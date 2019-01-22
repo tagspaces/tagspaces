@@ -4,19 +4,48 @@
 <!-- ![tagspaces@travis](https://travis-ci.org/tagspaces/tagspaces.svg?branch=master) -->
 [![Join the chat at https://gitter.im/tagspaces/tagspaces](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/tagspaces/tagspaces?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Github All Releases](https://img.shields.io/github/downloads/tagspaces/tagspaces/total.svg)]()
 
-## Introduction
+**TagSpaces** is a free, non-locking, open source application for organizing and managing your local files with the help of tags. It features note taking and some to-do app capabilities. The application is available for Windows, Linux, Mac OS and Android. We provide a web clipper extension for Firefox and Chrome for easy collecting of online content as local files.
 
-**TagSpaces** is a open source application for managing of your local files. You can find more information about it on its website [tagspaces.org](https://tagspaces.org/). For a quick TagSpaces introduction please see this [Youtube video](https://www.youtube.com/embed/CJ2hYU6U-C8).
+![TagSpaces Start Screen](https://raw.githubusercontent.com/tagspaces/documentation/master/media/v3/tagspaces-v3-themes.jpg)
 
-- [TagSpaces Blog](https://www.tagspaces.org/blog/) for news about TagSpaces
-- [TagSpaces Documentation](https://docs.tagspaces.org/) for our latest generated documentation
+
+More information about can be found from the following sources:
+- [Website: tagspaces.org](https://www.tagspaces.org/) - official web site of the project.
+- [Blog](https://www.tagspaces.org/blog/) for news about TagSpaces
+- [Documentation](https://docs.tagspaces.org/) for our latest generated documentation
+- [Video Introduction](https://www.youtube.com/embed/CJ2hYU6U-C8) - This is a short video presenting the main concepts of the application. It is made from a pretty old application version but it is still valid for the most of the use cases.
 - [Issues Tracker](https://github.com/tagspaces/tagspaces/issues) for developer support requests
 
-To get updates you can:
+<!-- To get updates you can:
 - Subscribe to GitHub updates by clicking the "watch" button up the top right of this page.
-- Subscribe to RSS feed updates for the [master branch](https://github.com/tagspaces/tagspaces/commits/master.atom)
+- Subscribe to RSS feed updates for the [master branch](https://github.com/tagspaces/tagspaces/commits/master.atom) -->
 
-## Repository Directory Structure
+
+## Downloads
+You can find the latest release of TagSpaces in the Github [release section](https://github.com/tagspaces/tagspaces/releases/)
+
+A full list of the changes is available on the  [changelog](CHANGELOG.md)
+
+## Main Features
+
+* **File and folder management** - TagSpaces provides a convenient user interface for browsing, viewing and man files and folders.
+* **File tagging** - The application supports two ways for tagging files. The default one embeds the tags directly in the name of the file, the other one uses a so called sidecar files for persisting the tags.
+* **Searching** - The search functionality supports fussy functionality and can filter your locations for files and folders containing one or more tags
+* **Browser for local content** - TagSpaces can be used just as browser for your local photos or navigation thought your local ebook library
+* **Media player** - It supports playing for common audio and video files types and has integrated basic media player functionalities.
+* **No-Cloud:** TagSpaces is running completely offline and serverless on your laptop, desktop or tablet and does not require an internet connection and any kind of online registration or service provider.
+* **Note Taking** - you can create and edit notes in plain text, markdown and html file formats
+* **To-Do Management** - with the help of the build in HTML editor you are able to create simple todo lists in every HTML file.
+* **Cross-platform:** TagSpaces runs on Windows, Linux, Mac and Android
+* **Web Clipper** for saving web pages and screenshots from your browsers is also available as extension for [Firefox](https://addons.mozilla.org/en-US/firefox/addon/tagspaces/) and [Chrome](https://chrome.google.com/webstore/detail/tagspaces-web-clipper/ldalmgifdlgpiiadeccbcjojljeanhjk).
+
+## Infos for developers
+
+The core of TagSpaces starting from version 3 is built with [react.js](https://reactjs.org/) and the great [material-ui](https://material-ui.com/) framework.
+
+The native Windows, Linux and Mac OS versions of TagSpaces are built with [Electron](https://electron.atom.io/). Electron is an app runtime based on Chromium and node.js. In order to combine it with react we have used the [electron-react-boilerplate](https://github.com/chentsulin/electron-react-boilerplate).
+
+### Repository Directory Structure
 
     ./app................ contains the application core
     ./app/locales........ contains the language files needed for the application internationalization
@@ -29,27 +58,6 @@ To get updates you can:
     ./resources.......... contains images and other files needed for the application building
     ./scripts............ contains js script needed for the yarn/npm tasks
 
-## Downloads
-You can find the latest release of TagSpaces in the Github [release section](https://github.com/tagspaces/tagspaces/releases/) of TagSpaces
-
-A full list of the changes is available on our [changelog](CHANGELOG.md)
-
-## Main Features
-
-* **File managing & tagging:** TagSpaces provides a convenient interface for browsing, viewing and tagging your local files and folders.
-* **No-Cloud:** TagSpaces is running completely offline and serverless on your laptop, desktop or tablet and does not require an internet connection and any kind of online registration or service provider.
-* **Note Taking:** You can create and edit notes in plain text, markdown and html file formats
-* **Cross-platform:** TagSpaces runs on Windows, Linux, Mac, Android and as extension for the Firefox and Chrome browsers.
-
-## Screenshots
-
-![TagSpaces Start Screen](https://raw.githubusercontent.com/tagspaces/documentation/master/media/v3/tagspaces-v3-themes.jpg)
-
-## Infos for developers
-
-The core of TagSpaces starting from version 3 is built with [react.js](https://reactjs.org/) and the great [material-ui](https://material-ui.com/) framework.
-
-The native Windows, Linux and Mac OS versions of TagSpaces are built with [Electron](https://electron.atom.io/). Electron is an app runtime based on Chromium and node.js. In order to combine it with react we have used the [electron-react-boilerplate](https://github.com/chentsulin/electron-react-boilerplate).
 
 ### How to run TagSpaces from the source code?
 In order to run TagSpaces on your Windows, Mac OS or Linux from the source code published here, you will need the following prerequisites:
@@ -154,9 +162,6 @@ With some modification it can be also used for Apache on Windows, for a detailed
 
 You can find more details about the Nextcloud integration here: [Self-hosted TagSpaces with WebDAV](https://docs.tagspaces.org/selfhosting.html).
 
-## License
-TagSpaces's source code is licensed under the AGPL (GNU Affero General Public License) Version 3, for the license text see [LICENSE](LICENSE) file.
-
 ## Contribute
 TagSpaces is an open source software, and as such, the code is publicly available on GitHub, and forking is particularly recommended! Still, contribution must be done following some guidelines.
 Contributor License Agreement
@@ -165,17 +170,22 @@ The CLA is an agreement commonly used in major open source project, which aims a
 
 The Contributor License Agreement can be signed online on the following [CLA form](http://tagspaces.org/contribute/).
 
-## Translations
-You can help the translation of this application in your languages by joining the translations teams on [Transifex](https://www.transifex.com/tagspaces/tagspaces/).
+## Localisation
+TagSpaces is currently available in more than 20 languages. You can help the translation of this application in your language by joining the translation teams on [Transifex](https://www.transifex.com/tagspaces/tagspaces/).
 
 ## Ideas and Suggestion
 If you have ideas or suggestions on how we can improve our application, you can check the following [Trello board](https://trello.com/b/TGeG5bi9/tagspaces-ideas). Here you will find numerous ideas already proposed by other users. If you want to post something new, please follow [this link](https://trello.com/c/mG97iOqo/19-how-to-use-this-board-and-add-new-ideas)
 
 ## Support and Bugs
-If you are having trouble using TagSpaces or have found a bug or you have some ideas how TagSpaces could be improved: [open a ticket](https://github.com/tagspaces/tagspaces/issues) on GitHub.
+If you are having troubles using TagSpaces or have found a bug please [open a ticket](https://github.com/tagspaces/tagspaces/issues) on GitHub.
+
+### Known issues
+ * TagSpaces is not suitable for searching in locations containing more than 100000 files.
+ * TagSpaces has performance issue displaying folders directly containing  more than 1000 files. There is no such problem if the files are distributed in sub folders.
 
 ## Feeds
 - Subscribe to RSS feed updates for the [tagspaces blog](http://tagspaces.org/blog/feed.xml)
 - Subscribe to RSS feed updates for the [master branch](https://github.com/tagspaces/tagspaces/commits/master.atom)
 
-
+## License
+TagSpaces's source code is licensed under the AGPL (GNU Affero General Public License) Version 3. The license text is available in the [LICENSE](LICENSE.txt) file.

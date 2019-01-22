@@ -59,23 +59,10 @@ class CreateTagGroupDialog extends React.Component<Props, State> {
     disableConfirmButton: true,
     title: '',
     children: '',
-    color: '',
-    textcolor: '',
+    color: this.props.color,
+    textcolor: this.props.textcolor,
     expanded: true,
     uuid: ''
-  };
-
-  componentWillReceiveProps = (nextProps: any) => {
-    if (nextProps.open === true) {
-      this.setState({
-        uuid: '',
-        title: '',
-        children: '',
-        expanded: true,
-        color: nextProps.color,
-        textcolor: nextProps.textcolor
-      });
-    }
   };
 
   handleInputChange = (event: Object) => {
@@ -177,6 +164,7 @@ class CreateTagGroupDialog extends React.Component<Props, State> {
           <TextField
             fullWidth={true}
             error={this.state.inputError}
+            autoFocus
             name="title"
             label={i18n.t('core:createTagGroupName')}
             value={this.state.title}

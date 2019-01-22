@@ -21,17 +21,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Button from '@material-ui/core/Button';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import Typography from '@material-ui/core/Typography';
-import FolderIcon from '@material-ui/icons/FolderOutlined';
 import FolderSeparatorIcon from '@material-ui/icons/KeyboardArrowRight';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { withStyles } from '@material-ui/core/styles';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListSubHeader from '@material-ui/core/ListSubheader';
 import { HotKeys } from 'react-hotkeys';
 import Loadable from 'react-loadable';
 import WelcomePanel from './WelcomePanel';
@@ -45,10 +38,14 @@ import {
   getDirectoryPath,
   getLastSelectedEntry,
   getSearchResultCount,
-  isReadOnlyMode,
+  isReadOnlyMode
 } from '../reducers/app';
 import TaggingActions from '../reducers/tagging-actions';
-import { extractDirectoryName, normalizePath, extractShortDirectoryName } from '../utils/paths';
+import {
+  extractDirectoryName,
+  normalizePath,
+  extractShortDirectoryName
+} from '../utils/paths';
 
 // https://reactjs.org/blog/2017/05/18/whats-new-in-create-react-app.html#code-splitting-with-dynamic-import
 // https://medium.com/@magbicaleman/intro-to-dynamic-import-in-create-react-app-6305bb397c46
@@ -69,7 +66,7 @@ const styles = theme => ({
     paddingRight: 5,
     paddingTop: 5,
     display: 'flex',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   topPanel: {
     flex: '1 1 50px',
@@ -94,7 +91,8 @@ const styles = theme => ({
   folderButton: {
     minWidth: 30,
     whiteSpace: 'nowrap',
-    paddingLeft: 0,
+    paddingLeft: 3,
+    paddingRight: 3,
     margin: '0 auto'
   },
   locationSelectorButton: {
@@ -106,7 +104,9 @@ const styles = theme => ({
 });
 
 function Loading() {
-  return <Typography style={{ padding: 10 }}>{i18n.t('core:loading')}</Typography>;
+  return (
+    <Typography style={{ padding: 10 }}>{i18n.t('core:loading')}</Typography>
+  );
 }
 
 const GridPerspective = Loadable({
@@ -143,8 +143,7 @@ type Props = {
   getNextFile: () => string,
   getPrevFile: () => string,
   openDirectory: () => void,
-  sortByCriteria: () => void,
-  openFile: (path: string) => void,
+    openFile: (path: string) => void,
   deleteDirectory: (path: string) => void,
   reflectCreateEntry: (path: string, isFile: boolean) => void,
   loadDirectoryContent: (path: string) => void,
@@ -185,11 +184,16 @@ class FolderContainer extends React.Component<Props, State> {
   static getDerivedStateFromProps(nextProps, prevState) {
     if (prevState.currentPath !== nextProps.currentDirectoryPath) {
       // Make the path unix like ending always with /
-      let normalizedPath = normalizePath(nextProps.currentDirectoryPath.split('\\').join('/')) + '/';
+      let normalizedPath =
+        normalizePath(nextProps.currentDirectoryPath.split('\\').join('/')) +
+        '/';
       let pathParts = [];
       while (normalizedPath.lastIndexOf('/') > 0) {
         pathParts.push(normalizedPath);
-        normalizedPath = normalizedPath.substring(0, normalizedPath.lastIndexOf('/'));
+        normalizedPath = normalizedPath.substring(
+          0,
+          normalizedPath.lastIndexOf('/')
+        );
       }
       pathParts = pathParts.reverse();
       // let pathParts = normalizedPath.split('/');
@@ -321,7 +325,11 @@ class FolderContainer extends React.Component<Props, State> {
 
   renderPerspective() {
     // console.log('renderPerspective: ', this.props);
-    if (this.props.currentDirectoryPath && this.props.currentDirectoryPath.length >= 2) { // TODO handle location perspectives  === 'grid'
+    if (
+      this.props.currentDirectoryPath &&
+      this.props.currentDirectoryPath.length >= 2
+    ) {
+      // TODO handle location perspectives  === 'grid'
       return (
         <GridPerspective
           directoryContent={this.props.directoryContent}
@@ -332,7 +340,6 @@ class FolderContainer extends React.Component<Props, State> {
           deleteFile={this.props.deleteFile}
           renameFile={this.props.renameFile}
           openDirectory={this.props.openDirectory}
-          sortByCriteria={this.props.sortByCriteria}
           currentDirectoryPath={this.props.currentDirectoryPath}
           setLastSelectedEntry={this.props.setLastSelectedEntry}
           perspectiveCommand={this.state.perspectiveCommand}
@@ -355,7 +362,6 @@ class FolderContainer extends React.Component<Props, State> {
           deleteFile={this.props.deleteFile}
           renameFile={this.props.renameFile}
           openDirectory={this.props.openDirectory}
-          sortByCriteria={this.props.sortByCriteria}
           currentDirectoryPath={this.props.currentDirectoryPath}
           setLastSelectedEntry={this.props.setLastSelectedEntry}
           perspectiveCommand={this.state.perspectiveCommand}
@@ -366,9 +372,7 @@ class FolderContainer extends React.Component<Props, State> {
         />
       */
     }
-    return (
-      <WelcomePanel />
-    );
+    return <WelcomePanel />;
   }
 
   render() {
@@ -385,33 +389,43 @@ class FolderContainer extends React.Component<Props, State> {
             <div className={classes.toolbar}>
               <LocationMenu />
               <div className={classes.flexMiddle} data-tid="entriesFound">
-                { this.props.searchResultCount > 0 && (
-                  <Typography className={classes.entriesFound}>
+                {this.props.searchResultCount > 0 && (
+                  <Typography
+                    style={{ whiteSpace: 'nowrap' }}
+                    className={classes.entriesFound}
+                  >
                     {this.props.searchResultCount} {i18n.t('entries')}
                   </Typography>
-                ) }
+                )}
               </div>
               {this.props.currentDirectoryPath && (
-                <div>
-                  { this.state.pathParts && this.state.pathParts.map((pathPart) => (
-                    <span key={pathPart}>
+                <div style={{ whiteSpace: 'nowrap' }}>
+                  {this.state.pathParts &&
+                    this.state.pathParts.map(pathPart => (
                       <Button
+                        key={pathPart}
                         onClick={() => loadDirectoryContent(pathPart)}
                         title={'Navigate to: ' + pathPart}
-                        style={{ paddingLeft: 0, paddingRight: 0 }}
+                        style={{ paddingLeft: 3, paddingRight: 0, minWidth: 10 }}
                       >
                         {extractShortDirectoryName(pathPart, '/')}
                         <FolderSeparatorIcon />
                       </Button>
-                    </span>
-                  ))}
+                    ))}
                   <Button
                     data-tid="folderContainerOpenDirMenu"
-                    title={i18n.t('core:openDirectoryMenu') + ' - ' + (currentDirectoryPath || '')}
+                    title={
+                      i18n.t('core:openDirectoryMenu') +
+                      ' - ' +
+                      (currentDirectoryPath || '')
+                    }
                     className={classes.folderButton}
                     onClick={this.openDirectoryMenu}
+                    onContextMenu={this.openDirectoryMenu}
                   >
-                    { extractShortDirectoryName(normalizePath(currentDirectoryPath)) }
+                    {extractShortDirectoryName(
+                      normalizePath(currentDirectoryPath)
+                    )}
                     <MoreVertIcon />
                   </Button>
                   <DirectoryMenu
@@ -452,7 +466,7 @@ function mapStateToProps(state) {
     perspectives: getPerspectives(state),
     directoryContent: getDirectoryContent(state),
     searchResultCount: getSearchResultCount(state),
-    isReadOnlyMode: isReadOnlyMode(state),
+    isReadOnlyMode: isReadOnlyMode(state)
   };
 }
 
@@ -470,7 +484,6 @@ function mapActionCreatorsToProps(dispatch) {
       getNextFile: AppActions.getNextFile,
       getPrevFile: AppActions.getPrevFile,
       openDirectory: AppActions.openDirectory,
-      sortByCriteria: AppActions.sortByCriteria,
       openFile: AppActions.openFile,
       deleteDirectory: AppActions.deleteDirectory,
       reflectCreateEntry: AppActions.reflectCreateEntry,

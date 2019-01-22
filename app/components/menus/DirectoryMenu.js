@@ -18,6 +18,7 @@
  */
 
 import React from 'react';
+import uuidv1 from 'uuid';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Menu from '@material-ui/core/Menu';
@@ -289,11 +290,13 @@ class DirectoryMenu extends React.Component<Props, State> {
     return (
       <div style={{ overflowY: 'hidden !important' }}>
         <RenameDirectoryDialog
+          key={uuidv1()}
           open={this.state.isRenameDirectoryDialogOpened}
           onClose={this.handleCloseDialogs}
           selectedDirectoryPath={this.props.directoryPath}
         />
         <CreateDirectoryDialog
+          key={uuidv1()}
           open={this.state.isCreateDirectoryDialogOpened}
           onClose={this.handleCloseDialogs}
           selectedDirectoryPath={this.props.directoryPath}

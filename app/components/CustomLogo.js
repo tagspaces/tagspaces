@@ -23,6 +23,7 @@ import { bindActionCreators } from 'redux';
 import IconButton from '@material-ui/core/IconButton';
 import { Pro } from '../pro';
 import TextLogoIcon from '../assets/images/text-logo.svg';
+import CustomLogoIcon from '../assets/images/custom-logo.svg';
 import { actions as AppActions } from '../reducers/app';
 
 class CustomLogo extends Component {
@@ -34,6 +35,7 @@ class CustomLogo extends Component {
         onClick={this.props.toggleAboutDialog}
       >
         <img style={{ height: 40 }} src={Pro ? Pro.TextLogoIcon : TextLogoIcon} alt="TagSpaces Logo" />
+        {/* <img style={{ height: 40 }} src={CustomLogoIcon} alt="Custom Logo" /> */}
       </IconButton>
     );
   }

@@ -42,7 +42,7 @@ const styles = theme => ({
 type Props = {
   open: boolean,
   onClose: () => void,
-  editTagForEntry: () => void,
+  editTagForEntry: (path: string, tag: Tag, title: string) => void,
   currentEntryPath: string,
   selectedTag: Tag,
   open: boolean
@@ -57,13 +57,16 @@ type State = {
 class EditEntryTagDialog extends React.Component<Props, State> {
   state = {
     disableConfirmButton: true,
-    errorTag: true,
+    errorTag: false,
     title: ''
   };
 
   componentWillReceiveProps = (nextProps: any) => {
     if (nextProps.open === true) {
-      this.setState({ title: nextProps.selectedTag.title });
+      this.setState({
+        disableConfirmButton: !nextProps.selectedTag.title,
+        title: nextProps.selectedTag.title
+      });
     }
   };
 
@@ -78,17 +81,18 @@ class EditEntryTagDialog extends React.Component<Props, State> {
   };
 
   handleValidation() {
-    if (this.state.title.length > 0) {
-      this.setState({ inputError: false, disableConfirmButton: false });
+    const tagCheck = RegExp(/^[^\#\/\\ \[\]]{1,}$/);
+    if (this.state.title && tagCheck.test(this.state.title)) {
+      this.setState({ errorTag: false, disableConfirmButton: false });
     } else {
-      this.setState({ inputError: true, disableConfirmButton: true });
+      this.setState({ errorTag: true, disableConfirmButton: true });
     }
   }
 
   onConfirm = () => {
     if (!this.state.disableConfirmButton) {
       this.props.editTagForEntry(this.props.currentEntryPath, this.props.selectedTag, this.state.title);
-      this.setState({ inputError: false, disableConfirmButton: true });
+      this.setState({ errorTag: false, disableConfirmButton: true });
       this.props.onClose();
     }
   };
@@ -113,7 +117,7 @@ class EditEntryTagDialog extends React.Component<Props, State> {
           value={this.state.title}
           data-tid="editTagEntryDialog_input"
         />
-        {this.state.inputError && <FormHelperText>Can title could not be empty</FormHelperText>}
+        {this.state.errorTag && <FormHelperText>{i18n.t('core:tagTitleHelper')}</FormHelperText>}
       </FormControl>
     </DialogContent>
   );

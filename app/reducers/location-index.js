@@ -30,6 +30,7 @@ import type { SearchQuery } from '../services/search';
 import Search from '../services/search';
 import { actions as AppActions } from './app';
 import AppConfig from '../config';
+import i18n from '../services/i18n';
 
 export const types = {
   INDEX_DIRECTORY: 'INDEX_DIRECTORY',
@@ -43,6 +44,7 @@ export const types = {
   REFLECT_CREATE_ENTRY: 'REFLECT_CREATE_ENTRY',
   REFLECT_RENAME_ENTRY: 'REFLECT_RENAME_ENTRY',
   REFLECT_UPDATE_SIDECARTAGS: 'REFLECT_UPDATE_SIDECARTAGS',
+  REFLECT_UPDATE_SIDECARMETA: 'REFLECT_UPDATE_SIDECARMETA'
 };
 
 
@@ -159,7 +161,6 @@ export default (state: Object = initialState, action: Object) => {
         indexForUpdatingInIndex = index;
       }
     });
-    let directoryIndex = state.currentDirectoryIndex;
     if (indexForUpdatingInIndex >= 0) {
       const updateEntry = {
         ...state.currentDirectoryIndex[indexForUpdatingInIndex],
@@ -168,16 +169,36 @@ export default (state: Object = initialState, action: Object) => {
           ...action.tags
         ]
       };
-      directoryIndex = [
-        ...state.currentDirectoryIndex.slice(0, indexForUpdatingInIndex),
-        updateEntry,
-        ...state.currentDirectoryIndex.slice(indexForUpdatingInIndex + 1)
-      ];
-    }
-    if (indexForUpdatingInIndex >= 0) {
       return {
         ...state,
-        currentDirectoryIndex: directoryIndex
+        currentDirectoryIndex: [
+          ...state.currentDirectoryIndex.slice(0, indexForUpdatingInIndex),
+          updateEntry,
+          ...state.currentDirectoryIndex.slice(indexForUpdatingInIndex + 1)
+        ]
+      };
+    }
+    return state;
+  }
+  case types.REFLECT_UPDATE_SIDECARMETA: {
+    let indexForUpdatingInIndex = -1;
+    state.currentDirectoryIndex.forEach((entry, index) => {
+      if (entry.path === action.path) {
+        indexForUpdatingInIndex = index;
+      }
+    });
+    if (indexForUpdatingInIndex >= 0) {
+      const updateEntry = {
+        ...state.currentDirectoryIndex[indexForUpdatingInIndex],
+        description: action.entryMeta.description
+      };
+      return {
+        ...state,
+        currentDirectoryIndex: [
+          ...state.currentDirectoryIndex.slice(0, indexForUpdatingInIndex),
+          updateEntry,
+          ...state.currentDirectoryIndex.slice(indexForUpdatingInIndex + 1)
+        ]
       };
     }
     return state;
@@ -218,14 +239,14 @@ export const actions = {
     const state = getState();
     const currentLocation: Location = getLocation(state, state.app.currentLocationId);
     dispatch(actions.startDirectoryIndexing());
-    dispatch(AppActions.showNotification('Loading index ...', 'default', true));
+    dispatch(AppActions.showNotification(i18n.t('core:loadingIndex'), 'default', true));
     if (Pro && Pro.Indexer.loadIndex) {
       Pro.Indexer.loadIndex(directoryPath, (currentLocation.type === locationType.TYPE_CLOUD) ? '/' : AppConfig.dirSeparator).then((directoryIndex) => {
         dispatch(actions.indexDirectorySuccess(directoryIndex));
         return true;
       }).catch(err => {
         dispatch(actions.indexDirectoryFailure(err));
-        dispatch(AppActions.showNotification('Loading index failed', 'warning', true));
+        dispatch(AppActions.showNotification(i18n.t('core:loadingIndexFailed'), 'warning', true));
       });
     }
   },
@@ -236,7 +257,7 @@ export const actions = {
     dispatch: (actions: Object) => void,
     getState: () => Object
   ) => {
-    dispatch(AppActions.showNotification('Searching...', 'default', false));
+    dispatch(AppActions.showNotification(i18n.t('core:searching'), 'default', false));
     setTimeout(() => { // Workarround used to show the start search notication
       Search.searchLocationIndex(
         getState().locationIndex.currentDirectoryIndex,
@@ -248,7 +269,7 @@ export const actions = {
       }).catch(() => {
         dispatch(AppActions.updateSearchResults([]));
         dispatch(AppActions.hideNotifications());
-        dispatch(AppActions.showNotification('Search failed.', 'warning', true));
+        dispatch(AppActions.showNotification(i18n.t('core:searchingFailed'), 'warning', true));
       });
     }, 50);
   },
@@ -277,6 +298,11 @@ export const actions = {
     type: types.REFLECT_UPDATE_SIDECARTAGS,
     path,
     tags
+  }),
+  reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => ({
+    type: types.REFLECT_UPDATE_SIDECARMETA,
+    path,
+    entryMeta
   })
 };
 

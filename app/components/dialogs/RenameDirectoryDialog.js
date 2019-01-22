@@ -52,13 +52,14 @@ class RenameDirectoryDialog extends React.Component<Props, State> {
     name: '',
   };
 
-  componentWillReceiveProps = (nextProps: any) => {
-    if (nextProps.open === true) {
-      this.setState({
-        name: extractDirectoryName(nextProps.selectedDirectoryPath),
-      });
+  static getDerivedStateFromProps(props) {
+    if (props.open) {
+      return {
+        name: extractDirectoryName(props.selectedDirectoryPath)
+      };
     }
-  };
+    return null;
+  }
 
   handleInputChange = (event: Object) => {
     const target = event.target;
@@ -148,6 +149,7 @@ class RenameDirectoryDialog extends React.Component<Props, State> {
       <GenericDialog
         open={this.props.open}
         onClose={this.props.onClose}
+        autoFocus
         onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
         renderTitle={this.renderTitle}
         renderContent={this.renderContent}

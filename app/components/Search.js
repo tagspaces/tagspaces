@@ -29,8 +29,12 @@ import NoteIcon from '@material-ui/icons/Note';
 import AudioIcon from '@material-ui/icons/MusicVideo';
 import VideoIcon from '@material-ui/icons/OndemandVideo';
 import ArchiveIcon from '@material-ui/icons/Archive';
-import FolderIcon from '@material-ui/icons/Folder';
+import FolderIcon from '@material-ui/icons/FolderOpen';
+import UntaggedIcon from '@material-ui/icons/LabelOffOutlined';
+import FileIcon from '@material-ui/icons/InsertDriveFileOutlined';
 import ClearSearchIcon from '@material-ui/icons/Clear';
+import BookmarkIcon from '@material-ui/icons/BookmarkBorder';
+import BookIcon from '@material-ui/icons/LocalLibraryOutlined';
 import Button from '@material-ui/core/Button';
 import Input from '@material-ui/core/Input';
 import Radio from '@material-ui/core/Radio';
@@ -200,7 +204,7 @@ class Search extends React.Component<Props, State> {
               {i18n.t('core:tagSearchType')}
             </FormHelperText>
             <RadioGroup
-              aria-label="Tag Search Type"
+              aria-label={i18n.t('core:tagSearchType')}
               name="tagConjunction"
               value={this.state.tagConjunction}
               onChange={this.handleInputChange}
@@ -243,13 +247,13 @@ class Search extends React.Component<Props, State> {
               </MenuItem>
               <MenuItem value={FileTypeGroups.files}>
                 <IconButton>
-                  <FolderIcon />
+                  <FileIcon />
                 </IconButton>
                 {i18n.t('core:searchFiles')}
               </MenuItem>
               <MenuItem value={FileTypeGroups.untagged}>
                 <IconButton>
-                  <FolderIcon />
+                  <UntaggedIcon />
                 </IconButton>
                 {i18n.t('core:searchUntaggedEntries')}
               </MenuItem>
@@ -306,6 +310,24 @@ class Search extends React.Component<Props, State> {
                   <ArchiveIcon />
                 </IconButton>
                 {i18n.t('core:searchArchives')}
+              </MenuItem>
+              <MenuItem
+                value={FileTypeGroups.bookmarks}
+                title={FileTypeGroups.bookmarks.toString()}
+              >
+                <IconButton>
+                  <BookmarkIcon />
+                </IconButton>
+                {i18n.t('core:searchBookmarks')}
+              </MenuItem>
+              <MenuItem
+                value={FileTypeGroups.ebooks}
+                title={FileTypeGroups.ebooks.toString()}
+              >
+                <IconButton>
+                  <BookIcon />
+                </IconButton>
+                {i18n.t('core:searchEbooks')}
               </MenuItem>
             </Select>
             {/* <FormHelperText>{i18n.t('core:searchFileTypes')}</FormHelperText> */}

@@ -65,7 +65,10 @@ const actions = {
       // filter existed in tagLibrary
       const uniqueTags = [];
       processedTags.map((tag) => {
-        if (taglibrary.findIndex(tagGroup => tagGroup.children.findIndex(obj => obj.id === tag.id) !== -1) === -1 && !/^(?:\d+~\d+|\d+)$/.test(tag.title)) {
+        if (
+          taglibrary.findIndex(tagGroup => tagGroup.children.findIndex(obj => obj.id === tag.id) !== -1) === -1 &&
+          !/^(?:\d+~\d+|\d+)$/.test(tag.title) // skip adding of tag containing only digits or geo tags
+        ) {
           uniqueTags.push(tag);
         }
         return true;
@@ -116,7 +119,7 @@ const actions = {
             return true;
           }).catch((err) => {
             console.warn('Error adding tags for ' + path + ' with ' + err);
-            dispatch(AppActions.showNotification('Adding tags failed', 'error', true));
+            dispatch(AppActions.showNotification(i18n.t('core:addingTagsFailed'), 'error', true));
           });
         }
       } else {
@@ -126,7 +129,7 @@ const actions = {
           return true;
         }).catch(error => {
           console.warn('Error adding tags for ' + path + ' with ' + error);
-          dispatch(AppActions.showNotification('Adding tags failed', 'error', true));
+          dispatch(AppActions.showNotification(i18n.t('core:addingTagsFailed'), 'error', true));
         });
       }
     } else if (fsEntryMeta) { // Handling tags in filename by existing sidecar
@@ -177,7 +180,7 @@ const actions = {
     dispatch: (actions: Object) => void,
     getState: () => Object
   ) => {
-    const { settings } = getState();
+    const { settings, taglibrary } = getState();
     // TODO: Handle adding already added tags
     if (tag.type === 'plain') {
       const fileName = extractFileName(path);
@@ -212,13 +215,43 @@ const actions = {
           return true;
         }).catch((err) => {
           console.warn('Error adding tags for ' + path + ' with ' + err);
-          dispatch(AppActions.showNotification('Adding tags failed', 'error', true));
+          dispatch(AppActions.showNotification(i18n.t('core:addingTagsFailed'), 'error', true));
         });
         return true;
       }).catch((error) => {
         console.warn('Error adding tags for ' + path + ' with ' + error);
-        dispatch(AppActions.showNotification('Adding tags failed', 'error', true));
+        dispatch(AppActions.showNotification(i18n.t('core:addingTagsFailed'), 'error', true));
       });
+    }
+
+    if (settings.addTagsToLibrary) { // collecting tags
+      // filter existed in tagLibrary
+      const uniqueTags = [];
+      if (
+        taglibrary.findIndex(tagGroup => tagGroup.children.findIndex(obj => obj.title === newTagTitle) !== -1) === -1 &&
+        !/^(?:\d+~\d+|\d+)$/.test(newTagTitle) // skip adding of tag containing only digits or geo tags
+      ) {
+        uniqueTags.push({
+          ...tag,
+          title: newTagTitle,
+          color: settings.tagBackgroundColor,
+          textcolor: settings.tagTextColor,
+          id: uuidv1()
+        });
+      }
+      if (uniqueTags.length > 0) {
+        const tagGroup = {
+          uuid: 'collected_tag_group_id', // uuid needs to be constant here (see mergeTagGroup)
+          title: i18n.t('core:collectedTags'),
+          expanded: true,
+          color: settings.tagBackgroundColor,
+          textcolor: settings.tagTextColor,
+          children: uniqueTags,
+          created_date: new Date(),
+          modified_date: new Date()
+        };
+        dispatch(TagLibraryActions.mergeTagGroup(tagGroup));
+      }
     }
   },
   removeTags: (paths: Array<string>, tags: Array<Tag>) => (
@@ -262,13 +295,13 @@ const actions = {
         return true;
       }).catch((err) => {
         console.warn('Removing sidecar tags failed ' + path + ' with ' + err);
-        dispatch(AppActions.showNotification('Removing sidecar tags failed', 'error', true));
+        dispatch(AppActions.showNotification(i18n.t('core:removingSidecarTagsFailed'), 'error', true));
         removeTagsFromFilename();
       });
       return true;
     }).catch((error) => {
       console.warn('Error adding tags for ' + path + ' with ' + error);
-      // dispatch(AppActions.showNotification('Removing sidecar tags failed', 'error', true));
+      // dispatch(AppActions.showNotification(i18n.t('core:removingSidecarTagsFailed'), 'error', true));
       removeTagsFromFilename();
     });
 
@@ -317,7 +350,7 @@ const actions = {
         return true;
       }).catch((err) => {
         console.warn('Removing sidecar tags failed for ' + path + ' with ' + err);
-        dispatch(AppActions.showNotification('Removing tags in sidecar file failed', 'error', true));
+        dispatch(AppActions.showNotification(i18n.t('core:removingTagsInSidecarFileFailed'), 'error', true));
         removeAllTagsFromFilename();
       });
       return true;

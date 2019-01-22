@@ -27,62 +27,62 @@ export default function buildTrayIconMenu(mainPageProps: Object) {
     return;
   }
 
-  let cKey = AppConfig.isMacLike ? '  -  Cmd' : ' Ctrl';
+  const cKey = AppConfig.isMacLike ? '  -  Cmd' : ' - Ctrl';
+
+  function openNextFile() {
+    const path = mainPageProps.getNextFile();
+    mainPageProps.openFile(path);
+    mainPageProps.setLastSelectedEntry(path);
+  }
+
+  function openPrevFile() {
+    const path = mainPageProps.getPrevFile();
+    mainPageProps.openFile(path);
+    mainPageProps.setLastSelectedEntry(path);
+  }
+
+  function playResumePlayback() {
+    const audioEvent = new CustomEvent('toggle-resume', { detail: '' });
+    window.dispatchEvent(audioEvent);
+  }
 
   const trayMenuTemplate = [
     {
       label: i18n.t('core:showTagSpaces') + cKey + '+Shift+W',
-      click: () => {
-        PlatformIO.showMainWindow();
-      }
+      click: PlatformIO.showMainWindow
     },
     {
       type: 'separator'
     },
     {
       label: i18n.t('core:newFileNote') + cKey + '+Shift+N',
-      click: () => {
-        mainPageProps.toggleCreateFileDialog();
-      }
+      click: mainPageProps.toggleCreateFileDialog
     },
     {
       type: 'separator'
     },
     {
       label: i18n.t('core:openNextFileTooltip') + cKey + '+Shift+D',
-      click: () => {
-        const path = mainPageProps.getNextFile();
-        mainPageProps.openFile(path);
-        mainPageProps.setLastSelectedEntry(path);
-      }
+      click: openNextFile
     },
     {
       label: i18n.t('core:openPrevFileTooltip') + cKey + '+Shift+A',
-      click: () => {
-        const path = mainPageProps.getPrevFile();
-        mainPageProps.openFile(path);
-        mainPageProps.setLastSelectedEntry(path);
-      }
+      click: openPrevFile
     },
     {
       type: 'separator'
     },
     {
       label: i18n.t('core:pauseResumePlayback') + cKey + '+Shift+P',
-      click: () => {
-        const audioEvent = new CustomEvent('toggle-resume', { detail: '' });
-        window.dispatchEvent(audioEvent);
-      }
+      click: playResumePlayback
     },
     {
       type: 'separator'
     },
     {
-      label: i18n.t('core:quitTagSpaces'),
+      label: i18n.t('core:quitTagSpaces') + cKey + '+Q',
       // role: 'quit',
-      click: () => {
-        PlatformIO.quitApp();
-      }
+      click: PlatformIO.quitApp
     }
   ];
   PlatformIO.initTrayMenu(trayMenuTemplate);

@@ -330,11 +330,11 @@ export default {
       viewer: '@tagspaces/mhtml-viewer',
       color: ''
     },
-    {
-      type: 'epub',
-      viewer: '@tagspaces/ebook-viewer',
-      color: ''
-    },
+    // {
+    //   type: 'epub',
+    //   viewer: '@tagspaces/ebook-viewer',
+    //   color: ''
+    // },
     {
       type: 'flac',
       viewer: '@tagspaces/media-player',

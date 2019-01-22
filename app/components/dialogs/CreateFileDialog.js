@@ -84,10 +84,7 @@ type State = {
   open?: boolean,
   fileName?: string,
   fileContent?: string,
-  fileType?: string,
-  // suggestionTags?: Array<Tag>,
-  // newlyAddedTags?: Array
-  // allTags?: Array
+  fileType?: string
 };
 
 class CreateFileDialog extends React.Component<Props, State> {
@@ -96,31 +93,12 @@ class CreateFileDialog extends React.Component<Props, State> {
     errorTextPath: false,
     openFolder: false,
     disableConfirmButton: true,
-    // dirPath: '',
     fileName: 'new note ' + AppConfig.beginTagContainer + formatDateTime4Tag(new Date(), true) + AppConfig.endTagContainer,
     fileContent: '',
     fileType: 'txt',
-    // suggestionTags: [],
-    // newlyAddedTags: [],
-    // allTags: []
   };
 
-  /* componentWillReceiveProps = (nextProps: any) => {
-    if (nextProps.open === true) {
-      this.setState({
-        selectedDirectoryPath: nextProps.selectedDirectoryPath || '',
-        allTags: nextProps.allTags,
-        fileName: 'new note ' + AppConfig.beginTagContainer + formatDateTime4Tag(new Date(), true) + AppConfig.endTagContainer,
-        fileContent: '',
-        newlyAddedTags: [],
-        disableConfirmButton: true
-      }, () => {
-        // this.fileName.select();
-        this.handleValidation();
-        // this.fileName.focus();
-      });
-    }
-  }; */
+  fileName;
 
   handleTypeChange = (event: Object) => {
     const target = event.target;
@@ -173,18 +151,6 @@ class CreateFileDialog extends React.Component<Props, State> {
     });
   };
 
-  /* onAddTag = (tag) => {
-    const { newlyAddedTags } = this.state;
-    newlyAddedTags.push(tag);
-    this.setState({ newlyAddedTags });
-  };
-
-  onRemoveTag = (tag) => {
-    const { newlyAddedTags } = this.state;
-    const modifiedTags = newlyAddedTags.filter(addedTag => addedTag.title !== tag.title);
-    this.setState({ newlyAddedTags: modifiedTags });
-  }; */
-
   onConfirm = () => {
     if (!this.state.disableConfirmButton) {
       const { fileName, fileContent, fileType } = this.state;
@@ -194,12 +160,6 @@ class CreateFileDialog extends React.Component<Props, State> {
       this.props.resetState('CreateFileDialogKey');
     }
   };
-
-  /* addedTags = (tags) => {
-    this.setState({
-      suggestionTags: tags,
-    });
-  }; */
 
   handleKeyPress = (event: any) => {
     if (event.key === 'Enter' || event.keyCode === 13) {
@@ -221,6 +181,7 @@ class CreateFileDialog extends React.Component<Props, State> {
         <TextField
           fullWidth={true}
           error={this.state.errorTextName}
+          autoFocus
           margin="dense"
           name="fileName"
           label={i18n.t('core:fileName')}

@@ -85,7 +85,8 @@ class EditTagDialog extends React.Component<Props, State> {
   };
 
   handleValidation() {
-    if (this.state.title && this.state.title.length > 0) {
+    const tagCheck = RegExp(/^[^\#\/\\ \[\]]{1,}$/);
+    if (this.state.title && tagCheck.test(this.state.title)) {
       this.setState({ inputError: false, disableConfirmButton: false });
     } else {
       this.setState({ inputError: true, disableConfirmButton: true });
@@ -186,7 +187,7 @@ class EditTagDialog extends React.Component<Props, State> {
             data-tid="editTagInput"
             fullWidth={true}
           />
-          {this.state.inputError && <FormHelperText style={styles.helpText}>{i18n.t('core:taggroupTitleHelper')}</FormHelperText>}
+          {this.state.inputError && <FormHelperText style={styles.helpText}>{i18n.t('core:tagTitleHelper')}</FormHelperText>}
         </FormControl>
         <FormControl
           fullWidth={true}

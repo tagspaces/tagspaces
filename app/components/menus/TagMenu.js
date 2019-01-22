@@ -18,11 +18,11 @@
  */
 
 import React from 'react';
+import uuidv1 from 'uuid';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Launch from '@material-ui/icons/Launch';
 import Edit from '@material-ui/icons/Edit';
-import LocalOffer from '@material-ui/icons/LocalOffer';
 import DeleteIcon from '@material-ui/icons/DeleteForever';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -99,15 +99,6 @@ class TagLibraryMenu extends React.Component<Props, State> {
       );
     }
   };
-
-  /*
-  <MenuItem data-tid="tagSelectedFiles" onClick={this.tagSelectedFiles}>
-    <ListItemIcon>
-      <LocalOffer />
-    </ListItemIcon>
-    <ListItemText inset primary={i18n.t('core:tagSelectedFiles')} />
-  </MenuItem>
-*/
 
   render = () => (
     <div style={{ overflowY: 'hidden !important' }}>

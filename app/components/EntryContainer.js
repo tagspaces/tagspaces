@@ -23,7 +23,6 @@ import { bindActionCreators } from 'redux';
 import { HotKeys } from 'react-hotkeys';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
-import EditIcon from '@material-ui/icons/Edit';
 import uuidv1 from 'uuid';
 import SaveIcon from '@material-ui/icons/Save';
 import CloseIcon from '@material-ui/icons/Close';
@@ -167,7 +166,8 @@ type Props = {
   deleteFile: (path: string) => void,
   toggleEntryFullWidth: () => void,
   isReadOnlyMode: boolean,
-  setEntryPropertiesSplitSize: (size: number) => void
+  setEntryPropertiesSplitSize: (size: number) => void,
+  reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void
 };
 
 type State = {
@@ -1071,26 +1071,18 @@ class EntryContainer extends React.Component<Props, State> {
                   resetState={this.resetState}
                   entryPath={currentEntry.path}
                   shouldReload={currentEntry.shouldReload}
-                  addTags={this.props.addTags}
                   renameFile={this.props.renameFile}
                   renameDirectory={this.props.renameDirectory}
-                  removeTags={this.props.removeTags}
                   editTagForEntry={this.props.editTagForEntry}
                   settings={this.props.settings}
                   deleteFile={this.props.deleteFile}
-                  showNotification={this.props.showNotification}
                   shouldCopyFile={this.state.shouldCopyFile}
                   normalizeShouldCopyFile={() => this.setState({ shouldCopyFile: false })}
-                  onEditTags={() => {
-                    const tags = extractTagsAsObjects(currentEntry.path, this.props.settings.tagDelimiter);
-                    this.setState({
-                      selectedItem: {
-                        ...currentEntry,
-                        tags
-                      },
-                      isEditTagsModalOpened: true
-                    });
-                  }}
+                  addTags={this.props.addTags}
+                  removeTags={this.props.removeTags}
+                  removeAllTags={this.props.removeAllTags}
+                  reflectUpdateSidecarMeta={this.props.reflectUpdateSidecarMeta}
+                  showNotification={this.props.showNotification}
                 />
               </div>
             </div>
@@ -1147,8 +1139,9 @@ function mapActionCreatorsToProps(dispatch) {
     toggleEntryFullWidth: AppActions.toggleEntryFullWidth,
     addTags: TaggingActions.addTags,
     removeTags: TaggingActions.removeTags,
-    editTagForEntry: TaggingActions.editTagForEntry,
     removeAllTags: TaggingActions.removeAllTags,
+    editTagForEntry: TaggingActions.editTagForEntry,
+    reflectUpdateSidecarMeta: AppActions.reflectUpdateSidecarMeta,
   }, dispatch);
 }
 

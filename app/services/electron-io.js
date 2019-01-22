@@ -18,9 +18,11 @@
  */
 
 import fsextra from 'fs-extra';
+import winattr from 'winattr';
 import { extractParentDirectoryPath, getMetaDirectoryPath } from '../utils/paths';
 import { arrayBufferToBuffer } from '../utils/misc';
 import AppConfig from '../config';
+import PlatformIO from './platform-io';
 import TrayIcon from '../assets/icons/trayIcon.png';
 // import TrayIconWin from '../assets/icons/trayIcon.ico';
 import TrayIcon2x from '../assets/icons/trayIcon@2x.png';
@@ -122,7 +124,8 @@ export default class ElectronIO {
   };
 
   quitApp = (): void => {
-    this.win.destroy();
+    // this.win.destroy();
+    this.ipcRenderer.send('quit-application', 'Bye, bye...');
   };
 
   // Experimental functionality
@@ -430,7 +433,19 @@ export default class ElectronIO {
           reject('Error creating folder: ' + dirPath + ' with ' + error);
           return;
         }
-        resolve(dirPath);
+        // Make newly created .ts folders hidden under Windows
+        if (AppConfig.isWin && !PlatformIO.haveObjectStoreSupport() && dirPath.endsWith('\\' + AppConfig.metaFolder)) {
+          winattr.set(dirPath, { hidden: true }, (err) => {
+            resolve(dirPath);
+            if (err) {
+              console.warn('Error setting hidden attr. to dir: ' + dirPath);
+            } else {
+              console.log('Success setting hidden attr. to dir: ' + dirPath);
+            }
+          });
+        } else {
+          resolve(dirPath);
+        }
       });
     });
   };

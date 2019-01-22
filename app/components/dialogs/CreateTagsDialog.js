@@ -40,8 +40,7 @@ type State = {
   inputError?: boolean,
   disableConfirmButton?: boolean,
   open?: boolean,
-  tagTitle?: string,
-  uuid?: string
+  tagTitle?: string
 };
 
 class CreateTagsDialog extends React.Component<Props, State> {
@@ -50,17 +49,6 @@ class CreateTagsDialog extends React.Component<Props, State> {
     disableConfirmButton: true,
     open: false,
     tagTitle: '',
-    uuid: ''
-  };
-
-  componentWillReceiveProps = (nextProps: any) => {
-    if (nextProps.open === true) {
-      this.setState({
-        tagTitle: '',
-        open: true,
-        uuid: nextProps.selectedTagGroupEntry.uuid,
-      });
-    }
   };
 
   handleInputChange = (event: Object) => {
@@ -74,9 +62,8 @@ class CreateTagsDialog extends React.Component<Props, State> {
   };
 
   handleValidation() {
-    // const regEx = '^[^#/\\ \[\]]{1,}$';
-    const tagTitle = this.state.tagTitle.match(/[^,(?! )]+/g);
-    if (tagTitle && tagTitle.length > 0) {
+    const tagCheck = RegExp(/^[^\#\/\\ \[\]]{1,}$/);
+    if (this.state.tagTitle && tagCheck.test(this.state.tagTitle)) {
       this.setState({ inputError: false, disableConfirmButton: false });
     } else {
       this.setState({ inputError: true, disableConfirmButton: true });
@@ -86,7 +73,7 @@ class CreateTagsDialog extends React.Component<Props, State> {
   onConfirm = () => {
     if (!this.state.disableConfirmButton) {
       this.setState({ open: false, disableConfirmButton: true });
-      this.props.addTag(this.state.tagTitle, this.state.uuid);
+      this.props.addTag(this.state.tagTitle, this.props.selectedTagGroupEntry.uuid);
       this.props.onClose();
     }
   };
@@ -104,13 +91,14 @@ class CreateTagsDialog extends React.Component<Props, State> {
         <TextField
           error={this.state.inputError}
           name="tagTitle"
+          autoFocus
           label={i18n.t('core:addTagsToGroupTagsPlaceholder')}
           onChange={this.handleInputChange}
           value={this.state.tagTitle}
           data-tid="addTagsInput"
           fullWidth={true}
         />
-        {this.state.inputError && <FormHelperText>{i18n.t('core:taggroupTitleHelper')}</FormHelperText>}
+        {this.state.inputError && <FormHelperText>{i18n.t('core:tagTitleHelper')}</FormHelperText>}
       </FormControl>
 
     </DialogContent>

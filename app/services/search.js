@@ -37,6 +37,8 @@ export const FileTypeGroups = {
   audio: ['ogg', 'mp3', 'wav', 'wave'],
   video: ['ogv', 'mp4', 'avi', 'webm', 'mkv'],
   archives: ['zip', 'rar', 'gz', 'tgz', 'arc', '7z'],
+  bookmarks: ['url', 'lnk', 'sym'],
+  ebooks: ['epub', 'mobi', 'azw', 'prc', 'azw1', 'azw3', 'azw4', 'azw8', 'azk'],
   folders: ['folders'],
   files: ['files'],
   untagged: ['untagged'],
@@ -165,6 +167,10 @@ export default class Search {
       console.timeEnd('jmespath');
       console.log('jmespath results: ' + results.length);
     }
+
+    // if (Pro && Pro.Search.filterIndex) {
+    //   results = Pro.Search.filterIndex(results || locationContent, searchQuery);
+    // }
 
     if (searchQuery.textQuery && searchQuery.textQuery.length > 1) {
       const fuseQuery = constructFuseQuery(searchQuery);

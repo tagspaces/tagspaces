@@ -18,7 +18,6 @@
  */
 
 import uuidv1 from 'uuid';
-// import winattr from 'winattr';
 import { type Location, locationType } from './locations';
 import PlatformIO from '../services/platform-io';
 import AppConfig from '../config';
@@ -37,7 +36,7 @@ import {
   extractParentDirectoryPath,
   extractTagsAsObjects, normalizePath
 } from '../utils/paths';
-import { sortByCriteria, formatDateTime4Tag } from '../utils/misc';
+import { formatDateTime4Tag } from '../utils/misc';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import { getThumbnailURLPromise } from '../services/thumbsgenerator';
@@ -67,7 +66,6 @@ export const types = {
   SET_FILEDRAGGED: 'APP/SET_FILEDRAGGED',
   SET_READONLYMODE: 'APP/SET_READONLYMODE',
   RENAME_FILE: 'APP/RENAME_FILE',
-  SORT_BY: 'APP/SORT_BY',
   TOGGLE_ABOUT_DIALOG: 'APP/TOGGLE_ABOUT_DIALOG',
   TOGGLE_KEYBOARD_DIALOG: 'APP/TOGGLE_KEYBOARD_DIALOG',
   TOGGLE_LICENSE_DIALOG: 'APP/TOGGLE_LICENSE_DIALOG',
@@ -79,7 +77,8 @@ export const types = {
   REFLECT_DELETE_ENTRY: 'APP/REFLECT_DELETE_ENTRY',
   REFLECT_RENAME_ENTRY: 'APP/REFLECT_RENAME_ENTRY',
   REFLECT_CREATE_ENTRY: 'APP/REFLECT_CREATE_ENTRY',
-  REFLECT_UPDATE_SIDECARTAGS: 'APP/REFLECT_UPDATE_SIDECARTAGS'
+  REFLECT_UPDATE_SIDECARTAGS: 'APP/REFLECT_UPDATE_SIDECARTAGS',
+  REFLECT_UPDATE_SIDECARMETA: 'APP/REFLECT_UPDATE_SIDECARMETA'
 };
 
 export const NotificationTypes = {
@@ -159,7 +158,8 @@ export default (state: Object = initialState, action: Object) => {
     return {
       ...state,
       currentDirectoryEntries: action.directoryContent,
-      currentDirectoryPath: action.directoryPath
+      currentDirectoryPath: action.directoryPath,
+      isLoading: false
     };
   }
   case types.CLEAR_DIRECTORY_CONTENT: {
@@ -206,21 +206,6 @@ export default (state: Object = initialState, action: Object) => {
   case types.TOGGLE_SELECT_DIRECTORY_DIALOG: {
     return { ...state, selectDirectoryDialogOpened: !state.selectDirectoryDialogOpened };
   }
-  case types.SORT_BY: {
-    const data = sortByCriteria(
-      action.sort,
-      state.currentDirectoryEntries,
-      action.order
-    );
-    return {
-      ...state,
-      currentDirectoryEntries: data,
-      isLoading: false
-    };
-  }
-  /* case types.SET_FILEDRAGGED: {
-    return { ...state, isFileDragged: action.isFileDragged };
-  } */
   case types.INDEX_DIRECTORY_SEARCH: {
     return {
       ...state,
@@ -453,6 +438,53 @@ export default (state: Object = initialState, action: Object) => {
     }
     return state;
   }
+  case types.REFLECT_UPDATE_SIDECARMETA: {
+    let indexForUpdating = -1;
+    let indexForUpdatingInOpenedFiles = -1;
+    // Updating entries in the current directory
+    state.currentDirectoryEntries.forEach((entry, index) => {
+      if (entry.path === action.path) {
+        indexForUpdating = index;
+      }
+    });
+    state.openedFiles.forEach((entry, index) => {
+      if (entry.path === action.path) {
+        indexForUpdatingInOpenedFiles = index;
+      }
+    });
+    let directoryEntries = state.currentDirectoryEntries;
+    let openedFiles = state.openedFiles;
+    if (indexForUpdating >= 0) {
+      const updateEntry = {
+        ...state.currentDirectoryEntries[indexForUpdating],
+        description: action.entryMeta.description
+      };
+      directoryEntries = [
+        ...state.currentDirectoryEntries.slice(0, indexForUpdating),
+        updateEntry,
+        ...state.currentDirectoryEntries.slice(indexForUpdating + 1)
+      ];
+    }
+    if (indexForUpdatingInOpenedFiles >= 0) {
+      const updateEntry = {
+        ...state.openedFiles[indexForUpdatingInOpenedFiles],
+        shouldReload: true,
+      };
+      openedFiles = [
+        ...state.openedFiles.slice(0, indexForUpdatingInOpenedFiles),
+        updateEntry,
+        ...state.openedFiles.slice(indexForUpdatingInOpenedFiles + 1)
+      ];
+    }
+    if (indexForUpdating >= 0 || indexForUpdatingInOpenedFiles >= 0) {
+      return {
+        ...state,
+        currentDirectoryEntries: directoryEntries,
+        openedFiles
+      };
+    }
+    return state;
+  }
   case types.CLOSE_ALL_FILES: {
     return {
       ...state,
@@ -477,7 +509,7 @@ export const actions = {
     const { app } = getState();
     if (!app.currentDirectoryPath) {
       dispatch(
-        actions.showNotification('Please first open a folder!', 'warning', true)
+        actions.showNotification(i18n.t('core:firstOpenaFolder'), 'warning', true)
       );
     } else {
       dispatch(actions.toggleCreateDirectoryDialog());
@@ -490,7 +522,7 @@ export const actions = {
     const { app } = getState();
     if (!app.currentDirectoryPath) {
       dispatch(
-        actions.showNotification('Please first open a folder!', 'warning', true)
+        actions.showNotification(i18n.t('core:firstOpenaFolder'), 'warning', true)
       );
     } else {
       dispatch(actions.toggleCreateFileDialog());
@@ -503,7 +535,7 @@ export const actions = {
     const { app } = getState();
     // if (!app.currentDirectoryPath) {
     //   dispatch(
-    //     actions.showNotification('Please first open a folder!', 'warning', true)
+    //     actions.showNotification(i18n.t('core:firstOpenaFolder'), 'warning', true)
     //   );
     // } else {
     dispatch(actions.toggleSelectDirectoryDialog());
@@ -526,7 +558,7 @@ export const actions = {
       const parentDirectory = extractParentDirectoryPath(app.currentDirectoryPath);
       dispatch(actions.loadDirectoryContent(parentDirectory));
     } else {
-      dispatch(actions.showNotification('Please first open a folder!', 'warning', true));
+      dispatch(actions.showNotification(i18n.t('core:firstOpenaFolder'), 'warning', true));
     }
   },
   loadDirectoryContent: (directoryPath: string) => (
@@ -572,17 +604,6 @@ export const actions = {
                     settings,
                     dispatch
                   );
-                  // Make .ts a hidden folder under Windows
-                  // TODO move functionality to electron-io.js
-                  /* if (AppConfig.isElectron && AppConfig.isWin && !PlatformIO.haveObjectStoreSupport() && !AppConfig.isCordova) {
-                    winattr.set(metaDirectory, { hidden: true }, (err) => {
-                      if (err) {
-                        console.warn('Error setting hidden attr. to dir: ' + metaDirectory);
-                      } else {
-                        console.log('Success setting hidden attr. to dir: ' + metaDirectory);
-                      }
-                    });
-                  } */
                   return true;
                 })
                 .catch(() => {
@@ -655,7 +676,7 @@ export const actions = {
     console.warn('Error loading directory: ' + error);
     dispatch(actions.hideNotifications());
     dispatch(
-      actions.showNotification('Error loading directory', 'warning', true)
+      actions.showNotification(i18n.t('core:errorLoadingFolder'), 'warning', true)
     );
     dispatch(actions.loadDirectorySuccess(directoryPath, []));
   },
@@ -777,16 +798,16 @@ export const actions = {
       const filePath = app.currentDirectoryPath + AppConfig.dirSeparator + 'textfile' + AppConfig.beginTagContainer + formatDateTime4Tag(new Date(), true) + AppConfig.endTagContainer + '.txt';
       PlatformIO.saveFilePromise(filePath, '', true).then(() => {
         dispatch(actions.reflectCreateEntry(filePath, true));
-        dispatch(actions.showNotification('File create successfully', 'info', true));
+        dispatch(actions.showNotification(i18n.t('core:fileCreateSuccessfully'), 'info', true));
         dispatch(actions.openFile(filePath));
         // TODO select file // dispatch(actions.setLastSelectedEntry(filePath));
         return true;
       }).catch((err) => {
         console.warn('File creation failed with ' + err);
-        dispatch(actions.showNotification('Error creating file', 'warning', true));
+        dispatch(actions.showNotification(i18n.t('core:errorCreatingFile'), 'warning', true));
       });
     } else {
-      dispatch(actions.showNotification('Please first open a folder!', 'warning', true));
+      dispatch(actions.showNotification(i18n.t('core:firstOpenaFolder'), 'warning', true));
     }
   },
   createFileAdvanced: (targetPath: string, fileName: string, content: string, fileType: 'md' | 'txt' | 'html') => (
@@ -853,7 +874,7 @@ export const actions = {
     const currentLocationId = getState().app;
     if (location.type === locationType.TYPE_CLOUD) {
       PlatformIO.enableObjectStoreSupport(location).then(() => {
-        dispatch(actions.showNotification('Connected to object store', 'default', true));
+        dispatch(actions.showNotification(i18n.t('core:connectedtoObjectStore'), 'default', true));
         dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
         dispatch(actions.setCurrentLocationId(location.uuid));
         dispatch(actions.loadDirectoryContent(location.paths[0]));
@@ -866,7 +887,7 @@ export const actions = {
         }
         return true;
       }).catch(() => {
-        dispatch(actions.showNotification('Connection to object store failed!', 'warning', true));
+        dispatch(actions.showNotification(i18n.t('core:connectedtoObjectStoreFailed'), 'warning', true));
         PlatformIO.disableObjectStoreSupport();
       });
     } else { // if (location.type === locationType.TYPE_LOCAL) {
@@ -1015,11 +1036,6 @@ export const actions = {
     });
     return prevFilePath;
   },
-  sortByCriteria: (sort: string, order: boolean) => ({
-    type: types.SORT_BY,
-    sort,
-    order
-  }),
   closeAllFiles: () => ({ type: types.CLOSE_ALL_FILES }),
   reflectDeleteEntryInt: (path: string) => ({
     type: types.REFLECT_DELETE_ENTRY,
@@ -1068,11 +1084,22 @@ export const actions = {
     path,
     tags
   }),
+  reflectUpdateSidecarMetaInt: (path: string, entryMeta: Object) => ({
+    type: types.REFLECT_UPDATE_SIDECARMETA,
+    path,
+    entryMeta
+  }),
   reflectUpdateSidecarTags: (path: string, tags: Array<Tags>) => (
     dispatch: (actions: Object) => void
   ) => {
     dispatch(actions.reflectUpdateSidecarTagsInt(path, tags));
     dispatch(LocationIndexActions.reflectUpdateSidecarTags(path, tags));
+  },
+  reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => (
+    dispatch: (actions: Object) => void
+  ) => {
+    dispatch(actions.reflectUpdateSidecarMetaInt(path, entryMeta));
+    dispatch(LocationIndexActions.reflectUpdateSidecarMeta(path, entryMeta));
   },
   deleteFile: (filePath: string) => (
     dispatch: (actions: Object) => void,
@@ -1123,7 +1150,7 @@ export const actions = {
         // UI notification
         dispatch(
           actions.showNotification(
-            'Renaming successfully.',
+            i18n.t('core:renamingSuccessfully'),
             'default',
             true
           )
@@ -1158,12 +1185,12 @@ export const actions = {
     dispatch: (actions: Object) => void,
     getState: () => Object
   ) => {
-    actions.showNotification('Not implemented yet, please use the save button.', 'warning', true);
+    actions.showNotification(i18n.t('core:notImplementedYet'), 'warning', true);
     // const { app } = getState();
     /* PlatformIO.saveFilePromise(filePath, content, true).then((isNewFile) => {
       console.log(isNewFile);
       dispatch(
-        actions.showNotification('File created successfully.', 'successfully', true)
+        actions.showNotification(i18n.t('core:fileCreatedSuccessfully.'), 'successfully', true)
       );
       return true;
     }).catch((error) => {
@@ -1190,7 +1217,7 @@ function prepareDirectoryContent(
   dirEntries.map(entry => {
     if (
       !settings.showUnixHiddenEntries &&
-      entry.name === AppConfig.metaFolder
+      entry.name.startsWith('.')
     ) {
       return true;
     }
@@ -1232,18 +1259,18 @@ function prepareDirectoryContent(
   function handleTmbGenerationFailed(error) {
     console.warn('Thumb generation failed: ' + error);
     dispatch(actions.setGeneratingThumbnails(false));
-    dispatch(actions.showNotification('Generating thumbnails failed', 'warning', true));
+    dispatch(actions.showNotification(i18n.t('core:generatingThumbnailsFailed'), 'warning', true));
   }
 
   if (tmbGenerationPromises.length > 0) {
     dispatch(actions.setGeneratingThumbnails(true));
-    // dispatch(actions.showNotification('Checking thumbnails', 'info', false));
+    // dispatch(actions.showNotification(i18n.t('core:checkingThumbnails'), 'info', false));
     Promise.all(tmbGenerationPromises)
       .then(handleTmbGenerationResults)
       .catch(handleTmbGenerationFailed);
   } else if (tmbGenerationList.length > 0) {
     dispatch(actions.setGeneratingThumbnails(true));
-    // dispatch(actions.showNotification('Loading or generating thumbnails...', 'info', false));
+    // dispatch(actions.showNotification(i18n.t('core:loadingOrGeneratingThumbnails'), 'info', false));
     PlatformIO.createThumbnailsInWorker(tmbGenerationList)
       .then(handleTmbGenerationResults)
       .catch(handleTmbGenerationFailed);
@@ -1254,9 +1281,6 @@ function prepareDirectoryContent(
     return;
   }
 
-  // directoryContent.sort((a, b) => (a.name < b.name ? -1 : 1));
-  // TODO check if here the right place for sorting
-  sortByCriteria('byName', directoryContent, true); // ability to sort by metadata criteria
   console.log('Dir ' + directoryPath + ' contains ' + directoryContent.length);
   console.timeEnd('listDirectoryPromise');
   dispatch(actions.loadDirectorySuccess(directoryPath, directoryContent));

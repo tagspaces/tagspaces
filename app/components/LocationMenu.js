@@ -20,10 +20,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import FolderIcon from '@material-ui/icons/Folder';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import LocationIcon from '@material-ui/icons/WorkOutline';
+import CloudLocationIcon from '@material-ui/icons/CloudQueue';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListSubHeader from '@material-ui/core/ListSubheader';
@@ -31,7 +31,7 @@ import { withTheme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import i18n from '../services/i18n';
-import { getLocations, type Location } from '../reducers/locations';
+import { getLocations, type Location, locationType } from '../reducers/locations';
 import {
   actions as AppActions,
   getCurrentLocationId } from '../reducers/app';
@@ -50,29 +50,26 @@ type State = {
   locationChooserMenuAnchorEl: null | Object
 };
 
-class LocationMenu extends React.Component { //  <Props, State>
+class LocationMenu extends React.Component<Props, State> {
   state = {
     locationChooserMenuOpened: false,
     locationChooserMenuAnchorEl: null,
   }
 
-  componentWillReceiveProps = (nextProps: Props) => {
-    if (nextProps.currentLocationId != null) {
-      this.props.locations.map((location: Location) => {
+  static getDerivedStateFromProps(nextProps, prevState) {
+    let currentLocation;
+    if (nextProps.currentLocationId && nextProps.locations) {
+      nextProps.locations.map((location: Location) => {
         if (location.uuid === nextProps.currentLocationId) {
-          this.setState({
-            currentLocation: location,
-          });
+          currentLocation = location;
         }
-        return true;
-      });
-    } else {
-      // closing the perspective
-      this.setState({
-        currentLocation: undefined,
       });
     }
-  };
+    return {
+      ...prevState,
+      currentLocation,
+    };
+  }
 
   openLocation = location => {
     this.props.openLocation(location);
@@ -88,13 +85,21 @@ class LocationMenu extends React.Component { //  <Props, State>
 
   render() {
     const { theme } = this.props;
+    const { currentLocation } = this.state;
     return (
-      <div>
+      <div style={{
+        position: 'absolute',
+        left: 0,
+        marginLeft: 5,
+        backgroundColor: theme.palette.background.default,
+        zIndex: 1
+      }}
+      >
         <Button
           data-tid="folderContainerLocationChooser"
           onClick={this.toggleLocationChooser}
           title={this.state.currentLocation && this.state.currentLocation.name}
-          style={{ marginLeft: -4 }}
+          style={{ paddingRight: 0, paddingLeft: 11 }}
         >
           {this.state.currentLocation
             ? <LocationIcon /> // this.state.currentLocation.name
@@ -120,10 +125,12 @@ class LocationMenu extends React.Component { //  <Props, State>
               data-tid="folderContainerMenuOpenLocation"
               key={location.uuid}
               onClick={() => this.openLocation(location)}
-              style={ (this.state.currentLocation &&  this.state.currentLocation.uuid === location.uuid) ? { backgroundColor: theme.palette.primary.light } : {}}
+              style={(currentLocation && currentLocation.uuid === location.uuid) ? { backgroundColor: theme.palette.primary.light } : {}}
             >
               <ListItemIcon>
-                <FolderIcon />
+                { location.type === locationType.TYPE_CLOUD ?
+                  (<CloudLocationIcon />) : (<LocationIcon />)
+                }
               </ListItemIcon>
               <ListItemText inset primary={location.name} />
             </MenuItem>

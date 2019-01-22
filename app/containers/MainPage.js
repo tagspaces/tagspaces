@@ -67,6 +67,7 @@ import AppConfig from '../config';
 // import i18n from '../services/i18n';
 import buildDesktopMenu from '../services/electron-menus';
 import buildTrayIconMenu from '../services/electron-tray-menu';
+import i18n from '../services/i18n';
 
 const initialSplitSize = 44;
 const drawerWidth = 300;
@@ -111,6 +112,7 @@ type Props = {
   // isFileDragged: boolean,
   isIndexing: boolean,
   isGeneratingThumbs: boolean,
+  setGeneratingThumbnails: (isGenerating: boolean) => void,
   isEntryInFullWidth: boolean,
   classes: Object,
   notificationStatus: Object,
@@ -472,7 +474,7 @@ class MainPage extends Component<Props, State> {
             action={[
               <IconButton
                 key="close"
-                aria-label="Close"
+                aria-label={i18n.t('core:closeButton')}
                 color="inherit"
                 onClick={this.props.hideNotifications}
               >
@@ -486,13 +488,14 @@ class MainPage extends Component<Props, State> {
             autoHideDuration={undefined}
             message={'Loading or generating thumbnails...'}
             action={[
-              // <Button
-              //   color="secondary"
-              //   size="small"
-              //   onClick={this.props.cancelDirectoryIndexing}
-              // >
-              // Cancel indexing
-              // </Button>
+              <IconButton
+                key="close"
+                aria-label={i18n.t('core:closeButton')}
+                color="inherit"
+                onClick={() => this.props.setGeneratingThumbnails(false)}
+              >
+                <CloseIcon />
+              </IconButton>,
             ]}
           />
           <Snackbar
@@ -585,6 +588,7 @@ function mapDispatchToProps(dispatch) {
     toggleThirdPartyLibsDialog: AppActions.toggleThirdPartyLibsDialog,
     toggleAboutDialog: AppActions.toggleAboutDialog,
     setLastSelectedEntry: AppActions.setLastSelectedEntry,
+    setGeneratingThumbnails: AppActions.setGeneratingThumbnails,
     openFile: AppActions.openFile,
     openFileNatively: AppActions.openFileNatively,
     setUpdateAvailable: AppActions.setUpdateAvailable,

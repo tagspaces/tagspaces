@@ -21,12 +21,17 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import removeMd from 'remove-markdown';
+import memoize from "memoize-one";
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import moment from 'moment';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Toolbar from '@material-ui/core/Toolbar';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import RadioCheckedIcon from '@material-ui/icons/RadioButtonChecked';
+import RadioUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
+import ListSubHeader from '@material-ui/core/ListSubheader';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Grid from '@material-ui/core/Grid';
@@ -39,6 +44,9 @@ import ArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import Divider from '@material-ui/core/Divider';
+import ThumbnailCoverIcon from '@material-ui/icons/PhotoSizeSelectActual';
+import ThumbnailContainIcon from '@material-ui/icons/PhotoSizeSelectLarge';
 import FolderIcon from '@material-ui/icons/FolderOpen';
 import FolderHiddenIcon from '@material-ui/icons/Folder';
 import TagIcon from '@material-ui/icons/LocalOffer';
@@ -52,17 +60,17 @@ import {
 } from '../../../services/utils-io';
 import { type Tag } from '../../../reducers/taglibrary';
 import {
-  getTagTextColor,
-  getTagColor,
   getSupportedFileTypes
 } from '../../../reducers/settings';
 import { extractTitle } from '../../../utils/paths';
 import {
   formatFileSize,
   formatDateTime,
+  sortByCriteria,
   isObj,
   isVisibleOnScreen
 } from '../../../utils/misc';
+import styles from './styles.css';
 import FileMenu from '../../../components/menus/FileMenu';
 import DirectoryMenu from '../../../components/menus/DirectoryMenu';
 import EntryTagMenu from '../../../components/menus/EntryTagMenu';
@@ -78,154 +86,18 @@ import FileSourceDnd from '../../../components/FileSourceDnd';
 import AppConfig from '../../../config';
 import DragItemTypes from '../../../components/DragItemTypes';
 import IOActions from '../../../reducers/io-actions';
+import {
+  actions as AppActions,
+  getLastSelectedEntry,
+} from '../../../reducers/app';
 
 const maxDescriptionPreviewLength = 90;
 
-const styles = theme => ({
-  gridContainer: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))',
-    // gridAutoRows: 'minmax(220px,auto)',
-    gridGap: '5px 5px',
-    backgroundColor: theme.palette.background.default,
-    padding: 10,
-    marginBottom: 100
-  },
-  rowContainer: {
-    display: 'grid',
-    gridTemplateColumns: 'auto',
-    gridGap: '1px 1px',
-    backgroundColor: theme.palette.background.default,
-    padding: 0,
-    paddingRight: 10,
-    margin: 0,
-    marginBottom: 100
-  },
-  gridCell: {
-    backgroundColor: theme.palette.background.paper,
-    margin: 2,
-    marginBottom: 5,
-    marginRight: 5,
-    borderRadius: 5
-  },
-  rowCell: {
-    backgroundColor: theme.palette.background.paper,
-    boxShadow: 'none',
-    borderTop: '1px solid transparent',
-    borderBottom: '1px solid ' + theme.palette.divider,
-    minHeight: 100,
-    margin: 0,
-    marginTop: 0,
-    marginBottom: 0,
-    borderRadius: 0
-  },
-  selectedGridCell: {
-    backgroundColor: theme.palette.primary.light,
-    boxShadow: '0 0 1pt 1pt ' + theme.palette.primary.light
-  },
-  selectedRowCell: {
-    backgroundColor: theme.palette.primary.light
-  },
-  gridCellThumb: {
-    backgroundRepeat: 'no-repeat',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center'
-  },
-  gridCellTitle: {
-    padding: 5,
-    minHeight: 20
-  },
-  gridCellTags: {
-    padding: 0,
-    paddingTop: 5,
-    zIndex: 100,
-    overflowY: 'auto',
-    overflowX: 'hidden',
-    opacity: 0.6
-  },
-  gridCellDescription: {
-    padding: 5,
-    margin: 4,
-    backgroundColor: theme.palette.background.paper,
-    opacity: 0.6,
-    borderRadius: 5
-  },
-  gridFileExtension: {
-    flex: 1,
-    padding: 5,
-    // marginBottom: 5,
-    marginRight: 5,
-    // marginLeft: 5,
-    // borderRadius: 3,
-    maxWidth: 45,
-    minHeight: 16,
-    borderWidth: 1,
-    color: 'white',
-    // color: theme.palette.getContrastText(),
-    textAlign: 'center'
-  },
-  rowFileExtension: {
-    flex: 1,
-    padding: 5,
-    marginTop: 5,
-    marginRight: 5,
-    marginLeft: 5,
-    borderRadius: 3,
-    maxWidth: 45,
-    minHeight: 15,
-    borderWidth: 1,
-    color: 'white',
-    textTransform: 'uppercase',
-    fontSize: 12,
-    fontWeight: 'bold',
-    // color: theme.palette.getContrastText(),
-    textAlign: 'center'
-  },
-  gridSizeDate: {
-    flex: 3,
-    textAlign: 'right',
-    whiteSpace: 'nowrap',
-    marginRight: 5,
-    paddingTop: 5
-  },
-  gridDetails: {
-    display: 'flex',
-    whiteSpace: 'nowrap'
-  },
-  rowFolder: {
-    color: 'white',
-    padding: 5,
-    marginRight: 5,
-    marginTop: 5,
-    minHeight: 10,
-    height: 20,
-    borderRadius: 5
-  },
-  gridFolder: {
-    color: 'white',
-    padding: 5,
-    // marginLeft: 5,
-    marginRight: 5,
-    // marginBottom: 5,
-    minHeight: 10,
-    height: 20
-    // borderRadius: 5
-  },
-  topToolbar: {
-    paddingLeft: 5,
-    paddingRight: 5,
-    minHeight: 40,
-    height: 53,
-    backgroundColor: theme.palette.background.default,
-    borderBottom: '1px solid ' + theme.palette.divider,
-    width: '100%'
-  }
-});
+const settings = JSON.parse(localStorage.getItem('tsPerspectiveGrid')); // loading settings
 
 type Props = {
   classes: Object,
   currentDirectoryPath?: string,
-  sortByCriteria: () => void,
   openFile: (path: string, isFile?: boolean) => void,
   deleteFile: (path: string) => void,
   deleteDirectory: (path: string) => void,
@@ -251,14 +123,16 @@ type State = {
   tagContextMenuAnchorEl?: Object | null,
   tagContextMenuOpened?: boolean,
   layoutType?: string,
+  singleClickAction?: string,
+  doubleClickAction?: string,
+  entrySize?: string,
+  thumbnailMode?: string,
   sortingContextMenuAnchorEl?: Object | null,
   sortingContextMenuOpened?: boolean | null,
+  optionsContextMenuAnchorEl?: Object | null,
+  optionsContextMenuOpened?: boolean | null,
+  sortBy?: string,
   orderBy?: null | boolean,
-  orderByDate?: null | boolean,
-  orderByExt?: null | boolean,
-  orderByName?: null | boolean,
-  orderBySize?: null | boolean,
-  orderByTags?: null | boolean,
   fileOperationsEnabled?: boolean,
   allFilesSelected?: boolean,
   showDirectories?: boolean,
@@ -272,43 +146,38 @@ type State = {
 };
 
 class GridPerspective extends React.Component<Props, State> {
-  state = {
-    fileContextMenuOpened: false,
-    fileContextMenuAnchorEl: null,
-    dirContextMenuOpened: false,
-    dirContextMenuAnchorEl: null,
-    tagContextMenuOpened: false,
-    tagContextMenuAnchorEl: null,
-    sortingContextMenuOpened: false,
-    sortingContextMenuAnchorEl: null,
-    selectedEntryPath: '',
-    orderBy: false,
-    orderByName: true,
-    orderBySize: null,
-    orderByDate: null,
-    orderByTags: null,
-    orderByExt: null,
-    layoutType: 'grid',
-    fileOperationsEnabled: false,
-    allFilesSelected: false,
-    showDirectories: true,
-    isDeleteMultipleFilesDialogOpened: false,
-    isMoveCopyFilesDialogOpened: false,
-    isAddRemoveTagsDialogOpened: false,
-    isFileRenameDialogOpened: false,
-    selectedTag: null,
-    selectedEntries: []
-  };
-
-  componentDidMount() {
-    const settings = this.loadSettings();
-    if (settings) {
-      this.setState({
-        showDirectories: settings.showDirectories,
-        layoutType: settings.layoutType ? settings.layoutType : 'grid'
-        // orderBy: settings.orderBy ? settings.orderBy : '',
-      });
-    }
+  constructor(props) {
+    super(props);
+    this.state = {
+      fileContextMenuOpened: false,
+      fileContextMenuAnchorEl: null,
+      dirContextMenuOpened: false,
+      dirContextMenuAnchorEl: null,
+      tagContextMenuOpened: false,
+      tagContextMenuAnchorEl: null,
+      sortingContextMenuOpened: false,
+      sortingContextMenuAnchorEl: null,
+      optionsContextMenuOpened: false,
+      optionsContextMenuAnchorEl: null,
+      selectedEntryPath: '',
+      sortBy: settings && settings.sortBy ? settings.sortBy : 'byName',
+      orderBy: settings && settings.orderBy ? settings.orderBy : false,
+      layoutType: settings && settings.layoutType ? settings.layoutType : 'grid',
+      singleClickAction: settings && settings.singleClickAction ? settings.singleClickAction : 'openInternal', // openExternal
+      doubleClickAction: settings && settings.doubleClickAction ? settings.doubleClickAction : 'openInternal', // openExternal
+      entrySize: settings && settings.entrySize ? settings.entrySize : 'normal', // small, big
+      thumbnailMode: settings && settings.thumbnailMode ? settings.thumbnailMode : 'cover', // contain
+      fileOperationsEnabled: false,
+      allFilesSelected: false,
+      showDirectories: settings && settings.showDirectories ? settings.showDirectories : true,
+      isDeleteMultipleFilesDialogOpened: false,
+      isMoveCopyFilesDialogOpened: false,
+      isAddRemoveTagsDialogOpened: false,
+      isFileRenameDialogOpened: false,
+      selectedTag: null,
+      selectedEntries: []
+    };
+    // console.log('Sort by -->' + this.state.sortBy);
   }
 
   componentWillReceiveProps = (nextProps: Props) => {
@@ -382,6 +251,10 @@ class GridPerspective extends React.Component<Props, State> {
     }
   };
 
+  sort = memoize(
+    (data, criteria, order) => sortByCriteria(data, criteria, order)
+  );
+
   makeFirstSelectedEntryVisible = () => {
     const { selectedEntries } = this.state;
     if (selectedEntries && selectedEntries.length > 0) {
@@ -397,18 +270,18 @@ class GridPerspective extends React.Component<Props, State> {
     }
   };
 
-  loadSettings = () => {
-    const extSettings = JSON.parse(localStorage.getItem('tsPerspectiveGrid'));
-    return extSettings;
-  };
-
   saveSettings() {
-    const settings = {
+    const settingsObj = {
       showDirectories: this.state.showDirectories,
       layoutType: this.state.layoutType,
-      orderBy: this.state.orderBy
+      orderBy: this.state.orderBy,
+      sortBy: this.state.sortBy,
+      singleClickAction: this.state.singleClickAction,
+      doubleClickAction: this.state.doubleClickAction,
+      entrySize: this.state.entrySize,
+      thumbnailMode: this.state.thumbnailMode
     };
-    localStorage.setItem('tsPerspectiveGrid', JSON.stringify(settings));
+    localStorage.setItem('tsPerspectiveGrid', JSON.stringify(settingsObj));
   }
 
   scrollToBottom = () => {
@@ -424,9 +297,10 @@ class GridPerspective extends React.Component<Props, State> {
 
   handleSortBy = sortBy => {
     this.closeSortingMenu();
-    this.handleSortMenuIconClick(sortBy, this.state.orderBy);
-    this.setState({ orderBy: !this.state.orderBy });
-    this.props.sortByCriteria(sortBy, this.state.orderBy);
+    this.setState({
+      orderBy: !this.state.orderBy,
+      sortBy
+    }, this.saveSettings);
   };
 
   handleSortingMenu = event => {
@@ -436,122 +310,34 @@ class GridPerspective extends React.Component<Props, State> {
     });
   };
 
-  handleSortMenuIconClick = sort => {
-    switch (sort) {
-    case 'byName':
-      if (this.state.orderByName === null) {
-        this.setState({
-          orderBySize: null,
-          orderByTags: null,
-          orderByExt: null,
-          orderByDate: null,
-          orderByName: true
-        });
-      } else {
-        this.setState({
-          orderBySize: null,
-          orderByTags: null,
-          orderByExt: null,
-          orderByDate: null,
-          orderByName: false
-        });
-      }
-      break;
-    case 'byFileSize':
-      if (this.state.orderBySize === null) {
-        this.setState({
-          orderByName: null,
-          orderByTags: null,
-          orderByExt: null,
-          orderByDate: null,
-          orderBySize: true
-        });
-      } else {
-        this.setState({
-          orderByName: null,
-          orderByTags: null,
-          orderByExt: null,
-          orderByDate: null,
-          orderBySize: false
-        });
-      }
-      break;
-    case 'byTags':
-      if (this.state.orderByTags === null) {
-        this.setState({
-          orderByName: null,
-          orderBySize: null,
-          orderByExt: null,
-          orderByDate: null,
-          orderByTags: true
-        });
-      } else {
-        this.setState({
-          orderByName: null,
-          orderBySize: null,
-          orderByExt: null,
-          orderByDate: null,
-          orderByTags: false
-        });
-      }
-      break;
-    case 'byExtension':
-      if (this.state.orderByExt === null) {
-        this.setState({
-          orderByName: null,
-          orderBySize: null,
-          orderByTags: null,
-          orderByDate: null,
-          orderByExt: true
-        });
-      } else {
-        this.setState({
-          orderByName: null,
-          orderBySize: null,
-          orderByTags: null,
-          orderByDate: null,
-          orderByExt: false
-        });
-      }
-      break;
-    case 'byDateModified':
-      if (this.state.orderByDate === null) {
-        this.setState({
-          orderByName: null,
-          orderBySize: null,
-          orderByTags: null,
-          orderByExt: null,
-          orderByDate: true
-        });
-      } else {
-        this.setState({
-          orderByName: null,
-          orderBySize: null,
-          orderByTags: null,
-          orderByExt: null,
-          orderByDate: false
-        });
-      }
-      break;
-    default:
-      break;
-    }
-  };
-
-  getLayoutClass = () => {
-    switch (this.state.layoutType) {
-    case 'grid':
-      return this.props.classes.gridContainer;
-    case 'row':
-      return this.props.classes.rowContainer;
-    default:
-      return this.props.classes.gridContainer;
-    }
+  handleOptionsMenu = event => {
+    this.setState({
+      optionsContextMenuOpened: !this.state.optionsContextMenuOpened,
+      optionsContextMenuAnchorEl: event ? event.currentTarget : null
+    });
   };
 
   handleGridCellClick = (event, fsEntry: FileSystemEntry) => {
     const { selectedEntries } = this.state;
-    if (event.ctrlKey) {
+    if (event.ctrlKey && event.shiftKey) {
+      const lastSelectedIndex = this.props.directoryContent.findIndex(entry => entry.path === this.props.lastSelectedEntry);
+      const currentSelectedIndex = this.props.directoryContent.findIndex(entry => entry.path === fsEntry.path);
+      let entriesToSelect;
+
+      if (currentSelectedIndex > lastSelectedIndex) {
+        entriesToSelect = this.props.directoryContent.slice(lastSelectedIndex, currentSelectedIndex + 1);
+      } else {
+        entriesToSelect = this.props.directoryContent.slice(currentSelectedIndex, lastSelectedIndex + 1);
+      }
+
+      this.setState(
+        {
+          selectedEntries: selectedEntries.concat(entriesToSelect)
+        },
+        this.computeFileOperationsEnabled
+      );
+      this.props.setLastSelectedEntry(fsEntry.path);
+    } else if (event.ctrlKey) {
       if (
         selectedEntries &&
         selectedEntries.some(entry => entry.path === fsEntry.path)
@@ -574,6 +360,23 @@ class GridPerspective extends React.Component<Props, State> {
         );
         this.props.setLastSelectedEntry(fsEntry.path);
       }
+    } else if (event.shiftKey) {
+      const lastSelectedIndex = this.props.directoryContent.findIndex(entry => entry.path === this.props.lastSelectedEntry);
+      const currentSelectedIndex = this.props.directoryContent.findIndex(entry => entry.path === fsEntry.path);
+      let entriesToSelect;
+
+      if (currentSelectedIndex > lastSelectedIndex) {
+        entriesToSelect = this.props.directoryContent.slice(lastSelectedIndex, currentSelectedIndex + 1);
+      } else {
+        entriesToSelect = this.props.directoryContent.slice(currentSelectedIndex, lastSelectedIndex + 1);
+      }
+
+      this.setState(
+        {
+          selectedEntries: entriesToSelect
+        },
+        this.computeFileOperationsEnabled
+      );
     } else {
       this.setState(
         {
@@ -583,7 +386,13 @@ class GridPerspective extends React.Component<Props, State> {
       );
       this.props.setLastSelectedEntry(fsEntry.path);
       if (fsEntry.isFile) {
-        this.props.openFile(fsEntry.path, fsEntry.isFile);
+        if (this.state.singleClickAction === 'openInternal') {
+          this.props.openFile(fsEntry.path, fsEntry.isFile);
+        } else if (this.state.singleClickAction === 'openExternal') {
+          this.props.openFileNatively(fsEntry.path);
+        } else {
+          this.props.openFile(fsEntry.path, fsEntry.isFile);
+        }
       }
     }
   };
@@ -624,10 +433,35 @@ class GridPerspective extends React.Component<Props, State> {
   };
 
   toggleShowDirectories = () => {
+    this.closeOptionsMenu();
     this.setState(
       {
         showDirectories: !this.state.showDirectories
       },
+      this.saveSettings
+    );
+  };
+
+  toggleThumbnailsMode = () => {
+    this.closeOptionsMenu();
+    this.setState(
+      {
+        thumbnailMode: this.state.thumbnailMode === 'cover' ? 'contain' : 'cover'
+      },
+      this.saveSettings
+    );
+  };
+
+  changeEntrySize = (entrySize) => {
+    this.closeOptionsMenu();
+    this.setState({ entrySize },
+      this.saveSettings
+    );
+  };
+
+  changeSingleClickAction = (singleClickAction) => {
+    this.closeOptionsMenu();
+    this.setState({ singleClickAction },
       this.saveSettings
     );
   };
@@ -715,6 +549,13 @@ class GridPerspective extends React.Component<Props, State> {
     });
   };
 
+  closeOptionsMenu = () => {
+    this.setState({
+      optionsContextMenuOpened: false,
+      optionsContextMenuAnchorEl: null
+    });
+  };
+
   handleCloseDialogs = () => {
     this.setState({
       isFileRenameDialogOpened: false,
@@ -757,15 +598,6 @@ class GridPerspective extends React.Component<Props, State> {
     }
   };
 
-  renderSortMenuIcon = order => {
-    if (order === null) {
-      return <div>{null}</div>;
-    } else if (order) {
-      return <ArrowUpIcon />;
-    }
-    return <ArrowDownIcon />;
-  };
-
   handleFileMoveDrop = (item, monitor) => {
     if (monitor) {
       const { path } = monitor.getItem();
@@ -775,6 +607,7 @@ class GridPerspective extends React.Component<Props, State> {
   };
 
   renderCell = (fsEntry: FileSystemEntry) => {
+    const { entrySize } = this.state;
     if (!fsEntry.isFile && !this.state.showDirectories) {
       return;
     }
@@ -787,7 +620,14 @@ class GridPerspective extends React.Component<Props, State> {
       selected = true;
     }
     const { layoutType } = this.state;
-    //  key={fsEntry.uuid}
+    let entryHeight = 200;
+    if (entrySize === 'small') {
+      entryHeight = 50;
+    } else if (entrySize === 'normal') {
+      entryHeight = 100;
+    } else if (entrySize === 'big') {
+      entryHeight = 150;
+    }
     const cellContent = (
       <TagDropContainer entryPath={fsEntry.path}>
         <Paper
@@ -798,6 +638,9 @@ class GridPerspective extends React.Component<Props, State> {
             selected && layoutType === 'grid' && classes.selectedGridCell,
             selected && layoutType === 'row' && classes.selectedRowCell
           )}
+          style={layoutType === 'row' ? {
+            minHeight: entryHeight
+          } : {}}
           onContextMenu={event => this.handleGridContextMenu(event, fsEntry)}
           onDoubleClick={event => this.handleGridCellDblClick(event, fsEntry)}
           onClick={event => this.handleGridCellClick(event, fsEntry)}
@@ -825,8 +668,6 @@ class GridPerspective extends React.Component<Props, State> {
 
   renderTag = (tag: Object, fsEntry) => (
     <TagContainer
-      defaultTextColor={this.props.tagTextColor}
-      defaultBackgroundColor={this.props.tagBackgroundColor}
       tag={tag}
       key={tag.id}
       entryPath={fsEntry.path}
@@ -857,6 +698,7 @@ class GridPerspective extends React.Component<Props, State> {
           <div
             className={classes.gridCellThumb}
             style={{
+              backgroundSize: this.state.thumbnailMode,
               backgroundImage: thumbPathUrl,
               height: 150 // fsEntry.isFile ? 150 : 70
             }}
@@ -866,6 +708,7 @@ class GridPerspective extends React.Component<Props, State> {
             </div>
             {description.length > 0 && (
               <Typography
+                id="gridCellDescription"
                 className={classes.gridCellDescription}
                 noWrap={true}
                 title={i18n.t('core:filePropertiesDescription')}
@@ -952,7 +795,6 @@ class GridPerspective extends React.Component<Props, State> {
           </Grid>
           <Grid item xs zeroMinWidth>
             <Typography
-              noWrap
               style={{
                 padding: 5
               }}
@@ -974,13 +816,13 @@ class GridPerspective extends React.Component<Props, State> {
                 title={
                   i18n.t('core:modifiedDate') +
                   ': ' +
-                  formatDateTime(fsEntry.lmdt, true)
+                  formatDateTime(fsEntry.lmdt, true) + ' '
                 }
               >
                 {fsEntry.isFile && fsEntry.lmdt && '️ ' + moment(fsEntry.lmdt).fromNow() /* ⏲ */}
               </span>
               <span title={i18n.t('core:entryDescription')}>
-                {description && ' - ' + description}
+                {description && description }
               </span>
             </Typography>
           </Grid>
@@ -996,6 +838,7 @@ class GridPerspective extends React.Component<Props, State> {
               <div
                 className={classes.gridCellThumb}
                 style={{
+                  backgroundSize: this.state.thumbnailMode,
                   backgroundImage: thumbPathUrl,
                   margin: 5,
                   height: 85,
@@ -1011,14 +854,26 @@ class GridPerspective extends React.Component<Props, State> {
 
   render() {
     const classes = this.props.classes;
-    const { selectedEntries = [] } = this.state;
+    const { selectedEntries = [], layoutType, entrySize, sortBy, orderBy } = this.state;
     const selectedFilePaths = selectedEntries.filter(fsEntry => fsEntry.isFile).map(fsentry => fsentry.path);
 
+    const sortedContent = this.sort(this.props.directoryContent, sortBy, orderBy);
+    const sortedDirectories = sortedContent.filter(entry => !entry.isFile);
+    const sortedFiles = sortedContent.filter(entry => entry.isFile);
+    let entryWidth = 200;
+    if (entrySize === 'small') {
+      entryWidth = 150;
+    } else if (entrySize === 'normal') {
+      entryWidth = 200;
+    } else if (entrySize === 'big') {
+      entryWidth = 300;
+    }
+    // console.log('Render grid');
     return (
       <div style={{ height: '100%' }}>
         <style>
           {`
-            #gridCellTags:hover {
+            #gridCellTags:hover, #gridCellDescription:hover {
               opacity: 1
             }
           `}
@@ -1097,14 +952,6 @@ class GridPerspective extends React.Component<Props, State> {
             <DeleteIcon />
           </IconButton>
           <IconButton
-            title={i18n.t('core:showHideDirectories')}
-            aria-label={i18n.t('core:showHideDirectories')}
-            data-tid="gridPerspectiveToggleShowDirectories"
-            onClick={this.toggleShowDirectories}
-          >
-            {this.state.showDirectories ? <FolderIcon /> : <FolderHiddenIcon />}
-          </IconButton>
-          <IconButton
             title={i18n.t('core:sort')}
             aria-label={i18n.t('core:sort')}
             data-tid="gridPerspectiveSortMenu"
@@ -1114,18 +961,30 @@ class GridPerspective extends React.Component<Props, State> {
           >
             <SwapVertIcon />
           </IconButton>
+          <IconButton
+            title={i18n.t('core:options')}
+            data-tid="gridPerspectiveOptionsMenu"
+            onClick={e => {
+              this.handleOptionsMenu(e);
+            }}
+          >
+            <MoreVertIcon />
+          </IconButton>
         </Toolbar>
         <div style={{ height: '100%', overflowY: AppConfig.isFirefox ? 'auto' : 'overlay' }}>
           <div
-            className={this.getLayoutClass()}
+            className={layoutType === 'grid' ? classes.gridContainer : classes.rowContainer}
+            style={layoutType === 'grid' ? {
+              gridTemplateColumns: 'repeat(auto-fit,minmax(' + entryWidth + 'px,1fr))'
+            } : {}}
             ref={ref => {
               this.mainGrid = ref;
             }}
             data-tid="perspectiveGridFileTable"
           >
-            {this.props.directoryContent.length > 0 ? (
-              this.props.directoryContent.map(entry => this.renderCell(entry))
-            ) : (
+            {(sortedDirectories.map(entry => this.renderCell(entry)))}
+            {(sortedFiles.map(entry => this.renderCell(entry)))}
+            {(sortedFiles.length < 1 && sortedDirectories.length < 1) && (
               <Typography style={{ padding: 15 }}>
                 {i18n.t('core:noFileFolderFound')}
               </Typography>
@@ -1209,61 +1068,147 @@ class GridPerspective extends React.Component<Props, State> {
           onClose={this.closeSortingMenu}
           anchorEl={this.state.sortingContextMenuAnchorEl}
         >
+          {/* <ListSubHeader>Sort by</ListSubHeader> */}
           <MenuItem
             data-tid="gridPerspectiveSortByName"
-            onClick={() => {
-              this.handleSortBy('byName');
-            }}
+            onClick={() => { this.handleSortBy('byName'); }}
           >
-            <ListItemIcon>
-              {this.renderSortMenuIcon(this.state.orderByName)}
+            <ListItemIcon style={{ minWidth: 25 }}>
+              {(this.state.sortBy === 'byName') && (
+                this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />
+              )}
             </ListItemIcon>
             <ListItemText inset primary={i18n.t('core:fileTitle')} />
           </MenuItem>
           <MenuItem
             data-tid="gridPerspectiveSortBySize"
-            onClick={() => {
-              this.handleSortBy('byFileSize');
-            }}
+            onClick={() => { this.handleSortBy('byFileSize'); }}
           >
-            <ListItemIcon>
-              {this.renderSortMenuIcon(this.state.orderBySize)}
+            <ListItemIcon style={{ minWidth: 25 }}>
+              {(this.state.sortBy === 'byFileSize') && (
+                this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />
+              )}
             </ListItemIcon>
             <ListItemText inset primary={i18n.t('core:fileSize')} />
           </MenuItem>
           <MenuItem
             data-tid="gridPerspectiveSortByDate"
-            onClick={() => {
-              this.handleSortBy('byDateModified');
-            }}
+            onClick={() => { this.handleSortBy('byDateModified'); }}
           >
-            <ListItemIcon>
-              {this.renderSortMenuIcon(this.state.orderByDate)}
+            <ListItemIcon style={{ minWidth: 25 }}>
+              {(this.state.sortBy === 'byDateModified') && (
+                this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />
+              )}
             </ListItemIcon>
             <ListItemText inset primary={i18n.t('core:fileLDTM')} />
           </MenuItem>
           <MenuItem
-            data-tid="gridPerspectiveSortByExt"
-            onClick={() => {
-              this.handleSortBy('byExtension');
-            }}
+            data-tid="gridPerspectiveSortByFirstTag"
+            onClick={() => { this.handleSortBy('byFirstTag'); }}
           >
-            <ListItemIcon>
-              {this.renderSortMenuIcon(this.state.orderByExt)}
+            <ListItemIcon style={{ minWidth: 25 }}>
+              {(this.state.sortBy === 'byFirstTag') && (
+                this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />
+              )}
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:fileFirstTag')} />
+          </MenuItem>
+          <MenuItem
+            data-tid="gridPerspectiveSortByExt"
+            onClick={() => { this.handleSortBy('byExtension'); }}
+          >
+            <ListItemIcon style={{ minWidth: 25 }}>
+              {(this.state.sortBy === 'byExtension') && (
+                this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />
+              )}
             </ListItemIcon>
             <ListItemText inset primary={i18n.t('core:fileExtension')} />
           </MenuItem>
-          {/* <MenuItem
-              data-tid="gridPerspectiveSortByTags"
-              onClick={() => {
-                this.handleSortBy('byTags');
-              }}
-            >
-              <ListItemIcon>
-                {this.renderSortMenuIcon(this.state.orderByTags)}
-              </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:fileTags')} />
-            </MenuItem> */}
+        </Menu>
+        <Menu
+          open={this.state.optionsContextMenuOpened}
+          onClose={this.closeOptionsMenu}
+          anchorEl={this.state.optionsContextMenuAnchorEl}
+        >
+          <MenuItem
+            data-tid="gridPerspectiveToggleShowDirectories"
+            title={i18n.t('core:showHideDirectories')}
+            aria-label={i18n.t('core:showHideDirectories')}
+            onClick={this.toggleShowDirectories}
+          >
+            <ListItemIcon style={{ minWidth: 25 }}>
+              {this.state.showDirectories ? <FolderIcon /> : <FolderHiddenIcon />}
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:showHideDirectories')} />
+          </MenuItem>
+          <MenuItem
+            data-tid="gridPerspectiveToggleThumbnailsMode"
+            title={i18n.t('core:toggleThumbnailModeTitle')}
+            aria-label={i18n.t('core:toggleThumbnailMode')}
+            onClick={this.toggleThumbnailsMode}
+          >
+            <ListItemIcon>
+              {this.state.thumbnailMode === 'cover' ? <ThumbnailCoverIcon /> : <ThumbnailContainIcon />}
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:toggleThumbnailMode')} />
+          </MenuItem>
+          <Divider />
+          <MenuItem
+            data-tid="gridPerspectiveEntrySizeSmall"
+            title={i18n.t('core:entrySizeSmall')}
+            aria-label={i18n.t('core:entrySizeSmall')}
+            onClick={() => this.changeEntrySize('small')}
+          >
+            <ListItemIcon>
+              {this.state.entrySize === 'small' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:entrySizeSmall')} />
+          </MenuItem>
+          <MenuItem
+            data-tid="gridPerspectiveEntrySizeNormal"
+            title={i18n.t('core:entrySizeNormal')}
+            aria-label={i18n.t('core:entrySizeNormal')}
+            onClick={() => this.changeEntrySize('normal')}
+          >
+            <ListItemIcon>
+              {this.state.entrySize === 'normal' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:entrySizeNormal')} />
+          </MenuItem>
+          <MenuItem
+            data-tid="gridPerspectiveEntrySizeBig"
+            title={i18n.t('core:entrySizeBig')}
+            aria-label={i18n.t('core:entrySizeBig')}
+            onClick={() => this.changeEntrySize('big')}
+          >
+            <ListItemIcon>
+              {this.state.entrySize === 'big' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:entrySizeBig')} />
+          </MenuItem>
+          <Divider />
+          <MenuItem
+            data-tid="gridPerspectiveSingleClickOpenInternally"
+            title={i18n.t('core:singleClickOpenInternally')}
+            aria-label={i18n.t('core:singleClickOpenInternally')}
+            onClick={() => this.changeSingleClickAction('openInternal')}
+          >
+            <ListItemIcon>
+              {this.state.singleClickAction === 'openInternal' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:singleClickOpenInternally')} />
+          </MenuItem>
+          <MenuItem
+            data-tid="gridPerspectiveSingleClickOpenExternally"
+            title={i18n.t('core:singleClickOpenExternally')}
+            aria-label={i18n.t('core:singleClickOpenExternally')}
+            onClick={() => this.changeSingleClickAction('openExternal')}
+          >
+            <ListItemIcon>
+              {this.state.singleClickAction === 'openExternal' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:singleClickOpenExternally')} />
+          </MenuItem>
         </Menu>
       </div>
     );
@@ -1272,15 +1217,14 @@ class GridPerspective extends React.Component<Props, State> {
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators({
-    moveFiles: IOActions.moveFiles
+    moveFiles: IOActions.moveFiles,
   }, dispatch);
 }
 
 function mapStateToProps(state) {
   return {
-    tagTextColor: getTagTextColor(state),
-    tagBackgroundColor: getTagColor(state),
-    supportedFileTypes: getSupportedFileTypes(state)
+    supportedFileTypes: getSupportedFileTypes(state),
+    lastSelectedEntry: getLastSelectedEntry(state),
   };
 }
 

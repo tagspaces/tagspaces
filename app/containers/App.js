@@ -75,6 +75,26 @@ const darkTheme = createMuiTheme({
   }
 });
 
+const lightBlueTheme = createMuiTheme({
+  palette: {
+    type: 'light', // Switching the dark mode on is a single property value change.
+    primary: {
+      light: '#cbe9fa',
+      main: '#19aeff',
+      dark: '#19aeff',
+      contrastText: '#ffffff',
+    },
+    secondary: {
+      main: '#19aeff',
+    },
+    divider: '#ddd'
+    // secondary: { main: '#cccccc', 200: '#ddd' }
+  },
+  typography: {
+    useNextVariants: true,
+  }
+});
+
 class App extends Component {
   props: {
     children: Object

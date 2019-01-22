@@ -35,55 +35,6 @@ if (process.env.NODE_ENV === 'production') {
   console.timeEnd = () => {};
 }
 
-/*
-Needed for drag and drop from desktop
-let dragTimer;
-document.addEventListener('dragover', (event) => {
-  const dt = event.dataTransfer;
-  if (dt.types && (dt.types.indexOf ? dt.types.indexOf('Files') !== -1 : dt.types.contains('Files'))) {
-    console.log('Dragging files ' + JSON.stringify(event.dataTransfer.items));
-    store.dispatch(AppActions.setFileDragged(true));
-    window.clearTimeout(dragTimer);
-  }
-  event.preventDefault();
-});
-
-document.addEventListener('dragleave', (event) => {
-  const dt = event.dataTransfer;
-  if (dt.types && (dt.types.indexOf ? dt.types.indexOf('Files') !== -1 : dt.types.contains('Files'))) {
-    // console.log('Dragging files ended' + JSON.stringify(event.dataTransfer.items));
-    dragTimer = window.setTimeout(() => {
-      store.dispatch(AppActions.setFileDragged(false));
-    }, 25);
-  }
-  // event.preventDefault();
-}); */
-
-/* document.addEventListener('storeLoaded', () => {
-  checkIsFirstRun();
-  store.dispatch(SettingsActions.setZoomRestoreApp());
-  store.dispatch(SettingsActions.upgradeSettings()); // TODO call this only on app version update
-  const state = store.getState();
-  const defaultLocationId = getDefaultLocationId(state);
-  if (defaultLocationId && defaultLocationId.length > 0) {
-    store.dispatch(AppActions.openLocationById(defaultLocationId));
-  }
-  if (getCheckForUpdateOnStartup(state)) {
-    store.dispatch(SettingsActions.checkForUpdate());
-  }
-  PlatformIO.setGlobalShortcuts(isGlobalKeyBindingEnabled(state));
-
-  const langURLParam = getURLParameter('locale');
-  if (langURLParam && langURLParam.length > 1 && /^[a-zA-Z\-_]+$/.test('langURLParam')) {
-    store.dispatch(SettingsActions.setLanguage(langURLParam));
-  }
-});
-
-function checkIsFirstRun() {
-  // history.push('/login');
-  console.log('');
-} */
-
 render(
   <AppContainer>
     <Root store={store} persistor={persistor} history={history} />

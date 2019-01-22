@@ -343,75 +343,63 @@ export function sortByName(a, b) {
   return (!b.isFile - !a.isFile) || sortAlphaNum(a, b);
 }
 
-export function sortByIsDirectory(a, b) {
-  if (b.isFile && a.isFile) {
-    return 0;
-  }
-  return a.isFile && !b.isFile ? -1 : 1;
-}
-
 export function sortBySize(a, b) {
-  return (!b.isFile - !a.isFile) || (a.size - b.size);
+  return a.size - b.size;
 }
 
 export function sortByDateModified(a, b) {
-  return (!b.isFile - !a.isFile) || (a.lmdt - b.lmdt);
+  return a.lmdt - b.lmdt;
 }
 
 export function sortByExtension(a, b) {
-  return (!b.isFile - !a.isFile) || (a.extension.toString().localeCompare(b.extension));
+  return a.extension.toString().localeCompare(b.extension);
 }
 
-export function sortByTags(a, b) {
-  return (!b.isFile - !a.isFile) || (a.tags.toString().localeCompare(b.tags));
+export function sortByFirstTag(a, b) {
+  if (
+    (!a.tags && !b.tags) ||
+    (a.tags.length < 1 && b.tags.length < 1)
+  ) {
+    return 0;
+  }
+  if (!a.tags || a.tags.length < 1) {
+    return -1;
+  }
+  if (!b.tags || b.tags.length < 1) {
+    return 1;
+  }
+  return a.tags[0].title.localeCompare(b.tags[0].title);
 }
 
-export function sortByCriteria(criteria, data, order) {
+export function sortByCriteria(data, criteria, order) {
   switch (criteria) {
-    case 'byName':
-      if (order) {
-        return data.sort(sortByName);
-      } else {
-        return data.sort((a, b) => -1 * sortByName(a, b));
-      }
-      break;
-    case 'byFileSize':
-      if (order) {
-        return data.sort(sortBySize);
-      } else {
-        return data.sort((a, b) => -1 * sortBySize(a, b));
-      }
-      break;
-    case 'byDateModified':
-      if (order) {
-        return data.sort(sortByDateModified);
-      } else {
-        return data.sort((a, b) => -1 * sortByDateModified(a, b));
-      }
-      break;
-    case 'byExtension':
-      if (order) {
-        return data.sort(sortByExtension);
-      } else {
-        return data.sort((a, b) => -1 * sortByExtension(a, b));
-      }
-      break;
-    case 'byTags':
-      if (order) {
-        return data.sort(sortByTags);
-      } else {
-        return data.sort((a, b) => -1 * sortByTags(a, b));
-      }
-      break;
-    case 'byDirectory':
-      if (order) {
-        return data.sort(sortByIsDirectory);
-      } else {
-        return data.sort((a, b) => -1 * sortByIsDirectory(a, b));
-      }
-      break;
-    default:
+  case 'byName':
+    if (order) {
       return data.sort(sortByName);
+    }
+    return data.sort((a, b) => -1 * sortByName(a, b));
+  case 'byFileSize':
+    if (order) {
+      return data.sort(sortBySize);
+    }
+    return data.sort((a, b) => -1 * sortBySize(a, b));
+  case 'byDateModified':
+    if (order) {
+      return data.sort(sortByDateModified);
+    }
+    return data.sort((a, b) => -1 * sortByDateModified(a, b));
+  case 'byExtension':
+    if (order) {
+      return data.sort(sortByExtension);
+    }
+    return data.sort((a, b) => -1 * sortByExtension(a, b));
+  case 'byFirstTag':
+    if (order) {
+      return data.sort(sortByFirstTag);
+    }
+    return data.sort((a, b) => -1 * sortByFirstTag(a, b));
+  default:
+    return data.sort(sortByName);
   }
 }
 

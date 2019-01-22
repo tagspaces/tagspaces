@@ -51,6 +51,7 @@ class LocalForm extends React.Component<Props> {
           <TextField
             error={state.errorTextName}
             required
+            autoFocus
             margin="dense"
             name="name"
             label={i18n.t('core:createLocationName')}
