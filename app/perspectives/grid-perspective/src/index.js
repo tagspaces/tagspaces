@@ -91,7 +91,7 @@ import {
   getLastSelectedEntry,
 } from '../../../reducers/app';
 
-const maxDescriptionPreviewLength = 90;
+const maxDescriptionPreviewLength = 100;
 
 const settings = JSON.parse(localStorage.getItem('tsPerspectiveGrid')); // loading settings
 
@@ -692,7 +692,6 @@ class GridPerspective extends React.Component<Props, State> {
               <Typography
                 id="gridCellDescription"
                 className={classes.gridCellDescription}
-                noWrap={true}
                 title={i18n.t('core:filePropertiesDescription')}
                 variant="caption"
               >
