@@ -178,7 +178,7 @@ class FolderContainer extends React.Component<Props, State> {
     directoryContextMenuAnchorEl: null,
     perspectiveChooserMenuOpened: false,
     perspectiveChooserMenuAnchorEl: null,
-    perspectiveCommand: {}
+    perspectiveCommand: null
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -232,7 +232,7 @@ class FolderContainer extends React.Component<Props, State> {
           perspectiveCommand: { key: 'TOGGLE_SELECT_ALL' }
         },
         () => {
-          this.setState({ perspectiveCommand: {} });
+          this.setState({ perspectiveCommand: null });
         }
       );
     },
@@ -242,7 +242,7 @@ class FolderContainer extends React.Component<Props, State> {
           perspectiveCommand: { key: 'DELETE_SELECTED_ENTRIES' }
         },
         () => {
-          this.setState({ perspectiveCommand: {} });
+          this.setState({ perspectiveCommand: null });
         }
       );
     },
@@ -252,7 +252,7 @@ class FolderContainer extends React.Component<Props, State> {
           perspectiveCommand: { key: 'ADD_REMOVE_TAGS' }
         },
         () => {
-          this.setState({ perspectiveCommand: {} });
+          this.setState({ perspectiveCommand: null });
         }
       );
     },
@@ -262,7 +262,7 @@ class FolderContainer extends React.Component<Props, State> {
           perspectiveCommand: { key: 'RENAME_ENTRY' }
         },
         () => {
-          this.setState({ perspectiveCommand: {} });
+          this.setState({ perspectiveCommand: null });
         }
       );
     },

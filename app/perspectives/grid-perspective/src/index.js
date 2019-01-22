@@ -181,8 +181,32 @@ class GridPerspective extends React.Component<Props, State> {
   }
 
   componentWillReceiveProps = (nextProps: Props) => {
-    const cmd = nextProps.perspectiveCommand;
-    const { directoryContent, lastSelectedEntryPath } = nextProps;
+    const { directoryContent, lastSelectedEntryPath, perspectiveCommand } = nextProps;
+
+    if (perspectiveCommand && perspectiveCommand.key) {
+      this.props.setLastSelectedEntry(null);
+      if (perspectiveCommand.key === 'TOGGLE_SELECT_ALL') {
+        this.toggleSelectAllFiles();
+      } else if (
+        perspectiveCommand.key === 'ADD_REMOVE_TAGS' &&
+        this.state.selectedEntries &&
+        this.state.selectedEntries.length > 0
+      ) {
+        this.openAddRemoveTagsDialog();
+      } else if (
+        perspectiveCommand.key === 'RENAME_ENTRY' &&
+        this.state.selectedEntries &&
+        this.state.selectedEntries.length === 1
+      ) {
+        if (this.state.selectedEntries[0].isFile) {
+          this.setState({ selectedEntryPath: this.state.selectedEntries[0].path }, () => {
+            this.openFileRenameDialog();
+          });
+        }
+      } else if (perspectiveCommand.key === 'DELETE_SELECTED_ENTRIES' && this.state.fileOperationsEnabled) {
+        this.openDeleteFileDialog();
+      }
+    }
 
     if (lastSelectedEntryPath !== null) {
       this.setState(
@@ -196,36 +220,6 @@ class GridPerspective extends React.Component<Props, State> {
           // this.makeFirstSelectedEntryVisible(); // disable due to wrong scrolling
         }
       );
-    }
-
-    if (cmd && cmd.key) {
-      if (cmd.key === 'TOGGLE_SELECT_ALL') {
-        this.toggleSelectAllFiles();
-      }
-
-      if (
-        cmd.key === 'ADD_REMOVE_TAGS' &&
-        this.state.selectedEntries &&
-        this.state.selectedEntries.length > 0
-      ) {
-        this.openAddRemoveTagsDialog();
-      }
-
-      if (
-        cmd.key === 'RENAME_ENTRY' &&
-        this.state.selectedEntries &&
-        this.state.selectedEntries.length === 1
-      ) {
-        if (this.state.selectedEntries[0].isFile) {
-          this.setState({ selectedEntryPath: this.state.selectedEntries[0].path }, () => {
-            this.openFileRenameDialog();
-          });
-        }
-      }
-
-      if (cmd.key === 'DELETE_SELECTED_ENTRIES' && this.state.fileOperationsEnabled) {
-        this.openDeleteFileDialog();
-      }
     }
 
     // Directory changed
