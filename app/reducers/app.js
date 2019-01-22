@@ -982,7 +982,7 @@ export const actions = {
     dispatch: (actions: Object) => void,
     getState: () => Object
   ) => {
-    const currentEntries = getState().app.currentDirectoryEntries;
+    const currentEntries = getState().app.currentDirectoryEntries.filter(entry => entry.isFile);
     const lastSelectedEntry = getState().app.lastSelectedEntry;
     let filePath = pivotFilePath;
     if (!filePath) {
@@ -1011,7 +1011,7 @@ export const actions = {
     dispatch: (actions: Object) => void,
     getState: () => Object
   ) => {
-    const currentEntries = getState().app.currentDirectoryEntries;
+    const currentEntries = getState().app.currentDirectoryEntries.filter(entry => entry.isFile);
     const lastSelectedEntry = getState().app.lastSelectedEntry;
     let filePath = pivotFilePath;
     if (!filePath) {
