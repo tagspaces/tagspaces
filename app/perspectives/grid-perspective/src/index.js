@@ -88,6 +88,7 @@ import DragItemTypes from '../../../components/DragItemTypes';
 import IOActions from '../../../reducers/io-actions';
 import {
   actions as AppActions,
+  getLastSelectedEntry,
 } from '../../../reducers/app';
 
 const maxDescriptionPreviewLength = 90;
@@ -318,7 +319,25 @@ class GridPerspective extends React.Component<Props, State> {
 
   handleGridCellClick = (event, fsEntry: FileSystemEntry) => {
     const { selectedEntries } = this.state;
-    if (event.ctrlKey) {
+    if (event.ctrlKey && event.shiftKey) {
+      const lastSelectedIndex = this.props.directoryContent.findIndex(entry => entry.path === this.props.lastSelectedEntry);
+      const currentSelectedIndex = this.props.directoryContent.findIndex(entry => entry.path === fsEntry.path);
+      let entriesToSelect;
+
+      if (currentSelectedIndex > lastSelectedIndex) {
+        entriesToSelect = this.props.directoryContent.slice(lastSelectedIndex, currentSelectedIndex + 1);
+      } else {
+        entriesToSelect = this.props.directoryContent.slice(currentSelectedIndex, lastSelectedIndex + 1);
+      }
+
+      this.setState(
+        {
+          selectedEntries: selectedEntries.concat(entriesToSelect)
+        },
+        this.computeFileOperationsEnabled
+      );
+      this.props.setLastSelectedEntry(fsEntry.path);
+    } else if (event.ctrlKey) {
       if (
         selectedEntries &&
         selectedEntries.some(entry => entry.path === fsEntry.path)
@@ -341,6 +360,23 @@ class GridPerspective extends React.Component<Props, State> {
         );
         this.props.setLastSelectedEntry(fsEntry.path);
       }
+    } else if (event.shiftKey) {
+      const lastSelectedIndex = this.props.directoryContent.findIndex(entry => entry.path === this.props.lastSelectedEntry);
+      const currentSelectedIndex = this.props.directoryContent.findIndex(entry => entry.path === fsEntry.path);
+      let entriesToSelect;
+
+      if (currentSelectedIndex > lastSelectedIndex) {
+        entriesToSelect = this.props.directoryContent.slice(lastSelectedIndex, currentSelectedIndex + 1);
+      } else {
+        entriesToSelect = this.props.directoryContent.slice(currentSelectedIndex, lastSelectedIndex + 1);
+      }
+
+      this.setState(
+        {
+          selectedEntries: entriesToSelect
+        },
+        this.computeFileOperationsEnabled
+      );
     } else {
       this.setState(
         {
@@ -1187,7 +1223,8 @@ function mapActionCreatorsToProps(dispatch) {
 
 function mapStateToProps(state) {
   return {
-    supportedFileTypes: getSupportedFileTypes(state)
+    supportedFileTypes: getSupportedFileTypes(state),
+    lastSelectedEntry: getLastSelectedEntry(state),
   };
 }
 
