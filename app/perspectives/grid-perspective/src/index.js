@@ -97,7 +97,8 @@ const settings = JSON.parse(localStorage.getItem('tsPerspectiveGrid')); // loadi
 
 type Props = {
   classes: Object,
-  currentDirectoryPath?: string,
+  currentDirectoryPath: string,
+  lastSelectedEntryPath: string | null,
   openFile: (path: string, isFile?: boolean) => void,
   deleteFile: (path: string) => void,
   deleteDirectory: (path: string) => void,
@@ -177,32 +178,27 @@ class GridPerspective extends React.Component<Props, State> {
       selectedTag: null,
       selectedEntries: []
     };
-    // console.log('Sort by -->' + this.state.sortBy);
   }
 
   componentWillReceiveProps = (nextProps: Props) => {
     const cmd = nextProps.perspectiveCommand;
-    const { directoryContent } = nextProps;
-    if (cmd && cmd.key) {
-      if (
-        cmd.key === 'SELECT_FILE' &&
-        cmd.value.length > 0 &&
-        directoryContent &&
-        directoryContent.length > 0
-      ) {
-        this.setState(
-          {
-            selectedEntries: nextProps.directoryContent.filter(
-              fsEntry => fsEntry.path === cmd.value
-            )
-          },
-          () => {
-            this.computeFileOperationsEnabled();
-            // this.makeFirstSelectedEntryVisible(); // disable due to wrong scrolling
-          }
-        );
-      }
+    const { directoryContent, lastSelectedEntryPath } = nextProps;
 
+    if (lastSelectedEntryPath !== null) {
+      this.setState(
+        {
+          selectedEntries: directoryContent.filter(
+            fsEntry => fsEntry.path === lastSelectedEntryPath
+          )
+        },
+        () => {
+          this.computeFileOperationsEnabled();
+          // this.makeFirstSelectedEntryVisible(); // disable due to wrong scrolling
+        }
+      );
+    }
+
+    if (cmd && cmd.key) {
       if (cmd.key === 'TOGGLE_SELECT_ALL') {
         this.toggleSelectAllFiles();
       }
@@ -319,24 +315,30 @@ class GridPerspective extends React.Component<Props, State> {
 
   handleGridCellClick = (event, fsEntry: FileSystemEntry) => {
     const { selectedEntries } = this.state;
-    if (event.ctrlKey && event.shiftKey) {
-      const lastSelectedIndex = this.props.directoryContent.findIndex(entry => entry.path === this.props.lastSelectedEntry);
+    if (event.shiftKey) {
+      let lastSelectedIndex = this.props.directoryContent.findIndex(entry => entry.path === this.props.lastSelectedEntryPath);
       const currentSelectedIndex = this.props.directoryContent.findIndex(entry => entry.path === fsEntry.path);
-      let entriesToSelect;
+      if (lastSelectedIndex < 0) {
+        lastSelectedIndex = currentSelectedIndex;
+      }
 
+      let entriesToSelect;
+      // console.log('lastSelectedIndex: ' + lastSelectedIndex + '  currentSelectedIndex: ' + currentSelectedIndex);
       if (currentSelectedIndex > lastSelectedIndex) {
         entriesToSelect = this.props.directoryContent.slice(lastSelectedIndex, currentSelectedIndex + 1);
-      } else {
+      } else if (currentSelectedIndex < lastSelectedIndex) {
         entriesToSelect = this.props.directoryContent.slice(currentSelectedIndex, lastSelectedIndex + 1);
+      } else if (currentSelectedIndex === lastSelectedIndex) {
+        entriesToSelect = [fsEntry];
+        this.props.setLastSelectedEntry(fsEntry.path);
       }
 
       this.setState(
         {
-          selectedEntries: selectedEntries.concat(entriesToSelect)
+          selectedEntries: entriesToSelect
         },
         this.computeFileOperationsEnabled
       );
-      this.props.setLastSelectedEntry(fsEntry.path);
     } else if (event.ctrlKey) {
       if (
         selectedEntries &&
@@ -350,7 +352,7 @@ class GridPerspective extends React.Component<Props, State> {
           },
           this.computeFileOperationsEnabled
         );
-        this.props.setLastSelectedEntry(null);
+        // this.props.setLastSelectedEntry(null);
       } else {
         this.setState(
           {
@@ -358,25 +360,8 @@ class GridPerspective extends React.Component<Props, State> {
           },
           this.computeFileOperationsEnabled
         );
-        this.props.setLastSelectedEntry(fsEntry.path);
+        // this.props.setLastSelectedEntry(fsEntry.path);
       }
-    } else if (event.shiftKey) {
-      const lastSelectedIndex = this.props.directoryContent.findIndex(entry => entry.path === this.props.lastSelectedEntry);
-      const currentSelectedIndex = this.props.directoryContent.findIndex(entry => entry.path === fsEntry.path);
-      let entriesToSelect;
-
-      if (currentSelectedIndex > lastSelectedIndex) {
-        entriesToSelect = this.props.directoryContent.slice(lastSelectedIndex, currentSelectedIndex + 1);
-      } else {
-        entriesToSelect = this.props.directoryContent.slice(currentSelectedIndex, lastSelectedIndex + 1);
-      }
-
-      this.setState(
-        {
-          selectedEntries: entriesToSelect
-        },
-        this.computeFileOperationsEnabled
-      );
     } else {
       this.setState(
         {
@@ -413,11 +398,9 @@ class GridPerspective extends React.Component<Props, State> {
       this.clearSelection();
     } else {
       const selectedEntries = [];
-      let lastSelectedPath = null;
       this.props.directoryContent.map(entry => {
         if (entry.isFile) {
           selectedEntries.push(entry);
-          lastSelectedPath = entry.path;
         }
         return true;
       });
@@ -428,7 +411,6 @@ class GridPerspective extends React.Component<Props, State> {
         },
         this.computeFileOperationsEnabled
       );
-      this.props.setLastSelectedEntry(lastSelectedPath);
     }
   };
 
@@ -563,7 +545,7 @@ class GridPerspective extends React.Component<Props, State> {
       isAddRemoveTagsDialogOpened: false,
       isMoveCopyFilesDialogOpened: false
     });
-    this.clearSelection();
+    // this.clearSelection();
   };
 
   openFileRenameDialog = () => {
@@ -1224,7 +1206,7 @@ function mapActionCreatorsToProps(dispatch) {
 function mapStateToProps(state) {
   return {
     supportedFileTypes: getSupportedFileTypes(state),
-    lastSelectedEntry: getLastSelectedEntry(state),
+    lastSelectedEntryPath: getLastSelectedEntry(state),
   };
 }
 

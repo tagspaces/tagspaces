@@ -167,13 +167,13 @@ type Props = {
   toggleEntryFullWidth: () => void,
   isReadOnlyMode: boolean,
   setEntryPropertiesSplitSize: (size: number) => void,
-  reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void
+  reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void,
+  setLastSelectedEntry: (path: string) => void
 };
 
 type State = {
   isPropertiesPanelVisible?: boolean,
   isFullscreen: boolean,
-  isPropertiesEditMode: boolean,
   currentEntry?: OpenedEntry | null,
   entryProps?: Object | null,
   editingSupported?: boolean,
@@ -320,6 +320,7 @@ class EntryContainer extends React.Component<Props, State> {
 
   fileViewer;
   fileViewerContainer;
+  isPropertiesEditMode = false;
 
   handleMessage = (msg: Object | string) => {
     let data;
@@ -606,6 +607,7 @@ class EntryContainer extends React.Component<Props, State> {
     if (this.state.currentEntry && this.state.currentEntry.path) {
       const nextFile = this.props.getNextFile(this.state.currentEntry.path);
       this.props.openFile(nextFile);
+      this.props.setLastSelectedEntry(nextFile);
     }
   };
 
@@ -613,6 +615,7 @@ class EntryContainer extends React.Component<Props, State> {
     if (this.state.currentEntry && this.state.currentEntry.path) {
       const prevFile = this.props.getPrevFile(this.state.currentEntry.path);
       this.props.openFile(prevFile);
+      this.props.setLastSelectedEntry(prevFile);
     }
   };
 
@@ -801,10 +804,11 @@ class EntryContainer extends React.Component<Props, State> {
   };
 
   setPropertiesEditMode = (editMode: boolean) => {
-    this.setState({ isPropertiesEditMode: editMode });
+    this.isPropertiesEditMode = editMode;
   }
 
   resetState = (key) => {
+    // this.isPropertiesEditMode = false;
     this.setState({
       [key]: uuidv1()
     });
@@ -864,8 +868,8 @@ class EntryContainer extends React.Component<Props, State> {
         saveDocument: this.startSavingFile,
         editDocument: this.editFile,
         reloadDocument: this.reloadDocument,
-        nextDocument: this.state.isPropertiesEditMode ? () => {} : this.openNextFile,
-        prevDocument: this.state.isPropertiesEditMode ? () => {} : this.openPrevFile
+        nextDocument: this.isPropertiesEditMode ? () => {} : this.openNextFile,
+        prevDocument: this.isPropertiesEditMode ? () => {} : this.openPrevFile
       }}
       >
         <ConfirmDialog
@@ -1149,6 +1153,7 @@ function mapActionCreatorsToProps(dispatch) {
     removeAllTags: TaggingActions.removeAllTags,
     editTagForEntry: TaggingActions.editTagForEntry,
     reflectUpdateSidecarMeta: AppActions.reflectUpdateSidecarMeta,
+    setLastSelectedEntry: AppActions.setLastSelectedEntry,
   }, dispatch);
 }
 

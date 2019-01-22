@@ -217,28 +217,12 @@ class FolderContainer extends React.Component<Props, State> {
     nextDocument: () => {
       const nextFilePath = this.props.getNextFile();
       if (nextFilePath) {
-        this.setState(
-          {
-            perspectiveCommand: { key: 'SELECT_FILE', value: nextFilePath }
-          },
-          () => {
-            this.setState({ perspectiveCommand: {} });
-          }
-        );
         this.props.setLastSelectedEntry(nextFilePath);
       }
     },
     prevDocument: () => {
       const prevFilePath = this.props.getPrevFile();
       if (prevFilePath) {
-        this.setState(
-          {
-            perspectiveCommand: { key: 'SELECT_FILE', value: prevFilePath }
-          },
-          () => {
-            this.setState({ perspectiveCommand: {} });
-          }
-        );
         this.props.setLastSelectedEntry(prevFilePath);
       }
     },
@@ -353,24 +337,6 @@ class FolderContainer extends React.Component<Props, State> {
       );
     } else if (this.state.currentPerspective === 'filemanager') {
       return <div>Place for another perspective</div>;
-      /*
-        <FileManagerPerspective
-          directoryContent={this.props.directoryContent}
-          loadDirectoryContent={this.props.loadDirectoryContent}
-          openFile={this.props.openFile}
-          openFileNatively={this.props.openFileNatively}
-          deleteFile={this.props.deleteFile}
-          renameFile={this.props.renameFile}
-          openDirectory={this.props.openDirectory}
-          currentDirectoryPath={this.props.currentDirectoryPath}
-          setLastSelectedEntry={this.props.setLastSelectedEntry}
-          perspectiveCommand={this.state.perspectiveCommand}
-          deleteDirectory={this.props.deleteDirectory}
-          addTags={this.props.addTags}
-          removeTags={this.props.removeTags}
-          removeAllTags={this.props.removeAllTags}
-        />
-      */
     }
     return <WelcomePanel />;
   }
