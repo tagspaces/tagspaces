@@ -19,8 +19,6 @@
 
 import React, { Component } from 'react';
 import marked from 'marked';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import FormControl from '@material-ui/core/FormControl';
@@ -39,9 +37,7 @@ import { formatFileSize } from '../utils/misc';
 import { extractContainingDirectoryPath } from '../utils/paths';
 import AppConfig from '../config';
 import { Pro } from '../pro';
-import PlatformIO from '../services/platform-io';
 import TagsSelect from './TagsSelect';
-import TaggingActions from '../reducers/tagging-actions';
 
 const styles = theme => ({
   entryProperties: {
@@ -141,14 +137,14 @@ marked.setOptions({
   xhtml: true
 });
 
-function handleExternalLinks(event) { // TODO move to misc
-  event.preventDefault();
-  event.stopPropagation();
-  console.log(event.currentTarget.href);
+// function handleExternalLinks(event) { // TODO move to misc
+//   event.preventDefault();
+//   event.stopPropagation();
+//   console.log(event.currentTarget.href);
 
-  // TODO evtl. use openFileNatively from app.js
-  PlatformIO.openUrl(event.currentTarget.href);
-}
+//   // TODO evtl. use openFileNatively from app.js
+//   PlatformIO.openUrl(event.currentTarget.href);
+// }
 
 type Props = {
   classes: Object,
@@ -157,11 +153,11 @@ type Props = {
   settings: Object,
   shouldCopyFile?: boolean,
   editTagForEntry: () => void,
-  onEditTags: () => void,
   renameFile: () => void,
   renameDirectory: () => void,
   normalizeShouldCopyFile: () => void,
   showNotification: () => void,
+  reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void,
   addTags: () => void,
   removeTags: () => void,
   removeAllTags: () => void,
@@ -214,10 +210,6 @@ class EntryProperties extends Component<Props, State> {
       this.props.resetState('EntryPropertiesKey');
       this.loadEntryProperties(nextProps.entryPath);
     }
-
-    /* if (nextProps.entryPath && this.state.path !== nextProps.entryPath) {
-      this.setState({ isEditDescription: false }); // state is reset isEditDescription default value is false
-    } */
 
     if (nextProps.shouldCopyFile) {
       this.setState({ isMoveCopyFilesDialogOpened: true });
@@ -328,12 +320,14 @@ class EntryProperties extends Component<Props, State> {
       return;
     }
     if (this.state.isEditDescription) {
-      Pro.MetaOperations.saveDescription(this.props.entryPath, this.state.description).then(() => {
+      Pro.MetaOperations.saveDescription(this.props.entryPath, this.state.description).then((entryMeta) => {
         this.setState({
           isEditDescription: false
         });
+        this.props.reflectUpdateSidecarMeta(this.props.entryPath, entryMeta);
         return true;
       }).catch((error) => {
+        console.warn('Error saving description ' + error);
         this.setState({
           isEditDescription: false
         });
@@ -408,21 +402,14 @@ class EntryProperties extends Component<Props, State> {
         return tag;
       });
     }
-
-    /* this.setState({ //not needed addTags/removeTags/removeAllTags => reflectUpdateSidecarTags -> state is updated -> loadEntryProperties
-      tags: value
-    }); */
   };
 
   render() {
     const {
       classes,
       entryPath,
-      onEditTags,
       removeTags,
       editTagForEntry,
-      copyFiles,
-      moveFiles
     } = this.props;
     const {
       path,
@@ -520,16 +507,7 @@ class EntryProperties extends Component<Props, State> {
                   {i18n.t('core:fileTags')}
                 </Typography>
               </div>
-              <div className="grid-item">
-                {/* <Button
-                  color="primary"
-                  data-tid="ok"
-                  className={classes.button}
-                  onClick={onEditTags}
-                >
-                  {i18n.t('core:addEntryTags')}
-                </Button> */}
-              </div>
+              <div className="grid-item" />
             </div>
             <Paper className={classes.tags}>
               <TagDropContainer entryPath={path}>
@@ -742,9 +720,4 @@ class EntryProperties extends Component<Props, State> {
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ addTags: TaggingActions.addTags, removeTags: TaggingActions.removeTags, removeAllTags: TaggingActions.removeAllTags }, dispatch);
-}
-export default withStyles(styles)(
-  connect(undefined, mapDispatchToProps)(EntryProperties)
-);
+export default withStyles(styles)(EntryProperties);

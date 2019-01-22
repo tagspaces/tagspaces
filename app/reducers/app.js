@@ -77,7 +77,8 @@ export const types = {
   REFLECT_DELETE_ENTRY: 'APP/REFLECT_DELETE_ENTRY',
   REFLECT_RENAME_ENTRY: 'APP/REFLECT_RENAME_ENTRY',
   REFLECT_CREATE_ENTRY: 'APP/REFLECT_CREATE_ENTRY',
-  REFLECT_UPDATE_SIDECARTAGS: 'APP/REFLECT_UPDATE_SIDECARTAGS'
+  REFLECT_UPDATE_SIDECARTAGS: 'APP/REFLECT_UPDATE_SIDECARTAGS',
+  REFLECT_UPDATE_SIDECARMETA: 'APP/REFLECT_UPDATE_SIDECARMETA'
 };
 
 export const NotificationTypes = {
@@ -410,6 +411,53 @@ export default (state: Object = initialState, action: Object) => {
           ...state.currentDirectoryEntries[indexForUpdating].tags.filter(tag => tag.type === 'plain'),
           ...action.tags
         ]
+      };
+      directoryEntries = [
+        ...state.currentDirectoryEntries.slice(0, indexForUpdating),
+        updateEntry,
+        ...state.currentDirectoryEntries.slice(indexForUpdating + 1)
+      ];
+    }
+    if (indexForUpdatingInOpenedFiles >= 0) {
+      const updateEntry = {
+        ...state.openedFiles[indexForUpdatingInOpenedFiles],
+        shouldReload: true,
+      };
+      openedFiles = [
+        ...state.openedFiles.slice(0, indexForUpdatingInOpenedFiles),
+        updateEntry,
+        ...state.openedFiles.slice(indexForUpdatingInOpenedFiles + 1)
+      ];
+    }
+    if (indexForUpdating >= 0 || indexForUpdatingInOpenedFiles >= 0) {
+      return {
+        ...state,
+        currentDirectoryEntries: directoryEntries,
+        openedFiles
+      };
+    }
+    return state;
+  }
+  case types.REFLECT_UPDATE_SIDECARMETA: {
+    let indexForUpdating = -1;
+    let indexForUpdatingInOpenedFiles = -1;
+    // Updating entries in the current directory
+    state.currentDirectoryEntries.forEach((entry, index) => {
+      if (entry.path === action.path) {
+        indexForUpdating = index;
+      }
+    });
+    state.openedFiles.forEach((entry, index) => {
+      if (entry.path === action.path) {
+        indexForUpdatingInOpenedFiles = index;
+      }
+    });
+    let directoryEntries = state.currentDirectoryEntries;
+    let openedFiles = state.openedFiles;
+    if (indexForUpdating >= 0) {
+      const updateEntry = {
+        ...state.currentDirectoryEntries[indexForUpdating],
+        description: action.entryMeta.description
       };
       directoryEntries = [
         ...state.currentDirectoryEntries.slice(0, indexForUpdating),
@@ -1036,11 +1084,22 @@ export const actions = {
     path,
     tags
   }),
+  reflectUpdateSidecarMetaInt: (path: string, entryMeta: Object) => ({
+    type: types.REFLECT_UPDATE_SIDECARMETA,
+    path,
+    entryMeta
+  }),
   reflectUpdateSidecarTags: (path: string, tags: Array<Tags>) => (
     dispatch: (actions: Object) => void
   ) => {
     dispatch(actions.reflectUpdateSidecarTagsInt(path, tags));
     dispatch(LocationIndexActions.reflectUpdateSidecarTags(path, tags));
+  },
+  reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => (
+    dispatch: (actions: Object) => void
+  ) => {
+    dispatch(actions.reflectUpdateSidecarMetaInt(path, entryMeta));
+    dispatch(LocationIndexActions.reflectUpdateSidecarMeta(path, entryMeta));
   },
   deleteFile: (filePath: string) => (
     dispatch: (actions: Object) => void,

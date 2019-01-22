@@ -44,6 +44,7 @@ export const types = {
   REFLECT_CREATE_ENTRY: 'REFLECT_CREATE_ENTRY',
   REFLECT_RENAME_ENTRY: 'REFLECT_RENAME_ENTRY',
   REFLECT_UPDATE_SIDECARTAGS: 'REFLECT_UPDATE_SIDECARTAGS',
+  REFLECT_UPDATE_SIDECARMETA: 'REFLECT_UPDATE_SIDECARMETA'
 };
 
 
@@ -160,7 +161,6 @@ export default (state: Object = initialState, action: Object) => {
         indexForUpdatingInIndex = index;
       }
     });
-    let directoryIndex = state.currentDirectoryIndex;
     if (indexForUpdatingInIndex >= 0) {
       const updateEntry = {
         ...state.currentDirectoryIndex[indexForUpdatingInIndex],
@@ -169,16 +169,36 @@ export default (state: Object = initialState, action: Object) => {
           ...action.tags
         ]
       };
-      directoryIndex = [
-        ...state.currentDirectoryIndex.slice(0, indexForUpdatingInIndex),
-        updateEntry,
-        ...state.currentDirectoryIndex.slice(indexForUpdatingInIndex + 1)
-      ];
-    }
-    if (indexForUpdatingInIndex >= 0) {
       return {
         ...state,
-        currentDirectoryIndex: directoryIndex
+        currentDirectoryIndex: [
+          ...state.currentDirectoryIndex.slice(0, indexForUpdatingInIndex),
+          updateEntry,
+          ...state.currentDirectoryIndex.slice(indexForUpdatingInIndex + 1)
+        ]
+      };
+    }
+    return state;
+  }
+  case types.REFLECT_UPDATE_SIDECARMETA: {
+    let indexForUpdatingInIndex = -1;
+    state.currentDirectoryIndex.forEach((entry, index) => {
+      if (entry.path === action.path) {
+        indexForUpdatingInIndex = index;
+      }
+    });
+    if (indexForUpdatingInIndex >= 0) {
+      const updateEntry = {
+        ...state.currentDirectoryIndex[indexForUpdatingInIndex],
+        description: action.entryMeta.description
+      };
+      return {
+        ...state,
+        currentDirectoryIndex: [
+          ...state.currentDirectoryIndex.slice(0, indexForUpdatingInIndex),
+          updateEntry,
+          ...state.currentDirectoryIndex.slice(indexForUpdatingInIndex + 1)
+        ]
       };
     }
     return state;
@@ -278,6 +298,11 @@ export const actions = {
     type: types.REFLECT_UPDATE_SIDECARTAGS,
     path,
     tags
+  }),
+  reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => ({
+    type: types.REFLECT_UPDATE_SIDECARMETA,
+    path,
+    entryMeta
   })
 };
 
