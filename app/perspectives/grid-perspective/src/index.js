@@ -803,7 +803,7 @@ class GridPerspective extends React.Component<Props, State> {
             </Typography>
             {fsEntry.tags.map(tag => this.renderTag(tag, fsEntry))}
             <Typography
-              noWrap
+              // noWrap
               style={{
                 color: 'gray',
                 padding: 5
@@ -816,10 +816,10 @@ class GridPerspective extends React.Component<Props, State> {
                 title={
                   i18n.t('core:modifiedDate') +
                   ': ' +
-                  formatDateTime(fsEntry.lmdt, true) + ' '
+                  formatDateTime(fsEntry.lmdt, true)
                 }
               >
-                {fsEntry.isFile && fsEntry.lmdt && '️ ' + moment(fsEntry.lmdt).fromNow() /* ⏲ */}
+                {fsEntry.isFile && fsEntry.lmdt && '️ ' + moment(fsEntry.lmdt).fromNow() + ' '}
               </span>
               <span title={i18n.t('core:entryDescription')}>
                 {description && description }
