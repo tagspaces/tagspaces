@@ -672,6 +672,7 @@ class GridPerspective extends React.Component<Props, State> {
             </div>
             {description.length > 0 && (
               <Typography
+                id="gridCellDescription"
                 className={classes.gridCellDescription}
                 noWrap={true}
                 title={i18n.t('core:filePropertiesDescription')}
@@ -836,7 +837,7 @@ class GridPerspective extends React.Component<Props, State> {
       <div style={{ height: '100%' }}>
         <style>
           {`
-            #gridCellTags:hover {
+            #gridCellTags:hover, #gridCellDescription:hover {
               opacity: 1
             }
           `}
