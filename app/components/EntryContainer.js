@@ -46,7 +46,7 @@ import AppConfig from '../config';
 import PlatformIO from '../services/platform-io';
 import AddRemoveTagsDialog from './dialogs/AddRemoveTagsDialog';
 import {
-  getAllPropertiesPromise,
+  // getAllPropertiesPromise,
   openLinkExternally
 } from '../services/utils-io';
 import i18n from '../services/i18n';
@@ -173,6 +173,7 @@ type Props = {
 type State = {
   isPropertiesPanelVisible?: boolean,
   isFullscreen: boolean,
+  isPropertiesEditMode: boolean,
   currentEntry?: OpenedEntry | null,
   entryProps?: Object | null,
   editingSupported?: boolean,
@@ -347,7 +348,7 @@ class EntryContainer extends React.Component<Props, State> {
       this.props.openFile(this.props.getNextFile(this.state.currentEntry.path));
       break;
     case 'openLinkExternally':
-      console.log('Open link externaly: ' + data.link);
+      console.log('Open link externally: ' + data.link);
       openLinkExternally(data.link);
       break;
     case 'openFileNatively':
@@ -799,12 +800,9 @@ class EntryContainer extends React.Component<Props, State> {
     );
   };
 
-  keyBindingHandlers = {
-    closeViewer: this.startClosingFile,
-    saveDocument: this.startSavingFile,
-    editDocument: this.editFile,
-    reloadDocument: this.reloadDocument,
-  };
+  setPropertiesEditMode = (editMode: boolean) => {
+    this.setState({ isPropertiesEditMode: editMode });
+  }
 
   resetState = (key) => {
     this.setState({
@@ -861,7 +859,15 @@ class EntryContainer extends React.Component<Props, State> {
     }
 
     return (
-      <HotKeys handlers={this.keyBindingHandlers}>
+      <HotKeys handlers={{
+        closeViewer: this.startClosingFile,
+        saveDocument: this.startSavingFile,
+        editDocument: this.editFile,
+        reloadDocument: this.reloadDocument,
+        nextDocument: this.state.isPropertiesEditMode ? () => {} : this.openNextFile,
+        prevDocument: this.state.isPropertiesEditMode ? () => {} : this.openPrevFile
+      }}
+      >
         <ConfirmDialog
           open={this.state.isSaveBeforeCloseConfirmDialogOpened}
           onClose={() => {
@@ -1069,6 +1075,7 @@ class EntryContainer extends React.Component<Props, State> {
                 <EntryProperties
                   key={this.state.EntryPropertiesKey}
                   resetState={this.resetState}
+                  setPropertiesEditMode={this.setPropertiesEditMode}
                   entryPath={currentEntry.path}
                   shouldReload={currentEntry.shouldReload}
                   renameFile={this.props.renameFile}

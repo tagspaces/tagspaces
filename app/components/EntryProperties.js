@@ -161,7 +161,8 @@ type Props = {
   addTags: () => void,
   removeTags: () => void,
   removeAllTags: () => void,
-  resetState: () => void
+  resetState: () => void,
+  setPropertiesEditMode: (editMode: boolean) => void
 };
 
 type State = {
@@ -287,6 +288,8 @@ class EntryProperties extends Component<Props, State> {
       this.setState({
         isEditName: false,
         name: this.state.originalName
+      }, () => {
+        this.props.setPropertiesEditMode(false);
       });
     } else {
       this.setState({
@@ -294,6 +297,7 @@ class EntryProperties extends Component<Props, State> {
         originalName: this.state.name
       }, () => {
         this.fileName.focus();
+        this.props.setPropertiesEditMode(true);
         const { originalName } = this.state;
         if (originalName) {
           const indexOfBracket = originalName.indexOf(AppConfig.beginTagContainer);
@@ -323,8 +327,10 @@ class EntryProperties extends Component<Props, State> {
       Pro.MetaOperations.saveDescription(this.props.entryPath, this.state.description).then((entryMeta) => {
         this.setState({
           isEditDescription: false
+        }, () => {
+          this.props.setPropertiesEditMode(false);
+          this.props.reflectUpdateSidecarMeta(this.props.entryPath, entryMeta);
         });
-        this.props.reflectUpdateSidecarMeta(this.props.entryPath, entryMeta);
         return true;
       }).catch((error) => {
         console.warn('Error saving description ' + error);
@@ -337,6 +343,7 @@ class EntryProperties extends Component<Props, State> {
       this.setState({
         isEditDescription: true
       }, () => {
+        this.props.setPropertiesEditMode(true);
         if (this.fileDescription) {
           this.fileDescription.focus();
         }
