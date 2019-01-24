@@ -76,7 +76,9 @@ class TagContainer extends React.Component<Props> {
         <RemoveTagIcon
           data-tid={'tagRemoveButton_' + tag.title.replace(/ /g, '_')}
           style={{
-            color: tag.textColor
+            color: tag.textColor,
+            fontSize: 20,
+            marginBottom: -6,
           }}
           onClick={event => this.props.handleRemoveTag(event, tag)}
         />
@@ -88,7 +90,10 @@ class TagContainer extends React.Component<Props> {
         <MoreVertIcon
           data-tid={'tagMoreButton_' + tag.title.replace(/ /g, '_')}
           style={{
-            color: tag.textColor
+            color: tag.textColor,
+            marginLeft: -5,
+            marginRight: -5,
+            top: 0
           }}
         />
       );
@@ -104,7 +109,7 @@ class TagContainer extends React.Component<Props> {
         onDoubleClick={event => { if (this.props.handleTagMenu) { this.props.handleTagMenu(event, tag, entryPath || tagGroup); } }}
         style={{
           backgroundColor: 'transparent',
-          marginLeft: 4,
+          marginRight: 2,
           marginTop: 0,
           marginBottom: 4,
           display: 'inline-block'
@@ -118,12 +123,14 @@ class TagContainer extends React.Component<Props> {
             textTransform: 'none',
             color: textColor,
             backgroundColor,
-            minHeight: 25,
+            minHeight: 0,
+            minWidth: 0,
             margin: 0,
             paddingTop: 0,
             paddingBottom: 0,
-            paddingRight: 3,
-            borderRadius: 5
+            paddingRight: 0,
+            paddingLeft: 5,
+            borderRadius: 5,
           }}
         >
           <span>
