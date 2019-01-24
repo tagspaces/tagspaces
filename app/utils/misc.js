@@ -371,6 +371,15 @@ export function sortByFirstTag(a, b) {
   return a.tags[0].title.localeCompare(b.tags[0].title);
 }
 
+export function shuffleArray(array) {
+  // Durstenfeld shuffle 
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
 export function sortByCriteria(data, criteria, order) {
   switch (criteria) {
   case 'byName':
@@ -398,6 +407,8 @@ export function sortByCriteria(data, criteria, order) {
       return data.sort(sortByFirstTag);
     }
     return data.sort((a, b) => -1 * sortByFirstTag(a, b));
+  case 'random':
+    return shuffleArray(data);
   default:
     return data.sort(sortByName);
   }

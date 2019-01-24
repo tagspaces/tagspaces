@@ -1099,6 +1099,17 @@ class GridPerspective extends React.Component<Props, State> {
             </ListItemIcon>
             <ListItemText inset primary={i18n.t('core:fileExtension')} />
           </MenuItem>
+          <MenuItem
+            data-tid="gridPerspectiveSortRandom"
+            onClick={() => { this.handleSortBy('random'); }}
+          >
+            <ListItemIcon style={{ minWidth: 25 }}>
+              {(this.state.sortBy === 'random') && (
+                <ArrowDownIcon />
+              )}
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:random')} />
+          </MenuItem>
         </Menu>
         <Menu
           open={this.state.optionsContextMenuOpened}
