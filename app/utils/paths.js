@@ -84,7 +84,7 @@ export function cleanTrailingDirSeparator(dirPath: string): string {
     }
     return dirPath;
   }
-  console.error('Directory Path ' + dirPath + ' undefined');
+  // console.log('Directory Path ' + dirPath + ' undefined');
   return '';
 }
 
