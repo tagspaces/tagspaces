@@ -168,7 +168,8 @@ type Props = {
   isReadOnlyMode: boolean,
   setEntryPropertiesSplitSize: (size: number) => void,
   reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void,
-  setLastSelectedEntry: (path: string) => void
+  setLastSelectedEntry: (path: string) => void,
+  setSelectedEntries: (selectedEntries: Array<Object>) => void
 };
 
 type State = {
@@ -611,6 +612,8 @@ class EntryContainer extends React.Component<Props, State> {
       const nextFile = this.props.getNextFile(this.state.currentEntry.path);
       this.props.openFile(nextFile);
       this.props.setLastSelectedEntry(nextFile);
+      // Update selectedEntries in app - I don't know how to go from filepath to object
+      // this.props.setSelectedEntries();
     }
   };
 
@@ -619,6 +622,8 @@ class EntryContainer extends React.Component<Props, State> {
       const prevFile = this.props.getPrevFile(this.state.currentEntry.path);
       this.props.openFile(prevFile);
       this.props.setLastSelectedEntry(prevFile);
+      // Update selectedEntries in app - I don't know how to go from filepath to object
+      // this.props.setSelectedEntries();
     }
   };
 
@@ -1157,6 +1162,7 @@ function mapActionCreatorsToProps(dispatch) {
     editTagForEntry: TaggingActions.editTagForEntry,
     reflectUpdateSidecarMeta: AppActions.reflectUpdateSidecarMeta,
     setLastSelectedEntry: AppActions.setLastSelectedEntry,
+    setSelectedEntries: AppActions.setSelectedEntries,
   }, dispatch);
 }
 
