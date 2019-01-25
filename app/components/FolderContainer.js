@@ -38,11 +38,11 @@ import {
   getDirectoryPath,
   getLastSelectedEntry,
   getSearchResultCount,
-  isReadOnlyMode
+  isReadOnlyMode,
+  getCurrentLocationPath
 } from '../reducers/app';
 import TaggingActions from '../reducers/tagging-actions';
 import {
-  extractDirectoryName,
   normalizePath,
   extractShortDirectoryName
 } from '../utils/paths';
@@ -178,24 +178,27 @@ class FolderContainer extends React.Component<Props, State> {
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (prevState.currentPath !== nextProps.currentDirectoryPath) {
+    if (nextProps.currentDirectoryPath && prevState.currentPath !== nextProps.currentDirectoryPath) {
+      let currentLocationPath = '';
+      if (nextProps.currentLocationPath) {
+        currentLocationPath = nextProps.currentLocationPath;
+      }
       // Make the path unix like ending always with /
-      let normalizedPath =
-        normalizePath(nextProps.currentDirectoryPath.split('\\').join('/')) +
-        '/';
+      const normalizedOrigCurrentPath = normalizePath(nextProps.currentDirectoryPath.split('\\').join('/'));
+      let normalizedCurrentPath = normalizedOrigCurrentPath;
+      const normalizedCurrentLocationPath = normalizePath(currentLocationPath.split('\\').join('/'));
+      // console.log('Current path : ' + normalizedCurrentPath);
+      // console.log('Current location path : ' + normalizedCurrentLocationPath);
       let pathParts = [];
-      while (normalizedPath.lastIndexOf('/') > 0) {
-        pathParts.push(normalizedPath);
-        normalizedPath = normalizedPath.substring(
-          0,
-          normalizedPath.lastIndexOf('/')
-        );
+      while (normalizedCurrentPath.lastIndexOf('/') > 0 && normalizedCurrentPath.startsWith(currentLocationPath)) {
+        // console.log('Current splitting : ' + normalizedCurrentPath);
+        pathParts.push(normalizedCurrentPath);
+        normalizedCurrentPath = normalizedCurrentPath.substring(0, normalizedCurrentPath.lastIndexOf('/'));
+      }
+      if (pathParts.length >= 1) {
+        pathParts = pathParts.slice(1, pathParts.length); // remove current directory
       }
       pathParts = pathParts.reverse();
-      // let pathParts = normalizedPath.split('/');
-      if (pathParts.length > 1) {
-        pathParts = pathParts.slice(0, pathParts.length - 2); // remove current directory
-      }
       if (pathParts.length > 2) {
         pathParts = pathParts.slice(pathParts.length - 2, pathParts.length); // leave only the last 2 dirs in the path
       }
@@ -314,7 +317,6 @@ class FolderContainer extends React.Component<Props, State> {
         <GridPerspective
           directoryContent={this.props.directoryContent}
           loadDirectoryContent={this.props.loadDirectoryContent}
-          loadParentDirectoryContent={this.props.loadParentDirectoryContent}
           openFile={this.props.openFile}
           openFileNatively={this.props.openFileNatively}
           deleteFile={this.props.deleteFile}
@@ -423,6 +425,8 @@ function mapStateToProps(state) {
     perspectives: getPerspectives(state),
     directoryContent: getDirectoryContent(state),
     searchResultCount: getSearchResultCount(state),
+    // pathPart: getPathTrail(state),
+    currentLocationPath: getCurrentLocationPath(state),
     isReadOnlyMode: isReadOnlyMode(state)
   };
 }

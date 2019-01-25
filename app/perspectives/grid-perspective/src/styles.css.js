@@ -87,8 +87,8 @@ export default (theme) => ({
     opacity: 0.6
   },
   gridCellDescription: {
-    padding: 0,
-    margin: 4,
+    padding: 2,
+    margin: 2,
     backgroundColor: theme.palette.background.paper,
     opacity: 0.6,
     borderRadius: 5

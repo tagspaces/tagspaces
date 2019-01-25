@@ -530,16 +530,8 @@ export const actions = {
   },
   showSelectDirectoryDialog: () => (
     dispatch: (actions: Object) => void,
-    getState: () => Object
   ) => {
-    const { app } = getState();
-    // if (!app.currentDirectoryPath) {
-    //   dispatch(
-    //     actions.showNotification(i18n.t('core:firstOpenaFolder'), 'warning', true)
-    //   );
-    // } else {
     dispatch(actions.toggleSelectDirectoryDialog());
-    // }
   },
   toggleAboutDialog: () => ({ type: types.TOGGLE_ABOUT_DIALOG }),
   toggleKeysDialog: () => ({ type: types.TOGGLE_KEYBOARD_DIALOG }),
@@ -553,10 +545,17 @@ export const actions = {
     dispatch: (actions: Object) => void,
     getState: () => Object
   ) => {
-    const { app } = getState();
-    if (app.currentDirectoryPath) {
-      const parentDirectory = extractParentDirectoryPath(app.currentDirectoryPath);
-      dispatch(actions.loadDirectoryContent(parentDirectory));
+    const state = getState();
+    const currentDirectoryPath = state.app.currentDirectoryPath;
+    const currentLocationPath = getCurrentLocationPath(state);
+
+    if (currentDirectoryPath) {
+      const parentDirectory = extractParentDirectoryPath(currentDirectoryPath);
+      if (parentDirectory.startsWith(currentLocationPath)) {
+        dispatch(actions.loadDirectoryContent(parentDirectory));
+      } else {
+        dispatch(actions.showNotification(i18n.t('core:parentDirNotInLocation'), 'warning', true));
+      }
     } else {
       dispatch(actions.showNotification(i18n.t('core:firstOpenaFolder'), 'warning', true));
     }
