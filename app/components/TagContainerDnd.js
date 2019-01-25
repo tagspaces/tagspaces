@@ -37,7 +37,8 @@ type Props = {
   entryPath?: string,
   connectDragSource: ConnectDragSource,
   connectDragPreview: ConnectDragPreview,
-  deleteIcon: Object
+  deleteIcon: Object,
+  selectedEntries: Array<string>
 };
 
 const boxSource = {
@@ -61,7 +62,13 @@ const boxSource = {
       props.moveTag(item.tagId, item.sourceTagGroupId, dropResult.tagGroupId);
     } else if (dropResult && dropResult.entryPath) {
       // console.log(`Dropped item: ${item.tag.title} onto file: ${dropResult.entryPath}!`);
-      props.addTags([dropResult.entryPath], [item.tag]);
+      if (props.selectedEntries.some(entry => entry.path === dropResult.entryPath)) {
+        const selectedEntryPaths = [];
+        props.selectedEntries.map(entry => selectedEntryPaths.push(entry.path));
+        props.addTags(selectedEntryPaths, [item.tag]);
+      } else {
+        props.addTags([dropResult.entryPath], [item.tag]);
+      }
     }
   }
 };
@@ -103,7 +110,8 @@ class TagContainerDnd extends React.Component<Props> {
       tagGroup,
       entryPath,
       handleTagMenu,
-      deleteIcon
+      deleteIcon,
+      selectedEntries
     } = this.props;
     const { isDragging, connectDragSource, tagMode } = this.props;
 
@@ -119,6 +127,7 @@ class TagContainerDnd extends React.Component<Props> {
           tagMode={tagMode}
           entryPath={entryPath}
           isDragging={isDragging}
+          selectedEntries={selectedEntries}
         />
       </span>);
     // , { dropEffect: 'copy' });

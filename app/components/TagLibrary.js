@@ -53,6 +53,7 @@ import {
 import TaggingActions from '../reducers/tagging-actions';
 import i18n from '../services/i18n';
 import { getTagColor, getTagTextColor } from '../reducers/settings';
+import { getSelectedEntries } from '../reducers/app';
 
 type Props = {
   classes: Object,
@@ -77,7 +78,8 @@ type Props = {
   moveTag: () => void,
   editTagGroup: () => void,
   editTag: () => void,
-  deleteTag: () => void
+  deleteTag: () => void,
+  selectedEntries: Array<Object>
 };
 
 type State = {
@@ -251,6 +253,7 @@ class TagLibrary extends React.Component<Props, State> {
               addTags={this.props.addTags}
               moveTag={this.props.moveTag}
               deleteTag={this.props.deleteTag}
+              selectedEntries={this.props.selectedEntries}
             />
           ))}
         </TagGroupContainer>
@@ -365,6 +368,7 @@ function mapStateToProps(state) {
     tagGroups: getTagGroups(state),
     tagBackgroundColor: getTagColor(state),
     tagTextColor: getTagTextColor(state),
+    selectedEntries: getSelectedEntries(state)
     allTags: getAllTags(state)
   };
 }
