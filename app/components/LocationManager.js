@@ -144,16 +144,6 @@ class LocationManager extends React.Component<Props, State> {
     dirs: {}
   };
 
-  componentWillReceiveProps = (nextProps: any) => {
-    if (this.props.locations !== nextProps.locations) {
-      nextProps.locations.forEach((location) => {
-        if (location.isDefault) {
-          this.loadSubDirectories(location, 1);
-        }
-      });
-    }
-  };
-
   loadSubDirectories = (location: Location, deepLevel: number) => {
     const subFolder = {
       uuid: location.uuid,
@@ -593,7 +583,13 @@ class LocationManager extends React.Component<Props, State> {
           onClick={() => this.handleLocationClick(location)}
           onContextMenu={event => this.handleLocationContextMenuClick(event, location)}
         >
-          <ListItemIcon style={{ marginRight: 0 }}>
+          <ListItemIcon
+            // onClick={(e) => {
+            //   e.preventDefault();
+            //   this.loadSubDirectories(location, 1);
+            // }}
+            style={{ marginRight: 0 }}
+          >
             { location.type === locationType.TYPE_CLOUD ?
               (<CloudLocationIcon className={this.props.classes.icon} />) :
               (<LocationIcon className={this.props.classes.icon} />)
