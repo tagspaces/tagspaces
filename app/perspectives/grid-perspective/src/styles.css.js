@@ -16,7 +16,7 @@
  *
  * @flow
  */
-// import AppConfig from '../../../config';
+import AppConfig from '../../../config';
 
 export default (theme) => ({
   gridContainer: {
@@ -87,7 +87,7 @@ export default (theme) => ({
     opacity: 0.6
   },
   gridCellDescription: {
-    padding: 5,
+    padding: 0,
     margin: 4,
     backgroundColor: theme.palette.background.paper,
     opacity: 0.6,
@@ -101,6 +101,7 @@ export default (theme) => ({
     // marginLeft: 5,
     // borderRadius: 3,
     maxWidth: 45,
+    minWidth: 30,
     minHeight: 16,
     borderWidth: 1,
     color: 'white',
@@ -125,6 +126,7 @@ export default (theme) => ({
     textAlign: 'center'
   },
   gridSizeDate: {
+    overflow: AppConfig.isFirefox ? 'auto' : 'overlay',
     flex: 3,
     textAlign: 'right',
     whiteSpace: 'nowrap',
