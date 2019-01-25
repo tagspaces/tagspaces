@@ -11,8 +11,6 @@
 }
 
 .Resizer:hover {
-  -webkit-transition: margin 0s;
-  transition: margin 0s;
   -webkit-transition: border-color 2s;
   transition: border-color 2s;
 }
