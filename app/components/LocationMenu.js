@@ -88,11 +88,7 @@ class LocationMenu extends React.Component<Props, State> {
     const { currentLocation } = this.state;
     return (
       <div style={{
-        position: 'absolute',
-        left: 0,
-        marginLeft: 5,
         backgroundColor: theme.palette.background.default,
-        zIndex: 1
       }}
       >
         <Button

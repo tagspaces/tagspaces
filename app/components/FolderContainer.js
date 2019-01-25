@@ -56,7 +56,7 @@ const styles = theme => ({
     width: '100%',
     height: '100%',
     maxHeight: '100%',
-    overflowY: 'hidden',
+    overflow: 'hidden',
     backgroundColor: theme.palette.background.default,
     display: 'flex',
     flexDirection: 'column'
@@ -69,9 +69,9 @@ const styles = theme => ({
     justifyContent: 'center',
   },
   topPanel: {
-    flex: '1 1 50px',
     height: 50,
     width: '100%',
+    overflowX: 'overlay',
     backgroundColor: theme.palette.background.default
   },
   centerPanel: {
@@ -83,10 +83,6 @@ const styles = theme => ({
     flex: '1 1 10%',
     display: 'flex',
     flexDirection: 'column'
-  },
-  entriesFound: {
-    alignSelf: 'center',
-    paddingTop: 10
   },
   folderButton: {
     minWidth: 30,
@@ -354,18 +350,13 @@ class FolderContainer extends React.Component<Props, State> {
           <div className={classes.topPanel}>
             <div className={classes.toolbar}>
               <LocationMenu />
-              <div className={classes.flexMiddle} data-tid="entriesFound">
-                {this.props.searchResultCount > 0 && (
-                  <Typography
-                    style={{ whiteSpace: 'nowrap' }}
-                    className={classes.entriesFound}
-                  >
-                    {this.props.searchResultCount} {i18n.t('entries')}
-                  </Typography>
-                )}
-              </div>
+              <div
+                className={classes.flexMiddle}
+                data-tid="entriesFound"
+                title={this.props.searchResultCount + ' ' + i18n.t('entries')}
+              />
               {this.props.currentDirectoryPath && (
-                <div style={{ whiteSpace: 'nowrap' }}>
+                <div>
                   {this.state.pathParts &&
                     this.state.pathParts.map(pathPart => (
                       <Button
