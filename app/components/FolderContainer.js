@@ -46,6 +46,7 @@ import {
   normalizePath,
   extractShortDirectoryName
 } from '../utils/paths';
+import PlatformIO from '../services/platform-io';
 
 // https://reactjs.org/blog/2017/05/18/whats-new-in-create-react-app.html#code-splitting-with-dynamic-import
 // https://medium.com/@magbicaleman/intro-to-dynamic-import-in-create-react-app-6305bb397c46
@@ -184,17 +185,17 @@ class FolderContainer extends React.Component<Props, State> {
         currentLocationPath = nextProps.currentLocationPath;
       }
       // Make the path unix like ending always with /
-      const normalizedOrigCurrentPath = normalizePath(nextProps.currentDirectoryPath.split('\\').join('/'));
-      let normalizedCurrentPath = normalizedOrigCurrentPath;
-      const normalizedCurrentLocationPath = normalizePath(currentLocationPath.split('\\').join('/'));
+      const addSlash = PlatformIO.haveObjectStoreSupport() ? '//' : '/';
+      let normalizedCurrentPath = addSlash + normalizePath(nextProps.currentDirectoryPath.split('\\').join('/'));
+      const normalizedCurrentLocationPath = addSlash + normalizePath(currentLocationPath.split('\\').join('/'));
       // console.log('Current path : ' + normalizedCurrentPath);
       // console.log('Current location path : ' + normalizedCurrentLocationPath);
       let pathParts = [];
-      while (normalizedCurrentPath.lastIndexOf('/') > 0 && normalizedCurrentPath.startsWith(currentLocationPath)) {
-        // console.log('Current splitting : ' + normalizedCurrentPath);
-        pathParts.push(normalizedCurrentPath);
+      while (normalizedCurrentPath.lastIndexOf('/') > 0 && normalizedCurrentPath.startsWith(normalizedCurrentLocationPath)) {
+        pathParts.push(normalizedCurrentPath.substring(PlatformIO.haveObjectStoreSupport() ? 2 : 1));
         normalizedCurrentPath = normalizedCurrentPath.substring(0, normalizedCurrentPath.lastIndexOf('/'));
       }
+      console.log('Path parts : ' + JSON.stringify(pathParts));
       if (pathParts.length >= 1) {
         pathParts = pathParts.slice(1, pathParts.length); // remove current directory
       }
@@ -346,7 +347,7 @@ class FolderContainer extends React.Component<Props, State> {
       loadDirectoryContent,
       classes
     } = this.props;
-    // console.log(this.props.windowHeight);
+    const normalizedCurrentDirPath = normalizePath(currentDirectoryPath.split('\\').join('/'));
     return (
       <HotKeys handlers={this.keyBindingHandlers}>
         <div className={classes.mainPanel}>
@@ -384,7 +385,7 @@ class FolderContainer extends React.Component<Props, State> {
                     onContextMenu={this.openDirectoryMenu}
                   >
                     {extractShortDirectoryName(
-                      normalizePath(currentDirectoryPath)
+                      normalizePath(normalizedCurrentDirPath), '/'
                     )}
                     <MoreVertIcon />
                   </Button>
