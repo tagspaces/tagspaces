@@ -1355,16 +1355,18 @@ export const getDirectoryContent = (state: Object) =>
   state.app.currentDirectoryEntries;
 export const getDirectoryPath = (state: Object) =>
   state.app.currentDirectoryPath;
-/* export const getPathCurrentLocation = (state: Object) => {
+export const getCurrentLocationPath = (state: Object) => {
   let pathCurrentLocation;
-  state.locations.map((location) => {
-    if (state.app.currentLocationId && location.uuid === state.app.currentLocationId) {
-      pathCurrentLocation = location.path[0];
-    }
-    return true;
-  });
+  if (state.locations) {
+    state.locations.map((location) => {
+      if (state.app.currentLocationId && location.uuid === state.app.currentLocationId) {
+        pathCurrentLocation = location.paths[0];
+      }
+      return true;
+    });
+  }
   return pathCurrentLocation;
-}; */
+};
 export const isUpdateAvailable = (state: Object) => state.app.isUpdateAvailable;
 export const isUpdateInProgress = (state: Object) =>
   state.app.isUpdateInProgress;
