@@ -550,7 +550,10 @@ export const actions = {
     const currentLocationPath = normalizePath(getCurrentLocationPath(state));
 
     if (currentDirectoryPath) {
-      const parentDirectory = extractParentDirectoryPath(currentDirectoryPath);
+      const dirSep = PlatformIO.haveObjectStoreSupport() ? '/' : AppConfig.dirSeparator;
+      const parentDirectory = extractParentDirectoryPath(currentDirectoryPath, dirSep);
+      // console.log('parentDirectory: ' + parentDirectory);
+      // console.log('currentDirectoryPath: ' + currentDirectoryPath);
       if (parentDirectory.startsWith(currentLocationPath)) {
         dispatch(actions.loadDirectoryContent(parentDirectory));
       } else {
