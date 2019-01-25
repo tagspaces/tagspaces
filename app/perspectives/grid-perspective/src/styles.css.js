@@ -142,7 +142,7 @@ export default (theme) => ({
     marginTop: 5,
     minHeight: 10,
     height: 20,
-    borderRadius: 5
+    borderRadius: 3
   },
   gridFolder: {
     color: 'white',
@@ -151,8 +151,8 @@ export default (theme) => ({
     marginRight: 5,
     // marginBottom: 5,
     minHeight: 10,
-    height: 20
-    // borderRadius: 5
+    height: 20,
+    borderRadius: 3
   },
   topToolbar: {
     paddingLeft: 5,
