@@ -167,7 +167,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
       return new Promise(resolve => this.setState({ errorTextName, errorTextPath, disableConfirmButton }, resolve(!disableConfirmButton)));
     } else if (this.state.type === locationType.TYPE_CLOUD) {
       let cloudErrorTextName = false;
-      let cloudErrorTextPath = false;
+      // let cloudErrorTextPath = false;
       let cloudErrorAccessKey = false;
       let cloudErrorSecretAccessKey = false;
       let cloudErrorBucketName = false;
@@ -178,7 +178,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
         disableConfirmButton = true;
       } else if (field === 'storeName'
         && !this.state.cloudErrorTextName
-        && !this.state.cloudErrorTextPath
+        // && !this.state.cloudErrorTextPath
         && !this.state.cloudErrorAccessKey
         && !this.state.cloudErrorSecretAccessKey
         && !this.state.cloudErrorBucketName
@@ -189,12 +189,12 @@ class CreateLocationDialog extends React.Component<Props, State> {
         }));
       }
 
-      if (!this.state.storePath || this.state.storePath.length === 0) {
+      /* if (!this.state.storePath || this.state.storePath.length === 0) {
         cloudErrorTextPath = true;
         disableConfirmButton = true;
       } else if (field === 'storePath'
         && !this.state.cloudErrorTextName
-        && !this.state.cloudErrorTextPath
+        // && !this.state.cloudErrorTextPath
         && !this.state.cloudErrorAccessKey
         && !this.state.cloudErrorSecretAccessKey
         && !this.state.cloudErrorBucketName
@@ -203,14 +203,14 @@ class CreateLocationDialog extends React.Component<Props, State> {
         return new Promise(((resolve) => {
           resolve(true);
         }));
-      }
+        } */
 
       if (!this.state.accessKeyId || this.state.accessKeyId.length === 0) {
         cloudErrorAccessKey = true;
         disableConfirmButton = true;
       } else if (field === 'accessKeyId'
         && !this.state.cloudErrorTextName
-        && !this.state.cloudErrorTextPath
+        // && !this.state.cloudErrorTextPath
         && !this.state.cloudErrorAccessKey
         && !this.state.cloudErrorSecretAccessKey
         && !this.state.cloudErrorBucketName
@@ -226,7 +226,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
         disableConfirmButton = true;
       } else if (field === 'secretAccessKey'
         && !this.state.cloudErrorTextName
-        && !this.state.cloudErrorTextPath
+        // && !this.state.cloudErrorTextPath
         && !this.state.cloudErrorAccessKey
         && !this.state.cloudErrorSecretAccessKey
         && !this.state.cloudErrorBucketName
@@ -242,7 +242,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
         disableConfirmButton = true;
       } else if (field === 'bucketName'
         && !this.state.cloudErrorTextName
-        && !this.state.cloudErrorTextPath
+        // && !this.state.cloudErrorTextPath
         && !this.state.cloudErrorAccessKey
         && !this.state.cloudErrorSecretAccessKey
         && !this.state.cloudErrorBucketName
@@ -260,7 +260,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
 
       return new Promise(resolve => this.setState({
         cloudErrorTextName,
-        cloudErrorTextPath,
+        // cloudErrorTextPath,
         cloudErrorAccessKey,
         cloudErrorSecretAccessKey,
         cloudErrorBucketName,
@@ -307,7 +307,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
         this.props.onClose();
         this.props.resetState('createLocationDialogKey');
       }
-      return haveErrors;
+      return true;
     }).catch((error) => {
       console.debug('Failed validation', error);
     });

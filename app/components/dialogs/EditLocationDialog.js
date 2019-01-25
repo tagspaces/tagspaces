@@ -139,7 +139,7 @@ class EditLocationDialog extends React.Component<Props, State> {
     // const nameRegex = this.state.name.match('^[A-Z][-a-zA-Z]+$');
     if (this.state.type === locationType.TYPE_CLOUD) {
       let cloudErrorTextName = false;
-      let cloudErrorTextPath = false;
+      // let cloudErrorTextPath = false;
       let cloudErrorAccessKey = false;
       let cloudErrorSecretAccessKey = false;
       let cloudErrorBucketName = false;
@@ -150,10 +150,10 @@ class EditLocationDialog extends React.Component<Props, State> {
         disableConfirmButton = true;
       }
 
-      if (!this.state.storePath || this.state.storePath.length === 0) {
+      /* if (!this.state.storePath || this.state.storePath.length === 0) {
         cloudErrorTextPath = true;
         disableConfirmButton = true;
-      }
+      } */
 
       if (!this.state.accessKeyId || this.state.accessKeyId.length === 0) {
         cloudErrorAccessKey = true;
@@ -177,7 +177,7 @@ class EditLocationDialog extends React.Component<Props, State> {
 
       this.setState({
         cloudErrorTextName,
-        cloudErrorTextPath,
+        // cloudErrorTextPath,
         cloudErrorAccessKey,
         cloudErrorSecretAccessKey,
         cloudErrorBucketName,
