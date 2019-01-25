@@ -255,6 +255,7 @@ class GridPerspective extends React.Component<Props, State> {
         isObj(firstSelectedElement) &&
         !isVisibleOnScreen(firstSelectedElement)
       ) {
+        // firstSelectedElement.parentNode.scrollTop = firstSelectedElement.offsetTop - firstSelectedElement.parentNode.offsetTop;
         firstSelectedElement.scrollIntoView(false);
       }
     }
