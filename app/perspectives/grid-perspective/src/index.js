@@ -89,6 +89,7 @@ import IOActions from '../../../reducers/io-actions';
 import {
   actions as AppActions,
   getLastSelectedEntry,
+  getSelectedEntries,
   isLoading
 } from '../../../reducers/app';
 
@@ -100,6 +101,7 @@ type Props = {
   classes: Object,
   currentDirectoryPath: string,
   lastSelectedEntryPath: string | null,
+  selectedEntries: Array<Object>,
   isAppLoading: boolean,
   openFile: (path: string, isFile?: boolean) => void,
   deleteFile: (path: string) => void,
@@ -110,6 +112,7 @@ type Props = {
   openFileNatively: (path: string) => void,
   loadParentDirectoryContent: () => void,
   setLastSelectedEntry: (entryPath: string | null) => void,
+  setSelectedEntries: (selectedEntries: Array<Object>) => void,
   addTags: () => void,
   removeTags: () => void,
   removeAllTags: () => void,
@@ -145,8 +148,7 @@ type State = {
   isAddRemoveTagsDialogOpened?: boolean,
   isFileRenameDialogOpened?: boolean,
   selectedEntryPath?: string,
-  selectedTag?: Tag | null,
-  selectedEntries?: Array<Object>
+  selectedTag?: Tag | null
 };
 
 class GridPerspective extends React.Component<Props, State> {
@@ -178,13 +180,12 @@ class GridPerspective extends React.Component<Props, State> {
       isMoveCopyFilesDialogOpened: false,
       isAddRemoveTagsDialogOpened: false,
       isFileRenameDialogOpened: false,
-      selectedTag: null,
-      selectedEntries: []
+      selectedTag: null
     };
   }
 
   componentWillReceiveProps = (nextProps: Props) => {
-    const { directoryContent, lastSelectedEntryPath, perspectiveCommand } = nextProps;
+    const { lastSelectedEntryPath, perspectiveCommand, selectedEntries } = nextProps;
 
     if (perspectiveCommand && perspectiveCommand.key) {
       this.props.setLastSelectedEntry(null);
@@ -192,17 +193,17 @@ class GridPerspective extends React.Component<Props, State> {
         this.toggleSelectAllFiles();
       } else if (
         perspectiveCommand.key === 'ADD_REMOVE_TAGS' &&
-        this.state.selectedEntries &&
-        this.state.selectedEntries.length > 0
+        selectedEntries &&
+        selectedEntries.length > 0
       ) {
         this.openAddRemoveTagsDialog();
       } else if (
         perspectiveCommand.key === 'RENAME_ENTRY' &&
-        this.state.selectedEntries &&
-        this.state.selectedEntries.length === 1
+        selectedEntries &&
+        selectedEntries.length === 1
       ) {
-        if (this.state.selectedEntries[0].isFile) {
-          this.setState({ selectedEntryPath: this.state.selectedEntries[0].path }, () => {
+        if (selectedEntries[0].isFile) {
+          this.setState({ selectedEntryPath: selectedEntries[0].path }, () => {
             this.openFileRenameDialog();
           });
         }
@@ -213,11 +214,6 @@ class GridPerspective extends React.Component<Props, State> {
 
     if (lastSelectedEntryPath !== null) {
       this.setState(
-        {
-          selectedEntries: directoryContent.filter(
-            fsEntry => fsEntry.path === lastSelectedEntryPath
-          )
-        },
         () => {
           this.computeFileOperationsEnabled();
           // this.makeFirstSelectedEntryVisible(); // disable due to wrong scrolling
@@ -249,7 +245,7 @@ class GridPerspective extends React.Component<Props, State> {
   );
 
   makeFirstSelectedEntryVisible = () => {
-    const { selectedEntries } = this.state;
+    const { selectedEntries } = this.props;
     if (selectedEntries && selectedEntries.length > 0) {
       const firstSelectedElement = document.querySelector(
         '[data-entry-id="' + selectedEntries[0].uuid + '"]'
@@ -312,7 +308,7 @@ class GridPerspective extends React.Component<Props, State> {
   };
 
   handleGridCellClick = (event, fsEntry: FileSystemEntry) => {
-    const { selectedEntries } = this.state;
+    const { selectedEntries } = this.props;
     if (event.shiftKey) {
       let lastSelectedIndex = this.props.directoryContent.findIndex(entry => entry.path === this.props.lastSelectedEntryPath);
       const currentSelectedIndex = this.props.directoryContent.findIndex(entry => entry.path === fsEntry.path);
@@ -331,42 +327,24 @@ class GridPerspective extends React.Component<Props, State> {
         this.props.setLastSelectedEntry(fsEntry.path);
       }
 
-      this.setState(
-        {
-          selectedEntries: entriesToSelect
-        },
-        this.computeFileOperationsEnabled
-      );
+      this.props.setSelectedEntries(entriesToSelect);
+      this.setState(this.computeFileOperationsEnabled);
     } else if (event.ctrlKey) {
       if (
         selectedEntries &&
         selectedEntries.some(entry => entry.path === fsEntry.path)
       ) {
-        this.setState(
-          {
-            selectedEntries: selectedEntries.filter(
-              entry => entry.path !== fsEntry.path
-            ) // deselect selected entry
-          },
-          this.computeFileOperationsEnabled
-        );
+        this.props.setSelectedEntries(selectedEntries.filter(entry => entry.path !== fsEntry.path)); // deselect selected entry
+        this.setState(this.computeFileOperationsEnabled);
         // this.props.setLastSelectedEntry(null);
       } else {
-        this.setState(
-          {
-            selectedEntries: [...selectedEntries, fsEntry]
-          },
-          this.computeFileOperationsEnabled
-        );
+        this.props.setSelectedEntries([...selectedEntries, fsEntry]);
+        this.setState(this.computeFileOperationsEnabled);
         // this.props.setLastSelectedEntry(fsEntry.path);
       }
     } else {
-      this.setState(
-        {
-          selectedEntries: [fsEntry]
-        },
-        this.computeFileOperationsEnabled
-      );
+      this.props.setSelectedEntries([fsEntry]);
+      this.setState(this.computeFileOperationsEnabled);
       this.props.setLastSelectedEntry(fsEntry.path);
       if (fsEntry.isFile) {
         if (this.state.singleClickAction === 'openInternal') {
@@ -381,9 +359,9 @@ class GridPerspective extends React.Component<Props, State> {
   };
 
   clearSelection = () => {
+    this.props.setSelectedEntries([]);
     this.setState(
       {
-        selectedEntries: [],
         allFilesSelected: false
       },
       this.computeFileOperationsEnabled
@@ -402,9 +380,9 @@ class GridPerspective extends React.Component<Props, State> {
         }
         return true;
       });
+      this.props.setSelectedEntries(selectedEntries);
       this.setState(
         {
-          selectedEntries,
           allFilesSelected: !this.state.allFilesSelected
         },
         this.computeFileOperationsEnabled
@@ -447,17 +425,13 @@ class GridPerspective extends React.Component<Props, State> {
   };
 
   handleGridCellDblClick = (event, fsEntry: FileSystemEntry) => {
+    this.props.setSelectedEntries([]);
     this.setState(
-      {
-        selectedEntries: []
-      },
       this.computeFileOperationsEnabled
     );
     if (fsEntry.isFile) {
+      this.props.setSelectedEntries([fsEntry]);
       this.setState(
-        {
-          selectedEntries: [fsEntry]
-        },
         this.computeFileOperationsEnabled
       );
       this.props.openFile(fsEntry.path);
@@ -468,23 +442,21 @@ class GridPerspective extends React.Component<Props, State> {
   };
 
   handleGridContextMenu = (event, fsEntry: FileSystemEntry) => {
-    const { selectedEntries } = this.state;
+    const { selectedEntries } = this.props;
 
     if (fsEntry.isFile) {
+      this.props.setSelectedEntries(event.ctrlKey ? [...selectedEntries, fsEntry] : [fsEntry]);
       this.setState({
         fileContextMenuOpened: true,
         fileContextMenuAnchorEl: event.currentTarget,
-        selectedEntryPath: fsEntry.path,
-        selectedEntries: event.ctrlKey
-          ? [...selectedEntries, fsEntry]
-          : [fsEntry]
+        selectedEntryPath: fsEntry.path
       });
     } else {
+      this.props.setSelectedEntries([fsEntry]);
       this.setState({
         dirContextMenuOpened: true,
         dirContextMenuAnchorEl: event.currentTarget,
-        selectedEntryPath: fsEntry.path,
-        selectedEntries: [fsEntry]
+        selectedEntryPath: fsEntry.path
       });
     }
   };
@@ -563,7 +535,7 @@ class GridPerspective extends React.Component<Props, State> {
   };
 
   computeFileOperationsEnabled = () => {
-    const { selectedEntries } = this.state;
+    const { selectedEntries } = this.props;
     if (selectedEntries && selectedEntries.length > 0) {
       let selectionContainsDirectories = false;
       selectedEntries.map(entry => {
@@ -594,8 +566,8 @@ class GridPerspective extends React.Component<Props, State> {
     const classes = this.props.classes;
     let selected = false;
     if (
-      this.state.selectedEntries &&
-      this.state.selectedEntries.some(entry => entry.path === fsEntry.path)
+      this.props.selectedEntries &&
+      this.props.selectedEntries.some(entry => entry.path === fsEntry.path)
     ) {
       selected = true;
     }
@@ -833,7 +805,8 @@ class GridPerspective extends React.Component<Props, State> {
 
   render() {
     const { classes, isAppLoading, directoryContent } = this.props;
-    const { selectedEntries = [], layoutType, entrySize, sortBy, orderBy } = this.state;
+    const { layoutType, entrySize, sortBy, orderBy } = this.state;
+    const { selectedEntries } = this.props;
     const selectedFilePaths = selectedEntries.filter(fsEntry => fsEntry.isFile).map(fsentry => fsentry.path);
 
     const sortedContent = this.sort(directoryContent, sortBy, orderBy);
@@ -981,7 +954,7 @@ class GridPerspective extends React.Component<Props, State> {
           addTags={this.props.addTags}
           removeTags={this.props.removeTags}
           removeAllTags={this.props.removeAllTags}
-          selectedEntries={this.state.selectedEntries}
+          selectedEntries={this.props.selectedEntries}
         />
         <MoveCopyFilesDialog
           open={this.state.isMoveCopyFilesDialogOpened}
@@ -1000,8 +973,8 @@ class GridPerspective extends React.Component<Props, State> {
           content={i18n.t('core:deleteConfirmationContent')}
           list={selectedFilePaths}
           confirmCallback={result => {
-            if (result && this.state.selectedEntries) {
-              this.state.selectedEntries.map(fsentry => {
+            if (result && this.props.selectedEntries) {
+              this.props.selectedEntries.map(fsentry => {
                 if (fsentry.isFile) {
                   this.props.deleteFile(fsentry.path);
                 }
@@ -1214,6 +1187,7 @@ class GridPerspective extends React.Component<Props, State> {
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators({
     moveFiles: IOActions.moveFiles,
+    setSelectedEntries: AppActions.setSelectedEntries
   }, dispatch);
 }
 
@@ -1222,6 +1196,7 @@ function mapStateToProps(state) {
     supportedFileTypes: getSupportedFileTypes(state),
     isAppLoading: isLoading(state),
     lastSelectedEntryPath: getLastSelectedEntry(state),
+    selectedEntries: getSelectedEntries(state)
   };
 }
 

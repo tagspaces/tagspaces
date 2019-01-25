@@ -63,6 +63,7 @@ export const types = {
   SET_NEW_VERSION_AVAILABLE: 'APP/SET_NEW_VERSION_AVAILABLE',
   SET_CURRENLOCATIONID: 'APP/SET_CURRENLOCATIONID',
   SET_LAST_SELECTED_ENTRY: 'APP/SET_LAST_SELECTED_ENTRY',
+  SET_SELECTED_ENTRIES: 'APP/SET_SELECTED_ENTRIES',
   SET_FILEDRAGGED: 'APP/SET_FILEDRAGGED',
   SET_READONLYMODE: 'APP/SET_READONLYMODE',
   RENAME_FILE: 'APP/RENAME_FILE',
@@ -132,6 +133,7 @@ export const initialState = {
   createDirectoryDialogOpened: false,
   selectDirectoryDialogOpened: false,
   lastSelectedEntry: null,
+  selectedEntries: [],
   isEntryInFullWidth: false,
   isGeneratingThumbs: false
 };
@@ -181,6 +183,9 @@ export default (state: Object = initialState, action: Object) => {
     console.timeEnd('SET_LAST_SELECTED_ENTRY');
     return result; */
     return { ...state, lastSelectedEntry: action.entryPath };
+  }
+  case types.SET_SELECTED_ENTRIES: {
+    return { ...state, selectedEntries: action.selectedEntries };
   }
   case types.TOGGLE_ABOUT_DIALOG: {
     return { ...state, aboutDialogOpened: !state.aboutDialogOpened };
@@ -701,6 +706,10 @@ export const actions = {
   setLastSelectedEntry: (entryPath: string | null) => ({
     type: types.SET_LAST_SELECTED_ENTRY,
     entryPath
+  }),
+  setSelectedEntries: (selectedEntries: Array<Object>) => ({
+    type: types.SET_SELECTED_ENTRIES,
+    selectedEntries
   }),
   deleteDirectory: (directoryPath: string) => (
     dispatch: (actions: Object) => void,
@@ -1377,6 +1386,7 @@ export const isUpdateInProgress = (state: Object) =>
   state.app.isUpdateInProgress;
 export const isOnline = (state: Object) => state.app.isOnline;
 export const getLastSelectedEntry = (state: Object) => state.app.lastSelectedEntry;
+export const getSelectedEntries = (state: Object) => state.app.selectedEntries;
 export const isFileOpened = (state: Object) => state.app.openedFiles.length > 0;
 export const isGeneratingThumbs = (state: Object) => state.app.isGeneratingThumbs;
 // export const isFileDragged = (state: Object) => state.app.isFileDragged;
