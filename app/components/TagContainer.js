@@ -20,11 +20,14 @@
 import React from 'react';
 import uuidv1 from 'uuid';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import Button from '@material-ui/core/Button';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import RemoveTagIcon from '@material-ui/icons/Close';
 import { type TagGroup, type Tag, getAllTags } from '../reducers/taglibrary';
 import { getTagColor, getTagTextColor } from '../reducers/settings';
+import { getSelectedEntries } from '../reducers/app';
+import TaggingActions from '../reducers/tagging-actions';
 
 type Props = {
   tag: Tag,
@@ -39,7 +42,10 @@ type Props = {
   isDragging: boolean,
   tagMode: 'default' | 'display' | 'remove',
   entryPath: string,
-  deleteIcon: Object
+  deleteIcon: Object,
+  addTags: (paths: Array<string>, tags: Array<Tag>) => void,
+  removeTags: (paths: Array<string>, tags: Array<Tag>) => void,
+  selectedEntries: Array<Object>
 };
 
 
@@ -81,7 +87,10 @@ class TagContainer extends React.Component<Props> {
       defaultBackgroundColor,
       tagGroup,
       entryPath,
-      allTags
+      allTags,
+      selectedEntries,
+      addTags,
+      removeTags
     } = this.props;
     const { tagMode } = this.props;
     let mode = '';
@@ -126,7 +135,19 @@ class TagContainer extends React.Component<Props> {
         role="presentation"
         data-tid={'tagContainer_' + tag.title.replace(/ /g, '_')}
         key={key || tag.id || uuidv1()}
-        onClick={event => { if (this.props.handleTagMenu) { this.props.handleTagMenu(event, tag, entryPath || tagGroup); } }}
+        onClick={event => {
+          if (event.ctrlKey) {
+            const selectedEntryPaths = [];
+            selectedEntries.map(entry => selectedEntryPaths.push(entry.path));
+            addTags(selectedEntryPaths, [tag]);
+          // Removing tags doesn't seem to work correctly here, yet. Using sidecar tagging, but the removeTagsFromEntry function in tagging.actions.js
+          // doesn't recignize it correctly, thinking it's a plain tag and thus tries to rename the files
+          // } else if (event.shiftKey) {
+          //   const selectedEntryPaths = [];
+          //   selectedEntries.map(entry => selectedEntryPaths.push(entry.path));
+          //   removeTags(selectedEntryPaths, [tag]);
+          } else if (this.props.handleTagMenu) { this.props.handleTagMenu(event, tag, entryPath || tagGroup); }
+        }}
         onContextMenu={event => { if (this.props.handleTagMenu) { this.props.handleTagMenu(event, tag, entryPath || tagGroup); } }}
         onDoubleClick={event => { if (this.props.handleTagMenu) { this.props.handleTagMenu(event, tag, entryPath || tagGroup); } }}
         style={{
@@ -167,7 +188,16 @@ function mapStateToProps(state) {
   return {
     allTags: getAllTags(state),
     defaultBackgroundColor: getTagColor(state),
-    defaultTextColor: getTagTextColor(state)
+    defaultTextColor: getTagTextColor(state),
+    selectedEntries: getSelectedEntries(state)
   };
 }
-export default connect(mapStateToProps)(TagContainer);
+
+function mapActionCreatorsToProps(dispatch) {
+  return bindActionCreators({
+    addTags: TaggingActions.addTags,
+    removeTags: TaggingActions.removeTags
+  }, dispatch);
+}
+
+export default connect(mapStateToProps, mapActionCreatorsToProps)(TagContainer);
