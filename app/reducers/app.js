@@ -547,7 +547,7 @@ export const actions = {
   ) => {
     const state = getState();
     const currentDirectoryPath = state.app.currentDirectoryPath;
-    const currentLocationPath = getCurrentLocationPath(state);
+    const currentLocationPath = normalizePath(getCurrentLocationPath(state));
 
     if (currentDirectoryPath) {
       const parentDirectory = extractParentDirectoryPath(currentDirectoryPath);
