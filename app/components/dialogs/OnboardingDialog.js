@@ -255,6 +255,7 @@ class OnboardingDialog extends React.Component<Props, State> {
                 onClick={this.props.onClose}
                 variant="contained"
                 color="primary"
+                data-tid="startTagSpacesAfterOnboarding"
               >
                 Start using TagSpaces
               </Button>
@@ -263,6 +264,7 @@ class OnboardingDialog extends React.Component<Props, State> {
               <Button
                 size="small"
                 onClick={this.handleNext}
+                data-tid="nextStepOnboarding"
               >
                 Next
               </Button>
