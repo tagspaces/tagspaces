@@ -67,6 +67,7 @@ import {
   NotificationTypes,
   getOpenedFiles,
   isReadOnlyMode,
+  getDirectoryContent,
   actions as AppActions
 } from '../reducers/app';
 
@@ -168,7 +169,9 @@ type Props = {
   isReadOnlyMode: boolean,
   setEntryPropertiesSplitSize: (size: number) => void,
   reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void,
-  setLastSelectedEntry: (path: string) => void
+  setLastSelectedEntry: (path: string) => void,
+  setSelectedEntries: (selectedEntries: Array<Object>) => void,
+  directoryContent: Array<Object>
 };
 
 type State = {
@@ -608,17 +611,21 @@ class EntryContainer extends React.Component<Props, State> {
 
   openNextFile = () => {
     if (this.state.currentEntry && this.state.currentEntry.path) {
-      const nextFile = this.props.getNextFile(this.state.currentEntry.path);
-      this.props.openFile(nextFile);
-      this.props.setLastSelectedEntry(nextFile);
+      const nextFilePath = this.props.getNextFile(this.state.currentEntry.path);
+      const nextFile = this.props.directoryContent.filter(entry => entry.path === nextFilePath);
+      this.props.openFile(nextFilePath);
+      this.props.setLastSelectedEntry(nextFilePath);
+      this.props.setSelectedEntries(nextFile);
     }
   };
 
   openPrevFile = () => {
     if (this.state.currentEntry && this.state.currentEntry.path) {
-      const prevFile = this.props.getPrevFile(this.state.currentEntry.path);
-      this.props.openFile(prevFile);
-      this.props.setLastSelectedEntry(prevFile);
+      const prevFilePath = this.props.getPrevFile(this.state.currentEntry.path);
+      const prevFile = this.props.directoryContent.filter(entry => entry.path === prevFilePath);
+      this.props.openFile(prevFilePath);
+      this.props.setLastSelectedEntry(prevFilePath);
+      this.props.setSelectedEntries(prevFile);
     }
   };
 
@@ -1135,6 +1142,7 @@ function mapStateToProps(state) {
     openedFiles: getOpenedFiles(state),
     settings: state.settings,
     isReadOnlyMode: isReadOnlyMode(state),
+    directoryContent: getDirectoryContent(state),
   };
 }
 
@@ -1157,6 +1165,7 @@ function mapActionCreatorsToProps(dispatch) {
     editTagForEntry: TaggingActions.editTagForEntry,
     reflectUpdateSidecarMeta: AppActions.reflectUpdateSidecarMeta,
     setLastSelectedEntry: AppActions.setLastSelectedEntry,
+    setSelectedEntries: AppActions.setSelectedEntries,
   }, dispatch);
 }
 
