@@ -518,7 +518,7 @@ class EntryProperties extends Component<Props, State> {
             </div>
             <Paper className={classes.tags}>
               <TagDropContainer entryPath={path}>
-                <TagsSelect tagQuery={tags} handleChange={this.handleChange} />
+                <TagsSelect tags={tags} handleChange={this.handleChange} />
               </TagDropContainer>
             </Paper>
           </div>

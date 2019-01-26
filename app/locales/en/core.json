@@ -338,7 +338,6 @@
   "showTagSpaces": "Show TagSpaces",
   "quitTagSpaces": "Quit TagSpaces",
   "switchTheme": "Switch theme",
-  "tagSearchType": "Tag search type",
   "bucketName": "Bucket Name",
   "regionSearch": "Search a region",
   "secretAccessKey": "Secret Access Key",
@@ -391,5 +390,8 @@
   "singleClickOpenInternally": "Single click opens file internally",
   "singleClickOpenExternally": "Single click opens file externally",
   "parentDirNotInLocation": "Unable to navigate! Parent folder not in the current location.",
+  "mustContainTheseTags": "Must contain all of these tags",
+  "atLeastOneOfTheseTags": "At least one of these tags",
+  "noneOfTheseTags": "None of these tags",
   "-": "-"
 }

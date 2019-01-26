@@ -178,7 +178,8 @@ const components = {
 type Props = {
   classes: Object,
   theme: Object,
-  tagQuery: string,
+  tags: Array<tag>,
+  tagSearchType: string,
   handleChange: () => void,
   allTags: Array<Tag>
 };
@@ -191,14 +192,14 @@ class TagsSelect extends React.Component<Props> {
     // console.groupEnd();
 
     if (actionMeta.action === 'select-option') {
-      this.props.handleChange('tagQuery', newValue, actionMeta.action);
+      this.props.handleChange(this.props.tagSearchType, newValue, actionMeta.action);
     } else if (actionMeta.action === 'create-option') {
       this.props.allTags.push(newValue);
-      this.props.handleChange('tagQuery', newValue, actionMeta.action);
+      this.props.handleChange(this.props.tagSearchType, newValue, actionMeta.action);
     } else if (actionMeta.action === 'remove-value') {
-      this.props.handleChange('tagQuery', newValue, actionMeta.action);
+      this.props.handleChange(this.props.tagSearchType, newValue, actionMeta.action);
     } else if (actionMeta.action === 'clear') {
-      this.props.handleChange('tagQuery', [], actionMeta.action);
+      this.props.handleChange(this.props.tagSearchType, [], actionMeta.action);
     }
   };
 
@@ -213,7 +214,7 @@ class TagsSelect extends React.Component<Props> {
       classes,
       theme,
       allTags,
-      tagQuery,
+      tags,
       defaultBackgroundColor,
       defaultTextColor
     } = this.props;
@@ -253,7 +254,7 @@ class TagsSelect extends React.Component<Props> {
               shrink: true,
             },
           }} */
-            value={tagQuery}
+            value={tags}
             onChange={this.handleChange}
             // onInputChange={this.handleInputSelectChange}
             // onCreateOption={this.handleCreate}

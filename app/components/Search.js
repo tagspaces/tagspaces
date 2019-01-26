@@ -70,18 +70,19 @@ type Props = {
 
 type State = {
   textQuery?: string,
-  tagQuery?: Array<Tag>,
-  tagConjunction?: string,
+  tagsAND?: Array<Tag>,
+  tagsOR?: Array<Tag>,
+  tagsNOT?: Array<Tag>,
   fileTypes?: Array<string>,
-  tags?: Array<string>,
   lastModified?: Date | string
 };
 
 class Search extends React.Component<Props, State> {
   state = {
     textQuery: '',
-    tagQuery: [],
-    tagConjunction: 'OR',
+    tagsAND: [],
+    tagsOR: [],
+    tagsNOT: [],
     fileTypes: FileTypeGroups.any,
     lastModified: ''
   };
@@ -106,8 +107,9 @@ class Search extends React.Component<Props, State> {
     this.setState(
       {
         textQuery: '',
-        tagQuery: [],
-        tagConjunction: 'OR',
+        tagsAND: [],
+        tagsOR: [],
+        tagsNOT: [],
         fileTypes: FileTypeGroups.any
       },
       () => this.props.loadDirectoryContent(this.props.currentDirectory)
@@ -115,20 +117,12 @@ class Search extends React.Component<Props, State> {
   };
 
   executeSearch = () => {
-    const tags = [];
-
-    if (this.state.tagQuery) {
-      this.state.tagQuery.map((tag) => {
-        Object.entries(tag).map(([key, value]) => {
-          if (key === 'title') tags.push(value);
-        });
-      });
-    }
     const searchQuery: SearchQuery = {
       textQuery: this.state.textQuery,
       fileTypes: this.state.fileTypes,
-      tagConjunction: this.state.tagConjunction,
-      tags, // TODO put this.state.tagQuery Array<Tag> instead
+      tagsAND: this.state.tagsAND,
+      tagsOR: this.state.tagsOR,
+      tagsNOT: this.state.tagsNOT,
       maxSearchResults: this.props.maxSearchResults
     };
     console.log('Search object: ' + JSON.stringify(searchQuery));
@@ -179,51 +173,32 @@ class Search extends React.Component<Props, State> {
               }
             />
           </FormControl>
+          <Typography variant="caption" style={{ marginTop: 10 }}>
+            {i18n.t('core:mustContainTheseTags')}
+          </Typography>
           <FormControl
             className={classes.formControl}
             disabled={indexing}
           >
-            {/* <InputLabel htmlFor="searchTags">{i18n.t('core:searchTags')}</InputLabel> */}
-            <TagsSelect tagQuery={this.state.tagQuery} handleChange={this.handleChange} />
-            {/* <Input
-              id="tagQuery"
-              name="tagQuery"
-              placeholder={i18n.t('core:tagsWithInterval')}
-              value={this.state.tagQuery}
-              onKeyDown={this.startSearch}
-              onChange={this.handleInputChange}
-            /> */}
+            <TagsSelect tags={this.state.tagsAND} handleChange={this.handleChange} tagSearchType={'tagsAND'} />
           </FormControl>
+          <Typography variant="caption" style={{ marginTop: 10 }}>
+            {i18n.t('core:atLeastOneOfTheseTags')}
+          </Typography>
           <FormControl
-            component="fieldset"
             className={classes.formControl}
-            disabled={indexing || !Pro}
-            title={i18n.t('core:thisFunctionalityIsAvailableInPro')}
+            disabled={indexing}
           >
-            <FormHelperText>
-              {i18n.t('core:tagSearchType')}
-            </FormHelperText>
-            <RadioGroup
-              aria-label={i18n.t('core:tagSearchType')}
-              name="tagConjunction"
-              value={this.state.tagConjunction}
-              onChange={this.handleInputChange}
-              row
-            >
-              <FormControlLabel
-                value="OR"
-                control={<Radio />}
-                label={i18n.t('core:tagSearchOR')}
-                title={i18n.t('core:tagSearchORTitle')}
-                style={{ paddingRight: 20 }}
-              />
-              <FormControlLabel
-                value="AND"
-                control={<Radio />}
-                label={i18n.t('core:tagSearchAND')}
-                title={i18n.t('core:tagSearchANDTitle')}
-              />
-            </RadioGroup>
+            <TagsSelect tags={this.state.tagsOR} handleChange={this.handleChange} tagSearchType={'tagsOR'} />
+          </FormControl>
+          <Typography variant="caption" style={{ marginTop: 10 }}>
+            {i18n.t('core:noneOfTheseTags')}
+          </Typography>
+          <FormControl
+            className={classes.formControl}
+            disabled={indexing}
+          >
+            <TagsSelect tags={this.state.tagsNOT} handleChange={this.handleChange} tagSearchType={'tagsNOT'} />
           </FormControl>
           <FormControl
             className={classes.formControl}

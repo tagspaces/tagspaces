@@ -47,8 +47,9 @@ export const FileTypeGroups = {
 export type SearchQuery = {
   textQuery?: string,
   fileTypes?: Array<string>,
-  tagConjunction?: 'AND' | 'OR',
-  tags?: Array<string>, // TODO Array<Tag>
+  tagsAND?: Array<Tag>,
+  tagsOR?: Array<Tag>,
+  tagsNOT?: Array<Tag>,
   lastChanged?: Date,
   maxSearchResults?: number
 };
@@ -110,62 +111,86 @@ const fuseOptions = {
   }]
 };
 
-function constructTagQuery(searchQuery: SearchQuery): string {
-  let tagQuery = '';
-  if (searchQuery.tags && searchQuery.tags.length >= 1) {
-    tagQuery = 'tags[? (';
-    searchQuery.tags.map(tag => {
-      const cleanedTag = tag.trim(); // .toLowerCase();
-      if (cleanedTag.length > 0) {
-        tagQuery += 'title==\'' + cleanedTag + '\' || ';
+// Constructs the string for the JMESPath search query.  We first filter for all ORTags, then continuously pipe the result in to the
+// filters for all AND and NOT tags. The Pro version can pipe the result into an additional filter for extension instead of tags.title.
+// The final string for the tag search should look like this:
+// index[? tags[? title=='ORTag1' || title=='ORTag2']] | [? tags[? title=='ANDTag1']] | [? tags[? title=='ANDTag2']] | [?!(tags[? title=='NOTTag1'])] | [?!(tags[? title=='NOTTag2'])] | extensionFilter
+function constructjmespathQuery(searchQuery: SearchQuery): string {
+  let jmespathQuery = '';
+  const ANDtagsExist = searchQuery.tagsAND && searchQuery.tagsAND.length >= 1;
+  const ORtagsExist = searchQuery.tagsOR && searchQuery.tagsOR.length >= 1;
+  const NOTtagsExist = searchQuery.tagsNOT && searchQuery.tagsNOT.length >= 1;
+  if (ANDtagsExist || ORtagsExist || NOTtagsExist) {
+    jmespathQuery = 'index[?';
+
+    if (ORtagsExist) {
+      jmespathQuery += ' tags[? ';
+      searchQuery.tagsOR.forEach(tag => {
+        const cleanedTagTitle = tag.title.trim(); // .toLowerCase();
+        if (cleanedTagTitle.length > 0) {
+          jmespathQuery += 'title==\'' + cleanedTagTitle + '\' || ';
+        }
+        return true;
+      });
+    }
+
+    if (ANDtagsExist) {
+      if (jmespathQuery.endsWith(' || ')) {
+        jmespathQuery = jmespathQuery.substring(0, jmespathQuery.length - 4) + ']] | [? tags[? ';
+      } else {
+        jmespathQuery += ' tags[? ';
       }
-      return true;
-    });
-    if (tagQuery.endsWith('|| ')) {
-      tagQuery = tagQuery.substring(0, tagQuery.length - 3) + ') ]';
+      searchQuery.tagsAND.forEach(tag => {
+        const cleanedTagTitle = tag.title.trim(); // .toLowerCase();
+        if (cleanedTagTitle.length > 0) {
+          jmespathQuery += 'title==\'' + cleanedTagTitle + '\']] | [? tags[? ';
+        }
+      });
+    }
+
+    if (NOTtagsExist) {
+      if (jmespathQuery.endsWith(' || ')) {
+        jmespathQuery = jmespathQuery.substring(0, jmespathQuery.length - 4) + ']] | [?!(tags[? ';
+      } else if (jmespathQuery.endsWith('[? tags[? ')) {
+        jmespathQuery = jmespathQuery.substring(0, jmespathQuery.length - 10) + '[?!(tags[? ';
+      } else {
+        jmespathQuery += '!(tags[? ';
+      }
+      searchQuery.tagsNOT.forEach(tag => {
+        const cleanedTagTitle = tag.title.trim(); // .toLowerCase();
+        if (cleanedTagTitle.length > 0) {
+          jmespathQuery += 'title==\'' + cleanedTagTitle + '\'])] | [?!(tags[? ';
+        }
+        return true;
+      });
+    }
+
+    if (jmespathQuery.endsWith(' || ')) {
+      jmespathQuery = jmespathQuery.substring(0, jmespathQuery.length - 4) + ']]';
+    } else if (jmespathQuery.endsWith(' | [? tags[? ')) {
+      jmespathQuery = jmespathQuery.substring(0, jmespathQuery.length - 13);
+    } else if (jmespathQuery.endsWith(' | [?!(tags[? ')) {
+      jmespathQuery = jmespathQuery.substring(0, jmespathQuery.length - 14);
     }
   }
-  return tagQuery;
-}
 
-function constructFuseQuery(searchQuery: SearchQuery): string {
-  if (!searchQuery) return '';
-  let fuseQuery = (searchQuery.textQuery) ? searchQuery.textQuery : '';
-  if (searchQuery.tags && searchQuery.tags.length >= 1) {
-    searchQuery.tags.map(tag => {
-      const cleanedTag = tag.trim().toLowerCase();
-      fuseQuery = fuseQuery + ' ' + cleanedTag;
-      return true;
-    });
-  }
-  return fuseQuery;
+  // if (Pro) ...
+
+  return jmespathQuery;
 }
 
 export default class Search {
   static searchLocationIndex = (locationContent: Array<Object>, searchQuery: SearchQuery): Promise<Array<Object> | []> => new Promise((resolve) => {
-    // let result = jmespath.search({ index: locationContent }, "index[?contains(name, '" + searchQuery.textQuery + "')]");
-    // ?tags[?title=='todo' || title=='high'
-    // index[?extension=='png' || extension=='jpg']
-
+    const jmespathQuery = constructjmespathQuery(searchQuery);
+    let jmespathResults;
     let results;
 
-    const extensionQuery = Pro ? Pro.Search.constructFileTypeQuery(searchQuery) : '';
-    const tagQuery = Pro ? Pro.Search.constructTagQuery(searchQuery) : constructTagQuery(searchQuery);
-    let jmespathQuery;
-
-    if (extensionQuery.length > 1 && tagQuery.length > 1) { // extension query and tags available
-      jmespathQuery = 'index[? ' + extensionQuery + ' && ' + tagQuery + ']';
-    } else if (extensionQuery.length <= 1 && tagQuery.length > 1) { // only tags
-      jmespathQuery = 'index[? ' + tagQuery + ']';
-    } else if (extensionQuery.length > 1 && tagQuery.length <= 1) { // only extension query
-      jmespathQuery = 'index[? ' + extensionQuery + ']';
-    }
     if (jmespathQuery) {
       console.log('jmespath query: ' + jmespathQuery);
       console.time('jmespath');
-      results = jmespath.search({ index: results || locationContent }, jmespathQuery);
+      jmespathResults = jmespath.search({ index: jmespathResults || locationContent }, jmespathQuery);
       console.timeEnd('jmespath');
-      console.log('jmespath results: ' + results.length);
+      console.log('jmespath results: ' + jmespathResults.length);
     }
 
     // if (Pro && Pro.Search.filterIndex) {
@@ -173,12 +198,13 @@ export default class Search {
     // }
 
     if (searchQuery.textQuery && searchQuery.textQuery.length > 1) {
-      const fuseQuery = constructFuseQuery(searchQuery);
-      console.log('fuse query: ' + fuseQuery);
+      console.log('fuse query: ' + searchQuery.textQuery);
       console.time('fuse');
-      const fuse = new Fuse(results || locationContent, fuseOptions);
-      results = fuse.search(fuseQuery);
+      const fuse = new Fuse(jmespathResults || locationContent, fuseOptions);
+      results = fuse.search(searchQuery.textQuery);
       console.timeEnd('fuse');
+    } else {
+      results = jmespathResults;
     }
 
     if (results) {
