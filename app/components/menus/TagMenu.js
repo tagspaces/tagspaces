@@ -67,7 +67,7 @@ class TagLibraryMenu extends React.Component<Props, State> {
   showFilesWithThisTag = () => {
     if (this.props.selectedTag) {
       this.props.searchLocationIndex({
-        tags: [this.props.selectedTag.title],
+        tagsAND: [this.props.selectedTag.title],
         maxSearchResults: this.props.maxSearchResults
       });
     }
