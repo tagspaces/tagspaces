@@ -397,6 +397,7 @@ class FolderContainer extends React.Component<Props, State> {
                     loadDirectoryContent={this.props.loadDirectoryContent}
                     openFileNatively={this.props.openFileNatively}
                     openDirectory={this.props.openDirectory}
+                    loadParentDirectoryContent={this.props.loadParentDirectoryContent}
                     reflectCreateEntry={this.props.reflectCreateEntry}
                     openFile={this.props.openFile}
                     toggleCreateFileDialog={this.props.toggleCreateFileDialog}

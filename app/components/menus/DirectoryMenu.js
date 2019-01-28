@@ -53,6 +53,7 @@ type Props = {
   deleteDirectory: (path: string) => void,
   reflectCreateEntry?: (path: string, isFile: boolean) => void,
   toggleCreateFileDialog?: () => void,
+  loadParentDirectoryContent?: () => void,
   openFileNatively?: (path: string) => void,
   perspectiveMode: boolean,
   showNotification?: (
@@ -85,10 +86,7 @@ class DirectoryMenu extends React.Component<Props, State> {
 
   openParentDirectory = () => {
     this.props.onClose();
-    const parentDirectory = extractParentDirectoryPath(
-      this.props.directoryPath
-    );
-    this.props.loadDirectoryContent(parentDirectory);
+    this.props.loadParentDirectoryContent();
   };
 
   openDirectory = () => {
