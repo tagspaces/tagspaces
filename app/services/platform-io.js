@@ -250,6 +250,9 @@ export default class PlatformIO {
   static openDirectory = (dirPath: string): void =>
     nativeAPI.openDirectory(dirPath);
 
+  static showInFileManager = (dirPath: string): void =>
+    nativeAPI.showInFileManager(dirPath);
+
   static openFile = (filePath: string): void => nativeAPI.openFile(filePath);
 
   static openUrl = (url: string): void => nativeAPI.openUrl(url);

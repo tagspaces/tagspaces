@@ -104,6 +104,7 @@ type Props = {
   deleteDirectory: (path: string) => void,
   loadDirectoryContent: (path: string) => void,
   openDirectory: (path: string) => void,
+  showInFileManager: (path: string) => void,
   openFileNatively: (path: string) => void,
   loadParentDirectoryContent: () => void,
   setLastSelectedEntry: (entryPath: string | null) => void,
@@ -1015,7 +1016,7 @@ class GridPerspective extends React.Component<Props, State> {
           openAddRemoveTagsDialog={this.openAddRemoveTagsDialog}
           openFile={this.props.openFile}
           openFileNatively={this.props.openFileNatively}
-          openDirectory={this.props.openDirectory}
+          showInFileManager={this.props.showInFileManager}
           selectedFilePath={this.state.selectedEntryPath}
         />
         <DirectoryMenu
@@ -1025,6 +1026,7 @@ class GridPerspective extends React.Component<Props, State> {
           directoryPath={this.state.selectedEntryPath}
           loadDirectoryContent={this.props.loadDirectoryContent}
           openDirectory={this.props.openDirectory}
+          showInFileManager={this.props.showInFileManager}
           openFileNatively={this.props.openFileNatively}
           openFile={this.props.openFile}
           deleteDirectory={this.props.deleteDirectory}

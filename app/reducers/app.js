@@ -735,6 +735,9 @@ export const actions = {
   openDirectory: (directoryPath: string) => () => {
     PlatformIO.openDirectory(directoryPath);
   },
+  showInFileManager: (filePath: string) => () => {
+    PlatformIO.showInFileManager(filePath);
+  },
   renameDirectory: (directoryPath: string, newDirectoryName: string) => (
     dispatch: (actions: Object) => void
   ) => {

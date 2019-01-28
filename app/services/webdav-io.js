@@ -630,6 +630,15 @@ export default class WebDAVIO {
   };
 
   /**
+   * Opens directory in new tab / window, selecting the file
+   */
+  showInFileManager = (filePath: string) => {
+    console.log(
+      'Showing item ' + filePath + ' not possible for the web version.'
+    );
+  };
+
+  /**
    * Open the file url in a new tab / window
    */
   openFile = (filePath: string): void => {
