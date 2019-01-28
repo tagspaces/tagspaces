@@ -188,8 +188,11 @@ export function generateThumbnailPromise(
     if (fileSize && fileSize < maxFileSize) {
       return Pro.ThumbsGenerator.generateZipContainerImageThumbnail(fileURL, maxSize, supportedImgs);
     }
-  } else if (Pro && supportedVideos.indexOf(ext) >= 0) {
-    return Pro.ThumbsGenerator.generateVideoThumbnail(fileURL, maxSize);
+  } else if (supportedVideos.indexOf(ext) >= 0) {
+    if (Pro) {
+      return Pro.ThumbsGenerator.generateVideoThumbnail(fileURL, maxSize);
+    }
+    return generateVideoThumbnail(fileURL);
   }
   return generateDefaultThumbnail();
 }
@@ -271,5 +274,48 @@ function generateImageThumbnail(fileURL) {
     };
     img.src = fileURL;
     img.onerror = errorHandler;
+  });
+}
+
+function generateVideoThumbnail(fileURL) {
+  return new Promise((resolve) => {
+    let canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    let img = new Image();
+    let video = document.createElement('video');
+    const captureTime = 1.5; // time in seconds at which to capture the image from the video
+
+    const errorHandler = err => {
+      console.warn(
+        'Error while generating thumbnail for: ' +
+        fileURL +
+        ' - ' +
+        JSON.stringify(err)
+      );
+      resolve('');
+    };
+
+    video.onloadedmetadata = () => {
+      video.currentTime = Math.min(Math.max(0, captureTime), video.duration);
+      if (video.videoWidth >= video.videoHeight) {
+        canvas.width = maxSize;
+        canvas.height = (maxSize * video.videoHeight) / video.videoWidth;
+      } else {
+        canvas.height = maxSize;
+        canvas.width = (maxSize * video.videoWidth) / video.videoHeight;
+      }
+    };
+
+    video.onseeked = () => {
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const dataurl = canvas.toDataURL(AppConfig.thumbType);
+      img.onerror = errorHandler;
+      resolve(dataurl);
+      img = null;
+      canvas = null;
+      video = null;
+    };
+    video.onerror = errorHandler;
+    video.src = fileURL;
   });
 }
