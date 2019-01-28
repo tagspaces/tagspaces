@@ -130,7 +130,7 @@ class DirectoryMenu extends React.Component<Props, State> {
 
   showInFileManager = () => {
     this.props.onClose();
-    this.props.showInFileManager(this.props.directoryPath);
+    this.props.openDirectory(this.props.directoryPath);
   };
 
   addExistingFile = () => {
