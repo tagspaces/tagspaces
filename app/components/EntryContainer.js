@@ -329,6 +329,7 @@ class EntryContainer extends React.Component<Props, State> {
     let data;
     let message;
     let textFilePath;
+    let nextFilePath;
     let nextFile;
     if (msg.data) {
       data = JSON.parse(msg.data);
@@ -350,9 +351,11 @@ class EntryContainer extends React.Component<Props, State> {
       this.editFile();
       break;
     case 'playbackEnded':
-      nextFile = this.props.getNextFile(this.state.currentEntry.path);
-      this.props.openFile(nextFile);
-      this.props.setLastSelectedEntry(nextFile);
+      nextFilePath = this.props.getNextFile(this.state.currentEntry.path);
+      nextFile = this.props.directoryContent.filter(entry => entry.path === nextFilePath);
+      this.props.openFile(nextFilePath);
+      this.props.setLastSelectedEntry(nextFilePath);
+      this.props.setSelectedEntries(nextFile);
       break;
     case 'openLinkExternally':
       console.log('Open link externally: ' + data.link);
