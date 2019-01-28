@@ -18,7 +18,11 @@
  */
 
 import nl from 'js-webdav-client';
-import { extractParentDirectoryPath, normalizePath } from '../utils/paths';
+import {
+  extractParentDirectoryPath,
+  normalizePath,
+  getMetaFileLocationForDir
+} from '../utils/paths';
 import AppConfig from '../config';
 
 export default class WebDAVIO {
@@ -232,10 +236,8 @@ export default class WebDAVIO {
 
             if (!lite) {
               if (isDir) { // Read tsm.json from subfolders
-                const metaDirAvailable = metaContent.find(obj => obj.name === AppConfig.metaFolderFile);
-                if (metaDirAvailable) {
-                  metaPromises.push(this.getEntryMeta(eentry, metaDirAvailable.path));
-                }
+                const pathMetaFile = getMetaFileLocationForDir(eentry.path);
+                metaPromises.push(this.getEntryMeta(eentry, pathMetaFile));
               } else {
                 const metaFileAvailable = metaContent.find(obj => obj.name === fileName + AppConfig.metaFileExt);
                 if (metaFileAvailable) {
@@ -291,27 +293,38 @@ export default class WebDAVIO {
   );
 
   getEntryMeta = (eentry: Object, metaPath: string): Promise<Object> => {
-    if (eentry.isFile) {
-      // const metaFilePath = getMetaFileLocationForFile(eentry.path);
-      return this.loadTextFilePromise(metaPath).then(result => {
-        // eslint-disable-next-line no-param-reassign
-        eentry.meta = JSON.parse(result.trim());
-        return eentry;
-      });
-    }
-    // const folderMetaPath = normalizePath(eentry.path) + AppConfig.dirSeparator + AppConfig.metaFolderFile; // getMetaFileLocationForDir(eentry.path);
-    if (!eentry.path.endsWith(AppConfig.metaFolder + '/')) { // Skip the /.ts folder
-      return this.loadTextFilePromise(metaPath).then(result => {
-        // eslint-disable-next-line no-param-reassign
-        eentry.meta = JSON.parse(result.trim());
-        return eentry;
-      });
-    }
-
     return new Promise((resolve) => {
+      if (eentry.isFile) {
+        this.loadTextFilePromise(metaPath).then(result => {
+          // eslint-disable-next-line no-param-reassign
+          eentry.meta = JSON.parse(result.trim());
+          return resolve(eentry);
+          // resolve({
+          //   ...eentry,
+          //   meta: JSON.parse(result.trim())
+          // });
+        }).catch(err => {
+          console.log('No meta file for folder found: ' + eentry.path + ' - ' + err);
+          resolve(eentry);
+        });
+      } else if (!eentry.path.endsWith(AppConfig.metaFolder + '/')) { // Skip the /.ts folder
+        this.loadTextFilePromise(metaPath).then(result => {
+          // eslint-disable-next-line no-param-reassign
+          eentry.meta = JSON.parse(result.trim());
+          return resolve(eentry);
+          // resolve({
+          //   ...eentry,
+          //   meta: JSON.parse(result.trim())
+          // });
+        }).catch(err => {
+          console.log('No meta file for folder found: ' + eentry.path + ' - ' + err);
+          resolve(eentry);
+        });
+      }
       resolve(eentry);
     });
   };
+
   /**
    * Finds out the properties of a file or directory such last modification date or file size
    */
