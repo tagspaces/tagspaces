@@ -191,9 +191,8 @@ export function generateThumbnailPromise(
   } else if (supportedVideos.indexOf(ext) >= 0) {
     if (Pro) {
       return Pro.ThumbsGenerator.generateVideoThumbnail(fileURL, maxSize);
-    } else {
-      return generateVideoThumbnail(fileURL);
     }
+    return generateVideoThumbnail(fileURL);
   }
   return generateDefaultThumbnail();
 }
@@ -235,19 +234,19 @@ function generateImageThumbnail(fileURL) {
         */
         let angleInRadians;
         switch (orientation) {
-          case 8:
-            angleInRadians = 270 * (Math.PI / 180);
-            break;
-          case 3:
-            angleInRadians = 180 * (Math.PI / 180);
-            break;
-          case 6:
-            angleInRadians = 90 * (Math.PI / 180);
-            break;
-          case 1:
-            // ctx.rotate(0);
-            break;
-          default:
+        case 8:
+          angleInRadians = 270 * (Math.PI / 180);
+          break;
+        case 3:
+          angleInRadians = 180 * (Math.PI / 180);
+          break;
+        case 6:
+          angleInRadians = 90 * (Math.PI / 180);
+          break;
+        case 1:
+          // ctx.rotate(0);
+          break;
+        default:
           // ctx.rotate(0);
         }
         if (img.width >= img.height) {
@@ -280,11 +279,11 @@ function generateImageThumbnail(fileURL) {
 
 function generateVideoThumbnail(fileURL) {
   return new Promise((resolve) => {
-    const canvas = document.createElement('canvas');
+    let canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    const img = new Image();
-    const video = document.createElement('video');
-    const captureTime = 0; // time in seconds at which to capture the image from the video
+    let img = new Image();
+    let video = document.createElement('video');
+    const captureTime = 1.5; // time in seconds at which to capture the image from the video
 
     const errorHandler = err => {
       console.warn(
@@ -296,15 +295,11 @@ function generateVideoThumbnail(fileURL) {
       resolve('');
     };
 
-    video.onloadedmetadata = function () {
-      if ('function' === typeof captureTime) {
-        captureTime = secs(this.duration);
-      }
-      // limit the captureTime to the max video duration if it exceeds it
-      this.currentTime = Math.min(Math.max(0, (captureTime < 0 ? this.duration : 0) + captureTime), this.duration);
+    video.onloadedmetadata = () => {
+      video.currentTime = Math.min(Math.max(0, captureTime), video.duration);
     };
 
-    video.onseeked = function (e) {
+    video.onseeked = () => {
       canvas.height = video.videoHeight;
       canvas.width = video.videoWidth;
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
