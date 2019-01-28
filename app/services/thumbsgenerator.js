@@ -297,11 +297,16 @@ function generateVideoThumbnail(fileURL) {
 
     video.onloadedmetadata = () => {
       video.currentTime = Math.min(Math.max(0, captureTime), video.duration);
+      if (video.videoWidth >= video.videoHeight) {
+        canvas.width = maxSize;
+        canvas.height = (maxSize * video.videoHeight) / video.videoWidth;
+      } else {
+        canvas.height = maxSize;
+        canvas.width = (maxSize * video.videoWidth) / video.videoHeight;
+      }
     };
 
     video.onseeked = () => {
-      canvas.height = video.videoHeight;
-      canvas.width = video.videoWidth;
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       const dataurl = canvas.toDataURL(AppConfig.thumbType);
       img.onerror = errorHandler;
