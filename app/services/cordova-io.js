@@ -1131,6 +1131,10 @@ export default class CordovaIO {
     }
   };
 
+  openUrl = (url: string): void => {
+    window.open(url, '_system');
+  };
+
   /**
    * Places the application window on top of the other windows
    */
