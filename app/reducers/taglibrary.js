@@ -468,7 +468,7 @@ export const getAllTags = (state: Object) => {
       allTags.push(tag);
     });
   });
-  return allTags;
+  return allTags.sort((a, b) => (a.title > b.title ? 1 : a.title < b.title ? -1 : 0));
 };
 
 export const getTagColors = (state: Object, tagTitle: string) => {
