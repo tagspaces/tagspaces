@@ -58,6 +58,7 @@ import {
   type TagGroup,
   type Tag,
   actions as TagLibraryActions,
+  getAllTags,
   getTagGroups
 } from '../reducers/taglibrary';
 import TaggingActions from '../reducers/tagging-actions';
@@ -70,6 +71,7 @@ type Props = {
   tagTextColor: string,
   tagBackgroundColor: string,
   tagGroups: Array<TagGroup>,
+  allTags: Array<Tag>,
   toggleTagGroup: (expanded: boolean, uuid: string) => void,
   removeTagGroup: (uuid: string) => void,
   moveTagGroupUp: (uuid: string) => void,
@@ -238,6 +240,7 @@ class TagLibrary extends React.Component<Props, State> {
         className={this.props.classes.listItem}
         onClick={event => this.handleTagGroupTitleClick(event, tagGroup)}
         onContextMenu={event => this.handleTagGroupMenu(event, tagGroup)}
+        title={'Number of tags in this tag group: ' + tagGroup.children.length}
       >
         <ListItemIcon style={{ marginRight: 0 }}>
           {tagGroup.expanded ? <ArrowDownIcon /> : <ArrowRightIcon />}
@@ -249,7 +252,10 @@ class TagLibrary extends React.Component<Props, State> {
           data-tid="locationTitleElement"
           noWrap
         >
-          {tagGroup.title}
+          {tagGroup.title + ' '}
+          {!tagGroup.expanded && (
+            <span className={this.props.classes.badge}>{tagGroup.children.length}</span>
+          )}
         </Typography>
         <ListItemSecondaryAction>
           <IconButton
@@ -283,14 +289,17 @@ class TagLibrary extends React.Component<Props, State> {
   );
 
   render() {
-    const classes = this.props.classes;
-    const { tagGroups } = this.props;
+    const { tagGroups, classes, allTags } = this.props;
 
     return (
       <div className={classes.panel} style={this.props.style}>
         <CustomLogo />
         <div className={classes.toolbar}>
-          <Typography className={classes.panelTitle} type="subtitle1">
+          <Typography
+            className={classes.panelTitle}
+            title={'Your tag library contains ' + allTags.length + ' tags \ndistributed in ' + tagGroups.length + ' tag groups'}
+            type="subtitle1"
+          >
             {i18n.t('core:tagLibrary')}
           </Typography>
           <IconButton
@@ -418,7 +427,8 @@ function mapStateToProps(state) {
   return {
     tagGroups: getTagGroups(state),
     tagBackgroundColor: getTagColor(state),
-    tagTextColor: getTagTextColor(state)
+    tagTextColor: getTagTextColor(state),
+    allTags: getAllTags(state)
   };
 }
 
