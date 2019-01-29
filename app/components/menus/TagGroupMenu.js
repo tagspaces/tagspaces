@@ -31,6 +31,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { type TagGroup } from '../../reducers/taglibrary';
 import i18n from '../../services/i18n';
+import { Pro } from '../../pro';
 
 type Props = {
   anchorEl: Object,
@@ -130,12 +131,12 @@ class TagLibraryMenu extends React.Component<Props> {
         <MenuItem
           data-tid="collectTags"
           onClick={this.handleCollectTags}
-          title="This feature is available in the PRO version"
+          title={Pro ? '' : i18n.t('core:needProVersion')}
         >
           <ListItemIcon>
             <CollectTagsIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:collectTagsFromLocation') + ' PRO'} />
+          <ListItemText primary={i18n.t('core:collectTagsFromLocation') + (Pro ? '' : ' PRO')} />
         </MenuItem>
       </Menu>
     </div>
