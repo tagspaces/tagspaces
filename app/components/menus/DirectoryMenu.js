@@ -49,10 +49,12 @@ type Props = {
   directoryPath?: string,
   loadDirectoryContent: (path: string) => void,
   openDirectory: (path: string) => void,
+  showInFileManager: (path: string) => void,
   openFile: (path: string, isFile: boolean) => void,
   deleteDirectory: (path: string) => void,
   reflectCreateEntry?: (path: string, isFile: boolean) => void,
   toggleCreateFileDialog?: () => void,
+  loadParentDirectoryContent?: () => void,
   openFileNatively?: (path: string) => void,
   perspectiveMode: boolean,
   showNotification?: (
@@ -85,10 +87,7 @@ class DirectoryMenu extends React.Component<Props, State> {
 
   openParentDirectory = () => {
     this.props.onClose();
-    const parentDirectory = extractParentDirectoryPath(
-      this.props.directoryPath
-    );
-    this.props.loadDirectoryContent(parentDirectory);
+    this.props.loadParentDirectoryContent();
   };
 
   openDirectory = () => {
@@ -130,11 +129,6 @@ class DirectoryMenu extends React.Component<Props, State> {
   };
 
   showInFileManager = () => {
-    this.props.onClose();
-    this.props.openFileNatively(this.props.directoryPath); // TODO use openDirectory
-  };
-
-  showContainingFolderInFileManager = () => {
     this.props.onClose();
     this.props.openDirectory(this.props.directoryPath);
   };
@@ -377,7 +371,7 @@ class DirectoryMenu extends React.Component<Props, State> {
             </MenuItem>
           )}
           <MenuItem
-            data-tid="openDirectoryNatively"
+            data-tid="showInFileManager"
             onClick={this.showInFileManager}
           >
             <ListItemIcon>
@@ -385,7 +379,7 @@ class DirectoryMenu extends React.Component<Props, State> {
             </ListItemIcon>
             <ListItemText
               inset
-              primary={i18n.t('core:openDirectoryNatively')}
+              primary={i18n.t('core:showInFileManager')}
             />
           </MenuItem>
           {!this.props.perspectiveMode && (

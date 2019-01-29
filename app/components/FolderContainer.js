@@ -140,7 +140,8 @@ type Props = {
   getNextFile: () => string,
   getPrevFile: () => string,
   openDirectory: () => void,
-    openFile: (path: string) => void,
+  showInFileManager: () => void,
+  openFile: (path: string) => void,
   deleteDirectory: (path: string) => void,
   reflectCreateEntry: (path: string, isFile: boolean) => void,
   loadDirectoryContent: (path: string) => void,
@@ -324,6 +325,7 @@ class FolderContainer extends React.Component<Props, State> {
           deleteFile={this.props.deleteFile}
           renameFile={this.props.renameFile}
           openDirectory={this.props.openDirectory}
+          showInFileManager={this.props.showInFileManager}
           currentDirectoryPath={this.props.currentDirectoryPath}
           setLastSelectedEntry={this.props.setLastSelectedEntry}
           perspectiveCommand={this.state.perspectiveCommand}
@@ -397,6 +399,8 @@ class FolderContainer extends React.Component<Props, State> {
                     loadDirectoryContent={this.props.loadDirectoryContent}
                     openFileNatively={this.props.openFileNatively}
                     openDirectory={this.props.openDirectory}
+                    loadParentDirectoryContent={this.props.loadParentDirectoryContent}
+                    showInFileManager={this.props.showInFileManager}
                     reflectCreateEntry={this.props.reflectCreateEntry}
                     openFile={this.props.openFile}
                     toggleCreateFileDialog={this.props.toggleCreateFileDialog}
@@ -447,6 +451,7 @@ function mapActionCreatorsToProps(dispatch) {
       getNextFile: AppActions.getNextFile,
       getPrevFile: AppActions.getPrevFile,
       openDirectory: AppActions.openDirectory,
+      showInFileManager: AppActions.showInFileManager,
       openFile: AppActions.openFile,
       deleteDirectory: AppActions.deleteDirectory,
       reflectCreateEntry: AppActions.reflectCreateEntry,

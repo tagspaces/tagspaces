@@ -735,6 +735,9 @@ export const actions = {
   openDirectory: (directoryPath: string) => () => {
     PlatformIO.openDirectory(directoryPath);
   },
+  showInFileManager: (filePath: string) => () => {
+    PlatformIO.showInFileManager(filePath);
+  },
   renameDirectory: (directoryPath: string, newDirectoryName: string) => (
     dispatch: (actions: Object) => void
   ) => {
@@ -1264,23 +1267,20 @@ function prepareDirectoryContent(
     dispatch(actions.showNotification(i18n.t('core:generatingThumbnailsFailed'), 'warning', true));
   }
 
+  dispatch(actions.setGeneratingThumbnails(false));
   if (tmbGenerationPromises.length > 0) {
     dispatch(actions.setGeneratingThumbnails(true));
     // dispatch(actions.showNotification(i18n.t('core:checkingThumbnails'), 'info', false));
     Promise.all(tmbGenerationPromises)
       .then(handleTmbGenerationResults)
       .catch(handleTmbGenerationFailed);
-  } else if (tmbGenerationList.length > 0) {
+  }
+  if (tmbGenerationList.length > 0) {
     dispatch(actions.setGeneratingThumbnails(true));
     // dispatch(actions.showNotification(i18n.t('core:loadingOrGeneratingThumbnails'), 'info', false));
     PlatformIO.createThumbnailsInWorker(tmbGenerationList)
       .then(handleTmbGenerationResults)
       .catch(handleTmbGenerationFailed);
-  } else { // no dirEntries
-    console.log('Dir ' + directoryPath + ' contains ' + directoryContent.length);
-    dispatch(actions.setGeneratingThumbnails(false));
-    dispatch(actions.loadDirectorySuccess(directoryPath, directoryContent));
-    return;
   }
 
   console.log('Dir ' + directoryPath + ' contains ' + directoryContent.length);

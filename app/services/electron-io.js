@@ -742,6 +742,10 @@ export default class ElectronIO {
     );
   };
 
+  showInFileManager = (filePath: string): void => {
+    this.electron.shell.showItemInFolder(filePath);
+  };
+
   openFile = (filePath: string): void => {
     this.electron.shell.openItem(filePath);
   };

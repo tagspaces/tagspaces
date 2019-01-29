@@ -17,10 +17,10 @@
  * @flow
  */
 
+import uuidv1 from 'uuid';
 import i18n from '../services/i18n';
 import { actions as AppActions } from './app';
-import { actions as TagLibraryActions, type Tag } from './taglibrary';
-import uuidv1 from 'uuid';
+import { actions as TagLibraryActions, type Tag, type TagGroup } from './taglibrary';
 import {
   extractFileExtension,
   extractFileName,
@@ -36,6 +36,7 @@ import {
 import { formatDateTime4Tag } from '../utils/misc';
 import AppConfig from '../config';
 import PlatformIO from '../services/platform-io';
+import { Pro } from '../pro';
 
 const actions = {
   addTags: (paths: Array<string>, tags: Array<Tag>) => (
@@ -432,6 +433,32 @@ const actions = {
     // dispatch: (actions: Object) => void
   ) => {
     // dispatch(actions.createLocation(location));
+  },
+  collectTagsFromLocation: (tagGroup: TagGroup) => (
+    dispatch: (actions: Object) => void,
+    getState: () => Object
+  ) => {
+    const { locationIndex, settings } = getState();
+
+    if (!Pro || !Pro.Indexer || !Pro.Indexer.collectTagsFromIndex) {
+      dispatch(AppActions.showNotification(i18n.t('core:needProVersion'), 'error', true));
+      return true;
+    }
+
+    if (locationIndex.currentDirectoryIndex.length < 1) {
+      dispatch(AppActions.showNotification('Please index location first', 'error', true));
+      return true;
+    }
+
+    const uniqueTags = Pro.Indexer.collectTagsFromIndex(locationIndex, tagGroup, settings);
+    if (uniqueTags.length > 0) {
+      const changedTagGroup = {
+        ...tagGroup,
+        children: uniqueTags,
+        modified_date: new Date()
+      };
+      dispatch(TagLibraryActions.mergeTagGroup(changedTagGroup));
+    }
   },
 };
 

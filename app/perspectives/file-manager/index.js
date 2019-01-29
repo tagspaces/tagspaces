@@ -38,7 +38,7 @@ type Props = {
   openFileNatively: (path: string) => void,
   deleteFile: (path: string) => void,
   renameFile: (path: string) => void,
-  openDirectory: (path: string) => void,
+  showInFileManager: (path: string) => void,
   loadDirectoryContent: (path: string) => void,
   directoryContent: Array<FileSystemEntry>
 };
@@ -349,7 +349,7 @@ class FileManagerPerspective extends React.Component<Props, State> {
           renameFile={this.props.renameFile}
           copyFiles={this.props.copyFiles}
           moveFiles={this.props.moveFiles}
-          openDirectory={this.props.openDirectory}
+          showInFileManager={this.props.showInFileManager}
           addRemoveTags={this.props.addRemoveTags}
           selectedFilePath={this.state.selectedFilePath}
           allTags={this.props.allTags}

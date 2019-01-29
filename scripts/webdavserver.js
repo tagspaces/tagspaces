@@ -1,7 +1,7 @@
 const jsDAV = require('jsDAV/lib/jsdav');
 const jsDAV_Auth_Backend_File = require('jsDAV/lib/DAV/plugins/auth/file');
 
-jsDAV.debugMode = true;
+jsDAV.debugMode = false;
 jsDAV.createServer(
   {
     node: './web',

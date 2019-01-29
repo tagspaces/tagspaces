@@ -31,6 +31,7 @@ import AppConfig from '../../config';
 
 type Props = {
   anchorEl: Object,
+  tagGroups: Array<Object>,
   open: boolean,
   onClose: () => void,
   importTagGroups: () => void,
