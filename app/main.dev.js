@@ -66,7 +66,7 @@ if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true')
 //   app.commandLine.appendSwitch('disable-gpu'); // Fix the freezing the app with a black box on dnd https://github.com/electron/electron/issues/12820
 // }
 
-app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096');
+// app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096'); // disabled due crashes on win 7
 
 const installExtensions = async () => {
   const { default: installExtension, REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } = require('electron-devtools-installer');
