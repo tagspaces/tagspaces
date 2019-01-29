@@ -76,7 +76,7 @@ class TagContainer extends React.Component<Props> {
         <RemoveTagIcon
           data-tid={'tagRemoveButton_' + tag.title.replace(/ /g, '_')}
           style={{
-            color: 'white'
+            color: tag.textColor
           }}
           onClick={event => this.props.handleRemoveTag(event, tag)}
         />
