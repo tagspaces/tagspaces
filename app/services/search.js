@@ -100,7 +100,7 @@ const fuseOptions = {
     weight: 0.4
   }, {
     name: 'description',
-    weight: 0.3
+    weight: 0.4
   }, {
     name: 'tags',
     weight: 0.3
