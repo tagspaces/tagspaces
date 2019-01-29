@@ -119,7 +119,7 @@ class OnboardingDialog extends React.Component<Props, State> {
           >
             <Typography variant="h4">Welcome to TagSpaces</Typography>
             <Typography variant="h6">&nbsp;</Typography>
-            <Typography variant="h6">Your favorite file organizer has a fresh new looks</Typography>
+            <Typography variant="h6">Your favorite file organizer has a fresh new look</Typography>
             <img
               style={{ maxHeight: 340, marginTop: 15 }}
               src={NewLook}
