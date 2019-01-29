@@ -118,7 +118,7 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: Object) => {
           title: action.entry.title,
           expanded: action.entry.expanded,
           children: [...state[indexForEditing].children, ...action.entry.children],
-          created_date: new Date(),
+          created_date: action.entry.created_date,
           modified_date: new Date()
         },
         ...state.slice(indexForEditing + 1)

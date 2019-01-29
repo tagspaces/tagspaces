@@ -27,23 +27,11 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import ListItemText from '@material-ui/core/ListItemText';
-// import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import Collapse from '@material-ui/core/Collapse';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import ArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
-import LocalOffer from '@material-ui/icons/LocalOffer';
-// import ImportExportIcon from '@material-ui/icons/ImportExport';
-import ArrowDownward from '@material-ui/icons/ArrowDownward';
-import ArrowUpward from '@material-ui/icons/ArrowUpward';
-import Edit from '@material-ui/icons/Edit';
-import SortByAlpha from '@material-ui/icons/SortByAlpha';
-import DeleteForever from '@material-ui/icons/DeleteForever';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-// import { Toolbar } from '@material-ui/core/Toolbar';
 import TagContainerDnd from './TagContainerDnd';
 import ConfirmDialog from './dialogs/ConfirmDialog';
 import styles from './SidePanels.css';
@@ -54,6 +42,7 @@ import TagGroupContainer from './TagGroupContainer';
 import TagMenu from './menus/TagMenu';
 import CustomLogo from './CustomLogo';
 import TagLibraryMenu from './menus/TagLibraryMenu';
+import TagGroupMenu from './menus/TagGroupMenu';
 import {
   type TagGroup,
   type Tag,
@@ -77,6 +66,7 @@ type Props = {
   moveTagGroupUp: (uuid: string) => void,
   moveTagGroupDown: (uuid: string) => void,
   sortTagGroup: (uuid: string) => void,
+  collectTagsFromLocation: (tagGroup: TagGroup) => void,
   addTags: () => void,
   importTagGroups: () => void,
   exportTagGroups: () => void,
@@ -180,27 +170,6 @@ class TagLibrary extends React.Component<Props, State> {
 
   showDeleteTagGroupDialog = () => {
     this.setState({ isDeleteTagGroupDialogOpened: true });
-    this.handleCloseTagGroupMenu();
-  };
-
-  moveTagGroupUp = () => {
-    if (this.state.selectedTagGroupEntry) {
-      this.props.moveTagGroupUp(this.state.selectedTagGroupEntry.uuid);
-    }
-    this.handleCloseTagGroupMenu();
-  };
-
-  moveTagGroupDown = () => {
-    if (this.state.selectedTagGroupEntry) {
-      this.props.moveTagGroupDown(this.state.selectedTagGroupEntry.uuid);
-    }
-    this.handleCloseTagGroupMenu();
-  };
-
-  sortTagGroup = () => {
-    if (this.state.selectedTagGroupEntry) {
-      this.props.sortTagGroup(this.state.selectedTagGroupEntry.uuid);
-    }
     this.handleCloseTagGroupMenu();
   };
 
@@ -348,54 +317,20 @@ class TagLibrary extends React.Component<Props, State> {
           editTagGroup={this.props.editTagGroup}
           selectedTagGroupEntry={this.state.selectedTagGroupEntry}
         />
-        <Menu
+        <TagGroupMenu
           anchorEl={this.state.tagGroupMenuAnchorEl}
           open={this.state.tagGroupMenuOpened}
           onClose={this.handleCloseTagGroupMenu}
-        >
-          <MenuItem data-tid="createTags" onClick={this.showCreateTagsDialog}>
-            <ListItemIcon>
-              <LocalOffer />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:addTags')} />
-          </MenuItem>
-          <MenuItem
-            data-tid="editTagGroup"
-            onClick={this.showEditTagGroupDialog}
-          >
-            <ListItemIcon>
-              <Edit />
-            </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:editTagGroup')} />
-          </MenuItem>
-          <MenuItem data-tid="moveTagGroupUp" onClick={this.moveTagGroupUp}>
-            <ListItemIcon>
-              <ArrowUpward />
-            </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:moveTagGroupUp')} />
-          </MenuItem>
-          <MenuItem data-tid="moveTagGroupDown" onClick={this.moveTagGroupDown}>
-            <ListItemIcon>
-              <ArrowDownward />
-            </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:moveTagGroupDown')} />
-          </MenuItem>
-          <MenuItem data-tid="sortTagGroup" onClick={this.sortTagGroup}>
-            <ListItemIcon>
-              <SortByAlpha />
-            </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:sortTagGroup')} />
-          </MenuItem>
-          <MenuItem
-            data-tid="deleteTagGroup"
-            onClick={this.showDeleteTagGroupDialog}
-          >
-            <ListItemIcon>
-              <DeleteForever />
-            </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:deleteTagGroup')} />
-          </MenuItem>
-        </Menu>
+          selectedTagGroupEntry={this.state.selectedTagGroupEntry}
+          showCreateTagsDialog={this.showCreateTagsDialog}
+          showDeleteTagGroupDialog={this.showDeleteTagGroupDialog}
+          handleCloseTagGroupMenu={this.handleCloseTagGroupMenu}
+          showEditTagGroupDialog={this.showEditTagGroupDialog}
+          moveTagGroupUp={this.props.moveTagGroupUp}
+          moveTagGroupDown={this.props.moveTagGroupDown}
+          sortTagGroup={this.props.sortTagGroup}
+          collectTagsFromLocation={this.props.collectTagsFromLocation}
+        />
         <TagLibraryMenu
           anchorEl={this.state.importExportMenuAnchorEl}
           open={this.state.importExportMenuOpened}
@@ -433,7 +368,11 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ ...TagLibraryActions, addTags: TaggingActions.addTags }, dispatch);
+  return bindActionCreators({
+    ...TagLibraryActions,
+    addTags: TaggingActions.addTags,
+    collectTagsFromLocation: TaggingActions.collectTagsFromLocation
+  }, dispatch);
 }
 
 export default withStyles(styles)(
