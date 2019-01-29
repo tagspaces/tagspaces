@@ -88,7 +88,7 @@ class TagContainer extends React.Component<Props> {
         <MoreVertIcon
           data-tid={'tagMoreButton_' + tag.title.replace(/ /g, '_')}
           style={{
-            color: 'white'
+            color: tag.textColor
           }}
         />
       );
