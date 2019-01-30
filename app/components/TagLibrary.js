@@ -240,7 +240,7 @@ class TagLibrary extends React.Component<Props, State> {
           </IconButton>
         </ListItemSecondaryAction>
       </ListItem>
-      <Collapse in={tagGroup.expanded} unmountOnExit style={{ maxWidth: 250 }}>
+      <Collapse in={tagGroup.expanded} unmountOnExit>
         <TagGroupContainer taggroup={tagGroup} data-tid={'tagGroupContainer_' + tagGroup.title}>
           {tagGroup.children && tagGroup.children.map((tag: Tag) => (
             <TagContainerDnd
