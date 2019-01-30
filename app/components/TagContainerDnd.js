@@ -80,6 +80,18 @@ class TagContainerDnd extends React.Component<Props> {
     // this.props.connectDragPreview(getEmptyImage(), { captureDraggingState: true });
   }
 
+  shouldComponentUpdate(nextProps) {
+    if (this.props.tag !== nextProps.tag
+      || this.props.key !== nextProps.key
+      || this.props.tagGroup !== nextProps.tagGroup
+      || this.props.isDragging !== nextProps.isDragging
+      || this.props.entryPath !== nextProps.entryPath
+    ) {
+      return true;
+    }
+    return false;
+  }
+
   render() {
     const {
       key,
