@@ -18,7 +18,11 @@
  */
 
 import nl from 'js-webdav-client';
-import { extractParentDirectoryPath, normalizePath } from '../utils/paths';
+import {
+  extractParentDirectoryPath,
+  normalizePath,
+  getMetaFileLocationForDir
+} from '../utils/paths';
 import AppConfig from '../config';
 
 export default class WebDAVIO {
@@ -201,55 +205,55 @@ export default class WebDAVIO {
       enhancedEntries = [];
       const metaPromises = [];
       for (const entry in dirList) {
-        path = dirList[entry].href;
-        if (dirPath.toLowerCase() === path.toLowerCase()) {
-          console.log('Skipping current folder');
-        } else {
-          isDir = false;
-          filesize = undefined;
-          lmdt = undefined;
-          // console.log(dirList[entry]._namespaces['DAV:']);
-          if (this.isFile(dirList[entry]._namespaces['DAV:'])) {
-            filesize = dirList[entry]._namespaces['DAV:'].getcontentlength._xmlvalue[0].data;
-            lmdt = data._responses[entry]._namespaces['DAV:'].getlastmodified._xmlvalue[0].data;
+        // if (Object.prototype.hasOwnProperty.call(dirList, entry)) {
+          path = dirList[entry].href;
+          if (dirPath.toLowerCase() === path.toLowerCase()) {
+            console.log('Skipping current folder');
           } else {
-            isDir = true;
-            // const metaFilePath = getMetaFileLocationForFile(path, '/');
-          }
-          fileName = this.getNameForPath(path);
-
-          eentry = {};
-          eentry.name = fileName;
-          eentry.path = decodeURI(path);
-          eentry.tags = [];
-          eentry.thumbPath = '';
-          // eentry.meta = {};
-          eentry.isFile = !isDir;
-          eentry.size = filesize;
-          eentry.lmdt = Date.parse(lmdt);
-          // const x = getMetaFileLocationForFile(eentry.path);
-
-          if (!lite) {
-            if (isDir) { // Read tsm.json from subfolders
-              const metaDirAvailable = metaContent.find(obj => obj.name === AppConfig.metaFolder);
-              if (metaDirAvailable) {
-                metaPromises.push(this.getEntryMeta(eentry, metaDirAvailable.path));
-              }
+            isDir = false;
+            filesize = undefined;
+            lmdt = undefined;
+            // console.log(dirList[entry]._namespaces['DAV:']);
+            if (this.isFile(dirList[entry]._namespaces['DAV:'])) {
+              filesize = dirList[entry]._namespaces['DAV:'].getcontentlength._xmlvalue[0].data;
+              lmdt = data._responses[entry]._namespaces['DAV:'].getlastmodified._xmlvalue[0].data;
             } else {
-              const metaFileAvailable = metaContent.find(obj => obj.name === fileName + AppConfig.metaFileExt);
-              if (metaFileAvailable) {
-                metaPromises.push(this.getEntryMeta(eentry, metaFileAvailable.path));
-              }
+              isDir = true;
+              // const metaFilePath = getMetaFileLocationForFile(path, '/');
+            }
+            fileName = this.getNameForPath(path);
 
-              // Finding if thumbnail available
-              const metaThumbAvailable = metaContent.find(obj => obj.name === fileName + AppConfig.thumbFileExt);
-              if (metaThumbAvailable) {
-                eentry.thumbPath = metaThumbAvailable.path;
+            eentry = {};
+            eentry.name = fileName;
+            eentry.path = decodeURI(path);
+            eentry.tags = [];
+            eentry.thumbPath = '';
+            // eentry.meta = {};
+            eentry.isFile = !isDir;
+            eentry.size = filesize;
+            eentry.lmdt = Date.parse(lmdt);
+            // const x = getMetaFileLocationForFile(eentry.path);
+
+            if (!lite) {
+              if (isDir) { // Read tsm.json from subfolders
+                const pathMetaFile = getMetaFileLocationForDir(eentry.path);
+                metaPromises.push(this.getEntryMeta(eentry, pathMetaFile));
+              } else {
+                const metaFileAvailable = metaContent.find(obj => obj.name === fileName + AppConfig.metaFileExt);
+                if (metaFileAvailable) {
+                  metaPromises.push(this.getEntryMeta(eentry, metaFileAvailable.path));
+                }
+
+                // Finding if thumbnail available
+                const metaThumbAvailable = metaContent.find(obj => obj.name === fileName + AppConfig.thumbFileExt);
+                if (metaThumbAvailable) {
+                  eentry.thumbPath = metaThumbAvailable.path;
+                }
               }
             }
-          }
 
-          enhancedEntries.push(eentry);
+            enhancedEntries.push(eentry);
+          // }
         }
       }
 
@@ -289,27 +293,38 @@ export default class WebDAVIO {
   );
 
   getEntryMeta = (eentry: Object, metaPath: string): Promise<Object> => {
-    if (eentry.isFile) {
-      // const metaFilePath = getMetaFileLocationForFile(eentry.path);
-      return this.loadTextFilePromise(metaPath).then(result => {
-        // eslint-disable-next-line no-param-reassign
-        eentry.meta = JSON.parse(result.trim());
-        return eentry;
-      });
-    }
-    // const folderMetaPath = normalizePath(eentry.path) + AppConfig.dirSeparator + AppConfig.metaFolderFile; // getMetaFileLocationForDir(eentry.path);
-    if (!eentry.path.endsWith(AppConfig.metaFolder + '/')) { // Skip the /.ts folder
-      return this.loadTextFilePromise(metaPath).then(result => {
-        // eslint-disable-next-line no-param-reassign
-        eentry.meta = JSON.parse(result.trim());
-        return eentry;
-      });
-    }
-
     return new Promise((resolve) => {
+      if (eentry.isFile) {
+        this.loadTextFilePromise(metaPath).then(result => {
+          // eslint-disable-next-line no-param-reassign
+          eentry.meta = JSON.parse(result.trim());
+          return resolve(eentry);
+          // resolve({
+          //   ...eentry,
+          //   meta: JSON.parse(result.trim())
+          // });
+        }).catch(err => {
+          console.log('No meta file for folder found: ' + eentry.path + ' - ' + err);
+          resolve(eentry);
+        });
+      } else if (!eentry.path.endsWith(AppConfig.metaFolder + '/')) { // Skip the /.ts folder
+        this.loadTextFilePromise(metaPath).then(result => {
+          // eslint-disable-next-line no-param-reassign
+          eentry.meta = JSON.parse(result.trim());
+          return resolve(eentry);
+          // resolve({
+          //   ...eentry,
+          //   meta: JSON.parse(result.trim())
+          // });
+        }).catch(err => {
+          console.log('No meta file for folder found: ' + eentry.path + ' - ' + err);
+          resolve(eentry);
+        });
+      }
       resolve(eentry);
     });
   };
+
   /**
    * Finds out the properties of a file or directory such last modification date or file size
    */
@@ -615,10 +630,23 @@ export default class WebDAVIO {
   };
 
   /**
+   * Opens directory in new tab / window, selecting the file
+   */
+  showInFileManager = (filePath: string) => {
+    console.log(
+      'Showing item ' + filePath + ' not possible for the web version.'
+    );
+  };
+
+  /**
    * Open the file url in a new tab / window
    */
   openFile = (filePath: string): void => {
     window.open(filePath, '_blank');
+  };
+
+  openUrl = (url: string): void => {
+    window.open(url, '_blank');
   };
 
   /**

@@ -1115,6 +1115,13 @@ export default class CordovaIO {
   };
 
   /**
+   * Opens a directory in the operating system's default file manager, selecting the file
+   */
+  showInFileManager = (filePath: string) => {
+    console.warn('Showing item ' + filePath + ' not supported on cordova');
+  };
+
+  /**
    * Opens a file with the operating system's default program for the type of the file
    */
   openFile = (filePath: string) => {
@@ -1129,6 +1136,10 @@ export default class CordovaIO {
     } else {
       window.plugins.fileOpener.open('file://' + filePath);
     }
+  };
+
+  openUrl = (url: string): void => {
+    window.open(url, '_system');
   };
 
   /**

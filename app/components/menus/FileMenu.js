@@ -43,7 +43,7 @@ type Props = {
   openAddRemoveTagsDialog: () => void,
   openFile: (path: string) => void,
   openFileNatively: (path: string) => void,
-  openDirectory: (path: string) => void,
+  showInFileManager: (path: string) => void,
   selectedFilePath?: string
 };
 
@@ -71,7 +71,7 @@ class FileMenu extends React.Component<Props> {
   showInFileManager = () => {
     this.props.onClose();
     if (this.props.selectedFilePath) {
-      this.props.openDirectory(extractContainingDirectoryPath(this.props.selectedFilePath));
+      this.props.showInFileManager(this.props.selectedFilePath);
     }
   };
 
@@ -131,7 +131,7 @@ class FileMenu extends React.Component<Props> {
             <ListItemIcon>
               <OpenContainingFolder />
             </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:openContainingFolder')} />
+            <ListItemText inset primary={i18n.t('core:showInFileManager')} />
           </MenuItem>
           <Divider />
           <MenuItem

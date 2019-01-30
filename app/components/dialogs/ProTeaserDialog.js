@@ -194,7 +194,7 @@ class ProTeaserDialog extends React.Component<Props, State> {
           <div style={slideStyles}>
             <Typography variant="h5" style={{ textAlign: 'center' }}>Connecting S3 Object Store Network Locations</Typography>
             <Typography variant="h6">&nbsp;</Typography>
-            <Typography variant="subtitle1">With this feature, TagSpaces PRO is going into direction of supporting the Cloud as file storage. In general it enables you to creating a location pointing to a remote object storages also knows as buckets on AWS S3 infrastructure. By doing this you get a full-fledged file organizer, browser and navigator for this bucket, directly in TagSpaces. You don not have to download separately and eventually to upload them back in order to preview, edit or annotate them.
+            <Typography variant="subtitle1">With this feature, TagSpaces PRO is going into direction of supporting the Cloud as file storage. In general it enables you to creating a location pointing to a remote object storages also knows as buckets on AWS S3 infrastructure. By doing this, you get a full-fledged file organizer, browser and navigator for this bucket, directly in TagSpaces. You do not have to download every file separately and eventually upload it back in order to preview, edit or annotate it.
             </Typography>
             <Typography variant="h6">&nbsp;</Typography>
             <Typography variant="subtitle1" style={{ textAlign: 'center' }}>&nbsp;

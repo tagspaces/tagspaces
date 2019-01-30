@@ -81,6 +81,7 @@ type Props = {
   openLocation: (location: Location) => void,
   openFileNatively: (path: string) => void,
   openDirectory: (path: string) => void,
+  showInFileManager: (path: string) => void,
   createDirectoryIndex: (path: string) => void,
   addLocation: () => void,
   editLocation: () => void,
@@ -780,6 +781,7 @@ class LocationManager extends React.Component<Props, State> {
           loadDirectoryContent={this.props.loadDirectoryContent}
           openFileNatively={this.props.openFileNatively}
           openDirectory={this.props.openDirectory}
+          showInFileManager={this.props.showInFileManager}
           openFile={this.props.openFile}
           reflectCreateEntry={this.props.reflectCreateEntry}
           deleteDirectory={this.props.deleteDirectory}
@@ -809,6 +811,7 @@ function mapDispatchToProps(dispatch) {
     reflectCreateEntry: AppActions.reflectCreateEntry,
     deleteDirectory: AppActions.deleteDirectory,
     openDirectory: AppActions.openDirectory,
+    showInFileManager: AppActions.showInFileManager,
     openFileNatively: AppActions.openFileNatively,
     openFile: AppActions.openFile,
     moveFiles: IOActions.moveFiles

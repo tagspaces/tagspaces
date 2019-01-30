@@ -118,7 +118,7 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: Object) => {
           title: action.entry.title,
           expanded: action.entry.expanded,
           children: [...state[indexForEditing].children, ...action.entry.children],
-          created_date: new Date(),
+          created_date: action.entry.created_date,
           modified_date: new Date()
         },
         ...state.slice(indexForEditing + 1)
@@ -468,7 +468,7 @@ export const getAllTags = (state: Object) => {
       allTags.push(tag);
     });
   });
-  return allTags;
+  return allTags.sort((a, b) => (a.title > b.title ? 1 : a.title < b.title ? -1 : 0));
 };
 
 export const getTagColors = (state: Object, tagTitle: string) => {
