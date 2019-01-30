@@ -35,6 +35,7 @@ import { actions as LocationIndexActions } from '../../reducers/location-index';
 import i18n from '../../services/i18n';
 import { type SearchQuery } from '../../services/search';
 import { getMaxSearchResults } from '../../reducers/settings';
+import { AppVerticalPanels } from '../VerticalNavigation';
 
 type Props = {
   anchorEl?: Object,
@@ -45,6 +46,7 @@ type Props = {
   deleteTag: (uuid: string, tagGroupUuid: string) => void,
   searchLocationIndex: (searchQuery: SearchQuery) => void,
   editTag: () => void,
+  togglePanel: () => void,
   maxSearchResults: number
 };
 
@@ -66,6 +68,7 @@ class TagLibraryMenu extends React.Component<Props, State> {
 
   showFilesWithThisTag = () => {
     if (this.props.selectedTag) {
+      this.props.togglePanel(AppVerticalPanels.search);
       this.props.searchLocationIndex({
         tagsAND: [this.props.selectedTag],
         maxSearchResults: this.props.maxSearchResults

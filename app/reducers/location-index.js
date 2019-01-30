@@ -258,7 +258,7 @@ export const actions = {
     getState: () => Object
   ) => {
     dispatch(AppActions.showNotification(i18n.t('core:searching'), 'default', false));
-    setTimeout(() => { // Workarround used to show the start search notication
+    setTimeout(() => { // Workaround used to show the start search notification
       Search.searchLocationIndex(
         getState().locationIndex.currentDirectoryIndex,
         searchQuery

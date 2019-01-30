@@ -26,7 +26,7 @@ import NewFileIcon from '@material-ui/icons/Add';
 import LocationsIcon from '@material-ui/icons/WorkOutline';
 import TagLibraryIcon from '@material-ui/icons/LocalOfferOutlined';
 import SearchIcon from '@material-ui/icons/SearchOutlined';
-import PerspectivesIcon from '@material-ui/icons/MapOutlined';
+// import PerspectivesIcon from '@material-ui/icons/MapOutlined';
 import SettingsIcon from '@material-ui/icons/Settings';
 import ThemingIcon from '@material-ui/icons/InvertColors';
 import UpgradeIcon from '@material-ui/icons/FlightTakeoff';
@@ -47,7 +47,6 @@ import Search from '../components/Search';
 import PerspectiveManager from '../components/PerspectiveManager';
 import LocationManager from '../components/LocationManager';
 import i18n from '../services/i18n';
-import PlatformIO from '../services/platform-io';
 import { Pro } from '../pro';
 import {
   actions as AppActions,
@@ -450,6 +449,7 @@ class VerticalNavigation extends React.Component<Props, State> {
                 }}
               />
               <TagLibrary
+                togglePanel={this.togglePanel}
                 style={{
                   display: this.state.isTagLibraryVisible ? 'block' : 'none'
                 }}
