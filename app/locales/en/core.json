@@ -394,5 +394,6 @@
   "atLeastOneOfTheseTags": "At least one of these tags",
   "noneOfTheseTags": "None of these tags",
   "collectTagsFromLocation": "Collect Tags From Current Location",
+  "searchCurrentFolderWithSubFolders": "Search in folder with sub folders",
   "-": "-"
 }

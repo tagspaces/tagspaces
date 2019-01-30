@@ -50,7 +50,10 @@ export type SearchQuery = {
   tagsAND?: Array<Tag>,
   tagsOR?: Array<Tag>,
   tagsNOT?: Array<Tag>,
-  lastChanged?: Date,
+  lastModified: string,
+  fileSize: string,
+  searchBoxing: 'location' | 'folder',
+  currentDirectory: string,
   maxSearchResults?: number
 };
 
@@ -121,7 +124,7 @@ function constructjmespathQuery(searchQuery: SearchQuery): string {
   const ORtagsExist = searchQuery.tagsOR && searchQuery.tagsOR.length >= 1;
   const NOTtagsExist = searchQuery.tagsNOT && searchQuery.tagsNOT.length >= 1;
   if (ANDtagsExist || ORtagsExist || NOTtagsExist) {
-    jmespathQuery = 'index[?';
+    jmespathQuery = '[?';
 
     if (ORtagsExist) {
       jmespathQuery += ' tags[? ';
@@ -174,21 +177,34 @@ function constructjmespathQuery(searchQuery: SearchQuery): string {
     }
   }
 
-  // if (Pro) ...
 
+  const extensionQuery = Pro ? Pro.Search.constructFileTypeQuery(searchQuery) : '';
+  if (extensionQuery.length > 0) {
+    jmespathQuery = (jmespathQuery.length > 0) ? jmespathQuery + ' | ' + extensionQuery : extensionQuery;
+  }
+
+  if (jmespathQuery.length > 0) {
+    return 'index' + jmespathQuery;
+  }
   return jmespathQuery;
 }
 
 export default class Search {
   static searchLocationIndex = (locationContent: Array<Object>, searchQuery: SearchQuery): Promise<Array<Object> | []> => new Promise((resolve) => {
+    console.time('searchtime');
     const jmespathQuery = constructjmespathQuery(searchQuery);
     let jmespathResults;
     let results;
+    let currentDirectoryEntries;
+
+    if (searchQuery.searchBoxing === 'folder') {
+      currentDirectoryEntries = locationContent.filter(entry => entry.path.startsWith(searchQuery.currentDirectory));
+    }
 
     if (jmespathQuery) {
       console.log('jmespath query: ' + jmespathQuery);
       console.time('jmespath');
-      jmespathResults = jmespath.search({ index: jmespathResults || locationContent }, jmespathQuery);
+      jmespathResults = jmespath.search({ index: currentDirectoryEntries || locationContent }, jmespathQuery);
       console.timeEnd('jmespath');
       console.log('jmespath results: ' + jmespathResults.length);
     }
@@ -213,10 +229,12 @@ export default class Search {
         results = results.slice(0, searchQuery.maxSearchResults);
       }
       console.log('Results send: ' + results.length);
+      console.timeEnd('searchtime');
       resolve(results);
       return true;
     }
     results = [];
+    console.timeEnd('searchtime');
     resolve(results);
   });
 }

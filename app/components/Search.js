@@ -30,6 +30,7 @@ import AudioIcon from '@material-ui/icons/MusicVideo';
 import VideoIcon from '@material-ui/icons/OndemandVideo';
 import ArchiveIcon from '@material-ui/icons/Archive';
 import FolderIcon from '@material-ui/icons/FolderOpen';
+import LocationIcon from '@material-ui/icons/WorkOutline';
 import UntaggedIcon from '@material-ui/icons/LabelOffOutlined';
 import FileIcon from '@material-ui/icons/InsertDriveFileOutlined';
 import ClearSearchIcon from '@material-ui/icons/Clear';
@@ -40,6 +41,9 @@ import Input from '@material-ui/core/Input';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Paper from '@material-ui/core/Paper';
+import InputBase from '@material-ui/core/InputBase';
+import Divider from '@material-ui/core/Divider';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
@@ -74,7 +78,9 @@ type State = {
   tagsOR?: Array<Tag>,
   tagsNOT?: Array<Tag>,
   fileTypes?: Array<string>,
-  lastModified?: Date | string
+  searchBoxing?: 'location' | 'folder',
+  lastModified?: string,
+  fileSize?: string
 };
 
 class Search extends React.Component<Props, State> {
@@ -84,7 +90,9 @@ class Search extends React.Component<Props, State> {
     tagsOR: [],
     tagsNOT: [],
     fileTypes: FileTypeGroups.any,
-    lastModified: ''
+    searchBoxing: 'location',
+    lastModified: '',
+    fileSize: ''
   };
 
   handleInputChange = event => {
@@ -110,20 +118,35 @@ class Search extends React.Component<Props, State> {
         tagsAND: [],
         tagsOR: [],
         tagsNOT: [],
-        fileTypes: FileTypeGroups.any
+        searchBoxing: 'location',
+        fileTypes: FileTypeGroups.any,
+        lastModified: '',
+        fileSize: ''
       },
       () => this.props.loadDirectoryContent(this.props.currentDirectory)
+    );
+  };
+
+  toggleSearchBoxing = () => {
+    this.setState(
+      {
+        searchBoxing: this.state.searchBoxing === 'location' ? 'folder' : 'location',
+      }
     );
   };
 
   executeSearch = () => {
     const searchQuery: SearchQuery = {
       textQuery: this.state.textQuery,
-      fileTypes: this.state.fileTypes,
       tagsAND: this.state.tagsAND,
       tagsOR: this.state.tagsOR,
       tagsNOT: this.state.tagsNOT,
-      maxSearchResults: this.props.maxSearchResults
+      searchBoxing: this.state.searchBoxing,
+      fileTypes: this.state.fileTypes,
+      lastModified: this.state.lastModified,
+      fileSize: this.state.fileSize,
+      maxSearchResults: this.props.maxSearchResults,
+      currentDirectory: this.props.currentDirectory
     };
     console.log('Search object: ' + JSON.stringify(searchQuery));
     this.props.searchLocationIndex(searchQuery);
@@ -141,20 +164,20 @@ class Search extends React.Component<Props, State> {
       <div className={classes.panel} style={this.props.style}>
         <CustomLogo />
         <div className={classes.toolbar}>
-          <Typography className={classes.panelTitle}>
+          <Typography className={classes.panelTitle} style={{ flex: 'none' }}>
             {i18n.t('searchTitle')}
+          </Typography>
+          <Typography variant="caption" style={{ alignSelf: 'flex-end', paddingLeft: 5 }}>
+            {indexing ? 'disabled while indexing...' : 'in ' + indexedEntriesCount + ' indexed entries'}
           </Typography>
         </div>
         <div className={classes.searchArea}>
-          <Typography variant="caption">
-            {indexing ? 'indexing...' : 'indexed ' + indexedEntriesCount + ' entries'}
-          </Typography>
           <FormControl
             className={classes.formControl}
             disabled={indexing}
           >
             <InputLabel htmlFor="textQuery">
-              {i18n.t('searchPlaceholder')}
+              {this.state.searchBoxing === 'location' ? i18n.t('searchPlaceholder') : i18n.t('searchCurrentFolderWithSubFolders')}
             </InputLabel>
             <Input
               id="textQuery"
@@ -164,8 +187,17 @@ class Search extends React.Component<Props, State> {
               onKeyDown={this.startSearch}
               placeholder={i18n.t('core:searchWordsWithInterval')}
               endAdornment={
-                /* (this.state.textQuery && this.state.textQuery.length > 0) && */
                 <InputAdornment position="end">
+                  <IconButton
+                    style={{ marginRight: -15 }}
+                    onClick={this.toggleSearchBoxing}
+                    title={this.state.searchBoxing === 'location' ? i18n.t('searchCurrentFolderWithSubFolders') : i18n.t('searchPlaceholder')}
+                  >
+                    {this.state.searchBoxing === 'location' ?
+                      <FolderIcon /> :
+                      <LocationIcon />
+                    }
+                  </IconButton>
                   <IconButton onClick={this.clearSearch}>
                     <ClearSearchIcon />
                   </IconButton>
@@ -307,9 +339,9 @@ class Search extends React.Component<Props, State> {
             </Select>
             {/* <FormHelperText>{i18n.t('core:searchFileTypes')}</FormHelperText> */}
           </FormControl>
-          {/*  <FormControl
+          {/* <FormControl
             className={classes.formControl}
-            disabled={true}
+            disabled={indexing || !Pro}
             title={i18n.t('core:thisFunctionalityIsAvailableInPro')}
           >
             <InputLabel htmlFor="modification-date">{i18n.t('core:modifiedDate')}</InputLabel>
@@ -321,27 +353,63 @@ class Search extends React.Component<Props, State> {
               <MenuItem value="">
                 {i18n.t('core:anyTime')}
               </MenuItem>
-              <MenuItem value={(new Date())}>
+              <MenuItem value="today">
                 {i18n.t('core:today')}
               </MenuItem>
-              <MenuItem value={(new Date())}>
+              <MenuItem value="yesterday">
                 {i18n.t('core:yesterday')}
               </MenuItem>
-              <MenuItem value={(new Date())}>
+              <MenuItem value="oneWeekAgo">
                 {i18n.t('core:oneWeekAgo')}
               </MenuItem>
-              <MenuItem value={(new Date())}>
+              <MenuItem value="oneMonthAgo">
                 {i18n.t('core:oneMonthAgo')}
               </MenuItem>
-              <MenuItem value={(new Date())}>
+              <MenuItem value="halfAnYearAgo">
                 {i18n.t('core:halfAnYearAgo')}
               </MenuItem>
-              <MenuItem value={(new Date())}>
+              <MenuItem value="anYearAgo">
                 {i18n.t('core:anYearAgo')}
               </MenuItem>
             </Select>
-            <FormHelperText>{i18n.t('')}</FormHelperText>
-          </FormControl> */ }
+          </FormControl>
+          <FormControl
+            className={classes.formControl}
+            disabled={indexing || !Pro}
+            title={i18n.t('core:thisFunctionalityIsAvailableInPro')}
+          >
+            <InputLabel htmlFor="file-size">{i18n.t('core:fileSize')}</InputLabel>
+            <Select
+              value={this.state.fileSize}
+              onChange={this.handleInputChange}
+              input={<Input name="fileSize" id="file-size" />}
+            >
+              <MenuItem value="">
+                {i18n.t('core:anySize')}
+              </MenuItem>
+              <MenuItem value="emptyOkb">
+                {i18n.t('core:emptyOkb')}
+              </MenuItem>
+              <MenuItem value="tiny10kb">
+                {i18n.t('core:tiny10kb')}
+              </MenuItem>
+              <MenuItem value="small100kb">
+                {i18n.t('core:small100kb')}
+              </MenuItem>
+              <MenuItem value="medium1mb">
+                {i18n.t('core:medium1mb')}
+              </MenuItem>
+              <MenuItem value="large30mb">
+                {i18n.t('core:large30mb')}
+              </MenuItem>
+              <MenuItem value="huge1000mb">
+                {i18n.t('core:huge1000mb')}
+              </MenuItem>
+              <MenuItem value="oneGBandBigger">
+                {i18n.t('core:oneGBandBigger')}
+              </MenuItem>
+            </Select>
+          </FormControl> */}
           { /* <FormControl
             className={classes.formControl}
             disabled={true}
