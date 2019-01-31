@@ -291,12 +291,6 @@ export default function buildDesktopMenu(mainPageProps: Object) {
           }
         },
         {
-          label: '&' + i18n.t('core:joinOnGooglePlus'),
-          click: () => {
-            mainPageProps.openFileNatively('https://plus.google.com/+TagspacesOrg/');
-          }
-        },
-        {
           label: '&' + i18n.t('core:followOnTwitter'),
           click: () => {
             mainPageProps.openFileNatively('https://twitter.com/intent/user?screen_name=tagspaces');
