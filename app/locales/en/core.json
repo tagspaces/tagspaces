@@ -330,6 +330,7 @@
   "indexLocation": "Refresh Location Index",
   "readonlyModeSwitch": "Open this location in read-only mode",
   "persistIndexSwitch": "Switch to manual index creation with persisted search index",
+  "createFullTextIndex": "Enable full text search for TXT, MD and HTML files (BETA)",
   "watchForChangesInLocation": "Watch for external changes in this location",
   "proFeature": "feature available in the PRO version",
   "collectedTags": "Collected Tags",

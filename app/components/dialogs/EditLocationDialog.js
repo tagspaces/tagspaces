@@ -63,6 +63,7 @@ type State = {
   isDefault?: boolean,
   isReadOnly?: boolean,
   watchForChanges?: boolean,
+  fullTextIndex?: boolean,
   persistIndex?: boolean
 };
 
@@ -80,6 +81,7 @@ class EditLocationDialog extends React.Component<Props, State> {
     isReadOnly: false,
     watchForChanges: false,
     persistIndex: false,
+    fullTextIndex: false,
     type: locationType.TYPE_LOCAL
   };
 
@@ -106,6 +108,7 @@ class EditLocationDialog extends React.Component<Props, State> {
          isReadOnly: nextProps.location.isReadOnly,
          watchForChanges: nextProps.location.watchForChanges,
          persistIndex: nextProps.location.persistIndex,
+         fullTextIndex: nextProps.location.fullTextIndex,
          type: nextProps.location.type || locationType.TYPE_LOCAL,
          accessKeyId: nextProps.location.accessKeyId,
          secretAccessKey: nextProps.location.secretAccessKey,
@@ -233,6 +236,7 @@ class EditLocationDialog extends React.Component<Props, State> {
           isDefault: this.state.isDefault,
           isReadOnly: this.state.isReadOnly,
           persistIndex: this.state.persistIndex,
+          fullTextIndex: this.state.fullTextIndex,
           watchForChanges: this.state.watchForChanges
         });
       } else if (this.state.type === locationType.TYPE_CLOUD) {
@@ -249,6 +253,7 @@ class EditLocationDialog extends React.Component<Props, State> {
           isDefault: this.state.isDefault,
           isReadOnly: this.state.isReadOnly,
           persistIndex: this.state.persistIndex,
+          fullTextIndex: this.state.fullTextIndex,
           watchForChanges: false
         });
       }
@@ -331,6 +336,18 @@ class EditLocationDialog extends React.Component<Props, State> {
               }
               label={i18n.t('core:readonlyModeSwitch') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
             /> */}
+            <FormControlLabel
+              control={
+                <Switch
+                  disabled={!Pro}
+                  data-tid="changeFullTextIndex"
+                  name="fullTextIndex"
+                  checked={this.state.fullTextIndex}
+                  onChange={this.handleInputChange}
+                />
+              }
+              label={i18n.t('core:createFullTextIndex') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
+            />
             <FormControlLabel
               control={
                 <Switch

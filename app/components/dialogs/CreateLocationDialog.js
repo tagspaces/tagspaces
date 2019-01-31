@@ -79,6 +79,7 @@ type State = {
   isReadOnly?: boolean,
   watchForChanges?: boolean,
   persistIndex?: boolean,
+  fullTextIndex?: boolean,
   type: string
 };
 
@@ -95,27 +96,9 @@ class CreateLocationDialog extends React.Component<Props, State> {
     isReadOnly: false,
     watchForChanges: Pro,
     persistIndex: false,
+    fullTextIndex: false,
     type: locationType.TYPE_LOCAL
   };
-
-  /* componentWillReceiveProps = (nextProps: any) => {
-    if (nextProps.open === true) {
-      const dir = nextProps.selectedDirectoryPath;
-      this.setState({
-        name: dir ? extractDirectoryName(dir) : '',
-        path: dir || '',
-        perspective: '',
-        isDefault: false,
-        isReadOnly: false,
-        watchForChanges: !!Pro,
-        persistIndex: false
-      });
-    }
-  }; */
-
-  /* componentWillUnmount = () => {
-    console.log('CreateLocationDialog componentWillUnmount');
-  }; */
 
   handleInputChange = (event: Object) => {
     const target = event.target;
@@ -137,13 +120,6 @@ class CreateLocationDialog extends React.Component<Props, State> {
       this.handleValidation(name);
     });
   };
-
-  /* handleFieldValidation(field) {
-    if (!this.state[field] || this.state[field].length === 0) {
-      const errorName = 'error' + field;
-      this.setState({ [errorName]: true, disableConfirmButton: true });
-    }
-  } */
 
   handleValidation(field) {
     // const pathRegex = this.state.path.match('^((\.\./|[a-zA-Z0-9_/\-\\])*\.[a-zA-Z0-9]+)$');
@@ -188,22 +164,6 @@ class CreateLocationDialog extends React.Component<Props, State> {
           resolve(true);
         }));
       }
-
-      /* if (!this.state.storePath || this.state.storePath.length === 0) {
-        cloudErrorTextPath = true;
-        disableConfirmButton = true;
-      } else if (field === 'storePath'
-        && !this.state.cloudErrorTextName
-        // && !this.state.cloudErrorTextPath
-        && !this.state.cloudErrorAccessKey
-        && !this.state.cloudErrorSecretAccessKey
-        && !this.state.cloudErrorBucketName
-        && !this.state.cloudErrorRegion
-        && this.state.disableConfirmButton) { // initial skip validation for other fields
-        return new Promise(((resolve) => {
-          resolve(true);
-        }));
-        } */
 
       if (!this.state.accessKeyId || this.state.accessKeyId.length === 0) {
         cloudErrorAccessKey = true;
@@ -285,6 +245,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
             isDefault: this.state.isDefault,
             isReadOnly: this.state.isReadOnly,
             persistIndex: this.state.persistIndex,
+            fullTextIndex: this.state.fullTextIndex,
             watchForChanges: this.state.watchForChanges
           });
         } else if (this.state.type === locationType.TYPE_CLOUD) {
@@ -301,6 +262,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
             isDefault: this.state.isDefault,
             isReadOnly: this.state.isReadOnly,
             persistIndex: this.state.persistIndex,
+            fullTextIndex: this.state.fullTextIndex,
             watchForChanges: false
           });
         }
@@ -378,6 +340,18 @@ class CreateLocationDialog extends React.Component<Props, State> {
             }
             label={i18n.t('core:readonlyModeSwitch') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
           /> */}
+          <FormControlLabel
+            control={
+              <Switch
+                disabled={!Pro}
+                data-tid="changeFullTextIndex"
+                name="fullTextIndex"
+                checked={this.state.fullTextIndex}
+                onChange={this.handleInputChange}
+              />
+            }
+            label={i18n.t('core:createFullTextIndex') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
+          />
           <FormControlLabel
             control={
               <Switch

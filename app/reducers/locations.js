@@ -49,7 +49,8 @@ export type Location = {
   isDefault: boolean,
   isReadOnly?: boolean,
   watchForChanges?: boolean,
-  persistIndex?: boolean
+  persistIndex?: boolean,
+  fullTextIndex?: boolean
 };
 
 export const initialState = [];
@@ -79,20 +80,9 @@ export default (state: Array<Location> = initialState, action: Object) => {
     return [
       ...state,
       {
+        ...action.location,
         uuid: action.location.uuid || uuidv1(),
-        type: action.location.type,
-        name: action.location.name,
-        paths: action.location.paths,
-        accessKeyId: action.location.accessKeyId,
-        secretAccessKey: action.location.secretAccessKey,
-        bucketName: action.location.bucketName,
-        region: action.location.region,
-        perspective: action.location.perspective,
         creationDate: new Date().toJSON(),
-        isDefault: action.location.isDefault,
-        isReadOnly: action.location.isReadOnly,
-        persistIndex: action.location.persistIndex,
-        watchForChanges: action.location.watchForChanges,
       }
     ];
   }
@@ -177,6 +167,7 @@ export const actions = {
     dispatch: (actions: Object) => void
   ) => {
     dispatch(actions.changeLocation(location));
+    dispatch(AppActions.openLocation(location));
     dispatch(AppActions.setReadOnlyMode(location.isReadOnly || false));
   },
   changeLocation: (location: Location) => ({

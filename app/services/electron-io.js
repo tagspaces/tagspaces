@@ -19,7 +19,11 @@
 
 import fsextra from 'fs-extra';
 import winattr from 'winattr';
-import { extractParentDirectoryPath, getMetaDirectoryPath } from '../utils/paths';
+import {
+  extractParentDirectoryPath,
+  getMetaDirectoryPath,
+  // extractFileExtension
+} from '../utils/paths';
 import { arrayBufferToBuffer } from '../utils/misc';
 import AppConfig from '../config';
 import PlatformIO from './platform-io';
@@ -27,6 +31,7 @@ import TrayIcon from '../assets/icons/trayIcon.png';
 // import TrayIconWin from '../assets/icons/trayIcon.ico';
 import TrayIcon2x from '../assets/icons/trayIcon@2x.png';
 import TrayIcon3x from '../assets/icons/trayIcon@3x.png';
+import { Pro } from '../pro';
 
 export default class ElectronIO {
   electron: Object;
@@ -205,18 +210,19 @@ export default class ElectronIO {
         console.error('Generating tree for ' + dirPath + ' failed ' + ex);
       }
     };
-    // console.log(JSON.stringify(directoyTree));
+    // console.log(JSON.stringify(directoryTree));
     return generateDirectoryTree(directoryPath);
   };
 
-  createDirectoryIndexInWorker = (directoryPath: string): Promise<any> => {
+  createDirectoryIndexInWorker = (directoryPath: string, extractText: boolean): Promise<any> => {
     return new Promise((resolve, reject) => {
       if (this.isWorkerAvailable()) {
         const timestamp = new Date().getTime().toString();
         this.workerWindow.webContents.send('worker', {
           id: timestamp,
           action: 'createDirectoryIndex',
-          path: directoryPath
+          path: directoryPath,
+          extractText
         });
         this.ipcRenderer.once(timestamp, (event, data) => {
           // console.log('Answer from worker recieved ' + data.result);
@@ -247,7 +253,8 @@ export default class ElectronIO {
 
   listDirectoryPromise = (
     path: string,
-    lite: boolean = true
+    lite: boolean = true,
+    extractTextContent: boolean = false
   ): Promise<Array<Object>> => new Promise(resolve => {
     const enhancedEntries = [];
     let entryPath;
@@ -292,7 +299,7 @@ export default class ElectronIO {
               containsMetaFolder = true;
             }
 
-            // Read tsm.json from subfolders
+            // Read tsm.json from sub folders
             if (!eentry.isFile && !lite) {
               const folderMetaPath =
                 eentry.path +
@@ -303,10 +310,20 @@ export default class ElectronIO {
               try {
                 const folderMeta = this.fs.readJsonSync(folderMetaPath);
                 eentry.meta = folderMeta;
-                // console.log('Succes reading meta folder file ' + folderMetaPath);
+                // console.log('Success reading meta folder file ' + folderMetaPath);
               } catch (err) {
                 // console.log('Failed reading meta folder file ' + folderMetaPath);
               }
+            }
+
+            const fileName = eentry.name.toLowerCase();
+            if (
+              extractTextContent && eentry.isFile &&
+              Pro && Pro.Indexer && Pro.Indexer.extractTextContent &&
+              (fileName.endsWith('.txt') || fileName.endsWith('.md') || fileName.endsWith('.html'))
+            ) {
+              const fileContent = this.fs.readFileSync(eentry.path, 'utf8');
+              eentry.textContent = Pro.Indexer.extractTextContent(fileName, fileContent);
             }
 
             if (window.walkCanceled) {
@@ -314,7 +331,7 @@ export default class ElectronIO {
               return;
             }
           } catch (e) {
-            console.warn('Can not load properties for: ' + entryPath);
+            console.warn('Can not load properties for: ' + entryPath + ' ' + e);
           }
           enhancedEntries.push(eentry);
         });
