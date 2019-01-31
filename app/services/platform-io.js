@@ -114,8 +114,8 @@ export default class PlatformIO {
   static createDirectoryTree = (directoryPath: string): Object =>
     nativeAPI.createDirectoryTree(directoryPath);
 
-  static createDirectoryIndexInWorker = (directoryPath: string): Promise<any> =>
-    nativeAPI.createDirectoryIndexInWorker(directoryPath);
+  static createDirectoryIndexInWorker = (directoryPath: string, extractText: boolean): Promise<any> =>
+    nativeAPI.createDirectoryIndexInWorker(directoryPath, extractText);
 
   static createThumbnailsInWorker = (
     tmbGenerationList: Array<string>
@@ -123,12 +123,13 @@ export default class PlatformIO {
 
   static listDirectoryPromise = (
     path: string,
-    lite: boolean = true
+    lite: boolean = true,
+    extractText: boolean = true
   ): Promise<Array<any>> => {
     if (objectStoreAPI) {
       return objectStoreAPI.listDirectoryPromise(path, lite);
     }
-    return nativeAPI.listDirectoryPromise(path, lite);
+    return nativeAPI.listDirectoryPromise(path, lite, extractText);
   };
 
   static getPropertiesPromise = (path: string): Promise<any> => {

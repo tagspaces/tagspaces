@@ -27,14 +27,14 @@ let isGeneratingThumbs = false;
 function init() {
   console.log('Init worker');
   ipcRenderer.on('worker', (event, arg) => {
-    // console.log('worker recieved: ' + arg);
+    // console.log('worker recieved: ' + JSON.stringify(arg));
     switch (arg.action) {
     case 'createDirectoryIndex': {
       console.log('createDirectoryIndex started in worker window');
       console.time('createDirectoryIndex');
       const directoryIndex = [];
       let counter = 0;
-      walkDirectory(arg.path, { recursive: true, skipMetaFolder: true }, (fileEntry) => {
+      walkDirectory(arg.path, { recursive: true, skipMetaFolder: true, extractText: arg.extractText }, (fileEntry) => {
         counter += 1;
         if (counter > AppConfig.indexerLimit) {
           console.warn('Walk canceled by ' + AppConfig.indexerLimit);

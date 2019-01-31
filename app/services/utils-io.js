@@ -39,6 +39,7 @@ export type FileSystemEntry = {
   isFile: boolean,
   extension: string,
   thumbPath?: string,
+  textContent?: string,
   description: string,
   tags: Array<Tag>,
   size: number,
@@ -76,6 +77,7 @@ export function enhanceEntry(entry: any): FileSystemEntry {
     extension: entry.isFile ? extractFileExtension(entry.name) : '',
     thumbPath: entry.thumbPath,
     description: sidecarDescription,
+    textContent: entry.textContent,
     tags: [...sidecarTags, ...fileNameTags],
     size: entry.size,
     lmdt: entry.lmdt,
@@ -85,10 +87,10 @@ export function enhanceEntry(entry: any): FileSystemEntry {
   return enhancedEntry;
 }
 
-export function createDirectoryIndex(directoryPath: string): Promise<Array<Object>> {
+export function createDirectoryIndex(directoryPath: string, extractText: boolean = false): Promise<Array<Object>> {
   const dirPath = cleanTrailingDirSeparator(directoryPath);
   if (PlatformIO.isWorkerAvailable() && !PlatformIO.haveObjectStoreSupport()) { // Start indexing in worker if not in the object store mode
-    return PlatformIO.createDirectoryIndexInWorker(dirPath);
+    return PlatformIO.createDirectoryIndexInWorker(dirPath, extractText);
   }
 
   return new Promise((resolve, reject) => {
@@ -96,7 +98,7 @@ export function createDirectoryIndex(directoryPath: string): Promise<Array<Objec
       const directoryIndex = [];
       let counter = 0;
       console.time('createDirectoryIndex');
-      walkDirectory(dirPath, { recursive: true, skipMetaFolder: true }, (fileEntry) => {
+      walkDirectory(dirPath, { recursive: true, skipMetaFolder: true, extractText }, (fileEntry) => {
         counter += 1;
         if (counter > AppConfig.indexerLimit) {
           console.warn('Walk canceled by ' + AppConfig.indexerLimit);
@@ -126,11 +128,18 @@ export function createDirectoryIndex(directoryPath: string): Promise<Array<Objec
 
 export function walkDirectory(
   path: string,
-  options: Object = { recursive: false, skipMetaFolder: true, loadMetaDate: true },
+  options: Object = {},
   fileCallback: any,
   dirCallback: any
 ) {
-  return PlatformIO.listDirectoryPromise(path, false).then((entries) => {
+  const mergedOptions = {
+    recursive: false,
+    skipMetaFolder: true,
+    loadMetaDate: true,
+    extractText: false,
+    ...options
+  };
+  return PlatformIO.listDirectoryPromise(path, false, mergedOptions.extractText).then((entries) => {
     if (window.walkCanceled) {
       return false;
     }
@@ -150,11 +159,11 @@ export function walkDirectory(
         dirCallback(entry);
       }
 
-      if (options.recursive) {
-        if (options.skipMetaFolder && entry.name === AppConfig.metaFolder) {
+      if (mergedOptions.recursive) {
+        if (mergedOptions.skipMetaFolder && entry.name === AppConfig.metaFolder) {
           return entry;
         }
-        return walkDirectory(entry.path, options, fileCallback, dirCallback);
+        return walkDirectory(entry.path, mergedOptions, fileCallback, dirCallback);
       }
       return entry;
     }));

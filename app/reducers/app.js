@@ -904,7 +904,7 @@ export const actions = {
         if (location.persistIndex) {
           dispatch(LocationIndexActions.loadDirectoryIndex(location.paths[0]));
         } else {
-          dispatch(LocationIndexActions.createDirectoryIndex(location.paths[0]));
+          dispatch(LocationIndexActions.createDirectoryIndex(location.paths[0], true));
         }
       }
       if (Pro && Pro.Watcher && location.watchForChanges) {

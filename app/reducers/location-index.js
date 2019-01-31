@@ -212,14 +212,14 @@ export default (state: Object = initialState, action: Object) => {
 export const actions = {
   startDirectoryIndexing: () => ({ type: types.INDEX_DIRECTORY_START }),
   cancelDirectoryIndexing: () => ({ type: types.INDEX_DIRECTORY_CANCEL }),
-  createDirectoryIndex: (directoryPath: string) => (
+  createDirectoryIndex: (directoryPath: string, extractText: boolean) => (
     dispatch: (actions: Object) => void,
     getState: () => Object
   ) => {
     const state = getState();
     const currentLocation: Location = getLocation(state, state.app.currentLocationId);
     dispatch(actions.startDirectoryIndexing());
-    createDirectoryIndex(directoryPath)
+    createDirectoryIndex(directoryPath, extractText)
       .then(directoryIndex => {
         dispatch(actions.indexDirectorySuccess(directoryIndex));
         if (Pro && currentLocation.persistIndex) {
