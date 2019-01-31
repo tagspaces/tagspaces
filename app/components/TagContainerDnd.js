@@ -81,11 +81,15 @@ class TagContainerDnd extends React.Component<Props> {
   }
 
   shouldComponentUpdate(nextProps) {
-    if (this.props.tag !== nextProps.tag
-      || this.props.key !== nextProps.key
-      || this.props.tagGroup !== nextProps.tagGroup
+    if (this.props.tag.title !== nextProps.tag.title
+      || typeof this.props.key !== typeof nextProps.key
+      || (this.props.key && nextProps.key && this.props.key !== nextProps.key)
+      || this.props.tag.color !== nextProps.tag.color
+      || this.props.tag.textcolor !== nextProps.tag.textcolor
+      || (this.props.tagGroup && this.props.tagGroup ? (this.props.tagGroup.uuid !== nextProps.tagGroup.uuid) : false)
       || this.props.isDragging !== nextProps.isDragging
-      || this.props.entryPath !== nextProps.entryPath
+      || typeof this.props.entryPath !== typeof nextProps.entryPath
+      || (this.props.entryPath && this.props.entryPath !== nextProps.entryPath)
     ) {
       return true;
     }
