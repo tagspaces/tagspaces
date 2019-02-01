@@ -89,6 +89,7 @@ import IOActions from '../../../reducers/io-actions';
 import {
   actions as AppActions,
   getLastSelectedEntry,
+  isLoading
 } from '../../../reducers/app';
 
 const maxDescriptionPreviewLength = 100;
@@ -99,6 +100,7 @@ type Props = {
   classes: Object,
   currentDirectoryPath: string,
   lastSelectedEntryPath: string | null,
+  isAppLoading: boolean,
   openFile: (path: string, isFile?: boolean) => void,
   deleteFile: (path: string) => void,
   deleteDirectory: (path: string) => void,
@@ -830,11 +832,11 @@ class GridPerspective extends React.Component<Props, State> {
   };
 
   render() {
-    const classes = this.props.classes;
+    const { classes, isAppLoading, directoryContent } = this.props;
     const { selectedEntries = [], layoutType, entrySize, sortBy, orderBy } = this.state;
     const selectedFilePaths = selectedEntries.filter(fsEntry => fsEntry.isFile).map(fsentry => fsentry.path);
 
-    const sortedContent = this.sort(this.props.directoryContent, sortBy, orderBy);
+    const sortedContent = this.sort(directoryContent, sortBy, orderBy);
     const sortedDirectories = sortedContent.filter(entry => !entry.isFile);
     const sortedFiles = sortedContent.filter(entry => entry.isFile);
     let entryWidth = 200;
@@ -961,7 +963,12 @@ class GridPerspective extends React.Component<Props, State> {
           >
             {(sortedDirectories.map(entry => this.renderCell(entry)))}
             {(sortedFiles.map(entry => this.renderCell(entry)))}
-            {(sortedFiles.length < 1 && sortedDirectories.length < 1) && (
+            {isAppLoading && (
+              <Typography style={{ padding: 15 }}>
+                {i18n.t('core:loading')}
+              </Typography>
+            )}
+            {(!isAppLoading && sortedFiles.length < 1 && sortedDirectories.length < 1) && (
               <Typography style={{ padding: 15 }}>
                 {i18n.t('core:noFileFolderFound')}
               </Typography>
@@ -1213,6 +1220,7 @@ function mapActionCreatorsToProps(dispatch) {
 function mapStateToProps(state) {
   return {
     supportedFileTypes: getSupportedFileTypes(state),
+    isAppLoading: isLoading(state),
     lastSelectedEntryPath: getLastSelectedEntry(state),
   };
 }

@@ -159,7 +159,7 @@ export default (state: Object = initialState, action: Object) => {
       ...state,
       currentDirectoryEntries: action.directoryContent,
       currentDirectoryPath: action.directoryPath,
-      isLoading: false
+      isLoading: action.showIsLoading || false
     };
   }
   case types.CLEAR_DIRECTORY_CONTENT: {
@@ -570,6 +570,7 @@ export const actions = {
     console.time('listDirectoryPromise');
     const { settings } = getState();
     window.walkCanceled = false;
+    dispatch(actions.loadDirectorySuccessInt(directoryPath, [], true));
     dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
     PlatformIO.listDirectoryPromise(directoryPath, false)
       .then(results => {
@@ -666,11 +667,13 @@ export const actions = {
   },
   loadDirectorySuccessInt: (
     directoryPath: string,
-    directoryContent: Array<Object>
+    directoryContent: Array<Object>,
+    showIsLoading: boolean
   ) => ({
     type: types.LOAD_DIRECTORY_SUCCESS,
     directoryPath,
-    directoryContent
+    directoryContent,
+    showIsLoading
   }),
   loadDirectoryFailure: (directoryPath: string, error: any) => (
     dispatch: (actions: Object) => void
@@ -1392,3 +1395,4 @@ export const getSearchResults = (state: Object) => state.app.currentDirectoryEnt
 export const getSearchResultCount = (state: Object) => state.app.currentDirectoryEntries.length;
 export const getCurrentLocationId = (state: Object) => state.app.currentLocationId;
 export const isEntryInFullWidth = (state: Object) => state.app.isEntryInFullWidth;
+export const isLoading = (state: Object) => state.app.isLoading;
