@@ -105,7 +105,7 @@ class ProTeaserDialog extends React.Component<Props, State> {
             <Typography variant="h5" style={{ textAlign: 'center' }}>Key Features</Typography>
             <Typography variant="subtitle1">&nbsp;</Typography>
             <Typography variant="subtitle1"><BulletIcon /> Generating Persistent Thumbnails</Typography>
-            <Typography variant="subtitle1"><BulletIcon /> Advanced Search by file type and tags</Typography>
+            <Typography variant="subtitle1"><BulletIcon /> Search in file content and by type and size</Typography>
             <Typography variant="subtitle1"><BulletIcon /> File and Folder Description</Typography>
             <Typography variant="subtitle1"><BulletIcon /> Connecting S3 Object Store Network Locations</Typography>
             <Typography variant="subtitle1">&nbsp;</Typography>
@@ -125,15 +125,15 @@ class ProTeaserDialog extends React.Component<Props, State> {
           <div style={slideStyles}>
             <Typography variant="h5" style={{ textAlign: 'center' }}>Generating Persistent Thumbnails</Typography>
             <Typography variant="subtitle1">&nbsp;</Typography>
-            <Typography variant="subtitle1"><BulletIcon /> Images: JPG, PNG, GIF, ... (supported also in the free version)</Typography>
-            <Typography variant="subtitle1"><BulletIcon /> Videos: WEBM, OGV, MP4, M4V, etc.</Typography>
-            <Typography variant="subtitle1"><BulletIcon /> Notes: HTML, MD, etc.</Typography>
-            <Typography variant="subtitle1"><BulletIcon /> Text files: TXT, source code files</Typography>
+            <Typography variant="subtitle1"><BulletIcon /> Images: JPG, PNG, GIF... (available also in the free version)</Typography>
+            <Typography variant="subtitle1"><BulletIcon /> Videos: WEBM, OGV, MP4... (available also in the free version)</Typography>
+            <Typography variant="subtitle1"><BulletIcon /> Notes: HTML, MD, TXT...</Typography>
+            <Typography variant="subtitle1"><BulletIcon /> Source Code: JS, C, JAVA...</Typography>
+            <Typography variant="subtitle1"><BulletIcon /> Office Documents: ODT, ODP, ODS, DOCX, XLSX, PPTX</Typography>
             <Typography variant="subtitle1"><BulletIcon /> Bookmarks: URL</Typography>
             <Typography variant="subtitle1"><BulletIcon /> Ebooks: EPUB</Typography>
             <Typography variant="subtitle1"><BulletIcon /> Archives: ZIP</Typography>
             <Typography variant="subtitle1"><BulletIcon /> Portable Documents: PDF</Typography>
-            <Typography variant="subtitle1"><BulletIcon /> Office Documents: ODT, ODP, ODS, DOCX, XLSX, PPTX</Typography>
             <Typography variant="subtitle1">&nbsp;</Typography>
             <Button
               onClick={() => {
@@ -148,6 +148,9 @@ class ProTeaserDialog extends React.Component<Props, State> {
           </div>
           <div style={slideStyles}>
             <Typography variant="h5" style={{ textAlign: 'center' }}>Advanced Search Options</Typography>
+            <Typography variant="h6">Full text search for your notes and text files</Typography>
+            <Typography variant="subtitle1"><BulletIcon /> Keywords from your text files will be included in the index</Typography>
+            <Typography variant="subtitle1"><BulletIcon /> Currently we support TXT, MD and HTML files</Typography>
             <Typography variant="h6">Search by file type</Typography>
             <Typography variant="subtitle1"><BulletIcon /> Documents: PDF, ODF, DOCX, EXL, etc.</Typography>
             <Typography variant="subtitle1"><BulletIcon /> Notes: MD, TXT, HTML, etc.</Typography>
@@ -157,9 +160,6 @@ class ProTeaserDialog extends React.Component<Props, State> {
             <Typography variant="subtitle1"><BulletIcon /> Bookmarks: URL, LNK, etc.</Typography>
             <Typography variant="subtitle1"><BulletIcon /> eBook EPUB, MOBI, AZW, PRC, etc.</Typography>
             <Typography variant="subtitle1"><BulletIcon /> Filter for files or folders without tags</Typography>
-            <Typography variant="h6">Searching types for tagged entries</Typography>
-            <Typography variant="subtitle1"><BulletIcon /> At least one tag - logical OR search</Typography>
-            <Typography variant="subtitle1"><BulletIcon /> All tag - logical AND search</Typography>
             <Typography variant="subtitle1" style={{ textAlign: 'right' }}>&nbsp;
               <Button
                 onClick={() => {
@@ -214,6 +214,7 @@ class ProTeaserDialog extends React.Component<Props, State> {
             <Typography variant="h5" style={{ textAlign: 'center' }}>Other advanced features</Typography>
             <Typography variant="subtitle1">&nbsp;</Typography>
             <Typography variant="subtitle1"><BulletIcon /> Location monitoring for changes</Typography>
+            <Typography variant="subtitle1"><BulletIcon /> Collecting all tags from locations</Typography>
             <Typography variant="subtitle1"><BulletIcon /> Persistent manual index</Typography>
             <Typography variant="subtitle1"><BulletIcon /> Signed installers for Windows</Typography>
             <Typography variant="subtitle1"><BulletIcon /> White label package (available in TagSpaces Enterprise)</Typography>
