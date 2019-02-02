@@ -1,5 +1,34 @@
 # Changelog
 
+## Version 3.0.9 / 2019.02.01
+
+### Community
+- extending the tag search to support AND, OR and negative searches, thanks to @IHappyDayI
+- added search boxing enabling search restriction to the current folder
+- clear folder content on directory change
+- added some basic statistics for tag library [#865](https://github.com/tagspaces/tagspaces/issues/865)
+- sorting tags in all tags lists [#849](https://github.com/tagspaces/tagspaces/issues/849)
+- replaced "Open Containing Folder" function with "Show in File Manager" function.
+- add function to generate video thumbnails
+- add openUrl functionality to web version
+- playing next file follows selection in perspective
+- limit the parent directory navigation to current location
+- fix various usability issue in folder container toolbar
+- updated split pane resizer style to prevent the divider from overlapping with the scroll bar [#855](https://github.com/tagspaces/tagspaces/issues/855)
+- added random sort order for directory content, useful when using TagSpaces as media player
+- getting previous and next entries iterate now only over files
+- previous and next file button select file in the perspective
+- added the ability to select multiple files by holding the shift key. [#852](https://github.com/tagspaces/tagspaces/issues/852)
+- added the ability to add multiple files to the selection by holding the shift + ctrl key.
+- reflecting changing of meta data like description in file and search indexes
+- usability improvements in many dialogs
+- refactoring sorting functionality, added sorting by first tag, showing folder always first
+
+### Pro
+- added experimental full text search support for TXT, MD and HTML files in the desktop app
+- added functionality for find and extract all the tags from the current location
+- fix navigation to parent folder on Windows and for s3
+
 ## Version 3.0.5 / 2019.01.18
 
 ### Community
