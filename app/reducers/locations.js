@@ -21,6 +21,7 @@ import uuidv1 from 'uuid';
 import { immutablySwapItems } from '../utils/misc';
 import PlatformIO from '../services/platform-io';
 import { actions as AppActions } from '../reducers/app';
+import AppConfig from '../config';
 
 export const types = {
   ADD_LOCATION: 'APP/ADD_LOCATION',
@@ -63,7 +64,7 @@ Object.keys(devicePaths).forEach(key => {
     type: locationType.TYPE_LOCAL,
     name: key, // TODO use i18n
     paths: [devicePaths[key]],
-    isDefault: false,
+    isDefault: (AppConfig.isWeb && devicePaths[key] === '/files/'), // Used for the web ts demo
     isReadOnly: false,
     persistIndex: false
   });
