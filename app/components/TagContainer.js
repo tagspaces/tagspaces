@@ -71,6 +71,7 @@ class TagContainer extends React.Component<Props> {
       || this.props.isDragging !== nextProps.isDragging
       || typeof this.props.entryPath !== typeof nextProps.entryPath
       || (this.props.entryPath && this.props.entryPath !== nextProps.entryPath)
+      || this.props.selectedEntries !== nextProps.selectedEntries
     ) {
       return true;
     }
