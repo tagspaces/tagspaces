@@ -368,7 +368,7 @@ function mapStateToProps(state) {
     tagGroups: getTagGroups(state),
     tagBackgroundColor: getTagColor(state),
     tagTextColor: getTagTextColor(state),
-    selectedEntries: getSelectedEntries(state)
+    selectedEntries: getSelectedEntries(state),
     allTags: getAllTags(state)
   };
 }
