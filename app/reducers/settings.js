@@ -72,19 +72,21 @@ export const types = {
 export default (state = defaultSettings, action) => {
   switch (action.type) {
   case types.UPGRADE_SETTINGS: {
+    const mergedKeyBindings = defaultSettings.keyBindings.map(x => Object.assign(x, state.keyBindings.find(y => y.name === x.name)));
+    const mergedFileTypes = defaultSettings.supportedFileTypes.map(x => Object.assign(x, state.supportedFileTypes.find(y => y.type === x.type)));
     return {
       ...defaultSettings,
       ...state,
       supportedThemes: defaultSettings.supportedThemes, // taking always the themes from default settings
       supportedLanguages: defaultSettings.supportedLanguages, // taking always the languages from default settings
-      // keyBindings: [
-      //   ...defaultSettings.keyBindings,
-      //   // ...state.keyBindings
-      // ],
-      // supportedFileTypes: [
-      //   ...defaultSettings.supportedFileTypes,
-      //   // ...state.supportedFileTypes
-      // ]
+      keyBindings: [
+        // ...defaultSettings.keyBindings, // use to reset to the default key bindings
+        ...mergedKeyBindings
+      ],
+      supportedFileTypes: [
+        // ...defaultSettings.supportedFileTypes, // use to reset to the default file types
+        ...mergedFileTypes
+      ]
     };
   }
   case types.TOGGLE_SHOWUNIXHIDDENENTRIES: {
