@@ -35,7 +35,7 @@ export const FileTypeGroups = {
   notes: ['md', 'mdown', 'txt', 'html'],
   documents: ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'odt', 'ods'],
   audio: ['ogg', 'mp3', 'wav', 'wave'],
-  video: ['ogv', 'mp4', 'avi', 'webm', 'mkv'],
+  video: ['ogv', 'mp4', 'webm', 'm4v', 'mkv', 'avi'],
   archives: ['zip', 'rar', 'gz', 'tgz', 'arc', '7z'],
   bookmarks: ['url', 'lnk', 'sym'],
   ebooks: ['epub', 'mobi', 'azw', 'prc', 'azw1', 'azw3', 'azw4', 'azw8', 'azk'],
