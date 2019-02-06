@@ -995,7 +995,10 @@ class EntryContainer extends React.Component<Props, State> {
                     >
                       <div
                         className={classes.fileBadge}
-                        style={{ backgroundColor: AppConfig.defaultFolderColor }}
+                        style={{
+                          backgroundColor: AppConfig.defaultFolderColor,
+                          paddingTop: 5
+                        }}
                       >
                         <FolderIcon />
                       </div>
