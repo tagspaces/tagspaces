@@ -243,11 +243,11 @@ class EntryProperties extends Component<Props, State> {
         path: entryProps.path,
         size: entryProps.size,
         tags: entryProps.tags,
-        ldtm: new Date(entryProps.lmdt)
+        ldtm: entryProps.lmdt ? new Date(entryProps.lmdt)
           .toISOString()
           .substring(0, 19)
           .split('T')
-          .join(' '),
+          .join(' ') : '',
         color: entryProps.color,
         isFile: entryProps.isFile,
         description: entryProps.description ? entryProps.description : ''
