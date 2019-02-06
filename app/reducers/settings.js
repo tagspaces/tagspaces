@@ -77,14 +77,14 @@ export default (state = defaultSettings, action) => {
       ...state,
       supportedThemes: defaultSettings.supportedThemes, // taking always the themes from default settings
       supportedLanguages: defaultSettings.supportedLanguages, // taking always the languages from default settings
-      /* keyBindings: [
+      keyBindings: [
         ...defaultSettings.keyBindings,
         ...state.keyBindings
-      ] */
-      /* supportedFileTypes: [
+      ],
+      supportedFileTypes: [
         ...defaultSettings.supportedFileTypes,
         ...state.supportedFileTypes
-      ] */
+      ]
     };
   }
   case types.TOGGLE_SHOWUNIXHIDDENENTRIES: {
