@@ -837,8 +837,8 @@ class EntryContainer extends React.Component<Props, State> {
           '&locale=' +
           i18n.language +
           '&edit=true';
-      } else if (!currentEntry.isFile) {
-        fileOpenerURL = 'node_modules/@tagspaces/html-viewer/index.html?locale=' + i18n.language;
+      // } else if (!currentEntry.isFile) { // TODO needed for loading folder's default html
+      //   fileOpenerURL = 'node_modules/@tagspaces/html-viewer/index.html?locale=' + i18n.language;
       } else {
         fileOpenerURL =
           currentEntry.viewingExtensionPath +
