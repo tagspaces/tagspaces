@@ -79,7 +79,7 @@ const supportedText = [
   'sql',
   'mhtml'
 ];
-const supportedVideos = ['mp4', 'webm', 'ogv', 'm4v'];
+const supportedVideos = ['ogv', 'mp4', 'webm', 'm4v', 'mkv'];
 const maxFileSize = 30 * 1024 * 1024;
 
 function saveThumbnailPromise(filePath, dataURL) {
