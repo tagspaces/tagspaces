@@ -389,6 +389,7 @@
   "entrySizeBig": "Large mode",
   "singleClickOpenInternally": "Single click opens file internally",
   "singleClickOpenExternally": "Single click opens file externally",
+  "singleClickSelects": "Single click selects only",
   "parentDirNotInLocation": "Unable to navigate! Parent folder not in the current location.",
   "mustContainTheseTags": "Must contain all of these tags",
   "atLeastOneOfTheseTags": "At least one of these tags",

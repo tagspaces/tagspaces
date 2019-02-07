@@ -373,9 +373,8 @@ class GridPerspective extends React.Component<Props, State> {
           this.props.openFile(fsEntry.path, fsEntry.isFile);
         } else if (this.state.singleClickAction === 'openExternal') {
           this.props.openFileNatively(fsEntry.path);
-        } else {
-          this.props.openFile(fsEntry.path, fsEntry.isFile);
         }
+        // else if (this.state.singleClickAction === 'selects') {}
       }
     }
   };
@@ -1204,6 +1203,17 @@ class GridPerspective extends React.Component<Props, State> {
               {this.state.singleClickAction === 'openExternal' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
             </ListItemIcon>
             <ListItemText inset primary={i18n.t('core:singleClickOpenExternally')} />
+          </MenuItem>
+          <MenuItem
+            data-tid="gridPerspectiveSingleClickSelects"
+            title={i18n.t('core:singleClickSelects')}
+            aria-label={i18n.t('core:singleClickSelects')}
+            onClick={() => this.changeSingleClickAction('selects')}
+          >
+            <ListItemIcon>
+              {this.state.singleClickAction === 'selects' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:singleClickSelects')} />
           </MenuItem>
         </Menu>
       </div>
