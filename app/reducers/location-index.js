@@ -31,6 +31,7 @@ import Search from '../services/search';
 import { actions as AppActions } from './app';
 import AppConfig from '../config';
 import i18n from '../services/i18n';
+import PlatformIO from '../services/platform-io';
 
 export const types = {
   INDEX_DIRECTORY: 'INDEX_DIRECTORY',
@@ -222,7 +223,7 @@ export const actions = {
     createDirectoryIndex(directoryPath, extractText)
       .then(directoryIndex => {
         dispatch(actions.indexDirectorySuccess(directoryIndex));
-        if (Pro && currentLocation.persistIndex) {
+        if (Pro && (currentLocation.persistIndex || PlatformIO.haveObjectStoreSupport())) { // always persist on s3 stores
           Pro.Indexer.persistIndex(directoryPath, directoryIndex, (currentLocation.type === locationType.TYPE_CLOUD) ? '/' : AppConfig.dirSeparator);
         }
         return true;
