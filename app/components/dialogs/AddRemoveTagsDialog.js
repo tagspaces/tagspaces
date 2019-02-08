@@ -27,7 +27,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import FileIcon from '@material-ui/icons/InsertDriveFileOutlined';
 import Typography from '@material-ui/core/Typography';
-import GenericDialog from './GenericDialog';
+import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import { type Tag } from '../../reducers/taglibrary';
 import TagsSelect from '../TagsSelect';
 import i18n from '../../services/i18n';
@@ -80,11 +80,22 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
     this.props.onClose();
   };
 
+  addTags = () => {
+    if (this.props.selectedEntries && this.props.selectedEntries.length > 0) {
+      const paths = [];
+      this.props.selectedEntries.map((entry) => {
+        paths.push(entry.path);
+        return true;
+      });
+      this.props.addTags(paths, this.state.newlyAddedTags);
+    }
+    this.onClose();
+  }
+
   render() {
     const {
       open,
       selectedEntries = [],
-      addTags,
       removeTags,
       removeAllTags,
       onClose
@@ -95,6 +106,7 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
       <GenericDialog
         open={open}
         onClose={onClose}
+        onEnterKey={(event) => onEnterKeyHandler(event, this.addTags)}
         renderTitle={() => (
           <DialogTitle>{i18n.t('core:tagOperationTitle')}</DialogTitle>
         )}
@@ -162,17 +174,7 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
               data-tid="addTagsMultipleEntries"
               disabled={newlyAddedTags.length < 1 || selectedEntries.length < 1}
               color="primary"
-              onClick={() => {
-                if (selectedEntries && selectedEntries.length > 0) {
-                  const paths = [];
-                  selectedEntries.map((entry) => {
-                    paths.push(entry.path);
-                    return true;
-                  });
-                  addTags(paths, newlyAddedTags);
-                }
-                this.onClose();
-              }}
+              onClick={this.addTags}
             >
               {i18n.t('core:tagOperationAddTag')}
             </Button>
