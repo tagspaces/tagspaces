@@ -30,7 +30,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import uuidv1 from 'uuid';
 import ConfirmDialog from './ConfirmDialog';
-import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
+import GenericDialog from './GenericDialog';
 import SettingsGeneral from '../settings/SettingsGeneral';
 import SettingsKeyBindings from '../settings/SettingsKeyBindings';
 import SettingsFileTypes from '../settings/SettingsFileTypes';
@@ -210,14 +210,14 @@ class SettingsDialog extends React.Component<Props, State> {
       <div
         data-tid="settingsDialog"
         className={this.props.classes.mainContent}
-        ref={el => this.settingsFileTypeRef = el}
+        ref={el => { this.settingsFileTypeRef = el; }}
       >
         <AppBar position="static" color="default">
           <Tabs
             value={this.state.currentTab}
             onChange={this.handleTabClick}
             indicatorColor="primary"
-            fullWidth
+            variant="fullWidth"
           >
             <Tab data-tid="generalSettingsDialog" label={i18n.t('core:generalTab')} />
             <Tab data-tid="fileTypeSettingsDialog" label={i18n.t('core:fileTypeTab')} />
