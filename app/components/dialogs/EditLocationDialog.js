@@ -52,19 +52,19 @@ type Props = {
 };
 
 type State = {
-  errorTextPath?: boolean,
-  errorTextName?: boolean,
-  disableConfirmButton?: boolean,
+  errorTextPath: boolean,
+  errorTextName: boolean,
+  disableConfirmButton: boolean,
   // openDirectoryButtonDisabled?: boolean,
-  uuid?: string,
-  name?: string,
-  path?: string,
-  perspective?: '',
-  isDefault?: boolean,
-  isReadOnly?: boolean,
-  watchForChanges?: boolean,
-  fullTextIndex?: boolean,
-  persistIndex?: boolean
+  uuid: string,
+  name: string,
+  path: string,
+  perspective: '',
+  isDefault: boolean,
+  isReadOnly: boolean,
+  watchForChanges: boolean,
+  fullTextIndex: boolean,
+  persistIndex: boolean
 };
 
 class EditLocationDialog extends React.Component<Props, State> {

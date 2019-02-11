@@ -103,11 +103,12 @@ class TagContainerDnd extends React.Component<Props> {
       tagGroup,
       entryPath,
       handleTagMenu,
-      deleteIcon
+      deleteIcon,
+      isDragging,
+      connectDragSource,
+      tagMode
     } = this.props;
-    const { isDragging, connectDragSource, tagMode } = this.props;
 
-    // return connectDragPreview(<span>{
     return connectDragSource(
       <span>
         <TagContainer
@@ -121,8 +122,6 @@ class TagContainerDnd extends React.Component<Props> {
           isDragging={isDragging}
         />
       </span>);
-    // , { dropEffect: 'copy' });
-    // }</span>, { anchorX: 0, anchorY: 0 });
   }
 }
 
