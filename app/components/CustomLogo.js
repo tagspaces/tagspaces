@@ -23,23 +23,23 @@ import { bindActionCreators } from 'redux';
 import IconButton from '@material-ui/core/IconButton';
 import { Pro } from '../pro';
 import TextLogoIcon from '../assets/images/text-logo.svg';
-import CustomLogoIcon from '../assets/images/custom-logo.svg';
+// import CustomLogoIcon from '../assets/images/custom-logo.svg';
 import { actions as AppActions } from '../reducers/app';
 
-class CustomLogo extends Component {
-  render() {
-    return (
-      <IconButton
-        style={{ height: 50, padding: 0, marginBottom: 15 }}
-        data-tid="aboutTagSpaces"
-        onClick={this.props.toggleAboutDialog}
-      >
-        <img style={{ height: 40 }} src={Pro ? Pro.TextLogoIcon : TextLogoIcon} alt="TagSpaces Logo" />
-        {/* <img style={{ height: 40 }} src={CustomLogoIcon} alt="Custom Logo" /> */}
-      </IconButton>
-    );
-  }
-}
+type Props = {
+  toggleAboutDialog: () => void
+};
+
+const CustomLogo = (props: Props) => (
+  <IconButton
+    style={{ height: 50, padding: 0, marginBottom: 15 }}
+    data-tid="aboutTagSpaces"
+    onClick={props.toggleAboutDialog}
+  >
+    <img style={{ height: 40 }} src={Pro ? Pro.TextLogoIcon : TextLogoIcon} alt="TagSpaces Logo" />
+    {/* <img style={{ height: 40 }} src={CustomLogoIcon} alt="Custom Logo" /> */}
+  </IconButton>
+);
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators({

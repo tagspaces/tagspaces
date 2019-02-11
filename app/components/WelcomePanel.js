@@ -23,20 +23,12 @@ import { bindActionCreators } from 'redux';
 import { withStyles } from '@material-ui/core/styles';
 import WelcomeLogo from '../assets/images/welcome-logo.png';
 import WelcomeBackground from '../assets/images/background.png';
-// import Menu from '@material-ui/core/Menu';
-// import MenuItem from '@material-ui/core/MenuItem';
-// import ListItemIcon from '@material-ui/core/ListItemCore';
-// import ListItemText  from '@material-ui/core/ListItemtext';
-// import ListSubheader from '@material-ui/core/ListSubheader';
-
-
 // import i18n from '../services/i18n';
-import { getLocations, type Location } from '../reducers/locations';
+// import { getLocations, type Location } from '../reducers/locations';
 import {
   isFirstRun,
   actions as SettingsActions
-} from '../reducers/settings'
-// import { extractDirectoryName } from '../utils/paths';
+} from '../reducers/settings';
 
 const styles = theme => ({
   mainPanel: {
@@ -59,43 +51,30 @@ const styles = theme => ({
 
 type Props = {
   classes: Object,
-  locations: Array<Location>
+  setFirstRun: (isFirstRun: boolean) => void
+  // locations: Array<Location>
 };
 
-type State = {
-  currentLocation?: Location,
-};
-
-class WelcomePanel extends React.Component<Props, State> {
-  state = {
-    currentLocation: null,
-  };
-
-  toggleOnboarding = () => {
-    this.props.setFirstRun(!this.props.isFirstRun);
-  }
-
-  render() {
-    const { classes } = this.props;
-    return (
-      <div className={classes.mainPanel}>
-        <div className={classes.slogan}>
-          <img
-            src={WelcomeLogo}
-            alt="Organize your files"
-            onClick={this.toggleOnboarding}
-            // style={{ pointerEvents: 'none' }}
-          />
-        </div>
+const WelcomePanel = (props: Props) => {
+  const { classes } = props;
+  return (
+    <div className={classes.mainPanel}>
+      <div className={classes.slogan}>
+        <img
+          src={WelcomeLogo}
+          alt="Organize your files"
+          onClick={() => { props.setFirstRun(!props.isFirstRun) }}
+          // style={{ pointerEvents: 'none' }}
+        />
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 function mapStateToProps(state) {
   return {
     isFirstRun: isFirstRun(state),
-    locations: getLocations(state),
+    // locations: getLocations(state),
   };
 }
 
