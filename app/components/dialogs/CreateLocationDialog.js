@@ -68,18 +68,17 @@ type Props = {
 };
 
 type State = {
-  errorTextPath?: boolean,
-  errorTextName?: boolean,
-  disableConfirmButton?: boolean,
-  // open?: boolean,
-  name?: string,
-  path?: string,
+  errorTextPath: boolean,
+  errorTextName: boolean,
+  disableConfirmButton: boolean,
+  name: string,
+  path: string,
   perspective?: string,
-  isDefault?: boolean,
-  isReadOnly?: boolean,
-  watchForChanges?: boolean,
-  persistIndex?: boolean,
-  fullTextIndex?: boolean,
+  isDefault: boolean,
+  isReadOnly: boolean,
+  watchForChanges: boolean,
+  persistIndex: boolean,
+  fullTextIndex: boolean,
   type: string
 };
 
@@ -88,7 +87,6 @@ class CreateLocationDialog extends React.Component<Props, State> {
     errorTextPath: false,
     errorTextName: false,
     disableConfirmButton: true,
-    // open: false,
     name: '',
     path: '',
     perspective: '',
