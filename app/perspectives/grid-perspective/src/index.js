@@ -683,7 +683,15 @@ class GridPerspective extends React.Component<Props, State> {
             }}
           >
             <div id="gridCellTags" className={classes.gridCellTags}>
-              {fsEntry.tags.map(tag => this.renderTag(tag, fsEntry))}
+              {
+                fsEntry.tags.map(tag => this.renderTag(tag, fsEntry))
+                // fsEntry.tags.map(tag => TagContainer({
+                //   tag,
+                //   key: tag.id,
+                //   entryPath: fsEntry.path,
+                //   handleTagMenu: this.handleTagMenu
+                // }))
+              }
             </div>
             {description.length > 0 && (
               <Typography
