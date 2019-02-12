@@ -208,7 +208,7 @@
     "jmespath": "^0.15.0",
     "js-webdav-client": "https://github.com/sara-nl/js-webdav-client",
     "jszip": "^3.1.5",
-    "marked": "^0.5.1",
+    "marked": "^0.6.0",
     "memoize-one": "^5.0.0",
     "moment": "^2.22.1",
     "path": "^0.12.7",
