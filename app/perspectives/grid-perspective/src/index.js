@@ -213,12 +213,8 @@ class GridPerspective extends React.Component<Props, State> {
     }
 
     if (lastSelectedEntryPath !== null) {
-      this.setState(
-        () => {
-          this.computeFileOperationsEnabled();
-          // this.makeFirstSelectedEntryVisible(); // disable due to wrong scrolling
-        }
-      );
+      this.computeFileOperationsEnabled();
+      // this.makeFirstSelectedEntryVisible(); // disable due to wrong scrolling
     }
 
     // Directory changed
@@ -351,9 +347,8 @@ class GridPerspective extends React.Component<Props, State> {
           this.props.openFile(fsEntry.path, fsEntry.isFile);
         } else if (this.state.singleClickAction === 'openExternal') {
           this.props.openFileNatively(fsEntry.path);
-        } else {
-          this.props.openFile(fsEntry.path, fsEntry.isFile);
         }
+        // else if (this.state.singleClickAction === 'selects') {}
       }
     }
   };
@@ -656,7 +651,15 @@ class GridPerspective extends React.Component<Props, State> {
             }}
           >
             <div id="gridCellTags" className={classes.gridCellTags}>
-              {fsEntry.tags.map(tag => this.renderTag(tag, fsEntry))}
+              {
+                fsEntry.tags.map(tag => this.renderTag(tag, fsEntry))
+                // fsEntry.tags.map(tag => TagContainer({
+                //   tag,
+                //   key: tag.id,
+                //   entryPath: fsEntry.path,
+                //   handleTagMenu: this.handleTagMenu
+                // }))
+              }
             </div>
             {description.length > 0 && (
               <Typography
@@ -1177,6 +1180,17 @@ class GridPerspective extends React.Component<Props, State> {
               {this.state.singleClickAction === 'openExternal' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
             </ListItemIcon>
             <ListItemText inset primary={i18n.t('core:singleClickOpenExternally')} />
+          </MenuItem>
+          <MenuItem
+            data-tid="gridPerspectiveSingleClickSelects"
+            title={i18n.t('core:singleClickSelects')}
+            aria-label={i18n.t('core:singleClickSelects')}
+            onClick={() => this.changeSingleClickAction('selects')}
+          >
+            <ListItemIcon>
+              {this.state.singleClickAction === 'selects' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:singleClickSelects')} />
           </MenuItem>
         </Menu>
       </div>

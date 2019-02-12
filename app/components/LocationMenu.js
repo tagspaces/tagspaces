@@ -86,6 +86,9 @@ class LocationMenu extends React.Component<Props, State> {
   render() {
     const { theme } = this.props;
     const { currentLocation } = this.state;
+    const locationIcon = (currentLocation && currentLocation.type === locationType.TYPE_CLOUD) ?
+      <CloudLocationIcon /> : <LocationIcon />;
+
     return (
       <div style={{
         backgroundColor: theme.palette.background.default,
@@ -98,7 +101,7 @@ class LocationMenu extends React.Component<Props, State> {
           style={{ paddingRight: 0, paddingLeft: 11 }}
         >
           {this.state.currentLocation
-            ? <LocationIcon /> // this.state.currentLocation.name
+            ? locationIcon // this.state.currentLocation.name
             : i18n.t('core:pleaseOpenLocation')}
           <ArrowDropDownIcon />
         </Button>

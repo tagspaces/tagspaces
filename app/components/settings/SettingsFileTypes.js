@@ -25,6 +25,7 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import IconButton from '@material-ui/core/IconButton';
+import RemoveIcon from '@material-ui/icons/RemoveCircle';
 import Button from '@material-ui/core/Button';
 import Select from '@material-ui/core/Select';
 import ColorPickerDialog from '../dialogs/ColorPickerDialog';
@@ -227,7 +228,7 @@ class SettingsFileTypes extends Component<Props, State> {
               title={i18n.t('removeFileType', { itemType: item.type })}
               onClick={() => onRemoveItem(item)}
             >
-              <i className="fa fa-times" />
+              <RemoveIcon />
             </IconButton>
           </ListItem>
         ))}

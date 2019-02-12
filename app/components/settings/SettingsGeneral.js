@@ -71,12 +71,14 @@ type Props = {
 };
 
 type State = {
-  color?: string
+  displayColorPicker?: boolean,
+  displayTextColorPicker?: boolean
 };
 
 class SettingsGeneral extends React.Component<Props, State> {
   state = {
-    color: ''
+    displayColorPicker: false,
+    displayTextColorPicker: false,
   };
 
   toggleDefaultTagBackgroundColorPicker = () => {
@@ -87,16 +89,6 @@ class SettingsGeneral extends React.Component<Props, State> {
     this.setState({
       displayTextColorPicker: !this.state.displayTextColorPicker
     });
-  };
-
-  handleChangeColor = color => {
-    this.setState({ color });
-    this.props.setTagColor(color);
-  };
-
-  handleChangeTextColor = color => {
-    this.setState({ textcolor: color });
-    this.props.setTagTextColor(color);
   };
 
   handleChange = event => {
@@ -218,7 +210,7 @@ class SettingsGeneral extends React.Component<Props, State> {
             </Button>
             <ColorPickerDialog
               open={this.state.displayColorPicker}
-              setColor={this.handleChangeColor}
+              setColor={(color) => { this.props.setTagColor(color); }}
               onClose={this.toggleDefaultTagBackgroundColorPicker}
               color={this.props.settings.tagBackgroundColor}
             />
@@ -239,7 +231,7 @@ class SettingsGeneral extends React.Component<Props, State> {
             </Button>
             <ColorPickerDialog
               open={this.state.displayTextColorPicker}
-              setColor={this.handleChangeTextColor}
+              setColor={(color) => { this.props.setTagTextColor(color); }}
               onClose={this.toggleDefaultTagTextColorPicker}
               color={this.props.settings.tagTextColor}
             />

@@ -575,7 +575,8 @@ export const actions = {
     console.time('listDirectoryPromise');
     const { settings } = getState();
     window.walkCanceled = false;
-    dispatch(actions.loadDirectorySuccessInt(directoryPath, [], true));
+    // Uncommenting the following line will make all content to be cleared before loading new dir content
+    // dispatch(actions.loadDirectorySuccessInt(directoryPath, [], true));
     dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
     PlatformIO.listDirectoryPromise(directoryPath, false)
       .then(results => {

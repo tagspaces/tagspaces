@@ -65,46 +65,43 @@ type Props = {
   globalKeyBindingEnabled: boolean
 };
 
-class SettingsKeyBindings extends React.Component<Props> {
-  render() {
-    const { keyBindings, classes, setKeyBinding, setGlobalKeyBinding, globalKeyBindingEnabled } = this.props;
-    return (
-      <form className={classes.root} noValidate autoComplete="off">
-
-        <ListItem>
-          <FormControl className={classes.formSelect}>
-            <ListItemText primary={i18n.t('core:enableGlobalKeyboardShortcuts')} />
-            <ListItemSecondaryAction>
-              <Switch
-                onClick={() => {
-                  setGlobalKeyBinding(!globalKeyBindingEnabled);
-                  PlatformIO.setGlobalShortcuts(!globalKeyBindingEnabled);
-                }}
-                checked={globalKeyBindingEnabled}
-              />
-            </ListItemSecondaryAction>
-          </FormControl>
-        </ListItem>
-
-        {keyBindings.map((keyBinding) => {
-          const defaultBinding = DefaultSettings.keyBindings.filter(kb => kb.name === keyBinding.name)[0];
-          return (
-            <TextField
-              className={classes.keyBinding}
-              key={keyBinding.name}
-              InputLabelProps={{ shrink: true }}
-              fullWidth
-              onBlur={event => setKeyBinding(keyBinding.name, event.target.value)}
-              label={i18n.t('core:' + keyBinding.name)}
-              placeholder={'suggested binding: ' + (defaultBinding ? defaultBinding.command : '')}
-              defaultValue={(isStr(keyBinding.command) ? keyBinding.command : '')}
+const SettingsKeyBindings = (props: Props) => {
+  const { keyBindings, classes, setKeyBinding, setGlobalKeyBinding, globalKeyBindingEnabled } = props;
+  return (
+    <form className={classes.root} noValidate autoComplete="off">
+      <ListItem>
+        <FormControl className={classes.formSelect}>
+          <ListItemText primary={i18n.t('core:enableGlobalKeyboardShortcuts')} />
+          <ListItemSecondaryAction>
+            <Switch
+              onClick={() => {
+                setGlobalKeyBinding(!globalKeyBindingEnabled);
+                PlatformIO.setGlobalShortcuts(!globalKeyBindingEnabled);
+              }}
+              checked={globalKeyBindingEnabled}
             />
-          );
-        })}
-      </form>
-    );
-  }
-}
+          </ListItemSecondaryAction>
+        </FormControl>
+      </ListItem>
+
+      {keyBindings.map((keyBinding) => {
+        const defaultBinding = DefaultSettings.keyBindings.filter(kb => kb.name === keyBinding.name)[0];
+        return (
+          <TextField
+            className={classes.keyBinding}
+            key={keyBinding.name}
+            InputLabelProps={{ shrink: true }}
+            fullWidth
+            onBlur={event => setKeyBinding(keyBinding.name, event.target.value)}
+            label={i18n.t('core:' + keyBinding.name)}
+            placeholder={'suggested binding: ' + (defaultBinding ? defaultBinding.command : '')}
+            defaultValue={(isStr(keyBinding.command) ? keyBinding.command : '')}
+          />
+        );
+      })}
+    </form>
+  );
+};
 
 function mapStateToProps(state) {
   return {

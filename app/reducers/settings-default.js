@@ -427,19 +427,24 @@ export default {
       color: ''
     },
     {
+      type: 'mkv',
+      viewer: '@tagspaces/media-player',
+      color: '#c5e4f9'
+    },
+    {
       type: 'm4a',
       viewer: '@tagspaces/media-player',
-      color: '#e5c3ca'
+      color: '#c5e4f9'
     },
     {
       type: 'm4p',
       viewer: '@tagspaces/media-player',
-      color: ''
+      color: '#c5e4f9'
     },
     {
       type: 'm4v',
       viewer: '@tagspaces/media-player',
-      color: ''
+      color: '#c5e4f9'
     },
     {
       type: 'markdown',
@@ -496,37 +501,37 @@ export default {
     {
       type: 'mp3',
       viewer: '@tagspaces/media-player',
-      color: '#e5c3ca'
+      color: '#c5e4f9'
     },
     {
       type: 'mp4',
       viewer: '@tagspaces/media-player',
-      color: '#efc0b8'
+      color: '#c5e4f9'
     },
     {
       type: 'oga',
       viewer: '@tagspaces/media-player',
-      color: ''
+      color: '#c5e4f9'
     },
     {
       type: 'ogg',
       viewer: '@tagspaces/media-player',
-      color: '#e5c3ca'
+      color: '#c5e4f9'
     },
     {
       type: 'ogv',
       viewer: '@tagspaces/media-player',
-      color: '#efc0b8'
+      color: '#c5e4f9'
     },
     {
       type: 'ogx',
       viewer: '@tagspaces/media-player',
-      color: ''
+      color: '#c5e4f9'
     },
     {
       type: 'opus',
       viewer: '@tagspaces/media-player',
-      color: ''
+      color: '#c5e4f9'
     },
     {
       type: 'pdf',
@@ -580,7 +585,7 @@ export default {
     {
       type: 'spx',
       viewer: '@tagspaces/media-player',
-      color: ''
+      color: '#c5e4f9'
     },
     {
       type: 'sql',
@@ -615,17 +620,17 @@ export default {
     {
       type: 'wav',
       viewer: '@tagspaces/media-player',
-      color: '#e5c3ca'
+      color: '#c5e4f9'
     },
     {
       type: 'wave',
       viewer: '@tagspaces/media-player',
-      color: ''
+      color: '#c5e4f9'
     },
     {
       type: 'webm',
       viewer: '@tagspaces/media-player',
-      color: '#efc0b8'
+      color: '#c5e4f9'
     },
     {
       type: 'webp',

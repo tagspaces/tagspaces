@@ -397,7 +397,7 @@ class DateCalendarDialog extends React.Component<Props, State> {
           onChange={this.handleChangeTabIndex}
           indicatorColor="primary"
           textColor="primary"
-          fullWidth
+          variant="fullWidth"
         >
           <Tab data-tid="dateCalendarTab" label={i18n.t('core:dateCalendarTab')} />
           <Tab data-tid="dateTimeTab" label={i18n.t('core:dateTime')} />

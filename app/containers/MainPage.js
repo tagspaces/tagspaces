@@ -483,7 +483,7 @@ class MainPage extends Component<Props, State> {
             ]}
           />
           <Snackbar
-            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
             open={this.props.isGeneratingThumbs}
             autoHideDuration={undefined}
             message={'Loading or generating thumbnails...'}
@@ -499,7 +499,7 @@ class MainPage extends Component<Props, State> {
             ]}
           />
           <Snackbar
-            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
             open={this.props.isIndexing}
             autoHideDuration={undefined}
             message={'Indexing'}

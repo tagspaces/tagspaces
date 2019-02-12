@@ -83,7 +83,7 @@ const styles = theme => ({
     flexDirection: 'column',
     flex: '1 1 100%',
     display: 'flex',
-    backgroundColor: theme.palette.background.default
+    backgroundColor: theme.palette.background.default,
   },
   fileContent: {
     width: '100%',
@@ -118,7 +118,7 @@ const styles = theme => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    borderBottom: '1px solid ' + theme.palette.divider
+    borderBottom: '1px solid ' + theme.palette.divider,
   },
   flexLeft: {
     flexDirection: 'row',
@@ -141,6 +141,13 @@ const styles = theme => ({
     minWidth: 20,
     height: 44,
     whiteSpace: 'nowrap',
+  },
+  entryCloseSection: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    backgroundColor: theme.palette.background.default,
+    boxShadow: '-15px 0px 24px 3px ' + theme.palette.background.default
   }
 });
 
@@ -740,6 +747,7 @@ class EntryContainer extends React.Component<Props, State> {
         aria-label={i18n.t('core:openNextFileTooltip')}
         data-tid="fileContainerNextFile"
         onClick={this.openNextFile}
+        style={{ marginRight: 5 }}
       >
         <ArrowRightIcon />
       </IconButton>
@@ -835,9 +843,9 @@ class EntryContainer extends React.Component<Props, State> {
 
     if (currentEntry && currentEntry.path) {
       fileTitle = extractTitle(currentEntry.path, !currentEntry.isFile);
-      if (fileTitle.length > maxCharactersTitleLength) {
-        fileTitle = fileTitle.substr(0, maxCharactersTitleLength) + '...';
-      }
+      // if (fileTitle.length > maxCharactersTitleLength) {
+      //   fileTitle = fileTitle.substr(0, maxCharactersTitleLength) + '...';
+      // }
 
       if (currentEntry.editMode && currentEntry.editingExtensionPath) {
         fileOpenerURL =
@@ -847,8 +855,8 @@ class EntryContainer extends React.Component<Props, State> {
           '&locale=' +
           i18n.language +
           '&edit=true';
-      } else if (!currentEntry.isFile) {
-        fileOpenerURL = 'node_modules/@tagspaces/html-viewer/index.html?locale=' + i18n.language;
+      // } else if (!currentEntry.isFile) { // TODO needed for loading folder's default html
+      //   fileOpenerURL = 'node_modules/@tagspaces/html-viewer/index.html?locale=' + i18n.language;
       } else {
         fileOpenerURL =
           currentEntry.viewingExtensionPath +
@@ -1005,7 +1013,10 @@ class EntryContainer extends React.Component<Props, State> {
                     >
                       <div
                         className={classes.fileBadge}
-                        style={{ backgroundColor: AppConfig.defaultFolderColor }}
+                        style={{
+                          backgroundColor: AppConfig.defaultFolderColor,
+                          paddingTop: 5
+                        }}
                       >
                         <FolderIcon />
                       </div>
@@ -1014,7 +1025,7 @@ class EntryContainer extends React.Component<Props, State> {
                   )}
                 </div>
                 {(this.state.editingSupported && currentEntry.editMode) && (
-                  <div>
+                  <div className={classes.entryCloseSection}>
                     <IconButton
                       disabled={false}
                       onClick={this.startSavingFile}
@@ -1042,7 +1053,7 @@ class EntryContainer extends React.Component<Props, State> {
                   </div>
                 )}
                 {(this.state.editingSupported && !currentEntry.editMode) && (
-                  <div>
+                  <div className={classes.entryCloseSection}>
                     {/* <IconButton
                       disabled={false}
                       onClick={this.editFile}
@@ -1075,14 +1086,16 @@ class EntryContainer extends React.Component<Props, State> {
                   </div>
                 )}
                 {(!this.state.editingSupported) && (
-                  <IconButton
-                    onClick={this.startClosingFile}
-                    title={i18n.t('core:closeEntry')}
-                    aria-label={i18n.t('core:closeEntry')}
-                    data-tid="fileContainerCloseOpenedFile"
-                  >
-                    <CloseIcon />
-                  </IconButton>
+                  <div className={classes.entryCloseSection}>
+                    <IconButton
+                      onClick={this.startClosingFile}
+                      title={i18n.t('core:closeEntry')}
+                      aria-label={i18n.t('core:closeEntry')}
+                      data-tid="fileContainerCloseOpenedFile"
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </div>
                 )}
               </div>
               <div className={classes.entryProperties}>

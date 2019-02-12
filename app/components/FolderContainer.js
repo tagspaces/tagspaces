@@ -372,7 +372,7 @@ class FolderContainer extends React.Component<Props, State> {
                         style={{ paddingLeft: 3, paddingRight: 0, minWidth: 10 }}
                       >
                         {extractShortDirectoryName(pathPart, '/')}
-                        <FolderSeparatorIcon />
+                        &nbsp;/&nbsp;
                       </Button>
                     ))}
                   <Button
