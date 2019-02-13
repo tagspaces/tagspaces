@@ -492,7 +492,6 @@ class LocationManager extends React.Component<Props, State> {
   onRowClick = (subDir) => {
     this.loadSubDirectories(subDir, 1);
     this.props.loadDirectoryContent(subDir.path);
-    // this.props.openFile(subDir.path);
   };
 
   /**
@@ -515,23 +514,7 @@ class LocationManager extends React.Component<Props, State> {
       </td>
     )
   ;
-  // expandedRowRender = (record, index, indent, expanded) => (<p>extra: {record.name}</p>);
-  /* CustomExpandIcon = (props) => {
-    let text;
-    if (props.expanded) {
-      text = '&#8679; collapse';
-    } else {
-      text = '&#8681; expand';
-    }
-    return (
-      <a
-        className="expand-row-icon"
-        onClick={e => props.onExpand(props.record, e)}
-        dangerouslySetInnerHTML={{ __html: text }}
-        style={{ color: 'blue', cursor: 'pointer' }}
-      />
-    );
-  }; */
+
   // <Tooltip id="tooltip-icon" title={i18n.t('core:moreOperations')} placement="bottom"></Tooltip>
   renderLocation = (location: Location) => {
     let table;
