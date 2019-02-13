@@ -378,11 +378,6 @@ class MainPage extends Component<Props, State> {
     return (
       <HotKeys handlers={this.keyBindingHandlers}>
         <TargetFileBox accepts={[FILE]} onDrop={this.handleFileDrop}>
-          {/* {this.props.isFileDragged && (
-          <div className={classes.dropTarget}>
-            <TargetFileBox accepts={[FILE]} onDrop={this.handleFileDrop} />
-          </div>
-        )} */}
           {this.props.isDesktopMode ? (
             <SplitPane
               split="vertical"
