@@ -74,7 +74,7 @@ import styles from './styles.css';
 import FileMenu from '../../../components/menus/FileMenu';
 import DirectoryMenu from '../../../components/menus/DirectoryMenu';
 import EntryTagMenu from '../../../components/menus/EntryTagMenu';
-import TagContainer from '../../../components/TagContainer';
+import TagContainerDnd from '../../../components/TagContainerDnd';
 import i18n from '../../../services/i18n';
 import ConfirmDialog from '../../../components/dialogs/ConfirmDialog';
 import AddRemoveTagsDialog from '../../../components/dialogs/AddRemoveTagsDialog';
@@ -92,6 +92,7 @@ import {
   getSelectedEntries,
   isLoading
 } from '../../../reducers/app';
+import TaggingActions from '../../../reducers/tagging-actions';
 
 const maxDescriptionPreviewLength = 100;
 
@@ -614,11 +615,13 @@ class GridPerspective extends React.Component<Props, State> {
   };
 
   renderTag = (tag: Object, fsEntry) => (
-    <TagContainer
+    <TagContainerDnd
       tag={tag}
       key={tag.id}
       entryPath={fsEntry.path}
+      addTags={this.props.addTags}
       handleTagMenu={this.handleTagMenu}
+      selectedEntries={this.props.selectedEntries}
     />
   );
 
@@ -1201,7 +1204,8 @@ class GridPerspective extends React.Component<Props, State> {
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators({
     moveFiles: IOActions.moveFiles,
-    setSelectedEntries: AppActions.setSelectedEntries
+    setSelectedEntries: AppActions.setSelectedEntries,
+    addTags: TaggingActions.addTags
   }, dispatch);
 }
 

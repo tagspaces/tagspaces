@@ -20,14 +20,12 @@
 import React from 'react';
 import uuidv1 from 'uuid';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import Button from '@material-ui/core/Button';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import RemoveTagIcon from '@material-ui/icons/Close';
 import { type TagGroup, type Tag, getAllTags } from '../reducers/taglibrary';
 import { getTagColor, getTagTextColor } from '../reducers/settings';
-import { getSelectedEntries } from '../reducers/app';
-import TaggingActions from '../reducers/tagging-actions';
+// import { getSelectedEntries } from '../reducers/app';
 
 type Props = {
   tag: Tag,
@@ -112,7 +110,7 @@ const TagContainer = (props: Props) => {
       data-tid={'tagContainer_' + tag.title.replace(/ /g, '_')}
       key={key || tag.id || uuidv1()}
       onClick={event => {
-        if (event.ctrlKey) {
+        if (event.ctrlKey && addTags) {
           const selectedEntryPaths = [];
           selectedEntries.map(entry => selectedEntryPaths.push(entry.path));
           addTags(selectedEntryPaths, [tag]);
@@ -128,9 +126,6 @@ const TagContainer = (props: Props) => {
       onDoubleClick={event => { if (handleTagMenu) { handleTagMenu(event, tag, entryPath || tagGroup); } }}
       style={{
         backgroundColor: 'transparent',
-        marginLeft: 4,
-        marginTop: 0,
-        marginBottom: 4,
         display: 'inline-block'
       }}
     >
@@ -143,7 +138,7 @@ const TagContainer = (props: Props) => {
           color: textColor,
           backgroundColor,
           minHeight: 25,
-          margin: 0,
+          margin: 2,
           paddingTop: 0,
           paddingBottom: 0,
           paddingRight: 3,
@@ -182,12 +177,5 @@ function mapStateToProps(state) {
     // selectedEntries: getSelectedEntries(state)
   };
 }
-
-// function mapActionCreatorsToProps(dispatch) {
-//   return bindActionCreators({
-//     addTags: TaggingActions.addTags,
-//     removeTags: TaggingActions.removeTags
-//   }, dispatch);
-// }
 
 export default connect(mapStateToProps)(TagContainer);

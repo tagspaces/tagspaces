@@ -375,6 +375,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     ...TagLibraryActions, // TODO connect only the really needed
+    addTags: TaggingActions.addTags,
     collectTagsFromLocation: TaggingActions.collectTagsFromLocation
   }, dispatch);
 }
