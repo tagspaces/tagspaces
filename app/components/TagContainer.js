@@ -137,22 +137,26 @@ const TagContainer = (props: Props) => {
           textTransform: 'none',
           color: textColor,
           backgroundColor,
-          minHeight: 25,
+          minHeight: 0,
+          minWidth: 0,
           margin: 2,
           paddingTop: 0,
           paddingBottom: 0,
-          paddingRight: 3,
+          paddingRight: 0,
+          paddingLeft: 5,
           borderRadius: 5
         }}
       >
-        <span>
+        <span style={{ flexGrow: '1' }}>
           {tag.title}
         </span>
         {(tagMode === 'remove') ? (deleteIcon || (
           <RemoveTagIcon
             data-tid={'tagRemoveButton_' + tag.title.replace(/ /g, '_')}
             style={{
-              color: tag.textColor
+              color: tag.textColor,
+              fontSize: 20,
+              marginBottom: -5
             }}
             onClick={event => handleRemoveTag(event, tag)}
           />
@@ -160,7 +164,10 @@ const TagContainer = (props: Props) => {
           <MoreVertIcon
             data-tid={'tagMoreButton_' + tag.title.replace(/ /g, '_')}
             style={{
-              color: tag.textColor
+              color: tag.textColor,
+              marginLeft: -5,
+              marginRight: -5,
+              top: 0
             }}
           />
         )}

@@ -726,7 +726,7 @@ class GridPerspective extends React.Component<Props, State> {
       );
     } else if (this.state.layoutType === 'row') {
       return (
-        <Grid container wrap="nowrap" spacing={16}>
+        <Grid container wrap="nowrap">
           <Grid
             item
             style={{
@@ -751,11 +751,7 @@ class GridPerspective extends React.Component<Props, State> {
             )}
           </Grid>
           <Grid item xs zeroMinWidth>
-            <Typography
-              style={{
-                padding: 5
-              }}
-            >
+            <Typography>
               {extractTitle(fsEntry.name, !fsEntry.isFile)}
             </Typography>
             {fsEntry.tags.map(tag => this.renderTag(tag, fsEntry))}
@@ -797,7 +793,7 @@ class GridPerspective extends React.Component<Props, State> {
                 style={{
                   backgroundSize: this.state.thumbnailMode,
                   backgroundImage: thumbPathUrl,
-                  margin: 5,
+                  margin: 1,
                   height: 85,
                   width: 85
                 }}

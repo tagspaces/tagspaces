@@ -33,21 +33,21 @@ const boxTarget = {
     return {
       entryPath: props.entryPath
     };
-  },
+  }
 };
 
 const TagDropContainer = (props: Props) => {
   const { canDrop, isOver, connectDropTarget } = props;
   const isActive = canDrop && isOver;
 
-  let border = '1px solid transparent';
+  let border = '2px solid transparent';
   let backgroundColor = 'transparent';
   if (isActive) {
-    border = '1px solid rgb(233, 233, 233)';
-    backgroundColor = 'rgb(233, 233, 233)';
+    border = '2px solid #f7cf00';
+    backgroundColor = '#f7cf00';
   } else if (canDrop) {
-    border = '1px solid rgb(212, 212, 212)';
-    backgroundColor = 'rgb(212, 212, 212)';
+    border = '2px solid #ffeaa5';
+    backgroundColor = '#ffeaa5';
   }
 
   return connectDropTarget(
@@ -55,17 +55,16 @@ const TagDropContainer = (props: Props) => {
       style={{
         border,
         backgroundColor,
-        borderRadius: 3
+        borderRadius: 5
       }}
     >
       {props.children}
-    </div>,
+    </div>
   );
 };
 
 export default DropTarget(DragItemTypes.TAG, boxTarget, (connect, monitor) => ({
   connectDropTarget: connect.dropTarget(),
   isOver: monitor.isOver(),
-  canDrop: monitor.canDrop(),
+  canDrop: monitor.canDrop()
 }))(TagDropContainer);
-
