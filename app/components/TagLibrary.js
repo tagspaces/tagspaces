@@ -252,7 +252,6 @@ class TagLibrary extends React.Component<Props, State> {
               handleTagMenu={this.handleTagMenu}
               addTags={this.props.addTags}
               moveTag={this.props.moveTag}
-              deleteTag={this.props.deleteTag}
               selectedEntries={this.props.selectedEntries}
             />
           ))}
@@ -375,8 +374,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    ...TagLibraryActions,
-    addTags: TaggingActions.addTags,
+    ...TagLibraryActions, // TODO connect only the really needed
     collectTagsFromLocation: TaggingActions.collectTagsFromLocation
   }, dispatch);
 }
