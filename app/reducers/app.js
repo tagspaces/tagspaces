@@ -55,6 +55,7 @@ export const types = {
   INDEX_DIRECTORY_SEARCH: 'APP/INDEX_DIRECTORY_SEARCH',
   OPEN_FILE: 'APP/OPEN_FILE',
   TOGGLE_ENTRY_FULLWIDTH: 'APP/TOGGLE_ENTRY_FULLWIDTH',
+  SET_ENTRY_FULLWIDTH: 'APP/SET_ENTRY_FULLWIDTH',
   CLOSE_ALL_FILES: 'APP/CLOSE_ALL_FILES',
   UPDATE_THUMB_URL: 'APP/UPDATE_THUMB_URL',
   UPDATE_THUMB_URLS: 'APP/UPDATE_THUMB_URLS',
@@ -246,6 +247,9 @@ export default (state: Object = initialState, action: Object) => {
   }
   case types.TOGGLE_ENTRY_FULLWIDTH: {
     return { ...state, isEntryInFullWidth: !state.isEntryInFullWidth };
+  }
+  case types.SET_ENTRY_FULLWIDTH: {
+    return { ...state, isEntryInFullWidth: action.isFullWidth };
   }
   case types.UPDATE_THUMB_URL: {
     const dirEntries = [...state.currentDirectoryEntries];
@@ -995,6 +999,10 @@ export const actions = {
   },
   toggleEntryFullWidth: () => ({
     type: types.TOGGLE_ENTRY_FULLWIDTH
+  }),
+  setEntryFullWidth: (isFullWidth: boolean) => ({
+    type: types.SET_ENTRY_FULLWIDTH,
+    isFullWidth
   }),
   getNextFile: (pivotFilePath?: string) => (
     dispatch: (actions: Object) => void,
