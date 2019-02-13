@@ -3982,10 +3982,10 @@ dmg-builder@6.5.3:
     parse-color "^1.0.0"
     sanitize-filename "^1.6.1"
 
-dnd-core@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/dnd-core/-/dnd-core-6.0.0.tgz#d347266ebd72f0a2de6ecf5e26e4ef006ebde84b"
-  integrity sha512-WnnFSbnC3grP/XJ+xfxgM8DyIsts3Q/rfgE6WGRWs6tCQcwILputNNm/Kw+WPS2N1e46hRy5iPl2pYwkP9kK9Q==
+dnd-core@^7.0.2:
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/dnd-core/-/dnd-core-7.0.2.tgz#6c080eb57243fa0372fd083b3db242d9eb525010"
+  integrity sha512-InwRBi6zTndtE3+3nTYpLJkYMEr7utSR7OziAoSFhtQsbUfJE1KeqxM+ZFRIMKn6ehxUTAC+QU6QC7IG9u86Mg==
   dependencies:
     asap "^2.0.6"
     invariant "^2.2.4"
@@ -10095,20 +10095,20 @@ react-deep-force-update@^1.0.0:
   resolved "https://registry.yarnpkg.com/react-deep-force-update/-/react-deep-force-update-1.1.2.tgz#3d2ae45c2c9040cbb1772be52f8ea1ade6ca2ee1"
   integrity sha512-WUSQJ4P/wWcusaH+zZmbECOk7H5N2pOIl0vzheeornkIMhu+qrNdGFm0bDZLCb0hSF0jf/kH1SgkNGfBdTc4wA==
 
-react-dnd-html5-backend@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/react-dnd-html5-backend/-/react-dnd-html5-backend-6.0.0.tgz#e70ad62a5df95cc993739aab1f1ffe0e725a9878"
-  integrity sha512-NRaApaf3IBrE/LgOCoTqbsI1MT5HKIBDkyMF1zoJUy+slW/RLjLuxMC2gYU1Y89Ra/e7CQ5Hw/gJY7oIXLK32g==
+react-dnd-html5-backend@^7.0.2:
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/react-dnd-html5-backend/-/react-dnd-html5-backend-7.0.2.tgz#f74181ca0ff05be13eb6094629c5ad560f558a7e"
+  integrity sha512-BPhmHeQjvhPXRykHvFLbM+TJFrrarcuf/mIArNEmXzZuNhLfbOnHtMSzR8lPwodABcDAYj7hEF7vTABXX298vA==
   dependencies:
-    dnd-core "^6.0.0"
+    dnd-core "^7.0.2"
     lodash "^4.17.11"
 
-react-dnd@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/react-dnd/-/react-dnd-6.0.0.tgz#0780eafaa47293bf12dc8f79cf1e48ede8ba72f1"
-  integrity sha512-XI14rxF5eeGk8045xh/6KbjfLSzgkfNdQCqwkR5qAvBf0QYvkGAUz1AQfLrQudFs/DVw7WiCoCohRzJR1Kyn9Q==
+react-dnd@^7.0.2:
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/react-dnd/-/react-dnd-7.0.2.tgz#8f5611a6e877592932c082d6280c64d1c817f420"
+  integrity sha512-nJnHJo/tNQjyod234+hPNopWHPvgH0gujf3pcdJWRe3l0GL+jSXXwXJ2SFwIHkVmxPYrx8+gbKU3+Pq26p6fkg==
   dependencies:
-    dnd-core "^6.0.0"
+    dnd-core "^7.0.2"
     hoist-non-react-statics "^3.1.0"
     invariant "^2.1.0"
     lodash "^4.17.11"
