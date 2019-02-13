@@ -37,7 +37,7 @@ const styles = theme => ({
     justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',
-    fontSize: '30px',
+    fontSize: '20px',
     fontWeight: 'bold',
     color: 'white',
   }
@@ -57,18 +57,16 @@ type Props = {
   children: Object
 };
 
-class TargetMoveFileBox extends React.Component<Props> {
-  render() {
-    const { classes, canDrop, isOver, connectDropTarget, children } = this.props;
-    const dragContent = canDrop && isOver ? (<div className={classes.dropzone}>{i18n.t('core:releaseToMoveDrop')}</div>) : undefined;
-    return connectDropTarget(
-      <div>
-        {dragContent}
-        {children}
-      </div>
-    );
-  }
-}
+const TargetMoveFileBox = (props: Props) => {
+  const { classes, canDrop, isOver, connectDropTarget, children } = props;
+  const dragContent = canDrop && isOver ? (<div className={classes.dropzone}>{i18n.t('core:releaseToMoveDrop')}</div>) : undefined;
+  return connectDropTarget(
+    <div>
+      {dragContent}
+      {children}
+    </div>
+  );
+};
 
 export default withStyles(styles, { withTheme: true })(DropTarget(props => props.accepts, boxTarget, (connect, monitor) => ({
   connectDropTarget: connect.dropTarget(),

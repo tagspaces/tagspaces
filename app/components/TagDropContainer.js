@@ -17,7 +17,7 @@
  * @flow
  */
 
-import React, { Component } from 'react';
+import React from 'react';
 import { DropTarget } from 'react-dnd';
 import DragItemTypes from './DragItemTypes';
 
@@ -36,29 +36,32 @@ const boxTarget = {
   },
 };
 
-class TagDropContainer extends Component<Props> {
-  render() {
-    const { canDrop, isOver, connectDropTarget } = this.props;
-    const isActive = canDrop && isOver;
+const TagDropContainer = (props: Props) => {
+  const { canDrop, isOver, connectDropTarget } = props;
+  const isActive = canDrop && isOver;
 
-    let backgroundColor = 'transparent';
-    if (isActive) {
-      backgroundColor = 'rgb(233, 233, 233)';
-    } else if (canDrop) {
-      backgroundColor = 'rgb(212, 212, 212)';
-    }
-
-    return connectDropTarget(
-      <div
-        style={{
-          backgroundColor
-        }}
-      >
-        {this.props.children}
-      </div>,
-    );
+  let border = '1px solid transparent';
+  let backgroundColor = 'transparent';
+  if (isActive) {
+    border = '1px solid rgb(233, 233, 233)';
+    backgroundColor = 'rgb(233, 233, 233)';
+  } else if (canDrop) {
+    border = '1px solid rgb(212, 212, 212)';
+    backgroundColor = 'rgb(212, 212, 212)';
   }
-}
+
+  return connectDropTarget(
+    <div
+      style={{
+        border,
+        backgroundColor,
+        borderRadius: 3
+      }}
+    >
+      {props.children}
+    </div>,
+  );
+};
 
 export default DropTarget(DragItemTypes.TAG, boxTarget, (connect, monitor) => ({
   connectDropTarget: connect.dropTarget(),
