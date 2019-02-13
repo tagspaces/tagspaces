@@ -23,7 +23,7 @@ export default (theme) => ({
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))',
     // gridAutoRows: 'minmax(220px,auto)',
-    gridGap: '5px 5px',
+    gridGap: '2px 2px',
     backgroundColor: theme.palette.background.default,
     padding: 10,
     marginBottom: 100
@@ -31,7 +31,7 @@ export default (theme) => ({
   rowContainer: {
     display: 'grid',
     gridTemplateColumns: 'auto',
-    gridGap: '1px 1px',
+    gridGap: '0px 0px',
     backgroundColor: theme.palette.background.default,
     padding: 0,
     paddingRight: 10,
@@ -42,8 +42,8 @@ export default (theme) => ({
     backgroundColor: theme.palette.background.paper,
     border: '2px solid transparent',
     margin: 2,
-    marginBottom: 5,
-    marginRight: 5,
+    marginBottom: 3,
+    marginRight: 3,
     borderRadius: 5
   },
   rowCell: {
