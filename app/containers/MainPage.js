@@ -120,6 +120,7 @@ type Props = {
   isUpdateAvailable: boolean,
   isFirstRun: boolean,
   setFirstRun: (isFirstRun: boolean) => void,
+  setEntryFullWidth: (isFullWidth: boolean) => void,
   hideNotifications: () => void,
   cancelDirectoryIndexing: () => void,
   setUpdateAvailable: (isUpdateAvailable: boolean) => void,
@@ -193,22 +194,25 @@ class MainPage extends Component<Props, State> {
   componentWillReceiveProps(nextProps: Props) {
     const isEntryOpenedChanged = nextProps.isFileOpened !== this.props.isFileOpened;
     const isEntryOpenedFullWidthChanged = nextProps.isEntryInFullWidth !== this.props.isEntryInFullWidth;
-    if (nextProps.isFileOpened && isEntryOpenedFullWidthChanged) {
-      this.setState({
-        mainSplitSize: nextProps.isEntryInFullWidth ? '0%' : this.props.mainSplitSize,
-        isManagementPanelVisible: !nextProps.isEntryInFullWidth
-      });
-    } else if (nextProps.isFileOpened && isEntryOpenedChanged) {
-      /* if (this.state.width && this.state.width > showOneColumnThreshold) {
-        this.props.setMainVerticalSplitSize('50%');
-      } else {
-        this.props.setMainVerticalSplitSize('0%');
-      } */
-      this.setState({
-        mainSplitSize: this.props.mainSplitSize,
-      });
+    const width = window.innerWidth || document.documentElement.clientWidth || body.clientWidth;
+    const height = window.innerHeight || document.documentElement.clientHeight || body.clientHeight;
+    if (nextProps.isFileOpened) {
+      if (height > width) {
+        this.setState({
+          mainSplitSize: '0%',
+          // isManagementPanelVisible: !nextProps.isEntryInFullWidth
+        });
+      } else if (isEntryOpenedFullWidthChanged) {
+        this.setState({
+          mainSplitSize: nextProps.isEntryInFullWidth ? '0%' : this.props.mainSplitSize,
+          isManagementPanelVisible: !nextProps.isEntryInFullWidth
+        });
+      } else if (isEntryOpenedChanged) {
+        this.setState({
+          mainSplitSize: this.props.mainSplitSize,
+        });
+      }
     }
-
     if (!nextProps.isFileOpened && isEntryOpenedChanged) {
       this.setState({
         mainSplitSize: '100%'
@@ -237,17 +241,13 @@ class MainPage extends Component<Props, State> {
   }
 
   updateDimensions = () => {
-    const width =
-      window.innerWidth ||
-      document.documentElement.clientWidth ||
-      body.clientWidth;
-    const height =
-      window.innerHeight ||
-      document.documentElement.clientHeight ||
-      body.clientHeight;
+    const width = window.innerWidth || document.documentElement.clientWidth || body.clientWidth;
+    const height = window.innerHeight || document.documentElement.clientHeight || body.clientHeight;
 
     // console.log('Width: ' + width + ' Height: ' + height);
     this.setState({ width, height });
+
+    // this.props.setEntryFullWidth(height > width);
 
     // Hide folder container on windows resize or on mobile
     // Disable due a bug with the full width functionality
@@ -586,6 +586,7 @@ function mapDispatchToProps(dispatch) {
     setGeneratingThumbnails: AppActions.setGeneratingThumbnails,
     openFile: AppActions.openFile,
     openFileNatively: AppActions.openFileNatively,
+    setEntryFullWidth: AppActions.setEntryFullWidth,
     setUpdateAvailable: AppActions.setUpdateAvailable,
     getNextFile: AppActions.getNextFile,
     getPrevFile: AppActions.getPrevFile,
