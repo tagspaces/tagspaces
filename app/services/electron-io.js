@@ -314,6 +314,18 @@ export default class ElectronIO {
               } catch (err) {
                 // console.log('Failed reading meta folder file ' + folderMetaPath);
               }
+
+              // Loading thumbs for folders
+              const folderTmbPath =
+                eentry.path +
+                AppConfig.dirSeparator +
+                AppConfig.metaFolder +
+                AppConfig.dirSeparator +
+                AppConfig.folderThumbFile;
+              const tmbStats = this.fs.statSync(folderTmbPath);
+              if (tmbStats.isFile()) {
+                eentry.thumbPath = folderTmbPath;
+              }
             }
 
             const fileName = eentry.name.toLowerCase();

@@ -27,6 +27,7 @@ export default {
   metaFolder: '.ts',
   metaFolderFile: 'tsm.json',
   folderIndexFile: 'tsi.json',
+  folderThumbFile: 'tst.jpg',
   metaFileExt: '.json',
   thumbFileExt: '.jpg',
   thumbType: 'image/jpeg',
