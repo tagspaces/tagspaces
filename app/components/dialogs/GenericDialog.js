@@ -47,56 +47,52 @@ export function onEnterKeyHandler(event: any, confirmFunction: () => void) {
   }
 }
 
-class GenericDialog extends React.Component<Props> {
-  onConfirm = () => { // should be overwritten in the children classes
-    this.props.onClose();
-  };
+const GenericDialog = (props: Props) => {
+  // function renderTitle() {
+  //   return (
+  //     <DialogTitle>Dialog</DialogTitle>
+  //   );
+  // }
 
-  renderTitle = () => (
-    <DialogTitle>Dialog</DialogTitle>
+  // function renderContent() {
+  //   return (
+  //     <DialogContent>
+  //       <DialogContentText>
+  //         Some content
+  //       </DialogContentText>
+  //     </DialogContent>
+  //   );
+  // }
+
+  // function renderActions() {
+  //   return (
+  //     <DialogActions>
+  //       <Button onClick={props.onClose} color="primary">
+  //         {i18n.t('core:cancel')}
+  //       </Button>
+  //     </DialogActions>
+  //   );
+  // }
+
+  const {
+    fullScreen,
+    open,
+    onEnterKey,
+  } = props;
+  return (
+    <Dialog
+      fullScreen={fullScreen}
+      open={open}
+      TransitionComponent={Transition}
+      keepMounted
+      onClose={props.onClose}
+      onKeyDown={onEnterKey || ((event) => onEnterKeyHandler(event, props.onClose))}
+    >
+      {props.renderTitle && props.renderTitle()}
+      {props.renderContent && props.renderContent()}
+      {props.renderActions && props.renderActions()}
+    </Dialog>
   );
-
-  renderContent = () => (
-    <DialogContent>
-      <DialogContentText>
-        Some content
-      </DialogContentText>
-    </DialogContent>
-  );
-
-  renderActions = () => (
-    <DialogActions>
-      <Button onClick={this.props.onClose} color="primary">
-        {i18n.t('core:cancel')}
-      </Button>
-    </DialogActions>
-  );
-
-  render() {
-    const {
-      fullScreen,
-      open,
-      onEnterKey,
-      onClose,
-      renderTitle,
-      renderContent,
-      renderActions
-    } = this.props;
-    return (
-      <Dialog
-        fullScreen={fullScreen}
-        open={open}
-        TransitionComponent={Transition}
-        keepMounted
-        onClose={this.props.onClose}
-        onKeyDown={onEnterKey || ((event) => onEnterKeyHandler(event, onClose))}
-      >
-        {renderTitle && renderTitle()}
-        {renderContent ? renderContent() : this.renderContent()}
-        {renderActions && renderActions()}
-      </Dialog>
-    );
-  }
-}
+};
 
 export default GenericDialog;
