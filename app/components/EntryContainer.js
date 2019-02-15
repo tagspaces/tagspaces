@@ -119,6 +119,7 @@ const styles = theme => ({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     borderBottom: '1px solid ' + theme.palette.divider,
+    overflowX: AppConfig.isFirefox ? 'auto' : 'overlay'
   },
   flexLeft: {
     flexDirection: 'row',

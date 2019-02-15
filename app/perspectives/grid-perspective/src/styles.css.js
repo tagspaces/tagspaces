@@ -161,6 +161,7 @@ export default (theme) => ({
     height: 53,
     backgroundColor: theme.palette.background.default,
     borderBottom: '1px solid ' + theme.palette.divider,
-    width: '100%'
+    width: '100%',
+    overflowX: AppConfig.isFirefox ? 'auto' : 'overlay'
   }
 });
