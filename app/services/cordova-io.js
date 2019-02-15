@@ -433,7 +433,7 @@ export default class CordovaIO {
               eentry.name = entry.name;
               eentry.path = entry.fullPath;
               eentry.tags = [];
-              eentry.thumbPath = '';
+              eentry.thumbPath = entry.isFile ? '' : eentry.path + '/' + AppConfig.metaFolder + '/' + AppConfig.folderThumbFile;
               // eentry.meta = {};
               eentry.isFile = entry.isFile;
               if (entry.isFile) {

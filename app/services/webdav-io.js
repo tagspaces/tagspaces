@@ -227,7 +227,7 @@ export default class WebDAVIO {
             eentry.name = fileName;
             eentry.path = decodeURI(path);
             eentry.tags = [];
-            eentry.thumbPath = '';
+            eentry.thumbPath = isDir ? eentry.path + AppConfig.metaFolder + '/' + AppConfig.folderThumbFile : '';
             // eentry.meta = {};
             eentry.isFile = !isDir;
             eentry.size = filesize;
@@ -244,7 +244,7 @@ export default class WebDAVIO {
                   metaPromises.push(this.getEntryMeta(eentry, metaFileAvailable.path));
                 }
 
-                // Finding if thumbnail available
+                // Finding if file thumbnail available
                 const metaThumbAvailable = metaContent.find(obj => obj.name === fileName + AppConfig.thumbFileExt);
                 if (metaThumbAvailable) {
                   eentry.thumbPath = metaThumbAvailable.path;
