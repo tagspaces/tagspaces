@@ -36,6 +36,7 @@ type Props = {
   open: boolean,
   color: string,
   setColor: (color: string) => void,
+  presetColors: Array<string>,
   onClose: () => void
 };
 
@@ -91,7 +92,7 @@ class ColorPickerDialog extends React.Component<Props, State> {
       <SketchPicker
         className={this.props.classes.noBorder}
         name="color"
-        presetColors={presetColors}
+        presetColors={this.props.presetColors ? this.props.presetColors : presetColors}
         color={this.state.color}
         onChangeComplete={this.handleChangeComplete}
       />
