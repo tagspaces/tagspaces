@@ -219,7 +219,7 @@ export default class Search {
     if (searchQuery.textQuery && searchQuery.textQuery.length > 1) {
       console.log('fuse query: ' + searchQuery.textQuery);
       console.time('fuse');
-      const fuse = new Fuse(jmespathResults || locationContent, fuseOptions);
+      const fuse = new Fuse(jmespathResults || currentDirectoryEntries || locationContent, fuseOptions);
       results = fuse.search(searchQuery.textQuery);
       console.timeEnd('fuse');
     } else {
