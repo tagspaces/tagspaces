@@ -125,8 +125,8 @@ class CreateTagGroupDialog extends React.Component<Props, State> {
   renderContent = () => {
     const styles = {
       color: {
-        width: 36,
-        height: 14,
+        width: 100,
+        height: 30,
         borderRadius: 2,
         borderWidth: 1,
         borderStyle: 'solid',
@@ -134,8 +134,8 @@ class CreateTagGroupDialog extends React.Component<Props, State> {
         background: this.state.color
       },
       textcolor: {
-        width: 36,
-        height: 14,
+        width: 100,
+        height: 30,
         borderRadius: 2,
         borderWidth: 1,
         borderStyle: 'solid',

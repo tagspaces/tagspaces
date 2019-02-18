@@ -139,8 +139,8 @@ class EditTagDialog extends React.Component<Props, State> {
 
     const styles = {
       color: {
-        width: 36,
-        height: 14,
+        width: 100,
+        height: 30,
         borderRadius: 2,
         borderWidth: 1,
         borderStyle: 'solid',
@@ -149,8 +149,8 @@ class EditTagDialog extends React.Component<Props, State> {
         background: color,
       },
       textcolor: {
-        width: 36,
-        height: 14,
+        width: 100,
+        height: 30,
         borderRadius: 2,
         borderWidth: 1,
         borderStyle: 'solid',
