@@ -62,10 +62,12 @@ export function enhanceEntry(entry: any): FileSystemEntry {
     fileNameTags = extractTagsAsObjects(entry.name);
   }
   let sidecarDescription = '';
+  let sidecarColor = '';
   let uuid;
   let sidecarTags = [];
   if (entry.meta) {
     sidecarDescription = entry.meta.description || '';
+    sidecarColor = entry.meta.color || '';
     sidecarTags = entry.meta.tags || [];
     sidecarTags.map((tag) => { tag.type = 'sidecar'; return true; });
     uuid = entry.meta.uuid || undefined;
@@ -77,6 +79,7 @@ export function enhanceEntry(entry: any): FileSystemEntry {
     extension: entry.isFile ? extractFileExtension(entry.name) : '',
     thumbPath: entry.thumbPath,
     description: sidecarDescription,
+    color: sidecarColor,
     textContent: entry.textContent,
     tags: [...sidecarTags, ...fileNameTags],
     size: entry.size,
