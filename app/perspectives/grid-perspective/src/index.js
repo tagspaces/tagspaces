@@ -31,7 +31,6 @@ import Toolbar from '@material-ui/core/Toolbar';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import RadioCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 import RadioUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
-import ListSubHeader from '@material-ui/core/ListSubheader';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Grid from '@material-ui/core/Grid';
@@ -168,7 +167,7 @@ class GridPerspective extends React.Component<Props, State> {
       optionsContextMenuAnchorEl: null,
       selectedEntryPath: '',
       sortBy: settings && settings.sortBy ? settings.sortBy : 'byName',
-      orderBy: settings && settings.orderBy ? settings.orderBy : false,
+      orderBy: settings && settings.orderBy ? settings.orderBy : true,
       layoutType: settings && settings.layoutType ? settings.layoutType : 'grid',
       singleClickAction: settings && settings.singleClickAction ? settings.singleClickAction : 'openInternal', // openExternal
       doubleClickAction: settings && settings.doubleClickAction ? settings.doubleClickAction : 'openInternal', // openExternal
@@ -560,6 +559,7 @@ class GridPerspective extends React.Component<Props, State> {
       return;
     }
     const classes = this.props.classes;
+    const fsEntryBackgroundColor = fsEntry.color ? fsEntry.color : 'transparent';
     let selected = false;
     if (
       this.props.selectedEntries &&
@@ -587,8 +587,9 @@ class GridPerspective extends React.Component<Props, State> {
             selected && layoutType === 'row' && classes.selectedRowCell
           )}
           style={layoutType === 'row' ? {
-            minHeight: entryHeight
-          } : {}}
+            minHeight: entryHeight,
+            backgroundColor: fsEntryBackgroundColor
+          } : { backgroundColor: fsEntryBackgroundColor }}
           onContextMenu={event => this.handleGridContextMenu(event, fsEntry)}
           onDoubleClick={event => this.handleGridCellDblClick(event, fsEntry)}
           onClick={event => this.handleGridCellClick(event, fsEntry)}
@@ -726,7 +727,10 @@ class GridPerspective extends React.Component<Props, State> {
       );
     } else if (this.state.layoutType === 'row') {
       return (
-        <Grid container wrap="nowrap">
+        <Grid
+          container
+          wrap="nowrap"
+        >
           <Grid
             item
             style={{
