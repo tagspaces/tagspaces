@@ -50,7 +50,6 @@
     "prepare-cordova": "rimraf cordova/www/dist && rimraf cordova/www/node_modules && cp -Lr app/node_modules cordova/www && cp LICENSE.txt cordova/www && cp app/third-party.txt cordova/www",
     "run-web": "yarn prepare-web && node scripts/webdavserver.js",
     "run-android": "cd cordova && cordova run android && cd ..",
-    "cordova-crosswalk": "cd cordova && cordova plugin add cordova-plugin-crosswalk-webview && cd ..",
     "cordova-android": "cd cordova && cordova platform add android && cd ..",
     "cordova-create": "cordova create ./cordova org.tagspaces.mobile TagSpaces",
     "start-android": "yarn build-cordova && yarn run-android",
