@@ -16,7 +16,6 @@
  *
  * @flow
  */
-
 import { persistCombineReducers } from 'redux-persist';
 import { routerReducer as router } from 'react-router-redux';
 import getStoredStateMigrateV4 from 'redux-persist/lib/integration/getStoredStateMigrateV4';
@@ -28,13 +27,16 @@ import locations from './locations';
 import taglibrary from './taglibrary';
 import locationIndex from './location-index';
 
+const ExternalLocations = window.ExtLocations || false;
+
+const blacklist = ExternalLocations ? ['app', 'locationIndex', 'locations'] : ['app', 'locationIndex'];
 
 const rootPersistConfig = {
   key: 'root',
-  getStoredState: getStoredStateMigrateV4({ blacklist: ['app', 'locationIndex'] }),
+  getStoredState: getStoredStateMigrateV4({ blacklist }),
   storage,
   version: 1,
-  blacklist: ['app', 'locationIndex'],
+  blacklist,
   debug: false,
   // https://github.com/rt2zz/redux-persist/blob/b6a60bd653d59c4fe462e2e0ea827fd76eb190e1/README.md#state-reconciler
   // stateReconciler: autoMergeLevel2,
@@ -51,7 +53,7 @@ const rootReducer = persistCombineReducers(rootPersistConfig, {
   ), */
   settings,
   app,
-  locations,
+  locations: ExternalLocations ? () => ExternalLocations : locations,
   taglibrary,
   router,
   locationIndex
