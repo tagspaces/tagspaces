@@ -24,6 +24,7 @@ import AppConfig from '../config';
 import {
   enhanceEntry,
   deleteFilesPromise,
+  loadMetaDataPromise,
   renameFilesPromise
 } from '../services/utils-io';
 import {
@@ -63,6 +64,7 @@ export const types = {
   SET_GENERATING_THUMBNAILS: 'APP/SET_GENERATING_THUMBNAILS',
   SET_NEW_VERSION_AVAILABLE: 'APP/SET_NEW_VERSION_AVAILABLE',
   SET_CURRENLOCATIONID: 'APP/SET_CURRENLOCATIONID',
+  SET_CURRENDIRECTORYCOLOR: 'APP/SET_CURRENDIRECTORYCOLOR',
   SET_LAST_SELECTED_ENTRY: 'APP/SET_LAST_SELECTED_ENTRY',
   SET_SELECTED_ENTRIES: 'APP/SET_SELECTED_ENTRIES',
   SET_FILEDRAGGED: 'APP/SET_FILEDRAGGED',
@@ -114,6 +116,7 @@ export const initialState = {
   isUpdateAvailable: false,
   currentLocationId: null,
   currentDirectoryPath: '',
+  currentDirectoryColor: '',
   currentDirectoryEntries: [],
   isReadOnlyMode: false,
   searchResults: [],
@@ -187,6 +190,9 @@ export default (state: Object = initialState, action: Object) => {
   }
   case types.SET_SELECTED_ENTRIES: {
     return { ...state, selectedEntries: action.selectedEntries };
+  }
+  case types.SET_CURRENDIRECTORYCOLOR: {
+    return { ...state, currentDirectoryColor: action.color };
   }
   case types.TOGGLE_ABOUT_DIALOG: {
     return { ...state, aboutDialogOpened: !state.aboutDialogOpened };
@@ -579,8 +585,19 @@ export const actions = {
     console.time('listDirectoryPromise');
     const { settings } = getState();
     window.walkCanceled = false;
+
+    loadMetaDataPromise(directoryPath).then(fsEntryMeta => {
+      if (fsEntryMeta.color) {
+        dispatch(actions.setCurrentDirectoryColor(fsEntryMeta.color));
+      }
+      return true;
+    }).catch((err) => {
+      console.log('Error loading color of the current folder' + err);
+    });
+
     // Uncomment the following line will to clear all content before loading new dir content
     dispatch(actions.loadDirectorySuccessInt(directoryPath, [], true));
+    dispatch(actions.setCurrentDirectoryColor(''));
     dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
     PlatformIO.listDirectoryPromise(directoryPath, false)
       .then(results => {
@@ -711,6 +728,10 @@ export const actions = {
   setLastSelectedEntry: (entryPath: string | null) => ({
     type: types.SET_LAST_SELECTED_ENTRY,
     entryPath
+  }),
+  setCurrentDirectoryColor: (color: string) => ({
+    type: types.SET_CURRENDIRECTORYCOLOR,
+    color
   }),
   setSelectedEntries: (selectedEntries: Array<Object>) => ({
     type: types.SET_SELECTED_ENTRIES,
@@ -1410,6 +1431,7 @@ export const isCreateFileDialogOpened = (state: Object) => state.app.createFileD
 export const isSelectDirectoryDialogOpened = (state: Object) => state.app.selectDirectoryDialogOpened;
 export const getOpenedFiles = (state: Object) => state.app.openedFiles;
 export const getNotificationStatus = (state: Object) => state.app.notificationStatus;
+export const getCurrentDirectoryColor = (state: Object) => state.app.currentDirectoryColor;
 export const getSearchResults = (state: Object) => state.app.currentDirectoryEntries;
 export const getSearchResultCount = (state: Object) => state.app.currentDirectoryEntries.length;
 export const getCurrentLocationId = (state: Object) => state.app.currentLocationId;
