@@ -555,11 +555,11 @@ class GridPerspective extends React.Component<Props, State> {
 
   renderCell = (fsEntry: FileSystemEntry) => {
     const { entrySize } = this.state;
+    const fsEntryBackgroundColor = fsEntry.color ? fsEntry.color : 'transparent';
     if (!fsEntry.isFile && !this.state.showDirectories) {
       return;
     }
     const classes = this.props.classes;
-    const fsEntryBackgroundColor = fsEntry.color ? fsEntry.color : 'transparent';
     let selected = false;
     if (
       this.props.selectedEntries &&
@@ -568,13 +568,13 @@ class GridPerspective extends React.Component<Props, State> {
       selected = true;
     }
     const { layoutType } = this.state;
-    let entryHeight = 200;
+    let entryHeight = 130;
     if (entrySize === 'small') {
       entryHeight = 50;
     } else if (entrySize === 'normal') {
-      entryHeight = 100;
+      entryHeight = 80;
     } else if (entrySize === 'big') {
-      entryHeight = 150;
+      entryHeight = 130;
     }
     const cellContent = (
       <TagDropContainer entryPath={fsEntry.path}>
@@ -588,13 +588,12 @@ class GridPerspective extends React.Component<Props, State> {
           )}
           style={layoutType === 'row' ? {
             minHeight: entryHeight,
-            backgroundColor: fsEntryBackgroundColor
           } : { backgroundColor: fsEntryBackgroundColor }}
           onContextMenu={event => this.handleGridContextMenu(event, fsEntry)}
           onDoubleClick={event => this.handleGridCellDblClick(event, fsEntry)}
           onClick={event => this.handleGridCellClick(event, fsEntry)}
         >
-          {this.renderCellContent(fsEntry)}
+          {this.renderCellContent(fsEntry, entryHeight)}
         </Paper>
       </TagDropContainer>
     );
@@ -626,8 +625,9 @@ class GridPerspective extends React.Component<Props, State> {
     />
   );
 
-  renderCellContent = (fsEntry: FileSystemEntry) => {
+  renderCellContent = (fsEntry: FileSystemEntry, entryHeight: number) => {
     const classes = this.props.classes;
+    const fsEntryBackgroundColor = fsEntry.color ? fsEntry.color : 'transparent';
     let description = removeMd(fsEntry.description);
     if (description.length > maxDescriptionPreviewLength) {
       description = description.substr(0, maxDescriptionPreviewLength) + '...';
@@ -734,7 +734,12 @@ class GridPerspective extends React.Component<Props, State> {
           <Grid
             item
             style={{
-              padding: 10
+              minHeight: entryHeight,
+              padding: 10,
+              marginRight: 5,
+              marginBottom: 5,
+              borderRadius: 5,
+              backgroundColor: fsEntryBackgroundColor
             }}
           >
             {fsEntry.isFile ? (

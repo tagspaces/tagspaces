@@ -53,7 +53,6 @@ export default (theme) => ({
     borderRight: '2px solid transparent',
     borderTop: '1px solid transparent',
     borderBottom: '1px solid ' + theme.palette.divider,
-    minHeight: 100,
     margin: 0,
     marginTop: 0,
     marginBottom: 0,
