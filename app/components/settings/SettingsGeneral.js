@@ -208,7 +208,7 @@ class SettingsGeneral extends React.Component<Props, State> {
                   backgroundColor: this.props.settings.tagBackgroundColor
                 }}
                 onClick={this.toggleDefaultTagBackgroundColorPicker}
-              />
+              >&nbsp;</Button>
             </TransparentBackground>
             <ColorPickerDialog
               open={this.state.displayColorPicker}
@@ -228,7 +228,7 @@ class SettingsGeneral extends React.Component<Props, State> {
                 size="small"
                 style={{ backgroundColor: this.props.settings.tagTextColor }}
                 onClick={this.toggleDefaultTagTextColorPicker}
-              />
+              >&nbsp;</Button>
             </TransparentBackground>
             <ColorPickerDialog
               open={this.state.displayTextColorPicker}
