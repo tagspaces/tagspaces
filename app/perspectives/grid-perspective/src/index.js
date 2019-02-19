@@ -21,7 +21,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import removeMd from 'remove-markdown';
-import memoize from "memoize-one";
+import memoize from 'memoize-one';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import moment from 'moment';
@@ -89,6 +89,7 @@ import {
   actions as AppActions,
   getLastSelectedEntry,
   getSelectedEntries,
+  getCurrentDirectoryColor,
   isLoading
 } from '../../../reducers/app';
 import TaggingActions from '../../../reducers/tagging-actions';
@@ -99,9 +100,12 @@ const settings = JSON.parse(localStorage.getItem('tsPerspectiveGrid')); // loadi
 
 type Props = {
   classes: Object,
+  theme: Object,
   currentDirectoryPath: string,
+  currentDirectoryColor: string,
   lastSelectedEntryPath: string | null,
   selectedEntries: Array<Object>,
+  supportedFileTypes: Array<Object>,
   isAppLoading: boolean,
   openFile: (path: string, isFile?: boolean) => void,
   deleteFile: (path: string) => void,
@@ -554,20 +558,19 @@ class GridPerspective extends React.Component<Props, State> {
   };
 
   renderCell = (fsEntry: FileSystemEntry) => {
-    const { entrySize } = this.state;
-    const fsEntryBackgroundColor = fsEntry.color ? fsEntry.color : 'transparent';
-    if (!fsEntry.isFile && !this.state.showDirectories) {
+    const { entrySize, layoutType, showDirectories } = this.state;
+    const { classes, theme, selectedEntries } = this.props;
+    if (!fsEntry.isFile && !showDirectories) {
       return;
     }
-    const classes = this.props.classes;
+
     let selected = false;
     if (
-      this.props.selectedEntries &&
-      this.props.selectedEntries.some(entry => entry.path === fsEntry.path)
+      selectedEntries &&
+      selectedEntries.some(entry => entry.path === fsEntry.path)
     ) {
       selected = true;
     }
-    const { layoutType } = this.state;
     let entryHeight = 130;
     if (entrySize === 'small') {
       entryHeight = 50;
@@ -586,9 +589,10 @@ class GridPerspective extends React.Component<Props, State> {
             selected && layoutType === 'grid' && classes.selectedGridCell,
             selected && layoutType === 'row' && classes.selectedRowCell
           )}
-          style={layoutType === 'row' ? {
-            minHeight: entryHeight,
-          } : { backgroundColor: fsEntryBackgroundColor }}
+          style={{
+            minHeight: layoutType === 'row' ? entryHeight : 'auto',
+            backgroundColor: theme.palette.background.default
+          }}
           onContextMenu={event => this.handleGridContextMenu(event, fsEntry)}
           onDoubleClick={event => this.handleGridCellDblClick(event, fsEntry)}
           onClick={event => this.handleGridCellClick(event, fsEntry)}
@@ -626,7 +630,7 @@ class GridPerspective extends React.Component<Props, State> {
   );
 
   renderCellContent = (fsEntry: FileSystemEntry, entryHeight: number) => {
-    const classes = this.props.classes;
+    const { classes, theme, supportedFileTypes } = this.props;
     const fsEntryBackgroundColor = fsEntry.color ? fsEntry.color : 'transparent';
     let description = removeMd(fsEntry.description);
     if (description.length > maxDescriptionPreviewLength) {
@@ -635,7 +639,7 @@ class GridPerspective extends React.Component<Props, State> {
     const fsEntryColor = findColorForFileEntry(
       fsEntry.extension,
       fsEntry.isFile,
-      this.props.supportedFileTypes
+      supportedFileTypes
     );
     let thumbPathUrl = fsEntry.thumbPath
       ? 'url("' + fsEntry.thumbPath + '")'
@@ -645,7 +649,10 @@ class GridPerspective extends React.Component<Props, State> {
     }
     if (this.state.layoutType === 'grid') {
       return (
-        <div>
+        <div style={{
+          backgroundColor: fsEntryBackgroundColor
+        }}
+        >
           <div
             className={classes.gridCellThumb}
             style={{
@@ -657,12 +664,6 @@ class GridPerspective extends React.Component<Props, State> {
             <div id="gridCellTags" className={classes.gridCellTags}>
               {
                 fsEntry.tags.map(tag => this.renderTag(tag, fsEntry))
-                // fsEntry.tags.map(tag => TagContainer({
-                //   tag,
-                //   key: tag.id,
-                //   entryPath: fsEntry.path,
-                //   handleTagMenu: this.handleTagMenu
-                // }))
               }
             </div>
             {description.length > 0 && (
@@ -730,6 +731,9 @@ class GridPerspective extends React.Component<Props, State> {
         <Grid
           container
           wrap="nowrap"
+          style={{
+            backgroundColor: theme.palette.background.default
+          }}
         >
           <Grid
             item
@@ -737,8 +741,7 @@ class GridPerspective extends React.Component<Props, State> {
               minHeight: entryHeight,
               padding: 10,
               marginRight: 5,
-              marginBottom: 5,
-              borderRadius: 5,
+              borderRadius: 4,
               backgroundColor: fsEntryBackgroundColor
             }}
           >
@@ -815,11 +818,16 @@ class GridPerspective extends React.Component<Props, State> {
   };
 
   render() {
-    const { classes, isAppLoading, directoryContent } = this.props;
+    const {
+      classes,
+      isAppLoading,
+      directoryContent,
+      currentDirectoryColor,
+      selectedEntries,
+      theme
+    } = this.props;
     const { layoutType, entrySize, sortBy, orderBy } = this.state;
-    const { selectedEntries } = this.props;
     const selectedFilePaths = selectedEntries.filter(fsEntry => fsEntry.isFile).map(fsentry => fsentry.path);
-
     const sortedContent = this.sort(directoryContent, sortBy, orderBy);
     const sortedDirectories = sortedContent.filter(entry => !entry.isFile);
     const sortedFiles = sortedContent.filter(entry => entry.isFile);
@@ -934,29 +942,40 @@ class GridPerspective extends React.Component<Props, State> {
             <MoreVertIcon />
           </IconButton>
         </Toolbar>
-        <div style={{ height: '100%', overflowY: AppConfig.isFirefox ? 'auto' : 'overlay' }}>
-          <div
-            className={layoutType === 'grid' ? classes.gridContainer : classes.rowContainer}
-            style={layoutType === 'grid' ? {
-              gridTemplateColumns: 'repeat(auto-fit,minmax(' + entryWidth + 'px,1fr))'
-            } : {}}
-            ref={ref => {
-              this.mainGrid = ref;
-            }}
-            data-tid="perspectiveGridFileTable"
+        <div style={{
+          height: '100%',
+          backgroundColor: theme.palette.background.default
+        }}
+        >
+          <div style={{
+            height: '100%',
+            overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
+            backgroundColor: currentDirectoryColor || 'transparent',
+          }}
           >
-            {(sortedDirectories.map(entry => this.renderCell(entry)))}
-            {(sortedFiles.map(entry => this.renderCell(entry)))}
-            {isAppLoading && (
-              <Typography style={{ padding: 15 }}>
-                {i18n.t('core:loading')}
-              </Typography>
-            )}
-            {(!isAppLoading && sortedFiles.length < 1 && sortedDirectories.length < 1) && (
-              <Typography style={{ padding: 15 }}>
-                {i18n.t('core:noFileFolderFound')}
-              </Typography>
-            )}
+            <div
+              className={layoutType === 'grid' ? classes.gridContainer : classes.rowContainer}
+              style={{
+                gridTemplateColumns: layoutType === 'grid' ? 'repeat(auto-fit,minmax(' + entryWidth + 'px,1fr))' : 'none',
+              }}
+              ref={ref => {
+                this.mainGrid = ref;
+              }}
+              data-tid="perspectiveGridFileTable"
+            >
+              {(sortedDirectories.map(entry => this.renderCell(entry)))}
+              {(sortedFiles.map(entry => this.renderCell(entry)))}
+              {isAppLoading && (
+                <Typography style={{ padding: 15 }}>
+                  {i18n.t('core:loading')}
+                </Typography>
+              )}
+              {(!isAppLoading && sortedFiles.length < 1 && sortedDirectories.length < 1) && (
+                <Typography style={{ padding: 15 }}>
+                  {i18n.t('core:noFileFolderFound')}
+                </Typography>
+              )}
+            </div>
           </div>
         </div>
         <AddRemoveTagsDialog
@@ -1219,10 +1238,11 @@ function mapStateToProps(state) {
     supportedFileTypes: getSupportedFileTypes(state),
     isAppLoading: isLoading(state),
     lastSelectedEntryPath: getLastSelectedEntry(state),
+    currentDirectoryColor: getCurrentDirectoryColor(state),
     selectedEntries: getSelectedEntries(state)
   };
 }
 
 export default connect(mapStateToProps, mapActionCreatorsToProps)(
-  withStyles(styles)(GridPerspective)
+  withStyles(styles, { withTheme: true })(GridPerspective)
 );

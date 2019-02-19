@@ -21,25 +21,20 @@ import AppConfig from '../../../config';
 export default (theme) => ({
   gridContainer: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))',
-    // gridAutoRows: 'minmax(220px,auto)',
     gridGap: '2px 2px',
-    backgroundColor: theme.palette.background.default,
     padding: 10,
     marginBottom: 100
   },
   rowContainer: {
     display: 'grid',
-    gridTemplateColumns: 'auto',
     gridGap: '0px 0px',
-    backgroundColor: theme.palette.background.default,
     padding: 0,
     paddingRight: 10,
     margin: 0,
     marginBottom: 100
   },
   gridCell: {
-    backgroundColor: theme.palette.background.paper,
+    // backgroundColor: theme.palette.background.paper,
     border: '2px solid transparent',
     margin: 2,
     marginBottom: 3,
@@ -47,7 +42,7 @@ export default (theme) => ({
     borderRadius: 5
   },
   rowCell: {
-    backgroundColor: theme.palette.background.paper,
+    // backgroundColor: theme.palette.background.paper,
     boxShadow: 'none',
     borderLeft: '2px solid transparent',
     borderRight: '2px solid transparent',
@@ -64,12 +59,12 @@ export default (theme) => ({
     // boxShadow: '0 0 1pt 1pt ' + theme.palette.primary.light
   },
   selectedRowCell: {
+    borderRadius: '4px',
     border: '2px solid' + theme.palette.primary.main,
     backgroundColor: theme.palette.primary.light
   },
   gridCellThumb: {
     backgroundRepeat: 'no-repeat',
-    // backgroundSize: 'cover',
     backgroundPosition: 'center'
   },
   gridCellTitle: {
@@ -146,9 +141,7 @@ export default (theme) => ({
   gridFolder: {
     color: 'white',
     padding: 5,
-    // marginLeft: 5,
     marginRight: 5,
-    // marginBottom: 5,
     minHeight: 10,
     height: 20,
     borderRadius: 3
