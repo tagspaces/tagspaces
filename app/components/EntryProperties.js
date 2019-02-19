@@ -38,6 +38,7 @@ import { extractContainingDirectoryPath } from '../utils/paths';
 import AppConfig from '../config';
 import { Pro } from '../pro';
 import TagsSelect from './TagsSelect';
+import TransparentBackground from './TransparentBackground';
 
 const styles = theme => ({
   entryProperties: {
@@ -57,8 +58,10 @@ const styles = theme => ({
     margin: '0 0 10px 0'
   },
   colorChooserButton: {
-    width: 30,
-    border: '1px solid lightgray'
+    minHeight: 35,
+    width: '100%',
+    border: '1px solid lightgray',
+    margin: '0 8px 0 0'
   },
   textField: {
     marginLeft: theme.spacing.unit,
@@ -78,7 +81,7 @@ const styles = theme => ({
     textAlign: 'end'
   },
   entryLabel: {
-    padding: '4px 4px 4px 0'
+    padding: 4
   },
   field: {
     color: theme.palette.primary.contrastText + ' !important'
@@ -89,11 +92,9 @@ const styles = theme => ({
   },
   button: {
     position: 'relative',
-    bottom: 2,
     padding: '8px 12px 6px 8px',
     margin: '0 10px 0 0',
     cursor: 'pointer',
-    // backgroundColor: 'rgba(239, 239, 239, 0.65)'
   },
   buttonIcon: {
     cursor: 'pointer'
@@ -365,12 +366,30 @@ class EntryProperties extends Component<Props, State> {
   };
 
   toggleBackgroundColorPicker = () => {
+    if (!Pro) {
+      this.props.showNotification(i18n.t('core:thisFunctionalityIsAvailableInPro'));
+      return;
+    }
+    if (!Pro.MetaOperations) {
+      this.props.showNotification(i18n.t('Saving color not supported'));
+      return;
+    }
     this.setState(prevState => ({
       displayColorPicker: !prevState.displayColorPicker
     }));
   };
 
-  handleChangeColor = color => this.setState({ color });
+  handleChangeColor = color => {
+    this.setState({ color }, () => {
+      Pro.MetaOperations.saveColor(this.props.entryPath, this.state.color).then((entryMeta) => {
+        this.props.reflectUpdateSidecarMeta(this.props.entryPath, entryMeta);
+        return true;
+      }).catch((error) => {
+        console.warn('Error saving color for folder ' + error);
+        this.props.showNotification(i18n.t('Error saving color for folder'));
+      });
+    });
+  }
 
   handleTagMenu = (event: Object, tag, tagGroup) => {
     this.setState({
@@ -622,14 +641,12 @@ class EntryProperties extends Component<Props, State> {
               className={[classes.fluidGrid, classes.ellipsisText].join(' ')}
             >
               <div className="grid-item" style={{ width: '50%' }}>
-                <div className={classes.fluidGrid}>
-                  <Typography
-                    variant="caption"
-                    className={classes.entryLabel}
-                  >
-                    {i18n.t('core:fileLDTM')}
-                  </Typography>
-                </div>
+                <Typography
+                  variant="caption"
+                  className={classes.entryLabel}
+                >
+                  {i18n.t('core:fileLDTM')}
+                </Typography>
                 <FormControl fullWidth={true} className={classes.formControl}>
                   <TextField
                     disabled
@@ -645,14 +662,12 @@ class EntryProperties extends Component<Props, State> {
 
               { isFile ? (
                 <div className="grid-item" style={{ width: '50%' }}>
-                  <div className={classes.fluidGrid}>
-                    <Typography
-                      variant="caption"
-                      className={classes.entryLabel}
-                    >
-                      {i18n.t('core:fileSize')}
-                    </Typography>
-                  </div>
+                  <Typography
+                    variant="caption"
+                    className={classes.entryLabel}
+                  >
+                    {i18n.t('core:fileSize')}
+                  </Typography>
                   <FormControl
                     fullWidth={true}
                     className={classes.formControl}
@@ -669,39 +684,44 @@ class EntryProperties extends Component<Props, State> {
                     />
                   </FormControl>
                 </div>
-              ) : false && (
+              ) : (
                 <div className="grid-item" style={{ width: '50%' }}>
-                  <div className={classes.fluidGrid}>
-                    <Typography
-                      variant="caption"
-                      className={classes.entryLabel}
-                    >
-                      {i18n.t('core:changeBackgroundColor')}
-                    </Typography>
-                    <div className="grid-item" style={{ padding: 2 }}>
+                  <Typography
+                    variant="caption"
+                    className={classes.entryLabel}
+                  >
+                    {i18n.t('core:changeBackgroundColor')}
+                  </Typography>
+                  <FormControl
+                    fullWidth={true}
+                    className={classes.formControl}
+                  >
+                    <TransparentBackground>
                       <Button
+                        fullWidth={true}
                         className={[
                           classes.colorChooserButton,
                           classes.button
                         ].join(' ')}
                         style={{
                           backgroundColor: color,
-                          width: 100,
-                          margin: '0 8px 0 0'
                         }}
                         onClick={this.toggleBackgroundColorPicker}
-                      >
-                        &nbsp;
-                      </Button>
-                      <div style={classes.color} />
+                      />
                       <ColorPickerDialog
                         color={color}
                         open={displayColorPicker}
                         setColor={this.handleChangeColor}
                         onClose={this.toggleBackgroundColorPicker}
+                        presetColors={[
+                          '#FFFFFFAA', '#000000AA', '#ac725eAA', '#f83a22AA', '#fa573cAA',
+                          '#ff7537AA', '#ffad46AA', '#42d692AA', '#008000AA', '#7bd148AA',
+                          '#fad165AA', '#92e1c0AA', '#9fe1e7AA', '#9fc6e7AA', '#4986e7AA',
+                          '#9a9cffAA', '#c2c2c2AA', '#cca6acAA', '#f691b2AA', '#cd74e6AA', '#a47ae2AA'
+                        ]}
                       />
-                    </div>
-                  </div>
+                    </TransparentBackground>
+                  </FormControl>
                 </div>
               )}
             </div>

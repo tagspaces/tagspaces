@@ -340,6 +340,7 @@ export async function loadMetaDataPromise(path: string): Promise<FileSystemEntry
     const metaData = await loadJSONFile(metaFilePath);
     metaDataObject = {
       description: metaData.description || '',
+      color: metaData.color || '',
       tags: metaData.tags || [],
       appVersionCreated: metaData.appVersionCreated || '',
       appName: metaData.appName || '',
@@ -351,6 +352,7 @@ export async function loadMetaDataPromise(path: string): Promise<FileSystemEntry
     const metaData = await loadJSONFile(metaFilePath);
     metaDataObject = {
       description: metaData.description || '',
+      color: metaData.color || '',
       tags: metaData.tags || [],
       appVersionCreated: metaData.appVersionCreated || '',
       appName: metaData.appName || '',

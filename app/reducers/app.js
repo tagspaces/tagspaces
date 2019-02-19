@@ -466,7 +466,7 @@ export default (state: Object = initialState, action: Object) => {
     if (indexForUpdating >= 0) {
       const updateEntry = {
         ...state.currentDirectoryEntries[indexForUpdating],
-        description: action.entryMeta.description
+        ...action.entryMeta
       };
       directoryEntries = [
         ...state.currentDirectoryEntries.slice(0, indexForUpdating),

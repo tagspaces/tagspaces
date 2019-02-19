@@ -191,7 +191,7 @@ export default (state: Object = initialState, action: Object) => {
     if (indexForUpdatingInIndex >= 0) {
       const updateEntry = {
         ...state.currentDirectoryIndex[indexForUpdatingInIndex],
-        description: action.entryMeta.description
+        ...action.entryMeta
       };
       return {
         ...state,
