@@ -1,13 +1,13 @@
 ::-webkit-scrollbar-track {
   border-radius: 0;
-  background-color: #F5F5F5;
+  background-color: transparent;
 }
 
 ::-webkit-scrollbar {
   width: 0;
   height: 0;
   -webkit-transform: scaleX(10);
-  background-color: #F5F5F5;
+  background-color: transparent;
 }
 
 :hover::-webkit-scrollbar {
