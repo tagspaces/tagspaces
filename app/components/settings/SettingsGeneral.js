@@ -37,6 +37,7 @@ import {
 } from '../../reducers/settings';
 import ColorPickerDialog from '../dialogs/ColorPickerDialog';
 import AppConfig from '../../config';
+import TransparentBackground from '../TransparentBackground';
 
 const styles = theme => ({
   root: {
@@ -47,6 +48,7 @@ const styles = theme => ({
     backgroundColor: '#1DD19F'
   },
   colorChooserButton: {
+    minHeight: 30,
     border: '1px solid lightgray'
   }
 });
@@ -197,17 +199,17 @@ class SettingsGeneral extends React.Component<Props, State> {
         <ListItem>
           <ListItemText primary={i18n.t('core:tagBackgroundColor')} />
           <ListItemSecondaryAction>
-            <Button
-              data-tid="settingsToggleDefaultTagBackgroundColor"
-              className={classes.colorChooserButton}
-              size="small"
-              style={{
-                backgroundColor: this.props.settings.tagBackgroundColor
-              }}
-              onClick={this.toggleDefaultTagBackgroundColorPicker}
-            >
-              &nbsp;
-            </Button>
+            <TransparentBackground>
+              <Button
+                data-tid="settingsToggleDefaultTagBackgroundColor"
+                className={classes.colorChooserButton}
+                size="small"
+                style={{
+                  backgroundColor: this.props.settings.tagBackgroundColor
+                }}
+                onClick={this.toggleDefaultTagBackgroundColorPicker}
+              />
+            </TransparentBackground>
             <ColorPickerDialog
               open={this.state.displayColorPicker}
               setColor={(color) => { this.props.setTagColor(color); }}
@@ -219,16 +221,15 @@ class SettingsGeneral extends React.Component<Props, State> {
         <ListItem>
           <ListItemText primary={i18n.t('core:tagForegroundColor')} />
           <ListItemSecondaryAction>
-            <Button
-              data-tid="settingsToggleDefaultTagForegroundColor"
-              className={classes.colorChooserButton}
-              size="small"
-              style={{ backgroundColor: this.props.settings.tagTextColor }}
-              onClick={this.toggleDefaultTagTextColorPicker}
-            >
-              &nbsp;
-              <div style={styles.textcolor} />
-            </Button>
+            <TransparentBackground>
+              <Button
+                data-tid="settingsToggleDefaultTagForegroundColor"
+                className={classes.colorChooserButton}
+                size="small"
+                style={{ backgroundColor: this.props.settings.tagTextColor }}
+                onClick={this.toggleDefaultTagTextColorPicker}
+              />
+            </TransparentBackground>
             <ColorPickerDialog
               open={this.state.displayTextColorPicker}
               setColor={(color) => { this.props.setTagTextColor(color); }}

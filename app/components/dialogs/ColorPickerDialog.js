@@ -41,8 +41,17 @@ type Props = {
 };
 
 type State = {
-  color: string
+  color: string,
+  colorHex: string
 };
+
+function decimalToHexString(number) {
+  let result = number;
+  if (result < 0) {
+    result = 0xFFFFFFFF + result + 1;
+  }
+  return result.toString(16).toUpperCase();
+}
 
 const styles = {
   noBorder: {
@@ -51,29 +60,37 @@ const styles = {
     backgroundColor: 'transparent !important'
   }
 };
-
 class ColorPickerDialog extends React.Component<Props, State> {
   state = {
-    color: ''
+    color: undefined,
+    colorHex: undefined
   };
 
-  componentWillReceiveProps = (nextProps: any) => {
-    if (this.props.color !== nextProps.color) {
-      this.setState({
-        color: nextProps.color
-      });
-    }
-  };
+  // static getDerivedStateFromProps(props: Props) {
+  //   // if (this.props.color !== nextProps.color) {
+  //   if (props.open) {
+  //     return {
+  //       color: props.color
+  //     };
+  //   }
+  //   return null;
+  // }
 
   onConfirm = () => {
-    if (this.state.color && this.state.color.length > 2) {
-      this.props.setColor(this.state.color);
+    const { color, colorHex } = this.state;
+    if (color && colorHex) {
+      // const hexAlphaColor = color.hex + (decimalToHexString(color.rgb.a * 256));
+      const hexAlphaColor = colorHex + Math.round(color.a * 255).toString(16);
+      this.props.setColor(hexAlphaColor);
     }
     this.props.onClose();
   };
 
   handleChangeComplete = (color) => {
-    this.setState({ color: color.hex });
+    this.setState({
+      color: color.rgb,
+      colorHex: color.hex
+    });
   };
 
   renderTitle = () => (
@@ -93,7 +110,7 @@ class ColorPickerDialog extends React.Component<Props, State> {
         className={this.props.classes.noBorder}
         name="color"
         presetColors={this.props.presetColors ? this.props.presetColors : presetColors}
-        color={this.state.color}
+        color={this.state.color ? this.state.color : this.props.color}
         onChangeComplete={this.handleChangeComplete}
       />
     </DialogContent>
