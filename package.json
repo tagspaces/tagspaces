@@ -217,7 +217,7 @@
     "react": "^16.6.0",
     "react-autosuggest": "^9.3.2",
     "react-beautiful-dnd": "^2.3.1",
-    "react-color": "^2.14.1",
+    "react-color": "^2.17.0",
     "react-datetime": "^2.14.0",
     "react-dnd": "^7.0.2",
     "react-dnd-html5-backend": "^7.0.2",
