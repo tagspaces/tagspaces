@@ -55,13 +55,12 @@ export default (theme) => ({
   },
   selectedGridCell: {
     border: '2px solid' + theme.palette.primary.main,
-    backgroundColor: theme.palette.primary.light,
-    // boxShadow: '0 0 1pt 1pt ' + theme.palette.primary.light
+    backgroundColor: theme.palette.primary.light + ' !important'
   },
   selectedRowCell: {
     borderRadius: '4px',
     border: '2px solid' + theme.palette.primary.main,
-    backgroundColor: theme.palette.primary.light
+    backgroundColor: theme.palette.primary.light + ' !important'
   },
   gridCellThumb: {
     backgroundRepeat: 'no-repeat',
