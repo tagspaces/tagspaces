@@ -45,14 +45,6 @@ type State = {
   colorHex: string
 };
 
-function decimalToHexString(number) {
-  let result = number;
-  if (result < 0) {
-    result = 0xFFFFFFFF + result + 1;
-  }
-  return result.toString(16).toUpperCase();
-}
-
 const styles = {
   noBorder: {
     padding: '0 !important',
@@ -66,20 +58,9 @@ class ColorPickerDialog extends React.Component<Props, State> {
     colorHex: undefined
   };
 
-  // static getDerivedStateFromProps(props: Props) {
-  //   // if (this.props.color !== nextProps.color) {
-  //   if (props.open) {
-  //     return {
-  //       color: props.color
-  //     };
-  //   }
-  //   return null;
-  // }
-
   onConfirm = () => {
     const { color, colorHex } = this.state;
     if (color && colorHex) {
-      // const hexAlphaColor = color.hex + (decimalToHexString(color.rgb.a * 256));
       const hexAlphaColor = colorHex + Math.round(color.a * 255).toString(16);
       this.props.setColor(hexAlphaColor);
     }
