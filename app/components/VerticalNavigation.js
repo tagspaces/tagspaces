@@ -33,15 +33,10 @@ import UpgradeIcon from '@material-ui/icons/FlightTakeoff';
 import { withTheme } from '@material-ui/core/styles';
 import SplitPane from 'react-split-pane';
 import LogoIcon from '../assets/images/icon100x100.svg';
-import AboutDialog from './dialogs/AboutDialog';
-import KeyboardDialog from './dialogs/KeyboardDialog';
-import LicenseDialog from './dialogs/LicenseDialog';
-import ThirdPartyLibsDialog from './dialogs/ThirdPartyLibsDialog';
 import SettingsDialog from './dialogs/SettingsDialog';
 import CreateDirectoryDialog from './dialogs/CreateDirectoryDialog';
 import CreateFileDialog from './dialogs/CreateFileDialog';
 import SelectDirectoryDialog from './dialogs/SelectDirectoryDialog';
-import ProTeaserDialog from './dialogs/ProTeaserDialog';
 import TagLibrary from '../components/TagLibrary';
 import Search from '../components/Search';
 import PerspectiveManager from '../components/PerspectiveManager';
@@ -61,6 +56,49 @@ import {
   isSelectDirectoryDialogOpened
 } from '../reducers/app';
 import { actions as SettingActions } from '../reducers/settings';
+import LoadingLazy from './LoadingLazy';
+
+const LicenseDialog = React.lazy(() => import(/* webpackChunkName: "LicenseDialog" */ './dialogs/LicenseDialog'));
+const LicenseDialogAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <LicenseDialog {...props} />
+  </React.Suspense>
+);
+
+const AboutDialog = React.lazy(() => import(/* webpackChunkName: "AboutDialog" */ './dialogs/AboutDialog'));
+const AboutDialogAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <AboutDialog {...props} />
+  </React.Suspense>
+);
+
+const KeyboardDialog = React.lazy(() => import(/* webpackChunkName: "KeyboardDialog" */ './dialogs/KeyboardDialog'));
+const KeyboardDialogAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <KeyboardDialog {...props} />
+  </React.Suspense>
+);
+
+// const SettingsDialog = React.lazy(() => import(/* webpackChunkName: "SettingsDialog" */ './dialogs/SettingsDialog'));
+// const SettingsDialogAsync = props => (
+//   <React.Suspense fallback={<LoadingLazy />}>
+//     <SettingsDialog {...props} />
+//   </React.Suspense>
+// );
+
+const ProTeaserDialog = React.lazy(() => import(/* webpackChunkName: "ProTeaserDialog" */ './dialogs/ProTeaserDialog'));
+const ProTeaserDialogAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <ProTeaserDialog {...props} />
+  </React.Suspense>
+);
+
+const ThirdPartyLibsDialog = React.lazy(() => import(/* webpackChunkName: "ThirdPartyLibsDialog" */ './dialogs/ThirdPartyLibsDialog'));
+const ThirdPartyLibsDialogAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <ThirdPartyLibsDialog {...props} />
+  </React.Suspense>
+);
 
 export const AppVerticalPanels = {
   tagLibrary: 'tagLibrary',
@@ -260,24 +298,45 @@ class VerticalNavigation extends React.Component<Props, State> {
           onClose={this.props.toggleCreateDirectoryDialog}
           selectedDirectoryPath={this.props.currentDirectory}
         />
-        <AboutDialog
-          open={this.props.isAboutDialogOpened}
-          toggleLicenseDialog={this.props.toggleLicenseDialog}
-          toggleThirdPartyLibsDialog={this.props.toggleThirdPartyLibsDialog}
-          onClose={this.props.toggleAboutDialog}
-        />
-        <KeyboardDialog
-          open={this.props.isKeysDialogOpened}
-          onClose={this.props.toggleKeysDialog}
-        />
-        <LicenseDialog
-          open={this.props.isLicenseDialogOpened}
-          onClose={this.props.toggleLicenseDialog}
-        />
-        <ThirdPartyLibsDialog
-          open={this.props.isThirdPartyLibsDialogOpened}
-          onClose={this.props.toggleThirdPartyLibsDialog}
-        />
+        {this.props.isAboutDialogOpened && (
+          <AboutDialogAsync
+            open={this.props.isAboutDialogOpened}
+            toggleLicenseDialog={this.props.toggleLicenseDialog}
+            toggleThirdPartyLibsDialog={this.props.toggleThirdPartyLibsDialog}
+            onClose={this.props.toggleAboutDialog}
+          />
+        )}
+        {this.props.isKeysDialogOpened && (
+          <KeyboardDialogAsync
+            open={this.props.isKeysDialogOpened}
+            onClose={this.props.toggleKeysDialog}
+          />
+        )}
+        {this.props.isLicenseDialogOpened && (
+          <LicenseDialogAsync
+            open={this.props.isLicenseDialogOpened}
+            onClose={this.props.toggleLicenseDialog}
+          />
+        )}
+        {this.props.isThirdPartyLibsDialogOpened && (
+          <ThirdPartyLibsDialogAsync
+            open={this.props.isThirdPartyLibsDialogOpened}
+            onClose={this.props.toggleThirdPartyLibsDialog}
+          />
+        )}
+        {this.state.isProTeaserVisible && (
+          <ProTeaserDialogAsync
+            open={this.state.isProTeaserVisible}
+            onClose={this.toggleProTeaser}
+            key={uuidv1()}
+          />
+        )}
+        {/* {this.props.isSettingsDialogOpened && (
+          <SettingsDialogAsync
+            open={this.props.isSettingsDialogOpened}
+            onClose={this.props.toggleSettingsDialog}
+          />
+        )} */}
         <SettingsDialog
           open={this.props.isSettingsDialogOpened}
           onClose={this.props.toggleSettingsDialog}
@@ -299,11 +358,6 @@ class VerticalNavigation extends React.Component<Props, State> {
           selectedDirectoryPath={
             this.state.selectedDirectoryPath || this.props.currentDirectory
           }
-        />
-        <ProTeaserDialog
-          open={this.state.isProTeaserVisible}
-          onClose={this.toggleProTeaser}
-          key={uuidv1()}
         />
         <SplitPane
           split="vertical"
