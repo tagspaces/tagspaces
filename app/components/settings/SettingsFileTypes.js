@@ -33,6 +33,7 @@ import { findAvailableExtensions } from '../../reducers/app';
 import { sortBy } from '../../utils/misc';
 import i18n from '../../services/i18n';
 import AppConfig from '../../config';
+import TransparentBackground from '../TransparentBackground';
 
 const styles = theme => ({
   root: {
@@ -206,20 +207,22 @@ class SettingsFileTypes extends Component<Props, State> {
             </FormControl>
 
             <FormControl className={classes.fileTypeColorDialogButton}>
-              <Button
-                data-tid={'settingsFileTypes_openColorPicker_'}
-                className={classes.colorChooserButton}
-                style={{
-                  backgroundColor: `${item.color}`,
-                  minWidth: '100px',
-                  cursor: 'pointer',
-                }}
-                onClick={() => {
-                  this.openColorPicker(item);
-                }}
-              >&nbsp;
-                <div style={styles.color} />
-              </Button>
+              <TransparentBackground>
+                <Button
+                  data-tid={'settingsFileTypes_openColorPicker_'}
+                  className={classes.colorChooserButton}
+                  style={{
+                    backgroundColor: `${item.color}`,
+                    minWidth: '100px',
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => {
+                    this.openColorPicker(item);
+                  }}
+                >&nbsp;
+                  <div style={styles.color} />
+                </Button>
+              </TransparentBackground>
             </FormControl>
 
             <IconButton

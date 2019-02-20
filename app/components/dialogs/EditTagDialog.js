@@ -28,6 +28,7 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import ColorPickerDialog from './ColorPickerDialog';
+import TransparentBackground from '../TransparentBackground';
 import i18n from '../../services/i18n';
 import { type Tag, type TagGroup } from '../../reducers/taglibrary';
 
@@ -139,7 +140,7 @@ class EditTagDialog extends React.Component<Props, State> {
 
     const styles = {
       color: {
-        width: 100,
+        width: '100%',
         height: 30,
         borderRadius: 2,
         borderWidth: 1,
@@ -149,7 +150,7 @@ class EditTagDialog extends React.Component<Props, State> {
         background: color,
       },
       textcolor: {
-        width: 100,
+        width: '100%',
         height: 30,
         borderRadius: 2,
         borderWidth: 1,
@@ -193,13 +194,15 @@ class EditTagDialog extends React.Component<Props, State> {
           fullWidth={true}
         >
           <FormHelperText style={styles.helpText}>{i18n.t('core:tagBackgroundColor')}</FormHelperText>
-          <Button
-            onClick={this.toggleDefaultTagBackgroundColorPicker}
-            data-tid="tagBackgroundColorEditTagDialog"
-            style={styles.color}
-            role="presentation"
-          >&nbsp;
-          </Button>
+          <TransparentBackground>
+            <Button
+              onClick={this.toggleDefaultTagBackgroundColorPicker}
+              data-tid="tagBackgroundColorEditTagDialog"
+              style={styles.color}
+              role="presentation"
+            >&nbsp;
+            </Button>
+          </TransparentBackground>
           <ColorPickerDialog
             open={this.state.displayColorPicker}
             setColor={this.handleChangeColor}
@@ -211,13 +214,15 @@ class EditTagDialog extends React.Component<Props, State> {
           fullWidth={true}
         >
           <FormHelperText style={styles.helpText}>{i18n.t('core:tagForegroundColor')}</FormHelperText>
-          <Button
-            onClick={this.toggleDefaultTagTextColorPicker}
-            data-tid="tagForegroundColorEditTagDialog"
-            style={styles.textcolor}
-            role="presentation"
-          >&nbsp;
-          </Button>
+          <TransparentBackground>
+            <Button
+              onClick={this.toggleDefaultTagTextColorPicker}
+              data-tid="tagForegroundColorEditTagDialog"
+              style={styles.textcolor}
+              role="presentation"
+            >&nbsp;
+            </Button>
+          </TransparentBackground>
           <ColorPickerDialog
             open={this.state.displayTextColorPicker}
             setColor={this.handleChangeTextColor}

@@ -29,6 +29,7 @@ import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import ColorPickerDialog from './ColorPickerDialog';
 import { type TagGroup } from '../../reducers/taglibrary';
 import i18n from '../../services/i18n';
+import TransparentBackground from '../TransparentBackground';
 
 type Props = {
   open?: boolean,
@@ -125,7 +126,7 @@ class CreateTagGroupDialog extends React.Component<Props, State> {
   renderContent = () => {
     const styles = {
       color: {
-        width: 100,
+        width: '100%',
         height: 30,
         borderRadius: 2,
         borderWidth: 1,
@@ -134,7 +135,7 @@ class CreateTagGroupDialog extends React.Component<Props, State> {
         background: this.state.color
       },
       textcolor: {
-        width: 100,
+        width: '100%',
         height: 30,
         borderRadius: 2,
         borderWidth: 1,
@@ -177,13 +178,15 @@ class CreateTagGroupDialog extends React.Component<Props, State> {
           fullWidth={true}
         >
           <FormHelperText style={styles.helpText}>{i18n.t('core:tagBackgroundColor')}</FormHelperText>
-          <Button
-            onClick={this.toggleDefaultTagBackgroundColorPicker}
-            data-tid="createTagGroupBackgroundColor"
-            style={styles.color}
-            role="presentation"
-          >&nbsp;
-          </Button>
+          <TransparentBackground>
+            <Button
+              onClick={this.toggleDefaultTagBackgroundColorPicker}
+              data-tid="createTagGroupBackgroundColor"
+              style={styles.color}
+              role="presentation"
+            >&nbsp;
+            </Button>
+          </TransparentBackground>
           <ColorPickerDialog
             open={this.state.displayColorPicker}
             setColor={this.handleChangeColor}
@@ -195,13 +198,15 @@ class CreateTagGroupDialog extends React.Component<Props, State> {
           fullWidth={true}
         >
           <FormHelperText style={styles.helpText}>{i18n.t('core:tagForegroundColor')}</FormHelperText>
-          <Button
-            onClick={this.toggleDefaultTagTextColorPicker}
-            data-tid="createTagGroupForegroundColor"
-            style={styles.textcolor}
-            role="presentation"
-          >&nbsp;
-          </Button>
+          <TransparentBackground>
+            <Button
+              onClick={this.toggleDefaultTagTextColorPicker}
+              data-tid="createTagGroupForegroundColor"
+              style={styles.textcolor}
+              role="presentation"
+            >&nbsp;
+            </Button>
+          </TransparentBackground>
           <ColorPickerDialog
             open={this.state.displayTextColorPicker}
             setColor={this.handleChangeTextColor}

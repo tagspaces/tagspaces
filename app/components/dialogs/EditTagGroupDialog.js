@@ -31,6 +31,7 @@ import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import ColorPickerDialog from './ColorPickerDialog';
 import { type TagGroup } from '../../reducers/taglibrary';
 import i18n from '../../services/i18n';
+import TransparentBackground from '../TransparentBackground';
 
 type Props = {
   open?: boolean,
@@ -148,7 +149,7 @@ class EditTagGroupDialog extends React.Component<Props, State> {
     const { color, textcolor, modifiedDate } = this.state;
     const styles = {
       color: {
-        width: 100,
+        width: '100%',
         height: 30,
         borderRadius: 2,
         borderWidth: 1,
@@ -158,7 +159,7 @@ class EditTagGroupDialog extends React.Component<Props, State> {
         background: color
       },
       textcolor: {
-        width: 100,
+        width: '100%',
         height: 30,
         borderRadius: 2,
         borderWidth: 1,
@@ -202,12 +203,14 @@ class EditTagGroupDialog extends React.Component<Props, State> {
           fullWidth={true}
         >
           <FormHelperText style={styles.helpText}>{i18n.t('core:tagBackgroundColor')}</FormHelperText>
-          <Button
-            onClick={this.toggleDefaultTagBackgroundColorPicker}
-            data-tid="editTagGroupBackgroundColor"
-            style={styles.color}
-          >&nbsp;
-          </Button>
+          <TransparentBackground>
+            <Button
+              onClick={this.toggleDefaultTagBackgroundColorPicker}
+              data-tid="editTagGroupBackgroundColor"
+              style={styles.color}
+            >&nbsp;
+            </Button>
+          </TransparentBackground>
           <ColorPickerDialog
             open={this.state.displayColorPicker}
             setColor={this.handleChangeColor}
@@ -219,13 +222,15 @@ class EditTagGroupDialog extends React.Component<Props, State> {
           fullWidth={true}
         >
           <FormHelperText style={styles.helpText}>{i18n.t('core:tagForegroundColor')}</FormHelperText>
-          <Button
-            onClick={this.toggleDefaultTagTextColorPicker}
-            data-tid="editTagGroupForegroundColor"
-            style={styles.textcolor}
-            role="presentation"
-          >&nbsp;
-          </Button>
+          <TransparentBackground>
+            <Button
+              onClick={this.toggleDefaultTagTextColorPicker}
+              data-tid="editTagGroupForegroundColor"
+              style={styles.textcolor}
+              role="presentation"
+            >&nbsp;
+            </Button>
+          </TransparentBackground>
           <ColorPickerDialog
             open={this.state.displayTextColorPicker}
             setColor={this.handleChangeTextColor}
