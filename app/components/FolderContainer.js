@@ -21,7 +21,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
 // import FolderSeparatorIcon from '@material-ui/icons/KeyboardArrowRight';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { withStyles } from '@material-ui/core/styles';
@@ -45,6 +44,21 @@ import {
   extractShortDirectoryName
 } from '../utils/paths';
 import PlatformIO from '../services/platform-io';
+import LoadingLazy from '../components/LoadingLazy';
+
+const GridPerspective = React.lazy(() => import(/* webpackChunkName: "GridPerspective" */ '../perspectives/grid-perspective/src/index'));
+const GridPerspectiveAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <GridPerspective {...props} />
+  </React.Suspense>
+);
+
+const WelcomePanel = React.lazy(() => import(/* webpackChunkName: "WelcomePanel" */ './WelcomePanel'));
+const WelcomePanelAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <WelcomePanel {...props} />
+  </React.Suspense>
+);
 
 const styles = theme => ({
   mainPanel: {
@@ -94,26 +108,6 @@ const styles = theme => ({
     alignItems: 'center'
   }
 });
-
-function Loading() {
-  return (
-    <Typography style={{ padding: 10 }}>{i18n.t('core:loading')}</Typography>
-  );
-}
-
-const GridPerspective = React.lazy(() => import(/* webpackChunkName: "GridPerspective" */ '../perspectives/grid-perspective/src/index'));
-const GridPerspectiveAsync = props => (
-  <React.Suspense fallback={<Loading />}>
-    <GridPerspective {...props} />
-  </React.Suspense>
-);
-
-const WelcomePanel = React.lazy(() => import(/* webpackChunkName: "WelcomePanel" */ './WelcomePanel'));
-const WelcomePanelAsync = props => (
-  <React.Suspense fallback={<Loading />}>
-    <WelcomePanel {...props} />
-  </React.Suspense>
-);
 
 type Props = {
   classes: Object,
