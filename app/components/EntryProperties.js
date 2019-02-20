@@ -50,7 +50,7 @@ const styles = theme => ({
     padding: '5px 5px 2px 2px',
     margin: 6,
     clear: 'both',
-    border: '1px dashed rgba(0,0,0,0.75)',
+    // border: '1px dashed rgba(0,0,0,0.75)',
     boxShadow: '0 1px 1px 0 rgba(0,0,0,0.16),0 1px 1px 0 rgba(239,239,239,0.12)'
   },
   editTagsButton: {
@@ -609,34 +609,6 @@ class EntryProperties extends Component<Props, State> {
           </div>
 
           <div className={classes.entryItem}>
-            <div className={classes.fluidGrid}>
-              <Typography variant="caption" className={classes.entryLabel}>
-                {i18n.t('core:filePath')}
-              </Typography>
-              <Button
-                color="primary"
-                styles={{ paddingBottom: 0 }}
-                disabled={isEditDescription || isEditName}
-                className={classes.button}
-                onClick={this.toggleMoveCopyFilesDialog}
-              >
-                {i18n.t('core:move')}
-              </Button>
-            </div>
-            <FormControl fullWidth={true} className={classes.formControl}>
-              <TextField
-                margin="dense"
-                disabled
-                name="path"
-                fullWidth={true}
-                data-tid="filePathProperties"
-                className={classes.field}
-                value={entryPath || ''}
-              />
-            </FormControl>
-          </div>
-
-          <div className={classes.entryItem}>
             <div
               className={[classes.fluidGrid, classes.ellipsisText].join(' ')}
             >
@@ -726,6 +698,36 @@ class EntryProperties extends Component<Props, State> {
               )}
             </div>
           </div>
+
+          <div className={classes.entryItem}>
+            <div className={classes.fluidGrid}>
+              <Typography variant="caption" className={classes.entryLabel}>
+                {i18n.t('core:filePath')}
+              </Typography>
+              <Button
+                color="primary"
+                styles={{ paddingBottom: 0 }}
+                disabled={isEditDescription || isEditName}
+                className={classes.button}
+                onClick={this.toggleMoveCopyFilesDialog}
+              >
+                {i18n.t('core:move')}
+              </Button>
+            </div>
+            <FormControl fullWidth={true} className={classes.formControl}>
+              <TextField
+                margin="dense"
+                disabled
+                name="path"
+                fullWidth={true}
+                data-tid="filePathProperties"
+                className={classes.field}
+                value={entryPath || ''}
+              />
+            </FormControl>
+          </div>
+
+
         </Grid>
 
         <EntryTagMenu
