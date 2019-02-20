@@ -80,4 +80,5 @@ web/third-party.txt
 app/extconfig.js
 app/extconfig1.js
 web/extconfig.js
+web/extconfig1.js
 cordova/www/extconfig.js

@@ -36,7 +36,6 @@ import { DragDropContext } from 'react-dnd';
 import VerticalNavigation, {
   AppVerticalPanels
 } from '../components/VerticalNavigation';
-import OnboardingDialog from '../components/dialogs/OnboardingDialog';
 import FolderContainer from '../components/FolderContainer';
 import EntryContainer from '../components/EntryContainer';
 import {
@@ -68,6 +67,14 @@ import AppConfig from '../config';
 import buildDesktopMenu from '../services/electron-menus';
 import buildTrayIconMenu from '../services/electron-tray-menu';
 import i18n from '../services/i18n';
+import LoadingLazy from '../components/LoadingLazy';
+
+const OnboardingDialog = React.lazy(() => import(/* webpackChunkName: "OnboardingDialog" */ '../components/dialogs/OnboardingDialog'));
+const OnboardingDialogAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <OnboardingDialog {...props} />
+  </React.Suspense>
+);
 
 const initialSplitSize = 44;
 const drawerWidth = 300;
@@ -537,10 +544,12 @@ class MainPage extends Component<Props, State> {
               </Button>,
             ]}
           />
-          <OnboardingDialog
-            open={this.props.isFirstRun}
-            onClose={this.toggleOnboarding}
-          />
+          {this.props.isFirstRun && (
+            <OnboardingDialogAsync
+              open={this.props.isFirstRun}
+              onClose={this.toggleOnboarding}
+            />
+          )}
         </TargetFileBox>
       </HotKeys>
     );
