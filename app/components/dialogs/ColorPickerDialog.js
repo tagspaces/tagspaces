@@ -17,7 +17,7 @@
  * @flow
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -33,16 +33,12 @@ const presetColors = ['#ffffff', '#000000', '#ac725e', '#d06b64', '#f83a22', '#f
   '#cabdbf', '#cca6ac', '#f691b2', '#cd74e6', '#a47ae2'];
 
 type Props = {
+  classes: Object,
   open: boolean,
   color: string,
   setColor: (color: string) => void,
   presetColors: Array<string>,
   onClose: () => void
-};
-
-type State = {
-  color: string,
-  colorHex: string
 };
 
 const styles = {
@@ -52,85 +48,85 @@ const styles = {
     backgroundColor: 'transparent !important'
   }
 };
-class ColorPickerDialog extends React.Component<Props, State> {
-  state = {
-    color: undefined,
-    colorHex: undefined
-  };
 
-  onConfirm = () => {
-    const { color, colorHex } = this.state;
+const ColorPickerDialog = (props: Props) => {
+  const [color, setColor] = useState(undefined);
+  const [colorHex, setColorHex] = useState(undefined);
+
+  function onConfirm() {
     if (color && colorHex) {
       const hexAlphaColor = colorHex + Math.round(color.a * 255).toString(16);
-      this.props.setColor(hexAlphaColor);
+      props.setColor(hexAlphaColor);
     }
-    this.props.onClose();
-  };
+    props.onClose();
+  }
 
-  handleChangeComplete = (color) => {
-    this.setState({
-      color: color.rgb,
-      colorHex: color.hex
-    });
-  };
+  function handleChangeComplete(newColor: Object) {
+    setColor(newColor.rgb);
+    setColorHex(newColor.hex);
+  }
 
-  renderTitle = () => (
-    <DialogTitle data-tid="colorPickerDialogTitle" >
-      {i18n.t('core:colorPickerDialogTitle')}
-    </DialogTitle>
-  );
-
-  renderContent = () => (
-    <DialogContent
-      style={{
-        marginLeft: 'auto',
-        marginRight: 'auto'
-      }}
-    >
-      <SketchPicker
-        className={this.props.classes.noBorder}
-        name="color"
-        presetColors={this.props.presetColors ? this.props.presetColors : presetColors}
-        color={this.state.color ? this.state.color : this.props.color}
-        onChangeComplete={this.handleChangeComplete}
-      />
-    </DialogContent>
-  );
-
-  renderActions = () => (
-    <DialogActions>
-      <Button
-        data-tid="colorPickerCloseDialog"
-        onClick={this.props.onClose}
-        color="primary"
-      >
-        {i18n.t('core:cancel')}
-      </Button>
-      <Button
-        onClick={this.onConfirm}
-        data-tid="colorPickerConfirm"
-        color="primary"
-      >
-        {i18n.t('core:ok')}
-      </Button>
-    </DialogActions>
-  );
-
-  render() {
-    const {
-      open = false,
-      onClose
-    } = this.props;
+  function renderTitle() {
     return (
-      <GenericDialog
-        open={open}
-        onClose={onClose}
-        renderTitle={this.renderTitle}
-        renderContent={this.renderContent}
-        renderActions={this.renderActions}
-      />
+      <DialogTitle data-tid="colorPickerDialogTitle" >
+        {i18n.t('core:colorPickerDialogTitle')}
+      </DialogTitle>
     );
   }
-}
+
+  function renderContent() {
+    return (
+      <DialogContent
+        style={{
+          marginLeft: 'auto',
+          marginRight: 'auto'
+        }}
+      >
+        <SketchPicker
+          className={props.classes.noBorder}
+          name="color"
+          presetColors={props.presetColors ? props.presetColors : presetColors}
+          color={color || props.color}
+          onChangeComplete={handleChangeComplete}
+        />
+      </DialogContent>
+    );
+  }
+
+  function renderActions() {
+    return (
+      <DialogActions>
+        <Button
+          data-tid="colorPickerCloseDialog"
+          onClick={props.onClose}
+          color="primary"
+        >
+          {i18n.t('core:cancel')}
+        </Button>
+        <Button
+          onClick={onConfirm}
+          data-tid="colorPickerConfirm"
+          color="primary"
+        >
+          {i18n.t('core:ok')}
+        </Button>
+      </DialogActions>
+    );
+  }
+
+  const {
+    open = false,
+    onClose
+  } = props;
+  return (
+    <GenericDialog
+      open={open}
+      onClose={onClose}
+      renderTitle={renderTitle}
+      renderContent={renderContent}
+      renderActions={renderActions}
+    />
+  );
+};
 
 export default withStyles(styles)(ColorPickerDialog);
