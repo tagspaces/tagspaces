@@ -226,7 +226,6 @@
     "react-hotkeys": "^1.1.4",
     "react-i18next": "^4.6.1",
     "react-joyride": "^2.0.0-11",
-    "react-loadable": "^5.3.1",
     "react-redux": "^5.0.7",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",

@@ -22,12 +22,10 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import FolderSeparatorIcon from '@material-ui/icons/KeyboardArrowRight';
+// import FolderSeparatorIcon from '@material-ui/icons/KeyboardArrowRight';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { withStyles } from '@material-ui/core/styles';
 import { HotKeys } from 'react-hotkeys';
-import Loadable from 'react-loadable';
-import WelcomePanel from './WelcomePanel';
 import LocationMenu from './LocationMenu';
 import DirectoryMenu from './menus/DirectoryMenu';
 import i18n from '../services/i18n';
@@ -47,9 +45,6 @@ import {
   extractShortDirectoryName
 } from '../utils/paths';
 import PlatformIO from '../services/platform-io';
-
-// https://reactjs.org/blog/2017/05/18/whats-new-in-create-react-app.html#code-splitting-with-dynamic-import
-// https://medium.com/@magbicaleman/intro-to-dynamic-import-in-create-react-app-6305bb397c46
 
 const styles = theme => ({
   mainPanel: {
@@ -106,20 +101,19 @@ function Loading() {
   );
 }
 
-const GridPerspective = Loadable({
-  // loader: () => import('../node_modules/@tagspaces/grid-perspective/index'),
-  loader: () => import('../perspectives/grid-perspective/src/index'),
-  // webpack: () => [require.resolveWeak('../perspectives/desktopr/index')],
-  // modules: [path.join(__dirname, './perspectives/desktopr/index')],
-  loading: Loading
-});
+const GridPerspective = React.lazy(() => import(/* webpackChunkName: "GridPerspective" */ '../perspectives/grid-perspective/src/index'));
+const GridPerspectiveAsync = props => (
+  <React.Suspense fallback={<Loading />}>
+    <GridPerspective {...props} />
+  </React.Suspense>
+);
 
-const FileManagerPerspective = Loadable({
-  loader: () => import('../perspectives/file-manager/index'),
-  // webpack: () => [require.resolveWeak('../perspectives/file-manager/index')],
-  // modules: [path.join(__dirname, '../perspectives/file-manager/index')],
-  loading: Loading
-});
+const WelcomePanel = React.lazy(() => import(/* webpackChunkName: "WelcomePanel" */ './WelcomePanel'));
+const WelcomePanelAsync = props => (
+  <React.Suspense fallback={<Loading />}>
+    <WelcomePanel {...props} />
+  </React.Suspense>
+);
 
 type Props = {
   classes: Object,
@@ -309,14 +303,13 @@ class FolderContainer extends React.Component<Props, State> {
   };
 
   renderPerspective() {
-    // console.log('renderPerspective: ', this.props);
     if (
+      // TODO handle location perspectives  === 'grid'
       this.props.currentDirectoryPath &&
       this.props.currentDirectoryPath.length >= 2
     ) {
-      // TODO handle location perspectives  === 'grid'
       return (
-        <GridPerspective
+        <GridPerspectiveAsync
           directoryContent={this.props.directoryContent}
           loadDirectoryContent={this.props.loadDirectoryContent}
           openFile={this.props.openFile}
@@ -340,7 +333,7 @@ class FolderContainer extends React.Component<Props, State> {
     } else if (this.state.currentPerspective === 'filemanager') {
       return <div>Place for another perspective</div>;
     }
-    return <WelcomePanel />;
+    return <WelcomePanelAsync />;
   }
 
   render() {

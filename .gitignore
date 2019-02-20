@@ -78,5 +78,6 @@ web/LICENSE.txt
 web/third-party.txt
 
 app/extconfig.js
+app/extconfig1.js
 web/extconfig.js
 cordova/www/extconfig.js
