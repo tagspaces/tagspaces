@@ -15,12 +15,12 @@
         <param name="android-package" value="org.apache.cordova.whitelist.WhitelistPlugin" />
         <param name="onload" value="true" />
     </feature>
-    <name>TagSpaces</name>
+    <name>TagSpaces Beta</name>
     <description>
-        A sample Apache Cordova application that responds to the deviceready event.
+		Offline file organizer and browser with tagging support.
     </description>
-    <author email="dev@cordova.apache.org" href="http://cordova.io">
-        Apache Cordova Team
+    <author email="contact@tagspaces.org" href="https://tagspaces.org">
+        TagSpaces UG (haftungsbeschraenkt)
     </author>
     <content src="index.html" />
     <access origin="*" />
