@@ -57,7 +57,7 @@ export default {
   useTextExtraction: false,
   useGenerateThumbnails: true,
   tagTextColor: 'white',
-  tagBackgroundColor: '#008000',
+  tagBackgroundColor: '#61DD61',
   currentTheme: 'light',
   enableGlobalKeyboardShortcuts: true,
   zoomFactor: 1,
