@@ -18433,24 +18433,6 @@ SOFTWARE.
 
 -----
 
-The following software may be included in this product: react-beautiful-dnd. A copy of the source code may be downloaded from https://github.com/atlassian/react-beautiful-dnd.git. This software contains the following license and notice below:
-
-Copyright 2017 Atlassian Pty Ltd
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
------
-
 The following software may be included in this product: react-color, reactcss. A copy of the source code may be downloaded from git+https://github.com/casesandberg/react-color.git (react-color), https://github.com/casesandberg/reactcss (reactcss). This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -18696,59 +18678,6 @@ SOFTWARE.
 
 -----
 
-The following software may be included in this product: react-loadable. A copy of the source code may be downloaded from https://github.com/thejameskyle/react-loadable.git. This software contains the following license and notice below:
-
-COPYRIGHT (c) 2017-present James Kyle <me@thejameskyle.com>
-
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
------
-
-The following software may be included in this product: react-motion. A copy of the source code may be downloaded from https://github.com/chenglou/react-motion.git. This software contains the following license and notice below:
-
-The MIT License (MIT)
-
-Copyright (c) 2015 React Motion authors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
------
-
 The following software may be included in this product: react-proptype-conditional-require. A copy of the source code may be downloaded from https://github.com/evcohen/react-proptype-conditional-require. This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -18775,7 +18704,7 @@ SOFTWARE.
 
 -----
 
-The following software may be included in this product: react-redux, redux, redux-thunk. A copy of the source code may be downloaded from https://github.com/reduxjs/react-redux.git (react-redux), https://github.com/reduxjs/redux.git (redux), https://github.com/reduxjs/redux-thunk.git (redux-thunk). This software contains the following license and notice below:
+The following software may be included in this product: react-redux, redux, redux-thunk. A copy of the source code may be downloaded from https://github.com/reduxjs/react-redux.git (react-redux), https://github.com/reactjs/redux.git (redux), https://github.com/reduxjs/redux-thunk.git (redux-thunk). This software contains the following license and notice below:
 
 The MIT License (MIT)
 
@@ -19537,32 +19466,6 @@ LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES
 OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
 WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
 ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
------
-
-The following software may be included in this product: reselect. A copy of the source code may be downloaded from https://github.com/reactjs/reselect.git. This software contains the following license and notice below:
-
-The MIT License (MIT)
-
-Copyright (c) 2015-2016 Reselect Contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 
 -----
 

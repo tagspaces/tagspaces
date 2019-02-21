@@ -55,7 +55,7 @@
     "cordova-create-app": "cordova create ./cordova org.tagspaces.mobile TagSpaces",
     "start-android": "yarn build-cordova && yarn run-android",
     "start-android-dev": "yarn prepare-cordova && yarn build-cordova-dev && yarn run-android",
-    "update-changelog": "git log v3.0.10..HEAD --no-merges --format=%B > CHANGELOG.TXT",
+    "update-changelog": "git log v3.0.11..HEAD --no-merges --format=%B > CHANGELOG.TXT",
     "clean": "rimraf app/dist && rimraf node_modules && rimraf app/node_modules"
   },
   "browserslist": "electron 2.0",
