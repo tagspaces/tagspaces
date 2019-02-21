@@ -184,90 +184,86 @@ type Props = {
   allTags: Array<Tag>
 };
 
-class TagsSelect extends React.Component<Props> {
-  handleChange = (newValue: any, actionMeta: any) => {
-    // console.group('Value Changed');
-    // console.log(JSON.stringify(newValue));
-    // console.log(`action: ${actionMeta.action}`);
-    // console.groupEnd();
-
+const TagsSelect = (props: Props) => {
+  function handleChange(newValue: any, actionMeta: any) {
     if (actionMeta.action === 'select-option') {
-      this.props.handleChange(this.props.tagSearchType, newValue, actionMeta.action);
+      props.handleChange(props.tagSearchType, newValue, actionMeta.action);
     } else if (actionMeta.action === 'create-option') {
-      this.props.allTags.push(newValue);
-      this.props.handleChange(this.props.tagSearchType, newValue, actionMeta.action);
+      props.allTags.push(newValue);
+      props.handleChange(props.tagSearchType, newValue, actionMeta.action);
     } else if (actionMeta.action === 'remove-value') {
-      this.props.handleChange(this.props.tagSearchType, newValue, actionMeta.action);
+      props.handleChange(props.tagSearchType, newValue, actionMeta.action);
     } else if (actionMeta.action === 'clear') {
-      this.props.handleChange(this.props.tagSearchType, [], actionMeta.action);
+      props.handleChange(props.tagSearchType, [], actionMeta.action);
     }
-  };
+  }
 
-  /**
-   * temp fix for https://github.com/JedWatson/react-select/issues/2630
-   */
-  isValidNewOption = (inputValue, selectValue, selectOptions) => !(inputValue.trim().length === 0 ||
-      selectOptions.find(option => option.name === inputValue));
-
-  render() {
-    const {
-      classes,
-      theme,
-      allTags,
-      tags,
-      defaultBackgroundColor,
-      defaultTextColor
-    } = this.props;
-
-    const selectStyles = {
-      input: base => ({
-        ...base,
-        color: theme.palette.text.primary,
-        '& input': {
-          font: 'inherit',
-        },
-      }),
-    };
-
+  function isValidNewOption(inputValue, selectValue, selectOptions) {
+    const trimmedInput = inputValue.trim();
     return (
-      <div className={classes.root}>
-        <NoSsr>
-          <CreatableSelect
-            isClearable={false}
-            classes={classes}
-            options={allTags}
-            getOptionLabel={(option) => option.title}
-            getOptionValue={(option) => option.id || option.title}
-            isValidNewOption={this.isValidNewOption}
-            getNewOptionData={(inputValue, optionLabel) => ({
-              id: inputValue,
-              title: optionLabel,
-              color: defaultBackgroundColor,
-              textcolor: defaultTextColor
-            })}
-            styles={selectStyles}
-            fullWidth={true}
-            components={components}
-            /* textFieldProps={{
-            label: 'title',
-            InputLabelProps: {
-              shrink: true,
-            },
-          }} */
-            value={tags}
-            onChange={this.handleChange}
-            // onInputChange={this.handleInputSelectChange}
-            // onCreateOption={this.handleCreate}
-            placeholder={i18n.t('core:searchTags')}
-            isMulti
-            formatCreateLabel={(label) => label}
-          // isSearchable
-          />
-        </NoSsr>
-      </div>
+      trimmedInput.trim().length > 0 &&
+      !trimmedInput.includes(' ') &&
+      !trimmedInput.includes('#') &&
+      !trimmedInput.includes(',') &&
+      !selectOptions.find(option => option.name === inputValue)
     );
   }
-}
+
+  const {
+    classes,
+    theme,
+    allTags,
+    tags,
+    defaultBackgroundColor,
+    defaultTextColor
+  } = props;
+
+  const selectStyles = {
+    input: base => ({
+      ...base,
+      color: theme.palette.text.primary,
+      '& input': {
+        font: 'inherit',
+      },
+    }),
+  };
+
+  return (
+    <div className={classes.root}>
+      <NoSsr>
+        <CreatableSelect
+          isClearable={false}
+          classes={classes}
+          options={allTags}
+          getOptionLabel={(option) => option.title}
+          getOptionValue={(option) => option.id || option.title}
+          isValidNewOption={isValidNewOption}
+          getNewOptionData={(inputValue, optionLabel) => ({
+            id: inputValue,
+            title: optionLabel,
+            color: defaultBackgroundColor,
+            textcolor: defaultTextColor
+          })}
+          styles={selectStyles}
+          fullWidth={true}
+          components={components}
+          /* textFieldProps={{
+          label: 'title',
+          InputLabelProps: {
+            shrink: true,
+          },
+        }} */
+          value={tags}
+          onChange={handleChange}
+          placeholder={i18n.t('core:searchTags')}
+          isMulti
+          formatCreateLabel={(label) => label}
+        // isSearchable
+        />
+      </NoSsr>
+    </div>
+  );
+};
 
 const mapStateToProps = state => ({
   allTags: getAllTags(state),
