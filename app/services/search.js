@@ -132,7 +132,7 @@ function constructjmespathQuery(searchQuery: SearchQuery): string {
     if (ORtagsExist) {
       jmespathQuery += ' tags[? ';
       searchQuery.tagsOR.forEach(tag => {
-        const cleanedTagTitle = tag.title.trim(); // .toLowerCase();
+        const cleanedTagTitle = tag.title.trim().toLowerCase();
         if (cleanedTagTitle.length > 0) {
           jmespathQuery += 'title==\'' + cleanedTagTitle + '\' || ';
         }
@@ -147,7 +147,7 @@ function constructjmespathQuery(searchQuery: SearchQuery): string {
         jmespathQuery += ' tags[? ';
       }
       searchQuery.tagsAND.forEach(tag => {
-        const cleanedTagTitle = tag.title.trim(); // .toLowerCase();
+        const cleanedTagTitle = tag.title.trim().toLowerCase();
         if (cleanedTagTitle.length > 0) {
           jmespathQuery += 'title==\'' + cleanedTagTitle + '\']] | [? tags[? ';
         }
@@ -163,7 +163,7 @@ function constructjmespathQuery(searchQuery: SearchQuery): string {
         jmespathQuery += '!(tags[? ';
       }
       searchQuery.tagsNOT.forEach(tag => {
-        const cleanedTagTitle = tag.title.trim(); // .toLowerCase();
+        const cleanedTagTitle = tag.title.trim().toLowerCase();
         if (cleanedTagTitle.length > 0) {
           jmespathQuery += 'title==\'' + cleanedTagTitle + '\'])] | [?!(tags[? ';
         }
@@ -192,13 +192,32 @@ function constructjmespathQuery(searchQuery: SearchQuery): string {
   return jmespathQuery;
 }
 
+function transformTagsToLowercase(index: Array<Object>) {
+  console.time('taglowercase');
+  const resultIndex = index.map((entry) => {
+    const tags = [...entry.tags];
+    if (tags && tags.length) {
+      tags.map((tag) => {
+        tag.title = tag.title.toLowerCase();
+        return tag;
+      });
+    }
+    return {
+      ...entry,
+      tags
+    };
+  });
+  console.timeEnd('taglowercase');
+  return resultIndex;
+}
+
 export default class Search {
   static searchLocationIndex = (locationContent: Array<Object>, searchQuery: SearchQuery): Promise<Array<Object> | []> => new Promise((resolve) => {
     console.time('searchtime');
     const jmespathQuery = constructjmespathQuery(searchQuery);
     let jmespathResults;
     let results;
-    let currentDirectoryEntries;
+    let currentDirectoryEntries = transformTagsToLowercase(locationContent);
 
     if (searchQuery.searchBoxing === 'folder') {
       currentDirectoryEntries = locationContent.filter(entry => entry.path.startsWith(searchQuery.currentDirectory));
