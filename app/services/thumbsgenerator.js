@@ -125,10 +125,12 @@ export function getThumbnailURLPromise(filePath) {
             resolve({ filePath });
           });
         }
+        return true;
       }).catch(err => {
         console.warn('Error getting tmb properties ' + err);
         resolve({ filePath });
       });
+      return true;
     }).catch(err => {
       console.warn('Error getting file properties ' + err);
       resolve({ filePath });
@@ -153,6 +155,7 @@ export function createThumbnailPromise(
       } else {
         resolve();
       }
+      return true;
     }).catch((err) => {
       console.warn('Thumb generation failed ' + err);
       resolve();
