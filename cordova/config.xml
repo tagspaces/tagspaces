@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="org.tagspaces.mobile" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>TagSpaces</name>
+    <name>TagSpaces Beta</name>
     <description>
-        A sample Apache Cordova application that responds to the deviceready event.
+		Offline file organizer and browser with tagging support.
     </description>
-    <author email="dev@cordova.apache.org" href="http://cordova.io">
-        Apache Cordova Team
+    <author email="contact@tagspaces.org" href="https://tagspaces.org">
+        TagSpaces UG (haftungsbeschraenkt)
     </author>
     <content src="index.html" />
     <access origin="*" />
