@@ -316,15 +316,17 @@ export default class ElectronIO {
               }
 
               // Loading thumbs for folders
-              const folderTmbPath =
-                eentry.path +
-                AppConfig.dirSeparator +
-                AppConfig.metaFolder +
-                AppConfig.dirSeparator +
-                AppConfig.folderThumbFile;
-              const tmbStats = this.fs.statSync(folderTmbPath);
-              if (tmbStats.isFile()) {
-                eentry.thumbPath = folderTmbPath;
+              if (!eentry.path.includes('/' + AppConfig.metaFolder)) { // skipping meta folder
+                const folderTmbPath =
+                  eentry.path +
+                  AppConfig.dirSeparator +
+                  AppConfig.metaFolder +
+                  AppConfig.dirSeparator +
+                  AppConfig.folderThumbFile;
+                const tmbStats = this.fs.statSync(folderTmbPath);
+                if (tmbStats.isFile()) {
+                  eentry.thumbPath = folderTmbPath;
+                }
               }
             }
 
