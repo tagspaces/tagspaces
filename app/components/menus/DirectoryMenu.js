@@ -420,9 +420,7 @@ class DirectoryMenu extends React.Component<Props, State> {
               <ListItemText inset primary={i18n.t('core:cameraTakePicture')} />
             </MenuItem>
           )}
-          {!this.props.perspectiveMode && (
-            <Divider />
-          )}
+          <Divider />
           <MenuItem data-tid="showProperties" onClick={this.showProperties}>
             <ListItemIcon>
               <SettingsIcon />
