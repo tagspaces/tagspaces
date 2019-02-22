@@ -12,7 +12,7 @@ if (!sh.which('yarn')) {
 }
 
 const extensionDir = 'extensions';
-const extensionBranch = 'develop';
+const extensionBranch = 'master';
 
 const extensionList = [
   { package: '@tagspaces/document-viewer', path: 'viewerDocument', url: 'https://github.com/tagspaces/viewerDocument' },
