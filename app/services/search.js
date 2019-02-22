@@ -220,25 +220,25 @@ export default class Search {
     let currentDirectoryEntries = transformTagsToLowercase(locationContent);
 
     if (searchQuery.searchBoxing === 'folder') {
-      currentDirectoryEntries = locationContent.filter(entry => entry.path.startsWith(searchQuery.currentDirectory));
+      currentDirectoryEntries = currentDirectoryEntries.filter(entry => entry.path.startsWith(searchQuery.currentDirectory));
     }
 
     if (jmespathQuery) {
       console.log('jmespath query: ' + jmespathQuery);
       console.time('jmespath');
-      jmespathResults = jmespath.search({ index: currentDirectoryEntries || locationContent }, jmespathQuery);
+      jmespathResults = jmespath.search({ index: currentDirectoryEntries }, jmespathQuery);
       console.timeEnd('jmespath');
       console.log('jmespath results: ' + jmespathResults.length);
     }
 
     // if (Pro && Pro.Search.filterIndex) {
-    //   results = Pro.Search.filterIndex(results || locationContent, searchQuery);
+    //   results = Pro.Search.filterIndex(currentDirectoryEntries);
     // }
 
     if (searchQuery.textQuery && searchQuery.textQuery.length > 1) {
       console.log('fuse query: ' + searchQuery.textQuery);
       console.time('fuse');
-      const fuse = new Fuse(jmespathResults || currentDirectoryEntries || locationContent, fuseOptions);
+      const fuse = new Fuse(jmespathResults || currentDirectoryEntries, fuseOptions);
       results = fuse.search(searchQuery.textQuery);
       console.timeEnd('fuse');
     } else {
