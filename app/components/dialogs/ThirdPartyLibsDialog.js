@@ -25,70 +25,49 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import GenericDialog from './GenericDialog';
 import i18n from '../../services/i18n';
-import { loadFileContentPromise } from '../../services/utils-io';
-
-const thirdpartylibsUrl = './third-party.txt';
+import ThirdPartyLibs from '../../third-party.txt';
 
 type Props = {
   open: boolean,
   onClose: () => void
 };
 
-type State = {
-  thirdpartylibs?: string
-};
-
-class ThirdPartyLibsDialog extends React.Component<Props, State> {
-  state = {
-    thirdpartylibs: 'Loading content ...'
-  };
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.open) {
-      loadFileContentPromise(thirdpartylibsUrl, 'text').then(
-        (result) => {
-          this.setState({
-            thirdpartylibs: result
-          });
-          return true;
-        }
-      ).catch((err) => {
-        console.log('Error loading third party libs file ' + err);
-      });
-    }
+const ThirdPartyLibsDialog = (props: Props) => {
+  function renderTitle() {
+    return (<DialogTitle>{i18n.t('core:thirdPartyLibs')}</DialogTitle>);
   }
 
-  renderTitle = () => <DialogTitle>{i18n.t('core:thirdPartyLibs')}</DialogTitle>;
-
-  renderContent = () => (
-    <DialogContent style={{ overflowX: 'auto' }}>
-      <pre style={{ whiteSpace: 'pre-wrap' }}>{ this.state.thirdpartylibs }</pre>
-    </DialogContent>
-  );
-
-  renderActions = () => (
-    <DialogActions>
-      <Button
-        data-tid="confirmThirdPartyLibsDialog"
-        onClick={this.props.onClose}
-        color="primary"
-      >
-        {i18n.t('core:ok')}
-      </Button>
-    </DialogActions>
-  );
-
-  render() {
+  function renderContent() {
     return (
-      <GenericDialog
-        open={this.props.open}
-        onClose={this.props.onClose}
-        renderTitle={this.renderTitle}
-        renderContent={this.renderContent}
-        renderActions={this.renderActions}
-      />
+      <DialogContent style={{ overflowX: 'auto' }}>
+        <pre style={{ whiteSpace: 'pre-wrap' }}>{ ThirdPartyLibs }</pre>
+      </DialogContent>
     );
   }
-}
+
+  function renderActions() {
+    return (
+      <DialogActions>
+        <Button
+          data-tid="confirmThirdPartyLibsDialog"
+          onClick={props.onClose}
+          color="primary"
+        >
+          {i18n.t('core:ok')}
+        </Button>
+      </DialogActions>
+    );
+  }
+
+  return (
+    <GenericDialog
+      open={props.open}
+      onClose={props.onClose}
+      renderTitle={renderTitle}
+      renderContent={renderContent}
+      renderActions={renderActions}
+    />
+  );
+};
 
 export default withMobileDialog()(ThirdPartyLibsDialog);
