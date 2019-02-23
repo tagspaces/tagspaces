@@ -53,9 +53,9 @@ import {
   isSettingsDialogOpened,
   isCreateFileDialogOpened,
   isCreateDirectoryOpened,
-  isSelectDirectoryDialogOpened
+  isSelectDirectoryDialogOpened,
 } from '../reducers/app';
-import { actions as SettingActions } from '../reducers/settings';
+import { actions as SettingActions, isFirstRun } from '../reducers/settings';
 import LoadingLazy from './LoadingLazy';
 
 const LicenseDialog = React.lazy(() => import(/* webpackChunkName: "LicenseDialog" */ './dialogs/LicenseDialog'));
@@ -109,6 +109,7 @@ export const AppVerticalPanels = {
 };
 
 type Props = {
+  isFirstRun: boolean,
   isAboutDialogOpened: boolean,
   toggleAboutDialog: () => void,
   isCreateDirectoryOpened: boolean,
@@ -312,7 +313,7 @@ class VerticalNavigation extends React.Component<Props, State> {
             onClose={this.props.toggleKeysDialog}
           />
         )}
-        {this.props.isLicenseDialogOpened && (
+        {(this.props.isLicenseDialogOpened) && ( // this.props.isFirstRun ||
           <LicenseDialogAsync
             open={this.props.isLicenseDialogOpened}
             onClose={this.props.toggleLicenseDialog}
@@ -530,6 +531,7 @@ class VerticalNavigation extends React.Component<Props, State> {
 
 function mapStateToProps(state) {
   return {
+    isFirstRun: isFirstRun(state),
     isAboutDialogOpened: isAboutDialogOpened(state),
     isKeysDialogOpened: isKeysDialogOpened(state),
     isLicenseDialogOpened: isLicenseDialogOpened(state),
