@@ -18,10 +18,9 @@
  */
 
 import React from 'react';
-import uuidv1 from 'uuid';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Launch from '@material-ui/icons/Launch';
+import ShowEntriesWithTagIcon from '@material-ui/icons/Launch';
 import Edit from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/DeleteForever';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -115,7 +114,7 @@ class TagLibraryMenu extends React.Component<Props, State> {
           onClick={this.showFilesWithThisTag}
         >
           <ListItemIcon>
-            <Launch />
+            <ShowEntriesWithTagIcon />
           </ListItemIcon>
           <ListItemText inset primary={i18n.t('core:showFilesWithThisTag')} />
         </MenuItem>

@@ -18,8 +18,11 @@
  */
 
 import React from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/DeleteForever';
+import ShowEntriesWithTagIcon from '@material-ui/icons/Launch';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Menu from '@material-ui/core/Menu';
@@ -29,6 +32,10 @@ import EditEntryTagDialog from '../dialogs/EditEntryTagDialog';
 import DateCalendarDialog from '../dialogs/DateCalendarDialog';
 import i18n from '../../services/i18n';
 import { type Tag } from '../../reducers/taglibrary';
+import { actions as LocationIndexActions } from '../../reducers/location-index';
+import { type SearchQuery } from '../../services/search';
+import { getMaxSearchResults } from '../../reducers/settings';
+
 
 type Props = {
   open?: boolean,
@@ -37,7 +44,9 @@ type Props = {
   selectedTag?: Tag | null,
   currentEntryPath?: string,
   removeTags: (paths: Array<string>, tags: Array<Tag>) => void,
-  editTagForEntry: (path: string, tag: Tag) => void
+  editTagForEntry: (path: string, tag: Tag) => void,
+  searchLocationIndex: (searchQuery: SearchQuery) => void,
+  maxSearchResults: number
 };
 
 type State = {
@@ -68,6 +77,17 @@ class EntryTagMenu extends React.Component<Props, State> {
     this.setState({ isDateCalendarDialogOpened: true });
   };
 
+  showFilesWithThisTag = () => {
+    if (this.props.selectedTag) {
+      // this.props.togglePanel(AppVerticalPanels.search);
+      this.props.searchLocationIndex({
+        tagsAND: [this.props.selectedTag],
+        maxSearchResults: this.props.maxSearchResults
+      });
+    }
+    this.props.onClose();
+  };
+
   handleCloseDialogs = () => {
     this.setState({
       isEditTagDialogOpened: false,
@@ -91,6 +111,15 @@ class EntryTagMenu extends React.Component<Props, State> {
         open={this.props.open}
         onClose={this.props.onClose}
       >
+        <MenuItem
+          data-tid="showFilesWithThisTag"
+          onClick={this.showFilesWithThisTag}
+        >
+          <ListItemIcon>
+            <ShowEntriesWithTagIcon />
+          </ListItemIcon>
+          <ListItemText inset primary={i18n.t('core:showFilesWithThisTag')} />
+        </MenuItem>
         <MenuItem data-tid="editTagDialogMenu" onClick={this.showEditTagDialog}>
           <ListItemIcon>
             <EditIcon />
@@ -148,4 +177,16 @@ class EntryTagMenu extends React.Component<Props, State> {
   </MenuItem>
 */
 
-export default EntryTagMenu;
+function mapStateToProps(state) {
+  return {
+    maxSearchResults: getMaxSearchResults(state)
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({
+    searchLocationIndex: LocationIndexActions.searchLocationIndex,
+  }, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(EntryTagMenu);
