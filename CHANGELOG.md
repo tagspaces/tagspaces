@@ -1,5 +1,41 @@
 # Changelog
 
+## Version 3.1.1 / 2019.02.23
+
+### Community
+
+- 🎉 making searching for tags case insensitive
+- 🎉 added the support for semi-transparent color for tags and folders
+- 🎉 extending redux to support external configs
+- 🎉 added read-only support for folder thumbnails
+- 🎉 adding option for the default perspective, making a single click to select only an entry [#909](https://github.com/tagspaces/tagspaces/issues/909)
+- 🎉 added mkv to the list of the supported file formats for thumbnail generation, search and playing with the audio video
+- 🎉 adding show files with this tags to entry tag menu
+- 🎉 added the ability to add tags to all selected files by ctrl+clicking a tag in the tag library
+- 🎉 added the feature to tag all selected files when drag and dropping a tag onto a file
+- 🎉 making the app usable on small screens, hiding the middle panel if the height of the window is greater than the width
+- 🎉 first public release of TagSpaces v3 for Android with a minimum Android version of 6.0 (SDK 23)
+- 🌟 making the toolbars usable on small screens
+- 🌟 improving performance by converting react component to stateless functional components
+- 🌟 enabling drag and drop of tags from one entry to another
+- 🌟 enter confirm adding tags in the add tags dialog
+- 🌟 showing all notification in the bottom middle part of the screen
+- 🌟 showing the correct icon for the currently opened location
+- 🌟 exchanging folder separator in the folder breadcrumb
+- 🌟 enabling settings upgrade for keybindings and files types
+- 🌟 improving startup speed by introducing lazy loading for some components
+- 🌟 upgrading to electron 4.0.4, stabilizing MacOS Mojave
+- 🌟 updating react to 16.8.2 and some other libraries
+- 🐛 fix exception by not existing date for entry properties
+- 🐛 fixing remove file type icon
+- 🐛 disabling spaces, commas and hashes in the tag names
+- 🐛 updating to marked 0.6.0 fixing [#913](https://github.com/tagspaces/tagspaces/issues/913)
+- 🐛 folder view not updating when selecting next or prev file in the file viewer
+
+### Pro
+- 🎉 added support for custom background color per folder
+* 🌟 always persisting index while on object store locations
+
 ## Version 3.0.9 / 2019.02.01
 
 ### Community
