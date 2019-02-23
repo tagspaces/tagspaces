@@ -199,6 +199,7 @@
   "view": "View",
   "help": "Help",
   "license": "License Agreement",
+  "agreeLicense": "I Agree",
   "shortcutKeys": "Keyboard Shortcuts",
   "settings": "Settings",
   "fileExists": "Target file '{{fileName}}' already exists.",

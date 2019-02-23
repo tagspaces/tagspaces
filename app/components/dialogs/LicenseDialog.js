@@ -28,6 +28,7 @@ import i18n from '../../services/i18n';
 import { Pro } from '../../pro';
 import AppConfig from '../../config';
 import LicenseContent from '../../LICENSE.txt';
+import PlatformIO from '../../services/platform-io';
 
 type Props = {
   open: boolean,
@@ -85,10 +86,17 @@ const LicenseDialog = (props: Props) => {
         </Button> */}
         <Button
           data-tid="confirmLicenseDialog"
+          onClick={PlatformIO.quitApp}
+          color="primary"
+        >
+          {i18n.t('core:quit')}
+        </Button>
+        <Button
+          data-tid="confirmLicenseDialog"
           onClick={props.onClose}
           color="primary"
         >
-          {i18n.t('core:ok')}
+          {i18n.t('core:agreeLicense')}
         </Button>
       </DialogActions>
     );
