@@ -301,7 +301,7 @@ class MainPage extends Component<Props, State> {
       console.log('Dropped files: ' + JSON.stringify(files));
       if (!this.props.directoryPath) {
         this.props.showNotification(
-          'Importing files failed. Please select Directory first!',
+          'Importing files failed, because no folder is opened in TagSpaces!',
           'error',
           true
         );
@@ -329,29 +329,42 @@ class MainPage extends Component<Props, State> {
           // }
           // TODO event.currentTarget.result is ArrayBuffer
           // Sample call from PRO version using content = Utils.base64ToArrayBuffer(baseString);
-            PlatformIO.saveBinaryFilePromise(
-              filePath,
-              event.currentTarget.result,
-              true
-            )
-              .then(() => {
+            PlatformIO.getPropertiesPromise(filePath).then((entryProps) => {
+              if (entryProps) {
                 this.props.showNotification(
-                  'File ' + fileName + '  imported as ' + filePath,
-                  'default',
+                  'File with the same name already exist, importing skipped!',
+                  'warning',
                   true
                 );
-                this.props.reflectCreateEntry(filePath, true);
-                // this.props.openFile(filePath);
-                return true;
-              })
-              .catch(() => {
-                this.props.showNotification(
-                  'Importing file ' + fileName + ' failed.',
-                  'error',
+              } else {
+                PlatformIO.saveBinaryFilePromise(
+                  filePath,
+                  event.currentTarget.result,
                   true
-                );
-                return true;
-              });
+                )
+                  .then(() => {
+                    this.props.showNotification(
+                      'File ' + fileName + '  imported as ' + filePath,
+                      'default',
+                      true
+                    );
+                    this.props.reflectCreateEntry(filePath, true);
+                    // this.props.openFile(filePath);
+                    return true;
+                  })
+                  .catch(() => {
+                    this.props.showNotification(
+                      'Importing file ' + fileName + ' failed.',
+                      'error',
+                      true
+                    );
+                    return true;
+                  });
+              }
+              return true;
+            }).catch((err) => {
+              console.log('Error getting properties ' + err);
+            });
           };
 
           if (AppConfig.isCordova) {
