@@ -146,7 +146,6 @@ class DirectoryMenu extends React.Component<Props, State> {
     window.resolveLocalFileSystemURL(imageURL, (fp) => {
       this.moveFile(fp.nativeURL);
     }, () => { console.log('Failed to get filesystem url'); });
-    // this.saveFile(imageURL); // 'data:image/jpeg;base64,' + imageData);
   };
 
   moveFile = (filePath) => {
@@ -177,39 +176,6 @@ class DirectoryMenu extends React.Component<Props, State> {
         return true;
       });
   };
-
-  /* saveFile = (data) => {
-    const fileName = 'IMG' + AppConfig.beginTagContainer + formatDateTime4Tag(new Date(), true) + AppConfig.endTagContainer + '.jpg';
-    const filePath =
-      normalizePath(this.props.directoryPath) +
-      AppConfig.dirSeparator +
-      fileName;
-
-    PlatformIO.saveBinaryFilePromise(
-      filePath,
-      data,
-      true
-    )
-      .then(() => {
-        this.props.showNotification(
-          'File ' + filePath + ' successfully imported.',
-          'default',
-          true
-        );
-        this.props.reflectCreateEntry(filePath, true);
-        return true;
-      })
-      .catch(error => {
-        // TODO showAlertDialog("Saving " + filePath + " failed.");
-        console.error('Save to file ' + filePath + ' failed ' + error);
-        this.props.showNotification(
-          'Importing file ' + filePath + ' failed.',
-          'error',
-          true
-        );
-        return true;
-      });
-  }; */
 
   loadImageLocal = () => {
     this.props.onClose();
@@ -247,30 +213,43 @@ class DirectoryMenu extends React.Component<Props, State> {
       // }
       // TODO event.currentTarget.result is ArrayBuffer
       // Sample call from PRO version using content = Utils.base64ToArrayBuffer(baseString);
-      PlatformIO.saveBinaryFilePromise(
-        filePath,
-        event.currentTarget.result,
-        true
-      )
-        .then(() => {
+      PlatformIO.getPropertiesPromise(filePath).then((entryProps) => {
+        if (entryProps) {
           this.props.showNotification(
-            'File ' + filePath + ' successfully imported.',
-            'default',
+            'File with the same name already exist, importing skipped!',
+            'warning',
             true
           );
-          this.props.reflectCreateEntry(filePath, true);
-          return true;
-        })
-        .catch(error => {
-          // TODO showAlertDialog("Saving " + filePath + " failed.");
-          console.error('Save to file ' + filePath + ' failed ' + error);
-          this.props.showNotification(
-            'Importing file ' + filePath + ' failed.',
-            'error',
+        } else {
+          PlatformIO.saveBinaryFilePromise(
+            filePath,
+            event.currentTarget.result,
             true
-          );
-          return true;
-        });
+          )
+            .then(() => {
+              this.props.showNotification(
+                'File ' + filePath + ' successfully imported.',
+                'default',
+                true
+              );
+              this.props.reflectCreateEntry(filePath, true);
+              return true;
+            })
+            .catch(error => {
+              // TODO showAlertDialog("Saving " + filePath + " failed.");
+              console.error('Save to file ' + filePath + ' failed ' + error);
+              this.props.showNotification(
+                'Importing file ' + filePath + ' failed.',
+                'error',
+                true
+              );
+              return true;
+            });
+        }
+        return true;
+      }).catch((err) => {
+        console.log('Error getting properties ' + err);
+      });
     };
 
     if (AppConfig.isCordova) {
