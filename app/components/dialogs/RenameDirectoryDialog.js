@@ -49,17 +49,8 @@ class RenameDirectoryDialog extends React.Component<Props, State> {
   state = {
     inputError: false,
     disableConfirmButton: true,
-    name: '',
+    name: this.props.selectedDirectoryPath ? extractDirectoryName(this.props.selectedDirectoryPath) : '',
   };
-
-  static getDerivedStateFromProps(props) {
-    if (props.open) {
-      return {
-        name: extractDirectoryName(props.selectedDirectoryPath)
-      };
-    }
-    return null;
-  }
 
   handleInputChange = (event: Object) => {
     const target = event.target;
