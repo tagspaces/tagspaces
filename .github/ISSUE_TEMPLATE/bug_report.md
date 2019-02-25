@@ -24,15 +24,14 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+ - OS: [e.g. macOS, Windows 10, Linux, Ubuntu]
+ - Browser - only needed if you use the web version [e.g. firefox, chrome]
+ - Version [e.g. 3.1.1]
 
 **Smartphone (please complete the following information):**
  - Device: [e.g. Samsung Galaxy 8]
  - OS: [e.g. Android 7.0.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+ - Version [e.g. 3.1.1]
 
 **Additional context**
 Add any other context about the problem here.
