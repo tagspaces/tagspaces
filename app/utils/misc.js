@@ -36,7 +36,7 @@ export function immutablySwapItems(items, firstIndex, secondIndex) {
   return results;
 }
 
-export function hasURLProtocol(url) {
+export function hasURLProtocol(url: string) {
   return (
     url.startsWith('http://') ||
     url.startsWith('https://') ||
@@ -95,7 +95,7 @@ export function isVisibleOnScreen(element) {
   return isVisible;
 }
 
-export function getURLParameter(variable) {
+export function getURLParameter(variable: string) {
   const query = window.location.search.substring(1);
   const vars = query.split('&');
   for (let i = 0; i < vars.length; i += 1) {
@@ -132,7 +132,7 @@ export function arrayBufferToBuffer(content) {
   return buffer;
 }
 
-export function getBase64Image(imgURL) {
+export function getBase64Image(imgURL: string) {
   const canvas = document.createElement('canvas');
   const img = new Image();
   img.crossOrigin = 'anonymous';
@@ -372,7 +372,7 @@ export function sortByFirstTag(a, b) {
 }
 
 export function shuffleArray(array) {
-  // Durstenfeld shuffle 
+  // Durstenfeld shuffle
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
