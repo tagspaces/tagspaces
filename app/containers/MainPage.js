@@ -254,7 +254,9 @@ class MainPage extends Component<Props, State> {
     // console.log('Width: ' + width + ' Height: ' + height);
     this.setState({ width, height });
 
-    // this.props.setEntryFullWidth(height > width);
+    if (this.props.isFileOpened) {
+      this.props.setEntryFullWidth(height > width);
+    }
 
     // Hide folder container on windows resize or on mobile
     // Disable due a bug with the full width functionality
