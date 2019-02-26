@@ -60,6 +60,15 @@ function onBeforeLift(store) {
   ) {
     store.dispatch(SettingsActions.setLanguage(langURLParam));
   }
+
+  const openParam = getURLParameter('open');
+  if (openParam && openParam.length > 1) {
+    // dispatch toggle full width
+    setTimeout(() => {
+      store.dispatch(AppActions.openFile(decodeURIComponent(openParam)));
+      store.dispatch(AppActions.setEntryFullWidth(true));
+    }, 1000);
+  }
 }
 
 export default function Root({ store, persistor, history }: RootType) {

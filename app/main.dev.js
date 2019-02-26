@@ -48,7 +48,9 @@ process.argv.forEach((arg, count) => {
     // Ignore these argument
   } else if (arg.length > 2) {
     // console.warn('Opening file: ' + arg);
-    startupFilePath = arg;
+    if (arg !== './app/main.dev.js' && arg !== './app/') {
+      startupFilePath = arg;
+    }
   }
 
   if (portableMode) {
@@ -128,6 +130,15 @@ app.on('ready', async () => {
 
   createSplashWorker();
 
+  let startupParameter = '';
+  if (startupFilePath) {
+    if (startupFilePath.startsWith('./') || startupFilePath.startsWith('.\\')) {
+      startupParameter = '?open=' + encodeURIComponent(path.join(__dirname, startupFilePath));
+    } else {
+      startupParameter = '?open=' + encodeURIComponent(startupFilePath);
+    }
+  }
+
   mainWindow = new BrowserWindow({
     show: true,
     x: mainWindowState.x,
@@ -137,7 +148,7 @@ app.on('ready', async () => {
     icon: path.join(__dirname, 'assets/icons/128x128.png')
   });
 
-  mainWindow.loadURL(mainHTML);
+  mainWindow.loadURL(mainHTML + startupParameter);
   mainWindow.setAutoHideMenuBar(true);
   mainWindow.setMenuBarVisibility(false);
 

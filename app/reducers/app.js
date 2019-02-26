@@ -37,7 +37,7 @@ import {
   extractParentDirectoryPath,
   extractTagsAsObjects, normalizePath
 } from '../utils/paths';
-import { formatDateTime4Tag } from '../utils/misc';
+import { formatDateTime4Tag, getURLParameter } from '../utils/misc';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import { getThumbnailURLPromise } from '../services/thumbsgenerator';
@@ -1016,6 +1016,13 @@ export const actions = {
       isFile
     );
     entryForOpening.url = PlatformIO.getURLforPath(entryPath); // Needed for the s3 support
+    const localePar = getURLParameter(entryPath);
+    let startPar = '?open=' + encodeURIComponent(entryPath);
+    if (localePar && localePar.length > 1) {
+      startPar += '&locale=' + localePar;
+    }
+    window.history.pushState('', 'TagSpaces', location.pathname + startPar);
+
     dispatch(actions.addToEntryContainer(entryForOpening));
   },
   toggleEntryFullWidth: () => ({
