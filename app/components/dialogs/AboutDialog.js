@@ -17,7 +17,7 @@
  * @flow
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -35,16 +35,12 @@ import { getLastVersionPromise } from '../../reducers/settings';
 import AppConfig from '../../config';
 
 type Props = {
+  classes: Object,
   open: boolean,
   fullScreen: boolean,
   toggleLicenseDialog: () => void,
   toggleThirdPartyLibsDialog: () => void,
   onClose: () => void
-};
-
-type State = {
-  updateAvailable: boolean,
-  newVersion: string
 };
 
 let buildID = versionMeta.commitId;
@@ -55,14 +51,12 @@ if (buildID && buildID.length >= 11) {
 const productName = versionMeta.name + (Pro ? ' Pro' : '');
 document.title = productName + ' ' + versionMeta.version;
 
-class AboutDialog extends React.Component<Props, State> {
-  state = {
-    updateAvailable: false,
-    newVersion: ''
-  };
+const AboutDialog = (props: Props) => {
+  const [updateAvailable] = useState(false);
+  const [newVersion] = useState();
 
-  checkForUpdates = () => {
-    if (this.state.updateAvailable) {
+  function checkForUpdates() {
+    if (updateAvailable) {
       PlatformIO.openUrl(AppConfig.downloadURL);
     } else {
       getLastVersionPromise()
@@ -75,12 +69,12 @@ class AboutDialog extends React.Component<Props, State> {
             semver.valid(cleanedLastVersion) &&
             semver.gt(cleanedLastVersion, cleanedCurrentVersion)
           ) {
-            this.setState({
+            useState({
               updateAvailable: true,
               newVersion: cleanedLastVersion.version
             });
           } else {
-            this.setState({
+            useState({
               newVersion: versionMeta.version
             });
           }
@@ -90,81 +84,87 @@ class AboutDialog extends React.Component<Props, State> {
           console.warn('Error while checking for update: ' + error);
         });
     }
-  };
+  }
 
-  renderTitle = () => <DialogTitle>{productName}</DialogTitle>;
+  function renderTitle() {
+    return (
+      <DialogTitle>{productName}</DialogTitle>
+    );
+  }
 
-  renderContent = () => (
-    <DialogContent>
-      <img
-        alt="TagSpaces logo"
-        src={LogoIcon}
-        style={{ float: 'left', marginRight: 10, width: 120, height: 120 }}
-      />
-      <Typography
-        variant="subtitle1"
-        title={'Build on: ' + versionMeta.buildTime}
-      >
-        Version: {versionMeta.version} / BuildID: {buildID}
-      </Typography>
-      <br />
-      <Typography id="aboutContent" variant="body1">
-        <strong>{productName}</strong> is made possible by the
-        TagSpaces(github.com/tagspaces) open source project and other{' '}
-        <Button onClick={this.props.toggleThirdPartyLibsDialog}>
-          open source software
-        </Button>
-        .
-        <br />
-        {!Pro && (
-          <span>
-            This program is free software: you can redistribute it and/or modify
-            it under the terms of the GNU Affero General Public License (version
-            3) as published by the Free Software Foundation.
-          </span>
-        )}
-        <br />
-        This program is distributed in the hope that it will be useful, but
-        WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the License for
-        more details.
-        <br />
-        <br />
-        <Button
-          onClick={() => {
-            PlatformIO.openUrl('https://www.tagspaces.org/about/imprint/');
-          }}
+  function renderContent() {
+    return (
+      <DialogContent>
+        <img
+          alt="TagSpaces logo"
+          src={LogoIcon}
+          style={{ float: 'left', marginRight: 10, width: 120, height: 120 }}
+        />
+        <Typography
+          variant="subtitle1"
+          title={'Build on: ' + versionMeta.buildTime}
         >
-          Imprint
-        </Button>
-        <Button
-          onClick={() => {
-            PlatformIO.openUrl('https://www.tagspaces.org/about/privacy/');
-          }}
-        >
-          Privacy Policy
-        </Button>
-        <Button
-          onClick={() => {
-            PlatformIO.openUrl('https://www.tagspaces.org/whatsnew/');
-          }}
-        >
-          Changelog
-        </Button>
-        <Button
-          data-tid="openLicenseDialog"
-          onClick={this.props.toggleLicenseDialog}
-        >
-          License Agreement
-        </Button>
-      </Typography>
-    </DialogContent>
-  );
+          Version: {versionMeta.version} / BuildID: {buildID}
+        </Typography>
+        <br />
+        <Typography id="aboutContent" variant="body1">
+          <strong>{productName}</strong> is made possible by the
+          TagSpaces(github.com/tagspaces) open source project and other{' '}
+          <Button onClick={props.toggleThirdPartyLibsDialog}>
+            open source software
+          </Button>
+          .
+          <br />
+          {!Pro && (
+            <span>
+              This program is free software: you can redistribute it and/or modify
+              it under the terms of the GNU Affero General Public License (version
+              3) as published by the Free Software Foundation.
+            </span>
+          )}
+          <br />
+          This program is distributed in the hope that it will be useful, but
+          WITHOUT ANY WARRANTY; without even the implied warranty of
+          MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the License for
+          more details.
+          <br />
+          <br />
+          <Button
+            onClick={() => {
+              PlatformIO.openUrl('https://www.tagspaces.org/about/imprint/');
+            }}
+          >
+            Imprint
+          </Button>
+          <Button
+            onClick={() => {
+              PlatformIO.openUrl('https://www.tagspaces.org/about/privacy/');
+            }}
+          >
+            Privacy Policy
+          </Button>
+          <Button
+            onClick={() => {
+              PlatformIO.openUrl('https://www.tagspaces.org/whatsnew/');
+            }}
+          >
+            Changelog
+          </Button>
+          <Button
+            data-tid="openLicenseDialog"
+            onClick={props.toggleLicenseDialog}
+          >
+            License Agreement
+          </Button>
+        </Typography>
+      </DialogContent>
+    );
+  }
 
-  renderActions = () => {
+  function renderActions() {
     let versionInfo = 'Check for updates';
-    if (this.state.newVersion && this.state.newVersion.length > 1) {
-      if (this.state.updateAvailable) {
+    if (newVersion && newVersion.length > 1) {
+      if (updateAvailable) {
         versionInfo = i18n.t('getNewVersion', {
           newVersion: this.state.newVersion
         });
@@ -190,7 +190,7 @@ class AboutDialog extends React.Component<Props, State> {
         <Button
           data-tid="checkForUpdates"
           title={i18n.t('core:checkForNewVersion')}
-          onClick={this.checkForUpdates}
+          onClick={checkForUpdates}
           color="primary"
         >
           {versionInfo}
@@ -209,28 +209,29 @@ class AboutDialog extends React.Component<Props, State> {
         </Button> */}
         <Button
           data-tid="closeAboutDialog"
-          onClick={this.props.onClose}
+          onClick={props.onClose}
           color="primary"
         >
           {i18n.t('core:ok')}
         </Button>
       </DialogActions>
     );
-  };
-
-  render() {
-    const { fullScreen, open, onClose } = this.props;
-    return (
-      <GenericDialog
-        fullScreen={fullScreen}
-        open={open}
-        onClose={onClose}
-        renderTitle={this.renderTitle}
-        renderContent={this.renderContent}
-        renderActions={this.renderActions}
-      />
-    );
   }
-}
+
+  const {
+    fullScreen, open, onClose
+  } = props;
+
+  return (
+    <GenericDialog
+      fullScreen={fullScreen}
+      open={open}
+      onClose={onClose}
+      renderTitle={renderTitle}
+      renderContent={renderContent}
+      renderActions={renderActions}
+    />
+  );
+};
 
 export default withMobileDialog()(AboutDialog);
