@@ -53,7 +53,7 @@ document.title = productName + ' ' + versionMeta.version;
 
 const AboutDialog = (props: Props) => {
   const [updateAvailable, setUpdateAvailable] = useState(false);
-  const [newVersion] = useState();
+  const [newVersion, setNewVersion] = useState('');
 
   function checkForUpdates() {
     if (updateAvailable) {
@@ -74,7 +74,7 @@ const AboutDialog = (props: Props) => {
               newVersion: cleanedLastVersion.version
             });
           } else {
-            setUpdateAvailable({
+            setNewVersion({
               newVersion: versionMeta.version
             });
           }
