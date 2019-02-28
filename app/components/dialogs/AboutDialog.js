@@ -52,7 +52,7 @@ const productName = versionMeta.name + (Pro ? ' Pro' : '');
 document.title = productName + ' ' + versionMeta.version;
 
 const AboutDialog = (props: Props) => {
-  const [updateAvailable] = useState(false);
+  const [updateAvailable, setUpdateAvailable] = useState(false);
   const [newVersion] = useState();
 
   function checkForUpdates() {
@@ -69,12 +69,12 @@ const AboutDialog = (props: Props) => {
             semver.valid(cleanedLastVersion) &&
             semver.gt(cleanedLastVersion, cleanedCurrentVersion)
           ) {
-            useState({
+            setUpdateAvailable({
               updateAvailable: true,
               newVersion: cleanedLastVersion.version
             });
           } else {
-            useState({
+            setUpdateAvailable({
               newVersion: versionMeta.version
             });
           }
