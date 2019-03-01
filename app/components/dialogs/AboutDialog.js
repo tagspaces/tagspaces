@@ -69,14 +69,9 @@ const AboutDialog = (props: Props) => {
             semver.valid(cleanedLastVersion) &&
             semver.gt(cleanedLastVersion, cleanedCurrentVersion)
           ) {
-            setUpdateAvailable({
-              updateAvailable: true,
-              newVersion: cleanedLastVersion.version
-            });
+            setUpdateAvailable(updateAvailable:true, newVersion: cleanedLastVersion.version);
           } else {
-            setNewVersion({
-              newVersion: versionMeta.version
-            });
+            setNewVersion(cleanedLastVersion.version:true);
           }
           return true;
         })
