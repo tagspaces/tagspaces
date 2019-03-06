@@ -17,7 +17,7 @@
  * @flow
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -40,6 +40,7 @@ const styles = theme => ({
 });
 
 type Props = {
+  classes: Object,
   open: boolean,
   onClose: () => void,
   editTagForEntry: (path: string, tag: Tag, title: string) => void,
@@ -48,112 +49,112 @@ type Props = {
   open: boolean
 };
 
-type State = {
-  errorTag?: boolean,
-  disableConfirmButton?: boolean,
-  title?: string
-};
+const EditEntryTagDialog = (props: Props) => {
+  const [disableConfirmButton, setDisableConfirmButton] = useState(true);
+  const [errorTag, setErrorTag] = useState(false);
+  const [title, setTitle] = useState('');
 
-class EditEntryTagDialog extends React.Component<Props, State> {
-  state = {
-    disableConfirmButton: true,
-    errorTag: false,
-    title: ''
-  };
-
-  componentWillReceiveProps = (nextProps: any) => {
+  function componentWillReceiveProps(nextProps: any) {
     if (nextProps.open === true) {
-      this.setState({
-        disableConfirmButton: !nextProps.selectedTag.title,
-        title: nextProps.selectedTag.title
-      });
+      setDisableConfirmButton(!nextProps.selectedTag.title);
+      setTitle(nextProps.selectedTag.title);
+      // this.setState({
+      //   disableConfirmButton: !nextProps.selectedTag.title,
+      //   title: nextProps.selectedTag.title
     }
-  };
+  }
 
-  handleInputChange = (event: Object) => {
+  function handleInputChange(event: Object) {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
 
     this.setState({
       [name]: value
-    }, this.handleValidation);
-  };
+    }, handleValidation);
+  }
 
-  handleValidation() {
+  function handleValidation() {
     const tagCheck = RegExp(/^[^\#\/\\ \[\]]{1,}$/);
-    if (this.state.title && tagCheck.test(this.state.title)) {
-      this.setState({ errorTag: false, disableConfirmButton: false });
+    if (title && tagCheck.test(title)) {
+      setErrorTag(false);
+      setDisableConfirmButton(false); // { errorTag: false, disableConfirmButton: false });
     } else {
-      this.setState({ errorTag: true, disableConfirmButton: true });
+      setErrorTag(true);
+      setDisableConfirmButton(true); // this.setState({ errorTag: true, disableConfirmButton: true });
     }
   }
 
-  onConfirm = () => {
-    if (!this.state.disableConfirmButton) {
-      this.props.editTagForEntry(this.props.currentEntryPath, this.props.selectedTag, this.state.title);
-      this.setState({ errorTag: false, disableConfirmButton: true });
-      this.props.onClose();
+  function onConfirm() {
+    if (!disableConfirmButton) {
+      props.editTagForEntry(props.currentEntryPath, props.selectedTag, state.title);
+      setErrorTag(false); // this.setState({ errorTag: false, disableConfirmButton: true });
+      setDisableConfirmButton(true);
+      props.onClose();
     }
-  };
+  }
 
-  renderTitle = () => (
-    <DialogTitle>{i18n.t('core:editTagTitle')}</DialogTitle>
-  );
-
-  renderContent = () => (
-    <DialogContent data-tid="editEntryTagDialog" className={this.props.classes.root}>
-      <FormControl
-        fullWidth={true}
-        error={this.state.errorTag}
-      >
-        <TextField
-          fullWidth={true}
-          error={this.state.errorTag}
-          margin="dense"
-          name="title"
-          label={i18n.t('core:editTag')}
-          onChange={this.handleInputChange}
-          value={this.state.title}
-          data-tid="editTagEntryDialog_input"
-        />
-        {this.state.errorTag && <FormHelperText>{i18n.t('core:tagTitleHelper')}</FormHelperText>}
-      </FormControl>
-    </DialogContent>
-  );
-
-  renderActions = () => (
-    <DialogActions>
-      <Button
-        data-tid="closeEditTagEntryDialog"
-        onClick={this.props.onClose}
-        color="primary"
-      >
-        {i18n.t('core:cancel')}
-      </Button>
-      <Button
-        disabled={this.state.disableConfirmButton}
-        onClick={this.onConfirm}
-        data-tid="confirmEditTagEntryDialog"
-        color="primary"
-      >
-        {i18n.t('core:ok')}
-      </Button>
-    </DialogActions>
-  );
-
-  render() {
+  function renderTitle() {
     return (
-      <GenericDialog
-        open={this.props.open}
-        onClose={this.props.onClose}
-        onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
-        renderTitle={this.renderTitle}
-        renderContent={this.renderContent}
-        renderActions={this.renderActions}
-      />
+      <DialogTitle>{i18n.t('core:editTagTitle')}</DialogTitle>
     );
   }
-}
+
+  function renderContent() {
+    return (
+      <DialogContent data-tid="editEntryTagDialog" className={props.classes.root}>
+        <FormControl
+          fullWidth={true}
+          error={errorTag}
+        >
+          <TextField
+            fullWidth={true}
+            error={errorTag}
+            margin="dense"
+            name="title"
+            label={i18n.t('core:editTag')}
+            onChange={handleInputChange}
+            value={title}
+            data-tid="editTagEntryDialog_input"
+          />
+          {errorTag && <FormHelperText>{i18n.t('core:tagTitleHelper')}</FormHelperText>}
+        </FormControl>
+      </DialogContent>
+    );
+  }
+
+  function renderActions() {
+    return (
+      <DialogActions>
+        <Button
+          data-tid="closeEditTagEntryDialog"
+          onClick={props.onClose}
+          color="primary"
+        >
+          {i18n.t('core:cancel')}
+        </Button>
+        <Button
+          disabled={disableConfirmButton}
+          onClick={onConfirm}
+          data-tid="confirmEditTagEntryDialog"
+          color="primary"
+        >
+          {i18n.t('core:ok')}
+        </Button>
+      </DialogActions>
+    );
+  }
+
+  return (
+    <GenericDialog
+      open={props.open}
+      onClose={props.onClose}
+      onEnterKey={(event) => onEnterKeyHandler(event, onConfirm)}
+      renderTitle={renderTitle}
+      renderContent={renderContent}
+      renderActions={renderActions}
+    />
+  );
+};
 
 export default withStyles(styles)(EditEntryTagDialog);
