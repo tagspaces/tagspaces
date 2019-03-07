@@ -17,7 +17,7 @@
  * @flow
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
@@ -45,6 +45,7 @@ import IOActions from '../../reducers/io-actions';
 import { extractFileName } from '../../utils/paths';
 
 type Props = {
+  classes: Object,
   open?: boolean,
   onClose: () => void,
   copyFiles: (files: Array<string>, destination: string) => void,
@@ -52,52 +53,44 @@ type Props = {
   selectedFiles: Array<string>
 };
 
-type State = {
-  inputError?: boolean,
-  disableConfirmButton?: boolean,
-  targetPath?: string
-};
+const MoveCopyFilesDialog = (props: Props) => { // state = {
+  const [inputError, setInputError] = useState(false); // inputError: false,
+  const [disableConfirmButton, setDisableConfirmButton] = useState(true); // disableConfirmButton: true,
+  const [targetPath, setTargetPath] = useState(''); // targetPath: ''
 
-class MoveCopyFilesDialog extends React.Component<Props, State> {
-  state = {
-    inputError: false,
-    disableConfirmButton: true,
-    targetPath: ''
-  };
-
-  handleValidation() {
-    if (this.state.targetPath && this.state.targetPath.length > 0) {
-      this.setState({ inputError: false, disableConfirmButton: false });
+  function handleValidation() {
+    if (targetPath && targetPath.length > 0) {
+      setInputError(false); //this.setState({ inputError: false, disableConfirmButton: false });
+      setDisableConfirmButton(false);
     } else {
-      this.setState({ inputError: true, disableConfirmButton: true });
+      setInputError(true); // this.setState({ inputError: true, disableConfirmButton: true });
+      setDisableConfirmButton(true);
     }
   }
 
-  handleCopyFiles = () => {
-    if (!this.state.disableConfirmButton) {
-      this.props.copyFiles(this.props.selectedFiles, this.state.targetPath);
-      this.setState({
-        inputError: false,
-        disableConfirmButton: true,
-        targetPath: ''
-      });
-      this.props.onClose();
-    }
-  };
+  function handleCopyFiles() {
+    if (!disableConfirmButton) {
+      props.copyFiles(props.selectedFiles, targetPath);
+      // this.setState({
+        setInputError(false);
+        setDisableConfirmButton(true);
+        setTargetPath('');
+    };
+      props.onClose();
+  }
 
-  handleMoveFiles = () => {
-    if (!this.state.disableConfirmButton) {
-      this.props.moveFiles(this.props.selectedFiles, this.state.targetPath);
-      this.setState({
-        inputError: false,
-        disableConfirmButton: true,
-        targetPath: ''
-      });
-      this.props.onClose();
-    }
-  };
+  function handleMoveFiles() {
+    if (!disableConfirmButton) {
+      props.moveFiles(props.selectedFiles, targetPath);
+      // this.setState({
+        setInputError(false);
+        setDisableConfirmButton(true);
+        setTargetPath('');
+    };
+      props.onClose();
+  }
 
-  handleInputChange = (event: Object) => {
+  handleInputChange(event: Object) {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
@@ -105,15 +98,14 @@ class MoveCopyFilesDialog extends React.Component<Props, State> {
     this.setState({
       [name]: value
     }, this.handleValidation);
-  };
+  }
 
-  selectDirectory = () => {
+  function selectDirectory() {
     if (AppConfig.isElectron) {
       PlatformIO.selectDirectoryDialog().then(selectedPaths => {
-        this.setState({
-          targetPath: selectedPaths[0],
-        });
-        this.handleValidation();
+        setTargetPath(selectedPaths[0]); // this.setState({
+        //   targetPath: selectedPaths[0],
+        handleValidation();
         return true;
       }).catch((err) => {
         console.log('selectDirectoryDialog failed with: ' + err);
@@ -124,86 +116,92 @@ class MoveCopyFilesDialog extends React.Component<Props, State> {
     }
   }
 
-  renderTitle = () => (
-    <DialogTitle>{i18n.t('core:copyMoveFilesTitle')}</DialogTitle>
-  );
+  function renderTitle() {
+    return (
+      <DialogTitle>{i18n.t('core:copyMoveFilesTitle')}</DialogTitle>
+    );
+  }
 
-  renderContent = () => (
-    <DialogContent>
-      <List dense style={{ width: 550 }}>
-        {this.props.selectedFiles && this.props.selectedFiles.length > 0 && this.props.selectedFiles.map(path => (
-          <ListItem title={path}>
-            <ListItemIcon>
-              <FileIcon />
-            </ListItemIcon>
-            <Typography variant="inherit" noWrap>{extractFileName(path)}</Typography>
-          </ListItem>
-        ))}
-      </List>
-      <FormControl fullWidth={true}>
-        <Input
-          autoFocus
-          required
-          margin="dense"
-          name="targetPath"
-          placeholder={i18n.t('core:moveCopyToPath')}
-          fullWidth={true}
-          data-tid="targetPathInput"
-          onChange={e => this.handleInputChange(e)}
-          value={this.state.targetPath}
-          endAdornment={
-            PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb ? undefined :
-              (<InputAdornment position="end" style={{ height: 33 }}>
-                <IconButton
-                  data-tid="openDirectoryMoveCopyDialog"
-                  onClick={this.selectDirectory}
-                >
-                  <FolderIcon />
-                </IconButton>
-              </InputAdornment>)
-          }
-        />
-        {this.state.inputError && <FormHelperText>Empty Input Field</FormHelperText>}
-      </FormControl>
-    </DialogContent>
-  );
+  function renderContent() {
+    return (
+      <DialogContent>
+        <List dense style={{ width: 550 }}>
+          {props.selectedFiles && props.selectedFiles.length > 0 && props.selectedFiles.map(path => (
+            <ListItem title={path}>
+              <ListItemIcon>
+                <FileIcon />
+              </ListItemIcon>
+              <Typography variant="inherit" noWrap>{extractFileName(path)}</Typography>
+            </ListItem>
+          ))}
+        </List>
+        <FormControl fullWidth={true}>
+          <Input
+            autoFocus
+            required
+            margin="dense"
+            name="targetPath"
+            placeholder={i18n.t('core:moveCopyToPath')}
+            fullWidth={true}
+            data-tid="targetPathInput"
+            onChange={e => handleInputChange(e)}
+            value={targetPath}
+            endAdornment={
+              PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb ? undefined :
+                (<InputAdornment position="end" style={{ height: 33 }}>
+                  <IconButton
+                    data-tid="openDirectoryMoveCopyDialog"
+                    onClick={selectDirectory}
+                  >
+                    <FolderIcon />
+                  </IconButton>
+                </InputAdornment>)
+            }
+          />
+          {inputError && <FormHelperText>Empty Input Field</FormHelperText>}
+        </FormControl>
+      </DialogContent>
+    );
+  }
 
-  renderActions = () => (
-    <DialogActions>
-      <Button
-        data-tid="closeMoveCopyDialog"
-        onClick={this.props.onClose}
-      >
-        {i18n.t('core:cancel')}
-      </Button>
-      <Button
-        data-tid="confirmMoveFiles"
-        disabled={this.state.disableConfirmButton}
-        onClick={this.handleMoveFiles}
-        color="primary"
-      >
-        {i18n.t('core:moveFilesButton')}
-      </Button>
-      <Button
-        onClick={this.handleCopyFiles}
-        data-tid="confirmCopyFiles"
-        disabled={this.state.disableConfirmButton}
-        color="primary"
-      >
-        {i18n.t('core:copyFilesButton')}
-      </Button>
-    </DialogActions>
-  );
+  function renderActions() {
+    return (
+      <DialogActions>
+        <Button
+          data-tid="closeMoveCopyDialog"
+          onClick={props.onClose}
+        >
+          {i18n.t('core:cancel')}
+        </Button>
+        <Button
+          data-tid="confirmMoveFiles"
+          disabled={disableConfirmButton}
+          onClick={handleMoveFiles}
+          color="primary"
+        >
+          {i18n.t('core:moveFilesButton')}
+        </Button>
+        <Button
+          onClick={handleCopyFiles}
+          data-tid="confirmCopyFiles"
+          disabled={disableConfirmButton}
+          color="primary"
+        >
+          {i18n.t('core:copyFilesButton')}
+        </Button>
+      </DialogActions>
+    );
+  }
 
   render() {
     return (
       <GenericDialog
-        open={this.props.open}
-        onClose={this.props.onClose}
+        open={props.open}
+        onClose={props.onClose}
         // onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
-        renderTitle={this.renderTitle}
-        renderContent={this.renderContent}
-        renderActions={this.renderActions}
+        renderTitle={renderTitle}
+        renderContent={renderContent}
+        renderActions={renderActions}
       />
     );
   }
