@@ -17,7 +17,7 @@
  * @flow
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Button from '@material-ui/core/Button';
@@ -33,129 +33,125 @@ import AppConfig from '../../config';
 import { actions as AppActions } from '../../reducers/app';
 
 type Props = {
+  classes: Object,
   open: boolean,
   onClose: () => void,
   selectedDirectoryPath: string,
   createDirectory: (directoryPath: string) => void
 };
 
-type State = {
-  disableConfirmButton?: boolean,
-  inputError?: boolean,
-  name?: string
-};
+const CreateDirectoryDialog = (props: Props) => {
+  const [inputError, setInputError] = useState(false);
+  const [disableConfirmButton, setDisableConfirmButton] = useState(true);
+  const [name, setName] = useState('');
 
-
-class CreateDirectoryDialog extends React.Component<Props, State> {
-  state = {
-    inputError: false,
-    disableConfirmButton: true,
-    name: '',
-  };
-
-  handleInputChange = (event: Object) => {
+  function handleInputChange(event: Object) {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
 
     this.setState({
       [name]: value
-    }, this.handleValidation());
-  };
+    }, handleValidation());
+  }
 
-  handleValidation() {
+  function handleValidation() {
     // const pathRegex = '^((\.\./|[a-zA-Z0-9_/\-\\])*\.[a-zA-Z0-9]+)$';
     // const nameRegex = '^[A-Z][-a-zA-Z]+$';
-    if (this.state.name.length > 0) {
-      this.setState({ inputError: false, disableConfirmButton: false });
+    if (name.length > 0) {
+      setInputError(false);
+      setDisableConfirmButton(false); // this.setState({ inputError: false, disableConfirmButton: false });
     } else {
-      this.setState({ inputError: true, disableConfirmButton: true });
+      setInputError(true); // this.setState({ inputError: true, disableConfirmButton: true });
+      setDisableConfirmButton(true);
     }
   }
 
-  onConfirm = () => {
-    if (!this.state.disableConfirmButton && this.state.name) {
-      const dirPath = this.props.selectedDirectoryPath + AppConfig.dirSeparator + this.state.name;
-      this.props.createDirectory(dirPath);
-      this.resetState();
-      this.props.onClose();
+  function onConfirm() {
+    if (!disableConfirmButton && name) {
+      const dirPath = props.selectedDirectoryPath + AppConfig.dirSeparator + name;
+      props.createDirectory(dirPath);
+      resetState();
+      props.onClose();
     }
-  };
-
-  onCancel = () => {
-    this.resetState();
-    this.props.onClose();
   }
 
-  resetState = () => {
-    this.setState({
-      name: '',
-      inputError: false,
-      disableConfirmButton: true
-    });
+  function onCancel() {
+    resetState();
+    props.onClose();
   }
 
-  renderTitle = () => (
-    <DialogTitle>{i18n.t('core:createNewDirectoryTitle')}</DialogTitle>
-  );
+  function resetState() { // this.setState({
+    setName(''); // name: '',
+    setInputError(false); // inputError: false,
+    setDisableConfirmButton(true); // disableConfirmButton: true,
+  }
 
-  renderContent = () => (
-    <DialogContent>
-      <FormControl
-        fullWidth={true}
-        error={this.state.inputError}
-      >
-        <TextField
-          fullWidth
-          error={this.state.inputError}
-          margin="dense"
-          autoFocus
-          name="name"
-          label={i18n.t('core:createNewDirectoryTitleName')}
-          onChange={this.handleInputChange}
-          value={this.state.name}
-          data-tid="directoryName"
-          id="directoryName"
-        />
-        <FormHelperText>{i18n.t('core:directoryNameHelp')}</FormHelperText>
-      </FormControl>
-    </DialogContent>
-  );
-
-  renderActions = () => (
-    <DialogActions>
-      <Button
-        data-tid="closeCreateNewDirectory"
-        onClick={this.onCancel}
-        color="primary"
-      >
-        {i18n.t('core:cancel')}
-      </Button>
-      <Button
-        disabled={this.state.disableConfirmButton}
-        onClick={this.onConfirm}
-        data-tid="confirmCreateNewDirectory"
-        id="confirmCreateNewDirectory"
-        color="primary"
-      >
-        {i18n.t('core:ok')}
-      </Button>
-    </DialogActions>
-  );
-
-  render() {
+  function renderTitle() {
     return (
-      <GenericDialog
-        open={this.props.open}
-        onClose={this.onCancel}
-        onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
-        renderTitle={this.renderTitle}
-        renderContent={this.renderContent}
-        renderActions={this.renderActions}
-      />
+      <DialogTitle>{i18n.t('core:createNewDirectoryTitle')}</DialogTitle>
     );
   }
-}
+
+  function renderContent() {
+    return (
+      <DialogContent>
+        <FormControl
+          fullWidth={true}
+          error={inputError}
+        >
+          <TextField
+            fullWidth
+            error={inputError}
+            margin="dense"
+            autoFocus
+            name="name"
+            label={i18n.t('core:createNewDirectoryTitleName')}
+            onChange={handleInputChange}
+            value={name}
+            data-tid="directoryName"
+            id="directoryName"
+          />
+          <FormHelperText>{i18n.t('core:directoryNameHelp')}</FormHelperText>
+        </FormControl>
+      </DialogContent>
+    );
+  }
+
+  function renderActions() {
+    return (
+      <DialogActions>
+        <Button
+          data-tid="closeCreateNewDirectory"
+          onClick={onCancel}
+          color="primary"
+        >
+          {i18n.t('core:cancel')}
+        </Button>
+        <Button
+          disabled={disableConfirmButton}
+          onClick={onConfirm}
+          data-tid="confirmCreateNewDirectory"
+          id="confirmCreateNewDirectory"
+          color="primary"
+        >
+          {i18n.t('core:ok')}
+        </Button>
+      </DialogActions>
+    );
+  }
+
+  return (
+    <GenericDialog
+      open={props.open}
+      onClose={onCancel}
+      onEnterKey={(event) => onEnterKeyHandler(event, onConfirm)}
+      renderTitle={renderTitle}
+      renderContent={renderContent}
+      renderActions={renderActions}
+    />
+  );
+};
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators({
