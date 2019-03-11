@@ -87,12 +87,13 @@ export default class ElectronIO {
     //   nImage = nativeImage.createFromDataURL(TrayIcon);
     //   nImage.addRepresentation(2, TrayIcon2x);
     // } else
+
     if (process.platform === 'win32') {
       nImage = nativeImage.createFromDataURL(TrayIcon2x);
     } else if (process.platform === 'darwin') {
       nImage = nativeImage.createFromDataURL(TrayIcon);
-      nImage.addRepresentation({ scaleFactor: 2.0, dataURL: TrayIcon2x });
-      nImage.addRepresentation({ scaleFactor: 3.0, dataURL: TrayIcon3x });
+      // nImage.addRepresentation({ scaleFactor: 2.0, dataURL: TrayIcon2x });
+      // nImage.addRepresentation({ scaleFactor: 3.0, dataURL: TrayIcon3x });
     } else {
       nImage = nativeImage.createFromDataURL(TrayIcon2x);
     }
