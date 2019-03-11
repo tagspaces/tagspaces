@@ -19,23 +19,23 @@
        under the License.
 */
 
-var device = require('./device');
-var args = process.argv;
+var device = require('./device'),
+    args   = process.argv;
 
-if (args.length > 2) {
+if(args.length > 2) {
     var install_target;
-    if (args[2].substring(0, 9) === '--target=') {
+    if (args[2].substring(0, 9) == '--target=') {
         install_target = args[2].substring(9, args[2].length);
-        device.install(install_target).catch(function (err) {
+        device.install(install_target).done(null, function(err) {
             console.error('ERROR: ' + err);
             process.exit(2);
         });
-    } else {
+     } else {
         console.error('ERROR : argument \'' + args[2] + '\' not recognized.');
         process.exit(2);
-    }
+     }
 } else {
-    device.install().catch(function (err) {
+    device.install().done(null, function(err) {
         console.error('ERROR: ' + err);
         process.exit(2);
     });

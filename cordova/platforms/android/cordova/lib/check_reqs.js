@@ -19,6 +19,8 @@
        under the License.
 */
 
+/* jshint sub:true */
+
 var shelljs = require('shelljs');
 var child_process = require('child_process');
 var Q = require('q');

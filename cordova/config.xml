@@ -29,5 +29,6 @@
     <plugin name="cordova-plugin-device" spec="^2.0.2" />
     <plugin name="cordova-plugin-whitelist" spec="^1.3.3" />
     <plugin name="cordova-plugin-camera" spec="~4.0.3" />
-    <engine name="android" spec="git+https://github.com/apache/cordova-android.git" />
+    <plugin name="cordova-plugin-media" spec="^5.0.2" />
+    <engine name="android" spec="^7.1.4" />
 </widget>

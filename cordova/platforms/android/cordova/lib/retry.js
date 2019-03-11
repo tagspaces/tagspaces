@@ -19,6 +19,8 @@
     under the License.
 */
 
+/* jshint node: true */
+
 'use strict';
 
 var events = require('cordova-common').events;
@@ -27,20 +29,21 @@ var events = require('cordova-common').events;
  * Retry a promise-returning function a number of times, propagating its
  * results on success or throwing its error on a failed final attempt.
  *
- * @arg {Number}   attemptsLeft    - The number of times to retry the passed call.
+ * @arg {Number}   attemts_left    - The number of times to retry the passed call.
  * @arg {Function} promiseFunction - A function that returns a promise.
  * @arg {...}                      - Arguments to pass to promiseFunction.
  *
  * @returns {Promise}
  */
-module.exports.retryPromise = function (attemptsLeft, promiseFunction) {
+module.exports.retryPromise = function (attemts_left, promiseFunction) {
 
     // NOTE:
-    //      get all trailing arguments, by skipping the first two (attemptsLeft and
+    //      get all trailing arguments, by skipping the first two (attemts_left and
     //      promiseFunction) because they shouldn't get passed to promiseFunction
     var promiseFunctionArguments = Array.prototype.slice.call(arguments, 2);
 
     return promiseFunction.apply(undefined, promiseFunctionArguments).then(
+
         // on success pass results through
         function onFulfilled (value) {
             return value;
@@ -48,16 +51,17 @@ module.exports.retryPromise = function (attemptsLeft, promiseFunction) {
 
         // on rejection either retry, or throw the error
         function onRejected (error) {
-            attemptsLeft -= 1;
 
-            if (attemptsLeft < 1) {
+            attemts_left -= 1;
+
+            if (attemts_left < 1) {
                 throw error;
             }
 
-            events.emit('verbose', 'A retried call failed. Retrying ' + attemptsLeft + ' more time(s).');
+            events.emit('verbose', 'A retried call failed. Retrying ' + attemts_left + ' more time(s).');
 
-            // retry call self again with the same arguments, except attemptsLeft is now lower
-            var fullArguments = [attemptsLeft, promiseFunction].concat(promiseFunctionArguments);
+            // retry call self again with the same arguments, except attemts_left is now lower
+            var fullArguments = [attemts_left, promiseFunction].concat(promiseFunctionArguments);
             return module.exports.retryPromise.apply(undefined, fullArguments);
         }
     );

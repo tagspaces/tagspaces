@@ -19,17 +19,17 @@
        under the License.
 */
 
-var log = require('./lib/log');
-var reqs = require('./lib/check_reqs');
-var args = process.argv;
+var log  = require('./lib/log'),
+    reqs = require('./lib/check_reqs'),
+    args = process.argv;
 
 // Usage support for when args are given
-if (args.length > 2) {
+if(args.length > 2) {
     log.help();
 } else {
-    reqs.run().done(function () {
+    reqs.run().done(function() {
         return log.run();
-    }, function (err) {
+    }, function(err) {
         console.error('ERROR: ' + err);
         process.exit(2);
     });

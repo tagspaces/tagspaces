@@ -19,20 +19,20 @@
        under the License.
 */
 
-var emulator = require('./emulator');
-var args = process.argv;
+var emulator = require('./emulator'),
+    args     = process.argv;
 
 var install_target;
-if (args.length > 2) {
-    if (args[2].substring(0, 9) === '--target=') {
+if(args.length > 2) {
+    if (args[2].substring(0, 9) == '--target=') {
         install_target = args[2].substring(9, args[2].length);
-    } else {
+     } else {
         console.error('ERROR : argument \'' + args[2] + '\' not recognized.');
         process.exit(2);
-    }
+     }
 }
 
-emulator.install(install_target).catch(function (err) {
+emulator.install(install_target).done(null, function(err) {
     console.error('ERROR: ' + err);
     process.exit(2);
 });
