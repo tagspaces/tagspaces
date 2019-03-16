@@ -163,6 +163,7 @@ type Props = {
   removeTags: () => void,
   removeAllTags: () => void,
   resetState: () => void,
+  isReadOnlyMode: boolean,
   setPropertiesEditMode: (editMode: boolean) => void
 };
 
@@ -178,6 +179,7 @@ type State = {
   isDeleteTagDialogOpened?: boolean | null,
   isEditName?: boolean | null,
   isEditDescription?: boolean | null,
+  displayColorPicker?: boolean | null,
   isFile?: boolean
 };
 
@@ -197,6 +199,7 @@ class EntryProperties extends Component<Props, State> {
     isEditName: false,
     isEditDescription: false,
     isMoveCopyFilesDialogOpened: false,
+    displayColorPicker: false,
     isFile: false
   };
 
@@ -285,6 +288,12 @@ class EntryProperties extends Component<Props, State> {
   };
 
   toggleEditNameField = () => {
+    if (this.props.isReadOnlyMode) {
+      this.setState({
+        isEditName: false
+      });
+      return;
+    }
     if (this.state.isEditName) {
       this.setState({
         isEditName: false,
@@ -316,6 +325,12 @@ class EntryProperties extends Component<Props, State> {
   };
 
   toggleEditDescriptionField = () => {
+    if (this.props.isReadOnlyMode) {
+      this.setState({
+        isEditDescription: false
+      });
+      return;
+    }
     if (!Pro) {
       this.props.showNotification(i18n.t('core:thisFunctionalityIsAvailableInPro'));
       return;
@@ -366,6 +381,9 @@ class EntryProperties extends Component<Props, State> {
   };
 
   toggleBackgroundColorPicker = () => {
+    if (this.props.isReadOnlyMode) {
+      return;
+    }
     if (!Pro) {
       this.props.showNotification(i18n.t('core:thisFunctionalityIsAvailableInPro'));
       return;
@@ -374,9 +392,9 @@ class EntryProperties extends Component<Props, State> {
       this.props.showNotification(i18n.t('Saving color not supported'));
       return;
     }
-    this.setState(prevState => ({
-      displayColorPicker: !prevState.displayColorPicker
-    }));
+    this.setState({
+      displayColorPicker: !this.state.displayColorPicker
+    });
   };
 
   handleChangeColor = color => {
@@ -436,6 +454,7 @@ class EntryProperties extends Component<Props, State> {
       entryPath,
       removeTags,
       editTagForEntry,
+      isReadOnlyMode
     } = this.props;
     const {
       path,
@@ -468,34 +487,38 @@ class EntryProperties extends Component<Props, State> {
                   {i18n.t('core:editTagMasterName')}
                 </Typography>
               </div>
-              {isEditName ? (
-                <div className="grid-item">
-                  <Button
-                    color="primary"
-                    className={classes.button}
-                    onClick={this.toggleEditNameField}
-                  >
-                    {i18n.t('core:cancel')}
-                  </Button>
-                  <Button
-                    color="primary"
-                    disabled={isEditDescription}
-                    className={classes.button}
-                    onClick={this.renameEntry}
-                  >
-                    {i18n.t('core:confirmSaveButton')}
-                  </Button>
-                </div>
-              ) : (
-                <div className="grid-item">
-                  <Button
-                    color="primary"
-                    disabled={isEditDescription}
-                    className={classes.button}
-                    onClick={this.toggleEditNameField}
-                  >
-                    {i18n.t('core:rename')}
-                  </Button>
+              {!isReadOnlyMode && (
+                <div>
+                  {isEditName ? (
+                    <div className="grid-item">
+                      <Button
+                        color="primary"
+                        className={classes.button}
+                        onClick={this.toggleEditNameField}
+                      >
+                        {i18n.t('core:cancel')}
+                      </Button>
+                      <Button
+                        color="primary"
+                        disabled={isEditDescription}
+                        className={classes.button}
+                        onClick={this.renameEntry}
+                      >
+                        {i18n.t('core:confirmSaveButton')}
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="grid-item">
+                      <Button
+                        color="primary"
+                        disabled={isEditDescription}
+                        className={classes.button}
+                        onClick={this.toggleEditNameField}
+                      >
+                        {i18n.t('core:rename')}
+                      </Button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -537,7 +560,7 @@ class EntryProperties extends Component<Props, State> {
             </div>
             <Paper className={classes.tags}>
               <TagDropContainer entryPath={path}>
-                <TagsSelect tags={tags} handleChange={this.handleChange} />
+                <TagsSelect isReadOnlyMode={isReadOnlyMode} tags={tags} handleChange={this.handleChange} />
               </TagDropContainer>
             </Paper>
           </div>
@@ -550,25 +573,29 @@ class EntryProperties extends Component<Props, State> {
                 </Typography>
               </div>
               <div className="grid-item">
-                {isEditDescription && (
-                  <Button
-                    color="primary"
-                    className={classes.button}
-                    onClick={this.toggleEditDescriptionField}
-                  >
-                    {i18n.t('core:cancel')}
-                  </Button>
+                {!isReadOnlyMode && (
+                  <div>
+                    {isEditDescription && (
+                      <Button
+                        color="primary"
+                        className={classes.button}
+                        onClick={this.toggleEditDescriptionField}
+                      >
+                        {i18n.t('core:cancel')}
+                      </Button>
+                    )}
+                    <Button
+                      color="primary"
+                      disabled={isEditName}
+                      className={classes.button}
+                      onClick={this.toggleEditDescriptionField}
+                    >
+                      {isEditDescription
+                        ? i18n.t('core:confirmSaveButton')
+                        : i18n.t('core:edit')}
+                    </Button>
+                  </div>
                 )}
-                <Button
-                  color="primary"
-                  disabled={isEditName}
-                  className={classes.button}
-                  onClick={this.toggleEditDescriptionField}
-                >
-                  {isEditDescription
-                    ? i18n.t('core:confirmSaveButton')
-                    : i18n.t('core:edit')}
-                </Button>
               </div>
             </div>
             <FormControl fullWidth={true} className={classes.formControl}>
@@ -704,15 +731,17 @@ class EntryProperties extends Component<Props, State> {
               <Typography variant="caption" className={classes.entryLabel}>
                 {i18n.t('core:filePath')}
               </Typography>
-              <Button
-                color="primary"
-                styles={{ paddingBottom: 0 }}
-                disabled={isEditDescription || isEditName}
-                className={classes.button}
-                onClick={this.toggleMoveCopyFilesDialog}
-              >
-                {i18n.t('core:move')}
-              </Button>
+              {!isReadOnlyMode && (
+                <Button
+                  color="primary"
+                  styles={{ paddingBottom: 0 }}
+                  disabled={isEditDescription || isEditName}
+                  className={classes.button}
+                  onClick={this.toggleMoveCopyFilesDialog}
+                >
+                  {i18n.t('core:move')}
+                </Button>
+              )}
             </div>
             <FormControl fullWidth={true} className={classes.formControl}>
               <TextField
@@ -726,8 +755,6 @@ class EntryProperties extends Component<Props, State> {
               />
             </FormControl>
           </div>
-
-
         </Grid>
 
         <EntryTagMenu

@@ -181,7 +181,8 @@ type Props = {
   tags: Array<tag>,
   tagSearchType: string,
   handleChange: () => void,
-  allTags: Array<Tag>
+  allTags: Array<Tag>,
+  isReadOnlyMode?: boolean
 };
 
 const TagsSelect = (props: Props) => {
@@ -215,7 +216,8 @@ const TagsSelect = (props: Props) => {
     allTags,
     tags,
     defaultBackgroundColor,
-    defaultTextColor
+    defaultTextColor,
+    isReadOnlyMode = false
   } = props;
 
   const selectStyles = {
@@ -233,6 +235,7 @@ const TagsSelect = (props: Props) => {
       <NoSsr>
         <CreatableSelect
           isClearable={false}
+          isDisabled={isReadOnlyMode}
           classes={classes}
           options={allTags}
           getOptionLabel={(option) => option.title}

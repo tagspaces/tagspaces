@@ -262,10 +262,14 @@ class EntryContainer extends React.Component<Props, State> {
 
       this.setState({ currentEntry: nextEntry });
 
-      if (nextEntry.editingExtensionId && nextEntry.editingExtensionId.length > 3) {
-        this.setState({ editingSupported: true });
-      } else {
+      if (nextProps.isReadOnlyMode) {
         this.setState({ editingSupported: false });
+      } else {
+        if (nextEntry.editingExtensionId && nextEntry.editingExtensionId.length > 3) {
+          this.setState({ editingSupported: true });
+        } else {
+          this.setState({ editingSupported: false });
+        }
       }
 
       const { settings } = nextProps;
@@ -674,7 +678,7 @@ class EntryContainer extends React.Component<Props, State> {
         >
           <ExpandIcon />
         </IconButton>
-        {!PlatformIO.haveObjectStoreSupport() && (
+        {!(PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb) && (
           <IconButton
             title={i18n.t('core:openFileExternally')}
             aria-label={i18n.t('core:openFileExternally')}
@@ -718,22 +722,26 @@ class EntryContainer extends React.Component<Props, State> {
         >
           <RefreshIcon />
         </IconButton>
-        <IconButton
-          aria-label={i18n.t('core:duplicateFile')}
-          title={i18n.t('core:duplicateFile')}
-          onClick={() => {
-            this.setState({ shouldCopyFile: true });
-          }}
-        >
-          <CopyContentIcon />
-        </IconButton>
-        <IconButton
-          title={i18n.t('core:deleteEntry')}
-          aria-label={i18n.t('core:deleteEntry')}
-          onClick={() => this.setState({ isDeleteEntryModalOpened: true })}
-        >
-          <DeleteIcon />
-        </IconButton>
+        { !this.props.isReadOnlyMode && (
+          <div>
+            <IconButton
+              aria-label={i18n.t('core:duplicateFile')}
+              title={i18n.t('core:duplicateFile')}
+              onClick={() => {
+                this.setState({ shouldCopyFile: true });
+              }}
+            >
+              <CopyContentIcon />
+            </IconButton>
+            <IconButton
+              title={i18n.t('core:deleteEntry')}
+              aria-label={i18n.t('core:deleteEntry')}
+              onClick={() => this.setState({ isDeleteEntryModalOpened: true })}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </div>
+        )}
       </div>
       <IconButton
         title={i18n.t('core:openPrevFileTooltip')}
@@ -768,7 +776,7 @@ class EntryContainer extends React.Component<Props, State> {
             color={this.state.isPropertiesPanelVisible ? 'primary' : 'action'}
           />
         </IconButton>
-        {!PlatformIO.haveObjectStoreSupport() && (
+        {!(PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb) && (
           <IconButton
             title={i18n.t('core:openDirectoryExternally')}
             aria-label={i18n.t('core:openDirectoryExternally')}
@@ -784,13 +792,17 @@ class EntryContainer extends React.Component<Props, State> {
         >
           <RefreshIcon />
         </IconButton>
-        <IconButton
-          title={i18n.t('core:deleteDirectory')}
-          aria-label={i18n.t('core:deleteDirectory')}
-          onClick={() => this.setState({ isDeleteEntryModalOpened: true })}
-        >
-          <DeleteIcon />
-        </IconButton>
+        { !this.props.isReadOnlyMode && (
+          <div>
+            <IconButton
+              title={i18n.t('core:deleteDirectory')}
+              aria-label={i18n.t('core:deleteDirectory')}
+              onClick={() => this.setState({ isDeleteEntryModalOpened: true })}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -1121,6 +1133,7 @@ class EntryContainer extends React.Component<Props, State> {
                   removeAllTags={this.props.removeAllTags}
                   reflectUpdateSidecarMeta={this.props.reflectUpdateSidecarMeta}
                   showNotification={this.props.showNotification}
+                  isReadOnlyMode={this.props.isReadOnlyMode}
                 />
               </div>
             </div>
