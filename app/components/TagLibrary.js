@@ -33,6 +33,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import ArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import TagContainerDnd from './TagContainerDnd';
+import TagContainer from './TagContainer';
 import ConfirmDialog from './dialogs/ConfirmDialog';
 import styles from './SidePanels.css';
 import CreateTagGroupDialog from './dialogs/CreateTagGroupDialog';
@@ -53,11 +54,12 @@ import {
 import TaggingActions from '../reducers/tagging-actions';
 import i18n from '../services/i18n';
 import { getTagColor, getTagTextColor } from '../reducers/settings';
-import { getSelectedEntries } from '../reducers/app';
+import { getSelectedEntries, isReadOnlyMode } from '../reducers/app';
 
 type Props = {
   classes: Object,
   style: Object,
+  isReadOnlyMode: boolean,
   tagTextColor: string,
   tagBackgroundColor: string,
   tagGroups: Array<TagGroup>,
@@ -244,17 +246,30 @@ class TagLibrary extends React.Component<Props, State> {
       </ListItem>
       <Collapse in={tagGroup.expanded} unmountOnExit>
         <TagGroupContainer taggroup={tagGroup} data-tid={'tagGroupContainer_' + tagGroup.title}>
-          {tagGroup.children && tagGroup.children.map((tag: Tag) => (
-            <TagContainerDnd
-              key={tag.id}
-              tag={tag}
-              tagGroup={tagGroup}
-              handleTagMenu={this.handleTagMenu}
-              addTags={this.props.addTags}
-              moveTag={this.props.moveTag}
-              selectedEntries={this.props.selectedEntries}
-            />
-          ))}
+          {tagGroup.children && tagGroup.children.map((tag: Tag) => {
+            const isReadOnly = this.props.isReadOnlyMode;
+            return isReadOnly ? (
+              <TagContainer
+                key={tag.id}
+                tag={tag}
+                tagGroup={tagGroup}
+                handleTagMenu={this.handleTagMenu}
+                addTags={this.props.addTags}
+                moveTag={this.props.moveTag}
+                selectedEntries={this.props.selectedEntries}
+              />
+            ) : (
+              <TagContainerDnd
+                key={tag.id}
+                tag={tag}
+                tagGroup={tagGroup}
+                handleTagMenu={this.handleTagMenu}
+                addTags={this.props.addTags}
+                moveTag={this.props.moveTag}
+                selectedEntries={this.props.selectedEntries}
+              />
+            );
+          })}
         </TagGroupContainer>
       </Collapse>
     </div>
@@ -368,7 +383,8 @@ function mapStateToProps(state) {
     tagBackgroundColor: getTagColor(state),
     tagTextColor: getTagTextColor(state),
     selectedEntries: getSelectedEntries(state),
-    allTags: getAllTags(state)
+    allTags: getAllTags(state),
+    isReadOnlyMode: isReadOnlyMode(state)
   };
 }
 

@@ -74,6 +74,7 @@ import FileMenu from '../../../components/menus/FileMenu';
 import DirectoryMenu from '../../../components/menus/DirectoryMenu';
 import EntryTagMenu from '../../../components/menus/EntryTagMenu';
 import TagContainerDnd from '../../../components/TagContainerDnd';
+import TagContainer from '../../../components/TagContainer';
 import i18n from '../../../services/i18n';
 import ConfirmDialog from '../../../components/dialogs/ConfirmDialog';
 import AddRemoveTagsDialog from '../../../components/dialogs/AddRemoveTagsDialog';
@@ -633,16 +634,28 @@ class GridPerspective extends React.Component<Props, State> {
     );
   };
 
-  renderTag = (tag: Object, fsEntry) => (
-    <TagContainerDnd
-      tag={tag}
-      key={tag.id}
-      entryPath={fsEntry.path}
-      addTags={this.props.addTags}
-      handleTagMenu={this.handleTagMenu}
-      selectedEntries={this.props.selectedEntries}
-    />
-  );
+  renderTag = (tag: Object, fsEntry) => {
+    const isReadOnly = this.props.isReadOnlyMode;
+    return isReadOnly ? (
+      <TagContainer
+        tag={tag}
+        key={tag.id}
+        entryPath={fsEntry.path}
+        addTags={this.props.addTags}
+        handleTagMenu={this.handleTagMenu}
+        selectedEntries={this.props.selectedEntries}
+      />
+    ) : (
+      <TagContainerDnd
+        tag={tag}
+        key={tag.id}
+        entryPath={fsEntry.path}
+        addTags={this.props.addTags}
+        handleTagMenu={this.handleTagMenu}
+        selectedEntries={this.props.selectedEntries}
+      />
+    );
+  };
 
   renderCellContent = (fsEntry: FileSystemEntry, entryHeight: number) => {
     const { classes, theme, supportedFileTypes } = this.props;
