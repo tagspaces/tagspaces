@@ -397,5 +397,6 @@
   "noneOfTheseTags": "None of these tags",
   "collectTagsFromLocation": "Collect Tags From Current Location",
   "searchCurrentFolderWithSubFolders": "Search in folder with sub folders",
+  "dndDisabledReadOnlyMode": "Importing files is disabled because the location is in read-only mode.",
   "-": "-"
 }

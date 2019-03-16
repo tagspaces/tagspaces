@@ -58,7 +58,7 @@ import {
   locationType,
   type Location
 } from '../reducers/locations';
-import { actions as AppActions, getCurrentLocationId } from '../reducers/app';
+import { actions as AppActions, getCurrentLocationId, isReadOnlyMode } from '../reducers/app';
 import { actions as LocationIndexActions } from '../reducers/location-index';
 import { getPerspectives } from '../reducers/settings';
 import i18n from '../services/i18n';
@@ -74,6 +74,7 @@ type Props = {
   locations: Array<Location>,
   perspectives: Array<Object>,
   currentLocationId: string,
+  isReadOnlyMode: boolean,
   loadDirectoryContent: (path: string) => void,
   openLocation: (location: Location) => void,
   openFileNatively: (path: string) => void,
@@ -500,6 +501,14 @@ class LocationManager extends React.Component<Props, State> {
    * @param monitor
    */
   handleFileMoveDrop = (item, monitor) => {
+    if (this.props.isReadOnlyMode) {
+      this.props.showNotification(
+        i18n.t('core:dndDisabledReadOnlyMode'),
+        'error',
+        true
+      );
+      return;
+    }
     if (monitor) { // TODO handle monitor -> isOver and change folder icon
       const { path } = monitor.getItem();
       console.log('Dropped files: ' + path);
@@ -777,7 +786,8 @@ function mapStateToProps(state) {
   return {
     locations: getLocations(state),
     currentLocationId: getCurrentLocationId(state),
-    perspectives: getPerspectives(state)
+    perspectives: getPerspectives(state),
+    isReadOnlyMode: isReadOnlyMode(state)
   };
 }
 
@@ -794,6 +804,7 @@ function mapDispatchToProps(dispatch) {
     showInFileManager: AppActions.showInFileManager,
     openFileNatively: AppActions.openFileNatively,
     openFile: AppActions.openFile,
+    showNotification: AppActions.showNotification,
     moveFiles: IOActions.moveFiles
   }, dispatch);
 }

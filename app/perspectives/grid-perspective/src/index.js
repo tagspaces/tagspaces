@@ -125,7 +125,12 @@ type Props = {
   editTagForEntry: () => void,
   perspectiveCommand: Object,
   directoryContent: Array<FileSystemEntry>,
-  moveFiles: (files: Array<string>, destination: string) => void
+  moveFiles: (files: Array<string>, destination: string) => void,
+  showNotification: (
+    text: string,
+    notificationType: string,
+    autohide: boolean
+  ) => void
 };
 
 type State = {
@@ -552,6 +557,14 @@ class GridPerspective extends React.Component<Props, State> {
   };
 
   handleFileMoveDrop = (item, monitor) => {
+    if (this.props.isReadOnlyMode) {
+      this.props.showNotification(
+        i18n.t('core:dndDisabledReadOnlyMode'),
+        'error',
+        true
+      );
+      return;
+    }
     if (monitor) {
       const { path } = monitor.getItem();
       console.log('Dropped files: ' + path);
@@ -1238,6 +1251,7 @@ function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators({
     moveFiles: IOActions.moveFiles,
     setSelectedEntries: AppActions.setSelectedEntries,
+    showNotification: AppActions.showNotification,
     addTags: TaggingActions.addTags
   }, dispatch);
 }

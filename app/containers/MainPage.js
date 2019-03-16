@@ -55,7 +55,8 @@ import {
   // isFileDragged,
   isEntryInFullWidth,
   isUpdateAvailable,
-  getDirectoryPath
+  getDirectoryPath,
+  isReadOnlyMode
 } from '../reducers/app';
 import { actions as LocationIndexActions, isIndexing } from '../reducers/location-index';
 import { buffer } from '../utils/misc';
@@ -126,6 +127,7 @@ type Props = {
   lastPublishedVersion: string,
   isUpdateAvailable: boolean,
   isFirstRun: boolean,
+  isReadOnlyMode: boolean,
   setFirstRun: (isFirstRun: boolean) => void,
   setEntryFullWidth: (isFullWidth: boolean) => void,
   hideNotifications: () => void,
@@ -154,7 +156,7 @@ type Props = {
   setLeftVerticalSplitSize: (splitSize: number) => void,
   setMainVerticalSplitSize: (splitSize: string) => void,
   directoryPath?: string,
-  showNotification?: (
+  showNotification: (
     text: string,
     notificationType: string,
     autohide: boolean
@@ -298,6 +300,14 @@ class MainPage extends Component<Props, State> {
   }
 
   handleFileDrop = (item, monitor) => {
+    if (this.props.isReadOnlyMode) {
+      this.props.showNotification(
+        i18n.t('core:dndDisabledReadOnlyMode'),
+        'error',
+        true
+      );
+      return;
+    }
     if (monitor) {
       const { files } = monitor.getItem();
       console.log('Dropped files: ' + JSON.stringify(files));
@@ -575,6 +585,7 @@ function mapStateToProps(state) {
   return {
     isIndexing: isIndexing(state),
     isFirstRun: isFirstRun(state),
+    isReadOnlyMode: isReadOnlyMode(state),
     isGeneratingThumbs: isGeneratingThumbs(state),
     isFileOpened: isFileOpened(state),
     // isFileDragged: isFileDragged(state),
