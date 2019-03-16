@@ -501,6 +501,7 @@ export default (state: Object = initialState, action: Object) => {
     return state;
   }
   case types.CLOSE_ALL_FILES: {
+    window.history.pushState('', 'TagSpaces', location.pathname);
     return {
       ...state,
       openedFiles: [],
