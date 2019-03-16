@@ -349,7 +349,7 @@ class DirectoryMenu extends React.Component<Props, State> {
               <ListItemText inset primary={i18n.t('core:deleteDirectory')} />
             </MenuItem>
           )}
-          {AppConfig.isWeb && (
+          {!AppConfig.isWeb && (
             <MenuItem
               data-tid="showInFileManager"
               onClick={this.showInFileManager}
