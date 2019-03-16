@@ -31,6 +31,7 @@ import MoveCopy from '@material-ui/icons/FileCopy';
 import RenameFile from '@material-ui/icons/FormatTextdirectionLToR';
 import DeleteForever from '@material-ui/icons/DeleteForever';
 import i18n from '../../services/i18n';
+import AppConfig from '../../config';
 
 type Props = {
   anchorEl?: Object | null,
@@ -43,7 +44,8 @@ type Props = {
   openFile: (path: string) => void,
   openFileNatively: (path: string) => void,
   showInFileManager: (path: string) => void,
-  selectedFilePath?: string
+  selectedFilePath?: string,
+  isReadOnlyMode: boolean
 };
 
 const FileMenu = (props: Props) => {
@@ -104,58 +106,66 @@ const FileMenu = (props: Props) => {
           </ListItemIcon>
           <ListItemText inset primary={i18n.t('core:openFile')} />
         </MenuItem>
-        <MenuItem
-          data-tid="fileMenuRenameFile"
-          onClick={showRenameFileDialog}
-        >
-          <ListItemIcon>
-            <RenameFile />
-          </ListItemIcon>
-          <ListItemText inset primary={i18n.t('core:renameFile')} />
-        </MenuItem>
-        <MenuItem
-          data-tid="fileMenuOpenFileNatively"
-          onClick={openFileNatively}
-        >
-          <ListItemIcon>
-            <OpenFileNatively />
-          </ListItemIcon>
-          <ListItemText inset primary={i18n.t('core:openFileNatively')} />
-        </MenuItem>
-        <MenuItem
-          data-tid="fileMenuOpenContainingFolder"
-          onClick={showInFileManager}
-        >
-          <ListItemIcon>
-            <OpenContainingFolder />
-          </ListItemIcon>
-          <ListItemText inset primary={i18n.t('core:showInFileManager')} />
-        </MenuItem>
-        <Divider />
-        <MenuItem
-          data-tid="fileMenuAddRemoveTags"
-          onClick={showAddRemoveTagsDialog}
-        >
-          <ListItemIcon>
-            <AddRemoveTags />
-          </ListItemIcon>
-          <ListItemText inset primary={i18n.t('core:addRemoveTags')} />
-        </MenuItem>
-        <MenuItem
-          data-tid="fileMenuMoveCopyFile"
-          onClick={showMoveCopyFilesDialog}
-        >
-          <ListItemIcon>
-            <MoveCopy />
-          </ListItemIcon>
-          <ListItemText inset primary={i18n.t('core:moveCopyFile')} />
-        </MenuItem>
-        <MenuItem data-tid="fileMenuDeleteFile" onClick={showDeleteFileDialog}>
-          <ListItemIcon>
-            <DeleteForever />
-          </ListItemIcon>
-          <ListItemText inset primary={i18n.t('core:deleteEntry')} />
-        </MenuItem>
+        {!AppConfig.isWeb && (
+          <div>
+            <MenuItem
+              data-tid="fileMenuOpenFileNatively"
+              onClick={openFileNatively}
+            >
+              <ListItemIcon>
+                <OpenFileNatively />
+              </ListItemIcon>
+              <ListItemText inset primary={i18n.t('core:openFileNatively')} />
+            </MenuItem>
+            <MenuItem
+              data-tid="fileMenuOpenContainingFolder"
+              onClick={showInFileManager}
+            >
+              <ListItemIcon>
+                <OpenContainingFolder />
+              </ListItemIcon>
+              <ListItemText inset primary={i18n.t('core:showInFileManager')} />
+            </MenuItem>
+          </div>
+        )}
+        {!props.isReadOnlyMode && (
+          <div>
+            <Divider />
+            <MenuItem
+              data-tid="fileMenuAddRemoveTags"
+              onClick={showAddRemoveTagsDialog}
+            >
+              <ListItemIcon>
+                <AddRemoveTags />
+              </ListItemIcon>
+              <ListItemText inset primary={i18n.t('core:addRemoveTags')} />
+            </MenuItem>
+            <MenuItem
+              data-tid="fileMenuRenameFile"
+              onClick={showRenameFileDialog}
+            >
+              <ListItemIcon>
+                <RenameFile />
+              </ListItemIcon>
+              <ListItemText inset primary={i18n.t('core:renameFile')} />
+            </MenuItem>
+            <MenuItem
+              data-tid="fileMenuMoveCopyFile"
+              onClick={showMoveCopyFilesDialog}
+            >
+              <ListItemIcon>
+                <MoveCopy />
+              </ListItemIcon>
+              <ListItemText inset primary={i18n.t('core:moveCopyFile')} />
+            </MenuItem>
+            <MenuItem data-tid="fileMenuDeleteFile" onClick={showDeleteFileDialog}>
+              <ListItemIcon>
+                <DeleteForever />
+              </ListItemIcon>
+              <ListItemText inset primary={i18n.t('core:deleteEntry')} />
+            </MenuItem>
+          </div>
+        )}
       </Menu>
     </div>
   );

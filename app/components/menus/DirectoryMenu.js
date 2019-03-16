@@ -349,18 +349,20 @@ class DirectoryMenu extends React.Component<Props, State> {
               <ListItemText inset primary={i18n.t('core:deleteDirectory')} />
             </MenuItem>
           )}
-          <MenuItem
-            data-tid="showInFileManager"
-            onClick={this.showInFileManager}
-          >
-            <ListItemIcon>
-              <OpenFolderNativelyIcon />
-            </ListItemIcon>
-            <ListItemText
-              inset
-              primary={i18n.t('core:showInFileManager')}
-            />
-          </MenuItem>
+          {AppConfig.isWeb && (
+            <MenuItem
+              data-tid="showInFileManager"
+              onClick={this.showInFileManager}
+            >
+              <ListItemIcon>
+                <OpenFolderNativelyIcon />
+              </ListItemIcon>
+              <ListItemText
+                inset
+                primary={i18n.t('core:showInFileManager')}
+              />
+            </MenuItem>
+          )}
           {!this.props.perspectiveMode && (
             <Divider />
           )}
