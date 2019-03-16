@@ -90,7 +90,8 @@ import {
   getLastSelectedEntry,
   getSelectedEntries,
   getCurrentDirectoryColor,
-  isLoading
+  isLoading,
+  isReadOnlyMode
 } from '../../../reducers/app';
 import TaggingActions from '../../../reducers/tagging-actions';
 
@@ -107,6 +108,7 @@ type Props = {
   selectedEntries: Array<Object>,
   supportedFileTypes: Array<Object>,
   isAppLoading: boolean,
+  isReadOnlyMode: boolean,
   openFile: (path: string, isFile?: boolean) => void,
   deleteFile: (path: string) => void,
   deleteDirectory: (path: string) => void,
@@ -895,33 +897,37 @@ class GridPerspective extends React.Component<Props, State> {
               <ViewListIcon />
             </IconButton>
           )}
-          <IconButton
-            title={i18n.t('core:tagSelectedEntries')}
-            aria-label={i18n.t('core:tagSelectedEntries')}
-            data-tid="gridPerspectiveAddRemoveTags"
-            disabled={selectedEntries.length < 1}
-            onClick={this.openAddRemoveTagsDialog}
-          >
-            <TagIcon />
-          </IconButton>
-          <IconButton
-            title={i18n.t('core:copyMoveSelectedEntries')}
-            aria-label={i18n.t('core:copyMoveSelectedEntries')}
-            data-tid="gridPerspectiveCopySelectedFiles"
-            disabled={!this.state.fileOperationsEnabled}
-            onClick={this.openMoveCopyFilesDialog}
-          >
-            <CopyIcon />
-          </IconButton>
-          <IconButton
-            title={i18n.t('core:deleteSelectedEntries')}
-            aria-label={i18n.t('core:deleteSelectedEntries')}
-            data-tid="gridPerspectiveDeleteMultipleFiles"
-            disabled={!this.state.fileOperationsEnabled}
-            onClick={this.openDeleteFileDialog}
-          >
-            <DeleteIcon />
-          </IconButton>
+          {!this.props.isReadOnlyMode && (
+            <div>
+              <IconButton
+                title={i18n.t('core:tagSelectedEntries')}
+                aria-label={i18n.t('core:tagSelectedEntries')}
+                data-tid="gridPerspectiveAddRemoveTags"
+                disabled={selectedEntries.length < 1}
+                onClick={this.openAddRemoveTagsDialog}
+              >
+                <TagIcon />
+              </IconButton>
+              <IconButton
+                title={i18n.t('core:copyMoveSelectedEntries')}
+                aria-label={i18n.t('core:copyMoveSelectedEntries')}
+                data-tid="gridPerspectiveCopySelectedFiles"
+                disabled={!this.state.fileOperationsEnabled}
+                onClick={this.openMoveCopyFilesDialog}
+              >
+                <CopyIcon />
+              </IconButton>
+              <IconButton
+                title={i18n.t('core:deleteSelectedEntries')}
+                aria-label={i18n.t('core:deleteSelectedEntries')}
+                data-tid="gridPerspectiveDeleteMultipleFiles"
+                disabled={!this.state.fileOperationsEnabled}
+                onClick={this.openDeleteFileDialog}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </div>
+          )}
           <IconButton
             title={i18n.t('core:sort')}
             aria-label={i18n.t('core:sort')}
@@ -1027,6 +1033,7 @@ class GridPerspective extends React.Component<Props, State> {
           openFile={this.props.openFile}
           openFileNatively={this.props.openFileNatively}
           showInFileManager={this.props.showInFileManager}
+          isReadOnlyMode={this.props.isReadOnlyMode}
           selectedFilePath={this.state.selectedEntryPath}
         />
         <DirectoryMenu
@@ -1040,6 +1047,7 @@ class GridPerspective extends React.Component<Props, State> {
           openFileNatively={this.props.openFileNatively}
           openFile={this.props.openFile}
           deleteDirectory={this.props.deleteDirectory}
+          isReadOnlyMode={this.props.isReadOnlyMode}
           perspectiveMode={true}
         />
         <EntryTagMenu
@@ -1050,6 +1058,7 @@ class GridPerspective extends React.Component<Props, State> {
           currentEntryPath={this.state.selectedEntryPath}
           removeTags={this.props.removeTags}
           editTagForEntry={this.props.editTagForEntry}
+          isReadOnlyMode={this.props.isReadOnlyMode}
         />
         <Menu
           open={this.state.sortingContextMenuOpened}
@@ -1237,6 +1246,7 @@ function mapStateToProps(state) {
   return {
     supportedFileTypes: getSupportedFileTypes(state),
     isAppLoading: isLoading(state),
+    isReadOnlyMode: isReadOnlyMode(state),
     lastSelectedEntryPath: getLastSelectedEntry(state),
     currentDirectoryColor: getCurrentDirectoryColor(state),
     selectedEntries: getSelectedEntries(state)
