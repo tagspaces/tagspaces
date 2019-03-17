@@ -398,5 +398,12 @@
   "collectTagsFromLocation": "Collect Tags From Current Location",
   "searchCurrentFolderWithSubFolders": "Search in folder with sub folders",
   "dndDisabledReadOnlyMode": "Importing files is disabled because the location is in read-only mode.",
+  "sizeAny": "Any size",
+  "sizeEmpty": "Empty",
+  "sizeTiny": "Tiny",
+  "sizeSmall": "Small",
+  "sizeMedium": "Medium",
+  "sizeLarge": "Large",
+  "sizeHuge": "Huge",
   "-": "-"
 }

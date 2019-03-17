@@ -215,37 +215,41 @@ export default class Search {
   static searchLocationIndex = (locationContent: Array<Object>, searchQuery: SearchQuery): Promise<Array<Object> | []> => new Promise((resolve) => {
     console.time('searchtime');
     const jmespathQuery = constructjmespathQuery(searchQuery);
-    let jmespathResults;
-    let results;
-    let currentDirectoryEntries = transformTagsToLowercase(locationContent);
+    let results = transformTagsToLowercase(locationContent);
+    let searched = false;
 
+    // Limiting the search to current folder only (with sub-folders)
     if (searchQuery.searchBoxing === 'folder') {
-      currentDirectoryEntries = currentDirectoryEntries.filter(entry => entry.path.startsWith(searchQuery.currentDirectory));
+      results = results.filter(entry => entry.path.startsWith(searchQuery.currentDirectory));
     }
 
     if (jmespathQuery) {
+      const resultCount = results.length;
       console.log('jmespath query: ' + jmespathQuery);
       console.time('jmespath');
-      jmespathResults = jmespath.search({ index: currentDirectoryEntries }, jmespathQuery);
+      results = jmespath.search({ index: results }, jmespathQuery);
       console.timeEnd('jmespath');
-      console.log('jmespath results: ' + jmespathResults.length);
+      console.log('jmespath results: ' + results.length);
+      searched = searched || (results.length < resultCount);
     }
 
-    // if (Pro && Pro.Search.filterIndex) {
-    //   results = Pro.Search.filterIndex(currentDirectoryEntries);
-    // }
+    if (Pro && Pro.Search.filterIndex) {
+      const resultCount = results.length;
+      results = Pro.Search.filterIndex(results, searchQuery);
+      searched = searched || (results.length < resultCount);
+    }
 
     if (searchQuery.textQuery && searchQuery.textQuery.length > 1) {
+      const resultCount = results.length;
       console.log('fuse query: ' + searchQuery.textQuery);
       console.time('fuse');
-      const fuse = new Fuse(jmespathResults || currentDirectoryEntries, fuseOptions);
+      const fuse = new Fuse(results, fuseOptions);
       results = fuse.search(searchQuery.textQuery);
       console.timeEnd('fuse');
-    } else {
-      results = jmespathResults;
+      searched = searched || (results.length < resultCount);
     }
 
-    if (results) {
+    if (searched) {
       console.log('Results found: ' + results.length);
       if (searchQuery.maxSearchResults && results.length >= searchQuery.maxSearchResults) {
         results = results.slice(0, searchQuery.maxSearchResults);

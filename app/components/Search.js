@@ -372,44 +372,41 @@ class Search extends React.Component<Props, State> {
                 {i18n.t('core:anYearAgo')}
               </MenuItem>
             </Select>
-          </FormControl>
+          </FormControl> */ }
           <FormControl
             className={classes.formControl}
             disabled={indexing || !Pro}
             title={i18n.t('core:thisFunctionalityIsAvailableInPro')}
           >
-            <InputLabel htmlFor="file-size">{i18n.t('core:fileSize')}</InputLabel>
+            <InputLabel htmlFor="file-size">{i18n.t('core:sizeAny')}</InputLabel>
             <Select
               value={this.state.fileSize}
               onChange={this.handleInputChange}
               input={<Input name="fileSize" id="file-size" />}
             >
               <MenuItem value="">
-                {i18n.t('core:anySize')}
+                {i18n.t('core:sizeAny')}
               </MenuItem>
-              <MenuItem value="emptyOkb">
-                {i18n.t('core:emptyOkb')}
+              <MenuItem value="sizeEmpty">
+                {i18n.t('core:sizeEmpty')}
               </MenuItem>
-              <MenuItem value="tiny10kb">
-                {i18n.t('core:tiny10kb')}
+              <MenuItem value="sizeTiny">
+                {i18n.t('core:sizeTiny')}&nbsp;(&lt;&nbsp;10KB)
               </MenuItem>
-              <MenuItem value="small100kb">
-                {i18n.t('core:small100kb')}
+              <MenuItem value="sizeSmall">
+                {i18n.t('core:sizeSmall')}&nbsp;(&lt;&nbsp;100KB)
               </MenuItem>
-              <MenuItem value="medium1mb">
-                {i18n.t('core:medium1mb')}
+              <MenuItem value="sizeMedium">
+                {i18n.t('core:sizeMedium')}&nbsp;(&lt;&nbsp;1MB)
               </MenuItem>
-              <MenuItem value="large30mb">
-                {i18n.t('core:large30mb')}
+              <MenuItem value="sizeLarge">
+                {i18n.t('core:sizeLarge')}&nbsp;(&lt;&nbsp;1GB)
               </MenuItem>
-              <MenuItem value="huge1000mb">
-                {i18n.t('core:huge1000mb')}
-              </MenuItem>
-              <MenuItem value="oneGBandBigger">
-                {i18n.t('core:oneGBandBigger')}
+              <MenuItem value="sizeHuge">
+                {i18n.t('core:sizeHuge')}&nbsp;(&gt;&nbsp;1GB)
               </MenuItem>
             </Select>
-          </FormControl> */}
+          </FormControl>
           { /* <FormControl
             className={classes.formControl}
             disabled={true}
