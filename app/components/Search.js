@@ -339,7 +339,7 @@ class Search extends React.Component<Props, State> {
             </Select>
             {/* <FormHelperText>{i18n.t('core:searchFileTypes')}</FormHelperText> */}
           </FormControl>
-          {/* <FormControl
+          <FormControl
             className={classes.formControl}
             disabled={indexing || !Pro}
             title={i18n.t('core:thisFunctionalityIsAvailableInPro')}
@@ -359,20 +359,23 @@ class Search extends React.Component<Props, State> {
               <MenuItem value="yesterday">
                 {i18n.t('core:yesterday')}
               </MenuItem>
-              <MenuItem value="oneWeekAgo">
-                {i18n.t('core:oneWeekAgo')}
+              <MenuItem value="past7Days">
+                {i18n.t('core:past7Days')}
               </MenuItem>
-              <MenuItem value="oneMonthAgo">
-                {i18n.t('core:oneMonthAgo')}
+              <MenuItem value="past30Days">
+                {i18n.t('core:past30Days')}
               </MenuItem>
-              <MenuItem value="halfAnYearAgo">
-                {i18n.t('core:halfAnYearAgo')}
+              <MenuItem value="past6Months">
+                {i18n.t('core:past6Months')}
               </MenuItem>
-              <MenuItem value="anYearAgo">
-                {i18n.t('core:anYearAgo')}
+              <MenuItem value="pastYear">
+                {i18n.t('core:pastYear')}
+              </MenuItem>
+              <MenuItem value="moreThanYear">
+                {i18n.t('core:moreThanYear')}
               </MenuItem>
             </Select>
-          </FormControl> */ }
+          </FormControl>
           <FormControl
             className={classes.formControl}
             disabled={indexing || !Pro}
@@ -393,11 +396,14 @@ class Search extends React.Component<Props, State> {
               <MenuItem value="sizeTiny">
                 {i18n.t('core:sizeTiny')}&nbsp;(&lt;&nbsp;10KB)
               </MenuItem>
+              <MenuItem value="sizeVerySmall">
+                {i18n.t('core:sizeVerySmall')}&nbsp;(&lt;&nbsp;100KB)
+              </MenuItem>
               <MenuItem value="sizeSmall">
-                {i18n.t('core:sizeSmall')}&nbsp;(&lt;&nbsp;100KB)
+                {i18n.t('core:sizeSmall')}&nbsp;(&lt;&nbsp;1MB)
               </MenuItem>
               <MenuItem value="sizeMedium">
-                {i18n.t('core:sizeMedium')}&nbsp;(&lt;&nbsp;1MB)
+                {i18n.t('core:sizeMedium')}&nbsp;(&lt;&nbsp;50MB)
               </MenuItem>
               <MenuItem value="sizeLarge">
                 {i18n.t('core:sizeLarge')}&nbsp;(&lt;&nbsp;1GB)
