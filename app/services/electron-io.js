@@ -289,6 +289,9 @@ export default class ElectronIO {
 
           try {
             stats = this.fs.statSync(entryPath);
+            // if (AppConfig.isWin && winattr.getSync(entryPath).hidden) {
+            //   return;
+            // }
             eentry.isFile = stats.isFile();
             eentry.size = stats.size;
             eentry.lmdt = stats.mtime.getTime();
