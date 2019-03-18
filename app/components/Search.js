@@ -344,11 +344,12 @@ class Search extends React.Component<Props, State> {
             disabled={indexing || !Pro}
             title={i18n.t('core:thisFunctionalityIsAvailableInPro')}
           >
-            <InputLabel htmlFor="modification-date">{i18n.t('core:modifiedDate')}</InputLabel>
+            <InputLabel shrink htmlFor="modification-date">{i18n.t('core:lastModifiedSearchTitle')}</InputLabel>
             <Select
               value={this.state.lastModified}
               onChange={this.handleInputChange}
               input={<Input name="lastModified" id="modification-date" />}
+              displayEmpty
             >
               <MenuItem value="">
                 {i18n.t('core:anyTime')}
@@ -381,11 +382,12 @@ class Search extends React.Component<Props, State> {
             disabled={indexing || !Pro}
             title={i18n.t('core:thisFunctionalityIsAvailableInPro')}
           >
-            <InputLabel htmlFor="file-size">{i18n.t('core:sizeAny')}</InputLabel>
+            <InputLabel shrink htmlFor="file-size">{i18n.t('core:sizeSearchTitle')}</InputLabel>
             <Select
               value={this.state.fileSize}
               onChange={this.handleInputChange}
               input={<Input name="fileSize" id="file-size" />}
+              displayEmpty
             >
               <MenuItem value="">
                 {i18n.t('core:sizeAny')}
