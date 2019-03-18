@@ -723,24 +723,24 @@ class EntryContainer extends React.Component<Props, State> {
           <RefreshIcon />
         </IconButton>
         { !this.props.isReadOnlyMode && (
-          <div>
-            <IconButton
-              aria-label={i18n.t('core:duplicateFile')}
-              title={i18n.t('core:duplicateFile')}
-              onClick={() => {
-                this.setState({ shouldCopyFile: true });
-              }}
-            >
-              <CopyContentIcon />
-            </IconButton>
-            <IconButton
-              title={i18n.t('core:deleteEntry')}
-              aria-label={i18n.t('core:deleteEntry')}
-              onClick={() => this.setState({ isDeleteEntryModalOpened: true })}
-            >
-              <DeleteIcon />
-            </IconButton>
-          </div>
+          <IconButton
+            aria-label={i18n.t('core:duplicateFile')}
+            title={i18n.t('core:duplicateFile')}
+            onClick={() => {
+              this.setState({ shouldCopyFile: true });
+            }}
+          >
+            <CopyContentIcon />
+          </IconButton>
+        )}
+        { !this.props.isReadOnlyMode && (
+          <IconButton
+            title={i18n.t('core:deleteEntry')}
+            aria-label={i18n.t('core:deleteEntry')}
+            onClick={() => this.setState({ isDeleteEntryModalOpened: true })}
+          >
+            <DeleteIcon />
+          </IconButton>
         )}
       </div>
       <IconButton

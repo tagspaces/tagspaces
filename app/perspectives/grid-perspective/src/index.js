@@ -924,35 +924,37 @@ class GridPerspective extends React.Component<Props, State> {
             </IconButton>
           )}
           {!this.props.isReadOnlyMode && (
-            <div>
-              <IconButton
-                title={i18n.t('core:tagSelectedEntries')}
-                aria-label={i18n.t('core:tagSelectedEntries')}
-                data-tid="gridPerspectiveAddRemoveTags"
-                disabled={selectedEntries.length < 1}
-                onClick={this.openAddRemoveTagsDialog}
-              >
-                <TagIcon />
-              </IconButton>
-              <IconButton
-                title={i18n.t('core:copyMoveSelectedEntries')}
-                aria-label={i18n.t('core:copyMoveSelectedEntries')}
-                data-tid="gridPerspectiveCopySelectedFiles"
-                disabled={!this.state.fileOperationsEnabled}
-                onClick={this.openMoveCopyFilesDialog}
-              >
-                <CopyIcon />
-              </IconButton>
-              <IconButton
-                title={i18n.t('core:deleteSelectedEntries')}
-                aria-label={i18n.t('core:deleteSelectedEntries')}
-                data-tid="gridPerspectiveDeleteMultipleFiles"
-                disabled={!this.state.fileOperationsEnabled}
-                onClick={this.openDeleteFileDialog}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </div>
+            <IconButton
+              title={i18n.t('core:tagSelectedEntries')}
+              aria-label={i18n.t('core:tagSelectedEntries')}
+              data-tid="gridPerspectiveAddRemoveTags"
+              disabled={selectedEntries.length < 1}
+              onClick={this.openAddRemoveTagsDialog}
+            >
+              <TagIcon />
+            </IconButton>
+          )}
+          {!this.props.isReadOnlyMode && (
+            <IconButton
+              title={i18n.t('core:copyMoveSelectedEntries')}
+              aria-label={i18n.t('core:copyMoveSelectedEntries')}
+              data-tid="gridPerspectiveCopySelectedFiles"
+              disabled={!this.state.fileOperationsEnabled}
+              onClick={this.openMoveCopyFilesDialog}
+            >
+              <CopyIcon />
+            </IconButton>
+          )}
+          {!this.props.isReadOnlyMode && (
+            <IconButton
+              title={i18n.t('core:deleteSelectedEntries')}
+              aria-label={i18n.t('core:deleteSelectedEntries')}
+              data-tid="gridPerspectiveDeleteMultipleFiles"
+              disabled={!this.state.fileOperationsEnabled}
+              onClick={this.openDeleteFileDialog}
+            >
+              <DeleteIcon />
+            </IconButton>
           )}
           <IconButton
             title={i18n.t('core:sort')}
