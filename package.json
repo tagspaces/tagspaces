@@ -43,7 +43,7 @@
     "package-web": "yarn prepare-web && yarn package-clean && zip -r ../builds/tagspaces-web.zip web -x web/files/**\\*",
     "package-android": "yarn build-cordova && cd cordova && yarn install && cordova build --release android && cd ../.. && ./prepare-android.sh",
     "package-web-pro": "yarn prepare-web && yarn package-clean && zip -r ../builds/tagspaces-pro-web.zip web -xi web/files/**\\* ",
-    "package-clean": "rimraf app/dist/**/*.map && rimraf web/dist/**/*.map && rimraf app/node_modules/@tagspaces/pro/",
+    "package-clean": "rimraf app/dist/**/*.map && rimraf web/dist/**/*.map && rimraf app/node_modules/@tagspaces/pro/lib/ && rimraf app/node_modules/@tagspaces/pro/modules/ && rimraf app/node_modules/@tagspaces/pro/test/",
     "install-ext": "cd app && yarn install --force --prod --no-lockfile && cd ..",
     "setup-ext": "node scripts/setupextensions.js",
     "setup-pro": "node scripts/setuppro.js",
