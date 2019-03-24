@@ -211,6 +211,7 @@
     "marked": "^0.6.1",
     "memoize-one": "^5.0.0",
     "moment": "^2.22.1",
+    "open-location-code": "^1.0.3",
     "path": "^0.12.7",
     "pdfjs-dist": "^2.0.943",
     "rc-table": "^6.4.0",
