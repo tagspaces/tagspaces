@@ -68,7 +68,8 @@ const actions = {
       processedTags.map((tag) => {
         if (
           taglibrary.findIndex(tagGroup => tagGroup.children.findIndex(obj => obj.id === tag.id) !== -1) === -1 &&
-          !/^(?:\d+~\d+|\d+)$/.test(tag.title) // skip adding of tag containing only digits or geo tags
+          !/^(?:\d+~\d+|\d+)$/.test(tag.title) && // skip adding of tag containing only digits
+          !/(^|\s)([23456789C][23456789CFGHJMPQRV][23456789CFGHJMPQRVWX]{6}\+[23456789CFGHJMPQRVWX]{2,3})(\s|$)/.test(tag.title) // skip adding of tag containing geo information
         ) {
           uniqueTags.push(tag);
         }
