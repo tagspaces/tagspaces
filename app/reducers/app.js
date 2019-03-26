@@ -42,6 +42,7 @@ import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import { getThumbnailURLPromise } from '../services/thumbsgenerator';
 import { actions as LocationIndexActions } from './location-index';
+import { type Tag } from './taglibrary';
 
 export const types = {
   DEVICE_ONLINE: 'APP/DEVICE_ONLINE',

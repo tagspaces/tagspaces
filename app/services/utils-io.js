@@ -39,6 +39,7 @@ export type FileSystemEntry = {
   isFile: boolean,
   extension: string,
   thumbPath?: string,
+  color?: string,
   textContent?: string,
   description: string,
   tags: Array<Tag>,
