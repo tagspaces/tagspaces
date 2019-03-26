@@ -19,24 +19,32 @@
 
 import { actions as AppActions } from './app';
 import {
-  extractFileExtension,
   extractFileName,
-  extractTags,
-  extractTitle,
-  extractContainingDirectoryPath,
   getMetaFileLocationForFile,
   getThumbFileLocationForFile,
   normalizePath
 } from '../utils/paths';
 import {
-
   copyFilesPromise,
   renameFilesPromise
 } from '../services/utils-io';
 import AppConfig from '../config';
 import i18n from '../services/i18n';
+import { Pro } from '../pro';
+import TaggingActions from './tagging-actions';
 
 const actions = {
+  extractContent: () => (
+    dispatch: (actions: Object) => void,
+    getState: () => Object
+  ) => {
+    const { currentDirectoryEntries } = getState().app;
+    if (!Pro || !Pro.ContentExtractor) {
+      dispatch(AppActions.showNotification(i18n.t('core:needProVersion')));
+      return false;
+    }
+    Pro.ContentExtractor.extractContent(currentDirectoryEntries, dispatch, AppActions, TaggingActions);
+  },
   moveFiles: (paths: Array<string>, targetPath: string) => (
     dispatch: (actions: Object) => void,
   ) => {
