@@ -41,85 +41,61 @@ type Props = {
   onClose: () => void
 };
 
-/*type State = {
-  inputError?: boolean,
-  displayColorPicker?: boolean,
-  displayTextColorPicker?: boolean,
-  disableConfirmButton?: boolean,
-  title?: string,
-  applyChanges?: boolean,
-  color?: string,
-  textcolor?: string,
-  modifiedDate?: string
-};*/
-
-/*class EditTagGroupDialog extends React.Component<Props, State> {
-  state = {
-    displayColorPicker: false,
-    displayTextColorPicker: false,
-    inputError: false,
-    disableConfirmButton: true,
-    applyChanges: false,
-    title: '',
-    color: '',
-    textcolor: '',
-    modifiedDate: ''
-  };*/
-
 const EditTagGroupDialog = (props: Props) => {
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
   const [displayTextColorPicker, setDisplayTextColorPicker] = useState(false);
-  cosnt [inputError, setInputError] = useState(false);
+  const [inputError, setInputError] = useState(false);
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [applyChanges, setApplyChanges] = useState(false);
   const [title, setTitle] = useState('');
   const [color, setColor] = useState('');
   const [textcolor, setTextcolor] = useState('');
   const [modifiedDate, setModifiedData] = useState('');
+  const [name, setName] = useState(target.name);
 
-  componentWillReceiveProps = ({ open, selectedTagGroupEntry }) => {
-    if (open === true) {
-      this.setState({
-        disableConfirmButton: !selectedTagGroupEntry.title,
-        applyChanges: false,
-        title: selectedTagGroupEntry.title,
-        color: selectedTagGroupEntry.color,
-        textcolor: selectedTagGroupEntry.textcolor,
-        modifiedDate: selectedTagGroupEntry.modified_date
-      });
-    }
-  }
+  /* componentWillReceiveProps = ({ open, selectedTagGroupEntry }) => {
+      if (open === true) {
+        this.setState({
+          disableConfirmButton: !selectedTagGroupEntry.title,
+          applyChanges: false,
+          title: selectedTagGroupEntry.title,
+          color: selectedTagGroupEntry.color,
+          textcolor: selectedTagGroupEntry.textcolor,
+          modifiedDate: selectedTagGroupEntry.modified_date
+        });
+      }
+  } */
 
-
-  /* function componentWillReceiveProps({ open, selectedTagGroupEntry }) {
+  function componentWillReceiveProps({ open, selectedTagGroupEntry }) {
     if (open === true) {
       setDisplayTextColorPicker(!selectedTagGroupEntry.title);
       setApplyChanges(false);
       setTitle(selectedTagGroupEntry.title);
       setColor(selectedTagGroupEntry.color);
-      setTestcolor(selectedTagGroupEntry.textcolor);
+      setTextcolor(selectedTagGroupEntry.textcolor);
       setModifiedData(selectedTagGroupEntry.modified_date);
     }
-  } */
+  }
 
-
-  handleInputChange = (event: Object) => {
+  /*
+  function handleInputChange(event: Object) {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
 
     this.setState({
       [name]: value
-    }, this.handleValidation);
-  }
-
-  /* handleValidation() {
-    if (this.state.title && this.state.title.length > 0) {
-      this.setState({ inputError: false, disableConfirmButton: false });
-    } else {
-      this.setState({ inputError: true, disableConfirmButton: true });
-    }
+    }, handleValidation);
   } */
+
+  function handleInputChange(event: Object) {
+    const target = event.target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+
+    setName({
+      [name]: value
+    }, handleValidation);
+  }
 
   function handleValidation() {
     if (title && title.length > 0) {
@@ -131,33 +107,7 @@ const EditTagGroupDialog = (props: Props) => {
     }
   }
 
-  /* onConfirm = () => {
-    const { disableConfirmButton, applyChanges } = this.state;
-    const { selectedTagGroupEntry } = this.props;
-    if (disableConfirmButton) {
-      return;
-    }
-
-    if (selectedTagGroupEntry && selectedTagGroupEntry.children) {
-      this.props.editTagGroup({
-        ...selectedTagGroupEntry,
-        title: this.state.title,
-        color: this.state.color,
-        textcolor: this.state.textcolor,
-        children: selectedTagGroupEntry.children.map((tag) => ({
-          ...tag,
-          color: applyChanges ? this.state.color : tag.color,
-          textcolor: applyChanges ? this.state.textcolor : tag.textcolor,
-          style: tag.style
-        }))
-      });
-      this.setState({ inputError: false, disableConfirmButton: true });
-      this.props.onClose();
-    }
-  }; */
-
   function onConfirm() {
-    const { disableConfirmButton, applyChanges } = state;
     const { selectedTagGroupEntry } = props;
     if (disableConfirmButton) {
       return;
@@ -166,9 +116,9 @@ const EditTagGroupDialog = (props: Props) => {
     if (selectedTagGroupEntry && selectedTagGroupEntry.children) {
       props.editTagGroup({
         ...selectedTagGroupEntry,
-        title: title,
-        color: color,
-        textcolor: textcolor,
+        title,
+        color,
+        textcolor,
         children: selectedTagGroupEntry.children.map((tag) => ({
           ...tag,
           color: applyChanges ? color : tag.color,
@@ -182,35 +132,19 @@ const EditTagGroupDialog = (props: Props) => {
     }
   }
 
-  /* toggleDefaultTagBackgroundColorPicker = () => {
-    this.setState({ displayColorPicker: !this.state.displayColorPicker });
-  }; */
-
   function toggleDefaultTagBackgroundColorPicker() {
     setDisplayColorPicker(!displayColorPicker);
   }
 
-  /* toggleDefaultTagTextColorPicker = () => {
-    this.setState({ displayTextColorPicker: !this.state.displayTextColorPicker });
-  }; */
-
   function toggleDefaultTagTextColorPicker() {
-    setDisplayTextColorPicker(!displayTextColorPicker );
+    setDisplayTextColorPicker(!displayTextColorPicker);
   }
 
-  /* handleChangeColor = (color: string) => {
-    this.setState({ color });
-  }; */
-
-  function handleChangeColor(color) {
+  function handleChangeColor() {
     setColor(color);
   }
 
-  /*  handleChangeTextColor = (color: string) => {
-      this.setState({ textcolor: color });
-  };  */
-
-  function handleChangeTextColor(color) {
+  function handleChangeTextColor() {
     setTextcolor(color);
   }
 
@@ -218,13 +152,9 @@ const EditTagGroupDialog = (props: Props) => {
       this.setState({ applyChanges: applyColorChanges });
   };  */
 
-  function setApplyChanges() {
+  function setApplyChanges(applyColorChanges: boolean) {
     setApplyChanges(applyColorChanges);
   }
-
-  /*  renderTitle = () => (
-      <DialogTitle style={{ overflow: 'visible' }}>{i18n.t('core:editTagGroupTitle')}{` '${this.state.title}'`}</DialogTitle>
-  );  */
 
   function renderTitle() {
     return (
@@ -262,7 +192,6 @@ const EditTagGroupDialog = (props: Props) => {
       };  */
 
   function renderContent() {
-    const { color, textcolor, modifiedDate } = this.state;
     const styles = {
       color: {
         width: '100%',
@@ -289,102 +218,82 @@ const EditTagGroupDialog = (props: Props) => {
         fontSize: '1rem'
       },
     };
-  }
 
-  return (
-    <DialogContent style={{ overflow: 'visible' }}>
-      <FormControl
-        fullWidth={true}
-        error={this.state.inputError}
-        style={{ overflow: 'visible' }}
-      >
-        {modifiedDate !== '' && (
-          <div className="tag-date" style={{ fontSize: 12, position: 'relative', bottom: 20, color: '#808080' }}>
-            <span className="text" style={{ fontWeight: 600 }}>{`${i18n.t('core:modifiedDate')}: `}</span>
-            <time>{moment(modifiedDate).format('MMM. DD, YYYY')}</time>
-          </div>
-        )}
-        <TextField
-          error={this.state.inputError}
-          margin="dense"
-          name="title"
-          label={i18n.t('core:editTagGroupNewName')}
-          onChange={this.handleInputChange}
-          value={this.state.title}
-          data-tid="editTagGroupInput"
+    return (
+      <DialogContent style={{ overflow: 'visible' }}>
+        <FormControl
           fullWidth={true}
-        />
-        {this.state.inputError && <FormHelperText>{i18n.t('core:taggroupTitleHelper')}</FormHelperText>}
-      </FormControl>
-      <FormControl
-        fullWidth={true}
-      >
-        <FormHelperText style={styles.helpText}>{i18n.t('core:tagBackgroundColor')}</FormHelperText>
-        <TransparentBackground>
-          <Button
-            onClick={this.toggleDefaultTagBackgroundColorPicker}
-            data-tid="editTagGroupBackgroundColor"
-            style={styles.color}
-          >&nbsp;
-          </Button>
-        </TransparentBackground>
-        <ColorPickerDialog
-          open={this.state.displayColorPicker}
-          setColor={this.handleChangeColor}
-          onClose={this.toggleDefaultTagBackgroundColorPicker}
-          color={this.state.color}
-        />
-      </FormControl>
-      <FormControl
-        fullWidth={true}
-      >
-        <FormHelperText style={styles.helpText}>{i18n.t('core:tagForegroundColor')}</FormHelperText>
-        <TransparentBackground>
-          <Button
-            onClick={this.toggleDefaultTagTextColorPicker}
-            data-tid="editTagGroupForegroundColor"
-            style={styles.textcolor}
-            role="presentation"
-          >&nbsp;
-          </Button>
-        </TransparentBackground>
-        <ColorPickerDialog
-          open={this.state.displayTextColorPicker}
-          setColor={this.handleChangeTextColor}
-          onClose={this.toggleDefaultTagTextColorPicker}
-          color={this.state.textcolor}
-        />
-      </FormControl>
-      <FormControl>
-        <FormHelperText style={styles.helpText}>{i18n.t('core:colorChangesToAllTags')}</FormHelperText>
-        <Switch
-          data-tid="editTagGroupSwitch"
-          onClick={() => this.setApplyChanges(!this.state.applyChanges)}
-          checked={this.state.applyChanges}
-        />
-      </FormControl>
-    </DialogContent>
-  );
-
-
-  /*renderActions = () => (
-    <DialogActions>
-      <Button
-        onClick={this.props.onClose}
-        color="primary"
-      >
-        {i18n.t('core:cancel')}
-      </Button>
-      <Button
-        disabled={this.state.disableConfirmButton}
-        onClick={this.onConfirm}
-        data-tid="editTagGroupConfirmButton"
-        color="primary"
-      >
-        {i18n.t('core:ok')}
-      </Button>
-    </DialogActions>
-  );*/
+          error={inputError}
+          style={{ overflow: 'visible' }}
+        >
+          {modifiedDate !== '' && (
+            <div className="tag-date" style={{ fontSize: 12, position: 'relative', bottom: 20, color: '#808080' }}>
+              <span className="text" style={{ fontWeight: 600 }}>{`${i18n.t('core:modifiedDate')}: `}</span>
+              <time>{moment(modifiedDate).format('MMM. DD, YYYY')}</time>
+            </div>
+          )}
+          <TextField
+            error={inputError}
+            margin="dense"
+            name="title"
+            label={i18n.t('core:editTagGroupNewName')}
+            onChange={handleInputChange}
+            value={title}
+            data-tid="editTagGroupInput"
+            fullWidth={true}
+          />
+          {inputError && <FormHelperText>{i18n.t('core:taggroupTitleHelper')}</FormHelperText>}
+        </FormControl>
+        <FormControl
+          fullWidth={true}
+        >
+          <FormHelperText style={styles.helpText}>{i18n.t('core:tagBackgroundColor')}</FormHelperText>
+          <TransparentBackground>
+            <Button
+              onClick={toggleDefaultTagBackgroundColorPicker}
+              data-tid="editTagGroupBackgroundColor"
+              style={styles.color}
+            >&nbsp;
+            </Button>
+          </TransparentBackground>
+          <ColorPickerDialog
+            open={displayColorPicker}
+            setColor={handleChangeColor}
+            onClose={toggleDefaultTagBackgroundColorPicker}
+            color={color}
+          />
+        </FormControl>
+        <FormControl
+          fullWidth={true}
+        >
+          <FormHelperText style={styles.helpText}>{i18n.t('core:tagForegroundColor')}</FormHelperText>
+          <TransparentBackground>
+            <Button
+              onClick={toggleDefaultTagTextColorPicker}
+              data-tid="editTagGroupForegroundColor"
+              style={styles.textcolor}
+              role="presentation"
+            >&nbsp;
+            </Button>
+          </TransparentBackground>
+          <ColorPickerDialog
+            open={displayTextColorPicker}
+            setColor={handleChangeTextColor}
+            onClose={toggleDefaultTagTextColorPicker}
+            color={textcolor}
+          />
+        </FormControl>
+        <FormControl>
+          <FormHelperText style={styles.helpText}>{i18n.t('core:colorChangesToAllTags')}</FormHelperText>
+          <Switch
+            data-tid="editTagGroupSwitch"
+            onClick={() => setApplyChanges(!applyChanges)}
+            checked={applyChanges}
+          />
+        </FormControl>
+      </DialogContent>
+    );
+  }
 
   function renderActions() {
     return (
@@ -407,18 +316,16 @@ const EditTagGroupDialog = (props: Props) => {
     );
   }
 
-  function render() {
-    return (
-      <GenericDialog
-        open={props.open}
-        onClose={props.onClose}
-        onEnterKey={(event) => onEnterKeyHandler(event, onConfirm)}
-        renderTitle={renderTitle}
-        renderContent={renderContent}
-        renderActions={renderActions}
-      />
-    );
-  }
-}
+  return (
+    <GenericDialog
+      open={props.open}
+      onClose={props.onClose}
+      onEnterKey={(event) => onEnterKeyHandler(event, onConfirm)}
+      renderTitle={renderTitle}
+      renderContent={renderContent}
+      renderActions={renderActions}
+    />
+  );
+};
 
 export default EditTagGroupDialog;
