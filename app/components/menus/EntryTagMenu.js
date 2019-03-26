@@ -127,7 +127,7 @@ class EntryTagMenu extends React.Component<Props, State> {
               <ListItemIcon>
                 <EditIcon />
               </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:editTag')} />
+              <ListItemText inset primary={i18n.t('core:tagProperties')} />
             </MenuItem>
             <MenuItem data-tid="deleteTagMenu" onClick={this.showDeleteTagDialog}>
               <ListItemIcon>
@@ -169,18 +169,6 @@ class EntryTagMenu extends React.Component<Props, State> {
     </div>
   );
 }
-
-/*
-  <MenuItem data-tid="dateTagDialogMenu" onClick={this.showDateCalendarDialog}>
-    <ListItemIcon>
-      <EditIcon />
-    </ListItemIcon>
-    <ListItemText
-      inset
-      primary={i18n.t('core:editDateTag')}
-    />
-  </MenuItem>
-*/
 
 function mapStateToProps(state) {
   return {

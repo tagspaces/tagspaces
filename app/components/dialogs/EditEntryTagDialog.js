@@ -98,7 +98,7 @@ class EditEntryTagDialog extends React.Component<Props, State> {
   };
 
   renderTitle = () => (
-    <DialogTitle>{i18n.t('core:editTagTitle')}</DialogTitle>
+    <DialogTitle>{i18n.t('core:tagProperties')}</DialogTitle>
   );
 
   renderContent = () => (

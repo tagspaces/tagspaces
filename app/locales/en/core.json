@@ -409,5 +409,7 @@
   "sizeMedium": "Medium",
   "sizeLarge": "Large",
   "sizeHuge": "Huge",
+  "tagProperties": "Tag Properties",
+  "startContentExtraction": "Extract Content",
   "-": "-"
 }
