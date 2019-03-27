@@ -17,7 +17,7 @@
  * @flow
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
@@ -46,24 +46,28 @@ import { extractFileName } from '../../utils/paths';
 
 type Props = {
   classes: Object,
-  open?: boolean,
+  open: boolean,
   onClose: () => void,
   copyFiles: (files: Array<string>, destination: string) => void,
   moveFiles: (files: Array<string>, destination: string) => void,
   selectedFiles: Array<string>
 };
 
-const MoveCopyFilesDialog = (props: Props) => { // state = {
-  const [inputError, setInputError] = useState(false); // inputError: false,
-  const [disableConfirmButton, setDisableConfirmButton] = useState(true); // disableConfirmButton: true,
-  const [targetPath, setTargetPath] = useState(''); // targetPath: ''
+const MoveCopyFilesDialog = (props: Props) => {
+  const [inputError, setInputError] = useState(false);
+  const [disableConfirmButton, setDisableConfirmButton] = useState(true);
+  const [targetPath, setTargetPath] = useState('');
+
+  useEffect(() => {
+    handleValidation();
+  });
 
   function handleValidation() {
     if (targetPath && targetPath.length > 0) {
-      setInputError(false); //this.setState({ inputError: false, disableConfirmButton: false });
+      setInputError(false);
       setDisableConfirmButton(false);
     } else {
-      setInputError(true); // this.setState({ inputError: true, disableConfirmButton: true });
+      setInputError(true);
       setDisableConfirmButton(true);
     }
   }
@@ -71,41 +75,27 @@ const MoveCopyFilesDialog = (props: Props) => { // state = {
   function handleCopyFiles() {
     if (!disableConfirmButton) {
       props.copyFiles(props.selectedFiles, targetPath);
-      // this.setState({
-        setInputError(false);
-        setDisableConfirmButton(true);
-        setTargetPath('');
-    };
-      props.onClose();
+      setInputError(false);
+      setDisableConfirmButton(true);
+      setTargetPath('');
+    }
+    props.onClose();
   }
 
   function handleMoveFiles() {
     if (!disableConfirmButton) {
       props.moveFiles(props.selectedFiles, targetPath);
-      // this.setState({
-        setInputError(false);
-        setDisableConfirmButton(true);
-        setTargetPath('');
-    };
-      props.onClose();
-  }
-
-  handleInputChange(event: Object) {
-    const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
-
-    this.setState({
-      [name]: value
-    }, this.handleValidation);
+      setInputError(false);
+      setDisableConfirmButton(true);
+      setTargetPath('');
+    }
+    props.onClose();
   }
 
   function selectDirectory() {
     if (AppConfig.isElectron) {
       PlatformIO.selectDirectoryDialog().then(selectedPaths => {
-        setTargetPath(selectedPaths[0]); // this.setState({
-        //   targetPath: selectedPaths[0],
-        handleValidation();
+        setTargetPath(selectedPaths[0]);
         return true;
       }).catch((err) => {
         console.log('selectDirectoryDialog failed with: ' + err);
@@ -144,7 +134,10 @@ const MoveCopyFilesDialog = (props: Props) => { // state = {
             placeholder={i18n.t('core:moveCopyToPath')}
             fullWidth={true}
             data-tid="targetPathInput"
-            onChange={e => handleInputChange(e)}
+            onChange={event => {
+              const target = event.target;
+              setTargetPath(target.value);
+            }}
             value={targetPath}
             endAdornment={
               PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb ? undefined :
@@ -193,19 +186,17 @@ const MoveCopyFilesDialog = (props: Props) => { // state = {
     );
   }
 
-  render() {
-    return (
-      <GenericDialog
-        open={props.open}
-        onClose={props.onClose}
-        // onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
-        renderTitle={renderTitle}
-        renderContent={renderContent}
-        renderActions={renderActions}
-      />
-    );
-  }
-}
+  return (
+    <GenericDialog
+      open={props.open}
+      onClose={props.onClose}
+      // onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
+      renderTitle={renderTitle}
+      renderContent={renderContent}
+      renderActions={renderActions}
+    />
+  );
+};
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators({

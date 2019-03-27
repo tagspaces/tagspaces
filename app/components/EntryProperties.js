@@ -18,6 +18,7 @@
  */
 
 import React, { Component } from 'react';
+import uuidv1 from 'uuid';
 import marked from 'marked';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -39,6 +40,7 @@ import AppConfig from '../config';
 import { Pro } from '../pro';
 import TagsSelect from './TagsSelect';
 import TransparentBackground from './TransparentBackground';
+import { UUID } from 'builder-util-runtime';
 
 const styles = theme => ({
   entryProperties: {
@@ -767,6 +769,7 @@ class EntryProperties extends Component<Props, State> {
           editTagForEntry={editTagForEntry}
         />
         <MoveCopyFilesDialog
+          key={uuidv1()}
           open={isMoveCopyFilesDialogOpened}
           onClose={this.toggleMoveCopyFilesDialog}
           selectedFiles={[entryPath]}

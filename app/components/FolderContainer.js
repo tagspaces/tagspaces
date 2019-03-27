@@ -184,7 +184,7 @@ class FolderContainer extends React.Component<Props, State> {
         pathParts.push(normalizedCurrentPath.substring(PlatformIO.haveObjectStoreSupport() ? 2 : 1));
         normalizedCurrentPath = normalizedCurrentPath.substring(0, normalizedCurrentPath.lastIndexOf('/'));
       }
-      console.log('Path parts : ' + JSON.stringify(pathParts));
+      // console.log('Path parts : ' + JSON.stringify(pathParts));
       if (pathParts.length >= 1) {
         pathParts = pathParts.slice(1, pathParts.length); // remove current directory
       }

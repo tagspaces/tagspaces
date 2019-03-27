@@ -18,6 +18,7 @@
  */
 
 import React from 'react';
+import uuidv1 from 'uuid';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import removeMd from 'remove-markdown';
@@ -1021,6 +1022,7 @@ class GridPerspective extends React.Component<Props, State> {
           selectedEntries={this.props.selectedEntries}
         />
         <MoveCopyFilesDialog
+          key={uuidv1()}
           open={this.state.isMoveCopyFilesDialogOpened}
           onClose={this.handleCloseDialogs}
           selectedFiles={selectedFilePaths}
