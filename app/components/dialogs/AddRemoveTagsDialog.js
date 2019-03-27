@@ -17,7 +17,7 @@
  * @flow
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -34,6 +34,7 @@ import i18n from '../../services/i18n';
 import { extractFileName } from '../../utils/paths';
 
 type Props = {
+  classes: Object,
   open: boolean,
   selectedEntries?: Array<Object>,
   onClose: () => void,
@@ -42,26 +43,33 @@ type Props = {
   removeAllTags: (paths: Array<string>) => void
 };
 
-type State = {
+/* type State = {
   disableConfirmButton?: boolean,
   open?: boolean,
   newlyAddedTags?: Array<Tag>,
   isConfirmDialogOpened?: boolean
-};
+}; */
 
-class AddRemoveTagsDialog extends React.Component<Props, State> {
-  state = {
-    disableConfirmButton: true,
+const AddRemoveTagsDialog = (props: Props) => {
+  const [disableConfirmButton, setDisableConfirmButton] = useState(true);
+  const [newlyAddedTags, setNewlyAddedTags] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [isConfirmDialogOpened, setIsConfirmDialogOpened] = useState(false);
+  /*  disableConfirmButton: true,
     newlyAddedTags: [],
     open: false,
     isConfirmDialogOpened: false
-  };
+  }; */
 
-  handleChange = (name, value) => {
+  /* handleChange = (name, value) => {
     this.setState({
       newlyAddedTags: value
     });
-  };
+  }; */
+
+  function handleChange(value) {
+    setNewlyAddedTags(value);
+  }
 
   /* onAddTag = (tag) => {
     const { newlyAddedTags } = this.state;
@@ -75,44 +83,117 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
     this.setState({ newlyAddedTags: modifiedTags });
   }; */
 
-  onClose = () => {
-    this.setState({ newlyAddedTags: [] });
-    this.props.onClose();
-  };
+  function onClose() {
+    setNewlyAddedTags({ newlyAddedTags: [] });
+    props.onClose();
+  }
 
-  addTags = () => {
-    if (this.props.selectedEntries && this.props.selectedEntries.length > 0) {
+  function addTags() {
+    if (props.selectedEntries && props.selectedEntries.length > 0) {
       const paths = [];
-      this.props.selectedEntries.map((entry) => {
+      props.selectedEntries.map((entry) => {
         paths.push(entry.path);
         return true;
       });
-      this.props.addTags(paths, this.state.newlyAddedTags);
+      props.addTags(paths, newlyAddedTags);
     }
-    this.onClose();
+    onClose();
   }
 
-  render() {
-    const {
-      open,
-      selectedEntries = [],
-      removeTags,
-      removeAllTags,
-      onClose
-    } = this.props;
-    const { newlyAddedTags = [] } = this.state;
+  function renderActions() {
+    return (
+      <DialogActions>
+        <Button
+          data-tid="cancel"
+          onClick={onClose}
+          color="primary"
+        >
+          {i18n.t('core:cancel')}
+        </Button>
+        <Button
+          data-tid="cleanTagsMultipleEntries"
+          disabled={selectedEntries.length < 1}
+          color="primary"
+          onClick={() => {
+            if (selectedEntries && selectedEntries.length > 0) {
+              const paths = [];
+              selectedEntries.map((entry) => {
+                paths.push(entry.path);
+                return true;
+              });
+              removeAllTags(paths);
+            }
+            onClose();
+          }}
+        >
+          {i18n.t('core:tagOperationCleanTags')}
+        </Button>
+        <Button
+          data-tid="removeTagsMultipleEntries"
+          disabled={newlyAddedTags.length === 0 || selectedEntries.length < 1}
+          color="primary"
+          onClick={() => {
+            if (selectedEntries && selectedEntries.length > 0) {
+              const paths = [];
+              selectedEntries.map((entry) => {
+                paths.push(entry.path);
+                return true;
+              });
+              removeTags(paths, newlyAddedTags);
+            }
+            onClose();
+          }}
+        >
+          {i18n.t('core:tagOperationRemoveTag')}
+        </Button>
+        <Button
+          data-tid="addTagsMultipleEntries"
+          disabled={newlyAddedTags.length < 1 || selectedEntries.length < 1}
+          color="primary"
+          onClick={addTags}
+        >
+          {i18n.t('core:tagOperationAddTag')}
+        </Button>
+      </DialogActions>
+    );
+  }
 
+  function renderContent() {
+    return (
+      <DialogContent style={{ minHeight: 330 }}>
+        <TagsSelect tags={newlyAddedTags} handleChange={handleChange} />
+        <List dense style={{ width: 550 }}>
+          {selectedEntries.length > 0 && selectedEntries.map((entry) => (
+            <ListItem title={entry.path}>
+              <ListItemIcon>
+                <FileIcon />
+              </ListItemIcon>
+              <Typography variant="inherit" noWrap>{extractFileName(entry.path || '')}</Typography>
+            </ListItem>
+          ))}
+        </List>
+      </DialogContent>
+    );
+  }
+
+  function renderTitle() {
+    return (
+      <DialogTitle>{i18n.t('core:tagOperationTitle')}</DialogTitle>
+    );
+  }
+
+  /* render() {
     return (
       <GenericDialog
         open={open}
         onClose={onClose}
-        onEnterKey={(event) => onEnterKeyHandler(event, this.addTags)}
+        onEnterKey={(event) => onEnterKeyHandler(event, addTags)}
         renderTitle={() => (
           <DialogTitle>{i18n.t('core:tagOperationTitle')}</DialogTitle>
         )}
         renderContent={() => (
           <DialogContent style={{ minHeight: 330 }}>
-            <TagsSelect tags={newlyAddedTags} handleChange={this.handleChange} />
+            <TagsSelect tags={newlyAddedTags} handleChange={handleChange} />
             <List dense style={{ width: 550 }}>
               {selectedEntries.length > 0 && selectedEntries.map((entry) => (
                 <ListItem title={entry.path}>
@@ -129,7 +210,7 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
           <DialogActions>
             <Button
               data-tid="cancel"
-              onClick={this.onClose}
+              onClick={onClose}
               color="primary"
             >
               {i18n.t('core:cancel')}
@@ -147,7 +228,7 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
                   });
                   removeAllTags(paths);
                 }
-                this.onClose();
+                onClose();
               }}
             >
               {i18n.t('core:tagOperationCleanTags')}
@@ -165,7 +246,7 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
                   });
                   removeTags(paths, newlyAddedTags);
                 }
-                this.onClose();
+                onClose();
               }}
             >
               {i18n.t('core:tagOperationRemoveTag')}
@@ -174,7 +255,7 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
               data-tid="addTagsMultipleEntries"
               disabled={newlyAddedTags.length < 1 || selectedEntries.length < 1}
               color="primary"
-              onClick={this.addTags}
+              onClick={addTags}
             >
               {i18n.t('core:tagOperationAddTag')}
             </Button>
@@ -182,7 +263,23 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
         )}
       />
     );
-  }
-}
+  } */
+
+  const {
+    selectedEntries = [],
+    removeTags,
+    removeAllTags,
+  } = props;
+  return (
+    <GenericDialog
+      open={open}
+      onClose={onClose}
+      onEnterKey={(event) => onEnterKeyHandler(event, addTags)}
+      renderTitle={renderTitle}
+      renderContent={renderContent}
+      renderActions={renderActions}
+    />
+  );
+};
 
 export default AddRemoveTagsDialog;
