@@ -46,7 +46,8 @@ type Props = {
   removeTags: (paths: Array<string>, tags: Array<Tag>) => void,
   editTagForEntry: (path: string, tag: Tag) => void,
   searchLocationIndex: (searchQuery: SearchQuery) => void,
-  maxSearchResults: number
+  maxSearchResults: number,
+  isReadOnlyMode: boolean
 };
 
 type State = {
@@ -120,18 +121,22 @@ class EntryTagMenu extends React.Component<Props, State> {
           </ListItemIcon>
           <ListItemText inset primary={i18n.t('core:showFilesWithThisTag')} />
         </MenuItem>
-        <MenuItem data-tid="editTagDialogMenu" onClick={this.showEditTagDialog}>
-          <ListItemIcon>
-            <EditIcon />
-          </ListItemIcon>
-          <ListItemText inset primary={i18n.t('core:editTag')} />
-        </MenuItem>
-        <MenuItem data-tid="deleteTagMenu" onClick={this.showDeleteTagDialog}>
-          <ListItemIcon>
-            <DeleteIcon />
-          </ListItemIcon>
-          <ListItemText inset primary={i18n.t('core:removeTag')} />
-        </MenuItem>
+        {!this.props.isReadOnlyMode && (
+          <div>
+            <MenuItem data-tid="editTagDialogMenu" onClick={this.showEditTagDialog}>
+              <ListItemIcon>
+                <EditIcon />
+              </ListItemIcon>
+              <ListItemText inset primary={i18n.t('core:tagProperties')} />
+            </MenuItem>
+            <MenuItem data-tid="deleteTagMenu" onClick={this.showDeleteTagDialog}>
+              <ListItemIcon>
+                <DeleteIcon />
+              </ListItemIcon>
+              <ListItemText inset primary={i18n.t('core:removeTag')} />
+            </MenuItem>
+          </div>
+        )}
       </Menu>
       <ConfirmDialog
         open={this.state.isDeleteTagDialogOpened}
@@ -164,18 +169,6 @@ class EntryTagMenu extends React.Component<Props, State> {
     </div>
   );
 }
-
-/*
-  <MenuItem data-tid="dateTagDialogMenu" onClick={this.showDateCalendarDialog}>
-    <ListItemIcon>
-      <EditIcon />
-    </ListItemIcon>
-    <ListItemText
-      inset
-      primary={i18n.t('core:editDateTag')}
-    />
-  </MenuItem>
-*/
 
 function mapStateToProps(state) {
   return {

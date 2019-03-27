@@ -21,7 +21,9 @@
 
 var android_sdk = require('./lib/android_sdk');
 
-android_sdk.print_newest_available_sdk_target().done(null, function (err) {
+android_sdk.print_newest_available_sdk_target().done(null, function(err) {
     console.error(err);
     process.exit(2);
 });
+
+

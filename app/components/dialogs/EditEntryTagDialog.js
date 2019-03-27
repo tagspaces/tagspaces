@@ -96,7 +96,7 @@ const EditEntryTagDialog = (props: Props) => {
 
   function renderTitle() {
     return (
-      <DialogTitle>{i18n.t('core:editTagTitle')}</DialogTitle>
+      <DialogTitle>{i18n.t('core:tagProperties')}</DialogTitle>
     );
   }
 

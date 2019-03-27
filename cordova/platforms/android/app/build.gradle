@@ -22,32 +22,33 @@ apply plugin: 'com.android.application'
 buildscript {
     repositories {
         mavenCentral()
-        google()
+        maven {
+            url "https://maven.google.com"
+        }
         jcenter()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.0'
+        classpath 'com.android.tools.build:gradle:3.0.1'
     }
 }
 
 // Allow plugins to declare Maven dependencies via build-extras.gradle.
 allprojects {
     repositories {
-        mavenCentral()
+        mavenCentral();
         jcenter()
     }
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.6.0'
+    gradleVersion = '4.1.0'
 }
 
 // Configuration properties. Set these via environment variables, build-extras.gradle, or gradle.properties.
 // Refer to: http://www.gradle.org/docs/current/userguide/tutorial_this_and_that.html
 ext {
     apply from: '../CordovaLib/cordova.gradle'
-
     // The value for android.compileSdkVersion.
     if (!project.hasProperty('cdvCompileSdkVersion')) {
         cdvCompileSdkVersion = null;
@@ -144,25 +145,24 @@ cdvBuildRelease.dependsOn {
     return computeBuildTargetName(false)
 }
 
-task cdvPrintProps {
-    doLast {
-        println('cdvCompileSdkVersion=' + cdvCompileSdkVersion)
-        println('cdvBuildToolsVersion=' + cdvBuildToolsVersion)
-        println('cdvVersionCode=' + cdvVersionCode)
-        println('cdvVersionCodeForceAbiDigit=' + cdvVersionCodeForceAbiDigit)
-        println('cdvMinSdkVersion=' + cdvMinSdkVersion)
-        println('cdvBuildMultipleApks=' + cdvBuildMultipleApks)
-        println('cdvReleaseSigningPropertiesFile=' + cdvReleaseSigningPropertiesFile)
-        println('cdvDebugSigningPropertiesFile=' + cdvDebugSigningPropertiesFile)
-        println('cdvBuildArch=' + cdvBuildArch)
-        println('computedVersionCode=' + android.defaultConfig.versionCode)
-        android.productFlavors.each { flavor ->
-            println('computed' + flavor.name.capitalize() + 'VersionCode=' + flavor.versionCode)
-        }
+task cdvPrintProps << {
+    println('cdvCompileSdkVersion=' + cdvCompileSdkVersion)
+    println('cdvBuildToolsVersion=' + cdvBuildToolsVersion)
+    println('cdvVersionCode=' + cdvVersionCode)
+    println('cdvVersionCodeForceAbiDigit=' + cdvVersionCodeForceAbiDigit)
+    println('cdvMinSdkVersion=' + cdvMinSdkVersion)
+    println('cdvBuildMultipleApks=' + cdvBuildMultipleApks)
+    println('cdvReleaseSigningPropertiesFile=' + cdvReleaseSigningPropertiesFile)
+    println('cdvDebugSigningPropertiesFile=' + cdvDebugSigningPropertiesFile)
+    println('cdvBuildArch=' + cdvBuildArch)
+    println('computedVersionCode=' + android.defaultConfig.versionCode)
+    android.productFlavors.each { flavor ->
+        println('computed' + flavor.name.capitalize() + 'VersionCode=' + flavor.versionCode)
     }
 }
 
 android {
+
     defaultConfig {
         versionCode cdvVersionCode ?: new BigInteger("" + privateHelpers.extractIntFromManifest("versionCode"))
         applicationId privateHelpers.extractStringFromManifest("package")
@@ -249,7 +249,6 @@ android {
         }
         addSigningProps(cdvReleaseSigningPropertiesFile, signingConfigs.release)
     }
-
     if (cdvDebugSigningPropertiesFile) {
         addSigningProps(cdvDebugSigningPropertiesFile, signingConfigs.debug)
     }
@@ -266,7 +265,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: '*.jar')
     // SUB-PROJECT DEPENDENCIES START
     implementation(project(path: ":CordovaLib"))
-    implementation "com.android.support:support-v4:24.1.1+"
+    compile "com.android.support:support-v4:24.1.1+"
     // SUB-PROJECT DEPENDENCIES END
 }
 

@@ -18,8 +18,8 @@
  */
 
 import React from 'react';
-import Typography from '@material-ui/core/Typography';
-import i18n from '../services/i18n';
+// import i18n from '../services/i18n';
+// {i18n.t('core:loading')}
 
-const LoadingLazy = () => (<Typography style={{ padding: 10 }}>{i18n.t('core:loading')}</Typography>);
+const LoadingLazy = () => (<div style={{ padding: 10, backgroundColor: 'transparent' }}>...</div>);
 export default LoadingLazy;

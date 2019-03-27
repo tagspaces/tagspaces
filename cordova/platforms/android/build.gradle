@@ -20,30 +20,32 @@
 
 buildscript {
     repositories {
-        google()
+        maven {
+            url "https://maven.google.com"
+        }
         jcenter()
     }
-
     dependencies {
+
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
-
-        classpath 'com.android.tools.build:gradle:3.2.0'
+        classpath 'com.android.tools.build:gradle:3.0.1'
     }
 }
 
 allprojects {
     repositories {
-        google()
+        maven {
+            url "https://maven.google.com"
+        }
         jcenter()
     }
-
     //This replaces project.properties w.r.t. build settings
     project.ext {
-      defaultBuildToolsVersion="28.0.3" //String
+      defaultBuildToolsVersion="27.0.1" //String
       defaultMinSdkVersion=19 //Integer - Minimum requirement is Android 4.4
-      defaultTargetSdkVersion=28 //Integer - We ALWAYS target the latest by default
-      defaultCompileSdkVersion=28 //Integer - We ALWAYS compile with the latest by default
+      defaultTargetSdkVersion=27 //Integer - We ALWAYS target the latest by default
+      defaultCompileSdkVersion=27 //Integer - We ALWAYS compile with the latest by default
     }
 }
 

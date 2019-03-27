@@ -142,7 +142,6 @@ public class SystemWebChromeClient extends WebChromeClient {
      * Handle database quota exceeded notification.
      */
     @Override
-    @SuppressWarnings("deprecation")
     public void onExceededDatabaseQuota(String url, String databaseIdentifier, long currentQuota, long estimatedSize,
             long totalUsedQuota, WebStorage.QuotaUpdater quotaUpdater)
     {
@@ -181,13 +180,11 @@ public class SystemWebChromeClient extends WebChromeClient {
 
     // API level 7 is required for this, see if we could lower this using something else
     @Override
-    @SuppressWarnings("deprecation")
     public void onShowCustomView(View view, WebChromeClient.CustomViewCallback callback) {
         parentEngine.getCordovaWebView().showCustomView(view, callback);
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public void onHideCustomView() {
         parentEngine.getCordovaWebView().hideCustomView();
     }

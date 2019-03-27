@@ -17,6 +17,7 @@
        under the License.
 */
 
+var Q = require('q');
 var superspawn = require('cordova-common').superspawn;
 
 var suffix_number_regex = /(\d+)$/;
@@ -94,7 +95,7 @@ module.exports.list_targets = function () {
         } else throw err;
     }).then(function (targets) {
         if (targets.length === 0) {
-            return Promise.reject(new Error('No android targets (SDKs) installed!'));
+            return Q.reject(new Error('No android targets (SDKs) installed!'));
         }
         return targets;
     });

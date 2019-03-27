@@ -44,7 +44,7 @@ process.argv.forEach((arg, count) => {
     portableMode = true;
   } else if (arg.indexOf('-psn') >= 0) { // ignoring the -psn process serial number parameter on MacOS by double click
     arg = '';
-  } else if (arg === '.' || count === 0) { // ignoring the first argument
+  } else if (arg === 'babel-register' || arg === '.' || count === 0) { // ignoring the first argument
     // Ignore these argument
   } else if (arg.length > 2) {
     // console.warn('Opening file: ' + arg);

@@ -19,7 +19,10 @@
        under the License.
 */
 
+/* jshint loopfunc:true */
+
 var path = require('path');
+var build = require('./build');
 var emulator = require('./emulator');
 var device = require('./device');
 var Q = require('q');
@@ -49,7 +52,6 @@ function getInstallTarget (runOptions) {
  * @return  {Promise}
  */
 module.exports.run = function (runOptions) {
-    runOptions = runOptions || {};
 
     var self = this;
     var install_target = getInstallTarget(runOptions);
@@ -101,17 +103,16 @@ module.exports.run = function (runOptions) {
             });
         });
     }).then(function (resolvedTarget) {
-        return new Promise((resolve) => {
-            const builder = require('./builders/builders').getBuilder();
-            const buildOptions = require('./build').parseBuildOptions(runOptions, null, self.root);
-            resolve(builder.fetchBuildResults(buildOptions.buildType, buildOptions.arch));
-        }).then(function (buildResults) {
+        // Better just call self.build, but we're doing some processing of
+        // build results (according to platformApi spec) so they are in different
+        // format than emulator.install expects.
+        // TODO: Update emulator/device.install to handle this change
+        return build.run.call(self, runOptions, resolvedTarget).then(function (buildResults) {
             if (resolvedTarget && resolvedTarget.isEmulator) {
                 return emulator.wait_for_boot(resolvedTarget.target).then(function () {
                     return emulator.install(resolvedTarget, buildResults);
                 });
             }
-
             return device.install(resolvedTarget, buildResults);
         });
     });

@@ -196,7 +196,7 @@ export function formatFileSize2(sizeInBytes, siSystem): string {
   return sizeInBytes.toFixed(1) + ' ' + units[cUnit];
 }
 
-export function formatDateTime(date, includeTime) {
+export function formatDateTime(date, includeTime: boolean) {
   if (date === undefined || date === '') {
     return '';
   }
@@ -206,8 +206,7 @@ export function formatDateTime(date, includeTime) {
   if (cDate.length === 1) {
     cDate = '0' + cDate;
   }
-  let cMonth = d.getMonth();
-  cMonth++;
+  let cMonth = d.getMonth() + 1;
   cMonth += '';
   if (cMonth.length === 1) {
     cMonth = '0' + cMonth;
@@ -235,7 +234,7 @@ export function formatDateTime(date, includeTime) {
   return cYear + '.' + cMonth + '.' + cDate + time;
 }
 
-export function formatDateTime4Tag(date, includeTime, includeMS) {
+export function formatDateTime4Tag(date, includeTime: boolean, includeMS?: boolean) {
   if (date === undefined || date === '') {
     return '';
   }
@@ -245,8 +244,7 @@ export function formatDateTime4Tag(date, includeTime, includeMS) {
   if (cDate.length === 1) {
     cDate = '0' + cDate;
   }
-  let cMonth = d.getMonth();
-  cMonth++;
+  let cMonth = d.getMonth() + 1;
   cMonth += '';
   if (cMonth.length === 1) {
     cMonth = '0' + cMonth;

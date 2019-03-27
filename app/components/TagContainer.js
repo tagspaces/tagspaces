@@ -22,6 +22,7 @@ import uuidv1 from 'uuid';
 import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import LocationIcon from '@material-ui/icons/Place';
 import RemoveTagIcon from '@material-ui/icons/Close';
 import { type TagGroup, type Tag, getAllTags } from '../reducers/taglibrary';
 import { getTagColor, getTagTextColor } from '../reducers/settings';
@@ -95,6 +96,9 @@ const TagContainer = (props: Props) => {
   let textColor = tag.textcolor || defaultTextColor;
   let backgroundColor = tag.color || defaultBackgroundColor;
 
+  // Check if tag is plus code
+  const isGeoTag = /(^|\s)([23456789C][23456789CFGHJMPQRV][23456789CFGHJMPQRVWX]{6}\+[23456789CFGHJMPQRVWX]{2,3})(\s|$)/.test(tag.title);
+
   allTags.some((currentTag: Tag) => {
     if (currentTag.title === tag.title) {
       textColor = currentTag.textcolor;
@@ -130,6 +134,7 @@ const TagContainer = (props: Props) => {
       }}
     >
       <Button
+        title={tag.title}
         size="small"
         style={{
           opacity: isDragging ? 0.5 : 1,
@@ -148,7 +153,16 @@ const TagContainer = (props: Props) => {
         }}
       >
         <span style={{ flexGrow: '1' }}>
-          {tag.title}
+          {isGeoTag ? (
+            <LocationIcon
+              style={{
+                color: tag.textColor,
+                fontSize: 18,
+                marginBottom: -5
+              }}
+              onClick={event => handleRemoveTag(event, tag)}
+            />
+          ) : tag.title}
         </span>
         {(tagMode === 'remove') ? (deleteIcon || (
           <RemoveTagIcon

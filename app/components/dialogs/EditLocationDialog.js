@@ -324,7 +324,7 @@ class EditLocationDialog extends React.Component<Props, State> {
               }
               label={i18n.t('core:startupLocation')}
             />
-            {/* <FormControlLabel
+            <FormControlLabel
               control={
                 <Switch
                   disabled={!Pro}
@@ -335,7 +335,7 @@ class EditLocationDialog extends React.Component<Props, State> {
                 />
               }
               label={i18n.t('core:readonlyModeSwitch') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
-            /> */}
+            />
             <FormControlLabel
               control={
                 <Switch

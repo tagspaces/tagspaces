@@ -27,9 +27,15 @@ import locations from './locations';
 import taglibrary from './taglibrary';
 import locationIndex from './location-index';
 
-const ExternalLocations = window.ExtLocations || false;
+const externalLocations = window.ExtLocations || false;
+const externalTagLibrary = window.ExtTagLibrary || false;
 
-const blacklist = ExternalLocations ? ['app', 'locationIndex', 'locations'] : ['app', 'locationIndex'];
+const blacklist = [
+  'app',
+  'locationIndex',
+  externalLocations ? 'locations' : false,
+  externalTagLibrary ? 'taglibrary' : false
+];
 
 const rootPersistConfig = {
   key: 'root',
@@ -53,8 +59,8 @@ const rootReducer = persistCombineReducers(rootPersistConfig, {
   ), */
   settings,
   app,
-  locations: ExternalLocations ? () => ExternalLocations : locations,
-  taglibrary,
+  locations: externalLocations ? () => externalLocations : locations,
+  taglibrary: externalTagLibrary ? () => externalTagLibrary : taglibrary,
   router,
   locationIndex
 });

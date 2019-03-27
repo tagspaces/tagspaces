@@ -23,12 +23,18 @@ import { bindActionCreators } from 'redux';
 import IconButton from '@material-ui/core/IconButton';
 import { Pro } from '../pro';
 import TextLogoIcon from '../assets/images/text-logo.svg';
-// import CustomLogoIcon from '../assets/images/custom-logo.svg';
 import { actions as AppActions } from '../reducers/app';
 
 type Props = {
   toggleAboutDialog: () => void
 };
+
+let logo = Pro ? Pro.TextLogoIcon : TextLogoIcon;
+// logo = 'assets/images/custom-logo.svg';
+const externalLogo = window.ExtLogoURL || false;
+if (externalLogo) {
+  logo = externalLogo;
+}
 
 const CustomLogo = (props: Props) => (
   <IconButton
@@ -36,8 +42,7 @@ const CustomLogo = (props: Props) => (
     data-tid="aboutTagSpaces"
     onClick={props.toggleAboutDialog}
   >
-    <img style={{ height: 40 }} src={Pro ? Pro.TextLogoIcon : TextLogoIcon} alt="TagSpaces Logo" />
-    {/* <img style={{ height: 40 }} src={CustomLogoIcon} alt="Custom Logo" /> */}
+    <img style={{ maxHeight: 50 }} src={logo} alt="TagSpaces Logo" />
   </IconButton>
 );
 

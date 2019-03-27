@@ -22,10 +22,9 @@
 var check_reqs = require('./lib/check_reqs');
 
 check_reqs.run().done(
-    function success () {
+    function success() {
         console.log('Looks like your environment fully supports cordova-android development!');
-    },
-    function fail (err) {
+    }, function fail(err) {
         console.log(err);
         process.exit(2);
     }

@@ -6,7 +6,6 @@
     "node_modules/",
     "app.html",
     "splash.html",
-    "splash-worker.js",
     "main.prod.js",
     "main.prod.js.map",
     "third-party.txt",

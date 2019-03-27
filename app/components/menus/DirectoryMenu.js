@@ -18,12 +18,15 @@
  */
 
 import React from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import uuidv1 from 'uuid';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Divider from '@material-ui/core/Divider';
+import ContentExtractionIcon from '@material-ui/icons/TrackChanges';
 import OpenFolderIcon from '@material-ui/icons/SubdirectoryArrowLeft';
 import AddExistingFileIcon from '@material-ui/icons/ExitToApp';
 import OpenFolderNativelyIcon from '@material-ui/icons/Launch';
@@ -38,9 +41,11 @@ import CreateDirectoryDialog from '../dialogs/CreateDirectoryDialog';
 import RenameDirectoryDialog from '../dialogs/RenameDirectoryDialog';
 import AppConfig from '../../config';
 import i18n from '../../services/i18n';
-import { extractFileName, extractParentDirectoryPath, normalizePath } from '../../utils/paths'; // extractFileExtension
+import { extractFileName, normalizePath } from '../../utils/paths'; // extractFileExtension
 import PlatformIO from '../../services/platform-io';
 import { formatDateTime4Tag } from '../../utils/misc';
+import { actions as AppActions } from '../../reducers/app';
+import IOActions from '../../reducers/io-actions';
 
 type Props = {
   open?: boolean,
@@ -56,6 +61,7 @@ type Props = {
   toggleCreateFileDialog?: () => void,
   loadParentDirectoryContent?: () => void,
   openFileNatively?: (path: string) => void,
+  extractContent?: () => void,
   perspectiveMode: boolean,
   showNotification?: (
     text: string,
@@ -98,6 +104,11 @@ class DirectoryMenu extends React.Component<Props, State> {
   showProperties = () => {
     this.props.onClose();
     this.props.openFile(this.props.directoryPath, false);
+  };
+
+  initContentExtraction = () => {
+    this.props.onClose();
+    this.props.extractContent();
   };
 
   showDeleteDirectoryDialog = () => {
@@ -349,18 +360,20 @@ class DirectoryMenu extends React.Component<Props, State> {
               <ListItemText inset primary={i18n.t('core:deleteDirectory')} />
             </MenuItem>
           )}
-          <MenuItem
-            data-tid="showInFileManager"
-            onClick={this.showInFileManager}
-          >
-            <ListItemIcon>
-              <OpenFolderNativelyIcon />
-            </ListItemIcon>
-            <ListItemText
-              inset
-              primary={i18n.t('core:showInFileManager')}
-            />
-          </MenuItem>
+          {!AppConfig.isWeb && (
+            <MenuItem
+              data-tid="showInFileManager"
+              onClick={this.showInFileManager}
+            >
+              <ListItemIcon>
+                <OpenFolderNativelyIcon />
+              </ListItemIcon>
+              <ListItemText
+                inset
+                primary={i18n.t('core:showInFileManager')}
+              />
+            </MenuItem>
+          )}
           {!this.props.perspectiveMode && (
             <Divider />
           )}
@@ -400,6 +413,15 @@ class DirectoryMenu extends React.Component<Props, State> {
             </MenuItem>
           )}
           <Divider />
+          <MenuItem data-tid="extractContent" onClick={this.initContentExtraction}>
+            <ListItemIcon>
+              <ContentExtractionIcon />
+            </ListItemIcon>
+            <ListItemText
+              inset
+              primary={i18n.t('core:startContentExtraction')}
+            />
+          </MenuItem>
           <MenuItem data-tid="showProperties" onClick={this.showProperties}>
             <ListItemIcon>
               <SettingsIcon />
@@ -424,4 +446,11 @@ class DirectoryMenu extends React.Component<Props, State> {
   }
 }
 
-export default DirectoryMenu;
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({
+    showNotification: AppActions.showNotification,
+    extractContent: IOActions.extractContent
+  }, dispatch);
+}
+
+export default connect(null, mapDispatchToProps)(DirectoryMenu);
