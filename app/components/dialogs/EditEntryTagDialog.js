@@ -17,7 +17,7 @@
  * @flow
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -52,40 +52,27 @@ type Props = {
 const EditEntryTagDialog = (props: Props) => {
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [errorTag, setErrorTag] = useState(false);
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState(props.selectedTag && props.selectedTag.title);
 
-  function componentWillReceiveProps(nextProps: any) {
-    if (nextProps.open === true) {
-      setDisableConfirmButton(!nextProps.selectedTag.title);
-      setTitle(nextProps.selectedTag.title);
-      // this.setState({
-      //   disableConfirmButton: !nextProps.selectedTag.title,
-      //   title: nextProps.selectedTag.title
-    }
-  }
-
-  function handleInputChange(event: Object) {
-    const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    setTitle(value);
+  useEffect(() => {
     handleValidation();
-  }
+  });
 
   function handleValidation() {
     const tagCheck = RegExp(/^[^\#\/\\ \[\]]{1,}$/);
     if (title && tagCheck.test(title)) {
       setErrorTag(false);
-      setDisableConfirmButton(false); // { errorTag: false, disableConfirmButton: false });
+      setDisableConfirmButton(false);
     } else {
       setErrorTag(true);
-      setDisableConfirmButton(true); // this.setState({ errorTag: true, disableConfirmButton: true });
+      setDisableConfirmButton(true);
     }
   }
 
   function onConfirm() {
     if (!disableConfirmButton) {
-      props.editTagForEntry(props.currentEntryPath, props.selectedTag, state.title);
-      setErrorTag(false); // this.setState({ errorTag: false, disableConfirmButton: true });
+      props.editTagForEntry(props.currentEntryPath, props.selectedTag, title);
+      setErrorTag(false);
       setDisableConfirmButton(true);
       props.onClose();
     }
@@ -110,7 +97,10 @@ const EditEntryTagDialog = (props: Props) => {
             margin="dense"
             name="title"
             label={i18n.t('core:editTag')}
-            onChange={handleInputChange}
+            onChange={event => {
+              const target = event.target;
+              setTitle(target.value);
+            }}
             value={title}
             data-tid="editTagEntryDialog_input"
           />

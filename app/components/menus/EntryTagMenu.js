@@ -18,8 +18,10 @@
  */
 
 import React from 'react';
+import uuidv1 from 'uuid';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import Divider from '@material-ui/core/Divider';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/DeleteForever';
 import ShowEntriesWithTagIcon from '@material-ui/icons/Launch';
@@ -123,17 +125,18 @@ class EntryTagMenu extends React.Component<Props, State> {
         </MenuItem>
         {!this.props.isReadOnlyMode && (
           <div>
-            <MenuItem data-tid="editTagDialogMenu" onClick={this.showEditTagDialog}>
-              <ListItemIcon>
-                <EditIcon />
-              </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:tagProperties')} />
-            </MenuItem>
             <MenuItem data-tid="deleteTagMenu" onClick={this.showDeleteTagDialog}>
               <ListItemIcon>
                 <DeleteIcon />
               </ListItemIcon>
               <ListItemText inset primary={i18n.t('core:removeTag')} />
+            </MenuItem>
+            <Divider />
+            <MenuItem data-tid="editTagDialogMenu" onClick={this.showEditTagDialog}>
+              <ListItemIcon>
+                <EditIcon />
+              </ListItemIcon>
+              <ListItemText inset primary={i18n.t('core:tagProperties')} />
             </MenuItem>
           </div>
         )}
@@ -153,6 +156,7 @@ class EntryTagMenu extends React.Component<Props, State> {
         confirmDialogContent={'confirmDialogContent'}
       />
       <EditEntryTagDialog
+        key={uuidv1()}
         open={this.state.isEditTagDialogOpened}
         onClose={this.handleCloseDialogs}
         editTagForEntry={this.props.editTagForEntry}
