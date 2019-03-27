@@ -17,7 +17,7 @@
  * @flow
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Button from '@material-ui/core/Button';
@@ -45,24 +45,18 @@ const CreateDirectoryDialog = (props: Props) => {
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [name, setName] = useState('');
 
-  function handleInputChange(event: Object) {
-    const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
-
-    this.setState({
-      [name]: value
-    }, handleValidation());
-  }
+  useEffect(() => {
+    handleValidation();
+  });
 
   function handleValidation() {
     // const pathRegex = '^((\.\./|[a-zA-Z0-9_/\-\\])*\.[a-zA-Z0-9]+)$';
     // const nameRegex = '^[A-Z][-a-zA-Z]+$';
     if (name.length > 0) {
       setInputError(false);
-      setDisableConfirmButton(false); // this.setState({ inputError: false, disableConfirmButton: false });
+      setDisableConfirmButton(false);
     } else {
-      setInputError(true); // this.setState({ inputError: true, disableConfirmButton: true });
+      setInputError(true);
       setDisableConfirmButton(true);
     }
   }
@@ -81,10 +75,10 @@ const CreateDirectoryDialog = (props: Props) => {
     props.onClose();
   }
 
-  function resetState() { // this.setState({
-    setName(''); // name: '',
-    setInputError(false); // inputError: false,
-    setDisableConfirmButton(true); // disableConfirmButton: true,
+  function resetState() {
+    setName('');
+    setInputError(false);
+    setDisableConfirmButton(true);
   }
 
   function renderTitle() {
@@ -107,7 +101,10 @@ const CreateDirectoryDialog = (props: Props) => {
             autoFocus
             name="name"
             label={i18n.t('core:createNewDirectoryTitleName')}
-            onChange={handleInputChange}
+            onChange={event => {
+              const target = event.target;
+              setName(target.value);
+            }}
             value={name}
             data-tid="directoryName"
             id="directoryName"
