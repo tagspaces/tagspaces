@@ -34,7 +34,7 @@ import i18n from '../../services/i18n';
 import TransparentBackground from '../TransparentBackground';
 
 type Props = {
-  // classes: Object,
+  classes: Object,
   open?: boolean,
   editTagGroup: (tagGroup: TagGroup) => void,
   selectedTagGroupEntry?: TagGroup,
@@ -66,7 +66,7 @@ const EditTagGroupDialog = (props: Props) => {
       }
   } */
 
-  function componentWillReceiveProps({ open, selectedTagGroupEntry }) {
+  /* function componentWillReceiveProps({ open, selectedTagGroupEntry }) {
     if (open === true) {
       setDisplayTextColorPicker(!selectedTagGroupEntry.title);
       setApplyChanges(false);
@@ -75,7 +75,7 @@ const EditTagGroupDialog = (props: Props) => {
       setTextcolor(selectedTagGroupEntry.textcolor);
       setModifiedData(selectedTagGroupEntry.modified_date);
     }
-  }
+  } */
 
   /*
   function handleInputChange(event: Object) {
