@@ -22,11 +22,13 @@ import uuidv1 from 'uuid';
 import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import LocationIcon from '@material-ui/icons/Place';
+import PlaceIcon from '@material-ui/icons/Place';
+import DateIcon from '@material-ui/icons/DateRange';
 import RemoveTagIcon from '@material-ui/icons/Close';
 import { type TagGroup, type Tag, getAllTags } from '../reducers/taglibrary';
 import { getTagColor, getTagTextColor } from '../reducers/settings';
-// import { getSelectedEntries } from '../reducers/app';
+import { isPlusCode } from '../utils/misc';
+import { isDateTimeTag } from '../utils/dates';
 
 type Props = {
   tag: Tag,
@@ -47,35 +49,7 @@ type Props = {
   selectedEntries: Array<Object>
 };
 
-const TagContainer = (props: Props) => {
-  // shouldComponentUpdate(nextProps) {
-  //   if (this.props.tag.title !== nextProps.tag.title
-  //     || typeof this.props.key !== typeof nextProps.key
-  //     || (this.props.key && nextProps.key && this.props.key !== nextProps.key)
-  //     || this.props.tag.color !== nextProps.tag.color
-  //     || this.props.tag.textcolor !== nextProps.tag.textcolor
-  //     || this.props.allTags.some((currentTag: Tag) => {
-  //       if (currentTag.title === this.props.tag.title) {
-  //         return (nextProps.allTags.some((updatedTag: Tag) => {
-  //           if (updatedTag.title === this.props.tag.title) {
-  //             return currentTag.color !== updatedTag.color || currentTag.textcolor !== updatedTag.textcolor;
-  //           }
-  //           return false;
-  //         }));
-  //       }
-  //       return false;
-  //     })
-  //     || (this.props.tagGroup && this.props.tagGroup ? (this.props.tagGroup.uuid !== nextProps.tagGroup.uuid) : false)
-  //     || this.props.isDragging !== nextProps.isDragging
-  //     || typeof this.props.entryPath !== typeof nextProps.entryPath
-  //     || (this.props.entryPath && this.props.entryPath !== nextProps.entryPath)
-  //     || this.props.selectedEntries !== nextProps.selectedEntries
-  //   ) {
-  //     return true;
-  //   }
-  //   return false;
-  // }
-
+const TagContainer = React.memo((props: Props) => {
   const {
     key,
     tag,
@@ -95,12 +69,14 @@ const TagContainer = (props: Props) => {
 
   let textColor = tag.textcolor || defaultTextColor;
   let backgroundColor = tag.color || defaultBackgroundColor;
+  const { title } = tag;
 
   // Check if tag is plus code
-  const isGeoTag = /(^|\s)([23456789C][23456789CFGHJMPQRV][23456789CFGHJMPQRVWX]{6}\+[23456789CFGHJMPQRVWX]{2,3})(\s|$)/.test(tag.title);
+  const isGeoTag = isPlusCode(title); // || isLatLong
+  const isTagDate = !isGeoTag && isDateTimeTag(title);
 
   allTags.some((currentTag: Tag) => {
-    if (currentTag.title === tag.title) {
+    if (currentTag.title === title) {
       textColor = currentTag.textcolor;
       backgroundColor = currentTag.color;
       return true;
@@ -111,7 +87,7 @@ const TagContainer = (props: Props) => {
   return (
     <div
       role="presentation"
-      data-tid={'tagContainer_' + tag.title.replace(/ /g, '_')}
+      data-tid={'tagContainer_' + title.replace(/ /g, '_')}
       key={key || tag.id || uuidv1()}
       onClick={event => {
         if (event.ctrlKey && addTags) {
@@ -134,7 +110,7 @@ const TagContainer = (props: Props) => {
       }}
     >
       <Button
-        title={tag.title}
+        title={title}
         size="small"
         style={{
           opacity: isDragging ? 0.5 : 1,
@@ -153,20 +129,29 @@ const TagContainer = (props: Props) => {
         }}
       >
         <span style={{ flexGrow: '1' }}>
-          {isGeoTag ? (
-            <LocationIcon
+          {isGeoTag && (
+            <PlaceIcon
               style={{
                 color: tag.textColor,
                 fontSize: 18,
                 marginBottom: -5
               }}
-              onClick={event => handleRemoveTag(event, tag)}
             />
-          ) : tag.title}
+          )}
+          {isTagDate && (
+            <DateIcon
+              style={{
+                color: tag.textColor,
+                fontSize: 18,
+                marginBottom: -5
+              }}
+            />
+          )}
+          {!isTagDate && !isGeoTag && title }
         </span>
         {(tagMode === 'remove') ? (deleteIcon || (
           <RemoveTagIcon
-            data-tid={'tagRemoveButton_' + tag.title.replace(/ /g, '_')}
+            data-tid={'tagRemoveButton_' + title.replace(/ /g, '_')}
             style={{
               color: tag.textColor,
               fontSize: 20,
@@ -176,7 +161,7 @@ const TagContainer = (props: Props) => {
           />
         )) : (
           <MoreVertIcon
-            data-tid={'tagMoreButton_' + tag.title.replace(/ /g, '_')}
+            data-tid={'tagMoreButton_' + title.replace(/ /g, '_')}
             style={{
               color: tag.textColor,
               marginLeft: -5,
@@ -188,7 +173,7 @@ const TagContainer = (props: Props) => {
       </Button>
     </div>
   );
-};
+});
 
 function mapStateToProps(state) {
   return {
