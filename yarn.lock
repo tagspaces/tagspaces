@@ -5558,6 +5558,13 @@ generic-pool@2.1.1:
   resolved "https://registry.yarnpkg.com/generic-pool/-/generic-pool-2.1.1.tgz#af04dc2c325cfcb975023fa52bfce9617a7435fd"
   integrity sha1-rwTcLDJc/Ll1Aj+lK/zpYXp0Nf0=
 
+geolocation-utils@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/geolocation-utils/-/geolocation-utils-1.2.1.tgz#3928be1a7a0c4f0283a7ca884128e09c4ada12cf"
+  integrity sha512-iz3k862SXYmGxBJvfDi3IfNRsWZeCugcjfh6H3dPpk//KV1T9+RO2AHP4ALYFtF7fTOd6VsOboqfjFgmviiUyw==
+  dependencies:
+    point-in-polygon "1.0.1"
+
 get-caller-file@^1.0.1:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/get-caller-file/-/get-caller-file-1.0.3.tgz#f978fa4c90d1dfe7ff2d6beda2a515e713bdcf4a"
@@ -9537,6 +9544,11 @@ pn@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/pn/-/pn-1.1.0.tgz#e2f4cef0e219f463c179ab37463e4e1ecdccbafb"
   integrity sha512-2qHaIQr2VLRFoxe2nASzsV6ef4yOOH+Fi9FBOVH6cqeSgUnoyySPZkxzLuzd+RYOQTRpROA0ztTMqxROKSb/nA==
+
+point-in-polygon@1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/point-in-polygon/-/point-in-polygon-1.0.1.tgz#d59b64e8fee41c49458aac82b56718c5957b2af7"
+  integrity sha1-1Ztk6P7kHElFiqyCtWcYxZV7Kvc=
 
 popper.js@^1.14.1, popper.js@^1.14.3:
   version "1.14.6"

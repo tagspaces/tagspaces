@@ -200,6 +200,7 @@
     "font-awesome": "^4.7.0",
     "fs-extra": "^4.0.1",
     "fuse.js": "^3.4.2",
+    "geolocation-utils": "^1.2.1",
     "history": "^4.7.2",
     "html2canvas": "^1.0.0-alpha.12",
     "i18next": "^11.3.3",
