@@ -38,18 +38,11 @@ import BookmarkIcon from '@material-ui/icons/BookmarkBorder';
 import BookIcon from '@material-ui/icons/LocalLibraryOutlined';
 import Button from '@material-ui/core/Button';
 import Input from '@material-ui/core/Input';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Paper from '@material-ui/core/Paper';
-import InputBase from '@material-ui/core/InputBase';
-import Divider from '@material-ui/core/Divider';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import TagsSelect from './TagsSelect';
 import CustomLogo from './CustomLogo';
 import { actions as AppActions, getDirectoryPath } from '../reducers/app';
@@ -73,14 +66,14 @@ type Props = {
 };
 
 type State = {
-  textQuery?: string,
-  tagsAND?: Array<Tag>,
-  tagsOR?: Array<Tag>,
-  tagsNOT?: Array<Tag>,
-  fileTypes?: Array<string>,
-  searchBoxing?: 'location' | 'folder',
-  lastModified?: string,
-  fileSize?: string
+  textQuery: string,
+  tagsAND: Array<Tag>,
+  tagsOR: Array<Tag>,
+  tagsNOT: Array<Tag>,
+  fileTypes: Array<string>,
+  searchBoxing: 'location' | 'folder',
+  lastModified: string,
+  fileSize: string
 };
 
 class Search extends React.Component<Props, State> {
@@ -415,15 +408,6 @@ class Search extends React.Component<Props, State> {
               </MenuItem>
             </Select>
           </FormControl>
-          { /* <FormControl
-            className={classes.formControl}
-            disabled={true}
-            title={i18n.t('core:thisFunctionalityIsAvailableInPro')}
-          >
-            <InputLabel htmlFor="searchHistory">{i18n.t('core:searchHistory')}</InputLabel>
-            <Input id="searchHistory" />
-            <FormHelperText>{i18n.t('core:chooseSearchQuery')}</FormHelperText>
-          </FormControl> */}
           <FormControl className={classes.formControl}>
             <Button
               disabled={indexing}
