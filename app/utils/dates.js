@@ -17,7 +17,55 @@
  * @flow
  */
 
-// Format Sun May 11, 2014 to 2014-05
+/** Returns true if the input is one of the following formats:
+ * 2015, 201402, 20220212, 20190230~12, 20190230~1245, 20190230~124612 */
+export function isDateTimeTag(tagDate: string): boolean {
+  return (
+    isYear(tagDate) ||
+    isYearMonth(tagDate) ||
+    isYearMonthDay(tagDate) ||
+    isYearMonthDayHour(tagDate) ||
+    isYearMonthDayHourMin(tagDate) ||
+    isYearMonthDayHourMinSec(tagDate)
+  );
+}
+
+/** Returns true if string is this format: 2015 */
+export function isYear(tagDate: string): boolean {
+  return /(^|\s)([0123][0123456789][0123456789][0123456789])(\s|$)/.test(tagDate);
+}
+
+/** Returns true if string is this format: 201512 */
+export function isYearMonth(tagDate: string): boolean {
+  return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789])(\s|$)/.test(tagDate);
+}
+
+/** Returns true if string is this format: 20151223 */
+export function isYearMonthDay(tagDate: string): boolean {
+  return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789])(\s|$)/.test(tagDate);
+}
+
+/** Returns true if string is this format: 20151223~01 */
+export function isYearMonthDayHour(tagDate: string): boolean {
+  return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789]~[0123456][0123456789])(\s|$)/.test(tagDate);
+}
+
+/** Returns true if string is this format: 20151223~0112 */
+export function isYearMonthDayHourMin(tagDate: string): boolean {
+  return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789]~[0123456][0123456789][0123456][0123456789])(\s|$)/.test(tagDate);
+}
+
+/** Returns true if string is this format: 20151223~011358 */
+export function isYearMonthDayHourMinSec(tagDate: string): boolean {
+  return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789]~[0123456][0123456789][0123456][0123456789][0123456][0123456789])(\s|$)/.test(tagDate);
+}
+
+/** Convert a date in this 2013-01-02 12:23:58 format */
+export function formatDateTime(date: Date): string {
+  return date.toISOString().substring(0, 19).split('T').join(' ');
+}
+
+/** Converts 'Sun May 11, 2014' to 2014-05 */
 export function parseDateMonth(date) {
   const d = new Date(date);
   let month = '' + (d.getMonth() + 1);
@@ -29,7 +77,7 @@ export function parseDateMonth(date) {
   return [year, month].join('');
 }
 
-// Format Sun May 11, 2014 to 2014-05-11
+/** Converts 'Sun May 11, 2014' to 2014-05-11 */
 export function parseDate(date) {
   const d = new Date(date);
   let month = '' + (d.getMonth() + 1);
