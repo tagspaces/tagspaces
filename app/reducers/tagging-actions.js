@@ -33,7 +33,7 @@ import {
   saveMetaDataPromise,
   generateFileName,
 } from '../services/utils-io';
-import { formatDateTime4Tag } from '../utils/misc';
+import { formatDateTime4Tag, isPlusCode } from '../utils/misc';
 import AppConfig from '../config';
 import PlatformIO from '../services/platform-io';
 import { Pro } from '../pro';
@@ -69,7 +69,7 @@ const actions = {
         if (
           taglibrary.findIndex(tagGroup => tagGroup.children.findIndex(obj => obj.id === tag.id) !== -1) === -1 &&
           !/^(?:\d+~\d+|\d+)$/.test(tag.title) && // skip adding of tag containing only digits
-          !/(^|\s)([23456789C][23456789CFGHJMPQRV][23456789CFGHJMPQRVWX]{6}\+[23456789CFGHJMPQRVWX]{2,3})(\s|$)/.test(tag.title) // skip adding of tag containing geo information
+          !isPlusCode(tag.title) // skip adding of tag containing geo information
         ) {
           uniqueTags.push(tag);
         }
