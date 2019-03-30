@@ -1145,11 +1145,13 @@ export const actions = {
     path,
     entryMeta
   }),
-  reflectUpdateSidecarTags: (path: string, tags: Array<Tags>) => (
+  reflectUpdateSidecarTags: (path: string, tags: Array<Tags>, updateIndex: boolean = true) => (
     dispatch: (actions: Object) => void
   ) => {
     dispatch(actions.reflectUpdateSidecarTagsInt(path, tags));
-    dispatch(LocationIndexActions.reflectUpdateSidecarTags(path, tags));
+    if (updateIndex) {
+      dispatch(LocationIndexActions.reflectUpdateSidecarTags(path, tags));
+    }
   },
   reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => (
     dispatch: (actions: Object) => void

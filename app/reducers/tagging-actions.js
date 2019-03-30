@@ -39,7 +39,7 @@ import PlatformIO from '../services/platform-io';
 import { Pro } from '../pro';
 
 const actions = {
-  addTags: (paths: Array<string>, tags: Array<Tag>) => (
+  addTags: (paths: Array<string>, tags: Array<Tag>, updateIndex?: boolean = true) => (
     dispatch: (actions: Object) => void,
     getState: () => Object
   ) => {
@@ -58,7 +58,7 @@ const actions = {
     });
 
     paths.map((path) => {
-      dispatch(actions.addTagsToEntry(path, processedTags));
+      dispatch(actions.addTagsToEntry(path, processedTags, updateIndex));
       return true;
     });
 
@@ -90,7 +90,7 @@ const actions = {
       }
     }
   },
-  addTagsToEntry: (path: string, tags: Array<Tag>) => async (
+  addTagsToEntry: (path: string, tags: Array<Tag>, updateIndex?: boolean = true) => async (
     dispatch: (actions: Object) => void,
     getState: () => Object
   ) => {
@@ -117,7 +117,7 @@ const actions = {
             tags: newTags,
           };
           saveMetaDataPromise(path, updatedFsEntryMeta).then(() => {
-            dispatch(AppActions.reflectUpdateSidecarTags(path, newTags));
+            dispatch(AppActions.reflectUpdateSidecarTags(path, newTags, updateIndex));
             return true;
           }).catch((err) => {
             console.warn('Error adding tags for ' + path + ' with ' + err);
@@ -127,7 +127,7 @@ const actions = {
       } else {
         const newFsEntryMeta = { tags };
         saveMetaDataPromise(path, newFsEntryMeta).then(() => {
-          dispatch(AppActions.reflectUpdateSidecarTags(path, tags));
+          dispatch(AppActions.reflectUpdateSidecarTags(path, tags, updateIndex));
           return true;
         }).catch(error => {
           console.warn('Error adding tags for ' + path + ' with ' + error);
