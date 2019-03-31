@@ -21,7 +21,8 @@ import { isDate } from "util";
 
 /** Returns true is a string is plus code e.g. 8FWH4HVG+3V 8FWH4HVG+ 8FWH4H+ */
 export function isPlusCode(plusCode: string): boolean {
-  return /(^|\s)([23456789C][23456789CFGHJMPQRV][23456789CFGHJMPQRVWX]{6}\+[23456789CFGHJMPQRVWX]{2,3})(\s|$)/.test(plusCode);
+  const upperCasedPlusCode = plusCode.toUpperCase(); // needed only lowercased index
+  return /(^|\s)([23456789C][23456789CFGHJMPQRV][23456789CFGHJMPQRVWX]{6}\+[23456789CFGHJMPQRVWX]{2,3})(\s|$)/.test(upperCasedPlusCode);
 }
 
 export function parseLatLon(latLongInput: string): {lat: number, lon: number} | false {
@@ -258,7 +259,8 @@ export function formatDateTime(date, includeTime: boolean) {
   return cYear + '.' + cMonth + '.' + cDate + time;
 }
 
-export function formatDateTime4Tag(date, includeTime: boolean, includeMS?: boolean) {
+/** Convert a date in the following format 20191204 or 20191204~124532 */
+export function formatDateTime4Tag(date, includeTime: boolean, includeMS?: boolean): string {
   if (date === undefined || date === '') {
     return '';
   }
