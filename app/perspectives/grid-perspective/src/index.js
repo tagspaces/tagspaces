@@ -238,14 +238,14 @@ class GridPerspective extends React.Component<Props, State> {
       // Clear selection on directory change
       this.clearSelection();
 
-      const grid = document.querySelector(
-        '[data-tid="perspectiveGridFileTable"]'
-      );
-      const firstGridItem = grid.querySelector('div');
+      // const grid = document.querySelector(
+      //   '[data-tid="perspectiveGridFileTable"]'
+      // );
+      // const firstGridItem = grid.querySelector('div');
 
-      if (isObj(firstGridItem)) {
-        firstGridItem.scrollIntoView({ top: 0 });
-      }
+      // if (isObj(firstGridItem)) {
+      //   firstGridItem.scrollIntoView({ top: 80 });
+      // }
     }
   };
 
