@@ -413,15 +413,17 @@ class DirectoryMenu extends React.Component<Props, State> {
             </MenuItem>
           )}
           <Divider />
-          <MenuItem data-tid="extractContent" onClick={this.initContentExtraction}>
-            <ListItemIcon>
-              <ContentExtractionIcon />
-            </ListItemIcon>
-            <ListItemText
-              inset
-              primary={i18n.t('core:startContentExtraction')}
-            />
-          </MenuItem>
+          {!this.props.isReadOnlyMode && (
+            <MenuItem data-tid="extractContent" onClick={this.initContentExtraction}>
+              <ListItemIcon>
+                <ContentExtractionIcon />
+              </ListItemIcon>
+              <ListItemText
+                inset
+                primary={i18n.t('core:startContentExtraction')}
+              />
+            </MenuItem>
+          )}
           <MenuItem data-tid="showProperties" onClick={this.showProperties}>
             <ListItemIcon>
               <SettingsIcon />
