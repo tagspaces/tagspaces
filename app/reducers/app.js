@@ -291,33 +291,16 @@ export default (state: Object = initialState, action: Object) => {
     };
   }
   case types.REFLECT_DELETE_ENTRY: {
-    let indexForRemoving = -1;
-    let indexForRenamingInOpenedFiles = -1;
-    // Updating entries in the current directory
-    let openedFiles = state.openedFiles;
-    state.currentDirectoryEntries.forEach((entry, index) => {
-      if (entry.path === action.path) {
-        indexForRemoving = index;
-        openedFiles = []; // TODO extend for multiple files
-      }
-    });
-    state.openedFiles.forEach((entry, index) => {
-      if (entry.path === action.path) { // TODO handle directory case, update contained files and dirs too
-        indexForRenamingInOpenedFiles = index;
-      }
-    });
-    let directoryEntries = state.currentDirectoryEntries;
-    if (indexForRemoving >= 0) {
-      directoryEntries = [
-        ...state.currentDirectoryEntries.slice(0, indexForRemoving),
-        ...state.currentDirectoryEntries.slice(indexForRemoving + 1)
-      ];
-    }
-    if (indexForRemoving >= 0 || indexForRenamingInOpenedFiles >= 0) {
+    const newDirectoryEntries = state.currentDirectoryEntries.filter((entry) => entry.path !== action.path);
+    const newOpenedFiles = state.openedFiles.filter((entry) => entry.path !== action.path);
+    if (
+      state.currentDirectoryEntries.length > newDirectoryEntries.length ||
+      state.openedFiles.length > newOpenedFiles.length
+    ) {
       return {
         ...state,
-        currentDirectoryEntries: directoryEntries,
-        openedFiles
+        currentDirectoryEntries: newDirectoryEntries,
+        openedFiles: newOpenedFiles
       };
     }
     return state;

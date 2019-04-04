@@ -32,6 +32,7 @@ import { actions as AppActions } from './app';
 import AppConfig from '../config';
 import i18n from '../services/i18n';
 import PlatformIO from '../services/platform-io';
+import { type Tag } from './taglibrary';
 
 export const types = {
   INDEX_DIRECTORY: 'INDEX_DIRECTORY',
@@ -41,11 +42,11 @@ export const types = {
   INDEX_DIRECTORY_SUCCESS: 'INDEX_DIRECTORY_SUCCESS',
   INDEX_DIRECTORY_FAILURE: 'INDEX_DIRECTORY_FAILURE',
   INDEX_DIRECTORY_SEARCH: 'INDEX_DIRECTORY_SEARCH',
-  REFLECT_DELETE_ENTRY: 'REFLECT_DELETE_ENTRY',
-  REFLECT_CREATE_ENTRY: 'REFLECT_CREATE_ENTRY',
-  REFLECT_RENAME_ENTRY: 'REFLECT_RENAME_ENTRY',
-  REFLECT_UPDATE_SIDECARTAGS: 'REFLECT_UPDATE_SIDECARTAGS',
-  REFLECT_UPDATE_SIDECARMETA: 'REFLECT_UPDATE_SIDECARMETA'
+  REFLECT_DELETE_ENTRY: 'INDEX/REFLECT_DELETE_ENTRY',
+  REFLECT_CREATE_ENTRY: 'INDEX/REFLECT_CREATE_ENTRY',
+  REFLECT_RENAME_ENTRY: 'INDEX/REFLECT_RENAME_ENTRY',
+  REFLECT_UPDATE_SIDECARTAGS: 'INDEX/REFLECT_UPDATE_SIDECARTAGS',
+  REFLECT_UPDATE_SIDECARMETA: 'INDEX/REFLECT_UPDATE_SIDECARMETA'
 };
 
 
@@ -75,7 +76,6 @@ export default (state: Object = initialState, action: Object) => {
     return { ...state, isIndexing: false };
   }
   case types.INDEX_DIRECTORY_SUCCESS: {
-    // return state; // uncomment to disable index in redux
     return {
       ...state,
       currentDirectoryIndex: action.directoryIndex,
@@ -91,23 +91,11 @@ export default (state: Object = initialState, action: Object) => {
     };
   }
   case types.REFLECT_DELETE_ENTRY: {
-    let indexForRemovingInIndex = -1;
-    state.currentDirectoryIndex.forEach((entry, index) => {
-      if (entry.path === action.path) { // TODO handle directory case, delete contained files and dirs
-        indexForRemovingInIndex = index;
-      }
-    });
-    let directoryIndex = state.currentDirectoryIndex;
-    if (indexForRemovingInIndex >= 0) {
-      directoryIndex = [
-        ...state.currentDirectoryIndex.slice(0, indexForRemovingInIndex),
-        ...state.currentDirectoryIndex.slice(indexForRemovingInIndex + 1)
-      ];
-    }
-    if (indexForRemovingInIndex >= 0) {
+    const newDirectoryIndex = state.currentDirectoryIndex.filter((entry) => !entry.path.startsWith(action.path));
+    if (state.currentDirectoryIndex.length > newDirectoryIndex.length) {
       return {
         ...state,
-        currentDirectoryIndex: directoryIndex
+        currentDirectoryIndex: newDirectoryIndex
       };
     }
     return state;
@@ -286,7 +274,7 @@ export const actions = {
     type: types.REFLECT_DELETE_ENTRY,
     path
   }),
-  reflectCreateEntry: (newEntry) => ({
+  reflectCreateEntry: (newEntry: Object) => ({
     type: types.REFLECT_CREATE_ENTRY,
     newEntry
   }),
@@ -295,7 +283,7 @@ export const actions = {
     path,
     newPath
   }),
-  reflectUpdateSidecarTags: (path: string, tags: Array<Tags>) => ({
+  reflectUpdateSidecarTags: (path: string, tags: Array<Tag>) => ({
     type: types.REFLECT_UPDATE_SIDECARTAGS,
     path,
     tags
