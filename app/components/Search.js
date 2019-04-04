@@ -36,8 +36,11 @@ import FileIcon from '@material-ui/icons/InsertDriveFileOutlined';
 import ClearSearchIcon from '@material-ui/icons/Clear';
 import BookmarkIcon from '@material-ui/icons/BookmarkBorder';
 import BookIcon from '@material-ui/icons/LocalLibraryOutlined';
+import PlaceIcon from '@material-ui/icons/Place';
+import DateIcon from '@material-ui/icons/DateRange';
 import Button from '@material-ui/core/Button';
 import Input from '@material-ui/core/Input';
+import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
@@ -53,6 +56,15 @@ import i18n from '../services/i18n';
 import { FileTypeGroups, type SearchQuery } from '../services/search';
 import { Pro } from '../pro';
 import type { Tag } from '../reducers/taglibrary';
+import ocl from '../utils/openlocationcode';
+import {
+  formatDateTime,
+  extractTimePeriod
+} from '../utils/dates';
+import {
+  isPlusCode,
+  parseLatLon
+} from '../utils/misc';
 
 type Props = {
   classes: Object,
@@ -73,6 +85,15 @@ type State = {
   fileTypes: Array<string>,
   searchBoxing: 'location' | 'folder',
   lastModified: string,
+  tagTimePeriod: string,
+  tagTimePeriodHelper: string,
+  tagPlace: string,
+  tagPlaceHelper: string,
+  tagTimePeriodFrom: Date | null,
+  tagTimePeriodTo: Date | null,
+  tagPlaceLat: number | null,
+  tagPlaceLong: number | null,
+  tagPlaceRadius: number,
   fileSize: string
 };
 
@@ -85,6 +106,15 @@ class Search extends React.Component<Props, State> {
     fileTypes: FileTypeGroups.any,
     searchBoxing: 'location',
     lastModified: '',
+    tagTimePeriod: '',
+    tagTimePeriodHelper: '',
+    tagPlace: '',
+    tagPlaceHelper: '',
+    tagTimePeriodFrom: null,
+    tagTimePeriodTo: null,
+    tagPlaceLat: null,
+    tagPlaceLong: null,
+    tagPlaceRadius: 0,
     fileSize: ''
   };
 
@@ -98,6 +128,59 @@ class Search extends React.Component<Props, State> {
     });
   };
 
+  handleTimePeriodChange = event => {
+    const target = event.target;
+    const value = target.value;
+    let tagTimePeriodHelper = '';
+    const { fromDateTime, toDateTime } = extractTimePeriod(value);
+
+    if (toDateTime && fromDateTime) {
+      tagTimePeriodHelper = 'From: ' + formatDateTime(fromDateTime) + ' To: ' + formatDateTime(toDateTime);
+    } else {
+      tagTimePeriodHelper = 'No period selected';
+    }
+
+    this.setState({
+      tagTimePeriod: value,
+      tagTimePeriodFrom: fromDateTime,
+      tagTimePeriodTo: toDateTime,
+      tagTimePeriodHelper
+    });
+  };
+
+  handlePlaceChange = event => {
+    const target = event.target;
+    const value = target.value;
+    let lat = null;
+    let lon = null;
+    let tagPlaceHelper;
+
+    if (isPlusCode(value)) {
+      const coord = ocl.decode(value);
+      lat = Number(coord.latitudeCenter.toFixed(7));
+      lon = Number(coord.longitudeCenter.toFixed(7));
+    } else {
+      const latLon = parseLatLon(value);
+      if (latLon) {
+        lat = latLon.lat;
+        lon = latLon.lon;
+      }
+    }
+
+    if (lat && lon) {
+      tagPlaceHelper = 'Place at lat: ' + lat + ' long: ' + lon;
+    } else {
+      tagPlaceHelper = 'No place selected';
+    }
+
+    this.setState({
+      tagPlace: value,
+      tagPlaceLat: lat,
+      tagPlaceLong: lon,
+      tagPlaceHelper
+    });
+  };
+
   startSearch = event => {
     if (event.key === 'Enter' || event.keyCode === 13) {
       this.executeSearch();
@@ -105,19 +188,25 @@ class Search extends React.Component<Props, State> {
   };
 
   clearSearch = () => {
-    this.setState(
-      {
-        textQuery: '',
-        tagsAND: [],
-        tagsOR: [],
-        tagsNOT: [],
-        searchBoxing: 'location',
-        fileTypes: FileTypeGroups.any,
-        lastModified: '',
-        fileSize: ''
-      },
-      () => this.props.loadDirectoryContent(this.props.currentDirectory)
-    );
+    this.setState({
+      textQuery: '',
+      tagsAND: [],
+      tagsOR: [],
+      tagsNOT: [],
+      searchBoxing: 'location',
+      fileTypes: FileTypeGroups.any,
+      lastModified: '',
+      tagTimePeriod: '',
+      tagTimePeriodHelper: '',
+      tagPlace: '',
+      tagPlaceHelper: '',
+      tagTimePeriodFrom: null,
+      tagTimePeriodTo: null,
+      tagPlaceLat: null,
+      tagPlaceLong: null,
+      tagPlaceRadius: 0,
+      fileSize: ''
+    }, () => this.props.loadDirectoryContent(this.props.currentDirectory));
   };
 
   toggleSearchBoxing = () => {
@@ -138,6 +227,11 @@ class Search extends React.Component<Props, State> {
       fileTypes: this.state.fileTypes,
       lastModified: this.state.lastModified,
       fileSize: this.state.fileSize,
+      tagTimePeriodFrom: this.state.tagTimePeriodFrom ? this.state.tagTimePeriodFrom.getTime() : null,
+      tagTimePeriodTo: this.state.tagTimePeriodTo ? this.state.tagTimePeriodTo.getTime() : null,
+      tagPlaceLat: this.state.tagPlaceLat,
+      tagPlaceLong: this.state.tagPlaceLong,
+      tagPlaceRadius: this.state.tagPlaceRadius,
       maxSearchResults: this.props.maxSearchResults,
       currentDirectory: this.props.currentDirectory
     };
@@ -228,7 +322,7 @@ class Search extends React.Component<Props, State> {
           <FormControl
             className={classes.formControl}
             disabled={indexing || !Pro}
-            title={i18n.t('core:thisFunctionalityIsAvailableInPro')}
+            title={!Pro && i18n.t('core:thisFunctionalityIsAvailableInPro')}
           >
             <InputLabel htmlFor="file-type">{i18n.t('core:fileType')}</InputLabel>
             <Select
@@ -337,6 +431,44 @@ class Search extends React.Component<Props, State> {
             disabled={indexing || !Pro}
             title={i18n.t('core:thisFunctionalityIsAvailableInPro')}
           >
+            <InputLabel shrink htmlFor="file-size">{i18n.t('core:sizeSearchTitle')}</InputLabel>
+            <Select
+              value={this.state.fileSize}
+              onChange={this.handleInputChange}
+              input={<Input name="fileSize" id="file-size" />}
+              displayEmpty
+            >
+              <MenuItem value="">
+                {i18n.t('core:sizeAny')}
+              </MenuItem>
+              <MenuItem value="sizeEmpty">
+                {i18n.t('core:sizeEmpty')}
+              </MenuItem>
+              <MenuItem value="sizeTiny">
+                {i18n.t('core:sizeTiny')}&nbsp;(&lt;&nbsp;10KB)
+              </MenuItem>
+              <MenuItem value="sizeVerySmall">
+                {i18n.t('core:sizeVerySmall')}&nbsp;(&lt;&nbsp;100KB)
+              </MenuItem>
+              <MenuItem value="sizeSmall">
+                {i18n.t('core:sizeSmall')}&nbsp;(&lt;&nbsp;1MB)
+              </MenuItem>
+              <MenuItem value="sizeMedium">
+                {i18n.t('core:sizeMedium')}&nbsp;(&lt;&nbsp;50MB)
+              </MenuItem>
+              <MenuItem value="sizeLarge">
+                {i18n.t('core:sizeLarge')}&nbsp;(&lt;&nbsp;1GB)
+              </MenuItem>
+              <MenuItem value="sizeHuge">
+                {i18n.t('core:sizeHuge')}&nbsp;(&gt;&nbsp;1GB)
+              </MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl
+            className={classes.formControl}
+            disabled={indexing || !Pro}
+            title={!Pro && i18n.t('core:thisFunctionalityIsAvailableInPro')}
+          >
             <InputLabel shrink htmlFor="modification-date">{i18n.t('core:lastModifiedSearchTitle')}</InputLabel>
             <Select
               value={this.state.lastModified}
@@ -373,40 +505,42 @@ class Search extends React.Component<Props, State> {
           <FormControl
             className={classes.formControl}
             disabled={indexing || !Pro}
-            title={i18n.t('core:thisFunctionalityIsAvailableInPro')}
+            title={!Pro && i18n.t('core:thisFunctionalityIsAvailableInPro')}
           >
-            <InputLabel shrink htmlFor="file-size">{i18n.t('core:sizeSearchTitle')}</InputLabel>
-            <Select
-              value={this.state.fileSize}
-              onChange={this.handleInputChange}
-              input={<Input name="fileSize" id="file-size" />}
-              displayEmpty
-            >
-              <MenuItem value="">
-                {i18n.t('core:sizeAny')}
-              </MenuItem>
-              <MenuItem value="sizeEmpty">
-                {i18n.t('core:sizeEmpty')}
-              </MenuItem>
-              <MenuItem value="sizeTiny">
-                {i18n.t('core:sizeTiny')}&nbsp;(&lt;&nbsp;10KB)
-              </MenuItem>
-              <MenuItem value="sizeVerySmall">
-                {i18n.t('core:sizeVerySmall')}&nbsp;(&lt;&nbsp;100KB)
-              </MenuItem>
-              <MenuItem value="sizeSmall">
-                {i18n.t('core:sizeSmall')}&nbsp;(&lt;&nbsp;1MB)
-              </MenuItem>
-              <MenuItem value="sizeMedium">
-                {i18n.t('core:sizeMedium')}&nbsp;(&lt;&nbsp;50MB)
-              </MenuItem>
-              <MenuItem value="sizeLarge">
-                {i18n.t('core:sizeLarge')}&nbsp;(&lt;&nbsp;1GB)
-              </MenuItem>
-              <MenuItem value="sizeHuge">
-                {i18n.t('core:sizeHuge')}&nbsp;(&gt;&nbsp;1GB)
-              </MenuItem>
-            </Select>
+            <TextField
+              id="tagTimePeriod"
+              label={i18n.t('Enter time period')}
+              value={this.state.tagTimePeriod}
+              onChange={this.handleTimePeriodChange}
+              onKeyDown={this.startSearch}
+              helperText={this.state.tagTimePeriodHelper}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end" title="201905 for May 2019 / 20190412 for 12th of April 2019 / 20190501~124523 for specific time">
+                    <IconButton>
+                      <DateIcon />
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+            />
+            <TextField
+              id="tagPlace"
+              label={i18n.t('GPS coordinates or plus code')}
+              value={this.state.tagPlace}
+              onChange={this.handlePlaceChange}
+              onKeyDown={this.startSearch}
+              helperText={this.state.tagPlaceHelper}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end" title="GPS: 49.23276,12.43123 PlusCode: 8FRG8Q87+6X">
+                    <IconButton>
+                      <PlaceIcon />
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+            />
           </FormControl>
           <FormControl className={classes.formControl}>
             <Button

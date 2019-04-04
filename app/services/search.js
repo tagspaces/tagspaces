@@ -18,14 +18,9 @@
  */
 
 import Fuse from 'fuse.js';
-// import ElasticLunr from 'elasticlunr';
 import jmespath from 'jmespath';
-import AppConfig from '../config';
+import { type Tag } from '../reducers/taglibrary';
 import { Pro } from '../pro';
-
-let currentQuery = '';
-let nextQuery = '';
-let caseSensitiveSearch = false; // TODO implement case sensitive search
 
 // export type FileTypeGroups = 'images' | 'notes' | 'documents' | 'audio' | 'video' | 'archives';
 
@@ -54,6 +49,11 @@ export type SearchQuery = {
   fileSize: string,
   searchBoxing: 'location' | 'folder',
   currentDirectory: string,
+  tagTimePeriodFrom?: number | null,
+  tagTimePeriodTo?: number | null,
+  tagPlaceLat?: number | null,
+  tagPlaceLong?: number | null,
+  tagPlaceRadius?: number | null,
   maxSearchResults?: number
 };
 
@@ -192,22 +192,27 @@ function constructjmespathQuery(searchQuery: SearchQuery): string {
   return jmespathQuery;
 }
 
-function transformTagsToLowercase(index: Array<Object>) {
-  console.time('taglowercase');
-  const resultIndex = index.map((entry) => {
-    const tags = [...entry.tags];
-    if (tags && tags.length) {
-      tags.map((tag) => {
-        tag.title = tag.title.toLowerCase();
-        return tag;
-      });
-    }
-    return {
-      ...entry,
-      tags
-    };
-  });
-  console.timeEnd('taglowercase');
+function prepareIndex(index: Array<Object>) {
+  console.time('PreparingIndex');
+  let resultIndex = [];
+  if (Pro && Pro.Search && Pro.Search.prepareIndex) {
+    resultIndex = Pro.Search.prepareIndex(index);
+  } else {
+    resultIndex = index.map((entry) => {
+      const tags = [...entry.tags];
+      if (tags && tags.length) {
+        tags.map((tag) => {
+          tag.title = tag.title.toLowerCase();
+          return tag;
+        });
+      }
+      return {
+        ...entry,
+        tags
+      };
+    });
+  }
+  console.timeEnd('PreparingIndex');
   return resultIndex;
 }
 
@@ -215,7 +220,7 @@ export default class Search {
   static searchLocationIndex = (locationContent: Array<Object>, searchQuery: SearchQuery): Promise<Array<Object> | []> => new Promise((resolve) => {
     console.time('searchtime');
     const jmespathQuery = constructjmespathQuery(searchQuery);
-    let results = transformTagsToLowercase(locationContent);
+    let results = prepareIndex(locationContent);
     let searched = false;
 
     // Limiting the search to current folder only (with sub-folders)

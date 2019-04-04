@@ -60,9 +60,84 @@ export function isYearMonthDayHourMinSec(tagDate: string): boolean {
   return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789]~[0123456][0123456789][0123456][0123456789][0123456][0123456789])(\s|$)/.test(tagDate);
 }
 
+/** Returns the number of day in month, January = 1 -> 31 .. December = 12 */
+export function getDaysInMonth(year: number, month: number): number {
+  return new Date(year, month, 0).getDate();
+}
+
+export const msInDay = 1000 * 60 * 60 * 24;
+
+/** Extract the time period from string e.g. 201902 -> fromDate: 2019-01-01 00:00:00, toDate; 2019-01-31 23:59:59 */
+export function extractTimePeriod(value: string): { fromDateTime: Date | null, toDateTime: Date | null} {
+  let fromDateTime = null;
+  let toDateTime = null;
+  if (value.length && !/(^|\s)([0123456789])(\s|$)/.test(value.substr(0, 1))) {
+    return { // Return if the first char is not a number, ignoring values starting with letters
+      fromDateTime,
+      toDateTime
+    };
+  }
+  try {
+    if (isYear(value)) {
+      fromDateTime = new Date(value + '-01-01');
+      toDateTime = new Date(value + '-12-31 23:59:59.999');
+    } else if (isYearMonth(value)) {
+      const year = value.substring(0, 4);
+      const month = value.substring(4, 6);
+      fromDateTime = new Date(year + '-' + month + '-01');
+      toDateTime = new Date(year + '-' + month + '-' + getDaysInMonth(parseInt(year, 10), parseInt(month, 10)) + ' 23:59:59.999');
+    } else if (isYearMonthDay(value)) {
+      const year = value.substring(0, 4);
+      const month = value.substring(4, 6);
+      const day = value.substring(6, 8);
+      fromDateTime = new Date(year + '-' + month + '-' + day);
+      toDateTime = new Date(year + '-' + month + '-' + day + ' 23:59:59.999');
+    } else if (isYearMonthDayHour(value)) {
+      const year = value.substring(0, 4);
+      const month = value.substring(4, 6);
+      const day = value.substring(6, 8);
+      const hour = value.substring(9, 11);
+      fromDateTime = new Date(year + '-' + month + '-' + day + ' ' + hour + ':00:00');
+      toDateTime = new Date(year + '-' + month + '-' + day + ' ' + hour + ':59:59.999');
+    } else if (isYearMonthDayHourMin(value)) {
+      const year = value.substring(0, 4);
+      const month = value.substring(4, 6);
+      const day = value.substring(6, 8);
+      const hour = value.substring(9, 11);
+      const min = value.substring(11, 13);
+      fromDateTime = new Date(year + '-' + month + '-' + day + ' ' + hour + ':' + min + ':00');
+      toDateTime = new Date(year + '-' + month + '-' + day + ' ' + hour + ':' + min + ':59.999');
+    } else if (isYearMonthDayHourMinSec(value)) {
+      const year = value.substring(0, 4);
+      const month = value.substring(4, 6);
+      const day = value.substring(6, 8);
+      const hour = value.substring(9, 11);
+      const min = value.substring(11, 13);
+      const sec = value.substring(13, 15);
+      fromDateTime = new Date(year + '-' + month + '-' + day + ' ' + hour + ':' + min + ':' + sec);
+      toDateTime = new Date(year + '-' + month + '-' + day + ' ' + hour + ':' + min + ':' + sec + '.999');
+    }
+  } catch (err) {
+    console.log('Error extracting date ' + err);
+  }
+  return {
+    fromDateTime,
+    toDateTime
+  };
+}
+
+export function pad(number: number) {
+  return (number < 10) ? '0' + number : number;
+}
+
 /** Convert a date in this 2013-01-02 12:23:58 format */
 export function formatDateTime(date: Date): string {
-  return date.toISOString().substring(0, 19).split('T').join(' ');
+  return date.getFullYear() +
+      '-' + pad(date.getMonth() + 1) +
+      '-' + pad(date.getDate()) +
+      ' ' + pad(date.getHours()) +
+      ':' + pad(date.getMinutes()) +
+      ':' + pad(date.getSeconds());
 }
 
 /** Converts 'Sun May 11, 2014' to 2014-05 */
