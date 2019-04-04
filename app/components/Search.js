@@ -65,6 +65,7 @@ import {
   isPlusCode,
   parseLatLon
 } from '../utils/misc';
+import PlatformIO from '../services/platform-io';
 
 type Props = {
   classes: Object,
@@ -179,6 +180,13 @@ class Search extends React.Component<Props, State> {
       tagPlaceLong: lon,
       tagPlaceHelper
     });
+  };
+
+  openPlace = () => {
+    const { tagPlaceLat, tagPlaceLong } = this.state;
+    if (tagPlaceLat && tagPlaceLong) {
+      PlatformIO.openUrl('https://www.openstreetmap.org/#map=16/' + tagPlaceLat + '/' + tagPlaceLong);
+    }
   };
 
   startSearch = event => {
@@ -537,7 +545,7 @@ class Search extends React.Component<Props, State> {
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end" title="GPS: 49.23276,12.43123 PlusCode: 8FRG8Q87+6X">
-                    <IconButton>
+                    <IconButton onClick={this.openPlace}>
                       <PlaceIcon />
                     </IconButton>
                   </InputAdornment>
