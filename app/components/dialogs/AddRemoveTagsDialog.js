@@ -17,7 +17,7 @@
  * @flow
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -61,14 +61,18 @@ const AddRemoveTagsDialog = (props: Props) => {
     isConfirmDialogOpened: false
   }; */
 
+  useEffect(() => {
+    handleChange();
+  });
+
   /* handleChange = (name, value) => {
     this.setState({
       newlyAddedTags: value
     });
   }; */
 
-  function handleChange(value) {
-    setNewlyAddedTags(value);
+  function handleChange(name: Object) {
+    setNewlyAddedTags(name);
   }
 
   /* onAddTag = (tag) => {
@@ -182,94 +186,12 @@ const AddRemoveTagsDialog = (props: Props) => {
     );
   }
 
-  /* render() {
-    return (
-      <GenericDialog
-        open={open}
-        onClose={onClose}
-        onEnterKey={(event) => onEnterKeyHandler(event, addTags)}
-        renderTitle={() => (
-          <DialogTitle>{i18n.t('core:tagOperationTitle')}</DialogTitle>
-        )}
-        renderContent={() => (
-          <DialogContent style={{ minHeight: 330 }}>
-            <TagsSelect tags={newlyAddedTags} handleChange={handleChange} />
-            <List dense style={{ width: 550 }}>
-              {selectedEntries.length > 0 && selectedEntries.map((entry) => (
-                <ListItem title={entry.path}>
-                  <ListItemIcon>
-                    <FileIcon />
-                  </ListItemIcon>
-                  <Typography variant="inherit" noWrap>{extractFileName(entry.path || '')}</Typography>
-                </ListItem>
-              ))}
-            </List>
-          </DialogContent>
-        )}
-        renderActions={() => (
-          <DialogActions>
-            <Button
-              data-tid="cancel"
-              onClick={onClose}
-              color="primary"
-            >
-              {i18n.t('core:cancel')}
-            </Button>
-            <Button
-              data-tid="cleanTagsMultipleEntries"
-              disabled={selectedEntries.length < 1}
-              color="primary"
-              onClick={() => {
-                if (selectedEntries && selectedEntries.length > 0) {
-                  const paths = [];
-                  selectedEntries.map((entry) => {
-                    paths.push(entry.path);
-                    return true;
-                  });
-                  removeAllTags(paths);
-                }
-                onClose();
-              }}
-            >
-              {i18n.t('core:tagOperationCleanTags')}
-            </Button>
-            <Button
-              data-tid="removeTagsMultipleEntries"
-              disabled={newlyAddedTags.length === 0 || selectedEntries.length < 1}
-              color="primary"
-              onClick={() => {
-                if (selectedEntries && selectedEntries.length > 0) {
-                  const paths = [];
-                  selectedEntries.map((entry) => {
-                    paths.push(entry.path);
-                    return true;
-                  });
-                  removeTags(paths, newlyAddedTags);
-                }
-                onClose();
-              }}
-            >
-              {i18n.t('core:tagOperationRemoveTag')}
-            </Button>
-            <Button
-              data-tid="addTagsMultipleEntries"
-              disabled={newlyAddedTags.length < 1 || selectedEntries.length < 1}
-              color="primary"
-              onClick={addTags}
-            >
-              {i18n.t('core:tagOperationAddTag')}
-            </Button>
-          </DialogActions>
-        )}
-      />
-    );
-  } */
-
   const {
     selectedEntries = [],
     removeTags,
     removeAllTags,
   } = props;
+
   return (
     <GenericDialog
       open={open}
