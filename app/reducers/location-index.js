@@ -24,14 +24,14 @@ import {
   extractFileExtension,
   extractFileName,
   extractTagsAsObjects,
-  getThumbFileLocationForFile
+  // getThumbFileLocationForFile
 } from '../utils/paths';
 import type { SearchQuery } from '../services/search';
 import Search from '../services/search';
 import { actions as AppActions } from './app';
 import AppConfig from '../config';
 import i18n from '../services/i18n';
-import PlatformIO from '../services/platform-io';
+// import PlatformIO from '../services/platform-io';
 import { type Tag } from './taglibrary';
 
 export const types = {
@@ -101,6 +101,10 @@ export default (state: Object = initialState, action: Object) => {
     return state;
   }
   case types.REFLECT_CREATE_ENTRY: {
+    const entryIndex = state.currentDirectoryEntries.findIndex((entry) => entry.path === action.newEntry.path);
+    if (entryIndex) {
+      return state;
+    }
     return {
       ...state,
       currentDirectoryIndex: [
@@ -110,7 +114,26 @@ export default (state: Object = initialState, action: Object) => {
     };
   }
   case types.REFLECT_RENAME_ENTRY: {
-    const indexForRenamingInIndex = state.currentDirectoryIndex.findIndex((entry) => entry.path === action.path);
+    return {
+      ...state,
+      currentDirectoryIndex: state.currentDirectoryIndex.map((entry) => {
+        if (entry.path !== action.path) {
+          return entry;
+        }
+        return {
+          ...entry,
+          path: action.newPath,
+          // thumbPath: getThumbFileLocationForFile(action.newPath), // disabled due performance concerns
+          name: extractFileName(action.newPath),
+          extension: extractFileExtension(action.newPath),
+          tags: [
+            ...entry.tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
+            ...extractTagsAsObjects(action.newPath) // , getTagDelimiter(state))
+          ]
+        };
+      })
+    };
+    /* const indexForRenamingInIndex = state.currentDirectoryIndex.findIndex((entry) => entry.path === action.path);
     if (indexForRenamingInIndex >= 0) {
       const updateEntry = {
         ...state.currentDirectoryIndex[indexForRenamingInIndex],
@@ -132,10 +155,25 @@ export default (state: Object = initialState, action: Object) => {
         ]
       };
     }
-    return state;
+    return state; */
   }
   case types.REFLECT_UPDATE_SIDECARTAGS: {
-    const indexForUpdatingInIndex = state.currentDirectoryIndex.findIndex((entry) => entry.path === action.path);
+    return {
+      ...state,
+      currentDirectoryIndex: state.currentDirectoryIndex.map((entry) => {
+        if (entry.path !== action.path) {
+          return entry;
+        }
+        return {
+          ...entry,
+          tags: [
+            ...entry.tags.filter(tag => tag.type === 'plain'),
+            ...action.tags
+          ]
+        };
+      })
+    };
+    /* const indexForUpdatingInIndex = state.currentDirectoryIndex.findIndex((entry) => entry.path === action.path);
     if (indexForUpdatingInIndex >= 0) {
       const updateEntry = {
         ...state.currentDirectoryIndex[indexForUpdatingInIndex],
@@ -153,10 +191,22 @@ export default (state: Object = initialState, action: Object) => {
         ]
       };
     }
-    return state;
+    return state; */
   }
   case types.REFLECT_UPDATE_SIDECARMETA: {
-    const indexForUpdatingInIndex = state.currentDirectoryIndex.findIndex((entry) => entry.path === action.path);
+    return {
+      ...state,
+      currentDirectoryIndex: state.currentDirectoryIndex.map((entry) => {
+        if (entry.path !== action.path) {
+          return entry;
+        }
+        return {
+          ...entry,
+          ...action.entryMeta
+        };
+      })
+    };
+    /* const indexForUpdatingInIndex = state.currentDirectoryIndex.findIndex((entry) => entry.path === action.path);
     if (indexForUpdatingInIndex >= 0) {
       const updateEntry = {
         ...state.currentDirectoryIndex[indexForUpdatingInIndex],
@@ -171,7 +221,7 @@ export default (state: Object = initialState, action: Object) => {
         ]
       };
     }
-    return state;
+    return state; */
   }
   default: {
     return state;
@@ -192,7 +242,7 @@ export const actions = {
     createDirectoryIndex(directoryPath, extractText)
       .then(directoryIndex => {
         dispatch(actions.indexDirectorySuccess(directoryIndex));
-        if (Pro && (currentLocation.persistIndex || PlatformIO.haveObjectStoreSupport())) { // always persist on s3 stores
+        if (Pro && Pro.Indexer) { // && (currentLocation.persistIndex || PlatformIO.haveObjectStoreSupport())) { // always persist on s3 stores
           Pro.Indexer.persistIndex(directoryPath, directoryIndex, (currentLocation.type === locationType.TYPE_CLOUD) ? '/' : AppConfig.dirSeparator);
         }
         return true;
