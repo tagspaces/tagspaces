@@ -107,9 +107,9 @@ class Search extends React.Component<Props, State> {
     searchBoxing: 'location',
     lastModified: '',
     tagTimePeriod: '',
-    tagTimePeriodHelper: '',
+    tagTimePeriodHelper: ' ',
     tagPlace: '',
-    tagPlaceHelper: '',
+    tagPlaceHelper: ' ',
     tagTimePeriodFrom: null,
     tagTimePeriodTo: null,
     tagPlaceLat: null,
@@ -137,7 +137,7 @@ class Search extends React.Component<Props, State> {
     if (toDateTime && fromDateTime) {
       tagTimePeriodHelper = 'From: ' + formatDateTime(fromDateTime) + ' To: ' + formatDateTime(toDateTime);
     } else {
-      tagTimePeriodHelper = 'No period selected';
+      tagTimePeriodHelper = '';
     }
 
     this.setState({
@@ -170,7 +170,7 @@ class Search extends React.Component<Props, State> {
     if (lat && lon) {
       tagPlaceHelper = 'Place at lat: ' + lat + ' long: ' + lon;
     } else {
-      tagPlaceHelper = 'No place selected';
+      tagPlaceHelper = '';
     }
 
     this.setState({
@@ -197,9 +197,9 @@ class Search extends React.Component<Props, State> {
       fileTypes: FileTypeGroups.any,
       lastModified: '',
       tagTimePeriod: '',
-      tagTimePeriodHelper: '',
+      tagTimePeriodHelper: ' ',
       tagPlace: '',
-      tagPlaceHelper: '',
+      tagPlaceHelper: ' ',
       tagTimePeriodFrom: null,
       tagTimePeriodTo: null,
       tagPlaceLat: null,
@@ -504,16 +504,17 @@ class Search extends React.Component<Props, State> {
           </FormControl>
           <FormControl
             className={classes.formControl}
-            disabled={indexing || !Pro}
             title={!Pro && i18n.t('core:thisFunctionalityIsAvailableInPro')}
           >
             <TextField
               id="tagTimePeriod"
               label={i18n.t('Enter time period')}
               value={this.state.tagTimePeriod}
+              disabled={indexing || !Pro}
               onChange={this.handleTimePeriodChange}
               onKeyDown={this.startSearch}
               helperText={this.state.tagTimePeriodHelper}
+              error={this.state.tagTimePeriodHelper.length < 1}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end" title="201905 for May 2019 / 20190412 for 12th of April 2019 / 20190501~124523 for specific time">
@@ -528,9 +529,11 @@ class Search extends React.Component<Props, State> {
               id="tagPlace"
               label={i18n.t('GPS coordinates or plus code')}
               value={this.state.tagPlace}
+              disabled={indexing || !Pro}
               onChange={this.handlePlaceChange}
               onKeyDown={this.startSearch}
               helperText={this.state.tagPlaceHelper}
+              error={this.state.tagPlaceHelper.length < 1}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end" title="GPS: 49.23276,12.43123 PlusCode: 8FRG8Q87+6X">
