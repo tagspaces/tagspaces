@@ -110,18 +110,12 @@ export default (state: Object = initialState, action: Object) => {
     };
   }
   case types.REFLECT_RENAME_ENTRY: {
-    let indexForRenamingInIndex = -1;
-    state.currentDirectoryIndex.forEach((entry, index) => {
-      if (entry.path === action.path) { // TODO handle directory case, update contained files and dirs too
-        indexForRenamingInIndex = index;
-      }
-    });
-    let directoryIndex = state.currentDirectoryIndex;
+    const indexForRenamingInIndex = state.currentDirectoryIndex.findIndex((entry) => entry.path === action.path);
     if (indexForRenamingInIndex >= 0) {
       const updateEntry = {
         ...state.currentDirectoryIndex[indexForRenamingInIndex],
-        path: action.newPath, // TODO handle thumbPath
-        thumbPath: getThumbFileLocationForFile(action.newPath),
+        path: action.newPath,
+        // thumbPath: getThumbFileLocationForFile(action.newPath), // disabled due performance concerns
         name: extractFileName(action.newPath),
         extension: extractFileExtension(action.newPath),
         tags: [
@@ -129,27 +123,19 @@ export default (state: Object = initialState, action: Object) => {
           ...extractTagsAsObjects(action.newPath) // , getTagDelimiter(state))
         ]
       };
-      directoryIndex = [
-        ...state.currentDirectoryIndex.slice(0, indexForRenamingInIndex),
-        updateEntry,
-        ...state.currentDirectoryIndex.slice(indexForRenamingInIndex + 1)
-      ];
-    }
-    if (indexForRenamingInIndex >= 0) {
       return {
         ...state,
-        currentDirectoryIndex: directoryIndex,
+        currentDirectoryIndex: [
+          ...state.currentDirectoryIndex.slice(0, indexForRenamingInIndex),
+          updateEntry,
+          ...state.currentDirectoryIndex.slice(indexForRenamingInIndex + 1)
+        ]
       };
     }
     return state;
   }
   case types.REFLECT_UPDATE_SIDECARTAGS: {
-    let indexForUpdatingInIndex = -1;
-    state.currentDirectoryIndex.forEach((entry, index) => {
-      if (entry.path === action.path) {
-        indexForUpdatingInIndex = index;
-      }
-    });
+    const indexForUpdatingInIndex = state.currentDirectoryIndex.findIndex((entry) => entry.path === action.path);
     if (indexForUpdatingInIndex >= 0) {
       const updateEntry = {
         ...state.currentDirectoryIndex[indexForUpdatingInIndex],
@@ -170,12 +156,7 @@ export default (state: Object = initialState, action: Object) => {
     return state;
   }
   case types.REFLECT_UPDATE_SIDECARMETA: {
-    let indexForUpdatingInIndex = -1;
-    state.currentDirectoryIndex.forEach((entry, index) => {
-      if (entry.path === action.path) {
-        indexForUpdatingInIndex = index;
-      }
-    });
+    const indexForUpdatingInIndex = state.currentDirectoryIndex.findIndex((entry) => entry.path === action.path);
     if (indexForUpdatingInIndex >= 0) {
       const updateEntry = {
         ...state.currentDirectoryIndex[indexForUpdatingInIndex],

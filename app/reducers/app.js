@@ -306,47 +306,25 @@ export default (state: Object = initialState, action: Object) => {
     return state;
   }
   case types.REFLECT_CREATE_ENTRY: {
-    let currentDirectoryEntries = state.currentDirectoryEntries;
-    // TODO Case changed current directory
-    if (state.currentDirectoryPath === action.newEntry.path) {
-      // Reindex ??
-    }
-
-    // Workarround for double update caused by the watcher
-    let entryAlreadyAdded = false;
-    state.currentDirectoryEntries.forEach((entry) => {
-      if (entry.path === action.newEntry.path) {
-        entryAlreadyAdded = true;
-      }
-    });
+    // Prevent adding entry twice e.g. by the watcher
+    const entryIndex = state.currentDirectoryEntries.findIndex((entry) => entry.path === action.newEntry.path);
     if (
-      !entryAlreadyAdded &&
+      entryIndex < 0 &&
       extractParentDirectoryPath(action.newEntry.path).replace(/(^\/)|(\/$)/g, '') === state.currentDirectoryPath.replace(/(^\/)|(\/$)/g, '')
     ) {
-      currentDirectoryEntries = [ // TODO evtl. apply sorting
-        ...state.currentDirectoryEntries,
-        action.newEntry
-      ];
+      return {
+        ...state,
+        currentDirectoryEntries: [
+          ...state.currentDirectoryEntries,
+          action.newEntry
+        ]
+      };
     }
-    return {
-      ...state,
-      currentDirectoryEntries
-    };
+    return state;
   }
   case types.REFLECT_RENAME_ENTRY: {
-    let indexForRenaming = -1;
-    let indexForRenamingInOpenedFiles = -1;
-    // Updating entries in the current directory
-    state.currentDirectoryEntries.forEach((entry, index) => {
-      if (entry.path === action.path) {
-        indexForRenaming = index;
-      }
-    });
-    state.openedFiles.forEach((entry, index) => {
-      if (entry.path === action.path) { // TODO handle directory case, update contained files and dirs too
-        indexForRenamingInOpenedFiles = index;
-      }
-    });
+    const indexForRenaming = state.currentDirectoryEntries.findIndex((entry) => entry.path === action.path);
+    const indexForRenamingInOpenedFiles = state.openedFiles.findIndex((entry) => entry.path === action.path);
     let directoryEntries = state.currentDirectoryEntries;
     let openedFiles = state.openedFiles;
     if (indexForRenaming >= 0) {
@@ -388,19 +366,8 @@ export default (state: Object = initialState, action: Object) => {
     return state;
   }
   case types.REFLECT_UPDATE_SIDECARTAGS: {
-    let indexForUpdating = -1;
-    let indexForUpdatingInOpenedFiles = -1;
-    // Updating entries in the current directory
-    state.currentDirectoryEntries.forEach((entry, index) => {
-      if (entry.path === action.path) {
-        indexForUpdating = index;
-      }
-    });
-    state.openedFiles.forEach((entry, index) => {
-      if (entry.path === action.path) {
-        indexForUpdatingInOpenedFiles = index;
-      }
-    });
+    const indexForUpdating = state.currentDirectoryEntries.findIndex((entry) => entry.path === action.path);
+    const indexForUpdatingInOpenedFiles = state.openedFiles.findIndex((entry) => entry.path === action.path);
     let directoryEntries = state.currentDirectoryEntries;
     let openedFiles = state.openedFiles;
     if (indexForUpdating >= 0) {
@@ -438,19 +405,8 @@ export default (state: Object = initialState, action: Object) => {
     return state;
   }
   case types.REFLECT_UPDATE_SIDECARMETA: {
-    let indexForUpdating = -1;
-    let indexForUpdatingInOpenedFiles = -1;
-    // Updating entries in the current directory
-    state.currentDirectoryEntries.forEach((entry, index) => {
-      if (entry.path === action.path) {
-        indexForUpdating = index;
-      }
-    });
-    state.openedFiles.forEach((entry, index) => {
-      if (entry.path === action.path) {
-        indexForUpdatingInOpenedFiles = index;
-      }
-    });
+    const indexForUpdating = state.currentDirectoryEntries.findIndex((entry) => entry.path === action.path);
+    const indexForUpdatingInOpenedFiles = state.openedFiles.findIndex((entry) => entry.path === action.path);
     let directoryEntries = state.currentDirectoryEntries;
     let openedFiles = state.openedFiles;
     if (indexForUpdating >= 0) {
