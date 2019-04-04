@@ -101,7 +101,7 @@ export default (state: Object = initialState, action: Object) => {
     return state;
   }
   case types.REFLECT_CREATE_ENTRY: {
-    const entryIndex = state.currentDirectoryEntries.findIndex((entry) => entry.path === action.newEntry.path);
+    const entryIndex = state.currentDirectoryIndex.findIndex((entry) => entry.path === action.newEntry.path);
     if (entryIndex) {
       return state;
     }

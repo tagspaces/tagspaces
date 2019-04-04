@@ -323,7 +323,36 @@ export default (state: Object = initialState, action: Object) => {
     return state;
   }
   case types.REFLECT_RENAME_ENTRY: {
-    const indexForRenaming = state.currentDirectoryEntries.findIndex((entry) => entry.path === action.path);
+    return {
+      ...state,
+      currentDirectoryEntries: state.currentDirectoryEntries.map((entry) => {
+        if (entry.path !== action.path) {
+          return entry;
+        }
+        return {
+          ...entry,
+          path: action.newPath,
+          // thumbPath: getThumbFileLocationForFile(action.newPath), // not needed due timing issue
+          name: extractFileName(action.newPath),
+          extension: extractFileExtension(action.newPath),
+          tags: [
+            ...entry.tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
+            ...extractTagsAsObjects(action.newPath) // , getTagDelimiter(state))  TODO https://itnext.io/passing-state-between-reducers-in-redux-318de6db06cd
+          ]
+        };
+      }),
+      openedFiles: state.openedFiles.map((entry) => {
+        if (entry.path !== action.path) {
+          return entry;
+        }
+        return {
+          ...entry,
+          path: action.newPath, // TODO handle change extension case
+          shouldReload: true,
+        };
+      })
+    };
+/*    const indexForRenaming = state.currentDirectoryEntries.findIndex((entry) => entry.path === action.path);
     const indexForRenamingInOpenedFiles = state.openedFiles.findIndex((entry) => entry.path === action.path);
     let directoryEntries = state.currentDirectoryEntries;
     let openedFiles = state.openedFiles;
@@ -363,10 +392,34 @@ export default (state: Object = initialState, action: Object) => {
         openedFiles
       };
     }
-    return state;
+    return state; */
   }
   case types.REFLECT_UPDATE_SIDECARTAGS: {
-    const indexForUpdating = state.currentDirectoryEntries.findIndex((entry) => entry.path === action.path);
+    return {
+      ...state,
+      currentDirectoryEntries: state.currentDirectoryEntries.map((entry) => {
+        if (entry.path !== action.path) {
+          return entry;
+        }
+        return {
+          ...entry,
+          tags: [
+            ...entry.tags.filter(tag => tag.type === 'plain'),
+            ...action.tags
+          ]
+        };
+      }),
+      openedFiles: state.openedFiles.map((entry) => {
+        if (entry.path !== action.path) {
+          return entry;
+        }
+        return {
+          ...entry,
+          shouldReload: true,
+        };
+      })
+    };
+/*    const indexForUpdating = state.currentDirectoryEntries.findIndex((entry) => entry.path === action.path);
     const indexForUpdatingInOpenedFiles = state.openedFiles.findIndex((entry) => entry.path === action.path);
     let directoryEntries = state.currentDirectoryEntries;
     let openedFiles = state.openedFiles;
@@ -402,10 +455,31 @@ export default (state: Object = initialState, action: Object) => {
         openedFiles
       };
     }
-    return state;
+    return state; */
   }
   case types.REFLECT_UPDATE_SIDECARMETA: {
-    const indexForUpdating = state.currentDirectoryEntries.findIndex((entry) => entry.path === action.path);
+    return {
+      ...state,
+      currentDirectoryEntries: state.currentDirectoryEntries.map((entry) => {
+        if (entry.path !== action.path) {
+          return entry;
+        }
+        return {
+          ...entry,
+          ...action.entryMeta
+        };
+      }),
+      openedFiles: state.openedFiles.map((entry) => {
+        if (entry.path !== action.path) {
+          return entry;
+        }
+        return {
+          ...entry,
+          shouldReload: true,
+        };
+      })
+    };
+/*    const indexForUpdating = state.currentDirectoryEntries.findIndex((entry) => entry.path === action.path);
     const indexForUpdatingInOpenedFiles = state.openedFiles.findIndex((entry) => entry.path === action.path);
     let directoryEntries = state.currentDirectoryEntries;
     let openedFiles = state.openedFiles;
@@ -438,7 +512,7 @@ export default (state: Object = initialState, action: Object) => {
         openedFiles
       };
     }
-    return state;
+    return state; */
   }
   case types.CLOSE_ALL_FILES: {
     window.history.pushState('', 'TagSpaces', location.pathname);
