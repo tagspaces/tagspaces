@@ -17,7 +17,7 @@
  * @flow
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
@@ -39,20 +39,12 @@ type Props = {
   renameDirectory: (directoryPath: string, newDirectoryName: string) => void
 };
 
-type State = {
-  inputError?: boolean,
-  disableConfirmButton?: boolean,
-  name?: string
-};
+const RenameDirectoryDialog = (props: Props) => {
+  const [inputError, setInputError] = useState(false);
+  const [disableConfirmButton, setDisableConfirmButton] = useState(true);
+  const [name, setName] = useState(props.selectedDirectoryPath ? extractDirectoryName(props.selectedDirectoryPath) : '');
 
-class RenameDirectoryDialog extends React.Component<Props, State> {
-  state = {
-    inputError: false,
-    disableConfirmButton: true,
-    name: this.props.selectedDirectoryPath ? extractDirectoryName(this.props.selectedDirectoryPath) : '',
-  };
-
-  handleInputChange = (event: Object) => {
+  /* handleInputChange = (event: Object) => {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
@@ -60,95 +52,101 @@ class RenameDirectoryDialog extends React.Component<Props, State> {
     this.setState({
       [name]: value
     }, this.handleValidation);
-  };
+  }; */
 
-  handleValidation() {
+  useEffect(() => {
+    handleValidation();
+  });
+
+  function handleValidation() {
     // const nameRegex = this.state.name.match('^[A-Z][-a-zA-Z]+$');
-    if (this.state.name.length > 0) {
-      this.setState({
-        inputError: false,
-        disableConfirmButton: false
-      });
+    if (name.length > 0) {
+      setInputError(false);
+      setDisableConfirmButton(false);
     } else {
-      this.setState({
-        inputError: true,
-        disableConfirmButton: true
-      });
+      setInputError(true);
+      setDisableConfirmButton(true);
     }
   }
 
-  onConfirm = () => {
-    if (!this.state.disableConfirmButton) {
-      this.props.renameDirectory(this.props.selectedDirectoryPath, this.state.name);
-      this.setState({
-        inputError: false,
-        disableConfirmButton: true
-      });
-      this.props.onClose();
+  function onConfirm() {
+    if (!disableConfirmButton) {
+      props.renameDirectory(props.selectedDirectoryPath, name);
+      setInputError(false);
+      setDisableConfirmButton(true);
+      props.onClose();
     }
-  };
+  }
 
-  renderTitle = () => (
-    <DialogTitle>{i18n.t('core:renameDirectory')}</DialogTitle>
-  );
-
-  renderContent = () => (
-    <DialogContent>
-      <FormControl
-        fullWidth={true}
-        error={this.state.inputError}
-      >
-        <TextField
-          fullWidth={true}
-          autoFocus
-          required
-          error={this.state.inputError}
-          margin="dense"
-          name="name"
-          label={i18n.t('core:renameDirectoryTitleName')}
-          onChange={this.handleInputChange}
-          value={this.state.name}
-          data-tid="renameDirectoryDialogInput"
-        />
-        <FormHelperText>{i18n.t('core:directoryNameHelp')}</FormHelperText>
-      </FormControl>
-    </DialogContent>
-  );
-
-  renderActions = () => (
-    <DialogActions>
-      <Button
-        data-tid="closeRenameDirectoryDialog"
-        onClick={this.props.onClose}
-        color="primary"
-      >
-        {i18n.t('core:cancel')}
-      </Button>
-      <Button
-        disabled={this.state.disableConfirmButton}
-        onClick={this.onConfirm}
-        data-tid="confirmRenameDirectory"
-        color="primary"
-      >
-        {i18n.t('core:ok')}
-      </Button>
-    </DialogActions>
-  );
-
-  render() {
+  function renderTitle() {
     return (
-      <GenericDialog
-        open={this.props.open}
-        onClose={this.props.onClose}
-        autoFocus
-        onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
-        renderTitle={this.renderTitle}
-        renderContent={this.renderContent}
-        renderActions={this.renderActions}
-      />
+      <DialogTitle>{i18n.t('core:renameDirectory')}</DialogTitle>
     );
   }
-}
+
+  function renderContent() {
+    return (
+      <DialogContent>
+        <FormControl
+          fullWidth={true}
+          error={inputError}
+        >
+          <TextField
+            fullWidth={true}
+            autoFocus
+            required
+            error={inputError}
+            margin="dense"
+            name="name"
+            label={i18n.t('core:renameDirectoryTitleName')}
+            onChange={event => {
+              const target = event.target;
+              setName(target.value);
+            }}
+            // onChange={this.handleInputChange}
+            value={name}
+            data-tid="renameDirectoryDialogInput"
+          />
+          <FormHelperText>{i18n.t('core:directoryNameHelp')}</FormHelperText>
+        </FormControl>
+      </DialogContent>
+    );
+  }
+
+  function renderActions() {
+    return (
+      <DialogActions>
+        <Button
+          data-tid="closeRenameDirectoryDialog"
+          onClick={props.onClose}
+          color="primary"
+        >
+          {i18n.t('core:cancel')}
+        </Button>
+        <Button
+          disabled={disableConfirmButton}
+          onClick={onConfirm}
+          data-tid="confirmRenameDirectory"
+          color="primary"
+        >
+          {i18n.t('core:ok')}
+        </Button>
+      </DialogActions>
+    );
+  }
+
+  return (
+    <GenericDialog
+      open={props.open}
+      onClose={props.onClose}
+      autoFocus
+      onEnterKey={(event) => onEnterKeyHandler(event, onConfirm)}
+      renderTitle={renderTitle}
+      renderContent={renderContent}
+      renderActions={renderActions}
+    />
+  );
+};
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators({
