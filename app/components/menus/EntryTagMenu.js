@@ -68,10 +68,10 @@ const EntryTagMenu = (props: Props) => {
     setIsDateCalendarDialogOpened(true);
   }
 
-  function showDateCalendarDialog() {
+  /* function showDateCalendarDialog() {
     props.onClose();
     setIsDeleteTagDialogOpened(true);
-  }
+  } */
 
   function showFilesWithThisTag() {
     if (props.selectedTag) {
