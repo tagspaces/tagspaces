@@ -60,7 +60,7 @@ import {
 } from '../reducers/locations';
 import { actions as AppActions, getCurrentLocationId, isReadOnlyMode } from '../reducers/app';
 import { actions as LocationIndexActions } from '../reducers/location-index';
-import { getPerspectives } from '../reducers/settings';
+import { getPerspectives, getShowUnixHiddenEntries } from '../reducers/settings';
 import i18n from '../services/i18n';
 import { isObj } from '../utils/misc';
 import AppConfig from '../config';
@@ -187,7 +187,9 @@ class LocationManager extends React.Component<Props, State> {
       .then(dirEntries => {
         const directoryContent = [];
         dirEntries.map(entry => {
-          if (entry.name === AppConfig.metaFolder || entry.name.endsWith('/' + AppConfig.metaFolder)) { // TODO !settings.showUnixHiddenEntries &&
+          if (entry.name === AppConfig.metaFolder
+            || entry.name.endsWith('/' + AppConfig.metaFolder)
+            || (!this.props.showUnixHiddenEntries && entry.name.startsWith('.'))) {
             return true;
           }
           // const enhancedEntry = enhanceEntry(entry);
@@ -787,7 +789,8 @@ function mapStateToProps(state) {
     locations: getLocations(state),
     currentLocationId: getCurrentLocationId(state),
     perspectives: getPerspectives(state),
-    isReadOnlyMode: isReadOnlyMode(state)
+    isReadOnlyMode: isReadOnlyMode(state),
+    showUnixHiddenEntries: getShowUnixHiddenEntries(state)
   };
 }
 
