@@ -81,7 +81,7 @@ type Props = {
   openDirectory: (path: string) => void,
   showInFileManager: (path: string) => void,
   createDirectoryIndex: (path: string) => void,
-  addLocation: () => void,
+  addLocation: (location: Location) => void,
   editLocation: () => void,
   moveLocationUp: (locationId: string) => void,
   moveLocationDown: (locationId: string) => void,
@@ -142,6 +142,24 @@ class LocationManager extends React.Component<Props, State> {
     editLocationDialogKey: uuidv1(),
     dirs: {}
   };
+
+  componentDidMount() {
+    if (this.props.locations.length < 1) {
+      const devicePaths = PlatformIO.getDevicePaths();
+
+      Object.keys(devicePaths).forEach(key => {
+        this.props.addLocation({
+          uuid: uuidv1(),
+          type: locationType.TYPE_LOCAL,
+          name: key, // TODO use i18n
+          paths: [devicePaths[key]],
+          isDefault: (AppConfig.isWeb && devicePaths[key] === '/files/'), // Used for the web ts demo
+          isReadOnly: false,
+          persistIndex: false
+        });
+      });
+    }
+  }
 
   loadSubDirectories = (location: Location, deepLevel: number) => {
     const subFolder = {

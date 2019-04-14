@@ -40,10 +40,10 @@ export type Location = {
   uuid: string,
   name: string,
   type: string,
-  accessKeyId: string,
-  secretAccessKey: string,
-  bucketName: string,
-  region: string,
+  accessKeyId?: string,
+  secretAccessKey?: string,
+  bucketName?: string,
+  region?: string,
   paths: Array<string>,
   perspective?: string, // id of the perspective
   creationDate?: string,
@@ -55,20 +55,6 @@ export type Location = {
 };
 
 export const initialState = [];
-
-const devicePaths = PlatformIO.getDevicePaths();
-
-Object.keys(devicePaths).forEach(key => {
-  initialState.push({
-    uuid: uuidv1(),
-    type: locationType.TYPE_LOCAL,
-    name: key, // TODO use i18n
-    paths: [devicePaths[key]],
-    isDefault: (AppConfig.isWeb && devicePaths[key] === '/files/'), // Used for the web ts demo
-    isReadOnly: false,
-    persistIndex: false
-  });
-});
 
 export default (state: Array<Location> = initialState, action: Object) => {
   switch (action.type) {
