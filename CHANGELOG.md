@@ -1,5 +1,30 @@
 # Changelog
 
+### Version 3.1.4 / 2019.04.04*
+
+### Community
+- 🎉 adding open location code / plus codes support
+- 🎉 added ability to open GPS coordinates in Openstreetmap
+- 🎉 added initial support for opening files from command prompt and url
+- 🌟 performance optimizations by updating the search index state
+- 🌟 detecting date and geo tags and displaying them as icon
+- 🌟 ignoring plus code by tag collection
+- 🌟 make updating the index optional after adding new tags
+- 🌟 updating electron to 4.1.0
+- 🌟 updating translations
+- 🌟 updating to fuse 3.4.2
+- 🐛 fixing wrong content scrolling on directory change
+- 🐛 fix crashes on MacOS Mojave
+
+### Pro
+- 🎉 content extraction of GPS and shooting date from EXIF and keyword from IPTC in JPGs
+- 🎉 add content extraction button in the directory menu
+- 🎉 extending search to support time periods and plus codes
+- 🎉 added search by last modified date and search by file size
+- 🎉 implementing read-only mode
+- 🎉 Supported loading external config with tag library and locations
+- 🐛 fix index persistence
+
 ## Version 3.1.1 / 2019.02.23
 
 ### Community
