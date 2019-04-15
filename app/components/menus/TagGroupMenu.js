@@ -34,6 +34,7 @@ import i18n from '../../services/i18n';
 import { Pro } from '../../pro';
 
 type Props = {
+  classes: Object,
   anchorEl: Object,
   open: boolean,
   onClose: () => void,
@@ -48,45 +49,45 @@ type Props = {
   handleCloseTagGroupMenu: () => void
 };
 
-class TagLibraryMenu extends React.Component<Props> {
-  handleCollectTags = () => {
-    this.props.onClose();
+const TagLibraryMenu = (props: Props) => {
+  function handleCollectTags() {
+    props.onClose();
 
-    if (this.props.selectedTagGroupEntry) {
-      this.props.collectTagsFromLocation(this.props.selectedTagGroupEntry);
+    if (props.selectedTagGroupEntry) {
+      props.collectTagsFromLocation(props.selectedTagGroupEntry);
     }
-    this.props.handleCloseTagGroupMenu();
-  };
+    props.handleCloseTagGroupMenu();
+  }
 
-  moveTagGroupUp = () => {
-    if (this.props.selectedTagGroupEntry) {
-      this.props.moveTagGroupUp(this.props.selectedTagGroupEntry.uuid);
+  function moveTagGroupUp() {
+    if (props.selectedTagGroupEntry) {
+      props.moveTagGroupUp(props.selectedTagGroupEntry.uuid);
     }
-    this.props.handleCloseTagGroupMenu();
-  };
+    props.handleCloseTagGroupMenu();
+  }
 
-  moveTagGroupDown = () => {
-    if (this.props.selectedTagGroupEntry) {
-      this.props.moveTagGroupDown(this.props.selectedTagGroupEntry.uuid);
+  function moveTagGroupDown() {
+    if (props.selectedTagGroupEntry) {
+      props.moveTagGroupDown(props.selectedTagGroupEntry.uuid);
     }
-    this.props.handleCloseTagGroupMenu();
-  };
+    props.handleCloseTagGroupMenu();
+  }
 
-  sortTagGroup = () => {
-    if (this.props.selectedTagGroupEntry) {
-      this.props.sortTagGroup(this.props.selectedTagGroupEntry.uuid);
+  function sortTagGroup() {
+    if (props.selectedTagGroupEntry) {
+      props.sortTagGroup(props.selectedTagGroupEntry.uuid);
     }
-    this.props.handleCloseTagGroupMenu();
-  };
+    props.handleCloseTagGroupMenu();
+  }
 
-  render = () => (
+  return (
     <div style={{ overflowY: 'hidden !important' }}>
       <Menu
-        anchorEl={this.props.anchorEl}
-        open={this.props.open}
-        onClose={this.props.handleCloseTagGroupMenu}
+        anchorEl={props.anchorEl}
+        open={props.open}
+        onClose={props.handleCloseTagGroupMenu}
       >
-        <MenuItem data-tid="createTags" onClick={this.props.showCreateTagsDialog}>
+        <MenuItem data-tid="createTags" onClick={props.showCreateTagsDialog}>
           <ListItemIcon>
             <TagIcon />
           </ListItemIcon>
@@ -94,26 +95,26 @@ class TagLibraryMenu extends React.Component<Props> {
         </MenuItem>
         <MenuItem
           data-tid="editTagGroup"
-          onClick={this.props.showEditTagGroupDialog}
+          onClick={props.showEditTagGroupDialog}
         >
           <ListItemIcon>
             <Edit />
           </ListItemIcon>
           <ListItemText inset primary={i18n.t('core:editTagGroup')} />
         </MenuItem>
-        <MenuItem data-tid="moveTagGroupUp" onClick={this.moveTagGroupUp}>
+        <MenuItem data-tid="moveTagGroupUp" onClick={moveTagGroupUp}>
           <ListItemIcon>
             <ArrowUpward />
           </ListItemIcon>
           <ListItemText inset primary={i18n.t('core:moveTagGroupUp')} />
         </MenuItem>
-        <MenuItem data-tid="moveTagGroupDown" onClick={this.moveTagGroupDown}>
+        <MenuItem data-tid="moveTagGroupDown" onClick={moveTagGroupDown}>
           <ListItemIcon>
             <ArrowDownward />
           </ListItemIcon>
           <ListItemText inset primary={i18n.t('core:moveTagGroupDown')} />
         </MenuItem>
-        <MenuItem data-tid="sortTagGroup" onClick={this.sortTagGroup}>
+        <MenuItem data-tid="sortTagGroup" onClick={sortTagGroup}>
           <ListItemIcon>
             <SortTagGroupIcon />
           </ListItemIcon>
@@ -121,7 +122,7 @@ class TagLibraryMenu extends React.Component<Props> {
         </MenuItem>
         <MenuItem
           data-tid="deleteTagGroup"
-          onClick={this.props.showDeleteTagGroupDialog}
+          onClick={props.showDeleteTagGroupDialog}
         >
           <ListItemIcon>
             <DeleteTagGroupIcon />
@@ -130,7 +131,7 @@ class TagLibraryMenu extends React.Component<Props> {
         </MenuItem>
         <MenuItem
           data-tid="collectTags"
-          onClick={this.handleCollectTags}
+          onClick={handleCollectTags}
           title={Pro ? '' : i18n.t('core:needProVersion')}
         >
           <ListItemIcon>
@@ -141,6 +142,6 @@ class TagLibraryMenu extends React.Component<Props> {
       </Menu>
     </div>
   );
-}
+};
 
 export default TagLibraryMenu;
