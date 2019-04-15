@@ -17,7 +17,7 @@
  * @flow
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Menu from '@material-ui/core/Menu';
@@ -30,6 +30,7 @@ import i18n from '../../services/i18n';
 import AppConfig from '../../config';
 
 type Props = {
+  classes: Object,
   anchorEl: Object,
   tagGroups: Array<Object>,
   open: boolean,
@@ -39,7 +40,7 @@ type Props = {
   showCreateTagGroupDialog: () => void
 };
 
-type State = {
+/* type State = {
   open?: boolean,
   tagGroups?: Array<Object>,
   isCreateDirectoryDialogOpened?: boolean,
@@ -47,59 +48,52 @@ type State = {
   isImportExportTagGroupDialogOpened?: boolean,
   selectedDirectoryPath?: string,
   dialogModeImport?: boolean
-};
+}; */
 
-class TagLibraryMenu extends React.Component<Props, State> {
-  fileInput: Object | null;
+const TagLibraryMenu = (props: Props) => {
+  let fileInput;
 
-  state = {
-    open: false,
-    tagGroups: null,
-    selectedDirectoryPath: '',
-    isSelectDirectoryDialogOpened: false,
-    isImportExportTagGroupDialogOpened: false,
-    dialogModeImport: false
-  };
+    const [open, setOpen] = useState(false);
+    const [tagGroups, setTagGroups] = useState(null);
+    const [selectedDirectoryPath, setSelectedDirectoryPath] = useState('');
+    const [isSelectDirectoryDialogOpened, setIsSelectDirectoryDialogOpened] = useState(false);
+    const [isImportExportTagGroupDialogOpened, setIsImportExportTagGroupDialogOpened] = useState(false);
+    const [dialogModeImport, setDialogModeImport] = useState(false);
 
-  handleCloseDialogs = () => {
-    this.setState({
-      isImportExportTagGroupDialogOpened: false
-    });
-  };
+  function handleCloseDialogs() {
+    setIsImportExportTagGroupDialogOpened(false);
 
-  handleExportTagGroup = () => {
-    this.props.onClose();
-    this.setState({
-      dialogModeImport: false,
-      tagGroups: this.props.tagGroups,
-      isImportExportTagGroupDialogOpened: true
-    });
-  };
+  }
 
-  showSelectDirectoryDialog = () => {
-    this.setState({
-      isSelectDirectoryDialogOpened: true,
-      selectedDirectoryPath: ''
-    });
-  };
+  function handleExportTagGroup() {
+    props.onClose();
+    setDialogModeImport(false);
+    setTagGroups(props.tagGroups);
+    setIsImportExportTagGroupDialogOpened(true);
+  }
 
-  closeSelectDirectoryExtDialog = () => {
-    this.setState({ isSelectDirectoryDialogOpened: false });
-  };
+  function showSelectDirectoryDialog() {
+    setIsSelectDirectoryDialogOpened(true);
+    setSelectedDirectoryPath('');
+  }
 
-  handleImportTagGroup = () => {
-    this.props.onClose();
-    this.setState({ dialogModeImport: true });
+  function closeSelectDirectoryExtDialog() {
+    setIsSelectDirectoryDialogOpened(false);
+  }
+
+  function handleImportTagGroup() {
+    props.onClose();
+    setDialogModeImport(true);
 
     if (AppConfig.isCordovaAndroid && AppConfig.isCordovaiOS) {
       // TODO Select directory or file from dialog
-      this.showSelectDirectoryDialog();
+      showSelectDirectoryDialog();
     } else {
-      this.fileInput.click();
+      fileInput.click();
     }
-  };
+  }
 
-  handleFileInputChange = (selection: Object) => {
+  function handleFileInputChange(selection: Object) {
     const target = selection.currentTarget;
     const file = target.files[0];
     const reader = new FileReader();
@@ -108,92 +102,88 @@ class TagLibraryMenu extends React.Component<Props, State> {
       try {
         const jsonObj = JSON.parse(reader.result);
         if (jsonObj.tagGroups) {
-          this.setState({
-            isImportExportTagGroupDialogOpened: true,
-            tagGroups: jsonObj.tagGroups
-          });
+          setIsImportExportTagGroupDialogOpened(true);
+          setTagGroups(jsonObj.tagGroups);
         } else {
           // TODO connect showNotification
-          /* this.props.showNotification(
+          /* props.showNotification(
             i18n.t('core:invalidImportFile', 'warning', true)
           ); */
         }
       } catch (e) {
         console.error('Error : ', e);
         // TODO connect showNotification
-        /* this.props.showNotification(
+        /* props.showNotification(
           i18n.t('core:invalidImportFile', 'warning', true)
         ); */
       }
     };
     reader.readAsText(file);
     target.value = null;
-  };
-
-  render() {
-    return (
-      <div style={{ overflowY: 'hidden !important' }}>
-        <ImportExportTagGroupsDialog
-          open={this.state.isImportExportTagGroupDialogOpened}
-          onClose={this.handleCloseDialogs}
-          tagGroups={this.state.tagGroups}
-          dialogModeImport={this.state.dialogModeImport}
-          exportTagGroups={this.props.exportTagGroups}
-          importTagGroups={this.props.importTagGroups}
-        />
-        <SelectDirectoryDialog
-          open={this.state.isSelectDirectoryDialogOpened}
-          onClose={this.closeSelectDirectoryExtDialog}
-          selectedDirectoryPath={this.state.selectedDirectoryPath}
-        />
-        <Menu
-          anchorEl={this.props.anchorEl}
-          open={this.props.open}
-          onClose={this.props.onClose}
-        >
-          <MenuItem
-            data-tid="createNewTagGroup"
-            onClick={() => {
-              this.props.onClose();
-              this.props.showCreateTagGroupDialog();
-            }}
-          >
-            <ListItemIcon>
-              <AddIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:createTagGroupTitle')} />
-          </MenuItem>
-          <MenuItem
-            data-tid="importTagGroup"
-            onClick={this.handleImportTagGroup}
-          >
-            <ListItemIcon>
-              <ImportExportIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:importTags')} />
-          </MenuItem>
-          <MenuItem
-            data-tid="exportTagGroup"
-            onClick={this.handleExportTagGroup}
-          >
-            <ListItemIcon>
-              <ImportExportIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:exportTagGroupsButton')} />
-          </MenuItem>
-        </Menu>
-        <input
-          style={{ display: 'none' }}
-          ref={input => {
-            this.fileInput = input;
-          }}
-          accept="*"
-          type="file"
-          onChange={this.handleFileInputChange}
-        />
-      </div>
-    );
   }
-}
+
+  return (
+    <div style={{ overflowY: 'hidden !important' }}>
+      <ImportExportTagGroupsDialog
+        open={isImportExportTagGroupDialogOpened}
+        onClose={handleCloseDialogs}
+        tagGroups={tagGroups}
+        dialogModeImport={dialogModeImport}
+        exportTagGroups={props.exportTagGroups}
+        importTagGroups={props.importTagGroups}
+      />
+      <SelectDirectoryDialog
+        open={isSelectDirectoryDialogOpened}
+        onClose={closeSelectDirectoryExtDialog}
+        selectedDirectoryPath={selectedDirectoryPath}
+      />
+      <Menu
+        anchorEl={props.anchorEl}
+        open={props.open}
+        onClose={props.onClose}
+      >
+        <MenuItem
+          data-tid="createNewTagGroup"
+          onClick={() => {
+            props.onClose();
+            props.showCreateTagGroupDialog();
+          }}
+        >
+          <ListItemIcon>
+            <AddIcon />
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:createTagGroupTitle')} />
+        </MenuItem>
+        <MenuItem
+          data-tid="importTagGroup"
+          onClick={handleImportTagGroup}
+        >
+          <ListItemIcon>
+            <ImportExportIcon />
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:importTags')} />
+        </MenuItem>
+        <MenuItem
+          data-tid="exportTagGroup"
+          onClick={handleExportTagGroup}
+        >
+          <ListItemIcon>
+            <ImportExportIcon />
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:exportTagGroupsButton')} />
+        </MenuItem>
+      </Menu>
+      <input
+        style={{ display: 'none' }}
+        ref={input => {
+          fileInput = input;
+        }}
+        accept="*"
+        type="file"
+        onChange={handleFileInputChange}
+      />
+    </div>
+  );
+};
 
 export default TagLibraryMenu;
