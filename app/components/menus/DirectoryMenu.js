@@ -77,7 +77,7 @@ const DirectoryMenu = (props: Props) => {
 
   const [isCreateDirectoryDialogOpened, setIsCreateDirectoryDialogOpened] = useState(false);
   const [isDeleteDirectoryDialogOpened, setIsDeleteDirectoryDialogOpened] = useState(false);
-  const [isRenameDirectoryDialogOpened, setIsRenameDirectoryDialogOpened]= useState(false);
+  const [isRenameDirectoryDialogOpened, setIsRenameDirectoryDialogOpened] = useState(false);
 
   function reloadDirectory() {
     props.onClose();
@@ -125,9 +125,9 @@ const DirectoryMenu = (props: Props) => {
   }
 
   function handleCloseDialogs() {
-      setIsCreateDirectoryDialogOpened(false);
-      setIsDeleteDirectoryDialogOpened(false);
-      setIsRenameDirectoryDialogOpened(false);
+    setIsCreateDirectoryDialogOpened(false);
+    setIsDeleteDirectoryDialogOpened(false);
+    setIsRenameDirectoryDialogOpened(false);
   }
 
   function showInFileManager() {
@@ -261,182 +261,180 @@ const DirectoryMenu = (props: Props) => {
     }
   }
 
-  render = () => (
-    return (
-      <div style={{ overflowY: 'hidden !important' }}>
-        <RenameDirectoryDialog
-          key={uuidv1()}
-          open={isRenameDirectoryDialogOpened}
-          onClose={handleCloseDialogs}
-          selectedDirectoryPath={props.directoryPath}
-        />
-        <CreateDirectoryDialog
-          key={uuidv1()}
-          open={isCreateDirectoryDialogOpened}
-          onClose={handleCloseDialogs}
-          selectedDirectoryPath={props.directoryPath}
-        />
-        <ConfirmDialog
-          open={isDeleteDirectoryDialogOpened}
-          onClose={handleCloseDialogs}
-          title={i18n.t('core:deleteDirectoryTitleConfirm')}
-          content={i18n.t('core:deleteDirectoryContentConfirm', {
-            dirPath: props.directoryPath
-              ? extractFileName(props.directoryPath)
-              : ''
-          })}
-          confirmCallback={result => {
-            if (result) {
-              props.deleteDirectory(props.directoryPath);
-            }
-          }}
-          confirmDialogContent={'confirmDialogContent'}
-          cancelDialogTID={'cancelDeleteDirectoryDialog'}
-          confirmDialogTID={'confirmDeleteDirectoryDialog'}
-        />
-        <Menu
-          anchorEl={props.anchorEl}
-          open={props.open}
-          onClose={props.onClose}
-        >
-          {props.perspectiveMode && (
-            <MenuItem
-              data-tid="openDirectory"
-              onClick={openDirectory}
-            >
-              <ListItemIcon>
-                <OpenFolderIcon />
-              </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:openDirectory')} />
-            </MenuItem>
-          )}
-          {!props.perspectiveMode && (
-            <MenuItem
-              data-tid="openParentDirectory"
-              onClick={openParentDirectory}
-            >
-              <ListItemIcon>
-                <OpenFolderIcon />
-              </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:openParentDirectory')} />
-            </MenuItem>
-          )}
-          {!props.perspectiveMode && (
-            <MenuItem data-tid="reloadDirectory" onClick={reloadDirectory}>
-              <ListItemIcon>
-                <AutoRenew />
-              </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:reloadDirectory')} />
-            </MenuItem>
-          )}
-          {!props.isReadOnlyMode && (
-            <MenuItem
-              data-tid="renameDirectory"
-              onClick={showRenameDirectoryDialog}
-            >
-              <ListItemIcon>
-                <RenameFolderIcon />
-              </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:renameDirectory')} />
-            </MenuItem>
-          )}
-          {!props.isReadOnlyMode && (
-            <MenuItem
-              data-tid="deleteDirectory"
-              onClick={showDeleteDirectoryDialog}
-            >
-              <ListItemIcon>
-                <DeleteForeverIcon />
-              </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:deleteDirectory')} />
-            </MenuItem>
-          )}
-          {!AppConfig.isWeb && (
-            <MenuItem
-              data-tid="showInFileManager"
-              onClick={showInFileManager}
-            >
-              <ListItemIcon>
-                <OpenFolderNativelyIcon />
-              </ListItemIcon>
-              <ListItemText
-                inset
-                primary={i18n.t('core:showInFileManager')}
-              />
-            </MenuItem>
-          )}
-          {!props.perspectiveMode && (
-            <Divider />
-          )}
-          {!props.isReadOnlyMode && !props.perspectiveMode && (
-            <MenuItem
-              data-tid="newSubDirectory"
-              onClick={showCreateDirectoryDialog}
-            >
-              <ListItemIcon>
-                <NewFolderIcon />
-              </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:newSubdirectory')} />
-            </MenuItem>
-          )}
-          {!props.isReadOnlyMode && !props.perspectiveMode && (
-            <MenuItem data-tid="createNewFile" onClick={createNewFile}>
-              <ListItemIcon>
-                <NewFileIcon />
-              </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:newFileNote')} />
-            </MenuItem>
-          )}
-          {!props.isReadOnlyMode && !props.perspectiveMode && (
-            <MenuItem data-tid="addExistingFile" onClick={addExistingFile}>
-              <ListItemIcon>
-                <AddExistingFileIcon />
-              </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:showAddFileDialog')} />
-            </MenuItem>
-          )}
-          {AppConfig.isCordova && (
-            <MenuItem data-tid="takePicture" onClick={cameraTakePicture}>
-              <ListItemIcon>
-                <AddExistingFileIcon />
-              </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:cameraTakePicture')} />
-            </MenuItem>
-          )}
-          <Divider />
-          {!props.isReadOnlyMode && (
-            <MenuItem data-tid="extractContent" onClick={initContentExtraction}>
-              <ListItemIcon>
-                <ContentExtractionIcon />
-              </ListItemIcon>
-              <ListItemText
-                inset
-                primary={i18n.t('core:startContentExtraction')}
-              />
-            </MenuItem>
-          )}
-          <MenuItem data-tid="showProperties" onClick={showProperties}>
+  return (
+    <div style={{ overflowY: 'hidden !important' }}>
+      <RenameDirectoryDialog
+        key={uuidv1()}
+        open={isRenameDirectoryDialogOpened}
+        onClose={handleCloseDialogs}
+        selectedDirectoryPath={props.directoryPath}
+      />
+      <CreateDirectoryDialog
+        key={uuidv1()}
+        open={isCreateDirectoryDialogOpened}
+        onClose={handleCloseDialogs}
+        selectedDirectoryPath={props.directoryPath}
+      />
+      <ConfirmDialog
+        open={isDeleteDirectoryDialogOpened}
+        onClose={handleCloseDialogs}
+        title={i18n.t('core:deleteDirectoryTitleConfirm')}
+        content={i18n.t('core:deleteDirectoryContentConfirm', {
+          dirPath: props.directoryPath
+            ? extractFileName(props.directoryPath)
+            : ''
+        })}
+        confirmCallback={result => {
+          if (result) {
+            props.deleteDirectory(props.directoryPath);
+          }
+        }}
+        confirmDialogContent={'confirmDialogContent'}
+        cancelDialogTID={'cancelDeleteDirectoryDialog'}
+        confirmDialogTID={'confirmDeleteDirectoryDialog'}
+      />
+      <Menu
+        anchorEl={props.anchorEl}
+        open={props.open}
+        onClose={props.onClose}
+      >
+        {props.perspectiveMode && (
+          <MenuItem
+            data-tid="openDirectory"
+            onClick={openDirectory}
+          >
             <ListItemIcon>
-              <SettingsIcon />
+              <OpenFolderIcon />
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:openDirectory')} />
+          </MenuItem>
+        )}
+        {!props.perspectiveMode && (
+          <MenuItem
+            data-tid="openParentDirectory"
+            onClick={openParentDirectory}
+          >
+            <ListItemIcon>
+              <OpenFolderIcon />
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:openParentDirectory')} />
+          </MenuItem>
+        )}
+        {!props.perspectiveMode && (
+          <MenuItem data-tid="reloadDirectory" onClick={reloadDirectory}>
+            <ListItemIcon>
+              <AutoRenew />
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:reloadDirectory')} />
+          </MenuItem>
+        )}
+        {!props.isReadOnlyMode && (
+          <MenuItem
+            data-tid="renameDirectory"
+            onClick={showRenameDirectoryDialog}
+          >
+            <ListItemIcon>
+              <RenameFolderIcon />
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:renameDirectory')} />
+          </MenuItem>
+        )}
+        {!props.isReadOnlyMode && (
+          <MenuItem
+            data-tid="deleteDirectory"
+            onClick={showDeleteDirectoryDialog}
+          >
+            <ListItemIcon>
+              <DeleteForeverIcon />
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:deleteDirectory')} />
+          </MenuItem>
+        )}
+        {!AppConfig.isWeb && (
+          <MenuItem
+            data-tid="showInFileManager"
+            onClick={showInFileManager}
+          >
+            <ListItemIcon>
+              <OpenFolderNativelyIcon />
             </ListItemIcon>
             <ListItemText
               inset
-              primary={i18n.t('core:directoryPropertiesTitle')}
+              primary={i18n.t('core:showInFileManager')}
             />
           </MenuItem>
-        </Menu>
-        <input
-          style={{ display: 'none' }}
-          ref={input => {
-            fileInput = input;
-          }}
-          accept="*"
-          type="file"
-          onChange={handleFileInputChange}
-        />
-      </div>
-    );
-  };
+        )}
+        {!props.perspectiveMode && (
+          <Divider />
+        )}
+        {!props.isReadOnlyMode && !props.perspectiveMode && (
+          <MenuItem
+            data-tid="newSubDirectory"
+            onClick={showCreateDirectoryDialog}
+          >
+            <ListItemIcon>
+              <NewFolderIcon />
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:newSubdirectory')} />
+          </MenuItem>
+        )}
+        {!props.isReadOnlyMode && !props.perspectiveMode && (
+          <MenuItem data-tid="createNewFile" onClick={createNewFile}>
+            <ListItemIcon>
+              <NewFileIcon />
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:newFileNote')} />
+          </MenuItem>
+        )}
+        {!props.isReadOnlyMode && !props.perspectiveMode && (
+          <MenuItem data-tid="addExistingFile" onClick={addExistingFile}>
+            <ListItemIcon>
+              <AddExistingFileIcon />
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:showAddFileDialog')} />
+          </MenuItem>
+        )}
+        {AppConfig.isCordova && (
+          <MenuItem data-tid="takePicture" onClick={cameraTakePicture}>
+            <ListItemIcon>
+              <AddExistingFileIcon />
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:cameraTakePicture')} />
+          </MenuItem>
+        )}
+        <Divider />
+        {!props.isReadOnlyMode && (
+          <MenuItem data-tid="extractContent" onClick={initContentExtraction}>
+            <ListItemIcon>
+              <ContentExtractionIcon />
+            </ListItemIcon>
+            <ListItemText
+              inset
+              primary={i18n.t('core:startContentExtraction')}
+            />
+          </MenuItem>
+        )}
+        <MenuItem data-tid="showProperties" onClick={showProperties}>
+          <ListItemIcon>
+            <SettingsIcon />
+          </ListItemIcon>
+          <ListItemText
+            inset
+            primary={i18n.t('core:directoryPropertiesTitle')}
+          />
+        </MenuItem>
+      </Menu>
+      <input
+        style={{ display: 'none' }}
+        ref={input => {
+          fileInput = input;
+        }}
+        accept="*"
+        type="file"
+        onChange={handleFileInputChange}
+      />
+    </div>
+  );
 };
 
 function mapDispatchToProps(dispatch) {
