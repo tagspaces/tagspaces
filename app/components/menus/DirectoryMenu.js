@@ -48,6 +48,7 @@ import { actions as AppActions } from '../../reducers/app';
 import IOActions from '../../reducers/io-actions';
 
 type Props = {
+  classes: Object,
   open?: boolean,
   onClose: () => void,
   anchorEl?: Object | null,
@@ -72,7 +73,7 @@ type Props = {
 };
 
 const DirectoryMenu = (props: Props) => {
-  fileInput: Object | null;
+  let fileInput; // Object | null;
 
   const [isCreateDirectoryDialogOpened, setIsCreateDirectoryDialogOpened] = useState(false);
   const [isDeleteDirectoryDialogOpened, setIsDeleteDirectoryDialogOpened] = useState(false);
