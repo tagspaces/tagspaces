@@ -106,7 +106,7 @@ const DirectoryMenu = (props: Props) => {
 
   function showDeleteDirectoryDialog() {
     props.onClose();
-    setIsDeleteDirectoryDialogOpened(false);
+    setIsDeleteDirectoryDialogOpened(true);
   }
 
   function showRenameDirectoryDialog() {
