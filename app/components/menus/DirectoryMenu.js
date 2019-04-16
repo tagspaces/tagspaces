@@ -17,7 +17,7 @@
  * @flow
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import uuidv1 from 'uuid';
@@ -48,6 +48,7 @@ import { actions as AppActions } from '../../reducers/app';
 import IOActions from '../../reducers/io-actions';
 
 type Props = {
+  classes: Object,
   open?: boolean,
   onClose: () => void,
   anchorEl?: Object | null,
@@ -71,146 +72,136 @@ type Props = {
   isReadOnlyMode: boolean
 };
 
-type State = {
-  isCreateDirectoryDialogOpened?: boolean,
-  isDeleteDirectoryDialogOpened?: boolean,
-  isRenameDirectoryDialogOpened?: boolean
-};
+const DirectoryMenu = (props: Props) => {
+  let fileInput; // Object | null;
 
-class DirectoryMenu extends React.Component<Props, State> {
-  fileInput: Object | null;
+  const [isCreateDirectoryDialogOpened, setIsCreateDirectoryDialogOpened] = useState(false);
+  const [isDeleteDirectoryDialogOpened, setIsDeleteDirectoryDialogOpened] = useState(false);
+  const [isRenameDirectoryDialogOpened, setIsRenameDirectoryDialogOpened] = useState(false);
 
-  state = {
-    isCreateDirectoryDialogOpened: false,
-    isDeleteDirectoryDialogOpened: false,
-    isRenameDirectoryDialogOpened: false
-  };
+  function reloadDirectory() {
+    props.onClose();
+    props.loadDirectoryContent(props.directoryPath);
+  }
 
-  reloadDirectory = () => {
-    this.props.onClose();
-    this.props.loadDirectoryContent(this.props.directoryPath);
-  };
+  function openParentDirectory() {
+    props.onClose();
+    props.loadParentDirectoryContent();
+  }
 
-  openParentDirectory = () => {
-    this.props.onClose();
-    this.props.loadParentDirectoryContent();
-  };
+  function openDirectory() {
+    props.onClose();
+    props.loadDirectoryContent(props.directoryPath);
+  }
 
-  openDirectory = () => {
-    this.props.onClose();
-    this.props.loadDirectoryContent(this.props.directoryPath);
-  };
+  function showProperties() {
+    props.onClose();
+    props.openFile(props.directoryPath, false);
+  }
 
-  showProperties = () => {
-    this.props.onClose();
-    this.props.openFile(this.props.directoryPath, false);
-  };
+  function initContentExtraction() {
+    props.onClose();
+    props.extractContent();
+  }
 
-  initContentExtraction = () => {
-    this.props.onClose();
-    this.props.extractContent();
-  };
+  function showDeleteDirectoryDialog() {
+    props.onClose();
+    setIsDeleteDirectoryDialogOpened(true);
+  }
 
-  showDeleteDirectoryDialog = () => {
-    this.props.onClose();
-    this.setState({ isDeleteDirectoryDialogOpened: true });
-  };
+  function showRenameDirectoryDialog() {
+    props.onClose();
+    setIsRenameDirectoryDialogOpened(true);
+  }
 
-  showRenameDirectoryDialog = () => {
-    this.props.onClose();
-    this.setState({ isRenameDirectoryDialogOpened: true });
-  };
+  function showCreateDirectoryDialog() {
+    props.onClose();
+    setIsCreateDirectoryDialogOpened(true);
+  }
 
-  showCreateDirectoryDialog = () => {
-    this.props.onClose();
-    this.setState({ isCreateDirectoryDialogOpened: true });
-  };
+  function createNewFile() {
+    props.onClose();
+    props.toggleCreateFileDialog();
+  }
 
-  createNewFile = () => {
-    this.props.onClose();
-    this.props.toggleCreateFileDialog();
-  };
+  function handleCloseDialogs() {
+    setIsCreateDirectoryDialogOpened(false);
+    setIsDeleteDirectoryDialogOpened(false);
+    setIsRenameDirectoryDialogOpened(false);
+  }
 
-  handleCloseDialogs = () => {
-    this.setState({
-      isCreateDirectoryDialogOpened: false,
-      isDeleteDirectoryDialogOpened: false,
-      isRenameDirectoryDialogOpened: false
-    });
-  };
+  function showInFileManager() {
+    props.onClose();
+    props.openDirectory(props.directoryPath);
+  }
 
-  showInFileManager = () => {
-    this.props.onClose();
-    this.props.openDirectory(this.props.directoryPath);
-  };
+  function addExistingFile() {
+    props.onClose();
+    fileInput.click();
+  }
 
-  addExistingFile = () => {
-    this.props.onClose();
-    this.fileInput.click();
-  };
-
-  onFail = (message) => {
+  function onFail(message) {
     console.log('Camera Failed: ' + message);
-  };
+  }
 
-  onCameraSuccess = (imageURL) => {
+  function onCameraSuccess(imageURL) {
     window.resolveLocalFileSystemURL(imageURL, (fp) => {
-      this.moveFile(fp.nativeURL);
+      moveFile(fp.nativeURL);
     }, () => { console.log('Failed to get filesystem url'); });
-  };
+  }
 
-  moveFile = (filePath) => {
+  function moveFile(filePath) {
     const fileName = 'IMG_TS' + AppConfig.beginTagContainer + formatDateTime4Tag(new Date(), true) + AppConfig.endTagContainer + '.jpg';
     const newFilePath =
-      normalizePath(this.props.directoryPath) +
+      normalizePath(props.directoryPath) +
       AppConfig.dirSeparator +
       fileName;
 
     PlatformIO.renameFilePromise(filePath, newFilePath)
       .then(() => {
-        this.props.showNotification(
+        props.showNotification(
           'File ' + newFilePath + ' successfully imported.',
           'default',
           true
         );
-        this.props.reflectCreateEntry(newFilePath, true);
+        props.reflectCreateEntry(newFilePath, true);
         return true;
       })
       .catch(error => {
         // TODO showAlertDialog("Saving " + filePath + " failed.");
         console.error('Save to file ' + newFilePath + ' failed ' + error);
-        this.props.showNotification(
+        props.showNotification(
           'Importing file ' + newFilePath + ' failed.',
           'error',
           true
         );
         return true;
       });
-  };
+  }
 
-  loadImageLocal = () => {
-    this.props.onClose();
-    navigator.camera.getPicture(this.onCameraSuccess, this.onFail, {
+  function loadImageLocal() {
+    props.onClose();
+    navigator.camera.getPicture(onCameraSuccess, onFail, {
       destinationType: Camera.DestinationType.FILE_URI,
       sourceType: Camera.PictureSourceType.PHOTOLIBRARY
     });
-  };
+  }
 
-  cameraTakePicture = () => {
-    this.props.onClose();
-    navigator.camera.getPicture(this.onCameraSuccess, this.onFail, {
+  function cameraTakePicture() {
+    props.onClose();
+    navigator.camera.getPicture(onCameraSuccess, onFail, {
       // quality: 50,
       destinationType: Camera.DestinationType.FILE_URI, // DATA_URL, // Return base64 encoded string
       // encodingType: Camera.EncodingType.JPEG,
       mediaType: Camera.MediaType.PICTURE // ALLMEDIA
     });
-  };
+  }
 
-  handleFileInputChange = (selection: Object) => {
+  function handleFileInputChange(selection: Object) {
     // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
     const file = selection.currentTarget.files[0];
     const filePath =
-      normalizePath(this.props.directoryPath) +
+      normalizePath(props.directoryPath) +
       AppConfig.dirSeparator +
       decodeURIComponent(file.name);
 
@@ -226,7 +217,7 @@ class DirectoryMenu extends React.Component<Props, State> {
       // Sample call from PRO version using content = Utils.base64ToArrayBuffer(baseString);
       PlatformIO.getPropertiesPromise(filePath).then((entryProps) => {
         if (entryProps) {
-          this.props.showNotification(
+          props.showNotification(
             'File with the same name already exist, importing skipped!',
             'warning',
             true
@@ -238,18 +229,18 @@ class DirectoryMenu extends React.Component<Props, State> {
             true
           )
             .then(() => {
-              this.props.showNotification(
+              props.showNotification(
                 'File ' + filePath + ' successfully imported.',
                 'default',
                 true
               );
-              this.props.reflectCreateEntry(filePath, true);
+              props.reflectCreateEntry(filePath, true);
               return true;
             })
             .catch(error => {
               // TODO showAlertDialog("Saving " + filePath + " failed.");
               console.error('Save to file ' + filePath + ' failed ' + error);
-              this.props.showNotification(
+              props.showNotification(
                 'Importing file ' + filePath + ' failed.',
                 'error',
                 true
@@ -268,185 +259,183 @@ class DirectoryMenu extends React.Component<Props, State> {
     } else {
       reader.readAsArrayBuffer(file);
     }
-  };
+  }
 
-  render() {
-    return (
-      <div style={{ overflowY: 'hidden !important' }}>
-        <RenameDirectoryDialog
-          key={uuidv1()}
-          open={this.state.isRenameDirectoryDialogOpened}
-          onClose={this.handleCloseDialogs}
-          selectedDirectoryPath={this.props.directoryPath}
-        />
-        <CreateDirectoryDialog
-          key={uuidv1()}
-          open={this.state.isCreateDirectoryDialogOpened}
-          onClose={this.handleCloseDialogs}
-          selectedDirectoryPath={this.props.directoryPath}
-        />
-        <ConfirmDialog
-          open={this.state.isDeleteDirectoryDialogOpened}
-          onClose={this.handleCloseDialogs}
-          title={i18n.t('core:deleteDirectoryTitleConfirm')}
-          content={i18n.t('core:deleteDirectoryContentConfirm', {
-            dirPath: this.props.directoryPath
-              ? extractFileName(this.props.directoryPath)
-              : ''
-          })}
-          confirmCallback={result => {
-            if (result) {
-              this.props.deleteDirectory(this.props.directoryPath);
-            }
-          }}
-          confirmDialogContent={'confirmDialogContent'}
-          cancelDialogTID={'cancelDeleteDirectoryDialog'}
-          confirmDialogTID={'confirmDeleteDirectoryDialog'}
-        />
-        <Menu
-          anchorEl={this.props.anchorEl}
-          open={this.props.open}
-          onClose={this.props.onClose}
-        >
-          {this.props.perspectiveMode && (
-            <MenuItem
-              data-tid="openDirectory"
-              onClick={this.openDirectory}
-            >
-              <ListItemIcon>
-                <OpenFolderIcon />
-              </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:openDirectory')} />
-            </MenuItem>
-          )}
-          {!this.props.perspectiveMode && (
-            <MenuItem
-              data-tid="openParentDirectory"
-              onClick={this.openParentDirectory}
-            >
-              <ListItemIcon>
-                <OpenFolderIcon />
-              </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:openParentDirectory')} />
-            </MenuItem>
-          )}
-          {!this.props.perspectiveMode && (
-            <MenuItem data-tid="reloadDirectory" onClick={this.reloadDirectory}>
-              <ListItemIcon>
-                <AutoRenew />
-              </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:reloadDirectory')} />
-            </MenuItem>
-          )}
-          {!this.props.isReadOnlyMode && (
-            <MenuItem
-              data-tid="renameDirectory"
-              onClick={this.showRenameDirectoryDialog}
-            >
-              <ListItemIcon>
-                <RenameFolderIcon />
-              </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:renameDirectory')} />
-            </MenuItem>
-          )}
-          {!this.props.isReadOnlyMode && (
-            <MenuItem
-              data-tid="deleteDirectory"
-              onClick={this.showDeleteDirectoryDialog}
-            >
-              <ListItemIcon>
-                <DeleteForeverIcon />
-              </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:deleteDirectory')} />
-            </MenuItem>
-          )}
-          {!AppConfig.isWeb && (
-            <MenuItem
-              data-tid="showInFileManager"
-              onClick={this.showInFileManager}
-            >
-              <ListItemIcon>
-                <OpenFolderNativelyIcon />
-              </ListItemIcon>
-              <ListItemText
-                inset
-                primary={i18n.t('core:showInFileManager')}
-              />
-            </MenuItem>
-          )}
-          {!this.props.perspectiveMode && (
-            <Divider />
-          )}
-          {!this.props.isReadOnlyMode && !this.props.perspectiveMode && (
-            <MenuItem
-              data-tid="newSubDirectory"
-              onClick={this.showCreateDirectoryDialog}
-            >
-              <ListItemIcon>
-                <NewFolderIcon />
-              </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:newSubdirectory')} />
-            </MenuItem>
-          )}
-          {!this.props.isReadOnlyMode && !this.props.perspectiveMode && (
-            <MenuItem data-tid="createNewFile" onClick={this.createNewFile}>
-              <ListItemIcon>
-                <NewFileIcon />
-              </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:newFileNote')} />
-            </MenuItem>
-          )}
-          {!this.props.isReadOnlyMode && !this.props.perspectiveMode && (
-            <MenuItem data-tid="addExistingFile" onClick={this.addExistingFile}>
-              <ListItemIcon>
-                <AddExistingFileIcon />
-              </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:showAddFileDialog')} />
-            </MenuItem>
-          )}
-          {AppConfig.isCordova && (
-            <MenuItem data-tid="takePicture" onClick={this.cameraTakePicture}>
-              <ListItemIcon>
-                <AddExistingFileIcon />
-              </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:cameraTakePicture')} />
-            </MenuItem>
-          )}
-          <Divider />
-          {!this.props.isReadOnlyMode && (
-            <MenuItem data-tid="extractContent" onClick={this.initContentExtraction}>
-              <ListItemIcon>
-                <ContentExtractionIcon />
-              </ListItemIcon>
-              <ListItemText
-                inset
-                primary={i18n.t('core:startContentExtraction')}
-              />
-            </MenuItem>
-          )}
-          <MenuItem data-tid="showProperties" onClick={this.showProperties}>
+  return (
+    <div style={{ overflowY: 'hidden !important' }}>
+      <RenameDirectoryDialog
+        key={uuidv1()}
+        open={isRenameDirectoryDialogOpened}
+        onClose={handleCloseDialogs}
+        selectedDirectoryPath={props.directoryPath}
+      />
+      <CreateDirectoryDialog
+        key={uuidv1()}
+        open={isCreateDirectoryDialogOpened}
+        onClose={handleCloseDialogs}
+        selectedDirectoryPath={props.directoryPath}
+      />
+      <ConfirmDialog
+        open={isDeleteDirectoryDialogOpened}
+        onClose={handleCloseDialogs}
+        title={i18n.t('core:deleteDirectoryTitleConfirm')}
+        content={i18n.t('core:deleteDirectoryContentConfirm', {
+          dirPath: props.directoryPath
+            ? extractFileName(props.directoryPath)
+            : ''
+        })}
+        confirmCallback={result => {
+          if (result) {
+            props.deleteDirectory(props.directoryPath);
+          }
+        }}
+        confirmDialogContent={'confirmDialogContent'}
+        cancelDialogTID={'cancelDeleteDirectoryDialog'}
+        confirmDialogTID={'confirmDeleteDirectoryDialog'}
+      />
+      <Menu
+        anchorEl={props.anchorEl}
+        open={props.open}
+        onClose={props.onClose}
+      >
+        {props.perspectiveMode && (
+          <MenuItem
+            data-tid="openDirectory"
+            onClick={openDirectory}
+          >
             <ListItemIcon>
-              <SettingsIcon />
+              <OpenFolderIcon />
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:openDirectory')} />
+          </MenuItem>
+        )}
+        {!props.perspectiveMode && (
+          <MenuItem
+            data-tid="openParentDirectory"
+            onClick={openParentDirectory}
+          >
+            <ListItemIcon>
+              <OpenFolderIcon />
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:openParentDirectory')} />
+          </MenuItem>
+        )}
+        {!props.perspectiveMode && (
+          <MenuItem data-tid="reloadDirectory" onClick={reloadDirectory}>
+            <ListItemIcon>
+              <AutoRenew />
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:reloadDirectory')} />
+          </MenuItem>
+        )}
+        {!props.isReadOnlyMode && (
+          <MenuItem
+            data-tid="renameDirectory"
+            onClick={showRenameDirectoryDialog}
+          >
+            <ListItemIcon>
+              <RenameFolderIcon />
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:renameDirectory')} />
+          </MenuItem>
+        )}
+        {!props.isReadOnlyMode && (
+          <MenuItem
+            data-tid="deleteDirectory"
+            onClick={showDeleteDirectoryDialog}
+          >
+            <ListItemIcon>
+              <DeleteForeverIcon />
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:deleteDirectory')} />
+          </MenuItem>
+        )}
+        {!AppConfig.isWeb && (
+          <MenuItem
+            data-tid="showInFileManager"
+            onClick={showInFileManager}
+          >
+            <ListItemIcon>
+              <OpenFolderNativelyIcon />
             </ListItemIcon>
             <ListItemText
               inset
-              primary={i18n.t('core:directoryPropertiesTitle')}
+              primary={i18n.t('core:showInFileManager')}
             />
           </MenuItem>
-        </Menu>
-        <input
-          style={{ display: 'none' }}
-          ref={input => {
-            this.fileInput = input;
-          }}
-          accept="*"
-          type="file"
-          onChange={this.handleFileInputChange}
-        />
-      </div>
-    );
-  }
-}
+        )}
+        {!props.perspectiveMode && (
+          <Divider />
+        )}
+        {!props.isReadOnlyMode && !props.perspectiveMode && (
+          <MenuItem
+            data-tid="newSubDirectory"
+            onClick={showCreateDirectoryDialog}
+          >
+            <ListItemIcon>
+              <NewFolderIcon />
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:newSubdirectory')} />
+          </MenuItem>
+        )}
+        {!props.isReadOnlyMode && !props.perspectiveMode && (
+          <MenuItem data-tid="createNewFile" onClick={createNewFile}>
+            <ListItemIcon>
+              <NewFileIcon />
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:newFileNote')} />
+          </MenuItem>
+        )}
+        {!props.isReadOnlyMode && !props.perspectiveMode && (
+          <MenuItem data-tid="addExistingFile" onClick={addExistingFile}>
+            <ListItemIcon>
+              <AddExistingFileIcon />
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:showAddFileDialog')} />
+          </MenuItem>
+        )}
+        {AppConfig.isCordova && (
+          <MenuItem data-tid="takePicture" onClick={cameraTakePicture}>
+            <ListItemIcon>
+              <AddExistingFileIcon />
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:cameraTakePicture')} />
+          </MenuItem>
+        )}
+        <Divider />
+        {!props.isReadOnlyMode && (
+          <MenuItem data-tid="extractContent" onClick={initContentExtraction}>
+            <ListItemIcon>
+              <ContentExtractionIcon />
+            </ListItemIcon>
+            <ListItemText
+              inset
+              primary={i18n.t('core:startContentExtraction')}
+            />
+          </MenuItem>
+        )}
+        <MenuItem data-tid="showProperties" onClick={showProperties}>
+          <ListItemIcon>
+            <SettingsIcon />
+          </ListItemIcon>
+          <ListItemText
+            inset
+            primary={i18n.t('core:directoryPropertiesTitle')}
+          />
+        </MenuItem>
+      </Menu>
+      <input
+        style={{ display: 'none' }}
+        ref={input => {
+          fileInput = input;
+        }}
+        accept="*"
+        type="file"
+        onChange={handleFileInputChange}
+      />
+    </div>
+  );
+};
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
