@@ -28,7 +28,9 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
+import { isPlusCode } from '../../utils/misc';
 import { type Tag } from '../../reducers/taglibrary';
+import { Pro } from '../../pro';
 
 const styles = theme => ({
   root: {
@@ -85,8 +87,10 @@ const EditEntryTagDialog = (props: Props) => {
   }
 
   function renderContent() {
+    const showGeoEditor = Pro && Pro.UI && Pro.UI.EditGeoTagContainer && isPlusCode(title);
     return (
       <DialogContent data-tid="editEntryTagDialog" className={props.classes.root}>
+        { showGeoEditor && <Pro.UI.EditGeoTagContainer geoTag={title} onChange={setTitle} /> }
         <FormControl
           fullWidth={true}
           error={errorTag}
