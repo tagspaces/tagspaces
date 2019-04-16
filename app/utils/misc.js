@@ -19,6 +19,9 @@
 
 /** Returns true is a string is plus code e.g. 8FWH4HVG+3V 8FWH4HVG+ 8FWH4H+ */
 export function isPlusCode(plusCode: string): boolean {
+  if (!plusCode) {
+    return false;
+  }
   const upperCasedPlusCode = plusCode.toUpperCase(); // needed only lowercased index
   return /(^|\s)([23456789C][23456789CFGHJMPQRV][23456789CFGHJMPQRVWX]{6}\+[23456789CFGHJMPQRVWX]{2,3})(\s|$)/.test(upperCasedPlusCode);
 }
