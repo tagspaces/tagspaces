@@ -17,7 +17,7 @@
  * @flow
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import uuidv1 from 'uuid';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -40,6 +40,7 @@ import { getMaxSearchResults } from '../../reducers/settings';
 
 
 type Props = {
+  classes: Object,
   open?: boolean,
   onClose: () => void,
   anchorEl?: Object | null,
@@ -52,87 +53,77 @@ type Props = {
   isReadOnlyMode: boolean
 };
 
-type State = {
-  isEditTagDialogOpened?: boolean,
-  isDateCalendarDialogOpened?: boolean,
-  isDeleteTagDialogOpened?: boolean
-};
+const EntryTagMenu = (props: Props) => {
+  const [isEditTagDialogOpened, setIsEditTagDialogOpened] = useState(false);
+  const [isDateCalendarDialogOpened, setIsDateCalendarDialogOpened] = useState(false);
+  const [isDeleteTagDialogOpened, setIsDeleteTagDialogOpened] = useState(false);
 
-class EntryTagMenu extends React.Component<Props, State> {
-  state = {
-    isEditTagDialogOpened: false,
-    isDateCalendarDialogOpened: false,
-    isDeleteTagDialogOpened: false
-  };
+  function showEditTagDialog() {
+    props.onClose();
+    setIsEditTagDialogOpened(true);
+  }
 
-  showEditTagDialog = () => {
-    this.props.onClose();
-    this.setState({ isEditTagDialogOpened: true });
-  };
+  function showDeleteTagDialog() {
+    props.onClose();
+    setIsDateCalendarDialogOpened(true);
+  }
 
-  showDeleteTagDialog = () => {
-    this.props.onClose();
-    this.setState({ isDeleteTagDialogOpened: true });
-  };
+  /* function showDateCalendarDialog() {
+    props.onClose();
+    setIsDeleteTagDialogOpened(true);
+  } */
 
-  showDateCalendarDialog = () => {
-    this.props.onClose();
-    this.setState({ isDateCalendarDialogOpened: true });
-  };
-
-  showFilesWithThisTag = () => {
-    if (this.props.selectedTag) {
+  function showFilesWithThisTag() {
+    if (props.selectedTag) {
       // this.props.togglePanel(AppVerticalPanels.search);
-      this.props.searchLocationIndex({
-        tagsAND: [this.props.selectedTag],
-        maxSearchResults: this.props.maxSearchResults
+      props.searchLocationIndex({
+        tagsAND: [props.selectedTag],
+        maxSearchResults: props.maxSearchResults
       });
     }
-    this.props.onClose();
-  };
+    props.onClose();
+  }
 
-  handleCloseDialogs = () => {
-    this.setState({
-      isEditTagDialogOpened: false,
-      isDateCalendarDialogOpened: false,
-      isDeleteTagDialogOpened: false
-    });
-  };
+  function handleCloseDialogs() {
+    setIsEditTagDialogOpened(false);
+    setIsDateCalendarDialogOpened(false);
+    setIsDeleteTagDialogOpened(false);
+  }
 
-  confirmRemoveTag = () => {
-    this.props.removeTags(
-      [this.props.currentEntryPath],
-      [this.props.selectedTag]
+  function confirmRemoveTag() {
+    props.removeTags(
+      [props.currentEntryPath],
+      [props.selectedTag]
     );
-    this.handleCloseDialogs();
-  };
+    handleCloseDialogs();
+  }
 
-  render = () => (
+  return (
     <div style={{ overflowY: 'hidden !important' }}>
       <Menu
-        anchorEl={this.props.anchorEl}
-        open={this.props.open}
-        onClose={this.props.onClose}
+        anchorEl={props.anchorEl}
+        open={props.open}
+        onClose={props.onClose}
       >
         <MenuItem
           data-tid="showFilesWithThisTag"
-          onClick={this.showFilesWithThisTag}
+          onClick={showFilesWithThisTag}
         >
           <ListItemIcon>
             <ShowEntriesWithTagIcon />
           </ListItemIcon>
           <ListItemText inset primary={i18n.t('core:showFilesWithThisTag')} />
         </MenuItem>
-        {!this.props.isReadOnlyMode && (
+        {!props.isReadOnlyMode && (
           <div>
-            <MenuItem data-tid="deleteTagMenu" onClick={this.showDeleteTagDialog}>
+            <MenuItem data-tid="deleteTagMenu" onClick={showDeleteTagDialog}>
               <ListItemIcon>
                 <DeleteIcon />
               </ListItemIcon>
               <ListItemText inset primary={i18n.t('core:removeTag')} />
             </MenuItem>
             <Divider />
-            <MenuItem data-tid="editTagDialogMenu" onClick={this.showEditTagDialog}>
+            <MenuItem data-tid="editTagDialogMenu" onClick={showEditTagDialog}>
               <ListItemIcon>
                 <EditIcon />
               </ListItemIcon>
@@ -142,13 +133,13 @@ class EntryTagMenu extends React.Component<Props, State> {
         )}
       </Menu>
       <ConfirmDialog
-        open={this.state.isDeleteTagDialogOpened}
-        onClose={this.handleCloseDialogs}
+        open={isDeleteTagDialogOpened}
+        onClose={handleCloseDialogs}
         title={i18n.t('core:removeTag')}
         content={i18n.t('core:removeTagTooltip')}
         confirmCallback={result => {
           if (result) {
-            this.confirmRemoveTag();
+            confirmRemoveTag();
           }
         }}
         cancelDialogTID={'cancelDeleteTagDialogTagMenu'}
@@ -157,22 +148,22 @@ class EntryTagMenu extends React.Component<Props, State> {
       />
       <EditEntryTagDialog
         key={uuidv1()}
-        open={this.state.isEditTagDialogOpened}
-        onClose={this.handleCloseDialogs}
-        editTagForEntry={this.props.editTagForEntry}
-        currentEntryPath={this.props.currentEntryPath}
-        selectedTag={this.props.selectedTag}
+        open={isEditTagDialogOpened}
+        onClose={handleCloseDialogs}
+        editTagForEntry={props.editTagForEntry}
+        currentEntryPath={props.currentEntryPath}
+        selectedTag={props.selectedTag}
       />
       <DateCalendarDialog
-        open={this.state.isDateCalendarDialogOpened}
-        onClose={this.handleCloseDialogs}
-        editTagForEntry={this.props.editTagForEntry}
-        currentEntryPath={this.props.currentEntryPath}
-        selectedTag={this.props.selectedTag}
+        open={isDateCalendarDialogOpened}
+        onClose={handleCloseDialogs}
+        editTagForEntry={props.editTagForEntry}
+        currentEntryPath={props.currentEntryPath}
+        selectedTag={props.selectedTag}
       />
     </div>
   );
-}
+};
 
 function mapStateToProps(state) {
   return {
