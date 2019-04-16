@@ -17,7 +17,7 @@
  * @flow
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import ShowEntriesWithTagIcon from '@material-ui/icons/Launch';
@@ -49,82 +49,73 @@ type Props = {
   maxSearchResults: number
 };
 
-type State = {
-  isEditTagDialogOpened?: boolean,
-  isDeleteTagDialogOpened?: boolean
-};
+const TagLibraryMenu = (props: Props) => {
+  const [isEditTagDialogOpened, setIsEditTagDialogOpened] = useState(false);
+  const [isDeleteTagDialogOpened, setIsDeleteTagDialogOpened] = useState(false);
 
-class TagLibraryMenu extends React.Component<Props, State> {
-  state = {
-    isEditTagDialogOpened: false,
-    isDeleteTagDialogOpened: false
-  };
-
-  tagSelectedFiles = () => {
+  function tagSelectedFiles() {
     // TODO not implemented
-    this.props.onClose();
-  };
+    props.onClose();
+  }
 
-  showFilesWithThisTag = () => {
-    if (this.props.selectedTag) {
-      this.props.togglePanel(AppVerticalPanels.search);
-      this.props.searchLocationIndex({
-        tagsAND: [this.props.selectedTag],
-        maxSearchResults: this.props.maxSearchResults
+  function showFilesWithThisTag() {
+    if (props.selectedTag) {
+      props.togglePanel(AppVerticalPanels.search);
+      props.searchLocationIndex({
+        tagsAND: [props.selectedTag],
+        maxSearchResults: props.maxSearchResults
       });
     }
-    this.props.onClose();
-  };
+    props.onClose();
+  }
 
-  showEditTagDialog = () => {
-    this.props.onClose();
-    this.setState({ isEditTagDialogOpened: true });
-  };
+  function showEditTagDialog() {
+    props.onClose();
+    setIsEditTagDialogOpened(true);
+  }
 
-  showDeleteTagDialog = () => {
-    this.props.onClose();
-    this.setState({ isDeleteTagDialogOpened: true });
-  };
+  function showDeleteTagDialog() {
+    props.onClose();
+    setIsDeleteTagDialogOpened(true);
+  }
 
-  handleCloseDialogs = () => {
-    this.setState({
-      isEditTagDialogOpened: false,
-      isDeleteTagDialogOpened: false
-    });
-  };
+  function handleCloseDialogs() {
+    setIsEditTagDialogOpened(false);
+    setIsDeleteTagDialogOpened(false);
+  }
 
-  confirmDeleteTag = () => {
-    if (this.props.selectedTag && this.props.selectedTagGroupEntry) {
-      this.props.deleteTag(
-        this.props.selectedTag.id,
-        this.props.selectedTagGroupEntry.uuid
+  function confirmDeleteTag() {
+    if (props.selectedTag && props.selectedTagGroupEntry) {
+      props.deleteTag(
+        props.selectedTag.id,
+        props.selectedTagGroupEntry.uuid
       );
     }
-  };
+  }
 
-  render = () => (
+  return (
     <div style={{ overflowY: 'hidden !important' }}>
       <Menu
-        anchorEl={this.props.anchorEl}
-        open={this.props.open}
-        onClose={this.props.onClose}
+        anchorEl={props.anchorEl}
+        open={props.open}
+        onClose={props.onClose}
       >
         <MenuItem
           data-tid="showFilesWithThisTag"
-          onClick={this.showFilesWithThisTag}
+          onClick={showFilesWithThisTag}
         >
           <ListItemIcon>
             <ShowEntriesWithTagIcon />
           </ListItemIcon>
           <ListItemText inset primary={i18n.t('core:showFilesWithThisTag')} />
         </MenuItem>
-        <MenuItem data-tid="editTagDialog" onClick={this.showEditTagDialog}>
+        <MenuItem data-tid="editTagDialog" onClick={showEditTagDialog}>
           <ListItemIcon>
             <Edit />
           </ListItemIcon>
           <ListItemText inset primary={i18n.t('core:editTag')} />
         </MenuItem>
-        <MenuItem data-tid="deleteTagDialog" onClick={this.showDeleteTagDialog}>
+        <MenuItem data-tid="deleteTagDialog" onClick={showDeleteTagDialog}>
           <ListItemIcon>
             <DeleteIcon />
           </ListItemIcon>
@@ -135,22 +126,22 @@ class TagLibraryMenu extends React.Component<Props, State> {
         </MenuItem>
       </Menu>
       <EditTagDialog
-        open={this.state.isEditTagDialogOpened}
-        onClose={this.handleCloseDialogs}
-        editTag={this.props.editTag}
-        selectedTagGroupEntry={this.props.selectedTagGroupEntry}
-        selectedTag={this.props.selectedTag}
+        open={isEditTagDialogOpened}
+        onClose={handleCloseDialogs}
+        editTag={props.editTag}
+        selectedTagGroupEntry={props.selectedTagGroupEntry}
+        selectedTag={props.selectedTag}
       />
       <ConfirmDialog
-        open={this.state.isDeleteTagDialogOpened}
-        onClose={this.handleCloseDialogs}
+        open={isDeleteTagDialogOpened}
+        onClose={handleCloseDialogs}
         title={i18n.t('core:deleteTagFromTagGroup')}
         content={i18n.t('core:deleteTagFromTagGroupContentConfirm', {
-          tagName: this.props.selectedTag ? this.props.selectedTag.title : ''
+          tagName: props.selectedTag ? props.selectedTag.title : ''
         })}
         confirmCallback={result => {
           if (result) {
-            this.confirmDeleteTag();
+            confirmDeleteTag();
           }
         }}
         cancelDialogTID={'cancelDeleteTagDialogTagMenu'}
@@ -158,7 +149,7 @@ class TagLibraryMenu extends React.Component<Props, State> {
       />
     </div>
   );
-}
+};
 
 function mapStateToProps(state) {
   return {
