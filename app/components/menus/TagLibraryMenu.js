@@ -53,16 +53,15 @@ type Props = {
 const TagLibraryMenu = (props: Props) => {
   let fileInput;
 
-    const [open, setOpen] = useState(false);
-    const [tagGroups, setTagGroups] = useState(null);
-    const [selectedDirectoryPath, setSelectedDirectoryPath] = useState('');
-    const [isSelectDirectoryDialogOpened, setIsSelectDirectoryDialogOpened] = useState(false);
-    const [isImportExportTagGroupDialogOpened, setIsImportExportTagGroupDialogOpened] = useState(false);
-    const [dialogModeImport, setDialogModeImport] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [tagGroups, setTagGroups] = useState(null);
+  const [selectedDirectoryPath, setSelectedDirectoryPath] = useState('');
+  const [isSelectDirectoryDialogOpened, setIsSelectDirectoryDialogOpened] = useState(false);
+  const [isImportExportTagGroupDialogOpened, setIsImportExportTagGroupDialogOpened] = useState(false);
+  const [dialogModeImport, setDialogModeImport] = useState(false);
 
   function handleCloseDialogs() {
     setIsImportExportTagGroupDialogOpened(false);
-
   }
 
   function handleExportTagGroup() {
