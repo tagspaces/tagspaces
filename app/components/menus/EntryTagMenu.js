@@ -30,14 +30,13 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ConfirmDialog from '../dialogs/ConfirmDialog';
-import EditEntryTagDialog from '../dialogs/EditEntryTagDialog';
 import DateCalendarDialog from '../dialogs/DateCalendarDialog';
 import i18n from '../../services/i18n';
 import { type Tag } from '../../reducers/taglibrary';
 import { actions as LocationIndexActions } from '../../reducers/location-index';
 import { type SearchQuery } from '../../services/search';
 import { getMaxSearchResults } from '../../reducers/settings';
-
+import LoadingLazy from '../LoadingLazy';
 
 type Props = {
   classes: Object,
@@ -52,6 +51,13 @@ type Props = {
   maxSearchResults: number,
   isReadOnlyMode: boolean
 };
+
+const EditEntryTagDialog = React.lazy(() => import(/* webpackChunkName: "EditEntryTagDialog" */ '../dialogs/EditEntryTagDialog'));
+const EditEntryTagDialogAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <EditEntryTagDialog {...props} />
+  </React.Suspense>
+);
 
 const EntryTagMenu = (props: Props) => {
   const [isEditTagDialogOpened, setIsEditTagDialogOpened] = useState(false);
@@ -146,7 +152,7 @@ const EntryTagMenu = (props: Props) => {
         confirmDialogTID={'confirmRemoveTagFromFile'}
         confirmDialogContent={'confirmDialogContent'}
       />
-      <EditEntryTagDialog
+      <EditEntryTagDialogAsync
         key={uuidv1()}
         open={isEditTagDialogOpened}
         onClose={handleCloseDialogs}
