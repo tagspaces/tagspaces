@@ -40,16 +40,6 @@ type Props = {
   showCreateTagGroupDialog: () => void
 };
 
-/* type State = {
-  open?: boolean,
-  tagGroups?: Array<Object>,
-  isCreateDirectoryDialogOpened?: boolean,
-  isSelectDirectoryDialogOpened?: boolean,
-  isImportExportTagGroupDialogOpened?: boolean,
-  selectedDirectoryPath?: string,
-  dialogModeImport?: boolean
-}; */
-
 const TagLibraryMenu = (props: Props) => {
   let fileInput;
 
