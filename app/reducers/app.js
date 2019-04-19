@@ -72,6 +72,7 @@ export const types = {
   SET_READONLYMODE: 'APP/SET_READONLYMODE',
   RENAME_FILE: 'APP/RENAME_FILE',
   TOGGLE_ABOUT_DIALOG: 'APP/TOGGLE_ABOUT_DIALOG',
+  TOGGLE_ONBOARDING_DIALOG: 'APP/TOGGLE_ONBOARDING_DIALOG',
   TOGGLE_KEYBOARD_DIALOG: 'APP/TOGGLE_KEYBOARD_DIALOG',
   TOGGLE_LICENSE_DIALOG: 'APP/TOGGLE_LICENSE_DIALOG',
   TOGGLE_THIRD_PARTY_LIBS_DIALOG: 'APP/TOGGLE_THIRD_PARTY_LIBS_DIALOG',
@@ -128,8 +129,8 @@ export const initialState = {
     autohide: false
   },
   openedFiles: [],
-  // isFileDragged: false,
   aboutDialogOpened: false,
+  onboardingDialogOpened: false,
   keysDialogOpened: false,
   createFileDialogOpened: false,
   licenseDialogOpened: false,
@@ -197,6 +198,9 @@ export default (state: Object = initialState, action: Object) => {
   }
   case types.TOGGLE_ABOUT_DIALOG: {
     return { ...state, aboutDialogOpened: !state.aboutDialogOpened };
+  }
+  case types.TOGGLE_ONBOARDING_DIALOG: {
+    return { ...state, onboardingDialogOpened: !state.onboardingDialogOpened };
   }
   case types.TOGGLE_KEYBOARD_DIALOG: {
     return { ...state, keysDialogOpened: !state.keysDialogOpened };
@@ -352,47 +356,6 @@ export default (state: Object = initialState, action: Object) => {
         };
       })
     };
-/*    const indexForRenaming = state.currentDirectoryEntries.findIndex((entry) => entry.path === action.path);
-    const indexForRenamingInOpenedFiles = state.openedFiles.findIndex((entry) => entry.path === action.path);
-    let directoryEntries = state.currentDirectoryEntries;
-    let openedFiles = state.openedFiles;
-    if (indexForRenaming >= 0) {
-      const updateEntry = {
-        ...state.currentDirectoryEntries[indexForRenaming],
-        path: action.newPath,
-        // thumbPath: getThumbFileLocationForFile(action.newPath), // not needed due timing issue
-        name: extractFileName(action.newPath),
-        extension: extractFileExtension(action.newPath),
-        tags: [
-          ...state.currentDirectoryEntries[indexForRenaming].tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
-          ...extractTagsAsObjects(action.newPath) // , getTagDelimiter(state))  TODO https://itnext.io/passing-state-between-reducers-in-redux-318de6db06cd
-        ]
-      };
-      directoryEntries = [
-        ...state.currentDirectoryEntries.slice(0, indexForRenaming),
-        updateEntry,
-        ...state.currentDirectoryEntries.slice(indexForRenaming + 1)
-      ];
-    }
-    if (indexForRenamingInOpenedFiles >= 0) {
-      const updateEntry = {
-        ...state.openedFiles[indexForRenamingInOpenedFiles],
-        path: action.newPath, // TODO handle change extension case
-      };
-      openedFiles = [
-        ...state.openedFiles.slice(0, indexForRenamingInOpenedFiles),
-        updateEntry,
-        ...state.openedFiles.slice(indexForRenamingInOpenedFiles + 1)
-      ];
-    }
-    if (indexForRenaming >= 0 || indexForRenamingInOpenedFiles >= 0) {
-      return {
-        ...state,
-        currentDirectoryEntries: directoryEntries,
-        openedFiles
-      };
-    }
-    return state; */
   }
   case types.REFLECT_UPDATE_SIDECARTAGS: {
     return {
@@ -419,43 +382,6 @@ export default (state: Object = initialState, action: Object) => {
         };
       })
     };
-/*    const indexForUpdating = state.currentDirectoryEntries.findIndex((entry) => entry.path === action.path);
-    const indexForUpdatingInOpenedFiles = state.openedFiles.findIndex((entry) => entry.path === action.path);
-    let directoryEntries = state.currentDirectoryEntries;
-    let openedFiles = state.openedFiles;
-    if (indexForUpdating >= 0) {
-      const updateEntry = {
-        ...state.currentDirectoryEntries[indexForUpdating],
-        tags: [
-          ...state.currentDirectoryEntries[indexForUpdating].tags.filter(tag => tag.type === 'plain'),
-          ...action.tags
-        ]
-      };
-      directoryEntries = [
-        ...state.currentDirectoryEntries.slice(0, indexForUpdating),
-        updateEntry,
-        ...state.currentDirectoryEntries.slice(indexForUpdating + 1)
-      ];
-    }
-    if (indexForUpdatingInOpenedFiles >= 0) {
-      const updateEntry = {
-        ...state.openedFiles[indexForUpdatingInOpenedFiles],
-        shouldReload: true,
-      };
-      openedFiles = [
-        ...state.openedFiles.slice(0, indexForUpdatingInOpenedFiles),
-        updateEntry,
-        ...state.openedFiles.slice(indexForUpdatingInOpenedFiles + 1)
-      ];
-    }
-    if (indexForUpdating >= 0 || indexForUpdatingInOpenedFiles >= 0) {
-      return {
-        ...state,
-        currentDirectoryEntries: directoryEntries,
-        openedFiles
-      };
-    }
-    return state; */
   }
   case types.REFLECT_UPDATE_SIDECARMETA: {
     return {
@@ -479,40 +405,6 @@ export default (state: Object = initialState, action: Object) => {
         };
       })
     };
-/*    const indexForUpdating = state.currentDirectoryEntries.findIndex((entry) => entry.path === action.path);
-    const indexForUpdatingInOpenedFiles = state.openedFiles.findIndex((entry) => entry.path === action.path);
-    let directoryEntries = state.currentDirectoryEntries;
-    let openedFiles = state.openedFiles;
-    if (indexForUpdating >= 0) {
-      const updateEntry = {
-        ...state.currentDirectoryEntries[indexForUpdating],
-        ...action.entryMeta
-      };
-      directoryEntries = [
-        ...state.currentDirectoryEntries.slice(0, indexForUpdating),
-        updateEntry,
-        ...state.currentDirectoryEntries.slice(indexForUpdating + 1)
-      ];
-    }
-    if (indexForUpdatingInOpenedFiles >= 0) {
-      const updateEntry = {
-        ...state.openedFiles[indexForUpdatingInOpenedFiles],
-        shouldReload: true,
-      };
-      openedFiles = [
-        ...state.openedFiles.slice(0, indexForUpdatingInOpenedFiles),
-        updateEntry,
-        ...state.openedFiles.slice(indexForUpdatingInOpenedFiles + 1)
-      ];
-    }
-    if (indexForUpdating >= 0 || indexForUpdatingInOpenedFiles >= 0) {
-      return {
-        ...state,
-        currentDirectoryEntries: directoryEntries,
-        openedFiles
-      };
-    }
-    return state; */
   }
   case types.CLOSE_ALL_FILES: {
     window.history.pushState('', 'TagSpaces', location.pathname);
@@ -564,6 +456,7 @@ export const actions = {
     dispatch(actions.toggleSelectDirectoryDialog());
   },
   toggleAboutDialog: () => ({ type: types.TOGGLE_ABOUT_DIALOG }),
+  toggleOnboardingDialog: () => ({ type: types.TOGGLE_ONBOARDING_DIALOG }),
   toggleKeysDialog: () => ({ type: types.TOGGLE_KEYBOARD_DIALOG }),
   toggleLicenseDialog: () => ({ type: types.TOGGLE_LICENSE_DIALOG }),
   toggleThirdPartyLibsDialog: () => ({ type: types.TOGGLE_THIRD_PARTY_LIBS_DIALOG }),
@@ -1445,6 +1338,7 @@ export const isFileOpened = (state: Object) => state.app.openedFiles.length > 0;
 export const isGeneratingThumbs = (state: Object) => state.app.isGeneratingThumbs;
 // export const isFileDragged = (state: Object) => state.app.isFileDragged;
 export const isReadOnlyMode = (state: Object) => state.app.isReadOnlyMode;
+export const isOnboardingDialogOpened = (state: Object) => state.app.onboardingDialogOpened;
 export const isAboutDialogOpened = (state: Object) => state.app.aboutDialogOpened;
 export const isKeysDialogOpened = (state: Object) => state.app.keysDialogOpened;
 export const isLicenseDialogOpened = (state: Object) => state.app.licenseDialogOpened;
