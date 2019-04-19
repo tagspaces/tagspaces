@@ -272,7 +272,7 @@ export default function buildDesktopMenu(mainPageProps: Object) {
         {
           label: 'Welcome Wizzard',
           click: () => {
-            mainPageProps.toggleOnboarding();
+            mainPageProps.toggleOnboardingDialog();
           }
         },
         {

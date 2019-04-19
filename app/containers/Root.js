@@ -27,7 +27,8 @@ import { actions as AppActions } from '../reducers/app';
 import {
   actions as SettingsActions,
   getCheckForUpdateOnStartup,
-  isGlobalKeyBindingEnabled
+  isGlobalKeyBindingEnabled,
+  isFirstRun
 } from '../reducers/settings';
 import { getDefaultLocationId } from '../reducers/locations';
 import PlatformIO from '../services/platform-io';
@@ -50,6 +51,10 @@ function onBeforeLift(store) {
   }
   if (getCheckForUpdateOnStartup(state)) {
     store.dispatch(SettingsActions.checkForUpdate());
+  }
+  if (isFirstRun(state)) {
+    store.dispatch(AppActions.toggleOnboardingDialog());
+    setTimeout(store.dispatch(AppActions.toggleLicenseDialog()), 2000);
   }
   PlatformIO.setGlobalShortcuts(isGlobalKeyBindingEnabled(state));
   const langURLParam = getURLParameter('locale');

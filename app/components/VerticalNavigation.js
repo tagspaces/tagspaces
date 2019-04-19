@@ -47,6 +47,7 @@ import {
   actions as AppActions,
   getDirectoryPath,
   isAboutDialogOpened,
+  isOnboardingDialogOpened,
   isKeysDialogOpened,
   isLicenseDialogOpened,
   isThirdPartyLibsDialogOpened,
@@ -56,7 +57,7 @@ import {
   isSelectDirectoryDialogOpened,
   isReadOnlyMode,
 } from '../reducers/app';
-import { actions as SettingActions, isFirstRun } from '../reducers/settings';
+import { actions as SettingsActions, isFirstRun } from '../reducers/settings';
 import LoadingLazy from './LoadingLazy';
 
 const LicenseDialog = React.lazy(() => import(/* webpackChunkName: "LicenseDialog" */ './dialogs/LicenseDialog'));
@@ -101,6 +102,13 @@ const ThirdPartyLibsDialogAsync = props => (
   </React.Suspense>
 );
 
+const OnboardingDialog = React.lazy(() => import(/* webpackChunkName: "OnboardingDialog" */ './dialogs/OnboardingDialog'));
+const OnboardingDialogAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <OnboardingDialog {...props} />
+  </React.Suspense>
+);
+
 export const AppVerticalPanels = {
   tagLibrary: 'tagLibrary',
   search: 'search',
@@ -111,6 +119,9 @@ export const AppVerticalPanels = {
 
 type Props = {
   isFirstRun: boolean,
+  setFirstRun: (isFirstRun: boolean) => void,
+  isOnboardingDialogOpened: boolean,
+  toggleOnboardingDialog: () => void,
   isAboutDialogOpened: boolean,
   toggleAboutDialog: () => void,
   isCreateDirectoryOpened: boolean,
@@ -315,10 +326,19 @@ class VerticalNavigation extends React.Component<Props, State> {
             onClose={this.props.toggleKeysDialog}
           />
         )}
-        {(this.props.isLicenseDialogOpened) && ( // this.props.isFirstRun ||
+        {(this.props.isLicenseDialogOpened) && (
           <LicenseDialogAsync
             open={this.props.isLicenseDialogOpened}
-            onClose={this.props.toggleLicenseDialog}
+            onClose={() => {
+              this.props.setFirstRun(false);
+              this.props.toggleLicenseDialog();
+            }}
+          />
+        )}
+        {(this.props.isOnboardingDialogOpened) && (
+          <OnboardingDialogAsync
+            open={this.props.isOnboardingDialogOpened}
+            onClose={this.props.toggleOnboardingDialog}
           />
         )}
         {this.props.isThirdPartyLibsDialogOpened && (
@@ -346,7 +366,6 @@ class VerticalNavigation extends React.Component<Props, State> {
         />
         <CreateFileDialog
           key={uuidv1()}
-          resetState={this.resetState}
           open={this.props.isCreateFileDialogOpened}
           selectedDirectoryPath={
             this.state.selectedDirectoryPath || this.props.currentDirectory
@@ -536,6 +555,7 @@ function mapStateToProps(state) {
     isFirstRun: isFirstRun(state),
     isAboutDialogOpened: isAboutDialogOpened(state),
     isKeysDialogOpened: isKeysDialogOpened(state),
+    isOnboardingDialogOpened: isOnboardingDialogOpened(state),
     isLicenseDialogOpened: isLicenseDialogOpened(state),
     isThirdPartyLibsDialogOpened: isThirdPartyLibsDialogOpened(state),
     isSettingsDialogOpened: isSettingsDialogOpened(state),
@@ -553,12 +573,14 @@ function mapActionCreatorsToProps(dispatch) {
       toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog,
       toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
       toggleSelectDirectoryDialog: AppActions.toggleSelectDirectoryDialog,
+      toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
       toggleSettingsDialog: AppActions.toggleSettingsDialog,
       toggleKeysDialog: AppActions.toggleKeysDialog,
       toggleLicenseDialog: AppActions.toggleLicenseDialog,
       toggleThirdPartyLibsDialog: AppActions.toggleThirdPartyLibsDialog,
       toggleAboutDialog: AppActions.toggleAboutDialog,
-      switchTheme: SettingActions.switchTheme
+      switchTheme: SettingsActions.switchTheme,
+      setFirstRun: SettingsActions.setFirstRun,
     },
     dispatch
   );

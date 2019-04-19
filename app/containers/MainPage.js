@@ -31,7 +31,6 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { HotKeys } from 'react-hotkeys';
 import HTML5Backend, { NativeTypes } from 'react-dnd-html5-backend';
-// import LinearProgress from '@material-ui/core/LinearProgress';
 import { DragDropContext } from 'react-dnd';
 import VerticalNavigation, {
   AppVerticalPanels
@@ -52,7 +51,6 @@ import {
   getNotificationStatus,
   isGeneratingThumbs,
   isFileOpened,
-  // isFileDragged,
   isEntryInFullWidth,
   isUpdateAvailable,
   getDirectoryPath,
@@ -64,18 +62,9 @@ import { normalizePath } from '../utils/paths';
 import TargetFileBox from '../components/TargetFileBox';
 import PlatformIO from '../services/platform-io';
 import AppConfig from '../config';
-// import i18n from '../services/i18n';
 import buildDesktopMenu from '../services/electron-menus';
 import buildTrayIconMenu from '../services/electron-tray-menu';
 import i18n from '../services/i18n';
-import LoadingLazy from '../components/LoadingLazy';
-
-const OnboardingDialog = React.lazy(() => import(/* webpackChunkName: "OnboardingDialog" */ '../components/dialogs/OnboardingDialog'));
-const OnboardingDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <OnboardingDialog {...props} />
-  </React.Suspense>
-);
 
 const initialSplitSize = 44;
 const drawerWidth = 300;
@@ -117,7 +106,6 @@ const styles = theme => ({
 type Props = {
   isDesktopMode: boolean,
   isFileOpened: boolean,
-  // isFileDragged: boolean,
   isIndexing: boolean,
   isGeneratingThumbs: boolean,
   setGeneratingThumbnails: (isGenerating: boolean) => void,
@@ -128,12 +116,10 @@ type Props = {
   isUpdateAvailable: boolean,
   isFirstRun: boolean,
   isReadOnlyMode: boolean,
-  setFirstRun: (isFirstRun: boolean) => void,
   setEntryFullWidth: (isFullWidth: boolean) => void,
   hideNotifications: () => void,
   cancelDirectoryIndexing: () => void,
   setUpdateAvailable: (isUpdateAvailable: boolean) => void,
-  // setFileDragged: (isFileDragged: boolean) => void,
   saveFile: () => void, // needed by electron-menus
   setZoomResetApp: () => void, // needed by electron-menus
   setZoomInApp: () => void, // needed by electron-menus
@@ -145,6 +131,7 @@ type Props = {
   toggleLicenseDialog: () => void, // needed by electron-menus
   toggleThirdPartyLibsDialog: () => void, // neede by electron-menus
   toggleAboutDialog: () => void, // needed by electron-menus
+  toggleOnboardingDialog: () => void, // needed by electron-menus
   setLastSelectedEntry: (path: string) => void, // needed by electron-menus
   openFile: (path: string) => void, // needed by electron-menus
   openFileNatively: () => void, // needed by electron-menus
@@ -192,7 +179,6 @@ class MainPage extends Component<Props, State> {
     // this.setupDesktopMenu();
     buildDesktopMenu({
       ...this.props,
-      toggleOnboarding: this.toggleOnboarding,
       toggleTagLibrary: this.toggleTagLibrary,
       toggleLocationManager: this.toggleLocationManager,
       toggleSearch: this.toggleSearch,
@@ -244,10 +230,6 @@ class MainPage extends Component<Props, State> {
   toggleSearch = () => {
     this.setState({ shouldTogglePanel: AppVerticalPanels.search });
   };
-
-  toggleOnboarding = () => {
-    this.props.setFirstRun(!this.props.isFirstRun);
-  }
 
   updateDimensions = () => {
     const width = window.innerWidth || document.documentElement.clientWidth || body.clientWidth;
@@ -569,12 +551,6 @@ class MainPage extends Component<Props, State> {
               </Button>,
             ]}
           />
-          {this.props.isFirstRun && (
-            <OnboardingDialogAsync
-              open={this.props.isFirstRun}
-              onClose={this.toggleOnboarding}
-            />
-          )}
         </TargetFileBox>
       </HotKeys>
     );
@@ -588,7 +564,6 @@ function mapStateToProps(state) {
     isReadOnlyMode: isReadOnlyMode(state),
     isGeneratingThumbs: isGeneratingThumbs(state),
     isFileOpened: isFileOpened(state),
-    // isFileDragged: isFileDragged(state),
     isEntryInFullWidth: isEntryInFullWidth(state),
     isDesktopMode: getDesktopMode(state),
     keyBindings: getKeyBindingObject(state),
@@ -603,7 +578,6 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    // setFileDragged: AppActions.setFileDragged,
     hideNotifications: AppActions.hideNotifications,
     cancelDirectoryIndexing: LocationIndexActions.cancelDirectoryIndexing,
     saveFile: AppActions.saveFile,
@@ -617,6 +591,7 @@ function mapDispatchToProps(dispatch) {
     toggleLicenseDialog: AppActions.toggleLicenseDialog,
     toggleThirdPartyLibsDialog: AppActions.toggleThirdPartyLibsDialog,
     toggleAboutDialog: AppActions.toggleAboutDialog,
+    toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
     setLastSelectedEntry: AppActions.setLastSelectedEntry,
     setGeneratingThumbnails: AppActions.setGeneratingThumbnails,
     openFile: AppActions.openFile,
@@ -630,7 +605,6 @@ function mapDispatchToProps(dispatch) {
     setMainVerticalSplitSize: SettingsActions.setMainVerticalSplitSize,
     showNotification: AppActions.showNotification,
     reflectCreateEntry: AppActions.reflectCreateEntry,
-    setFirstRun: SettingsActions.setFirstRun,
   }, dispatch);
 }
 
