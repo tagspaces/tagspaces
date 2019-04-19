@@ -55,9 +55,6 @@ const styles = theme => ({
     width: '98%',
     height: 'auto'
   },
-  folderIcon: {
-    color: '#ff9800',
-  },
   formControl: {
     margin: theme.spacing.unit * 3,
   },
@@ -70,21 +67,21 @@ type Props = {
   open: boolean,
   fullScreen: boolean,
   onClose: () => void,
+  selectedDirectoryPath: string | null,
   showSelectDirectoryDialog: () => void,
-  selectedDirectoryPath?: string,
-  // createDirectory: (directoryPath: string) => void,
   chooseDirectoryPath: (directoryPath: string) => void,
   createFileAdvanced: (targetPath: string, fileName: string, content: string, fileType: string) => void,
-  // allTags: Array<Tag>,
   resetState: () => void
 };
 
 type State = {
-  disableConfirmButton?: boolean,
-  open?: boolean,
-  fileName?: string,
-  fileContent?: string,
-  fileType?: string
+  errorTextName: boolean,
+  errorTextPath: boolean,
+  disableConfirmButton: boolean,
+  selectedDirectoryPath: string | null,
+  fileName: string,
+  fileContent: string,
+  fileType: string
 };
 
 class CreateFileDialog extends React.Component<Props, State> {
@@ -92,8 +89,9 @@ class CreateFileDialog extends React.Component<Props, State> {
     errorTextName: false,
     errorTextPath: false,
     openFolder: false,
-    disableConfirmButton: true,
-    fileName: 'new note ' + AppConfig.beginTagContainer + formatDateTime4Tag(new Date(), true) + AppConfig.endTagContainer,
+    disableConfirmButton: !(this.props.selectedDirectoryPath && this.props.selectedDirectoryPath.length > 0),
+    selectedDirectoryPath: this.props.selectedDirectoryPath,
+    fileName: 'note' + AppConfig.beginTagContainer + formatDateTime4Tag(new Date(), true) + AppConfig.endTagContainer,
     fileContent: '',
     fileType: 'txt',
   };
@@ -115,27 +113,29 @@ class CreateFileDialog extends React.Component<Props, State> {
   };
 
   handleValidation() {
-    if (this.state.fileName.length > 0) {
+    if (this.state.fileName && this.state.fileName.length > 0) {
       this.setState({ errorTextName: false });
     } else {
       this.setState({ errorTextName: true });
     }
 
-    if (this.props.selectedDirectoryPath.length > 0) {
+    if (this.state.selectedDirectoryPath && this.state.selectedDirectoryPath.length > 0) {
       this.setState({ errorTextPath: false });
     } else {
       this.setState({ errorTextPath: true });
     }
+
     this.setState({
-      disableConfirmButton: (this.state.fileName.length <= 0) || (this.props.selectedDirectoryPath.length <= 0)
+      disableConfirmButton: !this.state.fileName || !this.state.selectedDirectoryPath
     });
   }
 
   openFolderChooser = () => {
     if (AppConfig.isElectron) {
       PlatformIO.selectDirectoryDialog().then(selectedPaths => {
-        this.props.chooseDirectoryPath(selectedPaths[0]);
-        this.handleValidation();
+        this.setState({
+          selectedDirectoryPath: selectedPaths[0]
+        }, this.handleValidation);
         return true;
       }).catch((err) => {
         console.log('selectDirectoryDialog failed with: ' + err);
@@ -145,25 +145,16 @@ class CreateFileDialog extends React.Component<Props, State> {
     }
   };
 
-  showSelectDirectoryDialog = () => {
-    this.setState({
-      isSelectDirectoryDialogOpened: true
-    });
-  };
-
   onConfirm = () => {
     if (!this.state.disableConfirmButton) {
-      const { fileName, fileContent, fileType } = this.state;
-      this.props.createFileAdvanced(this.props.selectedDirectoryPath, fileName, fileContent, fileType);
+      const { fileName, fileContent, fileType, selectedDirectoryPath } = this.state;
+      this.props.createFileAdvanced(selectedDirectoryPath, fileName, fileContent, fileType);
       this.props.onClose();
-      this.props.chooseDirectoryPath(undefined);
-      this.props.resetState('CreateFileDialogKey');
     }
   };
 
   handleKeyPress = (event: any) => {
     if (event.key === 'Enter' || event.keyCode === 13) {
-      // event.preventDefault();
       event.stopPropagation();
     }
   };
@@ -199,7 +190,7 @@ class CreateFileDialog extends React.Component<Props, State> {
           multiline
           name="fileContent"
           value={this.state.fileContent}
-          onChange={e => this.handleInputChange(e)}
+          onChange={this.handleInputChange}
           onKeyDown={this.handleKeyPress}
           margin="normal"
           fullWidth={true}
@@ -242,13 +233,13 @@ class CreateFileDialog extends React.Component<Props, State> {
           label={i18n.t('core:filePath')}
           fullWidth={true}
           data-tid="createFileDialog_filePath"
-          value={this.props.selectedDirectoryPath}
+          value={this.state.selectedDirectoryPath}
           onChange={this.handleInputChange}
           endAdornment={
             PlatformIO.haveObjectStoreSupport() ? undefined :
               (<InputAdornment position="end" style={{ height: 32 }}>
                 <IconButton onClick={this.openFolderChooser}>
-                  <FolderIcon className={this.props.classes.folderIcon} />
+                  <FolderIcon />
                 </IconButton>
               </InputAdornment>)
           }
@@ -262,12 +253,7 @@ class CreateFileDialog extends React.Component<Props, State> {
     <DialogActions>
       <Button
         data-tid="closeCreateFileDialog"
-        onClick={() => {
-          // this.setState({ newlyAddedTags: [] });
-          this.props.onClose();
-          this.props.chooseDirectoryPath(undefined);
-          this.props.resetState('CreateFileDialogKey');
-        }}
+        onClick={this.props.onClose}
         color="primary"
       >
         {i18n.t('core:cancel')}
@@ -286,8 +272,6 @@ class CreateFileDialog extends React.Component<Props, State> {
   render() {
     const {
       fullScreen,
-      chooseDirectoryPath,
-      resetState,
       open,
       onClose
     } = this.props;
@@ -295,11 +279,7 @@ class CreateFileDialog extends React.Component<Props, State> {
       <GenericDialog
         fullScreen={fullScreen}
         open={open}
-        onClose={() => {
-          chooseDirectoryPath(undefined);
-          resetState('CreateFileDialogKey');
-          onClose();
-        }}
+        onClose={onClose}
         onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
         renderTitle={this.renderTitle}
         renderContent={this.renderContent}
