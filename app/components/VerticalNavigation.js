@@ -54,6 +54,7 @@ import {
   isCreateFileDialogOpened,
   isCreateDirectoryOpened,
   isSelectDirectoryDialogOpened,
+  isReadOnlyMode,
 } from '../reducers/app';
 import { actions as SettingActions, isFirstRun } from '../reducers/settings';
 import LoadingLazy from './LoadingLazy';
@@ -129,7 +130,8 @@ type Props = {
   toggleSelectDirectoryDialog: () => void,
   switchTheme: () => void,
   shouldTogglePanel: string,
-  currentDirectory: string
+  currentDirectory: string,
+  isReadOnlyMode: boolean
 };
 
 type State = {
@@ -383,15 +385,17 @@ class VerticalNavigation extends React.Component<Props, State> {
                 alt="TagSpaces Logo"
               />
             </IconButton>
-            <IconButton
-              id="verticalNavButton"
-              onClick={this.props.toggleCreateFileDialog}
-              style={{ ...this.styles.button, marginBottom: 20 }}
-              title={i18n.t('core:createFileTitle')}
-              data-tid="locationManager"
-            >
-              <NewFileIcon style={this.styles.buttonIcon} />
-            </IconButton>
+            { !this.props.isReadOnlyMode && (
+              <IconButton
+                id="verticalNavButton"
+                onClick={this.props.toggleCreateFileDialog}
+                style={{ ...this.styles.button, marginBottom: 20 }}
+                title={i18n.t('core:createFileTitle')}
+                data-tid="locationManager"
+              >
+                <NewFileIcon style={this.styles.buttonIcon} />
+              </IconButton>
+            )}
             <IconButton
               id="verticalNavButton"
               onClick={() => {
@@ -457,16 +461,12 @@ class VerticalNavigation extends React.Component<Props, State> {
                 id="verticalNavButton"
                 title={i18n.t('core:upgradeToPro')}
                 data-tid="upgradeToPro"
-                onClick={() => {
-                  this.toggleProTeaser();
-                  // PlatformIO.openUrl('https://www.tagspaces.org/products/');
-                }}
+                onClick={this.toggleProTeaser}
                 style={{ ...this.styles.button, ...this.styles.upgradeButton }}
               >
                 <UpgradeIcon style={this.styles.buttonIcon} />
               </IconButton>
             )}
-
             <IconButton
               id="verticalNavButton"
               title={i18n.t('core:switchTheme')}
@@ -482,13 +482,15 @@ class VerticalNavigation extends React.Component<Props, State> {
               data-tid="settings"
               onClick={this.props.toggleSettingsDialog}
               style={
-                this.state.isSettingsDialogOpened
+                this.props.isSettingsDialogOpened
                   ? {
                     ...this.styles.button,
                     ...this.styles.settingsButton,
                     ...this.styles.selectedButton
+                  } : {
+                    ...this.styles.button,
+                    ...this.styles.settingsButton
                   }
-                  : { ...this.styles.button, ...this.styles.settingsButton }
               }
             >
               <SettingsIcon style={this.styles.buttonIcon} />
@@ -540,7 +542,8 @@ function mapStateToProps(state) {
     isCreateDirectoryOpened: isCreateDirectoryOpened(state),
     isCreateFileDialogOpened: isCreateFileDialogOpened(state),
     isSelectDirectoryDialogOpened: isSelectDirectoryDialogOpened(state),
-    currentDirectory: getDirectoryPath(state)
+    currentDirectory: getDirectoryPath(state),
+    isReadOnlyMode: isReadOnlyMode(state)
   };
 }
 
