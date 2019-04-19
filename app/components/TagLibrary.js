@@ -56,6 +56,8 @@ import i18n from '../services/i18n';
 import { getTagColor, getTagTextColor } from '../reducers/settings';
 import { getSelectedEntries, isReadOnlyMode } from '../reducers/app';
 
+const isTagLibraryReadOnly = (window.ExtTagLibrary && window.ExtTagLibrary.length > 0);
+
 type Props = {
   classes: Object,
   style: Object,
@@ -232,24 +234,25 @@ class TagLibrary extends React.Component<Props, State> {
             <span className={this.props.classes.badge}>{tagGroup.children.length}</span>
           )}
         </Typography>
-        <ListItemSecondaryAction>
-          <IconButton
-            aria-label={i18n.t('core:options')}
-            aria-haspopup="true"
-            data-tid={'tagLibraryMoreButton_' + tagGroup.title.replace(/ /g,'_')}
-            style={{ marginRight: -4 }}
-            onClick={event => this.handleTagGroupMenu(event, tagGroup)}
-            onContextMenu={event => this.handleTagGroupMenu(event, tagGroup)}
-          >
-            <MoreVertIcon />
-          </IconButton>
-        </ListItemSecondaryAction>
+        { !isTagLibraryReadOnly && (
+          <ListItemSecondaryAction>
+            <IconButton
+              aria-label={i18n.t('core:options')}
+              aria-haspopup="true"
+              data-tid={'tagLibraryMoreButton_' + tagGroup.title.replace(/ /g,'_')}
+              style={{ marginRight: -4 }}
+              onClick={event => this.handleTagGroupMenu(event, tagGroup)}
+              onContextMenu={event => this.handleTagGroupMenu(event, tagGroup)}
+            >
+              <MoreVertIcon />
+            </IconButton>
+          </ListItemSecondaryAction>
+        )}
       </ListItem>
       <Collapse in={tagGroup.expanded} unmountOnExit>
         <TagGroupContainer taggroup={tagGroup} data-tid={'tagGroupContainer_' + tagGroup.title}>
           {tagGroup.children && tagGroup.children.map((tag: Tag) => {
-            const isReadOnly = this.props.isReadOnlyMode;
-            return isReadOnly ? (
+            return (this.props.isReadOnlyMode || isTagLibraryReadOnly) ? (
               <TagContainer
                 key={tag.id}
                 tag={tag}
@@ -290,13 +293,15 @@ class TagLibrary extends React.Component<Props, State> {
           >
             {i18n.t('core:tagLibrary')}
           </Typography>
-          <IconButton
-            style={{ paddingTop: 0 }}
-            data-tid="tagLibraryMenu"
-            onClick={this.handleTagLibraryMenu}
-          >
-            <MoreVertIcon />
-          </IconButton>
+          { !isTagLibraryReadOnly && (
+            <IconButton
+              style={{ paddingTop: 0 }}
+              data-tid="tagLibraryMenu"
+              onClick={this.handleTagLibraryMenu}
+            >
+              <MoreVertIcon />
+            </IconButton>
+          )}
         </div>
         <ConfirmDialog
           open={this.state.isDeleteTagGroupDialogOpened}

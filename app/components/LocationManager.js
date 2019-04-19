@@ -69,6 +69,8 @@ import TargetMoveFileBox from './TargetMoveFileBox';
 import DragItemTypes from './DragItemTypes';
 import IOActions from '../reducers/io-actions';
 
+const isLocationsReadOnly = window.ExtLocationsReadOnly;
+
 type Props = {
   classes: Object,
   locations: Array<Location>,
@@ -616,20 +618,22 @@ class LocationManager extends React.Component<Props, State> {
               {location.name}
             </Typography>
           </div>
-          <ListItemSecondaryAction>
-            <IconButton
-              aria-label={i18n.t('core:options')}
-              aria-haspopup="true"
-              data-tid={'locationMoreButton_' + location.name}
-              onClick={event => this.handleLocationContextMenuClick(event, location)}
-              onContextMenu={event => this.handleLocationContextMenuClick(event, location)}
-            >
-              {location.isDefault && (
-                <DefaultLocationIcon data-tid="startupIndication" />
-              )}
-              <MoreVertIcon />
-            </IconButton>
-          </ListItemSecondaryAction>
+          { !isLocationsReadOnly && (
+            <ListItemSecondaryAction>
+              <IconButton
+                aria-label={i18n.t('core:options')}
+                aria-haspopup="true"
+                data-tid={'locationMoreButton_' + location.name}
+                onClick={event => this.handleLocationContextMenuClick(event, location)}
+                onContextMenu={event => this.handleLocationContextMenuClick(event, location)}
+              >
+                {location.isDefault && (
+                  <DefaultLocationIcon data-tid="startupIndication" />
+                )}
+                <MoreVertIcon />
+              </IconButton>
+            </ListItemSecondaryAction>
+          )}
         </ListItem>
         {table}
       </div>
@@ -646,21 +650,23 @@ class LocationManager extends React.Component<Props, State> {
             {i18n.t('core:locationManager')}
           </Typography>
         </div>
-        <div style={{ width: '100%', textAlign: 'center', marginBottom: 10 }}>
-          <Button
-            data-tid="createNewLocation"
-            onClick={this.showCreateLocationDialog}
-            title={i18n.t('core:createLocationTitle')}
-            className={classes.mainActionButton}
-            size="small"
-            variant="outlined"
-            color="primary"
-            style={{ width: '95%' }}
-          >
-            {/* <CreateLocationIcon className={classNames(classes.leftIcon)} /> */}
-            {i18n.t('core:createLocationTitle')}
-          </Button>
-        </div>
+        { !isLocationsReadOnly && (
+          <div style={{ width: '100%', textAlign: 'center', marginBottom: 10 }}>
+            <Button
+              data-tid="createNewLocation"
+              onClick={this.showCreateLocationDialog}
+              title={i18n.t('core:createLocationTitle')}
+              className={classes.mainActionButton}
+              size="small"
+              variant="outlined"
+              color="primary"
+              style={{ width: '95%' }}
+            >
+              {/* <CreateLocationIcon className={classNames(classes.leftIcon)} /> */}
+              {i18n.t('core:createLocationTitle')}
+            </Button>
+          </div>
+        )}
         <div>
           <CreateLocationDialog
             key={this.state.createLocationDialogKey}

@@ -36,6 +36,8 @@ import { type SearchQuery } from '../../services/search';
 import { getMaxSearchResults } from '../../reducers/settings';
 import { AppVerticalPanels } from '../VerticalNavigation';
 
+const isTagLibraryReadOnly = (window.ExtTagLibrary && window.ExtTagLibrary.length > 0);
+
 type Props = {
   anchorEl?: Object,
   open?: boolean,
@@ -109,21 +111,25 @@ const TagLibraryMenu = (props: Props) => {
           </ListItemIcon>
           <ListItemText inset primary={i18n.t('core:showFilesWithThisTag')} />
         </MenuItem>
-        <MenuItem data-tid="editTagDialog" onClick={showEditTagDialog}>
-          <ListItemIcon>
-            <Edit />
-          </ListItemIcon>
-          <ListItemText inset primary={i18n.t('core:editTag')} />
-        </MenuItem>
-        <MenuItem data-tid="deleteTagDialog" onClick={showDeleteTagDialog}>
-          <ListItemIcon>
-            <DeleteIcon />
-          </ListItemIcon>
-          <ListItemText
-            inset
-            primary={i18n.t('core:deleteTagFromTagGroup')}
-          />
-        </MenuItem>
+        {!isTagLibraryReadOnly && (
+          <MenuItem data-tid="editTagDialog" onClick={showEditTagDialog}>
+            <ListItemIcon>
+              <Edit />
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:editTag')} />
+          </MenuItem>
+        )}
+        {!isTagLibraryReadOnly && (
+          <MenuItem data-tid="deleteTagDialog" onClick={showDeleteTagDialog}>
+            <ListItemIcon>
+              <DeleteIcon />
+            </ListItemIcon>
+            <ListItemText
+              inset
+              primary={i18n.t('core:deleteTagFromTagGroup')}
+            />
+          </MenuItem>
+        )}
       </Menu>
       <EditTagDialog
         open={isEditTagDialogOpened}
