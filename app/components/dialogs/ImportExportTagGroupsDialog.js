@@ -110,12 +110,10 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
   handleValidation() {
     let selected = false;
     this.state.tagGroupList.map(n => {
-      console.log(n.selected);
       if (n.selected === true) {
         selected = true;
       }
     });
-    console.log(selected);
     if (selected) {
       this.setState({ disableConfirmButton: false });
     } else {
