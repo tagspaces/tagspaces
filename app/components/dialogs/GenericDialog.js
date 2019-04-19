@@ -35,10 +35,11 @@ type Props = {
   open?: boolean,
   fullScreen?: boolean,
   onClose: () => void,
+  onBackdropClick?: () => void,
   onEnterKey?: () => void,
-  renderTitle: () => Object,
+  renderTitle?: () => Object,
   renderContent: () => Object,
-  renderActions: () => Object
+  renderActions?: () => Object
 };
 
 export function onEnterKeyHandler(event: any, confirmFunction: () => void) {
@@ -78,6 +79,8 @@ const GenericDialog = (props: Props) => {
     fullScreen,
     open,
     onEnterKey,
+    onClose,
+    onBackdropClick
   } = props;
   return (
     <Dialog
@@ -85,7 +88,9 @@ const GenericDialog = (props: Props) => {
       open={open}
       TransitionComponent={Transition}
       keepMounted
-      onClose={props.onClose}
+      onClose={onClose}
+      onBackdropClick={onBackdropClick && onClose}
+      // onEscapeKeyDown={onClose}
       onKeyDown={onEnterKey || ((event) => onEnterKeyHandler(event, props.onClose))}
     >
       {props.renderTitle && props.renderTitle()}

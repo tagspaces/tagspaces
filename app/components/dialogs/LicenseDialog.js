@@ -107,6 +107,7 @@ const LicenseDialog = (props: Props) => {
     <GenericDialog
       open={open}
       onClose={onClose}
+      onBackdropClick={() => {}}
       fullScreen={fullScreen}
       renderTitle={renderTitle}
       renderContent={renderContent}
