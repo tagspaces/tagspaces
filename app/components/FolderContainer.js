@@ -25,7 +25,7 @@ import Button from '@material-ui/core/Button';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { withStyles } from '@material-ui/core/styles';
 import { HotKeys } from 'react-hotkeys';
-import LocationMenu from './LocationMenu';
+import LocationMenu from './menus/LocationMenu';
 import DirectoryMenu from './menus/DirectoryMenu';
 import i18n from '../services/i18n';
 import { getPerspectives } from '../reducers/settings';

@@ -30,11 +30,11 @@ import ListSubHeader from '@material-ui/core/ListSubheader';
 import { withTheme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import i18n from '../services/i18n';
-import { getLocations, type Location, locationType } from '../reducers/locations';
+import i18n from '../../services/i18n';
+import { getLocations, type Location, locationType } from '../../reducers/locations';
 import {
   actions as AppActions,
-  getCurrentLocationId } from '../reducers/app';
+  getCurrentLocationId } from '../../reducers/app';
 
 type Props = {
   currentLocationId: string | null,
