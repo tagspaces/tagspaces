@@ -49,7 +49,6 @@ import {
 
 type Props = {
   open: boolean,
-  isFirstRun: boolean,
   isPersistTagsInSidecar: boolean,
   fullScreen: boolean,
   currentTheme: string,
@@ -60,7 +59,7 @@ type Props = {
 };
 
 type State = {
-  license?: string
+  activeStep: number
 };
 
 class OnboardingDialog extends React.Component<Props, State> {
@@ -283,22 +282,23 @@ class OnboardingDialog extends React.Component<Props, State> {
       </DialogContent>
     );
   };
-  renderActions = () => (
-    <DialogActions style={{ justifyContent: 'center' }}>
-      <Button
-        data-tid="confirmLicenseDialog"
-        onClick={this.props.onClose}
-        variant={
-          this.state.activeStep === this.maxSteps - 1 ? 'contained' : 'text'
-        }
-        color="primary"
-      >
-        {this.state.activeStep === this.maxSteps - 1
-          ? 'Start using TagSpaces'
-          : i18n.t('core:closeButton')}
-      </Button>
-    </DialogActions>
-  );
+
+  // renderActions = () => (
+  //   <DialogActions style={{ justifyContent: 'center' }}>
+  //     <Button
+  //       data-tid="startTagSpacesAfterOnboarding"
+  //       onClick={this.props.onClose}
+  //       variant={
+  //         this.state.activeStep === this.maxSteps - 1 ? 'contained' : 'text'
+  //       }
+  //       color="primary"
+  //     >
+  //       {this.state.activeStep === this.maxSteps - 1
+  //         ? 'Start using TagSpaces'
+  //         : i18n.t('core:closeButton')}
+  //     </Button>
+  //   </DialogActions>
+  // );
 
   render() {
     const { fullScreen, open, onClose } = this.props;
@@ -307,10 +307,7 @@ class OnboardingDialog extends React.Component<Props, State> {
         fullScreen={fullScreen}
         open={open}
         onClose={onClose}
-        // onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
-        // renderTitle={this.renderTitle}
         renderContent={this.renderContent}
-        // renderActions={this.renderActions}
       />
     );
   }
