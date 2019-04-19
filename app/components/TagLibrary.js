@@ -85,33 +85,34 @@ type Props = {
 };
 
 type State = {
-  importExportMenuAnchorEl?: Object | null,
-  importExportMenuOpened?: boolean,
-  tagGroupMenuAnchorEl?: Object | null,
-  tagGroupMenuOpened?: boolean,
-  tagMenuAnchorEl?: Object,
-  tagMenuOpened?: boolean,
-  selectedTagEntry?: TagGroup | null,
-  selectedTag?: Tag,
-  selectedTagGroupEntry?: TagGroup,
-  isCreateTagGroupDialogOpened?: boolean,
-  isEditTagGroupDialogOpened?: boolean,
-  isDeleteTagGroupDialogOpened?: boolean,
-  isCreateTagDialogOpened?: boolean,
-  isEditTagDialogOpened?: boolean,
-  isDeleteTagDialogOpened?: boolean
+  importExportMenuAnchorEl: Object | null,
+  importExportMenuOpened: boolean,
+  tagGroupMenuAnchorEl: Object | null,
+  tagGroupMenuOpened: boolean,
+  tagMenuAnchorEl: Object,
+  tagMenuOpened: boolean,
+  selectedTagEntry: TagGroup | null,
+  selectedTag: Tag | null,
+  selectedTagGroupEntry: TagGroup | null,
+  isCreateTagGroupDialogOpened: boolean,
+  isEditTagGroupDialogOpened: boolean,
+  isDeleteTagGroupDialogOpened: boolean,
+  isCreateTagDialogOpened: boolean,
+  isEditTagDialogOpened: boolean,
+  isDeleteTagDialogOpened: boolean
 };
 
 class TagLibrary extends React.Component<Props, State> {
   state = {
     tagGroupMenuAnchorEl: null,
     tagGroupMenuOpened: false,
-    tagMenuAnchorEl: undefined,
+    tagMenuAnchorEl: null,
     tagMenuOpened: false,
     importExportMenuAnchorEl: null,
     importExportMenuOpened: false,
-    selectedTagGroupEntry: undefined,
-    selectedTag: undefined,
+    selectedTagGroupEntry: null,
+    selectedTagEntry: null,
+    selectedTag: null,
     isCreateTagGroupDialogOpened: false,
     isEditTagGroupDialogOpened: false,
     isDeleteTagGroupDialogOpened: false,

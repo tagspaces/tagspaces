@@ -32,12 +32,12 @@ type Props = {
   open: boolean,
   title: string,
   content: string,
-  cancelDialogTID: string,
-  confirmDialogTID: string,
-  confirmDialogContentTID: string,
-  list: Array<string>,
+  cancelDialogTID?: string,
+  confirmDialogTID?: string,
+  confirmDialogContentTID?: string,
+  list?: Array<string>,
   confirmCallback: (result: boolean) => void,
-  onClose: () => void
+  onClose: () => void,
 };
 
 const ConfirmDialog = (props: Props) => {
@@ -91,6 +91,13 @@ const ConfirmDialog = (props: Props) => {
       renderActions={renderActions}
     />
   );
+};
+
+ConfirmDialog.defaultProps = {
+  cancelDialogTID: 'confirmDialogCancelButton',
+  confirmDialogTID: 'confirmDialogOkButton',
+  confirmDialogContentTID: 'confirmDialogContentTID',
+  list: []
 };
 
 export default ConfirmDialog;
