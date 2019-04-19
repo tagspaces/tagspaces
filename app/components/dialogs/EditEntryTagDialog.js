@@ -90,7 +90,7 @@ const EditEntryTagDialog = (props: Props) => {
     const showGeoEditor = Pro && Pro.UI && Pro.UI.EditGeoTagContainer && isPlusCode(title);
     return (
       <DialogContent data-tid="editEntryTagDialog" className={props.classes.root}>
-        { showGeoEditor && <Pro.UI.EditGeoTagContainer geoTag={title} onChange={setTitle} /> }
+        { showGeoEditor && <Pro.UI.EditGeoTagContainer key={title} geoTag={title} onChange={setTitle} /> }
         <FormControl
           fullWidth={true}
           error={errorTag}
