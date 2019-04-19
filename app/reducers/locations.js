@@ -141,11 +141,13 @@ export default (state: Array<Location> = initialState, action: Object) => {
 };
 
 export const actions = {
-  addLocation: (location: Location) => (
+  addLocation: (location: Location, openAfterCreate?: boolean = true) => (
     dispatch: (actions: Object) => void
   ) => {
     dispatch(actions.createLocation(location));
-    dispatch(AppActions.openLocation(location));
+    if (openAfterCreate) {
+      dispatch(AppActions.openLocation(location));
+    }
   },
   createLocation: (location: Location) => ({ type: types.ADD_LOCATION, location }),
   moveLocationUp: (uuid: string) => ({ type: types.MOVE_UP_LOCATION, uuid }),

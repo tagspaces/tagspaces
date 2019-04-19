@@ -83,7 +83,7 @@ type Props = {
   openDirectory: (path: string) => void,
   showInFileManager: (path: string) => void,
   createDirectoryIndex: (path: string) => void,
-  addLocation: (location: Location) => void,
+  addLocation: (location: Location, openAfterCreate: boolean) => void,
   editLocation: () => void,
   moveLocationUp: (locationId: string) => void,
   moveLocationDown: (locationId: string) => void,
@@ -158,7 +158,7 @@ class LocationManager extends React.Component<Props, State> {
           isDefault: (AppConfig.isWeb && devicePaths[key] === '/files/'), // Used for the web ts demo
           isReadOnly: false,
           persistIndex: false
-        });
+        }, false);
       });
     }
   }
