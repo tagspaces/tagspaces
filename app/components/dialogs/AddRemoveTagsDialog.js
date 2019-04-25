@@ -43,33 +43,15 @@ type Props = {
   removeAllTags: (paths: Array<string>) => void
 };
 
-/* type State = {
-  disableConfirmButton?: boolean,
-  open?: boolean,
-  newlyAddedTags?: Array<Tag>,
-  isConfirmDialogOpened?: boolean
-}; */
-
 const AddRemoveTagsDialog = (props: Props) => {
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [newlyAddedTags, setNewlyAddedTags] = useState([]);
   const [open, setOpen] = useState(false);
   const [isConfirmDialogOpened, setIsConfirmDialogOpened] = useState(false);
-  /*  disableConfirmButton: true,
-    newlyAddedTags: [],
-    open: false,
-    isConfirmDialogOpened: false
-  }; */
 
   useEffect(() => {
     handleChange();
   });
-
-  /* handleChange = (name, value) => {
-    this.setState({
-      newlyAddedTags: value
-    });
-  }; */
 
   function handleChange(name: Object) {
     setNewlyAddedTags(name);
@@ -134,7 +116,7 @@ const AddRemoveTagsDialog = (props: Props) => {
         </Button>
         <Button
           data-tid="removeTagsMultipleEntries"
-          disabled={newlyAddedTags.length === 0 || selectedEntries.length < 1}
+          disabled={(newlyAddedTags && newlyAddedTags.length === 0) || selectedEntries.length < 1}
           color="primary"
           onClick={() => {
             if (selectedEntries && selectedEntries.length > 0) {
@@ -152,7 +134,7 @@ const AddRemoveTagsDialog = (props: Props) => {
         </Button>
         <Button
           data-tid="addTagsMultipleEntries"
-          disabled={newlyAddedTags.length < 1 || selectedEntries.length < 1}
+          disabled={(newlyAddedTags && newlyAddedTags.length < 1) || selectedEntries.length < 1}
           color="primary"
           onClick={addTags}
         >
