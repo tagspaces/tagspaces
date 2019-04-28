@@ -29,6 +29,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 import { isPlusCode } from '../../utils/misc';
+import { isDateTimeTag } from '../../utils/dates';
 import { type Tag } from '../../reducers/taglibrary';
 import { Pro } from '../../pro';
 
@@ -87,10 +88,12 @@ const EditEntryTagDialog = (props: Props) => {
   }
 
   function renderContent() {
-    const showGeoEditor = Pro && Pro.UI && Pro.UI.EditGeoTagContainer && isPlusCode(title);
+    const showGeoEditor = Pro && Pro.UI && Pro.UI.GeoTagEditor && isPlusCode(title);
+    const showDatePeriodEditor = false; // Pro && Pro.UI && Pro.UI.DatePeriodTagEditor && isDateTimeTag(title);
     return (
       <DialogContent data-tid="editEntryTagDialog" className={props.classes.root}>
-        { showGeoEditor && <Pro.UI.EditGeoTagContainer key={title} geoTag={title} onChange={setTitle} /> }
+        { showGeoEditor && <Pro.UI.GeoTagEditor key={title} geoTag={title} onChange={setTitle} /> }
+        { showDatePeriodEditor && <Pro.UI.DatePeriodTagEditor key={title} datePeriodTag={title} onChange={setTitle} /> }
         <FormControl
           fullWidth={true}
           error={errorTag}
