@@ -72,8 +72,12 @@ const TagContainer = React.memo((props: Props) => {
   const { title } = tag;
 
   // Check if tag is plus code
-  const isGeoTag = isPlusCode(title); // || isLatLong
-  const isTagDate = !isGeoTag && isDateTimeTag(title);
+  let isGeoTag = false;
+  let isTagDate = false;
+  if (!tagGroup) {
+    isGeoTag = isPlusCode(title); // || isLatLong
+    isTagDate = !isGeoTag && isDateTimeTag(title);
+  }
 
   allTags.some((currentTag: Tag) => {
     if (currentTag.title === title) {
