@@ -17,7 +17,7 @@
  * @flow
  */
 
-export default (theme) => ({
+export default (theme: Object) => ({
   panel: {
     height: '100%',
     maxHeight: '100%',
