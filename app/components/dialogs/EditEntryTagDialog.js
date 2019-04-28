@@ -52,6 +52,9 @@ type Props = {
   open: boolean
 };
 
+const GeoTagEditor = Pro && Pro.UI ? Pro.UI.GeoTagEditor : false;
+const DatePeriodTagEditor = Pro && Pro.UI ? Pro.UI.DatePeriodTagEditor : false;
+
 const EditEntryTagDialog = (props: Props) => {
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [errorTag, setErrorTag] = useState(false);
@@ -88,12 +91,12 @@ const EditEntryTagDialog = (props: Props) => {
   }
 
   function renderContent() {
-    const showGeoEditor = Pro && Pro.UI && Pro.UI.GeoTagEditor && isPlusCode(title);
-    const showDatePeriodEditor = false; // Pro && Pro.UI && Pro.UI.DatePeriodTagEditor && isDateTimeTag(title);
+    const showGeoEditor = GeoTagEditor && isPlusCode(title);
+    const showDatePeriodEditor = false; // DatePeriodTagEditor && isDateTimeTag(title);
     return (
       <DialogContent data-tid="editEntryTagDialog" className={props.classes.root}>
-        { showGeoEditor && <Pro.UI.GeoTagEditor key={title} geoTag={title} onChange={setTitle} /> }
-        { showDatePeriodEditor && <Pro.UI.DatePeriodTagEditor key={title} datePeriodTag={title} onChange={setTitle} /> }
+        { showGeoEditor && <GeoTagEditor key={title} geoTag={title} onChange={setTitle} /> }
+        { showDatePeriodEditor && <DatePeriodTagEditor key={title} datePeriodTag={title} onChange={setTitle} /> }
         <FormControl
           fullWidth={true}
           error={errorTag}
