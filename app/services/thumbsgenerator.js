@@ -30,6 +30,7 @@ import PlatformIO from '../services/platform-io';
 import { Pro } from '../pro';
 
 const maxSize = AppConfig.maxThumbSize;
+const bgColor = AppConfig.thumbBgColor;
 
 const supportedImgs = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'bmp'];
 const supportedContainers = [
@@ -266,6 +267,8 @@ function generateImageThumbnail(fileURL) {
 
         ctx.translate(x, y);
         ctx.rotate(angleInRadians);
+        ctx.fillStyle = bgColor;
+        ctx.fillRect(-width / 2, -height / 2, width, height);
         ctx.drawImage(img, -width / 2, -height / 2, width, height);
         ctx.rotate(-angleInRadians);
         ctx.translate(-x, -y);

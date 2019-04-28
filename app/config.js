@@ -37,6 +37,7 @@ export default {
   tagDelimiter: ' ',
   prefixTagContainer: '',
   maxThumbSize: 400,
+  thumbBgColor: 'black',
   indexerLimit: 200000,
   // maxSearchResult: 1000,
   defaultFileColor: '#808080',
