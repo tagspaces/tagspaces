@@ -111,13 +111,15 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: Object) => {
   case types.MERGE_TAGGROUP: {
     const indexForEditing = state.findIndex(obj => obj.uuid === action.entry.uuid);
     if (indexForEditing >= 0) {
+      const tags = [...state[indexForEditing].children, ...action.entry.children];
+      tags.splice(0, tags.length - 500);
       return [
         ...state.slice(0, indexForEditing),
         {
           uuid: action.entry.uuid,
           title: action.entry.title,
           expanded: action.entry.expanded,
-          children: [...state[indexForEditing].children, ...action.entry.children],
+          children: tags,
           created_date: action.entry.created_date,
           modified_date: new Date()
         },
