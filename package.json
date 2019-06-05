@@ -130,7 +130,7 @@
     "cross-spawn": "^5.1.0",
     "css-loader": "^2.1.0",
     "devtron": "^1.4.0",
-    "electron": "4.1.0",
+    "electron": "4.2.3",
     "electron-builder": "^20.38.4",
     "electron-devtools-installer": "^2.2.4",
     "enzyme": "^2.8.2",
@@ -247,7 +247,7 @@
     "semver": "^5.5.0",
     "source-map-support": "^0.5.10",
     "tiff.js": "^1.0.0",
-    "winattr": "^2.0.0"
+    "winattr": "^3.0.0"
   },
   "devEngines": {
     "node": ">=8.x",

@@ -4385,10 +4385,10 @@ electron-window-state@^5.0.3:
     jsonfile "^4.0.0"
     mkdirp "^0.5.1"
 
-electron@4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-4.1.0.tgz#ecba9c83de271e8ba7637332ece9ed023c6ea3f0"
-  integrity sha512-q/yTi9dT5UEFK/s+vOQaHNkTHWiRK9kEBYVJt34nmWc9piW42hXT+nhKUEHHhccMPr3q18gG0iPZqeR+LG76ow==
+electron@4.2.3:
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-4.2.3.tgz#5d45da9dd5ae97269dbee2623840da808c72d29d"
+  integrity sha512-nx+jHxj2eNhaYHXFGdzr7zgSphpVHEU9WAu6qqEUsQ936X3c6bQ5Bdg08KbHZj+cyRRQ06JMu6/ILh5pWrDZaA==
   dependencies:
     "@types/node" "^10.12.18"
     electron-download "^4.1.0"
@@ -5534,10 +5534,10 @@ fstream@^1.0.0, fstream@^1.0.2, fstream@~1.0.10:
     mkdirp ">=0.5 0"
     rimraf "2"
 
-fswin@^2.16.1102:
-  version "2.17.1227"
-  resolved "https://registry.yarnpkg.com/fswin/-/fswin-2.17.1227.tgz#c598061e1ac1e7110e2e6ce884296efa27dc2507"
-  integrity sha512-xNDktvwzSsXT8Xqnpz59VbuFwGHhtn1w+dS7QQ+wAu5cbH0p3WMGKU9Duf7cPna+nubhR+5ZG1MTl6/V6xgRgw==
+fswin@^3.18.918:
+  version "3.18.918"
+  resolved "https://registry.yarnpkg.com/fswin/-/fswin-3.18.918.tgz#d541725f32090814b1815e2d52863ca1be0c2213"
+  integrity sha512-9dwdStHWoL25DJiQ4jG/No9vBeKB+BVTLDuvXfNtVP5jf4j9zpBnje8gb5xpAqXN59wV7n8RSdDaGhhVzf7/ZA==
 
 function-bind@^1.1.0, function-bind@^1.1.1:
   version "1.1.1"
@@ -13164,12 +13164,12 @@ widest-line@^2.0.0:
   dependencies:
     string-width "^2.1.1"
 
-winattr@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/winattr/-/winattr-2.0.0.tgz#553d4e347c8c598551a8d7032eefe36526bd5026"
-  integrity sha1-VT1ONHyMWYVRqNcDLu/jZSa9UCY=
+winattr@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/winattr/-/winattr-3.0.0.tgz#33e430c41510ce4018a0daaabb24927c162f1b1d"
+  integrity sha512-dt33rYsTYcGbB+I1ubB6ZLODibRSCW//TgY/SuajLllR9kHnHnbUMqnXIe0osYsXUdRLGs770zb3t9z/ScGUpw==
   dependencies:
-    fswin "^2.16.1102"
+    fswin "^3.18.918"
 
 window-size@^0.1.4:
   version "0.1.4"
