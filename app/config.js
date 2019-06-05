@@ -36,6 +36,7 @@ export default {
   endTagContainer: ']',
   tagDelimiter: ' ',
   prefixTagContainer: '',
+  maxCollectedTag: 500,
   maxThumbSize: 400,
   thumbBgColor: 'black',
   indexerLimit: 200000,

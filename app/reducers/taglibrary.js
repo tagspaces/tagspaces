@@ -17,13 +17,12 @@
  * @flow
  */
 
-// import AppConfig from '../config';
 import uuidv1 from 'uuid';
 import { immutablySwapItems, formatDateTime4Tag, extend } from '../utils/misc';
 import { saveAsTextFile } from '../services/utils-io';
 import versionMeta from '../version.json';
 import defaultTagLibrary from './taglibrary-default';
-// import AppConfig from '../config';
+import AppConfig from '../config';
 
 export const types = {
   CREATE_TAGGROUP: 'CREATE_TAGGROUP',
@@ -112,7 +111,7 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: Object) => {
     const indexForEditing = state.findIndex(obj => obj.uuid === action.entry.uuid);
     if (indexForEditing >= 0) {
       const tags = [...state[indexForEditing].children, ...action.entry.children];
-      tags.splice(0, tags.length - 500);
+      tags.splice(0, tags.length - AppConfig.maxCollectedTag);
       return [
         ...state.slice(0, indexForEditing),
         {
