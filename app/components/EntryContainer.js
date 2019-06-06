@@ -56,7 +56,7 @@ import {
   extractFileExtension,
   extractTagsAsObjects,
   baseName,
-  extractFileNameWithoutExt,
+  extractFileName,
   extractDirectoryName
 } from '../utils/paths';
 import { buffer } from '../utils/misc';
@@ -694,7 +694,7 @@ class EntryContainer extends React.Component<Props, State> {
             const { currentEntry } = this.state;
             const downloadLink = document.getElementById('downloadFile');
             const entryName = `${baseName(currentEntry.path)}`;
-            const fileName = extractFileNameWithoutExt(entryName);
+            const fileName = extractFileName(entryName);
 
             if (downloadLink) {
               if (AppConfig.isWeb) {
@@ -708,7 +708,7 @@ class EntryContainer extends React.Component<Props, State> {
                 downloadLink.setAttribute('href', currentEntry.url);
               }
 
-              downloadLink.setAttribute('download', fileName); //
+              downloadLink.setAttribute('download', fileName);
               downloadLink.click();
             }
           }}
