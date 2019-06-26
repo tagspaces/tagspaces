@@ -37,6 +37,7 @@ import { actions as LocationIndexActions } from '../../reducers/location-index';
 import { type SearchQuery } from '../../services/search';
 import { getMaxSearchResults } from '../../reducers/settings';
 import LoadingLazy from '../LoadingLazy';
+import { actions as AppActions } from '../../reducers/app';
 
 type Props = {
   classes: Object,
@@ -60,13 +61,16 @@ const EditEntryTagDialogAsync = props => (
 );
 
 const EntryTagMenu = (props: Props) => {
-  const [isEditTagDialogOpened, setIsEditTagDialogOpened] = useState(false);
+  // const [isEditTagDialogOpened, setIsEditTagDialogOpened] = useState(false);
   const [isDateCalendarDialogOpened, setIsDateCalendarDialogOpened] = useState(false);
   const [isDeleteTagDialogOpened, setIsDeleteTagDialogOpened] = useState(false);
 
   function showEditTagDialog() {
     props.onClose();
-    setIsEditTagDialogOpened(true);
+    // setIsEditTagDialogOpened(true);
+    const tag = props.selectedTag;
+    tag.path = props.currentEntryPath;
+    props.toggleEditTagDialog(tag);
   }
 
   function showDeleteTagDialog() {
@@ -91,7 +95,7 @@ const EntryTagMenu = (props: Props) => {
   }
 
   function handleCloseDialogs() {
-    setIsEditTagDialogOpened(false);
+    // setIsEditTagDialogOpened(false);
     setIsDateCalendarDialogOpened(false);
     setIsDeleteTagDialogOpened(false);
   }
@@ -152,14 +156,14 @@ const EntryTagMenu = (props: Props) => {
         confirmDialogTID={'confirmRemoveTagFromFile'}
         confirmDialogContent={'confirmDialogContent'}
       />
-      <EditEntryTagDialogAsync
+      {/* <EditEntryTagDialogAsync
         key={uuidv1()}
         open={isEditTagDialogOpened}
         onClose={handleCloseDialogs}
         editTagForEntry={props.editTagForEntry}
         currentEntryPath={props.currentEntryPath}
         selectedTag={props.selectedTag}
-      />
+      /> */}
       <DateCalendarDialog
         open={isDateCalendarDialogOpened}
         onClose={handleCloseDialogs}
@@ -180,6 +184,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     searchLocationIndex: LocationIndexActions.searchLocationIndex,
+    toggleEditTagDialog: AppActions.toggleEditTagDialog,
   }, dispatch);
 }
 
