@@ -233,9 +233,19 @@ const actions = {
           dispatch(AppActions.showNotification(i18n.t('core:addingTagsFailed'), 'error', true));
         });
         return true;
-      }).catch((error) => {
-        console.warn('Error adding tags for ' + path + ' with ' + error);
-        dispatch(AppActions.showNotification(i18n.t('core:addingTagsFailed'), 'error', true));
+      }).catch((error) => { // json metadata not exist -create the new one
+        console.warn('json metadata not exist create new ' + path + ' with ' + error);
+        // dispatch(AppActions.showNotification(i18n.t('core:addingTagsFailed'), 'error', true));
+        // eslint-disable-next-line no-param-reassign
+        tag.title = newTagTitle;
+        const fsEntryMeta = { tags: [tag] };
+        saveMetaDataPromise(path, fsEntryMeta).then(() => {
+          dispatch(AppActions.reflectUpdateSidecarTags(path, fsEntryMeta.tags));
+          return true;
+        }).catch((err) => {
+          console.warn('Error adding tags for ' + path + ' with ' + err);
+          dispatch(AppActions.showNotification(i18n.t('core:addingTagsFailed'), 'error', true));
+        });
       });
     }
 
@@ -244,7 +254,8 @@ const actions = {
       const uniqueTags = [];
       if (
         taglibrary.findIndex(tagGroup => tagGroup.children.findIndex(obj => obj.title === newTagTitle) !== -1) === -1 &&
-        !/^(?:\d+~\d+|\d+)$/.test(newTagTitle) // skip adding of tag containing only digits or geo tags
+        !/^(?:\d+~\d+|\d+)$/.test(newTagTitle) &&
+        !isPlusCode(newTagTitle)// skip adding of tag containing only digits or geo tags
       ) {
         uniqueTags.push({
           ...tag,
