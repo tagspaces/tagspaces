@@ -32,15 +32,15 @@ import TagDropContainer from './TagDropContainer';
 import EntryTagMenu from './menus/EntryTagMenu';
 import ColorPickerDialog from './dialogs/ColorPickerDialog';
 import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
+import FileThumbChooseDialog from './dialogs/FileThumbChooseDialog';
 import i18n from '../services/i18n';
 import { getAllPropertiesPromise } from '../services/utils-io';
 import { formatFileSize } from '../utils/misc';
-import { extractContainingDirectoryPath } from '../utils/paths';
+import { extractContainingDirectoryPath, getThumbFileLocationForFile } from '../utils/paths';
 import AppConfig from '../config';
 import { Pro } from '../pro';
 import TagsSelect from './TagsSelect';
 import TransparentBackground from './TransparentBackground';
-import { UUID } from 'builder-util-runtime';
 
 const styles = theme => ({
   entryProperties: {
@@ -201,6 +201,7 @@ class EntryProperties extends Component<Props, State> {
     isEditName: false,
     isEditDescription: false,
     isMoveCopyFilesDialogOpened: false,
+    isFileThumbChooseDialogOpened: false,
     displayColorPicker: false,
     isFile: false
   };
@@ -378,6 +379,14 @@ class EntryProperties extends Component<Props, State> {
     );
   };
 
+  toggleThumbFilesDialog = () => {
+    this.setState(
+      ({ isFileThumbChooseDialogOpened }) => ({
+        isFileThumbChooseDialogOpened: !isFileThumbChooseDialogOpened
+      })
+    );
+  };
+
   saveEditDescription = () => {
     this.setState({ isEditDescription: false });
   };
@@ -473,11 +482,19 @@ class EntryProperties extends Component<Props, State> {
       tagMenuAnchorEl,
       tagMenuOpened,
       selectedTag,
-      isMoveCopyFilesDialogOpened
+      isMoveCopyFilesDialogOpened,
+      isFileThumbChooseDialogOpened
     } = this.state;
     if (!path || path === '') {
       return <div />;
     }
+
+    const thumbPath = getThumbFileLocationForFile(path);
+    let thumbPathUrl = thumbPath ? 'url("' + thumbPath + '")' : '';
+    if (AppConfig.isWin) {
+      thumbPathUrl = thumbPathUrl.split('\\').join('\\\\');
+    }
+
     return (
       <div className={classes.entryProperties}>
         <Grid container spacing={8}>
@@ -757,6 +774,32 @@ class EntryProperties extends Component<Props, State> {
               />
             </FormControl>
           </div>
+
+          <div className={classes.entryItem}>
+            <div className={classes.fluidGrid}>
+              <Typography
+                variant="caption"
+                className={classes.entryLabel}
+                style={{
+                  backgroundSize: 'cover',
+                  backgroundImage: thumbPathUrl,
+                  height: 150,
+                  width: '25%'
+                }}
+              >
+                {i18n.t('core:filePreview')}
+              </Typography>
+              <Button
+                color="primary"
+                styles={{ paddingBottom: 0 }}
+                // disabled={isEditPreview}
+                className={classes.button}
+                onClick={this.toggleThumbFilesDialog}
+              >
+                {i18n.t('core:edit')}
+              </Button>
+            </div>
+          </div>
         </Grid>
 
         <EntryTagMenu
@@ -773,6 +816,12 @@ class EntryProperties extends Component<Props, State> {
           open={isMoveCopyFilesDialogOpened}
           onClose={this.toggleMoveCopyFilesDialog}
           selectedFiles={[entryPath]}
+        />
+        <FileThumbChooseDialog
+          key={uuidv1()}
+          open={isFileThumbChooseDialogOpened}
+          onClose={this.toggleThumbFilesDialog}
+          selectedFile={thumbPath}
         />
       </div>
     );
