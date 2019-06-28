@@ -18,7 +18,6 @@
  */
 
 import React, { useState } from 'react';
-import uuidv1 from 'uuid';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Divider from '@material-ui/core/Divider';
@@ -36,7 +35,7 @@ import { type Tag } from '../../reducers/taglibrary';
 import { actions as LocationIndexActions } from '../../reducers/location-index';
 import { type SearchQuery } from '../../services/search';
 import { getMaxSearchResults } from '../../reducers/settings';
-import LoadingLazy from '../LoadingLazy';
+// import LoadingLazy from '../LoadingLazy';
 import { actions as AppActions } from '../../reducers/app';
 
 type Props = {
@@ -53,12 +52,12 @@ type Props = {
   isReadOnlyMode: boolean
 };
 
-const EditEntryTagDialog = React.lazy(() => import(/* webpackChunkName: "EditEntryTagDialog" */ '../dialogs/EditEntryTagDialog'));
+/* const EditEntryTagDialog = React.lazy(() => import(/!* webpackChunkName: "EditEntryTagDialog" *!/ '../dialogs/EditEntryTagDialog'));
 const EditEntryTagDialogAsync = props => (
   <React.Suspense fallback={<LoadingLazy />}>
     <EditEntryTagDialog {...props} />
   </React.Suspense>
-);
+); */
 
 const EntryTagMenu = (props: Props) => {
   // const [isEditTagDialogOpened, setIsEditTagDialogOpened] = useState(false);

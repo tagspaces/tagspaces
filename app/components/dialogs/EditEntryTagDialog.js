@@ -34,7 +34,7 @@ import { isPlusCode } from '../../utils/misc';
 import { type Tag } from '../../reducers/taglibrary';
 import { Pro } from '../../pro';
 import { getSelectedTag } from '../../reducers/app';
-import TaggingActions from '../../reducers/tagging-actions';
+import TaggingActions, { defaultTagLocation } from '../../reducers/tagging-actions';
 
 const styles = theme => ({
   root: {
@@ -96,9 +96,10 @@ const EditEntryTagDialog = (props: Props) => {
   function renderContent() {
     const showGeoEditor = GeoTagEditor && isPlusCode(title);
     const showDatePeriodEditor = false; // DatePeriodTagEditor && isDateTimeTag(title);
+
     return (
       <DialogContent data-tid="editEntryTagDialog" className={props.classes.root}>
-        { showGeoEditor && <GeoTagEditor key={title} geoTag={title} onChange={setTitle} /> }
+        { showGeoEditor && <GeoTagEditor key={title} geoTag={title} onChange={setTitle} zoom={title === defaultTagLocation ? 2 : undefined} /> }
         { showDatePeriodEditor && <DatePeriodTagEditor key={title} datePeriodTag={title} onChange={setTitle} /> }
         <FormControl
           fullWidth={true}

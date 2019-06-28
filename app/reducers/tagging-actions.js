@@ -39,6 +39,8 @@ import PlatformIO from '../services/platform-io';
 import { Pro } from '../pro';
 import ocl from '../utils/openlocationcode';
 
+export const defaultTagLocation = ocl.encode(51.48, 0); // default tag coordinate Greenwich
+
 const actions = {
   addTags: (paths: Array<string>, tags: Array<Tag>, updateIndex?: boolean = true) => (
     dispatch: (actions: Object) => void,
@@ -54,7 +56,7 @@ const actions = {
         if (tag.functionality === 'geoTagging' && Pro) {
           // if (!isGeo(getState())) { // tag will be added later just open the Geo Dialog now
           tag.path = paths[0]; // todo rethink this!
-          tag.title = ocl.encode(51.48, 0); // default tag coordinate Greenwich
+          tag.title = defaultTagLocation;
           dispatch(AppActions.toggleEditTagDialog(tag));
           // }
         } else {
