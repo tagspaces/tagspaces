@@ -78,7 +78,7 @@ const FileThumbChooseDialog = (props: Props) => {
 
   function selectDirectory() {
     if (AppConfig.isElectron) {
-      PlatformIO.selectDirectoryDialog().then(selectedPaths => {
+      PlatformIO.selectFileDialog().then(selectedPaths => {
         setTargetPath(selectedPaths[0]);
         return true;
       }).catch((err) => {
@@ -122,15 +122,14 @@ const FileThumbChooseDialog = (props: Props) => {
             }}
             value={targetPath}
             endAdornment={
-              PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb ? undefined :
-                (<InputAdornment position="end" style={{ height: 33 }}>
-                  <IconButton
-                    data-tid="openDirectoryMoveCopyDialog"
-                    onClick={selectDirectory}
-                  >
-                    <FolderIcon />
-                  </IconButton>
-                </InputAdornment>)
+              (<InputAdornment position="end" style={{ height: 33 }}>
+                <IconButton
+                  data-tid="openThumbFilesDialog"
+                  onClick={selectDirectory}
+                >
+                  <FolderIcon />
+                </IconButton>
+              </InputAdornment>)
             }
           />
           {inputError && <FormHelperText>Empty Input Field</FormHelperText>}
