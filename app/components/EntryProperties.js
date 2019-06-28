@@ -32,7 +32,6 @@ import TagDropContainer from './TagDropContainer';
 import EntryTagMenu from './menus/EntryTagMenu';
 import ColorPickerDialog from './dialogs/ColorPickerDialog';
 import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
-import FileThumbChooseDialog from './dialogs/FileThumbChooseDialog';
 import i18n from '../services/i18n';
 import { getAllPropertiesPromise } from '../services/utils-io';
 import { formatFileSize } from '../utils/misc';
@@ -43,7 +42,7 @@ import TagsSelect from './TagsSelect';
 import TransparentBackground from './TransparentBackground';
 import { replaceThumbnailURLPromise } from '../services/thumbsgenerator';
 
-// const FileThumbChooseDialog = Pro && Pro.UI ? Pro.UI.FileThumbChooseDialog : false;
+const FileThumbChooseDialog = Pro && Pro.UI ? Pro.UI.FileThumbChooseDialog : false;
 
 const styles = theme => ({
   entryProperties: {
