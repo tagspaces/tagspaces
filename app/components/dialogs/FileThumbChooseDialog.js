@@ -154,7 +154,7 @@ const FileThumbChooseDialog = (props: Props) => {
           disabled={disableConfirmButton}
           color="primary"
         >
-          {i18n.t('core:setThumbButton')}
+          {i18n.t('core:ok')}
         </Button>
       </DialogActions>
     );

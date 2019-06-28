@@ -43,6 +43,8 @@ import TagsSelect from './TagsSelect';
 import TransparentBackground from './TransparentBackground';
 import { replaceThumbnailURLPromise } from '../services/thumbsgenerator';
 
+// const FileThumbChooseDialog = Pro && Pro.UI ? Pro.UI.FileThumbChooseDialog : false;
+
 const styles = theme => ({
   entryProperties: {
     overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
@@ -786,31 +788,31 @@ class EntryProperties extends Component<Props, State> {
             </FormControl>
           </div>
 
-          <div className={classes.entryItem}>
-            <div className={classes.fluidGrid}>
-              <Typography
-                variant="caption"
-                className={classes.entryLabel}
-                style={{
-                  backgroundSize: 'cover',
-                  backgroundImage: thumbPathUrl,
-                  height: 150,
-                  width: '25%'
-                }}
-              >
-                {i18n.t('core:filePreview')}
-              </Typography>
-              <Button
-                color="primary"
-                styles={{ paddingBottom: 0 }}
-                // disabled={isEditPreview}
-                className={classes.button}
-                onClick={this.toggleThumbFilesDialog}
-              >
-                {i18n.t('core:edit')}
-              </Button>
+          {Pro && (
+            <div className={classes.entryItem}>
+              <div className={classes.fluidGrid}>
+                <Typography
+                  variant="caption"
+                  className={classes.entryLabel}
+                  style={{
+                    backgroundSize: 'cover',
+                    backgroundImage: thumbPathUrl,
+                    height: 150,
+                    width: '25%'
+                  }}
+                />
+                <Button
+                  color="primary"
+                  styles={{ paddingBottom: 0 }}
+                  // disabled={isEditPreview}
+                  className={classes.button}
+                  onClick={this.toggleThumbFilesDialog}
+                >
+                  {i18n.t('core:edit')}
+                </Button>
+              </div>
             </div>
-          </div>
+          )}
         </Grid>
 
         <EntryTagMenu
