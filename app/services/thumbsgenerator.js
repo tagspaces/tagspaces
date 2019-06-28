@@ -139,6 +139,21 @@ export function getThumbnailURLPromise(filePath) {
   });
 }
 
+export function replaceThumbnailURLPromise(filePath, thumbFilePath) {
+  return new Promise((resolve) => {
+    PlatformIO.getPropertiesPromise(filePath).then((origStats) => {
+      createThumbnailPromise(filePath, origStats.size, thumbFilePath).then((tmbPath) => resolve({ filePath, tmbPath })).catch((err) => {
+        console.warn('Thumb generation failed ' + err);
+        resolve({ filePath, tmbPath: thumbFilePath });
+      });
+      return true;
+    }).catch(err => {
+      console.warn('Error getting file properties ' + err);
+      resolve({ filePath });
+    });
+  });
+}
+
 export function createThumbnailPromise(
   filePath: string,
   fileSize: number,

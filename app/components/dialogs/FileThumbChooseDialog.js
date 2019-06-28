@@ -44,6 +44,7 @@ type Props = {
   classes: Object,
   open: boolean,
   onClose: () => void,
+  setThumb: () => void,
   selectedFile: string
 };
 
@@ -68,7 +69,7 @@ const FileThumbChooseDialog = (props: Props) => {
 
   function handleSetThumb() {
     if (!disableConfirmButton) {
-      // props.setThumb(props.selectedFile, targetPath);
+      props.setThumb(targetPath, props.selectedFile);
       setInputError(false);
       setDisableConfirmButton(true);
       setTargetPath('');

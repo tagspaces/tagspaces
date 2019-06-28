@@ -41,6 +41,7 @@ import AppConfig from '../config';
 import { Pro } from '../pro';
 import TagsSelect from './TagsSelect';
 import TransparentBackground from './TransparentBackground';
+import { replaceThumbnailURLPromise } from '../services/thumbsgenerator';
 
 const styles = theme => ({
   entryProperties: {
@@ -387,6 +388,15 @@ class EntryProperties extends Component<Props, State> {
     );
   };
 
+  setThumb = (filePath, thumbFilePath) => {
+    replaceThumbnailURLPromise(filePath, thumbFilePath).then((objUrl) => {
+      this.setState({ thumbPath: objUrl.tmbPath });
+      return true;
+    }).catch(err => {
+      console.warn('Error replaceThumbnailURLPromise ' + err);
+    });
+  };
+
   saveEditDescription = () => {
     this.setState({ isEditDescription: false });
   };
@@ -418,7 +428,7 @@ class EntryProperties extends Component<Props, State> {
         this.props.showNotification(i18n.t('Error saving color for folder'));
       });
     });
-  }
+  };
 
   handleTagMenu = (event: Object, tag, tagGroup) => {
     this.setState({
@@ -485,12 +495,13 @@ class EntryProperties extends Component<Props, State> {
       isMoveCopyFilesDialogOpened,
       isFileThumbChooseDialogOpened
     } = this.state;
+    let { thumbPath } = this.state;
     if (!path || path === '') {
       return <div />;
     }
 
-    const thumbPath = getThumbFileLocationForFile(path);
-    let thumbPathUrl = thumbPath ? 'url("' + thumbPath + '")' : '';
+    if (thumbPath === undefined) thumbPath = getThumbFileLocationForFile(path);
+    let thumbPathUrl = thumbPath ? 'url("' + thumbPath + '?' + new Date().getTime() + '")' : '';
     if (AppConfig.isWin) {
       thumbPathUrl = thumbPathUrl.split('\\').join('\\\\');
     }
@@ -822,6 +833,7 @@ class EntryProperties extends Component<Props, State> {
           open={isFileThumbChooseDialogOpened}
           onClose={this.toggleThumbFilesDialog}
           selectedFile={thumbPath}
+          setThumb={this.setThumb}
         />
       </div>
     );
