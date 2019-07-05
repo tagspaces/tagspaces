@@ -99,8 +99,6 @@ const EditEntryTagDialog = (props: Props) => {
 
     return (
       <DialogContent data-tid="editEntryTagDialog" className={props.classes.root}>
-        { showGeoEditor && <GeoTagEditor key={title} geoTag={title} onChange={setTitle} zoom={title === defaultTagLocation ? 2 : undefined} /> }
-        { showDatePeriodEditor && <DatePeriodTagEditor key={title} datePeriodTag={title} onChange={setTitle} /> }
         <FormControl
           fullWidth={true}
           error={errorTag}
@@ -120,6 +118,8 @@ const EditEntryTagDialog = (props: Props) => {
           />
           {errorTag && <FormHelperText>{i18n.t('core:tagTitleHelper')}</FormHelperText>}
         </FormControl>
+        { showGeoEditor && <GeoTagEditor key={title} geoTag={title} onChange={setTitle} zoom={title === defaultTagLocation ? 2 : undefined} /> }
+        { showDatePeriodEditor && <DatePeriodTagEditor key={title} datePeriodTag={title} onChange={setTitle} /> }
       </DialogContent>
     );
   }

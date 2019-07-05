@@ -35,7 +35,6 @@ import { type Tag } from '../../reducers/taglibrary';
 import { actions as LocationIndexActions } from '../../reducers/location-index';
 import { type SearchQuery } from '../../services/search';
 import { getMaxSearchResults } from '../../reducers/settings';
-// import LoadingLazy from '../LoadingLazy';
 import { actions as AppActions } from '../../reducers/app';
 
 type Props = {
@@ -51,13 +50,6 @@ type Props = {
   maxSearchResults: number,
   isReadOnlyMode: boolean
 };
-
-/* const EditEntryTagDialog = React.lazy(() => import(/!* webpackChunkName: "EditEntryTagDialog" *!/ '../dialogs/EditEntryTagDialog'));
-const EditEntryTagDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <EditEntryTagDialog {...props} />
-  </React.Suspense>
-); */
 
 const EntryTagMenu = (props: Props) => {
   // const [isEditTagDialogOpened, setIsEditTagDialogOpened] = useState(false);
@@ -155,14 +147,6 @@ const EntryTagMenu = (props: Props) => {
         confirmDialogTID={'confirmRemoveTagFromFile'}
         confirmDialogContent={'confirmDialogContent'}
       />
-      {/* <EditEntryTagDialogAsync
-        key={uuidv1()}
-        open={isEditTagDialogOpened}
-        onClose={handleCloseDialogs}
-        editTagForEntry={props.editTagForEntry}
-        currentEntryPath={props.currentEntryPath}
-        selectedTag={props.selectedTag}
-      /> */}
       <DateCalendarDialog
         open={isDateCalendarDialogOpened}
         onClose={handleCloseDialogs}
