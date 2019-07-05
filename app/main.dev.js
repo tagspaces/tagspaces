@@ -123,6 +123,9 @@ app.on('ready', async () => {
       width: workerDevMode ? 800 : 1,
       height: workerDevMode ? 600 : 1,
       frame: false,
+      webPreferences: {
+        nodeIntegration: true
+      }
     });
 
     global.splashWorkerWindow.loadURL(`file://${__dirname}/splash.html`);
@@ -145,7 +148,11 @@ app.on('ready', async () => {
     y: mainWindowState.y,
     width: mainWindowState.width,
     height: mainWindowState.height,
-    icon: path.join(__dirname, 'assets/icons/128x128.png')
+    icon: path.join(__dirname, 'assets/icons/128x128.png'),
+    webPreferences: {
+      nodeIntegration: true,
+      webviewTag: true
+    }
   });
 
   mainWindow.loadURL(mainHTML + startupParameter);
