@@ -69,7 +69,8 @@ const TagContainer = React.memo((props: Props) => {
 
   let textColor = tag.textcolor || defaultTextColor;
   let backgroundColor = tag.color || defaultBackgroundColor;
-  const { title } = tag;
+  const titleOrig = tag.title;
+  let title = titleOrig;
 
   // Check if tag is plus code
   let isGeoTag = false;
@@ -77,6 +78,9 @@ const TagContainer = React.memo((props: Props) => {
   if (!tagGroup) {
     isGeoTag = isPlusCode(title); // || isLatLong
     isTagDate = !isGeoTag && isDateTimeTag(title);
+  }
+  if (isTagDate && title.length > 8) {
+    title = title.substr(0, 8) + '...';
   }
 
   allTags.some((currentTag: Tag) => {
@@ -114,7 +118,7 @@ const TagContainer = React.memo((props: Props) => {
       }}
     >
       <Button
-        title={title}
+        title={titleOrig}
         size="small"
         style={{
           opacity: isDragging ? 0.5 : 1,
@@ -147,11 +151,12 @@ const TagContainer = React.memo((props: Props) => {
               style={{
                 color: tag.textColor,
                 fontSize: 18,
-                marginBottom: -5
+                marginBottom: -5,
+                marginRight: 4
               }}
             />
           )}
-          {!isTagDate && !isGeoTag && title }
+          {!isGeoTag && title}
         </span>
         {(tagMode === 'remove') ? (deleteIcon || (
           <RemoveTagIcon
