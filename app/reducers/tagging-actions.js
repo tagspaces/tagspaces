@@ -37,6 +37,9 @@ import { formatDateTime4Tag, isPlusCode } from '../utils/misc';
 import AppConfig from '../config';
 import PlatformIO from '../services/platform-io';
 import { Pro } from '../pro';
+import ocl from '../utils/openlocationcode';
+
+export const defaultTagLocation = ocl.encode(51.48, 0); // default tag coordinate Greenwich
 
 const actions = {
   addTags: (paths: Array<string>, tags: Array<Tag>, updateIndex?: boolean = true) => (
@@ -48,45 +51,57 @@ const actions = {
     const processedTags = [];
     tags.map((pTag) => {
       const tag = { ...pTag };
-      if (tag.functionality && tag.functionality.length > 0) {
-        tag.title = generateTagValue(tag.functionality);
-        tag.id = uuidv1();
-      }
       tag.type = 'sidecar';
-      processedTags.push(tag);
-      return true;
-    });
-
-    paths.map((path) => {
-      dispatch(actions.addTagsToEntry(path, processedTags, updateIndex));
-      return true;
-    });
-
-    if (settings.addTagsToLibrary) { // collecting tags
-      // filter existed in tagLibrary
-      const uniqueTags = [];
-      processedTags.map((tag) => {
-        if (
-          taglibrary.findIndex(tagGroup => tagGroup.children.findIndex(obj => obj.id === tag.id) !== -1) === -1 &&
-          !/^(?:\d+~\d+|\d+)$/.test(tag.title) && // skip adding of tag containing only digits
-          !isPlusCode(tag.title) // skip adding of tag containing geo information
-        ) {
-          uniqueTags.push(tag);
+      if (tag.functionality && tag.functionality.length > 0) {
+        if (tag.functionality === 'geoTagging' && Pro) {
+          // if (!isGeo(getState())) { // tag will be added later just open the Geo Dialog now
+          tag.path = paths[0]; // todo rethink this!
+          tag.title = defaultTagLocation;
+          dispatch(AppActions.toggleEditTagDialog(tag));
+          // }
+        } else {
+          tag.title = generateTagValue(tag);
+          tag.id = uuidv1();
+          processedTags.push(tag);
         }
+      } else {
+        processedTags.push(tag);
+      }
+      return true;
+    });
+
+    if (processedTags.length > 0) {
+      paths.map((path) => {
+        dispatch(actions.addTagsToEntry(path, processedTags, updateIndex));
         return true;
       });
-      if (uniqueTags.length > 0) {
-        const tagGroup = {
-          uuid: 'collected_tag_group_id', // uuid needs to be constant here (see mergeTagGroup)
-          title: i18n.t('core:collectedTags'),
-          expanded: true,
-          color: settings.tagBackgroundColor,
-          textcolor: settings.tagTextColor,
-          children: uniqueTags,
-          created_date: new Date(),
-          modified_date: new Date()
-        };
-        dispatch(TagLibraryActions.mergeTagGroup(tagGroup));
+
+      if (settings.addTagsToLibrary) { // collecting tags
+      // filter existed in tagLibrary
+        const uniqueTags = [];
+        processedTags.map((tag) => {
+          if (
+            taglibrary.findIndex(tagGroup => tagGroup.children.findIndex(obj => obj.id === tag.id) !== -1) === -1 &&
+          !/^(?:\d+~\d+|\d+)$/.test(tag.title) && // skip adding of tag containing only digits
+          !isPlusCode(tag.title) // skip adding of tag containing geo information
+          ) {
+            uniqueTags.push(tag);
+          }
+          return true;
+        });
+        if (uniqueTags.length > 0) {
+          const tagGroup = {
+            uuid: 'collected_tag_group_id', // uuid needs to be constant here (see mergeTagGroup)
+            title: i18n.t('core:collectedTags'),
+            expanded: true,
+            color: settings.tagBackgroundColor,
+            textcolor: settings.tagTextColor,
+            children: uniqueTags,
+            created_date: new Date(),
+            modified_date: new Date()
+          };
+          dispatch(TagLibraryActions.mergeTagGroup(tagGroup));
+        }
       }
     }
   },
@@ -220,9 +235,19 @@ const actions = {
           dispatch(AppActions.showNotification(i18n.t('core:addingTagsFailed'), 'error', true));
         });
         return true;
-      }).catch((error) => {
-        console.warn('Error adding tags for ' + path + ' with ' + error);
-        dispatch(AppActions.showNotification(i18n.t('core:addingTagsFailed'), 'error', true));
+      }).catch((error) => { // json metadata not exist -create the new one
+        console.warn('json metadata not exist create new ' + path + ' with ' + error);
+        // dispatch(AppActions.showNotification(i18n.t('core:addingTagsFailed'), 'error', true));
+        // eslint-disable-next-line no-param-reassign
+        tag.title = newTagTitle;
+        const fsEntryMeta = { tags: [tag] };
+        saveMetaDataPromise(path, fsEntryMeta).then(() => {
+          dispatch(AppActions.reflectUpdateSidecarTags(path, fsEntryMeta.tags));
+          return true;
+        }).catch((err) => {
+          console.warn('Error adding tags for ' + path + ' with ' + err);
+          dispatch(AppActions.showNotification(i18n.t('core:addingTagsFailed'), 'error', true));
+        });
       });
     }
 
@@ -231,7 +256,8 @@ const actions = {
       const uniqueTags = [];
       if (
         taglibrary.findIndex(tagGroup => tagGroup.children.findIndex(obj => obj.title === newTagTitle) !== -1) === -1 &&
-        !/^(?:\d+~\d+|\d+)$/.test(newTagTitle) // skip adding of tag containing only digits or geo tags
+        !/^(?:\d+~\d+|\d+)$/.test(newTagTitle) &&
+        !isPlusCode(newTagTitle)// skip adding of tag containing only digits or geo tags
       ) {
         uniqueTags.push({
           ...tag,
@@ -478,19 +504,20 @@ function handleSmartTag(smarttagFunction: string) {
   }
 }
 
-function generateTagValue(smarttagFunction: string) {
-  let tagTitle = smarttagFunction;
-  switch (smarttagFunction) {
-  /* case 'geoTagging': {
-      $('#viewContainers').on('drop dragend', function(event) {
+function generateTagValue(tag) {
+  let tagTitle = tag.functionality;
+  switch (tag.functionality) {
+  case 'geoTagging': {
+    tagTitle = tag.title;
+    /* $('#viewContainers').on('drop dragend', function(event) {
         if (TSCORE.PRO && TSCORE.selectedTag === 'geo-tag') {
           TSCORE.UI.showTagEditDialog(true); // true start the dialog in add mode
         } else if (!TSCORE.PRO && TSCORE.selectedTag === 'geo-tag') {
           TSCORE.showAlertDialog($.i18n.t("ns.common:needProVersion"), $.i18n.t("ns.common:geoTaggingNotPossible"));
         }
-      });
-      break;
-    } */
+      }); */
+    break;
+  }
   case 'today': {
     tagTitle = formatDateTime4Tag(new Date(), false);
     break;
