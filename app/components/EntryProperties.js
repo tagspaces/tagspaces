@@ -395,6 +395,7 @@ class EntryProperties extends Component<Props, State> {
       return true;
     }).catch(err => {
       console.warn('Error replaceThumbnailURLPromise ' + err);
+      this.props.showNotification('Error replace Thumbnail');
     });
   };
 
@@ -806,6 +807,7 @@ class EntryProperties extends Component<Props, State> {
                   style={{
                     backgroundSize: 'cover',
                     backgroundImage: thumbPathUrl,
+                    backgroundPosition: 'center',
                     height: 50,
                     width: 50
                   }}
