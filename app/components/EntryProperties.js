@@ -501,7 +501,17 @@ class EntryProperties extends Component<Props, State> {
       return <div />;
     }
 
-    if (thumbPath === undefined) thumbPath = getThumbFileLocationForFile(path);
+    if (thumbPath === undefined) {
+      if (this.state.isFile) {
+        thumbPath = getThumbFileLocationForFile(path);
+      } else {
+        thumbPath = path +
+          AppConfig.dirSeparator +
+          AppConfig.metaFolder +
+          AppConfig.dirSeparator +
+          AppConfig.folderThumbFile;
+      }
+    }
     let thumbPathUrl = thumbPath ? 'url("' + thumbPath + '?' + new Date().getTime() + '")' : '';
     if (AppConfig.isWin) {
       thumbPathUrl = thumbPathUrl.split('\\').join('\\\\');
@@ -796,8 +806,8 @@ class EntryProperties extends Component<Props, State> {
                   style={{
                     backgroundSize: 'cover',
                     backgroundImage: thumbPathUrl,
-                    height: 150,
-                    width: '25%'
+                    height: 50,
+                    width: 50
                   }}
                 />
                 <Button
