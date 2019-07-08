@@ -20,6 +20,8 @@
 import React, { Component } from 'react';
 import uuidv1 from 'uuid';
 import marked from 'marked';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import FormControl from '@material-ui/core/FormControl';
@@ -41,6 +43,7 @@ import { Pro } from '../pro';
 import TagsSelect from './TagsSelect';
 import TransparentBackground from './TransparentBackground';
 import { replaceThumbnailURLPromise } from '../services/thumbsgenerator';
+import { actions as AppActions } from '../reducers/app';
 
 const FileThumbChooseDialog = Pro && Pro.UI ? Pro.UI.FileThumbChooseDialog : false;
 
@@ -167,6 +170,7 @@ type Props = {
   removeTags: () => void,
   removeAllTags: () => void,
   resetState: () => void,
+  showSelectDirectoryDialog: () => void,
   isReadOnlyMode: boolean,
   setPropertiesEditMode: (editMode: boolean) => void
 };
@@ -847,10 +851,19 @@ class EntryProperties extends Component<Props, State> {
           onClose={this.toggleThumbFilesDialog}
           selectedFile={thumbPath}
           setThumb={this.setThumb}
+          showSelectDirectoryDialog={this.props.showSelectDirectoryDialog}
         />
       </div>
     );
   }
 }
 
-export default withStyles(styles)(EntryProperties);
+function mapActionCreatorsToProps(dispatch) {
+  return bindActionCreators({
+    showSelectDirectoryDialog: AppActions.showSelectDirectoryDialog
+  }, dispatch);
+}
+
+export default withStyles(styles)(
+  connect(undefined, mapActionCreatorsToProps)(EntryProperties)
+);
