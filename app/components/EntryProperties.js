@@ -396,7 +396,7 @@ class EntryProperties extends Component<Props, State> {
 
   setThumb = (filePath, thumbFilePath) => {
     if (filePath !== undefined) {
-      replaceThumbnailURLPromise(filePath, thumbFilePath).then((objUrl) => {
+      return replaceThumbnailURLPromise(filePath, thumbFilePath).then((objUrl) => {
         this.setState({ thumbPath: objUrl.tmbPath });
         this.props.updateThumbnailUrl(this.props.entryPath, objUrl.tmbPath);
         return true;
@@ -404,16 +404,16 @@ class EntryProperties extends Component<Props, State> {
         console.warn('Error replaceThumbnailURLPromise ' + err);
         this.props.showNotification('Error replace Thumbnail');
       });
-    } else { // reset Thumbnail
-      getThumbnailURLPromise(this.props.entryPath).then((objUrl) => {
-        this.setState({ thumbPath: objUrl.tmbPath });
-        this.props.updateThumbnailUrl(this.props.entryPath, objUrl.tmbPath);
-        return true;
-      }).catch(err => {
-        console.warn('Error getThumbnailURLPromise ' + err);
-        this.props.showNotification('Error reset Thumbnail');
-      });
     }
+    // reset Thumbnail
+    return getThumbnailURLPromise(this.props.entryPath).then((objUrl) => {
+      this.setState({ thumbPath: objUrl.tmbPath });
+      this.props.updateThumbnailUrl(this.props.entryPath, objUrl.tmbPath);
+      return true;
+    }).catch(err => {
+      console.warn('Error getThumbnailURLPromise ' + err);
+      this.props.showNotification('Error reset Thumbnail');
+    });
   };
 
   saveEditDescription = () => {
