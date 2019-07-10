@@ -671,7 +671,7 @@ class GridPerspective extends React.Component<Props, State> {
       supportedFileTypes
     );
     let thumbPathUrl = fsEntry.thumbPath
-      ? 'url("' + fsEntry.thumbPath + '")'
+      ? 'url("' + fsEntry.thumbPath + '?' + new Date().getTime() + '")'
       : '';
     if (AppConfig.isWin) {
       thumbPathUrl = thumbPathUrl.split('\\').join('\\\\');

@@ -42,7 +42,7 @@ import AppConfig from '../config';
 import { Pro } from '../pro';
 import TagsSelect from './TagsSelect';
 import TransparentBackground from './TransparentBackground';
-import { replaceThumbnailURLPromise } from '../services/thumbsgenerator';
+import { replaceThumbnailURLPromise, getThumbnailURLPromise } from '../services/thumbsgenerator';
 // import { actions as AppActions } from '../reducers/app';
 
 const FileThumbChooseDialog = Pro && Pro.UI ? Pro.UI.FileThumbChooseDialog : false;
@@ -166,6 +166,7 @@ type Props = {
   normalizeShouldCopyFile: () => void,
   showNotification: () => void,
   reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void,
+  updateThumbnailUrl: (path: string, thumbUrl: string) => void,
   addTags: () => void,
   removeTags: () => void,
   removeAllTags: () => void,
@@ -394,13 +395,25 @@ class EntryProperties extends Component<Props, State> {
   };
 
   setThumb = (filePath, thumbFilePath) => {
-    replaceThumbnailURLPromise(filePath, thumbFilePath).then((objUrl) => {
-      this.setState({ thumbPath: objUrl.tmbPath });
-      return true;
-    }).catch(err => {
-      console.warn('Error replaceThumbnailURLPromise ' + err);
-      this.props.showNotification('Error replace Thumbnail');
-    });
+    if (filePath !== undefined) {
+      replaceThumbnailURLPromise(filePath, thumbFilePath).then((objUrl) => {
+        this.setState({ thumbPath: objUrl.tmbPath });
+        this.props.updateThumbnailUrl(this.props.entryPath, objUrl.tmbPath);
+        return true;
+      }).catch(err => {
+        console.warn('Error replaceThumbnailURLPromise ' + err);
+        this.props.showNotification('Error replace Thumbnail');
+      });
+    } else { // reset Thumbnail
+      getThumbnailURLPromise(this.props.entryPath).then((objUrl) => {
+        this.setState({ thumbPath: objUrl.tmbPath });
+        this.props.updateThumbnailUrl(this.props.entryPath, objUrl.tmbPath);
+        return true;
+      }).catch(err => {
+        console.warn('Error getThumbnailURLPromise ' + err);
+        this.props.showNotification('Error reset Thumbnail');
+      });
+    }
   };
 
   saveEditDescription = () => {

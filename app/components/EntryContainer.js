@@ -177,6 +177,7 @@ type Props = {
   isReadOnlyMode: boolean,
   setEntryPropertiesSplitSize: (size: number) => void,
   reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void,
+  updateThumbnailUrl: (path: string, thumbUrl: string) => void,
   setLastSelectedEntry: (path: string) => void,
   setSelectedEntries: (selectedEntries: Array<Object>) => void,
   directoryContent: Array<Object>
@@ -1132,6 +1133,7 @@ class EntryContainer extends React.Component<Props, State> {
                   removeTags={this.props.removeTags}
                   removeAllTags={this.props.removeAllTags}
                   reflectUpdateSidecarMeta={this.props.reflectUpdateSidecarMeta}
+                  updateThumbnailUrl={this.props.updateThumbnailUrl}
                   showNotification={this.props.showNotification}
                   isReadOnlyMode={this.props.isReadOnlyMode}
                 />
@@ -1194,6 +1196,7 @@ function mapActionCreatorsToProps(dispatch) {
     removeAllTags: TaggingActions.removeAllTags,
     editTagForEntry: TaggingActions.editTagForEntry,
     reflectUpdateSidecarMeta: AppActions.reflectUpdateSidecarMeta,
+    updateThumbnailUrl: AppActions.updateThumbnailUrl,
     setLastSelectedEntry: AppActions.setLastSelectedEntry,
     setSelectedEntries: AppActions.setSelectedEntries,
   }, dispatch);
