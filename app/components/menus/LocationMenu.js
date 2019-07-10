@@ -159,4 +159,4 @@ function mapActionCreatorsToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
-)(withTheme()(LocationMenu));
+)(withTheme(LocationMenu));

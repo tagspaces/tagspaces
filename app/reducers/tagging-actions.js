@@ -59,6 +59,11 @@ const actions = {
           tag.title = defaultTagLocation;
           dispatch(AppActions.toggleEditTagDialog(tag));
           // }
+        } else if (tag.functionality === 'dateTagging' && Pro) {
+          tag.path = paths[0];
+          tag.title = formatDateTime4Tag(new Date(), true); // defaultTagDate;
+          dispatch(AppActions.toggleEditTagDialog(tag));
+          // }
         } else {
           tag.title = generateTagValue(tag);
           tag.id = uuidv1();
