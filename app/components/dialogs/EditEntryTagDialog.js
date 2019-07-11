@@ -96,7 +96,21 @@ const EditEntryTagDialog = (props: Props) => {
 
   function renderContent() {
     const showGeoEditor = GeoTagEditor && isPlusCode(title);
-    const showDatePeriodEditor = DateTagEditor && isDateTimeTag(title);
+    let showDatePeriodEditor = false;
+    if (title.indexOf('-') > -1) {
+      const a = title.split('-');
+      if (a.length === 2) {
+        for (let i = 0; i < a.length; i += 1) {
+          if (isDateTimeTag(a[i])) {
+            showDatePeriodEditor = true;
+          } else {
+            showDatePeriodEditor = false;
+            break;
+          }
+        }
+      }
+    } else showDatePeriodEditor = isDateTimeTag(title);
+    showDatePeriodEditor = DateTagEditor && showDatePeriodEditor;
 
     return (
       <DialogContent data-tid="editEntryTagDialog" className={props.classes.root}>

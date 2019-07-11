@@ -512,17 +512,6 @@ function handleSmartTag(smarttagFunction: string) {
 function generateTagValue(tag) {
   let tagTitle = tag.functionality;
   switch (tag.functionality) {
-  case 'geoTagging': {
-    tagTitle = tag.title;
-    /* $('#viewContainers').on('drop dragend', function(event) {
-        if (TSCORE.PRO && TSCORE.selectedTag === 'geo-tag') {
-          TSCORE.UI.showTagEditDialog(true); // true start the dialog in add mode
-        } else if (!TSCORE.PRO && TSCORE.selectedTag === 'geo-tag') {
-          TSCORE.showAlertDialog($.i18n.t("ns.common:needProVersion"), $.i18n.t("ns.common:geoTaggingNotPossible"));
-        }
-      }); */
-    break;
-  }
   case 'today': {
     tagTitle = formatDateTime4Tag(new Date(), false);
     break;

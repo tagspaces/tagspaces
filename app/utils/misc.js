@@ -261,7 +261,7 @@ export function formatDateTime(date, includeTime: boolean) {
 }
 
 /** Convert a date in the following format 20191204 or 20191204~124532 */
-export function formatDateTime4Tag(date, includeTime: boolean, includeMS?: boolean): string {
+export function formatDateTime4Tag(date: string, includeTime: boolean, includeMS?: boolean): string {
   if (date === undefined || date === '') {
     return '';
   }
