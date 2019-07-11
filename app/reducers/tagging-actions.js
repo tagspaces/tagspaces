@@ -198,6 +198,13 @@ const actions = {
       return newTags;
     }
   },
+  /**
+   * if Tag not exist in meta it will be added see: addMode
+   * @param path
+   * @param tag
+   * @param newTagTitle
+   * @returns {Function}
+   */
   editTagForEntry: (path: string, tag: Tag, newTagTitle: string) => (
     dispatch: (actions: Object) => void,
     getState: () => Object
@@ -220,12 +227,15 @@ const actions = {
       }
     } else if (tag.type === 'sidecar') {
       loadMetaDataPromise(path).then(fsEntryMeta => {
+        let addMode = true;
         fsEntryMeta.tags.map((sidecarTag) => {
           if (sidecarTag.title === tag.title) {
             sidecarTag.title = newTagTitle;
+            addMode = false;
           }
           return true;
         });
+        if (addMode) fsEntryMeta.tags.push(tag);
         const updatedFsEntryMeta = {
           ...fsEntryMeta,
           tags: [
