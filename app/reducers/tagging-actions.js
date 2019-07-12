@@ -230,12 +230,17 @@ const actions = {
         let addMode = true;
         fsEntryMeta.tags.map((sidecarTag) => {
           if (sidecarTag.title === tag.title) {
+            // eslint-disable-next-line no-param-reassign
             sidecarTag.title = newTagTitle;
             addMode = false;
           }
           return true;
         });
-        if (addMode) fsEntryMeta.tags.push(tag);
+        if (addMode) {
+          // eslint-disable-next-line no-param-reassign
+          tag.title = newTagTitle;
+          fsEntryMeta.tags.push(tag);
+        }
         const updatedFsEntryMeta = {
           ...fsEntryMeta,
           tags: [
