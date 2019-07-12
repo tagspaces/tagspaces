@@ -43,9 +43,11 @@ import PerspectiveManager from '../components/PerspectiveManager';
 import LocationManager from '../components/LocationManager';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
+import { type Tag } from '../reducers/taglibrary';
 import {
   actions as AppActions,
   getDirectoryPath,
+  isEditTagDialogOpened,
   isAboutDialogOpened,
   isOnboardingDialogOpened,
   isKeysDialogOpened,
@@ -59,6 +61,13 @@ import {
 } from '../reducers/app';
 import { actions as SettingsActions, isFirstRun } from '../reducers/settings';
 import LoadingLazy from './LoadingLazy';
+
+const EditEntryTagDialog = React.lazy(() => import(/* webpackChunkName: "EditEntryTagDialog" */ './dialogs/EditEntryTagDialog'));
+const EditEntryTagDialogAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <EditEntryTagDialog {...props} />
+  </React.Suspense>
+);
 
 const LicenseDialog = React.lazy(() => import(/* webpackChunkName: "LicenseDialog" */ './dialogs/LicenseDialog'));
 const LicenseDialogAsync = props => (
@@ -129,6 +138,10 @@ type Props = {
   setFirstRun: (isFirstRun: boolean) => void,
   isOnboardingDialogOpened: boolean,
   toggleOnboardingDialog: () => void,
+  isEditTagDialogOpened: boolean,
+  toggleEditTagDialog: () => void,
+  currentEntryPath: string,
+  selectedTag: Tag,
   isAboutDialogOpened: boolean,
   toggleAboutDialog: () => void,
   isCreateDirectoryOpened: boolean,
@@ -319,6 +332,15 @@ class VerticalNavigation extends React.Component<Props, State> {
           onClose={this.props.toggleCreateDirectoryDialog}
           selectedDirectoryPath={this.props.currentDirectory}
         />
+        {this.props.isEditTagDialogOpened && (
+          <EditEntryTagDialogAsync
+            key={uuidv1()}
+            open={this.props.isEditTagDialogOpened}
+            onClose={this.props.toggleEditTagDialog}
+            currentEntryPath={this.props.currentEntryPath}
+            selectedTag={this.props.selectedTag}
+          />
+        )}
         {this.props.isSelectDirectoryDialogOpened && (
           <SelectDirectoryAsync
             open={this.props.isSelectDirectoryDialogOpened}
@@ -562,6 +584,7 @@ class VerticalNavigation extends React.Component<Props, State> {
 function mapStateToProps(state) {
   return {
     isFirstRun: isFirstRun(state),
+    isEditTagDialogOpened: isEditTagDialogOpened(state),
     isAboutDialogOpened: isAboutDialogOpened(state),
     isKeysDialogOpened: isKeysDialogOpened(state),
     isOnboardingDialogOpened: isOnboardingDialogOpened(state),
@@ -588,6 +611,7 @@ function mapActionCreatorsToProps(dispatch) {
       toggleLicenseDialog: AppActions.toggleLicenseDialog,
       toggleThirdPartyLibsDialog: AppActions.toggleThirdPartyLibsDialog,
       toggleAboutDialog: AppActions.toggleAboutDialog,
+      toggleEditTagDialog: AppActions.toggleEditTagDialog,
       switchTheme: SettingsActions.switchTheme,
       setFirstRun: SettingsActions.setFirstRun,
     },

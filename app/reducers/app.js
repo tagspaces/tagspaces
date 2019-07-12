@@ -71,6 +71,7 @@ export const types = {
   SET_FILEDRAGGED: 'APP/SET_FILEDRAGGED',
   SET_READONLYMODE: 'APP/SET_READONLYMODE',
   RENAME_FILE: 'APP/RENAME_FILE',
+  TOGGLE_EDIT_TAG_DIALOG: 'APP/TOGGLE_EDIT_TAG_DIALOG',
   TOGGLE_ABOUT_DIALOG: 'APP/TOGGLE_ABOUT_DIALOG',
   TOGGLE_ONBOARDING_DIALOG: 'APP/TOGGLE_ONBOARDING_DIALOG',
   TOGGLE_KEYBOARD_DIALOG: 'APP/TOGGLE_KEYBOARD_DIALOG',
@@ -129,6 +130,7 @@ export const initialState = {
     autohide: false
   },
   openedFiles: [],
+  editTagDialogOpened: false,
   aboutDialogOpened: false,
   onboardingDialogOpened: false,
   keysDialogOpened: false,
@@ -195,6 +197,12 @@ export default (state: Object = initialState, action: Object) => {
   }
   case types.SET_CURRENDIRECTORYCOLOR: {
     return { ...state, currentDirectoryColor: action.color };
+  }
+  case types.TOGGLE_EDIT_TAG_DIALOG: {
+    return { ...state,
+      tag: action.tag,
+      editTagDialogOpened: !state.editTagDialogOpened
+    };
   }
   case types.TOGGLE_ABOUT_DIALOG: {
     return { ...state, aboutDialogOpened: !state.aboutDialogOpened };
@@ -455,6 +463,7 @@ export const actions = {
   ) => {
     dispatch(actions.toggleSelectDirectoryDialog());
   },
+  toggleEditTagDialog: (tag: Tag) => ({ type: types.TOGGLE_EDIT_TAG_DIALOG, tag }),
   toggleAboutDialog: () => ({ type: types.TOGGLE_ABOUT_DIALOG }),
   toggleOnboardingDialog: () => ({ type: types.TOGGLE_ONBOARDING_DIALOG }),
   toggleKeysDialog: () => ({ type: types.TOGGLE_KEYBOARD_DIALOG }),
@@ -1333,12 +1342,14 @@ export const isUpdateInProgress = (state: Object) =>
   state.app.isUpdateInProgress;
 export const isOnline = (state: Object) => state.app.isOnline;
 export const getLastSelectedEntry = (state: Object) => state.app.lastSelectedEntry;
+export const getSelectedTag = (state: Object) => state.app.tag;
 export const getSelectedEntries = (state: Object) => state.app.selectedEntries;
 export const isFileOpened = (state: Object) => state.app.openedFiles.length > 0;
 export const isGeneratingThumbs = (state: Object) => state.app.isGeneratingThumbs;
 // export const isFileDragged = (state: Object) => state.app.isFileDragged;
 export const isReadOnlyMode = (state: Object) => state.app.isReadOnlyMode;
 export const isOnboardingDialogOpened = (state: Object) => state.app.onboardingDialogOpened;
+export const isEditTagDialogOpened = (state: Object) => state.app.editTagDialogOpened;
 export const isAboutDialogOpened = (state: Object) => state.app.aboutDialogOpened;
 export const isKeysDialogOpened = (state: Object) => state.app.keysDialogOpened;
 export const isLicenseDialogOpened = (state: Object) => state.app.licenseDialogOpened;

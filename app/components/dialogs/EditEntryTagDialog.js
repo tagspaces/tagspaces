@@ -18,6 +18,8 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -29,9 +31,10 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 import { isPlusCode } from '../../utils/misc';
-import { isDateTimeTag } from '../../utils/dates';
 import { type Tag } from '../../reducers/taglibrary';
 import { Pro } from '../../pro';
+import { getSelectedTag } from '../../reducers/app';
+import TaggingActions, { defaultTagLocation } from '../../reducers/tagging-actions';
 
 const styles = theme => ({
   root: {
@@ -93,10 +96,9 @@ const EditEntryTagDialog = (props: Props) => {
   function renderContent() {
     const showGeoEditor = GeoTagEditor && isPlusCode(title);
     const showDatePeriodEditor = false; // DatePeriodTagEditor && isDateTimeTag(title);
+
     return (
       <DialogContent data-tid="editEntryTagDialog" className={props.classes.root}>
-        { showGeoEditor && <GeoTagEditor key={title} geoTag={title} onChange={setTitle} /> }
-        { showDatePeriodEditor && <DatePeriodTagEditor key={title} datePeriodTag={title} onChange={setTitle} /> }
         <FormControl
           fullWidth={true}
           error={errorTag}
@@ -116,6 +118,8 @@ const EditEntryTagDialog = (props: Props) => {
           />
           {errorTag && <FormHelperText>{i18n.t('core:tagTitleHelper')}</FormHelperText>}
         </FormControl>
+        { showGeoEditor && <GeoTagEditor key={title} geoTag={title} onChange={setTitle} zoom={title === defaultTagLocation ? 2 : undefined} /> }
+        { showDatePeriodEditor && <DatePeriodTagEditor key={title} datePeriodTag={title} onChange={setTitle} /> }
       </DialogContent>
     );
   }
@@ -154,4 +158,19 @@ const EditEntryTagDialog = (props: Props) => {
   );
 };
 
-export default withStyles(styles)(EditEntryTagDialog);
+function mapStateToProps(state) {
+  return {
+    selectedTag: getSelectedTag(state),
+    currentEntryPath: getSelectedTag(state) ? getSelectedTag(state).path : undefined
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({
+    editTagForEntry: TaggingActions.editTagForEntry
+  }, dispatch);
+}
+
+export default withStyles(styles)(
+  connect(mapStateToProps, mapDispatchToProps)(EditEntryTagDialog)
+);
