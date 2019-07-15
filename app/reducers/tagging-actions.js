@@ -53,13 +53,13 @@ const actions = {
       const tag = { ...pTag };
       tag.type = 'sidecar';
       if (tag.functionality && tag.functionality.length > 0) {
-        if (tag.functionality === 'geoTagging' && Pro) {
+        if (tag.functionality === 'geoTagging') {
           // if (!isGeo(getState())) { // tag will be added later just open the Geo Dialog now
           tag.path = paths[0]; // todo rethink this!
           tag.title = defaultTagLocation;
           dispatch(AppActions.toggleEditTagDialog(tag));
           // }
-        } else if (tag.functionality === 'dateTagging' && Pro) {
+        } else if (tag.functionality === 'dateTagging') {
           tag.path = paths[0];
           tag.title = formatDateTime4Tag(new Date(), true); // defaultTagDate;
           dispatch(AppActions.toggleEditTagDialog(tag));

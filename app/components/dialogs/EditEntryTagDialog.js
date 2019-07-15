@@ -133,6 +133,7 @@ const EditEntryTagDialog = (props: Props) => {
           />
           {errorTag && <FormHelperText>{i18n.t('core:tagTitleHelper')}</FormHelperText>}
         </FormControl>
+        { !Pro && <h3>{i18n.t('core:needProVersion')}</h3> }
         { showGeoEditor && <GeoTagEditor key={title} geoTag={title} onChange={setTitle} zoom={title === defaultTagLocation ? 2 : undefined} /> }
         { showDatePeriodEditor && <DateTagEditor key={title} datePeriodTag={title} onChange={setTitle} /> }
       </DialogContent>
