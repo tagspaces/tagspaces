@@ -1115,10 +1115,16 @@ export const actions = {
   },
   renameFile: (filePath: string, newFilePath: string) => (
     dispatch: (actions: Object) => void
-  ) => {
-    PlatformIO.renameFilePromise(filePath, newFilePath)
-      .then(() => {
-        // console.log('File renamed ' + filePath + ' to ' + newFilePath);
+  ) => PlatformIO.renameFilePromise(filePath, newFilePath)
+    .then(() =>
+    // console.log('File renamed ' + filePath + ' to ' + newFilePath);
+
+    // Update sidecar file and thumb
+      renameFilesPromise([
+        [getMetaFileLocationForFile(filePath), getMetaFileLocationForFile(newFilePath)],
+        [getThumbFileLocationForFile(filePath), getThumbFileLocationForFile(newFilePath)]
+      ]).then(() => {
+        console.log('Renaming meta file and thumb successful for ' + filePath);
         dispatch(actions.reflectRenameEntry(filePath, newFilePath));
         // UI notification
         dispatch(
@@ -1128,29 +1134,22 @@ export const actions = {
             true
           )
         );
-        // Update sidecar file and thumb
-        renameFilesPromise([
-          [getMetaFileLocationForFile(filePath), getMetaFileLocationForFile(newFilePath)],
-          [getThumbFileLocationForFile(filePath), getThumbFileLocationForFile(newFilePath)]
-        ]).then(() => {
-          console.log('Renaming meta file and thumb successful for ' + filePath);
-          return true;
-        }).catch((err) => {
-          console.warn('Renaming meta file and thumb failed with ' + err);
-        });
         return true;
+      }).catch((err) => {
+        console.warn('Renaming meta file and thumb failed with ' + err);
       })
-      .catch(error => {
-        console.warn('Error while renaming file: ' + error);
-        dispatch(
-          actions.showNotification(
-            `Error while renaming file ${filePath}`,
-            'error',
-            true
-          )
-        );
-      });
-  },
+      // return true;
+    )
+    .catch(error => {
+      console.warn('Error while renaming file: ' + error);
+      dispatch(
+        actions.showNotification(
+          `Error while renaming file ${filePath}`,
+          'error',
+          true
+        )
+      );
+    }),
   openFileNatively: (selectedFile: string) => () => {
     PlatformIO.openFile(selectedFile);
   },
