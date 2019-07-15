@@ -145,15 +145,6 @@ marked.setOptions({
   xhtml: true
 });
 
-// function handleExternalLinks(event) { // TODO move to misc
-//   event.preventDefault();
-//   event.stopPropagation();
-//   console.log(event.currentTarget.href);
-
-//   // TODO evtl. use openFileNatively from app.js
-//   PlatformIO.openUrl(event.currentTarget.href);
-// }
-
 type Props = {
   classes: Object,
   entryPath?: string | null,
@@ -230,24 +221,6 @@ class EntryProperties extends Component<Props, State> {
       this.setState({ isMoveCopyFilesDialogOpened: true });
     }
   }
-
-  /* componentDidUpdate(prevProps, prevState) {
-    if (this.state.description == null || this.state.description !== prevState.description) {
-      const links = document.querySelectorAll('#descriptionArea a');
-      links.forEach((link) => {
-        link.addEventListener('click', handleExternalLinks, false);
-      });
-    }
-  }
-
-  componentWillUnmount() {
-    if (this.state.description) {
-      const links = document.querySelectorAll('#descriptionArea a');
-      links.forEach((link) => {
-        link.removeEventListener('click', handleExternalLinks);
-      });
-    }
-  } */
 
   loadEntryProperties = (entryPath) => {
     getAllPropertiesPromise(entryPath).then(entryProps => {
@@ -858,29 +831,18 @@ class EntryProperties extends Component<Props, State> {
           onClose={this.toggleMoveCopyFilesDialog}
           selectedFiles={[entryPath]}
         />
-        {Pro && (
+        {FileThumbChooseDialog && (
           <FileThumbChooseDialog
             key={uuidv1()}
             open={isFileThumbChooseDialogOpened}
             onClose={this.toggleThumbFilesDialog}
             selectedFile={thumbPath}
             setThumb={this.setThumb}
-          // showSelectDirectoryDialog={this.props.showSelectDirectoryDialog}
           />
         )}
       </div>
     );
   }
 }
-
-/* function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators({
-    showSelectDirectoryDialog: AppActions.showSelectDirectoryDialog
-  }, dispatch);
-}
-
-export default withStyles(styles)(
-  connect(undefined, mapActionCreatorsToProps)(EntryProperties)
-); */
 
 export default withStyles(styles)(EntryProperties);
