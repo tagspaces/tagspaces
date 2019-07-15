@@ -411,5 +411,7 @@
   "sizeHuge": "Huge",
   "tagProperties": "Tag Properties",
   "startContentExtraction": "Extract Content",
+  "thumbChooseFileTitle": "Thumbnail Chooser",
+  "clearThumbnail": "Clear Thumbnail",
   "-": "-"
 }

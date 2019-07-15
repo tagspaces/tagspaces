@@ -20,6 +20,8 @@
 import React, { Component } from 'react';
 import uuidv1 from 'uuid';
 import marked from 'marked';
+// import { bindActionCreators } from 'redux';
+// import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import FormControl from '@material-ui/core/FormControl';
@@ -35,12 +37,15 @@ import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
 import i18n from '../services/i18n';
 import { getAllPropertiesPromise } from '../services/utils-io';
 import { formatFileSize } from '../utils/misc';
-import { extractContainingDirectoryPath } from '../utils/paths';
+import { extractContainingDirectoryPath, getThumbFileLocationForFile } from '../utils/paths';
 import AppConfig from '../config';
 import { Pro } from '../pro';
 import TagsSelect from './TagsSelect';
 import TransparentBackground from './TransparentBackground';
-import { UUID } from 'builder-util-runtime';
+import { replaceThumbnailURLPromise, getThumbnailURLPromise } from '../services/thumbsgenerator';
+// import { actions as AppActions } from '../reducers/app';
+
+const FileThumbChooseDialog = Pro && Pro.UI ? Pro.UI.FileThumbChooseDialog : false;
 
 const styles = theme => ({
   entryProperties: {
@@ -140,15 +145,6 @@ marked.setOptions({
   xhtml: true
 });
 
-// function handleExternalLinks(event) { // TODO move to misc
-//   event.preventDefault();
-//   event.stopPropagation();
-//   console.log(event.currentTarget.href);
-
-//   // TODO evtl. use openFileNatively from app.js
-//   PlatformIO.openUrl(event.currentTarget.href);
-// }
-
 type Props = {
   classes: Object,
   entryPath?: string | null,
@@ -161,10 +157,12 @@ type Props = {
   normalizeShouldCopyFile: () => void,
   showNotification: () => void,
   reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void,
+  updateThumbnailUrl: (path: string, thumbUrl: string) => void,
   addTags: () => void,
   removeTags: () => void,
   removeAllTags: () => void,
   resetState: () => void,
+  showSelectDirectoryDialog: () => void,
   isReadOnlyMode: boolean,
   setPropertiesEditMode: (editMode: boolean) => void
 };
@@ -201,6 +199,7 @@ class EntryProperties extends Component<Props, State> {
     isEditName: false,
     isEditDescription: false,
     isMoveCopyFilesDialogOpened: false,
+    isFileThumbChooseDialogOpened: false,
     displayColorPicker: false,
     isFile: false
   };
@@ -222,24 +221,6 @@ class EntryProperties extends Component<Props, State> {
       this.setState({ isMoveCopyFilesDialogOpened: true });
     }
   }
-
-  /* componentDidUpdate(prevProps, prevState) {
-    if (this.state.description == null || this.state.description !== prevState.description) {
-      const links = document.querySelectorAll('#descriptionArea a');
-      links.forEach((link) => {
-        link.addEventListener('click', handleExternalLinks, false);
-      });
-    }
-  }
-
-  componentWillUnmount() {
-    if (this.state.description) {
-      const links = document.querySelectorAll('#descriptionArea a');
-      links.forEach((link) => {
-        link.removeEventListener('click', handleExternalLinks);
-      });
-    }
-  } */
 
   loadEntryProperties = (entryPath) => {
     getAllPropertiesPromise(entryPath).then(entryProps => {
@@ -378,6 +359,36 @@ class EntryProperties extends Component<Props, State> {
     );
   };
 
+  toggleThumbFilesDialog = () => {
+    this.setState(
+      ({ isFileThumbChooseDialogOpened }) => ({
+        isFileThumbChooseDialogOpened: !isFileThumbChooseDialogOpened
+      })
+    );
+  };
+
+  setThumb = (filePath, thumbFilePath) => {
+    if (filePath !== undefined) {
+      return replaceThumbnailURLPromise(filePath, thumbFilePath).then((objUrl) => {
+        this.setState({ thumbPath: objUrl.tmbPath });
+        this.props.updateThumbnailUrl(this.props.entryPath, objUrl.tmbPath);
+        return true;
+      }).catch(err => {
+        console.warn('Error replaceThumbnailURLPromise ' + err);
+        this.props.showNotification('Error replace Thumbnail');
+      });
+    }
+    // reset Thumbnail
+    return getThumbnailURLPromise(this.props.entryPath).then((objUrl) => {
+      this.setState({ thumbPath: objUrl.tmbPath });
+      this.props.updateThumbnailUrl(this.props.entryPath, objUrl.tmbPath);
+      return true;
+    }).catch(err => {
+      console.warn('Error getThumbnailURLPromise ' + err);
+      this.props.showNotification('Error reset Thumbnail');
+    });
+  };
+
   saveEditDescription = () => {
     this.setState({ isEditDescription: false });
   };
@@ -409,7 +420,7 @@ class EntryProperties extends Component<Props, State> {
         this.props.showNotification(i18n.t('Error saving color for folder'));
       });
     });
-  }
+  };
 
   handleTagMenu = (event: Object, tag, tagGroup) => {
     this.setState({
@@ -473,11 +484,30 @@ class EntryProperties extends Component<Props, State> {
       tagMenuAnchorEl,
       tagMenuOpened,
       selectedTag,
-      isMoveCopyFilesDialogOpened
+      isMoveCopyFilesDialogOpened,
+      isFileThumbChooseDialogOpened
     } = this.state;
+    let { thumbPath } = this.state;
     if (!path || path === '') {
       return <div />;
     }
+
+    if (thumbPath === undefined) {
+      if (this.state.isFile) {
+        thumbPath = getThumbFileLocationForFile(path);
+      } else {
+        thumbPath = path +
+          AppConfig.dirSeparator +
+          AppConfig.metaFolder +
+          AppConfig.dirSeparator +
+          AppConfig.folderThumbFile;
+      }
+    }
+    let thumbPathUrl = thumbPath ? 'url("' + thumbPath + '?' + new Date().getTime() + '")' : '';
+    if (AppConfig.isWin) {
+      thumbPathUrl = thumbPathUrl.split('\\').join('\\\\');
+    }
+
     return (
       <div className={classes.entryProperties}>
         <Grid container spacing={8}>
@@ -757,6 +787,33 @@ class EntryProperties extends Component<Props, State> {
               />
             </FormControl>
           </div>
+
+          {Pro && (
+            <div className={classes.entryItem}>
+              <div className={classes.fluidGrid}>
+                <Typography
+                  variant="caption"
+                  className={classes.entryLabel}
+                  style={{
+                    backgroundSize: 'cover',
+                    backgroundImage: thumbPathUrl,
+                    backgroundPosition: 'center',
+                    height: 50,
+                    width: 50
+                  }}
+                />
+                <Button
+                  color="primary"
+                  styles={{ paddingBottom: 0 }}
+                  // disabled={isEditPreview}
+                  className={classes.button}
+                  onClick={this.toggleThumbFilesDialog}
+                >
+                  {i18n.t('core:edit')}
+                </Button>
+              </div>
+            </div>
+          )}
         </Grid>
 
         <EntryTagMenu
@@ -774,6 +831,15 @@ class EntryProperties extends Component<Props, State> {
           onClose={this.toggleMoveCopyFilesDialog}
           selectedFiles={[entryPath]}
         />
+        {FileThumbChooseDialog && (
+          <FileThumbChooseDialog
+            key={uuidv1()}
+            open={isFileThumbChooseDialogOpened}
+            onClose={this.toggleThumbFilesDialog}
+            selectedFile={thumbPath}
+            setThumb={this.setThumb}
+          />
+        )}
       </div>
     );
   }
