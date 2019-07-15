@@ -858,14 +858,16 @@ class EntryProperties extends Component<Props, State> {
           onClose={this.toggleMoveCopyFilesDialog}
           selectedFiles={[entryPath]}
         />
-        <FileThumbChooseDialog
-          key={uuidv1()}
-          open={isFileThumbChooseDialogOpened}
-          onClose={this.toggleThumbFilesDialog}
-          selectedFile={thumbPath}
-          setThumb={this.setThumb}
+        {Pro && (
+          <FileThumbChooseDialog
+            key={uuidv1()}
+            open={isFileThumbChooseDialogOpened}
+            onClose={this.toggleThumbFilesDialog}
+            selectedFile={thumbPath}
+            setThumb={this.setThumb}
           // showSelectDirectoryDialog={this.props.showSelectDirectoryDialog}
-        />
+          />
+        )}
       </div>
     );
   }
