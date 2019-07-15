@@ -36,7 +36,7 @@ import LogoIcon from '../assets/images/icon100x100.svg';
 import SettingsDialog from './dialogs/SettingsDialog';
 import CreateDirectoryDialog from './dialogs/CreateDirectoryDialog';
 import CreateFileDialog from './dialogs/CreateFileDialog';
-import SelectDirectoryDialog from './dialogs/SelectDirectoryDialog';
+// import SelectDirectoryDialog from './dialogs/SelectDirectoryDialog';
 import TagLibrary from '../components/TagLibrary';
 import Search from '../components/Search';
 import PerspectiveManager from '../components/PerspectiveManager';
@@ -73,6 +73,13 @@ const LicenseDialog = React.lazy(() => import(/* webpackChunkName: "LicenseDialo
 const LicenseDialogAsync = props => (
   <React.Suspense fallback={<LoadingLazy />}>
     <LicenseDialog {...props} />
+  </React.Suspense>
+);
+
+const SelectDirectoryDialog = React.lazy(() => import(/* webpackChunkName: "LicenseDialog" */ './dialogs/SelectDirectoryDialog'));
+const SelectDirectoryAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <SelectDirectoryDialog {...props} />
   </React.Suspense>
 );
 
@@ -238,58 +245,58 @@ class VerticalNavigation extends React.Component<Props, State> {
 
   togglePanel = panelName => {
     switch (panelName) {
-      case AppVerticalPanels.locationManager:
-        this.props.setManagementPanelVisibility(
-          !this.state.isLocationManagerVisible
-        );
-        this.setState({
-          isLocationManagerVisible: !this.state.isLocationManagerVisible,
-          isTagLibraryVisible: false,
-          isSearchVisible: false,
-          isPerspectiveManagerVisible: false
-        });
-        break;
-      case AppVerticalPanels.tagLibrary:
-        this.props.setManagementPanelVisibility(
-          !this.state.isTagLibraryVisible
-        );
-        this.setState({
-          isLocationManagerVisible: false,
-          isTagLibraryVisible: !this.state.isTagLibraryVisible,
-          isSearchVisible: false,
-          isPerspectiveManagerVisible: false
-        });
-        break;
-      case AppVerticalPanels.search:
-        this.props.setManagementPanelVisibility(!this.state.isSearchVisible);
-        this.setState({
-          isLocationManagerVisible: false,
-          isTagLibraryVisible: false,
-          isSearchVisible: !this.state.isSearchVisible,
-          isPerspectiveManagerVisible: false
-        });
-        break;
-      case AppVerticalPanels.perspectiveManager:
-        this.props.setManagementPanelVisibility(
-          !this.state.isPerspectiveManagerVisible
-        );
-        this.setState({
-          isLocationManagerVisible: false,
-          isTagLibraryVisible: false,
-          isSearchVisible: false,
-          isPerspectiveManagerVisible: true
-        });
-        break;
-      default:
-        // this.props.setManagementPanelVisibility(false);
-        // this.setState({
-        //   isLocationManagerVisible: false,
-        //   isTagLibraryVisible: false,
-        //   isSearchVisible: false,
-        //   isPerspectiveManagerVisible: false,
-        //   isSettingsVisible: false
-        // });
-        break;
+    case AppVerticalPanels.locationManager:
+      this.props.setManagementPanelVisibility(
+        !this.state.isLocationManagerVisible
+      );
+      this.setState({
+        isLocationManagerVisible: !this.state.isLocationManagerVisible,
+        isTagLibraryVisible: false,
+        isSearchVisible: false,
+        isPerspectiveManagerVisible: false
+      });
+      break;
+    case AppVerticalPanels.tagLibrary:
+      this.props.setManagementPanelVisibility(
+        !this.state.isTagLibraryVisible
+      );
+      this.setState({
+        isLocationManagerVisible: false,
+        isTagLibraryVisible: !this.state.isTagLibraryVisible,
+        isSearchVisible: false,
+        isPerspectiveManagerVisible: false
+      });
+      break;
+    case AppVerticalPanels.search:
+      this.props.setManagementPanelVisibility(!this.state.isSearchVisible);
+      this.setState({
+        isLocationManagerVisible: false,
+        isTagLibraryVisible: false,
+        isSearchVisible: !this.state.isSearchVisible,
+        isPerspectiveManagerVisible: false
+      });
+      break;
+    case AppVerticalPanels.perspectiveManager:
+      this.props.setManagementPanelVisibility(
+        !this.state.isPerspectiveManagerVisible
+      );
+      this.setState({
+        isLocationManagerVisible: false,
+        isTagLibraryVisible: false,
+        isSearchVisible: false,
+        isPerspectiveManagerVisible: true
+      });
+      break;
+    default:
+      // this.props.setManagementPanelVisibility(false);
+      // this.setState({
+      //   isLocationManagerVisible: false,
+      //   isTagLibraryVisible: false,
+      //   isSearchVisible: false,
+      //   isPerspectiveManagerVisible: false,
+      //   isSettingsVisible: false
+      // });
+      break;
     }
   };
 
@@ -332,6 +339,16 @@ class VerticalNavigation extends React.Component<Props, State> {
             onClose={this.props.toggleEditTagDialog}
             currentEntryPath={this.props.currentEntryPath}
             selectedTag={this.props.selectedTag}
+          />
+        )}
+        {this.props.isSelectDirectoryDialogOpened && (
+          <SelectDirectoryAsync
+            open={this.props.isSelectDirectoryDialogOpened}
+            onClose={this.props.toggleSelectDirectoryDialog}
+            chooseDirectoryPath={this.chooseDirectoryPath}
+            selectedDirectoryPath={
+              this.state.selectedDirectoryPath || this.props.currentDirectory
+            }
           />
         )}
         {this.props.isAboutDialogOpened && (
@@ -394,14 +411,6 @@ class VerticalNavigation extends React.Component<Props, State> {
           }
           chooseDirectoryPath={this.chooseDirectoryPath}
           onClose={this.props.toggleCreateFileDialog}
-        />
-        <SelectDirectoryDialog
-          open={this.props.isSelectDirectoryDialogOpened}
-          onClose={this.props.toggleSelectDirectoryDialog}
-          chooseDirectoryPath={this.chooseDirectoryPath}
-          selectedDirectoryPath={
-            this.state.selectedDirectoryPath || this.props.currentDirectory
-          }
         />
         <SplitPane
           split="vertical"
