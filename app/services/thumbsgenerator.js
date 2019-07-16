@@ -162,10 +162,18 @@ export function createThumbnailPromise(
   return new Promise((resolve) => {
     generateThumbnailPromise(filePath, fileSize).then((dataURL) => {
       if (dataURL && dataURL.length) {
-        saveThumbnailPromise(thumbFilePath, dataURL)
-          .then(() => resolve(thumbFilePath))
-          .catch((err) => {
-            console.warn('Thumb saving failed ' + err);
+        PlatformIO.createDirectoryPromise(extractContainingDirectoryPath(thumbFilePath))
+          .then(() => {
+            saveThumbnailPromise(thumbFilePath, dataURL)
+              .then(() => resolve(thumbFilePath))
+              .catch((err) => {
+                console.warn('Thumb saving failed ' + err);
+                resolve();
+              });
+            return true;
+          })
+          .catch((error) => {
+            console.warn('Crating directory for ' + thumbFilePath + ' failed with ' + error);
             resolve();
           });
       } else {

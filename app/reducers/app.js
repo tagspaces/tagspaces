@@ -518,18 +518,18 @@ export const actions = {
     dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
     PlatformIO.listDirectoryPromise(directoryPath, false)
       .then(results => {
-        const metaDirectory = getMetaDirectoryPath(directoryPath);
+        // const metaDirectory = getMetaDirectoryPath(directoryPath);
         // Case where current folder is a .ts folder
-        if (normalizePath(directoryPath).endsWith(AppConfig.metaFolder)) {
-          prepareDirectoryContent(
-            results,
-            directoryPath,
-            settings,
-            dispatch
-          );
-          return true;
-        }
-        PlatformIO.getPropertiesPromise(metaDirectory)
+        // if (normalizePath(directoryPath).endsWith(AppConfig.metaFolder)) {
+        prepareDirectoryContent(
+          results,
+          directoryPath,
+          settings,
+          dispatch
+        );
+        return true;
+        // }
+        /* PlatformIO.getPropertiesPromise(metaDirectory)
           .then(stats => {
             if (stats && !stats.isFile) {
               prepareDirectoryContent(
@@ -592,8 +592,8 @@ export const actions = {
                   dispatch
                 );
               });
-          });
-        return true;
+          }); */
+        // return true;
       })
       .catch(error => {
         console.timeEnd('listDirectoryPromise');

@@ -27,7 +27,7 @@ import {
   cleanTrailingDirSeparator,
   getMetaDirectoryPath,
   getMetaFileLocationForFile,
-  getMetaFileLocationForDir
+  getMetaFileLocationForDir, extractContainingDirectoryPath
 } from '../utils/paths';
 // import { formatDateTime4Tag } from '../utils/misc';
 import versionMeta from '../version.json';
@@ -368,8 +368,12 @@ export async function saveMetaDataPromise(path: string, metaData: Object): Promi
   const entryProperties = await PlatformIO.getPropertiesPromise(path);
   let metaFilePath;
   let newFsEntryMeta;
+
   if (entryProperties.isFile) {
     metaFilePath = getMetaFileLocationForFile(path);
+    // check and create meta folder if not exist
+    await PlatformIO.createDirectoryPromise(extractContainingDirectoryPath(metaFilePath));
+
     newFsEntryMeta = {
       ...metaData,
       appName: versionMeta.name,
@@ -377,11 +381,14 @@ export async function saveMetaDataPromise(path: string, metaData: Object): Promi
       lastUpdated: (new Date()).toJSON()
     };
   } else {
+    // check and create meta folder if not exist
+    // todo not need to check if folder exist first createDirectoryPromise() recursively will skip creation of existing folders https://nodejs.org/api/fs.html#fs_fs_mkdir_path_options_callback
     const metaDirectoryPath = getMetaDirectoryPath(path);
     const metaDirectoryProperties = await PlatformIO.getPropertiesPromise(metaDirectoryPath);
     if (!metaDirectoryProperties) {
       await PlatformIO.createDirectoryPromise(metaDirectoryPath);
     }
+
     metaFilePath = getMetaFileLocationForDir(path);
     newFsEntryMeta = {
       ...metaData,
