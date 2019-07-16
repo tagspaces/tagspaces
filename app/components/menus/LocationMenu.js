@@ -131,7 +131,7 @@ class LocationMenu extends React.Component<Props, State> {
                   (<CloudLocationIcon />) : (<LocationIcon />)
                 }
               </ListItemIcon>
-              <ListItemText inset primary={location.name} />
+              <ListItemText primary={location.name} />
             </MenuItem>
           ))}
         </Menu>

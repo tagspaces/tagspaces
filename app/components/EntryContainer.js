@@ -22,6 +22,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { HotKeys } from 'react-hotkeys';
 import Button from '@material-ui/core/Button';
+import Fab from '@material-ui/core/Fab';
 import IconButton from '@material-ui/core/IconButton';
 import uuidv1 from 'uuid';
 import SaveIcon from '@material-ui/icons/Save';
@@ -1147,8 +1148,7 @@ class EntryContainer extends React.Component<Props, State> {
             className={classes.fileContent}
           >
             {isFullscreen && (
-              <IconButton
-                variant="fab"
+              <Fab
                 color="primary"
                 style={{
                   position: 'absolute',
@@ -1159,7 +1159,7 @@ class EntryContainer extends React.Component<Props, State> {
                 onClick={this.toggleFullScreen}
               >
                 <CloseIcon />
-              </IconButton>
+              </Fab>
             )}
             {this.renderFileView(fileOpenerURL)}
           </div>

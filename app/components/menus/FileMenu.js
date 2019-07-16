@@ -104,7 +104,7 @@ const FileMenu = (props: Props) => {
           <ListItemIcon>
             <OpenFile />
           </ListItemIcon>
-          <ListItemText inset primary={i18n.t('core:openFile')} />
+          <ListItemText primary={i18n.t('core:openFile')} />
         </MenuItem>
         {!AppConfig.isWeb && (
           <div>
@@ -115,7 +115,7 @@ const FileMenu = (props: Props) => {
               <ListItemIcon>
                 <OpenFileNatively />
               </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:openFileNatively')} />
+              <ListItemText primary={i18n.t('core:openFileNatively')} />
             </MenuItem>
             <MenuItem
               data-tid="fileMenuOpenContainingFolder"
@@ -124,7 +124,7 @@ const FileMenu = (props: Props) => {
               <ListItemIcon>
                 <OpenContainingFolder />
               </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:showInFileManager')} />
+              <ListItemText primary={i18n.t('core:showInFileManager')} />
             </MenuItem>
           </div>
         )}
@@ -138,7 +138,7 @@ const FileMenu = (props: Props) => {
               <ListItemIcon>
                 <AddRemoveTags />
               </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:addRemoveTags')} />
+              <ListItemText primary={i18n.t('core:addRemoveTags')} />
             </MenuItem>
             <MenuItem
               data-tid="fileMenuRenameFile"
@@ -147,7 +147,7 @@ const FileMenu = (props: Props) => {
               <ListItemIcon>
                 <RenameFile />
               </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:renameFile')} />
+              <ListItemText primary={i18n.t('core:renameFile')} />
             </MenuItem>
             <MenuItem
               data-tid="fileMenuMoveCopyFile"
@@ -156,13 +156,13 @@ const FileMenu = (props: Props) => {
               <ListItemIcon>
                 <MoveCopy />
               </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:moveCopyFile')} />
+              <ListItemText primary={i18n.t('core:moveCopyFile')} />
             </MenuItem>
             <MenuItem data-tid="fileMenuDeleteFile" onClick={showDeleteFileDialog}>
               <ListItemIcon>
                 <DeleteForever />
               </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:deleteEntry')} />
+              <ListItemText primary={i18n.t('core:deleteEntry')} />
             </MenuItem>
           </div>
         )}

@@ -230,7 +230,7 @@ class SelectDirectoryDialog extends React.Component<Props, State> {
       <FormControl
         fullWidth={true}
       >
-        <Paper>
+        <Paper elevation={2}>
           <Button
             data-tid="onBackButtonSelectDirectoryDialog"
             onClick={e => this.onBackButton(e)}
@@ -245,7 +245,7 @@ class SelectDirectoryDialog extends React.Component<Props, State> {
             {i18n.t('core:createDirectory')}
           </Button>
         </Paper>
-        <Paper className={this.props.classes.contentFolder} >
+        <Paper elevation={2} className={this.props.classes.contentFolder} >
           {this.state.subFolders.length === 0 ?
             (
               <div className={this.props.classes.alertWarning}>
