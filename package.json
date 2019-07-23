@@ -237,7 +237,7 @@
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
     "react-router-redux": "^5.0.0-alpha.6",
-    "react-select": "^2.1.1",
+    "react-select": "^3.0.4",
     "react-split-pane": "^0.1.87",
     "react-swipeable-views": "^0.13.0",
     "redux": "^3.7.2",

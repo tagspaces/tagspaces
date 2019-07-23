@@ -518,81 +518,12 @@ export const actions = {
     dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
     PlatformIO.listDirectoryPromise(directoryPath, false)
       .then(results => {
-        const metaDirectory = getMetaDirectoryPath(directoryPath);
-        // Case where current folder is a .ts folder
-        if (normalizePath(directoryPath).endsWith(AppConfig.metaFolder)) {
-          prepareDirectoryContent(
-            results,
-            directoryPath,
-            settings,
-            dispatch
-          );
-          return true;
-        }
-        PlatformIO.getPropertiesPromise(metaDirectory)
-          .then(stats => {
-            if (stats && !stats.isFile) {
-              prepareDirectoryContent(
-                results,
-                directoryPath,
-                settings,
-                dispatch
-              );
-            } else {
-              console.log(
-                'Failed getting meta folder, creating it for: ' +
-                  directoryPath
-              );
-              PlatformIO.createDirectoryPromise(metaDirectory)
-                .then(() => {
-                  prepareDirectoryContent(
-                    results,
-                    directoryPath,
-                    settings,
-                    dispatch
-                  );
-                  return true;
-                })
-                .catch(() => {
-                  console.warn(
-                    'Failed creating meta folder for ' + directoryPath
-                  );
-                  prepareDirectoryContent(
-                    results,
-                    directoryPath,
-                    settings,
-                    dispatch
-                  );
-                });
-            }
-            return true;
-          })
-          .catch(() => {
-            console.log(
-              'Failed getting meta folder, creating it for: ' + directoryPath
-            );
-            PlatformIO.createDirectoryPromise(metaDirectory)
-              .then(() => {
-                prepareDirectoryContent(
-                  results,
-                  directoryPath,
-                  settings,
-                  dispatch
-                );
-                return true;
-              })
-              .catch(() => {
-                console.warn(
-                  'Failed creating meta folder for ' + directoryPath
-                );
-                prepareDirectoryContent(
-                  results,
-                  directoryPath,
-                  settings,
-                  dispatch
-                );
-              });
-          });
+        prepareDirectoryContent(
+          results,
+          directoryPath,
+          settings,
+          dispatch
+        );
         return true;
       })
       .catch(error => {

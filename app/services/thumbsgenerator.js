@@ -22,6 +22,7 @@ import {
   extractFileExtension,
   extractContainingDirectoryPath,
   extractFileName,
+  normalizePath,
   getMetaDirectoryPath
 } from '../utils/paths';
 import { base64ToArrayBuffer } from '../utils/misc';
@@ -99,13 +100,13 @@ function saveThumbnailPromise(filePath, dataURL) {
   });
 }
 
-function getThumbFileLocation(filePath) {
+function getThumbFileLocation(filePath: string) {
   const containingFolder = extractContainingDirectoryPath(filePath);
   const metaFolder = getMetaDirectoryPath(containingFolder);
   return metaFolder + AppConfig.dirSeparator + extractFileName(filePath) + AppConfig.thumbFileExt;
 }
 
-export function getThumbnailURLPromise(filePath) {
+export function getThumbnailURLPromise(filePath: string): Promise<{ filePath: string }> {
   return new Promise((resolve) => {
     PlatformIO.getPropertiesPromise(filePath).then((origStats) => {
       const thumbFilePath = getThumbFileLocation(filePath);
@@ -139,7 +140,7 @@ export function getThumbnailURLPromise(filePath) {
   });
 }
 
-export function replaceThumbnailURLPromise(filePath, thumbFilePath) {
+export function replaceThumbnailURLPromise(filePath: string, thumbFilePath: string): Promise<any> {
   return new Promise((resolve) => {
     PlatformIO.getPropertiesPromise(filePath).then((origStats) => {
       createThumbnailPromise(filePath, origStats.size, thumbFilePath).then((tmbPath) => resolve({ filePath, tmbPath })).catch((err) => {
@@ -158,8 +159,20 @@ export function createThumbnailPromise(
   filePath: string,
   fileSize: number,
   thumbFilePath: string
-) {
-  return new Promise((resolve) => {
+): Promise<any> {
+  return new Promise(async (resolve) => {
+    const metaDirectory = extractContainingDirectoryPath(thumbFilePath);
+    const fileDirectory = extractContainingDirectoryPath(filePath);
+    const normalizedFileDirectory = normalizePath(fileDirectory);
+    if (normalizedFileDirectory.endsWith(AppConfig.metaFolder)) {
+      resolve(); // prevent creating thumbs in meta/.ts folder
+      return true;
+    }
+    const stats = await PlatformIO.getPropertiesPromise(metaDirectory);
+    if (!stats || stats.isFile) {
+      await PlatformIO.createDirectoryPromise(metaDirectory);
+    }
+
     generateThumbnailPromise(filePath, fileSize).then((dataURL) => {
       if (dataURL && dataURL.length) {
         saveThumbnailPromise(thumbFilePath, dataURL)
@@ -168,14 +181,15 @@ export function createThumbnailPromise(
             console.warn('Thumb saving failed ' + err);
             resolve();
           });
-      } else {
-        resolve();
+        return true;
       }
+      resolve();
       return true;
     }).catch((err) => {
       console.warn('Thumb generation failed ' + err);
       resolve();
     });
+    return true;
   });
 }
 
@@ -220,11 +234,11 @@ function generateDefaultThumbnail() {
   return Promise.resolve('');
 }
 
-function generateImageThumbnail(fileURL) {
+function generateImageThumbnail(fileURL): Promise<string> {
   return new Promise((resolve) => {
-    let canvas = document.createElement('canvas');
+    let canvas: HTMLCanvasElement = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    let img = new Image();
+    let img: HTMLImageElement = new Image();
 
     const errorHandler = err => {
       console.warn(
@@ -298,7 +312,7 @@ function generateImageThumbnail(fileURL) {
   });
 }
 
-function generateVideoThumbnail(fileURL) {
+function generateVideoThumbnail(fileURL): Promise<string> {
   return new Promise((resolve) => {
     let canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
