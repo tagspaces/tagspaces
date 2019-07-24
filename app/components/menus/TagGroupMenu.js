@@ -100,25 +100,25 @@ const TagLibraryMenu = (props: Props) => {
           <ListItemIcon>
             <Edit />
           </ListItemIcon>
-          <ListItemText inset primary={i18n.t('core:editTagGroup')} />
+          <ListItemText primary={i18n.t('core:editTagGroup')} />
         </MenuItem>
         <MenuItem data-tid="moveTagGroupUp" onClick={moveTagGroupUp}>
           <ListItemIcon>
             <ArrowUpward />
           </ListItemIcon>
-          <ListItemText inset primary={i18n.t('core:moveTagGroupUp')} />
+          <ListItemText primary={i18n.t('core:moveTagGroupUp')} />
         </MenuItem>
         <MenuItem data-tid="moveTagGroupDown" onClick={moveTagGroupDown}>
           <ListItemIcon>
             <ArrowDownward />
           </ListItemIcon>
-          <ListItemText inset primary={i18n.t('core:moveTagGroupDown')} />
+          <ListItemText primary={i18n.t('core:moveTagGroupDown')} />
         </MenuItem>
         <MenuItem data-tid="sortTagGroup" onClick={sortTagGroup}>
           <ListItemIcon>
             <SortTagGroupIcon />
           </ListItemIcon>
-          <ListItemText inset primary={i18n.t('core:sortTagGroup')} />
+          <ListItemText primary={i18n.t('core:sortTagGroup')} />
         </MenuItem>
         <MenuItem
           data-tid="deleteTagGroup"
@@ -127,7 +127,7 @@ const TagLibraryMenu = (props: Props) => {
           <ListItemIcon>
             <DeleteTagGroupIcon />
           </ListItemIcon>
-          <ListItemText inset primary={i18n.t('core:deleteTagGroup')} />
+          <ListItemText primary={i18n.t('core:deleteTagGroup')} />
         </MenuItem>
         <MenuItem
           data-tid="collectTags"

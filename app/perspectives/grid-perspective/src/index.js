@@ -283,10 +283,10 @@ class GridPerspective extends React.Component<Props, State> {
     localStorage.setItem('tsPerspectiveGrid', JSON.stringify(settingsObj));
   }
 
-  scrollToBottom = () => {
+  /* scrollToBottom = () => {
     const messagesContainer = ReactDOM.findDOMNode(this.messagesContainer);
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
-  };
+  }; */
 
   mainGrid;
 
@@ -599,6 +599,7 @@ class GridPerspective extends React.Component<Props, State> {
     const cellContent = (
       <TagDropContainer entryPath={fsEntry.path}>
         <Paper
+          elevation={2}
           data-entry-id={fsEntry.uuid}
           className={classNames(
             layoutType === 'grid' && classes.gridCell,
@@ -1106,7 +1107,7 @@ class GridPerspective extends React.Component<Props, State> {
                 this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />
               )}
             </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:fileTitle')} />
+            <ListItemText primary={i18n.t('core:fileTitle')} />
           </MenuItem>
           <MenuItem
             data-tid="gridPerspectiveSortBySize"
@@ -1117,7 +1118,7 @@ class GridPerspective extends React.Component<Props, State> {
                 this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />
               )}
             </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:fileSize')} />
+            <ListItemText primary={i18n.t('core:fileSize')} />
           </MenuItem>
           <MenuItem
             data-tid="gridPerspectiveSortByDate"
@@ -1128,7 +1129,7 @@ class GridPerspective extends React.Component<Props, State> {
                 this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />
               )}
             </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:fileLDTM')} />
+            <ListItemText primary={i18n.t('core:fileLDTM')} />
           </MenuItem>
           <MenuItem
             data-tid="gridPerspectiveSortByFirstTag"
@@ -1139,7 +1140,7 @@ class GridPerspective extends React.Component<Props, State> {
                 this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />
               )}
             </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:fileFirstTag')} />
+            <ListItemText primary={i18n.t('core:fileFirstTag')} />
           </MenuItem>
           <MenuItem
             data-tid="gridPerspectiveSortByExt"
@@ -1150,7 +1151,7 @@ class GridPerspective extends React.Component<Props, State> {
                 this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />
               )}
             </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:fileExtension')} />
+            <ListItemText primary={i18n.t('core:fileExtension')} />
           </MenuItem>
           <MenuItem
             data-tid="gridPerspectiveSortRandom"
@@ -1161,7 +1162,7 @@ class GridPerspective extends React.Component<Props, State> {
                 <ArrowDownIcon />
               )}
             </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:random')} />
+            <ListItemText primary={i18n.t('core:random')} />
           </MenuItem>
         </Menu>
         <Menu
@@ -1178,7 +1179,7 @@ class GridPerspective extends React.Component<Props, State> {
             <ListItemIcon style={{ minWidth: 25 }}>
               {this.state.showDirectories ? <FolderIcon /> : <FolderHiddenIcon />}
             </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:showHideDirectories')} />
+            <ListItemText primary={i18n.t('core:showHideDirectories')} />
           </MenuItem>
           <MenuItem
             data-tid="gridPerspectiveToggleThumbnailsMode"
@@ -1189,7 +1190,7 @@ class GridPerspective extends React.Component<Props, State> {
             <ListItemIcon>
               {this.state.thumbnailMode === 'cover' ? <ThumbnailCoverIcon /> : <ThumbnailContainIcon />}
             </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:toggleThumbnailMode')} />
+            <ListItemText primary={i18n.t('core:toggleThumbnailMode')} />
           </MenuItem>
           <Divider />
           <MenuItem
@@ -1201,7 +1202,7 @@ class GridPerspective extends React.Component<Props, State> {
             <ListItemIcon>
               {this.state.entrySize === 'small' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
             </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:entrySizeSmall')} />
+            <ListItemText primary={i18n.t('core:entrySizeSmall')} />
           </MenuItem>
           <MenuItem
             data-tid="gridPerspectiveEntrySizeNormal"
@@ -1212,7 +1213,7 @@ class GridPerspective extends React.Component<Props, State> {
             <ListItemIcon>
               {this.state.entrySize === 'normal' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
             </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:entrySizeNormal')} />
+            <ListItemText primary={i18n.t('core:entrySizeNormal')} />
           </MenuItem>
           <MenuItem
             data-tid="gridPerspectiveEntrySizeBig"
@@ -1223,7 +1224,7 @@ class GridPerspective extends React.Component<Props, State> {
             <ListItemIcon>
               {this.state.entrySize === 'big' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
             </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:entrySizeBig')} />
+            <ListItemText primary={i18n.t('core:entrySizeBig')} />
           </MenuItem>
           <Divider />
           <MenuItem
@@ -1235,7 +1236,7 @@ class GridPerspective extends React.Component<Props, State> {
             <ListItemIcon>
               {this.state.singleClickAction === 'openInternal' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
             </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:singleClickOpenInternally')} />
+            <ListItemText primary={i18n.t('core:singleClickOpenInternally')} />
           </MenuItem>
           <MenuItem
             data-tid="gridPerspectiveSingleClickOpenExternally"
@@ -1246,7 +1247,7 @@ class GridPerspective extends React.Component<Props, State> {
             <ListItemIcon>
               {this.state.singleClickAction === 'openExternal' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
             </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:singleClickOpenExternally')} />
+            <ListItemText primary={i18n.t('core:singleClickOpenExternally')} />
           </MenuItem>
           <MenuItem
             data-tid="gridPerspectiveSingleClickSelects"
@@ -1257,7 +1258,7 @@ class GridPerspective extends React.Component<Props, State> {
             <ListItemIcon>
               {this.state.singleClickAction === 'selects' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
             </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:singleClickSelects')} />
+            <ListItemText primary={i18n.t('core:singleClickSelects')} />
           </MenuItem>
         </Menu>
       </div>

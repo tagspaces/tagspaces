@@ -113,7 +113,7 @@ const EntryTagMenu = (props: Props) => {
           <ListItemIcon>
             <ShowEntriesWithTagIcon />
           </ListItemIcon>
-          <ListItemText inset primary={i18n.t('core:showFilesWithThisTag')} />
+          <ListItemText primary={i18n.t('core:showFilesWithThisTag')} />
         </MenuItem>
         {!props.isReadOnlyMode && (
           <div>
@@ -121,14 +121,14 @@ const EntryTagMenu = (props: Props) => {
               <ListItemIcon>
                 <DeleteIcon />
               </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:removeTag')} />
+              <ListItemText primary={i18n.t('core:removeTag')} />
             </MenuItem>
             <Divider />
             <MenuItem data-tid="editTagDialogMenu" onClick={showEditTagDialog}>
               <ListItemIcon>
                 <EditIcon />
               </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:tagProperties')} />
+              <ListItemText primary={i18n.t('core:tagProperties')} />
             </MenuItem>
           </div>
         )}

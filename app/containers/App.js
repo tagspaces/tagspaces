@@ -49,9 +49,6 @@ const lightTheme = createMuiTheme({
     },
     divider: '#ddd'
     // secondary: { main: '#cccccc', 200: '#ddd' }
-  },
-  typography: {
-    useNextVariants: true,
   }
 });
 
@@ -69,9 +66,6 @@ const darkTheme = createMuiTheme({
     },
     divider: '#555'
     // secondary: { main: '#555', 200: '#777' }
-  },
-  typography: {
-    useNextVariants: true,
   }
 });
 
@@ -89,9 +83,6 @@ const lightBlueTheme = createMuiTheme({
     },
     divider: '#ddd'
     // secondary: { main: '#cccccc', 200: '#ddd' }
-  },
-  typography: {
-    useNextVariants: true,
   }
 });
 

@@ -21,6 +21,7 @@ import React from 'react';
 import uuidv1 from 'uuid';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
@@ -239,7 +240,7 @@ class TagLibrary extends React.Component<Props, State> {
             <IconButton
               aria-label={i18n.t('core:options')}
               aria-haspopup="true"
-              data-tid={'tagLibraryMoreButton_' + tagGroup.title.replace(/ /g,'_')}
+              data-tid={'tagLibraryMoreButton_' + tagGroup.title.replace(/ /g, '_')}
               style={{ marginRight: -4 }}
               onClick={event => this.handleTagGroupMenu(event, tagGroup)}
               onContextMenu={event => this.handleTagGroupMenu(event, tagGroup)}
@@ -251,29 +252,27 @@ class TagLibrary extends React.Component<Props, State> {
       </ListItem>
       <Collapse in={tagGroup.expanded} unmountOnExit>
         <TagGroupContainer taggroup={tagGroup} data-tid={'tagGroupContainer_' + tagGroup.title}>
-          {tagGroup.children && tagGroup.children.map((tag: Tag) => {
-            return (this.props.isReadOnlyMode || isTagLibraryReadOnly) ? (
-              <TagContainer
-                key={tag.id}
-                tag={tag}
-                tagGroup={tagGroup}
-                handleTagMenu={this.handleTagMenu}
-                addTags={this.props.addTags}
-                moveTag={this.props.moveTag}
-                selectedEntries={this.props.selectedEntries}
-              />
-            ) : (
-              <TagContainerDnd
-                key={tag.id}
-                tag={tag}
-                tagGroup={tagGroup}
-                handleTagMenu={this.handleTagMenu}
-                addTags={this.props.addTags}
-                moveTag={this.props.moveTag}
-                selectedEntries={this.props.selectedEntries}
-              />
-            );
-          })}
+          {tagGroup.children && tagGroup.children.map((tag: Tag) => ((this.props.isReadOnlyMode || isTagLibraryReadOnly) ? (
+            <TagContainer
+              key={tag.id}
+              tag={tag}
+              tagGroup={tagGroup}
+              handleTagMenu={this.handleTagMenu}
+              addTags={this.props.addTags}
+              moveTag={this.props.moveTag}
+              selectedEntries={this.props.selectedEntries}
+            />
+          ) : (
+            <TagContainerDnd
+              key={tag.id}
+              tag={tag}
+              tagGroup={tagGroup}
+              handleTagMenu={this.handleTagMenu}
+              addTags={this.props.addTags}
+              moveTag={this.props.moveTag}
+              selectedEntries={this.props.selectedEntries}
+            />
+          )))}
         </TagGroupContainer>
       </Collapse>
     </div>
@@ -287,7 +286,7 @@ class TagLibrary extends React.Component<Props, State> {
         <CustomLogo />
         <div className={classes.toolbar}>
           <Typography
-            className={classes.panelTitle}
+            className={classNames(classes.panelTitle, classes.header)}
             title={'Your tag library contains ' + allTags.length + ' tags \ndistributed in ' + tagGroups.length + ' tag groups'}
             type="subtitle1"
           >

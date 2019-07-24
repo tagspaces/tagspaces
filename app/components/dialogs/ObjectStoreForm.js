@@ -71,7 +71,7 @@ const styles = theme => ({
     overflow: 'hidden',
   },
   noOptionsMessage: {
-    padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
+    padding: theme.spacing(1, 2),
   },
   singleValue: {
     fontSize: 16,
@@ -84,12 +84,12 @@ const styles = theme => ({
   paper: {
     // position: 'absolute',
     zIndex: 1,
-    marginTop: theme.spacing.unit,
+    marginTop: theme.spacing(1),
     left: 0,
     right: 0,
   },
   divider: {
-    height: theme.spacing.unit * 2,
+    height: theme.spacing(2),
   },
 });
 
@@ -130,7 +130,7 @@ function Control(props) {
 function Option(props) {
   return (
     <MenuItem
-      buttonRef={props.innerRef}
+      ref={props.innerRef}
       selected={props.isFocused}
       component="div"
       style={{
@@ -169,7 +169,7 @@ function ValueContainer(props) {
 
 function Menu(props) {
   return (
-    <Paper square className={props.selectProps.classes.paper} {...props.innerProps}>
+    <Paper elevation={2} square className={props.selectProps.classes.paper} {...props.innerProps}>
       {props.children}
     </Paper>
   );
@@ -221,7 +221,7 @@ class ObjectStoreForm extends React.Component<Props> {
     };
 
     return (
-      <Grid container spacing={24}>
+      <Grid container spacing={2}>
         <Grid item xs={12}>
           <FormControl
             fullWidth={true}

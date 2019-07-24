@@ -43,6 +43,7 @@ const styles = theme => ({
   input: {
     display: 'flex',
     padding: 0,
+    height: 'auto',
   },
   valueContainer: {
     display: 'flex',
@@ -52,7 +53,7 @@ const styles = theme => ({
     overflow: 'hidden',
   },
   noOptionsMessage: {
-    padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
+    padding: theme.spacing(1, 2),
   },
   singleValue: {
     fontSize: 16,
@@ -60,12 +61,13 @@ const styles = theme => ({
   placeholder: {
     position: 'absolute',
     left: 2,
+    bottom: 6,
     fontSize: 16,
   },
   paper: {
     position: 'absolute',
     zIndex: 2,
-    marginTop: theme.spacing.unit,
+    marginTop: theme.spacing(1),
     left: 0,
     right: 0,
   },
@@ -75,6 +77,7 @@ function NoOptionsMessage(props) {
   return (
     <Typography
       color="textSecondary"
+      style={{ display: 'block' }}
       className={props.selectProps.classes.noOptionsMessage}
       {...props.innerProps}
     >
@@ -88,19 +91,26 @@ function inputComponent({ inputRef, ...props }) {
 }
 
 function Control(props) {
+  const {
+    children,
+    innerProps,
+    innerRef,
+    selectProps: { classes, TextFieldProps },
+  } = props;
+
   return (
     <TextField
       fullWidth
       InputProps={{
         inputComponent,
         inputProps: {
-          className: props.selectProps.classes.input,
-          inputRef: props.innerRef,
-          children: props.children,
-          ...props.innerProps,
+          className: classes.input,
+          ref: innerRef,
+          children,
+          ...innerProps,
         },
       }}
-      {...props.selectProps.textFieldProps}
+      {...TextFieldProps}
     />
   );
 }
@@ -108,7 +118,7 @@ function Control(props) {
 function Option(props) {
   return (
     <MenuItem
-      buttonRef={props.innerRef}
+      ref={props.innerRef}
       selected={props.isFocused}
       component="div"
       style={{
@@ -125,6 +135,7 @@ function Placeholder(props) {
   return (
     <Typography
       color="textSecondary"
+      style={{ display: 'block' }}
       className={props.selectProps.classes.placeholder}
       {...props.innerProps}
     >
@@ -158,7 +169,7 @@ function MultiValue(props) {
 
 function Menu(props) {
   return (
-    <Paper square className={props.selectProps.classes.paper} {...props.innerProps}>
+    <Paper elevation={22} square className={props.selectProps.classes.paper} {...props.innerProps}>
       {props.children}
     </Paper>
   );
