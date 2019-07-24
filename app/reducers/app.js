@@ -518,81 +518,12 @@ export const actions = {
     dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
     PlatformIO.listDirectoryPromise(directoryPath, false)
       .then(results => {
-        const metaDirectory = getMetaDirectoryPath(directoryPath);
-        // Case where current folder is a .ts folder
-        if (normalizePath(directoryPath).endsWith(AppConfig.metaFolder)) {
-          prepareDirectoryContent(
-            results,
-            directoryPath,
-            settings,
-            dispatch
-          );
-          return true;
-        }
-        PlatformIO.getPropertiesPromise(metaDirectory)
-          .then(stats => {
-            if (stats && !stats.isFile) {
-              prepareDirectoryContent(
-                results,
-                directoryPath,
-                settings,
-                dispatch
-              );
-            } else {
-              console.log(
-                'Failed getting meta folder, creating it for: ' +
-                  directoryPath
-              );
-              PlatformIO.createDirectoryPromise(metaDirectory)
-                .then(() => {
-                  prepareDirectoryContent(
-                    results,
-                    directoryPath,
-                    settings,
-                    dispatch
-                  );
-                  return true;
-                })
-                .catch(() => {
-                  console.warn(
-                    'Failed creating meta folder for ' + directoryPath
-                  );
-                  prepareDirectoryContent(
-                    results,
-                    directoryPath,
-                    settings,
-                    dispatch
-                  );
-                });
-            }
-            return true;
-          })
-          .catch(() => {
-            console.log(
-              'Failed getting meta folder, creating it for: ' + directoryPath
-            );
-            PlatformIO.createDirectoryPromise(metaDirectory)
-              .then(() => {
-                prepareDirectoryContent(
-                  results,
-                  directoryPath,
-                  settings,
-                  dispatch
-                );
-                return true;
-              })
-              .catch(() => {
-                console.warn(
-                  'Failed creating meta folder for ' + directoryPath
-                );
-                prepareDirectoryContent(
-                  results,
-                  directoryPath,
-                  settings,
-                  dispatch
-                );
-              });
-          });
+        prepareDirectoryContent(
+          results,
+          directoryPath,
+          settings,
+          dispatch
+        );
         return true;
       })
       .catch(error => {
@@ -1115,48 +1046,46 @@ export const actions = {
   },
   renameFile: (filePath: string, newFilePath: string) => (
     dispatch: (actions: Object) => void
-  ) => {
-    PlatformIO.renameFilePromise(filePath, newFilePath)
-      .then(() => {
-        // console.log('File renamed ' + filePath + ' to ' + newFilePath);
+  ) => PlatformIO.renameFilePromise(filePath, newFilePath)
+    .then(() => {
+      // console.log('File renamed ' + filePath + ' to ' + newFilePath);
+      dispatch(
+        actions.showNotification(
+          i18n.t('core:renamingSuccessfully'),
+          'default',
+          true
+        )
+      );
+      // Update sidecar file and thumb
+      renameFilesPromise([
+        [getMetaFileLocationForFile(filePath), getMetaFileLocationForFile(newFilePath)],
+        [getThumbFileLocationForFile(filePath), getThumbFileLocationForFile(newFilePath)]
+      ]).then(() => {
+        console.log('Renaming meta file and thumb successful for ' + filePath);
         dispatch(actions.reflectRenameEntry(filePath, newFilePath));
-        // UI notification
-        dispatch(
-          actions.showNotification(
-            i18n.t('core:renamingSuccessfully'),
-            'default',
-            true
-          )
-        );
-        // Update sidecar file and thumb
-        renameFilesPromise([
-          [getMetaFileLocationForFile(filePath), getMetaFileLocationForFile(newFilePath)],
-          [getThumbFileLocationForFile(filePath), getThumbFileLocationForFile(newFilePath)]
-        ]).then(() => {
-          console.log('Renaming meta file and thumb successful for ' + filePath);
-          return true;
-        }).catch((err) => {
-          console.warn('Renaming meta file and thumb failed with ' + err);
-        });
         return true;
-      })
-      .catch(error => {
-        console.warn('Error while renaming file: ' + error);
-        dispatch(
-          actions.showNotification(
-            `Error while renaming file ${filePath}`,
-            'error',
-            true
-          )
-        );
+      }).catch((err) => {
+        dispatch(actions.reflectRenameEntry(filePath, newFilePath));
+        console.warn('Renaming meta file and thumb failed with ' + err);
       });
-  },
+      return true;
+    })
+    .catch(error => {
+      console.warn('Error while renaming file: ' + error);
+      dispatch(
+        actions.showNotification(
+          `Error while renaming file ${filePath}`,
+          'error',
+          true
+        )
+      );
+    }),
   openFileNatively: (selectedFile: string) => () => {
     PlatformIO.openFile(selectedFile);
   },
   saveFile: () => (
-    dispatch: (actions: Object) => void,
-    getState: () => Object
+    // dispatch: (actions: Object) => void,
+    // getState: () => Object
   ) => {
     actions.showNotification(i18n.t('core:notImplementedYet'), 'warning', true);
     // const { app } = getState();

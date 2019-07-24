@@ -109,14 +109,14 @@ const TagLibraryMenu = (props: Props) => {
           <ListItemIcon>
             <ShowEntriesWithTagIcon />
           </ListItemIcon>
-          <ListItemText inset primary={i18n.t('core:showFilesWithThisTag')} />
+          <ListItemText primary={i18n.t('core:showFilesWithThisTag')} />
         </MenuItem>
         {!isTagLibraryReadOnly && (
           <MenuItem data-tid="editTagDialog" onClick={showEditTagDialog}>
             <ListItemIcon>
               <Edit />
             </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:editTag')} />
+            <ListItemText primary={i18n.t('core:editTag')} />
           </MenuItem>
         )}
         {!isTagLibraryReadOnly && (
@@ -124,9 +124,7 @@ const TagLibraryMenu = (props: Props) => {
             <ListItemIcon>
               <DeleteIcon />
             </ListItemIcon>
-            <ListItemText
-              inset
-              primary={i18n.t('core:deleteTagFromTagGroup')}
+            <ListItemText primary={i18n.t('core:deleteTagFromTagGroup')}
             />
           </MenuItem>
         )}

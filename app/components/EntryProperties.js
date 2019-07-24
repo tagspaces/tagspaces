@@ -20,6 +20,7 @@
 import React, { Component } from 'react';
 import uuidv1 from 'uuid';
 import marked from 'marked';
+import classNames from 'classnames';
 // import { bindActionCreators } from 'redux';
 // import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
@@ -71,8 +72,8 @@ const styles = theme => ({
     margin: '0 8px 0 0'
   },
   textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
     width: '100vh'
   },
   dropText: {
@@ -89,6 +90,9 @@ const styles = theme => ({
   },
   entryLabel: {
     padding: 4
+  },
+  header: {
+    color: theme.palette.text.primary
   },
   field: {
     color: theme.palette.primary.contrastText + ' !important'
@@ -510,12 +514,12 @@ class EntryProperties extends Component<Props, State> {
 
     return (
       <div className={classes.entryProperties}>
-        <Grid container spacing={8}>
+        <Grid container spacing={1}>
           {/* edit file name */}
           <div className={classes.entryItem}>
             <div className={classes.fluidGrid}>
               <div className="grid-item">
-                <Typography variant="caption">
+                <Typography variant="caption" className={classes.header} style={{ display: 'block' }}>
                   {i18n.t('core:editTagMasterName')}
                 </Typography>
               </div>
@@ -584,13 +588,13 @@ class EntryProperties extends Component<Props, State> {
           <div className={classes.entryItem}>
             <div className={classes.fluidGrid}>
               <div className="grid-item">
-                <Typography variant="caption">
+                <Typography variant="caption" className={classes.header} style={{ display: 'block' }}>
                   {i18n.t('core:fileTags')}
                 </Typography>
               </div>
               <div className="grid-item" />
             </div>
-            <Paper className={classes.tags}>
+            <Paper elevation={2} className={classes.tags}>
               <TagDropContainer entryPath={path}>
                 <TagsSelect isReadOnlyMode={isReadOnlyMode} tags={tags} handleChange={this.handleChange} />
               </TagDropContainer>
@@ -600,7 +604,7 @@ class EntryProperties extends Component<Props, State> {
           <div className={classes.entryItem}>
             <div className={classes.fluidGrid}>
               <div className="grid-item">
-                <Typography variant="caption" className={classes.entryLabel}>
+                <Typography variant="caption" className={classNames(classes.entryLabel, classes.header)} style={{ display: 'block' }}>
                   {i18n.t('core:filePropertiesDescription')}
                 </Typography>
               </div>
@@ -645,8 +649,10 @@ class EntryProperties extends Component<Props, State> {
                   onChange={e => this.handleInputChange(e)}
                 />
               ) : (
-                <Paper style={{ padding: 5 }}>
+                <Paper elevation={2} style={{ padding: 5 }}>
                   <Typography
+                    className={classes.header}
+                    style={{ display: 'block' }}
                     role="button"
                     id="descriptionArea"
                     placeholder={Pro ? 'Click to add description' : i18n.t('core:addDescription')}
@@ -674,7 +680,8 @@ class EntryProperties extends Component<Props, State> {
               <div className="grid-item" style={{ width: '50%' }}>
                 <Typography
                   variant="caption"
-                  className={classes.entryLabel}
+                  className={classNames(classes.entryLabel, classes.header)}
+                  style={{ display: 'block' }}
                 >
                   {i18n.t('core:fileLDTM')}
                 </Typography>
@@ -695,7 +702,8 @@ class EntryProperties extends Component<Props, State> {
                 <div className="grid-item" style={{ width: '50%' }}>
                   <Typography
                     variant="caption"
-                    className={classes.entryLabel}
+                    className={classNames(classes.entryLabel, classes.header)}
+                    style={{ display: 'block' }}
                   >
                     {i18n.t('core:fileSize')}
                   </Typography>
@@ -719,7 +727,8 @@ class EntryProperties extends Component<Props, State> {
                 <div className="grid-item" style={{ width: '50%' }}>
                   <Typography
                     variant="caption"
-                    className={classes.entryLabel}
+                    style={{ display: 'block' }}
+                    className={classNames(classes.entryLabel, classes.header)}
                   >
                     {i18n.t('core:changeBackgroundColor')}
                   </Typography>
@@ -760,13 +769,13 @@ class EntryProperties extends Component<Props, State> {
 
           <div className={classes.entryItem}>
             <div className={classes.fluidGrid}>
-              <Typography variant="caption" className={classes.entryLabel}>
+              <Typography variant="caption" className={classNames(classes.entryLabel, classes.header)} style={{ display: 'block' }}>
                 {i18n.t('core:filePath')}
               </Typography>
               {!isReadOnlyMode && (
                 <Button
                   color="primary"
-                  styles={{ paddingBottom: 0 }}
+                  // style={{ paddingBottom: 0 }}
                   disabled={isEditDescription || isEditName}
                   className={classes.button}
                   onClick={this.toggleMoveCopyFilesDialog}
@@ -793,18 +802,19 @@ class EntryProperties extends Component<Props, State> {
               <div className={classes.fluidGrid}>
                 <Typography
                   variant="caption"
-                  className={classes.entryLabel}
+                  className={classNames(classes.entryLabel, classes.header)}
                   style={{
                     backgroundSize: 'cover',
                     backgroundImage: thumbPathUrl,
                     backgroundPosition: 'center',
                     height: 50,
-                    width: 50
+                    width: 50,
+                    display: 'block'
                   }}
                 />
                 <Button
                   color="primary"
-                  styles={{ paddingBottom: 0 }}
+                  // style={{ paddingBottom: 0 }}
                   // disabled={isEditPreview}
                   className={classes.button}
                   onClick={this.toggleThumbFilesDialog}
@@ -814,6 +824,7 @@ class EntryProperties extends Component<Props, State> {
               </div>
             </div>
           )}
+          <div className={classes.entryItem}><br /></div>
         </Grid>
 
         <EntryTagMenu

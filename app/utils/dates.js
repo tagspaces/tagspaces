@@ -22,11 +22,17 @@
 export function isDateTimeTag(tagDate: string): boolean {
   return (
     isYear(tagDate) ||
+    isYearPeriod(tagDate) ||
     isYearMonth(tagDate) ||
+    isYearMonthPeriod(tagDate) ||
     isYearMonthDay(tagDate) ||
+    isYearMonthDayPeriod(tagDate) ||
     isYearMonthDayHour(tagDate) ||
+    isYearMonthDayHourPeriod(tagDate) ||
     isYearMonthDayHourMin(tagDate) ||
-    isYearMonthDayHourMinSec(tagDate)
+    isYearMonthDayHourMinPeriod(tagDate) ||
+    isYearMonthDayHourMinSec(tagDate) ||
+    isYearMonthDayHourMinSecPeriod(tagDate)
   );
 }
 
@@ -65,14 +71,29 @@ export function isYearMonthDayHour(tagDate: string): boolean {
   return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789]~[0123456][0123456789])(\s|$)/.test(tagDate);
 }
 
+/** Returns true if string is this format: 20190712~17-20190712~17 */
+export function isYearMonthDayHourPeriod(tagDate: string): boolean {
+  return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789]~[0123456][0123456789]-[0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789]~[0123456][0123456789])(\s|$)/.test(tagDate);
+}
+
 /** Returns true if string is this format: 20151223~0112 */
 export function isYearMonthDayHourMin(tagDate: string): boolean {
   return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789]~[0123456][0123456789][0123456][0123456789])(\s|$)/.test(tagDate);
 }
 
+/** Returns true if string is this format: 20190712~1740-20190712~1740 */
+export function isYearMonthDayHourMinPeriod(tagDate: string): boolean {
+  return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789]~[0123456][0123456789][0123456][0123456789]-[0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789]~[0123456][0123456789][0123456][0123456789])(\s|$)/.test(tagDate);
+}
+
 /** Returns true if string is this format: 20151223~011358 */
 export function isYearMonthDayHourMinSec(tagDate: string): boolean {
   return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789]~[0123456][0123456789][0123456][0123456789][0123456][0123456789])(\s|$)/.test(tagDate);
+}
+
+/** Returns true if string is this format: 20190712~174031-20190712~174031 */
+export function isYearMonthDayHourMinSecPeriod(tagDate: string): boolean {
+  return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789]~[0123456][0123456789][0123456][0123456789][0123456][0123456789]-[0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789]~[0123456][0123456789][0123456][0123456789][0123456][0123456789])(\s|$)/.test(tagDate);
 }
 
 /** Returns the number of day in month, January = 1 -> 31 .. December = 12 */
@@ -135,6 +156,17 @@ export function extractTimePeriod(value: string): { fromDateTime: Date | null, t
       const hour = value.substring(9, 11);
       fromDateTime = new Date(year + '-' + month + '-' + day + ' ' + hour + ':00:00');
       toDateTime = new Date(year + '-' + month + '-' + day + ' ' + hour + ':59:59.999');
+    } else if (isYearMonthDayHourPeriod(value)) {
+      const fromYear = value.substring(0, 4);
+      const fromMonth = value.substring(4, 6);
+      const fromDay = value.substring(6, 8);
+      const fromHour = value.substring(9, 11);
+      const toYear = value.substring(12, 16);
+      const toMonth = value.substring(16, 18);
+      const toDay = value.substring(18, 20);
+      const toHour = value.substring(21, 23);
+      fromDateTime = new Date(fromYear + '-' + fromMonth + '-' + fromDay + ' ' + fromHour + ':00:00');
+      toDateTime = new Date(toYear + '-' + toMonth + '-' + toDay + ' ' + toHour + ':59:59.999');
     } else if (isYearMonthDayHourMin(value)) {
       const year = value.substring(0, 4);
       const month = value.substring(4, 6);
@@ -143,6 +175,19 @@ export function extractTimePeriod(value: string): { fromDateTime: Date | null, t
       const min = value.substring(11, 13);
       fromDateTime = new Date(year + '-' + month + '-' + day + ' ' + hour + ':' + min + ':00');
       toDateTime = new Date(year + '-' + month + '-' + day + ' ' + hour + ':' + min + ':59.999');
+    } else if (isYearMonthDayHourMinPeriod(value)) {
+      const fromYear = value.substring(0, 4);
+      const fromMonth = value.substring(4, 6);
+      const fromDay = value.substring(6, 8);
+      const fromHour = value.substring(9, 11);
+      const fromMin = value.substring(11, 13);
+      const toYear = value.substring(14, 18);
+      const toMonth = value.substring(18, 20);
+      const toDay = value.substring(20, 22);
+      const toHour = value.substring(23, 25);
+      const toMin = value.substring(25, 27);
+      fromDateTime = new Date(fromYear + '-' + fromMonth + '-' + fromDay + ' ' + fromHour + ':' + fromMin + ':00');
+      toDateTime = new Date(toYear + '-' + toMonth + '-' + toDay + ' ' + toHour + ':' + toMin + ':59.999');
     } else if (isYearMonthDayHourMinSec(value)) {
       const year = value.substring(0, 4);
       const month = value.substring(4, 6);
@@ -152,6 +197,21 @@ export function extractTimePeriod(value: string): { fromDateTime: Date | null, t
       const sec = value.substring(13, 15);
       fromDateTime = new Date(year + '-' + month + '-' + day + ' ' + hour + ':' + min + ':' + sec);
       toDateTime = new Date(year + '-' + month + '-' + day + ' ' + hour + ':' + min + ':' + sec + '.999');
+    } else if (isYearMonthDayHourMinSecPeriod(value)) {
+      const fromYear = value.substring(0, 4);
+      const fromMonth = value.substring(4, 6);
+      const fromDay = value.substring(6, 8);
+      const fromHour = value.substring(9, 11);
+      const fromMin = value.substring(11, 13);
+      const fromSec = value.substring(13, 15);
+      const toYear = value.substring(16, 20);
+      const toMonth = value.substring(20, 22);
+      const toDay = value.substring(22, 24);
+      const toHour = value.substring(25, 27);
+      const toMin = value.substring(27, 29);
+      const toSec = value.substring(29, 31);
+      fromDateTime = new Date(fromYear + '-' + fromMonth + '-' + fromDay + ' ' + fromHour + ':' + fromMin + ':' + fromSec);
+      toDateTime = new Date(toYear + '-' + toMonth + '-' + toDay + ' ' + toHour + ':' + toMin + ':' + toSec + '.999');
     }
   } catch (err) {
     console.log('Error extracting date ' + err);

@@ -413,5 +413,7 @@
   "startContentExtraction": "Extract Content",
   "thumbChooseFileTitle": "Thumbnail Chooser",
   "clearThumbnail": "Clear Thumbnail",
+  "range": "Range",
+  "showTime": "Show Time",
   "-": "-"
 }

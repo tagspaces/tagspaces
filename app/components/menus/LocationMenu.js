@@ -131,7 +131,7 @@ class LocationMenu extends React.Component<Props, State> {
                   (<CloudLocationIcon />) : (<LocationIcon />)
                 }
               </ListItemIcon>
-              <ListItemText inset primary={location.name} />
+              <ListItemText primary={location.name} />
             </MenuItem>
           ))}
         </Menu>
@@ -159,4 +159,4 @@ function mapActionCreatorsToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
-)(withTheme()(LocationMenu));
+)(withTheme(LocationMenu));

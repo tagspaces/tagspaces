@@ -289,7 +289,7 @@ class EditLocationDialog extends React.Component<Props, State> {
     }
     return (
       <DialogContent>
-        <Grid container spacing={32}>
+        <Grid container spacing={2}>
           <Grid item xs={2} style={{ marginTop: 13, textAlign: 'left' }}>
             <Typography>{i18n.t('core:locationType')}</Typography>
           </Grid>

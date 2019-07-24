@@ -191,6 +191,16 @@ export default [
         color: '#4986e7',
         textcolor: '#ffffff',
         icon: '',
+      },
+      {
+        id: 'e1f0760e-471c-4418-a404-6cb09e6f6c34',
+        type: 'plain',
+        title: 'date-tag',
+        functionality: 'dateTagging',
+        desciption: 'Add custom date as a tag',
+        color: '#4986e7',
+        textcolor: '#ffffff',
+        icon: '',
       }
     ]
   },

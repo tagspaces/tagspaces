@@ -21,6 +21,7 @@ import React from 'react';
 import Table from 'rc-table';
 import { bindActionCreators } from 'redux';
 import uuidv1 from 'uuid';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
@@ -646,7 +647,7 @@ class LocationManager extends React.Component<Props, State> {
       <div className={classes.panel} style={this.props.style}>
         <CustomLogo />
         <div className={classes.toolbar}>
-          <Typography className={classes.panelTitle} type="subtitle1">
+          <Typography className={classNames(classes.panelTitle, classes.header)} type="subtitle1">
             {i18n.t('core:locationManager')}
           </Typography>
         </div>
@@ -730,7 +731,7 @@ class LocationManager extends React.Component<Props, State> {
               <ListItemIcon>
                 <EditIcon />
               </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:editLocationTitle')} />
+              <ListItemText primary={i18n.t('core:editLocationTitle')} />
             </MenuItem>
             { this.state.selectedLocation && this.props.currentLocationId === this.state.selectedLocation.uuid && (
               <MenuItem
@@ -740,14 +741,14 @@ class LocationManager extends React.Component<Props, State> {
                 <ListItemIcon>
                   <RefreshIcon />
                 </ListItemIcon>
-                <ListItemText inset primary={i18n.t('core:indexLocation')} />
+                <ListItemText primary={i18n.t('core:indexLocation')} />
               </MenuItem>
             )}
             <MenuItem data-tid="moveLocationUp" onClick={this.moveLocationUp}>
               <ListItemIcon>
                 <ArrowUpwardIcon />
               </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:moveUp')} />
+              <ListItemText primary={i18n.t('core:moveUp')} />
             </MenuItem>
             <MenuItem
               data-tid="moveLocationDown"
@@ -756,7 +757,7 @@ class LocationManager extends React.Component<Props, State> {
               <ListItemIcon>
                 <ArrowDownwardIcon />
               </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:moveDown')} />
+              <ListItemText primary={i18n.t('core:moveDown')} />
             </MenuItem>
             <MenuItem
               data-tid="removeLocation"
@@ -765,7 +766,7 @@ class LocationManager extends React.Component<Props, State> {
               <ListItemIcon>
                 <DeleteIcon />
               </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:removeLocation')} />
+              <ListItemText primary={i18n.t('core:removeLocation')} />
             </MenuItem>
             <MenuItem
               data-tid="removeLocation"
@@ -774,7 +775,7 @@ class LocationManager extends React.Component<Props, State> {
               <ListItemIcon>
                 <CloseIcon />
               </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:closeLocation')} />
+              <ListItemText primary={i18n.t('core:closeLocation')} />
             </MenuItem>
           </Menu>
           <List

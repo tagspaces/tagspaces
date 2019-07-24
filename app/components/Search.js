@@ -21,6 +21,7 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
+import classNames from 'classnames';
 import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
 import PictureIcon from '@material-ui/icons/Panorama';
@@ -259,10 +260,10 @@ class Search extends React.Component<Props, State> {
       <div className={classes.panel} style={this.props.style}>
         <CustomLogo />
         <div className={classes.toolbar}>
-          <Typography className={classes.panelTitle} style={{ flex: 'none' }}>
+          <Typography className={classNames(classes.panelTitle, classes.header)} style={{ flex: 'none' }}>
             {i18n.t('searchTitle')}
           </Typography>
-          <Typography variant="caption" style={{ alignSelf: 'flex-end', paddingLeft: 5 }}>
+          <Typography variant="caption" className={classes.header} style={{ alignSelf: 'flex-end', paddingLeft: 5, display: 'block' }}>
             {indexing ? 'disabled while indexing...' : 'in ' + indexedEntriesCount + ' indexed entries'}
           </Typography>
         </div>
@@ -300,7 +301,7 @@ class Search extends React.Component<Props, State> {
               }
             />
           </FormControl>
-          <Typography variant="caption" style={{ marginTop: 10 }}>
+          <Typography variant="caption" className={classes.header} style={{ marginTop: 10 }}>
             {i18n.t('core:mustContainTheseTags')}
           </Typography>
           <FormControl
@@ -309,7 +310,7 @@ class Search extends React.Component<Props, State> {
           >
             <TagsSelect tags={this.state.tagsAND} handleChange={this.handleChange} tagSearchType={'tagsAND'} />
           </FormControl>
-          <Typography variant="caption" style={{ marginTop: 10 }}>
+          <Typography variant="caption" className={classes.header} style={{ marginTop: 10 }}>
             {i18n.t('core:atLeastOneOfTheseTags')}
           </Typography>
           <FormControl
@@ -318,7 +319,7 @@ class Search extends React.Component<Props, State> {
           >
             <TagsSelect tags={this.state.tagsOR} handleChange={this.handleChange} tagSearchType={'tagsOR'} />
           </FormControl>
-          <Typography variant="caption" style={{ marginTop: 10 }}>
+          <Typography variant="caption" className={classes.header} style={{ marginTop: 10 }}>
             {i18n.t('core:noneOfTheseTags')}
           </Typography>
           <FormControl
@@ -330,7 +331,7 @@ class Search extends React.Component<Props, State> {
           <FormControl
             className={classes.formControl}
             disabled={indexing || !Pro}
-            title={!Pro && i18n.t('core:thisFunctionalityIsAvailableInPro')}
+            title={!Pro ? i18n.t('core:thisFunctionalityIsAvailableInPro') : undefined}
           >
             <InputLabel htmlFor="file-type">{i18n.t('core:fileType')}</InputLabel>
             <Select
@@ -475,7 +476,7 @@ class Search extends React.Component<Props, State> {
           <FormControl
             className={classes.formControl}
             disabled={indexing || !Pro}
-            title={!Pro && i18n.t('core:thisFunctionalityIsAvailableInPro')}
+            title={!Pro ? i18n.t('core:thisFunctionalityIsAvailableInPro') : undefined}
           >
             <InputLabel shrink htmlFor="modification-date">{i18n.t('core:lastModifiedSearchTitle')}</InputLabel>
             <Select
@@ -512,7 +513,7 @@ class Search extends React.Component<Props, State> {
           </FormControl>
           <FormControl
             className={classes.formControl}
-            title={!Pro && i18n.t('core:thisFunctionalityIsAvailableInPro')}
+            title={!Pro ? i18n.t('core:thisFunctionalityIsAvailableInPro') : undefined}
           >
             <TextField
               id="tagTimePeriod"

@@ -45,10 +45,10 @@ const styles = theme => ({
     display: 'flex',
   },
   formControl: {
-    margin: theme.spacing.unit * 3,
+    margin: theme.spacing(3),
   },
   group: {
-    margin: `${theme.spacing.unit}px 0`,
+    margin: theme.spacing(1, 0),
     display: 'flex',
     flexDirection: 'row'
   },
@@ -292,7 +292,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
     }
     return (
       <DialogContent>
-        <Grid container spacing={32}>
+        <Grid container spacing={2}>
           <Grid item xs={2} style={{ marginTop: 13, textAlign: 'left' }}>
             <Typography>{i18n.t('core:locationType')}</Typography>
           </Grid>

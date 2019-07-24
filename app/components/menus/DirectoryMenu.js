@@ -306,7 +306,7 @@ const DirectoryMenu = (props: Props) => {
             <ListItemIcon>
               <OpenFolderIcon />
             </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:openDirectory')} />
+            <ListItemText primary={i18n.t('core:openDirectory')} />
           </MenuItem>
         )}
         {!props.perspectiveMode && (
@@ -317,7 +317,7 @@ const DirectoryMenu = (props: Props) => {
             <ListItemIcon>
               <OpenFolderIcon />
             </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:openParentDirectory')} />
+            <ListItemText primary={i18n.t('core:openParentDirectory')} />
           </MenuItem>
         )}
         {!props.perspectiveMode && (
@@ -325,7 +325,7 @@ const DirectoryMenu = (props: Props) => {
             <ListItemIcon>
               <AutoRenew />
             </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:reloadDirectory')} />
+            <ListItemText primary={i18n.t('core:reloadDirectory')} />
           </MenuItem>
         )}
         {!props.isReadOnlyMode && (
@@ -336,7 +336,7 @@ const DirectoryMenu = (props: Props) => {
             <ListItemIcon>
               <RenameFolderIcon />
             </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:renameDirectory')} />
+            <ListItemText primary={i18n.t('core:renameDirectory')} />
           </MenuItem>
         )}
         {!props.isReadOnlyMode && (
@@ -347,7 +347,7 @@ const DirectoryMenu = (props: Props) => {
             <ListItemIcon>
               <DeleteForeverIcon />
             </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:deleteDirectory')} />
+            <ListItemText primary={i18n.t('core:deleteDirectory')} />
           </MenuItem>
         )}
         {!AppConfig.isWeb && (
@@ -358,9 +358,7 @@ const DirectoryMenu = (props: Props) => {
             <ListItemIcon>
               <OpenFolderNativelyIcon />
             </ListItemIcon>
-            <ListItemText
-              inset
-              primary={i18n.t('core:showInFileManager')}
+            <ListItemText primary={i18n.t('core:showInFileManager')}
             />
           </MenuItem>
         )}
@@ -375,7 +373,7 @@ const DirectoryMenu = (props: Props) => {
             <ListItemIcon>
               <NewFolderIcon />
             </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:newSubdirectory')} />
+            <ListItemText primary={i18n.t('core:newSubdirectory')} />
           </MenuItem>
         )}
         {!props.isReadOnlyMode && !props.perspectiveMode && (
@@ -383,7 +381,7 @@ const DirectoryMenu = (props: Props) => {
             <ListItemIcon>
               <NewFileIcon />
             </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:newFileNote')} />
+            <ListItemText primary={i18n.t('core:newFileNote')} />
           </MenuItem>
         )}
         {!props.isReadOnlyMode && !props.perspectiveMode && (
@@ -391,7 +389,7 @@ const DirectoryMenu = (props: Props) => {
             <ListItemIcon>
               <AddExistingFileIcon />
             </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:showAddFileDialog')} />
+            <ListItemText primary={i18n.t('core:showAddFileDialog')} />
           </MenuItem>
         )}
         {AppConfig.isCordova && (
@@ -399,7 +397,7 @@ const DirectoryMenu = (props: Props) => {
             <ListItemIcon>
               <AddExistingFileIcon />
             </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:cameraTakePicture')} />
+            <ListItemText primary={i18n.t('core:cameraTakePicture')} />
           </MenuItem>
         )}
         <Divider />
@@ -408,9 +406,7 @@ const DirectoryMenu = (props: Props) => {
             <ListItemIcon>
               <ContentExtractionIcon />
             </ListItemIcon>
-            <ListItemText
-              inset
-              primary={i18n.t('core:startContentExtraction')}
+            <ListItemText primary={i18n.t('core:startContentExtraction')}
             />
           </MenuItem>
         )}
@@ -418,9 +414,7 @@ const DirectoryMenu = (props: Props) => {
           <ListItemIcon>
             <SettingsIcon />
           </ListItemIcon>
-          <ListItemText
-            inset
-            primary={i18n.t('core:directoryPropertiesTitle')}
+          <ListItemText primary={i18n.t('core:directoryPropertiesTitle')}
           />
         </MenuItem>
       </Menu>

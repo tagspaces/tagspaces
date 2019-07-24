@@ -622,4 +622,4 @@ function mapActionCreatorsToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
-)(withTheme()(VerticalNavigation));
+)(withTheme(VerticalNavigation));

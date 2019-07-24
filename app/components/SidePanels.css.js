@@ -34,7 +34,7 @@ export default (theme) => ({
     color: theme.palette.text.primary
   },
   icon: {
-    margin: theme.spacing.unit
+    margin: theme.spacing(1)
   },
   locationListArea: {
     // paddingRight: 10, // place for scroll
@@ -85,7 +85,7 @@ export default (theme) => ({
     paddingTop: 6,
   },
   nested: {
-    paddingLeft: theme.spacing.unit * 4
+    paddingLeft: theme.spacing(4)
   },
   listItemTitleText: {
     fontWeight: 'bold',
@@ -106,7 +106,7 @@ export default (theme) => ({
     paddingLeft: 8
   },
   leftIcon: {
-    marginRight: theme.spacing.unit,
+    marginRight: theme.spacing(1),
   },
   badge: {
     display: 'inline-block',

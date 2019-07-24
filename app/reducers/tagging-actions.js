@@ -53,10 +53,15 @@ const actions = {
       const tag = { ...pTag };
       tag.type = 'sidecar';
       if (tag.functionality && tag.functionality.length > 0) {
-        if (tag.functionality === 'geoTagging' && Pro) {
+        if (tag.functionality === 'geoTagging') {
           // if (!isGeo(getState())) { // tag will be added later just open the Geo Dialog now
           tag.path = paths[0]; // todo rethink this!
           tag.title = defaultTagLocation;
+          dispatch(AppActions.toggleEditTagDialog(tag));
+          // }
+        } else if (tag.functionality === 'dateTagging') {
+          tag.path = paths[0];
+          tag.title = formatDateTime4Tag(new Date(), true); // defaultTagDate;
           dispatch(AppActions.toggleEditTagDialog(tag));
           // }
         } else {
@@ -193,6 +198,13 @@ const actions = {
       return newTags;
     }
   },
+  /**
+   * if Tag not exist in meta it will be added see: addMode
+   * @param path
+   * @param tag
+   * @param newTagTitle
+   * @returns {Function}
+   */
   editTagForEntry: (path: string, tag: Tag, newTagTitle: string) => (
     dispatch: (actions: Object) => void,
     getState: () => Object
@@ -215,12 +227,20 @@ const actions = {
       }
     } else if (tag.type === 'sidecar') {
       loadMetaDataPromise(path).then(fsEntryMeta => {
+        let addMode = true;
         fsEntryMeta.tags.map((sidecarTag) => {
           if (sidecarTag.title === tag.title) {
+            // eslint-disable-next-line no-param-reassign
             sidecarTag.title = newTagTitle;
+            addMode = false;
           }
           return true;
         });
+        if (addMode) {
+          // eslint-disable-next-line no-param-reassign
+          tag.title = newTagTitle;
+          fsEntryMeta.tags.push(tag);
+        }
         const updatedFsEntryMeta = {
           ...fsEntryMeta,
           tags: [
@@ -507,17 +527,6 @@ function handleSmartTag(smarttagFunction: string) {
 function generateTagValue(tag) {
   let tagTitle = tag.functionality;
   switch (tag.functionality) {
-  case 'geoTagging': {
-    tagTitle = tag.title;
-    /* $('#viewContainers').on('drop dragend', function(event) {
-        if (TSCORE.PRO && TSCORE.selectedTag === 'geo-tag') {
-          TSCORE.UI.showTagEditDialog(true); // true start the dialog in add mode
-        } else if (!TSCORE.PRO && TSCORE.selectedTag === 'geo-tag') {
-          TSCORE.showAlertDialog($.i18n.t("ns.common:needProVersion"), $.i18n.t("ns.common:geoTaggingNotPossible"));
-        }
-      }); */
-    break;
-  }
   case 'today': {
     tagTitle = formatDateTime4Tag(new Date(), false);
     break;
