@@ -22,7 +22,7 @@ import uuidv1 from 'uuid';
 import Dialog from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
 
-function Transition(props) {
+export function DialogTransition(props) {
   return <Slide direction="down" {...props} />;
 }
 
@@ -79,10 +79,9 @@ const GenericDialog = (props: Props) => {
   } = props;
   return (
     <Dialog
-      key={uuidv1()}
       fullScreen={fullScreen}
       open={open}
-      TransitionComponent={Transition}
+      TransitionComponent={DialogTransition}
       keepMounted
       onClose={onClose}
       onBackdropClick={onBackdropClick && onClose}

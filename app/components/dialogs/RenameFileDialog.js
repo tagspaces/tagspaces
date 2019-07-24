@@ -22,13 +22,14 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { withStyles } from '@material-ui/core/styles';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
+import { onEnterKeyHandler, DialogTransition } from './GenericDialog';
 import AppConfig from '../../config';
 import i18n from '../../services/i18n';
 import { extractFileName, extractContainingDirectoryPath } from '../../utils/paths';
@@ -124,27 +125,26 @@ class RenameFileDialog extends React.Component<Props, State> {
   );
 
   renderContent = () => (
-    <DialogContent>
-      <div className={this.props.classes.root} data-tid="renameFileDialog">
-        <FormControl
-          fullWidth={true}
+    <DialogContent className={this.props.classes.root}>
+      <FormControl
+        data-tid="renameFileDialog"
+        fullWidth={true}
+        error={this.state.inputError}
+      >
+        <TextField
           error={this.state.inputError}
-        >
-          <TextField
-            error={this.state.inputError}
-            margin="dense"
-            name="fileName"
-            // autoFocus
-            inputRef={(ref) => { this.fileName = ref; }}
-            label={i18n.t('core:renameNewFileName')}
-            onChange={this.handleInputChange}
-            value={this.state.fileName}
-            data-tid="renameFileDialogInput"
-            fullWidth={true}
-          />
-          {this.state.inputError && <FormHelperText>Empty File Name</FormHelperText>}
-        </FormControl>
-      </div>
+          margin="dense"
+          name="fileName"
+          autoFocus
+          inputRef={(ref) => { this.fileName = ref; }}
+          label={i18n.t('core:renameNewFileName')}
+          onChange={this.handleInputChange}
+          value={this.state.fileName}
+          data-tid="renameFileDialogInput"
+          fullWidth={true}
+        />
+        {this.state.inputError && <FormHelperText>Empty File Name</FormHelperText>}
+      </FormControl>
     </DialogContent>
   );
 
@@ -169,15 +169,20 @@ class RenameFileDialog extends React.Component<Props, State> {
   );
 
   render() {
+    const { onClose, open } = this.props;
     return (
-      <GenericDialog
-        open={this.props.open}
-        onClose={this.props.onClose}
-        onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
-        renderTitle={this.renderTitle}
-        renderContent={this.renderContent}
-        renderActions={this.renderActions}
-      />
+      <Dialog
+        open={open}
+        TransitionComponent={DialogTransition}
+        keepMounted
+        onClose={onClose}
+        onBackdropClick={onClose}
+        // onKeyDown={((event) => onEnterKeyHandler(event, this.onConfirm))}
+      >
+        {this.renderTitle()}
+        {this.renderContent()}
+        {this.renderActions()}
+      </Dialog>
     );
   }
 }

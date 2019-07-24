@@ -53,12 +53,8 @@ class RenameDirectoryDialog extends React.Component<Props, State> {
   };
 
   handleInputChange = (event: Object) => {
-    const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
-
     this.setState({
-      [name]: value
+      name: event.target.value
     }, this.handleValidation);
   };
 
@@ -136,6 +132,7 @@ class RenameDirectoryDialog extends React.Component<Props, State> {
   );
 
   render() {
+    console.log('Render dialog');
     return (
       <GenericDialog
         open={this.props.open}
