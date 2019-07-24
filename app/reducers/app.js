@@ -1116,30 +1116,29 @@ export const actions = {
   renameFile: (filePath: string, newFilePath: string) => (
     dispatch: (actions: Object) => void
   ) => PlatformIO.renameFilePromise(filePath, newFilePath)
-    .then(() =>
-    // console.log('File renamed ' + filePath + ' to ' + newFilePath);
-
-    // Update sidecar file and thumb
+    .then(() => {
+      // console.log('File renamed ' + filePath + ' to ' + newFilePath);
+      dispatch(
+        actions.showNotification(
+          i18n.t('core:renamingSuccessfully'),
+          'default',
+          true
+        )
+      );
+      // Update sidecar file and thumb
       renameFilesPromise([
         [getMetaFileLocationForFile(filePath), getMetaFileLocationForFile(newFilePath)],
         [getThumbFileLocationForFile(filePath), getThumbFileLocationForFile(newFilePath)]
       ]).then(() => {
         console.log('Renaming meta file and thumb successful for ' + filePath);
         dispatch(actions.reflectRenameEntry(filePath, newFilePath));
-        // UI notification
-        dispatch(
-          actions.showNotification(
-            i18n.t('core:renamingSuccessfully'),
-            'default',
-            true
-          )
-        );
         return true;
       }).catch((err) => {
+        dispatch(actions.reflectRenameEntry(filePath, newFilePath));
         console.warn('Renaming meta file and thumb failed with ' + err);
-      })
-      // return true;
-    )
+      });
+      return true;
+    })
     .catch(error => {
       console.warn('Error while renaming file: ' + error);
       dispatch(
@@ -1154,8 +1153,8 @@ export const actions = {
     PlatformIO.openFile(selectedFile);
   },
   saveFile: () => (
-    dispatch: (actions: Object) => void,
-    getState: () => Object
+    // dispatch: (actions: Object) => void,
+    // getState: () => Object
   ) => {
     actions.showNotification(i18n.t('core:notImplementedYet'), 'warning', true);
     // const { app } = getState();
