@@ -46,7 +46,7 @@ import {
 import PlatformIO from '../services/platform-io';
 import LoadingLazy from '../components/LoadingLazy';
 
-const GridPerspective = React.lazy(() => import(/* webpackChunkName: "GridPerspective" */ '../perspectives/grid-perspective/src/index'));
+const GridPerspective = React.lazy(() => import(/* webpackChunkName: "GridPerspective" */ '../perspectives/virtualizing-perspective/src/index'));
 const GridPerspectiveAsync = props => (
   <React.Suspense fallback={<LoadingLazy />}>
     <GridPerspective {...props} />

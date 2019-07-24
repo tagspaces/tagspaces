@@ -239,6 +239,7 @@
     "react-select": "^3.0.4",
     "react-split-pane": "^0.1.87",
     "react-swipeable-views": "^0.13.0",
+    "react-virtualized": "^9.21.1",
     "redux": "^3.7.2",
     "redux-persist": "^5.10.0",
     "redux-thunk": "^2.2.0",
