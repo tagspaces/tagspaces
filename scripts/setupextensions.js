@@ -34,7 +34,7 @@ const extensionList = [
   { package: '@tagspaces/legacy-ext', path: 'extCommons', url: 'https://github.com/tagspaces/extCommons' },
 ];
 
-sh.rm('-rf', '~/.config/yarn/link/');
+sh.rm('-rf', '~/.config/yarn/link/@tagspaces');
 
 if (!sh.test('-d', extensionDir)) {
   sh.mkdir(extensionDir);
