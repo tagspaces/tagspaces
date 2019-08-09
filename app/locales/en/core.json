@@ -90,7 +90,7 @@
   "exportTagGroupsButton": "Export Tag Library",
   "showMainMenu": "Show main menu (restart needed)",
   "useDefaultLocation": "Use default location as a startup location",
-  "enablingUsingMetaFolder": "Enable the use of a hidden folder(.ts) for storing meta data and thumbnails",
+  "enablingUsingMetaFolder": "Enable the use of a hidden folder (.ts) for storing meta data and thumbnails",
   "persistTagsInSidecarFile": "Use sidecar files for file tagging",
   "addTagsToLibrary": "Collect new tags in the tag library",
   "useTrashCan": "Move deleted files or folders to trash bin",
