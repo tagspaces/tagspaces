@@ -66,6 +66,11 @@ export default class ElectronIO {
   };
 
   initTrayMenu = (menuConfig: Array<Object>) => {
+    // Temp. disabling the tray support on Mac OS due to instability‚
+    if (process.platform === 'darwin') {
+      return true
+    }
+    
     const mainWindow = this.win;
     const Menu = this.remote.Menu;
     const Tray = this.remote.Tray;
