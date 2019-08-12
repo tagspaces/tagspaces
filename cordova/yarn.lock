@@ -233,9 +233,10 @@ contains-path@^0.1.0:
   resolved "https://registry.yarnpkg.com/contains-path/-/contains-path-0.1.0.tgz#fe8cf184ff6670b6baef01a9d4861a5cbec4120a"
   integrity sha1-/ozxhP9mcLa67wGp1IYaXL7EEgo=
 
-"cordova-android@git+https://github.com/apache/cordova-android.git":
-  version "8.1.0-dev"
-  resolved "git+https://github.com/apache/cordova-android.git#576edb53bb5b6f9be4ffb1348f1efbeeb2968905"
+cordova-android@^8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/cordova-android/-/cordova-android-8.0.0.tgz#1fbe05a914731df619522b9385d4d1b183c36bdb"
+  integrity sha512-Ipv8HbVJpxEyYFSFLTEOaLRp0yxBtJVNbgSuDEB4naa34FzQaRWSNiiMcPJnO+x3hRXNt7pcwa46hARNzhn7+w==
   dependencies:
     android-versions "^1.3.0"
     cordova-common "^3.1.0"
@@ -264,30 +265,35 @@ cordova-common@^3.1.0:
     underscore "^1.8.3"
     which "^1.3.0"
 
-cordova-plugin-camera@^4.0.3:
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/cordova-plugin-camera/-/cordova-plugin-camera-4.0.3.tgz#7373a5938318c86ccfd84e3713e2382d10fe076b"
-  integrity sha1-c3Olk4MYyGzP2E43E+I4LRD+B2s=
+cordova-plugin-background-mode@^0.7.3:
+  version "0.7.3"
+  resolved "https://registry.yarnpkg.com/cordova-plugin-background-mode/-/cordova-plugin-background-mode-0.7.3.tgz#066f92c99f403b3ed3d6fb91f281a0a7ccbc84ba"
+  integrity sha512-LsU1v7EgTUROaks+tcQ8TnMzVUcU/TwjDVwj2O/4e4aI2q2ldLGsiZorqKqfqvwh2HoIssmY73OwJk91hQi62w==
 
-cordova-plugin-device@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/cordova-plugin-device/-/cordova-plugin-device-2.0.2.tgz#fc08f3722e67eef7b6c67bfc99a83df6add0baba"
-  integrity sha1-/Ajzci5n7ve2xnv8mag99q3Quro=
+cordova-plugin-camera@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/cordova-plugin-camera/-/cordova-plugin-camera-4.1.0.tgz#6474a3e080c4662aa00fd7425705d301c693ddc0"
+  integrity sha512-fCLhWjWYn49q3X5xaypAPgTz6MAWSKFFQvD2Gpi5SuVlrRPRphtX2jIqR2zCBuDTBR082QVnlc+yUDXt65Mjgw==
 
-cordova-plugin-file@^6.0.1:
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/cordova-plugin-file/-/cordova-plugin-file-6.0.1.tgz#49606b8c15a5688d4728f92e4a7325a061de07f5"
-  integrity sha1-SWBrjBWlaI1HKPkuSnMloGHeB/U=
+cordova-plugin-device@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/cordova-plugin-device/-/cordova-plugin-device-2.0.3.tgz#c2b41b7efd0455dd097f89356d85bfdd5dadeb0f"
+  integrity sha512-Jb3V72btxf3XHpkPQsGdyc8N6tVBYn1vsxSFj43fIz9vonJDUThYPCJJHqk6PX6N4dJw6I4FjxkpfCR4LDYMlw==
 
-cordova-plugin-media@^5.0.2:
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/cordova-plugin-media/-/cordova-plugin-media-5.0.2.tgz#3345769c07e6a46a71c97e1bb434dacca5c8d80b"
-  integrity sha1-M0V2nAfmpGpxyX4btDTazKXI2As=
+cordova-plugin-file@^6.0.2:
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/cordova-plugin-file/-/cordova-plugin-file-6.0.2.tgz#f3911479f8357e9aacb5576674f8d95b31a1fb20"
+  integrity sha512-m7cughw327CjONN/qjzsTpSesLaeybksQh420/gRuSXJX5Zt9NfgsSbqqKDon6jnQ9Mm7h7imgyO2uJ34XMBtA==
 
-cordova-plugin-whitelist@^1.3.3:
-  version "1.3.3"
-  resolved "https://registry.yarnpkg.com/cordova-plugin-whitelist/-/cordova-plugin-whitelist-1.3.3.tgz#b5e85ecdbbfe5aeded40a1bf4ee2372e67d96fb4"
-  integrity sha1-tehezbv+Wu3tQKG/TuI3LmfZb7Q=
+cordova-plugin-media@^5.0.3:
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/cordova-plugin-media/-/cordova-plugin-media-5.0.3.tgz#366188bd4f8472651c1e8304be649af6333b0e36"
+  integrity sha512-UQPFlpk1zL4BY44zGi8RVmYCvcKBCN4Dyf8ovxqGYCC8zR1yhbTRWYDdO9vJdERwbfgWV7+z7FMWiSUfqWm9bQ==
+
+cordova-plugin-whitelist@^1.3.4:
+  version "1.3.4"
+  resolved "https://registry.yarnpkg.com/cordova-plugin-whitelist/-/cordova-plugin-whitelist-1.3.4.tgz#31938545c7c3e7de35c20ab08c2c3afa06e8a3f9"
+  integrity sha512-EYC5eQFVkoYXq39l7tYKE6lEjHJ04mvTmKXxGL7quHLdFPfJMNzru/UYpn92AOfpl3PQaZmou78C7EgmFOwFQQ==
 
 core-util-is@~1.0.0:
   version "1.0.2"

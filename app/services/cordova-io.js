@@ -49,6 +49,11 @@ export default class CordovaIO {
     // attachFastClick(document.body);
     this.getFileSystem();
 
+    // enabling the cordova-plugin-background-mode
+    if (window.plugins.backgroundMode) {
+      window.plugins.backgroundMode.enable();
+    }
+
     // iOS specific initialization
     if (AppConfig.isCordovaiOS) {
       window.plugins = window.plugins || {};

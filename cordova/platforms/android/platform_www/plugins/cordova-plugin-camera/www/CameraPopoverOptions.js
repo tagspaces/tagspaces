@@ -40,14 +40,18 @@ var Camera = require('./Camera');
  * @param {Number} [width=320] - width, in pixels, of the screen element onto which to anchor the popover.
  * @param {Number} [height=480] - height, in pixels, of the screen element onto which to anchor the popover.
  * @param {module:Camera.PopoverArrowDirection} [arrowDir=ARROW_ANY] - Direction the arrow on the popover should point.
+ * @param {Number} [popoverWidth=0] - width of the popover (0 or not specified will use apple's default width).
+ * @param {Number} [popoverHeight=0] - height of the popover (0 or not specified will use apple's default height).
  */
-var CameraPopoverOptions = function (x, y, width, height, arrowDir) {
+var CameraPopoverOptions = function (x, y, width, height, arrowDir, popoverWidth, popoverHeight) {
     // information of rectangle that popover should be anchored to
     this.x = x || 0;
     this.y = y || 32;
     this.width = width || 320;
     this.height = height || 480;
     this.arrowDir = arrowDir || Camera.PopoverArrowDirection.ARROW_ANY;
+    this.popoverWidth = popoverWidth || 0;
+    this.popoverHeight = popoverHeight || 0;
 };
 
 module.exports = CameraPopoverOptions;

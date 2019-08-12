@@ -1,19 +1,22 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="org.tagspaces.mobile" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <feature name="Camera">
-        <param name="android-package" value="org.apache.cordova.camera.CameraLauncher" />
-    </feature>
     <feature name="Device">
         <param name="android-package" value="org.apache.cordova.device.Device" />
+    </feature>
+    <feature name="BackgroundMode">
+        <param name="android-package" value="de.appplant.cordova.plugin.background.BackgroundMode" />
+    </feature>
+    <feature name="BackgroundModeExt">
+        <param name="android-package" value="de.appplant.cordova.plugin.background.BackgroundModeExt" />
+    </feature>
+    <feature name="Camera">
+        <param name="android-package" value="org.apache.cordova.camera.CameraLauncher" />
     </feature>
     <feature name="File">
         <param name="android-package" value="org.apache.cordova.file.FileUtils" />
         <param name="onload" value="true" />
     </feature>
     <allow-navigation href="cdvfile:*" />
-    <feature name="Media">
-        <param name="android-package" value="org.apache.cordova.media.AudioHandler" />
-    </feature>
     <feature name="Whitelist">
         <param name="android-package" value="org.apache.cordova.whitelist.WhitelistPlugin" />
         <param name="onload" value="true" />
@@ -35,6 +38,7 @@
     <allow-intent href="geo:*" />
     <allow-intent href="market:*" />
     <preference name="loglevel" value="DEBUG" />
+    <preference name="KeepRunning" value="true" />
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
     <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root" />
     <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,cache,cache-external,assets,root" />

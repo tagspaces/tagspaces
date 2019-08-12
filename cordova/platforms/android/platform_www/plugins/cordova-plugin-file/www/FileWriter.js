@@ -22,6 +22,7 @@ cordova.define("cordova-plugin-file.FileWriter", function(require, exports, modu
 
 var exec = require('cordova/exec');
 var FileError = require('./FileError');
+var FileReader = require('./FileReader');
 var ProgressEvent = require('./ProgressEvent');
 
 /**
