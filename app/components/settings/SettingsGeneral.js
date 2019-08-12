@@ -41,8 +41,6 @@ import TransparentBackground from '../TransparentBackground';
 
 const styles = theme => ({
   root: {
-    maxHeight: 500,
-    overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
   },
   pro: {
     backgroundColor: '#1DD19F'

@@ -37,12 +37,11 @@ import SettingsFileTypes from '../settings/SettingsFileTypes';
 import i18n from '../../services/i18n';
 import { getSettings, actions } from '../../reducers/settings';
 import { extend } from '../../utils/misc';
+import AppConfig from '../../config';
 
 const styles = theme => ({
   mainContent: {
-    minHeight: 50,
-    maxHeight: 600,
-    overflowY: 'hidden'
+    overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
   }
 });
 
@@ -87,10 +86,6 @@ class SettingsDialog extends React.Component<Props, State> {
       isValidationInProgress: false
     });
   };
-
-  renderTitle = () => (
-    <DialogTitle>{i18n.t('core:options')}</DialogTitle>
-  );
 
   handleTabClick = (event, currentTab) => {
     this.setState({ currentTab });
@@ -183,6 +178,24 @@ class SettingsDialog extends React.Component<Props, State> {
     this.setState({ items: filteredItems }, () => this.saveFileTypes());
   };
 
+  renderTitle = () => (
+    <React.Fragment>
+      <DialogTitle>{i18n.t('core:options')}</DialogTitle>
+      <AppBar position="static" color="default">
+        <Tabs
+          value={this.state.currentTab}
+          onChange={this.handleTabClick}
+          indicatorColor="primary"
+          variant="fullWidth"
+        >
+          <Tab data-tid="generalSettingsDialog" label={i18n.t('core:generalTab')} />
+          <Tab data-tid="fileTypeSettingsDialog" label={i18n.t('core:fileTypeTab')} />
+          <Tab data-tid="keyBindingsSettingsDialog" label={i18n.t('core:keyBindingsTab')} />
+        </Tabs>
+      </AppBar>
+    </React.Fragment>
+  );
+
   renderContent = () => (
     <DialogContent className={this.props.classes.mainContent}>
 
@@ -212,18 +225,6 @@ class SettingsDialog extends React.Component<Props, State> {
         className={this.props.classes.mainContent}
         ref={el => { this.settingsFileTypeRef = el; }}
       >
-        <AppBar position="static" color="default">
-          <Tabs
-            value={this.state.currentTab}
-            onChange={this.handleTabClick}
-            indicatorColor="primary"
-            variant="fullWidth"
-          >
-            <Tab data-tid="generalSettingsDialog" label={i18n.t('core:generalTab')} />
-            <Tab data-tid="fileTypeSettingsDialog" label={i18n.t('core:fileTypeTab')} />
-            <Tab data-tid="keyBindingsSettingsDialog" label={i18n.t('core:keyBindingsTab')} />
-          </Tabs>
-        </AppBar>
         {this.state.currentTab === 0 && (<SettingsGeneral />)}
         {this.state.currentTab === 1 && (
           <SettingsFileTypes

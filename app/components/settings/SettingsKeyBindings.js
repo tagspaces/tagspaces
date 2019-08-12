@@ -35,16 +35,10 @@ import {
 } from '../../reducers/settings';
 import DefaultSettings from '../../reducers/settings-default';
 import { isStr } from '../../utils/misc';
-import AppConfig from '../../config';
 
 const styles = theme => ({
   root: {
-    width: 550,
-    height: '100%',
-    overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
-    maxHeight: 520,
-    paddingTop: 15,
-    paddingBottom: 40,
+
     background: theme.palette.background.paper
   },
   keyBinding: {

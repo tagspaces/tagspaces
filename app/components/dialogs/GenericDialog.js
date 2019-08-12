@@ -83,6 +83,7 @@ const GenericDialog = (props: Props) => {
       open={open}
       TransitionComponent={DialogTransition}
       keepMounted
+      scroll="paper"
       onClose={onClose}
       onBackdropClick={onBackdropClick && onClose}
       // onEscapeKeyDown={onClose}
