@@ -17,7 +17,7 @@
     { "from": "resources/tagspacesp" },
     { "from": "resources/tagspacesp.cmd" }
   ],
-  "copyright": "Copyright © 2018 TagSpaces UG (haftungsbeschraenkt)",
+  "copyright": "Copyright © 2019 TagSpaces UG (haftungsbeschraenkt)",
   "artifactName": "${name}-${os}-${arch}-${version}.${ext}",
   "win": {
     "target": [
@@ -46,7 +46,8 @@
   "nsis": {
     "oneClick": false,
     "allowToChangeInstallationDirectory": true,
-    "license": "app/LICENSE.txt"
+    "license": "app/LICENSE.txt",
+    "include": "resources/installer.nsh"
   },
   "directories": {
     "buildResources": "resources",
