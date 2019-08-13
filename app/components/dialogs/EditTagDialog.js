@@ -20,7 +20,7 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import moment from 'moment';
+import format from 'date-fns/format';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -165,6 +165,8 @@ class EditTagDialog extends React.Component<Props, State> {
       },
     };
 
+
+    console.log('Mod ' + modifiedDate);
     return (
       <DialogContent style={{ overflow: 'visible' }}>
         <FormControl
@@ -172,10 +174,10 @@ class EditTagDialog extends React.Component<Props, State> {
           error={this.state.inputError}
           style={{ overflow: 'visible' }}
         >
-          {modifiedDate !== '' && (
+          {modifiedDate && (
             <div className="tag-date" style={{ fontSize: 12, position: 'relative', bottom: 20, color: '#808080' }}>
               <span className="text" style={{ fontWeight: 600 }}>{`${i18n.t('core:modifiedDate')}: `}</span>
-              <time>{moment(modifiedDate).format('MMM. DD, YYYY')}</time>
+              <time>{format(new Date(modifiedDate), 'yyyy-mm-dd')}</time>
             </div>
           )}
           <TextField

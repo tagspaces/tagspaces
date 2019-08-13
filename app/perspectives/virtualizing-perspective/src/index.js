@@ -25,7 +25,6 @@ import removeMd from 'remove-markdown';
 import memoize from 'memoize-one';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
-import moment from 'moment';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -767,7 +766,7 @@ class GridPerspective extends React.Component<Props, State> {
                     formatDateTime(fsEntry.lmdt, true)
                   }
                 >
-                  {fsEntry.lmdt && ' ' + moment(fsEntry.lmdt).fromNow() /* ⏲ */}
+                  {fsEntry.lmdt}
                 </span>
                 <span title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
                   {' ' + formatFileSize(fsEntry.size)}
@@ -846,7 +845,7 @@ class GridPerspective extends React.Component<Props, State> {
                   formatDateTime(fsEntry.lmdt, true)
                 }
               >
-                {fsEntry.isFile && fsEntry.lmdt && '️ ' + moment(fsEntry.lmdt).fromNow() + ' '}
+                {fsEntry.isFile && fsEntry.lmdt && '️ ' + fsEntry.lmdt + ' '}
               </span>
               <span title={i18n.t('core:entryDescription')}>
                 {description && description }

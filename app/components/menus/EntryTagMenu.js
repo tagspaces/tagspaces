@@ -29,7 +29,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ConfirmDialog from '../dialogs/ConfirmDialog';
-import DateCalendarDialog from '../dialogs/DateCalendarDialog';
 import i18n from '../../services/i18n';
 import { type Tag } from '../../reducers/taglibrary';
 import { actions as LocationIndexActions } from '../../reducers/location-index';
@@ -52,8 +51,6 @@ type Props = {
 };
 
 const EntryTagMenu = (props: Props) => {
-  // const [isEditTagDialogOpened, setIsEditTagDialogOpened] = useState(false);
-  const [isDateCalendarDialogOpened, setIsDateCalendarDialogOpened] = useState(false);
   const [isDeleteTagDialogOpened, setIsDeleteTagDialogOpened] = useState(false);
 
   function showEditTagDialog() {
@@ -69,11 +66,6 @@ const EntryTagMenu = (props: Props) => {
     setIsDeleteTagDialogOpened(true);
   }
 
-  /* function showDateCalendarDialog() {
-    props.onClose();
-    setIsDateCalendarDialogOpened(true);
-  } */
-
   function showFilesWithThisTag() {
     if (props.selectedTag) {
       // this.props.togglePanel(AppVerticalPanels.search);
@@ -86,8 +78,6 @@ const EntryTagMenu = (props: Props) => {
   }
 
   function handleCloseDialogs() {
-    // setIsEditTagDialogOpened(false);
-    setIsDateCalendarDialogOpened(false);
     setIsDeleteTagDialogOpened(false);
   }
 
@@ -146,13 +136,6 @@ const EntryTagMenu = (props: Props) => {
         cancelDialogTID={'cancelDeleteTagDialogTagMenu'}
         confirmDialogTID={'confirmRemoveTagFromFile'}
         confirmDialogContent={'confirmDialogContent'}
-      />
-      <DateCalendarDialog
-        open={isDateCalendarDialogOpened}
-        onClose={handleCloseDialogs}
-        editTagForEntry={props.editTagForEntry}
-        currentEntryPath={props.currentEntryPath}
-        selectedTag={props.selectedTag}
       />
     </div>
   );

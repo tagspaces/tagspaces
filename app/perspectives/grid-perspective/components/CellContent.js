@@ -18,7 +18,7 @@
  */
 
 import React from 'react';
-import moment from 'moment';
+import formatDistance from 'date-fns/formatDistance';
 import removeMd from 'remove-markdown';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -168,7 +168,7 @@ const CellContent = (props: Props) => {
                   formatDateTime(fsEntry.lmdt, true)
                 }
               >
-                {fsEntry.lmdt && ' ' + moment(fsEntry.lmdt).fromNow() /* ⏲ */}
+                {fsEntry.lmdt && ' ' + formatDistance(fsEntry.lmdt, new Date(), { addSuffix: true }) /* ⏲ */}
               </span>
               <span title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
                 {' ' + formatFileSize(fsEntry.size)}
@@ -246,7 +246,7 @@ const CellContent = (props: Props) => {
                 formatDateTime(fsEntry.lmdt, true)
               }
             >
-              {fsEntry.isFile && fsEntry.lmdt && '️ ' + moment(fsEntry.lmdt).fromNow() + ' '}
+              {fsEntry.isFile && fsEntry.lmdt && '️ ' + formatDistance(fsEntry.lmdt, new Date(), { addSuffix: true }) + ' '}
             </span>
             <span title={i18n.t('core:entryDescription')}>
               {description && description }

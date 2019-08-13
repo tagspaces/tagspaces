@@ -19,7 +19,7 @@
 
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import moment from 'moment';
+import format from 'date-fns/format';
 import TextField from '@material-ui/core/TextField';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -181,10 +181,10 @@ class EditTagGroupDialog extends React.Component<Props, State> {
           error={this.state.inputError}
           style={{ overflow: 'visible' }}
         >
-          {modifiedDate !== '' && (
+          {modifiedDate && (
             <div className="tag-date" style={{ fontSize: 12, position: 'relative', bottom: 20, color: '#808080' }}>
               <span className="text" style={{ fontWeight: 600 }}>{`${i18n.t('core:modifiedDate')}: `}</span>
-              <time>{moment(modifiedDate).format('MMM. DD, YYYY')}</time>
+              <time>{format(new Date(modifiedDate), 'yyyy-mm-dd')}</time>
             </div>
           )}
           <TextField
