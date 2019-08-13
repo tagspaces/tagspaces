@@ -21,11 +21,9 @@ import React from 'react';
 import uuidv1 from 'uuid';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import removeMd from 'remove-markdown';
 import memoize from 'memoize-one';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
-import moment from 'moment';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -34,7 +32,6 @@ import RadioCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 import RadioUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import Grid from '@material-ui/core/Grid';
 import ParentDirIcon from '@material-ui/icons/SubdirectoryArrowLeft';
 import ViewListIcon from '@material-ui/icons/ViewList';
 import SwapVertIcon from '@material-ui/icons/SwapVert';
@@ -56,16 +53,12 @@ import SelectAllIcon from '@material-ui/icons/CheckBox';
 import DeSelectAllIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import {
   type FileSystemEntry,
-  findColorForFileEntry
 } from '../../../services/utils-io';
 import { type Tag } from '../../../reducers/taglibrary';
 import {
   getSupportedFileTypes
 } from '../../../reducers/settings';
-import { extractTitle } from '../../../utils/paths';
 import {
-  formatFileSize,
-  formatDateTime,
   sortByCriteria,
   isObj,
   isVisibleOnScreen
@@ -74,8 +67,6 @@ import styles from './styles.css';
 import FileMenu from '../../../components/menus/FileMenu';
 import DirectoryMenu from '../../../components/menus/DirectoryMenu';
 import EntryTagMenu from '../../../components/menus/EntryTagMenu';
-import TagContainerDnd from '../../../components/TagContainerDnd';
-import TagContainer from '../../../components/TagContainer';
 import i18n from '../../../services/i18n';
 import ConfirmDialog from '../../../components/dialogs/ConfirmDialog';
 import AddRemoveTagsDialog from '../../../components/dialogs/AddRemoveTagsDialog';
@@ -96,8 +87,7 @@ import {
   isReadOnlyMode
 } from '../../../reducers/app';
 import TaggingActions from '../../../reducers/tagging-actions';
-
-const maxDescriptionPreviewLength = 100;
+import CellContent from './CellContent';
 
 const settings = JSON.parse(localStorage.getItem('tsPerspectiveGrid')); // loading settings
 
@@ -136,32 +126,32 @@ type Props = {
 };
 
 type State = {
-  fileContextMenuAnchorEl?: Object | null,
-  fileContextMenuOpened?: boolean,
-  dirContextMenuAnchorEl?: Object | null,
-  dirContextMenuOpened?: boolean,
-  tagContextMenuAnchorEl?: Object | null,
-  tagContextMenuOpened?: boolean,
-  layoutType?: string,
-  singleClickAction?: string,
-  doubleClickAction?: string,
-  entrySize?: string,
-  thumbnailMode?: string,
-  sortingContextMenuAnchorEl?: Object | null,
-  sortingContextMenuOpened?: boolean | null,
-  optionsContextMenuAnchorEl?: Object | null,
-  optionsContextMenuOpened?: boolean | null,
-  sortBy?: string,
-  orderBy?: null | boolean,
-  fileOperationsEnabled?: boolean,
-  allFilesSelected?: boolean,
-  showDirectories?: boolean,
-  isDeleteMultipleFilesDialogOpened?: boolean,
-  isMoveCopyFilesDialogOpened?: boolean,
-  isAddRemoveTagsDialogOpened?: boolean,
-  isFileRenameDialogOpened?: boolean,
-  selectedEntryPath?: string,
-  selectedTag?: Tag | null
+  fileContextMenuAnchorEl: Object | null,
+  fileContextMenuOpened: boolean,
+  dirContextMenuAnchorEl: Object | null,
+  dirContextMenuOpened: boolean,
+  tagContextMenuAnchorEl: Object | null,
+  tagContextMenuOpened: boolean,
+  layoutType: string,
+  singleClickAction: string,
+  doubleClickAction: string,
+  entrySize: string,
+  thumbnailMode: string,
+  sortingContextMenuAnchorEl: Object | null,
+  sortingContextMenuOpened: boolean | null,
+  optionsContextMenuAnchorEl: Object | null,
+  optionsContextMenuOpened: boolean | null,
+  sortBy: string,
+  orderBy: null | boolean,
+  fileOperationsEnabled: boolean,
+  allFilesSelected: boolean,
+  showDirectories: boolean,
+  isDeleteMultipleFilesDialogOpened: boolean,
+  isMoveCopyFilesDialogOpened: boolean,
+  isAddRemoveTagsDialogOpened: boolean,
+  isFileRenameDialogOpened: boolean,
+  selectedEntryPath: string,
+  selectedTag: Tag | null
 };
 
 class GridPerspective extends React.Component<Props, State> {
@@ -575,8 +565,19 @@ class GridPerspective extends React.Component<Props, State> {
   };
 
   renderCell = (fsEntry: FileSystemEntry) => {
-    const { entrySize, layoutType, showDirectories } = this.state;
-    const { classes, theme, selectedEntries } = this.props;
+    const {
+      entrySize,
+      layoutType,
+      showDirectories,
+      thumbnailMode
+    } = this.state;
+    const {
+      classes,
+      theme,
+      selectedEntries,
+      addTags,
+      supportedFileTypes,
+    } = this.props;
     if (!fsEntry.isFile && !showDirectories) {
       return;
     }
@@ -615,7 +616,19 @@ class GridPerspective extends React.Component<Props, State> {
           onDoubleClick={event => this.handleGridCellDblClick(event, fsEntry)}
           onClick={event => this.handleGridCellClick(event, fsEntry)}
         >
-          {this.renderCellContent(fsEntry, entryHeight)}
+          <CellContent
+            fsEntry={fsEntry}
+            entryHeight={entryHeight}
+            classes={classes}
+            theme={theme}
+            supportedFileTypes={supportedFileTypes}
+            thumbnailMode={thumbnailMode}
+            addTags={addTags}
+            selectedEntries={selectedEntries}
+            isReadOnlyMode={this.props.isReadOnlyMode}
+            handleTagMenu={this.handleTagMenu}
+            layoutType={layoutType}
+          />
         </Paper>
       </TagDropContainer>
     );
@@ -634,218 +647,6 @@ class GridPerspective extends React.Component<Props, State> {
         </TargetMoveFileBox>
       </div>
     );
-  };
-
-  renderTag = (tag: Object, fsEntry) => {
-    const isReadOnly = this.props.isReadOnlyMode;
-    return isReadOnly ? (
-      <TagContainer
-        tag={tag}
-        key={tag.id}
-        entryPath={fsEntry.path}
-        addTags={this.props.addTags}
-        handleTagMenu={this.handleTagMenu}
-        selectedEntries={this.props.selectedEntries}
-      />
-    ) : (
-      <TagContainerDnd
-        tag={tag}
-        key={tag.id}
-        entryPath={fsEntry.path}
-        addTags={this.props.addTags}
-        handleTagMenu={this.handleTagMenu}
-        selectedEntries={this.props.selectedEntries}
-      />
-    );
-  };
-
-  renderCellContent = (fsEntry: FileSystemEntry, entryHeight: number) => {
-    const { classes, theme, supportedFileTypes } = this.props;
-    const fsEntryBackgroundColor = fsEntry.color ? fsEntry.color : 'transparent';
-    let description = removeMd(fsEntry.description);
-    if (description.length > maxDescriptionPreviewLength) {
-      description = description.substr(0, maxDescriptionPreviewLength) + '...';
-    }
-    const fsEntryColor = findColorForFileEntry(
-      fsEntry.extension,
-      fsEntry.isFile,
-      supportedFileTypes
-    );
-
-    let thumbPathUrl = fsEntry.thumbPath
-      ? 'url("' + fsEntry.thumbPath + '")'
-      : '';
-    if (AppConfig.isWin) {
-      thumbPathUrl = thumbPathUrl.split('\\').join('\\\\');
-    }
-    if (this.state.layoutType === 'grid') {
-      return (
-        <div style={{
-          backgroundColor: fsEntryBackgroundColor
-        }}
-        >
-          <div
-            className={classes.gridCellThumb}
-            style={{
-              backgroundSize: this.state.thumbnailMode,
-              backgroundImage: thumbPathUrl,
-              height: 150 // fsEntry.isFile ? 150 : 70
-            }}
-          >
-            <div id="gridCellTags" className={classes.gridCellTags}>
-              {
-                fsEntry.tags.map(tag => this.renderTag(tag, fsEntry))
-              }
-            </div>
-            {description.length > 0 && (
-              <Typography
-                id="gridCellDescription"
-                className={classes.gridCellDescription}
-                title={i18n.t('core:filePropertiesDescription')}
-                variant="caption"
-              >
-                {description}
-              </Typography>
-            )}
-          </div>
-          <Typography
-            className={classes.gridCellTitle}
-            data-tid="fsEntryName"
-            title={fsEntry.path}
-            noWrap={true}
-            variant="body1"
-          >
-            {extractTitle(fsEntry.name, !fsEntry.isFile)}
-          </Typography>
-          {fsEntry.isFile ? (
-            <div className={classes.gridDetails}>
-              <Typography
-                className={classes.gridFileExtension}
-                style={{ backgroundColor: fsEntryColor }}
-                noWrap={true}
-                variant="button"
-                title={fsEntry.path}
-              >
-                {fsEntry.extension}
-              </Typography>
-              <Typography className={classes.gridSizeDate} variant="caption">
-                <span
-                  title={
-                    i18n.t('core:modifiedDate') +
-                    ': ' +
-                    formatDateTime(fsEntry.lmdt, true)
-                  }
-                >
-                  {fsEntry.lmdt && ' ' + moment(fsEntry.lmdt).fromNow() /* ⏲ */}
-                </span>
-                <span title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
-                  {' ' + formatFileSize(fsEntry.size)}
-                </span>
-              </Typography>
-            </div>
-          ) : (
-            <div className={classes.gridDetails}>
-              <FolderIcon
-                className={classes.gridFolder}
-                style={{ backgroundColor: fsEntryColor }}
-                title={fsEntry.path}
-              />
-              {/* <Typography className={classes.gridSizeDate} variant="caption">
-                {' ' + formatDateTime4Tag(fsEntry.lmdt) }
-              </Typography> */}
-            </div>
-          )}
-        </div>
-      );
-    } else if (this.state.layoutType === 'row') {
-      return (
-        <Grid
-          container
-          wrap="nowrap"
-          style={{
-            backgroundColor: theme.palette.background.default
-          }}
-        >
-          <Grid
-            item
-            style={{
-              minHeight: entryHeight,
-              padding: 10,
-              marginRight: 5,
-              borderRadius: 4,
-              backgroundColor: fsEntryBackgroundColor
-            }}
-          >
-            {fsEntry.isFile ? (
-              <div
-                className={classes.rowFileExtension}
-                title={fsEntry.path}
-                style={{ backgroundColor: fsEntryColor }}
-              >
-                {fsEntry.extension}
-              </div>
-            ) : (
-              <span className={classes.gridFolder} title={fsEntry.path}>
-                <FolderIcon
-                  className={classes.rowFolder}
-                  style={{ backgroundColor: fsEntryColor }}
-                />
-              </span>
-            )}
-          </Grid>
-          <Grid item xs zeroMinWidth>
-            <Typography>
-              {extractTitle(fsEntry.name, !fsEntry.isFile)}
-            </Typography>
-            {fsEntry.tags.map(tag => this.renderTag(tag, fsEntry))}
-            <Typography
-              // noWrap
-              style={{
-                color: 'gray',
-                padding: 5
-              }}
-            >
-              <span title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
-                {fsEntry.isFile && formatFileSize(fsEntry.size) + ' - '}
-              </span>
-              <span
-                title={
-                  i18n.t('core:modifiedDate') +
-                  ': ' +
-                  formatDateTime(fsEntry.lmdt, true)
-                }
-              >
-                {fsEntry.isFile && fsEntry.lmdt && '️ ' + moment(fsEntry.lmdt).fromNow() + ' '}
-              </span>
-              <span title={i18n.t('core:entryDescription')}>
-                {description && description }
-              </span>
-            </Typography>
-          </Grid>
-          {fsEntry.thumbPath && (
-            <Grid
-              item
-              style={
-                {
-                  // margin: 5,
-                }
-              }
-            >
-              <div
-                className={classes.gridCellThumb}
-                style={{
-                  backgroundSize: this.state.thumbnailMode,
-                  backgroundImage: thumbPathUrl,
-                  margin: 1,
-                  height: 85,
-                  width: 85
-                }}
-              />
-            </Grid>
-          )}
-        </Grid>
-      );
-    }
   };
 
   render() {
