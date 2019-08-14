@@ -83,3 +83,5 @@ app/extconfig1.js
 web/extconfig.js
 web/extconfig1.js
 cordova/www/extconfig.js
+
+reports/*
