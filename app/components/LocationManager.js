@@ -45,6 +45,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import DefaultLocationIcon from '@material-ui/icons/Highlight';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+import OpenFolderNativelyIcon from '@material-ui/icons/Launch';
 import styles from './SidePanels.css';
 import DirectoryMenu from './menus/DirectoryMenu';
 import EditLocationDialog from './dialogs/EditLocationDialog';
@@ -345,6 +346,11 @@ class LocationManager extends React.Component<Props, State> {
     if (this.state.selectedLocation && this.state.selectedLocation.uuid) {
       this.props.moveLocationDown(this.state.selectedLocation.uuid);
     }
+  };
+
+  showInFileManager = () => {
+    this.handleRequestCloseContextMenus();
+    this.props.openDirectory(this.state.selectedLocation.paths[0]);
   };
 
   closeLocation = () => {
@@ -767,6 +773,15 @@ class LocationManager extends React.Component<Props, State> {
                 <DeleteIcon />
               </ListItemIcon>
               <ListItemText primary={i18n.t('core:removeLocation')} />
+            </MenuItem>
+            <MenuItem
+              data-tid="showInFileManager"
+              onClick={this.showInFileManager}
+            >
+              <ListItemIcon>
+                <OpenFolderNativelyIcon />
+              </ListItemIcon>
+              <ListItemText primary={i18n.t('core:showInFileManager')} />
             </MenuItem>
             <MenuItem
               data-tid="removeLocation"

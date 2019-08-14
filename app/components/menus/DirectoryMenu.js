@@ -358,8 +358,7 @@ const DirectoryMenu = (props: Props) => {
             <ListItemIcon>
               <OpenFolderNativelyIcon />
             </ListItemIcon>
-            <ListItemText primary={i18n.t('core:showInFileManager')}
-            />
+            <ListItemText primary={i18n.t('core:showInFileManager')} />
           </MenuItem>
         )}
         {!props.perspectiveMode && (
