@@ -132,7 +132,6 @@ class RenameDirectoryDialog extends React.Component<Props, State> {
   );
 
   render() {
-    console.log('Render dialog');
     return (
       <GenericDialog
         open={this.props.open}
