@@ -204,7 +204,7 @@ const CellContent = (props: Props) => {
             minHeight: entryHeight,
             padding: 10,
             marginRight: 5,
-            borderRadius: 4,
+            // borderRadius: 4,
             backgroundColor: fsEntryBackgroundColor
           }}
         >
