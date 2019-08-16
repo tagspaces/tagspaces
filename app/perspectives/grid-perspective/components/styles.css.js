@@ -39,7 +39,7 @@ export default (theme) => ({
     margin: 2,
     marginBottom: 3,
     marginRight: 3,
-    borderRadius: 5
+    // borderRadius: 5
   },
   rowCell: {
     // backgroundColor: theme.palette.background.paper,
@@ -51,14 +51,14 @@ export default (theme) => ({
     margin: 0,
     marginTop: 0,
     marginBottom: 0,
-    borderRadius: 0
+    // borderRadius: 0
   },
   selectedGridCell: {
     border: '2px solid' + theme.palette.primary.main,
     backgroundColor: theme.palette.primary.light + ' !important'
   },
   selectedRowCell: {
-    borderRadius: '4px',
+    // borderRadius: '4px',
     border: '2px solid' + theme.palette.primary.main,
     backgroundColor: theme.palette.primary.light + ' !important'
   },
@@ -84,7 +84,7 @@ export default (theme) => ({
     margin: 2,
     backgroundColor: theme.palette.background.paper,
     opacity: 0.6,
-    borderRadius: 5
+    // borderRadius: 5
   },
   gridFileExtension: {
     flex: 1,
@@ -93,7 +93,7 @@ export default (theme) => ({
     maxWidth: 50,
     minWidth: 40,
     minHeight: 16,
-    borderRadius: 3,
+    // borderRadius: 3,
     borderWidth: 1,
     color: 'white',
     // color: theme.palette.getContrastText(),
@@ -105,7 +105,7 @@ export default (theme) => ({
     marginTop: 5,
     marginRight: 5,
     marginLeft: 5,
-    borderRadius: 3,
+    // borderRadius: 3,
     maxWidth: 45,
     minHeight: 15,
     borderWidth: 1,
@@ -135,7 +135,7 @@ export default (theme) => ({
     marginTop: 5,
     minHeight: 10,
     height: 20,
-    borderRadius: 3
+    // borderRadius: 3
   },
   gridFolder: {
     color: 'white',
@@ -143,7 +143,7 @@ export default (theme) => ({
     marginRight: 5,
     minHeight: 10,
     height: 20,
-    borderRadius: 3
+    // borderRadius: 3
   },
   topToolbar: {
     paddingLeft: 5,

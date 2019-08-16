@@ -706,11 +706,12 @@ class EntryContainer extends React.Component<Props, State> {
                 downloadLink.setAttribute('href', `file:///${currentEntry.path}`);
               }
 
-              if (currentEntry.url) {
+              if (currentEntry.url) { // mostly the s3 case
+                downloadLink.setAttribute('target', '_blank');
                 downloadLink.setAttribute('href', currentEntry.url);
               }
 
-              downloadLink.setAttribute('download', fileName);
+              downloadLink.setAttribute('download', fileName); // works only for same origin
               downloadLink.click();
             }
           }}

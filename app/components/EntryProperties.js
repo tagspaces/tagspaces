@@ -46,7 +46,7 @@ import TransparentBackground from './TransparentBackground';
 import { replaceThumbnailURLPromise, getThumbnailURLPromise } from '../services/thumbsgenerator';
 // import { actions as AppActions } from '../reducers/app';
 
-const FileThumbChooseDialog = Pro && Pro.UI ? Pro.UI.FileThumbChooseDialog : false;
+const ThumbnailChooserDialog = Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
 
 const styles = theme => ({
   entryProperties: {
@@ -172,19 +172,20 @@ type Props = {
 };
 
 type State = {
-  name?: string | null,
-  originalName?: string | null,
-  description?: string | null,
-  color?: string,
-  path?: string | null,
-  tagMenuAnchorEl?: boolean | null,
-  tagMenuOpened?: boolean | null,
-  isEditTagDialogOpened?: boolean | null,
-  isDeleteTagDialogOpened?: boolean | null,
-  isEditName?: boolean | null,
-  isEditDescription?: boolean | null,
-  displayColorPicker?: boolean | null,
-  isFile?: boolean
+  name: string,
+  originalName: string,
+  description: string,
+  color: string,
+  path: string,
+  tagMenuAnchorEl: boolean | null,
+  tagMenuOpened: boolean | null,
+  isEditTagDialogOpened: boolean | null,
+  isDeleteTagDialogOpened: boolean,
+  isFileThumbChooseDialogOpened: boolean,
+  isEditName: boolean,
+  isEditDescription: boolean,
+  displayColorPicker: boolean,
+  isFile: boolean
 };
 
 class EntryProperties extends Component<Props, State> {
@@ -364,6 +365,10 @@ class EntryProperties extends Component<Props, State> {
   };
 
   toggleThumbFilesDialog = () => {
+    if (!Pro) {
+      this.props.showNotification(i18n.t('core:needProVersion'));
+      return true;
+    }
     this.setState(
       ({ isFileThumbChooseDialogOpened }) => ({
         isFileThumbChooseDialogOpened: !isFileThumbChooseDialogOpened
@@ -797,33 +802,38 @@ class EntryProperties extends Component<Props, State> {
             </FormControl>
           </div>
 
-          {Pro && (
-            <div className={classes.entryItem}>
-              <div className={classes.fluidGrid}>
-                <Typography
-                  variant="caption"
-                  className={classNames(classes.entryLabel, classes.header)}
-                  style={{
-                    backgroundSize: 'cover',
-                    backgroundImage: thumbPathUrl,
-                    backgroundPosition: 'center',
-                    height: 50,
-                    width: 50,
-                    display: 'block'
-                  }}
-                />
+          <div className={classes.entryItem}>
+            <div className={classes.fluidGrid}>
+              <Typography variant="caption" className={classNames(classes.entryLabel, classes.header)} style={{ display: 'block' }}>
+                {i18n.t('core:thumbnail')}
+              </Typography>
+              {!isReadOnlyMode && (
                 <Button
                   color="primary"
-                  // style={{ paddingBottom: 0 }}
-                  // disabled={isEditPreview}
                   className={classes.button}
                   onClick={this.toggleThumbFilesDialog}
                 >
-                  {i18n.t('core:edit')}
+                  {i18n.t('core:changeThumbnail')}
                 </Button>
-              </div>
+              )}
             </div>
-          )}
+            <div className={classes.fluidGrid}>
+              <div
+                className={classNames(classes.entryLabel, classes.header)}
+                onClick={this.toggleThumbFilesDialog}
+                role="button"
+                tabIndex="0"
+                style={{
+                  backgroundSize: 'cover',
+                  backgroundImage: thumbPathUrl,
+                  backgroundPosition: 'center',
+                  height: 100,
+                  width: 100,
+                  display: 'block'
+                }}
+              />
+            </div>
+          </div>
           <div className={classes.entryItem}><br /></div>
         </Grid>
 
@@ -842,8 +852,8 @@ class EntryProperties extends Component<Props, State> {
           onClose={this.toggleMoveCopyFilesDialog}
           selectedFiles={[entryPath]}
         />
-        {FileThumbChooseDialog && (
-          <FileThumbChooseDialog
+        {ThumbnailChooserDialog && (
+          <ThumbnailChooserDialog
             key={uuidv1()}
             open={isFileThumbChooseDialogOpened}
             onClose={this.toggleThumbFilesDialog}
