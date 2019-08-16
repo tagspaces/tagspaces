@@ -42,6 +42,10 @@ import TransparentBackground from '../TransparentBackground';
 const styles = theme => ({
   root: {
   },
+  listItem: {
+    paddingLeft: 0,
+    paddingRight: 0
+  },
   pro: {
     backgroundColor: '#1DD19F'
   },
@@ -104,11 +108,11 @@ class SettingsGeneral extends React.Component<Props, State> {
   };
 
   render() {
-    const classes = this.props.classes;
+    const { classes } = this.props;
 
     return (
       <List className={classes.root}>
-        <ListItem>
+        <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:interfaceLanguage')} />
           <Select
             data-tid="settingsSetLanguage"
@@ -123,7 +127,7 @@ class SettingsGeneral extends React.Component<Props, State> {
             ))}
           </Select>
         </ListItem>
-        <ListItem>
+        <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:themeSelector')} />
           <Select
             data-tid="settingsSetCurrentTheme"
@@ -138,10 +142,11 @@ class SettingsGeneral extends React.Component<Props, State> {
             ))}
           </Select>
         </ListItem>
-        <ListItem>
+        <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:checkForNewVersionOnStartup')} />
           <ListItemSecondaryAction>
             <Switch
+              edge="end"
               data-tid="settingsSetCheckForUpdates"
               onClick={() =>
                 this.props.setCheckForUpdates(
@@ -152,10 +157,11 @@ class SettingsGeneral extends React.Component<Props, State> {
             />
           </ListItemSecondaryAction>
         </ListItem>
-        <ListItem>
+        <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:persistTagsInSidecarFile')} />
           <ListItemSecondaryAction>
             <Switch
+              edge="end"
               data-tid="settingsSetPersistTagsInSidecarFile"
               onClick={() =>
                 this.props.setPersistTagsInSidecarFile(
@@ -166,10 +172,11 @@ class SettingsGeneral extends React.Component<Props, State> {
             />
           </ListItemSecondaryAction>
         </ListItem>
-        <ListItem>
+        <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:addTagsToLibrary')} />
           <ListItemSecondaryAction>
             <Switch
+              edge="end"
               data-tid="settingsSetAddTagsToLibrary"
               onClick={() =>
                 this.props.setAddTagsToLibrary(
@@ -180,10 +187,11 @@ class SettingsGeneral extends React.Component<Props, State> {
             />
           </ListItemSecondaryAction>
         </ListItem>
-        <ListItem>
+        <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:useGenerateThumbnails')} />
           <ListItemSecondaryAction>
             <Switch
+              edge="end"
               data-tid="settingsUseGenerateThumbnails"
               onClick={() =>
                 this.props.setUseGenerateThumbnails(
@@ -194,7 +202,7 @@ class SettingsGeneral extends React.Component<Props, State> {
             />
           </ListItemSecondaryAction>
         </ListItem>
-        <ListItem>
+        <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:tagBackgroundColor')} />
           <ListItemSecondaryAction>
             <TransparentBackground>
@@ -216,7 +224,7 @@ class SettingsGeneral extends React.Component<Props, State> {
             />
           </ListItemSecondaryAction>
         </ListItem>
-        <ListItem>
+        <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:tagForegroundColor')} />
           <ListItemSecondaryAction>
             <TransparentBackground>
@@ -236,10 +244,11 @@ class SettingsGeneral extends React.Component<Props, State> {
             />
           </ListItemSecondaryAction>
         </ListItem>
-        <ListItem>
+        <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:useTrashCan')} />
           <ListItemSecondaryAction>
             <Switch
+              edge="end"
               data-tid="settingsSetUseTrashCan"
               onClick={() =>
                 this.props.setUseTrashCan(!this.props.settings.useTrashCan)
@@ -248,17 +257,18 @@ class SettingsGeneral extends React.Component<Props, State> {
             />
           </ListItemSecondaryAction>
         </ListItem>
-        <ListItem>
+        <ListItem className={classes.listItem}>
           <ListItemText style={{ maxWidth: '350px' }} primary={i18n.t('core:showUnixHiddenFiles')} />
           <ListItemSecondaryAction>
             <Switch
+              edge="end"
               data-tid="settingsSetShowUnixHiddenEntries"
               onClick={this.props.toggleShowUnixHiddenEntries}
               checked={this.props.settings.showUnixHiddenEntries}
             />
           </ListItemSecondaryAction>
         </ListItem>
-        {/* <ListItem>
+        {/* <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:desktopMode')} />
           <ListItemSecondaryAction>
             <Switch
@@ -270,7 +280,7 @@ class SettingsGeneral extends React.Component<Props, State> {
             />
           </ListItemSecondaryAction>
         </ListItem> */}
-        {/* <ListItem>
+        {/* <ListItem className={classes.listItem}>
           <ListItemText style={{ maxWidth: '300px' }} primary={i18n.t('core:tagDelimiterChoose')} />
           <ListItemSecondaryAction>
             <Select
@@ -289,7 +299,7 @@ class SettingsGeneral extends React.Component<Props, State> {
             </Select>
           </ListItemSecondaryAction>
         </ListItem> */}
-        <ListItem>
+        <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:maxSearchResultChoose')} />
           <ListItemSecondaryAction>
             <Input
@@ -303,7 +313,7 @@ class SettingsGeneral extends React.Component<Props, State> {
             />
           </ListItemSecondaryAction>
         </ListItem>
-        { /* <ListItem>
+        { /* <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:coloredFileExtensionsEnabled')} />
           <ListItemSecondaryAction>
             <Switch
@@ -317,7 +327,7 @@ class SettingsGeneral extends React.Component<Props, State> {
             />
           </ListItemSecondaryAction>
         </ListItem> */ }
-        { /* <ListItem>
+        { /* <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:loadLocationMetaData')} />
           <ListItemSecondaryAction>
             <Switch
@@ -337,7 +347,7 @@ class SettingsGeneral extends React.Component<Props, State> {
 }
 
 /*
-        <ListItem>
+        <ListItem className={classes.listItem}>
           <span className={this.props.classes.pro}>pro</span>
           <ListItemText primary={i18n.t('core:calculateTag')} />
           <ListItemSecondaryAction>

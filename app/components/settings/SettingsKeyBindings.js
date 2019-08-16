@@ -68,6 +68,7 @@ const SettingsKeyBindings = (props: Props) => {
           <ListItemText primary={i18n.t('core:enableGlobalKeyboardShortcuts')} />
           <ListItemSecondaryAction>
             <Switch
+              edge="end"
               onClick={() => {
                 setGlobalKeyBinding(!globalKeyBindingEnabled);
                 PlatformIO.setGlobalShortcuts(!globalKeyBindingEnabled);
