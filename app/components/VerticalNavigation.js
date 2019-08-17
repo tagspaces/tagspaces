@@ -33,7 +33,7 @@ import UpgradeIcon from '@material-ui/icons/FlightTakeoff';
 import { withTheme } from '@material-ui/core/styles';
 import SplitPane from 'react-split-pane';
 import LogoIcon from '../assets/images/icon100x100.svg';
-import SettingsDialog from './dialogs/SettingsDialog';
+import SettingsDialog from './dialogs/settings/SettingsDialog';
 import CreateDirectoryDialog from './dialogs/CreateDirectoryDialog';
 import CreateFileDialog from './dialogs/CreateFileDialog';
 // import SelectDirectoryDialog from './dialogs/SelectDirectoryDialog';
