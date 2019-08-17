@@ -20,7 +20,6 @@
 import React, { useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Divider from '@material-ui/core/Divider';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/DeleteForever';
 import ShowEntriesWithTagIcon from '@material-ui/icons/Launch';
@@ -38,11 +37,11 @@ import { actions as AppActions } from '../../reducers/app';
 
 type Props = {
   classes: Object,
-  open?: boolean,
+  open: boolean,
   onClose: () => void,
-  anchorEl?: Object | null,
-  selectedTag?: Tag | null,
-  currentEntryPath?: string,
+  anchorEl: Object | null,
+  selectedTag: Tag | null,
+  currentEntryPath: string,
   removeTags: (paths: Array<string>, tags: Array<Tag>) => void,
   editTagForEntry: (path: string, tag: Tag) => void,
   searchLocationIndex: (searchQuery: SearchQuery) => void,
@@ -107,18 +106,17 @@ const EntryTagMenu = (props: Props) => {
         </MenuItem>
         {!props.isReadOnlyMode && (
           <div>
+            <MenuItem data-tid="editTagDialogMenu" onClick={showEditTagDialog}>
+              <ListItemIcon>
+                <EditIcon />
+              </ListItemIcon>
+              <ListItemText primary={i18n.t('core:editTagTitle')} />
+            </MenuItem>
             <MenuItem data-tid="deleteTagMenu" onClick={showDeleteTagDialog}>
               <ListItemIcon>
                 <DeleteIcon />
               </ListItemIcon>
               <ListItemText primary={i18n.t('core:removeTag')} />
-            </MenuItem>
-            <Divider />
-            <MenuItem data-tid="editTagDialogMenu" onClick={showEditTagDialog}>
-              <ListItemIcon>
-                <EditIcon />
-              </ListItemIcon>
-              <ListItemText primary={i18n.t('core:tagProperties')} />
             </MenuItem>
           </div>
         )}

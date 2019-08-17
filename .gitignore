@@ -85,3 +85,5 @@ web/extconfig1.js
 cordova/www/extconfig.js
 
 reports/*
+
+tests/*

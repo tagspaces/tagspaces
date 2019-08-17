@@ -33,22 +33,22 @@ import i18n from '../../services/i18n';
 import { type Tag, type TagGroup } from '../../reducers/taglibrary';
 
 type Props = {
-  open?: boolean,
+  open: boolean,
   onClose: () => void,
   editTag: (tag: Tag, tagGroupId: string) => void,
-  selectedTag?: Tag,
-  selectedTagGroupEntry?: TagGroup
+  selectedTag: Tag,
+  selectedTagGroupEntry: TagGroup
 };
 
 type State = {
-  inputError?: boolean,
+  inputError: boolean,
   displayColorPicker?: boolean,
   displayTextColorPicker?: boolean,
   disableConfirmButton?: boolean,
-  title?: string,
-  color?: string,
-  textcolor?: string,
-  modifiedDate?: string
+  title: string,
+  color: string,
+  textcolor: string,
+  modifiedDate: string
 };
 
 class EditTagDialog extends React.Component<Props, State> {
