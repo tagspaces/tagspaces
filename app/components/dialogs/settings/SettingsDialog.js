@@ -29,15 +29,15 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import uuidv1 from 'uuid';
-import ConfirmDialog from './ConfirmDialog';
-import GenericDialog from './GenericDialog';
+import ConfirmDialog from '../ConfirmDialog';
+import GenericDialog from '../GenericDialog';
 import SettingsGeneral from '../settings/SettingsGeneral';
 import SettingsKeyBindings from '../settings/SettingsKeyBindings';
 import SettingsFileTypes from '../settings/SettingsFileTypes';
-import i18n from '../../services/i18n';
-import { getSettings, actions } from '../../reducers/settings';
-import { extend } from '../../utils/misc';
-import AppConfig from '../../config';
+import i18n from '../../../services/i18n';
+import { getSettings, actions } from '../../../reducers/settings';
+import { extend } from '../../../utils/misc';
+import AppConfig from '../../../config';
 
 const styles = theme => ({
   mainContent: {
@@ -49,11 +49,14 @@ type Props = {
   open: boolean,
   fullScreen: boolean,
   classes: Object,
-  onClose: () => void
+  onClose: () => void,
+  setSupportedFileTypes: Array<Object>,
+  supportedFileTypes: Array<Object>,
+  settings: Array<Object>
 };
 
 type State = {
-  currentTab?: number,
+  currentTab: number,
   items: Array<Object>,
   selectedItem: Object,
   isValidationInProgress: boolean,

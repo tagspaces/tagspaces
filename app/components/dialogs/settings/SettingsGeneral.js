@@ -23,21 +23,19 @@ import { bindActionCreators } from 'redux';
 import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import MenuItem from '@material-ui/core/MenuItem';
 import Switch from '@material-ui/core/Switch';
 import Input from '@material-ui/core/Input';
 import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
-import i18n from '../../services/i18n';
+import i18n from '../../../services/i18n';
 import {
   actions as SettingsActions,
   getSettings
-} from '../../reducers/settings';
-import ColorPickerDialog from '../dialogs/ColorPickerDialog';
-import AppConfig from '../../config';
-import TransparentBackground from '../TransparentBackground';
+} from '../../../reducers/settings';
+import ColorPickerDialog from '../../dialogs/ColorPickerDialog';
+import TransparentBackground from '../../TransparentBackground';
 
 const styles = theme => ({
   root: {
@@ -63,7 +61,7 @@ type Props = {
   toggleShowUnixHiddenEntries: () => void,
   setCurrentTheme: () => void,
   setLanguage: () => void,
-  setDesktopMode: () => void,
+  // setDesktopMode: () => void,
   setCheckForUpdates: () => void,
   // setColoredFileExtension: () => void,
   setUseTrashCan: () => void,
@@ -75,8 +73,8 @@ type Props = {
 };
 
 type State = {
-  displayColorPicker?: boolean,
-  displayTextColorPicker?: boolean
+  displayColorPicker: boolean,
+  displayTextColorPicker: boolean
 };
 
 class SettingsGeneral extends React.Component<Props, State> {

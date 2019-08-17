@@ -28,12 +28,11 @@ import IconButton from '@material-ui/core/IconButton';
 import RemoveIcon from '@material-ui/icons/RemoveCircle';
 import Button from '@material-ui/core/Button';
 import Select from '@material-ui/core/Select';
-import ColorPickerDialog from '../dialogs/ColorPickerDialog';
-import { findAvailableExtensions } from '../../reducers/app';
-import { sortBy } from '../../utils/misc';
-import i18n from '../../services/i18n';
-import AppConfig from '../../config';
-import TransparentBackground from '../TransparentBackground';
+import ColorPickerDialog from '../ColorPickerDialog';
+import { findAvailableExtensions } from '../../../reducers/app';
+import { sortBy } from '../../../utils/misc';
+import i18n from '../../../services/i18n';
+import TransparentBackground from '../../TransparentBackground';
 
 const styles = theme => ({
   root: {
@@ -84,8 +83,8 @@ type Props = {
 };
 
 type State = {
-  isColorPickerVisible?: boolean,
-  availableExtensions?: []
+  isColorPickerVisible: boolean,
+  availableExtensions: []
 };
 
 class SettingsFileTypes extends Component<Props, State> {
@@ -165,9 +164,7 @@ class SettingsFileTypes extends Component<Props, State> {
                   updateItems('type', item.type, 'type', withoutSpecialChars);
                 }}
               />
-
             </FormControl>
-
             <FormControl className={classes.fileOpener} error={isValidationInProgress && item.viewer === ''}>
               <InputLabel htmlFor="">{i18n.t('core:fileOpener')}</InputLabel>
               <Select
@@ -184,7 +181,6 @@ class SettingsFileTypes extends Component<Props, State> {
                 ))}
               </Select>
             </FormControl>
-
             <FormControl className={classes.fileOpener}>
               <InputLabel htmlFor="">{i18n.t('core:fileEditor')}</InputLabel>
               <Select
@@ -201,7 +197,6 @@ class SettingsFileTypes extends Component<Props, State> {
                   )}
               </Select>
             </FormControl>
-
             <FormControl className={classes.fileTypeColorDialogButton}>
               <TransparentBackground>
                 <Button
@@ -220,7 +215,6 @@ class SettingsFileTypes extends Component<Props, State> {
                 </Button>
               </TransparentBackground>
             </FormControl>
-
             <IconButton
               data-tid={'settingsFileTypes_remove_'}
               className={classes.fileExtRemove}
