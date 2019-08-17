@@ -37,7 +37,7 @@ import { getSelectedTag } from '../../reducers/app';
 import TaggingActions, { defaultTagLocation } from '../../reducers/tagging-actions';
 import { isDateTimeTag } from '../../utils/dates';
 
-const styles = theme => ({
+const styles = () => ({
   root: {
     width: 550,
     height: '100%',
@@ -56,8 +56,8 @@ type Props = {
   open: boolean
 };
 
-const GeoTagEditor = Pro && Pro.UI ? Pro.UI.GeoTagEditor : false;
-const DateTagEditor = Pro && Pro.UI ? Pro.UI.DateTagEditor : false;
+const GeoTagEditor = Pro && Pro.UI ? Pro.UI.GeoTagEditor : React.Fragment;
+const DateTagEditor = Pro && Pro.UI ? Pro.UI.DateTagEditor : React.Fragment;
 
 const EditEntryTagDialog = (props: Props) => {
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
@@ -123,6 +123,7 @@ const EditEntryTagDialog = (props: Props) => {
             error={errorTag}
             margin="dense"
             name="title"
+            autoFocus
             label={i18n.t('core:editTag')}
             onChange={event => {
               const target = event.target;
@@ -133,7 +134,6 @@ const EditEntryTagDialog = (props: Props) => {
           />
           {errorTag && <FormHelperText>{i18n.t('core:tagTitleHelper')}</FormHelperText>}
         </FormControl>
-        { !Pro && <h3>{i18n.t('core:needProVersion')}</h3> }
         { showGeoEditor && <GeoTagEditor key={title} geoTag={title} onChange={setTitle} zoom={title === defaultTagLocation ? 2 : undefined} /> }
         { showDatePeriodEditor && <DateTagEditor key={title} datePeriodTag={title} onChange={setTitle} /> }
       </DialogContent>

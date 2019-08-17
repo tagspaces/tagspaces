@@ -128,6 +128,7 @@ class CreateTagsDialog extends React.Component<Props, State> {
       <GenericDialog
         open={this.props.open}
         onClose={this.props.onClose}
+        autoFocus
         onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
         renderTitle={this.renderTitle}
         renderContent={this.renderContent}

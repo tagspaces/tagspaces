@@ -191,6 +191,7 @@ class EditTagGroupDialog extends React.Component<Props, State> {
             error={this.state.inputError}
             margin="dense"
             name="title"
+            autoFocus
             label={i18n.t('core:editTagGroupNewName')}
             onChange={this.handleInputChange}
             value={this.state.title}

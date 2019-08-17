@@ -32,7 +32,7 @@ import i18n from '../../services/i18n';
 import TransparentBackground from '../TransparentBackground';
 
 type Props = {
-  open?: boolean,
+  open: boolean,
   onClose: () => void,
   createTagGroup: (tagGroup: TagGroup) => void,
   color: string,
@@ -40,16 +40,16 @@ type Props = {
 };
 
 type State = {
-  inputError?: boolean,
-  displayColorPicker?: boolean,
-  displayTextColorPicker?: boolean,
-  disableConfirmButton?: boolean,
-  uuid?: string,
-  title?: string,
-  color?: string,
-  textcolor?: string,
-  children?: string,
-  expanded?: boolean
+  inputError: boolean,
+  displayColorPicker: boolean,
+  displayTextColorPicker: boolean,
+  disableConfirmButton: boolean,
+  uuid: string,
+  title: string,
+  color: string,
+  textcolor: string,
+  children: string,
+  expanded: boolean
 };
 
 class CreateTagGroupDialog extends React.Component<Props, State> {

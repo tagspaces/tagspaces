@@ -63,7 +63,7 @@ class EditTagDialog extends React.Component<Props, State> {
     modifiedDate: ''
   };
 
-  componentWillReceiveProps = ({ open, selectedTag }) => {
+  componentWillReceiveProps = ({ open, selectedTag }: Props) => {
     if (open === true) {
       this.setState({
         disableConfirmButton: !selectedTag.title,
@@ -165,8 +165,6 @@ class EditTagDialog extends React.Component<Props, State> {
       },
     };
 
-
-    console.log('Mod ' + modifiedDate);
     return (
       <DialogContent style={{ overflow: 'visible' }}>
         <FormControl
@@ -184,6 +182,7 @@ class EditTagDialog extends React.Component<Props, State> {
             error={this.state.inputError}
             margin="dense"
             name="title"
+            autoFocus
             label={i18n.t('core:editTag')}
             onChange={this.handleInputChange}
             value={this.state.title}
