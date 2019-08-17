@@ -35,7 +35,7 @@ import { extractFileName } from '../../utils/paths';
 
 type Props = {
   open: boolean,
-  selectedEntries?: Array<Object>,
+  selectedEntries: Array<Object>,
   onClose: () => void,
   addTags: (paths: Array<string>, tags: Array<Tag>) => void,
   removeTags: (paths: Array<string>, tags: Array<Tag>) => void,
@@ -43,10 +43,10 @@ type Props = {
 };
 
 type State = {
-  disableConfirmButton?: boolean,
-  open?: boolean,
-  newlyAddedTags?: Array<Tag>,
-  isConfirmDialogOpened?: boolean
+  disableConfirmButton: boolean,
+  open: boolean,
+  newlyAddedTags: Array<Tag>,
+  isConfirmDialogOpened: boolean
 };
 
 class AddRemoveTagsDialog extends React.Component<Props, State> {
@@ -154,7 +154,7 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
             </Button>
             <Button
               data-tid="removeTagsMultipleEntries"
-              disabled={newlyAddedTags.length === 0 || selectedEntries.length < 1}
+              disabled={!newlyAddedTags || newlyAddedTags.length < 1 || selectedEntries.length < 1}
               color="primary"
               onClick={() => {
                 if (selectedEntries && selectedEntries.length > 0) {
@@ -172,7 +172,7 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
             </Button>
             <Button
               data-tid="addTagsMultipleEntries"
-              disabled={newlyAddedTags.length < 1 || selectedEntries.length < 1}
+              disabled={!newlyAddedTags || newlyAddedTags.length < 1 || selectedEntries.length < 1}
               color="primary"
               onClick={this.addTags}
             >
