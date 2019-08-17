@@ -38,16 +38,15 @@ import { isStr } from '../../utils/misc';
 
 const styles = theme => ({
   root: {
-
     background: theme.palette.background.paper
   },
   keyBinding: {
     marginTop: 10,
     marginBottom: 10,
   },
-  formSelect: {
-    width: '100%',
-    height: 'auto'
+  listItem: {
+    paddingLeft: 0,
+    paddingRight: 0
   },
 });
 
@@ -63,22 +62,16 @@ const SettingsKeyBindings = (props: Props) => {
   const { keyBindings, classes, setKeyBinding, setGlobalKeyBinding, globalKeyBindingEnabled } = props;
   return (
     <form className={classes.root} noValidate autoComplete="off">
-      <ListItem>
-        <FormControl className={classes.formSelect}>
-          <ListItemText primary={i18n.t('core:enableGlobalKeyboardShortcuts')} />
-          <ListItemSecondaryAction>
-            <Switch
-              edge="end"
-              onClick={() => {
-                setGlobalKeyBinding(!globalKeyBindingEnabled);
-                PlatformIO.setGlobalShortcuts(!globalKeyBindingEnabled);
-              }}
-              checked={globalKeyBindingEnabled}
-            />
-          </ListItemSecondaryAction>
-        </FormControl>
+      <ListItem className={classes.listItem}>
+        <ListItemText primary={i18n.t('core:enableGlobalKeyboardShortcuts')} />
+        <Switch
+          onClick={() => {
+            setGlobalKeyBinding(!globalKeyBindingEnabled);
+            PlatformIO.setGlobalShortcuts(!globalKeyBindingEnabled);
+          }}
+          checked={globalKeyBindingEnabled}
+        />
       </ListItem>
-
       {keyBindings.map((keyBinding) => {
         const defaultBinding = DefaultSettings.keyBindings.filter(kb => kb.name === keyBinding.name)[0];
         return (
