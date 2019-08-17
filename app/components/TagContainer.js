@@ -92,6 +92,11 @@ const TagContainer = React.memo((props: Props) => {
     return false;
   });
 
+  let description = tag.title
+  if (tag.description) {
+    description = tag.title + ' - ' + tag.description
+  }
+
   return (
     <div
       role="presentation"
@@ -118,7 +123,7 @@ const TagContainer = React.memo((props: Props) => {
       }}
     >
       <Button
-        title={titleOrig}
+        title={description}
         size="small"
         style={{
           opacity: isDragging ? 0.5 : 1,

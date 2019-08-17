@@ -37,51 +37,50 @@ const blacklist = [
   externalTagLibrary ? 'taglibrary' : false
 ];
 
-const migrations = {
- // 1: (state) => state,
-  2: (state) => { // migration to add geo and date tags in state
-    const tagGroups = [...state.taglibrary];
-    for (const tagGroup of tagGroups) {
-      if (tagGroup.title === 'Smart Tags') {
-        let haveGeoTagging = false;
-        let haveDateTagging = false;
-        for (const tag of tagGroup.children) {
-          if (tag.functionality === 'geoTagging') haveGeoTagging = true;
-          else if (tag.functionality === 'dateTagging') haveDateTagging = true;
-        }
-        if (!haveGeoTagging) {
-          tagGroup.children.push({
-            id: 'e1f0760e-471c-4418-a404-6cb09e6f6c24',
-            type: 'plain',
-            title: 'geo-tag',
-            functionality: 'geoTagging',
-            desciption: 'Add geo coordinates as a tag',
-            color: '#4986e7',
-            textcolor: '#ffffff',
-            icon: '',
-          });
-        }
-        if (!haveDateTagging) {
-          tagGroup.children.push({
-            id: 'e1f0760e-471c-4418-a404-6cb09e6f6c34',
-            type: 'plain',
-            title: 'date-tag',
-            functionality: 'dateTagging',
-            desciption: 'Add custom date as a tag',
-            color: '#4986e7',
-            textcolor: '#ffffff',
-            icon: '',
-          });
-        }
-        break;
-      }
-    }
-    return {
-      ...state,
-      tagGroups
-    };
-  }
-};
+// const migrations = {
+//   2: (state) => { // migration to add geo and date tags in state
+//     const tagGroups = [...state.taglibrary];
+//     for (const tagGroup of tagGroups) {
+//       if (tagGroup.title === 'Smart Tags') {
+//         let haveGeoTagging = false;
+//         let haveDateTagging = false;
+//         for (const tag of tagGroup.children) {
+//           if (tag.functionality === 'geoTagging') haveGeoTagging = true;
+//           else if (tag.functionality === 'dateTagging') haveDateTagging = true;
+//         }
+//         if (!haveGeoTagging) {
+//           tagGroup.children.push({
+//             id: 'e1f0760e-471c-4418-a404-6cb09e6f6c24',
+//             type: 'plain',
+//             title: 'geo-tag',
+//             functionality: 'geoTagging',
+//             desciption: 'Add geo coordinates as a tag',
+//             color: '#4986e7',
+//             textcolor: '#ffffff',
+//             icon: '',
+//           });
+//         }
+//         if (!haveDateTagging) {
+//           tagGroup.children.push({
+//             id: 'e1f0760e-471c-4418-a404-6cb09e6f6c34',
+//             type: 'plain',
+//             title: 'date-tag',
+//             functionality: 'dateTagging',
+//             desciption: 'Add custom date as a tag',
+//             color: '#4986e7',
+//             textcolor: '#ffffff',
+//             icon: '',
+//           });
+//         }
+//         break;
+//       }
+//     }
+//     return {
+//       ...state,
+//       tagGroups
+//     };
+//   }
+// };
 
 const rootPersistConfig = {
   key: 'root',
@@ -90,7 +89,7 @@ const rootPersistConfig = {
   version: 2,
   blacklist,
   debug: false,
-  migrate: createMigrate(migrations, { debug: true }),
+  // migrate: createMigrate(migrations, { debug: true }),
   // https://github.com/rt2zz/redux-persist/blob/b6a60bd653d59c4fe462e2e0ea827fd76eb190e1/README.md#state-reconciler
   // stateReconciler: autoMergeLevel2,
 };
