@@ -40,15 +40,14 @@ import LocalForm from './LocalForm';
 import { Pro } from '../../pro';
 
 type Props = {
-  open?: boolean,
+  open: boolean,
   fullScreen: boolean,
   resetState: () => void,
   onClose: () => void,
-  location?: Location | null,
+  location: Location | null,
   editLocation: (location: Location) => void,
-  perspectives: Array<Object>,
   showSelectDirectoryDialog: () => void,
-  selectedDirectoryPath?: string | null
+  selectedDirectoryPath: string | null
 };
 
 type State = {
