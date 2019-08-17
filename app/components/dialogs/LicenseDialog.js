@@ -68,7 +68,7 @@ const LicenseDialog = (props: Props) => {
         // }}
         style={{ overflow: AppConfig.isFirefox ? 'auto' : 'overlay' }}
       >
-        <pre style={{ whiteSpace: 'pre-wrap', backgroundColor: 'white', color: 'black' }} >
+        <pre style={{ whiteSpace: 'pre-wrap' }} >
           {Pro ? Pro.EULAContent : LicenseContent}
         </pre>
       </DialogContent>
