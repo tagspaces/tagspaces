@@ -30,17 +30,17 @@ import i18n from '../../services/i18n';
 import { type TagGroup } from '../../reducers/taglibrary';
 
 type Props = {
-  open?: boolean,
+  open: boolean,
   onClose: () => void,
   addTag: (tags: string, uuid: string) => void,
-  selectedTagGroupEntry?: TagGroup
+  selectedTagGroupEntry: TagGroup
 };
 
 type State = {
-  inputError?: boolean,
-  disableConfirmButton?: boolean,
-  open?: boolean,
-  tagTitle?: string
+  inputError: boolean,
+  disableConfirmButton: boolean,
+  open: boolean,
+  tagTitle: string
 };
 
 class CreateTagsDialog extends React.Component<Props, State> {

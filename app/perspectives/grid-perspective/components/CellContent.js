@@ -226,7 +226,7 @@ const CellContent = (props: Props) => {
           )}
         </Grid>
         <Grid item xs zeroMinWidth>
-          <Typography>
+          <Typography style={{ wordBreak: 'break-all' }}>
             {extractTitle(fsEntry.name, !fsEntry.isFile)}
           </Typography>
           {fsEntry.tags.map(tag => renderTag(tag))}
