@@ -1,13 +1,20 @@
 [ignore]
-<PROJECT_ROOT>/node_modules/*
+<PROJECT_ROOT>/node_modules/.*
+<PROJECT_ROOT>/app/node_modules/.*
 <PROJECT_ROOT>/app/main.prod.js
 <PROJECT_ROOT>/app/main.prod.js.map
 <PROJECT_ROOT>/app/dist/.*
 <PROJECT_ROOT>/resources/.*
+<PROJECT_ROOT>/internals/.*
 <PROJECT_ROOT>/release/.*
 <PROJECT_ROOT>/dll/.*
 <PROJECT_ROOT>/release/.*
-<PROJECT_ROOT>/git/.*
+<PROJECT_ROOT>/.git/.*
+<PROJECT_ROOT>/tests/.*
+<PROJECT_ROOT>/cordova/.*
+<PROJECT_ROOT>/reports/.*
+<PROJECT_ROOT>/tsprofile/.*
+<PROJECT_ROOT>/web/.*
 
 [include]
 
