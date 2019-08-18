@@ -122,12 +122,16 @@ class Search extends React.Component<Props, State> {
 
   handleInputChange = event => {
     const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const value = (target.type && target.type === 'checkbox') ? target.checked : target.value;
     const name = target.name;
 
     this.setState({
       [name]: value
-    });
+    }, this.executeSearch);
+  };
+
+  handleTagFieldChange = (name, value) => {
+    this.setState({ [name]: value }, this.executeSearch);
   };
 
   handleTimePeriodChange = event => {
@@ -248,12 +252,6 @@ class Search extends React.Component<Props, State> {
     this.props.searchLocationIndex(searchQuery);
   };
 
-  handleChange = (name, value) => {
-    this.setState({
-      [name]: value
-    });
-  };
-
   render() {
     const { classes, indexing, indexedEntriesCount } = this.props;
     return (
@@ -279,7 +277,9 @@ class Search extends React.Component<Props, State> {
               id="textQuery"
               name="textQuery"
               value={this.state.textQuery}
-              onChange={this.handleInputChange}
+              onChange={(event) => {
+                this.setState({ textQuery: event.target.value });
+              }}
               onKeyDown={this.startSearch}
               placeholder={i18n.t('core:searchWordsWithInterval')}
               endAdornment={
@@ -308,7 +308,7 @@ class Search extends React.Component<Props, State> {
             className={classes.formControl}
             disabled={indexing}
           >
-            <TagsSelect tags={this.state.tagsAND} handleChange={this.handleChange} tagSearchType={'tagsAND'} />
+            <TagsSelect tags={this.state.tagsAND} handleChange={this.handleTagFieldChange} tagSearchType={'tagsAND'} />
           </FormControl>
           <Typography variant="caption" className={classes.header} style={{ marginTop: 10 }}>
             {i18n.t('core:atLeastOneOfTheseTags')}
@@ -317,7 +317,7 @@ class Search extends React.Component<Props, State> {
             className={classes.formControl}
             disabled={indexing}
           >
-            <TagsSelect tags={this.state.tagsOR} handleChange={this.handleChange} tagSearchType={'tagsOR'} />
+            <TagsSelect tags={this.state.tagsOR} handleChange={this.handleTagFieldChange} tagSearchType={'tagsOR'} />
           </FormControl>
           <Typography variant="caption" className={classes.header} style={{ marginTop: 10 }}>
             {i18n.t('core:noneOfTheseTags')}
@@ -326,7 +326,7 @@ class Search extends React.Component<Props, State> {
             className={classes.formControl}
             disabled={indexing}
           >
-            <TagsSelect tags={this.state.tagsNOT} handleChange={this.handleChange} tagSearchType={'tagsNOT'} />
+            <TagsSelect tags={this.state.tagsNOT} handleChange={this.handleTagFieldChange} tagSearchType={'tagsNOT'} />
           </FormControl>
           <FormControl
             className={classes.formControl}
