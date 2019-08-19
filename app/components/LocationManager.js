@@ -460,7 +460,7 @@ class LocationManager extends React.Component<Props, State> {
     const firstGridItem = grid.querySelector('div');
 
     if (isObj(firstGridItem)) {
-      firstGridItem.scrollIntoView({ top: 0 });
+      firstGridItem.parentNode.scrollTop = target.offsetTop;
     }
   };
 
