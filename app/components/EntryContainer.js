@@ -560,6 +560,15 @@ class EntryContainer extends React.Component<Props, State> {
   };
 
   toggleFullScreen = () => {
+    // this.fileViewerContainer.addEventListener('onfullscreenchange', () => {
+    //   alert('Fullscreen change');
+    //   if (this.state.isFullscreen) {
+    //     this.setState({ isFullscreen: false });
+    //   } else {
+    //     this.fileViewerContainer.removeEventListener('onfullscreenchange');
+    //   }
+    // });
+
     if (this.state.isFullscreen && document.webkitExitFullscreen) {
       document.webkitExitFullscreen();
       this.setState({ isFullscreen: false });
