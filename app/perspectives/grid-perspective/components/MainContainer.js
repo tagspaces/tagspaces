@@ -305,6 +305,7 @@ class GridPerspective extends React.Component<Props, State> {
 
   handleGridCellClick = (event, fsEntry: FileSystemEntry) => {
     const { selectedEntries } = this.props;
+    const selectHelperKey = AppConfig.isMacLike ? event.metaKey : event.ctrlKey;
     if (event.shiftKey) {
       let lastSelectedIndex = this.props.directoryContent.findIndex(entry => entry.path === this.props.lastSelectedEntryPath);
       const currentSelectedIndex = this.props.directoryContent.findIndex(entry => entry.path === fsEntry.path);
@@ -325,7 +326,7 @@ class GridPerspective extends React.Component<Props, State> {
 
       this.props.setSelectedEntries(entriesToSelect);
       this.setState(this.computeFileOperationsEnabled);
-    } else if (event.ctrlKey) {
+    } else if (selectHelperKey) {
       if (
         selectedEntries &&
         selectedEntries.some(entry => entry.path === fsEntry.path)
