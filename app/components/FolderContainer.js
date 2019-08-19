@@ -23,12 +23,16 @@ import { bindActionCreators } from 'redux';
 import Button from '@material-ui/core/Button';
 // import FolderSeparatorIcon from '@material-ui/icons/KeyboardArrowRight';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import Badge from '@material-ui/core/Badge';
 import { withStyles } from '@material-ui/core/styles';
 import { HotKeys } from 'react-hotkeys';
 import LocationMenu from './menus/LocationMenu';
 import DirectoryMenu from './menus/DirectoryMenu';
 import i18n from '../services/i18n';
-import { getPerspectives } from '../reducers/settings';
+import {
+  getPerspectives,
+  getMaxSearchResults
+} from '../reducers/settings';
 import {
   actions as AppActions,
   getDirectoryContent,
@@ -59,6 +63,15 @@ const WelcomePanelAsync = props => (
     <WelcomePanel {...props} />
   </React.Suspense>
 );
+
+const CounterBadge = withStyles(theme => ({
+  badge: {
+    top: '50%',
+    right: -15,
+    color: theme.palette.type === 'light' ? theme.palette.grey[900] : theme.palette.grey[200],
+    backgroundColor: theme.palette.type === 'light' ? theme.palette.grey[200] : theme.palette.grey[900]
+  },
+}))(Badge);
 
 const styles = theme => ({
   mainPanel: {
@@ -136,7 +149,8 @@ type Props = {
   loadParentDirectoryContent: () => void,
   setLastSelectedEntry: (entryPath: string | null) => void,
   isReadOnlyMode: boolean,
-  showNotification: () => void
+  showNotification: () => void,
+  maxSearchResults: number
 };
 
 type State = {
@@ -334,21 +348,30 @@ class FolderContainer extends React.Component<Props, State> {
     const {
       currentDirectoryPath = '',
       loadDirectoryContent,
-      classes
+      searchResultCount,
+      classes,
+      maxSearchResults
     } = this.props;
     const normalizedCurrentDirPath = normalizePath(currentDirectoryPath.split('\\').join('/'));
+    let searchResultCounterText = searchResultCount + ' ' + i18n.t('entries');
+    if (searchResultCount >= maxSearchResults) {
+      searchResultCounterText = 'More than ' + (maxSearchResults - 1) + ' entries found, showing only the first ' + maxSearchResults ;
+    }
     return (
       <HotKeys handlers={this.keyBindingHandlers}>
         <div className={classes.mainPanel}>
           <div className={classes.topPanel}>
             <div className={classes.toolbar}>
               <LocationMenu />
-              <div
-                className={classes.flexMiddle}
-                data-tid="entriesFound"
-                title={this.props.searchResultCount + ' ' + i18n.t('entries')}
+              <CounterBadge
+                showZero={false}
+                title={searchResultCounterText}
+                badgeContent={searchResultCount}
+                color="secondary"
+                max={maxSearchResults - 1}
               />
-              {this.props.currentDirectoryPath && (
+              <div className={classes.flexMiddle} />
+              {currentDirectoryPath && (
                 <div>
                   {this.state.pathParts &&
                     this.state.pathParts.map(pathPart => (
@@ -420,6 +443,7 @@ function mapStateToProps(state) {
     searchResultCount: getSearchResultCount(state),
     // pathPart: getPathTrail(state),
     currentLocationPath: getCurrentLocationPath(state),
+    maxSearchResults: getMaxSearchResults(state),
     isReadOnlyMode: isReadOnlyMode(state)
   };
 }
