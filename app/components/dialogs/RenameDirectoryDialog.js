@@ -40,9 +40,10 @@ type Props = {
 };
 
 type State = {
-  inputError?: boolean,
-  disableConfirmButton?: boolean,
-  name?: string
+  inputError: boolean,
+  disableConfirmButton: boolean,
+  name: string,
+  length: string
 };
 
 class RenameDirectoryDialog extends React.Component<Props, State> {

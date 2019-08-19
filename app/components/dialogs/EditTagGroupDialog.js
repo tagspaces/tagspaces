@@ -34,22 +34,22 @@ import i18n from '../../services/i18n';
 import TransparentBackground from '../TransparentBackground';
 
 type Props = {
-  open?: boolean,
+  open: boolean,
   editTagGroup: (tagGroup: TagGroup) => void,
-  selectedTagGroupEntry?: TagGroup,
+  selectedTagGroupEntry: TagGroup,
   onClose: () => void
 };
 
 type State = {
-  inputError?: boolean,
-  displayColorPicker?: boolean,
-  displayTextColorPicker?: boolean,
-  disableConfirmButton?: boolean,
-  title?: string,
-  applyChanges?: boolean,
-  color?: string,
-  textcolor?: string,
-  modifiedDate?: string
+  inputError: boolean,
+  displayColorPicker: boolean,
+  displayTextColorPicker: boolean,
+  disableConfirmButton: boolean,
+  title: string,
+  applyChanges: boolean,
+  color: string,
+  textcolor: string,
+  modifiedDate: string
 };
 
 class EditTagGroupDialog extends React.Component<Props, State> {

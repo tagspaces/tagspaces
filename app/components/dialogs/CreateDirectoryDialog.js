@@ -33,7 +33,6 @@ import AppConfig from '../../config';
 import { actions as AppActions } from '../../reducers/app';
 
 type Props = {
-  classes: Object,
   open: boolean,
   onClose: () => void,
   selectedDirectoryPath: string,

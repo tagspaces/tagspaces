@@ -69,9 +69,7 @@ type Props = {
   onClose: () => void,
   selectedDirectoryPath: string | null,
   showSelectDirectoryDialog: () => void,
-  chooseDirectoryPath: (directoryPath: string) => void,
-  createFileAdvanced: (targetPath: string, fileName: string, content: string, fileType: string) => void,
-  resetState: () => void
+  createFileAdvanced: (targetPath: string, fileName: string, content: string, fileType: string) => void
 };
 
 type State = {

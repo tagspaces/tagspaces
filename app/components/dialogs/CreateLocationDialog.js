@@ -55,16 +55,14 @@ const styles = theme => ({
 });
 
 type Props = {
-  classes: Object,
+  // classes: Object,
   open: boolean,
   onClose: () => void,
   fullScreen: boolean,
   onClose: () => void,
   addLocation: (location: Location) => void,
-  perspectives: Array<Object>,
   showSelectDirectoryDialog: () => void,
-  resetState: () => void,
-  selectedDirectoryPath?: string | null
+  resetState: () => void
 };
 
 type State = {

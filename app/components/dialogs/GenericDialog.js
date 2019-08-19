@@ -18,7 +18,6 @@
  */
 
 import React from 'react';
-import uuidv1 from 'uuid';
 import Dialog from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
 
@@ -27,14 +26,14 @@ export function DialogTransition(props) {
 }
 
 type Props = {
-  open?: boolean,
-  fullScreen?: boolean,
+  open: boolean,
+  fullScreen: boolean,
   onClose: () => void,
-  onBackdropClick?: () => void,
-  onEnterKey?: () => void,
-  renderTitle?: () => Object,
+  onBackdropClick: () => void,
+  onEnterKey: () => void,
+  renderTitle: () => Object,
   renderContent: () => Object,
-  renderActions?: () => Object
+  renderActions: () => Object
 };
 
 export function onEnterKeyHandler(event: any, confirmFunction: () => void) {

@@ -44,9 +44,10 @@ type Props = {
 };
 
 type State = {
-  inputError?: boolean,
-  disableConfirmButton?: boolean,
-  fileName?: string
+  inputError: boolean,
+  disableConfirmButton: boolean,
+  fileName: string,
+  length: string
 };
 
 const styles = theme => ({

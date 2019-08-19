@@ -44,12 +44,12 @@ type Props = {
 };
 
 type State = {
-  errorTextPath?: boolean,
-  errorTextName?: boolean,
-  open?: boolean,
-  drives?: Array<string>,
-  currentPath?: string,
-  isDefault?: boolean
+  errorTextPath: boolean,
+  errorTextName: boolean,
+  open: boolean,
+  drives: Array<string>,
+  currentPath: string,
+  isDefault: boolean
 };
 
 const styles = () => ({
