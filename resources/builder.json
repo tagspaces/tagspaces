@@ -51,6 +51,6 @@
   },
   "directories": {
     "buildResources": "resources",
-    "output": "../builds"
+    "output": "builds"
   }
 }

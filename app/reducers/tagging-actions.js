@@ -54,16 +54,21 @@ const actions = {
       tag.type = 'sidecar';
       if (tag.functionality && tag.functionality.length > 0) {
         if (tag.functionality === 'geoTagging') {
-          // if (!isGeo(getState())) { // tag will be added later just open the Geo Dialog now
-          tag.path = paths[0]; // todo rethink this!
-          tag.title = defaultTagLocation;
-          dispatch(AppActions.toggleEditTagDialog(tag));
-          // }
+          if (Pro) {
+            tag.path = paths[0]; // todo rethink this!
+            tag.title = defaultTagLocation;
+            dispatch(AppActions.toggleEditTagDialog(tag));
+          } else {
+            dispatch(AppActions.showNotification(i18n.t('core:needProVersion')));
+          }
         } else if (tag.functionality === 'dateTagging') {
-          tag.path = paths[0];
-          tag.title = formatDateTime4Tag(new Date(), true); // defaultTagDate;
-          dispatch(AppActions.toggleEditTagDialog(tag));
-          // }
+          if (Pro) {
+            tag.path = paths[0];
+            tag.title = formatDateTime4Tag(new Date(), true); // defaultTagDate;
+            dispatch(AppActions.toggleEditTagDialog(tag));
+          } else {
+            dispatch(AppActions.showNotification(i18n.t('core:needProVersion')));
+          }
         } else {
           tag.title = generateTagValue(tag);
           tag.id = uuidv1();

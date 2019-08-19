@@ -64,6 +64,7 @@ export type TagGroup = {
   expanded: boolean,
   description?: string,
   categoryId?: string,
+  readOnly?: boolean,
   color?: string,
   textcolor?: string,
   children?: Array<Tag>

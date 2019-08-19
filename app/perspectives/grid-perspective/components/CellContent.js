@@ -20,8 +20,10 @@
 import React from 'react';
 import formatDistance from 'date-fns/formatDistance';
 import removeMd from 'remove-markdown';
+import classNames from 'classnames';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
+import Paper from '@material-ui/core/Paper';
 import FolderIcon from '@material-ui/icons/FolderOpen';
 import {
   formatFileSize,
@@ -34,6 +36,7 @@ import {
 } from '../../../services/utils-io';
 import TagContainerDnd from '../../../components/TagContainerDnd';
 import TagContainer from '../../../components/TagContainer';
+import TagDropContainer from '../../../components/TagDropContainer';
 import AppConfig from '../../../config';
 import i18n from '../../../services/i18n';
 import { type Tag } from '../../../reducers/taglibrary';
@@ -41,8 +44,9 @@ import { type Tag } from '../../../reducers/taglibrary';
 const maxDescriptionPreviewLength = 100;
 
 type Props = {
+  selected: boolean,
   fsEntry: FileSystemEntry,
-  entryHeight: number,
+  entrySize: string,
   classes: Object,
   theme: Object,
   supportedFileTypes: Array<Object>,
@@ -51,13 +55,17 @@ type Props = {
   selectedEntries: Array<Object>,
   isReadOnlyMode: boolean,
   handleTagMenu: (event: Object, tag: Tag, entryPath: string) => void,
-  layoutType: string
+  layoutType: string,
+  handleGridContextMenu: () => void,
+  handleGridCellDblClick: () => void,
+  handleGridCellClick: () => void
 };
 
 const CellContent = (props: Props) => {
   const {
+    selected,
     fsEntry,
-    entryHeight,
+    entrySize,
     classes,
     theme,
     supportedFileTypes,
@@ -66,7 +74,10 @@ const CellContent = (props: Props) => {
     selectedEntries,
     isReadOnlyMode,
     handleTagMenu,
-    layoutType
+    layoutType,
+    handleGridContextMenu,
+    handleGridCellDblClick,
+    handleGridCellClick
   } = props;
   const fsEntryBackgroundColor = fsEntry.color ? fsEntry.color : 'transparent';
 
@@ -88,29 +99,8 @@ const CellContent = (props: Props) => {
     thumbPathUrl = thumbPathUrl.split('\\').join('\\\\');
   }
 
-  function renderTag(tag: Object) {
-    return isReadOnlyMode ? (
-      <TagContainer
-        tag={tag}
-        key={tag.id}
-        entryPath={fsEntry.path}
-        addTags={addTags}
-        handleTagMenu={handleTagMenu}
-        selectedEntries={selectedEntries}
-      />
-    ) : (
-      <TagContainerDnd
-        tag={tag}
-        key={tag.id}
-        entryPath={fsEntry.path}
-        addTags={addTags}
-        handleTagMenu={handleTagMenu}
-        selectedEntries={selectedEntries}
-      />
-    );
-  }
 
-  if (layoutType === 'grid') {
+  function renderGridCell() {
     return (
       <div style={{
         backgroundColor: fsEntryBackgroundColor
@@ -182,14 +172,21 @@ const CellContent = (props: Props) => {
               style={{ backgroundColor: fsEntryColor }}
               title={fsEntry.path}
             />
-            {/* <Typography className={classes.gridSizeDate} variant="caption">
-              {' ' + formatDateTime4Tag(fsEntry.lmdt) }
-            </Typography> */}
           </div>
         )}
       </div>
     );
-  } else if (layoutType === 'row') {
+  }
+
+  function renderRowCell() {
+    let tmbSize = 85;
+    if (entrySize === 'small') {
+      tmbSize = 50;
+    } else if (entrySize === 'normal') {
+      tmbSize = 85;
+    } else if (entrySize === 'big') {
+      tmbSize = 120;
+    }
     return (
       <Grid
         container
@@ -204,7 +201,6 @@ const CellContent = (props: Props) => {
             minHeight: entryHeight,
             padding: 10,
             marginRight: 5,
-            // borderRadius: 4,
             backgroundColor: fsEntryBackgroundColor
           }}
         >
@@ -230,28 +226,30 @@ const CellContent = (props: Props) => {
             {extractTitle(fsEntry.name, !fsEntry.isFile)}
           </Typography>
           {fsEntry.tags.map(tag => renderTag(tag))}
-          <Typography
-            style={{
-              color: 'gray',
-              padding: 5
-            }}
-          >
-            <span title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
-              {fsEntry.isFile && formatFileSize(fsEntry.size) + ' - '}
-            </span>
-            <span
-              title={
-                i18n.t('core:modifiedDate') +
-                ': ' +
-                formatDateTime(fsEntry.lmdt, true)
-              }
+          {entrySize !== 'small' && (
+            <Typography
+              style={{
+                color: 'gray',
+                padding: 5
+              }}
             >
-              {fsEntry.isFile && fsEntry.lmdt && '️ ' + formatDistance(fsEntry.lmdt, new Date(), { addSuffix: true }) + ' '}
-            </span>
-            <span title={i18n.t('core:entryDescription')}>
-              {description && description }
-            </span>
-          </Typography>
+              <span title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
+                {fsEntry.isFile && formatFileSize(fsEntry.size) + ' - '}
+              </span>
+              <span
+                title={
+                  i18n.t('core:modifiedDate') +
+                  ': ' +
+                  formatDateTime(fsEntry.lmdt, true)
+                }
+              >
+                {fsEntry.isFile && fsEntry.lmdt && '️ ' + formatDistance(fsEntry.lmdt, new Date(), { addSuffix: true }) + ' '}
+              </span>
+              <span title={i18n.t('core:entryDescription')}>
+                {description && description}
+              </span>
+            </Typography>
+          )}
         </Grid>
         {fsEntry.thumbPath && (
           <Grid
@@ -263,8 +261,8 @@ const CellContent = (props: Props) => {
                 backgroundSize: thumbnailMode,
                 backgroundImage: thumbPathUrl,
                 margin: 1,
-                height: 85,
-                width: 85
+                height: tmbSize,
+                width: tmbSize
               }}
             />
           </Grid>
@@ -272,6 +270,66 @@ const CellContent = (props: Props) => {
       </Grid>
     );
   }
+
+  function renderTag(tag: Object) {
+    return isReadOnlyMode ? (
+      <TagContainer
+        tag={tag}
+        key={tag.id}
+        entryPath={fsEntry.path}
+        addTags={addTags}
+        handleTagMenu={handleTagMenu}
+        selectedEntries={selectedEntries}
+      />
+    ) : (
+      <TagContainerDnd
+        tag={tag}
+        key={tag.id}
+        entryPath={fsEntry.path}
+        addTags={addTags}
+        handleTagMenu={handleTagMenu}
+        selectedEntries={selectedEntries}
+      />
+    );
+  }
+
+  let entryHeight = 130;
+  if (entrySize === 'small') {
+    entryHeight = 50;
+  } else if (entrySize === 'normal') {
+    entryHeight = 80;
+  } else if (entrySize === 'big') {
+    entryHeight = 130;
+  }
+
+  let gridCell = React.Fragment;
+  if (layoutType === 'grid') {
+    gridCell = renderGridCell();
+  } else if (layoutType === 'row') {
+    gridCell = renderRowCell();
+  }
+
+  return (
+    <TagDropContainer entryPath={fsEntry.path}>
+      <Paper
+        elevation={2}
+        data-entry-id={fsEntry.uuid}
+        className={classNames(
+          layoutType === 'grid' && classes.gridCell,
+          layoutType === 'row' && classes.rowCell,
+          selected && layoutType === 'grid' && classes.selectedGridCell,
+          selected && layoutType === 'row' && classes.selectedRowCell
+        )}
+        style={{
+          minHeight: layoutType === 'row' ? entryHeight : 'auto',
+          backgroundColor: theme.palette.background.default
+        }}
+        onContextMenu={event => handleGridContextMenu(event, fsEntry)}
+        onDoubleClick={event => handleGridCellDblClick(event, fsEntry)}
+        onClick={event => handleGridCellClick(event, fsEntry)}
+      >{gridCell}</Paper>
+    </TagDropContainer>
+  );
 };
 
 export default CellContent;

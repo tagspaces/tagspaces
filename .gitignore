@@ -78,12 +78,12 @@ web/node_modules
 web/LICENSE.txt
 web/third-party.txt
 
-app/extconfig.js
-app/extconfig1.js
-web/extconfig.js
-web/extconfig1.js
+app/extconfig*
+web/extconfig*
 cordova/www/extconfig.js
 
 reports/*
 
 tests/*
+
+builds/*

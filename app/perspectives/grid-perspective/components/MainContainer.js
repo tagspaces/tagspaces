@@ -23,8 +23,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import memoize from 'memoize-one';
 import { withStyles } from '@material-ui/core/styles';
-import classNames from 'classnames';
-import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Toolbar from '@material-ui/core/Toolbar';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -72,7 +70,6 @@ import ConfirmDialog from '../../../components/dialogs/ConfirmDialog';
 import AddRemoveTagsDialog from '../../../components/dialogs/AddRemoveTagsDialog';
 import MoveCopyFilesDialog from '../../../components/dialogs/MoveCopyFilesDialog';
 import RenameFileDialog from '../../../components/dialogs/RenameFileDialog';
-import TagDropContainer from '../../../components/TagDropContainer';
 import TargetMoveFileBox from '../../../components/TargetMoveFileBox';
 import FileSourceDnd from '../../../components/FileSourceDnd';
 import AppConfig from '../../../config';
@@ -308,6 +305,7 @@ class GridPerspective extends React.Component<Props, State> {
 
   handleGridCellClick = (event, fsEntry: FileSystemEntry) => {
     const { selectedEntries } = this.props;
+    const selectHelperKey = AppConfig.isMacLike ? event.metaKey : event.ctrlKey;
     if (event.shiftKey) {
       let lastSelectedIndex = this.props.directoryContent.findIndex(entry => entry.path === this.props.lastSelectedEntryPath);
       const currentSelectedIndex = this.props.directoryContent.findIndex(entry => entry.path === fsEntry.path);
@@ -328,7 +326,7 @@ class GridPerspective extends React.Component<Props, State> {
 
       this.props.setSelectedEntries(entriesToSelect);
       this.setState(this.computeFileOperationsEnabled);
-    } else if (event.ctrlKey) {
+    } else if (selectHelperKey) {
       if (
         selectedEntries &&
         selectedEntries.some(entry => entry.path === fsEntry.path)
@@ -589,55 +587,30 @@ class GridPerspective extends React.Component<Props, State> {
     ) {
       selected = true;
     }
-    let entryHeight = 130;
-    if (entrySize === 'small') {
-      entryHeight = 50;
-    } else if (entrySize === 'normal') {
-      entryHeight = 80;
-    } else if (entrySize === 'big') {
-      entryHeight = 130;
-    }
+
     const cellContent = (
-      <TagDropContainer entryPath={fsEntry.path}>
-        <Paper
-          elevation={2}
-          data-entry-id={fsEntry.uuid}
-          className={classNames(
-            layoutType === 'grid' && classes.gridCell,
-            layoutType === 'row' && classes.rowCell,
-            selected && layoutType === 'grid' && classes.selectedGridCell,
-            selected && layoutType === 'row' && classes.selectedRowCell
-          )}
-          style={{
-            minHeight: layoutType === 'row' ? entryHeight : 'auto',
-            backgroundColor: theme.palette.background.default
-          }}
-          onContextMenu={event => this.handleGridContextMenu(event, fsEntry)}
-          onDoubleClick={event => this.handleGridCellDblClick(event, fsEntry)}
-          onClick={event => this.handleGridCellClick(event, fsEntry)}
-        >
-          <CellContent
-            fsEntry={fsEntry}
-            entryHeight={entryHeight}
-            classes={classes}
-            theme={theme}
-            supportedFileTypes={supportedFileTypes}
-            thumbnailMode={thumbnailMode}
-            addTags={addTags}
-            selectedEntries={selectedEntries}
-            isReadOnlyMode={this.props.isReadOnlyMode}
-            handleTagMenu={this.handleTagMenu}
-            layoutType={layoutType}
-          />
-        </Paper>
-      </TagDropContainer>
+      <CellContent
+        selected={selected}
+        fsEntry={fsEntry}
+        entrySize={entrySize}
+        classes={classes}
+        theme={theme}
+        supportedFileTypes={supportedFileTypes}
+        thumbnailMode={thumbnailMode}
+        addTags={addTags}
+        selectedEntries={selectedEntries}
+        isReadOnlyMode={this.props.isReadOnlyMode}
+        handleTagMenu={this.handleTagMenu}
+        layoutType={layoutType}
+        handleGridContextMenu={this.handleGridContextMenu}
+        handleGridCellDblClick={this.handleGridCellDblClick}
+        handleGridCellClick={this.handleGridCellClick}
+      />
     );
+
+
     if (fsEntry.isFile) {
-      return (
-        <FileSourceDnd>
-          {cellContent}
-        </FileSourceDnd>
-      );
+      return (<FileSourceDnd>{cellContent}</FileSourceDnd>);
     }
 
     return (
@@ -671,7 +644,6 @@ class GridPerspective extends React.Component<Props, State> {
     } else if (entrySize === 'big') {
       entryWidth = 300;
     }
-    // console.log('Render grid');
     return (
       <div style={{ height: '100%' }}>
         <style>
@@ -977,7 +949,7 @@ class GridPerspective extends React.Component<Props, State> {
             aria-label={i18n.t('core:showHideDirectories')}
             onClick={this.toggleShowDirectories}
           >
-            <ListItemIcon style={{ minWidth: 25 }}>
+            <ListItemIcon>
               {this.state.showDirectories ? <FolderIcon /> : <FolderHiddenIcon />}
             </ListItemIcon>
             <ListItemText primary={i18n.t('core:showHideDirectories')} />
