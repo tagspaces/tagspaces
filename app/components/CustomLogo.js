@@ -21,9 +21,21 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import IconButton from '@material-ui/core/IconButton';
+import Badge from '@material-ui/core/Badge';
 import { Pro } from '../pro';
 import TextLogoIcon from '../assets/images/text-logo.svg';
 import { actions as AppActions } from '../reducers/app';
+import versionMeta from '../version.json';
+import { withStyles } from '@material-ui/core/styles';
+
+const AppVersionBadge = withStyles(theme => ({
+  badge: {
+    top: '25%',
+    right: -15,
+    color: theme.palette.type === 'light' ? theme.palette.grey[900] : theme.palette.grey[200],
+    backgroundColor: theme.palette.type === 'light' ? theme.palette.grey[200] : theme.palette.grey[900]
+  },
+}))(Badge);
 
 type Props = {
   toggleAboutDialog: () => void
@@ -37,13 +49,15 @@ if (externalLogo) {
 }
 
 const CustomLogo = (props: Props) => (
-  <IconButton
-    style={{ height: 50, padding: 0, marginBottom: 15 }}
-    data-tid="aboutTagSpaces"
-    onClick={props.toggleAboutDialog}
-  >
-    <img style={{ maxHeight: 50 }} src={logo} alt="TagSpaces Logo" />
-  </IconButton>
+  <AppVersionBadge title="App Version" badgeContent={'v' + versionMeta.version} color="primary">
+    <IconButton
+      style={{ height: 50, padding: 0, marginBottom: 15 }}
+      data-tid="aboutTagSpaces"
+      onClick={props.toggleAboutDialog}
+    >
+      <img style={{ maxHeight: 50 }} src={logo} alt="TagSpaces Logo" />
+    </IconButton>
+  </AppVersionBadge>
 );
 
 function mapActionCreatorsToProps(dispatch) {
