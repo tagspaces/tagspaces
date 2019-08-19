@@ -100,9 +100,7 @@ class OnboardingDialog extends React.Component<Props, State> {
     const { activeStep } = this.state;
 
     return (
-      <DialogContent
-        style={{ height: 620, overflow: 'hidden', paddingBottom: 0 }}
-      >
+      <DialogContent>
         <SwipeableViews
           index={activeStep}
           onChangeIndex={this.handleStepChange}
@@ -110,9 +108,6 @@ class OnboardingDialog extends React.Component<Props, State> {
         >
           <div
             style={{
-              height: 550,
-              padding: 5,
-              overflow: 'hidden',
               textAlign: 'center'
             }}
           >
@@ -141,24 +136,19 @@ class OnboardingDialog extends React.Component<Props, State> {
           </div>
           <div
             style={{
-              height: 550,
-              padding: 5,
-              overflow: 'hidden',
               textAlign: 'center'
             }}
           >
             <Typography variant="h4">Meet our new navigation</Typography>
             <img
-              style={{ maxHeight: 500, marginTop: 15 }}
+              style={{ marginTop: 15 }}
               src={NavigationV3}
               alt=""
             />
           </div>
           <div
             style={{
-              height: 550,
-              padding: 5,
-              overflow: 'hidden',
+
               textAlign: 'center'
             }}
           >
@@ -208,9 +198,6 @@ class OnboardingDialog extends React.Component<Props, State> {
           </div>
           <div
             style={{
-              height: 550,
-              padding: 5,
-              overflow: 'hidden',
               textAlign: 'center'
             }}
           >
@@ -225,9 +212,6 @@ class OnboardingDialog extends React.Component<Props, State> {
           </div>
           <div
             style={{
-              height: 550,
-              padding: 5,
-              overflow: 'hidden',
               textAlign: 'center'
             }}
           >
