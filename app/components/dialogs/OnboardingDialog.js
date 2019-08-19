@@ -139,7 +139,7 @@ class OnboardingDialog extends React.Component<Props, State> {
               textAlign: 'center'
             }}
           >
-            <Typography variant="h4">Meet our new navigation</Typography>
+            <Typography variant="h4">Explanation of the app navigation</Typography>
             <img
               style={{ marginTop: 15 }}
               src={NavigationV3}
@@ -249,7 +249,7 @@ class OnboardingDialog extends React.Component<Props, State> {
                 onClick={this.handleNext}
                 data-tid="nextStepOnboarding"
               >
-                Next
+                {i18n.t('core:next')}
               </Button>
             )
           }
@@ -259,7 +259,7 @@ class OnboardingDialog extends React.Component<Props, State> {
               onClick={this.handleBack}
               disabled={activeStep === 0}
             >
-              Back
+              {i18n.t('core:prev')}
             </Button>
           }
         />
