@@ -35,9 +35,9 @@ type Props = {
   cancelDialogTID?: string,
   confirmDialogTID?: string,
   confirmDialogContentTID?: string,
-  list?: Array<string>,
+  list: Array<string>,
   confirmCallback: (result: boolean) => void,
-  onClose: () => void,
+  onClose: () => void
 };
 
 const ConfirmDialog = (props: Props) => {

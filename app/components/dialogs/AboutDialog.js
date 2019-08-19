@@ -35,7 +35,6 @@ import { getLastVersionPromise } from '../../reducers/settings';
 import AppConfig from '../../config';
 
 type Props = {
-  classes: Object,
   open: boolean,
   fullScreen: boolean,
   toggleLicenseDialog: () => void,

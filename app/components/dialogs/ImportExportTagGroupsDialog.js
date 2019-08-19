@@ -47,15 +47,16 @@ type Props = {
   open: boolean,
   onClose: () => void,
   dialogModeImport: boolean,
-  showNotification?: (text: string, notificationType: string, autohide: boolean) => void
+  showNotification: (text: string, notificationType: string, autohide: boolean) => void
 };
 
 type State = {
-  errorTextName?: boolean,
-  disableConfirmButton?: boolean,
-  open?: boolean,
-  tagGroupList?: null | Array,
-  checkedAll?: boolean
+  errorTextName: boolean,
+  disableConfirmButton: boolean,
+  open: boolean,
+  tagGroupList: null | Array,
+  checkedAll: boolean,
+  selectedAll: boolean
 };
 
 class ImportExportTagGroupsDialog extends React.Component<Props, State> {

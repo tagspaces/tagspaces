@@ -42,9 +42,9 @@ type Props = {
 
 type State = {
   inputError: boolean,
-  displayColorPicker?: boolean,
-  displayTextColorPicker?: boolean,
-  disableConfirmButton?: boolean,
+  displayColorPicker: boolean,
+  displayTextColorPicker: boolean,
+  disableConfirmButton: boolean,
   title: string,
   color: string,
   textcolor: string,
