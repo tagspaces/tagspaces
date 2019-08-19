@@ -53,7 +53,7 @@ type Props = {
 };
 
 type State = {
-  currentTab?: number,
+  currentTab: number,
   items: Array<Object>,
   selectedItem: Object,
   isValidationInProgress: boolean,

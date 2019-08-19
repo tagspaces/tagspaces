@@ -55,7 +55,8 @@ type State = {
   disableConfirmButton: boolean,
   open: boolean,
   tagGroupList: null | Array,
-  checkedAll: boolean
+  checkedAll: boolean,
+  selectedAll: boolean
 };
 
 class ImportExportTagGroupsDialog extends React.Component<Props, State> {
