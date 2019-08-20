@@ -157,15 +157,15 @@ class EditLocationDialog extends React.Component<Props, State> {
         disableConfirmButton = true;
       } */
 
-      if (!this.state.accessKeyId || this.state.accessKeyId.length === 0) {
-        cloudErrorAccessKey = true;
-        disableConfirmButton = true;
-      }
+      // if (!this.state.accessKeyId || this.state.accessKeyId.length === 0) {
+      //   cloudErrorAccessKey = true;
+      //   disableConfirmButton = true;
+      // }
 
-      if (!this.state.secretAccessKey || this.state.secretAccessKey.length === 0) {
-        cloudErrorSecretAccessKey = true;
-        disableConfirmButton = true;
-      }
+      // if (!this.state.secretAccessKey || this.state.secretAccessKey.length === 0) {
+      //   cloudErrorSecretAccessKey = true;
+      //   disableConfirmButton = true;
+      // }
 
       if (!this.state.bucketName || this.state.bucketName.length === 0) {
         cloudErrorBucketName = true;
@@ -180,8 +180,8 @@ class EditLocationDialog extends React.Component<Props, State> {
       this.setState({
         cloudErrorTextName,
         // cloudErrorTextPath,
-        cloudErrorAccessKey,
-        cloudErrorSecretAccessKey,
+        // cloudErrorAccessKey,
+        // cloudErrorSecretAccessKey,
         cloudErrorBucketName,
         disableConfirmButton,
         cloudErrorRegion
