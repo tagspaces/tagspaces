@@ -85,6 +85,7 @@ import {
 } from '../../../reducers/app';
 import TaggingActions from '../../../reducers/tagging-actions';
 import CellContent from './CellContent';
+import MainToolbar from './MainToolbar';
 
 const settings = JSON.parse(localStorage.getItem('tsPerspectiveGrid')); // loading settings
 
@@ -608,7 +609,6 @@ class GridPerspective extends React.Component<Props, State> {
       />
     );
 
-
     if (fsEntry.isFile) {
       return (<FileSourceDnd>{cellContent}</FileSourceDnd>);
     }
@@ -629,6 +629,16 @@ class GridPerspective extends React.Component<Props, State> {
       directoryContent,
       currentDirectoryColor,
       selectedEntries,
+      loadParentDirectoryContent,
+      toggleSelectAllFiles,
+      allFilesSelected,
+      handleLayoutSwitch,
+      openAddRemoveTagsDialog,
+      fileOperationsEnabled,
+      openMoveCopyFilesDialog,
+      openDeleteFileDialog,
+      handleSortingMenu,
+      handleOptionsMenu,
       theme
     } = this.props;
     const { layoutType, entrySize, sortBy, orderBy } = this.state;
@@ -653,105 +663,21 @@ class GridPerspective extends React.Component<Props, State> {
             }
           `}
         </style>
-        <Toolbar
-          className={classes.topToolbar}
-          data-tid="perspectiveGridToolbar"
-        >
-          <IconButton
-            title={i18n.t('core:toggleSelectAllFiles')}
-            data-tid="gridPerspectiveSelectAllFiles"
-            onClick={this.toggleSelectAllFiles}
-          >
-            {this.state.allFilesSelected ? (
-              <SelectAllIcon />
-            ) : (
-              <DeSelectAllIcon />
-            )}
-          </IconButton>
-          <IconButton
-            title={i18n.t('core:navigateToParentDirectory')}
-            aria-label={i18n.t('core:navigateToParentDirectory')}
-            data-tid="gridPerspectiveOnBackButton"
-            onClick={this.props.loadParentDirectoryContent}
-          >
-            <ParentDirIcon />
-          </IconButton>
-          {this.state.layoutType === 'row' ? (
-            <IconButton
-              title={i18n.t('core:switchToGridView')}
-              aria-label={i18n.t('core:switchToGridView')}
-              data-tid="gridPerspectiveSwitchLayoutToGrid"
-              onClick={() => {
-                this.handleLayoutSwitch('grid');
-              }}
-            >
-              <ViewGridIcon />
-            </IconButton>
-          ) : (
-            <IconButton
-              title={i18n.t('core:switchToListView')}
-              aria-label={i18n.t('core:switchToListView')}
-              data-tid="gridPerspectiveSwitchLayoutToRow"
-              onClick={() => {
-                this.handleLayoutSwitch('row');
-              }}
-            >
-              <ViewListIcon />
-            </IconButton>
-          )}
-          {!this.props.isReadOnlyMode && (
-            <IconButton
-              title={i18n.t('core:tagSelectedEntries')}
-              aria-label={i18n.t('core:tagSelectedEntries')}
-              data-tid="gridPerspectiveAddRemoveTags"
-              disabled={selectedEntries.length < 1}
-              onClick={this.openAddRemoveTagsDialog}
-            >
-              <TagIcon />
-            </IconButton>
-          )}
-          {!this.props.isReadOnlyMode && (
-            <IconButton
-              title={i18n.t('core:copyMoveSelectedEntries')}
-              aria-label={i18n.t('core:copyMoveSelectedEntries')}
-              data-tid="gridPerspectiveCopySelectedFiles"
-              disabled={!this.state.fileOperationsEnabled}
-              onClick={this.openMoveCopyFilesDialog}
-            >
-              <CopyIcon />
-            </IconButton>
-          )}
-          {!this.props.isReadOnlyMode && (
-            <IconButton
-              title={i18n.t('core:deleteSelectedEntries')}
-              aria-label={i18n.t('core:deleteSelectedEntries')}
-              data-tid="gridPerspectiveDeleteMultipleFiles"
-              disabled={!this.state.fileOperationsEnabled}
-              onClick={this.openDeleteFileDialog}
-            >
-              <DeleteIcon />
-            </IconButton>
-          )}
-          <IconButton
-            title={i18n.t('core:sort')}
-            aria-label={i18n.t('core:sort')}
-            data-tid="gridPerspectiveSortMenu"
-            onClick={e => {
-              this.handleSortingMenu(e);
-            }}
-          >
-            <SwapVertIcon />
-          </IconButton>
-          <IconButton
-            title={i18n.t('core:options')}
-            data-tid="gridPerspectiveOptionsMenu"
-            onClick={e => {
-              this.handleOptionsMenu(e);
-            }}
-          >
-            <MoreVertIcon />
-          </IconButton>
-        </Toolbar>
+        <MainToolbar
+          classes={classes}
+          isReadOnlyMode={isReadOnlyMode}
+          selectedEntries={selectedEntries}
+          loadParentDirectoryContent={loadParentDirectoryContent}
+          toggleSelectAllFiles={toggleSelectAllFiles}
+          allFilesSelected={allFilesSelected}
+          handleLayoutSwitch={handleLayoutSwitch}
+          openAddRemoveTagsDialog={openAddRemoveTagsDialog}
+          fileOperationsEnabled={fileOperationsEnabled}
+          openMoveCopyFilesDialog={openMoveCopyFilesDialog}
+          openDeleteFileDialog={openDeleteFileDialog}
+          handleSortingMenu={handleSortingMenu}
+          handleOptionsMenu={handleOptionsMenu}
+        />
         <div style={{
           height: '100%',
           backgroundColor: theme.palette.background.default
