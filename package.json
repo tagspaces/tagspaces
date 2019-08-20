@@ -55,7 +55,7 @@
     "cordova-create-app": "cordova create ./cordova org.tagspaces.mobile TagSpaces",
     "start-android": "yarn build-cordova && yarn run-android",
     "start-android-dev": "yarn prepare-cordova && yarn build-cordova-dev && yarn run-android",
-    "update-changelog": "git log v3.1.6..HEAD --no-merges --format=%B > CHANGELOG.TXT",
+    "update-changelog": "git log v3.2.0..HEAD --no-merges --format=%B > CHANGELOG.TXT",
     "clean": "rimraf app/dist && rimraf node_modules && rimraf app/node_modules",
     "source-map-app": "source-map-explorer app/dist/*.* --html reports/source-map-app.html",
     "source-map-web": "source-map-explorer web/dist/*.* --html reports/source-map-web.html",
