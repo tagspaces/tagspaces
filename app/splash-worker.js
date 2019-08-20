@@ -34,7 +34,12 @@ function init() {
       console.time('createDirectoryIndex');
       const directoryIndex = [];
       let counter = 0;
-      walkDirectory(arg.path, { recursive: true, skipMetaFolder: true, extractText: arg.extractText }, (fileEntry) => {
+      walkDirectory(arg.path, {
+        recursive: true,
+        skipMetaFolder: true,
+        skipDotHiddenFolder: true,
+        extractText: arg.extractText
+      }, (fileEntry) => {
         counter += 1;
         if (counter > AppConfig.indexerLimit) {
           console.warn('Walk canceled by ' + AppConfig.indexerLimit);
