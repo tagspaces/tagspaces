@@ -27,7 +27,7 @@ let isGeneratingThumbs = false;
 function init() {
   console.log('Init worker');
   ipcRenderer.on('worker', (event, arg) => {
-    // console.log('worker recieved: ' + JSON.stringify(arg));
+    // console.log('worker received: ' + JSON.stringify(arg));
     switch (arg.action) {
     case 'createDirectoryIndex': {
       console.log('createDirectoryIndex started in worker window');
@@ -118,7 +118,7 @@ function init() {
           id: arg.id,
           action: arg.action,
           result: [],
-          error: 'Error generating tmbs: ' + error
+          error: 'Error generating thumbnails: ' + error
         });
         ipcRenderer.send('setSplashVisibility', {
           visibility: false,
