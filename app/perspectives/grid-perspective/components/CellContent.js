@@ -36,7 +36,6 @@ import {
 } from '../../../services/utils-io';
 import TagContainerDnd from '../../../components/TagContainerDnd';
 import TagContainer from '../../../components/TagContainer';
-import TagDropContainer from '../../../components/TagDropContainer';
 import AppConfig from '../../../config';
 import i18n from '../../../services/i18n';
 import { type Tag } from '../../../reducers/taglibrary';
@@ -310,25 +309,23 @@ const CellContent = (props: Props) => {
   }
 
   return (
-    <TagDropContainer entryPath={fsEntry.path}>
-      <Paper
-        elevation={2}
-        data-entry-id={fsEntry.uuid}
-        className={classNames(
-          layoutType === 'grid' && classes.gridCell,
-          layoutType === 'row' && classes.rowCell,
-          selected && layoutType === 'grid' && classes.selectedGridCell,
-          selected && layoutType === 'row' && classes.selectedRowCell
-        )}
-        style={{
-          minHeight: layoutType === 'row' ? entryHeight : 'auto',
-          backgroundColor: theme.palette.background.default
-        }}
-        onContextMenu={event => handleGridContextMenu(event, fsEntry)}
-        onDoubleClick={event => handleGridCellDblClick(event, fsEntry)}
-        onClick={event => handleGridCellClick(event, fsEntry)}
-      >{gridCell}</Paper>
-    </TagDropContainer>
+    <Paper
+      elevation={2}
+      data-entry-id={fsEntry.uuid}
+      className={classNames(
+        layoutType === 'grid' && classes.gridCell,
+        layoutType === 'row' && classes.rowCell,
+        selected && layoutType === 'grid' && classes.selectedGridCell,
+        selected && layoutType === 'row' && classes.selectedRowCell
+      )}
+      style={{
+        minHeight: layoutType === 'row' ? entryHeight : 'auto',
+        backgroundColor: theme.palette.background.default
+      }}
+      onContextMenu={event => handleGridContextMenu(event, fsEntry)}
+      onDoubleClick={event => handleGridCellDblClick(event, fsEntry)}
+      onClick={event => handleGridCellClick(event, fsEntry)}
+    >{gridCell}</Paper>
   );
 };
 

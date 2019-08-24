@@ -74,6 +74,7 @@ import TargetMoveFileBox from '../../../components/TargetMoveFileBox';
 import FileSourceDnd from '../../../components/FileSourceDnd';
 import AppConfig from '../../../config';
 import DragItemTypes from '../../../components/DragItemTypes';
+import TagDropContainer from '../../../components/TagDropContainer';
 import IOActions from '../../../reducers/io-actions';
 import {
   actions as AppActions,
@@ -589,23 +590,25 @@ class GridPerspective extends React.Component<Props, State> {
     }
 
     const cellContent = (
-      <CellContent
-        selected={selected}
-        fsEntry={fsEntry}
-        entrySize={entrySize}
-        classes={classes}
-        theme={theme}
-        supportedFileTypes={supportedFileTypes}
-        thumbnailMode={thumbnailMode}
-        addTags={addTags}
-        selectedEntries={selectedEntries}
-        isReadOnlyMode={this.props.isReadOnlyMode}
-        handleTagMenu={this.handleTagMenu}
-        layoutType={layoutType}
-        handleGridContextMenu={this.handleGridContextMenu}
-        handleGridCellDblClick={this.handleGridCellDblClick}
-        handleGridCellClick={this.handleGridCellClick}
-      />
+      <TagDropContainer entryPath={fsEntry.path}>
+        <CellContent
+          selected={selected}
+          fsEntry={fsEntry}
+          entrySize={entrySize}
+          classes={classes}
+          theme={theme}
+          supportedFileTypes={supportedFileTypes}
+          thumbnailMode={thumbnailMode}
+          addTags={addTags}
+          selectedEntries={selectedEntries}
+          isReadOnlyMode={this.props.isReadOnlyMode}
+          handleTagMenu={this.handleTagMenu}
+          layoutType={layoutType}
+          handleGridContextMenu={this.handleGridContextMenu}
+          handleGridCellDblClick={this.handleGridCellDblClick}
+          handleGridCellClick={this.handleGridCellClick}
+        />
+      </TagDropContainer>
     );
 
 
