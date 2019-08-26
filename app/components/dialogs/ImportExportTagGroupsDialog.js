@@ -44,17 +44,20 @@ const styles = {
 };
 
 type Props = {
+  classes: Object,
   open: boolean,
   onClose: () => void,
   dialogModeImport: boolean,
-  showNotification: (text: string, notificationType: string, autohide: boolean) => void
+  showNotification: (text: string) => void,
+  importTagGroups: () => void,
+  exportTagGroups: () => void
 };
 
 type State = {
   errorTextName: boolean,
   disableConfirmButton: boolean,
   open: boolean,
-  tagGroupList: null | Array,
+  tagGroupList: Array<Object>,
   checkedAll: boolean,
   selectedAll: boolean
 };
@@ -65,10 +68,11 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
     disableConfirmButton: true,
     open: false,
     selectedAll: false,
+    checkedAll: false,
     tagGroupList: []
   };
 
-  componentWillReceiveProps = (nextProps: any) => {
+  componentWillReceiveProps = (nextProps: Props) => {
     if (nextProps.open === true) {
       const tagGroupList = [];
       const tagGroups = nextProps.tagGroups;
@@ -100,6 +104,7 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
         expanded: entry.expanded,
         selected: !this.state.selectedAll
       });
+      return true;
     });
     this.setState({ tagGroupList, selectedAll: !this.state.selectedAll }, this.handleValidation);
   };
@@ -114,6 +119,7 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
       if (n.selected === true) {
         selected = true;
       }
+      return true;
     });
     if (selected) {
       this.setState({ disableConfirmButton: false });
@@ -137,7 +143,7 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
     const { showNotification } = this.props;
     const groupList = [];
     const selectedTagGroup = this.state.tagGroupList;
-    selectedTagGroup.map((tagGroup, i) => {
+    selectedTagGroup.map((tagGroup) => {
       if (tagGroup.selected) {
         groupList.push({
           uuid: tagGroup.uuid || tagGroup.key,
@@ -148,6 +154,7 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
           expanded: tagGroup.expanded
         });
       }
+      return true;
     });
     this.props.onClose();
     if (this.props.dialogModeImport) {

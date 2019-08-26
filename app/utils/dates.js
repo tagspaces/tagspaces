@@ -237,7 +237,7 @@ export function formatDateTime(date: Date): string {
 }
 
 /** Converts 'Sun May 11, 2014' to 2014-05 */
-export function parseDateMonth(date) {
+export function parseDateMonth(date: string) {
   const d = new Date(date);
   let month = '' + (d.getMonth() + 1);
   const year = d.getFullYear();
@@ -249,7 +249,7 @@ export function parseDateMonth(date) {
 }
 
 /** Converts 'Sun May 11, 2014' to 2014-05-11 */
-export function parseDate(date) {
+export function parseDate(date: string) {
   const d = new Date(date);
   let month = '' + (d.getMonth() + 1);
   let day = '' + d.getDate();
@@ -320,13 +320,13 @@ export function formatDate(date) {
   return [year, month, day].join('-');
 }
 
-export function toHHMMSS(time) {
+export function toHHMMSS(time: string): string {
   const match = time.match(/(\d{2})(\d{2})(\d{2})/);
   return match[1] + ':' + match[2] + ':' + match[3];
 }
 
-export function convertToDate(date) {
-  const d = new Date(date);
+export function convertToDate(date: string) {
+  const d: Date = new Date(date);
   // missing radix parameter to parseInt
   const parseToInt = parseInt(date, 10);
   let dateStr;
@@ -362,7 +362,7 @@ export function convertToDate(date) {
   }
 }
 
-export function convertToDateTime(dateTime) {
+export function convertToDateTime(dateTime: string) {
   const dateTimeRegExp = /^\d\d\d\d-(00|[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9])$/g;
   const dateTimeWinRegExp = /^(([0-1]?[0-9])|([2][0-3]))!([0-5]?[0-9])(!([0-5]?[0-9]))?$/g;
   const dateTimeWin1RegExp = /^(([0-1]?[0-9])|([2][0-3]))~([0-5]?[0-9])(!([0-5]?[0-9]))?$/g;
@@ -408,7 +408,7 @@ export function convertToDateTime(dateTime) {
   }
 }
 
-export function convertToDateRange(dateRange) {
+export function convertToDateRange(dateRange: string) {
   const dateRangeRegExp = /^([0]?[1-9]|[1|2][0-9]|[3][0|1])[-]([0]?[1-9]|[1][0-2])$/g;
   if (dateRange.match(dateRangeRegExp) || dateRange.search('-')) {
     const range = dateRange.split('-');
@@ -418,7 +418,7 @@ export function convertToDateRange(dateRange) {
   }
 }
 
-export function splitValue(value, index) {
+export function splitValue(value: string, index: number) {
   const currentLat = value.substring(0, index);
   const currentLng = value.substring(index);
 

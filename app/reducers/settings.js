@@ -363,7 +363,7 @@ export const actions = {
       console.log('Last version on server: ' + lastVersion);
       const newVersion = semver.coerce(lastVersion); // lastVersion '3.0.5' ;
       const currentVersion = semver.coerce(versionMeta.version);
-      const lastPublishedVersion = semver.coerce(settings.lastPublishedVersion);
+      // const lastPublishedVersion = semver.coerce(settings.lastPublishedVersion);
       if (semver.valid(newVersion) && semver.gt(newVersion, currentVersion)) {
         console.log('New version available: ' + newVersion.version + '!');
         dispatch(actions.setLastPublishedVersion(newVersion.version));
