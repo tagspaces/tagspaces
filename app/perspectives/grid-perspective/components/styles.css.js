@@ -82,7 +82,7 @@ export default (theme) => ({
     margin: 2,
     backgroundColor: theme.palette.background.paper,
     opacity: 0.6,
-    wordBreak: 'break-all',
+    wordBreak: 'break-word',
     display: 'block'
   },
   gridFileExtension: {
