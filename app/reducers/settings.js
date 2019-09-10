@@ -435,7 +435,12 @@ export const getLeftVerticalSplitSize = (state: Object) => state.settings.leftVe
 export const getMainVerticalSplitSize = (state: Object) => state.settings.mainVerticalSplitSize;
 export const getTagDelimiter = (state: Object) => state.settings.tagDelimiter;
 export const getMaxSearchResults = (state: Object) => state.settings.maxSearchResult;
-export const isFirstRun = (state: Object) => window.ExtIsFirstRun || state.settings.firstRun;
+export const isFirstRun = (state: Object) => {
+  if (typeof window.ExtIsFirstRun === 'undefined') {
+    return state.settings.firstRun;
+  }
+  return window.ExtIsFirstRun;
+};
 
 function generateKeyBindingObject(keyBindings: Array<Object>) {
   const kbObject = {};
