@@ -777,7 +777,7 @@ class EntryProperties extends Component<Props, State> {
               <Typography variant="caption" className={classNames(classes.entryLabel, classes.header)} style={{ display: 'block' }}>
                 {i18n.t('core:filePath')}
               </Typography>
-              {!isReadOnlyMode && (
+              {isFile && !isReadOnlyMode && (
                 <Button
                   color="primary"
                   // style={{ paddingBottom: 0 }}
