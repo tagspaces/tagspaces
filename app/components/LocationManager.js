@@ -607,7 +607,7 @@ class LocationManager extends React.Component<Props, State> {
             //   e.preventDefault();
             //   this.loadSubDirectories(location, 1);
             // }}
-            style={{ marginRight: 0 }}
+            style={{ minWidth: 'auto' }}
           >
             { location.type === locationType.TYPE_CLOUD ?
               (<CloudLocationIcon className={this.props.classes.icon} />) :
@@ -630,6 +630,7 @@ class LocationManager extends React.Component<Props, State> {
               <IconButton
                 aria-label={i18n.t('core:options')}
                 aria-haspopup="true"
+                edge="end"
                 data-tid={'locationMoreButton_' + location.name}
                 onClick={event => this.handleLocationContextMenuClick(event, location)}
                 onContextMenu={event => this.handleLocationContextMenuClick(event, location)}

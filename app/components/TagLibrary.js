@@ -223,7 +223,7 @@ class TagLibrary extends React.Component<Props, State> {
           onContextMenu={event => this.handleTagGroupMenu(event, tagGroup)}
           title={'Number of tags in this tag group: ' + tagGroup.children.length}
         >
-          <ListItemIcon style={{ marginRight: 0 }}>
+          <ListItemIcon style={{ minWidth: 'auto' }}>
             {tagGroup.expanded ? <ArrowDownIcon /> : <ArrowRightIcon />}
           </ListItemIcon>
           <Typography
@@ -243,8 +243,8 @@ class TagLibrary extends React.Component<Props, State> {
               <IconButton
                 aria-label={i18n.t('core:options')}
                 aria-haspopup="true"
+                edge="end"
                 data-tid={'tagLibraryMoreButton_' + tagGroup.title.replace(/ /g, '_')}
-                style={{ marginRight: -4 }}
                 onClick={event => this.handleTagGroupMenu(event, tagGroup)}
                 onContextMenu={event => this.handleTagGroupMenu(event, tagGroup)}
               >
@@ -304,7 +304,6 @@ class TagLibrary extends React.Component<Props, State> {
           </Typography>
           { !isTagLibraryReadOnly && (
             <IconButton
-              style={{ paddingTop: 0 }}
               data-tid="tagLibraryMenu"
               onClick={this.handleTagLibraryMenu}
             >
