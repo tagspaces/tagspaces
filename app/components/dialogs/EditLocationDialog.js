@@ -304,7 +304,7 @@ class EditLocationDialog extends React.Component<Props, State> {
                 row
               >
                 <FormControlLabel value={locationType.TYPE_LOCAL} control={<Radio />} label="Local" />
-                <FormControlLabel value={locationType.TYPE_CLOUD} control={<Radio />} title="AWS S3 compatible object storage" label="AWS S3 Object Storage [BETA]" />
+                <FormControlLabel value={locationType.TYPE_CLOUD} control={<Radio />} title="AWS S3 compatible object storage" label="AWS S3 Object Storage" />
               </RadioGroup>
             </FormControl>
           </Grid>
