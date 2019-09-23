@@ -1,5 +1,44 @@
 # Changelog
 
+## Version 3.2.3 / 2019.09.23
+
+### Community
+- 🌟 Improving showing file and folder description in grid mode
+- 🌟 Hiding the button for moving folders from the properties section
+- 🌟 Changing the default background color for thumbnails to white
+- 🐛 Fixing adding new file types issue
+- 🐛 Fixing version check crash in the About dialog [#1016](https://github.com/tagspaces/tagspaces/issues/1016)
+- 🐛 Fixing word wrap on cell description
+- 🐛 Fixing file moving issue with drag and drop [#1017](https://github.com/tagspaces/tagspaces/issues/1017)
+
+
+## Version 3.2.1 / 2019.08.20
+
+### Community
+- 🌟 Major refactoring of the smart tags functionalities, smart tags are now ignored by the tag library exports
+- 🌟 Fixing row's compact mode in grid perspective
+- 🌟 Translations for spanish, german, check and other languages updated
+- 🌟 Improvements in the settings dialog
+- 🌟 Many small user interface and usability changes
+- 🌟 Add show in file manager functionality to the location context menu [#1010](https://github.com/tagspaces/tagspaces/issues/1010)
+- 🌟 Now the .ts folders are created only when needed [#998](https://github.com/tagspaces/tagspaces/issues/998)
+- 🌟 Showing file entries count in the search results [#991](https://github.com/tagspaces/tagspaces/issues/991)
+- 🌟 Skipping Unix like hidden folders (name starting with .) by the index generation
+- 🌟 Search is now started on change of the criteria in the search section
+- 🌟 Version number added on the right to the app logo
+- 🐛 Fixing [#908](https://github.com/tagspaces/tagspaces/issues/908) multiple file selection on Mac OS
+- 🐛 Fixing user interface shift on location change in some web browsers
+- 🐛 Fixing [#1009](https://github.com/tagspaces/tagspaces/issues/1009) tagging issue
+- 🐛 Fixing audio playback issues on Android
+- 🐛 Disabling the tray icon and menu on Mac OS
+- 🐛 Bug when add new Tag [#997](https://github.com/tagspaces/tagspaces/issues/997)
+
+### Pro
+- 🎉 Implemented ability to add geo locations as tags (geo-tagging)
+- 🎉 Implemented ability to tag files with custom date and time
+- 🎉 Implemented feature for changing the thumbnail of any file or directory manually
+- 🐛 Fixing broken download functionality on s3 locations
+
 ### Version 3.1.4 / 2019.04.04*
 
 ### Community
