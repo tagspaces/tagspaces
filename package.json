@@ -46,7 +46,7 @@
     "prepare-web": "rimraf web/dist && rimraf web/node_modules && cp -r app/node_modules web && cp LICENSE.txt web",
     "prepare-cordova": "rimraf cordova/www/dist && rimraf cordova/www/node_modules && cp -Lr app/node_modules cordova/www && cp LICENSE.txt cordova/www",
     "clean": "rimraf node_modules && rimraf app/dist",
-    "clean-pro": "yarn clean-map && rimraf app/node_modules/@tagspaces/pro/*.js && rimraf app/node_modules/@tagspaces/pro/lib/ && rimraf app/node_modules/@tagspaces/pro/modules/ && rimraf app/node_modules/@tagspaces/pro/test/",
+    "clean-pro": "yarn clean-maps && rimraf app/node_modules/@tagspaces/pro/*.js && rimraf app/node_modules/@tagspaces/pro/lib/ && rimraf app/node_modules/@tagspaces/pro/modules/ && rimraf app/node_modules/@tagspaces/pro/test/",
     "clean-maps": "rimraf app/dist/**/*.map && rimraf web/dist/**/*.map",
     "install-ext": "cd app && yarn install --force --prod --no-lockfile && cd ..",
     "setup-ext": "node scripts/setupextensions.js",
