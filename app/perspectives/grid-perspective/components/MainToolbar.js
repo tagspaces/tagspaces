@@ -24,13 +24,15 @@ import IconButton from '@material-ui/core/IconButton';
 import ParentDirIcon from '@material-ui/icons/SubdirectoryArrowLeft';
 import ViewGridIcon from '@material-ui/icons/ViewModule';
 import SwapVertIcon from '@material-ui/icons/SwapVert';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ViewListIcon from '@material-ui/icons/ViewList';
 import TagIcon from '@material-ui/icons/LocalOffer';
 import SelectAllIcon from '@material-ui/icons/CheckBox';
 import DeSelectAllIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CopyIcon from '@material-ui/icons/FileCopy';
 import DeleteIcon from '@material-ui/icons/Delete';
+import {
+  type FileSystemEntry,
+} from '../../../services/utils-io';
 import {
   actions as AppActions,
   getLastSelectedEntry,
@@ -55,7 +57,10 @@ type Props = {
   openDeleteFileDialog: () => void,
   handleSortingMenu: () => void,
   handleOptionsMenu: () => void,
-  isAppLoading: boolean
+  isAppLoading: boolean,
+  directoryContent: Array<FileSystemEntry>,
+  currentDirectoryColor: string,
+  layoutType: string,
 };
 
 const MainToolbar = (props: Props) => {
@@ -77,105 +82,102 @@ const MainToolbar = (props: Props) => {
     fileOperationsEnabled,
     handleSortingMenu,
     handleOptionsMenu,
-    theme
   } = props;
 
-  function renderGridToolbar() {
-    return (
-      <Toolbar className={classes.topToolbar} data-tid="perspectiveGridToolbar">
+  return (
+    <Toolbar className={classes.topToolbar} data-tid="perspectiveGridToolbar">
+      <IconButton
+        title={i18n.t('core:toggleSelectAllFiles')}
+        data-tid="gridPerspectiveSelectAllFiles"
+        onClick={toggleSelectAllFiles}
+      >
+        {allFilesSelected ? <SelectAllIcon /> : <DeSelectAllIcon />}
+      </IconButton>
+      <IconButton
+        title={i18n.t('core:navigateToParentDirectory')}
+        aria-label={i18n.t('core:navigateToParentDirectory')}
+        data-tid="gridPerspectiveOnBackButton"
+        onClick={loadParentDirectoryContent}
+      >
+        <ParentDirIcon />
+      </IconButton>
+      {layoutType === 'row' ? (
         <IconButton
-          title={i18n.t('core:toggleSelectAllFiles')}
-          data-tid="gridPerspectiveSelectAllFiles"
-          onClick={toggleSelectAllFiles}
-        >
-          {allFilesSelected ? <SelectAllIcon /> : <DeSelectAllIcon />}
-        </IconButton>
-        <IconButton
-          title={i18n.t('core:navigateToParentDirectory')}
-          aria-label={i18n.t('core:navigateToParentDirectory')}
-          data-tid="gridPerspectiveOnBackButton"
-          onClick={loadParentDirectoryContent}
-        >
-          <ParentDirIcon />
-        </IconButton>
-        {layoutType === 'row' ? (
-          <IconButton
-            title={i18n.t('core:switchToGridView')}
-            aria-label={i18n.t('core:switchToGridView')}
-            data-tid="gridPerspectiveSwitchLayoutToGrid"
-            onClick={() => {
-              handleLayoutSwitch('grid');
-            }}
-          >
-            <ViewGridIcon />
-          </IconButton>
-        ) : (
-          <IconButton
-            title={i18n.t('core:switchToListView')}
-            aria-label={i18n.t('core:switchToListView')}
-            data-tid="gridPerspectiveSwitchLayoutToRow"
-            onClick={() => {
-              handleLayoutSwitch('row');
-            }}
-          >
-            <ViewListIcon />
-          </IconButton>
-        )}
-        {!isReadOnlyMode && (
-          <IconButton
-            title={i18n.t('core:tagSelectedEntries')}
-            aria-label={i18n.t('core:tagSelectedEntries')}
-            data-tid="gridPerspectiveAddRemoveTags"
-            disabled={selectedEntries.length < 1}
-            onClick={openAddRemoveTagsDialog}
-          >
-            <TagIcon />
-          </IconButton>
-        )}
-        {!isReadOnlyMode && (
-          <IconButton
-            title={i18n.t('core:copyMoveSelectedEntries')}
-            aria-label={i18n.t('core:copyMoveSelectedEntries')}
-            data-tid="gridPerspectiveCopySelectedFiles"
-            disabled={!fileOperationsEnabled}
-            onClick={openMoveCopyFilesDialog}
-          >
-            <CopyIcon />
-          </IconButton>
-        )}
-        {!isReadOnlyMode && (
-          <IconButton
-            title={i18n.t('core:deleteSelectedEntries')}
-            aria-label={i18n.t('core:deleteSelectedEntries')}
-            data-tid="gridPerspectiveDeleteMultipleFiles"
-            disabled={!fileOperationsEnabled}
-            onClick={openDeleteFileDialog}
-          >
-            <DeleteIcon />
-          </IconButton>
-        )}
-        <IconButton
-          title={i18n.t('core:sort')}
-          aria-label={i18n.t('core:sort')}
-          data-tid="gridPerspectiveSortMenu"
-          onClick={e => {
-            handleSortingMenu(e);
+          title={i18n.t('core:switchToGridView')}
+          aria-label={i18n.t('core:switchToGridView')}
+          data-tid="gridPerspectiveSwitchLayoutToGrid"
+          onClick={() => {
+            handleLayoutSwitch('grid');
           }}
         >
-          <SwapVertIcon />
+          <ViewGridIcon />
         </IconButton>
+      ) : (
         <IconButton
-          title={i18n.t('core:options')}
-          data-tid="gridPerspectiveOptionsMenu"
-          onClick={e => {
-            handleOptionsMenu(e);
+          title={i18n.t('core:switchToListView')}
+          aria-label={i18n.t('core:switchToListView')}
+          data-tid="gridPerspectiveSwitchLayoutToRow"
+          onClick={() => {
+            handleLayoutSwitch('row');
           }}
         >
-          <MoreVertIcon />
+          <ViewListIcon />
         </IconButton>
-      </Toolbar>
-    );
-  }
+      )}
+      {!isReadOnlyMode && (
+        <IconButton
+          title={i18n.t('core:tagSelectedEntries')}
+          aria-label={i18n.t('core:tagSelectedEntries')}
+          data-tid="gridPerspectiveAddRemoveTags"
+          disabled={selectedEntries.length < 1}
+          onClick={openAddRemoveTagsDialog}
+        >
+          <TagIcon />
+        </IconButton>
+      )}
+      {!isReadOnlyMode && (
+        <IconButton
+          title={i18n.t('core:copyMoveSelectedEntries')}
+          aria-label={i18n.t('core:copyMoveSelectedEntries')}
+          data-tid="gridPerspectiveCopySelectedFiles"
+          disabled={!fileOperationsEnabled}
+          onClick={openMoveCopyFilesDialog}
+        >
+          <CopyIcon />
+        </IconButton>
+      )}
+      {!isReadOnlyMode && (
+        <IconButton
+          title={i18n.t('core:deleteSelectedEntries')}
+          aria-label={i18n.t('core:deleteSelectedEntries')}
+          data-tid="gridPerspectiveDeleteMultipleFiles"
+          disabled={!fileOperationsEnabled}
+          onClick={openDeleteFileDialog}
+        >
+          <DeleteIcon />
+        </IconButton>
+      )}
+      <IconButton
+        title={i18n.t('core:sort')}
+        aria-label={i18n.t('core:sort')}
+        data-tid="gridPerspectiveSortMenu"
+        onClick={e => {
+          handleSortingMenu(e);
+        }}
+      >
+        <SwapVertIcon />
+      </IconButton>
+      <IconButton
+        title={i18n.t('core:options')}
+        data-tid="gridPerspectiveOptionsMenu"
+        onClick={e => {
+          handleOptionsMenu(e);
+        }}
+      >
+        <MoreVertIcon />
+      </IconButton>
+    </Toolbar>
+  );
 };
 
 export default MainToolbar;
