@@ -21,16 +21,16 @@ import React from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
 
-export function DialogTransition(props) {
+export function DialogTransition(props: Object) {
   return <Slide direction="down" {...props} />;
 }
 
 type Props = {
   open: boolean,
-  fullScreen: boolean,
+  fullScreen?: boolean,
   onClose: () => void,
-  onBackdropClick: () => void,
-  onEnterKey: () => void,
+  onBackdropClick?: () => void,
+  onEnterKey?: () => void,
   renderTitle: () => Object,
   renderContent: () => Object,
   renderActions: () => Object

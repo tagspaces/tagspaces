@@ -82,7 +82,7 @@ export default (theme) => ({
     textTransform: 'uppercase',
     flex: 1,
     paddingLeft: 5,
-    paddingTop: 6,
+    paddingTop: 12,
   },
   nested: {
     paddingLeft: theme.spacing(4)

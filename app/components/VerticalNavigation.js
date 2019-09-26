@@ -422,7 +422,7 @@ class VerticalNavigation extends React.Component<Props, State> {
           <div style={this.styles.panel}>
             <IconButton
               onClick={this.props.toggleAboutDialog}
-              style={{ ...this.styles.button, marginTop: 10, marginBottom: 10 }}
+              style={{ ...this.styles.button, marginTop: 10, marginBottom: 16 }}
               title={i18n.t('core:aboutTitle')}
               data-tid="aboutTagSpaces"
             >

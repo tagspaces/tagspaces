@@ -61,6 +61,7 @@ const styles = theme => ({
   input: {
     display: 'flex',
     padding: 0,
+    height: 36,
     marginTop: 10
   },
   valueContainer: {
@@ -266,7 +267,6 @@ class ObjectStoreForm extends React.Component<Props> {
           >
             <InputLabel htmlFor="accessKeyId">{i18n.t('core:accessKeyId')}</InputLabel>
             <Input
-              required
               margin="dense"
               name="accessKeyId"
               label={i18n.t('core:accessKeyId')}
@@ -285,7 +285,6 @@ class ObjectStoreForm extends React.Component<Props> {
           >
             <InputLabel htmlFor="secretAccessKey">{i18n.t('core:secretAccessKey')}</InputLabel>
             <Input
-              required
               margin="dense"
               name="secretAccessKey"
               type="password"

@@ -18,15 +18,12 @@
  */
 
 import React, { Component } from 'react';
-// import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 // import injectTapEventPlugin from 'react-tap-event-plugin';
 import { I18nextProvider } from 'react-i18next'; // as we build ourself via webpack
 import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
 import { HotKeys } from 'react-hotkeys';
-// import lightTheme from '../assets/tspurple';
-// import darkTheme from '../assets/tsgreen';
 import '../assets/fonts/roboto/index.css';
 import i18n from '../services/i18n';
 import { getCurrentTheme, getKeyBindingObject } from '../reducers/settings';
@@ -69,22 +66,22 @@ const darkTheme = createMuiTheme({
   }
 });
 
-const lightBlueTheme = createMuiTheme({
-  palette: {
-    type: 'light', // Switching the dark mode on is a single property value change.
-    primary: {
-      light: '#cbe9fa',
-      main: '#19aeff',
-      dark: '#19aeff',
-      contrastText: '#ffffff',
-    },
-    secondary: {
-      main: '#19aeff',
-    },
-    divider: '#ddd'
-    // secondary: { main: '#cccccc', 200: '#ddd' }
-  }
-});
+// const lightBlueTheme = createMuiTheme({
+//   palette: {
+//     type: 'light', // Switching the dark mode on is a single property value change.
+//     primary: {
+//       light: '#cbe9fa',
+//       main: '#19aeff',
+//       dark: '#19aeff',
+//       contrastText: '#ffffff',
+//     },
+//     secondary: {
+//       main: '#19aeff',
+//     },
+//     divider: '#ddd'
+//     // secondary: { main: '#cccccc', 200: '#ddd' }
+//   }
+// });
 
 class App extends Component {
   props: {

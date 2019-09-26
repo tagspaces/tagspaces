@@ -102,7 +102,12 @@ export function createDirectoryIndex(directoryPath: string, extractText: boolean
       const directoryIndex = [];
       let counter = 0;
       console.time('createDirectoryIndex');
-      walkDirectory(dirPath, { recursive: true, skipMetaFolder: true, extractText }, (fileEntry) => {
+      walkDirectory(dirPath, {
+        recursive: true,
+        skipMetaFolder: true,
+        skipDotHiddenFolder: true,
+        extractText
+      }, (fileEntry) => {
         counter += 1;
         if (counter > AppConfig.indexerLimit) {
           console.warn('Walk canceled by ' + AppConfig.indexerLimit);
@@ -139,6 +144,7 @@ export function walkDirectory(
   const mergedOptions = {
     recursive: false,
     skipMetaFolder: true,
+    skipDotHiddenFolder: false,
     loadMetaDate: true,
     extractText: false,
     ...options
@@ -164,6 +170,9 @@ export function walkDirectory(
       }
 
       if (mergedOptions.recursive) {
+        if (mergedOptions.skipDotHiddenFolder && entry.name.startsWith('.')) {
+          return entry;
+        }
         if (mergedOptions.skipMetaFolder && entry.name === AppConfig.metaFolder) {
           return entry;
         }

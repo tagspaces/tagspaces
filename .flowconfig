@@ -14,9 +14,11 @@
 <PROJECT_ROOT>/cordova/.*
 <PROJECT_ROOT>/reports/.*
 <PROJECT_ROOT>/tsprofile/.*
+<PROJECT_ROOT>/flow-typed/.*
 <PROJECT_ROOT>/web/.*
 
 [include]
+<PROJECT_ROOT>/app/.*
 
 [libs]
 

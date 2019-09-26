@@ -74,6 +74,7 @@ export default (state = defaultSettings, action) => {
   case types.UPGRADE_SETTINGS: {
     const mergedKeyBindings = defaultSettings.keyBindings.map(x => Object.assign(x, state.keyBindings.find(y => y.name === x.name)));
     const mergedFileTypes = defaultSettings.supportedFileTypes.map(x => Object.assign(x, state.supportedFileTypes.find(y => y.type === x.type)));
+    const combinedFileTypes = state.supportedFileTypes.map(x => Object.assign(x, mergedFileTypes.find(y => y.type === x.type)));
     return {
       ...defaultSettings,
       ...state,
@@ -85,7 +86,7 @@ export default (state = defaultSettings, action) => {
       ],
       supportedFileTypes: [
         // ...defaultSettings.supportedFileTypes, // use to reset to the default file types
-        ...mergedFileTypes
+        ...combinedFileTypes
       ]
     };
   }
@@ -363,7 +364,7 @@ export const actions = {
       console.log('Last version on server: ' + lastVersion);
       const newVersion = semver.coerce(lastVersion); // lastVersion '3.0.5' ;
       const currentVersion = semver.coerce(versionMeta.version);
-      const lastPublishedVersion = semver.coerce(settings.lastPublishedVersion);
+      // const lastPublishedVersion = semver.coerce(settings.lastPublishedVersion);
       if (semver.valid(newVersion) && semver.gt(newVersion, currentVersion)) {
         console.log('New version available: ' + newVersion.version + '!');
         dispatch(actions.setLastPublishedVersion(newVersion.version));
@@ -435,7 +436,12 @@ export const getLeftVerticalSplitSize = (state: Object) => state.settings.leftVe
 export const getMainVerticalSplitSize = (state: Object) => state.settings.mainVerticalSplitSize;
 export const getTagDelimiter = (state: Object) => state.settings.tagDelimiter;
 export const getMaxSearchResults = (state: Object) => state.settings.maxSearchResult;
-export const isFirstRun = (state: Object) => state.settings.firstRun;
+export const isFirstRun = (state: Object) => {
+  if (typeof window.ExtIsFirstRun === 'undefined') {
+    return state.settings.firstRun;
+  }
+  return window.ExtIsFirstRun;
+};
 
 function generateKeyBindingObject(keyBindings: Array<Object>) {
   const kbObject = {};

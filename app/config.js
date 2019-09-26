@@ -38,7 +38,7 @@ export default {
   prefixTagContainer: '',
   maxCollectedTag: 500,
   maxThumbSize: 400,
-  thumbBgColor: 'black',
+  thumbBgColor: '#FFFFFF',
   indexerLimit: 200000,
   // maxSearchResult: 1000,
   defaultFileColor: '#808080',

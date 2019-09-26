@@ -160,9 +160,7 @@ const AboutDialog = (props: Props) => {
     let versionInfo = 'Check for updates';
     if (newVersion && newVersion.length > 1) {
       if (updateAvailable) {
-        versionInfo = i18n.t('getNewVersion', {
-          newVersion: this.state.newVersion
-        });
+        versionInfo = i18n.t('getNewVersion', { newVersion });
       } else {
         versionInfo = i18n.t('latestVersion', { productName });
       }

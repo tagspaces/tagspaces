@@ -104,14 +104,14 @@ const EntryTagMenu = (props: Props) => {
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:showFilesWithThisTag')} />
         </MenuItem>
+        <MenuItem data-tid="editTagDialogMenu" onClick={showEditTagDialog}>
+          <ListItemIcon>
+            <EditIcon />
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:editTagTitle')} />
+        </MenuItem>
         {!props.isReadOnlyMode && (
           <div>
-            <MenuItem data-tid="editTagDialogMenu" onClick={showEditTagDialog}>
-              <ListItemIcon>
-                <EditIcon />
-              </ListItemIcon>
-              <ListItemText primary={i18n.t('core:editTagTitle')} />
-            </MenuItem>
             <MenuItem data-tid="deleteTagMenu" onClick={showDeleteTagDialog}>
               <ListItemIcon>
                 <DeleteIcon />

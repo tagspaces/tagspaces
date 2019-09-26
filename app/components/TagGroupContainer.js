@@ -38,11 +38,14 @@ const TagGroupContainer = (props: Props) => {
   const { canDrop, isOver, connectDropTarget } = props;
   const isActive = canDrop && isOver;
 
+  let border = '2px solid transparent';
   let backgroundColor = 'transparent';
   if (isActive) {
-    backgroundColor = 'rgb(233, 233, 233)';
+    border = '2px solid #f7cf00';
+    backgroundColor = '#d9d9d9b5';
   } else if (canDrop) {
-    backgroundColor = 'rgb(212, 212, 212)';
+    // border = '2px solid gray';
+    backgroundColor = '#d9d9d9b5';
   }
 
   return connectDropTarget(
@@ -53,6 +56,7 @@ const TagGroupContainer = (props: Props) => {
         paddingTop: 3,
         borderRadius: 5,
         minHeight: 20,
+        border,
         backgroundColor
       }}
     >

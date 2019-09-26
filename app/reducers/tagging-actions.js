@@ -55,7 +55,9 @@ const actions = {
       if (tag.functionality && tag.functionality.length > 0) {
         if (tag.functionality === 'geoTagging') {
           if (Pro) {
-            tag.path = paths[0]; // todo rethink this!
+            tag.path = paths[0]; // todo rethink and remove this!
+            delete tag.description;
+            delete tag.functionality;
             tag.title = defaultTagLocation;
             dispatch(AppActions.toggleEditTagDialog(tag));
           } else {
@@ -63,7 +65,9 @@ const actions = {
           }
         } else if (tag.functionality === 'dateTagging') {
           if (Pro) {
-            tag.path = paths[0];
+            tag.path = paths[0]; // todo rethinka and remove this!
+            delete tag.description;
+            delete tag.functionality;
             tag.title = formatDateTime4Tag(new Date(), true); // defaultTagDate;
             dispatch(AppActions.toggleEditTagDialog(tag));
           } else {
@@ -215,6 +219,9 @@ const actions = {
     getState: () => Object
   ) => {
     const { settings, taglibrary } = getState();
+    delete tag.description;
+    delete tag.functionality;
+    delete tag.path;
     // TODO: Handle adding already added tags
     if (tag.type === 'plain') {
       const fileName = extractFileName(path);
