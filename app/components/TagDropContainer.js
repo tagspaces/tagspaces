@@ -46,8 +46,8 @@ const TagDropContainer = (props: Props) => {
     border = '2px solid #f7cf00';
     backgroundColor = '#f7cf00';
   } else if (canDrop) {
-    border = '2px solid #ffeaa5';
-    backgroundColor = '#ffeaa5';
+    border = '2px solid lightgray';
+    backgroundColor = 'lightgray';
   }
 
   return connectDropTarget(
