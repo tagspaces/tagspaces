@@ -548,31 +548,10 @@ class VerticalNavigation extends React.Component<Props, State> {
           </div>
           {this.state.isManagementPanelVisible && (
             <div style={this.styles.panel}>
-              <LocationManager
-                style={{
-                  display: this.state.isLocationManagerVisible
-                    ? 'block'
-                    : 'none'
-                }}
-              />
-              <TagLibrary
-                togglePanel={this.togglePanel}
-                style={{
-                  display: this.state.isTagLibraryVisible ? 'block' : 'none'
-                }}
-              />
-              <Search
-                style={{
-                  display: this.state.isSearchVisible ? 'block' : 'none'
-                }}
-              />
-              <PerspectiveManager
-                style={{
-                  display: this.state.isPerspectiveManagerVisible
-                    ? 'block'
-                    : 'none'
-                }}
-              />
+              { this.state.isLocationManagerVisible && <LocationManager /> }
+              { this.state.isTagLibraryVisible && <TagLibrary togglePanel={this.togglePanel} /> }
+              { this.state.isSearchVisible && <Search /> }
+              { this.state.isPerspectiveManagerVisible && <PerspectiveManager /> }
             </div>
           )}
         </SplitPane>
