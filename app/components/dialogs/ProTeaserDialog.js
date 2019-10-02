@@ -201,7 +201,7 @@ class ProTeaserDialog extends React.Component<Props, State> {
               <Button
                 onClick={() => {
                   // this.props.onClose();
-                  PlatformIO.openUrl('https://www.tagspaces.org/products/pro/#s3objectStores');
+                  PlatformIO.openUrl('https://www.tagspaces.org/products/pro/#connectingObjectStores');
                 }}
                 variant="contained"
                 color="primary"
