@@ -5,6 +5,7 @@
 @import "assets/rc-datetime.css";
 @import "~rc-table/assets/index.css";
 @import "~leaflet/dist/leaflet.css";
+@import "~react-image-gallery/styles/css/image-gallery-no-icon.css";
 
 /* Needed to disable border on focused HotKey element */
 div[tabindex="-1"]:focus {
