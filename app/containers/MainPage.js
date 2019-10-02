@@ -434,6 +434,7 @@ class MainPage extends Component<Props, State> {
                 <FolderContainer
                   windowHeight={this.state.height}
                   windowWidth={this.state.width}
+                  toggleSearchPanel={this.toggleSearch}
                 />
                 <EntryContainer />
               </SplitPane>
