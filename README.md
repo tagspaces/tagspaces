@@ -168,7 +168,7 @@ Contributor License Agreement
 
 The CLA is an agreement commonly used in major open source project, which aims at protecting all parties implied by a contribution: the contributor, the main code author, and above all, the community. The CLA model we have chosen basically tells the following: the contribution’s copyright is shared between the contributor and the main author. This means each party can do whatever she want in term of relicensing with this contributed piece of code. This is important, because, if in the future, the author wants to change the license in something more in favor of the community, a singular contributor cannot block the process.
 
-The Contributor License Agreement can be signed online on the following [CLA form](http://tagspaces.org/contribute/).
+The Contributor License Agreement can be signed online on the following [CLA form](https://www.tagspaces.org/contribute/).
 
 ## Localisation
 TagSpaces is currently available in more than 20 languages. You can help the translation of this application in your language by joining the translation teams on [Transifex](https://www.transifex.com/tagspaces/tagspaces/).
@@ -188,4 +188,4 @@ If you are having troubles using TagSpaces or have found a bug please [open a ti
 - Subscribe to RSS feed updates for the [master branch](https://github.com/tagspaces/tagspaces/commits/master.atom)
 
 ## License
-TagSpaces's source code is licensed under the AGPL (GNU Affero General Public License) Version 3. The license text is available in the [LICENSE](LICENSE.txt) file.
+TagSpaces' source code is licensed under the AGPL (GNU Affero General Public License) Version 3. The license text is available in the [LICENSE](LICENSE.txt) file.
