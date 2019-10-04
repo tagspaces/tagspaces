@@ -743,7 +743,6 @@ export const extractNestedProp = (obj, keysText) => {
 
       // ... check if final target is reached ...
       if (keysIndex === keysLength) {
-
         // ... extract target prop
         targetProp = !isUndef(nextTarget) && !isNull(nextTarget) ? nextTarget : undefined;
         break;
@@ -751,7 +750,6 @@ export const extractNestedProp = (obj, keysText) => {
 
       // ... check if next target is not an object ...
       if (!isObj(nextTarget)) {
-
         // ... cancel sequence
         isValidKey = false;
         break;
