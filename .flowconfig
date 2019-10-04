@@ -1,22 +1,22 @@
 [ignore]
 .*/node_modules/*
-<PROJECT_ROOT>/app/main.prod.js
-<PROJECT_ROOT>/app/main.prod.js.map
-<PROJECT_ROOT>/app/dist/.*
-<PROJECT_ROOT>/resources/.*
-<PROJECT_ROOT>/internals/.*
-<PROJECT_ROOT>/release/.*
-<PROJECT_ROOT>/dll/.*
-<PROJECT_ROOT>/release/.*
-<PROJECT_ROOT>/.git/.*
-<PROJECT_ROOT>/tests/.*
-<PROJECT_ROOT>/cordova/.*
-<PROJECT_ROOT>/reports/.*
-<PROJECT_ROOT>/tsprofile/.*
-<PROJECT_ROOT>/web/.*
+./app/main.prod.js
+./app/main.prod.js.map
+./app/dist/.*
+./resources/.*
+./internals/.*
+./release/.*
+./dll/.*
+./release/.*
+./.git/.*
+./tests/.*
+./cordova/.*
+./reports/.*
+./tsprofile/.*
+./web/.*
 
 [include]
-<PROJECT_ROOT>/app/.*
+./app/.*
 
 [libs]
 
