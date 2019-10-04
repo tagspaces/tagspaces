@@ -1,6 +1,5 @@
 [ignore]
-<PROJECT_ROOT>/node_modules/.*
-<PROJECT_ROOT>/app/node_modules/.*
+.*/node_modules/*
 <PROJECT_ROOT>/app/main.prod.js
 <PROJECT_ROOT>/app/main.prod.js.map
 <PROJECT_ROOT>/app/dist/.*
@@ -14,7 +13,6 @@
 <PROJECT_ROOT>/cordova/.*
 <PROJECT_ROOT>/reports/.*
 <PROJECT_ROOT>/tsprofile/.*
-<PROJECT_ROOT>/flow-typed/.*
 <PROJECT_ROOT>/web/.*
 
 [include]
