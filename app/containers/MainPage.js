@@ -238,7 +238,6 @@ class MainPage extends Component<Props, State> {
         !nextProps.isHelpFeedbackPanelOpened) {
       this.setManagementPanelVisibility(false);
     }
-
   }
 
   componentWillUnmount() {
@@ -391,9 +390,7 @@ class MainPage extends Component<Props, State> {
     showFolderNavigator: this.props.openLocationManagerPanel,
     showTagLibrary: this.props.openTagLibraryPanel,
     openSearch: this.props.openSearchPanel,
-    showHelp: () => {
-      PlatformIO.openFile(AppConfig.documentationLinks.general);
-    },
+    showHelp: this.props.openHelpFeedbackPanel,
   };
 
   render() {

@@ -260,7 +260,8 @@ export default function buildDesktopMenu(mainPageProps: Object) {
           label: '&' + i18n.t('core:documentation'),
           accelerator: mainPageProps.keyBindings.showHelp,
           click: () => {
-            mainPageProps.openFileNatively(AppConfig.documentationLinks.general);
+            // mainPageProps.openFileNatively(AppConfig.documentationLinks.general);
+            mainPageProps.openHelpFeedbackPanel();
           }
         },
         {
