@@ -49,6 +49,7 @@ import CopyIcon from '@material-ui/icons/FileCopy';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SelectAllIcon from '@material-ui/icons/CheckBox';
 import DeSelectAllIcon from '@material-ui/icons/CheckBoxOutlineBlank';
+import HelpIcon from '@material-ui/icons/Help';
 import {
   type FileSystemEntry,
 } from '../../../services/utils-io';
@@ -419,6 +420,11 @@ class GridPerspective extends React.Component<Props, State> {
     this.setState({ singleClickAction },
       this.saveSettings
     );
+  };
+
+  openHelpWebPage = () => {
+    this.closeOptionsMenu();
+    this.props.openFileNatively(AppConfig.documentationLinks.defaultPerspective);
   };
 
   handleGridCellDblClick = (event, fsEntry: FileSystemEntry) => {
@@ -1036,6 +1042,18 @@ class GridPerspective extends React.Component<Props, State> {
             </ListItemIcon>
             <ListItemText primary={i18n.t('core:singleClickSelects')} />
           </MenuItem>
+          <Divider />
+          <MenuItem
+            data-tid="gridPerspectiveHelp"
+            title={i18n.t('core:help')}
+            aria-label={i18n.t('core:perspectiveHelp')}
+            onClick={this.openHelpWebPage}
+          >
+            <ListItemIcon>
+              <HelpIcon />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:help')} />
+          </MenuItem>
         </Menu>
       </div>
     );
@@ -1047,6 +1065,7 @@ function mapActionCreatorsToProps(dispatch) {
     moveFiles: IOActions.moveFiles,
     setSelectedEntries: AppActions.setSelectedEntries,
     showNotification: AppActions.showNotification,
+    openFileNatively: AppActions.openFileNatively,
     addTags: TaggingActions.addTags
   }, dispatch);
 }

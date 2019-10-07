@@ -21,8 +21,8 @@ const isCordovaAndroid = document.URL.indexOf('file:///android_asset') === 0;
 
 export default {
   checkNewVersionURL: 'https://www.tagspaces.org/releases/tagspaces.json',
-  downloadURL: 'https://www.tagspaces.org/downloads',
-  changelogURL: 'https://www.tagspaces.org/whatsnew',
+  downloadURL: 'https://www.tagspaces.org/downloads/',
+  changelogURL: 'https://www.tagspaces.org/whatsnew/',
   tagspacesAppPath: '/tagspaces/',
   metaFolder: '.ts',
   metaFolderFile: 'tsm.json',
@@ -43,6 +43,14 @@ export default {
   // maxSearchResult: 1000,
   defaultFileColor: '#808080',
   defaultFolderColor: '#555', // transparent #FDEEBD #ff791b #2c001e #880e4f
+  documentationLinks: {
+    general: 'https://docs.tagspaces.org/',
+    defaultPerspective: 'https://docs.tagspaces.org/browsing-files.html#default-perspective',
+    locations: 'https://docs.tagspaces.org/ui/locations',
+    taglibrary: 'https://docs.tagspaces.org/ui/taglibrary',
+    search: 'https://docs.tagspaces.org/search',
+    settings: 'https://docs.tagspaces.org/ui/settings',
+  },
   isElectron: (navigator.userAgent.toLowerCase().indexOf(' electron/') > -1),
   isFirefox: (navigator.userAgent.toLowerCase().includes('firefox')), // typeof InstallTrigger !== 'undefined';
   isWin: navigator.appVersion.includes('Win'),

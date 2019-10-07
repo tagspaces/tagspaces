@@ -260,7 +260,7 @@ export default function buildDesktopMenu(mainPageProps: Object) {
           label: '&' + i18n.t('core:documentation'),
           accelerator: mainPageProps.keyBindings.showHelp,
           click: () => {
-            mainPageProps.openFileNatively('http://docs.tagspaces.org');
+            mainPageProps.openFileNatively(AppConfig.documentationLinks.general);
           }
         },
         {
@@ -278,7 +278,7 @@ export default function buildDesktopMenu(mainPageProps: Object) {
         {
           label: '&' + i18n.t('core:whatsNew'),
           click: () => {
-            mainPageProps.openFileNatively('http://www.tagspaces.org/whatsnew/');
+            mainPageProps.openFileNatively(AppConfig.changelogURL);
           }
         },
         {
