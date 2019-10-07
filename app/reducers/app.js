@@ -81,6 +81,12 @@ export const types = {
   TOGGLE_CREATE_DIRECTORY_DIALOG: 'APP/TOGGLE_CREATE_DIRECTORY_DIALOG',
   TOGGLE_CREATE_FILE_DIALOG: 'APP/TOGGLE_CREATE_FILE_DIALOG',
   TOGGLE_SELECT_DIRECTORY_DIALOG: 'APP/TOGGLE_SELECT_DIRECTORY_DIALOG',
+  OPEN_LOCATIONMANAGER_PANEL: 'APP/OPEN_LOCATIONMANAGER_PANEL',
+  OPEN_TAGLIBRARY_PANEL: 'APP/OPEN_TAGLIBRARY_PANEL',
+  OPEN_SEARCH_PANEL: 'APP/OPEN_SEARCH_PANEL',
+  OPEN_PERSPECTIVES_PANEL: 'APP/OPEN_PERSPECTIVES_PANEL',
+  OPEN_HELPFEEDBACK_PANEL: 'APP/OPEN_HELPFEEDBACK_PANEL',
+  CLOSE_ALLVERTICAL_PANELS: 'APP/CLOSE_ALLVERTICAL_PANELS',
   REFLECT_DELETE_ENTRY: 'APP/REFLECT_DELETE_ENTRY',
   REFLECT_RENAME_ENTRY: 'APP/REFLECT_RENAME_ENTRY',
   REFLECT_CREATE_ENTRY: 'APP/REFLECT_CREATE_ENTRY',
@@ -143,7 +149,12 @@ export const initialState = {
   lastSelectedEntry: null,
   selectedEntries: [],
   isEntryInFullWidth: false,
-  isGeneratingThumbs: false
+  isGeneratingThumbs: false,
+  locationManagerPanelOpened: true,
+  tagLibraryPanelOpened: false,
+  searchPanelOpened: false,
+  perspectivesPanelOpened: false,
+  helpFeedbackPanelOpened: false,
 };
 
 // The state described here will not be persisted
@@ -422,6 +433,66 @@ export default (state: Object = initialState, action: Object) => {
       isEntryInFullWidth: false
     };
   }
+  case types.OPEN_LOCATIONMANAGER_PANEL: {
+    return {
+      ...state,
+      locationManagerPanelOpened: true,
+      tagLibraryPanelOpened: false,
+      searchPanelOpened: false,
+      perspectivesPanelOpened: false,
+      helpFeedbackPanelOpened: false,
+    };
+  }
+  case types.OPEN_TAGLIBRARY_PANEL: {
+    return {
+      ...state,
+      locationManagerPanelOpened: false,
+      tagLibraryPanelOpened: true,
+      searchPanelOpened: false,
+      perspectivesPanelOpened: false,
+      helpFeedbackPanelOpened: false,
+    };
+  }
+  case types.OPEN_SEARCH_PANEL: {
+    return {
+      ...state,
+      locationManagerPanelOpened: false,
+      tagLibraryPanelOpened: false,
+      searchPanelOpened: true,
+      perspectivesPanelOpened: false,
+      helpFeedbackPanelOpened: false,
+    };
+  }
+  case types.OPEN_PERSPECTIVES_PANEL: {
+    return {
+      ...state,
+      locationManagerPanelOpened: false,
+      tagLibraryPanelOpened: false,
+      searchPanelOpened: false,
+      perspectivesPanelOpened: true,
+      helpFeedbackPanelOpened: false,
+    };
+  }
+  case types.OPEN_HELPFEEDBACK_PANEL: {
+    return {
+      ...state,
+      locationManagerPanelOpened: false,
+      tagLibraryPanelOpened: false,
+      searchPanelOpened: false,
+      perspectivesPanelOpened: false,
+      helpFeedbackPanelOpened: true,
+    };
+  }
+  case types.CLOSE_ALLVERTICAL_PANELS: {
+    return {
+      ...state,
+      locationManagerPanelOpened: false,
+      tagLibraryPanelOpened: false,
+      searchPanelOpened: false,
+      perspectivesPanelOpened: false,
+      helpFeedbackPanelOpened: false,
+    };
+  }
   default: {
     return state;
   }
@@ -473,6 +544,12 @@ export const actions = {
   toggleCreateDirectoryDialog: () => ({ type: types.TOGGLE_CREATE_DIRECTORY_DIALOG }),
   toggleCreateFileDialog: () => ({ type: types.TOGGLE_CREATE_FILE_DIALOG }),
   toggleSelectDirectoryDialog: () => ({ type: types.TOGGLE_SELECT_DIRECTORY_DIALOG }),
+  openLocationManagerPanel: () => ({ type: types.OPEN_LOCATIONMANAGER_PANEL }),
+  openTagLibraryPanel: () => ({ type: types.OPEN_TAGLIBRARY_PANEL }),
+  openSearchPanel: () => ({ type: types.OPEN_SEARCH_PANEL }),
+  openPerspectivesPanel: () => ({ type: types.OPEN_PERSPECTIVES_PANEL }),
+  openHelpFeedbackPanel: () => ({ type: types.OPEN_HELPFEEDBACK_PANEL }),
+  closeAllVerticalPanels: () => ({ type: types.CLOSE_ALLVERTICAL_PANELS }),
   loadParentDirectoryContent: () => (
     dispatch: (actions: Object) => void,
     getState: () => Object
@@ -1295,3 +1372,8 @@ export const getSearchResultCount = (state: Object) => state.app.currentDirector
 export const getCurrentLocationId = (state: Object) => state.app.currentLocationId;
 export const isEntryInFullWidth = (state: Object) => state.app.isEntryInFullWidth;
 export const isLoading = (state: Object) => state.app.isLoading;
+export const isLocationManagerPanelOpened = (state: Object) => state.app.locationManagerPanelOpened;
+export const isTagLibraryPanelOpened = (state: Object) => state.app.tagLibraryPanelOpened;
+export const isSearchPanelOpened = (state: Object) => state.app.searchPanelOpened;
+export const isPerspectivesPanelOpened = (state: Object) => state.app.perspectivesPanelOpened;
+export const isHelpFeedbackPanelOpened = (state: Object) => state.app.helpFeedbackPanelOpened;

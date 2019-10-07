@@ -46,6 +46,7 @@ type Props = {
   editTagForEntry: (path: string, tag: Tag) => void,
   searchLocationIndex: (searchQuery: SearchQuery) => void,
   maxSearchResults: number,
+  openSearchPanel: () => void,
   isReadOnlyMode: boolean
 };
 
@@ -67,7 +68,7 @@ const EntryTagMenu = (props: Props) => {
 
   function showFilesWithThisTag() {
     if (props.selectedTag) {
-      // this.props.togglePanel(AppVerticalPanels.search);
+      props.openSearchPanel();
       props.searchLocationIndex({
         tagsAND: [props.selectedTag],
         maxSearchResults: props.maxSearchResults
@@ -148,6 +149,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     searchLocationIndex: LocationIndexActions.searchLocationIndex,
+    openSearchPanel: AppActions.openSearchPanel,
     toggleEditTagDialog: AppActions.toggleEditTagDialog,
   }, dispatch);
 }

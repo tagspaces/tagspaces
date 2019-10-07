@@ -68,7 +68,6 @@ type Props = {
   tagBackgroundColor: string,
   tagGroups: Array<TagGroup>,
   allTags: Array<Tag>,
-  togglePanel: () => void,
   toggleTagGroup: (expanded: boolean, uuid: string) => void,
   removeTagGroup: (uuid: string) => void,
   moveTagGroupUp: (uuid: string) => void,
@@ -371,10 +370,8 @@ class TagLibrary extends React.Component<Props, State> {
           importTagGroups={this.props.importTagGroups}
           exportTagGroups={this.props.exportTagGroups}
           showCreateTagGroupDialog={this.showCreateTagGroupDialog}
-          toggleTagGroup={this.props.toggleTagGroup}
         />
         <TagMenu
-          togglePanel={this.props.togglePanel}
           anchorEl={this.state.tagMenuAnchorEl}
           open={this.state.tagMenuOpened}
           onClose={this.handleCloseTagMenu}

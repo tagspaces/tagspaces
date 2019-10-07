@@ -30,6 +30,7 @@ import SearchIcon from '@material-ui/icons/SearchOutlined';
 import SettingsIcon from '@material-ui/icons/Settings';
 import ThemingIcon from '@material-ui/icons/InvertColors';
 import UpgradeIcon from '@material-ui/icons/FlightTakeoff';
+import HelpIcon from '@material-ui/icons/HelpOutline';
 import { withTheme } from '@material-ui/core/styles';
 import SplitPane from 'react-split-pane';
 import LogoIcon from '../assets/images/icon100x100.svg';
@@ -41,6 +42,7 @@ import TagLibrary from '../components/TagLibrary';
 import Search from '../components/Search';
 import PerspectiveManager from '../components/PerspectiveManager';
 import LocationManager from '../components/LocationManager';
+import HelpFeedbackPanel from '../components/HelpFeedbackPanel';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import { type Tag } from '../reducers/taglibrary';
@@ -57,6 +59,11 @@ import {
   isCreateFileDialogOpened,
   isCreateDirectoryOpened,
   isSelectDirectoryDialogOpened,
+  isLocationManagerPanelOpened,
+  isTagLibraryPanelOpened,
+  isSearchPanelOpened,
+  isPerspectivesPanelOpened,
+  isHelpFeedbackPanelOpened,
   isReadOnlyMode,
 } from '../reducers/app';
 import { actions as SettingsActions, isFirstRun } from '../reducers/settings';
@@ -125,14 +132,6 @@ const OnboardingDialogAsync = props => (
   </React.Suspense>
 );
 
-export const AppVerticalPanels = {
-  tagLibrary: 'tagLibrary',
-  search: 'search',
-  perspectiveManager: 'perspectiveManager',
-  locationManager: 'locationManager',
-  settings: 'settings'
-};
-
 type Props = {
   isFirstRun: boolean,
   setFirstRun: (isFirstRun: boolean) => void,
@@ -159,6 +158,17 @@ type Props = {
   setManagementPanelVisibility: boolean => void,
   isSelectDirectoryDialogOpened: boolean,
   toggleSelectDirectoryDialog: () => void,
+  isLocationManagerPanelOpened: boolean,
+  openLocationManagerPanel: () => void,
+  isTagLibraryPanelOpened: boolean,
+  openTagLibraryPanel: () => void,
+  isSearchPanelOpened: boolean,
+  openSearchPanel: () => void,
+  isPerspectivesPanelOpened: boolean,
+  openPerspectivesPanel: () => void,
+  isHelpFeedbackPanelOpened: boolean,
+  openHelpFeedbackPanel: () => void,
+  closeAllVerticalPanels: () => void,
   switchTheme: () => void,
   shouldTogglePanel: string,
   currentDirectory: string,
@@ -167,10 +177,6 @@ type Props = {
 
 type State = {
   selectedDirectoryPath?: string,
-  isLocationManagerVisible?: boolean,
-  isTagLibraryVisible?: boolean,
-  isSearchVisible?: boolean,
-  isPerspectiveManagerVisible?: boolean,
   isManagementPanelVisible?: boolean, // evtl. redux migration
   CreateFileDialogKey: string,
   isProTeaserVisible: boolean
@@ -178,23 +184,10 @@ type State = {
 
 class VerticalNavigation extends React.Component<Props, State> {
   state = {
-    isLocationManagerVisible: true,
-    isTagLibraryVisible: false,
-    isSearchVisible: false,
-    isPerspectiveManagerVisible: false,
     isManagementPanelVisible: true,
     CreateFileDialogKey: uuidv1(),
     isProTeaserVisible: false
   };
-
-  componentWillReceiveProps(nextProps: Props) {
-    if (
-      nextProps.shouldTogglePanel &&
-      this.props.shouldTogglePanel !== nextProps.shouldTogglePanel
-    ) {
-      this.togglePanel(nextProps.shouldTogglePanel);
-    }
-  }
 
   styles = {
     panel: {
@@ -232,74 +225,6 @@ class VerticalNavigation extends React.Component<Props, State> {
     }
   };
 
-  hideAllPanels() {
-    this.setState({
-      isLocationManagerVisible: false,
-      isTagLibraryVisible: false,
-      isSearchVisible: false,
-      isPerspectiveManagerVisible: false,
-      isManagementPanelVisible: false
-    });
-    this.props.setManagementPanelVisibility(false);
-  }
-
-  togglePanel = panelName => {
-    switch (panelName) {
-    case AppVerticalPanels.locationManager:
-      this.props.setManagementPanelVisibility(
-        !this.state.isLocationManagerVisible
-      );
-      this.setState({
-        isLocationManagerVisible: !this.state.isLocationManagerVisible,
-        isTagLibraryVisible: false,
-        isSearchVisible: false,
-        isPerspectiveManagerVisible: false
-      });
-      break;
-    case AppVerticalPanels.tagLibrary:
-      this.props.setManagementPanelVisibility(
-        !this.state.isTagLibraryVisible
-      );
-      this.setState({
-        isLocationManagerVisible: false,
-        isTagLibraryVisible: !this.state.isTagLibraryVisible,
-        isSearchVisible: false,
-        isPerspectiveManagerVisible: false
-      });
-      break;
-    case AppVerticalPanels.search:
-      this.props.setManagementPanelVisibility(!this.state.isSearchVisible);
-      this.setState({
-        isLocationManagerVisible: false,
-        isTagLibraryVisible: false,
-        isSearchVisible: !this.state.isSearchVisible,
-        isPerspectiveManagerVisible: false
-      });
-      break;
-    case AppVerticalPanels.perspectiveManager:
-      this.props.setManagementPanelVisibility(
-        !this.state.isPerspectiveManagerVisible
-      );
-      this.setState({
-        isLocationManagerVisible: false,
-        isTagLibraryVisible: false,
-        isSearchVisible: false,
-        isPerspectiveManagerVisible: true
-      });
-      break;
-    default:
-      // this.props.setManagementPanelVisibility(false);
-      // this.setState({
-      //   isLocationManagerVisible: false,
-      //   isTagLibraryVisible: false,
-      //   isSearchVisible: false,
-      //   isPerspectiveManagerVisible: false,
-      //   isSettingsVisible: false
-      // });
-      break;
-    }
-  };
-
   toggleProTeaser = () => {
     this.setState({ isProTeaserVisible: !this.state.isProTeaserVisible });
   }
@@ -317,6 +242,44 @@ class VerticalNavigation extends React.Component<Props, State> {
   };
 
   render() {
+    const {
+      isFirstRun,
+      isEditTagDialogOpened,
+      isAboutDialogOpened,
+      isKeysDialogOpened,
+      isOnboardingDialogOpened,
+      isLicenseDialogOpened,
+      isThirdPartyLibsDialogOpened,
+      isSettingsDialogOpened,
+      isCreateDirectoryOpened,
+      isCreateFileDialogOpened,
+      isSelectDirectoryDialogOpened,
+      isLocationManagerPanelOpened,
+      isTagLibraryPanelOpened,
+      isSearchPanelOpened,
+      isPerspectivesPanelOpened,
+      isHelpFeedbackPanelOpened,
+      currentDirectory,
+      isReadOnlyMode,
+      toggleCreateDirectoryDialog,
+      toggleCreateFileDialog,
+      toggleSelectDirectoryDialog,
+      toggleOnboardingDialog,
+      toggleSettingsDialog,
+      toggleKeysDialog,
+      toggleLicenseDialog,
+      toggleThirdPartyLibsDialog,
+      toggleAboutDialog,
+      toggleEditTagDialog,
+      openLocationManagerPanel,
+      openTagLibraryPanel,
+      openSearchPanel,
+      openHelpFeedbackPanel,
+      closeAllVerticalPanels,
+      switchTheme,
+      setManagementPanelVisibility,
+      setFirstRun
+    } = this.props;
     return (
       <div>
         <style>
@@ -328,62 +291,62 @@ class VerticalNavigation extends React.Component<Props, State> {
           `}
         </style>
         <CreateDirectoryDialog
-          open={this.props.isCreateDirectoryOpened}
-          onClose={this.props.toggleCreateDirectoryDialog}
-          selectedDirectoryPath={this.props.currentDirectory}
+          open={isCreateDirectoryOpened}
+          onClose={toggleCreateDirectoryDialog}
+          selectedDirectoryPath={currentDirectory}
         />
-        {this.props.isEditTagDialogOpened && (
+        {isEditTagDialogOpened && (
           <EditEntryTagDialogAsync
             key={uuidv1()}
-            open={this.props.isEditTagDialogOpened}
-            onClose={this.props.toggleEditTagDialog}
+            open={isEditTagDialogOpened}
+            onClose={toggleEditTagDialog}
             currentEntryPath={this.props.currentEntryPath}
             selectedTag={this.props.selectedTag}
           />
         )}
-        {this.props.isSelectDirectoryDialogOpened && (
+        {isSelectDirectoryDialogOpened && (
           <SelectDirectoryAsync
-            open={this.props.isSelectDirectoryDialogOpened}
-            onClose={this.props.toggleSelectDirectoryDialog}
+            open={isSelectDirectoryDialogOpened}
+            onClose={toggleSelectDirectoryDialog}
             chooseDirectoryPath={this.chooseDirectoryPath}
             selectedDirectoryPath={
-              this.state.selectedDirectoryPath || this.props.currentDirectory
+              this.state.selectedDirectoryPath || currentDirectory
             }
           />
         )}
-        {this.props.isAboutDialogOpened && (
+        {isAboutDialogOpened && (
           <AboutDialogAsync
-            open={this.props.isAboutDialogOpened}
-            toggleLicenseDialog={this.props.toggleLicenseDialog}
-            toggleThirdPartyLibsDialog={this.props.toggleThirdPartyLibsDialog}
-            onClose={this.props.toggleAboutDialog}
+            open={isAboutDialogOpened}
+            toggleLicenseDialog={toggleLicenseDialog}
+            toggleThirdPartyLibsDialog={toggleThirdPartyLibsDialog}
+            onClose={toggleAboutDialog}
           />
         )}
-        {this.props.isKeysDialogOpened && (
+        {isKeysDialogOpened && (
           <KeyboardDialogAsync
-            open={this.props.isKeysDialogOpened}
-            onClose={this.props.toggleKeysDialog}
+            open={isKeysDialogOpened}
+            onClose={toggleKeysDialog}
           />
         )}
-        {(this.props.isLicenseDialogOpened) && (
+        {(isLicenseDialogOpened) && (
           <LicenseDialogAsync
-            open={this.props.isLicenseDialogOpened}
+            open={isLicenseDialogOpened}
             onClose={() => {
-              this.props.setFirstRun(false);
-              this.props.toggleLicenseDialog();
+              setFirstRun(false);
+              toggleLicenseDialog();
             }}
           />
         )}
-        {(this.props.isOnboardingDialogOpened) && (
+        {(isOnboardingDialogOpened) && (
           <OnboardingDialogAsync
-            open={this.props.isOnboardingDialogOpened}
-            onClose={this.props.toggleOnboardingDialog}
+            open={isOnboardingDialogOpened}
+            onClose={toggleOnboardingDialog}
           />
         )}
-        {this.props.isThirdPartyLibsDialogOpened && (
+        {isThirdPartyLibsDialogOpened && (
           <ThirdPartyLibsDialogAsync
-            open={this.props.isThirdPartyLibsDialogOpened}
-            onClose={this.props.toggleThirdPartyLibsDialog}
+            open={isThirdPartyLibsDialogOpened}
+            onClose={toggleThirdPartyLibsDialog}
           />
         )}
         {this.state.isProTeaserVisible && (
@@ -393,24 +356,24 @@ class VerticalNavigation extends React.Component<Props, State> {
             key={uuidv1()}
           />
         )}
-        {/* {this.props.isSettingsDialogOpened && (
+        {/* {isSettingsDialogOpened && (
           <SettingsDialogAsync
-            open={this.props.isSettingsDialogOpened}
-            onClose={this.props.toggleSettingsDialog}
+            open={isSettingsDialogOpened}
+            onClose={toggleSettingsDialog}
           />
         )} */}
         <SettingsDialog
-          open={this.props.isSettingsDialogOpened}
-          onClose={this.props.toggleSettingsDialog}
+          open={isSettingsDialogOpened}
+          onClose={toggleSettingsDialog}
         />
         <CreateFileDialog
           key={uuidv1()}
-          open={this.props.isCreateFileDialogOpened}
+          open={isCreateFileDialogOpened}
           selectedDirectoryPath={
-            this.state.selectedDirectoryPath || this.props.currentDirectory
+            this.state.selectedDirectoryPath || currentDirectory
           }
           chooseDirectoryPath={this.chooseDirectoryPath}
-          onClose={this.props.toggleCreateFileDialog}
+          onClose={toggleCreateFileDialog}
         />
         <SplitPane
           split="vertical"
@@ -421,7 +384,7 @@ class VerticalNavigation extends React.Component<Props, State> {
         >
           <div style={this.styles.panel}>
             <IconButton
-              onClick={this.props.toggleAboutDialog}
+              onClick={toggleAboutDialog}
               style={{ ...this.styles.button, marginTop: 10, marginBottom: 16 }}
               title={i18n.t('core:aboutTitle')}
               data-tid="aboutTagSpaces"
@@ -435,10 +398,10 @@ class VerticalNavigation extends React.Component<Props, State> {
                 alt="TagSpaces Logo"
               />
             </IconButton>
-            { !this.props.isReadOnlyMode && (
+            { !isReadOnlyMode && (
               <IconButton
                 id="verticalNavButton"
-                onClick={this.props.toggleCreateFileDialog}
+                onClick={toggleCreateFileDialog}
                 style={{ ...this.styles.button, marginBottom: 20 }}
                 title={i18n.t('core:createFileTitle')}
                 data-tid="locationManager"
@@ -449,10 +412,14 @@ class VerticalNavigation extends React.Component<Props, State> {
             <IconButton
               id="verticalNavButton"
               onClick={() => {
-                this.togglePanel(AppVerticalPanels.locationManager);
+                if (isLocationManagerPanelOpened) {
+                  closeAllVerticalPanels();
+                } else {
+                  openLocationManagerPanel();
+                }
               }}
               style={
-                this.state.isLocationManagerVisible
+                isLocationManagerPanelOpened
                   ? { ...this.styles.button, ...this.styles.selectedButton }
                   : this.styles.button
               }
@@ -466,10 +433,14 @@ class VerticalNavigation extends React.Component<Props, State> {
               title={i18n.t('core:tagGroupOperations')}
               data-tid="tagLibrary"
               onClick={() => {
-                this.togglePanel(AppVerticalPanels.tagLibrary);
+                if (isTagLibraryPanelOpened) {
+                  closeAllVerticalPanels();
+                } else {
+                  openTagLibraryPanel();
+                }
               }}
               style={
-                this.state.isTagLibraryVisible
+                isTagLibraryPanelOpened
                   ? { ...this.styles.button, ...this.styles.selectedButton }
                   : this.styles.button
               }
@@ -481,10 +452,14 @@ class VerticalNavigation extends React.Component<Props, State> {
               title={i18n.t('core:searchTitle')}
               data-tid="search"
               onClick={() => {
-                this.togglePanel(AppVerticalPanels.search);
+                if (isSearchPanelOpened) {
+                  closeAllVerticalPanels();
+                } else {
+                  openSearchPanel();
+                }
               }}
               style={
-                this.state.isSearchVisible
+                isSearchPanelOpened
                   ? { ...this.styles.button, ...this.styles.selectedButton }
                   : this.styles.button
               }
@@ -495,17 +470,40 @@ class VerticalNavigation extends React.Component<Props, State> {
               title={i18n.t('core:perspectiveManager')}
               data-tid="perspectiveManager"
               onClick={() => {
-                this.togglePanel(AppVerticalPanels.perspectiveManager);
+                if (isPerspectivePanelOpened) {
+                  closeAllVerticalPanels();
+                } else {
+                  openPerspectivesPanel();
+                }
               }}
               disabled={false}
               style={
-                this.state.isPerspectiveManagerVisible
+                isPerspectivePanelOpened
                   ? { ...this.styles.button, ...this.styles.selectedButton }
                   : this.styles.button
               }
             >
               <PerspectivesIcon style={this.styles.buttonIcon} />
             </IconButton> */}
+            <IconButton
+              id="verticalNavButton"
+              title={i18n.t('core:helpFeedback')}
+              data-tid="helpFeedback"
+              onClick={() => {
+                if (isHelpFeedbackPanelOpened) {
+                  closeAllVerticalPanels();
+                } else {
+                  openHelpFeedbackPanel();
+                }
+              }}
+              style={
+                isHelpFeedbackPanelOpened
+                  ? { ...this.styles.button, ...this.styles.selectedButton }
+                  : this.styles.button
+              }
+            >
+              <HelpIcon style={this.styles.buttonIcon} />
+            </IconButton>
             {!Pro && (
               <IconButton
                 id="verticalNavButton"
@@ -521,7 +519,7 @@ class VerticalNavigation extends React.Component<Props, State> {
               id="verticalNavButton"
               title={i18n.t('core:switchTheme')}
               data-tid="switchTheme"
-              onClick={this.props.switchTheme}
+              onClick={switchTheme}
               style={{ ...this.styles.button, ...this.styles.themingButton }}
             >
               <ThemingIcon style={this.styles.buttonIcon} />
@@ -530,9 +528,9 @@ class VerticalNavigation extends React.Component<Props, State> {
               id="verticalNavButton"
               title={i18n.t('core:settings')}
               data-tid="settings"
-              onClick={this.props.toggleSettingsDialog}
+              onClick={toggleSettingsDialog}
               style={
-                this.props.isSettingsDialogOpened
+                isSettingsDialogOpened
                   ? {
                     ...this.styles.button,
                     ...this.styles.settingsButton,
@@ -548,10 +546,11 @@ class VerticalNavigation extends React.Component<Props, State> {
           </div>
           {this.state.isManagementPanelVisible && (
             <div style={this.styles.panel}>
-              { this.state.isLocationManagerVisible && <LocationManager /> }
-              { this.state.isTagLibraryVisible && <TagLibrary togglePanel={this.togglePanel} /> }
-              { this.state.isSearchVisible && <Search /> }
-              { this.state.isPerspectiveManagerVisible && <PerspectiveManager /> }
+              <LocationManager style={{ display: isLocationManagerPanelOpened ? 'block' : 'none' }} />
+              { isTagLibraryPanelOpened && <TagLibrary /> }
+              <Search style={{ display: isSearchPanelOpened ? 'block' : 'none' }} />
+              { isPerspectivesPanelOpened && <PerspectiveManager /> }
+              { isHelpFeedbackPanelOpened && <HelpFeedbackPanel /> }
             </div>
           )}
         </SplitPane>
@@ -573,6 +572,11 @@ function mapStateToProps(state) {
     isCreateDirectoryOpened: isCreateDirectoryOpened(state),
     isCreateFileDialogOpened: isCreateFileDialogOpened(state),
     isSelectDirectoryDialogOpened: isSelectDirectoryDialogOpened(state),
+    isLocationManagerPanelOpened: isLocationManagerPanelOpened(state),
+    isTagLibraryPanelOpened: isTagLibraryPanelOpened(state),
+    isSearchPanelOpened: isSearchPanelOpened(state),
+    isPerspectivesPanelOpened: isPerspectivesPanelOpened(state),
+    isHelpFeedbackPanelOpened: isHelpFeedbackPanelOpened(state),
     currentDirectory: getDirectoryPath(state),
     isReadOnlyMode: isReadOnlyMode(state)
   };
@@ -591,6 +595,12 @@ function mapActionCreatorsToProps(dispatch) {
       toggleThirdPartyLibsDialog: AppActions.toggleThirdPartyLibsDialog,
       toggleAboutDialog: AppActions.toggleAboutDialog,
       toggleEditTagDialog: AppActions.toggleEditTagDialog,
+      openLocationManagerPanel: AppActions.openLocationManagerPanel,
+      openTagLibraryPanel: AppActions.openTagLibraryPanel,
+      openSearchPanel: AppActions.openSearchPanel,
+      openPerspectivesPanel: AppActions.openPerspectivesPanel,
+      openHelpFeedbackPanel: AppActions.openHelpFeedbackPanel,
+      closeAllVerticalPanels: AppActions.closeAllVerticalPanels,
       switchTheme: SettingsActions.switchTheme,
       setFirstRun: SettingsActions.setFirstRun,
     },

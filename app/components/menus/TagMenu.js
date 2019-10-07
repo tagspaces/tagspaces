@@ -34,7 +34,7 @@ import { actions as LocationIndexActions } from '../../reducers/location-index';
 import i18n from '../../services/i18n';
 import { type SearchQuery } from '../../services/search';
 import { getMaxSearchResults } from '../../reducers/settings';
-import { AppVerticalPanels } from '../VerticalNavigation';
+import { actions as AppActions } from '../../reducers/app';
 
 const isTagLibraryReadOnly = (window.ExtTagLibrary && window.ExtTagLibrary.length > 0);
 
@@ -47,7 +47,7 @@ type Props = {
   deleteTag: (uuid: string, tagGroupUuid: string) => void,
   searchLocationIndex: (searchQuery: SearchQuery) => void,
   editTag: () => void,
-  togglePanel: () => void,
+  openSearchPanel: () => void,
   maxSearchResults: number
 };
 
@@ -62,7 +62,7 @@ const TagLibraryMenu = (props: Props) => {
 
   function showFilesWithThisTag() {
     if (props.selectedTag) {
-      props.togglePanel(AppVerticalPanels.search);
+      props.openSearchPanel();
       props.searchLocationIndex({
         tagsAND: [props.selectedTag],
         maxSearchResults: props.maxSearchResults
@@ -163,6 +163,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
+    openSearchPanel: AppActions.openSearchPanel,
     searchLocationIndex: LocationIndexActions.searchLocationIndex,
   }, dispatch);
 }

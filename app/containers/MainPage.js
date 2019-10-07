@@ -32,9 +32,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { HotKeys } from 'react-hotkeys';
 import HTML5Backend, { NativeTypes } from 'react-dnd-html5-backend';
 import { DragDropContext } from 'react-dnd';
-import VerticalNavigation, {
-  AppVerticalPanels
-} from '../components/VerticalNavigation';
+import VerticalNavigation from '../components/VerticalNavigation';
 import FolderContainer from '../components/FolderContainer';
 import EntryContainer from '../components/EntryContainer';
 import {
@@ -54,6 +52,11 @@ import {
   isEntryInFullWidth,
   isUpdateAvailable,
   getDirectoryPath,
+  isLocationManagerPanelOpened,
+  isTagLibraryPanelOpened,
+  isSearchPanelOpened,
+  isPerspectivesPanelOpened,
+  isHelpFeedbackPanelOpened,
   isReadOnlyMode
 } from '../reducers/app';
 import { actions as LocationIndexActions, isIndexing } from '../reducers/location-index';
@@ -137,11 +140,22 @@ type Props = {
   openFileNatively: () => void, // needed by electron-menus
   getNextFile: () => void, // needed by electron-menus
   getPrevFile: () => void, // needed by electron-menus
+  openLocationManagerPanel: () => void,
+  openTagLibraryPanel: () => void,
+  openSearchPanel: () => void,
+  openPerspectivesPanel: () => void,
+  openHelpFeedbackPanel: () => void,
+  closeAllVerticalPanels: () => void,
   leftSplitSize: number,
   mainSplitSize: any,
   toggleShowUnixHiddenEntries: () => void,
   setLeftVerticalSplitSize: (splitSize: number) => void,
   setMainVerticalSplitSize: (splitSize: string) => void,
+  isLocationManagerPanelOpened: boolean,
+  isTagLibraryPanelOpened: boolean,
+  isSearchPanelOpened: boolean,
+  isPerspectivesPanelOpened: boolean,
+  isHelpFeedbackPanelOpened: boolean,
   directoryPath?: string,
   showNotification: (
     text: string,
@@ -155,7 +169,6 @@ type State = {
   isManagementPanelVisible?: boolean, // optionality because of https://github.com/codemix/flow-runtime/issues/149
   mainSplitSize?: any,
   isDrawerOpened?: boolean,
-  shouldTogglePanel?: string,
   width?: number,
   height?: number
 };
@@ -165,7 +178,6 @@ class MainPage extends Component<Props, State> {
     isManagementPanelVisible: true,
     mainSplitSize: '100%',
     isDrawerOpened: true,
-    shouldTogglePanel: AppVerticalPanels.locationManager,
     width: 1000,
     height: 1000
   };
@@ -177,12 +189,7 @@ class MainPage extends Component<Props, State> {
   componentDidMount = () => {
     window.addEventListener('resize', this.updateDimensions);
     // this.setupDesktopMenu();
-    buildDesktopMenu({
-      ...this.props,
-      toggleTagLibrary: this.toggleTagLibrary,
-      toggleLocationManager: this.toggleLocationManager,
-      toggleSearch: this.toggleSearch,
-    });
+    buildDesktopMenu(this.props);
     buildTrayIconMenu(this.props);
   };
 
@@ -198,6 +205,9 @@ class MainPage extends Component<Props, State> {
           // isManagementPanelVisible: !nextProps.isEntryInFullWidth
         });
       } else if (isEntryOpenedFullWidthChanged) {
+        if (nextProps.isEntryInFullWidth) {
+          this.props.closeAllVerticalPanels();
+        }
         this.setState({
           mainSplitSize: nextProps.isEntryInFullWidth ? '0%' : this.props.mainSplitSize,
           isManagementPanelVisible: !nextProps.isEntryInFullWidth
@@ -213,23 +223,27 @@ class MainPage extends Component<Props, State> {
         mainSplitSize: '100%'
       });
     }
+    if (nextProps.isLocationManagerPanelOpened ||
+        nextProps.isTagLibraryPanelOpened ||
+        nextProps.isSearchPanelOpened ||
+        nextProps.isPerspectivesPanelOpened ||
+        nextProps.isHelpFeedbackPanelOpened) {
+      this.setManagementPanelVisibility(true);
+    }
+
+    if (!nextProps.isLocationManagerPanelOpened &&
+        !nextProps.isTagLibraryPanelOpened &&
+        !nextProps.isSearchPanelOpened &&
+        !nextProps.isPerspectivesPanelOpened &&
+        !nextProps.isHelpFeedbackPanelOpened) {
+      this.setManagementPanelVisibility(false);
+    }
+
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.updateDimensions);
   }
-
-  toggleLocationManager = () => {
-    this.setState({ shouldTogglePanel: AppVerticalPanels.locationManager });
-  };
-
-  toggleTagLibrary = () => {
-    this.setState({ shouldTogglePanel: AppVerticalPanels.tagLibrary });
-  };
-
-  toggleSearch = () => {
-    this.setState({ shouldTogglePanel: AppVerticalPanels.search });
-  };
 
   updateDimensions = () => {
     const width = window.innerWidth || document.documentElement.clientWidth || body.clientWidth;
@@ -374,11 +388,11 @@ class MainPage extends Component<Props, State> {
 
   keyBindingHandlers = {
     toggleShowHiddenEntries: this.props.toggleShowUnixHiddenEntries,
-    showFolderNavigator: this.toggleLocationManager,
-    showTagLibrary: this.toggleTagLibrary,
-    openSearch: this.toggleSearch,
+    showFolderNavigator: this.props.openLocationManagerPanel,
+    showTagLibrary: this.props.openTagLibraryPanel,
+    openSearch: this.props.openSearchPanel,
     showHelp: () => {
-      PlatformIO.openFile('https://docs.tagspaces.org');
+      PlatformIO.openFile(AppConfig.documentationLinks.general);
     },
   };
 
@@ -411,10 +425,7 @@ class MainPage extends Component<Props, State> {
                 bufferedLeftSplitResize(() => this.props.setLeftVerticalSplitSize(size));
               }}
             >
-              <VerticalNavigation
-                setManagementPanelVisibility={this.setManagementPanelVisibility}
-                shouldTogglePanel={this.state.shouldTogglePanel}
-              />
+              <VerticalNavigation />
               <SplitPane
                 split="vertical"
                 minSize="200"
@@ -434,7 +445,6 @@ class MainPage extends Component<Props, State> {
                 <FolderContainer
                   windowHeight={this.state.height}
                   windowWidth={this.state.width}
-                  toggleSearchPanel={this.toggleSearch}
                 />
                 <EntryContainer />
               </SplitPane>
@@ -448,10 +458,7 @@ class MainPage extends Component<Props, State> {
                   paper: classes.drawerPaper
                 }}
               >
-                <VerticalNavigation
-                  setManagementPanelVisibility={this.setManagementPanelVisibility}
-                  shouldTogglePanel={this.state.shouldTogglePanel}
-                />
+                <VerticalNavigation />
               </Drawer>
               <SplitPane
                 className={classNames(
@@ -573,6 +580,11 @@ function mapStateToProps(state) {
     isUpdateAvailable: isUpdateAvailable(state),
     lastPublishedVersion: getLastPublishedVersion(state),
     notificationStatus: getNotificationStatus(state),
+    isLocationManagerPanelOpened: isLocationManagerPanelOpened(state),
+    isTagLibraryPanelOpened: isTagLibraryPanelOpened(state),
+    isSearchPanelOpened: isSearchPanelOpened(state),
+    isPerspectivesPanelOpened: isPerspectivesPanelOpened(state),
+    isHelpFeedbackPanelOpened: isHelpFeedbackPanelOpened(state),
     directoryPath: getDirectoryPath(state),
   };
 }
@@ -606,6 +618,12 @@ function mapDispatchToProps(dispatch) {
     setMainVerticalSplitSize: SettingsActions.setMainVerticalSplitSize,
     showNotification: AppActions.showNotification,
     reflectCreateEntry: AppActions.reflectCreateEntry,
+    openLocationManagerPanel: AppActions.openLocationManagerPanel,
+    openTagLibraryPanel: AppActions.openTagLibraryPanel,
+    openSearchPanel: AppActions.openSearchPanel,
+    openPerspectivesPanel: AppActions.openPerspectivesPanel,
+    openHelpFeedbackPanel: AppActions.openHelpFeedbackPanel,
+    closeAllVerticalPanels: AppActions.closeAllVerticalPanels
   }, dispatch);
 }
 

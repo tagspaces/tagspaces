@@ -179,21 +179,21 @@ export default function buildDesktopMenu(mainPageProps: Object) {
           label: i18n.t('core:showLocationManager'),
           accelerator: mainPageProps.keyBindings.showLocationManager,
           click: () => {
-            mainPageProps.toggleLocationManager();
+            mainPageProps.openLocationManagerPanel();
           }
         },
         {
           label: i18n.t('core:showTagLibrary'),
           accelerator: mainPageProps.keyBindings.showTagLibrary,
           click: () => {
-            mainPageProps.toggleTagLibrary();
+            mainPageProps.openTagLibraryPanel();
           }
         },
         {
           label: i18n.t('core:showSearch'),
           accelerator: mainPageProps.keyBindings.showSearch,
           click: () => {
-            mainPageProps.toggleSearch();
+            mainPageProps.openSearchPanel();
           }
         },
         {
