@@ -172,8 +172,8 @@
   "whatsNew": "What's New",
   "suggestNewFeatures": "Suggest New Features",
   "reportIssues": "Report Issues",
-  "followOnTwitter": "Follow @tagspaces on Twitter",
-  "likeUsOnFacebook": "Like us on Facebook",
+  "followOnTwitter": "Follow us on Twitter",
+  "likeUsOnFacebook": "Contact us on Facebook",
   "searchPlaceholder": "Search current location",
   "tagSearchOR": "At least one tag",
   "tagSearchORTitle": "Entry should contain at least one of the tags (OR search)",
@@ -434,5 +434,10 @@
   "smartTagGeoDescription": "Add custom geographical coordinates as a tag",
   "smartTagDate": "custom-date",
   "smartTagDateDescription": "Add custom date as a tag",
+  "webClipperChrome": "Get Chrome Web Clipper",
+  "webClipperFirefox": "Get Firefox Web Clipper",
+  "helpWithTranslation": "Help with translation",
+  "helpFeedback": "Get help, send feedback",
+  "emailContact": "Write us an email",
   "-": "-"
 }

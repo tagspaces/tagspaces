@@ -288,13 +288,13 @@ export default function buildDesktopMenu(mainPageProps: Object) {
         {
           label: '&' + i18n.t('core:likeUsOnFacebook'),
           click: () => {
-            mainPageProps.openFileNatively('https://www.facebook.com/tagspacesapp');
+            mainPageProps.openFileNatively(AppConfig.links.facebook);
           }
         },
         {
           label: '&' + i18n.t('core:followOnTwitter'),
           click: () => {
-            mainPageProps.openFileNatively('https://twitter.com/intent/user?screen_name=tagspaces');
+            mainPageProps.openFileNatively(AppConfig.links.twitter);
           }
         },
         {
@@ -303,28 +303,28 @@ export default function buildDesktopMenu(mainPageProps: Object) {
         {
           label: '&' + i18n.t('core:suggestNewFeatures'),
           click: () => {
-            mainPageProps.openFileNatively('https://trello.com/b/TGeG5bi9');
+            mainPageProps.openFileNatively(AppConfig.links.suggestFeature);
           }
         },
         {
           label: '&' + i18n.t('core:reportIssues'),
           click: () => {
-            mainPageProps.openFileNatively('https://github.com/tagspaces/tagspaces/issues/');
+            mainPageProps.openFileNatively(AppConfig.links.reportIssue);
           }
         },
         {
           type: 'separator'
         },
         {
-          label: 'Web clipper extension for Chrome',
+          label: i18n.t('core:webClipperChrome'),
           click: () => {
-            mainPageProps.openFileNatively('https://chrome.google.com/webstore/detail/tagspaces-web-clipper/ldalmgifdlgpiiadeccbcjojljeanhjk');
+            mainPageProps.openFileNatively(AppConfig.links.webClipperChrome);
           }
         },
         {
-          label: 'Web clipper extension for Firefox',
+          label: i18n.t('core:webClipperFirefox'),
           click: () => {
-            mainPageProps.openFileNatively('https://addons.mozilla.org/en-US/firefox/addon/tagspaces/');
+            mainPageProps.openFileNatively(AppConfig.links.webClipperFirefox);
           }
         },
         {

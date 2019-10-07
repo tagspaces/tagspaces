@@ -43,6 +43,16 @@ export default {
   // maxSearchResult: 1000,
   defaultFileColor: '#808080',
   defaultFolderColor: '#555', // transparent #FDEEBD #ff791b #2c001e #880e4f
+  links: {
+    suggestFeature: 'https://trello.com/b/TGeG5bi9',
+    reportIssue: 'https://github.com/tagspaces/tagspaces/issues/',
+    helpTranslating: 'https://www.transifex.com/tagspaces/tagspaces/',
+    webClipperChrome: 'https://chrome.google.com/webstore/detail/tagspaces-web-clipper/ldalmgifdlgpiiadeccbcjojljeanhjk',
+    webClipperFirefox: 'https://addons.mozilla.org/en-US/firefox/addon/tagspaces/',
+    twitter: 'https://twitter.com/tagspaces',
+    facebook: 'https://www.facebook.com/tagspacesapp',
+    emailContact: 'mailto:contactus@tagspaces.org?subject=App',
+  },
   documentationLinks: {
     general: 'https://docs.tagspaces.org/',
     defaultPerspective: 'https://docs.tagspaces.org/browsing-files.html#default-perspective',

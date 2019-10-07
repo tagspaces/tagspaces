@@ -169,6 +169,7 @@ type Props = {
   isHelpFeedbackPanelOpened: boolean,
   openHelpFeedbackPanel: () => void,
   closeAllVerticalPanels: () => void,
+  openFileNatively: (url: string) => void,
   switchTheme: () => void,
   shouldTogglePanel: string,
   currentDirectory: string,
@@ -278,6 +279,7 @@ class VerticalNavigation extends React.Component<Props, State> {
       closeAllVerticalPanels,
       switchTheme,
       setManagementPanelVisibility,
+      openFileNatively,
       setFirstRun
     } = this.props;
     return (
@@ -550,7 +552,7 @@ class VerticalNavigation extends React.Component<Props, State> {
               { isTagLibraryPanelOpened && <TagLibrary /> }
               <Search style={{ display: isSearchPanelOpened ? 'block' : 'none' }} />
               { isPerspectivesPanelOpened && <PerspectiveManager /> }
-              { isHelpFeedbackPanelOpened && <HelpFeedbackPanel /> }
+              { isHelpFeedbackPanelOpened && <HelpFeedbackPanel openFileNatively={openFileNatively} /> }
             </div>
           )}
         </SplitPane>
@@ -600,6 +602,7 @@ function mapActionCreatorsToProps(dispatch) {
       openSearchPanel: AppActions.openSearchPanel,
       openPerspectivesPanel: AppActions.openPerspectivesPanel,
       openHelpFeedbackPanel: AppActions.openHelpFeedbackPanel,
+      openFileNatively: AppActions.openFileNatively,
       closeAllVerticalPanels: AppActions.closeAllVerticalPanels,
       switchTheme: SettingsActions.switchTheme,
       setFirstRun: SettingsActions.setFirstRun,
