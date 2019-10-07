@@ -89,8 +89,8 @@ const TagLibraryMenu = (props: Props) => {
       try {
         const jsonObj = JSON.parse(reader.result);
         if (jsonObj.tagGroups) {
-          setIsImportExportTagGroupDialogOpened(true);
           setTagGroups(jsonObj.tagGroups);
+          setIsImportExportTagGroupDialogOpened(true);
         } else {
           // TODO connect showNotification
           /* props.showNotification(

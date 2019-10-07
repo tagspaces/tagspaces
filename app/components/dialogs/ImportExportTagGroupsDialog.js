@@ -76,18 +76,20 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
     if (nextProps.open === true) {
       const tagGroupList = [];
       const tagGroups = nextProps.tagGroups;
-      tagGroups.map(entry => {
-        tagGroupList.push({
-          uuid: entry.uuid || entry.key,
-          title: entry.title,
-          color: entry.color,
-          textcolor: entry.textcolor,
-          children: entry.children,
-          expanded: entry.expanded,
-          selected: true
+      if (tagGroups) {
+        tagGroups.map(entry => {
+          tagGroupList.push({
+            uuid: entry.uuid || entry.key,
+            title: entry.title,
+            color: entry.color,
+            textcolor: entry.textcolor,
+            children: entry.children,
+            expanded: entry.expanded,
+            selected: true
+          });
         });
-      });
-      this.setState({ tagGroupList, selectedAll: true }, this.handleValidation);
+        this.setState({ tagGroupList, selectedAll: true }, this.handleValidation);
+      }
     }
   };
 
