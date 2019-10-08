@@ -327,20 +327,15 @@ const actions = {
     getState: () => Object
   ) => {
     const { settings } = getState();
-    const sidecarTags = [];
-    let tagsInFilenameAvailable = false;
+    const tagTitlesForRemoving = [];
     tags.map(tag => {
-      if (tag.type === 'sidecar') {
-        sidecarTags.push(tag.title);
-      } else if (tag.type === 'plain') {
-        tagsInFilenameAvailable = true;
-      }
+      tagTitlesForRemoving.push(tag.title);
       return true;
     });
     loadMetaDataPromise(path).then(fsEntryMeta => {
       const newTags = [];
       fsEntryMeta.tags.map((sidecarTag) => {
-        if (!sidecarTags.includes(sidecarTag.title)) {
+        if (!tagTitlesForRemoving.includes(sidecarTag.title)) {
           newTags.push(sidecarTag); // adds only tags which are not in the tags for removing array
         }
         return true;
@@ -360,21 +355,18 @@ const actions = {
       });
       return true;
     }).catch((error) => {
-      console.warn('Error adding tags for ' + path + ' with ' + error);
+      console.warn('Error removing tags for ' + path + ' with ' + error);
       // dispatch(AppActions.showNotification(i18n.t('core:removingSidecarTagsFailed'), 'error', true));
       removeTagsFromFilename();
     });
 
     function removeTagsFromFilename() {
-      if (!tagsInFilenameAvailable) {
-        return;
-      }
       const extractedTags = extractTags(path, settings.tagDelimiter);
       if (extractedTags.length > 0) {
         const fileName = extractFileName(path);
         const containingDirectoryPath = extractContainingDirectoryPath(path);
-        for (let i = 0; i < tags.length; i += 1) {
-          const tagLoc = extractedTags.indexOf(tags[i].title);
+        for (let i = 0; i < tagTitlesForRemoving.length; i += 1) {
+          const tagLoc = extractedTags.indexOf(tagTitlesForRemoving[i]);
           if (tagLoc < 0) {
             console.log('The tag cannot be removed because it is not part of the file name.');
           } else {
@@ -382,7 +374,9 @@ const actions = {
           }
         }
         const newFilePath = containingDirectoryPath + AppConfig.dirSeparator + generateFileName(fileName, extractedTags, settings.tagDelimiter);
-        dispatch(AppActions.renameFile(path, newFilePath));
+        if (path !== newFilePath) {
+          dispatch(AppActions.renameFile(path, newFilePath));
+        }
       }
     }
   },
