@@ -49,11 +49,22 @@ import {
 } from '../utils/paths';
 import PlatformIO from '../services/platform-io';
 import LoadingLazy from '../components/LoadingLazy';
+import { Pro } from '../pro';
 
 const GridPerspective = React.lazy(() => import(/* webpackChunkName: "GridPerspective" */ '../perspectives/grid-perspective/'));
 const GridPerspectiveAsync = props => (
   <React.Suspense fallback={<LoadingLazy />}>
     <GridPerspective {...props} />
+  </React.Suspense>
+);
+
+let GalleryPerspective = React.Fragment;
+// if (Pro && Pro.Perspectives) {
+//   GalleryPerspective = React.lazy(() => import(/* webpackChunkName: "GalleryPerspective" */ '../node_modules/@tagspaces/pro/modules/perspectives/gallery'));
+// }
+const GalleryPerspectiveAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <GalleryPerspective {...props} />
   </React.Suspense>
 );
 
@@ -150,6 +161,7 @@ type Props = {
   setLastSelectedEntry: (entryPath: string | null) => void,
   isReadOnlyMode: boolean,
   showNotification: () => void,
+  openSearchPanel: () => void,
   maxSearchResults: number
 };
 
@@ -169,7 +181,7 @@ type State = {
 
 class FolderContainer extends React.Component<Props, State> {
   state = {
-    currentPerspective: undefined,
+    currentPerspective: 'default',
     currentPath: '',
     pathParts: [],
     isPropertiesPanelVisible: false,
@@ -303,6 +315,18 @@ class FolderContainer extends React.Component<Props, State> {
     });
   };
 
+  switchPerspective = (perspectiveId: string) => {
+    if (perspectiveId) {
+      this.setState({
+        currentPerspective: perspectiveId
+      });
+    } else {
+      this.setState({
+        currentPerspective: 'default'
+      });
+    }
+  }
+
   togglePerspectiveChooserClose = (event?: Object) => {
     this.setState({
       perspectiveChooserMenuOpened: !this.state.perspectiveChooserMenuOpened,
@@ -312,7 +336,7 @@ class FolderContainer extends React.Component<Props, State> {
 
   renderPerspective() {
     if (
-      // TODO handle location perspectives  === 'grid'
+      this.state.currentPerspective === 'default' &&
       this.props.currentDirectoryPath &&
       this.props.currentDirectoryPath.length >= 2
     ) {
@@ -338,8 +362,29 @@ class FolderContainer extends React.Component<Props, State> {
           windowWidth={this.props.windowWidth}
         />
       );
-    } else if (this.state.currentPerspective === 'filemanager') {
-      return <div>Place for another perspective</div>;
+    } else if (this.state.currentPerspective === 'gallery') {
+      return (
+        <GalleryPerspectiveAsync
+          directoryContent={this.props.directoryContent}
+          // loadDirectoryContent={this.props.loadDirectoryContent}
+          // openFile={this.props.openFile}
+          // openFileNatively={this.props.openFileNatively}
+          // loadParentDirectoryContent={this.props.loadParentDirectoryContent}
+          // deleteFile={this.props.deleteFile}
+          // renameFile={this.props.renameFile}
+          // openDirectory={this.props.openDirectory}
+          // showInFileManager={this.props.showInFileManager}
+          currentDirectoryPath={this.props.currentDirectoryPath}
+          setLastSelectedEntry={this.props.setLastSelectedEntry}
+          // perspectiveCommand={this.state.perspectiveCommand}
+          // addTags={this.props.addTags}
+          // editTagForEntry={this.props.editTagForEntry}
+          // deleteDirectory={this.props.deleteDirectory}
+          // removeTags={this.props.removeTags}
+          // removeAllTags={this.props.removeAllTags}
+          windowWidth={this.props.windowWidth}
+        />
+      );
     }
     return <WelcomePanelAsync />;
   }
@@ -350,7 +395,8 @@ class FolderContainer extends React.Component<Props, State> {
       loadDirectoryContent,
       searchResultCount,
       classes,
-      maxSearchResults
+      maxSearchResults,
+      openSearchPanel
     } = this.props;
     const normalizedCurrentDirPath = normalizePath(currentDirectoryPath.split('\\').join('/'));
     let searchResultCounterText = searchResultCount + ' ' + i18n.t('entries');
@@ -369,6 +415,9 @@ class FolderContainer extends React.Component<Props, State> {
                 badgeContent={searchResultCount}
                 color="secondary"
                 max={maxSearchResults - 1}
+                onClick={() => {
+                  openSearchPanel();
+                }}
               />
               <div className={classes.flexMiddle} />
               {currentDirectoryPath && (
@@ -469,7 +518,8 @@ function mapActionCreatorsToProps(dispatch) {
       loadDirectoryContent: AppActions.loadDirectoryContent,
       loadParentDirectoryContent: AppActions.loadParentDirectoryContent,
       setLastSelectedEntry: AppActions.setLastSelectedEntry,
-      showNotification: AppActions.showNotification
+      showNotification: AppActions.showNotification,
+      openSearchPanel: AppActions.openSearchPanel
     },
     dispatch
   );
