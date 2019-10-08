@@ -452,12 +452,16 @@ class EntryProperties extends Component<Props, State> {
 
   handleChange = (name, value, action) => {
     if (action === 'remove-value') {
-      this.state.tags.map((tag) => {
-        if (value.findIndex(obj => obj.title === tag.title) === -1) {
-          this.props.removeTags([this.state.path], [tag]);
-        }
-        return tag;
-      });
+      if (!value) { // no tags left in the select element
+        this.props.removeAllTags([this.state.path]);
+      } else {
+        this.state.tags.map((tag) => {
+          if (value.findIndex(obj => obj.title === tag.title) === -1) {
+            this.props.removeTags([this.state.path], [tag]);
+          }
+          return true;
+        });
+      }
     } else if (action === 'clear') {
       this.props.removeAllTags([this.state.path]);
     } else { // create-option or select-option
@@ -465,7 +469,7 @@ class EntryProperties extends Component<Props, State> {
         if (this.state.tags.findIndex(obj => obj.title === tag.title) === -1) {
           this.props.addTags([this.state.path], [tag]);
         }
-        return tag;
+        return true;
       });
     }
   };
