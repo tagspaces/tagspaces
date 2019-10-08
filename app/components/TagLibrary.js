@@ -55,7 +55,7 @@ import {
 import TaggingActions from '../reducers/tagging-actions';
 import i18n from '../services/i18n';
 import { getTagColor, getTagTextColor } from '../reducers/settings';
-import { getSelectedEntries, isReadOnlyMode } from '../reducers/app';
+import { actions as AppActions, getSelectedEntries, isReadOnlyMode } from '../reducers/app';
 import SmartTags from '../reducers/smart-tags';
 
 const isTagLibraryReadOnly = (window.ExtTagLibrary && window.ExtTagLibrary.length > 0);
@@ -68,6 +68,7 @@ type Props = {
   tagBackgroundColor: string,
   tagGroups: Array<TagGroup>,
   allTags: Array<Tag>,
+  openFileNatively: (path: string) => void,
   toggleTagGroup: (expanded: boolean, uuid: string) => void,
   removeTagGroup: (uuid: string) => void,
   moveTagGroupUp: (uuid: string) => void,
@@ -370,6 +371,7 @@ class TagLibrary extends React.Component<Props, State> {
           importTagGroups={this.props.importTagGroups}
           exportTagGroups={this.props.exportTagGroups}
           showCreateTagGroupDialog={this.showCreateTagGroupDialog}
+          openFileNatively={this.props.openFileNatively}
         />
         <TagMenu
           anchorEl={this.state.tagMenuAnchorEl}
@@ -404,7 +406,8 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     ...TagLibraryActions, // TODO connect only the really needed
     addTags: TaggingActions.addTags,
-    collectTagsFromLocation: TaggingActions.collectTagsFromLocation
+    collectTagsFromLocation: TaggingActions.collectTagsFromLocation,
+    openFileNatively: AppActions.openFileNatively,
   }, dispatch);
 }
 

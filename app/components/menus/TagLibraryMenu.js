@@ -23,6 +23,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ImportExportIcon from '@material-ui/icons/ImportExport';
+import HelpIcon from '@material-ui/icons/Help';
 import AddIcon from '@material-ui/icons/Add';
 import ImportExportTagGroupsDialog from '../dialogs/ImportExportTagGroupsDialog';
 import SelectDirectoryDialog from '../dialogs/SelectDirectoryDialog';
@@ -33,6 +34,7 @@ type Props = {
   classes: Object,
   anchorEl: Object,
   tagGroups: Array<Object>,
+  openFileNatively: (path: string) => void,
   open: boolean,
   onClose: () => void,
   importTagGroups: () => void,
@@ -158,6 +160,18 @@ const TagLibraryMenu = (props: Props) => {
             <ImportExportIcon />
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:exportTagGroupsButton')} />
+        </MenuItem>
+        <MenuItem
+          data-tid="tablibraryHelp"
+          onClick={() => {
+            props.onClose();
+            props.openFileNatively(AppConfig.documentationLinks.taglibrary)
+          }}
+        >
+          <ListItemIcon>
+            <HelpIcon />
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:help')} />
         </MenuItem>
       </Menu>
       <input
