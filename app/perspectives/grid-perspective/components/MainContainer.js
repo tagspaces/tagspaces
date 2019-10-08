@@ -794,6 +794,11 @@ class GridPerspective extends React.Component<Props, State> {
                   {i18n.t('core:noFileFolderFound')}
                 </Typography>
               )}
+              {(!isAppLoading && sortedFiles.length < 1 && sortedDirectories.length >= 1 && !this.state.showDirectories) && (
+                <Typography style={{ padding: 15 }}>
+                  {i18n.t('core:noFileButFoldersFound')}
+                </Typography>
+              )}
             </div>
           </div>
         </div>

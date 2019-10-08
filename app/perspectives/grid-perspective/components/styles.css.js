@@ -23,7 +23,7 @@ export default (theme) => ({
     display: 'grid',
     gridGap: '2px 2px',
     padding: 10,
-    marginBottom: 100
+    marginBottom: 100,
   },
   rowContainer: {
     display: 'grid',
@@ -39,6 +39,7 @@ export default (theme) => ({
     margin: 2,
     marginBottom: 3,
     marginRight: 3,
+    maxWidth: 500
   },
   rowCell: {
     // backgroundColor: theme.palette.background.paper,
