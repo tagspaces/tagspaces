@@ -36,7 +36,6 @@ import VerticalNavigation from '../components/VerticalNavigation';
 import FolderContainer from '../components/FolderContainer';
 import EntryContainer from '../components/EntryContainer';
 import {
-  isFirstRun,
   getDesktopMode,
   getKeyBindingObject,
   getLeftVerticalSplitSize,
@@ -68,12 +67,13 @@ import AppConfig from '../config';
 import buildDesktopMenu from '../services/electron-menus';
 import buildTrayIconMenu from '../services/electron-tray-menu';
 import i18n from '../services/i18n';
+import { Pro } from '../pro';
 
 const initialSplitSize = 44;
 const drawerWidth = 300;
 const body = document.getElementsByTagName('body')[0];
-const showOneColumnThreshold = 600;
-const bufferedMainSplitResize = buffer({ timeout: 50, id: 'buffered-mainsplit-resize' });
+// const showOneColumnThreshold = 600;
+// const bufferedMainSplitResize = buffer({ timeout: 50, id: 'buffered-mainsplit-resize' });
 const bufferedLeftSplitResize = buffer({ timeout: 300, id: 'buffered-leftsplit-resize' });
 
 const styles = theme => ({
@@ -117,7 +117,6 @@ type Props = {
   notificationStatus: Object,
   lastPublishedVersion: string,
   isUpdateAvailable: boolean,
-  isFirstRun: boolean,
   isReadOnlyMode: boolean,
   setEntryFullWidth: (isFullWidth: boolean) => void,
   hideNotifications: () => void,
@@ -137,7 +136,7 @@ type Props = {
   toggleOnboardingDialog: () => void, // needed by electron-menus
   setLastSelectedEntry: (path: string) => void, // needed by electron-menus
   openFile: (path: string) => void, // needed by electron-menus
-  openFileNatively: () => void, // needed by electron-menus
+  openFileNatively: (url: string) => void, // needed by electron-menus
   getNextFile: () => void, // needed by electron-menus
   getPrevFile: () => void, // needed by electron-menus
   openLocationManagerPanel: () => void,
@@ -156,13 +155,13 @@ type Props = {
   isSearchPanelOpened: boolean,
   isPerspectivesPanelOpened: boolean,
   isHelpFeedbackPanelOpened: boolean,
-  directoryPath?: string,
+  directoryPath: string,
   showNotification: (
     text: string,
-    notificationType: string,
-    autohide: boolean
+    notificationType?: string,
+    autohide?: boolean
   ) => void,
-  reflectCreateEntry?: (path: string, isFile: boolean) => void
+  reflectCreateEntry: (path: string, isFile: boolean) => void
 };
 
 type State = {
@@ -285,13 +284,17 @@ class MainPage extends Component<Props, State> {
     this.props.setUpdateAvailable(false);
   }
 
-  openDownloadPage = () => {
+  getLatestVersion = () => {
+    if (Pro) {
+      this.props.showNotification(i18n.t('core:getLatestVersionPro'), 'default', false);
+    } else {
+      this.props.openFileNatively(AppConfig.links.downloadURL);
+    }
     this.props.setUpdateAvailable(false);
-    PlatformIO.openFile(AppConfig.downloadURL);
-  }
+  };
 
   openChangelogPage = () => {
-    PlatformIO.openFile(AppConfig.changelogURL);
+    this.props.openFileNatively(AppConfig.links.changelogURL);
   }
 
   handleFileDrop = (item, monitor) => {
@@ -522,9 +525,7 @@ class MainPage extends Component<Props, State> {
                 color="secondary"
                 size="small"
                 onClick={this.props.cancelDirectoryIndexing}
-              >
-              Cancel indexing
-              </Button>
+              >{i18n.t('core:cancelIndexing')}</Button>
             ]}
           />
           <Snackbar
@@ -537,23 +538,17 @@ class MainPage extends Component<Props, State> {
                 color="secondary"
                 size="small"
                 onClick={this.skipRelease}
-              >
-              Later
-              </Button>,
+              >{i18n.t('core:later')}</Button>,
               <Button
                 color="secondary"
                 size="small"
                 onClick={this.openChangelogPage}
-              >
-              Release Notes
-              </Button>,
+              >{i18n.t('core:releaseNotes')}</Button>,
               <Button
                 color="primary"
                 size="small"
-                onClick={this.openDownloadPage}
-              >
-              Get Now
-              </Button>,
+                onClick={this.getLatestVersion}
+              >{i18n.t('core:getItNow')}</Button>,
             ]}
           />
         </TargetFileBox>
@@ -565,7 +560,6 @@ class MainPage extends Component<Props, State> {
 function mapStateToProps(state) {
   return {
     isIndexing: isIndexing(state),
-    isFirstRun: isFirstRun(state),
     isReadOnlyMode: isReadOnlyMode(state),
     isGeneratingThumbs: isGeneratingThumbs(state),
     isFileOpened: isFileOpened(state),

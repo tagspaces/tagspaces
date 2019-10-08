@@ -113,13 +113,14 @@ class OnboardingDialog extends React.Component<Props, State> {
           >
             <Typography variant="h4">Welcome to TagSpaces</Typography>
             <Typography variant="h6">&nbsp;</Typography>
-            <Typography variant="h6">Your favorite file organizer has a fresh new look</Typography>
+            {/* <Typography variant="h6">Your favorite file organizer has a fresh new look</Typography> */}
             <img
               style={{ maxHeight: 340, marginTop: 15 }}
               src={NewLook}
               alt=""
             />
-            <Typography variant="h6">Try out our new themes</Typography>
+            <Typography variant="h6">Try our user interface themes</Typography>
+            <Typography variant="h6">&nbsp;</Typography>
             <ToggleButtonGroup
               value={this.props.currentTheme}
               exclusive
@@ -139,7 +140,7 @@ class OnboardingDialog extends React.Component<Props, State> {
               textAlign: 'center'
             }}
           >
-            <Typography variant="h4">Explanation of the app navigation</Typography>
+            <Typography variant="h4">Understand main app navigation</Typography>
             <img
               style={{ marginTop: 15 }}
               src={NavigationV3}

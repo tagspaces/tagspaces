@@ -386,7 +386,7 @@ export function getLastVersionPromise(): Promise<string> {
   return new Promise((resolve, reject) => {
     console.log('Checking for new version...');
     const xhr = new XMLHttpRequest();
-    const updateUrl = AppConfig.checkNewVersionURL + '?cv=' + versionMeta.version;
+    const updateUrl = AppConfig.links.checkNewVersionURL + '?cv=' + versionMeta.version;
     xhr.open('GET', updateUrl, true);
     xhr.responseType = 'json';
     xhr.onerror = reject;

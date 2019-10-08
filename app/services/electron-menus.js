@@ -279,7 +279,7 @@ export default function buildDesktopMenu(mainPageProps: Object) {
         {
           label: '&' + i18n.t('core:whatsNew'),
           click: () => {
-            mainPageProps.openFileNatively(AppConfig.changelogURL);
+            mainPageProps.openFileNatively(AppConfig.links.changelogURL);
           }
         },
         {

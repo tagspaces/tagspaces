@@ -20,9 +20,6 @@ const isCordovaiOS = /^file:\/{3}[^\/]/i.test(window.location.href) && /ios|ipho
 const isCordovaAndroid = document.URL.indexOf('file:///android_asset') === 0;
 
 export default {
-  checkNewVersionURL: 'https://www.tagspaces.org/releases/tagspaces.json',
-  downloadURL: 'https://www.tagspaces.org/downloads/',
-  changelogURL: 'https://www.tagspaces.org/whatsnew/',
   tagspacesAppPath: '/tagspaces/',
   metaFolder: '.ts',
   metaFolderFile: 'tsm.json',
@@ -44,6 +41,10 @@ export default {
   defaultFileColor: '#808080',
   defaultFolderColor: '#555', // transparent #FDEEBD #ff791b #2c001e #880e4f
   links: {
+    checkNewVersionURL: 'https://www.tagspaces.org/releases/tagspaces.json',
+    productsOverview: 'https://www.tagspaces.org/products/',
+    downloadURL: 'https://www.tagspaces.org/downloads/',
+    changelogURL: 'https://www.tagspaces.org/whatsnew/',
     suggestFeature: 'https://trello.com/b/TGeG5bi9',
     reportIssue: 'https://github.com/tagspaces/tagspaces/issues/',
     helpTranslating: 'https://www.transifex.com/tagspaces/tagspaces/',

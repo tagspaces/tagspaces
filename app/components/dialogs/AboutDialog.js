@@ -56,7 +56,7 @@ const AboutDialog = (props: Props) => {
 
   function checkForUpdates() {
     if (updateAvailable) {
-      PlatformIO.openUrl(AppConfig.downloadURL);
+      PlatformIO.openUrl(AppConfig.links.downloadURL);
     } else {
       getLastVersionPromise()
         .then(lastVersion => {

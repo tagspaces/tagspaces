@@ -36,20 +36,31 @@ import TranslationIcon from '@material-ui/icons/Translate';
 import NewFeatureIcon from '@material-ui/icons/Gesture';
 import SocialIcon from '@material-ui/icons/ThumbUp';
 import Social2Icon from '@material-ui/icons/Mood';
+import KeyShortcutsIcon from '@material-ui/icons/Keyboard';
 import CustomLogo from './CustomLogo';
 import styles from './SidePanels.css';
 import AppConfig from '../config';
 import i18n from '../services/i18n';
+import { Pro } from '../pro';
 
 type Props = {
   classes: Object,
   openFileNatively: (url: string) => void,
+  toggleKeysDialog: () => void,
+  toggleOnboardingDialog: () => void,
+  toggleProTeaser: () => void,
   style: Object
 };
 
 class HelpFeedbackPanel extends React.Component<Props> {
   render() {
-    const { classes, openFileNatively } = this.props;
+    const {
+      classes,
+      openFileNatively,
+      toggleKeysDialog,
+      toggleOnboardingDialog,
+      toggleProTeaser
+    } = this.props;
 
     return (
       <div className={classes.panel} style={this.props.style}>
@@ -62,17 +73,23 @@ class HelpFeedbackPanel extends React.Component<Props> {
             </ListItemIcon>
             <ListItemText primary="Open Documentation" />
           </ListItem>
-          <ListItem button onClick={() => openFileNatively(AppConfig.changelogURL)}>
+          <ListItem button onClick={() => toggleKeysDialog()}>
+            <ListItemIcon>
+              <KeyShortcutsIcon />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:shortcutKeys')} title="" />
+          </ListItem>
+          <ListItem button onClick={() => openFileNatively(AppConfig.links.changelogURL)}>
             <ListItemIcon>
               <ChangeLogIcon />
             </ListItemIcon>
             <ListItemText primary={i18n.t('core:whatsNew')} title="Opens the changelog of the app" />
           </ListItem>
-          <ListItem button onClick={() => openFileNatively(AppConfig.documentationLinks.general)}>
+          <ListItem button onClick={() => toggleOnboardingDialog()}>
             <ListItemIcon>
               <OnboardingIcon />
             </ListItemIcon>
-            <ListItemText primary="Onboarding Wizard" />
+            <ListItemText primary={i18n.t('core:onboardingWizard')} />
           </ListItem>
           <Divider />
           <ListItem button onClick={() => openFileNatively(AppConfig.links.suggestFeature)}>
@@ -124,6 +141,13 @@ class HelpFeedbackPanel extends React.Component<Props> {
               <WebClipperIcon />
             </ListItemIcon>
             <ListItemText primary={i18n.t('core:webClipperFirefox')} />
+          </ListItem>
+          <Divider />
+          <ListItem button onClick={() => toggleProTeaser()}>
+            <ListItemIcon>
+              <WebClipperIcon />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:proTeaser')} />
           </ListItem>
         </List>
       </div>
