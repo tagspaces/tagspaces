@@ -514,7 +514,11 @@ class VerticalNavigation extends React.Component<Props, State> {
                 onClick={this.toggleProTeaser}
                 style={{ ...this.styles.button, ...this.styles.upgradeButton }}
               >
-                <UpgradeIcon style={this.styles.buttonIcon} />
+                <UpgradeIcon style={{
+                  ...this.styles.buttonIcon,
+                  color: '1DD19F'
+                }}
+                />
               </IconButton>
             )}
             <IconButton
@@ -552,7 +556,13 @@ class VerticalNavigation extends React.Component<Props, State> {
               { isTagLibraryPanelOpened && <TagLibrary /> }
               <Search style={{ display: isSearchPanelOpened ? 'block' : 'none' }} />
               { isPerspectivesPanelOpened && <PerspectiveManager /> }
-              { isHelpFeedbackPanelOpened && <HelpFeedbackPanel openFileNatively={openFileNatively} /> }
+              { isHelpFeedbackPanelOpened &&
+              <HelpFeedbackPanel
+                openFileNatively={openFileNatively}
+                toggleKeysDialog={toggleKeysDialog}
+                toggleOnboardingDialog={toggleOnboardingDialog}
+                toggleProTeaser={this.toggleProTeaser}
+              /> }
             </div>
           )}
         </SplitPane>
@@ -592,11 +602,11 @@ function mapActionCreatorsToProps(dispatch) {
       toggleSelectDirectoryDialog: AppActions.toggleSelectDirectoryDialog,
       toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
       toggleSettingsDialog: AppActions.toggleSettingsDialog,
-      toggleKeysDialog: AppActions.toggleKeysDialog,
       toggleLicenseDialog: AppActions.toggleLicenseDialog,
       toggleThirdPartyLibsDialog: AppActions.toggleThirdPartyLibsDialog,
       toggleAboutDialog: AppActions.toggleAboutDialog,
       toggleEditTagDialog: AppActions.toggleEditTagDialog,
+      toggleKeysDialog: AppActions.toggleKeysDialog,
       openLocationManagerPanel: AppActions.openLocationManagerPanel,
       openTagLibraryPanel: AppActions.openTagLibraryPanel,
       openSearchPanel: AppActions.openSearchPanel,
