@@ -81,7 +81,6 @@ export default function buildTrayIconMenu(mainPageProps: Object) {
     },
     {
       label: i18n.t('core:quitTagSpaces') + cKey + '+Q',
-      // role: 'quit',
       click: PlatformIO.quitApp
     }
   ];

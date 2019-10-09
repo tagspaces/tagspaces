@@ -44,6 +44,7 @@ export default class ElectronIO {
   fs: Object;
   fsWatcher: Object;
   webFrame: Object;
+  tsTray: Object;
 
   constructor() {
     if (window.require) {
@@ -103,16 +104,19 @@ export default class ElectronIO {
       nImage = nativeImage.createFromDataURL(TrayIcon2x);
     }
 
-    const tsTray = new Tray(nImage);
+    if (this.tsTray && this.tsTray.destroy) {
+      this.tsTray.destroy();
+    }
+    this.tsTray = new Tray(nImage);
 
-    tsTray.on('click', () => {
+    this.tsTray.on('click', () => {
       if (mainWindow) {
         mainWindow.show();
       }
     });
     const trayMenu = Menu.buildFromTemplate(menuConfig);
-    tsTray.setToolTip('TagSpaces');
-    tsTray.setContextMenu(trayMenu);
+    this.tsTray.setToolTip('TagSpaces');
+    this.tsTray.setContextMenu(trayMenu);
   };
 
   isWorkerAvailable = (): boolean => {
