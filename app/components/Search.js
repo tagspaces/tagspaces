@@ -24,6 +24,7 @@ import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
+import HelpIcon from '@material-ui/icons/Help';
 import PictureIcon from '@material-ui/icons/Panorama';
 import DocumentIcon from '@material-ui/icons/PictureAsPdf';
 import NoteIcon from '@material-ui/icons/Note';
@@ -264,6 +265,12 @@ class Search extends React.Component<Props, State> {
           <Typography variant="caption" className={classes.header} style={{ alignSelf: 'flex-end', paddingLeft: 5, display: 'block' }}>
             {indexing ? 'disabled while indexing...' : 'in ' + indexedEntriesCount + ' indexed entries'}
           </Typography>
+          {/* <IconButton
+            data-tid="helpSearchButton"
+            onClick={() => {}}
+          >
+            <HelpIcon />
+          </IconButton> */}
         </div>
         <div className={classes.searchArea}>
           <FormControl
