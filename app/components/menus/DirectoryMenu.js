@@ -31,6 +31,7 @@ import OpenFolderIcon from '@material-ui/icons/SubdirectoryArrowLeft';
 import AddExistingFileIcon from '@material-ui/icons/ExitToApp';
 import OpenFolderNativelyIcon from '@material-ui/icons/Launch';
 import AutoRenew from '@material-ui/icons/Autorenew';
+import GalleryPerspectiveIcon from '@material-ui/icons/Slideshow';
 import NewFileIcon from '@material-ui/icons/InsertDriveFile';
 import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import RenameFolderIcon from '@material-ui/icons/FormatTextdirectionLToR';
@@ -63,6 +64,7 @@ type Props = {
   loadParentDirectoryContent?: () => void,
   openFileNatively?: (path: string) => void,
   extractContent?: () => void,
+  switchPerspective?: () => void,
   perspectiveMode: boolean,
   showNotification?: (
     text: string,
@@ -102,6 +104,11 @@ const DirectoryMenu = (props: Props) => {
   function initContentExtraction() {
     props.onClose();
     props.extractContent();
+  }
+
+  function switchPerspective() {
+    props.onClose();
+    props.switchPerspective();
   }
 
   function showDeleteDirectoryDialog() {
@@ -401,20 +408,26 @@ const DirectoryMenu = (props: Props) => {
         )}
         <Divider />
         {!props.isReadOnlyMode && (
-          <MenuItem data-tid="extractContent" onClick={initContentExtraction}>
-            <ListItemIcon>
-              <ContentExtractionIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:startContentExtraction')}
-            />
-          </MenuItem>
+          <React.Fragment>
+            <MenuItem data-tid="extractContent" onClick={switchPerspective} title="Start experimental presentation mode">
+              <ListItemIcon>
+                <GalleryPerspectiveIcon />
+              </ListItemIcon>
+              <ListItemText primary="Toggle Gallery Perspective" />
+            </MenuItem>
+            <MenuItem data-tid="extractContent" onClick={initContentExtraction}>
+              <ListItemIcon>
+                <ContentExtractionIcon />
+              </ListItemIcon>
+              <ListItemText primary={i18n.t('core:startContentExtraction')} />
+            </MenuItem>
+          </React.Fragment>
         )}
         <MenuItem data-tid="showProperties" onClick={showProperties}>
           <ListItemIcon>
             <SettingsIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:directoryPropertiesTitle')}
-          />
+          <ListItemText primary={i18n.t('core:directoryPropertiesTitle')} />
         </MenuItem>
       </Menu>
       <input

@@ -59,9 +59,10 @@ const GridPerspectiveAsync = props => (
 );
 
 let GalleryPerspective = React.Fragment;
-// if (Pro && Pro.Perspectives) {
+if (Pro && Pro.Perspectives) {
 //   GalleryPerspective = React.lazy(() => import(/* webpackChunkName: "GalleryPerspective" */ '../node_modules/@tagspaces/pro/modules/perspectives/gallery'));
-// }
+  GalleryPerspective = Pro.Perspectives.GalleryPerspective;
+}
 const GalleryPerspectiveAsync = props => (
   <React.Suspense fallback={<LoadingLazy />}>
     <GalleryPerspective {...props} />
@@ -160,7 +161,7 @@ type Props = {
   loadParentDirectoryContent: () => void,
   setLastSelectedEntry: (entryPath: string | null) => void,
   isReadOnlyMode: boolean,
-  showNotification: () => void,
+  showNotification: (content: string) => void,
   openSearchPanel: () => void,
   maxSearchResults: number
 };
@@ -316,7 +317,14 @@ class FolderContainer extends React.Component<Props, State> {
   };
 
   switchPerspective = (perspectiveId: string) => {
-    if (perspectiveId) {
+    if (!Pro) {
+      this.props.showNotification(i18n.t('core:needProVersion'));
+      return;
+    }
+    this.setState({
+      currentPerspective: this.state.currentPerspective === 'default' ? 'gallery' : 'default'
+    });
+    /* if (perspectiveId) {
       this.setState({
         currentPerspective: perspectiveId
       });
@@ -324,7 +332,7 @@ class FolderContainer extends React.Component<Props, State> {
       this.setState({
         currentPerspective: 'default'
       });
-    }
+    } */
   }
 
   togglePerspectiveChooserClose = (event?: Object) => {
@@ -465,6 +473,7 @@ class FolderContainer extends React.Component<Props, State> {
                     toggleCreateFileDialog={this.props.toggleCreateFileDialog}
                     deleteDirectory={this.props.deleteDirectory}
                     showNotification={this.props.showNotification}
+                    switchPerspective={this.switchPerspective}
                     isReadOnlyMode={this.props.isReadOnlyMode}
                   />
                 </div>
