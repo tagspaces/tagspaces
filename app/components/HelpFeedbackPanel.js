@@ -141,7 +141,7 @@ class HelpFeedbackPanel extends React.Component<Props> {
             <ListItemText primary={i18n.t('core:likeUsOnFacebook')} color="textPrimary" />
           </ListItem>
         </List>
-        {Pro && <React.Fragment>
+        {!Pro && <React.Fragment>
           <Divider />
           <div
             onClick={toggleProTeaser}
@@ -156,11 +156,11 @@ class HelpFeedbackPanel extends React.Component<Props> {
               <Typography className={classes.title} color="textSecondary" gutterBottom>
                 Achieve more with
               </Typography>
-              <Typography variant="h5" component="h2" color="textPrimary">
+              <Typography variant="h6" component="h2" color="textPrimary">
                 TagSpaces Pro
               </Typography>
               <img
-                style={{ maxHeight: 100, marginTop: 15 }}
+                style={{ maxHeight: 80, marginTop: 10 }}
                 src={ProTeaser}
                 alt=""
               />

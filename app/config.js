@@ -43,6 +43,12 @@ export default {
   links: {
     checkNewVersionURL: 'https://www.tagspaces.org/releases/tagspaces.json',
     productsOverview: 'https://www.tagspaces.org/products/',
+    productProObjectStore: 'https://www.tagspaces.org/products/pro/#connectingObjectStores',
+    productProAdvancedSearch: 'https://www.tagspaces.org/products/pro/#connectingObjectStores',
+    productProFileFolderMeta: 'https://www.tagspaces.org/products/pro/#fileFolderMeta',
+    productProThumbnailsGeneration: 'https://www.tagspaces.org/products/pro/#thumbnailsGeneration',
+    productPro: 'https://www.tagspaces.org/products/pro/',
+    productEnterprise: 'https://www.tagspaces.org/products/enterprise/',
     downloadURL: 'https://www.tagspaces.org/downloads/',
     changelogURL: 'https://www.tagspaces.org/whatsnew/',
     suggestFeature: 'https://trello.com/b/TGeG5bi9',
