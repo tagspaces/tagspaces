@@ -355,6 +355,7 @@ class VerticalNavigation extends React.Component<Props, State> {
           <ProTeaserDialogAsync
             open={this.state.isProTeaserVisible}
             onClose={this.toggleProTeaser}
+            openFileNatively={openFileNatively}
             key={uuidv1()}
           />
         )}

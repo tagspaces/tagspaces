@@ -35,10 +35,12 @@ import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import MobileStepper from '@material-ui/core/MobileStepper';
-import WelcomeImage from '../../assets/images/onboarding.jpg';
+// import WelcomeImage from '../../assets/images/onboarding.jpg';
 import NavigationV3 from '../../assets/images/navigation-v3.png';
-import BrowserExtension from '../../assets/images/browser-extensions.png';
-import NewLook from '../../assets/images/new-look.png';
+import BrowserExtension from '../../assets/images/collecting-undraw.svg';
+import WizardFinished from '../../assets/images/balloons-undraw.svg';
+import ChooseTagging from '../../assets/images/internals-undraw.svg';
+import NewLook from '../../assets/images/welcome-undraw.svg';
 import i18n from '../../services/i18n';
 import {
   isFirstRun,
@@ -46,6 +48,8 @@ import {
   getPersistTagsInSidecarFile,
   actions as SettingsActions
 } from '../../reducers/settings';
+import { actions as AppActions } from '../../reducers/app';
+import AppConfig from '../../config';
 
 type Props = {
   open: boolean,
@@ -55,6 +59,7 @@ type Props = {
   // setFirstRun: (isFirstRun: boolean) => void,
   setPersistTagsInSidecarFile: (isPersistTagsInSidecar: boolean) => void,
   setCurrentTheme: () => void,
+  openFileNatively: (url: string) => void,
   onClose: () => void
 };
 
@@ -100,7 +105,7 @@ class OnboardingDialog extends React.Component<Props, State> {
     const { activeStep } = this.state;
 
     return (
-      <DialogContent>
+      <DialogContent style={{ marginTop: 20 }}>
         <SwipeableViews
           index={activeStep}
           onChangeIndex={this.handleStepChange}
@@ -111,7 +116,7 @@ class OnboardingDialog extends React.Component<Props, State> {
               textAlign: 'center'
             }}
           >
-            <Typography variant="h4">Welcome to TagSpaces</Typography>
+            <Typography variant="h5">Welcome to TagSpaces</Typography>
             <Typography variant="h6">&nbsp;</Typography>
             {/* <Typography variant="h6">Your favorite file organizer has a fresh new look</Typography> */}
             <img
@@ -140,7 +145,7 @@ class OnboardingDialog extends React.Component<Props, State> {
               textAlign: 'center'
             }}
           >
-            <Typography variant="h4">Understand main app navigation</Typography>
+            <Typography variant="h5">Understand main app navigation</Typography>
             <img
               style={{ marginTop: 15 }}
               src={NavigationV3}
@@ -153,10 +158,10 @@ class OnboardingDialog extends React.Component<Props, State> {
               textAlign: 'center'
             }}
           >
-            <Typography variant="h4">Tag your files and folder with ease!</Typography>
-            <Typography variant="h6">&nbsp;</Typography>
-            <Typography variant="h6">Choose your the default tagging method for files</Typography>
-            <FormControl style={{ marginTop: 20 }} component="fieldset">
+            <Typography variant="h5">Choose your the default tagging method for files</Typography>
+            <Typography variant="h5">&nbsp;</Typography>
+            <Typography variant="body">Core functionality of the application the ability to add tags to files and folders. Here you can choose how tags will applied on files.</Typography>
+            <FormControl style={{ marginTop: 20, marginBottom: 20 }} component="fieldset">
               <RadioGroup
                 aria-label="Gender"
                 name="isPersistTagsInSidecar"
@@ -189,37 +194,53 @@ class OnboardingDialog extends React.Component<Props, State> {
                       Use sidecar file for saving the tags - Tagging the file{' '}
                       <strong>image.jpg</strong> with a tag{' '}
                       <strong>sunset</strong> will save this tag in an
-                      additional file called <strong>image.jpg.json</strong>{' '}
+                      additional sidecar file called <strong>image.jpg.json</strong>{' '}
                       located in a sub folder with the name <strong>.ts</strong>
                     </Typography>
                   }
                 />
+                <img
+                  style={{ maxHeight: 200, marginTop: 15 }}
+                  src={ChooseTagging}
+                  alt=""
+                />
               </RadioGroup>
             </FormControl>
+            <Typography variant="body">You can always revise you decision and change the tagging method. But tags already tagged by  renaming the files will stay renamed and the created sidecar file containing tags will stay.</Typography>
           </div>
           <div
             style={{
               textAlign: 'center'
             }}
           >
-            <Typography variant="h4">Collect web content in Chrome and Firefox</Typography>
-            <Typography variant="h6">We have a web clipper browser extension</Typography>
+            <Typography variant="h5">Collect web content in Chrome and Firefox</Typography>
             <img
               style={{ maxHeight: 400, marginTop: 15 }}
               src={BrowserExtension}
               alt=""
             />
-            <Typography variant="h6">It is freely available on the official browser stores</Typography>
+            <Typography variant="h6">We have a web clipper extension for your browser.</Typography>
+            <Typography variant="h6">It is open source and available for free on the official stores.</Typography>
+            <Button
+              style={{ marginTop: 20 }}
+              onClick={() => {
+                this.props.openFileNatively(AppConfig.links.webClipper);
+              }}
+              variant="contained"
+              color="primary"
+            >
+              Get the web clipper
+            </Button>
           </div>
           <div
             style={{
               textAlign: 'center'
             }}
           >
-            <Typography variant="h4">And... you&apos;re done</Typography>
+            <Typography variant="h5">And... you&apos;re done</Typography>
             <img
-              style={{ maxHeight: 300, marginTop: 15 }}
-              src={WelcomeImage}
+              style={{ maxHeight: 300, marginTop: 100 }}
+              src={WizardFinished}
               alt=""
             />
             <Typography variant="h6">
@@ -311,7 +332,8 @@ function mapActionCreatorsToProps(dispatch) {
     {
       setFirstRun: SettingsActions.setFirstRun,
       setPersistTagsInSidecarFile: SettingsActions.setPersistTagsInSidecarFile,
-      setCurrentTheme: SettingsActions.setCurrentTheme
+      setCurrentTheme: SettingsActions.setCurrentTheme,
+      openFileNatively: AppActions.openFileNatively
     },
     dispatch
   );

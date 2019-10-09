@@ -21,6 +21,10 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import Typography from '@material-ui/core/Typography';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -38,6 +42,7 @@ import SocialIcon from '@material-ui/icons/ThumbUp';
 import Social2Icon from '@material-ui/icons/Mood';
 import KeyShortcutsIcon from '@material-ui/icons/Keyboard';
 import CustomLogo from './CustomLogo';
+import ProTeaser from '../assets/images/spacerocket_undraw.svg';
 import styles from './SidePanels.css';
 import AppConfig from '../config';
 import i18n from '../services/i18n';
@@ -66,7 +71,7 @@ class HelpFeedbackPanel extends React.Component<Props> {
       <div className={classes.panel} style={this.props.style}>
         <CustomLogo />
         <Typography className={classNames(classes.panelTitle, classes.header)} type="subtitle1">Help & Feedback</Typography>
-        <List dense={false} component="nav" aria-label="main mailbox folders">
+        <List dense={false} component="nav" aria-label="main help area">
           <ListItem button onClick={() => openFileNatively(AppConfig.documentationLinks.general)}>
             <ListItemIcon>
               <DocumentationIcon />
@@ -90,6 +95,12 @@ class HelpFeedbackPanel extends React.Component<Props> {
               <OnboardingIcon />
             </ListItemIcon>
             <ListItemText primary={i18n.t('core:onboardingWizard')} />
+          </ListItem>
+          <ListItem button onClick={() => openFileNatively(AppConfig.links.webClipper)}>
+            <ListItemIcon>
+              <WebClipperIcon />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:webClipper')} />
           </ListItem>
           <Divider />
           <ListItem button onClick={() => openFileNatively(AppConfig.links.suggestFeature)}>
@@ -127,29 +138,62 @@ class HelpFeedbackPanel extends React.Component<Props> {
             <ListItemIcon>
               <SocialIcon />
             </ListItemIcon>
-            <ListItemText primary={i18n.t('core:likeUsOnFacebook')} />
+            <ListItemText primary={i18n.t('core:likeUsOnFacebook')} color="textPrimary" />
           </ListItem>
+        </List>
+        {Pro && <React.Fragment>
           <Divider />
+          <div
+            onClick={toggleProTeaser}
+            role="button"
+            tabIndex="0"
+            style={{
+              backgroundColor: 'rgba(29, 209, 159, 0.08)',
+              textAlign: 'center'
+            }}
+          >
+            <CardContent>
+              <Typography className={classes.title} color="textSecondary" gutterBottom>
+                Achieve more with
+              </Typography>
+              <Typography variant="h5" component="h2" color="textPrimary">
+                TagSpaces Pro
+              </Typography>
+              <img
+                style={{ maxHeight: 100, marginTop: 15 }}
+                src={ProTeaser}
+                alt=""
+              />
+            </CardContent>
+            <CardActions style={{ flexDirection: 'row', justifyContent: 'center' }}>
+              <Button
+                size="small"
+                onClick={(event: any) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  toggleProTeaser();
+                }}
+              >Learn More</Button>
+              <Button
+                size="small"
+                onClick={(event: any) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  openFileNatively(AppConfig.links.productsOverview);
+                }}
+              >Get It</Button>
+            </CardActions>
+          </div>
+          <Divider />
+        </React.Fragment>}
+        {/* <List dense={false} component="nav" aria-label="main help area">
           <ListItem button onClick={() => openFileNatively(AppConfig.links.webClipperChrome)}>
             <ListItemIcon>
               <WebClipperIcon />
             </ListItemIcon>
             <ListItemText primary={i18n.t('core:webClipperChrome')} />
           </ListItem>
-          <ListItem button onClick={() => openFileNatively(AppConfig.links.webClipperFirefox)}>
-            <ListItemIcon>
-              <WebClipperIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:webClipperFirefox')} />
-          </ListItem>
-          <Divider />
-          <ListItem button onClick={() => toggleProTeaser()}>
-            <ListItemIcon>
-              <WebClipperIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:proTeaser')} />
-          </ListItem>
-        </List>
+        </List> */}
       </div>
     );
   }

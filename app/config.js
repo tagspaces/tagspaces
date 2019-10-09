@@ -50,6 +50,7 @@ export default {
     helpTranslating: 'https://www.transifex.com/tagspaces/tagspaces/',
     webClipperChrome: 'https://chrome.google.com/webstore/detail/tagspaces-web-clipper/ldalmgifdlgpiiadeccbcjojljeanhjk',
     webClipperFirefox: 'https://addons.mozilla.org/en-US/firefox/addon/tagspaces/',
+    webClipper: 'https://www.tagspaces.org/products/webclipper/',
     twitter: 'https://twitter.com/tagspaces',
     facebook: 'https://www.facebook.com/tagspacesapp',
     emailContact: 'mailto:contactus@tagspaces.org?subject=App',
