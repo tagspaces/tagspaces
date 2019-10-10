@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 3.2.3 / 2019.09.23
+## Version 3.2.5 / 2019.10.10
 
 ### Community
 - 🌟 Added new help panel, which can be opened from the vertical toolbar
