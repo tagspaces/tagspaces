@@ -41,6 +41,7 @@ import NewFeatureIcon from '@material-ui/icons/Gesture';
 import SocialIcon from '@material-ui/icons/ThumbUp';
 import Social2Icon from '@material-ui/icons/Mood';
 import KeyShortcutsIcon from '@material-ui/icons/Keyboard';
+import ProTeaserIcon from '@material-ui/icons/FlightTakeoff';
 import CustomLogo from './CustomLogo';
 import ProTeaser from '../assets/images/spacerocket_undraw.svg';
 import styles from './SidePanels.css';
@@ -71,129 +72,136 @@ class HelpFeedbackPanel extends React.Component<Props> {
       <div className={classes.panel} style={this.props.style}>
         <CustomLogo />
         <Typography className={classNames(classes.panelTitle, classes.header)} type="subtitle1">Help & Feedback</Typography>
-        <List dense={false} component="nav" aria-label="main help area">
-          <ListItem button onClick={() => openFileNatively(AppConfig.documentationLinks.general)}>
-            <ListItemIcon>
-              <DocumentationIcon />
-            </ListItemIcon>
-            <ListItemText primary="Open Documentation" />
-          </ListItem>
-          <ListItem button onClick={() => toggleKeysDialog()}>
-            <ListItemIcon>
-              <KeyShortcutsIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:shortcutKeys')} title="" />
-          </ListItem>
-          <ListItem button onClick={() => openFileNatively(AppConfig.links.changelogURL)}>
-            <ListItemIcon>
-              <ChangeLogIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:whatsNew')} title="Opens the changelog of the app" />
-          </ListItem>
-          <ListItem button onClick={() => toggleOnboardingDialog()}>
-            <ListItemIcon>
-              <OnboardingIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:onboardingWizard')} />
-          </ListItem>
-          <ListItem button onClick={() => openFileNatively(AppConfig.links.webClipper)}>
-            <ListItemIcon>
-              <WebClipperIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:webClipper')} />
-          </ListItem>
-          <Divider />
-          <ListItem button onClick={() => openFileNatively(AppConfig.links.suggestFeature)}>
-            <ListItemIcon>
-              <NewFeatureIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:suggestNewFeatures')} />
-          </ListItem>
-          <ListItem button onClick={() => openFileNatively(AppConfig.links.reportIssue)}>
-            <ListItemIcon>
-              <IssueIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:reportIssues')} />
-          </ListItem>
-          <ListItem button onClick={() => openFileNatively(AppConfig.links.helpTranslating)}>
-            <ListItemIcon>
-              <TranslationIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:helpWithTranslation')} />
-          </ListItem>
-          <Divider />
-          <ListItem button onClick={() => openFileNatively(AppConfig.links.emailContact)}>
-            <ListItemIcon>
-              <EmailIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:emailContact')} />
-          </ListItem>
-          <ListItem button onClick={() => openFileNatively(AppConfig.links.twitter)}>
-            <ListItemIcon>
-              <Social2Icon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:followOnTwitter')} />
-          </ListItem>
-          <ListItem button onClick={() => openFileNatively(AppConfig.links.facebook)}>
-            <ListItemIcon>
-              <SocialIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:likeUsOnFacebook')} color="textPrimary" />
-          </ListItem>
-        </List>
-        {!Pro && <React.Fragment>
-          <Divider />
-          <div
-            onClick={toggleProTeaser}
-            role="button"
-            tabIndex="0"
-            style={{
-              backgroundColor: 'rgba(29, 209, 159, 0.08)',
-              textAlign: 'center'
-            }}
-          >
-            <CardContent>
-              <Typography className={classes.title} color="textSecondary" gutterBottom>
-                Achieve more with
-              </Typography>
-              <Typography variant="h6" component="h2" color="textPrimary">
-                TagSpaces Pro
-              </Typography>
-              <img
-                style={{ maxHeight: 80, marginTop: 10 }}
-                src={ProTeaser}
-                alt=""
-              />
-            </CardContent>
-            <CardActions style={{ flexDirection: 'row', justifyContent: 'center' }}>
-              <Button
-                size="small"
-                onClick={(event: any) => {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  toggleProTeaser();
+        <div className={classes.helpFeedbackArea}>
+          <List dense={false} component="nav" aria-label="main help area">
+            <ListItem button onClick={() => openFileNatively(AppConfig.documentationLinks.general)}>
+              <ListItemIcon>
+                <DocumentationIcon />
+              </ListItemIcon>
+              <ListItemText primary="Open Documentation" />
+            </ListItem>
+            <ListItem button onClick={() => toggleKeysDialog()}>
+              <ListItemIcon>
+                <KeyShortcutsIcon />
+              </ListItemIcon>
+              <ListItemText primary={i18n.t('core:shortcutKeys')} title="" />
+            </ListItem>
+            <ListItem button onClick={() => openFileNatively(AppConfig.links.changelogURL)}>
+              <ListItemIcon>
+                <ChangeLogIcon />
+              </ListItemIcon>
+              <ListItemText primary={i18n.t('core:whatsNew')} title="Opens the changelog of the app" />
+            </ListItem>
+            <ListItem button onClick={() => toggleOnboardingDialog()}>
+              <ListItemIcon>
+                <OnboardingIcon />
+              </ListItemIcon>
+              <ListItemText primary={i18n.t('core:onboardingWizard')} />
+            </ListItem>
+            <ListItem button onClick={() => openFileNatively(AppConfig.links.webClipper)}>
+              <ListItemIcon>
+                <WebClipperIcon />
+              </ListItemIcon>
+              <ListItemText primary={i18n.t('core:webClipper')} />
+            </ListItem>
+            <Divider />
+            <ListItem button onClick={() => openFileNatively(AppConfig.links.suggestFeature)}>
+              <ListItemIcon>
+                <NewFeatureIcon />
+              </ListItemIcon>
+              <ListItemText primary={i18n.t('core:suggestNewFeatures')} />
+            </ListItem>
+            <ListItem button onClick={() => openFileNatively(AppConfig.links.reportIssue)}>
+              <ListItemIcon>
+                <IssueIcon />
+              </ListItemIcon>
+              <ListItemText primary={i18n.t('core:reportIssues')} />
+            </ListItem>
+            <ListItem button onClick={() => openFileNatively(AppConfig.links.helpTranslating)}>
+              <ListItemIcon>
+                <TranslationIcon />
+              </ListItemIcon>
+              <ListItemText primary={i18n.t('core:helpWithTranslation')} />
+            </ListItem>
+            <Divider />
+            <ListItem button onClick={() => openFileNatively(AppConfig.links.emailContact)}>
+              <ListItemIcon>
+                <EmailIcon />
+              </ListItemIcon>
+              <ListItemText primary={i18n.t('core:emailContact')} />
+            </ListItem>
+            <ListItem button onClick={() => openFileNatively(AppConfig.links.twitter)}>
+              <ListItemIcon>
+                <Social2Icon />
+              </ListItemIcon>
+              <ListItemText primary={i18n.t('core:followOnTwitter')} />
+            </ListItem>
+            <ListItem button onClick={() => openFileNatively(AppConfig.links.facebook)}>
+              <ListItemIcon>
+                <SocialIcon />
+              </ListItemIcon>
+              <ListItemText primary={i18n.t('core:likeUsOnFacebook')} color="textPrimary" />
+            </ListItem>
+            {Pro && <React.Fragment>
+              <Divider />
+              <ListItem button onClick={toggleProTeaser}>
+                <ListItemIcon>
+                  <ProTeaserIcon />
+                </ListItemIcon>
+                <ListItemText primary="TagSpaces Pro Overview" />
+              </ListItem>
+            </React.Fragment>}
+          </List>
+          {!Pro && <React.Fragment>
+            {/* <Divider /> */}
+            <div
+              onClick={toggleProTeaser}
+              role="button"
+              tabIndex="0"
+              style={{
+                backgroundColor: 'rgba(29, 209, 159, 0.08)',
+                textAlign: 'center'
+              }}
+            >
+              <CardContent
+                style={{
+                  paddingBottom: 0
                 }}
-              >Learn More</Button>
-              <Button
-                size="small"
-                onClick={(event: any) => {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  openFileNatively(AppConfig.links.productsOverview);
-                }}
-              >Get It</Button>
-            </CardActions>
-          </div>
-          <Divider />
-        </React.Fragment>}
-        {/* <List dense={false} component="nav" aria-label="main help area">
-          <ListItem button onClick={() => openFileNatively(AppConfig.links.webClipperChrome)}>
-            <ListItemIcon>
-              <WebClipperIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:webClipperChrome')} />
-          </ListItem>
-        </List> */}
+              >
+                <Typography color="textSecondary" gutterBottom>
+                  Achieve more with
+                </Typography>
+                <Typography variant="h6" component="h2" color="textPrimary">
+                  TagSpaces Pro
+                </Typography>
+                <img
+                  style={{ maxHeight: 80, marginTop: 10 }}
+                  src={ProTeaser}
+                  alt=""
+                />
+              </CardContent>
+              <CardActions style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                <Button
+                  size="small"
+                  onClick={(event: any) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    toggleProTeaser();
+                  }}
+                >Learn More</Button>
+                <Button
+                  size="small"
+                  onClick={(event: any) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    openFileNatively(AppConfig.links.productsOverview);
+                  }}
+                >Get It</Button>
+              </CardActions>
+            </div>
+            {/* <Divider /> */}
+          </React.Fragment>}
+        </div>
       </div>
     );
   }

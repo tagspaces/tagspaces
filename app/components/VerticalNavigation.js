@@ -517,7 +517,7 @@ class VerticalNavigation extends React.Component<Props, State> {
               >
                 <UpgradeIcon style={{
                   ...this.styles.buttonIcon,
-                  color: '1DD19F'
+                  // color: '1DD19F'
                 }}
                 />
               </IconButton>

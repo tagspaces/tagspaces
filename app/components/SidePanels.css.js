@@ -42,19 +42,26 @@ export default (theme) => ({
     marginTop: 0,
     overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
   },
+  helpFeedbackArea: {
+    paddingTop: 0,
+    marginTop: 0,
+    height: 'calc(100% - 110px)',
+    maxHeight: 'calc(100% - 110px)',
+    overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+  },
   taggroupsArea: {
     paddingTop: 0,
     marginTop: 0,
-    height: 'calc(100% - 105px)',
-    maxHeight: 'calc(100% - 105px)',
+    height: 'calc(100% - 110px)',
+    maxHeight: 'calc(100% - 110px)',
     overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
   },
   searchArea: {
     paddingTop: 0,
     paddingLeft: 5,
     marginTop: 0,
-    height: 'calc(100% - 80px)',
-    maxHeight: 'calc(100% - 80px)',
+    height: 'calc(100% - 110px)',
+    maxHeight: 'calc(100% - 110px)',
     overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
   },
   topShadow: {
