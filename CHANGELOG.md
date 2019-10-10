@@ -3,6 +3,27 @@
 ## Version 3.2.3 / 2019.09.23
 
 ### Community
+- 🌟 Added new help panel, which can be opened from the vertical toolbar
+- 🌟 Improving the onboarding wizard dialog and the help panel
+- 🌟 Added help button in the tag library and default perspective menus
+- 🌟 Click on the search result counter now opens search panel
+- 🌟 Showing a warning message when the folders are hidden and no files are in the current folder
+- 🌟 Improving the onboarding dialog
+- 🐛 Fixing the tag group imports
+- 🐛 Fixing removing tags issue by mixture of sidecar and filename
+- 🐛 Fixing issue, preventing the removal of the last tag in the properties area
+- 🐛 Fixed global shortcuts for playing/pause media content
+- 🐛 Fixing not working tray menu
+- 🐛 Fixing drag and drop highlight of tags [#1021](https://github.com/tagspaces/tagspaces/issues/1021)
+
+### Pro
+- 🎉 Added new experimental perspective for viewing folders containing images as gallery
+- 🌟 Added initial perspective switch in the directory menu
+- 🌟 Optimizing update process for PRO users
+
+## Version 3.2.3 / 2019.09.23
+
+### Community
 - 🌟 Improving showing file and folder description in grid mode
 - 🌟 Hiding the button for moving folders from the properties section
 - 🌟 Changing the default background color for thumbnails to white
