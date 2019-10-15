@@ -209,7 +209,7 @@ class EntryProperties extends Component<Props, State> {
     isFile: false
   };
 
-  componentWillMount() {
+  componentDidMount() {
     this.loadEntryProperties(this.props.entryPath);
   }
 

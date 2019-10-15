@@ -94,7 +94,7 @@ class SettingsFileTypes extends Component<Props, State> {
     isComponentActive: false
   };
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.setState({ availableExtensions: findAvailableExtensions() });
   }
 
