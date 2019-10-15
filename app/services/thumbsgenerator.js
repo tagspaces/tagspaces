@@ -178,7 +178,7 @@ export function createThumbnailPromise(
         saveThumbnailPromise(thumbFilePath, dataURL)
           .then(() => resolve(thumbFilePath))
           .catch((err) => {
-            console.warn('Thumb saving failed ' + err);
+            console.warn('Thumb saving failed ' + err + ' for ' + filePath);
             resolve();
           });
         return true;
@@ -186,7 +186,7 @@ export function createThumbnailPromise(
       resolve();
       return true;
     }).catch((err) => {
-      console.warn('Thumb generation failed ' + err);
+      console.warn('Thumb generation failed ' + err + ' for ' + filePath);
       resolve();
     });
     return true;
