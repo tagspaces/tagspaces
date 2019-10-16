@@ -1035,8 +1035,8 @@ class EntryContainer extends React.Component<Props, State> {
                       >
                         {extractFileExtension(currentEntry.path)}
                       </div>
-                      {fileTitle}
-                      {currentEntry.changed ? String.fromCharCode(0x25cf) : ''}
+                      {currentEntry.changed ? String.fromCharCode(0x25cf) + ' ' : ''}
+                      {fileTitle}                      
                     </Button>
                   ) : (
                     <Button
