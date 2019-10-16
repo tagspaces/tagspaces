@@ -95,7 +95,7 @@ const styles = theme => ({
     color: theme.palette.text.primary
   },
   field: {
-    color: theme.palette.primary.contrastText + ' !important'
+    color: theme.palette.text.disabled + ' !important'
   },
   entryItem: {
     width: '100%',
@@ -603,17 +603,15 @@ class EntryProperties extends Component<Props, State> {
               </div>
               <div className="grid-item" />
             </div>
-            <Paper elevation={2} className={classes.tags}>
-              <TagDropContainer entryPath={path}>
-                <TagsSelect isReadOnlyMode={isReadOnlyMode} tags={tags} handleChange={this.handleChange} />
-              </TagDropContainer>
-            </Paper>
+            <TagDropContainer entryPath={path}>
+              <TagsSelect isReadOnlyMode={isReadOnlyMode} tags={tags} handleChange={this.handleChange} />
+            </TagDropContainer>
           </div>
 
           <div className={classes.entryItem}>
             <div className={classes.fluidGrid}>
               <div className="grid-item">
-                <Typography variant="caption" className={classNames(classes.entryLabel, classes.header)} style={{ display: 'block' }}>
+                <Typography variant="caption" className={classNames(classes.header, classes.header)} style={{ display: 'block' }}>
                   {i18n.t('core:filePropertiesDescription')}
                 </Typography>
               </div>
@@ -658,26 +656,28 @@ class EntryProperties extends Component<Props, State> {
                   onChange={e => this.handleInputChange(e)}
                 />
               ) : (
-                <Paper elevation={2} style={{ padding: 5 }}>
-                  <Typography
-                    className={classes.header}
-                    style={{ display: 'block' }}
-                    role="button"
-                    id="descriptionArea"
-                    placeholder={Pro ? 'Click to add description' : i18n.t('core:addDescription')}
-                    dangerouslySetInnerHTML={{
-                      __html:
-                        description !== ''
-                          ? marked(DOMPurify.sanitize(description))
-                          : Pro ? 'Click to add description' : i18n.t('core:addDescription')
-                    }}
-                    onClick={() => {
-                      if (!isEditDescription) {
-                        this.toggleEditDescriptionField();
-                      }
-                    }}
-                  />
-                </Paper>
+                <Typography
+                  style={{ 
+                    display: 'block',
+                    padding: 2, 
+                    marginBottom: 5 
+                  }}
+                  className={classes.field}                  
+                  role="button"
+                  id="descriptionArea"
+                  // placeholder={Pro ? 'Click to add description' : i18n.t('core:addDescription')}
+                  dangerouslySetInnerHTML={{
+                    __html:
+                      description !== ''
+                        ? marked(DOMPurify.sanitize(description))
+                        : Pro ? 'Click to add description' : i18n.t('core:addDescription')
+                  }}
+                  onClick={() => {
+                    if (!isEditDescription) {
+                      this.toggleEditDescriptionField();
+                    }
+                  }}
+                />
               )}
             </FormControl>
           </div>
@@ -778,7 +778,7 @@ class EntryProperties extends Component<Props, State> {
 
           <div className={classes.entryItem}>
             <div className={classes.fluidGrid}>
-              <Typography variant="caption" className={classNames(classes.entryLabel, classes.header)} style={{ display: 'block' }}>
+              <Typography variant="caption" className={classNames(classes.header)} style={{ display: 'block' }}>
                 {i18n.t('core:filePath')}
               </Typography>
               {isFile && !isReadOnlyMode && (
@@ -808,7 +808,7 @@ class EntryProperties extends Component<Props, State> {
 
           <div className={classes.entryItem}>
             <div className={classes.fluidGrid}>
-              <Typography variant="caption" className={classNames(classes.entryLabel, classes.header)} style={{ display: 'block' }}>
+              <Typography variant="caption" className={classNames(classes.header)} style={{ display: 'block' }}>
                 {i18n.t('core:thumbnail')}
               </Typography>
               {!isReadOnlyMode && (

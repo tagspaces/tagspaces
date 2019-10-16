@@ -150,7 +150,14 @@ const styles = theme => ({
     right: 0,
     backgroundColor: theme.palette.background.default,
     boxShadow: '-15px 0px 24px 3px ' + theme.palette.background.default
-  }
+  },
+  entryNavigationSection: {
+    position: 'absolute',
+    top: 55,
+    right: 0,
+    backgroundColor: theme.palette.background.default,
+    boxShadow: '-15px 0px 24px 3px ' + theme.palette.background.default
+  }  
 });
 
 type Props = {
@@ -727,13 +734,6 @@ class EntryContainer extends React.Component<Props, State> {
         >
           <FileDownloadIcon />
         </IconButton>
-        <IconButton
-          title={i18n.t('core:reloadFile')}
-          aria-label={i18n.t('core:reloadFile')}
-          onClick={this.reloadDocument}
-        >
-          <RefreshIcon />
-        </IconButton>
         { !this.props.isReadOnlyMode && (
           <IconButton
             aria-label={i18n.t('core:duplicateFile')}
@@ -754,24 +754,33 @@ class EntryContainer extends React.Component<Props, State> {
             <DeleteIcon />
           </IconButton>
         )}
+        <IconButton
+          title={i18n.t('core:reloadFile')}
+          aria-label={i18n.t('core:reloadFile')}
+          onClick={this.reloadDocument}
+        >
+          <RefreshIcon />
+        </IconButton>        
       </div>
-      <IconButton
-        title={i18n.t('core:openPrevFileTooltip')}
-        aria-label={i18n.t('core:openPrevFileTooltip')}
-        data-tid="fileContainerPrevFile"
-        onClick={this.openPrevFile}
-      >
-        <ArrowLeftIcon />
-      </IconButton>
-      <IconButton
-        title={i18n.t('core:openNextFileTooltip')}
-        aria-label={i18n.t('core:openNextFileTooltip')}
-        data-tid="fileContainerNextFile"
-        onClick={this.openNextFile}
-        style={{ marginRight: 5 }}
-      >
-        <ArrowRightIcon />
-      </IconButton>
+      <div className={classes.entryNavigationSection} >
+        <IconButton
+          title={i18n.t('core:openPrevFileTooltip')}
+          aria-label={i18n.t('core:openPrevFileTooltip')}
+          data-tid="fileContainerPrevFile"
+          onClick={this.openPrevFile}
+        >
+          <ArrowLeftIcon />
+        </IconButton>
+        <IconButton
+          title={i18n.t('core:openNextFileTooltip')}
+          aria-label={i18n.t('core:openNextFileTooltip')}
+          data-tid="fileContainerNextFile"
+          onClick={this.openNextFile}
+          style={{ marginRight: 5 }}
+        >
+          <ArrowRightIcon />
+        </IconButton>
+      </div>
     </div>
   );
 

@@ -269,7 +269,7 @@ const TagsSelect = (props: Props) => {
         }} */
           value={tags}
           onChange={handleChange}
-          placeholder={i18n.t('core:searchTags')}
+          placeholder={i18n.t('core:dropHere')}
           isMulti
           formatCreateLabel={(label) => label}
         // isSearchable
