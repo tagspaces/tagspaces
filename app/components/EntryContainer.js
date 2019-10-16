@@ -734,7 +734,7 @@ class EntryContainer extends React.Component<Props, State> {
         >
           <FileDownloadIcon />
         </IconButton>
-        { !this.props.isReadOnlyMode && (
+        {/* !this.props.isReadOnlyMode && (
           <IconButton
             aria-label={i18n.t('core:duplicateFile')}
             title={i18n.t('core:duplicateFile')}
@@ -744,7 +744,7 @@ class EntryContainer extends React.Component<Props, State> {
           >
             <CopyContentIcon />
           </IconButton>
-        )}
+        )*/}
         { !this.props.isReadOnlyMode && (
           <IconButton
             title={i18n.t('core:deleteEntry')}
