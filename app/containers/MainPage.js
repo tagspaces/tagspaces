@@ -181,7 +181,7 @@ class MainPage extends Component<Props, State> {
     height: 1000
   };
 
-  componentDidMount() {
+  UNSAFE_componentWillMount() {
     this.updateDimensions();
   }
 

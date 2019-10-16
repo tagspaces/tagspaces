@@ -22,8 +22,9 @@ export default (theme) => ({
   gridContainer: {
     display: 'grid',
     gridGap: '2px 2px',
-    padding: 10,
-    marginBottom: 100,
+    padding: 2,
+    paddingRight: 10,    
+    paddingBottom: 200,    
   },
   rowContainer: {
     display: 'grid',
@@ -31,7 +32,7 @@ export default (theme) => ({
     padding: 0,
     paddingRight: 10,
     margin: 0,
-    marginBottom: 100
+    paddingBottom: 200,
   },
   gridCell: {
     // backgroundColor: theme.palette.background.paper,
@@ -137,8 +138,7 @@ export default (theme) => ({
   gridFolder: {
     color: 'white',
     padding: 5,
-    marginRight: 5,
-    minHeight: 10,
+    minHeight: 15,
     height: 20,
   },
   topToolbar: {
