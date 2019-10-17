@@ -776,7 +776,6 @@ class EntryContainer extends React.Component<Props, State> {
           aria-label={i18n.t('core:openNextFileTooltip')}
           data-tid="fileContainerNextFile"
           onClick={this.openNextFile}
-          style={{ marginRight: 5 }}
         >
           <ArrowRightIcon />
         </IconButton>
