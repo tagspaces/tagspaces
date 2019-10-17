@@ -23,7 +23,7 @@
     "version-meta": "node scripts/versionmeta.js",
     "third-party": "yarn licenses generate-disclaimer --silent > app/third-party.txt",
     "build-nc": "yarn version-meta && yarn build-main && yarn build-renderer && yarn build-worker",
-    "build": "rimraf app/dist && yarn version-meta && concurrently \"yarn build-main\" \"yarn build-renderer\" \"yarn build-worker\"",
+    "build": "rimraf app/dist && yarn version-meta && concurrently \"yarn build-main\" \"yarn build-renderer\" \"yarn build-worker\" \"yarn build-web\"",
     "build-dll": "cross-env NODE_ENV=development node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.renderer.dev.dll.js --colors",
     "build-cordova": "cross-env NODE_ENV=production node --max-old-space-size=4096 --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.renderer.cordova.js --colors",
     "build-cordova-dev": "cross-env NODE_ENV=development node --max-old-space-size=4096 --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.renderer.cordova.js --colors",
