@@ -126,21 +126,21 @@ const AboutDialog = (props: Props) => {
           <br />
           <Button
             onClick={() => {
-              PlatformIO.openUrl('https://www.tagspaces.org/about/imprint/');
+              PlatformIO.openUrl(AppConfig.links.imprintURL);
             }}
           >
             Imprint
           </Button>
           <Button
             onClick={() => {
-              PlatformIO.openUrl('https://www.tagspaces.org/about/privacy/');
+              PlatformIO.openUrl(AppConfig.links.privacyURL);
             }}
           >
             Privacy Policy
           </Button>
           <Button
             onClick={() => {
-              PlatformIO.openUrl('https://www.tagspaces.org/whatsnew/');
+              PlatformIO.openUrl(AppConfig.links.changelogURL);
             }}
           >
             Changelog
@@ -173,7 +173,7 @@ const AboutDialog = (props: Props) => {
             data-tid="checkForUpdates"
             title={i18n.t('core:checkForNewVersion')}
             onClick={() => {
-              PlatformIO.openUrl('https://www.tagspaces.org/products/');
+              PlatformIO.openUrl(AppConfig.links.productsOverview);
             }}
             color="primary"
           >
