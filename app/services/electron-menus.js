@@ -260,7 +260,7 @@ export default function buildDesktopMenu(mainPageProps: Object) {
           label: '&' + i18n.t('core:documentation'),
           accelerator: mainPageProps.keyBindings.showHelp,
           click: () => {
-            // mainPageProps.openFileNatively(AppConfig.documentationLinks.general);
+            // mainPageProps.openURLExternally(AppConfig.documentationLinks.general);
             mainPageProps.openHelpFeedbackPanel();
           }
         },
@@ -279,7 +279,7 @@ export default function buildDesktopMenu(mainPageProps: Object) {
         {
           label: '&' + i18n.t('core:whatsNew'),
           click: () => {
-            mainPageProps.openFileNatively(AppConfig.links.changelogURL);
+            mainPageProps.openURLExternally(AppConfig.links.changelogURL);
           }
         },
         {
@@ -288,13 +288,13 @@ export default function buildDesktopMenu(mainPageProps: Object) {
         {
           label: '&' + i18n.t('core:likeUsOnFacebook'),
           click: () => {
-            mainPageProps.openFileNatively(AppConfig.links.facebook);
+            mainPageProps.openURLExternally(AppConfig.links.facebook);
           }
         },
         {
           label: '&' + i18n.t('core:followOnTwitter'),
           click: () => {
-            mainPageProps.openFileNatively(AppConfig.links.twitter);
+            mainPageProps.openURLExternally(AppConfig.links.twitter);
           }
         },
         {
@@ -303,13 +303,13 @@ export default function buildDesktopMenu(mainPageProps: Object) {
         {
           label: '&' + i18n.t('core:suggestNewFeatures'),
           click: () => {
-            mainPageProps.openFileNatively(AppConfig.links.suggestFeature);
+            mainPageProps.openURLExternally(AppConfig.links.suggestFeature);
           }
         },
         {
           label: '&' + i18n.t('core:reportIssues'),
           click: () => {
-            mainPageProps.openFileNatively(AppConfig.links.reportIssue);
+            mainPageProps.openURLExternally(AppConfig.links.reportIssue);
           }
         },
         {
@@ -318,13 +318,13 @@ export default function buildDesktopMenu(mainPageProps: Object) {
         {
           label: i18n.t('core:webClipperChrome'),
           click: () => {
-            mainPageProps.openFileNatively(AppConfig.links.webClipperChrome);
+            mainPageProps.openURLExternally(AppConfig.links.webClipperChrome);
           }
         },
         {
           label: i18n.t('core:webClipperFirefox'),
           click: () => {
-            mainPageProps.openFileNatively(AppConfig.links.webClipperFirefox);
+            mainPageProps.openURLExternally(AppConfig.links.webClipperFirefox);
           }
         },
         {

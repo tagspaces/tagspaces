@@ -59,7 +59,7 @@ type Props = {
   // setFirstRun: (isFirstRun: boolean) => void,
   setPersistTagsInSidecarFile: (isPersistTagsInSidecar: boolean) => void,
   setCurrentTheme: () => void,
-  openFileNatively: (url: string) => void,
+  openURLExternally: (url: string) => void,
   onClose: () => void
 };
 
@@ -224,7 +224,7 @@ class OnboardingDialog extends React.Component<Props, State> {
             <Button
               style={{ marginTop: 20 }}
               onClick={() => {
-                this.props.openFileNatively(AppConfig.links.webClipper);
+                this.props.openURLExternally(AppConfig.links.webClipper);
               }}
               variant="contained"
               color="primary"
@@ -333,7 +333,7 @@ function mapActionCreatorsToProps(dispatch) {
       setFirstRun: SettingsActions.setFirstRun,
       setPersistTagsInSidecarFile: SettingsActions.setPersistTagsInSidecarFile,
       setCurrentTheme: SettingsActions.setCurrentTheme,
-      openFileNatively: AppActions.openFileNatively
+      openURLExternally: AppActions.openURLExternally
     },
     dispatch
   );

@@ -137,6 +137,7 @@ type Props = {
   setLastSelectedEntry: (path: string) => void, // needed by electron-menus
   openFile: (path: string) => void, // needed by electron-menus
   openFileNatively: (url: string) => void, // needed by electron-menus
+  openURLExternally: (url: string) => void, // needed by electron-menus
   getNextFile: () => void, // needed by electron-menus
   getPrevFile: () => void, // needed by electron-menus
   openLocationManagerPanel: () => void,
@@ -600,6 +601,7 @@ function mapDispatchToProps(dispatch) {
     setGeneratingThumbnails: AppActions.setGeneratingThumbnails,
     openFile: AppActions.openFile,
     openFileNatively: AppActions.openFileNatively,
+    openURLExternally: AppActions.openURLExternally,
     setEntryFullWidth: AppActions.setEntryFullWidth,
     setUpdateAvailable: AppActions.setUpdateAvailable,
     getNextFile: AppActions.getNextFile,

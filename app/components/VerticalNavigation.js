@@ -170,6 +170,7 @@ type Props = {
   openHelpFeedbackPanel: () => void,
   closeAllVerticalPanels: () => void,
   openFileNatively: (url: string) => void,
+  openURLExternally: (url: string) => void,
   switchTheme: () => void,
   shouldTogglePanel: string,
   currentDirectory: string,
@@ -280,6 +281,7 @@ class VerticalNavigation extends React.Component<Props, State> {
       switchTheme,
       setManagementPanelVisibility,
       openFileNatively,
+      openURLExternally,
       setFirstRun
     } = this.props;
     return (
@@ -355,7 +357,7 @@ class VerticalNavigation extends React.Component<Props, State> {
           <ProTeaserDialogAsync
             open={this.state.isProTeaserVisible}
             onClose={this.toggleProTeaser}
-            openFileNatively={openFileNatively}
+            openURLExternally={openURLExternally}
             key={uuidv1()}
           />
         )}
@@ -560,6 +562,7 @@ class VerticalNavigation extends React.Component<Props, State> {
               { isHelpFeedbackPanelOpened &&
               <HelpFeedbackPanel
                 openFileNatively={openFileNatively}
+                openURLExternally={openURLExternally}
                 toggleKeysDialog={toggleKeysDialog}
                 toggleOnboardingDialog={toggleOnboardingDialog}
                 toggleProTeaser={this.toggleProTeaser}
@@ -614,6 +617,7 @@ function mapActionCreatorsToProps(dispatch) {
       openPerspectivesPanel: AppActions.openPerspectivesPanel,
       openHelpFeedbackPanel: AppActions.openHelpFeedbackPanel,
       openFileNatively: AppActions.openFileNatively,
+      openURLExternally: AppActions.openURLExternally,
       closeAllVerticalPanels: AppActions.closeAllVerticalPanels,
       switchTheme: SettingsActions.switchTheme,
       setFirstRun: SettingsActions.setFirstRun,

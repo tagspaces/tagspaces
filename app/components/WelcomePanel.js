@@ -85,12 +85,13 @@ type Props = {
   classes: Object,
   setFirstRun: (isFirstRun: boolean) => void,
   toggleKeysDialog: () => void,
+  openURLExternally: (url: string) => void,
   openFileNatively: (url: string) => void
   // locations: Array<Location>
 };
 
 const WelcomePanel = (props: Props) => {
-  const { classes, openFileNatively, toggleKeysDialog } = props;
+  const { classes, openURLExternally, openFileNatively, toggleKeysDialog } = props;
   return (
     <div className={classes.mainPanel}>
       {/* <div className={classes.slogan}>
@@ -102,7 +103,7 @@ const WelcomePanel = (props: Props) => {
           alt="Organize your files"
           onClick={() => { props.setFirstRun(!props.isFirstRun) }}
         />        
-        <ListItem button onClick={() => openFileNatively(AppConfig.documentationLinks.general)}>
+        <ListItem button onClick={() => openURLExternally(AppConfig.documentationLinks.general)}>
           <ListItemIcon>
             <DocumentationIcon />
           </ListItemIcon>
@@ -114,7 +115,7 @@ const WelcomePanel = (props: Props) => {
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:shortcutKeys')} title="" />
         </ListItem>
-        <ListItem button onClick={() => openFileNatively(AppConfig.links.changelogURL)}>
+        <ListItem button onClick={() => openURLExternally(AppConfig.links.changelogURL)}>
           <ListItemIcon>
             <ChangeLogIcon />
           </ListItemIcon>
@@ -126,33 +127,33 @@ const WelcomePanel = (props: Props) => {
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:onboardingWizard')} />
         </ListItem> */}
-        <ListItem button onClick={() => openFileNatively(AppConfig.links.webClipper)}>
+        <ListItem button onClick={() => openURLExternally(AppConfig.links.webClipper)}>
           <ListItemIcon>
             <WebClipperIcon />
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:webClipper')} />
         </ListItem>
         <Divider />
-        <ListItem button onClick={() => openFileNatively(AppConfig.links.suggestFeature)}>
+        <ListItem button onClick={() => openURLExternally(AppConfig.links.suggestFeature)}>
           <ListItemIcon>
             <NewFeatureIcon />
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:suggestNewFeatures')} />
         </ListItem>
-        <ListItem button onClick={() => openFileNatively(AppConfig.links.reportIssue)}>
+        <ListItem button onClick={() => openURLExternally(AppConfig.links.reportIssue)}>
           <ListItemIcon>
             <IssueIcon />
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:reportIssues')} />
         </ListItem>
-        <ListItem button onClick={() => openFileNatively(AppConfig.links.helpTranslating)}>
+        <ListItem button onClick={() => openURLExternally(AppConfig.links.helpTranslating)}>
           <ListItemIcon>
             <TranslationIcon />
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:helpWithTranslation')} />
         </ListItem>
         <Divider />
-        <ListItem button onClick={() => openFileNatively(AppConfig.links.emailContact)}>
+        <ListItem button onClick={() => openURLExternally(AppConfig.links.emailContact)}>
           <ListItemIcon>
             <EmailIcon />
           </ListItemIcon>
@@ -164,7 +165,7 @@ const WelcomePanel = (props: Props) => {
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:followOnTwitter')} />
         </ListItem>
-        <ListItem button onClick={() => openFileNatively(AppConfig.links.facebook)}>
+        <ListItem button onClick={() => openURLExternally(AppConfig.links.facebook)}>
           <ListItemIcon>
             <SocialIcon />
           </ListItemIcon>
@@ -186,6 +187,7 @@ function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
       setFirstRun: SettingsActions.setFirstRun,
+      openURLExternally: AppActions.openURLExternally,
       openFileNatively: AppActions.openFileNatively,
       toggleKeysDialog: AppActions.toggleKeysDialog,
     },

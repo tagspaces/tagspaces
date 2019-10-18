@@ -107,6 +107,7 @@ type Props = {
   openDirectory: (path: string) => void,
   showInFileManager: (path: string) => void,
   openFileNatively: (path: string) => void,
+  openURLExternally: (path: string) => void,
   loadParentDirectoryContent: () => void,
   setLastSelectedEntry: (entryPath: string | null) => void,
   setSelectedEntries: (selectedEntries: Array<Object>) => void,
@@ -424,7 +425,7 @@ class GridPerspective extends React.Component<Props, State> {
 
   openHelpWebPage = () => {
     this.closeOptionsMenu();
-    this.props.openFileNatively(AppConfig.documentationLinks.defaultPerspective);
+    this.props.openURLExternally(AppConfig.documentationLinks.defaultPerspective);
   };
 
   handleGridCellDblClick = (event, fsEntry: FileSystemEntry) => {
@@ -1071,6 +1072,7 @@ function mapActionCreatorsToProps(dispatch) {
     setSelectedEntries: AppActions.setSelectedEntries,
     showNotification: AppActions.showNotification,
     openFileNatively: AppActions.openFileNatively,
+    openURLExternally: AppActions.openURLExternally,
     addTags: TaggingActions.addTags
   }, dispatch);
 }

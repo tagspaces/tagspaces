@@ -40,7 +40,7 @@ import AppConfig from '../../config';
 type Props = {
   open: boolean,
   fullScreen: boolean,
-  openFileNatively: (url: string) => void,
+  openURLExternally: (url: string) => void,
   onClose: () => void
 };
 
@@ -117,7 +117,7 @@ class ProTeaserDialog extends React.Component<Props, State> {
               />
               <br />
               <Button
-                onClick={() => { this.props.openFileNatively(AppConfig.links.productsOverview); }}
+                onClick={() => { this.props.openURLExternally(AppConfig.links.productsOverview); }}
                 variant="contained"
                 color="primary"
               >Open Product Comparison</Button>
@@ -145,7 +145,7 @@ class ProTeaserDialog extends React.Component<Props, State> {
               />
               <br />
               <Button
-                onClick={() => this.props.openFileNatively(AppConfig.links.productProAdvancedSearch)}
+                onClick={() => this.props.openURLExternally(AppConfig.links.productProAdvancedSearch)}
                 variant="contained"
                 color="primary"
               >Learn more</Button>
@@ -167,7 +167,7 @@ class ProTeaserDialog extends React.Component<Props, State> {
                 alt=""
               /><br />
               <Button
-                onClick={() => this.props.openFileNatively(AppConfig.links.productProObjectStore)}
+                onClick={() => this.props.openURLExternally(AppConfig.links.productProObjectStore)}
                 variant="contained"
                 color="primary"
               >Learn more</Button>
@@ -192,7 +192,7 @@ class ProTeaserDialog extends React.Component<Props, State> {
                 alt=""
               /><br />
               <Button
-                onClick={() => this.props.openFileNatively(AppConfig.links.productProFileFolderMeta)}
+                onClick={() => this.props.openURLExternally(AppConfig.links.productProFileFolderMeta)}
                 variant="contained"
                 color="primary"
               >Learn more</Button>
@@ -216,7 +216,7 @@ class ProTeaserDialog extends React.Component<Props, State> {
                 alt=""
               /><br />
               <Button
-                onClick={() => this.props.openFileNatively(AppConfig.links.productProGeoTagging)}
+                onClick={() => this.props.openURLExternally(AppConfig.links.productProGeoTagging)}
                 variant="contained"
                 color="primary"
               >Learn more</Button>
@@ -237,7 +237,7 @@ class ProTeaserDialog extends React.Component<Props, State> {
                 alt=""
               /><br />
               <Button
-                onClick={() => this.props.openFileNatively(AppConfig.links.productProThumbnailsGeneration)}
+                onClick={() => this.props.openURLExternally(AppConfig.links.productProThumbnailsGeneration)}
                 variant="contained"
                 color="primary"
               >Learn more</Button>
@@ -262,12 +262,12 @@ class ProTeaserDialog extends React.Component<Props, State> {
                 alt=""
               /><br />
               <Button
-                onClick={() => this.props.openFileNatively(AppConfig.links.productsOverview)}
+                onClick={() => this.props.openURLExternally(AppConfig.links.productsOverview)}
                 variant="outlined"
                 color="primary"
               >Product Landscape</Button>&nbsp;
               <Button
-                onClick={() => this.props.openFileNatively('mailto:contact@tagspaces.org')}
+                onClick={() => this.props.openURLExternally('mailto:contact@tagspaces.org')}
                 variant="outlined"
                 color="primary"
               >Contact us</Button>

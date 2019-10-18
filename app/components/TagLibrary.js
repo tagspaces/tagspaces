@@ -68,7 +68,7 @@ type Props = {
   tagBackgroundColor: string,
   tagGroups: Array<TagGroup>,
   allTags: Array<Tag>,
-  openFileNatively: (path: string) => void,
+  openURLExternally: (path: string) => void,
   toggleTagGroup: (expanded: boolean, uuid: string) => void,
   removeTagGroup: (uuid: string) => void,
   moveTagGroupUp: (uuid: string) => void,
@@ -371,7 +371,7 @@ class TagLibrary extends React.Component<Props, State> {
           importTagGroups={this.props.importTagGroups}
           exportTagGroups={this.props.exportTagGroups}
           showCreateTagGroupDialog={this.showCreateTagGroupDialog}
-          openFileNatively={this.props.openFileNatively}
+          openURLExternally={this.props.openURLExternally}
         />
         <TagMenu
           anchorEl={this.state.tagMenuAnchorEl}
@@ -407,7 +407,7 @@ function mapDispatchToProps(dispatch) {
     ...TagLibraryActions, // TODO connect only the really needed
     addTags: TaggingActions.addTags,
     collectTagsFromLocation: TaggingActions.collectTagsFromLocation,
-    openFileNatively: AppActions.openFileNatively,
+    openURLExternally: AppActions.openURLExternally,
   }, dispatch);
 }
 

@@ -794,8 +794,8 @@ export default class ElectronIO {
     this.electron.shell.openItem(filePath);
   };
 
-  openUrl = (url: string): void => {
-    this.electron.shell.openExternal(url);
+  openUrl = (url: string): void => { console.log(url)
+    this.electron.shell.openExternalSync(url);
   };
 
   selectFileDialog = (): Promise<any> => {

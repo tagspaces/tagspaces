@@ -1160,6 +1160,9 @@ export const actions = {
   openFileNatively: (selectedFile: string) => () => {
     PlatformIO.openFile(selectedFile);
   },
+  openURLExternally: (url: string, addAppVersion: boolean = false) => () => {
+    PlatformIO.openUrl(url);
+  },  
   saveFile: () => (
     // dispatch: (actions: Object) => void,
     // getState: () => Object

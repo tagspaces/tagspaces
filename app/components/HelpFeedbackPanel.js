@@ -51,6 +51,7 @@ import { Pro } from '../pro';
 
 type Props = {
   classes: Object,
+  openURLExternally: (url: string) => void,
   openFileNatively: (url: string) => void,
   toggleKeysDialog: () => void,
   toggleOnboardingDialog: () => void,
@@ -62,6 +63,7 @@ class HelpFeedbackPanel extends React.Component<Props> {
   render() {
     const {
       classes,
+      openURLExternally,
       openFileNatively,
       toggleKeysDialog,
       toggleOnboardingDialog,
@@ -74,7 +76,7 @@ class HelpFeedbackPanel extends React.Component<Props> {
         <Typography className={classNames(classes.panelTitle, classes.header)} type="subtitle1">Help & Feedback</Typography>
         <div className={classes.helpFeedbackArea}>
           <List dense={false} component="nav" aria-label="main help area">
-            <ListItem button onClick={() => openFileNatively(AppConfig.documentationLinks.general)}>
+            <ListItem button onClick={() => openURLExternally(AppConfig.documentationLinks.general)}>
               <ListItemIcon>
                 <DocumentationIcon />
               </ListItemIcon>
@@ -86,7 +88,7 @@ class HelpFeedbackPanel extends React.Component<Props> {
               </ListItemIcon>
               <ListItemText primary={i18n.t('core:shortcutKeys')} title="" />
             </ListItem>
-            <ListItem button onClick={() => openFileNatively(AppConfig.links.changelogURL)}>
+            <ListItem button onClick={() => openURLExternally(AppConfig.links.changelogURL)}>
               <ListItemIcon>
                 <ChangeLogIcon />
               </ListItemIcon>
@@ -98,26 +100,26 @@ class HelpFeedbackPanel extends React.Component<Props> {
               </ListItemIcon>
               <ListItemText primary={i18n.t('core:onboardingWizard')} />
             </ListItem>
-            <ListItem button onClick={() => openFileNatively(AppConfig.links.webClipper)}>
+            <ListItem button onClick={() => openURLExternally(AppConfig.links.webClipper)}>
               <ListItemIcon>
                 <WebClipperIcon />
               </ListItemIcon>
               <ListItemText primary={i18n.t('core:webClipper')} />
             </ListItem>
             <Divider />
-            <ListItem button onClick={() => openFileNatively(AppConfig.links.suggestFeature)}>
+            <ListItem button onClick={() => openURLExternally(AppConfig.links.suggestFeature)}>
               <ListItemIcon>
                 <NewFeatureIcon />
               </ListItemIcon>
               <ListItemText primary={i18n.t('core:suggestNewFeatures')} />
             </ListItem>
-            <ListItem button onClick={() => openFileNatively(AppConfig.links.reportIssue)}>
+            <ListItem button onClick={() => openURLExternally(AppConfig.links.reportIssue)}>
               <ListItemIcon>
                 <IssueIcon />
               </ListItemIcon>
               <ListItemText primary={i18n.t('core:reportIssues')} />
             </ListItem>
-            <ListItem button onClick={() => openFileNatively(AppConfig.links.helpTranslating)}>
+            <ListItem button onClick={() => openURLExternally(AppConfig.links.helpTranslating)}>
               <ListItemIcon>
                 <TranslationIcon />
               </ListItemIcon>
@@ -130,13 +132,13 @@ class HelpFeedbackPanel extends React.Component<Props> {
               </ListItemIcon>
               <ListItemText primary={i18n.t('core:emailContact')} />
             </ListItem>
-            <ListItem button onClick={() => openFileNatively(AppConfig.links.twitter)}>
+            <ListItem button onClick={() => openURLExternally(AppConfig.links.twitter)}>
               <ListItemIcon>
                 <Social2Icon />
               </ListItemIcon>
               <ListItemText primary={i18n.t('core:followOnTwitter')} />
             </ListItem>
-            <ListItem button onClick={() => openFileNatively(AppConfig.links.facebook)}>
+            <ListItem button onClick={() => openURLExternally(AppConfig.links.facebook)}>
               <ListItemIcon>
                 <SocialIcon />
               </ListItemIcon>
@@ -194,7 +196,7 @@ class HelpFeedbackPanel extends React.Component<Props> {
                   onClick={(event: any) => {
                     event.preventDefault();
                     event.stopPropagation();
-                    openFileNatively(AppConfig.links.productsOverview);
+                    openURLExternally(AppConfig.links.productsOverview);
                   }}
                 >Get It</Button>
               </CardActions>

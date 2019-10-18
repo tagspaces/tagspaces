@@ -34,7 +34,7 @@ type Props = {
   classes: Object,
   anchorEl: Object,
   tagGroups: Array<Object>,
-  openFileNatively: (path: string) => void,
+  openURLExternally: (path: string) => void,
   open: boolean,
   onClose: () => void,
   importTagGroups: () => void,
@@ -165,7 +165,7 @@ const TagLibraryMenu = (props: Props) => {
           data-tid="tablibraryHelp"
           onClick={() => {
             props.onClose();
-            props.openFileNatively(AppConfig.documentationLinks.taglibrary)
+            props.openURLExternally(AppConfig.documentationLinks.taglibrary)
           }}
         >
           <ListItemIcon>
