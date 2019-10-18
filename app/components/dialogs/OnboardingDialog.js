@@ -147,7 +147,7 @@ class OnboardingDialog extends React.Component<Props, State> {
           >
             <Typography variant="h5">Understand main app navigation</Typography>
             <img
-              style={{ marginTop: 15 }}
+              style={{ marginTop: 15, maxHeight: 500 }}              
               src={NavigationV3}
               alt=""
             />
