@@ -105,7 +105,7 @@ class OnboardingDialog extends React.Component<Props, State> {
     const { activeStep } = this.state;
 
     return (
-      <DialogContent style={{ marginTop: 20 }}>
+      <DialogContent style={{ marginTop: 20, overflowY: 'overlay' }}>
         <SwipeableViews
           index={activeStep}
           onChangeIndex={this.handleStepChange}
