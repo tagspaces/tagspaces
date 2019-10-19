@@ -407,14 +407,14 @@ const DirectoryMenu = (props: Props) => {
           </MenuItem>
         )}
         <Divider />
+        <MenuItem data-tid="extractContent" onClick={switchPerspective} title="Start experimental presentation mode">
+          <ListItemIcon>
+            <GalleryPerspectiveIcon />
+          </ListItemIcon>
+          <ListItemText primary="Toggle Gallery Perspective" />
+        </MenuItem>
         {!props.isReadOnlyMode && (
-          <React.Fragment>
-            <MenuItem data-tid="extractContent" onClick={switchPerspective} title="Start experimental presentation mode">
-              <ListItemIcon>
-                <GalleryPerspectiveIcon />
-              </ListItemIcon>
-              <ListItemText primary="Toggle Gallery Perspective" />
-            </MenuItem>
+          <React.Fragment>  
             <MenuItem data-tid="extractContent" onClick={initContentExtraction}>
               <ListItemIcon>
                 <ContentExtractionIcon />
