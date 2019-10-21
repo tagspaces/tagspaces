@@ -88,12 +88,8 @@ const installExtensions = async () => {
 app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required'); // Fix broken autoplay functionality in the av player
 
 app.on('window-all-closed', () => {
-  // Respect the OSX convention of having the application in memory even
-  // after all windows have been closed
-  if (process.platform !== 'darwin') {
-    globalShortcut.unregisterAll();
-    app.quit();
-  }
+  globalShortcut.unregisterAll();
+  app.quit();
 });
 
 app.on('ready', async () => {
