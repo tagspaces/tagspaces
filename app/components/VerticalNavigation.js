@@ -34,10 +34,6 @@ import HelpIcon from '@material-ui/icons/HelpOutline';
 import { withTheme } from '@material-ui/core/styles';
 import SplitPane from 'react-split-pane';
 import LogoIcon from '../assets/images/icon100x100.svg';
-import SettingsDialog from './dialogs/settings/SettingsDialog';
-import CreateDirectoryDialog from './dialogs/CreateDirectoryDialog';
-import CreateFileDialog from './dialogs/CreateFileDialog';
-// import SelectDirectoryDialog from './dialogs/SelectDirectoryDialog';
 import TagLibrary from '../components/TagLibrary';
 import Search from '../components/Search';
 import PerspectiveManager from '../components/PerspectiveManager';
@@ -49,11 +45,7 @@ import { type Tag } from '../reducers/taglibrary';
 import {
   actions as AppActions,
   getDirectoryPath,
-  isEditTagDialogOpened,
   isSettingsDialogOpened,
-  isCreateFileDialogOpened,
-  isCreateDirectoryOpened,
-  isSelectDirectoryDialogOpened,
   isLocationManagerPanelOpened,
   isTagLibraryPanelOpened,
   isSearchPanelOpened,
@@ -64,27 +56,6 @@ import {
 import { actions as SettingsActions, isFirstRun } from '../reducers/settings';
 import LoadingLazy from './LoadingLazy';
 
-const EditEntryTagDialog = React.lazy(() => import(/* webpackChunkName: "EditEntryTagDialog" */ './dialogs/EditEntryTagDialog'));
-const EditEntryTagDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <EditEntryTagDialog {...props} />
-  </React.Suspense>
-);
-
-const SelectDirectoryDialog = React.lazy(() => import(/* webpackChunkName: "LicenseDialog" */ './dialogs/SelectDirectoryDialog'));
-const SelectDirectoryAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <SelectDirectoryDialog {...props} />
-  </React.Suspense>
-);
-
-// const SettingsDialog = React.lazy(() => import(/* webpackChunkName: "SettingsDialog" */ './dialogs/SettingsDialog'));
-// const SettingsDialogAsync = props => (
-//   <React.Suspense fallback={<LoadingLazy />}>
-//     <SettingsDialog {...props} />
-//   </React.Suspense>
-// );
-
 const ProTeaserDialog = React.lazy(() => import(/* webpackChunkName: "ProTeaserDialog" */ './dialogs/ProTeaserDialog'));
 const ProTeaserDialogAsync = props => (
   <React.Suspense fallback={<LoadingLazy />}>
@@ -93,24 +64,16 @@ const ProTeaserDialogAsync = props => (
 );
 
 type Props = {
+  theme: Object,
   isFirstRun: boolean,
   setFirstRun: (isFirstRun: boolean) => void,
   toggleOnboardingDialog: () => void,
-  isEditTagDialogOpened: boolean,
-  toggleEditTagDialog: () => void,
-  currentEntryPath: string,
-  selectedTag: Tag,
-  isCreateDirectoryOpened: boolean,
-  toggleCreateDirectoryDialog: () => void,
-  isCreateFileDialogOpened: boolean,
   toggleCreateFileDialog: () => void,
   toggleAboutDialog: () => void,
   toggleKeysDialog: () => void,
-  isSettingsDialogOpened: boolean,
   toggleSettingsDialog: () => void,
+  isSettingsDialogOpened: () => void,
   setManagementPanelVisibility: boolean => void,
-  isSelectDirectoryDialogOpened: boolean,
-  toggleSelectDirectoryDialog: () => void,
   isLocationManagerPanelOpened: boolean,
   openLocationManagerPanel: () => void,
   isTagLibraryPanelOpened: boolean,
@@ -126,21 +89,17 @@ type Props = {
   openURLExternally: (url: string) => void,
   switchTheme: () => void,
   shouldTogglePanel: string,
-  currentDirectory: string,
   isReadOnlyMode: boolean
 };
 
 type State = {
-  selectedDirectoryPath?: string,
   isManagementPanelVisible?: boolean, // evtl. redux migration
-  CreateFileDialogKey: string,
   isProTeaserVisible: boolean
 };
 
 class VerticalNavigation extends React.Component<Props, State> {
   state = {
     isManagementPanelVisible: true,
-    CreateFileDialogKey: uuidv1(),
     isProTeaserVisible: false
   };
 
@@ -184,41 +143,21 @@ class VerticalNavigation extends React.Component<Props, State> {
     this.setState({ isProTeaserVisible: !this.state.isProTeaserVisible });
   }
 
-  chooseDirectoryPath = (currentPath: string) => {
-    this.setState({
-      selectedDirectoryPath: currentPath
-    });
-  };
-
-  resetState = dialogKey => {
-    this.setState({
-      [dialogKey]: uuidv1()
-    });
-  };
-
   render() {
     const {
       isFirstRun,
-      isEditTagDialogOpened,
-      isSettingsDialogOpened,
-      isCreateDirectoryOpened,
-      isCreateFileDialogOpened,
-      isSelectDirectoryDialogOpened,
       isLocationManagerPanelOpened,
       isTagLibraryPanelOpened,
       isSearchPanelOpened,
+      isSettingsDialogOpened,
       isPerspectivesPanelOpened,
       isHelpFeedbackPanelOpened,
-      currentDirectory,
       isReadOnlyMode,
-      toggleAboutDialog,
-      toggleCreateDirectoryDialog,
       toggleCreateFileDialog,
-      toggleSelectDirectoryDialog,
+      toggleAboutDialog,
       toggleOnboardingDialog,
       toggleSettingsDialog,
       toggleKeysDialog,
-      toggleEditTagDialog,
       openLocationManagerPanel,
       openTagLibraryPanel,
       openSearchPanel,
@@ -228,7 +167,8 @@ class VerticalNavigation extends React.Component<Props, State> {
       setManagementPanelVisibility,
       openFileNatively,
       openURLExternally,
-      setFirstRun
+      setFirstRun,
+      theme
     } = this.props;
     return (
       <div>
@@ -240,30 +180,6 @@ class VerticalNavigation extends React.Component<Props, State> {
             }
           `}
         </style>
-        <CreateDirectoryDialog
-          open={isCreateDirectoryOpened}
-          onClose={toggleCreateDirectoryDialog}
-          selectedDirectoryPath={currentDirectory}
-        />
-        {isEditTagDialogOpened && (
-          <EditEntryTagDialogAsync
-            key={uuidv1()}
-            open={isEditTagDialogOpened}
-            onClose={toggleEditTagDialog}
-            currentEntryPath={this.props.currentEntryPath}
-            selectedTag={this.props.selectedTag}
-          />
-        )}
-        {isSelectDirectoryDialogOpened && (
-          <SelectDirectoryAsync
-            open={isSelectDirectoryDialogOpened}
-            onClose={toggleSelectDirectoryDialog}
-            chooseDirectoryPath={this.chooseDirectoryPath}
-            selectedDirectoryPath={
-              this.state.selectedDirectoryPath || currentDirectory
-            }
-          />
-        )}
         {this.state.isProTeaserVisible && (
           <ProTeaserDialogAsync
             open={this.state.isProTeaserVisible}
@@ -272,31 +188,12 @@ class VerticalNavigation extends React.Component<Props, State> {
             key={uuidv1()}
           />
         )}
-        {/* {isSettingsDialogOpened && (
-          <SettingsDialogAsync
-            open={isSettingsDialogOpened}
-            onClose={toggleSettingsDialog}
-          />
-        )} */}
-        <SettingsDialog
-          open={isSettingsDialogOpened}
-          onClose={toggleSettingsDialog}
-        />
-        <CreateFileDialog
-          key={uuidv1()}
-          open={isCreateFileDialogOpened}
-          selectedDirectoryPath={
-            this.state.selectedDirectoryPath || currentDirectory
-          }
-          chooseDirectoryPath={this.chooseDirectoryPath}
-          onClose={toggleCreateFileDialog}
-        />
         <SplitPane
           split="vertical"
           minSize={44}
           maxSize={44}
           defaultSize={44}
-          resizerStyle={{ backgroundColor: this.props.theme.palette.divider }}
+          resizerStyle={{ backgroundColor: theme.palette.divider }}
         >
           <div style={this.styles.panel}>
             <IconButton
@@ -489,17 +386,12 @@ class VerticalNavigation extends React.Component<Props, State> {
 function mapStateToProps(state) {
   return {
     isFirstRun: isFirstRun(state),
-    isEditTagDialogOpened: isEditTagDialogOpened(state),
     isSettingsDialogOpened: isSettingsDialogOpened(state),
-    isCreateDirectoryOpened: isCreateDirectoryOpened(state),
-    isCreateFileDialogOpened: isCreateFileDialogOpened(state),
-    isSelectDirectoryDialogOpened: isSelectDirectoryDialogOpened(state),
     isLocationManagerPanelOpened: isLocationManagerPanelOpened(state),
     isTagLibraryPanelOpened: isTagLibraryPanelOpened(state),
     isSearchPanelOpened: isSearchPanelOpened(state),
     isPerspectivesPanelOpened: isPerspectivesPanelOpened(state),
     isHelpFeedbackPanelOpened: isHelpFeedbackPanelOpened(state),
-    currentDirectory: getDirectoryPath(state),
     isReadOnlyMode: isReadOnlyMode(state)
   };
 }
@@ -507,13 +399,10 @@ function mapStateToProps(state) {
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
-      toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog,
       toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
-      toggleSelectDirectoryDialog: AppActions.toggleSelectDirectoryDialog,
       toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
       toggleSettingsDialog: AppActions.toggleSettingsDialog,
       toggleAboutDialog: AppActions.toggleAboutDialog,
-      toggleEditTagDialog: AppActions.toggleEditTagDialog,
       toggleKeysDialog: AppActions.toggleKeysDialog,
       openLocationManagerPanel: AppActions.openLocationManagerPanel,
       openTagLibraryPanel: AppActions.openTagLibraryPanel,

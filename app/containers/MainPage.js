@@ -20,6 +20,7 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import uuidv1 from 'uuid';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import { translate } from 'react-i18next';
@@ -35,6 +36,9 @@ import { DragDropContext } from 'react-dnd';
 import VerticalNavigation from '../components/VerticalNavigation';
 import FolderContainer from '../components/FolderContainer';
 import EntryContainer from '../components/EntryContainer';
+import SettingsDialog from '../components/dialogs/settings/SettingsDialog';
+import CreateDirectoryDialog from '../components/dialogs/CreateDirectoryDialog';
+import CreateFileDialog from '../components/dialogs/CreateFileDialog';
 import {
   getDesktopMode,
   getKeyBindingObject,
@@ -61,6 +65,11 @@ import {
   isSearchPanelOpened,
   isPerspectivesPanelOpened,
   isHelpFeedbackPanelOpened,
+  isEditTagDialogOpened,
+  isCreateDirectoryOpened,
+  isSelectDirectoryDialogOpened,
+  isCreateFileDialogOpened,
+  isSettingsDialogOpened,
   isReadOnlyMode
 } from '../reducers/app';
 import { actions as LocationIndexActions, isIndexing } from '../reducers/location-index';
@@ -127,6 +136,12 @@ type Props = {
   lastPublishedVersion: string,
   isUpdateAvailable: boolean,
   isReadOnlyMode: boolean,
+  isSettingsDialogOpened: boolean,
+  toggleSettingsDialog: () => void,  
+  isCreateFileDialogOpened: boolean,
+  toggleCreateFileDialog: () => void,
+  isCreateDirectoryOpened: boolean,
+  toggleCreateDirectoryDialog: () => void,  
   isAboutDialogOpened: boolean,
   toggleAboutDialog: () => void,
   isCreateDirectoryOpened: boolean,
@@ -141,6 +156,10 @@ type Props = {
   toggleThirdPartyLibsDialog: () => void,
   isOnboardingDialogOpened: boolean,  
   toggleOnboardingDialog: () => void,
+  isSelectDirectoryDialogOpened: boolean,
+  toggleSelectDirectoryDialog: () => void,  
+  isEditTagDialogOpened: boolean,
+  toggleEditTagDialog: () => void,  
   setEntryFullWidth: (isFullWidth: boolean) => void,
   hideNotifications: () => void,
   cancelDirectoryIndexing: () => void,
@@ -223,7 +242,22 @@ const OnboardingDialogAsync = props => (
   </React.Suspense>
 );
 
+const EditEntryTagDialog = React.lazy(() => import(/* webpackChunkName: "EditEntryTagDialog" */ '../components/dialogs/EditEntryTagDialog'));
+const EditEntryTagDialogAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <EditEntryTagDialog {...props} />
+  </React.Suspense>
+);
+
+const SelectDirectoryDialog = React.lazy(() => import(/* webpackChunkName: "LicenseDialog" */ '../components/dialogs/SelectDirectoryDialog'));
+const SelectDirectoryAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <SelectDirectoryDialog {...props} />
+  </React.Suspense>
+);
+
 type State = {
+  selectedDirectoryPath?: string,
   isManagementPanelVisible?: boolean, // optionality because of https://github.com/codemix/flow-runtime/issues/149
   mainSplitSize?: any,
   isDrawerOpened?: boolean,
@@ -376,7 +410,7 @@ class MainPage extends Component<Props, State> {
         );
       } else {
         files.map(file => { // TODO move this in reducer -> look at DirectoryMenu handleFileInputChange
-          let filePath;
+          let filePath = '';
           let fileName = '';
           try {
             fileName = decodeURIComponent(file.name);
@@ -447,6 +481,12 @@ class MainPage extends Component<Props, State> {
     }
   };
 
+  chooseDirectoryPath = (currentPath: string) => {
+    this.setState({
+      selectedDirectoryPath: currentPath
+    });
+  };  
+
   keyBindingHandlers = {
     toggleShowHiddenEntries: this.props.toggleShowUnixHiddenEntries,
     showFolderNavigator: this.props.openLocationManagerPanel,
@@ -459,18 +499,28 @@ class MainPage extends Component<Props, State> {
     const { 
       classes, 
       theme,
+      isCreateFileDialogOpened,
+      isSettingsDialogOpened,      
       isAboutDialogOpened,
       isKeysDialogOpened,
       isOnboardingDialogOpened,
       isLicenseDialogOpened,
       isThirdPartyLibsDialogOpened,
+      isSelectDirectoryDialogOpened,      
+      isCreateDirectoryOpened,      
+      isEditTagDialogOpened,
       toggleOnboardingDialog,
       toggleSettingsDialog,
       toggleKeysDialog,
       toggleLicenseDialog,
       toggleThirdPartyLibsDialog,
       toggleAboutDialog,    
-      setFirstRun  
+      toggleCreateDirectoryDialog,      
+      toggleCreateFileDialog,      
+      toggleSelectDirectoryDialog,  
+      toggleEditTagDialog,         
+      setFirstRun,
+      directoryPath
     } = this.props;
     const { FILE } = NativeTypes;
 
@@ -513,7 +563,42 @@ class MainPage extends Component<Props, State> {
             open={isThirdPartyLibsDialogOpened}
             onClose={toggleThirdPartyLibsDialog}
           />
-        )}        
+        )}  
+        {isEditTagDialogOpened && (
+          <EditEntryTagDialogAsync
+            key={uuidv1()}
+            open={isEditTagDialogOpened}
+            onClose={toggleEditTagDialog}
+          />
+        )}
+        {isSelectDirectoryDialogOpened && (
+          <SelectDirectoryAsync
+            open={isSelectDirectoryDialogOpened}
+            onClose={toggleSelectDirectoryDialog}
+            chooseDirectoryPath={this.chooseDirectoryPath}
+            selectedDirectoryPath={
+              this.state.selectedDirectoryPath || directoryPath
+            }
+          />
+        )}   
+        <CreateDirectoryDialog
+          open={isCreateDirectoryOpened}
+          onClose={toggleCreateDirectoryDialog}
+          selectedDirectoryPath={directoryPath}
+        />
+        <CreateFileDialog
+          key={uuidv1()}
+          open={isCreateFileDialogOpened}
+          selectedDirectoryPath={
+            this.state.selectedDirectoryPath || directoryPath
+          }
+          chooseDirectoryPath={this.chooseDirectoryPath}
+          onClose={toggleCreateFileDialog}
+        />     
+        <SettingsDialog
+          open={isSettingsDialogOpened}
+          onClose={toggleSettingsDialog}
+        />
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           open={this.props.notificationStatus.visible}
@@ -668,6 +753,11 @@ class MainPage extends Component<Props, State> {
 
 function mapStateToProps(state) {
   return {
+    isEditTagDialogOpened: isEditTagDialogOpened(state),
+    isCreateDirectoryOpened: isCreateDirectoryOpened(state),
+    isCreateFileDialogOpened: isCreateFileDialogOpened(state),
+    isSelectDirectoryDialogOpened: isSelectDirectoryDialogOpened(state),  
+    isSettingsDialogOpened: isSettingsDialogOpened(state),
     isAboutDialogOpened: isAboutDialogOpened(state),
     isKeysDialogOpened: isKeysDialogOpened(state),
     isOnboardingDialogOpened: isOnboardingDialogOpened(state),
@@ -696,6 +786,11 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
+    toggleSettingsDialog: AppActions.toggleSettingsDialog,
+    toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
+    toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog,
+    toggleSelectDirectoryDialog: AppActions.toggleSelectDirectoryDialog,
+    toggleEditTagDialog: AppActions.toggleEditTagDialog,    
     toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
     toggleLicenseDialog: AppActions.toggleLicenseDialog,
     toggleThirdPartyLibsDialog: AppActions.toggleThirdPartyLibsDialog,
