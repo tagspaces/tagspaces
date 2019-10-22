@@ -23,7 +23,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Divider from '@material-ui/core/Divider';
-import OpenFile from '@material-ui/icons/SubdirectoryArrowLeft';
+import OpenFile from '@material-ui/icons/SubdirectoryArrowRight';
 import OpenFileNatively from '@material-ui/icons/Launch';
 import OpenContainingFolder from '@material-ui/icons/FolderOpen';
 import AddRemoveTags from '@material-ui/icons/Loyalty';
