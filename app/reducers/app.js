@@ -561,9 +561,8 @@ export const actions = {
     if (currentDirectoryPath) {
       const dirSep = PlatformIO.haveObjectStoreSupport() ? '/' : AppConfig.dirSeparator;
       const parentDirectory = extractParentDirectoryPath(currentDirectoryPath, dirSep);
-      // console.log('parentDirectory: ' + parentDirectory);
-      // console.log('currentDirectoryPath: ' + currentDirectoryPath);
-      if (parentDirectory.startsWith(currentLocationPath)) {
+      // console.log('parentDirectory: ' + parentDirectory  + ' - currentLocationPath: ' + currentLocationPath);
+      if (parentDirectory.includes(currentLocationPath)) {
         dispatch(actions.loadDirectoryContent(parentDirectory));
       } else {
         dispatch(actions.showNotification(i18n.t('core:parentDirNotInLocation'), 'warning', true));
