@@ -50,11 +50,6 @@ import {
   actions as AppActions,
   getDirectoryPath,
   isEditTagDialogOpened,
-  isAboutDialogOpened,
-  isOnboardingDialogOpened,
-  isKeysDialogOpened,
-  isLicenseDialogOpened,
-  isThirdPartyLibsDialogOpened,
   isSettingsDialogOpened,
   isCreateFileDialogOpened,
   isCreateDirectoryOpened,
@@ -76,31 +71,10 @@ const EditEntryTagDialogAsync = props => (
   </React.Suspense>
 );
 
-const LicenseDialog = React.lazy(() => import(/* webpackChunkName: "LicenseDialog" */ './dialogs/LicenseDialog'));
-const LicenseDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <LicenseDialog {...props} />
-  </React.Suspense>
-);
-
 const SelectDirectoryDialog = React.lazy(() => import(/* webpackChunkName: "LicenseDialog" */ './dialogs/SelectDirectoryDialog'));
 const SelectDirectoryAsync = props => (
   <React.Suspense fallback={<LoadingLazy />}>
     <SelectDirectoryDialog {...props} />
-  </React.Suspense>
-);
-
-const AboutDialog = React.lazy(() => import(/* webpackChunkName: "AboutDialog" */ './dialogs/AboutDialog'));
-const AboutDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <AboutDialog {...props} />
-  </React.Suspense>
-);
-
-const KeyboardDialog = React.lazy(() => import(/* webpackChunkName: "KeyboardDialog" */ './dialogs/KeyboardDialog'));
-const KeyboardDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <KeyboardDialog {...props} />
   </React.Suspense>
 );
 
@@ -118,41 +92,20 @@ const ProTeaserDialogAsync = props => (
   </React.Suspense>
 );
 
-const ThirdPartyLibsDialog = React.lazy(() => import(/* webpackChunkName: "ThirdPartyLibsDialog" */ './dialogs/ThirdPartyLibsDialog'));
-const ThirdPartyLibsDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <ThirdPartyLibsDialog {...props} />
-  </React.Suspense>
-);
-
-const OnboardingDialog = React.lazy(() => import(/* webpackChunkName: "OnboardingDialog" */ './dialogs/OnboardingDialog'));
-const OnboardingDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <OnboardingDialog {...props} />
-  </React.Suspense>
-);
-
 type Props = {
   isFirstRun: boolean,
   setFirstRun: (isFirstRun: boolean) => void,
-  isOnboardingDialogOpened: boolean,
   toggleOnboardingDialog: () => void,
   isEditTagDialogOpened: boolean,
   toggleEditTagDialog: () => void,
   currentEntryPath: string,
   selectedTag: Tag,
-  isAboutDialogOpened: boolean,
-  toggleAboutDialog: () => void,
   isCreateDirectoryOpened: boolean,
   toggleCreateDirectoryDialog: () => void,
   isCreateFileDialogOpened: boolean,
   toggleCreateFileDialog: () => void,
-  isKeysDialogOpened: boolean,
+  toggleAboutDialog: () => void,
   toggleKeysDialog: () => void,
-  isLicenseDialogOpened: boolean,
-  toggleLicenseDialog: () => void,
-  isThirdPartyLibsDialogOpened: boolean,
-  toggleThirdPartyLibsDialog: () => void,
   isSettingsDialogOpened: boolean,
   toggleSettingsDialog: () => void,
   setManagementPanelVisibility: boolean => void,
@@ -247,11 +200,6 @@ class VerticalNavigation extends React.Component<Props, State> {
     const {
       isFirstRun,
       isEditTagDialogOpened,
-      isAboutDialogOpened,
-      isKeysDialogOpened,
-      isOnboardingDialogOpened,
-      isLicenseDialogOpened,
-      isThirdPartyLibsDialogOpened,
       isSettingsDialogOpened,
       isCreateDirectoryOpened,
       isCreateFileDialogOpened,
@@ -263,15 +211,13 @@ class VerticalNavigation extends React.Component<Props, State> {
       isHelpFeedbackPanelOpened,
       currentDirectory,
       isReadOnlyMode,
+      toggleAboutDialog,
       toggleCreateDirectoryDialog,
       toggleCreateFileDialog,
       toggleSelectDirectoryDialog,
       toggleOnboardingDialog,
       toggleSettingsDialog,
       toggleKeysDialog,
-      toggleLicenseDialog,
-      toggleThirdPartyLibsDialog,
-      toggleAboutDialog,
       toggleEditTagDialog,
       openLocationManagerPanel,
       openTagLibraryPanel,
@@ -316,41 +262,6 @@ class VerticalNavigation extends React.Component<Props, State> {
             selectedDirectoryPath={
               this.state.selectedDirectoryPath || currentDirectory
             }
-          />
-        )}
-        {isAboutDialogOpened && (
-          <AboutDialogAsync
-            open={isAboutDialogOpened}
-            toggleLicenseDialog={toggleLicenseDialog}
-            toggleThirdPartyLibsDialog={toggleThirdPartyLibsDialog}
-            onClose={toggleAboutDialog}
-          />
-        )}
-        {isKeysDialogOpened && (
-          <KeyboardDialogAsync
-            open={isKeysDialogOpened}
-            onClose={toggleKeysDialog}
-          />
-        )}
-        {(isLicenseDialogOpened) && (
-          <LicenseDialogAsync
-            open={isLicenseDialogOpened}
-            onClose={() => {
-              setFirstRun(false);
-              toggleLicenseDialog();
-            }}
-          />
-        )}
-        {(isOnboardingDialogOpened) && (
-          <OnboardingDialogAsync
-            open={isOnboardingDialogOpened}
-            onClose={toggleOnboardingDialog}
-          />
-        )}
-        {isThirdPartyLibsDialogOpened && (
-          <ThirdPartyLibsDialogAsync
-            open={isThirdPartyLibsDialogOpened}
-            onClose={toggleThirdPartyLibsDialog}
           />
         )}
         {this.state.isProTeaserVisible && (
@@ -579,11 +490,6 @@ function mapStateToProps(state) {
   return {
     isFirstRun: isFirstRun(state),
     isEditTagDialogOpened: isEditTagDialogOpened(state),
-    isAboutDialogOpened: isAboutDialogOpened(state),
-    isKeysDialogOpened: isKeysDialogOpened(state),
-    isOnboardingDialogOpened: isOnboardingDialogOpened(state),
-    isLicenseDialogOpened: isLicenseDialogOpened(state),
-    isThirdPartyLibsDialogOpened: isThirdPartyLibsDialogOpened(state),
     isSettingsDialogOpened: isSettingsDialogOpened(state),
     isCreateDirectoryOpened: isCreateDirectoryOpened(state),
     isCreateFileDialogOpened: isCreateFileDialogOpened(state),
@@ -606,8 +512,6 @@ function mapActionCreatorsToProps(dispatch) {
       toggleSelectDirectoryDialog: AppActions.toggleSelectDirectoryDialog,
       toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
       toggleSettingsDialog: AppActions.toggleSettingsDialog,
-      toggleLicenseDialog: AppActions.toggleLicenseDialog,
-      toggleThirdPartyLibsDialog: AppActions.toggleThirdPartyLibsDialog,
       toggleAboutDialog: AppActions.toggleAboutDialog,
       toggleEditTagDialog: AppActions.toggleEditTagDialog,
       toggleKeysDialog: AppActions.toggleKeysDialog,

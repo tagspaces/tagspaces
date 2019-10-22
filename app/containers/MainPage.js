@@ -47,6 +47,11 @@ import {
   actions as AppActions,
   getNotificationStatus,
   isGeneratingThumbs,
+  isAboutDialogOpened,
+  isOnboardingDialogOpened,
+  isKeysDialogOpened,
+  isLicenseDialogOpened,
+  isThirdPartyLibsDialogOpened,  
   isFileOpened,
   isEntryInFullWidth,
   isUpdateAvailable,
@@ -68,6 +73,7 @@ import buildDesktopMenu from '../services/electron-menus';
 import buildTrayIconMenu from '../services/electron-tray-menu';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
+import LoadingLazy from '../components/LoadingLazy';
 
 const initialSplitSize = 44;
 const drawerWidth = 300;
@@ -107,6 +113,8 @@ const styles = theme => ({
 });
 
 type Props = {
+  isFirstRun: boolean,
+  setFirstRun: (isFirstRun: boolean) => void,  
   isDesktopMode: boolean,
   isFileOpened: boolean,
   isIndexing: boolean,
@@ -114,10 +122,25 @@ type Props = {
   setGeneratingThumbnails: (isGenerating: boolean) => void,
   isEntryInFullWidth: boolean,
   classes: Object,
+  theme: Object,
   notificationStatus: Object,
   lastPublishedVersion: string,
   isUpdateAvailable: boolean,
   isReadOnlyMode: boolean,
+  isAboutDialogOpened: boolean,
+  toggleAboutDialog: () => void,
+  isCreateDirectoryOpened: boolean,
+  toggleCreateDirectoryDialog: () => void,
+  isCreateFileDialogOpened: boolean,
+  toggleCreateFileDialog: () => void,
+  isKeysDialogOpened: boolean,
+  toggleKeysDialog: () => void,
+  isLicenseDialogOpened: boolean,
+  toggleLicenseDialog: () => void,
+  isThirdPartyLibsDialogOpened: boolean,
+  toggleThirdPartyLibsDialog: () => void,
+  isOnboardingDialogOpened: boolean,  
+  toggleOnboardingDialog: () => void,
   setEntryFullWidth: (isFullWidth: boolean) => void,
   hideNotifications: () => void,
   cancelDirectoryIndexing: () => void,
@@ -164,6 +187,41 @@ type Props = {
   ) => void,
   reflectCreateEntry: (path: string, isFile: boolean) => void
 };
+
+const AboutDialog = React.lazy(() => import(/* webpackChunkName: "AboutDialog" */ '../components/dialogs/AboutDialog'));
+const AboutDialogAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <AboutDialog {...props} />
+  </React.Suspense>
+);
+
+const LicenseDialog = React.lazy(() => import(/* webpackChunkName: "LicenseDialog" */ '../components/dialogs/LicenseDialog'));
+const LicenseDialogAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <LicenseDialog {...props} />
+  </React.Suspense>
+);
+
+const KeyboardDialog = React.lazy(() => import(/* webpackChunkName: "KeyboardDialog" */ '../components/dialogs/KeyboardDialog'));
+const KeyboardDialogAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <KeyboardDialog {...props} />
+  </React.Suspense>
+);
+
+const ThirdPartyLibsDialog = React.lazy(() => import(/* webpackChunkName: "ThirdPartyLibsDialog" */ '../components/dialogs/ThirdPartyLibsDialog'));
+const ThirdPartyLibsDialogAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <ThirdPartyLibsDialog {...props} />
+  </React.Suspense>
+);
+
+const OnboardingDialog = React.lazy(() => import(/* webpackChunkName: "OnboardingDialog" */ '../components/dialogs/OnboardingDialog'));
+const OnboardingDialogAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <OnboardingDialog {...props} />
+  </React.Suspense>
+);
 
 type State = {
   isManagementPanelVisible?: boolean, // optionality because of https://github.com/codemix/flow-runtime/issues/149
@@ -398,7 +456,22 @@ class MainPage extends Component<Props, State> {
   };
 
   render() {
-    const { classes, theme } = this.props;
+    const { 
+      classes, 
+      theme,
+      isAboutDialogOpened,
+      isKeysDialogOpened,
+      isOnboardingDialogOpened,
+      isLicenseDialogOpened,
+      isThirdPartyLibsDialogOpened,
+      toggleOnboardingDialog,
+      toggleSettingsDialog,
+      toggleKeysDialog,
+      toggleLicenseDialog,
+      toggleThirdPartyLibsDialog,
+      toggleAboutDialog,    
+      setFirstRun  
+    } = this.props;
     const { FILE } = NativeTypes;
 
     /* if (this.state.width < 400) {
@@ -406,8 +479,112 @@ class MainPage extends Component<Props, State> {
     } */
     return (
       <HotKeys handlers={this.keyBindingHandlers}>
-        <TargetFileBox accepts={[FILE]} onDrop={this.handleFileDrop}>
-          {this.props.isDesktopMode ? (
+        {isAboutDialogOpened && (
+          <AboutDialogAsync
+            open={isAboutDialogOpened}
+            toggleLicenseDialog={toggleLicenseDialog}
+            toggleThirdPartyLibsDialog={toggleThirdPartyLibsDialog}
+            onClose={toggleAboutDialog}
+          />
+        )}
+        {isKeysDialogOpened && (
+          <KeyboardDialogAsync
+            open={isKeysDialogOpened}
+            onClose={toggleKeysDialog}
+          />
+        )}
+        {(isLicenseDialogOpened) && (
+          <LicenseDialogAsync
+            open={isLicenseDialogOpened}
+            onClose={() => {
+              setFirstRun(false);
+              toggleLicenseDialog();
+            }}
+          />
+        )}
+        {(isOnboardingDialogOpened) && (
+          <OnboardingDialogAsync
+            open={isOnboardingDialogOpened}
+            onClose={toggleOnboardingDialog}
+          />
+        )}
+        {isThirdPartyLibsDialogOpened && (
+          <ThirdPartyLibsDialogAsync
+            open={isThirdPartyLibsDialogOpened}
+            onClose={toggleThirdPartyLibsDialog}
+          />
+        )}        
+        <Snackbar
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          open={this.props.notificationStatus.visible}
+          onClose={this.props.hideNotifications}
+          autoHideDuration={this.props.notificationStatus.autohide ? 3000 : undefined}
+          message={this.props.notificationStatus.text}
+          action={[
+            <IconButton
+              key="close"
+              aria-label={i18n.t('core:closeButton')}
+              color="inherit"
+              onClick={this.props.hideNotifications}
+            >
+              <CloseIcon />
+            </IconButton>,
+          ]}
+        />
+        <Snackbar
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          open={this.props.isGeneratingThumbs}
+          autoHideDuration={undefined}
+          message={'Loading or generating thumbnails...'}
+          action={[
+            <IconButton
+              key="close"
+              aria-label={i18n.t('core:closeButton')}
+              color="inherit"
+              onClick={() => this.props.setGeneratingThumbnails(false)}
+            >
+              <CloseIcon />
+            </IconButton>,
+          ]}
+        />
+        <Snackbar
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          open={this.props.isIndexing}
+          autoHideDuration={undefined}
+          message={'Indexing'}
+          action={[
+            <Button
+              color="secondary"
+              size="small"
+              onClick={this.props.cancelDirectoryIndexing}
+            >{i18n.t('core:cancelIndexing')}</Button>
+          ]}
+        />
+        <Snackbar
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          open={this.props.isUpdateAvailable}
+          autoHideDuration={undefined}
+          message={'Version ' + this.props.lastPublishedVersion + ' available.'}
+          action={[
+            <Button
+              color="secondary"
+              size="small"
+              onClick={this.skipRelease}
+            >{i18n.t('core:later')}</Button>,
+            <Button
+              color="secondary"
+              size="small"
+              onClick={this.openChangelogPage}
+            >{i18n.t('core:releaseNotes')}</Button>,
+            <Button
+              color="primary"
+              size="small"
+              onClick={this.getLatestVersion}
+            >{i18n.t('core:getItNow')}</Button>,
+          ]}
+        />
+        {this.props.isDesktopMode ? (
+          <TargetFileBox accepts={[FILE]} onDrop={this.handleFileDrop}>
             <SplitPane
               split="vertical"
               minSize={200}
@@ -450,109 +627,40 @@ class MainPage extends Component<Props, State> {
                 <EntryContainer />
               </SplitPane>
             </SplitPane>
-          ) : (
-            <div>
-              <Drawer
-                open={this.state.isDrawerOpened}
-                type="persistent"
-                classes={{
-                  paper: classes.drawerPaper
-                }}
-              >
-                <VerticalNavigation />
-              </Drawer>
-              <SplitPane
-                className={classNames(
-                  classes.content,
-                  this.state.isDrawerOpened && classes.contentShift
-                )}
-                split="vertical"
-                minSize={150}
-                resizerStyle={{ backgroundColor: theme.palette.divider }}
-                defaultSize={this.state.isViewerPanelVisible ? '50%' : '100%'}
-              >
-                <FolderContainer
-                  toggleDrawer={this.toggleDrawer}
-                  windowHeight={this.state.height}
-                />
-                {this.props.isFileOpened && (
-                  <div style={{ backgroundColor: 'lightgray', height: '100%' }}>
-                  FileViewer/Editor
-                  </div>
-                )}
-              </SplitPane>
-            </div>
-          )}
-          <Snackbar
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-            open={this.props.notificationStatus.visible}
-            onClose={this.props.hideNotifications}
-            autoHideDuration={this.props.notificationStatus.autohide ? 3000 : undefined}
-            message={this.props.notificationStatus.text}
-            action={[
-              <IconButton
-                key="close"
-                aria-label={i18n.t('core:closeButton')}
-                color="inherit"
-                onClick={this.props.hideNotifications}
-              >
-                <CloseIcon />
-              </IconButton>,
-            ]}
-          />
-          <Snackbar
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-            open={this.props.isGeneratingThumbs}
-            autoHideDuration={undefined}
-            message={'Loading or generating thumbnails...'}
-            action={[
-              <IconButton
-                key="close"
-                aria-label={i18n.t('core:closeButton')}
-                color="inherit"
-                onClick={() => this.props.setGeneratingThumbnails(false)}
-              >
-                <CloseIcon />
-              </IconButton>,
-            ]}
-          />
-          <Snackbar
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-            open={this.props.isIndexing}
-            autoHideDuration={undefined}
-            message={'Indexing'}
-            action={[
-              <Button
-                color="secondary"
-                size="small"
-                onClick={this.props.cancelDirectoryIndexing}
-              >{i18n.t('core:cancelIndexing')}</Button>
-            ]}
-          />
-          <Snackbar
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            open={this.props.isUpdateAvailable}
-            autoHideDuration={undefined}
-            message={'Version ' + this.props.lastPublishedVersion + ' available.'}
-            action={[
-              <Button
-                color="secondary"
-                size="small"
-                onClick={this.skipRelease}
-              >{i18n.t('core:later')}</Button>,
-              <Button
-                color="secondary"
-                size="small"
-                onClick={this.openChangelogPage}
-              >{i18n.t('core:releaseNotes')}</Button>,
-              <Button
-                color="primary"
-                size="small"
-                onClick={this.getLatestVersion}
-              >{i18n.t('core:getItNow')}</Button>,
-            ]}
-          />
-        </TargetFileBox>
+          </TargetFileBox>            
+        ) : (
+          <div>
+            <Drawer
+              open={this.state.isDrawerOpened}
+              type="persistent"
+              classes={{
+                paper: classes.drawerPaper
+              }}
+            >
+              <VerticalNavigation />
+            </Drawer>
+            <SplitPane
+              className={classNames(
+                classes.content,
+                this.state.isDrawerOpened && classes.contentShift
+              )}
+              split="vertical"
+              minSize={150}
+              resizerStyle={{ backgroundColor: theme.palette.divider }}
+              defaultSize={this.state.isViewerPanelVisible ? '50%' : '100%'}
+            >
+              <FolderContainer
+                toggleDrawer={this.toggleDrawer}
+                windowHeight={this.state.height}
+              />
+              {this.props.isFileOpened && (
+                <div style={{ backgroundColor: 'lightgray', height: '100%' }}>
+                FileViewer/Editor
+                </div>
+              )}
+            </SplitPane>
+          </div>
+        )}
       </HotKeys>
     );
   }
@@ -560,6 +668,11 @@ class MainPage extends Component<Props, State> {
 
 function mapStateToProps(state) {
   return {
+    isAboutDialogOpened: isAboutDialogOpened(state),
+    isKeysDialogOpened: isKeysDialogOpened(state),
+    isOnboardingDialogOpened: isOnboardingDialogOpened(state),
+    isLicenseDialogOpened: isLicenseDialogOpened(state),
+    isThirdPartyLibsDialogOpened: isThirdPartyLibsDialogOpened(state),    
     isIndexing: isIndexing(state),
     isReadOnlyMode: isReadOnlyMode(state),
     isGeneratingThumbs: isGeneratingThumbs(state),
@@ -583,6 +696,11 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
+    toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
+    toggleLicenseDialog: AppActions.toggleLicenseDialog,
+    toggleThirdPartyLibsDialog: AppActions.toggleThirdPartyLibsDialog,
+    toggleAboutDialog: AppActions.toggleAboutDialog,
+    toggleKeysDialog: AppActions.toggleKeysDialog,    
     hideNotifications: AppActions.hideNotifications,
     cancelDirectoryIndexing: LocationIndexActions.cancelDirectoryIndexing,
     saveFile: AppActions.saveFile,
@@ -616,7 +734,8 @@ function mapDispatchToProps(dispatch) {
     openSearchPanel: AppActions.openSearchPanel,
     openPerspectivesPanel: AppActions.openPerspectivesPanel,
     openHelpFeedbackPanel: AppActions.openHelpFeedbackPanel,
-    closeAllVerticalPanels: AppActions.closeAllVerticalPanels
+    closeAllVerticalPanels: AppActions.closeAllVerticalPanels,
+    setFirstRun: SettingsActions.setFirstRun,
   }, dispatch);
 }
 
