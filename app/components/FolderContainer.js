@@ -59,13 +59,24 @@ const GridPerspectiveAsync = props => (
 );
 
 let GalleryPerspective = React.Fragment;
-if (Pro && Pro.Perspectives) {
+if (Pro && Pro.Perspectives && Pro.Perspectives.GalleryPerspective) {
 //   GalleryPerspective = React.lazy(() => import(/* webpackChunkName: "GalleryPerspective" */ '../node_modules/@tagspaces/pro/modules/perspectives/gallery'));
   GalleryPerspective = Pro.Perspectives.GalleryPerspective;
 }
 const GalleryPerspectiveAsync = props => (
   <React.Suspense fallback={<LoadingLazy />}>
     <GalleryPerspective {...props} />
+  </React.Suspense>
+);
+
+let MapiquePerspective = React.Fragment;
+if (Pro && Pro.Perspectives && Pro.Perspectives.MapiquePerspective) {
+//   MapiquePerspective = React.lazy(() => import(/* webpackChunkName: "MapiquePerspective" */ '../node_modules/@tagspaces/pro/modules/perspectives/mapique'));
+  MapiquePerspective = Pro.Perspectives.MapiquePerspective;
+}
+const MapiquePerspectiveAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <MapiquePerspective {...props} />
   </React.Suspense>
 );
 
@@ -167,7 +178,7 @@ type Props = {
 };
 
 type State = {
-  currentPerspective?: string,
+  currentPerspective: string,
   currentPath?: string,
   pathParts?: Array<string>,
   isPropertiesPanelVisible?: boolean,
@@ -322,17 +333,8 @@ class FolderContainer extends React.Component<Props, State> {
       return;
     }
     this.setState({
-      currentPerspective: this.state.currentPerspective === 'default' ? 'gallery' : 'default'
+      currentPerspective: perspectiveId ? perspectiveId : 'default'
     });
-    /* if (perspectiveId) {
-      this.setState({
-        currentPerspective: perspectiveId
-      });
-    } else {
-      this.setState({
-        currentPerspective: 'default'
-      });
-    } */
   }
 
   togglePerspectiveChooserClose = (event?: Object) => {
@@ -373,22 +375,17 @@ class FolderContainer extends React.Component<Props, State> {
       return (
         <GalleryPerspectiveAsync
           directoryContent={this.props.directoryContent}
-          // loadDirectoryContent={this.props.loadDirectoryContent}
-          // openFile={this.props.openFile}
-          // openFileNatively={this.props.openFileNatively}
-          // loadParentDirectoryContent={this.props.loadParentDirectoryContent}
-          // deleteFile={this.props.deleteFile}
-          // renameFile={this.props.renameFile}
-          // openDirectory={this.props.openDirectory}
-          // showInFileManager={this.props.showInFileManager}
           currentDirectoryPath={this.props.currentDirectoryPath}
           setLastSelectedEntry={this.props.setLastSelectedEntry}
-          // perspectiveCommand={this.state.perspectiveCommand}
-          // addTags={this.props.addTags}
-          // editTagForEntry={this.props.editTagForEntry}
-          // deleteDirectory={this.props.deleteDirectory}
-          // removeTags={this.props.removeTags}
-          // removeAllTags={this.props.removeAllTags}
+          windowWidth={this.props.windowWidth}
+        />
+      );
+    } else if (this.state.currentPerspective === 'mapique') {
+      return (
+        <MapiquePerspectiveAsync
+          directoryContent={this.props.directoryContent}
+          currentDirectoryPath={this.props.currentDirectoryPath}
+          setLastSelectedEntry={this.props.setLastSelectedEntry}
           windowWidth={this.props.windowWidth}
         />
       );

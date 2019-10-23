@@ -64,7 +64,7 @@ type Props = {
   loadParentDirectoryContent?: () => void,
   openFileNatively?: (path: string) => void,
   extractContent?: () => void,
-  switchPerspective?: () => void,
+  switchPerspective?: (perspectiveId: string) => void,
   perspectiveMode: boolean,
   showNotification?: (
     text: string,
@@ -106,9 +106,9 @@ const DirectoryMenu = (props: Props) => {
     props.extractContent();
   }
 
-  function switchPerspective() {
+  function switchPerspective(perspectiveId) {
     props.onClose();
-    props.switchPerspective();
+    props.switchPerspective(perspectiveId);
   }
 
   function showDeleteDirectoryDialog() {
@@ -407,14 +407,27 @@ const DirectoryMenu = (props: Props) => {
           </MenuItem>
         )}
         <Divider />
-        <MenuItem data-tid="extractContent" onClick={switchPerspective} title="Start experimental presentation mode">
+        <MenuItem data-tid="openDefaultPerspecitve" onClick={() => switchPerspective('default')} title="Switch to default perspective">
           <ListItemIcon>
             <GalleryPerspectiveIcon />
           </ListItemIcon>
-          <ListItemText primary="Toggle Gallery Perspective" />
+          <ListItemText primary="Default perspective" />
         </MenuItem>
+        <MenuItem data-tid="openGalleryPerspecitve" onClick={() => switchPerspective('gallery')} title="Switch to gallery perspective">
+          <ListItemIcon>
+            <GalleryPerspectiveIcon />
+          </ListItemIcon>
+          <ListItemText primary="Gallery Perspective" />
+        </MenuItem>
+        <MenuItem data-tid="openMapiquePerspecitve" onClick={() => switchPerspective('mapique')} title="Switch to mapique perspective">
+          <ListItemIcon>
+            <GalleryPerspectiveIcon />
+          </ListItemIcon>
+          <ListItemText primary="Mapique Perspective" />
+        </MenuItem>
+        <Divider />
         {!props.isReadOnlyMode && (
-          <React.Fragment>  
+          <React.Fragment>
             <MenuItem data-tid="extractContent" onClick={initContentExtraction}>
               <ListItemIcon>
                 <ContentExtractionIcon />
