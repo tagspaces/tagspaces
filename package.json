@@ -52,7 +52,7 @@
     "setup-ext": "node scripts/setupextensions.js",
     "setup-pro": "node scripts/setuppro.js",
     "run-web": "yarn build-web && yarn prepare-web && node scripts/webdavserver.js",
-    "run-android": "cd cordova && cordova run android && cd ..",
+    "run-android": "yarn build-cordova && cd cordova && cordova run android && cd ..",
     "cordova-add-android": "cd cordova && cordova platform add android && cd ..",
     "cordova-create-app": "cordova create ./cordova org.tagspaces.mobile TagSpaces",
     "start-android": "yarn build-cordova && yarn run-android",
