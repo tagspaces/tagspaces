@@ -21,8 +21,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 // import injectTapEventPlugin from 'react-tap-event-plugin';
 import { I18nextProvider } from 'react-i18next'; // as we build ourself via webpack
-import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
-import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { HotKeys } from 'react-hotkeys';
 import '../assets/fonts/roboto/index.css';
 import i18n from '../services/i18n';
@@ -107,12 +106,10 @@ class App extends Component {
 
     return (
       <HotKeys keyMap={this.props.keyBindings}>
-        <MuiThemeProvider
-          theme={theme}
-        >
+        <ThemeProvider theme={theme}>
           <I18nextProvider i18n={i18n}>{this.props.children}</I18nextProvider>
           <AppOnBoarding />
-        </MuiThemeProvider>
+        </ThemeProvider>
       </HotKeys>
     );
   }
