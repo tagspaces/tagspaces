@@ -193,7 +193,7 @@ type State = {
 
 class FolderContainer extends React.Component<Props, State> {
   state = {
-    currentPerspective: 'default',
+    currentPerspective: window.ExtDefaultPerspective || 'default',
     currentPath: '',
     pathParts: [],
     isPropertiesPanelVisible: false,
@@ -345,38 +345,15 @@ class FolderContainer extends React.Component<Props, State> {
   };
 
   renderPerspective() {
-    if (
-      this.state.currentPerspective === 'default' &&
-      this.props.currentDirectoryPath &&
-      this.props.currentDirectoryPath.length >= 2
-    ) {
+    if (!this.props.currentDirectoryPath || this.props.currentDirectoryPath.length < 2) {
       return (
-        <GridPerspectiveAsync
-          directoryContent={this.props.directoryContent}
-          loadDirectoryContent={this.props.loadDirectoryContent}
-          openFile={this.props.openFile}
-          loadParentDirectoryContent={this.props.loadParentDirectoryContent}
-          deleteFile={this.props.deleteFile}
-          renameFile={this.props.renameFile}
-          openDirectory={this.props.openDirectory}
-          showInFileManager={this.props.showInFileManager}
-          currentDirectoryPath={this.props.currentDirectoryPath}
-          setLastSelectedEntry={this.props.setLastSelectedEntry}
-          perspectiveCommand={this.state.perspectiveCommand}
-          addTags={this.props.addTags}
-          editTagForEntry={this.props.editTagForEntry}
-          deleteDirectory={this.props.deleteDirectory}
-          removeTags={this.props.removeTags}
-          removeAllTags={this.props.removeAllTags}
-          windowWidth={this.props.windowWidth}
-        />
+        <WelcomePanelAsync />
       );
     } else if (this.state.currentPerspective === 'gallery') {
       return (
         <GalleryPerspectiveAsync
           directoryContent={this.props.directoryContent}
           currentDirectoryPath={this.props.currentDirectoryPath}
-          setLastSelectedEntry={this.props.setLastSelectedEntry}
           windowWidth={this.props.windowWidth}
         />
       );
@@ -385,12 +362,32 @@ class FolderContainer extends React.Component<Props, State> {
         <MapiquePerspectiveAsync
           directoryContent={this.props.directoryContent}
           currentDirectoryPath={this.props.currentDirectoryPath}
-          setLastSelectedEntry={this.props.setLastSelectedEntry}
           windowWidth={this.props.windowWidth}
         />
       );
     }
-    return <WelcomePanelAsync />;
+    //  else if (this.state.currentPerspective === 'default') {
+    return (
+      <GridPerspectiveAsync
+        directoryContent={this.props.directoryContent}
+        loadDirectoryContent={this.props.loadDirectoryContent}
+        openFile={this.props.openFile}
+        loadParentDirectoryContent={this.props.loadParentDirectoryContent}
+        deleteFile={this.props.deleteFile}
+        renameFile={this.props.renameFile}
+        openDirectory={this.props.openDirectory}
+        showInFileManager={this.props.showInFileManager}
+        currentDirectoryPath={this.props.currentDirectoryPath}
+        setLastSelectedEntry={this.props.setLastSelectedEntry}
+        perspectiveCommand={this.state.perspectiveCommand}
+        addTags={this.props.addTags}
+        editTagForEntry={this.props.editTagForEntry}
+        deleteDirectory={this.props.deleteDirectory}
+        removeTags={this.props.removeTags}
+        removeAllTags={this.props.removeAllTags}
+        windowWidth={this.props.windowWidth}
+      />
+    );
   }
 
   render() {
