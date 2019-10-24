@@ -371,6 +371,7 @@ class VerticalNavigation extends React.Component<Props, State> {
               <HelpFeedbackPanel
                 openFileNatively={openFileNatively}
                 openURLExternally={openURLExternally}
+                toggleAboutDialog={toggleAboutDialog}
                 toggleKeysDialog={toggleKeysDialog}
                 toggleOnboardingDialog={toggleOnboardingDialog}
                 toggleProTeaser={this.toggleProTeaser}

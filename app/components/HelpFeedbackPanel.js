@@ -31,6 +31,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import DocumentationIcon from '@material-ui/icons/Help';
+import AboutIcon from '@material-ui/icons/BlurOn';
 import ChangeLogIcon from '@material-ui/icons/ImportContacts';
 import OnboardingIcon from '@material-ui/icons/Explore';
 import WebClipperIcon from '@material-ui/icons/Transform';
@@ -53,6 +54,7 @@ type Props = {
   classes: Object,
   openURLExternally: (url: string) => void,
   openFileNatively: (url: string) => void,
+  toggleAboutDialog: () => void,
   toggleKeysDialog: () => void,
   toggleOnboardingDialog: () => void,
   toggleProTeaser: () => void,
@@ -65,6 +67,7 @@ class HelpFeedbackPanel extends React.Component<Props> {
       classes,
       openURLExternally,
       openFileNatively,
+      toggleAboutDialog,
       toggleKeysDialog,
       toggleOnboardingDialog,
       toggleProTeaser
@@ -76,13 +79,19 @@ class HelpFeedbackPanel extends React.Component<Props> {
         <Typography className={classNames(classes.panelTitle, classes.header)} type="subtitle1">Help & Feedback</Typography>
         <div className={classes.helpFeedbackArea}>
           <List dense={false} component="nav" aria-label="main help area">
+            <ListItem button onClick={toggleAboutDialog}>
+              <ListItemIcon>
+                <AboutIcon />
+              </ListItemIcon>
+              <ListItemText primary={i18n.t('core:aboutTitle')} title="" />
+            </ListItem>
             <ListItem button onClick={() => openURLExternally(AppConfig.documentationLinks.general)}>
               <ListItemIcon>
                 <DocumentationIcon />
               </ListItemIcon>
               <ListItemText primary="Open Documentation" />
             </ListItem>
-            <ListItem button onClick={() => toggleKeysDialog()}>
+            <ListItem button onClick={toggleKeysDialog}>
               <ListItemIcon>
                 <KeyShortcutsIcon />
               </ListItemIcon>
@@ -94,7 +103,7 @@ class HelpFeedbackPanel extends React.Component<Props> {
               </ListItemIcon>
               <ListItemText primary={i18n.t('core:whatsNew')} title="Opens the changelog of the app" />
             </ListItem>
-            <ListItem button onClick={() => toggleOnboardingDialog()}>
+            <ListItem button onClick={toggleOnboardingDialog}>
               <ListItemIcon>
                 <OnboardingIcon />
               </ListItemIcon>
