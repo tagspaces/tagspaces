@@ -50,23 +50,23 @@ import IOActions from '../../reducers/io-actions';
 
 type Props = {
   classes: Object,
-  open?: boolean,
+  open: boolean,
   onClose: () => void,
-  anchorEl?: Object | null,
-  directoryPath?: string,
+  anchorEl: Object | null,
+  directoryPath: string,
   loadDirectoryContent: (path: string) => void,
   openDirectory: (path: string) => void,
   showInFileManager: (path: string) => void,
   openFile: (path: string, isFile: boolean) => void,
   deleteDirectory: (path: string) => void,
-  reflectCreateEntry?: (path: string, isFile: boolean) => void,
-  toggleCreateFileDialog?: () => void,
-  loadParentDirectoryContent?: () => void,
-  openFileNatively?: (path: string) => void,
-  extractContent?: () => void,
-  switchPerspective?: (perspectiveId: string) => void,
+  reflectCreateEntry: (path: string, isFile: boolean) => void,
+  toggleCreateFileDialog: () => void,
+  loadParentDirectoryContent: () => void,
+  openFileNatively: (path: string) => void,
+  extractContent: (config: Object) => void,
+  switchPerspective: (perspectiveId: string) => void,
   perspectiveMode: boolean,
-  showNotification?: (
+  showNotification: (
     text: string,
     notificationType: string,
     autohide: boolean
@@ -103,7 +103,7 @@ const DirectoryMenu = (props: Props) => {
 
   function initContentExtraction() {
     props.onClose();
-    props.extractContent();
+    props.extractContent({ EXIFGeo: true });
   }
 
   function switchPerspective(perspectiveId) {

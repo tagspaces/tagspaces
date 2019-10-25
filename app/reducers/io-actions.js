@@ -34,7 +34,7 @@ import { Pro } from '../pro';
 import TaggingActions from './tagging-actions';
 
 const actions = {
-  extractContent: () => (
+  extractContent: (options: Object = { EXIFGeo: true, EXIFDateTime: true, IPTCDescription: true, IPTCTags: true }) => (
     dispatch: (actions: Object) => void,
     getState: () => Object
   ) => {
@@ -43,7 +43,7 @@ const actions = {
       dispatch(AppActions.showNotification(i18n.t('core:needProVersion')));
       return false;
     }
-    Pro.ContentExtractor.extractContent(currentDirectoryEntries, dispatch, AppActions, TaggingActions);
+    Pro.ContentExtractor.extractContent(currentDirectoryEntries, dispatch, AppActions, TaggingActions, options);
   },
   moveFiles: (paths: Array<string>, targetPath: string) => (
     dispatch: (actions: Object) => void,
