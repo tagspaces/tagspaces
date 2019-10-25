@@ -115,6 +115,27 @@ export type OpenedEntry = {
   tags?: Array<Tag>
 };
 
+let showLocations = true;
+let showTagLibrary = false;
+let showSearch = false;
+if (window.ExtDefaultVerticalPanel === 'none') {
+  showLocations = false;
+  showTagLibrary = false;
+  showSearch = false;
+} else if (window.ExtDefaultVerticalPanel === 'locations') {
+  showLocations = true;
+  showTagLibrary = false;
+  showSearch = false;
+} else if (window.ExtDefaultVerticalPanel === 'taglibrary') {
+  showLocations = false;
+  showTagLibrary = true;
+  showSearch = false;
+} else if (window.ExtDefaultVerticalPanel === 'search') {
+  showLocations = false;
+  showTagLibrary = false;
+  showSearch = true;
+}
+
 export const initialState = {
   isLoading: false,
   error: null,
@@ -150,9 +171,9 @@ export const initialState = {
   selectedEntries: [],
   isEntryInFullWidth: false,
   isGeneratingThumbs: false,
-  locationManagerPanelOpened: true,
-  tagLibraryPanelOpened: false,
-  searchPanelOpened: false,
+  locationManagerPanelOpened: showLocations,
+  tagLibraryPanelOpened: showTagLibrary,
+  searchPanelOpened: showSearch,
   perspectivesPanelOpened: false,
   helpFeedbackPanelOpened: false,
 };
@@ -1161,7 +1182,7 @@ export const actions = {
   },
   openURLExternally: (url: string, addAppVersion: boolean = false) => () => {
     PlatformIO.openUrl(url);
-  },  
+  },
   saveFile: () => (
     // dispatch: (actions: Object) => void,
     // getState: () => Object

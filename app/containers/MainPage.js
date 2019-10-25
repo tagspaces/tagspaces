@@ -55,7 +55,7 @@ import {
   isOnboardingDialogOpened,
   isKeysDialogOpened,
   isLicenseDialogOpened,
-  isThirdPartyLibsDialogOpened,  
+  isThirdPartyLibsDialogOpened,
   isFileOpened,
   isEntryInFullWidth,
   isUpdateAvailable,
@@ -123,7 +123,7 @@ const styles = theme => ({
 
 type Props = {
   isFirstRun: boolean,
-  setFirstRun: (isFirstRun: boolean) => void,  
+  setFirstRun: (isFirstRun: boolean) => void,
   isDesktopMode: boolean,
   isFileOpened: boolean,
   isIndexing: boolean,
@@ -137,11 +137,11 @@ type Props = {
   isUpdateAvailable: boolean,
   isReadOnlyMode: boolean,
   isSettingsDialogOpened: boolean,
-  toggleSettingsDialog: () => void,  
+  toggleSettingsDialog: () => void,
   isCreateFileDialogOpened: boolean,
   toggleCreateFileDialog: () => void,
   isCreateDirectoryOpened: boolean,
-  toggleCreateDirectoryDialog: () => void,  
+  toggleCreateDirectoryDialog: () => void,
   isAboutDialogOpened: boolean,
   toggleAboutDialog: () => void,
   isCreateDirectoryOpened: boolean,
@@ -154,12 +154,12 @@ type Props = {
   toggleLicenseDialog: () => void,
   isThirdPartyLibsDialogOpened: boolean,
   toggleThirdPartyLibsDialog: () => void,
-  isOnboardingDialogOpened: boolean,  
+  isOnboardingDialogOpened: boolean,
   toggleOnboardingDialog: () => void,
   isSelectDirectoryDialogOpened: boolean,
-  toggleSelectDirectoryDialog: () => void,  
+  toggleSelectDirectoryDialog: () => void,
   isEditTagDialogOpened: boolean,
-  toggleEditTagDialog: () => void,  
+  toggleEditTagDialog: () => void,
   setEntryFullWidth: (isFullWidth: boolean) => void,
   hideNotifications: () => void,
   cancelDirectoryIndexing: () => void,
@@ -265,9 +265,14 @@ type State = {
   height?: number
 };
 
+let showVerticalPanel = true;
+if (window.ExtDefaultVerticalPanel === 'none') {
+  showVerticalPanel = false;
+}
+
 class MainPage extends Component<Props, State> {
   state = {
-    isManagementPanelVisible: true,
+    isManagementPanelVisible: showVerticalPanel,
     mainSplitSize: '100%',
     isDrawerOpened: true,
     width: 1000,
@@ -485,7 +490,7 @@ class MainPage extends Component<Props, State> {
     this.setState({
       selectedDirectoryPath: currentPath
     });
-  };  
+  };
 
   keyBindingHandlers = {
     toggleShowHiddenEntries: this.props.toggleShowUnixHiddenEntries,
@@ -496,29 +501,29 @@ class MainPage extends Component<Props, State> {
   };
 
   render() {
-    const { 
-      classes, 
+    const {
+      classes,
       theme,
       isCreateFileDialogOpened,
-      isSettingsDialogOpened,      
+      isSettingsDialogOpened,
       isAboutDialogOpened,
       isKeysDialogOpened,
       isOnboardingDialogOpened,
       isLicenseDialogOpened,
       isThirdPartyLibsDialogOpened,
-      isSelectDirectoryDialogOpened,      
-      isCreateDirectoryOpened,      
+      isSelectDirectoryDialogOpened,
+      isCreateDirectoryOpened,
       isEditTagDialogOpened,
       toggleOnboardingDialog,
       toggleSettingsDialog,
       toggleKeysDialog,
       toggleLicenseDialog,
       toggleThirdPartyLibsDialog,
-      toggleAboutDialog,    
-      toggleCreateDirectoryDialog,      
-      toggleCreateFileDialog,      
-      toggleSelectDirectoryDialog,  
-      toggleEditTagDialog,         
+      toggleAboutDialog,
+      toggleCreateDirectoryDialog,
+      toggleCreateFileDialog,
+      toggleSelectDirectoryDialog,
+      toggleEditTagDialog,
       setFirstRun,
       directoryPath
     } = this.props;
@@ -563,7 +568,7 @@ class MainPage extends Component<Props, State> {
             open={isThirdPartyLibsDialogOpened}
             onClose={toggleThirdPartyLibsDialog}
           />
-        )}  
+        )}
         {isEditTagDialogOpened && (
           <EditEntryTagDialogAsync
             key={uuidv1()}
@@ -580,7 +585,7 @@ class MainPage extends Component<Props, State> {
               this.state.selectedDirectoryPath || directoryPath
             }
           />
-        )}   
+        )}
         <CreateDirectoryDialog
           open={isCreateDirectoryOpened}
           onClose={toggleCreateDirectoryDialog}
@@ -594,7 +599,7 @@ class MainPage extends Component<Props, State> {
           }
           chooseDirectoryPath={this.chooseDirectoryPath}
           onClose={toggleCreateFileDialog}
-        />     
+        />
         <SettingsDialog
           open={isSettingsDialogOpened}
           onClose={toggleSettingsDialog}
@@ -712,7 +717,7 @@ class MainPage extends Component<Props, State> {
                 <EntryContainer />
               </SplitPane>
             </SplitPane>
-          </TargetFileBox>            
+          </TargetFileBox>
         ) : (
           <div>
             <Drawer
@@ -756,13 +761,13 @@ function mapStateToProps(state) {
     isEditTagDialogOpened: isEditTagDialogOpened(state),
     isCreateDirectoryOpened: isCreateDirectoryOpened(state),
     isCreateFileDialogOpened: isCreateFileDialogOpened(state),
-    isSelectDirectoryDialogOpened: isSelectDirectoryDialogOpened(state),  
+    isSelectDirectoryDialogOpened: isSelectDirectoryDialogOpened(state),
     isSettingsDialogOpened: isSettingsDialogOpened(state),
     isAboutDialogOpened: isAboutDialogOpened(state),
     isKeysDialogOpened: isKeysDialogOpened(state),
     isOnboardingDialogOpened: isOnboardingDialogOpened(state),
     isLicenseDialogOpened: isLicenseDialogOpened(state),
-    isThirdPartyLibsDialogOpened: isThirdPartyLibsDialogOpened(state),    
+    isThirdPartyLibsDialogOpened: isThirdPartyLibsDialogOpened(state),
     isIndexing: isIndexing(state),
     isReadOnlyMode: isReadOnlyMode(state),
     isGeneratingThumbs: isGeneratingThumbs(state),
@@ -790,12 +795,12 @@ function mapDispatchToProps(dispatch) {
     toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
     toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog,
     toggleSelectDirectoryDialog: AppActions.toggleSelectDirectoryDialog,
-    toggleEditTagDialog: AppActions.toggleEditTagDialog,    
+    toggleEditTagDialog: AppActions.toggleEditTagDialog,
     toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
     toggleLicenseDialog: AppActions.toggleLicenseDialog,
     toggleThirdPartyLibsDialog: AppActions.toggleThirdPartyLibsDialog,
     toggleAboutDialog: AppActions.toggleAboutDialog,
-    toggleKeysDialog: AppActions.toggleKeysDialog,    
+    toggleKeysDialog: AppActions.toggleKeysDialog,
     hideNotifications: AppActions.hideNotifications,
     cancelDirectoryIndexing: LocationIndexActions.cancelDirectoryIndexing,
     saveFile: AppActions.saveFile,
