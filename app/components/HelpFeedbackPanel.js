@@ -79,11 +79,11 @@ class HelpFeedbackPanel extends React.Component<Props> {
         <Typography className={classNames(classes.panelTitle, classes.header)} type="subtitle1">Help & Feedback</Typography>
         <div className={classes.helpFeedbackArea}>
           <List dense={false} component="nav" aria-label="main help area">
-            <ListItem button onClick={toggleAboutDialog}>
+            <ListItem button onClick={toggleAboutDialog} title="Opens the about dialog">
               <ListItemIcon>
                 <AboutIcon />
               </ListItemIcon>
-              <ListItemText primary={i18n.t('core:aboutTitle')} title="" />
+              <ListItemText primary={i18n.t('core:aboutTitle')} />
             </ListItem>
             <ListItem button onClick={() => openURLExternally(AppConfig.documentationLinks.general)}>
               <ListItemIcon>
@@ -97,11 +97,11 @@ class HelpFeedbackPanel extends React.Component<Props> {
               </ListItemIcon>
               <ListItemText primary={i18n.t('core:shortcutKeys')} title="" />
             </ListItem>
-            <ListItem button onClick={() => openURLExternally(AppConfig.links.changelogURL)}>
+            <ListItem button onClick={() => openURLExternally(AppConfig.links.changelogURL)} title="Opens the changelog of the app">
               <ListItemIcon>
                 <ChangeLogIcon />
               </ListItemIcon>
-              <ListItemText primary={i18n.t('core:whatsNew')} title="Opens the changelog of the app" />
+              <ListItemText primary={i18n.t('core:whatsNew')} />
             </ListItem>
             <ListItem button onClick={toggleOnboardingDialog}>
               <ListItemIcon>
@@ -151,7 +151,7 @@ class HelpFeedbackPanel extends React.Component<Props> {
               <ListItemIcon>
                 <SocialIcon />
               </ListItemIcon>
-              <ListItemText primary={i18n.t('core:likeUsOnFacebook')} color="textPrimary" />
+              <ListItemText primary={i18n.t('core:likeUsOnFacebook')} />
             </ListItem>
             {Pro && <React.Fragment>
               <Divider />
