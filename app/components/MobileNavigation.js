@@ -92,11 +92,12 @@ type Props = {
 };
 
 type State = {
-  isProTeaserVisible: boolean // evtl. redux migration
+  isProTeaserVisible: boolean
 };
 
-class VerticalNavigation extends React.Component<Props, State> {
+class MobileNavigation extends React.Component<Props, State> {
   state = {
+    isManagementPanelVisible: true,
     isProTeaserVisible: false
   };
 
@@ -176,187 +177,111 @@ class VerticalNavigation extends React.Component<Props, State> {
             }
           `}
         </style>
-        {this.state.isProTeaserVisible && (
-          <ProTeaserDialogAsync
-            open={this.state.isProTeaserVisible}
-            onClose={this.toggleProTeaser}
-            openURLExternally={openURLExternally}
-            key={uuidv1()}
-          />
-        )}
-        <SplitPane
-          split="vertical"
-          minSize={44}
-          maxSize={44}
-          defaultSize={44}
-          resizerStyle={{ backgroundColor: theme.palette.divider }}
-        >
-          <div style={this.styles.panel}>
-            <IconButton
-              onClick={toggleAboutDialog}
-              style={{ ...this.styles.button, marginTop: 10, marginBottom: 16 }}
-              title={i18n.t('core:aboutTitle')}
-              data-tid="aboutTagSpaces"
-            >
-              <img
-                style={{
-                  ...this.styles.buttonIcon,
-                  color: this.props.theme.palette.text.primary
-                }}
-                src={LogoIcon}
-                alt="TagSpaces Logo"
-              />
-            </IconButton>
-            { !isReadOnlyMode && (
-              <IconButton
-                id="verticalNavButton"
-                onClick={toggleCreateFileDialog}
-                style={{ ...this.styles.button, marginBottom: 20 }}
-                title={i18n.t('core:createFileTitle')}
-                data-tid="locationManager"
-              >
-                <NewFileIcon style={this.styles.buttonIcon} />
-              </IconButton>
-            )}
+        <div style={this.styles.panel}>
+          <IconButton
+            onClick={toggleAboutDialog}
+            style={{ ...this.styles.button, marginTop: 10, marginBottom: 16 }}
+            title={i18n.t('core:aboutTitle')}
+            data-tid="aboutTagSpaces"
+          >
+            <img
+              style={{
+                ...this.styles.buttonIcon,
+                color: this.props.theme.palette.text.primary
+              }}
+              src={LogoIcon}
+              alt="TagSpaces Logo"
+            />
+          </IconButton>
+          { !isReadOnlyMode && (
             <IconButton
               id="verticalNavButton"
-              onClick={() => {
-                if (isLocationManagerPanelOpened) {
-                  closeAllVerticalPanels();
-                } else {
-                  openLocationManagerPanel();
-                }
-              }}
-              style={
-                isLocationManagerPanelOpened
-                  ? { ...this.styles.button, ...this.styles.selectedButton }
-                  : this.styles.button
-              }
-              title={i18n.t('core:locationManager')}
+              onClick={toggleCreateFileDialog}
+              style={{ ...this.styles.button, marginBottom: 20 }}
+              title={i18n.t('core:createFileTitle')}
               data-tid="locationManager"
             >
-              <LocationsIcon style={this.styles.buttonIcon} />
+              <NewFileIcon style={this.styles.buttonIcon} />
             </IconButton>
-            <IconButton
-              id="verticalNavButton"
-              title={i18n.t('core:tagGroupOperations')}
-              data-tid="tagLibrary"
-              onClick={() => {
-                if (isTagLibraryPanelOpened) {
-                  closeAllVerticalPanels();
-                } else {
-                  openTagLibraryPanel();
+          )}
+          <IconButton
+            id="verticalNavButton"
+            onClick={() => {
+              if (isLocationManagerPanelOpened) {
+                closeAllVerticalPanels();
+              } else {
+                openLocationManagerPanel();
+              }
+            }}
+            style={
+              isLocationManagerPanelOpened
+                ? { ...this.styles.button, ...this.styles.selectedButton }
+                : this.styles.button
+            }
+            title={i18n.t('core:locationManager')}
+            data-tid="locationManager"
+          >
+            <LocationsIcon style={this.styles.buttonIcon} />
+          </IconButton>
+          <IconButton
+            id="verticalNavButton"
+            title={i18n.t('core:tagGroupOperations')}
+            data-tid="tagLibrary"
+            onClick={() => {
+              if (isTagLibraryPanelOpened) {
+                closeAllVerticalPanels();
+              } else {
+                openTagLibraryPanel();
+              }
+            }}
+            style={
+              isTagLibraryPanelOpened
+                ? { ...this.styles.button, ...this.styles.selectedButton }
+                : this.styles.button
+            }
+          >
+            <TagLibraryIcon style={this.styles.buttonIcon} />
+          </IconButton>
+          <IconButton
+            id="verticalNavButton"
+            title={i18n.t('core:searchTitle')}
+            data-tid="search"
+            onClick={() => {
+              if (isSearchPanelOpened) {
+                closeAllVerticalPanels();
+              } else {
+                openSearchPanel();
+              }
+            }}
+            style={
+              isSearchPanelOpened
+                ? { ...this.styles.button, ...this.styles.selectedButton }
+                : this.styles.button
+            }
+          >
+            <SearchIcon style={this.styles.buttonIcon} />
+          </IconButton>
+          <IconButton
+            id="verticalNavButton"
+            title={i18n.t('core:settings')}
+            data-tid="settings"
+            onClick={toggleSettingsDialog}
+            style={
+              isSettingsDialogOpened
+                ? {
+                  ...this.styles.button,
+                  ...this.styles.settingsButton,
+                  ...this.styles.selectedButton
+                } : {
+                  ...this.styles.button,
+                  ...this.styles.settingsButton
                 }
-              }}
-              style={
-                isTagLibraryPanelOpened
-                  ? { ...this.styles.button, ...this.styles.selectedButton }
-                  : this.styles.button
-              }
-            >
-              <TagLibraryIcon style={this.styles.buttonIcon} />
-            </IconButton>
-            <IconButton
-              id="verticalNavButton"
-              title={i18n.t('core:searchTitle')}
-              data-tid="search"
-              onClick={() => {
-                if (isSearchPanelOpened) {
-                  closeAllVerticalPanels();
-                } else {
-                  openSearchPanel();
-                }
-              }}
-              style={
-                isSearchPanelOpened
-                  ? { ...this.styles.button, ...this.styles.selectedButton }
-                  : this.styles.button
-              }
-            >
-              <SearchIcon style={this.styles.buttonIcon} />
-            </IconButton>
-            {/* <IconButton
-              title={i18n.t('core:perspectiveManager')}
-              data-tid="perspectiveManager"
-              onClick={() => {
-                if (isPerspectivePanelOpened) {
-                  closeAllVerticalPanels();
-                } else {
-                  openPerspectivesPanel();
-                }
-              }}
-              disabled={false}
-              style={
-                isPerspectivePanelOpened
-                  ? { ...this.styles.button, ...this.styles.selectedButton }
-                  : this.styles.button
-              }
-            >
-              <PerspectivesIcon style={this.styles.buttonIcon} />
-            </IconButton> */}
-            <IconButton
-              id="verticalNavButton"
-              title={i18n.t('core:helpFeedback')}
-              data-tid="helpFeedback"
-              onClick={() => {
-                if (isHelpFeedbackPanelOpened) {
-                  closeAllVerticalPanels();
-                } else {
-                  openHelpFeedbackPanel();
-                }
-              }}
-              style={
-                isHelpFeedbackPanelOpened
-                  ? { ...this.styles.button, ...this.styles.selectedButton }
-                  : this.styles.button
-              }
-            >
-              <HelpIcon style={this.styles.buttonIcon} />
-            </IconButton>
-            {!Pro && (
-              <IconButton
-                id="verticalNavButton"
-                title={i18n.t('core:upgradeToPro')}
-                data-tid="upgradeToPro"
-                onClick={this.toggleProTeaser}
-                style={{ ...this.styles.button, ...this.styles.upgradeButton }}
-              >
-                <UpgradeIcon style={{
-                  ...this.styles.buttonIcon,
-                  // color: '1DD19F'
-                }}
-                />
-              </IconButton>
-            )}
-            <IconButton
-              id="verticalNavButton"
-              title={i18n.t('core:switchTheme')}
-              data-tid="switchTheme"
-              onClick={switchTheme}
-              style={{ ...this.styles.button, ...this.styles.themingButton }}
-            >
-              <ThemingIcon style={this.styles.buttonIcon} />
-            </IconButton>
-            <IconButton
-              id="verticalNavButton"
-              title={i18n.t('core:settings')}
-              data-tid="settings"
-              onClick={toggleSettingsDialog}
-              style={
-                isSettingsDialogOpened
-                  ? {
-                    ...this.styles.button,
-                    ...this.styles.settingsButton,
-                    ...this.styles.selectedButton
-                  } : {
-                    ...this.styles.button,
-                    ...this.styles.settingsButton
-                  }
-              }
-            >
-              <SettingsIcon style={this.styles.buttonIcon} />
-            </IconButton>
-          </div>
+            }
+          >
+            <SettingsIcon style={this.styles.buttonIcon} />
+          </IconButton>
+        </div>
+        { /*
           <div style={this.styles.panel}>
             <LocationManager style={{ display: isLocationManagerPanelOpened ? 'block' : 'none' }} />
             { isTagLibraryPanelOpened && <TagLibrary /> }
@@ -366,13 +291,12 @@ class VerticalNavigation extends React.Component<Props, State> {
             <HelpFeedbackPanel
               openFileNatively={openFileNatively}
               openURLExternally={openURLExternally}
-              toggleAboutDialog={toggleAboutDialog}
               toggleKeysDialog={toggleKeysDialog}
               toggleOnboardingDialog={toggleOnboardingDialog}
               toggleProTeaser={this.toggleProTeaser}
             /> }
           </div>
-        </SplitPane>
+        */}
       </div>
     );
   }
@@ -417,4 +341,4 @@ function mapActionCreatorsToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
-)(withTheme(VerticalNavigation));
+)(withTheme(MobileNavigation));
