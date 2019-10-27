@@ -78,6 +78,7 @@ export default (state = defaultSettings, action) => {
     return {
       ...defaultSettings,
       ...state,
+      currentTheme: window.ExtTheme || state.currentTheme,
       supportedThemes: defaultSettings.supportedThemes, // taking always the themes from default settings
       supportedLanguages: defaultSettings.supportedLanguages, // taking always the languages from default settings
       keyBindings: [
