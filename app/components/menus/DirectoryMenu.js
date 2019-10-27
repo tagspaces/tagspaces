@@ -407,26 +407,30 @@ const DirectoryMenu = (props: Props) => {
           </MenuItem>
         )}
         <Divider />
-        <MenuItem data-tid="openDefaultPerspecitve" onClick={() => switchPerspective('default')} title="Switch to default perspective">
-          <ListItemIcon>
-            <GalleryPerspectiveIcon />
-          </ListItemIcon>
-          <ListItemText primary="Default perspective" />
-        </MenuItem>
-        <MenuItem data-tid="openGalleryPerspecitve" onClick={() => switchPerspective('gallery')} title="Switch to gallery perspective">
-          <ListItemIcon>
-            <GalleryPerspectiveIcon />
-          </ListItemIcon>
-          <ListItemText primary="Gallery Perspective" />
-        </MenuItem>
-        <MenuItem data-tid="openMapiquePerspecitve" onClick={() => switchPerspective('mapique')} title="Switch to mapique perspective">
-          <ListItemIcon>
-            <GalleryPerspectiveIcon />
-          </ListItemIcon>
-          <ListItemText primary="Mapique Perspective" />
-        </MenuItem>
-        <Divider />
-        {!props.isReadOnlyMode && (
+        { !props.perspectiveMode && (
+        <React.Fragment>
+          <MenuItem data-tid="openDefaultPerspecitve" onClick={() => switchPerspective('default')} title="Switch to default perspective">
+            <ListItemIcon>
+              <GalleryPerspectiveIcon />
+            </ListItemIcon>
+            <ListItemText primary="Default perspective" />
+          </MenuItem>
+          <MenuItem data-tid="openGalleryPerspecitve" onClick={() => switchPerspective('gallery')} title="Switch to gallery perspective">
+            <ListItemIcon>
+              <GalleryPerspectiveIcon />
+            </ListItemIcon>
+            <ListItemText primary="Gallery Perspective" />
+          </MenuItem>
+          <MenuItem data-tid="openMapiquePerspecitve" onClick={() => switchPerspective('mapique')} title="Switch to mapique perspective">
+            <ListItemIcon>
+              <GalleryPerspectiveIcon />
+            </ListItemIcon>
+            <ListItemText primary="Mapique Perspective" />
+          </MenuItem>
+          <Divider />
+        </React.Fragment>
+        )}
+        {/* {!props.isReadOnlyMode && (
           <React.Fragment>
             <MenuItem data-tid="extractContent" onClick={initContentExtraction}>
               <ListItemIcon>
@@ -435,7 +439,7 @@ const DirectoryMenu = (props: Props) => {
               <ListItemText primary={i18n.t('core:startContentExtraction')} />
             </MenuItem>
           </React.Fragment>
-        )}
+        )} */}
         <MenuItem data-tid="showProperties" onClick={showProperties}>
           <ListItemIcon>
             <SettingsIcon />
