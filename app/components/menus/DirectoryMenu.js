@@ -408,7 +408,7 @@ const DirectoryMenu = (props: Props) => {
         )}
         <Divider />
         { !props.perspectiveMode && (
-        <React.Fragment>
+        <div>
           <MenuItem data-tid="openDefaultPerspecitve" onClick={() => switchPerspective('default')} title="Switch to default perspective">
             <ListItemIcon>
               <GalleryPerspectiveIcon />
@@ -428,7 +428,7 @@ const DirectoryMenu = (props: Props) => {
             <ListItemText primary="Mapique Perspective" />
           </MenuItem>
           <Divider />
-        </React.Fragment>
+        </div>
         )}
         {/* {!props.isReadOnlyMode && (
           <React.Fragment>
