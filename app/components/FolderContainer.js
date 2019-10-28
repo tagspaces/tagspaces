@@ -60,7 +60,7 @@ const GridPerspectiveAsync = props => (
 
 let GalleryPerspective = React.Fragment;
 if (Pro && Pro.Perspectives && Pro.Perspectives.GalleryPerspective) {
-//   GalleryPerspective = React.lazy(() => import(/* webpackChunkName: "GalleryPerspective" */ '../node_modules/@tagspaces/pro/modules/perspectives/gallery'));
+// GalleryPerspective = React.lazy(() => import(/* webpackChunkName: "GalleryPerspective" */ '../node_modules/@tagspaces/pro/modules/perspectives/gallery'));
   GalleryPerspective = Pro.Perspectives.GalleryPerspective;
 }
 const GalleryPerspectiveAsync = props => (
@@ -71,12 +71,23 @@ const GalleryPerspectiveAsync = props => (
 
 let MapiquePerspective = React.Fragment;
 if (Pro && Pro.Perspectives && Pro.Perspectives.MapiquePerspective) {
-//   MapiquePerspective = React.lazy(() => import(/* webpackChunkName: "MapiquePerspective" */ '../node_modules/@tagspaces/pro/modules/perspectives/mapique'));
+// MapiquePerspective = React.lazy(() => import(/* webpackChunkName: "MapiquePerspective" */ '../node_modules/@tagspaces/pro/modules/perspectives/mapique'));
   MapiquePerspective = Pro.Perspectives.MapiquePerspective;
 }
 const MapiquePerspectiveAsync = props => (
   <React.Suspense fallback={<LoadingLazy />}>
     <MapiquePerspective {...props} />
+  </React.Suspense>
+);
+
+let TreeVizPerspective = React.Fragment;
+if (Pro && Pro.Perspectives && Pro.Perspectives.TreeVizPerspective) {
+// TreeVizPerspective = React.lazy(() => import(/* webpackChunkName: "TreeVizPerspective" */ '../node_modules/@tagspaces/pro/modules/perspectives/treeviz'));
+  TreeVizPerspective = Pro.Perspectives.TreeVizPerspective;
+}
+const TreeVizPerspectiveAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <TreeVizPerspective {...props} />
   </React.Suspense>
 );
 
@@ -355,6 +366,16 @@ class FolderContainer extends React.Component<Props, State> {
           directoryContent={this.props.directoryContent}
           currentDirectoryPath={this.props.currentDirectoryPath}
           windowWidth={this.props.windowWidth}
+          switchPerspective={this.switchPerspective}
+        />
+      );
+    } else if (this.state.currentPerspective === 'treeviz') {
+      return (
+        <TreeVizPerspectiveAsync
+          directoryContent={this.props.directoryContent}
+          currentDirectoryPath={this.props.currentDirectoryPath}
+          windowWidth={this.props.windowWidth}
+          switchPerspective={this.switchPerspective}
         />
       );
     } else if (this.state.currentPerspective === 'mapique') {
@@ -363,6 +384,7 @@ class FolderContainer extends React.Component<Props, State> {
           directoryContent={this.props.directoryContent}
           currentDirectoryPath={this.props.currentDirectoryPath}
           windowWidth={this.props.windowWidth}
+          switchPerspective={this.switchPerspective}
         />
       );
     }

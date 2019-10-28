@@ -31,7 +31,10 @@ import OpenFolderIcon from '@material-ui/icons/SubdirectoryArrowLeft';
 import AddExistingFileIcon from '@material-ui/icons/ExitToApp';
 import OpenFolderNativelyIcon from '@material-ui/icons/Launch';
 import AutoRenew from '@material-ui/icons/Autorenew';
-import GalleryPerspectiveIcon from '@material-ui/icons/Slideshow';
+import DefaultPerspectiveIcon from '@material-ui/icons/GridOn';
+import GalleryPerspectiveIcon from '@material-ui/icons/Camera';
+import MapiquePerspectiveIcon from '@material-ui/icons/Map';
+import TreeVizPerspectiveIcon from '@material-ui/icons/AccountTree';
 import NewFileIcon from '@material-ui/icons/InsertDriveFile';
 import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import RenameFolderIcon from '@material-ui/icons/FormatTextdirectionLToR';
@@ -408,27 +411,33 @@ const DirectoryMenu = (props: Props) => {
         )}
         <Divider />
         { !props.perspectiveMode && (
-        <div>
-          <MenuItem data-tid="openDefaultPerspecitve" onClick={() => switchPerspective('default')} title="Switch to default perspective">
-            <ListItemIcon>
-              <GalleryPerspectiveIcon />
-            </ListItemIcon>
-            <ListItemText primary="Default perspective" />
-          </MenuItem>
-          <MenuItem data-tid="openGalleryPerspecitve" onClick={() => switchPerspective('gallery')} title="Switch to gallery perspective">
-            <ListItemIcon>
-              <GalleryPerspectiveIcon />
-            </ListItemIcon>
-            <ListItemText primary="Gallery Perspective" />
-          </MenuItem>
-          <MenuItem data-tid="openMapiquePerspecitve" onClick={() => switchPerspective('mapique')} title="Switch to mapique perspective">
-            <ListItemIcon>
-              <GalleryPerspectiveIcon />
-            </ListItemIcon>
-            <ListItemText primary="Mapique Perspective" />
-          </MenuItem>
-          <Divider />
-        </div>
+          <div>
+            <MenuItem data-tid="openDefaultPerspective" onClick={() => switchPerspective('default')} title="Switch to default perspective">
+              <ListItemIcon>
+                <DefaultPerspectiveIcon />
+              </ListItemIcon>
+              <ListItemText primary="Default perspective" />
+            </MenuItem>
+            <MenuItem data-tid="openGalleryPerspective" onClick={() => switchPerspective('gallery')} title="Switch to gallery perspective">
+              <ListItemIcon>
+                <GalleryPerspectiveIcon />
+              </ListItemIcon>
+              <ListItemText primary="Gallery Perspective" />
+            </MenuItem>
+            <MenuItem data-tid="openMapiquePerspective" onClick={() => switchPerspective('mapique')} title="Switch to mapique perspective">
+              <ListItemIcon>
+                <MapiquePerspectiveIcon />
+              </ListItemIcon>
+              <ListItemText primary="Mapique Perspective" />
+            </MenuItem>
+            <MenuItem data-tid="openTreeVizPerspective" onClick={() => switchPerspective('treeviz')} title="Switch to tree visualization perspective">
+              <ListItemIcon>
+                <TreeVizPerspectiveIcon />
+              </ListItemIcon>
+              <ListItemText primary="TreeViz Perspective" />
+            </MenuItem>
+            <Divider />
+          </div>
         )}
         {/* {!props.isReadOnlyMode && (
           <React.Fragment>
