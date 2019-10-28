@@ -319,7 +319,7 @@ const DirectoryMenu = (props: Props) => {
             <ListItemText primary={i18n.t('core:openDirectory')} />
           </MenuItem>
         )}
-        {!props.perspectiveMode && (
+        {/* {!props.perspectiveMode && (
           <MenuItem
             data-tid="openParentDirectory"
             onClick={openParentDirectory}
@@ -329,7 +329,7 @@ const DirectoryMenu = (props: Props) => {
             </ListItemIcon>
             <ListItemText primary={i18n.t('core:openParentDirectory')} />
           </MenuItem>
-        )}
+        )} */}
         {!props.perspectiveMode && (
           <MenuItem data-tid="reloadDirectory" onClick={reloadDirectory}>
             <ListItemIcon>
