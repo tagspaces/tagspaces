@@ -3,6 +3,7 @@
 const CACHE_NAME = 'TAGSPACES_VERSION';
 
 const FILES_TO_CACHE = [
+  'offline.html',
   'dist/bundle.js',
   'dist/style.css',
   'dist/roboto-v18-cyrillic_latin-100.ttf',
