@@ -282,14 +282,14 @@ app.on('ready', async () => {
 
   function getNextFile() {
     if (mainWindow) {
-      mainWindow.show();
+      // mainWindow.show();
       mainWindow.webContents.send('file', 'next-file');
     }
   }
 
   function getPreviousFile() {
     if (mainWindow) {
-      mainWindow.show();
+      // mainWindow.show();
       mainWindow.webContents.send('file', 'previous-file');
     }
   }
