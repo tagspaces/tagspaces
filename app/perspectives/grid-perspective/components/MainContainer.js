@@ -678,14 +678,14 @@ class GridPerspective extends React.Component<Props, State> {
               <DeSelectAllIcon />
             )}
           </IconButton>
-          <IconButton
+          {/* <IconButton
             title={i18n.t('core:navigateToParentDirectory')}
             aria-label={i18n.t('core:navigateToParentDirectory')}
             data-tid="gridPerspectiveOnBackButton"
             onClick={this.props.loadParentDirectoryContent}
           >
             <ParentDirIcon />
-          </IconButton>
+          </IconButton> */}
           {this.state.layoutType === 'row' ? (
             <IconButton
               title={i18n.t('core:switchToGridView')}
