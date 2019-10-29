@@ -75,10 +75,13 @@ const styles = theme => ({
   },
   links: {
     width: 300,
-    margin: 'auto',    
-    marginTop: 40,
+    height: 'calc(100% - 80px)',
+    margin: 'auto',
+    marginTop: 30,
+    marginBottom: 15,
+    overflowY: 'overlay',
     backgroundColor: theme.palette.background.default,
-  }  
+  }
 });
 
 type Props = {
@@ -86,7 +89,9 @@ type Props = {
   setFirstRun: (isFirstRun: boolean) => void,
   toggleKeysDialog: () => void,
   openURLExternally: (url: string) => void,
-  openFileNatively: (url: string) => void
+  openFileNatively: (url: string) => void,
+  toggleAboutDialog: () => void,
+  isFirstRun: boolean
   // locations: Array<Location>
 };
 
@@ -98,11 +103,18 @@ const WelcomePanel = (props: Props) => {
 
       </div> */}
       <List dense={false} component="nav" aria-label="main help area" className={classes.links}>
-         <img
-          src={WelcomeLogo}
-          alt="Organize your files"
-          onClick={() => { props.setFirstRun(!props.isFirstRun) }}
-        />        
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={props.toggleAboutDialog}
+        >
+          <img
+
+            src={WelcomeLogo}
+            alt="Organize your files"
+          />
+        </div>
+
         <ListItem button onClick={() => openURLExternally(AppConfig.documentationLinks.general)}>
           <ListItemIcon>
             <DocumentationIcon />
@@ -171,7 +183,7 @@ const WelcomePanel = (props: Props) => {
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:likeUsOnFacebook')} color="textPrimary" />
         </ListItem>
-      </List>      
+      </List>
     </div>
   );
 };
@@ -190,6 +202,7 @@ function mapActionCreatorsToProps(dispatch) {
       openURLExternally: AppActions.openURLExternally,
       openFileNatively: AppActions.openFileNatively,
       toggleKeysDialog: AppActions.toggleKeysDialog,
+      toggleAboutDialog: AppActions.toggleAboutDialog,
     },
     dispatch
   );
