@@ -85,6 +85,7 @@ type Props = {
   openFileNatively: (url: string) => void,
   openURLExternally: (url: string) => void,
   switchTheme: () => void,
+  toggleDrawer: () => void,
   isReadOnlyMode: boolean
 };
 
@@ -138,6 +139,7 @@ class MobileNavigation extends React.Component<Props, State> {
       openHelpFeedbackPanel,
       closeAllVerticalPanels,
       switchTheme,
+      toggleDrawer,
       openFileNatively,
       openURLExternally,
     } = this.props;
@@ -167,7 +169,10 @@ class MobileNavigation extends React.Component<Props, State> {
           { !isReadOnlyMode && (
             <IconButton
               id="verticalNavButton"
-              onClick={toggleCreateFileDialog}
+              onClick={() => {
+                toggleCreateFileDialog();
+                toggleDrawer();
+              }}
               style={{ marginTop: -15, marginRight: 10 }}
               title={i18n.t('core:createFileTitle')}
               data-tid="locationManager"
@@ -223,7 +228,10 @@ class MobileNavigation extends React.Component<Props, State> {
             id="verticalNavButton"
             title={i18n.t('core:settings')}
             data-tid="settings"
-            onClick={toggleSettingsDialog}
+            onClick={() => {
+              toggleSettingsDialog();
+              toggleDrawer();
+            }}
             style={{ marginTop: -15, marginLeft: 10 }}
           >
             <SettingsIcon style={this.styles.buttonIcon} />

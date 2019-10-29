@@ -734,8 +734,10 @@ class MainPage extends Component<Props, State> {
               onClose={this.toggleDrawer}
               onOpen={this.toggleDrawer}
               hysteresis={0.20}
+              disableBackdropTransition={!AppConfig.iOS}
+              disableDiscovery={AppConfig.iOS}
             >
-              <MobileNavigation />
+              <MobileNavigation toggleDrawer={this.toggleDrawer} />
             </SwipeableDrawer>
             <SplitPane
               split="vertical"
