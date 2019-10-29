@@ -444,7 +444,6 @@ class FolderContainer extends React.Component<Props, State> {
                   <MenuIcon />
                 </Button>
               )}
-              <LocationMenu />
               <CounterBadge
                 showZero={false}
                 title={searchResultCounterText}
