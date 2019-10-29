@@ -244,8 +244,8 @@ class SettingsGeneral extends React.Component<Props, State> {
             checked={this.props.settings.showUnixHiddenEntries}
           />
         </ListItem>
-        {/* <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:desktopMode')} />
+        {<ListItem className={classes.listItem}>
+          <ListItemText primary={i18n.t('core:desktopMode') + ' - experiment in ALPHA state'} />
           <Switch
             data-tid="settingsSetDesktopMode"
             onClick={() =>
@@ -253,7 +253,7 @@ class SettingsGeneral extends React.Component<Props, State> {
             }
             checked={this.props.settings.desktopMode}
           />
-        </ListItem> */}
+        </ListItem>}
         {/* <ListItem className={classes.listItem}>
           <ListItemText style={{ maxWidth: '300px' }} primary={i18n.t('core:tagDelimiterChoose')} />
           <Select
