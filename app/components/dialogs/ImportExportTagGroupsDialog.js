@@ -20,6 +20,7 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
+import withMobileDialog from '@material-ui/core/withMobileDialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -46,6 +47,7 @@ const styles = {
 type Props = {
   classes: Object,
   open: boolean,
+  fullScreen: boolean,
   onClose: () => void,
   dialogModeImport: boolean,
   showNotification: (text: string) => void,
@@ -250,6 +252,7 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
     return (
       <GenericDialog
         open={this.props.open}
+        fullScreen={this.props.fullScreen}
         onClose={this.props.onClose}
         onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
         renderTitle={this.renderTitle}
@@ -260,4 +263,4 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(ImportExportTagGroupsDialog);
+export default withStyles(styles)(withMobileDialog()(ImportExportTagGroupsDialog));

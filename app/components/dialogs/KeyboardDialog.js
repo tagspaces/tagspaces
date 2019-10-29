@@ -19,29 +19,23 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
-import FormControl from '@material-ui/core/FormControl';
 import { withStyles } from '@material-ui/core/styles';
-import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
+import GenericDialog from './GenericDialog';
 import i18n from '../../services/i18n';
 import { getKeyBindingObject } from '../../reducers/settings';
 
 const styles = theme => ({
   root: {
-    width: 550,
-    height: '100%',
-    marginBottom: 30,
-    background: theme.palette.background.paper
-  },
-  form: {
-    width: '98%',
-    height: 'auto'
+    minWidth: 350
   },
   shortcutKey: {
     backgroundColor: '#D6D6D6',
@@ -55,55 +49,58 @@ const styles = theme => ({
 type Props = {
   open: boolean,
   classes: Object,
+  fullScreen: boolean,
   keyBindings: Array<Object>,
   onClose: () => void
 };
 
-class KeyboardDialog extends React.Component<Props> {
-  renderTitle = () => <DialogTitle>{i18n.t('core:shortcutKeys')}</DialogTitle>;
+const KeyboardDialog = (props: Props) => {
+  function renderTitle() {
+    return (<DialogTitle>{i18n.t('core:shortcutKeys')}</DialogTitle>);
+  }
 
-  renderContent = () => (
-    <DialogContent>
-      <div className={this.props.classes.root} data-tid="keyboardShortCutsDialog">
-        {this.props.keyBindings && Object.keys(this.props.keyBindings).map((shortcutKey) => (
-          <ListItem key={shortcutKey}>
-            <FormControl className={this.props.classes.form}>
-              <ListItemText primary={i18n.t('core:' + shortcutKey)} />
-              <ListItemSecondaryAction className={this.props.classes.shortcutKey}>
-                {this.props.keyBindings[shortcutKey]}
-              </ListItemSecondaryAction>
-            </FormControl>
-          </ListItem>
-        ))}
-      </div>
-    </DialogContent>
-  );
-
-  renderActions = () => (
-    <DialogActions>
-      <Button
-        data-tid="closeKeyboardDialog"
-        onClick={this.props.onClose}
-        color="primary"
-      >
-        {i18n.t('core:ok')}
-      </Button>
-    </DialogActions>
-  );
-
-  render() {
+  function renderContent() {
     return (
-      <GenericDialog
-        open={this.props.open}
-        onClose={this.props.onClose}
-        // onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
-        renderTitle={this.renderTitle}
-        renderContent={this.renderContent}
-        renderActions={this.renderActions}
-      />
+      <DialogContent className={props.classes.root} data-tid="keyboardShortCutsDialog">
+        <List dense={false}>
+          {props.keyBindings && Object.keys(props.keyBindings).map((shortcutKey) => (
+            <ListItem key={shortcutKey}>
+              <ListItemText primary={i18n.t('core:' + shortcutKey)} />
+              <ListItemSecondaryAction className={props.classes.shortcutKey}>
+                {props.keyBindings[shortcutKey]}
+              </ListItemSecondaryAction>
+            </ListItem>
+          ))}
+        </List>
+      </DialogContent>
     );
   }
-}
+
+  function renderActions() {
+    return (
+      <DialogActions>
+        <Button
+          data-tid="closeKeyboardDialog"
+          onClick={props.onClose}
+          color="primary"
+        >
+          {i18n.t('core:ok')}
+        </Button>
+      </DialogActions>
+    );
+  }
+
+  return (
+    <GenericDialog
+      open={props.open}
+      onClose={props.onClose}
+      fullScreen={props.fullScreen}
+      renderTitle={renderTitle}
+      renderContent={renderContent}
+      renderActions={renderActions}
+    />
+  );
+};
 
 function mapStateToProps(state) {
   return {
@@ -112,5 +109,5 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps)(
-  withStyles(styles)(KeyboardDialog)
+  withMobileDialog()(withStyles(styles)(KeyboardDialog))
 );
