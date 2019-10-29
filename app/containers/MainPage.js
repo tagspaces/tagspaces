@@ -25,7 +25,7 @@ import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import { translate } from 'react-i18next';
 import SplitPane from 'react-split-pane';
-import Drawer from '@material-ui/core/Drawer';
+import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import Snackbar from '@material-ui/core/Snackbar';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
@@ -34,6 +34,7 @@ import { HotKeys } from 'react-hotkeys';
 import HTML5Backend, { NativeTypes } from 'react-dnd-html5-backend';
 import { DragDropContext } from 'react-dnd';
 import VerticalNavigation from '../components/VerticalNavigation';
+import MobileNavigation from '../components/MobileNavigation';
 import FolderContainer from '../components/FolderContainer';
 import EntryContainer from '../components/EntryContainer';
 import SettingsDialog from '../components/dialogs/settings/SettingsDialog';
@@ -257,12 +258,12 @@ const SelectDirectoryAsync = props => (
 );
 
 type State = {
-  selectedDirectoryPath?: string,
-  isManagementPanelVisible?: boolean, // optionality because of https://github.com/codemix/flow-runtime/issues/149
-  mainSplitSize?: any,
-  isDrawerOpened?: boolean,
-  width?: number,
-  height?: number
+  selectedDirectoryPath: string,
+  isManagementPanelVisible: boolean, // optionality because of https://github.com/codemix/flow-runtime/issues/149
+  mainSplitSize: any,
+  isDrawerOpened: boolean,
+  width: number,
+  height: number
 };
 
 let showVerticalPanel = true;
@@ -272,6 +273,7 @@ if (window.ExtDefaultVerticalPanel === 'none') {
 
 class MainPage extends Component<Props, State> {
   state = {
+    selectedDirectoryPath: '',
     isManagementPanelVisible: showVerticalPanel,
     mainSplitSize: '100%',
     isDrawerOpened: true,
@@ -321,18 +323,18 @@ class MainPage extends Component<Props, State> {
       });
     }
     if (nextProps.isLocationManagerPanelOpened ||
-        nextProps.isTagLibraryPanelOpened ||
-        nextProps.isSearchPanelOpened ||
-        nextProps.isPerspectivesPanelOpened ||
-        nextProps.isHelpFeedbackPanelOpened) {
+      nextProps.isTagLibraryPanelOpened ||
+      nextProps.isSearchPanelOpened ||
+      nextProps.isPerspectivesPanelOpened ||
+      nextProps.isHelpFeedbackPanelOpened) {
       this.setManagementPanelVisibility(true);
     }
 
     if (!nextProps.isLocationManagerPanelOpened &&
-        !nextProps.isTagLibraryPanelOpened &&
-        !nextProps.isSearchPanelOpened &&
-        !nextProps.isPerspectivesPanelOpened &&
-        !nextProps.isHelpFeedbackPanelOpened) {
+      !nextProps.isTagLibraryPanelOpened &&
+      !nextProps.isSearchPanelOpened &&
+      !nextProps.isPerspectivesPanelOpened &&
+      !nextProps.isHelpFeedbackPanelOpened) {
       this.setManagementPanelVisibility(false);
     }
   }
@@ -429,14 +431,14 @@ class MainPage extends Component<Props, State> {
 
           const reader = new FileReader();
           reader.onload = event => {
-          // console.log('Content on file read complete: ' + JSON.stringify(event));
-          // change name for ios fakepath
-          // if (AppConfig.isCordovaiOS) {
-          //   const fileExt = extractFileExtension(addFileInputName);
-          //   addFileInputName = AppConfig.beginTagContainer + formatDateTime4Tag(new Date(), true) + AppConfig.endTagContainer + fileExt;
-          // }
-          // TODO event.currentTarget.result is ArrayBuffer
-          // Sample call from PRO version using content = Utils.base64ToArrayBuffer(baseString);
+            // console.log('Content on file read complete: ' + JSON.stringify(event));
+            // change name for ios fakepath
+            // if (AppConfig.isCordovaiOS) {
+            //   const fileExt = extractFileExtension(addFileInputName);
+            //   addFileInputName = AppConfig.beginTagContainer + formatDateTime4Tag(new Date(), true) + AppConfig.endTagContainer + fileExt;
+            // }
+            // TODO event.currentTarget.result is ArrayBuffer
+            // Sample call from PRO version using content = Utils.base64ToArrayBuffer(baseString);
             PlatformIO.getPropertiesPromise(filePath).then((entryProps) => {
               if (entryProps) {
                 this.props.showNotification(
@@ -491,6 +493,13 @@ class MainPage extends Component<Props, State> {
       selectedDirectoryPath: currentPath
     });
   };
+
+  toggleDrawer = () => {
+    this.setState({
+      isDrawerOpened: !this.state.isDrawerOpened
+    });
+  };
+
 
   keyBindingHandlers = {
     toggleShowHiddenEntries: this.props.toggleShowUnixHiddenEntries,
@@ -719,37 +728,39 @@ class MainPage extends Component<Props, State> {
             </SplitPane>
           </TargetFileBox>
         ) : (
-          <div>
-            <Drawer
+          <React.Fragment>
+            <SwipeableDrawer
               open={this.state.isDrawerOpened}
-              type="persistent"
-              classes={{
-                paper: classes.drawerPaper
+              onClose={this.toggleDrawer}
+              onOpen={this.toggleDrawer}
+              hysteresis={0.30}
+            >
+              <MobileNavigation />
+            </SwipeableDrawer>
+            <SplitPane
+              split="vertical"
+              minSize="200"
+              resizerStyle={{ backgroundColor: theme.palette.divider }}
+              size={this.state.mainSplitSize}
+              onChange={size => {
+                if (size > 0 && this.state.width) {
+                  const sizeInPercent = parseInt(((size * 100) / this.state.width), 10) + '%';
+                  this.setState({
+                    mainSplitSize: sizeInPercent
+                  });
+                  // bufferedMainSplitResize(() => this.props.setMainVerticalSplitSize(sizeInPercent));
+                  this.props.setMainVerticalSplitSize(sizeInPercent);
+                }
               }}
             >
-              <VerticalNavigation />
-            </Drawer>
-            <SplitPane
-              className={classNames(
-                classes.content,
-                this.state.isDrawerOpened && classes.contentShift
-              )}
-              split="vertical"
-              minSize={150}
-              resizerStyle={{ backgroundColor: theme.palette.divider }}
-              defaultSize={this.state.isViewerPanelVisible ? '50%' : '100%'}
-            >
               <FolderContainer
-                toggleDrawer={this.toggleDrawer}
                 windowHeight={this.state.height}
+                windowWidth={this.state.width}
+                toggleDrawer={this.toggleDrawer}
               />
-              {this.props.isFileOpened && (
-                <div style={{ backgroundColor: 'lightgray', height: '100%' }}>
-                FileViewer/Editor
-                </div>
-              )}
+              <EntryContainer />
             </SplitPane>
-          </div>
+          </React.Fragment>
         )}
       </HotKeys>
     );

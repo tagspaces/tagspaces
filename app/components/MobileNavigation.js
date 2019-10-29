@@ -102,10 +102,6 @@ class MobileNavigation extends React.Component<Props, State> {
   };
 
   styles = {
-    panel: {
-      height: '100%',
-      backgroundColor: '#2C001E' // 'rgb(89, 89, 89)' // '#00D1A1' // #008023
-    },
     buttonIcon: {
       width: 28,
       height: 28,
@@ -120,21 +116,11 @@ class MobileNavigation extends React.Component<Props, State> {
       borderRadius: 0,
       backgroundColor: '#880E4F'
     },
-    settingsButton: {
-      position: 'absolute',
-      bottom: 0,
-      left: 0
-    },
     themingButton: {
       position: 'absolute',
       bottom: 45,
       left: 0
     },
-    upgradeButton: {
-      position: 'absolute',
-      bottom: 90,
-      left: 0
-    }
   };
 
   toggleProTeaser = () => {
@@ -168,7 +154,7 @@ class MobileNavigation extends React.Component<Props, State> {
       theme
     } = this.props;
     return (
-      <div>
+      <div style={{ height: '100%' }}>
         <style>
           {`
             #verticalNavButton:hover {
@@ -177,27 +163,25 @@ class MobileNavigation extends React.Component<Props, State> {
             }
           `}
         </style>
-        <div style={this.styles.panel}>
-          <IconButton
-            onClick={toggleAboutDialog}
-            style={{ ...this.styles.button, marginTop: 10, marginBottom: 16 }}
-            title={i18n.t('core:aboutTitle')}
-            data-tid="aboutTagSpaces"
-          >
-            <img
-              style={{
-                ...this.styles.buttonIcon,
-                color: this.props.theme.palette.text.primary
-              }}
-              src={LogoIcon}
-              alt="TagSpaces Logo"
-            />
-          </IconButton>
+        <div style={{ width: 300, maxWidth: 300, height: 'calc(100% - 60px)' }}>
+          <LocationManager style={{ display: isLocationManagerPanelOpened ? 'block' : 'none' }} />
+          { isTagLibraryPanelOpened && <TagLibrary /> }
+          <Search style={{ display: isSearchPanelOpened ? 'block' : 'none' }} />
+          { isPerspectivesPanelOpened && <PerspectiveManager /> }
+          { isHelpFeedbackPanelOpened && <HelpFeedbackPanel
+            openFileNatively={openFileNatively}
+            openURLExternally={openURLExternally}
+            toggleKeysDialog={toggleKeysDialog}
+            toggleOnboardingDialog={toggleOnboardingDialog}
+            toggleProTeaser={this.toggleProTeaser}
+          /> }
+        </div>
+        <div>
           { !isReadOnlyMode && (
             <IconButton
               id="verticalNavButton"
               onClick={toggleCreateFileDialog}
-              style={{ ...this.styles.button, marginBottom: 20 }}
+              style={{ ...this.styles.button }}
               title={i18n.t('core:createFileTitle')}
               data-tid="locationManager"
             >
@@ -270,33 +254,15 @@ class MobileNavigation extends React.Component<Props, State> {
               isSettingsDialogOpened
                 ? {
                   ...this.styles.button,
-                  ...this.styles.settingsButton,
                   ...this.styles.selectedButton
                 } : {
                   ...this.styles.button,
-                  ...this.styles.settingsButton
                 }
             }
           >
             <SettingsIcon style={this.styles.buttonIcon} />
           </IconButton>
         </div>
-        { /*
-          <div style={this.styles.panel}>
-            <LocationManager style={{ display: isLocationManagerPanelOpened ? 'block' : 'none' }} />
-            { isTagLibraryPanelOpened && <TagLibrary /> }
-            <Search style={{ display: isSearchPanelOpened ? 'block' : 'none' }} />
-            { isPerspectivesPanelOpened && <PerspectiveManager /> }
-            { isHelpFeedbackPanelOpened &&
-            <HelpFeedbackPanel
-              openFileNatively={openFileNatively}
-              openURLExternally={openURLExternally}
-              toggleKeysDialog={toggleKeysDialog}
-              toggleOnboardingDialog={toggleOnboardingDialog}
-              toggleProTeaser={this.toggleProTeaser}
-            /> }
-          </div>
-        */}
       </div>
     );
   }
