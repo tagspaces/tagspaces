@@ -362,8 +362,7 @@ class VerticalNavigation extends React.Component<Props, State> {
             { isTagLibraryPanelOpened && <TagLibrary /> }
             <Search style={{ display: isSearchPanelOpened ? 'block' : 'none' }} />
             { isPerspectivesPanelOpened && <PerspectiveManager /> }
-            { isHelpFeedbackPanelOpened &&
-            <HelpFeedbackPanel
+            { isHelpFeedbackPanelOpened && <HelpFeedbackPanel
               openFileNatively={openFileNatively}
               openURLExternally={openURLExternally}
               toggleAboutDialog={toggleAboutDialog}
