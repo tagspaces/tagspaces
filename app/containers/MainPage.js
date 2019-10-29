@@ -733,7 +733,7 @@ class MainPage extends Component<Props, State> {
               open={this.state.isDrawerOpened}
               onClose={this.toggleDrawer}
               onOpen={this.toggleDrawer}
-              hysteresis={0.30}
+              hysteresis={0.20}
             >
               <MobileNavigation />
             </SwipeableDrawer>
