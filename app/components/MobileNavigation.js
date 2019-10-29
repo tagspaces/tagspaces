@@ -20,7 +20,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import uuidv1 from 'uuid';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import IconButton from '@material-ui/core/IconButton';
 import NewFileIcon from '@material-ui/icons/Add';
 import LocationsIcon from '@material-ui/icons/WorkOutline';
@@ -28,23 +29,20 @@ import TagLibraryIcon from '@material-ui/icons/LocalOfferOutlined';
 import SearchIcon from '@material-ui/icons/SearchOutlined';
 // import PerspectivesIcon from '@material-ui/icons/MapOutlined';
 import SettingsIcon from '@material-ui/icons/Settings';
-import ThemingIcon from '@material-ui/icons/InvertColors';
-import UpgradeIcon from '@material-ui/icons/FlightTakeoff';
-import HelpIcon from '@material-ui/icons/HelpOutline';
+// import ThemingIcon from '@material-ui/icons/InvertColors';
+// import UpgradeIcon from '@material-ui/icons/FlightTakeoff';
+// import HelpIcon from '@material-ui/icons/HelpOutline';
 import { withTheme } from '@material-ui/core/styles';
-import SplitPane from 'react-split-pane';
-import LogoIcon from '../assets/images/icon100x100.svg';
+// import LogoIcon from '../assets/images/icon100x100.svg';
 import TagLibrary from '../components/TagLibrary';
 import Search from '../components/Search';
 import PerspectiveManager from '../components/PerspectiveManager';
 import LocationManager from '../components/LocationManager';
 import HelpFeedbackPanel from '../components/HelpFeedbackPanel';
 import i18n from '../services/i18n';
-import { Pro } from '../pro';
-import { type Tag } from '../reducers/taglibrary';
+// import { Pro } from '../pro';
 import {
   actions as AppActions,
-  getDirectoryPath,
   isSettingsDialogOpened,
   isLocationManagerPanelOpened,
   isTagLibraryPanelOpened,
@@ -54,14 +52,14 @@ import {
   isReadOnlyMode,
 } from '../reducers/app';
 import { actions as SettingsActions, isFirstRun } from '../reducers/settings';
-import LoadingLazy from './LoadingLazy';
+// import LoadingLazy from './LoadingLazy';
 
-const ProTeaserDialog = React.lazy(() => import(/* webpackChunkName: "ProTeaserDialog" */ './dialogs/ProTeaserDialog'));
-const ProTeaserDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <ProTeaserDialog {...props} />
-  </React.Suspense>
-);
+// const ProTeaserDialog = React.lazy(() => import(/* webpackChunkName: "ProTeaserDialog" */ './dialogs/ProTeaserDialog'));
+// const ProTeaserDialogAsync = props => (
+//   <React.Suspense fallback={<LoadingLazy />}>
+//     <ProTeaserDialog {...props} />
+//   </React.Suspense>
+// );
 
 type Props = {
   theme: Object,
@@ -80,14 +78,13 @@ type Props = {
   isSearchPanelOpened: boolean,
   openSearchPanel: () => void,
   isPerspectivesPanelOpened: boolean,
-  openPerspectivesPanel: () => void,
+  // openPerspectivesPanel: () => void,
   isHelpFeedbackPanelOpened: boolean,
   openHelpFeedbackPanel: () => void,
   closeAllVerticalPanels: () => void,
   openFileNatively: (url: string) => void,
   openURLExternally: (url: string) => void,
   switchTheme: () => void,
-  shouldTogglePanel: string,
   isReadOnlyMode: boolean
 };
 
@@ -102,24 +99,17 @@ class MobileNavigation extends React.Component<Props, State> {
   };
 
   styles = {
+    bottomToolbar: {
+      textAlign: 'center',
+      backgroundColor: this.props.theme.palette.background.default
+    },
     buttonIcon: {
-      width: 28,
-      height: 28,
       color: '#d6d6d6' // this.props.theme.palette.text.primary
     },
     button: {
-      padding: 8,
-      width: 44,
-      height: 44
     },
     selectedButton: {
-      borderRadius: 0,
       backgroundColor: '#880E4F'
-    },
-    themingButton: {
-      position: 'absolute',
-      bottom: 45,
-      left: 0
     },
   };
 
@@ -150,15 +140,12 @@ class MobileNavigation extends React.Component<Props, State> {
       switchTheme,
       openFileNatively,
       openURLExternally,
-      setFirstRun,
-      theme
     } = this.props;
     return (
       <div style={{ height: '100%' }}>
         <style>
           {`
             #verticalNavButton:hover {
-              border-radius: 0;
               background-color: #880E4F;
             }
           `}
@@ -176,89 +163,68 @@ class MobileNavigation extends React.Component<Props, State> {
             toggleProTeaser={this.toggleProTeaser}
           /> }
         </div>
-        <div>
+        <div style={this.styles.bottomToolbar}>
           { !isReadOnlyMode && (
             <IconButton
               id="verticalNavButton"
               onClick={toggleCreateFileDialog}
-              style={{ ...this.styles.button }}
+              style={{ marginTop: -15, marginRight: 10 }}
               title={i18n.t('core:createFileTitle')}
               data-tid="locationManager"
             >
               <NewFileIcon style={this.styles.buttonIcon} />
             </IconButton>
           )}
-          <IconButton
-            id="verticalNavButton"
-            onClick={() => {
-              if (isLocationManagerPanelOpened) {
-                closeAllVerticalPanels();
-              } else {
-                openLocationManagerPanel();
-              }
-            }}
-            style={
-              isLocationManagerPanelOpened
-                ? { ...this.styles.button, ...this.styles.selectedButton }
-                : this.styles.button
-            }
-            title={i18n.t('core:locationManager')}
-            data-tid="locationManager"
+          <ToggleButtonGroup
+            exclusive
+            // style={{ boxShadow: 'none' }}
           >
-            <LocationsIcon style={this.styles.buttonIcon} />
-          </IconButton>
-          <IconButton
-            id="verticalNavButton"
-            title={i18n.t('core:tagGroupOperations')}
-            data-tid="tagLibrary"
-            onClick={() => {
-              if (isTagLibraryPanelOpened) {
-                closeAllVerticalPanels();
-              } else {
-                openTagLibraryPanel();
+            <ToggleButton
+              id="verticalNavButton"
+              onClick={openLocationManagerPanel}
+              style={
+                isLocationManagerPanelOpened
+                  ? { ...this.styles.button, ...this.styles.selectedButton }
+                  : this.styles.button
               }
-            }}
-            style={
-              isTagLibraryPanelOpened
-                ? { ...this.styles.button, ...this.styles.selectedButton }
-                : this.styles.button
-            }
-          >
-            <TagLibraryIcon style={this.styles.buttonIcon} />
-          </IconButton>
-          <IconButton
-            id="verticalNavButton"
-            title={i18n.t('core:searchTitle')}
-            data-tid="search"
-            onClick={() => {
-              if (isSearchPanelOpened) {
-                closeAllVerticalPanels();
-              } else {
-                openSearchPanel();
+              title={i18n.t('core:locationManager')}
+              data-tid="locationManager"
+            >
+              <LocationsIcon style={this.styles.buttonIcon} />
+            </ToggleButton>
+            <ToggleButton
+              id="verticalNavButton"
+              title={i18n.t('core:tagGroupOperations')}
+              data-tid="tagLibrary"
+              onClick={openTagLibraryPanel}
+              style={
+                isTagLibraryPanelOpened
+                  ? { ...this.styles.button, ...this.styles.selectedButton }
+                  : this.styles.button
               }
-            }}
-            style={
-              isSearchPanelOpened
-                ? { ...this.styles.button, ...this.styles.selectedButton }
-                : this.styles.button
-            }
-          >
-            <SearchIcon style={this.styles.buttonIcon} />
-          </IconButton>
+            >
+              <TagLibraryIcon style={this.styles.buttonIcon} />
+            </ToggleButton>
+            <ToggleButton
+              id="verticalNavButton"
+              title={i18n.t('core:searchTitle')}
+              data-tid="search"
+              onClick={openSearchPanel}
+              style={
+                isSearchPanelOpened
+                  ? { ...this.styles.button, ...this.styles.selectedButton }
+                  : this.styles.button
+              }
+            >
+              <SearchIcon style={this.styles.buttonIcon} />
+            </ToggleButton>
+          </ToggleButtonGroup>
           <IconButton
             id="verticalNavButton"
             title={i18n.t('core:settings')}
             data-tid="settings"
             onClick={toggleSettingsDialog}
-            style={
-              isSettingsDialogOpened
-                ? {
-                  ...this.styles.button,
-                  ...this.styles.selectedButton
-                } : {
-                  ...this.styles.button,
-                }
-            }
+            style={{ marginTop: -15, marginLeft: 10 }}
           >
             <SettingsIcon style={this.styles.buttonIcon} />
           </IconButton>
