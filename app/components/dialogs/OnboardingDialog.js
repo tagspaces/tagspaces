@@ -31,11 +31,10 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
-import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import MobileStepper from '@material-ui/core/MobileStepper';
-// import WelcomeImage from '../../assets/images/onboarding.jpg';
+import GenericDialog from './GenericDialog';
 import NavigationV3 from '../../assets/images/navigation-v3.png';
 import BrowserExtension from '../../assets/images/collecting-undraw.svg';
 import WizardFinished from '../../assets/images/balloons-undraw.svg';
@@ -105,7 +104,7 @@ class OnboardingDialog extends React.Component<Props, State> {
     const { activeStep } = this.state;
 
     return (
-      <DialogContent style={{ marginTop: 20, overflowY: 'overlay' }}>
+      <DialogContent style={{ marginTop: 20 }}>
         <SwipeableViews
           index={activeStep}
           onChangeIndex={this.handleStepChange}
@@ -118,13 +117,12 @@ class OnboardingDialog extends React.Component<Props, State> {
           >
             <Typography variant="h5">Welcome to TagSpaces</Typography>
             <Typography variant="h6">&nbsp;</Typography>
-            {/* <Typography variant="h6">Your favorite file organizer has a fresh new look</Typography> */}
             <img
-              style={{ maxHeight: 340, marginTop: 15 }}
+              style={{ maxHeight: 300, marginTop: 15 }}
               src={NewLook}
               alt=""
             />
-            <Typography variant="h6">Try our user interface themes</Typography>
+            <Typography variant="h6">Try our interface themes</Typography>
             <Typography variant="h6">&nbsp;</Typography>
             <ToggleButtonGroup
               value={this.props.currentTheme}
@@ -147,7 +145,7 @@ class OnboardingDialog extends React.Component<Props, State> {
           >
             <Typography variant="h5">Understand main app navigation</Typography>
             <img
-              style={{ marginTop: 15, maxHeight: 500 }}              
+              style={{ marginTop: 15, maxHeight: 500 }}
               src={NavigationV3}
               alt=""
             />
@@ -215,7 +213,7 @@ class OnboardingDialog extends React.Component<Props, State> {
           >
             <Typography variant="h5">Collect web content in Chrome and Firefox</Typography>
             <img
-              style={{ maxHeight: 400, marginTop: 15 }}
+              style={{ maxHeight: 300, marginTop: 15 }}
               src={BrowserExtension}
               alt=""
             />
@@ -248,63 +246,50 @@ class OnboardingDialog extends React.Component<Props, State> {
             </Typography>
           </div>
         </SwipeableViews>
-        <MobileStepper
-          style={{ marginTop: 10, backgroundColor: 'transparent' }}
-          steps={this.maxSteps}
-          position="static"
-          activeStep={activeStep}
-          nextButton={
-            (activeStep === this.maxSteps - 1) ? (
-              <Button
-                size="small"
-                onClick={this.props.onClose}
-                variant="contained"
-                color="primary"
-                data-tid="startTagSpacesAfterOnboarding"
-              >
-                Start using TagSpaces
-              </Button>
-
-            ) : (
-              <Button
-                size="small"
-                onClick={this.handleNext}
-                data-tid="nextStepOnboarding"
-              >
-                {i18n.t('core:next')}
-              </Button>
-            )
-          }
-          backButton={
-            <Button
-              size="small"
-              onClick={this.handleBack}
-              disabled={activeStep === 0}
-            >
-              {i18n.t('core:prev')}
-            </Button>
-          }
-        />
       </DialogContent>
     );
   };
 
-  // renderActions = () => (
-  //   <DialogActions style={{ justifyContent: 'center' }}>
-  //     <Button
-  //       data-tid="startTagSpacesAfterOnboarding"
-  //       onClick={this.props.onClose}
-  //       variant={
-  //         this.state.activeStep === this.maxSteps - 1 ? 'contained' : 'text'
-  //       }
-  //       color="primary"
-  //     >
-  //       {this.state.activeStep === this.maxSteps - 1
-  //         ? 'Start using TagSpaces'
-  //         : i18n.t('core:closeButton')}
-  //     </Button>
-  //   </DialogActions>
-  // );
+  renderActions = () => (
+    <DialogActions style={{ justifyContent: 'center' }}>
+      <MobileStepper
+        style={{ marginTop: 10, backgroundColor: 'transparent' }}
+        steps={this.maxSteps}
+        position="static"
+        activeStep={this.state.activeStep}
+        nextButton={
+          (this.state.activeStep === this.maxSteps - 1) ? (
+            <Button
+              size="small"
+              onClick={this.props.onClose}
+              variant="contained"
+              color="primary"
+              data-tid="startTagSpacesAfterOnboarding"
+            >Start using TagSpaces
+            </Button>
+
+          ) : (
+            <Button
+              size="small"
+              onClick={this.handleNext}
+              data-tid="nextStepOnboarding"
+            >
+              {i18n.t('core:next')}
+            </Button>
+          )
+        }
+        backButton={
+          <Button
+            size="small"
+            onClick={this.handleBack}
+            disabled={this.state.activeStep === 0}
+          >
+            {i18n.t('core:prev')}
+          </Button>
+        }
+      />
+    </DialogActions>
+  );
 
   render() {
     const { fullScreen, open, onClose } = this.props;
@@ -314,6 +299,7 @@ class OnboardingDialog extends React.Component<Props, State> {
         open={open}
         onClose={onClose}
         renderContent={this.renderContent}
+        renderActions={this.renderActions}
       />
     );
   }

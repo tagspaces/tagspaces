@@ -31,9 +31,9 @@ type Props = {
   onClose: () => void,
   onBackdropClick?: () => void,
   onEnterKey?: () => void,
-  renderTitle: () => Object,
+  renderTitle?: () => Object,
   renderContent: () => Object,
-  renderActions: () => Object
+  renderActions?: () => Object
 };
 
 export function onEnterKeyHandler(event: any, confirmFunction: () => void) {
