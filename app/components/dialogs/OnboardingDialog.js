@@ -267,15 +267,12 @@ class OnboardingDialog extends React.Component<Props, State> {
               data-tid="startTagSpacesAfterOnboarding"
             >Start using TagSpaces
             </Button>
-
           ) : (
             <Button
               size="small"
               onClick={this.handleNext}
               data-tid="nextStepOnboarding"
-            >
-              {i18n.t('core:next')}
-            </Button>
+            >{i18n.t('core:next')}</Button>
           )
         }
         backButton={
@@ -283,9 +280,7 @@ class OnboardingDialog extends React.Component<Props, State> {
             size="small"
             onClick={this.handleBack}
             disabled={this.state.activeStep === 0}
-          >
-            {i18n.t('core:prev')}
-          </Button>
+          >{i18n.t('core:prev')}</Button>
         }
       />
     </DialogActions>

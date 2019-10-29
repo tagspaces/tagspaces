@@ -22,7 +22,7 @@ import SwipeableViews from 'react-swipeable-views';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
+// import DialogTitle from '@material-ui/core/DialogTitle';
 import Typography from '@material-ui/core/Typography';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import MobileStepper from '@material-ui/core/MobileStepper';
@@ -71,24 +71,22 @@ class ProTeaserDialog extends React.Component<Props, State> {
     this.setState({ activeStep });
   };
 
-  renderTitle = () => (
-    <DialogTitle style={{ justifyContent: 'center', textAlign: 'center' }}>
-      TagSpaces Pro Features
-    </DialogTitle>
-  );
+  // renderTitle = () => (
+  //   <DialogTitle style={{ justifyContent: 'center', textAlign: 'center' }}>
+  //     TagSpaces Pro Features
+  //   </DialogTitle>
+  // );
 
   renderContent = () => {
     const { activeStep } = this.state;
     const slideStyles = {
-      height: 500,
       padding: 5,
-      overflow: 'overflow',
       textAlign: 'left'
     };
 
     return (
       <DialogContent
-        style={{ overflow: 'hidden', paddingBottom: 0 }}
+        style={{ paddingBottom: 0 }}
       >
         <SwipeableViews
           index={activeStep}
@@ -270,62 +268,41 @@ class ProTeaserDialog extends React.Component<Props, State> {
                 onClick={() => this.props.openURLExternally('mailto:contact@tagspaces.org')}
                 variant="outlined"
                 color="primary"
-              >Contact us</Button>
+              >{i18n.t('core:emailContact')}</Button>
             </div>
           </div>
         </SwipeableViews>
-        <MobileStepper
-          style={{ marginTop: 10, backgroundColor: 'transparent' }}
-          steps={this.maxSteps}
-          position="static"
-          activeStep={activeStep}
-          nextButton={
-            (activeStep === this.maxSteps - 1) ? (
-              <Button
-                size="small"
-                onClick={this.props.onClose}
-                // variant="contained"
-                // color="primary"
-              >
-                Close
-              </Button>
-
-            ) : (
-              <Button
-                size="small"
-                onClick={this.handleNext}
-              >
-                Next
-              </Button>
-            )
-          }
-          backButton={
-            <Button
-              size="small"
-              onClick={this.handleBack}
-              disabled={activeStep === 0}
-            >
-              Back
-            </Button>
-          }
-        />
       </DialogContent>
     );
   };
   renderActions = () => (
     <DialogActions style={{ justifyContent: 'center' }}>
-      <Button
-        data-tid="confirmLicenseDialog"
-        onClick={this.props.onClose}
-        variant={
-          this.state.activeStep === this.maxSteps - 1 ? 'contained' : 'text'
+      <MobileStepper
+        style={{ marginTop: 10, backgroundColor: 'transparent' }}
+        steps={this.maxSteps}
+        position="static"
+        activeStep={this.state.activeStep}
+        nextButton={
+          (this.state.activeStep === this.maxSteps - 1) ? (
+            <Button
+              size="small"
+              onClick={this.props.onClose}
+            >{i18n.t('core:closeButton')}</Button>
+          ) : (
+            <Button
+              size="small"
+              onClick={this.handleNext}
+            >{i18n.t('core:next')}</Button>
+          )
         }
-        color="primary"
-      >
-        {this.state.activeStep === this.maxSteps - 1
-          ? 'Start using TagSpaces'
-          : i18n.t('core:closeButton')}
-      </Button>
+        backButton={
+          <Button
+            size="small"
+            onClick={this.handleBack}
+            disabled={this.state.activeStep === 0}
+          >{i18n.t('core:prev')}</Button>
+        }
+      />
     </DialogActions>
   );
 
@@ -336,10 +313,9 @@ class ProTeaserDialog extends React.Component<Props, State> {
         fullScreen={fullScreen}
         open={open}
         onClose={onClose}
-        onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
-        // renderTitle={this.renderTitle}
+        // onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
         renderContent={this.renderContent}
-        // renderActions={this.renderActions}
+        renderActions={this.renderActions}
       />
     );
   }
