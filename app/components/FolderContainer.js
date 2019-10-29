@@ -23,6 +23,7 @@ import { bindActionCreators } from 'redux';
 import Button from '@material-ui/core/Button';
 // import FolderSeparatorIcon from '@material-ui/icons/KeyboardArrowRight';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import MenuIcon from '@material-ui/icons/Menu';
 import Badge from '@material-ui/core/Badge';
 import { withStyles } from '@material-ui/core/styles';
 import { HotKeys } from 'react-hotkeys';
@@ -31,7 +32,8 @@ import DirectoryMenu from './menus/DirectoryMenu';
 import i18n from '../services/i18n';
 import {
   getPerspectives,
-  getMaxSearchResults
+  getMaxSearchResults,
+  getDesktopMode
 } from '../reducers/settings';
 import {
   actions as AppActions,
@@ -183,8 +185,10 @@ type Props = {
   loadParentDirectoryContent: () => void,
   setLastSelectedEntry: (entryPath: string | null) => void,
   isReadOnlyMode: boolean,
+  isDesktopMode: boolean,
   showNotification: (content: string) => void,
   openSearchPanel: () => void,
+  toggleDrawer: () => void,
   maxSearchResults: number
 };
 
@@ -419,7 +423,9 @@ class FolderContainer extends React.Component<Props, State> {
       searchResultCount,
       classes,
       maxSearchResults,
-      openSearchPanel
+      openSearchPanel,
+      toggleDrawer,
+      isDesktopMode
     } = this.props;
     const normalizedCurrentDirPath = normalizePath(currentDirectoryPath.split('\\').join('/'));
     let searchResultCounterText = searchResultCount + ' ' + i18n.t('entries');
@@ -431,6 +437,11 @@ class FolderContainer extends React.Component<Props, State> {
         <div className={classes.mainPanel}>
           <div className={classes.topPanel}>
             <div className={classes.toolbar}>
+              {!isDesktopMode && (
+                <Button style={{ marginLeft: -8 }} onClick={toggleDrawer}>
+                  <MenuIcon />
+                </Button>
+              )}
               <LocationMenu />
               <CounterBadge
                 showZero={false}
@@ -517,6 +528,7 @@ function mapStateToProps(state) {
     // pathPart: getPathTrail(state),
     currentLocationPath: getCurrentLocationPath(state),
     maxSearchResults: getMaxSearchResults(state),
+    isDesktopMode: getDesktopMode(state),
     isReadOnlyMode: isReadOnlyMode(state)
   };
 }
