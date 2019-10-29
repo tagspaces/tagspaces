@@ -69,7 +69,8 @@ type Props = {
   setAddTagsToLibrary: () => void,
   setUseGenerateThumbnails: () => void,
   setTagDelimiter: () => void,
-  setMaxSearchResult: () => void
+  setMaxSearchResult: () => void,
+  setDesktopMode: () => void
 };
 
 type State = {
@@ -245,13 +246,13 @@ class SettingsGeneral extends React.Component<Props, State> {
           />
         </ListItem>
         {<ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:desktopMode') + ' - experiment in ALPHA state'} />
+          <ListItemText primary="Mobile Mode (experimental)" />
           <Switch
             data-tid="settingsSetDesktopMode"
             onClick={() =>
               this.props.setDesktopMode(!this.props.settings.desktopMode)
             }
-            checked={this.props.settings.desktopMode}
+            checked={!this.props.settings.desktopMode}
           />
         </ListItem>}
         {/* <ListItem className={classes.listItem}>
