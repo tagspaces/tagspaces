@@ -437,7 +437,9 @@ class FolderContainer extends React.Component<Props, State> {
         <div className={classes.mainPanel}>
           <div className={classes.topPanel}>
             <div className={classes.toolbar}>
-              {!isDesktopMode && (
+              {isDesktopMode ? (
+                <LocationMenu />
+              ) : (
                 <Button style={{ marginLeft: -8 }} onClick={toggleDrawer}>
                   <MenuIcon />
                 </Button>
