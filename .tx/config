@@ -30,3 +30,4 @@ type = KEYVALUEJSON
 file_filter = extensions/editorText/locales/<lang>/ns.editorText.json
 source_lang = en
 type = KEYVALUEJSON
+
