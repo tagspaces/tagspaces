@@ -13,4 +13,5 @@ sh.exec('git log --format="%H" -n 1', { silent: true }, (code, lastCommitId) => 
   }
   sh.echo('{"commitId": "' + lastCommitId + '", "buildTime": "' + buildTime + '", "version": "' + version + '", "name": "' + productName + '"}')
     .to('app/version.json');
+  // sh.sed('-i', 'BUILD_VERSION', 'v0.1.2', file);
 });

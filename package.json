@@ -43,7 +43,7 @@
     "package-android": "yarn build-cordova && cd cordova && yarn install && cordova build --release android && cd ../.. && ./prepare-android.sh",
     "package-web": "yarn prepare-web && yarn clean-maps && zip -r ./builds/tagspaces-web.zip web -x web/files/**\\*",
     "package-web-pro": "yarn prepare-web && yarn clean-maps && zip -r ./builds/tagspaces-pro-web.zip web -xi web/files/**\\* ",
-    "prepare-web": "rimraf web/node_modules && cp -r app/node_modules web && cp LICENSE.txt web",
+    "prepare-web": "rimraf web/node_modules && cp -r app/node_modules web && cp LICENSE.txt web && node scripts/genswconf.js",
     "prepare-cordova": "rimraf cordova/www/dist && rimraf cordova/www/node_modules && cp -Lr app/node_modules cordova/www && cp LICENSE.txt cordova/www",
     "clean": "rimraf node_modules && rimraf app/dist",
     "clean-pro": "yarn clean-maps && rimraf app/node_modules/@tagspaces/pro/*.js* && rimraf app/node_modules/@tagspaces/pro/lib/ && rimraf app/node_modules/@tagspaces/pro/modules/ && rimraf app/node_modules/@tagspaces/pro/test/",

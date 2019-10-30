@@ -120,7 +120,7 @@ export default merge.smart(baseConfig, {
         use: [{
           loader: 'file-loader',
           options: {
-            name: '[name].[ext]',
+            // name: '[name].[ext]',
             publicPath: '../dist/',
           }
         }]
