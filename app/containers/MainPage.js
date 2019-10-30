@@ -22,7 +22,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import uuidv1 from 'uuid';
 import { withStyles } from '@material-ui/core/styles';
-import classNames from 'classnames';
 import { translate } from 'react-i18next';
 import SplitPane from 'react-split-pane';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
@@ -39,7 +38,7 @@ import FolderContainer from '../components/FolderContainer';
 import EntryContainer from '../components/EntryContainer';
 import SettingsDialog from '../components/dialogs/settings/SettingsDialog';
 import CreateDirectoryDialog from '../components/dialogs/CreateDirectoryDialog';
-import CreateFileDialog from '../components/dialogs/CreateFileDialog';
+import CreateFileDialog from '../components/dialogs/CreateDialog';
 import {
   getDesktopMode,
   getKeyBindingObject,
@@ -734,8 +733,8 @@ class MainPage extends Component<Props, State> {
               onClose={this.toggleDrawer}
               onOpen={this.toggleDrawer}
               hysteresis={0.20}
-              disableBackdropTransition={!AppConfig.iOS}
-              disableDiscovery={AppConfig.iOS}
+              disableBackdropTransition={!AppConfig.isIOS}
+              disableDiscovery={AppConfig.isIOS}
             >
               <MobileNavigation toggleDrawer={this.toggleDrawer} />
             </SwipeableDrawer>

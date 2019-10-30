@@ -18,6 +18,8 @@
  */
 const isCordovaiOS = /^file:\/{3}[^\/]/i.test(window.location.href) && /ios|iphone|ipod|ipad/i.test(navigator.userAgent);
 const isCordovaAndroid = document.URL.indexOf('file:///android_asset') === 0;
+const isIOS = navigator.userAgent.match(/(iPad|iPhone|iPod)/i);
+const isAndroid = navigator.userAgent.toLowerCase().includes('android');
 
 export default {
   tagspacesAppPath: '/tagspaces/',
@@ -76,10 +78,12 @@ export default {
   isFirefox: (navigator.userAgent.toLowerCase().includes('firefox')), // typeof InstallTrigger !== 'undefined';
   isWin: navigator.appVersion.includes('Win'),
   isMacLike: navigator.userAgent.match(/(Mac|iPhone|iPod|iPad)/i),
-  iOS: navigator.userAgent.match(/(iPad|iPhone|iPod)/i),
+  isIOS,
+  isAndroid,
   isWeb: (document.URL.startsWith('http') && !document.URL.startsWith('http://localhost:1212/')),
   isCordovaiOS,
   isCordovaAndroid,
   isCordova: isCordovaiOS || isCordovaAndroid,
+  isMobile: isCordovaiOS || isCordovaAndroid || isIOS || isAndroid,
   dirSeparator: (navigator.appVersion.includes('Win') && !document.URL.startsWith('http')) ? '\\' : '/',
 };
