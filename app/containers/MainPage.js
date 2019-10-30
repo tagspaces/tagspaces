@@ -38,7 +38,7 @@ import FolderContainer from '../components/FolderContainer';
 import EntryContainer from '../components/EntryContainer';
 import SettingsDialog from '../components/dialogs/settings/SettingsDialog';
 import CreateDirectoryDialog from '../components/dialogs/CreateDirectoryDialog';
-import CreateFileDialog from '../components/dialogs/CreateDialog';
+import CreateFileDialog from '../components/dialogs/CreateFileDialog';
 import {
   getDesktopMode,
   getKeyBindingObject,
