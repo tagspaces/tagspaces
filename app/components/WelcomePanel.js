@@ -65,7 +65,7 @@ const styles = theme => ({
     backgroundColor: theme.palette.background.default,
     backgroundImage: 'url(' + WelcomeBackground + ')',
     backgroundRepeat: 'repeat',
-    opacity: '0.4'
+    // opacity: '0.4'
   },
   slogan: {
     top: '45%',
@@ -75,9 +75,9 @@ const styles = theme => ({
   },
   links: {
     width: 300,
-    height: 'calc(100% - 80px)',
+    height: 'calc(100% - 100px)',
     margin: 'auto',
-    marginTop: 30,
+    marginTop: 15,
     marginBottom: 15,
     overflowY: 'overlay',
     backgroundColor: theme.palette.background.default,
@@ -109,12 +109,10 @@ const WelcomePanel = (props: Props) => {
           onClick={props.toggleAboutDialog}
         >
           <img
-
             src={WelcomeLogo}
             alt="Organize your files"
           />
         </div>
-
         <ListItem button onClick={() => openURLExternally(AppConfig.documentationLinks.general)}>
           <ListItemIcon>
             <DocumentationIcon />
