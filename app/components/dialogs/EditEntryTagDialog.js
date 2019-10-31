@@ -20,6 +20,7 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -39,16 +40,16 @@ import { isDateTimeTag } from '../../utils/dates';
 
 const styles = () => ({
   root: {
-    width: 550,
+    minWidth: 400,
     height: '100%',
     marginBottom: 30,
-    // background: theme.palette.background.paper
   },
 });
 
 type Props = {
   classes: Object,
   open: boolean,
+  fullScreen: boolean,
   onClose: () => void,
   editTagForEntry: (path: string, tag: Tag, title: string) => void,
   currentEntryPath: string,
@@ -165,6 +166,7 @@ const EditEntryTagDialog = (props: Props) => {
   return (
     <GenericDialog
       open={props.open}
+      fullScreen={props.fullScreen}
       onClose={props.onClose}
       onEnterKey={(event) => onEnterKeyHandler(event, onConfirm)}
       renderTitle={renderTitle}
@@ -187,6 +189,6 @@ function mapDispatchToProps(dispatch) {
   }, dispatch);
 }
 
-export default withStyles(styles)(
+export default withMobileDialog()(withStyles(styles)(
   connect(mapStateToProps, mapDispatchToProps)(EditEntryTagDialog)
-);
+));
