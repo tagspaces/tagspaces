@@ -21,8 +21,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Button from '@material-ui/core/Button';
-// import FolderSeparatorIcon from '@material-ui/icons/KeyboardArrowRight';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import BackButtonIcon from '@material-ui/icons/ArrowBack';
 import MenuIcon from '@material-ui/icons/Menu';
 import Badge from '@material-ui/core/Badge';
 import { withStyles } from '@material-ui/core/styles';
@@ -425,7 +425,8 @@ class FolderContainer extends React.Component<Props, State> {
       maxSearchResults,
       openSearchPanel,
       toggleDrawer,
-      isDesktopMode
+      isDesktopMode,
+      loadParentDirectoryContent
     } = this.props;
     const normalizedCurrentDirPath = normalizePath(currentDirectoryPath.split('\\').join('/'));
     let searchResultCounterText = searchResultCount + ' ' + i18n.t('entries');
@@ -456,8 +457,8 @@ class FolderContainer extends React.Component<Props, State> {
               />
               <div className={classes.flexMiddle} />
               {currentDirectoryPath && (
-                <div>
-                  {this.state.pathParts &&
+                <React.Fragment>
+                  {isDesktopMode && this.state.pathParts &&
                     this.state.pathParts.map(pathPart => (
                       <Button
                         key={pathPart}
@@ -469,6 +470,17 @@ class FolderContainer extends React.Component<Props, State> {
                         &nbsp;/&nbsp;
                       </Button>
                     ))}
+                  {!isDesktopMode && this.state.pathParts && this.state.pathParts.length > 0 && (
+                    <React.Fragment>
+                      <Button
+                        onClick={loadParentDirectoryContent}
+                        data-tid="openParentDirectory"
+                        style={{ paddingLeft: 3, paddingRight: 0}}
+                      >
+                        <BackButtonIcon />
+                      </Button>
+                    </React.Fragment>
+                  )}
                   <Button
                     data-tid="folderContainerOpenDirMenu"
                     title={
@@ -493,7 +505,7 @@ class FolderContainer extends React.Component<Props, State> {
                     loadDirectoryContent={this.props.loadDirectoryContent}
                     openFileNatively={this.props.openFileNatively}
                     openDirectory={this.props.openDirectory}
-                    loadParentDirectoryContent={this.props.loadParentDirectoryContent}
+                    loadParentDirectoryContent={loadParentDirectoryContent}
                     showInFileManager={this.props.showInFileManager}
                     reflectCreateEntry={this.props.reflectCreateEntry}
                     openFile={this.props.openFile}
@@ -503,7 +515,7 @@ class FolderContainer extends React.Component<Props, State> {
                     switchPerspective={this.switchPerspective}
                     isReadOnlyMode={this.props.isReadOnlyMode}
                   />
-                </div>
+                </React.Fragment>
               )}
             </div>
           </div>

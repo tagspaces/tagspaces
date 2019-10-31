@@ -55,7 +55,8 @@ import {
 } from '../../../services/utils-io';
 import { type Tag } from '../../../reducers/taglibrary';
 import {
-  getSupportedFileTypes
+  getSupportedFileTypes,
+  getDesktopMode,
 } from '../../../reducers/settings';
 import {
   sortByCriteria,
@@ -93,6 +94,7 @@ const settings = JSON.parse(localStorage.getItem('tsPerspectiveGrid')); // loadi
 type Props = {
   classes: Object,
   theme: Object,
+  desktopMode: boolean,
   currentDirectoryPath: string,
   currentDirectoryColor: string,
   lastSelectedEntryPath: string | null,
@@ -639,7 +641,8 @@ class GridPerspective extends React.Component<Props, State> {
       directoryContent,
       currentDirectoryColor,
       selectedEntries,
-      theme
+      theme,
+      desktopMode
     } = this.props;
     const { layoutType, entrySize, sortBy, orderBy } = this.state;
     const selectedFilePaths = selectedEntries.filter(fsEntry => fsEntry.isFile).map(fsentry => fsentry.path);
@@ -678,14 +681,16 @@ class GridPerspective extends React.Component<Props, State> {
               <DeSelectAllIcon />
             )}
           </IconButton>
-          {/* <IconButton
-            title={i18n.t('core:navigateToParentDirectory')}
-            aria-label={i18n.t('core:navigateToParentDirectory')}
-            data-tid="gridPerspectiveOnBackButton"
-            onClick={this.props.loadParentDirectoryContent}
-          >
-            <ParentDirIcon />
-          </IconButton> */}
+          {/* { desktopMode && (
+            <IconButton
+              title={i18n.t('core:navigateToParentDirectory')}
+              aria-label={i18n.t('core:navigateToParentDirectory')}
+              data-tid="gridPerspectiveOnBackButton"
+              onClick={this.props.loadParentDirectoryContent}
+            >
+              <ParentDirIcon />
+            </IconButton>
+          )} */}
           {this.state.layoutType === 'row' ? (
             <IconButton
               title={i18n.t('core:switchToGridView')}
@@ -1073,7 +1078,7 @@ function mapActionCreatorsToProps(dispatch) {
     showNotification: AppActions.showNotification,
     openFileNatively: AppActions.openFileNatively,
     openURLExternally: AppActions.openURLExternally,
-    addTags: TaggingActions.addTags
+    addTags: TaggingActions.addTags,
   }, dispatch);
 }
 
@@ -1084,6 +1089,7 @@ function mapStateToProps(state) {
     isReadOnlyMode: isReadOnlyMode(state),
     lastSelectedEntryPath: getLastSelectedEntry(state),
     currentDirectoryColor: getCurrentDirectoryColor(state),
+    desktopMode: getDesktopMode(state),
     selectedEntries: getSelectedEntries(state)
   };
 }

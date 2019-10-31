@@ -456,12 +456,12 @@ class LocationManager extends React.Component<Props, State> {
       this.props.openLocation(location);
       this.state.locationRootPath = location.paths[0];
     }
-    const grid = document.querySelector('[data-tid="perspectiveGridFileTable"]');
-    const firstGridItem = grid.querySelector('div');
 
-    if (isObj(firstGridItem)) {
-      firstGridItem.parentNode.scrollTop = target.offsetTop;
-    }
+    // const grid = document.querySelector('[data-tid="perspectiveGridFileTable"]');
+    // const firstGridItem = grid.querySelector('div');
+    // if (isObj(firstGridItem)) {
+    //   firstGridItem.parentNode.scrollTop = target.offsetTop;
+    // }
   };
 
   reloadDirectory = () => {

@@ -26,7 +26,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Divider from '@material-ui/core/Divider';
-import ContentExtractionIcon from '@material-ui/icons/TrackChanges';
+// import ContentExtractionIcon from '@material-ui/icons/TrackChanges';
 import OpenFolderIcon from '@material-ui/icons/SubdirectoryArrowLeft';
 import AddExistingFileIcon from '@material-ui/icons/ExitToApp';
 import OpenFolderNativelyIcon from '@material-ui/icons/Launch';
@@ -52,21 +52,17 @@ import { actions as AppActions } from '../../reducers/app';
 import IOActions from '../../reducers/io-actions';
 
 type Props = {
-  classes: Object,
   open: boolean,
   onClose: () => void,
   anchorEl: Object | null,
   directoryPath: string,
   loadDirectoryContent: (path: string) => void,
   openDirectory: (path: string) => void,
-  showInFileManager: (path: string) => void,
   openFile: (path: string, isFile: boolean) => void,
   deleteDirectory: (path: string) => void,
   reflectCreateEntry: (path: string, isFile: boolean) => void,
   toggleCreateFileDialog: () => void,
-  loadParentDirectoryContent: () => void,
-  openFileNatively: (path: string) => void,
-  extractContent: (config: Object) => void,
+  // extractContent: (config: Object) => void,
   switchPerspective: (perspectiveId: string) => void,
   perspectiveMode: boolean,
   showNotification: (
@@ -89,11 +85,6 @@ const DirectoryMenu = (props: Props) => {
     props.loadDirectoryContent(props.directoryPath);
   }
 
-  function openParentDirectory() {
-    props.onClose();
-    props.loadParentDirectoryContent();
-  }
-
   function openDirectory() {
     props.onClose();
     props.loadDirectoryContent(props.directoryPath);
@@ -104,10 +95,10 @@ const DirectoryMenu = (props: Props) => {
     props.openFile(props.directoryPath, false);
   }
 
-  function initContentExtraction() {
-    props.onClose();
-    props.extractContent({ EXIFGeo: true });
-  }
+  // function initContentExtraction() {
+  //   props.onClose();
+  //   props.extractContent({ EXIFGeo: true });
+  // }
 
   function switchPerspective(perspectiveId) {
     props.onClose();
@@ -189,13 +180,13 @@ const DirectoryMenu = (props: Props) => {
       });
   }
 
-  function loadImageLocal() {
-    props.onClose();
-    navigator.camera.getPicture(onCameraSuccess, onFail, {
-      destinationType: Camera.DestinationType.FILE_URI,
-      sourceType: Camera.PictureSourceType.PHOTOLIBRARY
-    });
-  }
+  // function loadImageLocal() {
+  //   props.onClose();
+  //   navigator.camera.getPicture(onCameraSuccess, onFail, {
+  //     destinationType: Camera.DestinationType.FILE_URI,
+  //     sourceType: Camera.PictureSourceType.PHOTOLIBRARY
+  //   });
+  // }
 
   function cameraTakePicture() {
     props.onClose();
@@ -319,17 +310,6 @@ const DirectoryMenu = (props: Props) => {
             <ListItemText primary={i18n.t('core:openDirectory')} />
           </MenuItem>
         )}
-        {/* {!props.perspectiveMode && (
-          <MenuItem
-            data-tid="openParentDirectory"
-            onClick={openParentDirectory}
-          >
-            <ListItemIcon>
-              <OpenFolderIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:openParentDirectory')} />
-          </MenuItem>
-        )} */}
         {!props.perspectiveMode && (
           <MenuItem data-tid="reloadDirectory" onClick={reloadDirectory}>
             <ListItemIcon>
