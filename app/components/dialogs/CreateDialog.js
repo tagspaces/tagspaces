@@ -21,9 +21,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Button from '@material-ui/core/Button';
+import NewFileIcon from '@material-ui/icons/AddCircle';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import GenericDialog from './GenericDialog';
 import i18n from '../../services/i18n';
@@ -36,21 +38,58 @@ import { formatDateTime4Tag } from '../../utils/misc';
 
 const styles = theme => ({
   root: {
-    minWidth: 350
+    dispatch: 'flex',
+    minWidth: 300,
+    minHeight: 300,
+    overflow: 'hidden',
+    alignSelf: 'center'
   },
+  grid: {
+    flexGrow: 1,
+    width: '100%',
+    height: '100%'
+  },
+  creatButton: {
+    textAlign: 'center'
+  }
 });
 
 type Props = {
   open: boolean,
   classes: Object,
+  selectedDirectoryPath: string | null,
   createFileAdvanced: (targetPath: string, fileName: string, content: string, fileType: string) => void,
   onClose: () => void
 };
 
 const CreateDialog = (props: Props) => {
   let fileInput; // Object | null;
+  const fileName = 'note' + AppConfig.beginTagContainer + formatDateTime4Tag(new Date(), true) + AppConfig.endTagContainer;
+  const fileContent = ''
+  const { classes, selectedDirectoryPath } = props;
 
-  function addExistingFile() {
+  function createRichTextFile() {
+    if (selectedDirectoryPath) {
+      props.createFileAdvanced(selectedDirectoryPath, fileName, fileContent, 'html');
+      props.onClose();
+    }
+  }
+
+  function createTextFile() {
+    if (selectedDirectoryPath) {
+      props.createFileAdvanced(selectedDirectoryPath, fileName, fileContent, 'txt');
+      props.onClose();
+    }
+  }
+
+  function createMarkdownFile() {
+    if (selectedDirectoryPath) {
+      props.createFileAdvanced(selectedDirectoryPath, fileName, fileContent, 'md');
+      props.onClose();
+    }
+  }
+
+  function addFile() {
     props.onClose();
     fileInput.click();
   }
@@ -131,13 +170,54 @@ const CreateDialog = (props: Props) => {
 
   // {i18n.t('core:createFileTitle')}
   function renderTitle() {
-    return (<DialogTitle>Create new content</DialogTitle>);
+    return (<DialogTitle style={{ alignSelf: 'center' }}>Create new content</DialogTitle>);
   }
 
   function renderContent() {
     return (
-      <DialogContent className={props.classes.root} data-tid="keyboardShortCutsDialog">
-        bla
+      <DialogContent className={classes.root} data-tid="keyboardShortCutsDialog">
+        <Grid className={classes.grid} container spacing={1}>
+          <Grid container item xs={12} spacing={3}>
+            <Grid item xs={4}>
+              <Button
+                onClick={createRichTextFile}
+                className={classes.creatButton}
+              >
+                <NewFileIcon /><br /><br /><br />
+                Create Note
+              </Button>
+            </Grid>
+            <Grid item xs={4}>
+              <Button
+                onClick={createTextFile}
+                className={classes.creatButton}
+              >
+                <NewFileIcon /><br />
+                Create Text File
+              </Button>
+            </Grid>
+          </Grid>
+          <Grid container item xs={12} spacing={3}>
+            <Grid item xs={4}>
+              <Button
+                onClick={createMarkdownFile}
+                className={classes.creatButton}
+              >
+                <NewFileIcon /><br />
+                Create Markdown File
+              </Button>
+            </Grid>
+            <Grid item xs={4}>
+              <Button
+                onClick={addFile}
+                className={classes.creatButton}
+              >
+                <NewFileIcon /><br />
+                Add file
+              </Button>
+            </Grid>
+          </Grid>
+        </Grid>
         <input
           style={{ display: 'none' }}
           ref={input => {
@@ -153,13 +233,13 @@ const CreateDialog = (props: Props) => {
 
   function renderActions() {
     return (
-      <DialogActions>
+      <DialogActions style={{ alignSelf: 'center' }}>
         <Button
           data-tid="closeKeyboardDialog"
           onClick={props.onClose}
           color="primary"
         >
-          {i18n.t('core:ok')}
+          {i18n.t('core:close')}
         </Button>
       </DialogActions>
     );
@@ -171,7 +251,7 @@ const CreateDialog = (props: Props) => {
       onClose={props.onClose}
       renderTitle={renderTitle}
       renderContent={renderContent}
-    // renderActions={renderActions}
+      renderActions={renderActions}
     />
   );
 };
