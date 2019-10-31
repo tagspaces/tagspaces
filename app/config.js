@@ -68,7 +68,10 @@ export default {
   },
   documentationLinks: {
     general: 'https://docs.tagspaces.org/',
-    defaultPerspective: 'https://docs.tagspaces.org/browsing-files.html#default-perspective',
+    defaultPerspective: 'https://docs.tagspaces.org/perspectives/grid',
+    mapiquePerspective: 'https://docs.tagspaces.org/perspectives/mapique',
+    treevizPerspective: 'https://docs.tagspaces.org/perspectives/treeviz',
+    galleryPerspective: 'https://docs.tagspaces.org/perspectives/gallery',
     locations: 'https://docs.tagspaces.org/ui/locations',
     taglibrary: 'https://docs.tagspaces.org/ui/taglibrary',
     search: 'https://docs.tagspaces.org/search',
