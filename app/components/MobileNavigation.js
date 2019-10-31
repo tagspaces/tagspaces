@@ -20,10 +20,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import classNames from 'classnames';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import IconButton from '@material-ui/core/IconButton';
-import NewFileIcon from '@material-ui/icons/Add';
+import NewFileIcon from '@material-ui/icons/AddCircle';
 import LocationsIcon from '@material-ui/icons/WorkOutline';
 import TagLibraryIcon from '@material-ui/icons/LocalOfferOutlined';
 import SearchIcon from '@material-ui/icons/SearchOutlined';
@@ -32,7 +33,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 // import ThemingIcon from '@material-ui/icons/InvertColors';
 // import UpgradeIcon from '@material-ui/icons/FlightTakeoff';
 // import HelpIcon from '@material-ui/icons/HelpOutline';
-import { withTheme } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 // import LogoIcon from '../assets/images/icon100x100.svg';
 import TagLibrary from '../components/TagLibrary';
 import Search from '../components/Search';
@@ -52,17 +53,24 @@ import {
   isReadOnlyMode,
 } from '../reducers/app';
 import { actions as SettingsActions, isFirstRun } from '../reducers/settings';
-// import LoadingLazy from './LoadingLazy';
 
-// const ProTeaserDialog = React.lazy(() => import(/* webpackChunkName: "ProTeaserDialog" */ './dialogs/ProTeaserDialog'));
-// const ProTeaserDialogAsync = props => (
-//   <React.Suspense fallback={<LoadingLazy />}>
-//     <ProTeaserDialog {...props} />
-//   </React.Suspense>
-// );
+const styles = theme => ({
+  bottomToolbar: {
+    textAlign: 'center',
+    backgroundColor: theme.palette.background.default
+  },
+  buttonIcon: {
+    color: '#d6d6d6' // theme.palette.text.primary
+  },
+  button: {
+  },
+  selectedButton: {
+    backgroundColor: '#880E4F'
+  },
+});
 
 type Props = {
-  theme: Object,
+  classes: Object,
   isFirstRun: boolean,
   setFirstRun: (isFirstRun: boolean) => void,
   toggleOnboardingDialog: () => void,
@@ -99,27 +107,13 @@ class MobileNavigation extends React.Component<Props, State> {
     isProTeaserVisible: false
   };
 
-  styles = {
-    bottomToolbar: {
-      textAlign: 'center',
-      backgroundColor: this.props.theme.palette.background.default
-    },
-    buttonIcon: {
-      color: '#d6d6d6' // this.props.theme.palette.text.primary
-    },
-    button: {
-    },
-    selectedButton: {
-      backgroundColor: '#880E4F'
-    },
-  };
-
   toggleProTeaser = () => {
     this.setState({ isProTeaserVisible: !this.state.isProTeaserVisible });
   }
 
   render() {
     const {
+      classes,
       isFirstRun,
       isLocationManagerPanelOpened,
       isTagLibraryPanelOpened,
@@ -154,76 +148,18 @@ class MobileNavigation extends React.Component<Props, State> {
         </style>
         <div style={{ width: 300, maxWidth: 300, height: 'calc(100% - 60px)' }}>
           <LocationManager style={{ display: isLocationManagerPanelOpened ? 'block' : 'none' }} />
-          { isTagLibraryPanelOpened && <TagLibrary /> }
+          {isTagLibraryPanelOpened && <TagLibrary />}
           <Search style={{ display: isSearchPanelOpened ? 'block' : 'none' }} />
-          { isPerspectivesPanelOpened && <PerspectiveManager /> }
-          { isHelpFeedbackPanelOpened && <HelpFeedbackPanel
+          {isPerspectivesPanelOpened && <PerspectiveManager />}
+          {isHelpFeedbackPanelOpened && <HelpFeedbackPanel
             openFileNatively={openFileNatively}
             openURLExternally={openURLExternally}
             toggleKeysDialog={toggleKeysDialog}
             toggleOnboardingDialog={toggleOnboardingDialog}
             toggleProTeaser={this.toggleProTeaser}
-          /> }
+          />}
         </div>
-        <div style={this.styles.bottomToolbar}>
-          { !isReadOnlyMode && (
-            <IconButton
-              id="verticalNavButton"
-              onClick={() => {
-                toggleCreateFileDialog();
-                toggleDrawer();
-              }}
-              style={{ marginTop: -15, marginRight: 10 }}
-              title={i18n.t('core:createFileTitle')}
-              data-tid="locationManager"
-            >
-              <NewFileIcon style={this.styles.buttonIcon} />
-            </IconButton>
-          )}
-          <ToggleButtonGroup
-            exclusive
-            // style={{ boxShadow: 'none' }}
-          >
-            <ToggleButton
-              id="verticalNavButton"
-              onClick={openLocationManagerPanel}
-              style={
-                isLocationManagerPanelOpened
-                  ? { ...this.styles.button, ...this.styles.selectedButton }
-                  : this.styles.button
-              }
-              title={i18n.t('core:locationManager')}
-              data-tid="locationManager"
-            >
-              <LocationsIcon style={this.styles.buttonIcon} />
-            </ToggleButton>
-            <ToggleButton
-              id="verticalNavButton"
-              title={i18n.t('core:tagGroupOperations')}
-              data-tid="tagLibrary"
-              onClick={openTagLibraryPanel}
-              style={
-                isTagLibraryPanelOpened
-                  ? { ...this.styles.button, ...this.styles.selectedButton }
-                  : this.styles.button
-              }
-            >
-              <TagLibraryIcon style={this.styles.buttonIcon} />
-            </ToggleButton>
-            <ToggleButton
-              id="verticalNavButton"
-              title={i18n.t('core:searchTitle')}
-              data-tid="search"
-              onClick={openSearchPanel}
-              style={
-                isSearchPanelOpened
-                  ? { ...this.styles.button, ...this.styles.selectedButton }
-                  : this.styles.button
-              }
-            >
-              <SearchIcon style={this.styles.buttonIcon} />
-            </ToggleButton>
-          </ToggleButtonGroup>
+        <div className={classes.bottomToolbar}>
           <IconButton
             id="verticalNavButton"
             title={i18n.t('core:settings')}
@@ -232,10 +168,65 @@ class MobileNavigation extends React.Component<Props, State> {
               toggleSettingsDialog();
               toggleDrawer();
             }}
-            style={{ marginTop: -15, marginLeft: 10 }}
+            style={{ marginTop: -15, marginRight: 10 }}
           >
-            <SettingsIcon style={this.styles.buttonIcon} />
+            <SettingsIcon className={classes.buttonIcon} />
           </IconButton>
+          <ToggleButtonGroup exclusive>
+            <ToggleButton
+              id="verticalNavButton"
+              onClick={openLocationManagerPanel}
+              className={
+                isLocationManagerPanelOpened
+                  ? classNames(classes.button, classes.selectedButton)
+                  : classes.button
+              }
+              title={i18n.t('core:locationManager')}
+              data-tid="locationManager"
+            >
+              <LocationsIcon className={classes.buttonIcon} />
+            </ToggleButton>
+            <ToggleButton
+              id="verticalNavButton"
+              title={i18n.t('core:tagGroupOperations')}
+              data-tid="tagLibrary"
+              onClick={openTagLibraryPanel}
+              className={
+                isTagLibraryPanelOpened
+                  ? classNames(classes.button, classes.selectedButton)
+                  : classes.button
+              }
+            >
+              <TagLibraryIcon className={classes.buttonIcon} />
+            </ToggleButton>
+            <ToggleButton
+              id="verticalNavButton"
+              title={i18n.t('core:searchTitle')}
+              data-tid="search"
+              onClick={openSearchPanel}
+              className={
+                isSearchPanelOpened
+                  ? classNames(classes.button, classes.selectedButton)
+                  : classes.button
+              }
+            >
+              <SearchIcon className={classes.buttonIcon} />
+            </ToggleButton>
+          </ToggleButtonGroup>
+          {!isReadOnlyMode && (
+            <IconButton
+              id="verticalNavButton"
+              onClick={() => {
+                toggleCreateFileDialog();
+                toggleDrawer();
+              }}
+              style={{ marginTop: -15, marginLeft: 10 }}
+              title={i18n.t('core:createFileTitle')}
+              data-tid="locationManager"
+            >
+              <NewFileIcon color="primary" />
+            </IconButton>
+          )}
         </div>
       </div>
     );
@@ -281,4 +272,4 @@ function mapActionCreatorsToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
-)(withTheme(MobileNavigation));
+)(withStyles(styles)(MobileNavigation));
