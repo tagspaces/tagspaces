@@ -193,7 +193,8 @@ type Props = {
   tagSearchType: string,
   handleChange: () => void,
   allTags: Array<Tag>,
-  isReadOnlyMode?: boolean
+  isReadOnlyMode?: boolean,
+  placeholderText: string
 };
 
 const TagsSelect = (props: Props) => {
@@ -228,7 +229,8 @@ const TagsSelect = (props: Props) => {
     tags,
     defaultBackgroundColor,
     defaultTextColor,
-    isReadOnlyMode = false
+    isReadOnlyMode = false,
+    placeholderText = ''
   } = props;
 
   const selectStyles = {
@@ -269,7 +271,7 @@ const TagsSelect = (props: Props) => {
         }} */
           value={tags}
           onChange={handleChange}
-          placeholder={i18n.t('core:dropHere')}
+          placeholder={placeholderText}
           isMulti
           formatCreateLabel={(label) => label}
         // isSearchable

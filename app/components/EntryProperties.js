@@ -604,7 +604,7 @@ class EntryProperties extends Component<Props, State> {
               <div className="grid-item" />
             </div>
             <TagDropContainer entryPath={path}>
-              <TagsSelect isReadOnlyMode={isReadOnlyMode} tags={tags} handleChange={this.handleChange} />
+              <TagsSelect placeholderText={i18n.t('core:dropHere')} isReadOnlyMode={isReadOnlyMode} tags={tags} handleChange={this.handleChange} />
             </TagDropContainer>
           </div>
 
@@ -657,12 +657,12 @@ class EntryProperties extends Component<Props, State> {
                 />
               ) : (
                 <Typography
-                  style={{ 
+                  style={{
                     display: 'block',
-                    padding: 2, 
-                    marginBottom: 5 
+                    padding: 2,
+                    marginBottom: 5
                   }}
-                  className={classes.field}                  
+                  className={classes.field}
                   role="button"
                   id="descriptionArea"
                   // placeholder={Pro ? 'Click to add description' : i18n.t('core:addDescription')}

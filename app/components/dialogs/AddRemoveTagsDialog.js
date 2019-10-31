@@ -116,7 +116,7 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
         )}
         renderContent={() => (
           <DialogContent style={{ minHeight: 330 }}>
-            <TagsSelect tags={newlyAddedTags} handleChange={this.handleChange} />
+            <TagsSelect placeholderText={i18n.t('core:selectTags')} tags={newlyAddedTags} handleChange={this.handleChange} />
             <List dense style={{ width: 550 }}>
               {selectedEntries.length > 0 && selectedEntries.map((entry) => (
                 <ListItem title={entry.path}>

@@ -319,7 +319,7 @@ class Search extends React.Component<Props, State> {
             className={classes.formControl}
             disabled={indexing}
           >
-            <TagsSelect tags={this.state.tagsAND} handleChange={this.handleTagFieldChange} tagSearchType={'tagsAND'} />
+            <TagsSelect placeholderText={i18n.t('core:selectTags')} tags={this.state.tagsAND} handleChange={this.handleTagFieldChange} tagSearchType={'tagsAND'} />
           </FormControl>
           <Typography variant="caption" className={classes.header} style={{ marginTop: 10 }}>
             {i18n.t('core:atLeastOneOfTheseTags')}
@@ -328,7 +328,7 @@ class Search extends React.Component<Props, State> {
             className={classes.formControl}
             disabled={indexing}
           >
-            <TagsSelect tags={this.state.tagsOR} handleChange={this.handleTagFieldChange} tagSearchType={'tagsOR'} />
+            <TagsSelect placeholderText={i18n.t('core:selectTags')} tags={this.state.tagsOR} handleChange={this.handleTagFieldChange} tagSearchType={'tagsOR'} />
           </FormControl>
           <Typography variant="caption" className={classes.header} style={{ marginTop: 10 }}>
             {i18n.t('core:noneOfTheseTags')}
@@ -337,7 +337,7 @@ class Search extends React.Component<Props, State> {
             className={classes.formControl}
             disabled={indexing}
           >
-            <TagsSelect tags={this.state.tagsNOT} handleChange={this.handleTagFieldChange} tagSearchType={'tagsNOT'} />
+            <TagsSelect placeholderText={i18n.t('core:selectTags')} tags={this.state.tagsNOT} handleChange={this.handleTagFieldChange} tagSearchType={'tagsNOT'} />
           </FormControl>
           <FormControl
             className={classes.formControl}
