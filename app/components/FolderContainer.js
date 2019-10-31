@@ -188,7 +188,7 @@ type Props = {
   isDesktopMode: boolean,
   showNotification: (content: string) => void,
   openSearchPanel: () => void,
-  toggleDrawer: () => void,
+  showDrawer: () => void,
   maxSearchResults: number
 };
 
@@ -424,7 +424,7 @@ class FolderContainer extends React.Component<Props, State> {
       classes,
       maxSearchResults,
       openSearchPanel,
-      toggleDrawer,
+      showDrawer,
       isDesktopMode,
       loadParentDirectoryContent
     } = this.props;
@@ -441,7 +441,7 @@ class FolderContainer extends React.Component<Props, State> {
               {isDesktopMode ? (
                 <LocationMenu />
               ) : (
-                <Button style={{ marginLeft: -8 }} onClick={toggleDrawer}>
+                <Button style={{ marginLeft: -8 }} onClick={showDrawer}>
                   <MenuIcon />
                 </Button>
               )}

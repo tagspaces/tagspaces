@@ -38,7 +38,7 @@ import FolderContainer from '../components/FolderContainer';
 import EntryContainer from '../components/EntryContainer';
 import SettingsDialog from '../components/dialogs/settings/SettingsDialog';
 import CreateDirectoryDialog from '../components/dialogs/CreateDirectoryDialog';
-import CreateFileDialog from '../components/dialogs/CreateFileDialog';
+import CreateFileDialog from '../components/dialogs/CreateDialog';
 import {
   getDesktopMode,
   getKeyBindingObject,
@@ -258,7 +258,7 @@ const SelectDirectoryAsync = props => (
 
 type State = {
   selectedDirectoryPath: string,
-  isManagementPanelVisible: boolean, // optionality because of https://github.com/codemix/flow-runtime/issues/149
+  isManagementPanelVisible: boolean,
   mainSplitSize: any,
   isDrawerOpened: boolean,
   width: number,
@@ -327,6 +327,7 @@ class MainPage extends Component<Props, State> {
       nextProps.isPerspectivesPanelOpened ||
       nextProps.isHelpFeedbackPanelOpened) {
       this.setManagementPanelVisibility(true);
+      this.showDrawer();
     }
 
     if (!nextProps.isLocationManagerPanelOpened &&
@@ -371,12 +372,30 @@ class MainPage extends Component<Props, State> {
 
   setManagementPanelVisibility = isVisible => {
     this.setState({
-      isManagementPanelVisible: isVisible
+      isManagementPanelVisible: isVisible,
+    });
+  };
+
+  hideDrawer = () => {
+    this.props.closeAllVerticalPanels();
+    this.setState({
+      isDrawerOpened: false
+    });
+  };
+
+  showDrawer = () => {
+    if (!this.props.isLocationManagerPanelOpened && !this.props.isSearchPanelOpened && !this.props.isTagLibraryPanelOpened) {
+      this.props.openLocationManagerPanel();
+    }
+    this.setState({
+      isDrawerOpened: true
     });
   };
 
   toggleDrawer = () => {
-    this.setState({ isDrawerOpened: !this.state.isDrawerOpened });
+    this.setState({
+      isDrawerOpened: !this.state.isDrawerOpened,
+    });
   };
 
   skipRelease = () => {
@@ -492,13 +511,6 @@ class MainPage extends Component<Props, State> {
       selectedDirectoryPath: currentPath
     });
   };
-
-  toggleDrawer = () => {
-    this.setState({
-      isDrawerOpened: !this.state.isDrawerOpened
-    });
-  };
-
 
   keyBindingHandlers = {
     toggleShowHiddenEntries: this.props.toggleShowUnixHiddenEntries,
@@ -730,13 +742,13 @@ class MainPage extends Component<Props, State> {
           <React.Fragment>
             <SwipeableDrawer
               open={this.state.isDrawerOpened}
-              onClose={this.toggleDrawer}
-              onOpen={this.toggleDrawer}
+              onClose={this.hideDrawer}
+              onOpen={this.showDrawer}
               hysteresis={0.20}
               disableBackdropTransition={!AppConfig.isIOS}
               disableDiscovery={AppConfig.isIOS}
             >
-              <MobileNavigation toggleDrawer={this.toggleDrawer} />
+              <MobileNavigation hideDrawer={this.hideDrawer} />
             </SwipeableDrawer>
             <SplitPane
               split="vertical"
@@ -757,7 +769,7 @@ class MainPage extends Component<Props, State> {
               <FolderContainer
                 windowHeight={this.state.height}
                 windowWidth={this.state.width}
-                toggleDrawer={this.toggleDrawer}
+                showDrawer={this.showDrawer}
               />
               <EntryContainer />
             </SplitPane>

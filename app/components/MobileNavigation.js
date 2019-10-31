@@ -93,7 +93,7 @@ type Props = {
   openFileNatively: (url: string) => void,
   openURLExternally: (url: string) => void,
   switchTheme: () => void,
-  toggleDrawer: () => void,
+  hideDrawer: () => void,
   isReadOnlyMode: boolean
 };
 
@@ -133,7 +133,7 @@ class MobileNavigation extends React.Component<Props, State> {
       openHelpFeedbackPanel,
       closeAllVerticalPanels,
       switchTheme,
-      toggleDrawer,
+      hideDrawer,
       openFileNatively,
       openURLExternally,
     } = this.props;
@@ -147,9 +147,9 @@ class MobileNavigation extends React.Component<Props, State> {
           `}
         </style>
         <div style={{ width: 300, maxWidth: 300, height: 'calc(100% - 60px)' }}>
-          <LocationManager style={{ display: isLocationManagerPanelOpened ? 'block' : 'none' }} />
+          <LocationManager hideDrawer={hideDrawer} style={{ display: isLocationManagerPanelOpened ? 'block' : 'none' }} />
           {isTagLibraryPanelOpened && <TagLibrary />}
-          <Search style={{ display: isSearchPanelOpened ? 'block' : 'none' }} />
+          <Search hideDrawer={hideDrawer} style={{ display: isSearchPanelOpened ? 'block' : 'none' }} />
           {isPerspectivesPanelOpened && <PerspectiveManager />}
           {isHelpFeedbackPanelOpened && <HelpFeedbackPanel
             openFileNatively={openFileNatively}
@@ -166,7 +166,7 @@ class MobileNavigation extends React.Component<Props, State> {
             data-tid="settings"
             onClick={() => {
               toggleSettingsDialog();
-              toggleDrawer();
+              hideDrawer();
             }}
             style={{ marginTop: -15, marginRight: 10 }}
           >
@@ -218,7 +218,7 @@ class MobileNavigation extends React.Component<Props, State> {
               id="verticalNavButton"
               onClick={() => {
                 toggleCreateFileDialog();
-                toggleDrawer();
+                hideDrawer();
               }}
               style={{ marginTop: -15, marginLeft: 10 }}
               title={i18n.t('core:createFileTitle')}

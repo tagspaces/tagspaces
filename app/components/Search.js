@@ -74,6 +74,7 @@ type Props = {
   style: Object,
   searchLocationIndex: (searchQuery: SearchQuery) => void,
   loadDirectoryContent: (path: string) => void,
+  hideDrawer?: () => void,
   currentDirectory: string,
   indexedEntriesCount: number,
   maxSearchResults: number,
@@ -251,6 +252,9 @@ class Search extends React.Component<Props, State> {
     };
     console.log('Search object: ' + JSON.stringify(searchQuery));
     this.props.searchLocationIndex(searchQuery);
+    if (this.props.hideDrawer) {
+      this.props.hideDrawer();
+    }
   };
 
   render() {

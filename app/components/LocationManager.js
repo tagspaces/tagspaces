@@ -79,6 +79,7 @@ type Props = {
   perspectives: Array<Object>,
   currentLocationId: string,
   isReadOnlyMode: boolean,
+  hideDrawer?: () => void,
   loadDirectoryContent: (path: string) => void,
   openLocation: (location: Location) => void,
   openFileNatively: (path: string) => void,
@@ -236,7 +237,7 @@ class LocationManager extends React.Component<Props, State> {
       .catch(error => {
         console.log('getDirectoriesTree', error);
       })
-  ;
+    ;
 
   /**
    * https://codereview.stackexchange.com/questions/47932/recursion-vs-iteration-of-tree-structure
@@ -455,6 +456,9 @@ class LocationManager extends React.Component<Props, State> {
       this.loadSubDirectories(location, 1);
       this.props.openLocation(location);
       this.state.locationRootPath = location.paths[0];
+      if (this.props.hideDrawer) {
+        this.props.hideDrawer();
+      }
     }
 
     // const grid = document.querySelector('[data-tid="perspectiveGridFileTable"]');
@@ -551,7 +555,7 @@ class LocationManager extends React.Component<Props, State> {
         <TargetMoveFileBox accepts={[DragItemTypes.FILE]} onDrop={this.handleFileMoveDrop} >{props.children}</TargetMoveFileBox>
       </td>
     )
-  ;
+    ;
 
   // <Tooltip id="tooltip-icon" title={i18n.t('core:moreOperations')} placement="bottom"></Tooltip>
   renderLocation = (location: Location) => {
@@ -581,11 +585,11 @@ class LocationManager extends React.Component<Props, State> {
         columns={columns}
         // expandedRowRender={this.expandedRowRender}
         onExpand={this.onExpand}
-        // expandIcon={this.CustomExpandIcon}
-        // expandIconAsCell
-        /* onRow={(record, index) => ({
-          onClick: this.onRowClick.bind(null, record, index),
-        })} */
+      // expandIcon={this.CustomExpandIcon}
+      // expandIconAsCell
+      /* onRow={(record, index) => ({
+        onClick: this.onRowClick.bind(null, record, index),
+      })} */
       />);
     }
     return (
@@ -609,7 +613,7 @@ class LocationManager extends React.Component<Props, State> {
             // }}
             style={{ minWidth: 'auto' }}
           >
-            { location.type === locationType.TYPE_CLOUD ?
+            {location.type === locationType.TYPE_CLOUD ?
               (<CloudLocationIcon className={this.props.classes.icon} />) :
               (<LocationIcon className={this.props.classes.icon} />)
             }
@@ -625,7 +629,7 @@ class LocationManager extends React.Component<Props, State> {
               {location.name}
             </Typography>
           </div>
-          { !isLocationsReadOnly && (
+          {!isLocationsReadOnly && (
             <ListItemSecondaryAction>
               <IconButton
                 aria-label={i18n.t('core:options')}
@@ -658,7 +662,7 @@ class LocationManager extends React.Component<Props, State> {
             {i18n.t('core:locationManager')}
           </Typography>
         </div>
-        { !isLocationsReadOnly && (
+        {!isLocationsReadOnly && (
           <div style={{ width: '100%', textAlign: 'center', marginBottom: 10 }}>
             <Button
               data-tid="createNewLocation"
@@ -740,7 +744,7 @@ class LocationManager extends React.Component<Props, State> {
               </ListItemIcon>
               <ListItemText primary={i18n.t('core:editLocationTitle')} />
             </MenuItem>
-            { this.state.selectedLocation && this.props.currentLocationId === this.state.selectedLocation.uuid && (
+            {this.state.selectedLocation && this.props.currentLocationId === this.state.selectedLocation.uuid && (
               <MenuItem
                 data-tid="indexLocation"
                 onClick={this.indexLocation}
