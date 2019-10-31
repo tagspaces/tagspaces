@@ -157,7 +157,7 @@ const styles = theme => ({
     right: 0,
     backgroundColor: theme.palette.background.default,
     boxShadow: '-15px 0px 24px 3px ' + theme.palette.background.default
-  }  
+  }
 });
 
 type Props = {
@@ -239,13 +239,8 @@ class EntryContainer extends React.Component<Props, State> {
     });
     if (AppConfig.isElectron) {
       if (this.fileViewer) {
-        this.fileViewer.addEventListener('console-message', e => {
-          console.log('Ext. Logging >>> ', e.message);
-        });
-
-        this.fileViewer.addEventListener('ipc-message', event => {
-          this.handleMessage(JSON.stringify(event.channel));
-        });
+        this.fileViewer.addEventListener('console-message', this.logEventsFromExtensions);
+        this.fileViewer.addEventListener('ipc-message', this.handleMessageProxy);
       }
     } else {
       window.addEventListener(
@@ -274,11 +269,7 @@ class EntryContainer extends React.Component<Props, State> {
       if (nextProps.isReadOnlyMode) {
         this.setState({ editingSupported: false });
       } else {
-        if (nextEntry.editingExtensionId && nextEntry.editingExtensionId.length > 3) {
-          this.setState({ editingSupported: true });
-        } else {
-          this.setState({ editingSupported: false });
-        }
+        this.setState({ editingSupported: (nextEntry.editingExtensionId && nextEntry.editingExtensionId.length > 3) });
       }
 
       const { settings } = nextProps;
@@ -333,9 +324,9 @@ class EntryContainer extends React.Component<Props, State> {
 
   componentWillUnmount() {
     if (AppConfig.isElectron) {
-      if (this.fileViewer) {
-        this.fileViewer.removeEventListener('console-message');
-        this.fileViewer.removeEventListener('ipc-message');
+      if (this.fileViewer && this.fileViewer.removeEventListener) {
+        this.fileViewer.removeEventListener('console-message', this.logEventsFromExtensions);
+        this.fileViewer.removeEventListener('ipc-message', this.handleMessageProxy);
       }
     } else {
       window.removeEventListener('message', this.handleMessage);
@@ -345,6 +336,14 @@ class EntryContainer extends React.Component<Props, State> {
   fileViewer;
   fileViewerContainer;
   isPropertiesEditMode = false;
+
+  logEventsFromExtensions = (event) => {
+    console.log('Ext. Logging >>> ', event.message);
+  }
+
+  handleMessageProxy = (event) => {
+    this.handleMessage(JSON.stringify(event.channel));
+  }
 
   handleMessage = (msg: Object | string) => {
     let data;
@@ -760,7 +759,7 @@ class EntryContainer extends React.Component<Props, State> {
           onClick={this.reloadDocument}
         >
           <RefreshIcon />
-        </IconButton>        
+        </IconButton>
       </div>
       <div className={classes.entryNavigationSection} >
         <IconButton
@@ -1035,7 +1034,7 @@ class EntryContainer extends React.Component<Props, State> {
                         {extractFileExtension(currentEntry.path)}
                       </div>
                       {currentEntry.changed ? String.fromCharCode(0x25cf) + ' ' : ''}
-                      {fileTitle}                      
+                      {fileTitle}
                     </Button>
                   ) : (
                     <Button
