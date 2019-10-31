@@ -87,3 +87,4 @@ reports/*
 tests/*
 
 builds/*
+web/sw-config.js
