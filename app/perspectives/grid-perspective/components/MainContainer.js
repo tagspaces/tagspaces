@@ -448,15 +448,29 @@ class GridPerspective extends React.Component<Props, State> {
   };
 
   handleGridContextMenu = (event, fsEntry: FileSystemEntry) => {
-    const { selectedEntries } = this.props;
-
+    const { desktopMode, selectedEntries } = this.props;
     if (fsEntry.isFile) {
-      this.props.setSelectedEntries(event.ctrlKey ? [...selectedEntries, fsEntry] : [fsEntry]);
-      this.setState({
-        fileContextMenuOpened: true,
-        fileContextMenuAnchorEl: event.currentTarget,
-        selectedEntryPath: fsEntry.path
-      });
+      if (!desktopMode) {
+        if (
+          selectedEntries &&
+          selectedEntries.some(entry => entry.path === fsEntry.path)
+        ) {
+          this.props.setSelectedEntries(selectedEntries.filter(entry => entry.path !== fsEntry.path)); // deselect selected entry
+          this.setState(this.computeFileOperationsEnabled);
+          // this.props.setLastSelectedEntry(null);
+        } else {
+          this.props.setSelectedEntries([...selectedEntries, fsEntry]);
+          this.setState(this.computeFileOperationsEnabled);
+          // this.props.setLastSelectedEntry(fsEntry.path);
+        }
+      } else {
+        this.props.setSelectedEntries(event.ctrlKey ? [...selectedEntries, fsEntry] : [fsEntry]);
+        this.setState({
+          fileContextMenuOpened: true,
+          fileContextMenuAnchorEl: event.currentTarget,
+          selectedEntryPath: fsEntry.path
+        });
+      }
     } else {
       this.props.setSelectedEntries([fsEntry]);
       this.setState({
