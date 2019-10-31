@@ -18,6 +18,7 @@
  */
 
 import React from 'react';
+import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -35,6 +36,7 @@ import { extractFileName } from '../../utils/paths';
 
 type Props = {
   open: boolean,
+  fullScreen: boolean,
   selectedEntries: Array<Object>,
   onClose: () => void,
   addTags: (paths: Array<string>, tags: Array<Tag>) => void,
@@ -98,6 +100,7 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
       selectedEntries = [],
       removeTags,
       removeAllTags,
+      fullScreen,
       onClose
     } = this.props;
     const { newlyAddedTags = [] } = this.state;
@@ -105,6 +108,7 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
     return (
       <GenericDialog
         open={open}
+        fullScreen={fullScreen}
         onClose={onClose}
         onEnterKey={(event) => onEnterKeyHandler(event, this.addTags)}
         renderTitle={() => (
@@ -185,4 +189,4 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
   }
 }
 
-export default AddRemoveTagsDialog;
+export default withMobileDialog()(AddRemoveTagsDialog);

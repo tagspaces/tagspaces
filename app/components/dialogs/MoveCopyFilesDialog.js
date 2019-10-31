@@ -20,6 +20,7 @@
 import React, { useState, useEffect } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -47,6 +48,7 @@ import { extractFileName } from '../../utils/paths';
 type Props = {
   classes: Object,
   open: boolean,
+  fullScreen: boolean,
   onClose: () => void,
   copyFiles: (files: Array<string>, destination: string) => void,
   moveFiles: (files: Array<string>, destination: string) => void,
@@ -190,6 +192,7 @@ const MoveCopyFilesDialog = (props: Props) => {
     <GenericDialog
       open={props.open}
       onClose={props.onClose}
+      fullScreen={props.fullScreen}
       // onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
       renderTitle={renderTitle}
       renderContent={renderContent}
@@ -205,4 +208,6 @@ function mapActionCreatorsToProps(dispatch) {
   }, dispatch);
 }
 
-export default connect(null, mapActionCreatorsToProps)(MoveCopyFilesDialog);
+export default connect(null, mapActionCreatorsToProps)(
+  withMobileDialog()(MoveCopyFilesDialog)
+);
