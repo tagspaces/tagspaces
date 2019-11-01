@@ -446,7 +446,7 @@ class FolderContainer extends React.Component<Props, State> {
                 </Button>
               )}
               <CounterBadge
-                showZero={false}
+                showZero={true}
                 title={searchResultCounterText}
                 badgeContent={searchResultCount}
                 color="secondary"

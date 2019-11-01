@@ -189,6 +189,13 @@ class Search extends React.Component<Props, State> {
     });
   };
 
+  clickSearchButton = () => {
+    this.executeSearch();
+    if (this.props.hideDrawer) {
+      this.props.hideDrawer();
+    }
+  }
+
   openPlace = () => {
     const { tagPlaceLat, tagPlaceLong } = this.state;
     if (tagPlaceLat && tagPlaceLong) {
@@ -198,6 +205,9 @@ class Search extends React.Component<Props, State> {
 
   startSearch = event => {
     if (event.key === 'Enter' || event.keyCode === 13) {
+      if (this.props.hideDrawer) {
+        this.props.hideDrawer();
+      }
       this.executeSearch();
     }
   };
@@ -252,9 +262,6 @@ class Search extends React.Component<Props, State> {
     };
     console.log('Search object: ' + JSON.stringify(searchQuery));
     this.props.searchLocationIndex(searchQuery);
-    if (this.props.hideDrawer) {
-      this.props.hideDrawer();
-    }
   };
 
   render() {
@@ -572,7 +579,7 @@ class Search extends React.Component<Props, State> {
               variant="outlined"
               size="small"
               color="primary"
-              onClick={this.executeSearch}
+              onClick={this.clickSearchButton}
             >
               {indexing ? 'Search disabled while indexing' : i18n.t('searchTitle')}
             </Button>&nbsp;
