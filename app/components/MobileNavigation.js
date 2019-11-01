@@ -51,6 +51,7 @@ import {
   isPerspectivesPanelOpened,
   isHelpFeedbackPanelOpened,
   isReadOnlyMode,
+  getDirectoryPath
 } from '../reducers/app';
 import { actions as SettingsActions, isFirstRun } from '../reducers/settings';
 
@@ -94,7 +95,9 @@ type Props = {
   openURLExternally: (url: string) => void,
   switchTheme: () => void,
   hideDrawer: () => void,
-  isReadOnlyMode: boolean
+  isReadOnlyMode: boolean,
+  showNotification: (message: string) => void,
+  directoryPath: string
 };
 
 type State = {
@@ -133,9 +136,11 @@ class MobileNavigation extends React.Component<Props, State> {
       openHelpFeedbackPanel,
       closeAllVerticalPanels,
       switchTheme,
+      showNotification,
       hideDrawer,
       openFileNatively,
       openURLExternally,
+      directoryPath
     } = this.props;
     return (
       <div style={{ height: '100%' }}>
@@ -213,20 +218,22 @@ class MobileNavigation extends React.Component<Props, State> {
               <SearchIcon className={classes.buttonIcon} />
             </ToggleButton>
           </ToggleButtonGroup>
-          {!isReadOnlyMode && (
-            <IconButton
-              id="verticalNavButton"
-              onClick={() => {
+          <IconButton
+            id="verticalNavButton"
+            onClick={() => {
+              if (isReadOnlyMode || !directoryPath) {
+                showNotification('You are in read-only mode or there is no opened location');
+              } else {
                 toggleCreateFileDialog();
                 hideDrawer();
-              }}
-              style={{ marginTop: -15, marginLeft: 10 }}
-              title={i18n.t('core:createFileTitle')}
-              data-tid="locationManager"
-            >
-              <NewFileIcon color="primary" />
-            </IconButton>
-          )}
+              }
+            }}
+            style={{ marginTop: -15, marginLeft: 10 }}
+            title={i18n.t('core:createFileTitle')}
+            data-tid="locationManager"
+          >
+            <NewFileIcon color="primary" />
+          </IconButton>
         </div>
       </div>
     );
@@ -242,7 +249,8 @@ function mapStateToProps(state) {
     isSearchPanelOpened: isSearchPanelOpened(state),
     isPerspectivesPanelOpened: isPerspectivesPanelOpened(state),
     isHelpFeedbackPanelOpened: isHelpFeedbackPanelOpened(state),
-    isReadOnlyMode: isReadOnlyMode(state)
+    isReadOnlyMode: isReadOnlyMode(state),
+    directoryPath: getDirectoryPath(state),
   };
 }
 
@@ -261,6 +269,7 @@ function mapActionCreatorsToProps(dispatch) {
       openHelpFeedbackPanel: AppActions.openHelpFeedbackPanel,
       openFileNatively: AppActions.openFileNatively,
       openURLExternally: AppActions.openURLExternally,
+      showNotification: AppActions.showNotification,
       closeAllVerticalPanels: AppActions.closeAllVerticalPanels,
       switchTheme: SettingsActions.switchTheme,
       setFirstRun: SettingsActions.setFirstRun,

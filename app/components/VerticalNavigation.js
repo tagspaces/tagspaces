@@ -66,6 +66,7 @@ const ProTeaserDialogAsync = props => (
 type Props = {
   theme: Object,
   isFirstRun: boolean,
+  directoryPath: string,
   setFirstRun: (isFirstRun: boolean) => void,
   toggleOnboardingDialog: () => void,
   toggleCreateFileDialog: () => void,
@@ -80,14 +81,14 @@ type Props = {
   isSearchPanelOpened: boolean,
   openSearchPanel: () => void,
   isPerspectivesPanelOpened: boolean,
-  openPerspectivesPanel: () => void,
+  // openPerspectivesPanel: () => void,
   isHelpFeedbackPanelOpened: boolean,
   openHelpFeedbackPanel: () => void,
   closeAllVerticalPanels: () => void,
   openFileNatively: (url: string) => void,
   openURLExternally: (url: string) => void,
   switchTheme: () => void,
-  shouldTogglePanel: string,
+  showNotification: (message: string) => void,
   isReadOnlyMode: boolean
 };
 
@@ -163,6 +164,8 @@ class VerticalNavigation extends React.Component<Props, State> {
       switchTheme,
       openFileNatively,
       openURLExternally,
+      showNotification,
+      directoryPath,
       setFirstRun,
       theme
     } = this.props;
@@ -207,17 +210,21 @@ class VerticalNavigation extends React.Component<Props, State> {
                 alt="TagSpaces Logo"
               />
             </IconButton>
-            { !isReadOnlyMode && (
-              <IconButton
-                id="verticalNavButton"
-                onClick={toggleCreateFileDialog}
-                style={{ ...this.styles.button, marginBottom: 20 }}
-                title={i18n.t('core:createFileTitle')}
-                data-tid="locationManager"
-              >
-                <NewFileIcon style={this.styles.buttonIcon} />
-              </IconButton>
-            )}
+            <IconButton
+              id="verticalNavButton"
+              onClick={() => {
+                if (isReadOnlyMode || !directoryPath) {
+                  showNotification('You are in read-only mode or there is no opened location');
+                } else {
+                  toggleCreateFileDialog();
+                }
+              }}
+              style={{ ...this.styles.button, marginBottom: 20 }}
+              title={i18n.t('core:createFileTitle')}
+              data-tid="locationManager"
+            >
+              <NewFileIcon style={this.styles.buttonIcon} />
+            </IconButton>
             <IconButton
               id="verticalNavButton"
               onClick={() => {
@@ -386,7 +393,8 @@ function mapStateToProps(state) {
     isSearchPanelOpened: isSearchPanelOpened(state),
     isPerspectivesPanelOpened: isPerspectivesPanelOpened(state),
     isHelpFeedbackPanelOpened: isHelpFeedbackPanelOpened(state),
-    isReadOnlyMode: isReadOnlyMode(state)
+    isReadOnlyMode: isReadOnlyMode(state),
+    directoryPath: getDirectoryPath(state),
   };
 }
 
@@ -406,6 +414,7 @@ function mapActionCreatorsToProps(dispatch) {
       openFileNatively: AppActions.openFileNatively,
       openURLExternally: AppActions.openURLExternally,
       closeAllVerticalPanels: AppActions.closeAllVerticalPanels,
+      showNotification: AppActions.showNotification,
       switchTheme: SettingsActions.switchTheme,
       setFirstRun: SettingsActions.setFirstRun,
     },

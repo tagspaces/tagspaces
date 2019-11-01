@@ -21,7 +21,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Button from '@material-ui/core/Button';
-import NewFileIcon from '@material-ui/icons/AddCircle';
+import Container from '@material-ui/core/Container';
+import NoteFileIcon from '@material-ui/icons/DescriptionOutlined';
+import TextFileIcon from '@material-ui/icons/InsertDriveFileOutlined';
+import MarkdownFileIcon from '@material-ui/icons/GetAppOutlined';
+import AddFileIcon from '@material-ui/icons/NoteAddOutlined';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -32,16 +36,16 @@ import i18n from '../../services/i18n';
 import { getKeyBindingObject } from '../../reducers/settings';
 import { actions as AppActions } from '../../reducers/app';
 import AppConfig from '../../config';
-import { extractFileName, normalizePath } from '../../utils/paths'; // extractFileExtension
+import { normalizePath } from '../../utils/paths';
 import PlatformIO from '../../services/platform-io';
 import { formatDateTime4Tag } from '../../utils/misc';
 
 const styles = theme => ({
   root: {
     dispatch: 'flex',
-    minWidth: 300,
+    minWidth: 200,
     minHeight: 300,
-    overflow: 'hidden',
+    overflow: 'overlay',
     alignSelf: 'center'
   },
   grid: {
@@ -50,6 +54,7 @@ const styles = theme => ({
     height: '100%'
   },
   creatButton: {
+    minHeight: 150,
     textAlign: 'center'
   }
 });
@@ -57,7 +62,8 @@ const styles = theme => ({
 type Props = {
   open: boolean,
   classes: Object,
-  selectedDirectoryPath: string | null,
+  selectedDirectoryPath: string,
+  showNotification: (message: string) => void,
   createFileAdvanced: (targetPath: string, fileName: string, content: string, fileType: string) => void,
   onClose: () => void
 };
@@ -65,8 +71,24 @@ type Props = {
 const CreateDialog = (props: Props) => {
   let fileInput; // Object | null;
   const fileName = 'note' + AppConfig.beginTagContainer + formatDateTime4Tag(new Date(), true) + AppConfig.endTagContainer;
-  const fileContent = ''
-  const { classes, selectedDirectoryPath } = props;
+  const fileContent = '';
+  const { classes, selectedDirectoryPath, showNotification } = props;
+
+  function handleKeyPress(event: any) {
+    if (event.key === 'n') {
+      event.stopPropagation();
+      createRichTextFile();
+    } else if (event.key === 't') {
+      event.stopPropagation();
+      createTextFile();
+    } else if (event.key === 'm') {
+      event.stopPropagation();
+      createMarkdownFile();
+    } else if (event.key === 'a') {
+      event.stopPropagation();
+      addFile();
+    }
+  }
 
   function createRichTextFile() {
     if (selectedDirectoryPath) {
@@ -116,7 +138,7 @@ const CreateDialog = (props: Props) => {
     // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
     const file = selection.currentTarget.files[0];
     const filePath =
-      normalizePath(props.directoryPath) +
+      normalizePath(selectedDirectoryPath) +
       AppConfig.dirSeparator +
       decodeURIComponent(file.name);
 
@@ -124,7 +146,7 @@ const CreateDialog = (props: Props) => {
     reader.onload = event => {
       PlatformIO.getPropertiesPromise(filePath).then((entryProps) => {
         if (entryProps) {
-          props.showNotification(
+          showNotification(
             'File with the same name already exist, importing skipped!',
             'warning',
             true
@@ -136,7 +158,7 @@ const CreateDialog = (props: Props) => {
             true
           )
             .then(() => {
-              props.showNotification(
+              showNotification(
                 'File ' + filePath + ' successfully imported.',
                 'default',
                 true
@@ -147,7 +169,7 @@ const CreateDialog = (props: Props) => {
             .catch(error => {
               // TODO showAlertDialog("Saving " + filePath + " failed.");
               console.error('Save to file ' + filePath + ' failed ' + error);
-              props.showNotification(
+              showNotification(
                 'Importing file ' + filePath + ' failed.',
                 'error',
                 true
@@ -177,45 +199,43 @@ const CreateDialog = (props: Props) => {
     return (
       <DialogContent className={classes.root} data-tid="keyboardShortCutsDialog">
         <Grid className={classes.grid} container spacing={1}>
-          <Grid container item xs={12} spacing={3}>
-            <Grid item xs={4}>
-              <Button
-                onClick={createRichTextFile}
-                className={classes.creatButton}
-              >
-                <NewFileIcon /><br /><br /><br />
-                Create Note
-              </Button>
-            </Grid>
-            <Grid item xs={4}>
-              <Button
-                onClick={createTextFile}
-                className={classes.creatButton}
-              >
-                <NewFileIcon /><br />
-                Create Text File
-              </Button>
-            </Grid>
+          <Grid item xs>
+            <Button
+              onClick={createRichTextFile}
+              className={classes.creatButton}
+            >
+              <div><NoteFileIcon /></div>
+              <div><Container>Create Note</Container></div>
+            </Button>
           </Grid>
-          <Grid container item xs={12} spacing={3}>
-            <Grid item xs={4}>
-              <Button
-                onClick={createMarkdownFile}
-                className={classes.creatButton}
-              >
-                <NewFileIcon /><br />
-                Create Markdown File
-              </Button>
-            </Grid>
-            <Grid item xs={4}>
-              <Button
-                onClick={addFile}
-                className={classes.creatButton}
-              >
-                <NewFileIcon /><br />
-                Add file
-              </Button>
-            </Grid>
+          <Grid item xs>
+            <Button
+              onClick={createTextFile}
+              className={classes.creatButton}
+            >
+              <TextFileIcon />
+              <Container>Create Text File</Container>
+            </Button>
+          </Grid>
+        </Grid>
+        <Grid className={classes.grid} container spacing={1}>
+          <Grid item xs>
+            <Button
+              onClick={createMarkdownFile}
+              className={classes.creatButton}
+            >
+              <MarkdownFileIcon />
+              <Container>Create Markdown File</Container>
+            </Button>
+          </Grid>
+          <Grid item xs>
+            <Button
+              onClick={addFile}
+              className={classes.creatButton}
+            >
+              <AddFileIcon />
+              <Container>Add file</Container>
+            </Button>
           </Grid>
         </Grid>
         <input
@@ -247,6 +267,7 @@ const CreateDialog = (props: Props) => {
 
   return (
     <GenericDialog
+      onKeyDown={handleKeyPress}
       open={props.open}
       onClose={props.onClose}
       renderTitle={renderTitle}
@@ -265,6 +286,7 @@ function mapStateToProps(state) {
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators({
     createFileAdvanced: AppActions.createFileAdvanced,
+    showNotification: AppActions.showNotification,
   }, dispatch);
 }
 
