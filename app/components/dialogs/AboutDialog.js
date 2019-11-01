@@ -105,7 +105,11 @@ const AboutDialog = (props: Props) => {
         <Typography id="aboutContent" variant="body1">
           <strong>{productName}</strong> is made possible by the
           TagSpaces(github.com/tagspaces) open source project and other{' '}
-          <Button onClick={props.toggleThirdPartyLibsDialog}>
+          <Button
+            size="small"
+            color="primary"
+            onClick={props.toggleThirdPartyLibsDialog}
+          >
             open source software
           </Button>
           .
@@ -125,6 +129,8 @@ const AboutDialog = (props: Props) => {
           <br />
           <br />
           <Button
+            size="small"
+            color="primary"
             onClick={() => {
               PlatformIO.openUrl(AppConfig.links.imprintURL);
             }}
@@ -132,6 +138,8 @@ const AboutDialog = (props: Props) => {
             Imprint
           </Button>
           <Button
+            size="small"
+            color="primary"
             onClick={() => {
               PlatformIO.openUrl(AppConfig.links.privacyURL);
             }}
@@ -139,6 +147,8 @@ const AboutDialog = (props: Props) => {
             Privacy Policy
           </Button>
           <Button
+            size="small"
+            color="primary"
             onClick={() => {
               PlatformIO.openUrl(AppConfig.links.changelogURL);
             }}
@@ -146,6 +156,8 @@ const AboutDialog = (props: Props) => {
             Changelog
           </Button>
           <Button
+            size="small"
+            color="primary"
             data-tid="openLicenseDialog"
             onClick={props.toggleLicenseDialog}
           >
