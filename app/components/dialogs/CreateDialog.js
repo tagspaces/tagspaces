@@ -54,7 +54,7 @@ const styles = theme => ({
     height: '100%'
   },
   creatButton: {
-    minHeight: 150,
+    minHeight: 100,
     textAlign: 'center'
   }
 });
