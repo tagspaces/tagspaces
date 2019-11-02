@@ -402,13 +402,13 @@ const DirectoryMenu = (props: Props) => {
               <ListItemIcon>
                 <GalleryPerspectiveIcon />
               </ListItemIcon>
-              <ListItemText primary="Gallery Perspective" />
+              <ListItemText primary="Gallery Perspective - Beta" />
             </MenuItem>
             <MenuItem data-tid="openMapiquePerspective" onClick={() => switchPerspective('mapique')} title="Switch to mapique perspective">
               <ListItemIcon>
                 <MapiquePerspectiveIcon />
               </ListItemIcon>
-              <ListItemText primary="Mapique Perspective" />
+              <ListItemText primary="Mapique Perspective - Beta" />
             </MenuItem>
             {/* <MenuItem data-tid="openTreeVizPerspective" onClick={() => switchPerspective('treeviz')} title="Switch to tree visualization perspective">
               <ListItemIcon>
