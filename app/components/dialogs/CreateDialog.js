@@ -53,8 +53,9 @@ const styles = theme => ({
     width: '100%',
     height: '100%'
   },
-  creatButton: {
+  createButton: {
     minHeight: 100,
+    width: '100%',
     textAlign: 'center'
   }
 });
@@ -197,12 +198,12 @@ const CreateDialog = (props: Props) => {
 
   function renderContent() {
     return (
-      <DialogContent className={classes.root} data-tid="keyboardShortCutsDialog">
+      <DialogContent onKeyPress={handleKeyPress} className={classes.root} data-tid="keyboardShortCutsDialog">
         <Grid className={classes.grid} container spacing={1}>
           <Grid item xs>
             <Button
               onClick={createRichTextFile}
-              className={classes.creatButton}
+              className={classes.createButton}
             >
               <div><NoteFileIcon /></div>
               <div><Container>Create Note</Container></div>
@@ -211,7 +212,7 @@ const CreateDialog = (props: Props) => {
           <Grid item xs>
             <Button
               onClick={createTextFile}
-              className={classes.creatButton}
+              className={classes.createButton}
             >
               <TextFileIcon />
               <Container>Create Text File</Container>
@@ -222,7 +223,7 @@ const CreateDialog = (props: Props) => {
           <Grid item xs>
             <Button
               onClick={createMarkdownFile}
-              className={classes.creatButton}
+              className={classes.createButton}
             >
               <MarkdownFileIcon />
               <Container>Create Markdown File</Container>
@@ -231,7 +232,7 @@ const CreateDialog = (props: Props) => {
           <Grid item xs>
             <Button
               onClick={addFile}
-              className={classes.creatButton}
+              className={classes.createButton}
             >
               <AddFileIcon />
               <Container>Add file</Container>
@@ -267,7 +268,6 @@ const CreateDialog = (props: Props) => {
 
   return (
     <GenericDialog
-      onKeyDown={handleKeyPress}
       open={props.open}
       onClose={props.onClose}
       renderTitle={renderTitle}
