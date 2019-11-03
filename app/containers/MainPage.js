@@ -744,7 +744,7 @@ class MainPage extends Component<Props, State> {
               open={this.state.isDrawerOpened}
               onClose={this.hideDrawer}
               onOpen={this.showDrawer}
-              hysteresis={0.20}
+              hysteresis={0.10}
               disableBackdropTransition={!AppConfig.isIOS}
               disableDiscovery={AppConfig.isIOS}
             >
