@@ -40,7 +40,7 @@ import { normalizePath } from '../../utils/paths';
 import PlatformIO from '../../services/platform-io';
 import { formatDateTime4Tag } from '../../utils/misc';
 
-const styles = theme => ({
+const styles = () => ({
   root: {
     dispatch: 'flex',
     minWidth: 200,
@@ -64,7 +64,8 @@ type Props = {
   open: boolean,
   classes: Object,
   selectedDirectoryPath: string,
-  showNotification: (message: string) => void,
+  showNotification: (message: string, type: string, autohide: boolean) => void,
+  reflectCreateEntry: (path: string, isFile: boolean) => void,
   createFileAdvanced: (targetPath: string, fileName: string, content: string, fileType: string) => void,
   onClose: () => void
 };
@@ -113,7 +114,6 @@ const CreateDialog = (props: Props) => {
   }
 
   function addFile() {
-    props.onClose();
     fileInput.click();
   }
 
@@ -165,6 +165,7 @@ const CreateDialog = (props: Props) => {
                 true
               );
               props.reflectCreateEntry(filePath, true);
+              props.onClose();
               return true;
             })
             .catch(error => {
@@ -175,12 +176,14 @@ const CreateDialog = (props: Props) => {
                 'error',
                 true
               );
+              props.onClose();
               return true;
             });
         }
         return true;
       }).catch((err) => {
         console.log('Error getting properties ' + err);
+        props.onClose();
       });
     };
 
@@ -287,6 +290,7 @@ function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators({
     createFileAdvanced: AppActions.createFileAdvanced,
     showNotification: AppActions.showNotification,
+    reflectCreateEntry: AppActions.reflectCreateEntry,
   }, dispatch);
 }
 
