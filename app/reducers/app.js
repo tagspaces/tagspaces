@@ -812,7 +812,7 @@ export const actions = {
     PlatformIO.saveFilePromise(filePath, fileContent, true)
       .then(() => {
         dispatch(actions.reflectCreateEntry(filePath, true));
-        dispatch(actions.openFile(filePath));
+        dispatch(actions.openFile(filePath, true, true));
         dispatch(actions.setLastSelectedEntry(filePath));
         dispatch(
           actions.showNotification(
@@ -949,7 +949,7 @@ export const actions = {
     type: types.SET_READONLYMODE,
     isReadOnlyMode
   }),
-  openFile: (entryPath: string, isFile?: boolean = true) => (
+  openFile: (entryPath: string, isFile?: boolean = true, editMode: boolean = false) => (
     dispatch: (actions: Object) => void,
     getState: () => Object
   ) => {
@@ -961,6 +961,9 @@ export const actions = {
       isFile
     );
     entryForOpening.url = PlatformIO.getURLforPath(entryPath); // Needed for the s3 support
+    if (editMode && entryForOpening.editingExtensionId && entryForOpening.editingExtensionId.length > 1) {
+      entryForOpening.editMode = true;
+    }
     const localePar = getURLParameter(entryPath);
     let startPar = '?open=' + encodeURIComponent(entryPath);
     if (localePar && localePar.length > 1) {
