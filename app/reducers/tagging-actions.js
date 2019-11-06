@@ -53,10 +53,13 @@ const actions = {
       const tag = { ...pTag };
       tag.type = 'sidecar';
       if (tag.functionality && tag.functionality.length > 0) {
+        delete tag.color;
+        delete tag.textcolor;
+        delete tag.icon;
+        delete tag.description;
         if (tag.functionality === 'geoTagging') {
           if (Pro) {
             tag.path = paths[0]; // todo rethink and remove this!
-            delete tag.description;
             delete tag.functionality;
             tag.title = defaultTagLocation;
             dispatch(AppActions.toggleEditTagDialog(tag));
@@ -65,8 +68,7 @@ const actions = {
           }
         } else if (tag.functionality === 'dateTagging') {
           if (Pro) {
-            tag.path = paths[0]; // todo rethinka and remove this!
-            delete tag.description;
+            tag.path = paths[0]; // todo rethink and remove this!
             delete tag.functionality;
             tag.title = formatDateTime4Tag(new Date(), true); // defaultTagDate;
             dispatch(AppActions.toggleEditTagDialog(tag));
@@ -76,6 +78,7 @@ const actions = {
         } else {
           tag.title = generateTagValue(tag);
           tag.id = uuidv1();
+          delete tag.functionality;
           processedTags.push(tag);
         }
       } else {
