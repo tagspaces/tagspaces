@@ -18,6 +18,7 @@
  */
 
 import React from 'react';
+import uuidv1 from 'uuid';
 import formatDistance from 'date-fns/formatDistance';
 import removeMd from 'remove-markdown';
 import classNames from 'classnames';
@@ -274,7 +275,7 @@ const CellContent = (props: Props) => {
     return isReadOnlyMode ? (
       <TagContainer
         tag={tag}
-        key={tag.id}
+        key={uuidv1()}
         entryPath={fsEntry.path}
         addTags={addTags}
         handleTagMenu={handleTagMenu}
@@ -283,7 +284,7 @@ const CellContent = (props: Props) => {
     ) : (
       <TagContainerDnd
         tag={tag}
-        key={tag.id}
+        key={uuidv1()}
         entryPath={fsEntry.path}
         addTags={addTags}
         handleTagMenu={handleTagMenu}

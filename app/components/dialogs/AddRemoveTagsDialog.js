@@ -18,6 +18,7 @@
  */
 
 import React from 'react';
+import uuidv1 from 'uuid';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -119,7 +120,7 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
             <TagsSelect placeholderText={i18n.t('core:selectTags')} tags={newlyAddedTags} handleChange={this.handleChange} />
             <List dense style={{ width: 550 }}>
               {selectedEntries.length > 0 && selectedEntries.map((entry) => (
-                <ListItem title={entry.path}>
+                <ListItem key={uuidv1()} title={entry.path}>
                   <ListItemIcon>
                     <FileIcon />
                   </ListItemIcon>

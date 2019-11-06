@@ -259,7 +259,7 @@ class TagLibrary extends React.Component<Props, State> {
               if (this.props.isReadOnlyMode) {
                 return (
                   <TagContainer
-                    key={tag.id}
+                    key={uuidv1()}
                     tag={tag}
                     tagGroup={tagGroup}
                     handleTagMenu={this.handleTagMenu}
@@ -271,7 +271,7 @@ class TagLibrary extends React.Component<Props, State> {
               }
               return (
                 <TagContainerDnd
-                  key={tag.id}
+                  key={uuidv1()}
                   tag={tag}
                   tagGroup={tagGroup}
                   handleTagMenu={this.handleTagMenu}
@@ -285,7 +285,7 @@ class TagLibrary extends React.Component<Props, State> {
           </TagGroupContainer>
         </Collapse>
       </div>
-    )
+    );
 };
 
   render() {
