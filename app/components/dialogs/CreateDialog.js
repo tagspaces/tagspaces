@@ -31,7 +31,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
-import GenericDialog from './GenericDialog';
+import Dialog from '@material-ui/core/Dialog';
+// import Slide from '@material-ui/core/Slide';
 import i18n from '../../services/i18n';
 import { getKeyBindingObject } from '../../reducers/settings';
 import { actions as AppActions } from '../../reducers/app';
@@ -39,6 +40,10 @@ import AppConfig from '../../config';
 import { normalizePath } from '../../utils/paths';
 import PlatformIO from '../../services/platform-io';
 import { formatDateTime4Tag } from '../../utils/misc';
+
+// const Transition = React.forwardRef(function Transition(props, ref) {
+//   return <Slide direction="down" ref={ref} {...props} />;
+// });
 
 const styles = () => ({
   root: {
@@ -74,7 +79,7 @@ const CreateDialog = (props: Props) => {
   let fileInput; // Object | null;
   const fileName = 'note' + AppConfig.beginTagContainer + formatDateTime4Tag(new Date(), true) + AppConfig.endTagContainer;
   const fileContent = '';
-  const { classes, selectedDirectoryPath, showNotification } = props;
+  const { classes, selectedDirectoryPath, showNotification, open, onClose } = props;
 
   function handleKeyPress(event: any) {
     if (event.key === 'n') {
@@ -194,13 +199,16 @@ const CreateDialog = (props: Props) => {
     }
   }
 
-  // {i18n.t('core:createFileTitle')}
-  function renderTitle() {
-    return (<DialogTitle style={{ alignSelf: 'center' }}>Create new content</DialogTitle>);
-  }
-
-  function renderContent() {
-    return (
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      keepMounted
+      scroll="paper"
+      // onEnterKey={(event) => onEnterKeyHandler(event, this.addTags)}
+      // TransitionComponent={Transition}
+    >
+      <DialogTitle style={{ alignSelf: 'center' }}>Create new content</DialogTitle>
       <DialogContent onKeyPress={handleKeyPress} className={classes.root} data-tid="keyboardShortCutsDialog">
         <Grid className={classes.grid} container spacing={1}>
           <Grid item xs>
@@ -252,11 +260,6 @@ const CreateDialog = (props: Props) => {
           onChange={handleFileInputChange}
         />
       </DialogContent>
-    );
-  }
-
-  function renderActions() {
-    return (
       <DialogActions style={{ alignSelf: 'center' }}>
         <Button
           data-tid="closeKeyboardDialog"
@@ -266,17 +269,7 @@ const CreateDialog = (props: Props) => {
           {i18n.t('core:close')}
         </Button>
       </DialogActions>
-    );
-  }
-
-  return (
-    <GenericDialog
-      open={props.open}
-      onClose={props.onClose}
-      renderTitle={renderTitle}
-      renderContent={renderContent}
-      renderActions={renderActions}
-    />
+    </Dialog>
   );
 };
 
