@@ -29,11 +29,16 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import FileIcon from '@material-ui/icons/InsertDriveFileOutlined';
 import Typography from '@material-ui/core/Typography';
-import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
+import Dialog from '@material-ui/core/Dialog';
+import Slide from '@material-ui/core/Slide';
 import { type Tag } from '../../reducers/taglibrary';
 import TagsSelect from '../TagsSelect';
 import i18n from '../../services/i18n';
 import { extractFileName } from '../../utils/paths';
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="down" ref={ref} {...props} />;
+});
 
 type Props = {
   open: boolean,
@@ -66,18 +71,6 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
     });
   };
 
-  /* onAddTag = (tag) => {
-    const { newlyAddedTags } = this.state;
-    newlyAddedTags.push(tag);
-    this.setState({ newlyAddedTags });
-  };
-
-  onRemoveTag = (tag) => {
-    const { newlyAddedTags } = this.state;
-    const modifiedTags = newlyAddedTags.filter(addedTag => addedTag.title !== tag.title);
-    this.setState({ newlyAddedTags: modifiedTags });
-  }; */
-
   onClose = () => {
     this.setState({ newlyAddedTags: [] });
     this.props.onClose();
@@ -107,85 +100,83 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
     const { newlyAddedTags = [] } = this.state;
 
     return (
-      <GenericDialog
+      <Dialog
         open={open}
         fullScreen={fullScreen}
         onClose={onClose}
-        onEnterKey={(event) => onEnterKeyHandler(event, this.addTags)}
-        renderTitle={() => (
-          <DialogTitle>{i18n.t('core:tagOperationTitle')}</DialogTitle>
-        )}
-        renderContent={() => (
-          <DialogContent style={{ minHeight: 330 }}>
-            <TagsSelect placeholderText={i18n.t('core:selectTags')} tags={newlyAddedTags} handleChange={this.handleChange} />
-            <List dense style={{ width: 550 }}>
-              {selectedEntries.length > 0 && selectedEntries.map((entry) => (
-                <ListItem key={uuidv1()} title={entry.path}>
-                  <ListItemIcon>
-                    <FileIcon />
-                  </ListItemIcon>
-                  <Typography variant="inherit" noWrap>{extractFileName(entry.path || '')}</Typography>
-                </ListItem>
-              ))}
-            </List>
-          </DialogContent>
-        )}
-        renderActions={() => (
-          <DialogActions>
-            <Button
-              data-tid="cancel"
-              onClick={this.onClose}
-              color="primary"
-            >
-              {i18n.t('core:cancel')}
-            </Button>
-            <Button
-              data-tid="cleanTagsMultipleEntries"
-              disabled={selectedEntries.length < 1}
-              color="primary"
-              onClick={() => {
-                if (selectedEntries && selectedEntries.length > 0) {
-                  const paths = [];
-                  selectedEntries.map((entry) => {
-                    paths.push(entry.path);
-                    return true;
-                  });
-                  removeAllTags(paths);
-                }
-                this.onClose();
-              }}
-            >
-              {i18n.t('core:tagOperationCleanTags')}
-            </Button>
-            <Button
-              data-tid="removeTagsMultipleEntries"
-              disabled={!newlyAddedTags || newlyAddedTags.length < 1 || selectedEntries.length < 1}
-              color="primary"
-              onClick={() => {
-                if (selectedEntries && selectedEntries.length > 0) {
-                  const paths = [];
-                  selectedEntries.map((entry) => {
-                    paths.push(entry.path);
-                    return true;
-                  });
-                  removeTags(paths, newlyAddedTags);
-                }
-                this.onClose();
-              }}
-            >
-              {i18n.t('core:tagOperationRemoveTag')}
-            </Button>
-            <Button
-              data-tid="addTagsMultipleEntries"
-              disabled={!newlyAddedTags || newlyAddedTags.length < 1 || selectedEntries.length < 1}
-              color="primary"
-              onClick={this.addTags}
-            >
-              {i18n.t('core:tagOperationAddTag')}
-            </Button>
-          </DialogActions>
-        )}
-      />
+        keepMounted
+        scroll="paper"
+        // onEnterKey={(event) => onEnterKeyHandler(event, this.addTags)}
+        TransitionComponent={Transition}
+      >
+        <DialogTitle>{i18n.t('core:tagOperationTitle')}</DialogTitle>
+        <DialogContent style={{ minHeight: 330 }}>
+          <TagsSelect placeholderText={i18n.t('core:selectTags')} tags={newlyAddedTags} handleChange={this.handleChange} />
+          <List dense style={{ width: 550 }}>
+            {selectedEntries.length > 0 && selectedEntries.map((entry) => (
+              <ListItem key={uuidv1()} title={entry.path}>
+                <ListItemIcon>
+                  <FileIcon />
+                </ListItemIcon>
+                <Typography variant="inherit" noWrap>{extractFileName(entry.path || '')}</Typography>
+              </ListItem>
+            ))}
+          </List>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            data-tid="cancel"
+            onClick={this.onClose}
+            color="primary"
+          >
+            {i18n.t('core:cancel')}
+          </Button>
+          <Button
+            data-tid="cleanTagsMultipleEntries"
+            disabled={selectedEntries.length < 1}
+            color="primary"
+            onClick={() => {
+              if (selectedEntries && selectedEntries.length > 0) {
+                const paths = [];
+                selectedEntries.map((entry) => {
+                  paths.push(entry.path);
+                  return true;
+                });
+                removeAllTags(paths);
+              }
+              this.onClose();
+            }}
+          >
+            {i18n.t('core:tagOperationCleanTags')}
+          </Button>
+          <Button
+            data-tid="removeTagsMultipleEntries"
+            disabled={!newlyAddedTags || newlyAddedTags.length < 1 || selectedEntries.length < 1}
+            color="primary"
+            onClick={() => {
+              if (selectedEntries && selectedEntries.length > 0) {
+                const paths = [];
+                selectedEntries.map((entry) => {
+                  paths.push(entry.path);
+                  return true;
+                });
+                removeTags(paths, newlyAddedTags);
+              }
+              this.onClose();
+            }}
+          >
+            {i18n.t('core:tagOperationRemoveTag')}
+          </Button>
+          <Button
+            data-tid="addTagsMultipleEntries"
+            disabled={!newlyAddedTags || newlyAddedTags.length < 1 || selectedEntries.length < 1}
+            color="primary"
+            onClick={this.addTags}
+          >
+            {i18n.t('core:tagOperationAddTag')}
+          </Button>
+        </DialogActions>
+      </Dialog>
     );
   }
 }
