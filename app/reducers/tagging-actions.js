@@ -60,7 +60,7 @@ const actions = {
         if (tag.functionality === 'geoTagging') {
           if (Pro) {
             tag.path = paths[0]; // todo rethink and remove this!
-            delete tag.functionality;
+            // delete tag.functionality;
             tag.title = defaultTagLocation;
             dispatch(AppActions.toggleEditTagDialog(tag));
           } else {
@@ -217,11 +217,18 @@ const actions = {
    * @param newTagTitle
    * @returns {Function}
    */
-  editTagForEntry: (path: string, tag: Tag, newTagTitle: string) => (
+  editTagForEntry: (path: string, tag: Tag, newTagTitle: string) => async (
     dispatch: (actions: Object) => void,
     getState: () => Object
   ) => {
     const { settings, taglibrary } = getState();
+    if (tag.functionality === 'geoTagging' || tag.functionality === 'dateTagging') { // Work around solution
+      delete tag.functionality;
+      const entryProperties = await PlatformIO.getPropertiesPromise(path);
+      if (entryProperties.isFile && !settings.persistTagsInSidecarFile) {
+        tag.type = 'plain';
+      }
+    }
     delete tag.description;
     delete tag.functionality;
     delete tag.path;
@@ -230,11 +237,16 @@ const actions = {
       const fileName = extractFileName(path);
       const containingDirectoryPath = extractContainingDirectoryPath(path);
       const extractedTags = extractTags(path, settings.tagDelimiter);
+      let tagFound = false;
       for (let i = 0; i < extractedTags.length; i += 1) {
         // check if tag is already in the tag array
         if (extractedTags[i] === tag.title) {
           extractedTags[i] = newTagTitle.trim();
+          tagFound = true;
         }
+      }
+      if (!tagFound) { // needed for the current implementation of geo tagging
+        extractedTags.push(tag.title);
       }
       const newFileName = generateFileName(fileName, extractedTags, settings.tagDelimiter);
       if (newFileName !== fileName) {
