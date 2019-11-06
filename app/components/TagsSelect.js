@@ -18,6 +18,7 @@
  */
 
 import React from 'react';
+import uuidv1 from 'uuid';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -255,7 +256,7 @@ const TagsSelect = (props: Props) => {
           getOptionValue={(option) => option.id || option.title}
           isValidNewOption={isValidNewOption}
           getNewOptionData={(inputValue, optionLabel) => ({
-            id: inputValue,
+            id: uuidv1(),
             title: optionLabel,
             color: defaultBackgroundColor,
             textcolor: defaultTextColor
