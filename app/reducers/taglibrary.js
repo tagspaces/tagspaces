@@ -180,22 +180,25 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: Object) => {
     });
 
     if (indexForEditing >= 0) {
-      const tags = action.tag.split(',');
-      const children = state[indexForEditing].children;
+      let tags = action.tag.split(',');
+      const taggroupTags = state[indexForEditing].children;
+      taggroupTags.forEach(tag => { // filter out duplicated tags
+        tags = tags.filter(e => e !== tag.title);
+      });
       return [
         ...state.slice(0, indexForEditing),
         {
           ...state[indexForEditing],
-          children: children.concat(tags.map((tagTitle) => ({
+          children: taggroupTags.concat(tags.map((tagTitle) => ({
             id: uuidv1(),
-            type: children.length > 0 ? children[0].type : 'sidecar',
+            type: taggroupTags.length > 0 ? taggroupTags[0].type : 'sidecar',
             title: tagTitle.trim(),
             functionality: '',
             description: '',
             icon: '',
             color: state[indexForEditing].color ? state[indexForEditing].color : '', // default color
             textcolor: state[indexForEditing].textcolor ? state[indexForEditing].textcolor : '', // default color
-            style: children.length > 0 ? children[0].style : '',
+            style: taggroupTags.length > 0 ? taggroupTags[0].style : '',
             created_date: new Date(),
             modified_date: new Date()
           })))
@@ -350,12 +353,16 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: Object) => {
     if (indexToGroup >= 0 && indexToGroup >= 0 && tagIndexForRemoving >= 0) {
       const newTagLibrary = [...state];
       const tag = { ...state[indexFromGroup].children[tagIndexForRemoving] };
-      newTagLibrary[indexToGroup].children.push(tag);
-      newTagLibrary[indexFromGroup].children = [
-        ...newTagLibrary[indexFromGroup].children.slice(0, tagIndexForRemoving),
-        ...newTagLibrary[indexFromGroup].children.slice(tagIndexForRemoving + 1)
-      ];
-      return newTagLibrary;
+      const found = newTagLibrary[indexToGroup].children.find(t => t.title === tag.title);
+      if (!found) {
+        newTagLibrary[indexToGroup].children.push(tag);
+        newTagLibrary[indexFromGroup].children = [
+          ...newTagLibrary[indexFromGroup].children.slice(0, tagIndexForRemoving),
+          ...newTagLibrary[indexFromGroup].children.slice(tagIndexForRemoving + 1)
+        ];
+        return newTagLibrary;
+      }
+      console.warn('Tag with this title alread exists in the target tag group');
     }
     return state;
   }
