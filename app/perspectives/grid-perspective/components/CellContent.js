@@ -275,7 +275,7 @@ const CellContent = (props: Props) => {
     return isReadOnlyMode ? (
       <TagContainer
         tag={tag}
-        key={fsEntry.path + tag}
+        key={fsEntry.path + tag.title}
         entryPath={fsEntry.path}
         addTags={addTags}
         handleTagMenu={handleTagMenu}
@@ -284,7 +284,7 @@ const CellContent = (props: Props) => {
     ) : (
       <TagContainerDnd
         tag={tag}
-        key={fsEntry.path + tag}
+        key={fsEntry.path + tag.title}
         entryPath={fsEntry.path}
         addTags={addTags}
         handleTagMenu={handleTagMenu}
