@@ -407,7 +407,12 @@ export function getLastVersionPromise(): Promise<string> {
 
 // Selectors
 export const getSettings = (state: Object) => state.settings;
-export const getDesktopMode = (state: Object) => state.settings.desktopMode;
+export const getDesktopMode = (state: Object) => {
+  if (typeof window.ExtDisplayMode === 'undefined') {
+    return state.settings.desktopMode;
+  }
+  return (window.ExtDisplayMode !== 'mobile');
+};
 export const getCheckForUpdateOnStartup = (state: Object) => state.settings.checkForUpdates;
 export const getLastPublishedVersion = (state: Object) => state.settings.lastPublishedVersion;
 export const getShowUnixHiddenEntries = (state: Object) => state.settings.showUnixHiddenEntries;

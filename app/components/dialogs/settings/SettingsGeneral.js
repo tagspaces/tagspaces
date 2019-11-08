@@ -249,6 +249,7 @@ class SettingsGeneral extends React.Component<Props, State> {
           <ListItemText primary="Mobile Mode (experimental)" />
           <Switch
             data-tid="settingsSetDesktopMode"
+            disabled={!(typeof window.ExtDisplayMode === 'undefined')}
             onClick={() =>
               this.props.setDesktopMode(!this.props.settings.desktopMode)
             }
