@@ -49,7 +49,7 @@ export default {
     productProAdvancedSearch: 'https://www.tagspaces.org/products/pro/#advancedSearch',
     productProFileFolderMeta: 'https://www.tagspaces.org/products/pro/#fileFolderMeta',
     productProThumbnailsGeneration: 'https://www.tagspaces.org/products/pro/#thumbnailsGeneration',
-    productProGeoTagging: 'https://www.tagspaces.org/products/pro/#geotagging',
+    productProGeoTagging: 'https://www.tagspaces.org/usecases/geotagging/',
     productPro: 'https://www.tagspaces.org/products/pro/',
     productEnterprise: 'https://www.tagspaces.org/products/enterprise/',
     downloadURL: 'https://www.tagspaces.org/downloads/',

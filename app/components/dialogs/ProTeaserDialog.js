@@ -197,12 +197,13 @@ class ProTeaserDialog extends React.Component<Props, State> {
             </div>
           </div>
           <div style={slideStyles}>
-            <Typography variant="h5" style={{ textAlign: 'center' }}>Tagging with geo coordinates</Typography>
+            <Typography variant="h5" style={{ textAlign: 'center' }}>Tag with geo coordinates</Typography>
             <br />
             <Typography variant="subtitle1">&#x2605; This feature can be used to add geo coordinates to every file or folder. </Typography>
-            <Typography variant="subtitle1">&#x2605; The geo coordinates are added as tags in plus-codes format. </Typography>
-            <Typography variant="subtitle1">&#x2605; The application has a build-in GPS extractor from JPGs with embedded EXIF data.</Typography>
-            <Typography variant="subtitle1">&#x2605; This feature can be useful for planing or documenting trips or vacations.</Typography>
+            <Typography variant="subtitle1">&#x2605; Dedicated perspective for showing geo-tags on a build-in map</Typography>
+            <Typography variant="subtitle1">&#x2605; Extract geo location data from EXIF in JPGs files.</Typography>
+            <Typography variant="subtitle1">&#x2605; Useful for planing or documenting trips and vacations.</Typography>
+            <Typography variant="subtitle1">&#x2605; Useful for adding annotations for places on a map.</Typography>
             <div style={{ textAlign: 'center' }}>
               <img
                 style={{
@@ -245,6 +246,7 @@ class ProTeaserDialog extends React.Component<Props, State> {
             <Typography variant="h5" style={{ textAlign: 'center' }}>TagSpaces Enterprise</Typography>
             <br />
             <Typography variant="subtitle1">&#x2605; On-prem web based version of TagSpaces Pro</Typography>
+            <Typography variant="subtitle1">&#x2605; PWA version of TagSpaces Pro optimized for use om mobile devices</Typography>
             <Typography variant="subtitle1">&#x2605; White label packages, with custom colors and logo</Typography>
             <Typography variant="subtitle1">&#x2605; Development of custom viewers for file (e.g. 3D-assets, medical data ...)</Typography>
             <Typography variant="subtitle1">&#x2605; Development of custom perspectives for folders (e.g. graphs, maps, trees)</Typography>

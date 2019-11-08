@@ -21,16 +21,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withStyles } from '@material-ui/core/styles';
-import HelpFeedbackPanel from './HelpFeedbackPanel';
 import WelcomeLogo from '../assets/images/welcome-logo.png';
 import WelcomeBackground from '../assets/images/background.png';
 // import i18n from '../services/i18n';
 // import { getLocations, type Location } from '../reducers/locations';
-import classNames from 'classnames';
 import Typography from '@material-ui/core/Typography';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -39,7 +34,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import DocumentationIcon from '@material-ui/icons/Help';
 import ChangeLogIcon from '@material-ui/icons/ImportContacts';
-import OnboardingIcon from '@material-ui/icons/Explore';
 import WebClipperIcon from '@material-ui/icons/Transform';
 import EmailIcon from '@material-ui/icons/Email';
 import IssueIcon from '@material-ui/icons/BugReport';
@@ -65,7 +59,7 @@ const styles = theme => ({
     backgroundColor: theme.palette.background.default,
     backgroundImage: 'url(' + WelcomeBackground + ')',
     backgroundRepeat: 'repeat',
-    // opacity: '0.4'
+    opacity: '0.4'
   },
   slogan: {
     top: '45%',
@@ -86,12 +80,10 @@ const styles = theme => ({
 
 type Props = {
   classes: Object,
-  setFirstRun: (isFirstRun: boolean) => void,
   toggleKeysDialog: () => void,
   openURLExternally: (url: string) => void,
   openFileNatively: (url: string) => void,
-  toggleAboutDialog: () => void,
-  isFirstRun: boolean
+  toggleAboutDialog: () => void
   // locations: Array<Location>
 };
 
@@ -114,22 +106,13 @@ const WelcomePanel = (props: Props) => {
           />
         </div>
         <ListItem button onClick={() => openURLExternally(AppConfig.documentationLinks.general)}>
-          <ListItemIcon>
-            <DocumentationIcon />
-          </ListItemIcon>
-          <ListItemText primary="Open Documentation" />
+          <Button startIcon={<DocumentationIcon />}>Open Documentation</Button>
         </ListItem>
         <ListItem button onClick={() => toggleKeysDialog()}>
-          <ListItemIcon>
-            <KeyShortcutsIcon />
-          </ListItemIcon>
-          <ListItemText primary={i18n.t('core:shortcutKeys')} title="" />
+          <Button startIcon={<KeyShortcutsIcon />}>{i18n.t('core:shortcutKeys')}</Button>
         </ListItem>
         <ListItem button onClick={() => openURLExternally(AppConfig.links.changelogURL)}>
-          <ListItemIcon>
-            <ChangeLogIcon />
-          </ListItemIcon>
-          <ListItemText primary={i18n.t('core:whatsNew')} title="Opens the changelog of the app" />
+          <Button startIcon={<ChangeLogIcon />} title="Opens the changelog of the app">{i18n.t('core:whatsNew')}</Button>
         </ListItem>
         {/* <ListItem button onClick={() => toggleOnboardingDialog()}>
           <ListItemIcon>
@@ -138,48 +121,27 @@ const WelcomePanel = (props: Props) => {
           <ListItemText primary={i18n.t('core:onboardingWizard')} />
         </ListItem> */}
         <ListItem button onClick={() => openURLExternally(AppConfig.links.webClipper)}>
-          <ListItemIcon>
-            <WebClipperIcon />
-          </ListItemIcon>
-          <ListItemText primary={i18n.t('core:webClipper')} />
+          <Button startIcon={<WebClipperIcon />}>{i18n.t('core:webClipper')}</Button>
         </ListItem>
         <Divider />
         <ListItem button onClick={() => openURLExternally(AppConfig.links.suggestFeature)}>
-          <ListItemIcon>
-            <NewFeatureIcon />
-          </ListItemIcon>
-          <ListItemText primary={i18n.t('core:suggestNewFeatures')} />
+          <Button startIcon={<NewFeatureIcon />}>{i18n.t('core:suggestNewFeatures')}</Button>
         </ListItem>
         <ListItem button onClick={() => openURLExternally(AppConfig.links.reportIssue)}>
-          <ListItemIcon>
-            <IssueIcon />
-          </ListItemIcon>
-          <ListItemText primary={i18n.t('core:reportIssues')} />
+          <Button startIcon={<IssueIcon />}>{i18n.t('core:reportIssues')}</Button>
         </ListItem>
         <ListItem button onClick={() => openURLExternally(AppConfig.links.helpTranslating)}>
-          <ListItemIcon>
-            <TranslationIcon />
-          </ListItemIcon>
-          <ListItemText primary={i18n.t('core:helpWithTranslation')} />
+          <Button startIcon={<TranslationIcon />}>{i18n.t('core:helpWithTranslation')}</Button>
         </ListItem>
         <Divider />
         <ListItem button onClick={() => openURLExternally(AppConfig.links.emailContact)}>
-          <ListItemIcon>
-            <EmailIcon />
-          </ListItemIcon>
-          <ListItemText primary={i18n.t('core:emailContact')} />
+          <Button startIcon={<EmailIcon />}>{i18n.t('core:emailContact')}</Button>
         </ListItem>
         <ListItem button onClick={() => openFileNatively(AppConfig.links.twitter)}>
-          <ListItemIcon>
-            <Social2Icon />
-          </ListItemIcon>
-          <ListItemText primary={i18n.t('core:followOnTwitter')} />
+          <Button startIcon={<Social2Icon />}>{i18n.t('core:followOnTwitter')}</Button>
         </ListItem>
         <ListItem button onClick={() => openURLExternally(AppConfig.links.facebook)}>
-          <ListItemIcon>
-            <SocialIcon />
-          </ListItemIcon>
-          <ListItemText primary={i18n.t('core:likeUsOnFacebook')} color="textPrimary" />
+          <Button startIcon={<SocialIcon />}>{i18n.t('core:likeUsOnFacebook')}</Button>
         </ListItem>
       </List>
     </div>
