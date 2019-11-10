@@ -1,5 +1,29 @@
 # Changelog
 
+## Version 3.3.0 / 2019.11.08
+
+### Community
+- 🌟 Make newly create files open in edit mode
+- 🌟 Make dialogs and the ui in general mobile friendly
+- 🌟 Improve navigation to parent folder #1038
+- 🌟 Add app detecting mobile mode
+- 🌟 updating Armenian translation
+- 🌟 Adding platform information in about box
+- 🌟 extending the welcome window
+- 🐛 Fixed missing uuid by tags, fixing #975
+- 🐛 Fixed auto focus in the create file dialog and the dialog for adding and removing tag #1033
+- 🐛 Prevent adding tags which already existing in a given tag group
+- 🐛 Fixing crash on mobile switch #1037
+- 🐛 Now the app exits on window close under macOS
+
+### Pro
+- 🎉 Added support for perspectives
+- 🎉 Added mapique perspective for showing geo-tags in map
+- 🎉 Added gallery perspective for presenting the images in a folder
+- 🎉 Added mobile mode with PWA support
+- 🐛 Allow geo tagging also in file names
+
+
 ## Version 3.2.5 / 2019.10.10
 
 ### Community
