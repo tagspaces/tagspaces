@@ -23,7 +23,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
-import GenericDialog from './GenericDialog';
+import Dialog from '@material-ui/core/Dialog';
 import i18n from '../../services/i18n';
 import { Pro } from '../../pro';
 import AppConfig from '../../config';
@@ -50,18 +50,21 @@ type Props = {
 // }
 
 const LicenseDialog = (props: Props) => {
+  const { fullScreen, open, onClose } = props;
   // let licenseElement;
   // function printLicense() {
   //   // printElem(licenseElement);
   //   window.print();
   // }
 
-  function renderTitle() {
-    return <DialogTitle>{i18n.t('core:license')}</DialogTitle>;
-  }
-
-  function renderContent() {
-    return (
+  return (
+    <Dialog
+    open={open}
+    onClose={onClose}
+    keepMounted
+    scroll="paper"
+    >  
+    <DialogTitle>{i18n.t('core:license')}</DialogTitle>
       <DialogContent
         // inputRef={ref => {
         //   licenseElement = ref;
@@ -72,11 +75,6 @@ const LicenseDialog = (props: Props) => {
           {Pro ? Pro.EULAContent : LicenseContent}
         </pre>
       </DialogContent>
-    );
-  }
-
-  function renderActions() {
-    return (
       <DialogActions>
         {/* <Button
           onClick={printLicense}
@@ -99,20 +97,7 @@ const LicenseDialog = (props: Props) => {
           {i18n.t('core:agreeLicense')}
         </Button>
       </DialogActions>
-    );
-  }
-
-  const { fullScreen, open, onClose } = props;
-  return (
-    <GenericDialog
-      open={open}
-      onClose={onClose}
-      onBackdropClick={() => {}}
-      fullScreen={fullScreen}
-      renderTitle={renderTitle}
-      renderContent={renderContent}
-      renderActions={renderActions}
-    />
+    </Dialog>  
   );
 };
 

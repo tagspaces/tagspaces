@@ -29,7 +29,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import { withStyles } from '@material-ui/core/styles';
-import GenericDialog from './GenericDialog';
+import Dialog from '@material-ui/core/Dialog';
 import i18n from '../../services/i18n';
 import { getKeyBindingObject } from '../../reducers/settings';
 
@@ -55,50 +55,37 @@ type Props = {
 };
 
 const KeyboardDialog = (props: Props) => {
-  function renderTitle() {
-    return (<DialogTitle>{i18n.t('core:shortcutKeys')}</DialogTitle>);
-  }
-
-  function renderContent() {
-    return (
-      <DialogContent className={props.classes.root} data-tid="keyboardShortCutsDialog">
-        <List dense={false}>
-          {props.keyBindings && Object.keys(props.keyBindings).map((shortcutKey) => (
-            <ListItem key={shortcutKey}>
-              <ListItemText primary={i18n.t('core:' + shortcutKey)} />
-              <ListItemSecondaryAction className={props.classes.shortcutKey}>
-                {props.keyBindings[shortcutKey]}
-              </ListItemSecondaryAction>
-            </ListItem>
-          ))}
-        </List>
-      </DialogContent>
-    );
-  }
-
-  function renderActions() {
-    return (
-      <DialogActions>
-        <Button
-          data-tid="closeKeyboardDialog"
-          onClick={props.onClose}
-          color="primary"
-        >
-          {i18n.t('core:ok')}
-        </Button>
-      </DialogActions>
-    );
-  }
-
+  const { open, onClose } = props;
   return (
-    <GenericDialog
-      open={props.open}
-      onClose={props.onClose}
-      fullScreen={props.fullScreen}
-      renderTitle={renderTitle}
-      renderContent={renderContent}
-      renderActions={renderActions}
-    />
+    <Dialog
+      open={open}
+      onClose={onClose}
+      keepMounted
+      scroll="paper"
+    >  
+    <DialogTitle>{i18n.t('core:shortcutKeys')}</DialogTitle>
+    <DialogContent className={props.classes.root} data-tid="keyboardShortCutsDialog">
+      <List dense={false}>
+        {props.keyBindings && Object.keys(props.keyBindings).map((shortcutKey) => (
+          <ListItem key={shortcutKey}>
+            <ListItemText primary={i18n.t('core:' + shortcutKey)} />
+            <ListItemSecondaryAction className={props.classes.shortcutKey}>
+              {props.keyBindings[shortcutKey]}
+            </ListItemSecondaryAction>
+          </ListItem>
+        ))}
+      </List>
+    </DialogContent>
+    <DialogActions>
+      <Button
+        data-tid="closeKeyboardDialog"
+        onClick={props.onClose}
+        color="primary"
+      >
+        {i18n.t('core:ok')}
+      </Button>
+    </DialogActions>
+  </Dialog>  
   );
 };
 
