@@ -60,21 +60,8 @@ type Props = {
   setPersistTagsInSidecarFile: (isPersistTagsInSidecar: boolean) => void,
   setCurrentTheme: () => void,
   openURLExternally: (url: string) => void,
-  onClose: () => void,
-  setActiveStep: number
+  onClose: () => void
 };
-
-// type State = {
-//   activeStep: number
-// };
-
-// class OnboardingDialog extends React.Component<Props, State> {
-//   state = {
-//     activeStep: 0,
-//     isPersistTagsInSidecar: false
-//   };
-
-//   maxSteps = 5;
 
 const OnboardingDialog = (props: Props) => {
   const [activeStep, setActiveStep] = useState(0);
@@ -88,15 +75,11 @@ const OnboardingDialog = (props: Props) => {
   let maxSteps = 5;
 
   function handleNext() {
-    setActiveStep(prevState => ({
-      activeStep: prevState.activeStep + 1
-    }));
+    setActiveStep(activeStep => activeStep + 1)
   }
 
   function handleBack() {
-    setActiveStep(prevState => ({
-      activeStep: prevState.activeStep - 1
-    }));
+    setActiveStep(activeStep => activeStep - 1)
   }
 
   function handleStepChange(activeStep) {
@@ -116,8 +99,6 @@ const OnboardingDialog = (props: Props) => {
   }
 
   function renderContent() {
-    // const { activeStep } = this.state;
-
     return (
       <DialogContent style={{ marginTop: 20 }}>
         <SwipeableViews
@@ -303,7 +284,6 @@ const OnboardingDialog = (props: Props) => {
     );
   }; 
 
-  // const { fullScreen, open, onClose } = props;
   return (
     <GenericDialog
       fullScreen={fullScreen}
