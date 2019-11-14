@@ -34,7 +34,7 @@ import withMobileDialog from '@material-ui/core/withMobileDialog';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import MobileStepper from '@material-ui/core/MobileStepper';
-import GenericDialog from './GenericDialog';
+import Dialog from '@material-ui/core/Dialog';
 import NavigationV3 from '../../assets/images/navigation-v3.png';
 import BrowserExtension from '../../assets/images/collecting-undraw.svg';
 import WizardFinished from '../../assets/images/balloons-undraw.svg';
@@ -90,16 +90,16 @@ const OnboardingDialog = (props: Props) => {
     props.setPersistTagsInSidecarFile(!props.isPersistTagsInSidecar);
   }
 
-  function renderTitle() {
-    return (
-    <DialogTitle style={{ justifyContent: 'center', textAlign: 'center' }}>
-      Welcome to TagSpaces
-    </DialogTitle>
-    );
-  }
-
-  function renderContent() {
-    return (
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      keepMounted
+      scroll="paper"
+    >
+      <DialogTitle style={{ justifyContent: 'center', textAlign: 'center' }}>
+        Welcome to TagSpaces
+      </DialogTitle>
       <DialogContent style={{ marginTop: 20 }}>
         <SwipeableViews
           index={activeStep}
@@ -243,11 +243,6 @@ const OnboardingDialog = (props: Props) => {
           </div>
         </SwipeableViews>
       </DialogContent>
-    );
-  };
-
-  function renderActions() {
-    return (
       <DialogActions style={{ justifyContent: 'center' }}>
         <MobileStepper
           style={{ marginTop: 10, backgroundColor: 'transparent' }}
@@ -281,19 +276,8 @@ const OnboardingDialog = (props: Props) => {
           }
         />
       </DialogActions>
-    );
-  }; 
-
-  return (
-    <GenericDialog
-      fullScreen={fullScreen}
-      open={open}
-      onClose={onClose}
-      renderTitle={renderTitle}
-      renderContent={renderContent}
-      renderActions={renderActions}
-    />
-  );
+    </Dialog>  
+  );  
 };
 
 function mapStateToProps(state) {
