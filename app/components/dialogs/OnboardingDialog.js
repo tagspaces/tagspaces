@@ -17,7 +17,7 @@
  * @flow
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import SwipeableViews from 'react-swipeable-views';
@@ -51,6 +51,7 @@ import { actions as AppActions } from '../../reducers/app';
 import AppConfig from '../../config';
 
 type Props = {
+  classes: Object,
   open: boolean,
   isPersistTagsInSidecar: boolean,
   fullScreen: boolean,
@@ -59,55 +60,69 @@ type Props = {
   setPersistTagsInSidecarFile: (isPersistTagsInSidecar: boolean) => void,
   setCurrentTheme: () => void,
   openURLExternally: (url: string) => void,
-  onClose: () => void
+  onClose: () => void,
+  setActiveStep: number
 };
 
-type State = {
-  activeStep: number
-};
+// type State = {
+//   activeStep: number
+// };
 
-class OnboardingDialog extends React.Component<Props, State> {
-  state = {
-    activeStep: 0,
-    isPersistTagsInSidecar: false
-  };
+// class OnboardingDialog extends React.Component<Props, State> {
+//   state = {
+//     activeStep: 0,
+//     isPersistTagsInSidecar: false
+//   };
 
-  maxSteps = 5;
+//   maxSteps = 5;
 
-  handleNext = () => {
-    this.setState(prevState => ({
+const OnboardingDialog = (props: Props) => {
+  const [activeStep, setActiveStep] = useState(0);
+  const [isPersistTagsInSidecar, setIsPersistTagInSidecar] = useState(false);
+  const { 
+    fullScreen, 
+    open, 
+    onClose
+  } = props;
+
+  let maxSteps = 5;
+
+  function handleNext() {
+    setActiveStep(prevState => ({
       activeStep: prevState.activeStep + 1
     }));
-  };
+  }
 
-  handleBack = () => {
-    this.setState(prevState => ({
+  function handleBack() {
+    setActiveStep(prevState => ({
       activeStep: prevState.activeStep - 1
     }));
-  };
+  }
 
-  handleStepChange = activeStep => {
-    this.setState({ activeStep });
-  };
+  function handleStepChange(activeStep) {
+    setActiveStep({ activeStep });
+  }
 
-  toggleTaggingType = () => {
-    this.props.setPersistTagsInSidecarFile(!this.props.isPersistTagsInSidecar);
-  };
+  function toggleTaggingType() {
+    props.setPersistTagsInSidecarFile(!props.isPersistTagsInSidecar);
+  }
 
-  renderTitle = () => (
+  function renderTitle() {
+    return (
     <DialogTitle style={{ justifyContent: 'center', textAlign: 'center' }}>
       Welcome to TagSpaces
     </DialogTitle>
-  );
+    );
+  }
 
-  renderContent = () => {
-    const { activeStep } = this.state;
+  function renderContent() {
+    // const { activeStep } = this.state;
 
     return (
       <DialogContent style={{ marginTop: 20 }}>
         <SwipeableViews
           index={activeStep}
-          onChangeIndex={this.handleStepChange}
+          onChangeIndex={handleStepChange}
           enableMouseEvents
         >
           <div
@@ -125,9 +140,9 @@ class OnboardingDialog extends React.Component<Props, State> {
             <Typography variant="h6">Try our interface themes</Typography>
             <Typography variant="h6">&nbsp;</Typography>
             <ToggleButtonGroup
-              value={this.props.currentTheme}
+              value={props.currentTheme}
               exclusive
-              onChange={(event, theme) => { this.props.setCurrentTheme(theme); }}
+              onChange={(event, theme) => { props.setCurrentTheme(theme); }}
               style={{ boxShadow: 'none' }}
             >
               <ToggleButton value="light">
@@ -164,12 +179,12 @@ class OnboardingDialog extends React.Component<Props, State> {
                 aria-label="Gender"
                 name="isPersistTagsInSidecar"
                 // value={this.props.isPersistTagsInSidecar}
-                onChange={this.toggleTaggingType}
+                onChange={toggleTaggingType}
               >
                 <FormControlLabel
                   value="false"
                   control={
-                    <Radio checked={!this.props.isPersistTagsInSidecar} />
+                    <Radio checked={!props.isPersistTagsInSidecar} />
                   }
                   label={
                     <Typography variant="subtitle1" style={{ textAlign: 'left' }}>
@@ -185,7 +200,7 @@ class OnboardingDialog extends React.Component<Props, State> {
                   style={{ marginTop: 20 }}
                   value="true"
                   control={
-                    <Radio checked={this.props.isPersistTagsInSidecar} />
+                    <Radio checked={props.isPersistTagsInSidecar} />
                   }
                   label={
                     <Typography variant="subtitle1" style={{ textAlign: 'left' }}>
@@ -222,7 +237,7 @@ class OnboardingDialog extends React.Component<Props, State> {
             <Button
               style={{ marginTop: 20 }}
               onClick={() => {
-                this.props.openURLExternally(AppConfig.links.webClipper);
+                props.openURLExternally(AppConfig.links.webClipper);
               }}
               variant="contained"
               color="primary"
@@ -250,55 +265,56 @@ class OnboardingDialog extends React.Component<Props, State> {
     );
   };
 
-  renderActions = () => (
-    <DialogActions style={{ justifyContent: 'center' }}>
-      <MobileStepper
-        style={{ marginTop: 10, backgroundColor: 'transparent' }}
-        steps={this.maxSteps}
-        position="static"
-        activeStep={this.state.activeStep}
-        nextButton={
-          (this.state.activeStep === this.maxSteps - 1) ? (
-            <Button
-              size="small"
-              onClick={this.props.onClose}
-              variant="contained"
-              color="primary"
-              data-tid="startTagSpacesAfterOnboarding"
-            >Start using TagSpaces
-            </Button>
-          ) : (
-            <Button
-              size="small"
-              onClick={this.handleNext}
-              data-tid="nextStepOnboarding"
-            >{i18n.t('core:next')}</Button>
-          )
-        }
-        backButton={
-          <Button
-            size="small"
-            onClick={this.handleBack}
-            disabled={this.state.activeStep === 0}
-          >{i18n.t('core:prev')}</Button>
-        }
-      />
-    </DialogActions>
-  );
-
-  render() {
-    const { fullScreen, open, onClose } = this.props;
+  function renderActions() {
     return (
-      <GenericDialog
-        fullScreen={fullScreen}
-        open={open}
-        onClose={onClose}
-        renderContent={this.renderContent}
-        renderActions={this.renderActions}
-      />
+      <DialogActions style={{ justifyContent: 'center' }}>
+        <MobileStepper
+          style={{ marginTop: 10, backgroundColor: 'transparent' }}
+          steps={maxSteps}
+          position="static"
+          activeStep={activeStep}
+          nextButton={
+            (activeStep === maxSteps - 1) ? (
+              <Button
+                size="small"
+                onClick={props.onClose}
+                variant="contained"
+                color="primary"
+                data-tid="startTagSpacesAfterOnboarding"
+              >Start using TagSpaces
+              </Button>
+            ) : (
+              <Button
+                size="small"
+                onClick={handleNext}
+                data-tid="nextStepOnboarding"
+              >{i18n.t('core:next')}</Button>
+            )
+          }
+          backButton={
+            <Button
+              size="small"
+              onClick={handleBack}
+              disabled={activeStep === 0}
+            >{i18n.t('core:prev')}</Button>
+          }
+        />
+      </DialogActions>
     );
-  }
-}
+  }; 
+
+  // const { fullScreen, open, onClose } = props;
+  return (
+    <GenericDialog
+      fullScreen={fullScreen}
+      open={open}
+      onClose={onClose}
+      renderTitle={renderTitle}
+      renderContent={renderContent}
+      renderActions={renderActions}
+    />
+  );
+};
 
 function mapStateToProps(state) {
   return {
