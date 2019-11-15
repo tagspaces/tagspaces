@@ -83,9 +83,10 @@ const AboutDialog = (props: Props) => {
   }
 
   // function confirmFunction(event) {
-  //   if (event.key === 'Enter' || event.keyCode === 13)
+  //   if (event.key === 'Enter' || event.keyCode === 13) {
   //     props.onClose();
   //     event.stopPropagation();
+  //   }     
   // }
 
   let versionInfo = 'Check for updates';
