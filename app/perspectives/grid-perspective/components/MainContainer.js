@@ -22,6 +22,7 @@ import uuidv1 from 'uuid';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import memoize from 'memoize-one';
+import { GlobalHotKeys } from 'react-hotkeys';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -30,7 +31,6 @@ import RadioCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 import RadioUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import ParentDirIcon from '@material-ui/icons/SubdirectoryArrowLeft';
 import ViewListIcon from '@material-ui/icons/ViewList';
 import SwapVertIcon from '@material-ui/icons/SwapVert';
 import ViewGridIcon from '@material-ui/icons/ViewModule';
@@ -57,6 +57,7 @@ import { type Tag } from '../../../reducers/taglibrary';
 import {
   getSupportedFileTypes,
   getDesktopMode,
+  getKeyBindingObject
 } from '../../../reducers/settings';
 import {
   sortByCriteria,
@@ -120,6 +121,7 @@ type Props = {
   perspectiveCommand: Object,
   directoryContent: Array<FileSystemEntry>,
   moveFiles: (files: Array<string>, destination: string) => void,
+  keyBindings: Object,
   showNotification: (
     text: string,
     notificationType: string,
@@ -190,32 +192,7 @@ class GridPerspective extends React.Component<Props, State> {
   }
 
   componentWillReceiveProps = (nextProps: Props) => {
-    const { lastSelectedEntryPath, perspectiveCommand, selectedEntries } = nextProps;
-
-    if (perspectiveCommand && perspectiveCommand.key) {
-      this.props.setLastSelectedEntry(null);
-      if (perspectiveCommand.key === 'TOGGLE_SELECT_ALL') {
-        this.toggleSelectAllFiles();
-      } else if (
-        perspectiveCommand.key === 'ADD_REMOVE_TAGS' &&
-        selectedEntries &&
-        selectedEntries.length > 0
-      ) {
-        this.openAddRemoveTagsDialog();
-      } else if (
-        perspectiveCommand.key === 'RENAME_ENTRY' &&
-        selectedEntries &&
-        selectedEntries.length === 1
-      ) {
-        if (selectedEntries[0].isFile) {
-          this.setState({ selectedEntryPath: selectedEntries[0].path }, () => {
-            this.openFileRenameDialog();
-          });
-        }
-      } else if (perspectiveCommand.key === 'DELETE_SELECTED_ENTRIES' && this.state.fileOperationsEnabled) {
-        this.openDeleteFileDialog();
-      }
-    }
+    const { lastSelectedEntryPath } = nextProps;
 
     if (lastSelectedEntryPath !== null) {
       this.computeFileOperationsEnabled();
@@ -648,6 +625,60 @@ class GridPerspective extends React.Component<Props, State> {
     );
   };
 
+
+  keyMap = this.props.keyBindings;
+
+  keyBindingHandlers = {
+    // nextDocument: () => {
+    //   const nextFilePath = this.props.getNextFile();
+    //   if (nextFilePath) {
+    //     this.props.setLastSelectedEntry(nextFilePath);
+    //   }
+    // },
+    // prevDocument: () => {
+    //   const prevFilePath = this.props.getPrevFile();
+    //   if (prevFilePath) {
+    //     this.props.setLastSelectedEntry(prevFilePath);
+    //   }
+    // },
+    selectAll: () => this.toggleSelectAllFiles(),
+    deleteDocument: () => {
+      if (this.state.fileOperationsEnabled) {
+        this.openDeleteFileDialog();
+      }
+    },
+    addRemoveTags: () => {
+      if (this.props.selectedEntries && this.props.selectedEntries.length > 0) {
+        this.openAddRemoveTagsDialog();
+      }
+    },
+    renameFile: () => {
+      if (this.props.selectedEntries && this.props.selectedEntries.length === 1 && this.props.selectedEntries[0].isFile) {
+        this.setState({ selectedEntryPath: this.props.selectedEntries[0].path }, () => {
+          this.openFileRenameDialog();
+        });
+      }
+    },
+    openEntry: () => {
+      const { lastSelectedEntryPath } = this.props;
+      if (lastSelectedEntryPath) {
+        const isLastSelectedEntryFile = this.props.directoryContent.some(
+          fsEntry => fsEntry.isFile && fsEntry.path === lastSelectedEntryPath
+        );
+        if (isLastSelectedEntryFile) {
+          this.props.openFile(lastSelectedEntryPath);
+        } else {
+          this.props.loadDirectoryContent(lastSelectedEntryPath);
+        }
+      }
+    },
+    openFileExternally: () => {
+      if (this.props.lastSelectedEntryPath) {
+        this.props.openFileNatively(this.props.lastSelectedEntryPath);
+      }
+    }
+  };
+
   render() {
     const {
       classes,
@@ -781,47 +812,49 @@ class GridPerspective extends React.Component<Props, State> {
             <MoreVertIcon />
           </IconButton>
         </Toolbar>
-        <div style={{
-          height: '100%',
-          backgroundColor: theme.palette.background.default
-        }}
-        >
+        {/* <GlobalHotKeys keyMap={this.keyMap} handlers={this.keyBindingHandlers}> */}
           <div style={{
             height: '100%',
-            overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
-            backgroundColor: currentDirectoryColor || 'transparent',
+            backgroundColor: theme.palette.background.default
           }}
           >
-            <div
-              className={layoutType === 'grid' ? classes.gridContainer : classes.rowContainer}
-              style={{
-                gridTemplateColumns: layoutType === 'grid' ? 'repeat(auto-fit,minmax(' + entryWidth + 'px,1fr))' : 'none',
-              }}
-              ref={ref => {
-                this.mainGrid = ref;
-              }}
-              data-tid="perspectiveGridFileTable"
+            <div style={{
+              height: '100%',
+              overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
+              backgroundColor: currentDirectoryColor || 'transparent',
+            }}
             >
-              {(sortedDirectories.map(entry => this.renderCell(entry)))}
-              {(sortedFiles.map(entry => this.renderCell(entry)))}
-              {isAppLoading && (
-                <Typography style={{ padding: 15 }}>
-                  {i18n.t('core:loading')}
-                </Typography>
-              )}
-              {(!isAppLoading && sortedFiles.length < 1 && sortedDirectories.length < 1) && (
-                <Typography style={{ padding: 15 }}>
-                  {i18n.t('core:noFileFolderFound')}
-                </Typography>
-              )}
-              {(!isAppLoading && sortedFiles.length < 1 && sortedDirectories.length >= 1 && !this.state.showDirectories) && (
-                <Typography style={{ padding: 15 }}>
-                  {i18n.t('core:noFileButFoldersFound')}
-                </Typography>
-              )}
+              <div
+                className={layoutType === 'grid' ? classes.gridContainer : classes.rowContainer}
+                style={{
+                  gridTemplateColumns: layoutType === 'grid' ? 'repeat(auto-fit,minmax(' + entryWidth + 'px,1fr))' : 'none',
+                }}
+                ref={ref => {
+                  this.mainGrid = ref;
+                }}
+                data-tid="perspectiveGridFileTable"
+              >
+                {(sortedDirectories.map(entry => this.renderCell(entry)))}
+                {(sortedFiles.map(entry => this.renderCell(entry)))}
+                {isAppLoading && (
+                  <Typography style={{ padding: 15 }}>
+                    {i18n.t('core:loading')}
+                  </Typography>
+                )}
+                {(!isAppLoading && sortedFiles.length < 1 && sortedDirectories.length < 1) && (
+                  <Typography style={{ padding: 15 }}>
+                    {i18n.t('core:noFileFolderFound')}
+                  </Typography>
+                )}
+                {(!isAppLoading && sortedFiles.length < 1 && sortedDirectories.length >= 1 && !this.state.showDirectories) && (
+                  <Typography style={{ padding: 15 }}>
+                    {i18n.t('core:noFileButFoldersFound')}
+                  </Typography>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+        {/* </GlobalHotKeys> */}
         <AddRemoveTagsDialog
           open={this.state.isAddRemoveTagsDialogOpened}
           onClose={this.handleCloseDialogs}
@@ -1104,7 +1137,8 @@ function mapStateToProps(state) {
     lastSelectedEntryPath: getLastSelectedEntry(state),
     currentDirectoryColor: getCurrentDirectoryColor(state),
     desktopMode: getDesktopMode(state),
-    selectedEntries: getSelectedEntries(state)
+    selectedEntries: getSelectedEntries(state),
+    keyBindings: getKeyBindingObject(state),
   };
 }
 

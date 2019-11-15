@@ -26,7 +26,6 @@ import BackButtonIcon from '@material-ui/icons/ArrowBack';
 import MenuIcon from '@material-ui/icons/Menu';
 import Badge from '@material-ui/core/Badge';
 import { withStyles } from '@material-ui/core/styles';
-import { HotKeys } from 'react-hotkeys';
 import LocationMenu from './menus/LocationMenu';
 import DirectoryMenu from './menus/DirectoryMenu';
 import i18n from '../services/i18n';
@@ -165,7 +164,6 @@ type Props = {
   directoryContent: Array<Object>,
   currentDirectoryPath: string | null,
   searchResultCount: number,
-  lastSelectedEntry: string | null,
   addTags: () => void,
   removeTags: () => void,
   removeAllTags: () => void,
@@ -174,8 +172,6 @@ type Props = {
   toggleCreateFileDialog: () => void,
   deleteFile: () => void,
   renameFile: () => void,
-  getNextFile: () => string,
-  getPrevFile: () => string,
   openDirectory: () => void,
   showInFileManager: () => void,
   openFile: (path: string) => void,
@@ -203,6 +199,8 @@ type State = {
   directoryMenuAnchorEl?: null | Object,
   perspectiveChooserMenuOpened?: boolean,
   perspectiveChooserMenuAnchorEl?: null | Object,
+  directoryContextMenuOpened: boolean,
+  directoryContextMenuAnchorEl: null | Object,
   perspectiveCommand?: null | Object
 };
 
@@ -254,79 +252,6 @@ class FolderContainer extends React.Component<Props, State> {
     return null;
   }
 
-  keyBindingHandlers = {
-    nextDocument: () => {
-      const nextFilePath = this.props.getNextFile();
-      if (nextFilePath) {
-        this.props.setLastSelectedEntry(nextFilePath);
-      }
-    },
-    prevDocument: () => {
-      const prevFilePath = this.props.getPrevFile();
-      if (prevFilePath) {
-        this.props.setLastSelectedEntry(prevFilePath);
-      }
-    },
-    selectAll: () => {
-      this.setState(
-        {
-          perspectiveCommand: { key: 'TOGGLE_SELECT_ALL' }
-        },
-        () => {
-          this.setState({ perspectiveCommand: null });
-        }
-      );
-    },
-    deleteDocument: () => {
-      this.setState(
-        {
-          perspectiveCommand: { key: 'DELETE_SELECTED_ENTRIES' }
-        },
-        () => {
-          this.setState({ perspectiveCommand: null });
-        }
-      );
-    },
-    addRemoveTags: () => {
-      this.setState(
-        {
-          perspectiveCommand: { key: 'ADD_REMOVE_TAGS' }
-        },
-        () => {
-          this.setState({ perspectiveCommand: null });
-        }
-      );
-    },
-    renameFile: () => {
-      this.setState(
-        {
-          perspectiveCommand: { key: 'RENAME_ENTRY' }
-        },
-        () => {
-          this.setState({ perspectiveCommand: null });
-        }
-      );
-    },
-    openEntry: () => {
-      const { lastSelectedEntry } = this.props;
-      if (lastSelectedEntry) {
-        const isLastSelectedEntryFile = this.props.directoryContent.some(
-          fsEntry => fsEntry.isFile && fsEntry.path === lastSelectedEntry
-        );
-        if (isLastSelectedEntryFile) {
-          this.props.openFile(lastSelectedEntry);
-        } else {
-          this.props.loadDirectoryContent(lastSelectedEntry);
-        }
-      }
-    },
-    openFileExternally: () => {
-      if (this.props.lastSelectedEntry) {
-        this.props.openFileNatively(this.props.lastSelectedEntry);
-      }
-    }
-  };
-
   openDirectoryMenu = (event: Object) => {
     this.setState({
       directoryContextMenuOpened: true,
@@ -347,7 +272,7 @@ class FolderContainer extends React.Component<Props, State> {
       return;
     }
     this.setState({
-      currentPerspective: perspectiveId ? perspectiveId : 'default'
+      currentPerspective: perspectiveId || 'default'
     });
   }
 
@@ -430,102 +355,100 @@ class FolderContainer extends React.Component<Props, State> {
     const normalizedCurrentDirPath = normalizePath(currentDirectoryPath.split('\\').join('/'));
     let searchResultCounterText = searchResultCount + ' ' + i18n.t('entries');
     if (searchResultCount >= maxSearchResults) {
-      searchResultCounterText = 'More than ' + (maxSearchResults - 1) + ' entries found, showing only the first ' + maxSearchResults ;
+      searchResultCounterText = 'More than ' + (maxSearchResults - 1) + ' entries found, showing only the first ' + maxSearchResults;
     }
     return (
-      <HotKeys handlers={this.keyBindingHandlers}>
-        <div className={classes.mainPanel}>
-          <div className={classes.topPanel}>
-            <div className={classes.toolbar}>
-              {isDesktopMode ? (
-                <LocationMenu />
-              ) : (
-                <Button style={{ marginLeft: -8 }} onClick={showDrawer}>
-                  <MenuIcon />
-                </Button>
-              )}
-              <CounterBadge
-                showZero={true}
-                title={searchResultCounterText}
-                badgeContent={searchResultCount}
-                color="secondary"
-                max={maxSearchResults - 1}
-                onClick={() => {
-                  openSearchPanel();
-                }}
-              />
-              <div className={classes.flexMiddle} />
-              {currentDirectoryPath && (
-                <React.Fragment>
-                  {isDesktopMode && this.state.pathParts &&
-                    this.state.pathParts.map(pathPart => (
-                      <Button
-                        key={pathPart}
-                        onClick={() => loadDirectoryContent(pathPart)}
-                        title={'Navigate to: ' + pathPart}
-                        style={{ paddingLeft: 3, paddingRight: 0, minWidth: 10 }}
-                      >
-                        {extractShortDirectoryName(pathPart, '/')}
-                        &nbsp;/&nbsp;
-                      </Button>
-                    ))}
-                  {!isDesktopMode && this.state.pathParts && this.state.pathParts.length > 0 && (
-                    <React.Fragment>
-                      <Button
-                        onClick={loadParentDirectoryContent}
-                        data-tid="openParentDirectory"
-                        style={{ paddingLeft: 3, paddingRight: 0}}
-                      >
-                        <BackButtonIcon />
-                      </Button>
-                    </React.Fragment>
+      <div className={classes.mainPanel}>
+        <div className={classes.topPanel}>
+          <div className={classes.toolbar}>
+            {isDesktopMode ? (
+              <LocationMenu />
+            ) : (
+              <Button style={{ marginLeft: -8 }} onClick={showDrawer}>
+                <MenuIcon />
+              </Button>
+            )}
+            <CounterBadge
+              showZero={true}
+              title={searchResultCounterText}
+              badgeContent={searchResultCount}
+              color="secondary"
+              max={maxSearchResults - 1}
+              onClick={() => {
+                openSearchPanel();
+              }}
+            />
+            <div className={classes.flexMiddle} />
+            {currentDirectoryPath && (
+              <React.Fragment>
+                {isDesktopMode && this.state.pathParts &&
+                  this.state.pathParts.map(pathPart => (
+                    <Button
+                      key={pathPart}
+                      onClick={() => loadDirectoryContent(pathPart)}
+                      title={'Navigate to: ' + pathPart}
+                      style={{ paddingLeft: 3, paddingRight: 0, minWidth: 10 }}
+                    >
+                      {extractShortDirectoryName(pathPart, '/')}
+                      &nbsp;/&nbsp;
+                    </Button>
+                  ))}
+                {!isDesktopMode && this.state.pathParts && this.state.pathParts.length > 0 && (
+                  <React.Fragment>
+                    <Button
+                      onClick={loadParentDirectoryContent}
+                      data-tid="openParentDirectory"
+                      style={{ paddingLeft: 3, paddingRight: 0}}
+                    >
+                      <BackButtonIcon />
+                    </Button>
+                  </React.Fragment>
+                )}
+                <Button
+                  data-tid="folderContainerOpenDirMenu"
+                  title={
+                    i18n.t('core:openDirectoryMenu') +
+                    ' - ' +
+                    (currentDirectoryPath || '')
+                  }
+                  className={classes.folderButton}
+                  onClick={this.openDirectoryMenu}
+                  onContextMenu={this.openDirectoryMenu}
+                >
+                  {extractShortDirectoryName(
+                    normalizePath(normalizedCurrentDirPath), '/'
                   )}
-                  <Button
-                    data-tid="folderContainerOpenDirMenu"
-                    title={
-                      i18n.t('core:openDirectoryMenu') +
-                      ' - ' +
-                      (currentDirectoryPath || '')
-                    }
-                    className={classes.folderButton}
-                    onClick={this.openDirectoryMenu}
-                    onContextMenu={this.openDirectoryMenu}
-                  >
-                    {extractShortDirectoryName(
-                      normalizePath(normalizedCurrentDirPath), '/'
-                    )}
-                    <MoreVertIcon />
-                  </Button>
-                  <DirectoryMenu
-                    open={this.state.directoryContextMenuOpened}
-                    onClose={this.closeDirectoryMenu}
-                    anchorEl={this.state.directoryContextMenuAnchorEl}
-                    directoryPath={currentDirectoryPath}
-                    loadDirectoryContent={this.props.loadDirectoryContent}
-                    openFileNatively={this.props.openFileNatively}
-                    openDirectory={this.props.openDirectory}
-                    loadParentDirectoryContent={loadParentDirectoryContent}
-                    showInFileManager={this.props.showInFileManager}
-                    reflectCreateEntry={this.props.reflectCreateEntry}
-                    openFile={this.props.openFile}
-                    toggleCreateFileDialog={this.props.toggleCreateFileDialog}
-                    deleteDirectory={this.props.deleteDirectory}
-                    showNotification={this.props.showNotification}
-                    switchPerspective={this.switchPerspective}
-                    isReadOnlyMode={this.props.isReadOnlyMode}
-                  />
-                </React.Fragment>
-              )}
-            </div>
-          </div>
-          <div
-            className={classes.centerPanel}
-            style={{ height: this.props.windowHeight }}
-          >
-            {this.renderPerspective()}
+                  <MoreVertIcon />
+                </Button>
+                <DirectoryMenu
+                  open={this.state.directoryContextMenuOpened}
+                  onClose={this.closeDirectoryMenu}
+                  anchorEl={this.state.directoryContextMenuAnchorEl}
+                  directoryPath={currentDirectoryPath}
+                  loadDirectoryContent={this.props.loadDirectoryContent}
+                  openFileNatively={this.props.openFileNatively}
+                  openDirectory={this.props.openDirectory}
+                  loadParentDirectoryContent={loadParentDirectoryContent}
+                  showInFileManager={this.props.showInFileManager}
+                  reflectCreateEntry={this.props.reflectCreateEntry}
+                  openFile={this.props.openFile}
+                  toggleCreateFileDialog={this.props.toggleCreateFileDialog}
+                  deleteDirectory={this.props.deleteDirectory}
+                  showNotification={this.props.showNotification}
+                  switchPerspective={this.switchPerspective}
+                  isReadOnlyMode={this.props.isReadOnlyMode}
+                />
+              </React.Fragment>
+            )}
           </div>
         </div>
-      </HotKeys>
+        <div
+          className={classes.centerPanel}
+          style={{ height: this.props.windowHeight }}
+        >
+          {this.renderPerspective()}
+        </div>
+      </div>
     );
   }
 }
@@ -537,7 +460,6 @@ function mapStateToProps(state) {
     perspectives: getPerspectives(state),
     directoryContent: getDirectoryContent(state),
     searchResultCount: getSearchResultCount(state),
-    // pathPart: getPathTrail(state),
     currentLocationPath: getCurrentLocationPath(state),
     maxSearchResults: getMaxSearchResults(state),
     isDesktopMode: getDesktopMode(state),
