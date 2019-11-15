@@ -36,7 +36,7 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
-import Dialog from '@material-ui/core/Dialog'; // TOD onEnterKeyHandler
+import Dialog from '@material-ui/core/Dialog';
 import i18n from '../../services/i18n';
 import { formatDateTime4Tag } from '../../utils/misc';
 import AppConfig from '../../config';
