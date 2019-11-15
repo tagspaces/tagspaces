@@ -228,17 +228,11 @@ export default {
     }, */
     {
       name: 'nextDocument',
-      command: [
-        'right',
-        'down'
-      ],
+      command: 'down'
     },
     {
       name: 'prevDocument',
-      command: [
-        'left',
-        'up'
-      ],
+      command: 'up',
     },
     {
       name: 'showHelp',

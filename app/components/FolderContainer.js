@@ -358,95 +358,97 @@ class FolderContainer extends React.Component<Props, State> {
       searchResultCounterText = 'More than ' + (maxSearchResults - 1) + ' entries found, showing only the first ' + maxSearchResults;
     }
     return (
-      <div className={classes.mainPanel}>
-        <div className={classes.topPanel}>
-          <div className={classes.toolbar}>
-            {isDesktopMode ? (
-              <LocationMenu />
-            ) : (
-              <Button style={{ marginLeft: -8 }} onClick={showDrawer}>
-                <MenuIcon />
-              </Button>
-            )}
-            <CounterBadge
-              showZero={true}
-              title={searchResultCounterText}
-              badgeContent={searchResultCount}
-              color="secondary"
-              max={maxSearchResults - 1}
-              onClick={() => {
-                openSearchPanel();
-              }}
-            />
-            <div className={classes.flexMiddle} />
-            {currentDirectoryPath && (
-              <React.Fragment>
-                {isDesktopMode && this.state.pathParts &&
-                  this.state.pathParts.map(pathPart => (
-                    <Button
-                      key={pathPart}
-                      onClick={() => loadDirectoryContent(pathPart)}
-                      title={'Navigate to: ' + pathPart}
-                      style={{ paddingLeft: 3, paddingRight: 0, minWidth: 10 }}
-                    >
-                      {extractShortDirectoryName(pathPart, '/')}
-                      &nbsp;/&nbsp;
-                    </Button>
-                  ))}
-                {!isDesktopMode && this.state.pathParts && this.state.pathParts.length > 0 && (
-                  <React.Fragment>
-                    <Button
-                      onClick={loadParentDirectoryContent}
-                      data-tid="openParentDirectory"
-                      style={{ paddingLeft: 3, paddingRight: 0}}
-                    >
-                      <BackButtonIcon />
-                    </Button>
-                  </React.Fragment>
-                )}
-                <Button
-                  data-tid="folderContainerOpenDirMenu"
-                  title={
-                    i18n.t('core:openDirectoryMenu') +
-                    ' - ' +
-                    (currentDirectoryPath || '')
-                  }
-                  className={classes.folderButton}
-                  onClick={this.openDirectoryMenu}
-                  onContextMenu={this.openDirectoryMenu}
-                >
-                  {extractShortDirectoryName(
-                    normalizePath(normalizedCurrentDirPath), '/'
-                  )}
-                  <MoreVertIcon />
+      <div>
+        <div className={classes.mainPanel}>
+          <div className={classes.topPanel}>
+            <div className={classes.toolbar}>
+              {isDesktopMode ? (
+                <LocationMenu />
+              ) : (
+                <Button style={{ marginLeft: -8 }} onClick={showDrawer}>
+                  <MenuIcon />
                 </Button>
-                <DirectoryMenu
-                  open={this.state.directoryContextMenuOpened}
-                  onClose={this.closeDirectoryMenu}
-                  anchorEl={this.state.directoryContextMenuAnchorEl}
-                  directoryPath={currentDirectoryPath}
-                  loadDirectoryContent={this.props.loadDirectoryContent}
-                  openFileNatively={this.props.openFileNatively}
-                  openDirectory={this.props.openDirectory}
-                  loadParentDirectoryContent={loadParentDirectoryContent}
-                  showInFileManager={this.props.showInFileManager}
-                  reflectCreateEntry={this.props.reflectCreateEntry}
-                  openFile={this.props.openFile}
-                  toggleCreateFileDialog={this.props.toggleCreateFileDialog}
-                  deleteDirectory={this.props.deleteDirectory}
-                  showNotification={this.props.showNotification}
-                  switchPerspective={this.switchPerspective}
-                  isReadOnlyMode={this.props.isReadOnlyMode}
-                />
-              </React.Fragment>
-            )}
+              )}
+              <CounterBadge
+                showZero={true}
+                title={searchResultCounterText}
+                badgeContent={searchResultCount}
+                color="secondary"
+                max={maxSearchResults - 1}
+                onClick={() => {
+                  openSearchPanel();
+                }}
+              />
+              <div className={classes.flexMiddle} />
+              {currentDirectoryPath && (
+                <React.Fragment>
+                  {isDesktopMode && this.state.pathParts &&
+                    this.state.pathParts.map(pathPart => (
+                      <Button
+                        key={pathPart}
+                        onClick={() => loadDirectoryContent(pathPart)}
+                        title={'Navigate to: ' + pathPart}
+                        style={{ paddingLeft: 3, paddingRight: 0, minWidth: 10 }}
+                      >
+                        {extractShortDirectoryName(pathPart, '/')}
+                        &nbsp;/&nbsp;
+                      </Button>
+                    ))}
+                  {!isDesktopMode && this.state.pathParts && this.state.pathParts.length > 0 && (
+                    <React.Fragment>
+                      <Button
+                        onClick={loadParentDirectoryContent}
+                        data-tid="openParentDirectory"
+                        style={{ paddingLeft: 3, paddingRight: 0 }}
+                      >
+                        <BackButtonIcon />
+                      </Button>
+                    </React.Fragment>
+                  )}
+                  <Button
+                    data-tid="folderContainerOpenDirMenu"
+                    title={
+                      i18n.t('core:openDirectoryMenu') +
+                      ' - ' +
+                      (currentDirectoryPath || '')
+                    }
+                    className={classes.folderButton}
+                    onClick={this.openDirectoryMenu}
+                    onContextMenu={this.openDirectoryMenu}
+                  >
+                    {extractShortDirectoryName(
+                      normalizePath(normalizedCurrentDirPath), '/'
+                    )}
+                    <MoreVertIcon />
+                  </Button>
+                  <DirectoryMenu
+                    open={this.state.directoryContextMenuOpened}
+                    onClose={this.closeDirectoryMenu}
+                    anchorEl={this.state.directoryContextMenuAnchorEl}
+                    directoryPath={currentDirectoryPath}
+                    loadDirectoryContent={this.props.loadDirectoryContent}
+                    openFileNatively={this.props.openFileNatively}
+                    openDirectory={this.props.openDirectory}
+                    loadParentDirectoryContent={loadParentDirectoryContent}
+                    showInFileManager={this.props.showInFileManager}
+                    reflectCreateEntry={this.props.reflectCreateEntry}
+                    openFile={this.props.openFile}
+                    toggleCreateFileDialog={this.props.toggleCreateFileDialog}
+                    deleteDirectory={this.props.deleteDirectory}
+                    showNotification={this.props.showNotification}
+                    switchPerspective={this.switchPerspective}
+                    isReadOnlyMode={this.props.isReadOnlyMode}
+                  />
+                </React.Fragment>
+              )}
+            </div>
           </div>
-        </div>
-        <div
-          className={classes.centerPanel}
-          style={{ height: this.props.windowHeight }}
-        >
-          {this.renderPerspective()}
+          <div
+            className={classes.centerPanel}
+            style={{ height: this.props.windowHeight }}
+          >
+            {this.renderPerspective()}
+          </div>
         </div>
       </div>
     );

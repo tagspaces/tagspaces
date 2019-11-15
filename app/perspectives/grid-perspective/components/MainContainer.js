@@ -104,6 +104,8 @@ type Props = {
   isAppLoading: boolean,
   isReadOnlyMode: boolean,
   openFile: (path: string, isFile?: boolean) => void,
+  getNextFile: () => void,
+  getPrevFile: () => void,
   deleteFile: (path: string) => void,
   deleteDirectory: (path: string) => void,
   loadDirectoryContent: (path: string) => void,
@@ -629,18 +631,22 @@ class GridPerspective extends React.Component<Props, State> {
   keyMap = this.props.keyBindings;
 
   keyBindingHandlers = {
-    // nextDocument: () => {
-    //   const nextFilePath = this.props.getNextFile();
-    //   if (nextFilePath) {
-    //     this.props.setLastSelectedEntry(nextFilePath);
-    //   }
-    // },
-    // prevDocument: () => {
-    //   const prevFilePath = this.props.getPrevFile();
-    //   if (prevFilePath) {
-    //     this.props.setLastSelectedEntry(prevFilePath);
-    //   }
-    // },
+    nextDocument: () => {
+      const nextFilePath = this.props.getNextFile();
+      if (nextFilePath) {
+        const nextFile = this.props.directoryContent.filter(entry => entry.path === nextFilePath);
+        this.props.setLastSelectedEntry(nextFilePath);
+        this.props.setSelectedEntries(nextFile);
+      }
+    },
+    prevDocument: () => {
+      const prevFilePath = this.props.getPrevFile();
+      if (prevFilePath) {
+        const prevFile = this.props.directoryContent.filter(entry => entry.path === prevFilePath);
+        this.props.setLastSelectedEntry(prevFilePath);
+        this.props.setSelectedEntries(prevFile);
+      }
+    },
     selectAll: () => this.toggleSelectAllFiles(),
     deleteDocument: () => {
       if (this.state.fileOperationsEnabled) {
@@ -659,7 +665,8 @@ class GridPerspective extends React.Component<Props, State> {
         });
       }
     },
-    openEntry: () => {
+    openEntry: (e) => {
+      e.preventDefault();
       const { lastSelectedEntryPath } = this.props;
       if (lastSelectedEntryPath) {
         const isLastSelectedEntryFile = this.props.directoryContent.some(
@@ -812,7 +819,7 @@ class GridPerspective extends React.Component<Props, State> {
             <MoreVertIcon />
           </IconButton>
         </Toolbar>
-        {/* <GlobalHotKeys keyMap={this.keyMap} handlers={this.keyBindingHandlers}> */}
+        <GlobalHotKeys keyMap={this.keyMap} handlers={this.keyBindingHandlers}>
           <div style={{
             height: '100%',
             backgroundColor: theme.palette.background.default
@@ -854,7 +861,7 @@ class GridPerspective extends React.Component<Props, State> {
               </div>
             </div>
           </div>
-        {/* </GlobalHotKeys> */}
+        </GlobalHotKeys>
         <AddRemoveTagsDialog
           open={this.state.isAddRemoveTagsDialogOpened}
           onClose={this.handleCloseDialogs}
@@ -1125,6 +1132,8 @@ function mapActionCreatorsToProps(dispatch) {
     showNotification: AppActions.showNotification,
     openFileNatively: AppActions.openFileNatively,
     openURLExternally: AppActions.openURLExternally,
+    getNextFile: AppActions.getNextFile,
+    getPrevFile: AppActions.getPrevFile,
     addTags: TaggingActions.addTags,
   }, dispatch);
 }

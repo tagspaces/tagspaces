@@ -921,8 +921,6 @@ class EntryContainer extends React.Component<Props, State> {
         saveDocument: this.startSavingFile,
         editDocument: this.editFile,
         reloadDocument: this.reloadDocument,
-        nextDocument: this.isPropertiesEditMode ? () => {} : this.openNextFile,
-        prevDocument: this.isPropertiesEditMode ? () => {} : this.openPrevFile
       }}
       >
         <ConfirmDialog
