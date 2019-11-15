@@ -29,7 +29,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { withStyles } from '@material-ui/core/styles';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
+import Dialog from '@material-ui/core/Dialog'; // TODO onEnterKeyHandler
 import i18n from '../../services/i18n';
 import { isPlusCode } from '../../utils/misc';
 import { type Tag } from '../../reducers/taglibrary';
@@ -64,6 +64,7 @@ const EditEntryTagDialog = (props: Props) => {
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [errorTag, setErrorTag] = useState(false);
   const [title, setTitle] = useState(props.selectedTag && props.selectedTag.title);
+  const { open, onClose, fullScreen } = props;
 
   useEffect(() => {
     handleValidation();
@@ -89,12 +90,6 @@ const EditEntryTagDialog = (props: Props) => {
     }
   }
 
-  function renderTitle() {
-    return (
-      <DialogTitle>{i18n.t('core:tagProperties')}</DialogTitle>
-    );
-  }
-
   function renderContent() {
     const showGeoEditor = GeoTagEditor && isPlusCode(title);
     let showDatePeriodEditor = false;
@@ -112,9 +107,20 @@ const EditEntryTagDialog = (props: Props) => {
       }
     } else showDatePeriodEditor = isDateTimeTag(title);
     showDatePeriodEditor = DateTagEditor && showDatePeriodEditor;
+  }
 
-    return (
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullScreen={fullScreen}
+      keepMounted
+      scroll="paper"
+      // onKeyDown={confirmFunction}
+    >
+      <DialogTitle>{i18n.t('core:tagProperties')}</DialogTitle>
       <DialogContent data-tid="editEntryTagDialog" className={props.classes.root}>
+      {renderContent}
         <FormControl
           fullWidth={true}
           error={errorTag}
@@ -138,11 +144,6 @@ const EditEntryTagDialog = (props: Props) => {
         { showGeoEditor && <GeoTagEditor key={title} geoTag={title} onChange={setTitle} zoom={title === defaultTagLocation ? 2 : undefined} /> }
         { showDatePeriodEditor && <DateTagEditor key={title} datePeriodTag={title} onChange={setTitle} /> }
       </DialogContent>
-    );
-  }
-
-  function renderActions() {
-    return (
       <DialogActions>
         <Button
           data-tid="closeEditTagEntryDialog"
@@ -160,19 +161,7 @@ const EditEntryTagDialog = (props: Props) => {
           {i18n.t('core:ok')}
         </Button>
       </DialogActions>
-    );
-  }
-
-  return (
-    <GenericDialog
-      open={props.open}
-      fullScreen={props.fullScreen}
-      onClose={props.onClose}
-      onEnterKey={(event) => onEnterKeyHandler(event, onConfirm)}
-      renderTitle={renderTitle}
-      renderContent={renderContent}
-      renderActions={renderActions}
-    />
+    </Dialog>  
   );
 };
 
