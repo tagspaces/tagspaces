@@ -36,7 +36,7 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
-import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
+import Dialog from '@material-ui/core/Dialog'; // TOD onEnterKeyHandler
 import i18n from '../../services/i18n';
 import { formatDateTime4Tag } from '../../utils/misc';
 import AppConfig from '../../config';
@@ -81,6 +81,8 @@ type State = {
   fileContent: string,
   fileType: string
 };
+
+const { open, onClose, fullScreen } = props;
 
 class CreateFileDialog extends React.Component<Props, State> {
   state = {
@@ -157,133 +159,117 @@ class CreateFileDialog extends React.Component<Props, State> {
     }
   };
 
-  renderTitle = () => (
-    <DialogTitle>{i18n.t('core:createFileTitle')}</DialogTitle>
-  );
-
-  renderContent = () => (
-    <DialogContent data-tid="createFileDialog">
-      <FormControl
-        fullWidth={true}
-        error={this.state.errorTextName}
-      >
-        <TextField
+  return = () => {
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullScreen={fullScreen}
+      keepMounted
+      scroll="paper"
+      // onKeyDown={confirmFunction}
+    >
+      <DialogTitle>{i18n.t('core:createFileTitle')}</DialogTitle>
+      <DialogContent data-tid="createFileDialog">
+        <FormControl
           fullWidth={true}
           error={this.state.errorTextName}
-          autoFocus
-          margin="dense"
-          name="fileName"
-          label={i18n.t('core:fileName')}
-          inputRef={(ref) => { this.fileName = ref; }}
-          onChange={this.handleInputChange}
-          value={this.state.fileName}
-          data-tid="createFileDialog_fileName"
-        />
-        {this.state.errorTextName && <FormHelperText>{i18n.t('core:fileNameHelp')}</FormHelperText>}
-      </FormControl>
-      <FormControl fullWidth={true}>
-        <TextField
-          id="textarea"
-          placeholder="Enter the content of your file / note"
-          multiline
-          name="fileContent"
-          value={this.state.fileContent}
-          onChange={this.handleInputChange}
-          onKeyDown={this.handleKeyPress}
-          margin="normal"
-          fullWidth={true}
-          rows={4}
-          rowsMax={10}
-        />
-      </FormControl>
-      <ListItem>
-        <Radio
-          checked={this.state.fileType === 'txt'}
-          onChange={this.handleTypeChange}
-          value="txt"
-          name="type"
-          aria-label={i18n.t('core:createTextFile')}
-        />
-        <FormHelperText>{i18n.t('core:createTextFile')}</FormHelperText>
-        <Radio
-          checked={this.state.fileType === 'md'}
-          onChange={this.handleTypeChange}
-          value="md"
-          name="type"
-          aria-label={i18n.t('core:createMarkdown')}
-        />
-        <FormHelperText>{i18n.t('core:createMarkdown')}</FormHelperText>
-        <Radio
-          checked={this.state.fileType === 'html'}
-          onChange={this.handleTypeChange}
-          value="html"
-          name="html"
-          aria-label={i18n.t('core:createRichTextFile')}
-        />
-        <FormHelperText>{i18n.t('core:createRichTextFile')}</FormHelperText>
-      </ListItem>
-      <FormControl fullWidth={true}>
-        <InputLabel htmlFor="name">{i18n.t('core:filePath')}</InputLabel>
-        <Input
-          required
-          margin="dense"
-          name="selectedDirectoryPath"
-          label={i18n.t('core:filePath')}
-          fullWidth={true}
-          data-tid="createFileDialog_filePath"
-          value={this.state.selectedDirectoryPath}
-          onChange={this.handleInputChange}
-          endAdornment={
-            PlatformIO.haveObjectStoreSupport() ? undefined :
-              (<InputAdornment position="end" style={{ height: 32 }}>
-                <IconButton onClick={this.openFolderChooser}>
-                  <FolderIcon />
-                </IconButton>
-              </InputAdornment>)
-          }
-        />
-        {this.state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
-      </FormControl>
-    </DialogContent>
-  );
-
-  renderActions = () => (
-    <DialogActions>
-      <Button
-        data-tid="closeCreateFileDialog"
-        onClick={this.props.onClose}
-        color="primary"
-      >
-        {i18n.t('core:cancel')}
-      </Button>
-      <Button
-        disabled={this.state.disableConfirmButton}
-        onClick={this.onConfirm}
-        data-tid="confirmCreateFileDialog"
-        color="primary"
-      >
-        {i18n.t('core:ok')}
-      </Button>
-    </DialogActions>
-  );
-
-  render() {
-    const {
-      fullScreen,
-      open,
-      onClose
-    } = this.props;
-    return (
-      <GenericDialog
-        fullScreen={fullScreen}
-        open={open}
-        onClose={onClose}
-        onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
-        renderTitle={this.renderTitle}
-        renderContent={this.renderContent}
-        renderActions={this.renderActions}
-      />
-    );
+        >
+          <TextField
+            fullWidth={true}
+            error={this.state.errorTextName}
+            autoFocus
+            margin="dense"
+            name="fileName"
+            label={i18n.t('core:fileName')}
+            inputRef={(ref) => { this.fileName = ref; }}
+            onChange={this.handleInputChange}
+            value={this.state.fileName}
+            data-tid="createFileDialog_fileName"
+          />
+          {this.state.errorTextName && <FormHelperText>{i18n.t('core:fileNameHelp')}</FormHelperText>}
+        </FormControl>
+        <FormControl fullWidth={true}>
+          <TextField
+            id="textarea"
+            placeholder="Enter the content of your file / note"
+            multiline
+            name="fileContent"
+            value={this.state.fileContent}
+            onChange={this.handleInputChange}
+            onKeyDown={this.handleKeyPress}
+            margin="normal"
+            fullWidth={true}
+            rows={4}
+            rowsMax={10}
+          />
+        </FormControl>
+        <ListItem>
+          <Radio
+            checked={this.state.fileType === 'txt'}
+            onChange={this.handleTypeChange}
+            value="txt"
+            name="type"
+            aria-label={i18n.t('core:createTextFile')}
+          />
+          <FormHelperText>{i18n.t('core:createTextFile')}</FormHelperText>
+          <Radio
+            checked={this.state.fileType === 'md'}
+            onChange={this.handleTypeChange}
+            value="md"
+            name="type"
+            aria-label={i18n.t('core:createMarkdown')}
+          />
+          <FormHelperText>{i18n.t('core:createMarkdown')}</FormHelperText>
+          <Radio
+            checked={this.state.fileType === 'html'}
+            onChange={this.handleTypeChange}
+            value="html"
+            name="html"
+            aria-label={i18n.t('core:createRichTextFile')}
+          />
+          <FormHelperText>{i18n.t('core:createRichTextFile')}</FormHelperText>
+        </ListItem>
+        <FormControl fullWidth={true}>
+          <InputLabel htmlFor="name">{i18n.t('core:filePath')}</InputLabel>
+          <Input
+            required
+            margin="dense"
+            name="selectedDirectoryPath"
+            label={i18n.t('core:filePath')}
+            fullWidth={true}
+            data-tid="createFileDialog_filePath"
+            value={this.state.selectedDirectoryPath}
+            onChange={this.handleInputChange}
+            endAdornment={
+              PlatformIO.haveObjectStoreSupport() ? undefined :
+                (<InputAdornment position="end" style={{ height: 32 }}>
+                  <IconButton onClick={this.openFolderChooser}>
+                    <FolderIcon />
+                  </IconButton>
+                </InputAdornment>)
+            }
+          />
+          {this.state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
+        </FormControl>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          data-tid="closeCreateFileDialog"
+          onClick={this.props.onClose}
+          color="primary"
+        >
+          {i18n.t('core:cancel')}
+        </Button>
+        <Button
+          disabled={this.state.disableConfirmButton}
+          onClick={this.onConfirm}
+          data-tid="confirmCreateFileDialog"
+          color="primary"
+        >
+          {i18n.t('core:ok')}
+        </Button>
+      </DialogActions>
+    </Dialog>  
   }
 }
 
