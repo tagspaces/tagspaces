@@ -33,7 +33,7 @@ import Grid from '@material-ui/core/Grid';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import { Typography } from '@material-ui/core';
-import Dialog from '@material-ui/core/Dialog'; // TODO onEnterKeyHandler
+import Dialog from '@material-ui/core/Dialog';
 import i18n from '../../services/i18n';
 import { type Location, locationType } from '../../reducers/locations';
 import { Pro } from '../../pro';

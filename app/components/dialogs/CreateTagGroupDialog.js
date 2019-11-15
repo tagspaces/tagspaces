@@ -25,7 +25,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import Dialog from '@material-ui/core/Dialog'; // TODO onEnterKeyHandler
+import Dialog from '@material-ui/core/Dialog';
 import ColorPickerDialog from './ColorPickerDialog';
 import { type TagGroup } from '../../reducers/taglibrary';
 import i18n from '../../services/i18n';
