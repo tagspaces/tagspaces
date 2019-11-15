@@ -29,7 +29,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { withStyles } from '@material-ui/core/styles';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import Dialog from '@material-ui/core/Dialog'; // TODO onEnterKeyHandler
+import Dialog from '@material-ui/core/Dialog';
 import i18n from '../../services/i18n';
 import { isPlusCode } from '../../utils/misc';
 import { type Tag } from '../../reducers/taglibrary';
