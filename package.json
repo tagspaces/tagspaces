@@ -243,7 +243,7 @@
     "react-dnd-html5-backend": "^7.0.2",
     "react-dom": "^16.8.2",
     "react-hot-loader": "^4.8.2",
-    "react-hotkeys": "^1.1.4",
+    "react-hotkeys": "^2.0.0",
     "react-i18next": "^4.6.1",
     "react-image-gallery": "^0.9.1",
     "react-joyride": "^2.0.0-11",

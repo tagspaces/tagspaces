@@ -255,7 +255,6 @@ class FolderContainer extends React.Component<Props, State> {
   }
 
   keyBindingHandlers = {
-    openParentDirectory: this.props.loadParentDirectoryContent,
     nextDocument: () => {
       const nextFilePath = this.props.getNextFile();
       if (nextFilePath) {

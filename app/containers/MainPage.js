@@ -163,6 +163,7 @@ type Props = {
   setEntryFullWidth: (isFullWidth: boolean) => void,
   hideNotifications: () => void,
   cancelDirectoryIndexing: () => void,
+  loadParentDirectoryContent: () => void,
   setUpdateAvailable: (isUpdateAvailable: boolean) => void,
   saveFile: () => void, // needed by electron-menus
   setZoomResetApp: () => void, // needed by electron-menus
@@ -513,6 +514,7 @@ class MainPage extends Component<Props, State> {
   };
 
   keyBindingHandlers = {
+    openParentDirectory: this.props.loadParentDirectoryContent,
     toggleShowHiddenEntries: this.props.toggleShowUnixHiddenEntries,
     showFolderNavigator: this.props.openLocationManagerPanel,
     showTagLibrary: this.props.openTagLibraryPanel,
@@ -815,6 +817,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
+    loadParentDirectoryContent: AppActions.loadParentDirectoryContent,
     toggleSettingsDialog: AppActions.toggleSettingsDialog,
     toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
     toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog,
