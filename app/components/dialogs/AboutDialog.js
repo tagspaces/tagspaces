@@ -82,6 +82,12 @@ const AboutDialog = (props: Props) => {
     }
   }
 
+  // function confirmFunction(event) {
+  //   if (event.key === 'Enter' || event.keyCode === 13)
+  //     props.onClose();
+  //     event.stopPropagation();
+  // }
+
   let versionInfo = 'Check for updates';
     if (newVersion && newVersion.length > 1) {
       if (updateAvailable) {
@@ -95,8 +101,10 @@ const AboutDialog = (props: Props) => {
     <Dialog
       open={open}
       onClose={onClose}
+      fullScreen={fullScreen}
       keepMounted
       scroll="paper"
+      // onKeyDown={confirmFunction}
     >  
     <DialogTitle>{productName}</DialogTitle>
     <DialogContent>
