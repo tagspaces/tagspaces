@@ -22,7 +22,6 @@ import { connect } from 'react-redux';
 // import injectTapEventPlugin from 'react-tap-event-plugin';
 import { I18nextProvider } from 'react-i18next'; // as we build ourself via webpack
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
-import { HotKeys } from 'react-hotkeys';
 import '../assets/fonts/roboto/index.css';
 import i18n from '../services/i18n';
 import { getCurrentTheme, getKeyBindingObject } from '../reducers/settings';
@@ -105,12 +104,10 @@ class App extends Component {
     }
 
     return (
-      <HotKeys keyMap={this.props.keyBindings}>
-        <ThemeProvider theme={theme}>
-          <I18nextProvider i18n={i18n}>{this.props.children}</I18nextProvider>
-          <AppOnBoarding />
-        </ThemeProvider>
-      </HotKeys>
+      <ThemeProvider theme={theme}>
+        <I18nextProvider i18n={i18n}>{this.props.children}</I18nextProvider>
+        <AppOnBoarding />
+      </ThemeProvider>
     );
   }
 }
@@ -118,7 +115,6 @@ class App extends Component {
 function mapStateToProps(state) {
   return {
     currentTheme: getCurrentTheme(state),
-    keyBindings: getKeyBindingObject(state)
   };
 }
 

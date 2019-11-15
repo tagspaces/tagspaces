@@ -627,8 +627,16 @@ class GridPerspective extends React.Component<Props, State> {
     );
   };
 
-
-  keyMap = this.props.keyBindings;
+  keyMap = {
+    nextDocument: this.props.keyBindings.nextDocument,
+    prevDocument: this.props.keyBindings.prevDocument,
+    selectAll: this.props.keyBindings.selectAll,
+    deleteDocument: this.props.keyBindings.deleteDocument,
+    addRemoveTags: this.props.keyBindings.addRemoveTags,
+    renameFile: this.props.keyBindings.renameFile,
+    openEntry: this.props.keyBindings.openEntry,
+    openFileExternally: this.props.keyBindings.openFileExternally,
+  };
 
   keyBindingHandlers = {
     nextDocument: () => {

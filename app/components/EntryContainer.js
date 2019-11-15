@@ -20,7 +20,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { HotKeys } from 'react-hotkeys';
+import { GlobalHotKeys } from 'react-hotkeys';
 import Button from '@material-ui/core/Button';
 import Fab from '@material-ui/core/Fab';
 import IconButton from '@material-ui/core/IconButton';
@@ -38,7 +38,6 @@ import ExpandIcon from '@material-ui/icons/SettingsEthernet';
 import FolderIcon from '@material-ui/icons/FolderOpen';
 import SplitPane from 'react-split-pane';
 import DeleteIcon from '@material-ui/icons/Delete';
-import CopyContentIcon from '@material-ui/icons/FileCopy';
 import { withStyles } from '@material-ui/core/styles';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import EntryProperties from './EntryProperties';
@@ -61,7 +60,7 @@ import {
   extractDirectoryName
 } from '../utils/paths';
 import { buffer } from '../utils/misc';
-import { actions as SettingsActions } from '../reducers/settings';
+import { actions as SettingsActions, getKeyBindingObject } from '../reducers/settings';
 import TaggingActions from '../reducers/tagging-actions';
 import {
   type OpenedEntry,
@@ -164,6 +163,7 @@ type Props = {
   classes: Object,
   openedFiles: Array<OpenedEntry>,
   settings: Object,
+  keyBindings: Object,
   closeAllFiles: () => void,
   renameFile: () => void,
   renameDirectory: () => void,
@@ -868,7 +868,7 @@ class EntryContainer extends React.Component<Props, State> {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, keyBindings } = this.props;
     const { isEditTagsModalOpened, currentEntry, isFullscreen } = this.state;
     let fileOpenerURL: string;
     let fileTitle: string = '';
@@ -916,12 +916,19 @@ class EntryContainer extends React.Component<Props, State> {
     }
 
     return (
-      <HotKeys handlers={{
-        closeViewer: this.startClosingFile,
-        saveDocument: this.startSavingFile,
-        editDocument: this.editFile,
-        reloadDocument: this.reloadDocument,
-      }}
+      <GlobalHotKeys
+        handlers={{
+          closeViewer: this.startClosingFile,
+          saveDocument: this.startSavingFile,
+          editDocument: this.editFile,
+          // reloadDocument: this.reloadDocument,
+        }}
+        keyMap={{
+          closeViewer: keyBindings.closeViewer,
+          saveDocument: keyBindings.saveDocument,
+          editDocument: keyBindings.editDocument,
+          // reloadDocument: settings.keyBindings.reloadDocument,
+        }}
       >
         <ConfirmDialog
           open={this.state.isSaveBeforeCloseConfirmDialogOpened}
@@ -1179,7 +1186,7 @@ class EntryContainer extends React.Component<Props, State> {
             {this.renderFileView(fileOpenerURL)}
           </div>
         </SplitPane>
-      </HotKeys>
+      </GlobalHotKeys>
     );
   }
 }
@@ -1190,6 +1197,7 @@ function mapStateToProps(state) {
     settings: state.settings,
     isReadOnlyMode: isReadOnlyMode(state),
     directoryContent: getDirectoryContent(state),
+    keyBindings: getKeyBindingObject(state),
   };
 }
 

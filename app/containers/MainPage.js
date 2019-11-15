@@ -151,6 +151,7 @@ type Props = {
   isSelectDirectoryDialogOpened: boolean,
   toggleSelectDirectoryDialog: () => void,
   isEditTagDialogOpened: boolean,
+  keyBindings: Object,
   toggleEditTagDialog: () => void,
   setEntryFullWidth: (isFullWidth: boolean) => void,
   hideNotifications: () => void,
@@ -514,6 +515,15 @@ class MainPage extends Component<Props, State> {
     showHelp: this.props.openHelpFeedbackPanel,
   };
 
+  keyMap = {
+    openParentDirectory: this.props.keyBindings.openParentDirectory,
+    toggleShowHiddenEntries: this.props.keyBindings.toggleShowHiddenEntries,
+    showFolderNavigator: this.props.keyBindings.showFolderNavigator,
+    showTagLibrary: this.props.keyBindings.showTagLibrary,
+    openSearch: this.props.keyBindings.openSearch,
+    showHelp: this.props.keyBindings.showHelp,
+  };
+
   render() {
     const {
       classes,
@@ -539,7 +549,7 @@ class MainPage extends Component<Props, State> {
       toggleSelectDirectoryDialog,
       toggleEditTagDialog,
       setFirstRun,
-      directoryPath
+      directoryPath,
     } = this.props;
     const { FILE } = NativeTypes;
 
@@ -547,7 +557,7 @@ class MainPage extends Component<Props, State> {
       this.setManagementPanelVisibility(false);
     } */
     return (
-      <HotKeys handlers={this.keyBindingHandlers}>
+      <HotKeys handlers={this.keyBindingHandlers} keyMap={this.keyMap}>
         {isAboutDialogOpened && (
           <AboutDialogAsync
             open={isAboutDialogOpened}
