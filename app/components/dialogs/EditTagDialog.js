@@ -26,7 +26,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
+import Dialog from '@material-ui/core/Dialog';
 import ColorPickerDialog from './ColorPickerDialog';
 import TransparentBackground from '../TransparentBackground';
 import i18n from '../../services/i18n';
@@ -131,13 +131,13 @@ class EditTagDialog extends React.Component<Props, State> {
     this.setState({ textcolor: color });
   };
 
-  renderTitle = () => (
-    <DialogTitle style={{ overflow: 'visible' }}>{i18n.t('core:editTagTitle')}{` '${this.state.title}'`}</DialogTitle>
-  );
-
-  renderContent = () => {
+  render() {
     const { color, textcolor, modifiedDate } = this.state;
-
+    const {
+      fullScreen,
+      open,
+      onClose
+    } = this.props;
     const styles = {
       color: {
         width: '100%',
@@ -166,107 +166,101 @@ class EditTagDialog extends React.Component<Props, State> {
     };
 
     return (
-      <DialogContent style={{ overflow: 'visible' }}>
-        <FormControl
-          fullWidth={true}
-          error={this.state.inputError}
-          style={{ overflow: 'visible' }}
-        >
-          {modifiedDate && (
-            <div className="tag-date" style={{ fontSize: 12, position: 'relative', bottom: 20, color: '#808080' }}>
-              <span className="text" style={{ fontWeight: 600 }}>{`${i18n.t('core:modifiedDate')}: `}</span>
-              <time>{format(new Date(modifiedDate), 'yyyy-mm-dd')}</time>
-            </div>
-          )}
-          <TextField
-            error={this.state.inputError}
-            margin="dense"
-            name="title"
-            autoFocus
-            label={i18n.t('core:editTag')}
-            onChange={this.handleInputChange}
-            value={this.state.title}
-            data-tid="editTagInput"
+      <Dialog
+        open={open}
+        fullScreen={fullScreen}
+        onClose={onClose}
+        keepMounted
+        scroll="paper"
+        // onEnterKey={(event) => onEnterKeyHandler(event, this.addTags)}
+      >
+        <DialogTitle style={{ overflow: 'visible' }}>{i18n.t('core:editTagTitle')}{` '${this.state.title}'`}</DialogTitle>
+        <DialogContent style={{ overflow: 'visible' }}>
+          <FormControl
             fullWidth={true}
-          />
-          {this.state.inputError && <FormHelperText style={styles.helpText}>{i18n.t('core:tagTitleHelper')}</FormHelperText>}
-        </FormControl>
-        <FormControl
-          fullWidth={true}
-        >
-          <FormHelperText style={styles.helpText}>{i18n.t('core:tagBackgroundColor')}</FormHelperText>
-          <TransparentBackground>
-            <Button
-              onClick={this.toggleDefaultTagBackgroundColorPicker}
-              data-tid="tagBackgroundColorEditTagDialog"
-              style={styles.color}
-              role="presentation"
-            >&nbsp;
-            </Button>
-          </TransparentBackground>
-          <ColorPickerDialog
-            open={this.state.displayColorPicker}
-            setColor={this.handleChangeColor}
-            onClose={this.toggleDefaultTagBackgroundColorPicker}
-            color={this.state.color}
-          />
-        </FormControl>
-        <FormControl
-          fullWidth={true}
-        >
-          <FormHelperText style={styles.helpText}>{i18n.t('core:tagForegroundColor')}</FormHelperText>
-          <TransparentBackground>
-            <Button
-              onClick={this.toggleDefaultTagTextColorPicker}
-              data-tid="tagForegroundColorEditTagDialog"
-              style={styles.textcolor}
-              role="presentation"
-            >&nbsp;
-            </Button>
-          </TransparentBackground>
-          <ColorPickerDialog
-            open={this.state.displayTextColorPicker}
-            setColor={this.handleChangeTextColor}
-            onClose={this.toggleDefaultTagTextColorPicker}
-            color={this.state.textcolor}
-          />
-        </FormControl>
-      </DialogContent>
+            error={this.state.inputError}
+            style={{ overflow: 'visible' }}
+          >
+            {modifiedDate && (
+              <div className="tag-date" style={{ fontSize: 12, position: 'relative', bottom: 20, color: '#808080' }}>
+                <span className="text" style={{ fontWeight: 600 }}>{`${i18n.t('core:modifiedDate')}: `}</span>
+                <time>{format(new Date(modifiedDate), 'yyyy-mm-dd')}</time>
+              </div>
+            )}
+            <TextField
+              error={this.state.inputError}
+              margin="dense"
+              name="title"
+              autoFocus
+              label={i18n.t('core:editTag')}
+              onChange={this.handleInputChange}
+              value={this.state.title}
+              data-tid="editTagInput"
+              fullWidth={true}
+            />
+            {this.state.inputError && <FormHelperText style={styles.helpText}>{i18n.t('core:tagTitleHelper')}</FormHelperText>}
+          </FormControl>
+          <FormControl
+            fullWidth={true}
+          >
+            <FormHelperText style={styles.helpText}>{i18n.t('core:tagBackgroundColor')}</FormHelperText>
+            <TransparentBackground>
+              <Button
+                onClick={this.toggleDefaultTagBackgroundColorPicker}
+                data-tid="tagBackgroundColorEditTagDialog"
+                style={styles.color}
+                role="presentation"
+              >&nbsp;
+              </Button>
+            </TransparentBackground>
+            <ColorPickerDialog
+              open={this.state.displayColorPicker}
+              setColor={this.handleChangeColor}
+              onClose={this.toggleDefaultTagBackgroundColorPicker}
+              color={this.state.color}
+            />
+          </FormControl>
+          <FormControl
+            fullWidth={true}
+          >
+            <FormHelperText style={styles.helpText}>{i18n.t('core:tagForegroundColor')}</FormHelperText>
+            <TransparentBackground>
+              <Button
+                onClick={this.toggleDefaultTagTextColorPicker}
+                data-tid="tagForegroundColorEditTagDialog"
+                style={styles.textcolor}
+                role="presentation"
+              >&nbsp;
+              </Button>
+            </TransparentBackground>
+            <ColorPickerDialog
+              open={this.state.displayTextColorPicker}
+              setColor={this.handleChangeTextColor}
+              onClose={this.toggleDefaultTagTextColorPicker}
+              color={this.state.textcolor}
+            />
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={this.props.onClose}
+            data-tid="closeEditTagDialog"
+            color="primary"
+          >
+            {i18n.t('core:cancel')}
+          </Button>
+          <Button
+            disabled={this.state.disableConfirmButton}
+            onClick={this.onConfirm}
+            data-tid="editTagConfirm"
+            color="primary"
+          >
+            {i18n.t('core:ok')}
+          </Button>
+        </DialogActions>
+      </Dialog>  
     );
-  };
-
-  renderActions = () => (
-    <DialogActions>
-      <Button
-        onClick={this.props.onClose}
-        data-tid="closeEditTagDialog"
-        color="primary"
-      >
-        {i18n.t('core:cancel')}
-      </Button>
-      <Button
-        disabled={this.state.disableConfirmButton}
-        onClick={this.onConfirm}
-        data-tid="editTagConfirm"
-        color="primary"
-      >
-        {i18n.t('core:ok')}
-      </Button>
-    </DialogActions>
-  );
-
-  render() {
-    return (
-      <GenericDialog
-        open={this.props.open}
-        onClose={this.props.onClose}
-        onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
-        renderTitle={this.renderTitle}
-        renderContent={this.renderContent}
-        renderActions={this.renderActions}
-      />
-    );
-  }
+  }  
 }
 
 export default EditTagDialog;
