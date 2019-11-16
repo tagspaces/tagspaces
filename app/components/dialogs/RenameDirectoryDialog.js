@@ -27,7 +27,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
+import Dialog from '@material-ui/core/Dialog';
 import i18n from '../../services/i18n';
 import { extractDirectoryName } from '../../utils/paths';
 import { actions as AppActions } from '../../reducers/app';
@@ -85,64 +85,61 @@ class RenameDirectoryDialog extends React.Component<Props, State> {
     }
   };
 
-  renderTitle = () => (
-    <DialogTitle>{i18n.t('core:renameDirectory')}</DialogTitle>
-  );
-
-  renderContent = () => (
-    <DialogContent>
-      <FormControl
-        fullWidth={true}
-        error={this.state.inputError}
-      >
-        <TextField
-          fullWidth={true}
-          autoFocus
-          required
-          error={this.state.inputError}
-          margin="dense"
-          name="name"
-          label={i18n.t('core:renameDirectoryTitleName')}
-          onChange={this.handleInputChange}
-          value={this.state.name}
-          data-tid="renameDirectoryDialogInput"
-        />
-        <FormHelperText>{i18n.t('core:directoryNameHelp')}</FormHelperText>
-      </FormControl>
-    </DialogContent>
-  );
-
-  renderActions = () => (
-    <DialogActions>
-      <Button
-        data-tid="closeRenameDirectoryDialog"
-        onClick={this.props.onClose}
-        color="primary"
-      >
-        {i18n.t('core:cancel')}
-      </Button>
-      <Button
-        disabled={this.state.disableConfirmButton}
-        onClick={this.onConfirm}
-        data-tid="confirmRenameDirectory"
-        color="primary"
-      >
-        {i18n.t('core:ok')}
-      </Button>
-    </DialogActions>
-  );
-
   render() {
+    const {
+      fullScreen,
+      open,
+      onClose
+    } = this.props;
+
     return (
-      <GenericDialog
-        open={this.props.open}
-        onClose={this.props.onClose}
-        autoFocus
-        onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
-        renderTitle={this.renderTitle}
-        renderContent={this.renderContent}
-        renderActions={this.renderActions}
-      />
+      <Dialog
+      open={open}
+      onClose={onClose}
+      fullScreen={fullScreen}
+      keepMounted
+      scroll="paper"
+      // onKeyDown={confirmFunction}
+      >
+        <DialogTitle>{i18n.t('core:renameDirectory')}</DialogTitle>
+        <DialogContent>
+          <FormControl
+            fullWidth={true}
+            error={this.state.inputError}
+          >
+            <TextField
+              fullWidth={true}
+              autoFocus
+              required
+              error={this.state.inputError}
+              margin="dense"
+              name="name"
+              label={i18n.t('core:renameDirectoryTitleName')}
+              onChange={this.handleInputChange}
+              value={this.state.name}
+              data-tid="renameDirectoryDialogInput"
+            />
+            <FormHelperText>{i18n.t('core:directoryNameHelp')}</FormHelperText>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            data-tid="closeRenameDirectoryDialog"
+            onClick={this.props.onClose}
+            color="primary"
+          >
+            {i18n.t('core:cancel')}
+          </Button>
+          <Button
+            disabled={this.state.disableConfirmButton}
+            onClick={this.onConfirm}
+            data-tid="confirmRenameDirectory"
+            color="primary"
+          >
+            {i18n.t('core:ok')}
+          </Button>
+        </DialogActions>
+      </Dialog>  
     );
   }
 }
