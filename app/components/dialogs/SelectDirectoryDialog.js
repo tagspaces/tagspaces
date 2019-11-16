@@ -32,7 +32,7 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
-import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
+import Dialog from '@material-ui/core/Dialog';
 import i18n from '../../services/i18n';
 import AppConfig from '../../config';
 import PlatformIO from '../../services/platform-io';
@@ -185,111 +185,109 @@ class SelectDirectoryDialog extends React.Component<Props, State> {
     </div>
   );
 
-  renderTitle = () => (
-    <DialogTitle>{i18n.t('core:selectDialogTitle')}</DialogTitle>
-  );
-
-  renderContent = () => (
-    <DialogContent>
-      <FormControl
-        fullWidth={true}
-        error={this.props.errorTextPath}
-      >
-        <InputLabel htmlFor="name">{i18n.t('core:selectDialogCurrentPath')}</InputLabel>
-        <Input
-          fullWidth={true}
-          required
-          margin="dense"
-          name="path"
-          onChange={this.handleInputChange}
-          label={i18n.t('core:selectDialogCurrentPath')}
-          data-tid="selectDirectoryDialogInput"
-          value={this.state.currentPath}
-          disabled={AppConfig.isWin}
-        />
-        {this.state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
-      </FormControl>
-      {AppConfig.isWin ? (
-        <FormControl
-          fullWidth={true}
-        >
-          <Select
-            data-tid="selectDirectoryDialogSelect"
-            native
-            autoWidth
-            name="choosePath"
-            value={this.state.choosePath}
-            onChange={this.handleInputChange}
-            input={<Input id="choosePath" />}
-          >
-            {drives.map((drive) => (<option key={drive} value={drive}>{drive}</option>))}
-          </Select>
-        </FormControl>
-      ) : null
-      }
-      <FormControl
-        fullWidth={true}
-      >
-        <Paper elevation={2}>
-          <Button
-            data-tid="onBackButtonSelectDirectoryDialog"
-            onClick={e => this.onBackButton(e)}
-          >
-            <UndoIcon />
-          </Button>
-          <Button
-            data-tid="createNewFolderSelectDirectoryDialog"
-            onClick={e => this.createNewFolder(e)}
-          >
-            <CreateFolderIcon className={this.props.classes.folderIcon} />
-            {i18n.t('core:createDirectory')}
-          </Button>
-        </Paper>
-        <Paper elevation={2} className={this.props.classes.contentFolder} >
-          {this.state.subFolders.length === 0 ?
-            (
-              <div className={this.props.classes.alertWarning}>
-                {i18n.t('core:noSubfoldersFound')}
-              </div>
-            )
-            :
-            this.state.subFolders.map(this.renderDriveSuggestions)
-          }
-        </Paper>
-      </FormControl>
-    </DialogContent>
-  );
-
-  renderActions = () => (
-    <DialogActions>
-      <Button
-        onClick={this.props.onClose}
-        color="primary"
-      >
-        {i18n.t('core:cancel')}
-      </Button>
-      <Button
-        onClick={this.onConfirm}
-        data-tid="confirmSelectDirectoryDialog"
-        color="primary"
-      >
-        {i18n.t('core:ok')}
-      </Button>
-    </DialogActions>
-  );
-
   render() {
+    const {
+      fullScreen,
+      open,
+      onClose
+    } = this.props;
+
     return (
-      <GenericDialog
-        open={this.props.open}
-        onClose={this.props.onClose}
-        onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
-        renderTitle={this.renderTitle}
-        renderContent={this.renderContent}
-        renderActions={this.renderActions}
-      />
+      <Dialog
+      open={open}
+      onClose={onClose}
+      fullScreen={fullScreen}
+      keepMounted
+      scroll="paper"
+      // onKeyDown={confirmFunction}
+      >
+        <DialogTitle>{i18n.t('core:selectDialogTitle')}</DialogTitle>
+        <DialogContent>
+          <FormControl
+            fullWidth={true}
+            error={this.props.errorTextPath}
+          >
+            <InputLabel htmlFor="name">{i18n.t('core:selectDialogCurrentPath')}</InputLabel>
+            <Input
+              fullWidth={true}
+              required
+              margin="dense"
+              name="path"
+              onChange={this.handleInputChange}
+              label={i18n.t('core:selectDialogCurrentPath')}
+              data-tid="selectDirectoryDialogInput"
+              value={this.state.currentPath}
+              disabled={AppConfig.isWin}
+            />
+            {this.state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
+          </FormControl>
+          {AppConfig.isWin ? (
+            <FormControl
+              fullWidth={true}
+            >
+              <Select
+                data-tid="selectDirectoryDialogSelect"
+                native
+                autoWidth
+                name="choosePath"
+                value={this.state.choosePath}
+                onChange={this.handleInputChange}
+                input={<Input id="choosePath" />}
+              >
+                {drives.map((drive) => (<option key={drive} value={drive}>{drive}</option>))}
+              </Select>
+            </FormControl>
+          ) : null
+          }
+          <FormControl
+            fullWidth={true}
+          >
+            <Paper elevation={2}>
+              <Button
+                data-tid="onBackButtonSelectDirectoryDialog"
+                onClick={e => this.onBackButton(e)}
+              >
+                <UndoIcon />
+              </Button>
+              <Button
+                data-tid="createNewFolderSelectDirectoryDialog"
+                onClick={e => this.createNewFolder(e)}
+              >
+                <CreateFolderIcon className={this.props.classes.folderIcon} />
+                {i18n.t('core:createDirectory')}
+              </Button>
+            </Paper>
+            <Paper elevation={2} className={this.props.classes.contentFolder} >
+              {this.state.subFolders.length === 0 ?
+                (
+                  <div className={this.props.classes.alertWarning}>
+                    {i18n.t('core:noSubfoldersFound')}
+                  </div>
+                )
+                :
+                this.state.subFolders.map(this.renderDriveSuggestions)
+              }
+            </Paper>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={this.props.onClose}
+            color="primary"
+          >
+            {i18n.t('core:cancel')}
+          </Button>
+          <Button
+            onClick={this.onConfirm}
+            data-tid="confirmSelectDirectoryDialog"
+            color="primary"
+          >
+            {i18n.t('core:ok')}
+          </Button>
+        </DialogActions>
+      </Dialog>  
     );
-  }
+  }            
 }
 
 export default withStyles(styles)(SelectDirectoryDialog);
