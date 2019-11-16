@@ -27,7 +27,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Switch from '@material-ui/core/Switch';
-import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
+import Dialog from '@material-ui/core/Dialog';
 import ColorPickerDialog from './ColorPickerDialog';
 import { type TagGroup } from '../../reducers/taglibrary';
 import i18n from '../../services/i18n';
@@ -271,15 +271,18 @@ class EditTagGroupDialog extends React.Component<Props, State> {
   );
 
   render() {
+    const { onClose, open, fullScreen } = this.props;
     return (
-      <GenericDialog
-        open={this.props.open}
-        onClose={this.props.onClose}
-        onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
-        renderTitle={this.renderTitle}
-        renderContent={this.renderContent}
-        renderActions={this.renderActions}
-      />
+      <Dialog
+        open={open}
+        fullScreen={fullScreen}
+        onClose={onClose}
+        // onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
+      >
+        {this.renderTitle()}
+        {this.renderContent()}
+        {this.renderActions()}
+      </Dialog>
     );
   }
 }
