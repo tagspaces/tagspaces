@@ -31,7 +31,7 @@ import Grid from '@material-ui/core/Grid';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import { Typography } from '@material-ui/core';
-import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
+import Dialog from '@material-ui/core/Dialog';
 import i18n from '../../services/i18n';
 import { extractDirectoryName } from '../../utils/paths';
 import { type Location, locationType } from '../../reducers/locations';
@@ -47,7 +47,8 @@ type Props = {
   location: Location | null,
   editLocation: (location: Location) => void,
   showSelectDirectoryDialog: () => void,
-  selectedDirectoryPath: string | null
+  selectedDirectoryPath: string | null,
+  onCancel: () => void
 };
 
 type State = {
@@ -399,19 +400,22 @@ class EditLocationDialog extends React.Component<Props, State> {
 
   render() {
     const {
-      fullScreen,
       open,
+      // onClose,
+      fullScreen,
+      onCancel
     } = this.props;
     return (
-      <GenericDialog
+      <Dialog
         open={open}
-        onClose={this.onCancel}
+        onClose={onCancel}
         fullScreen={fullScreen}
-        onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
-        renderTitle={this.renderTitle}
-        renderContent={this.renderContent}
-        renderActions={this.renderActions}
-      />
+        // onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
+      >
+        {this.renderTitle()}
+        {this.renderContent()}
+        {this.renderActions()}
+      </Dialog>  
     );
   }
 }
