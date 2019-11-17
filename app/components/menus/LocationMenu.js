@@ -96,6 +96,7 @@ class LocationMenu extends React.Component<Props, State> {
       >
         <Button
           data-tid="folderContainerLocationChooser"
+          id="locationMenuButton"
           onClick={this.toggleLocationChooser}
           title={this.state.currentLocation && this.state.currentLocation.name}
           style={{ paddingRight: 0, paddingLeft: 11 }}

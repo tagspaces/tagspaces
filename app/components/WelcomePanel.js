@@ -23,14 +23,10 @@ import { bindActionCreators } from 'redux';
 import { withStyles } from '@material-ui/core/styles';
 import WelcomeLogo from '../assets/images/welcome-logo.png';
 import WelcomeBackground from '../assets/images/background.png';
-// import i18n from '../services/i18n';
 // import { getLocations, type Location } from '../reducers/locations';
-import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import DocumentationIcon from '@material-ui/icons/Help';
 import ChangeLogIcon from '@material-ui/icons/ImportContacts';
@@ -46,6 +42,7 @@ import { actions as AppActions } from '../reducers/app';
 import i18n from '../services/i18n';
 import {
   isFirstRun,
+  getDesktopMode,
   actions as SettingsActions
 } from '../reducers/settings';
 import AppConfig from '../config';
@@ -83,12 +80,19 @@ type Props = {
   toggleKeysDialog: () => void,
   openURLExternally: (url: string) => void,
   openFileNatively: (url: string) => void,
-  toggleAboutDialog: () => void
+  toggleAboutDialog: () => void,
+  isDesktopMode: boolean
   // locations: Array<Location>
 };
 
 const WelcomePanel = (props: Props) => {
-  const { classes, openURLExternally, openFileNatively, toggleKeysDialog } = props;
+  const {
+    classes,
+    openURLExternally,
+    openFileNatively,
+    toggleKeysDialog,
+    isDesktopMode
+  } = props;
   return (
     <div className={classes.mainPanel}>
       {/* <div className={classes.slogan}>
@@ -105,6 +109,15 @@ const WelcomePanel = (props: Props) => {
             alt="Organize your files"
           />
         </div>
+        <ListItem
+          button
+          onClick={() => {
+            const button = document.getElementById(isDesktopMode ? 'locationMenuButton' : 'mobileMenuButton');
+            button.click();
+          }}
+        >
+          <Button startIcon={<DocumentationIcon />}>{i18n.t('core:chooseLocation')}</Button>
+        </ListItem>
         <ListItem button onClick={() => openURLExternally(AppConfig.documentationLinks.general)}>
           <Button startIcon={<DocumentationIcon />}>Open Documentation</Button>
         </ListItem>
@@ -151,6 +164,7 @@ const WelcomePanel = (props: Props) => {
 function mapStateToProps(state) {
   return {
     isFirstRun: isFirstRun(state),
+    isDesktopMode: getDesktopMode(state),
     // locations: getLocations(state),
   };
 }

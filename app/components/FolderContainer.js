@@ -365,7 +365,7 @@ class FolderContainer extends React.Component<Props, State> {
               {isDesktopMode ? (
                 <LocationMenu />
               ) : (
-                <Button style={{ marginLeft: -8 }} onClick={showDrawer}>
+                <Button id="mobileMenuButton" style={{ marginLeft: -8 }} onClick={showDrawer}>
                   <MenuIcon />
                 </Button>
               )}
