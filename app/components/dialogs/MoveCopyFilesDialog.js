@@ -37,7 +37,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Typography from '@material-ui/core/Typography';
-import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
+import Dialog from '@material-ui/core/Dialog';
 import i18n from '../../services/i18n';
 // import { extractContainingDirectoryPath } from '../../utils/paths';
 import PlatformIO from '../../services/platform-io';
@@ -59,6 +59,7 @@ const MoveCopyFilesDialog = (props: Props) => {
   const [inputError, setInputError] = useState(false);
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [targetPath, setTargetPath] = useState('');
+  const { open, onClose, fullScreen } = props;
 
   useEffect(() => {
     handleValidation();
@@ -108,14 +109,16 @@ const MoveCopyFilesDialog = (props: Props) => {
     }
   }
 
-  function renderTitle() {
-    return (
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      keepMounted
+      scroll="paper"
+      fullScreen={fullScreen}
+      // onEnterKey={(event) => onEnterKeyHandler(event, this.addTags)}
+    >
       <DialogTitle>{i18n.t('core:copyMoveFilesTitle')}</DialogTitle>
-    );
-  }
-
-  function renderContent() {
-    return (
       <DialogContent>
         <List dense style={{ width: 550 }}>
           {props.selectedFiles && props.selectedFiles.length > 0 && props.selectedFiles.map(path => (
@@ -156,11 +159,6 @@ const MoveCopyFilesDialog = (props: Props) => {
           {inputError && <FormHelperText>Empty Input Field</FormHelperText>}
         </FormControl>
       </DialogContent>
-    );
-  }
-
-  function renderActions() {
-    return (
       <DialogActions>
         <Button
           data-tid="closeMoveCopyDialog"
@@ -185,21 +183,9 @@ const MoveCopyFilesDialog = (props: Props) => {
           {i18n.t('core:copyFilesButton')}
         </Button>
       </DialogActions>
-    );
-  }
-
-  return (
-    <GenericDialog
-      open={props.open}
-      onClose={props.onClose}
-      fullScreen={props.fullScreen}
-      // onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
-      renderTitle={renderTitle}
-      renderContent={renderContent}
-      renderActions={renderActions}
-    />
+    </Dialog>  
   );
-};
+}
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators({

@@ -23,30 +23,30 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
-import GenericDialog from './GenericDialog';
+import Dialog from '@material-ui/core/Dialog';
 import i18n from '../../services/i18n';
 import ThirdPartyLibs from '../../third-party.txt';
 
 type Props = {
   open: boolean,
-  onClose: () => void
+  onClose: () => void,
+  fullScreen: boolean
 };
 
 const ThirdPartyLibsDialog = (props: Props) => {
-  function renderTitle() {
-    return (<DialogTitle>{i18n.t('core:thirdPartyLibs')}</DialogTitle>);
-  }
-
-  function renderContent() {
-    return (
+  const { open, onClose, fullScreen } = props;
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullScreen={fullScreen}
+      keepMounted
+      scroll="paper"
+    >
+      <DialogTitle>{i18n.t('core:thirdPartyLibs')}</DialogTitle>
       <DialogContent style={{ overflowX: 'auto' }}>
         <pre style={{ whiteSpace: 'pre-wrap' }}>{ ThirdPartyLibs }</pre>
       </DialogContent>
-    );
-  }
-
-  function renderActions() {
-    return (
       <DialogActions>
         <Button
           data-tid="confirmThirdPartyLibsDialog"
@@ -56,17 +56,7 @@ const ThirdPartyLibsDialog = (props: Props) => {
           {i18n.t('core:ok')}
         </Button>
       </DialogActions>
-    );
-  }
-
-  return (
-    <GenericDialog
-      open={props.open}
-      onClose={props.onClose}
-      renderTitle={renderTitle}
-      renderContent={renderContent}
-      renderActions={renderActions}
-    />
+    </Dialog>
   );
 };
 

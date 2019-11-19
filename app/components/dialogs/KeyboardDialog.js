@@ -29,7 +29,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import { withStyles } from '@material-ui/core/styles';
-import GenericDialog from './GenericDialog';
+import Dialog from '@material-ui/core/Dialog';
 import i18n from '../../services/i18n';
 import { getKeyBindingObject } from '../../reducers/settings';
 
@@ -55,12 +55,16 @@ type Props = {
 };
 
 const KeyboardDialog = (props: Props) => {
-  function renderTitle() {
-    return (<DialogTitle>{i18n.t('core:shortcutKeys')}</DialogTitle>);
-  }
-
-  function renderContent() {
-    return (
+  const { open, onClose, fullScreen } = props;
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullScreen={fullScreen}
+      keepMounted
+      scroll="paper"
+    >
+      <DialogTitle>{i18n.t('core:shortcutKeys')}</DialogTitle>
       <DialogContent className={props.classes.root} data-tid="keyboardShortCutsDialog">
         <List dense={false}>
           {props.keyBindings && Object.keys(props.keyBindings).map((shortcutKey) => (
@@ -73,11 +77,6 @@ const KeyboardDialog = (props: Props) => {
           ))}
         </List>
       </DialogContent>
-    );
-  }
-
-  function renderActions() {
-    return (
       <DialogActions>
         <Button
           data-tid="closeKeyboardDialog"
@@ -87,18 +86,7 @@ const KeyboardDialog = (props: Props) => {
           {i18n.t('core:ok')}
         </Button>
       </DialogActions>
-    );
-  }
-
-  return (
-    <GenericDialog
-      open={props.open}
-      onClose={props.onClose}
-      fullScreen={props.fullScreen}
-      renderTitle={renderTitle}
-      renderContent={renderContent}
-      renderActions={renderActions}
-    />
+    </Dialog>
   );
 };
 

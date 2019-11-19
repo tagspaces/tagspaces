@@ -27,7 +27,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
+import Dialog from '@material-ui/core/Dialog';
 import i18n from '../../services/i18n';
 import AppConfig from '../../config';
 import { actions as AppActions } from '../../reducers/app';
@@ -43,6 +43,7 @@ const CreateDirectoryDialog = (props: Props) => {
   const [inputError, setInputError] = useState(false);
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [name, setName] = useState('');
+  const { open, onClose, fullScreen } = props;
 
   useEffect(() => {
     handleValidation();
@@ -80,14 +81,16 @@ const CreateDirectoryDialog = (props: Props) => {
     setDisableConfirmButton(true);
   }
 
-  function renderTitle() {
-    return (
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullScreen={fullScreen}
+      keepMounted
+      scroll="paper"
+      // onKeyDown={confirmFunction} TODO
+    > 
       <DialogTitle>{i18n.t('core:createNewDirectoryTitle')}</DialogTitle>
-    );
-  }
-
-  function renderContent() {
-    return (
       <DialogContent>
         <FormControl
           fullWidth={true}
@@ -111,11 +114,6 @@ const CreateDirectoryDialog = (props: Props) => {
           <FormHelperText>{i18n.t('core:directoryNameHelp')}</FormHelperText>
         </FormControl>
       </DialogContent>
-    );
-  }
-
-  function renderActions() {
-    return (
       <DialogActions>
         <Button
           data-tid="closeCreateNewDirectory"
@@ -134,18 +132,7 @@ const CreateDirectoryDialog = (props: Props) => {
           {i18n.t('core:ok')}
         </Button>
       </DialogActions>
-    );
-  }
-
-  return (
-    <GenericDialog
-      open={props.open}
-      onClose={onCancel}
-      onEnterKey={(event) => onEnterKeyHandler(event, onConfirm)}
-      renderTitle={renderTitle}
-      renderContent={renderContent}
-      renderActions={renderActions}
-    />
+    </Dialog>
   );
 };
 
