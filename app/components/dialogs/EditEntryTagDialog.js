@@ -64,7 +64,7 @@ const EditEntryTagDialog = (props: Props) => {
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [errorTag, setErrorTag] = useState(false);
   const [title, setTitle] = useState(props.selectedTag && props.selectedTag.title);
-  const { open, onClose, fullScreen } = props;
+  const { onClose, open, fullScreen } = props;
 
   useEffect(() => {
     handleValidation();
@@ -90,6 +90,12 @@ const EditEntryTagDialog = (props: Props) => {
     }
   }
 
+  function renderTitle() {
+    return (
+      <DialogTitle>{i18n.t('core:tagProperties')}</DialogTitle>
+    );
+  }
+
   function renderContent() {
     const showGeoEditor = GeoTagEditor && isPlusCode(title);
     let showDatePeriodEditor = false;
@@ -107,20 +113,9 @@ const EditEntryTagDialog = (props: Props) => {
       }
     } else showDatePeriodEditor = isDateTimeTag(title);
     showDatePeriodEditor = DateTagEditor && showDatePeriodEditor;
-  }
 
-  return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      fullScreen={fullScreen}
-      keepMounted
-      scroll="paper"
-      // onKeyDown={confirmFunction}
-    >
-      <DialogTitle>{i18n.t('core:tagProperties')}</DialogTitle>
+    return (
       <DialogContent data-tid="editEntryTagDialog" className={props.classes.root}>
-      {renderContent}
         <FormControl
           fullWidth={true}
           error={errorTag}
@@ -144,6 +139,11 @@ const EditEntryTagDialog = (props: Props) => {
         { showGeoEditor && <GeoTagEditor key={title} geoTag={title} onChange={setTitle} zoom={title === defaultTagLocation ? 2 : undefined} /> }
         { showDatePeriodEditor && <DateTagEditor key={title} datePeriodTag={title} onChange={setTitle} /> }
       </DialogContent>
+    );
+  }
+
+  function renderActions() {
+    return (
       <DialogActions>
         <Button
           data-tid="closeEditTagEntryDialog"
@@ -161,6 +161,19 @@ const EditEntryTagDialog = (props: Props) => {
           {i18n.t('core:ok')}
         </Button>
       </DialogActions>
+    );
+  }
+
+  return (
+    <Dialog
+      open={open}
+      fullScreen={fullScreen}
+      onClose={onClose}
+      // onEnterKey={(event) => onEnterKeyHandler(event, onConfirm)}
+    >
+      {renderTitle()}
+      {renderContent()}
+      {renderActions()}
     </Dialog>  
   );
 };
