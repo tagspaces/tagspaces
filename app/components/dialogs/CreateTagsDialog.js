@@ -33,6 +33,7 @@ type Props = {
   open: boolean,
   onClose: () => void,
   addTag: (tags: string, uuid: string) => void,
+  fullScreen: boolean,
   selectedTagGroupEntry: TagGroup
 };
 
@@ -62,7 +63,7 @@ class CreateTagsDialog extends React.Component<Props, State> {
   };
 
   handleValidation() {
-    const tagCheck = RegExp(/^[^\#\/\\ \[\]]{1,}$/);
+    const tagCheck = RegExp(/^[^\#\/\\[\]]{1,}$/);
     if (this.state.tagTitle && tagCheck.test(this.state.tagTitle)) {
       this.setState({ inputError: false, disableConfirmButton: false });
     } else {
@@ -87,12 +88,11 @@ class CreateTagsDialog extends React.Component<Props, State> {
 
     return (
       <Dialog
-      open={open}
-      onClose={onClose}
-      fullScreen={fullScreen}
-      keepMounted
-      scroll="paper"
-      // onKeyDown={confirmFunction}
+        open={open}
+        onClose={onClose}
+        fullScreen={fullScreen}
+        keepMounted
+        scroll="paper"
       >
         <DialogTitle>{i18n.t('core:addTagsToGroupTitle')}</DialogTitle>
         <DialogContent style={{ minWidth: 400 }}>
@@ -129,8 +129,8 @@ class CreateTagsDialog extends React.Component<Props, State> {
             {i18n.t('core:ok')}
           </Button>
         </DialogActions>
-      </Dialog>  
-    );  
+      </Dialog>
+    );
   }
 }
 
