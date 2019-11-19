@@ -327,7 +327,9 @@ class MainPage extends Component<Props, State> {
       nextProps.isPerspectivesPanelOpened ||
       nextProps.isHelpFeedbackPanelOpened) {
       this.setManagementPanelVisibility(true);
-      this.showDrawer();
+      if (!nextProps.isDesktopMode) {
+        this.showDrawer();
+      }
     }
 
     if (!nextProps.isLocationManagerPanelOpened &&
@@ -377,14 +379,17 @@ class MainPage extends Component<Props, State> {
   };
 
   hideDrawer = () => {
-    this.props.closeAllVerticalPanels();
     this.setState({
       isDrawerOpened: false
     });
   };
 
   showDrawer = () => {
-    if (!this.props.isLocationManagerPanelOpened && !this.props.isSearchPanelOpened && !this.props.isTagLibraryPanelOpened) {
+    if (
+      !this.props.isLocationManagerPanelOpened &&
+      !this.props.isSearchPanelOpened &&
+      !this.props.isTagLibraryPanelOpened
+    ) {
       this.props.openLocationManagerPanel();
     }
     this.setState({
