@@ -71,12 +71,6 @@ class ProTeaserDialog extends React.Component<Props, State> {
     this.setState({ activeStep });
   };
 
-  // renderTitle = () => (
-  //   <DialogTitle style={{ justifyContent: 'center', textAlign: 'center' }}>
-  //     TagSpaces Pro Features
-  //   </DialogTitle>
-  // );
-
   render() {
     const { activeStep } = this.state;
     const slideStyles = {
@@ -91,12 +85,11 @@ class ProTeaserDialog extends React.Component<Props, State> {
 
     return (
       <Dialog
-      open={open}
-      onClose={onClose}
-      fullScreen={fullScreen}
-      keepMounted
-      scroll="paper"
-      // onKeyDown={confirmFunction}
+        open={open}
+        onClose={onClose}
+        fullScreen={fullScreen}
+        keepMounted
+        scroll="paper"
       >
         <DialogContent
           style={{ paddingBottom: 0 }}
@@ -316,7 +309,7 @@ class ProTeaserDialog extends React.Component<Props, State> {
             }
           />
         </DialogActions>
-      </Dialog>  
+      </Dialog>
     );
   }
 }

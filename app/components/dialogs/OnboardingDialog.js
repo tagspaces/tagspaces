@@ -66,9 +66,9 @@ type Props = {
 const OnboardingDialog = (props: Props) => {
   const [activeStep, setActiveStep] = useState(0);
   const [isPersistTagsInSidecar, setIsPersistTagInSidecar] = useState(false);
-  const { 
-    fullScreen, 
-    open, 
+  const {
+    fullScreen,
+    open,
     onClose
   } = props;
 
@@ -95,6 +95,7 @@ const OnboardingDialog = (props: Props) => {
       open={open}
       onClose={onClose}
       keepMounted
+      fullScreen={fullScreen}
       scroll="paper"
     >
       <DialogTitle style={{ justifyContent: 'center', textAlign: 'center' }}>
@@ -256,6 +257,7 @@ const OnboardingDialog = (props: Props) => {
                 onClick={props.onClose}
                 variant="contained"
                 color="primary"
+                style={{ marginLeft: 5 }}
                 data-tid="startTagSpacesAfterOnboarding"
               >Start using TagSpaces
               </Button>
@@ -276,8 +278,8 @@ const OnboardingDialog = (props: Props) => {
           }
         />
       </DialogActions>
-    </Dialog>  
-  );  
+    </Dialog>
+  );
 };
 
 function mapStateToProps(state) {

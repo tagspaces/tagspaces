@@ -42,8 +42,7 @@ type Props = {
 type State = {
   inputError: boolean,
   disableConfirmButton: boolean,
-  name: string,
-  length: string
+  name: string
 };
 
 class RenameDirectoryDialog extends React.Component<Props, State> {
@@ -87,19 +86,16 @@ class RenameDirectoryDialog extends React.Component<Props, State> {
 
   render() {
     const {
-      fullScreen,
       open,
       onClose
     } = this.props;
 
     return (
       <Dialog
-      open={open}
-      onClose={onClose}
-      fullScreen={fullScreen}
-      keepMounted
-      scroll="paper"
-      // onKeyDown={confirmFunction}
+        open={open}
+        onClose={onClose}
+        keepMounted
+        scroll="paper"
       >
         <DialogTitle>{i18n.t('core:renameDirectory')}</DialogTitle>
         <DialogContent>
@@ -139,7 +135,7 @@ class RenameDirectoryDialog extends React.Component<Props, State> {
             {i18n.t('core:ok')}
           </Button>
         </DialogActions>
-      </Dialog>  
+      </Dialog>
     );
   }
 }

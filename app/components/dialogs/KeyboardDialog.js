@@ -55,37 +55,38 @@ type Props = {
 };
 
 const KeyboardDialog = (props: Props) => {
-  const { open, onClose } = props;
+  const { open, onClose, fullScreen } = props;
   return (
     <Dialog
       open={open}
       onClose={onClose}
+      fullScreen={fullScreen}
       keepMounted
       scroll="paper"
-    >  
-    <DialogTitle>{i18n.t('core:shortcutKeys')}</DialogTitle>
-    <DialogContent className={props.classes.root} data-tid="keyboardShortCutsDialog">
-      <List dense={false}>
-        {props.keyBindings && Object.keys(props.keyBindings).map((shortcutKey) => (
-          <ListItem key={shortcutKey}>
-            <ListItemText primary={i18n.t('core:' + shortcutKey)} />
-            <ListItemSecondaryAction className={props.classes.shortcutKey}>
-              {props.keyBindings[shortcutKey]}
-            </ListItemSecondaryAction>
-          </ListItem>
-        ))}
-      </List>
-    </DialogContent>
-    <DialogActions>
-      <Button
-        data-tid="closeKeyboardDialog"
-        onClick={props.onClose}
-        color="primary"
-      >
-        {i18n.t('core:ok')}
-      </Button>
-    </DialogActions>
-  </Dialog>  
+    >
+      <DialogTitle>{i18n.t('core:shortcutKeys')}</DialogTitle>
+      <DialogContent className={props.classes.root} data-tid="keyboardShortCutsDialog">
+        <List dense={false}>
+          {props.keyBindings && Object.keys(props.keyBindings).map((shortcutKey) => (
+            <ListItem key={shortcutKey}>
+              <ListItemText primary={i18n.t('core:' + shortcutKey)} />
+              <ListItemSecondaryAction className={props.classes.shortcutKey}>
+                {props.keyBindings[shortcutKey]}
+              </ListItemSecondaryAction>
+            </ListItem>
+          ))}
+        </List>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          data-tid="closeKeyboardDialog"
+          onClick={props.onClose}
+          color="primary"
+        >
+          {i18n.t('core:ok')}
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 

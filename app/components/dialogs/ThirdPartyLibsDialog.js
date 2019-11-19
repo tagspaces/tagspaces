@@ -29,32 +29,34 @@ import ThirdPartyLibs from '../../third-party.txt';
 
 type Props = {
   open: boolean,
-  onClose: () => void
+  onClose: () => void,
+  fullScreen: boolean
 };
 
 const ThirdPartyLibsDialog = (props: Props) => {
-  const { open, onClose } = props;
+  const { open, onClose, fullScreen } = props;
   return (
     <Dialog
       open={open}
       onClose={onClose}
+      fullScreen={fullScreen}
       keepMounted
       scroll="paper"
     >
-    <DialogTitle>{i18n.t('core:thirdPartyLibs')}</DialogTitle>
-    <DialogContent style={{ overflowX: 'auto' }}>
-      <pre style={{ whiteSpace: 'pre-wrap' }}>{ ThirdPartyLibs }</pre>
-    </DialogContent>
-    <DialogActions>
-      <Button
-        data-tid="confirmThirdPartyLibsDialog"
-        onClick={props.onClose}
-        color="primary"
-      >
-        {i18n.t('core:ok')}
-      </Button>
-    </DialogActions>
-  </Dialog>  
+      <DialogTitle>{i18n.t('core:thirdPartyLibs')}</DialogTitle>
+      <DialogContent style={{ overflowX: 'auto' }}>
+        <pre style={{ whiteSpace: 'pre-wrap' }}>{ ThirdPartyLibs }</pre>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          data-tid="confirmThirdPartyLibsDialog"
+          onClick={props.onClose}
+          color="primary"
+        >
+          {i18n.t('core:ok')}
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 

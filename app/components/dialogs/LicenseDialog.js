@@ -59,12 +59,13 @@ const LicenseDialog = (props: Props) => {
 
   return (
     <Dialog
-    open={open}
-    onClose={onClose}
-    keepMounted
-    scroll="paper"
-    >  
-    <DialogTitle>{i18n.t('core:license')}</DialogTitle>
+      open={open}
+      onClose={onClose}
+      keepMounted
+      fullScreen={fullScreen}
+      scroll="paper"
+    >
+      <DialogTitle>{i18n.t('core:license')}</DialogTitle>
       <DialogContent
         // inputRef={ref => {
         //   licenseElement = ref;
@@ -97,7 +98,7 @@ const LicenseDialog = (props: Props) => {
           {i18n.t('core:agreeLicense')}
         </Button>
       </DialogActions>
-    </Dialog>  
+    </Dialog>
   );
 };
 
