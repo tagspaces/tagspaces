@@ -23,8 +23,8 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { withStyles } from '@material-ui/core/styles';
+import Dialog from '@material-ui/core/Dialog';
 import { SketchPicker } from 'react-color';
-import GenericDialog from './GenericDialog';
 import i18n from '../../services/i18n';
 
 const presetColors = ['#ffffff', '#000000', '#ac725e', '#d06b64', '#f83a22', '#fa573c',
@@ -52,6 +52,10 @@ const styles = {
 const ColorPickerDialog = (props: Props) => {
   const [color, setColor] = useState(undefined);
   const [colorHex, setColorHex] = useState(undefined);
+  const {
+    open = false,
+    onClose
+  } = props;
 
   function onConfirm() {
     if (color && colorHex) {
@@ -66,16 +70,16 @@ const ColorPickerDialog = (props: Props) => {
     setColorHex(newColor.hex);
   }
 
-  function renderTitle() {
-    return (
+  return (
+    <Dialog
+    open={open}
+    onClose={onClose}
+    keepMounted
+    scroll="paper"
+    >
       <DialogTitle data-tid="colorPickerDialogTitle" >
         {i18n.t('core:colorPickerDialogTitle')}
       </DialogTitle>
-    );
-  }
-
-  function renderContent() {
-    return (
       <DialogContent
         style={{
           marginLeft: 'auto',
@@ -90,11 +94,6 @@ const ColorPickerDialog = (props: Props) => {
           onChangeComplete={handleChangeComplete}
         />
       </DialogContent>
-    );
-  }
-
-  function renderActions() {
-    return (
       <DialogActions>
         <Button
           data-tid="colorPickerCloseDialog"
@@ -111,21 +110,7 @@ const ColorPickerDialog = (props: Props) => {
           {i18n.t('core:ok')}
         </Button>
       </DialogActions>
-    );
-  }
-
-  const {
-    open = false,
-    onClose
-  } = props;
-  return (
-    <GenericDialog
-      open={open}
-      onClose={onClose}
-      renderTitle={renderTitle}
-      renderContent={renderContent}
-      renderActions={renderActions}
-    />
+    </Dialog>  
   );
 };
 

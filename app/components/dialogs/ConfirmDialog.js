@@ -25,7 +25,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import ListItem from '@material-ui/core/ListItem';
 import Typography from '@material-ui/core/Typography';
-import GenericDialog from './GenericDialog';
+import Dialog from '@material-ui/core/Dialog';
 import i18n from '../../services/i18n';
 
 type Props = {
@@ -41,56 +41,49 @@ type Props = {
 };
 
 const ConfirmDialog = (props: Props) => {
+  const { open, onClose } = props; 
+
   function onConfirm(result) {
     props.confirmCallback(result);
     props.onClose();
   }
 
-  function renderTitle() {
-    return (<DialogTitle>{props.title}</DialogTitle>);
-  }
-
-  function renderContent() {
-    return (<DialogContent>
-      <DialogContentText data-tid={props.confirmDialogContentTID}>
-        {props.content}
-        {props.list && props.list.map((listItem) => (
-          <ListItem title={listItem}>
-            <Typography variant="inherit" noWrap>{listItem}</Typography>
-          </ListItem>
-        ))}
-      </DialogContentText>
-    </DialogContent>);
-  }
-
-  function renderActions() {
-    return (<DialogActions>
-      <Button
-        onClick={() => onConfirm(false)}
-        color="primary"
-        data-tid={props.cancelDialogTID}
-      >
-        {i18n.t('core:no')}
-      </Button>
-      <Button
-        data-tid={props.confirmDialogTID}
-        onClick={() => onConfirm(true)}
-        color="primary"
-      >
-        {i18n.t('core:yes')}
-      </Button>
-    </DialogActions>);
-  }
-
   return (
-    <GenericDialog
-      open={props.open}
-      onClose={props.onClose}
-      renderTitle={renderTitle}
-      renderContent={renderContent}
-      renderActions={renderActions}
-    />
-  );
+    <Dialog
+      open={open}
+      onClose={onClose}
+      keepMounted
+      scroll="paper"
+    >
+      <DialogTitle>{props.title}</DialogTitle>
+        <DialogContent>
+          <DialogContentText data-tid={props.confirmDialogContentTID}>
+            {props.content}
+            {props.list && props.list.map((listItem) => (
+              <ListItem title={listItem}>
+                <Typography variant="inherit" noWrap>{listItem}</Typography>
+              </ListItem>
+            ))}
+          </DialogContentText>
+        </DialogContent> 
+        <DialogActions>
+        <Button
+          onClick={() => onConfirm(false)}
+          color="primary"
+          data-tid={props.cancelDialogTID}
+        >
+          {i18n.t('core:no')}
+        </Button>
+        <Button
+          data-tid={props.confirmDialogTID}
+          onClick={() => onConfirm(true)}
+          color="primary"
+        >
+          {i18n.t('core:yes')}
+        </Button>
+      </DialogActions>
+    </Dialog>    
+  )
 };
 
 ConfirmDialog.defaultProps = {

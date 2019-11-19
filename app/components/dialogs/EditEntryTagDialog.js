@@ -29,7 +29,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { withStyles } from '@material-ui/core/styles';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
+import Dialog from '@material-ui/core/Dialog';
 import i18n from '../../services/i18n';
 import { isPlusCode } from '../../utils/misc';
 import { type Tag } from '../../reducers/taglibrary';
@@ -64,6 +64,7 @@ const EditEntryTagDialog = (props: Props) => {
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [errorTag, setErrorTag] = useState(false);
   const [title, setTitle] = useState(props.selectedTag && props.selectedTag.title);
+  const { onClose, open, fullScreen } = props;
 
   useEffect(() => {
     handleValidation();
@@ -164,15 +165,16 @@ const EditEntryTagDialog = (props: Props) => {
   }
 
   return (
-    <GenericDialog
-      open={props.open}
-      fullScreen={props.fullScreen}
-      onClose={props.onClose}
-      onEnterKey={(event) => onEnterKeyHandler(event, onConfirm)}
-      renderTitle={renderTitle}
-      renderContent={renderContent}
-      renderActions={renderActions}
-    />
+    <Dialog
+      open={open}
+      fullScreen={fullScreen}
+      onClose={onClose}
+      // onEnterKey={(event) => onEnterKeyHandler(event, onConfirm)}
+    >
+      {renderTitle()}
+      {renderContent()}
+      {renderActions()}
+    </Dialog>  
   );
 };
 

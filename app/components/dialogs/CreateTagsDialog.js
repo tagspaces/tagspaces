@@ -25,7 +25,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
+import Dialog from '@material-ui/core/Dialog';
 import i18n from '../../services/i18n';
 import { type TagGroup } from '../../reducers/taglibrary';
 
@@ -33,6 +33,7 @@ type Props = {
   open: boolean,
   onClose: () => void,
   addTag: (tags: string, uuid: string) => void,
+  fullScreen: boolean,
   selectedTagGroupEntry: TagGroup
 };
 
@@ -62,7 +63,7 @@ class CreateTagsDialog extends React.Component<Props, State> {
   };
 
   handleValidation() {
-    const tagCheck = RegExp(/^[^\#\/\\ \[\]]{1,}$/);
+    const tagCheck = RegExp(/^[^\#\/\\[\]]{1,}$/);
     if (this.state.tagTitle && tagCheck.test(this.state.tagTitle)) {
       this.setState({ inputError: false, disableConfirmButton: false });
     } else {
@@ -78,62 +79,57 @@ class CreateTagsDialog extends React.Component<Props, State> {
     }
   };
 
-  renderTitle = () => (
-    <DialogTitle>{i18n.t('core:addTagsToGroupTitle')}</DialogTitle>
-  );
-
-  renderContent = () => (
-    <DialogContent style={{ minWidth: 400 }}>
-      <FormControl
-        fullWidth={true}
-        error={this.state.inputError}
-      >
-        <TextField
-          error={this.state.inputError}
-          name="tagTitle"
-          autoFocus
-          label={i18n.t('core:addTagsToGroupTagsPlaceholder')}
-          onChange={this.handleInputChange}
-          value={this.state.tagTitle}
-          data-tid="addTagsInput"
-          fullWidth={true}
-        />
-        {this.state.inputError && <FormHelperText>{i18n.t('core:tagTitleHelper')}</FormHelperText>}
-      </FormControl>
-
-    </DialogContent>
-  );
-
-  renderActions = () => (
-    <DialogActions>
-      <Button
-        onClick={this.props.onClose}
-        color="primary"
-      >
-        {i18n.t('core:cancel')}
-      </Button>
-      <Button
-        disabled={this.state.disableConfirmButton}
-        onClick={this.onConfirm}
-        data-tid="createTagsConfirmButton"
-        color="primary"
-      >
-        {i18n.t('core:ok')}
-      </Button>
-    </DialogActions>
-  );
-
   render() {
+    const {
+      fullScreen,
+      open,
+      onClose
+    } = this.props;
+
     return (
-      <GenericDialog
-        open={this.props.open}
-        onClose={this.props.onClose}
-        autoFocus
-        onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
-        renderTitle={this.renderTitle}
-        renderContent={this.renderContent}
-        renderActions={this.renderActions}
-      />
+      <Dialog
+        open={open}
+        onClose={onClose}
+        fullScreen={fullScreen}
+        keepMounted
+        scroll="paper"
+      >
+        <DialogTitle>{i18n.t('core:addTagsToGroupTitle')}</DialogTitle>
+        <DialogContent style={{ minWidth: 400 }}>
+          <FormControl
+            fullWidth={true}
+            error={this.state.inputError}
+          >
+            <TextField
+              error={this.state.inputError}
+              name="tagTitle"
+              autoFocus
+              label={i18n.t('core:addTagsToGroupTagsPlaceholder')}
+              onChange={this.handleInputChange}
+              value={this.state.tagTitle}
+              data-tid="addTagsInput"
+              fullWidth={true}
+            />
+            {this.state.inputError && <FormHelperText>{i18n.t('core:tagTitleHelper')}</FormHelperText>}
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={this.props.onClose}
+            color="primary"
+          >
+            {i18n.t('core:cancel')}
+          </Button>
+          <Button
+            disabled={this.state.disableConfirmButton}
+            onClick={this.onConfirm}
+            data-tid="createTagsConfirmButton"
+            color="primary"
+          >
+            {i18n.t('core:ok')}
+          </Button>
+        </DialogActions>
+      </Dialog>
     );
   }
 }

@@ -180,7 +180,10 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: Object) => {
     });
 
     if (indexForEditing >= 0) {
-      let tags = action.tag.split(',');
+      let tags = action.tag.split(' ').join(',').split(','); // handle spaces around commas
+      tags = [...new Set(tags)]; // remove duplicates
+      tags = tags.filter(tag => tag.length > 0); // zero length tags
+
       const taggroupTags = state[indexForEditing].children;
       taggroupTags.forEach(tag => { // filter out duplicated tags
         tags = tags.filter(e => e !== tag.title);
@@ -189,7 +192,7 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: Object) => {
         ...state.slice(0, indexForEditing),
         {
           ...state[indexForEditing],
-          children: taggroupTags.concat(tags.map((tagTitle) => ({
+          children: taggroupTags.concat(tags.map(tagTitle => ({
             id: uuidv1(),
             type: taggroupTags.length > 0 ? taggroupTags[0].type : 'sidecar',
             title: tagTitle.trim(),

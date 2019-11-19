@@ -28,7 +28,7 @@ import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
+import Dialog from '@material-ui/core/Dialog';
 import TagGroupContainer from '../TagGroupContainer';
 import TagContainer from '../TagContainer';
 import i18n from '../../services/i18n';
@@ -249,16 +249,18 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
   );
 
   render() {
+    const { onClose, open, fullScreen } = this.props;
     return (
-      <GenericDialog
-        open={this.props.open}
-        fullScreen={this.props.fullScreen}
-        onClose={this.props.onClose}
-        onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
-        renderTitle={this.renderTitle}
-        renderContent={this.renderContent}
-        renderActions={this.renderActions}
-      />
+      <Dialog
+        open={open}
+        fullScreen={fullScreen}
+        onClose={onClose}
+        // onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
+      >
+        {this.renderTitle()}
+        {this.renderContent()}
+        {this.renderActions()}
+      </Dialog>
     );
   }
 }

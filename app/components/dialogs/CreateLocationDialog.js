@@ -33,7 +33,7 @@ import Grid from '@material-ui/core/Grid';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import { Typography } from '@material-ui/core';
-import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
+import Dialog from '@material-ui/core/Dialog';
 import i18n from '../../services/i18n';
 import { type Location, locationType } from '../../reducers/locations';
 import { Pro } from '../../pro';
@@ -276,19 +276,31 @@ class CreateLocationDialog extends React.Component<Props, State> {
     this.props.resetState('createLocationDialogKey');
   }
 
-  renderTitle = () => (
-    <DialogTitle>{i18n.t('core:createLocationTitle')}</DialogTitle>
-  );
+  render() {
+    const {
+      fullScreen,
+      open,
+      onClose
+    } = this.props;
 
-  renderContent = () => {
     // const { classes } = this.props;
     let content;
     if (this.state.type === locationType.TYPE_CLOUD) {
-      content = (<ObjectStoreForm handleInputChange={this.handleInputChange} handleChange={this.handleChange} state={this.state} />);
+      content = (<ObjectStoreForm handleInputChange={this.handleInputChange} handleChange={this.handleChange} state={this.state} />)
     } else {
-      content = (<LocalForm showSelectDirectoryDialog={this.props.showSelectDirectoryDialog} handleInputChange={this.handleInputChange} handleChange={this.handleChange} state={this.state} />);
+      content = (<LocalForm showSelectDirectoryDialog={this.props.showSelectDirectoryDialog} handleInputChange={this.handleInputChange} handleChange={this.handleChange} state={this.state} />)
     }
+
     return (
+      <Dialog
+      open={open}
+      onClose={onClose}
+      fullScreen={fullScreen}
+      keepMounted
+      scroll="paper"
+      // onKeyDown={confirmFunction}
+    >
+      <DialogTitle>{i18n.t('core:createLocationTitle')}</DialogTitle>
       <DialogContent>
         <Grid container spacing={2}>
           <Grid item xs={2} style={{ marginTop: 13, textAlign: 'left' }}>
@@ -374,44 +386,23 @@ class CreateLocationDialog extends React.Component<Props, State> {
           />
         </FormGroup>
       </DialogContent>
-    );
-  };
-
-  renderActions = () => (
-    <DialogActions>
-      <Button
-        onClick={this.onCancel}
-        color="primary"
-      >
-        {i18n.t('core:cancel')}
-      </Button>
-      <Button
-        disabled={this.state.disableConfirmButton}
-        onClick={this.onConfirm}
-        data-tid="confirmLocationCreation"
-        color="primary"
-      >
-        {i18n.t('core:ok')}
-      </Button>
-    </DialogActions>
-  );
-
-  render() {
-    const {
-      fullScreen,
-      open,
-      onClose
-    } = this.props;
-    return (
-      <GenericDialog
-        open={open}
-        onClose={onClose}
-        fullScreen={fullScreen}
-        onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
-        renderTitle={this.renderTitle}
-        renderContent={this.renderContent}
-        renderActions={this.renderActions}
-      />
+      <DialogActions>
+        <Button
+          onClick={this.onCancel}
+          color="primary"
+        >
+          {i18n.t('core:cancel')}
+        </Button>
+        <Button
+          disabled={this.state.disableConfirmButton}
+          onClick={this.onConfirm}
+          data-tid="confirmLocationCreation"
+          color="primary"
+        >
+          {i18n.t('core:ok')}
+        </Button>
+      </DialogActions>
+    </Dialog>
     );
   }
 }
