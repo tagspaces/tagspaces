@@ -448,12 +448,6 @@ export default {
       color: '#c5e4f9'
     },
     {
-      type: 'markdown',
-      viewer: '@tagspaces/md-viewer',
-      editor: '@tagspaces/text-editor',
-      color: '#beefed'
-    },
-    {
       type: 'md',
       viewer: '@tagspaces/md-viewer',
       editor: '@tagspaces/text-editor',
@@ -466,7 +460,7 @@ export default {
       color: '#beefed'
     },
     {
-      type: 'mdwn',
+      type: 'mdx',
       viewer: '@tagspaces/md-viewer',
       editor: '@tagspaces/text-editor',
       color: '#beefed'
