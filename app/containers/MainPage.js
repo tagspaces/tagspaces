@@ -72,7 +72,10 @@ import {
   isSettingsDialogOpened,
   isReadOnlyMode
 } from '../reducers/app';
-import { actions as LocationIndexActions, isIndexing } from '../reducers/location-index';
+import {
+  actions as LocationIndexActions,
+  isIndexing
+} from '../reducers/location-index';
 import { buffer } from '../utils/misc';
 import { normalizePath } from '../utils/paths';
 import TargetFileBox from '../components/TargetFileBox';
@@ -89,7 +92,10 @@ const drawerWidth = 300;
 const body = document.getElementsByTagName('body')[0];
 // const showOneColumnThreshold = 600;
 // const bufferedMainSplitResize = buffer({ timeout: 50, id: 'buffered-mainsplit-resize' });
-const bufferedLeftSplitResize = buffer({ timeout: 300, id: 'buffered-leftsplit-resize' });
+const bufferedLeftSplitResize = buffer({
+  timeout: 300,
+  id: 'buffered-leftsplit-resize'
+});
 
 const styles = theme => ({
   content: {
@@ -201,49 +207,77 @@ type Props = {
   reflectCreateEntry: (path: string, isFile: boolean) => void
 };
 
-const AboutDialog = React.lazy(() => import(/* webpackChunkName: "AboutDialog" */ '../components/dialogs/AboutDialog'));
+const AboutDialog = React.lazy(() =>
+  import(
+    /* webpackChunkName: "AboutDialog" */ '../components/dialogs/AboutDialog'
+  )
+);
 const AboutDialogAsync = props => (
   <React.Suspense fallback={<LoadingLazy />}>
     <AboutDialog {...props} />
   </React.Suspense>
 );
 
-const LicenseDialog = React.lazy(() => import(/* webpackChunkName: "LicenseDialog" */ '../components/dialogs/LicenseDialog'));
+const LicenseDialog = React.lazy(() =>
+  import(
+    /* webpackChunkName: "LicenseDialog" */ '../components/dialogs/LicenseDialog'
+  )
+);
 const LicenseDialogAsync = props => (
   <React.Suspense fallback={<LoadingLazy />}>
     <LicenseDialog {...props} />
   </React.Suspense>
 );
 
-const KeyboardDialog = React.lazy(() => import(/* webpackChunkName: "KeyboardDialog" */ '../components/dialogs/KeyboardDialog'));
+const KeyboardDialog = React.lazy(() =>
+  import(
+    /* webpackChunkName: "KeyboardDialog" */ '../components/dialogs/KeyboardDialog'
+  )
+);
 const KeyboardDialogAsync = props => (
   <React.Suspense fallback={<LoadingLazy />}>
     <KeyboardDialog {...props} />
   </React.Suspense>
 );
 
-const ThirdPartyLibsDialog = React.lazy(() => import(/* webpackChunkName: "ThirdPartyLibsDialog" */ '../components/dialogs/ThirdPartyLibsDialog'));
+const ThirdPartyLibsDialog = React.lazy(() =>
+  import(
+    /* webpackChunkName: "ThirdPartyLibsDialog" */ '../components/dialogs/ThirdPartyLibsDialog'
+  )
+);
 const ThirdPartyLibsDialogAsync = props => (
   <React.Suspense fallback={<LoadingLazy />}>
     <ThirdPartyLibsDialog {...props} />
   </React.Suspense>
 );
 
-const OnboardingDialog = React.lazy(() => import(/* webpackChunkName: "OnboardingDialog" */ '../components/dialogs/OnboardingDialog'));
+const OnboardingDialog = React.lazy(() =>
+  import(
+    /* webpackChunkName: "OnboardingDialog" */ '../components/dialogs/OnboardingDialog'
+  )
+);
 const OnboardingDialogAsync = props => (
   <React.Suspense fallback={<LoadingLazy />}>
     <OnboardingDialog {...props} />
   </React.Suspense>
 );
 
-const EditEntryTagDialog = React.lazy(() => import(/* webpackChunkName: "EditEntryTagDialog" */ '../components/dialogs/EditEntryTagDialog'));
+const EditEntryTagDialog = React.lazy(() =>
+  import(
+    /* webpackChunkName: "EditEntryTagDialog" */ '../components/dialogs/EditEntryTagDialog'
+  )
+);
 const EditEntryTagDialogAsync = props => (
   <React.Suspense fallback={<LoadingLazy />}>
     <EditEntryTagDialog {...props} />
   </React.Suspense>
 );
 
-const SelectDirectoryDialog = React.lazy(() => import(/* webpackChunkName: "LicenseDialog" */ '../components/dialogs/SelectDirectoryDialog'));
+const SelectDirectoryDialog = React.lazy(() =>
+  import(
+    /* webpackChunkName: "LicenseDialog" */ '../components/dialogs/SelectDirectoryDialog'
+  )
+);
 const SelectDirectoryAsync = props => (
   <React.Suspense fallback={<LoadingLazy />}>
     <SelectDirectoryDialog {...props} />
@@ -286,14 +320,22 @@ class MainPage extends Component<Props, State> {
   };
 
   componentWillReceiveProps(nextProps: Props) {
-    const isEntryOpenedChanged = nextProps.isFileOpened !== this.props.isFileOpened;
-    const isEntryOpenedFullWidthChanged = nextProps.isEntryInFullWidth !== this.props.isEntryInFullWidth;
-    const width = window.innerWidth || document.documentElement.clientWidth || body.clientWidth;
-    const height = window.innerHeight || document.documentElement.clientHeight || body.clientHeight;
+    const isEntryOpenedChanged =
+      nextProps.isFileOpened !== this.props.isFileOpened;
+    const isEntryOpenedFullWidthChanged =
+      nextProps.isEntryInFullWidth !== this.props.isEntryInFullWidth;
+    const width =
+      window.innerWidth ||
+      document.documentElement.clientWidth ||
+      body.clientWidth;
+    const height =
+      window.innerHeight ||
+      document.documentElement.clientHeight ||
+      body.clientHeight;
     if (nextProps.isFileOpened) {
       if (height > width) {
         this.setState({
-          mainSplitSize: '0%',
+          mainSplitSize: '0%'
           // isManagementPanelVisible: !nextProps.isEntryInFullWidth
         });
       } else if (isEntryOpenedFullWidthChanged) {
@@ -301,12 +343,14 @@ class MainPage extends Component<Props, State> {
           this.props.closeAllVerticalPanels();
         }
         this.setState({
-          mainSplitSize: nextProps.isEntryInFullWidth ? '0%' : this.props.mainSplitSize,
+          mainSplitSize: nextProps.isEntryInFullWidth
+            ? '0%'
+            : this.props.mainSplitSize,
           isManagementPanelVisible: !nextProps.isEntryInFullWidth
         });
       } else if (isEntryOpenedChanged) {
         this.setState({
-          mainSplitSize: this.props.mainSplitSize,
+          mainSplitSize: this.props.mainSplitSize
         });
       }
     }
@@ -315,22 +359,26 @@ class MainPage extends Component<Props, State> {
         mainSplitSize: '100%'
       });
     }
-    if (nextProps.isLocationManagerPanelOpened ||
+    if (
+      nextProps.isLocationManagerPanelOpened ||
       nextProps.isTagLibraryPanelOpened ||
       nextProps.isSearchPanelOpened ||
       nextProps.isPerspectivesPanelOpened ||
-      nextProps.isHelpFeedbackPanelOpened) {
+      nextProps.isHelpFeedbackPanelOpened
+    ) {
       this.setManagementPanelVisibility(true);
-      if (!nextProps.isDesktopMode) {
-        this.showDrawer();
-      }
+      // if (!nextProps.isDesktopMode) {
+      //   this.showDrawer();
+      // }
     }
 
-    if (!nextProps.isLocationManagerPanelOpened &&
+    if (
+      !nextProps.isLocationManagerPanelOpened &&
       !nextProps.isTagLibraryPanelOpened &&
       !nextProps.isSearchPanelOpened &&
       !nextProps.isPerspectivesPanelOpened &&
-      !nextProps.isHelpFeedbackPanelOpened) {
+      !nextProps.isHelpFeedbackPanelOpened
+    ) {
       this.setManagementPanelVisibility(false);
     }
   }
@@ -340,8 +388,14 @@ class MainPage extends Component<Props, State> {
   }
 
   updateDimensions = () => {
-    const width = window.innerWidth || document.documentElement.clientWidth || body.clientWidth;
-    const height = window.innerHeight || document.documentElement.clientHeight || body.clientHeight;
+    const width =
+      window.innerWidth ||
+      document.documentElement.clientWidth ||
+      body.clientWidth;
+    const height =
+      window.innerHeight ||
+      document.documentElement.clientHeight ||
+      body.clientHeight;
 
     // console.log('Width: ' + width + ' Height: ' + height);
     this.setState({ width, height });
@@ -368,7 +422,7 @@ class MainPage extends Component<Props, State> {
 
   setManagementPanelVisibility = isVisible => {
     this.setState({
-      isManagementPanelVisible: isVisible,
+      isManagementPanelVisible: isVisible
     });
   };
 
@@ -393,17 +447,21 @@ class MainPage extends Component<Props, State> {
 
   toggleDrawer = () => {
     this.setState({
-      isDrawerOpened: !this.state.isDrawerOpened,
+      isDrawerOpened: !this.state.isDrawerOpened
     });
   };
 
   skipRelease = () => {
     this.props.setUpdateAvailable(false);
-  }
+  };
 
   getLatestVersion = () => {
     if (Pro) {
-      this.props.showNotification(i18n.t('core:getLatestVersionPro'), 'default', false);
+      this.props.showNotification(
+        i18n.t('core:getLatestVersionPro'),
+        'default',
+        false
+      );
     } else {
       this.props.openFileNatively(AppConfig.links.downloadURL);
     }
@@ -412,7 +470,7 @@ class MainPage extends Component<Props, State> {
 
   openChangelogPage = () => {
     this.props.openFileNatively(AppConfig.links.changelogURL);
-  }
+  };
 
   handleFileDrop = (item, monitor) => {
     if (this.props.isReadOnlyMode) {
@@ -433,14 +491,20 @@ class MainPage extends Component<Props, State> {
           true
         );
       } else {
-        files.map(file => { // TODO move this in reducer -> look at DirectoryMenu handleFileInputChange
+        files.map(file => {
+          // TODO move this in reducer -> look at DirectoryMenu handleFileInputChange
           let filePath = '';
           let fileName = '';
           try {
             fileName = decodeURIComponent(file.name);
-            filePath = normalizePath(this.props.directoryPath) + AppConfig.dirSeparator + fileName;
+            filePath =
+              normalizePath(this.props.directoryPath) +
+              AppConfig.dirSeparator +
+              fileName;
           } catch (err) {
-            console.warn('Error decoding filename: ' + file.name + ' , skipping this file.');
+            console.warn(
+              'Error decoding filename: ' + file.name + ' , skipping this file.'
+            );
           }
           if (!filePath) {
             return true;
@@ -456,42 +520,44 @@ class MainPage extends Component<Props, State> {
             // }
             // TODO event.currentTarget.result is ArrayBuffer
             // Sample call from PRO version using content = Utils.base64ToArrayBuffer(baseString);
-            PlatformIO.getPropertiesPromise(filePath).then((entryProps) => {
-              if (entryProps) {
-                this.props.showNotification(
-                  'File with the same name already exist, importing skipped!',
-                  'warning',
-                  true
-                );
-              } else {
-                PlatformIO.saveBinaryFilePromise(
-                  filePath,
-                  event.currentTarget.result,
-                  true
-                )
-                  .then(() => {
-                    this.props.showNotification(
-                      'File ' + fileName + '  imported as ' + filePath,
-                      'default',
-                      true
-                    );
-                    this.props.reflectCreateEntry(filePath, true);
-                    // this.props.openFile(filePath);
-                    return true;
-                  })
-                  .catch(() => {
-                    this.props.showNotification(
-                      'Importing file ' + fileName + ' failed.',
-                      'error',
-                      true
-                    );
-                    return true;
-                  });
-              }
-              return true;
-            }).catch((err) => {
-              console.log('Error getting properties ' + err);
-            });
+            PlatformIO.getPropertiesPromise(filePath)
+              .then(entryProps => {
+                if (entryProps) {
+                  this.props.showNotification(
+                    'File with the same name already exist, importing skipped!',
+                    'warning',
+                    true
+                  );
+                } else {
+                  PlatformIO.saveBinaryFilePromise(
+                    filePath,
+                    event.currentTarget.result,
+                    true
+                  )
+                    .then(() => {
+                      this.props.showNotification(
+                        'File ' + fileName + '  imported as ' + filePath,
+                        'default',
+                        true
+                      );
+                      this.props.reflectCreateEntry(filePath, true);
+                      // this.props.openFile(filePath);
+                      return true;
+                    })
+                    .catch(() => {
+                      this.props.showNotification(
+                        'Importing file ' + fileName + ' failed.',
+                        'error',
+                        true
+                      );
+                      return true;
+                    });
+                }
+                return true;
+              })
+              .catch(err => {
+                console.log('Error getting properties ' + err);
+              });
           };
 
           if (AppConfig.isCordova) {
@@ -517,7 +583,7 @@ class MainPage extends Component<Props, State> {
     showFolderNavigator: this.props.openLocationManagerPanel,
     showTagLibrary: this.props.openTagLibraryPanel,
     openSearch: this.props.openSearchPanel,
-    showHelp: this.props.openHelpFeedbackPanel,
+    showHelp: this.props.openHelpFeedbackPanel
   };
 
   keyMap = {
@@ -526,7 +592,7 @@ class MainPage extends Component<Props, State> {
     showFolderNavigator: this.props.keyBindings.showFolderNavigator,
     showTagLibrary: this.props.keyBindings.showTagLibrary,
     openSearch: this.props.keyBindings.openSearch,
-    showHelp: this.props.keyBindings.showHelp,
+    showHelp: this.props.keyBindings.showHelp
   };
 
   render() {
@@ -554,7 +620,7 @@ class MainPage extends Component<Props, State> {
       toggleSelectDirectoryDialog,
       toggleEditTagDialog,
       setFirstRun,
-      directoryPath,
+      directoryPath
     } = this.props;
     const { FILE } = NativeTypes;
 
@@ -577,7 +643,7 @@ class MainPage extends Component<Props, State> {
             onClose={toggleKeysDialog}
           />
         )}
-        {(isLicenseDialogOpened) && (
+        {isLicenseDialogOpened && (
           <LicenseDialogAsync
             open={isLicenseDialogOpened}
             onClose={() => {
@@ -586,7 +652,7 @@ class MainPage extends Component<Props, State> {
             }}
           />
         )}
-        {(isOnboardingDialogOpened) && (
+        {isOnboardingDialogOpened && (
           <OnboardingDialogAsync
             open={isOnboardingDialogOpened}
             onClose={toggleOnboardingDialog}
@@ -637,7 +703,9 @@ class MainPage extends Component<Props, State> {
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           open={this.props.notificationStatus.visible}
           onClose={this.props.hideNotifications}
-          autoHideDuration={this.props.notificationStatus.autohide ? 3000 : undefined}
+          autoHideDuration={
+            this.props.notificationStatus.autohide ? 3000 : undefined
+          }
           message={this.props.notificationStatus.text}
           action={[
             <IconButton
@@ -647,7 +715,7 @@ class MainPage extends Component<Props, State> {
               onClick={this.props.hideNotifications}
             >
               <CloseIcon />
-            </IconButton>,
+            </IconButton>
           ]}
         />
         <Snackbar
@@ -663,7 +731,7 @@ class MainPage extends Component<Props, State> {
               onClick={() => this.props.setGeneratingThumbnails(false)}
             >
               <CloseIcon />
-            </IconButton>,
+            </IconButton>
           ]}
         />
         <Snackbar
@@ -676,7 +744,9 @@ class MainPage extends Component<Props, State> {
               color="secondary"
               size="small"
               onClick={this.props.cancelDirectoryIndexing}
-            >{i18n.t('core:cancelIndexing')}</Button>
+            >
+              {i18n.t('core:cancelIndexing')}
+            </Button>
           ]}
         />
         <Snackbar
@@ -685,21 +755,23 @@ class MainPage extends Component<Props, State> {
           autoHideDuration={undefined}
           message={'Version ' + this.props.lastPublishedVersion + ' available.'}
           action={[
-            <Button
-              color="secondary"
-              size="small"
-              onClick={this.skipRelease}
-            >{i18n.t('core:later')}</Button>,
+            <Button color="secondary" size="small" onClick={this.skipRelease}>
+              {i18n.t('core:later')}
+            </Button>,
             <Button
               color="secondary"
               size="small"
               onClick={this.openChangelogPage}
-            >{i18n.t('core:releaseNotes')}</Button>,
+            >
+              {i18n.t('core:releaseNotes')}
+            </Button>,
             <Button
               color="primary"
               size="small"
               onClick={this.getLatestVersion}
-            >{i18n.t('core:getItNow')}</Button>,
+            >
+              {i18n.t('core:getItNow')}
+            </Button>
           ]}
         />
         {this.props.isDesktopMode ? (
@@ -717,9 +789,11 @@ class MainPage extends Component<Props, State> {
               }
               onChange={size => {
                 this.setState({
-                  isManagementPanelVisible: size > initialSplitSize,
+                  isManagementPanelVisible: size > initialSplitSize
                 });
-                bufferedLeftSplitResize(() => this.props.setLeftVerticalSplitSize(size));
+                bufferedLeftSplitResize(() =>
+                  this.props.setLeftVerticalSplitSize(size)
+                );
               }}
             >
               <VerticalNavigation />
@@ -730,7 +804,8 @@ class MainPage extends Component<Props, State> {
                 size={this.state.mainSplitSize}
                 onChange={size => {
                   if (size > 0 && this.state.width) {
-                    const sizeInPercent = parseInt(((size * 100) / this.state.width), 10) + '%';
+                    const sizeInPercent =
+                      parseInt((size * 100) / this.state.width, 10) + '%';
                     this.setState({
                       mainSplitSize: sizeInPercent
                     });
@@ -753,7 +828,7 @@ class MainPage extends Component<Props, State> {
               open={this.state.isDrawerOpened}
               onClose={this.hideDrawer}
               onOpen={this.showDrawer}
-              hysteresis={0.10}
+              hysteresis={0.1}
               disableBackdropTransition={!AppConfig.isIOS}
               disableDiscovery={AppConfig.isIOS}
             >
@@ -766,7 +841,8 @@ class MainPage extends Component<Props, State> {
               size={this.state.mainSplitSize}
               onChange={size => {
                 if (size > 0 && this.state.width) {
-                  const sizeInPercent = parseInt(((size * 100) / this.state.width), 10) + '%';
+                  const sizeInPercent =
+                    parseInt((size * 100) / this.state.width, 10) + '%';
                   this.setState({
                     mainSplitSize: sizeInPercent
                   });
@@ -818,56 +894,64 @@ function mapStateToProps(state) {
     isSearchPanelOpened: isSearchPanelOpened(state),
     isPerspectivesPanelOpened: isPerspectivesPanelOpened(state),
     isHelpFeedbackPanelOpened: isHelpFeedbackPanelOpened(state),
-    directoryPath: getDirectoryPath(state),
+    directoryPath: getDirectoryPath(state)
   };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    loadParentDirectoryContent: AppActions.loadParentDirectoryContent,
-    toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog,
-    toggleSelectDirectoryDialog: AppActions.toggleSelectDirectoryDialog,
-    toggleEditTagDialog: AppActions.toggleEditTagDialog,
-    hideNotifications: AppActions.hideNotifications,
-    cancelDirectoryIndexing: LocationIndexActions.cancelDirectoryIndexing,
-    saveFile: AppActions.saveFile,
-    setZoomResetApp: SettingsActions.setZoomResetApp,
-    setZoomInApp: SettingsActions.setZoomInApp,
-    setZoomOutApp: SettingsActions.setZoomOutApp,
-    toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
-    showCreateDirectoryDialog: AppActions.showCreateDirectoryDialog,
-    toggleSettingsDialog: AppActions.toggleSettingsDialog,
-    toggleKeysDialog: AppActions.toggleKeysDialog,
-    toggleLicenseDialog: AppActions.toggleLicenseDialog,
-    toggleThirdPartyLibsDialog: AppActions.toggleThirdPartyLibsDialog,
-    toggleAboutDialog: AppActions.toggleAboutDialog,
-    toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
-    setLastSelectedEntry: AppActions.setLastSelectedEntry,
-    setGeneratingThumbnails: AppActions.setGeneratingThumbnails,
-    openFile: AppActions.openFile,
-    openFileNatively: AppActions.openFileNatively,
-    openURLExternally: AppActions.openURLExternally,
-    setEntryFullWidth: AppActions.setEntryFullWidth,
-    setUpdateAvailable: AppActions.setUpdateAvailable,
-    getNextFile: AppActions.getNextFile,
-    getPrevFile: AppActions.getPrevFile,
-    toggleShowUnixHiddenEntries: SettingsActions.toggleShowUnixHiddenEntries,
-    setLeftVerticalSplitSize: SettingsActions.setLeftVerticalSplitSize,
-    setMainVerticalSplitSize: SettingsActions.setMainVerticalSplitSize,
-    showNotification: AppActions.showNotification,
-    reflectCreateEntry: AppActions.reflectCreateEntry,
-    openLocationManagerPanel: AppActions.openLocationManagerPanel,
-    openTagLibraryPanel: AppActions.openTagLibraryPanel,
-    openSearchPanel: AppActions.openSearchPanel,
-    openPerspectivesPanel: AppActions.openPerspectivesPanel,
-    openHelpFeedbackPanel: AppActions.openHelpFeedbackPanel,
-    closeAllVerticalPanels: AppActions.closeAllVerticalPanels,
-    setFirstRun: SettingsActions.setFirstRun,
-  }, dispatch);
+  return bindActionCreators(
+    {
+      loadParentDirectoryContent: AppActions.loadParentDirectoryContent,
+      toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog,
+      toggleSelectDirectoryDialog: AppActions.toggleSelectDirectoryDialog,
+      toggleEditTagDialog: AppActions.toggleEditTagDialog,
+      hideNotifications: AppActions.hideNotifications,
+      cancelDirectoryIndexing: LocationIndexActions.cancelDirectoryIndexing,
+      saveFile: AppActions.saveFile,
+      setZoomResetApp: SettingsActions.setZoomResetApp,
+      setZoomInApp: SettingsActions.setZoomInApp,
+      setZoomOutApp: SettingsActions.setZoomOutApp,
+      toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
+      showCreateDirectoryDialog: AppActions.showCreateDirectoryDialog,
+      toggleSettingsDialog: AppActions.toggleSettingsDialog,
+      toggleKeysDialog: AppActions.toggleKeysDialog,
+      toggleLicenseDialog: AppActions.toggleLicenseDialog,
+      toggleThirdPartyLibsDialog: AppActions.toggleThirdPartyLibsDialog,
+      toggleAboutDialog: AppActions.toggleAboutDialog,
+      toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
+      setLastSelectedEntry: AppActions.setLastSelectedEntry,
+      setGeneratingThumbnails: AppActions.setGeneratingThumbnails,
+      openFile: AppActions.openFile,
+      openFileNatively: AppActions.openFileNatively,
+      openURLExternally: AppActions.openURLExternally,
+      setEntryFullWidth: AppActions.setEntryFullWidth,
+      setUpdateAvailable: AppActions.setUpdateAvailable,
+      getNextFile: AppActions.getNextFile,
+      getPrevFile: AppActions.getPrevFile,
+      toggleShowUnixHiddenEntries: SettingsActions.toggleShowUnixHiddenEntries,
+      setLeftVerticalSplitSize: SettingsActions.setLeftVerticalSplitSize,
+      setMainVerticalSplitSize: SettingsActions.setMainVerticalSplitSize,
+      showNotification: AppActions.showNotification,
+      reflectCreateEntry: AppActions.reflectCreateEntry,
+      openLocationManagerPanel: AppActions.openLocationManagerPanel,
+      openTagLibraryPanel: AppActions.openTagLibraryPanel,
+      openSearchPanel: AppActions.openSearchPanel,
+      openPerspectivesPanel: AppActions.openPerspectivesPanel,
+      openHelpFeedbackPanel: AppActions.openHelpFeedbackPanel,
+      closeAllVerticalPanels: AppActions.closeAllVerticalPanels,
+      setFirstRun: SettingsActions.setFirstRun
+    },
+    dispatch
+  );
 }
 
 export default DragDropContext(HTML5Backend)(
-  connect(mapStateToProps, mapDispatchToProps)(
-    translate(['core'], { wait: true })(withStyles(styles, { withTheme: true })(MainPage))
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(
+    translate(['core'], { wait: true })(
+      withStyles(styles, { withTheme: true })(MainPage)
+    )
   )
 );
