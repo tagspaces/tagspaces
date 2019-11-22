@@ -106,11 +106,24 @@ const CellContent = (props: Props) => {
         <div
           className={classes.gridCellThumb}
           style={{
-            backgroundSize: thumbnailMode,
-            backgroundImage: thumbPathUrl,
+            position: 'relative',
+            // zIndex: 1,
             height: 150 // fsEntry.isFile ? 150 : 70
           }}
         >
+          <img
+            alt="thumbnail"
+            className={classes.gridCellThumb}
+            src={fsEntry.thumbPath}
+            loading="lazy"
+            style={{
+              objectFit: thumbnailMode,
+              position: 'absolute',
+              margin: 1,
+              width: '100%',
+              height: 150
+            }}
+          />
           <div id="gridCellTags" className={classes.gridCellTags}>
             {fsEntry.tags.map(tag => renderTag(tag))}
           </div>
@@ -264,6 +277,7 @@ const CellContent = (props: Props) => {
               src={fsEntry.thumbPath}
               loading="lazy"
               style={{
+                objectFit: thumbnailMode,
                 margin: 1,
                 height: tmbSize,
                 width: tmbSize
