@@ -45,25 +45,21 @@ import ThumbnailContainIcon from '@material-ui/icons/PhotoSizeSelectLarge';
 import FolderIcon from '@material-ui/icons/FolderOpen';
 import FolderHiddenIcon from '@material-ui/icons/Folder';
 import TagIcon from '@material-ui/icons/LocalOffer';
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import CheckBoxEmptyIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CopyIcon from '@material-ui/icons/FileCopy';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SelectAllIcon from '@material-ui/icons/CheckBox';
 import DeSelectAllIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import HelpIcon from '@material-ui/icons/Help';
-import {
-  type FileSystemEntry,
-} from '../../../services/utils-io';
+import { type FileSystemEntry } from '../../../services/utils-io';
 import { type Tag } from '../../../reducers/taglibrary';
 import {
   getSupportedFileTypes,
   getDesktopMode,
   getKeyBindingObject
 } from '../../../reducers/settings';
-import {
-  sortByCriteria,
-  isObj,
-  isVisibleOnScreen
-} from '../../../utils/misc';
+import { sortByCriteria, isObj, isVisibleOnScreen } from '../../../utils/misc';
 import styles from './styles.css';
 import FileMenu from '../../../components/menus/FileMenu';
 import DirectoryMenu from '../../../components/menus/DirectoryMenu';
@@ -152,6 +148,7 @@ type State = {
   fileOperationsEnabled: boolean,
   allFilesSelected: boolean,
   showDirectories: boolean,
+  showTags: boolean,
   isDeleteMultipleFilesDialogOpened: boolean,
   isMoveCopyFilesDialogOpened: boolean,
   isAddRemoveTagsDialogOpened: boolean,
@@ -177,14 +174,24 @@ class GridPerspective extends React.Component<Props, State> {
       selectedEntryPath: '',
       sortBy: settings && settings.sortBy ? settings.sortBy : 'byName',
       orderBy: settings && settings.orderBy ? settings.orderBy : true,
-      layoutType: settings && settings.layoutType ? settings.layoutType : 'grid',
-      singleClickAction: settings && settings.singleClickAction ? settings.singleClickAction : 'openInternal', // openExternal
-      doubleClickAction: settings && settings.doubleClickAction ? settings.doubleClickAction : 'openInternal', // openExternal
+      layoutType:
+        settings && settings.layoutType ? settings.layoutType : 'grid',
+      singleClickAction:
+        settings && settings.singleClickAction
+          ? settings.singleClickAction
+          : 'openInternal', // openExternal
+      doubleClickAction:
+        settings && settings.doubleClickAction
+          ? settings.doubleClickAction
+          : 'openInternal', // openExternal
       entrySize: settings && settings.entrySize ? settings.entrySize : 'normal', // small, big
-      thumbnailMode: settings && settings.thumbnailMode ? settings.thumbnailMode : 'cover', // contain
+      thumbnailMode:
+        settings && settings.thumbnailMode ? settings.thumbnailMode : 'cover', // contain
       fileOperationsEnabled: false,
       allFilesSelected: false,
-      showDirectories: settings && settings.showDirectories ? settings.showDirectories : true,
+      showDirectories:
+        settings && settings.showDirectories ? settings.showDirectories : true,
+      showTags: settings && settings.showTags ? settings.showTags : true,
       isDeleteMultipleFilesDialogOpened: false,
       isMoveCopyFilesDialogOpened: false,
       isAddRemoveTagsDialogOpened: false,
@@ -220,8 +227,8 @@ class GridPerspective extends React.Component<Props, State> {
     }
   };
 
-  sort = memoize(
-    (data, criteria, order) => sortByCriteria(data, criteria, order)
+  sort = memoize((data, criteria, order) =>
+    sortByCriteria(data, criteria, order)
   );
 
   makeFirstSelectedEntryVisible = () => {
@@ -243,6 +250,7 @@ class GridPerspective extends React.Component<Props, State> {
   saveSettings() {
     const settingsObj = {
       showDirectories: this.state.showDirectories,
+      showTags: this.state.showTags,
       layoutType: this.state.layoutType,
       orderBy: this.state.orderBy,
       sortBy: this.state.sortBy,
@@ -267,10 +275,13 @@ class GridPerspective extends React.Component<Props, State> {
 
   handleSortBy = sortBy => {
     this.closeSortingMenu();
-    this.setState({
-      orderBy: !this.state.orderBy,
-      sortBy
-    }, this.saveSettings);
+    this.setState(
+      {
+        orderBy: !this.state.orderBy,
+        sortBy
+      },
+      this.saveSettings
+    );
   };
 
   handleSortingMenu = event => {
@@ -291,8 +302,12 @@ class GridPerspective extends React.Component<Props, State> {
     const { selectedEntries } = this.props;
     const selectHelperKey = AppConfig.isMacLike ? event.metaKey : event.ctrlKey;
     if (event.shiftKey) {
-      let lastSelectedIndex = this.props.directoryContent.findIndex(entry => entry.path === this.props.lastSelectedEntryPath);
-      const currentSelectedIndex = this.props.directoryContent.findIndex(entry => entry.path === fsEntry.path);
+      let lastSelectedIndex = this.props.directoryContent.findIndex(
+        entry => entry.path === this.props.lastSelectedEntryPath
+      );
+      const currentSelectedIndex = this.props.directoryContent.findIndex(
+        entry => entry.path === fsEntry.path
+      );
       if (lastSelectedIndex < 0) {
         lastSelectedIndex = currentSelectedIndex;
       }
@@ -300,9 +315,15 @@ class GridPerspective extends React.Component<Props, State> {
       let entriesToSelect;
       // console.log('lastSelectedIndex: ' + lastSelectedIndex + '  currentSelectedIndex: ' + currentSelectedIndex);
       if (currentSelectedIndex > lastSelectedIndex) {
-        entriesToSelect = this.props.directoryContent.slice(lastSelectedIndex, currentSelectedIndex + 1);
+        entriesToSelect = this.props.directoryContent.slice(
+          lastSelectedIndex,
+          currentSelectedIndex + 1
+        );
       } else if (currentSelectedIndex < lastSelectedIndex) {
-        entriesToSelect = this.props.directoryContent.slice(currentSelectedIndex, lastSelectedIndex + 1);
+        entriesToSelect = this.props.directoryContent.slice(
+          currentSelectedIndex,
+          lastSelectedIndex + 1
+        );
       } else if (currentSelectedIndex === lastSelectedIndex) {
         entriesToSelect = [fsEntry];
         this.props.setLastSelectedEntry(fsEntry.path);
@@ -315,7 +336,9 @@ class GridPerspective extends React.Component<Props, State> {
         selectedEntries &&
         selectedEntries.some(entry => entry.path === fsEntry.path)
       ) {
-        this.props.setSelectedEntries(selectedEntries.filter(entry => entry.path !== fsEntry.path)); // deselect selected entry
+        this.props.setSelectedEntries(
+          selectedEntries.filter(entry => entry.path !== fsEntry.path)
+        ); // deselect selected entry
         this.setState(this.computeFileOperationsEnabled);
         // this.props.setLastSelectedEntry(null);
       } else {
@@ -380,45 +403,50 @@ class GridPerspective extends React.Component<Props, State> {
     );
   };
 
-  toggleThumbnailsMode = () => {
+  toggleShowTags = () => {
     this.closeOptionsMenu();
     this.setState(
       {
-        thumbnailMode: this.state.thumbnailMode === 'cover' ? 'contain' : 'cover'
+        showTags: !this.state.showTags
       },
       this.saveSettings
     );
   };
 
-  changeEntrySize = (entrySize) => {
+  toggleThumbnailsMode = () => {
     this.closeOptionsMenu();
-    this.setState({ entrySize },
+    this.setState(
+      {
+        thumbnailMode:
+          this.state.thumbnailMode === 'cover' ? 'contain' : 'cover'
+      },
       this.saveSettings
     );
   };
 
-  changeSingleClickAction = (singleClickAction) => {
+  changeEntrySize = entrySize => {
     this.closeOptionsMenu();
-    this.setState({ singleClickAction },
-      this.saveSettings
-    );
+    this.setState({ entrySize }, this.saveSettings);
+  };
+
+  changeSingleClickAction = singleClickAction => {
+    this.closeOptionsMenu();
+    this.setState({ singleClickAction }, this.saveSettings);
   };
 
   openHelpWebPage = () => {
     this.closeOptionsMenu();
-    this.props.openURLExternally(AppConfig.documentationLinks.defaultPerspective);
+    this.props.openURLExternally(
+      AppConfig.documentationLinks.defaultPerspective
+    );
   };
 
   handleGridCellDblClick = (event, fsEntry: FileSystemEntry) => {
     this.props.setSelectedEntries([]);
-    this.setState(
-      this.computeFileOperationsEnabled
-    );
+    this.setState(this.computeFileOperationsEnabled);
     if (fsEntry.isFile) {
       this.props.setSelectedEntries([fsEntry]);
-      this.setState(
-        this.computeFileOperationsEnabled
-      );
+      this.setState(this.computeFileOperationsEnabled);
       this.props.openFile(fsEntry.path);
     } else {
       console.log('Handle Grid cell db click, selected path : ', fsEntry.path);
@@ -434,7 +462,9 @@ class GridPerspective extends React.Component<Props, State> {
           selectedEntries &&
           selectedEntries.some(entry => entry.path === fsEntry.path)
         ) {
-          this.props.setSelectedEntries(selectedEntries.filter(entry => entry.path !== fsEntry.path)); // deselect selected entry
+          this.props.setSelectedEntries(
+            selectedEntries.filter(entry => entry.path !== fsEntry.path)
+          ); // deselect selected entry
           this.setState(this.computeFileOperationsEnabled);
           // this.props.setLastSelectedEntry(null);
         } else {
@@ -443,7 +473,9 @@ class GridPerspective extends React.Component<Props, State> {
           // this.props.setLastSelectedEntry(fsEntry.path);
         }
       } else {
-        this.props.setSelectedEntries(event.ctrlKey ? [...selectedEntries, fsEntry] : [fsEntry]);
+        this.props.setSelectedEntries(
+          event.ctrlKey ? [...selectedEntries, fsEntry] : [fsEntry]
+        );
         this.setState({
           fileContextMenuOpened: true,
           fileContextMenuAnchorEl: event.currentTarget,
@@ -577,7 +609,7 @@ class GridPerspective extends React.Component<Props, State> {
       theme,
       selectedEntries,
       addTags,
-      supportedFileTypes,
+      supportedFileTypes
     } = this.props;
     if (!fsEntry.isFile && !showDirectories) {
       return;
@@ -606,6 +638,7 @@ class GridPerspective extends React.Component<Props, State> {
           isReadOnlyMode={this.props.isReadOnlyMode}
           handleTagMenu={this.handleTagMenu}
           layoutType={layoutType}
+          showTags={this.state.showTags}
           handleGridContextMenu={this.handleGridContextMenu}
           handleGridCellDblClick={this.handleGridCellDblClick}
           handleGridCellClick={this.handleGridCellClick}
@@ -613,14 +646,16 @@ class GridPerspective extends React.Component<Props, State> {
       </TagDropContainer>
     );
 
-
     if (fsEntry.isFile) {
-      return (<FileSourceDnd>{cellContent}</FileSourceDnd>);
+      return <FileSourceDnd>{cellContent}</FileSourceDnd>;
     }
 
     return (
       <div style={{ position: 'relative' }}>
-        <TargetMoveFileBox accepts={[DragItemTypes.FILE]} onDrop={this.handleFileMoveDrop}>
+        <TargetMoveFileBox
+          accepts={[DragItemTypes.FILE]}
+          onDrop={this.handleFileMoveDrop}
+        >
           {cellContent}
         </TargetMoveFileBox>
       </div>
@@ -635,14 +670,16 @@ class GridPerspective extends React.Component<Props, State> {
     addRemoveTags: this.props.keyBindings.addRemoveTags,
     renameFile: this.props.keyBindings.renameFile,
     openEntry: this.props.keyBindings.openEntry,
-    openFileExternally: this.props.keyBindings.openFileExternally,
+    openFileExternally: this.props.keyBindings.openFileExternally
   };
 
   keyBindingHandlers = {
     nextDocument: () => {
       const nextFilePath = this.props.getNextFile();
       if (nextFilePath) {
-        const nextFile = this.props.directoryContent.filter(entry => entry.path === nextFilePath);
+        const nextFile = this.props.directoryContent.filter(
+          entry => entry.path === nextFilePath
+        );
         this.props.setLastSelectedEntry(nextFilePath);
         this.props.setSelectedEntries(nextFile);
       }
@@ -650,7 +687,9 @@ class GridPerspective extends React.Component<Props, State> {
     prevDocument: () => {
       const prevFilePath = this.props.getPrevFile();
       if (prevFilePath) {
-        const prevFile = this.props.directoryContent.filter(entry => entry.path === prevFilePath);
+        const prevFile = this.props.directoryContent.filter(
+          entry => entry.path === prevFilePath
+        );
         this.props.setLastSelectedEntry(prevFilePath);
         this.props.setSelectedEntries(prevFile);
       }
@@ -667,13 +706,20 @@ class GridPerspective extends React.Component<Props, State> {
       }
     },
     renameFile: () => {
-      if (this.props.selectedEntries && this.props.selectedEntries.length === 1 && this.props.selectedEntries[0].isFile) {
-        this.setState({ selectedEntryPath: this.props.selectedEntries[0].path }, () => {
-          this.openFileRenameDialog();
-        });
+      if (
+        this.props.selectedEntries &&
+        this.props.selectedEntries.length === 1 &&
+        this.props.selectedEntries[0].isFile
+      ) {
+        this.setState(
+          { selectedEntryPath: this.props.selectedEntries[0].path },
+          () => {
+            this.openFileRenameDialog();
+          }
+        );
       }
     },
-    openEntry: (e) => {
+    openEntry: e => {
       e.preventDefault();
       const { lastSelectedEntryPath } = this.props;
       if (lastSelectedEntryPath) {
@@ -705,7 +751,9 @@ class GridPerspective extends React.Component<Props, State> {
       desktopMode
     } = this.props;
     const { layoutType, entrySize, sortBy, orderBy } = this.state;
-    const selectedFilePaths = selectedEntries.filter(fsEntry => fsEntry.isFile).map(fsentry => fsentry.path);
+    const selectedFilePaths = selectedEntries
+      .filter(fsEntry => fsEntry.isFile)
+      .map(fsentry => fsentry.path);
     const sortedContent = this.sort(directoryContent, sortBy, orderBy);
     const sortedDirectories = sortedContent.filter(entry => !entry.isFile);
     const sortedFiles = sortedContent.filter(entry => entry.isFile);
@@ -828,44 +876,58 @@ class GridPerspective extends React.Component<Props, State> {
           </IconButton>
         </Toolbar>
         <GlobalHotKeys keyMap={this.keyMap} handlers={this.keyBindingHandlers}>
-          <div style={{
-            height: '100%',
-            backgroundColor: theme.palette.background.default
-          }}
-          >
-            <div style={{
+          <div
+            style={{
               height: '100%',
-              overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
-              backgroundColor: currentDirectoryColor || 'transparent',
+              backgroundColor: theme.palette.background.default
             }}
+          >
+            <div
+              style={{
+                height: '100%',
+                overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
+                backgroundColor: currentDirectoryColor || 'transparent'
+              }}
             >
               <div
-                className={layoutType === 'grid' ? classes.gridContainer : classes.rowContainer}
+                className={
+                  layoutType === 'grid'
+                    ? classes.gridContainer
+                    : classes.rowContainer
+                }
                 style={{
-                  gridTemplateColumns: layoutType === 'grid' ? 'repeat(auto-fit,minmax(' + entryWidth + 'px,1fr))' : 'none',
+                  gridTemplateColumns:
+                    layoutType === 'grid'
+                      ? 'repeat(auto-fit,minmax(' + entryWidth + 'px,1fr))'
+                      : 'none'
                 }}
                 ref={ref => {
                   this.mainGrid = ref;
                 }}
                 data-tid="perspectiveGridFileTable"
               >
-                {(sortedDirectories.map(entry => this.renderCell(entry)))}
-                {(sortedFiles.map(entry => this.renderCell(entry)))}
+                {sortedDirectories.map(entry => this.renderCell(entry))}
+                {sortedFiles.map(entry => this.renderCell(entry))}
                 {isAppLoading && (
                   <Typography style={{ padding: 15 }}>
                     {i18n.t('core:loading')}
                   </Typography>
                 )}
-                {(!isAppLoading && sortedFiles.length < 1 && sortedDirectories.length < 1) && (
-                  <Typography style={{ padding: 15 }}>
-                    {i18n.t('core:noFileFolderFound')}
-                  </Typography>
-                )}
-                {(!isAppLoading && sortedFiles.length < 1 && sortedDirectories.length >= 1 && !this.state.showDirectories) && (
-                  <Typography style={{ padding: 15 }}>
-                    {i18n.t('core:noFileButFoldersFound')}
-                  </Typography>
-                )}
+                {!isAppLoading &&
+                  sortedFiles.length < 1 &&
+                  sortedDirectories.length < 1 && (
+                    <Typography style={{ padding: 15 }}>
+                      {i18n.t('core:noFileFolderFound')}
+                    </Typography>
+                  )}
+                {!isAppLoading &&
+                  sortedFiles.length < 1 &&
+                  sortedDirectories.length >= 1 &&
+                  !this.state.showDirectories && (
+                    <Typography style={{ padding: 15 }}>
+                      {i18n.t('core:noFileButFoldersFound')}
+                    </Typography>
+                  )}
               </div>
             </div>
           </div>
@@ -955,67 +1017,72 @@ class GridPerspective extends React.Component<Props, State> {
           {/* <ListSubHeader>Sort by</ListSubHeader> */}
           <MenuItem
             data-tid="gridPerspectiveSortByName"
-            onClick={() => { this.handleSortBy('byName'); }}
+            onClick={() => {
+              this.handleSortBy('byName');
+            }}
           >
             <ListItemIcon style={{ minWidth: 25 }}>
-              {(this.state.sortBy === 'byName') && (
-                this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />
-              )}
+              {this.state.sortBy === 'byName' &&
+                (this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />)}
             </ListItemIcon>
             <ListItemText primary={i18n.t('core:fileTitle')} />
           </MenuItem>
           <MenuItem
             data-tid="gridPerspectiveSortBySize"
-            onClick={() => { this.handleSortBy('byFileSize'); }}
+            onClick={() => {
+              this.handleSortBy('byFileSize');
+            }}
           >
             <ListItemIcon style={{ minWidth: 25 }}>
-              {(this.state.sortBy === 'byFileSize') && (
-                this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />
-              )}
+              {this.state.sortBy === 'byFileSize' &&
+                (this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />)}
             </ListItemIcon>
             <ListItemText primary={i18n.t('core:fileSize')} />
           </MenuItem>
           <MenuItem
             data-tid="gridPerspectiveSortByDate"
-            onClick={() => { this.handleSortBy('byDateModified'); }}
+            onClick={() => {
+              this.handleSortBy('byDateModified');
+            }}
           >
             <ListItemIcon style={{ minWidth: 25 }}>
-              {(this.state.sortBy === 'byDateModified') && (
-                this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />
-              )}
+              {this.state.sortBy === 'byDateModified' &&
+                (this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />)}
             </ListItemIcon>
             <ListItemText primary={i18n.t('core:fileLDTM')} />
           </MenuItem>
           <MenuItem
             data-tid="gridPerspectiveSortByFirstTag"
-            onClick={() => { this.handleSortBy('byFirstTag'); }}
+            onClick={() => {
+              this.handleSortBy('byFirstTag');
+            }}
           >
             <ListItemIcon style={{ minWidth: 25 }}>
-              {(this.state.sortBy === 'byFirstTag') && (
-                this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />
-              )}
+              {this.state.sortBy === 'byFirstTag' &&
+                (this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />)}
             </ListItemIcon>
             <ListItemText primary={i18n.t('core:fileFirstTag')} />
           </MenuItem>
           <MenuItem
             data-tid="gridPerspectiveSortByExt"
-            onClick={() => { this.handleSortBy('byExtension'); }}
+            onClick={() => {
+              this.handleSortBy('byExtension');
+            }}
           >
             <ListItemIcon style={{ minWidth: 25 }}>
-              {(this.state.sortBy === 'byExtension') && (
-                this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />
-              )}
+              {this.state.sortBy === 'byExtension' &&
+                (this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />)}
             </ListItemIcon>
             <ListItemText primary={i18n.t('core:fileExtension')} />
           </MenuItem>
           <MenuItem
             data-tid="gridPerspectiveSortRandom"
-            onClick={() => { this.handleSortBy('random'); }}
+            onClick={() => {
+              this.handleSortBy('random');
+            }}
           >
             <ListItemIcon style={{ minWidth: 25 }}>
-              {(this.state.sortBy === 'random') && (
-                <ArrowDownIcon />
-              )}
+              {this.state.sortBy === 'random' && <ArrowDownIcon />}
             </ListItemIcon>
             <ListItemText primary={i18n.t('core:random')} />
           </MenuItem>
@@ -1032,10 +1099,26 @@ class GridPerspective extends React.Component<Props, State> {
             onClick={this.toggleShowDirectories}
           >
             <ListItemIcon>
-              {this.state.showDirectories ? <FolderIcon /> : <FolderHiddenIcon />}
+              {this.state.showDirectories ? (
+                <CheckBoxIcon />
+              ) : (
+                <CheckBoxEmptyIcon />
+              )}
             </ListItemIcon>
             <ListItemText primary={i18n.t('core:showHideDirectories')} />
           </MenuItem>
+          <MenuItem
+            data-tid="gridPerspectiveToggleShowTags"
+            title={i18n.t('core:showTags')}
+            aria-label={i18n.t('core:showTags')}
+            onClick={this.toggleShowTags}
+          >
+            <ListItemIcon>
+              {this.state.showTags ? <CheckBoxIcon /> : <CheckBoxEmptyIcon />}
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:showTags')} />
+          </MenuItem>
+          <Divider />
           <MenuItem
             data-tid="gridPerspectiveToggleThumbnailsMode"
             title={i18n.t('core:toggleThumbnailModeTitle')}
@@ -1043,7 +1126,11 @@ class GridPerspective extends React.Component<Props, State> {
             onClick={this.toggleThumbnailsMode}
           >
             <ListItemIcon>
-              {this.state.thumbnailMode === 'cover' ? <ThumbnailCoverIcon /> : <ThumbnailContainIcon />}
+              {this.state.thumbnailMode === 'cover' ? (
+                <ThumbnailCoverIcon />
+              ) : (
+                <ThumbnailContainIcon />
+              )}
             </ListItemIcon>
             <ListItemText primary={i18n.t('core:toggleThumbnailMode')} />
           </MenuItem>
@@ -1055,7 +1142,11 @@ class GridPerspective extends React.Component<Props, State> {
             onClick={() => this.changeEntrySize('small')}
           >
             <ListItemIcon>
-              {this.state.entrySize === 'small' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
+              {this.state.entrySize === 'small' ? (
+                <RadioCheckedIcon />
+              ) : (
+                <RadioUncheckedIcon />
+              )}
             </ListItemIcon>
             <ListItemText primary={i18n.t('core:entrySizeSmall')} />
           </MenuItem>
@@ -1066,7 +1157,11 @@ class GridPerspective extends React.Component<Props, State> {
             onClick={() => this.changeEntrySize('normal')}
           >
             <ListItemIcon>
-              {this.state.entrySize === 'normal' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
+              {this.state.entrySize === 'normal' ? (
+                <RadioCheckedIcon />
+              ) : (
+                <RadioUncheckedIcon />
+              )}
             </ListItemIcon>
             <ListItemText primary={i18n.t('core:entrySizeNormal')} />
           </MenuItem>
@@ -1077,7 +1172,11 @@ class GridPerspective extends React.Component<Props, State> {
             onClick={() => this.changeEntrySize('big')}
           >
             <ListItemIcon>
-              {this.state.entrySize === 'big' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
+              {this.state.entrySize === 'big' ? (
+                <RadioCheckedIcon />
+              ) : (
+                <RadioUncheckedIcon />
+              )}
             </ListItemIcon>
             <ListItemText primary={i18n.t('core:entrySizeBig')} />
           </MenuItem>
@@ -1089,7 +1188,11 @@ class GridPerspective extends React.Component<Props, State> {
             onClick={() => this.changeSingleClickAction('openInternal')}
           >
             <ListItemIcon>
-              {this.state.singleClickAction === 'openInternal' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
+              {this.state.singleClickAction === 'openInternal' ? (
+                <RadioCheckedIcon />
+              ) : (
+                <RadioUncheckedIcon />
+              )}
             </ListItemIcon>
             <ListItemText primary={i18n.t('core:singleClickOpenInternally')} />
           </MenuItem>
@@ -1100,7 +1203,11 @@ class GridPerspective extends React.Component<Props, State> {
             onClick={() => this.changeSingleClickAction('openExternal')}
           >
             <ListItemIcon>
-              {this.state.singleClickAction === 'openExternal' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
+              {this.state.singleClickAction === 'openExternal' ? (
+                <RadioCheckedIcon />
+              ) : (
+                <RadioUncheckedIcon />
+              )}
             </ListItemIcon>
             <ListItemText primary={i18n.t('core:singleClickOpenExternally')} />
           </MenuItem>
@@ -1111,7 +1218,11 @@ class GridPerspective extends React.Component<Props, State> {
             onClick={() => this.changeSingleClickAction('selects')}
           >
             <ListItemIcon>
-              {this.state.singleClickAction === 'selects' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
+              {this.state.singleClickAction === 'selects' ? (
+                <RadioCheckedIcon />
+              ) : (
+                <RadioUncheckedIcon />
+              )}
             </ListItemIcon>
             <ListItemText primary={i18n.t('core:singleClickSelects')} />
           </MenuItem>
@@ -1134,16 +1245,19 @@ class GridPerspective extends React.Component<Props, State> {
 }
 
 function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators({
-    moveFiles: IOActions.moveFiles,
-    setSelectedEntries: AppActions.setSelectedEntries,
-    showNotification: AppActions.showNotification,
-    openFileNatively: AppActions.openFileNatively,
-    openURLExternally: AppActions.openURLExternally,
-    getNextFile: AppActions.getNextFile,
-    getPrevFile: AppActions.getPrevFile,
-    addTags: TaggingActions.addTags,
-  }, dispatch);
+  return bindActionCreators(
+    {
+      moveFiles: IOActions.moveFiles,
+      setSelectedEntries: AppActions.setSelectedEntries,
+      showNotification: AppActions.showNotification,
+      openFileNatively: AppActions.openFileNatively,
+      openURLExternally: AppActions.openURLExternally,
+      getNextFile: AppActions.getNextFile,
+      getPrevFile: AppActions.getPrevFile,
+      addTags: TaggingActions.addTags
+    },
+    dispatch
+  );
 }
 
 function mapStateToProps(state) {
@@ -1155,10 +1269,11 @@ function mapStateToProps(state) {
     currentDirectoryColor: getCurrentDirectoryColor(state),
     desktopMode: getDesktopMode(state),
     selectedEntries: getSelectedEntries(state),
-    keyBindings: getKeyBindingObject(state),
+    keyBindings: getKeyBindingObject(state)
   };
 }
 
-export default connect(mapStateToProps, mapActionCreatorsToProps)(
-  withStyles(styles, { withTheme: true })(GridPerspective)
-);
+export default connect(
+  mapStateToProps,
+  mapActionCreatorsToProps
+)(withStyles(styles, { withTheme: true })(GridPerspective));

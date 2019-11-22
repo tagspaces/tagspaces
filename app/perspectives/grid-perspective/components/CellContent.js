@@ -26,6 +26,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import FolderIcon from '@material-ui/icons/FolderOpen';
+import TagIcon from '@material-ui/icons/LocalOffer';
 import { formatFileSize, formatDateTime } from '../../../utils/misc';
 import { extractTitle } from '../../../utils/paths';
 import {
@@ -51,6 +52,7 @@ type Props = {
   addTags: () => void,
   selectedEntries: Array<Object>,
   isReadOnlyMode: boolean,
+  showTags: boolean,
   handleTagMenu: (event: Object, tag: Tag, entryPath: string) => void,
   layoutType: string,
   handleGridContextMenu: () => void,
@@ -74,7 +76,8 @@ const CellContent = (props: Props) => {
     layoutType,
     handleGridContextMenu,
     handleGridCellDblClick,
-    handleGridCellClick
+    handleGridCellClick,
+    showTags
   } = props;
   const fsEntryBackgroundColor = fsEntry.color ? fsEntry.color : 'transparent';
 
@@ -96,6 +99,13 @@ const CellContent = (props: Props) => {
     thumbPathUrl = thumbPathUrl.split('\\').join('\\\\');
   }
 
+  let tagTitles = '';
+  fsEntry.tags.map(tag => {
+    tagTitles += tag.title + ', ';
+  });
+  const tagPlaceholder =
+    tagTitles.length > 0 ? <TagIcon title={tagTitles} /> : null;
+
   function renderGridCell() {
     return (
       <div
@@ -111,21 +121,25 @@ const CellContent = (props: Props) => {
             height: 150 // fsEntry.isFile ? 150 : 70
           }}
         >
-          <img
-            alt="thumbnail"
-            className={classes.gridCellThumb}
-            src={fsEntry.thumbPath}
-            loading="lazy"
-            style={{
-              objectFit: thumbnailMode,
-              position: 'absolute',
-              margin: 1,
-              width: '100%',
-              height: 150
-            }}
-          />
+          {fsEntry.thumbPath && (
+            <img
+              alt="thumbnail"
+              className={classes.gridCellThumb}
+              src={fsEntry.thumbPath}
+              loading="lazy"
+              style={{
+                objectFit: thumbnailMode,
+                position: 'absolute',
+                margin: 1,
+                width: '100%',
+                height: 150
+              }}
+            />
+          )}
           <div id="gridCellTags" className={classes.gridCellTags}>
-            {fsEntry.tags.map(tag => renderTag(tag))}
+            {showTags
+              ? fsEntry.tags.map(tag => renderTag(tag))
+              : tagPlaceholder}
           </div>
           {description.length > 0 && (
             <Typography
