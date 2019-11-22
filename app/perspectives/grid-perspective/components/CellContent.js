@@ -26,10 +26,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import FolderIcon from '@material-ui/icons/FolderOpen';
-import {
-  formatFileSize,
-  formatDateTime,
-} from '../../../utils/misc';
+import { formatFileSize, formatDateTime } from '../../../utils/misc';
 import { extractTitle } from '../../../utils/paths';
 import {
   type FileSystemEntry,
@@ -99,12 +96,12 @@ const CellContent = (props: Props) => {
     thumbPathUrl = thumbPathUrl.split('\\').join('\\\\');
   }
 
-
   function renderGridCell() {
     return (
-      <div style={{
-        backgroundColor: fsEntryBackgroundColor
-      }}
+      <div
+        style={{
+          backgroundColor: fsEntryBackgroundColor
+        }}
       >
         <div
           className={classes.gridCellThumb}
@@ -115,9 +112,7 @@ const CellContent = (props: Props) => {
           }}
         >
           <div id="gridCellTags" className={classes.gridCellTags}>
-            {
-              fsEntry.tags.map(tag => renderTag(tag))
-            }
+            {fsEntry.tags.map(tag => renderTag(tag))}
           </div>
           {description.length > 0 && (
             <Typography
@@ -158,7 +153,11 @@ const CellContent = (props: Props) => {
                   formatDateTime(fsEntry.lmdt, true)
                 }
               >
-                {fsEntry.lmdt && ' ' + formatDistance(fsEntry.lmdt, new Date(), { addSuffix: true }) /* ⏲ */}
+                {fsEntry.lmdt &&
+                  ' ' +
+                    formatDistance(fsEntry.lmdt, new Date(), {
+                      addSuffix: true
+                    })}
               </span>
               <span title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
                 {' ' + formatFileSize(fsEntry.size)}
@@ -243,7 +242,13 @@ const CellContent = (props: Props) => {
                   formatDateTime(fsEntry.lmdt, true)
                 }
               >
-                {fsEntry.isFile && fsEntry.lmdt && '️ ' + formatDistance(fsEntry.lmdt, new Date(), { addSuffix: true }) + ' '}
+                {fsEntry.isFile &&
+                  fsEntry.lmdt &&
+                  '️ ' +
+                    formatDistance(fsEntry.lmdt, new Date(), {
+                      addSuffix: true
+                    }) +
+                    ' '}
               </span>
               <span title={i18n.t('core:entryDescription')}>
                 {description && description}
@@ -252,14 +257,13 @@ const CellContent = (props: Props) => {
           )}
         </Grid>
         {fsEntry.thumbPath && (
-          <Grid
-            item
-          >
-            <div
+          <Grid item>
+            <img
+              alt="thumbnail"
               className={classes.gridCellThumb}
+              src={fsEntry.thumbPath}
+              loading="lazy"
               style={{
-                backgroundSize: thumbnailMode,
-                backgroundImage: thumbPathUrl,
                 margin: 1,
                 height: tmbSize,
                 width: tmbSize
@@ -326,7 +330,9 @@ const CellContent = (props: Props) => {
       onContextMenu={event => handleGridContextMenu(event, fsEntry)}
       onDoubleClick={event => handleGridCellDblClick(event, fsEntry)}
       onClick={event => handleGridCellClick(event, fsEntry)}
-    >{gridCell}</Paper>
+    >
+      {gridCell}
+    </Paper>
   );
 };
 
