@@ -63,11 +63,10 @@ const styles = theme => ({
   buttonIcon: {
     color: '#d6d6d6' // theme.palette.text.primary
   },
-  button: {
-  },
+  button: {},
   selectedButton: {
     backgroundColor: '#880E4F'
-  },
+  }
 });
 
 type Props = {
@@ -112,7 +111,7 @@ class MobileNavigation extends React.Component<Props, State> {
 
   toggleProTeaser = () => {
     this.setState({ isProTeaserVisible: !this.state.isProTeaserVisible });
-  }
+  };
 
   render() {
     const {
@@ -152,17 +151,27 @@ class MobileNavigation extends React.Component<Props, State> {
           `}
         </style>
         <div style={{ width: 300, maxWidth: 300, height: 'calc(100% - 60px)' }}>
-          <LocationManager hideDrawer={hideDrawer} style={{ display: isLocationManagerPanelOpened ? 'block' : 'none' }} />
+          <LocationManager
+            hideDrawer={hideDrawer}
+            style={{
+              display: isLocationManagerPanelOpened ? 'block' : 'none'
+            }}
+          />
           {isTagLibraryPanelOpened && <TagLibrary />}
-          <Search hideDrawer={hideDrawer} style={{ display: isSearchPanelOpened ? 'block' : 'none' }} />
+          <Search
+            hideDrawer={hideDrawer}
+            style={{ display: isSearchPanelOpened ? 'block' : 'none' }}
+          />
           {isPerspectivesPanelOpened && <PerspectiveManager />}
-          {isHelpFeedbackPanelOpened && <HelpFeedbackPanel
-            openFileNatively={openFileNatively}
-            openURLExternally={openURLExternally}
-            toggleKeysDialog={toggleKeysDialog}
-            toggleOnboardingDialog={toggleOnboardingDialog}
-            toggleProTeaser={this.toggleProTeaser}
-          />}
+          {isHelpFeedbackPanelOpened && (
+            <HelpFeedbackPanel
+              openFileNatively={openFileNatively}
+              openURLExternally={openURLExternally}
+              toggleKeysDialog={toggleKeysDialog}
+              toggleOnboardingDialog={toggleOnboardingDialog}
+              toggleProTeaser={this.toggleProTeaser}
+            />
+          )}
         </div>
         <div className={classes.bottomToolbar}>
           <IconButton
@@ -222,7 +231,9 @@ class MobileNavigation extends React.Component<Props, State> {
             id="verticalNavButton"
             onClick={() => {
               if (isReadOnlyMode || !directoryPath) {
-                showNotification('You are in read-only mode or there is no opened location');
+                showNotification(
+                  'You are in read-only mode or there is no opened location'
+                );
               } else {
                 toggleCreateFileDialog();
                 hideDrawer();
@@ -250,7 +261,7 @@ function mapStateToProps(state) {
     isPerspectivesPanelOpened: isPerspectivesPanelOpened(state),
     isHelpFeedbackPanelOpened: isHelpFeedbackPanelOpened(state),
     isReadOnlyMode: isReadOnlyMode(state),
-    directoryPath: getDirectoryPath(state),
+    directoryPath: getDirectoryPath(state)
   };
 }
 
@@ -272,7 +283,7 @@ function mapActionCreatorsToProps(dispatch) {
       showNotification: AppActions.showNotification,
       closeAllVerticalPanels: AppActions.closeAllVerticalPanels,
       switchTheme: SettingsActions.switchTheme,
-      setFirstRun: SettingsActions.setFirstRun,
+      setFirstRun: SettingsActions.setFirstRun
     },
     dispatch
   );
