@@ -68,7 +68,6 @@
     "test-e2e": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings ./tests/runTests.js e2e",
     "test-e2e-dev": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings ./tests/runTests.js e2e-dev"
   },
-  "browserslist": "electron 2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tagspaces/tagspaces/"
