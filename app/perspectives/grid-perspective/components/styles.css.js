@@ -18,13 +18,13 @@
  */
 import AppConfig from '../../../config';
 
-export default (theme) => ({
+export default theme => ({
   gridContainer: {
     display: 'grid',
     gridGap: '2px 2px',
     padding: 2,
     paddingRight: 10,
-    paddingBottom: 200,
+    paddingBottom: 200
   },
   rowContainer: {
     display: 'grid',
@@ -32,14 +32,14 @@ export default (theme) => ({
     padding: 0,
     paddingRight: 10,
     margin: 0,
-    paddingBottom: 200,
+    paddingBottom: 200
   },
   gridCell: {
     // backgroundColor: theme.palette.background.paper,
     border: '2px solid transparent',
     margin: 2,
     marginBottom: 3,
-    marginRight: 3,
+    marginRight: 3
     // maxWidth: 500
   },
   rowCell: {
@@ -51,7 +51,7 @@ export default (theme) => ({
     borderBottom: '1px solid ' + theme.palette.divider,
     margin: 0,
     marginTop: 0,
-    marginBottom: 0,
+    marginBottom: 0
   },
   selectedGridCell: {
     border: '2px solid' + theme.palette.primary.main,
@@ -72,7 +72,6 @@ export default (theme) => ({
   },
   gridCellTags: {
     padding: 0,
-    paddingTop: 5,
     zIndex: 100,
     maxHeight: 100,
     overflowY: 'auto',
@@ -90,11 +89,11 @@ export default (theme) => ({
   gridFileExtension: {
     flex: 1,
     padding: 5,
+    lineHeight: '20px',
     marginRight: 5,
     maxWidth: 50,
     minWidth: 40,
-    minHeight: 16,
-    borderWidth: 1,
+    height: 20,
     color: 'white',
     // color: theme.palette.getContrastText(),
     textAlign: 'center'
@@ -133,13 +132,13 @@ export default (theme) => ({
     marginRight: 5,
     marginTop: 5,
     minHeight: 10,
-    height: 20,
+    height: 20
   },
   gridFolder: {
     color: 'white',
     padding: 5,
     minHeight: 15,
-    height: 20,
+    height: 20
   },
   topToolbar: {
     paddingLeft: 5,

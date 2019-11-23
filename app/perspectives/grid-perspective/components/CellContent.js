@@ -24,6 +24,7 @@ import removeMd from 'remove-markdown';
 import classNames from 'classnames';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
+import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import FolderIcon from '@material-ui/icons/FolderOpen';
 import TagIcon from '@material-ui/icons/LocalOffer';
@@ -50,6 +51,7 @@ type Props = {
   supportedFileTypes: Array<Object>,
   thumbnailMode: any,
   addTags: () => void,
+  openFile: (path: string, isFile: boolean) => void,
   selectedEntries: Array<Object>,
   isReadOnlyMode: boolean,
   showTags: boolean,
@@ -77,7 +79,8 @@ const CellContent = (props: Props) => {
     handleGridContextMenu,
     handleGridCellDblClick,
     handleGridCellClick,
-    showTags
+    showTags,
+    openFile
   } = props;
   const fsEntryBackgroundColor = fsEntry.color ? fsEntry.color : 'transparent';
 
@@ -92,19 +95,28 @@ const CellContent = (props: Props) => {
     supportedFileTypes
   );
 
-  let thumbPathUrl = fsEntry.thumbPath
-    ? 'url("' + fsEntry.thumbPath + '")'
-    : '';
-  if (AppConfig.isWin) {
-    thumbPathUrl = thumbPathUrl.split('\\').join('\\\\');
-  }
+  // let thumbPathUrl = fsEntry.thumbPath
+  //   ? 'url("' + fsEntry.thumbPath + '")'
+  //   : '';
+  // if (AppConfig.isWin) {
+  //   thumbPathUrl = thumbPathUrl.split('\\').join('\\\\');
+  // }
 
   let tagTitles = '';
   fsEntry.tags.map(tag => {
     tagTitles += tag.title + ', ';
+    return true;
   });
+  tagTitles = tagTitles.substring(0, tagTitles.length - 2);
   const tagPlaceholder =
-    tagTitles.length > 0 ? <TagIcon title={tagTitles} /> : null;
+    tagTitles.length > 0 ? (
+      <IconButton
+        title={tagTitles}
+        onClick={() => openFile(fsEntry.path, fsEntry.isFile)}
+      >
+        <TagIcon />
+      </IconButton>
+    ) : null;
 
   function renderGridCell() {
     return (
@@ -130,7 +142,6 @@ const CellContent = (props: Props) => {
               style={{
                 objectFit: thumbnailMode,
                 position: 'absolute',
-                margin: 1,
                 width: '100%',
                 height: 150
               }}
@@ -250,8 +261,13 @@ const CellContent = (props: Props) => {
         <Grid item xs zeroMinWidth>
           <Typography style={{ wordBreak: 'break-all' }}>
             {extractTitle(fsEntry.name, !fsEntry.isFile)}
+            {entrySize === 'small' && tagPlaceholder}
           </Typography>
-          {fsEntry.tags.map(tag => renderTag(tag))}
+          {entrySize !== 'small'
+            ? showTags
+              ? fsEntry.tags.map(tag => renderTag(tag))
+              : tagPlaceholder
+            : null}
           {entrySize !== 'small' && (
             <Typography
               style={{
@@ -292,7 +308,6 @@ const CellContent = (props: Props) => {
               loading="lazy"
               style={{
                 objectFit: thumbnailMode,
-                margin: 1,
                 height: tmbSize,
                 width: tmbSize
               }}
