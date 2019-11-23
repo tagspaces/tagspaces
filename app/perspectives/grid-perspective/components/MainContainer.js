@@ -190,8 +190,13 @@ class GridPerspective extends React.Component<Props, State> {
       fileOperationsEnabled: false,
       allFilesSelected: false,
       showDirectories:
-        settings && settings.showDirectories ? settings.showDirectories : true,
-      showTags: settings && settings.showTags ? settings.showTags : true,
+        settings && typeof settings.showDirectories !== 'undefined'
+          ? settings.showDirectories
+          : true,
+      showTags:
+        settings && typeof settings.showTags !== 'undefined'
+          ? settings.showTags
+          : true,
       isDeleteMultipleFilesDialogOpened: false,
       isMoveCopyFilesDialogOpened: false,
       isAddRemoveTagsDialogOpened: false,
@@ -609,7 +614,8 @@ class GridPerspective extends React.Component<Props, State> {
       theme,
       selectedEntries,
       addTags,
-      supportedFileTypes
+      supportedFileTypes,
+      openFile
     } = this.props;
     if (!fsEntry.isFile && !showDirectories) {
       return;
@@ -639,6 +645,7 @@ class GridPerspective extends React.Component<Props, State> {
           handleTagMenu={this.handleTagMenu}
           layoutType={layoutType}
           showTags={this.state.showTags}
+          openFile={openFile}
           handleGridContextMenu={this.handleGridContextMenu}
           handleGridCellDblClick={this.handleGridCellDblClick}
           handleGridCellClick={this.handleGridCellClick}
