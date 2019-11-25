@@ -162,7 +162,7 @@ const TagLibraryMenu = (props: Props) => {
           <ListItemText primary={i18n.t('core:exportTagGroupsButton')} />
         </MenuItem>
         <MenuItem
-          data-tid="tablibraryHelp"
+          data-tid="taglibraryHelp"
           onClick={() => {
             props.onClose();
             props.openURLExternally(AppConfig.documentationLinks.taglibrary)
