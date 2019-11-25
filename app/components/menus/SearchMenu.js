@@ -28,28 +28,23 @@ import AppConfig from '../../config';
 
 type Props = {
   classes: Object,
-	open: boolean,
-	anchorEl: Object,
+  open: boolean,
+  anchorEl: Object,
 	onClose: () => void,
-	openURLExternally: (path: string) => void,
+	openURLExternally: (url: string) => void,
 };
 
 const SearchMenu = (props: Props) => {
-	let anchorEl;
-	const {
-    open = false,
-    onClose
-  } = props;
 
   return (
     <div style={{ overflowY: 'hidden !important' }}>
       <Menu
-        anchorEl={anchorEl}
-        open={open}
-        onClose={onClose}
+        anchorEl={props.anchorEl}
+        open={props.open}
+        onClose={props.onClose}
       >
         <MenuItem
-          data-tid="taglibraryHelp"
+          data-tid="searchMenuHelp"
           onClick={() => {
 						props.onClose();
 						props.openURLExternally(AppConfig.documentationLinks.search)

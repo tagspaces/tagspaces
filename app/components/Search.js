@@ -101,7 +101,8 @@ type State = {
   tagPlaceLong: number | null,
   tagPlaceRadius: number,
 	fileSize: string,
-	isSearchMenuOpened: boolean
+  searchMenuOpened: boolean,
+  searchMenuAnchorEl: Object | null
 };
 
 class Search extends React.Component<Props, State> {
@@ -123,7 +124,8 @@ class Search extends React.Component<Props, State> {
     tagPlaceLong: null,
     tagPlaceRadius: 0,
 		fileSize: '',
-		isSearchMenuOpened: false
+    searchMenuOpened: false,
+    searchMenuAnchorEl: null
   };
 
   handleInputChange = event => {
@@ -269,11 +271,19 @@ class Search extends React.Component<Props, State> {
 	};
 	
 	handleSearchMenu = (event: Object) => {
-		this.setState({isSearchMenuOpened: true })
-	};
+		this.setState({ 
+      searchMenuOpened: true,
+      searchMenuAnchorEl: event.currentTarget
+    });
+  };
+  
+  handleCloseSearchMenu = () => {
+    this.setState({ searchMenuOpened: false});
+  };
 
   render() {
     const { classes, indexing, indexedEntriesCount } = this.props;
+
     return (
       <div className={classes.panel} style={this.props.style}>
         <CustomLogo />
@@ -298,8 +308,10 @@ class Search extends React.Component<Props, State> {
 					</IconButton>
         </div>
 				<SearchMenu
-					open={this.state.isSearchMenuOpened}
-          onClose={this.handleCloseImportExportMenu}
+          anchorEl={this.state.searchMenuAnchorEl}
+					open={this.state.searchMenuOpened}
+          onClose={this.handleCloseSearchMenu}
+          openURLExternally={this.props.openURLExternally}
 				/>
         <div className={classes.searchArea}>
           <FormControl
@@ -628,7 +640,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     searchLocationIndex: LocationIndexActions.searchLocationIndex,
-    loadDirectoryContent: AppActions.loadDirectoryContent
+    loadDirectoryContent: AppActions.loadDirectoryContent,
+    openURLExternally: AppActions.openURLExternally,
   }, dispatch);
 }
 
