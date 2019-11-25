@@ -48,6 +48,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 import TagsSelect from './TagsSelect';
 import CustomLogo from './CustomLogo';
 import { actions as AppActions, getDirectoryPath } from '../reducers/app';
@@ -57,6 +58,7 @@ import styles from './SidePanels.css';
 import i18n from '../services/i18n';
 import { FileTypeGroups, type SearchQuery } from '../services/search';
 import { Pro } from '../pro';
+import SearchMenu from './menus/SearchMenu';
 import type { Tag } from '../reducers/taglibrary';
 import ocl from '../utils/openlocationcode';
 import {
@@ -98,7 +100,9 @@ type State = {
   tagPlaceLat: number | null,
   tagPlaceLong: number | null,
   tagPlaceRadius: number,
-  fileSize: string
+	fileSize: string,
+  searchMenuOpened: boolean,
+  searchMenuAnchorEl: Object | null
 };
 
 class Search extends React.Component<Props, State> {
@@ -119,7 +123,9 @@ class Search extends React.Component<Props, State> {
     tagPlaceLat: null,
     tagPlaceLong: null,
     tagPlaceRadius: 0,
-    fileSize: ''
+		fileSize: '',
+    searchMenuOpened: false,
+    searchMenuAnchorEl: null
   };
 
   handleInputChange = event => {
@@ -262,15 +268,27 @@ class Search extends React.Component<Props, State> {
     };
     console.log('Search object: ' + JSON.stringify(searchQuery));
     this.props.searchLocationIndex(searchQuery);
+	};
+	
+	handleSearchMenu = (event: Object) => {
+		this.setState({ 
+      searchMenuOpened: true,
+      searchMenuAnchorEl: event.currentTarget
+    });
+  };
+  
+  handleCloseSearchMenu = () => {
+    this.setState({ searchMenuOpened: false});
   };
 
   render() {
     const { classes, indexing, indexedEntriesCount } = this.props;
+
     return (
       <div className={classes.panel} style={this.props.style}>
         <CustomLogo />
         <div className={classes.toolbar}>
-          <Typography className={classNames(classes.panelTitle, classes.header)} style={{ flex: 'none' }}>
+          <Typography className={classNames(classes.panelTitle, classes.header)}>
             {i18n.t('searchTitle')}
           </Typography>
           <Typography variant="caption" className={classes.header} style={{ alignSelf: 'flex-end', paddingLeft: 5, display: 'block' }}>
@@ -282,7 +300,19 @@ class Search extends React.Component<Props, State> {
           >
             <HelpIcon />
           </IconButton> */}
+					<IconButton
+						data-tid="searchMenu"
+						onClick={this.handleSearchMenu}
+					>
+						<MoreVertIcon />
+					</IconButton>
         </div>
+				<SearchMenu
+          anchorEl={this.state.searchMenuAnchorEl}
+					open={this.state.searchMenuOpened}
+          onClose={this.handleCloseSearchMenu}
+          openURLExternally={this.props.openURLExternally}
+				/>
         <div className={classes.searchArea}>
           <FormControl
             className={classes.formControl}
@@ -610,7 +640,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     searchLocationIndex: LocationIndexActions.searchLocationIndex,
-    loadDirectoryContent: AppActions.loadDirectoryContent
+    loadDirectoryContent: AppActions.loadDirectoryContent,
+    openURLExternally: AppActions.openURLExternally,
   }, dispatch);
 }
 

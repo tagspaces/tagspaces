@@ -48,6 +48,7 @@ import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import OpenFolderNativelyIcon from '@material-ui/icons/Launch';
 import styles from './SidePanels.css';
 import DirectoryMenu from './menus/DirectoryMenu';
+import LocationManagerMenu from './menus/LocationManagerMenu';
 import EditLocationDialog from './dialogs/EditLocationDialog';
 import CreateLocationDialog from './dialogs/CreateLocationDialog';
 import ConfirmDialog from './dialogs/ConfirmDialog';
@@ -80,6 +81,7 @@ type Props = {
   currentLocationId: string,
   isReadOnlyMode: boolean,
   hideDrawer?: () => void,
+  openURLExternally: (path: string) => void,
   loadDirectoryContent: (path: string) => void,
   openLocation: (location: Location) => void,
   openFileNatively: (path: string) => void,
@@ -117,7 +119,9 @@ type State = {
   isSelectDirectoryDialogOpened?: boolean,
   isCreateDirectoryDialogOpened?: boolean,
   createLocationDialogKey: string,
-  isCreateDirectoryDialogOpened?: boolean,
+	isCreateDirectoryDialogOpened?: boolean,
+  locationManagerMenuOpened: boolean,
+  locationManagerMenuAnchorEl: Object | null,
   dirs?: Object
 };
 
@@ -142,7 +146,9 @@ class LocationManager extends React.Component<Props, State> {
     isEditLocationDialogOpened: false,
     isDeleteLocationDialogOpened: false,
     isCreateDirectoryDialogOpened: false,
-    isSelectDirectoryDialogOpened: false,
+		isSelectDirectoryDialogOpened: false,
+    locationManagerMenuOpened: false,
+    locationManagerMenuAnchorEl: null,
     createLocationDialogKey: uuidv1(),
     editLocationDialogKey: uuidv1(),
     dirs: {}
@@ -363,7 +369,6 @@ class LocationManager extends React.Component<Props, State> {
       });
     }
   };
-
 
   showEditLocationDialog = () => {
     this.handleRequestCloseContextMenus();
@@ -650,6 +655,17 @@ class LocationManager extends React.Component<Props, State> {
         {table}
       </div>
     );
+	};
+	
+	handleLocationManagerMenu = (event: Object) => {
+		this.setState({
+      locationManagerMenuOpened: true,
+      locationManagerMenuAnchorEl: event.currentTarget
+    });
+  };
+  
+  handleCloseLocationManagerMenu = () => {
+    this.setState({ locationManagerMenuOpened: false});
   };
 
   render() {
@@ -661,7 +677,19 @@ class LocationManager extends React.Component<Props, State> {
           <Typography className={classNames(classes.panelTitle, classes.header)} type="subtitle1">
             {i18n.t('core:locationManager')}
           </Typography>
+          <IconButton
+						data-tid="locationManagerMenu"
+						onClick={this.handleLocationManagerMenu}
+					>
+						<MoreVertIcon />
+					</IconButton>
         </div>
+				<LocationManagerMenu
+					anchorEl={this.state.locationManagerMenuAnchorEl}
+					open={this.state.locationManagerMenuOpened}
+          onClose={this.handleCloseLocationManagerMenu}
+          openURLExternally={this.props.openURLExternally}
+				/>	
         {!isLocationsReadOnly && (
           <div style={{ width: '100%', textAlign: 'center', marginBottom: 10 }}>
             <Button
@@ -853,7 +881,8 @@ function mapDispatchToProps(dispatch) {
     openFileNatively: AppActions.openFileNatively,
     openFile: AppActions.openFile,
     showNotification: AppActions.showNotification,
-    moveFiles: IOActions.moveFiles
+    moveFiles: IOActions.moveFiles,
+    openURLExternally: AppActions.openURLExternally,
   }, dispatch);
 }
 
