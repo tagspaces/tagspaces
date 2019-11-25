@@ -89,7 +89,7 @@ type Props = {
 };
 
 type State = {
-  importExportMenuAnchorEl: Object | null,
+  tagLibraryMenuAnchorEl: Object | null,
   tagLibraryMenuOpened: boolean,
   tagGroupMenuAnchorEl: Object | null,
   tagGroupMenuOpened: boolean,
@@ -112,7 +112,7 @@ class TagLibrary extends React.Component<Props, State> {
     tagGroupMenuOpened: false,
     tagMenuAnchorEl: null,
     tagMenuOpened: false,
-    importExportMenuAnchorEl: null,
+    tagLibraryMenuAnchorEl: null,
     tagLibraryMenuOpened: false,
     selectedTagGroupEntry: null,
     selectedTagEntry: null,
@@ -160,7 +160,7 @@ class TagLibrary extends React.Component<Props, State> {
   handleTagLibraryMenu = (event: Object) => {
     this.setState({
       tagLibraryMenuOpened: true,
-      importExportMenuAnchorEl: event.currentTarget
+      tagLibraryMenuAnchorEl: event.currentTarget
     });
   };
 
@@ -364,7 +364,7 @@ class TagLibrary extends React.Component<Props, State> {
           collectTagsFromLocation={this.props.collectTagsFromLocation}
         />
         <TagLibraryMenu
-          anchorEl={this.state.importExportMenuAnchorEl}
+          anchorEl={this.state.tagLibraryMenuAnchorEl}
           open={this.state.tagLibraryMenuOpened}
           onClose={this.handleCloseImportExportMenu}
           tagGroups={tagGroups}
