@@ -288,10 +288,10 @@ class Search extends React.Component<Props, State> {
       <div className={classes.panel} style={this.props.style}>
         <CustomLogo />
         <div className={classes.toolbar}>
-          <Typography className={classNames(classes.panelTitle, classes.header)}>
+          <Typography className={classNames(classes.panelTitle, classes.header)} style={{ flex:0 }}>
             {i18n.t('searchTitle')}
           </Typography>
-          <Typography variant="caption" className={classes.header} style={{ alignSelf: 'flex-end', paddingLeft: 5, display: 'block' }}>
+          <Typography variant="caption" className={classes.header} style={{ alignSelf: 'center', paddingLeft: 5, display: 'block' }}>
             {indexing ? 'disabled while indexing...' : 'in ' + indexedEntriesCount + ' indexed entries'}
           </Typography>
           {/* <IconButton
@@ -301,6 +301,7 @@ class Search extends React.Component<Props, State> {
             <HelpIcon />
           </IconButton> */}
 					<IconButton
+            style={{ marginLeft: 'auto' }}
 						data-tid="searchMenu"
 						onClick={this.handleSearchMenu}
 					>
