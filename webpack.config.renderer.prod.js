@@ -111,12 +111,14 @@ export default merge.smart(baseConfig, {
       // Fonts
       {
         test: /\.(woff|woff2|eot|ttf)$/,
-        use: [{
-          loader: 'file-loader',
-          options: {
-            publicPath: '../dist/',
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              publicPath: '../dist/'
+            }
           }
-        }]
+        ]
       },
       // Text files
       {
@@ -135,7 +137,7 @@ export default merge.smart(baseConfig, {
       },
       {
         test: /\.(?:svg)$/,
-        use: 'url-loader',
+        use: 'url-loader'
       }
     ]
   },
@@ -151,7 +153,9 @@ export default merge.smart(baseConfig, {
      * development checks
      */
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production')
+      'process.env.NODE_ENV': JSON.stringify(
+        process.env.NODE_ENV || 'production'
+      )
     }),
 
     new MiniCssExtractPlugin({
@@ -159,8 +163,9 @@ export default merge.smart(baseConfig, {
     }),
 
     new BundleAnalyzerPlugin({
-      analyzerMode: process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
+      analyzerMode:
+        process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
       openAnalyzer: process.env.OPEN_ANALYZER === 'true'
-    }),
-  ],
+    })
+  ]
 });

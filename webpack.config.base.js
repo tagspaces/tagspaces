@@ -10,27 +10,27 @@ export default {
   // externals: Object.keys(externals || {}),
 
   module: {
-    rules: [{
-      test: /\.jsx?$/,
-      // exclude: path.resolve(__dirname, '/node_modules/'),
-      // exclude: /node_modules/,
-      include: [
-        /app/
-      ],
-      use: {
-        loader: 'babel-loader',
-        options: {
-          cacheDirectory: true
+    rules: [
+      {
+        test: /\.jsx?$/,
+        // exclude: path.resolve(__dirname, '/node_modules/'),
+        // exclude: /node_modules/,
+        include: [/app/],
+        use: {
+          loader: 'babel-loader',
+          options: {
+            cacheDirectory: true
+          }
         }
       }
-    }]
+    ]
   },
 
   output: {
     path: path.join(__dirname, 'app'),
     filename: 'bundle.js',
     // https://github.com/webpack/webpack/issues/1114
-    libraryTarget: 'commonjs2',
+    libraryTarget: 'commonjs2'
     // publicPath: 'dist/',
   },
 
@@ -39,18 +39,13 @@ export default {
    */
   resolve: {
     extensions: ['.js', '.jsx', '.json'],
-    modules: [
-      path.join(__dirname, 'app'),
-      'node_modules',
-    ],
-    symlinks: false,
+    modules: [path.join(__dirname, 'app'), 'node_modules'],
+    symlinks: false
     /* alias: {
       "react": "preact-compat",
       "react-dom": "preact-compat"
     } */
   },
 
-  plugins: [
-    new webpack.NamedModulesPlugin(),
-  ],
+  plugins: [new webpack.NamedModulesPlugin()]
 };

@@ -25,9 +25,11 @@ const manifest = path.resolve(dll, 'vendor.json');
  * Warn if the DLL is not built
  */
 if (!(fs.existsSync(dll) && fs.existsSync(manifest))) {
-  console.log(chalk.black.bgYellow.bold(
-    'The DLL files are missing. Sit back while we build them for you with "npm run build-dll"'
-  ));
+  console.log(
+    chalk.black.bgYellow.bold(
+      'The DLL files are missing. Sit back while we build them for you with "npm run build-dll"'
+    )
+  );
   execSync('npm run build-dll');
 }
 
@@ -40,7 +42,7 @@ export default merge.smart(baseConfig, {
     'react-hot-loader/patch',
     `webpack-dev-server/client?http://localhost:${port}/`,
     'webpack/hot/only-dev-server',
-    path.join(__dirname, 'app/index.js'),
+    path.join(__dirname, 'app/index.js')
   ],
 
   optimization: {
@@ -67,7 +69,7 @@ export default merge.smart(baseConfig, {
           {
             loader: 'css-loader',
             options: {
-              sourceMap: true,
+              sourceMap: true
             }
           }
         ]
@@ -84,7 +86,7 @@ export default merge.smart(baseConfig, {
               modules: true,
               sourceMap: true,
               importLoaders: 1,
-              localIdentName: '[name]__[local]__[hash:base64:5]',
+              localIdentName: '[name]__[local]__[hash:base64:5]'
             }
           }
         ]
@@ -99,8 +101,8 @@ export default merge.smart(baseConfig, {
           {
             loader: 'css-loader',
             options: {
-              sourceMap: true,
-            },
+              sourceMap: true
+            }
           },
           {
             loader: 'sass-loader'
@@ -120,7 +122,7 @@ export default merge.smart(baseConfig, {
               modules: true,
               sourceMap: true,
               importLoaders: 1,
-              localIdentName: '[name]__[local]__[hash:base64:5]',
+              localIdentName: '[name]__[local]__[hash:base64:5]'
             }
           },
           {
@@ -131,24 +133,30 @@ export default merge.smart(baseConfig, {
       // Add LESS support  - compile all other .less files and pipe it to style.css
       {
         test: /\.less$/,
-        use: [{
-          loader: 'style-loader'
-        }, {
-          loader: 'css-loader'
-        }, {
-          loader: 'less-loader',
-          options: {
-            strictMath: true,
-            noIeCompat: true
+        use: [
+          {
+            loader: 'style-loader'
+          },
+          {
+            loader: 'css-loader'
+          },
+          {
+            loader: 'less-loader',
+            options: {
+              strictMath: true,
+              noIeCompat: true
+            }
           }
-        }]
+        ]
       },
       // Fonts
       {
         test: /\.(woff|woff2|eot|ttf)$/,
-        use: [{
-          loader: 'file-loader'
-        }]
+        use: [
+          {
+            loader: 'file-loader'
+          }
+        ]
       },
       // Text files
       {
@@ -159,7 +167,7 @@ export default merge.smart(baseConfig, {
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp|svg)$/,
         use: {
-          loader: 'url-loader',
+          loader: 'url-loader'
           /* options: {
             limit: 15000
           } */
@@ -172,7 +180,7 @@ export default merge.smart(baseConfig, {
     new webpack.DllReferencePlugin({
       context: process.cwd(),
       manifest: require(manifest),
-      sourceType: 'var',
+      sourceType: 'var'
     }),
 
     /**
@@ -198,7 +206,9 @@ export default merge.smart(baseConfig, {
      * 'staging', for example, by changing the ENV variables in the npm scripts
      */
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
+      'process.env.NODE_ENV': JSON.stringify(
+        process.env.NODE_ENV || 'development'
+      )
     }),
 
     new webpack.LoaderOptionsPlugin({
@@ -207,7 +217,7 @@ export default merge.smart(baseConfig, {
 
     new ExtractTextPlugin({
       filename: '[name].css'
-    }),
+    })
   ],
 
   node: {
@@ -233,18 +243,18 @@ export default merge.smart(baseConfig, {
     },
     historyApiFallback: {
       verbose: true,
-      disableDotRule: false,
+      disableDotRule: false
     },
     before() {
       if (process.env.START_HOT) {
-        spawn(
-          'npm',
-          ['run', 'start-main-dev'],
-          { shell: true, env: process.env, stdio: 'inherit' }
-        )
+        spawn('npm', ['run', 'start-main-dev'], {
+          shell: true,
+          env: process.env,
+          stdio: 'inherit'
+        })
           .on('close', code => process.exit(code))
           .on('error', spawnError => console.error(spawnError));
       }
     }
-  },
+  }
 });

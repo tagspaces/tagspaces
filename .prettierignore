@@ -1,0 +1,8 @@
+node_modules
+builds
+cordova
+web/dist
+web/files
+app/node_modules
+extensions
+dll

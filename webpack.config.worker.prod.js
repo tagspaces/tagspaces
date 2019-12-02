@@ -33,7 +33,7 @@ export default merge.smart(baseConfig, {
         test: /\.global\.css$/,
         use: ExtractTextPlugin.extract({
           use: 'css-loader',
-          fallback: 'style-loader',
+          fallback: 'style-loader'
         })
       },
       // Pipe other styles through css modules and append to style.css
@@ -45,10 +45,10 @@ export default merge.smart(baseConfig, {
             options: {
               modules: true,
               importLoaders: 1,
-              localIdentName: '[name]__[local]__[hash:base64:5]',
+              localIdentName: '[name]__[local]__[hash:base64:5]'
             }
           }
-        }),
+        })
       },
       // Add SASS support  - compile all .global.scss files and pipe it to style.css
       {
@@ -62,35 +62,40 @@ export default merge.smart(baseConfig, {
               loader: 'sass-loader'
             }
           ],
-          fallback: 'style-loader',
+          fallback: 'style-loader'
         })
       },
       // Add SASS support  - compile all other .scss files and pipe it to style.css
       {
         test: /^((?!\.global).)*\.scss$/,
         use: ExtractTextPlugin.extract({
-          use: [{
-            loader: 'css-loader',
-            options: {
-              modules: true,
-              importLoaders: 1,
-              localIdentName: '[name]__[local]__[hash:base64:5]',
+          use: [
+            {
+              loader: 'css-loader',
+              options: {
+                modules: true,
+                importLoaders: 1,
+                localIdentName: '[name]__[local]__[hash:base64:5]'
+              }
+            },
+            {
+              loader: 'sass-loader'
             }
-          },
-          {
-            loader: 'sass-loader'
-          }]
-        }),
+          ]
+        })
       },
       // Add LESS support  - compile all other .less files and pipe it to style.css
       {
         test: /\.less$/,
         use: ExtractTextPlugin.extract({
-          use: [{
-            loader: 'css-loader'
-          }, {
-            loader: 'less-loader'
-          }],
+          use: [
+            {
+              loader: 'css-loader'
+            },
+            {
+              loader: 'less-loader'
+            }
+          ],
           // use style-loader in development
           fallback: 'style-loader'
         })
@@ -98,12 +103,14 @@ export default merge.smart(baseConfig, {
       // Fonts
       {
         test: /\.(woff|woff2|eot|ttf)$/,
-        use: [{
-          loader: 'file-loader',
-          options: {
-            publicPath: '../dist/',
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              publicPath: '../dist/'
+            }
           }
-        }]
+        ]
       },
       // Text files
       {
@@ -114,7 +121,7 @@ export default merge.smart(baseConfig, {
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
         use: {
-          loader: 'url-loader',
+          loader: 'url-loader'
           /* options: {
             limit: 15000
           } */
@@ -122,7 +129,7 @@ export default merge.smart(baseConfig, {
       },
       {
         test: /\.(?:svg)$/,
-        use: 'url-loader',
+        use: 'url-loader'
       }
     ]
   },
@@ -138,14 +145,17 @@ export default merge.smart(baseConfig, {
      * development checks
      */
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production')
+      'process.env.NODE_ENV': JSON.stringify(
+        process.env.NODE_ENV || 'production'
+      )
     }),
 
     new ExtractTextPlugin('style.css'),
 
     new BundleAnalyzerPlugin({
-      analyzerMode: process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
+      analyzerMode:
+        process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
       openAnalyzer: process.env.OPEN_ANALYZER === 'true'
-    }),
-  ],
+    })
+  ]
 });

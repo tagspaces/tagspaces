@@ -117,13 +117,15 @@ export default merge.smart(baseConfig, {
       // Fonts
       {
         test: /\.(woff|woff2|eot|ttf)$/,
-        use: [{
-          loader: 'file-loader',
-          options: {
-            // name: '[name].[ext]',
-            publicPath: '../dist/',
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              // name: '[name].[ext]',
+              publicPath: '../dist/'
+            }
           }
-        }]
+        ]
       },
       // Text files
       {
@@ -133,7 +135,7 @@ export default merge.smart(baseConfig, {
       // Common Image Formats
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp|svg)$/,
-        use: 'url-loader',
+        use: 'url-loader'
       }
     ]
   },
@@ -148,15 +150,17 @@ export default merge.smart(baseConfig, {
      * NODE_ENV should be production so that modules do not perform certain
      * development checks
      */
-    new webpack.DefinePlugin({ // evtl make process.env.NODE_ENV false for cordova and web
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production')
+    new webpack.DefinePlugin({
+      // evtl make process.env.NODE_ENV false for cordova and web
+      'process.env.NODE_ENV': JSON.stringify(
+        process.env.NODE_ENV || 'production'
+      )
     }),
 
     new webpack.IgnorePlugin(/electron-io/),
 
     new MiniCssExtractPlugin({
       filename: 'style.css'
-    }),
-
-  ],
+    })
+  ]
 });

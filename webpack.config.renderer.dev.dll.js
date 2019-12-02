@@ -34,8 +34,8 @@ export default merge.smart(baseConfig, {
           {
             loader: 'css-loader',
             options: {
-              sourceMap: true,
-            },
+              sourceMap: true
+            }
           }
         ]
       },
@@ -51,9 +51,9 @@ export default merge.smart(baseConfig, {
               modules: true,
               sourceMap: true,
               importLoaders: 1,
-              localIdentName: '[name]__[local]__[hash:base64:5]',
+              localIdentName: '[name]__[local]__[hash:base64:5]'
             }
-          },
+          }
         ]
       },
       // Add SASS support  - compile all .global.scss files and pipe it to style.css
@@ -66,8 +66,8 @@ export default merge.smart(baseConfig, {
           {
             loader: 'css-loader',
             options: {
-              sourceMap: true,
-            },
+              sourceMap: true
+            }
           },
           {
             loader: 'sass-loader'
@@ -87,7 +87,7 @@ export default merge.smart(baseConfig, {
               modules: true,
               sourceMap: true,
               importLoaders: 1,
-              localIdentName: '[name]__[local]__[hash:base64:5]',
+              localIdentName: '[name]__[local]__[hash:base64:5]'
             }
           },
           {
@@ -98,9 +98,11 @@ export default merge.smart(baseConfig, {
       // Fonts
       {
         test: /\.(woff|woff2|eot|ttf)$/,
-        use: [{
-          loader: 'file-loader'
-        }]
+        use: [
+          {
+            loader: 'file-loader'
+          }
+        ]
       },
       // Text files
       {
@@ -110,23 +112,19 @@ export default merge.smart(baseConfig, {
       // Common Image Formats
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp|svg)$/,
-        use: 'url-loader',
+        use: 'url-loader'
       }
     ]
   },
 
   resolve: {
-    modules: [
-      'app',
-    ],
+    modules: ['app']
   },
 
   entry: {
-    vendor: [
-      'babel-polyfill',
-      ...Object.keys(dependencies || {})
-    ]
-    .filter(dependency => dependency !== 'font-awesome'),
+    vendor: ['babel-polyfill', ...Object.keys(dependencies || {})].filter(
+      dependency => dependency !== 'font-awesome'
+    )
   },
 
   output: {
@@ -139,7 +137,7 @@ export default merge.smart(baseConfig, {
   plugins: [
     new webpack.DllPlugin({
       path: path.join(dist, '[name].json'),
-      name: '[name]',
+      name: '[name]'
     }),
 
     /**
@@ -152,7 +150,9 @@ export default merge.smart(baseConfig, {
      * development checks
      */
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
+      'process.env.NODE_ENV': JSON.stringify(
+        process.env.NODE_ENV || 'development'
+      )
     }),
 
     new webpack.LoaderOptionsPlugin({
@@ -160,9 +160,9 @@ export default merge.smart(baseConfig, {
       options: {
         context: path.resolve(process.cwd(), 'app'),
         output: {
-          path: path.resolve(process.cwd(), 'dll'),
-        },
-      },
+          path: path.resolve(process.cwd(), 'dll')
+        }
+      }
     })
-  ],
+  ]
 });
