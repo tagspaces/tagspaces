@@ -52,7 +52,11 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import TagsSelect from './TagsSelect';
 import CustomLogo from './CustomLogo';
 import { actions as AppActions, getDirectoryPath } from '../reducers/app';
-import { actions as LocationIndexActions, getIndexedEntriesCount, isIndexing } from '../reducers/location-index';
+import {
+  actions as LocationIndexActions,
+  getIndexedEntriesCount,
+  isIndexing
+} from '../reducers/location-index';
 import { getMaxSearchResults } from '../reducers/settings';
 import styles from './SidePanels.css';
 import i18n from '../services/i18n';
@@ -61,14 +65,8 @@ import { Pro } from '../pro';
 import SearchMenu from './menus/SearchMenu';
 import type { Tag } from '../reducers/taglibrary';
 import ocl from '../utils/openlocationcode';
-import {
-  formatDateTime,
-  extractTimePeriod
-} from '../utils/dates';
-import {
-  isPlusCode,
-  parseLatLon
-} from '../utils/misc';
+import { formatDateTime, extractTimePeriod } from '../utils/dates';
+import { isPlusCode, parseLatLon } from '../utils/misc';
 import PlatformIO from '../services/platform-io';
 
 type Props = {
@@ -100,7 +98,7 @@ type State = {
   tagPlaceLat: number | null,
   tagPlaceLong: number | null,
   tagPlaceRadius: number,
-	fileSize: string,
+  fileSize: string,
   searchMenuOpened: boolean,
   searchMenuAnchorEl: Object | null
 };
@@ -123,19 +121,23 @@ class Search extends React.Component<Props, State> {
     tagPlaceLat: null,
     tagPlaceLong: null,
     tagPlaceRadius: 0,
-		fileSize: '',
+    fileSize: '',
     searchMenuOpened: false,
     searchMenuAnchorEl: null
   };
 
   handleInputChange = event => {
     const target = event.target;
-    const value = (target.type && target.type === 'checkbox') ? target.checked : target.value;
+    const value =
+      target.type && target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
 
-    this.setState({
-      [name]: value
-    }, this.executeSearch);
+    this.setState(
+      {
+        [name]: value
+      },
+      this.executeSearch
+    );
   };
 
   handleTagFieldChange = (name, value) => {
@@ -149,7 +151,11 @@ class Search extends React.Component<Props, State> {
     const { fromDateTime, toDateTime } = extractTimePeriod(value);
 
     if (toDateTime && fromDateTime) {
-      tagTimePeriodHelper = 'From: ' + formatDateTime(fromDateTime) + ' To: ' + formatDateTime(toDateTime);
+      tagTimePeriodHelper =
+        'From: ' +
+        formatDateTime(fromDateTime) +
+        ' To: ' +
+        formatDateTime(toDateTime);
     } else {
       tagTimePeriodHelper = '';
     }
@@ -200,12 +206,17 @@ class Search extends React.Component<Props, State> {
     if (this.props.hideDrawer) {
       this.props.hideDrawer();
     }
-  }
+  };
 
   openPlace = () => {
     const { tagPlaceLat, tagPlaceLong } = this.state;
     if (tagPlaceLat && tagPlaceLong) {
-      PlatformIO.openUrl('https://www.openstreetmap.org/#map=16/' + tagPlaceLat + '/' + tagPlaceLong);
+      PlatformIO.openUrl(
+        'https://www.openstreetmap.org/#map=16/' +
+          tagPlaceLat +
+          '/' +
+          tagPlaceLong
+      );
     }
   };
 
@@ -219,33 +230,35 @@ class Search extends React.Component<Props, State> {
   };
 
   clearSearch = () => {
-    this.setState({
-      textQuery: '',
-      tagsAND: [],
-      tagsOR: [],
-      tagsNOT: [],
-      searchBoxing: 'location',
-      fileTypes: FileTypeGroups.any,
-      lastModified: '',
-      tagTimePeriod: '',
-      tagTimePeriodHelper: ' ',
-      tagPlace: '',
-      tagPlaceHelper: ' ',
-      tagTimePeriodFrom: null,
-      tagTimePeriodTo: null,
-      tagPlaceLat: null,
-      tagPlaceLong: null,
-      tagPlaceRadius: 0,
-      fileSize: ''
-    }, () => this.props.loadDirectoryContent(this.props.currentDirectory));
+    this.setState(
+      {
+        textQuery: '',
+        tagsAND: [],
+        tagsOR: [],
+        tagsNOT: [],
+        searchBoxing: 'location',
+        fileTypes: FileTypeGroups.any,
+        lastModified: '',
+        tagTimePeriod: '',
+        tagTimePeriodHelper: ' ',
+        tagPlace: '',
+        tagPlaceHelper: ' ',
+        tagTimePeriodFrom: null,
+        tagTimePeriodTo: null,
+        tagPlaceLat: null,
+        tagPlaceLong: null,
+        tagPlaceRadius: 0,
+        fileSize: ''
+      },
+      () => this.props.loadDirectoryContent(this.props.currentDirectory)
+    );
   };
 
   toggleSearchBoxing = () => {
-    this.setState(
-      {
-        searchBoxing: this.state.searchBoxing === 'location' ? 'folder' : 'location',
-      }
-    );
+    this.setState({
+      searchBoxing:
+        this.state.searchBoxing === 'location' ? 'folder' : 'location'
+    });
   };
 
   executeSearch = () => {
@@ -258,8 +271,12 @@ class Search extends React.Component<Props, State> {
       fileTypes: this.state.fileTypes,
       lastModified: this.state.lastModified,
       fileSize: this.state.fileSize,
-      tagTimePeriodFrom: this.state.tagTimePeriodFrom ? this.state.tagTimePeriodFrom.getTime() : null,
-      tagTimePeriodTo: this.state.tagTimePeriodTo ? this.state.tagTimePeriodTo.getTime() : null,
+      tagTimePeriodFrom: this.state.tagTimePeriodFrom
+        ? this.state.tagTimePeriodFrom.getTime()
+        : null,
+      tagTimePeriodTo: this.state.tagTimePeriodTo
+        ? this.state.tagTimePeriodTo.getTime()
+        : null,
       tagPlaceLat: this.state.tagPlaceLat,
       tagPlaceLong: this.state.tagPlaceLong,
       tagPlaceRadius: this.state.tagPlaceRadius,
@@ -268,17 +285,17 @@ class Search extends React.Component<Props, State> {
     };
     console.log('Search object: ' + JSON.stringify(searchQuery));
     this.props.searchLocationIndex(searchQuery);
-	};
-	
-	handleSearchMenu = (event: Object) => {
-		this.setState({ 
+  };
+
+  handleSearchMenu = (event: Object) => {
+    this.setState({
       searchMenuOpened: true,
       searchMenuAnchorEl: event.currentTarget
     });
   };
-  
+
   handleCloseSearchMenu = () => {
-    this.setState({ searchMenuOpened: false});
+    this.setState({ searchMenuOpened: false });
   };
 
   render() {
@@ -288,11 +305,20 @@ class Search extends React.Component<Props, State> {
       <div className={classes.panel} style={this.props.style}>
         <CustomLogo />
         <div className={classes.toolbar}>
-          <Typography className={classNames(classes.panelTitle, classes.header)}>
+          <Typography
+            className={classNames(classes.panelTitle, classes.header)}
+            style={{ flex: 0 }}
+          >
             {i18n.t('searchTitle')}
           </Typography>
-          <Typography variant="caption" className={classes.header} style={{ alignSelf: 'flex-end', paddingLeft: 5, display: 'block' }}>
-            {indexing ? 'disabled while indexing...' : 'in ' + indexedEntriesCount + ' indexed entries'}
+          <Typography
+            variant="caption"
+            className={classes.header}
+            style={{ alignSelf: 'center', paddingLeft: 5, display: 'block' }}
+          >
+            {indexing
+              ? 'disabled while indexing...'
+              : 'in ' + indexedEntriesCount + ' indexed entries'}
           </Typography>
           {/* <IconButton
             data-tid="helpSearchButton"
@@ -300,32 +326,32 @@ class Search extends React.Component<Props, State> {
           >
             <HelpIcon />
           </IconButton> */}
-					<IconButton
-						data-tid="searchMenu"
-						onClick={this.handleSearchMenu}
-					>
-						<MoreVertIcon />
-					</IconButton>
+          <IconButton
+            style={{ marginLeft: 'auto' }}
+            data-tid="searchMenu"
+            onClick={this.handleSearchMenu}
+          >
+            <MoreVertIcon />
+          </IconButton>
         </div>
-				<SearchMenu
+        <SearchMenu
           anchorEl={this.state.searchMenuAnchorEl}
-					open={this.state.searchMenuOpened}
+          open={this.state.searchMenuOpened}
           onClose={this.handleCloseSearchMenu}
           openURLExternally={this.props.openURLExternally}
-				/>
+        />
         <div className={classes.searchArea}>
-          <FormControl
-            className={classes.formControl}
-            disabled={indexing}
-          >
+          <FormControl className={classes.formControl} disabled={indexing}>
             <InputLabel htmlFor="textQuery">
-              {this.state.searchBoxing === 'location' ? i18n.t('searchPlaceholder') : i18n.t('searchCurrentFolderWithSubFolders')}
+              {this.state.searchBoxing === 'location'
+                ? i18n.t('searchPlaceholder')
+                : i18n.t('searchCurrentFolderWithSubFolders')}
             </InputLabel>
             <Input
               id="textQuery"
               name="textQuery"
               value={this.state.textQuery}
-              onChange={(event) => {
+              onChange={event => {
                 this.setState({ textQuery: event.target.value });
               }}
               onKeyDown={this.startSearch}
@@ -335,12 +361,17 @@ class Search extends React.Component<Props, State> {
                   <IconButton
                     style={{ marginRight: -15 }}
                     onClick={this.toggleSearchBoxing}
-                    title={this.state.searchBoxing === 'location' ? i18n.t('searchCurrentFolderWithSubFolders') : i18n.t('searchPlaceholder')}
-                  >
-                    {this.state.searchBoxing === 'location' ?
-                      <FolderIcon /> :
-                      <LocationIcon />
+                    title={
+                      this.state.searchBoxing === 'location'
+                        ? i18n.t('searchCurrentFolderWithSubFolders')
+                        : i18n.t('searchPlaceholder')
                     }
+                  >
+                    {this.state.searchBoxing === 'location' ? (
+                      <FolderIcon />
+                    ) : (
+                      <LocationIcon />
+                    )}
                   </IconButton>
                   <IconButton onClick={this.clearSearch}>
                     <ClearSearchIcon />
@@ -349,39 +380,63 @@ class Search extends React.Component<Props, State> {
               }
             />
           </FormControl>
-          <Typography variant="caption" className={classes.header} style={{ marginTop: 10 }}>
+          <Typography
+            variant="caption"
+            className={classes.header}
+            style={{ marginTop: 10 }}
+          >
             {i18n.t('core:mustContainTheseTags')}
           </Typography>
-          <FormControl
-            className={classes.formControl}
-            disabled={indexing}
-          >
-            <TagsSelect placeholderText={i18n.t('core:selectTags')} tags={this.state.tagsAND} handleChange={this.handleTagFieldChange} tagSearchType={'tagsAND'} />
+          <FormControl className={classes.formControl} disabled={indexing}>
+            <TagsSelect
+              placeholderText={i18n.t('core:selectTags')}
+              tags={this.state.tagsAND}
+              handleChange={this.handleTagFieldChange}
+              tagSearchType={'tagsAND'}
+            />
           </FormControl>
-          <Typography variant="caption" className={classes.header} style={{ marginTop: 10 }}>
+          <Typography
+            variant="caption"
+            className={classes.header}
+            style={{ marginTop: 10 }}
+          >
             {i18n.t('core:atLeastOneOfTheseTags')}
           </Typography>
-          <FormControl
-            className={classes.formControl}
-            disabled={indexing}
-          >
-            <TagsSelect placeholderText={i18n.t('core:selectTags')} tags={this.state.tagsOR} handleChange={this.handleTagFieldChange} tagSearchType={'tagsOR'} />
+          <FormControl className={classes.formControl} disabled={indexing}>
+            <TagsSelect
+              placeholderText={i18n.t('core:selectTags')}
+              tags={this.state.tagsOR}
+              handleChange={this.handleTagFieldChange}
+              tagSearchType={'tagsOR'}
+            />
           </FormControl>
-          <Typography variant="caption" className={classes.header} style={{ marginTop: 10 }}>
+          <Typography
+            variant="caption"
+            className={classes.header}
+            style={{ marginTop: 10 }}
+          >
             {i18n.t('core:noneOfTheseTags')}
           </Typography>
-          <FormControl
-            className={classes.formControl}
-            disabled={indexing}
-          >
-            <TagsSelect placeholderText={i18n.t('core:selectTags')} tags={this.state.tagsNOT} handleChange={this.handleTagFieldChange} tagSearchType={'tagsNOT'} />
+          <FormControl className={classes.formControl} disabled={indexing}>
+            <TagsSelect
+              placeholderText={i18n.t('core:selectTags')}
+              tags={this.state.tagsNOT}
+              handleChange={this.handleTagFieldChange}
+              tagSearchType={'tagsNOT'}
+            />
           </FormControl>
           <FormControl
             className={classes.formControl}
             disabled={indexing || !Pro}
-            title={!Pro ? i18n.t('core:thisFunctionalityIsAvailableInPro') : undefined}
+            title={
+              !Pro
+                ? i18n.t('core:thisFunctionalityIsAvailableInPro')
+                : undefined
+            }
           >
-            <InputLabel htmlFor="file-type">{i18n.t('core:fileType')}</InputLabel>
+            <InputLabel htmlFor="file-type">
+              {i18n.t('core:fileType')}
+            </InputLabel>
             <Select
               value={this.state.fileTypes}
               onChange={this.handleInputChange}
@@ -488,19 +543,17 @@ class Search extends React.Component<Props, State> {
             disabled={indexing || !Pro}
             title={i18n.t('core:thisFunctionalityIsAvailableInPro')}
           >
-            <InputLabel shrink htmlFor="file-size">{i18n.t('core:sizeSearchTitle')}</InputLabel>
+            <InputLabel shrink htmlFor="file-size">
+              {i18n.t('core:sizeSearchTitle')}
+            </InputLabel>
             <Select
               value={this.state.fileSize}
               onChange={this.handleInputChange}
               input={<Input name="fileSize" id="file-size" />}
               displayEmpty
             >
-              <MenuItem value="">
-                {i18n.t('core:sizeAny')}
-              </MenuItem>
-              <MenuItem value="sizeEmpty">
-                {i18n.t('core:sizeEmpty')}
-              </MenuItem>
+              <MenuItem value="">{i18n.t('core:sizeAny')}</MenuItem>
+              <MenuItem value="sizeEmpty">{i18n.t('core:sizeEmpty')}</MenuItem>
               <MenuItem value="sizeTiny">
                 {i18n.t('core:sizeTiny')}&nbsp;(&lt;&nbsp;10KB)
               </MenuItem>
@@ -524,36 +577,32 @@ class Search extends React.Component<Props, State> {
           <FormControl
             className={classes.formControl}
             disabled={indexing || !Pro}
-            title={!Pro ? i18n.t('core:thisFunctionalityIsAvailableInPro') : undefined}
+            title={
+              !Pro
+                ? i18n.t('core:thisFunctionalityIsAvailableInPro')
+                : undefined
+            }
           >
-            <InputLabel shrink htmlFor="modification-date">{i18n.t('core:lastModifiedSearchTitle')}</InputLabel>
+            <InputLabel shrink htmlFor="modification-date">
+              {i18n.t('core:lastModifiedSearchTitle')}
+            </InputLabel>
             <Select
               value={this.state.lastModified}
               onChange={this.handleInputChange}
               input={<Input name="lastModified" id="modification-date" />}
               displayEmpty
             >
-              <MenuItem value="">
-                {i18n.t('core:anyTime')}
-              </MenuItem>
-              <MenuItem value="today">
-                {i18n.t('core:today')}
-              </MenuItem>
-              <MenuItem value="yesterday">
-                {i18n.t('core:yesterday')}
-              </MenuItem>
-              <MenuItem value="past7Days">
-                {i18n.t('core:past7Days')}
-              </MenuItem>
+              <MenuItem value="">{i18n.t('core:anyTime')}</MenuItem>
+              <MenuItem value="today">{i18n.t('core:today')}</MenuItem>
+              <MenuItem value="yesterday">{i18n.t('core:yesterday')}</MenuItem>
+              <MenuItem value="past7Days">{i18n.t('core:past7Days')}</MenuItem>
               <MenuItem value="past30Days">
                 {i18n.t('core:past30Days')}
               </MenuItem>
               <MenuItem value="past6Months">
                 {i18n.t('core:past6Months')}
               </MenuItem>
-              <MenuItem value="pastYear">
-                {i18n.t('core:pastYear')}
-              </MenuItem>
+              <MenuItem value="pastYear">{i18n.t('core:pastYear')}</MenuItem>
               <MenuItem value="moreThanYear">
                 {i18n.t('core:moreThanYear')}
               </MenuItem>
@@ -561,7 +610,11 @@ class Search extends React.Component<Props, State> {
           </FormControl>
           <FormControl
             className={classes.formControl}
-            title={!Pro ? i18n.t('core:thisFunctionalityIsAvailableInPro') : undefined}
+            title={
+              !Pro
+                ? i18n.t('core:thisFunctionalityIsAvailableInPro')
+                : undefined
+            }
           >
             <TextField
               id="tagTimePeriod"
@@ -574,7 +627,10 @@ class Search extends React.Component<Props, State> {
               error={this.state.tagTimePeriodHelper.length < 1}
               InputProps={{
                 endAdornment: (
-                  <InputAdornment position="end" title="201905 for May 2019 / 20190412 for 12th of April 2019 / 20190501~124523 for specific time">
+                  <InputAdornment
+                    position="end"
+                    title="201905 for May 2019 / 20190412 for 12th of April 2019 / 20190501~124523 for specific time"
+                  >
                     <IconButton>
                       <DateIcon />
                     </IconButton>
@@ -593,7 +649,10 @@ class Search extends React.Component<Props, State> {
               error={this.state.tagPlaceHelper.length < 1}
               InputProps={{
                 endAdornment: (
-                  <InputAdornment position="end" title="GPS: 49.23276,12.43123 PlusCode: 8FRG8Q87+6X">
+                  <InputAdornment
+                    position="end"
+                    title="GPS: 49.23276,12.43123 PlusCode: 8FRG8Q87+6X"
+                  >
                     <IconButton onClick={this.openPlace}>
                       <PlaceIcon />
                     </IconButton>
@@ -611,8 +670,11 @@ class Search extends React.Component<Props, State> {
               color="primary"
               onClick={this.clickSearchButton}
             >
-              {indexing ? 'Search disabled while indexing' : i18n.t('searchTitle')}
-            </Button>&nbsp;
+              {indexing
+                ? 'Search disabled while indexing'
+                : i18n.t('searchTitle')}
+            </Button>
+            &nbsp;
             <Button
               size="small"
               color="primary"
@@ -638,11 +700,14 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    searchLocationIndex: LocationIndexActions.searchLocationIndex,
-    loadDirectoryContent: AppActions.loadDirectoryContent,
-    openURLExternally: AppActions.openURLExternally,
-  }, dispatch);
+  return bindActionCreators(
+    {
+      searchLocationIndex: LocationIndexActions.searchLocationIndex,
+      loadDirectoryContent: AppActions.loadDirectoryContent,
+      openURLExternally: AppActions.openURLExternally
+    },
+    dispatch
+  );
 }
 
 export default withStyles(styles)(
