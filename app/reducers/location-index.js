@@ -23,7 +23,7 @@ import { Pro } from '../pro';
 import {
   extractFileExtension,
   extractFileName,
-  extractTagsAsObjects,
+  extractTagsAsObjects
   // getThumbFileLocationForFile
 } from '../utils/paths';
 import type { SearchQuery } from '../services/search';
@@ -49,7 +49,6 @@ export const types = {
   REFLECT_UPDATE_SIDECARMETA: 'INDEX/REFLECT_UPDATE_SIDECARMETA'
 };
 
-
 export const initialState = {
   currentDirectoryIndex: [],
   isIndexing: false
@@ -57,83 +56,84 @@ export const initialState = {
 
 export default (state: Object = initialState, action: Object) => {
   switch (action.type) {
-  case types.INDEX_DIRECTORY_START: {
-    return {
-      ...state,
-      currentDirectoryIndex: [],
-      isIndexing: true
-    };
-  }
-  case types.INDEX_DIRECTORY_CLEAR: {
-    return {
-      ...state,
-      currentDirectoryIndex: [],
-      isIndexing: false
-    };
-  }
-  case types.INDEX_DIRECTORY_CANCEL: {
-    window.walkCanceled = true;
-    return { ...state, isIndexing: false };
-  }
-  case types.INDEX_DIRECTORY_SUCCESS: {
-    return {
-      ...state,
-      currentDirectoryIndex: action.directoryIndex,
-      isIndexing: false
-    };
-  }
-  case types.INDEX_DIRECTORY_FAILURE: {
-    return {
-      ...state,
-      lastError: action.error,
-      currentDirectoryIndex: [],
-      isIndexing: false
-    };
-  }
-  case types.REFLECT_DELETE_ENTRY: {
-    const newDirectoryIndex = state.currentDirectoryIndex.filter((entry) => !entry.path.startsWith(action.path));
-    if (state.currentDirectoryIndex.length > newDirectoryIndex.length) {
+    case types.INDEX_DIRECTORY_START: {
       return {
         ...state,
-        currentDirectoryIndex: newDirectoryIndex
+        currentDirectoryIndex: [],
+        isIndexing: true
       };
     }
-    return state;
-  }
-  case types.REFLECT_CREATE_ENTRY: {
-    const entryIndex = state.currentDirectoryIndex.findIndex((entry) => entry.path === action.newEntry.path);
-    if (entryIndex) {
+    case types.INDEX_DIRECTORY_CLEAR: {
+      return {
+        ...state,
+        currentDirectoryIndex: [],
+        isIndexing: false
+      };
+    }
+    case types.INDEX_DIRECTORY_CANCEL: {
+      window.walkCanceled = true;
+      return { ...state, isIndexing: false };
+    }
+    case types.INDEX_DIRECTORY_SUCCESS: {
+      return {
+        ...state,
+        currentDirectoryIndex: action.directoryIndex,
+        isIndexing: false
+      };
+    }
+    case types.INDEX_DIRECTORY_FAILURE: {
+      return {
+        ...state,
+        lastError: action.error,
+        currentDirectoryIndex: [],
+        isIndexing: false
+      };
+    }
+    case types.REFLECT_DELETE_ENTRY: {
+      const newDirectoryIndex = state.currentDirectoryIndex.filter(
+        entry => !entry.path.startsWith(action.path)
+      );
+      if (state.currentDirectoryIndex.length > newDirectoryIndex.length) {
+        return {
+          ...state,
+          currentDirectoryIndex: newDirectoryIndex
+        };
+      }
       return state;
     }
-    return {
-      ...state,
-      currentDirectoryIndex: [
-        action.newEntry,
-        ...state.currentDirectoryIndex
-      ],
-    };
-  }
-  case types.REFLECT_RENAME_ENTRY: {
-    return {
-      ...state,
-      currentDirectoryIndex: state.currentDirectoryIndex.map((entry) => {
-        if (entry.path !== action.path) {
-          return entry;
-        }
-        return {
-          ...entry,
-          path: action.newPath,
-          // thumbPath: getThumbFileLocationForFile(action.newPath), // disabled due performance concerns
-          name: extractFileName(action.newPath),
-          extension: extractFileExtension(action.newPath),
-          tags: [
-            ...entry.tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
-            ...extractTagsAsObjects(action.newPath) // , getTagDelimiter(state))
-          ]
-        };
-      })
-    };
-    /* const indexForRenamingInIndex = state.currentDirectoryIndex.findIndex((entry) => entry.path === action.path);
+    case types.REFLECT_CREATE_ENTRY: {
+      const entryIndex = state.currentDirectoryIndex.findIndex(
+        entry => entry.path === action.newEntry.path
+      );
+      if (entryIndex) {
+        return state;
+      }
+      return {
+        ...state,
+        currentDirectoryIndex: [action.newEntry, ...state.currentDirectoryIndex]
+      };
+    }
+    case types.REFLECT_RENAME_ENTRY: {
+      return {
+        ...state,
+        currentDirectoryIndex: state.currentDirectoryIndex.map(entry => {
+          if (entry.path !== action.path) {
+            return entry;
+          }
+          return {
+            ...entry,
+            path: action.newPath,
+            // thumbPath: getThumbFileLocationForFile(action.newPath), // disabled due performance concerns
+            name: extractFileName(action.newPath),
+            extension: extractFileExtension(action.newPath),
+            tags: [
+              ...entry.tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
+              ...extractTagsAsObjects(action.newPath) // , getTagDelimiter(state))
+            ]
+          };
+        })
+      };
+      /* const indexForRenamingInIndex = state.currentDirectoryIndex.findIndex((entry) => entry.path === action.path);
     if (indexForRenamingInIndex >= 0) {
       const updateEntry = {
         ...state.currentDirectoryIndex[indexForRenamingInIndex],
@@ -156,24 +156,24 @@ export default (state: Object = initialState, action: Object) => {
       };
     }
     return state; */
-  }
-  case types.REFLECT_UPDATE_SIDECARTAGS: {
-    return {
-      ...state,
-      currentDirectoryIndex: state.currentDirectoryIndex.map((entry) => {
-        if (entry.path !== action.path) {
-          return entry;
-        }
-        return {
-          ...entry,
-          tags: [
-            ...entry.tags.filter(tag => tag.type === 'plain'),
-            ...action.tags
-          ]
-        };
-      })
-    };
-    /* const indexForUpdatingInIndex = state.currentDirectoryIndex.findIndex((entry) => entry.path === action.path);
+    }
+    case types.REFLECT_UPDATE_SIDECARTAGS: {
+      return {
+        ...state,
+        currentDirectoryIndex: state.currentDirectoryIndex.map(entry => {
+          if (entry.path !== action.path) {
+            return entry;
+          }
+          return {
+            ...entry,
+            tags: [
+              ...entry.tags.filter(tag => tag.type === 'plain'),
+              ...action.tags
+            ]
+          };
+        })
+      };
+      /* const indexForUpdatingInIndex = state.currentDirectoryIndex.findIndex((entry) => entry.path === action.path);
     if (indexForUpdatingInIndex >= 0) {
       const updateEntry = {
         ...state.currentDirectoryIndex[indexForUpdatingInIndex],
@@ -192,21 +192,21 @@ export default (state: Object = initialState, action: Object) => {
       };
     }
     return state; */
-  }
-  case types.REFLECT_UPDATE_SIDECARMETA: {
-    return {
-      ...state,
-      currentDirectoryIndex: state.currentDirectoryIndex.map((entry) => {
-        if (entry.path !== action.path) {
-          return entry;
-        }
-        return {
-          ...entry,
-          ...action.entryMeta
-        };
-      })
-    };
-    /* const indexForUpdatingInIndex = state.currentDirectoryIndex.findIndex((entry) => entry.path === action.path);
+    }
+    case types.REFLECT_UPDATE_SIDECARMETA: {
+      return {
+        ...state,
+        currentDirectoryIndex: state.currentDirectoryIndex.map(entry => {
+          if (entry.path !== action.path) {
+            return entry;
+          }
+          return {
+            ...entry,
+            ...action.entryMeta
+          };
+        })
+      };
+      /* const indexForUpdatingInIndex = state.currentDirectoryIndex.findIndex((entry) => entry.path === action.path);
     if (indexForUpdatingInIndex >= 0) {
       const updateEntry = {
         ...state.currentDirectoryIndex[indexForUpdatingInIndex],
@@ -222,10 +222,10 @@ export default (state: Object = initialState, action: Object) => {
       };
     }
     return state; */
-  }
-  default: {
-    return state;
-  }
+    }
+    default: {
+      return state;
+    }
   }
 };
 
@@ -237,13 +237,23 @@ export const actions = {
     getState: () => Object
   ) => {
     const state = getState();
-    const currentLocation: Location = getLocation(state, state.app.currentLocationId);
+    const currentLocation: Location = getLocation(
+      state,
+      state.app.currentLocationId
+    );
     dispatch(actions.startDirectoryIndexing());
     createDirectoryIndex(directoryPath, extractText)
       .then(directoryIndex => {
         dispatch(actions.indexDirectorySuccess(directoryIndex));
-        if (Pro && Pro.Indexer) { // && (currentLocation.persistIndex || PlatformIO.haveObjectStoreSupport())) { // always persist on s3 stores
-          Pro.Indexer.persistIndex(directoryPath, directoryIndex, (currentLocation.type === locationType.TYPE_CLOUD) ? '/' : AppConfig.dirSeparator);
+        if (Pro && Pro.Indexer) {
+          // && (currentLocation.persistIndex || PlatformIO.haveObjectStoreSupport())) { // always persist on s3 stores
+          Pro.Indexer.persistIndex(
+            directoryPath,
+            directoryIndex,
+            currentLocation.type === locationType.TYPE_CLOUD
+              ? '/'
+              : AppConfig.dirSeparator
+          );
         }
         return true;
       })
@@ -257,17 +267,35 @@ export const actions = {
     getState: () => Object
   ) => {
     const state = getState();
-    const currentLocation: Location = getLocation(state, state.app.currentLocationId);
+    const currentLocation: Location = getLocation(
+      state,
+      state.app.currentLocationId
+    );
     dispatch(actions.startDirectoryIndexing());
-    dispatch(AppActions.showNotification(i18n.t('core:loadingIndex'), 'default', true));
+    dispatch(
+      AppActions.showNotification(i18n.t('core:loadingIndex'), 'default', true)
+    );
     if (Pro && Pro.Indexer.loadIndex) {
-      Pro.Indexer.loadIndex(directoryPath, (currentLocation.type === locationType.TYPE_CLOUD) ? '/' : AppConfig.dirSeparator).then((directoryIndex) => {
-        dispatch(actions.indexDirectorySuccess(directoryIndex));
-        return true;
-      }).catch(err => {
-        dispatch(actions.indexDirectoryFailure(err));
-        dispatch(AppActions.showNotification(i18n.t('core:loadingIndexFailed'), 'warning', true));
-      });
+      Pro.Indexer.loadIndex(
+        directoryPath,
+        currentLocation.type === locationType.TYPE_CLOUD
+          ? '/'
+          : AppConfig.dirSeparator
+      )
+        .then(directoryIndex => {
+          dispatch(actions.indexDirectorySuccess(directoryIndex));
+          return true;
+        })
+        .catch(err => {
+          dispatch(actions.indexDirectoryFailure(err));
+          dispatch(
+            AppActions.showNotification(
+              i18n.t('core:loadingIndexFailed'),
+              'warning',
+              true
+            )
+          );
+        });
     }
   },
   clearDirectoryIndex: () => ({
@@ -277,20 +305,31 @@ export const actions = {
     dispatch: (actions: Object) => void,
     getState: () => Object
   ) => {
-    dispatch(AppActions.showNotification(i18n.t('core:searching'), 'default', false));
-    setTimeout(() => { // Workaround used to show the start search notification
+    dispatch(
+      AppActions.showNotification(i18n.t('core:searching'), 'default', false)
+    );
+    setTimeout(() => {
+      // Workaround used to show the start search notification
       Search.searchLocationIndex(
         getState().locationIndex.currentDirectoryIndex,
         searchQuery
-      ).then((searchResults) => {
-        dispatch(AppActions.updateSearchResults(searchResults));
-        dispatch(AppActions.hideNotifications());
-        return true;
-      }).catch(() => {
-        dispatch(AppActions.updateSearchResults([]));
-        dispatch(AppActions.hideNotifications());
-        dispatch(AppActions.showNotification(i18n.t('core:searchingFailed'), 'warning', true));
-      });
+      )
+        .then(searchResults => {
+          dispatch(AppActions.updateSearchResults(searchResults));
+          dispatch(AppActions.hideNotifications());
+          return true;
+        })
+        .catch(() => {
+          dispatch(AppActions.updateSearchResults([]));
+          dispatch(AppActions.hideNotifications());
+          dispatch(
+            AppActions.showNotification(
+              i18n.t('core:searchingFailed'),
+              'warning',
+              true
+            )
+          );
+        });
     }, 50);
   },
   indexDirectorySuccess: (directoryIndex: Array<Object>) => ({
@@ -327,5 +366,6 @@ export const actions = {
 };
 
 // Selectors
-export const getIndexedEntriesCount = (state: Object) => state.locationIndex.currentDirectoryIndex.length;
+export const getIndexedEntriesCount = (state: Object) =>
+  state.locationIndex.currentDirectoryIndex.length;
 export const isIndexing = (state: Object) => state.locationIndex.isIndexing;

@@ -92,15 +92,8 @@ const FileMenu = (props: Props) => {
 
   return (
     <div style={{ overflowY: 'hidden !important' }}>
-      <Menu
-        anchorEl={props.anchorEl}
-        open={props.open}
-        onClose={props.onClose}
-      >
-        <MenuItem
-          data-tid="fileMenuOpenFile"
-          onClick={openFile}
-        >
+      <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
+        <MenuItem data-tid="fileMenuOpenFile" onClick={openFile}>
           <ListItemIcon>
             <OpenFile />
           </ListItemIcon>
@@ -158,7 +151,10 @@ const FileMenu = (props: Props) => {
               </ListItemIcon>
               <ListItemText primary={i18n.t('core:moveCopyFile')} />
             </MenuItem>
-            <MenuItem data-tid="fileMenuDeleteFile" onClick={showDeleteFileDialog}>
+            <MenuItem
+              data-tid="fileMenuDeleteFile"
+              onClick={showDeleteFileDialog}
+            >
               <ListItemIcon>
                 <DeleteForever />
               </ListItemIcon>

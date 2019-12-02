@@ -32,9 +32,15 @@ const AppVersionBadge = withStyles(theme => ({
   badge: {
     top: '25%',
     right: -15,
-    color: theme.palette.type === 'light' ? theme.palette.grey[900] : theme.palette.grey[200],
-    backgroundColor: theme.palette.type === 'light' ? theme.palette.grey[200] : theme.palette.grey[900]
-  },
+    color:
+      theme.palette.type === 'light'
+        ? theme.palette.grey[900]
+        : theme.palette.grey[200],
+    backgroundColor:
+      theme.palette.type === 'light'
+        ? theme.palette.grey[200]
+        : theme.palette.grey[900]
+  }
 }))(Badge);
 
 type Props = {
@@ -49,7 +55,11 @@ if (externalLogo) {
 }
 
 const CustomLogo = (props: Props) => (
-  <AppVersionBadge title="App Version" badgeContent={'v' + versionMeta.version} color="primary">
+  <AppVersionBadge
+    title="App Version"
+    badgeContent={'v' + versionMeta.version}
+    color="primary"
+  >
     <IconButton
       style={{ height: 50, padding: 0, marginBottom: 15 }}
       data-tid="aboutTagSpaces"
@@ -61,9 +71,12 @@ const CustomLogo = (props: Props) => (
 );
 
 function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators({
-    toggleAboutDialog: AppActions.toggleAboutDialog,
-  }, dispatch);
+  return bindActionCreators(
+    {
+      toggleAboutDialog: AppActions.toggleAboutDialog
+    },
+    dispatch
+  );
 }
 
 export default connect(undefined, mapActionCreatorsToProps)(CustomLogo);

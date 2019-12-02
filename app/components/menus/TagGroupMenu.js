@@ -137,7 +137,11 @@ const TagLibraryMenu = (props: Props) => {
           <ListItemIcon>
             <CollectTagsIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:collectTagsFromLocation') + (Pro ? '' : ' PRO')} />
+          <ListItemText
+            primary={
+              i18n.t('core:collectTagsFromLocation') + (Pro ? '' : ' PRO')
+            }
+          />
         </MenuItem>
       </Menu>
     </div>

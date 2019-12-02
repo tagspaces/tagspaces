@@ -21,7 +21,10 @@
 
 import AppConfig from '../config';
 import { b64toBlob } from '../utils/misc';
-import { extractParentDirectoryPath, cleanTrailingDirSeparator } from '../utils/paths';
+import {
+  extractParentDirectoryPath,
+  cleanTrailingDirSeparator
+} from '../utils/paths';
 
 const appSettingFile = 'settings.json';
 const appSettingTagsFile = 'settingsTags.json';
@@ -44,7 +47,9 @@ export default class CordovaIO {
   loadedSettingsTags: any;
 
   onDeviceReady = () => {
-    console.log('Device Ready: ' + window.device.platform + ' - ' + window.device.version);
+    console.log(
+      'Device Ready: ' + window.device.platform + ' - ' + window.device.version
+    );
 
     // attachFastClick(document.body);
     this.getFileSystem();
@@ -93,12 +98,12 @@ export default class CordovaIO {
         TestFairy.begin('ef5d3fd8bfa17164b8068e71ccb32e1beea25f2f');
       } */
     }
-  }
+  };
 
-  onDeviceBackButton = (e) => {
+  onDeviceBackButton = e => {
     e.preventDefault();
     // send event to main app
-  }
+  };
 
   isWorkerAvailable = (): boolean => false;
 
@@ -290,7 +295,7 @@ export default class CordovaIO {
         fileEntry.file(
           file => {
             const reader = new FileReader();
-            reader.onloadend = (evt) => {
+            reader.onloadend = evt => {
               let content = null;
               if (evt.target.result.length > 0) {
                 content = evt.target.result;
@@ -385,32 +390,35 @@ export default class CordovaIO {
   };
 
   listMetaDirectoryPromise = async (path: string): Promise<Array<Object>> => {
-    const promise = new Promise((resolve) => {
+    const promise = new Promise(resolve => {
       const entries = [];
-      const metaDirPath = cleanTrailingDirSeparator(path) + AppConfig.dirSeparator + AppConfig.metaFolder + AppConfig.dirSeparator;
+      const metaDirPath =
+        cleanTrailingDirSeparator(path) +
+        AppConfig.dirSeparator +
+        AppConfig.metaFolder +
+        AppConfig.dirSeparator;
 
-      this.getFileSystemPromise(metaDirPath).then(
-        fileSystem => {
+      this.getFileSystemPromise(metaDirPath)
+        .then(fileSystem => {
           const reader = fileSystem.createReader();
-          reader.readEntries(
-            entr => {
-              entr.forEach(entry => {
-                const entryPath = entry.fullPath;
-                if (entryPath.toLowerCase() === metaDirPath.toLowerCase()) {
-                  console.log('Skipping current folder');
-                } else {
-                  const ee = {};
-                  ee.name = entry.name;
-                  ee.path = decodeURI(entryPath);
-                  ee.isFile = true;
-                  entries.push(ee);
-                }
-              });
-              resolve(entries);
+          reader.readEntries(entr => {
+            entr.forEach(entry => {
+              const entryPath = entry.fullPath;
+              if (entryPath.toLowerCase() === metaDirPath.toLowerCase()) {
+                console.log('Skipping current folder');
+              } else {
+                const ee = {};
+                ee.name = entry.name;
+                ee.path = decodeURI(entryPath);
+                ee.isFile = true;
+                entries.push(ee);
+              }
             });
+            resolve(entries);
+          });
           return true;
         })
-        .catch((err) => {
+        .catch(err => {
           console.error('Error getting listMetaDirectoryPromise:', err);
           resolve(entries); // returning results even if any promise fails
         });
@@ -422,56 +430,76 @@ export default class CordovaIO {
   /**
    * Creates a list with containing the files and the sub directories of a given directory
    */
-  listDirectoryPromise = (path: string, lite: boolean): Promise<*> => new Promise(async (resolve, reject) => {
-    console.time('listDirectoryPromise');
-    const metaContent = !lite ? await this.listMetaDirectoryPromise(path) : [];
+  listDirectoryPromise = (path: string, lite: boolean): Promise<*> =>
+    new Promise(async (resolve, reject) => {
+      console.time('listDirectoryPromise');
+      const metaContent = !lite
+        ? await this.listMetaDirectoryPromise(path)
+        : [];
 
-    const enhancedEntries = [];
-    const metaPromises = [];
-    this.getFileSystemPromise(path).then(
-      fileSystem => {
-        const reader = fileSystem.createReader();
-        reader.readEntries(
-          entries => {
-            entries.forEach(entry => {
-              const eentry = {};
-              eentry.name = entry.name;
-              eentry.path = entry.fullPath;
-              eentry.tags = [];
-              eentry.thumbPath = entry.isFile ? '' : eentry.path + '/' + AppConfig.metaFolder + '/' + AppConfig.folderThumbFile;
-              // eentry.meta = {};
-              eentry.isFile = entry.isFile;
-              if (entry.isFile) {
-                entry.file(
-                  fileEntry => {
-                    eentry.size = fileEntry.size;
-                    eentry.lmdt = fileEntry.lastModifiedDate;
-                  });
-              }
-
-              if (!lite) {
-                if (entry.isDirectory) { // Read tsm.json from subfolders
-                  const metaDirAvailable = metaContent.find(obj => obj.name === AppConfig.metaFolder);
-                  if (metaDirAvailable) {
-                    metaPromises.push(this.getEntryMeta(eentry, metaDirAvailable.path));
-                  }
-                } else {
-                  const metaFileAvailable = metaContent.find(obj => obj.name === entry.name + AppConfig.metaFileExt);
-                  if (metaFileAvailable) {
-                    metaPromises.push(this.getEntryMeta(eentry, metaFileAvailable.path));
+      const enhancedEntries = [];
+      const metaPromises = [];
+      this.getFileSystemPromise(path)
+        .then(
+          fileSystem => {
+            const reader = fileSystem.createReader();
+            reader.readEntries(
+              entries => {
+                entries.forEach(entry => {
+                  const eentry = {};
+                  eentry.name = entry.name;
+                  eentry.path = entry.fullPath;
+                  eentry.tags = [];
+                  eentry.thumbPath = entry.isFile
+                    ? ''
+                    : eentry.path +
+                      '/' +
+                      AppConfig.metaFolder +
+                      '/' +
+                      AppConfig.folderThumbFile;
+                  // eentry.meta = {};
+                  eentry.isFile = entry.isFile;
+                  if (entry.isFile) {
+                    entry.file(fileEntry => {
+                      eentry.size = fileEntry.size;
+                      eentry.lmdt = fileEntry.lastModifiedDate;
+                    });
                   }
 
-                  // Finding if thumbnail available
-                  const metaThumbAvailable = metaContent.find(obj => obj.name === entry.name + AppConfig.thumbFileExt);
-                  if (metaThumbAvailable) {
-                    eentry.thumbPath = metaThumbAvailable.path;
+                  if (!lite) {
+                    if (entry.isDirectory) {
+                      // Read tsm.json from subfolders
+                      const metaDirAvailable = metaContent.find(
+                        obj => obj.name === AppConfig.metaFolder
+                      );
+                      if (metaDirAvailable) {
+                        metaPromises.push(
+                          this.getEntryMeta(eentry, metaDirAvailable.path)
+                        );
+                      }
+                    } else {
+                      const metaFileAvailable = metaContent.find(
+                        obj => obj.name === entry.name + AppConfig.metaFileExt
+                      );
+                      if (metaFileAvailable) {
+                        metaPromises.push(
+                          this.getEntryMeta(eentry, metaFileAvailable.path)
+                        );
+                      }
+
+                      // Finding if thumbnail available
+                      const metaThumbAvailable = metaContent.find(
+                        obj => obj.name === entry.name + AppConfig.thumbFileExt
+                      );
+                      if (metaThumbAvailable) {
+                        eentry.thumbPath = metaThumbAvailable.path;
+                      }
+                    }
                   }
-                }
-              }
 
-              enhancedEntries.push(eentry);
+                  enhancedEntries.push(eentry);
 
-              /* if (entry.isDirectory) {
+                  /* if (entry.isDirectory) {
                 anotatedDirList.push({
                   name: entry.name,
                   path: entry.fullPath,
@@ -516,15 +544,17 @@ export default class CordovaIO {
                   fileWorkers.push(filePromise);
                 }
               } */
-            });
+                });
 
-            Promise.all(metaPromises).then(() => {
-              resolve(enhancedEntries);
-              return true;
-            }).catch(() => {
-              resolve(enhancedEntries);
-            });
-            /* Promise.all(fileWorkers).then(
+                Promise.all(metaPromises)
+                  .then(() => {
+                    resolve(enhancedEntries);
+                    return true;
+                  })
+                  .catch(() => {
+                    resolve(enhancedEntries);
+                  });
+                /* Promise.all(fileWorkers).then(
               entries => {
                 entries.forEach(entry => {
                   anotatedDirList.push(entry);
@@ -543,29 +573,29 @@ export default class CordovaIO {
                 resolve(anotatedDirList); // returning results even if any promise fails
               }
             ); */
-          },
-          err => {
-            console.warn(
-              'Error reading entries promise from ' +
-                  path +
-                  'err ' +
-                  JSON.stringify(err)
+              },
+              err => {
+                console.warn(
+                  'Error reading entries promise from ' +
+                    path +
+                    'err ' +
+                    JSON.stringify(err)
+                );
+                resolve(enhancedEntries); // returning results even if any promise fails
+              }
             );
+            return true;
+          },
+          () => {
+            console.warn('Error getting file system promise');
             resolve(enhancedEntries); // returning results even if any promise fails
           }
-        );
-        return true;
-      },
-      () => {
-        console.warn('Error getting file system promise');
-        resolve(enhancedEntries); // returning results even if any promise fails
-      }
-    )
-      .catch((err) => {
-        console.error('Error getting listDirectoryPromise:', err);
-        resolve(enhancedEntries); // returning results even if any promise fails
-      });
-  });
+        )
+        .catch(err => {
+          console.error('Error getting listDirectoryPromise:', err);
+          resolve(enhancedEntries); // returning results even if any promise fails
+        });
+    });
 
   getEntryMeta = (eentry: Object, metaPath: string): Promise<Object> => {
     if (eentry.isFile) {
@@ -577,7 +607,8 @@ export default class CordovaIO {
       });
     }
     // const folderMetaPath = normalizePath(eentry.path) + AppConfig.dirSeparator + AppConfig.metaFolderFile; // getMetaFileLocationForDir(eentry.path);
-    if (!eentry.path.endsWith(AppConfig.metaFolder + '/')) { // Skip the /.ts folder
+    if (!eentry.path.endsWith(AppConfig.metaFolder + '/')) {
+      // Skip the /.ts folder
       return this.loadTextFilePromise(metaPath).then(result => {
         // eslint-disable-next-line no-param-reassign
         eentry.meta = JSON.parse(result.trim());
@@ -585,7 +616,7 @@ export default class CordovaIO {
       });
     }
 
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       resolve(eentry);
     });
   };
@@ -633,19 +664,22 @@ export default class CordovaIO {
             resolve(false);
           }
         },
-        (err) => {
-          console.log('getPropertiesPromise: Error getting file ' + entryPath, err);
+        err => {
+          console.log(
+            'getPropertiesPromise: Error getting file ' + entryPath,
+            err
+          );
           resolve(false);
         }
       );
-    })
-    // });
-  ;
+    });
+  // });
 
   /**
    * Load the content of a text file
    */
-  loadTextFilePromise = (filePath: string): Promise<*> => this.getFileContentPromise(filePath, 'text');
+  loadTextFilePromise = (filePath: string): Promise<*> =>
+    this.getFileContentPromise(filePath, 'text');
 
   /**
    * Gets the content of file, useful for binary files
@@ -695,10 +729,10 @@ export default class CordovaIO {
     return new Promise((resolve, reject) => {
       getFilePromise(filePath, resolvePath).then(file => {
         const reader = new FileReader();
-        reader.onerror = function () {
+        reader.onerror = function() {
           reject(reader.error);
         };
-        reader.onload = function () {
+        reader.onload = function() {
           resolve(reader.result);
         };
         if (type === 'text') {
@@ -748,13 +782,16 @@ export default class CordovaIO {
           entry => {
             entry.createWriter(
               writer => {
-                writer.onwriteend = function (evt) {
+                writer.onwriteend = function(evt) {
                   // resolve(this.fsRoot.fullPath + "/" + filePath);
                   resolve(isFileNew);
                 };
                 if (isRaw) {
                   writer.write(content);
-                } else if (typeof content === 'string' && content.indexOf(';base64,') > 0) {
+                } else if (
+                  typeof content === 'string' &&
+                  content.indexOf(';base64,') > 0
+                ) {
                   const contentArray = content.split(';base64,');
                   const type =
                     contentArray.length > 1
@@ -914,7 +951,9 @@ export default class CordovaIO {
     new Promise((resolve, reject) => {
       // eslint-disable-next-line no-param-reassign
       filePath = this.normalizePath(filePath);
-      const newFileName = newFilePath.substring(newFilePath.lastIndexOf('/') + 1);
+      const newFileName = newFilePath.substring(
+        newFilePath.lastIndexOf('/') + 1
+      );
       const newFileParentPath = this.normalizePath(
         newFilePath.substring(0, newFilePath.lastIndexOf('/') + 1)
       );
@@ -935,7 +974,7 @@ export default class CordovaIO {
               create: false,
               exclusive: false
             },
-            (entry) => {
+            entry => {
               entry.moveTo(
                 parentDirEntry,
                 newFileName,
@@ -948,12 +987,12 @@ export default class CordovaIO {
                   );
                   resolve([filePath, newFilePath]);
                 },
-                (err) => {
+                err => {
                   reject('error renaming: ' + filePath + ' ' + err);
                 }
               );
             },
-            (error) => {
+            error => {
               reject('Error getting file: ' + filePath + ' ' + error);
             }
           );
@@ -973,97 +1012,96 @@ export default class CordovaIO {
   /**
    * Rename a directory
    */
-  renameDirectoryPromise = (
-    dirPath: string,
-    newDirName: string
-  ): Promise<*> => new Promise((resolve, reject) => {
-    let newDirPath =
+  renameDirectoryPromise = (dirPath: string, newDirName: string): Promise<*> =>
+    new Promise((resolve, reject) => {
+      let newDirPath =
         extractParentDirectoryPath(dirPath) +
         AppConfig.dirSeparator +
         newDirName;
-    // eslint-disable-next-line no-param-reassign
-    dirPath = this.normalizePath(dirPath);
-    const newDirParentPath = this.normalizePath(
-      newDirPath.substring(0, newDirPath.lastIndexOf('/'))
-    );
-    newDirPath = this.normalizePath(newDirPath);
-    console.log('renameDirectoryPromise: ' + dirPath + ' to: ' + newDirPath);
-    // TODO check if the newFilePath exist or cause issues by renaming
-    this.fsRoot.getDirectory(
-      newDirParentPath,
-      {
-        create: false,
-        exclusive: false
-      },
-      parentDirEntry => {
-        this.fsRoot.getDirectory(
-          dirPath,
-          {
-            create: false,
-            exclusive: false
-          },
-          entry => {
-            entry.moveTo(
-              parentDirEntry,
-              newDirName,
-              () => {
-                console.log(
-                  'Directory renamed to: ' +
+      // eslint-disable-next-line no-param-reassign
+      dirPath = this.normalizePath(dirPath);
+      const newDirParentPath = this.normalizePath(
+        newDirPath.substring(0, newDirPath.lastIndexOf('/'))
+      );
+      newDirPath = this.normalizePath(newDirPath);
+      console.log('renameDirectoryPromise: ' + dirPath + ' to: ' + newDirPath);
+      // TODO check if the newFilePath exist or cause issues by renaming
+      this.fsRoot.getDirectory(
+        newDirParentPath,
+        {
+          create: false,
+          exclusive: false
+        },
+        parentDirEntry => {
+          this.fsRoot.getDirectory(
+            dirPath,
+            {
+              create: false,
+              exclusive: false
+            },
+            entry => {
+              entry.moveTo(
+                parentDirEntry,
+                newDirName,
+                () => {
+                  console.log(
+                    'Directory renamed to: ' +
                       newDirPath +
                       ' from: ' +
                       entry.fullPath
-                );
-                resolve('/' + newDirPath);
-              },
-              err => {
-                reject('error renaming directory: ' + dirPath + ' ' + err);
-              }
-            );
-          },
-          error => {
-            reject('Error getting directory: ' + dirPath + ' ' + error);
-          }
-        );
-      },
-      error => {
-        console.error(
-          'Getting dir: ' +
+                  );
+                  resolve('/' + newDirPath);
+                },
+                err => {
+                  reject('error renaming directory: ' + dirPath + ' ' + err);
+                }
+              );
+            },
+            error => {
+              reject('Error getting directory: ' + dirPath + ' ' + error);
+            }
+          );
+        },
+        error => {
+          console.error(
+            'Getting dir: ' +
               newDirParentPath +
               ' failed with error code: ' +
               error.code
-        );
-        reject(error);
-      }
-    );
-  });
+          );
+          reject(error);
+        }
+      );
+    });
 
   /**
    * Delete a specified file
    */
-  deleteFilePromise = (filePath: string): Promise<*> => new Promise((resolve, reject) => {
-    const path = this.normalizePath(filePath);
-    this.fsRoot.getFile(
-      path,
-      {
-        create: false,
-        exclusive: false
-      },
-      entry => {
-        entry.remove(
-          () => {
-            console.log('file deleted: ' + path);
-            resolve(filePath);
-          },
-          err => {
-            reject('error deleting: ' + filePath + ' ' + err);
-          }
-        );
-      },
-      error => {
-        reject('error getting file' + path + ' ' + error);
-      }
-    );
-  });
+  deleteFilePromise = (filePath: string): Promise<*> =>
+    new Promise((resolve, reject) => {
+      const path = this.normalizePath(filePath);
+      this.fsRoot.getFile(
+        path,
+        {
+          create: false,
+          exclusive: false
+        },
+        entry => {
+          entry.remove(
+            () => {
+              console.log('file deleted: ' + path);
+              resolve(filePath);
+            },
+            err => {
+              reject('error deleting: ' + filePath + ' ' + err);
+            }
+          );
+        },
+        error => {
+          reject('error getting file' + path + ' ' + error);
+        }
+      );
+    });
 
   /**
    * Delete a specified directory, the directory should be empty, if the trash can functionality is not enabled
@@ -1103,14 +1141,14 @@ export default class CordovaIO {
   selectDirectory = () => {
     console.log('Open select directory dialog.');
     // showDirectoryBrowserDialog(this.fsRoot.fullPath);
-  }
+  };
 
   /**
    * Selects a file with the help of a file chooser
    */
   selectFile = () => {
     console.log('Operation selectFile not supported.');
-  }
+  };
 
   /**
    * Opens a directory in the operating system's default file manager

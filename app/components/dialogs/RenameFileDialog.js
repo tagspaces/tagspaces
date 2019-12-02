@@ -32,7 +32,10 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import { onEnterKeyHandler, DialogTransition } from './GenericDialog';
 import AppConfig from '../../config';
 import i18n from '../../services/i18n';
-import { extractFileName, extractContainingDirectoryPath } from '../../utils/paths';
+import {
+  extractFileName,
+  extractContainingDirectoryPath
+} from '../../utils/paths';
 import { actions as AppActions } from '../../reducers/app';
 
 type Props = {
@@ -63,7 +66,7 @@ class RenameFileDialog extends React.Component<Props, State> {
   state = {
     inputError: false,
     disableConfirmButton: true,
-    fileName: '',
+    fileName: ''
   };
 
   componentWillReceiveProps = (nextProps: any) => {
@@ -83,7 +86,7 @@ class RenameFileDialog extends React.Component<Props, State> {
           this.fileName.setSelectionRange(0, endRange);
         }
         return {
-          fileName,
+          fileName
         };
       });
     }
@@ -96,9 +99,12 @@ class RenameFileDialog extends React.Component<Props, State> {
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
 
-    this.setState({
-      [name]: value
-    }, this.handleValidation);
+    this.setState(
+      {
+        [name]: value
+      },
+      this.handleValidation
+    );
   };
 
   handleValidation() {
@@ -111,8 +117,11 @@ class RenameFileDialog extends React.Component<Props, State> {
 
   onConfirm = () => {
     if (!this.state.disableConfirmButton) {
-      const fileDirectory = extractContainingDirectoryPath(this.props.selectedFilePath);
-      const newFilePath = fileDirectory + AppConfig.dirSeparator + this.state.fileName;
+      const fileDirectory = extractContainingDirectoryPath(
+        this.props.selectedFilePath
+      );
+      const newFilePath =
+        fileDirectory + AppConfig.dirSeparator + this.state.fileName;
       this.props.renameFile(this.props.selectedFilePath, newFilePath);
       this.props.onClose();
       this.setState({ inputError: false, disableConfirmButton: true });
@@ -137,14 +146,18 @@ class RenameFileDialog extends React.Component<Props, State> {
           margin="dense"
           name="fileName"
           autoFocus
-          inputRef={(ref) => { this.fileName = ref; }}
+          inputRef={ref => {
+            this.fileName = ref;
+          }}
           label={i18n.t('core:renameNewFileName')}
           onChange={this.handleInputChange}
           value={this.state.fileName}
           data-tid="renameFileDialogInput"
           fullWidth={true}
         />
-        {this.state.inputError && <FormHelperText>Empty File Name</FormHelperText>}
+        {this.state.inputError && (
+          <FormHelperText>Empty File Name</FormHelperText>
+        )}
       </FormControl>
     </DialogContent>
   );
@@ -189,9 +202,15 @@ class RenameFileDialog extends React.Component<Props, State> {
 }
 
 function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators({
-    renameFile: AppActions.renameFile,
-  }, dispatch);
+  return bindActionCreators(
+    {
+      renameFile: AppActions.renameFile
+    },
+    dispatch
+  );
 }
 
-export default connect(null, mapActionCreatorsToProps)(withStyles(styles)(RenameFileDialog));
+export default connect(
+  null,
+  mapActionCreatorsToProps
+)(withStyles(styles)(RenameFileDialog));

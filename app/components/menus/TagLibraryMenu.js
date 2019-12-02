@@ -46,8 +46,14 @@ const TagLibraryMenu = (props: Props) => {
   let fileInput;
   const [tagGroups, setTagGroups] = useState(null);
   const [selectedDirectoryPath, setSelectedDirectoryPath] = useState('');
-  const [isSelectDirectoryDialogOpened, setIsSelectDirectoryDialogOpened] = useState(false);
-  const [isImportExportTagGroupDialogOpened, setIsImportExportTagGroupDialogOpened] = useState(false);
+  const [
+    isSelectDirectoryDialogOpened,
+    setIsSelectDirectoryDialogOpened
+  ] = useState(false);
+  const [
+    isImportExportTagGroupDialogOpened,
+    setIsImportExportTagGroupDialogOpened
+  ] = useState(false);
   const [dialogModeImport, setDialogModeImport] = useState(false);
 
   function handleCloseDialogs() {
@@ -126,11 +132,7 @@ const TagLibraryMenu = (props: Props) => {
         onClose={closeSelectDirectoryExtDialog}
         selectedDirectoryPath={selectedDirectoryPath}
       />
-      <Menu
-        anchorEl={props.anchorEl}
-        open={props.open}
-        onClose={props.onClose}
-      >
+      <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
         <MenuItem
           data-tid="createNewTagGroup"
           onClick={() => {
@@ -143,19 +145,13 @@ const TagLibraryMenu = (props: Props) => {
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:createTagGroupTitle')} />
         </MenuItem>
-        <MenuItem
-          data-tid="importTagGroup"
-          onClick={handleImportTagGroup}
-        >
+        <MenuItem data-tid="importTagGroup" onClick={handleImportTagGroup}>
           <ListItemIcon>
             <ImportExportIcon />
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:importTags')} />
         </MenuItem>
-        <MenuItem
-          data-tid="exportTagGroup"
-          onClick={handleExportTagGroup}
-        >
+        <MenuItem data-tid="exportTagGroup" onClick={handleExportTagGroup}>
           <ListItemIcon>
             <ImportExportIcon />
           </ListItemIcon>
@@ -165,7 +161,7 @@ const TagLibraryMenu = (props: Props) => {
           data-tid="taglibraryHelp"
           onClick={() => {
             props.onClose();
-            props.openURLExternally(AppConfig.documentationLinks.taglibrary)
+            props.openURLExternally(AppConfig.documentationLinks.taglibrary);
           }}
         >
           <ListItemIcon>

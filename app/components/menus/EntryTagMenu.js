@@ -82,20 +82,13 @@ const EntryTagMenu = (props: Props) => {
   }
 
   function confirmRemoveTag() {
-    props.removeTags(
-      [props.currentEntryPath],
-      [props.selectedTag]
-    );
+    props.removeTags([props.currentEntryPath], [props.selectedTag]);
     handleCloseDialogs();
   }
 
   return (
     <div style={{ overflowY: 'hidden !important' }}>
-      <Menu
-        anchorEl={props.anchorEl}
-        open={props.open}
-        onClose={props.onClose}
-      >
+      <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
         <MenuItem
           data-tid="showFilesWithThisTag"
           onClick={showFilesWithThisTag}
@@ -147,11 +140,14 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    searchLocationIndex: LocationIndexActions.searchLocationIndex,
-    openSearchPanel: AppActions.openSearchPanel,
-    toggleEditTagDialog: AppActions.toggleEditTagDialog,
-  }, dispatch);
+  return bindActionCreators(
+    {
+      searchLocationIndex: LocationIndexActions.searchLocationIndex,
+      openSearchPanel: AppActions.openSearchPanel,
+      toggleEditTagDialog: AppActions.toggleEditTagDialog
+    },
+    dispatch
+  );
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(EntryTagMenu);

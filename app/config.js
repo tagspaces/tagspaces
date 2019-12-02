@@ -16,7 +16,9 @@
  *
  * @flow
  */
-const isCordovaiOS = /^file:\/{3}[^\/]/i.test(window.location.href) && /ios|iphone|ipod|ipad/i.test(navigator.userAgent);
+const isCordovaiOS =
+  /^file:\/{3}[^\/]/i.test(window.location.href) &&
+  /ios|iphone|ipod|ipad/i.test(navigator.userAgent);
 const isCordovaAndroid = document.URL.indexOf('file:///android_asset') === 0;
 const isIOS = navigator.userAgent.match(/(iPad|iPhone|iPod)/i);
 const isAndroid = navigator.userAgent.toLowerCase().includes('android');
@@ -45,10 +47,14 @@ export default {
   links: {
     checkNewVersionURL: 'https://www.tagspaces.org/releases/tagspaces.json',
     productsOverview: 'https://www.tagspaces.org/products/',
-    productProObjectStore: 'https://www.tagspaces.org/products/pro/#connectingObjectStores',
-    productProAdvancedSearch: 'https://www.tagspaces.org/products/pro/#advancedSearch',
-    productProFileFolderMeta: 'https://www.tagspaces.org/products/pro/#fileFolderMeta',
-    productProThumbnailsGeneration: 'https://www.tagspaces.org/products/pro/#thumbnailsGeneration',
+    productProObjectStore:
+      'https://www.tagspaces.org/products/pro/#connectingObjectStores',
+    productProAdvancedSearch:
+      'https://www.tagspaces.org/products/pro/#advancedSearch',
+    productProFileFolderMeta:
+      'https://www.tagspaces.org/products/pro/#fileFolderMeta',
+    productProThumbnailsGeneration:
+      'https://www.tagspaces.org/products/pro/#thumbnailsGeneration',
     productProGeoTagging: 'https://www.tagspaces.org/usecases/geotagging/',
     productPro: 'https://www.tagspaces.org/products/pro/',
     productEnterprise: 'https://www.tagspaces.org/products/enterprise/',
@@ -59,12 +65,14 @@ export default {
     suggestFeature: 'https://trello.com/b/TGeG5bi9',
     reportIssue: 'https://github.com/tagspaces/tagspaces/issues/',
     helpTranslating: 'https://www.transifex.com/tagspaces/tagspaces/',
-    webClipperChrome: 'https://chrome.google.com/webstore/detail/tagspaces-web-clipper/ldalmgifdlgpiiadeccbcjojljeanhjk',
-    webClipperFirefox: 'https://addons.mozilla.org/en-US/firefox/addon/tagspaces/',
+    webClipperChrome:
+      'https://chrome.google.com/webstore/detail/tagspaces-web-clipper/ldalmgifdlgpiiadeccbcjojljeanhjk',
+    webClipperFirefox:
+      'https://addons.mozilla.org/en-US/firefox/addon/tagspaces/',
     webClipper: 'https://www.tagspaces.org/products/webclipper/',
     twitter: 'https://twitter.com/tagspaces',
     facebook: 'https://www.facebook.com/tagspacesapp',
-    emailContact: 'mailto:contactus@tagspaces.org?subject=App',
+    emailContact: 'mailto:contactus@tagspaces.org?subject=App'
   },
   documentationLinks: {
     general: 'https://docs.tagspaces.org/',
@@ -75,18 +83,23 @@ export default {
     locations: 'https://docs.tagspaces.org/ui/locations',
     taglibrary: 'https://docs.tagspaces.org/ui/taglibrary',
     search: 'https://docs.tagspaces.org/search',
-    settings: 'https://docs.tagspaces.org/ui/settings',
+    settings: 'https://docs.tagspaces.org/ui/settings'
   },
-  isElectron: (navigator.userAgent.toLowerCase().indexOf(' electron/') > -1),
-  isFirefox: (navigator.userAgent.toLowerCase().includes('firefox')), // typeof InstallTrigger !== 'undefined';
+  isElectron: navigator.userAgent.toLowerCase().indexOf(' electron/') > -1,
+  isFirefox: navigator.userAgent.toLowerCase().includes('firefox'), // typeof InstallTrigger !== 'undefined';
   isWin: navigator.appVersion.includes('Win'),
   isMacLike: navigator.userAgent.match(/(Mac|iPhone|iPod|iPad)/i),
   isIOS,
   isAndroid,
-  isWeb: (document.URL.startsWith('http') && !document.URL.startsWith('http://localhost:1212/')),
+  isWeb:
+    document.URL.startsWith('http') &&
+    !document.URL.startsWith('http://localhost:1212/'),
   isCordovaiOS,
   isCordovaAndroid,
   isCordova: isCordovaiOS || isCordovaAndroid,
   isMobile: isCordovaiOS || isCordovaAndroid || isIOS || isAndroid,
-  dirSeparator: (navigator.appVersion.includes('Win') && !document.URL.startsWith('http')) ? '\\' : '/',
+  dirSeparator:
+    navigator.appVersion.includes('Win') && !document.URL.startsWith('http')
+      ? '\\'
+      : '/'
 };

@@ -36,7 +36,8 @@ import { type SearchQuery } from '../../services/search';
 import { getMaxSearchResults } from '../../reducers/settings';
 import { actions as AppActions } from '../../reducers/app';
 
-const isTagLibraryReadOnly = (window.ExtTagLibrary && window.ExtTagLibrary.length > 0);
+const isTagLibraryReadOnly =
+  window.ExtTagLibrary && window.ExtTagLibrary.length > 0;
 
 type Props = {
   anchorEl?: Object,
@@ -88,20 +89,13 @@ const TagLibraryMenu = (props: Props) => {
 
   function confirmDeleteTag() {
     if (props.selectedTag && props.selectedTagGroupEntry) {
-      props.deleteTag(
-        props.selectedTag.id,
-        props.selectedTagGroupEntry.uuid
-      );
+      props.deleteTag(props.selectedTag.id, props.selectedTagGroupEntry.uuid);
     }
   }
 
   return (
     <div style={{ overflowY: 'hidden !important' }}>
-      <Menu
-        anchorEl={props.anchorEl}
-        open={props.open}
-        onClose={props.onClose}
-      >
+      <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
         <MenuItem
           data-tid="showFilesWithThisTag"
           onClick={showFilesWithThisTag}
@@ -124,8 +118,7 @@ const TagLibraryMenu = (props: Props) => {
             <ListItemIcon>
               <DeleteIcon />
             </ListItemIcon>
-            <ListItemText primary={i18n.t('core:deleteTagFromTagGroup')}
-            />
+            <ListItemText primary={i18n.t('core:deleteTagFromTagGroup')} />
           </MenuItem>
         )}
       </Menu>
@@ -162,10 +155,13 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    openSearchPanel: AppActions.openSearchPanel,
-    searchLocationIndex: LocationIndexActions.searchLocationIndex,
-  }, dispatch);
+  return bindActionCreators(
+    {
+      openSearchPanel: AppActions.openSearchPanel,
+      searchLocationIndex: LocationIndexActions.searchLocationIndex
+    },
+    dispatch
+  );
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(TagLibraryMenu);

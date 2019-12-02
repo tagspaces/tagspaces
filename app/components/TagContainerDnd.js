@@ -40,12 +40,19 @@ const boxSource = {
 
     // console.log('DropRESULT: ', dropResult);
     // console.log('item: ', item);
-    if (dropResult && dropResult.tagGroupId && dropResult.tagGroupId !== item.sourceTagGroupId && props.moveTag) {
+    if (
+      dropResult &&
+      dropResult.tagGroupId &&
+      dropResult.tagGroupId !== item.sourceTagGroupId &&
+      props.moveTag
+    ) {
       // console.log(`Dropped ${item.tagId} from ${item.sourceTagGroupId} into ${dropResult.tagGroupId}!`);
       props.moveTag(item.tagId, item.sourceTagGroupId, dropResult.tagGroupId);
     } else if (dropResult && dropResult.entryPath && props.addTags) {
       // console.log(`Dropped item: ${item.tag.title} onto file: ${dropResult.entryPath}!`);
-      if (props.selectedEntries.some(entry => entry.path === dropResult.entryPath)) {
+      if (
+        props.selectedEntries.some(entry => entry.path === dropResult.entryPath)
+      ) {
         const selectedEntryPaths = [];
         props.selectedEntries.map(entry => selectedEntryPaths.push(entry.path));
         props.addTags(selectedEntryPaths, [item.tag]);
@@ -134,7 +141,8 @@ const TagContainerDnd = (props: Props) => {
         isDragging={isDragging}
         selectedEntries={selectedEntries}
       />
-    </span>);
+    </span>
+  );
 };
 
 export default DragSource(DragItemTypes.TAG, boxSource, (connect, monitor) => ({

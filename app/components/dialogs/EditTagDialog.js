@@ -80,9 +80,12 @@ class EditTagDialog extends React.Component<Props, State> {
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
 
-    this.setState({
-      [name]: value
-    }, this.handleValidation);
+    this.setState(
+      {
+        [name]: value
+      },
+      this.handleValidation
+    );
   };
 
   handleValidation() {
@@ -95,17 +98,21 @@ class EditTagDialog extends React.Component<Props, State> {
   }
 
   onConfirm = () => {
-    if (!this.state.disableConfirmButton &&
-         this.props.editTag &&
-         this.props.selectedTagGroupEntry &&
-         this.props.selectedTag
+    if (
+      !this.state.disableConfirmButton &&
+      this.props.editTag &&
+      this.props.selectedTagGroupEntry &&
+      this.props.selectedTag
     ) {
-      this.props.editTag({
-        ...this.props.selectedTag,
-        title: this.state.title,
-        color: this.state.color,
-        textcolor: this.state.textcolor,
-      }, this.props.selectedTagGroupEntry.uuid);
+      this.props.editTag(
+        {
+          ...this.props.selectedTag,
+          title: this.state.title,
+          color: this.state.color,
+          textcolor: this.state.textcolor
+        },
+        this.props.selectedTagGroupEntry.uuid
+      );
       this.setState({ inputError: false, disableConfirmButton: true });
       this.props.onClose();
     }
@@ -133,11 +140,7 @@ class EditTagDialog extends React.Component<Props, State> {
 
   render() {
     const { color, textcolor, modifiedDate } = this.state;
-    const {
-      fullScreen,
-      open,
-      onClose
-    } = this.props;
+    const { fullScreen, open, onClose } = this.props;
     const styles = {
       color: {
         width: '100%',
@@ -147,7 +150,7 @@ class EditTagDialog extends React.Component<Props, State> {
         borderStyle: 'solid',
         borderColor: 'gray',
         padding: '5px',
-        background: color,
+        background: color
       },
       textcolor: {
         width: '100%',
@@ -157,12 +160,12 @@ class EditTagDialog extends React.Component<Props, State> {
         borderStyle: 'solid',
         borderColor: 'gray',
         padding: '5px',
-        background: textcolor,
+        background: textcolor
       },
       helpText: {
         marginBottom: '5px',
         fontSize: '1rem'
-      },
+      }
     };
 
     return (
@@ -174,7 +177,10 @@ class EditTagDialog extends React.Component<Props, State> {
         scroll="paper"
         // onEnterKey={(event) => onEnterKeyHandler(event, this.addTags)}
       >
-        <DialogTitle style={{ overflow: 'visible' }}>{i18n.t('core:editTagTitle')}{` '${this.state.title}'`}</DialogTitle>
+        <DialogTitle style={{ overflow: 'visible' }}>
+          {i18n.t('core:editTagTitle')}
+          {` '${this.state.title}'`}
+        </DialogTitle>
         <DialogContent style={{ overflow: 'visible' }}>
           <FormControl
             fullWidth={true}
@@ -182,8 +188,18 @@ class EditTagDialog extends React.Component<Props, State> {
             style={{ overflow: 'visible' }}
           >
             {modifiedDate && (
-              <div className="tag-date" style={{ fontSize: 12, position: 'relative', bottom: 20, color: '#808080' }}>
-                <span className="text" style={{ fontWeight: 600 }}>{`${i18n.t('core:modifiedDate')}: `}</span>
+              <div
+                className="tag-date"
+                style={{
+                  fontSize: 12,
+                  position: 'relative',
+                  bottom: 20,
+                  color: '#808080'
+                }}
+              >
+                <span className="text" style={{ fontWeight: 600 }}>{`${i18n.t(
+                  'core:modifiedDate'
+                )}: `}</span>
                 <time>{format(new Date(modifiedDate), 'yyyy-mm-dd')}</time>
               </div>
             )}
@@ -198,19 +214,24 @@ class EditTagDialog extends React.Component<Props, State> {
               data-tid="editTagInput"
               fullWidth={true}
             />
-            {this.state.inputError && <FormHelperText style={styles.helpText}>{i18n.t('core:tagTitleHelper')}</FormHelperText>}
+            {this.state.inputError && (
+              <FormHelperText style={styles.helpText}>
+                {i18n.t('core:tagTitleHelper')}
+              </FormHelperText>
+            )}
           </FormControl>
-          <FormControl
-            fullWidth={true}
-          >
-            <FormHelperText style={styles.helpText}>{i18n.t('core:tagBackgroundColor')}</FormHelperText>
+          <FormControl fullWidth={true}>
+            <FormHelperText style={styles.helpText}>
+              {i18n.t('core:tagBackgroundColor')}
+            </FormHelperText>
             <TransparentBackground>
               <Button
                 onClick={this.toggleDefaultTagBackgroundColorPicker}
                 data-tid="tagBackgroundColorEditTagDialog"
                 style={styles.color}
                 role="presentation"
-              >&nbsp;
+              >
+                &nbsp;
               </Button>
             </TransparentBackground>
             <ColorPickerDialog
@@ -220,17 +241,18 @@ class EditTagDialog extends React.Component<Props, State> {
               color={this.state.color}
             />
           </FormControl>
-          <FormControl
-            fullWidth={true}
-          >
-            <FormHelperText style={styles.helpText}>{i18n.t('core:tagForegroundColor')}</FormHelperText>
+          <FormControl fullWidth={true}>
+            <FormHelperText style={styles.helpText}>
+              {i18n.t('core:tagForegroundColor')}
+            </FormHelperText>
             <TransparentBackground>
               <Button
                 onClick={this.toggleDefaultTagTextColorPicker}
                 data-tid="tagForegroundColorEditTagDialog"
                 style={styles.textcolor}
                 role="presentation"
-              >&nbsp;
+              >
+                &nbsp;
               </Button>
             </TransparentBackground>
             <ColorPickerDialog
@@ -258,9 +280,9 @@ class EditTagDialog extends React.Component<Props, State> {
             {i18n.t('core:ok')}
           </Button>
         </DialogActions>
-      </Dialog>  
+      </Dialog>
     );
-  }  
+  }
 }
 
 export default EditTagDialog;

@@ -88,7 +88,7 @@ const rootPersistConfig = {
   storage,
   version: 2,
   blacklist,
-  debug: false,
+  debug: false
   // migrate: createMigrate(migrations, { debug: true }),
   // https://github.com/rt2zz/redux-persist/blob/b6a60bd653d59c4fe462e2e0ea827fd76eb190e1/README.md#state-reconciler
   // stateReconciler: autoMergeLevel2,

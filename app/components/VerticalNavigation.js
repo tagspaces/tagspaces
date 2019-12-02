@@ -51,12 +51,14 @@ import {
   isSearchPanelOpened,
   isPerspectivesPanelOpened,
   isHelpFeedbackPanelOpened,
-  isReadOnlyMode,
+  isReadOnlyMode
 } from '../reducers/app';
 import { actions as SettingsActions, isFirstRun } from '../reducers/settings';
 import LoadingLazy from './LoadingLazy';
 
-const ProTeaserDialog = React.lazy(() => import(/* webpackChunkName: "ProTeaserDialog" */ './dialogs/ProTeaserDialog'));
+const ProTeaserDialog = React.lazy(() =>
+  import(/* webpackChunkName: "ProTeaserDialog" */ './dialogs/ProTeaserDialog')
+);
 const ProTeaserDialogAsync = props => (
   <React.Suspense fallback={<LoadingLazy />}>
     <ProTeaserDialog {...props} />
@@ -139,7 +141,7 @@ class VerticalNavigation extends React.Component<Props, State> {
 
   toggleProTeaser = () => {
     this.setState({ isProTeaserVisible: !this.state.isProTeaserVisible });
-  }
+  };
 
   render() {
     const {
@@ -214,7 +216,9 @@ class VerticalNavigation extends React.Component<Props, State> {
               id="verticalNavButton"
               onClick={() => {
                 if (isReadOnlyMode || !directoryPath) {
-                  showNotification('You are in read-only mode or there is no opened location');
+                  showNotification(
+                    'You are in read-only mode or there is no opened location'
+                  );
                 } else {
                   toggleCreateFileDialog();
                 }
@@ -328,10 +332,11 @@ class VerticalNavigation extends React.Component<Props, State> {
                 onClick={this.toggleProTeaser}
                 style={{ ...this.styles.button, ...this.styles.upgradeButton }}
               >
-                <UpgradeIcon style={{
-                  ...this.styles.buttonIcon,
-                  // color: '1DD19F'
-                }}
+                <UpgradeIcon
+                  style={{
+                    ...this.styles.buttonIcon
+                    // color: '1DD19F'
+                  }}
                 />
               </IconButton>
             )}
@@ -352,31 +357,40 @@ class VerticalNavigation extends React.Component<Props, State> {
               style={
                 isSettingsDialogOpened
                   ? {
-                    ...this.styles.button,
-                    ...this.styles.settingsButton,
-                    ...this.styles.selectedButton
-                  } : {
-                    ...this.styles.button,
-                    ...this.styles.settingsButton
-                  }
+                      ...this.styles.button,
+                      ...this.styles.settingsButton,
+                      ...this.styles.selectedButton
+                    }
+                  : {
+                      ...this.styles.button,
+                      ...this.styles.settingsButton
+                    }
               }
             >
               <SettingsIcon style={this.styles.buttonIcon} />
             </IconButton>
           </div>
           <div style={this.styles.panel}>
-            <LocationManager style={{ display: isLocationManagerPanelOpened ? 'block' : 'none' }} />
-            { isTagLibraryPanelOpened && <TagLibrary /> }
-            <Search style={{ display: isSearchPanelOpened ? 'block' : 'none' }} />
-            { isPerspectivesPanelOpened && <PerspectiveManager /> }
-            { isHelpFeedbackPanelOpened && <HelpFeedbackPanel
-              openFileNatively={openFileNatively}
-              openURLExternally={openURLExternally}
-              toggleAboutDialog={toggleAboutDialog}
-              toggleKeysDialog={toggleKeysDialog}
-              toggleOnboardingDialog={toggleOnboardingDialog}
-              toggleProTeaser={this.toggleProTeaser}
-            /> }
+            <LocationManager
+              style={{
+                display: isLocationManagerPanelOpened ? 'block' : 'none'
+              }}
+            />
+            {isTagLibraryPanelOpened && <TagLibrary />}
+            <Search
+              style={{ display: isSearchPanelOpened ? 'block' : 'none' }}
+            />
+            {isPerspectivesPanelOpened && <PerspectiveManager />}
+            {isHelpFeedbackPanelOpened && (
+              <HelpFeedbackPanel
+                openFileNatively={openFileNatively}
+                openURLExternally={openURLExternally}
+                toggleAboutDialog={toggleAboutDialog}
+                toggleKeysDialog={toggleKeysDialog}
+                toggleOnboardingDialog={toggleOnboardingDialog}
+                toggleProTeaser={this.toggleProTeaser}
+              />
+            )}
           </div>
         </SplitPane>
       </div>
@@ -394,7 +408,7 @@ function mapStateToProps(state) {
     isPerspectivesPanelOpened: isPerspectivesPanelOpened(state),
     isHelpFeedbackPanelOpened: isHelpFeedbackPanelOpened(state),
     isReadOnlyMode: isReadOnlyMode(state),
-    directoryPath: getDirectoryPath(state),
+    directoryPath: getDirectoryPath(state)
   };
 }
 
@@ -416,7 +430,7 @@ function mapActionCreatorsToProps(dispatch) {
       closeAllVerticalPanels: AppActions.closeAllVerticalPanels,
       showNotification: AppActions.showNotification,
       switchTheme: SettingsActions.switchTheme,
-      setFirstRun: SettingsActions.setFirstRun,
+      setFirstRun: SettingsActions.setFirstRun
     },
     dispatch
   );

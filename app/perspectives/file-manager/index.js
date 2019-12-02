@@ -55,7 +55,7 @@ class FileManagerPerspective extends React.Component<Props, State> {
     order: '',
     checked: [0],
     itemPath: '',
-    extension: this.props.directoryContent.map((item) => item.extension)
+    extension: this.props.directoryContent.map(item => item.extension)
   };
 
   /*
@@ -68,7 +68,7 @@ class FileManagerPerspective extends React.Component<Props, State> {
    </Button>
    */
 
-  handleRequestSort = (sortBy) => {
+  handleRequestSort = sortBy => {
     this.setState({ orderBy: !this.state.orderBy });
     this.props.sortByCriteria(sortBy, this.state.orderBy);
   };
@@ -125,9 +125,7 @@ class FileManagerPerspective extends React.Component<Props, State> {
 
   renderExtHeadTableAction = () => (
     <div>
-      <Tooltip
-        title="Sort"
-      >
+      <Tooltip title="Sort">
         <Button
           title="Ext"
           onClick={this.handleRequestSort('ext', !this.state.order)}
@@ -138,14 +136,13 @@ class FileManagerPerspective extends React.Component<Props, State> {
     </div>
   );
 
+  renderNameColumnAction = name => <span>{name}</span>;
 
-  renderNameColumnAction = (name) => (<span>{ name }</span>);
-
-  renderIsFileColumnAction = (isFile) => {
+  renderIsFileColumnAction = isFile => {
     if (isFile) {
-      return (<span>File</span>);
+      return <span>File</span>;
     }
-    return (<span>Folder</span>);
+    return <span>Folder</span>;
   };
 
   renderTagColumnAction = (tags: Array<Tag>) =>
@@ -158,21 +155,22 @@ class FileManagerPerspective extends React.Component<Props, State> {
         tag={tag}
         index={index}
       />
-    ))
-    ;
+    ));
 
-  renderLastModifiedColumnAction = (lmdt) => (<span>{ formatDateTime(lmdt, true) }</span>);
+  renderLastModifiedColumnAction = lmdt => (
+    <span>{formatDateTime(lmdt, true)}</span>
+  );
 
-  renderSizeColumnAction = (size) => (<span>{ formatFileSize(size) }</span>);
+  renderSizeColumnAction = size => <span>{formatFileSize(size)}</span>;
 
   handleCellClick = (record, index) => ({
-    onContextMenu: (e) => {
+    onContextMenu: e => {
       this.handleFileContextMenu(e, record.path);
     },
     onClick: () => {
       this.setState({ checkBox: true });
     },
-    onDoubleClick: (e) => {
+    onDoubleClick: e => {
       this.onRowClick(record, index, e);
     }
   });
@@ -191,10 +189,10 @@ class FileManagerPerspective extends React.Component<Props, State> {
     },
     {
       title: (
-        <div> Name
-          <Tooltip
-            title="Sort"
-          >
+        <div>
+          {' '}
+          Name
+          <Tooltip title="Sort">
             <ArrowUpward style={{ width: 16, height: 16 }} />
           </Tooltip>
         </div>
@@ -207,10 +205,10 @@ class FileManagerPerspective extends React.Component<Props, State> {
     },
     {
       title: (
-        <div> Is File
-          <Tooltip
-            title="Sort"
-          >
+        <div>
+          {' '}
+          Is File
+          <Tooltip title="Sort">
             <ArrowDownward style={{ width: 16, height: 16 }} />
           </Tooltip>
         </div>
@@ -222,10 +220,10 @@ class FileManagerPerspective extends React.Component<Props, State> {
     },
     {
       title: (
-        <div> Tags
-          <Tooltip
-            title="Sort"
-          >
+        <div>
+          {' '}
+          Tags
+          <Tooltip title="Sort">
             <ArrowDownward style={{ width: 16, height: 16 }} />
           </Tooltip>
         </div>
@@ -237,10 +235,10 @@ class FileManagerPerspective extends React.Component<Props, State> {
     },
     {
       title: (
-        <div> Size
-          <Tooltip
-            title="Sort"
-          >
+        <div>
+          {' '}
+          Size
+          <Tooltip title="Sort">
             <ArrowDownward style={{ width: 16, height: 16 }} />
           </Tooltip>
         </div>
@@ -252,10 +250,10 @@ class FileManagerPerspective extends React.Component<Props, State> {
     },
     {
       title: (
-        <div> Last Modified
-          <Tooltip
-            title="Sort"
-          >
+        <div>
+          {' '}
+          Last Modified
+          <Tooltip title="Sort">
             <ArrowDownward style={{ width: 16, height: 16 }} />
           </Tooltip>
         </div>
@@ -267,7 +265,7 @@ class FileManagerPerspective extends React.Component<Props, State> {
     }
   ];
 
-  handleToggle = value => (e) => {
+  handleToggle = value => e => {
     e.preventDefault();
     const { checked } = this.state;
     const currentIndex = checked.indexOf(value);
@@ -307,7 +305,7 @@ class FileManagerPerspective extends React.Component<Props, State> {
     });
   };
 
-  toggleFileMenuClose = (event) => {
+  toggleFileMenuClose = event => {
     this.setState({
       fileContextMenuOpened: !this.state.fileContextMenuOpened,
       fileContextMenuAnchorEl: event ? event.currentTarget : null

@@ -21,7 +21,7 @@ import fsextra from 'fs-extra';
 import winattr from 'winattr';
 import {
   extractParentDirectoryPath,
-  getMetaDirectoryPath,
+  getMetaDirectoryPath
   // extractFileExtension
 } from '../utils/paths';
 import { arrayBufferToBuffer } from '../utils/misc';
@@ -172,21 +172,18 @@ export default class ElectronIO {
 
   getUserHomePath = (): string => this.app.getPath('home');
 
-  getAppDataPath = (): string => this.ipcRenderer.sendSync(
-    'app-data-path-request',
-    'notNeededArgument'
-  );
+  getAppDataPath = (): string =>
+    this.ipcRenderer.sendSync('app-data-path-request', 'notNeededArgument');
 
-  setZoomFactorElectron = (zoomLevel: number) => this.webFrame.setZoomFactor(zoomLevel);
+  setZoomFactorElectron = (zoomLevel: number) =>
+    this.webFrame.setZoomFactor(zoomLevel);
 
   setGlobalShortcuts = (globalShortcutsEnabled: boolean) => {
     this.ipcRenderer.send('global-shortcuts-enabled', globalShortcutsEnabled);
-  }
+  };
 
-  getAppPath = (): string => this.ipcRenderer.sendSync(
-    'app-dir-path-request',
-    'notNeededArgument'
-  );
+  getAppPath = (): string =>
+    this.ipcRenderer.sendSync('app-dir-path-request', 'notNeededArgument');
 
   createDirectoryTree = (directoryPath: string): Object => {
     console.log('Creating directory index for: ' + directoryPath);
@@ -224,7 +221,10 @@ export default class ElectronIO {
     return generateDirectoryTree(directoryPath);
   };
 
-  createDirectoryIndexInWorker = (directoryPath: string, extractText: boolean): Promise<any> => {
+  createDirectoryIndexInWorker = (
+    directoryPath: string,
+    extractText: boolean
+  ): Promise<any> => {
     return new Promise((resolve, reject) => {
       if (this.isWorkerAvailable()) {
         const timestamp = new Date().getTime().toString();
@@ -244,230 +244,244 @@ export default class ElectronIO {
     });
   };
 
-  createThumbnailsInWorker = (tmbGenerationList: Array<string>): Promise<any> => new Promise((resolve, reject) => {
-    if (this.isWorkerAvailable()) {
-      const timestamp = new Date().getTime().toString();
-      this.workerWindow.webContents.send('worker', {
-        id: timestamp,
-        action: 'createThumbnails',
-        tmbGenerationList
-      });
-      this.ipcRenderer.once(timestamp, (event, data) => {
-        // console.log('Answer from worker received ' + data.result);
-        resolve(data.result);
-      });
-    } else {
-      reject('Worker window not available!');
-    }
-  });
+  createThumbnailsInWorker = (tmbGenerationList: Array<string>): Promise<any> =>
+    new Promise((resolve, reject) => {
+      if (this.isWorkerAvailable()) {
+        const timestamp = new Date().getTime().toString();
+        this.workerWindow.webContents.send('worker', {
+          id: timestamp,
+          action: 'createThumbnails',
+          tmbGenerationList
+        });
+        this.ipcRenderer.once(timestamp, (event, data) => {
+          // console.log('Answer from worker received ' + data.result);
+          resolve(data.result);
+        });
+      } else {
+        reject('Worker window not available!');
+      }
+    });
 
   listDirectoryPromise = (
     path: string,
     lite: boolean = true,
     extractTextContent: boolean = false
-  ): Promise<Array<Object>> => new Promise(resolve => {
-    const enhancedEntries = [];
-    let entryPath;
-    let metaFolderPath;
-    let stats;
-    let eentry;
-    let containsMetaFolder = false;
-    // const metaMetaFolder = AppConfig.metaFolder + AppConfig.dirSeparator + AppConfig.metaFolder;
+  ): Promise<Array<Object>> =>
+    new Promise(resolve => {
+      const enhancedEntries = [];
+      let entryPath;
+      let metaFolderPath;
+      let stats;
+      let eentry;
+      let containsMetaFolder = false;
+      // const metaMetaFolder = AppConfig.metaFolder + AppConfig.dirSeparator + AppConfig.metaFolder;
 
-    this.fs.readdir(path, (error, entries) => {
-      if (error) {
-        console.warn('Error listing directory ' + path);
-        resolve(enhancedEntries); // returning results even if any promise fails
-        return;
-      }
+      this.fs.readdir(path, (error, entries) => {
+        if (error) {
+          console.warn('Error listing directory ' + path);
+          resolve(enhancedEntries); // returning results even if any promise fails
+          return;
+        }
 
-      if (window.walkCanceled) {
-        resolve(enhancedEntries); // returning results even if walk canceled
-        return;
-      }
+        if (window.walkCanceled) {
+          resolve(enhancedEntries); // returning results even if walk canceled
+          return;
+        }
 
-      if (entries) {
-        entries.forEach(entry => {
-          entryPath = path + AppConfig.dirSeparator + entry;
-          eentry = {};
-          eentry.name = entry;
-          eentry.path = entryPath;
-          eentry.tags = [];
-          eentry.thumbPath = '';
-          eentry.meta = {};
+        if (entries) {
+          entries.forEach(entry => {
+            entryPath = path + AppConfig.dirSeparator + entry;
+            eentry = {};
+            eentry.name = entry;
+            eentry.path = entryPath;
+            eentry.tags = [];
+            eentry.thumbPath = '';
+            eentry.meta = {};
 
-          try {
-            stats = this.fs.statSync(entryPath);
-            // if (AppConfig.isWin && winattr.getSync(entryPath).hidden) {
-            //   return;
-            // }
-            eentry.isFile = stats.isFile();
-            eentry.size = stats.size;
-            eentry.lmdt = stats.mtime.getTime();
+            try {
+              stats = this.fs.statSync(entryPath);
+              // if (AppConfig.isWin && winattr.getSync(entryPath).hidden) {
+              //   return;
+              // }
+              eentry.isFile = stats.isFile();
+              eentry.size = stats.size;
+              eentry.lmdt = stats.mtime.getTime();
 
-            if (
-              !eentry.isFile &&
-              eentry.name.endsWith(AppConfig.metaFolder)
-            ) {
-              containsMetaFolder = true;
-            }
-
-            // Read tsm.json from sub folders
-            if (!eentry.isFile && !lite) {
-              const folderMetaPath =
-                eentry.path +
-                AppConfig.dirSeparator +
-                AppConfig.metaFolder +
-                AppConfig.dirSeparator +
-                AppConfig.metaFolderFile;
-              try {
-                const folderMeta = this.fs.readJsonSync(folderMetaPath);
-                eentry.meta = folderMeta;
-                // console.log('Success reading meta folder file ' + folderMetaPath);
-              } catch (err) {
-                // console.log('Failed reading meta folder file ' + folderMetaPath);
+              if (
+                !eentry.isFile &&
+                eentry.name.endsWith(AppConfig.metaFolder)
+              ) {
+                containsMetaFolder = true;
               }
 
-              // Loading thumbs for folders
-              if (!eentry.path.includes('/' + AppConfig.metaFolder)) { // skipping meta folder
-                const folderTmbPath =
+              // Read tsm.json from sub folders
+              if (!eentry.isFile && !lite) {
+                const folderMetaPath =
                   eentry.path +
                   AppConfig.dirSeparator +
                   AppConfig.metaFolder +
                   AppConfig.dirSeparator +
-                  AppConfig.folderThumbFile;
-                const tmbStats = this.fs.statSync(folderTmbPath);
-                if (tmbStats.isFile()) {
-                  eentry.thumbPath = folderTmbPath;
+                  AppConfig.metaFolderFile;
+                try {
+                  const folderMeta = this.fs.readJsonSync(folderMetaPath);
+                  eentry.meta = folderMeta;
+                  // console.log('Success reading meta folder file ' + folderMetaPath);
+                } catch (err) {
+                  // console.log('Failed reading meta folder file ' + folderMetaPath);
+                }
+
+                // Loading thumbs for folders
+                if (!eentry.path.includes('/' + AppConfig.metaFolder)) {
+                  // skipping meta folder
+                  const folderTmbPath =
+                    eentry.path +
+                    AppConfig.dirSeparator +
+                    AppConfig.metaFolder +
+                    AppConfig.dirSeparator +
+                    AppConfig.folderThumbFile;
+                  const tmbStats = this.fs.statSync(folderTmbPath);
+                  if (tmbStats.isFile()) {
+                    eentry.thumbPath = folderTmbPath;
+                  }
                 }
               }
-            }
 
-            const fileName = eentry.name.toLowerCase();
-            if (
-              extractTextContent && eentry.isFile &&
-              Pro && Pro.Indexer && Pro.Indexer.extractTextContent &&
-              (fileName.endsWith('.txt') || fileName.endsWith('.md') || fileName.endsWith('.html'))
-            ) {
-              const fileContent = this.fs.readFileSync(eentry.path, 'utf8');
-              eentry.textContent = Pro.Indexer.extractTextContent(fileName, fileContent);
-            }
+              const fileName = eentry.name.toLowerCase();
+              if (
+                extractTextContent &&
+                eentry.isFile &&
+                Pro &&
+                Pro.Indexer &&
+                Pro.Indexer.extractTextContent &&
+                (fileName.endsWith('.txt') ||
+                  fileName.endsWith('.md') ||
+                  fileName.endsWith('.html'))
+              ) {
+                const fileContent = this.fs.readFileSync(eentry.path, 'utf8');
+                eentry.textContent = Pro.Indexer.extractTextContent(
+                  fileName,
+                  fileContent
+                );
+              }
 
-            if (window.walkCanceled) {
-              resolve(enhancedEntries);
-              return;
-            }
-          } catch (e) {
-            console.warn('Can not load properties for: ' + entryPath + ' ' + e);
-          }
-          enhancedEntries.push(eentry);
-        });
-
-        // Read the .ts meta content
-        if (!lite && containsMetaFolder) {
-          metaFolderPath = getMetaDirectoryPath(path);
-          this.fs.readdir(metaFolderPath, (err, metaEntries) => {
-            if (err) {
-              console.log(
-                'Error listing meta directory ' + metaFolderPath + ' - ' + err
+              if (window.walkCanceled) {
+                resolve(enhancedEntries);
+                return;
+              }
+            } catch (e) {
+              console.warn(
+                'Can not load properties for: ' + entryPath + ' ' + e
               );
-              resolve(enhancedEntries); // returning results even if any promise fails
-              return;
             }
+            enhancedEntries.push(eentry);
+          });
 
-            if (window.walkCanceled) {
-              resolve(enhancedEntries); // returning results even if walk canceled
-              return;
-            }
+          // Read the .ts meta content
+          if (!lite && containsMetaFolder) {
+            metaFolderPath = getMetaDirectoryPath(path);
+            this.fs.readdir(metaFolderPath, (err, metaEntries) => {
+              if (err) {
+                console.log(
+                  'Error listing meta directory ' + metaFolderPath + ' - ' + err
+                );
+                resolve(enhancedEntries); // returning results even if any promise fails
+                return;
+              }
 
-            if (metaEntries) {
-              metaEntries.forEach(metaEntryName => {
-                /* if (metaEntryName === AppConfig.metaFolderFile) {
+              if (window.walkCanceled) {
+                resolve(enhancedEntries); // returning results even if walk canceled
+                return;
+              }
+
+              if (metaEntries) {
+                metaEntries.forEach(metaEntryName => {
+                  /* if (metaEntryName === AppConfig.metaFolderFile) {
                   // Read meta folder path
                 } */
 
-                // Reading meta json files with tags and description
-                if (metaEntryName.endsWith(AppConfig.metaFileExt)) {
-                  const fileNameWithoutMetaExt = metaEntryName.substr(
-                    0,
-                    metaEntryName.lastIndexOf(AppConfig.metaFileExt)
-                  );
-                  const origFile = enhancedEntries.find(
-                    result => result.name === fileNameWithoutMetaExt
-                  );
-                  if (origFile) {
-                    const metaFilePath =
-                      metaFolderPath + AppConfig.dirSeparator + metaEntryName;
-                    const metaFileObj = this.fs.readJsonSync(metaFilePath);
-                    if (metaFileObj) {
-                      enhancedEntries.map(enhancedEntry => {
-                        if (enhancedEntry.name === fileNameWithoutMetaExt) {
-                          enhancedEntry.meta = metaFileObj;
-                        }
-                        return true;
-                      });
+                  // Reading meta json files with tags and description
+                  if (metaEntryName.endsWith(AppConfig.metaFileExt)) {
+                    const fileNameWithoutMetaExt = metaEntryName.substr(
+                      0,
+                      metaEntryName.lastIndexOf(AppConfig.metaFileExt)
+                    );
+                    const origFile = enhancedEntries.find(
+                      result => result.name === fileNameWithoutMetaExt
+                    );
+                    if (origFile) {
+                      const metaFilePath =
+                        metaFolderPath + AppConfig.dirSeparator + metaEntryName;
+                      const metaFileObj = this.fs.readJsonSync(metaFilePath);
+                      if (metaFileObj) {
+                        enhancedEntries.map(enhancedEntry => {
+                          if (enhancedEntry.name === fileNameWithoutMetaExt) {
+                            enhancedEntry.meta = metaFileObj;
+                          }
+                          return true;
+                        });
+                      }
                     }
                   }
-                }
 
-                // Finding if thumbnail available
-                if (metaEntryName.endsWith(AppConfig.thumbFileExt)) {
-                  const fileNameWithoutMetaExt = metaEntryName.substr(
-                    0,
-                    metaEntryName.lastIndexOf(AppConfig.thumbFileExt)
-                  );
-                  enhancedEntries.map(enhancedEntry => {
-                    if (enhancedEntry.name === fileNameWithoutMetaExt) {
-                      const thumbFilePath =
-                        metaFolderPath +
-                        AppConfig.dirSeparator +
-                        metaEntryName;
-                      enhancedEntry.thumbPath = thumbFilePath;
-                    }
-                    return true;
-                  });
-                }
+                  // Finding if thumbnail available
+                  if (metaEntryName.endsWith(AppConfig.thumbFileExt)) {
+                    const fileNameWithoutMetaExt = metaEntryName.substr(
+                      0,
+                      metaEntryName.lastIndexOf(AppConfig.thumbFileExt)
+                    );
+                    enhancedEntries.map(enhancedEntry => {
+                      if (enhancedEntry.name === fileNameWithoutMetaExt) {
+                        const thumbFilePath =
+                          metaFolderPath +
+                          AppConfig.dirSeparator +
+                          metaEntryName;
+                        enhancedEntry.thumbPath = thumbFilePath;
+                      }
+                      return true;
+                    });
+                  }
 
-                if (window.walkCanceled) {
-                  resolve(enhancedEntries);
-                }
-              });
-            }
+                  if (window.walkCanceled) {
+                    resolve(enhancedEntries);
+                  }
+                });
+              }
+              resolve(enhancedEntries);
+            });
+          } else {
             resolve(enhancedEntries);
-          });
-        } else {
-          resolve(enhancedEntries);
+          }
         }
-      }
+      });
     });
-  });
 
-  getPropertiesPromise = (path: string): Promise<any> => new Promise(resolve => {
-    /* stats for file:
-     * "dev":41, "mode":33204, "nlink":1, "uid":1000, "gid":1000,  "rdev":0,
-     * "blksize":4096, "ino":2634172, "size":230, "blocks":24,  "atime":"2015-11-24T09:56:41.932Z",
-     * "mtime":"2015-11-23T14:29:29.689Z", "ctime":"2015-11-23T14:29:29.689Z",  "birthtime":"2015-11-23T14:29:29.689Z",
-     * "isFile":true, "path":"/home/somefile.txt" */
-    this.fs.lstat(path, (err, stats) => {
-      if (err) {
-        resolve(false);
-        return;
-      }
+  getPropertiesPromise = (path: string): Promise<any> =>
+    new Promise(resolve => {
+      /* stats for file:
+       * "dev":41, "mode":33204, "nlink":1, "uid":1000, "gid":1000,  "rdev":0,
+       * "blksize":4096, "ino":2634172, "size":230, "blocks":24,  "atime":"2015-11-24T09:56:41.932Z",
+       * "mtime":"2015-11-23T14:29:29.689Z", "ctime":"2015-11-23T14:29:29.689Z",  "birthtime":"2015-11-23T14:29:29.689Z",
+       * "isFile":true, "path":"/home/somefile.txt" */
+      this.fs.lstat(path, (err, stats) => {
+        if (err) {
+          resolve(false);
+          return;
+        }
 
-      if (stats) {
-        resolve({
-          name: path.substring(
-            path.lastIndexOf(AppConfig.dirSeparator) + 1,
-            path.length
-          ),
-          isFile: stats.isFile(),
-          size: stats.size,
-          lmdt: stats.mtime.getTime(),
-          path
-        });
-      }
+        if (stats) {
+          resolve({
+            name: path.substring(
+              path.lastIndexOf(AppConfig.dirSeparator) + 1,
+              path.length
+            ),
+            isFile: stats.isFile(),
+            size: stats.size,
+            lmdt: stats.mtime.getTime(),
+            path
+          });
+        }
+      });
     });
-  });
 
   createDirectoryPromise = (dirPath: string): Promise<any> => {
     console.log('Creating directory: ' + dirPath);
@@ -478,8 +492,12 @@ export default class ElectronIO {
           return;
         }
         // Make newly created .ts folders hidden under Windows
-        if (AppConfig.isWin && !PlatformIO.haveObjectStoreSupport() && dirPath.endsWith('\\' + AppConfig.metaFolder)) {
-          winattr.set(dirPath, { hidden: true }, (err) => {
+        if (
+          AppConfig.isWin &&
+          !PlatformIO.haveObjectStoreSupport() &&
+          dirPath.endsWith('\\' + AppConfig.metaFolder)
+        ) {
+          winattr.set(dirPath, { hidden: true }, err => {
             resolve(dirPath);
             if (err) {
               console.warn('Error setting hidden attr. to dir: ' + dirPath);
@@ -603,96 +621,96 @@ export default class ElectronIO {
   loadTextFilePromise = (
     filePath: string,
     isPreview?: boolean = false
-  ): Promise<string> => new Promise((resolve, reject) => {
-    if (isPreview) {
-      const stream = this.fs.createReadStream(filePath, {
-        start: 0,
-        end: 10000
-      });
+  ): Promise<string> =>
+    new Promise((resolve, reject) => {
+      if (isPreview) {
+        const stream = this.fs.createReadStream(filePath, {
+          start: 0,
+          end: 10000
+        });
 
-      stream.on('error', err => {
-        reject(err);
-      });
+        stream.on('error', err => {
+          reject(err);
+        });
 
-      const chunks = [];
-      stream.on('data', (chunk) => {
-        chunks.push(chunk.toString());
-        // console.log('stream data ' + chunk);
-      });
+        const chunks = [];
+        stream.on('data', chunk => {
+          chunks.push(chunk.toString());
+          // console.log('stream data ' + chunk);
+        });
 
-      stream.on('end', () => {
-        const textContent = chunks.join('');
-        resolve(textContent);
-        // console.log('final output ' + string);
-      });
-    } else {
-      this.fs.readFile(filePath, 'utf8', (error, content) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(content);
-        }
-      });
-    }
-  });
-
-  getFileContentPromise = (
-    fullPath: string,
-    type: string
-  ): Promise<any> => new Promise((resolve, reject) => {
-    let fileURL = fullPath;
-    if (fileURL.indexOf('file://') === -1) {
-      fileURL = 'file://' + fileURL;
-    }
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', fileURL, true);
-    xhr.responseType = type || 'arraybuffer';
-    xhr.onerror = reject;
-
-    xhr.onload = () => {
-      const response = xhr.response || xhr.responseText;
-      if (response) {
-        resolve(response);
+        stream.on('end', () => {
+          const textContent = chunks.join('');
+          resolve(textContent);
+          // console.log('final output ' + string);
+        });
       } else {
-        reject('getFileContentPromise error');
+        this.fs.readFile(filePath, 'utf8', (error, content) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(content);
+          }
+        });
       }
-    };
-    xhr.send();
-  });
+    });
+
+  getFileContentPromise = (fullPath: string, type: string): Promise<any> =>
+    new Promise((resolve, reject) => {
+      let fileURL = fullPath;
+      if (fileURL.indexOf('file://') === -1) {
+        fileURL = 'file://' + fileURL;
+      }
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', fileURL, true);
+      xhr.responseType = type || 'arraybuffer';
+      xhr.onerror = reject;
+
+      xhr.onload = () => {
+        const response = xhr.response || xhr.responseText;
+        if (response) {
+          resolve(response);
+        } else {
+          reject('getFileContentPromise error');
+        }
+      };
+      xhr.send();
+    });
 
   saveFilePromise = (
     filePath: string,
     content: any,
     overwrite: boolean = true
-  ): Promise<any> => new Promise((resolve, reject) => {
-    const fileSystem = this.fs;
-    function saveFile(fPath, tContent, isNewFile) {
-      fileSystem.writeFile(fPath, tContent, 'utf8', error => {
-        if (error) {
-          reject(error);
-          return;
-        }
-        resolve(isNewFile);
-      });
-    }
+  ): Promise<any> =>
+    new Promise((resolve, reject) => {
+      const fileSystem = this.fs;
+      function saveFile(fPath, tContent, isNewFile) {
+        fileSystem.writeFile(fPath, tContent, 'utf8', error => {
+          if (error) {
+            reject(error);
+            return;
+          }
+          resolve(isNewFile);
+        });
+      }
 
-    this.getPropertiesPromise(filePath)
-      .then(entry => {
-        if (entry && entry.isFile && overwrite) {
-          saveFile(filePath, content, false);
-        } else {
+      this.getPropertiesPromise(filePath)
+        .then(entry => {
+          if (entry && entry.isFile && overwrite) {
+            saveFile(filePath, content, false);
+          } else {
+            saveFile(filePath, content, true);
+          }
+          return true;
+        })
+        .catch(error => {
+          // Trying to save as new file
+          console.log(
+            'Getting properties for ' + filePath + ' failed with: ' + error
+          );
           saveFile(filePath, content, true);
-        }
-        return true;
-      })
-      .catch(error => {
-        // Trying to save as new file
-        console.log(
-          'Getting properties for ' + filePath + ' failed with: ' + error
-        );
-        saveFile(filePath, content, true);
-      });
-  });
+        });
+    });
 
   saveTextFilePromise = (
     filePath: string,
@@ -768,17 +786,18 @@ export default class ElectronIO {
     });
   };
 
-  moveToTrash = (files: Array<string>): Promise<any> => new Promise((resolve, reject) => {
-    let result = true;
-    files.forEach(fullPath => {
-      result = this.electron.shell.moveItemToTrash(fullPath);
+  moveToTrash = (files: Array<string>): Promise<any> =>
+    new Promise((resolve, reject) => {
+      let result = true;
+      files.forEach(fullPath => {
+        result = this.electron.shell.moveItemToTrash(fullPath);
+      });
+      if (result) {
+        resolve(true);
+      } else {
+        reject('Moving of at least one file to trash failed.');
+      }
     });
-    if (result) {
-      resolve(true);
-    } else {
-      reject('Moving of at least one file to trash failed.');
-    }
-  });
 
   openDirectory = (dirPath: string): void => {
     this.electron.shell.showItemInFolder(
@@ -794,7 +813,8 @@ export default class ElectronIO {
     this.electron.shell.openItem(filePath);
   };
 
-  openUrl = (url: string): void => { console.log(url)
+  openUrl = (url: string): void => {
+    console.log(url);
     this.electron.shell.openExternalSync(url);
   };
 
@@ -807,7 +827,7 @@ export default class ElectronIO {
         }
       ] */
     };
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       this.remote.dialog.showOpenDialog(options, fileNames => {
         resolve(fileNames);
       });

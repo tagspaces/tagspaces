@@ -26,7 +26,18 @@ import { Pro } from '../pro';
 
 export const FileTypeGroups = {
   any: [''],
-  images: ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'tif', 'tiff', 'ico', 'webp', 'psd'],
+  images: [
+    'jpg',
+    'jpeg',
+    'png',
+    'gif',
+    'bmp',
+    'tif',
+    'tiff',
+    'ico',
+    'webp',
+    'psd'
+  ],
   notes: ['md', 'mdown', 'txt', 'html'],
   documents: ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'odt', 'ods'],
   audio: ['ogg', 'mp3', 'wav', 'wave'],
@@ -36,7 +47,7 @@ export const FileTypeGroups = {
   ebooks: ['epub', 'mobi', 'azw', 'prc', 'azw1', 'azw3', 'azw4', 'azw8', 'azk'],
   folders: ['folders'],
   files: ['files'],
-  untagged: ['untagged'],
+  untagged: ['untagged']
 };
 
 export type SearchQuery = {
@@ -56,7 +67,6 @@ export type SearchQuery = {
   tagPlaceRadius?: number | null,
   maxSearchResults?: number
 };
-
 
 // id, name, isFile, tags, extension, size, lmdt, path
 
@@ -99,22 +109,28 @@ const fuseOptions = {
   tokenize: true,
   maxPatternLength: 32,
   minMatchCharLength: 1,
-  keys: [{
-    name: 'name',
-    weight: 0.4
-  }, {
-    name: 'description',
-    weight: 0.4
-  }, {
-    name: 'textContent',
-    weight: 0.4
-  }, {
-    name: 'tags',
-    weight: 0.3
-  }, {
-    name: 'path', // TODO ignore .ts folder, should not be in the index
-    weight: 0.1
-  }]
+  keys: [
+    {
+      name: 'name',
+      weight: 0.4
+    },
+    {
+      name: 'description',
+      weight: 0.4
+    },
+    {
+      name: 'textContent',
+      weight: 0.4
+    },
+    {
+      name: 'tags',
+      weight: 0.3
+    },
+    {
+      name: 'path', // TODO ignore .ts folder, should not be in the index
+      weight: 0.1
+    }
+  ]
 };
 
 // Constructs the string for the JMESPath search query.  We first filter for all ORTags, then continuously pipe the result in to the
@@ -134,7 +150,7 @@ function constructjmespathQuery(searchQuery: SearchQuery): string {
       searchQuery.tagsOR.forEach(tag => {
         const cleanedTagTitle = tag.title.trim().toLowerCase();
         if (cleanedTagTitle.length > 0) {
-          jmespathQuery += 'title==\'' + cleanedTagTitle + '\' || ';
+          jmespathQuery += "title=='" + cleanedTagTitle + "' || ";
         }
         return true;
       });
@@ -142,37 +158,43 @@ function constructjmespathQuery(searchQuery: SearchQuery): string {
 
     if (ANDtagsExist) {
       if (jmespathQuery.endsWith(' || ')) {
-        jmespathQuery = jmespathQuery.substring(0, jmespathQuery.length - 4) + ']] | [? tags[? ';
+        jmespathQuery =
+          jmespathQuery.substring(0, jmespathQuery.length - 4) +
+          ']] | [? tags[? ';
       } else {
         jmespathQuery += ' tags[? ';
       }
       searchQuery.tagsAND.forEach(tag => {
         const cleanedTagTitle = tag.title.trim().toLowerCase();
         if (cleanedTagTitle.length > 0) {
-          jmespathQuery += 'title==\'' + cleanedTagTitle + '\']] | [? tags[? ';
+          jmespathQuery += "title=='" + cleanedTagTitle + "']] | [? tags[? ";
         }
       });
     }
 
     if (NOTtagsExist) {
       if (jmespathQuery.endsWith(' || ')) {
-        jmespathQuery = jmespathQuery.substring(0, jmespathQuery.length - 4) + ']] | [?!(tags[? ';
+        jmespathQuery =
+          jmespathQuery.substring(0, jmespathQuery.length - 4) +
+          ']] | [?!(tags[? ';
       } else if (jmespathQuery.endsWith('[? tags[? ')) {
-        jmespathQuery = jmespathQuery.substring(0, jmespathQuery.length - 10) + '[?!(tags[? ';
+        jmespathQuery =
+          jmespathQuery.substring(0, jmespathQuery.length - 10) + '[?!(tags[? ';
       } else {
         jmespathQuery += '!(tags[? ';
       }
       searchQuery.tagsNOT.forEach(tag => {
         const cleanedTagTitle = tag.title.trim().toLowerCase();
         if (cleanedTagTitle.length > 0) {
-          jmespathQuery += 'title==\'' + cleanedTagTitle + '\'])] | [?!(tags[? ';
+          jmespathQuery += "title=='" + cleanedTagTitle + "'])] | [?!(tags[? ";
         }
         return true;
       });
     }
 
     if (jmespathQuery.endsWith(' || ')) {
-      jmespathQuery = jmespathQuery.substring(0, jmespathQuery.length - 4) + ']]';
+      jmespathQuery =
+        jmespathQuery.substring(0, jmespathQuery.length - 4) + ']]';
     } else if (jmespathQuery.endsWith(' | [? tags[? ')) {
       jmespathQuery = jmespathQuery.substring(0, jmespathQuery.length - 13);
     } else if (jmespathQuery.endsWith(' | [?!(tags[? ')) {
@@ -180,10 +202,14 @@ function constructjmespathQuery(searchQuery: SearchQuery): string {
     }
   }
 
-
-  const extensionQuery = Pro ? Pro.Search.constructFileTypeQuery(searchQuery) : '';
+  const extensionQuery = Pro
+    ? Pro.Search.constructFileTypeQuery(searchQuery)
+    : '';
   if (extensionQuery.length > 0) {
-    jmespathQuery = (jmespathQuery.length > 0) ? jmespathQuery + ' | ' + extensionQuery : extensionQuery;
+    jmespathQuery =
+      jmespathQuery.length > 0
+        ? jmespathQuery + ' | ' + extensionQuery
+        : extensionQuery;
   }
 
   if (jmespathQuery.length > 0) {
@@ -198,10 +224,10 @@ function prepareIndex(index: Array<Object>) {
   if (Pro && Pro.Search && Pro.Search.prepareIndex) {
     resultIndex = Pro.Search.prepareIndex(index);
   } else {
-    resultIndex = index.map((entry) => {
+    resultIndex = index.map(entry => {
       const tags = [...entry.tags];
       if (tags && tags.length) {
-        tags.map((tag) => {
+        tags.map(tag => {
           tag.title = tag.title.toLowerCase();
           return tag;
         });
@@ -217,55 +243,64 @@ function prepareIndex(index: Array<Object>) {
 }
 
 export default class Search {
-  static searchLocationIndex = (locationContent: Array<Object>, searchQuery: SearchQuery): Promise<Array<Object> | []> => new Promise((resolve) => {
-    console.time('searchtime');
-    const jmespathQuery = constructjmespathQuery(searchQuery);
-    let results = prepareIndex(locationContent);
-    let searched = false;
+  static searchLocationIndex = (
+    locationContent: Array<Object>,
+    searchQuery: SearchQuery
+  ): Promise<Array<Object> | []> =>
+    new Promise(resolve => {
+      console.time('searchtime');
+      const jmespathQuery = constructjmespathQuery(searchQuery);
+      let results = prepareIndex(locationContent);
+      let searched = false;
 
-    // Limiting the search to current folder only (with sub-folders)
-    if (searchQuery.searchBoxing === 'folder') {
-      results = results.filter(entry => entry.path.startsWith(searchQuery.currentDirectory));
-    }
-
-    if (jmespathQuery) {
-      const resultCount = results.length;
-      console.log('jmespath query: ' + jmespathQuery);
-      console.time('jmespath');
-      results = jmespath.search({ index: results }, jmespathQuery);
-      console.timeEnd('jmespath');
-      console.log('jmespath results: ' + results.length);
-      searched = searched || (results.length < resultCount);
-    }
-
-    if (Pro && Pro.Search.filterIndex) {
-      const resultCount = results.length;
-      results = Pro.Search.filterIndex(results, searchQuery);
-      searched = searched || (results.length < resultCount);
-    }
-
-    if (searchQuery.textQuery && searchQuery.textQuery.length > 1) {
-      const resultCount = results.length;
-      console.log('fuse query: ' + searchQuery.textQuery);
-      console.time('fuse');
-      const fuse = new Fuse(results, fuseOptions);
-      results = fuse.search(searchQuery.textQuery);
-      console.timeEnd('fuse');
-      searched = searched || (results.length < resultCount);
-    }
-
-    if (searched) {
-      console.log('Results found: ' + results.length);
-      if (searchQuery.maxSearchResults && results.length >= searchQuery.maxSearchResults) {
-        results = results.slice(0, searchQuery.maxSearchResults);
+      // Limiting the search to current folder only (with sub-folders)
+      if (searchQuery.searchBoxing === 'folder') {
+        results = results.filter(entry =>
+          entry.path.startsWith(searchQuery.currentDirectory)
+        );
       }
-      console.log('Results send: ' + results.length);
+
+      if (jmespathQuery) {
+        const resultCount = results.length;
+        console.log('jmespath query: ' + jmespathQuery);
+        console.time('jmespath');
+        results = jmespath.search({ index: results }, jmespathQuery);
+        console.timeEnd('jmespath');
+        console.log('jmespath results: ' + results.length);
+        searched = searched || results.length < resultCount;
+      }
+
+      if (Pro && Pro.Search.filterIndex) {
+        const resultCount = results.length;
+        results = Pro.Search.filterIndex(results, searchQuery);
+        searched = searched || results.length < resultCount;
+      }
+
+      if (searchQuery.textQuery && searchQuery.textQuery.length > 1) {
+        const resultCount = results.length;
+        console.log('fuse query: ' + searchQuery.textQuery);
+        console.time('fuse');
+        const fuse = new Fuse(results, fuseOptions);
+        results = fuse.search(searchQuery.textQuery);
+        console.timeEnd('fuse');
+        searched = searched || results.length < resultCount;
+      }
+
+      if (searched) {
+        console.log('Results found: ' + results.length);
+        if (
+          searchQuery.maxSearchResults &&
+          results.length >= searchQuery.maxSearchResults
+        ) {
+          results = results.slice(0, searchQuery.maxSearchResults);
+        }
+        console.log('Results send: ' + results.length);
+        console.timeEnd('searchtime');
+        resolve(results);
+        return true;
+      }
+      results = [];
       console.timeEnd('searchtime');
       resolve(results);
-      return true;
-    }
-    results = [];
-    console.timeEnd('searchtime');
-    resolve(results);
-  });
+    });
 }

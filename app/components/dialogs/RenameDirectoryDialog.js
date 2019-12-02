@@ -49,13 +49,18 @@ class RenameDirectoryDialog extends React.Component<Props, State> {
   state = {
     inputError: false,
     disableConfirmButton: true,
-    name: this.props.selectedDirectoryPath ? extractDirectoryName(this.props.selectedDirectoryPath) : '',
+    name: this.props.selectedDirectoryPath
+      ? extractDirectoryName(this.props.selectedDirectoryPath)
+      : ''
   };
 
   handleInputChange = (event: Object) => {
-    this.setState({
-      name: event.target.value
-    }, this.handleValidation);
+    this.setState(
+      {
+        name: event.target.value
+      },
+      this.handleValidation
+    );
   };
 
   handleValidation() {
@@ -75,7 +80,10 @@ class RenameDirectoryDialog extends React.Component<Props, State> {
 
   onConfirm = () => {
     if (!this.state.disableConfirmButton) {
-      this.props.renameDirectory(this.props.selectedDirectoryPath, this.state.name);
+      this.props.renameDirectory(
+        this.props.selectedDirectoryPath,
+        this.state.name
+      );
       this.setState({
         inputError: false,
         disableConfirmButton: true
@@ -85,24 +93,13 @@ class RenameDirectoryDialog extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      open,
-      onClose
-    } = this.props;
+    const { open, onClose } = this.props;
 
     return (
-      <Dialog
-        open={open}
-        onClose={onClose}
-        keepMounted
-        scroll="paper"
-      >
+      <Dialog open={open} onClose={onClose} keepMounted scroll="paper">
         <DialogTitle>{i18n.t('core:renameDirectory')}</DialogTitle>
         <DialogContent>
-          <FormControl
-            fullWidth={true}
-            error={this.state.inputError}
-          >
+          <FormControl fullWidth={true} error={this.state.inputError}>
             <TextField
               fullWidth={true}
               autoFocus
@@ -141,9 +138,12 @@ class RenameDirectoryDialog extends React.Component<Props, State> {
 }
 
 function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators({
-    renameDirectory: AppActions.renameDirectory,
-  }, dispatch);
+  return bindActionCreators(
+    {
+      renameDirectory: AppActions.renameDirectory
+    },
+    dispatch
+  );
 }
 
 export default connect(null, mapActionCreatorsToProps)(RenameDirectoryDialog);

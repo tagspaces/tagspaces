@@ -33,7 +33,7 @@ const boxSource = {
     return {
       path: props.children.props.entryPath
     };
-  },
+  }
 
   /* endDrag(props, monitor) {
     const item = monitor.getItem();
@@ -51,9 +51,14 @@ const boxSource = {
   } */
 };
 
-const FileSourceDnd = (props: Props) => props.connectDragSource(<span>{props.children}</span>);
+const FileSourceDnd = (props: Props) =>
+  props.connectDragSource(<span>{props.children}</span>);
 
-export default DragSource(DragItemTypes.FILE, boxSource, (connect, monitor) => ({
-  connectDragSource: connect.dragSource(),
-  isDragging: monitor.isDragging()
-}))(FileSourceDnd);
+export default DragSource(
+  DragItemTypes.FILE,
+  boxSource,
+  (connect, monitor) => ({
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging()
+  })
+)(FileSourceDnd);

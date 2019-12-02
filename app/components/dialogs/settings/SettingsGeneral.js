@@ -38,8 +38,7 @@ import ColorPickerDialog from '../../dialogs/ColorPickerDialog';
 import TransparentBackground from '../../TransparentBackground';
 
 const styles = theme => ({
-  root: {
-  },
+  root: {},
   listItem: {
     paddingLeft: 0,
     paddingRight: 0
@@ -81,7 +80,7 @@ type State = {
 class SettingsGeneral extends React.Component<Props, State> {
   state = {
     displayColorPicker: false,
-    displayTextColorPicker: false,
+    displayTextColorPicker: false
   };
 
   toggleDefaultTagBackgroundColorPicker = () => {
@@ -200,11 +199,15 @@ class SettingsGeneral extends React.Component<Props, State> {
                 backgroundColor: this.props.settings.tagBackgroundColor
               }}
               onClick={this.toggleDefaultTagBackgroundColorPicker}
-            >&nbsp;</Button>
+            >
+              &nbsp;
+            </Button>
           </TransparentBackground>
           <ColorPickerDialog
             open={this.state.displayColorPicker}
-            setColor={(color) => { this.props.setTagColor(color); }}
+            setColor={color => {
+              this.props.setTagColor(color);
+            }}
             onClose={this.toggleDefaultTagBackgroundColorPicker}
             color={this.props.settings.tagBackgroundColor}
           />
@@ -218,11 +221,15 @@ class SettingsGeneral extends React.Component<Props, State> {
               size="small"
               style={{ backgroundColor: this.props.settings.tagTextColor }}
               onClick={this.toggleDefaultTagTextColorPicker}
-            >&nbsp;</Button>
+            >
+              &nbsp;
+            </Button>
           </TransparentBackground>
           <ColorPickerDialog
             open={this.state.displayTextColorPicker}
-            setColor={(color) => { this.props.setTagTextColor(color); }}
+            setColor={color => {
+              this.props.setTagTextColor(color);
+            }}
             onClose={this.toggleDefaultTagTextColorPicker}
             color={this.props.settings.tagTextColor}
           />
@@ -245,17 +252,19 @@ class SettingsGeneral extends React.Component<Props, State> {
             checked={this.props.settings.showUnixHiddenEntries}
           />
         </ListItem>
-        {<ListItem className={classes.listItem}>
-          <ListItemText primary="Mobile Mode (experimental)" />
-          <Switch
-            data-tid="settingsSetDesktopMode"
-            disabled={!(typeof window.ExtDisplayMode === 'undefined')}
-            onClick={() =>
-              this.props.setDesktopMode(!this.props.settings.desktopMode)
-            }
-            checked={!this.props.settings.desktopMode}
-          />
-        </ListItem>}
+        {
+          <ListItem className={classes.listItem}>
+            <ListItemText primary="Mobile Mode (experimental)" />
+            <Switch
+              data-tid="settingsSetDesktopMode"
+              disabled={!(typeof window.ExtDisplayMode === 'undefined')}
+              onClick={() =>
+                this.props.setDesktopMode(!this.props.settings.desktopMode)
+              }
+              checked={!this.props.settings.desktopMode}
+            />
+          </ListItem>
+        }
         {/* <ListItem className={classes.listItem}>
           <ListItemText style={{ maxWidth: '300px' }} primary={i18n.t('core:tagDelimiterChoose')} />
           <Select
@@ -284,7 +293,7 @@ class SettingsGeneral extends React.Component<Props, State> {
             onChange={this.handleMaxSearchResult}
           />
         </ListItem>
-        { /* <ListItem className={classes.listItem}>
+        {/* <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:coloredFileExtensionsEnabled')} />
           <Switch
             data-tid="settingsSetColoredFileExtension"
@@ -295,8 +304,8 @@ class SettingsGeneral extends React.Component<Props, State> {
             }
             checked={this.props.settings.coloredFileExtension}
           />
-        </ListItem> */ }
-        { /* <ListItem className={classes.listItem}>
+        </ListItem> */}
+        {/* <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:loadLocationMetaData')} />
           <Switch
             data-tid="settingsSetLoadsLocationMetaData"
@@ -307,7 +316,7 @@ class SettingsGeneral extends React.Component<Props, State> {
             }
             checked={this.props.settings.loadsLocationMetaData}
           />
-        </ListItem> */ }
+        </ListItem> */}
       </List>
     );
   }
@@ -344,6 +353,7 @@ function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(SettingsActions, dispatch);
 }
 
-export default connect(mapStateToProps, mapActionCreatorsToProps)(
-  withStyles(styles)(SettingsGeneral)
-);
+export default connect(
+  mapStateToProps,
+  mapActionCreatorsToProps
+)(withStyles(styles)(SettingsGeneral));

@@ -34,7 +34,7 @@ class AppOnboarding extends Component {
     }, 1000);
   } */
 
-  callback = (data) => {
+  callback = data => {
     const { action, index, type } = data;
   };
 
@@ -44,21 +44,15 @@ class AppOnboarding extends Component {
       {
         target: '[data-tid=createNewLocation]',
         content: i18n.t('welcomeContent'),
-        placement: 'bottom',
+        placement: 'bottom'
       },
       {
         target: '[data-tid=aboutTagSpaces]',
         content: 'Hello world',
-        placement: 'bottom',
-      },
+        placement: 'bottom'
+      }
     ];
-    return (
-      <Joyride
-        steps={steps}
-        run={run}
-        callback={this.callback}
-      />
-    );
+    return <Joyride steps={steps} run={run} callback={this.callback} />;
   }
 }
 

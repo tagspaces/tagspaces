@@ -66,20 +66,16 @@ type Props = {
 const OnboardingDialog = (props: Props) => {
   const [activeStep, setActiveStep] = useState(0);
   const [isPersistTagsInSidecar, setIsPersistTagInSidecar] = useState(false);
-  const {
-    fullScreen,
-    open,
-    onClose
-  } = props;
+  const { fullScreen, open, onClose } = props;
 
   let maxSteps = 5;
 
   function handleNext() {
-    setActiveStep(activeStep => activeStep + 1)
+    setActiveStep(activeStep => activeStep + 1);
   }
 
   function handleBack() {
-    setActiveStep(activeStep => activeStep - 1)
+    setActiveStep(activeStep => activeStep - 1);
   }
 
   function handleStepChange(activeStep) {
@@ -124,15 +120,13 @@ const OnboardingDialog = (props: Props) => {
             <ToggleButtonGroup
               value={props.currentTheme}
               exclusive
-              onChange={(event, theme) => { props.setCurrentTheme(theme); }}
+              onChange={(event, theme) => {
+                props.setCurrentTheme(theme);
+              }}
               style={{ boxShadow: 'none' }}
             >
-              <ToggleButton value="light">
-                Light
-              </ToggleButton>
-              <ToggleButton value="dark">
-                Dark
-              </ToggleButton>
+              <ToggleButton value="light">Light</ToggleButton>
+              <ToggleButton value="dark">Dark</ToggleButton>
             </ToggleButtonGroup>
           </div>
           <div
@@ -149,14 +143,22 @@ const OnboardingDialog = (props: Props) => {
           </div>
           <div
             style={{
-
               textAlign: 'center'
             }}
           >
-            <Typography variant="h5">Choose your the default tagging method for files</Typography>
+            <Typography variant="h5">
+              Choose your the default tagging method for files
+            </Typography>
             <Typography variant="h5">&nbsp;</Typography>
-            <Typography variant="body">Core functionality of the application the ability to add tags to files and folders. Here you can choose how tags will applied on files.</Typography>
-            <FormControl style={{ marginTop: 20, marginBottom: 20 }} component="fieldset">
+            <Typography variant="body">
+              Core functionality of the application the ability to add tags to
+              files and folders. Here you can choose how tags will applied on
+              files.
+            </Typography>
+            <FormControl
+              style={{ marginTop: 20, marginBottom: 20 }}
+              component="fieldset"
+            >
               <RadioGroup
                 aria-label="Gender"
                 name="isPersistTagsInSidecar"
@@ -165,11 +167,12 @@ const OnboardingDialog = (props: Props) => {
               >
                 <FormControlLabel
                   value="false"
-                  control={
-                    <Radio checked={!props.isPersistTagsInSidecar} />
-                  }
+                  control={<Radio checked={!props.isPersistTagsInSidecar} />}
                   label={
-                    <Typography variant="subtitle1" style={{ textAlign: 'left' }}>
+                    <Typography
+                      variant="subtitle1"
+                      style={{ textAlign: 'left' }}
+                    >
                       Use the name of file for saving the tags - Tagging the
                       file <strong>image.jpg</strong> with a tag{' '}
                       <strong>sunset</strong> will rename it to{' '}
@@ -181,16 +184,18 @@ const OnboardingDialog = (props: Props) => {
                 <FormControlLabel
                   style={{ marginTop: 20 }}
                   value="true"
-                  control={
-                    <Radio checked={props.isPersistTagsInSidecar} />
-                  }
+                  control={<Radio checked={props.isPersistTagsInSidecar} />}
                   label={
-                    <Typography variant="subtitle1" style={{ textAlign: 'left' }}>
+                    <Typography
+                      variant="subtitle1"
+                      style={{ textAlign: 'left' }}
+                    >
                       Use sidecar file for saving the tags - Tagging the file{' '}
                       <strong>image.jpg</strong> with a tag{' '}
                       <strong>sunset</strong> will save this tag in an
-                      additional sidecar file called <strong>image.jpg.json</strong>{' '}
-                      located in a sub folder with the name <strong>.ts</strong>
+                      additional sidecar file called{' '}
+                      <strong>image.jpg.json</strong> located in a sub folder
+                      with the name <strong>.ts</strong>
                     </Typography>
                   }
                 />
@@ -201,21 +206,31 @@ const OnboardingDialog = (props: Props) => {
                 />
               </RadioGroup>
             </FormControl>
-            <Typography variant="body">You can always revise you decision and change the tagging method. But tags already tagged by  renaming the files will stay renamed and the created sidecar file containing tags will stay.</Typography>
+            <Typography variant="body">
+              You can always revise you decision and change the tagging method.
+              But tags already tagged by renaming the files will stay renamed
+              and the created sidecar file containing tags will stay.
+            </Typography>
           </div>
           <div
             style={{
               textAlign: 'center'
             }}
           >
-            <Typography variant="h5">Collect web content in Chrome and Firefox</Typography>
+            <Typography variant="h5">
+              Collect web content in Chrome and Firefox
+            </Typography>
             <img
               style={{ maxHeight: 300, marginTop: 15 }}
               src={BrowserExtension}
               alt=""
             />
-            <Typography variant="h6">We have a web clipper extension for your browser.</Typography>
-            <Typography variant="h6">It is open source and available for free on the official stores.</Typography>
+            <Typography variant="h6">
+              We have a web clipper extension for your browser.
+            </Typography>
+            <Typography variant="h6">
+              It is open source and available for free on the official stores.
+            </Typography>
             <Button
               style={{ marginTop: 20 }}
               onClick={() => {
@@ -251,7 +266,7 @@ const OnboardingDialog = (props: Props) => {
           position="static"
           activeStep={activeStep}
           nextButton={
-            (activeStep === maxSteps - 1) ? (
+            activeStep === maxSteps - 1 ? (
               <Button
                 size="small"
                 onClick={props.onClose}
@@ -259,14 +274,17 @@ const OnboardingDialog = (props: Props) => {
                 color="primary"
                 style={{ marginLeft: 5 }}
                 data-tid="startTagSpacesAfterOnboarding"
-              >Start using TagSpaces
+              >
+                Start using TagSpaces
               </Button>
             ) : (
               <Button
                 size="small"
                 onClick={handleNext}
                 data-tid="nextStepOnboarding"
-              >{i18n.t('core:next')}</Button>
+              >
+                {i18n.t('core:next')}
+              </Button>
             )
           }
           backButton={
@@ -274,7 +292,9 @@ const OnboardingDialog = (props: Props) => {
               size="small"
               onClick={handleBack}
               disabled={activeStep === 0}
-            >{i18n.t('core:prev')}</Button>
+            >
+              {i18n.t('core:prev')}
+            </Button>
           }
         />
       </DialogActions>

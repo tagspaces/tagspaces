@@ -49,7 +49,7 @@ class CreateTagsDialog extends React.Component<Props, State> {
     inputError: false,
     disableConfirmButton: true,
     open: false,
-    tagTitle: '',
+    tagTitle: ''
   };
 
   handleInputChange = (event: Object) => {
@@ -57,9 +57,12 @@ class CreateTagsDialog extends React.Component<Props, State> {
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
 
-    this.setState({
-      [name]: value
-    }, this.handleValidation);
+    this.setState(
+      {
+        [name]: value
+      },
+      this.handleValidation
+    );
   };
 
   handleValidation() {
@@ -74,17 +77,16 @@ class CreateTagsDialog extends React.Component<Props, State> {
   onConfirm = () => {
     if (!this.state.disableConfirmButton) {
       this.setState({ open: false, disableConfirmButton: true });
-      this.props.addTag(this.state.tagTitle, this.props.selectedTagGroupEntry.uuid);
+      this.props.addTag(
+        this.state.tagTitle,
+        this.props.selectedTagGroupEntry.uuid
+      );
       this.props.onClose();
     }
   };
 
   render() {
-    const {
-      fullScreen,
-      open,
-      onClose
-    } = this.props;
+    const { fullScreen, open, onClose } = this.props;
 
     return (
       <Dialog
@@ -96,10 +98,7 @@ class CreateTagsDialog extends React.Component<Props, State> {
       >
         <DialogTitle>{i18n.t('core:addTagsToGroupTitle')}</DialogTitle>
         <DialogContent style={{ minWidth: 400 }}>
-          <FormControl
-            fullWidth={true}
-            error={this.state.inputError}
-          >
+          <FormControl fullWidth={true} error={this.state.inputError}>
             <TextField
               error={this.state.inputError}
               name="tagTitle"
@@ -110,14 +109,13 @@ class CreateTagsDialog extends React.Component<Props, State> {
               data-tid="addTagsInput"
               fullWidth={true}
             />
-            {this.state.inputError && <FormHelperText>{i18n.t('core:tagTitleHelper')}</FormHelperText>}
+            {this.state.inputError && (
+              <FormHelperText>{i18n.t('core:tagTitleHelper')}</FormHelperText>
+            )}
           </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button
-            onClick={this.props.onClose}
-            color="primary"
-          >
+          <Button onClick={this.props.onClose} color="primary">
             {i18n.t('core:cancel')}
           </Button>
           <Button

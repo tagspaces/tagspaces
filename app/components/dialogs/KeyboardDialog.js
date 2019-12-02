@@ -42,7 +42,7 @@ const styles = theme => ({
     font: 'Console',
     fontFamily: 'monospace',
     padding: '5px',
-    borderRadius: '5px',
+    borderRadius: '5px'
   }
 });
 
@@ -65,16 +65,20 @@ const KeyboardDialog = (props: Props) => {
       scroll="paper"
     >
       <DialogTitle>{i18n.t('core:shortcutKeys')}</DialogTitle>
-      <DialogContent className={props.classes.root} data-tid="keyboardShortCutsDialog">
+      <DialogContent
+        className={props.classes.root}
+        data-tid="keyboardShortCutsDialog"
+      >
         <List dense={false}>
-          {props.keyBindings && Object.keys(props.keyBindings).map((shortcutKey) => (
-            <ListItem key={shortcutKey}>
-              <ListItemText primary={i18n.t('core:' + shortcutKey)} />
-              <ListItemSecondaryAction className={props.classes.shortcutKey}>
-                {props.keyBindings[shortcutKey]}
-              </ListItemSecondaryAction>
-            </ListItem>
-          ))}
+          {props.keyBindings &&
+            Object.keys(props.keyBindings).map(shortcutKey => (
+              <ListItem key={shortcutKey}>
+                <ListItemText primary={i18n.t('core:' + shortcutKey)} />
+                <ListItemSecondaryAction className={props.classes.shortcutKey}>
+                  {props.keyBindings[shortcutKey]}
+                </ListItemSecondaryAction>
+              </ListItem>
+            ))}
         </List>
       </DialogContent>
       <DialogActions>
@@ -92,7 +96,7 @@ const KeyboardDialog = (props: Props) => {
 
 function mapStateToProps(state) {
   return {
-    keyBindings: getKeyBindingObject(state),
+    keyBindings: getKeyBindingObject(state)
   };
 }
 

@@ -15,23 +15,91 @@ const extensionDir = 'extensions';
 const extensionBranch = 'master';
 
 const extensionList = [
-  { package: '@tagspaces/document-viewer', path: 'viewerDocument', url: 'https://github.com/tagspaces/viewerDocument' },
-  { package: '@tagspaces/pdf-viewer', path: 'viewerPDF', url: 'https://github.com/tagspaces/viewerPDF' },
-  { package: '@tagspaces/image-viewer', path: 'viewerImage', url: 'https://github.com/tagspaces/viewerImage' },
-  { package: '@tagspaces/html-viewer', path: 'viewerHTML', url: 'https://github.com/tagspaces/viewerHTML' },
-  { package: '@tagspaces/md-viewer', path: 'viewerMD', url: 'https://github.com/tagspaces/viewerMD' },
-  { package: '@tagspaces/url-viewer', path: 'viewerURL', url: 'https://github.com/tagspaces/viewerURL' },
-  { package: '@tagspaces/media-player', path: 'viewerAudioVideo', url: 'https://github.com/tagspaces/viewerAudioVideo' },
-  { package: '@tagspaces/plain-viewer', path: 'viewerBrowser', url: 'https://github.com/tagspaces/viewerBrowser' },
-  { package: '@tagspaces/mhtml-viewer', path: 'viewerMHTML', url: 'https://github.com/tagspaces/viewerMHTML' },
-  { package: '@tagspaces/rtf-viewer', path: 'viewerRTF', url: 'https://github.com/tagspaces/viewerRTF' },
-  { package: '@tagspaces/text-viewer', path: 'viewerText', url: 'https://github.com/tagspaces/viewerText' },
-  { package: '@tagspaces/archive-viewer', path: 'viewerZIP', url: 'https://github.com/tagspaces/viewerZIP' },
-  { package: '@tagspaces/ebook-viewer', path: 'viewerEPUB', url: 'https://github.com/tagspaces/viewerEPUB' },
-  { package: '@tagspaces/text-editor', path: 'editorText', url: 'https://github.com/tagspaces/editorText' },
-  { package: '@tagspaces/json-editor', path: 'editorJSON', url: 'https://github.com/tagspaces/editorJSON' },
-  { package: '@tagspaces/html-editor', path: 'editorHTML', url: 'https://github.com/tagspaces/editorHTML' },
-  { package: '@tagspaces/legacy-ext', path: 'extCommons', url: 'https://github.com/tagspaces/extCommons' },
+  {
+    package: '@tagspaces/document-viewer',
+    path: 'viewerDocument',
+    url: 'https://github.com/tagspaces/viewerDocument'
+  },
+  {
+    package: '@tagspaces/pdf-viewer',
+    path: 'viewerPDF',
+    url: 'https://github.com/tagspaces/viewerPDF'
+  },
+  {
+    package: '@tagspaces/image-viewer',
+    path: 'viewerImage',
+    url: 'https://github.com/tagspaces/viewerImage'
+  },
+  {
+    package: '@tagspaces/html-viewer',
+    path: 'viewerHTML',
+    url: 'https://github.com/tagspaces/viewerHTML'
+  },
+  {
+    package: '@tagspaces/md-viewer',
+    path: 'viewerMD',
+    url: 'https://github.com/tagspaces/viewerMD'
+  },
+  {
+    package: '@tagspaces/url-viewer',
+    path: 'viewerURL',
+    url: 'https://github.com/tagspaces/viewerURL'
+  },
+  {
+    package: '@tagspaces/media-player',
+    path: 'viewerAudioVideo',
+    url: 'https://github.com/tagspaces/viewerAudioVideo'
+  },
+  {
+    package: '@tagspaces/plain-viewer',
+    path: 'viewerBrowser',
+    url: 'https://github.com/tagspaces/viewerBrowser'
+  },
+  {
+    package: '@tagspaces/mhtml-viewer',
+    path: 'viewerMHTML',
+    url: 'https://github.com/tagspaces/viewerMHTML'
+  },
+  {
+    package: '@tagspaces/rtf-viewer',
+    path: 'viewerRTF',
+    url: 'https://github.com/tagspaces/viewerRTF'
+  },
+  {
+    package: '@tagspaces/text-viewer',
+    path: 'viewerText',
+    url: 'https://github.com/tagspaces/viewerText'
+  },
+  {
+    package: '@tagspaces/archive-viewer',
+    path: 'viewerZIP',
+    url: 'https://github.com/tagspaces/viewerZIP'
+  },
+  {
+    package: '@tagspaces/ebook-viewer',
+    path: 'viewerEPUB',
+    url: 'https://github.com/tagspaces/viewerEPUB'
+  },
+  {
+    package: '@tagspaces/text-editor',
+    path: 'editorText',
+    url: 'https://github.com/tagspaces/editorText'
+  },
+  {
+    package: '@tagspaces/json-editor',
+    path: 'editorJSON',
+    url: 'https://github.com/tagspaces/editorJSON'
+  },
+  {
+    package: '@tagspaces/html-editor',
+    path: 'editorHTML',
+    url: 'https://github.com/tagspaces/editorHTML'
+  },
+  {
+    package: '@tagspaces/legacy-ext',
+    path: 'extCommons',
+    url: 'https://github.com/tagspaces/extCommons'
+  }
 ];
 
 sh.rm('-rf', '~/.config/yarn/link/@tagspaces');
@@ -42,7 +110,7 @@ if (!sh.test('-d', extensionDir)) {
 
 sh.cd(extensionDir);
 
-extensionList.forEach((extension) => {
+extensionList.forEach(extension => {
   if (sh.test('-d', extension.path)) {
     sh.cd(extension.path);
     sh.exec('git checkout ' + extensionBranch);
@@ -57,7 +125,7 @@ extensionList.forEach((extension) => {
 });
 
 sh.cd('../app');
-extensionList.forEach((extension) => {
+extensionList.forEach(extension => {
   sh.exec('yarn link ' + extension.package);
 });
 sh.cd('..');

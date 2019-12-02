@@ -41,7 +41,7 @@ const styles = {
     height: '100%',
     overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
     marginBottom: 30
-  },
+  }
 };
 
 type Props = {
@@ -90,7 +90,10 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
             selected: true
           });
         });
-        this.setState({ tagGroupList, selectedAll: true }, this.handleValidation);
+        this.setState(
+          { tagGroupList, selectedAll: true },
+          this.handleValidation
+        );
       }
     }
   };
@@ -110,7 +113,10 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
       });
       return true;
     });
-    this.setState({ tagGroupList, selectedAll: !this.state.selectedAll }, this.handleValidation);
+    this.setState(
+      { tagGroupList, selectedAll: !this.state.selectedAll },
+      this.handleValidation
+    );
   };
 
   handleChange = name => (event: Object, checked: boolean) => {
@@ -147,7 +153,7 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
     const { showNotification } = this.props;
     const groupList = [];
     const selectedTagGroup = this.state.tagGroupList;
-    selectedTagGroup.map((tagGroup) => {
+    selectedTagGroup.map(tagGroup => {
       if (tagGroup.selected) {
         groupList.push({
           uuid: tagGroup.uuid || tagGroup.key,
@@ -184,7 +190,9 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
                 <Checkbox
                   id={tagGroup.uuid || tagGroup.key}
                   checked={tagGroup.selected}
-                  onClick={e => this.handleTagGroup(e, tagGroup.selected, index)}
+                  onClick={e =>
+                    this.handleTagGroup(e, tagGroup.selected, index)
+                  }
                   onChange={e => this.handleChange(e)}
                   value={tagGroup.title}
                   name={tagGroup.title}
@@ -195,12 +203,10 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
           </FormGroup>
         </FormControl>
         <TagGroupContainer taggroup={tagGroup}>
-          {tagGroup.children && tagGroup.children.map(tag => (
-            <TagContainer
-              tag={tag}
-              tagMode="display"
-            />
-          ))}
+          {tagGroup.children &&
+            tagGroup.children.map(tag => (
+              <TagContainer tag={tag} tagMode="display" />
+            ))}
         </TagGroupContainer>
       </div>
     );
@@ -208,18 +214,15 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
 
   renderTitle = () => {
     if (this.props.dialogModeImport) {
-      return (<DialogTitle>{i18n.t('core:importGroupTagsTitle')}</DialogTitle>);
+      return <DialogTitle>{i18n.t('core:importGroupTagsTitle')}</DialogTitle>;
     }
-    return (<DialogTitle>{i18n.t('core:exportGroupTagsTitle')}</DialogTitle>);
+    return <DialogTitle>{i18n.t('core:exportGroupTagsTitle')}</DialogTitle>;
   };
 
   renderContent = () => {
     return (
       <DialogContent className={this.props.classes.root}>
-        <Button
-          color="primary"
-          onClick={this.handleToggleSelectAll}
-        >
+        <Button color="primary" onClick={this.handleToggleSelectAll}>
           {i18n.t('core:selectAllTagGroups')}
         </Button>
         <FormControl fullWidth={true}>
@@ -231,10 +234,7 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
 
   renderActions = () => (
     <DialogActions>
-      <Button
-        onClick={this.props.onClose}
-        color="primary"
-      >
+      <Button onClick={this.props.onClose} color="primary">
         {i18n.t('core:cancel')}
       </Button>
       <Button
@@ -243,7 +243,7 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
         data-tid="confirmImportExport"
         color="primary"
       >
-        { this.props.dialogModeImport ? 'Import' : 'Export' }
+        {this.props.dialogModeImport ? 'Import' : 'Export'}
       </Button>
     </DialogActions>
   );
@@ -265,4 +265,6 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(withMobileDialog()(ImportExportTagGroupsDialog));
+export default withStyles(styles)(
+  withMobileDialog()(ImportExportTagGroupsDialog)
+);

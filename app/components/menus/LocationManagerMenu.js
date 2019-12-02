@@ -28,36 +28,31 @@ import AppConfig from '../../config';
 
 type Props = {
   classes: Object,
-	open: boolean,
-	anchorEl: Object,
-	onClose: () => void,
-	openURLExternally: (url: string) => void,
+  open: boolean,
+  anchorEl: Object,
+  onClose: () => void,
+  openURLExternally: (url: string) => void
 };
 
 const LocationManagerMenu = (props: Props) => {
-
-	return (
-		<div style={{ overflowY: 'hidden !important' }}>
-			<Menu
-				anchorEl={props.anchorEl}
-				open={props.open}
-				onClose={props.onClose}
-			>
-				<MenuItem
-					data-tid="locationManagerMenu"
-					onClick={() => {
-						props.onClose();
-						props.openURLExternally(AppConfig.documentationLinks.locations)
-					}}
-				>
-					<ListItemIcon>
-						<HelpIcon />
-					</ListItemIcon>
-					<ListItemText primary={i18n.t('core:help')} />
-				</MenuItem>
-			</Menu>
-		</div>
-	);
-};				
+  return (
+    <div style={{ overflowY: 'hidden !important' }}>
+      <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
+        <MenuItem
+          data-tid="locationManagerMenu"
+          onClick={() => {
+            props.onClose();
+            props.openURLExternally(AppConfig.documentationLinks.locations);
+          }}
+        >
+          <ListItemIcon>
+            <HelpIcon />
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:help')} />
+        </MenuItem>
+      </Menu>
+    </div>
+  );
+};
 
 export default LocationManagerMenu;

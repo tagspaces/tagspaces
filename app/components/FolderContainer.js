@@ -44,15 +44,16 @@ import {
   getCurrentLocationPath
 } from '../reducers/app';
 import TaggingActions from '../reducers/tagging-actions';
-import {
-  normalizePath,
-  extractShortDirectoryName
-} from '../utils/paths';
+import { normalizePath, extractShortDirectoryName } from '../utils/paths';
 import PlatformIO from '../services/platform-io';
 import LoadingLazy from '../components/LoadingLazy';
 import { Pro } from '../pro';
 
-const GridPerspective = React.lazy(() => import(/* webpackChunkName: "GridPerspective" */ '../perspectives/grid-perspective/'));
+const GridPerspective = React.lazy(() =>
+  import(
+    /* webpackChunkName: "GridPerspective" */ '../perspectives/grid-perspective/'
+  )
+);
 const GridPerspectiveAsync = props => (
   <React.Suspense fallback={<LoadingLazy />}>
     <GridPerspective {...props} />
@@ -61,7 +62,7 @@ const GridPerspectiveAsync = props => (
 
 let GalleryPerspective = React.Fragment;
 if (Pro && Pro.Perspectives && Pro.Perspectives.GalleryPerspective) {
-// GalleryPerspective = React.lazy(() => import(/* webpackChunkName: "GalleryPerspective" */ '../node_modules/@tagspaces/pro/modules/perspectives/gallery'));
+  // GalleryPerspective = React.lazy(() => import(/* webpackChunkName: "GalleryPerspective" */ '../node_modules/@tagspaces/pro/modules/perspectives/gallery'));
   GalleryPerspective = Pro.Perspectives.GalleryPerspective;
 }
 const GalleryPerspectiveAsync = props => (
@@ -72,7 +73,7 @@ const GalleryPerspectiveAsync = props => (
 
 let MapiquePerspective = React.Fragment;
 if (Pro && Pro.Perspectives && Pro.Perspectives.MapiquePerspective) {
-// MapiquePerspective = React.lazy(() => import(/* webpackChunkName: "MapiquePerspective" */ '../node_modules/@tagspaces/pro/modules/perspectives/mapique'));
+  // MapiquePerspective = React.lazy(() => import(/* webpackChunkName: "MapiquePerspective" */ '../node_modules/@tagspaces/pro/modules/perspectives/mapique'));
   MapiquePerspective = Pro.Perspectives.MapiquePerspective;
 }
 const MapiquePerspectiveAsync = props => (
@@ -83,7 +84,7 @@ const MapiquePerspectiveAsync = props => (
 
 let TreeVizPerspective = React.Fragment;
 if (Pro && Pro.Perspectives && Pro.Perspectives.TreeVizPerspective) {
-// TreeVizPerspective = React.lazy(() => import(/* webpackChunkName: "TreeVizPerspective" */ '../node_modules/@tagspaces/pro/modules/perspectives/treeviz'));
+  // TreeVizPerspective = React.lazy(() => import(/* webpackChunkName: "TreeVizPerspective" */ '../node_modules/@tagspaces/pro/modules/perspectives/treeviz'));
   TreeVizPerspective = Pro.Perspectives.TreeVizPerspective;
 }
 const TreeVizPerspectiveAsync = props => (
@@ -92,7 +93,9 @@ const TreeVizPerspectiveAsync = props => (
   </React.Suspense>
 );
 
-const WelcomePanel = React.lazy(() => import(/* webpackChunkName: "WelcomePanel" */ './WelcomePanel'));
+const WelcomePanel = React.lazy(() =>
+  import(/* webpackChunkName: "WelcomePanel" */ './WelcomePanel')
+);
 const WelcomePanelAsync = props => (
   <React.Suspense fallback={<LoadingLazy />}>
     <WelcomePanel {...props} />
@@ -103,9 +106,15 @@ const CounterBadge = withStyles(theme => ({
   badge: {
     top: '50%',
     right: -15,
-    color: theme.palette.type === 'light' ? theme.palette.grey[900] : theme.palette.grey[200],
-    backgroundColor: theme.palette.type === 'light' ? theme.palette.grey[200] : theme.palette.grey[900]
-  },
+    color:
+      theme.palette.type === 'light'
+        ? theme.palette.grey[900]
+        : theme.palette.grey[200],
+    backgroundColor:
+      theme.palette.type === 'light'
+        ? theme.palette.grey[200]
+        : theme.palette.grey[900]
+  }
 }))(Badge);
 
 const styles = theme => ({
@@ -124,7 +133,7 @@ const styles = theme => ({
     paddingRight: 5,
     paddingTop: 5,
     display: 'flex',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   topPanel: {
     height: 50,
@@ -219,21 +228,37 @@ class FolderContainer extends React.Component<Props, State> {
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.currentDirectoryPath && prevState.currentPath !== nextProps.currentDirectoryPath) {
+    if (
+      nextProps.currentDirectoryPath &&
+      prevState.currentPath !== nextProps.currentDirectoryPath
+    ) {
       let currentLocationPath = '';
       if (nextProps.currentLocationPath) {
         currentLocationPath = nextProps.currentLocationPath;
       }
       // Make the path unix like ending always with /
       const addSlash = PlatformIO.haveObjectStoreSupport() ? '//' : '/';
-      let normalizedCurrentPath = addSlash + normalizePath(nextProps.currentDirectoryPath.split('\\').join('/'));
-      const normalizedCurrentLocationPath = addSlash + normalizePath(currentLocationPath.split('\\').join('/'));
+      let normalizedCurrentPath =
+        addSlash +
+        normalizePath(nextProps.currentDirectoryPath.split('\\').join('/'));
+      const normalizedCurrentLocationPath =
+        addSlash + normalizePath(currentLocationPath.split('\\').join('/'));
       // console.log('Current path : ' + normalizedCurrentPath);
       // console.log('Current location path : ' + normalizedCurrentLocationPath);
       let pathParts = [];
-      while (normalizedCurrentPath.lastIndexOf('/') > 0 && normalizedCurrentPath.startsWith(normalizedCurrentLocationPath)) {
-        pathParts.push(normalizedCurrentPath.substring(PlatformIO.haveObjectStoreSupport() ? 2 : 1));
-        normalizedCurrentPath = normalizedCurrentPath.substring(0, normalizedCurrentPath.lastIndexOf('/'));
+      while (
+        normalizedCurrentPath.lastIndexOf('/') > 0 &&
+        normalizedCurrentPath.startsWith(normalizedCurrentLocationPath)
+      ) {
+        pathParts.push(
+          normalizedCurrentPath.substring(
+            PlatformIO.haveObjectStoreSupport() ? 2 : 1
+          )
+        );
+        normalizedCurrentPath = normalizedCurrentPath.substring(
+          0,
+          normalizedCurrentPath.lastIndexOf('/')
+        );
       }
       // console.log('Path parts : ' + JSON.stringify(pathParts));
       if (pathParts.length >= 1) {
@@ -274,7 +299,7 @@ class FolderContainer extends React.Component<Props, State> {
     this.setState({
       currentPerspective: perspectiveId || 'default'
     });
-  }
+  };
 
   togglePerspectiveChooserClose = (event?: Object) => {
     this.setState({
@@ -284,10 +309,11 @@ class FolderContainer extends React.Component<Props, State> {
   };
 
   renderPerspective() {
-    if (!this.props.currentDirectoryPath || this.props.currentDirectoryPath.length < 2) {
-      return (
-        <WelcomePanelAsync />
-      );
+    if (
+      !this.props.currentDirectoryPath ||
+      this.props.currentDirectoryPath.length < 2
+    ) {
+      return <WelcomePanelAsync />;
     } else if (this.state.currentPerspective === 'gallery') {
       return (
         <GalleryPerspectiveAsync
@@ -352,10 +378,16 @@ class FolderContainer extends React.Component<Props, State> {
       isDesktopMode,
       loadParentDirectoryContent
     } = this.props;
-    const normalizedCurrentDirPath = normalizePath(currentDirectoryPath.split('\\').join('/'));
+    const normalizedCurrentDirPath = normalizePath(
+      currentDirectoryPath.split('\\').join('/')
+    );
     let searchResultCounterText = searchResultCount + ' ' + i18n.t('entries');
     if (searchResultCount >= maxSearchResults) {
-      searchResultCounterText = 'More than ' + (maxSearchResults - 1) + ' entries found, showing only the first ' + maxSearchResults;
+      searchResultCounterText =
+        'More than ' +
+        (maxSearchResults - 1) +
+        ' entries found, showing only the first ' +
+        maxSearchResults;
     }
     return (
       <div>
@@ -365,7 +397,11 @@ class FolderContainer extends React.Component<Props, State> {
               {isDesktopMode ? (
                 <LocationMenu />
               ) : (
-                <Button id="mobileMenuButton" style={{ marginLeft: -8 }} onClick={showDrawer}>
+                <Button
+                  id="mobileMenuButton"
+                  style={{ marginLeft: -8 }}
+                  onClick={showDrawer}
+                >
                   <MenuIcon />
                 </Button>
               )}
@@ -382,29 +418,36 @@ class FolderContainer extends React.Component<Props, State> {
               <div className={classes.flexMiddle} />
               {currentDirectoryPath && (
                 <React.Fragment>
-                  {isDesktopMode && this.state.pathParts &&
+                  {isDesktopMode &&
+                    this.state.pathParts &&
                     this.state.pathParts.map(pathPart => (
                       <Button
                         key={pathPart}
                         onClick={() => loadDirectoryContent(pathPart)}
                         title={'Navigate to: ' + pathPart}
-                        style={{ paddingLeft: 3, paddingRight: 0, minWidth: 10 }}
+                        style={{
+                          paddingLeft: 3,
+                          paddingRight: 0,
+                          minWidth: 10
+                        }}
                       >
                         {extractShortDirectoryName(pathPart, '/')}
                         &nbsp;/&nbsp;
                       </Button>
                     ))}
-                  {!isDesktopMode && this.state.pathParts && this.state.pathParts.length > 0 && (
-                    <React.Fragment>
-                      <Button
-                        onClick={loadParentDirectoryContent}
-                        data-tid="openParentDirectory"
-                        style={{ paddingLeft: 3, paddingRight: 0 }}
-                      >
-                        <BackButtonIcon />
-                      </Button>
-                    </React.Fragment>
-                  )}
+                  {!isDesktopMode &&
+                    this.state.pathParts &&
+                    this.state.pathParts.length > 0 && (
+                      <React.Fragment>
+                        <Button
+                          onClick={loadParentDirectoryContent}
+                          data-tid="openParentDirectory"
+                          style={{ paddingLeft: 3, paddingRight: 0 }}
+                        >
+                          <BackButtonIcon />
+                        </Button>
+                      </React.Fragment>
+                    )}
                   <Button
                     data-tid="folderContainerOpenDirMenu"
                     title={
@@ -417,7 +460,8 @@ class FolderContainer extends React.Component<Props, State> {
                     onContextMenu={this.openDirectoryMenu}
                   >
                     {extractShortDirectoryName(
-                      normalizePath(normalizedCurrentDirPath), '/'
+                      normalizePath(normalizedCurrentDirPath),
+                      '/'
                     )}
                     <MoreVertIcon />
                   </Button>

@@ -52,11 +52,7 @@ class LoginPage extends Component {
   render() {
     return (
       <div style={{ backgroundColor: 'white' }}>
-        <Button
-          onClick={this.handleLogin}
-        >
-          {i18n.t('core:login')}
-        </Button>
+        <Button onClick={this.handleLogin}>{i18n.t('core:login')}</Button>
       </div>
     );
   }

@@ -71,9 +71,12 @@ class CreateTagGroupDialog extends React.Component<Props, State> {
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
 
-    this.setState({
-      [name]: value
-    }, this.handleValidation);
+    this.setState(
+      {
+        [name]: value
+      },
+      this.handleValidation
+    );
   };
 
   handleValidation() {
@@ -100,13 +103,13 @@ class CreateTagGroupDialog extends React.Component<Props, State> {
   };
 
   toggleDefaultTagBackgroundColorPicker = () => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       displayColorPicker: !prevState.displayColorPicker
     }));
   };
 
   toggleDefaultTagTextColorPicker = () => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       displayTextColorPicker: !prevState.displayTextColorPicker
     }));
   };
@@ -120,11 +123,7 @@ class CreateTagGroupDialog extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      fullScreen,
-      open,
-      onClose
-    } = this.props;
+    const { fullScreen, open, onClose } = this.props;
 
     const styles = {
       color: {
@@ -155,24 +154,21 @@ class CreateTagGroupDialog extends React.Component<Props, State> {
       helpText: {
         marginBottom: '5px',
         fontSize: '1rem'
-      },
-    }  
+      }
+    };
 
     return (
       <Dialog
-      open={open}
-      onClose={onClose}
-      fullScreen={fullScreen}
-      keepMounted
-      scroll="paper"
-      // onKeyDown={confirmFunction}
+        open={open}
+        onClose={onClose}
+        fullScreen={fullScreen}
+        keepMounted
+        scroll="paper"
+        // onKeyDown={confirmFunction}
       >
         <DialogTitle>{i18n.t('core:createTagGroupTitle')}</DialogTitle>
         <DialogContent>
-          <FormControl
-            fullWidth={true}
-            error={this.state.inputError}
-          >
+          <FormControl fullWidth={true} error={this.state.inputError}>
             <TextField
               fullWidth={true}
               error={this.state.inputError}
@@ -183,19 +179,24 @@ class CreateTagGroupDialog extends React.Component<Props, State> {
               onChange={this.handleInputChange}
               data-tid="createTagGroupInput"
             />
-            {this.state.inputError && <FormHelperText>{i18n.t('core:taggroupTitleHelper')}</FormHelperText>}
+            {this.state.inputError && (
+              <FormHelperText>
+                {i18n.t('core:taggroupTitleHelper')}
+              </FormHelperText>
+            )}
           </FormControl>
-          <FormControl
-            fullWidth={true}
-          >
-            <FormHelperText style={styles.helpText}>{i18n.t('core:tagBackgroundColor')}</FormHelperText>
+          <FormControl fullWidth={true}>
+            <FormHelperText style={styles.helpText}>
+              {i18n.t('core:tagBackgroundColor')}
+            </FormHelperText>
             <TransparentBackground>
               <Button
                 onClick={this.toggleDefaultTagBackgroundColorPicker}
                 data-tid="createTagGroupBackgroundColor"
                 style={styles.color}
                 role="presentation"
-              >&nbsp;
+              >
+                &nbsp;
               </Button>
             </TransparentBackground>
             <ColorPickerDialog
@@ -205,17 +206,18 @@ class CreateTagGroupDialog extends React.Component<Props, State> {
               color={this.state.color}
             />
           </FormControl>
-          <FormControl
-            fullWidth={true}
-          >
-            <FormHelperText style={styles.helpText}>{i18n.t('core:tagForegroundColor')}</FormHelperText>
+          <FormControl fullWidth={true}>
+            <FormHelperText style={styles.helpText}>
+              {i18n.t('core:tagForegroundColor')}
+            </FormHelperText>
             <TransparentBackground>
               <Button
                 onClick={this.toggleDefaultTagTextColorPicker}
                 data-tid="createTagGroupForegroundColor"
                 style={styles.textcolor}
                 role="presentation"
-              >&nbsp;
+              >
+                &nbsp;
               </Button>
             </TransparentBackground>
             <ColorPickerDialog
@@ -227,10 +229,7 @@ class CreateTagGroupDialog extends React.Component<Props, State> {
           </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button
-            onClick={this.props.onClose}
-            color="primary"
-          >
+          <Button onClick={this.props.onClose} color="primary">
             {i18n.t('core:cancel')}
           </Button>
           <Button
@@ -242,9 +241,9 @@ class CreateTagGroupDialog extends React.Component<Props, State> {
             {i18n.t('core:ok')}
           </Button>
         </DialogActions>
-      </Dialog>  
+      </Dialog>
     );
-  }  
+  }
 }
 
 export default CreateTagGroupDialog;

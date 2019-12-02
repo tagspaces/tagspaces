@@ -83,9 +83,12 @@ class EditTagGroupDialog extends React.Component<Props, State> {
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
 
-    this.setState({
-      [name]: value
-    }, this.handleValidation);
+    this.setState(
+      {
+        [name]: value
+      },
+      this.handleValidation
+    );
   };
 
   handleValidation() {
@@ -109,7 +112,7 @@ class EditTagGroupDialog extends React.Component<Props, State> {
         title: this.state.title,
         color: this.state.color,
         textcolor: this.state.textcolor,
-        children: selectedTagGroupEntry.children.map((tag) => ({
+        children: selectedTagGroupEntry.children.map(tag => ({
           ...tag,
           color: applyChanges ? this.state.color : tag.color,
           textcolor: applyChanges ? this.state.textcolor : tag.textcolor,
@@ -126,7 +129,9 @@ class EditTagGroupDialog extends React.Component<Props, State> {
   };
 
   toggleDefaultTagTextColorPicker = () => {
-    this.setState({ displayTextColorPicker: !this.state.displayTextColorPicker });
+    this.setState({
+      displayTextColorPicker: !this.state.displayTextColorPicker
+    });
   };
 
   handleChangeColor = (color: string) => {
@@ -142,7 +147,10 @@ class EditTagGroupDialog extends React.Component<Props, State> {
   };
 
   renderTitle = () => (
-    <DialogTitle style={{ overflow: 'visible' }}>{i18n.t('core:editTagGroupTitle')}{` '${this.state.title}'`}</DialogTitle>
+    <DialogTitle style={{ overflow: 'visible' }}>
+      {i18n.t('core:editTagGroupTitle')}
+      {` '${this.state.title}'`}
+    </DialogTitle>
   );
 
   renderContent = () => {
@@ -171,7 +179,7 @@ class EditTagGroupDialog extends React.Component<Props, State> {
       helpText: {
         marginBottom: '5px',
         fontSize: '1rem'
-      },
+      }
     };
 
     return (
@@ -182,8 +190,18 @@ class EditTagGroupDialog extends React.Component<Props, State> {
           style={{ overflow: 'visible' }}
         >
           {modifiedDate && (
-            <div className="tag-date" style={{ fontSize: 12, position: 'relative', bottom: 20, color: '#808080' }}>
-              <span className="text" style={{ fontWeight: 600 }}>{`${i18n.t('core:modifiedDate')}: `}</span>
+            <div
+              className="tag-date"
+              style={{
+                fontSize: 12,
+                position: 'relative',
+                bottom: 20,
+                color: '#808080'
+              }}
+            >
+              <span className="text" style={{ fontWeight: 600 }}>{`${i18n.t(
+                'core:modifiedDate'
+              )}: `}</span>
               <time>{format(new Date(modifiedDate), 'yyyy-mm-dd')}</time>
             </div>
           )}
@@ -198,18 +216,23 @@ class EditTagGroupDialog extends React.Component<Props, State> {
             data-tid="editTagGroupInput"
             fullWidth={true}
           />
-          {this.state.inputError && <FormHelperText>{i18n.t('core:taggroupTitleHelper')}</FormHelperText>}
+          {this.state.inputError && (
+            <FormHelperText>
+              {i18n.t('core:taggroupTitleHelper')}
+            </FormHelperText>
+          )}
         </FormControl>
-        <FormControl
-          fullWidth={true}
-        >
-          <FormHelperText style={styles.helpText}>{i18n.t('core:tagBackgroundColor')}</FormHelperText>
+        <FormControl fullWidth={true}>
+          <FormHelperText style={styles.helpText}>
+            {i18n.t('core:tagBackgroundColor')}
+          </FormHelperText>
           <TransparentBackground>
             <Button
               onClick={this.toggleDefaultTagBackgroundColorPicker}
               data-tid="editTagGroupBackgroundColor"
               style={styles.color}
-            >&nbsp;
+            >
+              &nbsp;
             </Button>
           </TransparentBackground>
           <ColorPickerDialog
@@ -219,17 +242,18 @@ class EditTagGroupDialog extends React.Component<Props, State> {
             color={this.state.color}
           />
         </FormControl>
-        <FormControl
-          fullWidth={true}
-        >
-          <FormHelperText style={styles.helpText}>{i18n.t('core:tagForegroundColor')}</FormHelperText>
+        <FormControl fullWidth={true}>
+          <FormHelperText style={styles.helpText}>
+            {i18n.t('core:tagForegroundColor')}
+          </FormHelperText>
           <TransparentBackground>
             <Button
               onClick={this.toggleDefaultTagTextColorPicker}
               data-tid="editTagGroupForegroundColor"
               style={styles.textcolor}
               role="presentation"
-            >&nbsp;
+            >
+              &nbsp;
             </Button>
           </TransparentBackground>
           <ColorPickerDialog
@@ -240,7 +264,9 @@ class EditTagGroupDialog extends React.Component<Props, State> {
           />
         </FormControl>
         <FormControl>
-          <FormHelperText style={styles.helpText}>{i18n.t('core:colorChangesToAllTags')}</FormHelperText>
+          <FormHelperText style={styles.helpText}>
+            {i18n.t('core:colorChangesToAllTags')}
+          </FormHelperText>
           <Switch
             data-tid="editTagGroupSwitch"
             onClick={() => this.setApplyChanges(!this.state.applyChanges)}
@@ -253,10 +279,7 @@ class EditTagGroupDialog extends React.Component<Props, State> {
 
   renderActions = () => (
     <DialogActions>
-      <Button
-        onClick={this.props.onClose}
-        color="primary"
-      >
+      <Button onClick={this.props.onClose} color="primary">
         {i18n.t('core:cancel')}
       </Button>
       <Button

@@ -86,13 +86,13 @@ const AboutDialog = (props: Props) => {
   //   if (event.key === 'Enter' || event.keyCode === 13) {
   //     props.onClose();
   //     event.stopPropagation();
-  //   }     
+  //   }
   // }
 
   let versionInfo = 'Check for updates';
-    if (newVersion && newVersion.length > 1) {
-      if (updateAvailable) {
-        versionInfo = i18n.t('getNewVersion', { newVersion });
+  if (newVersion && newVersion.length > 1) {
+    if (updateAvailable) {
+      versionInfo = i18n.t('getNewVersion', { newVersion });
     } else {
       versionInfo = i18n.t('latestVersion', { productName });
     }
@@ -106,106 +106,111 @@ const AboutDialog = (props: Props) => {
       keepMounted
       scroll="paper"
       // onKeyDown={confirmFunction}
-    >  
-    <DialogTitle>{productName}</DialogTitle>
-    <DialogContent>
-      <img
-        alt="TagSpaces logo"
-        src={LogoIcon}
-        style={{ float: 'left', marginRight: 10, width: 120, height: 120 }}
-      />
-      <Typography
-        variant="subtitle1"
-        title={'Build on: ' + versionMeta.buildTime + '\nPlatform: ' + navigator.appVersion}
-      >
-        Version: {versionMeta.version} / BuildID: {buildID}
-      </Typography>
-      <br />
-      <Typography id="aboutContent" variant="body1">
-        <strong>{productName}</strong> is made possible by the
-        TagSpaces(github.com/tagspaces) open source project and other{' '}
-        <Button
-          size="small"
-          color="primary"
-          onClick={props.toggleThirdPartyLibsDialog}
+    >
+      <DialogTitle>{productName}</DialogTitle>
+      <DialogContent>
+        <img
+          alt="TagSpaces logo"
+          src={LogoIcon}
+          style={{ float: 'left', marginRight: 10, width: 120, height: 120 }}
+        />
+        <Typography
+          variant="subtitle1"
+          title={
+            'Build on: ' +
+            versionMeta.buildTime +
+            '\nPlatform: ' +
+            navigator.appVersion
+          }
         >
-          open source software
-        </Button>
-        .
+          Version: {versionMeta.version} / BuildID: {buildID}
+        </Typography>
         <br />
+        <Typography id="aboutContent" variant="body1">
+          <strong>{productName}</strong> is made possible by the
+          TagSpaces(github.com/tagspaces) open source project and other{' '}
+          <Button
+            size="small"
+            color="primary"
+            onClick={props.toggleThirdPartyLibsDialog}
+          >
+            open source software
+          </Button>
+          .
+          <br />
+          {!Pro && (
+            <span>
+              This program is free software: you can redistribute it and/or
+              modify it under the terms of the GNU Affero General Public License
+              (version 3) as published by the Free Software Foundation.
+            </span>
+          )}
+          <br />
+          This program is distributed in the hope that it will be useful, but
+          WITHOUT ANY WARRANTY; without even the implied warranty of
+          MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the License
+          for more details.
+          <br />
+          <br />
+          <Button
+            size="small"
+            color="primary"
+            onClick={() => {
+              PlatformIO.openUrl(AppConfig.links.imprintURL);
+            }}
+          >
+            Imprint
+          </Button>
+          <Button
+            size="small"
+            color="primary"
+            onClick={() => {
+              PlatformIO.openUrl(AppConfig.links.privacyURL);
+            }}
+          >
+            Privacy Policy
+          </Button>
+          <Button
+            size="small"
+            color="primary"
+            onClick={() => {
+              PlatformIO.openUrl(AppConfig.links.changelogURL);
+            }}
+          >
+            Changelog
+          </Button>
+          <Button
+            size="small"
+            color="primary"
+            data-tid="openLicenseDialog"
+            onClick={props.toggleLicenseDialog}
+          >
+            License Agreement
+          </Button>
+        </Typography>
+      </DialogContent>
+      <DialogActions>
         {!Pro && (
-          <span>
-            This program is free software: you can redistribute it and/or modify
-            it under the terms of the GNU Affero General Public License (version
-            3) as published by the Free Software Foundation.
-          </span>
+          <Button
+            data-tid="checkForUpdates"
+            title={i18n.t('core:checkForNewVersion')}
+            onClick={() => {
+              PlatformIO.openUrl(AppConfig.links.productsOverview);
+            }}
+            color="primary"
+          >
+            Upgrade to PRO
+          </Button>
         )}
-        <br />
-        This program is distributed in the hope that it will be useful, but
-        WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the License for
-        more details.
-        <br />
-        <br />
-        <Button
-          size="small"
-          color="primary"
-          onClick={() => {
-            PlatformIO.openUrl(AppConfig.links.imprintURL);
-          }}
-        >
-          Imprint
-        </Button>
-        <Button
-          size="small"
-          color="primary"
-          onClick={() => {
-            PlatformIO.openUrl(AppConfig.links.privacyURL);
-          }}
-        >
-          Privacy Policy
-        </Button>
-        <Button
-          size="small"
-          color="primary"
-          onClick={() => {
-            PlatformIO.openUrl(AppConfig.links.changelogURL);
-          }}
-        >
-          Changelog
-        </Button>
-        <Button
-          size="small"
-          color="primary"
-          data-tid="openLicenseDialog"
-          onClick={props.toggleLicenseDialog}
-        >
-          License Agreement
-        </Button>
-      </Typography>
-    </DialogContent>
-    <DialogActions>
-      {!Pro && (
         <Button
           data-tid="checkForUpdates"
           title={i18n.t('core:checkForNewVersion')}
-          onClick={() => {
-            PlatformIO.openUrl(AppConfig.links.productsOverview);
-          }}
+          onClick={checkForUpdates}
           color="primary"
         >
-          Upgrade to PRO
+          {versionInfo}
         </Button>
-      )}
-      <Button
-        data-tid="checkForUpdates"
-        title={i18n.t('core:checkForNewVersion')}
-        onClick={checkForUpdates}
-        color="primary"
-      >
-        {versionInfo}
-      </Button>
-      {/* <Button
+        {/* <Button
         data-tid="openLicenseDialog"
         onClick={this.props.toggleLicenseDialog}
       >
@@ -217,14 +222,14 @@ const AboutDialog = (props: Props) => {
       >
         {i18n.t('core:thirdPartyLibs')}
       </Button> */}
-      <Button
-        data-tid="closeAboutDialog"
-        onClick={props.onClose}
-        color="primary"
-      >
-        {i18n.t('core:ok')}
-      </Button>
-    </DialogActions>
+        <Button
+          data-tid="closeAboutDialog"
+          onClick={props.onClose}
+          color="primary"
+        >
+          {i18n.t('core:ok')}
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 };

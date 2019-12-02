@@ -97,12 +97,14 @@ const MoveCopyFilesDialog = (props: Props) => {
 
   function selectDirectory() {
     if (AppConfig.isElectron) {
-      PlatformIO.selectDirectoryDialog().then(selectedPaths => {
-        setTargetPath(selectedPaths[0]);
-        return true;
-      }).catch((err) => {
-        console.log('selectDirectoryDialog failed with: ' + err);
-      });
+      PlatformIO.selectDirectoryDialog()
+        .then(selectedPaths => {
+          setTargetPath(selectedPaths[0]);
+          return true;
+        })
+        .catch(err => {
+          console.log('selectDirectoryDialog failed with: ' + err);
+        });
     } else {
       // TODO handle case on other platforms
       // this.props.showSelectDirectoryDialog();
@@ -121,14 +123,18 @@ const MoveCopyFilesDialog = (props: Props) => {
       <DialogTitle>{i18n.t('core:copyMoveFilesTitle')}</DialogTitle>
       <DialogContent>
         <List dense style={{ width: 550 }}>
-          {props.selectedFiles && props.selectedFiles.length > 0 && props.selectedFiles.map(path => (
-            <ListItem title={path}>
-              <ListItemIcon>
-                <FileIcon />
-              </ListItemIcon>
-              <Typography variant="inherit" noWrap>{extractFileName(path)}</Typography>
-            </ListItem>
-          ))}
+          {props.selectedFiles &&
+            props.selectedFiles.length > 0 &&
+            props.selectedFiles.map(path => (
+              <ListItem title={path}>
+                <ListItemIcon>
+                  <FileIcon />
+                </ListItemIcon>
+                <Typography variant="inherit" noWrap>
+                  {extractFileName(path)}
+                </Typography>
+              </ListItem>
+            ))}
         </List>
         <FormControl fullWidth={true}>
           <Input
@@ -145,25 +151,25 @@ const MoveCopyFilesDialog = (props: Props) => {
             }}
             value={targetPath}
             endAdornment={
-              PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb ? undefined :
-                (<InputAdornment position="end" style={{ height: 33 }}>
+              PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb ? (
+                undefined
+              ) : (
+                <InputAdornment position="end" style={{ height: 33 }}>
                   <IconButton
                     data-tid="openDirectoryMoveCopyDialog"
                     onClick={selectDirectory}
                   >
                     <FolderIcon />
                   </IconButton>
-                </InputAdornment>)
+                </InputAdornment>
+              )
             }
           />
           {inputError && <FormHelperText>Empty Input Field</FormHelperText>}
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button
-          data-tid="closeMoveCopyDialog"
-          onClick={props.onClose}
-        >
+        <Button data-tid="closeMoveCopyDialog" onClick={props.onClose}>
           {i18n.t('core:cancel')}
         </Button>
         <Button
@@ -183,17 +189,21 @@ const MoveCopyFilesDialog = (props: Props) => {
           {i18n.t('core:copyFilesButton')}
         </Button>
       </DialogActions>
-    </Dialog>  
+    </Dialog>
+  );
+};
+
+function mapActionCreatorsToProps(dispatch) {
+  return bindActionCreators(
+    {
+      copyFiles: IOActions.copyFiles,
+      moveFiles: IOActions.moveFiles
+    },
+    dispatch
   );
 }
 
-function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators({
-    copyFiles: IOActions.copyFiles,
-    moveFiles: IOActions.moveFiles
-  }, dispatch);
-}
-
-export default connect(null, mapActionCreatorsToProps)(
-  withMobileDialog()(MoveCopyFilesDialog)
-);
+export default connect(
+  null,
+  mapActionCreatorsToProps
+)(withMobileDialog()(MoveCopyFilesDialog));

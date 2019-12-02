@@ -61,9 +61,16 @@ import {
   locationType,
   type Location
 } from '../reducers/locations';
-import { actions as AppActions, getCurrentLocationId, isReadOnlyMode } from '../reducers/app';
+import {
+  actions as AppActions,
+  getCurrentLocationId,
+  isReadOnlyMode
+} from '../reducers/app';
 import { actions as LocationIndexActions } from '../reducers/location-index';
-import { getPerspectives, getShowUnixHiddenEntries } from '../reducers/settings';
+import {
+  getPerspectives,
+  getShowUnixHiddenEntries
+} from '../reducers/settings';
 import i18n from '../services/i18n';
 import { isObj } from '../utils/misc';
 import AppConfig from '../config';
@@ -119,7 +126,7 @@ type State = {
   isSelectDirectoryDialogOpened?: boolean,
   isCreateDirectoryDialogOpened?: boolean,
   createLocationDialogKey: string,
-	isCreateDirectoryDialogOpened?: boolean,
+  isCreateDirectoryDialogOpened?: boolean,
   locationManagerMenuOpened: boolean,
   locationManagerMenuAnchorEl: Object | null,
   dirs?: Object
@@ -146,7 +153,7 @@ class LocationManager extends React.Component<Props, State> {
     isEditLocationDialogOpened: false,
     isDeleteLocationDialogOpened: false,
     isCreateDirectoryDialogOpened: false,
-		isSelectDirectoryDialogOpened: false,
+    isSelectDirectoryDialogOpened: false,
     locationManagerMenuOpened: false,
     locationManagerMenuAnchorEl: null,
     createLocationDialogKey: uuidv1(),
@@ -159,15 +166,18 @@ class LocationManager extends React.Component<Props, State> {
       const devicePaths = PlatformIO.getDevicePaths();
 
       Object.keys(devicePaths).forEach(key => {
-        this.props.addLocation({
-          uuid: uuidv1(),
-          type: locationType.TYPE_LOCAL,
-          name: key, // TODO use i18n
-          paths: [devicePaths[key]],
-          isDefault: (AppConfig.isWeb && devicePaths[key] === '/files/'), // Used for the web ts demo
-          isReadOnly: false,
-          persistIndex: false
-        }, false);
+        this.props.addLocation(
+          {
+            uuid: uuidv1(),
+            type: locationType.TYPE_LOCAL,
+            name: key, // TODO use i18n
+            paths: [devicePaths[key]],
+            isDefault: AppConfig.isWeb && devicePaths[key] === '/files/', // Used for the web ts demo
+            isReadOnly: false,
+            persistIndex: false
+          },
+          false
+        );
       });
     }
   }
@@ -176,35 +186,38 @@ class LocationManager extends React.Component<Props, State> {
     const subFolder = {
       uuid: location.uuid,
       name: location.name,
-      path: location.path || location.paths[0],
+      path: location.path || location.paths[0]
     };
-    this.getDirectoriesTree(subFolder, deepLevel).then(children => {
-      if (children instanceof Array) {
-        if (location.uuid) {
-          const dirsTree = {}; // this.state.dirs; (uncomment to allow open multiple Locations folders) //TODO set settings for this
-          if (location.path === undefined) { // location
-            dirsTree[location.uuid] = children;
-          } else {
-            const dirsCopy = this.getMergedDirsCopy(location.path, children);
-            if (dirsCopy) {
-              dirsTree[location.uuid] = dirsCopy;
+    this.getDirectoriesTree(subFolder, deepLevel)
+      .then(children => {
+        if (children instanceof Array) {
+          if (location.uuid) {
+            const dirsTree = {}; // this.state.dirs; (uncomment to allow open multiple Locations folders) //TODO set settings for this
+            if (location.path === undefined) {
+              // location
+              dirsTree[location.uuid] = children;
             } else {
-              // eslint-disable-next-line no-param-reassign
-              location.children = children;
-              dirsTree[location.uuid] = [location];
+              const dirsCopy = this.getMergedDirsCopy(location.path, children);
+              if (dirsCopy) {
+                dirsTree[location.uuid] = dirsCopy;
+              } else {
+                // eslint-disable-next-line no-param-reassign
+                location.children = children;
+                dirsTree[location.uuid] = [location];
+              }
             }
+            this.setState({
+              dirs: dirsTree
+            });
           }
+        } else if (location.path === undefined) {
+          // if is Location
           this.setState({
-            dirs: dirsTree
+            dirs: {}
           });
         }
-      } else if (location.path === undefined) { // if is Location
-        this.setState({
-          dirs: {}
-        });
-      }
-      return true;
-    })
+        return true;
+      })
       .catch(error => {
         console.log('loadSubDirectories', error);
       });
@@ -216,9 +229,11 @@ class LocationManager extends React.Component<Props, State> {
       .then(dirEntries => {
         const directoryContent = [];
         dirEntries.map(entry => {
-          if (entry.name === AppConfig.metaFolder
-            || entry.name.endsWith('/' + AppConfig.metaFolder)
-            || (!this.props.showUnixHiddenEntries && entry.name.startsWith('.'))) {
+          if (
+            entry.name === AppConfig.metaFolder ||
+            entry.name.endsWith('/' + AppConfig.metaFolder) ||
+            (!this.props.showUnixHiddenEntries && entry.name.startsWith('.'))
+          ) {
             return true;
           }
           // const enhancedEntry = enhanceEntry(entry);
@@ -234,7 +249,11 @@ class LocationManager extends React.Component<Props, State> {
           subFolder.children = directoryContent;
           if (deepLevel > 0) {
             const promisesArr = [];
-            directoryContent.map(directory => promisesArr.push(this.getDirectoriesTree(directory, deepLevel - 1)));
+            directoryContent.map(directory =>
+              promisesArr.push(
+                this.getDirectoriesTree(directory, deepLevel - 1)
+              )
+            );
             return Promise.all(promisesArr);
           }
         }
@@ -242,8 +261,7 @@ class LocationManager extends React.Component<Props, State> {
       })
       .catch(error => {
         console.log('getDirectoriesTree', error);
-      })
-    ;
+      });
 
   /**
    * https://codereview.stackexchange.com/questions/47932/recursion-vs-iteration-of-tree-structure
@@ -261,11 +279,13 @@ class LocationManager extends React.Component<Props, State> {
           return copyObj;
         }
         if (arrSubDirs[a].children !== undefined) {
-          const stack = [{
-            depth: 0,
-            element: arrSubDirs[a],
-            propPath: ''
-          }];
+          const stack = [
+            {
+              depth: 0,
+              element: arrSubDirs[a],
+              propPath: ''
+            }
+          ];
           let stackItem = 0;
           let current;
           let children;
@@ -273,7 +293,7 @@ class LocationManager extends React.Component<Props, State> {
           let stackPath;
           let propPath = a + '.children';
 
-          while (current = stack[stackItem++]) {
+          while ((current = stack[stackItem++])) {
             // get the arguments
             stackPath = current.propPath;
             depth = current.depth;
@@ -283,7 +303,12 @@ class LocationManager extends React.Component<Props, State> {
               const len = children.length;
               for (let i = 0; i < len; i++) {
                 if (path === children[i].path) {
-                  propPath = propPath + '.' + (stackPath ? stackPath + '.' : '') + i + '.children';
+                  propPath =
+                    propPath +
+                    '.' +
+                    (stackPath ? stackPath + '.' : '') +
+                    i +
+                    '.children';
                   const copyObj = [...this.state.dirs[uuid]];
 
                   let schema = copyObj; // a moving reference to internal objects within obj
@@ -298,7 +323,8 @@ class LocationManager extends React.Component<Props, State> {
                   return copyObj;
                 }
 
-                stack.push({ // pass args via object or array
+                stack.push({
+                  // pass args via object or array
                   element: children[i],
                   depth: depth + 1,
                   propPath: (stackPath ? stackPath + '.' : '') + i + '.children'
@@ -480,7 +506,7 @@ class LocationManager extends React.Component<Props, State> {
     }
   };
 
-  resetState = (dialogKey) => {
+  resetState = dialogKey => {
     this.setState({
       [dialogKey]: uuidv1()
     });
@@ -489,7 +515,10 @@ class LocationManager extends React.Component<Props, State> {
   renderNameColumnAction = (field, location, key) => {
     const children = (
       <span style={{ fontSize: 15, marginLeft: 5 }} title={field}>
-        <FolderIcon style={{ marginTop: 0, marginBottom: -8 }} className={this.props.classes.icon} />
+        <FolderIcon
+          style={{ marginTop: 0, marginBottom: -8 }}
+          className={this.props.classes.icon}
+        />
         {field && field.length > 25 ? field.substr(0, 25) + '...' : field}
         {/* <IconButton
           style={{ float: 'right', paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0 }}
@@ -504,7 +533,7 @@ class LocationManager extends React.Component<Props, State> {
     );
     return {
       children,
-      props: {},
+      props: {}
     }; // (<span>{ name }</span>);
   };
 
@@ -514,7 +543,7 @@ class LocationManager extends React.Component<Props, State> {
     }, */
     onClick: () => {
       this.onRowClick(record);
-    },
+    }
     /* onDoubleClick: (e) => {
       this.onRowClick(record, index, e);
     } */
@@ -528,7 +557,7 @@ class LocationManager extends React.Component<Props, State> {
     }
   };
 
-  onRowClick = (subDir) => {
+  onRowClick = subDir => {
     this.loadSubDirectories(subDir, 1);
     this.props.loadDirectoryContent(subDir.path);
   };
@@ -547,20 +576,24 @@ class LocationManager extends React.Component<Props, State> {
       );
       return;
     }
-    if (monitor) { // TODO handle monitor -> isOver and change folder icon
+    if (monitor) {
+      // TODO handle monitor -> isOver and change folder icon
       const { path } = monitor.getItem();
       console.log('Dropped files: ' + path);
       this.props.moveFiles([path], item.children[1].props.record.path);
     }
   };
 
-  renderBodyCell = (props) =>
-    (
-      <td {...props} style={{ position: 'relative' }} >
-        <TargetMoveFileBox accepts={[DragItemTypes.FILE]} onDrop={this.handleFileMoveDrop} >{props.children}</TargetMoveFileBox>
-      </td>
-    )
-    ;
+  renderBodyCell = props => (
+    <td {...props} style={{ position: 'relative' }}>
+      <TargetMoveFileBox
+        accepts={[DragItemTypes.FILE]}
+        onDrop={this.handleFileMoveDrop}
+      >
+        {props.children}
+      </TargetMoveFileBox>
+    </td>
+  );
 
   // <Tooltip id="tooltip-icon" title={i18n.t('core:moreOperations')} placement="bottom"></Tooltip>
   renderLocation = (location: Location) => {
@@ -573,29 +606,31 @@ class LocationManager extends React.Component<Props, State> {
           key: 'name',
           width: '80%',
           render: this.renderNameColumnAction,
-          onCell: this.handleCellClick,
+          onCell: this.handleCellClick
         }
       ];
-      table = (<Table
-        // defaultExpandAllRows
-        // className={classes.locationListArea}
-        components={{
-          // header: { cell: this.renderHeaderRow },
-          body: { cell: this.renderBodyCell }
-        }}
-        showHeader={false}
-        // className="table"
-        rowKey="path"
-        data={this.state.dirs[location.uuid]}
-        columns={columns}
-        // expandedRowRender={this.expandedRowRender}
-        onExpand={this.onExpand}
-      // expandIcon={this.CustomExpandIcon}
-      // expandIconAsCell
-      /* onRow={(record, index) => ({
+      table = (
+        <Table
+          // defaultExpandAllRows
+          // className={classes.locationListArea}
+          components={{
+            // header: { cell: this.renderHeaderRow },
+            body: { cell: this.renderBodyCell }
+          }}
+          showHeader={false}
+          // className="table"
+          rowKey="path"
+          data={this.state.dirs[location.uuid]}
+          columns={columns}
+          // expandedRowRender={this.expandedRowRender}
+          onExpand={this.onExpand}
+          // expandIcon={this.CustomExpandIcon}
+          // expandIconAsCell
+          /* onRow={(record, index) => ({
         onClick: this.onRowClick.bind(null, record, index),
       })} */
-      />);
+        />
+      );
     }
     return (
       <div key={location.uuid}>
@@ -606,10 +641,18 @@ class LocationManager extends React.Component<Props, State> {
               ? this.props.classes.listItemSelected
               : this.props.classes.listItem
           }
-          title={location.isDefault ? i18n.t('core: thisIsStartupLocation') + ' : ' + location.paths[0] : location.paths[0]}
+          title={
+            location.isDefault
+              ? i18n.t('core: thisIsStartupLocation') +
+                ' : ' +
+                location.paths[0]
+              : location.paths[0]
+          }
           button
           onClick={() => this.handleLocationClick(location)}
-          onContextMenu={event => this.handleLocationContextMenuClick(event, location)}
+          onContextMenu={event =>
+            this.handleLocationContextMenuClick(event, location)
+          }
         >
           <ListItemIcon
             // onClick={(e) => {
@@ -618,10 +661,11 @@ class LocationManager extends React.Component<Props, State> {
             // }}
             style={{ minWidth: 'auto' }}
           >
-            {location.type === locationType.TYPE_CLOUD ?
-              (<CloudLocationIcon className={this.props.classes.icon} />) :
-              (<LocationIcon className={this.props.classes.icon} />)
-            }
+            {location.type === locationType.TYPE_CLOUD ? (
+              <CloudLocationIcon className={this.props.classes.icon} />
+            ) : (
+              <LocationIcon className={this.props.classes.icon} />
+            )}
           </ListItemIcon>
           <div style={{ maxWidth: 250 }}>
             <Typography
@@ -641,8 +685,12 @@ class LocationManager extends React.Component<Props, State> {
                 aria-haspopup="true"
                 edge="end"
                 data-tid={'locationMoreButton_' + location.name}
-                onClick={event => this.handleLocationContextMenuClick(event, location)}
-                onContextMenu={event => this.handleLocationContextMenuClick(event, location)}
+                onClick={event =>
+                  this.handleLocationContextMenuClick(event, location)
+                }
+                onContextMenu={event =>
+                  this.handleLocationContextMenuClick(event, location)
+                }
               >
                 {location.isDefault && (
                   <DefaultLocationIcon data-tid="startupIndication" />
@@ -655,17 +703,17 @@ class LocationManager extends React.Component<Props, State> {
         {table}
       </div>
     );
-	};
-	
-	handleLocationManagerMenu = (event: Object) => {
-		this.setState({
+  };
+
+  handleLocationManagerMenu = (event: Object) => {
+    this.setState({
       locationManagerMenuOpened: true,
       locationManagerMenuAnchorEl: event.currentTarget
     });
   };
-  
+
   handleCloseLocationManagerMenu = () => {
-    this.setState({ locationManagerMenuOpened: false});
+    this.setState({ locationManagerMenuOpened: false });
   };
 
   render() {
@@ -674,22 +722,25 @@ class LocationManager extends React.Component<Props, State> {
       <div className={classes.panel} style={this.props.style}>
         <CustomLogo />
         <div className={classes.toolbar}>
-          <Typography className={classNames(classes.panelTitle, classes.header)} type="subtitle1">
+          <Typography
+            className={classNames(classes.panelTitle, classes.header)}
+            type="subtitle1"
+          >
             {i18n.t('core:locationManager')}
           </Typography>
           <IconButton
-						data-tid="locationManagerMenu"
-						onClick={this.handleLocationManagerMenu}
-					>
-						<MoreVertIcon />
-					</IconButton>
+            data-tid="locationManagerMenu"
+            onClick={this.handleLocationManagerMenu}
+          >
+            <MoreVertIcon />
+          </IconButton>
         </div>
-				<LocationManagerMenu
-					anchorEl={this.state.locationManagerMenuAnchorEl}
-					open={this.state.locationManagerMenuOpened}
+        <LocationManagerMenu
+          anchorEl={this.state.locationManagerMenuAnchorEl}
+          open={this.state.locationManagerMenuOpened}
           onClose={this.handleCloseLocationManagerMenu}
           openURLExternally={this.props.openURLExternally}
-				/>	
+        />
         {!isLocationsReadOnly && (
           <div style={{ width: '100%', textAlign: 'center', marginBottom: 10 }}>
             <Button
@@ -772,17 +823,16 @@ class LocationManager extends React.Component<Props, State> {
               </ListItemIcon>
               <ListItemText primary={i18n.t('core:editLocationTitle')} />
             </MenuItem>
-            {this.state.selectedLocation && this.props.currentLocationId === this.state.selectedLocation.uuid && (
-              <MenuItem
-                data-tid="indexLocation"
-                onClick={this.indexLocation}
-              >
-                <ListItemIcon>
-                  <RefreshIcon />
-                </ListItemIcon>
-                <ListItemText primary={i18n.t('core:indexLocation')} />
-              </MenuItem>
-            )}
+            {this.state.selectedLocation &&
+              this.props.currentLocationId ===
+                this.state.selectedLocation.uuid && (
+                <MenuItem data-tid="indexLocation" onClick={this.indexLocation}>
+                  <ListItemIcon>
+                    <RefreshIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={i18n.t('core:indexLocation')} />
+                </MenuItem>
+              )}
             <MenuItem data-tid="moveLocationUp" onClick={this.moveLocationUp}>
               <ListItemIcon>
                 <ArrowUpwardIcon />
@@ -816,10 +866,7 @@ class LocationManager extends React.Component<Props, State> {
               </ListItemIcon>
               <ListItemText primary={i18n.t('core:showInFileManager')} />
             </MenuItem>
-            <MenuItem
-              data-tid="removeLocation"
-              onClick={this.closeLocation}
-            >
+            <MenuItem data-tid="removeLocation" onClick={this.closeLocation}>
               <ListItemIcon>
                 <CloseIcon />
               </ListItemIcon>
@@ -868,22 +915,25 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    ...LocationActions,
-    openLocation: AppActions.openLocation,
-    createDirectoryIndex: LocationIndexActions.createDirectoryIndex,
-    closeLocation: AppActions.closeLocation,
-    loadDirectoryContent: AppActions.loadDirectoryContent,
-    reflectCreateEntry: AppActions.reflectCreateEntry,
-    deleteDirectory: AppActions.deleteDirectory,
-    openDirectory: AppActions.openDirectory,
-    showInFileManager: AppActions.showInFileManager,
-    openFileNatively: AppActions.openFileNatively,
-    openFile: AppActions.openFile,
-    showNotification: AppActions.showNotification,
-    moveFiles: IOActions.moveFiles,
-    openURLExternally: AppActions.openURLExternally,
-  }, dispatch);
+  return bindActionCreators(
+    {
+      ...LocationActions,
+      openLocation: AppActions.openLocation,
+      createDirectoryIndex: LocationIndexActions.createDirectoryIndex,
+      closeLocation: AppActions.closeLocation,
+      loadDirectoryContent: AppActions.loadDirectoryContent,
+      reflectCreateEntry: AppActions.reflectCreateEntry,
+      deleteDirectory: AppActions.deleteDirectory,
+      openDirectory: AppActions.openDirectory,
+      showInFileManager: AppActions.showInFileManager,
+      openFileNatively: AppActions.openFileNatively,
+      openFile: AppActions.openFile,
+      showNotification: AppActions.showNotification,
+      moveFiles: IOActions.moveFiles,
+      openURLExternally: AppActions.openURLExternally
+    },
+    dispatch
+  );
 }
 
 export default withStyles(styles)(

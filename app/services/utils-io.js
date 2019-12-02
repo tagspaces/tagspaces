@@ -27,7 +27,8 @@ import {
   cleanTrailingDirSeparator,
   getMetaDirectoryPath,
   getMetaFileLocationForFile,
-  getMetaFileLocationForDir, extractContainingDirectoryPath
+  getMetaFileLocationForDir,
+  extractContainingDirectoryPath
 } from '../utils/paths';
 // import { formatDateTime4Tag } from '../utils/misc';
 import versionMeta from '../version.json';
@@ -70,7 +71,10 @@ export function enhanceEntry(entry: any): FileSystemEntry {
     sidecarDescription = entry.meta.description || '';
     sidecarColor = entry.meta.color || '';
     sidecarTags = entry.meta.tags || [];
-    sidecarTags.map((tag) => { tag.type = 'sidecar'; return true; });
+    sidecarTags.map(tag => {
+      tag.type = 'sidecar';
+      return true;
+    });
     uuid = entry.meta.uuid || undefined;
   }
   const enhancedEntry = {
@@ -91,9 +95,13 @@ export function enhanceEntry(entry: any): FileSystemEntry {
   return enhancedEntry;
 }
 
-export function createDirectoryIndex(directoryPath: string, extractText: boolean = false): Promise<Array<Object>> {
+export function createDirectoryIndex(
+  directoryPath: string,
+  extractText: boolean = false
+): Promise<Array<Object>> {
   const dirPath = cleanTrailingDirSeparator(directoryPath);
-  if (PlatformIO.isWorkerAvailable() && !PlatformIO.haveObjectStoreSupport()) { // Start indexing in worker if not in the object store mode
+  if (PlatformIO.isWorkerAvailable() && !PlatformIO.haveObjectStoreSupport()) {
+    // Start indexing in worker if not in the object store mode
     return PlatformIO.createDirectoryIndexInWorker(dirPath, extractText);
   }
 
@@ -102,35 +110,48 @@ export function createDirectoryIndex(directoryPath: string, extractText: boolean
       const directoryIndex = [];
       let counter = 0;
       console.time('createDirectoryIndex');
-      walkDirectory(dirPath, {
-        recursive: true,
-        skipMetaFolder: true,
-        skipDotHiddenFolder: true,
-        extractText
-      }, (fileEntry) => {
-        counter += 1;
-        if (counter > AppConfig.indexerLimit) {
-          console.warn('Walk canceled by ' + AppConfig.indexerLimit);
-          window.walkCanceled = true;
-        }
-        directoryIndex.push(enhanceEntry(fileEntry));
-      }, (directoryEntry) => {
-        if (directoryEntry.name !== AppConfig.metaFolder) {
+      walkDirectory(
+        dirPath,
+        {
+          recursive: true,
+          skipMetaFolder: true,
+          skipDotHiddenFolder: true,
+          extractText
+        },
+        fileEntry => {
           counter += 1;
-          directoryIndex.push(enhanceEntry(directoryEntry));
+          if (counter > AppConfig.indexerLimit) {
+            console.warn('Walk canceled by ' + AppConfig.indexerLimit);
+            window.walkCanceled = true;
+          }
+          directoryIndex.push(enhanceEntry(fileEntry));
+        },
+        directoryEntry => {
+          if (directoryEntry.name !== AppConfig.metaFolder) {
+            counter += 1;
+            directoryIndex.push(enhanceEntry(directoryEntry));
+          }
         }
-      }).then(() => { // entries - can be used for further processing
-        window.walkCanceled = false;
-        console.log('Directory index created ' + dirPath + ' containing ' + directoryIndex.length);
-        console.timeEnd('createDirectoryIndex');
-        resolve(directoryIndex);
-        return true;
-      }).catch((err) => {
-        window.walkCanceled = false;
-        console.timeEnd('createDirectoryIndex');
-        console.warn('Error creating index: ' + err);
-        reject(err);
-      });
+      )
+        .then(() => {
+          // entries - can be used for further processing
+          window.walkCanceled = false;
+          console.log(
+            'Directory index created ' +
+              dirPath +
+              ' containing ' +
+              directoryIndex.length
+          );
+          console.timeEnd('createDirectoryIndex');
+          resolve(directoryIndex);
+          return true;
+        })
+        .catch(err => {
+          window.walkCanceled = false;
+          console.timeEnd('createDirectoryIndex');
+          console.warn('Error creating index: ' + err);
+          reject(err);
+        });
     }, 2000);
   });
 }
@@ -149,44 +170,61 @@ export function walkDirectory(
     extractText: false,
     ...options
   };
-  return PlatformIO.listDirectoryPromise(path, false, mergedOptions.extractText).then((entries) => {
-    if (window.walkCanceled) {
-      return false;
-    }
-    return Promise.all(entries.map((entry) => {
+  return PlatformIO.listDirectoryPromise(path, false, mergedOptions.extractText)
+    .then(entries => {
       if (window.walkCanceled) {
         return false;
       }
+      return Promise.all(
+        entries.map(entry => {
+          if (window.walkCanceled) {
+            return false;
+          }
 
-      if (entry.isFile) {
-        if (fileCallback) {
-          fileCallback(entry);
-        }
-        return entry;
-      }
+          if (entry.isFile) {
+            if (fileCallback) {
+              fileCallback(entry);
+            }
+            return entry;
+          }
 
-      if (dirCallback) {
-        dirCallback(entry);
-      }
+          if (dirCallback) {
+            dirCallback(entry);
+          }
 
-      if (mergedOptions.recursive) {
-        if (mergedOptions.skipDotHiddenFolder && entry.name.startsWith('.')) {
+          if (mergedOptions.recursive) {
+            if (
+              mergedOptions.skipDotHiddenFolder &&
+              entry.name.startsWith('.')
+            ) {
+              return entry;
+            }
+            if (
+              mergedOptions.skipMetaFolder &&
+              entry.name === AppConfig.metaFolder
+            ) {
+              return entry;
+            }
+            return walkDirectory(
+              entry.path,
+              mergedOptions,
+              fileCallback,
+              dirCallback
+            );
+          }
           return entry;
-        }
-        if (mergedOptions.skipMetaFolder && entry.name === AppConfig.metaFolder) {
-          return entry;
-        }
-        return walkDirectory(entry.path, mergedOptions, fileCallback, dirCallback);
-      }
-      return entry;
-    }));
-  }).catch((err) => {
-    console.warn('Error walking directory ' + err);
-    return err;
-  });
+        })
+      );
+    })
+    .catch(err => {
+      console.warn('Error walking directory ' + err);
+      return err;
+    });
 }
 
-export async function getAllPropertiesPromise(entryPath: string): Promise<FileSystemEntry> {
+export async function getAllPropertiesPromise(
+  entryPath: string
+): Promise<FileSystemEntry> {
   const entryProps = await PlatformIO.getPropertiesPromise(entryPath);
   let metaFilePath;
   if (entryProps.isFile) {
@@ -235,7 +273,7 @@ export function openLinkExternally(uri: string) {
 
 export function deleteFilesPromise(filePathList: Array<string>) {
   const fileDeletionPromises = [];
-  filePathList.forEach((filePath) => {
+  filePathList.forEach(filePath => {
     fileDeletionPromises.push(PlatformIO.deleteFilePromise(filePath));
   });
   return Promise.all(fileDeletionPromises);
@@ -243,26 +281,31 @@ export function deleteFilesPromise(filePathList: Array<string>) {
 
 export function renameFilesPromise(renameJobs: Array<Array<string>>) {
   const fileRenamePromises = [];
-  renameJobs.forEach((renameJob) => {
-    fileRenamePromises.push(PlatformIO.renameFilePromise(renameJob[0], renameJob[1]));
+  renameJobs.forEach(renameJob => {
+    fileRenamePromises.push(
+      PlatformIO.renameFilePromise(renameJob[0], renameJob[1])
+    );
   });
   return Promise.all(fileRenamePromises);
 }
 
 export function copyFilesPromise(copyJobs: Array<Array<string>>) {
   const ioJobPromises = [];
-  copyJobs.forEach((copyJob) => {
+  copyJobs.forEach(copyJob => {
     ioJobPromises.push(PlatformIO.copyFilePromise(copyJob[0], copyJob[1]));
   });
   return Promise.all(ioJobPromises);
 }
 
-export async function loadSubFolders(path: string, loadHidden: boolean = false) {
+export async function loadSubFolders(
+  path: string,
+  loadHidden: boolean = false
+) {
   const folderContent = await PlatformIO.listDirectoryPromise(path, true);
   const subfolders = [];
   let i = 0;
   let isHidden = false;
-  folderContent.map((entry) => {
+  folderContent.map(entry => {
     if (!entry.isFile) {
       isHidden = entry.name.startsWith('.');
       if (isHidden) {
@@ -298,7 +341,11 @@ export async function loadSubFolders(path: string, loadHidden: boolean = false) 
   return subfolders;
 }
 
-export function generateFileName(fileName: string, tags: Array<string>, tagDelimiter: string) {
+export function generateFileName(
+  fileName: string,
+  tags: Array<string>,
+  tagDelimiter: string
+) {
   let tagsString = '';
   const prefixTagContainer = AppConfig.prefixTagContainer;
   // Creating the string will all the tags by more that 0 tags
@@ -321,28 +368,45 @@ export function generateFileName(fileName: string, tags: Array<string>, tagDelim
   const beginTagContainer = fileName.indexOf(AppConfig.beginTagContainer);
   const endTagContainer = fileName.indexOf(AppConfig.endTagContainer);
   const lastDotPosition = fileName.lastIndexOf('.');
-  if (beginTagContainer < 0 || endTagContainer < 0 || beginTagContainer >= endTagContainer) {
+  if (
+    beginTagContainer < 0 ||
+    endTagContainer < 0 ||
+    beginTagContainer >= endTagContainer
+  ) {
     // Filename does not contains tags.
     if (lastDotPosition < 0) {
       // File does not have an extension
       newFileName = fileName.trim() + tagsString;
     } else {
       // File has an extension
-      newFileName = fileName.substring(0, lastDotPosition).trim() + prefixTagContainer + tagsString + '.' + fileExt;
+      newFileName =
+        fileName.substring(0, lastDotPosition).trim() +
+        prefixTagContainer +
+        tagsString +
+        '.' +
+        fileExt;
     }
   } else {
     // File does not have an extension
-    newFileName = fileName.substring(0, beginTagContainer).trim() + prefixTagContainer + tagsString + fileName.substring(endTagContainer + 1, fileName.length).trim();
+    newFileName =
+      fileName.substring(0, beginTagContainer).trim() +
+      prefixTagContainer +
+      tagsString +
+      fileName.substring(endTagContainer + 1, fileName.length).trim();
   }
   if (newFileName.length < 1) {
     throw 'Generated filename is invalid';
   }
   // Removing double prefix
-  newFileName = newFileName.split(prefixTagContainer + '' + prefixTagContainer).join(prefixTagContainer);
+  newFileName = newFileName
+    .split(prefixTagContainer + '' + prefixTagContainer)
+    .join(prefixTagContainer);
   return newFileName;
 }
 
-export async function loadMetaDataPromise(path: string): Promise<FileSystemEntryMeta> {
+export async function loadMetaDataPromise(
+  path: string
+): Promise<FileSystemEntryMeta> {
   const entryProperties = await PlatformIO.getPropertiesPromise(path);
   let metaDataObject;
   if (entryProperties.isFile) {
@@ -373,7 +437,10 @@ export async function loadMetaDataPromise(path: string): Promise<FileSystemEntry
   return metaDataObject;
 }
 
-export async function saveMetaDataPromise(path: string, metaData: Object): Promise<any> {
+export async function saveMetaDataPromise(
+  path: string,
+  metaData: Object
+): Promise<any> {
   const entryProperties = await PlatformIO.getPropertiesPromise(path);
   let metaFilePath;
   let newFsEntryMeta;
@@ -381,19 +448,23 @@ export async function saveMetaDataPromise(path: string, metaData: Object): Promi
   if (entryProperties.isFile) {
     metaFilePath = getMetaFileLocationForFile(path);
     // check and create meta folder if not exist
-    await PlatformIO.createDirectoryPromise(extractContainingDirectoryPath(metaFilePath));
+    await PlatformIO.createDirectoryPromise(
+      extractContainingDirectoryPath(metaFilePath)
+    );
 
     newFsEntryMeta = {
       ...metaData,
       appName: versionMeta.name,
       appVersionUpdated: versionMeta.version,
-      lastUpdated: (new Date()).toJSON()
+      lastUpdated: new Date().toJSON()
     };
   } else {
     // check and create meta folder if not exist
     // todo not need to check if folder exist first createDirectoryPromise() recursively will skip creation of existing folders https://nodejs.org/api/fs.html#fs_fs_mkdir_path_options_callback
     const metaDirectoryPath = getMetaDirectoryPath(path);
-    const metaDirectoryProperties = await PlatformIO.getPropertiesPromise(metaDirectoryPath);
+    const metaDirectoryProperties = await PlatformIO.getPropertiesPromise(
+      metaDirectoryPath
+    );
     if (!metaDirectoryProperties) {
       await PlatformIO.createDirectoryPromise(metaDirectoryPath);
     }
@@ -403,7 +474,7 @@ export async function saveMetaDataPromise(path: string, metaData: Object): Promi
       ...metaData,
       appName: versionMeta.name,
       appVersionUpdated: versionMeta.version,
-      lastUpdated: (new Date()).toJSON()
+      lastUpdated: new Date().toJSON()
     };
   }
   const content = JSON.stringify(newFsEntryMeta);
@@ -413,7 +484,7 @@ export async function saveMetaDataPromise(path: string, metaData: Object): Promi
 export function findColorForFileEntry(
   fileExtension: string,
   isFile: boolean,
-  supportedFileTypes: Array<Object>,
+  supportedFileTypes: Array<Object>
 ): string {
   if (!isFile) {
     return AppConfig.defaultFolderColor;

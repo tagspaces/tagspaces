@@ -38,15 +38,22 @@ import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
 import i18n from '../services/i18n';
 import { getAllPropertiesPromise } from '../services/utils-io';
 import { formatFileSize } from '../utils/misc';
-import { extractContainingDirectoryPath, getThumbFileLocationForFile } from '../utils/paths';
+import {
+  extractContainingDirectoryPath,
+  getThumbFileLocationForFile
+} from '../utils/paths';
 import AppConfig from '../config';
 import { Pro } from '../pro';
 import TagsSelect from './TagsSelect';
 import TransparentBackground from './TransparentBackground';
-import { replaceThumbnailURLPromise, getThumbnailURLPromise } from '../services/thumbsgenerator';
+import {
+  replaceThumbnailURLPromise,
+  getThumbnailURLPromise
+} from '../services/thumbsgenerator';
 // import { actions as AppActions } from '../reducers/app';
 
-const ThumbnailChooserDialog = Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
+const ThumbnailChooserDialog =
+  Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
 
 const styles = theme => ({
   entryProperties: {
@@ -105,7 +112,7 @@ const styles = theme => ({
     position: 'relative',
     padding: '8px 12px 6px 8px',
     margin: '0 10px 0 0',
-    cursor: 'pointer',
+    cursor: 'pointer'
   },
   buttonIcon: {
     cursor: 'pointer'
@@ -135,7 +142,8 @@ const styles = theme => ({
 
 const customRenderer = new marked.Renderer();
 // customRenderer.link = (href, title, text) => `<a href="javascript:window.open('${href}', '_blank', 'nodeIntegration=no')" target="_blank">${text}</a>`;
-customRenderer.link = (href, title, text) => `<a href="#" onClick="event.preventDefault();event.stopPropagation(); window.open('${href}', '_blank', 'nodeIntegration=no');return false;">${text}</a>`;
+customRenderer.link = (href, title, text) =>
+  `<a href="#" onClick="event.preventDefault();event.stopPropagation(); window.open('${href}', '_blank', 'nodeIntegration=no');return false;">${text}</a>`;
 
 marked.setOptions({
   renderer: customRenderer,
@@ -227,29 +235,34 @@ class EntryProperties extends Component<Props, State> {
     }
   }
 
-  loadEntryProperties = (entryPath) => {
-    getAllPropertiesPromise(entryPath).then(entryProps => {
-      this.setState({
-        isEditName: false,
-        name: entryProps.name,
-        path: entryProps.path,
-        size: entryProps.size,
-        tags: entryProps.tags,
-        ldtm: entryProps.lmdt ? new Date(entryProps.lmdt)
-          .toISOString()
-          .substring(0, 19)
-          .split('T')
-          .join(' ') : '',
-        color: entryProps.color,
-        isFile: entryProps.isFile,
-        description: entryProps.description ? entryProps.description : ''
-      });
-      return true;
-    })
+  loadEntryProperties = entryPath => {
+    getAllPropertiesPromise(entryPath)
+      .then(entryProps => {
+        this.setState({
+          isEditName: false,
+          name: entryProps.name,
+          path: entryProps.path,
+          size: entryProps.size,
+          tags: entryProps.tags,
+          ldtm: entryProps.lmdt
+            ? new Date(entryProps.lmdt)
+                .toISOString()
+                .substring(0, 19)
+                .split('T')
+                .join(' ')
+            : '',
+          color: entryProps.color,
+          isFile: entryProps.isFile,
+          description: entryProps.description ? entryProps.description : ''
+        });
+        return true;
+      })
       .catch(error =>
-        console.warn('Error getting properties for entry: ' + entryPath + ' - ' + error)
+        console.warn(
+          'Error getting properties for entry: ' + entryPath + ' - ' + error
+        )
       );
-  }
+  };
 
   renameEntry = () => {
     if (this.state.isEditName) {
@@ -283,32 +296,40 @@ class EntryProperties extends Component<Props, State> {
       return;
     }
     if (this.state.isEditName) {
-      this.setState({
-        isEditName: false,
-        name: this.state.originalName
-      }, () => {
-        this.props.setPropertiesEditMode(false);
-      });
-    } else {
-      this.setState({
-        isEditName: true,
-        originalName: this.state.name
-      }, () => {
-        this.fileName.focus();
-        this.props.setPropertiesEditMode(true);
-        const { originalName } = this.state;
-        if (originalName) {
-          const indexOfBracket = originalName.indexOf(AppConfig.beginTagContainer);
-          const indexOfDot = originalName.indexOf('.');
-          let endRange = originalName.length;
-          if (indexOfBracket > 0) {
-            endRange = indexOfBracket;
-          } else if (indexOfDot > 0) {
-            endRange = indexOfDot;
-          }
-          this.fileName.setSelectionRange(0, endRange);
+      this.setState(
+        {
+          isEditName: false,
+          name: this.state.originalName
+        },
+        () => {
+          this.props.setPropertiesEditMode(false);
         }
-      });
+      );
+    } else {
+      this.setState(
+        {
+          isEditName: true,
+          originalName: this.state.name
+        },
+        () => {
+          this.fileName.focus();
+          this.props.setPropertiesEditMode(true);
+          const { originalName } = this.state;
+          if (originalName) {
+            const indexOfBracket = originalName.indexOf(
+              AppConfig.beginTagContainer
+            );
+            const indexOfDot = originalName.indexOf('.');
+            let endRange = originalName.length;
+            if (indexOfBracket > 0) {
+              endRange = indexOfBracket;
+            } else if (indexOfDot > 0) {
+              endRange = indexOfDot;
+            }
+            this.fileName.setSelectionRange(0, endRange);
+          }
+        }
+      );
     }
   };
 
@@ -320,7 +341,9 @@ class EntryProperties extends Component<Props, State> {
       return;
     }
     if (!Pro) {
-      this.props.showNotification(i18n.t('core:thisFunctionalityIsAvailableInPro'));
+      this.props.showNotification(
+        i18n.t('core:thisFunctionalityIsAvailableInPro')
+      );
       return;
     }
     if (!Pro.MetaOperations) {
@@ -328,30 +351,44 @@ class EntryProperties extends Component<Props, State> {
       return;
     }
     if (this.state.isEditDescription) {
-      Pro.MetaOperations.saveDescription(this.props.entryPath, this.state.description).then((entryMeta) => {
-        this.setState({
-          isEditDescription: false
-        }, () => {
-          this.props.setPropertiesEditMode(false);
-          this.props.reflectUpdateSidecarMeta(this.props.entryPath, entryMeta);
+      Pro.MetaOperations.saveDescription(
+        this.props.entryPath,
+        this.state.description
+      )
+        .then(entryMeta => {
+          this.setState(
+            {
+              isEditDescription: false
+            },
+            () => {
+              this.props.setPropertiesEditMode(false);
+              this.props.reflectUpdateSidecarMeta(
+                this.props.entryPath,
+                entryMeta
+              );
+            }
+          );
+          return true;
+        })
+        .catch(error => {
+          console.warn('Error saving description ' + error);
+          this.setState({
+            isEditDescription: false
+          });
+          this.props.showNotification(i18n.t('Error saving description'));
         });
-        return true;
-      }).catch((error) => {
-        console.warn('Error saving description ' + error);
-        this.setState({
-          isEditDescription: false
-        });
-        this.props.showNotification(i18n.t('Error saving description'));
-      });
     } else {
-      this.setState({
-        isEditDescription: true
-      }, () => {
-        this.props.setPropertiesEditMode(true);
-        if (this.fileDescription) {
-          this.fileDescription.focus();
+      this.setState(
+        {
+          isEditDescription: true
+        },
+        () => {
+          this.props.setPropertiesEditMode(true);
+          if (this.fileDescription) {
+            this.fileDescription.focus();
+          }
         }
-      });
+      );
     }
   };
 
@@ -369,33 +406,35 @@ class EntryProperties extends Component<Props, State> {
       this.props.showNotification(i18n.t('core:needProVersion'));
       return true;
     }
-    this.setState(
-      ({ isFileThumbChooseDialogOpened }) => ({
-        isFileThumbChooseDialogOpened: !isFileThumbChooseDialogOpened
-      })
-    );
+    this.setState(({ isFileThumbChooseDialogOpened }) => ({
+      isFileThumbChooseDialogOpened: !isFileThumbChooseDialogOpened
+    }));
   };
 
   setThumb = (filePath, thumbFilePath) => {
     if (filePath !== undefined) {
-      return replaceThumbnailURLPromise(filePath, thumbFilePath).then((objUrl) => {
+      return replaceThumbnailURLPromise(filePath, thumbFilePath)
+        .then(objUrl => {
+          this.setState({ thumbPath: objUrl.tmbPath });
+          this.props.updateThumbnailUrl(this.props.entryPath, objUrl.tmbPath);
+          return true;
+        })
+        .catch(err => {
+          console.warn('Error replaceThumbnailURLPromise ' + err);
+          this.props.showNotification('Error replace Thumbnail');
+        });
+    }
+    // reset Thumbnail
+    return getThumbnailURLPromise(this.props.entryPath)
+      .then(objUrl => {
         this.setState({ thumbPath: objUrl.tmbPath });
         this.props.updateThumbnailUrl(this.props.entryPath, objUrl.tmbPath);
         return true;
-      }).catch(err => {
-        console.warn('Error replaceThumbnailURLPromise ' + err);
-        this.props.showNotification('Error replace Thumbnail');
+      })
+      .catch(err => {
+        console.warn('Error getThumbnailURLPromise ' + err);
+        this.props.showNotification('Error reset Thumbnail');
       });
-    }
-    // reset Thumbnail
-    return getThumbnailURLPromise(this.props.entryPath).then((objUrl) => {
-      this.setState({ thumbPath: objUrl.tmbPath });
-      this.props.updateThumbnailUrl(this.props.entryPath, objUrl.tmbPath);
-      return true;
-    }).catch(err => {
-      console.warn('Error getThumbnailURLPromise ' + err);
-      this.props.showNotification('Error reset Thumbnail');
-    });
   };
 
   saveEditDescription = () => {
@@ -407,7 +446,9 @@ class EntryProperties extends Component<Props, State> {
       return;
     }
     if (!Pro) {
-      this.props.showNotification(i18n.t('core:thisFunctionalityIsAvailableInPro'));
+      this.props.showNotification(
+        i18n.t('core:thisFunctionalityIsAvailableInPro')
+      );
       return;
     }
     if (!Pro.MetaOperations) {
@@ -421,13 +462,15 @@ class EntryProperties extends Component<Props, State> {
 
   handleChangeColor = color => {
     this.setState({ color }, () => {
-      Pro.MetaOperations.saveColor(this.props.entryPath, this.state.color).then((entryMeta) => {
-        this.props.reflectUpdateSidecarMeta(this.props.entryPath, entryMeta);
-        return true;
-      }).catch((error) => {
-        console.warn('Error saving color for folder ' + error);
-        this.props.showNotification(i18n.t('Error saving color for folder'));
-      });
+      Pro.MetaOperations.saveColor(this.props.entryPath, this.state.color)
+        .then(entryMeta => {
+          this.props.reflectUpdateSidecarMeta(this.props.entryPath, entryMeta);
+          return true;
+        })
+        .catch(error => {
+          console.warn('Error saving color for folder ' + error);
+          this.props.showNotification(i18n.t('Error saving color for folder'));
+        });
     });
   };
 
@@ -452,10 +495,11 @@ class EntryProperties extends Component<Props, State> {
 
   handleChange = (name, value, action) => {
     if (action === 'remove-value') {
-      if (!value) { // no tags left in the select element
+      if (!value) {
+        // no tags left in the select element
         this.props.removeAllTags([this.state.path]);
       } else {
-        this.state.tags.map((tag) => {
+        this.state.tags.map(tag => {
           if (value.findIndex(obj => obj.title === tag.title) === -1) {
             this.props.removeTags([this.state.path], [tag]);
           }
@@ -464,8 +508,9 @@ class EntryProperties extends Component<Props, State> {
       }
     } else if (action === 'clear') {
       this.props.removeAllTags([this.state.path]);
-    } else { // create-option or select-option
-      value.map((tag) => {
+    } else {
+      // create-option or select-option
+      value.map(tag => {
         if (this.state.tags.findIndex(obj => obj.title === tag.title) === -1) {
           this.props.addTags([this.state.path], [tag]);
         }
@@ -509,14 +554,17 @@ class EntryProperties extends Component<Props, State> {
       if (this.state.isFile) {
         thumbPath = getThumbFileLocationForFile(path);
       } else {
-        thumbPath = path +
+        thumbPath =
+          path +
           AppConfig.dirSeparator +
           AppConfig.metaFolder +
           AppConfig.dirSeparator +
           AppConfig.folderThumbFile;
       }
     }
-    let thumbPathUrl = thumbPath ? 'url("' + thumbPath + '?' + new Date().getTime() + '")' : '';
+    let thumbPathUrl = thumbPath
+      ? 'url("' + thumbPath + '?' + new Date().getTime() + '")'
+      : '';
     if (AppConfig.isWin) {
       thumbPathUrl = thumbPathUrl.split('\\').join('\\\\');
     }
@@ -528,7 +576,11 @@ class EntryProperties extends Component<Props, State> {
           <div className={classes.entryItem}>
             <div className={classes.fluidGrid}>
               <div className="grid-item">
-                <Typography variant="caption" className={classes.header} style={{ display: 'block' }}>
+                <Typography
+                  variant="caption"
+                  className={classes.header}
+                  style={{ display: 'block' }}
+                >
                   {i18n.t('core:editTagMasterName')}
                 </Typography>
               </div>
@@ -576,7 +628,9 @@ class EntryProperties extends Component<Props, State> {
                   fullWidth={true}
                   data-tid="fileNameProperties"
                   value={name}
-                  inputRef={(ref) => { this.fileName = ref; }}
+                  inputRef={ref => {
+                    this.fileName = ref;
+                  }}
                   className={classes.field}
                   onClick={() => {
                     if (!isEditName) {
@@ -597,21 +651,34 @@ class EntryProperties extends Component<Props, State> {
           <div className={classes.entryItem}>
             <div className={classes.fluidGrid}>
               <div className="grid-item">
-                <Typography variant="caption" className={classes.header} style={{ display: 'block' }}>
+                <Typography
+                  variant="caption"
+                  className={classes.header}
+                  style={{ display: 'block' }}
+                >
                   {i18n.t('core:fileTags')}
                 </Typography>
               </div>
               <div className="grid-item" />
             </div>
             <TagDropContainer entryPath={path}>
-              <TagsSelect placeholderText={i18n.t('core:dropHere')} isReadOnlyMode={isReadOnlyMode} tags={tags} handleChange={this.handleChange} />
+              <TagsSelect
+                placeholderText={i18n.t('core:dropHere')}
+                isReadOnlyMode={isReadOnlyMode}
+                tags={tags}
+                handleChange={this.handleChange}
+              />
             </TagDropContainer>
           </div>
 
           <div className={classes.entryItem}>
             <div className={classes.fluidGrid}>
               <div className="grid-item">
-                <Typography variant="caption" className={classNames(classes.header, classes.header)} style={{ display: 'block' }}>
+                <Typography
+                  variant="caption"
+                  className={classNames(classes.header, classes.header)}
+                  style={{ display: 'block' }}
+                >
                   {i18n.t('core:filePropertiesDescription')}
                 </Typography>
               </div>
@@ -645,7 +712,9 @@ class EntryProperties extends Component<Props, State> {
               {isEditDescription ? (
                 <TextField
                   multiline
-                  inputRef={(ref) => { this.fileDescription = ref; }}
+                  inputRef={ref => {
+                    this.fileDescription = ref;
+                  }}
                   disabled={!isEditDescription}
                   id="textarea"
                   placeholder=""
@@ -670,7 +739,9 @@ class EntryProperties extends Component<Props, State> {
                     __html:
                       description !== ''
                         ? marked(DOMPurify.sanitize(description))
-                        : Pro ? 'Click to add description' : i18n.t('core:addDescription')
+                        : Pro
+                        ? 'Click to add description'
+                        : i18n.t('core:addDescription')
                   }}
                   onClick={() => {
                     if (!isEditDescription) {
@@ -707,7 +778,7 @@ class EntryProperties extends Component<Props, State> {
                 </FormControl>
               </div>
 
-              { isFile ? (
+              {isFile ? (
                 <div className="grid-item" style={{ width: '50%' }}>
                   <Typography
                     variant="caption"
@@ -741,10 +812,7 @@ class EntryProperties extends Component<Props, State> {
                   >
                     {i18n.t('core:changeBackgroundColor')}
                   </Typography>
-                  <FormControl
-                    fullWidth={true}
-                    className={classes.formControl}
-                  >
+                  <FormControl fullWidth={true} className={classes.formControl}>
                     <TransparentBackground>
                       <Button
                         fullWidth={true}
@@ -753,7 +821,7 @@ class EntryProperties extends Component<Props, State> {
                           classes.button
                         ].join(' ')}
                         style={{
-                          backgroundColor: color,
+                          backgroundColor: color
                         }}
                         onClick={this.toggleBackgroundColorPicker}
                       />
@@ -763,10 +831,27 @@ class EntryProperties extends Component<Props, State> {
                         setColor={this.handleChangeColor}
                         onClose={this.toggleBackgroundColorPicker}
                         presetColors={[
-                          '#FFFFFF44', '#00000044', '#ac725e44', '#f83a2244', '#fa573c44',
-                          '#ff753744', '#ffad4644', '#42d69244', '#00800044', '#7bd14844',
-                          '#fad16544', '#92e1c044', '#9fe1e744', '#9fc6e744', '#4986e744',
-                          '#9a9cff44', '#c2c2c244', '#cca6ac44', '#f691b244', '#cd74e644', '#a47ae244'
+                          '#FFFFFF44',
+                          '#00000044',
+                          '#ac725e44',
+                          '#f83a2244',
+                          '#fa573c44',
+                          '#ff753744',
+                          '#ffad4644',
+                          '#42d69244',
+                          '#00800044',
+                          '#7bd14844',
+                          '#fad16544',
+                          '#92e1c044',
+                          '#9fe1e744',
+                          '#9fc6e744',
+                          '#4986e744',
+                          '#9a9cff44',
+                          '#c2c2c244',
+                          '#cca6ac44',
+                          '#f691b244',
+                          '#cd74e644',
+                          '#a47ae244'
                         ]}
                       />
                     </TransparentBackground>
@@ -778,7 +863,11 @@ class EntryProperties extends Component<Props, State> {
 
           <div className={classes.entryItem}>
             <div className={classes.fluidGrid}>
-              <Typography variant="caption" className={classNames(classes.header)} style={{ display: 'block' }}>
+              <Typography
+                variant="caption"
+                className={classNames(classes.header)}
+                style={{ display: 'block' }}
+              >
                 {i18n.t('core:filePath')}
               </Typography>
               {isFile && !isReadOnlyMode && (
@@ -808,7 +897,11 @@ class EntryProperties extends Component<Props, State> {
 
           <div className={classes.entryItem}>
             <div className={classes.fluidGrid}>
-              <Typography variant="caption" className={classNames(classes.header)} style={{ display: 'block' }}>
+              <Typography
+                variant="caption"
+                className={classNames(classes.header)}
+                style={{ display: 'block' }}
+              >
                 {i18n.t('core:thumbnail')}
               </Typography>
               {!isReadOnlyMode && (
@@ -838,7 +931,9 @@ class EntryProperties extends Component<Props, State> {
               />
             </div>
           </div>
-          <div className={classes.entryItem}><br /></div>
+          <div className={classes.entryItem}>
+            <br />
+          </div>
         </Grid>
 
         <EntryTagMenu

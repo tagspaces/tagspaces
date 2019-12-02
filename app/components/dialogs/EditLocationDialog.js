@@ -85,44 +85,46 @@ class EditLocationDialog extends React.Component<Props, State> {
     type: locationType.TYPE_LOCAL
   };
 
-   componentWillReceiveProps = (nextProps: any) => {
-     if (nextProps.open === true && nextProps.location) {
-       const dir = nextProps.selectedDirectoryPath;
-       let properties;
-       if (nextProps.location.type === locationType.TYPE_CLOUD) {
-         properties = {
-           storeName: dir ? extractDirectoryName(dir) : nextProps.location.name,
-           storePath: dir || nextProps.location.paths[0],
-         };
-       } else {
-         properties = { // TODO maybe its better to separate name/path keys for different locationTypes ??
-           name: dir ? extractDirectoryName(dir) : nextProps.location.name,
-           path: dir || nextProps.location.paths[0],
-         };
-       }
-       this.setState({
-         ...properties,
-         uuid: nextProps.location.uuid,
-         perspective: nextProps.location.perspective,
-         isDefault: nextProps.location.isDefault,
-         isReadOnly: nextProps.location.isReadOnly,
-         watchForChanges: nextProps.location.watchForChanges,
-         persistIndex: nextProps.location.persistIndex,
-         fullTextIndex: nextProps.location.fullTextIndex,
-         type: nextProps.location.type || locationType.TYPE_LOCAL,
-         accessKeyId: nextProps.location.accessKeyId,
-         secretAccessKey: nextProps.location.secretAccessKey,
-         bucketName: nextProps.location.bucketName,
-         region: suggestions.find(obj => obj.value === nextProps.location.region)
-       });
-     }
-   };
+  componentWillReceiveProps = (nextProps: any) => {
+    if (nextProps.open === true && nextProps.location) {
+      const dir = nextProps.selectedDirectoryPath;
+      let properties;
+      if (nextProps.location.type === locationType.TYPE_CLOUD) {
+        properties = {
+          storeName: dir ? extractDirectoryName(dir) : nextProps.location.name,
+          storePath: dir || nextProps.location.paths[0]
+        };
+      } else {
+        properties = {
+          // TODO maybe its better to separate name/path keys for different locationTypes ??
+          name: dir ? extractDirectoryName(dir) : nextProps.location.name,
+          path: dir || nextProps.location.paths[0]
+        };
+      }
+      this.setState({
+        ...properties,
+        uuid: nextProps.location.uuid,
+        perspective: nextProps.location.perspective,
+        isDefault: nextProps.location.isDefault,
+        isReadOnly: nextProps.location.isReadOnly,
+        watchForChanges: nextProps.location.watchForChanges,
+        persistIndex: nextProps.location.persistIndex,
+        fullTextIndex: nextProps.location.fullTextIndex,
+        type: nextProps.location.type || locationType.TYPE_LOCAL,
+        accessKeyId: nextProps.location.accessKeyId,
+        secretAccessKey: nextProps.location.secretAccessKey,
+        bucketName: nextProps.location.bucketName,
+        region: suggestions.find(obj => obj.value === nextProps.location.region)
+      });
+    }
+  };
 
   handleInputChange = (event: Object) => {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
-    if (target.type === 'radio') { // type is changed (skip validation)
+    if (target.type === 'radio') {
+      // type is changed (skip validation)
       this.setState({
         [name]: value
       });
@@ -132,9 +134,12 @@ class EditLocationDialog extends React.Component<Props, State> {
   };
 
   handleChange = (name, value) => {
-    this.setState({
-      [name]: value
-    }, this.handleValidation);
+    this.setState(
+      {
+        [name]: value
+      },
+      this.handleValidation
+    );
   };
 
   handleValidation() {
@@ -265,7 +270,7 @@ class EditLocationDialog extends React.Component<Props, State> {
   onCancel = () => {
     this.props.onClose();
     this.props.resetState('editLocationDialogKey');
-  }
+  };
 
   renderTitle = () => (
     <DialogTitle>{i18n.t('core:editLocationTitle')}</DialogTitle>
@@ -274,18 +279,22 @@ class EditLocationDialog extends React.Component<Props, State> {
   renderContent = () => {
     let content;
     if (this.state.type === locationType.TYPE_CLOUD) {
-      content = (<ObjectStoreForm
-        handleInputChange={this.handleInputChange}
-        handleChange={this.handleChange}
-        state={this.state}
-      />);
+      content = (
+        <ObjectStoreForm
+          handleInputChange={this.handleInputChange}
+          handleChange={this.handleChange}
+          state={this.state}
+        />
+      );
     } else {
-      content = (<LocalForm
-        showSelectDirectoryDialog={this.props.showSelectDirectoryDialog}
-        handleInputChange={this.handleInputChange}
-        handleChange={this.handleChange}
-        state={this.state}
-      />);
+      content = (
+        <LocalForm
+          showSelectDirectoryDialog={this.props.showSelectDirectoryDialog}
+          handleInputChange={this.handleInputChange}
+          handleChange={this.handleChange}
+          state={this.state}
+        />
+      );
     }
     return (
       <DialogContent>
@@ -296,7 +305,9 @@ class EditLocationDialog extends React.Component<Props, State> {
           <Grid item xs={10}>
             <FormControl disabled={!Pro}>
               <RadioGroup
-                title={Pro ? '' : i18n.t('core:thisFunctionalityIsAvailableInPro')}
+                title={
+                  Pro ? '' : i18n.t('core:thisFunctionalityIsAvailableInPro')
+                }
                 component="label"
                 aria-label={i18n.t('core:locationType')}
                 name="type"
@@ -304,8 +315,17 @@ class EditLocationDialog extends React.Component<Props, State> {
                 onChange={this.handleInputChange}
                 row
               >
-                <FormControlLabel value={locationType.TYPE_LOCAL} control={<Radio />} label="Local" />
-                <FormControlLabel value={locationType.TYPE_CLOUD} control={<Radio />} title="AWS S3 compatible object storage" label="AWS S3 Object Storage" />
+                <FormControlLabel
+                  value={locationType.TYPE_LOCAL}
+                  control={<Radio />}
+                  label="Local"
+                />
+                <FormControlLabel
+                  value={locationType.TYPE_CLOUD}
+                  control={<Radio />}
+                  title="AWS S3 compatible object storage"
+                  label="AWS S3 Object Storage"
+                />
               </RadioGroup>
             </FormControl>
           </Grid>
@@ -334,7 +354,10 @@ class EditLocationDialog extends React.Component<Props, State> {
                   onChange={this.handleInputChange}
                 />
               }
-              label={i18n.t('core:readonlyModeSwitch') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
+              label={
+                i18n.t('core:readonlyModeSwitch') +
+                (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
+              }
             />
             <FormControlLabel
               control={
@@ -346,7 +369,10 @@ class EditLocationDialog extends React.Component<Props, State> {
                   onChange={this.handleInputChange}
                 />
               }
-              label={i18n.t('core:createFullTextIndex') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
+              label={
+                i18n.t('core:createFullTextIndex') +
+                (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
+              }
             />
             <FormControlLabel
               control={
@@ -358,7 +384,10 @@ class EditLocationDialog extends React.Component<Props, State> {
                   onChange={this.handleInputChange}
                 />
               }
-              label={i18n.t('core:persistIndexSwitch') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
+              label={
+                i18n.t('core:persistIndexSwitch') +
+                (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
+              }
             />
             <FormControlLabel
               control={
@@ -370,7 +399,10 @@ class EditLocationDialog extends React.Component<Props, State> {
                   onChange={this.handleInputChange}
                 />
               }
-              label={i18n.t('core:watchForChangesInLocation') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
+              label={
+                i18n.t('core:watchForChangesInLocation') +
+                (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
+              }
             />
           </FormGroup>
         </FormControl>
@@ -383,7 +415,10 @@ class EditLocationDialog extends React.Component<Props, State> {
       <Button
         data-tid="closeEditLocationDialog"
         color="primary"
-        onClick={() => { this.props.onClose(); this.props.resetState('editLocationDialogKey'); }}
+        onClick={() => {
+          this.props.onClose();
+          this.props.resetState('editLocationDialogKey');
+        }}
       >
         {i18n.t('core:cancel')}
       </Button>
@@ -415,10 +450,9 @@ class EditLocationDialog extends React.Component<Props, State> {
         {this.renderTitle()}
         {this.renderContent()}
         {this.renderActions()}
-      </Dialog>  
+      </Dialog>
     );
   }
 }
 
 export default withMobileDialog()(EditLocationDialog);
-

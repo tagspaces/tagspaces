@@ -38,7 +38,10 @@ export const suggestions = [
   { label: 'us-west-1 (US West N. California)', value: 'us-west-1' },
   { label: 'us-west-2 (US West Oregon)', value: 'us-west-2' },
   { label: 'ap-south-1 (Asia Pacific Mumbai)', value: 'ap-south-1' },
-  { label: 'ap-northeast-3 (Asia Pacific Osaka-Local)', value: 'ap-northeast-3' },
+  {
+    label: 'ap-northeast-3 (Asia Pacific Osaka-Local)',
+    value: 'ap-northeast-3'
+  },
   { label: 'ap-northeast-2 (Asia Pacific Seoul)', value: 'ap-northeast-2' },
   { label: 'ap-southeast-1 (Asia Pacific Singapore)', value: 'ap-southeast-1' },
   { label: 'ap-southeast-2 (Asia Pacific Sydney)', value: 'ap-southeast-2' },
@@ -50,13 +53,13 @@ export const suggestions = [
   { label: 'eu-west-1 (EU Ireland)', value: 'eu-west-1' },
   { label: 'eu-west-2 (EU London)', value: 'eu-west-2' },
   { label: 'eu-west-3 (EU Paris)', value: 'eu-west-3' },
-  { label: 'sa-east-1 (South America São Paulo)', value: 'sa-east-1' },
+  { label: 'sa-east-1 (South America São Paulo)', value: 'sa-east-1' }
 ];
 
 const styles = theme => ({
   root: {
     flexGrow: 1,
-    height: 250,
+    height: 250
   },
   input: {
     display: 'flex',
@@ -69,29 +72,29 @@ const styles = theme => ({
     flexWrap: 'wrap',
     flex: 1,
     alignItems: 'center',
-    overflow: 'hidden',
+    overflow: 'hidden'
   },
   noOptionsMessage: {
-    padding: theme.spacing(1, 2),
+    padding: theme.spacing(1, 2)
   },
   singleValue: {
-    fontSize: 16,
+    fontSize: 16
   },
   placeholder: {
     position: 'absolute',
     left: 2,
-    fontSize: 16,
+    fontSize: 16
   },
   paper: {
     // position: 'absolute',
     zIndex: 1,
     marginTop: theme.spacing(1),
     left: 0,
-    right: 0,
+    right: 0
   },
   divider: {
-    height: theme.spacing(2),
-  },
+    height: theme.spacing(2)
+  }
 });
 
 function NoOptionsMessage(props) {
@@ -120,8 +123,8 @@ function Control(props) {
           className: props.selectProps.classes.input,
           inputRef: props.innerRef,
           children: props.children,
-          ...props.innerProps,
-        },
+          ...props.innerProps
+        }
       }}
       {...props.selectProps.textFieldProps}
     />
@@ -135,7 +138,7 @@ function Option(props) {
       selected={props.isFocused}
       component="div"
       style={{
-        fontWeight: props.isSelected ? 500 : 400,
+        fontWeight: props.isSelected ? 500 : 400
       }}
       {...props.innerProps}
     >
@@ -158,19 +161,31 @@ function Placeholder(props) {
 
 function SingleValue(props) {
   return (
-    <Typography className={props.selectProps.classes.singleValue} {...props.innerProps}>
+    <Typography
+      className={props.selectProps.classes.singleValue}
+      {...props.innerProps}
+    >
       {props.children}
     </Typography>
   );
 }
 
 function ValueContainer(props) {
-  return <div className={props.selectProps.classes.valueContainer}>{props.children}</div>;
+  return (
+    <div className={props.selectProps.classes.valueContainer}>
+      {props.children}
+    </div>
+  );
 }
 
 function Menu(props) {
   return (
-    <Paper elevation={2} square className={props.selectProps.classes.paper} {...props.innerProps}>
+    <Paper
+      elevation={2}
+      square
+      className={props.selectProps.classes.paper}
+      {...props.innerProps}
+    >
       {props.children}
     </Paper>
   );
@@ -184,7 +199,7 @@ const components = {
   Option,
   Placeholder,
   SingleValue,
-  ValueContainer,
+  ValueContainer
 };
 
 type Props = {
@@ -202,7 +217,10 @@ class ObjectStoreForm extends React.Component<Props> {
 
   handleInputSelectChange = (inputValue: any, actionMeta: any) => {
     if (actionMeta.action === 'set-value') {
-      suggestions.push({ label: this.props.state.region, value: this.props.state.region });
+      suggestions.push({
+        label: this.props.state.region,
+        value: this.props.state.region
+      });
     } else if (actionMeta.action === 'input-change') {
       this.props.handleChange('region', inputValue);
     }
@@ -216,19 +234,18 @@ class ObjectStoreForm extends React.Component<Props> {
         ...base,
         color: theme.palette.text.primary,
         '& input': {
-          font: 'inherit',
-        },
-      }),
+          font: 'inherit'
+        }
+      })
     };
 
     return (
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <FormControl
-            fullWidth={true}
-            error={state.cloudErrorTextName}
-          >
-            <InputLabel htmlFor="storeName">{i18n.t('core:createLocationName')}</InputLabel>
+          <FormControl fullWidth={true} error={state.cloudErrorTextName}>
+            <InputLabel htmlFor="storeName">
+              {i18n.t('core:createLocationName')}
+            </InputLabel>
             <Input
               required
               margin="dense"
@@ -239,15 +256,16 @@ class ObjectStoreForm extends React.Component<Props> {
               onChange={handleInputChange}
               value={state.storeName}
             />
-            {state.cloudErrorTextName && <FormHelperText>{i18n.t('core:invalidName')}</FormHelperText>}
+            {state.cloudErrorTextName && (
+              <FormHelperText>{i18n.t('core:invalidName')}</FormHelperText>
+            )}
           </FormControl>
         </Grid>
         <Grid item xs={12}>
-          <FormControl
-            fullWidth={true}
-            error={state.cloudErrorTextPath}
-          >
-            <InputLabel htmlFor="path">{i18n.t('core:createLocationPath')}</InputLabel>
+          <FormControl fullWidth={true} error={state.cloudErrorTextPath}>
+            <InputLabel htmlFor="path">
+              {i18n.t('core:createLocationPath')}
+            </InputLabel>
             <Input
               margin="dense"
               name="storePath"
@@ -257,15 +275,16 @@ class ObjectStoreForm extends React.Component<Props> {
               onChange={handleInputChange}
               value={state.storePath}
             />
-            {state.cloudErrorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
+            {state.cloudErrorTextPath && (
+              <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>
+            )}
           </FormControl>
         </Grid>
         <Grid item xs={12}>
-          <FormControl
-            fullWidth={true}
-            error={state.cloudErrorAccessKey}
-          >
-            <InputLabel htmlFor="accessKeyId">{i18n.t('core:accessKeyId')}</InputLabel>
+          <FormControl fullWidth={true} error={state.cloudErrorAccessKey}>
+            <InputLabel htmlFor="accessKeyId">
+              {i18n.t('core:accessKeyId')}
+            </InputLabel>
             <Input
               margin="dense"
               name="accessKeyId"
@@ -275,15 +294,16 @@ class ObjectStoreForm extends React.Component<Props> {
               onChange={handleInputChange}
               value={state.accessKeyId}
             />
-            {state.cloudErrorAccessKey && <FormHelperText>{i18n.t('core:invalidAccessKey')}</FormHelperText>}
+            {state.cloudErrorAccessKey && (
+              <FormHelperText>{i18n.t('core:invalidAccessKey')}</FormHelperText>
+            )}
           </FormControl>
         </Grid>
         <Grid item xs={12}>
-          <FormControl
-            fullWidth={true}
-            error={state.cloudErrorSecretAccessKey}
-          >
-            <InputLabel htmlFor="secretAccessKey">{i18n.t('core:secretAccessKey')}</InputLabel>
+          <FormControl fullWidth={true} error={state.cloudErrorSecretAccessKey}>
+            <InputLabel htmlFor="secretAccessKey">
+              {i18n.t('core:secretAccessKey')}
+            </InputLabel>
             <Input
               margin="dense"
               name="secretAccessKey"
@@ -294,12 +314,18 @@ class ObjectStoreForm extends React.Component<Props> {
               onChange={handleInputChange}
               value={state.secretAccessKey}
             />
-            {state.cloudErrorSecretAccessKey && <FormHelperText>{i18n.t('core:invalidSecretAccessKey')}</FormHelperText>}
+            {state.cloudErrorSecretAccessKey && (
+              <FormHelperText>
+                {i18n.t('core:invalidSecretAccessKey')}
+              </FormHelperText>
+            )}
           </FormControl>
         </Grid>
         <Grid item xs={5}>
           <FormControl error={state.cloudErrorBucketName}>
-            <InputLabel htmlFor="bucketName">{i18n.t('core:bucketName')}</InputLabel>
+            <InputLabel htmlFor="bucketName">
+              {i18n.t('core:bucketName')}
+            </InputLabel>
             <Input
               required
               margin="dense"
@@ -310,7 +336,11 @@ class ObjectStoreForm extends React.Component<Props> {
               onChange={handleInputChange}
               value={state.bucketName}
             />
-            {state.cloudErrorBucketName && <FormHelperText>{i18n.t('core:invalidBucketName')}</FormHelperText>}
+            {state.cloudErrorBucketName && (
+              <FormHelperText>
+                {i18n.t('core:invalidBucketName')}
+              </FormHelperText>
+            )}
           </FormControl>
         </Grid>
         <Grid item xs={7}>
@@ -329,12 +359,13 @@ class ObjectStoreForm extends React.Component<Props> {
                 placeholder={i18n.t('core:regionSearch')}
               />
             </NoSsr>
-            {state.cloudErrorRegion && <FormHelperText>{i18n.t('core:invalidRegion')}</FormHelperText>}
+            {state.cloudErrorRegion && (
+              <FormHelperText>{i18n.t('core:invalidRegion')}</FormHelperText>
+            )}
           </FormControl>
         </Grid>
       </Grid>
     );
-
   }
 }
 

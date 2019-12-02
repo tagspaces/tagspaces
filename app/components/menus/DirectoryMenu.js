@@ -76,9 +76,18 @@ type Props = {
 const DirectoryMenu = (props: Props) => {
   let fileInput; // Object | null;
 
-  const [isCreateDirectoryDialogOpened, setIsCreateDirectoryDialogOpened] = useState(false);
-  const [isDeleteDirectoryDialogOpened, setIsDeleteDirectoryDialogOpened] = useState(false);
-  const [isRenameDirectoryDialogOpened, setIsRenameDirectoryDialogOpened] = useState(false);
+  const [
+    isCreateDirectoryDialogOpened,
+    setIsCreateDirectoryDialogOpened
+  ] = useState(false);
+  const [
+    isDeleteDirectoryDialogOpened,
+    setIsDeleteDirectoryDialogOpened
+  ] = useState(false);
+  const [
+    isRenameDirectoryDialogOpened,
+    setIsRenameDirectoryDialogOpened
+  ] = useState(false);
 
   function reloadDirectory() {
     props.onClose();
@@ -146,17 +155,26 @@ const DirectoryMenu = (props: Props) => {
   }
 
   function onCameraSuccess(imageURL) {
-    window.resolveLocalFileSystemURL(imageURL, (fp) => {
-      moveFile(fp.nativeURL);
-    }, () => { console.log('Failed to get filesystem url'); });
+    window.resolveLocalFileSystemURL(
+      imageURL,
+      fp => {
+        moveFile(fp.nativeURL);
+      },
+      () => {
+        console.log('Failed to get filesystem url');
+      }
+    );
   }
 
   function moveFile(filePath) {
-    const fileName = 'IMG_TS' + AppConfig.beginTagContainer + formatDateTime4Tag(new Date(), true) + AppConfig.endTagContainer + '.jpg';
+    const fileName =
+      'IMG_TS' +
+      AppConfig.beginTagContainer +
+      formatDateTime4Tag(new Date(), true) +
+      AppConfig.endTagContainer +
+      '.jpg';
     const newFilePath =
-      normalizePath(props.directoryPath) +
-      AppConfig.dirSeparator +
-      fileName;
+      normalizePath(props.directoryPath) + AppConfig.dirSeparator + fileName;
 
     PlatformIO.renameFilePromise(filePath, newFilePath)
       .then(() => {
@@ -216,43 +234,45 @@ const DirectoryMenu = (props: Props) => {
       // }
       // TODO event.currentTarget.result is ArrayBuffer
       // Sample call from PRO version using content = Utils.base64ToArrayBuffer(baseString);
-      PlatformIO.getPropertiesPromise(filePath).then((entryProps) => {
-        if (entryProps) {
-          props.showNotification(
-            'File with the same name already exist, importing skipped!',
-            'warning',
-            true
-          );
-        } else {
-          PlatformIO.saveBinaryFilePromise(
-            filePath,
-            event.currentTarget.result,
-            true
-          )
-            .then(() => {
-              props.showNotification(
-                'File ' + filePath + ' successfully imported.',
-                'default',
-                true
-              );
-              props.reflectCreateEntry(filePath, true);
-              return true;
-            })
-            .catch(error => {
-              // TODO showAlertDialog("Saving " + filePath + " failed.");
-              console.error('Save to file ' + filePath + ' failed ' + error);
-              props.showNotification(
-                'Importing file ' + filePath + ' failed.',
-                'error',
-                true
-              );
-              return true;
-            });
-        }
-        return true;
-      }).catch((err) => {
-        console.log('Error getting properties ' + err);
-      });
+      PlatformIO.getPropertiesPromise(filePath)
+        .then(entryProps => {
+          if (entryProps) {
+            props.showNotification(
+              'File with the same name already exist, importing skipped!',
+              'warning',
+              true
+            );
+          } else {
+            PlatformIO.saveBinaryFilePromise(
+              filePath,
+              event.currentTarget.result,
+              true
+            )
+              .then(() => {
+                props.showNotification(
+                  'File ' + filePath + ' successfully imported.',
+                  'default',
+                  true
+                );
+                props.reflectCreateEntry(filePath, true);
+                return true;
+              })
+              .catch(error => {
+                // TODO showAlertDialog("Saving " + filePath + " failed.");
+                console.error('Save to file ' + filePath + ' failed ' + error);
+                props.showNotification(
+                  'Importing file ' + filePath + ' failed.',
+                  'error',
+                  true
+                );
+                return true;
+              });
+          }
+          return true;
+        })
+        .catch(err => {
+          console.log('Error getting properties ' + err);
+        });
     };
 
     if (AppConfig.isCordova) {
@@ -294,16 +314,9 @@ const DirectoryMenu = (props: Props) => {
         cancelDialogTID={'cancelDeleteDirectoryDialog'}
         confirmDialogTID={'confirmDeleteDirectoryDialog'}
       />
-      <Menu
-        anchorEl={props.anchorEl}
-        open={props.open}
-        onClose={props.onClose}
-      >
+      <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
         {props.perspectiveMode && (
-          <MenuItem
-            data-tid="openDirectory"
-            onClick={openDirectory}
-          >
+          <MenuItem data-tid="openDirectory" onClick={openDirectory}>
             <ListItemIcon>
               <OpenFolderIcon />
             </ListItemIcon>
@@ -341,19 +354,14 @@ const DirectoryMenu = (props: Props) => {
           </MenuItem>
         )}
         {!AppConfig.isWeb && (
-          <MenuItem
-            data-tid="showInFileManager"
-            onClick={showInFileManager}
-          >
+          <MenuItem data-tid="showInFileManager" onClick={showInFileManager}>
             <ListItemIcon>
               <OpenFolderNativelyIcon />
             </ListItemIcon>
             <ListItemText primary={i18n.t('core:showInFileManager')} />
           </MenuItem>
         )}
-        {!props.perspectiveMode && (
-          <Divider />
-        )}
+        {!props.perspectiveMode && <Divider />}
         {!props.isReadOnlyMode && !props.perspectiveMode && (
           <MenuItem
             data-tid="newSubDirectory"
@@ -390,21 +398,33 @@ const DirectoryMenu = (props: Props) => {
           </MenuItem>
         )}
         <Divider />
-        { !props.perspectiveMode && (
+        {!props.perspectiveMode && (
           <div>
-            <MenuItem data-tid="openDefaultPerspective" onClick={() => switchPerspective('default')} title="Switch to default perspective">
+            <MenuItem
+              data-tid="openDefaultPerspective"
+              onClick={() => switchPerspective('default')}
+              title="Switch to default perspective"
+            >
               <ListItemIcon>
                 <DefaultPerspectiveIcon />
               </ListItemIcon>
               <ListItemText primary="Default perspective" />
             </MenuItem>
-            <MenuItem data-tid="openGalleryPerspective" onClick={() => switchPerspective('gallery')} title="Switch to gallery perspective">
+            <MenuItem
+              data-tid="openGalleryPerspective"
+              onClick={() => switchPerspective('gallery')}
+              title="Switch to gallery perspective"
+            >
               <ListItemIcon>
                 <GalleryPerspectiveIcon />
               </ListItemIcon>
               <ListItemText primary="Gallery Perspective - Beta" />
             </MenuItem>
-            <MenuItem data-tid="openMapiquePerspective" onClick={() => switchPerspective('mapique')} title="Switch to mapique perspective">
+            <MenuItem
+              data-tid="openMapiquePerspective"
+              onClick={() => switchPerspective('mapique')}
+              title="Switch to mapique perspective"
+            >
               <ListItemIcon>
                 <MapiquePerspectiveIcon />
               </ListItemIcon>
@@ -450,10 +470,13 @@ const DirectoryMenu = (props: Props) => {
 };
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    showNotification: AppActions.showNotification,
-    extractContent: IOActions.extractContent
-  }, dispatch);
+  return bindActionCreators(
+    {
+      showNotification: AppActions.showNotification,
+      extractContent: IOActions.extractContent
+    },
+    dispatch
+  );
 }
 
 export default connect(null, mapDispatchToProps)(DirectoryMenu);

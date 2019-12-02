@@ -41,28 +41,28 @@ export default [
         title: 'next',
         type: 'plain',
         color: '#008000',
-        textcolor: '#ffffff',
+        textcolor: '#ffffff'
       },
       {
         id: uuidv1(),
         title: 'maybe',
         type: 'plain',
         color: '#008000',
-        textcolor: '#ffffff',
+        textcolor: '#ffffff'
       },
       {
         id: uuidv1(),
         title: 'waiting',
         type: 'plain',
         color: '#008000',
-        textcolor: '#ffffff',
+        textcolor: '#ffffff'
       },
       {
         id: uuidv1(),
         type: 'plain',
         title: 'todo',
         color: '#008000',
-        textcolor: '#ffffff',
+        textcolor: '#ffffff'
       }
     ]
   },
@@ -78,21 +78,21 @@ export default [
         type: 'plain',
         title: 'book',
         color: '#008000',
-        textcolor: '#ffffff',
+        textcolor: '#ffffff'
       },
       {
         id: uuidv1(),
         type: 'plain',
         title: 'paper',
         color: '#008000',
-        textcolor: '#ffffff',
+        textcolor: '#ffffff'
       },
       {
         id: uuidv1(),
         type: 'plain',
         title: 'article',
         color: '#008000',
-        textcolor: '#ffffff',
+        textcolor: '#ffffff'
       }
     ]
   },
@@ -109,21 +109,21 @@ export default [
         title: 'high',
         description: '',
         color: '#ff7537',
-        textcolor: '#ffffff',
+        textcolor: '#ffffff'
       },
       {
         id: uuidv1(),
         type: 'plain',
         title: 'medium',
         color: '#ffad46',
-        textcolor: '#ffffff',
+        textcolor: '#ffffff'
       },
       {
         id: uuidv1(),
         type: 'plain',
         title: 'low',
         color: '#7bd148',
-        textcolor: '#ffffff',
+        textcolor: '#ffffff'
       }
     ]
   },
@@ -139,35 +139,35 @@ export default [
         type: 'plain',
         title: '1star',
         color: '#ffcc24',
-        textcolor: '#ffffff',
+        textcolor: '#ffffff'
       },
       {
         id: uuidv1(),
         type: 'plain',
         title: '2star',
         color: '#ffcc24',
-        textcolor: '#ffffff',
+        textcolor: '#ffffff'
       },
       {
         id: uuidv1(),
         type: 'plain',
         title: '3star',
         color: '#ffcc24',
-        textcolor: '#ffffff',
+        textcolor: '#ffffff'
       },
       {
         id: uuidv1(),
         type: 'plain',
         title: '4star',
         color: '#ffcc24',
-        textcolor: '#ffffff',
+        textcolor: '#ffffff'
       },
       {
         id: uuidv1(),
         type: 'plain',
         title: '5star',
         color: '#ffcc24',
-        textcolor: '#ffffff',
+        textcolor: '#ffffff'
       }
     ]
   }

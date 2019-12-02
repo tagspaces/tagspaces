@@ -42,9 +42,11 @@ process.argv.forEach((arg, count) => {
   } else if (arg.toLowerCase() === '-p' || arg.toLowerCase() === '--portable') {
     app.setPath('userData', process.cwd() + '/tsprofile'); // making the app portable
     portableMode = true;
-  } else if (arg.indexOf('-psn') >= 0) { // ignoring the -psn process serial number parameter on MacOS by double click
+  } else if (arg.indexOf('-psn') >= 0) {
+    // ignoring the -psn process serial number parameter on MacOS by double click
     arg = '';
-  } else if (arg === 'babel-register' || arg === '.' || count === 0) { // ignoring the first argument
+  } else if (arg === 'babel-register' || arg === '.' || count === 0) {
+    // ignoring the first argument
     // Ignore these argument
   } else if (arg.length > 2) {
     // console.warn('Opening file: ' + arg);
@@ -58,7 +60,10 @@ process.argv.forEach((arg, count) => {
   }
 });
 
-if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
+if (
+  process.env.NODE_ENV === 'development' ||
+  process.env.DEBUG_PROD === 'true'
+) {
   require('electron-debug')({ showDevTools: false, devToolsMode: 'right' });
   const p = path.join(__dirname, '..', 'app', 'node_modules');
   require('module').globalPaths.push(p);
@@ -72,17 +77,18 @@ if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true')
 app.commandLine.appendSwitch('--disable-http-cache');
 
 const installExtensions = async () => {
-  const { default: installExtension, REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } = require('electron-devtools-installer');
-
-  const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  const extensions = [
+  const {
+    default: installExtension,
     REACT_DEVELOPER_TOOLS,
     REDUX_DEVTOOLS
-  ];
+  } = require('electron-devtools-installer');
 
-  return Promise
-    .all(extensions.map(name => installExtension(name.id, forceDownload)))
-    .catch(console.log);
+  const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
+  const extensions = [REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS];
+
+  return Promise.all(
+    extensions.map(name => installExtension(name.id, forceDownload))
+  ).catch(console.log);
 };
 
 app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required'); // Fix broken autoplay functionality in the av player
@@ -96,7 +102,10 @@ app.on('ready', async () => {
   let workerDevMode = false;
   let mainHTML = `file://${__dirname}/app.html`;
 
-  if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
+  if (
+    process.env.NODE_ENV === 'development' ||
+    process.env.DEBUG_PROD === 'true'
+  ) {
     await installExtensions();
   }
 
@@ -132,7 +141,8 @@ app.on('ready', async () => {
   let startupParameter = '';
   if (startupFilePath) {
     if (startupFilePath.startsWith('./') || startupFilePath.startsWith('.\\')) {
-      startupParameter = '?open=' + encodeURIComponent(path.join(__dirname, startupFilePath));
+      startupParameter =
+        '?open=' + encodeURIComponent(path.join(__dirname, startupFilePath));
     } else {
       startupParameter = '?open=' + encodeURIComponent(startupFilePath);
     }
@@ -185,7 +195,7 @@ app.on('ready', async () => {
       message: 'This process has crashed.',
       buttons: ['Reload', 'Close']
     };
-    dialog.showMessageBox(mainWindow, options, (index) => {
+    dialog.showMessageBox(mainWindow, options, index => {
       mainWindow.hide();
       if (index === 0) {
         reloadApp();
@@ -213,7 +223,8 @@ app.on('ready', async () => {
     }
   });
 
-  ipcMain.on('setSplashVisibility', (event, arg) => { // worker window needed to be visible for the PDF tmb generation
+  ipcMain.on('setSplashVisibility', (event, arg) => {
+    // worker window needed to be visible for the PDF tmb generation
     // console.log('worker event in main: ' + arg.visibility);
     if (global.splashWorkerWindow && arg.visibility) {
       global.splashWorkerWindow.show();
@@ -221,15 +232,15 @@ app.on('ready', async () => {
     }
   });
 
-  ipcMain.on('app-data-path-request', (event) => {
+  ipcMain.on('app-data-path-request', event => {
     event.returnValue = app.getPath('appData');
   });
 
-  ipcMain.on('app-version-request', (event) => {
+  ipcMain.on('app-version-request', event => {
     event.returnValue = app.getVersion();
   });
 
-  ipcMain.on('app-dir-path-request', (event) => {
+  ipcMain.on('app-dir-path-request', event => {
     event.returnValue = path.join(__dirname, '');
   });
 
@@ -255,7 +266,7 @@ app.on('ready', async () => {
     app.quit();
   });
 
-  process.on('uncaughtException', (error) => {
+  process.on('uncaughtException', error => {
     if (error.stack) {
       console.error('error:', error.stack);
       throw new Error('error:', error.stack);
@@ -306,4 +317,3 @@ app.on('ready', async () => {
     }
   }
 });
-

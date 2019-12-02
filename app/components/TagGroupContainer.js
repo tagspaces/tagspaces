@@ -31,7 +31,7 @@ type Props = {
 const boxTarget = {
   drop(props) {
     return { tagGroupId: props.taggroup.uuid };
-  },
+  }
 };
 
 const TagGroupContainer = (props: Props) => {
@@ -68,6 +68,5 @@ const TagGroupContainer = (props: Props) => {
 export default DropTarget(DragItemTypes.TAG, boxTarget, (connect, monitor) => ({
   connectDropTarget: connect.dropTarget(),
   isOver: monitor.isOver(),
-  canDrop: monitor.canDrop(),
+  canDrop: monitor.canDrop()
 }))(TagGroupContainer);
-

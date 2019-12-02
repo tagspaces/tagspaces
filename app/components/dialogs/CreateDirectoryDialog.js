@@ -63,7 +63,8 @@ const CreateDirectoryDialog = (props: Props) => {
 
   function onConfirm() {
     if (!disableConfirmButton && name) {
-      const dirPath = props.selectedDirectoryPath + AppConfig.dirSeparator + name;
+      const dirPath =
+        props.selectedDirectoryPath + AppConfig.dirSeparator + name;
       props.createDirectory(dirPath);
       resetState();
       props.onClose();
@@ -89,13 +90,10 @@ const CreateDirectoryDialog = (props: Props) => {
       keepMounted
       scroll="paper"
       // onKeyDown={confirmFunction} TODO
-    > 
+    >
       <DialogTitle>{i18n.t('core:createNewDirectoryTitle')}</DialogTitle>
       <DialogContent>
-        <FormControl
-          fullWidth={true}
-          error={inputError}
-        >
+        <FormControl fullWidth={true} error={inputError}>
           <TextField
             fullWidth
             error={inputError}
@@ -137,9 +135,15 @@ const CreateDirectoryDialog = (props: Props) => {
 };
 
 function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators({
-    createDirectory: AppActions.createDirectory
-  }, dispatch);
+  return bindActionCreators(
+    {
+      createDirectory: AppActions.createDirectory
+    },
+    dispatch
+  );
 }
 
-export default connect(undefined, mapActionCreatorsToProps)(CreateDirectoryDialog);
+export default connect(
+  undefined,
+  mapActionCreatorsToProps
+)(CreateDirectoryDialog);

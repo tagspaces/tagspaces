@@ -35,7 +35,7 @@ import TagContainer from './TagContainer';
 
 const styles = theme => ({
   root: {
-    flexGrow: 1,
+    flexGrow: 1
     // height: 250,
     /* '& div': { //https://github.com/JedWatson/react-select/issues/1085
       zIndex: 1
@@ -44,34 +44,34 @@ const styles = theme => ({
   input: {
     display: 'flex',
     padding: 0,
-    height: 'auto',
+    height: 'auto'
   },
   valueContainer: {
     display: 'flex',
     flexWrap: 'wrap',
     flex: 1,
     alignItems: 'center',
-    overflow: 'hidden',
+    overflow: 'hidden'
   },
   noOptionsMessage: {
-    padding: theme.spacing(1, 2),
+    padding: theme.spacing(1, 2)
   },
   singleValue: {
-    fontSize: 16,
+    fontSize: 16
   },
   placeholder: {
     position: 'absolute',
     left: 2,
     bottom: 6,
-    fontSize: 16,
+    fontSize: 16
   },
   paper: {
     position: 'absolute',
     zIndex: 2,
     marginTop: theme.spacing(1),
     left: 0,
-    right: 0,
-  },
+    right: 0
+  }
 });
 
 function NoOptionsMessage(props) {
@@ -96,7 +96,7 @@ function Control(props) {
     children,
     innerProps,
     innerRef,
-    selectProps: { classes, TextFieldProps },
+    selectProps: { classes, TextFieldProps }
   } = props;
 
   return (
@@ -108,8 +108,8 @@ function Control(props) {
           className: classes.input,
           ref: innerRef,
           children,
-          ...innerProps,
-        },
+          ...innerProps
+        }
       }}
       {...TextFieldProps}
     />
@@ -123,7 +123,7 @@ function Option(props) {
       selected={props.isFocused}
       component="div"
       style={{
-        fontWeight: props.isSelected ? 500 : 400,
+        fontWeight: props.isSelected ? 500 : 400
       }}
       {...props.innerProps}
     >
@@ -147,14 +147,21 @@ function Placeholder(props) {
 
 function SingleValue(props) {
   return (
-    <Typography className={props.selectProps.classes.singleValue} {...props.innerProps}>
+    <Typography
+      className={props.selectProps.classes.singleValue}
+      {...props.innerProps}
+    >
       {props.children}
     </Typography>
   );
 }
 
 function ValueContainer(props) {
-  return <div className={props.selectProps.classes.valueContainer}>{props.children}</div>;
+  return (
+    <div className={props.selectProps.classes.valueContainer}>
+      {props.children}
+    </div>
+  );
 }
 
 function MultiValue(props) {
@@ -170,7 +177,12 @@ function MultiValue(props) {
 
 function Menu(props) {
   return (
-    <Paper elevation={22} square className={props.selectProps.classes.paper} {...props.innerProps}>
+    <Paper
+      elevation={22}
+      square
+      className={props.selectProps.classes.paper}
+      {...props.innerProps}
+    >
       {props.children}
     </Paper>
   );
@@ -239,9 +251,9 @@ const TagsSelect = (props: Props) => {
       ...base,
       color: theme.palette.text.primary,
       '& input': {
-        font: 'inherit',
-      },
-    }),
+        font: 'inherit'
+      }
+    })
   };
 
   return (
@@ -252,8 +264,8 @@ const TagsSelect = (props: Props) => {
           isDisabled={isReadOnlyMode}
           classes={classes}
           options={allTags}
-          getOptionLabel={(option) => option.title}
-          getOptionValue={(option) => option.id || option.title}
+          getOptionLabel={option => option.title}
+          getOptionValue={option => option.id || option.title}
           isValidNewOption={isValidNewOption}
           getNewOptionData={(inputValue, optionLabel) => ({
             id: uuidv1(),
@@ -274,8 +286,8 @@ const TagsSelect = (props: Props) => {
           onChange={handleChange}
           placeholder={placeholderText}
           isMulti
-          formatCreateLabel={(label) => label}
-        // isSearchable
+          formatCreateLabel={label => label}
+          // isSearchable
         />
       </NoSsr>
     </div>
@@ -288,5 +300,6 @@ const mapStateToProps = state => ({
   defaultTextColor: getTagTextColor(state)
 });
 
-
-export default connect(mapStateToProps)(withStyles(styles, { withTheme: true })(TagsSelect));
+export default connect(mapStateToProps)(
+  withStyles(styles, { withTheme: true })(TagsSelect)
+);

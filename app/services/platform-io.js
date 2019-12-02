@@ -35,19 +35,23 @@ if (AppConfig.isElectron) {
 let objectStoreAPI;
 
 export default class PlatformIO {
-  static enableObjectStoreSupport = (objectStoreConfig: Object): Promise<any> => new Promise((resolve, reject) => {
-    if (Pro && Pro.ObjectStoreIO) {
-      objectStoreAPI = new Pro.ObjectStoreIO();
-      objectStoreAPI.configure(objectStoreConfig).then(() => {
-        resolve();
-        return true;
-      }).catch((e) => {
-        reject(e);
-      });
-    } else {
-      reject('ObjectStore support available in the PRO version');
-    }
-  });
+  static enableObjectStoreSupport = (objectStoreConfig: Object): Promise<any> =>
+    new Promise((resolve, reject) => {
+      if (Pro && Pro.ObjectStoreIO) {
+        objectStoreAPI = new Pro.ObjectStoreIO();
+        objectStoreAPI
+          .configure(objectStoreConfig)
+          .then(() => {
+            resolve();
+            return true;
+          })
+          .catch(e => {
+            reject(e);
+          });
+      } else {
+        reject('ObjectStore support available in the PRO version');
+      }
+    });
 
   static disableObjectStoreSupport = (): void => {
     objectStoreAPI = undefined;
@@ -69,7 +73,7 @@ export default class PlatformIO {
     } else {
       console.log('initTrayMenu not supported');
     }
-  }
+  };
 
   static isWorkerAvailable = (): boolean => nativeAPI.isWorkerAvailable();
 
@@ -79,7 +83,7 @@ export default class PlatformIO {
     } else {
       console.log('setZoomFactorElectron not supported');
     }
-  }
+  };
 
   static setGlobalShortcuts = globalShortcutsEnabled => {
     if (nativeAPI.setGlobalShortcuts) {
@@ -87,7 +91,7 @@ export default class PlatformIO {
     } else {
       console.log('setGlobalShortcuts not supported');
     }
-  }
+  };
 
   static showMainWindow = (): void => nativeAPI.showMainWindow();
 
@@ -114,7 +118,10 @@ export default class PlatformIO {
   static createDirectoryTree = (directoryPath: string): Object =>
     nativeAPI.createDirectoryTree(directoryPath);
 
-  static createDirectoryIndexInWorker = (directoryPath: string, extractText: boolean): Promise<any> =>
+  static createDirectoryIndexInWorker = (
+    directoryPath: string,
+    extractText: boolean
+  ): Promise<any> =>
     nativeAPI.createDirectoryIndexInWorker(directoryPath, extractText);
 
   static createThumbnailsInWorker = (
@@ -172,7 +179,9 @@ export default class PlatformIO {
   ): Promise<any> => {
     if (objectStoreAPI) {
       // return objectStoreAPI.renameDirectoryPromise(dirPath, newDirName);
-      return Promise.reject('Renaming directories not supported on this platform');
+      return Promise.reject(
+        'Renaming directories not supported on this platform'
+      );
     }
     return nativeAPI.renameDirectoryPromise(dirPath, newDirName);
   };
@@ -230,7 +239,10 @@ export default class PlatformIO {
     return nativeAPI.saveBinaryFilePromise(filePath, content, overwrite);
   };
 
-  static deleteFilePromise = (path: string, useTrash?: boolean): Promise<any> => {
+  static deleteFilePromise = (
+    path: string,
+    useTrash?: boolean
+  ): Promise<any> => {
     if (objectStoreAPI) {
       return objectStoreAPI.deleteFilePromise(path, useTrash);
     }
@@ -243,7 +255,9 @@ export default class PlatformIO {
   ): Promise<any> => {
     if (objectStoreAPI) {
       // return objectStoreAPI.deleteDirectoryPromise(path, useTrash);
-      return Promise.reject('Deleting directories not supported on this platform');
+      return Promise.reject(
+        'Deleting directories not supported on this platform'
+      );
     }
     return nativeAPI.deleteDirectoryPromise(path, useTrash);
   };

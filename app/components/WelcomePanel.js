@@ -62,7 +62,7 @@ const styles = theme => ({
     top: '45%',
     width: '100%',
     textAlign: 'center',
-    position: 'absolute',
+    position: 'absolute'
   },
   links: {
     width: 300,
@@ -71,7 +71,7 @@ const styles = theme => ({
     marginTop: 15,
     marginBottom: 15,
     overflowY: 'overlay',
-    backgroundColor: theme.palette.background.default,
+    backgroundColor: theme.palette.background.default
   }
 });
 
@@ -98,34 +98,51 @@ const WelcomePanel = (props: Props) => {
       {/* <div className={classes.slogan}>
 
       </div> */}
-      <List dense={false} component="nav" aria-label="main help area" className={classes.links}>
-        <div
-          role="button"
-          tabIndex={0}
-          onClick={props.toggleAboutDialog}
-        >
-          <img
-            src={WelcomeLogo}
-            alt="Organize your files"
-          />
+      <List
+        dense={false}
+        component="nav"
+        aria-label="main help area"
+        className={classes.links}
+      >
+        <div role="button" tabIndex={0} onClick={props.toggleAboutDialog}>
+          <img src={WelcomeLogo} alt="Organize your files" />
         </div>
         <ListItem
           button
           onClick={() => {
-            const button = document.getElementById(isDesktopMode ? 'locationMenuButton' : 'mobileMenuButton');
+            const button = document.getElementById(
+              isDesktopMode ? 'locationMenuButton' : 'mobileMenuButton'
+            );
             button.click();
           }}
         >
-          <Button startIcon={<DocumentationIcon />}>{i18n.t('core:chooseLocation')}</Button>
+          <Button startIcon={<DocumentationIcon />}>
+            {i18n.t('core:chooseLocation')}
+          </Button>
         </ListItem>
-        <ListItem button onClick={() => openURLExternally(AppConfig.documentationLinks.general)}>
+        <ListItem
+          button
+          onClick={() =>
+            openURLExternally(AppConfig.documentationLinks.general)
+          }
+        >
           <Button startIcon={<DocumentationIcon />}>Open Documentation</Button>
         </ListItem>
         <ListItem button onClick={() => toggleKeysDialog()}>
-          <Button startIcon={<KeyShortcutsIcon />}>{i18n.t('core:shortcutKeys')}</Button>
+          <Button startIcon={<KeyShortcutsIcon />}>
+            {i18n.t('core:shortcutKeys')}
+          </Button>
         </ListItem>
-        <ListItem button onClick={() => openURLExternally(AppConfig.links.changelogURL)}>
-          <Button startIcon={<ChangeLogIcon />} title="Opens the changelog of the app">{i18n.t('core:whatsNew')}</Button>
+        <ListItem
+          button
+          onClick={() => openURLExternally(AppConfig.links.changelogURL)}
+        >
+          <Button
+            startIcon={<ChangeLogIcon />}
+            title="Opens the changelog of the app"
+          >
+            {i18n.t('core:whatsNew')}
+          </Button>
         </ListItem>
         {/* <ListItem button onClick={() => toggleOnboardingDialog()}>
           <ListItemIcon>
@@ -133,28 +150,63 @@ const WelcomePanel = (props: Props) => {
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:onboardingWizard')} />
         </ListItem> */}
-        <ListItem button onClick={() => openURLExternally(AppConfig.links.webClipper)}>
-          <Button startIcon={<WebClipperIcon />}>{i18n.t('core:webClipper')}</Button>
+        <ListItem
+          button
+          onClick={() => openURLExternally(AppConfig.links.webClipper)}
+        >
+          <Button startIcon={<WebClipperIcon />}>
+            {i18n.t('core:webClipper')}
+          </Button>
         </ListItem>
         <Divider />
-        <ListItem button onClick={() => openURLExternally(AppConfig.links.suggestFeature)}>
-          <Button startIcon={<NewFeatureIcon />}>{i18n.t('core:suggestNewFeatures')}</Button>
+        <ListItem
+          button
+          onClick={() => openURLExternally(AppConfig.links.suggestFeature)}
+        >
+          <Button startIcon={<NewFeatureIcon />}>
+            {i18n.t('core:suggestNewFeatures')}
+          </Button>
         </ListItem>
-        <ListItem button onClick={() => openURLExternally(AppConfig.links.reportIssue)}>
-          <Button startIcon={<IssueIcon />}>{i18n.t('core:reportIssues')}</Button>
+        <ListItem
+          button
+          onClick={() => openURLExternally(AppConfig.links.reportIssue)}
+        >
+          <Button startIcon={<IssueIcon />}>
+            {i18n.t('core:reportIssues')}
+          </Button>
         </ListItem>
-        <ListItem button onClick={() => openURLExternally(AppConfig.links.helpTranslating)}>
-          <Button startIcon={<TranslationIcon />}>{i18n.t('core:helpWithTranslation')}</Button>
+        <ListItem
+          button
+          onClick={() => openURLExternally(AppConfig.links.helpTranslating)}
+        >
+          <Button startIcon={<TranslationIcon />}>
+            {i18n.t('core:helpWithTranslation')}
+          </Button>
         </ListItem>
         <Divider />
-        <ListItem button onClick={() => openURLExternally(AppConfig.links.emailContact)}>
-          <Button startIcon={<EmailIcon />}>{i18n.t('core:emailContact')}</Button>
+        <ListItem
+          button
+          onClick={() => openURLExternally(AppConfig.links.emailContact)}
+        >
+          <Button startIcon={<EmailIcon />}>
+            {i18n.t('core:emailContact')}
+          </Button>
         </ListItem>
-        <ListItem button onClick={() => openFileNatively(AppConfig.links.twitter)}>
-          <Button startIcon={<Social2Icon />}>{i18n.t('core:followOnTwitter')}</Button>
+        <ListItem
+          button
+          onClick={() => openFileNatively(AppConfig.links.twitter)}
+        >
+          <Button startIcon={<Social2Icon />}>
+            {i18n.t('core:followOnTwitter')}
+          </Button>
         </ListItem>
-        <ListItem button onClick={() => openURLExternally(AppConfig.links.facebook)}>
-          <Button startIcon={<SocialIcon />}>{i18n.t('core:likeUsOnFacebook')}</Button>
+        <ListItem
+          button
+          onClick={() => openURLExternally(AppConfig.links.facebook)}
+        >
+          <Button startIcon={<SocialIcon />}>
+            {i18n.t('core:likeUsOnFacebook')}
+          </Button>
         </ListItem>
       </List>
     </div>
@@ -164,7 +216,7 @@ const WelcomePanel = (props: Props) => {
 function mapStateToProps(state) {
   return {
     isFirstRun: isFirstRun(state),
-    isDesktopMode: getDesktopMode(state),
+    isDesktopMode: getDesktopMode(state)
     // locations: getLocations(state),
   };
 }
@@ -176,12 +228,13 @@ function mapActionCreatorsToProps(dispatch) {
       openURLExternally: AppActions.openURLExternally,
       openFileNatively: AppActions.openFileNatively,
       toggleKeysDialog: AppActions.toggleKeysDialog,
-      toggleAboutDialog: AppActions.toggleAboutDialog,
+      toggleAboutDialog: AppActions.toggleAboutDialog
     },
     dispatch
   );
 }
 
-export default connect(mapStateToProps, mapActionCreatorsToProps)(
-  withStyles(styles)(WelcomePanel)
-);
+export default connect(
+  mapStateToProps,
+  mapActionCreatorsToProps
+)(withStyles(styles)(WelcomePanel));

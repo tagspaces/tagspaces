@@ -35,15 +35,17 @@ import { isPlusCode } from '../../utils/misc';
 import { type Tag } from '../../reducers/taglibrary';
 import { Pro } from '../../pro';
 import { getSelectedTag } from '../../reducers/app';
-import TaggingActions, { defaultTagLocation } from '../../reducers/tagging-actions';
+import TaggingActions, {
+  defaultTagLocation
+} from '../../reducers/tagging-actions';
 import { isDateTimeTag } from '../../utils/dates';
 
 const styles = () => ({
   root: {
     minWidth: 400,
     height: '100%',
-    marginBottom: 30,
-  },
+    marginBottom: 30
+  }
 });
 
 type Props = {
@@ -63,7 +65,9 @@ const DateTagEditor = Pro && Pro.UI ? Pro.UI.DateTagEditor : React.Fragment;
 const EditEntryTagDialog = (props: Props) => {
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [errorTag, setErrorTag] = useState(false);
-  const [title, setTitle] = useState(props.selectedTag && props.selectedTag.title);
+  const [title, setTitle] = useState(
+    props.selectedTag && props.selectedTag.title
+  );
   const { onClose, open, fullScreen } = props;
 
   useEffect(() => {
@@ -91,9 +95,7 @@ const EditEntryTagDialog = (props: Props) => {
   }
 
   function renderTitle() {
-    return (
-      <DialogTitle>{i18n.t('core:tagProperties')}</DialogTitle>
-    );
+    return <DialogTitle>{i18n.t('core:tagProperties')}</DialogTitle>;
   }
 
   function renderContent() {
@@ -115,11 +117,11 @@ const EditEntryTagDialog = (props: Props) => {
     showDatePeriodEditor = DateTagEditor && showDatePeriodEditor;
 
     return (
-      <DialogContent data-tid="editEntryTagDialog" className={props.classes.root}>
-        <FormControl
-          fullWidth={true}
-          error={errorTag}
-        >
+      <DialogContent
+        data-tid="editEntryTagDialog"
+        className={props.classes.root}
+      >
+        <FormControl fullWidth={true} error={errorTag}>
           <TextField
             fullWidth={true}
             error={errorTag}
@@ -134,10 +136,25 @@ const EditEntryTagDialog = (props: Props) => {
             value={title}
             data-tid="editTagEntryDialog_input"
           />
-          {errorTag && <FormHelperText>{i18n.t('core:tagTitleHelper')}</FormHelperText>}
+          {errorTag && (
+            <FormHelperText>{i18n.t('core:tagTitleHelper')}</FormHelperText>
+          )}
         </FormControl>
-        { showGeoEditor && <GeoTagEditor key={title} geoTag={title} onChange={setTitle} zoom={title === defaultTagLocation ? 2 : undefined} /> }
-        { showDatePeriodEditor && <DateTagEditor key={title} datePeriodTag={title} onChange={setTitle} /> }
+        {showGeoEditor && (
+          <GeoTagEditor
+            key={title}
+            geoTag={title}
+            onChange={setTitle}
+            zoom={title === defaultTagLocation ? 2 : undefined}
+          />
+        )}
+        {showDatePeriodEditor && (
+          <DateTagEditor
+            key={title}
+            datePeriodTag={title}
+            onChange={setTitle}
+          />
+        )}
       </DialogContent>
     );
   }
@@ -174,23 +191,30 @@ const EditEntryTagDialog = (props: Props) => {
       {renderTitle()}
       {renderContent()}
       {renderActions()}
-    </Dialog>  
+    </Dialog>
   );
 };
 
 function mapStateToProps(state) {
   return {
     selectedTag: getSelectedTag(state),
-    currentEntryPath: getSelectedTag(state) ? getSelectedTag(state).path : undefined
+    currentEntryPath: getSelectedTag(state)
+      ? getSelectedTag(state).path
+      : undefined
   };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    editTagForEntry: TaggingActions.editTagForEntry
-  }, dispatch);
+  return bindActionCreators(
+    {
+      editTagForEntry: TaggingActions.editTagForEntry
+    },
+    dispatch
+  );
 }
 
-export default withMobileDialog()(withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(EditEntryTagDialog)
-));
+export default withMobileDialog()(
+  withStyles(styles)(
+    connect(mapStateToProps, mapDispatchToProps)(EditEntryTagDialog)
+  )
+);

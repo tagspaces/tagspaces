@@ -27,10 +27,33 @@ import Dialog from '@material-ui/core/Dialog';
 import { SketchPicker } from 'react-color';
 import i18n from '../../services/i18n';
 
-const presetColors = ['#ffffff', '#000000', '#ac725e', '#d06b64', '#f83a22', '#fa573c',
-  '#ff7537', '#ffad46', '#42d692', '#008000', '#7bd148', '#fad165', '#FFCC24',
-  '#92e1c0', '#9fe1e7', '#9fc6e7', '#4986e7', '#9a9cff', '#b99aff', '#c2c2c2',
-  '#cabdbf', '#cca6ac', '#f691b2', '#cd74e6', '#a47ae2'];
+const presetColors = [
+  '#ffffff',
+  '#000000',
+  '#ac725e',
+  '#d06b64',
+  '#f83a22',
+  '#fa573c',
+  '#ff7537',
+  '#ffad46',
+  '#42d692',
+  '#008000',
+  '#7bd148',
+  '#fad165',
+  '#FFCC24',
+  '#92e1c0',
+  '#9fe1e7',
+  '#9fc6e7',
+  '#4986e7',
+  '#9a9cff',
+  '#b99aff',
+  '#c2c2c2',
+  '#cabdbf',
+  '#cca6ac',
+  '#f691b2',
+  '#cd74e6',
+  '#a47ae2'
+];
 
 type Props = {
   classes: Object,
@@ -52,10 +75,7 @@ const styles = {
 const ColorPickerDialog = (props: Props) => {
   const [color, setColor] = useState(undefined);
   const [colorHex, setColorHex] = useState(undefined);
-  const {
-    open = false,
-    onClose
-  } = props;
+  const { open = false, onClose } = props;
 
   function onConfirm() {
     if (color && colorHex) {
@@ -71,13 +91,8 @@ const ColorPickerDialog = (props: Props) => {
   }
 
   return (
-    <Dialog
-    open={open}
-    onClose={onClose}
-    keepMounted
-    scroll="paper"
-    >
-      <DialogTitle data-tid="colorPickerDialogTitle" >
+    <Dialog open={open} onClose={onClose} keepMounted scroll="paper">
+      <DialogTitle data-tid="colorPickerDialogTitle">
         {i18n.t('core:colorPickerDialogTitle')}
       </DialogTitle>
       <DialogContent
@@ -110,7 +125,7 @@ const ColorPickerDialog = (props: Props) => {
           {i18n.t('core:ok')}
         </Button>
       </DialogActions>
-    </Dialog>  
+    </Dialog>
   );
 };
 

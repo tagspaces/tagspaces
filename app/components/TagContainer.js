@@ -92,9 +92,9 @@ const TagContainer = React.memo((props: Props) => {
     return false;
   });
 
-  let description = tag.title
+  let description = tag.title;
   if (tag.description) {
-    description = tag.title + ' - ' + tag.description
+    description = tag.title + ' - ' + tag.description;
   }
 
   return (
@@ -107,16 +107,26 @@ const TagContainer = React.memo((props: Props) => {
           const selectedEntryPaths = [];
           selectedEntries.map(entry => selectedEntryPaths.push(entry.path));
           addTags(selectedEntryPaths, [tag]);
-        // Removing tags doesn't seem to work correctly here, yet. Using sidecar tagging, but the removeTagsFromEntry function in tagging.actions.js
-        // doesn't recignize it correctly, thinking it's a plain tag and thus tries to rename the files
-        // } else if (event.shiftKey) {
-        //   const selectedEntryPaths = [];
-        //   selectedEntries.map(entry => selectedEntryPaths.push(entry.path));
-        //   removeTags(selectedEntryPaths, [tag]);
-        } else if (handleTagMenu) { handleTagMenu(event, tag, entryPath || tagGroup); }
+          // Removing tags doesn't seem to work correctly here, yet. Using sidecar tagging, but the removeTagsFromEntry function in tagging.actions.js
+          // doesn't recignize it correctly, thinking it's a plain tag and thus tries to rename the files
+          // } else if (event.shiftKey) {
+          //   const selectedEntryPaths = [];
+          //   selectedEntries.map(entry => selectedEntryPaths.push(entry.path));
+          //   removeTags(selectedEntryPaths, [tag]);
+        } else if (handleTagMenu) {
+          handleTagMenu(event, tag, entryPath || tagGroup);
+        }
       }}
-      onContextMenu={event => { if (handleTagMenu) { handleTagMenu(event, tag, entryPath || tagGroup); } }}
-      onDoubleClick={event => { if (handleTagMenu) { handleTagMenu(event, tag, entryPath || tagGroup); } }}
+      onContextMenu={event => {
+        if (handleTagMenu) {
+          handleTagMenu(event, tag, entryPath || tagGroup);
+        }
+      }}
+      onDoubleClick={event => {
+        if (handleTagMenu) {
+          handleTagMenu(event, tag, entryPath || tagGroup);
+        }
+      }}
       style={{
         backgroundColor: 'transparent',
         display: 'inline-block'
@@ -163,17 +173,19 @@ const TagContainer = React.memo((props: Props) => {
           )}
           {!isGeoTag && title}
         </span>
-        {(tagMode === 'remove') ? (deleteIcon || (
-          <RemoveTagIcon
-            data-tid={'tagRemoveButton_' + title.replace(/ /g, '_')}
-            style={{
-              color: tag.textColor,
-              fontSize: 20,
-              marginBottom: -5
-            }}
-            onClick={event => handleRemoveTag(event, tag)}
-          />
-        )) : (
+        {tagMode === 'remove' ? (
+          deleteIcon || (
+            <RemoveTagIcon
+              data-tid={'tagRemoveButton_' + title.replace(/ /g, '_')}
+              style={{
+                color: tag.textColor,
+                fontSize: 20,
+                marginBottom: -5
+              }}
+              onClick={event => handleRemoveTag(event, tag)}
+            />
+          )
+        ) : (
           <MoreVertIcon
             data-tid={'tagMoreButton_' + title.replace(/ /g, '_')}
             style={{
@@ -193,7 +205,7 @@ function mapStateToProps(state) {
   return {
     allTags: getAllTags(state),
     defaultBackgroundColor: getTagColor(state),
-    defaultTextColor: getTagTextColor(state),
+    defaultTextColor: getTagTextColor(state)
     // selectedEntries: getSelectedEntries(state)
   };
 }

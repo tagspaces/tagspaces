@@ -41,7 +41,7 @@ import AppConfig from '../../../config';
 
 const styles = theme => ({
   mainContent: {
-    overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
+    overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
   }
 });
 
@@ -74,15 +74,18 @@ class SettingsDialog extends React.Component<Props, State> {
 
   componentWillReceiveProps = nextProps => {
     const { settings } = nextProps;
-    const supportedFileTypes = settings.supportedFileTypes.reduce((accumulator, fileType) => {
-      const modifiedFileType = extend({}, fileType, {
-        id: fileType.id || uuidv1()
-      });
-      if (fileType.viewer !== '') {
-        accumulator.push(modifiedFileType);
-      }
-      return accumulator;
-    }, []);
+    const supportedFileTypes = settings.supportedFileTypes.reduce(
+      (accumulator, fileType) => {
+        const modifiedFileType = extend({}, fileType, {
+          id: fileType.id || uuidv1()
+        });
+        if (fileType.viewer !== '') {
+          accumulator.push(modifiedFileType);
+        }
+        return accumulator;
+      },
+      []
+    );
 
     this.setState({
       items: supportedFileTypes,
@@ -94,7 +97,7 @@ class SettingsDialog extends React.Component<Props, State> {
     this.setState({ currentTab });
   };
 
-  onAddFileType = (item) => {
+  onAddFileType = item => {
     const { items } = this.state;
     this.setState({ items: [...items, item] }, () => {
       const settingsFileTypeRef = this.settingsFileTypeRef;
@@ -103,11 +106,17 @@ class SettingsDialog extends React.Component<Props, State> {
     });
   };
 
-  setSelectedItem = (selectedItem) => {
+  setSelectedItem = selectedItem => {
     this.setState({ selectedItem });
   };
 
-  updateItems = (identifierKey, identifierValue, targetKey, targetValue, disableSave = false) => {
+  updateItems = (
+    identifierKey,
+    identifierValue,
+    targetKey,
+    targetValue,
+    disableSave = false
+  ) => {
     const { items } = this.state;
     let isSaveable = false;
     let hasViewer = false;
@@ -124,14 +133,19 @@ class SettingsDialog extends React.Component<Props, State> {
       return accumulator;
     }, []);
 
-    this.setState({
-      items: modifiedItems
-    }, () => {
-      if ((targetKey !== 'type' && isSaveable && !disableSave) ||
-        (targetKey === 'type' && hasViewer && isSaveable && !disableSave)) {
-        this.saveFileTypes();
+    this.setState(
+      {
+        items: modifiedItems
+      },
+      () => {
+        if (
+          (targetKey !== 'type' && isSaveable && !disableSave) ||
+          (targetKey === 'type' && hasViewer && isSaveable && !disableSave)
+        ) {
+          this.saveFileTypes();
+        }
       }
-    });
+    );
   };
 
   getDefaultFileTypeObject = () => ({
@@ -164,9 +178,13 @@ class SettingsDialog extends React.Component<Props, State> {
     let isValid = true;
 
     items.map(item => {
-      const hasDuplicates = items.filter(targetItem => targetItem.type === item.type).length > 1;
+      const hasDuplicates =
+        items.filter(targetItem => targetItem.type === item.type).length > 1;
 
-      if (isValid && (item.type === '' || item.viewer === '' || hasDuplicates)) {
+      if (
+        isValid &&
+        (item.type === '' || item.viewer === '' || hasDuplicates)
+      ) {
         isValid = false;
       }
       return item;
@@ -177,7 +195,9 @@ class SettingsDialog extends React.Component<Props, State> {
 
   removeItem = (itemForRemoval = Object) => {
     const { items } = this.state;
-    const filteredItems = items.filter(item => item.type !== itemForRemoval.type);
+    const filteredItems = items.filter(
+      item => item.type !== itemForRemoval.type
+    );
     this.setState({ items: filteredItems }, () => this.saveFileTypes());
   };
 
@@ -191,9 +211,18 @@ class SettingsDialog extends React.Component<Props, State> {
           indicatorColor="primary"
           variant="fullWidth"
         >
-          <Tab data-tid="generalSettingsDialog" label={i18n.t('core:generalTab')} />
-          <Tab data-tid="fileTypeSettingsDialog" label={i18n.t('core:fileTypeTab')} />
-          <Tab data-tid="keyBindingsSettingsDialog" label={i18n.t('core:keyBindingsTab')} />
+          <Tab
+            data-tid="generalSettingsDialog"
+            label={i18n.t('core:generalTab')}
+          />
+          <Tab
+            data-tid="fileTypeSettingsDialog"
+            label={i18n.t('core:fileTypeTab')}
+          />
+          <Tab
+            data-tid="keyBindingsSettingsDialog"
+            label={i18n.t('core:keyBindingsTab')}
+          />
         </Tabs>
       </AppBar>
     </React.Fragment>
@@ -201,7 +230,6 @@ class SettingsDialog extends React.Component<Props, State> {
 
   renderContent = () => (
     <DialogContent className={this.props.classes.mainContent}>
-
       <ConfirmDialog
         open={this.state.isConfirmDialogOpened}
         onClose={() => {
@@ -226,9 +254,11 @@ class SettingsDialog extends React.Component<Props, State> {
       <div
         data-tid="settingsDialog"
         className={this.props.classes.mainContent}
-        ref={el => { this.settingsFileTypeRef = el; }}
+        ref={el => {
+          this.settingsFileTypeRef = el;
+        }}
       >
-        {this.state.currentTab === 0 && (<SettingsGeneral />)}
+        {this.state.currentTab === 0 && <SettingsGeneral />}
         {this.state.currentTab === 1 && (
           <SettingsFileTypes
             items={this.state.items}
@@ -245,7 +275,7 @@ class SettingsDialog extends React.Component<Props, State> {
             }}
           />
         )}
-        {this.state.currentTab === 2 && (<SettingsKeyBindings />)}
+        {this.state.currentTab === 2 && <SettingsKeyBindings />}
       </div>
     </DialogContent>
   );
@@ -253,7 +283,8 @@ class SettingsDialog extends React.Component<Props, State> {
   renderActions = () => (
     <DialogActions
       style={{
-        justifyContent: this.state.currentTab === 1 ? 'space-between' : 'flex-end'
+        justifyContent:
+          this.state.currentTab === 1 ? 'space-between' : 'flex-end'
       }}
     >
       {this.state.currentTab === 1 && (
@@ -277,11 +308,7 @@ class SettingsDialog extends React.Component<Props, State> {
   );
 
   render() {
-    const {
-      fullScreen,
-      open,
-      onClose
-    } = this.props;
+    const { fullScreen, open, onClose } = this.props;
     return (
       <GenericDialog
         open={open}
@@ -295,12 +322,16 @@ class SettingsDialog extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   settings: getSettings(state)
 });
 
 const mapDispatchToProps = dispatch => ({
-  setSupportedFileTypes: supportedFileTypes => dispatch(actions.setSupportedFileTypes(supportedFileTypes))
+  setSupportedFileTypes: supportedFileTypes =>
+    dispatch(actions.setSupportedFileTypes(supportedFileTypes))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withMobileDialog()(withStyles(styles)(SettingsDialog)));
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withMobileDialog()(withStyles(styles)(SettingsDialog)));

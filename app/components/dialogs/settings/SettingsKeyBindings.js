@@ -29,7 +29,8 @@ import PlatformIO from '../../../services/platform-io';
 import i18n from '../../../services/i18n';
 import {
   actions as SettingsActions,
-  getKeyBindings, isGlobalKeyBindingEnabled,
+  getKeyBindings,
+  isGlobalKeyBindingEnabled
 } from '../../../reducers/settings';
 import DefaultSettings from '../../../reducers/settings-default';
 import { isStr } from '../../../utils/misc';
@@ -40,12 +41,12 @@ const styles = theme => ({
   },
   keyBinding: {
     marginTop: 10,
-    marginBottom: 10,
+    marginBottom: 10
   },
   listItem: {
     paddingLeft: 0,
     paddingRight: 0
-  },
+  }
 });
 
 type Props = {
@@ -57,7 +58,13 @@ type Props = {
 };
 
 const SettingsKeyBindings = (props: Props) => {
-  const { keyBindings, classes, setKeyBinding, setGlobalKeyBinding, globalKeyBindingEnabled } = props;
+  const {
+    keyBindings,
+    classes,
+    setKeyBinding,
+    setGlobalKeyBinding,
+    globalKeyBindingEnabled
+  } = props;
   return (
     <form className={classes.root} noValidate autoComplete="off">
       <ListItem className={classes.listItem}>
@@ -70,8 +77,10 @@ const SettingsKeyBindings = (props: Props) => {
           checked={globalKeyBindingEnabled}
         />
       </ListItem>
-      {keyBindings.map((keyBinding) => {
-        const defaultBinding = DefaultSettings.keyBindings.filter(kb => kb.name === keyBinding.name)[0];
+      {keyBindings.map(keyBinding => {
+        const defaultBinding = DefaultSettings.keyBindings.filter(
+          kb => kb.name === keyBinding.name
+        )[0];
         return (
           <TextField
             className={classes.keyBinding}
@@ -80,8 +89,11 @@ const SettingsKeyBindings = (props: Props) => {
             fullWidth
             onBlur={event => setKeyBinding(keyBinding.name, event.target.value)}
             label={i18n.t('core:' + keyBinding.name)}
-            placeholder={'suggested binding: ' + (defaultBinding ? defaultBinding.command : '')}
-            defaultValue={(isStr(keyBinding.command) ? keyBinding.command : '')}
+            placeholder={
+              'suggested binding: ' +
+              (defaultBinding ? defaultBinding.command : '')
+            }
+            defaultValue={isStr(keyBinding.command) ? keyBinding.command : ''}
           />
         );
       })}
@@ -100,4 +112,7 @@ function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(SettingsActions, dispatch);
 }
 
-export default connect(mapStateToProps, mapActionCreatorsToProps)(withStyles(styles)(SettingsKeyBindings));
+export default connect(
+  mapStateToProps,
+  mapActionCreatorsToProps
+)(withStyles(styles)(SettingsKeyBindings));

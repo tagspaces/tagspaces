@@ -71,15 +71,30 @@ type Props = {
   selectedDirectoryPath: string,
   showNotification: (message: string, type: string, autohide: boolean) => void,
   reflectCreateEntry: (path: string, isFile: boolean) => void,
-  createFileAdvanced: (targetPath: string, fileName: string, content: string, fileType: string) => void,
+  createFileAdvanced: (
+    targetPath: string,
+    fileName: string,
+    content: string,
+    fileType: string
+  ) => void,
   onClose: () => void
 };
 
 const CreateDialog = (props: Props) => {
   let fileInput; // Object | null;
-  const fileName = 'note' + AppConfig.beginTagContainer + formatDateTime4Tag(new Date(), true) + AppConfig.endTagContainer;
+  const fileName =
+    'note' +
+    AppConfig.beginTagContainer +
+    formatDateTime4Tag(new Date(), true) +
+    AppConfig.endTagContainer;
   const fileContent = '';
-  const { classes, selectedDirectoryPath, showNotification, open, onClose } = props;
+  const {
+    classes,
+    selectedDirectoryPath,
+    showNotification,
+    open,
+    onClose
+  } = props;
 
   function handleKeyPress(event: any) {
     if (event.key === 'n') {
@@ -99,21 +114,36 @@ const CreateDialog = (props: Props) => {
 
   function createRichTextFile() {
     if (selectedDirectoryPath) {
-      props.createFileAdvanced(selectedDirectoryPath, fileName, fileContent, 'html');
+      props.createFileAdvanced(
+        selectedDirectoryPath,
+        fileName,
+        fileContent,
+        'html'
+      );
       props.onClose();
     }
   }
 
   function createTextFile() {
     if (selectedDirectoryPath) {
-      props.createFileAdvanced(selectedDirectoryPath, fileName, fileContent, 'txt');
+      props.createFileAdvanced(
+        selectedDirectoryPath,
+        fileName,
+        fileContent,
+        'txt'
+      );
       props.onClose();
     }
   }
 
   function createMarkdownFile() {
     if (selectedDirectoryPath) {
-      props.createFileAdvanced(selectedDirectoryPath, fileName, fileContent, 'md');
+      props.createFileAdvanced(
+        selectedDirectoryPath,
+        fileName,
+        fileContent,
+        'md'
+      );
       props.onClose();
     }
   }
@@ -150,46 +180,48 @@ const CreateDialog = (props: Props) => {
 
     const reader = new FileReader();
     reader.onload = event => {
-      PlatformIO.getPropertiesPromise(filePath).then((entryProps) => {
-        if (entryProps) {
-          showNotification(
-            'File with the same name already exist, importing skipped!',
-            'warning',
-            true
-          );
-        } else {
-          PlatformIO.saveBinaryFilePromise(
-            filePath,
-            event.currentTarget.result,
-            true
-          )
-            .then(() => {
-              showNotification(
-                'File ' + filePath + ' successfully imported.',
-                'default',
-                true
-              );
-              props.reflectCreateEntry(filePath, true);
-              props.onClose();
-              return true;
-            })
-            .catch(error => {
-              // TODO showAlertDialog("Saving " + filePath + " failed.");
-              console.error('Save to file ' + filePath + ' failed ' + error);
-              showNotification(
-                'Importing file ' + filePath + ' failed.',
-                'error',
-                true
-              );
-              props.onClose();
-              return true;
-            });
-        }
-        return true;
-      }).catch((err) => {
-        console.log('Error getting properties ' + err);
-        props.onClose();
-      });
+      PlatformIO.getPropertiesPromise(filePath)
+        .then(entryProps => {
+          if (entryProps) {
+            showNotification(
+              'File with the same name already exist, importing skipped!',
+              'warning',
+              true
+            );
+          } else {
+            PlatformIO.saveBinaryFilePromise(
+              filePath,
+              event.currentTarget.result,
+              true
+            )
+              .then(() => {
+                showNotification(
+                  'File ' + filePath + ' successfully imported.',
+                  'default',
+                  true
+                );
+                props.reflectCreateEntry(filePath, true);
+                props.onClose();
+                return true;
+              })
+              .catch(error => {
+                // TODO showAlertDialog("Saving " + filePath + " failed.");
+                console.error('Save to file ' + filePath + ' failed ' + error);
+                showNotification(
+                  'Importing file ' + filePath + ' failed.',
+                  'error',
+                  true
+                );
+                props.onClose();
+                return true;
+              });
+          }
+          return true;
+        })
+        .catch(err => {
+          console.log('Error getting properties ' + err);
+          props.onClose();
+        });
     };
 
     if (AppConfig.isCordova) {
@@ -208,23 +240,30 @@ const CreateDialog = (props: Props) => {
       // onEnterKey={(event) => onEnterKeyHandler(event, this.addTags)}
       // TransitionComponent={Transition}
     >
-      <DialogTitle style={{ alignSelf: 'center' }}>Create new content</DialogTitle>
-      <DialogContent onKeyPress={handleKeyPress} className={classes.root} data-tid="keyboardShortCutsDialog">
+      <DialogTitle style={{ alignSelf: 'center' }}>
+        Create new content
+      </DialogTitle>
+      <DialogContent
+        onKeyPress={handleKeyPress}
+        className={classes.root}
+        data-tid="keyboardShortCutsDialog"
+      >
         <Grid className={classes.grid} container spacing={1}>
           <Grid item xs>
             <Button
               onClick={createRichTextFile}
               className={classes.createButton}
             >
-              <div><NoteFileIcon /></div>
-              <div><Container>Create Note</Container></div>
+              <div>
+                <NoteFileIcon />
+              </div>
+              <div>
+                <Container>Create Note</Container>
+              </div>
             </Button>
           </Grid>
           <Grid item xs>
-            <Button
-              onClick={createTextFile}
-              className={classes.createButton}
-            >
+            <Button onClick={createTextFile} className={classes.createButton}>
               <TextFileIcon />
               <Container>Create Text File</Container>
             </Button>
@@ -241,10 +280,7 @@ const CreateDialog = (props: Props) => {
             </Button>
           </Grid>
           <Grid item xs>
-            <Button
-              onClick={addFile}
-              className={classes.createButton}
-            >
+            <Button onClick={addFile} className={classes.createButton}>
               <AddFileIcon />
               <Container>Add file</Container>
             </Button>
@@ -275,18 +311,22 @@ const CreateDialog = (props: Props) => {
 
 function mapStateToProps(state) {
   return {
-    keyBindings: getKeyBindingObject(state),
+    keyBindings: getKeyBindingObject(state)
   };
 }
 
 function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators({
-    createFileAdvanced: AppActions.createFileAdvanced,
-    showNotification: AppActions.showNotification,
-    reflectCreateEntry: AppActions.reflectCreateEntry,
-  }, dispatch);
+  return bindActionCreators(
+    {
+      createFileAdvanced: AppActions.createFileAdvanced,
+      showNotification: AppActions.showNotification,
+      reflectCreateEntry: AppActions.reflectCreateEntry
+    },
+    dispatch
+  );
 }
 
-export default connect(mapStateToProps, mapActionCreatorsToProps)(
-  withStyles(styles)(CreateDialog)
-);
+export default connect(
+  mapStateToProps,
+  mapActionCreatorsToProps
+)(withStyles(styles)(CreateDialog));

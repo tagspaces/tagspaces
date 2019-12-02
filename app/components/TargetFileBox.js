@@ -39,7 +39,7 @@ const styles = theme => ({
     textAlign: 'center',
     fontSize: '40px',
     fontWeight: 'bold',
-    color: 'white',
+    color: 'white'
   }
 });
 
@@ -47,10 +47,11 @@ const boxTarget = {
   /**
    * http://react-dnd.github.io/react-dnd/docs/api/drop-target
    */
-  drop(props, monitor) { // component)
+  drop(props, monitor) {
+    // component)
     //  return component.props.onDrop(props, monitor);
     return props.onDrop(props, monitor);
-  },
+  }
 };
 
 type Props = {
@@ -63,7 +64,12 @@ type Props = {
 
 const TargetFileBox = (props: Props) => {
   const { classes, canDrop, isOver, connectDropTarget, children } = props;
-  const dragContent = canDrop && isOver ? (<div className={classes.dropzone}>{i18n.t('core:releaseToDrop')}</div>) : undefined;
+  const dragContent =
+    canDrop && isOver ? (
+      <div className={classes.dropzone}>{i18n.t('core:releaseToDrop')}</div>
+    ) : (
+      undefined
+    );
   return connectDropTarget(
     <div>
       {dragContent}
@@ -72,8 +78,14 @@ const TargetFileBox = (props: Props) => {
   );
 };
 
-export default withStyles(styles, { withTheme: true })(DropTarget(props => props.accepts, boxTarget, (connect, monitor) => ({
-  connectDropTarget: connect.dropTarget(),
-  isOver: monitor.isOver(),
-  canDrop: monitor.canDrop(),
-}))(TargetFileBox));
+export default withStyles(styles, { withTheme: true })(
+  DropTarget(
+    props => props.accepts,
+    boxTarget,
+    (connect, monitor) => ({
+      connectDropTarget: connect.dropTarget(),
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop()
+    })
+  )(TargetFileBox)
+);

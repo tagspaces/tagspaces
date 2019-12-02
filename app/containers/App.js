@@ -37,10 +37,10 @@ const lightTheme = createMuiTheme({
       light: '#dcf3ec',
       main: '#1DD19F',
       dark: '#1DD19F',
-      contrastText: '#ffffff',
+      contrastText: '#ffffff'
     },
     secondary: {
-      main: '#1DD19F',
+      main: '#1DD19F'
     },
     divider: '#ddd'
     // secondary: { main: '#cccccc', 200: '#ddd' }
@@ -54,10 +54,10 @@ const darkTheme = createMuiTheme({
       light: '#56454e',
       main: '#ff9abe',
       dark: '#a21547',
-      contrastText: '#ffffff',
+      contrastText: '#ffffff'
     },
     secondary: {
-      main: '#ff9abe',
+      main: '#ff9abe'
     },
     divider: '#555'
     // secondary: { main: '#555', 200: '#777' }
@@ -89,18 +89,18 @@ class App extends Component {
   render() {
     let theme;
     switch (this.props.currentTheme) {
-    case 'light': {
-      theme = lightTheme;
-      break;
-    }
-    case 'dark': {
-      theme = darkTheme;
-      break;
-    }
-    default: {
-      theme = lightTheme;
-      break;
-    }
+      case 'light': {
+        theme = lightTheme;
+        break;
+      }
+      case 'dark': {
+        theme = darkTheme;
+        break;
+      }
+      default: {
+        theme = lightTheme;
+        break;
+      }
     }
 
     return (
@@ -114,7 +114,7 @@ class App extends Component {
 
 function mapStateToProps(state) {
   return {
-    currentTheme: getCurrentTheme(state),
+    currentTheme: getCurrentTheme(state)
   };
 }
 

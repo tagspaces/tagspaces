@@ -33,7 +33,7 @@ export const types = {
 
 export const locationType = {
   TYPE_LOCAL: '0',
-  TYPE_CLOUD: '1',
+  TYPE_CLOUD: '1'
 };
 
 export type Location = {
@@ -58,85 +58,85 @@ export const initialState = [];
 
 export default (state: Array<Location> = initialState, action: Object) => {
   switch (action.type) {
-  case types.ADD_LOCATION: {
-    if (action.location.isDefault) {
-      state.forEach((location) => {
-        location.isDefault = false;
-      });
-    }
-    return [
-      ...state,
-      {
-        ...action.location,
-        uuid: action.location.uuid || uuidv1(),
-        creationDate: new Date().toJSON(),
-      }
-    ];
-  }
-  case types.EDIT_LOCATION: {
-    let indexForEditing = -1;
-    state.forEach((location, index) => {
-      if (location.uuid === action.location.uuid) {
-        indexForEditing = index;
-      }
+    case types.ADD_LOCATION: {
       if (action.location.isDefault) {
-        location.isDefault = false;
+        state.forEach(location => {
+          location.isDefault = false;
+        });
       }
-    });
-    if (indexForEditing >= 0) {
       return [
-        ...state.slice(0, indexForEditing),
-        { ...state[indexForEditing], ...action.location },
-        ...state.slice(indexForEditing + 1)
+        ...state,
+        {
+          ...action.location,
+          uuid: action.location.uuid || uuidv1(),
+          creationDate: new Date().toJSON()
+        }
       ];
     }
-    return state;
-  }
-  case types.MOVE_UP_LOCATION: {
-    let indexForUpdating = -1;
-    state.forEach((location, index) => {
-      if (location.uuid === action.uuid) {
-        indexForUpdating = index;
+    case types.EDIT_LOCATION: {
+      let indexForEditing = -1;
+      state.forEach((location, index) => {
+        if (location.uuid === action.location.uuid) {
+          indexForEditing = index;
+        }
+        if (action.location.isDefault) {
+          location.isDefault = false;
+        }
+      });
+      if (indexForEditing >= 0) {
+        return [
+          ...state.slice(0, indexForEditing),
+          { ...state[indexForEditing], ...action.location },
+          ...state.slice(indexForEditing + 1)
+        ];
       }
-    });
-    if (indexForUpdating > 0) {
-      const secondIndex = indexForUpdating - 1;
-      return immutablySwapItems(state, indexForUpdating, secondIndex);
+      return state;
     }
-    return state;
-  }
-  case types.MOVE_DOWN_LOCATION: {
-    let indexForUpdating = -1;
-    state.forEach((location, index) => {
-      if (location.uuid === action.uuid) {
-        indexForUpdating = index;
+    case types.MOVE_UP_LOCATION: {
+      let indexForUpdating = -1;
+      state.forEach((location, index) => {
+        if (location.uuid === action.uuid) {
+          indexForUpdating = index;
+        }
+      });
+      if (indexForUpdating > 0) {
+        const secondIndex = indexForUpdating - 1;
+        return immutablySwapItems(state, indexForUpdating, secondIndex);
       }
-    });
-    if (indexForUpdating >= 0 && indexForUpdating < state.length - 1) {
-      const secondIndex = indexForUpdating + 1;
-      return immutablySwapItems(state, indexForUpdating, secondIndex);
+      return state;
     }
-    return state;
-  }
-  case types.REMOVE_LOCATION: {
-    let indexForRemoving = -1;
-    state.forEach((location, index) => {
-      if (location.uuid === action.location.uuid) {
-        indexForRemoving = index;
+    case types.MOVE_DOWN_LOCATION: {
+      let indexForUpdating = -1;
+      state.forEach((location, index) => {
+        if (location.uuid === action.uuid) {
+          indexForUpdating = index;
+        }
+      });
+      if (indexForUpdating >= 0 && indexForUpdating < state.length - 1) {
+        const secondIndex = indexForUpdating + 1;
+        return immutablySwapItems(state, indexForUpdating, secondIndex);
       }
-    });
-    if (indexForRemoving >= 0) {
-      return [
-        ...state.slice(0, indexForRemoving),
-        ...state.slice(indexForRemoving + 1)
-      ];
-      // return state.filter( (item, index) => index !== indexForRemoving);
+      return state;
     }
-    return state;
-  }
-  default: {
-    return state;
-  }
+    case types.REMOVE_LOCATION: {
+      let indexForRemoving = -1;
+      state.forEach((location, index) => {
+        if (location.uuid === action.location.uuid) {
+          indexForRemoving = index;
+        }
+      });
+      if (indexForRemoving >= 0) {
+        return [
+          ...state.slice(0, indexForRemoving),
+          ...state.slice(indexForRemoving + 1)
+        ];
+        // return state.filter( (item, index) => index !== indexForRemoving);
+      }
+      return state;
+    }
+    default: {
+      return state;
+    }
   }
 };
 
@@ -149,9 +149,15 @@ export const actions = {
       dispatch(AppActions.openLocation(location));
     }
   },
-  createLocation: (location: Location) => ({ type: types.ADD_LOCATION, location }),
+  createLocation: (location: Location) => ({
+    type: types.ADD_LOCATION,
+    location
+  }),
   moveLocationUp: (uuid: string) => ({ type: types.MOVE_UP_LOCATION, uuid }),
-  moveLocationDown: (uuid: string) => ({ type: types.MOVE_DOWN_LOCATION, uuid }),
+  moveLocationDown: (uuid: string) => ({
+    type: types.MOVE_DOWN_LOCATION,
+    uuid
+  }),
   editLocation: (location: Location) => (
     dispatch: (actions: Object) => void
   ) => {
@@ -177,9 +183,12 @@ export const actions = {
 
 // Selectors
 export const getLocations = (state: Object): Array<Location> => state.locations;
-export const getLocation = (state: Object, locationId: string): Location | null => {
+export const getLocation = (
+  state: Object,
+  locationId: string
+): Location | null => {
   let foundLocation = null;
-  state.locations.map((location) => {
+  state.locations.map(location => {
     if (location.uuid === locationId) {
       foundLocation = location;
     }
@@ -189,7 +198,7 @@ export const getLocation = (state: Object, locationId: string): Location | null 
 };
 export const getDefaultLocationId = (state: Object): ?string => {
   let defaultLocationID;
-  state.locations.map((location) => {
+  state.locations.map(location => {
     if (location.isDefault) {
       defaultLocationID = location.uuid;
     }

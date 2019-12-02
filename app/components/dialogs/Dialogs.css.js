@@ -24,5 +24,5 @@ export default (theme: Object) => ({
     padding: 5,
     overflowY: 'hidden',
     backgroundColor: theme.palette.background.default
-  },
+  }
 });

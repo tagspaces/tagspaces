@@ -18,7 +18,7 @@
  */
 import AppConfig from '../config';
 
-export default (theme) => ({
+export default theme => ({
   panel: {
     height: '100%',
     maxHeight: '100%',
@@ -89,19 +89,19 @@ export default (theme) => ({
     textTransform: 'uppercase',
     flex: 1,
     paddingLeft: 5,
-    paddingTop: 12,
+    paddingTop: 12
   },
   nested: {
     paddingLeft: theme.spacing(4)
   },
   listItemTitleText: {
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   },
   hiddenFileInput: {
-    display: 'none',
+    display: 'none'
   },
   toolbar: {
-    display: 'flex',
+    display: 'flex'
   },
   formControl: {
     width: '100%',
@@ -113,7 +113,7 @@ export default (theme) => ({
     paddingLeft: 8
   },
   leftIcon: {
-    marginRight: theme.spacing(1),
+    marginRight: theme.spacing(1)
   },
   badge: {
     display: 'inline-block',

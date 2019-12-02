@@ -29,106 +29,125 @@ function init() {
   ipcRenderer.on('worker', (event, arg) => {
     // console.log('worker received: ' + JSON.stringify(arg));
     switch (arg.action) {
-    case 'createDirectoryIndex': {
-      console.log('createDirectoryIndex started in worker window');
-      console.time('createDirectoryIndex');
-      const directoryIndex = [];
-      let counter = 0;
-      walkDirectory(arg.path, {
-        recursive: true,
-        skipMetaFolder: true,
-        skipDotHiddenFolder: true,
-        extractText: arg.extractText
-      }, (fileEntry) => {
-        counter += 1;
-        if (counter > AppConfig.indexerLimit) {
-          console.warn('Walk canceled by ' + AppConfig.indexerLimit);
-          window.walkCanceled = true;
-        }
-        directoryIndex.push(enhanceEntry(fileEntry));
-      }, (directoryEntry) => {
-        if (directoryEntry.name !== AppConfig.metaFolder) {
-          counter += 1;
-          directoryIndex.push(enhanceEntry(directoryEntry));
-        }
-      }).then(() => { // entries - can be used for further processing
-        window.walkCanceled = false;
-        console.log('Directory index created ' + arg.path + ' containing ' + directoryIndex.length);
-        console.timeEnd('createDirectoryIndex');
-        ipcRenderer.send('worker', {
-          id: arg.id,
-          action: arg.action,
-          result: directoryIndex,
-          error: ''
-        });
-        return true;
-      }).catch((err) => {
-        window.walkCanceled = false;
-        console.timeEnd('createDirectoryIndex');
-        console.warn('Error creating index: ' + err);
-        ipcRenderer.send('worker', {
-          id: arg.id,
-          action: arg.action,
-          result: [], // directoryIndex,
-          error: err
-        });
-      });
-      break;
-    }
-    case 'createThumbnails': {
-      console.log('createThumbnails started in worker window');
-      if (!arg.tmbGenerationList || arg.tmbGenerationList.length < 1 || isGeneratingThumbs) {
-        ipcRenderer.send('worker', {
-          id: arg.id,
-          action: arg.action,
-          result: [],
-          error: 'Empty or not available tmb list or busy worker'
-        });
+      case 'createDirectoryIndex': {
+        console.log('createDirectoryIndex started in worker window');
+        console.time('createDirectoryIndex');
+        const directoryIndex = [];
+        let counter = 0;
+        walkDirectory(
+          arg.path,
+          {
+            recursive: true,
+            skipMetaFolder: true,
+            skipDotHiddenFolder: true,
+            extractText: arg.extractText
+          },
+          fileEntry => {
+            counter += 1;
+            if (counter > AppConfig.indexerLimit) {
+              console.warn('Walk canceled by ' + AppConfig.indexerLimit);
+              window.walkCanceled = true;
+            }
+            directoryIndex.push(enhanceEntry(fileEntry));
+          },
+          directoryEntry => {
+            if (directoryEntry.name !== AppConfig.metaFolder) {
+              counter += 1;
+              directoryIndex.push(enhanceEntry(directoryEntry));
+            }
+          }
+        )
+          .then(() => {
+            // entries - can be used for further processing
+            window.walkCanceled = false;
+            console.log(
+              'Directory index created ' +
+                arg.path +
+                ' containing ' +
+                directoryIndex.length
+            );
+            console.timeEnd('createDirectoryIndex');
+            ipcRenderer.send('worker', {
+              id: arg.id,
+              action: arg.action,
+              result: directoryIndex,
+              error: ''
+            });
+            return true;
+          })
+          .catch(err => {
+            window.walkCanceled = false;
+            console.timeEnd('createDirectoryIndex');
+            console.warn('Error creating index: ' + err);
+            ipcRenderer.send('worker', {
+              id: arg.id,
+              action: arg.action,
+              result: [], // directoryIndex,
+              error: err
+            });
+          });
         break;
       }
-      isGeneratingThumbs = true;
-      const tmbGenerationPromises = [];
-      let splashShown = false;
-      arg.tmbGenerationList.map(entry => {
-        if (!splashShown && entry.endsWith('pdf')) {
-          splashShown = true;
-          ipcRenderer.send('setSplashVisibility', {
-            visibility: true,
+      case 'createThumbnails': {
+        console.log('createThumbnails started in worker window');
+        if (
+          !arg.tmbGenerationList ||
+          arg.tmbGenerationList.length < 1 ||
+          isGeneratingThumbs
+        ) {
+          ipcRenderer.send('worker', {
+            id: arg.id,
+            action: arg.action,
+            result: [],
+            error: 'Empty or not available tmb list or busy worker'
           });
+          break;
         }
-        tmbGenerationPromises.push(getThumbnailURLPromise(entry));
-        return true;
-      });
-      Promise.all(tmbGenerationPromises).then(tmbResult => {
-        console.log('tmb results' + JSON.stringify(tmbResult));
-        ipcRenderer.send('setSplashVisibility', {
-          visibility: false,
+        isGeneratingThumbs = true;
+        const tmbGenerationPromises = [];
+        let splashShown = false;
+        arg.tmbGenerationList.map(entry => {
+          if (!splashShown && entry.endsWith('pdf')) {
+            splashShown = true;
+            ipcRenderer.send('setSplashVisibility', {
+              visibility: true
+            });
+          }
+          tmbGenerationPromises.push(getThumbnailURLPromise(entry));
+          return true;
         });
-        ipcRenderer.send('worker', {
-          id: arg.id,
-          action: arg.action,
-          result: tmbResult,
-          error: ''
-        });
-        isGeneratingThumbs = false;
-        return true;
-      }).catch(error => {
-        console.warn('Tmb generation failed: ' + error);
-        ipcRenderer.send('worker', {
-          id: arg.id,
-          action: arg.action,
-          result: [],
-          error: 'Error generating thumbnails: ' + error
-        });
-        ipcRenderer.send('setSplashVisibility', {
-          visibility: false,
-        });
-        isGeneratingThumbs = false;
-      });
-      break;
-    }
-    default:
-      return false;
+        Promise.all(tmbGenerationPromises)
+          .then(tmbResult => {
+            console.log('tmb results' + JSON.stringify(tmbResult));
+            ipcRenderer.send('setSplashVisibility', {
+              visibility: false
+            });
+            ipcRenderer.send('worker', {
+              id: arg.id,
+              action: arg.action,
+              result: tmbResult,
+              error: ''
+            });
+            isGeneratingThumbs = false;
+            return true;
+          })
+          .catch(error => {
+            console.warn('Tmb generation failed: ' + error);
+            ipcRenderer.send('worker', {
+              id: arg.id,
+              action: arg.action,
+              result: [],
+              error: 'Error generating thumbnails: ' + error
+            });
+            ipcRenderer.send('setSplashVisibility', {
+              visibility: false
+            });
+            isGeneratingThumbs = false;
+          });
+        break;
+      }
+      default:
+        return false;
     }
   });
 }

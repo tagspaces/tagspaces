@@ -39,14 +39,14 @@ const styles = theme => ({
     textAlign: 'center',
     fontSize: '20px',
     fontWeight: 'bold',
-    color: 'white',
+    color: 'white'
   }
 });
 
 const boxTarget = {
   drop(props, monitor) {
     return props.onDrop(props, monitor);
-  },
+  }
 };
 
 type Props = {
@@ -59,7 +59,12 @@ type Props = {
 
 const TargetMoveFileBox = (props: Props) => {
   const { classes, canDrop, isOver, connectDropTarget, children } = props;
-  const dragContent = canDrop && isOver ? (<div className={classes.dropzone}>{i18n.t('core:releaseToMoveDrop')}</div>) : undefined;
+  const dragContent =
+    canDrop && isOver ? (
+      <div className={classes.dropzone}>{i18n.t('core:releaseToMoveDrop')}</div>
+    ) : (
+      undefined
+    );
   return connectDropTarget(
     <div>
       {dragContent}
@@ -68,8 +73,14 @@ const TargetMoveFileBox = (props: Props) => {
   );
 };
 
-export default withStyles(styles, { withTheme: true })(DropTarget(props => props.accepts, boxTarget, (connect, monitor) => ({
-  connectDropTarget: connect.dropTarget(),
-  isOver: monitor.isOver(),
-  canDrop: monitor.canDrop(),
-}))(TargetMoveFileBox));
+export default withStyles(styles, { withTheme: true })(
+  DropTarget(
+    props => props.accepts,
+    boxTarget,
+    (connect, monitor) => ({
+      connectDropTarget: connect.dropTarget(),
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop()
+    })
+  )(TargetMoveFileBox)
+);

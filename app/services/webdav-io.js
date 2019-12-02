@@ -38,12 +38,12 @@ export default class WebDAVIO {
       headers
     ) => {
       const /** @type XMLHttpRequest */ ajax =
-        typeof Components !== 'undefined' &&
-        typeof Components.classes !== 'undefined'
-          ? Components.classes[
-            '@mozilla.org/xmlextras/xmlhttprequest;1'
-          ].createInstance(Components.interfaces.nsIXMLHttpRequest)
-          : new XMLHttpRequest();
+          typeof Components !== 'undefined' &&
+          typeof Components.classes !== 'undefined'
+            ? Components.classes[
+                '@mozilla.org/xmlextras/xmlhttprequest;1'
+              ].createInstance(Components.interfaces.nsIXMLHttpRequest)
+            : new XMLHttpRequest();
       if (this._username !== null) {
         ajax.open(method, url, true, this._username, this._password);
       } else {
@@ -89,15 +89,14 @@ export default class WebDAVIO {
 
   getDevicePaths = (): Object => {
     const paths = {
-      Home: '/files/',
+      Home: '/files/'
     };
     return paths;
   };
 
   getAppDataPath = (): string =>
     // TODO
-    'SOMEPATH_FIX_ME'
-  ;
+    'SOMEPATH_FIX_ME';
 
   getUserHomePath = (): string => '/';
 
@@ -106,14 +105,16 @@ export default class WebDAVIO {
     if (path.lastIndexOf(separator) === path.length - 1) {
       path = path.substring(0, path.lastIndexOf(separator));
     }
-    const encodedName = path.substring(path.lastIndexOf(separator) + 1, path.length);
+    const encodedName = path.substring(
+      path.lastIndexOf(separator) + 1,
+      path.length
+    );
     return decodeURI(encodedName);
   };
 
   isDirectory = (path: string): boolean =>
     // TODO find a better solution
-    path.lastIndexOf('/') === path.length - 1
-  ;
+    path.lastIndexOf('/') === path.length - 1;
 
   checkStatusCode = (code: number): boolean => {
     const status = parseInt(code / 100);
@@ -143,11 +144,14 @@ export default class WebDAVIO {
     return directoyTree;
   };
 
-
   listMetaDirectoryPromise = async (path: string): Promise<Array<Object>> => {
-    const promise = new Promise((resolve) => {
+    const promise = new Promise(resolve => {
       const entries = [];
-      const metaDirPath = normalizePath(path) + AppConfig.dirSeparator + AppConfig.metaFolder + AppConfig.dirSeparator;
+      const metaDirPath =
+        normalizePath(path) +
+        AppConfig.dirSeparator +
+        AppConfig.metaFolder +
+        AppConfig.dirSeparator;
       const davSuccess = (status, data) => {
         const dirList = data._responses;
         for (const dir in dirList) {
@@ -181,31 +185,37 @@ export default class WebDAVIO {
   /**
    * Creates a list with containing the files and the sub directories of a given directory
    */
-  listDirectoryPromise = (directoryPath: string, lite: boolean = false): Promise<Array<Object>> => new Promise(async (resolve, reject) => {
-    let enhancedEntries;
-    let dirPath = directoryPath.split('//').join('/');
+  listDirectoryPromise = (
+    directoryPath: string,
+    lite: boolean = false
+  ): Promise<Array<Object>> =>
+    new Promise(async (resolve, reject) => {
+      let enhancedEntries;
+      let dirPath = directoryPath.split('//').join('/');
 
-    const metaContent = !lite ? await this.listMetaDirectoryPromise(directoryPath) : [];
+      const metaContent = !lite
+        ? await this.listMetaDirectoryPromise(directoryPath)
+        : [];
 
-    // let containsMetaFolder = false;
-    const davSuccess = (status, data) => {
-      console.log('Dirlist Status:  ' + status);
-      if (!this.checkStatusCode(status)) {
-        console.warn('Listing directory ' + dirPath + ' failed ' + status);
-        reject('Listing directory ' + dirPath + ' failed ' + status);
-      }
-      const dirList = data._responses;
-      let fileName;
-      let isDir;
-      let filesize;
-      let lmdt;
-      let path;
-      let eentry;
+      // let containsMetaFolder = false;
+      const davSuccess = (status, data) => {
+        console.log('Dirlist Status:  ' + status);
+        if (!this.checkStatusCode(status)) {
+          console.warn('Listing directory ' + dirPath + ' failed ' + status);
+          reject('Listing directory ' + dirPath + ' failed ' + status);
+        }
+        const dirList = data._responses;
+        let fileName;
+        let isDir;
+        let filesize;
+        let lmdt;
+        let path;
+        let eentry;
 
-      enhancedEntries = [];
-      const metaPromises = [];
-      for (const entry in dirList) {
-        // if (Object.prototype.hasOwnProperty.call(dirList, entry)) {
+        enhancedEntries = [];
+        const metaPromises = [];
+        for (const entry in dirList) {
+          // if (Object.prototype.hasOwnProperty.call(dirList, entry)) {
           path = dirList[entry].href;
           if (dirPath.toLowerCase() === path.toLowerCase()) {
             console.log('Skipping current folder');
@@ -215,8 +225,12 @@ export default class WebDAVIO {
             lmdt = undefined;
             // console.log(dirList[entry]._namespaces['DAV:']);
             if (this.isFile(dirList[entry]._namespaces['DAV:'])) {
-              filesize = dirList[entry]._namespaces['DAV:'].getcontentlength._xmlvalue[0].data;
-              lmdt = data._responses[entry]._namespaces['DAV:'].getlastmodified._xmlvalue[0].data;
+              filesize =
+                dirList[entry]._namespaces['DAV:'].getcontentlength._xmlvalue[0]
+                  .data;
+              lmdt =
+                data._responses[entry]._namespaces['DAV:'].getlastmodified
+                  ._xmlvalue[0].data;
             } else {
               isDir = true;
               // const metaFilePath = getMetaFileLocationForFile(path, '/');
@@ -227,7 +241,12 @@ export default class WebDAVIO {
             eentry.name = fileName;
             eentry.path = decodeURI(path);
             eentry.tags = [];
-            eentry.thumbPath = isDir ? eentry.path + AppConfig.metaFolder + '/' + AppConfig.folderThumbFile : '';
+            eentry.thumbPath = isDir
+              ? eentry.path +
+                AppConfig.metaFolder +
+                '/' +
+                AppConfig.folderThumbFile
+              : '';
             // eentry.meta = {};
             eentry.isFile = !isDir;
             eentry.size = filesize;
@@ -235,17 +254,24 @@ export default class WebDAVIO {
             // const x = getMetaFileLocationForFile(eentry.path);
 
             if (!lite) {
-              if (isDir) { // Read tsm.json from subfolders
+              if (isDir) {
+                // Read tsm.json from subfolders
                 const pathMetaFile = getMetaFileLocationForDir(eentry.path);
                 metaPromises.push(this.getEntryMeta(eentry, pathMetaFile));
               } else {
-                const metaFileAvailable = metaContent.find(obj => obj.name === fileName + AppConfig.metaFileExt);
+                const metaFileAvailable = metaContent.find(
+                  obj => obj.name === fileName + AppConfig.metaFileExt
+                );
                 if (metaFileAvailable) {
-                  metaPromises.push(this.getEntryMeta(eentry, metaFileAvailable.path));
+                  metaPromises.push(
+                    this.getEntryMeta(eentry, metaFileAvailable.path)
+                  );
                 }
 
                 // Finding if file thumbnail available
-                const metaThumbAvailable = metaContent.find(obj => obj.name === fileName + AppConfig.thumbFileExt);
+                const metaThumbAvailable = metaContent.find(
+                  obj => obj.name === fileName + AppConfig.thumbFileExt
+                );
                 if (metaThumbAvailable) {
                   eentry.thumbPath = metaThumbAvailable.path;
                 }
@@ -253,12 +279,13 @@ export default class WebDAVIO {
             }
 
             enhancedEntries.push(eentry);
-          // }
+            // }
+          }
         }
-      }
 
-      Promise.all(metaPromises).then((entriesMeta) => {
-        /* entriesMeta.forEach((entryMeta) => {
+        Promise.all(metaPromises)
+          .then(entriesMeta => {
+            /* entriesMeta.forEach((entryMeta) => {
           enhancedEntries.some((enhancedEntry) => {
             if (enhancedEntry.path === entryMeta.path) {
               // eslint-disable-next-line no-param-reassign
@@ -268,58 +295,70 @@ export default class WebDAVIO {
             return false;
           });
         }); */
-        resolve(enhancedEntries);
-        return true;
-      }).catch(() => {
-        resolve(enhancedEntries);
-      });
-    };
-    if (dirPath.substring(dirPath.length - 1) !== '/') {
-      dirPath += '/';
-    }
-    dirPath = encodeURI(dirPath);
+            resolve(enhancedEntries);
+            return true;
+          })
+          .catch(() => {
+            resolve(enhancedEntries);
+          });
+      };
+      if (dirPath.substring(dirPath.length - 1) !== '/') {
+        dirPath += '/';
+      }
+      dirPath = encodeURI(dirPath);
 
-    this.davClient.propfind(
-      dirPath,
-      davSuccess,
-      1 // 1 , davClient.INFINITY
+      this.davClient.propfind(
+        dirPath,
+        davSuccess,
+        1 // 1 , davClient.INFINITY
+      );
+    });
+
+  isFile = (dav: Object): boolean =>
+    !(
+      typeof dav.getcontentlength === 'undefined' ||
+      dav.getcontentlength._xmlvalue.length === 0 ||
+      (dav.resourcetype._xmlvalue.length === 1 &&
+        dav.resourcetype._xmlvalue[0].localName === 'collection')
     );
-  });
-
-  isFile = (dav: Object): boolean => !(
-    typeof dav.getcontentlength === 'undefined' ||
-    dav.getcontentlength._xmlvalue.length === 0 ||
-    (dav.resourcetype._xmlvalue.length === 1 && dav.resourcetype._xmlvalue[0].localName === 'collection')
-  );
 
   getEntryMeta = (eentry: Object, metaPath: string): Promise<Object> => {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       if (eentry.isFile) {
-        this.loadTextFilePromise(metaPath).then(result => {
-          // eslint-disable-next-line no-param-reassign
-          eentry.meta = JSON.parse(result.trim());
-          return resolve(eentry);
-          // resolve({
-          //   ...eentry,
-          //   meta: JSON.parse(result.trim())
-          // });
-        }).catch(err => {
-          console.log('No meta file for folder found: ' + eentry.path + ' - ' + err);
-          resolve(eentry);
-        });
-      } else if (!eentry.path.endsWith(AppConfig.metaFolder + '/')) { // Skip the /.ts folder
-        this.loadTextFilePromise(metaPath).then(result => {
-          // eslint-disable-next-line no-param-reassign
-          eentry.meta = JSON.parse(result.trim());
-          return resolve(eentry);
-          // resolve({
-          //   ...eentry,
-          //   meta: JSON.parse(result.trim())
-          // });
-        }).catch(err => {
-          console.log('No meta file for folder found: ' + eentry.path + ' - ' + err);
-          resolve(eentry);
-        });
+        this.loadTextFilePromise(metaPath)
+          .then(result => {
+            // eslint-disable-next-line no-param-reassign
+            eentry.meta = JSON.parse(result.trim());
+            return resolve(eentry);
+            // resolve({
+            //   ...eentry,
+            //   meta: JSON.parse(result.trim())
+            // });
+          })
+          .catch(err => {
+            console.log(
+              'No meta file for folder found: ' + eentry.path + ' - ' + err
+            );
+            resolve(eentry);
+          });
+      } else if (!eentry.path.endsWith(AppConfig.metaFolder + '/')) {
+        // Skip the /.ts folder
+        this.loadTextFilePromise(metaPath)
+          .then(result => {
+            // eslint-disable-next-line no-param-reassign
+            eentry.meta = JSON.parse(result.trim());
+            return resolve(eentry);
+            // resolve({
+            //   ...eentry,
+            //   meta: JSON.parse(result.trim())
+            // });
+          })
+          .catch(err => {
+            console.log(
+              'No meta file for folder found: ' + eentry.path + ' - ' + err
+            );
+            resolve(eentry);
+          });
       }
       resolve(eentry);
     });
@@ -328,38 +367,46 @@ export default class WebDAVIO {
   /**
    * Finds out the properties of a file or directory such last modification date or file size
    */
-  getPropertiesPromise = (filePath: string): Promise<Object> => new Promise((resolve, reject) => {
-    this.davClient.propfind(
-      encodeURI(filePath),
-      (status, data) => {
-        console.log(
-          'Properties Status / Content: ' +
+  getPropertiesPromise = (filePath: string): Promise<Object> =>
+    new Promise((resolve, reject) => {
+      this.davClient.propfind(
+        encodeURI(filePath),
+        (status, data) => {
+          console.log(
+            'Properties Status / Content: ' +
               status +
               ' / ' +
               JSON.stringify(data._responses)
-        );
-        const fileProperties = {};
-        if (this.checkStatusCode(status)) {
-          for (const entry in data._responses) {
-            fileProperties.path = filePath;
-            fileProperties.name = this.getNameForPath(filePath);
-            const isFile = this.isFile(data._responses[entry]._namespaces['DAV:']);
-            fileProperties.isFile = isFile;
-            if (isFile) {
-              fileProperties.size =
-                data._responses[entry]._namespaces['DAV:'].getcontentlength._xmlvalue[0].data;
-              fileProperties.lmdt = Date.parse(data._responses[entry]._namespaces['DAV:'].getlastmodified._xmlvalue[0].data);
+          );
+          const fileProperties = {};
+          if (this.checkStatusCode(status)) {
+            for (const entry in data._responses) {
+              fileProperties.path = filePath;
+              fileProperties.name = this.getNameForPath(filePath);
+              const isFile = this.isFile(
+                data._responses[entry]._namespaces['DAV:']
+              );
+              fileProperties.isFile = isFile;
+              if (isFile) {
+                fileProperties.size =
+                  data._responses[entry]._namespaces[
+                    'DAV:'
+                  ].getcontentlength._xmlvalue[0].data;
+                fileProperties.lmdt = Date.parse(
+                  data._responses[entry]._namespaces['DAV:'].getlastmodified
+                    ._xmlvalue[0].data
+                );
+              }
             }
+            resolve(fileProperties);
+          } else {
+            resolve(false);
+            // reject('getFileProperties ' + filePath + ' failed ' + status);
           }
-          resolve(fileProperties);
-        } else {
-          resolve(false);
-          // reject('getFileProperties ' + filePath + ' failed ' + status);
-        }
-      },
-      1
-    );
-  });
+        },
+        1
+      );
+    });
 
   /**
    * Load the content of a text file
@@ -398,50 +445,55 @@ export default class WebDAVIO {
     content: string,
     overWrite: boolean,
     mode: string
-  ): Promise<Object> => new Promise((resolve, reject) => {
-    let isNewFile = false;
-    this.davClient.propfind(
-      encodeURI(filePath),
-      (status, data) => {
-        console.log(
-          'Check file exists: Status / Content: ' + status + ' / ' + data
-        );
-        if (parseInt(status) === 404) {
-          isNewFile = true;
-        }
-        if (isNewFile || overWrite === true || mode === 'text') {
-          this.davClient.put(
-            encodeURI(filePath),
-            (status, data, headers) => {
-              console.log(
-                'Creating File Status/Content/Headers:  ' +
+  ): Promise<Object> =>
+    new Promise((resolve, reject) => {
+      let isNewFile = false;
+      this.davClient.propfind(
+        encodeURI(filePath),
+        (status, data) => {
+          console.log(
+            'Check file exists: Status / Content: ' + status + ' / ' + data
+          );
+          if (parseInt(status) === 404) {
+            isNewFile = true;
+          }
+          if (isNewFile || overWrite === true || mode === 'text') {
+            this.davClient.put(
+              encodeURI(filePath),
+              (status, data, headers) => {
+                console.log(
+                  'Creating File Status/Content/Headers:  ' +
                     status +
                     ' / ' +
                     data +
                     ' / ' +
                     headers
-              );
-              if (this.checkStatusCode(status)) {
-                resolve(isNewFile);
-              } else {
-                reject('saveFilePromise: ' + filePath + ' failed ' + status);
-              }
-            },
-            content,
-            'application/octet-stream'
-          );
-        } else {
-          reject('File Already Exists.');
-        }
-      },
-      1
-    );
-  });
+                );
+                if (this.checkStatusCode(status)) {
+                  resolve(isNewFile);
+                } else {
+                  reject('saveFilePromise: ' + filePath + ' failed ' + status);
+                }
+              },
+              content,
+              'application/octet-stream'
+            );
+          } else {
+            reject('File Already Exists.');
+          }
+        },
+        1
+      );
+    });
 
   /**
    * Persists a given text content to a specified filepath
    */
-  saveTextFilePromise(filePath: string, content: string, overWrite: boolean): Promise<Object> {
+  saveTextFilePromise(
+    filePath: string,
+    content: string,
+    overWrite: boolean
+  ): Promise<Object> {
     console.log('Saving text file: ' + filePath);
     return this.saveFilePromise(filePath, content, overWrite, 'text');
   }
@@ -449,7 +501,11 @@ export default class WebDAVIO {
   /**
    * Persists a given binary content to a specified filepath
    */
-  saveBinaryFilePromise(filePath: string, content: string, overWrite: boolean): Promise<Object> {
+  saveBinaryFilePromise(
+    filePath: string,
+    content: string,
+    overWrite: boolean
+  ): Promise<Object> {
     console.log('Saving binary file: ' + filePath);
     return this.saveFilePromise(filePath, content, overWrite);
   }
@@ -476,12 +532,15 @@ export default class WebDAVIO {
         }
       });
     });
-  }
+  };
 
   /**
    * Copies a given file to a specified location
    */
-  copyFilePromise = (filePath: string, newFilePath: string): Promise<Object> => {
+  copyFilePromise = (
+    filePath: string,
+    newFilePath: string
+  ): Promise<Object> => {
     console.log('Copying file: ' + filePath + ' to ' + newFilePath);
     return new Promise((resolve, reject) => {
       if (filePath.toLowerCase() === newFilePath.toLowerCase()) {
@@ -509,12 +568,15 @@ export default class WebDAVIO {
         );
       }
     });
-  }
+  };
 
   /**
    * Renames a given file
    */
-  renameFilePromise = (filePath: string, newFilePath: string): Promise<Object> => {
+  renameFilePromise = (
+    filePath: string,
+    newFilePath: string
+  ): Promise<Object> => {
     console.log('Renaming file: ' + filePath + ' to ' + newFilePath);
     return new Promise((resolve, reject) => {
       if (filePath === newFilePath) {
@@ -542,12 +604,15 @@ export default class WebDAVIO {
         );
       }
     });
-  }
+  };
 
   /**
    * Rename a directory
    */
-  renameDirectoryPromise = (dirPath: string, newDirectoryPath: string): Promise<Object> => {
+  renameDirectoryPromise = (
+    dirPath: string,
+    newDirectoryPath: string
+  ): Promise<Object> => {
     const newDirPath =
       extractParentDirectoryPath(dirPath) + '/' + newDirectoryPath;
     console.log('Renaming directory: ' + dirPath + ' to ' + newDirPath);
@@ -582,7 +647,8 @@ export default class WebDAVIO {
   /**
    * Delete a specified file
    */
-  deleteFilePromise = (path: string): Promise<Object> => this.deleteDirectoryPromise(path);
+  deleteFilePromise = (path: string): Promise<Object> =>
+    this.deleteDirectoryPromise(path);
 
   /**
    * Delete a specified directory, the directory should be empty, if the trash can functionality is not enabled

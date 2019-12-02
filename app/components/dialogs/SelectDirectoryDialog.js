@@ -89,9 +89,34 @@ const styles = () => ({
   }
 });
 
-const drives = ['Choose Drive', 'A:', 'B:', 'C:', 'D:', 'F:',
-  'G:', 'H:', 'I:', 'J:', 'K:', 'L:', 'M:', 'N:', 'O:', 'P:',
-  'Q:', 'R:', 'S:', 'T:', 'U:', 'V:', 'W:', 'X:', 'Y:', 'Z:'];
+const drives = [
+  'Choose Drive',
+  'A:',
+  'B:',
+  'C:',
+  'D:',
+  'F:',
+  'G:',
+  'H:',
+  'I:',
+  'J:',
+  'K:',
+  'L:',
+  'M:',
+  'N:',
+  'O:',
+  'P:',
+  'Q:',
+  'R:',
+  'S:',
+  'T:',
+  'U:',
+  'V:',
+  'W:',
+  'X:',
+  'Y:',
+  'Z:'
+];
 
 class SelectDirectoryDialog extends React.Component<Props, State> {
   state = {
@@ -102,7 +127,7 @@ class SelectDirectoryDialog extends React.Component<Props, State> {
     currentPath: PlatformIO.getUserHomePath(),
     subFolders: [],
     choosePath: '',
-    isDefault: false,
+    isDefault: false
   };
 
   componentWillReceiveProps = (nextProps: any) => {
@@ -121,14 +146,16 @@ class SelectDirectoryDialog extends React.Component<Props, State> {
   };
 
   loadListDirectory = (path: string) => {
-    loadSubFolders(path).then((rootDirContent) => {
-      this.setState({
-        subFolders: rootDirContent
+    loadSubFolders(path)
+      .then(rootDirContent => {
+        this.setState({
+          subFolders: rootDirContent
+        });
+        return true;
+      })
+      .catch(error => {
+        console.log('Error listing directory ' + error);
       });
-      return true;
-    }).catch((error) => {
-      console.log('Error listing directory ' + error);
-    });
   };
 
   onConfirm = () => {
@@ -160,7 +187,9 @@ class SelectDirectoryDialog extends React.Component<Props, State> {
   };
 
   onBackButton = () => {
-    const lastIndex = this.state.currentPath.lastIndexOf(AppConfig.dirSeparator);
+    const lastIndex = this.state.currentPath.lastIndexOf(
+      AppConfig.dirSeparator
+    );
     const path = this.state.currentPath.slice(0, lastIndex);
     this.setState({
       currentPath: path
@@ -173,7 +202,7 @@ class SelectDirectoryDialog extends React.Component<Props, State> {
     this.loadListDirectory(this.state.currentPath);
   };
 
-  renderDriveSuggestions = (drive) => (
+  renderDriveSuggestions = drive => (
     <div className={styles.buttonContainer}>
       <Button
         key={drive.name}
@@ -186,28 +215,23 @@ class SelectDirectoryDialog extends React.Component<Props, State> {
   );
 
   render() {
-    const {
-      fullScreen,
-      open,
-      onClose
-    } = this.props;
+    const { fullScreen, open, onClose } = this.props;
 
     return (
       <Dialog
-      open={open}
-      onClose={onClose}
-      fullScreen={fullScreen}
-      keepMounted
-      scroll="paper"
-      // onKeyDown={confirmFunction}
+        open={open}
+        onClose={onClose}
+        fullScreen={fullScreen}
+        keepMounted
+        scroll="paper"
+        // onKeyDown={confirmFunction}
       >
         <DialogTitle>{i18n.t('core:selectDialogTitle')}</DialogTitle>
         <DialogContent>
-          <FormControl
-            fullWidth={true}
-            error={this.props.errorTextPath}
-          >
-            <InputLabel htmlFor="name">{i18n.t('core:selectDialogCurrentPath')}</InputLabel>
+          <FormControl fullWidth={true} error={this.props.errorTextPath}>
+            <InputLabel htmlFor="name">
+              {i18n.t('core:selectDialogCurrentPath')}
+            </InputLabel>
             <Input
               fullWidth={true}
               required
@@ -219,12 +243,12 @@ class SelectDirectoryDialog extends React.Component<Props, State> {
               value={this.state.currentPath}
               disabled={AppConfig.isWin}
             />
-            {this.state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
+            {this.state.errorTextPath && (
+              <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>
+            )}
           </FormControl>
           {AppConfig.isWin ? (
-            <FormControl
-              fullWidth={true}
-            >
+            <FormControl fullWidth={true}>
               <Select
                 data-tid="selectDirectoryDialogSelect"
                 native
@@ -234,14 +258,15 @@ class SelectDirectoryDialog extends React.Component<Props, State> {
                 onChange={this.handleInputChange}
                 input={<Input id="choosePath" />}
               >
-                {drives.map((drive) => (<option key={drive} value={drive}>{drive}</option>))}
+                {drives.map(drive => (
+                  <option key={drive} value={drive}>
+                    {drive}
+                  </option>
+                ))}
               </Select>
             </FormControl>
-          ) : null
-          }
-          <FormControl
-            fullWidth={true}
-          >
+          ) : null}
+          <FormControl fullWidth={true}>
             <Paper elevation={2}>
               <Button
                 data-tid="onBackButtonSelectDirectoryDialog"
@@ -257,24 +282,19 @@ class SelectDirectoryDialog extends React.Component<Props, State> {
                 {i18n.t('core:createDirectory')}
               </Button>
             </Paper>
-            <Paper elevation={2} className={this.props.classes.contentFolder} >
-              {this.state.subFolders.length === 0 ?
-                (
-                  <div className={this.props.classes.alertWarning}>
-                    {i18n.t('core:noSubfoldersFound')}
-                  </div>
-                )
-                :
+            <Paper elevation={2} className={this.props.classes.contentFolder}>
+              {this.state.subFolders.length === 0 ? (
+                <div className={this.props.classes.alertWarning}>
+                  {i18n.t('core:noSubfoldersFound')}
+                </div>
+              ) : (
                 this.state.subFolders.map(this.renderDriveSuggestions)
-              }
+              )}
             </Paper>
           </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button
-            onClick={this.props.onClose}
-            color="primary"
-          >
+          <Button onClick={this.props.onClose} color="primary">
             {i18n.t('core:cancel')}
           </Button>
           <Button
@@ -285,9 +305,9 @@ class SelectDirectoryDialog extends React.Component<Props, State> {
             {i18n.t('core:ok')}
           </Button>
         </DialogActions>
-      </Dialog>  
+      </Dialog>
     );
-  }            
+  }
 }
 
 export default withStyles(styles)(SelectDirectoryDialog);

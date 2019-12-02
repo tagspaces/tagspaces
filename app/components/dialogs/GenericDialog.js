@@ -69,13 +69,7 @@ const GenericDialog = (props: Props) => {
   //   );
   // }
 
-  const {
-    fullScreen,
-    open,
-    onEnterKey,
-    onClose,
-    onBackdropClick
-  } = props;
+  const { fullScreen, open, onEnterKey, onClose, onBackdropClick } = props;
   return (
     <Dialog
       fullScreen={fullScreen}
@@ -86,7 +80,9 @@ const GenericDialog = (props: Props) => {
       onClose={onClose}
       onBackdropClick={onBackdropClick && onClose}
       // onEscapeKeyDown={onClose}
-      onKeyDown={onEnterKey || ((event) => onEnterKeyHandler(event, props.onClose))}
+      onKeyDown={
+        onEnterKey || (event => onEnterKeyHandler(event, props.onClose))
+      }
     >
       {props.renderTitle && props.renderTitle()}
       {props.renderContent && props.renderContent()}

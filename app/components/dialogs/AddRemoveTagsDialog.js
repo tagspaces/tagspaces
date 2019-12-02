@@ -79,14 +79,14 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
   addTags = () => {
     if (this.props.selectedEntries && this.props.selectedEntries.length > 0) {
       const paths = [];
-      this.props.selectedEntries.map((entry) => {
+      this.props.selectedEntries.map(entry => {
         paths.push(entry.path);
         return true;
       });
       this.props.addTags(paths, this.state.newlyAddedTags);
     }
     this.onClose();
-  }
+  };
 
   render() {
     const {
@@ -111,24 +111,27 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
       >
         <DialogTitle>{i18n.t('core:tagOperationTitle')}</DialogTitle>
         <DialogContent style={{ minHeight: 330 }}>
-          <TagsSelect placeholderText={i18n.t('core:selectTags')} tags={newlyAddedTags} handleChange={this.handleChange} />
+          <TagsSelect
+            placeholderText={i18n.t('core:selectTags')}
+            tags={newlyAddedTags}
+            handleChange={this.handleChange}
+          />
           <List dense style={{ width: 550 }}>
-            {selectedEntries.length > 0 && selectedEntries.map((entry) => (
-              <ListItem key={uuidv1()} title={entry.path}>
-                <ListItemIcon>
-                  <FileIcon />
-                </ListItemIcon>
-                <Typography variant="inherit" noWrap>{extractFileName(entry.path || '')}</Typography>
-              </ListItem>
-            ))}
+            {selectedEntries.length > 0 &&
+              selectedEntries.map(entry => (
+                <ListItem key={uuidv1()} title={entry.path}>
+                  <ListItemIcon>
+                    <FileIcon />
+                  </ListItemIcon>
+                  <Typography variant="inherit" noWrap>
+                    {extractFileName(entry.path || '')}
+                  </Typography>
+                </ListItem>
+              ))}
           </List>
         </DialogContent>
         <DialogActions>
-          <Button
-            data-tid="cancel"
-            onClick={this.onClose}
-            color="primary"
-          >
+          <Button data-tid="cancel" onClick={this.onClose} color="primary">
             {i18n.t('core:cancel')}
           </Button>
           <Button
@@ -138,7 +141,7 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
             onClick={() => {
               if (selectedEntries && selectedEntries.length > 0) {
                 const paths = [];
-                selectedEntries.map((entry) => {
+                selectedEntries.map(entry => {
                   paths.push(entry.path);
                   return true;
                 });
@@ -151,12 +154,16 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
           </Button>
           <Button
             data-tid="removeTagsMultipleEntries"
-            disabled={!newlyAddedTags || newlyAddedTags.length < 1 || selectedEntries.length < 1}
+            disabled={
+              !newlyAddedTags ||
+              newlyAddedTags.length < 1 ||
+              selectedEntries.length < 1
+            }
             color="primary"
             onClick={() => {
               if (selectedEntries && selectedEntries.length > 0) {
                 const paths = [];
-                selectedEntries.map((entry) => {
+                selectedEntries.map(entry => {
                   paths.push(entry.path);
                   return true;
                 });
@@ -169,7 +176,11 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
           </Button>
           <Button
             data-tid="addTagsMultipleEntries"
-            disabled={!newlyAddedTags || newlyAddedTags.length < 1 || selectedEntries.length < 1}
+            disabled={
+              !newlyAddedTags ||
+              newlyAddedTags.length < 1 ||
+              selectedEntries.length < 1
+            }
             color="primary"
             onClick={this.addTags}
           >

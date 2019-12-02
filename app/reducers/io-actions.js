@@ -24,29 +24,36 @@ import {
   getThumbFileLocationForFile,
   normalizePath
 } from '../utils/paths';
-import {
-  copyFilesPromise,
-  renameFilesPromise
-} from '../services/utils-io';
+import { copyFilesPromise, renameFilesPromise } from '../services/utils-io';
 import AppConfig from '../config';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import TaggingActions from './tagging-actions';
 
 const actions = {
-  extractContent: (options: Object = { EXIFGeo: true, EXIFDateTime: true, IPTCDescription: true, IPTCTags: true }) => (
-    dispatch: (actions: Object) => void,
-    getState: () => Object
-  ) => {
+  extractContent: (
+    options: Object = {
+      EXIFGeo: true,
+      EXIFDateTime: true,
+      IPTCDescription: true,
+      IPTCTags: true
+    }
+  ) => (dispatch: (actions: Object) => void, getState: () => Object) => {
     const { currentDirectoryEntries } = getState().app;
     if (!Pro || !Pro.ContentExtractor) {
       dispatch(AppActions.showNotification(i18n.t('core:needProVersion')));
       return false;
     }
-    Pro.ContentExtractor.extractContent(currentDirectoryEntries, dispatch, AppActions, TaggingActions, options);
+    Pro.ContentExtractor.extractContent(
+      currentDirectoryEntries,
+      dispatch,
+      AppActions,
+      TaggingActions,
+      options
+    );
   },
   moveFiles: (paths: Array<string>, targetPath: string) => (
-    dispatch: (actions: Object) => void,
+    dispatch: (actions: Object) => void
   ) => {
     /* const renameJobs = [];
     paths.map((path) => {
@@ -61,60 +68,98 @@ const actions = {
       dispatch(AppActions.showNotification(i18n.t('core:movingFilesFailed')));
     }); */
     const moveJobs = [];
-    paths.map((path) => {
-      moveJobs.push([path, normalizePath(targetPath) + AppConfig.dirSeparator + extractFileName(path)]);
+    paths.map(path => {
+      moveJobs.push([
+        path,
+        normalizePath(targetPath) +
+          AppConfig.dirSeparator +
+          extractFileName(path)
+      ]);
       return true;
     });
-    renameFilesPromise(moveJobs).then(() => {
-      dispatch(AppActions.showNotification(i18n.t('core:filesMovedSuccessful')));
-      const moveMetaJobs = [];
-      moveJobs.map((job) => {
-        dispatch(AppActions.reflectDeleteEntry(job[0])); // TODO moved files should be added to the index, if the target dir in index
-        moveMetaJobs.push([getMetaFileLocationForFile(job[0]), getMetaFileLocationForFile(job[1])]);
-        moveMetaJobs.push([getThumbFileLocationForFile(job[0]), getThumbFileLocationForFile(job[1])]);
-        renameFilesPromise(moveMetaJobs).then(() => {
-          console.log('Moving meta and thumbs successful');
+    renameFilesPromise(moveJobs)
+      .then(() => {
+        dispatch(
+          AppActions.showNotification(i18n.t('core:filesMovedSuccessful'))
+        );
+        const moveMetaJobs = [];
+        moveJobs.map(job => {
+          dispatch(AppActions.reflectDeleteEntry(job[0])); // TODO moved files should be added to the index, if the target dir in index
+          moveMetaJobs.push([
+            getMetaFileLocationForFile(job[0]),
+            getMetaFileLocationForFile(job[1])
+          ]);
+          moveMetaJobs.push([
+            getThumbFileLocationForFile(job[0]),
+            getThumbFileLocationForFile(job[1])
+          ]);
+          renameFilesPromise(moveMetaJobs)
+            .then(() => {
+              console.log('Moving meta and thumbs successful');
+              return true;
+            })
+            .catch(err => {
+              console.warn('At least one meta or thumb was not moved ' + err);
+            });
           return true;
-        }).catch(err => {
-          console.warn('At least one meta or thumb was not moved ' + err);
         });
         return true;
+      })
+      .catch(err => {
+        console.warn('Moving files failed with ' + err);
+        dispatch(
+          AppActions.showNotification(i18n.t('core:copyingFilesFailed'))
+        );
       });
-      return true;
-    }).catch((err) => {
-      console.warn('Moving files failed with ' + err);
-      dispatch(AppActions.showNotification(i18n.t('core:copyingFilesFailed')));
-    });
   },
   copyFiles: (paths: Array<string>, targetPath: string) => (
-    dispatch: (actions: Object) => void,
+    dispatch: (actions: Object) => void
   ) => {
     const copyJobs = [];
-    paths.map((path) => {
-      copyJobs.push([path, normalizePath(targetPath) + AppConfig.dirSeparator + extractFileName(path)]);
+    paths.map(path => {
+      copyJobs.push([
+        path,
+        normalizePath(targetPath) +
+          AppConfig.dirSeparator +
+          extractFileName(path)
+      ]);
       return true;
     });
-    copyFilesPromise(copyJobs).then(() => {
-      dispatch(AppActions.showNotification(i18n.t('core:filesCopiedSuccessful')));
-      const copyMetaJobs = [];
-      copyJobs.map((job) => {
-        // dispatch(AppActions.reflectCopyEntry(job[0])); // TODO need only for the index if the target dir is indexed
-        copyMetaJobs.push([getMetaFileLocationForFile(job[0]), getMetaFileLocationForFile(job[1])]);
-        copyMetaJobs.push([getThumbFileLocationForFile(job[0]), getThumbFileLocationForFile(job[1])]);
-        copyFilesPromise(copyMetaJobs).then(() => {
-          console.log('Copy meta and thumbs successful');
+    copyFilesPromise(copyJobs)
+      .then(() => {
+        dispatch(
+          AppActions.showNotification(i18n.t('core:filesCopiedSuccessful'))
+        );
+        const copyMetaJobs = [];
+        copyJobs.map(job => {
+          // dispatch(AppActions.reflectCopyEntry(job[0])); // TODO need only for the index if the target dir is indexed
+          copyMetaJobs.push([
+            getMetaFileLocationForFile(job[0]),
+            getMetaFileLocationForFile(job[1])
+          ]);
+          copyMetaJobs.push([
+            getThumbFileLocationForFile(job[0]),
+            getThumbFileLocationForFile(job[1])
+          ]);
+          copyFilesPromise(copyMetaJobs)
+            .then(() => {
+              console.log('Copy meta and thumbs successful');
+              return true;
+            })
+            .catch(err => {
+              console.warn('At least one meta or thumb was not copied ' + err);
+            });
           return true;
-        }).catch(err => {
-          console.warn('At least one meta or thumb was not copied ' + err);
         });
         return true;
+      })
+      .catch(err => {
+        console.warn('Moving files failed with ' + err);
+        dispatch(
+          AppActions.showNotification(i18n.t('core:copyingFilesFailed'))
+        );
       });
-      return true;
-    }).catch((err) => {
-      console.warn('Moving files failed with ' + err);
-      dispatch(AppActions.showNotification(i18n.t('core:copyingFilesFailed')));
-    });
-  },
+  }
 };
 
 export default actions;

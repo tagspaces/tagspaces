@@ -55,10 +55,15 @@ import {
 import TaggingActions from '../reducers/tagging-actions';
 import i18n from '../services/i18n';
 import { getTagColor, getTagTextColor } from '../reducers/settings';
-import { actions as AppActions, getSelectedEntries, isReadOnlyMode } from '../reducers/app';
+import {
+  actions as AppActions,
+  getSelectedEntries,
+  isReadOnlyMode
+} from '../reducers/app';
 import SmartTags from '../reducers/smart-tags';
 
-const isTagLibraryReadOnly = (window.ExtTagLibrary && window.ExtTagLibrary.length > 0);
+const isTagLibraryReadOnly =
+  window.ExtTagLibrary && window.ExtTagLibrary.length > 0;
 
 type Props = {
   classes: Object,
@@ -210,7 +215,7 @@ class TagLibrary extends React.Component<Props, State> {
     this.setState({ tagLibraryMenuOpened: false });
   };
 
-  renderTagGroup = (tagGroup) => {
+  renderTagGroup = tagGroup => {
     const isReadOnly = tagGroup.readOnly || isTagLibraryReadOnly;
     return (
       <div key={tagGroup.uuid}>
@@ -221,7 +226,9 @@ class TagLibrary extends React.Component<Props, State> {
           className={this.props.classes.listItem}
           onClick={event => this.handleTagGroupTitleClick(event, tagGroup)}
           onContextMenu={event => this.handleTagGroupMenu(event, tagGroup)}
-          title={'Number of tags in this tag group: ' + tagGroup.children.length}
+          title={
+            'Number of tags in this tag group: ' + tagGroup.children.length
+          }
         >
           <ListItemIcon style={{ minWidth: 'auto' }}>
             {tagGroup.expanded ? <ArrowDownIcon /> : <ArrowRightIcon />}
@@ -235,18 +242,24 @@ class TagLibrary extends React.Component<Props, State> {
           >
             {tagGroup.title + ' '}
             {!tagGroup.expanded && (
-              <span className={this.props.classes.badge}>{tagGroup.children.length}</span>
+              <span className={this.props.classes.badge}>
+                {tagGroup.children.length}
+              </span>
             )}
           </Typography>
-          { !isReadOnly && (
+          {!isReadOnly && (
             <ListItemSecondaryAction>
               <IconButton
                 aria-label={i18n.t('core:options')}
                 aria-haspopup="true"
                 edge="end"
-                data-tid={'tagLibraryMoreButton_' + tagGroup.title.replace(/ /g, '_')}
+                data-tid={
+                  'tagLibraryMoreButton_' + tagGroup.title.replace(/ /g, '_')
+                }
                 onClick={event => this.handleTagGroupMenu(event, tagGroup)}
-                onContextMenu={event => this.handleTagGroupMenu(event, tagGroup)}
+                onContextMenu={event =>
+                  this.handleTagGroupMenu(event, tagGroup)
+                }
               >
                 <MoreVertIcon />
               </IconButton>
@@ -254,11 +267,27 @@ class TagLibrary extends React.Component<Props, State> {
           )}
         </ListItem>
         <Collapse in={tagGroup.expanded} unmountOnExit>
-          <TagGroupContainer taggroup={tagGroup} data-tid={'tagGroupContainer_' + tagGroup.title}>
-            {tagGroup.children && tagGroup.children.map((tag: Tag) => {
-              if (this.props.isReadOnlyMode) {
+          <TagGroupContainer
+            taggroup={tagGroup}
+            data-tid={'tagGroupContainer_' + tagGroup.title}
+          >
+            {tagGroup.children &&
+              tagGroup.children.map((tag: Tag) => {
+                if (this.props.isReadOnlyMode) {
+                  return (
+                    <TagContainer
+                      key={tagGroup.uuid + tag.title}
+                      tag={tag}
+                      tagGroup={tagGroup}
+                      handleTagMenu={this.handleTagMenu}
+                      addTags={this.props.addTags}
+                      moveTag={this.props.moveTag}
+                      selectedEntries={this.props.selectedEntries}
+                    />
+                  );
+                }
                 return (
-                  <TagContainer
+                  <TagContainerDnd
                     key={tagGroup.uuid + tag.title}
                     tag={tag}
                     tagGroup={tagGroup}
@@ -268,25 +297,12 @@ class TagLibrary extends React.Component<Props, State> {
                     selectedEntries={this.props.selectedEntries}
                   />
                 );
-              }
-              return (
-                <TagContainerDnd
-                  key={tagGroup.uuid + tag.title}
-                  tag={tag}
-                  tagGroup={tagGroup}
-                  handleTagMenu={this.handleTagMenu}
-                  addTags={this.props.addTags}
-                  moveTag={this.props.moveTag}
-                  selectedEntries={this.props.selectedEntries}
-                />
-              );
-            }
-            )}
+              })}
           </TagGroupContainer>
         </Collapse>
       </div>
     );
-};
+  };
 
   render() {
     const { tagGroups, classes, allTags } = this.props;
@@ -297,12 +313,18 @@ class TagLibrary extends React.Component<Props, State> {
         <div className={classes.toolbar}>
           <Typography
             className={classNames(classes.panelTitle, classes.header)}
-            title={'Your tag library contains ' + allTags.length + ' tags \ndistributed in ' + tagGroups.length + ' tag groups'}
+            title={
+              'Your tag library contains ' +
+              allTags.length +
+              ' tags \ndistributed in ' +
+              tagGroups.length +
+              ' tag groups'
+            }
             type="subtitle1"
           >
             {i18n.t('core:tagLibrary')}
           </Typography>
-          { !isTagLibraryReadOnly && (
+          {!isTagLibraryReadOnly && (
             <IconButton
               data-tid="tagLibraryMenu"
               onClick={this.handleTagLibraryMenu}
@@ -382,9 +404,16 @@ class TagLibrary extends React.Component<Props, State> {
           editTag={this.props.editTag}
           deleteTag={this.props.deleteTag}
         />
-        <div className={classes.taggroupsArea} data-tid="tagLibraryTagGroupList">
-          <List style={{ paddingTop: 0 }}>{SmartTags(i18n).map(this.renderTagGroup)}</List>
-          <List style={{ paddingTop: 0 }}>{tagGroups.map(this.renderTagGroup)}</List>
+        <div
+          className={classes.taggroupsArea}
+          data-tid="tagLibraryTagGroupList"
+        >
+          <List style={{ paddingTop: 0 }}>
+            {SmartTags(i18n).map(this.renderTagGroup)}
+          </List>
+          <List style={{ paddingTop: 0 }}>
+            {tagGroups.map(this.renderTagGroup)}
+          </List>
         </div>
       </div>
     );
@@ -403,12 +432,15 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    ...TagLibraryActions, // TODO connect only the really needed
-    addTags: TaggingActions.addTags,
-    collectTagsFromLocation: TaggingActions.collectTagsFromLocation,
-    openURLExternally: AppActions.openURLExternally,
-  }, dispatch);
+  return bindActionCreators(
+    {
+      ...TagLibraryActions, // TODO connect only the really needed
+      addTags: TaggingActions.addTags,
+      collectTagsFromLocation: TaggingActions.collectTagsFromLocation,
+      openURLExternally: AppActions.openURLExternally
+    },
+    dispatch
+  );
 }
 
 export default withStyles(styles)(

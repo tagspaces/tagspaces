@@ -41,7 +41,7 @@ type Props = {
 };
 
 const ConfirmDialog = (props: Props) => {
-  const { open, onClose } = props; 
+  const { open, onClose } = props;
 
   function onConfirm(result) {
     props.confirmCallback(result);
@@ -49,24 +49,22 @@ const ConfirmDialog = (props: Props) => {
   }
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      keepMounted
-      scroll="paper"
-    >
+    <Dialog open={open} onClose={onClose} keepMounted scroll="paper">
       <DialogTitle>{props.title}</DialogTitle>
-        <DialogContent>
-          <DialogContentText data-tid={props.confirmDialogContentTID}>
-            {props.content}
-            {props.list && props.list.map((listItem) => (
+      <DialogContent>
+        <DialogContentText data-tid={props.confirmDialogContentTID}>
+          {props.content}
+          {props.list &&
+            props.list.map(listItem => (
               <ListItem title={listItem}>
-                <Typography variant="inherit" noWrap>{listItem}</Typography>
+                <Typography variant="inherit" noWrap>
+                  {listItem}
+                </Typography>
               </ListItem>
             ))}
-          </DialogContentText>
-        </DialogContent> 
-        <DialogActions>
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
         <Button
           onClick={() => onConfirm(false)}
           color="primary"
@@ -82,8 +80,8 @@ const ConfirmDialog = (props: Props) => {
           {i18n.t('core:yes')}
         </Button>
       </DialogActions>
-    </Dialog>    
-  )
+    </Dialog>
+  );
 };
 
 ConfirmDialog.defaultProps = {

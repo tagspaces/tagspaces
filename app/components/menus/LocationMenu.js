@@ -31,10 +31,15 @@ import { withTheme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import i18n from '../../services/i18n';
-import { getLocations, type Location, locationType } from '../../reducers/locations';
+import {
+  getLocations,
+  type Location,
+  locationType
+} from '../../reducers/locations';
 import {
   actions as AppActions,
-  getCurrentLocationId } from '../../reducers/app';
+  getCurrentLocationId
+} from '../../reducers/app';
 
 type Props = {
   currentLocationId: string | null,
@@ -53,8 +58,8 @@ type State = {
 class LocationMenu extends React.Component<Props, State> {
   state = {
     locationChooserMenuOpened: false,
-    locationChooserMenuAnchorEl: null,
-  }
+    locationChooserMenuAnchorEl: null
+  };
 
   static getDerivedStateFromProps(nextProps, prevState) {
     let currentLocation;
@@ -67,7 +72,7 @@ class LocationMenu extends React.Component<Props, State> {
     }
     return {
       ...prevState,
-      currentLocation,
+      currentLocation
     };
   }
 
@@ -86,13 +91,18 @@ class LocationMenu extends React.Component<Props, State> {
   render() {
     const { theme } = this.props;
     const { currentLocation } = this.state;
-    const locationIcon = (currentLocation && currentLocation.type === locationType.TYPE_CLOUD) ?
-      <CloudLocationIcon /> : <LocationIcon />;
+    const locationIcon =
+      currentLocation && currentLocation.type === locationType.TYPE_CLOUD ? (
+        <CloudLocationIcon />
+      ) : (
+        <LocationIcon />
+      );
 
     return (
-      <div style={{
-        backgroundColor: theme.palette.background.default,
-      }}
+      <div
+        style={{
+          backgroundColor: theme.palette.background.default
+        }}
       >
         <Button
           data-tid="folderContainerLocationChooser"
@@ -125,12 +135,18 @@ class LocationMenu extends React.Component<Props, State> {
               data-tid="folderContainerMenuOpenLocation"
               key={location.uuid}
               onClick={() => this.openLocation(location)}
-              style={(currentLocation && currentLocation.uuid === location.uuid) ? { backgroundColor: theme.palette.primary.light } : {}}
+              style={
+                currentLocation && currentLocation.uuid === location.uuid
+                  ? { backgroundColor: theme.palette.primary.light }
+                  : {}
+              }
             >
               <ListItemIcon>
-                { location.type === locationType.TYPE_CLOUD ?
-                  (<CloudLocationIcon />) : (<LocationIcon />)
-                }
+                {location.type === locationType.TYPE_CLOUD ? (
+                  <CloudLocationIcon />
+                ) : (
+                  <LocationIcon />
+                )}
               </ListItemIcon>
               <ListItemText primary={location.name} />
             </MenuItem>
@@ -151,7 +167,7 @@ function mapStateToProps(state) {
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
-      openLocation: AppActions.openLocation,
+      openLocation: AppActions.openLocation
     },
     dispatch
   );

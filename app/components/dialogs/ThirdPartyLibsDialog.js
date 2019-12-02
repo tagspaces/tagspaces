@@ -45,7 +45,7 @@ const ThirdPartyLibsDialog = (props: Props) => {
     >
       <DialogTitle>{i18n.t('core:thirdPartyLibs')}</DialogTitle>
       <DialogContent style={{ overflowX: 'auto' }}>
-        <pre style={{ whiteSpace: 'pre-wrap' }}>{ ThirdPartyLibs }</pre>
+        <pre style={{ whiteSpace: 'pre-wrap' }}>{ThirdPartyLibs}</pre>
       </DialogContent>
       <DialogActions>
         <Button

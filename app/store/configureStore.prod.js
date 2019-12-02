@@ -35,7 +35,9 @@ const enhancer = compose(
 function configureStore(initialState) {
   const store = createStore(rootReducer, initialState, enhancer);
   onlineListener(store.dispatch);
-  const persistor = persistStore(store); /* , null, () => {
+  const persistor = persistStore(
+    store
+  ); /* , null, () => {
     document.dispatchEvent(new Event('storeLoaded'));
   }); */
   return { store, persistor };

@@ -56,11 +56,11 @@ const styles = theme => ({
     height: 'auto'
   },
   formControl: {
-    margin: theme.spacing(3),
+    margin: theme.spacing(3)
   },
   group: {
-    margin: theme.spacing(1, 0),
-  },
+    margin: theme.spacing(1, 0)
+  }
 });
 
 type Props = {
@@ -69,7 +69,12 @@ type Props = {
   onClose: () => void,
   selectedDirectoryPath: string | null,
   showSelectDirectoryDialog: () => void,
-  createFileAdvanced: (targetPath: string, fileName: string, content: string, fileType: string) => void
+  createFileAdvanced: (
+    targetPath: string,
+    fileName: string,
+    content: string,
+    fileType: string
+  ) => void
 };
 
 type State = {
@@ -89,11 +94,18 @@ class CreateFileDialog extends React.Component<Props, State> {
     errorTextName: false,
     errorTextPath: false,
     openFolder: false,
-    disableConfirmButton: !(this.props.selectedDirectoryPath && this.props.selectedDirectoryPath.length > 0),
+    disableConfirmButton: !(
+      this.props.selectedDirectoryPath &&
+      this.props.selectedDirectoryPath.length > 0
+    ),
     selectedDirectoryPath: this.props.selectedDirectoryPath,
-    fileName: 'note' + AppConfig.beginTagContainer + formatDateTime4Tag(new Date(), true) + AppConfig.endTagContainer,
+    fileName:
+      'note' +
+      AppConfig.beginTagContainer +
+      formatDateTime4Tag(new Date(), true) +
+      AppConfig.endTagContainer,
     fileContent: '',
-    fileType: 'txt',
+    fileType: 'txt'
   };
 
   fileName;
@@ -107,9 +119,12 @@ class CreateFileDialog extends React.Component<Props, State> {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
-    this.setState({
-      [name]: value
-    }, this.handleValidation);
+    this.setState(
+      {
+        [name]: value
+      },
+      this.handleValidation
+    );
   };
 
   handleValidation() {
@@ -119,27 +134,36 @@ class CreateFileDialog extends React.Component<Props, State> {
       this.setState({ errorTextName: true });
     }
 
-    if (this.state.selectedDirectoryPath && this.state.selectedDirectoryPath.length > 0) {
+    if (
+      this.state.selectedDirectoryPath &&
+      this.state.selectedDirectoryPath.length > 0
+    ) {
       this.setState({ errorTextPath: false });
     } else {
       this.setState({ errorTextPath: true });
     }
 
     this.setState({
-      disableConfirmButton: !this.state.fileName || !this.state.selectedDirectoryPath
+      disableConfirmButton:
+        !this.state.fileName || !this.state.selectedDirectoryPath
     });
   }
 
   openFolderChooser = () => {
     if (AppConfig.isElectron) {
-      PlatformIO.selectDirectoryDialog().then(selectedPaths => {
-        this.setState({
-          selectedDirectoryPath: selectedPaths[0]
-        }, this.handleValidation);
-        return true;
-      }).catch((err) => {
-        console.log('selectDirectoryDialog failed with: ' + err);
-      });
+      PlatformIO.selectDirectoryDialog()
+        .then(selectedPaths => {
+          this.setState(
+            {
+              selectedDirectoryPath: selectedPaths[0]
+            },
+            this.handleValidation
+          );
+          return true;
+        })
+        .catch(err => {
+          console.log('selectDirectoryDialog failed with: ' + err);
+        });
     } else {
       this.props.showSelectDirectoryDialog();
     }
@@ -147,8 +171,18 @@ class CreateFileDialog extends React.Component<Props, State> {
 
   onConfirm = () => {
     if (!this.state.disableConfirmButton) {
-      const { fileName, fileContent, fileType, selectedDirectoryPath } = this.state;
-      this.props.createFileAdvanced(selectedDirectoryPath, fileName, fileContent, fileType);
+      const {
+        fileName,
+        fileContent,
+        fileType,
+        selectedDirectoryPath
+      } = this.state;
+      this.props.createFileAdvanced(
+        selectedDirectoryPath,
+        fileName,
+        fileContent,
+        fileType
+      );
       this.props.onClose();
     }
   };
@@ -170,10 +204,7 @@ class CreateFileDialog extends React.Component<Props, State> {
     >
       <DialogTitle>{i18n.t('core:createFileTitle')}</DialogTitle>
       <DialogContent data-tid="createFileDialog">
-        <FormControl
-          fullWidth={true}
-          error={this.state.errorTextName}
-        >
+        <FormControl fullWidth={true} error={this.state.errorTextName}>
           <TextField
             fullWidth={true}
             error={this.state.errorTextName}
@@ -181,12 +212,16 @@ class CreateFileDialog extends React.Component<Props, State> {
             margin="dense"
             name="fileName"
             label={i18n.t('core:fileName')}
-            inputRef={(ref) => { this.fileName = ref; }}
+            inputRef={ref => {
+              this.fileName = ref;
+            }}
             onChange={this.handleInputChange}
             value={this.state.fileName}
             data-tid="createFileDialog_fileName"
           />
-          {this.state.errorTextName && <FormHelperText>{i18n.t('core:fileNameHelp')}</FormHelperText>}
+          {this.state.errorTextName && (
+            <FormHelperText>{i18n.t('core:fileNameHelp')}</FormHelperText>
+          )}
         </FormControl>
         <FormControl fullWidth={true}>
           <TextField
@@ -241,15 +276,20 @@ class CreateFileDialog extends React.Component<Props, State> {
             value={this.state.selectedDirectoryPath}
             onChange={this.handleInputChange}
             endAdornment={
-              PlatformIO.haveObjectStoreSupport() ? undefined :
-                (<InputAdornment position="end" style={{ height: 32 }}>
+              PlatformIO.haveObjectStoreSupport() ? (
+                undefined
+              ) : (
+                <InputAdornment position="end" style={{ height: 32 }}>
                   <IconButton onClick={this.openFolderChooser}>
                     <FolderIcon />
                   </IconButton>
-                </InputAdornment>)
+                </InputAdornment>
+              )
             }
           />
-          {this.state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
+          {this.state.errorTextPath && (
+            <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>
+          )}
         </FormControl>
       </DialogContent>
       <DialogActions>
@@ -269,16 +309,22 @@ class CreateFileDialog extends React.Component<Props, State> {
           {i18n.t('core:ok')}
         </Button>
       </DialogActions>
-    </Dialog>  
-  }
+    </Dialog>;
+  };
 }
 
 function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators({
-    createFileAdvanced: AppActions.createFileAdvanced,
-    showSelectDirectoryDialog: AppActions.showSelectDirectoryDialog,
-    ...TaggingActions
-  }, dispatch);
+  return bindActionCreators(
+    {
+      createFileAdvanced: AppActions.createFileAdvanced,
+      showSelectDirectoryDialog: AppActions.showSelectDirectoryDialog,
+      ...TaggingActions
+    },
+    dispatch
+  );
 }
 
-export default connect(undefined, mapActionCreatorsToProps)(withMobileDialog()(withStyles(styles)(CreateFileDialog)));
+export default connect(
+  undefined,
+  mapActionCreatorsToProps
+)(withMobileDialog()(withStyles(styles)(CreateFileDialog)));

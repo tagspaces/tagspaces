@@ -36,26 +36,26 @@ export default function buildDesktopMenu(mainPageProps: Object) {
   ipcRenderer.on('file', (event, arg) => {
     // console.log('Global events: ' + arg);
     switch (arg) {
-    case 'new-text-file':
-      mainPageProps.toggleCreateFileDialog();
-      break;
-    case 'audio':
-      // console.log('showAudioRecordingDialog');
-      break;
-    case 'next-file': {
-      const path = mainPageProps.getNextFile();
-      mainPageProps.openFile(path);
-      mainPageProps.setLastSelectedEntry(path);
-      break;
-    }
-    case 'previous-file': {
-      const path = mainPageProps.getPrevFile();
-      mainPageProps.openFile(path);
-      mainPageProps.setLastSelectedEntry(path);
-      break;
-    }
-    default:
-      return false;
+      case 'new-text-file':
+        mainPageProps.toggleCreateFileDialog();
+        break;
+      case 'audio':
+        // console.log('showAudioRecordingDialog');
+        break;
+      case 'next-file': {
+        const path = mainPageProps.getNextFile();
+        mainPageProps.openFile(path);
+        mainPageProps.setLastSelectedEntry(path);
+        break;
+      }
+      case 'previous-file': {
+        const path = mainPageProps.getPrevFile();
+        mainPageProps.openFile(path);
+        mainPageProps.setLastSelectedEntry(path);
+        break;
+      }
+      default:
+        return false;
     }
   });
 
@@ -169,7 +169,7 @@ export default function buildDesktopMenu(mainPageProps: Object) {
           label: i18n.t('core:selectAll'),
           accelerator: 'CmdOrCtrl+A',
           role: 'selectall'
-        },
+        }
       ]
     },
     {
@@ -250,7 +250,7 @@ export default function buildDesktopMenu(mainPageProps: Object) {
           click: () => {
             mainPageProps.toggleSettingsDialog();
           }
-        },
+        }
       ]
     },
     {
@@ -347,7 +347,7 @@ export default function buildDesktopMenu(mainPageProps: Object) {
           click: () => {
             mainPageProps.toggleAboutDialog();
           }
-        },
+        }
       ]
     }
   ];

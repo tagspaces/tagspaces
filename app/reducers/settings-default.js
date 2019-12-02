@@ -180,47 +180,47 @@ export default {
   keyBindings: [
     {
       name: 'selectAll',
-      command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '+a',
+      command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '+a'
     },
     {
       name: 'closeViewer',
-      command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '+w',
+      command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '+w'
     },
     {
       name: 'saveDocument',
-      command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '+s',
+      command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '+s'
     },
     {
       name: 'reloadDocument',
-      command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '+r',
+      command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '+r'
     },
     {
       name: 'editDocument',
-      command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '+e',
+      command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '+e'
     },
     {
       name: 'deleteDocument',
-      command: 'del',
+      command: 'del'
     },
     {
       name: 'showLocationManager',
-      command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '+1',
+      command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '+1'
     },
     {
       name: 'showTagLibrary',
-      command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '+2',
+      command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '+2'
     },
     {
       name: 'showSearch',
-      command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '+3',
+      command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '+3'
     },
     {
       name: 'toggleShowHiddenEntries',
-      command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '+h',
+      command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '+h'
     },
     {
       name: 'addRemoveTags',
-      command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '+t',
+      command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '+t'
     },
     /* {
       name: 'propertiesDocument',
@@ -232,51 +232,51 @@ export default {
     },
     {
       name: 'prevDocument',
-      command: 'up',
+      command: 'up'
     },
     {
       name: 'showHelp',
-      command: 'f1',
+      command: 'f1'
     },
     {
       name: 'reloadApplication',
-      command: 'r a',
+      command: 'r a'
     },
     {
       name: 'toggleFullScreen',
-      command: 'f11',
+      command: 'f11'
     },
     {
       name: 'openDevTools',
-      command: 'f10',
+      command: 'f10'
     },
     {
       name: 'openSearch',
-      command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '+f',
+      command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '+f'
     },
     {
       name: 'renameFile',
-      command: 'f2',
+      command: 'f2'
     },
     {
       name: 'openEntry',
-      command: 'enter',
+      command: 'enter'
     },
     {
       name: 'openParentDirectory',
-      command: 'backspace',
+      command: 'backspace'
     },
     {
       name: 'openFileExternally',
-      command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '+enter',
+      command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '+enter'
     },
     {
       name: 'zoomIn',
-      command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '+',
+      command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '+'
     },
     {
       name: 'zoomOut',
-      command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '-',
+      command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '-'
     }
   ],
   supportedFileTypes: [
@@ -658,7 +658,7 @@ export default {
       type: 'docx',
       viewer: '@tagspaces/document-viewer',
       color: '#2196f3'
-    },
+    }
     /* {
       type: 'xlsx',
       viewer: '@tagspaces/document-viewer',

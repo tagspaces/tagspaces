@@ -42,15 +42,20 @@ type Props = {
 class LocalForm extends React.Component<Props> {
   openDirectory = () => {
     if (AppConfig.isElectron) {
-      PlatformIO.selectDirectoryDialog().then((selectedPaths) => {
-        this.props.handleChange('path', selectedPaths[0]);
-        if (this.props.state.name.length < 1) {
-          this.props.handleChange('name', extractDirectoryName(selectedPaths[0]));
-        }
-        return true;
-      }).catch((err) => {
-        console.log('selectDirectoryDialog failed with: ' + err);
-      });
+      PlatformIO.selectDirectoryDialog()
+        .then(selectedPaths => {
+          this.props.handleChange('path', selectedPaths[0]);
+          if (this.props.state.name.length < 1) {
+            this.props.handleChange(
+              'name',
+              extractDirectoryName(selectedPaths[0])
+            );
+          }
+          return true;
+        })
+        .catch(err => {
+          console.log('selectDirectoryDialog failed with: ' + err);
+        });
     } else {
       this.props.showSelectDirectoryDialog();
     }
@@ -61,10 +66,7 @@ class LocalForm extends React.Component<Props> {
 
     return (
       <div>
-        <FormControl
-          fullWidth={true}
-          error={state.errorTextName}
-        >
+        <FormControl fullWidth={true} error={state.errorTextName}>
           <TextField
             error={state.errorTextName}
             required
@@ -77,13 +79,14 @@ class LocalForm extends React.Component<Props> {
             data-tid="locationName"
             fullWidth={true}
           />
-          {state.errorTextName && <FormHelperText>{i18n.t('core:invalidName')}</FormHelperText>}
+          {state.errorTextName && (
+            <FormHelperText>{i18n.t('core:invalidName')}</FormHelperText>
+          )}
         </FormControl>
-        <FormControl
-          fullWidth={true}
-          error={state.errorTextPath}
-        >
-          <InputLabel htmlFor="path">{i18n.t('core:createLocationPath')}</InputLabel>
+        <FormControl fullWidth={true} error={state.errorTextPath}>
+          <InputLabel htmlFor="path">
+            {i18n.t('core:createLocationPath')}
+          </InputLabel>
           <Input
             required
             margin="dense"
@@ -95,15 +98,15 @@ class LocalForm extends React.Component<Props> {
             value={state.path}
             endAdornment={
               <InputAdornment position="end" style={{ height: 32 }}>
-                <IconButton
-                  onClick={this.openDirectory}
-                >
+                <IconButton onClick={this.openDirectory}>
                   <FolderIcon />
                 </IconButton>
               </InputAdornment>
             }
           />
-          {state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
+          {state.errorTextPath && (
+            <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>
+          )}
         </FormControl>
       </div>
     );

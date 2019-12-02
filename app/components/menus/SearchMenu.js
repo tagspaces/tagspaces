@@ -30,25 +30,20 @@ type Props = {
   classes: Object,
   open: boolean,
   anchorEl: Object,
-	onClose: () => void,
-	openURLExternally: (url: string) => void,
+  onClose: () => void,
+  openURLExternally: (url: string) => void
 };
 
 const SearchMenu = (props: Props) => {
-
   return (
     <div style={{ overflowY: 'hidden !important' }}>
-      <Menu
-        anchorEl={props.anchorEl}
-        open={props.open}
-        onClose={props.onClose}
-      >
+      <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
         <MenuItem
           data-tid="searchMenuHelp"
           onClick={() => {
-						props.onClose();
-						props.openURLExternally(AppConfig.documentationLinks.search)
-					}}
+            props.onClose();
+            props.openURLExternally(AppConfig.documentationLinks.search);
+          }}
         >
           <ListItemIcon>
             <HelpIcon />

@@ -50,7 +50,7 @@ type State = {
 
 class ProTeaserDialog extends React.Component<Props, State> {
   state = {
-    activeStep: 0,
+    activeStep: 0
   };
 
   maxSteps = 7;
@@ -77,11 +77,7 @@ class ProTeaserDialog extends React.Component<Props, State> {
       padding: 5,
       textAlign: 'left'
     };
-    const {
-      fullScreen,
-      open,
-      onClose
-    } = this.props;
+    const { fullScreen, open, onClose } = this.props;
 
     return (
       <Dialog
@@ -91,192 +87,335 @@ class ProTeaserDialog extends React.Component<Props, State> {
         keepMounted
         scroll="paper"
       >
-        <DialogContent
-          style={{ paddingBottom: 0 }}
-        >
+        <DialogContent style={{ paddingBottom: 0 }}>
           <SwipeableViews
             index={activeStep}
             onChangeIndex={this.handleStepChange}
             enableMouseEvents
           >
             <div style={slideStyles}>
-              <Typography variant="h5" style={{ textAlign: 'center' }}>TagSpaces Pro - Key Features</Typography>
+              <Typography variant="h5" style={{ textAlign: 'center' }}>
+                TagSpaces Pro - Key Features
+              </Typography>
               <br />
-              <Typography variant="subtitle1">&#x2605; Connect AWS S3 object storages (buckets) as locations</Typography>
-              <Typography variant="subtitle1">&#x2605; Advanced search with full text support for some file types</Typography>
-              <Typography variant="subtitle1">&#x2605; Description and custom thumbnails for files and folder</Typography>
-              <Typography variant="subtitle1">&#x2605; Custom background color for folders</Typography>
-              <Typography variant="subtitle1">&#x2605; Advanced tagging with geo location support</Typography>
-              <Typography variant="subtitle1">&#x2605; Generating persistent thumbnails</Typography>
+              <Typography variant="subtitle1">
+                &#x2605; Connect AWS S3 object storages (buckets) as locations
+              </Typography>
+              <Typography variant="subtitle1">
+                &#x2605; Advanced search with full text support for some file
+                types
+              </Typography>
+              <Typography variant="subtitle1">
+                &#x2605; Description and custom thumbnails for files and folder
+              </Typography>
+              <Typography variant="subtitle1">
+                &#x2605; Custom background color for folders
+              </Typography>
+              <Typography variant="subtitle1">
+                &#x2605; Advanced tagging with geo location support
+              </Typography>
+              <Typography variant="subtitle1">
+                &#x2605; Generating persistent thumbnails
+              </Typography>
               <Typography variant="subtitle1">&nbsp;</Typography>
               <div style={{ textAlign: 'center' }}>
                 <img
                   style={{
                     maxHeight: 150,
                     marginTop: 15,
-                    marginBottom: 15,
+                    marginBottom: 15
                   }}
                   src={DecideImage}
                   alt=""
                 />
                 <br />
                 <Button
-                  onClick={() => { this.props.openURLExternally(AppConfig.links.productsOverview); }}
+                  onClick={() => {
+                    this.props.openURLExternally(
+                      AppConfig.links.productsOverview
+                    );
+                  }}
                   variant="contained"
                   color="primary"
-                >Open Product Comparison</Button>
+                >
+                  Open Product Comparison
+                </Button>
               </div>
             </div>
             <div style={slideStyles}>
-              <Typography variant="h5" style={{ textAlign: 'center' }}>Advanced Search Options</Typography>
+              <Typography variant="h5" style={{ textAlign: 'center' }}>
+                Advanced Search Options
+              </Typography>
               <br />
               <Typography variant="h6">Full text search</Typography>
-              <Typography variant="subtitle1">&#x2605; Keywords from your text files will be included in the index</Typography>
-              <Typography variant="subtitle1">&#x2605; Currently we support TXT, MD and HTML files</Typography>
+              <Typography variant="subtitle1">
+                &#x2605; Keywords from your text files will be included in the
+                index
+              </Typography>
+              <Typography variant="subtitle1">
+                &#x2605; Currently we support TXT, MD and HTML files
+              </Typography>
               <Typography variant="h6">Filter by file type</Typography>
-              <Typography variant="subtitle1">&#x2605; Documents, Notes, Audio files, Video files, Archives, Bookmarks, eBooks</Typography>
-              <Typography variant="subtitle1">&#x2605; Filter for files, folders and untagged files</Typography>
-              <Typography variant="h6">Filter by size, date and gps-coordinates</Typography>
+              <Typography variant="subtitle1">
+                &#x2605; Documents, Notes, Audio files, Video files, Archives,
+                Bookmarks, eBooks
+              </Typography>
+              <Typography variant="subtitle1">
+                &#x2605; Filter for files, folders and untagged files
+              </Typography>
+              <Typography variant="h6">
+                Filter by size, date and gps-coordinates
+              </Typography>
               <div style={{ textAlign: 'center' }}>
                 <img
                   style={{
                     maxHeight: 150,
                     marginTop: 15,
-                    marginBottom: 15,
+                    marginBottom: 15
                   }}
                   src={SearchImage}
                   alt=""
                 />
                 <br />
                 <Button
-                  onClick={() => this.props.openURLExternally(AppConfig.links.productProAdvancedSearch)}
+                  onClick={() =>
+                    this.props.openURLExternally(
+                      AppConfig.links.productProAdvancedSearch
+                    )
+                  }
                   variant="contained"
                   color="primary"
-                >Learn more</Button>
+                >
+                  Learn more
+                </Button>
               </div>
             </div>
             <div style={slideStyles}>
-              <Typography variant="h5" style={{ textAlign: 'center' }}>Connect S3 object storages as locations</Typography>
+              <Typography variant="h5" style={{ textAlign: 'center' }}>
+                Connect S3 object storages as locations
+              </Typography>
               <br />
-              <Typography variant="subtitle1">With this feature, TagSpaces Pro supports the AWS S3 buckets as file storage. In general it enables you to creating a location pointing to a remote object storages also knows as buckets on AWS S3 infrastructure. By doing this, you get a full-fledged <strong>file organizer, browser and navigator for AWS buckets</strong>, directly in TagSpaces. You do not have to download every file separately and eventually upload it back in order to preview, edit or annotate it.
+              <Typography variant="subtitle1">
+                With this feature, TagSpaces Pro supports the AWS S3 buckets as
+                file storage. In general it enables you to creating a location
+                pointing to a remote object storages also knows as buckets on
+                AWS S3 infrastructure. By doing this, you get a full-fledged{' '}
+                <strong>
+                  file organizer, browser and navigator for AWS buckets
+                </strong>
+                , directly in TagSpaces. You do not have to download every file
+                separately and eventually upload it back in order to preview,
+                edit or annotate it.
               </Typography>
               <div style={{ textAlign: 'center' }}>
                 <img
                   style={{
                     maxHeight: 120,
                     marginTop: 15,
-                    marginBottom: 15,
+                    marginBottom: 15
                   }}
                   src={CloudImage}
                   alt=""
-                /><br />
+                />
+                <br />
                 <Button
-                  onClick={() => this.props.openURLExternally(AppConfig.links.productProObjectStore)}
+                  onClick={() =>
+                    this.props.openURLExternally(
+                      AppConfig.links.productProObjectStore
+                    )
+                  }
                   variant="contained"
                   color="primary"
-                >Learn more</Button>
+                >
+                  Learn more
+                </Button>
               </div>
             </div>
             <div style={slideStyles}>
-              <Typography variant="h5" style={{ textAlign: 'center' }}>Annotate your files and folders visually</Typography>
+              <Typography variant="h5" style={{ textAlign: 'center' }}>
+                Annotate your files and folders visually
+              </Typography>
               <br />
-              <Typography variant="subtitle1">&#x2605; Add <b>custom description</b> to every document, photo or folder</Typography>
-              <Typography variant="subtitle1">&#x2605; The description can be in markdown allowing images and links</Typography>
-              <Typography variant="subtitle1">&#x2605; Set a <b>custom thumbnail</b> for every file or folder</Typography>
-              <Typography variant="subtitle1">&#x2605; Set a <b>custom background color</b> to folders</Typography>
-              <Typography variant="subtitle1">These features will enable you to find with ease your documents via the build-in search or just visually.</Typography>
+              <Typography variant="subtitle1">
+                &#x2605; Add <b>custom description</b> to every document, photo
+                or folder
+              </Typography>
+              <Typography variant="subtitle1">
+                &#x2605; The description can be in markdown allowing images and
+                links
+              </Typography>
+              <Typography variant="subtitle1">
+                &#x2605; Set a <b>custom thumbnail</b> for every file or folder
+              </Typography>
+              <Typography variant="subtitle1">
+                &#x2605; Set a <b>custom background color</b> to folders
+              </Typography>
+              <Typography variant="subtitle1">
+                These features will enable you to find with ease your documents
+                via the build-in search or just visually.
+              </Typography>
               <div style={{ textAlign: 'center' }}>
                 <img
                   style={{
                     maxHeight: 200,
                     marginTop: 15,
-                    marginBottom: 15,
+                    marginBottom: 15
                   }}
                   src={AnnotateImage}
                   alt=""
-                /><br />
+                />
+                <br />
                 <Button
-                  onClick={() => this.props.openURLExternally(AppConfig.links.productProFileFolderMeta)}
+                  onClick={() =>
+                    this.props.openURLExternally(
+                      AppConfig.links.productProFileFolderMeta
+                    )
+                  }
                   variant="contained"
                   color="primary"
-                >Learn more</Button>
+                >
+                  Learn more
+                </Button>
               </div>
             </div>
             <div style={slideStyles}>
-              <Typography variant="h5" style={{ textAlign: 'center' }}>Tag with geo coordinates</Typography>
+              <Typography variant="h5" style={{ textAlign: 'center' }}>
+                Tag with geo coordinates
+              </Typography>
               <br />
-              <Typography variant="subtitle1">&#x2605; This feature can be used to add geo coordinates to every file or folder. </Typography>
-              <Typography variant="subtitle1">&#x2605; Dedicated perspective for showing geo-tags on a build-in map</Typography>
-              <Typography variant="subtitle1">&#x2605; Extract geo location data from EXIF in JPGs files.</Typography>
-              <Typography variant="subtitle1">&#x2605; Useful for planing or documenting trips and vacations.</Typography>
-              <Typography variant="subtitle1">&#x2605; Useful for adding annotations for places on a map.</Typography>
+              <Typography variant="subtitle1">
+                &#x2605; This feature can be used to add geo coordinates to
+                every file or folder.{' '}
+              </Typography>
+              <Typography variant="subtitle1">
+                &#x2605; Dedicated perspective for showing geo-tags on a
+                build-in map
+              </Typography>
+              <Typography variant="subtitle1">
+                &#x2605; Extract geo location data from EXIF in JPGs files.
+              </Typography>
+              <Typography variant="subtitle1">
+                &#x2605; Useful for planing or documenting trips and vacations.
+              </Typography>
+              <Typography variant="subtitle1">
+                &#x2605; Useful for adding annotations for places on a map.
+              </Typography>
               <div style={{ textAlign: 'center' }}>
                 <img
                   style={{
                     maxHeight: 200,
                     marginTop: 15,
-                    marginBottom: 15,
+                    marginBottom: 15
                   }}
                   src={MapImage}
                   alt=""
-                /><br />
+                />
+                <br />
                 <Button
-                  onClick={() => this.props.openURLExternally(AppConfig.links.productProGeoTagging)}
+                  onClick={() =>
+                    this.props.openURLExternally(
+                      AppConfig.links.productProGeoTagging
+                    )
+                  }
                   variant="contained"
                   color="primary"
-                >Learn more</Button>
+                >
+                  Learn more
+                </Button>
               </div>
             </div>
             <div style={slideStyles}>
-              <Typography variant="h5" style={{ textAlign: 'center' }}>Generating persistent thumbnails</Typography>
+              <Typography variant="h5" style={{ textAlign: 'center' }}>
+                Generating persistent thumbnails
+              </Typography>
               <br />
-              <Typography variant="subtitle1">TagSpaces Pro generates persistent thumbnails for many file type such as: images, videos, notes, source code, office documents, bookmarks, ebooks, archives and PDFs.</Typography>
+              <Typography variant="subtitle1">
+                TagSpaces Pro generates persistent thumbnails for many file type
+                such as: images, videos, notes, source code, office documents,
+                bookmarks, ebooks, archives and PDFs.
+              </Typography>
               <div style={{ textAlign: 'center' }}>
                 <img
                   style={{
                     maxHeight: 200,
                     marginTop: 15,
-                    marginBottom: 15,
+                    marginBottom: 15
                   }}
                   src={ThumbsImage}
                   alt=""
-                /><br />
+                />
+                <br />
                 <Button
-                  onClick={() => this.props.openURLExternally(AppConfig.links.productProThumbnailsGeneration)}
+                  onClick={() =>
+                    this.props.openURLExternally(
+                      AppConfig.links.productProThumbnailsGeneration
+                    )
+                  }
                   variant="contained"
                   color="primary"
-                >Learn more</Button>
+                >
+                  Learn more
+                </Button>
               </div>
             </div>
             <div style={slideStyles}>
-              <Typography variant="h5" style={{ textAlign: 'center' }}>TagSpaces Enterprise</Typography>
+              <Typography variant="h5" style={{ textAlign: 'center' }}>
+                TagSpaces Enterprise
+              </Typography>
               <br />
-              <Typography variant="subtitle1">&#x2605; On-prem web based version of TagSpaces Pro</Typography>
-              <Typography variant="subtitle1">&#x2605; PWA version of TagSpaces Pro optimized for use om mobile devices</Typography>
-              <Typography variant="subtitle1">&#x2605; White label packages, with custom colors and logo</Typography>
-              <Typography variant="subtitle1">&#x2605; Development of custom viewers for file (e.g. 3D-assets, medical data ...)</Typography>
-              <Typography variant="subtitle1">&#x2605; Development of custom perspectives for folders (e.g. graphs, maps, trees)</Typography>
-              <Typography variant="subtitle1">&#x2605; Premium technical support and signed installers</Typography>
+              <Typography variant="subtitle1">
+                &#x2605; On-prem web based version of TagSpaces Pro
+              </Typography>
+              <Typography variant="subtitle1">
+                &#x2605; PWA version of TagSpaces Pro optimized for use om
+                mobile devices
+              </Typography>
+              <Typography variant="subtitle1">
+                &#x2605; White label packages, with custom colors and logo
+              </Typography>
+              <Typography variant="subtitle1">
+                &#x2605; Development of custom viewers for file (e.g. 3D-assets,
+                medical data ...)
+              </Typography>
+              <Typography variant="subtitle1">
+                &#x2605; Development of custom perspectives for folders (e.g.
+                graphs, maps, trees)
+              </Typography>
+              <Typography variant="subtitle1">
+                &#x2605; Premium technical support and signed installers
+              </Typography>
               <div style={{ textAlign: 'center' }}>
                 <img
                   style={{
                     maxHeight: 200,
                     marginTop: 15,
-                    marginBottom: 15,
+                    marginBottom: 15
                   }}
                   src={EnterpriseImage}
                   alt=""
-                /><br />
+                />
+                <br />
                 <Button
-                  onClick={() => this.props.openURLExternally(AppConfig.links.productsOverview)}
+                  onClick={() =>
+                    this.props.openURLExternally(
+                      AppConfig.links.productsOverview
+                    )
+                  }
                   variant="outlined"
                   color="primary"
-                >Product Landscape</Button>&nbsp;
+                >
+                  Product Landscape
+                </Button>
+                &nbsp;
                 <Button
-                  onClick={() => this.props.openURLExternally('mailto:contact@tagspaces.org')}
+                  onClick={() =>
+                    this.props.openURLExternally('mailto:contact@tagspaces.org')
+                  }
                   variant="outlined"
                   color="primary"
-                >{i18n.t('core:emailContact')}</Button>
+                >
+                  {i18n.t('core:emailContact')}
+                </Button>
               </div>
             </div>
           </SwipeableViews>
@@ -288,16 +427,14 @@ class ProTeaserDialog extends React.Component<Props, State> {
             position="static"
             activeStep={this.state.activeStep}
             nextButton={
-              (this.state.activeStep === this.maxSteps - 1) ? (
-                <Button
-                  size="small"
-                  onClick={this.props.onClose}
-                >{i18n.t('core:closeButton')}</Button>
+              this.state.activeStep === this.maxSteps - 1 ? (
+                <Button size="small" onClick={this.props.onClose}>
+                  {i18n.t('core:closeButton')}
+                </Button>
               ) : (
-                <Button
-                  size="small"
-                  onClick={this.handleNext}
-                >{i18n.t('core:next')}</Button>
+                <Button size="small" onClick={this.handleNext}>
+                  {i18n.t('core:next')}
+                </Button>
               )
             }
             backButton={
@@ -305,7 +442,9 @@ class ProTeaserDialog extends React.Component<Props, State> {
                 size="small"
                 onClick={this.handleBack}
                 disabled={this.state.activeStep === 0}
-              >{i18n.t('core:prev')}</Button>
+              >
+                {i18n.t('core:prev')}
+              </Button>
             }
           />
         </DialogActions>
@@ -314,4 +453,4 @@ class ProTeaserDialog extends React.Component<Props, State> {
   }
 }
 
-export default (withMobileDialog()(ProTeaserDialog));
+export default withMobileDialog()(ProTeaserDialog);

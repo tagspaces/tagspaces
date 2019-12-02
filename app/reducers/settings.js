@@ -71,212 +71,250 @@ export const types = {
 
 export default (state = defaultSettings, action) => {
   switch (action.type) {
-  case types.UPGRADE_SETTINGS: {
-    const mergedKeyBindings = defaultSettings.keyBindings.map(x => Object.assign(x, state.keyBindings.find(y => y.name === x.name)));
-    const mergedFileTypes = defaultSettings.supportedFileTypes.map(x => Object.assign(x, state.supportedFileTypes.find(y => y.type === x.type)));
-    const combinedFileTypes = state.supportedFileTypes.map(x => Object.assign(x, mergedFileTypes.find(y => y.type === x.type)));
-    return {
-      ...defaultSettings,
-      ...state,
-      currentTheme: window.ExtTheme || state.currentTheme,
-      supportedThemes: defaultSettings.supportedThemes, // taking always the themes from default settings
-      supportedLanguages: defaultSettings.supportedLanguages, // taking always the languages from default settings
-      keyBindings: [
-        // ...defaultSettings.keyBindings, // use to reset to the default key bindings
-        ...mergedKeyBindings
-      ],
-      supportedFileTypes: [
-        // ...defaultSettings.supportedFileTypes, // use to reset to the default file types
-        ...combinedFileTypes
-      ]
-    };
-  }
-  case types.TOGGLE_SHOWUNIXHIDDENENTRIES: {
-    return { ...state, showUnixHiddenEntries: !state.showUnixHiddenEntries };
-  }
-  case types.SET_TAG_DELIMITER: {
-    return { ...state, tagDelimiter: action.delimiter };
-  }
-  case types.SET_MAX_SEARCH_RESULT: {
-    return { ...state, maxSearchResult: action.maxSearchResult };
-  }
-  case types.SET_DESKTOPMODE: {
-    return { ...state, desktopMode: action.desktopMode };
-  }
-  case types.SET_CHECKFORUPDATES: {
-    return { ...state, checkForUpdates: action.checkForUpdates };
-  }
-  case types.SET_USEDEFAULTLOCATION: {
-    return { ...state, useDefaultLocation: action.useDefaultLocation };
-  }
-  case types.SET_COLOREDFILEEXTENSION: {
-    return { ...state, coloredFileExtension: action.coloredFileExtension };
-  }
-  case types.SET_SHOWTAGAREAONSTARTUP: {
-    return { ...state, showTagAreaOnStartup: action.showTagAreaOnStartup };
-  }
-  case types.SET_LOADSLOCATIONMETADATA: {
-    return { ...state, loadsLocationMetaData: action.loadsLocationMetaData };
-  }
-  case types.SET_SEARCHINSUBFOLDERS: {
-    return { ...state, searchInSubfolders: action.searchInSubfolders };
-  }
-  case types.SET_WATCHCURRENTDIRECTORY: {
-    return { ...state, watchCurrentDirectory: action.watchCurrentDirectory };
-  }
-  case types.SET_FIRST_RUN: {
-    return { ...state, firstRun: action.firstRun };
-  }
-  case types.SET_LANGUAGE: {
-    i18n.changeLanguage(action.language);
-    return { ...state, interfaceLanguage: action.language };
-  }
-  case types.SET_APPDATAPATH: {
-    return { ...state, appDataPath: action.path };
-  }
-  case types.SET_CONTENTHASH: {
-    return { ...state, contentHash: action.contentHash };
-  }
-  case types.SET_UPDATEAVAILABLE: {
-    return { ...state, isUpdateAvailable: action.isUpdateAvailable };
-  }
-  case types.SET_UPDATEINPROGRESS: {
-    return { ...state, isUpdateInProgress: action.isUpdateInProgress };
-  }
-  case types.SET_CALCULATETAGS: {
-    return { ...state, calculateTags: action.calculateTags };
-  }
-  case types.SET_USETRASHCAN: {
-    return { ...state, useTrashCan: action.useTrashCan };
-  }
-  case types.SET_PERSISTTAGSINSIDECARFILE: {
-    return { ...state, persistTagsInSidecarFile: action.persistTagsInSidecarFile };
-  }
-  case types.SET_ADDTAGSTOLIBRARY: {
-    return { ...state, addTagsToLibrary: action.addTagsToLibrary };
-  }
-  case types.SET_USEGENERATETHUMBNAILS: {
-    return { ...state, useGenerateThumbnails: action.useGenerateThumbnails };
-  }
-  case types.SET_USETEXTEXTRACTION: {
-    return { ...state, useTextExtraction: action.useTextExtraction };
-  }
-  case types.SET_EMAIL: {
-    return {
-      ...state,
-      isLoading: true,
-      email: action.email
-    };
-  }
-  case types.SET_TAGCOLOR: {
-    return { ...state, tagBackgroundColor: action.tagColor };
-  }
-  case types.SET_TAGTEXTCOLOR: {
-    return { ...state, tagTextColor: action.tagTextColor };
-  }
-  case types.SET_CURRENTTHEME: {
-    return { ...state, currentTheme: action.currentTheme };
-  }
-  case types.SWITCH_THEME: {
-    let currentTheme = 'dark';
-    if (state.currentTheme === 'dark') {
-      currentTheme = 'light';
-    }
-    return { ...state, currentTheme };
-  }
-  case types.SET_KEYBINDING: {
-    let indexForEditing = -1;
-    state.keyBindings.map((kb, index) => {
-      if (kb.name === action.keyBindingName) {
-        indexForEditing = index;
-      }
-      return true;
-    });
-    if (indexForEditing >= 0) {
+    case types.UPGRADE_SETTINGS: {
+      const mergedKeyBindings = defaultSettings.keyBindings.map(x =>
+        Object.assign(
+          x,
+          state.keyBindings.find(y => y.name === x.name)
+        )
+      );
+      const mergedFileTypes = defaultSettings.supportedFileTypes.map(x =>
+        Object.assign(
+          x,
+          state.supportedFileTypes.find(y => y.type === x.type)
+        )
+      );
+      const combinedFileTypes = state.supportedFileTypes.map(x =>
+        Object.assign(
+          x,
+          mergedFileTypes.find(y => y.type === x.type)
+        )
+      );
       return {
+        ...defaultSettings,
         ...state,
+        currentTheme: window.ExtTheme || state.currentTheme,
+        supportedThemes: defaultSettings.supportedThemes, // taking always the themes from default settings
+        supportedLanguages: defaultSettings.supportedLanguages, // taking always the languages from default settings
         keyBindings: [
-          ...state.keyBindings.slice(0, indexForEditing),
-          { name: action.keyBindingName, command: action.keyBindingCommand },
-          ...state.keyBindings.slice(indexForEditing + 1)
+          // ...defaultSettings.keyBindings, // use to reset to the default key bindings
+          ...mergedKeyBindings
+        ],
+        supportedFileTypes: [
+          // ...defaultSettings.supportedFileTypes, // use to reset to the default file types
+          ...combinedFileTypes
         ]
       };
     }
-    return state;
-  }
-  case types.SET_GLOBAL_KEYBINDING: {
-    return { ...state, enableGlobalKeyboardShortcuts: action.enableGlobalKeyboardShortcuts };
-  }
-  case types.SET_ZOOM_RESET: {
-    PlatformIO.setZoomFactorElectron(1);
-    return { ...state, zoomFactor: 1 };
-  }
-  case types.SET_ZOOM_RESTORE: {
-    PlatformIO.setZoomFactorElectron(state.zoomFactor);
-    return state;
-  }
-  case types.SET_ZOOM_IN: {
-    let zoomLevel = state.zoomFactor;
-    const offSet = 0.1;
-    if (zoomLevel.toPrecision(2) <= zoomLevel + (offSet * 4)) {
-      zoomLevel += offSet;
-      PlatformIO.setZoomFactorElectron(zoomLevel);
+    case types.TOGGLE_SHOWUNIXHIDDENENTRIES: {
+      return { ...state, showUnixHiddenEntries: !state.showUnixHiddenEntries };
     }
-    return { ...state, zoomFactor: zoomLevel };
-  }
-  case types.SET_ZOOM_OUT: {
-    let zoomLevel = state.zoomFactor;
-    const offSet = 0.1;
-    if (zoomLevel.toPrecision(2) > (offSet * 4)) {
-      zoomLevel -= offSet;
-      PlatformIO.setZoomFactorElectron(zoomLevel);
+    case types.SET_TAG_DELIMITER: {
+      return { ...state, tagDelimiter: action.delimiter };
     }
-    return { ...state, zoomFactor: zoomLevel };
-  }
-  case types.SET_SUPPORTED_FILE_TYPES: {
-    return {
-      ...state,
-      supportedFileTypes: action.supportedFileTypes
-    };
-  }
-  case types.SET_ENTRY_PROPERTIES_SPLIT_SIZE: {
-    return {
-      ...state,
-      entryPropertiesSplitSize: action.entryPropertiesSplitSize
-    };
-  }
-  case types.SET_MAIN_VSPLIT_SIZE: {
-    return {
-      ...state,
-      mainVerticalSplitSize: action.mainVerticalSplitSize
-    };
-  }
-  case types.SET_LEFT_VSPLIT_SIZE: {
-    return {
-      ...state,
-      leftVerticalSplitSize: action.leftVerticalSplitSize
-    };
-  }
-  case types.SET_LAST_PUBLISHED_VERSION: {
-    return {
-      ...state,
-      lastPublishedVersion: action.lastPublishedVersion
-    };
-  }
-  default: {
-    return state;
-  }
+    case types.SET_MAX_SEARCH_RESULT: {
+      return { ...state, maxSearchResult: action.maxSearchResult };
+    }
+    case types.SET_DESKTOPMODE: {
+      return { ...state, desktopMode: action.desktopMode };
+    }
+    case types.SET_CHECKFORUPDATES: {
+      return { ...state, checkForUpdates: action.checkForUpdates };
+    }
+    case types.SET_USEDEFAULTLOCATION: {
+      return { ...state, useDefaultLocation: action.useDefaultLocation };
+    }
+    case types.SET_COLOREDFILEEXTENSION: {
+      return { ...state, coloredFileExtension: action.coloredFileExtension };
+    }
+    case types.SET_SHOWTAGAREAONSTARTUP: {
+      return { ...state, showTagAreaOnStartup: action.showTagAreaOnStartup };
+    }
+    case types.SET_LOADSLOCATIONMETADATA: {
+      return { ...state, loadsLocationMetaData: action.loadsLocationMetaData };
+    }
+    case types.SET_SEARCHINSUBFOLDERS: {
+      return { ...state, searchInSubfolders: action.searchInSubfolders };
+    }
+    case types.SET_WATCHCURRENTDIRECTORY: {
+      return { ...state, watchCurrentDirectory: action.watchCurrentDirectory };
+    }
+    case types.SET_FIRST_RUN: {
+      return { ...state, firstRun: action.firstRun };
+    }
+    case types.SET_LANGUAGE: {
+      i18n.changeLanguage(action.language);
+      return { ...state, interfaceLanguage: action.language };
+    }
+    case types.SET_APPDATAPATH: {
+      return { ...state, appDataPath: action.path };
+    }
+    case types.SET_CONTENTHASH: {
+      return { ...state, contentHash: action.contentHash };
+    }
+    case types.SET_UPDATEAVAILABLE: {
+      return { ...state, isUpdateAvailable: action.isUpdateAvailable };
+    }
+    case types.SET_UPDATEINPROGRESS: {
+      return { ...state, isUpdateInProgress: action.isUpdateInProgress };
+    }
+    case types.SET_CALCULATETAGS: {
+      return { ...state, calculateTags: action.calculateTags };
+    }
+    case types.SET_USETRASHCAN: {
+      return { ...state, useTrashCan: action.useTrashCan };
+    }
+    case types.SET_PERSISTTAGSINSIDECARFILE: {
+      return {
+        ...state,
+        persistTagsInSidecarFile: action.persistTagsInSidecarFile
+      };
+    }
+    case types.SET_ADDTAGSTOLIBRARY: {
+      return { ...state, addTagsToLibrary: action.addTagsToLibrary };
+    }
+    case types.SET_USEGENERATETHUMBNAILS: {
+      return { ...state, useGenerateThumbnails: action.useGenerateThumbnails };
+    }
+    case types.SET_USETEXTEXTRACTION: {
+      return { ...state, useTextExtraction: action.useTextExtraction };
+    }
+    case types.SET_EMAIL: {
+      return {
+        ...state,
+        isLoading: true,
+        email: action.email
+      };
+    }
+    case types.SET_TAGCOLOR: {
+      return { ...state, tagBackgroundColor: action.tagColor };
+    }
+    case types.SET_TAGTEXTCOLOR: {
+      return { ...state, tagTextColor: action.tagTextColor };
+    }
+    case types.SET_CURRENTTHEME: {
+      return { ...state, currentTheme: action.currentTheme };
+    }
+    case types.SWITCH_THEME: {
+      let currentTheme = 'dark';
+      if (state.currentTheme === 'dark') {
+        currentTheme = 'light';
+      }
+      return { ...state, currentTheme };
+    }
+    case types.SET_KEYBINDING: {
+      let indexForEditing = -1;
+      state.keyBindings.map((kb, index) => {
+        if (kb.name === action.keyBindingName) {
+          indexForEditing = index;
+        }
+        return true;
+      });
+      if (indexForEditing >= 0) {
+        return {
+          ...state,
+          keyBindings: [
+            ...state.keyBindings.slice(0, indexForEditing),
+            { name: action.keyBindingName, command: action.keyBindingCommand },
+            ...state.keyBindings.slice(indexForEditing + 1)
+          ]
+        };
+      }
+      return state;
+    }
+    case types.SET_GLOBAL_KEYBINDING: {
+      return {
+        ...state,
+        enableGlobalKeyboardShortcuts: action.enableGlobalKeyboardShortcuts
+      };
+    }
+    case types.SET_ZOOM_RESET: {
+      PlatformIO.setZoomFactorElectron(1);
+      return { ...state, zoomFactor: 1 };
+    }
+    case types.SET_ZOOM_RESTORE: {
+      PlatformIO.setZoomFactorElectron(state.zoomFactor);
+      return state;
+    }
+    case types.SET_ZOOM_IN: {
+      let zoomLevel = state.zoomFactor;
+      const offSet = 0.1;
+      if (zoomLevel.toPrecision(2) <= zoomLevel + offSet * 4) {
+        zoomLevel += offSet;
+        PlatformIO.setZoomFactorElectron(zoomLevel);
+      }
+      return { ...state, zoomFactor: zoomLevel };
+    }
+    case types.SET_ZOOM_OUT: {
+      let zoomLevel = state.zoomFactor;
+      const offSet = 0.1;
+      if (zoomLevel.toPrecision(2) > offSet * 4) {
+        zoomLevel -= offSet;
+        PlatformIO.setZoomFactorElectron(zoomLevel);
+      }
+      return { ...state, zoomFactor: zoomLevel };
+    }
+    case types.SET_SUPPORTED_FILE_TYPES: {
+      return {
+        ...state,
+        supportedFileTypes: action.supportedFileTypes
+      };
+    }
+    case types.SET_ENTRY_PROPERTIES_SPLIT_SIZE: {
+      return {
+        ...state,
+        entryPropertiesSplitSize: action.entryPropertiesSplitSize
+      };
+    }
+    case types.SET_MAIN_VSPLIT_SIZE: {
+      return {
+        ...state,
+        mainVerticalSplitSize: action.mainVerticalSplitSize
+      };
+    }
+    case types.SET_LEFT_VSPLIT_SIZE: {
+      return {
+        ...state,
+        leftVerticalSplitSize: action.leftVerticalSplitSize
+      };
+    }
+    case types.SET_LAST_PUBLISHED_VERSION: {
+      return {
+        ...state,
+        lastPublishedVersion: action.lastPublishedVersion
+      };
+    }
+    default: {
+      return state;
+    }
   }
 };
 
 export const actions = {
-  setTagDelimiter: (delimiter: string) => ({ type: types.SET_TAG_DELIMITER, delimiter }),
-  setMaxSearchResult: (maxSearchResult: number) => ({ type: types.SET_MAX_SEARCH_RESULT, maxSearchResult }),
-  setDesktopMode: (desktopMode: boolean) => ({ type: types.SET_DESKTOPMODE, desktopMode }),
-  toggleShowUnixHiddenEntries: () => ({ type: types.TOGGLE_SHOWUNIXHIDDENENTRIES }),
-  setCheckForUpdates: (checkForUpdates: boolean) => ({ type: types.SET_CHECKFORUPDATES, checkForUpdates }),
+  setTagDelimiter: (delimiter: string) => ({
+    type: types.SET_TAG_DELIMITER,
+    delimiter
+  }),
+  setMaxSearchResult: (maxSearchResult: number) => ({
+    type: types.SET_MAX_SEARCH_RESULT,
+    maxSearchResult
+  }),
+  setDesktopMode: (desktopMode: boolean) => ({
+    type: types.SET_DESKTOPMODE,
+    desktopMode
+  }),
+  toggleShowUnixHiddenEntries: () => ({
+    type: types.TOGGLE_SHOWUNIXHIDDENENTRIES
+  }),
+  setCheckForUpdates: (checkForUpdates: boolean) => ({
+    type: types.SET_CHECKFORUPDATES,
+    checkForUpdates
+  }),
   setLanguage: (language: string) => ({ type: types.SET_LANGUAGE, language }),
-  setUseDefaultLocation: (useDefaultLocation: boolean) => ({ type: types.SET_USEDEFAULTLOCATION, useDefaultLocation }),
+  setUseDefaultLocation: (useDefaultLocation: boolean) => ({
+    type: types.SET_USEDEFAULTLOCATION,
+    useDefaultLocation
+  }),
   setColoredFileExtension: (coloredFileExtension: boolean) => ({
     type: types.SET_COLOREDFILEEXTENSION,
     coloredFileExtension
@@ -289,13 +327,22 @@ export const actions = {
     type: types.SET_LOADSLOCATIONMETADATA,
     loadsLocationMetaData
   }),
-  setSearchInSubfolders: (searchInSubfolders: boolean) => ({ type: types.SET_SEARCHINSUBFOLDERS, searchInSubfolders }),
+  setSearchInSubfolders: (searchInSubfolders: boolean) => ({
+    type: types.SET_SEARCHINSUBFOLDERS,
+    searchInSubfolders
+  }),
   setWatchCurrentDirectory: (watchCurrentDirectory: boolean) => ({
     type: types.SET_WATCHCURRENTDIRECTORY,
     watchCurrentDirectory
   }),
-  setCalculateTags: (calculateTags: boolean) => ({ type: types.SET_CALCULATETAGS, calculateTags }),
-  setUseTrashCan: (useTrashCan: boolean) => ({ type: types.SET_USETRASHCAN, useTrashCan }),
+  setCalculateTags: (calculateTags: boolean) => ({
+    type: types.SET_CALCULATETAGS,
+    calculateTags
+  }),
+  setUseTrashCan: (useTrashCan: boolean) => ({
+    type: types.SET_USETRASHCAN,
+    useTrashCan
+  }),
   setPersistTagsInSidecarFile: (persistTagsInSidecarFile: boolean) => ({
     type: types.SET_PERSISTTAGSINSIDECARFILE,
     persistTagsInSidecarFile
@@ -308,17 +355,29 @@ export const actions = {
     type: types.SET_USEGENERATETHUMBNAILS,
     useGenerateThumbnails
   }),
-  setUseTextExtraction: (useTextExtraction: boolean) => ({ type: types.SET_USETEXTEXTRACTION, useTextExtraction }),
+  setUseTextExtraction: (useTextExtraction: boolean) => ({
+    type: types.SET_USETEXTEXTRACTION,
+    useTextExtraction
+  }),
   setAppDataPath: (path: string) => ({ type: types.SET_APPDATAPATH, path }),
-  setContentHash: (contentHash: string) => ({ type: types.SET_CONTENTHASH, contentHash }),
+  setContentHash: (contentHash: string) => ({
+    type: types.SET_CONTENTHASH,
+    contentHash
+  }),
   setEmail: (email: string) => ({ type: types.SET_EMAIL, email }),
   setZoomRestoreApp: () => ({ type: types.SET_ZOOM_RESTORE }),
   setZoomResetApp: () => ({ type: types.SET_ZOOM_RESET }),
   setZoomInApp: () => ({ type: types.SET_ZOOM_IN }),
   setZoomOutApp: () => ({ type: types.SET_ZOOM_OUT }),
   setTagColor: (tagColor: string) => ({ type: types.SET_TAGCOLOR, tagColor }),
-  setTagTextColor: (tagTextColor: string) => ({ type: types.SET_TAGTEXTCOLOR, tagTextColor }),
-  setCurrentTheme: (currentTheme: string) => ({ type: types.SET_CURRENTTHEME, currentTheme }),
+  setTagTextColor: (tagTextColor: string) => ({
+    type: types.SET_TAGTEXTCOLOR,
+    tagTextColor
+  }),
+  setCurrentTheme: (currentTheme: string) => ({
+    type: types.SET_CURRENTTHEME,
+    currentTheme
+  }),
   switchTheme: () => ({ type: types.SWITCH_THEME }),
   setKeyBinding: (keyBindingName: string, keyBindingCommand: string) => ({
     type: types.SET_KEYBINDING,
@@ -361,33 +420,37 @@ export const actions = {
     getState: () => Object
   ) => {
     const { settings } = getState();
-    getLastVersionPromise().then((lastVersion) => {
-      console.log('Last version on server: ' + lastVersion);
-      const newVersion = semver.coerce(lastVersion); // lastVersion '3.0.5' ;
-      const currentVersion = semver.coerce(versionMeta.version);
-      // const lastPublishedVersion = semver.coerce(settings.lastPublishedVersion);
-      if (semver.valid(newVersion) && semver.gt(newVersion, currentVersion)) {
-        console.log('New version available: ' + newVersion.version + '!');
-        dispatch(actions.setLastPublishedVersion(newVersion.version));
-        // if (semver.gt(newVersion, lastPublishedVersion)) {
-        dispatch(AppActions.setUpdateAvailable(true));
-        // }
-      } else {
-        console.log('Current version: ' + versionMeta.version + ' is up to date');
-      }
-      return true;
-    })
+    getLastVersionPromise()
+      .then(lastVersion => {
+        console.log('Last version on server: ' + lastVersion);
+        const newVersion = semver.coerce(lastVersion); // lastVersion '3.0.5' ;
+        const currentVersion = semver.coerce(versionMeta.version);
+        // const lastPublishedVersion = semver.coerce(settings.lastPublishedVersion);
+        if (semver.valid(newVersion) && semver.gt(newVersion, currentVersion)) {
+          console.log('New version available: ' + newVersion.version + '!');
+          dispatch(actions.setLastPublishedVersion(newVersion.version));
+          // if (semver.gt(newVersion, lastPublishedVersion)) {
+          dispatch(AppActions.setUpdateAvailable(true));
+          // }
+        } else {
+          console.log(
+            'Current version: ' + versionMeta.version + ' is up to date'
+          );
+        }
+        return true;
+      })
       .catch(error => {
         console.warn('Error while checking for update: ' + error);
       });
-  },
+  }
 };
 
 export function getLastVersionPromise(): Promise<string> {
   return new Promise((resolve, reject) => {
     console.log('Checking for new version...');
     const xhr = new XMLHttpRequest();
-    const updateUrl = AppConfig.links.checkNewVersionURL + '?cv=' + versionMeta.version;
+    const updateUrl =
+      AppConfig.links.checkNewVersionURL + '?cv=' + versionMeta.version;
     xhr.open('GET', updateUrl, true);
     xhr.responseType = 'json';
     xhr.onerror = reject;
@@ -411,37 +474,58 @@ export const getDesktopMode = (state: Object) => {
   if (typeof window.ExtDisplayMode === 'undefined') {
     return state.settings.desktopMode;
   }
-  return (window.ExtDisplayMode !== 'mobile');
+  return window.ExtDisplayMode !== 'mobile';
 };
-export const getCheckForUpdateOnStartup = (state: Object) => state.settings.checkForUpdates;
-export const getLastPublishedVersion = (state: Object) => state.settings.lastPublishedVersion;
-export const getShowUnixHiddenEntries = (state: Object) => state.settings.showUnixHiddenEntries;
-export const getUseDefaultLocation = (state: Object) => state.settings.useDefaultLocation;
-export const getColoredFileExtension = (state: Object) => state.settings.coloredFileExtension;
-export const getShowTagAreaOnStartup = (state: Object) => state.settings.showTagAreaOnStartup;
-export const getLoadsLocationMetaData = (state: Object) => state.settings.loadsLocationMetaData;
-export const getSearchInSubfolders = (state: Object) => state.settings.searchInSubfolders;
-export const getWatchCurrentDirectory = (state: Object) => state.settings.watchCurrentDirectory;
-export const getCurrentLanguage = (state: Object) => state.settings.interfaceLanguage;
+export const getCheckForUpdateOnStartup = (state: Object) =>
+  state.settings.checkForUpdates;
+export const getLastPublishedVersion = (state: Object) =>
+  state.settings.lastPublishedVersion;
+export const getShowUnixHiddenEntries = (state: Object) =>
+  state.settings.showUnixHiddenEntries;
+export const getUseDefaultLocation = (state: Object) =>
+  state.settings.useDefaultLocation;
+export const getColoredFileExtension = (state: Object) =>
+  state.settings.coloredFileExtension;
+export const getShowTagAreaOnStartup = (state: Object) =>
+  state.settings.showTagAreaOnStartup;
+export const getLoadsLocationMetaData = (state: Object) =>
+  state.settings.loadsLocationMetaData;
+export const getSearchInSubfolders = (state: Object) =>
+  state.settings.searchInSubfolders;
+export const getWatchCurrentDirectory = (state: Object) =>
+  state.settings.watchCurrentDirectory;
+export const getCurrentLanguage = (state: Object) =>
+  state.settings.interfaceLanguage;
 export const getAppDataPath = (state: Object) => state.settings.appDataPath;
-export const getSupportedLanguages = (state: Object) => state.settings.languages;
+export const getSupportedLanguages = (state: Object) =>
+  state.settings.languages;
 export const getCalculateTags = (state: Object) => state.settings.calculateTags;
 export const getUseTrashCan = (state: Object) => state.settings.useTrashCan;
-export const getPersistTagsInSidecarFile = (state: Object) => state.settings.persistTagsInSidecarFile;
-export const getUseGenerateThumbnails = (state: Object) => state.settings.useGenerateThumbnails;
-export const getUseTextExtraction = (state: Object) => state.settings.useTextExtraction;
+export const getPersistTagsInSidecarFile = (state: Object) =>
+  state.settings.persistTagsInSidecarFile;
+export const getUseGenerateThumbnails = (state: Object) =>
+  state.settings.useGenerateThumbnails;
+export const getUseTextExtraction = (state: Object) =>
+  state.settings.useTextExtraction;
 export const getKeyBindings = (state: Object) => state.settings.keyBindings;
-export const getKeyBindingObject = (state: Object) => generateKeyBindingObject(state.settings.keyBindings);
-export const getSupportedFileTypes = (state: Object) => state.settings.supportedFileTypes;
-export const getPerspectives = (state: Object) => state.settings.supportedPerspectives;
+export const getKeyBindingObject = (state: Object) =>
+  generateKeyBindingObject(state.settings.keyBindings);
+export const getSupportedFileTypes = (state: Object) =>
+  state.settings.supportedFileTypes;
+export const getPerspectives = (state: Object) =>
+  state.settings.supportedPerspectives;
 export const getTagColor = (state: Object) => state.settings.tagBackgroundColor;
 export const getTagTextColor = (state: Object) => state.settings.tagTextColor;
 export const getCurrentTheme = (state: Object) => state.settings.currentTheme;
-export const isGlobalKeyBindingEnabled = (state: Object) => state.settings.enableGlobalKeyboardShortcuts;
-export const getLeftVerticalSplitSize = (state: Object) => state.settings.leftVerticalSplitSize;
-export const getMainVerticalSplitSize = (state: Object) => state.settings.mainVerticalSplitSize;
+export const isGlobalKeyBindingEnabled = (state: Object) =>
+  state.settings.enableGlobalKeyboardShortcuts;
+export const getLeftVerticalSplitSize = (state: Object) =>
+  state.settings.leftVerticalSplitSize;
+export const getMainVerticalSplitSize = (state: Object) =>
+  state.settings.mainVerticalSplitSize;
 export const getTagDelimiter = (state: Object) => state.settings.tagDelimiter;
-export const getMaxSearchResults = (state: Object) => state.settings.maxSearchResult;
+export const getMaxSearchResults = (state: Object) =>
+  state.settings.maxSearchResult;
 export const isFirstRun = (state: Object) => {
   if (typeof window.ExtIsFirstRun === 'undefined') {
     return state.settings.firstRun;
@@ -451,7 +535,7 @@ export const isFirstRun = (state: Object) => {
 
 function generateKeyBindingObject(keyBindings: Array<Object>) {
   const kbObject = {};
-  keyBindings.map((kb) => {
+  keyBindings.map(kb => {
     kbObject[kb.name] = kb.command;
     return true;
   });

@@ -23,12 +23,20 @@ export function isPlusCode(plusCode: string): boolean {
     return false;
   }
   const upperCasedPlusCode = plusCode.toUpperCase(); // needed only lowercased index
-  return /(^|\s)([23456789C][23456789CFGHJMPQRV][23456789CFGHJMPQRVWX]{6}\+[23456789CFGHJMPQRVWX]{2,3})(\s|$)/.test(upperCasedPlusCode);
+  return /(^|\s)([23456789C][23456789CFGHJMPQRV][23456789CFGHJMPQRVWX]{6}\+[23456789CFGHJMPQRVWX]{2,3})(\s|$)/.test(
+    upperCasedPlusCode
+  );
 }
 
-export function parseLatLon(latLongInput: string): {lat: number, lon: number} | false {
+export function parseLatLon(
+  latLongInput: string
+): { lat: number, lon: number } | false {
   const cleanedInput = latLongInput.replace(/\s+/g, ''); // cleaning spaces
-  if (!/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$/.test(cleanedInput)) {
+  if (
+    !/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$/.test(
+      cleanedInput
+    )
+  ) {
     return false;
   }
   const latLongArray = cleanedInput.split(',');
@@ -44,10 +52,10 @@ export function parseLatLon(latLongInput: string): {lat: number, lon: number} | 
 }
 
 export function traverse(objArr, func) {
-  objArr.forEach((obj) => {
-    Object.keys(obj).map((objKey) => {
+  objArr.forEach(obj => {
+    Object.keys(obj).map(objKey => {
       func.apply(this, [obj, objKey]);
-      if ((objKey === 'subPages') && typeof Array.isArray(obj[objKey])) {
+      if (objKey === 'subPages' && typeof Array.isArray(obj[objKey])) {
         traverse(obj[objKey], func);
       }
     });
@@ -112,12 +120,13 @@ export function getRandomInt(min, max) {
 
 export function isVisibleOnScreen(element) {
   const rectangle = element.getBoundingClientRect();
-  const isVisible = (
+  const isVisible =
     rectangle.top >= 0 &&
     rectangle.left >= 0 &&
-    rectangle.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-    rectangle.right <= (window.innerWidth || document.documentElement.clientWidth)
-  );
+    rectangle.bottom <=
+      (window.innerHeight || document.documentElement.clientHeight) &&
+    rectangle.right <=
+      (window.innerWidth || document.documentElement.clientWidth);
   return isVisible;
 }
 
@@ -177,13 +186,13 @@ export function formatFileSize(sizeInBytes): string {
   const terabyte = gigabyte * kilobyte;
   const precision = 2;
 
-  if ((sizeInBytes >= 0) && (sizeInBytes < kilobyte)) {
+  if (sizeInBytes >= 0 && sizeInBytes < kilobyte) {
     return sizeInBytes + ' B';
-  } else if ((sizeInBytes >= kilobyte) && (sizeInBytes < megabyte)) {
+  } else if (sizeInBytes >= kilobyte && sizeInBytes < megabyte) {
     return (sizeInBytes / kilobyte).toFixed(precision) + ' KB';
-  } else if ((sizeInBytes >= megabyte) && (sizeInBytes < gigabyte)) {
+  } else if (sizeInBytes >= megabyte && sizeInBytes < gigabyte) {
     return (sizeInBytes / megabyte).toFixed(precision) + ' MB';
-  } else if ((sizeInBytes >= gigabyte) && (sizeInBytes < terabyte)) {
+  } else if (sizeInBytes >= gigabyte && sizeInBytes < terabyte) {
     return (sizeInBytes / gigabyte).toFixed(precision) + ' GB';
   } else if (sizeInBytes >= terabyte) {
     return (sizeInBytes / terabyte).toFixed(precision) + ' TB';
@@ -199,21 +208,9 @@ export function formatFileSize2(sizeInBytes, siSystem): string {
   if (sizeInBytes < threshold) {
     return sizeInBytes + ' B';
   }
-  const units = siSystem ? [
-    'kB',
-    'MB',
-    'GB',
-    'TB',
-    'PB',
-    'EB'
-  ] : [
-    'KiB',
-    'MiB',
-    'GiB',
-    'TiB',
-    'PiB',
-    'EiB'
-  ];
+  const units = siSystem
+    ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB']
+    : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB'];
   let cUnit = -1;
   do {
     sizeInBytes /= threshold;
@@ -261,7 +258,11 @@ export function formatDateTime(date, includeTime: boolean) {
 }
 
 /** Convert a date in the following format 20191204 or 20191204~124532 */
-export function formatDateTime4Tag(date: string, includeTime: boolean, includeMS?: boolean): string {
+export function formatDateTime4Tag(
+  date: string,
+  includeTime: boolean,
+  includeMS?: boolean
+): string {
   if (date === undefined || date === '') {
     return '';
   }
@@ -310,7 +311,13 @@ export function convertStringToDate(dateString) {
     return false;
   }
   if (dateString.length === 8) {
-    return new Date(dateString.substring(0, 4) + '-' + dateString.substring(4, 6) + '-' + dateString.substring(6, 8));
+    return new Date(
+      dateString.substring(0, 4) +
+        '-' +
+        dateString.substring(4, 6) +
+        '-' +
+        dateString.substring(6, 8)
+    );
   }
   return false;
 }
@@ -335,8 +342,11 @@ export function sortAlphaNum(a, b) {
   let isDigitPart;
 
   // If `a` and `b` are strings with substring parts that match...
-  if (aParts && bParts &&
-    (isDigitPart = reDigit.test(aParts[0])) === reDigit.test(bParts[0])) {
+  if (
+    aParts &&
+    bParts &&
+    (isDigitPart = reDigit.test(aParts[0])) === reDigit.test(bParts[0])
+  ) {
     // Loop through each substring part to compare the overall strings.
     const len = Math.min(aParts.length, bParts.length);
     for (let i = 0; i < len; i += 1) {
@@ -365,7 +375,7 @@ export function sortAlphaNum(a, b) {
 
 // Sorting functionality
 export function sortByName(a, b) {
-  return (!b.isFile - !a.isFile) || sortAlphaNum(a, b);
+  return !b.isFile - !a.isFile || sortAlphaNum(a, b);
 }
 
 export function sortBySize(a, b) {
@@ -381,10 +391,7 @@ export function sortByExtension(a, b) {
 }
 
 export function sortByFirstTag(a, b) {
-  if (
-    (!a.tags && !b.tags) ||
-    (a.tags.length < 1 && b.tags.length < 1)
-  ) {
+  if ((!a.tags && !b.tags) || (a.tags.length < 1 && b.tags.length < 1)) {
     return 0;
   }
   if (!a.tags || a.tags.length < 1) {
@@ -407,35 +414,35 @@ export function shuffleArray(array) {
 
 export function sortByCriteria(data, criteria, order) {
   switch (criteria) {
-  case 'byName':
-    if (order) {
+    case 'byName':
+      if (order) {
+        return data.sort(sortByName);
+      }
+      return data.sort((a, b) => -1 * sortByName(a, b));
+    case 'byFileSize':
+      if (order) {
+        return data.sort(sortBySize);
+      }
+      return data.sort((a, b) => -1 * sortBySize(a, b));
+    case 'byDateModified':
+      if (order) {
+        return data.sort(sortByDateModified);
+      }
+      return data.sort((a, b) => -1 * sortByDateModified(a, b));
+    case 'byExtension':
+      if (order) {
+        return data.sort(sortByExtension);
+      }
+      return data.sort((a, b) => -1 * sortByExtension(a, b));
+    case 'byFirstTag':
+      if (order) {
+        return data.sort(sortByFirstTag);
+      }
+      return data.sort((a, b) => -1 * sortByFirstTag(a, b));
+    case 'random':
+      return shuffleArray(data);
+    default:
       return data.sort(sortByName);
-    }
-    return data.sort((a, b) => -1 * sortByName(a, b));
-  case 'byFileSize':
-    if (order) {
-      return data.sort(sortBySize);
-    }
-    return data.sort((a, b) => -1 * sortBySize(a, b));
-  case 'byDateModified':
-    if (order) {
-      return data.sort(sortByDateModified);
-    }
-    return data.sort((a, b) => -1 * sortByDateModified(a, b));
-  case 'byExtension':
-    if (order) {
-      return data.sort(sortByExtension);
-    }
-    return data.sort((a, b) => -1 * sortByExtension(a, b));
-  case 'byFirstTag':
-    if (order) {
-      return data.sort(sortByFirstTag);
-    }
-    return data.sort((a, b) => -1 * sortByFirstTag(a, b));
-  case 'random':
-    return shuffleArray(data);
-  default:
-    return data.sort(sortByName);
   }
 }
 
@@ -444,7 +451,8 @@ export function sortByCriteria(data, criteria, order) {
  * @param val
  * @returns {boolean}
  */
-export const isObj = val => typeof val === 'object' && !isArr(val) && !isNull(val);
+export const isObj = val =>
+  typeof val === 'object' && !isArr(val) && !isNull(val);
 
 /**
  * @description Check if value is of type 'null'
@@ -509,7 +517,8 @@ export const hasProp = (obj, prop) => obj.hasOwnProperty(prop);
  * @param method
  * @returns {boolean}
  */
-export const hasMethod = (obj, method) => hasProp(obj, method) && isFunc(obj[method]);
+export const hasMethod = (obj, method) =>
+  hasProp(obj, method) && isFunc(obj[method]);
 
 /**
  * @description Check if object has key
@@ -583,7 +592,7 @@ export const recurIter = (handler, complete, index = 0) => {
  */
 export const poll = (handler, complete, interval) => {
   setTimeout(() => {
-    handler((canPoll) => {
+    handler(canPoll => {
       if (canPoll) {
         return poll(handler, complete, interval);
       }
@@ -645,7 +654,7 @@ export const determineTypeChecker = type => {
  */
 export const setStrongTypedObject = config => {
   const proxy = {};
-  eachProp(config, (prop, key) => proxy[key] = prop.value);
+  eachProp(config, (prop, key) => (proxy[key] = prop.value));
 
   return new Proxy(proxy, {
     get(target, prop) {
@@ -656,7 +665,9 @@ export const setStrongTypedObject = config => {
       const typeChecker = determineTypeChecker(type);
 
       if (!typeChecker(value)) {
-        throw new Error(`[Ammo.StrongType] Invalid type. Expected type for field {${prop}} is {${type}}`);
+        throw new Error(
+          `[Ammo.StrongType] Invalid type. Expected type for field {${prop}} is {${type}}`
+        );
       }
 
       target[prop] = value;
@@ -744,7 +755,8 @@ export const extractNestedProp = (obj, keysText) => {
       // ... check if final target is reached ...
       if (keysIndex === keysLength) {
         // ... extract target prop
-        targetProp = !isUndef(nextTarget) && !isNull(nextTarget) ? nextTarget : undefined;
+        targetProp =
+          !isUndef(nextTarget) && !isNull(nextTarget) ? nextTarget : undefined;
         break;
       }
 
@@ -849,22 +861,24 @@ export const shape = items => {
  * @param key
  * @returns {*}
  */
-export const filterByUnique = (items, key) => items.reduce((accumulator, item) => {
-  const itemProp = extractNestedProp(item, key);
+export const filterByUnique = (items, key) =>
+  items.reduce((accumulator, item) => {
+    const itemProp = extractNestedProp(item, key);
 
-  const isDuplicate = accumulator.filter(filteredItem => {
-    const prop = extractNestedProp(filteredItem, key);
-    return prop === itemProp;
-  }).length > 0;
+    const isDuplicate =
+      accumulator.filter(filteredItem => {
+        const prop = extractNestedProp(filteredItem, key);
+        return prop === itemProp;
+      }).length > 0;
 
-  if (isDuplicate) {
+    if (isDuplicate) {
+      return accumulator;
+    }
+
+    const modifiedItem = extend({}, item);
+    accumulator.push(modifiedItem);
     return accumulator;
-  }
-
-  const modifiedItem = extend({}, item);
-  accumulator.push(modifiedItem);
-  return accumulator;
-}, []);
+  }, []);
 
 /**
  * @description Filter by duplicate
@@ -873,12 +887,15 @@ export const filterByUnique = (items, key) => items.reduce((accumulator, item) =
  * @param duplicateLength
  * @returns {*}
  */
-export const filterByDuplicate = (items, key, duplicateLength = 2) => items.filter(item => {
-  const itemProp = extractNestedProp(item, key);
-  const duplicatesCount = duplicateLength - 1;
+export const filterByDuplicate = (items, key, duplicateLength = 2) =>
+  items.filter(item => {
+    const itemProp = extractNestedProp(item, key);
+    const duplicatesCount = duplicateLength - 1;
 
-  return items.filter(innerItem => {
-    const prop = extractNestedProp(innerItem, key);
-    return prop === itemProp;
-  }).length > duplicatesCount;
-});
+    return (
+      items.filter(innerItem => {
+        const prop = extractNestedProp(innerItem, key);
+        return prop === itemProp;
+      }).length > duplicatesCount
+    );
+  });
