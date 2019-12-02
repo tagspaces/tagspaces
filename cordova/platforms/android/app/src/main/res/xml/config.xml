@@ -37,11 +37,11 @@
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
     <allow-intent href="market:*" />
-    <icon density="ldpi" src="res/icon/android/icon-36-ldpi.png" />
-    <icon density="mdpi" src="res/icon/android/icon-48-mdpi.png" />
-    <icon density="hdpi" src="res/icon/android/icon-72-hdpi.png" />
-    <icon density="xhdpi" src="res/icon/android/icon-96-xhdpi.png" />
-    <icon density="xxhdpi" src="res/icon/android/icon-192-xxhdpi.png" />
+    <icon density="mdpi" src="res/icon/android/mipmap-mdpi/ic_launcher.png" />
+    <icon density="hdpi" src="res/icon/android/mipmap-hdpi/ic_launcher.png" />
+    <icon density="xhdpi" src="res/icon/android/mipmap-xhdpi/ic_launcher.png" />
+    <icon density="xxhdpi" src="res/icon/android/mipmap-xxhdpi/ic_launcher.png" />
+    <icon density="xxxhdpi" src="res/icon/android/mipmap-xxxhdpi/ic_launcher.png" />
     <preference name="loglevel" value="DEBUG" />
     <preference name="KeepRunning" value="true" />
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
