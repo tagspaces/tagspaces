@@ -1,4 +1,4 @@
 {
 	"singleQuote": true,
-	"eslintIntegration": true
+	"semi": true
 }
