@@ -794,6 +794,7 @@ class GridPerspective extends React.Component<Props, State> {
         </style>
         <MainToolbar
           classes={classes}
+          layoutType={this.state.layoutType}
           isReadOnlyMode={this.props.isReadOnlyMode}
           selectedEntries={this.props.selectedEntries}
           loadParentDirectoryContent={this.props.loadParentDirectoryContent}
@@ -801,7 +802,7 @@ class GridPerspective extends React.Component<Props, State> {
           allFilesSelected={this.allFilesSelected}
           handleLayoutSwitch={this.handleLayoutSwitch}
           openAddRemoveTagsDialog={this.openAddRemoveTagsDialog}
-          fileOperationsEnabled={this.fileOperationsEnabled}
+          fileOperationsEnabled={this.state.fileOperationsEnabled}
           openMoveCopyFilesDialog={this.openMoveCopyFilesDialog}
           openDeleteFileDialog={this.openDeleteFileDialog}
           handleSortingMenu={this.handleSortingMenu}

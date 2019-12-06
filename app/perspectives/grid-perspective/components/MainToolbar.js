@@ -31,12 +31,7 @@ import DeSelectAllIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CopyIcon from '@material-ui/icons/FileCopy';
 import DeleteIcon from '@material-ui/icons/Delete';
 import {
-  actions as AppActions,
-  getLastSelectedEntry,
-  getSelectedEntries,
-  getCurrentDirectoryColor,
-  isLoading,
-  isReadOnlyMode
+  actions as isReadOnlyMode
 } from '../../../reducers/app';
 import i18n from '../../../services/i18n';
 
@@ -53,16 +48,12 @@ type Props = {
   openMoveCopyFilesDialog: () => void,
   openDeleteFileDialog: () => void,
   handleSortingMenu: () => void,
-  handleOptionsMenu: () => void,
-  isAppLoading: boolean
+  handleOptionsMenu: () => void
 };
 
 const MainToolbar = (props: Props) => {
   const {
     classes,
-    isAppLoading,
-    directoryContent,
-    currentDirectoryColor,
     selectedEntries,
     toggleSelectAllFiles,
     allFilesSelected,
@@ -75,8 +66,7 @@ const MainToolbar = (props: Props) => {
     openDeleteFileDialog,
     fileOperationsEnabled,
     handleSortingMenu,
-    handleOptionsMenu,
-    theme
+    handleOptionsMenu
   } = props;
 
   return (
