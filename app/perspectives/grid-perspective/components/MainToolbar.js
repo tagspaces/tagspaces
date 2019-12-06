@@ -70,13 +70,20 @@ const MainToolbar = (props: Props) => {
   } = props;
 
   return (
-    <Toolbar className={classes.topToolbar} data-tid="perspectiveGridToolbar">
+    <Toolbar
+      className={classes.topToolbar}
+      data-tid="perspectiveGridToolbar"
+    >
       <IconButton
         title={i18n.t('core:toggleSelectAllFiles')}
         data-tid="gridPerspectiveSelectAllFiles"
         onClick={toggleSelectAllFiles}
       >
-        {allFilesSelected ? <SelectAllIcon /> : <DeSelectAllIcon />}
+        {allFilesSelected ? (
+          <SelectAllIcon />
+         ) : (
+          <DeSelectAllIcon />
+         )}
       </IconButton>
       <IconButton
         title={i18n.t('core:navigateToParentDirectory')}
