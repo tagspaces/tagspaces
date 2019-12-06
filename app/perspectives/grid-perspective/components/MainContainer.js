@@ -799,7 +799,7 @@ class GridPerspective extends React.Component<Props, State> {
           selectedEntries={this.props.selectedEntries}
           loadParentDirectoryContent={this.props.loadParentDirectoryContent}
           toggleSelectAllFiles={this.toggleSelectAllFiles}
-          allFilesSelected={this.allFilesSelected}
+          allFilesSelected={this.state.allFilesSelected}
           handleLayoutSwitch={this.handleLayoutSwitch}
           openAddRemoveTagsDialog={this.openAddRemoveTagsDialog}
           fileOperationsEnabled={this.state.fileOperationsEnabled}
