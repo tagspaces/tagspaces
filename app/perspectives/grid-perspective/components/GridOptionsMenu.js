@@ -33,8 +33,6 @@ import RadioUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import HelpIcon from '@material-ui/icons/Help';
 import i18n from '../../../services/i18n';
 
-const settings = JSON.parse(localStorage.getItem('tsPerspectiveGrid')); // loading settings
-
 type Props = {
   open: boolean,
   onClose: () => void,

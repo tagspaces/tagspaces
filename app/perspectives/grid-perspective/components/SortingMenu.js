@@ -18,23 +18,21 @@
  */
 
 import React from 'react';
-import memoize from 'memoize-one';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import ArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import { sortByCriteria, isObj, isVisibleOnScreen } from '../../../utils/misc';
 import i18n from '../../../services/i18n';
-
-const settings = JSON.parse(localStorage.getItem('tsPerspectiveGrid')); // loading settings
 
 type Props = {
   open: boolean,
   onClose: () => void,
-  anchorEl: Object,
-  handleSortBy: () => void
+  anchorEl: Object | null,
+  handleSortBy: () => void,
+  sortBy: string,
+  orderBy: null | boolean,
 };
 
 const SortingMenu = (props: Props) => {
