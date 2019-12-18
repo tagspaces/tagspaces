@@ -25,22 +25,10 @@ import memoize from 'memoize-one';
 import { GlobalHotKeys } from 'react-hotkeys';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import RadioCheckedIcon from '@material-ui/icons/RadioButtonChecked';
-import RadioUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
 import ArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import ArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import Divider from '@material-ui/core/Divider';
-import ThumbnailCoverIcon from '@material-ui/icons/PhotoSizeSelectActual';
-import ThumbnailContainIcon from '@material-ui/icons/PhotoSizeSelectLarge';
 import FolderIcon from '@material-ui/icons/FolderOpen';
 import FolderHiddenIcon from '@material-ui/icons/Folder';
-import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import CheckBoxEmptyIcon from '@material-ui/icons/CheckBoxOutlineBlank';
-import HelpIcon from '@material-ui/icons/Help';
 import { type FileSystemEntry } from '../../../services/utils-io';
 import { type Tag } from '../../../reducers/taglibrary';
 import {
@@ -76,6 +64,7 @@ import TaggingActions from '../../../reducers/tagging-actions';
 import CellContent from './CellContent';
 import MainToolbar from './MainToolbar';
 import SortingMenu from './SortingMenu';
+import GridOptionsMenu from './GridOptionsMenu';
 
 const settings = JSON.parse(localStorage.getItem('tsPerspectiveGrid')); // loading settings
 
@@ -940,158 +929,22 @@ class GridPerspective extends React.Component<Props, State> {
           orderBy={this.state.orderBy}
           handleSortBy={this.handleSortBy}
         />
-        <Menu
+        <GridOptionsMenu
           open={this.state.optionsContextMenuOpened}
           onClose={this.closeOptionsMenu}
           anchorEl={this.state.optionsContextMenuAnchorEl}
-        >
-          <MenuItem
-            data-tid="gridPerspectiveToggleShowDirectories"
-            title={i18n.t('core:showHideDirectories')}
-            aria-label={i18n.t('core:showHideDirectories')}
-            onClick={this.toggleShowDirectories}
-          >
-            <ListItemIcon>
-              {this.state.showDirectories ? (
-                <CheckBoxIcon />
-              ) : (
-                <CheckBoxEmptyIcon />
-              )}
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:showHideDirectories')} />
-          </MenuItem>
-          <MenuItem
-            data-tid="gridPerspectiveToggleShowTags"
-            title={i18n.t('core:showTags')}
-            aria-label={i18n.t('core:showTags')}
-            onClick={this.toggleShowTags}
-          >
-            <ListItemIcon>
-              {this.state.showTags ? <CheckBoxIcon /> : <CheckBoxEmptyIcon />}
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:showTags')} />
-          </MenuItem>
-          <Divider />
-          <MenuItem
-            data-tid="gridPerspectiveToggleThumbnailsMode"
-            title={i18n.t('core:toggleThumbnailModeTitle')}
-            aria-label={i18n.t('core:toggleThumbnailMode')}
-            onClick={this.toggleThumbnailsMode}
-          >
-            <ListItemIcon>
-              {this.state.thumbnailMode === 'cover' ? (
-                <ThumbnailCoverIcon />
-              ) : (
-                <ThumbnailContainIcon />
-              )}
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:toggleThumbnailMode')} />
-          </MenuItem>
-          <Divider />
-          <MenuItem
-            data-tid="gridPerspectiveEntrySizeSmall"
-            title={i18n.t('core:entrySizeSmall')}
-            aria-label={i18n.t('core:entrySizeSmall')}
-            onClick={() => this.changeEntrySize('small')}
-          >
-            <ListItemIcon>
-              {this.state.entrySize === 'small' ? (
-                <RadioCheckedIcon />
-              ) : (
-                <RadioUncheckedIcon />
-              )}
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:entrySizeSmall')} />
-          </MenuItem>
-          <MenuItem
-            data-tid="gridPerspectiveEntrySizeNormal"
-            title={i18n.t('core:entrySizeNormal')}
-            aria-label={i18n.t('core:entrySizeNormal')}
-            onClick={() => this.changeEntrySize('normal')}
-          >
-            <ListItemIcon>
-              {this.state.entrySize === 'normal' ? (
-                <RadioCheckedIcon />
-              ) : (
-                <RadioUncheckedIcon />
-              )}
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:entrySizeNormal')} />
-          </MenuItem>
-          <MenuItem
-            data-tid="gridPerspectiveEntrySizeBig"
-            title={i18n.t('core:entrySizeBig')}
-            aria-label={i18n.t('core:entrySizeBig')}
-            onClick={() => this.changeEntrySize('big')}
-          >
-            <ListItemIcon>
-              {this.state.entrySize === 'big' ? (
-                <RadioCheckedIcon />
-              ) : (
-                <RadioUncheckedIcon />
-              )}
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:entrySizeBig')} />
-          </MenuItem>
-          <Divider />
-          <MenuItem
-            data-tid="gridPerspectiveSingleClickOpenInternally"
-            title={i18n.t('core:singleClickOpenInternally')}
-            aria-label={i18n.t('core:singleClickOpenInternally')}
-            onClick={() => this.changeSingleClickAction('openInternal')}
-          >
-            <ListItemIcon>
-              {this.state.singleClickAction === 'openInternal' ? (
-                <RadioCheckedIcon />
-              ) : (
-                <RadioUncheckedIcon />
-              )}
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:singleClickOpenInternally')} />
-          </MenuItem>
-          <MenuItem
-            data-tid="gridPerspectiveSingleClickOpenExternally"
-            title={i18n.t('core:singleClickOpenExternally')}
-            aria-label={i18n.t('core:singleClickOpenExternally')}
-            onClick={() => this.changeSingleClickAction('openExternal')}
-          >
-            <ListItemIcon>
-              {this.state.singleClickAction === 'openExternal' ? (
-                <RadioCheckedIcon />
-              ) : (
-                <RadioUncheckedIcon />
-              )}
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:singleClickOpenExternally')} />
-          </MenuItem>
-          <MenuItem
-            data-tid="gridPerspectiveSingleClickSelects"
-            title={i18n.t('core:singleClickSelects')}
-            aria-label={i18n.t('core:singleClickSelects')}
-            onClick={() => this.changeSingleClickAction('selects')}
-          >
-            <ListItemIcon>
-              {this.state.singleClickAction === 'selects' ? (
-                <RadioCheckedIcon />
-              ) : (
-                <RadioUncheckedIcon />
-              )}
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:singleClickSelects')} />
-          </MenuItem>
-          <Divider />
-          <MenuItem
-            data-tid="gridPerspectiveHelp"
-            title={i18n.t('core:help')}
-            aria-label={i18n.t('core:perspectiveHelp')}
-            onClick={this.openHelpWebPage}
-          >
-            <ListItemIcon>
-              <HelpIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:help')} />
-          </MenuItem>
-        </Menu>
+          toggleShowDirectories={this.toggleShowDirectories}
+          showDirectories={this.state.showDirectories}
+          toggleShowTags={this.toggleShowTags}
+          showTags={this.state.showTags}
+          toggleThumbnailsMode={this.toggleThumbnailsMode}
+          thumbnailMode={this.state.thumbnailMode}
+          entrySize={this.state.entrySize}
+          changeSingleClickAction={this.changeSingleClickAction}
+          singleClickAction={this.state.singleClickAction}
+          changeEntrySize={this.changeEntrySize}
+          openHelpWebPage={this.openHelpWebPage}
+        />
       </div>
     );
   }
