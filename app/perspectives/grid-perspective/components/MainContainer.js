@@ -75,6 +75,7 @@ import {
 import TaggingActions from '../../../reducers/tagging-actions';
 import CellContent from './CellContent';
 import MainToolbar from './MainToolbar';
+import SortingMenu from './SortingMenu';
 
 const settings = JSON.parse(localStorage.getItem('tsPerspectiveGrid')); // loading settings
 
@@ -931,84 +932,14 @@ class GridPerspective extends React.Component<Props, State> {
           editTagForEntry={this.props.editTagForEntry}
           isReadOnlyMode={this.props.isReadOnlyMode}
         />
-        <Menu
+        <SortingMenu
           open={this.state.sortingContextMenuOpened}
           onClose={this.closeSortingMenu}
           anchorEl={this.state.sortingContextMenuAnchorEl}
-        >
-          {/* <ListSubHeader>Sort by</ListSubHeader> */}
-          <MenuItem
-            data-tid="gridPerspectiveSortByName"
-            onClick={() => {
-              this.handleSortBy('byName');
-            }}
-          >
-            <ListItemIcon style={{ minWidth: 25 }}>
-              {this.state.sortBy === 'byName' &&
-                (this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />)}
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:fileTitle')} />
-          </MenuItem>
-          <MenuItem
-            data-tid="gridPerspectiveSortBySize"
-            onClick={() => {
-              this.handleSortBy('byFileSize');
-            }}
-          >
-            <ListItemIcon style={{ minWidth: 25 }}>
-              {this.state.sortBy === 'byFileSize' &&
-                (this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />)}
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:fileSize')} />
-          </MenuItem>
-          <MenuItem
-            data-tid="gridPerspectiveSortByDate"
-            onClick={() => {
-              this.handleSortBy('byDateModified');
-            }}
-          >
-            <ListItemIcon style={{ minWidth: 25 }}>
-              {this.state.sortBy === 'byDateModified' &&
-                (this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />)}
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:fileLDTM')} />
-          </MenuItem>
-          <MenuItem
-            data-tid="gridPerspectiveSortByFirstTag"
-            onClick={() => {
-              this.handleSortBy('byFirstTag');
-            }}
-          >
-            <ListItemIcon style={{ minWidth: 25 }}>
-              {this.state.sortBy === 'byFirstTag' &&
-                (this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />)}
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:fileFirstTag')} />
-          </MenuItem>
-          <MenuItem
-            data-tid="gridPerspectiveSortByExt"
-            onClick={() => {
-              this.handleSortBy('byExtension');
-            }}
-          >
-            <ListItemIcon style={{ minWidth: 25 }}>
-              {this.state.sortBy === 'byExtension' &&
-                (this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />)}
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:fileExtension')} />
-          </MenuItem>
-          <MenuItem
-            data-tid="gridPerspectiveSortRandom"
-            onClick={() => {
-              this.handleSortBy('random');
-            }}
-          >
-            <ListItemIcon style={{ minWidth: 25 }}>
-              {this.state.sortBy === 'random' && <ArrowDownIcon />}
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:random')} />
-          </MenuItem>
-        </Menu>
+          sortBy={this.state.sortBy}
+          orderBy={this.state.orderBy}
+          handleSortBy={this.handleSortBy}
+        />
         <Menu
           open={this.state.optionsContextMenuOpened}
           onClose={this.closeOptionsMenu}
