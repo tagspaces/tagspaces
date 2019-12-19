@@ -36,7 +36,7 @@ import i18n from '../../../services/i18n';
 type Props = {
   open: boolean,
   onClose: () => void,
-  anchorEl: Object,
+  anchorEl: Object | null,
   toggleShowDirectories: boolean,
   toggleShowTags: boolean,
   showDirectories: boolean,
@@ -67,9 +67,9 @@ const GridOptionsMenu = (props: Props) => {
 
   return (
     <Menu
+      anchorEl={props.anchorEl}
       open={props.open}
       onClose={props.onClose}
-      anchorEl={props.optionsContextMenuAnchorEl}
     >
       <MenuItem
         data-tid="gridPerspectiveToggleShowDirectories"

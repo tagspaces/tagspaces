@@ -43,12 +43,12 @@ const SortingMenu = (props: Props) => {
     orderBy,
     handleSortBy,
     closeSortingMenu,
-    sortingContextMenuAnchorEl
+    anchorEl
   } = props;
 
   return (
     <Menu
-      anchorEl={props.sortingContextMenuAnchorEl}
+      anchorEl={props.anchorEl}
       open={props.open}
       onClose={props.onClose}
     >
