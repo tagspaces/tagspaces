@@ -12,7 +12,6 @@
     "prettier-format": "prettier --write '**/*.{js,jsx,json,ts,tsx,yml}'",
     "prettier-check": "prettier --check '**/*.{js,json,ts,tsx,yml}'",
     "start-portable": "cross-env NODE_ENV=production electron ./app/ --portable",
-    "prestart_bak": "yarn build",
     "flow": "flow check",
     "flow-typed": "rimraf flow-typed/npm && node --max-old-space-size=4096 node_modules/.bin/flow-typed install",
     "start-renderer-dev": "cross-env NODE_ENV=development node --trace-warnings -r babel-register ./node_modules/webpack-dev-server/bin/webpack-dev-server --config webpack.config.renderer.dev.js",
