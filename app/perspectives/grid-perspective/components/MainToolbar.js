@@ -39,13 +39,14 @@ type Props = {
   loadParentDirectoryContent: () => void,
   toggleSelectAllFiles: boolean,
   allFilesSelected: boolean,
-  handleLayoutSwitch: () => void,
+  handleLayoutSwitch: (any) => void,
   openAddRemoveTagsDialog: () => void,
   fileOperationsEnabled: boolean,
   openMoveCopyFilesDialog: () => void,
   openDeleteFileDialog: () => void,
-  handleSortingMenu: () => void,
-  handleOptionsMenu: () => void
+  handleSortingMenu: (any) => void,
+  handleOptionsMenu: (any) => void,
+  layoutType: string
 };
 
 const MainToolbar = (props: Props) => {
@@ -76,11 +77,11 @@ const MainToolbar = (props: Props) => {
         data-tid="gridPerspectiveSelectAllFiles"
         onClick={toggleSelectAllFiles}
       >
-        {allFilesSelected ? (
-          <SelectAllIcon />
-         ) : (
-          <DeSelectAllIcon />
-         )}
+      {allFilesSelected ? (
+        <SelectAllIcon />
+      ) : (
+        <DeSelectAllIcon />
+      )}
       </IconButton>
       <IconButton
         title={i18n.t('core:navigateToParentDirectory')}
