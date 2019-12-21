@@ -18,7 +18,6 @@
  */
 
 import React from 'react';
-import uuidv1 from 'uuid';
 import formatDistance from 'date-fns/formatDistance';
 import removeMd from 'remove-markdown';
 import classNames from 'classnames';
@@ -36,7 +35,6 @@ import {
 } from '../../../services/utils-io';
 import TagContainerDnd from '../../../components/TagContainerDnd';
 import TagContainer from '../../../components/TagContainer';
-import AppConfig from '../../../config';
 import i18n from '../../../services/i18n';
 import { type Tag } from '../../../reducers/taglibrary';
 
@@ -57,9 +55,9 @@ type Props = {
   showTags: boolean,
   handleTagMenu: (event: Object, tag: Tag, entryPath: string) => void,
   layoutType: string,
-  handleGridContextMenu: () => void,
-  handleGridCellDblClick: () => void,
-  handleGridCellClick: () => void
+  handleGridContextMenu: (event: Object, fsEntry: FileSystemEntry) => void,
+  handleGridCellDblClick: (event: Object, fsEntry: FileSystemEntry) => void,
+  handleGridCellClick: (event: Object, fsEntry: FileSystemEntry) => void
 };
 
 const CellContent = (props: Props) => {

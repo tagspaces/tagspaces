@@ -479,4 +479,7 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
-export default connect(null, mapDispatchToProps)(DirectoryMenu);
+export default connect(
+  null,
+  mapDispatchToProps
+)(DirectoryMenu);

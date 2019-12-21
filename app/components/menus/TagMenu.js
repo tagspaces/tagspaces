@@ -164,4 +164,7 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(TagLibraryMenu);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TagLibraryMenu);

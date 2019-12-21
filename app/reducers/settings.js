@@ -73,22 +73,13 @@ export default (state = defaultSettings, action) => {
   switch (action.type) {
     case types.UPGRADE_SETTINGS: {
       const mergedKeyBindings = defaultSettings.keyBindings.map(x =>
-        Object.assign(
-          x,
-          state.keyBindings.find(y => y.name === x.name)
-        )
+        Object.assign(x, state.keyBindings.find(y => y.name === x.name))
       );
       const mergedFileTypes = defaultSettings.supportedFileTypes.map(x =>
-        Object.assign(
-          x,
-          state.supportedFileTypes.find(y => y.type === x.type)
-        )
+        Object.assign(x, state.supportedFileTypes.find(y => y.type === x.type))
       );
       const combinedFileTypes = state.supportedFileTypes.map(x =>
-        Object.assign(
-          x,
-          mergedFileTypes.find(y => y.type === x.type)
-        )
+        Object.assign(x, mergedFileTypes.find(y => y.type === x.type))
       );
       return {
         ...defaultSettings,

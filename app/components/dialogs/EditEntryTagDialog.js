@@ -215,6 +215,9 @@ function mapDispatchToProps(dispatch) {
 
 export default withMobileDialog()(
   withStyles(styles)(
-    connect(mapStateToProps, mapDispatchToProps)(EditEntryTagDialog)
+    connect(
+      mapStateToProps,
+      mapDispatchToProps
+    )(EditEntryTagDialog)
   )
 );

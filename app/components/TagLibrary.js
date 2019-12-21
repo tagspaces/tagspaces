@@ -444,5 +444,8 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(TagLibrary)
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(TagLibrary)
 );

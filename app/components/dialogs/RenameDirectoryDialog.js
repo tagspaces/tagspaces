@@ -146,4 +146,7 @@ function mapActionCreatorsToProps(dispatch) {
   );
 }
 
-export default connect(null, mapActionCreatorsToProps)(RenameDirectoryDialog);
+export default connect(
+  null,
+  mapActionCreatorsToProps
+)(RenameDirectoryDialog);
