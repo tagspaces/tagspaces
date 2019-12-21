@@ -25,7 +25,6 @@ import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
 import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
@@ -46,7 +45,6 @@ import IOActions from '../../reducers/io-actions';
 import { extractFileName } from '../../utils/paths';
 
 type Props = {
-  classes: Object,
   open: boolean,
   fullScreen: boolean,
   onClose: () => void,
