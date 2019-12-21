@@ -74,9 +74,13 @@ const TargetMoveFileBox = (props: Props) => {
 };
 
 export default withStyles(styles, { withTheme: true })(
-  DropTarget(props => props.accepts, boxTarget, (connect, monitor) => ({
-    connectDropTarget: connect.dropTarget(),
-    isOver: monitor.isOver(),
-    canDrop: monitor.canDrop()
-  }))(TargetMoveFileBox)
+  DropTarget(
+    props => props.accepts,
+    boxTarget,
+    (connect, monitor) => ({
+      connectDropTarget: connect.dropTarget(),
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop()
+    })
+  )(TargetMoveFileBox)
 );

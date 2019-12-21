@@ -79,7 +79,4 @@ function mapActionCreatorsToProps(dispatch) {
   );
 }
 
-export default connect(
-  undefined,
-  mapActionCreatorsToProps
-)(CustomLogo);
+export default connect(undefined, mapActionCreatorsToProps)(CustomLogo);

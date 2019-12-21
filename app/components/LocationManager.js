@@ -937,8 +937,5 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default withStyles(styles)(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(LocationManager)
+  connect(mapStateToProps, mapDispatchToProps)(LocationManager)
 );

@@ -711,8 +711,5 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default withStyles(styles)(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(Search)
+  connect(mapStateToProps, mapDispatchToProps)(Search)
 );
