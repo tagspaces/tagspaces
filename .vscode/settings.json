@@ -2,7 +2,7 @@
   "flow.pathToFlow": "node_modules/.bin/flow",
   "javascript.validate.enable": false,
   "git.autofetch": true,
-  "editor.minimap.enabled": false,
+  "editor.minimap.enabled": true,
   "git.confirmSync": false,
   "cSpell.userWords": ["customizability", "mapique", "tagspaces", "treeviz"],
   "typescript.format.enable": false,
