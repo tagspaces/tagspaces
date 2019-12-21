@@ -30,8 +30,11 @@ const { store, persistor } = configureStore();
 document.addEventListener('contextmenu', event => event.preventDefault());
 
 if (process.env.NODE_ENV === 'production') {
+  // $FlowFixMe
   console.log = () => {};
+  // $FlowFixMe
   console.time = () => {};
+  // $FlowFixMe
   console.timeEnd = () => {};
 }
 

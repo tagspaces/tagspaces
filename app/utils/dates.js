@@ -390,25 +390,28 @@ export function parseDate(date: string) {
 }
 
 // parse “YYYYmmdd” to 'Fri Jul 15 2016 00:00:00 GMT+0300 (FLE Summer Time)'
-export function parseFullDate(date) {
+export function parseFullDate(date: string) {
   // validate year as 4 digits, month as 01-12, and day as 01-31
-  if ((date = date.match(/^(\d{4})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])$/))) {
+  const parsedDate = date.match(
+    /^(\d{4})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])$/
+  );
+  if (parsedDate) {
     // make a date
-    date[0] = new Date(+date[1], +date[2] - 1, +date[3]);
+    const result = new Date(+parsedDate[1], +parsedDate[2] - 1, +parsedDate[3]);
     // check if month stayed the same (ie that day number is valid)
-    if (date[0].getMonth() === +date[2] - 1) {
-      return date[0];
+    if (result.getMonth() === +parsedDate[2] - 1) {
+      return result;
     }
   }
 }
 
 // return array of [years, month]
-export function parseToDate(date) {
+export function parseToDate(date: string) {
   const dateMonth = convertToDate(date);
   let d;
   if (dateMonth) {
     d = dateMonth;
-  } else if (dateMonth.length === 5) {
+  } else if (dateMonth && dateMonth.length === 5) {
     const dateString = dateMonth.split('-');
     d = new Date(dateString[0], dateString[1]);
   }
@@ -416,7 +419,7 @@ export function parseToDate(date) {
 }
 
 // Format Sun May 11, 2014 to 2014-05
-export function formatDateMonth(date) {
+export function formatDateMonth(date: string) {
   const d = new Date(date);
   let month = '' + (d.getMonth() + 1);
   const year = d.getFullYear();
@@ -428,7 +431,7 @@ export function formatDateMonth(date) {
 }
 
 // Format Sun May 11, 2014 to 2014-05-11
-export function formatDate(date) {
+export function formatDate(date: string) {
   const d = new Date(date);
   let month = '' + (d.getMonth() + 1);
   let day = '' + d.getDate();
@@ -446,7 +449,7 @@ export function formatDate(date) {
 
 export function toHHMMSS(time: string): string {
   const match = time.match(/(\d{2})(\d{2})(\d{2})/);
-  return match[1] + ':' + match[2] + ':' + match[3];
+  return match ? match[1] + ':' + match[2] + ':' + match[3] : '';
 }
 
 export function convertToDate(date: string) {

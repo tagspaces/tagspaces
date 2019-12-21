@@ -25,20 +25,24 @@ let mainWindow = null;
 global.splashWorkerWindow = null;
 
 if (process.env.NODE_ENV === 'production') {
+  // eslint-disable-next-line
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
+  // $FlowFixMe
   console.log = () => {};
+  // $FlowFixMe
   console.time = () => {};
+  // $FlowFixMe
   console.timeEnd = () => {};
 }
 
-let debugMode;
+// let debugMode;
 let startupFilePath;
 let portableMode;
 
 process.argv.forEach((arg, count) => {
   if (arg.toLowerCase() === '-d' || arg.toLowerCase() === '--debug') {
-    debugMode = true;
+    // debugMode = true;
   } else if (arg.toLowerCase() === '-p' || arg.toLowerCase() === '--portable') {
     app.setPath('userData', process.cwd() + '/tsprofile'); // making the app portable
     portableMode = true;
@@ -64,8 +68,10 @@ if (
   process.env.NODE_ENV === 'development' ||
   process.env.DEBUG_PROD === 'true'
 ) {
+  // eslint-disable-next-line
   require('electron-debug')({ showDevTools: false, devToolsMode: 'right' });
   const p = path.join(__dirname, '..', 'app', 'node_modules');
+  // eslint-disable-next-line
   require('module').globalPaths.push(p);
 }
 
@@ -81,7 +87,7 @@ const installExtensions = async () => {
     default: installExtension,
     REACT_DEVELOPER_TOOLS,
     REDUX_DEVTOOLS
-  } = require('electron-devtools-installer');
+  } = require('electron-devtools-installer'); // eslint-disable-line
 
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
   const extensions = [REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS];
@@ -196,6 +202,10 @@ app.on('ready', async () => {
       buttons: ['Reload', 'Close']
     };
     dialog.showMessageBox(mainWindow, options, index => {
+      if (!mainWindow) {
+        globalShortcut.unregisterAll();
+        return;
+      }
       mainWindow.hide();
       if (index === 0) {
         reloadApp();
@@ -233,15 +243,15 @@ app.on('ready', async () => {
   });
 
   ipcMain.on('app-data-path-request', event => {
-    event.returnValue = app.getPath('appData');
+    event.returnValue = app.getPath('appData'); // eslint-disable-line
   });
 
   ipcMain.on('app-version-request', event => {
-    event.returnValue = app.getVersion();
+    event.returnValue = app.getVersion(); // eslint-disable-line
   });
 
   ipcMain.on('app-dir-path-request', event => {
-    event.returnValue = path.join(__dirname, '');
+    event.returnValue = path.join(__dirname, ''); // eslint-disable-line
   });
 
   ipcMain.on('global-shortcuts-enabled', (e, globalShortcutsEnabled) => {
@@ -269,7 +279,7 @@ app.on('ready', async () => {
   process.on('uncaughtException', error => {
     if (error.stack) {
       console.error('error:', error.stack);
-      throw new Error('error:', error.stack);
+      throw new Error(error.stack);
     }
     reloadApp();
   });
@@ -313,7 +323,7 @@ app.on('ready', async () => {
 
   function reloadApp() {
     if (mainWindow) {
-      mainWindow.loadURL(indexPath);
+      mainWindow.loadURL(mainHTML);
     }
   }
 });
