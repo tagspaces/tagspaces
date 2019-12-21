@@ -200,7 +200,10 @@ export function formatFileSize(sizeInBytes): string {
   // return sizeInBytes + ' B';
 }
 
-export function formatFileSize2(sizeInBytes, siSystem): string {
+export function formatFileSize2(
+  sizeInBytes: number,
+  siSystem: boolean
+): string {
   const threshold = siSystem ? 1000 : 1024;
   if (!sizeInBytes) {
     return '';

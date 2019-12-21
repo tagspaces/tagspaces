@@ -19,7 +19,7 @@
 
 import { actions as CommonActions } from '../reducers/app';
 
-export default function(dispatch) {
+export default (dispatch: any => void) => {
   window.addEventListener('online', updateOnlineStatus);
   window.addEventListener('offline', updateOnlineStatus);
 
@@ -31,4 +31,4 @@ export default function(dispatch) {
       dispatch(CommonActions.goOffline());
     }
   }
-}
+};

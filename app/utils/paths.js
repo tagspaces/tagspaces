@@ -174,10 +174,11 @@ export function extractParentDirectoryPath(
   dirSeparator: string = AppConfig.dirSeparator
 ) {
   if (!dirPath) return;
-  if (dirPath.endsWith(dirSeparator)) {
-    dirPath = dirPath.substring(0, dirPath.lastIndexOf(dirSeparator));
+  let path = dirPath;
+  if (path.endsWith(dirSeparator)) {
+    path = path.substring(0, path.lastIndexOf(dirSeparator));
   }
-  return dirPath.substring(0, dirPath.lastIndexOf(dirSeparator));
+  return path.substring(0, path.lastIndexOf(dirSeparator));
 }
 
 export function extractDirectoryName(
@@ -259,7 +260,7 @@ export function extractTitle(entryPath: string, isDirectory?: boolean = false) {
 
 export function extractTagsAsObjects(
   filePath: string,
-  tagDelimiter: string
+  tagDelimiter?: string
 ): Array<Tag> {
   const tagsInFileName = extractTags(filePath, tagDelimiter);
   const tagArray = [];
@@ -273,7 +274,7 @@ export function extractTagsAsObjects(
   return tagArray;
 }
 
-export function extractTags(filePath: string, tagDelimiter: string) {
+export function extractTags(filePath: string, tagDelimiter?: string) {
   if (tagDelimiter === undefined) {
     // TODO get tagDelimiter from settings reducer only
     // eslint-disable-next-line no-param-reassign

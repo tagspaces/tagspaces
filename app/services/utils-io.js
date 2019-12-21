@@ -52,6 +52,7 @@ export type FileSystemEntry = {
 export type FileSystemEntryMeta = {
   description: string,
   tags: Array<Tag>,
+  color?: string,
   appVersionCreated: string,
   appName: string,
   appVersionUpdated: string,
@@ -395,7 +396,7 @@ export function generateFileName(
       fileName.substring(endTagContainer + 1, fileName.length).trim();
   }
   if (newFileName.length < 1) {
-    throw 'Generated filename is invalid';
+    throw new Error('Generated filename is invalid');
   }
   // Removing double prefix
   newFileName = newFileName
