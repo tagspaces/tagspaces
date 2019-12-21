@@ -18,7 +18,6 @@
  */
 
 import React from 'react';
-import memoize from 'memoize-one';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Menu from '@material-ui/core/Menu';
@@ -44,7 +43,10 @@ type Props = {
   toggleThumbnailsMode: boolean,
   thumbnailMode: string,
   singleClickAction: string,
-  entrySize: string
+  entrySize: string,
+  changeEntrySize: (entrySize: string) => void,
+  changeSingleClickAction: (actionType: string) => void,
+  openHelpWebPage: () => void
 };
 
 const GridOptionsMenu = (props: Props) => {
@@ -66,11 +68,7 @@ const GridOptionsMenu = (props: Props) => {
   } = props;
 
   return (
-    <Menu
-      anchorEl={props.anchorEl}
-      open={props.open}
-      onClose={props.onClose}
-    >
+    <Menu anchorEl={anchorEl} open={open} onClose={onClose}>
       <MenuItem
         data-tid="gridPerspectiveToggleShowDirectories"
         title={i18n.t('core:showHideDirectories')}
@@ -78,11 +76,7 @@ const GridOptionsMenu = (props: Props) => {
         onClick={toggleShowDirectories}
       >
         <ListItemIcon>
-          {showDirectories ? (
-            <CheckBoxIcon />
-          ) : (
-            <CheckBoxEmptyIcon />
-          )}
+          {showDirectories ? <CheckBoxIcon /> : <CheckBoxEmptyIcon />}
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:showHideDirectories')} />
       </MenuItem>
@@ -93,11 +87,7 @@ const GridOptionsMenu = (props: Props) => {
         onClick={toggleShowTags}
       >
         <ListItemIcon>
-          {showTags ? (
-            <CheckBoxIcon />
-          ) : (
-            <CheckBoxEmptyIcon />
-          )}
+          {showTags ? <CheckBoxIcon /> : <CheckBoxEmptyIcon />}
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:showTags')} />
       </MenuItem>
@@ -122,7 +112,7 @@ const GridOptionsMenu = (props: Props) => {
         data-tid="gridPerspectiveEntrySizeSmall"
         title={i18n.t('core:entrySizeSmall')}
         aria-label={i18n.t('core:entrySizeSmall')}
-        onClick={() => props.changeEntrySize('small')}
+        onClick={() => changeEntrySize('small')}
       >
         <ListItemIcon>
           {entrySize === 'small' ? (
@@ -137,7 +127,7 @@ const GridOptionsMenu = (props: Props) => {
         data-tid="gridPerspectiveEntrySizeNormal"
         title={i18n.t('core:entrySizeNormal')}
         aria-label={i18n.t('core:entrySizeNormal')}
-        onClick={() => props.changeEntrySize('normal')}
+        onClick={() => changeEntrySize('normal')}
       >
         <ListItemIcon>
           {entrySize === 'normal' ? (
@@ -152,14 +142,10 @@ const GridOptionsMenu = (props: Props) => {
         data-tid="gridPerspectiveEntrySizeBig"
         title={i18n.t('core:entrySizeBig')}
         aria-label={i18n.t('core:entrySizeBig')}
-        onClick={() => props.changeEntrySize('big')}
+        onClick={() => changeEntrySize('big')}
       >
         <ListItemIcon>
-          {entrySize === 'big' ? (
-            <RadioCheckedIcon />
-          ) : (
-            <RadioUncheckedIcon />
-          )}
+          {entrySize === 'big' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:entrySizeBig')} />
       </MenuItem>
@@ -168,7 +154,7 @@ const GridOptionsMenu = (props: Props) => {
         data-tid="gridPerspectiveSingleClickOpenInternally"
         title={i18n.t('core:singleClickOpenInternally')}
         aria-label={i18n.t('core:singleClickOpenInternally')}
-        onClick={() => props.changeSingleClickAction('openInternal')}
+        onClick={() => changeSingleClickAction('openInternal')}
       >
         <ListItemIcon>
           {singleClickAction === 'openInternal' ? (
@@ -183,7 +169,7 @@ const GridOptionsMenu = (props: Props) => {
         data-tid="gridPerspectiveSingleClickOpenExternally"
         title={i18n.t('core:singleClickOpenExternally')}
         aria-label={i18n.t('core:singleClickOpenExternally')}
-        onClick={() => props.changeSingleClickAction('openExternal')}
+        onClick={() => changeSingleClickAction('openExternal')}
       >
         <ListItemIcon>
           {singleClickAction === 'openExternal' ? (
@@ -198,7 +184,7 @@ const GridOptionsMenu = (props: Props) => {
         data-tid="gridPerspectiveSingleClickSelects"
         title={i18n.t('core:singleClickSelects')}
         aria-label={i18n.t('core:singleClickSelects')}
-        onClick={() => props.changeSingleClickAction('selects')}
+        onClick={() => changeSingleClickAction('selects')}
       >
         <ListItemIcon>
           {singleClickAction === 'selects' ? (

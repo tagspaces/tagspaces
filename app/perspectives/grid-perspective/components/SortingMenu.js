@@ -30,33 +30,21 @@ type Props = {
   open: boolean,
   onClose: () => void,
   anchorEl: Object | null,
-  handleSortBy: () => void,
+  handleSortBy: (sortType: string) => void,
   sortBy: string,
-  orderBy: null | boolean,
+  orderBy: null | boolean
 };
 
 const SortingMenu = (props: Props) => {
-  const {
-    open,
-    onClose,
-    sortBy,
-    orderBy,
-    handleSortBy,
-    closeSortingMenu,
-    anchorEl
-  } = props;
+  const { open, onClose, sortBy, orderBy, handleSortBy, anchorEl } = props;
 
   return (
-    <Menu
-      anchorEl={props.anchorEl}
-      open={props.open}
-      onClose={props.onClose}
-    >
+    <Menu anchorEl={anchorEl} open={open} onClose={onClose}>
       {/* <ListSubHeader>Sort by</ListSubHeader> */}
       <MenuItem
         data-tid="gridPerspectiveSortByName"
         onClick={() => {
-          props.handleSortBy('byName');
+          handleSortBy('byName');
         }}
       >
         <ListItemIcon style={{ minWidth: 25 }}>
@@ -68,7 +56,7 @@ const SortingMenu = (props: Props) => {
       <MenuItem
         data-tid="gridPerspectiveSortBySize"
         onClick={() => {
-          props.handleSortBy('byFileSize');
+          handleSortBy('byFileSize');
         }}
       >
         <ListItemIcon style={{ minWidth: 25 }}>
@@ -80,7 +68,7 @@ const SortingMenu = (props: Props) => {
       <MenuItem
         data-tid="gridPerspectiveSortByDate"
         onClick={() => {
-          props.handleSortBy('byDateModified');
+          handleSortBy('byDateModified');
         }}
       >
         <ListItemIcon style={{ minWidth: 25 }}>
@@ -92,7 +80,7 @@ const SortingMenu = (props: Props) => {
       <MenuItem
         data-tid="gridPerspectiveSortByFirstTag"
         onClick={() => {
-          props.handleSortBy('byFirstTag');
+          handleSortBy('byFirstTag');
         }}
       >
         <ListItemIcon style={{ minWidth: 25 }}>
@@ -104,7 +92,7 @@ const SortingMenu = (props: Props) => {
       <MenuItem
         data-tid="gridPerspectiveSortByExt"
         onClick={() => {
-          props.handleSortBy('byExtension');
+          handleSortBy('byExtension');
         }}
       >
         <ListItemIcon style={{ minWidth: 25 }}>
@@ -116,7 +104,7 @@ const SortingMenu = (props: Props) => {
       <MenuItem
         data-tid="gridPerspectiveSortRandom"
         onClick={() => {
-          props.handleSortBy('random');
+          handleSortBy('random');
         }}
       >
         <ListItemIcon style={{ minWidth: 25 }}>

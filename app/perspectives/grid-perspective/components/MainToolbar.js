@@ -39,13 +39,13 @@ type Props = {
   loadParentDirectoryContent: () => void,
   toggleSelectAllFiles: boolean,
   allFilesSelected: boolean,
-  handleLayoutSwitch: (any) => void,
+  handleLayoutSwitch: (event: Object) => void,
   openAddRemoveTagsDialog: () => void,
   fileOperationsEnabled: boolean,
   openMoveCopyFilesDialog: () => void,
   openDeleteFileDialog: () => void,
-  handleSortingMenu: (any) => void,
-  handleOptionsMenu: (any) => void,
+  handleSortingMenu: (event: Object) => void,
+  handleOptionsMenu: (event: Object) => void,
   layoutType: string
 };
 
@@ -68,20 +68,13 @@ const MainToolbar = (props: Props) => {
   } = props;
 
   return (
-    <Toolbar
-      className={classes.topToolbar}
-      data-tid="perspectiveGridToolbar"
-    >
+    <Toolbar className={classes.topToolbar} data-tid="perspectiveGridToolbar">
       <IconButton
         title={i18n.t('core:toggleSelectAllFiles')}
         data-tid="gridPerspectiveSelectAllFiles"
         onClick={toggleSelectAllFiles}
       >
-      {allFilesSelected ? (
-        <SelectAllIcon />
-      ) : (
-        <DeSelectAllIcon />
-      )}
+        {allFilesSelected ? <SelectAllIcon /> : <DeSelectAllIcon />}
       </IconButton>
       <IconButton
         title={i18n.t('core:navigateToParentDirectory')}
@@ -97,7 +90,7 @@ const MainToolbar = (props: Props) => {
           aria-label={i18n.t('core:switchToGridView')}
           data-tid="gridPerspectiveSwitchLayoutToGrid"
           onClick={() => {
-            props.handleLayoutSwitch('grid');
+            handleLayoutSwitch('grid');
           }}
         >
           <ViewGridIcon />
@@ -108,7 +101,7 @@ const MainToolbar = (props: Props) => {
           aria-label={i18n.t('core:switchToListView')}
           data-tid="gridPerspectiveSwitchLayoutToRow"
           onClick={() => {
-            props.handleLayoutSwitch('row');
+            handleLayoutSwitch('row');
           }}
         >
           <ViewListIcon />
