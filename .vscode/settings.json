@@ -18,5 +18,14 @@
     "**/.git/objects/**": true,
     "**/.git/subtree-cache/**": true,
     "**/node_modules/*/**": true
-  }
+  },
+  "cSpell.words": [
+    "Affero",
+    "haftungsbeschraenkt",
+    "lastindex",
+    "nbsp",
+    "taggroup",
+    "taglibrary",
+    "textcolor"
+  ]
 }
