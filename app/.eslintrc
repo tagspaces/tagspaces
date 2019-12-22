@@ -5,7 +5,7 @@
     "flowtype/delimiter-dangle": [2, "never"],
     "flowtype/generic-spacing": [2, "never"],
     "flowtype/no-primitive-constructor-types": 2,
-    "flowtype/no-weak-types": 1,
+    "flowtype/no-weak-types": 0,
     "flowtype/object-type-delimiter": [2, "comma"],
     "flowtype/require-parameter-type": 0,
     "flowtype/require-return-type": 0,

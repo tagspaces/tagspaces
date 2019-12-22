@@ -69,7 +69,7 @@ export const types = {
   SET_FIRST_RUN: 'SETTINGS/SET_FIRST_RUN'
 };
 
-export default (state = defaultSettings, action) => {
+export default (state: Object = defaultSettings, action: any) => {
   switch (action.type) {
     case types.UPGRADE_SETTINGS: {
       const mergedKeyBindings = defaultSettings.keyBindings.map(x =>
@@ -239,7 +239,9 @@ export default (state = defaultSettings, action) => {
     case types.SET_ZOOM_IN: {
       let zoomLevel = state.zoomFactor;
       const offSet = 0.1;
-      if (zoomLevel.toPrecision(2) <= zoomLevel + offSet * 4) {
+      const correctedOffset = offSet * 4;
+      const threshold = zoomLevel + correctedOffset;
+      if (zoomLevel.toPrecision(2) <= threshold) {
         zoomLevel += offSet;
         PlatformIO.setZoomFactorElectron(zoomLevel);
       }
@@ -416,14 +418,16 @@ export const actions = {
     lastPublishedVersion
   }),
   checkForUpdate: () => (
-    dispatch: (actions: Object) => void,
-    getState: () => Object
+    dispatch: (actions: Object) => void
+    // getState: () => Object
   ) => {
-    const { settings } = getState();
+    // const { settings } = getState();
     getLastVersionPromise()
       .then(lastVersion => {
         console.log('Last version on server: ' + lastVersion);
+        // $FlowFixMe
         const newVersion = semver.coerce(lastVersion); // lastVersion '3.0.5' ;
+        // $FlowFixMe
         const currentVersion = semver.coerce(versionMeta.version);
         // const lastPublishedVersion = semver.coerce(settings.lastPublishedVersion);
         if (semver.valid(newVersion) && semver.gt(newVersion, currentVersion)) {

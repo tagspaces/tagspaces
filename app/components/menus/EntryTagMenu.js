@@ -36,17 +36,16 @@ import { getMaxSearchResults } from '../../reducers/settings';
 import { actions as AppActions } from '../../reducers/app';
 
 type Props = {
-  classes: Object,
   open: boolean,
   onClose: () => void,
   anchorEl: Object | null,
   selectedTag: Tag | null,
   currentEntryPath: string,
   removeTags: (paths: Array<string>, tags: Array<Tag>) => void,
-  editTagForEntry: (path: string, tag: Tag) => void,
   searchLocationIndex: (searchQuery: SearchQuery) => void,
   maxSearchResults: number,
   openSearchPanel: () => void,
+  toggleEditTagDialog: (tag: Tag) => void,
   isReadOnlyMode: boolean
 };
 

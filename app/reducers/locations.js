@@ -19,9 +19,7 @@
 
 import uuidv1 from 'uuid';
 import { immutablySwapItems } from '../utils/misc';
-import PlatformIO from '../services/platform-io';
 import { actions as AppActions } from '../reducers/app';
-import AppConfig from '../config';
 
 export const types = {
   ADD_LOCATION: 'APP/ADD_LOCATION',
@@ -61,6 +59,7 @@ export default (state: Array<Location> = initialState, action: Object) => {
     case types.ADD_LOCATION: {
       if (action.location.isDefault) {
         state.forEach(location => {
+          // eslint-disable-next-line no-param-reassign
           location.isDefault = false;
         });
       }
@@ -80,6 +79,7 @@ export default (state: Array<Location> = initialState, action: Object) => {
           indexForEditing = index;
         }
         if (action.location.isDefault) {
+          // eslint-disable-next-line no-param-reassign
           location.isDefault = false;
         }
       });

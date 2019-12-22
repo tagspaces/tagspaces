@@ -21,12 +21,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import IconButton from '@material-ui/core/IconButton';
+import { withStyles } from '@material-ui/core/styles';
 import Badge from '@material-ui/core/Badge';
 import { Pro } from '../pro';
 import TextLogoIcon from '../assets/images/text-logo.svg';
 import { actions as AppActions } from '../reducers/app';
 import versionMeta from '../version.json';
-import { withStyles } from '@material-ui/core/styles';
 
 const AppVersionBadge = withStyles(theme => ({
   badge: {

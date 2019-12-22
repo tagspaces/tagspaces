@@ -87,7 +87,8 @@ type Props = {
   perspectives: Array<Object>,
   currentLocationId: string,
   isReadOnlyMode: boolean,
-  hideDrawer?: () => void,
+  hideDrawer: () => void,
+  openFile: (path: string) => void,
   openURLExternally: (path: string) => void,
   loadDirectoryContent: (path: string) => void,
   openLocation: (location: Location) => void,
@@ -512,7 +513,7 @@ class LocationManager extends React.Component<Props, State> {
     });
   };
 
-  renderNameColumnAction = (field, location, key) => {
+  renderNameColumnAction = field => {
     const children = (
       <span style={{ fontSize: 15, marginLeft: 5 }} title={field}>
         <FolderIcon
@@ -520,21 +521,12 @@ class LocationManager extends React.Component<Props, State> {
           className={this.props.classes.icon}
         />
         {field && field.length > 25 ? field.substr(0, 25) + '...' : field}
-        {/* <IconButton
-          style={{ float: 'right', paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0 }}
-          aria-label={i18n.t('core:options')}
-          aria-haspopup="true"
-          data-tid={'locationMoreButton_' + field.name}
-          onClick={event => this.handleLocationContextMenuClick(event, location)}
-        >
-          <MoreVertIcon />
-        </IconButton> */}
       </span>
     );
     return {
       children,
       props: {}
-    }; // (<span>{ name }</span>);
+    };
   };
 
   handleCellClick = (record, index) => ({

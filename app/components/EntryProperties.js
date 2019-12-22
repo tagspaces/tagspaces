@@ -141,7 +141,6 @@ const styles = theme => ({
 });
 
 const customRenderer = new marked.Renderer();
-// customRenderer.link = (href, title, text) => `<a href="javascript:window.open('${href}', '_blank', 'nodeIntegration=no')" target="_blank">${text}</a>`;
 customRenderer.link = (href, title, text) =>
   `<a href="#" onClick="event.preventDefault();event.stopPropagation(); window.open('${href}', '_blank', 'nodeIntegration=no');return false;">${text}</a>`;
 
@@ -159,22 +158,20 @@ marked.setOptions({
 
 type Props = {
   classes: Object,
-  entryPath?: string | null,
-  shouldReload?: boolean | null,
-  settings: Object,
-  shouldCopyFile?: boolean,
+  entryPath: string,
+  shouldReload: boolean | null,
+  shouldCopyFile: boolean,
   editTagForEntry: () => void,
-  renameFile: () => void,
-  renameDirectory: () => void,
+  renameFile: (path: string, nextPath: string) => void,
+  renameDirectory: (path: string, nextPath: string) => void,
   normalizeShouldCopyFile: () => void,
-  showNotification: () => void,
+  showNotification: (message: string) => void,
   reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void,
   updateThumbnailUrl: (path: string, thumbUrl: string) => void,
   addTags: () => void,
   removeTags: () => void,
   removeAllTags: () => void,
-  resetState: () => void,
-  showSelectDirectoryDialog: () => void,
+  resetState: (stateName: string) => void,
   isReadOnlyMode: boolean,
   setPropertiesEditMode: (editMode: boolean) => void
 };
@@ -190,9 +187,11 @@ type State = {
   isEditTagDialogOpened: boolean | null,
   isDeleteTagDialogOpened: boolean,
   isFileThumbChooseDialogOpened: boolean,
+  isMoveCopyFilesDialogOpened: boolean,
   isEditName: boolean,
   isEditDescription: boolean,
   displayColorPicker: boolean,
+  thumbPath: string,
   isFile: boolean
 };
 
@@ -235,7 +234,7 @@ class EntryProperties extends Component<Props, State> {
     }
   }
 
-  loadEntryProperties = entryPath => {
+  loadEntryProperties = (entryPath: string) => {
     getAllPropertiesPromise(entryPath)
       .then(entryProps => {
         this.setState({
@@ -336,6 +335,7 @@ class EntryProperties extends Component<Props, State> {
   toggleEditDescriptionField = () => {
     if (this.props.isReadOnlyMode) {
       this.setState({
+        // customRenderer.link = (href, title, text) => `<a href="javascript:window.open('${href}', '_blank', 'nodeIntegration=no')" target="_blank">${text}</a>`;
         isEditDescription: false
       });
       return;

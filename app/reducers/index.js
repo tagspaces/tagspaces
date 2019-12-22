@@ -16,7 +16,7 @@
  *
  * @flow
  */
-import { persistCombineReducers, createMigrate } from 'redux-persist';
+import { persistCombineReducers } from 'redux-persist';
 import { routerReducer as router } from 'react-router-redux';
 import getStoredStateMigrateV4 from 'redux-persist/lib/integration/getStoredStateMigrateV4';
 // import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
