@@ -51,18 +51,23 @@ export function parseLatLon(
   return false;
 }
 
-export function traverse(objArr, func) {
+export function traverse(objArr: Array<Object>, func: any) {
   objArr.forEach(obj => {
     Object.keys(obj).map(objKey => {
       func.apply(this, [obj, objKey]);
       if (objKey === 'subPages' && typeof Array.isArray(obj[objKey])) {
         traverse(obj[objKey], func);
       }
+      return true;
     });
   });
 }
 
-export function immutablySwapItems(items, firstIndex, secondIndex) {
+export function immutablySwapItems(
+  items: any,
+  firstIndex: number,
+  secondIndex: number
+) {
   const results = items.slice();
   const firstItem = items[firstIndex];
   results[firstIndex] = items[secondIndex];
@@ -79,7 +84,7 @@ export function hasURLProtocol(url: string) {
   );
 }
 
-export function arrayBufferToDataURL(arrayBuffer, mime) {
+export function arrayBufferToDataURL(arrayBuffer: any, mime: string) {
   const blob = new Blob([arrayBuffer], { type: mime });
   const url = window.URL || window.webkitURL;
   return url.createObjectURL(blob);
@@ -94,10 +99,11 @@ export function arrayBufferToDataURL(arrayBuffer, mime) {
  * @param {int} sliceSize - optional size of slices if omited 512 is used as default
  * @returns {Blob}
  */
-export function b64toBlob(b64Data, contentType, sliceSize) {
-  contentType = contentType || '';
-  sliceSize = sliceSize || 512;
-
+export function b64toBlob(
+  b64Data: any,
+  contentType: string = '',
+  sliceSize: number = 512
+) {
   const byteCharacters = atob(b64Data);
   const byteArrays = [];
 
@@ -114,11 +120,11 @@ export function b64toBlob(b64Data, contentType, sliceSize) {
   return blob;
 }
 
-export function getRandomInt(min, max) {
+export function getRandomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-export function isVisibleOnScreen(element) {
+export function isVisibleOnScreen(element: Object) {
   const rectangle = element.getBoundingClientRect();
   const isVisible =
     rectangle.top >= 0 &&
@@ -143,8 +149,8 @@ export function getURLParameter(variable: string) {
 }
 
 export function dataURLtoBlob(dataURI) {
-  let arr = dataURI.split(','),
-    mime = arr[0].match(/:(.*?);/)[1];
+  const arr = dataURI.split(',');
+  const mime = arr[0].match(/:(.*?);/)[1];
   const arrBuff = base64ToArrayBuffer(arr[1]);
   return new window.Blob([arrBuff], { type: mime });
 }
@@ -158,7 +164,7 @@ export function base64ToArrayBuffer(base64) {
   return bytes.buffer;
 }
 
-export function arrayBufferToBuffer(content) {
+export function arrayBufferToBuffer(content: any) {
   const buffer = new Buffer(content.byteLength);
   const view = new Uint8Array(content);
   for (let i = 0; i < buffer.length; ++i) {
@@ -179,7 +185,7 @@ export function getBase64Image(imgURL: string) {
   return canvas.toDataURL('image/png');
 }
 
-export function formatFileSize(sizeInBytes): string {
+export function formatFileSize(sizeInBytes: number): string {
   const kilobyte = 1024;
   const megabyte = kilobyte * kilobyte;
   const gigabyte = megabyte * kilobyte;
@@ -197,7 +203,7 @@ export function formatFileSize(sizeInBytes): string {
   } else if (sizeInBytes >= terabyte) {
     return (sizeInBytes / terabyte).toFixed(precision) + ' TB';
   }
-  // return sizeInBytes + ' B';
+  return sizeInBytes + '';
 }
 
 export function formatFileSize2(
@@ -222,7 +228,7 @@ export function formatFileSize2(
   return sizeInBytes.toFixed(1) + ' ' + units[cUnit];
 }
 
-export function formatDateTime(date, includeTime: boolean) {
+export function formatDateTime(date: string, includeTime: boolean) {
   if (date === undefined || date === '') {
     return '';
   }
@@ -309,7 +315,7 @@ export function formatDateTime4Tag(
   return cYear + '' + cMonth + '' + cDate + time + milliseconds;
 }
 
-export function convertStringToDate(dateString) {
+export function convertStringToDate(dateString: string) {
   if (dateString === undefined || dateString === '') {
     return false;
   }
@@ -325,7 +331,7 @@ export function convertStringToDate(dateString) {
   return false;
 }
 
-export function sortAlphaNum(a, b) {
+export function sortAlphaNum(a: any, b: any) {
   // Regular expression to separate the digit string from the non-digit strings.
   const reParts = /\d+|\D+/g;
 
@@ -377,23 +383,23 @@ export function sortAlphaNum(a, b) {
 }
 
 // Sorting functionality
-export function sortByName(a, b) {
+export function sortByName(a: any, b: any) {
   return !b.isFile - !a.isFile || sortAlphaNum(a, b);
 }
 
-export function sortBySize(a, b) {
+export function sortBySize(a: any, b: any) {
   return a.size - b.size;
 }
 
-export function sortByDateModified(a, b) {
+export function sortByDateModified(a: any, b: any) {
   return a.lmdt - b.lmdt;
 }
 
-export function sortByExtension(a, b) {
+export function sortByExtension(a: any, b: any) {
   return a.extension.toString().localeCompare(b.extension);
 }
 
-export function sortByFirstTag(a, b) {
+export function sortByFirstTag(a: any, b: any) {
   if ((!a.tags && !b.tags) || (a.tags.length < 1 && b.tags.length < 1)) {
     return 0;
   }
@@ -406,7 +412,7 @@ export function sortByFirstTag(a, b) {
   return a.tags[0].title.localeCompare(b.tags[0].title);
 }
 
-export function shuffleArray(array) {
+export function shuffleArray(array: Array<any>) {
   // Durstenfeld shuffle
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -415,7 +421,7 @@ export function shuffleArray(array) {
   return array;
 }
 
-export function sortByCriteria(data, criteria, order) {
+export function sortByCriteria(data: any, criteria: string, order: boolean) {
   switch (criteria) {
     case 'byName':
       if (order) {
@@ -454,7 +460,7 @@ export function sortByCriteria(data, criteria, order) {
  * @param val
  * @returns {boolean}
  */
-export const isObj = val =>
+export const isObj = (val: any) =>
   typeof val === 'object' && !isArr(val) && !isNull(val);
 
 /**
@@ -462,81 +468,70 @@ export const isObj = val =>
  * @param val
  * @returns {boolean}
  */
-export const isNull = val => val === null;
+export const isNull = (val: any) => val === null;
 
 /**
  * @description Check if value is of type 'number'
  * @param val
  * @returns {boolean}
  */
-export const isNum = val => typeof val === 'number' && !isNaN(val);
+export const isNum = (val: any) => typeof val === 'number' && !isNaN(val);
 
 /**
  * @description Check if value is of type 'function'
  * @param val
  * @returns {boolean}
  */
-export const isFunc = val => typeof val === 'function';
+export const isFunc = (val: any) => typeof val === 'function';
 
 /**
  * @description Check if value is of type 'array'
  * @param val
  * @returns {boolean}
  */
-export const isArr = val => Array.isArray(val);
+export const isArr = (val: any) => Array.isArray(val);
 
 /**
  * @description Check if value is of type 'string'
  * @param val
  * @returns {boolean}
  */
-export const isStr = val => typeof val === 'string';
+export const isStr = (val: any) => typeof val === 'string';
 
 /**
- * @description Check if value is of type 'undefined'
- * @param val
- * @returns {boolean}
+ * Check if value is of type 'undefined'
  */
-export const isUndef = val => typeof val === 'undefined';
+export const isUndef = (val: any): boolean => typeof val === 'undefined';
 
 /**
- * @description Check if value is of type 'boolean'
- * @param val
- * @returns {boolean}
+ * Check if value is of type 'boolean'
  */
-export const isBool = val => typeof val === 'boolean';
+export const isBool = (val: any) => typeof val === 'boolean';
 
 /**
- * @description Check if object has property
- * @param obj
- * @param prop
- * @returns {boolean}
+ * Check if object has property
  */
-export const hasProp = (obj, prop) => obj.hasOwnProperty(prop);
+export const hasProp = (obj: Object, prop: any): boolean =>
+  obj.hasOwnProperty(prop);
 
 /**
- * @description Check if object has method
- * @param obj
- * @param method
- * @returns {boolean}
+ * Check if object has method
  */
-export const hasMethod = (obj, method) =>
+export const hasMethod = (obj: Object, method: any): boolean =>
   hasProp(obj, method) && isFunc(obj[method]);
 
 /**
- * @description Check if object has key
- * @param obj
- * @param key
- * @returns {boolean}
+ * Check if object has key
  */
-export const hasKey = (obj, key) => getKeys(obj).indexOf(key) > -1;
+export const hasKey = (obj: Object, key: any): boolean =>
+  getKeys(obj).indexOf(key) > -1;
 
 /**
  * @description Get object keys
  * @param obj
  * @returns {Array}
  */
-export const getKeys = obj => Object.keys(obj);
+export const getKeys = (obj: Object) => Object.keys(obj);
 
 /**
  * @description Iterate over each key of an object

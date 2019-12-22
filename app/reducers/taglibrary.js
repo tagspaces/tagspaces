@@ -52,6 +52,7 @@ export type Tag = {
   icon?: string,
   description?: string,
   style?: string,
+  path?: string, // needed for geo tagging should be removed
   functionality?: string,
   keyBinding?: string,
   color?: string,

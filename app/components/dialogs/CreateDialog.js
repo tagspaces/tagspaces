@@ -81,7 +81,7 @@ type Props = {
 };
 
 const CreateDialog = (props: Props) => {
-  let fileInput; // Object | null;
+  let fileInput: HTMLFormElement;
   const fileName =
     'note' +
     AppConfig.beginTagContainer +

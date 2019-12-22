@@ -287,7 +287,6 @@ function generateImageThumbnail(fileURL): Promise<string> {
     img.crossOrigin = 'anonymous';
     img.onload = () => {
       EXIF.getData(img, function() {
-        // eslint-disable-line
         // TODO Use EXIF only for jpegs
         const orientation = EXIF.getTag(this, 'Orientation');
         /*
@@ -349,10 +348,10 @@ function generateImageThumbnail(fileURL): Promise<string> {
 
 function generateVideoThumbnail(fileURL): Promise<string> {
   return new Promise(resolve => {
-    let canvas = document.createElement('canvas');
+    let canvas: HTMLCanvasElement = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    let img = new Image();
-    let video = document.createElement('video');
+    let img: HTMLImageElement = new Image();
+    let video: HTMLVideoElement = document.createElement('video');
     const captureTime = 1.5; // time in seconds at which to capture the image from the video
 
     const errorHandler = err => {
