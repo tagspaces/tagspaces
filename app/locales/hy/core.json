@@ -166,7 +166,7 @@
   "reloadDirectory": "Վերագործարկել պանակը",
   "newSubdirectory": "Նոր ենթապանակ",
   "openParentDirectory": "Բացել ծնող պանակը",
-  "openDirectory": "Բացել պանակը",
+  "openDirectory": "Բացել պանակ",
   "aboutTagSpaces": "TagSpaces-ի մասին",
   "startingHints": "Օգտագործման հուշումներ",
   "whatsNew": "Ծրագրի նոր փոփոխությունները",
@@ -265,7 +265,7 @@
   "options": "Նախընտրանքներ",
   "desktopMode": "Աշխատասեղանի ռեժիմ",
   "locationManager": "Տեղակառավարիչ",
-  "chooseLocation": "Բացել պանակը",
+  "chooseLocation": "Բացել պանակ",
   "colorPickerDialogTitle": "Ընտրել գույն",
   "themeSelector": "Թեմայի ընտրիչ",
   "moveUp": "Բարձրացնել",
@@ -447,6 +447,6 @@
   "cancelIndexing": "Չեղարկել ցուցակումը",
   "getLatestVersionPro": "Ներբեռնեք վերջին տարբերակն այն հղումով, որ ստացել եք գնումը հաստատող էլ. նամակով։",
   "noFileButFoldersFound": "Որոշ պանակներ գտնվել են։ Դրանք տեսնելու համար միացրեք պանակի տեսանելիությունը ցուցադրաձևերի գործիքագոտում։",
-  "selectTags": "Select tags",
+  "selectTags": "Ընտրել պիտակներ",
   "-": "-"
 }
