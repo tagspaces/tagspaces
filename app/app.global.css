@@ -1,14 +1,14 @@
-@import "assets/loading.css";
-@import "assets/scrollbars.css";
-@import "assets/splitpane.css";
-@import "assets/minireset.css";
-@import "assets/rc-datetime.css";
-@import "~rc-table/assets/index.css";
-@import "~leaflet/dist/leaflet.css";
-@import "~react-image-gallery/styles/css/image-gallery-no-icon.css";
+@import 'assets/loading.css';
+@import 'assets/scrollbars.css';
+@import 'assets/splitpane.css';
+@import 'assets/minireset.css';
+@import 'assets/rc-datetime.css';
+@import '~rc-table/assets/index.css';
+@import '~leaflet/dist/leaflet.css';
+@import '~react-image-gallery/styles/css/image-gallery.css';
 
 /* Needed to disable border on focused HotKey element */
-div[tabindex="-1"]:focus {
+div[tabindex='-1']:focus {
   outline: 0;
 }
 
