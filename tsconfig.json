@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "allowJs": false,
+    "target": "es5",
+    "baseUrl": "./",
+    "rootDir": "./",
+    "jsx": "react",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "noUnusedLocals": true,
+    "noEmit": false,
+    "allowSyntheticDefaultImports": true,
+    "pretty": true,
+    "sourceMap": false,
+    "resolveJsonModule": true,
+    "lib": ["es2015", "dom"]
+  },
+  "exclude": ["node_modules", "**/node_modules/*", "extensions"]
+}

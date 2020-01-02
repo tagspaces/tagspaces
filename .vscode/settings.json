@@ -1,10 +1,9 @@
 {
-  "flow.pathToFlow": "node_modules/.bin/flow",
-  "javascript.validate.enable": false,
+  "javascript.validate.enable": true,
   "git.autofetch": true,
   "git.confirmSync": false,
   "cSpell.userWords": ["customizability", "mapique", "tagspaces", "treeviz"],
-  "typescript.format.enable": false,
+  "typescript.format.enable": true,
   "search.exclude": {
     ".git": true,
     "cordova": true,
@@ -27,5 +26,6 @@
     "taggroup",
     "taglibrary",
     "textcolor"
-  ]
+  ],
+  "flow.enabled": false
 }
