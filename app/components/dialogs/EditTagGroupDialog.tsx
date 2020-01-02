@@ -32,14 +32,14 @@ import { TagGroup } from '../../reducers/taglibrary';
 import i18n from '../../services/i18n';
 import TransparentBackground from '../TransparentBackground';
 
-type Props = {
+interface Props {
 	open: boolean;
 	editTagGroup: (tagGroup: TagGroup) => void;
 	selectedTagGroupEntry: TagGroup;
 	onClose: () => void;
-};
+}
 
-type State = {
+interface State {
 	inputError: boolean;
 	displayColorPicker: boolean;
 	displayTextColorPicker: boolean;
@@ -49,7 +49,7 @@ type State = {
 	color: string;
 	textcolor: string;
 	modifiedDate: string;
-};
+}
 
 class EditTagGroupDialog extends React.Component<Props, State> {
 	state = {
@@ -77,7 +77,7 @@ class EditTagGroupDialog extends React.Component<Props, State> {
 		}
 	};
 
-	handleInputChange = (event: Object) => {
+	handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const target = event.target;
 		const value = target.type === 'checkbox' ? target.checked : target.value;
 		const name = target.name;

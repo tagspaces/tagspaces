@@ -28,20 +28,20 @@ import Dialog from '@material-ui/core/Dialog';
 import i18n from '../../services/i18n';
 import { TagGroup } from '../../reducers/taglibrary';
 
-type Props = {
+interface Props {
 	open: boolean;
 	onClose: () => void;
 	addTag: (tags: string, uuid: string) => void;
 	fullScreen: boolean;
 	selectedTagGroupEntry: TagGroup;
-};
+}
 
-type State = {
+interface State {
 	inputError: boolean;
 	disableConfirmButton: boolean;
 	open: boolean;
 	tagTitle: string;
-};
+}
 
 class CreateTagsDialog extends React.Component<Props, State> {
 	state = {
@@ -51,7 +51,7 @@ class CreateTagsDialog extends React.Component<Props, State> {
 		tagTitle: ''
 	};
 
-	handleInputChange = (event: Object) => {
+	handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const target = event.target;
 		const value = target.type === 'checkbox' ? target.checked : target.value;
 		const name = target.name;

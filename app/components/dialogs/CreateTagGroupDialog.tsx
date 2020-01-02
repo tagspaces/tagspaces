@@ -30,15 +30,16 @@ import { TagGroup } from '../../reducers/taglibrary';
 import i18n from '../../services/i18n';
 import TransparentBackground from '../TransparentBackground';
 
-type Props = {
+interface Props {
 	open: boolean;
 	onClose: () => void;
 	createTagGroup: (tagGroup: TagGroup) => void;
+	fullScreen: boolean;
 	color: string;
 	textcolor: string;
-};
+}
 
-type State = {
+interface State {
 	inputError: boolean;
 	displayColorPicker: boolean;
 	displayTextColorPicker: boolean;
@@ -49,7 +50,7 @@ type State = {
 	textcolor: string;
 	children: string;
 	expanded: boolean;
-};
+}
 
 class CreateTagGroupDialog extends React.Component<Props, State> {
 	state = {
@@ -65,7 +66,7 @@ class CreateTagGroupDialog extends React.Component<Props, State> {
 		uuid: ''
 	};
 
-	handleInputChange = (event: Object) => {
+	handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const target = event.target;
 		const value = target.type === 'checkbox' ? target.checked : target.value;
 		const name = target.name;

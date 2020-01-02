@@ -33,7 +33,7 @@ import {
 import versionMeta from '../version.json';
 import { Tag } from '../reducers/taglibrary';
 
-export type FileSystemEntry = {
+export interface FileSystemEntry {
 	uuid: string;
 	name: string;
 	isFile: boolean;
@@ -46,9 +46,10 @@ export type FileSystemEntry = {
 	size: number;
 	lmdt: number;
 	path: string;
-};
+	meta?: FileSystemEntryMeta;
+}
 
-export type FileSystemEntryMeta = {
+export interface FileSystemEntryMeta {
 	description: string;
 	tags: Array<Tag>;
 	color?: string;
@@ -56,7 +57,7 @@ export type FileSystemEntryMeta = {
 	appName: string;
 	appVersionUpdated: string;
 	lastUpdated: string;
-};
+}
 
 export function enhanceEntry(entry: any): FileSystemEntry {
 	let fileNameTags = [];

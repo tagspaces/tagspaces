@@ -82,7 +82,6 @@ type Props = {
 	addTags: () => void;
 	importTagGroups: () => void;
 	exportTagGroups: () => void;
-	toggleTagGroup: () => void;
 	createTagGroup: () => void;
 	addTag: () => void;
 	moveTag: () => void;
@@ -129,22 +128,14 @@ class TagLibrary extends React.Component<Props, State> {
 		isDeleteTagDialogOpened: false
 	};
 
-	handleCloseDialogs = () => {
-		this.setState({
-			isCreateLocationDialogOpened: false,
-			isEditLocationDialogOpened: false,
-			isDeleteLocationDialogOpened: false,
-			isDeleteDirectoryDialogOpened: false,
-			isCreateDirectoryDialogOpened: false,
-			isRenameDirectoryDialogOpened: false
-		});
-	};
-
 	handleTagGroupTitleClick = (event: Object, tagGroup) => {
 		this.props.toggleTagGroup(tagGroup.expanded, tagGroup.uuid);
 	};
 
-	handleTagGroupMenu = (event: Object, tagGroup) => {
+	handleTagGroupMenu = (
+		event: React.ChangeEvent<HTMLInputElement>,
+		tagGroup
+	) => {
 		this.setState({
 			tagGroupMenuOpened: true,
 			tagGroupMenuAnchorEl: event.currentTarget,
@@ -152,7 +143,11 @@ class TagLibrary extends React.Component<Props, State> {
 		});
 	};
 
-	handleTagMenu = (event: Object, tag, tagGroup) => {
+	handleTagMenu = (
+		event: React.ChangeEvent<HTMLInputElement>,
+		tag,
+		tagGroup: TagGroup
+	) => {
 		this.setState({
 			tagMenuOpened: true,
 			tagMenuAnchorEl: event.currentTarget,
@@ -161,7 +156,7 @@ class TagLibrary extends React.Component<Props, State> {
 		});
 	};
 
-	handleTagLibraryMenu = (event: Object) => {
+	handleTagLibraryMenu = (event: React.ChangeEvent<HTMLInputElement>) => {
 		this.setState({
 			tagLibraryMenuOpened: true,
 			tagLibraryMenuAnchorEl: event.currentTarget

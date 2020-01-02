@@ -24,6 +24,7 @@ import {
   extractParentDirectoryPath,
   cleanTrailingDirSeparator
 } from '../utils/paths';
+import { FileSystemEntry } from './utils-io';
 
 const appSettingFile = 'settings.json';
 const appSettingTagsFile = 'settingsTags.json';
@@ -157,7 +158,7 @@ export default class CordovaIO {
     }
   };
 
-  getFileSystemPromise = (path: string): Promise<*> => {
+  getFileSystemPromise = (path: string): Promise<any> => {
     console.log('getFileSystemPromise: ' + path);
     if (path.indexOf(cordova.file.applicationDirectory) === 0) {
     } else {
@@ -429,7 +430,7 @@ export default class CordovaIO {
   /**
    * Creates a list with containing the files and the sub directories of a given directory
    */
-  listDirectoryPromise = (path: string, lite: boolean): Promise<*> =>
+  listDirectoryPromise = (path: string, lite: boolean): Promise<any> =>
     new Promise(async (resolve, reject) => {
       console.time('listDirectoryPromise');
       const metaContent = !lite
@@ -596,7 +597,7 @@ export default class CordovaIO {
         });
     });
 
-  getEntryMeta = (eentry: Object, metaPath: string): Promise<Object> => {
+  getEntryMeta = (eentry: FileSystemEntry, metaPath: string): Promise<any> => {
     if (eentry.isFile) {
       // const metaFilePath = getMetaFileLocationForFile(eentry.path);
       return this.loadTextFilePromise(metaPath).then(result => {
@@ -623,11 +624,11 @@ export default class CordovaIO {
   /**
    * Finds out the properties of a file or directory such last modification date or file size
    */
-  getPropertiesPromise = (path: string): Promise<*> =>
+  getPropertiesPromise = (path: string): Promise<any> =>
     new Promise((resolve, reject) => {
       const entryPath = this.normalizePath(path);
       // getFileSystemPromise(dir).then(function(fileSystem) {
-      const fileProperties = {};
+      const fileProperties: object = {};
       this.fsRoot.getFile(
         entryPath,
         {
@@ -677,7 +678,7 @@ export default class CordovaIO {
   /**
    * Load the content of a text file
    */
-  loadTextFilePromise = (filePath: string): Promise<*> =>
+  loadTextFilePromise = (filePath: string): Promise<any> =>
     this.getFileContentPromise(filePath, 'text');
 
   /**
@@ -686,8 +687,8 @@ export default class CordovaIO {
   getFileContentPromise = (
     filePath: string,
     type,
-    resolvePath: string
-  ): Promise<*> => {
+    resolvePath?: string
+  ): Promise<any> => {
     // TODO refactor
     const getFilePromise = (filePath, resolvePath) => {
       const getFile = (fullPath, result, fail) => {
@@ -751,7 +752,7 @@ export default class CordovaIO {
     content,
     overWrite: boolean,
     isRaw?: boolean
-  ): Promise<*> => {
+  ): Promise<any> => {
     // eslint-disable-next-line no-param-reassign
     filePath = this.normalizePath(filePath);
     console.log('Saving file: ' + filePath);
@@ -815,7 +816,7 @@ export default class CordovaIO {
         );
       } else {
         const errMsg = $.i18n.t('ns.common:fileExists', { fileName: filePath });
-        showAlertDialog(errMsg);
+        // showAlertDialog(errMsg);
         reject(errMsg);
       }
     });
@@ -828,7 +829,7 @@ export default class CordovaIO {
     filePath: string,
     content: string,
     overWrite: boolean
-  ): Promise<*> => {
+  ): Promise<any> => {
     console.log('Saving TEXT file: ' + filePath);
     // Handling the UTF8 support for text files
     /* var UTF8_BOM = "\ufeff";
@@ -857,7 +858,7 @@ export default class CordovaIO {
   /**
    * Creates a directory
    */
-  createDirectoryPromise = (dirPath: string): Promise<*> => {
+  createDirectoryPromise = (dirPath: string): Promise<any> => {
     console.log('Creating directory: ' + dirPath);
     return new Promise((resolve, reject) => {
       dirPath = this.normalizePath(dirPath);
@@ -885,7 +886,7 @@ export default class CordovaIO {
   /**
    * Copies a given file to a specified location
    */
-  copyFilePromise = (filePath: string, newFilePath: string): Promise<*> =>
+  copyFilePromise = (filePath: string, newFilePath: string): Promise<any> =>
     new Promise((resolve, reject) => {
       // eslint-disable-next-line no-param-reassign
       filePath = this.normalizePath(filePath);
@@ -946,7 +947,7 @@ export default class CordovaIO {
   /**
    * Renames a given file
    */
-  renameFilePromise = (filePath: string, newFilePath: string): Promise<*> =>
+  renameFilePromise = (filePath: string, newFilePath: string): Promise<any> =>
     new Promise((resolve, reject) => {
       // eslint-disable-next-line no-param-reassign
       filePath = this.normalizePath(filePath);
@@ -1011,7 +1012,7 @@ export default class CordovaIO {
   /**
    * Rename a directory
    */
-  renameDirectoryPromise = (dirPath: string, newDirName: string): Promise<*> =>
+  renameDirectoryPromise = (dirPath: string, newDirName: string): Promise<any> =>
     new Promise((resolve, reject) => {
       let newDirPath =
         extractParentDirectoryPath(dirPath) +
@@ -1076,7 +1077,7 @@ export default class CordovaIO {
   /**
    * Delete a specified file
    */
-  deleteFilePromise = (filePath: string): Promise<*> =>
+  deleteFilePromise = (filePath: string): Promise<any> =>
     new Promise((resolve, reject) => {
       const path = this.normalizePath(filePath);
       this.fsRoot.getFile(
@@ -1105,7 +1106,7 @@ export default class CordovaIO {
   /**
    * Delete a specified directory, the directory should be empty, if the trash can functionality is not enabled
    */
-  deleteDirectoryPromise = (dirPath: string): Promise<*> => {
+  deleteDirectoryPromise = (dirPath: string): Promise<any> => {
     console.log('Deleting directory: ' + dirPath);
     return new Promise((resolve, reject) => {
       const path = this.normalizePath(dirPath);

@@ -58,7 +58,7 @@ import {
   actions as LocationActions,
   getLocations,
   locationType,
-  type Location
+  Location
 } from '../reducers/locations';
 import {
   actions as AppActions,
@@ -71,7 +71,6 @@ import {
   getShowUnixHiddenEntries
 } from '../reducers/settings';
 import i18n from '../services/i18n';
-import { isObj } from '../utils/misc';
 import AppConfig from '../config';
 import PlatformIO from '../services/platform-io';
 import TargetMoveFileBox from './TargetMoveFileBox';
@@ -80,7 +79,7 @@ import IOActions from '../reducers/io-actions';
 
 const isLocationsReadOnly = window.ExtLocationsReadOnly;
 
-type Props = {
+interface Props {
   classes: Object,
   locations: Array<Location>,
   perspectives: Array<Object>,
@@ -112,7 +111,7 @@ type Props = {
   moveFiles: (files: Array<string>, destination: string) => void
 };
 
-type State = {
+interface State {
   locationDirectoryContextMenuAnchorEl?: Object | null,
   locationContextMenuOpened?: boolean,
   directoryContextMenuAnchorEl?: Object | null,
@@ -124,7 +123,6 @@ type State = {
   isEditLocationDialogOpened?: boolean,
   isDeleteLocationDialogOpened?: boolean,
   isSelectDirectoryDialogOpened?: boolean,
-  isCreateDirectoryDialogOpened?: boolean,
   createLocationDialogKey: string,
   isCreateDirectoryDialogOpened?: boolean,
   locationManagerMenuOpened: boolean,
@@ -270,7 +268,7 @@ class LocationManager extends React.Component<Props, State> {
   getMergedDirsCopy = (path: string, arrChildren: Array<SubFolder>) => {
     const entries = Object.entries(this.state.dirs);
     for (const [uuid, arrSubDirs] of entries) {
-      const arr = arrSubDirs.length;
+      const arr: number = arrSubDirs.length;
       let a;
       for (a = 0; a < arr; a += 1) {
         if (path === arrSubDirs[a].path) {
@@ -406,7 +404,7 @@ class LocationManager extends React.Component<Props, State> {
     this.setState({ isDeleteLocationDialogOpened: true });
   };
 
-  handleDirectoryContextMenu = (event: Object, directoryPath: string) => {
+  handleDirectoryContextMenu = (event: React.ChangeEvent<HTMLInputElement> , directoryPath: string) => {
     this.setState({
       directoryContextMenuOpened: true,
       directoryContextMenuAnchorEl: event.currentTarget,
@@ -414,7 +412,7 @@ class LocationManager extends React.Component<Props, State> {
     });
   };
 
-  toggleDirectoryMenuClose = (event: Object) => {
+  toggleDirectoryMenuClose = (event: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({
       directoryContextMenuOpened: !this.state.directoryContextMenuOpened,
       directoryContextMenuAnchorEl: event ? event.currentTarget : null
@@ -696,7 +694,7 @@ class LocationManager extends React.Component<Props, State> {
     );
   };
 
-  handleLocationManagerMenu = (event: Object) => {
+  handleLocationManagerMenu = (event: React.ChangeEvent<HTMLInputElement> ) => {
     this.setState({
       locationManagerMenuOpened: true,
       locationManagerMenuAnchorEl: event.currentTarget

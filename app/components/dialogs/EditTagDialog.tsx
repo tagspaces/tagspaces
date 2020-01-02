@@ -31,15 +31,15 @@ import TransparentBackground from '../TransparentBackground';
 import i18n from '../../services/i18n';
 import { Tag, TagGroup } from '../../reducers/taglibrary';
 
-type Props = {
+interface Props {
 	open: boolean;
 	onClose: () => void;
 	editTag: (tag: Tag, tagGroupId: string) => void;
 	selectedTag: Tag;
 	selectedTagGroupEntry: TagGroup;
-};
+}
 
-type State = {
+interface State {
 	inputError: boolean;
 	displayColorPicker: boolean;
 	displayTextColorPicker: boolean;
@@ -48,7 +48,7 @@ type State = {
 	color: string;
 	textcolor: string;
 	modifiedDate: string;
-};
+}
 
 class EditTagDialog extends React.Component<Props, State> {
 	state = {
@@ -74,7 +74,7 @@ class EditTagDialog extends React.Component<Props, State> {
 		}
 	};
 
-	handleInputChange = (event: Object) => {
+	handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const target = event.target;
 		const value = target.type === 'checkbox' ? target.checked : target.value;
 		const name = target.name;

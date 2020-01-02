@@ -59,48 +59,48 @@ import {
 import { getMaxSearchResults } from '../reducers/settings';
 import styles from './SidePanels.css';
 import i18n from '../services/i18n';
-import { FileTypeGroups, type SearchQuery } from '../services/search';
+import { FileTypeGroups, SearchQuery } from '../services/search';
 import { Pro } from '../pro';
 import SearchMenu from './menus/SearchMenu';
-import type { Tag } from '../reducers/taglibrary';
+import { Tag } from '../reducers/taglibrary';
 import ocl from '../utils/openlocationcode';
 import { formatDateTime, extractTimePeriod } from '../utils/dates';
 import { isPlusCode, parseLatLon } from '../utils/misc';
 import PlatformIO from '../services/platform-io';
 
-type Props = {
-  classes: Object,
-  style: Object,
-  searchLocationIndex: (searchQuery: SearchQuery) => void,
-  loadDirectoryContent: (path: string) => void,
-  hideDrawer?: () => void,
-  currentDirectory: string,
-  indexedEntriesCount: number,
-  maxSearchResults: number,
-  indexing: boolean
-};
+interface Props {
+  classes: Object;
+  style: Object;
+  searchLocationIndex: (searchQuery: SearchQuery) => void;
+  loadDirectoryContent: (path: string) => void;
+  hideDrawer?: () => void;
+  currentDirectory: string;
+  indexedEntriesCount: number;
+  maxSearchResults: number;
+  indexing: boolean;
+}
 
-type State = {
-  textQuery: string,
-  tagsAND: Array<Tag>,
-  tagsOR: Array<Tag>,
-  tagsNOT: Array<Tag>,
-  fileTypes: Array<string>,
-  searchBoxing: 'location' | 'folder',
-  lastModified: string,
-  tagTimePeriod: string,
-  tagTimePeriodHelper: string,
-  tagPlace: string,
-  tagPlaceHelper: string,
-  tagTimePeriodFrom: Date | null,
-  tagTimePeriodTo: Date | null,
-  tagPlaceLat: number | null,
-  tagPlaceLong: number | null,
-  tagPlaceRadius: number,
-  fileSize: string,
-  searchMenuOpened: boolean,
-  searchMenuAnchorEl: Object | null
-};
+interface State {
+  textQuery: string;
+  tagsAND: Array<Tag>;
+  tagsOR: Array<Tag>;
+  tagsNOT: Array<Tag>;
+  fileTypes: Array<string>;
+  searchBoxing: 'location' | 'folder';
+  lastModified: string;
+  tagTimePeriod: string;
+  tagTimePeriodHelper: string;
+  tagPlace: string;
+  tagPlaceHelper: string;
+  tagTimePeriodFrom: Date | null;
+  tagTimePeriodTo: Date | null;
+  tagPlaceLat: number | null;
+  tagPlaceLong: number | null;
+  tagPlaceRadius: number;
+  fileSize: string;
+  searchMenuOpened: boolean;
+  searchMenuAnchorEl: Object | null;
+}
 
 class Search extends React.Component<Props, State> {
   state = {
@@ -286,7 +286,7 @@ class Search extends React.Component<Props, State> {
     this.props.searchLocationIndex(searchQuery);
   };
 
-  handleSearchMenu = (event: Object) => {
+  handleSearchMenu = (event: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({
       searchMenuOpened: true,
       searchMenuAnchorEl: event.currentTarget

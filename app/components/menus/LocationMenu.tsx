@@ -30,149 +30,148 @@ import { withTheme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import i18n from '../../services/i18n';
+import { getLocations, Location, locationType } from '../../reducers/locations';
 import {
-  getLocations,
-  type Location,
-  locationType
-} from '../../reducers/locations';
-import {
-  actions as AppActions,
-  getCurrentLocationId
+	actions as AppActions,
+	getCurrentLocationId
 } from '../../reducers/app';
 
-type Props = {
-  currentLocationId: string | null,
-  theme: Object,
-  locations: Array<Location>,
-  menuAnchorEl: null | Object,
-  openLocation: (location: Location) => void
-};
+interface Props {
+	currentLocationId: string | null;
+	theme: Object;
+	locations: Array<Location>;
+	menuAnchorEl: null | Object;
+	openLocation: (location: Location) => void;
+}
 
-type State = {
-  currentLocation?: Location | null,
-  locationChooserMenuOpened: boolean,
-  locationChooserMenuAnchorEl: null | Object
-};
+interface State {
+	currentLocation: Location | null;
+	locationChooserMenuOpened: boolean;
+	locationChooserMenuAnchorEl: null | Object;
+}
 
 class LocationMenu extends React.Component<Props, State> {
-  state = {
-    locationChooserMenuOpened: false,
-    locationChooserMenuAnchorEl: null
-  };
+	state = {
+		currentLocation: null,
+		locationChooserMenuOpened: false,
+		locationChooserMenuAnchorEl: null
+	};
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    let currentLocation;
-    if (nextProps.currentLocationId && nextProps.locations) {
-      nextProps.locations.map((location: Location) => {
-        if (location.uuid === nextProps.currentLocationId) {
-          currentLocation = location;
-        }
-      });
-    }
-    return {
-      ...prevState,
-      currentLocation
-    };
-  }
+	static getDerivedStateFromProps(nextProps, prevState) {
+		let currentLocation;
+		if (nextProps.currentLocationId && nextProps.locations) {
+			nextProps.locations.map((location: Location) => {
+				if (location.uuid === nextProps.currentLocationId) {
+					currentLocation = location;
+				}
+			});
+		}
+		return {
+			...prevState,
+			currentLocation
+		};
+	}
 
-  openLocation = location => {
-    this.props.openLocation(location);
-    this.toggleLocationChooser();
-  };
+	openLocation = location => {
+		this.props.openLocation(location);
+		this.toggleLocationChooser(undefined);
+	};
 
-  toggleLocationChooser = (event?: Object) => {
-    this.setState({
-      locationChooserMenuOpened: !this.state.locationChooserMenuOpened,
-      locationChooserMenuAnchorEl: event ? event.currentTarget : null
-    });
-  };
+	toggleLocationChooser = (
+		event: React.ChangeEvent<HTMLInputElement> | undefined
+	) => {
+		this.setState({
+			locationChooserMenuOpened: !this.state.locationChooserMenuOpened,
+			locationChooserMenuAnchorEl: event ? event.currentTarget : null
+		});
+	};
 
-  render() {
-    const { theme } = this.props;
-    const { currentLocation } = this.state;
-    const locationIcon =
-      currentLocation && currentLocation.type === locationType.TYPE_CLOUD ? (
-        <CloudLocationIcon />
-      ) : (
-        <LocationIcon />
-      );
+	render() {
+		const { theme } = this.props;
+		const { currentLocation } = this.state;
+		const locationIcon =
+			currentLocation && currentLocation.type === locationType.TYPE_CLOUD ? (
+				<CloudLocationIcon />
+			) : (
+				<LocationIcon />
+			);
 
-    return (
-      <div
-        style={{
-          backgroundColor: theme.palette.background.default
-        }}
-      >
-        <Button
-          data-tid="folderContainerLocationChooser"
-          id="locationMenuButton"
-          onClick={this.toggleLocationChooser}
-          title={this.state.currentLocation && this.state.currentLocation.name}
-          style={{ paddingRight: 0, paddingLeft: 11 }}
-        >
-          {this.state.currentLocation
-            ? locationIcon // this.state.currentLocation.name
-            : i18n.t('core:pleaseOpenLocation')}
-          <ArrowDropDownIcon />
-        </Button>
-        <Menu
-          id="simple-menu"
-          open={this.state.locationChooserMenuOpened}
-          anchorEl={this.state.locationChooserMenuAnchorEl}
-          onClose={this.toggleLocationChooser}
-          PaperProps={{
-            style: {
-              maxHeight: 48 * 6.5,
-              width: 300
-            }
-          }}
-        >
-          <div style={{ display: 'none' }} />
-          <ListSubHeader>{i18n.t('core:chooseLocation')}</ListSubHeader>
-          {this.props.locations.map((location: Location) => (
-            <MenuItem
-              data-tid="folderContainerMenuOpenLocation"
-              key={location.uuid}
-              onClick={() => this.openLocation(location)}
-              style={
-                currentLocation && currentLocation.uuid === location.uuid
-                  ? { backgroundColor: theme.palette.primary.light }
-                  : {}
-              }
-            >
-              <ListItemIcon>
-                {location.type === locationType.TYPE_CLOUD ? (
-                  <CloudLocationIcon />
-                ) : (
-                  <LocationIcon />
-                )}
-              </ListItemIcon>
-              <ListItemText primary={location.name} />
-            </MenuItem>
-          ))}
-        </Menu>
-      </div>
-    );
-  }
+		return (
+			<div
+				style={{
+					backgroundColor: theme.palette.background.default
+				}}
+			>
+				<Button
+					data-tid="folderContainerLocationChooser"
+					id="locationMenuButton"
+					onClick={this.toggleLocationChooser}
+					title={this.state.currentLocation && this.state.currentLocation.name}
+					style={{ paddingRight: 0, paddingLeft: 11 }}
+				>
+					{this.state.currentLocation
+						? locationIcon // this.state.currentLocation.name
+						: i18n.t('core:pleaseOpenLocation')}
+					<ArrowDropDownIcon />
+				</Button>
+				<Menu
+					id="simple-menu"
+					open={this.state.locationChooserMenuOpened}
+					anchorEl={this.state.locationChooserMenuAnchorEl}
+					onClose={this.toggleLocationChooser}
+					PaperProps={{
+						style: {
+							maxHeight: 48 * 6.5,
+							width: 300
+						}
+					}}
+				>
+					<div style={{ display: 'none' }} />
+					<ListSubHeader>{i18n.t('core:chooseLocation')}</ListSubHeader>
+					{this.props.locations.map((location: Location) => (
+						<MenuItem
+							data-tid="folderContainerMenuOpenLocation"
+							key={location.uuid}
+							onClick={() => this.openLocation(location)}
+							style={
+								currentLocation && currentLocation.uuid === location.uuid
+									? { backgroundColor: theme.palette.primary.light }
+									: {}
+							}
+						>
+							<ListItemIcon>
+								{location.type === locationType.TYPE_CLOUD ? (
+									<CloudLocationIcon />
+								) : (
+									<LocationIcon />
+								)}
+							</ListItemIcon>
+							<ListItemText primary={location.name} />
+						</MenuItem>
+					))}
+				</Menu>
+			</div>
+		);
+	}
 }
 
 function mapStateToProps(state) {
-  return {
-    locations: getLocations(state),
-    currentLocationId: getCurrentLocationId(state)
-  };
+	return {
+		locations: getLocations(state),
+		currentLocationId: getCurrentLocationId(state)
+	};
 }
 
 function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators(
-    {
-      openLocation: AppActions.openLocation
-    },
-    dispatch
-  );
+	return bindActionCreators(
+		{
+			openLocation: AppActions.openLocation
+		},
+		dispatch
+	);
 }
 
 export default connect(
-  mapStateToProps,
-  mapActionCreatorsToProps
+	mapStateToProps,
+	mapActionCreatorsToProps
 )(withTheme(LocationMenu));

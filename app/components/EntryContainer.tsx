@@ -46,7 +46,7 @@ import PlatformIO from '../services/platform-io';
 import AddRemoveTagsDialog from './dialogs/AddRemoveTagsDialog';
 import {
   // getAllPropertiesPromise,
-  openLinkExternally
+  openLinkExternally, FileSystemEntry
 } from '../services/utils-io';
 import i18n from '../services/i18n';
 import {
@@ -165,10 +165,10 @@ const styles = theme => ({
 });
 
 type Props = {
-  classes: Object,
+  classes: any,
   openedFiles: Array<OpenedEntry>,
-  settings: Object,
-  keyBindings: Object,
+  settings: any,
+  keyBindings: any,
   closeAllFiles: () => void,
   renameFile: () => void,
   renameDirectory: () => void,
@@ -369,7 +369,7 @@ class EntryContainer extends React.Component<Props, State> {
     this.handleMessage(JSON.stringify(event.channel));
   };
 
-  handleMessage = (msg: Object | string) => {
+  handleMessage = (msg: any) => {
     let data;
     let message;
     let textFilePath;
@@ -397,7 +397,7 @@ class EntryContainer extends React.Component<Props, State> {
       case 'playbackEnded':
         nextFilePath = this.props.getNextFile(this.state.currentEntry.path);
         nextFile = this.props.directoryContent.filter(
-          entry => entry.path === nextFilePath
+          (entry: any) => entry.path === nextFilePath
         );
         this.props.openFile(nextFilePath);
         this.props.setLastSelectedEntry(nextFilePath);
@@ -684,7 +684,7 @@ class EntryContainer extends React.Component<Props, State> {
     if (this.state.currentEntry && this.state.currentEntry.path) {
       const nextFilePath = this.props.getNextFile(this.state.currentEntry.path);
       const nextFile = this.props.directoryContent.filter(
-        entry => entry.path === nextFilePath
+        (entry: FileSystemEntry) => entry.path === nextFilePath
       );
       this.props.openFile(nextFilePath);
       this.props.setLastSelectedEntry(nextFilePath);
@@ -696,7 +696,7 @@ class EntryContainer extends React.Component<Props, State> {
     if (this.state.currentEntry && this.state.currentEntry.path) {
       const prevFilePath = this.props.getPrevFile(this.state.currentEntry.path);
       const prevFile = this.props.directoryContent.filter(
-        entry => entry.path === prevFilePath
+				(entry: FileSystemEntry) => entry.path === prevFilePath
       );
       this.props.openFile(prevFilePath);
       this.props.setLastSelectedEntry(prevFilePath);
@@ -1000,7 +1000,7 @@ class EntryContainer extends React.Component<Props, State> {
           }}
           cancelDialogTID={'cancelSaveBeforeCloseDialog'}
           confirmDialogTID={'confirmSaveBeforeCloseDialog'}
-          confirmDialogContent={'confirmDialogContent'}
+          confirmDialogContentTID={'confirmDialogContent'}
         />
         <ConfirmDialog
           open={this.state.isSaveBeforeReloadConfirmDialogOpened}
@@ -1025,7 +1025,7 @@ class EntryContainer extends React.Component<Props, State> {
           }}
           cancelDialogTID={'cancelSaveBeforeCloseDialog'}
           confirmDialogTID={'confirmSaveBeforeCloseDialog'}
-          confirmDialogContent={'confirmDialogContent'}
+          confirmDialogContentTID={'confirmDialogContent'}
         />
         <ConfirmDialog
           open={this.state.isDeleteEntryModalOpened}
@@ -1053,7 +1053,7 @@ class EntryContainer extends React.Component<Props, State> {
           }}
           cancelDialogTID={'cancelSaveBeforeCloseDialog'}
           confirmDialogTID={'confirmSaveBeforeCloseDialog'}
-          confirmDialogContent={'confirmDialogContent'}
+          confirmDialogContentTID={'confirmDialogContent'}
         />
         <AddRemoveTagsDialog
           open={isEditTagsModalOpened}

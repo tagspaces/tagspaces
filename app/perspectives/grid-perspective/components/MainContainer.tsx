@@ -24,8 +24,6 @@ import memoize from 'memoize-one';
 import { GlobalHotKeys } from 'react-hotkeys';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import FolderIcon from '@material-ui/icons/FolderOpen';
-import FolderHiddenIcon from '@material-ui/icons/Folder';
 import { FileSystemEntry } from '../../../services/utils-io';
 import { Tag } from '../../../reducers/taglibrary';
 import {
@@ -65,73 +63,73 @@ import GridOptionsMenu from './GridOptionsMenu';
 
 const settings = JSON.parse(localStorage.getItem('tsPerspectiveGrid')); // loading settings
 
-type Props = {
-  classes: Object,
-  theme: Object,
-  desktopMode: boolean,
-  currentDirectoryPath: string,
-  currentDirectoryColor: string,
-  lastSelectedEntryPath: string | null,
-  selectedEntries: Array<Object>,
-  supportedFileTypes: Array<Object>,
-  isAppLoading: boolean,
-  isReadOnlyMode: boolean,
-  openFile: (path: string, isFile?: boolean) => void,
-  getNextFile: () => void,
-  getPrevFile: () => void,
-  deleteFile: (path: string) => void,
-  deleteDirectory: (path: string) => void,
-  loadDirectoryContent: (path: string) => void,
-  openDirectory: (path: string) => void,
-  showInFileManager: (path: string) => void,
-  openFileNatively: (path: string) => void,
-  openURLExternally: (path: string) => void,
-  loadParentDirectoryContent: () => void,
-  setLastSelectedEntry: (entryPath: string | null) => void,
-  setSelectedEntries: (selectedEntries: Array<Object>) => void,
-  addTags: () => void,
-  removeTags: () => void,
-  removeAllTags: () => void,
-  editTagForEntry: () => void,
-  perspectiveCommand: Object,
-  directoryContent: Array<FileSystemEntry>,
-  moveFiles: (files: Array<string>, destination: string) => void,
-  keyBindings: Object,
+interface Props {
+  classes: Object;
+  theme: Object;
+  desktopMode: boolean;
+  currentDirectoryPath: string;
+  currentDirectoryColor: string;
+  lastSelectedEntryPath: string | null;
+  selectedEntries: Array<Object>;
+  supportedFileTypes: Array<Object>;
+  isAppLoading: boolean;
+  isReadOnlyMode: boolean;
+  openFile: (path: string, isFile?: boolean) => void;
+  getNextFile: () => void;
+  getPrevFile: () => void;
+  deleteFile: (path: string) => void;
+  deleteDirectory: (path: string) => void;
+  loadDirectoryContent: (path: string) => void;
+  openDirectory: (path: string) => void;
+  showInFileManager: (path: string) => void;
+  openFileNatively: (path: string) => void;
+  openURLExternally: (path: string) => void;
+  loadParentDirectoryContent: () => void;
+  setLastSelectedEntry: (entryPath: string | null) => void;
+  setSelectedEntries: (selectedEntries: Array<Object>) => void;
+  addTags: () => void;
+  removeTags: () => void;
+  removeAllTags: () => void;
+  editTagForEntry: () => void;
+  perspectiveCommand: any;
+  directoryContent: Array<FileSystemEntry>;
+  moveFiles: (files: Array<string>, destination: string) => void;
+  keyBindings: any;
   showNotification: (
     text: string,
     notificationType: string,
     autohide: boolean
-  ) => void
+  ) => void;
 };
 
-type State = {
-  fileContextMenuAnchorEl: Object | null,
-  fileContextMenuOpened: boolean,
-  dirContextMenuAnchorEl: Object | null,
-  dirContextMenuOpened: boolean,
-  tagContextMenuAnchorEl: Object | null,
-  tagContextMenuOpened: boolean,
-  layoutType: string,
-  singleClickAction: string,
-  doubleClickAction: string,
-  entrySize: string,
-  thumbnailMode: string,
-  sortingContextMenuAnchorEl: Object | null,
-  sortingContextMenuOpened: boolean | null,
-  optionsContextMenuAnchorEl: Object | null,
-  optionsContextMenuOpened: boolean | null,
-  sortBy: string,
-  orderBy: null | boolean,
-  fileOperationsEnabled: boolean,
-  allFilesSelected: boolean,
-  showDirectories: boolean,
-  showTags: boolean,
-  isDeleteMultipleFilesDialogOpened: boolean,
-  isMoveCopyFilesDialogOpened: boolean,
-  isAddRemoveTagsDialogOpened: boolean,
-  isFileRenameDialogOpened: boolean,
-  selectedEntryPath: string,
-  selectedTag: Tag | null
+interface State {
+  fileContextMenuAnchorEl: Object | null;
+  fileContextMenuOpened: boolean;
+  dirContextMenuAnchorEl: Object | null;
+  dirContextMenuOpened: boolean;
+  tagContextMenuAnchorEl: Object | null;
+  tagContextMenuOpened: boolean;
+  layoutType: string;
+  singleClickAction: string;
+  doubleClickAction: string;
+  entrySize: string;
+  thumbnailMode: string;
+  sortingContextMenuAnchorEl: Object | null;
+  sortingContextMenuOpened: boolean | null;
+  optionsContextMenuAnchorEl: Object | null;
+  optionsContextMenuOpened: boolean | null;
+  sortBy: string;
+  orderBy: null | boolean;
+  fileOperationsEnabled: boolean;
+  allFilesSelected: boolean;
+  showDirectories: boolean;
+  showTags: boolean;
+  isDeleteMultipleFilesDialogOpened: boolean;
+  isMoveCopyFilesDialogOpened: boolean;
+  isAddRemoveTagsDialogOpened: boolean;
+  isFileRenameDialogOpened: boolean;
+  selectedEntryPath: string;
+  selectedTag: Tag | null;
 };
 
 class GridPerspective extends React.Component<Props, State> {
@@ -474,7 +472,7 @@ class GridPerspective extends React.Component<Props, State> {
     }
   };
 
-  handleTagMenu = (event: Object, tag: Tag, entryPath: string) => {
+  handleTagMenu = (event: React.ChangeEvent<HTMLInputElement>, tag: Tag, entryPath: string) => {
     event.preventDefault();
     event.stopPropagation();
 

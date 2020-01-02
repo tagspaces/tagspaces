@@ -40,7 +40,6 @@ import LocationManager from '../components/LocationManager';
 import HelpFeedbackPanel from '../components/HelpFeedbackPanel';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
-import { Tag } from '../reducers/taglibrary';
 import {
 	actions as AppActions,
 	getDirectoryPath,
@@ -64,7 +63,7 @@ const ProTeaserDialogAsync = props => (
 	</React.Suspense>
 );
 
-type Props = {
+interface Props {
 	theme: Object;
 	isFirstRun: boolean;
 	directoryPath: string;
@@ -91,11 +90,11 @@ type Props = {
 	switchTheme: () => void;
 	showNotification: (message: string) => void;
 	isReadOnlyMode: boolean;
-};
+}
 
-type State = {
+interface State {
 	isProTeaserVisible: boolean; // evtl. redux migration
-};
+}
 
 class VerticalNavigation extends React.Component<Props, State> {
 	state = {
@@ -144,7 +143,6 @@ class VerticalNavigation extends React.Component<Props, State> {
 
 	render() {
 		const {
-			isFirstRun,
 			isLocationManagerPanelOpened,
 			isTagLibraryPanelOpened,
 			isSearchPanelOpened,
@@ -167,7 +165,6 @@ class VerticalNavigation extends React.Component<Props, State> {
 			openURLExternally,
 			showNotification,
 			directoryPath,
-			setFirstRun,
 			theme
 		} = this.props;
 		return (
