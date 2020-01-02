@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * @flow
  */
 
 import React from 'react';
@@ -27,8 +26,8 @@ import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import FolderIcon from '@material-ui/icons/FolderOpen';
 import FolderHiddenIcon from '@material-ui/icons/Folder';
-import { type FileSystemEntry } from '../../../services/utils-io';
-import { type Tag } from '../../../reducers/taglibrary';
+import { FileSystemEntry } from '../../../services/utils-io';
+import { Tag } from '../../../reducers/taglibrary';
 import {
   getSupportedFileTypes,
   getDesktopMode,

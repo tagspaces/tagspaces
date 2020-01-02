@@ -14,11 +14,10 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * @flow
  */
 
 import uuidv1 from 'uuid';
-import { type Location, locationType } from './locations';
+import { Location, locationType } from './locations';
 import PlatformIO from '../services/platform-io';
 import AppConfig from '../config';
 import {
@@ -31,7 +30,6 @@ import {
   extractFileExtension,
   extractDirectoryName,
   extractFileName,
-  getMetaDirectoryPath,
   getMetaFileLocationForFile,
   getThumbFileLocationForFile,
   extractParentDirectoryPath,
@@ -43,7 +41,7 @@ import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import { getThumbnailURLPromise } from '../services/thumbsgenerator';
 import { actions as LocationIndexActions } from './location-index';
-import { type Tag } from './taglibrary';
+import { Tag } from './taglibrary';
 
 export const types = {
   DEVICE_ONLINE: 'APP/DEVICE_ONLINE',

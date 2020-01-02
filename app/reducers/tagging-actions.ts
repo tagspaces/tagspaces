@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * @flow
  */
 
 import uuidv1 from 'uuid';
@@ -22,8 +21,8 @@ import i18n from '../services/i18n';
 import { actions as AppActions } from './app';
 import {
   actions as TagLibraryActions,
-  type Tag,
-  type TagGroup
+  Tag,
+  TagGroup
 } from './taglibrary';
 import {
   extractFileExtension,
