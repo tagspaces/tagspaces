@@ -50,27 +50,27 @@ import { formatDateTime4Tag } from '../../utils/misc';
 import { actions as AppActions } from '../../reducers/app';
 import IOActions from '../../reducers/io-actions';
 
-type Props = {
-  open: boolean,
-  onClose: () => void,
-  anchorEl: Object | null,
-  directoryPath: string,
-  loadDirectoryContent: (path: string) => void,
-  openDirectory: (path: string) => void,
-  openFile: (path: string, isFile: boolean) => void,
-  deleteDirectory: (path: string) => void,
-  reflectCreateEntry: (path: string, isFile: boolean) => void,
-  toggleCreateFileDialog: () => void,
+interface Props {
+  open: boolean;
+  onClose: () => void;
+  anchorEl: Element;
+  directoryPath: string;
+  loadDirectoryContent: (path: string) => void;
+  openDirectory: (path: string) => void;
+  openFile: (path: string, isFile: boolean) => void;
+  deleteDirectory: (path: string) => void;
+  reflectCreateEntry?: (path: string, isFile: boolean) => void;
+  toggleCreateFileDialog?: () => void;
   // extractContent: (config: Object) => void,
-  switchPerspective: (perspectiveId: string) => void,
-  perspectiveMode: boolean,
-  showNotification: (
+  switchPerspective?: (perspectiveId: string) => void;
+  perspectiveMode?: boolean;
+  showNotification?: (
     text: string,
     notificationType: string,
     autohide: boolean
-  ) => void,
-  isReadOnlyMode: boolean
-};
+  ) => void;
+  isReadOnlyMode: boolean;
+}
 
 const DirectoryMenu = (props: Props) => {
   let fileInput; // Object | null;
@@ -207,15 +207,18 @@ const DirectoryMenu = (props: Props) => {
 
   function cameraTakePicture() {
     props.onClose();
+    // @ts-ignore
     navigator.camera.getPicture(onCameraSuccess, onFail, {
       // quality: 50,
+      // @ts-ignore
       destinationType: Camera.DestinationType.FILE_URI, // DATA_URL, // Return base64 encoded string
       // encodingType: Camera.EncodingType.JPEG,
+      // @ts-ignore
       mediaType: Camera.MediaType.PICTURE // ALLMEDIA
     });
   }
 
-  function handleFileInputChange(selection: Object) {
+  function handleFileInputChange(selection: any) {
     // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
     const file = selection.currentTarget.files[0];
     const filePath =
@@ -224,7 +227,7 @@ const DirectoryMenu = (props: Props) => {
       decodeURIComponent(file.name);
 
     const reader = new FileReader();
-    reader.onload = event => {
+    reader.onload = (event: any) => {
       // console.log('Content on file read complete: ' + JSON.stringify(event));
       // change name for ios fakepath
       // if (AppConfig.isCordovaiOS) {
@@ -282,7 +285,10 @@ const DirectoryMenu = (props: Props) => {
   }
 
   return (
-    <div style={{ overflowY: 'hidden !important' }}>
+    <div
+      // @ts-ignore
+      style={{ overflowY: 'hidden !important' }}
+    >
       <RenameDirectoryDialog
         key={uuidv1()}
         open={isRenameDirectoryDialogOpened}
@@ -309,7 +315,7 @@ const DirectoryMenu = (props: Props) => {
             props.deleteDirectory(props.directoryPath);
           }
         }}
-        confirmDialogContent={'confirmDialogContent'}
+        confirmDialogContentTID={'confirmDialogContent'}
         cancelDialogTID={'cancelDeleteDirectoryDialog'}
         confirmDialogTID={'confirmDeleteDirectoryDialog'}
       />

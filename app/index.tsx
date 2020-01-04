@@ -24,16 +24,13 @@ import Root from './containers/Root';
 import { configureStore, history } from './store/configureStore';
 import './app.global.css';
 
-const { store, persistor } = configureStore();
+const { store, persistor } = configureStore({});
 
 document.addEventListener('contextmenu', event => event.preventDefault());
 
 if (process.env.NODE_ENV === 'production') {
-  // $FlowFixMe
   console.log = () => {};
-  // $FlowFixMe
   console.time = () => {};
-  // $FlowFixMe
   console.timeEnd = () => {};
 }
 

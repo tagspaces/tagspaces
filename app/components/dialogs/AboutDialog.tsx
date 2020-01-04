@@ -33,13 +33,13 @@ import { Pro } from '../../pro';
 import { getLastVersionPromise } from '../../reducers/settings';
 import AppConfig from '../../config';
 
-type Props = {
-  open: boolean,
-  fullScreen: boolean,
-  toggleLicenseDialog: () => void,
-  toggleThirdPartyLibsDialog: () => void,
-  onClose: () => void
-};
+interface Props {
+  open: boolean;
+  fullScreen: boolean;
+  toggleLicenseDialog: () => void;
+  toggleThirdPartyLibsDialog: () => void;
+  onClose: () => void;
+}
 
 let buildID = versionMeta.commitId;
 if (buildID && buildID.length >= 11) {

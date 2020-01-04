@@ -51,30 +51,29 @@ const styles = theme => ({
   }
 });
 
-type Props = {
-  setTagColor: string,
-  setTagTextColor: string,
-  classes: Object,
-  settings: Object,
-  toggleShowUnixHiddenEntries: () => void,
-  setCurrentTheme: () => void,
-  setLanguage: () => void,
-  // setDesktopMode: () => void,
-  setCheckForUpdates: () => void,
-  // setColoredFileExtension: () => void,
-  setUseTrashCan: () => void,
-  setPersistTagsInSidecarFile: () => void,
-  setAddTagsToLibrary: () => void,
-  setUseGenerateThumbnails: () => void,
-  setTagDelimiter: () => void,
-  setMaxSearchResult: () => void,
-  setDesktopMode: () => void
-};
+interface Props {
+  setTagColor: (tagColor: string) => void;
+  setTagTextColor: (tagTextColor: string) => void;
+  classes: any;
+  settings: any;
+  toggleShowUnixHiddenEntries: () => void;
+  setCurrentTheme: (theme: string) => void;
+  setLanguage: (language: string) => void;
+  setCheckForUpdates: (check: boolean) => void;
+  setUseTrashCan: (useTrashCan: boolean) => void;
+  setPersistTagsInSidecarFile: (tagInSidecar: boolean) => void;
+  setAddTagsToLibrary: (addTagsToLibrary: boolean) => void;
+  setUseGenerateThumbnails: (useGenerateThumbnails: boolean) => void;
+  setTagDelimiter: (tagDelimiter: string) => void;
+  setMaxSearchResult: (maxResult: string) => void;
+  setDesktopMode: (desktopMode: boolean) => void;
+}
 
-type State = {
-  displayColorPicker: boolean,
-  displayTextColorPicker: boolean
-};
+interface State {
+  displayColorPicker: boolean;
+  displayTextColorPicker: boolean;
+  currentTheme?: any;
+}
 
 class SettingsGeneral extends React.Component<Props, State> {
   state = {
@@ -114,7 +113,9 @@ class SettingsGeneral extends React.Component<Props, State> {
           <Select
             data-tid="settingsSetLanguage"
             value={this.props.settings.interfaceLanguage}
-            onChange={event => this.props.setLanguage(event.target.value)}
+            onChange={(event: any) =>
+              this.props.setLanguage(event.target.value)
+            }
             input={<Input id="languageSelector" />}
           >
             {this.props.settings.supportedLanguages.map(language => (
@@ -129,7 +130,9 @@ class SettingsGeneral extends React.Component<Props, State> {
           <Select
             data-tid="settingsSetCurrentTheme"
             value={this.props.settings.currentTheme}
-            onChange={event => this.props.setCurrentTheme(event.target.value)}
+            onChange={(event: any) =>
+              this.props.setCurrentTheme(event.target.value)
+            }
             input={<Input id="themeSelector" />}
           >
             {this.props.settings.supportedThemes.map(theme => (
@@ -287,6 +290,7 @@ class SettingsGeneral extends React.Component<Props, State> {
             style={{ maxWidth: '100px' }}
             type="number"
             data-tid="settingsMaxSearchResult"
+            // @ts-ignore
             label={i18n.t('core:maxSearchResult')}
             value={this.props.settings.maxSearchResult}
             onChange={this.handleMaxSearchResult}
@@ -355,4 +359,5 @@ function mapActionCreatorsToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
+  // @ts-ignore
 )(withStyles(styles)(SettingsGeneral));

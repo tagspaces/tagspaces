@@ -21,7 +21,7 @@ import { DropTarget } from 'react-dnd';
 import { withStyles } from '@material-ui/core/styles/index';
 import i18n from '../services/i18n';
 
-const styles = theme => ({
+const styles: any = () => ({
   dropzone: {
     margin: 5,
     position: 'absolute',
@@ -48,13 +48,13 @@ const boxTarget = {
   }
 };
 
-type Props = {
-  classes: Object,
-  canDrop: boolean,
-  isOver: boolean,
-  connectDropTarget: Object,
-  children: Object
-};
+interface Props {
+  classes?: any;
+  canDrop: boolean;
+  isOver: boolean;
+  connectDropTarget: any;
+  children: Object;
+}
 
 const TargetMoveFileBox = (props: Props) => {
   const { classes, canDrop, isOver, connectDropTarget, children } = props;

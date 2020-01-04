@@ -29,17 +29,17 @@ import SelectDirectoryDialog from '../dialogs/SelectDirectoryDialog';
 import i18n from '../../services/i18n';
 import AppConfig from '../../config';
 
-type Props = {
-  classes: Object,
-  anchorEl: Object,
-  tagGroups: Array<Object>,
-  openURLExternally: (path: string) => void,
-  open: boolean,
-  onClose: () => void,
-  importTagGroups: () => void,
-  exportTagGroups: () => void,
-  showCreateTagGroupDialog: () => void
-};
+interface Props {
+  classes?: any;
+  anchorEl: Element;
+  tagGroups: Array<Object>;
+  openURLExternally: (path: string) => void;
+  open: boolean;
+  onClose: () => void;
+  importTagGroups: () => void;
+  exportTagGroups: () => void;
+  showCreateTagGroupDialog: () => void;
+}
 
 const TagLibraryMenu = (props: Props) => {
   let fileInput;
@@ -87,10 +87,10 @@ const TagLibraryMenu = (props: Props) => {
     }
   }
 
-  function handleFileInputChange(selection: Object) {
+  function handleFileInputChange(selection: any) {
     const target = selection.currentTarget;
     const file = target.files[0];
-    const reader = new FileReader();
+    const reader: any = new FileReader();
 
     reader.onload = () => {
       try {
@@ -117,7 +117,10 @@ const TagLibraryMenu = (props: Props) => {
   }
 
   return (
-    <div style={{ overflowY: 'hidden !important' }}>
+    <div
+      // @ts-ignore
+      style={{ overflowY: 'hidden !important' }}
+    >
       <ImportExportTagGroupsDialog
         open={isImportExportTagGroupDialogOpened}
         onClose={handleCloseDialogs}

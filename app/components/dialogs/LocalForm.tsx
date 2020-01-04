@@ -31,12 +31,12 @@ import AppConfig from '../../config';
 import { extractDirectoryName } from '../../utils/paths';
 import PlatformIO from '../../services/platform-io';
 
-type Props = {
+interface Props {
   state: any;
   handleChange: (param1: string, param2: string) => void;
   handleInputChange: () => void;
   showSelectDirectoryDialog: () => void;
-};
+}
 
 class LocalForm extends React.Component<Props> {
   openDirectory = () => {

@@ -32,20 +32,20 @@ import DeleteForever from '@material-ui/icons/DeleteForever';
 import i18n from '../../services/i18n';
 import AppConfig from '../../config';
 
-type Props = {
-  anchorEl?: Object | null,
-  open?: boolean,
-  onClose: () => void,
-  openDeleteFileDialog: () => void,
-  openRenameFileDialog: () => void,
-  openMoveCopyFilesDialog: () => void,
-  openAddRemoveTagsDialog: () => void,
-  openFile: (path: string) => void,
-  openFileNatively: (path: string) => void,
-  showInFileManager: (path: string) => void,
-  selectedFilePath?: string,
-  isReadOnlyMode: boolean
-};
+interface Props {
+  anchorEl: Element;
+  open: boolean;
+  onClose: () => void;
+  openDeleteFileDialog: () => void;
+  openRenameFileDialog: () => void;
+  openMoveCopyFilesDialog: () => void;
+  openAddRemoveTagsDialog: () => void;
+  openFile: (path: string, isFile: boolean) => void;
+  openFileNatively: (path: string) => void;
+  showInFileManager: (path: string) => void;
+  selectedFilePath?: string;
+  isReadOnlyMode: boolean;
+}
 
 const FileMenu = (props: Props) => {
   function showDeleteFileDialog() {
@@ -85,12 +85,15 @@ const FileMenu = (props: Props) => {
   function openFile() {
     props.onClose();
     if (props.selectedFilePath) {
-      props.openFile(props.selectedFilePath);
+      props.openFile(props.selectedFilePath, true);
     }
   }
 
   return (
-    <div style={{ overflowY: 'hidden !important' }}>
+    <div
+      // @ts-ignore
+      style={{ overflowY: 'hidden !important' }}
+    >
       <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
         <MenuItem data-tid="fileMenuOpenFile" onClick={openFile}>
           <ListItemIcon>

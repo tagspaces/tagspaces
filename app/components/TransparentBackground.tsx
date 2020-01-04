@@ -17,9 +17,9 @@
  */
 import React from 'react';
 
-type Props = {
-  children: Object
-};
+interface Props {
+  children: Object;
+}
 
 const TransparentBackground = (props: Props) => (
   <span

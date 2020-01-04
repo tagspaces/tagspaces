@@ -26,11 +26,11 @@ import Dialog from '@material-ui/core/Dialog';
 import i18n from '../../services/i18n';
 import ThirdPartyLibs from '../../third-party.txt';
 
-type Props = {
-  open: boolean,
-  onClose: () => void,
-  fullScreen: boolean
-};
+interface Props {
+  open: boolean;
+  onClose: () => void;
+  fullScreen: boolean;
+}
 
 const ThirdPartyLibsDialog = (props: Props) => {
   const { open, onClose, fullScreen } = props;

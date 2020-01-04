@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -96,7 +97,7 @@ const bufferedLeftSplitResize = buffer({
   id: 'buffered-leftsplit-resize'
 });
 
-const styles = theme => ({
+const styles: any = (theme: any) => ({
   content: {
     width: '100%',
     marginLeft: drawerWidth,
@@ -126,85 +127,82 @@ const styles = theme => ({
   }
 });
 
-type Props = {
-  isFirstRun: boolean,
-  setFirstRun: (isFirstRun: boolean) => void,
-  isDesktopMode: boolean,
-  isFileOpened: boolean,
-  isIndexing: boolean,
-  isGeneratingThumbs: boolean,
-  setGeneratingThumbnails: (isGenerating: boolean) => void,
-  isEntryInFullWidth: boolean,
-  classes: Object,
-  theme: Object,
-  notificationStatus: Object,
-  lastPublishedVersion: string,
-  isUpdateAvailable: boolean,
-  isReadOnlyMode: boolean,
-  isSettingsDialogOpened: boolean,
-  isCreateFileDialogOpened: boolean,
-  isCreateDirectoryOpened: boolean,
-  toggleCreateDirectoryDialog: () => void,
-  isAboutDialogOpened: boolean,
-  isCreateDirectoryOpened: boolean,
-  toggleCreateDirectoryDialog: () => void,
-  isCreateFileDialogOpened: boolean,
-  isKeysDialogOpened: boolean,
-  isLicenseDialogOpened: boolean,
-  isThirdPartyLibsDialogOpened: boolean,
-  isOnboardingDialogOpened: boolean,
-  isSelectDirectoryDialogOpened: boolean,
-  toggleSelectDirectoryDialog: () => void,
-  isEditTagDialogOpened: boolean,
-  keyBindings: Object,
-  toggleEditTagDialog: () => void,
-  setEntryFullWidth: (isFullWidth: boolean) => void,
-  hideNotifications: () => void,
-  cancelDirectoryIndexing: () => void,
-  loadParentDirectoryContent: () => void,
-  setUpdateAvailable: (isUpdateAvailable: boolean) => void,
-  saveFile: () => void, // needed by electron-menus
-  setZoomResetApp: () => void, // needed by electron-menus
-  setZoomInApp: () => void, // needed by electron-menus
-  setZoomOutApp: () => void, // needed by electron-menus
-  toggleCreateFileDialog: () => void, // needed by electron-menus
-  showCreateDirectoryDialog: () => void, // needed by electron-menus
-  toggleSettingsDialog: () => void, // needed by electron-menus
-  toggleKeysDialog: () => void, // needed by electron-menus
-  toggleLicenseDialog: () => void, // needed by electron-menus
-  toggleThirdPartyLibsDialog: () => void, // neede by electron-menus
-  toggleAboutDialog: () => void, // needed by electron-menus
-  toggleOnboardingDialog: () => void, // needed by electron-menus
-  setLastSelectedEntry: (path: string) => void, // needed by electron-menus
-  openFile: (path: string) => void, // needed by electron-menus
-  openFileNatively: (url: string) => void, // needed by electron-menus
-  openURLExternally: (url: string) => void, // needed by electron-menus
-  getNextFile: () => void, // needed by electron-menus
-  getPrevFile: () => void, // needed by electron-menus
-  openLocationManagerPanel: () => void,
-  openTagLibraryPanel: () => void,
-  openSearchPanel: () => void,
-  openPerspectivesPanel: () => void,
-  openHelpFeedbackPanel: () => void,
-  closeAllVerticalPanels: () => void,
-  leftSplitSize: number,
-  mainSplitSize: any,
-  toggleShowUnixHiddenEntries: () => void,
-  setLeftVerticalSplitSize: (splitSize: number) => void,
-  setMainVerticalSplitSize: (splitSize: string) => void,
-  isLocationManagerPanelOpened: boolean,
-  isTagLibraryPanelOpened: boolean,
-  isSearchPanelOpened: boolean,
-  isPerspectivesPanelOpened: boolean,
-  isHelpFeedbackPanelOpened: boolean,
-  directoryPath: string,
+interface Props {
+  isFirstRun: boolean;
+  setFirstRun: (isFirstRun: boolean) => void;
+  isDesktopMode: boolean;
+  isFileOpened: boolean;
+  isIndexing: boolean;
+  isGeneratingThumbs: boolean;
+  setGeneratingThumbnails: (isGenerating: boolean) => void;
+  isEntryInFullWidth: boolean;
+  classes: any;
+  theme: any;
+  notificationStatus: any;
+  lastPublishedVersion: string;
+  isUpdateAvailable: boolean;
+  isReadOnlyMode: boolean;
+  isSettingsDialogOpened: boolean;
+  isCreateFileDialogOpened: boolean;
+  isCreateDirectoryOpened: boolean;
+  toggleCreateDirectoryDialog: () => void;
+  isAboutDialogOpened: boolean;
+  isKeysDialogOpened: boolean;
+  isLicenseDialogOpened: boolean;
+  isThirdPartyLibsDialogOpened: boolean;
+  isOnboardingDialogOpened: boolean;
+  isSelectDirectoryDialogOpened: boolean;
+  toggleSelectDirectoryDialog: () => void;
+  isEditTagDialogOpened: boolean;
+  keyBindings: any;
+  toggleEditTagDialog: () => void;
+  setEntryFullWidth: (isFullWidth: boolean) => void;
+  hideNotifications: () => void;
+  cancelDirectoryIndexing: () => void;
+  loadParentDirectoryContent: () => void;
+  setUpdateAvailable: (isUpdateAvailable: boolean) => void;
+  saveFile: () => void; // needed by electron-menus
+  setZoomResetApp: () => void; // needed by electron-menus
+  setZoomInApp: () => void; // needed by electron-menus
+  setZoomOutApp: () => void; // needed by electron-menus
+  toggleCreateFileDialog: () => void; // needed by electron-menus
+  showCreateDirectoryDialog: () => void; // needed by electron-menus
+  toggleSettingsDialog: () => void; // needed by electron-menus
+  toggleKeysDialog: () => void; // needed by electron-menus
+  toggleLicenseDialog: () => void; // needed by electron-menus
+  toggleThirdPartyLibsDialog: () => void; // neede by electron-menus
+  toggleAboutDialog: () => void; // needed by electron-menus
+  toggleOnboardingDialog: () => void; // needed by electron-menus
+  setLastSelectedEntry: (path: string) => void; // needed by electron-menus
+  openFile: (path: string) => void; // needed by electron-menus
+  openFileNatively: (url: string) => void; // needed by electron-menus
+  openURLExternally: (url: string) => void; // needed by electron-menus
+  getNextFile: () => void; // needed by electron-menus
+  getPrevFile: () => void; // needed by electron-menus
+  openLocationManagerPanel: () => void;
+  openTagLibraryPanel: () => void;
+  openSearchPanel: () => void;
+  openPerspectivesPanel: () => void;
+  openHelpFeedbackPanel: () => void;
+  closeAllVerticalPanels: () => void;
+  leftSplitSize: number;
+  mainSplitSize: any;
+  toggleShowUnixHiddenEntries: () => void;
+  setLeftVerticalSplitSize: (splitSize: number) => void;
+  setMainVerticalSplitSize: (splitSize: string) => void;
+  isLocationManagerPanelOpened: boolean;
+  isTagLibraryPanelOpened: boolean;
+  isSearchPanelOpened: boolean;
+  isPerspectivesPanelOpened: boolean;
+  isHelpFeedbackPanelOpened: boolean;
+  directoryPath: string;
   showNotification: (
     text: string,
     notificationType?: string,
     autohide?: boolean
-  ) => void,
-  reflectCreateEntry: (path: string, isFile: boolean) => void
-};
+  ) => void;
+  reflectCreateEntry: (path: string, isFile: boolean) => void;
+}
 
 const AboutDialog = React.lazy(() =>
   import(
@@ -283,14 +281,14 @@ const SelectDirectoryAsync = props => (
   </React.Suspense>
 );
 
-type State = {
-  selectedDirectoryPath: string,
-  isManagementPanelVisible: boolean,
-  mainSplitSize: any,
-  isDrawerOpened: boolean,
-  width: number,
-  height: number
-};
+interface State {
+  selectedDirectoryPath: string;
+  isManagementPanelVisible: boolean;
+  mainSplitSize: any;
+  isDrawerOpened: boolean;
+  width: number;
+  height: number;
+}
 
 let showVerticalPanel = true;
 if (window.ExtDefaultVerticalPanel === 'none') {
@@ -509,8 +507,8 @@ class MainPage extends Component<Props, State> {
             return true;
           }
 
-          const reader = new FileReader();
-          reader.onload = event => {
+          const reader: any = new FileReader();
+          reader.onload = (event: any) => {
             // console.log('Content on file read complete: ' + JSON.stringify(event));
             // change name for ios fakepath
             // if (AppConfig.isCordovaiOS) {

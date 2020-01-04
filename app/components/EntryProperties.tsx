@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -54,7 +55,7 @@ import {
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
 
-const styles = theme => ({
+const styles: any = (theme: any) => ({
   entryProperties: {
     overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
     padding: 10,
@@ -155,51 +156,53 @@ marked.setOptions({
   xhtml: true
 });
 
-type Props = {
-  classes: Object,
-  entryPath: string,
-  shouldReload: boolean | null,
-  shouldCopyFile: boolean,
-  editTagForEntry: () => void,
-  renameFile: (path: string, nextPath: string) => void,
-  renameDirectory: (path: string, nextPath: string) => void,
-  normalizeShouldCopyFile: () => void,
-  showNotification: (message: string) => void,
-  reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void,
-  updateThumbnailUrl: (path: string, thumbUrl: string) => void,
-  addTags: () => void,
-  removeTags: () => void,
-  removeAllTags: () => void,
-  resetState: (stateName: string) => void,
-  isReadOnlyMode: boolean,
-  setPropertiesEditMode: (editMode: boolean) => void
-};
+interface Props {
+  classes: any;
+  entryPath: string;
+  shouldReload: boolean | null;
+  shouldCopyFile: boolean;
+  editTagForEntry: () => void;
+  renameFile: (path: string, nextPath: string) => void;
+  renameDirectory: (path: string, nextPath: string) => void;
+  normalizeShouldCopyFile: () => void;
+  showNotification: (message: string) => void;
+  reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
+  updateThumbnailUrl: (path: string, thumbUrl: string) => void;
+  addTags: () => void;
+  removeTags: () => void;
+  removeAllTags: () => void;
+  resetState: (stateName: string) => void;
+  isReadOnlyMode: boolean;
+  setPropertiesEditMode: (editMode: boolean) => void;
+}
 
-type State = {
-  name: string,
-  originalName: string,
-  description: string,
-  color: string,
-  path: string,
-  tagMenuAnchorEl: boolean | null,
-  tagMenuOpened: boolean | null,
-  isEditTagDialogOpened: boolean | null,
-  isDeleteTagDialogOpened: boolean,
-  isFileThumbChooseDialogOpened: boolean,
-  isMoveCopyFilesDialogOpened: boolean,
-  isEditName: boolean,
-  isEditDescription: boolean,
-  displayColorPicker: boolean,
-  thumbPath: string,
-  isFile: boolean
-};
+interface State {
+  name: string;
+  originalName: string;
+  description: string;
+  color: string;
+  path: string;
+  size: number;
+  tag: any;
+  tagMenuAnchorEl: boolean | null;
+  tagMenuOpened: boolean | null;
+  isEditTagDialogOpened: boolean | null;
+  isDeleteTagDialogOpened: boolean;
+  isFileThumbChooseDialogOpened: boolean;
+  isMoveCopyFilesDialogOpened: boolean;
+  isEditName: boolean;
+  isEditDescription: boolean;
+  displayColorPicker: boolean;
+  thumbPath: string;
+  isFile: boolean;
+}
 
 class EntryProperties extends Component<Props, State> {
   state = {
     name: '',
     originalName: '',
     description: '',
-    size: '',
+    size: 0,
     color: '#3498db',
     path: '',
     tagMenuAnchorEl: null,
@@ -214,6 +217,9 @@ class EntryProperties extends Component<Props, State> {
     displayColorPicker: false,
     isFile: false
   };
+
+  fileName: any;
+  fileDescription: any;
 
   componentDidMount() {
     this.loadEntryProperties(this.props.entryPath);
@@ -473,7 +479,7 @@ class EntryProperties extends Component<Props, State> {
     });
   };
 
-  handleTagMenu = (event: Object, tag, tagGroup) => {
+  handleTagMenu = (event: any, tag, tagGroup) => {
     this.setState({
       tagMenuOpened: true,
       tagMenuAnchorEl: event.currentTarget,
@@ -484,7 +490,7 @@ class EntryProperties extends Component<Props, State> {
 
   handleCloseTagMenu = () => this.setState({ tagMenuOpened: false });
 
-	handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;

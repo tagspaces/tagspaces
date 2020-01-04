@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-import { persistCombineReducers } from 'redux-persist';
+import { persistCombineReducers, PersistConfig } from 'redux-persist';
 import { routerReducer as router } from 'react-router-redux';
 import getStoredStateMigrateV4 from 'redux-persist/lib/integration/getStoredStateMigrateV4';
 // import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
@@ -32,8 +32,8 @@ const externalTagLibrary = window.ExtTagLibrary || false;
 const blacklist = [
   'app',
   'locationIndex',
-  externalLocations ? 'locations' : false,
-  externalTagLibrary ? 'taglibrary' : false
+  externalLocations ? 'locations' : '',
+  externalTagLibrary ? 'taglibrary' : ''
 ];
 
 // const migrations = {
@@ -81,7 +81,7 @@ const blacklist = [
 //   }
 // };
 
-const rootPersistConfig = {
+const rootPersistConfig: PersistConfig = {
   key: 'root',
   getStoredState: getStoredStateMigrateV4({ blacklist }),
   storage,

@@ -20,12 +20,12 @@ import React from 'react';
 import { DropTarget } from 'react-dnd';
 import DragItemTypes from './DragItemTypes';
 
-type Props = {
-  children: Array<Object>,
-  canDrop: boolean,
-  isOver: boolean,
-  connectDropTarget: (param: Object) => void
-};
+interface Props {
+  children: Array<Object>;
+  canDrop: boolean;
+  isOver: boolean;
+  connectDropTarget: (param: Object) => void;
+}
 
 const boxTarget = {
   drop(props) {
@@ -66,4 +66,5 @@ export default DropTarget(DragItemTypes.TAG, boxTarget, (connect, monitor) => ({
   connectDropTarget: connect.dropTarget(),
   isOver: monitor.isOver(),
   canDrop: monitor.canDrop()
+  // @ts-ignore
 }))(TagDropContainer);

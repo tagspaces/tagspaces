@@ -15,9 +15,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
+import configureStoreDev from './configureStore.dev';
+import configureStoreProd from './configureStore.prod';
 
-if (process.env.NODE_ENV === 'production') {
-  module.exports = require('./configureStore.prod'); // eslint-disable-line global-require
-} else {
-  module.exports = require('./configureStore.dev'); // eslint-disable-line global-require
-}
+const selectedConfigureStore =
+  process.env.NODE_ENV === 'production'
+    ? configureStoreProd
+    : configureStoreDev;
+
+export const { configureStore } = selectedConfigureStore;
+
+export const { history } = selectedConfigureStore;

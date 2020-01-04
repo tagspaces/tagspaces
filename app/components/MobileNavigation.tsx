@@ -36,7 +36,7 @@ import { withStyles } from '@material-ui/core/styles';
 // import LogoIcon from '../assets/images/icon100x100.svg';
 import TagLibrary from '../components/TagLibrary';
 import Search from '../components/Search';
-import PerspectiveManager from '../components/PerspectiveManager';
+// import PerspectiveManager from '../components/PerspectiveManager';
 import LocationManager from '../components/LocationManager';
 import HelpFeedbackPanel from '../components/HelpFeedbackPanel';
 import i18n from '../services/i18n';
@@ -54,7 +54,7 @@ import {
 } from '../reducers/app';
 import { actions as SettingsActions, isFirstRun } from '../reducers/settings';
 
-const styles = theme => ({
+const styles: any = (theme: any) => ({
   bottomToolbar: {
     textAlign: 'center',
     backgroundColor: theme.palette.background.default
@@ -68,39 +68,39 @@ const styles = theme => ({
   }
 });
 
-type Props = {
-  classes: Object,
-  isFirstRun: boolean,
-  setFirstRun: (isFirstRun: boolean) => void,
-  toggleOnboardingDialog: () => void,
-  toggleCreateFileDialog: () => void,
-  toggleAboutDialog: () => void,
-  toggleKeysDialog: () => void,
-  toggleSettingsDialog: () => void,
-  isSettingsDialogOpened: () => void,
-  isLocationManagerPanelOpened: boolean,
-  openLocationManagerPanel: () => void,
-  isTagLibraryPanelOpened: boolean,
-  openTagLibraryPanel: () => void,
-  isSearchPanelOpened: boolean,
-  openSearchPanel: () => void,
-  isPerspectivesPanelOpened: boolean,
+interface Props {
+  classes: any;
+  isFirstRun: boolean;
+  setFirstRun: (isFirstRun: boolean) => void;
+  toggleOnboardingDialog: () => void;
+  toggleCreateFileDialog: () => void;
+  toggleAboutDialog: () => void;
+  toggleKeysDialog: () => void;
+  toggleSettingsDialog: () => void;
+  isSettingsDialogOpened: () => void;
+  isLocationManagerPanelOpened: boolean;
+  openLocationManagerPanel: () => void;
+  isTagLibraryPanelOpened: boolean;
+  openTagLibraryPanel: () => void;
+  isSearchPanelOpened: boolean;
+  openSearchPanel: () => void;
+  isPerspectivesPanelOpened: boolean;
   // openPerspectivesPanel: () => void,
-  isHelpFeedbackPanelOpened: boolean,
-  openHelpFeedbackPanel: () => void,
-  closeAllVerticalPanels: () => void,
-  openFileNatively: (url: string) => void,
-  openURLExternally: (url: string) => void,
-  switchTheme: () => void,
-  hideDrawer: () => void,
-  isReadOnlyMode: boolean,
-  showNotification: (message: string) => void,
-  directoryPath: string
-};
+  isHelpFeedbackPanelOpened: boolean;
+  openHelpFeedbackPanel: () => void;
+  closeAllVerticalPanels: () => void;
+  openFileNatively: (url: string) => void;
+  openURLExternally: (url: string) => void;
+  switchTheme: () => void;
+  hideDrawer: () => void;
+  isReadOnlyMode: boolean;
+  showNotification: (message: string) => void;
+  directoryPath: string;
+}
 
-type State = {
-  isProTeaserVisible: boolean
-};
+interface State {
+  isProTeaserVisible: boolean;
+}
 
 class MobileNavigation extends React.Component<Props, State> {
   state = {
@@ -115,25 +115,18 @@ class MobileNavigation extends React.Component<Props, State> {
   render() {
     const {
       classes,
-      isFirstRun,
       isLocationManagerPanelOpened,
       isTagLibraryPanelOpened,
       isSearchPanelOpened,
-      isSettingsDialogOpened,
-      isPerspectivesPanelOpened,
       isHelpFeedbackPanelOpened,
       isReadOnlyMode,
       toggleCreateFileDialog,
-      toggleAboutDialog,
       toggleOnboardingDialog,
       toggleSettingsDialog,
       toggleKeysDialog,
       openLocationManagerPanel,
       openTagLibraryPanel,
       openSearchPanel,
-      openHelpFeedbackPanel,
-      closeAllVerticalPanels,
-      switchTheme,
       showNotification,
       hideDrawer,
       openFileNatively,
@@ -161,7 +154,7 @@ class MobileNavigation extends React.Component<Props, State> {
             hideDrawer={hideDrawer}
             style={{ display: isSearchPanelOpened ? 'block' : 'none' }}
           />
-          {isPerspectivesPanelOpened && <PerspectiveManager />}
+          {/* {isPerspectivesPanelOpened && <PerspectiveManager />} */}
           {isHelpFeedbackPanelOpened && (
             <HelpFeedbackPanel
               openFileNatively={openFileNatively}

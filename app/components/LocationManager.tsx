@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -80,61 +81,61 @@ import IOActions from '../reducers/io-actions';
 const isLocationsReadOnly = window.ExtLocationsReadOnly;
 
 interface Props {
-  classes: Object,
-  locations: Array<Location>,
-  perspectives: Array<Object>,
-  currentLocationId: string,
-  isReadOnlyMode: boolean,
-  hideDrawer: () => void,
-  openFile: (path: string) => void,
-  openURLExternally: (path: string) => void,
-  loadDirectoryContent: (path: string) => void,
-  openLocation: (location: Location) => void,
-  openFileNatively: (path: string) => void,
-  openDirectory: (path: string) => void,
-  showInFileManager: (path: string) => void,
-  createDirectoryIndex: (path: string) => void,
-  addLocation: (location: Location, openAfterCreate: boolean) => void,
-  editLocation: () => void,
-  moveLocationUp: (locationId: string) => void,
-  moveLocationDown: (locationId: string) => void,
-  closeLocation: (locationId: string) => void,
-  removeLocation: (location: Location) => void,
+  classes: any;
+  locations: Array<Location>;
+  perspectives: Array<Object>;
+  currentLocationId: string;
+  isReadOnlyMode: boolean;
+  hideDrawer: () => void;
+  openFile: (path: string) => void;
+  openURLExternally: (path: string) => void;
+  loadDirectoryContent: (path: string) => void;
+  openLocation: (location: Location) => void;
+  openFileNatively: (path: string) => void;
+  openDirectory: (path: string) => void;
+  showInFileManager: (path: string) => void;
+  createDirectoryIndex: (path: string) => void;
+  addLocation: (location: Location, openAfterCreate: boolean) => void;
+  editLocation: () => void;
+  moveLocationUp: (locationId: string) => void;
+  moveLocationDown: (locationId: string) => void;
+  closeLocation: (locationId: string) => void;
+  removeLocation: (location: Location) => void;
   // renameDirectory: (directoryPath: string, newDirectoryName: string) => void,
-  reflectCreateEntry: (path: string, isFile: boolean) => void,
-  deleteDirectory: (directoryPath: string) => void,
+  reflectCreateEntry: (path: string, isFile: boolean) => void;
+  deleteDirectory: (directoryPath: string) => void;
   showNotification: (
     text: string,
     notificationType: string,
     autohide: boolean
-  ) => void,
-  moveFiles: (files: Array<string>, destination: string) => void
-};
+  ) => void;
+  moveFiles: (files: Array<string>, destination: string) => void;
+}
 
 interface State {
-  locationDirectoryContextMenuAnchorEl?: Object | null,
-  locationContextMenuOpened?: boolean,
-  directoryContextMenuAnchorEl?: Object | null,
-  directoryContextMenuOpened?: boolean,
-  selectedLocation?: Location | null,
-  selectedDirectoryPath?: string | null,
-  locationRootPath?: string | null,
-  isCreateLocationDialogOpened?: boolean,
-  isEditLocationDialogOpened?: boolean,
-  isDeleteLocationDialogOpened?: boolean,
-  isSelectDirectoryDialogOpened?: boolean,
-  createLocationDialogKey: string,
-  isCreateDirectoryDialogOpened?: boolean,
-  locationManagerMenuOpened: boolean,
-  locationManagerMenuAnchorEl: Object | null,
-  dirs?: Object
-};
+  locationDirectoryContextMenuAnchorEl?: Object | null;
+  locationContextMenuOpened?: boolean;
+  directoryContextMenuAnchorEl?: Object | null;
+  directoryContextMenuOpened?: boolean;
+  selectedLocation?: Location | null;
+  selectedDirectoryPath?: string | null;
+  locationRootPath?: string | null;
+  isCreateLocationDialogOpened?: boolean;
+  isEditLocationDialogOpened?: boolean;
+  isDeleteLocationDialogOpened?: boolean;
+  isSelectDirectoryDialogOpened?: boolean;
+  createLocationDialogKey: string;
+  isCreateDirectoryDialogOpened?: boolean;
+  locationManagerMenuOpened: boolean;
+  locationManagerMenuAnchorEl: Object | null;
+  dirs?: Object;
+}
 
 type SubFolder = {
-  uuid: string,
-  name: string,
-  path: string,
-  children?: Array<SubFolder>
+  uuid: string;
+  name: string;
+  path: string;
+  children?: Array<SubFolder>;
 };
 
 class LocationManager extends React.Component<Props, State> {
@@ -404,7 +405,10 @@ class LocationManager extends React.Component<Props, State> {
     this.setState({ isDeleteLocationDialogOpened: true });
   };
 
-  handleDirectoryContextMenu = (event: React.ChangeEvent<HTMLInputElement> , directoryPath: string) => {
+  handleDirectoryContextMenu = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    directoryPath: string
+  ) => {
     this.setState({
       directoryContextMenuOpened: true,
       directoryContextMenuAnchorEl: event.currentTarget,
@@ -694,7 +698,7 @@ class LocationManager extends React.Component<Props, State> {
     );
   };
 
-  handleLocationManagerMenu = (event: React.ChangeEvent<HTMLInputElement> ) => {
+  handleLocationManagerMenu = (event: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({
       locationManagerMenuOpened: true,
       locationManagerMenuAnchorEl: event.currentTarget

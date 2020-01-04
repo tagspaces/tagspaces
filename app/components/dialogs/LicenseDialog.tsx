@@ -29,11 +29,11 @@ import AppConfig from '../../config';
 import LicenseContent from '../../LICENSE.txt';
 import PlatformIO from '../../services/platform-io';
 
-type Props = {
-  open: boolean,
-  fullScreen: boolean,
-  onClose: () => void
-};
+interface Props {
+  open: boolean;
+  fullScreen: boolean;
+  onClose: () => void;
+}
 
 // function printElem(elem) {
 //   const printWin = window.open('', 'PRINT', 'height=400,width=600');

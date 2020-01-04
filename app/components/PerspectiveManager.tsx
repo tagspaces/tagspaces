@@ -21,14 +21,12 @@ import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import styles from './SidePanels.css';
 
-type Props = {
+interface Props {
   classes: any;
   style: any;
-};
+}
 
-type State = {};
-
-class PerspectiveManager extends React.Component<Props, State> {
+class PerspectiveManager extends React.Component<Props> {
   render() {
     const classes = this.props.classes;
 

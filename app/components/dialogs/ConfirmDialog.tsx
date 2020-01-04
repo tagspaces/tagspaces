@@ -27,17 +27,17 @@ import Typography from '@material-ui/core/Typography';
 import Dialog from '@material-ui/core/Dialog';
 import i18n from '../../services/i18n';
 
-type Props = {
-  open: boolean,
-  title: string,
-  content: string,
-  cancelDialogTID?: string,
-  confirmDialogTID?: string,
-  confirmDialogContentTID?: string,
-  list: Array<string>,
-  confirmCallback: (result: boolean) => void,
-  onClose: () => void
-};
+interface Props {
+  open: boolean;
+  title: string;
+  content: string;
+  cancelDialogTID?: string;
+  confirmDialogTID?: string;
+  confirmDialogContentTID?: string;
+  list: Array<string>;
+  confirmCallback: (result: boolean) => void;
+  onClose: () => void;
+}
 
 const ConfirmDialog = (props: Props) => {
   const { open, onClose } = props;

@@ -35,9 +35,9 @@ import PlatformIO from '../services/platform-io';
 import { getURLParameter } from '../utils/misc';
 
 type RootType = {
-  store: {},
-  persistor: {},
-  history: {}
+  store: {};
+  persistor: {};
+  history: {};
 };
 
 function onBeforeLift(store) {
@@ -77,7 +77,10 @@ function onBeforeLift(store) {
 
 export default function Root({ store, persistor, history }: RootType) {
   return (
-    <Provider store={store}>
+    <Provider
+      // @ts-ignore
+      store={store}
+    >
       {/**
        * PersistGate delays the rendering of the app's UI until the persisted state has been retrieved
        * and saved to redux.
@@ -88,6 +91,7 @@ export default function Root({ store, persistor, history }: RootType) {
       <PersistGate
         loading={<LoadingScreen />}
         onBeforeLift={() => onBeforeLift(store)}
+        // @ts-ignore
         persistor={persistor}
       >
         <ConnectedRouter history={history}>

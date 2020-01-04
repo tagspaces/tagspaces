@@ -46,7 +46,7 @@ import {
 } from '../reducers/settings';
 import AppConfig from '../config';
 
-const styles = theme => ({
+const styles: any = (theme: any) => ({
   mainPanel: {
     flex: '1 1 100%',
     width: '100%',
@@ -74,15 +74,14 @@ const styles = theme => ({
   }
 });
 
-type Props = {
-  classes: Object,
-  toggleKeysDialog: () => void,
-  openURLExternally: (url: string) => void,
-  openFileNatively: (url: string) => void,
-  toggleAboutDialog: () => void,
-  isDesktopMode: boolean
-  // locations: Array<Location>
-};
+interface Props {
+  classes: any;
+  toggleKeysDialog: () => void;
+  openURLExternally: (url: string) => void;
+  openFileNatively: (url: string) => void;
+  toggleAboutDialog: () => void;
+  isDesktopMode: boolean;
+}
 
 const WelcomePanel = (props: Props) => {
   const {

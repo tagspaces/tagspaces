@@ -33,8 +33,9 @@ import TagContainer from '../TagContainer';
 import i18n from '../../services/i18n';
 import { isFunc } from '../../utils/misc';
 import AppConfig from '../../config';
+import { Tag } from '-/reducers/taglibrary';
 
-const styles = {
+const styles: any = {
   root: {
     width: 400,
     height: '100%',
@@ -43,25 +44,26 @@ const styles = {
   }
 };
 
-type Props = {
-  classes: Object,
-  open: boolean,
-  fullScreen: boolean,
-  onClose: () => void,
-  dialogModeImport: boolean,
-  showNotification: (text: string) => void,
-  importTagGroups: () => void,
-  exportTagGroups: () => void
-};
+interface Props {
+  classes: any;
+  open: boolean;
+  tagGroups: Array<any>;
+  fullScreen: boolean;
+  onClose: () => void;
+  dialogModeImport: boolean;
+  showNotification?: (text: string) => void;
+  importTagGroups: (taggroup: any) => void;
+  exportTagGroups: (taggroup: any) => void;
+}
 
-type State = {
-  errorTextName: boolean,
-  disableConfirmButton: boolean,
-  open: boolean,
-  tagGroupList: Array<Object>,
-  checkedAll: boolean,
-  selectedAll: boolean
-};
+interface State {
+  errorTextName: boolean;
+  disableConfirmButton: boolean;
+  open: boolean;
+  tagGroupList: Array<Object>;
+  checkedAll: boolean;
+  selectedAll: boolean;
+}
 
 class ImportExportTagGroupsDialog extends React.Component<Props, State> {
   state = {
@@ -118,7 +120,8 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
     );
   };
 
-  handleChange = name => (event: Object, checked: boolean) => {
+  handleChange = name => (event: any, checked: boolean) => {
+    // @ts-ignore
     this.setState({ [name]: !checked });
   };
 
@@ -137,7 +140,7 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
     }
   }
 
-  handleTagGroup = (tagGroup: Object, checked: boolean, index) => {
+  handleTagGroup = (tagGroup: any, checked: boolean, index) => {
     const groups = this.state.tagGroupList;
     if (!checked) {
       groups[index].selected = true;
@@ -203,7 +206,7 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
         </FormControl>
         <TagGroupContainer taggroup={tagGroup}>
           {tagGroup.children &&
-            tagGroup.children.map(tag => (
+            tagGroup.children.map((tag: Tag) => (
               <TagContainer tag={tag} tagMode="display" />
             ))}
         </TagGroupContainer>

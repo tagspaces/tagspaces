@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -38,275 +39,275 @@ import PlatformIO from '../../services/platform-io';
 import { loadSubFolders } from '../../services/utils-io';
 
 interface Props {
-	open: boolean;
-	onClose: () => void;
+  open: boolean;
+  onClose: () => void;
 }
 
 interface State {
-	errorTextPath: boolean;
-	errorTextName: boolean;
-	open: boolean;
-	drives: Array<string>;
-	currentPath: string;
-	isDefault: boolean;
+  errorTextPath: boolean;
+  errorTextName: boolean;
+  open: boolean;
+  drives: Array<string>;
+  currentPath: string;
+  isDefault: boolean;
 }
 
 const styles = () => ({
-	buttonContainer: {
-		color: '#212121',
-		backgroundColor: '#f5f5f5',
-		borderColor: '#dddddd',
-		marginLeft: 4,
-		marginTop: 4,
-		marginBottom: 4
-	},
-	buttonSuggestion: {
-		fontSize: 10,
-		textTransform: 'none',
-		backgroundColor: '#E5E5E5',
-		color: '#444444',
-		textAlign: 'left',
-		backgroundImage: 'none',
-		margin: 0,
-		paddingTop: '0',
-		paddingBottom: '0',
-		paddingRight: 0,
-		borderRadius: 5
-	},
-	alertWarning: {
-		color: '#fff',
-		backgroundColor: '#ff9800',
-		margin: 15,
-		padding: 15
-	},
-	folderIcon: {
-		color: '#ff9800'
-	},
-	contentFolder: {
-		overflowY: 'auto',
-		maxHeight: '40vh'
-	}
+  buttonContainer: {
+    color: '#212121',
+    backgroundColor: '#f5f5f5',
+    borderColor: '#dddddd',
+    marginLeft: 4,
+    marginTop: 4,
+    marginBottom: 4
+  },
+  buttonSuggestion: {
+    fontSize: 10,
+    textTransform: 'none',
+    backgroundColor: '#E5E5E5',
+    color: '#444444',
+    textAlign: 'left',
+    backgroundImage: 'none',
+    margin: 0,
+    paddingTop: '0',
+    paddingBottom: '0',
+    paddingRight: 0,
+    borderRadius: 5
+  },
+  alertWarning: {
+    color: '#fff',
+    backgroundColor: '#ff9800',
+    margin: 15,
+    padding: 15
+  },
+  folderIcon: {
+    color: '#ff9800'
+  },
+  contentFolder: {
+    overflowY: 'auto',
+    maxHeight: '40vh'
+  }
 });
 
 const drives = [
-	'Choose Drive',
-	'A:',
-	'B:',
-	'C:',
-	'D:',
-	'F:',
-	'G:',
-	'H:',
-	'I:',
-	'J:',
-	'K:',
-	'L:',
-	'M:',
-	'N:',
-	'O:',
-	'P:',
-	'Q:',
-	'R:',
-	'S:',
-	'T:',
-	'U:',
-	'V:',
-	'W:',
-	'X:',
-	'Y:',
-	'Z:'
+  'Choose Drive',
+  'A:',
+  'B:',
+  'C:',
+  'D:',
+  'F:',
+  'G:',
+  'H:',
+  'I:',
+  'J:',
+  'K:',
+  'L:',
+  'M:',
+  'N:',
+  'O:',
+  'P:',
+  'Q:',
+  'R:',
+  'S:',
+  'T:',
+  'U:',
+  'V:',
+  'W:',
+  'X:',
+  'Y:',
+  'Z:'
 ];
 
 class SelectDirectoryDialog extends React.Component<Props, State> {
-	state = {
-		errorTextPath: false,
-		alertSubFolderText: false,
-		disableConfirmButton: true,
-		open: false,
-		currentPath: PlatformIO.getUserHomePath(),
-		subFolders: [],
-		choosePath: '',
-		isDefault: false
-	};
+  state = {
+    errorTextPath: false,
+    alertSubFolderText: false,
+    disableConfirmButton: true,
+    open: false,
+    currentPath: PlatformIO.getUserHomePath(),
+    subFolders: [],
+    choosePath: '',
+    isDefault: false
+  };
 
-	componentWillReceiveProps = (nextProps: any) => {
-		if (nextProps.open === true) {
-			let currentPath = this.state.currentPath;
-			if (nextProps.currentPath) {
-				currentPath = nextProps.currentPath;
-			}
-			this.setState({
-				open: true,
-				currentPath, // AppConfig.isWin ? drives[3] : AppConfig.dirSeparator,
-				choosePath: drives[0]
-			});
-			this.loadListDirectory(currentPath);
-		}
-	};
+  componentWillReceiveProps = (nextProps: any) => {
+    if (nextProps.open === true) {
+      let currentPath = this.state.currentPath;
+      if (nextProps.currentPath) {
+        currentPath = nextProps.currentPath;
+      }
+      this.setState({
+        open: true,
+        currentPath, // AppConfig.isWin ? drives[3] : AppConfig.dirSeparator,
+        choosePath: drives[0]
+      });
+      this.loadListDirectory(currentPath);
+    }
+  };
 
-	loadListDirectory = (path: string) => {
-		loadSubFolders(path)
-			.then(rootDirContent => {
-				this.setState({
-					subFolders: rootDirContent
-				});
-				return true;
-			})
-			.catch(error => {
-				console.log('Error listing directory ' + error);
-			});
-	};
+  loadListDirectory = (path: string) => {
+    loadSubFolders(path)
+      .then(rootDirContent => {
+        this.setState({
+          subFolders: rootDirContent
+        });
+        return true;
+      })
+      .catch(error => {
+        console.log('Error listing directory ' + error);
+      });
+  };
 
-	onConfirm = () => {
-		this.props.chooseDirectoryPath(this.state.currentPath);
-		this.setState({
-			open: false,
-			errorTextPath: false
-		});
-		this.props.onClose();
-	};
+  onConfirm = () => {
+    this.props.chooseDirectoryPath(this.state.currentPath);
+    this.setState({
+      open: false,
+      errorTextPath: false
+    });
+    this.props.onClose();
+  };
 
-	handleChooseDrive = (e: Object, selectedPath: string) => {
-		this.setState({
-			currentPath: selectedPath
-		});
-		this.loadListDirectory(selectedPath);
-	};
+  handleChooseDrive = (e: Object, selectedPath: string) => {
+    this.setState({
+      currentPath: selectedPath
+    });
+    this.loadListDirectory(selectedPath);
+  };
 
-	handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		const target = event.target;
-		const value = target.type === 'checkbox' ? target.checked : target.value;
-		const name = target.name;
+  handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const target = event.target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const name = target.name;
 
-		this.setState({
-			[name]: value,
-			currentPath: value
-		});
-		this.loadListDirectory(value);
-	};
+    this.setState({
+      [name]: value,
+      currentPath: value
+    });
+    this.loadListDirectory(value);
+  };
 
-	onBackButton = () => {
-		const lastIndex = this.state.currentPath.lastIndexOf(
-			AppConfig.dirSeparator
-		);
-		const path = this.state.currentPath.slice(0, lastIndex);
-		this.setState({
-			currentPath: path
-		});
-		this.loadListDirectory(path);
-	};
+  onBackButton = () => {
+    const lastIndex = this.state.currentPath.lastIndexOf(
+      AppConfig.dirSeparator
+    );
+    const path = this.state.currentPath.slice(0, lastIndex);
+    this.setState({
+      currentPath: path
+    });
+    this.loadListDirectory(path);
+  };
 
-	createNewFolder = () => {
-		this.props.createNewDirectoryExt(this.state.currentPath);
-		this.loadListDirectory(this.state.currentPath);
-	};
+  createNewFolder = () => {
+    this.props.createNewDirectoryExt(this.state.currentPath);
+    this.loadListDirectory(this.state.currentPath);
+  };
 
-	renderDriveSuggestions = drive => (
-		<div className={styles.buttonContainer}>
-			<Button
-				key={drive.name}
-				onClick={e => this.handleChooseDrive(e, drive.path)}
-			>
-				<FolderIcon />
-				<span>{drive.name}</span>
-			</Button>
-		</div>
-	);
+  renderDriveSuggestions = drive => (
+    <div className={styles.buttonContainer}>
+      <Button
+        key={drive.name}
+        onClick={e => this.handleChooseDrive(e, drive.path)}
+      >
+        <FolderIcon />
+        <span>{drive.name}</span>
+      </Button>
+    </div>
+  );
 
-	render() {
-		const { fullScreen, open, onClose } = this.props;
+  render() {
+    const { fullScreen, open, onClose } = this.props;
 
-		return (
-			<Dialog
-				open={open}
-				onClose={onClose}
-				fullScreen={fullScreen}
-				keepMounted
-				scroll="paper"
-				// onKeyDown={confirmFunction}
-			>
-				<DialogTitle>{i18n.t('core:selectDialogTitle')}</DialogTitle>
-				<DialogContent>
-					<FormControl fullWidth={true} error={this.props.errorTextPath}>
-						<InputLabel htmlFor="name">
-							{i18n.t('core:selectDialogCurrentPath')}
-						</InputLabel>
-						<Input
-							fullWidth={true}
-							required
-							margin="dense"
-							name="path"
-							onChange={this.handleInputChange}
-							label={i18n.t('core:selectDialogCurrentPath')}
-							data-tid="selectDirectoryDialogInput"
-							value={this.state.currentPath}
-							disabled={AppConfig.isWin}
-						/>
-						{this.state.errorTextPath && (
-							<FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>
-						)}
-					</FormControl>
-					{AppConfig.isWin ? (
-						<FormControl fullWidth={true}>
-							<Select
-								data-tid="selectDirectoryDialogSelect"
-								native
-								autoWidth
-								name="choosePath"
-								value={this.state.choosePath}
-								onChange={this.handleInputChange}
-								input={<Input id="choosePath" />}
-							>
-								{drives.map(drive => (
-									<option key={drive} value={drive}>
-										{drive}
-									</option>
-								))}
-							</Select>
-						</FormControl>
-					) : null}
-					<FormControl fullWidth={true}>
-						<Paper elevation={2}>
-							<Button
-								data-tid="onBackButtonSelectDirectoryDialog"
-								onClick={e => this.onBackButton(e)}
-							>
-								<UndoIcon />
-							</Button>
-							<Button
-								data-tid="createNewFolderSelectDirectoryDialog"
-								onClick={e => this.createNewFolder(e)}
-							>
-								<CreateFolderIcon className={this.props.classes.folderIcon} />
-								{i18n.t('core:createDirectory')}
-							</Button>
-						</Paper>
-						<Paper elevation={2} className={this.props.classes.contentFolder}>
-							{this.state.subFolders.length === 0 ? (
-								<div className={this.props.classes.alertWarning}>
-									{i18n.t('core:noSubfoldersFound')}
-								</div>
-							) : (
-								this.state.subFolders.map(this.renderDriveSuggestions)
-							)}
-						</Paper>
-					</FormControl>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={this.props.onClose} color="primary">
-						{i18n.t('core:cancel')}
-					</Button>
-					<Button
-						onClick={this.onConfirm}
-						data-tid="confirmSelectDirectoryDialog"
-						color="primary"
-					>
-						{i18n.t('core:ok')}
-					</Button>
-				</DialogActions>
-			</Dialog>
-		);
-	}
+    return (
+      <Dialog
+        open={open}
+        onClose={onClose}
+        fullScreen={fullScreen}
+        keepMounted
+        scroll="paper"
+        // onKeyDown={confirmFunction}
+      >
+        <DialogTitle>{i18n.t('core:selectDialogTitle')}</DialogTitle>
+        <DialogContent>
+          <FormControl fullWidth={true} error={this.props.errorTextPath}>
+            <InputLabel htmlFor="name">
+              {i18n.t('core:selectDialogCurrentPath')}
+            </InputLabel>
+            <Input
+              fullWidth={true}
+              required
+              margin="dense"
+              name="path"
+              onChange={this.handleInputChange}
+              label={i18n.t('core:selectDialogCurrentPath')}
+              data-tid="selectDirectoryDialogInput"
+              value={this.state.currentPath}
+              disabled={AppConfig.isWin}
+            />
+            {this.state.errorTextPath && (
+              <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>
+            )}
+          </FormControl>
+          {AppConfig.isWin ? (
+            <FormControl fullWidth={true}>
+              <Select
+                data-tid="selectDirectoryDialogSelect"
+                native
+                autoWidth
+                name="choosePath"
+                value={this.state.choosePath}
+                onChange={this.handleInputChange}
+                input={<Input id="choosePath" />}
+              >
+                {drives.map(drive => (
+                  <option key={drive} value={drive}>
+                    {drive}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
+          ) : null}
+          <FormControl fullWidth={true}>
+            <Paper elevation={2}>
+              <Button
+                data-tid="onBackButtonSelectDirectoryDialog"
+                onClick={e => this.onBackButton(e)}
+              >
+                <UndoIcon />
+              </Button>
+              <Button
+                data-tid="createNewFolderSelectDirectoryDialog"
+                onClick={e => this.createNewFolder(e)}
+              >
+                <CreateFolderIcon className={this.props.classes.folderIcon} />
+                {i18n.t('core:createDirectory')}
+              </Button>
+            </Paper>
+            <Paper elevation={2} className={this.props.classes.contentFolder}>
+              {this.state.subFolders.length === 0 ? (
+                <div className={this.props.classes.alertWarning}>
+                  {i18n.t('core:noSubfoldersFound')}
+                </div>
+              ) : (
+                this.state.subFolders.map(this.renderDriveSuggestions)
+              )}
+            </Paper>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={this.props.onClose} color="primary">
+            {i18n.t('core:cancel')}
+          </Button>
+          <Button
+            onClick={this.onConfirm}
+            data-tid="confirmSelectDirectoryDialog"
+            color="primary"
+          >
+            {i18n.t('core:ok')}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
+  }
 }
 
 export default withStyles(styles)(SelectDirectoryDialog);

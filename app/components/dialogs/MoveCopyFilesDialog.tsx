@@ -43,14 +43,14 @@ import AppConfig from '../../config';
 import IOActions from '../../reducers/io-actions';
 import { extractFileName } from '../../utils/paths';
 
-type Props = {
-  open: boolean,
-  fullScreen: boolean,
-  onClose: () => void,
-  copyFiles: (files: Array<string>, destination: string) => void,
-  moveFiles: (files: Array<string>, destination: string) => void,
-  selectedFiles: Array<string>
-};
+interface Props {
+  open: boolean;
+  fullScreen: boolean;
+  onClose: () => void;
+  copyFiles: (files: Array<string>, destination: string) => void;
+  moveFiles: (files: Array<string>, destination: string) => void;
+  selectedFiles: Array<string>;
+}
 
 const MoveCopyFilesDialog = (props: Props) => {
   const [inputError, setInputError] = useState(false);

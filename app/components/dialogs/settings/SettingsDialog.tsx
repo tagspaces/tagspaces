@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -44,23 +45,23 @@ const styles = theme => ({
   }
 });
 
-type Props = {
-  open: boolean,
-  fullScreen: boolean,
-  classes: Object,
-  onClose: () => void,
-  setSupportedFileTypes: Array<Object>,
-  supportedFileTypes: Array<Object>,
-  settings: Array<Object>
-};
+interface Props {
+  open: boolean;
+  fullScreen: boolean;
+  classes: AttestationConveyancePreference;
+  onClose: () => void;
+  setSupportedFileTypes: Array<Object>;
+  supportedFileTypes: Array<Object>;
+  settings: Array<Object>;
+}
 
-type State = {
-  currentTab: number,
-  items: Array<Object>,
-  selectedItem: Object,
-  isValidationInProgress: boolean,
-  isConfirmDialogOpened: boolean
-};
+interface State {
+  currentTab: number;
+  items: Array<Object>;
+  selectedItem: any;
+  isValidationInProgress: boolean;
+  isConfirmDialogOpened: boolean;
+}
 
 class SettingsDialog extends React.Component<Props, State> {
   state = {

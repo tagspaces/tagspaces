@@ -47,15 +47,15 @@ const styles = () => ({
 	}
 });
 
-type Props = {
-	classes: Object;
+interface Props {
+	classes: any;
 	open: boolean;
 	fullScreen: boolean;
 	onClose: () => void;
 	editTagForEntry: (path: string, tag: Tag, title: string) => void;
 	currentEntryPath: string;
 	selectedTag: Tag;
-};
+}
 
 const GeoTagEditor = Pro && Pro.UI ? Pro.UI.GeoTagEditor : React.Fragment;
 const DateTagEditor = Pro && Pro.UI ? Pro.UI.DateTagEditor : React.Fragment;

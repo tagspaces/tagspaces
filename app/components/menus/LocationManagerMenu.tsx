@@ -25,17 +25,20 @@ import HelpIcon from '@material-ui/icons/Help';
 import i18n from '../../services/i18n';
 import AppConfig from '../../config';
 
-type Props = {
-  classes: Object,
-  open: boolean,
-  anchorEl: Object,
-  onClose: () => void,
-  openURLExternally: (url: string) => void
-};
+interface Props {
+  classes: any;
+  open: boolean;
+  anchorEl: Element;
+  onClose: () => void;
+  openURLExternally: (url: string) => void;
+}
 
 const LocationManagerMenu = (props: Props) => {
   return (
-    <div style={{ overflowY: 'hidden !important' }}>
+    <div
+      // @ts-ignore
+      style={{ overflowY: 'hidden !important' }}
+    >
       <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
         <MenuItem
           data-tid="locationManagerMenu"

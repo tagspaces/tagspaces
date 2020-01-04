@@ -21,20 +21,20 @@ import { DragSource } from 'react-dnd';
 import { ConnectDragSource } from 'react-dnd';
 import DragItemTypes from './DragItemTypes';
 
-type Props = {
-	children: Array<Object>;
-	connectDragSource: ConnectDragSource;
-};
+interface Props {
+  children: Array<Object>;
+  connectDragSource: ConnectDragSource;
+}
 
 const boxSource = {
-	beginDrag(props) {
-		// console.log('beginDrag', props);
-		return {
-			path: props.children.props.entryPath
-		};
-	}
+  beginDrag(props) {
+    // console.log('beginDrag', props);
+    return {
+      path: props.children.props.entryPath
+    };
+  }
 
-	/* endDrag(props, monitor) {
+  /* endDrag(props, monitor) {
     const item = monitor.getItem();
     const dropResult = monitor.getDropResult();
 
@@ -51,13 +51,13 @@ const boxSource = {
 };
 
 const FileSourceDnd = (props: Props) =>
-	props.connectDragSource(<span>{props.children}</span>);
+  props.connectDragSource(<span>{props.children}</span>);
 
 export default DragSource(
-	DragItemTypes.FILE,
-	boxSource,
-	(connect, monitor) => ({
-		connectDragSource: connect.dragSource(),
-		isDragging: monitor.isDragging()
-	})
+  DragItemTypes.FILE,
+  boxSource,
+  (connect, monitor) => ({
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging()
+  })
 )(FileSourceDnd);

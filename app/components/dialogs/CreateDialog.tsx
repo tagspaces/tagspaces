@@ -64,7 +64,7 @@ const styles: any = () => ({
   }
 });
 
-type Props = {
+interface Props {
   open: boolean;
   classes: any;
   selectedDirectoryPath: string;
@@ -78,7 +78,7 @@ type Props = {
     fileType: string
   ) => void;
   onClose: () => void;
-};
+}
 
 const CreateDialog = (props: Props) => {
   let fileInput: HTMLFormElement;

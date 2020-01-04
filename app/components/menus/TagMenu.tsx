@@ -38,7 +38,7 @@ import { actions as AppActions } from '../../reducers/app';
 const isTagLibraryReadOnly =
   window.ExtTagLibrary && window.ExtTagLibrary.length > 0;
 
-type Props = {
+interface Props {
   anchorEl?: Element;
   open?: boolean;
   onClose: () => void;
@@ -49,7 +49,7 @@ type Props = {
   editTag: () => void;
   openSearchPanel: () => void;
   maxSearchResults: number;
-};
+}
 
 const TagLibraryMenu = (props: Props) => {
   const [isEditTagDialogOpened, setIsEditTagDialogOpened] = useState(false);

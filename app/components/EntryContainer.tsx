@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -46,7 +47,8 @@ import PlatformIO from '../services/platform-io';
 import AddRemoveTagsDialog from './dialogs/AddRemoveTagsDialog';
 import {
   // getAllPropertiesPromise,
-  openLinkExternally, FileSystemEntry
+  openLinkExternally,
+  FileSystemEntry
 } from '../services/utils-io';
 import i18n from '../services/i18n';
 import {
@@ -76,13 +78,13 @@ import {
 const defaultSplitSize = 103;
 const openedSplitSize = 360;
 const fullSplitSize = 600;
-const maxCharactersTitleLength = 50;
+// const maxCharactersTitleLength = 50;
 const bufferedSplitResize = buffer({
   timeout: 300,
   id: 'buffered-split-resize'
 });
 
-const styles = theme => ({
+const styles: any = (theme: any) => ({
   panel: {
     width: '100%',
     flexDirection: 'column',
@@ -164,54 +166,55 @@ const styles = theme => ({
   }
 });
 
-type Props = {
-  classes: any,
-  openedFiles: Array<OpenedEntry>,
-  settings: any,
-  keyBindings: any,
-  closeAllFiles: () => void,
-  renameFile: () => void,
-  renameDirectory: () => void,
-  addTags: () => void,
-  removeTags: () => void,
-  editTagForEntry: () => void,
-  openFile: (filePath: string) => void,
-  getNextFile: (path: string) => string,
-  getPrevFile: (path: string) => string,
-  openFileNatively: (path: string) => void,
+interface Props {
+  classes: any;
+  theme: any;
+  openedFiles: Array<OpenedEntry>;
+  settings: any;
+  keyBindings: any;
+  closeAllFiles: () => void;
+  renameFile: () => void;
+  renameDirectory: () => void;
+  addTags: () => void;
+  removeTags: () => void;
+  editTagForEntry: () => void;
+  openFile: (filePath: string) => void;
+  getNextFile: (path: string) => string;
+  getPrevFile: (path: string) => string;
+  openFileNatively: (path: string) => void;
   showNotification: (
     text: string,
     notificationType?: string, // NotificationTypes
     autohide?: boolean
-  ) => void,
-  removeAllTags: () => void,
-  deleteFile: (path: string) => void,
-  toggleEntryFullWidth: () => void,
-  isReadOnlyMode: boolean,
-  setEntryPropertiesSplitSize: (size: number) => void,
-  reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void,
-  updateThumbnailUrl: (path: string, thumbUrl: string) => void,
-  setLastSelectedEntry: (path: string) => void,
-  setSelectedEntries: (selectedEntries: Array<Object>) => void,
-  directoryContent: Array<Object>
-};
+  ) => void;
+  removeAllTags: () => void;
+  deleteFile: (path: string) => void;
+  toggleEntryFullWidth: () => void;
+  isReadOnlyMode: boolean;
+  setEntryPropertiesSplitSize: (size: number) => void;
+  reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
+  updateThumbnailUrl: (path: string, thumbUrl: string) => void;
+  setLastSelectedEntry: (path: string) => void;
+  setSelectedEntries: (selectedEntries: Array<Object>) => void;
+  directoryContent: Array<Object>;
+}
 
-type State = {
-  isPropertiesPanelVisible?: boolean,
-  isFullscreen: boolean,
-  currentEntry?: OpenedEntry | null,
-  entryProps?: Object | null,
-  editingSupported?: boolean,
-  isSaveBeforeCloseConfirmDialogOpened?: boolean,
-  isSaveBeforeReloadConfirmDialogOpened?: boolean,
-  openedSplitSize?: number,
-  isEditTagsModalOpened?: boolean,
-  selectedItem?: Object,
-  isDeleteEntryModalOpened?: boolean,
-  shouldCopyFile?: boolean,
-  entryPropertiesSplitSize?: number,
-  EntryPropertiesKey: string
-};
+interface State {
+  isPropertiesPanelVisible?: boolean;
+  isFullscreen: boolean;
+  currentEntry?: OpenedEntry | null;
+  entryProps?: any | null;
+  editingSupported?: boolean;
+  isSaveBeforeCloseConfirmDialogOpened?: boolean;
+  isSaveBeforeReloadConfirmDialogOpened?: boolean;
+  openedSplitSize?: number;
+  isEditTagsModalOpened?: boolean;
+  selectedItem?: any;
+  isDeleteEntryModalOpened?: boolean;
+  shouldCopyFile?: boolean;
+  entryPropertiesSplitSize?: number;
+  EntryPropertiesKey: string;
+}
 
 class EntryContainer extends React.Component<Props, State> {
   state = {
@@ -696,7 +699,7 @@ class EntryContainer extends React.Component<Props, State> {
     if (this.state.currentEntry && this.state.currentEntry.path) {
       const prevFilePath = this.props.getPrevFile(this.state.currentEntry.path);
       const prevFile = this.props.directoryContent.filter(
-				(entry: FileSystemEntry) => entry.path === prevFilePath
+        (entry: FileSystemEntry) => entry.path === prevFilePath
       );
       this.props.openFile(prevFilePath);
       this.props.setLastSelectedEntry(prevFilePath);
