@@ -5,15 +5,26 @@
     "baseUrl": "./",
     "rootDir": "./",
     "jsx": "react",
-    "module": "ESNext",
+    "module": "esnext",
     "moduleResolution": "node",
     "noUnusedLocals": true,
-    "noEmit": false,
     "allowSyntheticDefaultImports": true,
     "pretty": true,
     "sourceMap": false,
+    "skipLibCheck": true,
     "resolveJsonModule": true,
-    "lib": ["es2015", "dom"]
+    "lib": ["es2015", "dom"],
+    "paths": {
+      "-/*": ["app/*"]
+    }
   },
-  "exclude": ["node_modules", "**/node_modules/*", "extensions"]
+  "include": ["app/**/*.ts", "app/**/*.tsx"]
+  // "exclude": [
+  //  "node_modules",
+  //  "**/node_modules/*",
+  //  "extensions",
+  //  "cordova",
+  //  "web",
+  //  "tests"
+  //]
 }

@@ -21,17 +21,14 @@ import windowStateKeeper from 'electron-window-state';
 import path from 'path';
 
 let mainWindow = null;
-global.splashWorkerWindow = null;
+(global as any).splashWorkerWindow = null;
 
 if (process.env.NODE_ENV === 'production') {
   // eslint-disable-next-line
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
-  // $FlowFixMe
   console.log = () => {};
-  // $FlowFixMe
   console.time = () => {};
-  // $FlowFixMe
   console.timeEnd = () => {};
 }
 
@@ -126,7 +123,7 @@ app.on('ready', async () => {
 
   function createSplashWorker() {
     // console.log('Dev ' + process.env.NODE_ENV + ' worker ' + showWorkerWindow);
-    global.splashWorkerWindow = new BrowserWindow({
+    (global as any).splashWorkerWindow = new BrowserWindow({
       show: workerDevMode,
       x: 0,
       y: 0,
@@ -138,7 +135,9 @@ app.on('ready', async () => {
       }
     });
 
-    global.splashWorkerWindow.loadURL(`file://${__dirname}/splash.html`);
+    (global as any).splashWorkerWindow.loadURL(
+      `file://${__dirname}/splash.html`
+    );
   }
 
   createSplashWorker();
@@ -175,7 +174,7 @@ app.on('ready', async () => {
       throw new Error('"mainWindow" is not defined');
     }
     // mainWindow.show();
-    global.splashWorkerWindow.hide(); // Comment for easy debugging of the worker
+    (global as any).splashWorkerWindow.hide(); // Comment for easy debugging of the worker
     mainWindow.focus();
   });
 
@@ -186,8 +185,8 @@ app.on('ready', async () => {
     // when you should delete the corresponding element.
     mainWindow = null;
     try {
-      global.splashWorkerWindow.close();
-      global.splashWorkerWindow = null;
+      (global as any).splashWorkerWindow.close();
+      (global as any).splashWorkerWindow = null;
     } catch (err) {
       // console.warn('Error closing the splash window. ' + err);
     }
@@ -215,10 +214,10 @@ app.on('ready', async () => {
     });
   });
 
-  global.splashWorkerWindow.webContents.on('crashed', () => {
+  (global as any).splashWorkerWindow.webContents.on('crashed', () => {
     try {
-      global.splashWorkerWindow.close();
-      global.splashWorkerWindow = null;
+      (global as any).splashWorkerWindow.close();
+      (global as any).splashWorkerWindow = null;
     } catch (err) {
       console.warn('Error closing the splash window. ' + err);
     }
@@ -235,8 +234,8 @@ app.on('ready', async () => {
   ipcMain.on('setSplashVisibility', (event, arg) => {
     // worker window needed to be visible for the PDF tmb generation
     // console.log('worker event in main: ' + arg.visibility);
-    if (global.splashWorkerWindow && arg.visibility) {
-      global.splashWorkerWindow.show();
+    if ((global as any).splashWorkerWindow && arg.visibility) {
+      (global as any).splashWorkerWindow.show();
       // arg.visibility ? global.splashWorkerWindow.show() : global.splashWorkerWindow.hide();
     }
   });

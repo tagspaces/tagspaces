@@ -35,8 +35,8 @@
         const port = process.env.PORT || 1212;
         const bundleScript = document.createElement('script');
         bundleScript.src = process.env.HOT
-          ? 'http://localhost:' + port + '/dist/bundle.js'
-          : './dist/bundle.js';
+          ? 'http://localhost:' + port + '/dist/renderer.prod.js'
+          : './dist/renderer.prod.js';
         bundleScript.type = 'text/javascript';
         bundleScript.defer = true;
         document.getElementsByTagName('head')[0].appendChild(bundleScript);

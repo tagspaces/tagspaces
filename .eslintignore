@@ -50,3 +50,11 @@ main.js.map
 .idea
 npm-debug.log.*
 __snapshots__
+
+extensions
+cordova
+web
+app/utils/openlocationcode.js
+
+# TODO just temporal
+tests

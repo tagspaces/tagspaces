@@ -3,7 +3,9 @@
   "git.autofetch": true,
   "git.confirmSync": false,
   "cSpell.userWords": ["customizability", "mapique", "tagspaces", "treeviz"],
+  "cSpell.diagnosticLevel": "Hint",
   "typescript.format.enable": true,
+  "terminal.integrated.scrollback": 10000,
   "search.exclude": {
     ".git": true,
     "cordova": true,
@@ -20,12 +22,16 @@
   "cSpell.words": [
     "Affero",
     "flowtype",
+    "fsextra",
     "haftungsbeschraenkt",
     "lastindex",
     "nbsp",
     "taggroup",
     "taglibrary",
-    "textcolor"
+    "textcolor",
+    "winattr"
   ],
-  "flow.enabled": false
+  "flow.enabled": false,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "eslint.enable": false
 }
