@@ -201,8 +201,8 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
           .split(' ')
           .join(',')
           .split(','); // handle spaces around commas
-        tags = new Set(tags); // remove duplicates
-        tags = tags.filter(tag => tag.length > 0); // zero length tags
+        // tags = [...new Set(tags)]; // remove duplicates
+        tags = tags.filter(tag => tag && tag.length > 0); // zero length tags
 
         const taggroupTags = state[indexForEditing].children;
         taggroupTags.forEach(tag => {
