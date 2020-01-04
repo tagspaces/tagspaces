@@ -18,14 +18,16 @@ export default merge.smart(baseConfig, {
 
   mode: 'production',
 
-  target: 'electron-renderer',
+  target: 'web',
 
   entry: path.join(__dirname, '..', 'app/index'),
+  // entry: ['babel-polyfill', './app/index'],
 
   output: {
-    path: path.join(__dirname, '..', 'app/dist'),
-    publicPath: './dist/',
-    filename: 'renderer.prod.js'
+    libraryTarget: 'window', // 'window', // 'commonjs2',
+    path: path.join(__dirname, '../web/dist'),
+    publicPath: '../dist/',
+    filename: 'bundle.js'
   },
 
   module: {

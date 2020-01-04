@@ -20,13 +20,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { I18nextProvider } from 'react-i18next'; // as we build ourself via webpack
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
-import '../assets/fonts/roboto/index.css';
 import i18n from '../services/i18n';
 import { getCurrentTheme } from '../reducers/settings';
 import AppOnBoarding from '../components/AppOnboarding';
-
-// Needed for onTouchTap http://stackoverflow.com/a/34015469/988941
-// injectTapEventPlugin();
 
 const lightTheme = createMuiTheme({
   palette: {

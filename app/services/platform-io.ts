@@ -19,16 +19,17 @@
 import AppConfig from '../config';
 import { Pro } from '../pro';
 import ElectronIO from './electron-io';
+import WebDAVIO from './electron-io';
 
 let nativeAPI: any = new ElectronIO();
+// let nativeAPI: any = new WebDAVIO();
 
 // let nativeAPI: any = {};
 // if (AppConfig.isElectron) {
-//   const ElectronIO = require('./electron-io');
-//   nativeAPI = new ElectronIO();
+//   nativeAPI = require('./electron-io');
 // } else if (AppConfig.isWeb) {
-//   const WebDAVIO = require('./webdav-io');
-//   nativeAPI = new WebDAVIO();
+//   // const WebDAVIO = require('./webdav-io');
+//   // nativeAPI = new WebDAVIO();
 // } else if (AppConfig.isCordovaAndroid || AppConfig.isCordovaiOS) {
 //   // const CordovaIO = require('./cordova-io');
 //   // nativeAPI = new CordovaIO();
