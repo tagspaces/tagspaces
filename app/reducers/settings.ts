@@ -68,7 +68,7 @@ export const types = {
   SET_FIRST_RUN: 'SETTINGS/SET_FIRST_RUN'
 };
 
-export default (state: Object = defaultSettings, action: any) => {
+export default (state: any = defaultSettings, action: any) => {
   switch (action.type) {
     case types.UPGRADE_SETTINGS: {
       const mergedKeyBindings = defaultSettings.keyBindings.map(x =>
@@ -418,15 +418,13 @@ export const actions = {
   }),
   checkForUpdate: () => (
     dispatch: (actions: Object) => void
-    // getState: () => Object
+    // getState: () => any
   ) => {
     // const { settings } = getState();
     getLastVersionPromise()
       .then(lastVersion => {
         console.log('Last version on server: ' + lastVersion);
-        // $FlowFixMe
         const newVersion = semver.coerce(lastVersion); // lastVersion '3.0.5' ;
-        // $FlowFixMe
         const currentVersion = semver.coerce(versionMeta.version);
         // const lastPublishedVersion = semver.coerce(settings.lastPublishedVersion);
         if (semver.valid(newVersion) && semver.gt(newVersion, currentVersion)) {
@@ -472,64 +470,63 @@ export function getLastVersionPromise(): Promise<string> {
 }
 
 // Selectors
-export const getSettings = (state: Object) => state.settings;
-export const getDesktopMode = (state: Object) => {
+export const getSettings = (state: any) => state.settings;
+export const getDesktopMode = (state: any) => {
   if (typeof window.ExtDisplayMode === 'undefined') {
     return state.settings.desktopMode;
   }
   return window.ExtDisplayMode !== 'mobile';
 };
-export const getCheckForUpdateOnStartup = (state: Object) =>
+export const getCheckForUpdateOnStartup = (state: any) =>
   state.settings.checkForUpdates;
-export const getLastPublishedVersion = (state: Object) =>
+export const getLastPublishedVersion = (state: any) =>
   state.settings.lastPublishedVersion;
-export const getShowUnixHiddenEntries = (state: Object) =>
+export const getShowUnixHiddenEntries = (state: any) =>
   state.settings.showUnixHiddenEntries;
-export const getUseDefaultLocation = (state: Object) =>
+export const getUseDefaultLocation = (state: any) =>
   state.settings.useDefaultLocation;
-export const getColoredFileExtension = (state: Object) =>
+export const getColoredFileExtension = (state: any) =>
   state.settings.coloredFileExtension;
-export const getShowTagAreaOnStartup = (state: Object) =>
+export const getShowTagAreaOnStartup = (state: any) =>
   state.settings.showTagAreaOnStartup;
-export const getLoadsLocationMetaData = (state: Object) =>
+export const getLoadsLocationMetaData = (state: any) =>
   state.settings.loadsLocationMetaData;
-export const getSearchInSubfolders = (state: Object) =>
+export const getSearchInSubfolders = (state: any) =>
   state.settings.searchInSubfolders;
-export const getWatchCurrentDirectory = (state: Object) =>
+export const getWatchCurrentDirectory = (state: any) =>
   state.settings.watchCurrentDirectory;
-export const getCurrentLanguage = (state: Object) =>
+export const getCurrentLanguage = (state: any) =>
   state.settings.interfaceLanguage;
-export const getAppDataPath = (state: Object) => state.settings.appDataPath;
-export const getSupportedLanguages = (state: Object) =>
-  state.settings.languages;
-export const getCalculateTags = (state: Object) => state.settings.calculateTags;
-export const getUseTrashCan = (state: Object) => state.settings.useTrashCan;
-export const getPersistTagsInSidecarFile = (state: Object) =>
+export const getAppDataPath = (state: any) => state.settings.appDataPath;
+export const getSupportedLanguages = (state: any) => state.settings.languages;
+export const getCalculateTags = (state: any) => state.settings.calculateTags;
+export const getUseTrashCan = (state: any) => state.settings.useTrashCan;
+export const getPersistTagsInSidecarFile = (state: any) =>
   state.settings.persistTagsInSidecarFile;
-export const getUseGenerateThumbnails = (state: Object) =>
+export const getUseGenerateThumbnails = (state: any) =>
   state.settings.useGenerateThumbnails;
-export const getUseTextExtraction = (state: Object) =>
+export const getUseTextExtraction = (state: any) =>
   state.settings.useTextExtraction;
-export const getKeyBindings = (state: Object) => state.settings.keyBindings;
-export const getKeyBindingObject = (state: Object) =>
+export const getKeyBindings = (state: any) => state.settings.keyBindings;
+export const getKeyBindingObject = (state: any) =>
   generateKeyBindingObject(state.settings.keyBindings);
-export const getSupportedFileTypes = (state: Object) =>
+export const getSupportedFileTypes = (state: any) =>
   state.settings.supportedFileTypes;
-export const getPerspectives = (state: Object) =>
+export const getPerspectives = (state: any) =>
   state.settings.supportedPerspectives;
-export const getTagColor = (state: Object) => state.settings.tagBackgroundColor;
-export const getTagTextColor = (state: Object) => state.settings.tagTextColor;
-export const getCurrentTheme = (state: Object) => state.settings.currentTheme;
-export const isGlobalKeyBindingEnabled = (state: Object) =>
+export const getTagColor = (state: any) => state.settings.tagBackgroundColor;
+export const getTagTextColor = (state: any) => state.settings.tagTextColor;
+export const getCurrentTheme = (state: any) => state.settings.currentTheme;
+export const isGlobalKeyBindingEnabled = (state: any) =>
   state.settings.enableGlobalKeyboardShortcuts;
-export const getLeftVerticalSplitSize = (state: Object) =>
+export const getLeftVerticalSplitSize = (state: any) =>
   state.settings.leftVerticalSplitSize;
-export const getMainVerticalSplitSize = (state: Object) =>
+export const getMainVerticalSplitSize = (state: any) =>
   state.settings.mainVerticalSplitSize;
-export const getTagDelimiter = (state: Object) => state.settings.tagDelimiter;
-export const getMaxSearchResults = (state: Object) =>
+export const getTagDelimiter = (state: any) => state.settings.tagDelimiter;
+export const getMaxSearchResults = (state: any) =>
   state.settings.maxSearchResult;
-export const isFirstRun = (state: Object) => {
+export const isFirstRun = (state: any) => {
   if (typeof window.ExtIsFirstRun === 'undefined') {
     return state.settings.firstRun;
   }
@@ -538,7 +535,7 @@ export const isFirstRun = (state: Object) => {
 
 function generateKeyBindingObject(keyBindings: Array<Object>) {
   const kbObject = {};
-  keyBindings.map(kb => {
+  keyBindings.map((kb: any) => {
     kbObject[kb.name] = kb.command;
     return true;
   });

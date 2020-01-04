@@ -20,74 +20,74 @@ import React from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
 
-export function DialogTransition(props: Object) {
-  return <Slide direction="down" {...props} />;
+export function DialogTransition(props: any) {
+	return <Slide direction="down" {...props} />;
 }
 
-type Props = {
-  open: boolean,
-  fullScreen?: boolean,
-  onClose: () => void,
-  onBackdropClick?: () => void,
-  onEnterKey?: () => void,
-  renderTitle?: () => Object,
-  renderContent: () => Object,
-  renderActions?: () => Object
-};
+interface Props {
+	open: boolean;
+	fullScreen?: boolean;
+	onClose: () => void;
+	onBackdropClick?: () => void;
+	onEnterKey?: () => void;
+	renderTitle?: () => Object;
+	renderContent: () => Object;
+	renderActions?: () => Object;
+}
 
 export function onEnterKeyHandler(event: any, confirmFunction: () => void) {
-  if (event.key === 'Enter' || event.keyCode === 13) {
-    confirmFunction();
-  }
+	if (event.key === 'Enter' || event.keyCode === 13) {
+		confirmFunction();
+	}
 }
 
 const GenericDialog = (props: Props) => {
-  // function renderTitle() {
-  //   return (
-  //     <DialogTitle>Dialog</DialogTitle>
-  //   );
-  // }
+	// function renderTitle() {
+	//   return (
+	//     <DialogTitle>Dialog</DialogTitle>
+	//   );
+	// }
 
-  // function renderContent() {
-  //   return (
-  //     <DialogContent>
-  //       <DialogContentText>
-  //         Some content
-  //       </DialogContentText>
-  //     </DialogContent>
-  //   );
-  // }
+	// function renderContent() {
+	//   return (
+	//     <DialogContent>
+	//       <DialogContentText>
+	//         Some content
+	//       </DialogContentText>
+	//     </DialogContent>
+	//   );
+	// }
 
-  // function renderActions() {
-  //   return (
-  //     <DialogActions>
-  //       <Button onClick={props.onClose} color="primary">
-  //         {i18n.t('core:cancel')}
-  //       </Button>
-  //     </DialogActions>
-  //   );
-  // }
+	// function renderActions() {
+	//   return (
+	//     <DialogActions>
+	//       <Button onClick={props.onClose} color="primary">
+	//         {i18n.t('core:cancel')}
+	//       </Button>
+	//     </DialogActions>
+	//   );
+	// }
 
-  const { fullScreen, open, onEnterKey, onClose, onBackdropClick } = props;
-  return (
-    <Dialog
-      fullScreen={fullScreen}
-      open={open}
-      TransitionComponent={DialogTransition}
-      keepMounted
-      scroll="paper"
-      onClose={onClose}
-      onBackdropClick={onBackdropClick && onClose}
-      // onEscapeKeyDown={onClose}
-      onKeyDown={
-        onEnterKey || (event => onEnterKeyHandler(event, props.onClose))
-      }
-    >
-      {props.renderTitle && props.renderTitle()}
-      {props.renderContent && props.renderContent()}
-      {props.renderActions && props.renderActions()}
-    </Dialog>
-  );
+	const { fullScreen, open, onEnterKey, onClose, onBackdropClick } = props;
+	return (
+		<Dialog
+			fullScreen={fullScreen}
+			open={open}
+			TransitionComponent={DialogTransition}
+			keepMounted
+			scroll="paper"
+			onClose={onClose}
+			onBackdropClick={onBackdropClick && onClose}
+			// onEscapeKeyDown={onClose}
+			onKeyDown={
+				onEnterKey || (event => onEnterKeyHandler(event, props.onClose))
+			}
+		>
+			{props.renderTitle && props.renderTitle()}
+			{props.renderContent && props.renderContent()}
+			{props.renderActions && props.renderActions()}
+		</Dialog>
+	);
 };
 
 export default GenericDialog;

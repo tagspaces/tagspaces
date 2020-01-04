@@ -44,7 +44,7 @@ import { formatDateTime4Tag } from '../../utils/misc';
 //   return <Slide direction="down" ref={ref} {...props} />;
 // });
 
-const styles = () => ({
+const styles: any = () => ({
   root: {
     dispatch: 'flex',
     minWidth: 200,
@@ -65,18 +65,19 @@ const styles = () => ({
 });
 
 type Props = {
-  open: boolean,
-  classes: Object,
-  selectedDirectoryPath: string,
-  showNotification: (message: string, type: string, autohide: boolean) => void,
-  reflectCreateEntry: (path: string, isFile: boolean) => void,
+  open: boolean;
+  classes: any;
+  selectedDirectoryPath: string;
+  chooseDirectoryPath: (path: string) => void;
+  showNotification: (message: string, type: string, autohide: boolean) => void;
+  reflectCreateEntry: (path: string, isFile: boolean) => void;
   createFileAdvanced: (
     targetPath: string,
     fileName: string,
     content: string,
     fileType: string
-  ) => void,
-  onClose: () => void
+  ) => void;
+  onClose: () => void;
 };
 
 const CreateDialog = (props: Props) => {
@@ -169,7 +170,7 @@ const CreateDialog = (props: Props) => {
   //   });
   // }
 
-  function handleFileInputChange(selection: Object) {
+  function handleFileInputChange(selection: any) {
     // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
     const file = selection.currentTarget.files[0];
     const filePath =
@@ -178,7 +179,7 @@ const CreateDialog = (props: Props) => {
       decodeURIComponent(file.name);
 
     const reader = new FileReader();
-    reader.onload = event => {
+    reader.onload = (event: any) => {
       PlatformIO.getPropertiesPromise(filePath)
         .then(entryProps => {
           if (entryProps) {
@@ -288,6 +289,7 @@ const CreateDialog = (props: Props) => {
         <input
           style={{ display: 'none' }}
           ref={input => {
+            // @ts-ignore
             fileInput = input;
           }}
           accept="*"

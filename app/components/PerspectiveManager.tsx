@@ -19,13 +19,11 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-// import Button from '@material-ui/Button';
-// import { history } from '../store/configureStore';
 import styles from './SidePanels.css';
 
 type Props = {
-  classes: Object,
-  style: Object
+  classes: any;
+  style: any;
 };
 
 type State = {};
@@ -36,9 +34,7 @@ class PerspectiveManager extends React.Component<Props, State> {
 
     return (
       <div className={classes.panel} style={this.props.style}>
-        <Typography className={classes.panelTitle} type="subtitle1">
-          Perspectives
-        </Typography>
+        <Typography className={classes.panelTitle}>Perspectives</Typography>
       </div>
     );
   }

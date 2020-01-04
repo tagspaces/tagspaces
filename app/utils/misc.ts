@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -267,7 +268,7 @@ export function formatDateTime(date: string, includeTime: boolean) {
 
 /** Convert a date in the following format 20191204 or 20191204~124532 */
 export function formatDateTime4Tag(
-	date: string,
+	date: string | Date,
 	includeTime: boolean,
 	includeMS?: boolean
 ): string {

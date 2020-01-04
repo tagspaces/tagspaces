@@ -170,4 +170,4 @@ export default [
       }
     ]
   }
-];
+] as any;

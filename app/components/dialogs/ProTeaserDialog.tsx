@@ -35,16 +35,16 @@ import EnterpriseImage from '../../assets/images/world-undraw.svg';
 import i18n from '../../services/i18n';
 import AppConfig from '../../config';
 
-type Props = {
-  open: boolean,
-  fullScreen: boolean,
-  openURLExternally: (url: string) => void,
-  onClose: () => void
-};
+interface Props {
+  open: boolean;
+  fullScreen: boolean;
+  openURLExternally: (url: string) => void;
+  onClose: () => void;
+}
 
-type State = {
-  activeStep: number
-};
+interface State {
+  activeStep: number;
+}
 
 class ProTeaserDialog extends React.Component<Props, State> {
   state = {
@@ -71,7 +71,7 @@ class ProTeaserDialog extends React.Component<Props, State> {
 
   render() {
     const { activeStep } = this.state;
-    const slideStyles = {
+    const slideStyles: any = {
       padding: 5,
       textAlign: 'left'
     };

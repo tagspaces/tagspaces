@@ -31,12 +31,13 @@ import i18n from '../../services/i18n';
 import AppConfig from '../../config';
 import { actions as AppActions } from '../../reducers/app';
 
-type Props = {
-  open: boolean,
-  onClose: () => void,
-  selectedDirectoryPath: string,
-  createDirectory: (directoryPath: string) => void
-};
+interface Props {
+  open: boolean;
+  onClose: () => void;
+  fullScreen?: boolean;
+  selectedDirectoryPath: string;
+  createDirectory: (directoryPath: string) => void;
+}
 
 const CreateDirectoryDialog = (props: Props) => {
   const [inputError, setInputError] = useState(false);

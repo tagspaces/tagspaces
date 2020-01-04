@@ -17,7 +17,7 @@
  */
 import AppConfig from '../../../config';
 
-export default (theme: Object) => ({
+export default (theme: any): any => ({
   gridContainer: {
     display: 'grid',
     gridGap: '2px 2px',

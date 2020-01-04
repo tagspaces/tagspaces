@@ -55,7 +55,7 @@ const presetColors = [
 ];
 
 interface Props {
-	classes: Object;
+	classes: any;
 	open: boolean;
 	color: string;
 	setColor: (color: string) => void;
@@ -84,7 +84,7 @@ const ColorPickerDialog = (props: Props) => {
 		props.onClose();
 	}
 
-	function handleChangeComplete(newColor: Object) {
+	function handleChangeComplete(newColor: any) {
 		setColor(newColor.rgb);
 		setColorHex(newColor.hex);
 	}

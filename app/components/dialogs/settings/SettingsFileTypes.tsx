@@ -33,7 +33,7 @@ import { sortBy } from '../../../utils/misc';
 import i18n from '../../../services/i18n';
 import TransparentBackground from '../../TransparentBackground';
 
-const styles = theme => ({
+const styles: any = (theme: any) => ({
   root: {
     background: theme.palette.background.paper
   },
@@ -71,20 +71,21 @@ const styles = theme => ({
   }
 });
 
-type Props = {
-  items: Array,
-  classes: Object,
-  updateItems: Function,
-  selectedItem: Object,
-  setSelectedItem: Function,
-  isValidationInProgress: boolean,
-  onRemoveItem: Function
-};
+interface Props {
+  items: Array<any>;
+  classes: any;
+  updateItems: Function;
+  selectedItem: any;
+  setSelectedItem: Function;
+  isValidationInProgress: boolean;
+  onRemoveItem: Function;
+}
 
-type State = {
-  isColorPickerVisible: boolean,
-  availableExtensions: []
-};
+interface State {
+  isColorPickerVisible: boolean;
+  availableExtensions: Array<any>;
+  isComponentActive: boolean;
+}
 
 class SettingsFileTypes extends Component<Props, State> {
   state = {

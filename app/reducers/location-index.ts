@@ -53,7 +53,7 @@ export const initialState = {
 	isIndexing: false
 };
 
-export default (state: Object = initialState, action: Object) => {
+export default (state: any = initialState, action: any) => {
 	switch (action.type) {
 		case types.INDEX_DIRECTORY_START: {
 			return {
@@ -233,7 +233,7 @@ export const actions = {
 	cancelDirectoryIndexing: () => ({ type: types.INDEX_DIRECTORY_CANCEL }),
 	createDirectoryIndex: (directoryPath: string, extractText: boolean) => (
 		dispatch: (actions: Object) => void,
-		getState: () => Object
+		getState: () => any
 	) => {
 		const state = getState();
 		const currentLocation: Location = getLocation(
@@ -263,7 +263,7 @@ export const actions = {
 	},
 	loadDirectoryIndex: (directoryPath: string) => (
 		dispatch: (actions: Object) => void,
-		getState: () => Object
+		getState: () => any
 	) => {
 		const state = getState();
 		const currentLocation: Location = getLocation(
@@ -302,7 +302,7 @@ export const actions = {
 	}),
 	searchLocationIndex: (searchQuery: SearchQuery) => (
 		dispatch: (actions: Object) => void,
-		getState: () => Object
+		getState: () => any
 	) => {
 		dispatch(
 			AppActions.showNotification(i18n.t('core:searching'), 'default', false)
@@ -365,6 +365,6 @@ export const actions = {
 };
 
 // Selectors
-export const getIndexedEntriesCount = (state: Object) =>
+export const getIndexedEntriesCount = (state: any) =>
 	state.locationIndex.currentDirectoryIndex.length;
-export const isIndexing = (state: Object) => state.locationIndex.isIndexing;
+export const isIndexing = (state: any) => state.locationIndex.isIndexing;

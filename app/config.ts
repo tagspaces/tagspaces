@@ -19,7 +19,8 @@ const isCordovaiOS =
   /^file:\/{3}[^\/]/i.test(window.location.href) &&
   /ios|iphone|ipod|ipad/i.test(navigator.userAgent);
 const isCordovaAndroid = document.URL.indexOf('file:///android_asset') === 0;
-const isIOS = navigator.userAgent.match(/(iPad|iPhone|iPod)/i);
+const iOSMatcher = navigator.userAgent.match(/(iPad|iPhone|iPod)/i);
+const isIOS = iOSMatcher && iOSMatcher.length > 0;
 const isAndroid = navigator.userAgent.toLowerCase().includes('android');
 
 export default {

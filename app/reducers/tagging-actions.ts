@@ -19,11 +19,7 @@
 import uuidv1 from 'uuid';
 import i18n from '../services/i18n';
 import { actions as AppActions } from './app';
-import {
-  actions as TagLibraryActions,
-  Tag,
-  TagGroup
-} from './taglibrary';
+import { actions as TagLibraryActions, Tag, TagGroup } from './taglibrary';
 import {
   extractFileExtension,
   extractFileName,
@@ -40,16 +36,16 @@ import { formatDateTime4Tag, isPlusCode } from '../utils/misc';
 import AppConfig from '../config';
 import PlatformIO from '../services/platform-io';
 import { Pro } from '../pro';
-import ocl from '../utils/openlocationcode';
+// import openlocationcode from '../utils/openlocationcode';
 
-export const defaultTagLocation = ocl.encode(51.48, 0); // default tag coordinate Greenwich
+export const defaultTagLocation = ''; // (new openlocationcode()).encode(51.48, 0, undefined); // default tag coordinate Greenwich
 
 const actions = {
   addTags: (
     paths: Array<string>,
     tags: Array<Tag>,
-    updateIndex?: boolean = true
-  ) => (dispatch: (actions: Object) => void, getState: () => Object) => {
+    updateIndex: boolean = true
+  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
     const { settings, taglibrary } = getState();
 
     const processedTags = [];
@@ -137,8 +133,8 @@ const actions = {
   addTagsToEntry: (
     path: string,
     tags: Array<Tag>,
-    updateIndex?: boolean = true
-  ) => async (dispatch: (actions: Object) => void, getState: () => Object) => {
+    updateIndex: boolean = true
+  ) => async (dispatch: (actions: Object) => void, getState: () => any) => {
     const { settings } = getState();
     const entryProperties = await PlatformIO.getPropertiesPromise(path);
     let fsEntryMeta;
@@ -273,7 +269,7 @@ const actions = {
    */
   editTagForEntry: (path: string, tag: Tag, newTagTitle: string) => async (
     dispatch: (actions: Object) => void,
-    getState: () => Object
+    getState: () => any
   ) => {
     const { settings, taglibrary } = getState();
     if (
@@ -434,7 +430,7 @@ const actions = {
   },
   removeTagsFromEntry: (path: string, tags: Array<Tag>) => (
     dispatch: (actions: Object) => void,
-    getState: () => Object
+    getState: () => any
   ) => {
     const { settings } = getState();
     const tagTitlesForRemoving = [];
@@ -517,7 +513,7 @@ const actions = {
   },
   removeAllTagsFromEntry: (path: string) => (
     dispatch: (actions: Object) => void,
-    getState: () => Object
+    getState: () => any
   ) => {
     const { settings } = getState();
     loadMetaDataPromise(path)
@@ -636,7 +632,7 @@ const actions = {
     },
   collectTagsFromLocation: (tagGroup: TagGroup) => (
     dispatch: (actions: Object) => void,
-    getState: () => Object
+    getState: () => any
   ) => {
     const { locationIndex, settings } = getState();
 
@@ -677,21 +673,6 @@ const actions = {
     }
   }
 };
-
-function handleSmartTag(smarttagFunction: string) {
-  switch (smarttagFunction) {
-    case 'today':
-      message = data.title ? data.title : '';
-      if (data.message) {
-        message = message + ': ' + data.message;
-      }
-      this.props.showNotification(message, NotificationTypes.default);
-      break;
-    default:
-      console.log('Not recognized messaging command: ' + msg);
-      break;
-  }
-}
 
 function generateTagValue(tag) {
   let tagTitle = tag.functionality;

@@ -42,9 +42,9 @@ const AppVersionBadge = withStyles(theme => ({
   }
 }))(Badge);
 
-type Props = {
-  toggleAboutDialog: () => void
-};
+interface Props {
+  toggleAboutDialog: () => void;
+}
 
 let logo = Pro ? Pro.TextLogoIcon : TextLogoIcon;
 // logo = 'assets/images/custom-logo.svg';

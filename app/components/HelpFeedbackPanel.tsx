@@ -20,7 +20,6 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import Typography from '@material-ui/core/Typography';
-import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
@@ -49,16 +48,16 @@ import AppConfig from '../config';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 
-type Props = {
-  classes: Object,
-  openURLExternally: (url: string) => void,
-  openFileNatively: (url: string) => void,
-  toggleAboutDialog: () => void,
-  toggleKeysDialog: () => void,
-  toggleOnboardingDialog: () => void,
-  toggleProTeaser: () => void,
-  style: Object
-};
+interface Props {
+  classes?: any;
+  openURLExternally: (url: string) => void;
+  openFileNatively: (url: string) => void;
+  toggleAboutDialog?: () => void;
+  toggleKeysDialog: () => void;
+  toggleOnboardingDialog: () => void;
+  toggleProTeaser: () => void;
+  style?: any;
+}
 
 class HelpFeedbackPanel extends React.Component<Props> {
   render() {
@@ -77,7 +76,7 @@ class HelpFeedbackPanel extends React.Component<Props> {
         <CustomLogo />
         <Typography
           className={classNames(classes.panelTitle, classes.header)}
-          type="subtitle1"
+          variant="subtitle1"
         >
           Help & Feedback
         </Typography>
@@ -209,7 +208,7 @@ class HelpFeedbackPanel extends React.Component<Props> {
               <div
                 onClick={toggleProTeaser}
                 role="button"
-                tabIndex="0"
+                tabIndex={0}
                 style={{
                   backgroundColor: 'rgba(29, 209, 159, 0.08)',
                   textAlign: 'center'

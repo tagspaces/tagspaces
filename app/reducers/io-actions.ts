@@ -37,7 +37,7 @@ const actions = {
       IPTCDescription: true,
       IPTCTags: true
     }
-  ) => (dispatch: (actions: Object) => void, getState: () => Object) => {
+  ) => (dispatch: (actions: any) => void, getState: () => any) => {
     const { currentDirectoryEntries } = getState().app;
     if (!Pro || !Pro.ContentExtractor) {
       dispatch(AppActions.showNotification(i18n.t('core:needProVersion')));

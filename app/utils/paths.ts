@@ -218,7 +218,7 @@ export function extractContainingDirectoryName(filePath: string) {
 	);
 }
 
-export function extractTitle(entryPath: string, isDirectory?: boolean = false) {
+export function extractTitle(entryPath: string, isDirectory: boolean = false) {
 	let title;
 	if (isDirectory) {
 		title = extractDirectoryName(entryPath);

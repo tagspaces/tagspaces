@@ -31,22 +31,22 @@ import CopyIcon from '@material-ui/icons/FileCopy';
 import DeleteIcon from '@material-ui/icons/Delete';
 import i18n from '../../../services/i18n';
 
-type Props = {
-  classes: Object,
-  isReadOnlyMode: boolean,
-  selectedEntries: Array<Object>,
-  loadParentDirectoryContent: () => void,
-  toggleSelectAllFiles: boolean,
-  allFilesSelected: boolean,
-  handleLayoutSwitch: (event: Object) => void,
-  openAddRemoveTagsDialog: () => void,
-  fileOperationsEnabled: boolean,
-  openMoveCopyFilesDialog: () => void,
-  openDeleteFileDialog: () => void,
-  handleSortingMenu: (event: Object) => void,
-  handleOptionsMenu: (event: Object) => void,
-  layoutType: string
-};
+interface Props {
+  classes: any;
+  isReadOnlyMode: boolean;
+  selectedEntries: Array<Object>;
+  loadParentDirectoryContent: () => void;
+  toggleSelectAllFiles: (event: any) => void;
+  allFilesSelected: boolean;
+  handleLayoutSwitch: (event: Object) => void;
+  openAddRemoveTagsDialog: () => void;
+  fileOperationsEnabled: boolean;
+  openMoveCopyFilesDialog: () => void;
+  openDeleteFileDialog: () => void;
+  handleSortingMenu: (event: Object) => void;
+  handleOptionsMenu: (event: Object) => void;
+  layoutType: string;
+}
 
 const MainToolbar = (props: Props) => {
   const {

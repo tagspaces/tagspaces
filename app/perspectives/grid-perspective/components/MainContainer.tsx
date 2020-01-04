@@ -64,19 +64,19 @@ import GridOptionsMenu from './GridOptionsMenu';
 const settings = JSON.parse(localStorage.getItem('tsPerspectiveGrid')); // loading settings
 
 interface Props {
-  classes: Object;
-  theme: Object;
+  classes: any;
+  theme: any;
   desktopMode: boolean;
   currentDirectoryPath: string;
   currentDirectoryColor: string;
   lastSelectedEntryPath: string | null;
-  selectedEntries: Array<Object>;
-  supportedFileTypes: Array<Object>;
+  selectedEntries: Array<any>;
+  supportedFileTypes: Array<any>;
   isAppLoading: boolean;
   isReadOnlyMode: boolean;
-  openFile: (path: string, isFile?: boolean) => void;
-  getNextFile: () => void;
-  getPrevFile: () => void;
+  openFile: (path: string, isFile: boolean) => void;
+  getNextFile: () => any;
+  getPrevFile: () => any;
   deleteFile: (path: string) => void;
   deleteDirectory: (path: string) => void;
   loadDirectoryContent: (path: string) => void;
@@ -90,7 +90,6 @@ interface Props {
   addTags: () => void;
   removeTags: () => void;
   removeAllTags: () => void;
-  editTagForEntry: () => void;
   perspectiveCommand: any;
   directoryContent: Array<FileSystemEntry>;
   moveFiles: (files: Array<string>, destination: string) => void;
@@ -100,23 +99,23 @@ interface Props {
     notificationType: string,
     autohide: boolean
   ) => void;
-};
+}
 
 interface State {
-  fileContextMenuAnchorEl: Object | null;
+  fileContextMenuAnchorEl: Element;
   fileContextMenuOpened: boolean;
-  dirContextMenuAnchorEl: Object | null;
+  dirContextMenuAnchorEl: Element;
   dirContextMenuOpened: boolean;
-  tagContextMenuAnchorEl: Object | null;
+  tagContextMenuAnchorEl: Element;
   tagContextMenuOpened: boolean;
   layoutType: string;
   singleClickAction: string;
   doubleClickAction: string;
   entrySize: string;
   thumbnailMode: string;
-  sortingContextMenuAnchorEl: Object | null;
+  sortingContextMenuAnchorEl: Element;
   sortingContextMenuOpened: boolean | null;
-  optionsContextMenuAnchorEl: Object | null;
+  optionsContextMenuAnchorEl: Element;
   optionsContextMenuOpened: boolean | null;
   sortBy: string;
   orderBy: null | boolean;
@@ -130,7 +129,7 @@ interface State {
   isFileRenameDialogOpened: boolean;
   selectedEntryPath: string;
   selectedTag: Tag | null;
-};
+}
 
 class GridPerspective extends React.Component<Props, State> {
   constructor(props) {
@@ -427,7 +426,7 @@ class GridPerspective extends React.Component<Props, State> {
     if (fsEntry.isFile) {
       this.props.setSelectedEntries([fsEntry]);
       this.setState(this.computeFileOperationsEnabled);
-      this.props.openFile(fsEntry.path);
+      this.props.openFile(fsEntry.path, true);
     } else {
       console.log('Handle Grid cell db click, selected path : ', fsEntry.path);
       this.props.loadDirectoryContent(fsEntry.path);
@@ -472,7 +471,11 @@ class GridPerspective extends React.Component<Props, State> {
     }
   };
 
-  handleTagMenu = (event: React.ChangeEvent<HTMLInputElement>, tag: Tag, entryPath: string) => {
+  handleTagMenu = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    tag: Tag,
+    entryPath: string
+  ) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -604,7 +607,7 @@ class GridPerspective extends React.Component<Props, State> {
       selected = true;
     }
 
-    const cellContent = (
+    const cellContent: any = (
       <TagDropContainer entryPath={fsEntry.path}>
         <CellContent
           selected={selected}
@@ -635,6 +638,7 @@ class GridPerspective extends React.Component<Props, State> {
     return (
       <div style={{ position: 'relative' }}>
         <TargetMoveFileBox
+          // @ts-ignore
           accepts={[DragItemTypes.FILE]}
           onDrop={this.handleFileMoveDrop}
         >
@@ -709,7 +713,7 @@ class GridPerspective extends React.Component<Props, State> {
           fsEntry => fsEntry.isFile && fsEntry.path === lastSelectedEntryPath
         );
         if (isLastSelectedEntryFile) {
-          this.props.openFile(lastSelectedEntryPath);
+          this.props.openFile(lastSelectedEntryPath, true);
         } else {
           this.props.loadDirectoryContent(lastSelectedEntryPath);
         }
@@ -730,17 +734,7 @@ class GridPerspective extends React.Component<Props, State> {
       currentDirectoryColor,
       selectedEntries,
       loadParentDirectoryContent,
-      toggleSelectAllFiles,
-      allFilesSelected,
-      handleLayoutSwitch,
-      openAddRemoveTagsDialog,
-      fileOperationsEnabled,
-      openMoveCopyFilesDialog,
-      openDeleteFileDialog,
-      handleSortingMenu,
-      handleOptionsMenu,
-      theme,
-      desktopMode
+      theme
     } = this.props;
     const { layoutType, entrySize, sortBy, orderBy } = this.state;
     const selectedFilePaths = selectedEntries
@@ -771,7 +765,7 @@ class GridPerspective extends React.Component<Props, State> {
           layoutType={this.state.layoutType}
           isReadOnlyMode={this.props.isReadOnlyMode}
           selectedEntries={this.props.selectedEntries}
-          loadParentDirectoryContent={this.props.loadParentDirectoryContent}
+          loadParentDirectoryContent={loadParentDirectoryContent}
           toggleSelectAllFiles={this.toggleSelectAllFiles}
           allFilesSelected={this.state.allFilesSelected}
           handleLayoutSwitch={this.handleLayoutSwitch}
@@ -792,6 +786,7 @@ class GridPerspective extends React.Component<Props, State> {
             <div
               style={{
                 height: '100%',
+                // @ts-ignore
                 overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
                 backgroundColor: currentDirectoryColor || 'transparent'
               }}
@@ -865,8 +860,8 @@ class GridPerspective extends React.Component<Props, State> {
           content={i18n.t('core:deleteConfirmationContent')}
           list={selectedFilePaths}
           confirmCallback={result => {
-            if (result && this.props.selectedEntries) {
-              this.props.selectedEntries.map(fsentry => {
+            if (result && selectedEntries) {
+              selectedEntries.map(fsentry => {
                 if (fsentry.isFile) {
                   this.props.deleteFile(fsentry.path);
                 }
@@ -899,8 +894,6 @@ class GridPerspective extends React.Component<Props, State> {
           directoryPath={this.state.selectedEntryPath}
           loadDirectoryContent={this.props.loadDirectoryContent}
           openDirectory={this.props.openDirectory}
-          showInFileManager={this.props.showInFileManager}
-          openFileNatively={this.props.openFileNatively}
           openFile={this.props.openFile}
           deleteDirectory={this.props.deleteDirectory}
           isReadOnlyMode={this.props.isReadOnlyMode}
@@ -913,7 +906,6 @@ class GridPerspective extends React.Component<Props, State> {
           selectedTag={this.state.selectedTag}
           currentEntryPath={this.state.selectedEntryPath}
           removeTags={this.props.removeTags}
-          editTagForEntry={this.props.editTagForEntry}
           isReadOnlyMode={this.props.isReadOnlyMode}
         />
         <SortingMenu
@@ -977,4 +969,5 @@ function mapStateToProps(state) {
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
+  // @ts-ignore
 )(withStyles(styles, { withTheme: true })(GridPerspective));

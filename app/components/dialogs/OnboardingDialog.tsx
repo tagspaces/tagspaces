@@ -49,22 +49,21 @@ import {
 import { actions as AppActions } from '../../reducers/app';
 import AppConfig from '../../config';
 
-type Props = {
-  classes: Object,
-  open: boolean,
-  isPersistTagsInSidecar: boolean,
-  fullScreen: boolean,
-  currentTheme: string,
+interface Props {
+  classes: any;
+  open: boolean;
+  isPersistTagsInSidecar: boolean;
+  fullScreen: boolean;
+  currentTheme: string;
   // setFirstRun: (isFirstRun: boolean) => void,
-  setPersistTagsInSidecarFile: (isPersistTagsInSidecar: boolean) => void,
-  setCurrentTheme: () => void,
-  openURLExternally: (url: string) => void,
-  onClose: () => void
-};
+  setPersistTagsInSidecarFile: (isPersistTagsInSidecar: boolean) => void;
+  setCurrentTheme: (theme: string) => void;
+  openURLExternally: (url: string) => void;
+  onClose: () => void;
+}
 
 const OnboardingDialog = (props: Props) => {
   const [activeStep, setActiveStep] = useState(0);
-  const [isPersistTagsInSidecar, setIsPersistTagInSidecar] = useState(false);
   const { fullScreen, open, onClose } = props;
 
   let maxSteps = 5;
@@ -77,8 +76,8 @@ const OnboardingDialog = (props: Props) => {
     setActiveStep(activeStep => activeStep - 1);
   }
 
-  function handleStepChange(activeStep) {
-    setActiveStep({ activeStep });
+  function handleStepChange(activeStep: number) {
+    setActiveStep(activeStep);
   }
 
   function toggleTaggingType() {
@@ -149,7 +148,7 @@ const OnboardingDialog = (props: Props) => {
               Choose your the default tagging method for files
             </Typography>
             <Typography variant="h5">&nbsp;</Typography>
-            <Typography variant="body">
+            <Typography variant="body1">
               Core functionality of the application the ability to add tags to
               files and folders. Here you can choose how tags will applied on
               files.
@@ -161,7 +160,6 @@ const OnboardingDialog = (props: Props) => {
               <RadioGroup
                 aria-label="Gender"
                 name="isPersistTagsInSidecar"
-                // value={this.props.isPersistTagsInSidecar}
                 onChange={toggleTaggingType}
               >
                 <FormControlLabel
@@ -205,7 +203,7 @@ const OnboardingDialog = (props: Props) => {
                 />
               </RadioGroup>
             </FormControl>
-            <Typography variant="body">
+            <Typography variant="body1">
               You can always revise you decision and change the tagging method.
               But tags already tagged by renaming the files will stay renamed
               and the created sidecar file containing tags will stay.
@@ -324,4 +322,5 @@ function mapActionCreatorsToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
+  // @ts-ignore
 )(withMobileDialog()(OnboardingDialog));

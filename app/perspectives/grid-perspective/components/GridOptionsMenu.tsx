@@ -31,22 +31,22 @@ import RadioUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import HelpIcon from '@material-ui/icons/Help';
 import i18n from '../../../services/i18n';
 
-type Props = {
-  open: boolean,
-  onClose: () => void,
-  anchorEl: Object | null,
-  toggleShowDirectories: boolean,
-  toggleShowTags: boolean,
-  showDirectories: boolean,
-  showTags: boolean,
-  toggleThumbnailsMode: boolean,
-  thumbnailMode: string,
-  singleClickAction: string,
-  entrySize: string,
-  changeEntrySize: (entrySize: string) => void,
-  changeSingleClickAction: (actionType: string) => void,
-  openHelpWebPage: () => void
-};
+interface Props {
+  open: boolean;
+  onClose: () => void;
+  anchorEl: Element;
+  toggleShowDirectories: () => void;
+  toggleShowTags: () => void;
+  showDirectories: boolean;
+  showTags: boolean;
+  toggleThumbnailsMode: () => void;
+  thumbnailMode: string;
+  singleClickAction: string;
+  entrySize: string;
+  changeEntrySize: (entrySize: string) => void;
+  changeSingleClickAction: (actionType: string) => void;
+  openHelpWebPage: () => void;
+}
 
 const GridOptionsMenu = (props: Props) => {
   const {

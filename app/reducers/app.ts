@@ -178,7 +178,7 @@ export const initialState = {
 };
 
 // The state described here will not be persisted
-export default (state: Object = initialState, action: Object) => {
+export default (state: any = initialState, action: any) => {
   switch (action.type) {
     case types.DEVICE_ONLINE: {
       return { ...state, isOnline: true, error: null };
@@ -549,7 +549,7 @@ export const actions = {
   }),
   showCreateDirectoryDialog: () => (
     dispatch: (actions: Object) => void,
-    getState: () => Object
+    getState: () => any
   ) => {
     const { app } = getState();
     if (!app.currentDirectoryPath) {
@@ -566,7 +566,7 @@ export const actions = {
   },
   showCreateFileDialog: () => (
     dispatch: (actions: Object) => void,
-    getState: () => Object
+    getState: () => any
   ) => {
     const { app } = getState();
     if (!app.currentDirectoryPath) {
@@ -611,7 +611,7 @@ export const actions = {
   closeAllVerticalPanels: () => ({ type: types.CLOSE_ALLVERTICAL_PANELS }),
   loadParentDirectoryContent: () => (
     dispatch: (actions: Object) => void,
-    getState: () => Object
+    getState: () => any
   ) => {
     const state = getState();
     const currentDirectoryPath = state.app.currentDirectoryPath;
@@ -649,10 +649,10 @@ export const actions = {
   },
   loadDirectoryContent: (directoryPath: string) => (
     dispatch: (actions: Object) => void,
-    getState: () => Object
+    getState: () => any
   ) => {
     console.time('listDirectoryPromise');
-    const { settings } = getState();
+		const { settings } = getState();
     window.walkCanceled = false;
 
     loadMetaDataPromise(directoryPath)
@@ -677,7 +677,7 @@ export const actions = {
       })
       .catch(error => {
         console.timeEnd('listDirectoryPromise');
-        dispatch(actions.loadDirectoryFailure(error)); // Currently this is never called, due the promise alwasy resolvse
+        dispatch(actions.loadDirectoryFailure(error)); // Currently this is never called, due the promise always resolve
       });
   },
   loadDirectorySuccess: (
@@ -690,14 +690,14 @@ export const actions = {
   loadDirectorySuccessInt: (
     directoryPath: string,
     directoryContent: Array<Object>,
-    showIsLoading: boolean
+    showIsLoading?: boolean
   ) => ({
     type: types.LOAD_DIRECTORY_SUCCESS,
     directoryPath,
     directoryContent,
     showIsLoading
   }),
-  loadDirectoryFailure: (directoryPath: string, error: any) => (
+  loadDirectoryFailure: (directoryPath: string, error?: any) => (
     dispatch: (actions: Object) => void
   ) => {
     console.warn('Error loading directory: ' + error);
@@ -738,7 +738,7 @@ export const actions = {
   }),
   deleteDirectory: (directoryPath: string) => (
     dispatch: (actions: Object) => void,
-    getState: () => Object
+    getState: () => any
   ) => {
     const { settings } = getState();
     PlatformIO.deleteDirectoryPromise(directoryPath, settings.useTrashCan)
@@ -835,7 +835,7 @@ export const actions = {
   },
   createFile: () => (
     dispatch: (actions: Object) => void,
-    getState: () => Object
+    getState: () => any
   ) => {
     const { app } = getState();
     if (app.currentDirectoryPath) {
@@ -886,7 +886,7 @@ export const actions = {
     fileName: string,
     content: string,
     fileType: 'md' | 'txt' | 'html'
-  ) => (dispatch: (actions: Object) => void, getState: () => Object) => {
+  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
     const fileNameAndExt = fileName + '.' + fileType;
     const filePath =
       normalizePath(targetPath) + AppConfig.dirSeparator + fileNameAndExt;
@@ -935,7 +935,7 @@ export const actions = {
   }),
   openLocationById: (locationId: string) => (
     dispatch: (actions: Object) => void,
-    getState: () => Object
+    getState: () => any
   ) => {
     const locations: Array<Location> = getState().locations;
     locations.map(location => {
@@ -947,7 +947,7 @@ export const actions = {
   },
   openLocation: (location: Location) => (
     dispatch: (actions: Object) => void,
-    getState: () => Object
+    getState: () => any
   ) => {
     if (Pro && Pro.Watcher) {
       Pro.Watcher.stopWatching();
@@ -1017,7 +1017,7 @@ export const actions = {
   },
   closeLocation: (locationId: string) => (
     dispatch: (actions: Object) => void,
-    getState: () => Object
+    getState: () => any
   ) => {
     const locations: Array<Location> = getState().locations;
     const { currentLocationId } = getState().app;
@@ -1041,8 +1041,8 @@ export const actions = {
   }),
   showNotification: (
     text: string,
-    notificationType?: string = 'default',
-    autohide?: boolean = true
+    notificationType: string = 'default',
+    autohide: boolean = true
   ) => ({
     type: types.SET_NOTIFICATION,
     visible: true,
@@ -1071,9 +1071,9 @@ export const actions = {
   }),
   openFile: (
     entryPath: string,
-    isFile?: boolean = true,
+    isFile: boolean = true,
     editMode: boolean = false
-  ) => (dispatch: (actions: Object) => void, getState: () => Object) => {
+  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
     const supportedFileTypes: Array<Object> = getState().settings
       .supportedFileTypes;
     const entryForOpening: OpenedEntry = findExtensionsForEntry(
@@ -1107,7 +1107,7 @@ export const actions = {
   }),
   getNextFile: (pivotFilePath?: string) => (
     dispatch: (actions: Object) => void,
-    getState: () => Object
+    getState: () => any
   ) => {
     const currentEntries = getState().app.currentDirectoryEntries.filter(
       entry => entry.isFile
@@ -1138,7 +1138,7 @@ export const actions = {
   },
   getPrevFile: (pivotFilePath?: string) => (
     dispatch: (actions: Object) => void,
-    getState: () => Object
+    getState: () => any
   ) => {
     const currentEntries = getState().app.currentDirectoryEntries.filter(
       entry => entry.isFile
@@ -1210,7 +1210,7 @@ export const actions = {
     dispatch(actions.reflectRenameEntryInt(path, newPath));
     dispatch(LocationIndexActions.reflectRenameEntry(path, newPath));
   },
-  reflectUpdateSidecarTagsInt: (path: string, tags: Array<Tags>) => ({
+  reflectUpdateSidecarTagsInt: (path: string, tags: Array<Tag>) => ({
     type: types.REFLECT_UPDATE_SIDECARTAGS,
     path,
     tags
@@ -1222,7 +1222,7 @@ export const actions = {
   }),
   reflectUpdateSidecarTags: (
     path: string,
-    tags: Array<Tags>,
+    tags: Array<Tag>,
     updateIndex: boolean = true
   ) => (dispatch: (actions: Object) => void) => {
     dispatch(actions.reflectUpdateSidecarTagsInt(path, tags));
@@ -1238,7 +1238,7 @@ export const actions = {
   },
   deleteFile: (filePath: string) => (
     dispatch: (actions: Object) => void,
-    getState: () => Object
+    getState: () => any
   ) => {
     const { settings } = getState();
     PlatformIO.deleteFilePromise(filePath, settings.useTrashCan)
@@ -1334,7 +1334,7 @@ export const actions = {
   },
   saveFile: () => () =>
     // dispatch: (actions: Object) => void,
-    // getState: () => Object
+    // getState: () => any
     {
       actions.showNotification(
         i18n.t('core:notImplementedYet'),
@@ -1448,7 +1448,7 @@ function findExtensionPathForId(extensionId: string): string {
 }
 
 function findExtensionsForEntry(
-  supportedFileTypes: Array<Object>,
+  supportedFileTypes: Array<any>,
   entryPath: string,
   isFile: boolean = true
 ): OpenedEntry {
@@ -1569,11 +1569,11 @@ export function findAvailableExtensions() {
 }
 
 // Selectors
-export const getDirectoryContent = (state: Object) =>
+export const getDirectoryContent = (state: any) =>
   state.app.currentDirectoryEntries;
-export const getDirectoryPath = (state: Object) =>
+export const getDirectoryPath = (state: any) =>
   state.app.currentDirectoryPath;
-export const getCurrentLocationPath = (state: Object) => {
+export const getCurrentLocationPath = (state: any) => {
   let pathCurrentLocation;
   if (state.locations) {
     state.locations.map(location => {
@@ -1588,59 +1588,59 @@ export const getCurrentLocationPath = (state: Object) => {
   }
   return pathCurrentLocation;
 };
-export const isUpdateAvailable = (state: Object) => state.app.isUpdateAvailable;
-export const isUpdateInProgress = (state: Object) =>
+export const isUpdateAvailable = (state: any) => state.app.isUpdateAvailable;
+export const isUpdateInProgress = (state: any) =>
   state.app.isUpdateInProgress;
-export const isOnline = (state: Object) => state.app.isOnline;
-export const getLastSelectedEntry = (state: Object) =>
+export const isOnline = (state: any) => state.app.isOnline;
+export const getLastSelectedEntry = (state: any) =>
   state.app.lastSelectedEntry;
-export const getSelectedTag = (state: Object) => state.app.tag;
-export const getSelectedEntries = (state: Object) => state.app.selectedEntries;
-export const isFileOpened = (state: Object) => state.app.openedFiles.length > 0;
-export const isGeneratingThumbs = (state: Object) =>
+export const getSelectedTag = (state: any) => state.app.tag;
+export const getSelectedEntries = (state: any) => state.app.selectedEntries;
+export const isFileOpened = (state: any) => state.app.openedFiles.length > 0;
+export const isGeneratingThumbs = (state: any) =>
   state.app.isGeneratingThumbs;
-// export const isFileDragged = (state: Object) => state.app.isFileDragged;
-export const isReadOnlyMode = (state: Object) => state.app.isReadOnlyMode;
-export const isOnboardingDialogOpened = (state: Object) =>
+// export const isFileDragged = (state: any) => state.app.isFileDragged;
+export const isReadOnlyMode = (state: any) => state.app.isReadOnlyMode;
+export const isOnboardingDialogOpened = (state: any) =>
   state.app.onboardingDialogOpened;
-export const isEditTagDialogOpened = (state: Object) =>
+export const isEditTagDialogOpened = (state: any) =>
   state.app.editTagDialogOpened;
-export const isAboutDialogOpened = (state: Object) =>
+export const isAboutDialogOpened = (state: any) =>
   state.app.aboutDialogOpened;
-export const isKeysDialogOpened = (state: Object) => state.app.keysDialogOpened;
-export const isLicenseDialogOpened = (state: Object) =>
+export const isKeysDialogOpened = (state: any) => state.app.keysDialogOpened;
+export const isLicenseDialogOpened = (state: any) =>
   state.app.licenseDialogOpened;
-export const isThirdPartyLibsDialogOpened = (state: Object) =>
+export const isThirdPartyLibsDialogOpened = (state: any) =>
   state.app.thirdPartyLibsDialogOpened;
-export const isSettingsDialogOpened = (state: Object) =>
+export const isSettingsDialogOpened = (state: any) =>
   state.app.settingsDialogOpened;
-export const isCreateDirectoryOpened = (state: Object) =>
+export const isCreateDirectoryOpened = (state: any) =>
   state.app.createDirectoryDialogOpened;
-export const isCreateFileDialogOpened = (state: Object) =>
+export const isCreateFileDialogOpened = (state: any) =>
   state.app.createFileDialogOpened;
-export const isSelectDirectoryDialogOpened = (state: Object) =>
+export const isSelectDirectoryDialogOpened = (state: any) =>
   state.app.selectDirectoryDialogOpened;
-export const getOpenedFiles = (state: Object) => state.app.openedFiles;
-export const getNotificationStatus = (state: Object) =>
+export const getOpenedFiles = (state: any) => state.app.openedFiles;
+export const getNotificationStatus = (state: any) =>
   state.app.notificationStatus;
-export const getCurrentDirectoryColor = (state: Object) =>
+export const getCurrentDirectoryColor = (state: any) =>
   state.app.currentDirectoryColor;
-export const getSearchResults = (state: Object) =>
+export const getSearchResults = (state: any) =>
   state.app.currentDirectoryEntries;
-export const getSearchResultCount = (state: Object) =>
+export const getSearchResultCount = (state: any) =>
   state.app.currentDirectoryEntries.length;
-export const getCurrentLocationId = (state: Object) =>
+export const getCurrentLocationId = (state: any) =>
   state.app.currentLocationId;
-export const isEntryInFullWidth = (state: Object) =>
+export const isEntryInFullWidth = (state: any) =>
   state.app.isEntryInFullWidth;
-export const isLoading = (state: Object) => state.app.isLoading;
-export const isLocationManagerPanelOpened = (state: Object) =>
+export const isLoading = (state: any) => state.app.isLoading;
+export const isLocationManagerPanelOpened = (state: any) =>
   state.app.locationManagerPanelOpened;
-export const isTagLibraryPanelOpened = (state: Object) =>
+export const isTagLibraryPanelOpened = (state: any) =>
   state.app.tagLibraryPanelOpened;
-export const isSearchPanelOpened = (state: Object) =>
+export const isSearchPanelOpened = (state: any) =>
   state.app.searchPanelOpened;
-export const isPerspectivesPanelOpened = (state: Object) =>
+export const isPerspectivesPanelOpened = (state: any) =>
   state.app.perspectivesPanelOpened;
-export const isHelpFeedbackPanelOpened = (state: Object) =>
+export const isHelpFeedbackPanelOpened = (state: any) =>
   state.app.helpFeedbackPanelOpened;

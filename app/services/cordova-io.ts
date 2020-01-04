@@ -31,6 +31,8 @@ const appSettingTagsFile = 'settingsTags.json';
 // let anotatedTree;
 // let pendingCallbacks = 0;
 
+declare let cordova;
+declare let navigator;
 export default class CordovaIO {
   constructor() {
     // Redefining the back button
@@ -109,7 +111,7 @@ export default class CordovaIO {
 
   // Register ios file open handler
   handleOpenURL = (url: string) => {
-    const fileName = url.substring(url.lastIndexOf('/') + 1, url.length);
+    // const fileName = url.substring(url.lastIndexOf('/') + 1, url.length);
     /* showConfirmDialog('File copied', 'File ' + fileName + ' is copied in inbox folder. Would you like to open it ?', () => {
       FileOpener.openFile(url);
     }); */
@@ -197,7 +199,7 @@ export default class CordovaIO {
 
     window.resolveLocalFileSystemURL(
       dataFolderPath,
-      fs => {
+      (fs: any) => {
         fs.getFile(fileName, { create: true }, fileCallback, fail);
       },
       error => {
@@ -295,7 +297,7 @@ export default class CordovaIO {
         fileEntry.file(
           file => {
             const reader = new FileReader();
-            reader.onloadend = evt => {
+            reader.onloadend = (evt: any) => {
               let content = null;
               if (evt.target.result.length > 0) {
                 content = evt.target.result;
@@ -325,22 +327,22 @@ export default class CordovaIO {
 
   loadSettings = () => this.loadedSettings;
 
-  saveSettingsTags = (tagGroups: Object) => {
-    // TODO use js objects
-    const jsonFormat =
-      '{ "appName": "' +
-      Config.DefaultSettings.appName +
-      '", "appVersion": "' +
-      Config.DefaultSettings.appVersion +
-      '", "appBuild": "' +
-      Config.DefaultSettings.appBuild +
-      '", "settingsVersion": ' +
-      Config.DefaultSettings.settingsVersion +
-      ', "tagGroups": ' +
-      tagGroups +
-      ' }';
-    this.saveSettingsFile(appSettingTagsFile, jsonFormat);
-  };
+  // saveSettingsTags = (tagGroups: Object) => {
+  //   // TODO use js objects
+  //   const jsonFormat =
+  //     '{ "appName": "' +
+  //     Config.DefaultSettings.appName +
+  //     '", "appVersion": "' +
+  //     Config.DefaultSettings.appVersion +
+  //     '", "appBuild": "' +
+  //     Config.DefaultSettings.appBuild +
+  //     '", "settingsVersion": ' +
+  //     Config.DefaultSettings.settingsVersion +
+  //     ', "tagGroups": ' +
+  //     tagGroups +
+  //     ' }';
+  //   this.saveSettingsFile(appSettingTagsFile, jsonFormat);
+  // };
 
   loadSettingsTags = () => this.loadedSettingsTags;
 
@@ -377,7 +379,7 @@ export default class CordovaIO {
   handleStartParameters = () => {
     if (this.urlFromIntent !== undefined && this.urlFromIntent.length > 0) {
       console.log('Intent URL: ' + this.urlFromIntent);
-      const filePath = decodeURIComponent(this.urlFromIntent);
+      // const filePath = decodeURIComponent(this.urlFromIntent);
       // TODO FileOpener.openFileOnStartup(filePath);
     }
   };
@@ -389,8 +391,8 @@ export default class CordovaIO {
     console.warn('Creating directory tree is not supported in Cordova yet.');
   };
 
-  listMetaDirectoryPromise = async (path: string): Promise<Array<Object>> => {
-    const promise = new Promise(resolve => {
+  listMetaDirectoryPromise = async (path: string): Promise<Array<any>> => {
+    const promise: Promise<Array<any>> = new Promise(resolve => {
       const entries = [];
       const metaDirPath =
         cleanTrailingDirSeparator(path) +
@@ -407,7 +409,7 @@ export default class CordovaIO {
               if (entryPath.toLowerCase() === metaDirPath.toLowerCase()) {
                 console.log('Skipping current folder');
               } else {
-                const ee = {};
+                const ee: any = {};
                 ee.name = entry.name;
                 ee.path = decodeURI(entryPath);
                 ee.isFile = true;
@@ -446,7 +448,7 @@ export default class CordovaIO {
             reader.readEntries(
               entries => {
                 entries.forEach(entry => {
-                  const eentry = {};
+                  const eentry: any = {};
                   eentry.name = entry.name;
                   eentry.path = entry.fullPath;
                   eentry.tags = [];
@@ -469,29 +471,31 @@ export default class CordovaIO {
                   if (!lite) {
                     if (entry.isDirectory) {
                       // Read tsm.json from subfolders
-                      const metaDirAvailable = metaContent.find(
-                        obj => obj.name === AppConfig.metaFolder
+                      const metaDirAvailable: any = metaContent.find(
+                        (obj: any) => obj.name === AppConfig.metaFolder
                       );
-                      if (metaDirAvailable) {
+                      if (metaDirAvailable && metaDirAvailable.path) {
                         metaPromises.push(
                           this.getEntryMeta(eentry, metaDirAvailable.path)
                         );
                       }
                     } else {
-                      const metaFileAvailable = metaContent.find(
-                        obj => obj.name === entry.name + AppConfig.metaFileExt
+                      const metaFileAvailable: any = metaContent.find(
+                        (obj: any) =>
+                          obj.name === entry.name + AppConfig.metaFileExt
                       );
-                      if (metaFileAvailable) {
+                      if (metaFileAvailable && metaFileAvailable.path) {
                         metaPromises.push(
                           this.getEntryMeta(eentry, metaFileAvailable.path)
                         );
                       }
 
                       // Finding if thumbnail available
-                      const metaThumbAvailable = metaContent.find(
-                        obj => obj.name === entry.name + AppConfig.thumbFileExt
+                      const metaThumbAvailable: any = metaContent.find(
+                        (obj: any) =>
+                          obj.name === entry.name + AppConfig.thumbFileExt
                       );
-                      if (metaThumbAvailable) {
+                      if (metaThumbAvailable && metaThumbAvailable.path) {
                         eentry.thumbPath = metaThumbAvailable.path;
                       }
                     }
@@ -628,7 +632,7 @@ export default class CordovaIO {
     new Promise((resolve, reject) => {
       const entryPath = this.normalizePath(path);
       // getFileSystemPromise(dir).then(function(fileSystem) {
-      const fileProperties: object = {};
+      const fileProperties: any = {};
       this.fsRoot.getFile(
         entryPath,
         {
@@ -690,7 +694,7 @@ export default class CordovaIO {
     resolvePath?: string
   ): Promise<any> => {
     // TODO refactor
-    const getFilePromise = (filePath, resolvePath) => {
+    const getFilePromise = (filePath, resolvePath): Promise<any> => {
       const getFile = (fullPath, result, fail) => {
         const filePath = this.normalizePath(fullPath);
 
@@ -815,7 +819,7 @@ export default class CordovaIO {
           }
         );
       } else {
-        const errMsg = $.i18n.t('ns.common:fileExists', { fileName: filePath });
+        const errMsg = 'File already exists: ' + filePath; // i18n.t('ns.common:fileExists', { fileName: filePath });
         // showAlertDialog(errMsg);
         reject(errMsg);
       }
@@ -1012,7 +1016,10 @@ export default class CordovaIO {
   /**
    * Rename a directory
    */
-  renameDirectoryPromise = (dirPath: string, newDirName: string): Promise<any> =>
+  renameDirectoryPromise = (
+    dirPath: string,
+    newDirName: string
+  ): Promise<any> =>
     new Promise((resolve, reject) => {
       let newDirPath =
         extractParentDirectoryPath(dirPath) +

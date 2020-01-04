@@ -25,14 +25,14 @@ import ArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import ArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import i18n from '../../../services/i18n';
 
-type Props = {
-  open: boolean,
-  onClose: () => void,
-  anchorEl: Object | null,
-  handleSortBy: (sortType: string) => void,
-  sortBy: string,
-  orderBy: null | boolean
-};
+interface Props {
+  open: boolean;
+  onClose: () => void;
+  anchorEl: Element;
+  handleSortBy: (sortType: string) => void;
+  sortBy: string;
+  orderBy: null | boolean;
+}
 
 const SortingMenu = (props: Props) => {
   const { open, onClose, sortBy, orderBy, handleSortBy, anchorEl } = props;

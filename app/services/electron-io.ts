@@ -29,21 +29,21 @@ import PlatformIO from './platform-io';
 import TrayIcon from '../assets/icons/trayIcon.png';
 // import TrayIconWin from '../assets/icons/trayIcon.ico';
 import TrayIcon2x from '../assets/icons/trayIcon@2x.png';
-import TrayIcon3x from '../assets/icons/trayIcon@3x.png';
+// import TrayIcon3x from '../assets/icons/trayIcon@3x.png';
 import { Pro } from '../pro';
 
 export default class ElectronIO {
-  electron: Object;
-  win: Object;
-  app: Object;
-  ipcRenderer: Object;
-  remote: Object;
-  workerWindow: Object;
-  pathUtils: Object;
-  fs: Object;
-  fsWatcher: Object;
-  webFrame: Object;
-  tsTray: Object;
+  electron: any;
+  win: any;
+  app: any;
+  ipcRenderer: any;
+  remote: any;
+  workerWindow: any;
+  pathUtils: any;
+  fs: any;
+  fsWatcher: any;
+  webFrame: any;
+  tsTray: any;
 
   constructor() {
     if (window.require) {
@@ -94,7 +94,8 @@ export default class ElectronIO {
     // } else
 
     if (process.platform === 'win32') {
-      nImage = nativeImage.createFromDataURL(TrayIcon2x);
+			nImage = nativeImage.createFromDataURL(TrayIcon2x);
+		// @ts-ignore
     } else if (process.platform === 'darwin') {
       nImage = nativeImage.createFromDataURL(TrayIcon);
       // nImage.addRepresentation({ scaleFactor: 2.0, dataURL: TrayIcon2x });
@@ -188,7 +189,7 @@ export default class ElectronIO {
     console.log('Creating directory index for: ' + directoryPath);
     const generateDirectoryTree = (dirPath: string) => {
       try {
-        const tree = {};
+        const tree: any = {};
         const dstats = this.fs.lstatSync(dirPath);
         tree.name = this.pathUtils.basename(dirPath);
         tree.isFile = false;
@@ -619,7 +620,7 @@ export default class ElectronIO {
 
   loadTextFilePromise = (
     filePath: string,
-    isPreview?: boolean = false
+    isPreview: boolean = false
   ): Promise<string> =>
     new Promise((resolve, reject) => {
       if (isPreview) {
@@ -660,7 +661,7 @@ export default class ElectronIO {
       if (fileURL.indexOf('file://') === -1) {
         fileURL = 'file://' + fileURL;
       }
-      const xhr = new XMLHttpRequest();
+      const xhr: any = new XMLHttpRequest();
       xhr.open('GET', fileURL, true);
       xhr.responseType = type || 'arraybuffer';
       xhr.onerror = reject;
@@ -743,7 +744,7 @@ export default class ElectronIO {
 
   deleteFilePromise = (
     path: string,
-    useTrash?: boolean = true
+    useTrash: boolean = true
   ): Promise<any> => {
     if (useTrash) {
       return new Promise((resolve, reject) => {
@@ -765,7 +766,7 @@ export default class ElectronIO {
 
   deleteDirectoryPromise = (
     path: string,
-    useTrash?: boolean = true
+    useTrash: boolean = true
   ): Promise<any> => {
     if (useTrash) {
       return new Promise((resolve, reject) => {

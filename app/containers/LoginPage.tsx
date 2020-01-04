@@ -17,7 +17,6 @@
  */
 
 import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { translate } from 'react-i18next';
 import Button from '@material-ui/core/Button';

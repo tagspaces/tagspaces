@@ -32,10 +32,10 @@ import { extractDirectoryName } from '../../utils/paths';
 import PlatformIO from '../../services/platform-io';
 
 type Props = {
-  state: Object,
-  handleChange: () => void,
-  handleInputChange: () => void,
-  showSelectDirectoryDialog: () => void
+  state: any;
+  handleChange: (param1: string, param2: string) => void;
+  handleInputChange: () => void;
+  showSelectDirectoryDialog: () => void;
 };
 
 class LocalForm extends React.Component<Props> {
@@ -90,6 +90,7 @@ class LocalForm extends React.Component<Props> {
             required
             margin="dense"
             name="path"
+            // @ts-ignore
             label={i18n.t('core:createLocationPath')}
             fullWidth={true}
             data-tid="locationPath"

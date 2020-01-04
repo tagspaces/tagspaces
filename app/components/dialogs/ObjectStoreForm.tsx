@@ -55,7 +55,7 @@ export const suggestions = [
   { label: 'sa-east-1 (South America São Paulo)', value: 'sa-east-1' }
 ];
 
-const styles = theme => ({
+const styles: any = (theme: any) => ({
   root: {
     flexGrow: 1,
     height: 250
@@ -201,13 +201,13 @@ const components = {
   ValueContainer
 };
 
-type Props = {
-  state: Object,
-  handleChange: () => void,
-  handleInputChange: () => void,
-  classes: Object,
-  theme: Object
-};
+interface Props {
+  state: any;
+  handleChange: (name: string, value: any) => void;
+  handleInputChange: () => void;
+  classes: any;
+  theme: any;
+}
 
 class ObjectStoreForm extends React.Component<Props> {
   handleChange = name => value => {
@@ -249,6 +249,7 @@ class ObjectStoreForm extends React.Component<Props> {
               required
               margin="dense"
               name="storeName"
+              // @ts-ignore
               label={i18n.t('core:createLocationName')}
               fullWidth={true}
               data-tid="locationName"
@@ -268,6 +269,7 @@ class ObjectStoreForm extends React.Component<Props> {
             <Input
               margin="dense"
               name="storePath"
+              // @ts-ignore
               label={i18n.t('core:createLocationPath')}
               fullWidth={true}
               data-tid="locationPath"
@@ -287,6 +289,7 @@ class ObjectStoreForm extends React.Component<Props> {
             <Input
               margin="dense"
               name="accessKeyId"
+              // @ts-ignore
               label={i18n.t('core:accessKeyId')}
               fullWidth={true}
               data-tid="accessKeyId"
@@ -307,6 +310,7 @@ class ObjectStoreForm extends React.Component<Props> {
               margin="dense"
               name="secretAccessKey"
               type="password"
+              // @ts-ignore
               label={i18n.t('core:secretAccessKey')}
               fullWidth={true}
               data-tid="secretAccessKey"
@@ -329,6 +333,7 @@ class ObjectStoreForm extends React.Component<Props> {
               required
               margin="dense"
               name="bucketName"
+              // @ts-ignore
               label={i18n.t('core:bucketName')}
               fullWidth={true}
               data-tid="bucketName"
