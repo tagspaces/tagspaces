@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -23,7 +24,6 @@ import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
-import HelpIcon from '@material-ui/icons/Help';
 import PictureIcon from '@material-ui/icons/Panorama';
 import DocumentIcon from '@material-ui/icons/PictureAsPdf';
 import NoteIcon from '@material-ui/icons/Note';
@@ -63,16 +63,17 @@ import { FileTypeGroups, SearchQuery } from '../services/search';
 import { Pro } from '../pro';
 import SearchMenu from './menus/SearchMenu';
 import { Tag } from '../reducers/taglibrary';
-import ocl from '../utils/openlocationcode';
+// import openlocationcode from '../utils/openlocationcode';
 import { formatDateTime, extractTimePeriod } from '../utils/dates';
 import { isPlusCode, parseLatLon } from '../utils/misc';
 import PlatformIO from '../services/platform-io';
 
 interface Props {
-  classes: Object;
-  style: Object;
+  classes: any;
+  style: any;
   searchLocationIndex: (searchQuery: SearchQuery) => void;
   loadDirectoryContent: (path: string) => void;
+  openURLExternally: (url: string) => void;
   hideDrawer?: () => void;
   currentDirectory: string;
   indexedEntriesCount: number;
@@ -99,8 +100,10 @@ interface State {
   tagPlaceRadius: number;
   fileSize: string;
   searchMenuOpened: boolean;
-  searchMenuAnchorEl: Object | null;
+  searchMenuAnchorEl: Element;
 }
+
+const olc = {}; // new openlocationcode();
 
 class Search extends React.Component<Props, State> {
   state = {
@@ -175,7 +178,7 @@ class Search extends React.Component<Props, State> {
     let tagPlaceHelper;
 
     if (isPlusCode(value)) {
-      const coord = ocl.decode(value);
+      const coord = olc.decode(value);
       lat = Number(coord.latitudeCenter.toFixed(7));
       lon = Number(coord.longitudeCenter.toFixed(7));
     } else {

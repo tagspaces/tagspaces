@@ -18,18 +18,21 @@
 
 import AppConfig from '../config';
 import { Pro } from '../pro';
+import ElectronIO from './electron-io';
 
-let nativeAPI = {};
-if (AppConfig.isElectron) {
-  const ElectronIO = require('./electron-io');
-  nativeAPI = new ElectronIO();
-} else if (AppConfig.isWeb) {
-  const WebDAVIO = require('./webdav-io');
-  nativeAPI = new WebDAVIO();
-} else if (AppConfig.isCordovaAndroid || AppConfig.isCordovaiOS) {
-  const CordovaIO = require('./cordova-io');
-  nativeAPI = new CordovaIO();
-}
+let nativeAPI: any = new ElectronIO();
+
+// let nativeAPI: any = {};
+// if (AppConfig.isElectron) {
+//   const ElectronIO = require('./electron-io');
+//   nativeAPI = new ElectronIO();
+// } else if (AppConfig.isWeb) {
+//   const WebDAVIO = require('./webdav-io');
+//   nativeAPI = new WebDAVIO();
+// } else if (AppConfig.isCordovaAndroid || AppConfig.isCordovaiOS) {
+//   // const CordovaIO = require('./cordova-io');
+//   // nativeAPI = new CordovaIO();
+// }
 
 let objectStoreAPI;
 
