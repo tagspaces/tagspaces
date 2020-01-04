@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -88,7 +87,7 @@ interface Props {
   closeAllVerticalPanels: () => void;
   openFileNatively: (url: string) => void;
   openURLExternally: (url: string) => void;
-  switchTheme: () => void;
+  switchTheme: (theme: string) => void;
   showNotification: (message: string) => void;
   isReadOnlyMode: boolean;
 }
@@ -327,6 +326,7 @@ class VerticalNavigation extends React.Component<Props, State> {
                 title={i18n.t('core:upgradeToPro')}
                 data-tid="upgradeToPro"
                 onClick={this.toggleProTeaser}
+                // @ts-ignore
                 style={{ ...this.styles.button, ...this.styles.upgradeButton }}
               >
                 <UpgradeIcon
@@ -342,6 +342,7 @@ class VerticalNavigation extends React.Component<Props, State> {
               title={i18n.t('core:switchTheme')}
               data-tid="switchTheme"
               onClick={switchTheme}
+              // @ts-ignore
               style={{ ...this.styles.button, ...this.styles.themingButton }}
             >
               <ThemingIcon style={this.styles.buttonIcon} />
@@ -351,6 +352,7 @@ class VerticalNavigation extends React.Component<Props, State> {
               title={i18n.t('core:settings')}
               data-tid="settings"
               onClick={toggleSettingsDialog}
+              // @ts-ignore
               style={
                 isSettingsDialogOpened
                   ? {
@@ -377,7 +379,6 @@ class VerticalNavigation extends React.Component<Props, State> {
             <Search
               style={{ display: isSearchPanelOpened ? 'block' : 'none' }}
             />
-            {isPerspectivesPanelOpened && <PerspectiveManager />}
             {isHelpFeedbackPanelOpened && (
               <HelpFeedbackPanel
                 openFileNatively={openFileNatively}

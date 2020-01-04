@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -100,12 +99,13 @@ interface State {
   tagPlaceRadius: number;
   fileSize: string;
   searchMenuOpened: boolean;
-  searchMenuAnchorEl: Element;
+  searchMenuAnchorEl: Element | null;
 }
 
 const olc = {}; // new openlocationcode();
 
 class Search extends React.Component<Props, State> {
+  // @ts-ignore
   state = {
     textQuery: '',
     tagsAND: [],
@@ -135,6 +135,7 @@ class Search extends React.Component<Props, State> {
     const name = target.name;
 
     this.setState(
+      // @ts-ignore
       {
         [name]: value
       },
@@ -143,6 +144,7 @@ class Search extends React.Component<Props, State> {
   };
 
   handleTagFieldChange = (name, value) => {
+    // @ts-ignore
     this.setState({ [name]: value }, this.executeSearch);
   };
 
@@ -178,9 +180,9 @@ class Search extends React.Component<Props, State> {
     let tagPlaceHelper;
 
     if (isPlusCode(value)) {
-      const coord = olc.decode(value);
-      lat = Number(coord.latitudeCenter.toFixed(7));
-      lon = Number(coord.longitudeCenter.toFixed(7));
+      // const coord = olc.decode(value);
+      // lat = Number(coord.latitudeCenter.toFixed(7));
+      // lon = Number(coord.longitudeCenter.toFixed(7));
     } else {
       const latLon = parseLatLon(value);
       if (latLon) {
@@ -269,6 +271,7 @@ class Search extends React.Component<Props, State> {
       tagsAND: this.state.tagsAND,
       tagsOR: this.state.tagsOR,
       tagsNOT: this.state.tagsNOT,
+      // @ts-ignore
       searchBoxing: this.state.searchBoxing,
       fileTypes: this.state.fileTypes,
       lastModified: this.state.lastModified,
@@ -289,7 +292,7 @@ class Search extends React.Component<Props, State> {
     this.props.searchLocationIndex(searchQuery);
   };
 
-  handleSearchMenu = (event: React.ChangeEvent<HTMLInputElement>) => {
+  handleSearchMenu = (event: any) => {
     this.setState({
       searchMenuOpened: true,
       searchMenuAnchorEl: event.currentTarget
@@ -322,12 +325,6 @@ class Search extends React.Component<Props, State> {
               ? 'disabled while indexing...'
               : 'in ' + indexedEntriesCount + ' indexed entries'}
           </Typography>
-          {/* <IconButton
-            data-tid="helpSearchButton"
-            onClick={() => {}}
-          >
-            <HelpIcon />
-          </IconButton> */}
           <IconButton
             style={{ marginLeft: 'auto' }}
             data-tid="searchMenu"

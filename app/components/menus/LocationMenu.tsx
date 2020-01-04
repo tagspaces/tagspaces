@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -78,9 +77,7 @@ class LocationMenu extends React.Component<Props, State> {
     this.toggleLocationChooser(undefined);
   };
 
-  toggleLocationChooser = (
-    event: React.ChangeEvent<HTMLInputElement> | undefined
-  ) => {
+  toggleLocationChooser = (event: any) => {
     this.setState({
       locationChooserMenuOpened: !this.state.locationChooserMenuOpened,
       locationChooserMenuAnchorEl: event ? event.currentTarget : null

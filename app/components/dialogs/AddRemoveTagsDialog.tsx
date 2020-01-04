@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -107,7 +106,7 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
         keepMounted
         scroll="paper"
         // onEnterKey={(event) => onEnterKeyHandler(event, this.addTags)}
-        TransitionComponent={Transition}
+        // TransitionComponent={Transition}
       >
         <DialogTitle>{i18n.t('core:tagOperationTitle')}</DialogTitle>
         <DialogContent style={{ minHeight: 330 }}>

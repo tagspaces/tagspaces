@@ -198,16 +198,16 @@ const components = {
 };
 
 interface Props {
-  classes: any;
-  theme: any;
+  classes?: any;
+  theme?: any;
   tags: Array<Tag>;
-  tagSearchType: string;
+  tagSearchType?: string;
   defaultBackgroundColor?: string;
   defaultTextColor?: string;
-  handleChange: (param1: any, param2: any, param3: any) => void;
-  allTags: Array<Tag>;
+  handleChange?: (param1: any, param2: any, param3: any) => void;
+  allTags?: Array<Tag>;
   isReadOnlyMode?: boolean;
-  placeholderText: string;
+  placeholderText?: string;
 }
 
 const TagsSelect = (props: Props) => {

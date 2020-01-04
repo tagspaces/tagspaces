@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -772,7 +771,11 @@ class MainPage extends Component<Props, State> {
           ]}
         />
         {this.props.isDesktopMode ? (
-          <TargetFileBox accepts={[FILE]} onDrop={this.handleFileDrop}>
+          <TargetFileBox
+            // @ts-ignore
+            accepts={[FILE]}
+            onDrop={this.handleFileDrop}
+          >
             <SplitPane
               split="vertical"
               minSize={200}
@@ -802,6 +805,7 @@ class MainPage extends Component<Props, State> {
                 onChange={size => {
                   if (size > 0 && this.state.width) {
                     const sizeInPercent =
+                      // @ts-ignore
                       parseInt((size * 100) / this.state.width, 10) + '%';
                     this.setState({
                       mainSplitSize: sizeInPercent
@@ -839,6 +843,7 @@ class MainPage extends Component<Props, State> {
               onChange={size => {
                 if (size > 0 && this.state.width) {
                   const sizeInPercent =
+                    // @ts-ignore
                     parseInt((size * 100) / this.state.width, 10) + '%';
                   this.setState({
                     mainSplitSize: sizeInPercent

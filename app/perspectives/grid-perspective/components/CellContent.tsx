@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -206,6 +205,7 @@ const CellContent = (props: Props) => {
             <FolderIcon
               className={classes.gridFolder}
               style={{ backgroundColor: fsEntryColor }}
+              // @ts-ignore
               title={fsEntry.path}
             />
           </div>
@@ -349,7 +349,7 @@ const CellContent = (props: Props) => {
     entryHeight = 130;
   }
 
-  let gridCell = React.Fragment;
+  let gridCell: any = React.Fragment;
   if (layoutType === 'grid') {
     gridCell = renderGridCell();
   } else if (layoutType === 'row') {

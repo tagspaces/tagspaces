@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -117,6 +116,7 @@ class CreateFileDialog extends React.Component<Props, State> {
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
     this.setState(
+      // @ts-ignore
       {
         [name]: value
       },
@@ -192,9 +192,9 @@ class CreateFileDialog extends React.Component<Props, State> {
 
   return = () => {
     <Dialog
-      open={open}
-      onClose={onClose}
-      fullScreen={fullScreen}
+      open={this.props.open}
+      onClose={this.props.onClose}
+      fullScreen={this.props.fullScreen}
       keepMounted
       scroll="paper"
       // onKeyDown={confirmFunction}
@@ -267,6 +267,7 @@ class CreateFileDialog extends React.Component<Props, State> {
             required
             margin="dense"
             name="selectedDirectoryPath"
+            // @ts-ignore
             label={i18n.t('core:filePath')}
             fullWidth={true}
             data-tid="createFileDialog_filePath"
