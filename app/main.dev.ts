@@ -45,7 +45,7 @@ process.argv.forEach((arg, count) => {
   } else if (arg.indexOf('-psn') >= 0) {
     // ignoring the -psn process serial number parameter on MacOS by double click
     arg = '';
-  } else if (arg === 'babel-register' || arg === '.' || count === 0) {
+  } else if (arg === './app/main.dev.babel.js' || arg === '.' || count === 0) {
     // ignoring the first argument
     // Ignore these argument
   } else if (arg.length > 2) {

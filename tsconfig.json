@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
-    "allowJs": false,
-    "target": "es5",
+    "allowJs": true,
+    "target": "esnext", // es5
     "baseUrl": "./",
     "rootDir": "./",
     "jsx": "react",
-    "module": "esnext",
+    "module": "esnext", // esnext, commonjs
     "moduleResolution": "node",
     "noUnusedLocals": false,
     "allowSyntheticDefaultImports": true,
@@ -13,12 +13,17 @@
     "sourceMap": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "lib": ["es2015", "dom"],
+    "lib": ["esnext", "dom"], // "lib": ["es2015", "dom"],
     "paths": {
       "-/*": ["app/*"]
     }
   },
-  "include": ["app/**/*.ts", "app/**/*.tsx"]
+  "include": [
+    "app/**/*.ts",
+    "app/**/*.tsx"
+    // "app/node_modules/@tagspaces/pro/**/*.ts",
+    // "app/node_modules/@tagspaces/pro/**/*.tsx"
+  ]
   // "exclude": [
   //  "node_modules",
   //  "**/node_modules/*",

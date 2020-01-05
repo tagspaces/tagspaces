@@ -18,6 +18,8 @@ import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 
 CheckNodeEnv('development');
 
+const targetPlatform = 'electron-io'; // electron-io | webdav-io | cordova-io | process.env.APP_TARGET ||
+
 const port = process.env.PORT || 1212;
 const publicPath = `http://localhost:${port}/dist`;
 const dll = path.join(__dirname, '..', 'dll');
@@ -202,6 +204,15 @@ export default merge.smart(baseConfig, {
 
     new webpack.HotModuleReplacementPlugin({
       multiStep: true
+    }),
+
+    new webpack.NormalModuleReplacementPlugin(/(.*)_PLATFORMIO_(\.*)/, function(
+      resource
+    ) {
+      resource.request = resource.request.replace(
+        /_PLATFORMIO_/,
+        `${targetPlatform}`
+      );
     }),
 
     new webpack.NoEmitOnErrorsPlugin(),

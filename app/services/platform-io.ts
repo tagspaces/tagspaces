@@ -16,25 +16,11 @@
  *
  */
 
-import AppConfig from '../config';
 import { Pro } from '../pro';
-import ElectronIO from './electron-io';
-import WebDAVIO from './electron-io';
+// @ts-ignore
+import platformIO from './_PLATFORMIO_';
 
-let nativeAPI: any = new ElectronIO();
-// let nativeAPI: any = new WebDAVIO();
-
-// let nativeAPI: any = {};
-// if (AppConfig.isElectron) {
-//   nativeAPI = require('./electron-io');
-// } else if (AppConfig.isWeb) {
-//   // const WebDAVIO = require('./webdav-io');
-//   // nativeAPI = new WebDAVIO();
-// } else if (AppConfig.isCordovaAndroid || AppConfig.isCordovaiOS) {
-//   // const CordovaIO = require('./cordova-io');
-//   // nativeAPI = new CordovaIO();
-// }
-
+let nativeAPI: any = new platformIO();
 let objectStoreAPI;
 
 export default class PlatformIO {

@@ -12,6 +12,8 @@ import TerserPlugin from 'terser-webpack-plugin';
 import baseConfig from './webpack.config.base';
 import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 
+const targetPlatform = 'electron-io'; // electron-io | webdav-io | cordova-io | process.env.APP_TARGET ||
+
 CheckNodeEnv('production');
 export default merge.smart(baseConfig, {
   devtool: 'source-map',
@@ -205,6 +207,15 @@ export default merge.smart(baseConfig, {
      */
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'production'
+    }),
+
+    new webpack.NormalModuleReplacementPlugin(/(.*)_PLATFORMIO_(\.*)/, function(
+      resource
+    ) {
+      resource.request = resource.request.replace(
+        /_PLATFORMIO_/,
+        `${targetPlatform}`
+      );
     }),
 
     new MiniCssExtractPlugin({

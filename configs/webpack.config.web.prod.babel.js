@@ -12,6 +12,8 @@ import TerserPlugin from 'terser-webpack-plugin';
 import baseConfig from './webpack.config.base';
 import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 
+const targetPlatform = 'webdav-io'; // electron-io | webdav-io | cordova-io | process.env.APP_TARGET ||
+
 CheckNodeEnv('production');
 export default merge.smart(baseConfig, {
   devtool: 'source-map',
@@ -165,7 +167,7 @@ export default merge.smart(baseConfig, {
       // Text files
       {
         test: /\.(txt)$/,
-        use: 'raw-loader'
+        use: 'file-loader'
       },
       // Common Image Formats
       {
@@ -211,6 +213,15 @@ export default merge.smart(baseConfig, {
 
     new MiniCssExtractPlugin({
       filename: 'style.css'
+    }),
+
+    new webpack.NormalModuleReplacementPlugin(/(.*)_PLATFORMIO_(\.*)/, function(
+      resource
+    ) {
+      resource.request = resource.request.replace(
+        /_PLATFORMIO_/,
+        `${targetPlatform}`
+      );
     }),
 
     new BundleAnalyzerPlugin({

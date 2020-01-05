@@ -12,6 +12,8 @@ import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 
 CheckNodeEnv('production');
 
+const targetPlatform = 'electron-io'; // electron-io | webdav-io | cordova-io | process.env.APP_TARGET ||
+
 export default merge.smart(baseConfig, {
   devtool: 'source-map',
 
@@ -43,6 +45,15 @@ export default merge.smart(baseConfig, {
       analyzerMode:
         process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
       openAnalyzer: process.env.OPEN_ANALYZER === 'true'
+    }),
+
+    new webpack.NormalModuleReplacementPlugin(/(.*)_PLATFORMIO_(\.*)/, function(
+      resource
+    ) {
+      resource.request = resource.request.replace(
+        /_PLATFORMIO_/,
+        `${targetPlatform}`
+      );
     }),
 
     /**
