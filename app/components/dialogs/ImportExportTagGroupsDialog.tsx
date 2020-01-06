@@ -30,9 +30,9 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Dialog from '@material-ui/core/Dialog';
 import TagGroupContainer from '../TagGroupContainer';
 import TagContainer from '../TagContainer';
-import i18n from '../../services/i18n';
-import { isFunc } from '../../utils/misc';
-import AppConfig from '../../config';
+import i18n from '-/services/i18n';
+import { isFunc } from '-/utils/misc';
+import AppConfig from '-/config';
 import { Tag } from '-/reducers/taglibrary';
 
 const styles: any = {

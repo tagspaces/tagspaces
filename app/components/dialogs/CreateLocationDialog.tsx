@@ -34,9 +34,9 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import { Typography } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
-import i18n from '../../services/i18n';
-import { Location, locationType } from '../../reducers/locations';
-import { Pro } from '../../pro';
+import i18n from '-/services/i18n';
+import { Location, locationType } from '-/reducers/locations';
+import { Pro } from '-/pro';
 import ObjectStoreForm from './ObjectStoreForm';
 import LocalForm from './LocalForm';
 

@@ -42,13 +42,13 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import ConfirmDialog from '../dialogs/ConfirmDialog';
 import CreateDirectoryDialog from '../dialogs/CreateDirectoryDialog';
 import RenameDirectoryDialog from '../dialogs/RenameDirectoryDialog';
-import AppConfig from '../../config';
-import i18n from '../../services/i18n';
-import { extractFileName, normalizePath } from '../../utils/paths'; // extractFileExtension
-import PlatformIO from '../../services/platform-io';
-import { formatDateTime4Tag } from '../../utils/misc';
-import { actions as AppActions } from '../../reducers/app';
-import IOActions from '../../reducers/io-actions';
+import AppConfig from '-/config';
+import i18n from '-/services/i18n';
+import { extractFileName, normalizePath } from '-/utils/paths'; // extractFileExtension
+import PlatformIO from '-/services/platform-io';
+import { formatDateTime4Tag } from '-/utils/misc';
+import { actions as AppActions } from '-/reducers/app';
+import IOActions from '-/reducers/io-actions';
 
 interface Props {
   open: boolean;

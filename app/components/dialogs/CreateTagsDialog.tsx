@@ -25,8 +25,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
-import i18n from '../../services/i18n';
-import { TagGroup } from '../../reducers/taglibrary';
+import i18n from '-/services/i18n';
+import { TagGroup } from '-/reducers/taglibrary';
 
 interface Props {
   open: boolean;

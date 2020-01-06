@@ -29,8 +29,8 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import { withStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
-import i18n from '../../services/i18n';
-import { getKeyBindingObject } from '../../reducers/settings';
+import i18n from '-/services/i18n';
+import { getKeyBindingObject } from '-/reducers/settings';
 
 const styles = theme => ({
 	root: {

@@ -30,10 +30,10 @@ import FileIcon from '@material-ui/icons/InsertDriveFileOutlined';
 import Typography from '@material-ui/core/Typography';
 import Dialog from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
-import { Tag } from '../../reducers/taglibrary';
+import { Tag } from '-/reducers/taglibrary';
 import TagsSelect from '../TagsSelect';
-import i18n from '../../services/i18n';
-import { extractFileName } from '../../utils/paths';
+import i18n from '-/services/i18n';
+import { extractFileName } from '-/utils/paths';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;

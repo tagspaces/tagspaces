@@ -29,7 +29,7 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
-import i18n from '../../services/i18n';
+import i18n from '-/services/i18n';
 
 export const suggestions = [
   { label: 'us-east-2 (US East Ohio)', value: 'us-east-2' },

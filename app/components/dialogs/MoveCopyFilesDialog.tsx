@@ -36,12 +36,12 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Typography from '@material-ui/core/Typography';
 import Dialog from '@material-ui/core/Dialog';
-import i18n from '../../services/i18n';
-// import { extractContainingDirectoryPath } from '../../utils/paths';
-import PlatformIO from '../../services/platform-io';
-import AppConfig from '../../config';
-import IOActions from '../../reducers/io-actions';
-import { extractFileName } from '../../utils/paths';
+import i18n from '-/services/i18n';
+// import { extractContainingDirectoryPath } from '-/utils/paths';
+import PlatformIO from '-/services/platform-io';
+import AppConfig from '-/config';
+import IOActions from '-/reducers/io-actions';
+import { extractFileName } from '-/utils/paths';
 
 interface Props {
   open: boolean;

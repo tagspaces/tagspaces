@@ -28,9 +28,9 @@ import TagIcon from '@material-ui/icons/LocalOffer';
 import CollectTagsIcon from '@material-ui/icons/Voicemail';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { TagGroup } from '../../reducers/taglibrary';
-import i18n from '../../services/i18n';
-import { Pro } from '../../pro';
+import { TagGroup } from '-/reducers/taglibrary';
+import i18n from '-/services/i18n';
+import { Pro } from '-/pro';
 
 interface Props {
   classes?: any;

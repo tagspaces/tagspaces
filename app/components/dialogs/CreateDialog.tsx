@@ -32,13 +32,13 @@ import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 // import Slide from '@material-ui/core/Slide';
-import i18n from '../../services/i18n';
-import { getKeyBindingObject } from '../../reducers/settings';
-import { actions as AppActions } from '../../reducers/app';
-import AppConfig from '../../config';
-import { normalizePath } from '../../utils/paths';
-import PlatformIO from '../../services/platform-io';
-import { formatDateTime4Tag } from '../../utils/misc';
+import i18n from '-/services/i18n';
+import { getKeyBindingObject } from '-/reducers/settings';
+import { actions as AppActions } from '-/reducers/app';
+import AppConfig from '-/config';
+import { normalizePath } from '-/utils/paths';
+import PlatformIO from '-/services/platform-io';
+import { formatDateTime4Tag } from '-/utils/misc';
 
 // const Transition = React.forwardRef(function Transition(props, ref) {
 //   return <Slide direction="down" ref={ref} {...props} />;

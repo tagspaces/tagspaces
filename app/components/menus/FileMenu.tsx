@@ -29,8 +29,8 @@ import AddRemoveTags from '@material-ui/icons/Loyalty';
 import MoveCopy from '@material-ui/icons/FileCopy';
 import RenameFile from '@material-ui/icons/FormatTextdirectionLToR';
 import DeleteForever from '@material-ui/icons/DeleteForever';
-import i18n from '../../services/i18n';
-import AppConfig from '../../config';
+import i18n from '-/services/i18n';
+import AppConfig from '-/config';
 
 interface Props {
   anchorEl: Element;

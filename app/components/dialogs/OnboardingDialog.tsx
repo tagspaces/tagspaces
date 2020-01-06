@@ -34,20 +34,20 @@ import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import MobileStepper from '@material-ui/core/MobileStepper';
 import Dialog from '@material-ui/core/Dialog';
-import NavigationV3 from '../../assets/images/navigation-v3.png';
-import BrowserExtension from '../../assets/images/collecting-undraw.svg';
-import WizardFinished from '../../assets/images/balloons-undraw.svg';
-import ChooseTagging from '../../assets/images/internals-undraw.svg';
-import NewLook from '../../assets/images/welcome-undraw.svg';
-import i18n from '../../services/i18n';
+import NavigationV3 from '-/assets/images/navigation-v3.png';
+import BrowserExtension from '-/assets/images/collecting-undraw.svg';
+import WizardFinished from '-/assets/images/balloons-undraw.svg';
+import ChooseTagging from '-/assets/images/internals-undraw.svg';
+import NewLook from '-/assets/images/welcome-undraw.svg';
+import i18n from '-/services/i18n';
 import {
   isFirstRun,
   getCurrentTheme,
   getPersistTagsInSidecarFile,
   actions as SettingsActions
-} from '../../reducers/settings';
-import { actions as AppActions } from '../../reducers/app';
-import AppConfig from '../../config';
+} from '-/reducers/settings';
+import { actions as AppActions } from '-/reducers/app';
+import AppConfig from '-/config';
 
 interface Props {
   classes: any;

@@ -22,8 +22,8 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import HelpIcon from '@material-ui/icons/Help';
-import i18n from '../../services/i18n';
-import AppConfig from '../../config';
+import i18n from '-/services/i18n';
+import AppConfig from '-/config';
 
 interface Props {
   classes: any;

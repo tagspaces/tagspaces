@@ -24,7 +24,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { withStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import { SketchPicker } from 'react-color';
-import i18n from '../../services/i18n';
+import i18n from '-/services/i18n';
 
 const presetColors = [
 	'#ffffff',

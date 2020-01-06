@@ -29,15 +29,15 @@ import { withStyles } from '@material-ui/core/styles';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
-import i18n from '../../services/i18n';
-import { isPlusCode } from '../../utils/misc';
-import { Tag } from '../../reducers/taglibrary';
-import { Pro } from '../../pro';
-import { getSelectedTag } from '../../reducers/app';
+import i18n from '-/services/i18n';
+import { isPlusCode } from '-/utils/misc';
+import { Tag } from '-/reducers/taglibrary';
+import { Pro } from '-/pro';
+import { getSelectedTag } from '-/reducers/app';
 import TaggingActions, {
 	defaultTagLocation
-} from '../../reducers/tagging-actions';
-import { isDateTimeTag } from '../../utils/dates';
+} from '-/reducers/tagging-actions';
+import { isDateTimeTag } from '-/utils/dates';
 
 const styles = () => ({
 	root: {

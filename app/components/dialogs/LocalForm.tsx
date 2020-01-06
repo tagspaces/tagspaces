@@ -26,10 +26,10 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import IconButton from '@material-ui/core/IconButton';
 import FolderIcon from '@material-ui/icons/Folder';
-import i18n from '../../services/i18n';
-import AppConfig from '../../config';
-import { extractDirectoryName } from '../../utils/paths';
-import PlatformIO from '../../services/platform-io';
+import i18n from '-/services/i18n';
+import AppConfig from '-/config';
+import { extractDirectoryName } from '-/utils/paths';
+import PlatformIO from '-/services/platform-io';
 
 interface Props {
   state: any;

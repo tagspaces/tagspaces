@@ -28,8 +28,8 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
 import ColorPickerDialog from './ColorPickerDialog';
 import TransparentBackground from '../TransparentBackground';
-import i18n from '../../services/i18n';
-import { Tag, TagGroup } from '../../reducers/taglibrary';
+import i18n from '-/services/i18n';
+import { Tag, TagGroup } from '-/reducers/taglibrary';
 
 interface Props {
   open: boolean;

@@ -23,8 +23,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Dialog from '@material-ui/core/Dialog';
-import i18n from '../../services/i18n';
-import ThirdPartyLibs from '../../third-party.txt';
+import i18n from '-/services/i18n';
+import ThirdPartyLibs from '-/third-party.txt';
 
 interface Props {
   open: boolean;

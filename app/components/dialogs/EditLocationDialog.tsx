@@ -32,12 +32,12 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import { Typography } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
-import i18n from '../../services/i18n';
-import { extractDirectoryName } from '../../utils/paths';
-import { Location, locationType } from '../../reducers/locations';
+import i18n from '-/services/i18n';
+import { extractDirectoryName } from '-/utils/paths';
+import { Location, locationType } from '-/reducers/locations';
 import ObjectStoreForm, { suggestions } from './ObjectStoreForm';
 import LocalForm from './LocalForm';
-import { Pro } from '../../pro';
+import { Pro } from '-/pro';
 
 interface Props {
   open: boolean;

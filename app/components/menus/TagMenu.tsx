@@ -28,12 +28,12 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ConfirmDialog from '../dialogs/ConfirmDialog';
 import EditTagDialog from '../dialogs/EditTagDialog';
-import { Tag, TagGroup } from '../../reducers/taglibrary';
-import { actions as LocationIndexActions } from '../../reducers/location-index';
-import i18n from '../../services/i18n';
-import { SearchQuery } from '../../services/search';
-import { getMaxSearchResults } from '../../reducers/settings';
-import { actions as AppActions } from '../../reducers/app';
+import { Tag, TagGroup } from '-/reducers/taglibrary';
+import { actions as LocationIndexActions } from '-/reducers/location-index';
+import i18n from '-/services/i18n';
+import { SearchQuery } from '-/services/search';
+import { getMaxSearchResults } from '-/reducers/settings';
+import { actions as AppActions } from '-/reducers/app';
 
 const isTagLibraryReadOnly =
   window.ExtTagLibrary && window.ExtTagLibrary.length > 0;

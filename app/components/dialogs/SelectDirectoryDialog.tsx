@@ -33,10 +33,10 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import Dialog from '@material-ui/core/Dialog';
-import i18n from '../../services/i18n';
-import AppConfig from '../../config';
-import PlatformIO from '../../services/platform-io';
-import { loadSubFolders } from '../../services/utils-io';
+import i18n from '-/services/i18n';
+import AppConfig from '-/config';
+import PlatformIO from '-/services/platform-io';
+import { loadSubFolders } from '-/services/utils-io';
 
 interface Props {
   open: boolean;

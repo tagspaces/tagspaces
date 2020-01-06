@@ -27,12 +27,12 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ConfirmDialog from '../dialogs/ConfirmDialog';
-import i18n from '../../services/i18n';
-import { Tag } from '../../reducers/taglibrary';
-import { actions as LocationIndexActions } from '../../reducers/location-index';
-import { SearchQuery } from '../../services/search';
-import { getMaxSearchResults } from '../../reducers/settings';
-import { actions as AppActions } from '../../reducers/app';
+import i18n from '-/services/i18n';
+import { Tag } from '-/reducers/taglibrary';
+import { actions as LocationIndexActions } from '-/reducers/location-index';
+import { SearchQuery } from '-/services/search';
+import { getMaxSearchResults } from '-/reducers/settings';
+import { actions as AppActions } from '-/reducers/app';
 
 interface Props {
   open: boolean;

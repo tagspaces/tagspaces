@@ -25,15 +25,15 @@ import Typography from '@material-ui/core/Typography';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import MobileStepper from '@material-ui/core/MobileStepper';
 import Dialog from '@material-ui/core/Dialog';
-import DecideImage from '../../assets/images/decide-undraw.svg';
-import ThumbsImage from '../../assets/images/thumbnails-undraw.svg';
-import CloudImage from '../../assets/images/cloud-undraw.svg';
-import SearchImage from '../../assets/images/search-undraw.svg';
-import MapImage from '../../assets/images/map-undraw.svg';
-import AnnotateImage from '../../assets/images/annotate-undraw.svg';
-import EnterpriseImage from '../../assets/images/world-undraw.svg';
-import i18n from '../../services/i18n';
-import AppConfig from '../../config';
+import DecideImage from '-/assets/images/decide-undraw.svg';
+import ThumbsImage from '-/assets/images/thumbnails-undraw.svg';
+import CloudImage from '-/assets/images/cloud-undraw.svg';
+import SearchImage from '-/assets/images/search-undraw.svg';
+import MapImage from '-/assets/images/map-undraw.svg';
+import AnnotateImage from '-/assets/images/annotate-undraw.svg';
+import EnterpriseImage from '-/assets/images/world-undraw.svg';
+import i18n from '-/services/i18n';
+import AppConfig from '-/config';
 
 interface Props {
   open: boolean;

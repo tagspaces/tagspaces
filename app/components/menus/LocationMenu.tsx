@@ -29,12 +29,12 @@ import ListSubHeader from '@material-ui/core/ListSubheader';
 import { withTheme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import i18n from '../../services/i18n';
-import { getLocations, Location, locationType } from '../../reducers/locations';
+import i18n from '-/services/i18n';
+import { getLocations, Location, locationType } from '-/reducers/locations';
 import {
   actions as AppActions,
   getCurrentLocationId
-} from '../../reducers/app';
+} from '-/reducers/app';
 
 interface Props {
   currentLocationId: string | null;

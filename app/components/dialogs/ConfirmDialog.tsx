@@ -25,7 +25,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import ListItem from '@material-ui/core/ListItem';
 import Typography from '@material-ui/core/Typography';
 import Dialog from '@material-ui/core/Dialog';
-import i18n from '../../services/i18n';
+import i18n from '-/services/i18n';
 
 interface Props {
   open: boolean;

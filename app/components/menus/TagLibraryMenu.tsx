@@ -26,8 +26,8 @@ import HelpIcon from '@material-ui/icons/Help';
 import AddIcon from '@material-ui/icons/Add';
 import ImportExportTagGroupsDialog from '../dialogs/ImportExportTagGroupsDialog';
 import SelectDirectoryDialog from '../dialogs/SelectDirectoryDialog';
-import i18n from '../../services/i18n';
-import AppConfig from '../../config';
+import i18n from '-/services/i18n';
+import AppConfig from '-/config';
 
 interface Props {
   classes?: any;

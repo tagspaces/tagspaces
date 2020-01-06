@@ -36,12 +36,12 @@ import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Dialog from '@material-ui/core/Dialog';
-import i18n from '../../services/i18n';
-import { formatDateTime4Tag } from '../../utils/misc';
-import AppConfig from '../../config';
-import TaggingActions from '../../reducers/tagging-actions';
-import { actions as AppActions } from '../../reducers/app';
-import PlatformIO from '../../services/platform-io';
+import i18n from '-/services/i18n';
+import { formatDateTime4Tag } from '-/utils/misc';
+import AppConfig from '-/config';
+import TaggingActions from '-/reducers/tagging-actions';
+import { actions as AppActions } from '-/reducers/app';
+import PlatformIO from '-/services/platform-io';
 
 const styles = theme => ({
   root: {

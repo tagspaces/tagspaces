@@ -23,11 +23,11 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Dialog from '@material-ui/core/Dialog';
-import i18n from '../../services/i18n';
-import { Pro } from '../../pro';
-import AppConfig from '../../config';
-import LicenseContent from '../../LICENSE.txt';
-import PlatformIO from '../../services/platform-io';
+import i18n from '-/services/i18n';
+import { Pro } from '-/pro';
+import AppConfig from '-/config';
+import LicenseContent from '-/LICENSE.txt';
+import PlatformIO from '-/services/platform-io';
 
 interface Props {
   open: boolean;
