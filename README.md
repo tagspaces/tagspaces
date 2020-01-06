@@ -28,16 +28,16 @@ A full list of the changes is available on the  [changelog](CHANGELOG.md)
 
 ## Main Features
 
-* **File and folder management** - TagSpaces provides a convenient user interface for browsing, viewing and man files and folders.
 * **File tagging** - The application supports two ways for tagging files. The default one embeds the tags directly in the name of the file, the other one uses a so called sidecar files for persisting the tags.
-* **Searching** - The search functionality supports fussy functionality and can filter your locations for files and folders containing one or more tags
-* **Browser for local content** - TagSpaces can be used just as browser for your local photos or navigation thought your local ebook library
-* **Media player** - It supports playing for common audio and video files types and has integrated basic media player functionalities.
-* **No-Cloud:** TagSpaces is running completely offline and serverless on your laptop, desktop or tablet and does not require an internet connection and any kind of online registration or service provider.
-* **Note Taking** - you can create and edit notes in plain text, markdown and html file formats
-* **To-Do Management** - with the help of the build in HTML editor you are able to create simple todo lists in every HTML file.
-* **Cross-platform:** TagSpaces runs on Windows, Linux, Mac and Android
-* **Web Clipper** for saving web pages and screenshots from your browsers is also available as extension for [Firefox](https://addons.mozilla.org/en-US/firefox/addon/tagspaces/) and [Chrome](https://chrome.google.com/webstore/detail/tagspaces-web-clipper/ldalmgifdlgpiiadeccbcjojljeanhjk).
+* **File and folder management** - TagSpaces provides a convenient user interface for browsing, viewing and managing files and folders.
+* **Searching** - The search functionality supports fussy functionality and can filter your locations for files and folders containing one or more tags.
+* **Browser for local content** - TagSpaces fitts as a navigator for your local photo collections or ebook library.
+* **Media player** - Supports playing for common audio and video files types and has integrated basic media player functionalities.
+* **Note Taking** - You can create and edit notes in plain text, markdown and HTML file formats.
+* **To-Do Management** - With the help of the build in HTML editor you are able to create simple todo lists in every HTML file.
+* **Cross-platform** - TagSpaces runs on Windows, Linux, Mac and Android.
+* **No-Cloud** - TagSpaces is running completely offline and serverless on your laptop, desktop or tablet and does not require an internet connection and any kind of online registration or service provider.
+* **Web Clipper** - For saving web pages and screenshots from your browsers is also available as extension for [Firefox](https://addons.mozilla.org/en-US/firefox/addon/tagspaces/) and [Chrome](https://chrome.google.com/webstore/detail/tagspaces-web-clipper/ldalmgifdlgpiiadeccbcjojljeanhjk).
 
 ## Infos for developers
 
