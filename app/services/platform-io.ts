@@ -187,7 +187,7 @@ export default class PlatformIO {
 
   static getFileContentPromise = (
     filePath: string,
-    type: string
+    type?: string
   ): Promise<Object> => {
     if (objectStoreAPI) {
       return objectStoreAPI.getFileContentPromise(filePath, type);

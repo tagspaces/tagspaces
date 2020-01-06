@@ -29,7 +29,7 @@ import SelectAllIcon from '@material-ui/icons/CheckBox';
 import DeSelectAllIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CopyIcon from '@material-ui/icons/FileCopy';
 import DeleteIcon from '@material-ui/icons/Delete';
-import i18n from '../../../services/i18n';
+import i18n from '-/services/i18n';
 
 interface Props {
   classes: any;

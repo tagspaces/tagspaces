@@ -29,7 +29,7 @@ import ThumbnailContainIcon from '@material-ui/icons/PhotoSizeSelectLarge';
 import RadioCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 import RadioUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import HelpIcon from '@material-ui/icons/Help';
-import i18n from '../../../services/i18n';
+import i18n from '-/services/i18n';
 
 interface Props {
   open: boolean;

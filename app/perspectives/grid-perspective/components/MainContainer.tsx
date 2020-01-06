@@ -24,29 +24,29 @@ import memoize from 'memoize-one';
 import { GlobalHotKeys } from 'react-hotkeys';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { FileSystemEntry } from '../../../services/utils-io';
-import { Tag } from '../../../reducers/taglibrary';
+import { FileSystemEntry } from '-/services/utils-io';
+import { Tag } from '-/reducers/taglibrary';
 import {
   getSupportedFileTypes,
   getDesktopMode,
   getKeyBindingObject
-} from '../../../reducers/settings';
-import { sortByCriteria, isObj, isVisibleOnScreen } from '../../../utils/misc';
+} from '-/reducers/settings';
+import { sortByCriteria, isObj, isVisibleOnScreen } from '-/utils/misc';
 import styles from './styles.css';
-import FileMenu from '../../../components/menus/FileMenu';
-import DirectoryMenu from '../../../components/menus/DirectoryMenu';
-import EntryTagMenu from '../../../components/menus/EntryTagMenu';
-import i18n from '../../../services/i18n';
-import ConfirmDialog from '../../../components/dialogs/ConfirmDialog';
-import AddRemoveTagsDialog from '../../../components/dialogs/AddRemoveTagsDialog';
-import MoveCopyFilesDialog from '../../../components/dialogs/MoveCopyFilesDialog';
-import RenameFileDialog from '../../../components/dialogs/RenameFileDialog';
-import TargetMoveFileBox from '../../../components/TargetMoveFileBox';
-import FileSourceDnd from '../../../components/FileSourceDnd';
-import AppConfig from '../../../config';
-import DragItemTypes from '../../../components/DragItemTypes';
-import TagDropContainer from '../../../components/TagDropContainer';
-import IOActions from '../../../reducers/io-actions';
+import FileMenu from '-/components/menus/FileMenu';
+import DirectoryMenu from '-/components/menus/DirectoryMenu';
+import EntryTagMenu from '-/components/menus/EntryTagMenu';
+import i18n from '-/services/i18n';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
+import MoveCopyFilesDialog from '-/components/dialogs/MoveCopyFilesDialog';
+import RenameFileDialog from '-/components/dialogs/RenameFileDialog';
+import TargetMoveFileBox from '-/components/TargetMoveFileBox';
+import FileSourceDnd from '-/components/FileSourceDnd';
+import AppConfig from '-/config';
+import DragItemTypes from '-/components/DragItemTypes';
+import TagDropContainer from '-/components/TagDropContainer';
+import IOActions from '-/reducers/io-actions';
 import {
   actions as AppActions,
   getLastSelectedEntry,
@@ -54,8 +54,8 @@ import {
   getCurrentDirectoryColor,
   isLoading,
   isReadOnlyMode
-} from '../../../reducers/app';
-import TaggingActions from '../../../reducers/tagging-actions';
+} from '-/reducers/app';
+import TaggingActions from '-/reducers/tagging-actions';
 import CellContent from './CellContent';
 import MainToolbar from './MainToolbar';
 import SortingMenu from './SortingMenu';

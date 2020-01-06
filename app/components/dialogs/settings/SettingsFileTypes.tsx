@@ -28,9 +28,9 @@ import RemoveIcon from '@material-ui/icons/RemoveCircle';
 import Button from '@material-ui/core/Button';
 import Select from '@material-ui/core/Select';
 import ColorPickerDialog from '../ColorPickerDialog';
-import { findAvailableExtensions } from '../../../reducers/app';
-import { sortBy } from '../../../utils/misc';
-import i18n from '../../../services/i18n';
+import { findAvailableExtensions } from '-/reducers/app';
+import { sortBy } from '-/utils/misc';
+import i18n from '-/services/i18n';
 import TransparentBackground from '../../TransparentBackground';
 
 const styles: any = (theme: any) => ({

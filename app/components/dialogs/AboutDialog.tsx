@@ -25,13 +25,13 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Dialog from '@material-ui/core/Dialog';
 import semver from 'semver';
-import LogoIcon from '../../assets/images/icon100x100.svg';
-import i18n from '../../services/i18n';
-import versionMeta from '../../version.json';
-import PlatformIO from '../../services/platform-io';
-import { Pro } from '../../pro';
-import { getLastVersionPromise } from '../../reducers/settings';
-import AppConfig from '../../config';
+import LogoIcon from '-/assets/images/icon100x100.svg';
+import i18n from '-/services/i18n';
+import versionMeta from '-/version.json';
+import PlatformIO from '-/services/platform-io';
+import { Pro } from '-/pro';
+import { getLastVersionPromise } from '-/reducers/settings';
+import AppConfig from '-/config';
 
 interface Props {
   open: boolean;

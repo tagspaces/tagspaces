@@ -28,11 +28,11 @@ import Switch from '@material-ui/core/Switch';
 import Input from '@material-ui/core/Input';
 import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
-import i18n from '../../../services/i18n';
+import i18n from '-/services/i18n';
 import {
   actions as SettingsActions,
   getSettings
-} from '../../../reducers/settings';
+} from '-/reducers/settings';
 import ColorPickerDialog from '../../dialogs/ColorPickerDialog';
 import TransparentBackground from '../../TransparentBackground';
 

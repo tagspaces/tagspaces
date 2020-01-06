@@ -146,6 +146,7 @@
     "babel-jest": "^23.6.0",
     "babel-loader": "^8.0.5",
     "babel-plugin-dev-expression": "^0.2.1",
+    "babel-plugin-module-resolver": "^4.0.0",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.21",
     "chalk": "^2.4.1",
     "concat-licenses": "^1.0.1",

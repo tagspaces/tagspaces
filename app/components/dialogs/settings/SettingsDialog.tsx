@@ -34,10 +34,10 @@ import GenericDialog from '../GenericDialog';
 import SettingsGeneral from '../settings/SettingsGeneral';
 import SettingsKeyBindings from '../settings/SettingsKeyBindings';
 import SettingsFileTypes from '../settings/SettingsFileTypes';
-import i18n from '../../../services/i18n';
-import { getSettings, actions } from '../../../reducers/settings';
-import { extend } from '../../../utils/misc';
-import AppConfig from '../../../config';
+import i18n from '-/services/i18n';
+import { getSettings, actions } from '-/reducers/settings';
+import { extend } from '-/utils/misc';
+import AppConfig from '-/config';
 
 const styles = theme => ({
   mainContent: {

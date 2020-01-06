@@ -26,16 +26,16 @@ import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import FolderIcon from '@material-ui/icons/FolderOpen';
 import TagIcon from '@material-ui/icons/LocalOffer';
-import { formatFileSize, formatDateTime } from '../../../utils/misc';
-import { extractTitle } from '../../../utils/paths';
+import { formatFileSize, formatDateTime } from '-/utils/misc';
+import { extractTitle } from '-/utils/paths';
 import {
   FileSystemEntry,
   findColorForFileEntry
-} from '../../../services/utils-io';
-import TagContainerDnd from '../../../components/TagContainerDnd';
-import TagContainer from '../../../components/TagContainer';
-import i18n from '../../../services/i18n';
-import { Tag } from '../../../reducers/taglibrary';
+} from '-/services/utils-io';
+import TagContainerDnd from '-/components/TagContainerDnd';
+import TagContainer from '-/components/TagContainer';
+import i18n from '-/services/i18n';
+import { Tag } from '-/reducers/taglibrary';
 
 const maxDescriptionPreviewLength = 100;
 

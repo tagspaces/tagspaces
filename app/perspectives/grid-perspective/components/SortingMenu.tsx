@@ -23,7 +23,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import ArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import i18n from '../../../services/i18n';
+import i18n from '-/services/i18n';
 
 interface Props {
   open: boolean;
