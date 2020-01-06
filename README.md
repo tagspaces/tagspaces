@@ -11,10 +11,10 @@
 
 More information about can be found from the following sources:
 - [Website: tagspaces.org](https://www.tagspaces.org/) - official web site of the project.
-- [Blog](https://www.tagspaces.org/blog/) for news about TagSpaces
-- [Documentation](https://docs.tagspaces.org/) for our latest generated documentation
-- [Video Introduction](https://www.youtube.com/embed/CJ2hYU6U-C8) - This is a short video presenting the main concepts of the application. It is made from a pretty old application version but it is still valid for the most of the use cases.
-- [Issues Tracker](https://github.com/tagspaces/tagspaces/issues) for developer support requests
+- [Blog](https://www.tagspaces.org/blog/) - for news about TagSpaces.
+- [Documentation](https://docs.tagspaces.org/) - for our latest generated documentation
+- [Video Introduction](https://www.youtube.com/embed/CJ2hYU6U-C8) - a short video presenting the main concepts of the application. It is made from a pretty old application version but it is still valid for the most of the use cases.
+- [Issues Tracker](https://github.com/tagspaces/tagspaces/issues) - for developer support requests.
 
 <!-- To get updates you can:
 - Subscribe to GitHub updates by clicking the "watch" button up the top right of this page.
