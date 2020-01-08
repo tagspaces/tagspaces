@@ -4,4 +4,4 @@ register({
   extensions: ['.ts', '.tsx', '.js', '.json']
 });
 
-require('./main.dev.ts');
+require('./splash-worker.ts');
