@@ -17,7 +17,7 @@
     { "from": "resources/tagspacesp" },
     { "from": "resources/tagspacesp.cmd" }
   ],
-  "copyright": "Copyright © 2019 TagSpaces UG (haftungsbeschraenkt)",
+  "copyright": "Copyright © 2020 TagSpaces UG (haftungsbeschraenkt)",
   "artifactName": "${name}-${os}-${arch}-${version}.${ext}",
   "win": {
     "target": [
