@@ -129,7 +129,7 @@ export const msInDay = 1000 * 60 * 60 * 24;
 /** Extract the time period from string e.g. 201902 -> fromDate: 2019-01-01 00:00:00, toDate; 2019-01-31 23:59:59 */
 export function extractTimePeriod(
   value: string
-): { fromDateTime: Date | null, toDateTime: Date | null } {
+): { fromDateTime: Date | null; toDateTime: Date | null } {
   let fromDateTime = null;
   let toDateTime = null;
   if (value.length && !/(^|\s)([0123456789])(\s|$)/.test(value.substr(0, 1))) {

@@ -94,8 +94,8 @@ export default class ElectronIO {
     // } else
 
     if (process.platform === 'win32') {
-			nImage = nativeImage.createFromDataURL(TrayIcon2x);
-		// @ts-ignore
+      nImage = nativeImage.createFromDataURL(TrayIcon2x);
+      // @ts-ignore
     } else if (process.platform === 'darwin') {
       nImage = nativeImage.createFromDataURL(TrayIcon);
       // nImage.addRepresentation({ scaleFactor: 2.0, dataURL: TrayIcon2x });

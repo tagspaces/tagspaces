@@ -31,10 +31,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import { DialogTransition } from './GenericDialog';
 import AppConfig from '-/config';
 import i18n from '-/services/i18n';
-import {
-  extractFileName,
-  extractContainingDirectoryPath
-} from '-/utils/paths';
+import { extractFileName, extractContainingDirectoryPath } from '-/utils/paths';
 import { actions as AppActions } from '-/reducers/app';
 
 interface Props {

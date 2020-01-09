@@ -31,10 +31,7 @@ import Button from '@material-ui/core/Button';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import i18n from '-/services/i18n';
 import { getLocations, Location, locationType } from '-/reducers/locations';
-import {
-  actions as AppActions,
-  getCurrentLocationId
-} from '-/reducers/app';
+import { actions as AppActions, getCurrentLocationId } from '-/reducers/app';
 
 interface Props {
   currentLocationId: string | null;

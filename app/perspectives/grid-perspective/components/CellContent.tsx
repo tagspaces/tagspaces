@@ -28,10 +28,7 @@ import FolderIcon from '@material-ui/icons/FolderOpen';
 import TagIcon from '@material-ui/icons/LocalOffer';
 import { formatFileSize, formatDateTime } from '-/utils/misc';
 import { extractTitle } from '-/utils/paths';
-import {
-  FileSystemEntry,
-  findColorForFileEntry
-} from '-/services/utils-io';
+import { FileSystemEntry, findColorForFileEntry } from '-/services/utils-io';
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagContainer from '-/components/TagContainer';
 import i18n from '-/services/i18n';

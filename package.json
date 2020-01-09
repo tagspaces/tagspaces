@@ -21,6 +21,8 @@
     "postlint-fix": "prettier --ignore-path .eslintignore --single-quote --write '**/*.{*{js,jsx,json},babelrc,eslintrc,prettierrc,stylelintrc}'",
     "postlint-styles-fix": "prettier --ignore-path .eslintignore --single-quote --write '**/*.{css,scss}'",
     "precommit": "lint-staged",
+    "prettier-check": "prettier --check '**/*.{js,json,ts,tsx,yml}'",
+    "prettier-format": "prettier --write '**/*.{js,jsx,json,ts,tsx,yml}'",
     "prestart-bak": "yarn build",
     "bs": "yarn build && yarn start",
     "start": "cross-env NODE_ENV=production electron ./app/",
@@ -92,7 +94,7 @@
   ],
   "husky": {
     "hooks": {
-      "pre-commit": "yarn prettier-check"
+      "pre-commit": "yarn prettier-check && yarn type-check"
     }
   },
   "jest": {

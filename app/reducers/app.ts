@@ -99,19 +99,19 @@ export const NotificationTypes = {
 };
 
 export type OpenedEntry = {
-  path: string,
-  url?: string,
-  viewingExtensionPath: string,
-  viewingExtensionId: string,
-  editingExtensionPath?: string,
-  editingExtensionId?: string,
-  isFile?: boolean,
-  color?: string,
-  editMode?: boolean,
-  changed?: boolean,
-  shouldReload?: boolean,
-  focused?: boolean, // TODO make it mandatory once support for multiple files is added
-  tags?: Array<Tag>
+  path: string;
+  url?: string;
+  viewingExtensionPath: string;
+  viewingExtensionId: string;
+  editingExtensionPath?: string;
+  editingExtensionId?: string;
+  isFile?: boolean;
+  color?: string;
+  editMode?: boolean;
+  changed?: boolean;
+  shouldReload?: boolean;
+  focused?: boolean; // TODO make it mandatory once support for multiple files is added
+  tags?: Array<Tag>;
 };
 
 let showLocations = true;
@@ -652,7 +652,7 @@ export const actions = {
     getState: () => any
   ) => {
     console.time('listDirectoryPromise');
-		const { settings } = getState();
+    const { settings } = getState();
     window.walkCanceled = false;
 
     loadMetaDataPromise(directoryPath)
@@ -1571,8 +1571,7 @@ export function findAvailableExtensions() {
 // Selectors
 export const getDirectoryContent = (state: any) =>
   state.app.currentDirectoryEntries;
-export const getDirectoryPath = (state: any) =>
-  state.app.currentDirectoryPath;
+export const getDirectoryPath = (state: any) => state.app.currentDirectoryPath;
 export const getCurrentLocationPath = (state: any) => {
   let pathCurrentLocation;
   if (state.locations) {
@@ -1589,24 +1588,20 @@ export const getCurrentLocationPath = (state: any) => {
   return pathCurrentLocation;
 };
 export const isUpdateAvailable = (state: any) => state.app.isUpdateAvailable;
-export const isUpdateInProgress = (state: any) =>
-  state.app.isUpdateInProgress;
+export const isUpdateInProgress = (state: any) => state.app.isUpdateInProgress;
 export const isOnline = (state: any) => state.app.isOnline;
-export const getLastSelectedEntry = (state: any) =>
-  state.app.lastSelectedEntry;
+export const getLastSelectedEntry = (state: any) => state.app.lastSelectedEntry;
 export const getSelectedTag = (state: any) => state.app.tag;
 export const getSelectedEntries = (state: any) => state.app.selectedEntries;
 export const isFileOpened = (state: any) => state.app.openedFiles.length > 0;
-export const isGeneratingThumbs = (state: any) =>
-  state.app.isGeneratingThumbs;
+export const isGeneratingThumbs = (state: any) => state.app.isGeneratingThumbs;
 // export const isFileDragged = (state: any) => state.app.isFileDragged;
 export const isReadOnlyMode = (state: any) => state.app.isReadOnlyMode;
 export const isOnboardingDialogOpened = (state: any) =>
   state.app.onboardingDialogOpened;
 export const isEditTagDialogOpened = (state: any) =>
   state.app.editTagDialogOpened;
-export const isAboutDialogOpened = (state: any) =>
-  state.app.aboutDialogOpened;
+export const isAboutDialogOpened = (state: any) => state.app.aboutDialogOpened;
 export const isKeysDialogOpened = (state: any) => state.app.keysDialogOpened;
 export const isLicenseDialogOpened = (state: any) =>
   state.app.licenseDialogOpened;
@@ -1629,17 +1624,14 @@ export const getSearchResults = (state: any) =>
   state.app.currentDirectoryEntries;
 export const getSearchResultCount = (state: any) =>
   state.app.currentDirectoryEntries.length;
-export const getCurrentLocationId = (state: any) =>
-  state.app.currentLocationId;
-export const isEntryInFullWidth = (state: any) =>
-  state.app.isEntryInFullWidth;
+export const getCurrentLocationId = (state: any) => state.app.currentLocationId;
+export const isEntryInFullWidth = (state: any) => state.app.isEntryInFullWidth;
 export const isLoading = (state: any) => state.app.isLoading;
 export const isLocationManagerPanelOpened = (state: any) =>
   state.app.locationManagerPanelOpened;
 export const isTagLibraryPanelOpened = (state: any) =>
   state.app.tagLibraryPanelOpened;
-export const isSearchPanelOpened = (state: any) =>
-  state.app.searchPanelOpened;
+export const isSearchPanelOpened = (state: any) => state.app.searchPanelOpened;
 export const isPerspectivesPanelOpened = (state: any) =>
   state.app.perspectivesPanelOpened;
 export const isHelpFeedbackPanelOpened = (state: any) =>
