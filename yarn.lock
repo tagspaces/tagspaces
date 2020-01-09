@@ -12268,6 +12268,11 @@ onetime@^5.1.0:
   dependencies:
     mimic-fn "^2.1.0"
 
+open-location-code-typescript@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/open-location-code-typescript/-/open-location-code-typescript-1.4.0.tgz#509f51e7e02799b954ffb00be6f425167f5b0c66"
+  integrity sha512-k5qeLR3NiEXHCy8BjqazbfvOJbIlnTiBN+JkHAJHROuSVTD4c1I+wFRw3aZet1FxksoWuo7z6MXb6Ei21NLY8g==
+
 open-location-code@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/open-location-code/-/open-location-code-1.0.3.tgz#5ea1a34ee5221c6cafa04392e1bd906fd7488f7e"

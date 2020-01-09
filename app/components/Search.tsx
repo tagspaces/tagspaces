@@ -47,6 +47,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import OpenLocationCode from 'open-location-code-typescript';
 import TagsSelect from './TagsSelect';
 import CustomLogo from './CustomLogo';
 import { actions as AppActions, getDirectoryPath } from '../reducers/app';
@@ -62,7 +63,6 @@ import { FileTypeGroups, SearchQuery } from '../services/search';
 import { Pro } from '../pro';
 import SearchMenu from './menus/SearchMenu';
 import { Tag } from '../reducers/taglibrary';
-// import openlocationcode from '../utils/openlocationcode';
 import { formatDateTime, extractTimePeriod } from '../utils/dates';
 import { isPlusCode, parseLatLon } from '../utils/misc';
 import PlatformIO from '../services/platform-io';
@@ -102,7 +102,7 @@ interface State {
   searchMenuAnchorEl: Element | null;
 }
 
-const olc = {}; // new openlocationcode();
+// const olc = new openlocationcode();
 
 class Search extends React.Component<Props, State> {
   // @ts-ignore
@@ -180,9 +180,9 @@ class Search extends React.Component<Props, State> {
     let tagPlaceHelper;
 
     if (isPlusCode(value)) {
-      // const coord = olc.decode(value);
-      // lat = Number(coord.latitudeCenter.toFixed(7));
-      // lon = Number(coord.longitudeCenter.toFixed(7));
+      const coord = OpenLocationCode.decode(value);
+      lat = Number(coord.latitudeCenter.toFixed(7));
+      lon = Number(coord.longitudeCenter.toFixed(7));
     } else {
       const latLon = parseLatLon(value);
       if (latLon) {
