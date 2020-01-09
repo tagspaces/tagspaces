@@ -4,6 +4,10 @@
   "description": "TagSpaces core repository",
   "homepage": "https://www.tagspaces.org",
   "scripts": {
+    "bump-version": "yarn third-party && cd app && yarn version && cd .. && yarn version-meta",
+    "update-i18n": "tx pull -a -d",
+    "version-meta": "node scripts/versionmeta.js",
+    "third-party": "yarn licenses generate-disclaimer --silent > app/third-party.txt",
     "build": "concurrently 'yarn build-main' 'yarn build-renderer' 'yarn build-worker'",
     "build-dll": "cross-env NODE_ENV=development webpack --config ./configs/webpack.config.renderer.dev.dll.babel.js --colors",
     "build-e2e": "cross-env E2E_BUILD=true yarn build",
