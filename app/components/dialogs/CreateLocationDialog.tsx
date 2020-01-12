@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -40,7 +39,7 @@ import { Pro } from '-/pro';
 import ObjectStoreForm from './ObjectStoreForm';
 import LocalForm from './LocalForm';
 
-const styles = theme => ({
+const styles: any = theme => ({
   root: {
     display: 'flex'
   },
@@ -60,7 +59,7 @@ interface Props {
   fullScreen: boolean;
   addLocation: (location: Location) => void;
   showSelectDirectoryDialog: () => void;
-  resetState: () => void;
+  resetState: (stateMember: string) => void;
 }
 
 interface State {
@@ -69,12 +68,23 @@ interface State {
   disableConfirmButton: boolean;
   name: string;
   path: string;
-  perspective?: string;
+  perspective: string;
   isDefault: boolean;
   isReadOnly: boolean;
   watchForChanges: boolean;
   persistIndex: boolean;
   fullTextIndex: boolean;
+  storeName: string;
+  cloudErrorTextName: string;
+  cloudErrorAccessKey: string;
+  cloudErrorSecretAccessKey: string;
+  cloudErrorBucketName: string;
+  cloudErrorRegion: string;
+  accessKeyId: string;
+  secretAccessKey: string;
+  bucketName: string;
+  region?: any;
+  storePath: string;
   type: string;
 }
 
@@ -91,6 +101,17 @@ class CreateLocationDialog extends React.Component<Props, State> {
     watchForChanges: Pro,
     persistIndex: false,
     fullTextIndex: false,
+    storeName: '',
+    cloudErrorTextName: '',
+    cloudErrorAccessKey: '',
+    cloudErrorSecretAccessKey: '',
+    cloudErrorBucketName: '',
+    cloudErrorRegion: '',
+    accessKeyId: '',
+    secretAccessKey: '',
+    bucketName: '',
+    region: undefined,
+    storePath: '',
     type: locationType.TYPE_LOCAL
   };
 
@@ -100,6 +121,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
     const name = target.name;
     if (target.type === 'radio') {
       // type is changed (skip validation)
+      // @ts-ignore
       this.setState({
         [name]: value
       });
@@ -110,6 +132,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
 
   handleChange = (name, value) => {
     this.setState(
+      // @ts-ignore
       {
         [name]: value
       },
@@ -147,6 +170,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
       return new Promise(resolve =>
         this.setState(
           { errorTextName, errorTextPath, disableConfirmButton },
+          // @ts-ignore
           resolve(!disableConfirmButton)
         )
       );
@@ -244,9 +268,9 @@ class CreateLocationDialog extends React.Component<Props, State> {
 
       return new Promise(resolve =>
         this.setState(
+          // @ts-ignore
           {
             cloudErrorTextName,
-            // cloudErrorTextPath,
             cloudErrorAccessKey,
             cloudErrorSecretAccessKey,
             cloudErrorBucketName,
@@ -263,6 +287,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
   }
 
   onConfirm = () => {
+    // @ts-ignore
     this.handleValidation()
       .then(success => {
         if (success) {
@@ -357,6 +382,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
                   title={
                     Pro ? '' : i18n.t('core:thisFunctionalityIsAvailableInPro')
                   }
+                  // @ts-ignore
                   component="label"
                   aria-label={i18n.t('core:locationType')}
                   name="type"

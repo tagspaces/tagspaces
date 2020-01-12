@@ -52,7 +52,8 @@ import IOActions from '-/reducers/io-actions';
 
 interface Props {
   open: boolean;
-  onClose: () => void;
+  classes?: any;
+  onClose: (param?: any) => void;
   anchorEl: Element;
   directoryPath: string;
   loadDirectoryContent: (path: string) => void;
@@ -69,7 +70,7 @@ interface Props {
     notificationType: string,
     autohide: boolean
   ) => void;
-  isReadOnlyMode: boolean;
+  isReadOnlyMode?: boolean;
 }
 
 const DirectoryMenu = (props: Props) => {

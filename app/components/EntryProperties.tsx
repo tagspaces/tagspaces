@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -50,6 +49,7 @@ import {
   replaceThumbnailURLPromise,
   getThumbnailURLPromise
 } from '../services/thumbsgenerator';
+import { Tag, TagGroup } from '-/reducers/taglibrary';
 // import { actions as AppActions } from '../reducers/app';
 
 const ThumbnailChooserDialog =
@@ -168,9 +168,9 @@ interface Props {
   showNotification: (message: string) => void;
   reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
   updateThumbnailUrl: (path: string, thumbUrl: string) => void;
-  addTags: () => void;
-  removeTags: () => void;
-  removeAllTags: () => void;
+  addTags: (paths: Array<string>, tags: Array<Tag>) => void;
+  removeTags: (paths: Array<string>, tags: Array<Tag>) => void;
+  removeAllTags: (paths: Array<string>) => void;
   resetState: (stateName: string) => void;
   isReadOnlyMode: boolean;
   setPropertiesEditMode: (editMode: boolean) => void;
@@ -183,9 +183,12 @@ interface State {
   color: string;
   path: string;
   size: number;
-  tag: any;
+  ldtm: string;
+  tags: Array<Tag>;
   tagMenuAnchorEl: boolean | null;
   tagMenuOpened: boolean | null;
+  selectedTag: Tag;
+  selectedTagGroupEntry?: TagGroup;
   isEditTagDialogOpened: boolean | null;
   isDeleteTagDialogOpened: boolean;
   isFileThumbChooseDialogOpened: boolean;
@@ -205,6 +208,8 @@ class EntryProperties extends Component<Props, State> {
     size: 0,
     color: '#3498db',
     path: '',
+    ldtm: '',
+    tags: [],
     tagMenuAnchorEl: null,
     tagMenuOpened: false,
     selectedTag: null,
@@ -215,6 +220,7 @@ class EntryProperties extends Component<Props, State> {
     isMoveCopyFilesDialogOpened: false,
     isFileThumbChooseDialogOpened: false,
     displayColorPicker: false,
+    thumbPath: '',
     isFile: false
   };
 
@@ -248,6 +254,7 @@ class EntryProperties extends Component<Props, State> {
           path: entryProps.path,
           size: entryProps.size,
           tags: entryProps.tags,
+          // @ts-ignore
           ldtm: entryProps.lmdt
             ? new Date(entryProps.lmdt)
                 .toISOString()
@@ -479,7 +486,7 @@ class EntryProperties extends Component<Props, State> {
     });
   };
 
-  handleTagMenu = (event: any, tag, tagGroup) => {
+  handleTagMenu = (event: any, tag: Tag, tagGroup: TagGroup) => {
     this.setState({
       tagMenuOpened: true,
       tagMenuAnchorEl: event.currentTarget,
@@ -490,11 +497,12 @@ class EntryProperties extends Component<Props, State> {
 
   handleCloseTagMenu = () => this.setState({ tagMenuOpened: false });
 
-  handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  handleInputChange = (event: any) => {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
 
+    // @ts-ignore
     this.setState({ [name]: value });
   };
 
@@ -924,7 +932,7 @@ class EntryProperties extends Component<Props, State> {
                 className={classNames(classes.entryLabel, classes.header)}
                 onClick={this.toggleThumbFilesDialog}
                 role="button"
-                tabIndex="0"
+                tabIndex={0}
                 style={{
                   backgroundSize: 'cover',
                   backgroundImage: thumbPathUrl,
@@ -948,7 +956,6 @@ class EntryProperties extends Component<Props, State> {
           selectedTag={selectedTag}
           currentEntryPath={entryPath}
           removeTags={removeTags}
-          editTagForEntry={editTagForEntry}
         />
         <MoveCopyFilesDialog
           key={uuidv1()}

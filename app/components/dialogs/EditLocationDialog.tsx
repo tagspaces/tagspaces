@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -41,30 +40,37 @@ import { Pro } from '-/pro';
 
 interface Props {
   open: boolean;
-  fullScreen: boolean;
-  resetState: () => void;
+  fullScreen?: boolean;
+  resetState: (param: string) => void;
   onClose: () => void;
   location: Location | null;
   editLocation: (location: Location) => void;
   showSelectDirectoryDialog: () => void;
   selectedDirectoryPath: string | null;
-  onCancel: () => void;
+  onCancel?: () => void;
 }
 
 interface State {
   errorTextPath: boolean;
   errorTextName: boolean;
   disableConfirmButton: boolean;
-  // openDirectoryButtonDisabled?: boolean,
+  cloudErrorTextName: string;
+  cloudErrorBucketName: string;
+  cloudErrorRegion: string;
   uuid: string;
   name: string;
   path: string;
-  perspective: '';
   isDefault: boolean;
   isReadOnly: boolean;
   watchForChanges: boolean;
   fullTextIndex: boolean;
   persistIndex: boolean;
+  storeName: string;
+  accessKeyId: string;
+  secretAccessKey: string;
+  bucketName: string;
+  region?: any;
+  storePath: string;
   type: string;
 }
 
@@ -73,16 +79,23 @@ class EditLocationDialog extends React.Component<Props, State> {
     errorTextPath: false,
     errorTextName: false,
     disableConfirmButton: true,
-    // openDirectoryButtonDisabled: false,
+    cloudErrorTextName: '',
+    cloudErrorBucketName: '',
+    cloudErrorRegion: '',
     uuid: '',
     name: '',
     path: '',
-    perspective: '',
     isDefault: false,
     isReadOnly: false,
     watchForChanges: false,
     persistIndex: false,
     fullTextIndex: false,
+    storeName: '',
+    accessKeyId: '',
+    secretAccessKey: '',
+    bucketName: '',
+    region: undefined,
+    storePath: '',
     type: locationType.TYPE_LOCAL
   };
 
@@ -126,6 +139,7 @@ class EditLocationDialog extends React.Component<Props, State> {
     const name = target.name;
     if (target.type === 'radio') {
       // type is changed (skip validation)
+      // @ts-ignore
       this.setState({
         [name]: value
       });
@@ -136,6 +150,7 @@ class EditLocationDialog extends React.Component<Props, State> {
 
   handleChange = (name, value) => {
     this.setState(
+      // @ts-ignore
       {
         [name]: value
       },
@@ -184,11 +199,9 @@ class EditLocationDialog extends React.Component<Props, State> {
         disableConfirmButton = true;
       }
 
+      // @ts-ignore
       this.setState({
         cloudErrorTextName,
-        // cloudErrorTextPath,
-        // cloudErrorAccessKey,
-        // cloudErrorSecretAccessKey,
         cloudErrorBucketName,
         disableConfirmButton,
         cloudErrorRegion
@@ -238,7 +251,6 @@ class EditLocationDialog extends React.Component<Props, State> {
           type: locationType.TYPE_LOCAL,
           name: this.state.name,
           paths: [this.state.path],
-          perspective: this.state.perspective,
           isDefault: this.state.isDefault,
           isReadOnly: this.state.isReadOnly,
           persistIndex: this.state.persistIndex,
@@ -255,7 +267,6 @@ class EditLocationDialog extends React.Component<Props, State> {
           secretAccessKey: this.state.secretAccessKey,
           bucketName: this.state.bucketName,
           region: this.state.region.value,
-          perspective: this.state.perspective,
           isDefault: this.state.isDefault,
           isReadOnly: this.state.isReadOnly,
           persistIndex: this.state.persistIndex,
@@ -309,6 +320,7 @@ class EditLocationDialog extends React.Component<Props, State> {
                 title={
                   Pro ? '' : i18n.t('core:thisFunctionalityIsAvailableInPro')
                 }
+                // @ts-ignore
                 component="label"
                 aria-label={i18n.t('core:locationType')}
                 name="type"

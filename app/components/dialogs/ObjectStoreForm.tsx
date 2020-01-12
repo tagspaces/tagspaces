@@ -204,7 +204,7 @@ const components = {
 interface Props {
   state: any;
   handleChange: (name: string, value: any) => void;
-  handleInputChange: () => void;
+  handleInputChange: (event: any) => void;
   classes: any;
   theme: any;
 }

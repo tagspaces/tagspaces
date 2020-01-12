@@ -42,6 +42,8 @@ export type Location = {
   bucketName?: string;
   region?: string;
   paths: Array<string>;
+  path?: string;
+  children?: Array<any>;
   perspective?: string; // id of the perspective
   creationDate?: string;
   isDefault: boolean;

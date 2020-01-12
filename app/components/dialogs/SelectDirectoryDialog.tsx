@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -39,20 +38,25 @@ import PlatformIO from '-/services/platform-io';
 import { loadSubFolders } from '-/services/utils-io';
 
 interface Props {
+  classes?: any;
   open: boolean;
+  fullScreen?: boolean;
   onClose: () => void;
+  chooseDirectoryPath?: (path: string) => void; // TODO check if needed
+  createNewDirectoryExt?: (path: string) => void; // TODO check if needed
 }
 
 interface State {
   errorTextPath: boolean;
-  errorTextName: boolean;
   open: boolean;
   drives: Array<string>;
   currentPath: string;
+  choosePath: string;
+  subFolders: Array<any>;
   isDefault: boolean;
 }
 
-const styles = () => ({
+const styles: any = () => ({
   buttonContainer: {
     color: '#212121',
     backgroundColor: '#f5f5f5',
@@ -121,9 +125,8 @@ const drives = [
 class SelectDirectoryDialog extends React.Component<Props, State> {
   state = {
     errorTextPath: false,
-    alertSubFolderText: false,
-    disableConfirmButton: true,
     open: false,
+    drives,
     currentPath: PlatformIO.getUserHomePath(),
     subFolders: [],
     choosePath: '',
@@ -147,7 +150,7 @@ class SelectDirectoryDialog extends React.Component<Props, State> {
 
   loadListDirectory = (path: string) => {
     loadSubFolders(path)
-      .then(rootDirContent => {
+      .then((rootDirContent: Array<any>) => {
         this.setState({
           subFolders: rootDirContent
         });
@@ -179,11 +182,12 @@ class SelectDirectoryDialog extends React.Component<Props, State> {
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
 
+    // @ts-ignore
     this.setState({
       [name]: value,
       currentPath: value
     });
-    this.loadListDirectory(value);
+    this.loadListDirectory(value as string);
   };
 
   onBackButton = () => {
@@ -228,7 +232,7 @@ class SelectDirectoryDialog extends React.Component<Props, State> {
       >
         <DialogTitle>{i18n.t('core:selectDialogTitle')}</DialogTitle>
         <DialogContent>
-          <FormControl fullWidth={true} error={this.props.errorTextPath}>
+          <FormControl fullWidth={true} error={this.state.errorTextPath}>
             <InputLabel htmlFor="name">
               {i18n.t('core:selectDialogCurrentPath')}
             </InputLabel>
@@ -238,6 +242,7 @@ class SelectDirectoryDialog extends React.Component<Props, State> {
               margin="dense"
               name="path"
               onChange={this.handleInputChange}
+              // @ts-ignore
               label={i18n.t('core:selectDialogCurrentPath')}
               data-tid="selectDirectoryDialogInput"
               value={this.state.currentPath}
@@ -270,13 +275,13 @@ class SelectDirectoryDialog extends React.Component<Props, State> {
             <Paper elevation={2}>
               <Button
                 data-tid="onBackButtonSelectDirectoryDialog"
-                onClick={e => this.onBackButton(e)}
+                onClick={() => this.onBackButton()}
               >
                 <UndoIcon />
               </Button>
               <Button
                 data-tid="createNewFolderSelectDirectoryDialog"
-                onClick={e => this.createNewFolder(e)}
+                onClick={() => this.createNewFolder()}
               >
                 <CreateFolderIcon className={this.props.classes.folderIcon} />
                 {i18n.t('core:createDirectory')}

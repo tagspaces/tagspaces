@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -102,7 +101,7 @@ const WelcomePanelAsync = props => (
   </React.Suspense>
 );
 
-const CounterBadge = withStyles(theme => ({
+const CounterBadge: any = withStyles(theme => ({
   badge: {
     top: '50%',
     right: -15,
@@ -277,7 +276,7 @@ class FolderContainer extends React.Component<Props, State> {
     return null;
   }
 
-  openDirectoryMenu = (event: React.ChangeEvent<HTMLInputElement>) => {
+  openDirectoryMenu = (event: any) => {
     this.setState({
       directoryContextMenuOpened: true,
       directoryContextMenuAnchorEl: event ? event.currentTarget : null
@@ -540,4 +539,5 @@ function mapActionCreatorsToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
+  // @ts-ignore
 )(withStyles(styles)(FolderContainer));

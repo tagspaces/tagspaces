@@ -34,7 +34,7 @@ import PlatformIO from '-/services/platform-io';
 interface Props {
   state: any;
   handleChange: (param1: string, param2: string) => void;
-  handleInputChange: () => void;
+  handleInputChange: (event: any) => void;
   showSelectDirectoryDialog: () => void;
 }
 

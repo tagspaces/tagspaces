@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck @ts-ignore
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -95,7 +95,7 @@ interface Props {
   openDirectory: (path: string) => void;
   showInFileManager: (path: string) => void;
   createDirectoryIndex: (path: string) => void;
-  addLocation: (location: Location, openAfterCreate: boolean) => void;
+  addLocation: (location: Location, openAfterCreate?: boolean) => void;
   editLocation: () => void;
   moveLocationUp: (locationId: string) => void;
   moveLocationDown: (locationId: string) => void;
@@ -104,6 +104,7 @@ interface Props {
   // renameDirectory: (directoryPath: string, newDirectoryName: string) => void,
   reflectCreateEntry: (path: string, isFile: boolean) => void;
   deleteDirectory: (directoryPath: string) => void;
+  showUnixHiddenEntries: boolean;
   showNotification: (
     text: string,
     notificationType: string,
@@ -225,6 +226,7 @@ class LocationManager extends React.Component<Props, State> {
   getDirectoriesTree = (subFolder: SubFolder, deepLevel: number) =>
     // const { settings } = getState();
     PlatformIO.listDirectoryPromise(subFolder.path, false)
+      // @ts-ignore
       .then(dirEntries => {
         const directoryContent = [];
         dirEntries.map(entry => {
@@ -269,7 +271,7 @@ class LocationManager extends React.Component<Props, State> {
   getMergedDirsCopy = (path: string, arrChildren: Array<SubFolder>) => {
     const entries = Object.entries(this.state.dirs);
     for (const [uuid, arrSubDirs] of entries) {
-      const arr: number = arrSubDirs.length;
+      const arr: number = (arrSubDirs as Array<any>).length;
       let a;
       for (a = 0; a < arr; a += 1) {
         if (path === arrSubDirs[a].path) {
@@ -463,7 +465,7 @@ class LocationManager extends React.Component<Props, State> {
     });
   };
 
-  handleLocationContextMenuClick = (event: Object, location: Location) => {
+  handleLocationContextMenuClick = (event: any, location: Location) => {
     event.preventDefault();
     event.stopPropagation();
     this.setState({
@@ -509,6 +511,7 @@ class LocationManager extends React.Component<Props, State> {
   };
 
   resetState = dialogKey => {
+    // @ts-ignore
     this.setState({
       [dialogKey]: uuidv1()
     });
@@ -580,6 +583,7 @@ class LocationManager extends React.Component<Props, State> {
   renderBodyCell = props => (
     <td {...props} style={{ position: 'relative' }}>
       <TargetMoveFileBox
+        // @ts-ignore
         accepts={[DragItemTypes.FILE]}
         onDrop={this.handleFileMoveDrop}
       >
@@ -620,8 +624,8 @@ class LocationManager extends React.Component<Props, State> {
           // expandIcon={this.CustomExpandIcon}
           // expandIconAsCell
           /* onRow={(record, index) => ({
-        onClick: this.onRowClick.bind(null, record, index),
-      })} */
+						onClick: this.onRowClick.bind(null, record, index),
+					})} */
         />
       );
     }
@@ -698,7 +702,7 @@ class LocationManager extends React.Component<Props, State> {
     );
   };
 
-  handleLocationManagerMenu = (event: React.ChangeEvent<HTMLInputElement>) => {
+  handleLocationManagerMenu = (event: any) => {
     this.setState({
       locationManagerMenuOpened: true,
       locationManagerMenuAnchorEl: event.currentTarget
@@ -712,17 +716,18 @@ class LocationManager extends React.Component<Props, State> {
   render() {
     const classes = this.props.classes;
     return (
-      <div className={classes.panel} style={this.props.style}>
+      <div className={classes.panel}>
         <CustomLogo />
         <div className={classes.toolbar}>
           <Typography
             className={classNames(classes.panelTitle, classes.header)}
-            type="subtitle1"
+            variant="subtitle1"
           >
             {i18n.t('core:locationManager')}
           </Typography>
           <IconButton
             data-tid="locationManagerMenu"
+            // @ts-ignore
             onClick={this.handleLocationManagerMenu}
           >
             <MoreVertIcon />
@@ -758,9 +763,7 @@ class LocationManager extends React.Component<Props, State> {
             open={this.state.isCreateLocationDialogOpened}
             onClose={this.handleCloseDialogs}
             addLocation={this.props.addLocation}
-            perspectives={this.props.perspectives}
             showSelectDirectoryDialog={this.showSelectDirectoryDialog}
-            selectedDirectoryPath={this.state.selectedDirectoryPath}
           />
           <EditLocationDialog
             key={this.state.editLocationDialogKey}
@@ -769,7 +772,6 @@ class LocationManager extends React.Component<Props, State> {
             onClose={this.handleCloseDialogs}
             location={this.state.selectedLocation}
             editLocation={this.props.editLocation}
-            perspectives={this.props.perspectives}
             showSelectDirectoryDialog={this.showSelectDirectoryDialog}
             selectedDirectoryPath={this.state.selectedDirectoryPath}
           />
@@ -871,6 +873,7 @@ class LocationManager extends React.Component<Props, State> {
             data-tid="locationList"
             style={{
               maxHeight: 'calc(100vh - 150px)',
+              // @ts-ignore
               overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
             }}
           >
@@ -883,14 +886,11 @@ class LocationManager extends React.Component<Props, State> {
           anchorEl={this.state.directoryContextMenuAnchorEl}
           directoryPath={this.state.selectedDirectoryPath}
           loadDirectoryContent={this.props.loadDirectoryContent}
-          openFileNatively={this.props.openFileNatively}
           openDirectory={this.props.openDirectory}
-          showInFileManager={this.props.showInFileManager}
           openFile={this.props.openFile}
           reflectCreateEntry={this.props.reflectCreateEntry}
           deleteDirectory={this.props.deleteDirectory}
           classes={this.props.classes}
-          showNotification={this.props.showNotification}
         />
       </div>
     );
@@ -930,5 +930,6 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default withStyles(styles)(
+  // @ts-ignore
   connect(mapStateToProps, mapDispatchToProps)(LocationManager)
 );

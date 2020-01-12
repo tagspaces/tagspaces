@@ -132,7 +132,6 @@ const TagLibraryMenu = (props: Props) => {
       <SelectDirectoryDialog
         open={isSelectDirectoryDialogOpened}
         onClose={closeSelectDirectoryExtDialog}
-        selectedDirectoryPath={selectedDirectoryPath}
       />
       <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
         <MenuItem

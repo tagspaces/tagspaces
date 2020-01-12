@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -914,6 +913,7 @@ class EntryContainer extends React.Component<Props, State> {
 
   resetState = key => {
     // this.isPropertiesEditMode = false;
+    // @ts-ignore
     this.setState({
       [key]: uuidv1()
     });
@@ -1116,7 +1116,7 @@ class EntryContainer extends React.Component<Props, State> {
                         className={classes.fileBadge}
                         style={{ backgroundColor: currentEntry.color }}
                       >
-                        {extractFileExtension(currentEntry.path)}
+                        {'.' + extractFileExtension(currentEntry.path)}
                       </div>
                       {currentEntry.changed
                         ? String.fromCharCode(0x25cf) + ' '
@@ -1230,8 +1230,6 @@ class EntryContainer extends React.Component<Props, State> {
                   renameFile={this.props.renameFile}
                   renameDirectory={this.props.renameDirectory}
                   editTagForEntry={this.props.editTagForEntry}
-                  settings={this.props.settings}
-                  deleteFile={this.props.deleteFile}
                   shouldCopyFile={this.state.shouldCopyFile}
                   normalizeShouldCopyFile={() =>
                     this.setState({ shouldCopyFile: false })
@@ -1317,4 +1315,5 @@ function mapActionCreatorsToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
+  // @ts-ignore
 )(withStyles(styles, { withTheme: true })(EntryContainer));

@@ -41,11 +41,11 @@ interface Props {
   selectedTag: Tag | null;
   currentEntryPath: string;
   removeTags: (paths: Array<string>, tags: Array<Tag>) => void;
-  searchLocationIndex: (searchQuery: SearchQuery) => void;
-  maxSearchResults: number;
-  openSearchPanel: () => void;
-  toggleEditTagDialog: (tag: Tag) => void;
-  isReadOnlyMode: boolean;
+  searchLocationIndex?: (searchQuery: SearchQuery) => void;
+  maxSearchResults?: number;
+  openSearchPanel?: () => void;
+  toggleEditTagDialog?: (tag: Tag) => void;
+  isReadOnlyMode?: boolean;
 }
 
 const EntryTagMenu = (props: Props) => {

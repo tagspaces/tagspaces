@@ -261,7 +261,6 @@
     "path": "^0.12.7",
     "pdfjs-dist": "^2.0.943",
     "rc-table": "^6.4.0",
-    "rc-tree": "^1.7.8",
     "react": "^16.8.6",
     "react-autosuggest": "^9.3.2",
     "react-color": "^2.17.3",

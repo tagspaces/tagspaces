@@ -26,7 +26,7 @@ import i18n from '-/services/i18n';
 import AppConfig from '-/config';
 
 interface Props {
-  classes: any;
+  classes?: any;
   open: boolean;
   anchorEl: Element;
   onClose: () => void;

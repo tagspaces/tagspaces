@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -39,7 +38,7 @@ import { getSettings, actions } from '-/reducers/settings';
 import { extend } from '-/utils/misc';
 import AppConfig from '-/config';
 
-const styles = theme => ({
+const styles: any = theme => ({
   mainContent: {
     overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
   }
@@ -47,18 +46,19 @@ const styles = theme => ({
 
 interface Props {
   open: boolean;
-  fullScreen: boolean;
-  classes: AttestationConveyancePreference;
+  fullScreen?: boolean;
+  classes?: any;
   onClose: () => void;
-  setSupportedFileTypes: Array<Object>;
-  supportedFileTypes: Array<Object>;
-  settings: Array<Object>;
+  setSupportedFileTypes?: (fileTypes: Array<Object>) => void;
+  supportedFileTypes?: Array<Object>;
+  settings?: Array<Object>;
 }
 
 interface State {
   currentTab: number;
   items: Array<Object>;
   selectedItem: any;
+  activeItem?: any;
   isValidationInProgress: boolean;
   isConfirmDialogOpened: boolean;
 }
@@ -71,6 +71,8 @@ class SettingsDialog extends React.Component<Props, State> {
     isValidationInProgress: false,
     isConfirmDialogOpened: false
   };
+
+  settingsFileTypeRef;
 
   componentWillReceiveProps = nextProps => {
     const { settings } = nextProps;
@@ -193,7 +195,7 @@ class SettingsDialog extends React.Component<Props, State> {
     return isValid;
   };
 
-  removeItem = (itemForRemoval = Object) => {
+  removeItem = (itemForRemoval: any) => {
     const { items } = this.state;
     const filteredItems = items.filter(
       item => item.type !== itemForRemoval.type
@@ -248,7 +250,7 @@ class SettingsDialog extends React.Component<Props, State> {
         }}
         cancelDialogTID={'cancelDeleteFileTypeDialog'}
         confirmDialogTID={'confirmDeleteFileTypeDialog'}
-        confirmDialogContent={'confirmDeleteFileTypeDialogContent'}
+        confirmDialogContentTID={'confirmDeleteFileTypeDialogContent'}
       />
 
       <div
@@ -266,7 +268,6 @@ class SettingsDialog extends React.Component<Props, State> {
             setSelectedItem={this.setSelectedItem}
             updateItems={this.updateItems}
             isValidationInProgress={this.state.isValidationInProgress}
-            supportedFileTypes={this.props.settings.supportedFileTypes}
             onRemoveItem={selectedItem => {
               this.setState({
                 selectedItem,
