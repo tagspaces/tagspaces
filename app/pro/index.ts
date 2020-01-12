@@ -19,7 +19,7 @@
 let tsPro;
 
 try {
-  tsPro = require('../node_modules/@tagspaces/pro');
+  tsPro = require('../../extensions/pro');
 } catch (e) {
   if (e && e.code && e.code === 'MODULE_NOT_FOUND') {
     console.log('PRO functionality not available');
