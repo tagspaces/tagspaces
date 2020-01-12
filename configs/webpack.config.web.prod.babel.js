@@ -32,6 +32,11 @@ export default merge.smart(baseConfig, {
     filename: 'bundle.js'
   },
 
+  node: {
+    fs: 'empty',
+    child_process: 'empty'
+  },
+
   module: {
     rules: [
       // Extract all .global.css to style.css as is
