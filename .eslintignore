@@ -30,19 +30,16 @@ node_modules
 # OSX
 .DS_Store
 
-# flow-typed
-flow-typed/npm/*
-!flow-typed/npm/module_vx.x.x.js
-
 # App packaged
-release
 app/main.prod.js
 app/main.prod.js.map
-app/bundle.js
-app/bundle.js.map
 app/style.css
 app/style.css.map
-dist
+app/dist
+app/node_modules
+
+web
+cordova
 dll
 main.js
 main.js.map
@@ -54,7 +51,6 @@ __snapshots__
 extensions
 cordova
 web
-app/utils/openlocationcode.js
 
 # TODO just temporal
 tests

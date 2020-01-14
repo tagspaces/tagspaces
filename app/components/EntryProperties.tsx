@@ -27,7 +27,6 @@ import Grid from '@material-ui/core/Grid';
 import FormControl from '@material-ui/core/FormControl';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
-import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import DOMPurify from 'dompurify';
 import TagDropContainer from './TagDropContainer';
@@ -49,7 +48,7 @@ import {
   replaceThumbnailURLPromise,
   getThumbnailURLPromise
 } from '../services/thumbsgenerator';
-import { Tag, TagGroup } from '-/reducers/taglibrary';
+import { Tag } from '-/reducers/taglibrary';
 // import { actions as AppActions } from '../reducers/app';
 
 const ThumbnailChooserDialog =
@@ -188,9 +187,6 @@ interface State {
   tagMenuAnchorEl: boolean | null;
   tagMenuOpened: boolean | null;
   selectedTag: Tag;
-  selectedTagGroupEntry?: TagGroup;
-  isEditTagDialogOpened: boolean | null;
-  isDeleteTagDialogOpened: boolean;
   isFileThumbChooseDialogOpened: boolean;
   isMoveCopyFilesDialogOpened: boolean;
   isEditName: boolean;
@@ -201,6 +197,10 @@ interface State {
 }
 
 class EntryProperties extends Component<Props, State> {
+  fileName: any;
+
+  fileDescription: any;
+
   state = {
     name: '',
     originalName: '',
@@ -213,8 +213,6 @@ class EntryProperties extends Component<Props, State> {
     tagMenuAnchorEl: null,
     tagMenuOpened: false,
     selectedTag: null,
-    isEditTagDialogOpened: false,
-    isDeleteTagDialogOpened: false,
     isEditName: false,
     isEditDescription: false,
     isMoveCopyFilesDialogOpened: false,
@@ -223,9 +221,6 @@ class EntryProperties extends Component<Props, State> {
     thumbPath: '',
     isFile: false
   };
-
-  fileName: any;
-  fileDescription: any;
 
   componentDidMount() {
     this.loadEntryProperties(this.props.entryPath);
@@ -236,6 +231,7 @@ class EntryProperties extends Component<Props, State> {
       (nextProps.entryPath && nextProps.shouldReload) ||
       (nextProps.entryPath && this.state.path !== nextProps.entryPath)
     ) {
+      // eslint-disable-next-line react/destructuring-assignment
       this.props.resetState('EntryPropertiesKey');
       this.loadEntryProperties(nextProps.entryPath);
     }
@@ -486,11 +482,10 @@ class EntryProperties extends Component<Props, State> {
     });
   };
 
-  handleTagMenu = (event: any, tag: Tag, tagGroup: TagGroup) => {
+  handleTagMenu = (event: any, tag: Tag) => {
     this.setState({
       tagMenuOpened: true,
       tagMenuAnchorEl: event.currentTarget,
-      selectedTagGroupEntry: tagGroup,
       selectedTag: tag
     });
   };
@@ -533,13 +528,7 @@ class EntryProperties extends Component<Props, State> {
   };
 
   render() {
-    const {
-      classes,
-      entryPath,
-      removeTags,
-      editTagForEntry,
-      isReadOnlyMode
-    } = this.props;
+    const { classes, entryPath, removeTags, isReadOnlyMode } = this.props;
     const {
       path,
       tags,
@@ -564,7 +553,7 @@ class EntryProperties extends Component<Props, State> {
     }
 
     if (thumbPath === undefined) {
-      if (this.state.isFile) {
+      if (isFile) {
         thumbPath = getThumbFileLocationForFile(path);
       } else {
         thumbPath =

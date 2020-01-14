@@ -33,5 +33,5 @@
   ],
   "flow.enabled": false,
   "typescript.tsdk": "node_modules/typescript/lib",
-  "eslint.enable": false
+  "eslint.enable": true
 }

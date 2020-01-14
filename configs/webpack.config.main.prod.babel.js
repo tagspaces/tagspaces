@@ -47,14 +47,15 @@ export default merge.smart(baseConfig, {
       openAnalyzer: process.env.OPEN_ANALYZER === 'true'
     }),
 
-    new webpack.NormalModuleReplacementPlugin(/(.*)_PLATFORMIO_(\.*)/, function(
-      resource
-    ) {
-      resource.request = resource.request.replace(
-        /_PLATFORMIO_/,
-        `${targetPlatform}`
-      );
-    }),
+    new webpack.NormalModuleReplacementPlugin(
+      /(.*)_PLATFORMIO_(\.*)/,
+      resource => {
+        resource.request = resource.request.replace(
+          /_PLATFORMIO_/,
+          `${targetPlatform}`
+        );
+      }
+    ),
 
     /**
      * Create global constants which can be configured at compile time.

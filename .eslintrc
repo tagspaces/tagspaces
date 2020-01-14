@@ -10,7 +10,7 @@
     "node": true
   },
   "rules": {
-    "indent": ["warn", 2, { "SwitchCase": 1 }],
+    "indent": ["off", 2, { "SwitchCase": 1 }],
     "max-len": ["warn", { "code": 150 }],
     "react/jsx-indent": ["warn", 2],
     "arrow-parens": ["off"],
@@ -19,7 +19,9 @@
     "comma-dangle": "off",
     "generator-star-spacing": "off",
     "import/no-extraneous-dependencies": "off",
-    "no-console": "off",
+    "import/no-unresolved": "off",
+    "import/extensions": "off",
+    "no-console": "warn",
     "no-use-before-define": "off",
     "no-multi-assign": "off",
     "prefer-template": "off",
@@ -42,11 +44,12 @@
     "react/jsx-no-bind": "off",
     "react/jsx-filename-extension": [
       "error",
-      { "extensions": [".js", ".jsx"] }
+      { "extensions": [".ts", ".tsx"] }
     ],
     "react/jsx-indent-props": ["warn", 2],
     "react/prefer-stateless-function": "off",
     "react/forbid-prop-types": "warn",
+    "react/destructuring-assignment": "warn",
     "react/jsx-boolean-value": "off"
   },
   "plugins": ["import", "promise", "compat", "react"]

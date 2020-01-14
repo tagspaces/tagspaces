@@ -1,7 +1,8 @@
-var express = require('express');
-var serveStatic = require('serve-static');
+const express = require('express');
+const serveStatic = require('serve-static');
+
 const port = 8000;
-var app = express();
+const app = express();
 
 app.use(serveStatic('./web', { index: ['index.html'] }));
 app.listen(port);
