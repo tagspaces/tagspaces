@@ -123,7 +123,7 @@ const MoveCopyFilesDialog = (props: Props) => {
           {props.selectedFiles &&
             props.selectedFiles.length > 0 &&
             props.selectedFiles.map(path => (
-              <ListItem title={path}>
+              <ListItem title={path} key={path}>
                 <ListItemIcon>
                   <FileIcon />
                 </ListItemIcon>

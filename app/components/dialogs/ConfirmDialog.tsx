@@ -55,7 +55,7 @@ const ConfirmDialog = (props: Props) => {
           {props.content}
           {props.list &&
             props.list.map(listItem => (
-              <ListItem title={listItem}>
+              <ListItem title={listItem} key={listItem.toString()}>
                 <Typography variant="inherit" noWrap>
                   {listItem}
                 </Typography>

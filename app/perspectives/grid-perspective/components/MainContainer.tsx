@@ -631,12 +631,14 @@ class GridPerspective extends React.Component<Props, State> {
       </TagDropContainer>
     );
 
+    const key = fsEntry.path;
+
     if (fsEntry.isFile) {
-      return <FileSourceDnd>{cellContent}</FileSourceDnd>;
+      return <FileSourceDnd key={key}>{cellContent}</FileSourceDnd>;
     }
 
     return (
-      <div style={{ position: 'relative' }}>
+      <div style={{ position: 'relative' }} key={key}>
         <TargetMoveFileBox
           // @ts-ignore
           accepts={[DragItemTypes.FILE]}
