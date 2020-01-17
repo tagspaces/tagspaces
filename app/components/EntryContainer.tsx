@@ -234,36 +234,46 @@ class EntryContainer extends React.Component<Props, State> {
 
   componentDidMount() {
     window.addEventListener('toggle-resume', () => {
-      // console.log('Play pause');
-      if (AppConfig.isElectron && this.fileViewer) {
-        // this.fileViewer.dispatchEvent(audioEvent);
-        this.fileViewer.executeJavaScript(
-          'window.dispatchEvent(new Event("resume"));'
-        );
-      } else if (this.fileViewer) {
+      // if (AppConfig.isElectron && this.fileViewer) {
+      //   this.fileViewer.executeJavaScript(
+      //     'window.dispatchEvent(new Event("resume"));'
+      //   );
+      // } else
+      if (this.fileViewer) {
         this.fileViewer.dispatchEvent(new Event('resume'));
       }
     });
-    if (AppConfig.isElectron) {
-      if (this.fileViewer) {
-        this.fileViewer.addEventListener(
-          'console-message',
-          this.logEventsFromExtensions
-        );
-        this.fileViewer.addEventListener(
-          'ipc-message',
-          this.handleMessageProxy
-        );
-      }
-    } else {
-      window.addEventListener(
-        'message',
-        e => {
-          this.handleMessage(e);
-        },
-        false
-      );
-    }
+    // if (AppConfig.isElectron) {
+    //   if (this.fileViewer) {
+    //     this.fileViewer.addEventListener(
+    //       'console-message',
+    //       this.logEventsFromExtensions
+    //     );
+    //     this.fileViewer.addEventListener(
+    //       'ipc-message',
+    //       this.handleMessageProxy
+    //     );
+    //   }
+    // } else {
+
+    // if (this.fileViewer) {
+    //   this.fileViewer.contentWindow.onbeforeunload = () => {
+    //     console.log('Unloading');
+    //   };
+    // }
+
+    window.addEventListener(
+      'message',
+      e => {
+        if (typeof e.data === 'string') {
+          // console.log(e.data);
+          const dataObj = JSON.parse(e.data);
+          this.handleMessage(dataObj);
+        }
+      },
+      false
+    );
+    // }
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -312,76 +322,43 @@ class EntryContainer extends React.Component<Props, State> {
     }
   }
 
-  /* componentDidUpdate(prevProps, prevState) {
-    if (!this.state.currentEntry || !this.state.currentEntry.path) {
-      return;
-    }
-    if (prevState.currentEntry == null || this.state.currentEntry.path !== prevState.currentEntry.path) {
-      if (AppConfig.isElectron) {
-        if (this.fileViewer) {
-          // this.fileViewer.addEventListener('console-message', e => {
-          //  console.log('Ext. Logging >>> ', e.message);
-          // });
-
-          window.addEventListener('toggle-resume', e => {
-            const audioEvent = new CustomEvent('resume', { detail: e.detail });
-            this.fileViewer.dispatchEvent(audioEvent);
-          });
-
-          this.fileViewer.addEventListener('ipc-message', event => {
-            this.handleMessage(JSON.stringify(event.channel));
-          });
-        }
-      } else {
-        window.addEventListener(
-          'message',
-          this.handleMessage,
-          false
-        );
-      }
-    }
-  } */
-
   componentWillUnmount() {
-    if (AppConfig.isElectron) {
-      if (this.fileViewer && this.fileViewer.removeEventListener) {
-        this.fileViewer.removeEventListener(
-          'console-message',
-          this.logEventsFromExtensions
-        );
-        this.fileViewer.removeEventListener(
-          'ipc-message',
-          this.handleMessageProxy
-        );
-      }
-    } else {
-      window.removeEventListener('message', this.handleMessage);
-    }
+    // if (AppConfig.isElectron) {
+    //   if (this.fileViewer && this.fileViewer.removeEventListener) {
+    //     this.fileViewer.removeEventListener(
+    //       'console-message',
+    //       this.logEventsFromExtensions
+    //     );
+    //     this.fileViewer.removeEventListener(
+    //       'ipc-message',
+    //       this.handleMessageProxy
+    //     );
+    //   }
+    // } else {
+    window.removeEventListener('message', this.handleMessage);
+    // }
   }
 
   fileViewer;
+
   fileViewerContainer;
+
   isPropertiesEditMode = false;
 
-  logEventsFromExtensions = event => {
-    console.log('Ext. Logging >>> ', event.message);
-  };
+  // logEventsFromExtensions = event => {
+  //   console.log('Ext. Logging >>> ', event.message);
+  // };
 
-  handleMessageProxy = event => {
-    this.handleMessage(JSON.stringify(event.channel));
-  };
+  // handleMessageProxy = event => {
+  //   this.handleMessage(JSON.stringify(event.channel));
+  // };
 
-  handleMessage = (msg: any) => {
-    let data;
+  handleMessage = (data: any) => {
     let message;
     let textFilePath;
     let nextFilePath;
     let nextFile;
-    if (msg.data) {
-      data = JSON.parse(msg.data);
-    } else {
-      data = JSON.parse(msg); // electron case
-    }
+
     switch (data.command) {
       case 'showAlertDialog':
         message = data.title ? data.title : '';
@@ -434,18 +411,19 @@ class EntryContainer extends React.Component<Props, State> {
                 '/' +
                 fileDirectory;
             }
-            if (AppConfig.isElectron && this.fileViewer) {
-              this.fileViewer.executeJavaScript(
-                'setContent(' +
-                  JSON.stringify(content) +
-                  ',' +
-                  JSON.stringify(fileDirectory) +
-                  ',' +
-                  !this.state.currentEntry.editMode +
-                  ')',
-                false
-              );
-            } else {
+            // if (AppConfig.isElectron && this.fileViewer) {
+            //   this.fileViewer.executeJavaScript(
+            //     'setContent(' +
+            //       JSON.stringify(content) +
+            //       ',' +
+            //       JSON.stringify(fileDirectory) +
+            //       ',' +
+            //       !this.state.currentEntry.editMode +
+            //       ')',
+            //     false
+            //   );
+            // } else
+            if (this.fileViewer) {
               this.fileViewer.contentWindow.setContent(
                 content,
                 fileDirectory,
@@ -469,7 +447,9 @@ class EntryContainer extends React.Component<Props, State> {
         }
         break;
       default:
-        console.log('Not recognized messaging command: ' + msg);
+        console.log(
+          'Not recognized messaging command: ' + JSON.stringify(data)
+        );
         break;
     }
   };
@@ -524,28 +504,21 @@ class EntryContainer extends React.Component<Props, State> {
       },
       this.props.closeAllFiles
     );
-    /* if (AppConfig.isElectron) {
-      if (this.fileViewer) {
-        this.fileViewer.removeEventListener('console-message');
-        this.fileViewer.removeEventListener('ipc-message');
-      }
-    } else {
-      window.removeEventListener('message', this.handleMessage);
-    } */
   };
 
   startSavingFile = () => {
-    if (AppConfig.isElectron) {
-      if (this.fileViewer) {
-        this.fileViewer.executeJavaScript(
-          'getContent()',
-          false,
-          textContent => {
-            this.saveFile(textContent);
-          }
-        );
-      }
-    } else {
+    // if (AppConfig.isElectron) {
+    //   if (this.fileViewer) {
+    //     this.fileViewer.executeJavaScript(
+    //       'getContent()',
+    //       false,
+    //       textContent => {
+    //         this.saveFile(textContent);
+    //       }
+    //     );
+    //   }
+    // } else
+    if (this.fileViewer) {
       const textContent = this.fileViewer.contentWindow.getContent();
       this.saveFile(textContent);
     }
@@ -878,20 +851,20 @@ class EntryContainer extends React.Component<Props, State> {
   );
 
   renderFileView = fileOpenerURL => {
-    if (AppConfig.isElectron) {
-      return (
-        <webview
-          id="webViewer"
-          ref={fileViewer => {
-            this.fileViewer = fileViewer;
-          }}
-          className={this.props.classes.fileOpener}
-          src={fileOpenerURL}
-          allowFullScreen
-          preload="./node_modules/@tagspaces/legacy-ext/webview-preload.js"
-        />
-      );
-    }
+    // if (AppConfig.isElectron) {
+    //   return (
+    //     <webview
+    //       id="webViewer"
+    //       ref={fileViewer => {
+    //         this.fileViewer = fileViewer;
+    //       }}
+    //       className={this.props.classes.fileOpener}
+    //       src={fileOpenerURL}
+    //       allowFullScreen
+    //       preload="./node_modules/@tagspaces/legacy-ext/webview-preload.js"
+    //     />
+    //   );
+    // }
     return (
       <iframe
         ref={fileViewer => {

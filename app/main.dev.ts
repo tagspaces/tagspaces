@@ -199,13 +199,15 @@ app.on('ready', async () => {
       message: 'This process has crashed.',
       buttons: ['Reload', 'Close']
     };
-    dialog.showMessageBox(mainWindow, options, index => {
-      if (!mainWindow) {
-        globalShortcut.unregisterAll();
-        return;
-      }
+
+    if (!mainWindow) {
+      globalShortcut.unregisterAll();
+      return;
+    }
+
+    dialog.showMessageBox(mainWindow, options).then(dialogResponse => {
       mainWindow.hide();
-      if (index === 0) {
+      if (dialogResponse.response === 0) {
         reloadApp();
       } else {
         mainWindow.close();
