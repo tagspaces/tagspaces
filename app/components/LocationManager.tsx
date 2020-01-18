@@ -727,7 +727,6 @@ class LocationManager extends React.Component<Props, State> {
           </Typography>
           <IconButton
             data-tid="locationManagerMenu"
-            // @ts-ignore
             onClick={this.handleLocationManagerMenu}
           >
             <MoreVertIcon />
@@ -872,7 +871,7 @@ class LocationManager extends React.Component<Props, State> {
             className={classes.locationListArea}
             data-tid="locationList"
             style={{
-              maxHeight: 'calc(100vh - 150px)',
+              maxHeight: 'calc(100vh - 175px)',
               // @ts-ignore
               overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
             }}
