@@ -5,10 +5,10 @@ jobs:
     name: GitHub Action for npm
     runs-on: ubuntu-latest
     steps:
-			- uses: actions/checkout@v1
-			- name: Type checking
-			- uses: actions/setup-node@v1
-				with:
-					node-version: '10.x'
-			- run: npm install
-			- run: npm run type-check
+      - uses: actions/checkout@v1
+      - name: Type checking
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
+      - run: npm install
+      - run: npm run type-check
