@@ -1541,7 +1541,7 @@ export function findAvailableExtensions() {
     },
     {
       extensionId: '@tagspaces/plain-viewer',
-      extensionName: 'Simple Viewer',
+      extensionName: 'Experimental Viewer - insecure!!!',
       extensionType: 'viewer'
     },
     {
