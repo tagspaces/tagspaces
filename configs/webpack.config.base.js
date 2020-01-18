@@ -22,7 +22,13 @@ export default {
               cacheDirectory: true
             }
           },
-          'ts-loader'
+          {
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: true,
+              experimentalWatchApi: true
+            }
+          }
         ]
       }
     ]
@@ -31,7 +37,8 @@ export default {
   output: {
     path: path.join(__dirname, '..', 'app'),
     // https://github.com/webpack/webpack/issues/1114
-    libraryTarget: 'commonjs2'
+    libraryTarget: 'commonjs2',
+    pathinfo: false
   },
 
   /**

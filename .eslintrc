@@ -49,7 +49,7 @@
     "react/jsx-indent-props": ["warn", 2],
     "react/prefer-stateless-function": "off",
     "react/forbid-prop-types": "warn",
-    "react/destructuring-assignment": "warn",
+    "react/destructuring-assignment": "off",
     "react/jsx-boolean-value": "off"
   },
   "plugins": ["import", "promise", "compat", "react"]

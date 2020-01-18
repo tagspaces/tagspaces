@@ -278,13 +278,19 @@ class GridPerspective extends React.Component<Props, State> {
   };
 
   handleGridCellClick = (event, fsEntry: FileSystemEntry) => {
-    const { selectedEntries } = this.props;
+    const {
+      selectedEntries,
+      directoryContent,
+      lastSelectedEntryPath,
+      setLastSelectedEntry,
+      setSelectedEntries
+    } = this.props;
     const selectHelperKey = AppConfig.isMacLike ? event.metaKey : event.ctrlKey;
     if (event.shiftKey) {
-      let lastSelectedIndex = this.props.directoryContent.findIndex(
-        entry => entry.path === this.props.lastSelectedEntryPath
+      let lastSelectedIndex = directoryContent.findIndex(
+        entry => entry.path === lastSelectedEntryPath
       );
-      const currentSelectedIndex = this.props.directoryContent.findIndex(
+      const currentSelectedIndex = directoryContent.findIndex(
         entry => entry.path === fsEntry.path
       );
       if (lastSelectedIndex < 0) {
@@ -294,41 +300,41 @@ class GridPerspective extends React.Component<Props, State> {
       let entriesToSelect;
       // console.log('lastSelectedIndex: ' + lastSelectedIndex + '  currentSelectedIndex: ' + currentSelectedIndex);
       if (currentSelectedIndex > lastSelectedIndex) {
-        entriesToSelect = this.props.directoryContent.slice(
+        entriesToSelect = directoryContent.slice(
           lastSelectedIndex,
           currentSelectedIndex + 1
         );
       } else if (currentSelectedIndex < lastSelectedIndex) {
-        entriesToSelect = this.props.directoryContent.slice(
+        entriesToSelect = directoryContent.slice(
           currentSelectedIndex,
           lastSelectedIndex + 1
         );
       } else if (currentSelectedIndex === lastSelectedIndex) {
         entriesToSelect = [fsEntry];
-        this.props.setLastSelectedEntry(fsEntry.path);
+        setLastSelectedEntry(fsEntry.path);
       }
 
-      this.props.setSelectedEntries(entriesToSelect);
+      setSelectedEntries(entriesToSelect);
       this.setState(this.computeFileOperationsEnabled);
     } else if (selectHelperKey) {
       if (
         selectedEntries &&
         selectedEntries.some(entry => entry.path === fsEntry.path)
       ) {
-        this.props.setSelectedEntries(
+        setSelectedEntries(
           selectedEntries.filter(entry => entry.path !== fsEntry.path)
         ); // deselect selected entry
         this.setState(this.computeFileOperationsEnabled);
         // this.props.setLastSelectedEntry(null);
       } else {
-        this.props.setSelectedEntries([...selectedEntries, fsEntry]);
+        setSelectedEntries([...selectedEntries, fsEntry]);
         this.setState(this.computeFileOperationsEnabled);
         // this.props.setLastSelectedEntry(fsEntry.path);
       }
     } else {
-      this.props.setSelectedEntries([fsEntry]);
+      setSelectedEntries([fsEntry]);
       this.setState(this.computeFileOperationsEnabled);
-      this.props.setLastSelectedEntry(fsEntry.path);
+      setLastSelectedEntry(fsEntry.path);
       if (fsEntry.isFile) {
         if (this.state.singleClickAction === 'openInternal') {
           this.props.openFile(fsEntry.path, fsEntry.isFile);
@@ -341,14 +347,15 @@ class GridPerspective extends React.Component<Props, State> {
   };
 
   clearSelection = () => {
-    this.props.setSelectedEntries([]);
+    const { setSelectedEntries, setLastSelectedEntry } = this.props;
+    setSelectedEntries([]);
     this.setState(
       {
         allFilesSelected: false
       },
       this.computeFileOperationsEnabled
     );
-    this.props.setLastSelectedEntry(null);
+    setLastSelectedEntry(null);
   };
 
   toggleSelectAllFiles = () => {

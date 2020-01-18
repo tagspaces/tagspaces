@@ -33,5 +33,14 @@
   ],
   "flow.enabled": false,
   "typescript.tsdk": "node_modules/typescript/lib",
-  "eslint.enable": true
+  "eslint.enable": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    { "language": "typescript", "autoFix": true },
+    { "language": "typescriptreact", "autoFix": true }
+  ]
 }
