@@ -35,7 +35,6 @@ import SplitPane from 'react-split-pane';
 import LogoIcon from '../assets/images/icon100x100.svg';
 import TagLibrary from '../components/TagLibrary';
 import Search from '../components/Search';
-import PerspectiveManager from '../components/PerspectiveManager';
 import LocationManager from '../components/LocationManager';
 import HelpFeedbackPanel from '../components/HelpFeedbackPanel';
 import i18n from '../services/i18n';
@@ -45,10 +44,10 @@ import {
   getDirectoryPath,
   isSettingsDialogOpened,
   isLocationManagerPanelOpened,
-  isTagLibraryPanelOpened,
-  isSearchPanelOpened,
-  isPerspectivesPanelOpened,
-  isHelpFeedbackPanelOpened,
+  isTagLibraryPanelOpened as isTagLibraryOpened,
+  isSearchPanelOpened as isSearchOpened,
+  isPerspectivesPanelOpened as isPerspectivesOpened,
+  isHelpFeedbackPanelOpened as isHelpFeedbackOpened,
   isReadOnlyMode
 } from '../reducers/app';
 import { actions as SettingsActions, isFirstRun } from '../reducers/settings';
@@ -138,7 +137,9 @@ class VerticalNavigation extends React.Component<Props, State> {
   };
 
   toggleProTeaser = () => {
-    this.setState({ isProTeaserVisible: !this.state.isProTeaserVisible });
+    this.setState(prevState => ({
+      isProTeaserVisible: !prevState.isProTeaserVisible
+    }));
   };
 
   render() {
@@ -147,7 +148,6 @@ class VerticalNavigation extends React.Component<Props, State> {
       isTagLibraryPanelOpened,
       isSearchPanelOpened,
       isSettingsDialogOpened,
-      isPerspectivesPanelOpened,
       isHelpFeedbackPanelOpened,
       isReadOnlyMode,
       toggleCreateFileDialog,
@@ -401,10 +401,10 @@ function mapStateToProps(state) {
     isFirstRun: isFirstRun(state),
     isSettingsDialogOpened: isSettingsDialogOpened(state),
     isLocationManagerPanelOpened: isLocationManagerPanelOpened(state),
-    isTagLibraryPanelOpened: isTagLibraryPanelOpened(state),
-    isSearchPanelOpened: isSearchPanelOpened(state),
-    isPerspectivesPanelOpened: isPerspectivesPanelOpened(state),
-    isHelpFeedbackPanelOpened: isHelpFeedbackPanelOpened(state),
+    isTagLibraryPanelOpened: isTagLibraryOpened(state),
+    isSearchPanelOpened: isSearchOpened(state),
+    isPerspectivesPanelOpened: isPerspectivesOpened(state),
+    isHelpFeedbackPanelOpened: isHelpFeedbackOpened(state),
     isReadOnlyMode: isReadOnlyMode(state),
     directoryPath: getDirectoryPath(state)
   };

@@ -593,7 +593,6 @@ class MainPage extends Component<Props, State> {
 
   render() {
     const {
-      classes,
       theme,
       isCreateFileDialogOpened,
       isSettingsDialogOpened,

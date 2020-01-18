@@ -166,6 +166,7 @@ app.on('ready', async () => {
   });
 
   mainWindow.loadURL(mainHTML + startupParameter);
+  mainWindow.menubarVisible = false;
   mainWindow.autoHideMenuBar = true;
 
   mainWindow.webContents.on('did-finish-load', () => {

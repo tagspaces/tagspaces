@@ -714,9 +714,9 @@ class LocationManager extends React.Component<Props, State> {
   };
 
   render() {
-    const classes = this.props.classes;
+    const { classes } = this.props;
     return (
-      <div className={classes.panel}>
+      <div className={classes.panel} style={this.props.style}>
         <CustomLogo />
         <div className={classes.toolbar}>
           <Typography
