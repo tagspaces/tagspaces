@@ -119,12 +119,11 @@ class SettingsFileTypes extends Component<Props, State> {
     updateItems('id', selectedItem.id, 'color', color);
   };
 
-  sanitizeFileTypeInput = fileTypeInput => {
-    return fileTypeInput.replace(/[^a-zA-Z0-9 ]/g, '');
-  };
+  sanitizeFileTypeInput = fileTypeInput =>
+    fileTypeInput.replace(/[^a-zA-Z0-9 ]/g, '');
 
   render() {
-    const classes = this.props.classes;
+    const { classes } = this.props;
     const {
       items,
       selectedItem,
@@ -255,7 +254,7 @@ class SettingsFileTypes extends Component<Props, State> {
             <FormControl className={classes.fileTypeColorDialogButton}>
               <TransparentBackground>
                 <Button
-                  data-tid={'settingsFileTypes_openColorPicker_'}
+                  data-tid="settingsFileTypes_openColorPicker_"
                   className={classes.colorChooserButton}
                   style={{
                     backgroundColor: `${item.color}`,
@@ -272,7 +271,7 @@ class SettingsFileTypes extends Component<Props, State> {
               </TransparentBackground>
             </FormControl>
             <IconButton
-              data-tid={'settingsFileTypes_remove_'}
+              data-tid="settingsFileTypes_remove_"
               className={classes.fileExtRemove}
               title={i18n.t('removeFileType', { itemType: item.type })}
               onClick={() => onRemoveItem(item)}

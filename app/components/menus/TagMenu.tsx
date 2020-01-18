@@ -138,8 +138,8 @@ const TagLibraryMenu = (props: Props) => {
             confirmDeleteTag();
           }
         }}
-        cancelDialogTID={'cancelDeleteTagDialogTagMenu'}
-        confirmDialogTID={'confirmDeleteTagDialogTagMenu'}
+        cancelDialogTID="cancelDeleteTagDialogTagMenu"
+        confirmDialogTID="confirmDeleteTagDialogTagMenu"
       />
     </div>
   );

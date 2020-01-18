@@ -25,8 +25,8 @@ import {
   extractTagsAsObjects
   // getThumbFileLocationForFile
 } from '../utils/paths';
-import { SearchQuery } from '../services/search';
-import Search from '../services/search';
+import Search, { SearchQuery } from '../services/search';
+
 import { actions as AppActions } from './app';
 import AppConfig from '../config';
 import i18n from '../services/i18n';

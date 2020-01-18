@@ -126,7 +126,7 @@ const EditEntryTagDialog = (props: Props) => {
             autoFocus
             label={i18n.t('core:editTag')}
             onChange={event => {
-              const target = event.target;
+              const { target } = event;
               setTitle(target.value);
             }}
             value={title}

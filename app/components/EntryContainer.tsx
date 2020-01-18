@@ -257,8 +257,10 @@ class EntryContainer extends React.Component<Props, State> {
     // } else {
 
     // if (this.fileViewer) {
-    //   this.fileViewer.contentWindow.onbeforeunload = () => {
-    //     console.log('Unloading');
+    //   this.fileViewer.contentWindow.onbeforeunload = e => {
+    //     console.log('Unloading ' + JSON.stringify(e));
+    //     // e.preventDefault();
+    //     e.returnValue = 'Do you really want to leave this page?';
     //   };
     // }
 
@@ -574,7 +576,8 @@ class EntryContainer extends React.Component<Props, State> {
       document.webkitExitFullscreen();
       this.setState({ isFullscreen: false });
       return;
-    } else if (this.state.isFullscreen && document.exitFullscreen) {
+    }
+    if (this.state.isFullscreen && document.exitFullscreen) {
       // TODO exit fullscreen firefox does not work
       document
         .exitFullscreen()
@@ -767,7 +770,7 @@ class EntryContainer extends React.Component<Props, State> {
           >
             <CopyContentIcon />
           </IconButton>
-        )*/}
+        ) */}
         {!this.props.isReadOnlyMode && (
           <IconButton
             title={i18n.t('core:deleteEntry')}
@@ -850,7 +853,7 @@ class EntryContainer extends React.Component<Props, State> {
     </div>
   );
 
-  renderFileView = fileOpenerURL => {
+  renderFileView = fileOpenerURL => (
     // if (AppConfig.isElectron) {
     //   return (
     //     <webview
@@ -865,20 +868,18 @@ class EntryContainer extends React.Component<Props, State> {
     //     />
     //   );
     // }
-    return (
-      <iframe
-        ref={fileViewer => {
-          this.fileViewer = fileViewer;
-        }}
-        className={this.props.classes.fileOpener}
-        src={fileOpenerURL}
-        allowFullScreen
-        sandbox="allow-same-origin allow-scripts"
-        title={i18n.t('core:fileViewer')}
-        id="FileViewer"
-      />
-    );
-  };
+    <iframe
+      ref={fileViewer => {
+        this.fileViewer = fileViewer;
+      }}
+      className={this.props.classes.fileOpener}
+      src={fileOpenerURL}
+      allowFullScreen
+      sandbox="allow-same-origin allow-scripts"
+      title={i18n.t('core:fileViewer')}
+      id="FileViewer"
+    />
+  );
 
   setPropertiesEditMode = (editMode: boolean) => {
     this.isPropertiesEditMode = editMode;
@@ -974,9 +975,9 @@ class EntryContainer extends React.Component<Props, State> {
               this.setState({ isSaveBeforeCloseConfirmDialogOpened: false });
             }
           }}
-          cancelDialogTID={'cancelSaveBeforeCloseDialog'}
-          confirmDialogTID={'confirmSaveBeforeCloseDialog'}
-          confirmDialogContentTID={'confirmDialogContent'}
+          cancelDialogTID="cancelSaveBeforeCloseDialog"
+          confirmDialogTID="confirmSaveBeforeCloseDialog"
+          confirmDialogContentTID="confirmDialogContent"
         />
         <ConfirmDialog
           open={this.state.isSaveBeforeReloadConfirmDialogOpened}
@@ -984,7 +985,7 @@ class EntryContainer extends React.Component<Props, State> {
             this.setState({ isSaveBeforeReloadConfirmDialogOpened: false });
           }}
           title={i18n.t('core:confirm')}
-          content={'File was modified, do you want to save the changes?'}
+          content="File was modified, do you want to save the changes?"
           confirmCallback={result => {
             if (result) {
               this.startSavingFile();
@@ -999,9 +1000,9 @@ class EntryContainer extends React.Component<Props, State> {
               }
             });
           }}
-          cancelDialogTID={'cancelSaveBeforeCloseDialog'}
-          confirmDialogTID={'confirmSaveBeforeCloseDialog'}
-          confirmDialogContentTID={'confirmDialogContent'}
+          cancelDialogTID="cancelSaveBeforeCloseDialog"
+          confirmDialogTID="confirmSaveBeforeCloseDialog"
+          confirmDialogContentTID="confirmDialogContent"
         />
         <ConfirmDialog
           open={this.state.isDeleteEntryModalOpened}
@@ -1027,9 +1028,9 @@ class EntryContainer extends React.Component<Props, State> {
               this.props.deleteFile(currentEntry.path);
             }
           }}
-          cancelDialogTID={'cancelSaveBeforeCloseDialog'}
-          confirmDialogTID={'confirmSaveBeforeCloseDialog'}
-          confirmDialogContentTID={'confirmDialogContent'}
+          cancelDialogTID="cancelSaveBeforeCloseDialog"
+          confirmDialogTID="confirmSaveBeforeCloseDialog"
+          confirmDialogContentTID="confirmDialogContent"
         />
         <AddRemoveTagsDialog
           open={isEditTagsModalOpened}

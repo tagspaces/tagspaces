@@ -28,7 +28,7 @@ interface Props {
 
 class PerspectiveManager extends React.Component<Props> {
   render() {
-    const classes = this.props.classes;
+    const { classes } = this.props;
 
     return (
       <div className={classes.panel} style={this.props.style}>

@@ -57,28 +57,22 @@ interface Props {
 }
 
 interface State {
-  errorTextName: boolean;
   disableConfirmButton: boolean;
-  open: boolean;
   tagGroupList: Array<Object>;
-  checkedAll: boolean;
   selectedAll: boolean;
 }
 
 class ImportExportTagGroupsDialog extends React.Component<Props, State> {
   state = {
-    errorTextName: false,
     disableConfirmButton: true,
-    open: false,
     selectedAll: false,
-    checkedAll: false,
     tagGroupList: []
   };
 
   componentWillReceiveProps = (nextProps: Props) => {
     if (nextProps.open === true) {
       const tagGroupList = [];
-      const tagGroups = nextProps.tagGroups;
+      const { tagGroups } = nextProps;
       if (tagGroups) {
         tagGroups.map(entry => {
           tagGroupList.push({
@@ -90,6 +84,7 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
             expanded: entry.expanded,
             selected: true
           });
+          return true;
         });
         this.setState(
           { tagGroupList, selectedAll: true },
@@ -114,10 +109,7 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
       });
       return true;
     });
-    this.setState(
-      { tagGroupList, selectedAll: !this.state.selectedAll },
-      this.handleValidation
-    );
+    this.setState({ tagGroupList }, this.handleValidation);
   };
 
   handleChange = name => (event: any, checked: boolean) => {
@@ -182,37 +174,33 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
     }
   };
 
-  renderTagGroups = (tagGroup, index) => {
-    return (
-      <div key={tagGroup.uuid || tagGroup.key}>
-        <FormControl component="fieldset">
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  id={tagGroup.uuid || tagGroup.key}
-                  checked={tagGroup.selected}
-                  onClick={e =>
-                    this.handleTagGroup(e, tagGroup.selected, index)
-                  }
-                  onChange={e => this.handleChange(e)}
-                  value={tagGroup.title}
-                  name={tagGroup.title}
-                />
-              }
-              label={tagGroup.title}
-            />
-          </FormGroup>
-        </FormControl>
-        <TagGroupContainer taggroup={tagGroup}>
-          {tagGroup.children &&
-            tagGroup.children.map((tag: Tag) => (
-              <TagContainer tag={tag} tagMode="display" />
-            ))}
-        </TagGroupContainer>
-      </div>
-    );
-  };
+  renderTagGroups = (tagGroup, index) => (
+    <div key={tagGroup.uuid || tagGroup.key}>
+      <FormControl component="fieldset">
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Checkbox
+                id={tagGroup.uuid || tagGroup.key}
+                checked={tagGroup.selected}
+                onClick={e => this.handleTagGroup(e, tagGroup.selected, index)}
+                onChange={e => this.handleChange(e)}
+                value={tagGroup.title}
+                name={tagGroup.title}
+              />
+            }
+            label={tagGroup.title}
+          />
+        </FormGroup>
+      </FormControl>
+      <TagGroupContainer taggroup={tagGroup}>
+        {tagGroup.children &&
+          tagGroup.children.map((tag: Tag) => (
+            <TagContainer tag={tag} tagMode="display" />
+          ))}
+      </TagGroupContainer>
+    </div>
+  );
 
   renderTitle = () => {
     if (this.props.dialogModeImport) {
@@ -221,18 +209,16 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
     return <DialogTitle>{i18n.t('core:exportGroupTagsTitle')}</DialogTitle>;
   };
 
-  renderContent = () => {
-    return (
-      <DialogContent className={this.props.classes.root}>
-        <Button color="primary" onClick={this.handleToggleSelectAll}>
-          {i18n.t('core:selectAllTagGroups')}
-        </Button>
-        <FormControl fullWidth={true}>
-          {this.state.tagGroupList.map(this.renderTagGroups)}
-        </FormControl>
-      </DialogContent>
-    );
-  };
+  renderContent = () => (
+    <DialogContent className={this.props.classes.root}>
+      <Button color="primary" onClick={this.handleToggleSelectAll}>
+        {i18n.t('core:selectAllTagGroups')}
+      </Button>
+      <FormControl fullWidth={true}>
+        {this.state.tagGroupList.map(this.renderTagGroups)}
+      </FormControl>
+    </DialogContent>
+  );
 
   renderActions = () => (
     <DialogActions>

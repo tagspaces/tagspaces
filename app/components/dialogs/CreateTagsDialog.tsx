@@ -39,7 +39,6 @@ interface Props {
 interface State {
   inputError: boolean;
   disableConfirmButton: boolean;
-  open: boolean;
   tagTitle: string;
 }
 
@@ -47,14 +46,13 @@ class CreateTagsDialog extends React.Component<Props, State> {
   state = {
     inputError: false,
     disableConfirmButton: true,
-    open: false,
     tagTitle: ''
   };
 
   handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const target = event.target;
+    const { target } = event;
     const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
+    const { name } = target;
 
     this.setState(
       // @ts-ignore
@@ -76,7 +74,7 @@ class CreateTagsDialog extends React.Component<Props, State> {
 
   onConfirm = () => {
     if (!this.state.disableConfirmButton) {
-      this.setState({ open: false, disableConfirmButton: true });
+      this.setState({ disableConfirmButton: true });
       this.props.addTag(
         this.state.tagTitle,
         this.props.selectedTagGroupEntry.uuid

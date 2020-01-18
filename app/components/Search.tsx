@@ -129,10 +129,10 @@ class Search extends React.Component<Props, State> {
   };
 
   handleInputChange = event => {
-    const target = event.target;
+    const { target } = event;
     const value =
       target.type && target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
+    const { name } = target;
 
     this.setState(
       // @ts-ignore
@@ -149,8 +149,8 @@ class Search extends React.Component<Props, State> {
   };
 
   handleTimePeriodChange = event => {
-    const target = event.target;
-    const value = target.value;
+    const { target } = event;
+    const { value } = target;
     let tagTimePeriodHelper = '';
     const { fromDateTime, toDateTime } = extractTimePeriod(value);
 
@@ -173,8 +173,8 @@ class Search extends React.Component<Props, State> {
   };
 
   handlePlaceChange = event => {
-    const target = event.target;
-    const value = target.value;
+    const { target } = event;
+    const { value } = target;
     let lat = null;
     let lon = null;
     let tagPlaceHelper;
@@ -391,7 +391,7 @@ class Search extends React.Component<Props, State> {
               placeholderText={i18n.t('core:selectTags')}
               tags={this.state.tagsAND}
               handleChange={this.handleTagFieldChange}
-              tagSearchType={'tagsAND'}
+              tagSearchType="tagsAND"
             />
           </FormControl>
           <Typography
@@ -406,7 +406,7 @@ class Search extends React.Component<Props, State> {
               placeholderText={i18n.t('core:selectTags')}
               tags={this.state.tagsOR}
               handleChange={this.handleTagFieldChange}
-              tagSearchType={'tagsOR'}
+              tagSearchType="tagsOR"
             />
           </FormControl>
           <Typography
@@ -421,7 +421,7 @@ class Search extends React.Component<Props, State> {
               placeholderText={i18n.t('core:selectTags')}
               tags={this.state.tagsNOT}
               handleChange={this.handleTagFieldChange}
-              tagSearchType={'tagsNOT'}
+              tagSearchType="tagsNOT"
             />
           </FormControl>
           <FormControl
@@ -554,22 +554,28 @@ class Search extends React.Component<Props, State> {
               <MenuItem value="">{i18n.t('core:sizeAny')}</MenuItem>
               <MenuItem value="sizeEmpty">{i18n.t('core:sizeEmpty')}</MenuItem>
               <MenuItem value="sizeTiny">
-                {i18n.t('core:sizeTiny')}&nbsp;(&lt;&nbsp;10KB)
+                {i18n.t('core:sizeTiny')}
+                &nbsp;(&lt;&nbsp;10KB)
               </MenuItem>
               <MenuItem value="sizeVerySmall">
-                {i18n.t('core:sizeVerySmall')}&nbsp;(&lt;&nbsp;100KB)
+                {i18n.t('core:sizeVerySmall')}
+                &nbsp;(&lt;&nbsp;100KB)
               </MenuItem>
               <MenuItem value="sizeSmall">
-                {i18n.t('core:sizeSmall')}&nbsp;(&lt;&nbsp;1MB)
+                {i18n.t('core:sizeSmall')}
+                &nbsp;(&lt;&nbsp;1MB)
               </MenuItem>
               <MenuItem value="sizeMedium">
-                {i18n.t('core:sizeMedium')}&nbsp;(&lt;&nbsp;50MB)
+                {i18n.t('core:sizeMedium')}
+                &nbsp;(&lt;&nbsp;50MB)
               </MenuItem>
               <MenuItem value="sizeLarge">
-                {i18n.t('core:sizeLarge')}&nbsp;(&lt;&nbsp;1GB)
+                {i18n.t('core:sizeLarge')}
+                &nbsp;(&lt;&nbsp;1GB)
               </MenuItem>
               <MenuItem value="sizeHuge">
-                {i18n.t('core:sizeHuge')}&nbsp;(&gt;&nbsp;1GB)
+                {i18n.t('core:sizeHuge')}
+                &nbsp;(&gt;&nbsp;1GB)
               </MenuItem>
             </Select>
           </FormControl>

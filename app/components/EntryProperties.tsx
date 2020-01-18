@@ -493,9 +493,9 @@ class EntryProperties extends Component<Props, State> {
   handleCloseTagMenu = () => this.setState({ tagMenuOpened: false });
 
   handleInputChange = (event: any) => {
-    const target = event.target;
+    const { target } = event;
     const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
+    const { name } = target;
 
     // @ts-ignore
     this.setState({ [name]: value });

@@ -134,9 +134,9 @@ class EditLocationDialog extends React.Component<Props, State> {
   };
 
   handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const target = event.target;
+    const { target } = event;
     const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
+    const { name } = target;
     if (target.type === 'radio') {
       // type is changed (skip validation)
       // @ts-ignore
@@ -164,8 +164,8 @@ class EditLocationDialog extends React.Component<Props, State> {
     if (this.state.type === locationType.TYPE_CLOUD) {
       let cloudErrorTextName = false;
       // let cloudErrorTextPath = false;
-      let cloudErrorAccessKey = false;
-      let cloudErrorSecretAccessKey = false;
+      const cloudErrorAccessKey = false;
+      const cloudErrorSecretAccessKey = false;
       let cloudErrorBucketName = false;
       let cloudErrorRegion = false;
       let disableConfirmButton = false;

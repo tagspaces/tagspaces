@@ -316,9 +316,9 @@ const DirectoryMenu = (props: Props) => {
             props.deleteDirectory(props.directoryPath);
           }
         }}
-        confirmDialogContentTID={'confirmDialogContent'}
-        cancelDialogTID={'cancelDeleteDirectoryDialog'}
-        confirmDialogTID={'confirmDeleteDirectoryDialog'}
+        confirmDialogContentTID="confirmDialogContent"
+        cancelDialogTID="cancelDeleteDirectoryDialog"
+        confirmDialogTID="confirmDeleteDirectoryDialog"
       />
       <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
         {props.perspectiveMode && (

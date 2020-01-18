@@ -48,8 +48,6 @@ interface State {
   title: string;
   color: string;
   textcolor: string;
-  children: string;
-  expanded: boolean;
 }
 
 class CreateTagGroupDialog extends React.Component<Props, State> {
@@ -59,17 +57,15 @@ class CreateTagGroupDialog extends React.Component<Props, State> {
     inputError: false,
     disableConfirmButton: true,
     title: '',
-    children: '',
     color: this.props.color,
     textcolor: this.props.textcolor,
-    expanded: true,
     uuid: ''
   };
 
   handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const target = event.target;
+    const { target } = event;
     const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
+    const { name } = target;
 
     this.setState(
       // @ts-ignore

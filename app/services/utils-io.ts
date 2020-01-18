@@ -351,7 +351,7 @@ export function generateFileName(
   tagDelimiter: string
 ) {
   let tagsString = '';
-  const prefixTagContainer = AppConfig.prefixTagContainer;
+  const { prefixTagContainer } = AppConfig;
   // Creating the string will all the tags by more that 0 tags
   if (tags && tags.length > 0) {
     tagsString = AppConfig.beginTagContainer;

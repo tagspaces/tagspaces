@@ -33,28 +33,26 @@ interface Props {
   openURLExternally: (url: string) => void;
 }
 
-const SearchMenu = (props: Props) => {
-  return (
-    <div
-      // @ts-ignore
-      style={{ overflowY: 'hidden !important' }}
-    >
-      <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
-        <MenuItem
-          data-tid="searchMenuHelp"
-          onClick={() => {
-            props.onClose();
-            props.openURLExternally(AppConfig.documentationLinks.search);
-          }}
-        >
-          <ListItemIcon>
-            <HelpIcon />
-          </ListItemIcon>
-          <ListItemText primary={i18n.t('core:help')} />
-        </MenuItem>
-      </Menu>
-    </div>
-  );
-};
+const SearchMenu = (props: Props) => (
+  <div
+    // @ts-ignore
+    style={{ overflowY: 'hidden !important' }}
+  >
+    <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
+      <MenuItem
+        data-tid="searchMenuHelp"
+        onClick={() => {
+          props.onClose();
+          props.openURLExternally(AppConfig.documentationLinks.search);
+        }}
+      >
+        <ListItemIcon>
+          <HelpIcon />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:help')} />
+      </MenuItem>
+    </Menu>
+  </div>
+);
 
 export default SearchMenu;

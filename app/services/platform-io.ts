@@ -18,9 +18,9 @@
 
 import { Pro } from '../pro';
 // @ts-ignore
-import platformIO from './_PLATFORMIO_';
+import NativePlatformIO from './_PLATFORMIO_';
 
-let nativeAPI: any = new platformIO();
+const nativeAPI: any = new NativePlatformIO();
 let objectStoreAPI;
 
 export default class PlatformIO {

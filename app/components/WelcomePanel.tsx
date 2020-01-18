@@ -20,8 +20,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withStyles } from '@material-ui/core/styles';
-import WelcomeLogo from '../assets/images/welcome-logo.png';
-import WelcomeBackground from '../assets/images/background.png';
 // import { getLocations, type Location } from '../reducers/locations';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
@@ -37,6 +35,8 @@ import NewFeatureIcon from '@material-ui/icons/Gesture';
 import SocialIcon from '@material-ui/icons/ThumbUp';
 import Social2Icon from '@material-ui/icons/Mood';
 import KeyShortcutsIcon from '@material-ui/icons/Keyboard';
+import WelcomeBackground from '../assets/images/background.png';
+import WelcomeLogo from '../assets/images/welcome-logo.png';
 import { actions as AppActions } from '../reducers/app';
 import i18n from '../services/i18n';
 import {

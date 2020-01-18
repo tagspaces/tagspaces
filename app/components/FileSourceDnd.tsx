@@ -17,8 +17,8 @@
  */
 
 import React from 'react';
-import { DragSource } from 'react-dnd';
-import { ConnectDragSource } from 'react-dnd';
+import { DragSource, ConnectDragSource } from 'react-dnd';
+
 import DragItemTypes from './DragItemTypes';
 
 interface Props {

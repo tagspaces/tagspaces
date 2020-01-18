@@ -76,9 +76,9 @@ class EditTagDialog extends React.Component<Props, State> {
   };
 
   handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const target = event.target;
+    const { target } = event;
     const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
+    const { name } = target;
 
     this.setState(
       // @ts-ignore
@@ -198,9 +198,9 @@ class EditTagDialog extends React.Component<Props, State> {
                   color: '#808080'
                 }}
               >
-                <span className="text" style={{ fontWeight: 600 }}>{`${i18n.t(
-                  'core:modifiedDate'
-                )}: `}</span>
+                <span className="text" style={{ fontWeight: 600 }}>
+                  {`${i18n.t('core:modifiedDate')}: `}
+                </span>
                 <time>{format(new Date(modifiedDate), 'yyyy-mm-dd')}</time>
               </div>
             )}

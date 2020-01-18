@@ -614,7 +614,7 @@ export const actions = {
     getState: () => any
   ) => {
     const state = getState();
-    const currentDirectoryPath = state.app.currentDirectoryPath;
+    const { currentDirectoryPath } = state.app;
     const currentLocationPath = normalizePath(getCurrentLocationPath(state));
 
     if (currentDirectoryPath) {
@@ -892,7 +892,7 @@ export const actions = {
       normalizePath(targetPath) + AppConfig.dirSeparator + fileNameAndExt;
     let fileContent = content;
     if (fileType === 'html') {
-      const newHTMLFileContent = getState().settings.newHTMLFileContent;
+      const { newHTMLFileContent } = getState().settings;
       fileContent =
         newHTMLFileContent.split('<body></body>')[0] +
         '<body>' +
@@ -937,7 +937,7 @@ export const actions = {
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
-    const locations: Array<Location> = getState().locations;
+    const { locations } = getState();
     locations.map(location => {
       if (location.uuid === locationId) {
         dispatch(actions.openLocation(location));
@@ -1019,7 +1019,7 @@ export const actions = {
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
-    const locations: Array<Location> = getState().locations;
+    const { locations } = getState();
     const { currentLocationId } = getState().app;
     if (currentLocationId === locationId) {
       locations.map(location => {
@@ -1074,8 +1074,7 @@ export const actions = {
     isFile: boolean = true,
     editMode: boolean = false
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
-    const supportedFileTypes: Array<Object> = getState().settings
-      .supportedFileTypes;
+    const { supportedFileTypes } = getState().settings;
     const entryForOpening: OpenedEntry = findExtensionsForEntry(
       supportedFileTypes,
       entryPath,
@@ -1112,7 +1111,7 @@ export const actions = {
     const currentEntries = getState().app.currentDirectoryEntries.filter(
       entry => entry.isFile
     );
-    const lastSelectedEntry = getState().app.lastSelectedEntry;
+    const { lastSelectedEntry } = getState().app;
     let filePath = pivotFilePath;
     if (!filePath) {
       if (lastSelectedEntry) {
@@ -1143,7 +1142,7 @@ export const actions = {
     const currentEntries = getState().app.currentDirectoryEntries.filter(
       entry => entry.isFile
     );
-    const lastSelectedEntry = getState().app.lastSelectedEntry;
+    const { lastSelectedEntry } = getState().app;
     let filePath = pivotFilePath;
     if (!filePath) {
       if (lastSelectedEntry) {

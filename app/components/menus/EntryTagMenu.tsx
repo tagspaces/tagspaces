@@ -126,9 +126,9 @@ const EntryTagMenu = (props: Props) => {
             confirmRemoveTag();
           }
         }}
-        cancelDialogTID={'cancelDeleteTagDialogTagMenu'}
-        confirmDialogTID={'confirmRemoveTagFromFile'}
-        confirmDialogContentTID={'confirmDialogContent'}
+        cancelDialogTID="cancelDeleteTagDialogTagMenu"
+        confirmDialogTID="confirmRemoveTagFromFile"
+        confirmDialogContentTID="confirmDialogContent"
       />
     </div>
   );

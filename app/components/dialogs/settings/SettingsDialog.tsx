@@ -38,7 +38,7 @@ import { getSettings, actions } from '-/reducers/settings';
 import { extend } from '-/utils/misc';
 import AppConfig from '-/config';
 
-const styles: any = theme => ({
+const styles: any = () => ({
   mainContent: {
     overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
   }
@@ -72,8 +72,6 @@ class SettingsDialog extends React.Component<Props, State> {
     isConfirmDialogOpened: false
   };
 
-  settingsFileTypeRef;
-
   componentWillReceiveProps = nextProps => {
     const { settings } = nextProps;
     const supportedFileTypes = settings.supportedFileTypes.reduce(
@@ -95,6 +93,8 @@ class SettingsDialog extends React.Component<Props, State> {
     });
   };
 
+  settingsFileTypeRef;
+
   handleTabClick = (event, currentTab) => {
     this.setState({ currentTab });
   };
@@ -102,7 +102,7 @@ class SettingsDialog extends React.Component<Props, State> {
   onAddFileType = item => {
     const { items } = this.state;
     this.setState({ items: [...items, item] }, () => {
-      const settingsFileTypeRef = this.settingsFileTypeRef;
+      const { settingsFileTypeRef } = this;
       const lastFileType = settingsFileTypeRef.querySelector('li:last-child');
       lastFileType.scrollIntoView({ behavior: 'smooth' });
     });
@@ -240,7 +240,7 @@ class SettingsDialog extends React.Component<Props, State> {
             isConfirmDialogOpened: false
           });
         }}
-        title={'Confirm'}
+        title="Confirm"
         content={i18n.t('core:confirmFileTypeDeletion')}
         confirmCallback={result => {
           if (result) {
@@ -248,9 +248,9 @@ class SettingsDialog extends React.Component<Props, State> {
             this.removeItem(selectedItem);
           }
         }}
-        cancelDialogTID={'cancelDeleteFileTypeDialog'}
-        confirmDialogTID={'confirmDeleteFileTypeDialog'}
-        confirmDialogContentTID={'confirmDeleteFileTypeDialogContent'}
+        cancelDialogTID="cancelDeleteFileTypeDialog"
+        confirmDialogTID="confirmDeleteFileTypeDialog"
+        confirmDialogContentTID="confirmDeleteFileTypeDialogContent"
       />
 
       <div

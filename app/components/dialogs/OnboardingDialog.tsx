@@ -66,18 +66,18 @@ const OnboardingDialog = (props: Props) => {
   const [activeStep, setActiveStep] = useState(0);
   const { fullScreen, open, onClose } = props;
 
-  let maxSteps = 5;
+  const maxSteps = 5;
 
   function handleNext() {
-    setActiveStep(activeStep => activeStep + 1);
+    setActiveStep(step => step + 1);
   }
 
   function handleBack() {
-    setActiveStep(activeStep => activeStep - 1);
+    setActiveStep(step => step - 1);
   }
 
-  function handleStepChange(activeStep: number) {
-    setActiveStep(activeStep);
+  function handleStepChange(step: number) {
+    setActiveStep(step);
   }
 
   function toggleTaggingType() {
@@ -192,7 +192,8 @@ const OnboardingDialog = (props: Props) => {
                       <strong>sunset</strong> will save this tag in an
                       additional sidecar file called{' '}
                       <strong>image.jpg.json</strong> located in a sub folder
-                      with the name <strong>.ts</strong>
+                      with the name
+                      <strong>.ts</strong>
                     </Typography>
                   }
                 />

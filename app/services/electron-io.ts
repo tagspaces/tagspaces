@@ -34,15 +34,25 @@ import { Pro } from '../pro';
 
 export default class ElectronIO {
   electron: any;
+
   win: any;
+
   app: any;
+
   ipcRenderer: any;
+
   remote: any;
+
   workerWindow: any;
+
   pathUtils: any;
+
   fs: any;
+
   fsWatcher: any;
+
   webFrame: any;
+
   tsTray: any;
 
   constructor() {
@@ -60,7 +70,7 @@ export default class ElectronIO {
   }
 
   initMainMenu = (menuConfig: Array<Object>) => {
-    const Menu = this.remote.Menu;
+    const { Menu } = this.remote;
     const defaultMenu = Menu.buildFromTemplate(menuConfig);
     Menu.setApplicationMenu(defaultMenu);
   };
@@ -72,9 +82,9 @@ export default class ElectronIO {
     }
 
     const mainWindow = this.win;
-    const Menu = this.remote.Menu;
-    const Tray = this.remote.Tray;
-    const nativeImage = this.remote.nativeImage;
+    const { Menu } = this.remote;
+    const { Tray } = this.remote;
+    const { nativeImage } = this.remote;
 
     // let trayIconPath;
     // if (process.platform === 'darwin') {
@@ -224,8 +234,8 @@ export default class ElectronIO {
   createDirectoryIndexInWorker = (
     directoryPath: string,
     extractText: boolean
-  ): Promise<any> => {
-    return new Promise((resolve, reject) => {
+  ): Promise<any> =>
+    new Promise((resolve, reject) => {
       if (this.isWorkerAvailable()) {
         const timestamp = new Date().getTime().toString();
         this.workerWindow.webContents.send('worker', {
@@ -242,7 +252,6 @@ export default class ElectronIO {
         reject('Worker window not available!');
       }
     });
-  };
 
   createThumbnailsInWorker = (tmbGenerationList: Array<string>): Promise<any> =>
     new Promise((resolve, reject) => {
@@ -551,17 +560,20 @@ export default class ElectronIO {
             '" failed'
         );
         return;
-      } else if (this.fs.lstatSync(filePath).isDirectory()) {
+      }
+      if (this.fs.lstatSync(filePath).isDirectory()) {
         reject(
           'Trying to rename a directory. Renaming of "' + filePath + '" failed'
         );
         return;
-      } else if (!this.fs.existsSync(filePath)) {
+      }
+      if (!this.fs.existsSync(filePath)) {
         reject(
           'Source file does not exist. Renaming of "' + filePath + '" failed'
         );
         return;
-      } else if (this.fs.existsSync(newFilePath)) {
+      }
+      if (this.fs.existsSync(newFilePath)) {
         reject(
           'Target filename "' +
             newFilePath +
@@ -593,7 +605,8 @@ export default class ElectronIO {
       if (dirPath === newDirPath) {
         reject('Trying to move in the same directory. Moving failed');
         return;
-      } else if (this.fs.existsSync(newDirPath)) {
+      }
+      if (this.fs.existsSync(newDirPath)) {
         reject(
           'Directory "' +
             newDirPath +

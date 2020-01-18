@@ -17,8 +17,8 @@
  */
 
 import React from 'react';
-import { DragSource } from 'react-dnd';
-import { ConnectDragPreview, ConnectDragSource } from 'react-dnd';
+import { DragSource, ConnectDragPreview, ConnectDragSource } from 'react-dnd';
+
 import DragItemTypes from './DragItemTypes';
 import TagContainer from './TagContainer';
 import { TagGroup, Tag } from '../reducers/taglibrary';

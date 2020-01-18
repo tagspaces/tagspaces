@@ -348,8 +348,8 @@ class TagLibrary extends React.Component<Props, State> {
               this.props.removeTagGroup(this.state.selectedTagGroupEntry.uuid);
             }
           }}
-          cancelDialogTID={'cancelDeleteTagGroupDialog'}
-          confirmDialogTID={'confirmDeleteTagGroupDialog'}
+          cancelDialogTID="cancelDeleteTagGroupDialog"
+          confirmDialogTID="confirmDeleteTagGroupDialog"
         />
         <CreateTagGroupDialog
           key={uuidv1()}

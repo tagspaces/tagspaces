@@ -143,7 +143,7 @@ const MoveCopyFilesDialog = (props: Props) => {
             fullWidth={true}
             data-tid="targetPathInput"
             onChange={event => {
-              const target = event.target;
+              const { target } = event;
               setTargetPath(target.value);
             }}
             value={targetPath}

@@ -27,8 +27,11 @@ import { FileSystemEntry } from './utils-io';
 
 export default class WebDAVIO {
   davClient: any;
+
   _username: string;
+
   _password: string;
+
   _headers: any;
 
   constructor() {
@@ -320,11 +323,8 @@ export default class WebDAVIO {
         dav.resourcetype._xmlvalue[0].localName === 'collection')
     );
 
-  getEntryMeta = (
-    eentry: FileSystemEntry,
-    metaPath: string
-  ): Promise<Object> => {
-    return new Promise(resolve => {
+  getEntryMeta = (eentry: FileSystemEntry, metaPath: string): Promise<Object> =>
+    new Promise(resolve => {
       if (eentry.isFile) {
         this.loadTextFilePromise(metaPath)
           .then(result => {
@@ -363,7 +363,6 @@ export default class WebDAVIO {
       }
       resolve(eentry);
     });
-  };
 
   /**
    * Finds out the properties of a file or directory such last modification date or file size

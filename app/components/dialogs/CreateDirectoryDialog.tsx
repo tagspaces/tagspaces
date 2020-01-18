@@ -102,7 +102,7 @@ const CreateDirectoryDialog = (props: Props) => {
             name="name"
             label={i18n.t('core:createNewDirectoryTitleName')}
             onChange={event => {
-              const target = event.target;
+              const { target } = event;
               setName(target.value);
             }}
             value={name}

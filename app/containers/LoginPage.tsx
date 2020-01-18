@@ -26,8 +26,11 @@ import i18n from '../services/i18n';
 
 class LoginPage extends Component {
   formValid: boolean;
+
   emailValid: boolean;
+
   passValid: boolean;
+
   handleInputChange: Function;
 
   constructor(props) {

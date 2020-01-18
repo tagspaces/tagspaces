@@ -90,9 +90,9 @@ class RenameFileDialog extends React.Component<Props, State> {
   fileName;
 
   handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const target = event.target;
+    const { target } = event;
     const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
+    const { name } = target;
 
     this.setState(
       // @ts-ignore

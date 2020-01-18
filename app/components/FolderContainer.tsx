@@ -313,7 +313,8 @@ class FolderContainer extends React.Component<Props, State> {
       this.props.currentDirectoryPath.length < 2
     ) {
       return <WelcomePanelAsync />;
-    } else if (this.state.currentPerspective === 'gallery') {
+    }
+    if (this.state.currentPerspective === 'gallery') {
       return (
         <GalleryPerspectiveAsync
           directoryContent={this.props.directoryContent}
@@ -322,7 +323,8 @@ class FolderContainer extends React.Component<Props, State> {
           switchPerspective={this.switchPerspective}
         />
       );
-    } else if (this.state.currentPerspective === 'treeviz') {
+    }
+    if (this.state.currentPerspective === 'treeviz') {
       return (
         <TreeVizPerspectiveAsync
           directoryContent={this.props.directoryContent}
@@ -331,7 +333,8 @@ class FolderContainer extends React.Component<Props, State> {
           switchPerspective={this.switchPerspective}
         />
       );
-    } else if (this.state.currentPerspective === 'mapique') {
+    }
+    if (this.state.currentPerspective === 'mapique') {
       return (
         <MapiquePerspectiveAsync
           directoryContent={this.props.directoryContent}

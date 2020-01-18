@@ -35,10 +35,12 @@ export function extractFileExtension(filePath: string) {
   const lastindexDot = filePath.lastIndexOf('.');
   if (lastindexDot < 0) {
     return '';
-  } else if (lastindexDot < lastindexDirSeparator) {
+  }
+  if (lastindexDot < lastindexDirSeparator) {
     // case: "../remote.php/webdav/somefilename"
     return '';
-  } else if (lastindexDot < lastIndexEndTagContainer) {
+  }
+  if (lastindexDot < lastIndexEndTagContainer) {
     // case: "[20120125 89.4kg 19.5% 60.5% 39.8% 2.6kg]"
     return '';
   }
@@ -118,7 +120,8 @@ export function cleanTrailingDirSeparator(dirPath: string): string {
   if (dirPath) {
     if (dirPath.lastIndexOf('\\') === dirPath.length - 1) {
       return dirPath.substring(0, dirPath.length - 1);
-    } else if (dirPath.lastIndexOf('/') === dirPath.length - 1) {
+    }
+    if (dirPath.lastIndexOf('/') === dirPath.length - 1) {
       return dirPath.substring(0, dirPath.length - 1);
     }
     return dirPath;
@@ -151,10 +154,12 @@ export function extractFileNameWithoutExt(filePath: string): string {
   ) {
     // case: "[tag1 tag.2]"
     return '';
-  } else if (indexOfDot > 0) {
+  }
+  if (indexOfDot > 0) {
     // case: regular
     return fileName.substring(0, indexOfDot);
-  } else if (indexOfDot === 0) {
+  }
+  if (indexOfDot === 0) {
     // case ".txt"
     return '';
   }
@@ -239,7 +244,8 @@ export function extractTitle(entryPath: string, isDirectory: boolean = false) {
     if (beginTagContainer === 0 && endTagContainer === title.trim().length) {
       // case: "[tag1, tag2]"
       return '';
-    } else if (endTagContainer === title.trim().length) {
+    }
+    if (endTagContainer === title.trim().length) {
       // case: "asd[tag1, tag2]"
       return title.slice(0, beginTagContainer);
     }

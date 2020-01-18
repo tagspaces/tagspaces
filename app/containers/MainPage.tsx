@@ -718,7 +718,7 @@ class MainPage extends Component<Props, State> {
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           open={this.props.isGeneratingThumbs}
           autoHideDuration={undefined}
-          message={'Loading or generating thumbnails...'}
+          message="Loading or generating thumbnails..."
           action={[
             <IconButton
               key="close"
@@ -734,7 +734,7 @@ class MainPage extends Component<Props, State> {
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           open={this.props.isIndexing}
           autoHideDuration={undefined}
-          message={'Indexing'}
+          message="Indexing"
           action={[
             <Button
               color="secondary"

@@ -167,7 +167,7 @@ function MultiValue(props) {
     <TagContainer
       key={props.data.id || props.data.title}
       tag={props.data}
-      tagMode={'remove'}
+      tagMode="remove"
       deleteIcon={<CloseIcon {...props.removeProps} />}
     />
   );

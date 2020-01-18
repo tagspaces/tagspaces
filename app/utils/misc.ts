@@ -193,13 +193,17 @@ export function formatFileSize(sizeInBytes: number): string {
 
   if (sizeInBytes >= 0 && sizeInBytes < kilobyte) {
     return sizeInBytes + ' B';
-  } else if (sizeInBytes >= kilobyte && sizeInBytes < megabyte) {
+  }
+  if (sizeInBytes >= kilobyte && sizeInBytes < megabyte) {
     return (sizeInBytes / kilobyte).toFixed(precision) + ' KB';
-  } else if (sizeInBytes >= megabyte && sizeInBytes < gigabyte) {
+  }
+  if (sizeInBytes >= megabyte && sizeInBytes < gigabyte) {
     return (sizeInBytes / megabyte).toFixed(precision) + ' MB';
-  } else if (sizeInBytes >= gigabyte && sizeInBytes < terabyte) {
+  }
+  if (sizeInBytes >= gigabyte && sizeInBytes < terabyte) {
     return (sizeInBytes / gigabyte).toFixed(precision) + ' GB';
-  } else if (sizeInBytes >= terabyte) {
+  }
+  if (sizeInBytes >= terabyte) {
     return (sizeInBytes / terabyte).toFixed(precision) + ' TB';
   }
   return sizeInBytes + '';
@@ -559,7 +563,7 @@ export const eachProp = (obj, callback) => {
  * @returns {object}
  */
 export const extend = (baseObject, ...restObjects) => {
-  const assign = Object.assign;
+  const { assign } = Object;
   const modifiedObject = assign({}, baseObject);
 
   restObjects.map(obj => assign(modifiedObject, obj));
@@ -667,13 +671,12 @@ export const filterObjectData = (objectData, requiredKeys) => {
  * @param arrayData
  * @param requiredKeys
  */
-export const filterArrayOfObjectsData = (arrayData, requiredKeys) => {
-  return arrayData.reduce((accumulator, item) => {
+export const filterArrayOfObjectsData = (arrayData, requiredKeys) =>
+  arrayData.reduce((accumulator, item) => {
     const filteredObject = filterObjectData(item, requiredKeys);
     accumulator.push(filteredObject);
     return accumulator;
   }, []);
-};
 
 /**
  * @description Pluck object data to array
@@ -696,12 +699,11 @@ export const pluckObjectDataToArray = (objectData, requiredKey) => {
  * @param arrayData
  * @param requiredKey
  */
-export const pluckArrayOfObjectsDataToArray = (arrayData, requiredKey) => {
-  return arrayData.reduce((accumulator, item) => {
+export const pluckArrayOfObjectsDataToArray = (arrayData, requiredKey) =>
+  arrayData.reduce((accumulator, item) => {
     const filteredArray = pluckObjectDataToArray(item, requiredKey);
     return [...accumulator, ...filteredArray];
   }, []);
-};
 
 /**
  * @description Extract nexted prop
@@ -757,8 +759,8 @@ export const sortBy = (
   keysText: any,
   type: string = 'string',
   direction: string = 'asc'
-) => {
-  return items.sort((a, b) => {
+) =>
+  items.sort((a, b) => {
     const aVal: any = extractNestedProp(a, keysText);
     const bVal: any = extractNestedProp(b, keysText);
 
@@ -778,7 +780,8 @@ export const sortBy = (
         return direction === 'asc' ? -1 : 1;
       }
       return 0;
-    } else if (type === 'number' || type === 'integer' || type === 'float') {
+    }
+    if (type === 'number' || type === 'integer' || type === 'float') {
       if (aVal > bVal) {
         return direction === 'asc' ? 1 : -1;
       }
@@ -786,7 +789,8 @@ export const sortBy = (
         return direction === 'asc' ? -1 : 1;
       }
       return 0;
-    } else if (type === 'date') {
+    }
+    if (type === 'date') {
       // @ts-ignore
       const res1 = new Date(aVal) - new Date(bVal);
       // @ts-ignore
@@ -794,7 +798,6 @@ export const sortBy = (
       return direction === 'asc' ? res1 : res2;
     }
   });
-};
 
 /**
  * @description Shape
@@ -823,7 +826,8 @@ export const shape = items => {
         const prop = extractNestedProp(item, key);
         if (isArr(prop)) {
           return [...accumulator, ...prop];
-        } else if (!isUndef(prop) && !isNull(prop)) {
+        }
+        if (!isUndef(prop) && !isNull(prop)) {
           return [...accumulator, prop];
         }
       }, []);
