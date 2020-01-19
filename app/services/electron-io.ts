@@ -840,10 +840,21 @@ export default class ElectronIO {
         }
       ] */
     };
-    return new Promise(resolve => {
-      this.remote.dialog.showOpenDialog(options, fileNames => {
-        resolve(fileNames);
-      });
+    return new Promise((resolve, reject) => {
+      this.remote.dialog
+        .showOpenDialog(options)
+        .then(resultObject => {
+          if (resultObject.filePaths && resultObject.filePaths.length) {
+            // alert(JSON.stringify(resultObject.filePaths));
+            resolve(resultObject.filePaths);
+          } else {
+            reject('No file selected');
+          }
+          return true;
+        })
+        .catch(e => {
+          reject('Error opening file ' + e);
+        });
     });
   };
 
@@ -851,14 +862,13 @@ export default class ElectronIO {
     const options = {
       properties: ['openDirectory', 'createDirectory']
     };
-    // eslint-disable-next-line compat/compat
     return new Promise((resolve, reject) => {
       this.remote.dialog
         .showOpenDialog(options)
-        .then(directory => {
-          if (directory.filePaths && directory.filePaths.length) {
-            // alert(JSON.stringify(directory.filePaths));
-            resolve(directory.filePaths);
+        .then(resultObject => {
+          if (resultObject.filePaths && resultObject.filePaths.length) {
+            // alert(JSON.stringify(resultObject.filePaths));
+            resolve(resultObject.filePaths);
           } else {
             reject('No directory selected');
           }
