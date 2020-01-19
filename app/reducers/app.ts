@@ -1329,7 +1329,9 @@ export const actions = {
     PlatformIO.openFile(selectedFile);
   },
   openURLExternally: (url: string, addAppVersion: boolean = false) => () => {
-    PlatformIO.openUrl(url);
+    if (window.confirm('Do you really want to open this url: ' + url + ' ?')) {
+      PlatformIO.openUrl(url);
+    }
   },
   saveFile: () => () =>
     // dispatch: (actions: Object) => void,

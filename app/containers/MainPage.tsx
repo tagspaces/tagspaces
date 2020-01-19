@@ -175,7 +175,7 @@ interface Props {
   setLastSelectedEntry: (path: string) => void; // needed by electron-menus
   openFile: (path: string) => void; // needed by electron-menus
   openFileNatively: (url: string) => void; // needed by electron-menus
-  openURLExternally: (url: string) => void; // needed by electron-menus
+  openURLExternally: (url: string) => void;
   getNextFile: () => void; // needed by electron-menus
   getPrevFile: () => void; // needed by electron-menus
   openLocationManagerPanel: () => void;
@@ -615,6 +615,7 @@ class MainPage extends Component<Props, State> {
       toggleSelectDirectoryDialog,
       toggleEditTagDialog,
       setFirstRun,
+      openURLExternally,
       directoryPath
     } = this.props;
     const { FILE } = NativeTypes;
@@ -627,6 +628,7 @@ class MainPage extends Component<Props, State> {
         {isAboutDialogOpened && (
           <AboutDialogAsync
             open={isAboutDialogOpened}
+            openURLExternally={openURLExternally}
             toggleLicenseDialog={toggleLicenseDialog}
             toggleThirdPartyLibsDialog={toggleThirdPartyLibsDialog}
             onClose={toggleAboutDialog}

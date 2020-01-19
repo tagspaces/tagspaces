@@ -28,7 +28,6 @@ import semver from 'semver';
 import LogoIcon from '-/assets/images/icon100x100.svg';
 import i18n from '-/services/i18n';
 import versionMeta from '-/version.json';
-import PlatformIO from '-/services/platform-io';
 import { Pro } from '-/pro';
 import { getLastVersionPromise } from '-/reducers/settings';
 import AppConfig from '-/config';
@@ -36,6 +35,7 @@ import AppConfig from '-/config';
 interface Props {
   open: boolean;
   fullScreen: boolean;
+  openURLExternally: (url: string) => void;
   toggleLicenseDialog: () => void;
   toggleThirdPartyLibsDialog: () => void;
   onClose: () => void;
@@ -56,7 +56,7 @@ const AboutDialog = (props: Props) => {
 
   function checkForUpdates() {
     if (updateAvailable) {
-      PlatformIO.openUrl(AppConfig.links.downloadURL);
+      props.openURLExternally(AppConfig.links.downloadURL);
     } else {
       getLastVersionPromise()
         .then(lastVersion => {
@@ -122,15 +122,19 @@ const AboutDialog = (props: Props) => {
             navigator.appVersion
           }
         >
-          Version: {versionMeta.version} / BuildID: {buildID}
+          Version:
+          {versionMeta.version} BuildID:
+          {buildID}
         </Typography>
         <br />
         <Typography id="aboutContent" variant="body1">
-          <strong>{productName}</strong> is made possible by the
-          TagSpaces(github.com/tagspaces) open source project and other{' '}
+          <strong>{productName}</strong>
+          is made possible by the TagSpaces(github.com/tagspaces) open source
+          project and other
           <Button
             size="small"
             color="primary"
+            style={{ marginLeft: 10 }}
             onClick={props.toggleThirdPartyLibsDialog}
           >
             open source software
@@ -155,7 +159,7 @@ const AboutDialog = (props: Props) => {
             size="small"
             color="primary"
             onClick={() => {
-              PlatformIO.openUrl(AppConfig.links.imprintURL);
+              props.openURLExternally(AppConfig.links.imprintURL);
             }}
           >
             Imprint
@@ -164,7 +168,7 @@ const AboutDialog = (props: Props) => {
             size="small"
             color="primary"
             onClick={() => {
-              PlatformIO.openUrl(AppConfig.links.privacyURL);
+              props.openURLExternally(AppConfig.links.privacyURL);
             }}
           >
             Privacy Policy
@@ -173,7 +177,7 @@ const AboutDialog = (props: Props) => {
             size="small"
             color="primary"
             onClick={() => {
-              PlatformIO.openUrl(AppConfig.links.changelogURL);
+              props.openURLExternally(AppConfig.links.changelogURL);
             }}
           >
             Changelog
@@ -194,7 +198,7 @@ const AboutDialog = (props: Props) => {
             data-tid="checkForUpdates"
             title={i18n.t('core:checkForNewVersion')}
             onClick={() => {
-              PlatformIO.openUrl(AppConfig.links.productsOverview);
+              props.openURLExternally(AppConfig.links.productsOverview);
             }}
             color="primary"
           >
