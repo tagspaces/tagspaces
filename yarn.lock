@@ -10126,9 +10126,9 @@ js-tokens@^3.0.2:
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-3.0.2.tgz#9866df395102130e38f7f996bceb65443209c25b"
   integrity sha1-mGbfOVECEw449/mWvOtlRDIJwls=
 
-"js-webdav-client@https://github.com/sara-nl/js-webdav-client":
+"js-webdav-client@https://github.com/sara-nl/js-webdav-client.git":
   version "1.0.0"
-  resolved "https://github.com/sara-nl/js-webdav-client#978c2c74692091de2bc8c60268045980508a0959"
+  resolved "https://github.com/sara-nl/js-webdav-client.git#978c2c74692091de2bc8c60268045980508a0959"
 
 js-yaml@^3.13.1:
   version "3.13.1"

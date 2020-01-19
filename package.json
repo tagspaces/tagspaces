@@ -258,7 +258,7 @@
     "i18next-browser-languagedetector": "^2.0.0",
     "i18next-xhr-backend": "^1.4.2",
     "jmespath": "^0.15.0",
-    "js-webdav-client": "https://github.com/sara-nl/js-webdav-client",
+    "js-webdav-client": "https://github.com/sara-nl/js-webdav-client.git",
     "jszip": "^3.1.5",
     "leaflet": "^1.4.0",
     "marked": "^0.6.1",
