@@ -3,18 +3,18 @@ name: PR
 
 jobs:
   gitHubActionForNpm:
-    name: GitHub Action for npm
+    name: Validating
     runs-on: ubuntu-latest
 
     steps:
-      - name: checking out default branch
+      - name: Checking out default branch
         uses: actions/checkout@v1
         with:
           submodules: true
       - uses: actions/setup-node@v1
         with:
-          node-version: "10.x"
-      - name: npm install and type check
+          node-version: '10.x'
+      - name: Running npm install and type check
         run: |
           npm install
           npm run type-check
