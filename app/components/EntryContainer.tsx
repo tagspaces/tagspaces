@@ -44,11 +44,7 @@ import ConfirmDialog from './dialogs/ConfirmDialog';
 import AppConfig from '../config';
 import PlatformIO from '../services/platform-io';
 import AddRemoveTagsDialog from './dialogs/AddRemoveTagsDialog';
-import {
-  // getAllPropertiesPromise,
-  openLinkExternally,
-  FileSystemEntry
-} from '../services/utils-io';
+import { FileSystemEntry } from '../services/utils-io';
 import i18n from '../services/i18n';
 import {
   extractContainingDirectoryPath,
@@ -181,6 +177,7 @@ interface Props {
   getNextFile: (path: string) => string;
   getPrevFile: (path: string) => string;
   openFileNatively: (path: string) => void;
+  openURLExternally: (url: string) => void;
   showNotification: (
     text: string,
     notificationType?: string, // NotificationTypes
@@ -360,6 +357,7 @@ class EntryContainer extends React.Component<Props, State> {
     let textFilePath;
     let nextFilePath;
     let nextFile;
+    let decodedURI;
 
     switch (data.command) {
       case 'showAlertDialog':
@@ -385,8 +383,17 @@ class EntryContainer extends React.Component<Props, State> {
         this.props.setSelectedEntries(nextFile);
         break;
       case 'openLinkExternally':
-        console.log('Open link externally: ' + data.link);
-        openLinkExternally(data.link);
+        // console.log('Open link externally: ' + data.link);
+        decodedURI = decodeURIComponent(data.link);
+        if (
+          decodedURI.startsWith('http://') ||
+          decodedURI.startsWith('https://') ||
+          decodedURI.startsWith('file://')
+        ) {
+          this.props.openURLExternally(decodedURI);
+        } else {
+          console.log('Not supported URL format: ' + decodedURI);
+        }
         break;
       case 'openFileNatively':
         console.log('Open file natively: ' + data.link);
@@ -1268,6 +1275,7 @@ function mapActionCreatorsToProps(dispatch) {
       renameDirectory: AppActions.renameDirectory,
       openFile: AppActions.openFile,
       openFileNatively: AppActions.openFileNatively,
+      openURLExternally: AppActions.openURLExternally,
       showNotification: AppActions.showNotification,
       getNextFile: AppActions.getNextFile,
       getPrevFile: AppActions.getPrevFile,

@@ -262,19 +262,6 @@ export function saveAsTextFile(blob: any, filename: string) {
   saveAs(blob, filename);
 }
 
-export function openLinkExternally(uri: string) {
-  const decodedURI = decodeURIComponent(uri);
-  if (
-    decodedURI.startsWith('http://') ||
-    decodedURI.startsWith('https://') ||
-    decodedURI.startsWith('file://')
-  ) {
-    PlatformIO.openFile(decodedURI);
-  } else {
-    console.log('Not supported URL format: ' + decodedURI);
-  }
-}
-
 export function deleteFilesPromise(filePathList: Array<string>) {
   const fileDeletionPromises = [];
   filePathList.forEach(filePath => {
