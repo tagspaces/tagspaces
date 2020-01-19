@@ -109,15 +109,21 @@
       "\\.(css|less|sass|scss)$": "identity-obj-proxy"
     },
     "moduleFileExtensions": [
-      "js"
+      "js",
+      "ts",
+      "tsx"
     ],
     "moduleDirectories": [
       "node_modules",
       "app/node_modules"
     ],
-    "transform": {
-      "^.+\\.js$": "babel-jest"
-    }
+    "testMatch": [
+      "**/{app,test,integration}/**/*.test.{js,tsx,ts,tsx}"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/extensions"
+    ],
+    "collectCoverage": true
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",
@@ -252,7 +258,6 @@
     "i18next-browser-languagedetector": "^2.0.0",
     "i18next-xhr-backend": "^1.4.2",
     "jmespath": "^0.15.0",
-    "js-webdav-client": "https://github.com/sara-nl/js-webdav-client",
     "jszip": "^3.1.5",
     "leaflet": "^1.4.0",
     "marked": "^0.6.1",
@@ -281,7 +286,7 @@
     "react-router-redux": "^5.0.0-alpha.6",
     "react-select": "^3.0.8",
     "react-split-pane": "^0.1.89",
-    "react-swipeable-views": "^0.13.3",
+    "react-swipeable-views": "0.13.3",
     "react-virtualized": "^9.21.1",
     "redux": "^3.7.2",
     "redux-persist": "^5.10.0",

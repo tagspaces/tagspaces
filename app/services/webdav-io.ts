@@ -16,7 +16,7 @@
  *
  */
 
-import nl from 'js-webdav-client';
+import nl from '../utils/js-webdav-client';
 import {
   extractParentDirectoryPath,
   normalizePath,
@@ -37,6 +37,7 @@ export default class WebDAVIO {
   constructor() {
     console.log('Loading web.js..' + nl);
     // exact copy of getAjax with timeout added
+    // @ts-ignore
     nl.sara.webdav.Client.prototype.getAjax = (
       method,
       url,
@@ -50,12 +51,14 @@ export default class WebDAVIO {
         ajax.open(method, url, true);
       }
       ajax.onreadystatechange = () => {
+        // @ts-ignore
         nl.sara.webdav.Client.ajaxHandler(ajax, callback);
       };
 
       ajax.ontimeout = () => {
         ajax.readyState = 4;
         ajax.ajax.status = -1;
+        // @ts-ignore
         nl.sara.webdav.Client.ajaxHandler(ajax, callback);
       };
 
@@ -78,6 +81,7 @@ export default class WebDAVIO {
     if (location.href.indexOf('https') === 0) {
       useHTTPS = true;
     }
+    // @ts-ignore
     this.davClient = new nl.sara.webdav.Client(
       location.hostname,
       useHTTPS,
