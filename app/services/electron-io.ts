@@ -849,18 +849,23 @@ export default class ElectronIO {
 
   selectDirectoryDialog = (): Promise<any> => {
     const options = {
-      properties: ['openDirectory']
+      properties: ['openDirectory', 'createDirectory']
     };
     // eslint-disable-next-line compat/compat
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.remote.dialog
         .showOpenDialog(options)
         .then(directory => {
-          resolve(directory);
+          if (directory.filePaths && directory.filePaths.length) {
+            // alert(JSON.stringify(directory.filePaths));
+            resolve(directory.filePaths);
+          } else {
+            reject('No directory selected');
+          }
           return true;
         })
         .catch(e => {
-          console.warn('Error opening directory ' + e);
+          reject('Error opening directory ' + e);
         });
     });
   };
