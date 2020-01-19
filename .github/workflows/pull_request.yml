@@ -17,4 +17,5 @@ jobs:
       - name: Running npm install and type check
         run: |
           npm install
+          npm run prettier-check
           npm run type-check
