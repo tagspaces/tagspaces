@@ -122,13 +122,17 @@ const AboutDialog = (props: Props) => {
             navigator.appVersion
           }
         >
-          Version:
-          {versionMeta.version} BuildID:
+          Version:&nbsp;
+          {versionMeta.version}
+          &nbsp;BuildID:&nbsp;
           {buildID}
         </Typography>
         <br />
         <Typography id="aboutContent" variant="body1">
-          <strong>{productName}</strong>
+          <strong>
+            {productName}
+            &nbsp;
+          </strong>
           is made possible by the TagSpaces(github.com/tagspaces) open source
           project and other
           <Button
