@@ -851,10 +851,17 @@ export default class ElectronIO {
     const options = {
       properties: ['openDirectory']
     };
+    // eslint-disable-next-line compat/compat
     return new Promise(resolve => {
-      this.remote.dialog.showOpenDialog(options, directory => {
-        resolve(directory);
-      });
+      this.remote.dialog
+        .showOpenDialog(options)
+        .then(directory => {
+          resolve(directory);
+          return true;
+        })
+        .catch(e => {
+          console.warn('Error opening directory ' + e);
+        });
     });
   };
 }
