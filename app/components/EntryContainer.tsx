@@ -882,7 +882,7 @@ class EntryContainer extends React.Component<Props, State> {
       className={this.props.classes.fileOpener}
       src={fileOpenerURL}
       allowFullScreen
-      sandbox="allow-same-origin allow-scripts"
+      sandbox="allow-same-origin allow-scripts allow-modals"
       title={i18n.t('core:fileViewer')}
       id="FileViewer"
     />
