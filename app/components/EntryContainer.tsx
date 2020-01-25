@@ -236,8 +236,8 @@ class EntryContainer extends React.Component<Props, State> {
       //     'window.dispatchEvent(new Event("resume"));'
       //   );
       // } else
-      if (this.fileViewer) {
-        this.fileViewer.dispatchEvent(new Event('resume'));
+      if (this.fileViewer && this.fileViewer.contentWindow) {
+        this.fileViewer.contentWindow.togglePlay();
       }
     });
     // if (AppConfig.isElectron) {
