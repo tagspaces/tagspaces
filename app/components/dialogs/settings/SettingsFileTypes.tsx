@@ -67,7 +67,8 @@ const styles: any = (theme: any) => ({
   fileExtRemove: {
     width: '7%',
     height: '38px',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    padding: '0'
   }
 });
 
