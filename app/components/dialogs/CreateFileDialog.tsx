@@ -111,17 +111,13 @@ class CreateFileDialog extends React.Component<Props, State> {
     this.setState({ fileType: target.value });
   };
 
-  handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  handleFileNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const { name } = target;
-    this.setState(
-      // @ts-ignore
-      {
-        [name]: value
-      },
-      this.handleValidation
-    );
+    const { value, name } = target;
+
+    if (name === 'fileName') {
+      this.setState({ fileName: value }, this.handleValidation);
+    }
   };
 
   handleValidation() {
@@ -212,7 +208,7 @@ class CreateFileDialog extends React.Component<Props, State> {
             inputRef={ref => {
               this.fileName = ref;
             }}
-            onChange={this.handleInputChange}
+            onChange={this.handleFileNameChange}
             value={this.state.fileName}
             data-tid="createFileDialog_fileName"
           />
@@ -227,7 +223,7 @@ class CreateFileDialog extends React.Component<Props, State> {
             multiline
             name="fileContent"
             value={this.state.fileContent}
-            onChange={this.handleInputChange}
+            onChange={this.handleFileNameChange}
             onKeyDown={this.handleKeyPress}
             margin="normal"
             fullWidth={true}
@@ -272,7 +268,7 @@ class CreateFileDialog extends React.Component<Props, State> {
             fullWidth={true}
             data-tid="createFileDialog_filePath"
             value={this.state.selectedDirectoryPath}
-            onChange={this.handleInputChange}
+            onChange={this.handleFileNameChange}
             endAdornment={
               PlatformIO.haveObjectStoreSupport() ? (
                 undefined

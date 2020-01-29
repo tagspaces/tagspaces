@@ -78,18 +78,13 @@ class EditTagGroupDialog extends React.Component<Props, State> {
     }
   };
 
-  handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  handleTagGroupTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const { name } = target;
+    const { value, name } = target;
 
-    this.setState(
-      // @ts-ignore
-      {
-        [name]: value
-      },
-      this.handleValidation
-    );
+    if (name === 'title') {
+      this.setState({ title: value }, this.handleValidation);
+    }
   };
 
   handleValidation() {
@@ -212,7 +207,7 @@ class EditTagGroupDialog extends React.Component<Props, State> {
             name="title"
             autoFocus
             label={i18n.t('core:editTagGroupNewName')}
-            onChange={this.handleInputChange}
+            onChange={this.handleTagGroupTitleChange}
             value={this.state.title}
             data-tid="editTagGroupInput"
             fullWidth={true}
