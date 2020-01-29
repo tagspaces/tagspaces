@@ -120,6 +120,24 @@ class CreateFileDialog extends React.Component<Props, State> {
     }
   };
 
+  handleFileContentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { target } = event;
+    const { value, name } = target;
+
+    if (name === 'fileContent') {
+      this.setState({ fileContent: value }, this.handleValidation);
+    }
+  };
+
+  handleFilePathChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { target } = event;
+    const { value, name } = target;
+
+    if (name === 'selectedDirectoryPath') {
+      this.setState({ selectedDirectoryPath: value }, this.handleValidation);
+    }
+  };
+
   handleValidation() {
     if (this.state.fileName && this.state.fileName.length > 0) {
       this.setState({ errorTextName: false });
@@ -223,7 +241,7 @@ class CreateFileDialog extends React.Component<Props, State> {
             multiline
             name="fileContent"
             value={this.state.fileContent}
-            onChange={this.handleFileNameChange}
+            onChange={this.handleFileContentChange}
             onKeyDown={this.handleKeyPress}
             margin="normal"
             fullWidth={true}
@@ -268,7 +286,7 @@ class CreateFileDialog extends React.Component<Props, State> {
             fullWidth={true}
             data-tid="createFileDialog_filePath"
             value={this.state.selectedDirectoryPath}
-            onChange={this.handleFileNameChange}
+            onChange={this.handleFilePathChange}
             endAdornment={
               PlatformIO.haveObjectStoreSupport() ? (
                 undefined
