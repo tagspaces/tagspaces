@@ -16,7 +16,7 @@
  *
  */
 
-import React, { Component } from 'react';
+import React, { Component, ChangeEvent } from 'react';
 import uuidv1 from 'uuid';
 import marked from 'marked';
 import classNames from 'classnames';
@@ -492,13 +492,22 @@ class EntryProperties extends Component<Props, State> {
 
   handleCloseTagMenu = () => this.setState({ tagMenuOpened: false });
 
-  handleInputChange = (event: any) => {
+  handleFileNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const { name } = target;
+    const { value, name } = target;
 
-    // @ts-ignore
-    this.setState({ [name]: value });
+    if (name === 'name') {
+      this.setState({ name: value });
+    }
+  };
+
+  handleDescriptionChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { target } = event;
+    const { value, name } = target;
+
+    if (name === 'description') {
+      this.setState({ description: value });
+    }
   };
 
   handleChange = (name, value, action) => {
@@ -644,7 +653,7 @@ class EntryProperties extends Component<Props, State> {
                       this.renameEntry();
                     }
                   }}
-                  onChange={e => this.handleInputChange(e)}
+                  onChange={this.handleFileNameChange}
                 />
               </div>
             </FormControl>
@@ -724,7 +733,7 @@ class EntryProperties extends Component<Props, State> {
                   className={styles.textField}
                   value={description}
                   fullWidth={true}
-                  onChange={e => this.handleInputChange(e)}
+                  onChange={this.handleDescriptionChange}
                 />
               ) : (
                 <Typography
