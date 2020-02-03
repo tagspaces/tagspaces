@@ -286,10 +286,7 @@ const DirectoryMenu = (props: Props) => {
   }
 
   return (
-    <div
-      // @ts-ignore
-      style={{ overflowY: 'hidden !important' }}
-    >
+    <div style={{ overflowY: 'hidden' }}>
       <RenameDirectoryDialog
         key={uuidv1()}
         open={isRenameDirectoryDialogOpened}
