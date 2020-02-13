@@ -81,7 +81,7 @@ interface Props {
 }
 
 const CreateDialog = (props: Props) => {
-  let fileInput: HTMLFormElement;
+  let fileInput: HTMLInputElement;
   const fileName =
     'note' +
     AppConfig.beginTagContainer +
@@ -289,7 +289,6 @@ const CreateDialog = (props: Props) => {
         <input
           style={{ display: 'none' }}
           ref={input => {
-            // @ts-ignore
             fileInput = input;
           }}
           accept="*"
