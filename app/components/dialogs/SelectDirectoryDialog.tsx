@@ -242,8 +242,6 @@ class SelectDirectoryDialog extends React.Component<Props, State> {
               margin="dense"
               name="path"
               onChange={this.handleInputChange}
-              // @ts-ignore
-              label={i18n.t('core:selectDialogCurrentPath')}
               data-tid="selectDirectoryDialogInput"
               value={this.state.currentPath}
               disabled={AppConfig.isWin}

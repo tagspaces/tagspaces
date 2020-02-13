@@ -249,8 +249,6 @@ class ObjectStoreForm extends React.Component<Props> {
               required
               margin="dense"
               name="storeName"
-              // @ts-ignore
-              label={i18n.t('core:createLocationName')}
               fullWidth={true}
               data-tid="locationName"
               onChange={handleInputChange}
@@ -269,8 +267,6 @@ class ObjectStoreForm extends React.Component<Props> {
             <Input
               margin="dense"
               name="storePath"
-              // @ts-ignore
-              label={i18n.t('core:createLocationPath')}
               fullWidth={true}
               data-tid="locationPath"
               onChange={handleInputChange}
@@ -289,8 +285,6 @@ class ObjectStoreForm extends React.Component<Props> {
             <Input
               margin="dense"
               name="accessKeyId"
-              // @ts-ignore
-              label={i18n.t('core:accessKeyId')}
               fullWidth={true}
               data-tid="accessKeyId"
               onChange={handleInputChange}
@@ -310,8 +304,6 @@ class ObjectStoreForm extends React.Component<Props> {
               margin="dense"
               name="secretAccessKey"
               type="password"
-              // @ts-ignore
-              label={i18n.t('core:secretAccessKey')}
               fullWidth={true}
               data-tid="secretAccessKey"
               onChange={handleInputChange}
@@ -333,8 +325,6 @@ class ObjectStoreForm extends React.Component<Props> {
               required
               margin="dense"
               name="bucketName"
-              // @ts-ignore
-              label={i18n.t('core:bucketName')}
               fullWidth={true}
               data-tid="bucketName"
               onChange={handleInputChange}

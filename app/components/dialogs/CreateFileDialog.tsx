@@ -281,8 +281,6 @@ class CreateFileDialog extends React.Component<Props, State> {
             required
             margin="dense"
             name="selectedDirectoryPath"
-            // @ts-ignore
-            label={i18n.t('core:filePath')}
             fullWidth={true}
             data-tid="createFileDialog_filePath"
             value={this.state.selectedDirectoryPath}
