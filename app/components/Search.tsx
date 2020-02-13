@@ -143,6 +143,33 @@ class Search extends React.Component<Props, State> {
     );
   };
 
+  // handleFileTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const { target } = event;
+  //   const { value, name } = target;
+
+  //   if (name === 'fileTypes') {
+  //     this.setState({ fileTypes: [value] }, this.executeSearch);
+  //   }
+  // };
+
+  handleFileSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { target } = event;
+    const { value, name } = target;
+
+    if (name === 'fileSize') {
+      this.setState({ fileSize: value }, this.executeSearch);
+    }
+  };
+
+  handleLastModifiedChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { target } = event;
+    const { value, name } = target;
+
+    if (name === 'lastModified') {
+      this.setState({ lastModified: value }, this.executeSearch);
+    }
+  };
+
   handleTagFieldChange = (name, value) => {
     // @ts-ignore
     this.setState({ [name]: value }, this.executeSearch);
@@ -547,7 +574,7 @@ class Search extends React.Component<Props, State> {
             </InputLabel>
             <Select
               value={this.state.fileSize}
-              onChange={this.handleInputChange}
+              onChange={this.handleFileSizeChange}
               input={<Input name="fileSize" id="file-size" />}
               displayEmpty
             >
@@ -593,7 +620,7 @@ class Search extends React.Component<Props, State> {
             </InputLabel>
             <Select
               value={this.state.lastModified}
-              onChange={this.handleInputChange}
+              onChange={this.handleLastModifiedChange}
               input={<Input name="lastModified" id="modification-date" />}
               displayEmpty
             >
