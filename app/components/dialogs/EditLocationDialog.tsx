@@ -320,8 +320,6 @@ class EditLocationDialog extends React.Component<Props, State> {
                 title={
                   Pro ? '' : i18n.t('core:thisFunctionalityIsAvailableInPro')
                 }
-                // @ts-ignore
-                component="label"
                 aria-label={i18n.t('core:locationType')}
                 name="type"
                 value={this.state.type}
