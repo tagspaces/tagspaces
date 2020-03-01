@@ -28,7 +28,7 @@
     "icon": "resources/icon.ico"
   },
   "mac": {
-    "target": ["zip"],
+    "target": ["zip", "dmg"],
     "icon": "resources/icon.icns"
   },
   "linux": {
