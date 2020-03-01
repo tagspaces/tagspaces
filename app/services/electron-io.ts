@@ -29,7 +29,7 @@ import PlatformIO from './platform-io';
 import TrayIcon from '../assets/icons/trayIcon.png';
 // import TrayIconWin from '../assets/icons/trayIcon.ico';
 import TrayIcon2x from '../assets/icons/trayIcon@2x.png';
-// import TrayIcon3x from '../assets/icons/trayIcon@3x.png';
+import TrayIcon3x from '../assets/icons/trayIcon@3x.png';
 import { Pro } from '../pro';
 
 export default class ElectronIO {
@@ -98,18 +98,13 @@ export default class ElectronIO {
     // const nImage = nativeImage.createFromPath(appPath + trayIconPath);
 
     let nImage;
-    // if (process.platform === 'darwin') {
-    //   nImage = nativeImage.createFromDataURL(TrayIcon);
-    //   nImage.addRepresentation(2, TrayIcon2x);
-    // } else
-
     if (process.platform === 'win32') {
       nImage = nativeImage.createFromDataURL(TrayIcon2x);
       // @ts-ignore
     } else if (process.platform === 'darwin') {
       nImage = nativeImage.createFromDataURL(TrayIcon);
-      // nImage.addRepresentation({ scaleFactor: 2.0, dataURL: TrayIcon2x });
-      // nImage.addRepresentation({ scaleFactor: 3.0, dataURL: TrayIcon3x });
+      nImage.addRepresentation({ scaleFactor: 2.0, dataURL: TrayIcon2x });
+      nImage.addRepresentation({ scaleFactor: 3.0, dataURL: TrayIcon3x });
     } else {
       nImage = nativeImage.createFromDataURL(TrayIcon2x);
     }
