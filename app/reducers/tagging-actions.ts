@@ -17,6 +17,7 @@
  */
 
 import uuidv1 from 'uuid';
+import OpenLocationCode from 'open-location-code-typescript';
 import i18n from '../services/i18n';
 import { actions as AppActions } from './app';
 import { actions as TagLibraryActions, Tag, TagGroup } from './taglibrary';
@@ -36,9 +37,8 @@ import { formatDateTime4Tag, isPlusCode } from '../utils/misc';
 import AppConfig from '../config';
 import PlatformIO from '../services/platform-io';
 import { Pro } from '../pro';
-// import openlocationcode from '../utils/openlocationcode';
 
-export const defaultTagLocation = ''; // (new openlocationcode()).encode(51.48, 0, undefined); // default tag coordinate Greenwich
+export const defaultTagLocation = OpenLocationCode.encode(51.48, 0, undefined); // default tag coordinate Greenwich
 
 const actions = {
   addTags: (

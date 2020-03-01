@@ -102,8 +102,6 @@ interface State {
   searchMenuAnchorEl: Element | null;
 }
 
-// const olc = new openlocationcode();
-
 class Search extends React.Component<Props, State> {
   // @ts-ignore
   state = {
