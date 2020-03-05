@@ -239,7 +239,7 @@
     "@material-ui/pickers": "^3.2.8",
     "aws-sdk": "^2.263.1",
     "babel-polyfill": "^6.26.0",
-    "chokidar": "^3.2.1",
+    "chokidar": "^3.3.1",
     "classnames": "^2.2.5",
     "clone": "^2.1.2",
     "core-js": "2",
