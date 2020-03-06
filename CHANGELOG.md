@@ -1,5 +1,25 @@
 # Changelog
 
+## Version 3.4.2 / 2020.03.06
+
+### Community
+- 🎉 implementing switch for toggling tags visibility
+- 🌟 improving handling of key bindings
+- 🌟 adding dmg builds for Mac OS
+- 🌟 restore showing tags in the compact list mode
+- 🌟 added confirmation for opening external links
+- 🌟 upgrading to electron 7
+- 🌟 code base migration to Typescript with Prettier
+- 🌟 updating Armenian, Turkish, Chinese, Japanize and German translations
+- 🌟 add menu with link to help in the Search area and location manager
+- 🌟 lazy loading thumbnails
+- 🌟 allowing spaces as separator for tags
+- 🐛 fixed crash on document save in some cased #1090
+- 🐛 fixed wrong panel in drawer or vertical panel
+- 🐛 changing default markdown formats
+
+### Pro
+
 ## Version 3.3.0 / 2019.11.08
 
 ### Community
