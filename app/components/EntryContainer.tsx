@@ -279,9 +279,7 @@ class EntryContainer extends React.Component<Props, State> {
     if (nextProps.openedFiles.length > 0) {
       const nextEntry = nextProps.openedFiles[0];
       if (this.state.currentEntry && this.state.currentEntry.changed) {
-        this.props.showNotification(
-          i18n.t('core:currentlyFileChangedSaveOrClose')
-        );
+        // console.warn(i18n.t('core:currentlyFileChangedSaveOrClose'))
         return true;
       }
 
