@@ -10,7 +10,9 @@ export default {
   // externals: [...Object.keys(dependencies || {})],
   externals: [
     {
-      fsevents: "require('fsevents')",
+      fsevents: "require('fsevents')"
+    },
+    {
       fswin: "require('fswin')"
     }
   ],
