@@ -257,13 +257,8 @@ const CellContent = (props: Props) => {
         <Grid item xs zeroMinWidth>
           <Typography style={{ wordBreak: 'break-all' }}>
             {extractTitle(fsEntry.name, !fsEntry.isFile)}
-            {entrySize === 'small' && tagPlaceholder}
           </Typography>
-          {entrySize !== 'small'
-            ? showTags
-              ? fsEntry.tags.map(tag => renderTag(tag))
-              : tagPlaceholder
-            : null}
+          {showTags ? fsEntry.tags.map(tag => renderTag(tag)) : tagPlaceholder}
           {entrySize !== 'small' && (
             <Typography
               style={{
