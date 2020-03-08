@@ -14,8 +14,8 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '10.x'
-      - name: Running npm install and type check
+      - name: Running yarn install and type check
         run: |
-          npm install
-          npm run prettier-check
-          npm run type-check
+          yarn install
+          yarn prettier-check
+          yarn run type-check
