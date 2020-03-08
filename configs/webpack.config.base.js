@@ -8,6 +8,14 @@ import webpack from 'webpack';
 
 export default {
   // externals: [...Object.keys(dependencies || {})],
+  externals: [
+    {
+      fsevents: "require('fsevents')"
+    },
+    {
+      fswin: "require('fswin')"
+    }
+  ],
 
   module: {
     rules: [
