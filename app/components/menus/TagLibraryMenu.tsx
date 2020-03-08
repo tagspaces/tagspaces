@@ -117,10 +117,7 @@ const TagLibraryMenu = (props: Props) => {
   }
 
   return (
-    <div
-      // @ts-ignore
-      style={{ overflowY: 'hidden !important' }}
-    >
+    <div style={{ overflowY: 'hidden' }}>
       <ImportExportTagGroupsDialog
         open={isImportExportTagGroupDialogOpened}
         onClose={handleCloseDialogs}

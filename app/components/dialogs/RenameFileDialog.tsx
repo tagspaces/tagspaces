@@ -89,18 +89,13 @@ class RenameFileDialog extends React.Component<Props, State> {
 
   fileName;
 
-  handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  handleRenameFile = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const { name } = target;
+    const { value, name } = target;
 
-    this.setState(
-      // @ts-ignore
-      {
-        [name]: value
-      },
-      this.handleValidation
-    );
+    if (name === 'fileName') {
+      this.setState({ fileName: value }, this.handleValidation);
+    }
   };
 
   handleValidation() {
@@ -146,7 +141,7 @@ class RenameFileDialog extends React.Component<Props, State> {
             this.fileName = ref;
           }}
           label={i18n.t('core:renameNewFileName')}
-          onChange={this.handleInputChange}
+          onChange={this.handleRenameFile}
           value={this.state.fileName}
           data-tid="renameFileDialogInput"
           fullWidth={true}

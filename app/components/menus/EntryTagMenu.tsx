@@ -85,10 +85,7 @@ const EntryTagMenu = (props: Props) => {
   }
 
   return (
-    <div
-      // @ts-ignore
-      style={{ overflowY: 'hidden !important' }}
-    >
+    <div style={{ overflowY: 'hidden' }}>
       <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
         <MenuItem
           data-tid="showFilesWithThisTag"

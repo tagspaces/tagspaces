@@ -90,8 +90,6 @@ class LocalForm extends React.Component<Props> {
             required
             margin="dense"
             name="path"
-            // @ts-ignore
-            label={i18n.t('core:createLocationPath')}
             fullWidth={true}
             data-tid="locationPath"
             onChange={handleInputChange}

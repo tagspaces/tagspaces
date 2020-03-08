@@ -62,18 +62,13 @@ class CreateTagGroupDialog extends React.Component<Props, State> {
     uuid: ''
   };
 
-  handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  handleTagGroupTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const { name } = target;
+    const { value, name } = target;
 
-    this.setState(
-      // @ts-ignore
-      {
-        [name]: value
-      },
-      this.handleValidation
-    );
+    if (name === 'title') {
+      this.setState({ title: value }, this.handleValidation);
+    }
   };
 
   handleValidation() {
@@ -173,7 +168,7 @@ class CreateTagGroupDialog extends React.Component<Props, State> {
               name="title"
               label={i18n.t('core:createTagGroupName')}
               value={this.state.title}
-              onChange={this.handleInputChange}
+              onChange={this.handleTagGroupTitleChange}
               data-tid="createTagGroupInput"
             />
             {this.state.inputError && (

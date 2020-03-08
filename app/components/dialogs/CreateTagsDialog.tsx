@@ -49,18 +49,13 @@ class CreateTagsDialog extends React.Component<Props, State> {
     tagTitle: ''
   };
 
-  handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  handleTagTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const { name } = target;
+    const { value, name } = target;
 
-    this.setState(
-      // @ts-ignore
-      {
-        [name]: value
-      },
-      this.handleValidation
-    );
+    if (name === 'tagTitle') {
+      this.setState({ tagTitle: value }, this.handleValidation);
+    }
   };
 
   handleValidation() {
@@ -102,7 +97,7 @@ class CreateTagsDialog extends React.Component<Props, State> {
               name="tagTitle"
               autoFocus
               label={i18n.t('core:addTagsToGroupTagsPlaceholder')}
-              onChange={this.handleInputChange}
+              onChange={this.handleTagTitleChange}
               value={this.state.tagTitle}
               data-tid="addTagsInput"
               fullWidth={true}

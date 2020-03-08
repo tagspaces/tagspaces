@@ -285,8 +285,6 @@ class SettingsGeneral extends React.Component<Props, State> {
             style={{ maxWidth: '100px' }}
             type="number"
             data-tid="settingsMaxSearchResult"
-            // @ts-ignore
-            label={i18n.t('core:maxSearchResult')}
             value={this.props.settings.maxSearchResult}
             onChange={this.handleMaxSearchResult}
           />

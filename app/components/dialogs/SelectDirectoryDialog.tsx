@@ -177,17 +177,24 @@ class SelectDirectoryDialog extends React.Component<Props, State> {
     this.loadListDirectory(selectedPath);
   };
 
-  handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
+  handleCurrentPath = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { target } = event;
+    const { value, name } = target;
 
-    // @ts-ignore
-    this.setState({
-      [name]: value,
-      currentPath: value
-    });
-    this.loadListDirectory(value as string);
+    if (name === 'currentPath') {
+      this.setState({ currentPath: value });
+      this.loadListDirectory(value as string);
+    }
+  };
+
+  handleChoosePath = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { target } = event;
+    const { value, name } = target;
+
+    if (name === 'choosePath') {
+      this.setState({ choosePath: value });
+      this.loadListDirectory(value as string);
+    }
   };
 
   onBackButton = () => {
@@ -241,9 +248,7 @@ class SelectDirectoryDialog extends React.Component<Props, State> {
               required
               margin="dense"
               name="path"
-              onChange={this.handleInputChange}
-              // @ts-ignore
-              label={i18n.t('core:selectDialogCurrentPath')}
+              onChange={this.handleCurrentPath}
               data-tid="selectDirectoryDialogInput"
               value={this.state.currentPath}
               disabled={AppConfig.isWin}
@@ -260,7 +265,7 @@ class SelectDirectoryDialog extends React.Component<Props, State> {
                 autoWidth
                 name="choosePath"
                 value={this.state.choosePath}
-                onChange={this.handleInputChange}
+                onChange={this.handleChoosePath}
                 input={<Input id="choosePath" />}
               >
                 {drives.map(drive => (
