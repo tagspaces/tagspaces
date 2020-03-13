@@ -20,6 +20,7 @@ import Fuse from 'fuse.js';
 import jmespath from 'jmespath';
 import { Tag } from '../reducers/taglibrary';
 import { Pro } from '../pro';
+import SearchIndex from './search-index';
 
 // export type FileTypeGroups = 'images' | 'notes' | 'documents' | 'audio' | 'video' | 'archives';
 
@@ -249,7 +250,7 @@ export default class Search {
     new Promise(resolve => {
       console.time('searchtime');
       const jmespathQuery = constructjmespathQuery(searchQuery);
-      let results = prepareIndex(locationContent);
+      let results = prepareIndex(SearchIndex);
       let searched = false;
 
       // Limiting the search to current folder only (with sub-folders)

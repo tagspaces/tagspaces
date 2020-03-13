@@ -26,12 +26,12 @@ import {
   // getThumbFileLocationForFile
 } from '../utils/paths';
 import Search, { SearchQuery } from '../services/search';
-
 import { actions as AppActions } from './app';
 import AppConfig from '../config';
 import i18n from '../services/i18n';
 // import PlatformIO from '../services/platform-io';
 import { Tag } from './taglibrary';
+import SearchIndex from '../services/search-index';
 
 export const types = {
   INDEX_DIRECTORY: 'INDEX_DIRECTORY',
@@ -49,7 +49,6 @@ export const types = {
 };
 
 export const initialState = {
-  currentDirectoryIndex: [],
   isIndexing: false
 };
 
@@ -58,14 +57,14 @@ export default (state: any = initialState, action: any) => {
     case types.INDEX_DIRECTORY_START: {
       return {
         ...state,
-        currentDirectoryIndex: [],
         isIndexing: true
       };
     }
     case types.INDEX_DIRECTORY_CLEAR: {
+      // SearchIndex.length = 0;
+      SearchIndex.splice(0, SearchIndex.length);
       return {
         ...state,
-        currentDirectoryIndex: [],
         isIndexing: false
       };
     }
@@ -76,62 +75,53 @@ export default (state: any = initialState, action: any) => {
     case types.INDEX_DIRECTORY_SUCCESS: {
       return {
         ...state,
-        currentDirectoryIndex: action.directoryIndex,
         isIndexing: false
       };
     }
     case types.INDEX_DIRECTORY_FAILURE: {
+      // SearchIndex.length = 0;
       return {
         ...state,
         lastError: action.error,
-        currentDirectoryIndex: [],
         isIndexing: false
       };
     }
     case types.REFLECT_DELETE_ENTRY: {
-      const newDirectoryIndex = state.currentDirectoryIndex.filter(
-        entry => !entry.path.startsWith(action.path)
-      );
-      if (state.currentDirectoryIndex.length > newDirectoryIndex.length) {
-        return {
-          ...state,
-          currentDirectoryIndex: newDirectoryIndex
-        };
+      for (let i = 0; i < SearchIndex.length; i += 1) {
+        if (SearchIndex[i].path === action.path) {
+          SearchIndex.splice(i, 1);
+          i -= 1;
+        }
       }
       return state;
     }
     case types.REFLECT_CREATE_ENTRY: {
-      const entryIndex = state.currentDirectoryIndex.findIndex(
-        entry => entry.path === action.newEntry.path
-      );
-      if (entryIndex) {
+      let entryFound = false;
+      for (let i = 0; i < SearchIndex.length; i += 1) {
+        if (SearchIndex[i].path === action.path) {
+          entryFound = true;
+        }
+      }
+      if (entryFound) {
         return state;
       }
-      return {
-        ...state,
-        currentDirectoryIndex: [action.newEntry, ...state.currentDirectoryIndex]
-      };
+      SearchIndex.push(action.newEntry);
+      return state;
     }
     case types.REFLECT_RENAME_ENTRY: {
-      return {
-        ...state,
-        currentDirectoryIndex: state.currentDirectoryIndex.map(entry => {
-          if (entry.path !== action.path) {
-            return entry;
-          }
-          return {
-            ...entry,
-            path: action.newPath,
-            // thumbPath: getThumbFileLocationForFile(action.newPath), // disabled due performance concerns
-            name: extractFileName(action.newPath),
-            extension: extractFileExtension(action.newPath),
-            tags: [
-              ...entry.tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
-              ...extractTagsAsObjects(action.newPath) // , getTagDelimiter(state))
-            ]
-          };
-        })
-      };
+      for (let i = 0; i < SearchIndex.length; i += 1) {
+        if (SearchIndex[i].path === action.path) {
+          SearchIndex[i].path = action.newPath;
+          // thumbPath: getThumbFileLocationForFile(action.newPath), // disabled due performance concerns
+          SearchIndex[i].name = extractFileName(action.newPath);
+          SearchIndex[i].extension = extractFileExtension(action.newPath);
+          SearchIndex[i].tags = [
+            ...SearchIndex[i].tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
+            ...extractTagsAsObjects(action.newPath) // , getTagDelimiter(state))
+          ];
+        }
+      }
+      return state;
       /* const indexForRenamingInIndex = state.currentDirectoryIndex.findIndex((entry) => entry.path === action.path);
     if (indexForRenamingInIndex >= 0) {
       const updateEntry = {
@@ -157,21 +147,15 @@ export default (state: any = initialState, action: any) => {
     return state; */
     }
     case types.REFLECT_UPDATE_SIDECARTAGS: {
-      return {
-        ...state,
-        currentDirectoryIndex: state.currentDirectoryIndex.map(entry => {
-          if (entry.path !== action.path) {
-            return entry;
-          }
-          return {
-            ...entry,
-            tags: [
-              ...entry.tags.filter(tag => tag.type === 'plain'),
-              ...action.tags
-            ]
-          };
-        })
-      };
+      for (let i = 0; i < SearchIndex.length; i += 1) {
+        if (SearchIndex[i].path === action.path) {
+          SearchIndex[i].tags = [
+            ...SearchIndex[i].tags.filter(tag => tag.type === 'plain'),
+            ...action.tags
+          ];
+        }
+      }
+      return state;
       /* const indexForUpdatingInIndex = state.currentDirectoryIndex.findIndex((entry) => entry.path === action.path);
     if (indexForUpdatingInIndex >= 0) {
       const updateEntry = {
@@ -193,18 +177,15 @@ export default (state: any = initialState, action: any) => {
     return state; */
     }
     case types.REFLECT_UPDATE_SIDECARMETA: {
-      return {
-        ...state,
-        currentDirectoryIndex: state.currentDirectoryIndex.map(entry => {
-          if (entry.path !== action.path) {
-            return entry;
-          }
-          return {
-            ...entry,
+      for (let i = 0; i < SearchIndex.length; i += 1) {
+        if (SearchIndex[i].path === action.path) {
+          SearchIndex[i] = {
+            ...SearchIndex[i],
             ...action.entryMeta
           };
-        })
-      };
+        }
+      }
+      return state;
       /* const indexForUpdatingInIndex = state.currentDirectoryIndex.findIndex((entry) => entry.path === action.path);
     if (indexForUpdatingInIndex >= 0) {
       const updateEntry = {
@@ -242,13 +223,13 @@ export const actions = {
     );
     dispatch(actions.startDirectoryIndexing());
     createDirectoryIndex(directoryPath, extractText)
-      .then(directoryIndex => {
-        dispatch(actions.indexDirectorySuccess(directoryIndex));
+      .then(() => {
+        dispatch(actions.indexDirectorySuccess());
         if (Pro && Pro.Indexer) {
           // && (currentLocation.persistIndex || PlatformIO.haveObjectStoreSupport())) { // always persist on s3 stores
           Pro.Indexer.persistIndex(
             directoryPath,
-            directoryIndex,
+            SearchIndex,
             currentLocation.type === locationType.TYPE_CLOUD
               ? '/'
               : AppConfig.dirSeparator
@@ -258,7 +239,6 @@ export const actions = {
       })
       .catch(err => {
         dispatch(actions.indexDirectoryFailure(err));
-        // dispatch(actions.startDirectoryIndexing());
       });
   },
   loadDirectoryIndex: (directoryPath: string) => (
@@ -281,8 +261,8 @@ export const actions = {
           ? '/'
           : AppConfig.dirSeparator
       )
-        .then(directoryIndex => {
-          dispatch(actions.indexDirectorySuccess(directoryIndex));
+        .then(() => {
+          dispatch(actions.indexDirectorySuccess());
           return true;
         })
         .catch(err => {
@@ -331,9 +311,8 @@ export const actions = {
         });
     }, 50);
   },
-  indexDirectorySuccess: (directoryIndex: Array<Object>) => ({
-    type: types.INDEX_DIRECTORY_SUCCESS,
-    directoryIndex
+  indexDirectorySuccess: () => ({
+    type: types.INDEX_DIRECTORY_SUCCESS
   }),
   indexDirectoryFailure: (error: string) => ({
     type: types.INDEX_DIRECTORY_FAILURE,
@@ -365,6 +344,5 @@ export const actions = {
 };
 
 // Selectors
-export const getIndexedEntriesCount = (state: any) =>
-  state.locationIndex.currentDirectoryIndex.length;
+export const getIndexedEntriesCount = (state: any) => SearchIndex.length;
 export const isIndexing = (state: any) => state.locationIndex.isIndexing;

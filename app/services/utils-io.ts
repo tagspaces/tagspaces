@@ -17,7 +17,6 @@
  */
 
 import { saveAs } from 'file-saver';
-import uuidv1 from 'uuid';
 import PlatformIO from './platform-io';
 import AppConfig from '../config';
 import {
@@ -32,6 +31,7 @@ import {
 // import { formatDateTime4Tag } from '../utils/misc';
 import versionMeta from '../version.json';
 import { Tag } from '../reducers/taglibrary';
+import SearchIndex from '../services/search-index';
 
 export interface FileSystemEntry {
   uuid?: string;
@@ -66,7 +66,6 @@ export function enhanceEntry(entry: any): FileSystemEntry {
   }
   let sidecarDescription = '';
   let sidecarColor = '';
-  let uuid;
   let sidecarTags = [];
   if (entry.meta) {
     sidecarDescription = entry.meta.description || '';
@@ -76,22 +75,29 @@ export function enhanceEntry(entry: any): FileSystemEntry {
       tag.type = 'sidecar';
       return true;
     });
-    uuid = entry.meta.uuid || undefined;
   }
-  const enhancedEntry = {
-    uuid: uuid || uuidv1(),
+  const enhancedEntry: FileSystemEntry = {
     name: entry.name,
     isFile: entry.isFile,
     extension: entry.isFile ? extractFileExtension(entry.name) : '',
-    thumbPath: entry.thumbPath,
-    description: sidecarDescription,
-    color: sidecarColor,
-    textContent: entry.textContent,
     tags: [...sidecarTags, ...fileNameTags],
     size: entry.size,
     lmdt: entry.lmdt,
     path: entry.path
   };
+  if (sidecarDescription) {
+    enhancedEntry.description = sidecarDescription;
+  }
+  // enhancedEntry.description = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam vitae magna rhoncus, rutrum dolor id, vestibulum arcu. Maecenas scelerisque nisl quis sollicitudin dapibus. Ut pulvinar est sed nunc finibus cursus. Nam semper felis eu ex auctor, nec semper lectus sagittis. Donec dictum volutpat lorem, in mollis turpis scelerisque in. Morbi pulvinar egestas turpis, euismod suscipit leo egestas eget. Nullam ac mollis sem. \n Quisque luctus dapibus elit, sed molestie ipsum tempor quis. Sed urna turpis, mattis quis orci ac, placerat lacinia est. Pellentesque quis arcu malesuada, consequat magna ut, tincidunt eros. Aenean sodales nisl finibus pharetra blandit. Pellentesque egestas magna et lectus tempor ultricies. Phasellus sed ornare leo. Vivamus sed massa erat. \n Mauris eu dignissim justo, eget luctus nisi. Ut nec arcu quis ligula tempor porttitor. Pellentesque in pharetra quam. Nulla nec ornare magna. Phasellus interdum dictum mauris eget laoreet. In vulputate massa sem, a mattis elit turpis duis.';
+  if (entry && entry.thumbPath) {
+    enhancedEntry.thumbPath = entry.thumbPath;
+  }
+  if (entry && entry.textContent) {
+    enhancedEntry.textContent = entry.textContent;
+  }
+  if (sidecarColor) {
+    enhancedEntry.color = sidecarColor;
+  }
   // console.log('Enhancing ' + entry.path); console.log(enhancedEntry);
   return enhancedEntry;
 }
@@ -99,16 +105,17 @@ export function enhanceEntry(entry: any): FileSystemEntry {
 export function createDirectoryIndex(
   directoryPath: string,
   extractText: boolean = false
-): Promise<Array<Object>> {
+): Promise<number> {
   const dirPath = cleanTrailingDirSeparator(directoryPath);
-  if (PlatformIO.isWorkerAvailable() && !PlatformIO.haveObjectStoreSupport()) {
-    // Start indexing in worker if not in the object store mode
-    return PlatformIO.createDirectoryIndexInWorker(dirPath, extractText);
-  }
+  // if (PlatformIO.isWorkerAvailable() && !PlatformIO.haveObjectStoreSupport()) {
+  //   // Start indexing in worker if not in the object store mode
+  //   return PlatformIO.createDirectoryIndexInWorker(dirPath, extractText);
+  // }
+
+  SearchIndex.length = 0;
 
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      const directoryIndex = [];
       let counter = 0;
       console.time('createDirectoryIndex');
       walkDirectory(
@@ -125,12 +132,12 @@ export function createDirectoryIndex(
             console.warn('Walk canceled by ' + AppConfig.indexerLimit);
             window.walkCanceled = true;
           }
-          directoryIndex.push(enhanceEntry(fileEntry));
+          SearchIndex.push(enhanceEntry(fileEntry));
         },
         directoryEntry => {
           if (directoryEntry.name !== AppConfig.metaFolder) {
             counter += 1;
-            directoryIndex.push(enhanceEntry(directoryEntry));
+            SearchIndex.push(enhanceEntry(directoryEntry));
           }
         }
       )
@@ -141,10 +148,10 @@ export function createDirectoryIndex(
             'Directory index created ' +
               dirPath +
               ' containing ' +
-              directoryIndex.length
+              SearchIndex.length
           );
           console.timeEnd('createDirectoryIndex');
-          resolve(directoryIndex);
+          resolve(SearchIndex.length);
           return true;
         })
         .catch(err => {
