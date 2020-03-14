@@ -94,7 +94,11 @@ interface Props {
   openFileNatively: (path: string) => void;
   openDirectory: (path: string) => void;
   showInFileManager: (path: string) => void;
-  createDirectoryIndex: (path: string) => void;
+  createDirectoryIndex: (
+    path: string,
+    fullTextIndex: boolean,
+    isCurrentLocation: boolean
+  ) => void;
   addLocation: (location: Location, openAfterCreate?: boolean) => void;
   editLocation: () => void;
   moveLocationUp: (locationId: string) => void;
@@ -118,7 +122,7 @@ interface State {
   locationContextMenuOpened?: boolean;
   directoryContextMenuAnchorEl?: Object | null;
   directoryContextMenuOpened?: boolean;
-  selectedLocation?: Location | null;
+  selectedLocation: Location | null;
   selectedDirectoryPath?: string | null;
   locationRootPath?: string | null;
   isCreateLocationDialogOpened?: boolean;
@@ -363,9 +367,17 @@ class LocationManager extends React.Component<Props, State> {
 
   indexLocation = () => {
     this.handleRequestCloseContextMenus();
-    if (this.state.selectedLocation && this.state.selectedLocation.uuid) {
-      this.props.createDirectoryIndex(this.state.selectedLocation.paths[0]);
-    }
+    const { selectedLocation } = this.state;
+    const { currentLocationId, createDirectoryIndex } = this.props;
+    const isCurrentLocation =
+      selectedLocation &&
+      selectedLocation.uuid &&
+      selectedLocation.uuid === currentLocationId;
+    createDirectoryIndex(
+      selectedLocation.paths[0],
+      selectedLocation.fullTextIndex,
+      isCurrentLocation
+    );
   };
 
   moveLocationUp = () => {
@@ -817,16 +829,12 @@ class LocationManager extends React.Component<Props, State> {
               </ListItemIcon>
               <ListItemText primary={i18n.t('core:editLocationTitle')} />
             </MenuItem>
-            {this.state.selectedLocation &&
-              this.props.currentLocationId ===
-                this.state.selectedLocation.uuid && (
-                <MenuItem data-tid="indexLocation" onClick={this.indexLocation}>
-                  <ListItemIcon>
-                    <RefreshIcon />
-                  </ListItemIcon>
-                  <ListItemText primary={i18n.t('core:indexLocation')} />
-                </MenuItem>
-              )}
+            <MenuItem data-tid="indexLocation" onClick={this.indexLocation}>
+              <ListItemIcon>
+                <RefreshIcon />
+              </ListItemIcon>
+              <ListItemText primary={i18n.t('core:indexLocation')} />
+            </MenuItem>
             <MenuItem data-tid="moveLocationUp" onClick={this.moveLocationUp}>
               <ListItemIcon>
                 <ArrowUpwardIcon />

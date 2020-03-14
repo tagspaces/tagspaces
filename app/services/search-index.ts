@@ -16,5 +16,7 @@
  *
  */
 
-const searchIndex = [];
-export default searchIndex;
+const GlobalSearch = {
+  index: []
+};
+export default GlobalSearch;

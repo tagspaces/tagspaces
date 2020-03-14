@@ -31,7 +31,7 @@ import AppConfig from '../config';
 import i18n from '../services/i18n';
 // import PlatformIO from '../services/platform-io';
 import { Tag } from './taglibrary';
-import SearchIndex from '../services/search-index';
+import GlobalSearch from '../services/search-index';
 
 export const types = {
   INDEX_DIRECTORY: 'INDEX_DIRECTORY',
@@ -61,8 +61,8 @@ export default (state: any = initialState, action: any) => {
       };
     }
     case types.INDEX_DIRECTORY_CLEAR: {
-      // SearchIndex.length = 0;
-      SearchIndex.splice(0, SearchIndex.length);
+      // GlobalSearch.index.length = 0;
+      GlobalSearch.index.splice(0, GlobalSearch.index.length);
       return {
         ...state,
         isIndexing: false
@@ -79,7 +79,7 @@ export default (state: any = initialState, action: any) => {
       };
     }
     case types.INDEX_DIRECTORY_FAILURE: {
-      // SearchIndex.length = 0;
+      // GlobalSearch.index.length = 0;
       return {
         ...state,
         lastError: action.error,
@@ -87,9 +87,9 @@ export default (state: any = initialState, action: any) => {
       };
     }
     case types.REFLECT_DELETE_ENTRY: {
-      for (let i = 0; i < SearchIndex.length; i += 1) {
-        if (SearchIndex[i].path === action.path) {
-          SearchIndex.splice(i, 1);
+      for (let i = 0; i < GlobalSearch.index.length; i += 1) {
+        if (GlobalSearch.index[i].path === action.path) {
+          GlobalSearch.index.splice(i, 1);
           i -= 1;
         }
       }
@@ -97,26 +97,28 @@ export default (state: any = initialState, action: any) => {
     }
     case types.REFLECT_CREATE_ENTRY: {
       let entryFound = false;
-      for (let i = 0; i < SearchIndex.length; i += 1) {
-        if (SearchIndex[i].path === action.path) {
+      for (let i = 0; i < GlobalSearch.index.length; i += 1) {
+        if (GlobalSearch.index[i].path === action.path) {
           entryFound = true;
         }
       }
       if (entryFound) {
         return state;
       }
-      SearchIndex.push(action.newEntry);
+      GlobalSearch.index.push(action.newEntry);
       return state;
     }
     case types.REFLECT_RENAME_ENTRY: {
-      for (let i = 0; i < SearchIndex.length; i += 1) {
-        if (SearchIndex[i].path === action.path) {
-          SearchIndex[i].path = action.newPath;
+      for (let i = 0; i < GlobalSearch.index.length; i += 1) {
+        if (GlobalSearch.index[i].path === action.path) {
+          GlobalSearch.index[i].path = action.newPath;
           // thumbPath: getThumbFileLocationForFile(action.newPath), // disabled due performance concerns
-          SearchIndex[i].name = extractFileName(action.newPath);
-          SearchIndex[i].extension = extractFileExtension(action.newPath);
-          SearchIndex[i].tags = [
-            ...SearchIndex[i].tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
+          GlobalSearch.index[i].name = extractFileName(action.newPath);
+          GlobalSearch.index[i].extension = extractFileExtension(
+            action.newPath
+          );
+          GlobalSearch.index[i].tags = [
+            ...GlobalSearch.index[i].tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
             ...extractTagsAsObjects(action.newPath) // , getTagDelimiter(state))
           ];
         }
@@ -147,10 +149,10 @@ export default (state: any = initialState, action: any) => {
     return state; */
     }
     case types.REFLECT_UPDATE_SIDECARTAGS: {
-      for (let i = 0; i < SearchIndex.length; i += 1) {
-        if (SearchIndex[i].path === action.path) {
-          SearchIndex[i].tags = [
-            ...SearchIndex[i].tags.filter(tag => tag.type === 'plain'),
+      for (let i = 0; i < GlobalSearch.index.length; i += 1) {
+        if (GlobalSearch.index[i].path === action.path) {
+          GlobalSearch.index[i].tags = [
+            ...GlobalSearch.index[i].tags.filter(tag => tag.type === 'plain'),
             ...action.tags
           ];
         }
@@ -177,10 +179,10 @@ export default (state: any = initialState, action: any) => {
     return state; */
     }
     case types.REFLECT_UPDATE_SIDECARMETA: {
-      for (let i = 0; i < SearchIndex.length; i += 1) {
-        if (SearchIndex[i].path === action.path) {
-          SearchIndex[i] = {
-            ...SearchIndex[i],
+      for (let i = 0; i < GlobalSearch.index.length; i += 1) {
+        if (GlobalSearch.index[i].path === action.path) {
+          GlobalSearch.index[i] = {
+            ...GlobalSearch.index[i],
             ...action.entryMeta
           };
         }
@@ -212,10 +214,11 @@ export default (state: any = initialState, action: any) => {
 export const actions = {
   startDirectoryIndexing: () => ({ type: types.INDEX_DIRECTORY_START }),
   cancelDirectoryIndexing: () => ({ type: types.INDEX_DIRECTORY_CANCEL }),
-  createDirectoryIndex: (directoryPath: string, extractText: boolean) => (
-    dispatch: (actions: Object) => void,
-    getState: () => any
-  ) => {
+  createDirectoryIndex: (
+    directoryPath: string,
+    extractText: boolean,
+    isCurrentLocation: boolean = true
+  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
     const state = getState();
     const currentLocation: Location = getLocation(
       state,
@@ -223,13 +226,16 @@ export const actions = {
     );
     dispatch(actions.startDirectoryIndexing());
     createDirectoryIndex(directoryPath, extractText)
-      .then(() => {
+      .then(directoryIndex => {
+        if (isCurrentLocation) {
+          GlobalSearch.index = directoryIndex;
+        }
         dispatch(actions.indexDirectorySuccess());
         if (Pro && Pro.Indexer) {
           // && (currentLocation.persistIndex || PlatformIO.haveObjectStoreSupport())) { // always persist on s3 stores
           Pro.Indexer.persistIndex(
             directoryPath,
-            SearchIndex,
+            GlobalSearch.index,
             currentLocation.type === locationType.TYPE_CLOUD
               ? '/'
               : AppConfig.dirSeparator
@@ -344,5 +350,5 @@ export const actions = {
 };
 
 // Selectors
-export const getIndexedEntriesCount = (state: any) => SearchIndex.length;
+export const getIndexedEntriesCount = (state: any) => GlobalSearch.index.length;
 export const isIndexing = (state: any) => state.locationIndex.isIndexing;

@@ -31,7 +31,6 @@ import {
 // import { formatDateTime4Tag } from '../utils/misc';
 import versionMeta from '../version.json';
 import { Tag } from '../reducers/taglibrary';
-import SearchIndex from '../services/search-index';
 
 export interface FileSystemEntry {
   uuid?: string;
@@ -105,15 +104,16 @@ export function enhanceEntry(entry: any): FileSystemEntry {
 export function createDirectoryIndex(
   directoryPath: string,
   extractText: boolean = false
-): Promise<number> {
+): Promise<Array<FileSystemEntry>> {
   const dirPath = cleanTrailingDirSeparator(directoryPath);
-  // if (PlatformIO.isWorkerAvailable() && !PlatformIO.haveObjectStoreSupport()) {
-  //   // Start indexing in worker if not in the object store mode
-  //   return PlatformIO.createDirectoryIndexInWorker(dirPath, extractText);
-  // }
+  if (PlatformIO.isWorkerAvailable() && !PlatformIO.haveObjectStoreSupport()) {
+    // Start indexing in worker if not in the object store mode
+    return PlatformIO.createDirectoryIndexInWorker(dirPath, extractText);
+  }
 
-  SearchIndex.length = 0;
+  const SearchIndex = [];
 
+  // eslint-disable-next-line compat/compat
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       let counter = 0;
@@ -151,7 +151,7 @@ export function createDirectoryIndex(
               SearchIndex.length
           );
           console.timeEnd('createDirectoryIndex');
-          resolve(SearchIndex.length);
+          resolve(SearchIndex);
           return true;
         })
         .catch(err => {
