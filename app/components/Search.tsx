@@ -47,6 +47,9 @@ import IconButton from '@material-ui/core/IconButton';
 import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import OpenLocationCode from 'open-location-code-typescript';
 import TagsSelect from './TagsSelect';
 import CustomLogo from './CustomLogo';
@@ -86,7 +89,7 @@ interface State {
   tagsOR: Array<Tag>;
   tagsNOT: Array<Tag>;
   fileTypes: Array<string>;
-  searchBoxing: 'location' | 'folder';
+  searchBoxing: 'location' | 'folder' | 'global';
   lastModified: string;
   tagTimePeriod: string;
   tagTimePeriodHelper: string;
@@ -283,11 +286,11 @@ class Search extends React.Component<Props, State> {
     );
   };
 
-  toggleSearchBoxing = () => {
-    this.setState({
-      searchBoxing:
-        this.state.searchBoxing === 'location' ? 'folder' : 'location'
-    });
+  switchSearchBoxing = (
+    event: React.MouseEvent<HTMLElement>,
+    boxing: 'location' | 'folder' | 'global'
+  ) => {
+    this.setState({ searchBoxing: boxing });
   };
 
   executeSearch = () => {
@@ -344,11 +347,12 @@ class Search extends React.Component<Props, State> {
           <Typography
             variant="caption"
             className={classes.header}
+            title="Indexed entries in the current location"
             style={{ alignSelf: 'center', paddingLeft: 5, display: 'block' }}
           >
             {indexing
               ? 'disabled while indexing...'
-              : 'in ' + indexedEntriesCount + ' indexed entries'}
+              : indexedEntriesCount + ' indexed entries'}
           </Typography>
           <IconButton
             style={{ marginLeft: 'auto' }}
@@ -365,12 +369,16 @@ class Search extends React.Component<Props, State> {
           openURLExternally={this.props.openURLExternally}
         />
         <div className={classes.searchArea}>
-          <FormControl className={classes.formControl} disabled={indexing}>
-            <InputLabel htmlFor="textQuery">
+          <FormControl
+            className={classes.formControl}
+            style={{ marginTop: 10 }}
+            disabled={indexing}
+          >
+            {/* <InputLabel htmlFor="textQuery">
               {this.state.searchBoxing === 'location'
                 ? i18n.t('searchPlaceholder')
                 : i18n.t('searchCurrentFolderWithSubFolders')}
-            </InputLabel>
+            </InputLabel> */}
             <Input
               id="textQuery"
               name="textQuery"
@@ -379,10 +387,10 @@ class Search extends React.Component<Props, State> {
                 this.setState({ textQuery: event.target.value });
               }}
               onKeyDown={this.startSearch}
-              placeholder={i18n.t('core:searchWordsWithInterval')}
+              title={i18n.t('core:searchWordsWithInterval')}
               endAdornment={
                 <InputAdornment position="end">
-                  <IconButton
+                  {/* <IconButton
                     style={{ marginRight: -15 }}
                     onClick={this.toggleSearchBoxing}
                     title={
@@ -396,7 +404,7 @@ class Search extends React.Component<Props, State> {
                     ) : (
                       <LocationIcon />
                     )}
-                  </IconButton>
+                  </IconButton> */}
                   <IconButton onClick={this.clearSearch}>
                     <ClearSearchIcon />
                   </IconButton>
@@ -404,6 +412,32 @@ class Search extends React.Component<Props, State> {
               }
             />
           </FormControl>
+          <FormControl className={classes.formControl} disabled={indexing}>
+            <ToggleButtonGroup
+              onChange={this.switchSearchBoxing}
+              size="small"
+              exclusive
+              style={{ marginBottom: 10, alignSelf: 'center' }}
+              value={this.state.searchBoxing}
+            >
+              <ToggleButton
+                value="location"
+                title={i18n.t('searchPlaceholder')}
+              >
+                Location
+              </ToggleButton>
+              <ToggleButton
+                value="folder"
+                title={i18n.t('searchCurrentFolderWithSubFolders')}
+              >
+                Folder
+              </ToggleButton>
+              <ToggleButton value="global" title="Search in all locations">
+                Global
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </FormControl>
+          <br />
           <Typography
             variant="caption"
             className={classes.header}
@@ -692,27 +726,30 @@ class Search extends React.Component<Props, State> {
             />
           </FormControl>
           <FormControl className={classes.formControl}>
-            <Button
-              disabled={indexing}
-              id="searchButton"
-              variant="outlined"
-              size="small"
-              color="primary"
-              onClick={this.clickSearchButton}
-            >
-              {indexing
-                ? 'Search disabled while indexing'
-                : i18n.t('searchTitle')}
-            </Button>
-            &nbsp;
-            <Button
-              size="small"
-              color="primary"
-              onClick={this.clearSearch}
-              id="resetSearchButton"
-            >
-              {i18n.t('resetBtn')}
-            </Button>
+            <ButtonGroup>
+              <Button
+                disabled={indexing}
+                id="searchButton"
+                variant="outlined"
+                size="small"
+                color="primary"
+                onClick={this.clickSearchButton}
+                style={{ width: '100%' }}
+              >
+                {indexing
+                  ? 'Search disabled while indexing'
+                  : i18n.t('searchTitle')}
+              </Button>
+              <Button
+                size="small"
+                variant="outlined"
+                color="secondary"
+                onClick={this.clearSearch}
+                id="resetSearchButton"
+              >
+                {i18n.t('resetBtn')}
+              </Button>
+            </ButtonGroup>
           </FormControl>
         </div>
       </div>
