@@ -13,7 +13,7 @@
 - 🌟 updating Armenian, Turkish, Chinese, Japanize and German translations
 - 🌟 add menu with link to help in the Search area and location manager
 - 🌟 lazy loading thumbnails
-- 🌟 allowing spaces as separator for tags
+- 🌟 allowing spaces as separator for tags in the tag creation dialog
 - 🐛 fixed crash on document save in some cased #1090
 - 🐛 fixed wrong panel in drawer or vertical panel
 - 🐛 changing default markdown formats
