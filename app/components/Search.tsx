@@ -74,6 +74,8 @@ interface Props {
   classes: any;
   style: any;
   searchLocationIndex: (searchQuery: SearchQuery) => void;
+  createLocationsIndexes: () => void;
+  searchAllLocations: (searchQuery: SearchQuery) => void;
   loadDirectoryContent: (path: string) => void;
   openURLExternally: (url: string) => void;
   hideDrawer?: () => void;
@@ -317,7 +319,11 @@ class Search extends React.Component<Props, State> {
       currentDirectory: this.props.currentDirectory
     };
     console.log('Search object: ' + JSON.stringify(searchQuery));
-    this.props.searchLocationIndex(searchQuery);
+    if (this.state.searchBoxing === 'global') {
+      this.props.searchAllLocations(searchQuery);
+    } else {
+      this.props.searchLocationIndex(searchQuery);
+    }
   };
 
   handleSearchMenu = (event: any) => {
@@ -366,6 +372,7 @@ class Search extends React.Component<Props, State> {
           anchorEl={this.state.searchMenuAnchorEl}
           open={this.state.searchMenuOpened}
           onClose={this.handleCloseSearchMenu}
+          createLocationsIndexes={this.props.createLocationsIndexes}
           openURLExternally={this.props.openURLExternally}
         />
         <div className={classes.searchArea}>
@@ -769,7 +776,9 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
+      searchAllLocations: LocationIndexActions.searchAllLocations,
       searchLocationIndex: LocationIndexActions.searchLocationIndex,
+      createLocationsIndexes: LocationIndexActions.createLocationsIndexes,
       loadDirectoryContent: AppActions.loadDirectoryContent,
       openURLExternally: AppActions.openURLExternally
     },

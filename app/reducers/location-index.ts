@@ -16,7 +16,7 @@
  *
  */
 
-import { Location, getLocation, locationType } from './locations';
+import { Location, getLocation, getLocations, locationType } from './locations';
 import { createDirectoryIndex } from '../services/utils-io';
 import { Pro } from '../pro';
 import {
@@ -228,6 +228,7 @@ export const actions = {
     createDirectoryIndex(directoryPath, extractText)
       .then(directoryIndex => {
         if (isCurrentLocation) {
+          // Load index only if current location
           GlobalSearch.index = directoryIndex;
         }
         dispatch(actions.indexDirectorySuccess());
@@ -235,7 +236,7 @@ export const actions = {
           // && (currentLocation.persistIndex || PlatformIO.haveObjectStoreSupport())) { // always persist on s3 stores
           Pro.Indexer.persistIndex(
             directoryPath,
-            GlobalSearch.index,
+            directoryIndex,
             currentLocation.type === locationType.TYPE_CLOUD
               ? '/'
               : AppConfig.dirSeparator
@@ -247,10 +248,56 @@ export const actions = {
         dispatch(actions.indexDirectoryFailure(err));
       });
   },
-  loadDirectoryIndex: (directoryPath: string) => (
+  createLocationsIndexes: (extractText: boolean = true) => (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
+    const state = getState();
+    const currentLocation: Location = getLocation(
+      state,
+      state.app.currentLocationId
+    );
+    dispatch(actions.startDirectoryIndexing());
+    const allLocations = getLocations(state);
+    const locationPaths = [];
+    allLocations.forEach(location => {
+      locationPaths.push(location.paths[0]);
+    });
+    const result = locationPaths.reduce(
+      (accumulatorPromise, nextPath) =>
+        accumulatorPromise.then(() => createDirectoryIndex(nextPath, extractText)
+            .then(directoryIndex => {
+              if (Pro && Pro.Indexer) {
+                Pro.Indexer.persistIndex(
+                  nextPath,
+                  directoryIndex,
+                  currentLocation.type === locationType.TYPE_CLOUD
+                    ? '/'
+                    : AppConfig.dirSeparator
+                );
+              }
+              return true;
+            })
+            .catch(err => {
+              dispatch(actions.indexDirectoryFailure(err));
+            })),
+      Promise.resolve()
+    );
+
+    result
+      .then(e => {
+        dispatch(actions.indexDirectorySuccess());
+        console.log('Resolution is complete!', e);
+        return true;
+      })
+      .catch(e => {
+        console.warn('Resolution is faled!', e);
+      });
+  },
+  loadDirectoryIndex: (
+    directoryPath: string,
+    isCurrentLocation: boolean = true
+  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
     const state = getState();
     const currentLocation: Location = getLocation(
       state,
@@ -267,7 +314,11 @@ export const actions = {
           ? '/'
           : AppConfig.dirSeparator
       )
-        .then(() => {
+        .then(directoryIndex => {
+          if (isCurrentLocation) {
+            // Load index only if current location
+            GlobalSearch.index = directoryIndex;
+          }
           dispatch(actions.indexDirectorySuccess());
           return true;
         })
@@ -287,25 +338,21 @@ export const actions = {
     type: types.INDEX_DIRECTORY_CLEAR
   }),
   searchLocationIndex: (searchQuery: SearchQuery) => (
-    dispatch: (actions: Object) => void,
-    getState: () => any
+    dispatch: (actions: Object) => void
   ) => {
     dispatch(
       AppActions.showNotification(i18n.t('core:searching'), 'default', false)
     );
     setTimeout(() => {
       // Workaround used to show the start search notification
-      Search.searchLocationIndex(
-        getState().locationIndex.currentDirectoryIndex,
-        searchQuery
-      )
+      Search.searchLocationIndex(GlobalSearch.index, searchQuery)
         .then(searchResults => {
-          dispatch(AppActions.updateSearchResults(searchResults));
+          dispatch(AppActions.setSearchResults(searchResults));
           dispatch(AppActions.hideNotifications());
           return true;
         })
         .catch(() => {
-          dispatch(AppActions.updateSearchResults([]));
+          dispatch(AppActions.setSearchResults([]));
           dispatch(AppActions.hideNotifications());
           dispatch(
             AppActions.showNotification(
@@ -316,6 +363,74 @@ export const actions = {
           );
         });
     }, 50);
+  },
+  searchAllLocations: (searchQuery: SearchQuery) => (
+    dispatch: (actions: Object) => void,
+    getState: () => any
+  ) => {
+    const state = getState();
+    const currentLocation: Location = getLocation(
+      state,
+      state.app.currentLocationId
+    );
+    dispatch(actions.startDirectoryIndexing());
+    dispatch(AppActions.setSearchResults([]));
+    const allLocations = getLocations(state);
+    const locationPaths = [];
+    allLocations.forEach(location => {
+      locationPaths.push(location.paths[0]);
+    });
+    const result = locationPaths.reduce(
+      (accumulatorPromise, nextPath) =>
+        accumulatorPromise.then(() =>
+          createDirectoryIndex(nextPath, true)
+            .then(directoryIndex => {
+              AppActions.showNotification(i18n.t('Searching:' + nextPath), 'default', true)
+              console.log('Searching in:' + nextPath)
+              Search.searchLocationIndex(directoryIndex, searchQuery)
+                .then(searchResults => {
+                  dispatch(AppActions.appendSearchResults(searchResults));
+                  dispatch(AppActions.hideNotifications());
+                  return true;
+                })
+                .catch(() => {
+                  dispatch(AppActions.setSearchResults([]));
+                  dispatch(AppActions.hideNotifications());
+                  dispatch(
+                    AppActions.showNotification(
+                      i18n.t('core:searchingFailed'),
+                      'warning',
+                      true
+                    )
+                  );
+                });
+              if (Pro && Pro.Indexer) {
+                Pro.Indexer.persistIndex(
+                  nextPath,
+                  directoryIndex,
+                  currentLocation.type === locationType.TYPE_CLOUD
+                    ? '/'
+                    : AppConfig.dirSeparator
+                );
+              }
+              return true;
+            })
+            .catch(err => {
+              dispatch(actions.indexDirectoryFailure(err));
+            })
+        ),
+      Promise.resolve()
+    );
+
+    result
+      .then(e => {
+        dispatch(actions.indexDirectorySuccess());
+        console.log('Resolution is complete!', e);
+        return true;
+      })
+      .catch(e => {
+        console.warn('Resolution is faled!', e);
+      });
   },
   indexDirectorySuccess: () => ({
     type: types.INDEX_DIRECTORY_SUCCESS

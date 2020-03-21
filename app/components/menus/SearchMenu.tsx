@@ -31,6 +31,7 @@ interface Props {
   anchorEl: Element;
   onClose: () => void;
   openURLExternally: (url: string) => void;
+  createLocationsIndexes: () => void;
 }
 
 const SearchMenu = (props: Props) => (
@@ -47,6 +48,18 @@ const SearchMenu = (props: Props) => (
           <HelpIcon />
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:help')} />
+      </MenuItem>
+      <MenuItem
+        data-tid="searchMenuHelp"
+        onClick={() => {
+          props.onClose();
+          props.createLocationsIndexes();
+        }}
+      >
+        <ListItemIcon>
+          <HelpIcon />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:Update all location indexes')} />
       </MenuItem>
     </Menu>
   </div>

@@ -53,7 +53,8 @@ export const types = {
   LOAD_DIRECTORY_SUCCESS: 'APP/LOAD_DIRECTORY_SUCCESS',
   LOAD_DIRECTORY_FAILURE: 'APP/LOAD_DIRECTORY_FAILURE',
   CLEAR_DIRECTORY_CONTENT: 'APP/CLEAR_DIRECTORY_CONTENT',
-  INDEX_DIRECTORY_SEARCH: 'APP/INDEX_DIRECTORY_SEARCH',
+  SET_SEARCH_RESULTS: 'APP/SET_SEARCH_RESULTS',
+  APPEND_SEARCH_RESULTS: 'APP/APPEND_SEARCH_RESULTS',
   OPEN_FILE: 'APP/OPEN_FILE',
   TOGGLE_ENTRY_FULLWIDTH: 'APP/TOGGLE_ENTRY_FULLWIDTH',
   SET_ENTRY_FULLWIDTH: 'APP/SET_ENTRY_FULLWIDTH',
@@ -278,10 +279,21 @@ export default (state: any = initialState, action: any) => {
         selectDirectoryDialogOpened: !state.selectDirectoryDialogOpened
       };
     }
-    case types.INDEX_DIRECTORY_SEARCH: {
+    case types.SET_SEARCH_RESULTS: {
       return {
         ...state,
         currentDirectoryEntries: action.searchResults,
+        isLoading: false
+      };
+    }
+    case types.APPEND_SEARCH_RESULTS: {
+      const newDirEntries = [
+        ...state.currentDirectoryEntries,
+        ...action.searchResults
+      ];
+      return {
+        ...state,
+        currentDirectoryEntries: newDirEntries,
         isLoading: false
       };
     }
@@ -925,8 +937,12 @@ export const actions = {
         );
       });
   },
-  updateSearchResults: (searchResults: Array<Object> | []) => ({
-    type: types.INDEX_DIRECTORY_SEARCH,
+  setSearchResults: (searchResults: Array<Object> | []) => ({
+    type: types.SET_SEARCH_RESULTS,
+    searchResults
+  }),
+  appendSearchResults: (searchResults: Array<Object> | []) => ({
+    type: types.APPEND_SEARCH_RESULTS,
     searchResults
   }),
   setCurrentLocationId: (locationId: string | null) => ({

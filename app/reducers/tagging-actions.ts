@@ -37,6 +37,7 @@ import { formatDateTime4Tag, isPlusCode } from '../utils/misc';
 import AppConfig from '../config';
 import PlatformIO from '../services/platform-io';
 import { Pro } from '../pro';
+import GlobalSearch from '../services/search-index';
 
 export const defaultTagLocation = OpenLocationCode.encode(51.48, 0, undefined); // default tag coordinate Greenwich
 
@@ -647,7 +648,7 @@ const actions = {
       return true;
     }
 
-    if (locationIndex.currentDirectoryIndex.length < 1) {
+    if (GlobalSearch.index.length < 1) {
       dispatch(
         AppActions.showNotification(
           'Please index location first',
