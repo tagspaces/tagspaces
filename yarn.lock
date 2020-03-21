@@ -1626,6 +1626,11 @@
     unique-filename "^1.1.1"
     which "^1.3.1"
 
+"@gorillastack/jmespath@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@gorillastack/jmespath/-/jmespath-1.3.0.tgz#813824aa89d6684a20b5a8d157f8ddb289749d18"
+  integrity sha512-3ayDFchiPhBwb+BeGtSoEMHNhxd2B0Dh18D8L9JAvzxtsDOMX5w7+AZfnL0o6KE1LrXUK2SyMA1SktGCYGdM1w==
+
 "@icons/material@^0.2.4":
   version "0.2.4"
   resolved "https://registry.yarnpkg.com/@icons/material/-/material-0.2.4.tgz#e90c9f71768b3736e76d7dd6783fc6c2afa88bc8"
@@ -10127,7 +10132,7 @@ jest@^24.9.0:
     import-local "^2.0.0"
     jest-cli "^24.9.0"
 
-jmespath@0.15.0, jmespath@^0.15.0:
+jmespath@0.15.0:
   version "0.15.0"
   resolved "https://registry.yarnpkg.com/jmespath/-/jmespath-0.15.0.tgz#a3f222a9aae9f966f5d27c796510e28091764217"
   integrity sha1-o/Iiqarp+Wb10nx5ZRDigJF2Qhc=
