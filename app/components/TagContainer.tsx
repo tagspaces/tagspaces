@@ -100,10 +100,14 @@ const TagContainer = React.memo((props: Props) => {
     description = tag.title + ' - ' + tag.description;
   }
 
+  let tid = 'tagContainer_';
+  if (title && title.length > 0) {
+    tid += title.replace(/ /g, '_');
+  }
   return (
     <div
       role="presentation"
-      data-tid={'tagContainer_' + title.replace(/ /g, '_')}
+      data-tid={tid}
       key={key || tag.id || uuidv1()}
       onClick={event => {
         if (event.ctrlKey && addTags) {
@@ -182,8 +186,7 @@ const TagContainer = React.memo((props: Props) => {
               data-tid={'tagRemoveButton_' + title.replace(/ /g, '_')}
               style={{
                 color: tag.textcolor,
-                fontSize: 20,
-                marginBottom: -5
+                fontSize: 20
               }}
               onClick={event => handleRemoveTag(event, tag)}
             />

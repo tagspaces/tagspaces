@@ -510,7 +510,7 @@ class EntryProperties extends Component<Props, State> {
     }
   };
 
-  handleChange = (name, value, action) => {
+  handleChange = (name: string, value: any, action: string) => {
     if (action === 'remove-value') {
       if (!value) {
         // no tags left in the select element

@@ -20,13 +20,8 @@ import React from 'react';
 import uuidv1 from 'uuid';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import CloseIcon from '@material-ui/icons/Close';
-import MenuItem from '@material-ui/core/MenuItem';
-import CreatableSelect from 'react-select/creatable';
-import NoSsr from '@material-ui/core/NoSsr';
 import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import { Tag, getAllTags } from '../reducers/taglibrary';
 import { getTagColor, getTagTextColor } from '../reducers/settings';
 import TagContainer from './TagContainer';
@@ -34,10 +29,6 @@ import TagContainer from './TagContainer';
 const styles: any = (theme: any) => ({
   root: {
     flexGrow: 1
-    // height: 250,
-    /* '& div': { //https://github.com/JedWatson/react-select/issues/1085
-      zIndex: 1
-    } */
   },
   input: {
     display: 'flex',
@@ -72,224 +63,113 @@ const styles: any = (theme: any) => ({
   }
 });
 
-function NoOptionsMessage(props) {
-  return (
-    <Typography
-      color="textSecondary"
-      style={{ display: 'block' }}
-      className={props.selectProps.classes.noOptionsMessage}
-      {...props.innerProps}
-    >
-      {props.children}
-    </Typography>
-  );
-}
-
-function inputComponent({ inputRef, ...props }) {
-  return <div ref={inputRef} {...props} />;
-}
-
-function Control(props) {
-  const {
-    children,
-    innerProps,
-    innerRef,
-    selectProps: { classes, TextFieldProps }
-  } = props;
-
-  return (
-    <TextField
-      fullWidth
-      InputProps={{
-        inputComponent,
-        inputProps: {
-          className: classes.input,
-          ref: innerRef,
-          children,
-          ...innerProps
-        }
-      }}
-      {...TextFieldProps}
-    />
-  );
-}
-
-function Option(props) {
-  return (
-    <MenuItem
-      ref={props.innerRef}
-      selected={props.isFocused}
-      component="div"
-      style={{
-        fontWeight: props.isSelected ? 500 : 400
-      }}
-      {...props.innerProps}
-    >
-      {props.children}
-    </MenuItem>
-  );
-}
-
-function Placeholder(props) {
-  return (
-    <Typography
-      color="textSecondary"
-      style={{ display: 'block' }}
-      className={props.selectProps.classes.placeholder}
-      {...props.innerProps}
-    >
-      {props.children}
-    </Typography>
-  );
-}
-
-function SingleValue(props) {
-  return (
-    <Typography
-      className={props.selectProps.classes.singleValue}
-      {...props.innerProps}
-    >
-      {props.children}
-    </Typography>
-  );
-}
-
-function ValueContainer(props) {
-  return (
-    <div className={props.selectProps.classes.valueContainer}>
-      {props.children}
-    </div>
-  );
-}
-
-function MultiValue(props) {
-  return (
-    <TagContainer
-      key={props.data.id || props.data.title}
-      tag={props.data}
-      tagMode="remove"
-      deleteIcon={<CloseIcon {...props.removeProps} />}
-    />
-  );
-}
-
-function Menu(props) {
-  return (
-    <Paper
-      elevation={22}
-      square
-      className={props.selectProps.classes.paper}
-      {...props.innerProps}
-    >
-      {props.children}
-    </Paper>
-  );
-}
-
-const components = {
-  Control,
-  Menu,
-  MultiValue,
-  NoOptionsMessage,
-  Option,
-  Placeholder,
-  SingleValue,
-  ValueContainer
-};
-
 interface Props {
   classes?: any;
   theme?: any;
   tags: Array<Tag>;
+  label?: string;
   tagSearchType?: string;
   defaultBackgroundColor?: string;
   defaultTextColor?: string;
-  handleChange?: (param1: any, param2: any, param3: any) => void;
+  handleChange?: (param1: any, param2: any, param3?: any) => void;
   allTags?: Array<Tag>;
   isReadOnlyMode?: boolean;
   placeholderText?: string;
 }
 
 const TagsSelect = (props: Props) => {
-  function handleChange(newValue: any, actionMeta: any) {
-    if (actionMeta.action === 'select-option') {
-      props.handleChange(props.tagSearchType, newValue, actionMeta.action);
-    } else if (actionMeta.action === 'create-option') {
-      props.allTags.push(newValue);
-      props.handleChange(props.tagSearchType, newValue, actionMeta.action);
-    } else if (actionMeta.action === 'remove-value') {
-      props.handleChange(props.tagSearchType, newValue, actionMeta.action);
-    } else if (actionMeta.action === 'clear') {
-      props.handleChange(props.tagSearchType, [], actionMeta.action);
+  function handleTagChange(
+    event: Object,
+    selectedTags: Array<Tag>,
+    reason: string
+  ) {
+    if (reason === 'select-option') {
+      props.handleChange(props.tagSearchType, selectedTags);
+    } else if (reason === 'create-option') {
+      if (
+        selectedTags &&
+        selectedTags.length &&
+        isValidNewOption(selectedTags[selectedTags.length - 1], selectedTags)
+      ) {
+        const newTag: Tag = {
+          id: uuidv1(),
+          title: '' + selectedTags[selectedTags.length - 1],
+          color: defaultBackgroundColor,
+          textcolor: defaultTextColor
+        };
+        props.allTags.push(newTag);
+        selectedTags.pop();
+        const newTags = [...selectedTags, newTag];
+        props.handleChange(props.tagSearchType, newTags);
+      }
+    } else if (reason === 'remove-value') {
+      props.handleChange(props.tagSearchType, selectedTags);
+    } else if (reason === 'clear') {
+      props.handleChange(props.tagSearchType, []);
     }
   }
 
-  function isValidNewOption(inputValue, selectValue, selectOptions) {
+  function isValidNewOption(inputValue, selectOptions) {
     const trimmedInput = inputValue.trim();
     return (
       trimmedInput.trim().length > 0 &&
       !trimmedInput.includes(' ') &&
       !trimmedInput.includes('#') &&
       !trimmedInput.includes(',') &&
-      !selectOptions.find(option => option.name === inputValue)
+      !selectOptions.find(option => option.title === inputValue)
     );
   }
 
   const {
     classes,
-    theme,
     allTags,
     tags,
     defaultBackgroundColor,
     defaultTextColor,
-    isReadOnlyMode = false,
-    placeholderText = ''
+    placeholderText = '',
+    label,
+    tagSearchType,
+    handleChange
   } = props;
-
-  const selectStyles = {
-    input: base => ({
-      ...base,
-      color: theme.palette.text.primary,
-      '& input': {
-        font: 'inherit'
-      }
-    })
-  };
 
   return (
     <div className={classes.root}>
-      <NoSsr>
-        <CreatableSelect
-          isClearable={false}
-          isDisabled={isReadOnlyMode}
-          classes={classes}
-          options={allTags}
-          getOptionLabel={option => option.title}
-          getOptionValue={option => option.id || option.title}
-          isValidNewOption={isValidNewOption}
-          getNewOptionData={(inputValue, optionLabel) => ({
-            id: uuidv1(),
-            title: optionLabel,
-            color: defaultBackgroundColor,
-            textcolor: defaultTextColor
-          })}
-          styles={selectStyles}
-          fullWidth={true}
-          components={components}
-          /* textFieldProps={{
-          label: 'title',
-          InputLabelProps: {
-            shrink: true,
-          },
-        }} */
-          value={tags}
-          onChange={handleChange}
-          placeholder={placeholderText}
-          isMulti
-          formatCreateLabel={label => label}
-          // isSearchable
-        />
-      </NoSsr>
+      <Autocomplete
+        multiple
+        options={allTags}
+        getOptionLabel={option => option.title}
+        freeSolo
+        value={tags}
+        onChange={handleTagChange}
+        renderTags={(value: Tag[]) =>
+          value.map((tag: Tag, index: number) => (
+            <TagContainer
+              key={tag.title + index}
+              tag={tag}
+              tagMode="remove"
+              handleRemoveTag={(event, tag) => {
+                for (let i = 0; i < tags.length; i += 1) {
+                  if (tags[i].title === tag.title) {
+                    tags.splice(i, 1);
+                  }
+                }
+                handleChange(tagSearchType, [...tags]);
+              }}
+            />
+          ))
+        }
+        renderInput={params => (
+          <TextField
+            {...params}
+            // variant="filled"
+            label={label}
+            placeholder={placeholderText}
+            margin="normal"
+            style={{ marginTop: 0, marginBottom: 0 }}
+            fullWidth
+          />
+        )}
+      />
     </div>
   );
 };

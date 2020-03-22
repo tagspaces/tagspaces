@@ -445,47 +445,29 @@ class Search extends React.Component<Props, State> {
             </ToggleButtonGroup>
           </FormControl>
           <br />
-          <Typography
-            variant="caption"
-            className={classes.header}
-            style={{ marginTop: 10 }}
-          >
-            {i18n.t('core:mustContainTheseTags')}
-          </Typography>
           <FormControl className={classes.formControl} disabled={indexing}>
             <TagsSelect
               placeholderText={i18n.t('core:selectTags')}
+              label={i18n.t('core:mustContainTheseTags')}
               tags={this.state.tagsAND}
               handleChange={this.handleTagFieldChange}
               tagSearchType="tagsAND"
             />
           </FormControl>
-          <Typography
-            variant="caption"
-            className={classes.header}
-            style={{ marginTop: 10 }}
-          >
-            {i18n.t('core:atLeastOneOfTheseTags')}
-          </Typography>
           <FormControl className={classes.formControl} disabled={indexing}>
             <TagsSelect
               placeholderText={i18n.t('core:selectTags')}
               tags={this.state.tagsOR}
+              label={i18n.t('core:atLeastOneOfTheseTags')}
               handleChange={this.handleTagFieldChange}
               tagSearchType="tagsOR"
             />
           </FormControl>
-          <Typography
-            variant="caption"
-            className={classes.header}
-            style={{ marginTop: 10 }}
-          >
-            {i18n.t('core:noneOfTheseTags')}
-          </Typography>
           <FormControl className={classes.formControl} disabled={indexing}>
             <TagsSelect
               placeholderText={i18n.t('core:selectTags')}
               tags={this.state.tagsNOT}
+              label={i18n.t('core:noneOfTheseTags')}
               handleChange={this.handleTagFieldChange}
               tagSearchType="tagsNOT"
             />
