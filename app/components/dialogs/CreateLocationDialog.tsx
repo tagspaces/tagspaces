@@ -68,6 +68,7 @@ interface State {
   disableConfirmButton: boolean;
   name: string;
   path: string;
+  endpointURL: string;
   perspective: string;
   isDefault: boolean;
   isReadOnly: boolean;
@@ -75,11 +76,11 @@ interface State {
   persistIndex: boolean;
   fullTextIndex: boolean;
   storeName: string;
-  cloudErrorTextName: string;
-  cloudErrorAccessKey: string;
-  cloudErrorSecretAccessKey: string;
-  cloudErrorBucketName: string;
-  cloudErrorRegion: string;
+  cloudErrorTextName: boolean;
+  cloudErrorAccessKey: boolean;
+  cloudErrorSecretAccessKey: boolean;
+  cloudErrorBucketName: boolean;
+  cloudErrorRegion: boolean;
   accessKeyId: string;
   secretAccessKey: string;
   bucketName: string;
@@ -95,6 +96,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
     disableConfirmButton: true,
     name: '',
     path: '',
+    endpointURL: '',
     perspective: '',
     isDefault: false,
     isReadOnly: false,
@@ -102,11 +104,11 @@ class CreateLocationDialog extends React.Component<Props, State> {
     persistIndex: false,
     fullTextIndex: false,
     storeName: '',
-    cloudErrorTextName: '',
-    cloudErrorAccessKey: '',
-    cloudErrorSecretAccessKey: '',
-    cloudErrorBucketName: '',
-    cloudErrorRegion: '',
+    cloudErrorTextName: false,
+    cloudErrorAccessKey: false,
+    cloudErrorSecretAccessKey: false,
+    cloudErrorBucketName: false,
+    cloudErrorRegion: false,
     accessKeyId: '',
     secretAccessKey: '',
     bucketName: '',
@@ -278,7 +280,9 @@ class CreateLocationDialog extends React.Component<Props, State> {
             disableConfirmButton,
             cloudErrorRegion
           },
-          resolve(!disableConfirmButton)
+          () => {
+            resolve(!disableConfirmButton);
+          }
         )
       );
     }
@@ -311,10 +315,11 @@ class CreateLocationDialog extends React.Component<Props, State> {
               type: locationType.TYPE_CLOUD,
               name: this.state.storeName,
               paths: [this.state.storePath],
+              endpointURL: this.state.endpointURL,
               accessKeyId: this.state.accessKeyId,
               secretAccessKey: this.state.secretAccessKey,
               bucketName: this.state.bucketName,
-              region: this.state.region.value,
+              region: this.state.region,
               perspective: this.state.perspective,
               isDefault: this.state.isDefault,
               isReadOnly: this.state.isReadOnly,

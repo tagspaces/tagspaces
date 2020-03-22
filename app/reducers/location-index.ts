@@ -265,7 +265,8 @@ export const actions = {
     });
     const result = locationPaths.reduce(
       (accumulatorPromise, nextPath) =>
-        accumulatorPromise.then(() => createDirectoryIndex(nextPath, extractText)
+        accumulatorPromise.then(() =>
+          createDirectoryIndex(nextPath, extractText)
             .then(directoryIndex => {
               if (Pro && Pro.Indexer) {
                 Pro.Indexer.persistIndex(
@@ -280,7 +281,8 @@ export const actions = {
             })
             .catch(err => {
               dispatch(actions.indexDirectoryFailure(err));
-            })),
+            })
+        ),
       Promise.resolve()
     );
 
@@ -385,8 +387,12 @@ export const actions = {
         accumulatorPromise.then(() =>
           createDirectoryIndex(nextPath, true)
             .then(directoryIndex => {
-              AppActions.showNotification(i18n.t('Searching:' + nextPath), 'default', true)
-              console.log('Searching in:' + nextPath)
+              AppActions.showNotification(
+                i18n.t('Searching:' + nextPath),
+                'default',
+                true
+              );
+              console.log('Searching in:' + nextPath);
               Search.searchLocationIndex(directoryIndex, searchQuery)
                 .then(searchResults => {
                   dispatch(AppActions.appendSearchResults(searchResults));

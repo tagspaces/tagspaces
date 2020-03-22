@@ -198,12 +198,10 @@ const CellContent = (props: Props) => {
             </Typography>
           </div>
         ) : (
-          <div className={classes.gridDetails}>
+          <div className={classes.gridDetails} title={fsEntry.path}>
             <FolderIcon
               className={classes.gridFolder}
               style={{ backgroundColor: fsEntryColor }}
-              // @ts-ignore
-              title={fsEntry.path}
             />
           </div>
         )}

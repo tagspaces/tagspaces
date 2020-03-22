@@ -43,6 +43,7 @@ export type Location = {
   region?: string;
   paths: Array<string>;
   path?: string;
+  endpointURL?: string;
   children?: Array<any>;
   perspective?: string; // id of the perspective
   creationDate?: string;

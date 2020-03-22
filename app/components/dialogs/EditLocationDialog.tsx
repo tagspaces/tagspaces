@@ -34,7 +34,7 @@ import Dialog from '@material-ui/core/Dialog';
 import i18n from '-/services/i18n';
 import { extractDirectoryName } from '-/utils/paths';
 import { Location, locationType } from '-/reducers/locations';
-import ObjectStoreForm, { suggestions } from './ObjectStoreForm';
+import ObjectStoreForm from './ObjectStoreForm';
 import LocalForm from './LocalForm';
 import { Pro } from '-/pro';
 
@@ -54,12 +54,15 @@ interface State {
   errorTextPath: boolean;
   errorTextName: boolean;
   disableConfirmButton: boolean;
-  cloudErrorTextName: string;
-  cloudErrorBucketName: string;
-  cloudErrorRegion: string;
+  cloudErrorTextName: boolean;
+  cloudErrorBucketName: boolean;
+  cloudErrorRegion: boolean;
+  cloudErrorAccessKey: boolean;
+  cloudErrorSecretAccessKey: boolean;
   uuid: string;
   name: string;
   path: string;
+  endpointURL: string;
   isDefault: boolean;
   isReadOnly: boolean;
   watchForChanges: boolean;
@@ -79,12 +82,15 @@ class EditLocationDialog extends React.Component<Props, State> {
     errorTextPath: false,
     errorTextName: false,
     disableConfirmButton: true,
-    cloudErrorTextName: '',
-    cloudErrorBucketName: '',
-    cloudErrorRegion: '',
+    cloudErrorTextName: false,
+    cloudErrorBucketName: false,
+    cloudErrorRegion: false,
+    cloudErrorAccessKey: false,
+    cloudErrorSecretAccessKey: false,
     uuid: '',
     name: '',
     path: '',
+    endpointURL: '',
     isDefault: false,
     isReadOnly: false,
     watchForChanges: false,
@@ -118,7 +124,6 @@ class EditLocationDialog extends React.Component<Props, State> {
       this.setState({
         ...properties,
         uuid: nextProps.location.uuid,
-        perspective: nextProps.location.perspective,
         isDefault: nextProps.location.isDefault,
         isReadOnly: nextProps.location.isReadOnly,
         watchForChanges: nextProps.location.watchForChanges,
@@ -128,7 +133,8 @@ class EditLocationDialog extends React.Component<Props, State> {
         accessKeyId: nextProps.location.accessKeyId,
         secretAccessKey: nextProps.location.secretAccessKey,
         bucketName: nextProps.location.bucketName,
-        region: suggestions.find(obj => obj.value === nextProps.location.region)
+        endpointURL: nextProps.location.endpointURL,
+        region: nextProps.location.region
       });
     }
   };
@@ -163,11 +169,10 @@ class EditLocationDialog extends React.Component<Props, State> {
     // const nameRegex = this.state.name.match('^[A-Z][-a-zA-Z]+$');
     if (this.state.type === locationType.TYPE_CLOUD) {
       let cloudErrorTextName = false;
-      // let cloudErrorTextPath = false;
-      const cloudErrorAccessKey = false;
-      const cloudErrorSecretAccessKey = false;
+      let cloudErrorAccessKey = false;
+      let cloudErrorSecretAccessKey = false;
       let cloudErrorBucketName = false;
-      let cloudErrorRegion = false;
+      const cloudErrorRegion = false;
       let disableConfirmButton = false;
       if (!this.state.storeName || this.state.storeName.length === 0) {
         cloudErrorTextName = true;
@@ -179,30 +184,35 @@ class EditLocationDialog extends React.Component<Props, State> {
         disableConfirmButton = true;
       } */
 
-      // if (!this.state.accessKeyId || this.state.accessKeyId.length === 0) {
-      //   cloudErrorAccessKey = true;
-      //   disableConfirmButton = true;
-      // }
+      if (!this.state.accessKeyId || this.state.accessKeyId.length === 0) {
+        cloudErrorAccessKey = true;
+        disableConfirmButton = true;
+      }
 
-      // if (!this.state.secretAccessKey || this.state.secretAccessKey.length === 0) {
-      //   cloudErrorSecretAccessKey = true;
-      //   disableConfirmButton = true;
-      // }
+      if (
+        !this.state.secretAccessKey ||
+        this.state.secretAccessKey.length === 0
+      ) {
+        cloudErrorSecretAccessKey = true;
+        disableConfirmButton = true;
+      }
 
       if (!this.state.bucketName || this.state.bucketName.length === 0) {
         cloudErrorBucketName = true;
         disableConfirmButton = true;
       }
 
-      if (!this.state.region) {
-        cloudErrorRegion = true;
-        disableConfirmButton = true;
-      }
+      // if (!this.state.region) {
+      //   cloudErrorRegion = true;
+      //   disableConfirmButton = true;
+      // }
 
       // @ts-ignore
       this.setState({
         cloudErrorTextName,
         cloudErrorBucketName,
+        cloudErrorAccessKey,
+        cloudErrorSecretAccessKey,
         disableConfirmButton,
         cloudErrorRegion
       });
@@ -263,10 +273,11 @@ class EditLocationDialog extends React.Component<Props, State> {
           type: locationType.TYPE_CLOUD,
           name: this.state.storeName,
           paths: [this.state.storePath],
+          endpointURL: this.state.endpointURL,
           accessKeyId: this.state.accessKeyId,
           secretAccessKey: this.state.secretAccessKey,
           bucketName: this.state.bucketName,
-          region: this.state.region.value,
+          region: this.state.region,
           isDefault: this.state.isDefault,
           isReadOnly: this.state.isReadOnly,
           persistIndex: this.state.persistIndex,
