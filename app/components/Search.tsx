@@ -30,7 +30,6 @@ import AudioIcon from '@material-ui/icons/MusicVideo';
 import VideoIcon from '@material-ui/icons/OndemandVideo';
 import ArchiveIcon from '@material-ui/icons/Archive';
 import FolderIcon from '@material-ui/icons/FolderOpen';
-import LocationIcon from '@material-ui/icons/WorkOutline';
 import UntaggedIcon from '@material-ui/icons/LabelOffOutlined';
 import FileIcon from '@material-ui/icons/InsertDriveFileOutlined';
 import ClearSearchIcon from '@material-ui/icons/Clear';
@@ -51,6 +50,7 @@ import ButtonGroup from '@material-ui/core/ButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import OpenLocationCode from 'open-location-code-typescript';
+import { FormControlLabel, Switch } from '@material-ui/core';
 import TagsSelect from './TagsSelect';
 import CustomLogo from './CustomLogo';
 import { actions as AppActions, getDirectoryPath } from '../reducers/app';
@@ -103,6 +103,7 @@ interface State {
   tagPlaceLong: number | null;
   tagPlaceRadius: number;
   fileSize: string;
+  forceIndexing: boolean;
   searchMenuOpened: boolean;
   searchMenuAnchorEl: Element | null;
 }
@@ -126,6 +127,7 @@ class Search extends React.Component<Props, State> {
     tagPlaceLat: null,
     tagPlaceLong: null,
     tagPlaceRadius: 0,
+    forceIndexing: false,
     fileSize: '',
     searchMenuOpened: false,
     searchMenuAnchorEl: null
@@ -282,6 +284,7 @@ class Search extends React.Component<Props, State> {
         tagPlaceLat: null,
         tagPlaceLong: null,
         tagPlaceRadius: 0,
+        forceIndexing: false,
         fileSize: ''
       },
       () => this.props.loadDirectoryContent(this.props.currentDirectory)
@@ -316,7 +319,8 @@ class Search extends React.Component<Props, State> {
       tagPlaceLong: this.state.tagPlaceLong,
       tagPlaceRadius: this.state.tagPlaceRadius,
       maxSearchResults: this.props.maxSearchResults,
-      currentDirectory: this.props.currentDirectory
+      currentDirectory: this.props.currentDirectory,
+      forceIndexing: this.state.forceIndexing
     };
     console.log('Search object: ' + JSON.stringify(searchQuery));
     if (this.state.searchBoxing === 'global') {
@@ -381,11 +385,6 @@ class Search extends React.Component<Props, State> {
             style={{ marginTop: 10 }}
             disabled={indexing}
           >
-            {/* <InputLabel htmlFor="textQuery">
-              {this.state.searchBoxing === 'location'
-                ? i18n.t('searchPlaceholder')
-                : i18n.t('searchCurrentFolderWithSubFolders')}
-            </InputLabel> */}
             <Input
               id="textQuery"
               name="textQuery"
@@ -395,28 +394,13 @@ class Search extends React.Component<Props, State> {
               }}
               onKeyDown={this.startSearch}
               title={i18n.t('core:searchWordsWithInterval')}
-              endAdornment={
+              endAdornment={(
                 <InputAdornment position="end">
-                  {/* <IconButton
-                    style={{ marginRight: -15 }}
-                    onClick={this.toggleSearchBoxing}
-                    title={
-                      this.state.searchBoxing === 'location'
-                        ? i18n.t('searchCurrentFolderWithSubFolders')
-                        : i18n.t('searchPlaceholder')
-                    }
-                  >
-                    {this.state.searchBoxing === 'location' ? (
-                      <FolderIcon />
-                    ) : (
-                      <LocationIcon />
-                    )}
-                  </IconButton> */}
                   <IconButton onClick={this.clearSearch}>
                     <ClearSearchIcon />
                   </IconButton>
                 </InputAdornment>
-              }
+              )}
             />
           </FormControl>
           <FormControl className={classes.formControl} disabled={indexing}>
@@ -431,20 +415,33 @@ class Search extends React.Component<Props, State> {
                 value="location"
                 title={i18n.t('searchPlaceholder')}
               >
-                Location
+                {i18n.t('location')}
               </ToggleButton>
               <ToggleButton
                 value="folder"
                 title={i18n.t('searchCurrentFolderWithSubFolders')}
               >
-                Folder
+                {i18n.t('folder')}
               </ToggleButton>
-              <ToggleButton value="global" title="Search in all locations">
-                Global
+              <ToggleButton value="global" title={i18n.t('searchInAllLocations')}>
+                {i18n.t('globalSearch')}
+                <sub style={{ color: 'red'}}>BETA</sub>
               </ToggleButton>
             </ToggleButtonGroup>
           </FormControl>
           <br />
+          {this.state.searchBoxing === 'global' && (
+          <FormControlLabel
+            control={(
+              <Switch
+                checked={this.state.forceIndexing}
+                onChange={() => this.setState(prevState => ({forceIndexing: !prevState.forceIndexing}))}
+                name="forceIndexing"
+              />
+            )}
+            label="Force reindexing all locations"
+          />
+          )}
           <FormControl className={classes.formControl} disabled={indexing}>
             <TagsSelect
               placeholderText={i18n.t('core:selectTags')}
@@ -720,7 +717,6 @@ class Search extends React.Component<Props, State> {
                 disabled={indexing}
                 id="searchButton"
                 variant="outlined"
-                size="small"
                 color="primary"
                 onClick={this.clickSearchButton}
                 style={{ width: '100%' }}
@@ -730,7 +726,6 @@ class Search extends React.Component<Props, State> {
                   : i18n.t('searchTitle')}
               </Button>
               <Button
-                size="small"
                 variant="outlined"
                 color="secondary"
                 onClick={this.clearSearch}

@@ -398,7 +398,8 @@
   "atLeastOneOfTheseTags": "At least one of these tags",
   "noneOfTheseTags": "None of these tags",
   "collectTagsFromLocation": "Collect Tags From Current Location",
-  "searchCurrentFolderWithSubFolders": "Search in folder with sub folders",
+  "searchCurrentFolderWithSubFolders": "Search in the current folder including sub folders",
+  "searchInAllLocations": "Search in all locations",
   "dndDisabledReadOnlyMode": "Importing files is disabled because the location is in read-only mode.",
   "lastModifiedSearchTitle": "Last modified date",
   "sizeSearchTitle": "File size",
@@ -449,5 +450,8 @@
   "getLatestVersionPro": "Please download the latest version from the link in the purchase confirmation email.",
   "noFileButFoldersFound": "Some folders found! Turn on the folder visibility from the perspective's toolbar to view them.",
   "selectTags": "Select tags",
+  "location": "Location",
+  "folder": "Folder",
+  "globalSearch": "Global",
   "-": "-"
 }

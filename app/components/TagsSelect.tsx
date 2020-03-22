@@ -84,7 +84,7 @@ const TagsSelect = (props: Props) => {
     reason: string
   ) {
     if (reason === 'select-option') {
-      props.handleChange(props.tagSearchType, selectedTags);
+      props.handleChange(props.tagSearchType, selectedTags, reason);
     } else if (reason === 'create-option') {
       if (
         selectedTags &&
@@ -100,12 +100,12 @@ const TagsSelect = (props: Props) => {
         props.allTags.push(newTag);
         selectedTags.pop();
         const newTags = [...selectedTags, newTag];
-        props.handleChange(props.tagSearchType, newTags);
+        props.handleChange(props.tagSearchType, newTags, reason);
       }
     } else if (reason === 'remove-value') {
-      props.handleChange(props.tagSearchType, selectedTags);
+      props.handleChange(props.tagSearchType, selectedTags, reason);
     } else if (reason === 'clear') {
-      props.handleChange(props.tagSearchType, []);
+      props.handleChange(props.tagSearchType, [], reason);
     }
   }
 
@@ -127,9 +127,7 @@ const TagsSelect = (props: Props) => {
     defaultBackgroundColor,
     defaultTextColor,
     placeholderText = '',
-    label,
-    tagSearchType,
-    handleChange
+    label
   } = props;
 
   return (
@@ -147,13 +145,13 @@ const TagsSelect = (props: Props) => {
               key={tag.title + index}
               tag={tag}
               tagMode="remove"
-              handleRemoveTag={(event, tag) => {
+              handleRemoveTag={(event, cTag) => {
                 for (let i = 0; i < tags.length; i += 1) {
-                  if (tags[i].title === tag.title) {
+                  if (tags[i].title === cTag.title) {
                     tags.splice(i, 1);
                   }
                 }
-                handleChange(tagSearchType, [...tags]);
+                handleTagChange(event, [...tags], 'remove-value' )
               }}
             />
           ))
