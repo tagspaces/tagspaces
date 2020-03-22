@@ -151,7 +151,7 @@ const TagsSelect = (props: Props) => {
                     tags.splice(i, 1);
                   }
                 }
-                handleTagChange(event, [...tags], 'remove-value' )
+                handleTagChange(event, [...tags], 'remove-value');
               }}
             />
           ))

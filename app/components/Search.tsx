@@ -394,13 +394,13 @@ class Search extends React.Component<Props, State> {
               }}
               onKeyDown={this.startSearch}
               title={i18n.t('core:searchWordsWithInterval')}
-              endAdornment={(
+              endAdornment={
                 <InputAdornment position="end">
                   <IconButton onClick={this.clearSearch}>
                     <ClearSearchIcon />
                   </IconButton>
                 </InputAdornment>
-              )}
+              }
             />
           </FormControl>
           <FormControl className={classes.formControl} disabled={indexing}>
@@ -423,24 +423,31 @@ class Search extends React.Component<Props, State> {
               >
                 {i18n.t('folder')}
               </ToggleButton>
-              <ToggleButton value="global" title={i18n.t('searchInAllLocations')}>
+              <ToggleButton
+                value="global"
+                title={i18n.t('searchInAllLocations')}
+              >
                 {i18n.t('globalSearch')}
-                <sub style={{ color: 'red'}}>BETA</sub>
+                <sub style={{ color: 'red' }}>BETA</sub>
               </ToggleButton>
             </ToggleButtonGroup>
           </FormControl>
           <br />
           {this.state.searchBoxing === 'global' && (
-          <FormControlLabel
-            control={(
-              <Switch
-                checked={this.state.forceIndexing}
-                onChange={() => this.setState(prevState => ({forceIndexing: !prevState.forceIndexing}))}
-                name="forceIndexing"
-              />
-            )}
-            label="Force reindexing all locations"
-          />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={this.state.forceIndexing}
+                  onChange={() =>
+                    this.setState(prevState => ({
+                      forceIndexing: !prevState.forceIndexing
+                    }))
+                  }
+                  name="forceIndexing"
+                />
+              }
+              label="Force reindexing all locations"
+            />
           )}
           <FormControl className={classes.formControl} disabled={indexing}>
             <TagsSelect
