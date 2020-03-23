@@ -309,8 +309,7 @@ class FolderContainer extends React.Component<Props, State> {
 
   renderPerspective() {
     if (
-      !this.props.currentDirectoryPath ||
-      this.props.currentDirectoryPath.length < 2
+      !this.props.currentDirectoryPath
     ) {
       return <WelcomePanelAsync />;
     }
