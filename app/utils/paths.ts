@@ -64,7 +64,10 @@ export function getMetaDirectoryPath(
   directoryPath: string,
   dirSeparator: string = AppConfig.dirSeparator
 ) {
-  return normalizePath(directoryPath) + dirSeparator + AppConfig.metaFolder;
+  return (
+    (directoryPath ? normalizePath(directoryPath) + dirSeparator : '') +
+    AppConfig.metaFolder
+  );
 }
 
 export function getMetaFileLocationForFile(

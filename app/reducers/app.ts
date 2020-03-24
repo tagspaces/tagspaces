@@ -705,7 +705,7 @@ export const actions = {
     showIsLoading?: boolean
   ) => ({
     type: types.LOAD_DIRECTORY_SUCCESS,
-    directoryPath,
+    directoryPath: directoryPath || AppConfig.dirSeparator,
     directoryContent,
     showIsLoading
   }),

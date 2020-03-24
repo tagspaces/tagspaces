@@ -22,6 +22,7 @@ import { bindActionCreators } from 'redux';
 import Button from '@material-ui/core/Button';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import BackButtonIcon from '@material-ui/icons/ArrowBack';
+import FolderSeparatorIcon from '@material-ui/icons/ChevronRight';
 import MenuIcon from '@material-ui/icons/Menu';
 import Badge from '@material-ui/core/Badge';
 import { withStyles } from '@material-ui/core/styles';
@@ -308,10 +309,7 @@ class FolderContainer extends React.Component<Props, State> {
   };
 
   renderPerspective() {
-    if (
-      !this.props.currentDirectoryPath ||
-      this.props.currentDirectoryPath.length < 2
-    ) {
+    if (!this.props.currentDirectoryPath) {
       return <WelcomePanelAsync />;
     }
     if (this.state.currentPerspective === 'gallery') {
@@ -434,7 +432,7 @@ class FolderContainer extends React.Component<Props, State> {
                         }}
                       >
                         {extractShortDirectoryName(pathPart, '/')}
-                        &nbsp;/&nbsp;
+                        <FolderSeparatorIcon />
                       </Button>
                     ))}
                   {!isDesktopMode &&
