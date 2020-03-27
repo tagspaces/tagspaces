@@ -16,3 +16,17 @@ div[tabindex='-1']:focus {
 .rc-table td {
   border-bottom: 1px solid #e9e9e91a;
 }
+
+/* Fix for icon of broken thumbnails */
+img[alt]:after {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  color: #fff;
+  text-align: center;
+  content: attr(alt);
+}
