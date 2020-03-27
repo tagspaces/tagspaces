@@ -137,12 +137,14 @@ const TagsSelect = (props: Props) => {
         options={allTags}
         getOptionLabel={option => option.title}
         freeSolo
+        autoSelect
+        autoComplete
         value={tags}
         onChange={handleTagChange}
         renderTags={(value: Tag[]) =>
-          value.map((tag: Tag, index: number) => (
+          value.map((tag: Tag) => (
             <TagContainer
-              key={tag.title + index}
+              key={uuidv1()}
               tag={tag}
               tagMode="remove"
               handleRemoveTag={(event, cTag) => {

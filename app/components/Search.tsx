@@ -295,7 +295,9 @@ class Search extends React.Component<Props, State> {
     event: React.MouseEvent<HTMLElement>,
     boxing: 'location' | 'folder' | 'global'
   ) => {
-    this.setState({ searchBoxing: boxing });
+    this.setState(prevState => ({
+      searchBoxing: boxing === null ? prevState.searchBoxing : boxing
+    }));
   };
 
   executeSearch = () => {
@@ -423,12 +425,9 @@ class Search extends React.Component<Props, State> {
               >
                 {i18n.t('folder')}
               </ToggleButton>
-              <ToggleButton
-                value="global"
-                title={i18n.t('searchInAllLocations')}
-              >
+              <ToggleButton disabled={!Pro} value="global">
                 {i18n.t('globalSearch')}
-                <sub style={{ color: 'red' }}>BETA</sub>
+                <sub>{Pro ? ' BETA' : ' PRO'}</sub>
               </ToggleButton>
             </ToggleButtonGroup>
           </FormControl>

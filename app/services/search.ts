@@ -58,6 +58,7 @@ export type SearchQuery = {
   lastModified?: string;
   fileSize?: string;
   searchBoxing?: 'location' | 'folder';
+  forceIndexing?: boolean;
   currentDirectory?: string;
   tagTimePeriodFrom?: number | null;
   tagTimePeriodTo?: number | null;

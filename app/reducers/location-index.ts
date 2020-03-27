@@ -375,7 +375,9 @@ export const actions = {
       state,
       state.app.currentLocationId
     );
-    dispatch(actions.startDirectoryIndexing());
+    dispatch(
+      AppActions.showNotification(i18n.t('core:searching'), 'default', false)
+    );
     dispatch(AppActions.setSearchResults([]));
     const allLocations = getLocations(state);
     const locationPaths = [];
@@ -384,58 +386,72 @@ export const actions = {
     });
     const result = locationPaths.reduce(
       (accumulatorPromise, nextPath) =>
-        accumulatorPromise.then(() =>
-          createDirectoryIndex(nextPath, true)
-            .then(directoryIndex => {
-              AppActions.showNotification(
-                i18n.t('Searching:' + nextPath),
-                'default',
-                true
-              );
-              console.log('Searching in:' + nextPath);
-              Search.searchLocationIndex(directoryIndex, searchQuery)
-                .then(searchResults => {
-                  dispatch(AppActions.appendSearchResults(searchResults));
-                  dispatch(AppActions.hideNotifications());
-                  return true;
-                })
-                .catch(() => {
-                  dispatch(AppActions.setSearchResults([]));
-                  dispatch(AppActions.hideNotifications());
-                  dispatch(
-                    AppActions.showNotification(
-                      i18n.t('core:searchingFailed'),
-                      'warning',
-                      true
-                    )
-                  );
-                });
-              if (Pro && Pro.Indexer) {
-                Pro.Indexer.persistIndex(
-                  nextPath,
-                  directoryIndex,
-                  currentLocation.type === locationType.TYPE_CLOUD
-                    ? '/'
-                    : AppConfig.dirSeparator
-                );
-              }
+        accumulatorPromise.then(async () => {
+          let directoryIndex = [];
+          let hasIndex = false;
+          const dirSeparator =
+            currentLocation.type === locationType.TYPE_CLOUD
+              ? '/'
+              : AppConfig.dirSeparator;
+          console.log('Searching in: ' + nextPath);
+          dispatch(
+            AppActions.showNotification(
+              i18n.t('core:searching') + nextPath,
+              'default',
+              true
+            )
+          );
+          if (Pro && Pro.Indexer && Pro.Indexer.hasIndex) {
+            hasIndex = await Pro.Indexer.hasIndex(nextPath);
+          }
+          if (searchQuery.forceIndexing || !hasIndex) {
+            console.log('Creating index for : ' + nextPath);
+            directoryIndex = await createDirectoryIndex(nextPath, true);
+            if (Pro && Pro.Indexer && Pro.Indexer.persistIndex) {
+              Pro.Indexer.persistIndex(nextPath, directoryIndex, dirSeparator);
+            }
+          } else if (Pro && Pro.Indexer && Pro.Indexer.loadIndex) {
+            console.log('Loading index for : ' + nextPath);
+            directoryIndex = await Pro.Indexer.loadIndex(
+              nextPath,
+              dirSeparator
+            );
+          }
+          return Search.searchLocationIndex(directoryIndex, searchQuery)
+            .then(searchResults => {
+              dispatch(AppActions.appendSearchResults(searchResults));
+              dispatch(AppActions.hideNotifications());
               return true;
             })
-            .catch(err => {
-              dispatch(actions.indexDirectoryFailure(err));
-            })
-        ),
+            .catch(() => {
+              dispatch(AppActions.setSearchResults([]));
+              dispatch(AppActions.hideNotifications());
+              dispatch(
+                AppActions.showNotification(
+                  i18n.t('core:searchingFailed'),
+                  'warning',
+                  true
+                )
+              );
+            });
+        }),
       Promise.resolve()
     );
 
     result
-      .then(e => {
-        dispatch(actions.indexDirectorySuccess());
-        console.log('Resolution is complete!', e);
+      .then(() => {
+        dispatch(
+          AppActions.showNotification(
+            i18n.t('Global search completed'),
+            'default',
+            true
+          )
+        );
+        console.log('Global search completed!');
         return true;
       })
       .catch(e => {
-        console.warn('Resolution is faled!', e);
+        console.warn('Global search faled!', e);
       });
   },
   indexDirectorySuccess: () => ({
