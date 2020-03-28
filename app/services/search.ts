@@ -1,3 +1,4 @@
+/* eslint-disable compat/compat */
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -95,6 +96,11 @@ export type SearchQuery = {
         "type": "sidecar"
       }
     ],
+    "textConten": "adsadas dasda",
+    "lat": "",
+    "lon": "",
+    "fromTime": "",
+    "toTime": "",
     "thumbPath":
       "/home/na/TagSpaces/testfiles/sidecarTests/.ts/Apple-Notes-Mac2 (copy).jpg.jpg",
     "uuid": "76075fc2-4a2f-4e27-a188-d96fece032aa"
@@ -293,6 +299,12 @@ export default class Search {
           results.length >= searchQuery.maxSearchResults
         ) {
           results = results.slice(0, searchQuery.maxSearchResults);
+        }
+        // Removing textContent as not needed for the search results
+        for (let i = 0, len = results.length; i < len; i += 1) {
+          if (results[i].textContent) {
+            results[i].textContent = undefined;
+          }
         }
         console.log('Results send: ' + results.length);
         console.timeEnd('searchtime');
