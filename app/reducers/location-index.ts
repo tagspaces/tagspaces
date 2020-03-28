@@ -34,6 +34,7 @@ import { Tag } from './taglibrary';
 import GlobalSearch from '../services/search-index';
 
 export const types = {
+  SET_SEARCH_QUERY: 'SET_SEARCH_QUERY',
   INDEX_DIRECTORY: 'INDEX_DIRECTORY',
   INDEX_DIRECTORY_CLEAR: 'INDEX_DIRECTORY_CLEAR',
   INDEX_DIRECTORY_START: 'INDEX_DIRECTORY_START',
@@ -49,11 +50,15 @@ export const types = {
 };
 
 export const initialState = {
-  isIndexing: false
+  isIndexing: false,
+  searchQuery: {}
 };
 
 export default (state: any = initialState, action: any) => {
   switch (action.type) {
+    case types.SET_SEARCH_QUERY: {
+      return { ...state, searchQuery: action.searchQuery };
+    }
     case types.INDEX_DIRECTORY_START: {
       return {
         ...state,
@@ -212,6 +217,10 @@ export default (state: any = initialState, action: any) => {
 };
 
 export const actions = {
+  setSearchQuery: (searchQuery: SearchQuery) => ({
+    type: types.SET_SEARCH_QUERY,
+    searchQuery
+  }),
   startDirectoryIndexing: () => ({ type: types.INDEX_DIRECTORY_START }),
   cancelDirectoryIndexing: () => ({ type: types.INDEX_DIRECTORY_CANCEL }),
   createDirectoryIndex: (
@@ -345,6 +354,7 @@ export const actions = {
     dispatch(
       AppActions.showNotification(i18n.t('core:searching'), 'default', false)
     );
+    dispatch(actions.setSearchQuery(searchQuery));
     setTimeout(() => {
       // Workaround used to show the start search notification
       Search.searchLocationIndex(GlobalSearch.index, searchQuery)
@@ -375,6 +385,7 @@ export const actions = {
       state,
       state.app.currentLocationId
     );
+    console.time('globalSearch');
     dispatch(
       AppActions.showNotification(i18n.t('core:searching'), 'default', false)
     );
@@ -406,7 +417,7 @@ export const actions = {
           }
           if (searchQuery.forceIndexing || !hasIndex) {
             console.log('Creating index for : ' + nextPath);
-            directoryIndex = await createDirectoryIndex(nextPath, true);
+            directoryIndex = await createDirectoryIndex(nextPath, true); // take the last treu from location object
             if (Pro && Pro.Indexer && Pro.Indexer.persistIndex) {
               Pro.Indexer.persistIndex(nextPath, directoryIndex, dirSeparator);
             }
@@ -440,6 +451,7 @@ export const actions = {
 
     result
       .then(() => {
+        console.timeEnd('globalSearch');
         dispatch(
           AppActions.showNotification(
             i18n.t('Global search completed'),
@@ -451,6 +463,7 @@ export const actions = {
         return true;
       })
       .catch(e => {
+        console.timeEnd('globalSearch');
         console.warn('Global search faled!', e);
       });
   },
@@ -489,3 +502,4 @@ export const actions = {
 // Selectors
 export const getIndexedEntriesCount = (state: any) => GlobalSearch.index.length;
 export const isIndexing = (state: any) => state.locationIndex.isIndexing;
+export const getSearchQuery = (state: any) => state.locationIndex.searchQuery;

@@ -57,7 +57,8 @@ import { actions as AppActions, getDirectoryPath } from '../reducers/app';
 import {
   actions as LocationIndexActions,
   getIndexedEntriesCount,
-  isIndexing
+  isIndexing,
+  getSearchQuery
 } from '../reducers/location-index';
 import { getMaxSearchResults } from '../reducers/settings';
 import styles from './SidePanels.css';
@@ -79,6 +80,8 @@ interface Props {
   loadDirectoryContent: (path: string) => void;
   openURLExternally: (url: string) => void;
   hideDrawer?: () => void;
+  searchQuery: () => any;
+  setSearchQuery: (searchQuery: SearchQuery) => void;
   currentDirectory: string;
   indexedEntriesCount: number;
   maxSearchResults: number;
@@ -132,6 +135,18 @@ class Search extends React.Component<Props, State> {
     searchMenuOpened: false,
     searchMenuAnchorEl: null
   };
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.searchQuery && nextProps.searchQuery.tagsAND) {
+      return {
+        ...prevState,
+        tagsAND: nextProps.searchQuery.tagsAND
+      };
+    }
+    return {
+      ...prevState
+    };
+  }
 
   handleInputChange = event => {
     const { target } = event;
@@ -266,29 +281,40 @@ class Search extends React.Component<Props, State> {
   };
 
   clearSearch = () => {
-    this.setState(
-      {
-        textQuery: '',
-        tagsAND: [],
-        tagsOR: [],
-        tagsNOT: [],
-        searchBoxing: 'location',
-        fileTypes: FileTypeGroups.any,
-        lastModified: '',
-        tagTimePeriod: '',
-        tagTimePeriodHelper: ' ',
-        tagPlace: '',
-        tagPlaceHelper: ' ',
-        tagTimePeriodFrom: null,
-        tagTimePeriodTo: null,
-        tagPlaceLat: null,
-        tagPlaceLong: null,
-        tagPlaceRadius: 0,
-        forceIndexing: false,
-        fileSize: ''
-      },
-      () => this.props.loadDirectoryContent(this.props.currentDirectory)
-    );
+    const {
+      setSearchQuery,
+      loadDirectoryContent,
+      currentDirectory
+    } = this.props;
+    setSearchQuery({});
+    setTimeout(() => {
+      // TODO find solution without settimeout
+      this.setState(
+        {
+          textQuery: '',
+          tagsAND: [],
+          tagsOR: [],
+          tagsNOT: [],
+          searchBoxing: 'location',
+          fileTypes: FileTypeGroups.any,
+          lastModified: '',
+          tagTimePeriod: '',
+          tagTimePeriodHelper: ' ',
+          tagPlace: '',
+          tagPlaceHelper: ' ',
+          tagTimePeriodFrom: null,
+          tagTimePeriodTo: null,
+          tagPlaceLat: null,
+          tagPlaceLong: null,
+          tagPlaceRadius: 0,
+          forceIndexing: false,
+          fileSize: ''
+        },
+        () => {
+          loadDirectoryContent(currentDirectory);
+        }
+      );
+    }, 100);
   };
 
   switchSearchBoxing = (
@@ -301,6 +327,11 @@ class Search extends React.Component<Props, State> {
   };
 
   executeSearch = () => {
+    const {
+      setSearchQuery,
+      searchAllLocations,
+      searchLocationIndex
+    } = this.props;
     const searchQuery: SearchQuery = {
       textQuery: this.state.textQuery,
       tagsAND: this.state.tagsAND,
@@ -325,10 +356,11 @@ class Search extends React.Component<Props, State> {
       forceIndexing: this.state.forceIndexing
     };
     console.log('Search object: ' + JSON.stringify(searchQuery));
+    setSearchQuery(searchQuery);
     if (this.state.searchBoxing === 'global') {
-      this.props.searchAllLocations(searchQuery);
+      searchAllLocations(searchQuery);
     } else {
-      this.props.searchLocationIndex(searchQuery);
+      searchLocationIndex(searchQuery);
     }
   };
 
@@ -750,6 +782,7 @@ class Search extends React.Component<Props, State> {
 function mapStateToProps(state) {
   return {
     indexing: isIndexing(state),
+    searchQuery: getSearchQuery(state),
     currentDirectory: getDirectoryPath(state),
     indexedEntriesCount: getIndexedEntriesCount(state),
     maxSearchResults: getMaxSearchResults(state)
@@ -760,6 +793,7 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
       searchAllLocations: LocationIndexActions.searchAllLocations,
+      setSearchQuery: LocationIndexActions.setSearchQuery,
       searchLocationIndex: LocationIndexActions.searchLocationIndex,
       createLocationsIndexes: LocationIndexActions.createLocationsIndexes,
       loadDirectoryContent: AppActions.loadDirectoryContent,
