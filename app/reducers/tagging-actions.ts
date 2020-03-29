@@ -53,6 +53,9 @@ const actions = {
     tags.map(pTag => {
       const tag = { ...pTag };
       tag.type = 'sidecar';
+      if (tag.id) {
+        delete tag.id;
+      }
       if (tag.functionality && tag.functionality.length > 0) {
         delete tag.color;
         delete tag.textcolor;
@@ -82,7 +85,6 @@ const actions = {
           }
         } else {
           tag.title = generateTagValue(tag);
-          tag.id = uuidv1();
           delete tag.functionality;
           processedTags.push(tag);
         }
@@ -144,7 +146,6 @@ const actions = {
     } catch (error) {
       console.log('No sidecar found ' + error);
     }
-
     if (!entryProperties.isFile || settings.persistTagsInSidecarFile) {
       // Handling adding tags in sidecar
       if (fsEntryMeta) {
@@ -287,6 +288,7 @@ const actions = {
     delete tag.description;
     delete tag.functionality;
     delete tag.path;
+    delete tag.id;
     // TODO: Handle adding already added tags
     if (tag.type === 'plain') {
       const fileName = extractFileName(path);
@@ -402,8 +404,7 @@ const actions = {
           ...tag,
           title: newTagTitle,
           color: settings.tagBackgroundColor,
-          textcolor: settings.tagTextColor,
-          id: uuidv1()
+          textcolor: settings.tagTextColor
         });
       }
       if (uniqueTags.length > 0) {

@@ -106,7 +106,6 @@ export default [
         id: uuidv1(),
         type: 'plain',
         title: 'high',
-        description: '',
         color: '#ff7537',
         textcolor: '#ffffff'
       },

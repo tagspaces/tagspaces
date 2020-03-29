@@ -417,7 +417,7 @@ export const actions = {
           }
           if (searchQuery.forceIndexing || !hasIndex) {
             console.log('Creating index for : ' + nextPath);
-            directoryIndex = await createDirectoryIndex(nextPath, true); // take the last treu from location object
+            directoryIndex = await createDirectoryIndex(nextPath, true); // TODO: take the last treu from location object
             if (Pro && Pro.Indexer && Pro.Indexer.persistIndex) {
               Pro.Indexer.persistIndex(nextPath, directoryIndex, dirSeparator);
             }

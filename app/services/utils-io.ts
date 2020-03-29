@@ -72,6 +72,9 @@ export function enhanceEntry(entry: any): FileSystemEntry {
     sidecarTags = entry.meta.tags || [];
     sidecarTags.map(tag => {
       tag.type = 'sidecar';
+      if (tag.id) {
+        delete tag.id;
+      }
       return true;
     });
   }
