@@ -137,7 +137,11 @@ class Search extends React.Component<Props, State> {
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.searchQuery && nextProps.searchQuery.tagsAND) {
+    if (
+      prevState.tagsAND.length < 1 &&
+      nextProps.searchQuery &&
+      nextProps.searchQuery.tagsAND
+    ) {
       return {
         ...prevState,
         tagsAND: nextProps.searchQuery.tagsAND
@@ -750,14 +754,14 @@ class Search extends React.Component<Props, State> {
             />
           </FormControl>
           <FormControl className={classes.formControl}>
-            <ButtonGroup>
+            <ButtonGroup style={{ justifyContent: 'center' }}>
               <Button
                 disabled={indexing}
                 id="searchButton"
                 variant="outlined"
                 color="primary"
                 onClick={this.clickSearchButton}
-                style={{ width: '100%' }}
+                style={{ width: '70%' }}
               >
                 {indexing
                   ? 'Search disabled while indexing'
