@@ -139,6 +139,7 @@ const TagsSelect = (props: Props) => {
         freeSolo
         autoSelect
         autoComplete
+        disableClearable
         value={tags}
         onChange={handleTagChange}
         renderTags={(value: Tag[]) =>
@@ -148,12 +149,13 @@ const TagsSelect = (props: Props) => {
               tag={tag}
               tagMode="remove"
               handleRemoveTag={(event, cTag) => {
-                for (let i = 0; i < tags.length; i += 1) {
-                  if (tags[i].title === cTag.title) {
-                    tags.splice(i, 1);
+                const reducedTags = [...tags];
+                for (let i = 0; i < reducedTags.length; i += 1) {
+                  if (reducedTags[i].title === cTag.title) {
+                    reducedTags.splice(i, 1);
                   }
                 }
-                handleTagChange(event, [...tags], 'remove-value');
+                handleTagChange(event, reducedTags, 'remove-value');
               }}
             />
           ))
