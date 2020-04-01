@@ -391,13 +391,10 @@ export const actions = {
     );
     dispatch(AppActions.setSearchResults([]));
     const allLocations = getLocations(state);
-    const locationPaths = [];
-    allLocations.forEach(location => {
-      locationPaths.push(location.paths[0]);
-    });
-    const result = locationPaths.reduce(
-      (accumulatorPromise, nextPath) =>
+    const result = allLocations.reduce(
+      (accumulatorPromise, location) =>
         accumulatorPromise.then(async () => {
+          const nextPath = location.paths[0];
           let directoryIndex = [];
           let hasIndex = false;
           const dirSeparator =
@@ -417,7 +414,10 @@ export const actions = {
           }
           if (searchQuery.forceIndexing || !hasIndex) {
             console.log('Creating index for : ' + nextPath);
-            directoryIndex = await createDirectoryIndex(nextPath, true); // TODO: take the last treu from location object
+            directoryIndex = await createDirectoryIndex(
+              nextPath,
+              location.fullTextIndex
+            );
             if (Pro && Pro.Indexer && Pro.Indexer.persistIndex) {
               Pro.Indexer.persistIndex(nextPath, directoryIndex, dirSeparator);
             }
