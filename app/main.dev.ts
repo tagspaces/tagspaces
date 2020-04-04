@@ -255,6 +255,7 @@ app.on('ready', async () => {
 
   ipcMain.on('global-shortcuts-enabled', (e, globalShortcutsEnabled) => {
     if (globalShortcutsEnabled) {
+      globalShortcut.register('CommandOrControl+Shift+F', showSearch);
       globalShortcut.register('CommandOrControl+Shift+P', resumePlayback);
       globalShortcut.register('MediaPlayPause', resumePlayback);
       globalShortcut.register('CommandOrControl+Shift+N', newTextFile);
@@ -290,26 +291,30 @@ app.on('ready', async () => {
       mainWindow.restore();
       mainWindow.show();
     }
-    // mainWindow.webContents.send("showing-tagspaces", "tagspaces");
+  }
+
+  function showSearch() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('file', 'open-search');
+    }
   }
 
   function newTextFile() {
     if (mainWindow) {
-      mainWindow.show();
+      showTagSpaces();
       mainWindow.webContents.send('file', 'new-text-file');
     }
   }
 
   function getNextFile() {
     if (mainWindow) {
-      // mainWindow.show();
       mainWindow.webContents.send('file', 'next-file');
     }
   }
 
   function getPreviousFile() {
     if (mainWindow) {
-      // mainWindow.show();
       mainWindow.webContents.send('file', 'previous-file');
     }
   }

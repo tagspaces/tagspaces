@@ -38,6 +38,9 @@ export default function buildDesktopMenu(mainPageProps: any) {
       case 'new-text-file':
         mainPageProps.toggleCreateFileDialog();
         break;
+      case 'open-search':
+        mainPageProps.openSearchPanel();
+        break;
       case 'audio':
         // console.log('showAudioRecordingDialog');
         break;

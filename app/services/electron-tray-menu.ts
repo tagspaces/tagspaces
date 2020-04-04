@@ -51,6 +51,10 @@ export default function buildTrayIconMenu(mainPageProps: any) {
       click: PlatformIO.showMainWindow
     },
     {
+      label: i18n.t('core:showSearch') + cKey + '+Shift+F',
+      click: mainPageProps.openSearchPanel
+    },
+    {
       type: 'separator'
     },
     {
