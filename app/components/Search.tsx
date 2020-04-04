@@ -152,36 +152,59 @@ class Search extends React.Component<Props, State> {
     };
   }
 
-  handleInputChange = event => {
-    const { target } = event;
-    const value =
-      target.type && target.type === 'checkbox' ? target.checked : target.value;
-    const { name } = target;
+  componentDidUpdate() {
+    const {
+      textQuery,
+      tagPlace,
+      tagTimePeriod,
+      tagsAND,
+      tagsOR,
+      tagsNOT
+    } = this.state;
+    if (
+      !textQuery.length &&
+      !tagPlace.length &&
+      !tagTimePeriod.length &&
+      !tagsAND.length &&
+      !tagsOR.length &&
+      !tagsNOT.length
+    ) {
+      this.focusMainSearchFiled();
+    }
+  }
 
-    this.setState(
-      // @ts-ignore
-      {
-        [name]: value
-      },
-      this.executeSearch
-    );
+  mainSearchField;
+
+  focusMainSearchFiled = () => {
+    if (this.mainSearchField) {
+      this.mainSearchField.focus();
+    }
   };
 
-  // handleFileTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const { target } = event;
-  //   const { value, name } = target;
+  handleFileTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { target } = event;
+    const { value, name } = target;
 
-  //   if (name === 'fileTypes') {
-  //     this.setState({ fileTypes: [value] }, this.executeSearch);
-  //   }
-  // };
+    if (name === 'fileTypes') {
+      // @ts-ignore
+      this.setState({ fileTypes: value }, () => {
+        if (this.state.searchBoxing !== 'global') {
+          this.executeSearch();
+        }
+      });
+    }
+  };
 
   handleFileSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
     const { value, name } = target;
 
     if (name === 'fileSize') {
-      this.setState({ fileSize: value }, this.executeSearch);
+      this.setState({ fileSize: value }, () => {
+        if (this.state.searchBoxing !== 'global') {
+          this.executeSearch();
+        }
+      });
     }
   };
 
@@ -190,13 +213,21 @@ class Search extends React.Component<Props, State> {
     const { value, name } = target;
 
     if (name === 'lastModified') {
-      this.setState({ lastModified: value }, this.executeSearch);
+      this.setState({ lastModified: value }, () => {
+        if (this.state.searchBoxing !== 'global') {
+          this.executeSearch();
+        }
+      });
     }
   };
 
   handleTagFieldChange = (name, value) => {
     // @ts-ignore
-    this.setState({ [name]: value }, this.executeSearch);
+    this.setState({ [name]: value }, () => {
+      if (this.state.searchBoxing !== 'global') {
+        this.executeSearch();
+      }
+    });
   };
 
   handleTimePeriodChange = event => {
@@ -316,6 +347,7 @@ class Search extends React.Component<Props, State> {
         },
         () => {
           loadDirectoryContent(currentDirectory);
+          this.focusMainSearchFiled();
         }
       );
     }, 100);
@@ -430,6 +462,10 @@ class Search extends React.Component<Props, State> {
               onChange={event => {
                 this.setState({ textQuery: event.target.value });
               }}
+              inputRef={input => {
+                this.mainSearchField = input;
+              }}
+              autoFocus
               onKeyDown={this.startSearch}
               title={i18n.t('core:searchWordsWithInterval')}
               endAdornment={
@@ -472,6 +508,7 @@ class Search extends React.Component<Props, State> {
             <FormControlLabel
               control={
                 <Switch
+                  title="By enabling this option, the search will deliver better results, but it could take longer"
                   checked={this.state.forceIndexing}
                   onChange={() =>
                     this.setState(prevState => ({
@@ -525,7 +562,7 @@ class Search extends React.Component<Props, State> {
             </InputLabel>
             <Select
               value={this.state.fileTypes}
-              onChange={this.handleInputChange}
+              onChange={this.handleFileTypeChange}
               input={<Input name="fileTypes" id="file-type" />}
             >
               <MenuItem value={FileTypeGroups.any}>
