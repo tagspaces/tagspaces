@@ -171,18 +171,11 @@ class EditLocationDialog extends React.Component<Props, State> {
       let cloudErrorTextName = false;
       let cloudErrorAccessKey = false;
       let cloudErrorSecretAccessKey = false;
-      let cloudErrorBucketName = false;
-      const cloudErrorRegion = false;
       let disableConfirmButton = false;
       if (!this.state.storeName || this.state.storeName.length === 0) {
         cloudErrorTextName = true;
         disableConfirmButton = true;
       }
-
-      /* if (!this.state.storePath || this.state.storePath.length === 0) {
-        cloudErrorTextPath = true;
-        disableConfirmButton = true;
-      } */
 
       if (!this.state.accessKeyId || this.state.accessKeyId.length === 0) {
         cloudErrorAccessKey = true;
@@ -197,24 +190,12 @@ class EditLocationDialog extends React.Component<Props, State> {
         disableConfirmButton = true;
       }
 
-      if (!this.state.bucketName || this.state.bucketName.length === 0) {
-        cloudErrorBucketName = true;
-        disableConfirmButton = true;
-      }
-
-      // if (!this.state.region) {
-      //   cloudErrorRegion = true;
-      //   disableConfirmButton = true;
-      // }
-
       // @ts-ignore
       this.setState({
         cloudErrorTextName,
-        cloudErrorBucketName,
         cloudErrorAccessKey,
         cloudErrorSecretAccessKey,
-        disableConfirmButton,
-        cloudErrorRegion
+        disableConfirmButton
       });
     } else {
       let errorTextName = false;
@@ -345,8 +326,8 @@ class EditLocationDialog extends React.Component<Props, State> {
                 <FormControlLabel
                   value={locationType.TYPE_CLOUD}
                   control={<Radio />}
-                  title="AWS S3 compatible object storage"
-                  label="AWS S3 Object Storage"
+                  title={i18n.t('core:objectStorageTitle')}
+                  label={i18n.t('core:objectStorage')}
                 />
               </RadioGroup>
             </FormControl>

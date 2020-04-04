@@ -138,89 +138,26 @@ class CreateLocationDialog extends React.Component<Props, State> {
       {
         [name]: value
       },
-      () => {
-        this.handleValidation(name);
-      }
+      this.handleValidation
     );
   };
 
-  handleValidation(field) {
+  handleValidation() {
     // const pathRegex = this.state.path.match('^((\.\./|[a-zA-Z0-9_/\-\\])*\.[a-zA-Z0-9]+)$');
     // const nameRegex = this.state.name.match('^[A-Z][-a-zA-Z]+$');
-    if (this.state.type === locationType.TYPE_LOCAL) {
-      let errorTextName = false;
-      let errorTextPath = false;
-      let disableConfirmButton = false;
-      if (!this.state.name || this.state.name.length === 0) {
-        errorTextName = true;
-        disableConfirmButton = true;
-      } else if (
-        field === 'name' &&
-        !this.state.errorTextName &&
-        !this.state.errorTextPath &&
-        this.state.disableConfirmButton
-      ) {
-        // initial skip validation for other fields
-        return new Promise(resolve => {
-          resolve(true);
-        });
-      }
-      if (!this.state.path || this.state.path.length === 0) {
-        errorTextPath = true; // make it optinal in cloud mode
-        disableConfirmButton = true;
-      }
-      return new Promise(resolve =>
-        this.setState(
-          { errorTextName, errorTextPath, disableConfirmButton },
-          // @ts-ignore
-          resolve(!disableConfirmButton)
-        )
-      );
-    }
     if (this.state.type === locationType.TYPE_CLOUD) {
       let cloudErrorTextName = false;
-      // let cloudErrorTextPath = false;
       let cloudErrorAccessKey = false;
       let cloudErrorSecretAccessKey = false;
-      let cloudErrorBucketName = false;
-      let cloudErrorRegion = false;
       let disableConfirmButton = false;
       if (!this.state.storeName || this.state.storeName.length === 0) {
         cloudErrorTextName = true;
         disableConfirmButton = true;
-      } else if (
-        field === 'storeName' &&
-        !this.state.cloudErrorTextName &&
-        // && !this.state.cloudErrorTextPath
-        !this.state.cloudErrorAccessKey &&
-        !this.state.cloudErrorSecretAccessKey &&
-        !this.state.cloudErrorBucketName &&
-        !this.state.cloudErrorRegion &&
-        this.state.disableConfirmButton
-      ) {
-        // initial skip validation for other fields
-        return new Promise(resolve => {
-          resolve(true);
-        });
       }
 
       if (!this.state.accessKeyId || this.state.accessKeyId.length === 0) {
         cloudErrorAccessKey = true;
         disableConfirmButton = true;
-      } else if (
-        field === 'accessKeyId' &&
-        !this.state.cloudErrorTextName &&
-        // && !this.state.cloudErrorTextPath
-        !this.state.cloudErrorAccessKey &&
-        !this.state.cloudErrorSecretAccessKey &&
-        !this.state.cloudErrorBucketName &&
-        !this.state.cloudErrorRegion &&
-        this.state.disableConfirmButton
-      ) {
-        // initial skip validation for other fields
-        return new Promise(resolve => {
-          resolve(true);
-        });
       }
 
       if (
@@ -229,113 +166,66 @@ class CreateLocationDialog extends React.Component<Props, State> {
       ) {
         cloudErrorSecretAccessKey = true;
         disableConfirmButton = true;
-      } else if (
-        field === 'secretAccessKey' &&
-        !this.state.cloudErrorTextName &&
-        // && !this.state.cloudErrorTextPath
-        !this.state.cloudErrorAccessKey &&
-        !this.state.cloudErrorSecretAccessKey &&
-        !this.state.cloudErrorBucketName &&
-        !this.state.cloudErrorRegion &&
-        this.state.disableConfirmButton
-      ) {
-        // initial skip validation for other fields
-        return new Promise(resolve => {
-          resolve(true);
-        });
       }
 
-      if (!this.state.bucketName || this.state.bucketName.length === 0) {
-        cloudErrorBucketName = true;
-        disableConfirmButton = true;
-      } else if (
-        field === 'bucketName' &&
-        !this.state.cloudErrorTextName &&
-        // && !this.state.cloudErrorTextPath
-        !this.state.cloudErrorAccessKey &&
-        !this.state.cloudErrorSecretAccessKey &&
-        !this.state.cloudErrorBucketName &&
-        !this.state.cloudErrorRegion &&
-        this.state.disableConfirmButton
-      ) {
-        // initial skip validation for other fields
-        return new Promise(resolve => {
-          resolve(true);
-        });
-      }
-
-      if (!this.state.region) {
-        cloudErrorRegion = true;
+      // @ts-ignore
+      this.setState({
+        cloudErrorTextName,
+        cloudErrorAccessKey,
+        cloudErrorSecretAccessKey,
+        disableConfirmButton
+      });
+    } else {
+      let errorTextName = false;
+      let errorTextPath = false;
+      let disableConfirmButton = false;
+      if (!this.state.name || this.state.name.length === 0) {
+        errorTextName = true;
         disableConfirmButton = true;
       }
-
-      return new Promise(resolve =>
-        this.setState(
-          // @ts-ignore
-          {
-            cloudErrorTextName,
-            cloudErrorAccessKey,
-            cloudErrorSecretAccessKey,
-            cloudErrorBucketName,
-            disableConfirmButton,
-            cloudErrorRegion
-          },
-          () => {
-            resolve(!disableConfirmButton);
-          }
-        )
-      );
+      if (!this.state.path || this.state.path.length === 0) {
+        errorTextPath = true;
+        disableConfirmButton = true;
+      }
+      this.setState({ errorTextName, errorTextPath, disableConfirmButton });
     }
-    return new Promise(resolve => {
-      resolve(true);
-    });
   }
 
   onConfirm = () => {
-    // @ts-ignore
-    this.handleValidation()
-      .then(success => {
-        if (success) {
-          if (this.state.type === locationType.TYPE_LOCAL) {
-            this.props.addLocation({
-              uuid: uuidv1(),
-              type: locationType.TYPE_LOCAL,
-              name: this.state.name,
-              paths: [this.state.path],
-              perspective: this.state.perspective,
-              isDefault: this.state.isDefault,
-              isReadOnly: this.state.isReadOnly,
-              persistIndex: this.state.persistIndex,
-              fullTextIndex: this.state.fullTextIndex,
-              watchForChanges: this.state.watchForChanges
-            });
-          } else if (this.state.type === locationType.TYPE_CLOUD) {
-            this.props.addLocation({
-              uuid: uuidv1(),
-              type: locationType.TYPE_CLOUD,
-              name: this.state.storeName,
-              paths: [this.state.storePath],
-              endpointURL: this.state.endpointURL,
-              accessKeyId: this.state.accessKeyId,
-              secretAccessKey: this.state.secretAccessKey,
-              bucketName: this.state.bucketName,
-              region: this.state.region,
-              perspective: this.state.perspective,
-              isDefault: this.state.isDefault,
-              isReadOnly: this.state.isReadOnly,
-              persistIndex: this.state.persistIndex,
-              fullTextIndex: this.state.fullTextIndex,
-              watchForChanges: false
-            });
-          }
-          this.props.onClose();
-          this.props.resetState('createLocationDialogKey');
-        }
-        return true;
-      })
-      .catch(error => {
-        console.debug('Failed validation', error);
-      });
+    if (!this.state.disableConfirmButton) {
+      if (this.state.type === locationType.TYPE_LOCAL) {
+        this.props.addLocation({
+          uuid: uuidv1(),
+          type: locationType.TYPE_LOCAL,
+          name: this.state.name,
+          paths: [this.state.path],
+          isDefault: this.state.isDefault,
+          isReadOnly: this.state.isReadOnly,
+          persistIndex: this.state.persistIndex,
+          fullTextIndex: this.state.fullTextIndex,
+          watchForChanges: this.state.watchForChanges
+        });
+      } else if (this.state.type === locationType.TYPE_CLOUD) {
+        this.props.addLocation({
+          uuid: uuidv1(),
+          type: locationType.TYPE_CLOUD,
+          name: this.state.storeName,
+          paths: [this.state.storePath],
+          endpointURL: this.state.endpointURL,
+          accessKeyId: this.state.accessKeyId,
+          secretAccessKey: this.state.secretAccessKey,
+          bucketName: this.state.bucketName,
+          region: this.state.region,
+          isDefault: this.state.isDefault,
+          isReadOnly: this.state.isReadOnly,
+          persistIndex: this.state.persistIndex,
+          fullTextIndex: this.state.fullTextIndex,
+          watchForChanges: false
+        });
+      }
+      this.props.onClose();
+      this.props.resetState('createLocationDialogKey');
+    }
   };
 
   onCancel = () => {
@@ -402,8 +292,8 @@ class CreateLocationDialog extends React.Component<Props, State> {
                   <FormControlLabel
                     value={locationType.TYPE_CLOUD}
                     control={<Radio />}
-                    title="AWS S3 compatible object storage"
-                    label="AWS S3 Object Storage"
+                    title={i18n.t('core:objectStorageTitle')}
+                    label={i18n.t('core:objectStorage')}
                   />
                 </RadioGroup>
               </FormControl>

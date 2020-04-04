@@ -121,6 +121,7 @@ class ObjectStoreForm extends React.Component<Props> {
             </InputLabel>
             <Input
               required
+              autoFocus
               margin="dense"
               name="storeName"
               fullWidth={true}
@@ -196,7 +197,6 @@ class ObjectStoreForm extends React.Component<Props> {
               {i18n.t('core:bucketName')}
             </InputLabel>
             <Input
-              required
               margin="dense"
               name="bucketName"
               fullWidth={true}
@@ -234,7 +234,7 @@ class ObjectStoreForm extends React.Component<Props> {
           </FormControl>
         </Grid>
         <Grid item xs={12}>
-          <FormControl fullWidth={true} error={state.cloudErrorSecretAccessKey}>
+          <FormControl fullWidth={true}>
             <InputLabel htmlFor="endpointURL">
               {i18n.t('core:endpointURL')}
             </InputLabel>
@@ -247,11 +247,6 @@ class ObjectStoreForm extends React.Component<Props> {
               onChange={handleInputChange}
               value={state.endpointURL}
             />
-            {state.cloudErrorSecretAccessKey && (
-              <FormHelperText>
-                {i18n.t('core:invalidEndpointUrl')}
-              </FormHelperText>
-            )}
           </FormControl>
         </Grid>
       </Grid>

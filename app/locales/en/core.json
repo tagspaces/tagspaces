@@ -365,8 +365,8 @@
   "errorLoadingFolder": "Error loading directory",
   "fileCreateSuccessfully": "File create successfully",
   "errorCreatingFile": "Error creating file",
-  "connectedtoObjectStore": "Connected to object store",
-  "connectedtoObjectStoreFailed": "Connection to object store failed!",
+  "connectedtoObjectStore": "Connected to object storage",
+  "connectedtoObjectStoreFailed": "Connection to object storage failed!",
   "renamingSuccessfully": "Renaming successfully.",
   "notImplementedYet": "Not implemented yet, please use the save button.",
   "generatingThumbnailsFailed": "Generating thumbnails failed",
@@ -453,5 +453,8 @@
   "location": "Location",
   "folder": "Folder",
   "globalSearch": "Global",
+  "objectStorage": "Object Storage (Amazon S3, Minio)",
+  "objectStorageTitle": "Amazon S3 complient object storage",
+  "endpointURL": "Endpoint URL",
   "-": "-"
 }
