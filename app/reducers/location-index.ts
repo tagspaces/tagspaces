@@ -355,6 +355,7 @@ export const actions = {
       AppActions.showNotification(i18n.t('core:searching'), 'default', false)
     );
     dispatch(actions.setSearchQuery(searchQuery));
+    window.walkCanceled = false;
     setTimeout(() => {
       // Workaround used to show the start search notification
       Search.searchLocationIndex(GlobalSearch.index, searchQuery)
@@ -390,10 +391,19 @@ export const actions = {
       AppActions.showNotification(i18n.t('core:searching'), 'default', false)
     );
     dispatch(AppActions.setSearchResults([]));
+    window.walkCanceled = false;
     const allLocations = getLocations(state);
+    let searchResultCount = 0;
+    let maxSearchResultReached = false;
     const result = allLocations.reduce(
       (accumulatorPromise, location) =>
         accumulatorPromise.then(async () => {
+          // cancel search if max search result count reached
+          if (searchResultCount >= searchQuery.maxSearchResults) {
+            maxSearchResultReached = true;
+            Promise.resolve();
+            return true;
+          }
           const nextPath = location.paths[0];
           let directoryIndex = [];
           let hasIndex = false;
@@ -430,6 +440,7 @@ export const actions = {
           }
           return Search.searchLocationIndex(directoryIndex, searchQuery)
             .then(searchResults => {
+              searchResultCount += searchResults.length;
               dispatch(AppActions.appendSearchResults(searchResults));
               dispatch(AppActions.hideNotifications());
               return true;
@@ -452,19 +463,31 @@ export const actions = {
     result
       .then(() => {
         console.timeEnd('globalSearch');
-        dispatch(
-          AppActions.showNotification(
-            i18n.t('Global search completed'),
-            'default',
-            true
-          )
-        );
+        if (maxSearchResultReached) {
+          dispatch(
+            AppActions.showNotification(
+              'Global search finished, reaching the max. search results. The first ' +
+                searchResultCount +
+                ' entries are listed.',
+              'default',
+              true
+            )
+          );
+        } else {
+          dispatch(
+            AppActions.showNotification(
+              i18n.t('Global search completed'),
+              'default',
+              true
+            )
+          );
+        }
         console.log('Global search completed!');
         return true;
       })
       .catch(e => {
         console.timeEnd('globalSearch');
-        console.warn('Global search faled!', e);
+        console.warn('Global search failed!', e);
       });
   },
   indexDirectorySuccess: () => ({

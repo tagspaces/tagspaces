@@ -384,10 +384,9 @@ class FolderContainer extends React.Component<Props, State> {
     let searchResultCounterText = searchResultCount + ' ' + i18n.t('entries');
     if (searchResultCount >= maxSearchResults) {
       searchResultCounterText =
-        'More than ' +
-        (maxSearchResults - 1) +
-        ' entries found, showing only the first ' +
-        maxSearchResults;
+        'Max. search count reached, showing only the first ' +
+        searchResultCount +
+        ' entries.';
     }
     return (
       <div>
