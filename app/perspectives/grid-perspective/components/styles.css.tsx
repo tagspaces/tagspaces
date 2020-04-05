@@ -128,8 +128,6 @@ export default (theme: any): any => ({
   rowFolder: {
     color: 'white',
     padding: 5,
-    marginRight: 5,
-    marginTop: 5,
     minHeight: 10,
     height: 20
   },

@@ -25,7 +25,7 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import FolderIcon from '@material-ui/icons/FolderOpen';
-import TagIcon from '@material-ui/icons/LocalOffer';
+import TagIcon from '@material-ui/icons/LocalOfferOutlined';
 import { formatFileSize, formatDateTime } from '-/utils/misc';
 import { extractTitle } from '-/utils/paths';
 import { FileSystemEntry, findColorForFileEntry } from '-/services/utils-io';
@@ -230,6 +230,8 @@ const CellContent = (props: Props) => {
           item
           style={{
             minHeight: entryHeight,
+            width: 70,
+            maxWidth: 70,
             padding: 10,
             marginRight: 5,
             backgroundColor: fsEntryBackgroundColor
@@ -252,12 +254,31 @@ const CellContent = (props: Props) => {
             </span>
           )}
         </Grid>
-        <Grid item xs zeroMinWidth>
-          <Typography style={{ wordBreak: 'break-all' }}>
-            {extractTitle(fsEntry.name, !fsEntry.isFile)}
-          </Typography>
-          {showTags ? fsEntry.tags.map(tag => renderTag(tag)) : tagPlaceholder}
-          {entrySize !== 'small' && (
+        {entrySize === 'small' ? (
+          <Grid
+            item
+            xs
+            zeroMinWidth
+            style={{
+              display: 'flex'
+            }}
+          >
+            <Typography style={{ wordBreak: 'break-all', alignSelf: 'center' }}>
+              {extractTitle(fsEntry.name, !fsEntry.isFile)}
+              &nbsp;
+              {showTags
+                ? fsEntry.tags.map(tag => renderTag(tag))
+                : tagPlaceholder}
+            </Typography>
+          </Grid>
+        ) : (
+          <Grid item xs zeroMinWidth>
+            <Typography style={{ wordBreak: 'break-all' }}>
+              {extractTitle(fsEntry.name, !fsEntry.isFile)}
+            </Typography>
+            {showTags
+              ? fsEntry.tags.map(tag => renderTag(tag))
+              : tagPlaceholder}
             <Typography
               style={{
                 color: 'gray',
@@ -286,8 +307,8 @@ const CellContent = (props: Props) => {
                 {description && description}
               </span>
             </Typography>
-          )}
-        </Grid>
+          </Grid>
+        )}
         {fsEntry.thumbPath && (
           <Grid item>
             <img
