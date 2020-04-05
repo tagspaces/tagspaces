@@ -39,6 +39,7 @@ import PlaceIcon from '@material-ui/icons/Place';
 import DateIcon from '@material-ui/icons/DateRange';
 import Button from '@material-ui/core/Button';
 import Input from '@material-ui/core/Input';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
 import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -455,7 +456,7 @@ class Search extends React.Component<Props, State> {
             style={{ marginTop: 10 }}
             disabled={indexing}
           >
-            <Input
+            <OutlinedInput
               id="textQuery"
               name="textQuery"
               value={this.state.textQuery}
@@ -465,12 +466,17 @@ class Search extends React.Component<Props, State> {
               inputRef={input => {
                 this.mainSearchField = input;
               }}
+              margin="dense"
               autoFocus
               onKeyDown={this.startSearch}
               title={i18n.t('core:searchWordsWithInterval')}
               endAdornment={
                 <InputAdornment position="end">
-                  <IconButton onClick={this.clearSearch}>
+                  <IconButton
+                    onClick={this.clearSearch}
+                    size="small"
+                    edge="end"
+                  >
                     <ClearSearchIcon />
                   </IconButton>
                 </InputAdornment>
