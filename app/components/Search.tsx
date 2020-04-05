@@ -82,6 +82,7 @@ interface Props {
   openURLExternally: (url: string) => void;
   hideDrawer?: () => void;
   searchQuery: () => any;
+  setSearchResults: (entries: Array<any>) => void;
   setSearchQuery: (searchQuery: SearchQuery) => void;
   currentDirectory: string;
   indexedEntriesCount: number;
@@ -320,7 +321,8 @@ class Search extends React.Component<Props, State> {
     const {
       setSearchQuery,
       loadDirectoryContent,
-      currentDirectory
+      currentDirectory,
+      setSearchResults
     } = this.props;
     setSearchQuery({});
     setTimeout(() => {
@@ -347,7 +349,11 @@ class Search extends React.Component<Props, State> {
           fileSize: ''
         },
         () => {
-          loadDirectoryContent(currentDirectory);
+          if (currentDirectory) {
+            loadDirectoryContent(currentDirectory);
+          } else {
+            setSearchResults([]);
+          }
           this.focusMainSearchFiled();
         }
       );
@@ -844,7 +850,8 @@ function mapDispatchToProps(dispatch) {
       searchLocationIndex: LocationIndexActions.searchLocationIndex,
       createLocationsIndexes: LocationIndexActions.createLocationsIndexes,
       loadDirectoryContent: AppActions.loadDirectoryContent,
-      openURLExternally: AppActions.openURLExternally
+      openURLExternally: AppActions.openURLExternally,
+      setSearchResults: AppActions.setSearchResults
     },
     dispatch
   );

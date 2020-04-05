@@ -309,7 +309,10 @@ class FolderContainer extends React.Component<Props, State> {
   };
 
   renderPerspective() {
-    if (!this.props.currentDirectoryPath) {
+    if (
+      !this.props.currentDirectoryPath &&
+      this.props.directoryContent.length < 1
+    ) {
       return <WelcomePanelAsync />;
     }
     if (this.state.currentPerspective === 'gallery') {
@@ -415,71 +418,69 @@ class FolderContainer extends React.Component<Props, State> {
                 }}
               />
               <div className={classes.flexMiddle} />
-              {currentDirectoryPath && (
-                <React.Fragment>
-                  {isDesktopMode &&
-                    this.state.pathParts &&
-                    this.state.pathParts.map(pathPart => (
+              <React.Fragment>
+                {isDesktopMode &&
+                  this.state.pathParts &&
+                  this.state.pathParts.map(pathPart => (
+                    <Button
+                      key={pathPart}
+                      onClick={() => loadDirectoryContent(pathPart)}
+                      title={'Navigate to: ' + pathPart}
+                      style={{
+                        paddingLeft: 3,
+                        paddingRight: 0,
+                        minWidth: 10
+                      }}
+                    >
+                      {extractShortDirectoryName(pathPart, '/')}
+                      <FolderSeparatorIcon />
+                    </Button>
+                  ))}
+                {!isDesktopMode &&
+                  this.state.pathParts &&
+                  this.state.pathParts.length > 0 && (
+                    <React.Fragment>
                       <Button
-                        key={pathPart}
-                        onClick={() => loadDirectoryContent(pathPart)}
-                        title={'Navigate to: ' + pathPart}
-                        style={{
-                          paddingLeft: 3,
-                          paddingRight: 0,
-                          minWidth: 10
-                        }}
+                        onClick={loadParentDirectoryContent}
+                        data-tid="openParentDirectory"
+                        style={{ paddingLeft: 3, paddingRight: 0 }}
                       >
-                        {extractShortDirectoryName(pathPart, '/')}
-                        <FolderSeparatorIcon />
+                        <BackButtonIcon />
                       </Button>
-                    ))}
-                  {!isDesktopMode &&
-                    this.state.pathParts &&
-                    this.state.pathParts.length > 0 && (
-                      <React.Fragment>
-                        <Button
-                          onClick={loadParentDirectoryContent}
-                          data-tid="openParentDirectory"
-                          style={{ paddingLeft: 3, paddingRight: 0 }}
-                        >
-                          <BackButtonIcon />
-                        </Button>
-                      </React.Fragment>
-                    )}
-                  <Button
-                    data-tid="folderContainerOpenDirMenu"
-                    title={
-                      i18n.t('core:openDirectoryMenu') +
-                      ' - ' +
-                      (currentDirectoryPath || '')
-                    }
-                    className={classes.folderButton}
-                    onClick={this.openDirectoryMenu}
-                    onContextMenu={this.openDirectoryMenu}
-                  >
-                    {extractShortDirectoryName(
-                      normalizePath(normalizedCurrentDirPath),
-                      '/'
-                    )}
-                    <MoreVertIcon />
-                  </Button>
-                  <DirectoryMenu
-                    open={this.state.directoryContextMenuOpened}
-                    onClose={this.closeDirectoryMenu}
-                    anchorEl={this.state.directoryContextMenuAnchorEl}
-                    directoryPath={currentDirectoryPath}
-                    loadDirectoryContent={this.props.loadDirectoryContent}
-                    openDirectory={this.props.openDirectory}
-                    reflectCreateEntry={this.props.reflectCreateEntry}
-                    openFile={this.props.openFile}
-                    toggleCreateFileDialog={this.props.toggleCreateFileDialog}
-                    deleteDirectory={this.props.deleteDirectory}
-                    switchPerspective={this.switchPerspective}
-                    isReadOnlyMode={this.props.isReadOnlyMode}
-                  />
-                </React.Fragment>
-              )}
+                    </React.Fragment>
+                  )}
+                <Button
+                  data-tid="folderContainerOpenDirMenu"
+                  title={
+                    i18n.t('core:openDirectoryMenu') +
+                    ' - ' +
+                    (currentDirectoryPath || '')
+                  }
+                  className={classes.folderButton}
+                  onClick={this.openDirectoryMenu}
+                  onContextMenu={this.openDirectoryMenu}
+                >
+                  {extractShortDirectoryName(
+                    normalizePath(normalizedCurrentDirPath),
+                    '/'
+                  )}
+                  <MoreVertIcon />
+                </Button>
+                <DirectoryMenu
+                  open={this.state.directoryContextMenuOpened}
+                  onClose={this.closeDirectoryMenu}
+                  anchorEl={this.state.directoryContextMenuAnchorEl}
+                  directoryPath={currentDirectoryPath}
+                  loadDirectoryContent={this.props.loadDirectoryContent}
+                  openDirectory={this.props.openDirectory}
+                  reflectCreateEntry={this.props.reflectCreateEntry}
+                  openFile={this.props.openFile}
+                  toggleCreateFileDialog={this.props.toggleCreateFileDialog}
+                  deleteDirectory={this.props.deleteDirectory}
+                  switchPerspective={this.switchPerspective}
+                  isReadOnlyMode={this.props.isReadOnlyMode}
+                />
+              </React.Fragment>
             </div>
           </div>
           <div

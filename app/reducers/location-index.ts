@@ -382,10 +382,6 @@ export const actions = {
     getState: () => any
   ) => {
     const state = getState();
-    const currentLocation: Location = getLocation(
-      state,
-      state.app.currentLocationId
-    );
     console.time('globalSearch');
     dispatch(
       AppActions.showNotification(i18n.t('core:searching'), 'default', false)
@@ -408,7 +404,7 @@ export const actions = {
           let directoryIndex = [];
           let hasIndex = false;
           const dirSeparator =
-            currentLocation.type === locationType.TYPE_CLOUD
+            location.type === locationType.TYPE_CLOUD
               ? '/'
               : AppConfig.dirSeparator;
           console.log('Searching in: ' + nextPath);
