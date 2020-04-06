@@ -383,10 +383,11 @@ export default (state: any = initialState, action: any) => {
       );
       if (
         entryIndex < 0 &&
-        extractParentDirectoryPath(action.newEntry.path).replace(
-          /(^\/)|(\/$)/g,
-          ''
-        ) === state.currentDirectoryPath.replace(/(^\/)|(\/$)/g, '')
+        extractParentDirectoryPath(
+          action.newEntry.path,
+          PlatformIO.haveObjectStoreSupport() ? '/' : AppConfig.dirSeparator
+        ).replace(/(^\/)|(\/$)/g, '') ===
+          state.currentDirectoryPath.replace(/(^\/)|(\/$)|(^\\)|(\\$)/g, '')
       ) {
         return {
           ...state,
@@ -759,7 +760,12 @@ export const actions = {
         dispatch(
           actions.showNotification(
             i18n.t('deletingDirectorySuccessfull', {
-              dirPath: extractDirectoryName(directoryPath)
+              dirPath: extractDirectoryName(
+                directoryPath,
+                PlatformIO.haveObjectStoreSupport()
+                  ? '/'
+                  : AppConfig.dirSeparator
+              )
             }),
             'default',
             true
@@ -772,7 +778,12 @@ export const actions = {
         dispatch(
           actions.showNotification(
             i18n.t('errorDeletingDirectoryAlert', {
-              dirPath: extractDirectoryName(directoryPath)
+              dirPath: extractDirectoryName(
+                directoryPath,
+                PlatformIO.haveObjectStoreSupport()
+                  ? '/'
+                  : AppConfig.dirSeparator
+              )
             }),
             'error',
             true
