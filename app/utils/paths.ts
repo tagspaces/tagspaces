@@ -113,10 +113,12 @@ export function extractFileName(
   filePath: string,
   dirSeparator: string = AppConfig.dirSeparator
 ): string {
-  return filePath.substring(
-    filePath.lastIndexOf(dirSeparator) + 1,
-    filePath.length
-  );
+  return filePath
+    ? filePath.substring(
+        filePath.lastIndexOf(dirSeparator) + 1,
+        filePath.length
+      )
+    : filePath;
 }
 
 export function cleanTrailingDirSeparator(dirPath: string): string {
