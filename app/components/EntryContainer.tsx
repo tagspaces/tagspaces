@@ -1024,7 +1024,12 @@ class EntryContainer extends React.Component<Props, State> {
               ? i18n.t('core:doYouWantToDeleteFile')
               : i18n.t('core:deleteDirectoryContentConfirm', {
                   dirPath: currentEntry
-                    ? extractDirectoryName(currentEntry.path)
+                    ? extractDirectoryName(
+                        currentEntry.path,
+                        PlatformIO.haveObjectStoreSupport()
+                          ? '/'
+                          : AppConfig.dirSeparator
+                      )
                     : ''
                 })
           }
