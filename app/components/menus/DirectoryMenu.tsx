@@ -44,7 +44,11 @@ import CreateDirectoryDialog from '../dialogs/CreateDirectoryDialog';
 import RenameDirectoryDialog from '../dialogs/RenameDirectoryDialog';
 import AppConfig from '-/config';
 import i18n from '-/services/i18n';
-import { extractFileName, normalizePath, cleanTrailingDirSeparator } from '-/utils/paths'; // extractFileExtension
+import {
+  extractFileName,
+  normalizePath,
+  cleanTrailingDirSeparator
+} from '-/utils/paths'; // extractFileExtension
 import PlatformIO from '-/services/platform-io';
 import { formatDateTime4Tag } from '-/utils/misc';
 import { actions as AppActions } from '-/reducers/app';
@@ -289,7 +293,7 @@ const DirectoryMenu = (props: Props) => {
     const fileName = extractFileName(dirPath);
     return props.directoryPath && fileName
       ? fileName
-      : cleanTrailingDirSeparator(props.directoryPath)
+      : cleanTrailingDirSeparator(props.directoryPath);
   }
 
   return (
@@ -310,10 +314,9 @@ const DirectoryMenu = (props: Props) => {
         open={isDeleteDirectoryDialogOpened}
         onClose={handleCloseDialogs}
         title={i18n.t('core:deleteDirectoryTitleConfirm')}
-        content={
-          i18n.t('core:deleteDirectoryContentConfirm',
-          {dirPath: getDirPath(props.directoryPath)})
-        }
+        content={i18n.t('core:deleteDirectoryContentConfirm', {
+          dirPath: getDirPath(props.directoryPath)
+        })}
         confirmCallback={result => {
           if (result) {
             props.deleteDirectory(props.directoryPath);
