@@ -195,14 +195,22 @@ export function extractDirectoryName(
   dirSeparator: string = AppConfig.dirSeparator
 ): string {
   if (!dirPath) return '';
-  let directoryName;
-  if (dirPath.endsWith(dirSeparator)) {
-    directoryName = dirPath.substring(0, dirPath.lastIndexOf(dirSeparator));
+  let directoryName = dirPath;
+  if (dirPath.indexOf(dirSeparator) !== -1) {
+    if (dirPath.endsWith(dirSeparator)) {
+      directoryName = directoryName.substring(
+        0,
+        dirPath.lastIndexOf(dirSeparator)
+      );
+    }
+    const lastDirSeparator = directoryName.lastIndexOf(dirSeparator);
+    if (lastDirSeparator !== -1) {
+      directoryName = directoryName.substring(
+        lastDirSeparator + 1,
+        directoryName.length
+      );
+    }
   }
-  directoryName = dirPath.substring(
-    dirPath.lastIndexOf(dirSeparator) + 1,
-    dirPath.length
-  );
   return directoryName;
 }
 

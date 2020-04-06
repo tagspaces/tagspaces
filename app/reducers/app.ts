@@ -819,7 +819,11 @@ export const actions = {
     dispatch: (actions: Object) => void
   ) => {
     PlatformIO.createDirectoryPromise(directoryPath)
-      .then(() => {
+      .then((normalizedDirPath) => {
+        if(normalizedDirPath !== undefined) {
+          // eslint-disable-next-line no-param-reassign
+           directoryPath = normalizedDirPath
+        }
         console.log(`Creating directory ${directoryPath} successful.`);
         dispatch(actions.reflectCreateEntry(directoryPath, false));
         dispatch(
@@ -1202,7 +1206,7 @@ export const actions = {
   ) => {
     const newEntry = {
       uuid: uuidv1(),
-      name: extractFileName(path),
+      name: isFile ? extractFileName(path) : extractDirectoryName(path),
       isFile,
       extension: extractFileExtension(path),
       description: '',
