@@ -819,10 +819,10 @@ export const actions = {
     dispatch: (actions: Object) => void
   ) => {
     PlatformIO.createDirectoryPromise(directoryPath)
-      .then((normalizedDirPath) => {
-        if(normalizedDirPath !== undefined) {
+      .then(normalizedDirPath => {
+        if (normalizedDirPath !== undefined) {
           // eslint-disable-next-line no-param-reassign
-           directoryPath = normalizedDirPath
+          directoryPath = normalizedDirPath;
         }
         console.log(`Creating directory ${directoryPath} successful.`);
         dispatch(actions.reflectCreateEntry(directoryPath, false));
