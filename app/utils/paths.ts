@@ -187,7 +187,12 @@ export function extractParentDirectoryPath(
   if (path.endsWith(dirSeparator)) {
     path = path.substring(0, path.lastIndexOf(dirSeparator));
   }
-  return path.substring(0, path.lastIndexOf(dirSeparator));
+  const lastIndex = path.lastIndexOf(dirSeparator);
+  if (lastIndex !== -1) {
+    return path.substring(0, lastIndex);
+  }
+  //return root dir in cases that dirPath not start with dirSeparator (AWS)
+  return '';
 }
 
 export function extractDirectoryName(
@@ -195,14 +200,22 @@ export function extractDirectoryName(
   dirSeparator: string = AppConfig.dirSeparator
 ): string {
   if (!dirPath) return '';
-  let directoryName;
-  if (dirPath.endsWith(dirSeparator)) {
-    directoryName = dirPath.substring(0, dirPath.lastIndexOf(dirSeparator));
+  let directoryName = dirPath;
+  if (dirPath.indexOf(dirSeparator) !== -1) {
+    if (dirPath.endsWith(dirSeparator)) {
+      directoryName = directoryName.substring(
+        0,
+        dirPath.lastIndexOf(dirSeparator)
+      );
+    }
+    const lastDirSeparator = directoryName.lastIndexOf(dirSeparator);
+    if (lastDirSeparator !== -1) {
+      directoryName = directoryName.substring(
+        lastDirSeparator + 1,
+        directoryName.length
+      );
+    }
   }
-  directoryName = dirPath.substring(
-    dirPath.lastIndexOf(dirSeparator) + 1,
-    dirPath.length
-  );
   return directoryName;
 }
 
@@ -231,7 +244,7 @@ export function extractContainingDirectoryName(filePath: string) {
 export function extractTitle(entryPath: string, isDirectory: boolean = false) {
   let title;
   if (isDirectory) {
-    title = extractDirectoryName(entryPath);
+    title = extractDirectoryName(entryPath).replace(/(^\/)|(\/$)/g, '');
     return title;
   }
   title = extractFileNameWithoutExt(entryPath);

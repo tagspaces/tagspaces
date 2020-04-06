@@ -290,7 +290,10 @@ const DirectoryMenu = (props: Props) => {
   }
 
   function getDirPath(dirPath: string) {
-    const fileName = extractFileName(dirPath);
+    const fileName = extractFileName(
+      dirPath,
+      PlatformIO.haveObjectStoreSupport() ? '/' : AppConfig.dirSeparator
+    );
     return props.directoryPath && fileName
       ? fileName
       : cleanTrailingDirSeparator(props.directoryPath);

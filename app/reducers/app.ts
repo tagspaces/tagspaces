@@ -383,10 +383,11 @@ export default (state: any = initialState, action: any) => {
       );
       if (
         entryIndex < 0 &&
-        extractParentDirectoryPath(action.newEntry.path).replace(
-          /(^\/)|(\/$)/g,
-          ''
-        ) === state.currentDirectoryPath.replace(/(^\/)|(\/$)/g, '')
+        extractParentDirectoryPath(
+          action.newEntry.path,
+          PlatformIO.haveObjectStoreSupport() ? '/' : AppConfig.dirSeparator
+        ).replace(/(^\/)|(\/$)/g, '') ===
+          state.currentDirectoryPath.replace(/(^\/)|(\/$)|(^\\)|(\\$)/g, '')
       ) {
         return {
           ...state,
@@ -759,7 +760,12 @@ export const actions = {
         dispatch(
           actions.showNotification(
             i18n.t('deletingDirectorySuccessfull', {
-              dirPath: extractDirectoryName(directoryPath)
+              dirPath: extractDirectoryName(
+                directoryPath,
+                PlatformIO.haveObjectStoreSupport()
+                  ? '/'
+                  : AppConfig.dirSeparator
+              )
             }),
             'default',
             true
@@ -772,7 +778,12 @@ export const actions = {
         dispatch(
           actions.showNotification(
             i18n.t('errorDeletingDirectoryAlert', {
-              dirPath: extractDirectoryName(directoryPath)
+              dirPath: extractDirectoryName(
+                directoryPath,
+                PlatformIO.haveObjectStoreSupport()
+                  ? '/'
+                  : AppConfig.dirSeparator
+              )
             }),
             'error',
             true
@@ -819,7 +830,11 @@ export const actions = {
     dispatch: (actions: Object) => void
   ) => {
     PlatformIO.createDirectoryPromise(directoryPath)
-      .then(() => {
+      .then(normalizedDirPath => {
+        if (normalizedDirPath !== undefined) {
+          // eslint-disable-next-line no-param-reassign
+          directoryPath = normalizedDirPath;
+        }
         console.log(`Creating directory ${directoryPath} successful.`);
         dispatch(actions.reflectCreateEntry(directoryPath, false));
         dispatch(
@@ -1202,7 +1217,7 @@ export const actions = {
   ) => {
     const newEntry = {
       uuid: uuidv1(),
-      name: extractFileName(path),
+      name: isFile ? extractFileName(path) : extractDirectoryName(path),
       isFile,
       extension: extractFileExtension(path),
       description: '',
