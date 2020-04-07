@@ -669,7 +669,7 @@ export const actions = {
     const { settings } = getState();
     window.walkCanceled = false;
 
-    loadMetaDataPromise(directoryPath)
+    loadMetaDataPromise(normalizePath(directoryPath) + AppConfig.dirSeparator)
       .then(fsEntryMeta => {
         if (fsEntryMeta.color) {
           dispatch(actions.setCurrentDirectoryColor(fsEntryMeta.color));
