@@ -94,14 +94,8 @@ const styles: any = (theme: any) => ({
   actionPlaceholder: {
     textAlign: 'end'
   },
-  entryLabel: {
-    padding: 4
-  },
   header: {
     color: theme.palette.text.primary
-  },
-  field: {
-    color: theme.palette.text.disabled + ' !important'
   },
   entryItem: {
     width: '100%',
@@ -122,7 +116,6 @@ const styles: any = (theme: any) => ({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: '0 0 0 4px',
     ' .grid-item': {
       width: '100%'
     }
@@ -135,7 +128,7 @@ const styles: any = (theme: any) => ({
   },
   formControl: {
     width: 'calc(100% - 12px)',
-    padding: '0 0 2px 6px'
+    marginBottom: 10
   }
 });
 
@@ -157,6 +150,7 @@ marked.setOptions({
 
 interface Props {
   classes: any;
+  theme: any;
   entryPath: string;
   shouldReload: boolean | null;
   shouldCopyFile: boolean;
@@ -583,7 +577,6 @@ class EntryProperties extends Component<Props, State> {
     return (
       <div className={classes.entryProperties}>
         <Grid container spacing={1}>
-          {/* edit file name */}
           <div className={classes.entryItem}>
             <div className={classes.fluidGrid}>
               <div className="grid-item">
@@ -631,31 +624,30 @@ class EntryProperties extends Component<Props, State> {
               )}
             </div>
             <FormControl fullWidth={true} className={classes.formControl}>
-              <div className={classes.ellipsisText}>
-                <TextField
-                  disabled={!isEditName}
-                  margin="dense"
-                  name="name"
-                  fullWidth={true}
-                  data-tid="fileNameProperties"
-                  value={name}
-                  inputRef={ref => {
-                    this.fileName = ref;
-                  }}
-                  className={classes.field}
-                  onClick={() => {
-                    if (!isEditName) {
-                      this.toggleEditNameField();
-                    }
-                  }}
-                  onKeyDown={event => {
-                    if (event.key === 'Enter') {
-                      this.renameEntry();
-                    }
-                  }}
-                  onChange={this.handleFileNameChange}
-                />
-              </div>
+              <TextField
+                InputProps={{
+                  readOnly: !isEditName
+                }}
+                margin="dense"
+                name="name"
+                fullWidth={true}
+                data-tid="fileNameProperties"
+                value={name}
+                inputRef={ref => {
+                  this.fileName = ref;
+                }}
+                onClick={() => {
+                  if (!isEditName) {
+                    this.toggleEditNameField();
+                  }
+                }}
+                onKeyDown={event => {
+                  if (event.key === 'Enter') {
+                    this.renameEntry();
+                  }
+                }}
+                onChange={this.handleFileNameChange}
+              />
             </FormControl>
           </div>
 
@@ -726,7 +718,6 @@ class EntryProperties extends Component<Props, State> {
                   inputRef={ref => {
                     this.fileDescription = ref;
                   }}
-                  disabled={!isEditDescription}
                   id="textarea"
                   placeholder=""
                   name="description"
@@ -740,19 +731,19 @@ class EntryProperties extends Component<Props, State> {
                   style={{
                     display: 'block',
                     padding: 2,
-                    marginBottom: 5
+                    marginBottom: 5,
+                    color: description
+                      ? this.props.theme.palette.text.primary
+                      : this.props.theme.palette.text.disabled
                   }}
-                  className={classes.field}
                   role="button"
                   id="descriptionArea"
-                  // placeholder={Pro ? 'Click to add description' : i18n.t('core:addDescription')}
                   dangerouslySetInnerHTML={{
-                    __html:
-                      description !== ''
-                        ? marked(DOMPurify.sanitize(description))
-                        : Pro
-                        ? 'Click to add description'
-                        : i18n.t('core:addDescription')
+                    __html: description
+                      ? marked(DOMPurify.sanitize(description))
+                      : Pro
+                      ? i18n.t('core:addMarkdownDescription')
+                      : i18n.t('core:addDescription')
                   }}
                   onClick={() => {
                     if (!isEditDescription) {
@@ -771,20 +762,21 @@ class EntryProperties extends Component<Props, State> {
               <div className="grid-item" style={{ width: '50%' }}>
                 <Typography
                   variant="caption"
-                  className={classNames(classes.entryLabel, classes.header)}
+                  className={classes.header}
                   style={{ display: 'block' }}
                 >
                   {i18n.t('core:fileLDTM')}
                 </Typography>
                 <FormControl fullWidth={true} className={classes.formControl}>
                   <TextField
-                    disabled
+                    InputProps={{
+                      readOnly: true
+                    }}
                     margin="dense"
                     name="ldtm"
                     fullWidth={true}
                     data-tid="fileLdtmProperties"
                     value={ldtm}
-                    className={classes.field}
                   />
                 </FormControl>
               </div>
@@ -793,7 +785,7 @@ class EntryProperties extends Component<Props, State> {
                 <div className="grid-item" style={{ width: '50%' }}>
                   <Typography
                     variant="caption"
-                    className={classNames(classes.entryLabel, classes.header)}
+                    className={classes.header}
                     style={{ display: 'block' }}
                   >
                     {i18n.t('core:fileSize')}
@@ -806,10 +798,11 @@ class EntryProperties extends Component<Props, State> {
                     <TextField
                       margin="dense"
                       name="size"
-                      disabled
+                      InputProps={{
+                        readOnly: true
+                      }}
                       fullWidth={true}
                       data-tid="fileSizeProperties"
-                      className={classes.field}
                       value={formatFileSize(size)}
                     />
                   </FormControl>
@@ -819,7 +812,7 @@ class EntryProperties extends Component<Props, State> {
                   <Typography
                     variant="caption"
                     style={{ display: 'block' }}
-                    className={classNames(classes.entryLabel, classes.header)}
+                    className={classes.header}
                   >
                     {i18n.t('core:changeBackgroundColor')}
                   </Typography>
@@ -884,7 +877,6 @@ class EntryProperties extends Component<Props, State> {
               {isFile && !isReadOnlyMode && (
                 <Button
                   color="primary"
-                  // style={{ paddingBottom: 0 }}
                   disabled={isEditDescription || isEditName}
                   className={classes.button}
                   onClick={this.toggleMoveCopyFilesDialog}
@@ -896,11 +888,12 @@ class EntryProperties extends Component<Props, State> {
             <FormControl fullWidth={true} className={classes.formControl}>
               <TextField
                 margin="dense"
-                disabled
+                InputProps={{
+                  readOnly: true
+                }}
                 name="path"
                 fullWidth={true}
                 data-tid="filePathProperties"
-                className={classes.field}
                 value={entryPath || ''}
               />
             </FormControl>
@@ -927,7 +920,7 @@ class EntryProperties extends Component<Props, State> {
             </div>
             <div className={classes.fluidGrid}>
               <div
-                className={classNames(classes.entryLabel, classes.header)}
+                className={classes.header}
                 onClick={this.toggleThumbFilesDialog}
                 role="button"
                 tabIndex={0}
@@ -975,4 +968,4 @@ class EntryProperties extends Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(EntryProperties);
+export default withStyles(styles, { withTheme: true })(EntryProperties);
