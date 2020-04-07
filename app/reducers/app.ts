@@ -381,13 +381,14 @@ export default (state: any = initialState, action: any) => {
       const entryIndex = state.currentDirectoryEntries.findIndex(
         entry => entry.path === action.newEntry.path
       );
+      // clean all dir separators to have platform independent path match
       if (
         entryIndex < 0 &&
         extractParentDirectoryPath(
           action.newEntry.path,
           PlatformIO.haveObjectStoreSupport() ? '/' : AppConfig.dirSeparator
-        ).replace(/(^\/)|(\/$)/g, '') ===
-          state.currentDirectoryPath.replace(/(^\/)|(\/$)|(^\\)|(\\$)/g, '')
+        ).replace(/[/\\]/g, '') ===
+          state.currentDirectoryPath.replace(/[/\\]/g, '')
       ) {
         return {
           ...state,
@@ -830,10 +831,10 @@ export const actions = {
     dispatch: (actions: Object) => void
   ) => {
     PlatformIO.createDirectoryPromise(directoryPath)
-      .then(normalizedDirPath => {
-        if (normalizedDirPath !== undefined) {
+      .then(result => {
+        if (result !== undefined && result.dirPath !== undefined) {
           // eslint-disable-next-line no-param-reassign
-          directoryPath = normalizedDirPath;
+          directoryPath = result.dirPath;
         }
         console.log(`Creating directory ${directoryPath} successful.`);
         dispatch(actions.reflectCreateEntry(directoryPath, false));
