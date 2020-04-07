@@ -1216,9 +1216,14 @@ export const actions = {
   reflectCreateEntry: (path: string, isFile: boolean) => (
     dispatch: (actions: Object) => void
   ) => {
+    const separator = PlatformIO.haveObjectStoreSupport()
+      ? '/'
+      : AppConfig.dirSeparator;
     const newEntry = {
       uuid: uuidv1(),
-      name: isFile ? extractFileName(path) : extractDirectoryName(path),
+      name: isFile
+        ? extractFileName(path, separator)
+        : extractDirectoryName(path, separator),
       isFile,
       extension: extractFileExtension(path),
       description: '',
