@@ -984,7 +984,7 @@ export const actions = {
     if (Pro && Pro.Watcher) {
       Pro.Watcher.stopWatching();
     }
-    const currentLocationId = getState().app;
+    const { currentLocationId } = getState().app;
     if (location.type === locationType.TYPE_CLOUD) {
       PlatformIO.enableObjectStoreSupport(location)
         .then(() => {
