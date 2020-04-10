@@ -140,7 +140,10 @@ class Search extends React.Component<Props, State> {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     let { searchBoxing } = prevState;
-    if (!nextProps.currentDirectory || nextProps.currentDirectory.length < 1) {
+    if (
+      Pro &&
+      (!nextProps.currentDirectory || nextProps.currentDirectory.length < 1)
+    ) {
       searchBoxing = 'global';
     }
     if (
