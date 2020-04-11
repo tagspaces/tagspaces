@@ -444,6 +444,7 @@ class FolderContainer extends React.Component<Props, State> {
                         onClick={loadParentDirectoryContent}
                         data-tid="openParentDirectory"
                         style={{ paddingLeft: 3, paddingRight: 0 }}
+                        title={i18n.t('core:navigateToParentDirectory')}
                       >
                         <BackButtonIcon />
                       </Button>

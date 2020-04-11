@@ -27,20 +27,13 @@ import NewFileIcon from '@material-ui/icons/AddCircle';
 import LocationsIcon from '@material-ui/icons/WorkOutline';
 import TagLibraryIcon from '@material-ui/icons/LocalOfferOutlined';
 import SearchIcon from '@material-ui/icons/SearchOutlined';
-// import PerspectivesIcon from '@material-ui/icons/MapOutlined';
 import SettingsIcon from '@material-ui/icons/Settings';
-// import ThemingIcon from '@material-ui/icons/InvertColors';
-// import UpgradeIcon from '@material-ui/icons/FlightTakeoff';
-// import HelpIcon from '@material-ui/icons/HelpOutline';
 import { withStyles } from '@material-ui/core/styles';
-// import LogoIcon from '../assets/images/icon100x100.svg';
 import TagLibrary from '../components/TagLibrary';
 import Search from '../components/Search';
-// import PerspectiveManager from '../components/PerspectiveManager';
 import LocationManager from '../components/LocationManager';
 import HelpFeedbackPanel from '../components/HelpFeedbackPanel';
 import i18n from '../services/i18n';
-// import { Pro } from '../pro';
 import {
   actions as AppActions,
   isSettingsDialogOpened,
@@ -56,6 +49,7 @@ import { actions as SettingsActions, isFirstRun } from '../reducers/settings';
 
 const styles: any = (theme: any) => ({
   bottomToolbar: {
+    marginTop: 9,
     textAlign: 'center',
     backgroundColor: theme.palette.background.default
   },
