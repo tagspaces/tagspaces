@@ -172,7 +172,7 @@ export default merge.smart(baseConfig, {
       // Text files
       {
         test: /\.(txt)$/,
-        use: 'file-loader'
+        use: 'raw-loader'
       },
       // Common Image Formats
       {
