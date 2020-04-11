@@ -13,10 +13,6 @@
     "version.json",
     "package.json"
   ],
-  "extraFiles": [
-    { "from": "resources/tagspacesp" },
-    { "from": "resources/tagspacesp.cmd" }
-  ],
   "copyright": "Copyright © 2020 TagSpaces UG (haftungsbeschraenkt)",
   "artifactName": "${name}-${os}-${arch}-${version}.${ext}",
   "win": {
