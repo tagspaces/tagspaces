@@ -95,6 +95,7 @@ export default (theme: any): any => ({
     height: 20,
     color: 'white',
     // color: theme.palette.getContrastText(),
+    borderRadius: 3,
     textAlign: 'center'
   },
   rowFileExtension: {
@@ -103,13 +104,15 @@ export default (theme: any): any => ({
     marginTop: 5,
     marginRight: 5,
     marginLeft: 5,
-    maxWidth: 45,
+    width: 35,
+    maxWidth: 60,
     minHeight: 15,
     borderWidth: 1,
     color: 'white',
     textTransform: 'uppercase',
     fontSize: 12,
     fontWeight: 'bold',
+    borderRadius: 3,
     // color: theme.palette.getContrastText(),
     textAlign: 'center'
   },
@@ -129,13 +132,15 @@ export default (theme: any): any => ({
     color: 'white',
     padding: 5,
     minHeight: 10,
-    height: 20
+    height: 20,
+    borderRadius: 3
   },
   gridFolder: {
     color: 'white',
     padding: 5,
     minHeight: 15,
-    height: 20
+    height: 20,
+    borderRadius: 3
   },
   topToolbar: {
     paddingLeft: 5,

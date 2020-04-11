@@ -25,6 +25,8 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import FolderIcon from '@material-ui/icons/FolderOpen';
+import SelectedIcon from '@material-ui/icons/CheckCircle';
+import UnSelectedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import TagIcon from '@material-ui/icons/LocalOfferOutlined';
 import { formatFileSize, formatDateTime } from '-/utils/misc';
 import { extractTitle } from '-/utils/paths';
@@ -234,9 +236,19 @@ const CellContent = (props: Props) => {
             maxWidth: 70,
             padding: 10,
             marginRight: 5,
+            textAlign: 'center',
             backgroundColor: fsEntryBackgroundColor
           }}
+          // onClick={() => {}}
         >
+          {/* {selected && (
+            <span title={fsEntry.path}>
+              <SelectedIcon
+                className={classes.rowFolder}
+                style={{ backgroundColor: fsEntryColor }}
+              />
+            </span>
+          )} */}
           {fsEntry.isFile ? (
             <div
               className={classes.rowFileExtension}
@@ -246,7 +258,7 @@ const CellContent = (props: Props) => {
               {fsEntry.extension}
             </div>
           ) : (
-            <span className={classes.gridFolder} title={fsEntry.path}>
+            <span title={fsEntry.path}>
               <FolderIcon
                 className={classes.rowFolder}
                 style={{ backgroundColor: fsEntryColor }}
