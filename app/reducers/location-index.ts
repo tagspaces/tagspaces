@@ -410,7 +410,7 @@ export const actions = {
           console.log('Searching in: ' + nextPath);
           dispatch(
             AppActions.showNotification(
-              i18n.t('core:searching') + nextPath,
+              i18n.t('core:searching') + ' ' + location.name,
               'default',
               true
             )
