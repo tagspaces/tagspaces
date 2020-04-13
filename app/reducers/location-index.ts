@@ -29,7 +29,7 @@ import Search, { SearchQuery } from '../services/search';
 import { actions as AppActions } from './app';
 import AppConfig from '../config';
 import i18n from '../services/i18n';
-// import PlatformIO from '../services/platform-io';
+import PlatformIO from '../services/platform-io';
 import { Tag } from './taglibrary';
 import GlobalSearch from '../services/search-index';
 
@@ -382,6 +382,10 @@ export const actions = {
     getState: () => any
   ) => {
     const state = getState();
+    const currentLocation: Location = getLocation(
+      state,
+      state.app.currentLocationId
+    );
     console.time('globalSearch');
     dispatch(
       AppActions.showNotification(i18n.t('core:searching'), 'default', false)
@@ -403,10 +407,8 @@ export const actions = {
           const nextPath = location.paths[0];
           let directoryIndex = [];
           let hasIndex = false;
-          const dirSeparator =
-            location.type === locationType.TYPE_CLOUD
-              ? '/'
-              : AppConfig.dirSeparator;
+          const isCloudLocation = location.type === locationType.TYPE_CLOUD;
+          const dirSeparator = isCloudLocation ? '/' : AppConfig.dirSeparator;
           console.log('Searching in: ' + nextPath);
           dispatch(
             AppActions.showNotification(
@@ -415,6 +417,9 @@ export const actions = {
               true
             )
           );
+          if (isCloudLocation) {
+            await PlatformIO.enableObjectStoreSupport(location);
+          }
           if (Pro && Pro.Indexer && Pro.Indexer.hasIndex) {
             hasIndex = await Pro.Indexer.hasIndex(nextPath);
           }
@@ -439,6 +444,9 @@ export const actions = {
               searchResultCount += searchResults.length;
               dispatch(AppActions.appendSearchResults(searchResults));
               dispatch(AppActions.hideNotifications());
+              if (isCloudLocation) {
+                PlatformIO.disableObjectStoreSupport();
+              }
               return true;
             })
             .catch(() => {
@@ -451,6 +459,9 @@ export const actions = {
                   true
                 )
               );
+              if (isCloudLocation) {
+                PlatformIO.disableObjectStoreSupport();
+              }
             });
         }),
       Promise.resolve()
@@ -479,9 +490,15 @@ export const actions = {
           );
         }
         console.log('Global search completed!');
+        if (currentLocation.type === locationType.TYPE_CLOUD) {
+          PlatformIO.enableObjectStoreSupport(currentLocation);
+        }
         return true;
       })
       .catch(e => {
+        if (currentLocation.type === locationType.TYPE_CLOUD) {
+          PlatformIO.enableObjectStoreSupport(currentLocation);
+        }
         console.timeEnd('globalSearch');
         console.warn('Global search failed!', e);
       });
