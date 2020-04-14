@@ -17,8 +17,8 @@ div[tabindex='-1']:focus {
   border-bottom: 1px solid #e9e9e91a;
 }
 
-/* Fix for icon of broken thumbnails */
-img[alt]:after {
+/* Fix for icon of broken thumbnails, disabled because does not work in list view */
+/* img[alt]:after {
   display: block;
   position: absolute;
   top: 0;
@@ -29,4 +29,4 @@ img[alt]:after {
   color: #fff;
   text-align: center;
   content: attr(alt);
-}
+} */

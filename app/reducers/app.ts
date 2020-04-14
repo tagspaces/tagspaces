@@ -287,10 +287,15 @@ export default (state: any = initialState, action: any) => {
       };
     }
     case types.APPEND_SEARCH_RESULTS: {
-      const newDirEntries = [
-        ...state.currentDirectoryEntries,
-        ...action.searchResults
-      ];
+      const newDirEntries = [...state.currentDirectoryEntries];
+      for (let i = 0; i < action.searchResults.length; i += 1) {
+        const index = newDirEntries.findIndex(
+          entry => entry.path === action.searchResults[i].path
+        );
+        if (index === -1) {
+          newDirEntries.push(action.searchResults[i]);
+        }
+      }
       return {
         ...state,
         currentDirectoryEntries: newDirEntries,

@@ -21,6 +21,7 @@ import Fuse from 'fuse.js';
 import jmespath from 'jmespath';
 import { Tag } from '../reducers/taglibrary';
 import { Pro } from '../pro';
+import { FileSystemEntry } from './utils-io';
 
 // export type FileTypeGroups = 'images' | 'notes' | 'documents' | 'audio' | 'video' | 'archives';
 
@@ -250,9 +251,9 @@ function prepareIndex(index: Array<Object>) {
 
 export default class Search {
   static searchLocationIndex = (
-    locationContent: Array<Object>,
+    locationContent: Array<FileSystemEntry>,
     searchQuery: SearchQuery
-  ): Promise<Array<Object> | []> =>
+  ): Promise<Array<FileSystemEntry> | []> =>
     new Promise(resolve => {
       console.time('searchtime');
       const jmespathQuery = constructjmespathQuery(searchQuery);

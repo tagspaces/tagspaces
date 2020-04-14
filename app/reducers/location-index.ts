@@ -490,13 +490,19 @@ export const actions = {
           );
         }
         console.log('Global search completed!');
-        if (currentLocation.type === locationType.TYPE_CLOUD) {
+        if (
+          currentLocation &&
+          currentLocation.type === locationType.TYPE_CLOUD
+        ) {
           PlatformIO.enableObjectStoreSupport(currentLocation);
         }
         return true;
       })
       .catch(e => {
-        if (currentLocation.type === locationType.TYPE_CLOUD) {
+        if (
+          currentLocation &&
+          currentLocation.type === locationType.TYPE_CLOUD
+        ) {
           PlatformIO.enableObjectStoreSupport(currentLocation);
         }
         console.timeEnd('globalSearch');
