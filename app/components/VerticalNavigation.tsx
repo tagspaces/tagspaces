@@ -52,6 +52,7 @@ import {
 } from '../reducers/app';
 import { actions as SettingsActions, isFirstRun } from '../reducers/settings';
 import LoadingLazy from './LoadingLazy';
+import Login from '../login/Login';
 
 const ProTeaserDialog = React.lazy(() =>
   import(/* webpackChunkName: "ProTeaserDialog" */ './dialogs/ProTeaserDialog')
@@ -320,6 +321,7 @@ class VerticalNavigation extends React.Component<Props, State> {
             >
               <HelpIcon style={this.styles.buttonIcon} />
             </IconButton>
+            <Login />
             {!Pro && (
               <IconButton
                 id="verticalNavButton"

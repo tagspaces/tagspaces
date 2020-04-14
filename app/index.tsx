@@ -23,6 +23,7 @@ import { AppContainer } from 'react-hot-loader';
 import Root from './containers/Root';
 import { configureStore, history } from './store/configureStore';
 import './app.global.css';
+import { Auth0Provider } from './login/auth0-spa';
 
 const { store, persistor } = configureStore({});
 
@@ -34,10 +35,22 @@ if (process.env.NODE_ENV === 'production') {
   console.timeEnd = () => {};
 }
 
+const onRedirectCallback = appState => {
+  console.log('appState', appState);
+  window.location = appState && appState.targetUrl ? appState.targetUrl : '/';
+};
+
 render(
-  <AppContainer>
-    <Root store={store} persistor={persistor} history={history} />
-  </AppContainer>,
+  <Auth0Provider
+    domain="tagspaces.eu.auth0.com"
+    clientId="FfQ0paETu20Bm44y5cEi0zXLoAuJncOq"
+    redirectUri={window.location.origin}
+    onRedirectCallback={onRedirectCallback}
+  >
+    <AppContainer>
+      <Root store={store} persistor={persistor} history={history} />
+    </AppContainer>
+  </Auth0Provider>,
   document.getElementById('root')
 );
 
