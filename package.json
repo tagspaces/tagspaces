@@ -234,9 +234,9 @@
   "dependencies": {
     "@date-io/date-fns": "^1.3.9",
     "@gorillastack/jmespath": "^1.3.0",
-    "@material-ui/core": "^4.9.6",
+    "@material-ui/core": "^4.9.10",
     "@material-ui/icons": "^4.9.1",
-    "@material-ui/lab": "^4.0.0-alpha.46",
+    "@material-ui/lab": "^4.0.0-alpha.49",
     "@material-ui/pickers": "^3.2.10",
     "aws-sdk": "^2.652.0",
     "babel-polyfill": "^6.26.0",

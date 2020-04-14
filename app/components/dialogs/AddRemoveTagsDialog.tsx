@@ -29,15 +29,11 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import FileIcon from '@material-ui/icons/InsertDriveFileOutlined';
 import Typography from '@material-ui/core/Typography';
 import Dialog from '@material-ui/core/Dialog';
-import Slide from '@material-ui/core/Slide';
+import { DialogTransition } from './GenericDialog';
 import { Tag } from '-/reducers/taglibrary';
 import TagsSelect from '../TagsSelect';
 import i18n from '-/services/i18n';
 import { extractFileName } from '-/utils/paths';
-
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="down" ref={ref} {...props} />;
-});
 
 interface Props {
   open: boolean;
@@ -106,7 +102,7 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
         keepMounted
         scroll="paper"
         // onEnterKey={(event) => onEnterKeyHandler(event, this.addTags)}
-        // TransitionComponent={Transition}
+        TransitionComponent={DialogTransition}
       >
         <DialogTitle>{i18n.t('core:tagOperationTitle')}</DialogTitle>
         <DialogContent style={{ minHeight: 330 }}>
