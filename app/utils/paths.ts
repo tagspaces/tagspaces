@@ -104,6 +104,19 @@ export function getThumbFileLocationForFile(
   );
 }
 
+export function getThumbFileLocationForDirectory(
+  entryPath: string,
+  dirSeparator: string = AppConfig.dirSeparator
+) {
+  return (
+    entryPath +
+    dirSeparator +
+    AppConfig.metaFolder +
+    dirSeparator +
+    AppConfig.folderThumbFile
+  );
+}
+
 export function getMetaFileLocationForDir(entryPath: string) {
   const metaFolder = getMetaDirectoryPath(entryPath);
   return metaFolder + AppConfig.dirSeparator + AppConfig.metaFolderFile;
@@ -191,7 +204,7 @@ export function extractParentDirectoryPath(
   if (lastIndex !== -1) {
     return path.substring(0, lastIndex);
   }
-  //return root dir in cases that dirPath not start with dirSeparator (AWS)
+  // return root dir in cases that dirPath not start with dirSeparator (AWS)
   return '';
 }
 

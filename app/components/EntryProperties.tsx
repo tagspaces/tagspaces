@@ -38,10 +38,12 @@ import { getAllPropertiesPromise } from '../services/utils-io';
 import { formatFileSize } from '../utils/misc';
 import {
   extractContainingDirectoryPath,
-  getThumbFileLocationForFile
+  getThumbFileLocationForFile,
+  getThumbFileLocationForDirectory
 } from '../utils/paths';
 import AppConfig from '../config';
 import { Pro } from '../pro';
+import PlatformIO from '../services/platform-io';
 import TagsSelect from './TagsSelect';
 import TransparentBackground from './TransparentBackground';
 import {
@@ -271,7 +273,7 @@ class EntryProperties extends Component<Props, State> {
       const { entryPath, renameFile, renameDirectory } = this.props;
 
       const path = extractContainingDirectoryPath(entryPath);
-      const nextPath = path + AppConfig.dirSeparator + name;
+      const nextPath = path + PlatformIO.directorySeparator + name;
 
       this.setState(
         {
@@ -423,7 +425,7 @@ class EntryProperties extends Component<Props, State> {
         })
         .catch(err => {
           console.warn('Error replaceThumbnailURLPromise ' + err);
-          this.props.showNotification('Error replace Thumbnail');
+          this.props.showNotification('Error replacing thumbnail');
         });
     }
     // reset Thumbnail
@@ -555,16 +557,17 @@ class EntryProperties extends Component<Props, State> {
       return <div />;
     }
 
-    if (thumbPath === undefined) {
+    if (!thumbPath) {
       if (isFile) {
-        thumbPath = getThumbFileLocationForFile(path);
+        thumbPath = getThumbFileLocationForFile(
+          path,
+          PlatformIO.directorySeparator
+        );
       } else {
-        thumbPath =
-          path +
-          AppConfig.dirSeparator +
-          AppConfig.metaFolder +
-          AppConfig.dirSeparator +
-          AppConfig.folderThumbFile;
+        thumbPath = getThumbFileLocationForDirectory(
+          path,
+          PlatformIO.directorySeparator
+        );
       }
     }
     let thumbPathUrl = thumbPath
