@@ -1,8 +1,34 @@
 # Changelog
 
+## Version 3.5.2 / 2020.04.19
+
+### Community
+
+- 🎉 Added global key shortcut `ctrl/cmd + shift + f` for showing TagSpaces in search mode
+- 🌟 removing extrafile with portable script because causing issue with MacOS signing
+- 🌟 finetunning ui of the entry properties area
+- 🌟 optimizing compact mode in grid perspective
+- 🌟 upgrading electron, material-ui, aws-sdk libs
+- 🌟 improving speed by removing the usage of id for tags
+- 🌟 showing tags for which it is searched in the search area
+- 🌟 optimizing displaying search results by removing the text content
+- 🌟 improving ui of the search panel
+- 🌟 enabling creating the index for every location
+- 🌟 improving TagSpaces performance by removing search index from Redux store
+- 🐛 fix issues with file renaming and thumbnail showing in the entry properties
+- 🐛 fix geo pointer shadow icon
+
+### Pro
+
+- 🎉 implementing multi location search, which we call Global search
+- 🎉 support connecting Minio and Digital Ocean Spaces locations
+- 🌟 allow-browsing-the-root-folder-of-a-S3-bucket
+- 🐛 fix folder properties in s3 locations
+
 ## Version 3.4.2 / 2020.03.06
 
 ### Community
+
 - 🎉 implementing switch for toggling tags visibility
 - 🌟 improving handling of key bindings
 - 🌟 adding dmg builds for Mac OS
@@ -23,6 +49,7 @@
 ## Version 3.3.0 / 2019.11.08
 
 ### Community
+
 - 🌟 Make newly created files open in edit mode
 - 🌟 Make dialogs and the ui in general mobile friendly
 - 🌟 Improve navigation to parent folder #1038
@@ -37,16 +64,17 @@
 - 🐛 Now the app exits on window close under macOS
 
 ### Pro
+
 - 🎉 Added support for perspectives
 - 🎉 Added mapique perspective for showing geo-tags in map
 - 🎉 Added gallery perspective for presenting the images in a folder
 - 🎉 Added mobile mode with PWA support
 - 🐛 Allow geo-tagging also in file names
 
-
 ## Version 3.2.5 / 2019.10.10
 
 ### Community
+
 - 🌟 Added new help panel, which can be opened from the vertical toolbar
 - 🌟 Improving the onboarding wizard dialog and the help panel
 - 🌟 Added help button in the tag library and default perspective menus
@@ -61,6 +89,7 @@
 - 🐛 Fixing drag and drop highlight of tags [#1021](https://github.com/tagspaces/tagspaces/issues/1021)
 
 ### Pro
+
 - 🎉 Added new experimental perspective for viewing folders containing images as gallery
 - 🌟 Added initial perspective switch in the directory menu
 - 🌟 Optimizing update process for PRO users
@@ -68,6 +97,7 @@
 ## Version 3.2.3 / 2019.09.23
 
 ### Community
+
 - 🌟 Improving showing file and folder description in grid mode
 - 🌟 Hiding the button for moving folders from the properties section
 - 🌟 Changing the default background color for thumbnails to white
@@ -76,10 +106,10 @@
 - 🐛 Fixing word wrap on cell description
 - 🐛 Fixing file moving issue with drag and drop [#1017](https://github.com/tagspaces/tagspaces/issues/1017)
 
-
 ## Version 3.2.1 / 2019.08.20
 
 ### Community
+
 - 🌟 Major refactoring of the smart tags functionalities, smart tags are now ignored by the tag library exports
 - 🌟 Fixing row's compact mode in grid perspective
 - 🌟 Translations for spanish, german, check and other languages updated
@@ -99,14 +129,16 @@
 - 🐛 Bug when add new Tag [#997](https://github.com/tagspaces/tagspaces/issues/997)
 
 ### Pro
+
 - 🎉 Implemented ability to add geo locations as tags (geo-tagging)
 - 🎉 Implemented ability to tag files with custom date and time
 - 🎉 Implemented feature for changing the thumbnail of any file or directory manually
 - 🐛 Fixing broken download functionality on s3 locations
 
-### Version 3.1.4 / 2019.04.04*
+### Version 3.1.4 / 2019.04.04\*
 
 ### Community
+
 - 🎉 adding open location code / plus codes support
 - 🎉 added ability to open GPS coordinates in Openstreetmap
 - 🎉 added initial support for opening files from command prompt and url
@@ -121,6 +153,7 @@
 - 🐛 fix crashes on MacOS Mojave
 
 ### Pro
+
 - 🎉 content extraction of GPS and shooting date from EXIF and keyword from IPTC in JPGs
 - 🎉 add content extraction button in the directory menu
 - 🎉 extending search to support time periods and plus codes
@@ -162,12 +195,15 @@
 - 🐛 folder view not updating when selecting next or prev file in the file viewer
 
 ### Pro
+
 - 🎉 added support for custom background color per folder
+
 * 🌟 always persisting index while on object store locations
 
 ## Version 3.0.9 / 2019.02.01
 
 ### Community
+
 - extending the tag search to support AND, OR and negative searches, thanks to @IHappyDayI
 - added search boxing enabling search restriction to the current folder
 - clear folder content on directory change
@@ -190,6 +226,7 @@
 - refactoring sorting functionality, added sorting by first tag, showing folder always first
 
 ### Pro
+
 - added experimental full text search support for TXT, MD and HTML files in the desktop app
 - added functionality for find and extract all the tags from the current location
 - fix navigation to parent folder on Windows and for s3
@@ -197,6 +234,7 @@
 ## Version 3.0.5 / 2019.01.18
 
 ### Community
+
 - add collecting tags after tag rename #832(https://github.com/tagspaces/tagspaces/issues/832)
 - fix tag moving bug in tag library
 - fix the check for new version
@@ -219,12 +257,13 @@
 - updating translations
 
 ### Pro
-- added search filters for bookmarks and ebooks
 
+- added search filters for bookmarks and ebooks
 
 ## Version 3.0.1 / 2018.12.31
 
 ### Community
+
 - fixing tag color issues [#799](https://github.com/tagspaces/tagspaces/issues/799)
 - fix tag name validation
 - fixing dark theme issue in settings
@@ -234,11 +273,13 @@
 - fixing importing tag library in web edition [#804](https://github.com/tagspaces/tagspaces/issues/804)
 
 ### Pro
+
 - fixing pdf thumb generation
 
 ## Version 3.0.0 / 2018.12.21
 
 ### Community
+
 - New user interface based on React.js with resizable panels
 - Location indexing for faster search
 - Tree folder navigation
@@ -247,6 +288,7 @@
 - Playing modes for audio and video files
 
 ### Pro
+
 - Connecting of AWS S3 compatible storage locations
 - Watching for changes in a location
 - New advance search functionalities
@@ -254,6 +296,7 @@
 ## Version 2.9.0 / 2017.07.15
 
 ### Community
+
 - added support for playing flac and mp3 files
 - added swith for disabling global keybindings [#574](https://github.com/tagspaces/tagspaces/issues/574)
 - allow navigation in the alternative directoriy with a single click
@@ -264,11 +307,13 @@
 - update i18n files for spanish, chinese, russian and dutch languages
 
 ### Pro
+
 - fixed issues with handling tags in sidecar files [#582](https://github.com/tagspaces/tagspaces/issues/582) and [#604](https://github.com/tagspaces/tagspaces/issues/604),
 
 ## Version 2.7.0 / 2017.02.04
 
 ### Community
+
 - redesigning the user interface for file and directory properties
 - read only support for file and directory description
 - showing the count of tags in a tag group only if it is collapsed
@@ -292,19 +337,22 @@
 - [#411](https://github.com/tagspaces/tagspaces/issues/411) fixed
 
 ### Pro
+
 - added file description editor in the file properties area
 - added directory description in the directory properties are
 
 ### Chrome Extension and Firefox Addon
+
 - improved onboarding for the chrome extension
 
 ### Android App
-- corrected the loading of meta data
 
+- corrected the loading of meta data
 
 ## Version 2.6.0 / 2016.11.23
 
 ### Community
+
 - Adding a tray icon with a menu
 - Adding global shortcuts for showing the application, opening the previous and next files, pausing the playback
 - Adding new keyboard shortcuts for open, open native and delete
@@ -328,20 +376,24 @@
 - Show source url and saved date in viewerHTML
 
 ### Pro
+
 - Added geo tagging with the leaflet library
 - Making thumbnails size and format configurable
 - Correcting the generation of PDF thumbnails
 
 ### Chrome Extension and Firefox Addon
+
 - Minor bug fixes
 
 ### Android App
+
 - Correcting adding external files
 - Improving position of alert messages
 
 ## Version 2.5.0 / 2016.09.05
 
 ### Community
+
 - Support for folders in the grid perspective
 - Added Maltese and Armenian translation
 - Added new logo
@@ -357,17 +409,21 @@
 - Added extCommon library as a place to share common code between tagspaces extensions
 
 ### Pro
+
 - Minor bug fixes
 
 ### Chrome Extension and Firefox Addon
+
 - Added close button for the chrome extension popup
 
 ### Android App
+
 - no specific changes
 
 ## Version 2.4.0 / 2016.06.09
 
 ### Community
+
 - Added initial implementation for searching in the HTML and MD viewers
 - The user interface of the audio/video player was updated
 - Audio/video player will trigger the opening of the next file in the current folder on finishing playback, allowing you for example to listen many audio files one after another like in a regular music player.
@@ -377,20 +433,28 @@
 - Fixed directory listing issue with the nginx webdav module [#409](https://github.com/tagspaces/tagspaces/issues/409)
 - Fixing showing files containing a tag [#441](https://github.com/tagspaces/tagspaces/issues/441)
 - Starting the search in the advanced search dialog on enter now possible
+
 ### Pro
+
 - Minor bug fixes
+
 ### Chrome Extension and Firefox Addon
+
 - Added the ability to save the source url and date in the saved HTML web page
+
 ### Android App
+
 - Supporting playing of audio while the app is not in foreground
 - Fixing issue with opening files from search results on android [#438](https://github.com/tagspaces/tagspaces/issues/438)
 
 ## Version 2.3.0 / 2016.04.30
 
 ### Pro
+
 - Initial release of [TagSpaces Pro](https://www.tagspaces.org/products/pro)
 
 ### Community
+
 - Redesigning the search user interface, adding new options
 - Considering the parent directory name by the search algorithm
 - Added an option in the settings for limiting the search results
@@ -404,21 +468,26 @@
 - Fixing issue [#358](https://github.com/tagspaces/tagspaces/issues/358) which was preventing file renaming on network shares under OS X
 
 ### Chrome Extension
+
 - Fixes needed for the file system API changes in Chrome 49
 
 ### Android App
+
 - Reenabling the add existing file functionality on Android
 
 ## Version 2.2.5 / 2016.04.24
+
 - Firefox only release, with a signed addon
 - Addon migration to JPM
 
 ## Version 2.2.1 / 2016.03.28
+
 - Fixing embedded images in HTML with data url
 - Fixing search in ImageSwiper perspective
 - Fixing opening of the source link in MHTML viewer
 
 ## Version 2.2.0 / 2016.03.24
+
 - Migration the desktop app to the [Electron](http://electron.atom.io) shell
 - Adding live thumbnails for images in grid and image-swiper perspectives
 - Adding language detection on the first application run
@@ -436,6 +505,7 @@
 - Disabling the firefox file browser in the addon
 
 ## Version 2.1.4 / 2016.03.22 (Android only)
+
 - Adding live thumbnails for images in grid and image-swiper perspectives
 - Adding language detection on first run
 - Adding polish translation thanks to fringoo
@@ -444,11 +514,13 @@
 - Showing Exif and IPTC information from JPEGs in the image viewer extension
 
 ## Version 2.1.1 / 2016.02.03
+
 - Fixing issue with renaming folder in the WebDAV edition
 - Fixing missing icons
 - Fixing loading extensions in Firefox
 
 ## Version 2.1.0 / 2016.01.28
+
 - Added new perspective(ImageSwiper) for browsing of photos and image
 - Separating all the extension in separate modules/repositories, so they can be now easily extended by advanced users
 - Adding support for search in subfolders for the webdav and chrome versions
@@ -468,6 +540,7 @@
 - Hosting the current jsdoc of the application on [tagspaces.github.io](http://tagspaces.github.io)
 
 ## Version 2.0.1 / 2015.10.31
+
 - redesign of the user interface using material paradigms
 - using flexbox for performance optimization of the user interface
 - show file names in delete confirmation message
