@@ -90,13 +90,9 @@
   },
   "keywords": [
     "electron",
-    "boilerplate",
     "react",
-    "redux",
-    "sass",
-    "webpack",
-    "hot",
-    "reload"
+    "taggin",
+    "file-manager"
   ],
   "husky": {
     "hooks": {
