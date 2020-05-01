@@ -28,7 +28,7 @@ export default merge.smart(baseConfig, {
   output: {
     libraryTarget: 'window', // 'window', // 'commonjs2',
     path: path.join(__dirname, '../cordova/www/dist'),
-    publicPath: '../dist/',
+    publicPath: './dist/',
     filename: 'bundle.js'
   },
 
@@ -172,7 +172,7 @@ export default merge.smart(baseConfig, {
       // Text files
       {
         test: /\.(txt)$/,
-        use: 'file-loader'
+        use: 'raw-loader'
       },
       // Common Image Formats
       {
