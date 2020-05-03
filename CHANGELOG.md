@@ -1,12 +1,18 @@
 # Changelog
 
+## Version 3.6.x / 2020.05.xx
+
+### Community
+
+- Added switch for playing video with audio only, for saving cpu / battery resouces
+
 ## Version 3.5.2 / 2020.04.19
 
 ### Community
 
 - 🎉 Added global key shortcut `ctrl/cmd + shift + f` for showing TagSpaces in search mode
 - 🌟 removing extrafile with portable script because causing issue with MacOS signing
-- 🌟 finetunning ui of the entry properties area
+- 🌟 fine tunning ui of the entry properties area
 - 🌟 optimizing compact mode in grid perspective
 - 🌟 upgrading electron, material-ui, aws-sdk libs
 - 🌟 improving speed by removing the usage of id for tags
@@ -22,7 +28,7 @@
 
 - 🎉 implementing multi location search, which we call Global search
 - 🎉 support connecting Minio and Digital Ocean Spaces locations
-- 🌟 allow-browsing-the-root-folder-of-a-S3-bucket
+- 🌟 allow browsing the root folder of a S3 bucket
 - 🐛 fix folder properties in s3 locations
 
 ## Version 3.4.2 / 2020.03.06
