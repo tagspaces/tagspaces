@@ -147,10 +147,7 @@ class GridPerspective extends React.Component<Props, State> {
       optionsContextMenuAnchorEl: null,
       selectedEntryPath: '',
       sortBy: settings && settings.sortBy ? settings.sortBy : 'byName',
-      orderBy:
-        settings && typeof settings.orderBy !== 'undefined'
-          ? settings.orderBy
-          : true,
+      orderBy: settings && settings.orderBy ? settings.orderBy : true,
       layoutType:
         settings && settings.layoutType ? settings.layoutType : 'grid',
       singleClickAction:

@@ -81,15 +81,15 @@ Change to the branch with the name **develop**:
 
 and install the project dependencies:
 
-    $ yarn install --network-timeout 1000000
+    $ yarn install
 
 The last command will automatically build the application with webpack. Now it is time to install all the TagSpaces extensions:
 
 	$ yarn install-ext
 
-Now you are ready and can build/start (bs) the application with:
+Now you are ready and can start the application with:
 
-	$ yarn bs
+	$ yarn start
 
 If you want to try the development mode, you can start it by:
 
