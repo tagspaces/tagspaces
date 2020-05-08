@@ -379,6 +379,16 @@ const CellContent = (props: Props) => {
     gridCell = renderRowCell();
   }
 
+  function scrollElementAfterClick(event: any) {
+    const target =
+      event.target.parentNode.parentNode.parentNode.parentNode.parentNode;
+    const parent = target.parentNode.parentNode;
+    setTimeout(() => {
+      parent.scrollTop = target.offsetTop - parent.offsetTop;
+    }, 500);
+    handleGridCellClick(event, fsEntry);
+  }
+
   return (
     <Paper
       elevation={2}
@@ -395,7 +405,7 @@ const CellContent = (props: Props) => {
       }}
       onContextMenu={event => handleGridContextMenu(event, fsEntry)}
       onDoubleClick={event => handleGridCellDblClick(event, fsEntry)}
-      onClick={event => handleGridCellClick(event, fsEntry)}
+      onClick={event => scrollElementAfterClick(event)}
     >
       {gridCell}
     </Paper>
