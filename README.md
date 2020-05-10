@@ -81,6 +81,10 @@ Change to the branch with the name **develop**:
 
 and install the project dependencies:
 
+    $ yarn install
+
+**Note:** If you experience any errors with the above command, please try this command first before filing a bug report:
+
     $ yarn install --network-timeout 1000000
 
 The last command will automatically build the application with webpack. Now it is time to install all the TagSpaces extensions:
