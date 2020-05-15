@@ -237,8 +237,17 @@ const CreateDialog = (props: Props) => {
       onClose={onClose}
       keepMounted
       scroll="paper"
-      // onEnterKey={(event) => onEnterKeyHandler(event, this.addTags)}
-      // TransitionComponent={Transition}
+      onKeyDown={event => {
+        if (event.key === 'N' || event.key === 'n') {
+          createRichTextFile();
+        } else if (event.key === 'T' || event.key === 't') {
+          createTextFile();
+        } else if (event.key === 'M' || event.key === 'm') {
+          createMarkdownFile();
+        } else if (event.key === 'A' || event.key === 'a') {
+          addFile();
+        }
+      }}
     >
       <DialogTitle style={{ alignSelf: 'center' }}>
         Create new content
@@ -253,19 +262,24 @@ const CreateDialog = (props: Props) => {
             <Button
               onClick={createRichTextFile}
               className={classes.createButton}
+              title={i18n.t('createNoteTitle')}
             >
               <div>
                 <NoteFileIcon />
               </div>
               <div>
-                <Container>Create Note</Container>
+                <Container>{i18n.t('createNote')}</Container>
               </div>
             </Button>
           </Grid>
           <Grid item xs>
-            <Button onClick={createTextFile} className={classes.createButton}>
+            <Button
+              onClick={createTextFile}
+              className={classes.createButton}
+              title={i18n.t('createNoteTitle')}
+            >
               <TextFileIcon />
-              <Container>Create Text File</Container>
+              <Container>{i18n.t('createTextFile')}</Container>
             </Button>
           </Grid>
         </Grid>
@@ -274,15 +288,20 @@ const CreateDialog = (props: Props) => {
             <Button
               onClick={createMarkdownFile}
               className={classes.createButton}
+              title={i18n.t('createMarkdownTitle')}
             >
               <MarkdownFileIcon />
-              <Container>Create Markdown File</Container>
+              <Container>{i18n.t('createMarkdown')}</Container>
             </Button>
           </Grid>
           <Grid item xs>
-            <Button onClick={addFile} className={classes.createButton}>
+            <Button
+              onClick={addFile}
+              className={classes.createButton}
+              title={i18n.t('addFileTitle')}
+            >
               <AddFileIcon />
-              <Container>Add file</Container>
+              <Container>{i18n.t('addFile')}</Container>
             </Button>
           </Grid>
         </Grid>

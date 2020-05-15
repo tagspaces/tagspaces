@@ -29,7 +29,6 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import FileIcon from '@material-ui/icons/InsertDriveFileOutlined';
 import Typography from '@material-ui/core/Typography';
 import Dialog from '@material-ui/core/Dialog';
-import { DialogTransition } from './GenericDialog';
 import { Tag } from '-/reducers/taglibrary';
 import TagsSelect from '../TagsSelect';
 import i18n from '-/services/i18n';
@@ -101,13 +100,11 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
         onClose={onClose}
         keepMounted
         scroll="paper"
-        // onEnterKey={(event) => onEnterKeyHandler(event, this.addTags)}
-        TransitionComponent={DialogTransition}
       >
         <DialogTitle>{i18n.t('core:tagOperationTitle')}</DialogTitle>
         <DialogContent style={{ minHeight: 330 }}>
           <TagsSelect
-            placeholderText={i18n.t('core:selectTags') as string}
+            placeholderText={i18n.t('core:selectTags')}
             tags={newlyAddedTags}
             handleChange={this.handleChange}
           />

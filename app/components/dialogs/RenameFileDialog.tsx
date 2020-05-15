@@ -28,7 +28,6 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { withStyles } from '@material-ui/core/styles';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import { DialogTransition } from './GenericDialog';
 import AppConfig from '-/config';
 import i18n from '-/services/i18n';
 import { extractFileName, extractContainingDirectoryPath } from '-/utils/paths';
@@ -178,11 +177,15 @@ class RenameFileDialog extends React.Component<Props, State> {
     return (
       <Dialog
         open={open}
-        TransitionComponent={DialogTransition}
+        // TransitionComponent={DialogTransition}
         keepMounted
         onClose={onClose}
         onBackdropClick={onClose}
-        // onKeyDown={((event) => onEnterKeyHandler(event, this.onConfirm))}
+        onKeyDown={event => {
+          if (event.key === 'Enter' || event.keyCode === 13) {
+            this.onConfirm();
+          }
+        }}
       >
         {this.renderTitle()}
         {this.renderContent()}

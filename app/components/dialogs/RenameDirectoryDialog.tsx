@@ -95,7 +95,17 @@ class RenameDirectoryDialog extends React.Component<Props, State> {
     const { open, onClose } = this.props;
 
     return (
-      <Dialog open={open} onClose={onClose} keepMounted scroll="paper">
+      <Dialog
+        open={open}
+        onClose={onClose}
+        keepMounted
+        scroll="paper"
+        onKeyDown={event => {
+          if (event.key === 'Enter' || event.keyCode === 13) {
+            this.onConfirm();
+          }
+        }}
+      >
         <DialogTitle>{i18n.t('core:renameDirectory')}</DialogTitle>
         <DialogContent>
           <FormControl fullWidth={true} error={this.state.inputError}>

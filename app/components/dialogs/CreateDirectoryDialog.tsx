@@ -89,7 +89,11 @@ const CreateDirectoryDialog = (props: Props) => {
       fullScreen={fullScreen}
       keepMounted
       scroll="paper"
-      // onKeyDown={confirmFunction} TODO
+      onKeyDown={event => {
+        if (event.key === 'Enter' || event.keyCode === 13) {
+          onConfirm();
+        }
+      }}
     >
       <DialogTitle>{i18n.t('core:createNewDirectoryTitle')}</DialogTitle>
       <DialogContent>

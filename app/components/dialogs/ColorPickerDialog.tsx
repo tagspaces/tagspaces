@@ -90,7 +90,17 @@ const ColorPickerDialog = (props: Props) => {
   }
 
   return (
-    <Dialog open={open} onClose={onClose} keepMounted scroll="paper">
+    <Dialog
+      open={open}
+      onClose={onClose}
+      keepMounted
+      scroll="paper"
+      onKeyDown={event => {
+        if (event.key === 'Enter' || event.keyCode === 13) {
+          onConfirm();
+        }
+      }}
+    >
       <DialogTitle data-tid="colorPickerDialogTitle">
         {i18n.t('core:colorPickerDialogTitle')}
       </DialogTitle>
