@@ -250,6 +250,8 @@ const CreateDialog = (props: Props) => {
           createMarkdownFile();
         } else if (event.key === 'A' || event.key === 'a') {
           addFile();
+        } else if (event.key === 'Escape') {
+          onClose();
         }
       }}
     >

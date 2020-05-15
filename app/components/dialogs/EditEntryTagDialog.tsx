@@ -185,6 +185,8 @@ const EditEntryTagDialog = (props: Props) => {
       onKeyDown={event => {
         if (event.key === 'Enter' || event.keyCode === 13) {
           onConfirm();
+        } else if (event.key === 'Escape') {
+          onClose();
         }
       }}
     >

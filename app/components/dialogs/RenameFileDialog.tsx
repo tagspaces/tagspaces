@@ -177,13 +177,13 @@ class RenameFileDialog extends React.Component<Props, State> {
     return (
       <Dialog
         open={open}
-        // TransitionComponent={DialogTransition}
         keepMounted
         onClose={onClose}
-        onBackdropClick={onClose}
         onKeyDown={event => {
           if (event.key === 'Enter' || event.keyCode === 13) {
             this.onConfirm();
+          } else if (event.key === 'Escape') {
+            onClose();
           }
         }}
       >
