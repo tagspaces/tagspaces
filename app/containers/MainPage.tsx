@@ -19,7 +19,6 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import uuidv1 from 'uuid';
 import { withStyles } from '@material-ui/core/styles';
 import { translate } from 'react-i18next';
 import SplitPane from 'react-split-pane';
@@ -663,7 +662,6 @@ class MainPage extends Component<Props, State> {
         )}
         {isEditTagDialogOpened && (
           <EditEntryTagDialogAsync
-            key={uuidv1()}
             open={isEditTagDialogOpened}
             onClose={toggleEditTagDialog}
           />
@@ -684,7 +682,6 @@ class MainPage extends Component<Props, State> {
           selectedDirectoryPath={directoryPath}
         />
         <CreateFileDialog
-          key={uuidv1()}
           open={isCreateFileDialogOpened}
           selectedDirectoryPath={
             this.state.selectedDirectoryPath || directoryPath

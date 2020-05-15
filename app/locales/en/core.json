@@ -231,6 +231,7 @@
   "searchSubFolder": "Search in subfolders",
   "file": "File",
   "newFileNote": "New File / Note",
+  "createNewContent": "Create New Content",
   "createTextFile": "Create Text File",
   "createTextFileTitle": "Press 'T' to create a simple text file",
   "createMarkdown": "Create Markdown File",

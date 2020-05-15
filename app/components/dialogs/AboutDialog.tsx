@@ -104,7 +104,6 @@ const AboutDialog = (props: Props) => {
       fullScreen={fullScreen}
       keepMounted
       scroll="paper"
-      // onKeyDown={confirmFunction}
     >
       <DialogTitle>{productName}</DialogTitle>
       <DialogContent>
@@ -229,11 +228,7 @@ const AboutDialog = (props: Props) => {
       >
         {i18n.t('core:thirdPartyLibs')}
       </Button> */}
-        <Button
-          data-tid="closeAboutDialog"
-          onClick={props.onClose}
-          color="primary"
-        >
+        <Button data-tid="closeAboutDialog" onClick={onClose} color="primary">
           {i18n.t('core:ok')}
         </Button>
       </DialogActions>

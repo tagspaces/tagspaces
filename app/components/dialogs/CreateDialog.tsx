@@ -30,6 +30,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
+import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Dialog from '@material-ui/core/Dialog';
 // import Slide from '@material-ui/core/Slide';
 import i18n from '-/services/i18n';
@@ -68,6 +69,7 @@ interface Props {
   open: boolean;
   classes: any;
   selectedDirectoryPath: string;
+  fullScreen: boolean;
   chooseDirectoryPath: (path: string) => void;
   showNotification: (message: string, type: string, autohide: boolean) => void;
   reflectCreateEntry: (path: string, isFile: boolean) => void;
@@ -93,7 +95,8 @@ const CreateDialog = (props: Props) => {
     selectedDirectoryPath,
     showNotification,
     open,
-    onClose
+    onClose,
+    fullScreen
   } = props;
 
   function handleKeyPress(event: any) {
@@ -235,6 +238,7 @@ const CreateDialog = (props: Props) => {
     <Dialog
       open={open}
       onClose={onClose}
+      // fullScreen={fullScreen}
       keepMounted
       scroll="paper"
       onKeyDown={event => {
@@ -250,7 +254,7 @@ const CreateDialog = (props: Props) => {
       }}
     >
       <DialogTitle style={{ alignSelf: 'center' }}>
-        Create new content
+        {i18n.t('createNewContent')}
       </DialogTitle>
       <DialogContent
         onKeyPress={handleKeyPress}
@@ -318,7 +322,7 @@ const CreateDialog = (props: Props) => {
       <DialogActions style={{ alignSelf: 'center' }}>
         <Button
           data-tid="closeKeyboardDialog"
-          onClick={props.onClose}
+          onClick={onClose}
           color="primary"
         >
           {i18n.t('core:close')}
@@ -348,4 +352,4 @@ function mapActionCreatorsToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
-)(withStyles(styles)(CreateDialog));
+)(withMobileDialog()(withStyles(styles)(CreateDialog)));
