@@ -88,6 +88,11 @@ class CreateTagsDialog extends React.Component<Props, State> {
         fullScreen={fullScreen}
         keepMounted
         scroll="paper"
+        onKeyDown={event => {
+          if (event.key === 'Enter' || event.keyCode === 13) {
+            this.onConfirm();
+          }
+        }}
       >
         <DialogTitle>{i18n.t('core:addTagsToGroupTitle')}</DialogTitle>
         <DialogContent style={{ minWidth: 400 }}>

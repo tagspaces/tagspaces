@@ -296,7 +296,11 @@ class EditTagGroupDialog extends React.Component<Props, State> {
         open={open}
         fullScreen={fullScreen}
         onClose={onClose}
-        // onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
+        onKeyDown={event => {
+          if (event.key === 'Enter' || event.keyCode === 13) {
+            this.onConfirm();
+          }
+        }}
       >
         {this.renderTitle()}
         {this.renderContent()}
