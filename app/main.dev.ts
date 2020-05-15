@@ -288,7 +288,9 @@ app.on('ready', async () => {
 
   function showTagSpaces() {
     if (mainWindow) {
-      mainWindow.restore();
+      if (mainWindow.isMinimized()) {
+        mainWindow.restore();
+      }
       mainWindow.show();
     }
   }
