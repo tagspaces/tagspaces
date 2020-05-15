@@ -779,6 +779,9 @@ class MainPage extends Component<Props, State> {
           >
             <SplitPane
               split="vertical"
+              style={{
+                borderTop: AppConfig.isElectron ? '1px solid lightgray' : 'none'
+              }}
               minSize={200}
               maxSize={450}
               resizerStyle={{ backgroundColor: theme.palette.divider }}
