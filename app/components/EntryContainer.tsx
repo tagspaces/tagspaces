@@ -908,7 +908,7 @@ class EntryContainer extends React.Component<Props, State> {
       fileTitle = extractTitle(
         currentEntry.path,
         !currentEntry.isFile,
-        PlatformIO.directorySeparator()
+        PlatformIO.getDirSeparator()
       );
       // if (fileTitle.length > maxCharactersTitleLength) {
       //   fileTitle = fileTitle.substr(0, maxCharactersTitleLength) + '...';
@@ -1030,7 +1030,7 @@ class EntryContainer extends React.Component<Props, State> {
                   dirPath: currentEntry
                     ? extractDirectoryName(
                         currentEntry.path,
-                        PlatformIO.directorySeparator()
+                        PlatformIO.getDirSeparator()
                       )
                     : ''
                 })

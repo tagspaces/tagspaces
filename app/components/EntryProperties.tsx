@@ -274,9 +274,9 @@ class EntryProperties extends Component<Props, State> {
 
       const path = extractContainingDirectoryPath(
         entryPath,
-        PlatformIO.directorySeparator()
+        PlatformIO.getDirSeparator()
       );
-      const nextPath = path + PlatformIO.directorySeparator() + name;
+      const nextPath = path + PlatformIO.getDirSeparator() + name;
 
       this.setState(
         {
@@ -564,12 +564,12 @@ class EntryProperties extends Component<Props, State> {
       if (isFile) {
         thumbPath = getThumbFileLocationForFile(
           path,
-          PlatformIO.directorySeparator()
+          PlatformIO.getDirSeparator()
         );
       } else {
         thumbPath = getThumbFileLocationForDirectory(
           path,
-          PlatformIO.directorySeparator()
+          PlatformIO.getDirSeparator()
         );
       }
     }

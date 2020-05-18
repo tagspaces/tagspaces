@@ -72,8 +72,8 @@ const actions = {
       moveJobs.push([
         path,
         normalizePath(targetPath) +
-          PlatformIO.directorySeparator() +
-          extractFileName(path, PlatformIO.directorySeparator())
+          PlatformIO.getDirSeparator() +
+          extractFileName(path, PlatformIO.getDirSeparator())
       ]);
       return true;
     });
@@ -120,8 +120,8 @@ const actions = {
       copyJobs.push([
         path,
         normalizePath(targetPath) +
-          PlatformIO.directorySeparator() +
-          extractFileName(path, PlatformIO.directorySeparator())
+          PlatformIO.getDirSeparator() +
+          extractFileName(path, PlatformIO.getDirSeparator())
       ]);
       return true;
     });

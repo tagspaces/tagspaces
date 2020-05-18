@@ -64,7 +64,7 @@ const CreateDirectoryDialog = (props: Props) => {
   function onConfirm() {
     if (!disableConfirmButton && name) {
       const dirPath =
-        props.selectedDirectoryPath + PlatformIO.directorySeparator() + name;
+        props.selectedDirectoryPath + PlatformIO.getDirSeparator() + name;
       props.createDirectory(dirPath);
       resetState();
       props.onClose();

@@ -120,7 +120,7 @@ export default (state: any = initialState, action: any) => {
           // thumbPath: getThumbFileLocationForFile(action.newPath), // disabled due performance concerns
           GlobalSearch.index[i].name = extractFileName(
             action.newPath,
-            PlatformIO.directorySeparator()
+            PlatformIO.getDirSeparator()
           );
           GlobalSearch.index[i].extension = extractFileExtension(
             action.newPath
@@ -191,7 +191,7 @@ export const actions = {
           Pro.Indexer.persistIndex(
             directoryPath,
             directoryIndex,
-            PlatformIO.directorySeparator()
+            PlatformIO.getDirSeparator()
           );
         }
         return true;
@@ -224,7 +224,7 @@ export const actions = {
                 Pro.Indexer.persistIndex(
                   nextPath,
                   directoryIndex,
-                  PlatformIO.directorySeparator()
+                  PlatformIO.getDirSeparator()
                 );
               }
               return true;
@@ -260,7 +260,7 @@ export const actions = {
       AppActions.showNotification(i18n.t('core:loadingIndex'), 'default', true)
     );
     if (Pro && Pro.Indexer.loadIndex) {
-      Pro.Indexer.loadIndex(directoryPath, PlatformIO.directorySeparator())
+      Pro.Indexer.loadIndex(directoryPath, PlatformIO.getDirSeparator())
         .then(directoryIndex => {
           if (isCurrentLocation) {
             // Load index only if current location
@@ -368,14 +368,14 @@ export const actions = {
               Pro.Indexer.persistIndex(
                 nextPath,
                 directoryIndex,
-                PlatformIO.directorySeparator()
+                PlatformIO.getDirSeparator()
               );
             }
           } else if (Pro && Pro.Indexer && Pro.Indexer.loadIndex) {
             console.log('Loading index for : ' + nextPath);
             directoryIndex = await Pro.Indexer.loadIndex(
               nextPath,
-              PlatformIO.directorySeparator()
+              PlatformIO.getDirSeparator()
             );
           }
           return Search.searchLocationIndex(directoryIndex, searchQuery)

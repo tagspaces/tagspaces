@@ -49,7 +49,7 @@ export default class PlatformIO {
 
   static haveObjectStoreSupport = (): boolean => objectStoreAPI !== undefined;
 
-  static directorySeparator = (): string =>
+  static getDirSeparator = (): string =>
     PlatformIO.haveObjectStoreSupport() ? '/' : AppConfig.dirSeparator;
 
   static initMainMenu = (menuConfig: Array<Object>): void => {

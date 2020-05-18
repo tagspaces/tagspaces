@@ -214,7 +214,7 @@ const actions = {
         }
         const newFilePath =
           containingDirectoryPath +
-          PlatformIO.directorySeparator() +
+          PlatformIO.getDirSeparator() +
           generateFileName(fileName, extractedTags, settings.tagDelimiter);
         dispatch(AppActions.renameFile(path, newFilePath));
       }
@@ -232,7 +232,7 @@ const actions = {
       }
       const newFilePath =
         containingDirectoryPath +
-        PlatformIO.directorySeparator() +
+        PlatformIO.getDirSeparator() +
         generateFileName(fileName, extractedTags, settings.tagDelimiter);
       if (path !== newFilePath) {
         dispatch(AppActions.renameFile(path, newFilePath));
@@ -314,9 +314,7 @@ const actions = {
         dispatch(
           AppActions.renameFile(
             path,
-            containingDirectoryPath +
-              PlatformIO.directorySeparator() +
-              newFileName
+            containingDirectoryPath + PlatformIO.getDirSeparator() + newFileName
           )
         );
       }
@@ -498,7 +496,7 @@ const actions = {
         }
         const newFilePath =
           containingDirectoryPath +
-          PlatformIO.directorySeparator() +
+          PlatformIO.getDirSeparator() +
           generateFileName(fileName, extractedTags, settings.tagDelimiter);
         if (path !== newFilePath) {
           dispatch(AppActions.renameFile(path, newFilePath));
@@ -564,7 +562,7 @@ const actions = {
         }
         const newFilePath =
           containingDirectoryPath +
-          PlatformIO.directorySeparator() +
+          PlatformIO.getDirSeparator() +
           fileTitle +
           fileExt;
         dispatch(AppActions.renameFile(path, newFilePath));
@@ -610,7 +608,7 @@ const actions = {
       }
     }
     var newFileName = generateFileName(fileName, extractedTags);
-    renameFile(filePath, containingDirectoryPath + PlatformIO.directorySeparator(), + newFileName); */
+    renameFile(filePath, containingDirectoryPath + PlatformIO.getDirSeparator(), + newFileName); */
     },
   // smart tagging -> PRO
   addDateTag: (paths: Array<string>) => () =>

@@ -391,7 +391,7 @@ export default (state: any = initialState, action: any) => {
         entryIndex < 0 &&
         extractParentDirectoryPath(
           action.newEntry.path,
-          PlatformIO.directorySeparator()
+          PlatformIO.getDirSeparator()
         ).replace(/[/\\]/g, '') ===
           state.currentDirectoryPath.replace(/[/\\]/g, '')
       ) {
@@ -416,10 +416,7 @@ export default (state: any = initialState, action: any) => {
             ...entry,
             path: action.newPath,
             // thumbPath: getThumbFileLocationForFile(action.newPath), // not needed due timing issue
-            name: extractFileName(
-              action.newPath,
-              PlatformIO.directorySeparator()
-            ),
+            name: extractFileName(action.newPath, PlatformIO.getDirSeparator()),
             extension: extractFileExtension(action.newPath),
             tags: [
               ...entry.tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
@@ -642,7 +639,7 @@ export const actions = {
     if (currentDirectoryPath) {
       const parentDirectory = extractParentDirectoryPath(
         currentDirectoryPath,
-        PlatformIO.directorySeparator()
+        PlatformIO.getDirSeparator()
       );
       // console.log('parentDirectory: ' + parentDirectory  + ' - currentLocationPath: ' + currentLocationPath);
       if (parentDirectory.includes(currentLocationPath)) {
@@ -675,7 +672,7 @@ export const actions = {
     window.walkCanceled = false;
 
     loadMetaDataPromise(
-      normalizePath(directoryPath) + PlatformIO.directorySeparator()
+      normalizePath(directoryPath) + PlatformIO.getDirSeparator()
     )
       .then(fsEntryMeta => {
         if (fsEntryMeta.color) {
@@ -714,7 +711,7 @@ export const actions = {
     showIsLoading?: boolean
   ) => ({
     type: types.LOAD_DIRECTORY_SUCCESS,
-    directoryPath: directoryPath || PlatformIO.directorySeparator(),
+    directoryPath: directoryPath || PlatformIO.getDirSeparator(),
     directoryContent,
     showIsLoading
   }),
@@ -770,7 +767,7 @@ export const actions = {
             i18n.t('deletingDirectorySuccessfull', {
               dirPath: extractDirectoryName(
                 directoryPath,
-                PlatformIO.directorySeparator()
+                PlatformIO.getDirSeparator()
               )
             }),
             'default',
@@ -786,7 +783,7 @@ export const actions = {
             i18n.t('errorDeletingDirectoryAlert', {
               dirPath: extractDirectoryName(
                 directoryPath,
-                PlatformIO.directorySeparator()
+                PlatformIO.getDirSeparator()
               )
             }),
             'error',
@@ -872,7 +869,7 @@ export const actions = {
     if (app.currentDirectoryPath) {
       const filePath =
         app.currentDirectoryPath +
-        PlatformIO.directorySeparator() +
+        PlatformIO.getDirSeparator() +
         'textfile' +
         AppConfig.beginTagContainer +
         formatDateTime4Tag(new Date(), true) +
@@ -920,9 +917,7 @@ export const actions = {
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
     const fileNameAndExt = fileName + '.' + fileType;
     const filePath =
-      normalizePath(targetPath) +
-      PlatformIO.directorySeparator() +
-      fileNameAndExt;
+      normalizePath(targetPath) + PlatformIO.getDirSeparator() + fileNameAndExt;
     let fileContent = content;
     if (fileType === 'html') {
       const { newHTMLFileContent } = getState().settings;
@@ -1224,8 +1219,8 @@ export const actions = {
     const newEntry = {
       uuid: uuidv1(),
       name: isFile
-        ? extractFileName(path, PlatformIO.directorySeparator())
-        : extractDirectoryName(path, PlatformIO.directorySeparator()),
+        ? extractFileName(path, PlatformIO.getDirSeparator())
+        : extractDirectoryName(path, PlatformIO.getDirSeparator()),
       isFile,
       extension: extractFileExtension(path),
       description: '',
@@ -1333,23 +1328,17 @@ export const actions = {
         // Update sidecar file and thumb
         renameFilesPromise([
           [
-            getMetaFileLocationForFile(
-              filePath,
-              PlatformIO.directorySeparator()
-            ),
+            getMetaFileLocationForFile(filePath, PlatformIO.getDirSeparator()),
             getMetaFileLocationForFile(
               newFilePath,
-              PlatformIO.directorySeparator()
+              PlatformIO.getDirSeparator()
             )
           ],
           [
-            getThumbFileLocationForFile(
-              filePath,
-              PlatformIO.directorySeparator()
-            ),
+            getThumbFileLocationForFile(filePath, PlatformIO.getDirSeparator()),
             getThumbFileLocationForFile(
               newFilePath,
-              PlatformIO.directorySeparator()
+              PlatformIO.getDirSeparator()
             )
           ]
         ])

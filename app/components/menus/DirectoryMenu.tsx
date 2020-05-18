@@ -179,7 +179,7 @@ const DirectoryMenu = (props: Props) => {
       '.jpg';
     const newFilePath =
       normalizePath(props.directoryPath) +
-      PlatformIO.directorySeparator() +
+      PlatformIO.getDirSeparator() +
       fileName;
 
     PlatformIO.renameFilePromise(filePath, newFilePath)
@@ -292,7 +292,7 @@ const DirectoryMenu = (props: Props) => {
   }
 
   function getDirPath(dirPath: string) {
-    const fileName = extractFileName(dirPath, PlatformIO.directorySeparator());
+    const fileName = extractFileName(dirPath, PlatformIO.getDirSeparator());
     return props.directoryPath && fileName
       ? fileName
       : cleanTrailingDirSeparator(props.directoryPath);

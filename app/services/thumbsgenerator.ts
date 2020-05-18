@@ -110,7 +110,7 @@ function getThumbFileLocation(filePath: string) {
   const metaFolder = getMetaDirectoryPath(containingFolder);
   return (
     metaFolder +
-    PlatformIO.directorySeparator() +
+    PlatformIO.getDirSeparator() +
     extractFileName(filePath) +
     AppConfig.thumbFileExt
   );

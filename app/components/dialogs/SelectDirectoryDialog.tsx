@@ -199,7 +199,7 @@ class SelectDirectoryDialog extends React.Component<Props, State> {
 
   onBackButton = () => {
     const lastIndex = this.state.currentPath.lastIndexOf(
-      PlatformIO.directorySeparator()
+      PlatformIO.getDirSeparator()
     );
     const path = this.state.currentPath.slice(0, lastIndex);
     this.setState({

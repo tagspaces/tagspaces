@@ -112,7 +112,7 @@ class RenameFileDialog extends React.Component<Props, State> {
         this.props.selectedFilePath
       );
       const newFilePath =
-        fileDirectory + PlatformIO.directorySeparator + this.state.fileName;
+        fileDirectory + PlatformIO.getDirSeparator + this.state.fileName;
       this.props.renameFile(this.props.selectedFilePath, newFilePath);
       this.props.onClose();
       this.setState({ inputError: false, disableConfirmButton: true });

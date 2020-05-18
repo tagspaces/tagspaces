@@ -244,12 +244,12 @@ export async function getAllPropertiesPromise(
   if (entryProps.isFile) {
     metaFilePath = getMetaFileLocationForFile(
       entryPath,
-      PlatformIO.directorySeparator()
+      PlatformIO.getDirSeparator()
     );
   } else {
     metaFilePath = getMetaFileLocationForDir(
       entryPath,
-      PlatformIO.directorySeparator()
+      PlatformIO.getDirSeparator()
     );
   }
   const metaFileProps = await PlatformIO.getPropertiesPromise(metaFilePath);
