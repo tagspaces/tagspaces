@@ -494,7 +494,7 @@ class MainPage extends Component<Props, State> {
             fileName = decodeURIComponent(file.name);
             filePath =
               normalizePath(this.props.directoryPath) +
-              AppConfig.dirSeparator +
+              PlatformIO.getDirSeparator() +
               fileName;
           } catch (err) {
             console.warn(

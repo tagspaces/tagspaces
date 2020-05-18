@@ -230,7 +230,7 @@ const DirectoryMenu = (props: Props) => {
     const file = selection.currentTarget.files[0];
     const filePath =
       normalizePath(props.directoryPath) +
-      AppConfig.dirSeparator +
+      PlatformIO.getDirSeparator() +
       decodeURIComponent(file.name);
 
     const reader = new FileReader();
