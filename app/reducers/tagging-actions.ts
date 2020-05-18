@@ -16,7 +16,6 @@
  *
  */
 
-import uuidv1 from 'uuid';
 import OpenLocationCode from 'open-location-code-typescript';
 import i18n from '../services/i18n';
 import { actions as AppActions } from './app';
@@ -215,7 +214,7 @@ const actions = {
         }
         const newFilePath =
           containingDirectoryPath +
-          AppConfig.dirSeparator +
+          PlatformIO.directorySeparator() +
           generateFileName(fileName, extractedTags, settings.tagDelimiter);
         dispatch(AppActions.renameFile(path, newFilePath));
       }
@@ -233,7 +232,7 @@ const actions = {
       }
       const newFilePath =
         containingDirectoryPath +
-        AppConfig.dirSeparator +
+        PlatformIO.directorySeparator() +
         generateFileName(fileName, extractedTags, settings.tagDelimiter);
       if (path !== newFilePath) {
         dispatch(AppActions.renameFile(path, newFilePath));
@@ -315,7 +314,9 @@ const actions = {
         dispatch(
           AppActions.renameFile(
             path,
-            containingDirectoryPath + AppConfig.dirSeparator + newFileName
+            containingDirectoryPath +
+              PlatformIO.directorySeparator() +
+              newFileName
           )
         );
       }
@@ -497,7 +498,7 @@ const actions = {
         }
         const newFilePath =
           containingDirectoryPath +
-          AppConfig.dirSeparator +
+          PlatformIO.directorySeparator() +
           generateFileName(fileName, extractedTags, settings.tagDelimiter);
         if (path !== newFilePath) {
           dispatch(AppActions.renameFile(path, newFilePath));
@@ -563,7 +564,7 @@ const actions = {
         }
         const newFilePath =
           containingDirectoryPath +
-          AppConfig.dirSeparator +
+          PlatformIO.directorySeparator() +
           fileTitle +
           fileExt;
         dispatch(AppActions.renameFile(path, newFilePath));
@@ -609,7 +610,7 @@ const actions = {
       }
     }
     var newFileName = generateFileName(fileName, extractedTags);
-    renameFile(filePath, containingDirectoryPath + AppConfig.dirSeparator + newFileName); */
+    renameFile(filePath, containingDirectoryPath + PlatformIO.directorySeparator(), + newFileName); */
     },
   // smart tagging -> PRO
   addDateTag: (paths: Array<string>) => () =>

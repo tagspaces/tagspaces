@@ -32,6 +32,7 @@ import AppConfig from '-/config';
 import i18n from '-/services/i18n';
 import { extractFileName, extractContainingDirectoryPath } from '-/utils/paths';
 import { actions as AppActions } from '-/reducers/app';
+import PlatformIO from '-/services/platform-io';
 
 interface Props {
   open: boolean;
@@ -111,7 +112,7 @@ class RenameFileDialog extends React.Component<Props, State> {
         this.props.selectedFilePath
       );
       const newFilePath =
-        fileDirectory + AppConfig.dirSeparator + this.state.fileName;
+        fileDirectory + PlatformIO.directorySeparator + this.state.fileName;
       this.props.renameFile(this.props.selectedFilePath, newFilePath);
       this.props.onClose();
       this.setState({ inputError: false, disableConfirmButton: true });

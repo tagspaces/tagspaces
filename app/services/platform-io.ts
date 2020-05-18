@@ -49,9 +49,8 @@ export default class PlatformIO {
 
   static haveObjectStoreSupport = (): boolean => objectStoreAPI !== undefined;
 
-  static directorySeparator: string = PlatformIO.haveObjectStoreSupport()
-    ? '/'
-    : AppConfig.dirSeparator;
+  static directorySeparator = (): string =>
+    PlatformIO.haveObjectStoreSupport() ? '/' : AppConfig.dirSeparator;
 
   static initMainMenu = (menuConfig: Array<Object>): void => {
     if (nativeAPI.initMainMenu) {

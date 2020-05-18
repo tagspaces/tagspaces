@@ -272,8 +272,11 @@ class EntryProperties extends Component<Props, State> {
       const { name, isFile } = this.state;
       const { entryPath, renameFile, renameDirectory } = this.props;
 
-      const path = extractContainingDirectoryPath(entryPath);
-      const nextPath = path + PlatformIO.directorySeparator + name;
+      const path = extractContainingDirectoryPath(
+        entryPath,
+        PlatformIO.directorySeparator()
+      );
+      const nextPath = path + PlatformIO.directorySeparator() + name;
 
       this.setState(
         {
@@ -561,21 +564,21 @@ class EntryProperties extends Component<Props, State> {
       if (isFile) {
         thumbPath = getThumbFileLocationForFile(
           path,
-          PlatformIO.directorySeparator
+          PlatformIO.directorySeparator()
         );
       } else {
         thumbPath = getThumbFileLocationForDirectory(
           path,
-          PlatformIO.directorySeparator
+          PlatformIO.directorySeparator()
         );
       }
     }
-    let thumbPathUrl = thumbPath
+    const thumbPathUrl = thumbPath
       ? 'url("' + thumbPath + '?' + new Date().getTime() + '")'
       : '';
-    if (AppConfig.isWin) {
-      thumbPathUrl = thumbPathUrl.split('\\').join('\\\\');
-    }
+    // if (AppConfig.isWin) {
+    //   thumbPathUrl = thumbPathUrl.split('\\').join('\\\\');
+    // }
 
     return (
       <div className={classes.entryProperties}>

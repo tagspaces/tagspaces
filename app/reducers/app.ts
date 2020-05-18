@@ -391,7 +391,7 @@ export default (state: any = initialState, action: any) => {
         entryIndex < 0 &&
         extractParentDirectoryPath(
           action.newEntry.path,
-          PlatformIO.haveObjectStoreSupport() ? '/' : AppConfig.dirSeparator
+          PlatformIO.directorySeparator()
         ).replace(/[/\\]/g, '') ===
           state.currentDirectoryPath.replace(/[/\\]/g, '')
       ) {
@@ -416,7 +416,10 @@ export default (state: any = initialState, action: any) => {
             ...entry,
             path: action.newPath,
             // thumbPath: getThumbFileLocationForFile(action.newPath), // not needed due timing issue
-            name: extractFileName(action.newPath),
+            name: extractFileName(
+              action.newPath,
+              PlatformIO.directorySeparator()
+            ),
             extension: extractFileExtension(action.newPath),
             tags: [
               ...entry.tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
@@ -637,12 +640,9 @@ export const actions = {
     const currentLocationPath = normalizePath(getCurrentLocationPath(state));
 
     if (currentDirectoryPath) {
-      const dirSep = PlatformIO.haveObjectStoreSupport()
-        ? '/'
-        : AppConfig.dirSeparator;
       const parentDirectory = extractParentDirectoryPath(
         currentDirectoryPath,
-        dirSep
+        PlatformIO.directorySeparator()
       );
       // console.log('parentDirectory: ' + parentDirectory  + ' - currentLocationPath: ' + currentLocationPath);
       if (parentDirectory.includes(currentLocationPath)) {
@@ -674,7 +674,9 @@ export const actions = {
     const { settings } = getState();
     window.walkCanceled = false;
 
-    loadMetaDataPromise(normalizePath(directoryPath) + AppConfig.dirSeparator)
+    loadMetaDataPromise(
+      normalizePath(directoryPath) + PlatformIO.directorySeparator()
+    )
       .then(fsEntryMeta => {
         if (fsEntryMeta.color) {
           dispatch(actions.setCurrentDirectoryColor(fsEntryMeta.color));
@@ -712,7 +714,7 @@ export const actions = {
     showIsLoading?: boolean
   ) => ({
     type: types.LOAD_DIRECTORY_SUCCESS,
-    directoryPath: directoryPath || AppConfig.dirSeparator,
+    directoryPath: directoryPath || PlatformIO.directorySeparator(),
     directoryContent,
     showIsLoading
   }),
@@ -768,9 +770,7 @@ export const actions = {
             i18n.t('deletingDirectorySuccessfull', {
               dirPath: extractDirectoryName(
                 directoryPath,
-                PlatformIO.haveObjectStoreSupport()
-                  ? '/'
-                  : AppConfig.dirSeparator
+                PlatformIO.directorySeparator()
               )
             }),
             'default',
@@ -786,9 +786,7 @@ export const actions = {
             i18n.t('errorDeletingDirectoryAlert', {
               dirPath: extractDirectoryName(
                 directoryPath,
-                PlatformIO.haveObjectStoreSupport()
-                  ? '/'
-                  : AppConfig.dirSeparator
+                PlatformIO.directorySeparator()
               )
             }),
             'error',
@@ -874,7 +872,7 @@ export const actions = {
     if (app.currentDirectoryPath) {
       const filePath =
         app.currentDirectoryPath +
-        AppConfig.dirSeparator +
+        PlatformIO.directorySeparator() +
         'textfile' +
         AppConfig.beginTagContainer +
         formatDateTime4Tag(new Date(), true) +
@@ -922,7 +920,9 @@ export const actions = {
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
     const fileNameAndExt = fileName + '.' + fileType;
     const filePath =
-      normalizePath(targetPath) + AppConfig.dirSeparator + fileNameAndExt;
+      normalizePath(targetPath) +
+      PlatformIO.directorySeparator() +
+      fileNameAndExt;
     let fileContent = content;
     if (fileType === 'html') {
       const { newHTMLFileContent } = getState().settings;
@@ -1221,14 +1221,11 @@ export const actions = {
   reflectCreateEntry: (path: string, isFile: boolean) => (
     dispatch: (actions: Object) => void
   ) => {
-    const separator = PlatformIO.haveObjectStoreSupport()
-      ? '/'
-      : AppConfig.dirSeparator;
     const newEntry = {
       uuid: uuidv1(),
       name: isFile
-        ? extractFileName(path, separator)
-        : extractDirectoryName(path, separator),
+        ? extractFileName(path, PlatformIO.directorySeparator())
+        : extractDirectoryName(path, PlatformIO.directorySeparator()),
       isFile,
       extension: extractFileExtension(path),
       description: '',
@@ -1336,12 +1333,24 @@ export const actions = {
         // Update sidecar file and thumb
         renameFilesPromise([
           [
-            getMetaFileLocationForFile(filePath),
-            getMetaFileLocationForFile(newFilePath)
+            getMetaFileLocationForFile(
+              filePath,
+              PlatformIO.directorySeparator()
+            ),
+            getMetaFileLocationForFile(
+              newFilePath,
+              PlatformIO.directorySeparator()
+            )
           ],
           [
-            getThumbFileLocationForFile(filePath),
-            getThumbFileLocationForFile(newFilePath)
+            getThumbFileLocationForFile(
+              filePath,
+              PlatformIO.directorySeparator()
+            ),
+            getThumbFileLocationForFile(
+              newFilePath,
+              PlatformIO.directorySeparator()
+            )
           ]
         ])
           .then(() => {

@@ -118,7 +118,10 @@ export default (state: any = initialState, action: any) => {
         if (GlobalSearch.index[i].path === action.path) {
           GlobalSearch.index[i].path = action.newPath;
           // thumbPath: getThumbFileLocationForFile(action.newPath), // disabled due performance concerns
-          GlobalSearch.index[i].name = extractFileName(action.newPath);
+          GlobalSearch.index[i].name = extractFileName(
+            action.newPath,
+            PlatformIO.directorySeparator()
+          );
           GlobalSearch.index[i].extension = extractFileExtension(
             action.newPath
           );
@@ -129,29 +132,6 @@ export default (state: any = initialState, action: any) => {
         }
       }
       return state;
-      /* const indexForRenamingInIndex = state.currentDirectoryIndex.findIndex((entry) => entry.path === action.path);
-    if (indexForRenamingInIndex >= 0) {
-      const updateEntry = {
-        ...state.currentDirectoryIndex[indexForRenamingInIndex],
-        path: action.newPath,
-        // thumbPath: getThumbFileLocationForFile(action.newPath), // disabled due performance concerns
-        name: extractFileName(action.newPath),
-        extension: extractFileExtension(action.newPath),
-        tags: [
-          ...state.currentDirectoryIndex[indexForRenamingInIndex].tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
-          ...extractTagsAsObjects(action.newPath) // , getTagDelimiter(state))
-        ]
-      };
-      return {
-        ...state,
-        currentDirectoryIndex: [
-          ...state.currentDirectoryIndex.slice(0, indexForRenamingInIndex),
-          updateEntry,
-          ...state.currentDirectoryIndex.slice(indexForRenamingInIndex + 1)
-        ]
-      };
-    }
-    return state; */
     }
     case types.REFLECT_UPDATE_SIDECARTAGS: {
       for (let i = 0; i < GlobalSearch.index.length; i += 1) {
@@ -163,25 +143,6 @@ export default (state: any = initialState, action: any) => {
         }
       }
       return state;
-      /* const indexForUpdatingInIndex = state.currentDirectoryIndex.findIndex((entry) => entry.path === action.path);
-    if (indexForUpdatingInIndex >= 0) {
-      const updateEntry = {
-        ...state.currentDirectoryIndex[indexForUpdatingInIndex],
-        tags: [
-          ...state.currentDirectoryIndex[indexForUpdatingInIndex].tags.filter(tag => tag.type === 'plain'),
-          ...action.tags
-        ]
-      };
-      return {
-        ...state,
-        currentDirectoryIndex: [
-          ...state.currentDirectoryIndex.slice(0, indexForUpdatingInIndex),
-          updateEntry,
-          ...state.currentDirectoryIndex.slice(indexForUpdatingInIndex + 1)
-        ]
-      };
-    }
-    return state; */
     }
     case types.REFLECT_UPDATE_SIDECARMETA: {
       for (let i = 0; i < GlobalSearch.index.length; i += 1) {
@@ -193,22 +154,6 @@ export default (state: any = initialState, action: any) => {
         }
       }
       return state;
-      /* const indexForUpdatingInIndex = state.currentDirectoryIndex.findIndex((entry) => entry.path === action.path);
-    if (indexForUpdatingInIndex >= 0) {
-      const updateEntry = {
-        ...state.currentDirectoryIndex[indexForUpdatingInIndex],
-        ...action.entryMeta
-      };
-      return {
-        ...state,
-        currentDirectoryIndex: [
-          ...state.currentDirectoryIndex.slice(0, indexForUpdatingInIndex),
-          updateEntry,
-          ...state.currentDirectoryIndex.slice(indexForUpdatingInIndex + 1)
-        ]
-      };
-    }
-    return state; */
     }
     default: {
       return state;
@@ -246,9 +191,7 @@ export const actions = {
           Pro.Indexer.persistIndex(
             directoryPath,
             directoryIndex,
-            currentLocation.type === locationType.TYPE_CLOUD
-              ? '/'
-              : AppConfig.dirSeparator
+            PlatformIO.directorySeparator()
           );
         }
         return true;
@@ -281,9 +224,7 @@ export const actions = {
                 Pro.Indexer.persistIndex(
                   nextPath,
                   directoryIndex,
-                  currentLocation.type === locationType.TYPE_CLOUD
-                    ? '/'
-                    : AppConfig.dirSeparator
+                  PlatformIO.directorySeparator()
                 );
               }
               return true;
@@ -319,12 +260,7 @@ export const actions = {
       AppActions.showNotification(i18n.t('core:loadingIndex'), 'default', true)
     );
     if (Pro && Pro.Indexer.loadIndex) {
-      Pro.Indexer.loadIndex(
-        directoryPath,
-        currentLocation.type === locationType.TYPE_CLOUD
-          ? '/'
-          : AppConfig.dirSeparator
-      )
+      Pro.Indexer.loadIndex(directoryPath, PlatformIO.directorySeparator())
         .then(directoryIndex => {
           if (isCurrentLocation) {
             // Load index only if current location
@@ -408,7 +344,6 @@ export const actions = {
           let directoryIndex = [];
           let hasIndex = false;
           const isCloudLocation = location.type === locationType.TYPE_CLOUD;
-          const dirSeparator = isCloudLocation ? '/' : AppConfig.dirSeparator;
           console.log('Searching in: ' + nextPath);
           dispatch(
             AppActions.showNotification(
@@ -430,13 +365,17 @@ export const actions = {
               location.fullTextIndex
             );
             if (Pro && Pro.Indexer && Pro.Indexer.persistIndex) {
-              Pro.Indexer.persistIndex(nextPath, directoryIndex, dirSeparator);
+              Pro.Indexer.persistIndex(
+                nextPath,
+                directoryIndex,
+                PlatformIO.directorySeparator()
+              );
             }
           } else if (Pro && Pro.Indexer && Pro.Indexer.loadIndex) {
             console.log('Loading index for : ' + nextPath);
             directoryIndex = await Pro.Indexer.loadIndex(
               nextPath,
-              dirSeparator
+              PlatformIO.directorySeparator()
             );
           }
           return Search.searchLocationIndex(directoryIndex, searchQuery)

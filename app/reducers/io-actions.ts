@@ -28,6 +28,7 @@ import AppConfig from '../config';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import TaggingActions from './tagging-actions';
+import PlatformIO from '-/services/platform-io';
 
 const actions = {
   extractContent: (
@@ -71,8 +72,8 @@ const actions = {
       moveJobs.push([
         path,
         normalizePath(targetPath) +
-          AppConfig.dirSeparator +
-          extractFileName(path)
+          PlatformIO.directorySeparator() +
+          extractFileName(path, PlatformIO.directorySeparator())
       ]);
       return true;
     });
@@ -119,8 +120,8 @@ const actions = {
       copyJobs.push([
         path,
         normalizePath(targetPath) +
-          AppConfig.dirSeparator +
-          extractFileName(path)
+          PlatformIO.directorySeparator() +
+          extractFileName(path, PlatformIO.directorySeparator())
       ]);
       return true;
     });

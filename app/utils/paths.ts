@@ -117,9 +117,12 @@ export function getThumbFileLocationForDirectory(
   );
 }
 
-export function getMetaFileLocationForDir(entryPath: string) {
+export function getMetaFileLocationForDir(
+  entryPath: string,
+  dirSeparator: string = AppConfig.dirSeparator
+) {
   const metaFolder = getMetaDirectoryPath(entryPath);
-  return metaFolder + AppConfig.dirSeparator + AppConfig.metaFolderFile;
+  return metaFolder + dirSeparator + AppConfig.metaFolderFile;
 }
 
 export function extractFileName(
@@ -157,8 +160,11 @@ export function normalizePath(path: string): string {
   return cleanTrailingDirSeparator(path.replace(/\/\//g, '/'));
 }
 
-export function extractFileNameWithoutExt(filePath: string): string {
-  const fileName = extractFileName(filePath);
+export function extractFileNameWithoutExt(
+  filePath: string,
+  dirSeparator: string = AppConfig.dirSeparator
+): string {
+  const fileName = extractFileName(filePath, dirSeparator);
   const indexOfDot = fileName.lastIndexOf('.');
   const lastIndexBeginTagContainer = fileName.lastIndexOf(
     AppConfig.beginTagContainer
@@ -254,13 +260,17 @@ export function extractContainingDirectoryName(filePath: string) {
   );
 }
 
-export function extractTitle(entryPath: string, isDirectory: boolean = false) {
+export function extractTitle(
+  entryPath: string,
+  isDirectory: boolean = false,
+  dirSeparator: string = AppConfig.dirSeparator
+) {
   let title;
   if (isDirectory) {
-    title = extractDirectoryName(entryPath).replace(/(^\/)|(\/$)/g, '');
+    title = extractDirectoryName(entryPath, dirSeparator); // .replace(/(^\/)|(\/$)/g, '');
     return title;
   }
-  title = extractFileNameWithoutExt(entryPath);
+  title = extractFileNameWithoutExt(entryPath, dirSeparator);
 
   const beginTagContainer = title.indexOf(AppConfig.beginTagContainer);
   const endTagContainer = title.lastIndexOf(AppConfig.endTagContainer);

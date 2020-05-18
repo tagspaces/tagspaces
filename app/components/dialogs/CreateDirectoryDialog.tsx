@@ -28,8 +28,8 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
 import i18n from '-/services/i18n';
-import AppConfig from '-/config';
 import { actions as AppActions } from '-/reducers/app';
+import PlatformIO from '-/services/platform-io';
 
 interface Props {
   open: boolean;
@@ -64,7 +64,7 @@ const CreateDirectoryDialog = (props: Props) => {
   function onConfirm() {
     if (!disableConfirmButton && name) {
       const dirPath =
-        props.selectedDirectoryPath + AppConfig.dirSeparator + name;
+        props.selectedDirectoryPath + PlatformIO.directorySeparator() + name;
       props.createDirectory(dirPath);
       resetState();
       props.onClose();
