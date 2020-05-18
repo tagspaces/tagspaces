@@ -91,13 +91,6 @@ const CellContent = (props: Props) => {
     supportedFileTypes
   );
 
-  // let thumbPathUrl = fsEntry.thumbPath
-  //   ? 'url("' + fsEntry.thumbPath + '")'
-  //   : '';
-  // if (AppConfig.isWin) {
-  //   thumbPathUrl = thumbPathUrl.split('\\').join('\\\\');
-  // }
-
   let tagTitles = '';
   fsEntry.tags.map(tag => {
     tagTitles += tag.title + ', ';
@@ -239,16 +232,7 @@ const CellContent = (props: Props) => {
             textAlign: 'center',
             backgroundColor: fsEntryBackgroundColor
           }}
-          // onClick={() => {}}
         >
-          {/* {selected && (
-            <span title={fsEntry.path}>
-              <SelectedIcon
-                className={classes.rowFolder}
-                style={{ backgroundColor: fsEntryColor }}
-              />
-            </span>
-          )} */}
           {fsEntry.isFile ? (
             <div
               className={classes.rowFileExtension}
