@@ -107,7 +107,8 @@ const actions = {
           if (
             taglibrary.findIndex(
               tagGroup =>
-                tagGroup.children.findIndex(obj => obj.id === tag.id) !== -1
+                tagGroup.children.findIndex(obj => obj.title === tag.title) !==
+                -1
             ) === -1 &&
             !/^(?:\d+~\d+|\d+)$/.test(tag.title) && // skip adding of tag containing only digits
             !isPlusCode(tag.title) // skip adding of tag containing geo information
