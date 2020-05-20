@@ -263,7 +263,7 @@ export function extractContainingDirectoryName(filePath: string) {
 export function extractTitle(
   entryPath: string,
   isDirectory: boolean = false,
-  dirSeparator: string = AppConfig.dirSeparator
+  dirSeparator: string // = AppConfig.dirSeparator
 ) {
   let title;
   if (isDirectory) {
@@ -306,7 +306,7 @@ export function extractTitle(
 
 export function extractTagsAsObjects(
   filePath: string,
-  tagDelimiter?: string
+  tagDelimiter: string = AppConfig.tagDelimiter
 ): Array<Tag> {
   const tagsInFileName = extractTags(filePath, tagDelimiter);
   const tagArray = [];
@@ -320,12 +320,10 @@ export function extractTagsAsObjects(
   return tagArray;
 }
 
-export function extractTags(filePath: string, tagDelimiter?: string) {
-  if (tagDelimiter === undefined) {
-    // TODO get tagDelimiter from settings reducer only
-    // eslint-disable-next-line no-param-reassign
-    tagDelimiter = AppConfig.tagDelimiter;
-  }
+export function extractTags(
+  filePath: string,
+  tagDelimiter: string = AppConfig.tagDelimiter
+) {
   // console.log('Extracting tags from: ' + filePath);
   const fileName = extractFileName(filePath);
   // WithoutExt

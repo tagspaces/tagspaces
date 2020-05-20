@@ -555,7 +555,11 @@ const actions = {
       // Tags in file name case, check is file
       const extractedTags = extractTags(path, settings.tagDelimiter);
       if (extractedTags.length > 0) {
-        const fileTitle = extractTitle(path);
+        const fileTitle = extractTitle(
+          path,
+          false,
+          PlatformIO.getDirSeparator()
+        );
         let fileExt = extractFileExtension(path);
         const containingDirectoryPath = extractContainingDirectoryPath(path);
         if (fileExt.length > 0) {
