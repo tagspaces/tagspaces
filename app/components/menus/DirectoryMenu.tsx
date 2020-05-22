@@ -48,7 +48,7 @@ import {
   extractFileName,
   normalizePath,
   cleanTrailingDirSeparator
-} from '-/utils/paths'; // extractFileExtension
+} from '-/utils/paths';
 import PlatformIO from '-/services/platform-io';
 import { formatDateTime4Tag } from '-/utils/misc';
 import { actions as AppActions } from '-/reducers/app';

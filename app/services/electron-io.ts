@@ -21,7 +21,6 @@ import winattr from 'winattr';
 import {
   extractParentDirectoryPath,
   getMetaDirectoryPath
-  // extractFileExtension
 } from '../utils/paths';
 import { arrayBufferToBuffer } from '../utils/misc';
 import AppConfig from '../config';
@@ -382,7 +381,7 @@ export default class ElectronIO {
 
           // Read the .ts meta content
           if (!lite && containsMetaFolder) {
-            metaFolderPath = getMetaDirectoryPath(path);
+            metaFolderPath = getMetaDirectoryPath(path, AppConfig.dirSeparator);
             this.fs.readdir(metaFolderPath, (err, metaEntries) => {
               if (err) {
                 console.log(
@@ -593,7 +592,9 @@ export default class ElectronIO {
     newDirName: string
   ): Promise<any> => {
     const newDirPath =
-      extractParentDirectoryPath(dirPath) + AppConfig.dirSeparator + newDirName;
+      extractParentDirectoryPath(dirPath, AppConfig.dirSeparator) +
+      AppConfig.dirSeparator +
+      newDirName;
     console.log('Renaming dir: ' + dirPath + ' to ' + newDirPath);
     // stopWatchingDirectories();
     return new Promise((resolve, reject) => {

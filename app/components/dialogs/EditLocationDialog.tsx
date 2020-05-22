@@ -37,6 +37,7 @@ import { Location, locationType } from '-/reducers/locations';
 import ObjectStoreForm from './ObjectStoreForm';
 import LocalForm from './LocalForm';
 import { Pro } from '-/pro';
+import PlatformIO from '-/services/platform-io';
 
 interface Props {
   open: boolean;
@@ -111,13 +112,17 @@ class EditLocationDialog extends React.Component<Props, State> {
       let properties;
       if (nextProps.location.type === locationType.TYPE_CLOUD) {
         properties = {
-          storeName: dir ? extractDirectoryName(dir) : nextProps.location.name,
+          storeName: dir
+            ? extractDirectoryName(dir, PlatformIO.getDirSeparator())
+            : nextProps.location.name,
           storePath: dir || nextProps.location.paths[0]
         };
       } else {
         properties = {
           // TODO maybe its better to separate name/path keys for different locationTypes ??
-          name: dir ? extractDirectoryName(dir) : nextProps.location.name,
+          name: dir
+            ? extractDirectoryName(dir, PlatformIO.getDirSeparator())
+            : nextProps.location.name,
           path: dir || nextProps.location.paths[0]
         };
       }

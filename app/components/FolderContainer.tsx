@@ -432,7 +432,10 @@ class FolderContainer extends React.Component<Props, State> {
                         minWidth: 10
                       }}
                     >
-                      {extractShortDirectoryName(pathPart, '/')}
+                      {extractShortDirectoryName(
+                        pathPart,
+                        PlatformIO.getDirSeparator()
+                      )}
                       <FolderSeparatorIcon />
                     </Button>
                   ))}
@@ -463,7 +466,7 @@ class FolderContainer extends React.Component<Props, State> {
                 >
                   {extractShortDirectoryName(
                     normalizePath(normalizedCurrentDirPath),
-                    '/'
+                    PlatformIO.getDirSeparator()
                   )}
                   <MoreVertIcon />
                 </Button>

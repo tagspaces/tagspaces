@@ -61,7 +61,11 @@ export interface FileSystemEntryMeta {
 export function enhanceEntry(entry: any): FileSystemEntry {
   let fileNameTags = [];
   if (entry.isFile) {
-    fileNameTags = extractTagsAsObjects(entry.name);
+    fileNameTags = extractTagsAsObjects(
+      entry.name,
+      AppConfig.tagDelimiter,
+      PlatformIO.getDirSeparator()
+    );
   }
   let sidecarDescription = '';
   let sidecarColor = '';
@@ -81,7 +85,9 @@ export function enhanceEntry(entry: any): FileSystemEntry {
   const enhancedEntry: FileSystemEntry = {
     name: entry.name,
     isFile: entry.isFile,
-    extension: entry.isFile ? extractFileExtension(entry.name) : '',
+    extension: entry.isFile
+      ? extractFileExtension(entry.name, PlatformIO.getDirSeparator())
+      : '',
     tags: [...sidecarTags, ...fileNameTags],
     size: entry.size,
     lmdt: entry.lmdt,
@@ -368,7 +374,7 @@ export function generateFileName(
     tagsString = tagsString.trim() + AppConfig.endTagContainer;
   }
   // console.log('The tags string: ' + tagsString);
-  const fileExt = extractFileExtension(fileName);
+  const fileExt = extractFileExtension(fileName, PlatformIO.getDirSeparator());
   // console.log('Filename: ' + fileName + ' file extension: ' + fileExt);
   // Assembling the new filename with the tags
   let newFileName = '';
@@ -417,7 +423,10 @@ export async function loadMetaDataPromise(
   const entryProperties = await PlatformIO.getPropertiesPromise(path);
   let metaDataObject;
   if (entryProperties.isFile) {
-    const metaFilePath = getMetaFileLocationForFile(path);
+    const metaFilePath = getMetaFileLocationForFile(
+      path,
+      PlatformIO.getDirSeparator()
+    );
     const metaData = await loadJSONFile(metaFilePath);
     metaDataObject = {
       description: metaData.description || '',
@@ -429,7 +438,10 @@ export async function loadMetaDataPromise(
       lastUpdated: metaData.lastUpdated || ''
     };
   } else {
-    const metaFilePath = getMetaFileLocationForDir(path);
+    const metaFilePath = getMetaFileLocationForDir(
+      path,
+      PlatformIO.getDirSeparator()
+    );
     const metaData = await loadJSONFile(metaFilePath);
     metaDataObject = {
       description: metaData.description || '',
@@ -453,10 +465,13 @@ export async function saveMetaDataPromise(
   let newFsEntryMeta;
 
   if (entryProperties.isFile) {
-    metaFilePath = getMetaFileLocationForFile(path);
+    metaFilePath = getMetaFileLocationForFile(
+      path,
+      PlatformIO.getDirSeparator()
+    );
     // check and create meta folder if not exist
     await PlatformIO.createDirectoryPromise(
-      extractContainingDirectoryPath(metaFilePath)
+      extractContainingDirectoryPath(metaFilePath, PlatformIO.getDirSeparator())
     );
 
     newFsEntryMeta = {
@@ -468,7 +483,10 @@ export async function saveMetaDataPromise(
   } else {
     // check and create meta folder if not exist
     // todo not need to check if folder exist first createDirectoryPromise() recursively will skip creation of existing folders https://nodejs.org/api/fs.html#fs_fs_mkdir_path_options_callback
-    const metaDirectoryPath = getMetaDirectoryPath(path);
+    const metaDirectoryPath = getMetaDirectoryPath(
+      path,
+      PlatformIO.getDirSeparator()
+    );
     const metaDirectoryProperties = await PlatformIO.getPropertiesPromise(
       metaDirectoryPath
     );
@@ -476,7 +494,10 @@ export async function saveMetaDataPromise(
       await PlatformIO.createDirectoryPromise(metaDirectoryPath);
     }
 
-    metaFilePath = getMetaFileLocationForDir(path);
+    metaFilePath = getMetaFileLocationForDir(
+      path,
+      PlatformIO.getDirSeparator()
+    );
     newFsEntryMeta = {
       ...metaData,
       appName: versionMeta.name,

@@ -415,12 +415,19 @@ export default (state: any = initialState, action: any) => {
           return {
             ...entry,
             path: action.newPath,
-            // thumbPath: getThumbFileLocationForFile(action.newPath), // not needed due timing issue
+            // thumbPath: getThumbFileLocationForFile(action.newPath, PlatformIO.getDirSeparator()), // not needed due timing issue
             name: extractFileName(action.newPath, PlatformIO.getDirSeparator()),
-            extension: extractFileExtension(action.newPath),
+            extension: extractFileExtension(
+              action.newPath,
+              PlatformIO.getDirSeparator()
+            ),
             tags: [
               ...entry.tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
-              ...extractTagsAsObjects(action.newPath) // , getTagDelimiter(state))  TODO https://itnext.io/passing-state-between-reducers-in-redux-318de6db06cd
+              ...extractTagsAsObjects(
+                action.newPath,
+                AppConfig.tagDelimiter,
+                PlatformIO.getDirSeparator()
+              )
             ]
           };
         }),
@@ -808,7 +815,8 @@ export const actions = {
         dispatch(
           actions.showNotification(
             `Renaming directory ${extractDirectoryName(
-              directoryPath
+              directoryPath,
+              PlatformIO.getDirSeparator()
             )} successful.`,
             'default',
             true
@@ -820,7 +828,10 @@ export const actions = {
         console.warn('Error while renaming directory: ' + error);
         dispatch(
           actions.showNotification(
-            `Error renaming directory '${extractDirectoryName(directoryPath)}'`,
+            `Error renaming directory '${extractDirectoryName(
+              directoryPath,
+              PlatformIO.getDirSeparator()
+            )}'`,
             'error',
             true
           )
@@ -841,7 +852,8 @@ export const actions = {
         dispatch(
           actions.showNotification(
             `Creating directory ${extractDirectoryName(
-              directoryPath
+              directoryPath,
+              PlatformIO.getDirSeparator()
             )} successful.`,
             'default',
             true
@@ -853,7 +865,10 @@ export const actions = {
         console.warn('Error creating directory: ' + error);
         dispatch(
           actions.showNotification(
-            `Error creating directory '${extractDirectoryName(directoryPath)}'`,
+            `Error creating directory '${extractDirectoryName(
+              directoryPath,
+              PlatformIO.getDirSeparator()
+            )}'`,
             'error',
             true
           )
@@ -1222,7 +1237,7 @@ export const actions = {
         ? extractFileName(path, PlatformIO.getDirSeparator())
         : extractDirectoryName(path, PlatformIO.getDirSeparator()),
       isFile,
-      extension: extractFileExtension(path),
+      extension: extractFileExtension(path, PlatformIO.getDirSeparator()),
       description: '',
       tags: [],
       size: 0,
@@ -1287,8 +1302,8 @@ export const actions = {
         );
         // Delete sidecar file and thumb
         deleteFilesPromise([
-          getMetaFileLocationForFile(filePath),
-          getThumbFileLocationForFile(filePath)
+          getMetaFileLocationForFile(filePath, PlatformIO.getDirSeparator()),
+          getThumbFileLocationForFile(filePath, PlatformIO.getDirSeparator())
         ])
           .then(() => {
             console.log(
@@ -1493,7 +1508,10 @@ function findExtensionsForEntry(
   entryPath: string,
   isFile: boolean = true
 ): OpenedEntry {
-  const fileExtension = extractFileExtension(entryPath).toLowerCase();
+  const fileExtension = extractFileExtension(
+    entryPath,
+    PlatformIO.getDirSeparator()
+  ).toLowerCase();
   const viewingExtensionPath = isFile
     ? findExtensionPathForId('@tagspaces/text-viewer')
     : 'about:blank';

@@ -106,12 +106,18 @@ function saveThumbnailPromise(filePath, dataURL) {
 }
 
 function getThumbFileLocation(filePath: string) {
-  const containingFolder = extractContainingDirectoryPath(filePath);
-  const metaFolder = getMetaDirectoryPath(containingFolder);
+  const containingFolder = extractContainingDirectoryPath(
+    filePath,
+    PlatformIO.getDirSeparator()
+  );
+  const metaFolder = getMetaDirectoryPath(
+    containingFolder,
+    PlatformIO.getDirSeparator()
+  );
   return (
     metaFolder +
     PlatformIO.getDirSeparator() +
-    extractFileName(filePath) +
+    extractFileName(filePath, PlatformIO.getDirSeparator()) +
     AppConfig.thumbFileExt
   );
 }
@@ -191,8 +197,14 @@ export function createThumbnailPromise(
   thumbFilePath: string
 ): Promise<any> {
   return new Promise(async resolve => {
-    const metaDirectory = extractContainingDirectoryPath(thumbFilePath);
-    const fileDirectory = extractContainingDirectoryPath(filePath);
+    const metaDirectory = extractContainingDirectoryPath(
+      thumbFilePath,
+      PlatformIO.getDirSeparator()
+    );
+    const fileDirectory = extractContainingDirectoryPath(
+      filePath,
+      PlatformIO.getDirSeparator()
+    );
     const normalizedFileDirectory = normalizePath(fileDirectory);
     if (normalizedFileDirectory.endsWith(AppConfig.metaFolder)) {
       resolve(); // prevent creating thumbs in meta/.ts folder
@@ -226,7 +238,10 @@ export function createThumbnailPromise(
 }
 
 export function generateThumbnailPromise(fileURL: string, fileSize: number) {
-  const ext = extractFileExtension(fileURL).toLowerCase();
+  const ext = extractFileExtension(
+    fileURL,
+    PlatformIO.getDirSeparator()
+  ).toLowerCase();
 
   if (supportedImgs.indexOf(ext) >= 0) {
     if (fileSize && fileSize < maxFileSize) {

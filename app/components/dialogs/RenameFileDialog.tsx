@@ -66,7 +66,10 @@ class RenameFileDialog extends React.Component<Props, State> {
 
   componentWillReceiveProps = (nextProps: any) => {
     if (nextProps.open) {
-      const fileName = extractFileName(nextProps.selectedFilePath);
+      const fileName = extractFileName(
+        nextProps.selectedFilePath,
+        PlatformIO.getDirSeparator()
+      );
       this.setState({ fileName }, () => {
         this.fileName.focus();
         if (fileName) {
@@ -109,7 +112,8 @@ class RenameFileDialog extends React.Component<Props, State> {
   onConfirm = () => {
     if (!this.state.disableConfirmButton) {
       const fileDirectory = extractContainingDirectoryPath(
-        this.props.selectedFilePath
+        this.props.selectedFilePath,
+        PlatformIO.getDirSeparator()
       );
       const newFilePath =
         fileDirectory + PlatformIO.getDirSeparator + this.state.fileName;

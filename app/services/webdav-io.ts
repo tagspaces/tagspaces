@@ -261,7 +261,10 @@ export default class WebDAVIO {
             if (!lite) {
               if (isDir) {
                 // Read tsm.json from subfolders
-                const pathMetaFile = getMetaFileLocationForDir(eentry.path);
+                const pathMetaFile = getMetaFileLocationForDir(
+                  eentry.path,
+                  '/'
+                );
                 metaPromises.push(this.getEntryMeta(eentry, pathMetaFile));
               } else {
                 const metaFileAvailable = metaContent.find(
@@ -620,7 +623,7 @@ export default class WebDAVIO {
     newDirectoryPath: string
   ): Promise<Object> => {
     const newDirPath =
-      extractParentDirectoryPath(dirPath) + '/' + newDirectoryPath;
+      extractParentDirectoryPath(dirPath, '/') + '/' + newDirectoryPath;
     console.log('Renaming directory: ' + dirPath + ' to ' + newDirPath);
     return new Promise((resolve, reject) => {
       if (dirPath === newDirPath) {

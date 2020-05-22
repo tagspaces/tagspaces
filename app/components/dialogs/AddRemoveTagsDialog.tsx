@@ -33,6 +33,7 @@ import { Tag } from '-/reducers/taglibrary';
 import TagsSelect from '../TagsSelect';
 import i18n from '-/services/i18n';
 import { extractFileName } from '-/utils/paths';
+import PlatformIO from '-/services/platform-io';
 
 interface Props {
   open: boolean;
@@ -116,7 +117,10 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
                     <FileIcon />
                   </ListItemIcon>
                   <Typography variant="inherit" noWrap>
-                    {extractFileName(entry.path || '')}
+                    {extractFileName(
+                      entry.path || '',
+                      PlatformIO.getDirSeparator()
+                    )}
                   </Typography>
                 </ListItem>
               ))}

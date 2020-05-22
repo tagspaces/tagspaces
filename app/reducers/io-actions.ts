@@ -24,7 +24,6 @@ import {
   normalizePath
 } from '../utils/paths';
 import { copyFilesPromise, renameFilesPromise } from '../services/utils-io';
-import AppConfig from '../config';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import TaggingActions from './tagging-actions';
@@ -86,12 +85,12 @@ const actions = {
         moveJobs.map(job => {
           dispatch(AppActions.reflectDeleteEntry(job[0])); // TODO moved files should be added to the index, if the target dir in index
           moveMetaJobs.push([
-            getMetaFileLocationForFile(job[0]),
-            getMetaFileLocationForFile(job[1])
+            getMetaFileLocationForFile(job[0], PlatformIO.getDirSeparator()),
+            getMetaFileLocationForFile(job[1], PlatformIO.getDirSeparator())
           ]);
           moveMetaJobs.push([
-            getThumbFileLocationForFile(job[0]),
-            getThumbFileLocationForFile(job[1])
+            getThumbFileLocationForFile(job[0], PlatformIO.getDirSeparator()),
+            getThumbFileLocationForFile(job[1], PlatformIO.getDirSeparator())
           ]);
           renameFilesPromise(moveMetaJobs)
             .then(() => {
@@ -134,12 +133,12 @@ const actions = {
         copyJobs.map(job => {
           // dispatch(AppActions.reflectCopyEntry(job[0])); // TODO need only for the index if the target dir is indexed
           copyMetaJobs.push([
-            getMetaFileLocationForFile(job[0]),
-            getMetaFileLocationForFile(job[1])
+            getMetaFileLocationForFile(job[0], PlatformIO.getDirSeparator()),
+            getMetaFileLocationForFile(job[1], PlatformIO.getDirSeparator())
           ]);
           copyMetaJobs.push([
-            getThumbFileLocationForFile(job[0]),
-            getThumbFileLocationForFile(job[1])
+            getThumbFileLocationForFile(job[0], PlatformIO.getDirSeparator()),
+            getThumbFileLocationForFile(job[1], PlatformIO.getDirSeparator())
           ]);
           copyFilesPromise(copyMetaJobs)
             .then(() => {

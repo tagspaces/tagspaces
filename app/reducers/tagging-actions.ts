@@ -33,7 +33,6 @@ import {
   generateFileName
 } from '../services/utils-io';
 import { formatDateTime4Tag, isPlusCode } from '../utils/misc';
-import AppConfig from '../config';
 import PlatformIO from '../services/platform-io';
 import { Pro } from '../pro';
 import GlobalSearch from '../services/search-index';
@@ -151,7 +150,11 @@ const actions = {
       if (fsEntryMeta) {
         const uniqueTags = getNonExistingTags(
           tags,
-          extractTags(path, settings.tagDelimiter),
+          extractTags(
+            path,
+            settings.tagDelimiter,
+            PlatformIO.getDirSeparator()
+          ),
           fsEntryMeta.tags
         );
         if (uniqueTags.length > 0) {
@@ -200,15 +203,22 @@ const actions = {
       }
     } else if (fsEntryMeta) {
       // Handling tags in filename by existing sidecar
-      const extractedTags = extractTags(path, settings.tagDelimiter);
+      const extractedTags = extractTags(
+        path,
+        settings.tagDelimiter,
+        PlatformIO.getDirSeparator()
+      );
       const uniqueTags = getNonExistingTags(
         tags,
         extractedTags,
         fsEntryMeta.tags
       );
       if (uniqueTags.length > 0) {
-        const fileName = extractFileName(path);
-        const containingDirectoryPath = extractContainingDirectoryPath(path);
+        const fileName = extractFileName(path, PlatformIO.getDirSeparator());
+        const containingDirectoryPath = extractContainingDirectoryPath(
+          path,
+          PlatformIO.getDirSeparator()
+        );
 
         for (let i = 0; i < uniqueTags.length; i += 1) {
           extractedTags.push(uniqueTags[i].title);
@@ -221,9 +231,16 @@ const actions = {
       }
     } else {
       // Handling tags in filename by no sidecar
-      const fileName = extractFileName(path);
-      const containingDirectoryPath = extractContainingDirectoryPath(path);
-      const extractedTags = extractTags(path);
+      const fileName = extractFileName(path, PlatformIO.getDirSeparator());
+      const containingDirectoryPath = extractContainingDirectoryPath(
+        path,
+        PlatformIO.getDirSeparator()
+      );
+      const extractedTags = extractTags(
+        path,
+        settings.tagDelimiter,
+        PlatformIO.getDirSeparator()
+      );
       for (let i = 0; i < tags.length; i += 1) {
         // check if tag is already in the tag array
         if (extractedTags.indexOf(tags[i].title) < 0) {
@@ -291,9 +308,16 @@ const actions = {
     delete tag.id;
     // TODO: Handle adding already added tags
     if (tag.type === 'plain') {
-      const fileName = extractFileName(path);
-      const containingDirectoryPath = extractContainingDirectoryPath(path);
-      const extractedTags = extractTags(path, settings.tagDelimiter);
+      const fileName = extractFileName(path, PlatformIO.getDirSeparator());
+      const containingDirectoryPath = extractContainingDirectoryPath(
+        path,
+        PlatformIO.getDirSeparator()
+      );
+      const extractedTags = extractTags(
+        path,
+        settings.tagDelimiter,
+        PlatformIO.getDirSeparator()
+      );
       let tagFound = false;
       for (let i = 0; i < extractedTags.length; i += 1) {
         // check if tag is already in the tag array
@@ -481,10 +505,17 @@ const actions = {
       });
 
     function removeTagsFromFilename() {
-      const extractedTags = extractTags(path, settings.tagDelimiter);
+      const extractedTags = extractTags(
+        path,
+        settings.tagDelimiter,
+        PlatformIO.getDirSeparator()
+      );
       if (extractedTags.length > 0) {
-        const fileName = extractFileName(path);
-        const containingDirectoryPath = extractContainingDirectoryPath(path);
+        const fileName = extractFileName(path, PlatformIO.getDirSeparator());
+        const containingDirectoryPath = extractContainingDirectoryPath(
+          path,
+          PlatformIO.getDirSeparator()
+        );
         for (let i = 0; i < tagTitlesForRemoving.length; i += 1) {
           const tagLoc = extractedTags.indexOf(tagTitlesForRemoving[i]);
           if (tagLoc < 0) {
@@ -553,15 +584,22 @@ const actions = {
 
     function removeAllTagsFromFilename() {
       // Tags in file name case, check is file
-      const extractedTags = extractTags(path, settings.tagDelimiter);
+      const extractedTags = extractTags(
+        path,
+        settings.tagDelimiter,
+        PlatformIO.getDirSeparator()
+      );
       if (extractedTags.length > 0) {
         const fileTitle = extractTitle(
           path,
           false,
           PlatformIO.getDirSeparator()
         );
-        let fileExt = extractFileExtension(path);
-        const containingDirectoryPath = extractContainingDirectoryPath(path);
+        let fileExt = extractFileExtension(path, PlatformIO.getDirSeparator());
+        const containingDirectoryPath = extractContainingDirectoryPath(
+          path,
+          PlatformIO.getDirSeparator()
+        );
         if (fileExt.length > 0) {
           fileExt = '.' + fileExt;
         }
@@ -583,9 +621,9 @@ const actions = {
     {
       /*
     console.log('Moves the location of tag in the file name: ' + filePath);
-    var fileName = extractFileName(filePath);
-    var containingDirectoryPath = extractContainingDirectoryPath(filePath);
-    var extractedTags = extractTags(filePath);
+    var fileName = extractFileName(filePath, PlatformIO.getDirSeparator());
+    var containingDirectoryPath = extractContainingDirectoryPath(filePath, PlatformIO.getDirSeparator());
+    var extractedTags = extractTags(filePath, settings.tagDelimiter, PlatformIO.getDirSeparator());
     if (extractedTags.indexOf(tagName) < 0) {
       showAlertDialog("The tag you are trying to move is not part of the file name and that's why it cannot be moved.", $.i18n.t("ns.common:warning"));
       return;

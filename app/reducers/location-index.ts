@@ -23,15 +23,14 @@ import {
   extractFileExtension,
   extractFileName,
   extractTagsAsObjects
-  // getThumbFileLocationForFile
 } from '../utils/paths';
 import Search, { SearchQuery } from '../services/search';
 import { actions as AppActions } from './app';
-import AppConfig from '../config';
 import i18n from '../services/i18n';
 import PlatformIO from '../services/platform-io';
 import { Tag } from './taglibrary';
 import GlobalSearch from '../services/search-index';
+import AppConfig from '-/config';
 
 export const types = {
   SET_SEARCH_QUERY: 'SET_SEARCH_QUERY',
@@ -117,17 +116,21 @@ export default (state: any = initialState, action: any) => {
       for (let i = 0; i < GlobalSearch.index.length; i += 1) {
         if (GlobalSearch.index[i].path === action.path) {
           GlobalSearch.index[i].path = action.newPath;
-          // thumbPath: getThumbFileLocationForFile(action.newPath), // disabled due performance concerns
           GlobalSearch.index[i].name = extractFileName(
             action.newPath,
             PlatformIO.getDirSeparator()
           );
           GlobalSearch.index[i].extension = extractFileExtension(
-            action.newPath
+            action.newPath,
+            PlatformIO.getDirSeparator()
           );
           GlobalSearch.index[i].tags = [
             ...GlobalSearch.index[i].tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
-            ...extractTagsAsObjects(action.newPath) // , getTagDelimiter(state))
+            ...extractTagsAsObjects(
+              action.newPath,
+              AppConfig.tagDelimiter,
+              PlatformIO.getDirSeparator()
+            )
           ];
         }
       }

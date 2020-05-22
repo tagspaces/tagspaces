@@ -30,6 +30,7 @@ import Dialog from '@material-ui/core/Dialog';
 import i18n from '-/services/i18n';
 import { extractDirectoryName } from '-/utils/paths';
 import { actions as AppActions } from '-/reducers/app';
+import PlatformIO from '-/services/platform-io';
 
 interface Props {
   open: boolean;
@@ -49,7 +50,10 @@ class RenameDirectoryDialog extends React.Component<Props, State> {
     inputError: false,
     disableConfirmButton: true,
     name: this.props.selectedDirectoryPath
-      ? extractDirectoryName(this.props.selectedDirectoryPath)
+      ? extractDirectoryName(
+          this.props.selectedDirectoryPath,
+          PlatformIO.getDirSeparator()
+        )
       : ''
   };
 

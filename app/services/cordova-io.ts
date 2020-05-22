@@ -1022,7 +1022,7 @@ export default class CordovaIO {
   ): Promise<any> =>
     new Promise((resolve, reject) => {
       let newDirPath =
-        extractParentDirectoryPath(dirPath) +
+        extractParentDirectoryPath(dirPath, '/') +
         AppConfig.dirSeparator +
         newDirName;
       // eslint-disable-next-line no-param-reassign

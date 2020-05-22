@@ -19,16 +19,22 @@
 import AppConfig from '../config';
 import { Tag } from '../reducers/taglibrary';
 
-export function baseName(dirPath: string) {
+export function baseName(
+  dirPath: string,
+  dirSeparator: string // = AppConfig.dirSeparator
+) {
   const fileName = dirPath.substring(
-    dirPath.lastIndexOf(AppConfig.dirSeparator) + 1,
+    dirPath.lastIndexOf(dirSeparator) + 1,
     dirPath.length
   );
   return fileName || dirPath;
 }
 
-export function extractFileExtension(filePath: string) {
-  const lastindexDirSeparator = filePath.lastIndexOf(AppConfig.dirSeparator);
+export function extractFileExtension(
+  filePath: string,
+  dirSeparator: string // = AppConfig.dirSeparator
+) {
+  const lastindexDirSeparator = filePath.lastIndexOf(dirSeparator);
   const lastIndexEndTagContainer = filePath.lastIndexOf(
     AppConfig.endTagContainer
   );
@@ -54,15 +60,11 @@ export function extractFileExtension(filePath: string) {
     extension = extension.substring(0, lastindexQuestionMark);
   }
   return extension;
-
-  /* alternative implementation
-    const ext = fileURL.split('.').pop();
-    return (ext === fileURL) ? '' : ext; */
 }
 
 export function getMetaDirectoryPath(
   directoryPath: string,
-  dirSeparator: string = AppConfig.dirSeparator
+  dirSeparator: string // = AppConfig.dirSeparator
 ) {
   return (
     (directoryPath ? normalizePath(directoryPath) + dirSeparator : '') +
@@ -72,7 +74,7 @@ export function getMetaDirectoryPath(
 
 export function getMetaFileLocationForFile(
   entryPath: string,
-  dirSeparator: string = AppConfig.dirSeparator
+  dirSeparator: string // = AppConfig.dirSeparator
 ) {
   const containingFolder = extractContainingDirectoryPath(
     entryPath,
@@ -89,7 +91,7 @@ export function getMetaFileLocationForFile(
 
 export function getThumbFileLocationForFile(
   entryPath: string,
-  dirSeparator: string = AppConfig.dirSeparator
+  dirSeparator: string // = AppConfig.dirSeparator
 ) {
   const containingFolder = extractContainingDirectoryPath(
     entryPath,
@@ -106,7 +108,7 @@ export function getThumbFileLocationForFile(
 
 export function getThumbFileLocationForDirectory(
   entryPath: string,
-  dirSeparator: string = AppConfig.dirSeparator
+  dirSeparator: string // = AppConfig.dirSeparator
 ) {
   return (
     entryPath +
@@ -119,15 +121,15 @@ export function getThumbFileLocationForDirectory(
 
 export function getMetaFileLocationForDir(
   entryPath: string,
-  dirSeparator: string = AppConfig.dirSeparator
+  dirSeparator: string // = AppConfig.dirSeparator
 ) {
-  const metaFolder = getMetaDirectoryPath(entryPath);
+  const metaFolder = getMetaDirectoryPath(entryPath, dirSeparator);
   return metaFolder + dirSeparator + AppConfig.metaFolderFile;
 }
 
 export function extractFileName(
   filePath: string,
-  dirSeparator: string = AppConfig.dirSeparator
+  dirSeparator: string // = AppConfig.dirSeparator
 ): string {
   return filePath
     ? filePath.substring(
@@ -162,7 +164,7 @@ export function normalizePath(path: string): string {
 
 export function extractFileNameWithoutExt(
   filePath: string,
-  dirSeparator: string = AppConfig.dirSeparator
+  dirSeparator: string // = AppConfig.dirSeparator
 ): string {
   const fileName = extractFileName(filePath, dirSeparator);
   const indexOfDot = fileName.lastIndexOf('.');
@@ -192,14 +194,14 @@ export function extractFileNameWithoutExt(
 
 export function extractContainingDirectoryPath(
   filePath: string,
-  dirSeparator: string = AppConfig.dirSeparator
+  dirSeparator: string // = AppConfig.dirSeparator
 ) {
   return filePath.substring(0, filePath.lastIndexOf(dirSeparator));
 }
 
 export function extractParentDirectoryPath(
   dirPath: string,
-  dirSeparator: string = AppConfig.dirSeparator
+  dirSeparator: string // = AppConfig.dirSeparator
 ) {
   if (!dirPath) return;
   let path = dirPath;
@@ -216,7 +218,7 @@ export function extractParentDirectoryPath(
 
 export function extractDirectoryName(
   dirPath: string,
-  dirSeparator: string = AppConfig.dirSeparator
+  dirSeparator: string // = AppConfig.dirSeparator
 ): string {
   if (!dirPath) return '';
   let directoryName = dirPath;
@@ -240,7 +242,7 @@ export function extractDirectoryName(
 
 export function extractShortDirectoryName(
   dirPath: string,
-  dirSeparator: string = AppConfig.dirSeparator
+  dirSeparator: string // = AppConfig.dirSeparator
 ) {
   let shortDirName: string = extractDirectoryName(dirPath, dirSeparator);
   if (shortDirName.length > 20) {
@@ -249,15 +251,12 @@ export function extractShortDirectoryName(
   return shortDirName;
 }
 
-export function extractContainingDirectoryName(filePath: string) {
-  const tmpStr = filePath.substring(
-    0,
-    filePath.lastIndexOf(AppConfig.dirSeparator)
-  );
-  return tmpStr.substring(
-    tmpStr.lastIndexOf(AppConfig.dirSeparator) + 1,
-    tmpStr.length
-  );
+export function extractContainingDirectoryName(
+  filePath: string,
+  dirSeparator: string
+) {
+  const tmpStr = filePath.substring(0, filePath.lastIndexOf(dirSeparator));
+  return tmpStr.substring(tmpStr.lastIndexOf(dirSeparator) + 1, tmpStr.length);
 }
 
 export function extractTitle(
@@ -306,9 +305,10 @@ export function extractTitle(
 
 export function extractTagsAsObjects(
   filePath: string,
-  tagDelimiter: string = AppConfig.tagDelimiter
+  tagDelimiter: string = AppConfig.tagDelimiter,
+  dirSeparator: string // = AppConfig.dirSeparator
 ): Array<Tag> {
-  const tagsInFileName = extractTags(filePath, tagDelimiter);
+  const tagsInFileName = extractTags(filePath, tagDelimiter, dirSeparator);
   const tagArray = [];
   tagsInFileName.map(tag => {
     tagArray.push({
@@ -322,10 +322,11 @@ export function extractTagsAsObjects(
 
 export function extractTags(
   filePath: string,
-  tagDelimiter: string = AppConfig.tagDelimiter
+  tagDelimiter: string = AppConfig.tagDelimiter,
+  dirSeparator: string // = AppConfig.dirSeparator
 ) {
   // console.log('Extracting tags from: ' + filePath);
-  const fileName = extractFileName(filePath);
+  const fileName = extractFileName(filePath, dirSeparator);
   // WithoutExt
   let tags = [];
   const beginTagContainer = fileName.indexOf(AppConfig.beginTagContainer);

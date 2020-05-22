@@ -47,7 +47,10 @@ class LocalForm extends React.Component<Props> {
           if (this.props.state.name.length < 1) {
             this.props.handleChange(
               'name',
-              extractDirectoryName(selectedPaths[0])
+              extractDirectoryName(
+                selectedPaths[0],
+                PlatformIO.getDirSeparator()
+              )
             );
           }
           return true;

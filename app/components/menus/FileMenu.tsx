@@ -31,6 +31,7 @@ import RenameFile from '@material-ui/icons/FormatTextdirectionLToR';
 import DeleteForever from '@material-ui/icons/DeleteForever';
 import i18n from '-/services/i18n';
 import AppConfig from '-/config';
+import PlatformIO from '-/services/platform-io';
 
 interface Props {
   anchorEl: Element;
@@ -98,7 +99,7 @@ const FileMenu = (props: Props) => {
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:openFile')} />
         </MenuItem>
-        {!AppConfig.isWeb && (
+        {!(PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb) && (
           <div>
             <MenuItem
               data-tid="fileMenuOpenFileNatively"
