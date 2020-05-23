@@ -73,7 +73,7 @@ const actions = {
         } else if (tag.functionality === 'dateTagging') {
           if (Pro) {
             tag.path = paths[0]; // todo rethink and remove this!
-            delete tag.functionality;
+            // delete tag.functionality;
             tag.title = formatDateTime4Tag(new Date(), true); // defaultTagDate;
             dispatch(AppActions.toggleEditTagDialog(tag));
           } else {
