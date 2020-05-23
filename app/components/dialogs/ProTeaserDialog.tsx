@@ -97,7 +97,11 @@ class ProTeaserDialog extends React.Component<Props, State> {
               </Typography>
               <br />
               <Typography variant="subtitle1">
-                &#x2605; Connect AWS S3 object storages (buckets) as locations
+                &#x2605; Connect cloud object storages as locations (e.g. AWS S3
+                Buckets, Minio, DigitalOcean Spaces)
+              </Typography>
+              <Typography variant="subtitle1">
+                &#x2605; Global search in all locations (cloud &amp; local ones)
               </Typography>
               <Typography variant="subtitle1">
                 &#x2605; Advanced search with full text support for some file
@@ -142,16 +146,18 @@ class ProTeaserDialog extends React.Component<Props, State> {
             </div>
             <div style={slideStyles}>
               <Typography variant="h5" style={{ textAlign: 'center' }}>
-                Advanced Search Options
+                Advanced Search
               </Typography>
               <br />
+              <Typography variant="h6">Global search</Typography>
+              <Typography variant="subtitle1">
+                &#x2605; Search in all locations at once, regardless if they are
+                local or in the Cloud
+              </Typography>
               <Typography variant="h6">Full text search</Typography>
               <Typography variant="subtitle1">
-                &#x2605; Keywords from your text files will be included in the
-                index
-              </Typography>
-              <Typography variant="subtitle1">
-                &#x2605; Currently we support TXT, MD and HTML files
+                &#x2605; Keywords from text files (TXT, HTML, Markdown) will be
+                included in the index
               </Typography>
               <Typography variant="h6">Filter by file type</Typography>
               <Typography variant="subtitle1">
@@ -194,12 +200,12 @@ class ProTeaserDialog extends React.Component<Props, State> {
               </Typography>
               <br />
               <Typography variant="subtitle1">
-                With this feature, TagSpaces Pro supports the AWS S3 buckets as
-                file storage. In general it enables you to creating a location
-                pointing to a remote object storages also knows as buckets on
-                AWS S3 infrastructure. By doing this, you get a full-fledged{' '}
+                With this feature, TagSpaces Pro supports AWS S3 compatible
+                buckets as file storage. Such buckets are offered by e.g. Amazon
+                AWS, DigitalOcean or Minio. By doing this, you get a
+                full-fledged{' '}
                 <strong>
-                  file organizer, browser and navigator for AWS buckets
+                  file organizer, browser and navigator for files in the Cloud
                 </strong>
                 , directly in TagSpaces. You do not have to download every file
                 separately and eventually upload it back in order to preview,
