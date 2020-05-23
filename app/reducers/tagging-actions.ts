@@ -678,7 +678,7 @@ const actions = {
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
-    const { locationIndex, settings } = getState();
+    const { settings } = getState();
 
     if (!Pro || !Pro.Indexer || !Pro.Indexer.collectTagsFromIndex) {
       dispatch(
@@ -703,7 +703,7 @@ const actions = {
     }
 
     const uniqueTags = Pro.Indexer.collectTagsFromIndex(
-      locationIndex,
+      GlobalSearch.index,
       tagGroup,
       settings
     );
