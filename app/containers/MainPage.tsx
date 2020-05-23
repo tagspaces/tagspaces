@@ -777,7 +777,10 @@ class MainPage extends Component<Props, State> {
             <SplitPane
               split="vertical"
               style={{
-                borderTop: AppConfig.isElectron ? '1px solid lightgray' : 'none'
+                borderTop:
+                  AppConfig.isElectron && !AppConfig.isMacLike
+                    ? '1px solid lightgray'
+                    : 'none'
               }}
               minSize={200}
               maxSize={450}
