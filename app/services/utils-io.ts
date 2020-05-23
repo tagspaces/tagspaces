@@ -247,22 +247,19 @@ export async function getAllPropertiesPromise(
 ): Promise<FileSystemEntry> {
   const entryProps = await PlatformIO.getPropertiesPromise(entryPath);
   let metaFilePath;
-  if (entryProps.isFile) {
-    metaFilePath = getMetaFileLocationForFile(
-      entryPath,
-      PlatformIO.getDirSeparator()
-    );
-  } else {
-    metaFilePath = getMetaFileLocationForDir(
-      entryPath,
-      PlatformIO.getDirSeparator()
-    );
+  const dirSep = PlatformIO.getDirSeparator();
+  if (entryProps) {
+    metaFilePath = entryProps.isFile
+      ? getMetaFileLocationForFile(entryPath, dirSep)
+      : getMetaFileLocationForDir(entryPath, dirSep);
+    const metaFileProps = await PlatformIO.getPropertiesPromise(metaFilePath);
+    if (metaFileProps.isFile) {
+      entryProps.meta = await loadJSONFile(metaFilePath);
+    }
+    return enhanceEntry(entryProps);
   }
-  const metaFileProps = await PlatformIO.getPropertiesPromise(metaFilePath);
-  if (metaFileProps.isFile) {
-    entryProps.meta = await loadJSONFile(metaFilePath);
-  }
-  return enhanceEntry(entryProps);
+  console.warn('Error getting props for ' + entryPath);
+  return entryProps;
 }
 
 export async function loadJSONFile(filePath: string) {
