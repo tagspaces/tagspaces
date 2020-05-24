@@ -584,11 +584,17 @@ class LocationManager extends React.Component<Props, State> {
       );
       return;
     }
-    if (monitor) {
+    let targetPath;
+    if (item.children && item.children.props && item.children.props.path) {
+      targetPath = item.children.props.path;
+    } else {
+      targetPath = item.children[1].props.record.path;
+    }
+    if (monitor && targetPath) {
       // TODO handle monitor -> isOver and change folder icon
       const { path } = monitor.getItem();
       console.log('Dropped files: ' + path);
-      this.props.moveFiles([path], item.children[1].props.record.path);
+      this.props.moveFiles([path], targetPath);
     }
   };
 
@@ -676,17 +682,24 @@ class LocationManager extends React.Component<Props, State> {
               <LocationIcon className={this.props.classes.icon} />
             )}
           </ListItemIcon>
-          <div style={{ maxWidth: 250 }}>
-            <Typography
-              variant="inherit"
-              style={{ paddingLeft: 5, paddingRight: 5 }}
-              className={this.props.classes.header}
-              data-tid="locationTitleElement"
-              noWrap
-            >
-              {location.name}
-            </Typography>
-          </div>
+
+          <TargetMoveFileBox
+            // @ts-ignore
+            accepts={[DragItemTypes.FILE]}
+            onDrop={this.handleFileMoveDrop}
+          >
+            <div style={{ maxWidth: 250 }} path={location.paths[0]}>
+              <Typography
+                variant="inherit"
+                style={{ paddingLeft: 5, paddingRight: 5 }}
+                className={this.props.classes.header}
+                data-tid="locationTitleElement"
+                noWrap
+              >
+                {location.name}
+              </Typography>
+            </div>
+          </TargetMoveFileBox>
           {!isLocationsReadOnly && (
             <ListItemSecondaryAction>
               <IconButton
