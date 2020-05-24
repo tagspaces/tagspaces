@@ -100,7 +100,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
     perspective: '',
     isDefault: false,
     isReadOnly: false,
-    watchForChanges: Pro,
+    watchForChanges: false,
     persistIndex: false,
     fullTextIndex: false,
     storeName: '',

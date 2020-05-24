@@ -719,7 +719,7 @@ class MainPage extends Component<Props, State> {
           message="Loading or generating thumbnails..."
           action={[
             <IconButton
-              key="close"
+              key="closeButton"
               aria-label={i18n.t('core:closeButton')}
               color="inherit"
               onClick={() => this.props.setGeneratingThumbnails(false)}
@@ -735,6 +735,7 @@ class MainPage extends Component<Props, State> {
           message="Indexing"
           action={[
             <Button
+              key="cancelIndexButton"
               color="secondary"
               size="small"
               onClick={this.props.cancelDirectoryIndexing}
@@ -749,10 +750,16 @@ class MainPage extends Component<Props, State> {
           autoHideDuration={undefined}
           message={'Version ' + this.props.lastPublishedVersion + ' available.'}
           action={[
-            <Button color="secondary" size="small" onClick={this.skipRelease}>
+            <Button
+              key="laterButton"
+              color="secondary"
+              size="small"
+              onClick={this.skipRelease}
+            >
               {i18n.t('core:later')}
             </Button>,
             <Button
+              key="changelogButton"
               color="secondary"
               size="small"
               onClick={this.openChangelogPage}
@@ -760,6 +767,7 @@ class MainPage extends Component<Props, State> {
               {i18n.t('core:releaseNotes')}
             </Button>,
             <Button
+              key="latestVersionButton"
               color="primary"
               size="small"
               onClick={this.getLatestVersion}
