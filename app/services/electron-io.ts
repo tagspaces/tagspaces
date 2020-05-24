@@ -809,9 +809,13 @@ export default class ElectronIO {
     });
 
   openDirectory = (dirPath: string): void => {
-    this.electron.shell.showItemInFolder(
-      dirPath + AppConfig.dirSeparator + '.'
-    );
+    if (AppConfig.isWin) {
+      this.electron.shell.showItemInFolder(dirPath);
+    } else {
+      this.electron.shell.showItemInFolder(
+        dirPath + AppConfig.dirSeparator + '.'
+      );
+    }
   };
 
   showInFileManager = (filePath: string): void => {
