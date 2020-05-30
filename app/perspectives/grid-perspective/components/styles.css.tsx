@@ -114,7 +114,9 @@ export default (theme: any): any => ({
     fontWeight: 'bold',
     borderRadius: 3,
     // color: theme.palette.getContrastText(),
-    textAlign: 'center'
+    textAlign: 'center',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
   },
   gridSizeDate: {
     overflow: AppConfig.isFirefox ? 'auto' : 'overlay',
