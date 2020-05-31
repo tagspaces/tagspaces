@@ -526,23 +526,21 @@ class Search extends React.Component<Props, State> {
             </ToggleButtonGroup>
           </FormControl>
           <br />
-          {this.state.searchBoxing === 'global' && (
-            <FormControlLabel
-              control={
-                <Switch
-                  title="By enabling this option, the search will deliver better results, but it could take longer"
-                  checked={this.state.forceIndexing}
-                  onChange={() =>
-                    this.setState(prevState => ({
-                      forceIndexing: !prevState.forceIndexing
-                    }))
-                  }
-                  name="forceIndexing"
-                />
-              }
-              label="Force reindexing all locations"
-            />
-          )}
+          <FormControlLabel
+            title={i18n.t('core:enableIndexingBySearch')}
+            control={
+              <Switch
+                checked={this.state.forceIndexing}
+                onChange={() =>
+                  this.setState(prevState => ({
+                    forceIndexing: !prevState.forceIndexing
+                  }))
+                }
+                name="forceIndexing"
+              />
+            }
+            label="Force reindexing all locations"
+          />
           <FormControl className={classes.formControl} disabled={indexing}>
             <TagsSelect
               placeholderText={i18n.t('core:selectTags')}

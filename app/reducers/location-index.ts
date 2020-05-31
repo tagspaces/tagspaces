@@ -288,15 +288,47 @@ export const actions = {
     type: types.INDEX_DIRECTORY_CLEAR
   }),
   searchLocationIndex: (searchQuery: SearchQuery) => (
-    dispatch: (actions: Object) => void
+    dispatch: (actions: Object) => void,
+    getState: () => any
   ) => {
+    const state = getState();
+    const currentLocation: Location = getLocation(
+      state,
+      state.app.currentLocationId
+    );
+    window.walkCanceled = false;
+    if (!currentLocation) {
+      dispatch(
+        AppActions.showNotification(
+          i18n.t('core:pleaseOpenLocation'),
+          'warning',
+          true
+        )
+      );
+      return;
+    }
     dispatch(
       AppActions.showNotification(i18n.t('core:searching'), 'default', false)
     );
     dispatch(actions.setSearchQuery(searchQuery));
-    window.walkCanceled = false;
-    setTimeout(() => {
+    let directoryIndex = GlobalSearch.index;
+    setTimeout(async () => {
       // Workaround used to show the start search notification
+      if (searchQuery.forceIndexing) {
+        const currentPath = currentLocation.paths[0];
+        console.log('Start creating index for : ' + currentPath);
+        directoryIndex = await createDirectoryIndex(
+          currentPath,
+          currentLocation.fullTextIndex
+        );
+        if (Pro && Pro.Indexer && Pro.Indexer.persistIndex) {
+          Pro.Indexer.persistIndex(
+            currentPath,
+            directoryIndex,
+            PlatformIO.getDirSeparator()
+          );
+        }
+      }
       Search.searchLocationIndex(GlobalSearch.index, searchQuery)
         .then(searchResults => {
           dispatch(AppActions.setSearchResults(searchResults));
@@ -381,14 +413,17 @@ export const actions = {
               PlatformIO.getDirSeparator()
             );
           }
+          if (isCloudLocation) {
+            PlatformIO.disableObjectStoreSupport();
+          }
           return Search.searchLocationIndex(directoryIndex, searchQuery)
             .then(searchResults => {
               searchResultCount += searchResults.length;
               dispatch(AppActions.appendSearchResults(searchResults));
               dispatch(AppActions.hideNotifications());
-              if (isCloudLocation) {
-                PlatformIO.disableObjectStoreSupport();
-              }
+              // if (isCloudLocation) {
+              //   PlatformIO.disableObjectStoreSupport();
+              // }
               return true;
             })
             .catch(() => {
