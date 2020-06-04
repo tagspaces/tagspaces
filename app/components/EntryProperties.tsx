@@ -28,6 +28,9 @@ import FormControl from '@material-ui/core/FormControl';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import LocationIcon from '@material-ui/icons/WorkOutline';
+import CloudLocationIcon from '@material-ui/icons/CloudQueue';
 import DOMPurify from 'dompurify';
 import TagDropContainer from './TagDropContainer';
 import EntryTagMenu from './menus/EntryTagMenu';
@@ -154,6 +157,7 @@ interface Props {
   classes: any;
   theme: any;
   entryPath: string;
+  entryURL: string;
   shouldReload: boolean | null;
   shouldCopyFile: boolean;
   editTagForEntry: () => void;
@@ -536,7 +540,13 @@ class EntryProperties extends Component<Props, State> {
   };
 
   render() {
-    const { classes, entryPath, removeTags, isReadOnlyMode } = this.props;
+    const {
+      classes,
+      entryPath,
+      removeTags,
+      isReadOnlyMode,
+      entryURL
+    } = this.props;
     const {
       path,
       tags,
@@ -894,13 +904,19 @@ class EntryProperties extends Component<Props, State> {
             <FormControl fullWidth={true} className={classes.formControl}>
               <TextField
                 margin="dense"
-                InputProps={{
-                  readOnly: true
-                }}
                 name="path"
+                title={entryURL || entryPath}
                 fullWidth={true}
                 data-tid="filePathProperties"
                 value={entryPath || ''}
+                InputProps={{
+                  readOnly: true,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      {entryURL ? <CloudLocationIcon /> : <LocationIcon />}
+                    </InputAdornment>
+                  )
+                }}
               />
             </FormControl>
           </div>

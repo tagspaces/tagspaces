@@ -1229,6 +1229,7 @@ class EntryContainer extends React.Component<Props, State> {
                   resetState={this.resetState}
                   setPropertiesEditMode={this.setPropertiesEditMode}
                   entryPath={currentEntry.path}
+                  entryURL={currentEntry.url}
                   shouldReload={currentEntry.shouldReload}
                   renameFile={this.props.renameFile}
                   renameDirectory={this.props.renameDirectory}
