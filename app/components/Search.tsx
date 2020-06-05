@@ -541,6 +541,25 @@ class Search extends React.Component<Props, State> {
             }
             label="Force reindexing all locations"
           />
+          <br />
+          <br />
+          <FormControl className={classes.formControl}>
+            <ButtonGroup style={{ justifyContent: 'center' }}>
+              <Button
+                disabled={indexing}
+                id="searchButton"
+                variant="outlined"
+                color="primary"
+                onClick={this.clickSearchButton}
+                style={{ width: '90%' }}
+                size="small"
+              >
+                {indexing
+                  ? 'Search disabled while indexing'
+                  : i18n.t('searchTitle')}
+              </Button>
+            </ButtonGroup>
+          </FormControl>
           <FormControl className={classes.formControl} disabled={indexing}>
             <TagsSelect
               placeholderText={i18n.t('core:selectTags')}
@@ -812,7 +831,7 @@ class Search extends React.Component<Props, State> {
           </FormControl>
           <FormControl className={classes.formControl}>
             <ButtonGroup style={{ justifyContent: 'center' }}>
-              <Button
+              {/* <Button
                 disabled={indexing}
                 id="searchButton"
                 variant="outlined"
@@ -823,10 +842,12 @@ class Search extends React.Component<Props, State> {
                 {indexing
                   ? 'Search disabled while indexing'
                   : i18n.t('searchTitle')}
-              </Button>
+              </Button> */}
               <Button
                 variant="outlined"
                 color="secondary"
+                size="small"
+                style={{ width: '90%' }}
                 onClick={this.clearSearch}
                 id="resetSearchButton"
               >
