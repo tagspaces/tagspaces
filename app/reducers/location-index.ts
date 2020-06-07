@@ -361,11 +361,17 @@ export const actions = {
     dispatch(
       AppActions.showNotification(i18n.t('core:searching'), 'default', false)
     );
+
+    // Preparing for global search
     dispatch(AppActions.setSearchResults([]));
+    if (currentLocation.type === locationType.TYPE_CLOUD) {
+      PlatformIO.disableObjectStoreSupport();
+    }
     window.walkCanceled = false;
     const allLocations = getLocations(state);
     let searchResultCount = 0;
     let maxSearchResultReached = false;
+
     const result = allLocations.reduce(
       (accumulatorPromise, location) =>
         accumulatorPromise.then(async () => {
@@ -413,20 +419,21 @@ export const actions = {
               PlatformIO.getDirSeparator()
             );
           }
-          if (isCloudLocation) {
-            PlatformIO.disableObjectStoreSupport();
-          }
           return Search.searchLocationIndex(directoryIndex, searchQuery)
             .then(searchResults => {
               searchResultCount += searchResults.length;
               dispatch(AppActions.appendSearchResults(searchResults));
               dispatch(AppActions.hideNotifications());
-              // if (isCloudLocation) {
-              //   PlatformIO.disableObjectStoreSupport();
-              // }
+              if (isCloudLocation) {
+                PlatformIO.disableObjectStoreSupport();
+              }
               return true;
             })
-            .catch(() => {
+            .catch(e => {
+              if (isCloudLocation) {
+                PlatformIO.disableObjectStoreSupport();
+              }
+              console.log('Searching Index failed: ' + e);
               dispatch(AppActions.setSearchResults([]));
               dispatch(AppActions.hideNotifications());
               dispatch(
@@ -436,9 +443,6 @@ export const actions = {
                   true
                 )
               );
-              if (isCloudLocation) {
-                PlatformIO.disableObjectStoreSupport();
-              }
             });
         }),
       Promise.resolve()
