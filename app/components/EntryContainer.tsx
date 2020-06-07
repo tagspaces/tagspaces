@@ -1107,12 +1107,13 @@ class EntryContainer extends React.Component<Props, State> {
                   {currentEntry.isFile ? (
                     <Button
                       onClick={this.togglePanel}
-                      title={i18n.t('core:toggleEntryProperties')}
+                      title={currentEntry.url || currentEntry.path}
                       aria-label={i18n.t('core:toggleEntryProperties')}
                       className={classes.entryNameButton}
                     >
                       <div
                         className={classes.fileBadge}
+                        title={i18n.t('core:toggleEntryProperties')}
                         style={{ backgroundColor: currentEntry.color }}
                       >
                         {'.' +
@@ -1129,12 +1130,13 @@ class EntryContainer extends React.Component<Props, State> {
                   ) : (
                     <Button
                       onClick={this.togglePanel}
-                      title={i18n.t('core:toggleEntryProperties')}
+                      title={currentEntry.url || currentEntry.path}
                       aria-label={i18n.t('core:toggleEntryProperties')}
                       className={classes.entryNameButton}
                     >
                       <div
                         className={classes.fileBadge}
+                        title={i18n.t('core:toggleEntryProperties')}
                         style={{
                           backgroundColor: AppConfig.defaultFolderColor,
                           paddingTop: 5
