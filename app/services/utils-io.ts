@@ -45,6 +45,7 @@ export interface FileSystemEntry {
   size: number;
   lmdt: number;
   path: string;
+  url?: string;
   meta?: FileSystemEntryMeta;
 }
 
