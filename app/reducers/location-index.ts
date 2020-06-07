@@ -17,7 +17,7 @@
  */
 
 import { Location, getLocation, getLocations, locationType } from './locations';
-import { createDirectoryIndex } from '../services/utils-io';
+import { createDirectoryIndex, FileSystemEntry } from '../services/utils-io';
 import { Pro } from '../pro';
 import {
   extractFileExtension,
@@ -175,12 +175,7 @@ export const actions = {
     directoryPath: string,
     extractText: boolean,
     isCurrentLocation: boolean = true
-  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
-    const state = getState();
-    const currentLocation: Location = getLocation(
-      state,
-      state.app.currentLocationId
-    );
+  ) => (dispatch: (actions: Object) => void) => {
     dispatch(actions.startDirectoryIndexing());
     createDirectoryIndex(directoryPath, extractText)
       .then(directoryIndex => {
@@ -190,7 +185,6 @@ export const actions = {
         }
         dispatch(actions.indexDirectorySuccess());
         if (Pro && Pro.Indexer) {
-          // && (currentLocation.persistIndex || PlatformIO.haveObjectStoreSupport())) { // always persist on s3 stores
           Pro.Indexer.persistIndex(
             directoryPath,
             directoryIndex,
@@ -208,10 +202,6 @@ export const actions = {
     getState: () => any
   ) => {
     const state = getState();
-    const currentLocation: Location = getLocation(
-      state,
-      state.app.currentLocationId
-    );
     dispatch(actions.startDirectoryIndexing());
     const allLocations = getLocations(state);
     const locationPaths = [];
@@ -252,12 +242,7 @@ export const actions = {
   loadDirectoryIndex: (
     directoryPath: string,
     isCurrentLocation: boolean = true
-  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
-    const state = getState();
-    const currentLocation: Location = getLocation(
-      state,
-      state.app.currentLocationId
-    );
+  ) => (dispatch: (actions: Object) => void) => {
     dispatch(actions.startDirectoryIndexing());
     dispatch(
       AppActions.showNotification(i18n.t('core:loadingIndex'), 'default', true)
@@ -331,6 +316,11 @@ export const actions = {
       }
       Search.searchLocationIndex(GlobalSearch.index, searchQuery)
         .then(searchResults => {
+          if (currentLocation.type === locationType.TYPE_CLOUD) {
+            searchResults.forEach((entry: FileSystemEntry) => {
+              entry.url = PlatformIO.getURLforPath(entry.path);
+            });
+          }
           dispatch(AppActions.setSearchResults(searchResults));
           dispatch(AppActions.hideNotifications());
           return true;
@@ -421,8 +411,21 @@ export const actions = {
           }
           return Search.searchLocationIndex(directoryIndex, searchQuery)
             .then(searchResults => {
-              searchResultCount += searchResults.length;
-              dispatch(AppActions.appendSearchResults(searchResults));
+              let enhancedSearchResult = searchResults;
+              if (isCloudLocation) {
+                enhancedSearchResult = searchResults.filter(
+                  (entry: FileSystemEntry) => {
+                    // Excluding s3 folders from global search
+                    if (entry && entry.isFile) {
+                      entry.url = PlatformIO.getURLforPath(entry.path);
+                      return entry;
+                    }
+                  }
+                );
+              }
+
+              searchResultCount += enhancedSearchResult.length;
+              dispatch(AppActions.appendSearchResults(enhancedSearchResult));
               dispatch(AppActions.hideNotifications());
               if (isCloudLocation) {
                 PlatformIO.disableObjectStoreSupport();

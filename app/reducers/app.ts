@@ -17,7 +17,7 @@
  */
 
 import uuidv1 from 'uuid';
-import { Location, locationType } from './locations';
+import { Location, getLocation, locationType } from './locations';
 import PlatformIO from '../services/platform-io';
 import AppConfig from '../config';
 import {
@@ -697,7 +697,13 @@ export const actions = {
     dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
     PlatformIO.listDirectoryPromise(directoryPath, false)
       .then(results => {
-        prepareDirectoryContent(results, directoryPath, settings, dispatch);
+        prepareDirectoryContent(
+          results,
+          directoryPath,
+          settings,
+          dispatch,
+          getState
+        );
         return true;
       })
       .catch(error => {
@@ -1127,7 +1133,13 @@ export const actions = {
       entryPath,
       isFile
     );
-    entryForOpening.url = PlatformIO.getURLforPath(entryPath); // Needed for the s3 support
+    const { currentDirectoryEntries } = getState().app;
+    const currentEntry = currentDirectoryEntries.find(
+      entry => entry.path === entryPath
+    );
+    if (currentEntry && currentEntry.url) {
+      entryForOpening.url = currentEntry.url;
+    }
     if (
       editMode &&
       entryForOpening.editingExtensionId &&
@@ -1419,16 +1431,28 @@ function prepareDirectoryContent(
   dirEntries,
   directoryPath,
   settings,
-  dispatch
+  dispatch,
+  getState
 ) {
   const directoryContent = [];
   const tmbGenerationPromises = [];
   const tmbGenerationList = [];
   const isWorkerAvailable = PlatformIO.isWorkerAvailable();
+  const currentLocation: Location = getLocation(
+    getState(),
+    getState().app.currentLocationId
+  );
+  const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
+
   dirEntries.map(entry => {
     if (!settings.showUnixHiddenEntries && entry.name.startsWith('.')) {
       return true;
     }
+
+    if (isCloudLocation) {
+      entry.url = PlatformIO.getURLforPath(entry.path);
+    }
+
     const enhancedEntry = enhanceEntry(entry);
     directoryContent.push(enhancedEntry);
     if (
