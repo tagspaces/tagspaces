@@ -1,10 +1,37 @@
 # Changelog
 
-## Version 3.6.x / 2020.05.xx
+## Version 3.5.4 / 2020.06.08
 
 ### Community
 
-- Added switch for playing video with audio only, for saving cpu / battery resouces
+- 🎉 added support for picture-in-picture (PIP) playing mode in the media player
+- 🎉 added switch for playing video with audio only, useful for saving cpu/battery resources while playing music videos
+- 🎉 adding path or URL as title to entry extension
+- 🎉 improving usability search area
+- 🎉 showing URL in the property's path field
+- 🎉 showing different icon in the property path depending on the where the file is located
+- 🎉 enabling re-indexing switch for all kinds of searches
+- 🎉 move files with drag & drop to the location's root folder [#1130](https://github.com/tagspaces/tagspaces/issues/1130)
+- 🎉 enabling escape key for closing application dialogs
+- 🎉 supporting enter for confirming changes in the dialog
+- 🌟 updating Greek and French translations
+- 🌟 upgrading to Electron 7.3.0
+- 🐛 fixing long file extension in grid perspective row view
+- 🐛 fix renaming files from dialog #1134 [#1021](https://github.com/tagspaces/tagspaces/issues/1021)
+- 🐛 disabling drag and drop from cloud to local location and vice versa
+- 🐛 fix opening directory in file manager on Windows
+- 🐛 correcting the way of tagging for custom data tag [#1124](https://github.com/tagspaces/tagspaces/issues/1124)
+- 🐛 fix showing main app window
+- 🐛 fix file sorting bug in default perspective [#1120](https://github.com/tagspaces/tagspaces/issues/1120)
+- 🐛 fix issues with file renaming and thumbnail showing in the entry properties
+
+### Pro
+
+- 🌟 global search with mix of local and cloud locations
+- 🐛 fix uploading file to s3 from windows
+- 🐛 fix handling object storage on windows
+- 🐛 fix collecting tags from current location #1111
+- 🐛 various issues with the global search, removing duplicates from the global search results
 
 ## Version 3.5.2 / 2020.04.19
 
