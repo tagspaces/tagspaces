@@ -823,7 +823,15 @@ export default class ElectronIO {
   };
 
   openFile = (filePath: string): void => {
-    this.electron.shell.openItem(filePath);
+    this.electron.shell
+      .openPath(filePath)
+      .then(() => {
+        console.log('File successfully opened ' + filePath);
+        return true;
+      })
+      .catch(e => {
+        console.log('Opening path ' + filePath + ' failed with ' + e);
+      });
   };
 
   openUrl = (url: string): void => {

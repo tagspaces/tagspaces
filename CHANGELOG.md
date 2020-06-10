@@ -17,7 +17,7 @@
 - 🌟 updating Greek and French translations
 - 🌟 upgrading to Electron 7.3.0
 - 🐛 fixing long file extension in grid perspective row view
-- 🐛 fix renaming files from dialog #1134 [#1021](https://github.com/tagspaces/tagspaces/issues/1021)
+- 🐛 fix renaming files from dialog [#1134](https://github.com/tagspaces/tagspaces/issues/1134)
 - 🐛 disabling drag and drop from cloud to local location and vice versa
 - 🐛 fix opening directory in file manager on Windows
 - 🐛 correcting the way of tagging for custom data tag [#1124](https://github.com/tagspaces/tagspaces/issues/1124)
@@ -30,7 +30,7 @@
 - 🌟 global search with mix of local and cloud locations
 - 🐛 fix uploading file to s3 from windows
 - 🐛 fix handling object storage on windows
-- 🐛 fix collecting tags from current location #1111
+- 🐛 fix collecting tags from current location [#1111](https://github.com/tagspaces/tagspaces/issues/1111)
 - 🐛 various issues with the global search, removing duplicates from the global search results
 
 ## Version 3.5.2 / 2020.04.19
