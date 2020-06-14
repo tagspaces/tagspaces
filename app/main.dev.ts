@@ -158,7 +158,7 @@ app.on('ready', async () => {
     y: mainWindowState.y,
     width: mainWindowState.width,
     height: mainWindowState.height,
-    icon: path.join(__dirname, 'assets/icons/128x128.png'),
+    // icon: path.join(__dirname, 'assets/icons/128x128.png'),
     webPreferences: {
       nodeIntegration: true,
       webviewTag: true
