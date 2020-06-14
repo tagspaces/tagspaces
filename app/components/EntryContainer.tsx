@@ -972,10 +972,14 @@ class EntryContainer extends React.Component<Props, State> {
         handlers={{
           closeViewer: this.startClosingFile,
           saveDocument: this.startSavingFile,
-          editDocument: this.editFile
+          editDocument: this.editFile,
+          nextDocument: this.openNextFile,
+          prevDocument: this.openPrevFile
           // reloadDocument: this.reloadDocument,
         }}
         keyMap={{
+          nextDocument: keyBindings.nextDocument,
+          prevDocument: keyBindings.prevDocument,
           closeViewer: keyBindings.closeViewer,
           saveDocument: keyBindings.saveDocument,
           editDocument: keyBindings.editDocument
