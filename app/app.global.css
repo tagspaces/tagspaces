@@ -20,17 +20,3 @@ div[tabindex='-1']:focus {
 .tagspaces-main-color {
   color: #1dd19f;
 }
-
-/* Fix for icon of broken thumbnails, disabled because does not work in list view */
-/* img[alt]:after {
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #fff;
-  color: #fff;
-  text-align: center;
-  content: attr(alt);
-} */

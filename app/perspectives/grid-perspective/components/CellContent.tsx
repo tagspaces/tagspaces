@@ -134,6 +134,8 @@ const CellContent = (props: Props) => {
               className={classes.gridCellThumb}
               src={fsEntry.thumbPath}
               // @ts-ignore
+              onError={i => (i.target.style.display = 'none')}
+              // @ts-ignore
               loading="lazy"
               style={{
                 objectFit: thumbnailMode,
@@ -317,6 +319,8 @@ const CellContent = (props: Props) => {
               alt="thumbnail"
               className={classes.gridCellThumb}
               src={fsEntry.thumbPath}
+              // @ts-ignore
+              onError={i => (i.target.style.display = 'none')}
               // @ts-ignore
               loading="lazy"
               style={{
