@@ -225,6 +225,7 @@
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.10.1",
     "webpack-merge": "^4.2.2",
+    "worker-loader": "^2.0.0",
     "yarn": "^1.21.1"
   },
   "dependencies": {
