@@ -34,18 +34,15 @@ export default (theme: any): any => ({
     paddingBottom: 200
   },
   gridCell: {
-    // backgroundColor: theme.palette.background.paper,
     border: '2px solid transparent',
     margin: 2,
     marginBottom: 3,
     marginRight: 3
-    // maxWidth: 500
   },
   rowCell: {
-    // backgroundColor: theme.palette.background.paper,
     boxShadow: 'none',
-    borderLeft: '2px solid transparent',
-    borderRight: '2px solid transparent',
+    borderLeft: '1px solid transparent',
+    borderRight: '1px solid transparent',
     borderTop: '1px solid transparent',
     borderBottom: '1px solid ' + theme.palette.divider,
     margin: 0,
@@ -57,9 +54,8 @@ export default (theme: any): any => ({
     backgroundColor: theme.palette.primary.light + ' !important'
   },
   selectedRowCell: {
-    // borderRadius: '4px',
-    border: '2px solid' + theme.palette.primary.main,
-    backgroundColor: theme.palette.primary.light + ' !important'
+    borderRadius: '0px',
+    border: '1px solid' + theme.palette.primary.main
   },
   gridCellThumb: {
     backgroundRepeat: 'no-repeat',
@@ -94,7 +90,6 @@ export default (theme: any): any => ({
     minWidth: 40,
     height: 20,
     color: 'white',
-    // color: theme.palette.getContrastText(),
     borderRadius: 3,
     textAlign: 'center'
   },
@@ -113,7 +108,6 @@ export default (theme: any): any => ({
     fontSize: 12,
     fontWeight: 'bold',
     borderRadius: 3,
-    // color: theme.palette.getContrastText(),
     textAlign: 'center',
     overflow: 'hidden',
     textOverflow: 'ellipsis'

@@ -212,7 +212,7 @@ const CellContent = (props: Props) => {
     );
   }
 
-  function renderRowCell() {
+  function renderRowCell(selected: boolean) {
     let tmbSize = 85;
     if (entrySize === 'small') {
       tmbSize = 50;
@@ -226,7 +226,9 @@ const CellContent = (props: Props) => {
         container
         wrap="nowrap"
         style={{
-          backgroundColor: theme.palette.background.default
+          backgroundColor: selected
+            ? theme.palette.primary.light
+            : theme.palette.background.default
         }}
       >
         <Grid
@@ -370,7 +372,7 @@ const CellContent = (props: Props) => {
   if (layoutType === 'grid') {
     gridCell = renderGridCell();
   } else if (layoutType === 'row') {
-    gridCell = renderRowCell();
+    gridCell = renderRowCell(selected);
   }
 
   return (
