@@ -181,6 +181,9 @@ app.on('ready', async () => {
     }
     // mainWindow.show();
     (global as any).splashWorkerWindow.hide(); // Comment for easy debugging of the worker
+    if (portableMode) {
+      mainWindow.setTitle(mainWindow.title + ' Portable 🔌');
+    }
     mainWindow.focus();
   });
 
