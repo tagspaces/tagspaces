@@ -201,7 +201,7 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
           .split(' ')
           .join(',')
           .split(','); // handle spaces around commas
-        // tags = [...new Set(tags)]; // remove duplicates
+        tags = [...new Set(tags)]; // remove duplicates
         tags = tags.filter(tag => tag && tag.length > 0); // zero length tags
 
         const taggroupTags = state[indexForEditing].children;
@@ -215,7 +215,6 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
             ...state[indexForEditing],
             children: taggroupTags.concat(
               tags.map(tagTitle => ({
-                id: uuidv1(),
                 type:
                   taggroupTags.length > 0 ? taggroupTags[0].type : 'sidecar',
                 title: tagTitle.trim(),
@@ -244,20 +243,18 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
       let indexForUpdating = -1;
       state.forEach((tagGroup, index) => {
         if (tagGroup.uuid === action.uuid) {
+          tagGroup.children.forEach((tag, tagIndex) => {
+            if (tag.title === action.origTitle) {
+              tagIndexForUpdating = tagIndex;
+            }
+          });
           indexForUpdating = index;
         }
-        tagGroup.children.forEach((tag, tagIndex) => {
-          if (tag.id === action.entry.id) {
-            tagIndexForUpdating = tagIndex;
-          }
-        });
       });
       if (tagIndexForUpdating >= 0) {
-        const modifiedEntry = extend(
-          { created_date: new Date() },
-          action.entry,
-          { modified_date: new Date() }
-        );
+        const modifiedEntry = extend({ created_date: new Date() }, action.tag, {
+          modified_date: new Date()
+        });
         return [
           ...state.slice(0, indexForUpdating),
           {
@@ -281,7 +278,7 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
           indexForEditing = index;
         }
         tagGroup.children.forEach((tag, tagIndex) => {
-          if (tag.id === action.tagID) {
+          if (tag.title === action.tagTitle) {
             tagIndexForRemoving = tagIndex;
           }
         });
@@ -381,7 +378,7 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
       });
       if (indexFromGroup >= 0 && state[indexFromGroup].children) {
         state[indexFromGroup].children.forEach((tag, tagIndex) => {
-          if (tag.id === action.tagID) {
+          if (tag.title === action.tagTitle) {
             tagIndexForRemoving = tagIndex;
           }
           return true;
@@ -428,20 +425,7 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
             };
             const tagsArr = [];
             tagGroup.children.forEach(tag => {
-              if (!tag.id) {
-                tag = {
-                  id: uuidv1(),
-                  type: tag.type,
-                  title: tag.title,
-                  functionality: tag.title,
-                  color: tag.color,
-                  textcolor: tag.textcolor,
-                  description: tag.description,
-                  icon: tag.icon,
-                  style: tag.style
-                };
-                tagsArr.push(tag);
-              }
+              tagsArr.push(tag);
               tagGroup.children = tagsArr;
               arr.push(tagGroup);
             });
@@ -492,14 +476,15 @@ export const actions = {
     console.log(tag, parentTagGroupUuid);
     return { type: types.ADD_TAG, tag, uuid: parentTagGroupUuid };
   },
-  editTag: (entry: Tag, parentTagGroupUuid: Uuid) => ({
+  editTag: (tag: Tag, parentTagGroupUuid: Uuid, origTitle: string) => ({
     type: types.UPDATE_TAG,
-    entry,
-    uuid: parentTagGroupUuid
+    tag,
+    uuid: parentTagGroupUuid,
+    origTitle
   }),
-  deleteTag: (tagID: string, parentTagGroupUuid: Uuid) => ({
+  deleteTag: (tagTitle: string, parentTagGroupUuid: Uuid) => ({
     type: types.REMOVE_TAG,
-    tagID,
+    tagTitle,
     uuid: parentTagGroupUuid
   }),
   moveTagGroupUp: (parentTagGroupUuid: Uuid) => ({
@@ -514,9 +499,13 @@ export const actions = {
     type: types.SORT_TAG_GROUP_UP,
     uuid: parentTagGroupUuid
   }),
-  moveTag: (tagID: string, fromTagGroupUuid: Uuid, toTagGroupUuid: Uuid) => ({
+  moveTag: (
+    tagTitle: string,
+    fromTagGroupUuid: Uuid,
+    toTagGroupUuid: Uuid
+  ) => ({
     type: types.MOVE_TAG,
-    tagID,
+    tagTitle,
     fromTagGroupId: fromTagGroupUuid,
     toTagGroupId: toTagGroupUuid
   }),

@@ -28,7 +28,7 @@ const boxSource = {
   beginDrag(props) {
     // console.log('beginDrag', props);
     return {
-      tagId: props.tag.id,
+      tagTitle: props.tag.title,
       tag: props.tag,
       sourceTagGroupId: props.tagGroup ? props.tagGroup.uuid : undefined
     };
@@ -47,7 +47,11 @@ const boxSource = {
       props.moveTag
     ) {
       // console.log(`Dropped ${item.tagId} from ${item.sourceTagGroupId} into ${dropResult.tagGroupId}!`);
-      props.moveTag(item.tagId, item.sourceTagGroupId, dropResult.tagGroupId);
+      props.moveTag(
+        item.tagTitle,
+        item.sourceTagGroupId,
+        dropResult.tagGroupId
+      );
     } else if (dropResult && dropResult.entryPath && props.addTags) {
       // console.log(`Dropped item: ${item.tag.title} onto file: ${dropResult.entryPath}!`);
       if (
