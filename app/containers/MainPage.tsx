@@ -28,8 +28,8 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { HotKeys } from 'react-hotkeys';
-import HTML5Backend, { NativeTypes } from 'react-dnd-html5-backend';
-import { DragDropContext } from 'react-dnd';
+import { NativeTypes } from 'react-dnd-html5-backend';
+//import { DragDropContext } from 'react-dnd';
 import VerticalNavigation from '../components/VerticalNavigation';
 import MobileNavigation from '../components/MobileNavigation';
 import FolderContainer from '../components/FolderContainer';
@@ -84,6 +84,7 @@ import buildTrayIconMenu from '../services/electron-tray-menu';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import LoadingLazy from '../components/LoadingLazy';
+import withDnDContext from '-/containers/withDnDContext';
 
 const initialSplitSize = 44;
 const drawerWidth = 300;
@@ -959,7 +960,7 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
-export default DragDropContext(HTML5Backend)(
+export default withDnDContext(
   connect(
     mapStateToProps,
     mapDispatchToProps
