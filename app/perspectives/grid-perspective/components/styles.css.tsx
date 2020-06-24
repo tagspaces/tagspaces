@@ -49,6 +49,11 @@ export default (theme: any): any => ({
     marginTop: 0,
     marginBottom: 0
   },
+  rowHover: {
+    '&:hover': {
+      backgroundColor: theme.palette.divider + ' !important'
+    }
+  },
   selectedGridCell: {
     border: '2px solid' + theme.palette.primary.main,
     backgroundColor: theme.palette.primary.light + ' !important'
