@@ -7,11 +7,11 @@
 }
 
 .rc-table-cell:hover {
-  background-color: #dcf3ec;
+  background-color: #dcf3ec !important;
 }
 
 .rc-table td {
   border: none;
   padding: 8px;
-  /*border-bottom: 1px solid #e9e9e91a;*/
+  background: transparent !important;
 }
