@@ -30,7 +30,8 @@ const boxSource = {
   beginDrag(props) {
     // console.log('beginDrag', props);
     return {
-      path: props.children.props.entryPath
+      path: props.children.props.entryPath,
+      selectedEntries: props.children.props.selectedEntries
     };
   }
 
