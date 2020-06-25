@@ -1,0 +1,17 @@
+.rc-table-content {
+  border: none;
+}
+
+.rc-table-cell {
+  border: none;
+}
+
+.rc-table-cell:hover {
+  background-color: #dcf3ec !important;
+}
+
+.rc-table td {
+  border: none;
+  padding: 8px;
+  background: transparent !important;
+}

@@ -654,6 +654,7 @@ class LocationManager extends React.Component<Props, State> {
           rowKey="path"
           data={this.state.dirs[location.uuid]}
           columns={columns}
+          indentSize={20}
           // expandedRowRender={this.expandedRowRender}
           onExpand={this.onExpand}
           // expandIcon={this.CustomExpandIcon}
