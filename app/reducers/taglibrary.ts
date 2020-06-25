@@ -240,15 +240,15 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
     }
     case types.UPDATE_TAG: {
       let tagIndexForUpdating = -1;
-      let indexForUpdating = -1;
+      let tagGroupIndexForUpdating = -1;
       state.forEach((tagGroup, index) => {
         if (tagGroup.uuid === action.uuid) {
           tagGroup.children.forEach((tag, tagIndex) => {
             if (tag.title === action.origTitle) {
               tagIndexForUpdating = tagIndex;
+              tagGroupIndexForUpdating = index;
             }
           });
-          indexForUpdating = index;
         }
       });
       if (tagIndexForUpdating >= 0) {
@@ -256,44 +256,54 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
           modified_date: new Date()
         });
         return [
-          ...state.slice(0, indexForUpdating),
+          ...state.slice(0, tagGroupIndexForUpdating),
           {
-            ...state[indexForUpdating],
+            ...state[tagGroupIndexForUpdating],
             children: [
-              ...state[indexForUpdating].children.slice(0, tagIndexForUpdating),
+              ...state[tagGroupIndexForUpdating].children.slice(
+                0,
+                tagIndexForUpdating
+              ),
               modifiedEntry,
-              ...state[indexForUpdating].children.slice(tagIndexForUpdating + 1)
+              ...state[tagGroupIndexForUpdating].children.slice(
+                tagIndexForUpdating + 1
+              )
             ]
           },
-          ...state.slice(indexForUpdating + 1)
+          ...state.slice(tagGroupIndexForUpdating + 1)
         ];
       }
       return state;
     }
     case types.REMOVE_TAG: {
       let tagIndexForRemoving = -1;
-      let indexForEditing = -1;
+      let tagGroupIndexForEditing = -1;
       state.forEach((tagGroup, index) => {
         if (tagGroup.uuid === action.uuid) {
-          indexForEditing = index;
+          tagGroup.children.forEach((tag, tagIndex) => {
+            if (tag.title === action.tagTitle) {
+              tagIndexForRemoving = tagIndex;
+              tagGroupIndexForEditing = index;
+            }
+          });
         }
-        tagGroup.children.forEach((tag, tagIndex) => {
-          if (tag.title === action.tagTitle) {
-            tagIndexForRemoving = tagIndex;
-          }
-        });
       });
       if (tagIndexForRemoving >= 0) {
         return [
-          ...state.slice(0, indexForEditing),
+          ...state.slice(0, tagGroupIndexForEditing),
           {
-            ...state[indexForEditing],
+            ...state[tagGroupIndexForEditing],
             children: [
-              ...state[indexForEditing].children.slice(0, tagIndexForRemoving),
-              ...state[indexForEditing].children.slice(tagIndexForRemoving + 1)
+              ...state[tagGroupIndexForEditing].children.slice(
+                0,
+                tagIndexForRemoving
+              ),
+              ...state[tagGroupIndexForEditing].children.slice(
+                tagIndexForRemoving + 1
+              )
             ]
           },
-          ...state.slice(indexForEditing + 1)
+          ...state.slice(tagGroupIndexForEditing + 1)
         ];
       }
       return state;
