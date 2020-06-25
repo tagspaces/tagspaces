@@ -447,7 +447,7 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
           if (index > -1) {
             tagGroup.children.forEach(tag => {
               const stateTag = state[index].children.find(
-                obj => obj.id === tag.id
+                obj => obj.title === tag.title
               );
               if (stateTag === undefined) {
                 arr[index].children.push(tag);
