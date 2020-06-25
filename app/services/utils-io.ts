@@ -16,6 +16,7 @@
  *
  */
 
+import uuidv1 from 'uuid';
 import { saveAs } from 'file-saver';
 import PlatformIO from './platform-io';
 import AppConfig from '../config';
@@ -444,6 +445,7 @@ export async function loadMetaDataPromise(
     );
     const metaData = await loadJSONFile(metaFilePath);
     metaDataObject = {
+      id: metaData.id || uuidv1(),
       description: metaData.description || '',
       color: metaData.color || '',
       tags: metaData.tags || [],
@@ -458,7 +460,7 @@ export async function loadMetaDataPromise(
 
 export async function saveMetaDataPromise(
   path: string,
-  metaData: Object
+  metaData: any
 ): Promise<any> {
   const entryProperties = await PlatformIO.getPropertiesPromise(path);
   let metaFilePath;
@@ -494,12 +496,20 @@ export async function saveMetaDataPromise(
       await PlatformIO.createDirectoryPromise(metaDirectoryPath);
     }
 
+    let dirId;
+    if (metaData && metaData.id && metaData.id.length > 1) {
+      dirId = metaData.id;
+    } else {
+      dirId = uuidv1();
+    }
+
     metaFilePath = getMetaFileLocationForDir(
       path,
       PlatformIO.getDirSeparator()
     );
     newFsEntryMeta = {
       ...metaData,
+      id: dirId,
       appName: versionMeta.name,
       appVersionUpdated: versionMeta.version,
       lastUpdated: new Date().toJSON()
