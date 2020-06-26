@@ -17,13 +17,14 @@
  */
 
 import React from 'react';
-import { DragSource, ConnectDragSource } from 'react-dnd';
-
+import { DragSource, ConnectDragSource, ConnectDragPreview } from 'react-dnd';
+import { getEmptyImage } from 'react-dnd-html5-backend';
 import DragItemTypes from './DragItemTypes';
 
 interface Props {
   children: Array<Object>;
   connectDragSource: ConnectDragSource;
+  connectDragPreview: ConnectDragPreview;
 }
 
 const boxSource = {
@@ -36,29 +37,50 @@ const boxSource = {
   }
 
   /* endDrag(props, monitor) {
-    const item = monitor.getItem();
-    const dropResult = monitor.getDropResult();
+      const item = monitor.getItem();
+      const dropResult = monitor.getDropResult();
 
-    // console.log('DropRESULT: ', dropResult);
-    // console.log('item: ', item);
-    if (dropResult && dropResult.tagGroupId && dropResult.tagGroupId !== item.sourceTagGroupId) {
-      // console.log(`Dropped ${item.tagId} from ${item.sourceTagGroupId} into ${dropResult.tagGroupId}!`);
-      props.moveTag(item.tagId, item.sourceTagGroupId, dropResult.tagGroupId);
-    } else if (dropResult && dropResult.entryPath) {
-      // console.log(`Dropped item: ${item.tag.title} onto file: ${dropResult.entryPath}!`);
-      props.addTags([dropResult.entryPath], [item.tag]);
-    }
-  } */
+      // console.log('DropRESULT: ', dropResult);
+      // console.log('item: ', item);
+      if (dropResult && dropResult.tagGroupId && dropResult.tagGroupId !== item.sourceTagGroupId) {
+        // console.log(`Dropped ${item.tagId} from ${item.sourceTagGroupId} into ${dropResult.tagGroupId}!`);
+        props.moveTag(item.tagId, item.sourceTagGroupId, dropResult.tagGroupId);
+      } else if (dropResult && dropResult.entryPath) {
+        // console.log(`Dropped item: ${item.tag.title} onto file: ${dropResult.entryPath}!`);
+        props.addTags([dropResult.entryPath], [item.tag]);
+      }
+    } */
 };
 
-const FileSourceDnd = (props: Props) =>
-  props.connectDragSource(<span>{props.children}</span>);
+const FileSourceDnd = (props: Props) => {
+  // Use empty image as a drag preview so browsers don't draw it
+  // and we can draw whatever we want on the custom drag layer instead.
+  // if(props.children.props.selectedEntries &&  props.children.props.selectedEntries.length > 1) {
+  props.connectDragPreview(getEmptyImage(), {
+    // IE fallback: specify that we'd rather screenshot the node
+    // when it already knows it's being dragged so we can hide it with CSS.
+    captureDraggingState: true
+  });
+  // }
+
+  return props.connectDragSource(<span>{props.children}</span>);
+};
+
+/**
+ * Specifies which props to inject into your component.
+ */
+const collect = (connect, monitor) => ({
+  // Call this function inside render()
+  // to let React DnD handle the drag events:
+  connectDragSource: connect.dragSource(),
+  // You can ask the monitor about the current drag preview
+  connectDragPreview: connect.dragPreview(),
+  // You can ask the monitor about the current drag state:
+  isDragging: monitor.isDragging()
+});
 
 export default DragSource(
   DragItemTypes.FILE,
   boxSource,
-  (connect, monitor) => ({
-    connectDragSource: connect.dragSource(),
-    isDragging: monitor.isDragging()
-  })
+  collect
 )(FileSourceDnd);
