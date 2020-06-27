@@ -20,8 +20,8 @@ import AppConfig from '-/config';
 export default (theme: any): any => ({
   gridContainer: {
     display: 'grid',
-    gridGap: '2px 2px',
-    padding: 2,
+    gridGap: '0px 0px',
+    padding: 0,
     paddingRight: 10,
     paddingBottom: 200
   },
@@ -35,9 +35,10 @@ export default (theme: any): any => ({
   },
   gridCell: {
     border: '2px solid transparent',
-    margin: 2,
-    marginBottom: 3,
-    marginRight: 3
+    marginTop: 1,
+    marginLeft: 2,
+    marginBottom: 1,
+    marginRight: 1
   },
   rowCell: {
     boxShadow: 'none',
@@ -49,13 +50,18 @@ export default (theme: any): any => ({
     marginTop: 0,
     marginBottom: 0
   },
+  rowHover: {
+    '&:hover': {
+      backgroundColor: theme.palette.divider + ' !important'
+    }
+  },
   selectedGridCell: {
     border: '2px solid' + theme.palette.primary.main,
     backgroundColor: theme.palette.primary.light + ' !important'
   },
   selectedRowCell: {
-    borderRadius: '0px',
-    border: '1px solid' + theme.palette.primary.main
+    borderRadius: 0,
+    border: '1px solid' + theme.palette.primary.main + ' !important'
   },
   gridCellThumb: {
     backgroundRepeat: 'no-repeat',

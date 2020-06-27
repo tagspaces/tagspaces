@@ -225,6 +225,7 @@ const CellContent = (props: Props) => {
       <Grid
         container
         wrap="nowrap"
+        className={classes.rowHover}
         style={{
           backgroundColor: selected
             ? theme.palette.primary.light
@@ -316,7 +317,7 @@ const CellContent = (props: Props) => {
           </Grid>
         )}
         {fsEntry.thumbPath && (
-          <Grid item>
+          <Grid item style={{ display: 'flex', alignItems: 'center' }}>
             <img
               alt="thumbnail"
               className={classes.gridCellThumb}
