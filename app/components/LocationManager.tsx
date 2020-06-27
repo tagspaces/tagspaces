@@ -500,6 +500,7 @@ class LocationManager extends React.Component<Props, State> {
       }
       this.props.loadDirectoryContent(location.paths[0]);
     } else {
+      this.props.setSelectedEntries([]);
       this.loadSubDirectories(location, 1);
       this.props.openLocation(location);
       this.state.locationRootPath = location.paths[0];
@@ -576,7 +577,15 @@ class LocationManager extends React.Component<Props, State> {
    * @param monitor
    */
   handleFileMoveDrop = (item, monitor) => {
-    const { path } = monitor.getItem();
+    const { path, selectedEntries } = monitor.getItem();
+    const arrPath = [];
+    if (selectedEntries && selectedEntries.length > 0) {
+      selectedEntries.map(entry => {
+        arrPath.push(entry.path);
+      });
+    } else {
+      arrPath.push(path);
+    }
     if (this.props.isReadOnlyMode) {
       this.props.showNotification(
         i18n.t('core:dndDisabledReadOnlyMode'),
@@ -610,7 +619,8 @@ class LocationManager extends React.Component<Props, State> {
     if (monitor && targetPath) {
       // TODO handle monitor -> isOver and change folder icon
       console.log('Dropped files: ' + path);
-      this.props.moveFiles([path], targetPath);
+      this.props.moveFiles(arrPath, targetPath);
+      this.props.setSelectedEntries([]);
     }
   };
 
@@ -975,7 +985,8 @@ function mapDispatchToProps(dispatch) {
       openFile: AppActions.openFile,
       showNotification: AppActions.showNotification,
       moveFiles: IOActions.moveFiles,
-      openURLExternally: AppActions.openURLExternally
+      openURLExternally: AppActions.openURLExternally,
+      setSelectedEntries: AppActions.setSelectedEntries
     },
     dispatch
   );

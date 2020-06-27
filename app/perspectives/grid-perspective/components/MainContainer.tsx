@@ -591,7 +591,10 @@ class GridPerspective extends React.Component<Props, State> {
     }
 
     const cellContent: any = (
-      <TagDropContainer entryPath={fsEntry.path}>
+      <TagDropContainer
+        entryPath={fsEntry.path}
+        selectedEntries={selectedEntries}
+      >
         <CellContent
           selected={selected}
           fsEntry={fsEntry}

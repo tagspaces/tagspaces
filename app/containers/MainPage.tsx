@@ -85,6 +85,7 @@ import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import LoadingLazy from '../components/LoadingLazy';
 import withDnDContext from '-/containers/withDnDContext';
+import { CustomDragLayer } from '-/components/CustomDragLayer';
 
 const initialSplitSize = 44;
 const drawerWidth = 300;
@@ -783,6 +784,7 @@ class MainPage extends Component<Props, State> {
             accepts={[FILE]}
             onDrop={this.handleFileDrop}
           >
+            <CustomDragLayer />
             <SplitPane
               split="vertical"
               style={{

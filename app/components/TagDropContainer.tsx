@@ -30,6 +30,7 @@ interface Props {
 const boxTarget = {
   drop(props) {
     return {
+      selectedEntries: props.selectedEntries,
       entryPath: props.entryPath
     };
   }
