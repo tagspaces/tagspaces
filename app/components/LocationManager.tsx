@@ -610,16 +610,21 @@ class LocationManager extends React.Component<Props, State> {
       );
       return;
     }
-    let targetPath;
-    if (item.children && item.children.props && item.children.props.path) {
+    const targetPath = item.path;
+    const targetLocationType = item.locationType;
+    /*if (item.children && item.children.props && item.children.props.path) {
       targetPath = item.children.props.path;
     } else {
       targetPath = item.children[1].props.record.path;
-    }
-    if (monitor && targetPath) {
+    }*/
+    if (monitor && targetPath != undefined) {
       // TODO handle monitor -> isOver and change folder icon
       console.log('Dropped files: ' + path);
-      this.props.moveFiles(arrPath, targetPath);
+      if (targetLocationType === locationType.TYPE_CLOUD) {
+        this.props.uploadFiles(arrPath, targetPath);
+      } else { //if (targetLocationType === locationType.TYPE_LOCAL) {
+        this.props.moveFiles(arrPath, targetPath);
+      }
       this.props.setSelectedEntries([]);
     }
   };
@@ -630,6 +635,8 @@ class LocationManager extends React.Component<Props, State> {
         // @ts-ignore
         accepts={[DragItemTypes.FILE]}
         onDrop={this.handleFileMoveDrop}
+        path={props.children[0]._owner.key}
+       // locationType={location.type}
       >
         {props.children}
       </TargetMoveFileBox>
@@ -728,6 +735,8 @@ class LocationManager extends React.Component<Props, State> {
               // @ts-ignore
               accepts={[DragItemTypes.FILE]}
               onDrop={this.handleFileMoveDrop}
+              path={location.paths[0]}
+              locationType={location.type}
             >
               <div style={{ maxWidth: 250 }} path={location.paths[0]}>
                 <Typography
