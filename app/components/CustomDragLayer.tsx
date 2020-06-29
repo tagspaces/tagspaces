@@ -15,7 +15,8 @@ const layerStyles: React.CSSProperties = {
 
 function getItemStyles(
   initialOffset: XYCoord | null,
-  currentOffset: XYCoord | null
+  currentOffset: XYCoord | null,
+  clientOffset: XYCoord | null
 ) {
   if (!initialOffset || !currentOffset) {
     return {
@@ -23,7 +24,7 @@ function getItemStyles(
     };
   }
 
-  const { x, y } = currentOffset;
+  const { x, y } = clientOffset; // currentOffset;
 
   const transform = `translate(${x}px, ${y}px)`;
   return {
@@ -40,12 +41,14 @@ export const CustomDragLayer: React.FC<CustomDragLayerProps> = props => {
     isDragging,
     item,
     initialOffset,
-    currentOffset
+    currentOffset,
+    clientOffset
   } = useDragLayer(monitor => ({
     item: monitor.getItem(),
     itemType: monitor.getItemType(),
     initialOffset: monitor.getInitialSourceClientOffset(),
     currentOffset: monitor.getSourceClientOffset(),
+    clientOffset:  monitor.getClientOffset(),
     isDragging: monitor.isDragging()
   }));
 
@@ -66,7 +69,7 @@ export const CustomDragLayer: React.FC<CustomDragLayerProps> = props => {
   }
   return (
     <div style={layerStyles}>
-      <div style={getItemStyles(initialOffset, currentOffset)}>
+      <div style={getItemStyles(initialOffset, currentOffset, clientOffset)}>
         {renderItem()}
       </div>
     </div>

@@ -588,12 +588,16 @@ class GridPerspective extends React.Component<Props, State> {
       selectedEntries.some(entry => entry.path === fsEntry.path)
     ) {
       selected = true;
-    }
+    } /* else {
+      selectedEntries.push(fsEntry);
+    } */
 
     const cellContent: any = (
       <TagDropContainer
-        entryPath={fsEntry.path}
-        selectedEntries={selectedEntries}
+        entryPath={fsEntry.path} // TODO remove entryPath it is already included in selectedEntries
+        selectedEntries={
+          selectedEntries.length > 0 ? selectedEntries : [fsEntry]
+        }
       >
         <CellContent
           selected={selected}
