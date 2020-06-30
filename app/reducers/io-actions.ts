@@ -28,6 +28,7 @@ import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import TaggingActions from './tagging-actions';
 import PlatformIO from '-/services/platform-io';
+import AppConfig from '-/config';
 
 const actions = {
   extractContent: (
@@ -158,6 +159,170 @@ const actions = {
           AppActions.showNotification(i18n.t('core:copyingFilesFailed'))
         );
       });
+  },
+  /**
+   * with HTML5 Files API
+   * @param files
+   * @param targetPath
+   */
+  uploadFilesAPI: (files: Array<File>, targetPath: string) => (
+    dispatch: (actions: Object) => void
+  ) => {
+    const uploadJobs = [];
+    files.map(file => {
+      uploadJobs.push(file);
+      return true;
+    });
+    uploadJobs.map(file => {
+      const filePath =
+        normalizePath(targetPath) +
+        PlatformIO.getDirSeparator() +
+        decodeURIComponent(file.name);
+      const reader = new FileReader();
+      reader.onload = (event: any) => {
+        // TODO event.currentTarget.result is ArrayBuffer
+        // Sample call from PRO version using content = Utils.base64ToArrayBuffer(baseString);
+        PlatformIO.getPropertiesPromise(filePath)
+          .then(entryProps => {
+            if (entryProps) {
+              dispatch(
+                AppActions.showNotification(
+                  'File with the same name already exist, importing skipped!',
+                  'warning',
+                  true
+                )
+              );
+            } else {
+              PlatformIO.saveBinaryFilePromise(
+                filePath,
+                event.currentTarget.result,
+                true
+              )
+                .then(() => {
+                  dispatch(
+                    AppActions.showNotification(
+                      'File ' + filePath + ' successfully imported.',
+                      'default',
+                      true
+                    )
+                  );
+                  dispatch(AppActions.reflectCreateEntry(filePath, true));
+                  return true;
+                })
+                .catch(error => {
+                  // TODO showAlertDialog("Saving " + filePath + " failed.");
+                  console.error(
+                    'Save to file ' + filePath + ' failed ' + error
+                  );
+                  dispatch(
+                    AppActions.showNotification(
+                      'Importing file ' + filePath + ' failed.',
+                      'error',
+                      true
+                    )
+                  );
+                  return true;
+                });
+            }
+            return true;
+          })
+          .catch(err => {
+            console.log('Error getting properties ' + err);
+          });
+      };
+
+      if (AppConfig.isCordova) {
+        reader.readAsDataURL(file);
+      } else {
+        reader.readAsArrayBuffer(file);
+      }
+      return file;
+    });
+  },
+  /**
+   * use with Electron only!
+   * @param paths
+   * @param targetPath
+   */
+  uploadFiles: (paths: Array<string>, targetPath: string) => (
+    dispatch: (actions: Object) => void
+  ) => {
+    const uploadJobs = [];
+    paths.map(path => {
+      uploadJobs.push([
+        path,
+        normalizePath(targetPath) +
+          PlatformIO.getDirSeparator() +
+          extractFileName(path, PlatformIO.getDirSeparator())
+      ]);
+      return true;
+    });
+    uploadJobs.map(job => {
+      // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
+      // const file = selection.currentTarget.files[0];
+      const filePath = job[1];
+      /* normalizePath(props.directoryPath) +
+                PlatformIO.getDirSeparator() +
+                decodeURIComponent(file.name); */
+
+      // TODO try to replace this with <input type="file"
+      if (AppConfig.isElectron) {
+        import('fs-extra')
+          .then(fs => {
+            const fileContent = fs.readFileSync(job[0]);
+            // TODO event.currentTarget.result is ArrayBuffer
+            // Sample call from PRO version using content = Utils.base64ToArrayBuffer(baseString);
+            PlatformIO.getPropertiesPromise(filePath)
+              .then(entryProps => {
+                if (entryProps) {
+                  dispatch(
+                    AppActions.showNotification(
+                      'File with the same name already exist, importing skipped!',
+                      'warning',
+                      true
+                    )
+                  );
+                } else {
+                  PlatformIO.saveBinaryFilePromise(filePath, fileContent, true)
+                    .then(() => {
+                      dispatch(
+                        AppActions.showNotification(
+                          'File ' + filePath + ' successfully imported.',
+                          'default',
+                          true
+                        )
+                      );
+                      dispatch(AppActions.reflectCreateEntry(filePath, true));
+                      return true;
+                    })
+                    .catch(err => {
+                      // TODO showAlertDialog("Saving " + filePath + " failed.");
+                      console.error(
+                        'Save to file ' + filePath + ' failed ' + err
+                      );
+                      dispatch(
+                        AppActions.showNotification(
+                          'Importing file ' + filePath + ' failed.',
+                          'error',
+                          true
+                        )
+                      );
+                      return true;
+                    });
+                }
+                return true;
+              })
+              .catch(err => {
+                console.log('Error getting properties ' + err);
+              });
+            return true;
+          })
+          .catch(err => {
+            console.log('Error import fs: ' + err);
+          });
+      }
+      return true;
+    });
   }
 };
 

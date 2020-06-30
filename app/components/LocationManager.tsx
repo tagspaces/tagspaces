@@ -115,6 +115,7 @@ interface Props {
     autohide: boolean
   ) => void;
   moveFiles: (files: Array<string>, destination: string) => void;
+  uploadFiles: (files: Array<string>, destination: string) => void;
 }
 
 interface State {
@@ -611,7 +612,7 @@ class LocationManager extends React.Component<Props, State> {
       return;
     }
     const targetPath = item.path;
-    const targetLocationType = item.locationType;
+    const targetLocation = item.location;
     /*if (item.children && item.children.props && item.children.props.path) {
       targetPath = item.children.props.path;
     } else {
@@ -620,8 +621,11 @@ class LocationManager extends React.Component<Props, State> {
     if (monitor && targetPath != undefined) {
       // TODO handle monitor -> isOver and change folder icon
       console.log('Dropped files: ' + path);
-      if (targetLocationType === locationType.TYPE_CLOUD) {
-        this.props.uploadFiles(arrPath, targetPath);
+      if (targetLocation && targetLocation.type === locationType.TYPE_CLOUD) {
+        PlatformIO.enableObjectStoreSupport(targetLocation)
+            .then(() => {
+              this.props.uploadFiles(arrPath, targetPath);
+            });
       } else {
         //if (targetLocationType === locationType.TYPE_LOCAL) {
         this.props.moveFiles(arrPath, targetPath);
@@ -724,7 +728,7 @@ class LocationManager extends React.Component<Props, State> {
             )}
           </ListItemIcon>
 
-          {isCloudLocation ? (
+          {isCloudLocation && !AppConfig.isElectron ? (
             <div style={{ maxWidth: 250 }}>
               <Typography
                 variant="inherit"
@@ -737,25 +741,24 @@ class LocationManager extends React.Component<Props, State> {
               </Typography>
             </div>
           ) : (
-            <TargetMoveFileBox
-              // @ts-ignore
-              accepts={[DragItemTypes.FILE]}
-              onDrop={this.handleFileMoveDrop}
-              path={location.paths[0]}
-              locationType={location.type}
+          <TargetMoveFileBox
+            accepts={[DragItemTypes.FILE]}
+            onDrop={this.handleFileMoveDrop}
+            path={location.paths[0]}
+            location={location}
             >
-              <div style={{ maxWidth: 250 }} path={location.paths[0]}>
-                <Typography
-                  variant="inherit"
-                  style={{ paddingLeft: 5, paddingRight: 5 }}
-                  className={this.props.classes.header}
-                  data-tid="locationTitleElement"
-                  noWrap
-                >
-                  {location.name}
-                </Typography>
-              </div>
-            </TargetMoveFileBox>
+              <div style={{ maxWidth: 250 }} >
+              <Typography
+                variant="inherit"
+                style={{ paddingLeft: 5, paddingRight: 5 }}
+                className={this.props.classes.header}
+                data-tid="locationTitleElement"
+                noWrap
+              >
+                {location.name}
+              </Typography>
+            </div>
+          </TargetMoveFileBox>
           )}
           {!isLocationsReadOnly && (
             <ListItemSecondaryAction>
@@ -1000,6 +1003,7 @@ function mapDispatchToProps(dispatch) {
       openFile: AppActions.openFile,
       showNotification: AppActions.showNotification,
       moveFiles: IOActions.moveFiles,
+      uploadFiles: IOActions.uploadFiles,
       openURLExternally: AppActions.openURLExternally,
       setSelectedEntries: AppActions.setSelectedEntries
     },

@@ -67,6 +67,7 @@ interface Props {
   reflectCreateEntry?: (path: string, isFile: boolean) => void;
   toggleCreateFileDialog?: () => void;
   // extractContent: (config: Object) => void,
+  uploadFilesAPI: (files: Array<File>, destination: string) => void;
   switchPerspective?: (perspectiveId: string) => void;
   perspectiveMode?: boolean;
   showNotification?: (
@@ -228,11 +229,12 @@ const DirectoryMenu = (props: Props) => {
   function handleFileInputChange(selection: any) {
     // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
     const file = selection.currentTarget.files[0];
+    props.uploadFilesAPI([file], props.directoryPath);
+    /*
     const filePath =
       normalizePath(props.directoryPath) +
       PlatformIO.getDirSeparator() +
       decodeURIComponent(file.name);
-
     const reader = new FileReader();
     reader.onload = (event: any) => {
       // console.log('Content on file read complete: ' + JSON.stringify(event));
@@ -288,7 +290,7 @@ const DirectoryMenu = (props: Props) => {
       reader.readAsDataURL(file);
     } else {
       reader.readAsArrayBuffer(file);
-    }
+    } */
   }
 
   function getDirPath(dirPath: string) {
@@ -487,7 +489,8 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
       showNotification: AppActions.showNotification,
-      extractContent: IOActions.extractContent
+      extractContent: IOActions.extractContent,
+      uploadFilesAPI: IOActions.uploadFilesAPI
     },
     dispatch
   );

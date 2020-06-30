@@ -48,7 +48,7 @@ export const CustomDragLayer: React.FC<CustomDragLayerProps> = props => {
     itemType: monitor.getItemType(),
     initialOffset: monitor.getInitialSourceClientOffset(),
     currentOffset: monitor.getSourceClientOffset(),
-    clientOffset:  monitor.getClientOffset(),
+    clientOffset: monitor.getClientOffset(),
     isDragging: monitor.isDragging()
   }));
 
