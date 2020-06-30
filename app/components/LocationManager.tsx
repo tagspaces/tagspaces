@@ -622,7 +622,8 @@ class LocationManager extends React.Component<Props, State> {
       console.log('Dropped files: ' + path);
       if (targetLocationType === locationType.TYPE_CLOUD) {
         this.props.uploadFiles(arrPath, targetPath);
-      } else { //if (targetLocationType === locationType.TYPE_LOCAL) {
+      } else {
+        //if (targetLocationType === locationType.TYPE_LOCAL) {
         this.props.moveFiles(arrPath, targetPath);
       }
       this.props.setSelectedEntries([]);
@@ -635,8 +636,13 @@ class LocationManager extends React.Component<Props, State> {
         // @ts-ignore
         accepts={[DragItemTypes.FILE]}
         onDrop={this.handleFileMoveDrop}
-        path={props.children[0]._owner.key}
-       // locationType={location.type}
+        path={
+          //TODO rethink this its not reliable to get path like that (try Picture)
+          props.children[0] !== undefined
+            ? props.children[0]._owner.key
+            : undefined
+        }
+        // locationType={location.type}
       >
         {props.children}
       </TargetMoveFileBox>
