@@ -30,7 +30,7 @@ const styles: any = () => ({
     right: 0,
     bottom: 0,
     backgroundColor: '#1dd19f40',
-    zIndex: 1000,
+    zIndex: 1,
     border: '3px dashed white',
     display: 'flex'
     /* justifyContent: 'center',

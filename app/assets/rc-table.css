@@ -21,11 +21,3 @@
   border: 3px dashed white;
   padding: 5px;
 }
-
-.rc-table tr.dropzonemove td::before {
-  content: "Move ";
-}
-
-.rc-table tr.dropzonecopy td::before {
-  content: "Copy ";
-}
