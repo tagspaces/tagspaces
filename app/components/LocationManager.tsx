@@ -637,24 +637,6 @@ class LocationManager extends React.Component<Props, State> {
     }
   };
 
-  /*renderBodyCell = props => (
-    <td {...props} style={{ position: 'relative' }}>
-      <TargetMoveFileBox
-        // @ts-ignore
-        accepts={[DragItemTypes.FILE]}
-        onDrop={this.handleFileMoveDrop}
-        path={
-          //TODO rethink this its not reliable to get path like that (try Picture)
-          props.children[0] !== undefined
-            ? props.children[0]._owner.key
-            : undefined
-        }
-        // locationType={location.type}
-      >
-        {props.children}
-      </TargetMoveFileBox>
-    </td>
-  );*/
   renderBodyRow = props => (
     <TargetTableMoveFileBox
       // @ts-ignore
