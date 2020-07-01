@@ -84,7 +84,7 @@ import { Pro } from '../pro';
 import LoadingLazy from '../components/LoadingLazy';
 import withDnDContext from '-/containers/withDnDContext';
 import { CustomDragLayer } from '-/components/CustomDragLayer';
-import IOActions from "-/reducers/io-actions";
+import IOActions from '-/reducers/io-actions';
 
 const initialSplitSize = 44;
 const drawerWidth = 300;

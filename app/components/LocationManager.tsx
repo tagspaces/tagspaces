@@ -614,7 +614,7 @@ class LocationManager extends React.Component<Props, State> {
     }
     let targetPath = item.path;
     const targetLocation = item.location;
-    if(targetPath === undefined){
+    if (targetPath === undefined) {
       targetPath = targetLocation.path;
     }
     /*if (item.children && item.children.props && item.children.props.path) {

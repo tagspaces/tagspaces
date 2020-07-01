@@ -62,11 +62,11 @@ const TargetTableMoveFileBox = (props: Props) => {
 };
 
 export default DropTarget(
-    props => props.accepts,
-    boxTarget,
-    (connect, monitor) => ({
-      connectDropTarget: connect.dropTarget(),
-      isOver: monitor.isOver(),
-      canDrop: monitor.canDrop()
-    })
-  )(TargetTableMoveFileBox);
+  props => props.accepts,
+  boxTarget,
+  (connect, monitor) => ({
+    connectDropTarget: connect.dropTarget(),
+    isOver: monitor.isOver(),
+    canDrop: monitor.canDrop()
+  })
+)(TargetTableMoveFileBox);
