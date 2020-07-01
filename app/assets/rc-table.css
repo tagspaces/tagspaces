@@ -15,3 +15,9 @@
   padding: 8px;
   background: transparent !important;
 }
+
+.rc-table tr.dropzone td {
+  background-color: #1dd19f40 !important;
+  border: 3px dashed white;
+  padding: 5px;
+}

@@ -557,9 +557,18 @@ class GridPerspective extends React.Component<Props, State> {
       return;
     }
     if (monitor) {
-      const { path } = monitor.getItem();
+      const { path, selectedEntries } = monitor.getItem();
+      const arrPath = [];
+      if (selectedEntries && selectedEntries.length > 0) {
+        selectedEntries.map(entry => {
+          arrPath.push(entry.path);
+          return true;
+        });
+      } else {
+        arrPath.push(path);
+      }
       console.log('Dropped files: ' + path);
-      this.props.moveFiles([path], item.children.props.entryPath);
+      this.props.moveFiles(arrPath, item.path);
     }
   };
 
@@ -588,12 +597,16 @@ class GridPerspective extends React.Component<Props, State> {
       selectedEntries.some(entry => entry.path === fsEntry.path)
     ) {
       selected = true;
-    }
+    } /* else {
+      selectedEntries.push(fsEntry);
+    } */
 
     const cellContent: any = (
       <TagDropContainer
-        entryPath={fsEntry.path}
-        selectedEntries={selectedEntries}
+        entryPath={fsEntry.path} // TODO remove entryPath it is already included in selectedEntries
+        selectedEntries={
+          selectedEntries.length > 0 ? selectedEntries : [fsEntry]
+        }
       >
         <CellContent
           selected={selected}
@@ -628,6 +641,7 @@ class GridPerspective extends React.Component<Props, State> {
         <TargetMoveFileBox
           // @ts-ignore
           accepts={[DragItemTypes.FILE]}
+          path={fsEntry.path}
           onDrop={this.handleFileMoveDrop}
         >
           {cellContent}
