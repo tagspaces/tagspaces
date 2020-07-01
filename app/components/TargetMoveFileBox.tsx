@@ -32,13 +32,13 @@ const styles: any = () => ({
     backgroundColor: '#1dd19f40',
     zIndex: 1000,
     border: '3px dashed white',
-    display: 'flex',
-    justifyContent: 'center',
+    display: 'flex'
+    /* justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',
     fontSize: '20px',
     fontWeight: 'bold',
-    color: 'white'
+    color: 'white' */
   }
 });
 
@@ -60,7 +60,9 @@ const TargetMoveFileBox = (props: Props) => {
   const { classes, canDrop, isOver, connectDropTarget, children } = props;
   const dragContent =
     canDrop && isOver ? (
-      <div className={classes.dropzone}>{i18n.t('core:releaseToMoveDrop')}</div>
+      <div
+        className={classes.dropzone}
+      /> /* {i18n.t('core:releaseToMoveDrop')} */
     ) : (
       undefined
     );

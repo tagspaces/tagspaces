@@ -19,27 +19,6 @@
 import React from 'react';
 import { DropTarget } from 'react-dnd';
 
-/* const styles: any = () => ({
-  dropzone: {
-    margin: 5,
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: '#1dd19f40',
-    zIndex: 1000,
-    border: '3px dashed white',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    textAlign: 'center',
-    fontSize: '20px',
-    fontWeight: 'bold',
-    color: 'white'
-  }
-}); */
-
 const boxTarget = {
   drop(props, monitor) {
     return props.onDrop(props, monitor);
@@ -56,7 +35,7 @@ interface Props {
 const TargetTableMoveFileBox = (props: Props) => {
   const { canDrop, isOver, connectDropTarget, ...restProps } = props;
   if (canDrop && isOver) {
-    restProps.className += ' dropzone';
+    restProps.className += ' dropzone dropzonemove'; // TODO set props.location type and add dropzonecopy based on this type
   }
   return connectDropTarget(<tr {...restProps} />);
 };

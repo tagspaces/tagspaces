@@ -17,23 +17,15 @@
 }
 
 .rc-table tr.dropzone td {
-  /*margin: 5px;*/
-  /*background-color: #1dd19f40; overriden with transparent from .rc-table !important*/
+  background-color: #1dd19f40 !important;
   border: 3px dashed white;
-  /*font-size: 20px;*/
-  /*font-weight: bold;*/
-  /*color: white;*/
+  padding: 5px;
 }
 
-.rc-table tr.dropzone td span {
-  white-space: nowrap;
-  overflow: hidden;
+.rc-table tr.dropzonemove td::before {
+  content: "Move ";
 }
-.rc-table tr.dropzone td::before {
-  content: "Move files here...";
-  /*position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;*/
+
+.rc-table tr.dropzonecopy td::before {
+  content: "Copy ";
 }
