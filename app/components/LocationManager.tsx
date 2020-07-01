@@ -75,6 +75,7 @@ import i18n from '../services/i18n';
 import AppConfig from '../config';
 import PlatformIO from '../services/platform-io';
 import TargetMoveFileBox from './TargetMoveFileBox';
+import TargetTableMoveFileBox from './TargetTableMoveFileBox';
 import DragItemTypes from './DragItemTypes';
 import IOActions from '../reducers/io-actions';
 
@@ -611,8 +612,11 @@ class LocationManager extends React.Component<Props, State> {
       );
       return;
     }
-    const targetPath = item.path;
+    let targetPath = item.path;
     const targetLocation = item.location;
+    if(targetPath === undefined){
+      targetPath = targetLocation.path;
+    }
     /*if (item.children && item.children.props && item.children.props.path) {
       targetPath = item.children.props.path;
     } else {
@@ -622,10 +626,9 @@ class LocationManager extends React.Component<Props, State> {
       // TODO handle monitor -> isOver and change folder icon
       console.log('Dropped files: ' + path);
       if (targetLocation && targetLocation.type === locationType.TYPE_CLOUD) {
-        PlatformIO.enableObjectStoreSupport(targetLocation)
-            .then(() => {
-              this.props.uploadFiles(arrPath, targetPath);
-            });
+        PlatformIO.enableObjectStoreSupport(targetLocation).then(() => {
+          this.props.uploadFiles(arrPath, targetPath);
+        });
       } else {
         //if (targetLocationType === locationType.TYPE_LOCAL) {
         this.props.moveFiles(arrPath, targetPath);
@@ -634,7 +637,7 @@ class LocationManager extends React.Component<Props, State> {
     }
   };
 
-  renderBodyCell = props => (
+  /*renderBodyCell = props => (
     <td {...props} style={{ position: 'relative' }}>
       <TargetMoveFileBox
         // @ts-ignore
@@ -651,6 +654,15 @@ class LocationManager extends React.Component<Props, State> {
         {props.children}
       </TargetMoveFileBox>
     </td>
+  );*/
+  renderBodyRow = props => (
+    <TargetTableMoveFileBox
+      // @ts-ignore
+      accepts={[DragItemTypes.FILE]}
+      onDrop={this.handleFileMoveDrop}
+      location={props.location}
+      {...props}
+    />
   );
 
   // <Tooltip id="tooltip-icon" title={i18n.t('core:moreOperations')} placement="bottom"></Tooltip>
@@ -674,7 +686,7 @@ class LocationManager extends React.Component<Props, State> {
           // className={classes.locationListArea}
           components={{
             // header: { cell: this.renderHeaderRow },
-            body: { cell: this.renderBodyCell }
+            body: { row: this.renderBodyRow }
           }}
           showHeader={false}
           // className="table"
@@ -683,12 +695,16 @@ class LocationManager extends React.Component<Props, State> {
           columns={columns}
           indentSize={20}
           // expandedRowRender={this.expandedRowRender}
-          onExpand={this.onExpand}
+          expandable={{ onExpand: this.onExpand }}
           // expandIcon={this.CustomExpandIcon}
           // expandIconAsCell
           /* onRow={(record, index) => ({
 						onClick: this.onRowClick.bind(null, record, index),
 					})} */
+          onRow={(record, index) => ({
+            index,
+            location: record
+          })}
         />
       );
     }
@@ -741,24 +757,24 @@ class LocationManager extends React.Component<Props, State> {
               </Typography>
             </div>
           ) : (
-          <TargetMoveFileBox
-            accepts={[DragItemTypes.FILE]}
-            onDrop={this.handleFileMoveDrop}
-            path={location.paths[0]}
-            location={location}
+            <TargetMoveFileBox
+              accepts={[DragItemTypes.FILE]}
+              onDrop={this.handleFileMoveDrop}
+              path={location.paths[0]}
+              location={location}
             >
-              <div style={{ maxWidth: 250 }} >
-              <Typography
-                variant="inherit"
-                style={{ paddingLeft: 5, paddingRight: 5 }}
-                className={this.props.classes.header}
-                data-tid="locationTitleElement"
-                noWrap
-              >
-                {location.name}
-              </Typography>
-            </div>
-          </TargetMoveFileBox>
+              <div style={{ maxWidth: 250 }}>
+                <Typography
+                  variant="inherit"
+                  style={{ paddingLeft: 5, paddingRight: 5 }}
+                  className={this.props.classes.header}
+                  data-tid="locationTitleElement"
+                  noWrap
+                >
+                  {location.name}
+                </Typography>
+              </div>
+            </TargetMoveFileBox>
           )}
           {!isLocationsReadOnly && (
             <ListItemSecondaryAction>

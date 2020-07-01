@@ -15,3 +15,25 @@
   padding: 8px;
   background: transparent !important;
 }
+
+.rc-table tr.dropzone td {
+  /*margin: 5px;*/
+  /*background-color: #1dd19f40; overriden with transparent from .rc-table !important*/
+  border: 3px dashed white;
+  /*font-size: 20px;*/
+  /*font-weight: bold;*/
+  /*color: white;*/
+}
+
+.rc-table tr.dropzone td span {
+  white-space: nowrap;
+  overflow: hidden;
+}
+.rc-table tr.dropzone td::before {
+  content: "Move files here...";
+  /*position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;*/
+}
