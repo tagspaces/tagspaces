@@ -462,18 +462,18 @@ class LocationManager extends React.Component<Props, State> {
     } else {
       targetPath = item.children[1].props.record.path;
     } */
-    if (monitor && targetPath !== undefined) {
+    if (monitor && targetPath !== undefined && targetLocation !== undefined) {
       // TODO handle monitor -> isOver and change folder icon
       console.log('Dropped files: ' + path);
-      if (targetLocation && targetLocation.type === locationType.TYPE_CLOUD) {
+      if (targetLocation.type === locationType.TYPE_CLOUD) {
         PlatformIO.enableObjectStoreSupport(targetLocation).then(() => {
           this.props.uploadFiles(arrPath, targetPath);
           return true;
         }).catch(error => {
           console.log('enableObjectStoreSupport', error);
         });
-      } else {
-        // if (targetLocationType === locationType.TYPE_LOCAL) {
+      } else if (targetLocation.type === locationType.TYPE_LOCAL) {
+        PlatformIO.disableObjectStoreSupport();
         this.props.moveFiles(arrPath, targetPath);
       }
       this.props.setSelectedEntries([]);

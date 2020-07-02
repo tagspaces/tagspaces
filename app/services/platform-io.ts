@@ -28,16 +28,20 @@ export default class PlatformIO {
   static enableObjectStoreSupport = (objectStoreConfig: Object): Promise<any> =>
     new Promise((resolve, reject) => {
       if (Pro && Pro.ObjectStoreIO) {
-        objectStoreAPI = new Pro.ObjectStoreIO();
-        objectStoreAPI
-          .configure(objectStoreConfig)
-          .then(() => {
-            resolve();
-            return true;
-          })
-          .catch(e => {
-            reject(e);
-          });
+        if (objectStoreAPI !== undefined) {  // TODO rethink this for the many same location types... && objectStoreAPI.accessKeyId === objectStoreConfig.accessKeyId) {
+          resolve();
+        } else {
+          objectStoreAPI = new Pro.ObjectStoreIO();
+          objectStoreAPI
+              .configure(objectStoreConfig)
+              .then(() => {
+                resolve();
+                return true;
+              })
+              .catch(e => {
+                reject(e);
+              });
+        }
       } else {
         reject('ObjectStore support available in the PRO version');
       }

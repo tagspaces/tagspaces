@@ -19,7 +19,7 @@
 import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import Table from 'rc-table';
 import FolderIcon from '@material-ui/icons/FolderOpen';
-import { Location } from '-/reducers/locations';
+import { Location, locationType } from '-/reducers/locations';
 import DragItemTypes from '-/components/DragItemTypes';
 import AppConfig from '-/config';
 import PlatformIO from '-/services/platform-io';
@@ -126,8 +126,20 @@ const DirectoryTreeView = forwardRef((props: Props, ref) => {
   };
 
   const onRowClick = subDir => {
-    loadSubDirectories(subDir, 1);
-    props.loadDirectoryContent(subDir.path);
+    if (subDir.type === locationType.TYPE_CLOUD) {
+      PlatformIO.enableObjectStoreSupport(subDir)
+        .then(() => {
+          loadSubDirectories(subDir, 1);
+          props.loadDirectoryContent(subDir.path);
+        })
+        .catch(error => {
+          console.log('enableObjectStoreSupport', error);
+        });
+    } else if (subDir.type === locationType.TYPE_LOCAL) {
+      PlatformIO.disableObjectStoreSupport();
+      loadSubDirectories(subDir, 1);
+      props.loadDirectoryContent(subDir.path);
+    }
   };
 
   const columns = [
@@ -143,8 +155,13 @@ const DirectoryTreeView = forwardRef((props: Props, ref) => {
 
   const loadSubDirectories = (location: Location, deepLevel: number) => {
     const subFolder = {
+      ...(location.accessKeyId && { accessKeyId: location.accessKeyId }),
+      ...(location.bucketName && { bucketName: location.bucketName }),
+      ...(location.region && { region: location.region }),
+      ...(location.secretAccessKey && { secretAccessKey: location.secretAccessKey }),
       uuid: location.uuid,
       name: location.name,
+      type: location.type,
       path: location.path || location.paths[0]
     };
     getDirectoriesTree(subFolder, deepLevel)
@@ -180,8 +197,13 @@ const DirectoryTreeView = forwardRef((props: Props, ref) => {
   };
 
   type SubFolder = {
+    accessKeyId?: string;
+    bucketName?: string;
+    region?: string;
+    secretAccessKey?: string;
     uuid: string;
     name: string;
+    type: string;
     path: string;
     children?: Array<SubFolder>;
   };
@@ -203,7 +225,20 @@ const DirectoryTreeView = forwardRef((props: Props, ref) => {
           // const enhancedEntry = enhanceEntry(entry);
           if (!entry.isFile) {
             // eslint-disable-next-line no-param-reassign
+            if (subFolder.accessKeyId) {
+              entry.accessKeyId = subFolder.accessKeyId;
+            }
+            if (subFolder.bucketName) {
+              entry.bucketName = subFolder.bucketName;
+            }
+            if (subFolder.region) {
+              entry.region = subFolder.region;
+            }
+            if (subFolder.secretAccessKey) {
+              entry.secretAccessKey = subFolder.secretAccessKey;
+            }
             entry.uuid = subFolder.uuid;
+            entry.type = subFolder.type;
             directoryContent.push(entry);
           }
           return true;
