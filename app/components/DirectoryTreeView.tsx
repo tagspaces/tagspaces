@@ -20,10 +20,10 @@ import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import Table from 'rc-table';
 import FolderIcon from '@material-ui/icons/FolderOpen';
 import { Location } from '-/reducers/locations';
-import TargetMoveFileBox from './TargetMoveFileBox';
 import DragItemTypes from '-/components/DragItemTypes';
 import AppConfig from '-/config';
 import PlatformIO from '-/services/platform-io';
+import TargetTableMoveFileBox from '-/components/TargetTableMoveFileBox';
 
 interface Props {
   classes: any;
@@ -67,7 +67,7 @@ const DirectoryTreeView = forwardRef((props: Props, ref) => {
     setData(dirsTree);
   };*/
 
-  const renderBodyCell = props => (
+  /*const renderBodyCell = props => (
     <td {...props}>
       <TargetMoveFileBox
         // @ts-ignore
@@ -77,6 +77,16 @@ const DirectoryTreeView = forwardRef((props: Props, ref) => {
         {props.children}
       </TargetMoveFileBox>
     </td>
+  );*/
+
+  const renderBodyRow = props => (
+    <TargetTableMoveFileBox
+      // @ts-ignore
+      accepts={[DragItemTypes.FILE]}
+      onDrop={props.handleFileMoveDrop}
+      location={props.location}
+      {...props}
+    />
   );
 
   const renderNameColumnAction = field => {
@@ -107,13 +117,13 @@ const DirectoryTreeView = forwardRef((props: Props, ref) => {
     } */
   });
 
-  /*const onExpand = (expanded, record) => {
+  const onExpand = (expanded, record) => {
     // console.log('onExpand', expanded + JSON.stringify(record));
     if (expanded) {
       // this.onRowClick(record);
       loadSubDirectories(record, 1);
     }
-  };*/
+  };
 
   const onRowClick = subDir => {
     loadSubDirectories(subDir, 1);
@@ -290,29 +300,30 @@ const DirectoryTreeView = forwardRef((props: Props, ref) => {
   };
 
   if (isExpanded && data != undefined) {
+    // @ts-ignore
     return (
-      // @ts-ignore
       <Table
-        //key={props.location.uuid}
         // defaultExpandAllRows
         // className={classes.locationListArea}
         components={{
           // header: { cell: this.renderHeaderRow },
-          body: { cell: renderBodyCell }
+          body: { row: renderBodyRow }
         }}
         showHeader={false}
         // className="table"
         rowKey="path"
         data={data[props.location.uuid]}
         columns={columns}
-        className="table"
-        // expandedRowRender={this.expandedRowRender}
-        //onExpand={onExpand}
+        indentSize={20}
+        expandable={{ onExpand: onExpand }}
         // expandIcon={this.CustomExpandIcon}
         // expandIconAsCell
-        /* onRow={(record, index) => ({
-          onClick: this.onRowClick.bind(null, record, index),
-        })} */
+        // @ts-ignore
+        onRow={(record, index) => ({
+          index,
+          location: record,
+          handleFileMoveDrop: props.handleFileMoveDrop
+        })}
       />
     );
   }

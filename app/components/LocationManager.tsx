@@ -253,10 +253,10 @@ class LocationManager extends React.Component<Props, State> {
     if (this.state.selectedLocation && this.state.selectedLocation.uuid) {
       this.props.closeLocation(this.state.selectedLocation.uuid);
       this.directoryTreeRef[this.state.selectedLocation.uuid] = undefined;
-      //this.directoryTreeRef[this.state.selectedLocation.uuid].closeLocation();
-      /*this.setState({
+      // this.directoryTreeRef[this.state.selectedLocation.uuid].closeLocation();
+      /* this.setState({
         dirs: {}
-      });*/
+      }); */
     }
   };
 
@@ -338,15 +338,15 @@ class LocationManager extends React.Component<Props, State> {
     });
   };
 
-  //todo https://stackoverflow.com/questions/37949981/call-child-method-from-parent
-  //const directoryTreeRef = useRef();
+  // todo https://stackoverflow.com/questions/37949981/call-child-method-from-parent
+  // const directoryTreeRef = useRef();
 
   handleLocationClick = (location: Location) => {
     this.directoryTreeRef[location.uuid].changeLocation(location);
     if (location.uuid === this.props.currentLocationId) {
       this.props.loadDirectoryContent(location.paths[0]);
     } else {
-      //this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
+      // this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
       this.props.setSelectedEntries([]);
       this.props.openLocation(location);
       this.state.locationRootPath = location.paths[0];
@@ -376,7 +376,7 @@ class LocationManager extends React.Component<Props, State> {
     });
   };
 
-  /*renderNameColumnAction = field => {
+  /* renderNameColumnAction = field => {
     const children = (
       <span style={{fontSize: 15, marginLeft: 5}} title={field}>
         <FolderIcon
@@ -390,17 +390,17 @@ class LocationManager extends React.Component<Props, State> {
       children,
       props: {}
     };
-  };*/
+  }; */
 
-  /*handleCellClick = (record, index) => ({
+  /* handleCellClick = (record, index) => ({
 
     onClick: () => {
       this.onRowClick(record);
     }
 
-  });*/
+  }); */
 
-  /*onExpand = (expanded, record) => {
+  /* onExpand = (expanded, record) => {
     // console.log('onExpand', expanded + JSON.stringify(record));
     if (expanded) {
       // this.onRowClick(record);
@@ -411,7 +411,7 @@ class LocationManager extends React.Component<Props, State> {
   onRowClick = subDir => {
     this.loadSubDirectories(subDir, 1);
     this.props.loadDirectoryContent(subDir.path);
-  };*/
+  }; */
 
   /**
    * https://github.com/react-component/table/blob/master/examples/react-dnd.js
@@ -457,27 +457,30 @@ class LocationManager extends React.Component<Props, State> {
     if (targetPath === undefined) {
       targetPath = targetLocation.path;
     }
-    /*if (item.children && item.children.props && item.children.props.path) {
+    /* if (item.children && item.children.props && item.children.props.path) {
       targetPath = item.children.props.path;
     } else {
       targetPath = item.children[1].props.record.path;
-    }*/
-    if (monitor && targetPath != undefined) {
+    } */
+    if (monitor && targetPath !== undefined) {
       // TODO handle monitor -> isOver and change folder icon
       console.log('Dropped files: ' + path);
       if (targetLocation && targetLocation.type === locationType.TYPE_CLOUD) {
         PlatformIO.enableObjectStoreSupport(targetLocation).then(() => {
           this.props.uploadFiles(arrPath, targetPath);
+          return true;
+        }).catch(error => {
+          console.log('enableObjectStoreSupport', error);
         });
       } else {
-        //if (targetLocationType === locationType.TYPE_LOCAL) {
+        // if (targetLocationType === locationType.TYPE_LOCAL) {
         this.props.moveFiles(arrPath, targetPath);
       }
       this.props.setSelectedEntries([]);
     }
   };
 
-  renderBodyRow = props => (
+  /* renderBodyRow = props => (
     <TargetTableMoveFileBox
       // @ts-ignore
       accepts={[DragItemTypes.FILE]}
@@ -485,13 +488,13 @@ class LocationManager extends React.Component<Props, State> {
       location={props.location}
       {...props}
     />
-  );
+  ); */
 
   // <Tooltip id="tooltip-icon" title={i18n.t('core:moreOperations')} placement="bottom"></Tooltip>
   renderLocation = (location: Location) => {
     /* if (this.directoryTreeRef[location.uuid] === undefined) {
        this.directoryTreeRef[location.uuid] = React.createRef();
-     }*/
+     } */
     const isCloudLocation = location.type === locationType.TYPE_CLOUD;
     /* if (this.state.dirs[location.uuid] !== undefined) {
       const columns = [
@@ -621,7 +624,9 @@ class LocationManager extends React.Component<Props, State> {
           )}
         </ListItem>
         <DirectoryTreeView
-          ref={dirTree => (this.directoryTreeRef[location.uuid] = dirTree)}
+          ref={dirTree => {
+            this.directoryTreeRef[location.uuid] = dirTree;
+          }}
           classes={this.props.classes}
           loadDirectoryContent={this.props.loadDirectoryContent}
           location={location}
@@ -719,8 +724,8 @@ class LocationManager extends React.Component<Props, State> {
                 this.props.removeLocation(this.state.selectedLocation);
               }
             }}
-            cancelDialogTID={'cancelDeleteLocationDialog'}
-            confirmDialogTID={'confirmDeleteLocationDialog'}
+            cancelDialogTID="cancelDeleteLocationDialog"
+            confirmDialogTID="confirmDeleteLocationDialog"
           />
           <SelectDirectoryDialog
             open={this.state.isSelectDirectoryDialogOpened}
