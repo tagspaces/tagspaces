@@ -83,7 +83,10 @@ const TagLibraryMenu = (props: Props) => {
 
   function confirmDeleteTag() {
     if (props.selectedTag && props.selectedTagGroupEntry) {
-      props.deleteTag(props.selectedTag.id, props.selectedTagGroupEntry.uuid);
+      props.deleteTag(
+        props.selectedTag.title,
+        props.selectedTagGroupEntry.uuid
+      );
     }
   }
 

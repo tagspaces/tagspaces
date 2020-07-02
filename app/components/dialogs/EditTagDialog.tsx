@@ -35,7 +35,7 @@ interface Props {
   open: boolean;
   fullScreen?: boolean;
   onClose: () => void;
-  editTag: (tag: Tag, tagGroupId: string) => void;
+  editTag: (tag: Tag, tagGroupId: string, origTitle: string) => void;
   selectedTag: Tag;
   selectedTagGroupEntry: TagGroup;
 }
@@ -46,6 +46,7 @@ interface State {
   displayTextColorPicker: boolean;
   disableConfirmButton: boolean;
   title: string;
+  origTitle: string;
   color: string;
   textcolor: string;
   modifiedDate: string;
@@ -57,6 +58,7 @@ class EditTagDialog extends React.Component<Props, State> {
     displayTextColorPicker: false,
     inputError: false,
     disableConfirmButton: true,
+    origTitle: '',
     title: '',
     color: '',
     textcolor: '',
@@ -67,6 +69,7 @@ class EditTagDialog extends React.Component<Props, State> {
     if (open === true) {
       this.setState({
         disableConfirmButton: !selectedTag.title,
+        origTitle: selectedTag.title,
         title: selectedTag.title,
         color: selectedTag.color,
         textcolor: selectedTag.textcolor,
@@ -107,7 +110,8 @@ class EditTagDialog extends React.Component<Props, State> {
           color: this.state.color,
           textcolor: this.state.textcolor
         },
-        this.props.selectedTagGroupEntry.uuid
+        this.props.selectedTagGroupEntry.uuid,
+        this.state.origTitle
       );
       this.setState({ inputError: false, disableConfirmButton: true });
       this.props.onClose();

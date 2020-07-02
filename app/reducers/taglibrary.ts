@@ -201,7 +201,7 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
           .split(' ')
           .join(',')
           .split(','); // handle spaces around commas
-        // tags = [...new Set(tags)]; // remove duplicates
+        tags = [...new Set(tags)]; // remove duplicates
         tags = tags.filter(tag => tag && tag.length > 0); // zero length tags
 
         const taggroupTags = state[indexForEditing].children;
@@ -215,7 +215,6 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
             ...state[indexForEditing],
             children: taggroupTags.concat(
               tags.map(tagTitle => ({
-                id: uuidv1(),
                 type:
                   taggroupTags.length > 0 ? taggroupTags[0].type : 'sidecar',
                 title: tagTitle.trim(),
@@ -241,62 +240,70 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
     }
     case types.UPDATE_TAG: {
       let tagIndexForUpdating = -1;
-      let indexForUpdating = -1;
+      let tagGroupIndexForUpdating = -1;
       state.forEach((tagGroup, index) => {
         if (tagGroup.uuid === action.uuid) {
-          indexForUpdating = index;
+          tagGroup.children.forEach((tag, tagIndex) => {
+            if (tag.title === action.origTitle) {
+              tagIndexForUpdating = tagIndex;
+              tagGroupIndexForUpdating = index;
+            }
+          });
         }
-        tagGroup.children.forEach((tag, tagIndex) => {
-          if (tag.id === action.entry.id) {
-            tagIndexForUpdating = tagIndex;
-          }
-        });
       });
       if (tagIndexForUpdating >= 0) {
-        const modifiedEntry = extend(
-          { created_date: new Date() },
-          action.entry,
-          { modified_date: new Date() }
-        );
+        const modifiedEntry = extend({ created_date: new Date() }, action.tag, {
+          modified_date: new Date()
+        });
         return [
-          ...state.slice(0, indexForUpdating),
+          ...state.slice(0, tagGroupIndexForUpdating),
           {
-            ...state[indexForUpdating],
+            ...state[tagGroupIndexForUpdating],
             children: [
-              ...state[indexForUpdating].children.slice(0, tagIndexForUpdating),
+              ...state[tagGroupIndexForUpdating].children.slice(
+                0,
+                tagIndexForUpdating
+              ),
               modifiedEntry,
-              ...state[indexForUpdating].children.slice(tagIndexForUpdating + 1)
+              ...state[tagGroupIndexForUpdating].children.slice(
+                tagIndexForUpdating + 1
+              )
             ]
           },
-          ...state.slice(indexForUpdating + 1)
+          ...state.slice(tagGroupIndexForUpdating + 1)
         ];
       }
       return state;
     }
     case types.REMOVE_TAG: {
       let tagIndexForRemoving = -1;
-      let indexForEditing = -1;
+      let tagGroupIndexForEditing = -1;
       state.forEach((tagGroup, index) => {
         if (tagGroup.uuid === action.uuid) {
-          indexForEditing = index;
+          tagGroup.children.forEach((tag, tagIndex) => {
+            if (tag.title === action.tagTitle) {
+              tagIndexForRemoving = tagIndex;
+              tagGroupIndexForEditing = index;
+            }
+          });
         }
-        tagGroup.children.forEach((tag, tagIndex) => {
-          if (tag.id === action.tagID) {
-            tagIndexForRemoving = tagIndex;
-          }
-        });
       });
       if (tagIndexForRemoving >= 0) {
         return [
-          ...state.slice(0, indexForEditing),
+          ...state.slice(0, tagGroupIndexForEditing),
           {
-            ...state[indexForEditing],
+            ...state[tagGroupIndexForEditing],
             children: [
-              ...state[indexForEditing].children.slice(0, tagIndexForRemoving),
-              ...state[indexForEditing].children.slice(tagIndexForRemoving + 1)
+              ...state[tagGroupIndexForEditing].children.slice(
+                0,
+                tagIndexForRemoving
+              ),
+              ...state[tagGroupIndexForEditing].children.slice(
+                tagIndexForRemoving + 1
+              )
             ]
           },
-          ...state.slice(indexForEditing + 1)
+          ...state.slice(tagGroupIndexForEditing + 1)
         ];
       }
       return state;
@@ -381,7 +388,7 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
       });
       if (indexFromGroup >= 0 && state[indexFromGroup].children) {
         state[indexFromGroup].children.forEach((tag, tagIndex) => {
-          if (tag.id === action.tagID) {
+          if (tag.title === action.tagTitle) {
             tagIndexForRemoving = tagIndex;
           }
           return true;
@@ -428,20 +435,7 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
             };
             const tagsArr = [];
             tagGroup.children.forEach(tag => {
-              if (!tag.id) {
-                tag = {
-                  id: uuidv1(),
-                  type: tag.type,
-                  title: tag.title,
-                  functionality: tag.title,
-                  color: tag.color,
-                  textcolor: tag.textcolor,
-                  description: tag.description,
-                  icon: tag.icon,
-                  style: tag.style
-                };
-                tagsArr.push(tag);
-              }
+              tagsArr.push(tag);
               tagGroup.children = tagsArr;
               arr.push(tagGroup);
             });
@@ -453,7 +447,7 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
           if (index > -1) {
             tagGroup.children.forEach(tag => {
               const stateTag = state[index].children.find(
-                obj => obj.id === tag.id
+                obj => obj.title === tag.title
               );
               if (stateTag === undefined) {
                 arr[index].children.push(tag);
@@ -492,14 +486,15 @@ export const actions = {
     console.log(tag, parentTagGroupUuid);
     return { type: types.ADD_TAG, tag, uuid: parentTagGroupUuid };
   },
-  editTag: (entry: Tag, parentTagGroupUuid: Uuid) => ({
+  editTag: (tag: Tag, parentTagGroupUuid: Uuid, origTitle: string) => ({
     type: types.UPDATE_TAG,
-    entry,
-    uuid: parentTagGroupUuid
+    tag,
+    uuid: parentTagGroupUuid,
+    origTitle
   }),
-  deleteTag: (tagID: string, parentTagGroupUuid: Uuid) => ({
+  deleteTag: (tagTitle: string, parentTagGroupUuid: Uuid) => ({
     type: types.REMOVE_TAG,
-    tagID,
+    tagTitle,
     uuid: parentTagGroupUuid
   }),
   moveTagGroupUp: (parentTagGroupUuid: Uuid) => ({
@@ -514,9 +509,13 @@ export const actions = {
     type: types.SORT_TAG_GROUP_UP,
     uuid: parentTagGroupUuid
   }),
-  moveTag: (tagID: string, fromTagGroupUuid: Uuid, toTagGroupUuid: Uuid) => ({
+  moveTag: (
+    tagTitle: string,
+    fromTagGroupUuid: Uuid,
+    toTagGroupUuid: Uuid
+  ) => ({
     type: types.MOVE_TAG,
-    tagID,
+    tagTitle,
     fromTagGroupId: fromTagGroupUuid,
     toTagGroupId: toTagGroupUuid
   }),

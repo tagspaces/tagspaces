@@ -72,6 +72,7 @@ import i18n from '../services/i18n';
 import AppConfig from '../config';
 import PlatformIO from '../services/platform-io';
 import TargetMoveFileBox from './TargetMoveFileBox';
+import TargetTableMoveFileBox from './TargetTableMoveFileBox';
 import DragItemTypes from './DragItemTypes';
 import IOActions from '../reducers/io-actions';
 import DirectoryTreeView from '-/components/DirectoryTreeView';
@@ -113,6 +114,7 @@ interface Props {
     autohide: boolean
   ) => void;
   moveFiles: (files: Array<string>, destination: string) => void;
+  uploadFiles: (files: Array<string>, destination: string) => void;
 }
 
 interface State {
@@ -345,6 +347,7 @@ class LocationManager extends React.Component<Props, State> {
       this.props.loadDirectoryContent(location.paths[0]);
     } else {
       //this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
+      this.props.setSelectedEntries([]);
       this.props.openLocation(location);
       this.state.locationRootPath = location.paths[0];
       if (this.props.hideDrawer) {
@@ -390,15 +393,11 @@ class LocationManager extends React.Component<Props, State> {
   };*/
 
   /*handleCellClick = (record, index) => ({
-    /!* onContextMenu: (e) => {
-      this.handleFileContextMenu(e, record.path);
-    }, *!/
+
     onClick: () => {
       this.onRowClick(record);
     }
-    /!* onDoubleClick: (e) => {
-      this.onRowClick(record, index, e);
-    } *!/
+
   });*/
 
   /*onExpand = (expanded, record) => {
@@ -420,7 +419,15 @@ class LocationManager extends React.Component<Props, State> {
    * @param monitor
    */
   handleFileMoveDrop = (item, monitor) => {
-    const { path } = monitor.getItem();
+    const { path, selectedEntries } = monitor.getItem();
+    const arrPath = [];
+    if (selectedEntries && selectedEntries.length > 0) {
+      selectedEntries.map(entry => {
+        arrPath.push(entry.path);
+      });
+    } else {
+      arrPath.push(path);
+    }
     if (this.props.isReadOnlyMode) {
       this.props.showNotification(
         i18n.t('core:dndDisabledReadOnlyMode'),
@@ -445,30 +452,40 @@ class LocationManager extends React.Component<Props, State> {
       );
       return;
     }
-    let targetPath;
-    if (item.children && item.children.props && item.children.props.path) {
+    let targetPath = item.path;
+    const targetLocation = item.location;
+    if (targetPath === undefined) {
+      targetPath = targetLocation.path;
+    }
+    /*if (item.children && item.children.props && item.children.props.path) {
       targetPath = item.children.props.path;
     } else {
       targetPath = item.children[1].props.record.path;
-    }
-    if (monitor && targetPath) {
+    }*/
+    if (monitor && targetPath != undefined) {
       // TODO handle monitor -> isOver and change folder icon
       console.log('Dropped files: ' + path);
-      this.props.moveFiles([path], targetPath);
+      if (targetLocation && targetLocation.type === locationType.TYPE_CLOUD) {
+        PlatformIO.enableObjectStoreSupport(targetLocation).then(() => {
+          this.props.uploadFiles(arrPath, targetPath);
+        });
+      } else {
+        //if (targetLocationType === locationType.TYPE_LOCAL) {
+        this.props.moveFiles(arrPath, targetPath);
+      }
+      this.props.setSelectedEntries([]);
     }
   };
 
-  /*renderBodyCell = props => (
-    <td {...props}>
-      <TargetMoveFileBox
-        // @ts-ignore
-        accepts={[DragItemTypes.FILE]}
-        onDrop={this.handleFileMoveDrop}
-      >
-        {props.children}
-      </TargetMoveFileBox>
-    </td>
-  );*/
+  renderBodyRow = props => (
+    <TargetTableMoveFileBox
+      // @ts-ignore
+      accepts={[DragItemTypes.FILE]}
+      onDrop={this.handleFileMoveDrop}
+      location={props.location}
+      {...props}
+    />
+  );
 
   // <Tooltip id="tooltip-icon" title={i18n.t('core:moreOperations')} placement="bottom"></Tooltip>
   renderLocation = (location: Location) => {
@@ -476,7 +493,43 @@ class LocationManager extends React.Component<Props, State> {
        this.directoryTreeRef[location.uuid] = React.createRef();
      }*/
     const isCloudLocation = location.type === locationType.TYPE_CLOUD;
+    /* if (this.state.dirs[location.uuid] !== undefined) {
+      const columns = [
+        {
+          title: undefined,
+          dataIndex: 'name',
+          key: 'name',
+          width: '80%',
+          render: this.renderNameColumnAction,
+          onCell: this.handleCellClick
+        }
+      ];
+      table = (
+        <Table
+          // defaultExpandAllRows
+          // className={classes.locationListArea}
+          components={{
+            // header: { cell: this.renderHeaderRow },
+            body: { row: this.renderBodyRow }
+          }}
+          showHeader={false}
+          // className="table"
+          rowKey="path"
+          data={this.state.dirs[location.uuid]}
+          columns={columns}
+          indentSize={20}
+          // expandedRowRender={this.expandedRowRender}
+          expandable={{ onExpand: this.onExpand }}
+          // expandIcon={this.CustomExpandIcon}
+          // expandIconAsCell
 
+          onRow={(record, index) => ({
+            index,
+            location: record
+          })}
+        />
+      );
+    } */
     return (
       <div key={location.uuid}>
         <ListItem
@@ -513,7 +566,7 @@ class LocationManager extends React.Component<Props, State> {
             )}
           </ListItemIcon>
 
-          {isCloudLocation ? (
+          {isCloudLocation && !AppConfig.isElectron ? (
             <div style={{ maxWidth: 250 }}>
               <Typography
                 variant="inherit"
@@ -527,11 +580,12 @@ class LocationManager extends React.Component<Props, State> {
             </div>
           ) : (
             <TargetMoveFileBox
-              // @ts-ignore
               accepts={[DragItemTypes.FILE]}
               onDrop={this.handleFileMoveDrop}
+              path={location.paths[0]}
+              location={location}
             >
-              <div style={{ maxWidth: 250 }} path={location.paths[0]}>
+              <div style={{ maxWidth: 250 }}>
                 <Typography
                   variant="inherit"
                   style={{ paddingLeft: 5, paddingRight: 5 }}
@@ -795,7 +849,9 @@ function mapDispatchToProps(dispatch) {
       openFile: AppActions.openFile,
       showNotification: AppActions.showNotification,
       moveFiles: IOActions.moveFiles,
-      openURLExternally: AppActions.openURLExternally
+      uploadFiles: IOActions.uploadFiles,
+      openURLExternally: AppActions.openURLExternally,
+      setSelectedEntries: AppActions.setSelectedEntries
     },
     dispatch
   );

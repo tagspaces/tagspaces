@@ -19,7 +19,6 @@
 import React from 'react';
 import { DropTarget } from 'react-dnd';
 import { withStyles } from '@material-ui/core/styles/index';
-import i18n from '../services/i18n';
 
 const styles: any = () => ({
   dropzone: {
@@ -30,15 +29,9 @@ const styles: any = () => ({
     right: 0,
     bottom: 0,
     backgroundColor: '#1dd19f40',
-    zIndex: 1000,
+    zIndex: 1,
     border: '3px dashed white',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    textAlign: 'center',
-    fontSize: '20px',
-    fontWeight: 'bold',
-    color: 'white'
+    display: 'flex'
   }
 });
 
@@ -60,7 +53,9 @@ const TargetMoveFileBox = (props: Props) => {
   const { classes, canDrop, isOver, connectDropTarget, children } = props;
   const dragContent =
     canDrop && isOver ? (
-      <div className={classes.dropzone}>{i18n.t('core:releaseToMoveDrop')}</div>
+      <div
+        className={classes.dropzone}
+      /> /* {i18n.t('core:releaseToMoveDrop')} */
     ) : (
       undefined
     );

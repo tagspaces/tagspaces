@@ -28,8 +28,8 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { HotKeys } from 'react-hotkeys';
-import HTML5Backend, { NativeTypes } from 'react-dnd-html5-backend';
-import { DragDropContext } from 'react-dnd';
+import { NativeTypes } from 'react-dnd-html5-backend';
+// import { DragDropContext } from 'react-dnd';
 import VerticalNavigation from '../components/VerticalNavigation';
 import MobileNavigation from '../components/MobileNavigation';
 import FolderContainer from '../components/FolderContainer';
@@ -75,15 +75,16 @@ import {
   isIndexing
 } from '../reducers/location-index';
 import { buffer } from '../utils/misc';
-import { normalizePath } from '../utils/paths';
 import TargetFileBox from '../components/TargetFileBox';
-import PlatformIO from '../services/platform-io';
 import AppConfig from '../config';
 import buildDesktopMenu from '../services/electron-menus';
 import buildTrayIconMenu from '../services/electron-tray-menu';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import LoadingLazy from '../components/LoadingLazy';
+import withDnDContext from '-/containers/withDnDContext';
+import { CustomDragLayer } from '-/components/CustomDragLayer';
+import IOActions from '-/reducers/io-actions';
 
 const initialSplitSize = 44;
 const drawerWidth = 300;
@@ -200,6 +201,7 @@ interface Props {
     autohide?: boolean
   ) => void;
   reflectCreateEntry: (path: string, isFile: boolean) => void;
+  uploadFilesAPI: (files: Array<File>, destination: string) => void;
 }
 
 const AboutDialog = React.lazy(() =>
@@ -486,8 +488,8 @@ class MainPage extends Component<Props, State> {
           true
         );
       } else {
-        files.map(file => {
-          // TODO move this in reducer -> look at DirectoryMenu handleFileInputChange
+        this.props.uploadFilesAPI(files, this.props.directoryPath);
+        /* files.map(file => {
           let filePath = '';
           let fileName = '';
           try {
@@ -561,7 +563,7 @@ class MainPage extends Component<Props, State> {
             reader.readAsArrayBuffer(file);
           }
           return file;
-        });
+        }); */
       }
     }
   };
@@ -782,6 +784,7 @@ class MainPage extends Component<Props, State> {
             accepts={[FILE]}
             onDrop={this.handleFileDrop}
           >
+            <CustomDragLayer />
             <SplitPane
               split="vertical"
               style={{
@@ -953,13 +956,14 @@ function mapDispatchToProps(dispatch) {
       openPerspectivesPanel: AppActions.openPerspectivesPanel,
       openHelpFeedbackPanel: AppActions.openHelpFeedbackPanel,
       closeAllVerticalPanels: AppActions.closeAllVerticalPanels,
-      setFirstRun: SettingsActions.setFirstRun
+      setFirstRun: SettingsActions.setFirstRun,
+      uploadFilesAPI: IOActions.uploadFilesAPI
     },
     dispatch
   );
 }
 
-export default DragDropContext(HTML5Backend)(
+export default withDnDContext(
   connect(
     mapStateToProps,
     mapDispatchToProps

@@ -212,7 +212,7 @@ const CellContent = (props: Props) => {
     );
   }
 
-  function renderRowCell() {
+  function renderRowCell(selected: boolean) {
     let tmbSize = 85;
     if (entrySize === 'small') {
       tmbSize = 50;
@@ -225,8 +225,11 @@ const CellContent = (props: Props) => {
       <Grid
         container
         wrap="nowrap"
+        className={classes.rowHover}
         style={{
-          backgroundColor: theme.palette.background.default
+          backgroundColor: selected
+            ? theme.palette.primary.light
+            : theme.palette.background.default
         }}
       >
         <Grid
@@ -314,7 +317,7 @@ const CellContent = (props: Props) => {
           </Grid>
         )}
         {fsEntry.thumbPath && (
-          <Grid item>
+          <Grid item style={{ display: 'flex', alignItems: 'center' }}>
             <img
               alt="thumbnail"
               className={classes.gridCellThumb}
@@ -370,7 +373,7 @@ const CellContent = (props: Props) => {
   if (layoutType === 'grid') {
     gridCell = renderGridCell();
   } else if (layoutType === 'row') {
-    gridCell = renderRowCell();
+    gridCell = renderRowCell(selected);
   }
 
   return (
