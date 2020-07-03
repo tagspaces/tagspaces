@@ -466,12 +466,14 @@ class LocationManager extends React.Component<Props, State> {
       // TODO handle monitor -> isOver and change folder icon
       console.log('Dropped files: ' + path);
       if (targetLocation.type === locationType.TYPE_CLOUD) {
-        PlatformIO.enableObjectStoreSupport(targetLocation).then(() => {
-          this.props.uploadFiles(arrPath, targetPath);
-          return true;
-        }).catch(error => {
-          console.log('enableObjectStoreSupport', error);
-        });
+        PlatformIO.enableObjectStoreSupport(targetLocation)
+          .then(() => {
+            this.props.uploadFiles(arrPath, targetPath);
+            return true;
+          })
+          .catch(error => {
+            console.log('enableObjectStoreSupport', error);
+          });
       } else if (targetLocation.type === locationType.TYPE_LOCAL) {
         PlatformIO.disableObjectStoreSupport();
         this.props.moveFiles(arrPath, targetPath);

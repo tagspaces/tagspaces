@@ -158,7 +158,9 @@ const DirectoryTreeView = forwardRef((props: Props, ref) => {
       ...(location.accessKeyId && { accessKeyId: location.accessKeyId }),
       ...(location.bucketName && { bucketName: location.bucketName }),
       ...(location.region && { region: location.region }),
-      ...(location.secretAccessKey && { secretAccessKey: location.secretAccessKey }),
+      ...(location.secretAccessKey && {
+        secretAccessKey: location.secretAccessKey
+      }),
       uuid: location.uuid,
       name: location.name,
       type: location.type,

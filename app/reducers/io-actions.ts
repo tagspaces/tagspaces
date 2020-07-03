@@ -249,11 +249,19 @@ const actions = {
   ) => {
     const uploadJobs = [];
     paths.map(path => {
-      uploadJobs.push([
-        path,
+      const target =
         normalizePath(targetPath) +
-          PlatformIO.getDirSeparator() +
-          extractFileName(path, PlatformIO.getDirSeparator())
+        PlatformIO.getDirSeparator() +
+        extractFileName(path, PlatformIO.getDirSeparator());
+      uploadJobs.push([path, target]);
+      // copy meta
+      uploadJobs.push([
+        getMetaFileLocationForFile(path, PlatformIO.getDirSeparator()),
+        getMetaFileLocationForFile(target, PlatformIO.getDirSeparator())
+      ]);
+      uploadJobs.push([
+        getThumbFileLocationForFile(path, PlatformIO.getDirSeparator()),
+        getThumbFileLocationForFile(target, PlatformIO.getDirSeparator())
       ]);
       return true;
     });
