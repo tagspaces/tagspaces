@@ -53,7 +53,20 @@ const DirectoryTreeView = forwardRef((props: Props, ref) => {
         //setData(undefined);
         setExpanded(false);
       } else {
-        loadSubDirectories(location, 1);
+        if (location.type === locationType.TYPE_CLOUD) {
+          PlatformIO.enableObjectStoreSupport(location)
+            .then(() => {
+              loadSubDirectories(location, 1);
+              props.loadDirectoryContent(location.paths[0]);
+            })
+            .catch(error => {
+              console.log('enableObjectStoreSupport', error);
+            });
+        } else if (location.type === locationType.TYPE_LOCAL) {
+          PlatformIO.disableObjectStoreSupport();
+          loadSubDirectories(location, 1);
+          props.loadDirectoryContent(location.paths[0]);
+        }
       }
     },
     closeLocation() {

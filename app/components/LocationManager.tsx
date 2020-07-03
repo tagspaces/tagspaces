@@ -18,7 +18,6 @@
  */
 
 import React from 'react';
-import Table from 'rc-table';
 import { bindActionCreators } from 'redux';
 import uuidv1 from 'uuid';
 import classNames from 'classnames';
@@ -35,7 +34,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
-import FolderIcon from '@material-ui/icons/FolderOpen';
 import LocationIcon from '@material-ui/icons/WorkOutline';
 import CloudLocationIcon from '@material-ui/icons/CloudQueue';
 import EditIcon from '@material-ui/icons/Edit';
@@ -72,7 +70,6 @@ import i18n from '../services/i18n';
 import AppConfig from '../config';
 import PlatformIO from '../services/platform-io';
 import TargetMoveFileBox from './TargetMoveFileBox';
-import TargetTableMoveFileBox from './TargetTableMoveFileBox';
 import DragItemTypes from './DragItemTypes';
 import IOActions from '../reducers/io-actions';
 import DirectoryTreeView from '-/components/DirectoryTreeView';
@@ -104,7 +101,6 @@ interface Props {
   moveLocationDown: (locationId: string) => void;
   closeLocation: (locationId: string) => void;
   removeLocation: (location: Location) => void;
-  // renameDirectory: (directoryPath: string, newDirectoryName: string) => void,
   reflectCreateEntry: (path: string, isFile: boolean) => void;
   deleteDirectory: (directoryPath: string) => void;
   showUnixHiddenEntries: boolean;
@@ -124,7 +120,6 @@ interface State {
   directoryContextMenuOpened?: boolean;
   selectedLocation: Location | null;
   selectedDirectoryPath?: string | null;
-  locationRootPath?: string | null;
   isCreateLocationDialogOpened?: boolean;
   isEditLocationDialogOpened?: boolean;
   isDeleteLocationDialogOpened?: boolean;
@@ -133,7 +128,6 @@ interface State {
   isCreateDirectoryDialogOpened?: boolean;
   locationManagerMenuOpened: boolean;
   locationManagerMenuAnchorEl: Object | null;
-  isExpanded: boolean;
 }
 
 type SubFolder = {
@@ -150,14 +144,12 @@ class LocationManager extends React.Component<Props, State> {
   }
 
   state = {
-    open: false,
     locationDirectoryContextMenuAnchorEl: null,
     locationContextMenuOpened: false,
     directoryContextMenuAnchorEl: null,
     directoryContextMenuOpened: false,
     selectedLocation: null,
     selectedDirectoryPath: null,
-    locationRootPath: null,
     isCreateLocationDialogOpened: false,
     isEditLocationDialogOpened: false,
     isDeleteLocationDialogOpened: false,
@@ -166,8 +158,7 @@ class LocationManager extends React.Component<Props, State> {
     locationManagerMenuOpened: false,
     locationManagerMenuAnchorEl: null,
     createLocationDialogKey: uuidv1(),
-    editLocationDialogKey: uuidv1(),
-    isExpanded: false
+    editLocationDialogKey: uuidv1()
   };
 
   componentDidMount() {
@@ -282,8 +273,9 @@ class LocationManager extends React.Component<Props, State> {
   };
 
   toggleDirectoryMenuClose = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const opened = this.state.directoryContextMenuOpened;
     this.setState({
-      directoryContextMenuOpened: !this.state.directoryContextMenuOpened,
+      directoryContextMenuOpened: !opened,
       directoryContextMenuAnchorEl: event ? event.currentTarget : null
     });
   };
@@ -349,7 +341,6 @@ class LocationManager extends React.Component<Props, State> {
       // this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
       this.props.setSelectedEntries([]);
       this.props.openLocation(location);
-      this.state.locationRootPath = location.paths[0];
       if (this.props.hideDrawer) {
         this.props.hideDrawer();
       }
@@ -376,43 +367,6 @@ class LocationManager extends React.Component<Props, State> {
     });
   };
 
-  /* renderNameColumnAction = field => {
-    const children = (
-      <span style={{fontSize: 15, marginLeft: 5}} title={field}>
-        <FolderIcon
-          style={{marginTop: 0, marginBottom: -8}}
-          className={this.props.classes.icon}
-        />
-        {field && field.length > 25 ? field.substr(0, 25) + '...' : field}
-      </span>
-    );
-    return {
-      children,
-      props: {}
-    };
-  }; */
-
-  /* handleCellClick = (record, index) => ({
-
-    onClick: () => {
-      this.onRowClick(record);
-    }
-
-  }); */
-
-  /* onExpand = (expanded, record) => {
-    // console.log('onExpand', expanded + JSON.stringify(record));
-    if (expanded) {
-      // this.onRowClick(record);
-      this.loadSubDirectories(record, 1);
-    }
-  };
-
-  onRowClick = subDir => {
-    this.loadSubDirectories(subDir, 1);
-    this.props.loadDirectoryContent(subDir.path);
-  }; */
-
   /**
    * https://github.com/react-component/table/blob/master/examples/react-dnd.js
    * @param item
@@ -424,6 +378,7 @@ class LocationManager extends React.Component<Props, State> {
     if (selectedEntries && selectedEntries.length > 0) {
       selectedEntries.map(entry => {
         arrPath.push(entry.path);
+        return true;
       });
     } else {
       arrPath.push(path);
@@ -482,59 +437,10 @@ class LocationManager extends React.Component<Props, State> {
     }
   };
 
-  /* renderBodyRow = props => (
-    <TargetTableMoveFileBox
-      // @ts-ignore
-      accepts={[DragItemTypes.FILE]}
-      onDrop={this.handleFileMoveDrop}
-      location={props.location}
-      {...props}
-    />
-  ); */
-
   // <Tooltip id="tooltip-icon" title={i18n.t('core:moreOperations')} placement="bottom"></Tooltip>
   renderLocation = (location: Location) => {
-    /* if (this.directoryTreeRef[location.uuid] === undefined) {
-       this.directoryTreeRef[location.uuid] = React.createRef();
-     } */
     const isCloudLocation = location.type === locationType.TYPE_CLOUD;
-    /* if (this.state.dirs[location.uuid] !== undefined) {
-      const columns = [
-        {
-          title: undefined,
-          dataIndex: 'name',
-          key: 'name',
-          width: '80%',
-          render: this.renderNameColumnAction,
-          onCell: this.handleCellClick
-        }
-      ];
-      table = (
-        <Table
-          // defaultExpandAllRows
-          // className={classes.locationListArea}
-          components={{
-            // header: { cell: this.renderHeaderRow },
-            body: { row: this.renderBodyRow }
-          }}
-          showHeader={false}
-          // className="table"
-          rowKey="path"
-          data={this.state.dirs[location.uuid]}
-          columns={columns}
-          indentSize={20}
-          // expandedRowRender={this.expandedRowRender}
-          expandable={{ onExpand: this.onExpand }}
-          // expandIcon={this.CustomExpandIcon}
-          // expandIconAsCell
 
-          onRow={(record, index) => ({
-            index,
-            location: record
-          })}
-        />
-      );
-    } */
     return (
       <div key={location.uuid}>
         <ListItem
@@ -564,7 +470,7 @@ class LocationManager extends React.Component<Props, State> {
             // }}
             style={{ minWidth: 'auto' }}
           >
-            {location.type === locationType.TYPE_CLOUD ? (
+            {isCloudLocation ? (
               <CloudLocationIcon className={this.props.classes.icon} />
             ) : (
               <LocationIcon className={this.props.classes.icon} />
