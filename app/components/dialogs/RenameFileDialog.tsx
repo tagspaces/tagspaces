@@ -39,7 +39,7 @@ interface Props {
   selectedFilePath: string;
   classes: any;
   renameFile: (source: string, target: string) => void;
-  onClose: () => void;
+  onClose: (clearSelection?: boolean) => void;
 }
 
 interface State {
@@ -118,7 +118,7 @@ class RenameFileDialog extends React.Component<Props, State> {
       const newFilePath =
         fileDirectory + PlatformIO.getDirSeparator() + this.state.fileName;
       this.props.renameFile(this.props.selectedFilePath, newFilePath);
-      this.props.onClose();
+      this.props.onClose(true);
       this.setState({ inputError: false, disableConfirmButton: true });
     } else {
       this.handleValidation();
@@ -161,7 +161,7 @@ class RenameFileDialog extends React.Component<Props, State> {
     <DialogActions>
       <Button
         data-tid="closeRenameFileDialog"
-        onClick={this.props.onClose}
+        onClick={() => this.props.onClose()}
         color="primary"
       >
         {i18n.t('core:cancel')}

@@ -25,19 +25,32 @@ const nativeAPI: any = new NativePlatformIO();
 let objectStoreAPI;
 
 export default class PlatformIO {
-  static enableObjectStoreSupport = (objectStoreConfig: Object): Promise<any> =>
+  static enableObjectStoreSupport = (
+    objectStoreConfig: any // S3.Types.ClientConfiguration
+  ): Promise<any> =>
     new Promise((resolve, reject) => {
       if (Pro && Pro.ObjectStoreIO) {
-        objectStoreAPI = new Pro.ObjectStoreIO();
-        objectStoreAPI
-          .configure(objectStoreConfig)
-          .then(() => {
-            resolve();
-            return true;
-          })
-          .catch(e => {
-            reject(e);
-          });
+        if (
+          objectStoreAPI !== undefined &&
+          objectStoreAPI.config.bucketName === objectStoreConfig.bucketName &&
+          objectStoreAPI.config.secretAccessKey ===
+            objectStoreConfig.secretAccessKey &&
+          objectStoreAPI.config.region === objectStoreConfig.region &&
+          objectStoreAPI.config.accessKeyId === objectStoreConfig.accessKeyId
+        ) {
+          resolve();
+        } else {
+          objectStoreAPI = new Pro.ObjectStoreIO();
+          objectStoreAPI
+            .configure(objectStoreConfig)
+            .then(() => {
+              resolve();
+              return true;
+            })
+            .catch(e => {
+              reject(e);
+            });
+        }
       } else {
         reject('ObjectStore support available in the PRO version');
       }
