@@ -45,7 +45,7 @@ import { extractFileName } from '-/utils/paths';
 interface Props {
   open: boolean;
   fullScreen: boolean;
-  onClose: () => void;
+  onClose: (clearSelection?: boolean) => void;
   copyFiles: (files: Array<string>, destination: string) => void;
   moveFiles: (files: Array<string>, destination: string) => void;
   selectedFiles: Array<string>;
@@ -78,7 +78,7 @@ const MoveCopyFilesDialog = (props: Props) => {
       setDisableConfirmButton(true);
       setTargetPath('');
     }
-    props.onClose();
+    props.onClose(true);
   }
 
   function handleMoveFiles() {
@@ -88,7 +88,7 @@ const MoveCopyFilesDialog = (props: Props) => {
       setDisableConfirmButton(true);
       setTargetPath('');
     }
-    props.onClose();
+    props.onClose(true);
   }
 
   function selectDirectory() {
@@ -165,7 +165,7 @@ const MoveCopyFilesDialog = (props: Props) => {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button data-tid="closeMoveCopyDialog" onClick={props.onClose}>
+        <Button data-tid="closeMoveCopyDialog" onClick={() => props.onClose()}>
           {i18n.t('core:cancel')}
         </Button>
         <Button
