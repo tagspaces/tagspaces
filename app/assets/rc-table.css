@@ -23,3 +23,9 @@
   border: 3px dashed white;
   padding: 5px;
 }
+
+.rc-table-row-expand-icon {
+  width: 10px;
+  height: 10px;
+  line-height: 10px;
+}
