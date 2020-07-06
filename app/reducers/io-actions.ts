@@ -16,6 +16,7 @@
  *
  */
 
+import { Progress } from 'aws-sdk/clients/s3';
 import { actions as AppActions } from './app';
 import {
   extractFileName,
@@ -164,10 +165,13 @@ const actions = {
    * with HTML5 Files API
    * @param files
    * @param targetPath
+   * @param onUploadProgress
    */
-  uploadFilesAPI: (files: Array<File>, targetPath: string) => (
-    dispatch: (actions: Object) => void
-  ) => {
+  uploadFilesAPI: (
+    files: Array<File>,
+    targetPath: string,
+    onUploadProgress?: (progress: Progress, response: any) => void
+  ) => (dispatch: (actions: Object) => void) => {
     const uploadJobs = [];
     files.map(file => {
       uploadJobs.push(file);
@@ -196,7 +200,8 @@ const actions = {
               PlatformIO.saveBinaryFilePromise(
                 filePath,
                 event.currentTarget.result,
-                true
+                true,
+                onUploadProgress
               )
                 .then(() => {
                   dispatch(
@@ -239,14 +244,18 @@ const actions = {
       return file;
     });
   },
+
   /**
    * use with Electron only!
    * @param paths
    * @param targetPath
+   * @param onUploadProgress
    */
-  uploadFiles: (paths: Array<string>, targetPath: string) => (
-    dispatch: (actions: Object) => void
-  ) => {
+  uploadFiles: (
+    paths: Array<string>,
+    targetPath: string,
+    onUploadProgress?: (progress: Progress, response: any) => void
+  ) => (dispatch: (actions: Object) => void) => {
     const uploadJobs = [];
     paths.map(path => {
       const target =
@@ -291,7 +300,13 @@ const actions = {
                     )
                   );
                 } else {
-                  PlatformIO.saveBinaryFilePromise(filePath, fileContent, true)
+                  // dispatch(AppActions.setProgress(filePath, progress));
+                  PlatformIO.saveBinaryFilePromise(
+                    filePath,
+                    fileContent,
+                    true,
+                    onUploadProgress
+                  )
                     .then(() => {
                       dispatch(
                         AppActions.showNotification(

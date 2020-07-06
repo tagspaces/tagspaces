@@ -44,6 +44,7 @@ import DefaultLocationIcon from '@material-ui/icons/Highlight';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import OpenFolderNativelyIcon from '@material-ui/icons/Launch';
+import { Progress } from 'aws-sdk/clients/s3';
 import styles from './SidePanels.css';
 import DirectoryMenu from './menus/DirectoryMenu';
 import LocationManagerMenu from './menus/LocationManagerMenu';
@@ -73,6 +74,7 @@ import TargetMoveFileBox from './TargetMoveFileBox';
 import DragItemTypes from './DragItemTypes';
 import IOActions from '../reducers/io-actions';
 import DirectoryTreeView from '-/components/DirectoryTreeView';
+import FileUploadDialog from '-/components/dialogs/FileUploadDialog';
 
 const isLocationsReadOnly = window.ExtLocationsReadOnly;
 
@@ -110,7 +112,11 @@ interface Props {
     autohide: boolean
   ) => void;
   moveFiles: (files: Array<string>, destination: string) => void;
-  uploadFiles: (files: Array<string>, destination: string) => void;
+  uploadFiles: (
+    files: Array<string>,
+    destination: string,
+    onUploadProgress?: (progress: Progress, response: any) => void
+  ) => void;
 }
 
 interface State {
@@ -128,6 +134,7 @@ interface State {
   isCreateDirectoryDialogOpened?: boolean;
   locationManagerMenuOpened: boolean;
   locationManagerMenuAnchorEl: Object | null;
+  displayUploadDialog: boolean;
 }
 
 type SubFolder = {
@@ -158,7 +165,8 @@ class LocationManager extends React.Component<Props, State> {
     locationManagerMenuOpened: false,
     locationManagerMenuAnchorEl: null,
     createLocationDialogKey: uuidv1(),
-    editLocationDialogKey: uuidv1()
+    editLocationDialogKey: uuidv1(),
+    displayUploadDialog: false
   };
 
   componentDidMount() {
@@ -423,7 +431,12 @@ class LocationManager extends React.Component<Props, State> {
       if (targetLocation.type === locationType.TYPE_CLOUD) {
         PlatformIO.enableObjectStoreSupport(targetLocation)
           .then(() => {
-            this.props.uploadFiles(arrPath, targetPath);
+            this.props.uploadFiles(
+              arrPath,
+              targetPath,
+              this.props.onUploadProgress
+            );
+            this.setState({ displayUploadDialog: true });
             return true;
           })
           .catch(error => {
@@ -435,6 +448,10 @@ class LocationManager extends React.Component<Props, State> {
       }
       this.props.setSelectedEntries([]);
     }
+  };
+
+  closeUploadDialog = () => {
+    this.setState({ displayUploadDialog: false }, () => this.props.resetProgress());
   };
 
   // <Tooltip id="tooltip-icon" title={i18n.t('core:moreOperations')} placement="bottom"></Tooltip>
@@ -719,6 +736,10 @@ class LocationManager extends React.Component<Props, State> {
             {this.props.locations.map(this.renderLocation)}
           </List>
         </div>
+        <FileUploadDialog
+          open={this.state.displayUploadDialog}
+          onClose={this.closeUploadDialog}
+        />
         <DirectoryMenu
           open={this.state.directoryContextMenuOpened}
           onClose={this.toggleDirectoryMenuClose}
@@ -751,6 +772,8 @@ function mapDispatchToProps(dispatch) {
     {
       ...LocationActions,
       openLocation: AppActions.openLocation,
+      onUploadProgress: AppActions.onUploadProgress,
+      resetProgress: AppActions.resetProgress,
       createDirectoryIndex: LocationIndexActions.createDirectoryIndex,
       closeLocation: AppActions.closeLocation,
       loadDirectoryContent: AppActions.loadDirectoryContent,

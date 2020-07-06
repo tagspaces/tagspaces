@@ -46,6 +46,8 @@ import { Tag } from './taglibrary';
 export const types = {
   DEVICE_ONLINE: 'APP/DEVICE_ONLINE',
   DEVICE_OFFLINE: 'APP/DEVICE_OFFLINE',
+  PROGRESS: 'APP/PROGRESS',
+  RESET_PROGRESS: 'APP/RESET_PROGRESS',
   LOGIN_REQUEST: 'APP/LOGIN_REQUEST',
   LOGIN_SUCCESS: 'APP/LOGIN_SUCCESS',
   LOGIN_FAILURE: 'APP/LOGIN_FAILURE',
@@ -142,6 +144,7 @@ export const initialState = {
   loggedIn: false,
   isOnline: false,
   lastError: '',
+  progress: [],
   isUpdateInProgress: false,
   isUpdateAvailable: false,
   currentLocationId: null,
@@ -186,6 +189,19 @@ export default (state: any = initialState, action: any) => {
     }
     case types.DEVICE_OFFLINE: {
       return { ...state, isOnline: false, error: null };
+    }
+    case types.PROGRESS: {
+      const arrProgress = [{ [action.path]: action.progress }];
+      state.progress.map(fileProgress => {
+        if (fileProgress[action.path] === undefined) {
+          arrProgress.push(fileProgress);
+        }
+        return true;
+      });
+      return { ...state, progress: arrProgress };
+    }
+    case types.RESET_PROGRESS: {
+      return { ...state, progress: [] };
     }
     case types.SET_READONLYMODE: {
       return { ...state, isReadOnlyMode: action.isReadOnlyMode };
@@ -573,6 +589,16 @@ export const actions = {
     type: types.SET_NEW_VERSION_AVAILABLE,
     isUpdateAvailable
   }),
+  setProgress: (path, progress) => ({ type: types.PROGRESS, path, progress }),
+  resetProgress: () => ({ type: types.RESET_PROGRESS }),
+  onUploadProgress: progress => (dispatch: (actions: Object) => void) => {
+    const progressPercentage = Math.round(
+      (progress.loaded / progress.total) * 100
+    );
+    console.log(progressPercentage);
+
+    dispatch(actions.setProgress(progress.key, progressPercentage));
+  },
   showCreateDirectoryDialog: () => (
     dispatch: (actions: Object) => void,
     getState: () => any
@@ -1655,6 +1681,7 @@ export function findAvailableExtensions() {
 export const getDirectoryContent = (state: any) =>
   state.app.currentDirectoryEntries;
 export const getDirectoryPath = (state: any) => state.app.currentDirectoryPath;
+export const getProgress = (state: any) => state.app.progress;
 export const getCurrentLocationPath = (state: any) => {
   let pathCurrentLocation;
   if (state.locations) {

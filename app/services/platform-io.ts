@@ -16,6 +16,7 @@
  *
  */
 
+import { Progress } from 'aws-sdk/clients/s3';
 import { Pro } from '../pro';
 // @ts-ignore
 import NativePlatformIO from './_PLATFORMIO_';
@@ -237,10 +238,19 @@ export default class PlatformIO {
   static saveBinaryFilePromise = (
     filePath: string,
     content: any,
-    overwrite: boolean
+    overwrite: boolean,
+    onUploadProgress?: (
+      progress: Progress,
+      response: any // AWS.Response<AWS.S3.PutObjectOutput, AWS.AWSError>
+    ) => void
   ): Promise<any> => {
     if (objectStoreAPI) {
-      return objectStoreAPI.saveBinaryFilePromise(filePath, content, overwrite);
+      return objectStoreAPI.saveBinaryFilePromise(
+        filePath,
+        content,
+        overwrite,
+        onUploadProgress
+      );
     }
     return nativeAPI.saveBinaryFilePromise(filePath, content, overwrite);
   };
