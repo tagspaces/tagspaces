@@ -521,14 +521,16 @@ class GridPerspective extends React.Component<Props, State> {
     });
   };
 
-  handleCloseDialogs = () => {
+  handleCloseDialogs = (clearSelection: boolean = false) => {
     this.setState({
       isFileRenameDialogOpened: false,
       isDeleteMultipleFilesDialogOpened: false,
       isAddRemoveTagsDialogOpened: false,
       isMoveCopyFilesDialogOpened: false
     });
-    // this.clearSelection();
+    if (clearSelection) {
+      this.clearSelection();
+    }
   };
 
   openFileRenameDialog = () => {
@@ -569,6 +571,7 @@ class GridPerspective extends React.Component<Props, State> {
       }
       console.log('Dropped files: ' + path);
       this.props.moveFiles(arrPath, item.path);
+      this.clearSelection();
     }
   };
 
@@ -870,6 +873,7 @@ class GridPerspective extends React.Component<Props, State> {
                 return true;
               });
             }
+            this.handleCloseDialogs(true);
           }}
           cancelDialogTID="cancelDeleteFileDialog"
           confirmDialogTID="confirmDeleteFileDialog"

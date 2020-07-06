@@ -39,7 +39,7 @@ interface Props {
   open: boolean;
   fullScreen: boolean;
   selectedEntries: Array<any>;
-  onClose: () => void;
+  onClose: (clearSelection?: boolean) => void;
   addTags: (paths: Array<string>, tags: Array<Tag>) => void;
   removeTags: (paths: Array<string>, tags: Array<Tag>) => void;
   removeAllTags: (paths: Array<string>) => void;
@@ -66,9 +66,9 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
     });
   };
 
-  onClose = () => {
+  onClose = (clearSelection?: boolean) => {
     this.setState({ newlyAddedTags: [] });
-    this.props.onClose();
+    this.props.onClose(clearSelection);
   };
 
   addTags = () => {
@@ -80,8 +80,41 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
       });
       this.props.addTags(paths, this.state.newlyAddedTags);
     }
-    this.onClose();
+    this.onClose(true);
   };
+
+  removeTags = () => {
+    const {
+      selectedEntries = [],
+      removeTags,
+    } = this.props;    
+    const { newlyAddedTags = [] } = this.state;   
+    if (selectedEntries && selectedEntries.length > 0) {
+      const paths = [];
+      selectedEntries.map(entry => {
+        paths.push(entry.path);
+        return true;
+      });
+      removeTags(paths, newlyAddedTags);
+    }
+    this.onClose(true);
+  }
+
+  removeAllTags = () => {
+    const {
+      selectedEntries = [],
+      removeAllTags,
+    } = this.props;    
+    if (selectedEntries && selectedEntries.length > 0) {
+      const paths = [];
+      selectedEntries.map(entry => {
+        paths.push(entry.path);
+        return true;
+      });
+      removeAllTags(paths);
+    }
+    this.onClose(true);
+  }    
 
   render() {
     const {
@@ -93,6 +126,7 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
       onClose
     } = this.props;
     const { newlyAddedTags = [] } = this.state;
+    const disabledButtons = !newlyAddedTags || newlyAddedTags.length < 1 ||selectedEntries.length < 1;
 
     return (
       <Dialog
@@ -127,56 +161,28 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
           </List>
         </DialogContent>
         <DialogActions>
-          <Button data-tid="cancel" onClick={this.onClose} color="primary">
+          <Button data-tid="cancel" onClick={() => this.onClose()} color="primary">
             {i18n.t('core:cancel')}
           </Button>
           <Button
             data-tid="cleanTagsMultipleEntries"
             disabled={selectedEntries.length < 1}
             color="primary"
-            onClick={() => {
-              if (selectedEntries && selectedEntries.length > 0) {
-                const paths = [];
-                selectedEntries.map(entry => {
-                  paths.push(entry.path);
-                  return true;
-                });
-                removeAllTags(paths);
-              }
-              this.onClose();
-            }}
+            onClick={this.removeAllTags}
           >
             {i18n.t('core:tagOperationCleanTags')}
           </Button>
           <Button
             data-tid="removeTagsMultipleEntries"
-            disabled={
-              !newlyAddedTags ||
-              newlyAddedTags.length < 1 ||
-              selectedEntries.length < 1
-            }
+            disabled={disabledButtons}
             color="primary"
-            onClick={() => {
-              if (selectedEntries && selectedEntries.length > 0) {
-                const paths = [];
-                selectedEntries.map(entry => {
-                  paths.push(entry.path);
-                  return true;
-                });
-                removeTags(paths, newlyAddedTags);
-              }
-              this.onClose();
-            }}
+            onClick={this.removeTags}
           >
             {i18n.t('core:tagOperationRemoveTag')}
           </Button>
           <Button
             data-tid="addTagsMultipleEntries"
-            disabled={
-              !newlyAddedTags ||
-              newlyAddedTags.length < 1 ||
-              selectedEntries.length < 1
-            }
+            disabled={disabledButtons}
             color="primary"
             onClick={this.addTags}
           >
