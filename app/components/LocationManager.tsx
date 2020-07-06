@@ -451,7 +451,9 @@ class LocationManager extends React.Component<Props, State> {
   };
 
   closeUploadDialog = () => {
-    this.setState({ displayUploadDialog: false }, () => this.props.resetProgress());
+    this.setState({ displayUploadDialog: false }, () =>
+      this.props.resetProgress()
+    );
   };
 
   // <Tooltip id="tooltip-icon" title={i18n.t('core:moreOperations')} placement="bottom"></Tooltip>
