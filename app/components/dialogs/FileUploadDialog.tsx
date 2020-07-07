@@ -25,13 +25,14 @@ import Dialog from '@material-ui/core/Dialog';
 import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import { LinearProgress } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
 import { getProgress } from '-/reducers/app';
 import i18n from '-/services/i18n';
 
 interface Props {
   open: boolean;
-  progress?: Array<Object>;
+  progress?: Array<any>;
   onClose: () => void;
 }
 
@@ -40,11 +41,21 @@ const FileUploadDialog = (props: Props) => {
   // const [colorHex, setColorHex] = useState(undefined);
   const { open = false, onClose } = props;
 
-  function onConfirm() {
-    props.onClose();
+  function LinearProgressWithLabel(prop) {
+    return (
+      <Box display="flex" alignItems="center">
+        <Box width="100%" mr={1}>
+          <LinearProgress variant="determinate" {...props} />
+        </Box>
+        <Box minWidth={35}>
+          <Typography variant="body2" color="textSecondary">
+            {`${prop.value}%`}
+          </Typography>
+        </Box>
+      </Box>
+    );
   }
-
-  function CircularProgressWithLabel(prop) {
+  /* function CircularProgressWithLabel(prop) {
     return (
       <Box position="relative" display="inline-flex">
         <CircularProgress variant="static" {...prop} />
@@ -64,7 +75,7 @@ const FileUploadDialog = (props: Props) => {
         </Box>
       </Box>
     );
-  }
+  } */
 
   return (
     <Dialog
@@ -72,13 +83,13 @@ const FileUploadDialog = (props: Props) => {
       onClose={onClose}
       keepMounted
       scroll="paper"
-      onKeyDown={event => {
+      /* onKeyDown={event => {
         if (event.key === 'Enter' || event.keyCode === 13) {
           onConfirm();
         } else if (event.key === 'Escape') {
           onClose();
         }
-      }}
+      }} */
     >
       <DialogTitle data-tid="uploadDialogTitle">
         {i18n.t('core:uploadDialogTitle')}
@@ -90,14 +101,21 @@ const FileUploadDialog = (props: Props) => {
         }}
       >
         {props.progress &&
-          props.progress.map(fileProgress =>
-            Object.entries(fileProgress).map(([path, percentage]) => (
-              <p>
-                <span>{path}</span>
-                <CircularProgressWithLabel value={percentage} />
-              </p>
-            ))
-          )}
+          props.progress
+            .sort((a, b) => ('' + a.path).localeCompare(b.path))
+            .map(fileProgress => {
+              const percentage = fileProgress.progress;
+              const { abort, path } = fileProgress;
+              return (
+                <div>
+                  <span>{path}</span>
+                  <Button onClick={() => abort()}>
+                    <CloseIcon />
+                  </Button>
+                  <LinearProgressWithLabel value={percentage} />
+                </div>
+              );
+            })}
       </DialogContent>
       <DialogActions>
         <Button
@@ -105,10 +123,7 @@ const FileUploadDialog = (props: Props) => {
           onClick={props.onClose}
           color="primary"
         >
-          {i18n.t('core:cancel')}
-        </Button>
-        <Button onClick={onConfirm} data-tid="uploadConfirm" color="primary">
-          {i18n.t('core:ok')}
+          {i18n.t('core:close')}
         </Button>
       </DialogActions>
     </Dialog>

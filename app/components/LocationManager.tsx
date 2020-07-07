@@ -74,7 +74,6 @@ import TargetMoveFileBox from './TargetMoveFileBox';
 import DragItemTypes from './DragItemTypes';
 import IOActions from '../reducers/io-actions';
 import DirectoryTreeView from '-/components/DirectoryTreeView';
-import FileUploadDialog from '-/components/dialogs/FileUploadDialog';
 
 const isLocationsReadOnly = window.ExtLocationsReadOnly;
 
@@ -134,7 +133,6 @@ interface State {
   isCreateDirectoryDialogOpened?: boolean;
   locationManagerMenuOpened: boolean;
   locationManagerMenuAnchorEl: Object | null;
-  displayUploadDialog: boolean;
 }
 
 type SubFolder = {
@@ -165,8 +163,7 @@ class LocationManager extends React.Component<Props, State> {
     locationManagerMenuOpened: false,
     locationManagerMenuAnchorEl: null,
     createLocationDialogKey: uuidv1(),
-    editLocationDialogKey: uuidv1(),
-    displayUploadDialog: false
+    editLocationDialogKey: uuidv1()
   };
 
   componentDidMount() {
@@ -436,7 +433,7 @@ class LocationManager extends React.Component<Props, State> {
               targetPath,
               this.props.onUploadProgress
             );
-            this.setState({ displayUploadDialog: true });
+            this.props.toggleUploadDialog();
             return true;
           })
           .catch(error => {
@@ -448,12 +445,6 @@ class LocationManager extends React.Component<Props, State> {
       }
       this.props.setSelectedEntries([]);
     }
-  };
-
-  closeUploadDialog = () => {
-    this.setState({ displayUploadDialog: false }, () =>
-      this.props.resetProgress()
-    );
   };
 
   // <Tooltip id="tooltip-icon" title={i18n.t('core:moreOperations')} placement="bottom"></Tooltip>
@@ -738,10 +729,6 @@ class LocationManager extends React.Component<Props, State> {
             {this.props.locations.map(this.renderLocation)}
           </List>
         </div>
-        <FileUploadDialog
-          open={this.state.displayUploadDialog}
-          onClose={this.closeUploadDialog}
-        />
         <DirectoryMenu
           open={this.state.directoryContextMenuOpened}
           onClose={this.toggleDirectoryMenuClose}
@@ -775,7 +762,7 @@ function mapDispatchToProps(dispatch) {
       ...LocationActions,
       openLocation: AppActions.openLocation,
       onUploadProgress: AppActions.onUploadProgress,
-      resetProgress: AppActions.resetProgress,
+      toggleUploadDialog: AppActions.toggleUploadDialog,
       createDirectoryIndex: LocationIndexActions.createDirectoryIndex,
       closeLocation: AppActions.closeLocation,
       loadDirectoryContent: AppActions.loadDirectoryContent,

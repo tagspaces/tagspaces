@@ -83,6 +83,7 @@ export const types = {
   TOGGLE_CREATE_DIRECTORY_DIALOG: 'APP/TOGGLE_CREATE_DIRECTORY_DIALOG',
   TOGGLE_CREATE_FILE_DIALOG: 'APP/TOGGLE_CREATE_FILE_DIALOG',
   TOGGLE_SELECT_DIRECTORY_DIALOG: 'APP/TOGGLE_SELECT_DIRECTORY_DIALOG',
+  TOGGLE_UPLOAD_DIALOG: 'APP/TOGGLE_UPLOAD_DIALOG',
   OPEN_LOCATIONMANAGER_PANEL: 'APP/OPEN_LOCATIONMANAGER_PANEL',
   OPEN_TAGLIBRARY_PANEL: 'APP/OPEN_TAGLIBRARY_PANEL',
   OPEN_SEARCH_PANEL: 'APP/OPEN_SEARCH_PANEL',
@@ -191,9 +192,11 @@ export default (state: any = initialState, action: any) => {
       return { ...state, isOnline: false, error: null };
     }
     case types.PROGRESS: {
-      const arrProgress = [{ [action.path]: action.progress }];
+      const arrProgress = [
+        { path: action.path, progress: action.progress, abort: action.abort }
+      ];
       state.progress.map(fileProgress => {
-        if (fileProgress[action.path] === undefined) {
+        if (fileProgress.path !== action.path) {
           arrProgress.push(fileProgress);
         }
         return true;
@@ -293,6 +296,13 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         selectDirectoryDialogOpened: !state.selectDirectoryDialogOpened
+      };
+    }
+    case types.TOGGLE_UPLOAD_DIALOG: {
+      return {
+        ...state,
+        uploadDialogOpened: !state.uploadDialogOpened,
+        progress: []
       };
     }
     case types.SET_SEARCH_RESULTS: {
@@ -589,15 +599,22 @@ export const actions = {
     type: types.SET_NEW_VERSION_AVAILABLE,
     isUpdateAvailable
   }),
-  setProgress: (path, progress) => ({ type: types.PROGRESS, path, progress }),
-  resetProgress: () => ({ type: types.RESET_PROGRESS }),
-  onUploadProgress: progress => (dispatch: (actions: Object) => void) => {
+  setProgress: (path, progress, abort) => ({
+    type: types.PROGRESS,
+    path,
+    progress,
+    abort
+  }),
+  // resetProgress: () => ({ type: types.RESET_PROGRESS }),
+  onUploadProgress: (progress, abort) => (
+    dispatch: (actions: Object) => void
+  ) => {
     const progressPercentage = Math.round(
       (progress.loaded / progress.total) * 100
     );
     console.log(progressPercentage);
 
-    dispatch(actions.setProgress(progress.key, progressPercentage));
+    dispatch(actions.setProgress(progress.key, progressPercentage, abort));
   },
   showCreateDirectoryDialog: () => (
     dispatch: (actions: Object) => void,
@@ -654,6 +671,9 @@ export const actions = {
   toggleCreateFileDialog: () => ({ type: types.TOGGLE_CREATE_FILE_DIALOG }),
   toggleSelectDirectoryDialog: () => ({
     type: types.TOGGLE_SELECT_DIRECTORY_DIALOG
+  }),
+  toggleUploadDialog: () => ({
+    type: types.TOGGLE_UPLOAD_DIALOG
   }),
   openLocationManagerPanel: () => ({ type: types.OPEN_LOCATIONMANAGER_PANEL }),
   openTagLibraryPanel: () => ({ type: types.OPEN_TAGLIBRARY_PANEL }),
@@ -1725,6 +1745,8 @@ export const isCreateFileDialogOpened = (state: any) =>
   state.app.createFileDialogOpened;
 export const isSelectDirectoryDialogOpened = (state: any) =>
   state.app.selectDirectoryDialogOpened;
+export const isUploadDialogOpened = (state: any) =>
+  state.app.uploadDialogOpened;
 export const getOpenedFiles = (state: any) => state.app.openedFiles;
 export const getNotificationStatus = (state: any) =>
   state.app.notificationStatus;
