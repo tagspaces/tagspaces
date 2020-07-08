@@ -218,11 +218,28 @@ class LocationManager extends React.Component<Props, State> {
       selectedLocation &&
       selectedLocation.uuid &&
       selectedLocation.uuid === currentLocationId;
-    createDirectoryIndex(
-      selectedLocation.paths[0],
-      selectedLocation.fullTextIndex,
-      isCurrentLocation
-    );
+
+    if (selectedLocation.type === locationType.TYPE_CLOUD) {
+      PlatformIO.enableObjectStoreSupport(selectedLocation)
+        .then(() => {
+          createDirectoryIndex(
+            selectedLocation.paths[0],
+            selectedLocation.fullTextIndex,
+            isCurrentLocation
+          );
+          return true;
+        })
+        .catch(() => {
+          PlatformIO.disableObjectStoreSupport();
+        });
+    } else if (selectedLocation.type === locationType.TYPE_LOCAL) {
+      PlatformIO.disableObjectStoreSupport();
+      createDirectoryIndex(
+        selectedLocation.paths[0],
+        selectedLocation.fullTextIndex,
+        isCurrentLocation
+      );
+    }
   };
 
   moveLocationUp = () => {
@@ -378,72 +395,74 @@ class LocationManager extends React.Component<Props, State> {
    * @param monitor
    */
   handleFileMoveDrop = (item, monitor) => {
-    const { path, selectedEntries } = monitor.getItem();
-    const arrPath = [];
-    if (selectedEntries && selectedEntries.length > 0) {
-      selectedEntries.map(entry => {
-        arrPath.push(entry.path);
-        return true;
-      });
-    } else {
-      arrPath.push(path);
-    }
-    if (this.props.isReadOnlyMode) {
-      this.props.showNotification(
-        i18n.t('core:dndDisabledReadOnlyMode'),
-        'error',
-        true
-      );
-      return;
-    }
-    if (!AppConfig.isWin && !path.startsWith('/')) {
-      this.props.showNotification(
-        i18n.t('Moving file not possible'),
-        'error',
-        true
-      );
-      return;
-    }
-    if (AppConfig.isWin && !path.substr(1).startsWith(':')) {
-      this.props.showNotification(
-        i18n.t('Moving file not possible'),
-        'error',
-        true
-      );
-      return;
-    }
-    let targetPath = item.path;
-    const targetLocation = item.location;
-    if (targetPath === undefined) {
-      targetPath = targetLocation.path;
-    }
-    /* if (item.children && item.children.props && item.children.props.path) {
-      targetPath = item.children.props.path;
-    } else {
-      targetPath = item.children[1].props.record.path;
-    } */
-    if (monitor && targetPath !== undefined && targetLocation !== undefined) {
-      // TODO handle monitor -> isOver and change folder icon
-      console.log('Dropped files: ' + path);
-      if (targetLocation.type === locationType.TYPE_CLOUD) {
-        PlatformIO.enableObjectStoreSupport(targetLocation)
-          .then(() => {
-            this.props.uploadFiles(
-              arrPath,
-              targetPath,
-              this.props.onUploadProgress
-            );
-            this.props.toggleUploadDialog();
-            return true;
-          })
-          .catch(error => {
-            console.log('enableObjectStoreSupport', error);
-          });
-      } else if (targetLocation.type === locationType.TYPE_LOCAL) {
-        PlatformIO.disableObjectStoreSupport();
-        this.props.moveFiles(arrPath, targetPath);
+    if (monitor) {
+      const { path, selectedEntries } = monitor.getItem();
+      const arrPath = [];
+      if (selectedEntries && selectedEntries.length > 0) {
+        selectedEntries.map(entry => {
+          arrPath.push(entry.path);
+          return true;
+        });
+      } else {
+        arrPath.push(path);
       }
-      this.props.setSelectedEntries([]);
+      if (this.props.isReadOnlyMode) {
+        this.props.showNotification(
+          i18n.t('core:dndDisabledReadOnlyMode'),
+          'error',
+          true
+        );
+        return;
+      }
+      if (!AppConfig.isWin && !path.startsWith('/')) {
+        this.props.showNotification(
+          i18n.t('Moving file not possible'),
+          'error',
+          true
+        );
+        return;
+      }
+      if (AppConfig.isWin && !path.substr(1).startsWith(':')) {
+        this.props.showNotification(
+          i18n.t('Moving file not possible'),
+          'error',
+          true
+        );
+        return;
+      }
+      let targetPath = item.path;
+      const targetLocation = item.location;
+      if (targetPath === undefined) {
+        targetPath = targetLocation.path;
+      }
+      /* if (item.children && item.children.props && item.children.props.path) {
+        targetPath = item.children.props.path;
+      } else {
+        targetPath = item.children[1].props.record.path;
+      } */
+      if (monitor && targetPath !== undefined && targetLocation !== undefined) {
+        // TODO handle monitor -> isOver and change folder icon
+        console.log('Dropped files: ' + path);
+        if (targetLocation.type === locationType.TYPE_CLOUD) {
+          PlatformIO.enableObjectStoreSupport(targetLocation)
+            .then(() => {
+              this.props.uploadFiles(
+                arrPath,
+                targetPath,
+                this.props.onUploadProgress
+              );
+              this.props.toggleUploadDialog();
+              return true;
+            })
+            .catch(error => {
+              console.log('enableObjectStoreSupport', error);
+            });
+        } else if (targetLocation.type === locationType.TYPE_LOCAL) {
+          PlatformIO.disableObjectStoreSupport();
+          this.props.moveFiles(arrPath, targetPath);
+        }
+        this.props.setSelectedEntries([]);
+      }
     }
   };
 

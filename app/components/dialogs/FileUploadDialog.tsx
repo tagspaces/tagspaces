@@ -45,7 +45,7 @@ const FileUploadDialog = (props: Props) => {
     return (
       <Box display="flex" alignItems="center">
         <Box width="100%" mr={1}>
-          <LinearProgress variant="determinate" {...props} />
+          <LinearProgress variant="determinate" {...prop} />
         </Box>
         <Box minWidth={35}>
           <Typography variant="body2" color="textSecondary">
@@ -55,6 +55,7 @@ const FileUploadDialog = (props: Props) => {
       </Box>
     );
   }
+
   /* function CircularProgressWithLabel(prop) {
     return (
       <Box position="relative" display="inline-flex">
@@ -76,6 +77,16 @@ const FileUploadDialog = (props: Props) => {
       </Box>
     );
   } */
+
+  const cancelAll = () => {
+    if (props.progress) {
+      props.progress.map(fileProgress => {
+        const { abort } = fileProgress;
+        abort();
+        return true;
+      });
+    }
+  };
 
   return (
     <Dialog
@@ -112,7 +123,9 @@ const FileUploadDialog = (props: Props) => {
                   <Button onClick={() => abort()}>
                     <CloseIcon />
                   </Button>
-                  <LinearProgressWithLabel value={percentage} />
+                  <div style={{ width: '100%' }}>
+                    <LinearProgressWithLabel value={percentage} />
+                  </div>
                 </div>
               );
             })}
@@ -124,6 +137,13 @@ const FileUploadDialog = (props: Props) => {
           color="primary"
         >
           {i18n.t('core:close')}
+        </Button>
+        <Button
+          data-tid="uploadCloseDialog"
+          onClick={cancelAll}
+          color="primary"
+        >
+          {i18n.t('core:cancel')}
         </Button>
       </DialogActions>
     </Dialog>

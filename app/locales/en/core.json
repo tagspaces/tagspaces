@@ -465,5 +465,6 @@
   "objectStorageTitle": "Amazon S3 complient object storage",
   "endpointURL": "Endpoint URL",
   "enableIndexingBySearch": "By enabling this option, the search will deliver better results, but it will take longer",
+  "uploadDialogTitle": "Upload Files",
   "-": "-"
 }

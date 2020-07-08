@@ -1063,8 +1063,6 @@ export const actions = {
             )
           );
           dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
-          dispatch(actions.setCurrentLocationId(location.uuid));
-          dispatch(actions.loadDirectoryContent(location.paths[0]));
           if (location.uuid !== currentLocationId) {
             if (location.persistIndex) {
               dispatch(
@@ -1079,6 +1077,8 @@ export const actions = {
               );
             }
           }
+          dispatch(actions.setCurrentLocationId(location.uuid));
+          dispatch(actions.loadDirectoryContent(location.paths[0]));
           return true;
         })
         .catch(() => {
@@ -1095,8 +1095,6 @@ export const actions = {
       // if (location.type === locationType.TYPE_LOCAL) {
       PlatformIO.disableObjectStoreSupport();
       dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
-      dispatch(actions.setCurrentLocationId(location.uuid));
-      dispatch(actions.loadDirectoryContent(location.paths[0]));
       if (location.uuid !== currentLocationId) {
         if (location.persistIndex) {
           dispatch(LocationIndexActions.loadDirectoryIndex(location.paths[0]));
@@ -1109,6 +1107,8 @@ export const actions = {
           );
         }
       }
+      dispatch(actions.setCurrentLocationId(location.uuid));
+      dispatch(actions.loadDirectoryContent(location.paths[0]));
       if (Pro && Pro.Watcher && location.watchForChanges) {
         Pro.Watcher.watchFolder(location.paths[0], dispatch, actions);
       }
