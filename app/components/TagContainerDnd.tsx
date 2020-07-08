@@ -19,6 +19,7 @@
 import React from 'react';
 import { DragSource, ConnectDragPreview, ConnectDragSource } from 'react-dnd';
 
+import { getEmptyImage } from 'react-dnd-html5-backend';
 import DragItemTypes from './DragItemTypes';
 import TagContainer from './TagContainer';
 import { TagGroup, Tag } from '../reducers/taglibrary';
@@ -84,37 +85,6 @@ interface Props {
   selectedEntries: Array<FileSystemEntry>;
 }
 
-// class TagContainerDnd extends React.PureComponent<Props> {
-//   // componentDidMount() {
-//   //   const xml = '<svg version="1.1" height="25" width="100" xmlns="http://www.w3.org/2000/svg">' +
-//   //     '<g>' +
-//   //     '<rect x="0" y="0" rx="5" ry="5" width="100%" height="100%" style="fill:' + this.props.tag.color + ';opacity:0.5" />' +
-//   //     '<text x="50%" y="55%" font-family="Roboto,Arial,Helvetica,Sans" font-size="13" dominant-baseline="middle" text-anchor="middle" fill="' + this.props.tag.textcolor + '">' + this.props.tag.title + '</text>' +
-//   //     '</g>' +
-//   //     '</svg>';
-//   //   const img = new Image();
-//   //   img.src = `data:image/svg+xml;charset=utf-8,${xml.replace(/(\r\n|\n|\r)/gm, '')}`;
-//   //   img.onload = () => this.props.connectDragPreview(img, { anchorX: 1, anchorY: 0 });
-//   //   // this.props.connectDragPreview(getEmptyImage(), { captureDraggingState: true });
-//   // }
-
-//   shouldComponentUpdate(nextProps) {
-//     if (this.props.tag.title !== nextProps.tag.title
-//       || typeof this.props.key !== typeof nextProps.key
-//       || (this.props.key && nextProps.key && this.props.key !== nextProps.key)
-//       || this.props.tag.color !== nextProps.tag.color
-//       || this.props.tag.textcolor !== nextProps.tag.textcolor
-//       || (this.props.tagGroup && this.props.tagGroup ? (this.props.tagGroup.uuid !== nextProps.tagGroup.uuid) : false)
-//       || this.props.isDragging !== nextProps.isDragging
-//       || typeof this.props.entryPath !== typeof nextProps.entryPath
-//       || (this.props.entryPath && this.props.entryPath !== nextProps.entryPath)
-//     ) {
-//       return true;
-//     }
-//     return false;
-//   }
-
-//   render() {
 const TagContainerDnd = (props: Props) => {
   const {
     key,
@@ -129,6 +99,14 @@ const TagContainerDnd = (props: Props) => {
     addTags,
     tagMode
   } = props;
+
+  // Use empty image as a drag preview so browsers don't draw it
+  // and we can draw whatever we want on the custom drag layer instead.
+  props.connectDragPreview(getEmptyImage(), {
+    // IE fallback: specify that we'd rather screenshot the node
+    // when it already knows it's being dragged so we can hide it with CSS.
+    captureDraggingState: true
+  });
 
   return connectDragSource(
     <span>
@@ -148,8 +126,21 @@ const TagContainerDnd = (props: Props) => {
   );
 };
 
-export default DragSource(DragItemTypes.TAG, boxSource, (connect, monitor) => ({
+/**
+ * Specifies which props to inject into your component.
+ */
+const collect = (connect, monitor) => ({
+  // Call this function inside render()
+  // to let React DnD handle the drag events:
   connectDragSource: connect.dragSource(),
+  // You can ask the monitor about the current drag preview
   connectDragPreview: connect.dragPreview(),
+  // You can ask the monitor about the current drag state:
   isDragging: monitor.isDragging()
-}))(TagContainerDnd);
+});
+
+export default DragSource(
+  DragItemTypes.TAG,
+  boxSource,
+  collect
+)(TagContainerDnd);
