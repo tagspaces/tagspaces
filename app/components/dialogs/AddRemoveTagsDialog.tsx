@@ -84,11 +84,8 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
   };
 
   removeTags = () => {
-    const {
-      selectedEntries = [],
-      removeTags,
-    } = this.props;    
-    const { newlyAddedTags = [] } = this.state;   
+    const { selectedEntries = [], removeTags } = this.props;
+    const { newlyAddedTags = [] } = this.state;
     if (selectedEntries && selectedEntries.length > 0) {
       const paths = [];
       selectedEntries.map(entry => {
@@ -98,13 +95,10 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
       removeTags(paths, newlyAddedTags);
     }
     this.onClose(true);
-  }
+  };
 
   removeAllTags = () => {
-    const {
-      selectedEntries = [],
-      removeAllTags,
-    } = this.props;    
+    const { selectedEntries = [], removeAllTags } = this.props;
     if (selectedEntries && selectedEntries.length > 0) {
       const paths = [];
       selectedEntries.map(entry => {
@@ -114,7 +108,7 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
       removeAllTags(paths);
     }
     this.onClose(true);
-  }    
+  };
 
   render() {
     const {
@@ -126,7 +120,10 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
       onClose
     } = this.props;
     const { newlyAddedTags = [] } = this.state;
-    const disabledButtons = !newlyAddedTags || newlyAddedTags.length < 1 ||selectedEntries.length < 1;
+    const disabledButtons =
+      !newlyAddedTags ||
+      newlyAddedTags.length < 1 ||
+      selectedEntries.length < 1;
 
     return (
       <Dialog
@@ -161,7 +158,11 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
           </List>
         </DialogContent>
         <DialogActions>
-          <Button data-tid="cancel" onClick={() => this.onClose()} color="primary">
+          <Button
+            data-tid="cancel"
+            onClick={() => this.onClose()}
+            color="primary"
+          >
             {i18n.t('core:cancel')}
           </Button>
           <Button
