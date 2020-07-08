@@ -216,6 +216,16 @@ export default merge.smart(baseConfig, {
       }
     ),
 
+    new webpack.NormalModuleReplacementPlugin(
+      /(.*)_PDFDISTLIB_(\.*)/,
+      resource => {
+        resource.request = resource.request.replace(
+          /_PDFDISTLIB_/,
+          `pdfjs-dist/webpack`
+        );
+      }
+    ),
+
     new webpack.NoEmitOnErrorsPlugin(),
 
     /**
