@@ -414,14 +414,14 @@ class LocationManager extends React.Component<Props, State> {
         );
         return;
       }
-      if (!AppConfig.isWin && !path.startsWith('/')) {
+      /* if (!AppConfig.isWin && !path.startsWith('/')) {
         this.props.showNotification(
           i18n.t('Moving file not possible'),
           'error',
           true
         );
         return;
-      }
+      } */
       if (AppConfig.isWin && !path.substr(1).startsWith(':')) {
         this.props.showNotification(
           i18n.t('Moving file not possible'),
@@ -444,22 +444,31 @@ class LocationManager extends React.Component<Props, State> {
         // TODO handle monitor -> isOver and change folder icon
         console.log('Dropped files: ' + path);
         if (targetLocation.type === locationType.TYPE_CLOUD) {
-          PlatformIO.enableObjectStoreSupport(targetLocation)
-            .then(() => {
-              this.props.uploadFiles(
-                arrPath,
-                targetPath,
-                this.props.onUploadProgress
-              );
-              this.props.toggleUploadDialog();
-              return true;
-            })
-            .catch(error => {
-              console.log('enableObjectStoreSupport', error);
-            });
+          if (!PlatformIO.haveObjectStoreSupport()) {
+            PlatformIO.enableObjectStoreSupport(targetLocation)
+              .then(() => {
+                this.props.uploadFiles(
+                  arrPath,
+                  targetPath,
+                  this.props.onUploadProgress
+                );
+                this.props.toggleUploadDialog();
+                return true;
+              })
+              .catch(error => {
+                console.log('enableObjectStoreSupport', error);
+              });
+          } else {
+            // todo move S3 files
+          }
         } else if (targetLocation.type === locationType.TYPE_LOCAL) {
-          PlatformIO.disableObjectStoreSupport();
-          this.props.moveFiles(arrPath, targetPath);
+          if (PlatformIO.haveObjectStoreSupport()) {
+            // download S3 files
+            this.props.downloadFiles(arrPath, targetPath);
+          } else {
+            PlatformIO.disableObjectStoreSupport();
+            this.props.moveFiles(arrPath, targetPath);
+          }
         }
         this.props.setSelectedEntries([]);
       }
@@ -794,6 +803,7 @@ function mapDispatchToProps(dispatch) {
       showNotification: AppActions.showNotification,
       moveFiles: IOActions.moveFiles,
       uploadFiles: IOActions.uploadFiles,
+      downloadFiles: IOActions.downloadFiles,
       openURLExternally: AppActions.openURLExternally,
       setSelectedEntries: AppActions.setSelectedEntries
     },

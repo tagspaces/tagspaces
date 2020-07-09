@@ -21,6 +21,7 @@ import { Pro } from '../pro';
 // @ts-ignore
 import NativePlatformIO from './_PLATFORMIO_';
 import AppConfig from '-/config';
+import {WriteStream} from "fs";
 
 const nativeAPI: any = new NativePlatformIO();
 let objectStoreAPI;
@@ -211,6 +212,12 @@ export default class PlatformIO {
       return objectStoreAPI.getFileContentPromise(filePath, type);
     }
     return nativeAPI.getFileContentPromise(filePath, type);
+  };
+
+  static downloadFile = (filePath: string, targetFile: WriteStream): void => {
+    if (objectStoreAPI) {
+      objectStoreAPI.downloadFile(filePath, targetFile);
+    }
   };
 
   static saveFilePromise = (

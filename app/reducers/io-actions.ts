@@ -162,6 +162,37 @@ const actions = {
       });
   },
   /**
+   * download files from S3 Location
+   * @param paths
+   * @param targetPath
+   */
+  downloadFiles: (paths: Array<string>, targetPath: string) => (
+    dispatch: (actions: Object) => void
+  ) => {
+    if (AppConfig.isElectron) {
+      import('fs-extra').then(fs => {
+        const downloadJobs = [];
+        paths.map(path => {
+          downloadJobs.push([
+            path,
+            normalizePath(targetPath) +
+              PlatformIO.getDirSeparator() +
+              extractFileName(path, PlatformIO.getDirSeparator())
+          ]);
+          return true;
+        });
+        downloadJobs.map(path => {
+          const file = fs.createWriteStream(path[1]);
+          PlatformIO.downloadFile(path[0], file);
+          return true;
+        });
+        return true;
+      }).catch(err => {
+          console.log('Error import fs: ' + err);
+      });
+    }
+  },
+  /**
    * with HTML5 Files API
    * @param files
    * @param targetPath
