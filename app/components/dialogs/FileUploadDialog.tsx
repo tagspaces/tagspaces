@@ -25,7 +25,7 @@ import Dialog from '@material-ui/core/Dialog';
 import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import { LinearProgress } from '@material-ui/core';
+import { LinearProgress, Grid } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import { getProgress } from '-/reducers/app';
 import i18n from '-/services/i18n';
@@ -38,7 +38,6 @@ interface Props {
 
 const FileUploadDialog = (props: Props) => {
   // const [color, setColor] = useState(undefined);
-  // const [colorHex, setColorHex] = useState(undefined);
   const { open = false, onClose } = props;
 
   function LinearProgressWithLabel(prop) {
@@ -94,6 +93,9 @@ const FileUploadDialog = (props: Props) => {
       onClose={onClose}
       keepMounted
       scroll="paper"
+      fullWidth={true}
+      maxWidth="sm"
+      BackdropProps={{ style: { backgroundColor: 'transparent' } }}
       /* onKeyDown={event => {
         if (event.key === 'Enter' || event.keyCode === 13) {
           onConfirm();
@@ -108,7 +110,8 @@ const FileUploadDialog = (props: Props) => {
       <DialogContent
         style={{
           marginLeft: 'auto',
-          marginRight: 'auto'
+          marginRight: 'auto',
+          flexGrow: 1
         }}
       >
         {props.progress &&
@@ -118,15 +121,19 @@ const FileUploadDialog = (props: Props) => {
               const percentage = fileProgress.progress;
               const { abort, path } = fileProgress;
               return (
-                <div>
-                  <span>{path}</span>
-                  <Button onClick={() => abort()}>
-                    <CloseIcon />
-                  </Button>
-                  <div style={{ width: '100%' }}>
+                <Grid container justify="center" alignItems="center">
+                  <Grid item xs={10}>
+                    {path}
+                  </Grid>
+                  <Grid item xs={2}>
+                    <Button onClick={() => abort()}>
+                      <CloseIcon />
+                    </Button>
+                  </Grid>
+                  <Grid item xs={12}>
                     <LinearProgressWithLabel value={percentage} />
-                  </div>
-                </div>
+                  </Grid>
+                </Grid>
               );
             })}
       </DialogContent>

@@ -29,6 +29,7 @@ import SearchIcon from '@material-ui/icons/SearchOutlined';
 import SettingsIcon from '@material-ui/icons/Settings';
 import ThemingIcon from '@material-ui/icons/InvertColors';
 import UpgradeIcon from '@material-ui/icons/FlightTakeoff';
+import ProgressIcon from '@material-ui/icons/Sort';
 import HelpIcon from '@material-ui/icons/HelpOutline';
 import { withTheme } from '@material-ui/core/styles';
 import SplitPane from 'react-split-pane';
@@ -48,7 +49,8 @@ import {
   isSearchPanelOpened as isSearchOpened,
   isPerspectivesPanelOpened as isPerspectivesOpened,
   isHelpFeedbackPanelOpened as isHelpFeedbackOpened,
-  isReadOnlyMode
+  isReadOnlyMode,
+  getProgress
 } from '../reducers/app';
 import { actions as SettingsActions, isFirstRun } from '../reducers/settings';
 import LoadingLazy from './LoadingLazy';
@@ -72,6 +74,7 @@ interface Props {
   toggleAboutDialog: () => void;
   toggleKeysDialog: () => void;
   toggleSettingsDialog: () => void;
+  toggleUploadDialog: () => void;
   isSettingsDialogOpened: () => void;
   isLocationManagerPanelOpened: boolean;
   openLocationManagerPanel: () => void;
@@ -89,6 +92,7 @@ interface Props {
   switchTheme: (theme: string) => void;
   showNotification: (message: string) => void;
   isReadOnlyMode: boolean;
+  progress?: Array<any>;
 }
 
 interface State {
@@ -337,6 +341,22 @@ class VerticalNavigation extends React.Component<Props, State> {
                 />
               </IconButton>
             )}
+            {this.props.progress && this.props.progress.length > 0 && (
+              <IconButton
+                id="progressButton"
+                title={i18n.t('core:progress')}
+                data-tid="uploadProgress"
+                onClick={() => this.props.toggleUploadDialog()}
+                // @ts-ignore
+                style={{ ...this.styles.button, ...this.styles.upgradeButton }}
+              >
+                <ProgressIcon
+                  style={{
+                    ...this.styles.buttonIcon
+                  }}
+                />
+              </IconButton>
+            )}
             <IconButton
               id="verticalNavButton"
               title={i18n.t('core:switchTheme')}
@@ -406,13 +426,15 @@ function mapStateToProps(state) {
     isPerspectivesPanelOpened: isPerspectivesOpened(state),
     isHelpFeedbackPanelOpened: isHelpFeedbackOpened(state),
     isReadOnlyMode: isReadOnlyMode(state),
-    directoryPath: getDirectoryPath(state)
+    directoryPath: getDirectoryPath(state),
+    progress: getProgress(state)
   };
 }
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
+      toggleUploadDialog: AppActions.toggleUploadDialog,
       toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
       toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
       toggleSettingsDialog: AppActions.toggleSettingsDialog,
