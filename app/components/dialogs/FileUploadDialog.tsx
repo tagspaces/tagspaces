@@ -121,7 +121,7 @@ const FileUploadDialog = (props: Props) => {
               const percentage = fileProgress.progress;
               const { abort, path } = fileProgress;
               return (
-                <Grid container justify="center" alignItems="center">
+                <Grid key={path} container justify="center" alignItems="center">
                   <Grid item xs={10}>
                     {path}
                   </Grid>

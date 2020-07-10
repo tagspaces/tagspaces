@@ -116,6 +116,8 @@ interface Props {
     destination: string,
     onUploadProgress?: (progress: Progress, response: any) => void
   ) => void;
+  toggleUploadDialog: () => void;
+  resetProgress: () => void;
 }
 
 interface State {
@@ -446,6 +448,7 @@ class LocationManager extends React.Component<Props, State> {
         if (targetLocation.type === locationType.TYPE_CLOUD) {
           PlatformIO.enableObjectStoreSupport(targetLocation)
             .then(() => {
+              this.props.resetProgress();
               this.props.uploadFiles(
                 arrPath,
                 targetPath,
@@ -782,6 +785,7 @@ function mapDispatchToProps(dispatch) {
       openLocation: AppActions.openLocation,
       onUploadProgress: AppActions.onUploadProgress,
       toggleUploadDialog: AppActions.toggleUploadDialog,
+      resetProgress: AppActions.resetProgress,
       createDirectoryIndex: LocationIndexActions.createDirectoryIndex,
       closeLocation: AppActions.closeLocation,
       loadDirectoryContent: AppActions.loadDirectoryContent,

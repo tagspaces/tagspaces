@@ -83,6 +83,7 @@ interface Props {
   ) => void;
   isReadOnlyMode?: boolean;
   toggleUploadDialog: () => void;
+  resetProgress: () => void;
 }
 
 const DirectoryMenu = (props: Props) => {
@@ -235,8 +236,13 @@ const DirectoryMenu = (props: Props) => {
 
   function handleFileInputChange(selection: any) {
     // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
-    const file = selection.currentTarget.files[0];
-    props.uploadFilesAPI([file], props.directoryPath, props.onUploadProgress);
+    // const file = selection.currentTarget.files[0];
+    props.resetProgress();
+    props.uploadFilesAPI(
+      Array.from(selection.currentTarget.files),
+      props.directoryPath,
+      props.onUploadProgress
+    );
     props.toggleUploadDialog();
     /*
     const filePath =
@@ -499,6 +505,7 @@ function mapDispatchToProps(dispatch) {
       showNotification: AppActions.showNotification,
       onUploadProgress: AppActions.onUploadProgress,
       toggleUploadDialog: AppActions.toggleUploadDialog,
+      resetProgress: AppActions.resetProgress,
       extractContent: IOActions.extractContent,
       uploadFilesAPI: IOActions.uploadFilesAPI
     },

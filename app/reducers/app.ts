@@ -301,8 +301,8 @@ export default (state: any = initialState, action: any) => {
     case types.TOGGLE_UPLOAD_DIALOG: {
       return {
         ...state,
-        uploadDialogOpened: !state.uploadDialogOpened,
-        progress: []
+        // progress: (state.uploadDialogOpened ? state.progress : []),
+        uploadDialogOpened: !state.uploadDialogOpened
       };
     }
     case types.SET_SEARCH_RESULTS: {
@@ -605,7 +605,7 @@ export const actions = {
     progress,
     abort
   }),
-  // resetProgress: () => ({ type: types.RESET_PROGRESS }),
+  resetProgress: () => ({ type: types.RESET_PROGRESS }),
   onUploadProgress: (progress, abort) => (
     dispatch: (actions: Object) => void
   ) => {

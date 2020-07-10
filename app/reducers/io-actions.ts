@@ -166,6 +166,7 @@ const actions = {
    * @param files
    * @param targetPath
    * @param onUploadProgress
+   * TODO reader.onload not work for multiple files https://stackoverflow.com/questions/56178918/react-upload-multiple-files-using-window-filereader
    */
   uploadFilesAPI: (
     files: Array<File>,

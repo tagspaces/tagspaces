@@ -32,13 +32,13 @@ import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Dialog from '@material-ui/core/Dialog';
+import { Progress } from 'aws-sdk/clients/s3';
 import i18n from '-/services/i18n';
 import { getKeyBindingObject } from '-/reducers/settings';
 import { actions as AppActions } from '-/reducers/app';
 import AppConfig from '-/config';
-import { normalizePath } from '-/utils/paths';
-import PlatformIO from '-/services/platform-io';
 import { formatDateTime4Tag } from '-/utils/misc';
+import IOActions from '-/reducers/io-actions';
 
 const styles: any = () => ({
   root: {
@@ -64,7 +64,7 @@ interface Props {
   open: boolean;
   classes: any;
   selectedDirectoryPath: string;
-  fullScreen: boolean;
+  // fullScreen: boolean;
   chooseDirectoryPath: (path: string) => void;
   showNotification: (message: string, type: string, autohide: boolean) => void;
   reflectCreateEntry: (path: string, isFile: boolean) => void;
@@ -75,6 +75,14 @@ interface Props {
     fileType: string
   ) => void;
   onClose: () => void;
+  uploadFilesAPI: (
+    files: Array<File>,
+    destination: string,
+    onUploadProgress?: (progress: Progress, response: any) => void
+  ) => void;
+  onUploadProgress: (progress: Progress, response: any) => void;
+  toggleUploadDialog: () => void;
+  resetProgress: () => void;
 }
 
 const CreateDialog = (props: Props) => {
@@ -85,14 +93,7 @@ const CreateDialog = (props: Props) => {
     formatDateTime4Tag(new Date(), true) +
     AppConfig.endTagContainer;
   const fileContent = '';
-  const {
-    classes,
-    selectedDirectoryPath,
-    showNotification,
-    open,
-    onClose,
-    fullScreen
-  } = props;
+  const { classes, selectedDirectoryPath, open, onClose } = props;
 
   function handleKeyPress(event: any) {
     if (event.key === 'n') {
@@ -170,8 +171,16 @@ const CreateDialog = (props: Props) => {
 
   function handleFileInputChange(selection: any) {
     // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
-    const file = selection.currentTarget.files[0];
-    const filePath =
+    // const file = selection.currentTarget.files[0];
+    props.resetProgress();
+    props.uploadFilesAPI(
+      Array.from(selection.currentTarget.files),
+      selectedDirectoryPath,
+      props.onUploadProgress
+    );
+    props.toggleUploadDialog();
+
+    /* const filePath =
       normalizePath(selectedDirectoryPath) +
       PlatformIO.getDirSeparator() +
       decodeURIComponent(file.name);
@@ -226,7 +235,7 @@ const CreateDialog = (props: Props) => {
       reader.readAsDataURL(file);
     } else {
       reader.readAsArrayBuffer(file);
-    }
+    } */
   }
 
   return (
@@ -340,7 +349,11 @@ function mapActionCreatorsToProps(dispatch) {
     {
       createFileAdvanced: AppActions.createFileAdvanced,
       showNotification: AppActions.showNotification,
-      reflectCreateEntry: AppActions.reflectCreateEntry
+      reflectCreateEntry: AppActions.reflectCreateEntry,
+      uploadFilesAPI: IOActions.uploadFilesAPI,
+      onUploadProgress: AppActions.onUploadProgress,
+      toggleUploadDialog: AppActions.toggleUploadDialog,
+      resetProgress: AppActions.resetProgress
     },
     dispatch
   );

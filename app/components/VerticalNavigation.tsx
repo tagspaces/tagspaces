@@ -29,10 +29,11 @@ import SearchIcon from '@material-ui/icons/SearchOutlined';
 import SettingsIcon from '@material-ui/icons/Settings';
 import ThemingIcon from '@material-ui/icons/InvertColors';
 import UpgradeIcon from '@material-ui/icons/FlightTakeoff';
-import ProgressIcon from '@material-ui/icons/Sort';
 import HelpIcon from '@material-ui/icons/HelpOutline';
 import { withTheme } from '@material-ui/core/styles';
 import SplitPane from 'react-split-pane';
+import { CircularProgress, Typography } from '@material-ui/core';
+import Box from '@material-ui/core/Box';
 import LogoIcon from '../assets/images/icon100x100.svg';
 import TagLibrary from '../components/TagLibrary';
 import Search from '../components/Search';
@@ -350,11 +351,12 @@ class VerticalNavigation extends React.Component<Props, State> {
                 // @ts-ignore
                 style={{ ...this.styles.button, ...this.styles.upgradeButton }}
               >
-                <ProgressIcon
+                <CircularProgressWithLabel value={this.getProgressValue()} />
+                {/* <ProgressIcon
                   style={{
                     ...this.styles.buttonIcon
                   }}
-                />
+                /> */}
               </IconButton>
             )}
             <IconButton
@@ -414,6 +416,42 @@ class VerticalNavigation extends React.Component<Props, State> {
       </div>
     );
   }
+
+  getProgressValue() {
+    const objProgress = this.props.progress.find(
+      fileProgress => fileProgress.progress < 100
+    );
+    if (objProgress !== undefined) {
+      return objProgress.progress;
+    }
+    return 100;
+  }
+}
+
+function CircularProgressWithLabel(prop) {
+  return (
+    <Box position="relative" display="inline-flex">
+      <CircularProgress variant="static" {...prop} />
+      <Box
+        top={0}
+        left={0}
+        bottom={0}
+        right={0}
+        position="absolute"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Typography
+          variant="caption"
+          component="div"
+          style={{ color: 'white' }}
+        >
+          {`${prop.value}%`}
+        </Typography>
+      </Box>
+    </Box>
+  );
 }
 
 function mapStateToProps(state) {

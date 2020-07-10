@@ -157,6 +157,7 @@ interface Props {
   isUploadProgressDialogOpened: boolean;
   toggleSelectDirectoryDialog: () => void;
   toggleUploadDialog: () => void;
+  resetProgress: () => void;
   isEditTagDialogOpened: boolean;
   keyBindings: any;
   toggleEditTagDialog: () => void;
@@ -498,6 +499,7 @@ class MainPage extends Component<Props, State> {
           true
         );
       } else {
+        this.props.resetProgress();
         this.props.uploadFilesAPI(
           files,
           this.props.directoryPath,
@@ -946,6 +948,7 @@ function mapDispatchToProps(dispatch) {
       toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog,
       toggleSelectDirectoryDialog: AppActions.toggleSelectDirectoryDialog,
       toggleUploadDialog: AppActions.toggleUploadDialog,
+      resetProgress: AppActions.resetProgress,
       toggleEditTagDialog: AppActions.toggleEditTagDialog,
       hideNotifications: AppActions.hideNotifications,
       onUploadProgress: AppActions.onUploadProgress,
