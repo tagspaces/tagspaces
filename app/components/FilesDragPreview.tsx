@@ -7,7 +7,7 @@ export interface Props {
   path: string;
 }
 
-export const BoxDragPreview = memo((props: Props) => {
+export const FilesDragPreview = memo((props: Props) => {
   const { entries, path } = props;
   return (
     <Chip

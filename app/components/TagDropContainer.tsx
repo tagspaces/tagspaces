@@ -28,7 +28,7 @@ interface Props {
 }
 
 const boxTarget = {
-  drop(props) {
+  drop(props, monitor) {
     return {
       selectedEntries: props.selectedEntries,
       entryPath: props.entryPath

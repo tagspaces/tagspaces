@@ -1,6 +1,7 @@
 import React from 'react';
 import { XYCoord, useDragLayer } from 'react-dnd';
-import { BoxDragPreview } from './BoxDragPreview';
+import { FilesDragPreview } from './FilesDragPreview';
+import { TagDragPreview } from './TagDragPreview';
 import DragItemTypes from '-/components/DragItemTypes';
 
 const layerStyles: React.CSSProperties = {
@@ -56,8 +57,10 @@ export const CustomDragLayer: React.FC<CustomDragLayerProps> = props => {
     switch (itemType) {
       case DragItemTypes.FILE:
         return (
-          <BoxDragPreview entries={item.selectedEntries} path={item.path} />
+          <FilesDragPreview entries={item.selectedEntries} path={item.path} />
         );
+      case DragItemTypes.TAG:
+        return <TagDragPreview tag={item.tag} />;
 
       default:
         return null;
