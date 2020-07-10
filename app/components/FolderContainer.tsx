@@ -22,10 +22,11 @@ import { bindActionCreators } from 'redux';
 import Button from '@material-ui/core/Button';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import BackButtonIcon from '@material-ui/icons/ArrowBack';
+import IconButton from '@material-ui/core/IconButton';
 import FolderSeparatorIcon from '@material-ui/icons/ChevronRight';
 import MenuIcon from '@material-ui/icons/Menu';
 import Badge from '@material-ui/core/Badge';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles, withTheme } from '@material-ui/core/styles';
 import LocationMenu from './menus/LocationMenu';
 import DirectoryMenu from './menus/DirectoryMenu';
 import i18n from '../services/i18n';
@@ -154,9 +155,11 @@ const styles: any = (theme: any) => ({
   folderButton: {
     minWidth: 30,
     whiteSpace: 'nowrap',
+    overflow: 'hidden',
     paddingLeft: 3,
     paddingRight: 3,
-    margin: '0 auto'
+    margin: '0 auto',
+    backgroundColor: theme.palette.background.default
   },
   locationSelectorButton: {
     whiteSpace: 'nowrap',
@@ -168,6 +171,7 @@ const styles: any = (theme: any) => ({
 
 interface Props {
   classes: any;
+  theme: any;
   windowHeight: number;
   windowWidth: number;
   directoryContent: Array<Object>;
@@ -379,6 +383,7 @@ class FolderContainer extends React.Component<Props, State> {
       openSearchPanel,
       showDrawer,
       isDesktopMode,
+      theme,
       loadParentDirectoryContent
     } = this.props;
     const normalizedCurrentDirPath = normalizePath(
@@ -429,7 +434,9 @@ class FolderContainer extends React.Component<Props, State> {
                       style={{
                         paddingLeft: 3,
                         paddingRight: 0,
-                        minWidth: 10
+                        minWidth: 10,
+                        overflow: 'hidden',
+                        backgroundColor: theme.palette.background.default
                       }}
                     >
                       {extractShortDirectoryName(pathPart, '/')}
@@ -440,14 +447,18 @@ class FolderContainer extends React.Component<Props, State> {
                   this.state.pathParts &&
                   this.state.pathParts.length > 0 && (
                     <React.Fragment>
-                      <Button
+                      <IconButton
                         onClick={loadParentDirectoryContent}
                         data-tid="openParentDirectory"
-                        style={{ paddingLeft: 3, paddingRight: 0 }}
+                        size="small"
+                        style={{
+                          overflow: 'hidden',
+                          backgroundColor: theme.palette.background.default
+                        }}
                         title={i18n.t('core:navigateToParentDirectory')}
                       >
                         <BackButtonIcon />
-                      </Button>
+                      </IconButton>
                     </React.Fragment>
                   )}
                 <Button
@@ -542,4 +553,4 @@ export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
   // @ts-ignore
-)(withStyles(styles)(FolderContainer));
+)(withStyles(styles)(withTheme(FolderContainer)));
