@@ -173,17 +173,16 @@ const actions = {
     targetPath: string,
     onUploadProgress?: (progress: Progress, response: any) => void
   ) => (dispatch: (actions: Object) => void) => {
-
     setupReader(0);
 
     function setupReader(i) {
       const file = files[i];
       const reader = new FileReader();
       const filePath =
-          normalizePath(targetPath) +
-          PlatformIO.getDirSeparator() +
-          decodeURIComponent(file.name);
-      reader.onload  = (event: any) => {
+        normalizePath(targetPath) +
+        PlatformIO.getDirSeparator() +
+        decodeURIComponent(file.name);
+      reader.onload = (event: any) => {
         readerLoaded(event, i, filePath);
       };
       if (AppConfig.isCordova) {
@@ -194,56 +193,52 @@ const actions = {
     }
 
     function readerLoaded(event, i, filePath) {
-
       PlatformIO.getPropertiesPromise(filePath)
-          .then(entryProps => {
-            if (entryProps) {
-              dispatch(
-                  AppActions.showNotification(
-                      'File with the same name already exist, importing skipped!',
-                      'warning',
-                      true
-                  )
-              );
-            } else {
-              PlatformIO.saveBinaryFilePromise(
-                  filePath,
-                  event.currentTarget.result,
-                  true,
-                  onUploadProgress
+        .then(entryProps => {
+          if (entryProps) {
+            dispatch(
+              AppActions.showNotification(
+                'File with the same name already exist, importing skipped!',
+                'warning',
+                true
               )
-                  .then(() => {
-                    dispatch(
-                        AppActions.showNotification(
-                            'File ' + filePath + ' successfully imported.',
-                            'default',
-                            true
-                        )
-                    );
-                    dispatch(AppActions.reflectCreateEntry(filePath, true));
-                    return true;
-                  })
-                  .catch(error => {
-                    // TODO showAlertDialog("Saving " + filePath + " failed.");
-                    console.error(
-                        'Save to file ' + filePath + ' failed ' + error
-                    );
-                    dispatch(
-                        AppActions.showNotification(
-                            'Importing file ' + filePath + ' failed.',
-                            'error',
-                            true
-                        )
-                    );
-                    return true;
-                  });
-            }
-            return true;
-          })
-          .catch(err => {
-            console.log('Error getting properties ' + err);
-          });
-
+            );
+          } else {
+            PlatformIO.saveBinaryFilePromise(
+              filePath,
+              event.currentTarget.result,
+              true,
+              onUploadProgress
+            )
+              .then(() => {
+                dispatch(
+                  AppActions.showNotification(
+                    'File ' + filePath + ' successfully imported.',
+                    'default',
+                    true
+                  )
+                );
+                dispatch(AppActions.reflectCreateEntry(filePath, true));
+                return true;
+              })
+              .catch(error => {
+                // TODO showAlertDialog("Saving " + filePath + " failed.");
+                console.error('Save to file ' + filePath + ' failed ' + error);
+                dispatch(
+                  AppActions.showNotification(
+                    'Importing file ' + filePath + ' failed.',
+                    'error',
+                    true
+                  )
+                );
+                return true;
+              });
+          }
+          return true;
+        })
+        .catch(err => {
+          console.log('Error getting properties ' + err);
+        });
 
       // If there's a file left to load
       if (i < files.length - 1) {
