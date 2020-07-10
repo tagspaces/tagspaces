@@ -173,77 +173,84 @@ const actions = {
     targetPath: string,
     onUploadProgress?: (progress: Progress, response: any) => void
   ) => (dispatch: (actions: Object) => void) => {
-    const uploadJobs = [];
-    files.map(file => {
-      uploadJobs.push(file);
-      return true;
-    });
-    uploadJobs.map(file => {
-      const filePath =
-        normalizePath(targetPath) +
-        PlatformIO.getDirSeparator() +
-        decodeURIComponent(file.name);
+
+    setupReader(0);
+
+    function setupReader(i) {
+      const file = files[i];
       const reader = new FileReader();
-      reader.onload = (event: any) => {
-        // TODO event.currentTarget.result is ArrayBuffer
-        // Sample call from PRO version using content = Utils.base64ToArrayBuffer(baseString);
-        PlatformIO.getPropertiesPromise(filePath)
+      const filePath =
+          normalizePath(targetPath) +
+          PlatformIO.getDirSeparator() +
+          decodeURIComponent(file.name);
+      reader.onload  = (event: any) => {
+        readerLoaded(event, i, filePath);
+      };
+      if (AppConfig.isCordova) {
+        reader.readAsDataURL(file);
+      } else {
+        reader.readAsArrayBuffer(file);
+      }
+    }
+
+    function readerLoaded(event, i, filePath) {
+
+      PlatformIO.getPropertiesPromise(filePath)
           .then(entryProps => {
             if (entryProps) {
               dispatch(
-                AppActions.showNotification(
-                  'File with the same name already exist, importing skipped!',
-                  'warning',
-                  true
-                )
+                  AppActions.showNotification(
+                      'File with the same name already exist, importing skipped!',
+                      'warning',
+                      true
+                  )
               );
             } else {
               PlatformIO.saveBinaryFilePromise(
-                filePath,
-                event.currentTarget.result,
-                true,
-                onUploadProgress
+                  filePath,
+                  event.currentTarget.result,
+                  true,
+                  onUploadProgress
               )
-                .then(() => {
-                  dispatch(
-                    AppActions.showNotification(
-                      'File ' + filePath + ' successfully imported.',
-                      'default',
-                      true
-                    )
-                  );
-                  dispatch(AppActions.reflectCreateEntry(filePath, true));
-                  return true;
-                })
-                .catch(error => {
-                  // TODO showAlertDialog("Saving " + filePath + " failed.");
-                  console.error(
-                    'Save to file ' + filePath + ' failed ' + error
-                  );
-                  dispatch(
-                    AppActions.showNotification(
-                      'Importing file ' + filePath + ' failed.',
-                      'error',
-                      true
-                    )
-                  );
-                  return true;
-                });
+                  .then(() => {
+                    dispatch(
+                        AppActions.showNotification(
+                            'File ' + filePath + ' successfully imported.',
+                            'default',
+                            true
+                        )
+                    );
+                    dispatch(AppActions.reflectCreateEntry(filePath, true));
+                    return true;
+                  })
+                  .catch(error => {
+                    // TODO showAlertDialog("Saving " + filePath + " failed.");
+                    console.error(
+                        'Save to file ' + filePath + ' failed ' + error
+                    );
+                    dispatch(
+                        AppActions.showNotification(
+                            'Importing file ' + filePath + ' failed.',
+                            'error',
+                            true
+                        )
+                    );
+                    return true;
+                  });
             }
             return true;
           })
           .catch(err => {
             console.log('Error getting properties ' + err);
           });
-      };
 
-      if (AppConfig.isCordova) {
-        reader.readAsDataURL(file);
-      } else {
-        reader.readAsArrayBuffer(file);
+
+      // If there's a file left to load
+      if (i < files.length - 1) {
+        // Load the next file
+        setupReader(i + 1);
       }
-      return file;
-    });
+    }
   },
 
   /**

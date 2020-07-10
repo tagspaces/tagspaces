@@ -322,6 +322,7 @@ const CreateDialog = (props: Props) => {
           }}
           accept="*"
           type="file"
+          multiple
           onChange={handleFileInputChange}
         />
       </DialogContent>

@@ -493,6 +493,7 @@ const DirectoryMenu = (props: Props) => {
         }}
         accept="*"
         type="file"
+        multiple
         onChange={handleFileInputChange}
       />
     </div>
