@@ -112,7 +112,11 @@ const actions = {
             !/^(?:\d+~\d+|\d+)$/.test(tag.title) && // skip adding of tag containing only digits
             !isPlusCode(tag.title) // skip adding of tag containing geo information
           ) {
-            uniqueTags.push(tag);
+            uniqueTags.push({
+              ...tag,
+              color: tag.color || settings.tagBackgroundColor,
+              textcolor: tag.textcolor || settings.tagTextColor
+            });
           }
           return true;
         });
@@ -427,8 +431,8 @@ const actions = {
         uniqueTags.push({
           ...tag,
           title: newTagTitle,
-          color: settings.tagBackgroundColor,
-          textcolor: settings.tagTextColor
+          color: tag.color || settings.tagBackgroundColor,
+          textcolor: tag.textcolor || settings.tagTextColor
         });
       }
       if (uniqueTags.length > 0) {
