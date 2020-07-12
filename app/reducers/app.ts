@@ -46,6 +46,8 @@ import { Tag } from './taglibrary';
 export const types = {
   DEVICE_ONLINE: 'APP/DEVICE_ONLINE',
   DEVICE_OFFLINE: 'APP/DEVICE_OFFLINE',
+  PROGRESS: 'APP/PROGRESS',
+  RESET_PROGRESS: 'APP/RESET_PROGRESS',
   LOGIN_REQUEST: 'APP/LOGIN_REQUEST',
   LOGIN_SUCCESS: 'APP/LOGIN_SUCCESS',
   LOGIN_FAILURE: 'APP/LOGIN_FAILURE',
@@ -81,6 +83,7 @@ export const types = {
   TOGGLE_CREATE_DIRECTORY_DIALOG: 'APP/TOGGLE_CREATE_DIRECTORY_DIALOG',
   TOGGLE_CREATE_FILE_DIALOG: 'APP/TOGGLE_CREATE_FILE_DIALOG',
   TOGGLE_SELECT_DIRECTORY_DIALOG: 'APP/TOGGLE_SELECT_DIRECTORY_DIALOG',
+  TOGGLE_UPLOAD_DIALOG: 'APP/TOGGLE_UPLOAD_DIALOG',
   OPEN_LOCATIONMANAGER_PANEL: 'APP/OPEN_LOCATIONMANAGER_PANEL',
   OPEN_TAGLIBRARY_PANEL: 'APP/OPEN_TAGLIBRARY_PANEL',
   OPEN_SEARCH_PANEL: 'APP/OPEN_SEARCH_PANEL',
@@ -142,6 +145,7 @@ export const initialState = {
   loggedIn: false,
   isOnline: false,
   lastError: '',
+  progress: [],
   isUpdateInProgress: false,
   isUpdateAvailable: false,
   currentLocationId: null,
@@ -186,6 +190,21 @@ export default (state: any = initialState, action: any) => {
     }
     case types.DEVICE_OFFLINE: {
       return { ...state, isOnline: false, error: null };
+    }
+    case types.PROGRESS: {
+      const arrProgress = [
+        { path: action.path, progress: action.progress, abort: action.abort }
+      ];
+      state.progress.map(fileProgress => {
+        if (fileProgress.path !== action.path) {
+          arrProgress.push(fileProgress);
+        }
+        return true;
+      });
+      return { ...state, progress: arrProgress };
+    }
+    case types.RESET_PROGRESS: {
+      return { ...state, progress: [] };
     }
     case types.SET_READONLYMODE: {
       return { ...state, isReadOnlyMode: action.isReadOnlyMode };
@@ -277,6 +296,13 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         selectDirectoryDialogOpened: !state.selectDirectoryDialogOpened
+      };
+    }
+    case types.TOGGLE_UPLOAD_DIALOG: {
+      return {
+        ...state,
+        // progress: (state.uploadDialogOpened ? state.progress : []),
+        uploadDialogOpened: !state.uploadDialogOpened
       };
     }
     case types.SET_SEARCH_RESULTS: {
@@ -573,6 +599,23 @@ export const actions = {
     type: types.SET_NEW_VERSION_AVAILABLE,
     isUpdateAvailable
   }),
+  setProgress: (path, progress, abort) => ({
+    type: types.PROGRESS,
+    path,
+    progress,
+    abort
+  }),
+  resetProgress: () => ({ type: types.RESET_PROGRESS }),
+  onUploadProgress: (progress, abort) => (
+    dispatch: (actions: Object) => void
+  ) => {
+    const progressPercentage = Math.round(
+      (progress.loaded / progress.total) * 100
+    );
+    console.log(progressPercentage);
+
+    dispatch(actions.setProgress(progress.key, progressPercentage, abort));
+  },
   showCreateDirectoryDialog: () => (
     dispatch: (actions: Object) => void,
     getState: () => any
@@ -628,6 +671,9 @@ export const actions = {
   toggleCreateFileDialog: () => ({ type: types.TOGGLE_CREATE_FILE_DIALOG }),
   toggleSelectDirectoryDialog: () => ({
     type: types.TOGGLE_SELECT_DIRECTORY_DIALOG
+  }),
+  toggleUploadDialog: () => ({
+    type: types.TOGGLE_UPLOAD_DIALOG
   }),
   openLocationManagerPanel: () => ({ type: types.OPEN_LOCATIONMANAGER_PANEL }),
   openTagLibraryPanel: () => ({ type: types.OPEN_TAGLIBRARY_PANEL }),
@@ -1017,8 +1063,6 @@ export const actions = {
             )
           );
           dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
-          dispatch(actions.setCurrentLocationId(location.uuid));
-          dispatch(actions.loadDirectoryContent(location.paths[0]));
           if (location.uuid !== currentLocationId) {
             if (location.persistIndex) {
               dispatch(
@@ -1033,6 +1077,8 @@ export const actions = {
               );
             }
           }
+          dispatch(actions.setCurrentLocationId(location.uuid));
+          dispatch(actions.loadDirectoryContent(location.paths[0]));
           return true;
         })
         .catch(() => {
@@ -1049,8 +1095,6 @@ export const actions = {
       // if (location.type === locationType.TYPE_LOCAL) {
       PlatformIO.disableObjectStoreSupport();
       dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
-      dispatch(actions.setCurrentLocationId(location.uuid));
-      dispatch(actions.loadDirectoryContent(location.paths[0]));
       if (location.uuid !== currentLocationId) {
         if (location.persistIndex) {
           dispatch(LocationIndexActions.loadDirectoryIndex(location.paths[0]));
@@ -1063,6 +1107,8 @@ export const actions = {
           );
         }
       }
+      dispatch(actions.setCurrentLocationId(location.uuid));
+      dispatch(actions.loadDirectoryContent(location.paths[0]));
       if (Pro && Pro.Watcher && location.watchForChanges) {
         Pro.Watcher.watchFolder(location.paths[0], dispatch, actions);
       }
@@ -1655,6 +1701,7 @@ export function findAvailableExtensions() {
 export const getDirectoryContent = (state: any) =>
   state.app.currentDirectoryEntries;
 export const getDirectoryPath = (state: any) => state.app.currentDirectoryPath;
+export const getProgress = (state: any) => state.app.progress;
 export const getCurrentLocationPath = (state: any) => {
   let pathCurrentLocation;
   if (state.locations) {
@@ -1698,6 +1745,8 @@ export const isCreateFileDialogOpened = (state: any) =>
   state.app.createFileDialogOpened;
 export const isSelectDirectoryDialogOpened = (state: any) =>
   state.app.selectDirectoryDialogOpened;
+export const isUploadDialogOpened = (state: any) =>
+  state.app.uploadDialogOpened;
 export const getOpenedFiles = (state: any) => state.app.openedFiles;
 export const getNotificationStatus = (state: any) =>
   state.app.notificationStatus;

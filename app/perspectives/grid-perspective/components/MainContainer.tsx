@@ -60,6 +60,8 @@ import CellContent from './CellContent';
 import MainToolbar from './MainToolbar';
 import SortingMenu from './SortingMenu';
 import GridOptionsMenu from './GridOptionsMenu';
+import { getLocation, Location, locationType } from '-/reducers/locations';
+import PlatformIO from '-/services/platform-io';
 
 const settings = JSON.parse(localStorage.getItem('tsPerspectiveGrid')); // loading settings
 
@@ -99,6 +101,7 @@ interface Props {
     notificationType: string,
     autohide: boolean
   ) => void;
+  currentLocation: Location;
 }
 
 interface State {
@@ -427,6 +430,22 @@ class GridPerspective extends React.Component<Props, State> {
 
   handleGridCellDblClick = (event, fsEntry: FileSystemEntry) => {
     this.props.setSelectedEntries([]);
+    if (this.props.currentLocation.type === locationType.TYPE_CLOUD) {
+      PlatformIO.enableObjectStoreSupport(this.props.currentLocation)
+        .then(() => {
+          this.openLocation(fsEntry);
+          return true;
+        })
+        .catch(error => {
+          console.log('enableObjectStoreSupport', error);
+        });
+    } else if (this.props.currentLocation.type === locationType.TYPE_LOCAL) {
+      PlatformIO.disableObjectStoreSupport();
+      this.openLocation(fsEntry);
+    }
+  };
+
+  openLocation = (fsEntry: FileSystemEntry) => {
     if (fsEntry.isFile) {
       this.props.setSelectedEntries([fsEntry]);
       this.props.openFile(fsEntry.path, true);
@@ -968,7 +987,8 @@ function mapStateToProps(state) {
     currentDirectoryColor: getCurrentDirectoryColor(state),
     desktopMode: getDesktopMode(state),
     selectedEntries: getSelectedEntries(state),
-    keyBindings: getKeyBindingObject(state)
+    keyBindings: getKeyBindingObject(state),
+    currentLocation: getLocation(state, state.app.currentLocationId)
   };
 }
 

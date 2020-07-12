@@ -32,6 +32,8 @@ import UpgradeIcon from '@material-ui/icons/FlightTakeoff';
 import HelpIcon from '@material-ui/icons/HelpOutline';
 import { withTheme } from '@material-ui/core/styles';
 import SplitPane from 'react-split-pane';
+import { CircularProgress, Typography } from '@material-ui/core';
+import Box from '@material-ui/core/Box';
 import LogoIcon from '../assets/images/icon100x100.svg';
 import TagLibrary from '../components/TagLibrary';
 import Search from '../components/Search';
@@ -48,7 +50,8 @@ import {
   isSearchPanelOpened as isSearchOpened,
   isPerspectivesPanelOpened as isPerspectivesOpened,
   isHelpFeedbackPanelOpened as isHelpFeedbackOpened,
-  isReadOnlyMode
+  isReadOnlyMode,
+  getProgress
 } from '../reducers/app';
 import { actions as SettingsActions, isFirstRun } from '../reducers/settings';
 import LoadingLazy from './LoadingLazy';
@@ -72,6 +75,7 @@ interface Props {
   toggleAboutDialog: () => void;
   toggleKeysDialog: () => void;
   toggleSettingsDialog: () => void;
+  toggleUploadDialog: () => void;
   isSettingsDialogOpened: () => void;
   isLocationManagerPanelOpened: boolean;
   openLocationManagerPanel: () => void;
@@ -89,6 +93,7 @@ interface Props {
   switchTheme: (theme: string) => void;
   showNotification: (message: string) => void;
   isReadOnlyMode: boolean;
+  progress?: Array<any>;
 }
 
 interface State {
@@ -337,6 +342,23 @@ class VerticalNavigation extends React.Component<Props, State> {
                 />
               </IconButton>
             )}
+            {this.props.progress && this.props.progress.length > 0 && (
+              <IconButton
+                id="progressButton"
+                title={i18n.t('core:progress')}
+                data-tid="uploadProgress"
+                onClick={() => this.props.toggleUploadDialog()}
+                // @ts-ignore
+                style={{ ...this.styles.button, ...this.styles.upgradeButton }}
+              >
+                <CircularProgressWithLabel value={this.getProgressValue()} />
+                {/* <ProgressIcon
+                  style={{
+                    ...this.styles.buttonIcon
+                  }}
+                /> */}
+              </IconButton>
+            )}
             <IconButton
               id="verticalNavButton"
               title={i18n.t('core:switchTheme')}
@@ -394,6 +416,42 @@ class VerticalNavigation extends React.Component<Props, State> {
       </div>
     );
   }
+
+  getProgressValue() {
+    const objProgress = this.props.progress.find(
+      fileProgress => fileProgress.progress < 100
+    );
+    if (objProgress !== undefined) {
+      return objProgress.progress;
+    }
+    return 100;
+  }
+}
+
+function CircularProgressWithLabel(prop) {
+  return (
+    <Box position="relative" display="inline-flex">
+      <CircularProgress variant="static" {...prop} />
+      <Box
+        top={0}
+        left={0}
+        bottom={0}
+        right={0}
+        position="absolute"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Typography
+          variant="caption"
+          component="div"
+          style={{ color: 'white' }}
+        >
+          {`${prop.value}%`}
+        </Typography>
+      </Box>
+    </Box>
+  );
 }
 
 function mapStateToProps(state) {
@@ -406,13 +464,15 @@ function mapStateToProps(state) {
     isPerspectivesPanelOpened: isPerspectivesOpened(state),
     isHelpFeedbackPanelOpened: isHelpFeedbackOpened(state),
     isReadOnlyMode: isReadOnlyMode(state),
-    directoryPath: getDirectoryPath(state)
+    directoryPath: getDirectoryPath(state),
+    progress: getProgress(state)
   };
 }
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
+      toggleUploadDialog: AppActions.toggleUploadDialog,
       toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
       toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
       toggleSettingsDialog: AppActions.toggleSettingsDialog,

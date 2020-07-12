@@ -30,6 +30,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { HotKeys } from 'react-hotkeys';
 import { NativeTypes } from 'react-dnd-html5-backend';
 // import { DragDropContext } from 'react-dnd';
+import { Progress } from 'aws-sdk/clients/s3';
 import VerticalNavigation from '../components/VerticalNavigation';
 import MobileNavigation from '../components/MobileNavigation';
 import FolderContainer from '../components/FolderContainer';
@@ -66,6 +67,7 @@ import {
   isEditTagDialogOpened,
   isCreateDirectoryOpened,
   isSelectDirectoryDialogOpened,
+  isUploadDialogOpened,
   isCreateFileDialogOpened,
   isSettingsDialogOpened,
   isReadOnlyMode
@@ -85,6 +87,7 @@ import LoadingLazy from '../components/LoadingLazy';
 import withDnDContext from '-/containers/withDnDContext';
 import { CustomDragLayer } from '-/components/CustomDragLayer';
 import IOActions from '-/reducers/io-actions';
+import FileUploadDialog from '-/components/dialogs/FileUploadDialog';
 
 const initialSplitSize = 44;
 const drawerWidth = 300;
@@ -151,7 +154,10 @@ interface Props {
   isThirdPartyLibsDialogOpened: boolean;
   isOnboardingDialogOpened: boolean;
   isSelectDirectoryDialogOpened: boolean;
+  isUploadProgressDialogOpened: boolean;
   toggleSelectDirectoryDialog: () => void;
+  toggleUploadDialog: () => void;
+  resetProgress: () => void;
   isEditTagDialogOpened: boolean;
   keyBindings: any;
   toggleEditTagDialog: () => void;
@@ -201,7 +207,12 @@ interface Props {
     autohide?: boolean
   ) => void;
   reflectCreateEntry: (path: string, isFile: boolean) => void;
-  uploadFilesAPI: (files: Array<File>, destination: string) => void;
+  uploadFilesAPI: (
+    files: Array<File>,
+    destination: string,
+    onUploadProgress?: (progress: Progress, response: any) => void
+  ) => void;
+  onUploadProgress: (progress: Progress, response: any) => void;
 }
 
 const AboutDialog = React.lazy(() =>
@@ -488,7 +499,13 @@ class MainPage extends Component<Props, State> {
           true
         );
       } else {
-        this.props.uploadFilesAPI(files, this.props.directoryPath);
+        this.props.resetProgress();
+        this.props.uploadFilesAPI(
+          files,
+          this.props.directoryPath,
+          this.props.onUploadProgress
+        );
+        this.props.toggleUploadDialog();
         /* files.map(file => {
           let filePath = '';
           let fileName = '';
@@ -605,6 +622,7 @@ class MainPage extends Component<Props, State> {
       isSelectDirectoryDialogOpened,
       isCreateDirectoryOpened,
       isEditTagDialogOpened,
+      isUploadProgressDialogOpened,
       toggleOnboardingDialog,
       toggleSettingsDialog,
       toggleKeysDialog,
@@ -614,6 +632,7 @@ class MainPage extends Component<Props, State> {
       toggleCreateDirectoryDialog,
       toggleCreateFileDialog,
       toggleSelectDirectoryDialog,
+      toggleUploadDialog,
       toggleEditTagDialog,
       setFirstRun,
       openURLExternally,
@@ -676,6 +695,12 @@ class MainPage extends Component<Props, State> {
             selectedDirectoryPath={
               this.state.selectedDirectoryPath || directoryPath
             }
+          />
+        )}
+        {isUploadProgressDialogOpened && (
+          <FileUploadDialog
+            open={isUploadProgressDialogOpened}
+            onClose={toggleUploadDialog}
           />
         )}
         <CreateDirectoryDialog
@@ -894,6 +919,7 @@ function mapStateToProps(state) {
     isOnboardingDialogOpened: isOnboardingDialogOpened(state),
     isLicenseDialogOpened: isLicenseDialogOpened(state),
     isThirdPartyLibsDialogOpened: isThirdPartyLibsDialogOpened(state),
+    isUploadProgressDialogOpened: isUploadDialogOpened(state),
     isIndexing: isIndexing(state),
     isReadOnlyMode: isReadOnlyMode(state),
     isGeneratingThumbs: isGeneratingThumbs(state),
@@ -921,8 +947,11 @@ function mapDispatchToProps(dispatch) {
       loadParentDirectoryContent: AppActions.loadParentDirectoryContent,
       toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog,
       toggleSelectDirectoryDialog: AppActions.toggleSelectDirectoryDialog,
+      toggleUploadDialog: AppActions.toggleUploadDialog,
+      resetProgress: AppActions.resetProgress,
       toggleEditTagDialog: AppActions.toggleEditTagDialog,
       hideNotifications: AppActions.hideNotifications,
+      onUploadProgress: AppActions.onUploadProgress,
       cancelDirectoryIndexing: LocationIndexActions.cancelDirectoryIndexing,
       saveFile: AppActions.saveFile,
       setZoomResetApp: SettingsActions.setZoomResetApp,

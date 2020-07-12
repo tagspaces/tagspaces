@@ -16,6 +16,7 @@
  *
  */
 
+import { Progress } from 'aws-sdk/clients/s3';
 import { actions as AppActions } from './app';
 import {
   extractFileName,
@@ -164,89 +165,100 @@ const actions = {
    * with HTML5 Files API
    * @param files
    * @param targetPath
+   * @param onUploadProgress
+   * TODO reader.onload not work for multiple files https://stackoverflow.com/questions/56178918/react-upload-multiple-files-using-window-filereader
    */
-  uploadFilesAPI: (files: Array<File>, targetPath: string) => (
-    dispatch: (actions: Object) => void
-  ) => {
-    const uploadJobs = [];
-    files.map(file => {
-      uploadJobs.push(file);
-      return true;
-    });
-    uploadJobs.map(file => {
+  uploadFilesAPI: (
+    files: Array<File>,
+    targetPath: string,
+    onUploadProgress?: (progress: Progress, response: any) => void
+  ) => (dispatch: (actions: Object) => void) => {
+    setupReader(0);
+
+    function setupReader(i) {
+      const file = files[i];
+      const reader = new FileReader();
       const filePath =
         normalizePath(targetPath) +
         PlatformIO.getDirSeparator() +
         decodeURIComponent(file.name);
-      const reader = new FileReader();
       reader.onload = (event: any) => {
-        // TODO event.currentTarget.result is ArrayBuffer
-        // Sample call from PRO version using content = Utils.base64ToArrayBuffer(baseString);
-        PlatformIO.getPropertiesPromise(filePath)
-          .then(entryProps => {
-            if (entryProps) {
-              dispatch(
-                AppActions.showNotification(
-                  'File with the same name already exist, importing skipped!',
-                  'warning',
-                  true
-                )
-              );
-            } else {
-              PlatformIO.saveBinaryFilePromise(
-                filePath,
-                event.currentTarget.result,
-                true
-              )
-                .then(() => {
-                  dispatch(
-                    AppActions.showNotification(
-                      'File ' + filePath + ' successfully imported.',
-                      'default',
-                      true
-                    )
-                  );
-                  dispatch(AppActions.reflectCreateEntry(filePath, true));
-                  return true;
-                })
-                .catch(error => {
-                  // TODO showAlertDialog("Saving " + filePath + " failed.");
-                  console.error(
-                    'Save to file ' + filePath + ' failed ' + error
-                  );
-                  dispatch(
-                    AppActions.showNotification(
-                      'Importing file ' + filePath + ' failed.',
-                      'error',
-                      true
-                    )
-                  );
-                  return true;
-                });
-            }
-            return true;
-          })
-          .catch(err => {
-            console.log('Error getting properties ' + err);
-          });
+        readerLoaded(event, i, filePath);
       };
-
       if (AppConfig.isCordova) {
         reader.readAsDataURL(file);
       } else {
         reader.readAsArrayBuffer(file);
       }
-      return file;
-    });
+    }
+
+    function readerLoaded(event, i, filePath) {
+      PlatformIO.getPropertiesPromise(filePath)
+        .then(entryProps => {
+          if (entryProps) {
+            dispatch(
+              AppActions.showNotification(
+                'File with the same name already exist, importing skipped!',
+                'warning',
+                true
+              )
+            );
+          } else {
+            PlatformIO.saveBinaryFilePromise(
+              filePath,
+              event.currentTarget.result,
+              true,
+              onUploadProgress
+            )
+              .then(() => {
+                dispatch(
+                  AppActions.showNotification(
+                    'File ' + filePath + ' successfully imported.',
+                    'default',
+                    true
+                  )
+                );
+                dispatch(AppActions.reflectCreateEntry(filePath, true));
+                return true;
+              })
+              .catch(error => {
+                // TODO showAlertDialog("Saving " + filePath + " failed.");
+                console.error('Save to file ' + filePath + ' failed ' + error);
+                dispatch(
+                  AppActions.showNotification(
+                    'Importing file ' + filePath + ' failed.',
+                    'error',
+                    true
+                  )
+                );
+                return true;
+              });
+          }
+          return true;
+        })
+        .catch(err => {
+          console.log('Error getting properties ' + err);
+        });
+
+      // If there's a file left to load
+      if (i < files.length - 1) {
+        // Load the next file
+        setupReader(i + 1);
+      }
+    }
   },
+
   /**
    * use with Electron only!
    * @param paths
    * @param targetPath
+   * @param onUploadProgress
    */
-  uploadFiles: (paths: Array<string>, targetPath: string) => (
-    dispatch: (actions: Object) => void
-  ) => {
+  uploadFiles: (
+    paths: Array<string>,
+    targetPath: string,
+    onUploadProgress?: (progress: Progress, response: any) => void
+  ) => (dispatch: (actions: Object) => void) => {
     const uploadJobs = [];
     paths.map(path => {
       const target =
@@ -291,7 +303,13 @@ const actions = {
                     )
                   );
                 } else {
-                  PlatformIO.saveBinaryFilePromise(filePath, fileContent, true)
+                  // dispatch(AppActions.setProgress(filePath, progress));
+                  PlatformIO.saveBinaryFilePromise(
+                    filePath,
+                    fileContent,
+                    true,
+                    onUploadProgress
+                  )
                     .then(() => {
                       dispatch(
                         AppActions.showNotification(
@@ -304,9 +322,8 @@ const actions = {
                       return true;
                     })
                     .catch(err => {
-                      // TODO showAlertDialog("Saving " + filePath + " failed.");
                       console.error(
-                        'Save to file ' + filePath + ' failed ' + err
+                        'Importing file ' + filePath + ' failed ' + err
                       );
                       dispatch(
                         AppActions.showNotification(
