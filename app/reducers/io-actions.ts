@@ -322,9 +322,8 @@ const actions = {
                       return true;
                     })
                     .catch(err => {
-                      // TODO showAlertDialog("Saving " + filePath + " failed.");
                       console.error(
-                        'Save to file ' + filePath + ' failed ' + err
+                        'Importing file ' + filePath + ' failed ' + err
                       );
                       dispatch(
                         AppActions.showNotification(

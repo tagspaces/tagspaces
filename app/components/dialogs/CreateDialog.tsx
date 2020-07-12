@@ -179,6 +179,7 @@ const CreateDialog = (props: Props) => {
       props.onUploadProgress
     );
     props.toggleUploadDialog();
+    props.onClose();
 
     /* const filePath =
       normalizePath(selectedDirectoryPath) +
@@ -308,10 +309,10 @@ const CreateDialog = (props: Props) => {
             <Button
               onClick={addFile}
               className={classes.createButton}
-              title={i18n.t('addFileTitle')}
+              title={i18n.t('addFilesTitle')}
             >
               <AddFileIcon />
-              <Container>{i18n.t('addFile')}</Container>
+              <Container>{i18n.t('addFiles')}</Container>
             </Button>
           </Grid>
         </Grid>

@@ -55,29 +55,7 @@ const FileUploadDialog = (props: Props) => {
     );
   }
 
-  /* function CircularProgressWithLabel(prop) {
-    return (
-      <Box position="relative" display="inline-flex">
-        <CircularProgress variant="static" {...prop} />
-        <Box
-          top={0}
-          left={0}
-          bottom={0}
-          right={0}
-          position="absolute"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Typography variant="caption" component="div" color="textSecondary">
-            {`${prop.value}%`}
-          </Typography>
-        </Box>
-      </Box>
-    );
-  } */
-
-  const cancelAll = () => {
+  const stopAll = () => {
     if (props.progress) {
       props.progress.map(fileProgress => {
         const { abort } = fileProgress;
@@ -104,8 +82,8 @@ const FileUploadDialog = (props: Props) => {
         }
       }} */
     >
-      <DialogTitle data-tid="uploadDialogTitle">
-        {i18n.t('core:uploadDialogTitle')}
+      <DialogTitle data-tid="importDialogTitle">
+        {i18n.t('core:importDialogTitle')}
       </DialogTitle>
       <DialogContent
         style={{
@@ -145,12 +123,8 @@ const FileUploadDialog = (props: Props) => {
         >
           {i18n.t('core:close')}
         </Button>
-        <Button
-          data-tid="uploadCloseDialog"
-          onClick={cancelAll}
-          color="primary"
-        >
-          {i18n.t('core:cancel')}
+        <Button data-tid="uploadCloseDialog" onClick={stopAll} color="primary">
+          {i18n.t('core:stopAll')}
         </Button>
       </DialogActions>
     </Dialog>

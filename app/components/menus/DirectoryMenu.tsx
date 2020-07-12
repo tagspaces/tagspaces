@@ -416,7 +416,7 @@ const DirectoryMenu = (props: Props) => {
             <ListItemIcon>
               <AddExistingFileIcon />
             </ListItemIcon>
-            <ListItemText primary={i18n.t('core:showAddFileDialog')} />
+            <ListItemText primary={i18n.t('core:addFiles')} />
           </MenuItem>
         )}
         {AppConfig.isCordova && (
