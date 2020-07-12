@@ -39,6 +39,7 @@ import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import RenameFolderIcon from '@material-ui/icons/FormatTextdirectionLToR';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import SettingsIcon from '@material-ui/icons/Settings';
+import { Progress } from 'aws-sdk/clients/s3';
 import ConfirmDialog from '../dialogs/ConfirmDialog';
 import CreateDirectoryDialog from '../dialogs/CreateDirectoryDialog';
 import RenameDirectoryDialog from '../dialogs/RenameDirectoryDialog';
@@ -67,7 +68,12 @@ interface Props {
   reflectCreateEntry?: (path: string, isFile: boolean) => void;
   toggleCreateFileDialog?: () => void;
   // extractContent: (config: Object) => void,
-  uploadFilesAPI: (files: Array<File>, destination: string) => void;
+  uploadFilesAPI: (
+    files: Array<File>,
+    destination: string,
+    onUploadProgress?: (progress: Progress, response: any) => void
+  ) => void;
+  onUploadProgress: (progress: Progress, response: any) => void;
   switchPerspective?: (perspectiveId: string) => void;
   perspectiveMode?: boolean;
   showNotification?: (
@@ -76,6 +82,8 @@ interface Props {
     autohide: boolean
   ) => void;
   isReadOnlyMode?: boolean;
+  toggleUploadDialog: () => void;
+  resetProgress: () => void;
 }
 
 const DirectoryMenu = (props: Props) => {
@@ -228,8 +236,14 @@ const DirectoryMenu = (props: Props) => {
 
   function handleFileInputChange(selection: any) {
     // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
-    const file = selection.currentTarget.files[0];
-    props.uploadFilesAPI([file], props.directoryPath);
+    // const file = selection.currentTarget.files[0];
+    props.resetProgress();
+    props.uploadFilesAPI(
+      Array.from(selection.currentTarget.files),
+      props.directoryPath,
+      props.onUploadProgress
+    );
+    props.toggleUploadDialog();
     /*
     const filePath =
       normalizePath(props.directoryPath) +
@@ -402,7 +416,7 @@ const DirectoryMenu = (props: Props) => {
             <ListItemIcon>
               <AddExistingFileIcon />
             </ListItemIcon>
-            <ListItemText primary={i18n.t('core:showAddFileDialog')} />
+            <ListItemText primary={i18n.t('core:addFiles')} />
           </MenuItem>
         )}
         {AppConfig.isCordova && (
@@ -479,6 +493,7 @@ const DirectoryMenu = (props: Props) => {
         }}
         accept="*"
         type="file"
+        multiple
         onChange={handleFileInputChange}
       />
     </div>
@@ -489,6 +504,9 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
       showNotification: AppActions.showNotification,
+      onUploadProgress: AppActions.onUploadProgress,
+      toggleUploadDialog: AppActions.toggleUploadDialog,
+      resetProgress: AppActions.resetProgress,
       extractContent: IOActions.extractContent,
       uploadFilesAPI: IOActions.uploadFilesAPI
     },

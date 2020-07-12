@@ -238,8 +238,8 @@
   "createMarkdownTitle": "Press 'M' to create a markdown file",
   "createRichTextFile": "Rich Text (html)",
   "createDirectory": "New Directory",
-  "addFile": "Add File",
-  "addFileTitle": "Press 'A' to add a file",
+  "addFiles": "Add Files",
+  "addFilesTitle": "Press 'A' to add a files",
   "exitApp": "Exit",
   "closeWin": "Close Window",
   "openNewInstance": "New Application Window",
@@ -263,7 +263,6 @@
   "filePath": "Path",
   "fileName": "File Name",
   "createTXTFile": "New Plain Text File",
-  "showAddFileDialog": "Add Existing File",
   "cameraTakePicture": "Take Picture",
   "deleteConfirmationTitle": "Confirm Delete",
   "deleteConfirmationContent": "The selected entries will be permanently deleted. Are you sure?",
@@ -465,5 +464,7 @@
   "objectStorageTitle": "Amazon S3 complient object storage",
   "endpointURL": "Endpoint URL",
   "enableIndexingBySearch": "By enabling this option, the search will deliver better results, but it will take longer",
+  "importDialogTitle": "Import Files",
+  "stopAll": "Stop all",
   "-": "-"
 }
