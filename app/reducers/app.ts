@@ -299,11 +299,15 @@ export default (state: any = initialState, action: any) => {
       };
     }
     case types.TOGGLE_UPLOAD_DIALOG: {
-      return {
-        ...state,
-        // progress: (state.uploadDialogOpened ? state.progress : []),
-        uploadDialogOpened: !state.uploadDialogOpened
-      };
+      if (PlatformIO.haveObjectStoreSupport()) {
+        // upload dialog have objectStore support only
+        return {
+          ...state,
+          // progress: (state.uploadDialogOpened ? state.progress : []),
+          uploadDialogOpened: !state.uploadDialogOpened
+        };
+      }
+      return state;
     }
     case types.SET_SEARCH_RESULTS: {
       return {

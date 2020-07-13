@@ -166,14 +166,23 @@ const actions = {
    * @param files
    * @param targetPath
    * @param onUploadProgress
-   * TODO reader.onload not work for multiple files https://stackoverflow.com/questions/56178918/react-upload-multiple-files-using-window-filereader
+   * reader.onload not work for multiple files https://stackoverflow.com/questions/56178918/react-upload-multiple-files-using-window-filereader
    */
   uploadFilesAPI: (
     files: Array<File>,
     targetPath: string,
     onUploadProgress?: (progress: Progress, response: any) => void
   ) => (dispatch: (actions: Object) => void) => {
-    setupReader(0);
+    if (AppConfig.isElectron) {
+      const arrFiles = [];
+      for (let i = 0; i < files.length; i += 1) {
+        arrFiles.push(files[i].path);
+      }
+      actions.uploadFiles(arrFiles, targetPath, onUploadProgress);
+    } else {
+      // -> cannot upload meta data (for every upload in web browser its need to have <input> element)
+      setupReader(0);
+    }
 
     function setupReader(i) {
       const file = files[i];
@@ -192,8 +201,8 @@ const actions = {
       }
     }
 
-    function readerLoaded(event, i, filePath) {
-      PlatformIO.getPropertiesPromise(filePath)
+    function readerLoaded(event, i, fileTargetPath) {
+      PlatformIO.getPropertiesPromise(fileTargetPath)
         .then(entryProps => {
           if (entryProps) {
             dispatch(
@@ -205,7 +214,7 @@ const actions = {
             );
           } else {
             PlatformIO.saveBinaryFilePromise(
-              filePath,
+              fileTargetPath,
               event.currentTarget.result,
               true,
               onUploadProgress
@@ -213,20 +222,22 @@ const actions = {
               .then(() => {
                 dispatch(
                   AppActions.showNotification(
-                    'File ' + filePath + ' successfully imported.',
+                    'File ' + fileTargetPath + ' successfully imported.',
                     'default',
                     true
                   )
                 );
-                dispatch(AppActions.reflectCreateEntry(filePath, true));
+                dispatch(AppActions.reflectCreateEntry(fileTargetPath, true));
                 return true;
               })
               .catch(error => {
                 // TODO showAlertDialog("Saving " + filePath + " failed.");
-                console.error('Save to file ' + filePath + ' failed ' + error);
+                console.error(
+                  'Save to file ' + fileTargetPath + ' failed ' + error
+                );
                 dispatch(
                   AppActions.showNotification(
-                    'Importing file ' + filePath + ' failed.',
+                    'Importing file ' + fileTargetPath + ' failed.',
                     'error',
                     true
                   )
