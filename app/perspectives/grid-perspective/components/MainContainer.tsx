@@ -62,6 +62,7 @@ import SortingMenu from './SortingMenu';
 import GridOptionsMenu from './GridOptionsMenu';
 import { getLocation, Location, locationType } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-io';
+import { extractFileName } from '-/utils/paths';
 
 const settings = JSON.parse(localStorage.getItem('tsPerspectiveGrid')); // loading settings
 
@@ -882,7 +883,9 @@ class GridPerspective extends React.Component<Props, State> {
           onClose={this.handleCloseDialogs}
           title={i18n.t('core:deleteConfirmationTitle')}
           content={i18n.t('core:deleteConfirmationContent')}
-          list={selectedFilePaths}
+          list={selectedFilePaths.map(path =>
+            extractFileName(path, PlatformIO.getDirSeparator())
+          )}
           confirmCallback={result => {
             if (result && selectedEntries) {
               selectedEntries.map(fsentry => {

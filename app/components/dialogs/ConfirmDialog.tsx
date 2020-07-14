@@ -22,8 +22,11 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContentText from '@material-ui/core/DialogContentText';
+import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import Typography from '@material-ui/core/Typography';
+import BulletIcon from '@material-ui/icons/Remove';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 import Dialog from '@material-ui/core/Dialog';
 import i18n from '-/services/i18n';
 
@@ -53,14 +56,18 @@ const ConfirmDialog = (props: Props) => {
       <DialogContent>
         <DialogContentText data-tid={props.confirmDialogContentTID}>
           {props.content}
-          {props.list &&
-            props.list.map(listItem => (
-              <ListItem title={listItem} key={listItem.toString()}>
-                <Typography variant="inherit" noWrap>
-                  {listItem}
-                </Typography>
-              </ListItem>
-            ))}
+          {props.list && (
+            <List dense>
+              {props.list.map(listItem => (
+                <ListItem key={listItem.toString()}>
+                  <ListItemIcon>
+                    <BulletIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={listItem} />
+                </ListItem>
+              ))}
+            </List>
+          )}
         </DialogContentText>
       </DialogContent>
       <DialogActions>

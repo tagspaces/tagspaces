@@ -28,7 +28,9 @@ import Box from '@material-ui/core/Box';
 import { LinearProgress, Grid, Tooltip } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import WarningIcon from '@material-ui/icons/Warning';
+import PlatformIO from '-/services/platform-io';
 import { getProgress } from '-/reducers/app';
+import { extractFileName } from '-/utils/paths';
 import i18n from '-/services/i18n';
 
 interface Props {
@@ -94,6 +96,7 @@ const FileUploadDialog = (props: Props) => {
         style={{
           marginLeft: 'auto',
           marginRight: 'auto',
+          width: '90%',
           flexGrow: 1
         }}
       >
@@ -103,6 +106,10 @@ const FileUploadDialog = (props: Props) => {
             .map(fileProgress => {
               const percentage = fileProgress.progress;
               const { path } = fileProgress;
+              const fileName = extractFileName(
+                path,
+                PlatformIO.getDirSeparator()
+              );
               let { abort } = fileProgress;
               if (percentage > -1 && percentage < 100) {
                 haveProgress = true;
@@ -117,7 +124,7 @@ const FileUploadDialog = (props: Props) => {
                     xs={10}
                     style={{ display: 'flex', alignItems: 'center' }}
                   >
-                    {path}
+                    {fileName}
                     {percentage === -1 && (
                       <Tooltip title={i18n.t('core:fileExist')}>
                         <WarningIcon color="secondary" />
