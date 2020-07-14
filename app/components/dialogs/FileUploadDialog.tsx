@@ -25,8 +25,9 @@ import Dialog from '@material-ui/core/Dialog';
 import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import { LinearProgress, Grid } from '@material-ui/core';
+import { LinearProgress, Grid, Tooltip } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
+import WarningIcon from '@material-ui/icons/Warning';
 import { getProgress } from '-/reducers/app';
 import i18n from '-/services/i18n';
 
@@ -59,11 +60,15 @@ const FileUploadDialog = (props: Props) => {
     if (props.progress) {
       props.progress.map(fileProgress => {
         const { abort } = fileProgress;
-        abort();
+        if (abort !== undefined) {
+          abort();
+        }
         return true;
       });
     }
   };
+
+  let haveProgress = false;
 
   return (
     <Dialog
@@ -97,19 +102,39 @@ const FileUploadDialog = (props: Props) => {
             .sort((a, b) => ('' + a.path).localeCompare(b.path))
             .map(fileProgress => {
               const percentage = fileProgress.progress;
-              const { abort, path } = fileProgress;
+              const { path } = fileProgress;
+              let { abort } = fileProgress;
+              if (percentage > -1 && percentage < 100) {
+                haveProgress = true;
+              } else {
+                abort = undefined;
+              }
+
               return (
                 <Grid key={path} container justify="center" alignItems="center">
-                  <Grid item xs={10}>
+                  <Grid
+                    item
+                    xs={10}
+                    style={{ display: 'flex', alignItems: 'center' }}
+                  >
                     {path}
+                    {percentage === -1 && (
+                      <Tooltip title={i18n.t('core:fileExist')}>
+                        <WarningIcon color="secondary" />
+                      </Tooltip>
+                    )}
                   </Grid>
                   <Grid item xs={2}>
-                    <Button onClick={() => abort()}>
-                      <CloseIcon />
-                    </Button>
+                    {abort && (
+                      <Button onClick={() => abort()}>
+                        <CloseIcon />
+                      </Button>
+                    )}
                   </Grid>
                   <Grid item xs={12}>
-                    <LinearProgressWithLabel value={percentage} />
+                    {percentage > -1 && (
+                      <LinearProgressWithLabel value={percentage} />
+                    )}
                   </Grid>
                 </Grid>
               );
@@ -123,9 +148,15 @@ const FileUploadDialog = (props: Props) => {
         >
           {i18n.t('core:close')}
         </Button>
-        <Button data-tid="uploadCloseDialog" onClick={stopAll} color="primary">
-          {i18n.t('core:stopAll')}
-        </Button>
+        {haveProgress && (
+          <Button
+            data-tid="uploadCloseDialog"
+            onClick={stopAll}
+            color="primary"
+          >
+            {i18n.t('core:stopAll')}
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );

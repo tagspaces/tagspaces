@@ -314,6 +314,7 @@ const actions = {
                       true
                     )
                   );
+                  dispatch(AppActions.setProgress(filePath, -1, undefined));
                 } else {
                   // dispatch(AppActions.setProgress(filePath, progress));
                   PlatformIO.saveBinaryFilePromise(
