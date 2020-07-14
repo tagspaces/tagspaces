@@ -178,11 +178,10 @@ const actions = {
       for (let i = 0; i < files.length; i += 1) {
         arrFiles.push(files[i].path);
       }
-      actions.uploadFiles(arrFiles, targetPath, onUploadProgress);
-    } else {
-      // -> cannot upload meta data (for every upload in web browser its need to have <input> element)
-      setupReader(0);
+      dispatch(actions.uploadFiles(arrFiles, targetPath, onUploadProgress));
     }
+    // -> cannot upload meta data (for every upload in web browser its need to have <input> element)
+    setupReader(0);
 
     function setupReader(i) {
       const file = files[i];
