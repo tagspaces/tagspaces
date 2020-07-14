@@ -466,5 +466,6 @@
   "enableIndexingBySearch": "By enabling this option, the search will deliver better results, but it will take longer",
   "importDialogTitle": "Import Files",
   "stopAll": "Stop all",
+  "fileExist": "File with the same name already exist",
   "-": "-"
 }
