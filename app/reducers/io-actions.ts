@@ -178,7 +178,7 @@ const actions = {
       for (let i = 0; i < files.length; i += 1) {
         arrFiles.push(files[i].path);
       }
-      dispatch(actions.uploadFiles(arrFiles, targetPath, onUploadProgress));
+      return dispatch(actions.uploadFiles(arrFiles, targetPath, onUploadProgress));
     }
     // -> cannot upload meta data (for every upload in web browser its need to have <input> element)
     setupReader(0);
