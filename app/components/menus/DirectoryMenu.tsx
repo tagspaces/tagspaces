@@ -40,6 +40,7 @@ import RenameFolderIcon from '@material-ui/icons/FormatTextdirectionLToR';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { Progress } from 'aws-sdk/clients/s3';
+import { Pro } from '../../pro';
 import ConfirmDialog from '../dialogs/ConfirmDialog';
 import CreateDirectoryDialog from '../dialogs/CreateDirectoryDialog';
 import RenameDirectoryDialog from '../dialogs/RenameDirectoryDialog';
@@ -54,7 +55,6 @@ import PlatformIO from '-/services/platform-io';
 import { formatDateTime4Tag } from '-/utils/misc';
 import { actions as AppActions } from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
-import { readMacOSTags, walkDirectory } from '-/services/utils-io';
 import { Tag } from '-/reducers/taglibrary';
 import TaggingActions from '-/reducers/tagging-actions';
 
@@ -175,7 +175,7 @@ const DirectoryMenu = (props: Props) => {
     props.onClose();
 
     const entryCallback = entry => {
-      readMacOSTags(entry.path)
+      Pro.MacTagsImport.readMacOSTags(entry.path)
         .then(tags => {
           if (tags.length > 0) {
             props.addTags([entry.path], tags, true);
@@ -186,20 +186,7 @@ const DirectoryMenu = (props: Props) => {
           console.warn('Error creating tags: ' + err);
         });
     };
-
-    walkDirectory(
-      props.directoryPath,
-      {
-        recursive: true,
-        skipMetaFolder: true,
-        skipDotHiddenFolder: true,
-        skipDotHiddenFiles: true,
-        loadMetaDate: false,
-        extractText: false
-      },
-      entryCallback,
-      entryCallback
-    )
+    Pro.MacTagsImport.importTags(props.directoryPath, entryCallback)
       .then(() => {
         console.log('Import tags succeeded ' + props.directoryPath);
         props.showNotification(
