@@ -54,6 +54,9 @@ import PlatformIO from '-/services/platform-io';
 import { formatDateTime4Tag } from '-/utils/misc';
 import { actions as AppActions } from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
+import { readMacOSTags, walkDirectory } from '-/services/utils-io';
+import { Tag } from '-/reducers/taglibrary';
+import TaggingActions from '-/reducers/tagging-actions';
 
 interface Props {
   open: boolean;
@@ -84,6 +87,11 @@ interface Props {
   isReadOnlyMode?: boolean;
   toggleUploadDialog: () => void;
   resetProgress: () => void;
+  addTags: (
+    paths: Array<string>,
+    tags: Array<Tag>,
+    updateIndex: boolean
+  ) => void;
 }
 
 const DirectoryMenu = (props: Props) => {
@@ -161,6 +169,49 @@ const DirectoryMenu = (props: Props) => {
   function addExistingFile() {
     props.onClose();
     fileInput.click();
+  }
+
+  function importMacTags() {
+    props.onClose();
+
+    const entryCallback = entry => {
+      readMacOSTags(entry.path)
+        .then(tags => {
+          if (tags.length > 0) {
+            props.addTags([entry.path], tags, true);
+          }
+          return tags;
+        })
+        .catch(err => {
+          console.warn('Error creating tags: ' + err);
+        });
+    };
+
+    walkDirectory(
+      props.directoryPath,
+      {
+        recursive: true,
+        skipMetaFolder: true,
+        skipDotHiddenFolder: true,
+        skipDotHiddenFiles: true,
+        loadMetaDate: false,
+        extractText: false
+      },
+      entryCallback,
+      entryCallback
+    )
+      .then(() => {
+        console.log('Import tags succeeded ' + props.directoryPath);
+        props.showNotification(
+            'Tags from ' + props.directoryPath + ' are imported successfully.',
+            'default',
+            true
+        );
+        return true;
+      })
+      .catch(err => {
+        console.warn('Error importing tags: ' + err);
+      });
   }
 
   function onFail(message) {
@@ -419,6 +470,14 @@ const DirectoryMenu = (props: Props) => {
             <ListItemText primary={i18n.t('core:addFiles')} />
           </MenuItem>
         )}
+        {process.platform === 'darwin' && (
+          <MenuItem data-tid="importMacTags" onClick={importMacTags}>
+            <ListItemIcon>
+              <AddExistingFileIcon />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:importMacTags')} />
+          </MenuItem>
+        )}
         {AppConfig.isCordova && (
           <MenuItem data-tid="takePicture" onClick={cameraTakePicture}>
             <ListItemIcon>
@@ -508,7 +567,8 @@ function mapDispatchToProps(dispatch) {
       toggleUploadDialog: AppActions.toggleUploadDialog,
       resetProgress: AppActions.resetProgress,
       extractContent: IOActions.extractContent,
-      uploadFilesAPI: IOActions.uploadFilesAPI
+      uploadFilesAPI: IOActions.uploadFilesAPI,
+      addTags: TaggingActions.addTags
     },
     dispatch
   );

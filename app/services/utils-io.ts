@@ -18,6 +18,7 @@
 
 import uuidv1 from 'uuid';
 import { saveAs } from 'file-saver';
+import { exec } from 'child_process';
 import PlatformIO from './platform-io';
 import AppConfig from '../config';
 import {
@@ -187,6 +188,7 @@ export function walkDirectory(
     recursive: false,
     skipMetaFolder: true,
     skipDotHiddenFolder: false,
+    skipDotHiddenFiles: false,
     loadMetaDate: true,
     extractText: false,
     ...options
@@ -205,13 +207,23 @@ export function walkDirectory(
             }
 
             if (entry.isFile) {
-              if (fileCallback) {
+              if (
+                fileCallback &&
+                (!mergedOptions.skipDotHiddenFiles ||
+                  !entry.name.startsWith('.'))
+              ) {
                 fileCallback(entry);
               }
               return entry;
             }
 
-            if (dirCallback) {
+            if (
+              dirCallback &&
+              (!mergedOptions.skipDotHiddenFolder ||
+                !entry.name.startsWith('.')) &&
+              (!mergedOptions.skipMetaFolder ||
+                entry.name !== AppConfig.metaFolder)
+            ) {
               dirCallback(entry);
             }
 
@@ -557,5 +569,51 @@ export function loadFileContentPromise(
       }
     };
     xhr.send();
+  });
+}
+
+export function readMacOSTags(filename): Promise<Tag[]> {
+  // console.log('reading', filename);
+
+  const cmdArr = [
+    'mdls',
+    '-raw',
+    '-name',
+    'kMDItemUserTags',
+    '"' + filename + '"'
+  ];
+  const cmd = cmdArr.join(' ');
+
+  return new Promise((resolve, reject) => {
+    const foundTags: Tag[] = [];
+    exec(cmd, (error, stdout, stderr) => {
+      if (error) {
+        console.error(error);
+        reject(error);
+      }
+      if (stderr) {
+        console.log(stderr);
+        reject(stderr);
+      }
+      if (stdout && stdout !== '(null)') {
+        stdout
+            .toString()
+            .replace(/^\(|\)$/g, '')
+            .split(',')
+            .map(item => {
+              const newTag: Tag = {
+                // id: uuidv1(),
+                title: item.trim()
+              };
+              foundTags.push(newTag);
+              return newTag;
+            });
+
+        resolve(foundTags);
+        // console.log('Tags in file "' + filename + '": ' + JSON.stringify(foundTags));
+      } else {
+        resolve(foundTags);
+      }
+    });
   });
 }
