@@ -203,9 +203,9 @@ const DirectoryMenu = (props: Props) => {
       .then(() => {
         console.log('Import tags succeeded ' + props.directoryPath);
         props.showNotification(
-            'Tags from ' + props.directoryPath + ' are imported successfully.',
-            'default',
-            true
+          'Tags from ' + props.directoryPath + ' are imported successfully.',
+          'default',
+          true
         );
         return true;
       })

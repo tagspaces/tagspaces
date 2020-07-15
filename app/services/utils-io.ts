@@ -597,17 +597,17 @@ export function readMacOSTags(filename): Promise<Tag[]> {
       }
       if (stdout && stdout !== '(null)') {
         stdout
-            .toString()
-            .replace(/^\(|\)$/g, '')
-            .split(',')
-            .map(item => {
-              const newTag: Tag = {
-                // id: uuidv1(),
-                title: item.trim()
-              };
-              foundTags.push(newTag);
-              return newTag;
-            });
+          .toString()
+          .replace(/^\(|\)$/g, '')
+          .split(',')
+          .map(item => {
+            const newTag: Tag = {
+              // id: uuidv1(),
+              title: item.trim()
+            };
+            foundTags.push(newTag);
+            return newTag;
+          });
 
         resolve(foundTags);
         // console.log('Tags in file "' + filename + '": ' + JSON.stringify(foundTags));
