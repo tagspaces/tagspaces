@@ -293,5 +293,6 @@ export default class PlatformIO {
   static selectDirectoryDialog = (): Promise<any> =>
     nativeAPI.selectDirectoryDialog();
 
-  static shareFiles = (files: Array<string>): void => nativeAPI.shareFiles(files);
+  static shareFiles = (files: Array<string>): void =>
+    nativeAPI.shareFiles(files);
 }
