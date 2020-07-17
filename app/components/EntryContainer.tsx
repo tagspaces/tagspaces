@@ -128,7 +128,8 @@ const styles: any = (theme: any) => ({
     flexDirection: 'row',
     flex: '1 1',
     display: 'flex',
-    overflowX: 'auto'
+    overflowX: 'auto',
+    marginRight: 100
   },
   fileBadge: {
     color: 'white',
