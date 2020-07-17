@@ -1182,9 +1182,9 @@ export default class CordovaIO {
     ) {
       window.open(filePath, '_system');
     } else if (filePath.indexOf('file://') === 0) {
-      window.plugins.fileOpener.open(filePath);
+      cordova.plugins.fileOpener2.open(filePath);
     } else {
-      window.plugins.fileOpener.open('file://' + filePath);
+      cordova.plugins.fileOpener2.open('file://' + filePath);
     }
   };
 

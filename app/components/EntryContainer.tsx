@@ -740,13 +740,6 @@ class EntryContainer extends React.Component<Props, State> {
             <ShareIcon />
           </IconButton>
         )}
-        <IconButton
-          title={i18n.t('core:openInFullWidth')}
-          aria-label={i18n.t('core:openInFullWidth')}
-          onClick={this.props.toggleEntryFullWidth}
-        >
-          <ExpandIcon />
-        </IconButton>
         {!(PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb) && (
           <IconButton
             title={i18n.t('core:openFileExternally')}
@@ -823,6 +816,13 @@ class EntryContainer extends React.Component<Props, State> {
           onClick={this.reloadDocument}
         >
           <RefreshIcon />
+        </IconButton>
+        <IconButton
+            title={i18n.t('core:openInFullWidth')}
+            aria-label={i18n.t('core:openInFullWidth')}
+            onClick={this.props.toggleEntryFullWidth}
+        >
+          <ExpandIcon />
         </IconButton>
       </div>
       <div className={classes.entryNavigationSection}>
