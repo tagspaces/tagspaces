@@ -70,7 +70,8 @@ import {
   isUploadDialogOpened,
   isCreateFileDialogOpened,
   isSettingsDialogOpened,
-  isReadOnlyMode
+  isReadOnlyMode,
+  isProgressOpened
 } from '../reducers/app';
 import {
   actions as LocationIndexActions,
@@ -88,6 +89,7 @@ import withDnDContext from '-/containers/withDnDContext';
 import { CustomDragLayer } from '-/components/CustomDragLayer';
 import IOActions from '-/reducers/io-actions';
 import FileUploadDialog from '-/components/dialogs/FileUploadDialog';
+import ProgressDialog from '-/components/dialogs/ProgressDialog';
 
 const initialSplitSize = 44;
 const drawerWidth = 300;
@@ -155,8 +157,10 @@ interface Props {
   isOnboardingDialogOpened: boolean;
   isSelectDirectoryDialogOpened: boolean;
   isUploadProgressDialogOpened: boolean;
+  isProgressDialogOpened: boolean;
   toggleSelectDirectoryDialog: () => void;
   toggleUploadDialog: () => void;
+  toggleProgressDialog: () => void;
   resetProgress: () => void;
   isEditTagDialogOpened: boolean;
   keyBindings: any;
@@ -623,6 +627,7 @@ class MainPage extends Component<Props, State> {
       isCreateDirectoryOpened,
       isEditTagDialogOpened,
       isUploadProgressDialogOpened,
+      isProgressDialogOpened,
       toggleOnboardingDialog,
       toggleSettingsDialog,
       toggleKeysDialog,
@@ -633,6 +638,7 @@ class MainPage extends Component<Props, State> {
       toggleCreateFileDialog,
       toggleSelectDirectoryDialog,
       toggleUploadDialog,
+      toggleProgressDialog,
       toggleEditTagDialog,
       setFirstRun,
       openURLExternally,
@@ -701,6 +707,12 @@ class MainPage extends Component<Props, State> {
           <FileUploadDialog
             open={isUploadProgressDialogOpened}
             onClose={toggleUploadDialog}
+          />
+        )}
+        {isProgressDialogOpened && (
+          <ProgressDialog
+            open={isProgressDialogOpened}
+            onClose={toggleProgressDialog}
           />
         )}
         <CreateDirectoryDialog
@@ -920,6 +932,7 @@ function mapStateToProps(state) {
     isLicenseDialogOpened: isLicenseDialogOpened(state),
     isThirdPartyLibsDialogOpened: isThirdPartyLibsDialogOpened(state),
     isUploadProgressDialogOpened: isUploadDialogOpened(state),
+    isProgressDialogOpened: isProgressOpened(state),
     isIndexing: isIndexing(state),
     isReadOnlyMode: isReadOnlyMode(state),
     isGeneratingThumbs: isGeneratingThumbs(state),
@@ -948,6 +961,7 @@ function mapDispatchToProps(dispatch) {
       toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog,
       toggleSelectDirectoryDialog: AppActions.toggleSelectDirectoryDialog,
       toggleUploadDialog: AppActions.toggleUploadDialog,
+      toggleProgressDialog: AppActions.toggleProgressDialog,
       resetProgress: AppActions.resetProgress,
       toggleEditTagDialog: AppActions.toggleEditTagDialog,
       hideNotifications: AppActions.hideNotifications,

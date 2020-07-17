@@ -86,6 +86,7 @@ interface Props {
   ) => void;
   isReadOnlyMode?: boolean;
   toggleUploadDialog: () => void;
+  toggleProgressDialog: () => void;
   resetProgress: () => void;
   addTags: (
     paths: Array<string>,
@@ -173,6 +174,7 @@ const DirectoryMenu = (props: Props) => {
 
   function importMacTags() {
     props.onClose();
+    props.toggleProgressDialog();
 
     const entryCallback = entry => {
       Pro.MacTagsImport.readMacOSTags(entry.path)
@@ -188,6 +190,8 @@ const DirectoryMenu = (props: Props) => {
     };
     Pro.MacTagsImport.importTags(props.directoryPath, entryCallback)
       .then(() => {
+        // props.loadDirectoryContent(props.directoryPath); // TODO after first import tags is not imported without reloadDirContent
+        props.toggleProgressDialog();
         console.log('Import tags succeeded ' + props.directoryPath);
         props.showNotification(
           'Tags from ' + props.directoryPath + ' are imported successfully.',
@@ -198,6 +202,7 @@ const DirectoryMenu = (props: Props) => {
       })
       .catch(err => {
         console.warn('Error importing tags: ' + err);
+        props.toggleProgressDialog();
       });
   }
 
@@ -552,6 +557,7 @@ function mapDispatchToProps(dispatch) {
       showNotification: AppActions.showNotification,
       onUploadProgress: AppActions.onUploadProgress,
       toggleUploadDialog: AppActions.toggleUploadDialog,
+      toggleProgressDialog: AppActions.toggleProgressDialog,
       resetProgress: AppActions.resetProgress,
       extractContent: IOActions.extractContent,
       uploadFilesAPI: IOActions.uploadFilesAPI,
