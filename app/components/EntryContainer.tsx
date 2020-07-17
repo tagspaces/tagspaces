@@ -818,9 +818,9 @@ class EntryContainer extends React.Component<Props, State> {
           <RefreshIcon />
         </IconButton>
         <IconButton
-            title={i18n.t('core:openInFullWidth')}
-            aria-label={i18n.t('core:openInFullWidth')}
-            onClick={this.props.toggleEntryFullWidth}
+          title={i18n.t('core:openInFullWidth')}
+          aria-label={i18n.t('core:openInFullWidth')}
+          onClick={this.props.toggleEntryFullWidth}
         >
           <ExpandIcon />
         </IconButton>
