@@ -887,4 +887,8 @@ export default class ElectronIO {
         });
     });
   };
+
+  shareFiles = (files: Array<string>) => {
+    console.log('shareFiles is not implemented in electron.');
+  };
 }
