@@ -28,6 +28,7 @@ import Divider from '@material-ui/core/Divider';
 // import ContentExtractionIcon from '@material-ui/icons/TrackChanges';
 import OpenFolderIcon from '@material-ui/icons/SubdirectoryArrowLeft';
 import AddExistingFileIcon from '@material-ui/icons/ExitToApp';
+import ImportTagsIcon from '@material-ui/icons/FindInPage';
 import OpenFolderNativelyIcon from '@material-ui/icons/Launch';
 import AutoRenew from '@material-ui/icons/Autorenew';
 import DefaultPerspectiveIcon from '@material-ui/icons/GridOn';
@@ -174,36 +175,41 @@ const DirectoryMenu = (props: Props) => {
 
   function importMacTags() {
     props.onClose();
-    props.toggleProgressDialog();
+    if (Pro && Pro.MacTagsImport && Pro.MacTagsImport.importTags) {
+      props.toggleProgressDialog();
 
-    const entryCallback = entry => {
-      Pro.MacTagsImport.readMacOSTags(entry.path)
-        .then(tags => {
-          if (tags.length > 0) {
-            props.addTags([entry.path], tags, true);
-          }
-          return tags;
+      const entryCallback = entry => {
+        Pro.MacTagsImport.readMacOSTags(entry.path)
+          .then(tags => {
+            if (tags.length > 0) {
+              props.addTags([entry.path], tags, true);
+            }
+            return tags;
+          })
+          .catch(err => {
+            console.warn('Error creating tags: ' + err);
+          });
+      };
+      Pro.MacTagsImport.importTags(props.directoryPath, entryCallback)
+        .then(() => {
+          // props.loadDirectoryContent(props.directoryPath); // TODO after first import tags is not imported without reloadDirContent
+          props.toggleProgressDialog();
+          console.log('Import tags succeeded ' + props.directoryPath);
+          props.showNotification(
+            'Tags from ' + props.directoryPath + ' are imported successfully.',
+            'default',
+            true
+          );
+          return true;
         })
         .catch(err => {
-          console.warn('Error creating tags: ' + err);
+          console.warn('Error importing tags: ' + err);
+          props.toggleProgressDialog();
         });
-    };
-    Pro.MacTagsImport.importTags(props.directoryPath, entryCallback)
-      .then(() => {
-        // props.loadDirectoryContent(props.directoryPath); // TODO after first import tags is not imported without reloadDirContent
-        props.toggleProgressDialog();
-        console.log('Import tags succeeded ' + props.directoryPath);
-        props.showNotification(
-          'Tags from ' + props.directoryPath + ' are imported successfully.',
-          'default',
-          true
-        );
-        return true;
-      })
-      .catch(err => {
-        console.warn('Error importing tags: ' + err);
-        props.toggleProgressDialog();
-      });
+    } else {
+      props.showNotification(i18n.t('core:proFeature'), 'default', true);
+      return true;
+    }
   }
 
   function onFail(message) {
@@ -465,7 +471,7 @@ const DirectoryMenu = (props: Props) => {
         {process.platform === 'darwin' && (
           <MenuItem data-tid="importMacTags" onClick={importMacTags}>
             <ListItemIcon>
-              <AddExistingFileIcon />
+              <ImportTagsIcon />
             </ListItemIcon>
             <ListItemText primary={i18n.t('core:importMacTags')} />
           </MenuItem>
