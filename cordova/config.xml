@@ -17,12 +17,12 @@
     <allow-intent href="geo:*" />
     <platform name="android">
         <allow-intent href="market:*" />
-		<preference name="android-minSdkVersion" value="23" />
-		<icon src="res/icon/android/mipmap-mdpi/ic_launcher.png" density="mdpi" />
-		<icon src="res/icon/android/mipmap-hdpi/ic_launcher.png" density="hdpi" />
-		<icon src="res/icon/android/mipmap-xhdpi/ic_launcher.png" density="xhdpi" />
-		<icon src="res/icon/android/mipmap-xxhdpi/ic_launcher.png" density="xxhdpi" />
-		<icon src="res/icon/android/mipmap-xxxhdpi/ic_launcher.png" density="xxxhdpi" />
+        <preference name="android-minSdkVersion" value="23" />
+        <icon density="mdpi" src="res/icon/android/mipmap-mdpi/ic_launcher.png" />
+        <icon density="hdpi" src="res/icon/android/mipmap-hdpi/ic_launcher.png" />
+        <icon density="xhdpi" src="res/icon/android/mipmap-xhdpi/ic_launcher.png" />
+        <icon density="xxhdpi" src="res/icon/android/mipmap-xxhdpi/ic_launcher.png" />
+        <icon density="xxxhdpi" src="res/icon/android/mipmap-xxxhdpi/ic_launcher.png" />
     </platform>
     <platform name="ios">
         <allow-intent href="itms:*" />
@@ -38,5 +38,4 @@
         <variable name="ANDROID_SUPPORT_V4_VERSION" value="27.+" />
     </plugin>
     <plugin name="cordova-plugin-file" spec="6.0.2" />
-    <engine name="android" spec="^7.1.4" />
 </widget>

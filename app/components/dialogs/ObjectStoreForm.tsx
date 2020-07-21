@@ -23,8 +23,12 @@ import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
+import IconButton from '@material-ui/core/IconButton';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import i18n from '-/services/i18n';
 
 export const regions = [
@@ -97,7 +101,13 @@ interface Props {
   theme: any;
 }
 
-class ObjectStoreForm extends React.Component<Props> {
+interface State {
+  showPassword: boolean;
+}
+
+class ObjectStoreForm extends React.Component<Props, State> {
+  state = { showPassword: false };
+
   handleRegionChange = (inputValue: any, region: string, reason: string) => {
     if (reason === 'input') {
       this.props.handleChange('region', region, reason);
@@ -107,6 +117,10 @@ class ObjectStoreForm extends React.Component<Props> {
     if (reason === 'clear') {
       this.props.handleChange('region', '', reason);
     }
+  };
+
+  handleClickShowPassword = () => {
+    this.setState(prevState => ({ showPassword: !prevState.showPassword }));
   };
 
   render() {
@@ -178,11 +192,25 @@ class ObjectStoreForm extends React.Component<Props> {
             <Input
               margin="dense"
               name="secretAccessKey"
-              type="password"
+              type={this.state.showPassword ? 'text' : 'password'}
               fullWidth={true}
               data-tid="secretAccessKey"
               onChange={handleInputChange}
               value={state.secretAccessKey}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={this.handleClickShowPassword}
+                  >
+                    {this.state.showPassword ? (
+                      <Visibility />
+                    ) : (
+                      <VisibilityOff />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              }
             />
             {state.cloudErrorSecretAccessKey && (
               <FormHelperText>

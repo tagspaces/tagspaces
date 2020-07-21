@@ -37,6 +37,7 @@ import ExpandIcon from '@material-ui/icons/SettingsEthernet';
 import FolderIcon from '@material-ui/icons/FolderOpen';
 import SplitPane from 'react-split-pane';
 import DeleteIcon from '@material-ui/icons/Delete';
+import ShareIcon from '@material-ui/icons/Share';
 import { withStyles } from '@material-ui/core/styles';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import EntryProperties from '-/components/EntryProperties';
@@ -126,7 +127,9 @@ const styles: any = (theme: any) => ({
   flexLeft: {
     flexDirection: 'row',
     flex: '1 1',
-    display: 'flex'
+    display: 'flex',
+    overflowX: 'auto',
+    marginRight: 100
   },
   fileBadge: {
     color: 'white',
@@ -574,6 +577,10 @@ class EntryContainer extends React.Component<Props, State> {
     });
   };
 
+  shareFile = (filePath: string) => {
+    PlatformIO.shareFiles([filePath]);
+  };
+
   toggleFullScreen = () => {
     // this.fileViewerContainer.addEventListener('onfullscreenchange', () => {
     //   alert('Fullscreen change');
@@ -721,13 +728,18 @@ class EntryContainer extends React.Component<Props, State> {
         >
           <FullScreenIcon />
         </IconButton>
-        <IconButton
-          title={i18n.t('core:openInFullWidth')}
-          aria-label={i18n.t('core:openInFullWidth')}
-          onClick={this.props.toggleEntryFullWidth}
-        >
-          <ExpandIcon />
-        </IconButton>
+        {AppConfig.isCordova && (
+          <IconButton
+            title={i18n.t('core:shareFile')}
+            aria-label={i18n.t('core:shareFile')}
+            data-tid="shareFile"
+            onClick={() =>
+              this.shareFile(`file:///${this.state.currentEntry.path}`)
+            }
+          >
+            <ShareIcon />
+          </IconButton>
+        )}
         {!(PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb) && (
           <IconButton
             title={i18n.t('core:openFileExternally')}
@@ -804,6 +816,13 @@ class EntryContainer extends React.Component<Props, State> {
           onClick={this.reloadDocument}
         >
           <RefreshIcon />
+        </IconButton>
+        <IconButton
+          title={i18n.t('core:openInFullWidth')}
+          aria-label={i18n.t('core:openInFullWidth')}
+          onClick={this.props.toggleEntryFullWidth}
+        >
+          <ExpandIcon />
         </IconButton>
       </div>
       <div className={classes.entryNavigationSection}>

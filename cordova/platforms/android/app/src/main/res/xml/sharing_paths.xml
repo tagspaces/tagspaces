@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <external-path
+        name="Android/data/${applicationId}/socialsharing_downloads"
+        path="./socialsharing-downloads"/>
+
+    <root-path
+        name="root"
+        path="/"/>
+
+</paths>
