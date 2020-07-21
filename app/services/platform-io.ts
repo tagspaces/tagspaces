@@ -292,4 +292,12 @@ export default class PlatformIO {
 
   static selectDirectoryDialog = (): Promise<any> =>
     nativeAPI.selectDirectoryDialog();
+
+  static shareFiles = (files: Array<string>): void => {
+    if (AppConfig.isCordova) {
+      nativeAPI.shareFiles(files);
+    } else {
+      console.log('shareFiles is implemented in Cordova only.');
+    }
+  };
 }

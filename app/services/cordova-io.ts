@@ -1182,9 +1182,9 @@ export default class CordovaIO {
     ) {
       window.open(filePath, '_system');
     } else if (filePath.indexOf('file://') === 0) {
-      window.plugins.fileOpener.open(filePath);
+      cordova.plugins.fileOpener2.open(filePath);
     } else {
-      window.plugins.fileOpener.open('file://' + filePath);
+      cordova.plugins.fileOpener2.open('file://' + filePath);
     }
   };
 
@@ -1197,5 +1197,29 @@ export default class CordovaIO {
    */
   focusWindow = () => {
     console.log('Focusing window is not implemented in cordova.');
+  };
+
+  shareFiles = (files: Array<string>) => {
+    // this is the complete list of currently supported params you can pass to the plugin (all optional)
+    const options = {
+      // message: 'share file', // not supported on some apps (Facebook, Instagram)
+      subject: 'File sharing', // fi. for email
+      files, //: ['', ''], // an array of filenames either locally or remotely
+      // url: 'https://www.website.com/foo/#bar?a=b',
+      chooserTitle: 'Pick an app' // Android only, you can override the default share sheet title
+      //appPackageName: 'com.apple.social.facebook', // Android only, you can provide id of the App you want to share with
+      //iPadCoordinates: '0,0,0,0' //IOS only iPadCoordinates for where the popover should be point.  Format with x,y,width,height
+    };
+
+    const onSuccess = function(result) {
+      console.log('Share completed? ' + result.completed); // On Android apps mostly return false even while it's true
+      console.log('Shared to app: ' + result.app); // On Android result.app since plugin version 5.4.0 this is no longer empty. On iOS it's empty when sharing is cancelled (result.completed=false)
+    };
+
+    const onError = function(msg) {
+      console.log('Sharing failed with message: ' + msg);
+    };
+
+    window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
   };
 }
