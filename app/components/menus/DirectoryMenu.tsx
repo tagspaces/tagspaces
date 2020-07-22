@@ -28,6 +28,7 @@ import Divider from '@material-ui/core/Divider';
 // import ContentExtractionIcon from '@material-ui/icons/TrackChanges';
 import OpenFolderIcon from '@material-ui/icons/SubdirectoryArrowLeft';
 import AddExistingFileIcon from '@material-ui/icons/ExitToApp';
+import ImportTagsIcon from '@material-ui/icons/FindInPage';
 import OpenFolderNativelyIcon from '@material-ui/icons/Launch';
 import AutoRenew from '@material-ui/icons/Autorenew';
 import DefaultPerspectiveIcon from '@material-ui/icons/GridOn';
@@ -40,6 +41,7 @@ import RenameFolderIcon from '@material-ui/icons/FormatTextdirectionLToR';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { Progress } from 'aws-sdk/clients/s3';
+import { Pro } from '../../pro';
 import ConfirmDialog from '../dialogs/ConfirmDialog';
 import CreateDirectoryDialog from '../dialogs/CreateDirectoryDialog';
 import RenameDirectoryDialog from '../dialogs/RenameDirectoryDialog';
@@ -54,6 +56,8 @@ import PlatformIO from '-/services/platform-io';
 import { formatDateTime4Tag } from '-/utils/misc';
 import { actions as AppActions } from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
+import { Tag } from '-/reducers/taglibrary';
+import TaggingActions from '-/reducers/tagging-actions';
 
 interface Props {
   open: boolean;
@@ -83,7 +87,13 @@ interface Props {
   ) => void;
   isReadOnlyMode?: boolean;
   toggleUploadDialog: () => void;
+  toggleProgressDialog: () => void;
   resetProgress: () => void;
+  addTags: (
+    paths: Array<string>,
+    tags: Array<Tag>,
+    updateIndex: boolean
+  ) => void;
 }
 
 const DirectoryMenu = (props: Props) => {
@@ -161,6 +171,45 @@ const DirectoryMenu = (props: Props) => {
   function addExistingFile() {
     props.onClose();
     fileInput.click();
+  }
+
+  function importMacTags() {
+    props.onClose();
+    if (Pro && Pro.MacTagsImport && Pro.MacTagsImport.importTags) {
+      props.toggleProgressDialog();
+
+      const entryCallback = entry => {
+        Pro.MacTagsImport.readMacOSTags(entry.path)
+          .then(tags => {
+            if (tags.length > 0) {
+              props.addTags([entry.path], tags, true);
+            }
+            return tags;
+          })
+          .catch(err => {
+            console.warn('Error creating tags: ' + err);
+          });
+      };
+      Pro.MacTagsImport.importTags(props.directoryPath, entryCallback)
+        .then(() => {
+          // props.loadDirectoryContent(props.directoryPath); // TODO after first import tags is not imported without reloadDirContent
+          props.toggleProgressDialog();
+          console.log('Import tags succeeded ' + props.directoryPath);
+          props.showNotification(
+            'Tags from ' + props.directoryPath + ' are imported successfully.',
+            'default',
+            true
+          );
+          return true;
+        })
+        .catch(err => {
+          console.warn('Error importing tags: ' + err);
+          props.toggleProgressDialog();
+        });
+    } else {
+      props.showNotification(i18n.t('core:proFeature'), 'default', true);
+      return true;
+    }
   }
 
   function onFail(message) {
@@ -419,6 +468,14 @@ const DirectoryMenu = (props: Props) => {
             <ListItemText primary={i18n.t('core:addFiles')} />
           </MenuItem>
         )}
+        {process.platform === 'darwin' && (
+          <MenuItem data-tid="importMacTags" onClick={importMacTags}>
+            <ListItemIcon>
+              <ImportTagsIcon />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:importMacTags')} />
+          </MenuItem>
+        )}
         {AppConfig.isCordova && (
           <MenuItem data-tid="takePicture" onClick={cameraTakePicture}>
             <ListItemIcon>
@@ -506,9 +563,11 @@ function mapDispatchToProps(dispatch) {
       showNotification: AppActions.showNotification,
       onUploadProgress: AppActions.onUploadProgress,
       toggleUploadDialog: AppActions.toggleUploadDialog,
+      toggleProgressDialog: AppActions.toggleProgressDialog,
       resetProgress: AppActions.resetProgress,
       extractContent: IOActions.extractContent,
-      uploadFilesAPI: IOActions.uploadFilesAPI
+      uploadFilesAPI: IOActions.uploadFilesAPI,
+      addTags: TaggingActions.addTags
     },
     dispatch
   );

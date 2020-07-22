@@ -187,6 +187,7 @@ export function walkDirectory(
     recursive: false,
     skipMetaFolder: true,
     skipDotHiddenFolder: false,
+    skipDotHiddenFiles: false,
     loadMetaDate: true,
     extractText: false,
     ...options
@@ -205,13 +206,23 @@ export function walkDirectory(
             }
 
             if (entry.isFile) {
-              if (fileCallback) {
+              if (
+                fileCallback &&
+                (!mergedOptions.skipDotHiddenFiles ||
+                  !entry.name.startsWith('.'))
+              ) {
                 fileCallback(entry);
               }
               return entry;
             }
 
-            if (dirCallback) {
+            if (
+              dirCallback &&
+              (!mergedOptions.skipDotHiddenFolder ||
+                !entry.name.startsWith('.')) &&
+              (!mergedOptions.skipMetaFolder ||
+                entry.name !== AppConfig.metaFolder)
+            ) {
               dirCallback(entry);
             }
 

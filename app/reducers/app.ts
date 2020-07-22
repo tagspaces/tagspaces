@@ -84,6 +84,7 @@ export const types = {
   TOGGLE_CREATE_FILE_DIALOG: 'APP/TOGGLE_CREATE_FILE_DIALOG',
   TOGGLE_SELECT_DIRECTORY_DIALOG: 'APP/TOGGLE_SELECT_DIRECTORY_DIALOG',
   TOGGLE_UPLOAD_DIALOG: 'APP/TOGGLE_UPLOAD_DIALOG',
+  TOGGLE_PROGRESS_DIALOG: 'APP/TOGGLE_PROGRESS_DIALOG',
   OPEN_LOCATIONMANAGER_PANEL: 'APP/OPEN_LOCATIONMANAGER_PANEL',
   OPEN_TAGLIBRARY_PANEL: 'APP/OPEN_TAGLIBRARY_PANEL',
   OPEN_SEARCH_PANEL: 'APP/OPEN_SEARCH_PANEL',
@@ -308,6 +309,12 @@ export default (state: any = initialState, action: any) => {
         };
       }
       return state;
+    }
+    case types.TOGGLE_PROGRESS_DIALOG: {
+      return {
+        ...state,
+        progressDialogOpened: !state.progressDialogOpened
+      };
     }
     case types.SET_SEARCH_RESULTS: {
       return {
@@ -678,6 +685,9 @@ export const actions = {
   }),
   toggleUploadDialog: () => ({
     type: types.TOGGLE_UPLOAD_DIALOG
+  }),
+  toggleProgressDialog: () => ({
+    type: types.TOGGLE_PROGRESS_DIALOG
   }),
   openLocationManagerPanel: () => ({ type: types.OPEN_LOCATIONMANAGER_PANEL }),
   openTagLibraryPanel: () => ({ type: types.OPEN_TAGLIBRARY_PANEL }),
@@ -1751,6 +1761,7 @@ export const isSelectDirectoryDialogOpened = (state: any) =>
   state.app.selectDirectoryDialogOpened;
 export const isUploadDialogOpened = (state: any) =>
   state.app.uploadDialogOpened;
+export const isProgressOpened = (state: any) => state.app.progressDialogOpened;
 export const getOpenedFiles = (state: any) => state.app.openedFiles;
 export const getNotificationStatus = (state: any) =>
   state.app.notificationStatus;
