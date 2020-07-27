@@ -707,6 +707,39 @@ class EntryContainer extends React.Component<Props, State> {
     }
   };
 
+  downloadCordova = (uri, filename) => {
+    const { Downloader } = window.plugins;
+
+    const downloadSuccessCallback = result => {
+      // result is an object
+      /* {
+        path: "file:///storage/sdcard0/documents/My Pdf.pdf", // Returns full file path
+        file: "My Pdf.pdf", // Returns Filename
+        folder: "documents" // Returns folder name
+      } */
+      console.log(result.file); // My Pdf.pdf
+    };
+
+    const downloadErrorCallback = error => {
+      console.log(error);
+    };
+
+    const options = {
+      title: 'Downloading File:' + filename, // Download Notification Title
+      url: uri, // File Url
+      path: filename, // The File Name with extension
+      description: 'The file is downloading', // Download description Notification String
+      visible: true, // This download is visible and shows in the notifications while in progress and after completion.
+      folder: 'documents' // Folder to save the downloaded file, if not exist it will be created
+    };
+
+    Downloader.download(
+      options,
+      downloadSuccessCallback,
+      downloadErrorCallback
+    );
+  };
+
   renderFileToolbar = classes => (
     <div className={classes.toolbar2}>
       <div className={classes.flexLeft}>
@@ -754,7 +787,6 @@ class EntryContainer extends React.Component<Props, State> {
           aria-label={i18n.t('core:downloadFile')}
           onClick={() => {
             const { currentEntry } = this.state;
-            const downloadLink = document.getElementById('downloadFile');
             const entryName = `${baseName(
               currentEntry.path,
               PlatformIO.getDirSeparator()
@@ -764,27 +796,36 @@ class EntryContainer extends React.Component<Props, State> {
               PlatformIO.getDirSeparator()
             );
 
-            if (downloadLink) {
-              if (AppConfig.isWeb) {
-                const link = `${location.protocol}//${location.hostname}${
-                  location.port !== '' ? `:${location.port}` : ''
-                }/${currentEntry.path}`;
-                downloadLink.setAttribute('href', link);
-              } else {
-                downloadLink.setAttribute(
-                  'href',
-                  `file:///${currentEntry.path}`
-                );
-              }
-
+            if (AppConfig.isCordova) {
               if (currentEntry.url) {
-                // mostly the s3 case
-                downloadLink.setAttribute('target', '_blank');
-                downloadLink.setAttribute('href', currentEntry.url);
+                this.downloadCordova(currentEntry.url, entryName);
+              } else {
+                console.log('Can only download HTTP/HTTPS URIs');
               }
+            } else {
+              const downloadLink = document.getElementById('downloadFile');
+              if (downloadLink) {
+                if (AppConfig.isWeb) {
+                  const link = `${location.protocol}//${location.hostname}${
+                    location.port !== '' ? `:${location.port}` : ''
+                  }/${currentEntry.path}`;
+                  downloadLink.setAttribute('href', link);
+                } else {
+                  downloadLink.setAttribute(
+                    'href',
+                    `file:///${currentEntry.path}`
+                  );
+                }
 
-              downloadLink.setAttribute('download', fileName); // works only for same origin
-              downloadLink.click();
+                if (currentEntry.url) {
+                  // mostly the s3 case
+                  downloadLink.setAttribute('target', '_blank');
+                  downloadLink.setAttribute('href', currentEntry.url);
+                }
+
+                downloadLink.setAttribute('download', fileName); // works only for same origin
+                downloadLink.click();
+              }
             }
           }}
         >

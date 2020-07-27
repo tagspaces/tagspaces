@@ -27,6 +27,15 @@
     <feature name="FileOpener2">
         <param name="android-package" value="io.github.pwlin.cordova.plugins.fileopener2.FileOpener2" />
     </feature>
+    <feature name="Downloader">
+        <param name="android-package" value="com.whebcraft.android.plugin.Downloader" />
+    </feature>
+    <feature name="FileTransfer">
+        <param name="android-package" value="org.apache.cordova.filetransfer.FileTransfer" />
+    </feature>
+    <feature name="Zip">
+        <param name="android-package" value="org.apache.cordova.Zip" />
+    </feature>
     <name>TagSpaces Beta</name>
     <description>
 		Offline file organizer and browser with tagging support.
