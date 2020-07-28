@@ -72,8 +72,8 @@ import {
 } from '-/reducers/app';
 
 const defaultSplitSize = 103;
-const openedSplitSize = 360;
-const fullSplitSize = 600;
+const openedSplitSize = 650; // 360;
+const fullSplitSize = 750;
 // const maxCharactersTitleLength = 50;
 const bufferedSplitResize = buffer({
   timeout: 300,
@@ -191,6 +191,7 @@ interface Props {
   toggleEntryFullWidth: () => void;
   isReadOnlyMode: boolean;
   setEntryPropertiesSplitSize: (size: number) => void;
+  entryPropertiesSplitSize?: number;
   reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
   updateThumbnailUrl: (path: string, thumbUrl: string) => void;
   setLastSelectedEntry: (path: string) => void;
@@ -206,12 +207,12 @@ interface State {
   editingSupported?: boolean;
   isSaveBeforeCloseConfirmDialogOpened?: boolean;
   isSaveBeforeReloadConfirmDialogOpened?: boolean;
-  openedSplitSize?: number;
+  // openedSplitSize?: number;
   isEditTagsModalOpened?: boolean;
   selectedItem?: any;
   isDeleteEntryModalOpened?: boolean;
   shouldCopyFile?: boolean;
-  entryPropertiesSplitSize?: number;
+  // entryPropertiesSplitSize?: number;
   EntryPropertiesKey: string;
 }
 
@@ -222,13 +223,13 @@ class EntryContainer extends React.Component<Props, State> {
     editingSupported: false,
     isSaveBeforeCloseConfirmDialogOpened: false,
     isSaveBeforeReloadConfirmDialogOpened: false,
-    openedSplitSize,
+    // openedSplitSize,
     isEditTagsModalOpened: false,
     isDeleteEntryModalOpened: false,
     currentEntry: null,
     selectedItem: {},
     shouldCopyFile: false,
-    entryPropertiesSplitSize: 0,
+    // entryPropertiesSplitSize: 0,
     EntryPropertiesKey: uuidv1()
   };
 
@@ -314,7 +315,7 @@ class EntryContainer extends React.Component<Props, State> {
       });
 
       this.setState({
-        entryPropertiesSplitSize: settings.entryPropertiesSplitSize,
+        // entryPropertiesSplitSize: settings.entryPropertiesSplitSize,
         isPropertiesPanelVisible:
           settings.entryPropertiesSplitSize > defaultSplitSize
       });
@@ -344,7 +345,9 @@ class EntryContainer extends React.Component<Props, State> {
 
   fileViewerContainer;
 
-  isPropertiesEditMode = false;
+  isPropertiesEditMode = false; // TODO rethink this! why exist?
+
+  isChanged = false;
 
   // logEventsFromExtensions = event => {
   //   console.log('Ext. Logging >>> ', event.message);
@@ -453,16 +456,19 @@ class EntryContainer extends React.Component<Props, State> {
             console.warn('Error loading text content ' + err);
           });
         break;
-      case 'contentChangedInEditor':
-        if (this.state.currentEntry.editMode) {
-          this.setState({
+      case 'contentChangedInEditor': {
+        const { currentEntry } = this.state;
+        if (currentEntry.editMode && !this.isChanged) {
+          this.isChanged = true;
+          /* this.setState({
             currentEntry: {
-              ...this.state.currentEntry,
+              ...currentEntry,
               changed: true
             }
-          });
+          }); */
         }
         break;
+      }
       default:
         console.log(
           'Not recognized messaging command: ' + JSON.stringify(data)
@@ -472,7 +478,8 @@ class EntryContainer extends React.Component<Props, State> {
   };
 
   reloadDocument = () => {
-    if (this.state.currentEntry && this.state.currentEntry.changed) {
+    if (this.state.currentEntry && this.isChanged) {
+      // this.state.currentEntry.changed) {
       this.setState({ isSaveBeforeReloadConfirmDialogOpened: true });
       return true;
     }
@@ -486,7 +493,8 @@ class EntryContainer extends React.Component<Props, State> {
   };
 
   cancelEditing = () => {
-    if (this.state.currentEntry && this.state.currentEntry.changed) {
+    if (this.state.currentEntry && this.isChanged) {
+      // this.state.currentEntry.changed) {
       this.props.showNotification(
         i18n.t('core:currentlyFileChangedSaveOrClose')
       );
@@ -506,7 +514,8 @@ class EntryContainer extends React.Component<Props, State> {
       event.preventDefault(); // Let's stop this event.
       event.stopPropagation();
     }
-    if (this.state.currentEntry && this.state.currentEntry.changed) {
+    if (this.state.currentEntry && this.isChanged) {
+      // this.state.currentEntry.changed) {
       this.setState({ isSaveBeforeCloseConfirmDialogOpened: true });
     } else {
       this.closeFile();
@@ -548,10 +557,11 @@ class EntryContainer extends React.Component<Props, State> {
       true
     )
       .then(result => {
+        this.isChanged = false;
         this.setState({
           currentEntry: {
             ...this.state.currentEntry,
-            changed: false
+            editMode: false
           }
         });
         this.props.showNotification(
@@ -651,7 +661,7 @@ class EntryContainer extends React.Component<Props, State> {
 
     this.setState(
       {
-        openedSplitSize,
+        // openedSplitSize,
         isPropertiesPanelVisible: true
       },
       () => this.props.setEntryPropertiesSplitSize(openedSplitSize)
@@ -661,8 +671,8 @@ class EntryContainer extends React.Component<Props, State> {
   closePanel = () => {
     this.setState(
       {
-        openedSplitSize: defaultSplitSize,
-        entryPropertiesSplitSize: defaultSplitSize,
+        // openedSplitSize: defaultSplitSize,
+        // entryPropertiesSplitSize: defaultSplitSize,
         isPropertiesPanelVisible: false
       },
       () => this.props.setEntryPropertiesSplitSize(defaultSplitSize)
@@ -801,6 +811,10 @@ class EntryContainer extends React.Component<Props, State> {
                 this.downloadCordova(currentEntry.url, entryName);
               } else {
                 console.log('Can only download HTTP/HTTPS URIs');
+                this.props.showNotification(
+                  i18n.t('core:cantDownloadLocalFile'),
+                  NotificationTypes.default
+                );
               }
             } else {
               const downloadLink = document.getElementById('downloadFile');
@@ -996,7 +1010,8 @@ class EntryContainer extends React.Component<Props, State> {
           ) +
           '&locale=' +
           i18n.language +
-          '&edit=true';
+          '&edit=true' +
+          (currentEntry.shouldReload ? '&t=' + new Date().getTime() : '');
         // } else if (!currentEntry.isFile) { // TODO needed for loading folder's default html
         //   fileOpenerURL = 'node_modules/@tagspaces/html-viewer/index.html?locale=' + i18n.language;
       } else {
@@ -1007,7 +1022,8 @@ class EntryContainer extends React.Component<Props, State> {
             currentEntry.url ? currentEntry.url : currentEntry.path
           ) +
           '&locale=' +
-          i18n.language;
+          i18n.language +
+          (currentEntry.shouldReload ? '&t=' + new Date().getTime() : '');
       }
 
       // if (!currentEntry.isFile) {
@@ -1141,7 +1157,7 @@ class EntryContainer extends React.Component<Props, State> {
           // defaultSize={this.state.entryPropertiesSplitSize}
           size={
             currentEntry && currentEntry.isFile
-              ? this.state.entryPropertiesSplitSize
+              ? this.props.settings.entryPropertiesSplitSize
               : '100%'
           }
           minSize={
@@ -1150,15 +1166,20 @@ class EntryContainer extends React.Component<Props, State> {
           maxSize={currentEntry && currentEntry.isFile ? fullSplitSize : '100%'}
           defaultSize={
             currentEntry && currentEntry.isFile
-              ? this.state.entryPropertiesSplitSize
+              ? this.props.settings.entryPropertiesSplitSize
               : '100%'
           }
           onChange={size => {
-            this.setState({
-              isPropertiesPanelVisible: size > defaultSplitSize,
-              openedSplitSize: size,
-              entryPropertiesSplitSize: size
-            });
+            const isPropertiesPanelVisible = size > defaultSplitSize;
+            if (
+              this.state.isPropertiesPanelVisible !== isPropertiesPanelVisible
+            ) {
+              this.setState({
+                isPropertiesPanelVisible
+                // openedSplitSize: size,
+                // entryPropertiesSplitSize: size
+              });
+            }
             bufferedSplitResize(() =>
               this.props.setEntryPropertiesSplitSize(size)
             );

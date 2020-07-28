@@ -205,7 +205,7 @@ interface State {
   currentPerspective: string;
   currentPath?: string;
   pathParts?: Array<string>;
-  isPropertiesPanelVisible?: boolean;
+  // isPropertiesPanelVisible?: boolean;
   locationChooserMenuOpened?: boolean;
   locationChooserMenuAnchorEl?: null | Object;
   directoryMenuOpened?: boolean;
@@ -222,7 +222,7 @@ class FolderContainer extends React.Component<Props, State> {
     currentPerspective: window.ExtDefaultPerspective || 'default',
     currentPath: '',
     pathParts: [],
-    isPropertiesPanelVisible: false,
+    // isPropertiesPanelVisible: false,
     isDirectoryMenuOpened: false,
     directoryContextMenuOpened: false,
     directoryContextMenuAnchorEl: null,
