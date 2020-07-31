@@ -179,11 +179,14 @@ export default class CordovaIO {
     console.log('getFileSystemPromise: ' + localPath);
     if (
       localPath &&
-        (localPath.indexOf(cordova.file.applicationDirectory) === 0 || localPath.startsWith('file:///'))
+      (localPath.indexOf(cordova.file.applicationDirectory) === 0 ||
+        localPath.startsWith('file:///'))
     ) {
     } else {
       localPath = AppConfig.isCordovaiOS
-        ? path.join(cordova.file.documentsDirectory, localPath).replace(':/',':///')
+        ? path
+            .join(cordova.file.documentsDirectory, localPath)
+            .replace(':/', ':///')
         : 'file:///' + localPath;
     }
     localPath = encodeURI(localPath);
