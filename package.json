@@ -61,6 +61,8 @@
     "run-web": "yarn build-web && yarn prepare-web && node scripts/webserver.js",
     "run-android": "yarn build-cordova && cd cordova && cordova run android && cd ..",
     "run-android-dev": "yarn prepare-cordova && yarn build-cordova-dev && cd cordova && cordova run android && cd ..",
+    "run-ios-dev": "yarn prepare-cordova && yarn build-cordova-dev && cd cordova && cordova run ios && cd ..",
+    "cordova-list-emulators": "cd cordova && cordova run --list --emulator && cd ..",
     "cordova-add-android": "cd cordova && cordova platform add android && cd ..",
     "cordova-create-app": "cordova create ./cordova org.tagspaces.mobile TagSpaces",
     "update-changelog": "git log v3.4.2..HEAD --no-merges --format=%B > CHANGELOG.TXT",

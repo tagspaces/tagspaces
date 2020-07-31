@@ -173,7 +173,7 @@ const actions = {
     targetPath: string,
     onUploadProgress?: (progress: Progress, response: any) => void
   ) => (dispatch: (actions: Object) => void) => {
-    if (AppConfig.isElectron) {
+    if (AppConfig.isElectron || AppConfig.isCordova) {
       const arrFiles = [];
       for (let i = 0; i < files.length; i += 1) {
         arrFiles.push(files[i].path);
