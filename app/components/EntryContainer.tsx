@@ -72,7 +72,7 @@ import {
 } from '-/reducers/app';
 
 const defaultSplitSize = 103;
-const openedSplitSize = 650; // 360;
+const openedSplitSize = AppConfig.isElectron ? 560 : 360;
 const fullSplitSize = 750;
 // const maxCharactersTitleLength = 50;
 const bufferedSplitResize = buffer({
@@ -282,7 +282,8 @@ class EntryContainer extends React.Component<Props, State> {
   componentWillReceiveProps(nextProps: Props) {
     if (nextProps.openedFiles.length > 0) {
       const nextEntry = nextProps.openedFiles[0];
-      if (this.state.currentEntry && this.state.currentEntry.changed) {
+      if (this.state.currentEntry && this.isChanged) {
+        // this.state.currentEntry.changed) {
         // console.warn(i18n.t('core:currentlyFileChangedSaveOrClose'))
         return true;
       }
@@ -348,6 +349,8 @@ class EntryContainer extends React.Component<Props, State> {
   isPropertiesEditMode = false; // TODO rethink this! why exist?
 
   isChanged = false;
+
+  shouldReload = false;
 
   // logEventsFromExtensions = event => {
   //   console.log('Ext. Logging >>> ', event.message);
@@ -460,12 +463,13 @@ class EntryContainer extends React.Component<Props, State> {
         const { currentEntry } = this.state;
         if (currentEntry.editMode && !this.isChanged) {
           this.isChanged = true;
-          /* this.setState({
+          // dummy state change to rerender for DOT before file name (only first time)
+          this.setState({
             currentEntry: {
-              ...currentEntry,
-              changed: true
+              ...currentEntry
+              // changed: true
             }
-          }); */
+          });
         }
         break;
       }
@@ -478,18 +482,22 @@ class EntryContainer extends React.Component<Props, State> {
   };
 
   reloadDocument = () => {
-    if (this.state.currentEntry && this.isChanged) {
-      // this.state.currentEntry.changed) {
-      this.setState({ isSaveBeforeReloadConfirmDialogOpened: true });
-      return true;
-    }
-    this.setState({
-      currentEntry: {
-        ...this.state.currentEntry,
-        shouldReload: true,
-        editMode: false
+    if (this.state.currentEntry) {
+      if (this.isChanged) {
+        this.setState({
+          isSaveBeforeReloadConfirmDialogOpened: true
+        });
+      } else {
+        this.shouldReload = true;
+        this.setState({
+          currentEntry: {
+            ...this.state.currentEntry,
+            // shouldReload: true,
+            editMode: false
+          }
+        });
       }
-    });
+    }
   };
 
   cancelEditing = () => {
@@ -500,10 +508,11 @@ class EntryContainer extends React.Component<Props, State> {
       );
       return true;
     }
+    this.shouldReload = true;
     this.setState({
       currentEntry: {
         ...this.state.currentEntry,
-        shouldReload: true,
+        // shouldReload: true,
         editMode: false
       }
     });
@@ -562,6 +571,7 @@ class EntryContainer extends React.Component<Props, State> {
           currentEntry: {
             ...this.state.currentEntry,
             editMode: false
+            // shouldReload: false
           }
         });
         this.props.showNotification(
@@ -664,7 +674,11 @@ class EntryContainer extends React.Component<Props, State> {
         // openedSplitSize,
         isPropertiesPanelVisible: true
       },
-      () => this.props.setEntryPropertiesSplitSize(openedSplitSize)
+      () => {
+        if (this.props.settings.entryPropertiesSplitSize === defaultSplitSize) {
+          this.props.setEntryPropertiesSplitSize(openedSplitSize);
+        }
+      }
     );
   };
 
@@ -674,8 +688,8 @@ class EntryContainer extends React.Component<Props, State> {
         // openedSplitSize: defaultSplitSize,
         // entryPropertiesSplitSize: defaultSplitSize,
         isPropertiesPanelVisible: false
-      },
-      () => this.props.setEntryPropertiesSplitSize(defaultSplitSize)
+      }
+      // ,() => this.props.setEntryPropertiesSplitSize(defaultSplitSize)
     );
   };
 
@@ -1011,7 +1025,7 @@ class EntryContainer extends React.Component<Props, State> {
           '&locale=' +
           i18n.language +
           '&edit=true' +
-          (currentEntry.shouldReload ? '&t=' + new Date().getTime() : '');
+          (this.shouldReload ? '&t=' + new Date().getTime() : '');
         // } else if (!currentEntry.isFile) { // TODO needed for loading folder's default html
         //   fileOpenerURL = 'node_modules/@tagspaces/html-viewer/index.html?locale=' + i18n.language;
       } else {
@@ -1023,8 +1037,9 @@ class EntryContainer extends React.Component<Props, State> {
           ) +
           '&locale=' +
           i18n.language +
-          (currentEntry.shouldReload ? '&t=' + new Date().getTime() : '');
+          (this.shouldReload ? '&t=' + new Date().getTime() : '');
       }
+      this.shouldReload = false;
 
       // if (!currentEntry.isFile) {
       //   fileOpenerURL = currentEntry.path + '/index.html';
@@ -1090,17 +1105,23 @@ class EntryContainer extends React.Component<Props, State> {
           content="File was modified, do you want to save the changes?"
           confirmCallback={result => {
             if (result) {
+              this.setState({
+                isSaveBeforeReloadConfirmDialogOpened: false
+              });
               this.startSavingFile();
+            } else {
+              this.isChanged = false;
+              this.shouldReload = true;
+              this.setState({
+                isSaveBeforeReloadConfirmDialogOpened: false,
+                currentEntry: {
+                  ...this.state.currentEntry,
+                  // shouldReload: true,
+                  editMode: false
+                  // changed: false
+                }
+              });
             }
-            this.setState({
-              isSaveBeforeReloadConfirmDialogOpened: false,
-              currentEntry: {
-                ...this.state.currentEntry,
-                shouldReload: true,
-                editMode: false,
-                changed: false
-              }
-            });
           }}
           cancelDialogTID="cancelSaveBeforeCloseDialog"
           confirmDialogTID="confirmSaveBeforeCloseDialog"
@@ -1156,9 +1177,11 @@ class EntryContainer extends React.Component<Props, State> {
           // maxSize={fullSplitSize}
           // defaultSize={this.state.entryPropertiesSplitSize}
           size={
-            currentEntry && currentEntry.isFile
-              ? this.props.settings.entryPropertiesSplitSize
-              : '100%'
+            this.state.isPropertiesPanelVisible
+              ? currentEntry && currentEntry.isFile
+                ? this.props.settings.entryPropertiesSplitSize
+                : '100%'
+              : defaultSplitSize
           }
           minSize={
             currentEntry && currentEntry.isFile ? defaultSplitSize : '100%'
@@ -1207,7 +1230,7 @@ class EntryContainer extends React.Component<Props, State> {
                             PlatformIO.getDirSeparator()
                           )}
                       </div>
-                      {currentEntry.changed
+                      {this.isChanged // currentEntry.changed
                         ? String.fromCharCode(0x25cf) + ' '
                         : ''}
                       {fileTitle}
@@ -1307,6 +1330,7 @@ class EntryContainer extends React.Component<Props, State> {
                   </div>
                 )}
               </div>
+
               <div className={classes.entryProperties}>
                 {currentEntry.isFile
                   ? this.renderFileToolbar(classes)
@@ -1317,7 +1341,7 @@ class EntryContainer extends React.Component<Props, State> {
                   setPropertiesEditMode={this.setPropertiesEditMode}
                   entryPath={currentEntry.path}
                   entryURL={currentEntry.url}
-                  shouldReload={currentEntry.shouldReload}
+                  shouldReload={this.shouldReload}
                   renameFile={this.props.renameFile}
                   renameDirectory={this.props.renameDirectory}
                   editTagForEntry={this.props.editTagForEntry}
