@@ -532,6 +532,7 @@ class EntryContainer extends React.Component<Props, State> {
   };
 
   closeFile = () => {
+    this.isChanged = false;
     this.setState(
       {
         currentEntry: null,
