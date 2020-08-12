@@ -128,8 +128,8 @@ const styles: any = (theme: any) => ({
     flexDirection: 'row',
     flex: '1 1',
     display: 'flex',
-    overflowX: 'auto',
-    marginRight: 100
+    overflowX: 'auto'
+    // marginRight: 100
   },
   fileBadge: {
     color: 'white',
@@ -146,6 +146,7 @@ const styles: any = (theme: any) => ({
     paddingBottom: 0,
     minWidth: 20,
     height: 44,
+    justifyContent: 'unset',
     whiteSpace: 'nowrap'
   },
   entryCloseSection: {
@@ -1287,15 +1288,6 @@ class EntryContainer extends React.Component<Props, State> {
                 )}
                 {this.state.editingSupported && !currentEntry.editMode && (
                   <div className={classes.entryCloseSection}>
-                    {/* <IconButton
-                      disabled={false}
-                      onClick={this.editFile}
-                      title={i18n.t('core:editFile')}
-                      aria-label={i18n.t('core:editFile')}
-                      data-tid="fileContainerEditFile"
-                    >
-                      <EditIcon />
-                    </IconButton> */}
                     <Button
                       disabled={false}
                       size="small"
