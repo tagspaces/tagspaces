@@ -255,7 +255,8 @@ module.exports.metadata =
   "cordova-plugin-whitelist": "1.3.4",
   "es6-promise-plugin": "4.2.2",
   "cordova-plugin-x-socialsharing": "5.6.8",
-  "cordova-plugin-file-opener2": "3.0.3"
+  "cordova-plugin-file-opener2": "3.0.3",
+  "cordova-plugin-wkwebview-engine": "1.2.1"
 };
 // BOTTOM OF METADATA
 });

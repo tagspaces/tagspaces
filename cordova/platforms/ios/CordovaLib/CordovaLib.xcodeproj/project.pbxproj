@@ -587,6 +587,7 @@
 			buildSettings = {
 				PUBLIC_HEADERS_FOLDER_PATH = include/Cordova;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				WK_WEB_VIEW_ONLY = 1;
 			};
 			name = Debug;
 		};
@@ -595,6 +596,7 @@
 			buildSettings = {
 				PUBLIC_HEADERS_FOLDER_PATH = include/Cordova;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				WK_WEB_VIEW_ONLY = 1;
 			};
 			name = Release;
 		};
@@ -660,7 +662,7 @@
 				PRODUCT_NAME = Cordova;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				WK_WEB_VIEW_ONLY = 0;
+				WK_WEB_VIEW_ONLY = 1;
 			};
 			name = Debug;
 		};
@@ -723,7 +725,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				VALIDATE_PRODUCT = YES;
-				WK_WEB_VIEW_ONLY = 0;
+				WK_WEB_VIEW_ONLY = 1;
 			};
 			name = Release;
 		};
@@ -739,6 +741,7 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
+				WK_WEB_VIEW_ONLY = 1;
 			};
 			name = Debug;
 		};
@@ -754,6 +757,7 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
+				WK_WEB_VIEW_ONLY = 1;
 			};
 			name = Release;
 		};
