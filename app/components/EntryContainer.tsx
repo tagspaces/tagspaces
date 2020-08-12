@@ -72,8 +72,8 @@ import {
 } from '-/reducers/app';
 
 const defaultSplitSize = 103;
-const openedSplitSize = 360;
-const fullSplitSize = 600;
+const openedSplitSize = AppConfig.isElectron ? 560 : 360;
+const fullSplitSize = 750;
 // const maxCharactersTitleLength = 50;
 const bufferedSplitResize = buffer({
   timeout: 300,
@@ -128,8 +128,8 @@ const styles: any = (theme: any) => ({
     flexDirection: 'row',
     flex: '1 1',
     display: 'flex',
-    overflowX: 'auto',
-    marginRight: 100
+    overflowX: 'auto'
+    // marginRight: 100
   },
   fileBadge: {
     color: 'white',
@@ -146,6 +146,7 @@ const styles: any = (theme: any) => ({
     paddingBottom: 0,
     minWidth: 20,
     height: 44,
+    justifyContent: 'unset',
     whiteSpace: 'nowrap'
   },
   entryCloseSection: {
@@ -191,6 +192,7 @@ interface Props {
   toggleEntryFullWidth: () => void;
   isReadOnlyMode: boolean;
   setEntryPropertiesSplitSize: (size: number) => void;
+  entryPropertiesSplitSize?: number;
   reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
   updateThumbnailUrl: (path: string, thumbUrl: string) => void;
   setLastSelectedEntry: (path: string) => void;
@@ -206,12 +208,12 @@ interface State {
   editingSupported?: boolean;
   isSaveBeforeCloseConfirmDialogOpened?: boolean;
   isSaveBeforeReloadConfirmDialogOpened?: boolean;
-  openedSplitSize?: number;
+  // openedSplitSize?: number;
   isEditTagsModalOpened?: boolean;
   selectedItem?: any;
   isDeleteEntryModalOpened?: boolean;
   shouldCopyFile?: boolean;
-  entryPropertiesSplitSize?: number;
+  // entryPropertiesSplitSize?: number;
   EntryPropertiesKey: string;
 }
 
@@ -222,13 +224,13 @@ class EntryContainer extends React.Component<Props, State> {
     editingSupported: false,
     isSaveBeforeCloseConfirmDialogOpened: false,
     isSaveBeforeReloadConfirmDialogOpened: false,
-    openedSplitSize,
+    // openedSplitSize,
     isEditTagsModalOpened: false,
     isDeleteEntryModalOpened: false,
     currentEntry: null,
     selectedItem: {},
     shouldCopyFile: false,
-    entryPropertiesSplitSize: 0,
+    // entryPropertiesSplitSize: 0,
     EntryPropertiesKey: uuidv1()
   };
 
@@ -281,7 +283,8 @@ class EntryContainer extends React.Component<Props, State> {
   componentWillReceiveProps(nextProps: Props) {
     if (nextProps.openedFiles.length > 0) {
       const nextEntry = nextProps.openedFiles[0];
-      if (this.state.currentEntry && this.state.currentEntry.changed) {
+      if (this.state.currentEntry && this.isChanged) {
+        // this.state.currentEntry.changed) {
         // console.warn(i18n.t('core:currentlyFileChangedSaveOrClose'))
         return true;
       }
@@ -314,7 +317,7 @@ class EntryContainer extends React.Component<Props, State> {
       });
 
       this.setState({
-        entryPropertiesSplitSize: settings.entryPropertiesSplitSize,
+        // entryPropertiesSplitSize: settings.entryPropertiesSplitSize,
         isPropertiesPanelVisible:
           settings.entryPropertiesSplitSize > defaultSplitSize
       });
@@ -344,7 +347,11 @@ class EntryContainer extends React.Component<Props, State> {
 
   fileViewerContainer;
 
-  isPropertiesEditMode = false;
+  isPropertiesEditMode = false; // TODO rethink this! why exist?
+
+  isChanged = false;
+
+  shouldReload = false;
 
   // logEventsFromExtensions = event => {
   //   console.log('Ext. Logging >>> ', event.message);
@@ -453,16 +460,20 @@ class EntryContainer extends React.Component<Props, State> {
             console.warn('Error loading text content ' + err);
           });
         break;
-      case 'contentChangedInEditor':
-        if (this.state.currentEntry.editMode) {
+      case 'contentChangedInEditor': {
+        const { currentEntry } = this.state;
+        if (currentEntry.editMode && !this.isChanged) {
+          this.isChanged = true;
+          // dummy state change to rerender for DOT before file name (only first time)
           this.setState({
             currentEntry: {
-              ...this.state.currentEntry,
-              changed: true
+              ...currentEntry
+              // changed: true
             }
           });
         }
         break;
+      }
       default:
         console.log(
           'Not recognized messaging command: ' + JSON.stringify(data)
@@ -472,30 +483,37 @@ class EntryContainer extends React.Component<Props, State> {
   };
 
   reloadDocument = () => {
-    if (this.state.currentEntry && this.state.currentEntry.changed) {
-      this.setState({ isSaveBeforeReloadConfirmDialogOpened: true });
-      return true;
-    }
-    this.setState({
-      currentEntry: {
-        ...this.state.currentEntry,
-        shouldReload: true,
-        editMode: false
+    if (this.state.currentEntry) {
+      if (this.isChanged) {
+        this.setState({
+          isSaveBeforeReloadConfirmDialogOpened: true
+        });
+      } else {
+        this.shouldReload = true;
+        this.setState({
+          currentEntry: {
+            ...this.state.currentEntry,
+            // shouldReload: true,
+            editMode: false
+          }
+        });
       }
-    });
+    }
   };
 
   cancelEditing = () => {
-    if (this.state.currentEntry && this.state.currentEntry.changed) {
+    if (this.state.currentEntry && this.isChanged) {
+      // this.state.currentEntry.changed) {
       this.props.showNotification(
         i18n.t('core:currentlyFileChangedSaveOrClose')
       );
       return true;
     }
+    this.shouldReload = true;
     this.setState({
       currentEntry: {
         ...this.state.currentEntry,
-        shouldReload: true,
+        // shouldReload: true,
         editMode: false
       }
     });
@@ -506,7 +524,8 @@ class EntryContainer extends React.Component<Props, State> {
       event.preventDefault(); // Let's stop this event.
       event.stopPropagation();
     }
-    if (this.state.currentEntry && this.state.currentEntry.changed) {
+    if (this.state.currentEntry && this.isChanged) {
+      // this.state.currentEntry.changed) {
       this.setState({ isSaveBeforeCloseConfirmDialogOpened: true });
     } else {
       this.closeFile();
@@ -514,6 +533,7 @@ class EntryContainer extends React.Component<Props, State> {
   };
 
   closeFile = () => {
+    this.isChanged = false;
     this.setState(
       {
         currentEntry: null,
@@ -548,10 +568,12 @@ class EntryContainer extends React.Component<Props, State> {
       true
     )
       .then(result => {
+        this.isChanged = false;
         this.setState({
           currentEntry: {
             ...this.state.currentEntry,
-            changed: false
+            editMode: false
+            // shouldReload: false
           }
         });
         this.props.showNotification(
@@ -651,21 +673,25 @@ class EntryContainer extends React.Component<Props, State> {
 
     this.setState(
       {
-        openedSplitSize,
+        // openedSplitSize,
         isPropertiesPanelVisible: true
       },
-      () => this.props.setEntryPropertiesSplitSize(openedSplitSize)
+      () => {
+        if (this.props.settings.entryPropertiesSplitSize === defaultSplitSize) {
+          this.props.setEntryPropertiesSplitSize(openedSplitSize);
+        }
+      }
     );
   };
 
   closePanel = () => {
     this.setState(
       {
-        openedSplitSize: defaultSplitSize,
-        entryPropertiesSplitSize: defaultSplitSize,
+        // openedSplitSize: defaultSplitSize,
+        // entryPropertiesSplitSize: defaultSplitSize,
         isPropertiesPanelVisible: false
-      },
-      () => this.props.setEntryPropertiesSplitSize(defaultSplitSize)
+      }
+      // ,() => this.props.setEntryPropertiesSplitSize(defaultSplitSize)
     );
   };
 
@@ -705,6 +731,39 @@ class EntryContainer extends React.Component<Props, State> {
     if (this.state.currentEntry) {
       this.props.openFileNatively(this.state.currentEntry.path);
     }
+  };
+
+  downloadCordova = (uri, filename) => {
+    const { Downloader } = window.plugins;
+
+    const downloadSuccessCallback = result => {
+      // result is an object
+      /* {
+        path: "file:///storage/sdcard0/documents/My Pdf.pdf", // Returns full file path
+        file: "My Pdf.pdf", // Returns Filename
+        folder: "documents" // Returns folder name
+      } */
+      console.log(result.file); // My Pdf.pdf
+    };
+
+    const downloadErrorCallback = error => {
+      console.log(error);
+    };
+
+    const options = {
+      title: 'Downloading File:' + filename, // Download Notification Title
+      url: uri, // File Url
+      path: filename, // The File Name with extension
+      description: 'The file is downloading', // Download description Notification String
+      visible: true, // This download is visible and shows in the notifications while in progress and after completion.
+      folder: 'documents' // Folder to save the downloaded file, if not exist it will be created
+    };
+
+    Downloader.download(
+      options,
+      downloadSuccessCallback,
+      downloadErrorCallback
+    );
   };
 
   renderFileToolbar = classes => (
@@ -754,7 +813,6 @@ class EntryContainer extends React.Component<Props, State> {
           aria-label={i18n.t('core:downloadFile')}
           onClick={() => {
             const { currentEntry } = this.state;
-            const downloadLink = document.getElementById('downloadFile');
             const entryName = `${baseName(
               currentEntry.path,
               PlatformIO.getDirSeparator()
@@ -764,27 +822,40 @@ class EntryContainer extends React.Component<Props, State> {
               PlatformIO.getDirSeparator()
             );
 
-            if (downloadLink) {
-              if (AppConfig.isWeb) {
-                const link = `${location.protocol}//${location.hostname}${
-                  location.port !== '' ? `:${location.port}` : ''
-                }/${currentEntry.path}`;
-                downloadLink.setAttribute('href', link);
+            if (AppConfig.isCordova) {
+              if (currentEntry.url) {
+                this.downloadCordova(currentEntry.url, entryName);
               } else {
-                downloadLink.setAttribute(
-                  'href',
-                  `file:///${currentEntry.path}`
+                console.log('Can only download HTTP/HTTPS URIs');
+                this.props.showNotification(
+                  i18n.t('core:cantDownloadLocalFile'),
+                  NotificationTypes.default
                 );
               }
+            } else {
+              const downloadLink = document.getElementById('downloadFile');
+              if (downloadLink) {
+                if (AppConfig.isWeb) {
+                  const link = `${location.protocol}//${location.hostname}${
+                    location.port !== '' ? `:${location.port}` : ''
+                  }/${currentEntry.path}`;
+                  downloadLink.setAttribute('href', link);
+                } else {
+                  downloadLink.setAttribute(
+                    'href',
+                    `file:///${currentEntry.path}`
+                  );
+                }
 
-              if (currentEntry.url) {
-                // mostly the s3 case
-                downloadLink.setAttribute('target', '_blank');
-                downloadLink.setAttribute('href', currentEntry.url);
+                if (currentEntry.url) {
+                  // mostly the s3 case
+                  downloadLink.setAttribute('target', '_blank');
+                  downloadLink.setAttribute('href', currentEntry.url);
+                }
+
+                downloadLink.setAttribute('download', fileName); // works only for same origin
+                downloadLink.click();
               }
-
-              downloadLink.setAttribute('download', fileName); // works only for same origin
-              downloadLink.click();
             }
           }}
         >
@@ -955,7 +1026,8 @@ class EntryContainer extends React.Component<Props, State> {
           ) +
           '&locale=' +
           i18n.language +
-          '&edit=true';
+          '&edit=true' +
+          (this.shouldReload ? '&t=' + new Date().getTime() : '');
         // } else if (!currentEntry.isFile) { // TODO needed for loading folder's default html
         //   fileOpenerURL = 'node_modules/@tagspaces/html-viewer/index.html?locale=' + i18n.language;
       } else {
@@ -966,8 +1038,10 @@ class EntryContainer extends React.Component<Props, State> {
             currentEntry.url ? currentEntry.url : currentEntry.path
           ) +
           '&locale=' +
-          i18n.language;
+          i18n.language +
+          (this.shouldReload ? '&t=' + new Date().getTime() : '');
       }
+      this.shouldReload = false;
 
       // if (!currentEntry.isFile) {
       //   fileOpenerURL = currentEntry.path + '/index.html';
@@ -1033,17 +1107,23 @@ class EntryContainer extends React.Component<Props, State> {
           content="File was modified, do you want to save the changes?"
           confirmCallback={result => {
             if (result) {
+              this.setState({
+                isSaveBeforeReloadConfirmDialogOpened: false
+              });
               this.startSavingFile();
+            } else {
+              this.isChanged = false;
+              this.shouldReload = true;
+              this.setState({
+                isSaveBeforeReloadConfirmDialogOpened: false,
+                currentEntry: {
+                  ...this.state.currentEntry,
+                  // shouldReload: true,
+                  editMode: false
+                  // changed: false
+                }
+              });
             }
-            this.setState({
-              isSaveBeforeReloadConfirmDialogOpened: false,
-              currentEntry: {
-                ...this.state.currentEntry,
-                shouldReload: true,
-                editMode: false,
-                changed: false
-              }
-            });
           }}
           cancelDialogTID="cancelSaveBeforeCloseDialog"
           confirmDialogTID="confirmSaveBeforeCloseDialog"
@@ -1099,9 +1179,11 @@ class EntryContainer extends React.Component<Props, State> {
           // maxSize={fullSplitSize}
           // defaultSize={this.state.entryPropertiesSplitSize}
           size={
-            currentEntry && currentEntry.isFile
-              ? this.state.entryPropertiesSplitSize
-              : '100%'
+            this.state.isPropertiesPanelVisible
+              ? currentEntry && currentEntry.isFile
+                ? this.props.settings.entryPropertiesSplitSize
+                : '100%'
+              : defaultSplitSize
           }
           minSize={
             currentEntry && currentEntry.isFile ? defaultSplitSize : '100%'
@@ -1109,15 +1191,20 @@ class EntryContainer extends React.Component<Props, State> {
           maxSize={currentEntry && currentEntry.isFile ? fullSplitSize : '100%'}
           defaultSize={
             currentEntry && currentEntry.isFile
-              ? this.state.entryPropertiesSplitSize
+              ? this.props.settings.entryPropertiesSplitSize
               : '100%'
           }
           onChange={size => {
-            this.setState({
-              isPropertiesPanelVisible: size > defaultSplitSize,
-              openedSplitSize: size,
-              entryPropertiesSplitSize: size
-            });
+            const isPropertiesPanelVisible = size > defaultSplitSize;
+            if (
+              this.state.isPropertiesPanelVisible !== isPropertiesPanelVisible
+            ) {
+              this.setState({
+                isPropertiesPanelVisible
+                // openedSplitSize: size,
+                // entryPropertiesSplitSize: size
+              });
+            }
             bufferedSplitResize(() =>
               this.props.setEntryPropertiesSplitSize(size)
             );
@@ -1145,7 +1232,7 @@ class EntryContainer extends React.Component<Props, State> {
                             PlatformIO.getDirSeparator()
                           )}
                       </div>
-                      {currentEntry.changed
+                      {this.isChanged // currentEntry.changed
                         ? String.fromCharCode(0x25cf) + ' '
                         : ''}
                       {fileTitle}
@@ -1201,15 +1288,6 @@ class EntryContainer extends React.Component<Props, State> {
                 )}
                 {this.state.editingSupported && !currentEntry.editMode && (
                   <div className={classes.entryCloseSection}>
-                    {/* <IconButton
-                      disabled={false}
-                      onClick={this.editFile}
-                      title={i18n.t('core:editFile')}
-                      aria-label={i18n.t('core:editFile')}
-                      data-tid="fileContainerEditFile"
-                    >
-                      <EditIcon />
-                    </IconButton> */}
                     <Button
                       disabled={false}
                       size="small"
@@ -1245,6 +1323,7 @@ class EntryContainer extends React.Component<Props, State> {
                   </div>
                 )}
               </div>
+
               <div className={classes.entryProperties}>
                 {currentEntry.isFile
                   ? this.renderFileToolbar(classes)
@@ -1255,7 +1334,7 @@ class EntryContainer extends React.Component<Props, State> {
                   setPropertiesEditMode={this.setPropertiesEditMode}
                   entryPath={currentEntry.path}
                   entryURL={currentEntry.url}
-                  shouldReload={currentEntry.shouldReload}
+                  shouldReload={this.shouldReload}
                   renameFile={this.props.renameFile}
                   renameDirectory={this.props.renameDirectory}
                   editTagForEntry={this.props.editTagForEntry}

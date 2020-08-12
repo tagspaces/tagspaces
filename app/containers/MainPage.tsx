@@ -321,11 +321,15 @@ class MainPage extends Component<Props, State> {
   };
 
   UNSAFE_componentWillMount() {
-    this.updateDimensions();
+    if (!AppConfig.isCordova) {
+      this.updateDimensions();
+    }
   }
 
   componentDidMount = () => {
-    window.addEventListener('resize', this.updateDimensions);
+    if (!AppConfig.isCordova) {
+      window.addEventListener('resize', this.updateDimensions);
+    }
     // this.setupDesktopMenu();
     buildDesktopMenu(this.props);
     buildTrayIconMenu(this.props);
@@ -396,7 +400,9 @@ class MainPage extends Component<Props, State> {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.updateDimensions);
+    if (!AppConfig.isCordova) {
+      window.removeEventListener('resize', this.updateDimensions);
+    }
   }
 
   updateDimensions = () => {

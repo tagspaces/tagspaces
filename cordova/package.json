@@ -1,7 +1,7 @@
 {
   "name": "org.tagspaces.mobile",
   "displayName": "TagSpaces",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A sample Apache Cordova application that responds to the deviceready event.",
   "main": "index.js",
   "scripts": {
@@ -10,6 +10,7 @@
   "author": "Apache Cordova Team",
   "license": "Apache-2.0",
   "dependencies": {
+    "bamboo.cordova.plugin.downloader": "git+https://github.com/sytolk/cordova-plugin-downloader.git",
     "cordova-android": "^7.1.4",
     "cordova-ios": "^5.1.1",
     "cordova-plugin-background-mode": "^0.7.3",
@@ -34,7 +35,8 @@
       "cordova-plugin-file-opener2": {
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
       },
-      "cordova-plugin-wkwebview-engine": {}
+      "cordova-plugin-wkwebview-engine": {},
+      "com.whebcraft.cordova.plugin.downloader": {}
     },
     "platforms": [
       "android",
