@@ -468,5 +468,6 @@
   "stopAll": "Stop all",
   "fileExist": "File with the same name already exist",
   "importMacTags": "Import macOS tags",
+  "cantDownloadLocalFile": "You can't download local files",
   "-": "-"
 }

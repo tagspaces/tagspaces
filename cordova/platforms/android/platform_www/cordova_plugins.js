@@ -243,6 +243,14 @@ module.exports = [
     "clobbers": [
       "cordova.plugins.fileOpener2"
     ]
+  },
+  {
+    "id": "com.whebcraft.cordova.plugin.downloader.Downloader",
+    "file": "plugins/com.whebcraft.cordova.plugin.downloader/www/Downloader.js",
+    "pluginId": "com.whebcraft.cordova.plugin.downloader",
+    "clobbers": [
+      "plugins.Downloader"
+    ]
   }
 ];
 module.exports.metadata = 
@@ -255,7 +263,8 @@ module.exports.metadata =
   "cordova-plugin-whitelist": "1.3.4",
   "es6-promise-plugin": "4.2.2",
   "cordova-plugin-x-socialsharing": "5.6.8",
-  "cordova-plugin-file-opener2": "3.0.3"
+  "cordova-plugin-file-opener2": "3.0.3",
+  "com.whebcraft.cordova.plugin.downloader": "0.1.0"
 };
 // BOTTOM OF METADATA
 });

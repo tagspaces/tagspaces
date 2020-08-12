@@ -10,6 +10,7 @@
   "author": "Apache Cordova Team",
   "license": "Apache-2.0",
   "dependencies": {
+    "bamboo.cordova.plugin.downloader": "git+https://github.com/sytolk/cordova-plugin-downloader.git",
     "cordova-android": "^7.1.4",
     "cordova-plugin-background-mode": "^0.7.3",
     "cordova-plugin-camera": "4.1.0",
@@ -31,7 +32,8 @@
       "cordova-plugin-file": {},
       "cordova-plugin-file-opener2": {
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
-      }
+      },
+      "com.whebcraft.cordova.plugin.downloader": {}
     },
     "platforms": [
       "android"

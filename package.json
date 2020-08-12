@@ -281,7 +281,7 @@
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
     "react-router-redux": "^5.0.0-alpha.6",
-    "react-split-pane": "^0.1.91",
+    "react-split-pane": "https://github.com/quarkw/react-split-pane",
     "react-swipeable-views": "0.13.3",
     "react-virtualized": "^9.21.1",
     "redux": "^3.7.2",
