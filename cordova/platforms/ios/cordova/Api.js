@@ -19,19 +19,27 @@
 
 /* jslint node: true */
 
-var fs = require('fs');
-var path = require('path');
-var unorm = require('unorm');
-var projectFile = require('./lib/projectFile');
-var check_reqs = require('./lib/check_reqs');
-var CordovaError = require('cordova-common').CordovaError;
-var CordovaLogger = require('cordova-common').CordovaLogger;
-var events = require('cordova-common').events;
-var PluginManager = require('cordova-common').PluginManager;
-var Q = require('q');
-var util = require('util');
-var xcode = require('xcode');
-var ConfigParser = require('cordova-common').ConfigParser;
+/**
+ * @todo update coho to update this line.
+ * @todo use `package.json` instead but first
+ *  figure out how this fit in with the platform-centered workflow structure.
+ *  This workflow would not have the `package.json` file.
+ */
+// Coho updates this line
+const VERSION = '6.1.0';
+
+const fs = require('fs-extra');
+const path = require('path');
+const unorm = require('unorm');
+const projectFile = require('./lib/projectFile');
+const check_reqs = require('./lib/check_reqs');
+const CordovaError = require('cordova-common').CordovaError;
+const CordovaLogger = require('cordova-common').CordovaLogger;
+const events = require('cordova-common').events;
+const PluginManager = require('cordova-common').PluginManager;
+const util = require('util');
+const xcode = require('xcode');
+const ConfigParser = require('cordova-common').ConfigParser;
 
 function setupEvents (externalEventEmitter) {
     if (externalEventEmitter) {
@@ -42,6 +50,10 @@ function setupEvents (externalEventEmitter) {
         // so attach a console logger
         CordovaLogger.get().subscribe(events);
     }
+}
+
+function getVariableSpec (spec, options) {
+    return spec.includes('$') ? options.cli_variables[spec.replace('$', '')] : spec;
 }
 
 /**
@@ -62,14 +74,13 @@ function Api (platform, platformRootDir, events) {
 
     setupEvents(events);
 
-    var xcodeProjDir;
-    var xcodeCordovaProj;
+    let xcodeProjDir;
+    let xcodeCordovaProj;
 
     try {
-
-        var xcodeProjDir_array = fs.readdirSync(this.root).filter(function (e) { return e.match(/\.xcodeproj$/i); });
+        const xcodeProjDir_array = fs.readdirSync(this.root).filter(e => e.match(/\.xcodeproj$/i));
         if (xcodeProjDir_array.length > 1) {
-            for (var x = 0; x < xcodeProjDir_array.length; x++) {
+            for (let x = 0; x < xcodeProjDir_array.length; x++) {
                 if (xcodeProjDir_array[x].substring(0, 2) === '._') {
                     xcodeProjDir_array.splice(x, 1);
                 }
@@ -78,13 +89,13 @@ function Api (platform, platformRootDir, events) {
         xcodeProjDir = xcodeProjDir_array[0];
 
         if (!xcodeProjDir) {
-            throw new CordovaError('The provided path "' + this.root + '" is not a Cordova iOS project.');
+            throw new CordovaError(`The provided path "${this.root}" is not a Cordova iOS project.`);
         }
 
-        var cordovaProjName = xcodeProjDir.substring(xcodeProjDir.lastIndexOf(path.sep) + 1, xcodeProjDir.indexOf('.xcodeproj'));
+        const cordovaProjName = xcodeProjDir.substring(xcodeProjDir.lastIndexOf(path.sep) + 1, xcodeProjDir.indexOf('.xcodeproj'));
         xcodeCordovaProj = path.join(this.root, cordovaProjName);
     } catch (e) {
-        throw new CordovaError('The provided path "' + this.root + '" is not a Cordova iOS project.');
+        throw new CordovaError(`The provided path "${this.root}" is not a Cordova iOS project.`);
     }
 
     this.locations = {
@@ -95,7 +106,7 @@ function Api (platform, platformRootDir, events) {
         defaultConfigXml: path.join(this.root, 'cordova/defaults.xml'),
         pbxproj: path.join(this.root, xcodeProjDir, 'project.pbxproj'),
         xcodeProjDir: path.join(this.root, xcodeProjDir),
-        xcodeCordovaProj: xcodeCordovaProj
+        xcodeCordovaProj
     };
 }
 
@@ -117,21 +128,21 @@ function Api (platform, platformRootDir, events) {
  * @return {Promise<PlatformApi>} Promise either fulfilled with PlatformApi
  *   instance or rejected with CordovaError.
  */
-Api.createPlatform = function (destination, config, options, events) {
+Api.createPlatform = (destination, config, options, events) => {
     setupEvents(events);
 
     // CB-6992 it is necessary to normalize characters
     // because node and shell scripts handles unicode symbols differently
     // We need to normalize the name to NFD form since iOS uses NFD unicode form
-    var name = unorm.nfd(config.name());
-    var result;
+    const name = unorm.nfd(config.name());
+    let result;
     try {
         result = require('../../../lib/create')
             .createProject(destination, config.getAttribute('ios-CFBundleIdentifier') || config.packageName(), name, options, config)
-            .then(function () {
+            .then(() => {
                 // after platform is created we return Api instance based on new Api.js location
                 // This is required to correctly resolve paths in the future api calls
-                var PlatformApi = require(path.resolve(destination, 'cordova/Api'));
+                const PlatformApi = require(path.resolve(destination, 'cordova/Api'));
                 return new PlatformApi('ios', destination, events);
             });
     } catch (e) {
@@ -157,15 +168,15 @@ Api.createPlatform = function (destination, config, options, events) {
  * @return {Promise<PlatformApi>} Promise either fulfilled with PlatformApi
  *   instance or rejected with CordovaError.
  */
-Api.updatePlatform = function (destination, options, events) {
+Api.updatePlatform = (destination, options, events) => {
     setupEvents(events);
 
-    var result;
+    let result;
     try {
         result = require('../../../lib/create')
             .updateProject(destination, options)
-            .then(function () {
-                var PlatformApi = require(path.resolve(destination, 'cordova/Api'));
+            .then(() => {
+                const PlatformApi = require(path.resolve(destination, 'cordova/Api'));
                 return new PlatformApi('ios', destination, events);
             });
     } catch (e) {
@@ -182,11 +193,11 @@ Api.updatePlatform = function (destination, options, events) {
  *   platform's file structure and other properties of platform.
  */
 Api.prototype.getPlatformInfo = function () {
-    var result = {};
+    const result = {};
     result.locations = this.locations;
     result.root = this.root;
     result.name = this.platform;
-    result.version = require('./version');
+    result.version = Api.version();
     result.projectConfig = new ConfigParser(this.locations.configXml);
 
     return result;
@@ -230,9 +241,7 @@ Api.prototype.prepare = function (cordovaProject) {
  *   CordovaError instance.
  */
 Api.prototype.addPlugin = function (plugin, installOptions) {
-
-    var xcodeproj = projectFile.parse(this.locations);
-    var self = this;
+    const xcodeproj = projectFile.parse(this.locations);
 
     installOptions = installOptions || {};
     installOptions.variables = installOptions.variables || {};
@@ -241,41 +250,36 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
         installOptions.variables.PACKAGE_NAME = xcodeproj.getPackageName();
     }
 
-    return PluginManager.get(self.platform, self.locations, xcodeproj)
+    return PluginManager.get(this.platform, this.locations, xcodeproj)
         .addPlugin(plugin, installOptions)
-        .then(function () {
+        .then(() => {
             if (plugin != null) {
-                var headerTags = plugin.getHeaderFiles(self.platform);
-                var bridgingHeaders = headerTags.filter(function (obj) {
-                    return (obj.type === 'BridgingHeader');
-                });
+                const headerTags = plugin.getHeaderFiles(this.platform);
+                const bridgingHeaders = headerTags.filter(obj => obj.type === 'BridgingHeader');
                 if (bridgingHeaders.length > 0) {
-                    var project_dir = self.locations.root;
-                    var project_name = self.locations.xcodeCordovaProj.split('/').pop();
-                    var BridgingHeader = require('./lib/BridgingHeader').BridgingHeader;
-                    var bridgingHeaderFile = new BridgingHeader(path.join(project_dir, project_name, 'Bridging-Header.h'));
+                    const project_dir = this.locations.root;
+                    const project_name = this.locations.xcodeCordovaProj.split('/').pop();
+                    const BridgingHeader = require('./lib/BridgingHeader').BridgingHeader;
+                    const bridgingHeaderFile = new BridgingHeader(path.join(project_dir, project_name, 'Bridging-Header.h'));
                     events.emit('verbose', 'Adding Bridging-Headers since the plugin contained <header-file> with type="BridgingHeader"');
-                    bridgingHeaders.forEach(function (obj) {
-                        var bridgingHeaderPath = path.basename(obj.src);
+                    bridgingHeaders.forEach(obj => {
+                        const bridgingHeaderPath = path.basename(obj.src);
                         bridgingHeaderFile.addHeader(plugin.id, bridgingHeaderPath);
                     });
                     bridgingHeaderFile.write();
                 }
             }
         })
-        .then(function () {
+        .then(() => {
             if (plugin != null) {
-                var podSpecs = plugin.getPodSpecs ? plugin.getPodSpecs(self.platform) : [];
-                var frameworkTags = plugin.getFrameworks(self.platform);
-                var frameworkPods = frameworkTags.filter(function (obj) {
-                    return (obj.type === 'podspec');
-                });
-                return self.addPodSpecs(plugin, podSpecs, frameworkPods);
+                const podSpecs = plugin.getPodSpecs ? plugin.getPodSpecs(this.platform) : [];
+                const frameworkTags = plugin.getFrameworks(this.platform);
+                const frameworkPods = frameworkTags.filter(obj => obj.type === 'podspec');
+                return this.addPodSpecs(plugin, podSpecs, frameworkPods, installOptions);
             }
         })
-        // CB-11022 return non-falsy value to indicate
-        // that there is no need to run prepare after
-        .thenResolve(true);
+        // CB-11022 Return truthy value to prevent running prepare after
+        .then(() => true);
 };
 
 /**
@@ -292,44 +296,38 @@ Api.prototype.addPlugin = function (plugin, installOptions) {
  *   CordovaError instance.
  */
 Api.prototype.removePlugin = function (plugin, uninstallOptions) {
-    var xcodeproj = projectFile.parse(this.locations);
-    var self = this;
+    const xcodeproj = projectFile.parse(this.locations);
 
-    return PluginManager.get(self.platform, self.locations, xcodeproj)
+    return PluginManager.get(this.platform, this.locations, xcodeproj)
         .removePlugin(plugin, uninstallOptions)
-        .then(function () {
+        .then(() => {
             if (plugin != null) {
-                var headerTags = plugin.getHeaderFiles(self.platform);
-                var bridgingHeaders = headerTags.filter(function (obj) {
-                    return (obj.type === 'BridgingHeader');
-                });
+                const headerTags = plugin.getHeaderFiles(this.platform);
+                const bridgingHeaders = headerTags.filter(obj => obj.type === 'BridgingHeader');
                 if (bridgingHeaders.length > 0) {
-                    var project_dir = self.locations.root;
-                    var project_name = self.locations.xcodeCordovaProj.split('/').pop();
-                    var BridgingHeader = require('./lib/BridgingHeader').BridgingHeader;
-                    var bridgingHeaderFile = new BridgingHeader(path.join(project_dir, project_name, 'Bridging-Header.h'));
+                    const project_dir = this.locations.root;
+                    const project_name = this.locations.xcodeCordovaProj.split('/').pop();
+                    const BridgingHeader = require('./lib/BridgingHeader').BridgingHeader;
+                    const bridgingHeaderFile = new BridgingHeader(path.join(project_dir, project_name, 'Bridging-Header.h'));
                     events.emit('verbose', 'Removing Bridging-Headers since the plugin contained <header-file> with type="BridgingHeader"');
-                    bridgingHeaders.forEach(function (obj) {
-                        var bridgingHeaderPath = path.basename(obj.src);
+                    bridgingHeaders.forEach(obj => {
+                        const bridgingHeaderPath = path.basename(obj.src);
                         bridgingHeaderFile.removeHeader(plugin.id, bridgingHeaderPath);
                     });
                     bridgingHeaderFile.write();
                 }
             }
         })
-        .then(function () {
+        .then(() => {
             if (plugin != null) {
-                var podSpecs = plugin.getPodSpecs ? plugin.getPodSpecs(self.platform) : [];
-                var frameworkTags = plugin.getFrameworks(self.platform);
-                var frameworkPods = frameworkTags.filter(function (obj) {
-                    return (obj.type === 'podspec');
-                });
-                return self.removePodSpecs(plugin, podSpecs, frameworkPods);
+                const podSpecs = plugin.getPodSpecs ? plugin.getPodSpecs(this.platform) : [];
+                const frameworkTags = plugin.getFrameworks(this.platform);
+                const frameworkPods = frameworkTags.filter(obj => obj.type === 'podspec');
+                return this.removePodSpecs(plugin, podSpecs, frameworkPods, uninstallOptions);
             }
         })
-        // CB-11022 return non-falsy value to indicate
-        // that there is no need to run prepare after
-        .thenResolve(true);
+        // CB-11022 Return truthy value to prevent running prepare after
+        .then(() => true);
 };
 
 /**
@@ -337,34 +335,32 @@ Api.prototype.removePlugin = function (plugin, uninstallOptions) {
  *
  * @param  {PluginInfo}  plugin  A PluginInfo instance that represents plugin
  *   that will be installed.
- * @param  {Object}  podSpecs: the return value of plugin.getPodSpecs(self.platform)
+ * @param  {Object}  podSpecs: the return value of plugin.getPodSpecs(this.platform)
  * @param  {Object}  frameworkPods: framework tags object with type === 'podspec'
  * @return  {Promise}  Return a promise
  */
 
-Api.prototype.addPodSpecs = function (plugin, podSpecs, frameworkPods) {
-    var self = this;
+Api.prototype.addPodSpecs = function (plugin, podSpecs, frameworkPods, installOptions) {
+    const project_dir = this.locations.root;
+    const project_name = this.locations.xcodeCordovaProj.split('/').pop();
+    const minDeploymentTarget = this.getPlatformInfo().projectConfig.getPreference('deployment-target', 'ios');
 
-    var project_dir = self.locations.root;
-    var project_name = self.locations.xcodeCordovaProj.split('/').pop();
-    var minDeploymentTarget = self.getPlatformInfo().projectConfig.getPreference('deployment-target', 'ios');
-
-    var Podfile = require('./lib/Podfile').Podfile;
-    var PodsJson = require('./lib/PodsJson').PodsJson;
-    var podsjsonFile = new PodsJson(path.join(project_dir, PodsJson.FILENAME));
-    var podfileFile = new Podfile(path.join(project_dir, Podfile.FILENAME), project_name, minDeploymentTarget);
+    const Podfile = require('./lib/Podfile').Podfile;
+    const PodsJson = require('./lib/PodsJson').PodsJson;
+    const podsjsonFile = new PodsJson(path.join(project_dir, PodsJson.FILENAME));
+    const podfileFile = new Podfile(path.join(project_dir, Podfile.FILENAME), project_name, minDeploymentTarget);
 
     if (podSpecs.length) {
         events.emit('verbose', 'Adding pods since the plugin contained <podspecs>');
-        podSpecs.forEach(function (obj) {
+        podSpecs.forEach(obj => {
             // declarations
-            Object.keys(obj.declarations).forEach(function (key) {
+            Object.keys(obj.declarations).forEach(key => {
                 if (obj.declarations[key] === 'true') {
-                    var declaration = Podfile.proofDeclaration(key);
-                    var podJson = {
-                        declaration: declaration
+                    const declaration = Podfile.proofDeclaration(key);
+                    const podJson = {
+                        declaration
                     };
-                    var val = podsjsonFile.getDeclaration(declaration);
+                    const val = podsjsonFile.getDeclaration(declaration);
                     if (val) {
                         podsjsonFile.incrementDeclaration(declaration);
                     } else {
@@ -375,11 +371,11 @@ Api.prototype.addPodSpecs = function (plugin, podSpecs, frameworkPods) {
                 }
             });
             // sources
-            Object.keys(obj.sources).forEach(function (key) {
-                var podJson = {
+            Object.keys(obj.sources).forEach(key => {
+                const podJson = {
                     source: obj.sources[key].source
                 };
-                var val = podsjsonFile.getSource(key);
+                const val = podsjsonFile.getSource(key);
                 if (val) {
                     podsjsonFile.incrementSource(key);
                 } else {
@@ -389,11 +385,14 @@ Api.prototype.addPodSpecs = function (plugin, podSpecs, frameworkPods) {
                 }
             });
             // libraries
-            Object.keys(obj.libraries).forEach(function (key) {
-                var podJson = Object.assign({}, obj.libraries[key]);
-                var val = podsjsonFile.getLibrary(key);
+            Object.keys(obj.libraries).forEach(key => {
+                const podJson = Object.assign({}, obj.libraries[key]);
+                if (podJson.spec) {
+                    podJson.spec = getVariableSpec(podJson.spec, installOptions);
+                }
+                const val = podsjsonFile.getLibrary(key);
                 if (val) {
-                    events.emit('warn', plugin.id + ' depends on ' + podJson.name + ', which may conflict with another plugin. ' + podJson.name + '@' + val.spec + ' is already installed and was not overwritten.');
+                    events.emit('warn', `${plugin.id} depends on ${podJson.name}, which may conflict with another plugin. ${podJson.name}@${val.spec} is already installed and was not overwritten.`);
                     podsjsonFile.incrementLibrary(key);
                 } else {
                     podJson.count = 1;
@@ -401,24 +400,24 @@ Api.prototype.addPodSpecs = function (plugin, podSpecs, frameworkPods) {
                     podfileFile.addSpec(podJson.name, podJson);
                 }
             });
-
         });
     }
 
     if (frameworkPods.length) {
         events.emit('warn', '"framework" tag with type "podspec" is deprecated and will be removed. Please use the "podspec" tag.');
         events.emit('verbose', 'Adding pods since the plugin contained <framework>(s) with type="podspec"');
-        frameworkPods.forEach(function (obj) {
-            var podJson = {
+        frameworkPods.forEach(obj => {
+            const spec = getVariableSpec(obj.spec, installOptions);
+            const podJson = {
                 name: obj.src,
                 type: obj.type,
-                spec: obj.spec
+                spec
             };
 
-            var val = podsjsonFile.getLibrary(podJson.name);
+            const val = podsjsonFile.getLibrary(podJson.name);
             if (val) { // found
                 if (podJson.spec !== val.spec) { // exists, different spec, print warning
-                    events.emit('warn', plugin.id + ' depends on ' + podJson.name + '@' + podJson.spec + ', which conflicts with another plugin. ' + podJson.name + '@' + val.spec + ' is already installed and was not overwritten.');
+                    events.emit('warn', `${plugin.id} depends on ${podJson.name}@${podJson.spec}, which conflicts with another plugin. ${podJson.name}@${val.spec} is already installed and was not overwritten.`);
                 }
                 // increment count, but don't add in Podfile because it already exists
                 podsjsonFile.incrementLibrary(podJson.name);
@@ -439,17 +438,15 @@ Api.prototype.addPodSpecs = function (plugin, podSpecs, frameworkPods) {
         if (podfileFile.isDirty()) {
             podfileFile.write();
             events.emit('verbose', 'Running `pod install` (to install plugins)');
-            projectFile.purgeProjectFileCache(self.locations.root);
+            projectFile.purgeProjectFileCache(this.locations.root);
 
             return podfileFile.install(check_reqs.check_cocoapods)
-                .then(function () {
-                    return self.setSwiftVersionForCocoaPodsLibraries(podsjsonFile);
-                });
+                .then(() => this.setSwiftVersionForCocoaPodsLibraries(podsjsonFile));
         } else {
             events.emit('verbose', 'Podfile unchanged, skipping `pod install`');
         }
     }
-    return Q.when();
+    return Promise.resolve();
 };
 
 /**
@@ -457,37 +454,35 @@ Api.prototype.addPodSpecs = function (plugin, podSpecs, frameworkPods) {
  *
  * @param  {PluginInfo}  plugin  A PluginInfo instance that represents plugin
  *   that will be installed.
- * @param  {Object}  podSpecs: the return value of plugin.getPodSpecs(self.platform)
+ * @param  {Object}  podSpecs: the return value of plugin.getPodSpecs(this.platform)
  * @param  {Object}  frameworkPods: framework tags object with type === 'podspec'
  * @return  {Promise}  Return a promise
  */
 
-Api.prototype.removePodSpecs = function (plugin, podSpecs, frameworkPods) {
-    var self = this;
+Api.prototype.removePodSpecs = function (plugin, podSpecs, frameworkPods, uninstallOptions) {
+    const project_dir = this.locations.root;
+    const project_name = this.locations.xcodeCordovaProj.split('/').pop();
 
-    var project_dir = self.locations.root;
-    var project_name = self.locations.xcodeCordovaProj.split('/').pop();
-
-    var Podfile = require('./lib/Podfile').Podfile;
-    var PodsJson = require('./lib/PodsJson').PodsJson;
-    var podsjsonFile = new PodsJson(path.join(project_dir, PodsJson.FILENAME));
-    var podfileFile = new Podfile(path.join(project_dir, Podfile.FILENAME), project_name);
+    const Podfile = require('./lib/Podfile').Podfile;
+    const PodsJson = require('./lib/PodsJson').PodsJson;
+    const podsjsonFile = new PodsJson(path.join(project_dir, PodsJson.FILENAME));
+    const podfileFile = new Podfile(path.join(project_dir, Podfile.FILENAME), project_name);
 
     if (podSpecs.length) {
         events.emit('verbose', 'Adding pods since the plugin contained <podspecs>');
-        podSpecs.forEach(function (obj) {
+        podSpecs.forEach(obj => {
             // declarations
-            Object.keys(obj.declarations).forEach(function (key) {
+            Object.keys(obj.declarations).forEach(key => {
                 if (obj.declarations[key] === 'true') {
-                    var declaration = Podfile.proofDeclaration(key);
-                    var podJson = {
-                        declaration: declaration
+                    const declaration = Podfile.proofDeclaration(key);
+                    const podJson = {
+                        declaration
                     };
-                    var val = podsjsonFile.getDeclaration(declaration);
+                    const val = podsjsonFile.getDeclaration(declaration);
                     if (val) {
                         podsjsonFile.decrementDeclaration(declaration);
                     } else {
-                        var message = util.format('plugin \"%s\" declaration \"%s\" does not seem to be in pods.json, nothing to remove. Will attempt to remove from Podfile.', plugin.id, podJson.declaration); /* eslint no-useless-escape : 0 */
+                        const message = util.format('plugin \"%s\" declaration \"%s\" does not seem to be in pods.json, nothing to remove. Will attempt to remove from Podfile.', plugin.id, podJson.declaration); /* eslint no-useless-escape : 0 */
                         events.emit('verbose', message);
                     }
                     if (!val || val.count === 0) {
@@ -496,15 +491,15 @@ Api.prototype.removePodSpecs = function (plugin, podSpecs, frameworkPods) {
                 }
             });
             // sources
-            Object.keys(obj.sources).forEach(function (key) {
-                var podJson = {
+            Object.keys(obj.sources).forEach(key => {
+                const podJson = {
                     source: obj.sources[key].source
                 };
-                var val = podsjsonFile.getSource(key);
+                const val = podsjsonFile.getSource(key);
                 if (val) {
                     podsjsonFile.decrementSource(key);
                 } else {
-                    var message = util.format('plugin \"%s\" source \"%s\" does not seem to be in pods.json, nothing to remove. Will attempt to remove from Podfile.', plugin.id, podJson.source); /* eslint no-useless-escape : 0 */
+                    const message = util.format('plugin \"%s\" source \"%s\" does not seem to be in pods.json, nothing to remove. Will attempt to remove from Podfile.', plugin.id, podJson.source); /* eslint no-useless-escape : 0 */
                     events.emit('verbose', message);
                 }
                 if (!val || val.count === 0) {
@@ -512,38 +507,41 @@ Api.prototype.removePodSpecs = function (plugin, podSpecs, frameworkPods) {
                 }
             });
             // libraries
-            Object.keys(obj.libraries).forEach(function (key) {
-                var podJson = Object.assign({}, obj.libraries[key]);
-                var val = podsjsonFile.getLibrary(key);
+            Object.keys(obj.libraries).forEach(key => {
+                const podJson = Object.assign({}, obj.libraries[key]);
+                if (podJson.spec) {
+                    podJson.spec = getVariableSpec(podJson.spec, uninstallOptions);
+                }
+                const val = podsjsonFile.getLibrary(key);
                 if (val) {
                     podsjsonFile.decrementLibrary(key);
                 } else {
-                    var message = util.format('plugin \"%s\" podspec \"%s\" does not seem to be in pods.json, nothing to remove. Will attempt to remove from Podfile.', plugin.id, podJson.name); /* eslint no-useless-escape : 0 */
+                    const message = util.format('plugin \"%s\" podspec \"%s\" does not seem to be in pods.json, nothing to remove. Will attempt to remove from Podfile.', plugin.id, podJson.name); /* eslint no-useless-escape : 0 */
                     events.emit('verbose', message);
                 }
                 if (!val || val.count === 0) {
                     podfileFile.removeSpec(podJson.name);
                 }
             });
-
         });
     }
 
     if (frameworkPods.length) {
         events.emit('warn', '"framework" tag with type "podspec" is deprecated and will be removed. Please use the "podspec" tag.');
         events.emit('verbose', 'Adding pods since the plugin contained <framework>(s) with type=\"podspec\"'); /* eslint no-useless-escape : 0 */
-        frameworkPods.forEach(function (obj) {
-            var podJson = {
+        frameworkPods.forEach(obj => {
+            const spec = getVariableSpec(obj.spec, uninstallOptions);
+            const podJson = {
                 name: obj.src,
                 type: obj.type,
-                spec: obj.spec
+                spec
             };
 
-            var val = podsjsonFile.getLibrary(podJson.name);
+            const val = podsjsonFile.getLibrary(podJson.name);
             if (val) { // found, decrement count
                 podsjsonFile.decrementLibrary(podJson.name);
             } else { // not found (perhaps a sync error)
-                var message = util.format('plugin \"%s\" podspec \"%s\" does not seem to be in pods.json, nothing to remove. Will attempt to remove from Podfile.', plugin.id, podJson.name); /* eslint no-useless-escape : 0 */
+                const message = util.format('plugin \"%s\" podspec \"%s\" does not seem to be in pods.json, nothing to remove. Will attempt to remove from Podfile.', plugin.id, podJson.name); /* eslint no-useless-escape : 0 */
                 events.emit('verbose', message);
             }
 
@@ -561,14 +559,12 @@ Api.prototype.removePodSpecs = function (plugin, podSpecs, frameworkPods) {
             events.emit('verbose', 'Running `pod install` (to uninstall pods)');
 
             return podfileFile.install(check_reqs.check_cocoapods)
-                .then(function () {
-                    return self.setSwiftVersionForCocoaPodsLibraries(podsjsonFile);
-                });
+                .then(() => this.setSwiftVersionForCocoaPodsLibraries(podsjsonFile));
         } else {
             events.emit('verbose', 'Podfile unchanged, skipping `pod install`');
         }
     }
-    return Q.when();
+    return Promise.resolve();
 };
 
 /**
@@ -578,42 +574,36 @@ Api.prototype.removePodSpecs = function (plugin, podSpecs, frameworkPods) {
  */
 
 Api.prototype.setSwiftVersionForCocoaPodsLibraries = function (podsjsonFile) {
-    var self = this;
-    var __dirty = false;
-    return check_reqs.check_cocoapods().then(function (toolOptions) {
+    let __dirty = false;
+    return check_reqs.check_cocoapods().then(toolOptions => {
         if (toolOptions.ignore) {
             events.emit('verbose', '=== skip Swift Version Settings For Cocoapods Libraries');
         } else {
-            var podPbxPath = path.join(self.root, 'Pods', 'Pods.xcodeproj', 'project.pbxproj');
-            var podXcodeproj = xcode.project(podPbxPath);
+            const podPbxPath = path.join(this.root, 'Pods', 'Pods.xcodeproj', 'project.pbxproj');
+            const podXcodeproj = xcode.project(podPbxPath);
             podXcodeproj.parseSync();
-            var podTargets = podXcodeproj.pbxNativeTargetSection();
-            var podConfigurationList = podXcodeproj.pbxXCConfigurationList();
-            var podConfigs = podXcodeproj.pbxXCBuildConfigurationSection();
+            const podTargets = podXcodeproj.pbxNativeTargetSection();
+            const podConfigurationList = podXcodeproj.pbxXCConfigurationList();
+            const podConfigs = podXcodeproj.pbxXCBuildConfigurationSection();
 
-            var libraries = podsjsonFile.getLibraries();
-            Object.keys(libraries).forEach(function (key) {
-                var podJson = libraries[key];
-                var name = podJson.name;
-                var swiftVersion = podJson['swift-version'];
+            const libraries = podsjsonFile.getLibraries();
+            Object.keys(libraries).forEach(key => {
+                const podJson = libraries[key];
+                const name = podJson.name;
+                const swiftVersion = podJson['swift-version'];
                 if (swiftVersion) {
                     __dirty = true;
-                    Object.keys(podTargets).filter(function (targetKey) {
-                        return podTargets[targetKey].productName === name;
-                    }).map(function (targetKey) {
-                        return podTargets[targetKey].buildConfigurationList;
-                    }).map(function (buildConfigurationListId) {
-                        return podConfigurationList[buildConfigurationListId];
-                    }).map(function (buildConfigurationList) {
-                        return buildConfigurationList.buildConfigurations;
-                    }).reduce(function (acc, buildConfigurations) {
-                        return acc.concat(buildConfigurations);
-                    }, []).map(function (buildConfiguration) {
-                        return buildConfiguration.value;
-                    }).forEach(function (buildId) {
-                        __dirty = true;
-                        podConfigs[buildId].buildSettings['SWIFT_VERSION'] = swiftVersion;
-                    });
+                    Object.keys(podTargets)
+                        .filter(targetKey => podTargets[targetKey].productName === name)
+                        .map(targetKey => podTargets[targetKey].buildConfigurationList)
+                        .map(buildConfigurationListId => podConfigurationList[buildConfigurationListId])
+                        .map(buildConfigurationList => buildConfigurationList.buildConfigurations)
+                        .reduce((acc, buildConfigurations) => acc.concat(buildConfigurations), [])
+                        .map(buildConfiguration => buildConfiguration.value)
+                        .forEach(buildId => {
+                            __dirty = true;
+                            podConfigs[buildId].buildSettings.SWIFT_VERSION = swiftVersion;
+                        });
                 }
             });
             if (__dirty) {
@@ -656,11 +646,8 @@ Api.prototype.setSwiftVersionForCocoaPodsLibraries = function (podsjsonFile) {
  *   CordovaError instance.
  */
 Api.prototype.build = function (buildOptions) {
-    var self = this;
     return check_reqs.run()
-        .then(function () {
-            return require('./lib/build').run.call(self, buildOptions);
-        });
+        .then(() => require('./lib/build').run.call(this, buildOptions));
 };
 
 /**
@@ -676,11 +663,8 @@ Api.prototype.build = function (buildOptions) {
  *   successfully, or rejected with CordovaError.
  */
 Api.prototype.run = function (runOptions) {
-    var self = this;
     return check_reqs.run()
-        .then(function () {
-            return require('./lib/run').run.call(self, runOptions);
-        });
+        .then(() => require('./lib/run').run.call(this, runOptions));
 };
 
 /**
@@ -690,14 +674,9 @@ Api.prototype.run = function (runOptions) {
  *   CordovaError.
  */
 Api.prototype.clean = function (cleanOptions) {
-    var self = this;
     return check_reqs.run()
-        .then(function () {
-            return require('./lib/clean').run.call(self, cleanOptions);
-        })
-        .then(function () {
-            return require('./lib/prepare').clean.call(self, cleanOptions);
-        });
+        .then(() => require('./lib/clean').run.call(this, cleanOptions))
+        .then(() => require('./lib/prepare').clean.call(this, cleanOptions));
 };
 
 /**
@@ -710,6 +689,10 @@ Api.prototype.clean = function (cleanOptions) {
  */
 Api.prototype.requirements = function () {
     return check_reqs.check_all();
+};
+
+Api.version = function () {
+    return VERSION;
 };
 
 module.exports = Api;

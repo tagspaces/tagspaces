@@ -47,11 +47,11 @@ public class CordovaPreferences {
     public void set(String name, int value) {
         set(name, "" + value);
     }
-    
+
     public void set(String name, double value) {
         set(name, "" + value);
     }
-    
+
     public Map<String, String> getAll() {
         return prefs;
     }

@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /*
        Licensed to the Apache Software Foundation (ASF) under one
        or more contributor license agreements.  See the NOTICE file
@@ -19,12 +17,11 @@
        under the License.
 */
 
-var Q = require('q');
+const execa = require('execa');
 var build = require('./build');
 var path = require('path');
 var Adb = require('./Adb');
 var AndroidManifest = require('./AndroidManifest');
-var spawn = require('cordova-common').superspawn.spawn;
 var CordovaError = require('cordova-common').CordovaError;
 var events = require('cordova-common').events;
 
@@ -38,7 +35,7 @@ module.exports.list = function (lookHarder) {
             // adb kill-server doesn't seem to do the trick.
             // Could probably find a x-platform version of killall, but I'm not actually
             // sure that this scenario even happens on non-OSX machines.
-            return spawn('killall', ['adb']).then(function () {
+            return execa('killall', ['adb']).then(function () {
                 events.emit('verbose', 'Restarting adb to see if more devices are detected.');
                 return Adb.devices();
             }, function () {
@@ -53,13 +50,13 @@ module.exports.list = function (lookHarder) {
 module.exports.resolveTarget = function (target) {
     return this.list(true).then(function (device_list) {
         if (!device_list || !device_list.length) {
-            return Q.reject(new CordovaError('Failed to deploy to device, no devices found.'));
+            return Promise.reject(new CordovaError('Failed to deploy to device, no devices found.'));
         }
         // default device
         target = target || device_list[0];
 
         if (device_list.indexOf(target) < 0) {
-            return Q.reject('ERROR: Unable to find target \'' + target + '\'.');
+            return Promise.reject(new CordovaError('ERROR: Unable to find target \'' + target + '\'.'));
         }
 
         return build.detectArchitecture(target).then(function (arch) {
@@ -74,7 +71,7 @@ module.exports.resolveTarget = function (target) {
  * Returns a promise.
  */
 module.exports.install = function (target, buildResults) {
-    return Q().then(function () {
+    return Promise.resolve().then(function () {
         if (target && typeof target === 'object') {
             return target;
         }
@@ -87,7 +84,7 @@ module.exports.install = function (target, buildResults) {
         events.emit('log', 'Using apk: ' + apk_path);
         events.emit('log', 'Package name: ' + pkgName);
 
-        return Adb.install(resolvedTarget.target, apk_path, {replace: true}).catch(function (error) {
+        return Adb.install(resolvedTarget.target, apk_path, { replace: true }).catch(function (error) {
             // CB-9557 CB-10157 only uninstall and reinstall app if the one that
             // is already installed on device was signed w/different certificate
             if (!/INSTALL_PARSE_FAILED_INCONSISTENT_CERTIFICATES/.test(error.toString())) { throw error; }
@@ -98,7 +95,7 @@ module.exports.install = function (target, buildResults) {
             // This promise is always resolved, even if 'adb uninstall' fails to uninstall app
             // or the app doesn't installed at all, so no error catching needed.
             return Adb.uninstall(resolvedTarget.target, pkgName).then(function () {
-                return Adb.install(resolvedTarget.target, apk_path, {replace: true});
+                return Adb.install(resolvedTarget.target, apk_path, { replace: true });
             });
         }).then(function () {
             // unlock screen

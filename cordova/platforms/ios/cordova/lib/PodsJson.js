@@ -17,11 +17,11 @@
        under the License.
 */
 
-var fs = require('fs');
-var path = require('path');
-var util = require('util');
-var events = require('cordova-common').events;
-var CordovaError = require('cordova-common').CordovaError;
+const fs = require('fs-extra');
+const path = require('path');
+const util = require('util');
+const events = require('cordova-common').events;
+const CordovaError = require('cordova-common').CordovaError;
 
 PodsJson.FILENAME = 'pods.json';
 PodsJson.LIBRARY = 'libraries';
@@ -33,7 +33,7 @@ function PodsJson (podsJsonPath) {
     this.contents = null;
     this.__dirty = false;
 
-    var filename = this.path.split(path.sep).pop();
+    const filename = this.path.split(path.sep).pop();
     if (filename !== PodsJson.FILENAME) {
         throw new CordovaError(util.format('PodsJson: The file at %s is not `%s`.', this.path, PodsJson.FILENAME));
     }
@@ -46,7 +46,7 @@ function PodsJson (podsJsonPath) {
     } else {
         events.emit('verbose', 'pods.json found in platforms/ios');
         // load contents
-        var contents = fs.readFileSync(this.path, 'utf8');
+        const contents = fs.readFileSync(this.path, 'utf8');
         this.contents = JSON.parse(contents);
     }
     this.__updateFormatIfNecessary();
@@ -138,7 +138,7 @@ PodsJson.prototype.write = function () {
 };
 
 PodsJson.prototype.__increment = function (kind, name) {
-    var val = this.__get(kind, name);
+    const val = this.__get(kind, name);
     if (val) {
         val.count++;
     }
@@ -157,7 +157,7 @@ PodsJson.prototype.incrementDeclaration = function (name) {
 };
 
 PodsJson.prototype.__decrement = function (kind, name) {
-    var val = this.__get(kind, name);
+    const val = this.__get(kind, name);
     if (val) {
         val.count--;
         if (val.count <= 0) {

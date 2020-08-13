@@ -46,7 +46,15 @@
 - (void)parserDidStartDocument:(NSXMLParser*)parser
 {
     // file: url <allow-navigations> are added by default
-    self.allowNavigations = [[NSMutableArray alloc] initWithArray:@[ @"file://" ]];
+    // navigation to the scheme used by the app is also allowed
+    self.allowNavigations = [[NSMutableArray alloc] initWithArray:@[ @"file://"]];
+
+    // If the custom app scheme is defined, append it to the allow navigation as default
+    NSString* scheme = ((CDVViewController*)self.viewController).appScheme;
+    if (scheme) {
+        [self.allowNavigations addObject: [NSString stringWithFormat:@"%@://", scheme]];
+    }
+
     // no intents are added by default
     self.allowIntents = [[NSMutableArray alloc] init];
 }
@@ -95,21 +103,15 @@
     return [[self class] filterUrl:url intentsWhitelist:self.allowIntentsWhitelist navigationsWhitelist:self.allowNavigationsWhitelist];
 }
 
-#if WK_WEB_VIEW_ONLY
 #define CDVWebViewNavigationTypeLinkClicked 0
-#define CDVWebViewNavigationTypeOther 5
-#else
-#define CDVWebViewNavigationTypeLinkClicked UIWebViewNavigationTypeLinkClicked
-#define CDVWebViewNavigationTypeOther UIWebViewNavigationTypeOther
-#endif
+#define CDVWebViewNavigationTypeLinkOther -1
 
 + (BOOL)shouldOpenURLRequest:(NSURLRequest*)request navigationType:(CDVWebViewNavigationType)navigationType
 {
-    return (CDVWebViewNavigationTypeLinkClicked == navigationType ||
-        (CDVWebViewNavigationTypeOther == navigationType &&
-         [[request.mainDocumentURL absoluteString] isEqualToString:[request.URL absoluteString]]
-         )
-        );
+    return (
+        navigationType == CDVWebViewNavigationTypeLinkClicked ||
+        navigationType == CDVWebViewNavigationTypeLinkOther
+    );
 }
 
 + (BOOL)shouldOverrideLoadWithRequest:(NSURLRequest*)request navigationType:(CDVWebViewNavigationType)navigationType filterValue:(CDVIntentAndNavigationFilterValue)filterValue
@@ -123,8 +125,7 @@
         case CDVIntentAndNavigationFilterValueNavigationAllowed:
             return YES;
         case CDVIntentAndNavigationFilterValueIntentAllowed:
-            // only allow-intent if it's a UIWebViewNavigationTypeLinkClicked (anchor tag) OR
-            // it's a UIWebViewNavigationTypeOther, and it's an internal link
+            // only allow-intent if it's a CDVWebViewNavigationTypeLinkClicked (anchor tag) or CDVWebViewNavigationTypeOther and it's an internal link
             if ([[self class] shouldOpenURLRequest:request navigationType:navigationType]){
                 [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
             }

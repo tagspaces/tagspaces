@@ -20,11 +20,11 @@
 */
 
 var Api = require('./Api');
-var path  = require('path');
+var path = require('path');
 var nopt = require('nopt');
 
 // Support basic help commands
-if(['--help', '/?', '-h', 'help', '-help', '/help'].indexOf(process.argv[2]) >= 0) {
+if (['--help', '/?', '-h', 'help', '-help', '/help'].indexOf(process.argv[2]) >= 0) {
     console.log('Usage: ' + path.relative(process.cwd(), process.argv[1]));
     console.log('Cleans the project directory.');
     process.exit(0);
@@ -32,9 +32,9 @@ if(['--help', '/?', '-h', 'help', '-help', '/help'].indexOf(process.argv[2]) >= 
 
 // Do some basic argument parsing
 var opts = nopt({
-    'verbose' : Boolean,
-    'silent' : Boolean
-}, { 'd' : '--verbose' });
+    verbose: Boolean,
+    silent: Boolean
+}, { d: '--verbose' });
 
 // Make buildOptions compatible with PlatformApi clean method spec
 opts.argv = opts.argv.original;
@@ -45,7 +45,7 @@ opts.noPrepare = true;
 require('./loggingHelper').adjustLoggerLevel(opts);
 
 new Api().clean(opts)
-.catch(function(err) {
-    console.error(err.stack);
-    process.exit(2);
-});
+    .catch(function (err) {
+        console.error(err.stack);
+        process.exit(2);
+    });

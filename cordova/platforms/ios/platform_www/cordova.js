@@ -1,5 +1,5 @@
 // Platform: ios
-// 9c79667cd175f51fd2edf2dc91ac8be98b89076a
+// 538a985db128858c0a0eb4dd40fb9c8e5433fc94
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -19,7 +19,7 @@
  under the License.
 */
 ;(function() {
-var PLATFORM_VERSION_BUILD_LABEL = '5.1.1';
+var PLATFORM_VERSION_BUILD_LABEL = '6.1.0';
 // file: src/scripts/require.js
 var require;
 var define;
@@ -50,10 +50,10 @@ var define;
 
     require = function (id) {
         if (!modules[id]) {
-            throw 'module ' + id + ' not found';
+            throw new Error('module ' + id + ' not found');
         } else if (id in inProgressModules) {
             var cycle = requireStack.slice(inProgressModules[id]).join('->') + '->' + id;
-            throw 'Cycle in require graph: ' + cycle;
+            throw new Error('Cycle in require graph: ' + cycle);
         }
         if (modules[id].factory) {
             try {
@@ -70,7 +70,7 @@ var define;
 
     define = function (id, factory) {
         if (Object.prototype.hasOwnProperty.call(modules, id)) {
-            throw 'module ' + id + ' already defined';
+            throw new Error('module ' + id + ' already defined');
         }
 
         modules[id] = {
@@ -162,7 +162,7 @@ function createEvent (type, data) {
     event.initEvent(type, false, false);
     if (data) {
         for (var i in data) {
-            if (data.hasOwnProperty(i)) {
+            if (Object.prototype.hasOwnProperty.call(data, i)) {
                 event[i] = data[i];
             }
         }
@@ -310,9 +310,7 @@ var cordova = {
             }
         } catch (err) {
             var msg = 'Error in ' + (isSuccess ? 'Success' : 'Error') + ' callbackId: ' + callbackId + ' : ' + err;
-            console && console.log && console.log(msg);
-            console && console.log && err.stack && console.log(err.stack);
-            cordova.fireWindowEvent('cordovacallbackerror', { 'message': msg });
+            cordova.fireWindowEvent('cordovacallbackerror', { message: msg, error: err });
             throw err;
         }
     },
@@ -340,12 +338,12 @@ var utils = require('cordova/utils');
 var moduleExports = module.exports;
 
 var typeMap = {
-    'A': 'Array',
-    'D': 'Date',
-    'N': 'Number',
-    'S': 'String',
-    'F': 'Function',
-    'O': 'Object'
+    A: 'Array',
+    D: 'Date',
+    N: 'Number',
+    S: 'String',
+    F: 'Function',
+    O: 'Object'
 };
 
 function extractParamName (callee, argIndex) {
@@ -498,7 +496,7 @@ var utils = require('cordova/utils');
 
 function each (objects, func, context) {
     for (var prop in objects) {
-        if (objects.hasOwnProperty(prop)) {
+        if (Object.prototype.hasOwnProperty.call(objects, prop)) {
             func.apply(context, [objects[prop], prop]);
         }
     }
@@ -578,7 +576,7 @@ function include (parent, objects, clobber, merge) {
  */
 function recursiveMerge (target, src) {
     for (var prop in src) {
-        if (src.hasOwnProperty(prop)) {
+        if (Object.prototype.hasOwnProperty.call(src, prop)) {
             if (target.prototype && target.prototype.constructor === target) {
                 // If the target object is a constructor override off prototype.
                 clobber(target.prototype, prop, src[prop]);
@@ -871,19 +869,13 @@ module.exports = channel;
 // file: ../cordova-ios/cordova-js-src/exec.js
 define("cordova/exec", function(require, exports, module) {
 
-/* global require, module, atob, document */
-
 /**
- * Creates a gap bridge iframe used to notify the native code about queued
+ * Creates the exec bridge used to notify the native code of
  * commands.
  */
 var cordova = require('cordova');
 var utils = require('cordova/utils');
 var base64 = require('cordova/base64');
-var execIframe;
-var commandQueue = []; // Contains pending JS->Native messages.
-var isInContextOfEvalJs = 0;
-var failSafeTimerId = 0;
 
 function massageArgsJsToNative (args) {
     if (!args || utils.typeName(args) !== 'Array') {
@@ -893,8 +885,8 @@ function massageArgsJsToNative (args) {
     args.forEach(function (arg, i) {
         if (utils.typeName(arg) === 'ArrayBuffer') {
             ret.push({
-                'CDVType': 'ArrayBuffer',
-                'data': base64.fromArrayBuffer(arg)
+                CDVType: 'ArrayBuffer',
+                data: base64.fromArrayBuffer(arg)
             });
         } else {
             ret.push(arg);
@@ -913,7 +905,7 @@ function massageMessageNativeToJs (message) {
             return ret.buffer;
         };
         var base64ToArrayBuffer = function (b64) {
-            return stringToArrayBuffer(atob(b64));
+            return stringToArrayBuffer(atob(b64)); // eslint-disable-line no-undef
         };
         message = base64ToArrayBuffer(message.data);
     }
@@ -922,7 +914,7 @@ function massageMessageNativeToJs (message) {
 
 function convertMessageToArgsNativeToJs (message) {
     var args = [];
-    if (!message || !message.hasOwnProperty('CDVType')) {
+    if (!message || !Object.prototype.hasOwnProperty.call(message, 'CDVType')) {
         args.push(message);
     } else if (message.CDVType === 'MultiPart') {
         message.messages.forEach(function (e) {
@@ -934,8 +926,7 @@ function convertMessageToArgsNativeToJs (message) {
     return args;
 }
 
-function iOSExec () {
-
+var iOSExec = function () {
     var successCallback, failCallback, service, action, actionArgs;
     var callbackId = null;
     if (typeof arguments[0] !== 'string') {
@@ -952,9 +943,8 @@ function iOSExec () {
         // an invalid callbackId and passes it even if no callbacks were given.
         callbackId = 'INVALID';
     } else {
-        throw new Error('The old format of this exec call has been removed (deprecated since 2.1). Change to: ' +
-            'cordova.exec(null, null, \'Service\', \'action\', [ arg1, arg2 ]);'
-        );
+   	    throw new Error('The old format of this exec call has been removed (deprecated since 2.1). Change to: ' + // eslint-disable-line
+            'cordova.exec(null, null, \'Service\', \'action\', [ arg1, arg2 ]);');
     }
 
     // If actionArgs is not provided, default to an empty array
@@ -970,120 +960,25 @@ function iOSExec () {
 
     actionArgs = massageArgsJsToNative(actionArgs);
 
-    var command = [callbackId, service, action, actionArgs];
-
-    // Stringify and queue the command. We stringify to command now to
-    // effectively clone the command arguments in case they are mutated before
-    // the command is executed.
-    commandQueue.push(JSON.stringify(command));
-
-    // If we're in the context of a stringByEvaluatingJavaScriptFromString call,
-    // then the queue will be flushed when it returns; no need for a poke.
-    // Also, if there is already a command in the queue, then we've already
-    // poked the native side, so there is no reason to do so again.
-    if (!isInContextOfEvalJs && commandQueue.length === 1) {
-        pokeNative();
-    }
-}
-
-// CB-10530
-function proxyChanged () {
-    var cexec = cordovaExec();
-
-    return (execProxy !== cexec && // proxy objects are different
-            iOSExec !== cexec // proxy object is not the current iOSExec
-    );
-}
-
-// CB-10106
-function handleBridgeChange () {
-    if (proxyChanged()) {
-        var commandString = commandQueue.shift();
-        while (commandString) {
-            var command = JSON.parse(commandString);
-            var callbackId = command[0];
-            var service = command[1];
-            var action = command[2];
-            var actionArgs = command[3];
-            var callbacks = cordova.callbacks[callbackId] || {};
-
-            execProxy(callbacks.success, callbacks.fail, service, action, actionArgs);
-
-            commandString = commandQueue.shift();
-        }
-        return true;
-    }
-
-    return false;
-}
-
-function pokeNative () {
-    // CB-5488 - Don't attempt to create iframe before document.body is available.
-    if (!document.body) {
-        setTimeout(pokeNative);
-        return;
-    }
-
-    // Check if they've removed it from the DOM, and put it back if so.
-    if (execIframe && execIframe.contentWindow) {
-        execIframe.contentWindow.location = 'gap://ready';
-    } else {
-        execIframe = document.createElement('iframe');
-        execIframe.style.display = 'none';
-        execIframe.src = 'gap://ready';
-        document.body.appendChild(execIframe);
-    }
-    // Use a timer to protect against iframe being unloaded during the poke (CB-7735).
-    // This makes the bridge ~ 7% slower, but works around the poke getting lost
-    // when the iframe is removed from the DOM.
-    // An onunload listener could be used in the case where the iframe has just been
-    // created, but since unload events fire only once, it doesn't work in the normal
-    // case of iframe reuse (where unload will have already fired due to the attempted
-    // navigation of the page).
-    failSafeTimerId = setTimeout(function () {
-        if (commandQueue.length) {
-            // CB-10106 - flush the queue on bridge change
-            if (!handleBridgeChange()) {
-                pokeNative();
-            }
-        }
-    }, 50); // Making this > 0 improves performance (marginally) in the normal case (where it doesn't fire).
-}
-
-iOSExec.nativeFetchMessages = function () {
-    // Stop listing for window detatch once native side confirms poke.
-    if (failSafeTimerId) {
-        clearTimeout(failSafeTimerId);
-        failSafeTimerId = 0;
-    }
-    // Each entry in commandQueue is a JSON string already.
-    if (!commandQueue.length) {
-        return '';
-    }
-    var json = '[' + commandQueue.join(',') + ']';
-    commandQueue.length = 0;
-    return json;
+    // CB-10133 DataClone DOM Exception 25 guard (fast function remover)
+    var command = [callbackId, service, action, JSON.parse(JSON.stringify(actionArgs))];
+    window.webkit.messageHandlers.cordova.postMessage(command);
 };
 
 iOSExec.nativeCallback = function (callbackId, status, message, keepCallback, debug) {
-    return iOSExec.nativeEvalAndFetch(function () {
-        var success = status === 0 || status === 1;
-        var args = convertMessageToArgsNativeToJs(message);
-        function nc2 () {
-            cordova.callbackFromNative(callbackId, success, status, args, keepCallback);
-        }
-        setTimeout(nc2, 0);
+    var success = status === 0 || status === 1;
+    var args = convertMessageToArgsNativeToJs(message);
+    Promise.resolve().then(function () {
+        cordova.callbackFromNative(callbackId, success, status, args, keepCallback); // eslint-disable-line
     });
 };
 
+// for backwards compatibility
 iOSExec.nativeEvalAndFetch = function (func) {
-    // This shouldn't be nested, but better to be safe.
-    isInContextOfEvalJs++;
     try {
         func();
-        return iOSExec.nativeFetchMessages();
-    } finally {
-        isInContextOfEvalJs--;
+    } catch (e) {
+        console.log(e);
     }
 };
 
@@ -1153,7 +1048,6 @@ var cordova = require('cordova');
 var modulemapper = require('cordova/modulemapper');
 var platform = require('cordova/platform');
 var pluginloader = require('cordova/pluginloader');
-var utils = require('cordova/utils');
 
 var platformInitChannelsArray = [channel.onNativeReady, channel.onPluginsReady];
 
@@ -1172,34 +1066,6 @@ window.setTimeout(function () {
         logUnfiredChannels(channel.deviceReadyChannelsArray);
     }
 }, 5000);
-
-// Replace navigator before any modules are required(), to ensure it happens as soon as possible.
-// We replace it so that properties that can't be clobbered can instead be overridden.
-function replaceNavigator (origNavigator) {
-    var CordovaNavigator = function () {};
-    CordovaNavigator.prototype = origNavigator;
-    var newNavigator = new CordovaNavigator();
-    // This work-around really only applies to new APIs that are newer than Function.bind.
-    // Without it, APIs such as getGamepads() break.
-    if (CordovaNavigator.bind) {
-        for (var key in origNavigator) {
-            if (typeof origNavigator[key] === 'function') {
-                newNavigator[key] = origNavigator[key].bind(origNavigator);
-            } else {
-                (function (k) {
-                    utils.defineGetterSetter(newNavigator, key, function () {
-                        return origNavigator[k];
-                    });
-                })(key);
-            }
-        }
-    }
-    return newNavigator;
-}
-
-if (window.navigator) {
-    window.navigator = replaceNavigator(window.navigator);
-}
 
 if (!window.console) {
     window.console = {
@@ -1266,7 +1132,6 @@ channel.join(function () {
     channel.join(function () {
         require('cordova').fireDocumentEvent('deviceready');
     }, channel.deviceReadyChannelsArray);
-
 }, platformInitChannelsArray);
 
 });
@@ -1377,6 +1242,14 @@ module.exports = {
         // Attach the console polyfill that is iOS-only to window.console
         // see the file under plugin/ios/console.js
         require('cordova/modulemapper').clobbers('cordova/plugin/ios/console', 'window.console');
+
+        // Attach the wkwebkit utility to window.WkWebView
+        // see the file under plugin/ios/wkwebkit.js
+        require('cordova/modulemapper').clobbers('cordova/plugin/ios/wkwebkit', 'window.WkWebView');
+
+        // Attach the splashscreen utility to window.navigator.splashscreen
+        // see the file under plugin/ios/launchscreen.js
+        require('cordova/modulemapper').clobbers('cordova/plugin/ios/launchscreen', 'navigator.splashscreen');
 
         require('cordova/channel').onNativeReady.fire();
     }
@@ -1552,6 +1425,24 @@ for (var key in console) {
         console[key] = wrappedOrigCall(WinConsole[key], console[key]);
     }
 }
+
+});
+
+// file: ../cordova-ios/cordova-js-src/plugin/ios/launchscreen.js
+define("cordova/plugin/ios/launchscreen", function(require, exports, module) {
+
+var exec = require('cordova/exec');
+
+var launchscreen = {
+    show: function () {
+        exec(null, null, 'LaunchScreen', 'show', []);
+    },
+    hide: function () {
+        exec(null, null, 'LaunchScreen', 'hide', []);
+    }
+};
+
+module.exports = launchscreen;
 
 });
 
@@ -1851,7 +1742,6 @@ function __format (formatString, args) {
 }
 
 function __formatted (object, formatChar) {
-
     try {
         switch (formatChar) {
         case 'j':
@@ -1886,6 +1776,33 @@ logger.__onDeviceReady = function () {
 
 // add a deviceready event to log queued messages
 document.addEventListener('deviceready', logger.__onDeviceReady, false);
+
+});
+
+// file: ../cordova-ios/cordova-js-src/plugin/ios/wkwebkit.js
+define("cordova/plugin/ios/wkwebkit", function(require, exports, module) {
+
+var exec = require('cordova/exec');
+
+var WkWebKit = {
+    allowsBackForwardNavigationGestures: function (allow) {
+        exec(null, null, 'CDVWebViewEngine', 'allowsBackForwardNavigationGestures', [allow]);
+    },
+    convertFilePath: function (path) {
+        if (!path || !window.CDV_ASSETS_URL) {
+            return path;
+        }
+        if (path.startsWith('/')) {
+            return window.CDV_ASSETS_URL + '/_app_file_' + path;
+        }
+        if (path.startsWith('file://')) {
+            return window.CDV_ASSETS_URL + path.replace('file://', '/_app_file_');
+        }
+        return path;
+    }
+};
+
+module.exports = WkWebKit;
 
 });
 
@@ -2160,7 +2077,6 @@ utils.extend = (function () {
     var F = function () {};
     // extend Child from Parent
     return function (Child, Parent) {
-
         F.prototype = Parent.prototype;
         Child.prototype = new F();
         Child.__super__ = Parent.prototype;

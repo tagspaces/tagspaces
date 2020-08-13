@@ -231,20 +231,50 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       ]
     },
     {
-      "id": "cordova-plugin-wkwebview-engine.ios-wkwebview-exec",
-      "file": "plugins/cordova-plugin-wkwebview-engine/src/www/ios/ios-wkwebview-exec.js",
-      "pluginId": "cordova-plugin-wkwebview-engine",
+      "id": "com.whebcraft.cordova.plugin.downloader.Downloader",
+      "file": "plugins/com.whebcraft.cordova.plugin.downloader/www/Downloader.js",
+      "pluginId": "com.whebcraft.cordova.plugin.downloader",
       "clobbers": [
-        "cordova.exec"
+        "plugins.Downloader"
       ]
     },
     {
-      "id": "cordova-plugin-wkwebview-engine.ios-wkwebview",
-      "file": "plugins/cordova-plugin-wkwebview-engine/src/www/ios/ios-wkwebview.js",
-      "pluginId": "cordova-plugin-wkwebview-engine",
+      "id": "es6-promise-plugin.Promise",
+      "file": "plugins/es6-promise-plugin/www/promise.js",
+      "pluginId": "es6-promise-plugin",
+      "runs": true
+    },
+    {
+      "id": "cordova-plugin-x-socialsharing.SocialSharing",
+      "file": "plugins/cordova-plugin-x-socialsharing/www/SocialSharing.js",
+      "pluginId": "cordova-plugin-x-socialsharing",
       "clobbers": [
-        "window.WkWebView"
+        "window.plugins.socialsharing"
       ]
+    },
+    {
+      "id": "cordova-plugin-ios-xhr.formdata-polyfill",
+      "file": "plugins/cordova-plugin-ios-xhr/src/www/ios/formdata-polyfill.js",
+      "pluginId": "cordova-plugin-ios-xhr",
+      "runs": true
+    },
+    {
+      "id": "cordova-plugin-ios-xhr.xhr-polyfill",
+      "file": "plugins/cordova-plugin-ios-xhr/src/www/ios/xhr-polyfill.js",
+      "pluginId": "cordova-plugin-ios-xhr",
+      "runs": true
+    },
+    {
+      "id": "cordova-plugin-ios-xhr.fetch-bootstrap",
+      "file": "plugins/cordova-plugin-ios-xhr/src/www/ios/fetch-bootstrap.js",
+      "pluginId": "cordova-plugin-ios-xhr",
+      "runs": true
+    },
+    {
+      "id": "cordova-plugin-ios-xhr.fetch-polyfill",
+      "file": "plugins/cordova-plugin-ios-xhr/src/www/ios/whatwg-fetch-2.0.3.js",
+      "pluginId": "cordova-plugin-ios-xhr",
+      "runs": true
     }
   ];
   module.exports.metadata = {
@@ -254,6 +284,9 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
     "cordova-plugin-file": "6.0.2",
     "cordova-plugin-file-opener2": "3.0.4",
     "cordova-plugin-whitelist": "1.3.4",
-    "cordova-plugin-wkwebview-engine": "1.2.1"
+    "com.whebcraft.cordova.plugin.downloader": "0.1.0",
+    "es6-promise-plugin": "4.2.2",
+    "cordova-plugin-x-socialsharing": "5.6.8",
+    "cordova-plugin-ios-xhr": "1.0.0"
   };
 });

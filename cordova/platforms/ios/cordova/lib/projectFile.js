@@ -17,47 +17,46 @@
        under the License.
 */
 
-var xcode = require('xcode');
-var plist = require('plist');
-var _ = require('underscore');
-var path = require('path');
-var fs = require('fs');
-var shell = require('shelljs');
+const xcode = require('xcode');
+const plist = require('plist');
+const _ = require('underscore');
+const path = require('path');
+const fs = require('fs-extra');
 
-var pluginHandlers = require('./plugman/pluginHandlers');
-var CordovaError = require('cordova-common').CordovaError;
+const pluginHandlers = require('./plugman/pluginHandlers');
+const CordovaError = require('cordova-common').CordovaError;
 
-var cachedProjectFiles = {};
+const cachedProjectFiles = {};
 
 function parseProjectFile (locations) {
-    var project_dir = locations.root;
-    var pbxPath = locations.pbxproj;
+    const project_dir = locations.root;
+    const pbxPath = locations.pbxproj;
 
     if (cachedProjectFiles[project_dir]) {
         return cachedProjectFiles[project_dir];
     }
 
-    var xcodeproj = xcode.project(pbxPath);
+    const xcodeproj = xcode.project(pbxPath);
     xcodeproj.parseSync();
 
-    var xcBuildConfiguration = xcodeproj.pbxXCBuildConfigurationSection();
-    var plist_file_entry = _.find(xcBuildConfiguration, function (entry) { return entry.buildSettings && entry.buildSettings.INFOPLIST_FILE; });
-    var plist_file = path.join(project_dir, plist_file_entry.buildSettings.INFOPLIST_FILE.replace(/^"(.*)"$/g, '$1').replace(/\\&/g, '&'));
-    var config_file = path.join(path.dirname(plist_file), 'config.xml');
+    const xcBuildConfiguration = xcodeproj.pbxXCBuildConfigurationSection();
+    const plist_file_entry = _.find(xcBuildConfiguration, entry => entry.buildSettings && entry.buildSettings.INFOPLIST_FILE);
+    const plist_file = path.join(project_dir, plist_file_entry.buildSettings.INFOPLIST_FILE.replace(/^"(.*)"$/g, '$1').replace(/\\&/g, '&'));
+    const config_file = path.join(path.dirname(plist_file), 'config.xml');
 
     if (!fs.existsSync(plist_file) || !fs.existsSync(config_file)) {
         throw new CordovaError('Could not find *-Info.plist file, or config.xml file.');
     }
 
-    var frameworks_file = path.join(project_dir, 'frameworks.json');
-    var frameworks = {};
+    const frameworks_file = path.join(project_dir, 'frameworks.json');
+    let frameworks = {};
     try {
         frameworks = require(frameworks_file);
     } catch (e) { }
 
-    var xcode_dir = path.dirname(plist_file);
-    var pluginsDir = path.resolve(xcode_dir, 'Plugins');
-    var resourcesDir = path.resolve(xcode_dir, 'Resources');
+    const xcode_dir = path.dirname(plist_file);
+    const pluginsDir = path.resolve(xcode_dir, 'Plugins');
+    const resourcesDir = path.resolve(xcode_dir, 'Resources');
 
     cachedProjectFiles[project_dir] = {
         plugins_dir: pluginsDir,
@@ -72,13 +71,21 @@ function parseProjectFile (locations) {
             fs.writeFileSync(pbxPath, xcodeproj.writeSync());
             if (Object.keys(this.frameworks).length === 0) {
                 // If there is no framework references remain in the project, just remove this file
-                shell.rm('-rf', frameworks_file);
+                fs.removeSync(frameworks_file);
                 return;
             }
             fs.writeFileSync(frameworks_file, JSON.stringify(this.frameworks, null, 4));
         },
         getPackageName: function () {
-            return plist.parse(fs.readFileSync(plist_file, 'utf8')).CFBundleIdentifier;
+            const packageName = plist.parse(fs.readFileSync(plist_file, 'utf8')).CFBundleIdentifier;
+            let bundleIdentifier = packageName;
+
+            const variables = packageName.match(/\$\((\w+)\)/); // match $(VARIABLE), if any
+            if (variables && variables.length >= 2) {
+                bundleIdentifier = xcodeproj.getBuildProperty(variables[1]);
+            }
+
+            return bundleIdentifier.replace(/^"/, '').replace(/"$/, '');
         },
         getInstaller: function (name) {
             return pluginHandlers.getInstaller(name);
@@ -86,7 +93,7 @@ function parseProjectFile (locations) {
         getUninstaller: function (name) {
             return pluginHandlers.getUninstaller(name);
         },
-        frameworks: frameworks
+        frameworks
     };
     return cachedProjectFiles[project_dir];
 }
@@ -97,7 +104,7 @@ function purgeProjectFileCache (project_dir) {
 
 module.exports = {
     parse: parseProjectFile,
-    purgeProjectFileCache: purgeProjectFileCache
+    purgeProjectFileCache
 };
 
 xcode.project.prototype.pbxEmbedFrameworksBuildPhaseObj = function (target) {
@@ -105,25 +112,23 @@ xcode.project.prototype.pbxEmbedFrameworksBuildPhaseObj = function (target) {
 };
 
 xcode.project.prototype.addToPbxEmbedFrameworksBuildPhase = function (file) {
-    var sources = this.pbxEmbedFrameworksBuildPhaseObj(file.target);
+    const sources = this.pbxEmbedFrameworksBuildPhaseObj(file.target);
     if (sources) {
         sources.files.push(pbxBuildPhaseObj(file));
     }
 };
 xcode.project.prototype.removeFromPbxEmbedFrameworksBuildPhase = function (file) {
-    var sources = this.pbxEmbedFrameworksBuildPhaseObj(file.target);
+    const sources = this.pbxEmbedFrameworksBuildPhaseObj(file.target);
     if (sources) {
-        sources.files = _.reject(sources.files, function (file) {
-            return file.comment === longComment(file);
-        });
+        sources.files = _.reject(sources.files, file => file.comment === longComment(file));
     }
 };
 
 // special handlers to add frameworks to the 'Embed Frameworks' build phase, needed for custom frameworks
 // see CB-9517. should probably be moved to node-xcode.
-var util = require('util');
+const util = require('util');
 function pbxBuildPhaseObj (file) {
-    var obj = Object.create(null);
+    const obj = Object.create(null);
     obj.value = file.uuid;
     obj.comment = longComment(file);
     return obj;

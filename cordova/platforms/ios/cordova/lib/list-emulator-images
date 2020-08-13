@@ -19,25 +19,10 @@
        under the License.
 */
 
-var Q = require('q');
-var iossim = require('ios-sim');
+const { run } = require('./listEmulatorImages');
 
-/**
- * Gets list of iOS devices available for simulation
- * @return {Promise} Promise fulfilled with list of devices available for simulation
- */
-function listEmulatorImages () {
-    return Q.resolve(iossim.getdevicetypes());
-}
-
-exports.run = listEmulatorImages;
-
-// Check if module is started as separate script.
-// If so, then invoke main method and print out results.
-if (!module.parent) {
-    listEmulatorImages().then(function (names) {
-        names.forEach(function (name) {
-            console.log(name);
-        });
+run().then(names => {
+    names.forEach(name => {
+        console.log(name);
     });
-}
+});

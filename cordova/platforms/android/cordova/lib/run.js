@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /*
        Licensed to the Apache Software Foundation (ASF) under one
        or more contributor license agreements.  See the NOTICE file
@@ -19,14 +17,11 @@
        under the License.
 */
 
-/* jshint loopfunc:true */
-
 var path = require('path');
-var build = require('./build');
 var emulator = require('./emulator');
 var device = require('./device');
-var Q = require('q');
-var events = require('cordova-common').events;
+var PackageType = require('./PackageType');
+const { CordovaError, events } = require('cordova-common');
 
 function getInstallTarget (runOptions) {
     var install_target;
@@ -52,11 +47,12 @@ function getInstallTarget (runOptions) {
  * @return  {Promise}
  */
 module.exports.run = function (runOptions) {
+    runOptions = runOptions || {};
 
     var self = this;
     var install_target = getInstallTarget(runOptions);
 
-    return Q().then(function () {
+    return Promise.resolve().then(function () {
         if (!install_target) {
             // no target given, deploy to device if available, otherwise use the emulator.
             return device.list().then(function (device_list) {
@@ -98,21 +94,30 @@ module.exports.run = function (runOptions) {
                             });
                         }
                     }
-                    return Q.reject('Target \'' + install_target + '\' not found, unable to run project');
+                    return Promise.reject(new CordovaError(`Target '${install_target}' not found, unable to run project`));
                 });
             });
         });
     }).then(function (resolvedTarget) {
-        // Better just call self.build, but we're doing some processing of
-        // build results (according to platformApi spec) so they are in different
-        // format than emulator.install expects.
-        // TODO: Update emulator/device.install to handle this change
-        return build.run.call(self, runOptions, resolvedTarget).then(function (buildResults) {
+        return new Promise((resolve) => {
+            const builder = require('./builders/builders').getBuilder();
+            const buildOptions = require('./build').parseBuildOptions(runOptions, null, self.root);
+
+            // Android app bundles cannot be deployed directly to the device
+            if (buildOptions.packageType === PackageType.BUNDLE) {
+                const packageTypeErrorMessage = 'Package type "bundle" is not supported during cordova run.';
+                events.emit('error', packageTypeErrorMessage);
+                throw packageTypeErrorMessage;
+            }
+
+            resolve(builder.fetchBuildResults(buildOptions.buildType, buildOptions.arch));
+        }).then(function (buildResults) {
             if (resolvedTarget && resolvedTarget.isEmulator) {
                 return emulator.wait_for_boot(resolvedTarget.target).then(function () {
                     return emulator.install(resolvedTarget, buildResults);
                 });
             }
+
             return device.install(resolvedTarget, buildResults);
         });
     });

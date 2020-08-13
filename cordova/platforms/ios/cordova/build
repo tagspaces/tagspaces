@@ -31,33 +31,36 @@ if (['--help', '/?', '-h', 'help', '-help', '/help'].indexOf(process.argv[2]) >=
 
 // Parse arguments
 var buildOpts = nopt({
-    'verbose': Boolean,
-    'silent': Boolean,
-    'archs': String,
-    'debug': Boolean,
-    'release': Boolean,
-    'device': Boolean,
-    'emulator': Boolean,
-    'codeSignIdentity': String,
-    'codeSignResourceRules': String,
-    'provisioningProfile': String,
-    'automaticProvisioning': Boolean,
-    'developmentTeam': String,
-    'packageType': String,
-    'buildConfig': String,
-    'buildFlag': [String, Array],
-    'noSign': Boolean
-}, { '-r': '--release', 'd': '--verbose' }, args);
+    verbose: Boolean,
+    silent: Boolean,
+    archs: String,
+    debug: Boolean,
+    release: Boolean,
+    device: Boolean,
+    emulator: Boolean,
+    codeSignIdentity: String,
+    codeSignResourceRules: String,
+    provisioningProfile: String,
+    automaticProvisioning: Boolean,
+    developmentTeam: String,
+    packageType: String,
+    buildConfig: String,
+    buildFlag: [String, Array],
+    noSign: Boolean
+}, { '-r': '--release', d: '--verbose' }, args);
 
 // Make buildOptions compatible with PlatformApi build method spec
 buildOpts.argv = buildOpts.argv.remain;
 
 require('./loggingHelper').adjustLoggerLevel(buildOpts);
 
-new Api().build(buildOpts).done(function () {
-    console.log('** BUILD SUCCEEDED **');
-}, function (err) {
-    var errorMessage = (err && err.stack) ? err.stack : err;
-    console.error(errorMessage);
-    process.exit(2);
-});
+new Api().build(buildOpts).then(
+    () => {
+        console.log('** BUILD SUCCEEDED **');
+    },
+    err => {
+        var errorMessage = (err && err.stack) ? err.stack : err;
+        console.error(errorMessage);
+        process.exit(2);
+    }
+);

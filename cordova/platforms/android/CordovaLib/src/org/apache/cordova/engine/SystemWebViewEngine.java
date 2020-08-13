@@ -113,7 +113,7 @@ public class SystemWebViewEngine implements CordovaWebViewEngine {
                 //sometimes this can be called after calling webview.destroy() on destroy()
                 //thus resulting in a NullPointerException
                 if(webView!=null) {
-                   webView.setNetworkAvailable(value); 
+                   webView.setNetworkAvailable(value);
                 }
             }
             @Override

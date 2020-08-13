@@ -19,31 +19,10 @@
        under the License.
 */
 
-var Q = require('q');
-var exec = require('child_process').exec;
+const { run } = require('./listStartedEmulators');
 
-/**
- * Gets list of running iOS simulators
- * @return {Promise} Promise fulfilled with list of running iOS simulators
- */
-function listStartedEmulators () {
-    // wrap exec call into promise
-    return Q.nfcall(exec, 'ps aux | grep -i "[i]OS Simulator"')
-        .then(function () {
-            return Q.nfcall(exec, 'defaults read com.apple.iphonesimulator "SimulateDevice"');
-        }).then(function (stdio) {
-            return stdio[0].trim().split('\n');
-        });
-}
-
-exports.run = listStartedEmulators;
-
-// Check if module is started as separate script.
-// If so, then invoke main method and print out results.
-if (!module.parent) {
-    listStartedEmulators().then(function (emulators) {
-        emulators.forEach(function (emulator) {
-            console.log(emulator);
-        });
+run().then(emulators => {
+    emulators.forEach(emulator => {
+        console.log(emulator);
     });
-}
+});

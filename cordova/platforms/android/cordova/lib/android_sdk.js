@@ -17,8 +17,7 @@
        under the License.
 */
 
-var Q = require('q');
-var superspawn = require('cordova-common').superspawn;
+const execa = require('execa');
 
 var suffix_number_regex = /(\d+)$/;
 // Used for sorting Android targets, example strings to sort:
@@ -30,17 +29,14 @@ var suffix_number_regex = /(\d+)$/;
 // the number at the end, the more recent the target, the closer to the
 // start of the array.
 function sort_by_largest_numerical_suffix (a, b) {
-    var suffix_a = a.match(suffix_number_regex);
-    var suffix_b = b.match(suffix_number_regex);
-    if (suffix_a && suffix_b) {
-        // If the two targets being compared have suffixes, return less than
-        // zero, or greater than zero, based on which suffix is larger.
-        return (parseInt(suffix_a[1]) > parseInt(suffix_b[1]) ? -1 : 1);
-    } else {
-        // If no suffix numbers were detected, leave the order as-is between
-        // elements a and b.
-        return 0;
-    }
+    let suffix_a = a.match(suffix_number_regex);
+    let suffix_b = b.match(suffix_number_regex);
+    // If no number is detected (eg: preview version like android-R),
+    // designate a suffix of 0 so it gets moved to the end
+    suffix_a = suffix_a || ['0', '0'];
+    suffix_b = suffix_b || ['0', '0'];
+    // Return < zero, or > zero, based on which suffix is larger.
+    return (parseInt(suffix_a[1]) > parseInt(suffix_b[1]) ? -1 : 1);
 }
 
 module.exports.print_newest_available_sdk_target = function () {
@@ -50,6 +46,8 @@ module.exports.print_newest_available_sdk_target = function () {
     });
 };
 
+// Versions should not be represented as float, so we disable quote-props here
+/* eslint-disable quote-props */
 module.exports.version_string_to_api_level = {
     '4.0': 14,
     '4.0.3': 15,
@@ -65,6 +63,7 @@ module.exports.version_string_to_api_level = {
     '7.1.1': 25,
     '8.0': 26
 };
+/* eslint-enable quote-props */
 
 function parse_targets (output) {
     var target_out = output.split('\n');
@@ -78,11 +77,11 @@ function parse_targets (output) {
 }
 
 module.exports.list_targets_with_android = function () {
-    return superspawn.spawn('android', ['list', 'target']).then(parse_targets);
+    return execa('android', ['list', 'target']).then(result => parse_targets(result.stdout));
 };
 
 module.exports.list_targets_with_avdmanager = function () {
-    return superspawn.spawn('avdmanager', ['list', 'target']).then(parse_targets);
+    return execa('avdmanager', ['list', 'target']).then(result => parse_targets(result.stdout));
 };
 
 module.exports.list_targets = function () {
@@ -95,7 +94,7 @@ module.exports.list_targets = function () {
         } else throw err;
     }).then(function (targets) {
         if (targets.length === 0) {
-            return Q.reject(new Error('No android targets (SDKs) installed!'));
+            return Promise.reject(new Error('No android targets (SDKs) installed!'));
         }
         return targets;
     });

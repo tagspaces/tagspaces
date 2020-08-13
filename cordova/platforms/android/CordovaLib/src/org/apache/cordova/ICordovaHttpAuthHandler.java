@@ -27,10 +27,10 @@ package org.apache.cordova;
      * Instructs the WebView to cancel the authentication request.
      */
     public void cancel ();
-    
+
     /**
      * Instructs the WebView to proceed with the authentication with the given credentials.
-     * 
+     *
      * @param username The user name
      * @param password The password
      */

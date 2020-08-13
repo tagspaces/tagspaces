@@ -21,7 +21,7 @@
 
 var versions = require('./lib/versions.js');
 
-versions.get_apple_ios_version().done(null, function (err) {
+versions.get_apple_ios_version().catch(err => {
     console.log(err);
     process.exit(2);
 });

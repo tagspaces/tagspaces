@@ -19,6 +19,7 @@
 
 import java.util.regex.Pattern
 import groovy.swing.SwingBuilder
+import com.g00fy2.versioncompare.Version
 
 String doEnsureValueExists(filePath, props, key) {
     if (props.get(key) == null) {
@@ -39,62 +40,52 @@ String doGetProjectTarget() {
     return doEnsureValueExists('project.properties', props, 'target')
 }
 
-String[] getAvailableBuildTools() {
-    def buildToolsDir = new File(getAndroidSdkDir(), "build-tools")
-    buildToolsDir.list()
-        .findAll { it ==~ /[0-9.]+/ }
-        .sort { a, b -> compareVersions(b, a) }
+Boolean isVersionValid(version) {
+    return !(new Version(version)).isEqual('0.0.0')
 }
 
-String doFindLatestInstalledBuildTools(String minBuildToolsVersion) {
-    def availableBuildToolsVersions
+String doFindLatestInstalledBuildTools(String minBuildToolsVersionString) {
+    def buildToolsDirContents
     try {
-        availableBuildToolsVersions = getAvailableBuildTools()
+        def buildToolsDir = new File(getAndroidSdkDir(), "build-tools")
+        buildToolsDirContents = buildToolsDir.list()
     } catch (e) {
         println "An exception occurred while trying to find the Android build tools."
         throw e
     }
-    if (availableBuildToolsVersions.length > 0) {
-        def highestBuildToolsVersion = availableBuildToolsVersions[0]
-        if (compareVersions(highestBuildToolsVersion, minBuildToolsVersion) < 0) {
-            throw new RuntimeException(
-                "No usable Android build tools found. Highest installed version is " +
-                highestBuildToolsVersion + "; minimum version required is " +
-                minBuildToolsVersion + ".")
-        }
-        highestBuildToolsVersion
-    } else {
-        throw new RuntimeException(
-            "No installed build tools found. Install the Android build tools version " +
-            minBuildToolsVersion + " or higher.")
+
+    def highestBuildToolsVersion = buildToolsDirContents
+        .collect { new Version(it) }
+        // Invalid inputs will be handled as 0.0.0
+        .findAll { it.isHigherThan('0.0.0') }
+        .max()
+
+    if (highestBuildToolsVersion == null) {
+        throw new RuntimeException("""
+            No installed build tools found. Install the Android build tools
+            version ${minBuildToolsVersionString} or higher.
+        """.replaceAll(/\s+/, ' ').trim())
     }
-}
 
-// Return the first non-zero result of subtracting version list elements
-// pairwise. If they are all identical, return the difference in length of
-// the two lists.
-int compareVersionList(Collection aParts, Collection bParts) {
-    def pairs = ([aParts, bParts]).transpose()
-    pairs.findResult(aParts.size()-bParts.size()) {it[0] - it[1] != 0 ? it[0] - it[1] : null}
-}
+    if (highestBuildToolsVersion.isLowerThan(minBuildToolsVersionString)) {
+        throw new RuntimeException("""
+            No usable Android build tools found. Highest installed version is
+            ${highestBuildToolsVersion.getOriginalString()}; minimum version
+            required is ${minBuildToolsVersionString}.
+        """.replaceAll(/\s+/, ' ').trim())
+    }
 
-// Compare two version strings, such as "19.0.0" and "18.1.1.0". If all matched
-// elements are identical, the longer version is the largest by this method.
-// Examples:
-//   "19.0.0" > "19"
-//   "19.0.1" > "19.0.0"
-//   "19.1.0" > "19.0.1"
-//   "19" > "18.999.999"
-int compareVersions(String a, String b) {
-    def aParts = a.tokenize('.').collect {it.toInteger()}
-    def bParts = b.tokenize('.').collect {it.toInteger()}
-    compareVersionList(aParts, bParts)
+    highestBuildToolsVersion.getOriginalString()
 }
 
 String getAndroidSdkDir() {
     def rootDir = project.rootDir
     def androidSdkDir = null
-    String envVar = System.getenv("ANDROID_HOME")
+    String envVar = System.getenv("ANDROID_SDK_ROOT")
+    if (envVar == null) {
+        envVar = System.getenv("ANDROID_HOME")
+    }
+
     def localProperties = new File(rootDir, 'local.properties')
     String systemProperty = System.getProperty("android.home")
     if (envVar != null) {
@@ -203,3 +194,12 @@ ext {
     cdvHelpers.getConfigPreference = { name, defaultValue -> doGetConfigPreference(name, defaultValue) }
 }
 
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.g00fy2:versioncompare:1.3.4@jar'
+    }
+}

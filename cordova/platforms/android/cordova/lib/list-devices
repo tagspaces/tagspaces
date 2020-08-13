@@ -22,12 +22,12 @@
 var devices = require('./device');
 
 // Usage support for when args are given
-require('./check_reqs').check_android().then(function() {
-    devices.list().done(function(device_list) {
-        device_list && device_list.forEach(function(dev) {
+require('./check_reqs').check_android().then(function () {
+    devices.list().then(function (device_list) {
+        device_list && device_list.forEach(function (dev) {
             console.log(dev);
         });
-    }, function(err) {
+    }, function (err) {
         console.error('ERROR: ' + err);
         process.exit(2);
     });

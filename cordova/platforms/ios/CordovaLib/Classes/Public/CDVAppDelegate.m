@@ -25,18 +25,6 @@
 
 - (id)init
 {
-    /** If you need to do any extra app-specific initialization, you can do it here
-     *  -jm
-     **/
-    NSHTTPCookieStorage* cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
-
-    [cookieStorage setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyAlways];
-
-    int cacheSizeMemory = 8 * 1024 * 1024; // 8MB
-    int cacheSizeDisk = 32 * 1024 * 1024; // 32MB
-    NSURLCache* sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:cacheSizeMemory diskCapacity:cacheSizeDisk diskPath:@"nsurlcache"];
-    [NSURLCache setSharedURLCache:sharedCache];
-
     self = [super init];
     return self;
 }
@@ -98,21 +86,12 @@
     return YES;
 }
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED < 90000  
-- (NSUInteger)application:(UIApplication*)application supportedInterfaceOrientationsForWindow:(UIWindow*)window
-#else //CB-12098.  Defaults to UIInterfaceOrientationMask for iOS 9+
 - (UIInterfaceOrientationMask)application:(UIApplication*)application supportedInterfaceOrientationsForWindow:(UIWindow*)window
-#endif
 {
     // iPhone doesn't support upside down by default, while the iPad does.  Override to allow all orientations always, and let the root view controller decide what's allowed (the supported orientations mask gets intersected).
     NSUInteger supportedInterfaceOrientations = (1 << UIInterfaceOrientationPortrait) | (1 << UIInterfaceOrientationLandscapeLeft) | (1 << UIInterfaceOrientationLandscapeRight) | (1 << UIInterfaceOrientationPortraitUpsideDown);
 
     return supportedInterfaceOrientations;
-}
-
-- (void)applicationDidReceiveMemoryWarning:(UIApplication*)application
-{
-    [[NSURLCache sharedURLCache] removeAllCachedResponses];
 }
 
 @end

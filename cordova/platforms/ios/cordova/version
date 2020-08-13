@@ -26,10 +26,6 @@
 */
 
 // Coho updates this line
-var VERSION = '5.1.1';
+const Api = require('./Api');
 
-module.exports.version = VERSION;
-
-if (!module.parent) {
-    console.log(VERSION);
-}
+console.log(Api.version());

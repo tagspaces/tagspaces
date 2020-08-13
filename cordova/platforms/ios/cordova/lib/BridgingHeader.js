@@ -18,8 +18,8 @@
 */
 'use strict';
 
-var fs = require('fs');
-var CordovaError = require('cordova-common').CordovaError;
+const fs = require('fs-extra');
+const CordovaError = require('cordova-common').CordovaError;
 
 function BridgingHeader (bridgingHeaderPath) {
     this.path = bridgingHeaderPath;
@@ -31,7 +31,7 @@ function BridgingHeader (bridgingHeaderPath) {
 }
 
 BridgingHeader.prototype.addHeader = function (plugin_id, header_path) {
-    this.bridgingHeaders.push({ type: 'code', code: '#import "' + header_path + '"\n' });
+    this.bridgingHeaders.push({ type: 'code', code: `#import "${header_path}"\n` });
 };
 
 BridgingHeader.prototype.removeHeader = function (plugin_id, header_path) {
@@ -40,7 +40,7 @@ BridgingHeader.prototype.removeHeader = function (plugin_id, header_path) {
             return true;
         }
         if (line.type === 'code') {
-            var re = new RegExp('#import\\s+"' + preg_quote(header_path) + '"(\\s*|\\s.+)(\\n|$)');
+            const re = new RegExp(`#import\\s+"${preg_quote(header_path)}"(\\s*|\\s.+)(\\n|$)`);
             if (re.test(line.code)) {
                 this.found = true;
                 return false;
@@ -51,27 +51,25 @@ BridgingHeader.prototype.removeHeader = function (plugin_id, header_path) {
 };
 
 BridgingHeader.prototype.write = function () {
-    var text = this.__stringifyForBridgingHeader(this.bridgingHeaders);
+    const text = this.__stringifyForBridgingHeader(this.bridgingHeaders);
     fs.writeFileSync(this.path, text, 'utf8');
 };
 
 BridgingHeader.prototype.__stringifyForBridgingHeader = function (bridgingHeaders) {
-    return bridgingHeaders.map(function (obj) {
-        return obj.code;
-    }).join('');
+    return bridgingHeaders.map(obj => obj.code).join('');
 };
 
 BridgingHeader.prototype.__parseForBridgingHeader = function (text) {
-    var i = 0;
-    var list = [];
-    var type = 'code';
-    var start = 0;
+    let i = 0;
+    const list = [];
+    let type = 'code';
+    let start = 0;
     while (i < text.length) {
         switch (type) {
         case 'comment':
             if (i + 1 < text.length && text[i] === '*' && text[i + 1] === '/') {
                 i += 2;
-                list.push({ type: type, code: text.slice(start, i) });
+                list.push({ type, code: text.slice(start, i) });
                 type = 'code';
                 start = i;
             } else {
@@ -81,7 +79,7 @@ BridgingHeader.prototype.__parseForBridgingHeader = function (text) {
         case 'line-comment':
             if (i < text.length && text[i] === '\n') {
                 i += 1;
-                list.push({ type: type, code: text.slice(start, i) });
+                list.push({ type, code: text.slice(start, i) });
                 type = 'code';
                 start = i;
             } else {
@@ -92,19 +90,19 @@ BridgingHeader.prototype.__parseForBridgingHeader = function (text) {
         default:
             if (i + 1 < text.length && text[i] === '/' && text[i + 1] === '*') { // comment
                 if (start < i) {
-                    list.push({ type: type, code: text.slice(start, i) });
+                    list.push({ type, code: text.slice(start, i) });
                 }
                 type = 'comment';
                 start = i;
             } else if (i + 1 < text.length && text[i] === '/' && text[i + 1] === '/') { // line comment
                 if (start < i) {
-                    list.push({ type: type, code: text.slice(start, i) });
+                    list.push({ type, code: text.slice(start, i) });
                 }
                 type = 'line-comment';
                 start = i;
             } else if (i < text.length && text[i] === '\n') {
                 i += 1;
-                list.push({ type: type, code: text.slice(start, i) });
+                list.push({ type, code: text.slice(start, i) });
                 start = i;
             } else {
                 i += 1;
@@ -113,13 +111,13 @@ BridgingHeader.prototype.__parseForBridgingHeader = function (text) {
         }
     }
     if (start < i) {
-        list.push({ type: type, code: text.slice(start, i) });
+        list.push({ type, code: text.slice(start, i) });
     }
     return list;
 };
 
 function preg_quote (str, delimiter) {
-    return (str + '').replace(new RegExp('[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\' + (delimiter || '') + '-]', 'g'), '\\$&');
+    return (`${str}`).replace(new RegExp(`[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\${delimiter || ''}-]`, 'g'), '\\$&');
 }
 
 module.exports.BridgingHeader = BridgingHeader;

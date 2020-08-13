@@ -29,9 +29,9 @@ if (['--help', '/?', '-h', 'help', '-help', '/help'].indexOf(process.argv[2]) >=
 
 // Do some basic argument parsing
 var opts = nopt({
-    'verbose': Boolean,
-    'silent': Boolean
-}, { 'd': '--verbose' });
+    verbose: Boolean,
+    silent: Boolean
+}, { d: '--verbose' });
 
 // Make buildOptions compatible with PlatformApi clean method spec
 opts.argv = opts.argv.original;
@@ -41,9 +41,12 @@ opts.noPrepare = true;
 
 require('./loggingHelper').adjustLoggerLevel(opts);
 
-new Api().clean(opts).done(function () {
-    console.log('** CLEAN SUCCEEDED **');
-}, function (err) {
-    console.error(err);
-    process.exit(2);
-});
+new Api().clean(opts).then(
+    () => {
+        console.log('** CLEAN SUCCEEDED **');
+    },
+    err => {
+        console.error(err);
+        process.exit(2);
+    }
+);

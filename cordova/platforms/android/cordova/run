@@ -24,22 +24,23 @@ var nopt = require('nopt');
 var path = require('path');
 
 // Support basic help commands
-if(['--help', '/?', '-h', 'help', '-help', '/help'].indexOf(process.argv[2]) >= 0)
+if (['--help', '/?', '-h', 'help', '-help', '/help'].indexOf(process.argv[2]) >= 0) {
     require('./lib/run').help();
+}
 
 // Do some basic argument parsing
 var runOpts = nopt({
-    'verbose' : Boolean,
-    'silent' : Boolean,
-    'debug' : Boolean,
-    'release' : Boolean,
-    'nobuild': Boolean,
-    'buildConfig' : path,
-    'archs' : String,
-    'device' : Boolean,
-    'emulator': Boolean,
-    'target' : String
-}, { 'd' : '--verbose' });
+    verbose: Boolean,
+    silent: Boolean,
+    debug: Boolean,
+    release: Boolean,
+    nobuild: Boolean,
+    buildConfig: path,
+    archs: String,
+    device: Boolean,
+    emulator: Boolean,
+    target: String
+}, { d: '--verbose' });
 
 // Make runOptions compatible with PlatformApi run method spec
 runOpts.argv = runOpts.argv.remain;
@@ -47,7 +48,7 @@ runOpts.argv = runOpts.argv.remain;
 require('./loggingHelper').adjustLoggerLevel(runOpts);
 
 new Api().run(runOpts)
-.catch(function(err) {
-    console.error(err, err.stack);
-    process.exit(2);
-});
+    .catch(function (err) {
+        console.error(err, err.stack);
+        process.exit(2);
+    });

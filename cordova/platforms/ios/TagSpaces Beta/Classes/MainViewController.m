@@ -77,42 +77,6 @@
     // Do any additional setup after loading the view from its nib.
 }
 
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
-}
-
-/* Comment out the block below to over-ride */
-
-/*
-- (UIWebView*) newCordovaViewWithFrame:(CGRect)bounds
-{
-    return[super newCordovaViewWithFrame:bounds];
-}
-
-// CB-12098
-#if __IPHONE_OS_VERSION_MAX_ALLOWED < 90000  
-- (NSUInteger)supportedInterfaceOrientations
-#else  
-- (UIInterfaceOrientationMask)supportedInterfaceOrientations
-#endif
-{
-    return [super supportedInterfaceOrientations];
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
-{
-    return [super shouldAutorotateToInterfaceOrientation:interfaceOrientation];
-}
-
-- (BOOL)shouldAutorotate 
-{
-    return [super shouldAutorotate];
-}
-*/
-
 @end
 
 @implementation MainCommandDelegate

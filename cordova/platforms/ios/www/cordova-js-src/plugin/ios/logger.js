@@ -312,7 +312,6 @@ function __format (formatString, args) {
 }
 
 function __formatted (object, formatChar) {
-
     try {
         switch (formatChar) {
         case 'j':

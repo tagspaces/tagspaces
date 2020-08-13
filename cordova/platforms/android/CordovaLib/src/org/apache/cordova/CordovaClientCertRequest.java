@@ -36,7 +36,7 @@ public class CordovaClientCertRequest implements ICordovaClientCertRequest {
     public CordovaClientCertRequest(ClientCertRequest request) {
         this.request = request;
     }
-    
+
     /**
      * Cancel this request
      */
@@ -45,7 +45,7 @@ public class CordovaClientCertRequest implements ICordovaClientCertRequest {
     {
         request.cancel();
     }
-    
+
     /*
      * Returns the host name of the server requesting the certificate.
      */
@@ -54,7 +54,7 @@ public class CordovaClientCertRequest implements ICordovaClientCertRequest {
     {
         return request.getHost();
     }
-    
+
     /*
      * Returns the acceptable types of asymmetric keys (can be null).
      */
@@ -63,7 +63,7 @@ public class CordovaClientCertRequest implements ICordovaClientCertRequest {
     {
         return request.getKeyTypes();
     }
-    
+
     /*
      * Returns the port number of the server requesting the certificate.
      */
@@ -72,7 +72,7 @@ public class CordovaClientCertRequest implements ICordovaClientCertRequest {
     {
         return request.getPort();
     }
-    
+
     /*
      * Returns the acceptable certificate issuers for the certificate matching the private key (can be null).
      */
@@ -81,7 +81,7 @@ public class CordovaClientCertRequest implements ICordovaClientCertRequest {
     {
         return request.getPrincipals();
     }
-    
+
     /*
      * Ignore the request for now. Do not remember user's choice.
      */
@@ -90,12 +90,12 @@ public class CordovaClientCertRequest implements ICordovaClientCertRequest {
     {
         request.ignore();
     }
-    
+
     /*
      * Proceed with the specified private key and client certificate chain. Remember the user's positive choice and use it for future requests.
-     * 
+     *
      * @param privateKey The privateKey
-     * @param chain The certificate chain 
+     * @param chain The certificate chain
      */
     @SuppressLint("NewApi")
     public void proceed(PrivateKey privateKey, X509Certificate[] chain)
