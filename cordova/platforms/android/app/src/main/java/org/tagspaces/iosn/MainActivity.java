@@ -17,7 +17,7 @@
        under the License.
  */
 
-package org.tagspaces.mobile;
+package org.tagspaces.iosn;
 
 import android.os.Bundle;
 import org.apache.cordova.*;

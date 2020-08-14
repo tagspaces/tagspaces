@@ -5,7 +5,7 @@ import Foundation
         var pluginResult = CDVPluginResult(
             status: CDVCommandStatus_ERROR
         )
-
+        
         var isError = false
 
         let args = command.arguments[0] as! NSDictionary
@@ -25,12 +25,12 @@ import Foundation
                     status: CDVCommandStatus_ERROR,
                     messageAs: error.localizedDescription
                 )
-
+                
                 self.commandDelegate!.send(
                     pluginResult,
                     callbackId: command.callbackId
                 )
-
+                
                 isError = true
             }
         }
@@ -48,7 +48,7 @@ import Foundation
                                     status: CDVCommandStatus_OK,
                                     messageAs: documentsUrl?.path
                                 )
-
+                                
                                 self.commandDelegate!.send(
                                     pluginResult,
                                     callbackId: command.callbackId

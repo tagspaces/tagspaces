@@ -1,5 +1,5 @@
 {
-  "name": "org.tagspaces.mobile",
+  "name": "org.tagspaces.iosn",
   "displayName": "TagSpaces",
   "version": "1.0.4",
   "description": "A sample Apache Cordova application that responds to the deviceready event.",
@@ -11,7 +11,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "cordova-plugin-background-mode": "^0.7.3",
-    "cordova-plugin-camera": "4.1.0",
     "cordova-plugin-device": "^2.0.3",
     "cordova-plugin-file": "6.0.2",
     "cordova-plugin-file-opener2": "^3.0.3",
@@ -23,9 +22,6 @@
       "cordova-plugin-whitelist": {},
       "cordova-plugin-device": {},
       "cordova-plugin-background-mode": {},
-      "cordova-plugin-camera": {
-        "ANDROID_SUPPORT_V4_VERSION": "27.+"
-      },
       "cordova-plugin-file": {},
       "cordova-plugin-file-opener2": {
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
@@ -36,6 +32,9 @@
         "PHOTO_LIBRARY_ADD_USAGE_DESCRIPTION": "This app requires photo library access to function properly.",
         "PHOTO_LIBRARY_USAGE_DESCRIPTION": "This app requires photo library access to function properly."
       },
+      "cordova-plugin-camera": {
+        "ANDROID_SUPPORT_V4_VERSION": "27.+"
+      },
       "cordova-plugin-ios-xhr": {}
     },
     "platforms": [
@@ -44,7 +43,7 @@
     ]
   },
   "devDependencies": {
-    "@globules-io/cordova-plugin-ios-xhr": "^1.0.3",
+    "@globules-io/cordova-plugin-ios-xhr": "^1.0.4",
     "bamboo.cordova.plugin.downloader": "git+https://github.com/sytolk/cordova-plugin-downloader.git",
     "cordova-android": "^9.0.0",
     "cordova-ios": "^6.1.0"

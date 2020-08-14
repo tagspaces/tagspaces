@@ -142,7 +142,7 @@
         } else if ([contentMode isEqual: @"desktop"]) {
             configuration.defaultWebpagePreferences.preferredContentMode = WKContentModeDesktop;
         }
-
+        
     }
 
     return configuration;

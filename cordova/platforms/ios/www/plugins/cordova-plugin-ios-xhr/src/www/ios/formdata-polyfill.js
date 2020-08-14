@@ -34,9 +34,9 @@ cordova.define("cordova-plugin-ios-xhr.formdata-polyfill", function(require, exp
  */
 
 /*
- * Native Safari FormData only implements the append method. This polyfill is used in
+ * Native Safari FormData only implements the append method. This polyfill is used in 
  * tandem with the xhr-polyfill.
- *
+ * 
  * Two additional functions in this FormData implementation:
  * 1) __getNative - returns the native Safari FormData object.
  * 2) __getRequestParts - returns a promise resolving an object {contentType:string, body:string}.
@@ -191,7 +191,7 @@ cordova.define("cordova-plugin-ios-xhr.formdata-polyfill", function(require, exp
 
     return __FormData._makeIterator(allentries);
   };
-
+  
   __FormData.prototype.forEach = function(callback)
   {
     var eit = this.entries();
@@ -200,7 +200,7 @@ cordova.define("cordova-plugin-ios-xhr.formdata-polyfill", function(require, exp
     {
       callback.call(this, entry.value[1], entry.value[0], this);
       entry = eit.next();
-    }
+    }  
   };
 
   __FormData.prototype.toString = function ()
@@ -215,7 +215,7 @@ cordova.define("cordova-plugin-ios-xhr.formdata-polyfill", function(require, exp
       __FormData._getRequestValues(this.entries()).then(function (entries)
       {
         var parts = __FormData._getMultipartRequest(entries);
-
+        
         resolve(parts);
       });
     }.bind(this));
@@ -231,10 +231,10 @@ cordova.define("cordova-plugin-ios-xhr.formdata-polyfill", function(require, exp
     while (!entry.done)
     {
       if (entry.value[1] && Blob.prototype.isPrototypeOf(entry.value[1]))
-        fd.append(entry.value[0], entry.value[1], entry.value[1].name);
+        fd.append(entry.value[0], entry.value[1], entry.value[1].name);        
       else
         fd.append(entry.value[0], entry.value[1]);
-
+    
       entry = eit.next();
     }
 
@@ -250,13 +250,13 @@ cordova.define("cordova-plugin-ios-xhr.formdata-polyfill", function(require, exp
     for (var i = 0; i < entries.length; i++)
     {
       var entry = entries[i];
-      for (var data of __FormData._generateMultipartFormData(entry, boundary))
+      for (var data of __FormData._generateMultipartFormData(entry, boundary)) 
         bodyEntries.push(data);
     }
 
     bodyEntries.push("--" + boundary + "--");
     parts.body = new Blob(bodyEntries, {type: "application/octet-stream"});
-
+    
     return parts;
   };
 

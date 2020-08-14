@@ -220,7 +220,7 @@ public class SystemWebChromeClient extends WebChromeClient {
         }
         Intent intent = fileChooserParams.createIntent();
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, selectMultiple);
-
+        
         // Uses Intent.EXTRA_MIME_TYPES to pass multiple mime types.
         String[] acceptTypes = fileChooserParams.getAcceptTypes();
         if (acceptTypes.length > 1) {

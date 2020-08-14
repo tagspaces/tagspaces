@@ -173,16 +173,16 @@ cordova.define("cordova-plugin-ios-xhr.xhr-polyfill", function(require, exports,
 
   FileHandler.prototype._isTraceLoggingEnabled = function ()
   {
-    return this._config["NativeXHRLogging"] === "full";
+    return this._config["NativeXHRLogging"] === "full"; 
   };
-
+  
   FileHandler._presend = function (reqContext)
   {
     reqContext.dispatchReadyStateChangeEvent(1);  // OPEN
     reqContext.dispatchProgressEvent("loadstart");
     // no upload events for a GET
   };
-
+  
   FileHandler._error = function (reqContext, e)
   {
     if (this._isTraceLoggingEnabled())
@@ -225,10 +225,10 @@ cordova.define("cordova-plugin-ios-xhr.xhr-polyfill", function(require, exports,
   };
 
   FileHandler.prototype.send = function ()
-  {
+  {    
     var reqContext = this._reqContext;
     var rspTypeHandler = FileHandler.getHandlerForResponseType(reqContext);
-
+    
     if (this._isTraceLoggingEnabled())
       console.log("xhr-polyfill.js - native file XHR Request:\n%o", reqContext.url);
 
@@ -318,14 +318,14 @@ cordova.define("cordova-plugin-ios-xhr.xhr-polyfill", function(require, exports,
           var body = reqContext.requestData;
           var promise = new Promise(function (resolve, reject)
           {
-            var contentType = reqContext.requestHeaders["content-type"];
-
+            var contentType = reqContext.requestHeaders["content-type"]; 
+            
             // FormData polyfill - request the body and context-type
             body.__getRequestParts().then(function (parts)
             {
               if (!contentType)
                 reqContext.requestHeaders["content-type"] = parts.contentType;
-
+              
               var reader = new FileReader();
               reader.onload = function ()
               {
@@ -341,7 +341,7 @@ cordova.define("cordova-plugin-ios-xhr.xhr-polyfill", function(require, exports,
               reader.readAsBinaryString(parts.body);
             });
           });
-
+          
           return promise;
         }
       },
@@ -566,22 +566,22 @@ cordova.define("cordova-plugin-ios-xhr.xhr-polyfill", function(require, exports,
 
   HttpHandler.prototype._isTraceLoggingEnabled = function ()
   {
-    return this._config["NativeXHRLogging"] === "full";
+    return this._config["NativeXHRLogging"] === "full";  
   };
-
+  
   HttpHandler._resolveUri = function (uri)
   {
     if (uri.indexOf("://") > -1)
       return uri;
-
+    
     var resolver = document.createElement("a");
     document.body.appendChild(resolver);
     resolver.href = uri;
-    var absoluteUri = resolver.href;
+    var absoluteUri = resolver.href; 
     resolver.parentNode.removeChild(resolver);
     return absoluteUri;
   };
-
+  
   HttpHandler.prototype.send = function ()
   {
     var reqContext = this._reqContext;
@@ -607,7 +607,7 @@ cordova.define("cordova-plugin-ios-xhr.xhr-polyfill", function(require, exports,
         url: HttpHandler._resolveUri(reqContext.url), method: reqContext.method,
         headers: reqContext.requestHeaders,
         body: bodyAsBase64String, timeout: timeoutInSecs};
-
+      
       if (this._isTraceLoggingEnabled())
         console.log("xhr-polyfill.js - native XHR Request:\n %o", reqPayLoad);
 
@@ -697,10 +697,10 @@ cordova.define("cordova-plugin-ios-xhr.xhr-polyfill", function(require, exports,
   HttpHandler.prototype.load = function (payload)
   {
     var reqContext = this._reqContext;
-
+    
     if (this._isTraceLoggingEnabled())
       console.log("xhr-polyfill.js - native XHR Response:\n%o", payload);
-
+    
     if (payload.error)
       HttpHandler._error(reqContext, payload.error, payload['underlyingErrorCode']);
     else
@@ -832,10 +832,10 @@ cordova.define("cordova-plugin-ios-xhr.xhr-polyfill", function(require, exports,
 
     var requestData = reqContext.requestData;
     reqContext.requestData = undefined;
-
+    
     // returns a native FormData from the plugin's polyfill
     if (FormData.prototype.isPrototypeOf(requestData))
-      requestData = requestData.__getNative();
+      requestData = requestData.__getNative();  
 
     delegate.send(requestData);
   };
@@ -863,7 +863,7 @@ cordova.define("cordova-plugin-ios-xhr.xhr-polyfill", function(require, exports,
 
         function error()
         {
-          HandlerFactory._config = {"InterceptRemoteRequests": "secureOnly",
+          HandlerFactory._config = {"InterceptRemoteRequests": "secureOnly", 
             "NativeXHRLogging": "none"};
           done(HandlerFactory._config);
         }
@@ -875,7 +875,7 @@ cordova.define("cordova-plugin-ios-xhr.xhr-polyfill", function(require, exports,
 
     return promise;
   };
-
+  
   HandlerFactory.getHandler = function (context)
   {
     var promise = new Promise(function (resolve)
@@ -1020,7 +1020,7 @@ cordova.define("cordova-plugin-ios-xhr.xhr-polyfill", function(require, exports,
 
 
   // define readonly const properties
-  ["UNSENT", "OPENED", "HEADERS_RECIEVED", "LOADING", "DONE"].forEach(function (propName, i)
+  ["UNSENT", "OPENED", "HEADERS_RECEIVED", "LOADING", "DONE"].forEach(function (propName, i)
   {
     Object.defineProperty(window.XMLHttpRequest.prototype, propName,
       {
@@ -1233,7 +1233,7 @@ cordova.define("cordova-plugin-ios-xhr.xhr-polyfill", function(require, exports,
   /**
    * Override plugin config settings per request instance for the "InterceptRemoteRequests"
    * config param.
-   *
+   * 
    * @param {string} value enumerations are: "all", "secureOnly", "none".
    */
   window.XMLHttpRequest.prototype.__setInterceptRemoteRequests = function (value)

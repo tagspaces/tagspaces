@@ -138,7 +138,7 @@
     BOOL keepCallback = [result.keepCallback boolValue];
     NSString* argumentsAsJSON = [result argumentsAsJSON];
     BOOL debug = NO;
-
+    
 #ifdef DEBUG
     debug = YES;
 #endif
