@@ -1004,60 +1004,73 @@ class EntryContainer extends React.Component<Props, State> {
   render() {
     const { classes, keyBindings } = this.props;
     const { isEditTagsModalOpened, currentEntry, isFullscreen } = this.state;
-    let fileOpenerURL: string;
+    let fileOpenerURL: string = 'about:blank';
     let fileTitle: string = '';
+    let component;
 
     if (currentEntry && currentEntry.path) {
-      fileTitle = extractTitle(
-        currentEntry.path,
-        !currentEntry.isFile,
-        PlatformIO.getDirSeparator()
-      );
-      // if (fileTitle.length > maxCharactersTitleLength) {
-      //   fileTitle = fileTitle.substr(0, maxCharactersTitleLength) + '...';
-      // }
+      if (
+        currentEntry.webComponent !== undefined &&
+        currentEntry.webComponent
+      ) {
+        // this.appendScript('utils/LazyLoading.js');
+        import('@tagspaces/text-editor-component');
+        // import('@tagspaces/text-editor-component/index.css');
+        // import(currentEntry.editingExtensionId); //'@tagspaces/text-editor-component');
 
-      if (currentEntry.editMode && currentEntry.editingExtensionPath) {
-        fileOpenerURL =
-          currentEntry.editingExtensionPath +
-          '/index.html?file=' +
-          encodeURIComponent(
-            currentEntry.url ? currentEntry.url : currentEntry.path
-          ) +
-          '&locale=' +
-          i18n.language +
-          '&edit=true' +
-          (this.shouldReload ? '&t=' + new Date().getTime() : '');
-        // } else if (!currentEntry.isFile) { // TODO needed for loading folder's default html
-        //   fileOpenerURL = 'node_modules/@tagspaces/html-viewer/index.html?locale=' + i18n.language;
+        component = <text-editor-component class="dynamic-element" />;
       } else {
-        fileOpenerURL =
-          currentEntry.viewingExtensionPath +
-          '/index.html?file=' +
-          encodeURIComponent(
-            currentEntry.url ? currentEntry.url : currentEntry.path
-          ) +
-          '&locale=' +
-          i18n.language +
-          (this.shouldReload ? '&t=' + new Date().getTime() : '');
+        fileTitle = extractTitle(
+          currentEntry.path,
+          !currentEntry.isFile,
+          PlatformIO.getDirSeparator()
+        );
+        // if (fileTitle.length > maxCharactersTitleLength) {
+        //   fileTitle = fileTitle.substr(0, maxCharactersTitleLength) + '...';
+        // }
+
+        if (currentEntry.editMode && currentEntry.editingExtensionPath) {
+          fileOpenerURL =
+            currentEntry.editingExtensionPath +
+            '/index.html?file=' +
+            encodeURIComponent(
+              currentEntry.url ? currentEntry.url : currentEntry.path
+            ) +
+            '&locale=' +
+            i18n.language +
+            '&edit=true' +
+            (this.shouldReload ? '&t=' + new Date().getTime() : '');
+          // } else if (!currentEntry.isFile) { // TODO needed for loading folder's default html
+          //   fileOpenerURL = 'node_modules/@tagspaces/html-viewer/index.html?locale=' + i18n.language;
+        } else {
+          fileOpenerURL =
+            currentEntry.viewingExtensionPath +
+            '/index.html?file=' +
+            encodeURIComponent(
+              currentEntry.url ? currentEntry.url : currentEntry.path
+            ) +
+            '&locale=' +
+            i18n.language +
+            (this.shouldReload ? '&t=' + new Date().getTime() : '');
+        }
+        this.shouldReload = false;
+
+        // if (!currentEntry.isFile) {
+        //   fileOpenerURL = currentEntry.path + '/index.html';
+        // }
+
+        // // Idea for using mhtml native browser in chrome
+        // if (
+        //   !AppConfig.isFirefox && (
+        //     currentEntry.path.endsWith('mht') ||
+        //     currentEntry.path.endsWith('mhtml')
+        //   )
+        // ) {
+        //   fileOpenerURL = currentEntry.path;
+        component = this.renderFileView(fileOpenerURL);
       }
-      this.shouldReload = false;
-
-      // if (!currentEntry.isFile) {
-      //   fileOpenerURL = currentEntry.path + '/index.html';
-      // }
-
-      // // Idea for using mhtml native browser in chrome
-      // if (
-      //   !AppConfig.isFirefox && (
-      //     currentEntry.path.endsWith('mht') ||
-      //     currentEntry.path.endsWith('mhtml')
-      //   )
-      // ) {
-      //   fileOpenerURL = currentEntry.path;
-      // }
     } else {
-      fileOpenerURL = 'about:blank';
+      component = this.renderFileView(fileOpenerURL);
     }
 
     return (
@@ -1375,7 +1388,7 @@ class EntryContainer extends React.Component<Props, State> {
                 <CloseIcon />
               </Fab>
             )}
-            {this.renderFileView(fileOpenerURL)}
+            {component}
           </div>
         </SplitPane>
       </GlobalHotKeys>

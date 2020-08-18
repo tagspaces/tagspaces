@@ -236,6 +236,7 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.56",
     "@material-ui/pickers": "^3.2.10",
+    "@tagspaces/text-editor-component": "https://github.com/sytolk/editorText.git#ts-component",
     "aws-sdk": "^2.652.0",
     "babel-polyfill": "^6.26.0",
     "chokidar": "^3.4.0",

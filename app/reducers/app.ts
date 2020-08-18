@@ -106,6 +106,7 @@ export const NotificationTypes = {
 export type OpenedEntry = {
   path: string;
   url?: string;
+  webComponent?: boolean;
   viewingExtensionPath: string;
   viewingExtensionId: string;
   editingExtensionPath?: string;
@@ -1608,6 +1609,7 @@ function findExtensionsForEntry(
   };
   supportedFileTypes.map(fileType => {
     if (fileType.viewer && fileType.type.toLowerCase() === fileExtension) {
+      fileForOpening.webComponent = fileType.webComponent;
       fileForOpening.viewingExtensionId = fileType.viewer;
       if (fileType.color) {
         fileForOpening.color = fileType.color;

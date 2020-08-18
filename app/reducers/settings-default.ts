@@ -603,8 +603,9 @@ export default {
     },
     {
       type: 'txt',
-      viewer: '@tagspaces/text-editor',
-      editor: '@tagspaces/text-editor'
+      webComponent: true,
+      viewer: '@tagspaces/text-editor-component',
+      editor: '@tagspaces/text-editor-component'
     },
     {
       type: 'url',
