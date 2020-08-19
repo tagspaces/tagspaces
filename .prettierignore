@@ -11,3 +11,4 @@ app/main.prod.js
 extensions
 dll
 app/utils/js-webdav-client.js
+coverage

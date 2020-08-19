@@ -76,8 +76,8 @@
     "test-watch": "yarn test --watch",
     "test-e2e-old": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings ./tests/runTests.js e2e",
     "test-e2e-dev": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings ./tests/runTests.js e2e-dev",
-    "test": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 jest --verbose ./tests/unit",
-    "test-all": "yarn lint && yarn build && yarn test && yarn build-e2e && yarn test-e2e",
+    "test-unit": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 jest --verbose ./tests/unit/",
+    "test-all": "yarn lint && yarn build && yarn test-unit && yarn build-e2e && yarn test-e2e",
     "test-e2e": "node -r @babel/register ./internals/scripts/CheckBuiltsExist.js && cross-env NODE_ENV=test testcafe electron:./ ./test/e2e/HomePage.e2e.ts"
   },
   "repository": {
