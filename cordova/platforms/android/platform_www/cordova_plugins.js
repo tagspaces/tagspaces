@@ -255,13 +255,13 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
   ];
   module.exports.metadata = {
     "com.whebcraft.cordova.plugin.downloader": "0.1.0",
-    "cordova-plugin-device": "2.0.3",
+    "cordova-plugin-device": "2.0.2",
     "cordova-plugin-background-mode": "0.7.3",
     "cordova-plugin-camera": "4.1.0",
     "cordova-plugin-file": "6.0.2",
-    "cordova-plugin-file-opener2": "3.0.4",
-    "cordova-plugin-ios-xhr": "1.0.0",
-    "cordova-plugin-whitelist": "1.3.4",
+    "cordova-plugin-file-opener2": "3.0.3",
+    "cordova-plugin-whitelist": "1.3.3",
+    "cordova-plugin-wkwebview-engine": "1.2.1",
     "es6-promise-plugin": "4.2.2",
     "cordova-plugin-x-socialsharing": "5.6.8"
   };
