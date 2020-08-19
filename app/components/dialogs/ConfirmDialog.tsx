@@ -54,7 +54,10 @@ const ConfirmDialog = (props: Props) => {
     <Dialog open={open} onClose={onClose} keepMounted scroll="paper">
       <DialogTitle>{props.title}</DialogTitle>
       <DialogContent>
-        <DialogContentText data-tid={props.confirmDialogContentTID}>
+        <DialogContentText
+          data-tid={props.confirmDialogContentTID}
+          component="span"
+        >
           {props.content}
           {props.list && (
             <List dense>

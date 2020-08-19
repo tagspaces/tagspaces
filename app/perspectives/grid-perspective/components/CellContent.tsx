@@ -36,6 +36,7 @@ import TagContainer from '-/components/TagContainer';
 import i18n from '-/services/i18n';
 import { Tag } from '-/reducers/taglibrary';
 import PlatformIO from '-/services/platform-io';
+import { AppConfig } from '-/config';
 
 const maxDescriptionPreviewLength = 100;
 
@@ -392,7 +393,11 @@ const CellContent = (props: Props) => {
       }}
       onContextMenu={event => handleGridContextMenu(event, fsEntry)}
       onDoubleClick={event => handleGridCellDblClick(event, fsEntry)}
-      onClick={event => handleGridCellClick(event, fsEntry)}
+      onClick={event =>
+        AppConfig.isCordovaiOS // TODO DoubleClick not fired in Cordova IOS
+          ? handleGridCellDblClick(event, fsEntry)
+          : handleGridCellClick(event, fsEntry)
+      }
     >
       {gridCell}
     </Paper>

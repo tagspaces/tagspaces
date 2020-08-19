@@ -25,12 +25,12 @@ var nativeApi = this._cordovaNative || require('cordova/android/promptbasednativ
 var currentApi = nativeApi;
 
 module.exports = {
-    get: function() { return currentApi; },
-    setPreferPrompt: function(value) {
+    get: function () { return currentApi; },
+    setPreferPrompt: function (value) {
         currentApi = value ? require('cordova/android/promptbasednativeapi') : nativeApi;
     },
     // Used only by tests.
-    set: function(value) {
+    set: function (value) {
         currentApi = value;
     }
 };

@@ -19,11 +19,6 @@
        under the License.
 */
 
-// Coho updates this line:
-var VERSION = "7.1.4";
+const Api = require('./Api');
 
-module.exports.version = VERSION;
-
-if (!module.parent) {
-    console.log(VERSION);
-}
+console.log(Api.version());

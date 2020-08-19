@@ -316,11 +316,11 @@ class EntryContainer extends React.Component<Props, State> {
         }
       });
 
-      this.setState({
+      /* this.setState({
         // entryPropertiesSplitSize: settings.entryPropertiesSplitSize,
         isPropertiesPanelVisible:
           settings.entryPropertiesSplitSize > defaultSplitSize
-      });
+      }); */
     } else {
       this.setState({ currentEntry: null });
     }

@@ -26,8 +26,8 @@ module.exports = {
     /**
     * Clear the resource cache.
     */
-    clearCache:function() {
-        exec(null, null, APP_PLUGIN_NAME, "clearCache", []);
+    clearCache: function () {
+        exec(null, null, APP_PLUGIN_NAME, 'clearCache', []);
     },
 
     /**
@@ -44,31 +44,31 @@ module.exports = {
     * Example:
     *      navigator.app.loadUrl("http://server/myapp/index.html", {wait:2000, loadingDialog:"Wait,Loading App", loadUrlTimeoutValue: 60000});
     */
-    loadUrl:function(url, props) {
-        exec(null, null, APP_PLUGIN_NAME, "loadUrl", [url, props]);
+    loadUrl: function (url, props) {
+        exec(null, null, APP_PLUGIN_NAME, 'loadUrl', [url, props]);
     },
 
     /**
     * Cancel loadUrl that is waiting to be loaded.
     */
-    cancelLoadUrl:function() {
-        exec(null, null, APP_PLUGIN_NAME, "cancelLoadUrl", []);
+    cancelLoadUrl: function () {
+        exec(null, null, APP_PLUGIN_NAME, 'cancelLoadUrl', []);
     },
 
     /**
     * Clear web history in this web view.
     * Instead of BACK button loading the previous web page, it will exit the app.
     */
-    clearHistory:function() {
-        exec(null, null, APP_PLUGIN_NAME, "clearHistory", []);
+    clearHistory: function () {
+        exec(null, null, APP_PLUGIN_NAME, 'clearHistory', []);
     },
 
     /**
     * Go to previous page displayed.
     * This is the same as pressing the backbutton on Android device.
     */
-    backHistory:function() {
-        exec(null, null, APP_PLUGIN_NAME, "backHistory", []);
+    backHistory: function () {
+        exec(null, null, APP_PLUGIN_NAME, 'backHistory', []);
     },
 
     /**
@@ -80,8 +80,8 @@ module.exports = {
     *
     * @param override        T=override, F=cancel override
     */
-    overrideBackbutton:function(override) {
-        exec(null, null, APP_PLUGIN_NAME, "overrideBackbutton", [override]);
+    overrideBackbutton: function (override) {
+        exec(null, null, APP_PLUGIN_NAME, 'overrideBackbutton', [override]);
     },
 
     /**
@@ -95,14 +95,14 @@ module.exports = {
     * @param button          volumeup, volumedown
     * @param override        T=override, F=cancel override
     */
-    overrideButton:function(button, override) {
-        exec(null, null, APP_PLUGIN_NAME, "overrideButton", [button, override]);
+    overrideButton: function (button, override) {
+        exec(null, null, APP_PLUGIN_NAME, 'overrideButton', [button, override]);
     },
 
     /**
     * Exit and terminate the application.
     */
-    exitApp:function() {
-        return exec(null, null, APP_PLUGIN_NAME, "exitApp", []);
+    exitApp: function () {
+        return exec(null, null, APP_PLUGIN_NAME, 'exitApp', []);
     }
 };

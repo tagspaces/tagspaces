@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /*
        Licensed to the Apache Software Foundation (ASF) under one
        or more contributor license agreements.  See the NOTICE file
@@ -21,8 +19,7 @@
 
 var path = require('path');
 var os = require('os');
-var Q = require('q');
-var child_process = require('child_process');
+var execa = require('execa');
 var ROOT = path.join(__dirname, '..', '..');
 
 /*
@@ -30,8 +27,7 @@ var ROOT = path.join(__dirname, '..', '..');
  * Returns a promise.
  */
 module.exports.run = function () {
-    var d = Q.defer();
-    var adb = child_process.spawn('adb', ['logcat'], {cwd: os.tmpdir()});
+    var adb = execa('adb', ['logcat'], { cwd: os.tmpdir(), stderr: 'inherit' });
 
     adb.stdout.on('data', function (data) {
         var lines = data ? data.toString().split('\n') : [];
@@ -39,14 +35,7 @@ module.exports.run = function () {
         console.log(out.join('\n'));
     });
 
-    adb.stderr.on('data', console.error);
-    adb.on('close', function (code) {
-        if (code > 0) {
-            d.reject('Failed to run logcat command.');
-        } else d.resolve();
-    });
-
-    return d.promise;
+    return adb;
 };
 
 module.exports.help = function () {

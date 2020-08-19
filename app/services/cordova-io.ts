@@ -17,7 +17,6 @@
  */
 
 /* globals cordova */
-
 import AppConfig from '../config';
 import { b64toBlob } from '../utils/misc';
 import {
@@ -47,6 +46,21 @@ export default class CordovaIO {
   widgetAction;
   loadedSettings: any;
   loadedSettingsTags: any;
+
+  cordovaFileError = {
+    1: 'NOT_FOUND_ERR',
+    2: 'SECURITY_ERR',
+    3: 'ABORT_ERR',
+    4: 'NOT_READABLE_ERR',
+    5: 'ENCODING_ERR',
+    6: 'NO_MODIFICATION_ALLOWED_ERR',
+    7: 'INVALID_STATE_ERR',
+    8: 'SYNTAX_ERR',
+    9: 'INVALID_MODIFICATION_ERR',
+    10: 'QUOTA_EXCEEDED_ERR',
+    11: 'TYPE_MISMATCH_ERR',
+    12: 'PATH_EXISTS_ERR'
+  };
 
   onDeviceReady = () => {
     console.log(
@@ -160,18 +174,32 @@ export default class CordovaIO {
     }
   };
 
-  getFileSystemPromise = (path: string): Promise<any> => {
-    console.log('getFileSystemPromise: ' + path);
-    if (path.indexOf(cordova.file.applicationDirectory) === 0) {
+  getFileSystemPromise = (localPath: string): Promise<any> => {
+    console.log('getFileSystemPromise: ' + localPath);
+    if (
+      localPath &&
+      (localPath.indexOf(cordova.file.applicationDirectory) === 0 ||
+        localPath.startsWith('file:///'))
+    ) {
     } else {
-      path = AppConfig.isCordovaiOS
-        ? cordova.file.documentsDirectory + '/' + path
-        : 'file:///' + path;
+      localPath = AppConfig.isCordovaiOS
+        ? (cordova.file.documentsDirectory + '/' + localPath).replace(
+            ':/',
+            ':///'
+          )
+        : 'file:///' + localPath;
+      /*localPath = AppConfig.isCordovaiOS
+        ? path
+            .join(cordova.file.documentsDirectory, localPath)
+            .replace(':/', ':///')
+        : 'file:///' + localPath;*/
     }
-    path = encodeURI(path);
+    localPath = encodeURI(localPath);
     return new Promise((resolve, reject) => {
-      window.resolveLocalFileSystemURL(path, resolve, error => {
-        console.error('Error getting FileSystem: ' + JSON.stringify(error));
+      window.resolveLocalFileSystemURL(localPath, resolve, error => {
+        console.error(
+          'Error getting FileSystem: ' + this.cordovaFileError[error.code]
+        ); //JSON.stringify(error));
         reject(error);
       });
     });
@@ -358,14 +386,22 @@ export default class CordovaIO {
   // Platform API
 
   getDevicePaths = (): Object => {
-    const paths = {
-      Photos: 'sdcard/DCIM/',
-      Pictures: 'sdcard/Pictures/',
-      Download: 'sdcard/Download/',
-      Music: 'sdcard/Music/',
-      Movies: 'sdcard/Movies/',
-      SDCard: 'sdcard/'
-    };
+    let paths;
+    if (AppConfig.isCordovaiOS) {
+      paths = {
+        Documents: '/',
+        iCloud: cordova.file.syncedDataDirectory
+      };
+    } else {
+      paths = {
+        Photos: 'sdcard/DCIM/',
+        Pictures: 'sdcard/Pictures/',
+        Download: 'sdcard/Download/',
+        Music: 'sdcard/Music/',
+        Movies: 'sdcard/Movies/',
+        SDCard: cordova.file.externalRootDirectory // 'sdcard/'
+      };
+    }
     return paths;
   };
 

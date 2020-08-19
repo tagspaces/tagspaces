@@ -268,9 +268,11 @@ public class CordovaActivity extends Activity {
         if (this.appView == null) {
             return;
         }
-        // Force window to have focus, so application always
-        // receive user input. Workaround for some devices (Samsung Galaxy Note 3 at least)
-        this.getWindow().getDecorView().requestFocus();
+        if (! this.getWindow().getDecorView().hasFocus()) {
+            // Force window to have focus, so application always
+            // receive user input. Workaround for some devices (Samsung Galaxy Note 3 at least)
+            this.getWindow().getDecorView().requestFocus();
+        }
 
         this.appView.handleResume(this.keepRunning);
     }

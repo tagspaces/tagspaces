@@ -127,7 +127,7 @@ public class CordovaBridge {
     }
 
     public String promptOnJsPrompt(String origin, String message, String defaultValue) {
-        if (defaultValue != null && defaultValue.length() > 3 && defaultValue.startsWith("gap:")) {
+        if (defaultValue != null && defaultValue.startsWith("gap:")) {
             JSONArray array;
             try {
                 array = new JSONArray(defaultValue.substring(4));

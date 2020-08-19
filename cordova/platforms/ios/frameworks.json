@@ -1,0 +1,7 @@
+{
+    "ImageIO.framework": 1,
+    "CoreLocation.framework": 1,
+    "AVFoundation.framework": 1,
+    "Social.framework": 1,
+    "MessageUI.framework": 1
+}
