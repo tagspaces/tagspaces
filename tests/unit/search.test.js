@@ -17,5 +17,5 @@ test('calls Search.searchLocationIndex with the params', () => {
   expect(
     Search.searchLocationIndex(locationContent, searchQuery)
   ).resolves.toStrictEqual(mockedSearchIndex);
-  expect(SearchMock).toHaveBeenCalledWith(locationContent,searchQuery);
+  expect(SearchMock).toHaveBeenCalledWith(locationContent, searchQuery);
 });
