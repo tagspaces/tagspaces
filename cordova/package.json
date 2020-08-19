@@ -34,8 +34,7 @@
       },
       "cordova-plugin-camera": {
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
-      },
-      "cordova-plugin-ios-xhr": {}
+      }
     },
     "platforms": [
       "ios",

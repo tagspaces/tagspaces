@@ -25,8 +25,8 @@
         <icon density="xxxhdpi" src="res/icon/android/mipmap-xxxhdpi/ic_launcher.png" />
     </platform>
     <platform name="ios">
-        <preference name="NativeXHRLogging" value="full" />
-        <preference name="allowFileAccessFromFileURLs" value="true" />
+        <!--<preference name="NativeXHRLogging" value="full" />
+        <preference name="allowFileAccessFromFileURLs" value="true" />-->
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
     </platform>

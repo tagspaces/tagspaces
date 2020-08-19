@@ -17,7 +17,6 @@
  */
 
 /* globals cordova */
-import path from 'path';
 import AppConfig from '../config';
 import { b64toBlob } from '../utils/misc';
 import {
@@ -184,10 +183,16 @@ export default class CordovaIO {
     ) {
     } else {
       localPath = AppConfig.isCordovaiOS
+        ? (cordova.file.documentsDirectory + '/' + localPath).replace(
+            ':/',
+            ':///'
+          )
+        : 'file:///' + localPath;
+      /*localPath = AppConfig.isCordovaiOS
         ? path
             .join(cordova.file.documentsDirectory, localPath)
             .replace(':/', ':///')
-        : 'file:///' + localPath;
+        : 'file:///' + localPath;*/
     }
     localPath = encodeURI(localPath);
     return new Promise((resolve, reject) => {

@@ -45,10 +45,6 @@
     <feature name="FileOpener2">
         <param name="ios-package" value="FileOpener2" />
     </feature>
-    <feature name="CDVWKWebViewFileXhr">
-        <param name="ios-package" value="CDVWKWebViewFileXhr" />
-        <param name="onload" value="true" />
-    </feature>
     <feature name="SocialSharing">
         <param name="ios-package" value="SocialSharing" />
         <param name="onload" value="true" />
@@ -87,6 +83,4 @@
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
     <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root" />
     <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,cache,cache-external,assets,root" />
-    <preference name="NativeXHRLogging" value="full" />
-    <preference name="allowFileAccessFromFileURLs" value="true" />
 </widget>

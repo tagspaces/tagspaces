@@ -239,30 +239,6 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       ]
     },
     {
-      "id": "cordova-plugin-ios-xhr.formdata-polyfill",
-      "file": "plugins/cordova-plugin-ios-xhr/src/www/ios/formdata-polyfill.js",
-      "pluginId": "cordova-plugin-ios-xhr",
-      "runs": true
-    },
-    {
-      "id": "cordova-plugin-ios-xhr.xhr-polyfill",
-      "file": "plugins/cordova-plugin-ios-xhr/src/www/ios/xhr-polyfill.js",
-      "pluginId": "cordova-plugin-ios-xhr",
-      "runs": true
-    },
-    {
-      "id": "cordova-plugin-ios-xhr.fetch-bootstrap",
-      "file": "plugins/cordova-plugin-ios-xhr/src/www/ios/fetch-bootstrap.js",
-      "pluginId": "cordova-plugin-ios-xhr",
-      "runs": true
-    },
-    {
-      "id": "cordova-plugin-ios-xhr.fetch-polyfill",
-      "file": "plugins/cordova-plugin-ios-xhr/src/www/ios/whatwg-fetch-2.0.3.js",
-      "pluginId": "cordova-plugin-ios-xhr",
-      "runs": true
-    },
-    {
       "id": "es6-promise-plugin.Promise",
       "file": "plugins/es6-promise-plugin/www/promise.js",
       "pluginId": "es6-promise-plugin",
@@ -284,7 +260,6 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
     "cordova-plugin-camera": "4.1.0",
     "cordova-plugin-file": "6.0.2",
     "cordova-plugin-file-opener2": "3.0.4",
-    "cordova-plugin-ios-xhr": "1.0.0",
     "cordova-plugin-whitelist": "1.3.4",
     "es6-promise-plugin": "4.2.2",
     "cordova-plugin-x-socialsharing": "5.6.8"
