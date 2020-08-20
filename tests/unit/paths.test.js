@@ -7,88 +7,59 @@ const {
   getMetaFileLocationForFile
 } = require('../../app/utils/paths');
 
-const testDirPathUnix = '/home/user';
 const dirSeparatorUnix = '/';
-const testDirPathWin = 'c:\\Users\\testuser';
 const dirSeparatorWin = '\\';
-const fileName = 'filename';
-const txtFileExtension = 'txt';
 
-const txtFilePathUnix =
-  testDirPathUnix + dirSeparatorUnix + fileName + '.' + txtFileExtension;
+executeTests('/home/user', 'filename', 'txt', dirSeparatorUnix);
+executeTests('c:\\Users\\testuser', 'filename', 'txt', dirSeparatorWin);
+//c:\\users\\tester\\file.jpg
+executeTests('c:\\users\\tester', 'file', 'jpg', dirSeparatorWin);
+///users/tester/file.jpg
+executeTests('users/tester', 'file', 'jpg', dirSeparatorUnix);
+//without file Extension
+executeTests('../remote.php/webdav/somefilename', '', '', dirSeparatorUnix);
+executeTests(
+  '../remote.php/webdav/[20120125 89.4kg 19.5% 2.6kg]',
+  '',
+  '',
+  dirSeparatorUnix
+);
 
-const txtFilePathWin =
-  testDirPathWin + dirSeparatorWin + fileName + '.' + txtFileExtension;
+function executeTests(dirPath, fileName, fileExtension, dirSeparator) {
+  const platform = dirSeparator === '\\' ? 'Windows' : 'UNIX';
+  const filepath =
+    dirPath +
+    dirSeparator +
+    fileName +
+    (fileExtension ? '.' + fileExtension : '');
 
-test('extract baseName', () => {
-  expect(baseName(txtFilePathUnix, dirSeparatorUnix)).toBe(
-    fileName + '.' + txtFileExtension
-  );
+  test(platform + ' extract baseName ' + filepath, () => {
+    const name = baseName(filepath, dirSeparator);
+    expect(
+      name === fileName + (fileExtension ? '.' + fileExtension : '') ||
+        name === filepath
+    ).toBeTruthy();
+  });
 
-  expect(baseName(txtFilePathWin, dirSeparatorWin)).toBe(
-    fileName + '.' + txtFileExtension
-  );
-});
+  test(platform + ' extractFileExtension', () => {
+    expect(extractFileExtension(filepath, dirSeparator)).toBe(fileExtension);
+  });
 
-test('extractFileExtension', () => {
-  expect(extractFileExtension(txtFilePathUnix, dirSeparatorUnix)).toBe(
-    txtFileExtension
-  );
+  test(platform + ' getMetaDirectoryPath', () => {
+    expect(getMetaDirectoryPath(dirPath, dirSeparator)).toBe(
+      dirPath + dirSeparator + AppConfig.metaFolder
+    );
+  });
 
-  expect(extractFileExtension(txtFilePathWin, dirSeparatorWin)).toBe(
-    txtFileExtension
-  );
-
-  expect(
-    extractFileExtension('../remote.php/webdav/somefilename', dirSeparatorUnix)
-  ).toBe('');
-
-  expect(
-    extractFileExtension(
-      '../remote.php/webdav/[20120125 89.4kg 19.5% 2.6kg]',
-      dirSeparatorUnix
-    )
-  ).toBe('');
-});
-
-test('getMetaDirectoryPath', () => {
-  expect(getMetaDirectoryPath(testDirPathUnix, dirSeparatorUnix)).toBe(
-    testDirPathUnix + dirSeparatorUnix + AppConfig.metaFolder
-  );
-
-  expect(getMetaDirectoryPath(testDirPathWin, dirSeparatorWin)).toBe(
-    testDirPathWin + dirSeparatorWin + AppConfig.metaFolder
-  );
-});
-
-test('getMetaFileLocationForFile', () => {
-  expect(getMetaFileLocationForFile(txtFilePathUnix, dirSeparatorUnix)).toBe(
-    testDirPathUnix +
-      dirSeparatorUnix +
-      AppConfig.metaFolder +
-      dirSeparatorUnix +
-      fileName +
-      '.' +
-      txtFileExtension +
-      AppConfig.metaFileExt
-  );
-
-  expect(getMetaFileLocationForFile(txtFilePathWin, dirSeparatorWin)).toBe(
-    testDirPathWin +
-      dirSeparatorWin +
-      AppConfig.metaFolder +
-      dirSeparatorWin +
-      fileName +
-      '.' +
-      txtFileExtension +
-      AppConfig.metaFileExt
-  );
-
-  expect(
-    getMetaFileLocationForFile('c:\\users\\tester\\file.jpg', dirSeparatorWin)
-  ).toBe('c:\\users\\tester\\.ts\\file.jpg.json');
-
-  expect(
-    getMetaFileLocationForFile('/users/tester/file.jpg', dirSeparatorUnix)
-  ).toBe('/users/tester/.ts/file.jpg.json');
-});
+  test(platform + ' getMetaFileLocationForFile', () => {
+    expect(getMetaFileLocationForFile(filepath, dirSeparator)).toBe(
+      dirPath +
+        dirSeparator +
+        AppConfig.metaFolder +
+        dirSeparator +
+        fileName +
+        (fileExtension ? '.' + fileExtension : '') +
+        AppConfig.metaFileExt
+    );
+  });
+}
