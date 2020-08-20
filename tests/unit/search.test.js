@@ -1,4 +1,4 @@
-import Search, { SearchQuery } from '../../app/services/search';
+import Search from '../../app/services/search';
 
 /*const mockedSearchIndex = { data: {} };
 const SearchMock = jest.fn();
@@ -44,49 +44,30 @@ test('calls Search.searchLocationIndex with the params', () => {
   forceIndexing: this.state.forceIndexing
 };*/
 
-/*FileSystemEntry {
-  uuid?: string;
-  name: string;
-  isFile: boolean;
-  extension: string;
-  thumbPath?: string;
-  color?: string;
-  textContent?: string;
-  description?: string;
-  tags?: Array<Tag>;
-  size: number;
-  lmdt: number;
-  path: string;
-  url?: string;
-  meta?: FileSystemEntryMeta;
-}*/
+const tag1 = { title: 'tagTitle1' };
+const tag2 = { title: 'tagTitle2' };
+const tag3 = { title: 'tagTitle3' };
 
+const entry1 = {
+  name: 'entryTitle1',
+  description: 'test description',
+  isFile: true,
+  extension: 'jpg',
+  tags: [tag1],
+  size: 111,
+  path: '/gg/'
+};
 
-//jest.mock('../../app/pro', () => require('../../extensions/pro'));
+const entry2 = {
+  name: 'entryTitle2',
+  isFile: true,
+  extension: 'jpg',
+  tags: [tag2],
+  size: 111,
+  path: '/gg/'
+};
 
-test('calls Search.searchLocationIndex with the params', () => {
-  const tag1 = { title: 'tagTitle1'};
-  const tag2 = { title: 'tagTitle2'};
-  const tag3 = { title: 'tagTitle3'};
-
-  const entry1 = {
-    name: 'entryTitle1',
-    isFile: true,
-    extension: 'jpg',
-    tags: [tag1],
-    size: 111,
-    path: '/gg/'
-  };
-
-  const entry2 = {
-    name: 'entryTitle2',
-    isFile: true,
-    extension: 'jpg',
-    tags: [tag2],
-    size: 111,
-    path: '/gg/'
-  };
-
+test('calls Search.searchLocationIndex for tags', () => {
   const locationContent = [entry1, entry2]; //enhanceEntry(entry)];
 
   const searchQuery = {
@@ -111,3 +92,34 @@ test('calls Search.searchLocationIndex with the params', () => {
     Search.searchLocationIndex(locationContent, searchQueryNotExist)
   ).resolves.toStrictEqual([]);
 });
+
+test('calls Search.searchLocationIndex for textQuery', () => {
+  const locationContent = [entry1, entry2];
+
+  const searchQuery = {
+    textQuery: 'description'
+  };
+
+  expect(
+    Search.searchLocationIndex(locationContent, searchQuery)
+  ).resolves.toStrictEqual([entry1]);
+});
+
+//jest.mock('../../app/pro', () => require('../../extensions/pro'));
+//jest.mock('../../extensions/pro/modules/thumbsgenerator');
+//jest.mock('../../app/services/platform-io');
+
+/*
+test('calls Search.searchLocationIndex for Pro', () => {
+
+  const locationContent = [entry1, entry2];
+
+  const searchQuery = {
+    textQuery: 'description'
+  };
+
+  expect(
+    Search.searchLocationIndex(locationContent, searchQuery)
+  ).resolves.toStrictEqual([entry1]);
+});
+*/
