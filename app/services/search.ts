@@ -274,13 +274,13 @@ export default class Search {
         results = jmespath.search({ index: results }, jmespathQuery);
         console.timeEnd('jmespath');
         console.log('jmespath results: ' + results.length);
-        searched = searched || results.length < resultCount;
+        searched = searched || results.length <= resultCount;
       }
 
       if (Pro && Pro.Search.filterIndex) {
         const resultCount = results.length;
         results = Pro.Search.filterIndex(results, searchQuery);
-        searched = searched || results.length < resultCount;
+        searched = searched || results.length <= resultCount;
       }
 
       if (searchQuery.textQuery && searchQuery.textQuery.length > 1) {
@@ -290,7 +290,7 @@ export default class Search {
         const fuse = new Fuse(results, fuseOptions);
         results = fuse.search(searchQuery.textQuery);
         console.timeEnd('fuse');
-        searched = searched || results.length < resultCount;
+        searched = searched || results.length <= resultCount;
       }
 
       if (searched) {
