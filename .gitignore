@@ -86,6 +86,7 @@ reports/*
 
 tests/*
 !tests/unit/
+!tests/e2e/
 
 builds/*
 web/sw-config.js

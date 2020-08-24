@@ -49,7 +49,7 @@
     "package-android": "yarn build-cordova && cd cordova && yarn install && cordova build --release android && cd ../.. && ./prepare-android.sh",
     "package-web": "yarn prepare-web && yarn clean-maps && zip -r ../builds/tagspaces-web.zip web -x web/files/**\\*",
     "package-web-pro": "yarn prepare-web && yarn clean-maps && zip -r ../builds/tagspaces-pro-web.zip web -xi web/files/**\\* ",
-    "prepare-web": "rimraf web/node_modules && cp -r app/node_modules web && cp LICENSE.txt web && node scripts/genswconf.js",
+    "prepare-web": "rimraf web/node_modules && copyfiles -a app/node_modules LICENSE.txt web && node scripts/genswconf.js",
     "prepare-cordova": "rimraf cordova/www/dist && rimraf cordova/www/node_modules && cp -LR app/node_modules cordova/www && cp LICENSE.txt cordova/www",
     "paste-android-linux": "adb shell input text '$(xclip -selection c -o)'",
     "paste-android-macos": "adb shell input text \"'$(pbpaste)'\"",
@@ -77,8 +77,8 @@
     "test-e2e-old": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings ./tests/runTests.js e2e",
     "test-e2e-dev": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings ./tests/runTests.js e2e-dev",
     "test-unit": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 jest --verbose ./tests/unit/",
-    "test-all": "yarn lint && yarn build && yarn test-unit && yarn build-e2e && yarn test-e2e",
-    "test-e2e": "node -r @babel/register ./internals/scripts/CheckBuiltsExist.js && cross-env NODE_ENV=test testcafe electron:./ ./test/e2e/HomePage.e2e.ts"
+    "test-all": "yarn build && yarn test-unit && yarn build-e2e && yarn test-e2e",
+    "test-e2e": "node -r @babel/register ./internals/scripts/CheckBuiltsExist.js && cross-env NODE_ENV=test  jest --verbose ./tests/e2e/"
   },
   "repository": {
     "type": "git",
@@ -119,7 +119,7 @@
       "app/node_modules"
     ],
     "testMatch": [
-      "**/{unit,app,test,integration}/**/*.test.{js,tsx,ts,tsx}"
+      "**/{unit,e2e,app,test,integration}/**/*.{test,spec}.{js,tsx,ts,tsx}"
     ],
     "testPathIgnorePatterns": [
       "<rootDir>/extensions"
@@ -166,6 +166,7 @@
     "chalk": "^2.4.1",
     "concat-licenses": "^2.0.1",
     "concurrently": "^4.1.0",
+    "copyfiles": "^2.3.0",
     "cross-env": "^5.2.0",
     "cross-spawn": "^6.0.5",
     "css-loader": "^2.1.0",
@@ -216,7 +217,7 @@
     "serve-static": "^1.14.1",
     "shelljs": "^0.8.3",
     "sinon": "^2.3.1",
-    "spectron": "^7.0.0",
+    "spectron": "^11.1.0",
     "style-loader": "^1.1.2",
     "stylelint": "^9.9.0",
     "stylelint-config-prettier": "^4.0.0",

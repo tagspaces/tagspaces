@@ -37,7 +37,7 @@ const LocationManagerMenu = (props: Props) => (
   <div style={{ overflowY: 'hidden' }}>
     <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
       <MenuItem
-        data-tid="locationManagerMenu"
+        data-tid="locationManagerHelp"
         onClick={() => {
           props.onClose();
           props.openURLExternally(AppConfig.documentationLinks.locations);

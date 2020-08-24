@@ -90,7 +90,7 @@ const LicenseDialog = (props: Props) => {
           {i18n.t('core:quit')}
         </Button>
         <Button
-          data-tid="confirmLicenseDialog"
+          data-tid="agreeLicenseDialog"
           onClick={props.onClose}
           color="primary"
         >

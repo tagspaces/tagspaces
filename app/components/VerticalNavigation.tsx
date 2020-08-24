@@ -245,7 +245,7 @@ class VerticalNavigation extends React.Component<Props, State> {
                   : this.styles.button
               }
               title={i18n.t('core:locationManager')}
-              data-tid="locationManager"
+              data-tid="locationManagerPanel"
             >
               <LocationsIcon style={this.styles.buttonIcon} />
             </IconButton>

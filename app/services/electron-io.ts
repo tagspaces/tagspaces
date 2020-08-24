@@ -17,6 +17,7 @@
  */
 
 import fsextra from 'fs-extra';
+import pathLib from 'path';
 import winattr from 'winattr';
 import {
   extractParentDirectoryPath,
@@ -278,7 +279,10 @@ export default class ElectronIO {
       let eentry;
       let containsMetaFolder = false;
       // const metaMetaFolder = AppConfig.metaFolder + AppConfig.dirSeparator + AppConfig.metaFolder;
-
+      if (path.startsWith('./')) {
+        //relative paths
+        path = pathLib.resolve(path);
+      }
       this.fs.readdir(path, (error, entries) => {
         if (error) {
           console.warn('Error listing directory ' + path);
