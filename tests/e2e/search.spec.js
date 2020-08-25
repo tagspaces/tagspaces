@@ -16,25 +16,26 @@ export const testFilename = 'sample.desktop';
 export const firstTagButton = '/tbody/tr[1]/td[3]/button[1]';
 
 export async function searchEngine(filename, tagName, resetSearchButton) {
-  await global.client
-    .waitForVisible('[data-tid=search]')
-    .click('[data-tid=search]');
-  await global.client
-    .waitForVisible('#textQuery')
-    .setValue('#textQuery', filename);
+  const searchElem = await global.client.$('[data-tid=search]');
+  await searchElem.click();
+  const searchInput = await global.client.$('#textQuery');
+  await searchInput.waitForDisplayed();
+  await searchInput.setValue(filename);
 
   if (tagName) {
-    await global.client
-      .waitForVisible('#searchTags')
-      .setValue('#searchTags', tagName);
+    const searchTags = await global.client.$('#searchTags');
+    await searchTags.waitForDisplayed();
+    await searchTags.setValue(tagName);
   }
 
   if (resetSearchButton) {
-    await global.client
-      .waitForVisible('#resetSearchButton')
-      .click('#resetSearchButton');
+    const resetSearch = await global.client.$('#resetSearchButton');
+    await resetSearch.waitForDisplayed();
+    await resetSearch.click();
   } else {
-    await global.client.waitForVisible('#searchButton').click('#searchButton');
+    const searchButton = await global.client.$('#searchButton');
+    await searchButton.waitForDisplayed();
+    await searchButton.click();
   }
 }
 

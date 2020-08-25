@@ -81,6 +81,15 @@ export async function openLocation(locationName) {
   await lName.click();
 }
 
+export async function closeFileProperties() {
+  const fileContainerCloseOpenedFile = await global.client.$(
+    '[data-tid=fileContainerCloseOpenedFile]'
+  );
+  if (fileContainerCloseOpenedFile.isClickable()) {
+    await fileContainerCloseOpenedFile.click();
+  }
+}
+
 export async function checkForIdExist(tid) {
   await delay(500);
   const dataTid = await global.client.element('[data-tid=' + tid + ']');

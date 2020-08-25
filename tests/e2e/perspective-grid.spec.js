@@ -4,7 +4,8 @@ import {
   createLocation,
   openLocation,
   defaultLocationPath,
-  defaultLocationName
+  defaultLocationName,
+  closeFileProperties
 } from './location.helpers';
 import { searchEngine } from './search.spec';
 import {
@@ -39,16 +40,10 @@ describe('TST51 - Perspective Grid', () => {
     await delay(500);
     await openLocation(defaultLocationName);
     await delay(500);
+    await closeFileProperties();
   });
 
   it('TST5112 - Show sub folders', async () => {
-    const fileContainerCloseOpenedFile = await global.client.$(
-      '[data-tid=fileContainerCloseOpenedFile]'
-    );
-    if (fileContainerCloseOpenedFile.isClickable()) {
-      await fileContainerCloseOpenedFile.click();
-    }
-
     const gridPerspectiveOptionsMenu = await global.client.$(
       '[data-tid=gridPerspectiveOptionsMenu]'
     );
@@ -61,14 +56,16 @@ describe('TST51 - Perspective Grid', () => {
     );
     await gridPerspectiveToggleShowDirectories.waitForDisplayed();
     // await elem.waitForVisible();
-    await gridPerspectiveToggleShowDirectories.click();
-    //await delay(500);
-    const fileIcon = await global.client.$(
+    const folder = await global.client.$(
+      '//*[@data-tid="perspectiveGridFileTable"]/div'
+    );
+    const file = await global.client.$(
       '//*[@data-tid="perspectiveGridFileTable"]/span'
     );
-    const fileIconText = fileIcon.getText();
-    await delay(500);
-    expect(fileIconText).not.toContain('[__]');
+    await gridPerspectiveToggleShowDirectories.click();
+    //await delay(500);
+    expect(await file.isDisplayed()).toBe(true);
+    expect(await folder.isDisplayed()).toBe(false);
 
     // show sub folder in the grid perspective
     await gridPerspectiveOptionsMenu.waitForDisplayed();
@@ -77,11 +74,8 @@ describe('TST51 - Perspective Grid', () => {
     await gridPerspectiveToggleShowDirectories.waitForDisplayed();
     await gridPerspectiveToggleShowDirectories.click();
 
-    const folderIcon = await global.client.$(
-      '//*[@data-tid="perspectiveGridFileTable"]/span'
-    );
-    await delay(500);
-    expect(folderIcon).toContain('[__]');
+    expect(await file.isDisplayed()).toBe(true);
+    expect(await folder.isDisplayed()).toBe(true);
   });
 
   it('TST5113 - Show sub folders content', async () => {});

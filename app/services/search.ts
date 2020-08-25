@@ -119,23 +119,23 @@ const fuseOptions = {
   keys: [
     {
       name: 'name',
-      weight: 0.4
+      weight: 0.25
     },
     {
       name: 'description',
-      weight: 0.4
+      weight: 0.25
     },
     {
       name: 'textContent',
-      weight: 0.4
+      weight: 0.25
     },
     {
       name: 'tags',
-      weight: 0.3
+      weight: 0.2
     },
     {
       name: 'path', // TODO ignore .ts folder, should not be in the index
-      weight: 0.1
+      weight: 0.05
     }
   ]
 };
@@ -303,9 +303,10 @@ export default class Search {
         }
         // Removing textContent as not needed for the search results
         for (let i = 0, len = results.length; i < len; i += 1) {
-          if (results[i].textContent) {
+          results[i] = results[i].item;
+          /*if (results[i].textContent) {
             results[i].textContent = undefined;
-          }
+          }*/
         }
         console.log('Results send: ' + results.length);
         console.timeEnd('searchtime');
