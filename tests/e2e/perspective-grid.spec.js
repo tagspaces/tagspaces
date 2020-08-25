@@ -197,7 +197,9 @@ describe('TST51 - Perspective Grid', () => {
     });
 
     it('TST10** - Sort by extension', async () => {
-      const sortByExt = await global.client.$('[data-tid=gridPerspectiveSortByExt]');
+      const sortByExt = await global.client.$(
+        '[data-tid=gridPerspectiveSortByExt]'
+      );
       await sortByExt.click();
       // todo Check if the directories are displayed
     });
@@ -218,10 +220,10 @@ describe('TST50** - Right button on a file', () => {
   beforeEach(async () => {
     await clearLocalStorage();
     await createLocation(defaultLocationPath, defaultLocationName, true);
-   // await delay(500);
+    // await delay(500);
     await openLocation(defaultLocationName);
     await closeFileProperties();
-   // await delay(500);
+    // await delay(500);
     //await openDirectoryMenu('createNewFile');
   });
 

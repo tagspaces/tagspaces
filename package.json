@@ -101,7 +101,7 @@
   ],
   "husky": {
     "hooks": {
-      "pre-commit": "yarn prettier-check && yarn type-check"
+      "pre-commit": "yarn prettier-check"
     }
   },
   "jest": {

@@ -26,7 +26,6 @@ export async function openFile(perspectiveSelector, inDepth) {
   await resetSearch.waitForDisplayed();
   await resetSearch.click();
 
-
   const fileSelector = await global.client.$(perspectiveSelector + inDepth);
   await fileSelector.waitForDisplayed();
   await fileSelector.click();
@@ -34,7 +33,9 @@ export async function openFile(perspectiveSelector, inDepth) {
 
 export async function openDirectoryMenu(menuOperation) {
   // menuOption is selector for current menu operation
-  const folderContainerOpenDirMenu = await global.client.$('[data-tid=folderContainerOpenDirMenu]');
+  const folderContainerOpenDirMenu = await global.client.$(
+    '[data-tid=folderContainerOpenDirMenu]'
+  );
   await folderContainerOpenDirMenu.click();
   const menuElem = await global.client.$('[data-tid=' + menuOperation + ']');
   menuElem.click();
@@ -44,10 +45,12 @@ export async function openContextEntryMenu(selector, menuOperation) {
   // selector is current selector location for element in perspectiveGridTable or perspectiveListTable (full xpath path to element)
   // menuOption is selector for current menu operation
   const elem = await global.client.$(selector);
-  await elem.click({ button: 'right'});
+  await elem.click({ button: 'right' });
   //const xoffset = await elem.getLocation('x');
   //const yoffset = await elem.getLocation('y');
-  const folderContainerOpenDirMenu = await global.client.$('[data-tid=folderContainerOpenDirMenu]');
+  const folderContainerOpenDirMenu = await global.client.$(
+    '[data-tid=folderContainerOpenDirMenu]'
+  );
 
   const operation = await global.client.$('[data-tid=' + menuOperation + ']');
   await operation.click();
