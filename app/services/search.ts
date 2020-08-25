@@ -304,9 +304,9 @@ export default class Search {
         // Removing textContent as not needed for the search results
         for (let i = 0, len = results.length; i < len; i += 1) {
           results[i] = results[i].item;
-          /*if (results[i].textContent) {
+          if (results[i].textContent) {
             results[i].textContent = undefined;
-          }*/
+          }
         }
         console.log('Results send: ' + results.length);
         console.timeEnd('searchtime');
