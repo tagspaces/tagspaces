@@ -35,13 +35,13 @@ const newTagName = 'newTagName';
 describe('TST51 - Perspective Grid', () => {
   beforeEach(async () => {
     await clearLocalStorage();
-  //  await delay(500);
+    //  await delay(500);
     //await closeWelcome();
     //await delay(500);
     await createLocation(defaultLocationPath, defaultLocationName, true);
-   // await delay(500);
+    // await delay(500);
     await openLocation(defaultLocationName);
-   // await delay(500);
+    // await delay(500);
     await closeFileProperties();
   });
 
@@ -69,7 +69,7 @@ describe('TST51 - Perspective Grid', () => {
     expect(await folder.isDisplayed()).toBe(true);
   });
 
-  it('TST5113 - Show sub folders content', async () => {});
+  /*it('TST5113 - Show sub folders content', async () => {});*/
 
   it('TST5101 - Open file with click', async () => {
     await searchEngine(testTestFilename);
@@ -101,7 +101,6 @@ describe('TST51 - Perspective Grid', () => {
   });
 
   it('TST51** - Return directory back', async () => {
-
     const file = await global.client.$(
       '//*[@data-tid="perspectiveGridFileTable"]/span'
     );
@@ -135,14 +134,25 @@ describe('TST51 - Perspective Grid', () => {
   });
 
   it('TST51** - Changing the Perspective View', async () => {
-    await global.client.waitForVisible(
+    const grid = await global.client.$('[data-tid=perspectiveGridFileTable]');
+    let gridStyle = await grid.getAttribute('style');
+
+    expect(gridStyle).toContain(
+      'grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));'
+    );
+
+    const switchLayoutToRow = await global.client.$(
       '[data-tid=gridPerspectiveSwitchLayoutToRow]'
     );
-    await global.client.click('[data-tid=gridPerspectiveSwitchLayoutToRow]');
+    await switchLayoutToRow.click();
     // check perspective view
+    // await delay(95000);
+
+    gridStyle = await grid.getAttribute('style');
+    expect(gridStyle).toContain('grid-template-columns: none;');
   });
 
-  it('TST51** - Show/Hide directories in perspective view', async () => {
+  /*it('TST51** - Show/Hide directories in perspective view', async () => { //TODO
     await global.client.waitForVisible(
       '[data-tid=gridPerspectiveToggleShowDirectories]'
     );
@@ -150,52 +160,54 @@ describe('TST51 - Perspective Grid', () => {
       '[data-tid=gridPerspectiveToggleShowDirectories]'
     );
     // Check if the directories are displayed
-  });
+  });*/
 
   // Scenarios for sorting files in grid perspective
   describe('TST5117 - Testing sort files in the grid perspective:', () => {
     beforeEach(async () => {
-      await delay(500);
-      await global.client.waitForVisible('[data-tid=gridPerspectiveSortMenu]');
-      await global.client.click('[data-tid=gridPerspectiveSortMenu]');
+      // await delay(500);
+      const sortMenu = await global.client.$(
+        '[data-tid=gridPerspectiveSortMenu]'
+      );
+      await sortMenu.click();
     });
 
     it('TST10** - Sort by name', async () => {
-      await global.client.waitForVisible(
+      const sortByName = await global.client.$(
         '[data-tid=gridPerspectiveSortByName]'
       );
-      await global.client.click('[data-tid=gridPerspectiveSortByName]');
-      // check all selected files
+      await sortByName.click();
+      // todo check all selected files
     });
 
     it('TST10** - Sort by size', async () => {
-      await global.client.waitForVisible(
+      const sortBySize = await global.client.$(
         '[data-tid=gridPerspectiveSortBySize]'
       );
-      await global.client.click('[data-tid=gridPerspectiveSortBySize]');
-      // check parent directory
+      await sortBySize.click();
+      // todo check parent directory
     });
 
     it('TST10** - Sort by date', async () => {
-      await global.client.waitForVisible(
+      const sortByDate = await global.client.$(
         '[data-tid=gridPerspectiveSortByDate]'
       );
-      await global.client.click('[data-tid=gridPerspectiveSortByDate]');
-      // check perspective view
+      await sortByDate.click();
+      // todo check perspective view
     });
 
     it('TST10** - Sort by extension', async () => {
-      await global.client.waitForVisible('[data-tid=gridPerspectiveSortByExt]');
-      await global.client.click('[data-tid=gridPerspectiveSortByExt]');
-      // Check if the directories are displayed
+      const sortByExt = await global.client.$('[data-tid=gridPerspectiveSortByExt]');
+      await sortByExt.click();
+      // todo Check if the directories are displayed
     });
 
     it('TST10** - Sort by tags', async () => {
-      await global.client.waitForVisible(
-        '[data-tid=gridPerspectiveSortByTags]'
+      const sortByTags = await global.client.$(
+        '[data-tid=gridPerspectiveSortByFirstTag]'
       );
-      await global.client.click('[data-tid=gridPerspectiveSortByTags]');
-      // Check if the directories are displayed
+      await sortByTags.click();
+      // todo Check if the directories are displayed
     });
   });
 });
@@ -206,10 +218,11 @@ describe('TST50** - Right button on a file', () => {
   beforeEach(async () => {
     await clearLocalStorage();
     await createLocation(defaultLocationPath, defaultLocationName, true);
-    await delay(500);
+   // await delay(500);
     await openLocation(defaultLocationName);
-    await delay(500);
-    await openDirectoryMenu('createNewFile');
+    await closeFileProperties();
+   // await delay(500);
+    //await openDirectoryMenu('createNewFile');
   });
 
   it('TST5016 - Open file', async () => {
@@ -220,9 +233,10 @@ describe('TST50** - Right button on a file', () => {
     );
     // Check if the file is opened
     await delay(500);
-    const webViewer = await global.client.element('#webViewer');
-    await delay(500);
-    expect(webViewer.selector).toBe('#webViewer');
+    const webViewer = await global.client.$('#FileViewer');
+    //await delay(500);
+    expect(await webViewer.isDisplayed()).toBe(true);
+    //expect(webViewer.selector).toBe('#webViewer');
   });
 
   it('TST5017 - Rename file', async () => {

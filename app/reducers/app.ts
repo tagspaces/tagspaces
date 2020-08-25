@@ -17,6 +17,7 @@
  */
 
 import uuidv1 from 'uuid';
+import pathLib from 'path';
 import { Location, getLocation, locationType } from './locations';
 import PlatformIO from '../services/platform-io';
 import AppConfig from '../config';
@@ -1725,6 +1726,10 @@ export const getCurrentLocationPath = (state: any) => {
         location.uuid === state.app.currentLocationId
       ) {
         pathCurrentLocation = location.paths[0];
+        if (pathCurrentLocation.startsWith('./')) {
+          //relative paths
+          pathCurrentLocation = pathLib.resolve(pathCurrentLocation);
+        }
       }
       return true;
     });
