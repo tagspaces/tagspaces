@@ -20,7 +20,7 @@ export const firstFileName = '/span/div/div/div/p';
 export async function openFile(perspectiveSelector, inDepth) {
   // perspectiveSelector is selector for current perspective
   // inDepth is selector for the depth of the elements
-  await delay(500);
+  //await delay(500);
 
   const resetSearch = await global.client.$('#resetSearchButton');
   await resetSearch.waitForDisplayed();

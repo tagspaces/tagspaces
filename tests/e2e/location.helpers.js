@@ -60,6 +60,30 @@ export async function createLocation(
   await confirmLocationCreation.click();
 }
 
+export async function openFilesOptionMenu() {
+  const gridPerspectiveOptionsMenu = await global.client.$(
+    '[data-tid=gridPerspectiveOptionsMenu]'
+  );
+  // await gridPerspectiveOptionsMenu.waitForDisplayed();
+  await gridPerspectiveOptionsMenu.click();
+}
+
+export async function toggleShowDirectoriesClick() {
+  const gridPerspectiveToggleShowDirectories = await global.client.$(
+    '[data-tid=gridPerspectiveToggleShowDirectories]'
+  );
+  await gridPerspectiveToggleShowDirectories.waitForDisplayed();
+  await gridPerspectiveToggleShowDirectories.click();
+}
+
+export async function selectAllFilesClick() {
+  const gridPerspectiveSelectAllFiles = await global.client.$(
+    '[data-tid=gridPerspectiveSelectAllFiles]'
+  );
+  await gridPerspectiveSelectAllFiles.waitForDisplayed();
+  await gridPerspectiveSelectAllFiles.click();
+}
+
 export async function openLocationMenu(locationName) {
   await delay(500);
   await global.client.waitForVisible(

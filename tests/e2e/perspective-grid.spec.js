@@ -5,7 +5,10 @@ import {
   openLocation,
   defaultLocationPath,
   defaultLocationName,
-  closeFileProperties
+  closeFileProperties,
+  openFilesOptionMenu,
+  toggleShowDirectoriesClick,
+  selectAllFilesClick
 } from './location.helpers';
 import { searchEngine } from './search.spec';
 import {
@@ -25,36 +28,27 @@ const subFolderContentExtractionPath =
 const subFolderThumbnailsPath = defaultLocationPath + '/thumbnails';
 
 const testTagName = 'testTag';
-const testTestFilename = 'sample_exif';
+const testTestFilename = 'sample';
 const newFileName = 'newFileName';
 const newTagName = 'newTagName';
-const selectedFileStyle = 'rgb(29, 209, 159)';
 
 describe('TST51 - Perspective Grid', () => {
   beforeEach(async () => {
     await clearLocalStorage();
-    await delay(500);
+  //  await delay(500);
     //await closeWelcome();
     //await delay(500);
     await createLocation(defaultLocationPath, defaultLocationName, true);
-    await delay(500);
+   // await delay(500);
     await openLocation(defaultLocationName);
-    await delay(500);
+   // await delay(500);
     await closeFileProperties();
   });
 
   it('TST5112 - Show sub folders', async () => {
-    const gridPerspectiveOptionsMenu = await global.client.$(
-      '[data-tid=gridPerspectiveOptionsMenu]'
-    );
-    // await gridPerspectiveOptionsMenu.waitForDisplayed();
-    await gridPerspectiveOptionsMenu.click();
+    await openFilesOptionMenu();
+    await toggleShowDirectoriesClick();
 
-    // hide sub folder in the grid perspective
-    const gridPerspectiveToggleShowDirectories = await global.client.$(
-      '[data-tid=gridPerspectiveToggleShowDirectories]'
-    );
-    await gridPerspectiveToggleShowDirectories.waitForDisplayed();
     // await elem.waitForVisible();
     const folder = await global.client.$(
       '//*[@data-tid="perspectiveGridFileTable"]/div'
@@ -62,17 +56,14 @@ describe('TST51 - Perspective Grid', () => {
     const file = await global.client.$(
       '//*[@data-tid="perspectiveGridFileTable"]/span'
     );
-    await gridPerspectiveToggleShowDirectories.click();
+
     //await delay(500);
     expect(await file.isDisplayed()).toBe(true);
     expect(await folder.isDisplayed()).toBe(false);
 
     // show sub folder in the grid perspective
-    await gridPerspectiveOptionsMenu.waitForDisplayed();
-    await gridPerspectiveOptionsMenu.click();
-
-    await gridPerspectiveToggleShowDirectories.waitForDisplayed();
-    await gridPerspectiveToggleShowDirectories.click();
+    await openFilesOptionMenu();
+    await toggleShowDirectoriesClick();
 
     expect(await file.isDisplayed()).toBe(true);
     expect(await folder.isDisplayed()).toBe(true);
@@ -87,23 +78,17 @@ describe('TST51 - Perspective Grid', () => {
   });
 
   it('TST5102 - Select/deselect all files', async () => {
-    await global.client.waitForVisible(
-      '[data-tid=gridPerspectiveSelectAllFiles]'
+    await openFilesOptionMenu();
+    await toggleShowDirectoriesClick();
+    await selectAllFilesClick();
+
+    const file = await global.client.$(
+      '//*[@data-tid="perspectiveGridFileTable"]/span/div/div'
     );
-    await global.client.click('[data-tid=gridPerspectiveSelectAllFiles]');
-    await global.client.waitForVisible(
-      '[data-tid=gridPerspectiveToggleShowDirectories]'
-    );
-    await global.client.click(
-      '[data-tid=gridPerspectiveToggleShowDirectories]'
-    );
-    await delay(500);
-    const file = await global.client.getAttribute(
-      '//*[@data-tid="perspectiveGridFileTable"]/div[1]',
-      'style'
-    );
-    await delay(500);
-    expect(file).toContain(selectedFileStyle);
+    //expect(file).toHaveClass('selectedGridCell', { message: 'Not selected!', })
+    const style = await file.getAttribute('class');
+    // await delay(90000);
+    expect(style).toContain('jss131');
   });
 
   // This scenario includes "Add tags" && "Remove tags" to be fulfilled
@@ -116,17 +101,34 @@ describe('TST51 - Perspective Grid', () => {
   });
 
   it('TST51** - Return directory back', async () => {
-    await global.client.waitForVisible(
+
+    const file = await global.client.$(
+      '//*[@data-tid="perspectiveGridFileTable"]/span'
+    );
+    expect(await file.isDisplayed()).toBe(true);
+
+    //Open folder
+    const folder = await global.client.$(
+      '//*[@data-tid="perspectiveGridFileTable"]/div'
+    );
+
+    await folder.doubleClick();
+    expect(await file.isDisplayed()).toBe(false);
+
+    const backButton = await global.client.$(
       '[data-tid=gridPerspectiveOnBackButton]'
     );
-    await global.client.click('[data-tid=gridPerspectiveOnBackButton]');
+    await backButton.click();
+    expect(await file.isDisplayed()).toBe(true);
+
+    /*await global.client.click('[data-tid=gridPerspectiveOnBackButton]');
     // check parent directory
     await global.client.waitForVisible(
-      '//*[@data-tid="perspectiveGridFileTable"]/div[1]'
+      '//!*[@data-tid="perspectiveGridFileTable"]/div[1]'
     );
     await global.client.click(
-      '//*[@data-tid="perspectiveGridFileTable"]/div[1]'
-    );
+      '//!*[@data-tid="perspectiveGridFileTable"]/div[1]'
+    );*/
     // const file = await global.client.getAttribute('//*[@data-tid="perspectiveGridFileTable"]/div[1]/div/p', 'style');
     // await delay(500);
     // expect(file).toContain(selectedFileStyle);
