@@ -274,6 +274,7 @@ const CreateDialog = (props: Props) => {
               onClick={createRichTextFile}
               className={classes.createButton}
               title={i18n.t('createNoteTitle')}
+              data-tid="createRichTextFileButton"
             >
               <div>
                 <NoteFileIcon />
@@ -288,6 +289,7 @@ const CreateDialog = (props: Props) => {
               onClick={createTextFile}
               className={classes.createButton}
               title={i18n.t('createNoteTitle')}
+              data-tid="createTextFileButton"
             >
               <TextFileIcon />
               <Container>{i18n.t('createTextFile')}</Container>
@@ -300,6 +302,7 @@ const CreateDialog = (props: Props) => {
               onClick={createMarkdownFile}
               className={classes.createButton}
               title={i18n.t('createMarkdownTitle')}
+              data-tid="createMarkdownButton"
             >
               <MarkdownFileIcon />
               <Container>{i18n.t('createMarkdown')}</Container>
@@ -310,6 +313,7 @@ const CreateDialog = (props: Props) => {
               onClick={addFile}
               className={classes.createButton}
               title={i18n.t('addFilesTitle')}
+              data-tid="addFilesButton"
             >
               <AddFileIcon />
               <Container>{i18n.t('addFiles')}</Container>

@@ -39,7 +39,18 @@ export async function searchEngine(filename, tagName, resetSearchButton) {
   }
 }
 
-describe('TST06 - Test Search in file structure:', () => {
+export async function createNewFile() {
+  const dirMenu = await global.client.$('[data-tid=folderContainerOpenDirMenu]');
+  await dirMenu.click();
+
+  const createNewFile = await global.client.$('[data-tid=createNewFile]');
+  await createNewFile.click();
+
+  const createTextFileButton = await global.client.$('[data-tid=createTextFileButton]');
+  await createTextFileButton.click();
+}
+
+/*describe('TST06 - Test Search in file structure:', () => {
   beforeEach(async () => {
     await clearLocalStorage();
     await delay(500);
@@ -99,4 +110,4 @@ describe('TST06 - Test Search in file structure:', () => {
     await searchEngine(testFileInSubDirectory, searchTag, true);
     // expected to reset all search engine
   });
-});
+});*/

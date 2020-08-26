@@ -1,5 +1,6 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 import { delay } from './hook';
+import {firstFile, openContextEntryMenu} from "./perspective.spec";
 
 export const defaultLocationPath =
   './tests/file-structure/supported-filestypes';
@@ -119,6 +120,69 @@ export async function checkForIdExist(tid) {
   const dataTid = await global.client.element('[data-tid=' + tid + ']');
   await delay(500);
   expect(dataTid.selector).toBe('[data-tid=' + tid + ']');
+}
+
+export async function clearInputValue(inputElement) {
+  const value = await inputElement.getValue();
+  const count = value.length;
+  for (let i = 0; i < count; i++) {
+    const value = await inputElement.getValue();
+    if (value === '') {
+      break;
+    }
+    await inputElement.doubleClick();
+    await global.client.keys('Delete');
+    await inputElement.clearValue();
+  }
+  await delay(500);
+}
+
+export async function renameFirstFile(newFileName) {
+  await openContextEntryMenu(
+      perspectiveGridTable + firstFile,
+      'fileMenuRenameFile'
+  );
+  await delay(500);
+  const renameFileDialogInput = await global.client
+      .$('[data-tid=renameFileDialogInput] input');
+  await renameFileDialogInput.waitForDisplayed();
+  await clearInputValue(renameFileDialogInput);
+  await renameFileDialogInput.keys(newFileName);
+  //await delay(1500);
+  const confirmRenameFileDialog = await global.client
+      .$('[data-tid=confirmRenameFileDialog]');
+  await confirmRenameFileDialog.click();
+}
+
+export async function deleteFirstFile() {
+  await openContextEntryMenu(
+      perspectiveGridTable + firstFile,
+      'fileMenuDeleteFile'
+  );
+  await delay(500);
+  // Check if the directories are displayed
+  const confirmDelete = await global.client
+      .$('[data-tid=confirmDeleteFileDialog]');
+  await confirmDelete.click();
+}
+
+
+
+export async function getFirstFileName() {
+  let fileName;
+  await openContextEntryMenu(
+      perspectiveGridTable + firstFile,
+      'fileMenuRenameFile'
+  );
+  await delay(500);
+  const renameFileDialogInput = await global.client
+      .$('[data-tid=renameFileDialogInput] input');
+  fileName = await renameFileDialogInput.getValue();
+  const cancelButton = await global.client
+      .$('[data-tid=closeRenameFileDialog]');
+  //await cancelButton.waitForDisplayed();
+  await cancelButton.click();
+  return fileName;
 }
 
 export async function checkForValidExt(selector, ext) {
