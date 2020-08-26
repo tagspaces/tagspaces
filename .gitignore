@@ -87,6 +87,8 @@ reports/*
 tests/*
 !tests/unit/
 !tests/e2e/
+!tests/file-structure/
+tests/file-structure/supported-filestypes/.ts/
 
 builds/*
 web/sw-config.js

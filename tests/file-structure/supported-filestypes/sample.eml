@@ -1,0 +1,647 @@
+Delivered-To: ilian.sapundshiev@gmail.com
+Received: by 10.107.128.169 with SMTP id k41csp232820ioi;
+        Tue, 27 Sep 2016 22:16:06 -0700 (PDT)
+X-Received: by 10.194.187.175 with SMTP id ft15mr26110344wjc.66.1475039765935;
+        Tue, 27 Sep 2016 22:16:05 -0700 (PDT)
+Return-Path: <m-7a5wx235hk3sskcgyiu40ff5k5gsuvsgsykegem89pmbxvrxrgpz3ftj583@bounce.linkedin.com>
+Received: from h1324065.stratoserver.net (tagspaces.org. [85.214.127.138])
+        by mx.google.com with ESMTPS id l141si18062648wma.61.2016.09.27.22.16.05
+        for <ilian.sapundshiev@gmail.com>
+        (version=TLS1 cipher=AES128-SHA bits=128/128);
+        Tue, 27 Sep 2016 22:16:05 -0700 (PDT)
+Received-SPF: softfail (google.com: domain of transitioning m-7a5wx235hk3sskcgyiu40ff5k5gsuvsgsykegem89pmbxvrxrgpz3ftj583@bounce.linkedin.com does not designate 85.214.127.138 as permitted sender) client-ip=85.214.127.138;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@linkedin.com;
+       spf=softfail (google.com: domain of transitioning m-7a5wx235hk3sskcgyiu40ff5k5gsuvsgsykegem89pmbxvrxrgpz3ftj583@bounce.linkedin.com does not designate 85.214.127.138 as permitted sender) smtp.mailfrom=m-7a5wx235hk3sskcgyiu40ff5k5gsuvsgsykegem89pmbxvrxrgpz3ftj583@bounce.linkedin.com;
+       dmarc=pass (p=REJECT dis=NONE) header.from=linkedin.com
+Received: by h1324065.stratoserver.net (Postfix, from userid 110)
+	id 5464271C060; Wed, 28 Sep 2016 07:15:35 +0200 (CEST)
+X-Original-To: ilian@structmedia.com
+Delivered-To: ilian@structmedia.com
+Received: by h1324065.stratoserver.net (Postfix, from userid 110)
+	id 14DC371C063; Wed, 28 Sep 2016 07:15:35 +0200 (CEST)
+X-Original-To: ilian@sapundshiev.de
+Delivered-To: ilian@sapundshiev.de
+X-No-Auth: unauthenticated sender
+X-No-Relay: not in my network
+Received: from mailc-af.linkedin.com (mailc-af.linkedin.com [108.174.3.166])
+	by h1324065.stratoserver.net (Postfix) with ESMTPS id 593D271C04B
+	for <ilian@sapundshiev.de>; Wed, 28 Sep 2016 07:15:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linkedin.com;
+	s=proddkim1024; t=1475039733;
+	bh=vOSYEgOrfokk+WAA4UKwItY5BOuWyxQQ0FNtFHzUkW0=;
+	h=From:Subject:MIME-Version:Content-Type:To:Date:X-LinkedIn-Class:
+	 X-LinkedIn-Template:X-LinkedIn-fbl;
+	b=nIoOiCyFRd6j+V9xalGYj743l3vnV3DxYAziWTWO7ol6SSBEPjkGuJATPhwxpkvcF
+	 /roaWyyHLMQmU6LpD4ZAZfoWu8Sp6jSG9/Ot0FA24KTN5HFd9ApW+uLWnzS6higrS+
+	 iAsVXKUTyNdlP4pEKr53dgFhJhLdYCE+rrkoZPa4=
+From: LinkedIn <news@linkedin.com>
+Message-ID: <1196782352.478625.1475039732990.JavaMail.app@ltx1-app8650.prod.linkedin.com>
+Subject: How two companies hooked customers on products they rarely use
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+	boundary="----=_Part_478623_1249715357.1475039732984"
+To: Ilian Sapundshiev <ilian@sapundshiev.de>
+Date: Wed, 28 Sep 2016 05:15:32 +0000 (UTC)
+X-LinkedIn-Class: CED
+X-LinkedIn-Template: b2_content_ecosystem_digest
+X-LinkedIn-fbl: m2-aszymvymjlohjks0qcbf5y9f66ofbjtaov5s3m7orh1x692ino83ws0ho829v6gar4djtqb85q5az8fc8auhz5sw2sbnjvnex35c8m
+X-LinkedIn-Id: 47o2o-itm7uegh-j3
+List-Unsubscribe: <mailto:list-unsubscribe@linkedin.com?subject=unsubscribe/AQElgNYfLyWD-gAAAVdvOCT-mb3tDsXkzp7qYFrZCXEdWLxLr1Z8EX0c-5JXw8_gWSlbCsFoMpLqf98f/47o2o-itm7uegh-j3/m2-aszymvymjlohjks0qcbf5y9f66ofbjtaov5s3m7orh1x692ino83ws0ho829v6gar4djtqb85q5az8fc8auhz5sw2sbnjvnex35c8m>
+Require-Recipient-Valid-Since: ilian@sapundshiev.de; Wed, 14 Aug 2013 00:00:00 +0000
+
+------=_Part_478623_1249715357.1475039732984
+Content-Type: text/plain;charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Content-ID: text-body
+
+&copy; 2016 LinkedIn Ireland Limited. LinkedIn, the LinkedIn logo, and InMa=
+il are registered trademarks of LinkedIn Corporation in the United States a=
+nd/or other countries. All rights reserved.
+
+You are receiving notification emails from LinkedIn. Unsubscribe here: http=
+s://www.linkedin.com/e/v2?e=3D47o2o-itm7uegh-j3&t=3Dlun&midToken=3DAQFjG-Dt=
+HGVS_w&ek=3Db2_content_ecosystem_digest&loid=3DAQEWyZ6AKZ1g8QAAAVdvOCSu_XoU=
+tKEW4mp7MGD6Y5kFvxkiKBwRL1TeJVpMS7i0HZUUFcML1GbStX3Z&eid=3D47o2o-itm7uegh-j=
+3
+
+
+
+This email was intended for Ilian Sapundshiev (Founder TagSpaces).=20
+Learn why we included this: https://www.linkedin.com/e/v2?e=3D47o2o-itm7ueg=
+h-j3&a=3DcustomerServiceUrl&midToken=3DAQFjG-DtHGVS_w&ek=3Db2_content_ecosy=
+stem_digest&articleId=3D4788
+
+If you need assistance or have questions, please contact LinkedIn Customer =
+Service: https://www.linkedin.com/e/v2?e=3D47o2o-itm7uegh-j3&a=3DcustomerSe=
+rviceUrl&midToken=3DAQFjG-DtHGVS_w&ek=3Db2_content_ecosystem_digest
+
+LinkedIn is a registered business name of LinkedIn Ireland Limited.
+Registered in Ireland as a private limited company, Company Number 477441
+Registered Office: Wilton Plaza, Wilton Place, Dublin 2, Ireland
+------=_Part_478623_1249715357.1475039732984
+Content-Type: text/html;charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Content-ID: html-body
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.=
+w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns=3D"http://www.w3=
+.org/1999/xhtml" style=3D"-webkit-text-size-adjust:none;"> <head> <meta htt=
+p-equiv=3D"Content-Type" content=3D"text/html;charset=3Dutf-8"/> <meta name=
+=3D"HandheldFriendly" content=3D"true"/> <meta name=3D"viewport" content=3D=
+"width=3Ddevice-width; initial-scale=3D0.666667; maximum-scale=3D0.666667; =
+user-scalable=3D0"/> <meta name=3D"viewport" content=3D"width=3Ddevice-widt=
+h"/> <title></title> <style type=3D"text/css">@media all and (max-width:590=
+px) { *[class].responsive { width:290px !important; } *[id]#center { width:=
+50%; margin:0 auto; display:table; } *[class].display-none { display:none !=
+important; } *[class].display-block { display:block !important; } *[class].=
+fix-table-content { table-layout:fixed; } *[class].hide-for-mobile { displa=
+y:none !important; } *[class].show-for-mobile { width:auto !important; max-=
+height:none !important; visibility:visible !important; overflow:visible !im=
+portant; float:none !important; height:auto !important; display:block !impo=
+rtant; } *[class].responsive_header { display:table-cell !important; width:=
+100% !important; color:#0077b5 !important; font-size:12px !important; } *[c=
+lass].res-font10 { font-size:10px !important; } *[class].res-font12 { font-=
+size:12px !important; } *[class].res-font13 { font-size:13px !important; } =
+*[class].res-font14 { font-size:14px !important; } *[class].res-font16 { fo=
+nt-size:16px !important; } *[class].res-font18 { font-size:18px !important;=
+ } *[class].res-font20 { font-size:20px !important; } *[class].res-width10 =
+{ width:10px !important; } *[class].res-width20 { width:20px !important; } =
+*[class].res-width25 { width:25px !important; } *[class].res-width120 { wid=
+th:120px !important; } *[class].res-height0 { height:0px !important; } *[cl=
+ass].res-height10 { height:10px !important; } *[class].res-height20 { heigh=
+t:20px !important; } *[class].res-height30 { height:30px !important; } *[cl=
+ass].res-img40 { width:40px !important; height:40px !important; } *[class].=
+res-img60 { width:60px !important; height:60px !important; } *[class].res-i=
+mg75 { width:75px !important; height:75px !important; } *[class].res-img100=
+ { width:100px !important; height:100px !important; } *[class].res-img150 {=
+ width:150px !important; height:150px !important; } *[class].res-img320 { w=
+idth:320px !important; height:auto !important; } *[class].hideIMG { display=
+:none; height:0px !important; width:0px !important; } *[class].responsive-s=
+pacer { width:10px !important; } *[class].header-spacer { table-layout:auto=
+ !important; width:250px !important; } *[class].header-spacer td, *[class].=
+header-spacer div { width:250px !important; } *[class].center-content { tex=
+t-align:center !important; } *[class].responsive-fullwidth { width:100% !im=
+portant; } *[class].cellpadding-none, *[class].cellpadding-none table, *[cl=
+ass].cellpadding-none table td { border-collapse:collapse !important; paddi=
+ng:0 !important; } *[class].remove-margin { margin:0 !important; } *[class]=
+.remove-border { border:none !important; } table[class].responsive:not(.res=
+ponsive-footer) { width:100% !important; } *[class].responsive-hidden { dis=
+play:none !important; max-height:0 !important; font-size:0 !important; over=
+flow:hidden !important; mso-hide:all !important; } *[class].responsive-body=
+ { width:100% !important; } *[class].responsive-logo, *[class].responsive-a=
+rticle, *[class].responsive-footer, *[class].responsive-headline { margin:0=
+ auto; text-align:0 left; width:268px !important; } *[class].text-link { co=
+lor:#008CC9; text-decoration:none; } *[class].res-font16 { font-size:16px !=
+important; line-height:20px !important; } @media only screen and (max-width=
+:532px) { *[class].responsive-logo, *[class].responsive-article, *[class].r=
+esponsive-footer, *[class].responsive-headline { width:96% !important; max-=
+width:532px; text-align:left; } } *[class].responsive-promo { margin:0 auto=
+; text-align:0 left; width:100% !important; max-width:532px; text-align:lef=
+t; } *[class].mobile-hidden { display:none; } } @media all and (-webkit-min=
+-device-pixel-ratio:1.5) { *[id]#base-header-logo { background-image:url(ht=
+tps://static.licdn.com/scds/common/u/images/email/logos/logo_linkedin_tm_em=
+ail_197x48_v1.png) !important; background-size:95px; background-repeat:no-r=
+epeat; width:95px !important; height:21px !important; } *[id]#base-header-l=
+ogo img { display:none; } *[id]#base-header-logo a { height:21px !important=
+; } *[id]#base-header-logo-china { background-image:url(https://static.licd=
+n.com/scds/common/u/images/email/logos/logo_linkedin_tm_china_email_266x42_=
+v1.png) !important; background-size:133px; background-repeat:no-repeat; wid=
+th:133px !important; height:21px !important; } *[id]#base-header-logo-china=
+ img { display:none; } *[id]#base-header-logo-china a { height:21px !import=
+ant; } } </style> </head> <body style=3D"background-color:#dfdfdf;padding:0=
+;margin:0 auto;width:100%;"> <span style=3D"visibility:hidden;color:transpa=
+rent;display:none !important;mso-hide:all;width:0;font-size:1px;opacity:0;h=
+eight:0;"></span> <table border=3D"0" cellspacing=3D"0" cellpadding=3D"0" s=
+tyle=3D"background-color:#dfdfdf;font-family:Helvetica,Arial,sans-serif;" w=
+idth=3D"100%" bgcolor=3D"#dfdfdf"> <tbody> <tr> <td> <table border=3D"0" ce=
+llspacing=3D"0" cellpadding=3D"0" style=3D"background-color:#dfdfdf;font-fa=
+mily:Helvetica,Arial,sans-serif;" width=3D"1" bgcolor=3D"#dfdfdf"> <tbody> =
+<tr> <td> <div style=3D"height:5px;font-size:5px;line-height:5px;"> &nbsp; =
+</div></td> </tr> </tbody> </table></td> </tr> <tr> <td> <table cellspacing=
+=3D"0" cellpadding=3D"0" border=3D"0" align=3D"center" width=3D"100%" style=
+=3D"table-layout:fixed;font-family:Helvetica,Arial,sans-serif;"> <tbody> <t=
+r> <td align=3D"center"> <table border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0" style=3D"font-family:Helvetica,Arial,sans-serif;min-width:290px;" wi=
+dth=3D"100%" class=3D"responsive"> <tbody> <tr> <td align=3D"left"> <table =
+border=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-family:Helve=
+tica,Arial,sans-serif;" width=3D"100%" class=3D"responsive-body"> <tbody> <=
+tr> <td align=3D"center"> <table border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0" style=3D"font-family:Helvetica,Arial,sans-serif;" width=3D"520" clas=
+s=3D"responsive-logo"> <tbody> <tr> <td align=3D"left"> <table width=3D"1" =
+border=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-family:Helve=
+tica,Arial,sans-serif;"> <tbody> <tr> <td> <div style=3D"height:7px;font-si=
+ze:7px;line-height:7px"> &nbsp; </div></td> </tr> </tbody> </table> <table =
+border=3D"0" cellspacing=3D"0" cellpadding=3D"0" width=3D"100%" class=3D"re=
+sponsive-logo" bgcolor=3D"#DFDFDF" style=3D"font-family:Helvetica,Arial,san=
+s-serif;"> <tbody> <tr> <td> <table width=3D"1" border=3D"0" cellspacing=3D=
+"0" cellpadding=3D"0" style=3D"font-family:Helvetica,Arial,sans-serif;"> <t=
+body> <tr> <td> <div style=3D"height:8px;font-size:8px;line-height:8px"> &n=
+bsp; </div></td> </tr> </tbody> </table></td> </tr> <tr> <td valign=3D"midd=
+le" align=3D"left" height=3D"35" width=3D"260"> <table border=3D"0" cellspa=
+cing=3D"0" cellpadding=3D"0" style=3D"font-family:Helvetica,Arial,sans-seri=
+f;" width=3D"100%" class=3D"responsive-logo"> <tbody> <tr> <td align=3D"lef=
+t" valign=3D"middle" width=3D"95" height=3D"21" id=3D"base-header-logo"><a =
+style=3D"text-decoration:none;cursor:pointer;border:none;display:block;heig=
+ht:21px;width:100%;" href=3D"https://www.linkedin.com/comm/nhome/?midToken=
+=3DAQFjG-DtHGVS_w&amp;trk=3Deml-b2_content_ecosystem_digest-null-17-null&am=
+p;trkEmail=3Deml-b2_content_ecosystem_digest-null-17-null-null-47o2o%7Eitm7=
+uegh%7Ej3"><img src=3D"https://static.licdn.com/scds/common/u/images/email/=
+logos/logo_linkedin_tm_email_95x21_v1.png" width=3D"95" height=3D"21" alt=
+=3D"LinkedIn" style=3D"border:none;text-decoration:none;"/></a></td> </tr> =
+</tbody> </table></td> </tr> </tbody> </table> <table width=3D"1" border=3D=
+"0" cellspacing=3D"0" cellpadding=3D"0" class=3D"responsive-logo" style=3D"=
+font-family:Helvetica,Arial,sans-serif;"> <tbody> <tr> <td> <div style=3D"h=
+eight:8px;font-size:8px;line-height:8px"> &nbsp; </div></td> </tr> </tbody>=
+ </table> <table width=3D"1" border=3D"0" cellspacing=3D"0" cellpadding=3D"=
+0" style=3D"font-family:Helvetica,Arial,sans-serif;"> <tbody> <tr> <td> <di=
+v style=3D"height:12px;font-size:12px;line-height:12px"> &nbsp; </div></td>=
+ </tr> </tbody> </table></td> </tr> </tbody> </table></td> </tr> </tbody> <=
+/table> <table border=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"fo=
+nt-family:Helvetica,Arial,sans-serif;" width=3D"100%" bgcolor=3D"#ffffff" c=
+lass=3D"responsive-body" align=3D"center"> <tbody> <tr> <td align=3D"center=
+"> <table border=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-fa=
+mily:Helvetica,Arial,sans-serif;" width=3D"100%" class=3D"responsive-articl=
+e"> <tbody> <tr> <td align=3D"center"> <table width=3D"1" border=3D"0" cell=
+spacing=3D"0" cellpadding=3D"1" style=3D"font-family:Helvetica,Arial,sans-s=
+erif;"> <tbody> <tr> <td> <div style=3D"height:25px;font-size:25px;line-hei=
+ght:25px"> &nbsp; </div></td> </tr> </tbody> </table> <table border=3D"0" c=
+ellspacing=3D"0" cellpadding=3D"0" style=3D"font-family:Helvetica,Arial,san=
+s-serif;" width=3D"100%" class=3D"responsive-article" align=3D"center"> <tb=
+ody> <tr> <td align=3D"center"> <table border=3D"0" cellspacing=3D"0" cellp=
+adding=3D"0" style=3D"font-family:Helvetica,Arial,sans-serif;" width=3D"100=
+%"> <tbody> <tr> <td align=3D"center" data-qa=3D"section_votd"> <table bord=
+er=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-family:Helvetica=
+,Arial,sans-serif;" width=3D"520" class=3D"responsive-body"> <tbody> <tr> <=
+td align=3D"left"> <table border=3D"0" cellspacing=3D"0" cellpadding=3D"0" =
+style=3D"font-family:Helvetica,Arial,sans-serif;" width=3D"520" class=3D"re=
+sponsive-body" align=3D"left"> <tbody> <tr> <td align=3D"left"> <table bord=
+er=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-family:Helvetica=
+,Arial,sans-serif;" width=3D"520" class=3D"responsive-article"> <tbody> <tr=
+> <td align=3D"left" data-qa=3D"votd_author_link" style=3D"color:#666666;fo=
+nt-weight:100;text-decoration:none;font-size:13px;line-height:20px;text-ali=
+gn:left;"><a href=3D"https://www.linkedin.com/e/v2?e=3D47o2o-itm7uegh-j3&am=
+p;t=3Dplh&amp;midToken=3DAQFjG-DtHGVS_w&amp;ek=3Db2_content_ecosystem_diges=
+t&amp;li=3D19&amp;m=3Dhero&amp;urlhash=3DoCXu&amp;url=3Dhttps%3A%2F%2Fwww%2=
+Elinkedin%2Ecom%2Ftoday%2Fauthor%2F0_0sLIUoI6h0pipIUANS3tGD" style=3D"color=
+:#303030;font-weight:100;text-decoration:none;font-size:13px;line-height:20=
+px;text-align:right;">Nir Eyal, Wall Street Journal bestselling author of &=
+quot;Hooked: How To Build Habit-Forming Products&quot;</a></td> </tr> <tr> =
+<td colspan=3D"3"> <table width=3D"1" border=3D"0" cellspacing=3D"0" cellpa=
+dding=3D"0" style=3D"font-family:Helvetica,Arial,sans-serif;"> <tbody> <tr>=
+ <td> <div style=3D"height:10px;font-size:10px;line-height:10px"> &nbsp; </=
+div></td> </tr> </tbody> </table></td> </tr> </tbody> </table> <table borde=
+r=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-family:Helvetica,=
+Arial,sans-serif;" width=3D"520" class=3D"responsive-article"> <tbody> <tr>=
+ <td align=3D"left" data-qa=3D"votd_article_title_link"></td> </tr> <tr> <t=
+d align=3D"left" style=3D"margin-left:0;color:#008CC9;font-weight:100;font-=
+size:22px;line-height:26px;text-align:left;"><a href=3D"https://www.linkedi=
+n.com/e/v2/pulse?e=3D47o2o-itm7uegh-j3&amp;a=3Dpulse_web_view_article_detai=
+l_new_url&amp;midToken=3DAQFjG-DtHGVS_w&amp;ek=3Db2_content_ecosystem_diges=
+t&amp;li=3D22&amp;m=3Dhero&amp;permLink=3Dhow-two-companies-hooked-customer=
+s-products-rarely-use-nir-eyal" title=3D"How two companies hooked customers=
+ on products they rarely use" style=3D"margin-left:0;color:#008CC9;font-wei=
+ght:100;text-decoration:none;text-align:left;">How two companies hooked cus=
+tomers on products they rarely use</a></td> </tr> <tr> <td> <table width=3D=
+"1" border=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-family:H=
+elvetica,Arial,sans-serif;"> <tbody> <tr> <td> <div style=3D"height:10px;fo=
+nt-size:10px;line-height:10px"> &nbsp; </div></td> </tr> </tbody> </table><=
+/td> </tr> </tbody> </table> <table border=3D"0" cellspacing=3D"0" cellpadd=
+ing=3D"0" style=3D"font-family:Helvetica,Arial,sans-serif;" width=3D"520" c=
+lass=3D"responsive-article"> <tbody> <tr> <td align=3D"left" data-qa=3D"vot=
+d_article_title_link"></td> </tr> <tr> <td data-qa=3D"_summary_link" align=
+=3D"left" style=3D"margin:0;color:#666666;font-weight:100;font-size:16px;li=
+ne-height:20px;text-align:left;"><a href=3D"https://www.linkedin.com/e/v2/p=
+ulse?e=3D47o2o-itm7uegh-j3&amp;a=3Dpulse_web_view_article_detail_new_url&am=
+p;midToken=3DAQFjG-DtHGVS_w&amp;ek=3Db2_content_ecosystem_digest&amp;li=3D2=
+2&amp;m=3Dhero&amp;permLink=3Dhow-two-companies-hooked-customers-products-r=
+arely-use-nir-eyal" style=3D"color:#868686;font-weight:100;text-decoration:=
+none;"></a></td> </tr> <tr> <td> <table width=3D"1" border=3D"0" cellspacin=
+g=3D"0" cellpadding=3D"0" style=3D"font-family:Helvetica,Arial,sans-serif;"=
+> <tbody> <tr> <td> <div style=3D"height:20px;font-size:20px;line-height:20=
+px"> &nbsp; </div></td> </tr> </tbody> </table></td> </tr> </tbody> </table=
+> <table border=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-fam=
+ily:Helvetica,Arial,sans-serif;" width=3D"520" class=3D"responsive-article"=
+> <tbody> <tr> <td align=3D"left" data-qa=3D"votd_summary_link"><a href=3D"=
+https://www.linkedin.com/e/v2/pulse?e=3D47o2o-itm7uegh-j3&amp;a=3Dpulse_web=
+_view_article_detail_new_url&amp;midToken=3DAQFjG-DtHGVS_w&amp;ek=3Db2_cont=
+ent_ecosystem_digest&amp;li=3D22&amp;m=3Dhero&amp;permLink=3Dhow-two-compan=
+ies-hooked-customers-products-rarely-use-nir-eyal" title=3D"How two compani=
+es hooked customers on products they rarely use"><img src=3D"https://media.=
+licdn.com/media/AAEAAQAAAAAAAAl3AAAAJDE1ZTU3ODAxLTI4OGItNGI5OC1hOGY2LWI5MzV=
+mMThmZWU3Yw.png" alt=3D"Highlight of the day" style=3D"max-width:100%;borde=
+r-width:0;"/></a></td> </tr> <tr> <td> <table width=3D"1" border=3D"0" cell=
+spacing=3D"0" cellpadding=3D"0" style=3D"font-family:Helvetica,Arial,sans-s=
+erif;"> <tbody> <tr> <td> <div style=3D"height:20px;font-size:20px;line-hei=
+ght:20px"> &nbsp; </div></td> </tr> </tbody> </table></td> </tr> <tr> <td b=
+gcolor=3D"#dddddd" style=3D"background-color:#dddddd;"> <table width=3D"1" =
+border=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-family:Helve=
+tica,Arial,sans-serif;"> <tbody> <tr> <td> <div style=3D"height:1px;font-si=
+ze:1px;line-height:1px"> &nbsp; </div></td> </tr> </tbody> </table></td> </=
+tr> <tr> <td> <table width=3D"1" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0" style=3D"font-family:Helvetica,Arial,sans-serif;"> <tbody> <tr> <td>=
+ <div style=3D"height:25px;font-size:25px;line-height:25px"> &nbsp; </div><=
+/td> </tr> </tbody> </table></td> </tr> </tbody> </table></td> </tr> </tbod=
+y> </table></td> </tr> </tbody> </table></td> </tr> </tbody> </table> <tabl=
+e border=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-family:Hel=
+vetica,Arial,sans-serif;" width=3D"100%" class=3D"responsive-article"> <tbo=
+dy> <tr> <td align=3D"center"> <table border=3D"0" cellspacing=3D"0" cellpa=
+dding=3D"0" style=3D"font-family:Helvetica,Arial,sans-serif;" width=3D"520"=
+ class=3D"responsive-body"> <tbody> <tr> <td align=3D"left"> <table border=
+=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-family:Helvetica,A=
+rial,sans-serif;" width=3D"520" class=3D"responsive-body" align=3D"left"> <=
+tbody> <tr> <td align=3D"left"> <table border=3D"0" cellspacing=3D"0" cellp=
+adding=3D"0" style=3D"font-family:Helvetica,Arial,sans-serif;" width=3D"520=
+" class=3D"responsive-body"> <tbody> <tr> <td align=3D"left"> <table border=
+=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-family:Helvetica,A=
+rial,sans-serif;" width=3D"100%" align=3D"center"> <tbody> <tr> <td align=
+=3D"left" data-qa=3D"section_recommended_articles"> <table border=3D"0" cel=
+lspacing=3D"0" cellpadding=3D"0" style=3D"font-family:Helvetica,Arial,sans-=
+serif;" width=3D"100%"> <tbody> <tr> <td valign=3D"middle" align=3D"left" d=
+ata-qa=3D"recommended_articles_section_header" style=3D"margin-left:0;color=
+:#666666;font-weight:100;text-decoration:none;font-size:16px;line-height:20=
+px;text-align:left;">Recommended for you</td> </tr> <tr> <td> <table width=
+=3D"1" border=3D"0" cellspacing=3D"0" cellpadding=3D"0" class=3D"res-height=
+10" style=3D"font-family:Helvetica,Arial,sans-serif;"> <tbody> <tr> <td> <d=
+iv style=3D"height:25px;font-size:25px;line-height:25px"> &nbsp; </div></td=
+> </tr> </tbody> </table></td> </tr> </tbody> </table></td> </tr> </tbody> =
+</table></td> </tr> </tbody> </table> <table border=3D"0" cellspacing=3D"0"=
+ cellpadding=3D"0" style=3D"font-family:Helvetica,Arial,sans-serif;" width=
+=3D"520" class=3D"responsive-body"> <tbody> <tr> <td align=3D"left"> <table=
+ border=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-family:Helv=
+etica,Arial,sans-serif;" width=3D"520" class=3D"responsive-body"> <tbody> <=
+tr> <td width=3D"24"><img width=3D"24" height=3D"24" src=3D"https://media.l=
+icdn.com/mpr/mpr/shrinknp_100_100/AAEAAQAAAAAAAAcoAAAAJGU5MTkzZjA1LWE3ZGMtN=
+GU1ZC1iMThhLTA1NWUzOTA2MTliOA.jpg" style=3D"border:none; text-decoration:no=
+ne; outline:hidden;" alt=3D"linkedin.com"/></td> <td width=3D"7"> <table wi=
+dth=3D"7px" border=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-=
+family:Helvetica,Arial,sans-serif;"> <tbody> <tr> <td> <div style=3D"height=
+:0px;font-size:0px;line-height:0px"> &nbsp; </div></td> </tr> </tbody> </ta=
+ble></td> <td align=3D"left" data-qa=3D"recommended_articles_author_link" s=
+tyle=3D"color:#666666;font-weight:100;text-decoration:none;font-size:13px;l=
+ine-height:20px;text-align:left;"><a href=3D"https://www.linkedin.com/comm/=
+profile/view?id=3DAAsAAAInajIBuEIhym3wvU1KN8OMx6eEwdPnzh4&amp;ref=3DCONTENT=
+&amp;midToken=3DAQFjG-DtHGVS_w&amp;trk=3Deml-b2_content_ecosystem_digest-re=
+commended_articles-84-null&amp;trkEmail=3Deml-b2_content_ecosystem_digest-r=
+ecommended_articles-84-null-null-47o2o%7Eitm7uegh%7Ej3" style=3D"color:#303=
+030;font-weight:100;text-decoration:none;font-size:13px;line-height:20px;te=
+xt-align:right;">Mathias Plank</a></td> </tr> </tbody> </table> <table bord=
+er=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-family:Helvetica=
+,Arial,sans-serif;" width=3D"520" class=3D"responsive-body"> <tbody> <tr> <=
+td> <table width=3D"1" border=3D"0" cellspacing=3D"0" cellpadding=3D"0" sty=
+le=3D"font-family:Helvetica,Arial,sans-serif;"> <tbody> <tr> <td> <div styl=
+e=3D"height:10px;font-size:10px;line-height:10px"> &nbsp; </div></td> </tr>=
+ </tbody> </table></td> </tr> <tr> <td class=3D"res-font16" data-qa=3D"reco=
+mmended_articles_article_title_link" align=3D"left" style=3D"margin-left:0;=
+color:#008CC9;font-weight:100;font-size:22px;line-height:26px;text-align:le=
+ft;"><a href=3D"https://www.linkedin.com/e/v2/pulse?e=3D47o2o-itm7uegh-j3&a=
+mp;a=3Dpulse_web_view_article_detail_new_url&amp;midToken=3DAQFjG-DtHGVS_w&=
+amp;ek=3Db2_content_ecosystem_digest&amp;li=3D82&amp;m=3Drecommended_articl=
+es&amp;permLink=3Dwelcome-banana-republic-sweden-mathias-plank" style=3D"ma=
+rgin-left:0;color:#008CC9;font-weight:100;text-decoration:none;text-align:l=
+eft;">Welcome to the Banana Republic of Sweden</a></td> </tr> <tr> <td> <ta=
+ble width=3D"1" border=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"f=
+ont-family:Helvetica,Arial,sans-serif;"> <tbody> <tr> <td> <div style=3D"he=
+ight:10px;font-size:10px;line-height:10px"> &nbsp; </div></td> </tr> </tbod=
+y> </table></td> </tr> <tr> <td data-qa=3D"recommended_articles_summary_lin=
+k" align=3D"left" style=3D"margin:0;color:#666666;font-weight:100;font-size=
+:16px;line-height:20px;text-align:left;"><a href=3D"https://www.linkedin.co=
+m/e/v2/pulse?e=3D47o2o-itm7uegh-j3&amp;a=3Dpulse_web_view_article_detail_ne=
+w_url&amp;midToken=3DAQFjG-DtHGVS_w&amp;ek=3Db2_content_ecosystem_digest&am=
+p;li=3D83&amp;m=3Drecommended_articles&amp;permLink=3Dwelcome-banana-republ=
+ic-sweden-mathias-plank" style=3D"color:#868686;font-weight:100;text-decora=
+tion:none;">This week we received a letter from the Swedish Migration Board=
+. They have decided to deport...</a></td> </tr> </tbody> </table></td> </tr=
+> <tr> <td> <table width=3D"1" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0" style=3D"font-family:Helvetica,Arial,sans-serif;"> <tbody> <tr> <td>=
+ <div style=3D"height:30px;font-size:30px;line-height:30px"> &nbsp; </div><=
+/td> </tr> </tbody> </table></td> </tr> <tr> <td align=3D"left"> <table bor=
+der=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-family:Helvetic=
+a,Arial,sans-serif;" width=3D"520" class=3D"responsive-body"> <tbody> <tr> =
+<td width=3D"24"><img width=3D"24" height=3D"24" src=3D"https://static.licd=
+n.com/scds/common/u/images/themes/katy/ghosts/person/ghost_person_30x30_v1.=
+png" style=3D"border:none; text-decoration:none; outline:hidden;" alt=3D"li=
+nkedin.com"/></td> <td width=3D"7"> <table width=3D"7px" border=3D"0" cells=
+pacing=3D"0" cellpadding=3D"0" style=3D"font-family:Helvetica,Arial,sans-se=
+rif;"> <tbody> <tr> <td> <div style=3D"height:0px;font-size:0px;line-height=
+:0px"> &nbsp; </div></td> </tr> </tbody> </table></td> <td align=3D"left" d=
+ata-qa=3D"recommended_articles_author_link" style=3D"color:#666666;font-wei=
+ght:100;text-decoration:none;font-size:13px;line-height:20px;text-align:lef=
+t;"><a href=3D"https://www.linkedin.com/comm/profile/view?id=3DAAsAAB7uuycB=
+8LnpkpyDfrhSrzs7hKZn4YZK4d8&amp;ref=3DCONTENT&amp;midToken=3DAQFjG-DtHGVS_w=
+&amp;trk=3Deml-b2_content_ecosystem_digest-recommended_articles-95-null&amp=
+;trkEmail=3Deml-b2_content_ecosystem_digest-recommended_articles-95-null-nu=
+ll-47o2o%7Eitm7uegh%7Ej3" style=3D"color:#303030;font-weight:100;text-decor=
+ation:none;font-size:13px;line-height:20px;text-align:right;">C Dillstrom</=
+a></td> </tr> </tbody> </table> <table border=3D"0" cellspacing=3D"0" cellp=
+adding=3D"0" style=3D"font-family:Helvetica,Arial,sans-serif;" width=3D"520=
+" class=3D"responsive-body"> <tbody> <tr> <td> <table width=3D"1" border=3D=
+"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-family:Helvetica,Aria=
+l,sans-serif;"> <tbody> <tr> <td> <div style=3D"height:10px;font-size:10px;=
+line-height:10px"> &nbsp; </div></td> </tr> </tbody> </table></td> </tr> <t=
+r> <td class=3D"res-font16" data-qa=3D"recommended_articles_article_title_l=
+ink" align=3D"left" style=3D"margin-left:0;color:#008CC9;font-weight:100;fo=
+nt-size:22px;line-height:26px;text-align:left;"><a href=3D"https://www.link=
+edin.com/e/v2/pulse?e=3D47o2o-itm7uegh-j3&amp;a=3Dpulse_web_view_article_de=
+tail_new_url&amp;midToken=3DAQFjG-DtHGVS_w&amp;ek=3Db2_content_ecosystem_di=
+gest&amp;li=3D93&amp;m=3Drecommended_articles&amp;permLink=3Dhow-make-addit=
+ional-50000-from-your-customer-database-c-dillstrom-1" style=3D"margin-left=
+:0;color:#008CC9;font-weight:100;text-decoration:none;text-align:left;">How=
+ to make additional $50,000 from your customer database every month?</a></t=
+d> </tr> <tr> <td> <table width=3D"1" border=3D"0" cellspacing=3D"0" cellpa=
+dding=3D"0" style=3D"font-family:Helvetica,Arial,sans-serif;"> <tbody> <tr>=
+ <td> <div style=3D"height:10px;font-size:10px;line-height:10px"> &nbsp; </=
+div></td> </tr> </tbody> </table></td> </tr> <tr> <td data-qa=3D"recommende=
+d_articles_summary_link" align=3D"left" style=3D"margin:0;color:#666666;fon=
+t-weight:100;font-size:16px;line-height:20px;text-align:left;"><a href=3D"h=
+ttps://www.linkedin.com/e/v2/pulse?e=3D47o2o-itm7uegh-j3&amp;a=3Dpulse_web_=
+view_article_detail_new_url&amp;midToken=3DAQFjG-DtHGVS_w&amp;ek=3Db2_conte=
+nt_ecosystem_digest&amp;li=3D94&amp;m=3Drecommended_articles&amp;permLink=
+=3Dhow-make-additional-50000-from-your-customer-database-c-dillstrom-1" sty=
+le=3D"color:#868686;font-weight:100;text-decoration:none;">Dear Customer, T=
+his seven month old interview contained so many important thoughts about bo=
+osting...</a></td> </tr> </tbody> </table></td> </tr> <tr> <td> <table widt=
+h=3D"1" border=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-fami=
+ly:Helvetica,Arial,sans-serif;"> <tbody> <tr> <td> <div style=3D"height:30p=
+x;font-size:30px;line-height:30px"> &nbsp; </div></td> </tr> </tbody> </tab=
+le></td> </tr> <tr> <td align=3D"left"> <table border=3D"0" cellspacing=3D"=
+0" cellpadding=3D"0" style=3D"font-family:Helvetica,Arial,sans-serif;" widt=
+h=3D"520" class=3D"responsive-body"> <tbody> <tr> <td width=3D"24"><img wid=
+th=3D"24" height=3D"24" src=3D"https://media.licdn.com/mpr/mpr/shrinknp_100=
+_100/p/8/005/093/3ae/01eefce.jpg" style=3D"border:none; text-decoration:non=
+e; outline:hidden;" alt=3D"linkedin.com"/></td> <td width=3D"7"> <table wid=
+th=3D"7px" border=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-f=
+amily:Helvetica,Arial,sans-serif;"> <tbody> <tr> <td> <div style=3D"height:=
+0px;font-size:0px;line-height:0px"> &nbsp; </div></td> </tr> </tbody> </tab=
+le></td> <td align=3D"left" data-qa=3D"recommended_articles_author_link" st=
+yle=3D"color:#666666;font-weight:100;text-decoration:none;font-size:13px;li=
+ne-height:20px;text-align:left;"><a href=3D"https://www.linkedin.com/comm/p=
+rofile/view?id=3DAAsAAAMDxhcBDYxYriW1LuClTZtD2HPi26f38E4&amp;ref=3DCONTENT&=
+amp;midToken=3DAQFjG-DtHGVS_w&amp;trk=3Deml-b2_content_ecosystem_digest-rec=
+ommended_articles-106-null&amp;trkEmail=3Deml-b2_content_ecosystem_digest-r=
+ecommended_articles-106-null-null-47o2o%7Eitm7uegh%7Ej3" style=3D"color:#30=
+3030;font-weight:100;text-decoration:none;font-size:13px;line-height:20px;t=
+ext-align:right;">Dr. Travis Bradberry</a></td> </tr> </tbody> </table> <ta=
+ble border=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-family:H=
+elvetica,Arial,sans-serif;" width=3D"520" class=3D"responsive-body"> <tbody=
+> <tr> <td> <table width=3D"1" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0" style=3D"font-family:Helvetica,Arial,sans-serif;"> <tbody> <tr> <td>=
+ <div style=3D"height:10px;font-size:10px;line-height:10px"> &nbsp; </div><=
+/td> </tr> </tbody> </table></td> </tr> <tr> <td class=3D"res-font16" data-=
+qa=3D"recommended_articles_article_title_link" align=3D"left" style=3D"marg=
+in-left:0;color:#008CC9;font-weight:100;font-size:22px;line-height:26px;tex=
+t-align:left;"><a href=3D"https://www.linkedin.com/e/v2/pulse?e=3D47o2o-itm=
+7uegh-j3&amp;a=3Dpulse_web_view_article_detail_new_url&amp;midToken=3DAQFjG=
+-DtHGVS_w&amp;ek=3Db2_content_ecosystem_digest&amp;li=3D104&amp;m=3Drecomme=
+nded_articles&amp;permLink=3Dhow-cutthroat-work-cultures-suck-life-out-you-=
+dr-travis-bradberry" style=3D"margin-left:0;color:#008CC9;font-weight:100;t=
+ext-decoration:none;text-align:left;">How Cutthroat Work Cultures Suck the =
+Life Out of You</a></td> </tr> <tr> <td> <table width=3D"1" border=3D"0" ce=
+llspacing=3D"0" cellpadding=3D"0" style=3D"font-family:Helvetica,Arial,sans=
+-serif;"> <tbody> <tr> <td> <div style=3D"height:10px;font-size:10px;line-h=
+eight:10px"> &nbsp; </div></td> </tr> </tbody> </table></td> </tr> <tr> <td=
+ data-qa=3D"recommended_articles_summary_link" align=3D"left" style=3D"marg=
+in:0;color:#666666;font-weight:100;font-size:16px;line-height:20px;text-ali=
+gn:left;"><a href=3D"https://www.linkedin.com/e/v2/pulse?e=3D47o2o-itm7uegh=
+-j3&amp;a=3Dpulse_web_view_article_detail_new_url&amp;midToken=3DAQFjG-DtHG=
+VS_w&amp;ek=3Db2_content_ecosystem_digest&amp;li=3D105&amp;m=3Drecommended_=
+articles&amp;permLink=3Dhow-cutthroat-work-cultures-suck-life-out-you-dr-tr=
+avis-bradberry" style=3D"color:#868686;font-weight:100;text-decoration:none=
+;">Far too many companies believe that a cutthroat pressure-cooker culture =
+gets results. They think...</a></td> </tr> </tbody> </table></td> </tr> <tr=
+> <td> <table width=3D"1" border=3D"0" cellspacing=3D"0" cellpadding=3D"0" =
+style=3D"font-family:Helvetica,Arial,sans-serif;"> <tbody> <tr> <td> <div s=
+tyle=3D"height:30px;font-size:30px;line-height:30px"> &nbsp; </div></td> </=
+tr> </tbody> </table></td> </tr> <tr> <td align=3D"left"> <table border=3D"=
+0" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-family:Helvetica,Arial=
+,sans-serif;" width=3D"520" class=3D"responsive-body"> <tbody> <tr> <td wid=
+th=3D"24"><img width=3D"24" height=3D"24" src=3D"https://media.licdn.com/mp=
+r/mpr/shrinknp_100_100/AAEAAQAAAAAAAAc8AAAAJDUwNGUzZWQ1LTg4MzgtNGY3MC1iMzkw=
+LTQ4MGVmNjljZTRiNw.jpg" style=3D"border:none; text-decoration:none; outline=
+:hidden;" alt=3D"linkedin.com"/></td> <td width=3D"7"> <table width=3D"7px"=
+ border=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-family:Helv=
+etica,Arial,sans-serif;"> <tbody> <tr> <td> <div style=3D"height:0px;font-s=
+ize:0px;line-height:0px"> &nbsp; </div></td> </tr> </tbody> </table></td> <=
+td align=3D"left" data-qa=3D"recommended_articles_author_link" style=3D"col=
+or:#666666;font-weight:100;text-decoration:none;font-size:13px;line-height:=
+20px;text-align:left;"><a href=3D"https://www.linkedin.com/comm/profile/vie=
+w?id=3DAAsAAA2YzykBJ46UflSr1ria1DxICacgSOdHxBs&amp;ref=3DCONTENT&amp;midTok=
+en=3DAQFjG-DtHGVS_w&amp;trk=3Deml-b2_content_ecosystem_digest-recommended_a=
+rticles-117-null&amp;trkEmail=3Deml-b2_content_ecosystem_digest-recommended=
+_articles-117-null-null-47o2o%7Eitm7uegh%7Ej3" style=3D"color:#303030;font-=
+weight:100;text-decoration:none;font-size:13px;line-height:20px;text-align:=
+right;">Kimberly Ta</a></td> </tr> </tbody> </table> <table border=3D"0" ce=
+llspacing=3D"0" cellpadding=3D"0" style=3D"font-family:Helvetica,Arial,sans=
+-serif;" width=3D"520" class=3D"responsive-body"> <tbody> <tr> <td> <table =
+width=3D"1" border=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-=
+family:Helvetica,Arial,sans-serif;"> <tbody> <tr> <td> <div style=3D"height=
+:10px;font-size:10px;line-height:10px"> &nbsp; </div></td> </tr> </tbody> <=
+/table></td> </tr> <tr> <td class=3D"res-font16" data-qa=3D"recommended_art=
+icles_article_title_link" align=3D"left" style=3D"margin-left:0;color:#008C=
+C9;font-weight:100;font-size:22px;line-height:26px;text-align:left;"><a hre=
+f=3D"https://www.linkedin.com/e/v2/pulse?e=3D47o2o-itm7uegh-j3&amp;a=3Dpuls=
+e_web_view_article_detail_new_url&amp;midToken=3DAQFjG-DtHGVS_w&amp;ek=3Db2=
+_content_ecosystem_digest&amp;li=3D115&amp;m=3Drecommended_articles&amp;per=
+mLink=3Dage-22-i-turned-down-60000-salary-best-decision-ever-made-kimberly-=
+ta" style=3D"margin-left:0;color:#008CC9;font-weight:100;text-decoration:no=
+ne;text-align:left;">At the Age of 22, I Turned Down a $60,000 Salary and I=
+t was the Best...</a></td> </tr> <tr> <td> <table width=3D"1" border=3D"0" =
+cellspacing=3D"0" cellpadding=3D"0" style=3D"font-family:Helvetica,Arial,sa=
+ns-serif;"> <tbody> <tr> <td> <div style=3D"height:10px;font-size:10px;line=
+-height:10px"> &nbsp; </div></td> </tr> </tbody> </table></td> </tr> <tr> <=
+td data-qa=3D"recommended_articles_summary_link" align=3D"left" style=3D"ma=
+rgin:0;color:#666666;font-weight:100;font-size:16px;line-height:20px;text-a=
+lign:left;"><a href=3D"https://www.linkedin.com/e/v2/pulse?e=3D47o2o-itm7ue=
+gh-j3&amp;a=3Dpulse_web_view_article_detail_new_url&amp;midToken=3DAQFjG-Dt=
+HGVS_w&amp;ek=3Db2_content_ecosystem_digest&amp;li=3D116&amp;m=3Drecommende=
+d_articles&amp;permLink=3Dage-22-i-turned-down-60000-salary-best-decision-e=
+ver-made-kimberly-ta" style=3D"color:#868686;font-weight:100;text-decoratio=
+n:none;">This article was originally published on Project Ava. Three months=
+ out of college, and two months...</a></td> </tr> </tbody> </table></td> </=
+tr> <tr> <td> <table width=3D"1" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0" style=3D"font-family:Helvetica,Arial,sans-serif;"> <tbody> <tr> <td>=
+ <div style=3D"height:30px;font-size:30px;line-height:30px"> &nbsp; </div><=
+/td> </tr> </tbody> </table></td> </tr> <tr> <td align=3D"left"> <table bor=
+der=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-family:Helvetic=
+a,Arial,sans-serif;" width=3D"520" class=3D"responsive-body"> <tbody> <tr> =
+<td width=3D"24"><img width=3D"24" height=3D"24" src=3D"https://static.licd=
+n.com/scds/common/u/images/themes/katy/ghosts/person/ghost_person_30x30_v1.=
+png" style=3D"border:none; text-decoration:none; outline:hidden;" alt=3D"li=
+nkedin.com"/></td> <td width=3D"7"> <table width=3D"7px" border=3D"0" cells=
+pacing=3D"0" cellpadding=3D"0" style=3D"font-family:Helvetica,Arial,sans-se=
+rif;"> <tbody> <tr> <td> <div style=3D"height:0px;font-size:0px;line-height=
+:0px"> &nbsp; </div></td> </tr> </tbody> </table></td> <td align=3D"left" d=
+ata-qa=3D"recommended_articles_author_link" style=3D"color:#666666;font-wei=
+ght:100;text-decoration:none;font-size:13px;line-height:20px;text-align:lef=
+t;"><a href=3D"https://www.linkedin.com/comm/profile/view?id=3DAAsAAAErFwgB=
+xF7frNJLFlHsUT7-JeJcbNhZrpc&amp;ref=3DCONTENT&amp;midToken=3DAQFjG-DtHGVS_w=
+&amp;trk=3Deml-b2_content_ecosystem_digest-recommended_articles-128-null&am=
+p;trkEmail=3Deml-b2_content_ecosystem_digest-recommended_articles-128-null-=
+null-47o2o%7Eitm7uegh%7Ej3" style=3D"color:#303030;font-weight:100;text-dec=
+oration:none;font-size:13px;line-height:20px;text-align:right;">Mary Jo Pil=
+e</a></td> </tr> </tbody> </table> <table border=3D"0" cellspacing=3D"0" ce=
+llpadding=3D"0" style=3D"font-family:Helvetica,Arial,sans-serif;" width=3D"=
+520" class=3D"responsive-body"> <tbody> <tr> <td> <table width=3D"1" border=
+=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-family:Helvetica,A=
+rial,sans-serif;"> <tbody> <tr> <td> <div style=3D"height:10px;font-size:10=
+px;line-height:10px"> &nbsp; </div></td> </tr> </tbody> </table></td> </tr>=
+ <tr> <td class=3D"res-font16" data-qa=3D"recommended_articles_article_titl=
+e_link" align=3D"left" style=3D"margin-left:0;color:#008CC9;font-weight:100=
+;font-size:22px;line-height:26px;text-align:left;"><a href=3D"https://www.l=
+inkedin.com/e/v2/pulse?e=3D47o2o-itm7uegh-j3&amp;a=3Dpulse_web_view_article=
+_detail_new_url&amp;midToken=3DAQFjG-DtHGVS_w&amp;ek=3Db2_content_ecosystem=
+_digest&amp;li=3D126&amp;m=3Drecommended_articles&amp;permLink=3Dletter-ref=
+erence-mary-jo-pile" style=3D"margin-left:0;color:#008CC9;font-weight:100;t=
+ext-decoration:none;text-align:left;">A Letter of Reference</a></td> </tr> =
+<tr> <td> <table width=3D"1" border=3D"0" cellspacing=3D"0" cellpadding=3D"=
+0" style=3D"font-family:Helvetica,Arial,sans-serif;"> <tbody> <tr> <td> <di=
+v style=3D"height:10px;font-size:10px;line-height:10px"> &nbsp; </div></td>=
+ </tr> </tbody> </table></td> </tr> <tr> <td data-qa=3D"recommended_article=
+s_summary_link" align=3D"left" style=3D"margin:0;color:#666666;font-weight:=
+100;font-size:16px;line-height:20px;text-align:left;"><a href=3D"https://ww=
+w.linkedin.com/e/v2/pulse?e=3D47o2o-itm7uegh-j3&amp;a=3Dpulse_web_view_arti=
+cle_detail_new_url&amp;midToken=3DAQFjG-DtHGVS_w&amp;ek=3Db2_content_ecosys=
+tem_digest&amp;li=3D127&amp;m=3Drecommended_articles&amp;permLink=3Dletter-=
+reference-mary-jo-pile" style=3D"color:#868686;font-weight:100;text-decorat=
+ion:none;">To anyone searching for truly, remarkably outstanding retail exp=
+erts, For more than ten years, I...</a></td> </tr> </tbody> </table></td> <=
+/tr> <tr> <td> <table width=3D"1" border=3D"0" cellspacing=3D"0" cellpaddin=
+g=3D"0" style=3D"font-family:Helvetica,Arial,sans-serif;"> <tbody> <tr> <td=
+> <div style=3D"height:30px;font-size:30px;line-height:30px"> &nbsp; </div>=
+</td> </tr> </tbody> </table></td> </tr> <tr> <td bgcolor=3D"#dddddd" style=
+=3D"background-color:#dddddd;"> <table width=3D"1" border=3D"0" cellspacing=
+=3D"0" cellpadding=3D"0" style=3D"font-family:Helvetica,Arial,sans-serif;">=
+ <tbody> <tr> <td> <div style=3D"height:1px;font-size:1px;line-height:1px">=
+ &nbsp; </div></td> </tr> </tbody> </table></td> </tr> </tbody> </table></t=
+d> </tr> <tr> <td> <table width=3D"1" border=3D"0" cellspacing=3D"0" cellpa=
+dding=3D"0" class=3D"res-height10" style=3D"font-family:Helvetica,Arial,san=
+s-serif;"> <tbody> <tr> <td> <div style=3D"height:25px;font-size:25px;line-=
+height:25px"> &nbsp; </div></td> </tr> </tbody> </table></td> </tr> </tbody=
+> </table></td> </tr> </tbody> </table></td> </tr> </tbody> </table> <table=
+ border=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-family:Helv=
+etica,Arial,sans-serif;" width=3D"100%" class=3D"responsive-article" align=
+=3D"center"> <tbody> <tr> <td align=3D"center" data-qa=3D"section_start_wri=
+ting" class=3D"mobile-hidden"> <table border=3D"0" cellspacing=3D"0" cellpa=
+dding=3D"0" style=3D"font-family:Helvetica,Arial,sans-serif;" width=3D"520"=
+ class=3D"responsive-article" align=3D"center"> <tbody> <tr> <td align=3D"c=
+enter"></td> </tr> <tr> <td> <table width=3D"1" border=3D"0" cellspacing=3D=
+"0" cellpadding=3D"0" align=3D"center" style=3D"font-family:Helvetica,Arial=
+,sans-serif;"> <tbody> <tr> <td> <div style=3D"height:5px;font-size:5px;lin=
+e-height:5px"> &nbsp; </div></td> </tr> </tbody> </table></td> </tr> <tr> <=
+td align=3D"center" style=3D"color:#666666;font-weight:100;font-size:18px;l=
+ine-height:20px;text-align:center;">Have your own perspective to share?</td=
+> </tr> <tr> <td> <table width=3D"1" border=3D"0" cellspacing=3D"0" cellpad=
+ding=3D"0" align=3D"center" style=3D"font-family:Helvetica,Arial,sans-serif=
+;"> <tbody> <tr> <td> <div style=3D"height:20px;font-size:20px;line-height:=
+20px"> &nbsp; </div></td> </tr> </tbody> </table></td> </tr> <tr> <td align=
+=3D"center" width=3D"100%" height=3D"40" bgcolor=3D"#008CC9" class=3D"res-f=
+ont16" style=3D"font-weight:200;width:100%;font-size:20px;text-align:center=
+;"><a href=3D"https://www.linkedin.com/e/v2?e=3D47o2o-itm7uegh-j3&amp;a=3Dp=
+ulse_web_create_article&amp;midToken=3DAQFjG-DtHGVS_w&amp;ek=3Db2_content_e=
+cosystem_digest&amp;li=3D246&amp;m=3Dfooter_promo&amp;ts=3Dpub_upsell" targ=
+et=3D"_blank" style=3D"color:#FFFFFF;text-decoration:none;">Start writing o=
+n LinkedIn</a></td> </tr> <tr> <td> <table width=3D"1" border=3D"0" cellspa=
+cing=3D"0" cellpadding=3D"0" align=3D"center" style=3D"font-family:Helvetic=
+a,Arial,sans-serif;"> <tbody> <tr> <td> <div style=3D"height:40px;font-size=
+:40px;line-height:40px"> &nbsp; </div></td> </tr> </tbody> </table></td> </=
+tr> </tbody> </table></td> </tr> </tbody> </table></td> </tr> </tbody> </ta=
+ble></td> </tr> </tbody> </table></td> </tr> </tbody> </table></td> </tr> <=
+tr> <td></td> </tr> <tr> <td align=3D"left"> <table border=3D"0" cellspacin=
+g=3D"0" cellpadding=3D"0" style=3D"font-family:Helvetica,Arial,sans-serif;"=
+ width=3D"100%" class=3D"responsive"> <tbody> <tr> <td> <table width=3D"1" =
+border=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-family:Helve=
+tica,Arial,sans-serif;"> <tbody> <tr> <td> <div style=3D"height:10px;font-s=
+ize:10px;line-height:10px"> &nbsp; </div></td> </tr> </tbody> </table></td>=
+ </tr> <tr> <td align=3D"center"> <table border=3D"0" cellspacing=3D"0" cel=
+lpadding=3D"0" style=3D"color:#999999;font-size:11px;font-family:Helvetica,=
+Arial,sans-serif;" width=3D"100%"> <tbody> <tr> <td align=3D"center" dir=3D=
+"ltr">&copy; 2016 LinkedIn Ireland Limited. LinkedIn, the LinkedIn logo, an=
+d InMail are registered trademarks of LinkedIn Corporation in the United St=
+ates and/or other countries. All rights reserved.</td> </tr> <tr> <td> <tab=
+le width=3D"1" border=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"fo=
+nt-family:Helvetica,Arial,sans-serif;"> <tbody> <tr> <td> <div style=3D"hei=
+ght:10px;font-size:10px;line-height:10px"> &nbsp; </div></td> </tr> </tbody=
+> </table></td> </tr> <tr> <td align=3D"center">You are receiving notificat=
+ion emails from LinkedIn. <a style=3D"color:#0077B5;text-decoration:none;" =
+href=3D"https://www.linkedin.com/e/v2?e=3D47o2o-itm7uegh-j3&amp;t=3Dlun&amp=
+;midToken=3DAQFjG-DtHGVS_w&amp;ek=3Db2_content_ecosystem_digest&amp;loid=3D=
+AQGSePXZumfFhQAAAVdvOCSce0Yj1ybaQb3iJ8fC39J45pctt4OOIUrBu1fbs-q9Dj3AuaEDzhN=
+DvSBP&amp;eid=3D47o2o-itm7uegh-j3">Unsubscribe</a></td> </tr> <tr> <td alig=
+n=3D"center"></td> </tr> <tr> <td align=3D"center">This email was intended =
+for Ilian Sapundshiev (Founder TagSpaces). <a href=3D"https://www.linkedin.=
+com/e/v2?e=3D47o2o-itm7uegh-j3&amp;a=3DcustomerServiceUrl&amp;midToken=3DAQ=
+FjG-DtHGVS_w&amp;ek=3Db2_content_ecosystem_digest&amp;articleId=3D4788" sty=
+le=3D"color:#2e8dd7;text-decoration:none;">Learn why we included this.</a><=
+/td> </tr> <tr> <td align=3D"center">If you need assistance or have questio=
+ns, please contact <a target=3D"_blank" href=3D"https://www.linkedin.com/e/=
+v2?e=3D47o2o-itm7uegh-j3&amp;a=3DcustomerServiceUrl&amp;midToken=3DAQFjG-Dt=
+HGVS_w&amp;ek=3Db2_content_ecosystem_digest" style=3D"color:#2e8dd7;text-de=
+coration:none;">LinkedIn Customer Service</a>.</td> </tr> <tr> <td> <table =
+width=3D"1" border=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-=
+family:Helvetica,Arial,sans-serif;"> <tbody> <tr> <td> <div style=3D"height=
+:10px;font-size:10px;line-height:10px"> &nbsp; </div></td> </tr> </tbody> <=
+/table></td> </tr> <tr> <td align=3D"center" dir=3D"ltr">LinkedIn is a regi=
+stered business name of LinkedIn Ireland Limited.</td> </tr> <tr> <td align=
+=3D"center" dir=3D"ltr">Registered in Ireland as a private limited company,=
+ Company Number 477441</td> </tr> <tr> <td align=3D"center" dir=3D"ltr">Reg=
+istered Office: Wilton Plaza, Wilton Place, Dublin 2, Ireland</td> </tr> <t=
+r> <td> <table width=3D"1" border=3D"0" cellspacing=3D"0" cellpadding=3D"0"=
+ style=3D"font-family:Helvetica,Arial,sans-serif;"> <tbody> <tr> <td> <div =
+style=3D"height:10px;font-size:10px;line-height:10px"> &nbsp; </div></td> <=
+/tr> </tbody> </table></td> </tr> <tr> <td align=3D"center"></td> </tr> <tr=
+> <td> <table width=3D"1" border=3D"0" cellspacing=3D"0" cellpadding=3D"0" =
+style=3D"font-family:Helvetica,Arial,sans-serif;"> <tbody> <tr> <td> <div s=
+tyle=3D"height:10px;font-size:10px;line-height:10px"> &nbsp; </div></td> </=
+tr> </tbody> </table></td> </tr> </tbody> </table></td> </tr> <tr> <td> <ta=
+ble width=3D"1" border=3D"0" cellspacing=3D"0" cellpadding=3D"0" style=3D"f=
+ont-family:Helvetica,Arial,sans-serif;"> <tbody> <tr> <td> <div style=3D"he=
+ight:20px;font-size:20px;line-height:20px"> &nbsp; </div></td> </tr> </tbod=
+y> </table></td> </tr> </tbody> </table></td> </tr> </tbody> </table></td> =
+</tr> </tbody> </table></td> </tr> <tr> <td> <table width=3D"1" border=3D"0=
+" cellspacing=3D"0" cellpadding=3D"0" style=3D"font-family:Helvetica,Arial,=
+sans-serif;"> <tbody> <tr> <td> <div style=3D"height:20px;font-size:20px;li=
+ne-height:20px"> &nbsp; </div></td> </tr> </tbody> </table></td> </tr> </tb=
+ody> </table> <img src=3D"http://www.linkedin.com/emimp/47o2o-itm7uegh-j3.g=
+if" style=3D"width:1px; height:1px;"/> </body> </html>
+------=_Part_478623_1249715357.1475039732984--
+

@@ -1,0 +1,1061 @@
+From: <Saved by WebKit>
+Subject: Inno Setup FAQ
+Date: Sun, 3 May 2014 23:32:59 +0200
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	type="text/html";
+	boundary="----=_NextPart_000_339C_68FB738A.9F1452E4"
+
+------=_NextPart_000_339C_68FB738A.9F1452E4
+Content-Type: text/html
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://www.jrsoftware.org/isfaq.php
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.=
+w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns=3D"http://www.w3.=
+org/1999/xhtml" xml:lang=3D"en" lang=3D"en"><head><meta charset=3D"ISO-8859=
+-1">
+<title>Inno Setup FAQ</title>
+
+<meta name=3D"robots" content=3D"noarchive">
+<link rel=3D"stylesheet" type=3D"text/css" href=3D"http://www.jrsoftware.or=
+g/styles.css">
+<style type=3D"text/css"></style><style id=3D"clearly_highlighting_css" typ=
+e=3D"text/css">/* selection */ html.clearly_highlighting_enabled ::-moz-sel=
+ection { background: rgba(246, 238, 150, 0.99); } html.clearly_highlighting=
+_enabled ::selection { background: rgba(246, 238, 150, 0.99); } /* cursor *=
+/ html.clearly_highlighting_enabled {    /* cursor and hot-spot position --=
+ requires a default cursor, after the URL one */    cursor: url("chrome-ext=
+ension://pioclpoplcdbaefihamjohnefbikjilc/clearly/images/highlight--cursor.=
+png") 14 16, text; } /* highlight tag */ em.clearly_highlight_element {    =
+font-style: inherit !important; font-weight: inherit !important;    backgro=
+und-image: url("chrome-extension://pioclpoplcdbaefihamjohnefbikjilc/clearly=
+/images/highlight--yellow.png");    background-repeat: repeat-x; background=
+-position: top left; background-size: 100% 100%; } /* the delete-buttons ar=
+e positioned relative to this */ em.clearly_highlight_element.clearly_highl=
+ight_first { position: relative; } /* delete buttons */ em.clearly_highligh=
+t_element a.clearly_highlight_delete_element {    display: none; cursor: po=
+inter;    padding: 0; margin: 0; line-height: 0;    position: absolute; wid=
+th: 34px; height: 34px; left: -17px; top: -17px;    background-image: url("=
+chrome-extension://pioclpoplcdbaefihamjohnefbikjilc/clearly/images/highligh=
+t--delete-sprite.png"); background-repeat: no-repeat; background-position: =
+0px 0px; } em.clearly_highlight_element a.clearly_highlight_delete_element:=
+hover { background-position: -34px 0px; } /* retina */ @media (min--moz-dev=
+ice-pixel-ratio: 2), (-webkit-min-device-pixel-ratio: 2), (min-device-pixel=
+-ratio: 2) {    em.clearly_highlight_element { background-image: url("chrom=
+e-extension://pioclpoplcdbaefihamjohnefbikjilc/clearly/images/highlight--ye=
+llow@2x.png"); }    em.clearly_highlight_element a.clearly_highlight_delete=
+_element { background-image: url("chrome-extension://pioclpoplcdbaefihamjoh=
+nefbikjilc/clearly/images/highlight--delete-sprite@2x.png"); background-siz=
+e: 68px 34px; } } </style><style>[touch-action=3D"none"]{ -ms-touch-action:=
+ none; touch-action: none; }[touch-action=3D"pan-x"]{ -ms-touch-action: pan=
+-x; touch-action: pan-x; }[touch-action=3D"pan-y"]{ -ms-touch-action: pan-y=
+; touch-action: pan-y; }[touch-action=3D"scroll"],[touch-action=3D"pan-x pa=
+n-y"],[touch-action=3D"pan-y pan-x"]{ -ms-touch-action: pan-x pan-y; touch-=
+action: pan-x pan-y; }</style></head>
+<body>
+
+<div style=3D"border: 4px solid black; background: #3366cc"><img src=3D"htt=
+p://www.jrsoftware.org/images/header3.png" width=3D"440" height=3D"35" alt=
+=3D"jrsoftware.org // Jordan Russell's Software"></div>
+
+<table border=3D"0" cellpadding=3D"6">
+<tbody><tr>
+<td valign=3D"top" nowrap=3D"nowrap">
+<img src=3D"http://www.jrsoftware.org/images/arrow.gif" width=3D"12" height=
+=3D"8" alt=3D"-"><a href=3D"http://www.jrsoftware.org/">Home</a><br>
+<br><div class=3D"leftheading">Products</div>
+<div class=3D"small"><br></div>
+<img src=3D"http://www.jrsoftware.org/images/arrow.gif" width=3D"12" height=
+=3D"8" alt=3D"-"><b>Inno Setup</b><br>
+<div class=3D"small"><br></div>
+<div class=3D"small" style=3D"padding-left: 12px">
+<img src=3D"http://www.jrsoftware.org/images/arrow.gif" width=3D"12" height=
+=3D"8" alt=3D"--"><a href=3D"http://www.jrsoftware.org/isinfo.php">About</a=
+><br>
+<img src=3D"http://www.jrsoftware.org/images/arrow.gif" width=3D"12" height=
+=3D"8" alt=3D"--"><a href=3D"http://www.jrsoftware.org/isdl.php">Downloads<=
+/a><br>
+<img src=3D"http://www.jrsoftware.org/images/arrow.gif" width=3D"12" height=
+=3D"8" alt=3D"--"><a href=3D"http://www.jrsoftware.org/ismail.php">Mailing =
+List</a><br>
+<br>
+<img src=3D"http://www.jrsoftware.org/images/arrow.gif" width=3D"12" height=
+=3D"8" alt=3D"--"><a href=3D"http://www.jrsoftware.org/isdonate.php">Donate=
+</a><br>
+<img src=3D"http://www.jrsoftware.org/images/arrow.gif" width=3D"12" height=
+=3D"8" alt=3D"--"><a href=3D"http://www.jrsoftware.org/iscontrib.php">Contr=
+ibute</a><br>
+<br>
+<img src=3D"http://www.jrsoftware.org/images/arrow.gif" width=3D"12" height=
+=3D"8" alt=3D"--"><a href=3D"http://www.jrsoftware.org/ishelp/" target=3D"_=
+blank">Documentation</a><br>
+<img src=3D"http://www.jrsoftware.org/images/arrow.gif" width=3D"12" height=
+=3D"8" alt=3D"--">FAQ<br>
+<img src=3D"http://www.jrsoftware.org/images/arrow.gif" width=3D"12" height=
+=3D"8" alt=3D"--"><a href=3D"http://www.jrsoftware.org/iskb.php">Knowledge =
+Base</a><br>
+<br>
+<img src=3D"http://www.jrsoftware.org/images/arrow.gif" width=3D"12" height=
+=3D"8" alt=3D"--"><a href=3D"http://www.jrsoftware.org/is3rdparty.php">Thir=
+d-Party Files</a><br>
+<img src=3D"http://www.jrsoftware.org/images/arrow.gif" width=3D"12" height=
+=3D"8" alt=3D"--"><a href=3D"http://www.jrsoftware.org/files/istrans/">Tran=
+slations</a><br>
+<img src=3D"http://www.jrsoftware.org/images/arrow.gif" width=3D"12" height=
+=3D"8" alt=3D"--"><a href=3D"http://www.jrsoftware.org/islinks.php">Links</=
+a><br>
+</div><br>
+<img src=3D"http://www.jrsoftware.org/images/arrow.gif" width=3D"12" height=
+=3D"8" alt=3D"-"><a href=3D"http://www.jrsoftware.org/tb2k.php">Toolbar2000=
+</a><br>
+<div class=3D"small"><br></div>
+<img src=3D"http://www.jrsoftware.org/images/arrow.gif" width=3D"12" height=
+=3D"8" alt=3D"-"><a href=3D"http://www.jrsoftware.org/tb97info.php">Toolbar=
+97</a><br>
+<div class=3D"small"><br></div>
+<img src=3D"http://www.jrsoftware.org/images/arrow.gif" width=3D"12" height=
+=3D"8" alt=3D"-"><a href=3D"http://www.jrsoftware.org/striprlc.php">StripRe=
+loc</a><br>
+<div class=3D"small"><br></div>
+<img src=3D"http://www.jrsoftware.org/images/arrow.gif" width=3D"12" height=
+=3D"8" alt=3D"-"><a href=3D"http://www.jrsoftware.org/misc.php">More...</a>=
+<br>
+<br><div class=3D"leftheading">Support</div>
+<div class=3D"small"><br></div>
+<img src=3D"http://www.jrsoftware.org/images/arrow.gif" width=3D"12" height=
+=3D"8" alt=3D"-"><a href=3D"http://www.jrsoftware.org/newsgroups.php">Newsg=
+roups</a><br>
+<div class=3D"small"><br></div>
+<img src=3D"http://www.jrsoftware.org/images/arrow.gif" width=3D"12" height=
+=3D"8" alt=3D"-"><a href=3D"http://www.jrsoftware.org/contact.php">Contact =
+Me</a><br>
+<br><div align=3D"center" class=3D"small"><img src=3D"http://www.jrsoftware=
+.org/count.php" width=3D"56" height=3D"14" alt=3D"#######"><br>visitors sin=
+ce<br>Jan. 1998</div>
+</td>
+
+<td width=3D"100%" valign=3D"top">
+<h3 class=3D"whitebar">Inno Setup Frequently Asked Questions</h3>
+
+<p>The <b>Inno Setup Frequently Asked Questions</b> contains supplemental i=
+nformation not found in the <a href=3D"http://www.jrsoftware.org/ishelp/" t=
+arget=3D"blank">documentation</a> or the <a href=3D"http://www.jrsoftware.o=
+rg/iskb.php">Knowledge Base</a>.</p>
+
+<h3>Functionality</h3>
+<ul>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#lang">Translating Inno S=
+etup's Text</a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#mbcs">Does it support MB=
+CS (multi-byte character sets)?</a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#msi">Will it support Win=
+dows Installer in the future?</a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#setupicon">How do I chan=
+ge the icon of Setup.exe?</a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#conditional">Can Inno Se=
+tup do a conditional installation - for example, proceed only if a certain =
+registry key or file exists?</a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#silent">Is it possible t=
+o do a silent install without using the /SILENT or /VERYSILENT command-line=
+ parameters?</a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#dirnamereg">Can Setup us=
+e the value of a registry entry as the default directory name?</a></li>
+</ul>
+
+<h3>Problems</h3>
+<ul>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#errorquotes">Compiler sa=
+ys "Mismatched or misplaced quotes on parameter"</a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#workingdir">My applicati=
+on can't find any of its files when it is started from the shortcut created=
+ by Setup. It works fine when I double-click the application's EXE in Explo=
+rer.</a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#appid">When I install a =
+new version of my application without uninstalling the old version first, I=
+ get a second entry in Control Panel's <i>Add/Remove Programs</i>.</a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#corrupt">Why is the erro=
+r message "The setup files are corrupted" displayed on some systems?</a></l=
+i>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#noregserver">Setup gives=
+ the message "Unable to register the DLL/OCX: DllRegisterServer export not =
+found"</a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#emptydirs">After uninsta=
+lling, the directories created during installation still exist.</a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#batchfile">I run a batch=
+ file in the [Run] section, but the window remains on the screen after it f=
+inishes executing. I'd like it to "close on exit."</a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#olddir">I've changed Def=
+aultDirName in my script, yet when I run Setup it defaults to the directory=
+ I had before.</a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#twoicons">I have two [Ic=
+ons] entries with the same Name, but only one of them gets installed.</a></=
+li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#runwait">Setup isn't wai=
+ting for programs executed by [Run] entries to finish.</a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#missinglanguages">Some l=
+anguages are missing on the <i>Select Setup Language</i> dialog, or it does=
+n't show up at all.</a></li>
+</ul>
+
+<h3>Installation Tasks</h3>
+<ul>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#urls">Creating Internet =
+(URL) Shortcuts</a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#startin">Setting the "St=
+art In" Field on a Shortcut</a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#assoc">Creating File Ass=
+ociations</a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#env">Setting Environment=
+ Variables</a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#closeonexit">Setting the=
+ "Close on Exit" Box on a Shortcut to an MS-DOS Program</a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#backup">Making Backups B=
+efore Replacing Files</a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#difffiles">Installing Di=
+fferent Files Depending on Windows Version</a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#perms">Settings Permissi=
+ons on Files, Directories, or Registry Keys</a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#custom">My installation =
+needs to do something that Inno Setup apparently doesn't have a feature for=
+.</a></li>
+</ul>
+
+<h3>How Do I Install...?</h3>
+<ul>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#ocx">OCX Files</a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#vb">Visual Basic System =
+Files</a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#vc">Visual C++ System Fi=
+les (e.g. MFC)</a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#comctl32">COMCTL32.DLL</=
+a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#bde">BDE (Borland Databa=
+se Engine)</a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#mdac">MDAC, ADO, Jet, et=
+c.</a></li>
+</ul>
+
+<h3>Compatibility</h3>
+<ul>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#oscompat">OS Compatibili=
+ty</a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#ntsecur">Administrative =
+Privileges</a></li>
+</ul>
+
+<h3>Miscellaneous</h3>
+<ul>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#limits">Are there any li=
+mits on how many files, etc. may be included in an installation?</a></li>
+<li><a href=3D"http://www.jrsoftware.org/isfaq.php#cancel">What exactly hap=
+pens when the user clicks Cancel during an installation?</a></li>
+</ul>
+
+
+
+<hr><h2>Functionality</h2>
+
+<h4><a name=3D"lang">Translating Inno Setup's Text</a></h4>
+<blockquote>
+<p>Translating Inno Setup's text into another language does not require mod=
+ifying the source code. Simply make a copy of the Default.isl file (include=
+d with Inno Setup) and start editing the text in it. (Do not directly edit =
+the Default.isl file, otherwise your changes will be lost when you install =
+a new Inno Setup version.) See the "[Messages] Section" topic in the Inno S=
+etup help file for some important tips.</p>
+<p>Once you have finished creating the new .isl file, create a [Languages] =
+section to tell the compiler to use it:</p>
+<p><tt>
+<b>[Languages]</b><br>
+<font color=3D"blue">Name</font>: mytrans; <font color=3D"blue">MessagesFil=
+e</font>: "compiler:MyTranslation.isl"
+</tt></p>
+<p>If you're using a version of Inno Setup prior to 4.0, use this instead:<=
+/p>
+<p><tt>
+<b>[Setup]</b><br>
+<font color=3D"blue">MessagesFile</font>=3Dcompiler:MyTranslation.isl
+</tt></p>
+<p>There are many contributed translations available for download on the <a=
+ href=3D"http://www.jrsoftware.org/is3rdparty.php">Inno Setup Third-Party F=
+iles</a> page, as well as a program to assist in editing the .isl file.</p>
+</blockquote>
+
+<h4><a name=3D"mbcs">Does it support MBCS (multi-byte character sets)?</a><=
+/h4>
+<blockquote>
+<p>Inno Setup 2.0.6 adds complete support for MBCS. It does lead byte check=
+ing on all filename and constant parsing, so it should no longer mistake tr=
+ail bytes for backslashes ("\") or braces ("{").</p>
+<p>Versions prior to 2.0.6 did not include any special support for MBCS.</p=
+>
+</blockquote>
+
+<h4><a name=3D"msi">Will it support Windows Installer in the future?</a></h=
+4>
+<blockquote>
+<p>At the present time, there are no plans for a Windows Installer edition =
+of Inno Setup. "Supporting" Windows Installer would likely involve a near-c=
+omplete rewrite of the program.</p>
+</blockquote>
+
+<h4><a name=3D"setupicon">How do I change the icon of Setup.exe?</a></h4>
+<blockquote>
+<p>The installer's icon may be changed by setting the <tt>SetupIconFile</tt=
+> [Setup] section directive. To set the uninstaller's icon, set <tt>Uninsta=
+llIconFile</tt>.</p>
+</blockquote>
+
+<h4><a name=3D"conditional">Can Inno Setup do a conditional installation - =
+for example, proceed only if a certain registry key or file exists?</a></h4=
+>
+<blockquote>
+<p>Inno Setup 4 adds support for this through the new Pascal Scripting feat=
+ure.</p>
+<p>Note: with earlier Inno Setup versions it was already possible to <a hre=
+f=3D"http://www.jrsoftware.org/isfaq.php#difffiles">install different files=
+ depending on the Windows version</a>.</p>
+</blockquote>
+
+
+<h4><a name=3D"silent">Is it possible to do a silent install without using =
+the /SILENT or /VERYSILENT command-line parameters?</a></h4>
+<blockquote>
+<p>No, nor is such a feature planned (it would be abused). If it is your in=
+tention to keep user interaction to a minimum, use the Disable* [Setup] sec=
+tion directives.</p>
+</blockquote>
+
+<h4><a name=3D"dirnamereg">Can Setup use the value of a registry entry as t=
+he default directory name?</a></h4>
+<blockquote>
+<p>Yes. Use a {reg:...} constant in DefaultDirName. For example:</p>
+<p><tt><b>[Setup]</b><br>
+<font color=3D"blue">DefaultDirName</font>=3D{reg:HKLM\Software\My Program,=
+Path|{pf}\My Program}<br>
+</tt></p>
+<p>See the "Constants" topic in the Inno Setup help file for more informati=
+on on {reg:...} constants.</p>
+</blockquote>
+
+
+
+<hr><h2>Problems</h2>
+
+<h4><a name=3D"errorquotes">Compiler says "Mismatched or misplaced quotes o=
+n parameter"</a></h4>
+<blockquote>
+<p>This message is typically displayed if you try to embed a quote (") char=
+acter in a parameter's data, but do not double it as required. Read the "Pa=
+rameters in Sections" topic in the Inno Setup help file for more informatio=
+n.</p>
+</blockquote>
+
+<h4><a name=3D"workingdir">My application can't find any of its files when =
+it is started from the shortcut created by Setup. It works fine when I doub=
+le-click the application's EXE in Explorer.</a></h4>
+<blockquote>
+<p>Your application is most likely not specifying pathnames on the files it=
+ is trying to open, so it is expecting to find them in the current director=
+y. Inno Setup by default does not set the "Start In" field on shortcuts its=
+ creates; this causes Windows to pick a directory itself, which usually won=
+'t be the directory containing your application.</p>
+<p>In virtually all cases, this is something that should be corrected at th=
+e application level. Properly designed GUI applications should not expect t=
+o be started from a particular directory; they should always specify full p=
+athnames on files they open. In Delphi or C++Builder, for example, it's pos=
+sible to get the full pathname of the directory containing the application =
+EXE by calling: <tt>ExtractFilePath(ParamStr(0))</tt>. To get the full path=
+ of a file named "File.txt" in the application directory, use: <tt>ExtractF=
+ilePath(ParamStr(0)) + 'File.txt'</tt>.</p>
+<p>If for some reason you cannot fix this at the application level, you can=
+ tell Inno Setup to set the "Start In" field by adding "WorkingDir: {app}" =
+to your [Icons] entries.</p>
+</blockquote>
+
+<h4><a name=3D"corrupt">Why is the error message "The setup files are corru=
+pted" displayed on some systems?</a></h4>
+<blockquote>
+<p>This error message is displayed when a file pertaining to the installati=
+on (e.g., setup.exe, setup.1) has the wrong size, or part of a file fails a=
+ CRC check. It is not displayed for any other reason.</p>
+<p>If your installation is distributed over the internet and you're getting=
+ a lot of reports of this error, it could be that your web server is delive=
+ring partial files by dropping connections prematurely. Have the affected u=
+sers check the size in the bytes of the file(s) they downloaded.</p>
+<p>If your installation is distributed via CD-ROM or floppy disk, it could =
+be that the CD-ROM or floppy disk is bad, or possibly the drive is defectiv=
+e.</p>
+</blockquote>
+
+<h4><a name=3D"appid">When I install a new version of my application withou=
+t uninstalling the old version first, I get a second entry in Control Panel=
+'s <i>Add/Remove Programs</i>.</a></h4>
+<blockquote>
+<p>This happens when you change AppId between versions, or if AppId is not =
+specified, AppName. If you do that, Setup has no way of knowing that the tw=
+o versions are of the same application, and thus will create a new entry in=
+ <i>Add/Remove Programs</i>. Additionally, a new uninstall log file (unins?=
+??.dat) will be created. The obvious solution for this is to not change App=
+Id or AppName.</p>
+<p>If you must change AppName in a new version, set AppId to the value of A=
+ppId or AppName from the previous version.</p>
+</blockquote>
+
+<h4><a name=3D"noregserver">Setup gives the message "Unable to register the=
+ DLL/OCX: DllRegisterServer export not found"</a></h4>
+<blockquote>
+<p>This message normally means that you specified the "regserver" flag on a=
+ file that doesn't possess the ability to be registered. Remove the "regser=
+ver" flag from the [Files] entry and the message will go away.</p>
+</blockquote>
+
+<h4><a name=3D"emptydirs">After uninstalling, the directories created durin=
+g installation still exist.</a></h4>
+<blockquote>
+<p>There are several reasons why a directory may not be removed:</p>
+<ul>
+<li>It already existed prior to installation. By default, the uninstaller p=
+lays it safe and doesn't remove directories that the installer didn't creat=
+e.</li>
+<li>It contains files or subdirectories. Use [UninstallDelete] if you need =
+the uninstaller to delete additional files/directories.</li>
+<li>A running process has the directory as its current directory.</li>
+</ul>
+<p>Note: In Inno Setup versions prior to 2.0.1, directories must be specifi=
+ed in either the [Dirs] or [UninstallDelete] sections for them to be delete=
+d by the uninstaller. In newer Inno Setup versions, directories created by =
+[Files] section entries will be deleted automatically by the uninstaller if=
+ they didn't exist prior to installation.</p>
+</blockquote>
+
+<h4><a name=3D"batchfile">I run a batch file in the [Run] section, but the =
+window remains on the screen after it finishes executing. I'd like it to "c=
+lose on exit."</a></h4>
+<blockquote>
+<p>From Tim Rude:<br>
+The simplest way to get a batch file to automatically close on exit is to c=
+lear the screen at the end of it using the CLS command.</p>
+<p><i>--- batch file 1 ---</i></p>
+<p><tt>
+@echo off<br>
+echo Hello World<br>
+echo This batch file does NOT close on exit
+</tt></p>
+<p><i>--- batch file 2 ---</i></p>
+<p><tt>
+@echo off<br>
+echo Hello World<br>
+echo This batch file DOES close on exit<br>
+cls
+</tt></p>
+</blockquote>
+
+<h4><a name=3D"olddir">I've changed DefaultDirName in my script, yet when I=
+ run Setup it defaults to the directory I had before.</a></h4>
+<blockquote>
+<p>At startup Setup looks in the registry to see if the same application wa=
+s already installed previously, and if so, it will use the directory of the=
+ previous installation as the default directory presented to the user in th=
+e wizard. If you uninstall the application and run Setup again, it will use=
+ the new DefaultDirName setting. If you wish to disable this feature, set U=
+sePreviousAppDir to "no".</p>
+</blockquote>
+
+<h4><a name=3D"twoicons">I have two [Icons] entries with the same Name, but=
+ only one of them gets installed.</a></h4>
+<blockquote>
+<p>Two files can't have the same name, and since shortcuts are files, two s=
+hortcuts therefore can't have the same name.</p>
+</blockquote>
+
+<h4><a name=3D"runwait">Setup isn't waiting for a program executed by a [Ru=
+n] entry to finish.</a></h4>
+<blockquote>
+<p>First, make sure that you are <i>not</i> using the "nowait" or "waitunti=
+lidle" flags on the [Run] entry. These flags prevent Setup from waiting unt=
+il the process completely terminates.</p>
+<p>If you aren't using those flags and it still doesn't seem to be waiting =
+for the program to finish, then likely what is happening is that the EXE yo=
+u're running is spawning some other process and then terminating itself imm=
+ediately, causing Setup to think the program has finished. This is known to=
+ happen with older InstallShield-based installers (to work around it, try u=
+sing the <a href=3D"http://www.installshield.com/news/newsletter/0206-artic=
+les/LaunchIS5Setup.asp">/SMS switch</a>).</p>
+<p>A simple way to check if a program does that is to run "START /WAIT Prog=
+ramName.exe" from the command line, and see if you are returned to the comm=
+and prompt before the program exits.</p>
+</blockquote>
+
+<h4><a name=3D"missinglanguages">Some languages are missing on the <i>Selec=
+t Setup Language</i> dialog, or it doesn't show up at all.</a></h4>
+<blockquote>
+<p>You are using Non Unicode Inno Setup:
+</p><p>Beginning with Inno Setup 4.2.2, languages specified in the [Languag=
+es] section that cannot be displayed under the active Windows ANSI code pag=
+e are not listed in the <i>Select Setup Language</i> dialog. For example, R=
+ussian text can only be displayed properly if the active code page is 1251;=
+ if the user isn't running code page 1251 they will not see Russian as an o=
+ption.</p>
+<p>On Windows XP, the active code page may be changed by going to <i>Region=
+al and Language Options</i> in Control Panel, and setting <i>Language for n=
+on-Unicode programs</i> on the Advanced tab. On Windows 2000, the active co=
+de page may be changed by going to <i>Regional Options</i> in Control Panel=
+, and clicking <i>Set default...</i>.</p>
+<p>If you are sure you're running in the correct code page and a language s=
+till isn't being listed, then most likely <tt>LanguageCodePage</tt> is set =
+incorrectly inside the language's .isl file.</p>
+<p>If you would like to force all languages to be visible regardless of whe=
+ther they can be displayed properly under the active code page, set the <tt=
+>ShowUndisplayableLanguages</tt> [Setup] section directive (new in Inno Set=
+up 5.1.7).</p>
+</blockquote>
+
+
+
+<hr><h2>Installation Tasks</h2>
+
+<h4><a name=3D"urls">Creating Internet (URL) Shortcuts</a></h4>
+<blockquote>
+<p>First create a file named, for example, "website.url", and place these l=
+ines inside it:</p>
+<p><tt>[InternetShortcut]<br>
+URL=3Dhttp://web.site.address/
+</tt></p>
+<p>Then add these lines to your script:</p>
+<p><tt><b>[Files]</b><br>
+<font color=3D"blue">Source</font>: "website.url"; <font color=3D"blue">Des=
+tDir</font>: "{app}"<br>
+<br>
+<b>[Icons]</b><br>
+<font color=3D"blue">Name</font>: "{group}\Visit My Web Site"; <font color=
+=3D"blue">Filename</font>: "{app}\website.url"<br>
+</tt></p>
+</blockquote>
+
+
+<h4><a name=3D"startin">Setting the "Start In" Field on a Shortcut</a></h4>
+<blockquote>
+<p>Use a WorkingDir parameter on the [Icons] section entry.</p>
+</blockquote>
+
+<h4><a name=3D"assoc">Creating File Associations</a></h4>
+<blockquote>
+<p>First set the [Setup] section directive "ChangesAssociations" to "yes". =
+Then create [Registry] entries as shown below. </p>
+
+<p><tt>
+<b>[Registry]</b><br>
+<font color=3D"blue">Root</font>: HKCR; <font color=3D"blue">Subkey</font>:=
+ ".myp"; <font color=3D"blue">ValueType</font>: string; <font color=3D"blue=
+">ValueName</font>: ""; ValueData: "MyProgramFile"; <font color=3D"blue">Fl=
+ags</font>: uninsdeletevalue
+</tt></p>
+<blockquote>
+".myp" is the extension we're associating. "MyProgramFile" is the internal =
+name for the file type as stored in the registry. Make sure you use a uniqu=
+e name for this so you don't inadvertently overwrite another application's =
+registry key.
+</blockquote>
+
+<p><tt>
+<font color=3D"blue">Root</font>: HKCR; <font color=3D"blue">Subkey</font>:=
+ "MyProgramFile"; <font color=3D"blue">ValueType</font>: string; <font colo=
+r=3D"blue">ValueName</font>: ""; <font color=3D"blue">ValueData</font>: "My=
+ Program File"; <font color=3D"blue">Flags</font>: uninsdeletekey
+</tt></p>
+<blockquote>
+"My Program File" above is the name for the file type as shown in Explorer.
+</blockquote>
+
+<p><tt>
+<font color=3D"blue">Root</font>: HKCR; <font color=3D"blue">Subkey</font>:=
+ "MyProgramFile\DefaultIcon"; <font color=3D"blue">ValueType</font>: string=
+; <font color=3D"blue">ValueName</font>: ""; <font color=3D"blue">ValueData=
+</font>: "{app}\MYPROG.EXE,0"
+</tt></p>
+<blockquote>
+"DefaultIcon" is the registry key that specifies the filename containing th=
+e icon to associate with the file type. ",0" tells Explorer to use the firs=
+t icon from MYPROG.EXE. (",1" would mean the second icon.)
+</blockquote>
+
+<p><tt>
+<font color=3D"blue">Root</font>: HKCR; <font color=3D"blue">Subkey</font>:=
+ "MyProgramFile\shell\open\command"; <font color=3D"blue">ValueType</font>:=
+ string; <font color=3D"blue">ValueName</font>: ""; <font color=3D"blue">Va=
+lueData</font>: """{app}\MYPROG.EXE"" ""%1"""
+</tt></p>
+<blockquote>
+"shell\open\command" is the registry key that specifies the program to exec=
+ute when a file of the type is double-clicked in Explorer. The surrounding =
+quotes are in the command line so it handles long filenames correctly.
+</blockquote>
+</blockquote>
+
+<h4><a name=3D"env">Setting Environment Variables</a></h4>
+<blockquote>
+<p>Environment variables are stored as string values in the registry, so it=
+ is possible to manipulate them using the [Registry] section. System-wide e=
+nvironment variables are located at:</p>
+<blockquote>HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Man=
+ager\Environment</blockquote>
+<p>User-specific environment variables are located at:</p>
+<blockquote>HKEY_CURRENT_USER\Environment</blockquote>
+</blockquote>
+
+<h4><a name=3D"closeonexit">Setting the "Close on Exit" Box on a Shortcut t=
+o an MS-DOS Program</a></h4>
+<blockquote>
+<p>Inno Setup version 1.3.15 and later includes support for "closeonexit" a=
+nd "dontcloseonexit" flags in the [Icons] section.</p>
+</blockquote>
+
+<h4><a name=3D"backup">Making Backups Before Replacing Files</a></h4>
+<blockquote>
+<p>Inno Setup does not currently have a specific feature for doing that, bu=
+t you can make a copy of a file before it is replaced by using a [Files] se=
+ction entry similar to this:</p>
+<p><tt><font color=3D"blue">Source</font>: "{app}\MyProg.exe"; <font color=
+=3D"blue">DestDir</font>: "{app}\backup"; <font color=3D"blue">Flags</font>=
+: external skipifsourcedoesntexist uninsneveruninstall</tt></p>
+</blockquote>
+
+<h4><a name=3D"difffiles">Installing Different Files Depending on Windows V=
+ersion</a></h4>
+<blockquote>
+<p>That can be done via MinVersion and/or OnlyBelowVersion parameters on an=
+ entry. See the Common Parameters topic in the documentation for details.</=
+p>
+</blockquote>
+
+<h4><a name=3D"perms">Settings Permissions on Files, Directories, or Regist=
+ry Keys</a></h4>
+<blockquote>
+<p>Beginning with Inno Setup 4.1.0, the [Dirs], [Files], and [Registry] sec=
+tions support Permissions parameters for setting permissions on directories=
+, files, and registry keys respectively.</p>
+<p>If you have more advanced needs, take a look at <a href=3D"http://setacl=
+.sourceforge.net/">SetACL</a>.</p>
+</blockquote>
+
+<h4><a name=3D"custom">My installation needs to do something that Inno Setu=
+p apparently doesn't have a feature for.</a></h4>
+<blockquote>
+<p>See the Knowledge Base article <a href=3D"http://www.jrsoftware.org/iskb=
+.php?custom">Implementing Custom Functionality</a>.</p>
+</blockquote>
+
+
+
+<hr><h2>How Do I Install...?</h2>
+
+<h4><a name=3D"ocx">OCX Files</a></h4>
+<blockquote>
+<p>The recommended way to install an OCX file is as follows.</p>
+<p><tt>
+<b>[Files]</b><br>
+<font color=3D"blue">Source</font>: "ComCtl32.ocx";
+	<font color=3D"blue">DestDir</font>: "{sys}";
+	<font color=3D"blue">CopyMode</font>: alwaysskipifsameorolder;
+	<font color=3D"blue">Flags</font>: restartreplace sharedfile regserver
+</tt></p>
+</blockquote>
+
+<h4><a name=3D"vb">Visual Basic System Files</a></h4>
+<blockquote>
+<p>See <a href=3D"http://www.jrsoftware.org/iskb.php?vb">this Knowledge Bas=
+e article</a>.</p>
+</blockquote>
+
+<h4><a name=3D"vc">Visual C++ System Files (e.g. MFC)</a></h4>
+<blockquote>
+<p>See <a href=3D"http://www.jrsoftware.org/iskb.php?vc">this Knowledge Bas=
+e article</a>.</p>
+</blockquote>
+
+<h4><a name=3D"comctl32">COMCTL32.DLL</a></h4>
+<blockquote>
+<p>If your application requires an updated version of COMCTL32.DLL, you can=
+ direct your users to
+<a href=3D"http://www.microsoft.com/downloads/details.aspx?FamilyID=3Dcb2cf=
+3a2-8025-4e8f-8511-9b476a8d35d2&amp;DisplayLang=3Den">download</a>
+the COMCTL32 update from Microsoft, or call the COMCTL32 update from your i=
+nstallation by using the following lines:</p>
+<p><tt>
+<b>[Files]</b><br>
+<font color=3D"blue">Source</font>: "50comupd.exe"; <font color=3D"blue">De=
+stDir</font>: "{tmp}"<br>
+<br>
+<b>[Code]</b><br>
+function ShouldInstallComCtlUpdate: Boolean;<br>
+var<br>
+&nbsp;&nbsp;MS, LS: Cardinal;<br>
+begin<br>
+&nbsp;&nbsp;// Only install if the existing comctl32.dll is &lt; 5.80<br>
+&nbsp;&nbsp;Result :=3D False;<br>
+&nbsp;&nbsp;if GetVersionNumbers(ExpandConstant('{sys}\comctl32.dll'), MS, =
+LS) then<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if MS &lt; $00050050 then<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Result :=3D True;<br>
+end;<br>
+<br>
+<b>[Run]</b><br>
+<font color=3D"blue">Filename</font>: "{tmp}\50comupd.exe"; <font color=3D"=
+blue">Parameters</font>: "/r:n /q:1"; <font color=3D"blue">Check</font>: Sh=
+ouldInstallComCtlUpdate
+</tt></p>
+<p>Don't try to install COMCTL32.DLL directly using the [Files] section; Mi=
+crosoft <a href=3D"http://www.microsoft.com/permission/copyrgt/cop-soft.htm=
+#COM">does not allow</a> this, and it's dangerous.</p>
+</blockquote>
+
+<h4><a name=3D"bde">BDE (Borland Database Engine)</a></h4>
+<blockquote>
+<p>See the Knowledge Base article <a href=3D"http://www.jrsoftware.org/iskb=
+.php?bde">Installing BDE</a> for details on deploying the 32-bit version of=
+ BDE using Inno Setup.</p>
+</blockquote>
+
+<h4><a name=3D"mdac">MDAC, ADO, Jet, etc.</a></h4>
+<blockquote>
+<p>See <a href=3D"http://www.jrsoftware.org/iskb.php?dcommdac">this Knowled=
+ge Base article</a>.</p>
+</blockquote>
+
+
+
+<hr><h2>Compatibility</h2>
+
+<h4><a name=3D"oscompat">OS Compatibility</a></h4>
+<blockquote>
+<p>Currently supported platforms include every Windows release since 2000. =
+No service packs or other OS updates are required on any of the supported p=
+latforms.</p>
+<p>The 16-bit version of Inno Setup was discontinued starting with version =
+1.3. Support for Windows NT 3.51 was discontinued starting with version 3.0=
+. Support for Windows 95, 98, Me, and NT 4.0 was discontinued starting with=
+ version 5.5.</p>
+</blockquote>
+
+<h4><a name=3D"ntsecur">Administrative Privileges</a></h4>
+<blockquote>
+<p>A typical Inno Setup installation does not require administrative or "po=
+wer user" privileges. However, there are exceptions as noted below.</p>
+<p>Things that require administrative privileges:</p>
+<ul>
+<li>Using "PrivilegesRequired=3Dadmin" in the script's [Setup] section. Thi=
+s causes Setup to abort with an error message if the user lacks administrat=
+ive privileges.</li>
+<li>Using the "restartreplace" flag in the [Files] section. This flag cause=
+s Inno Setup to call the MoveFileEx function, which attempts to write to "H=
+KEY_LOCAL_MACHINE\ SYSTEM\ CurrentControlSet\ Control\ Session Manager". Wr=
+ite access to this key is restricted to Administrators.</li>
+<li>Writing to any key under HKEY_USERS\.DEFAULT using the [Registry] secti=
+on. Write access to this key is restricted to Administrators.</li>
+</ul>
+<p>Things that require <i>either</i> administrative or "power user" privile=
+ges:</p>
+<ul>
+<li>Using "PrivilegesRequired=3Dpoweruser" in the script's [Setup] section.=
+ This causes Setup to abort with an error message if the user lacks either =
+administrative or "power user" privileges.</li>
+<li>Using the "regserver" flag in the [Files] section. In most cases regist=
+ering a DLL involves writing to HKEY_CLASSES_ROOT, a privilege not granted =
+to ordinary users.</li>
+<li>Using the "sharedfile" flag is the [Files] section. This flag causes In=
+no Setup to create/update a value in "HKEY_LOCAL_MACHINE\ SOFTWARE\ Microso=
+ft\ Windows\ CurrentVersion\ SharedDLLs". Ordinary users are not allowed to=
+ write to that key.</li>
+<li>Using the FontInstall parameter in the [Files] section.</li>
+<li>Writing to any key under HKEY_LOCAL_MACHINE or HKEY_CLASSES_ROOT using =
+the [Registry] section. Ordinary users are not allowed to write to those ke=
+ys.</li>
+</ul>
+<p>Inno Setup itself does not require write access to the WINNT directory, =
+or any other registry keys not mentioned above.</p>
+<p>What is different when an installation is run by a user <i>without</i> a=
+dministrative privileges?</p>
+<ul>
+<li>The registry key for the <i>Add/Remove Programs</i> Control Panel entry=
+ is created under HKEY_CURRENT_USER instead of HKEY_LOCAL_MACHINE. Thus, on=
+ly the user who installed the program will see an <i>Add/Remove Programs</i=
+> entry for it.</li>
+<li>The "{group}" constant always points to the current user's profile, as =
+opposed to the All Users profile.</li>
+<li>All "{common...}" constants are equivalent to the "{user...}" constants=
+.</li>
+<li>The program may be uninstalled by any user. (When an administrator inst=
+alls a program, only an administrator is allowed to uninstall it.)</li>
+</ul>
+</blockquote>
+
+
+
+<hr><h2>Miscellaneous</h2>
+
+<h4><a name=3D"limits">Are there any limits on how many files, etc. may be =
+included in an installation?</a></h4>
+<blockquote>
+<p>Inno Setup places no arbitrary limits on how many files, shortcuts, regi=
+stry entries, etc. that you may include in an installation. However, keep i=
+n mind that Setup does need memory for each entry in a script. For example,=
+ roughly 120 bytes of memory is needed for each [Files] entry.</p>
+<p>In Inno Setup 3.x and earlier, installations and individual files cannot=
+ exceed 2 GB, because it does not use 64-bit arithmetic in most places. Thi=
+s has been addressed in Inno Setup 4.</p>
+</blockquote>
+
+<h4><a name=3D"cancel">What exactly happens when the user clicks Cancel dur=
+ing an installation?</a></h4>
+<blockquote>
+<p>When Cancel is clicked, Setup will begin reverting changes it's made so =
+far in the very same manner as the Uninstall program. Thus, a partially ins=
+talled application isn't left over.</p>
+</blockquote>
+
+
+<hr><div class=3D"small">Site contents Copyright =A9 1997-2012 Jordan Russe=
+ll. All rights reserved.</div>
+</td></tr></tbody></table>
+
+
+
+</body><style type=3D"text/css">embed[type*=3D"application/x-shockwave-flas=
+h"],embed[src*=3D".swf"],object[type*=3D"application/x-shockwave-flash"],ob=
+ject[codetype*=3D"application/x-shockwave-flash"],object[src*=3D".swf"],obj=
+ect[codebase*=3D"swflash.cab"],object[classid*=3D"D27CDB6E-AE6D-11cf-96B8-4=
+44553540000"],object[classid*=3D"d27cdb6e-ae6d-11cf-96b8-444553540000"],obj=
+ect[classid*=3D"D27CDB6E-AE6D-11cf-96B8-444553540000"]{	display: none !impo=
+rtant;}</style></html>
+------=_NextPart_000_339C_68FB738A.9F1452E4
+Content-Type: text/css
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://www.jrsoftware.org/styles.css
+
+body { background-color: white; color: black; margin: 0px; padding: 0px; fo=
+nt-style: normal; font-variant: normal; font-weight: normal; font-size: sma=
+ll; line-height: normal; font-family: verdana, arial, sans-serif; backgroun=
+d-position: initial initial; background-repeat: initial initial; }
+
+td, .normal { font-style: normal; font-variant: normal; font-weight: normal=
+; font-size: small; line-height: normal; font-family: verdana, arial, sans-=
+serif; }
+
+h1, .xxbig { font-weight: bold; font-style: normal; font-variant: normal; f=
+ont-size: xx-large; line-height: normal; font-family: verdana, arial, sans-=
+serif; }
+
+h2, .xbig { font-weight: bold; font-style: normal; font-variant: normal; fo=
+nt-size: x-large; line-height: normal; font-family: verdana, arial, sans-se=
+rif; }
+
+h3, .big { font-weight: bold; font-style: normal; font-variant: normal; fon=
+t-size: large; line-height: normal; font-family: verdana, arial, sans-serif=
+; }
+
+h4, .medium { font-weight: bold; font-style: normal; font-variant: normal; =
+font-size: medium; line-height: normal; font-family: verdana, arial, sans-s=
+erif; }
+
+.small { font-size: x-small; }
+
+pre, tt { font-style: normal; font-variant: normal; font-weight: normal; fo=
+nt-size: small; line-height: normal; font-family: 'courier new', monospace;=
+ }
+
+li { margin-top: 0.25em; margin-bottom: 0.25em; }
+
+p, h1, h2, h3, h4, h5, blockquote, pre, form, ol, ul, ul.linespace li { mar=
+gin-top: 1em; margin-bottom: 1em; }
+
+a:link { color: rgb(39, 77, 153); }
+
+a:visited, a:active { color: rgb(90, 131, 215); }
+
+img { border: 0px; }
+
+table.standard { width: 100%; border: 0px; }
+
+table.standard th { padding: 4px; background-color: rgb(38, 75, 153); color=
+: white; text-align: left; font-weight: bold; background-position: initial =
+initial; background-repeat: initial initial; }
+
+table.standard td { padding: 4px; background-color: rgb(240, 240, 240); bac=
+kground-position: initial initial; background-repeat: initial initial; }
+
+.snippet { background-color: rgb(240, 240, 240); padding: 4px; border: 1px =
+solid rgb(208, 208, 208); background-position: initial initial; background-=
+repeat: initial initial; }
+
+.whitebar { background-color: rgb(224, 224, 224); padding: 5px; margin: 0px=
+; background-position: initial initial; background-repeat: initial initial;=
+ }
+
+.bluebar { background-color: rgb(38, 75, 153); padding: 5px; margin: 0px; c=
+olor: white; background-position: initial initial; background-repeat: initi=
+al initial; }
+
+.leftheading { background-color: rgb(42, 84, 168); padding: 3px; text-align=
+: center; color: white; font-weight: bold; background-position: initial ini=
+tial; background-repeat: initial initial; }
+------=_NextPart_000_339C_68FB738A.9F1452E4
+Content-Type: image/png
+Content-Transfer-Encoding: base64
+Content-Location: http://www.jrsoftware.org/images/header3.png
+
+iVBORw0KGgoAAAANSUhEUgAAAbgAAAAjCAMAAADRwu+1AAAC6FBMVEUAAABFYZp7lMaMnL2vsbe9
+xtbGzt7GzufO1ufn5+/v9/dgbYSKjpJbfL54jrWcpaW1vcaltdZgaXPa3t48Wo6BhIn3//8pOVZa
+Y4Q5QlpSZY5YbpRpdYxne5h3e4hxfph7e4wYGCE5XapSc7Vne6Vie60YKTl1hKR7iad7lK1vhLV1
+ksmEjJyHkqspMUKWn6+ip62cpb2Bmc6lrbWlrb2ttb2yt8C9vc7Gxs4/SmC9xt67yunGxtbGztY5
+SmvOzs7O1t5GVmvW3ufO1u/W3u/e5+fe5+8YHClUXm9UY3shKSl1dXg5UpBOXogQMWO9vcZ3jL2M
+pc49UH2ZnKJBY6uYqcYpKSne3uelssgpMUqxtcoxOUZBabrBxspjc6UYGBilteKtvdatwOQxUpS1
+xt5rhK0xOUoQEBAxWpwlJTFrc3MQEBgxQlrW1t7W1ueMnLEpQmshLUYxQmPe3u81RmcpQnMxSnOg
+qbkpSnspSoQhISExMzne5/dCRkYlMVbO1ta9xsYQGCEpQnuWq9opOWfn7/fn7/8xSnspQmPG1u/O
+3vMxOVIxUoTOzt4pUpwICBgpSpQhQnsQHD0QKVIIGDEQGDEpUq0pWq0pWrUQGDkIHD0ACBAxWrUx
+Y70ACBgxWq0ACAgYOWsYOXMhOXsQIUohSpT///8pUqUYKVIpSpwQKUohQoQIGCkIEBgIECEYMWMh
+OWsYKUohSpwQIUIQIVIxY8YIECkQGCkICAgAAAgYKVoYMWshSowhUpwAABAIEDEpSqUhOYQIGDnn
+5+chQowYQnsYOXspUrUQMVopSowhUqUpY8YpWr0YMXMAECEpWsYYKWNSVlYxWsYQKVrn7+8hQpQI
+EBAIIUIYQoQ5Qk4YMVIAEBjGzs5/hJQxY87W1tYACCEhOWMQECFWWmP39/eRlpzv7+9na3ccIS0x
+OUK9vb0cMVb39/8hSqVGSk6tra1KTlpGWHnOztYxWqXv7/cYKUK1vc4nLTe77AC8AAAbeElEQVR4
+XnyXVXMkSw9E9/9Ddw8zM5uZ2ct4mZnhw9d7JFXNTNvh7ZRqHH49kSnp0eLbFUnVKdFRvbRbqpfm
+X2iqhtVJNZxU0bQ6DaeT59Plb0u0Naac0uP0Vponk7bKnIkK6eRZoVhIniWLSb5icj25LuXUNrXb
+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
+------=_NextPart_000_339C_68FB738A.9F1452E4
+Content-Type: image/gif
+Content-Transfer-Encoding: base64
+Content-Location: http://www.jrsoftware.org/images/arrow.gif
+
+R0lGODlhDAAIALMAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwICAgP8AAAD/AP//AAAA//8A/wD/
+/////yH5BAEAAA8ALAAAAAAMAAgAAAQT8MlJKUC1go3z26AHdtnlnegZAQA7
+------=_NextPart_000_339C_68FB738A.9F1452E4
+Content-Type: image/gif
+Content-Transfer-Encoding: base64
+Content-Location: http://www.jrsoftware.org/count.php
+
+R0lGODdhOAAOAIAAAP///wAAACwAAAAAOAAOAAACW4SPqcvtD6OctNYQEMZnZ+NpH+Bx5NahoHmu
+bWvGrPhyMvkm9jfDeeqC8UazUG1YHAGFmVtQh+yxpMTdSvVbap/UZZc7PIqfv5u5dK1OVaWwaN2z
+yOf0uv1uKQAAOw==
+------=_NextPart_000_339C_68FB738A.9F1452E4--
