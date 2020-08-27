@@ -26,6 +26,7 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 150000;
 // global.msPause = 3000;
 
 global.isWin = /^win/.test(process.platform);
+global.isMinio =  process.env.NODE_JEST === 'test_minio';
 
 export function clearLocalStorage() {
   // global.app.client.localStorage('DELETE');

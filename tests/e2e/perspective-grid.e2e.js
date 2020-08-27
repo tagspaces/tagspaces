@@ -8,7 +8,7 @@ import {
   closeFileProperties,
   openFilesOptionMenu,
   toggleShowDirectoriesClick,
-  selectAllFilesClick, clearInputValue, getFirstFileName, renameFirstFile, deleteFirstFile
+  selectAllFilesClick, clearInputValue, getFirstFileName, renameFirstFile, deleteFirstFile, createMinioLocation
 } from './location.helpers';
 import { searchEngine, createNewFile} from './search.spec';
 import {
@@ -18,7 +18,7 @@ import {
   perspectiveGridTable,
   firstFile,
   openDirectoryMenu,
-  firstFileName
+  firstFileName, startMinio, stopMinio
 } from './perspective.spec';
 
 const subFolderName = '/test-perspective-grid';
@@ -32,12 +32,28 @@ const newFileName = 'newFileName.txt';
 const newTagName = 'newTagName';
 
 describe('TST51 - Perspective Grid', () => {
+  beforeAll(async () => {
+    if(global.isMinio) {
+      global.minio = await startMinio();
+    }
+  });
+
+  afterAll(async () => {
+    if(global.isMinio) {
+      await stopMinio(global.minio);
+    }
+  });
+
   beforeEach(async () => {
     await clearLocalStorage();
     //  await delay(500);
     //await closeWelcome();
     //await delay(500);
-    await createLocation(defaultLocationPath, defaultLocationName, true);
+    if(global.isMinio){
+      await createMinioLocation('', defaultLocationName, true);
+    } else {
+      await createLocation(defaultLocationPath, defaultLocationName, true);
+    }
     // await delay(500);
     await openLocation(defaultLocationName);
     // await delay(500);
@@ -56,7 +72,7 @@ describe('TST51 - Perspective Grid', () => {
       '//*[@data-tid="perspectiveGridFileTable"]/span'
     );
 
-    //await delay(500);
+    // await delay(500);
     expect(await file.isDisplayed()).toBe(true);
     expect(await folder.isDisplayed()).toBe(false);
 
@@ -71,7 +87,8 @@ describe('TST51 - Perspective Grid', () => {
   /*it('TST5113 - Show sub folders content', async () => {});*/
 
   it('TST5101 - Open file with click', async () => {
-    await searchEngine(testTestFilename);
+    await searchEngine('txt');//testTestFilename);
+    await delay(500);
     await openFile(perspectiveGridTable, firstFile);
     await checkFilenameForExist(testTestFilename);
   });

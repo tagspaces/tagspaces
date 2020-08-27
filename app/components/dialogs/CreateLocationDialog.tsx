@@ -285,11 +285,13 @@ class CreateLocationDialog extends React.Component<Props, State> {
                   row
                 >
                   <FormControlLabel
+                    data-tid="localLocation"
                     value={locationType.TYPE_LOCAL}
                     control={<Radio />}
                     label="Local"
                   />
                   <FormControlLabel
+                    data-tid="objectStorageLocation"
                     value={locationType.TYPE_CLOUD}
                     control={<Radio />}
                     title={i18n.t('core:objectStorageTitle')}

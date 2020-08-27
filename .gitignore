@@ -89,6 +89,7 @@ tests/*
 !tests/e2e/
 !tests/file-structure/
 tests/file-structure/supported-filestypes/.ts/
+tests/file-structure/.minio.sys/
 
 builds/*
 web/sw-config.js

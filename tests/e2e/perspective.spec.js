@@ -1,6 +1,7 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 
 import { delay, clearLocalStorage } from './hook';
+import pathLib from 'path';
 import {
   createLocation,
   openLocation,
@@ -8,6 +9,8 @@ import {
   defaultLocationName
 } from './location.helpers';
 
+const winMinio = './tests/bin/minio.exe';
+const unixMinio = 'minio';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const firstFile = '/span';
 export const firstFileName = '/span/div/div/div/p';
@@ -17,14 +20,45 @@ export const firstFileName = '/span/div/div/div/p';
 // const perspectiveGrid = 'perspectiveGrid';
 // const select = '//*[@id="perspectiveList"]/div[5]/div/select';
 
+export async function startMinio() {
+  const command = global.isWin ? pathLib.resolve(winMinio) : unixMinio;
+  const minioProcess = await require('child_process').spawn(command, [
+    'server',
+    pathLib.resolve('./tests/file-structure')
+  ]);
+
+  minioProcess.on('exit', function(code) {
+    console.log('exit here with code: ', code);
+  });
+  minioProcess.on('close', (code, signal) => {
+    console.log(`child process terminated due to receipt of signal ${signal}`);
+  });
+
+  minioProcess.stdout.on('data', function(data) {
+    // console.log('stdout: ' + data);
+  });
+
+  minioProcess.stderr.on('data', function(data) {
+    console.log('stderr: ' + data);
+  });
+  return minioProcess;
+}
+
+export async function stopMinio(process) {
+  // Send SIGHUP to process.
+  console.log('stopMinio');
+  process.stdin.pause();
+  process.kill(); //'SIGHUP');
+}
+
 export async function openFile(perspectiveSelector, inDepth) {
   // perspectiveSelector is selector for current perspective
   // inDepth is selector for the depth of the elements
   //await delay(500);
 
-  const resetSearch = await global.client.$('#resetSearchButton');
+  /*const resetSearch = await global.client.$('#resetSearchButton');
   await resetSearch.waitForDisplayed();
-  await resetSearch.click();
+  await resetSearch.click();*/
 
   const fileSelector = await global.client.$(perspectiveSelector + inDepth);
   await fileSelector.waitForDisplayed();

@@ -78,7 +78,9 @@
     "test-e2e-dev": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings ./tests/runTests.js e2e-dev",
     "test-unit": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 jest --verbose ./tests/unit/",
     "test-all": "yarn build && yarn test-unit && yarn build-e2e && yarn test-e2e",
-    "test-e2e": "node -r @babel/register ./internals/scripts/CheckBuiltsExist.js && cross-env NODE_ENV=test  jest --verbose ./tests/e2e/"
+    "test-e2e": "node -r @babel/register ./internals/scripts/CheckBuiltsExist.js && cross-env NODE_ENV=test  jest --verbose ./tests/e2e/",
+    "minio-start-windows": "./tests/bin/minio.exe server ./tests/file-structure",
+    "test-e2e-minio": "node -r @babel/register ./internals/scripts/CheckBuiltsExist.js && cross-env NODE_JEST=test_minio  jest --verbose ./tests/e2e/"
   },
   "repository": {
     "type": "git",
