@@ -1,12 +1,12 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 
-import { delay, clearLocalStorage } from './hook';
+import { clearLocalStorage, delay } from './hook';
 import pathLib from 'path';
 import {
   createLocation,
-  openLocation,
+  defaultLocationName,
   defaultLocationPath,
-  defaultLocationName
+  openLocation
 } from './location.helpers';
 
 const winMinio = './tests/bin/minio.exe';
@@ -28,10 +28,10 @@ export async function startMinio() {
   ]);
 
   minioProcess.on('exit', function(code) {
-    console.log('exit here with code: ', code);
+    // console.log('exit here with code: ', code);
   });
   minioProcess.on('close', (code, signal) => {
-    console.log(`child process terminated due to receipt of signal ${signal}`);
+    // console.log(`child process terminated due to receipt of signal ${signal}`);
   });
 
   minioProcess.stdout.on('data', function(data) {
@@ -44,11 +44,53 @@ export async function startMinio() {
   return minioProcess;
 }
 
+export async function startChromeDriver() {
+  //const childProcess = await require('child_process');
+  const chromeDriver = await require('chromedriver');
+  //const binPath = chromedriver.path;
+
+  const args = ['--url-base=/', '--port=9515'];
+
+  await chromeDriver.start(args);
+  /*const process = await childProcess.execFile(binPath, args, function (err, stdout, stderr) {
+    // handle results
+    console.log('err: ' + err);
+    console.log('stdout: ' + stdout);
+    console.log('stderr: ' + stderr);
+  });*/
+  return chromeDriver;
+}
+
+/*export async function startWebServer() {
+  const express = await require('express');
+  const serveStatic = await require('serve-static');
+
+  const port = 8000;
+  const app = await express();
+
+  await app.use(serveStatic('./web', { index: ['index.html'] }));
+  await app.listen(port);
+  console.log('Webserver listining on http://127.0.0.1:' + port);
+  return app;
+}*/
+
+/*export async function stopWebServer(app) {
+  await app.close();
+}*/
+
 export async function stopMinio(process) {
   // Send SIGHUP to process.
   console.log('stopMinio');
   process.stdin.pause();
   process.kill(); //'SIGHUP');
+}
+
+export async function stopChromeDriver(chromeDriver) {
+  chromeDriver.stop();
+  // Send SIGHUP to process.
+  /*console.log('stopChromeDriver');
+  process.stdin.pause();
+  process.kill(); //'SIGHUP');*/
 }
 
 export async function openFile(perspectiveSelector, inDepth) {

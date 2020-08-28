@@ -40,13 +40,17 @@ export async function searchEngine(filename, tagName, resetSearchButton) {
 }
 
 export async function createNewFile() {
-  const dirMenu = await global.client.$('[data-tid=folderContainerOpenDirMenu]');
+  const dirMenu = await global.client.$(
+    '[data-tid=folderContainerOpenDirMenu]'
+  );
   await dirMenu.click();
 
   const createNewFile = await global.client.$('[data-tid=createNewFile]');
   await createNewFile.click();
 
-  const createTextFileButton = await global.client.$('[data-tid=createTextFileButton]');
+  const createTextFileButton = await global.client.$(
+    '[data-tid=createTextFileButton]'
+  );
   await createTextFileButton.click();
 }
 

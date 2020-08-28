@@ -8,9 +8,14 @@ import {
   closeFileProperties,
   openFilesOptionMenu,
   toggleShowDirectoriesClick,
-  selectAllFilesClick, clearInputValue, getFirstFileName, renameFirstFile, deleteFirstFile, createMinioLocation
+  selectAllFilesClick,
+  clearInputValue,
+  getFirstFileName,
+  renameFirstFile,
+  deleteFirstFile,
+  createMinioLocation
 } from './location.helpers';
-import { searchEngine, createNewFile} from './search.spec';
+import { searchEngine, createNewFile } from './search.spec';
 import {
   openFile,
   checkFilenameForExist,
@@ -18,7 +23,11 @@ import {
   perspectiveGridTable,
   firstFile,
   openDirectoryMenu,
-  firstFileName, startMinio, stopMinio
+  firstFileName,
+  startMinio,
+  stopMinio,
+  startWebServer,
+  stopWebServer
 } from './perspective.spec';
 
 const subFolderName = '/test-perspective-grid';
@@ -32,24 +41,12 @@ const newFileName = 'newFileName.txt';
 const newTagName = 'newTagName';
 
 describe('TST51 - Perspective Grid', () => {
-  beforeAll(async () => {
-    if(global.isMinio) {
-      global.minio = await startMinio();
-    }
-  });
-
-  afterAll(async () => {
-    if(global.isMinio) {
-      await stopMinio(global.minio);
-    }
-  });
-
   beforeEach(async () => {
     await clearLocalStorage();
     //  await delay(500);
     //await closeWelcome();
     //await delay(500);
-    if(global.isMinio){
+    if (global.isMinio) {
       await createMinioLocation('', defaultLocationName, true);
     } else {
       await createLocation(defaultLocationPath, defaultLocationName, true);
@@ -87,7 +84,7 @@ describe('TST51 - Perspective Grid', () => {
   /*it('TST5113 - Show sub folders content', async () => {});*/
 
   it('TST5101 - Open file with click', async () => {
-    await searchEngine('txt');//testTestFilename);
+    await searchEngine('txt'); //testTestFilename);
     await delay(500);
     await openFile(perspectiveGridTable, firstFile);
     await checkFilenameForExist(testTestFilename);
@@ -323,8 +320,9 @@ describe('TST50** - Right button on a file', () => {
       'fileMenuMoveCopyFile'
     );
     //TODO
-    const cancelButton = await global.client
-        .$('[data-tid=closeMoveCopyDialog]');
+    const cancelButton = await global.client.$(
+      '[data-tid=closeMoveCopyDialog]'
+    );
     await cancelButton.click();
 
     // Check if the directories are displayed

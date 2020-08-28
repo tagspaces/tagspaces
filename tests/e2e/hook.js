@@ -3,6 +3,12 @@ import { Application } from 'spectron';
 import electronPath from 'electron';
 import path from 'path';
 import { closeWelcome } from './welcome.helpers';
+import {
+  startChromeDriver,
+  startMinio,
+  stopChromeDriver,
+  stopMinio
+} from './perspective.spec';
 
 // Spectron API https://github.com/electron/spectron
 // Webdriver.io http://webdriver.io/api.html
@@ -26,7 +32,8 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 150000;
 // global.msPause = 3000;
 
 global.isWin = /^win/.test(process.platform);
-global.isMinio =  process.env.NODE_JEST === 'test_minio';
+global.isWeb = process.env.NODE_JEST === 'test_web';
+global.isMinio = global.isWeb || process.env.NODE_JEST === 'test_minio';
 
 export function clearLocalStorage() {
   // global.app.client.localStorage('DELETE');
@@ -46,14 +53,51 @@ for (var index in process.argv) {
   }
 } */
 
+beforeAll(async () => {
+  if (global.isWeb) {
+    // global.webserver = await startWebServer();
+    global.chromeDriver = await startChromeDriver();
+  }
+  if (global.isMinio) {
+    global.minio = await startMinio();
+  }
+});
+
+afterAll(async () => {
+  if (global.isWeb) {
+    // await stopWebServer(global.webserver);
+    await stopChromeDriver(global.chromeDriver);
+  }
+  if (global.isMinio) {
+    await stopMinio(global.minio);
+  }
+});
+
 beforeEach(async () => {
-  global.app = new Application({
-    path: electronPath,
-    args: [path.join(__dirname, '..', '..', 'app')]
-  });
-  await global.app.start();
-  global.client = global.app.client;
-  await global.client.waitUntilWindowLoaded();
+  if (global.isWeb) {
+    const webdriverio = await require('webdriverio');
+    const options = {
+      host: 'localhost', // Use localhost as chrome driver server
+      port: 9515, // "9515" is the port opened by chrome driver.
+      capabilities: {
+        browserName: 'chrome'
+        /*'goog:chromeOptions': {
+          binary: electronPath, // Path to your Electron binary.
+          args: [ /!* cli arguments *!/] // Optional, perhaps 'app=' + /path/to/your/app/
+        }*/
+      }
+    };
+    global.client = await webdriverio.remote(options);
+    await global.client.url('http://localhost:8000');
+  } else {
+    global.app = new Application({
+      path: electronPath,
+      args: [path.join(__dirname, '..', '..', 'app')]
+    });
+    await global.app.start();
+    global.client = global.app.client;
+    await global.client.waitUntilWindowLoaded();
+  }
   // global.app.browserWindow.focus();
   //let windowCount = await global.client.getWindowCount();
   // expect(windowCount).to.equal(2);

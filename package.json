@@ -80,7 +80,9 @@
     "test-all": "yarn build && yarn test-unit && yarn build-e2e && yarn test-e2e",
     "test-e2e": "node -r @babel/register ./internals/scripts/CheckBuiltsExist.js && cross-env NODE_ENV=test  jest --verbose ./tests/e2e/",
     "minio-start-windows": "./tests/bin/minio.exe server ./tests/file-structure",
-    "test-e2e-minio": "node -r @babel/register ./internals/scripts/CheckBuiltsExist.js && cross-env NODE_JEST=test_minio  jest --verbose ./tests/e2e/"
+    "test-e2e-minio": "node -r @babel/register ./internals/scripts/CheckBuiltsExist.js && cross-env NODE_JEST=test_minio  jest --verbose ./tests/e2e/",
+    "test-e2e-web": "cross-env NODE_JEST=test_web  jest --verbose ./tests/e2e/",
+    "start-chrome-driver": "./node_modules/.bin/chromedriver --url-base=/ --port=9515"
   },
   "repository": {
     "type": "git",
@@ -167,6 +169,7 @@
     "babel-plugin-module-resolver": "^4.0.0",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.21",
     "chalk": "^2.4.1",
+    "chromedriver": "^85.0.0",
     "concat-licenses": "^2.0.1",
     "concurrently": "^4.1.0",
     "copyfiles": "^2.3.0",

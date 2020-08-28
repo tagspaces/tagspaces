@@ -1725,7 +1725,8 @@ export const getCurrentLocationPath = (state: any) => {
         state.app.currentLocationId &&
         location.uuid === state.app.currentLocationId
       ) {
-        if (AppConfig.isElectron && location.paths[0].startsWith('./')) { // TODO test relative path (Directory Back) with other platforms
+        if (AppConfig.isElectron && location.paths[0].startsWith('./')) {
+          // TODO test relative path (Directory Back) with other platforms
           // relative paths
           pathCurrentLocation = pathLib.resolve(location.paths[0]);
         } else {

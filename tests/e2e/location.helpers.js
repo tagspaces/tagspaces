@@ -70,10 +70,13 @@ export async function createMinioLocation(
   isDefault = false
 ) {
   // locationPerspective = locationPerspective || 'Grid';
-  const locationManagerMenu = await global.client.$(
-    '[data-tid=locationManagerPanel]'
-  );
-  await locationManagerMenu.click();
+  if (!global.isWeb) {
+    //TODO rethink this!!
+    const locationManagerMenu = await global.client.$(
+      '[data-tid=locationManagerPanel]'
+    );
+    await locationManagerMenu.click();
+  }
   const elem = await global.client.$('[data-tid=createNewLocation]');
   await elem.click();
 
@@ -167,7 +170,8 @@ export async function closeFileProperties() {
   const fileContainerCloseOpenedFile = await global.client.$(
     '[data-tid=fileContainerCloseOpenedFile]'
   );
-  if (fileContainerCloseOpenedFile.isClickable()) {
+  if (await fileContainerCloseOpenedFile.isDisplayed()) {
+    //.isClickable()) {
     await fileContainerCloseOpenedFile.click();
   }
 }
