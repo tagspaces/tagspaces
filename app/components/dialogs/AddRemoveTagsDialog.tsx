@@ -159,7 +159,7 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
         </DialogContent>
         <DialogActions>
           <Button
-            data-tid="cancel"
+            data-tid="cancelTagsMultipleEntries"
             onClick={() => this.onClose()}
             color="primary"
           >
