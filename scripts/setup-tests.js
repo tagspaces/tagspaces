@@ -38,3 +38,18 @@ extensionList.forEach(extension => {
   }
   sh.cd('..');
 });
+
+/// Download
+const winUrl = 'http://dl.min.io/server/minio/release/windows-amd64/minio.exe';
+const linuxUrl = 'https://dl.min.io/server/minio/release/linux-amd64/minio';
+const macUrl = 'https://dl.min.io/server/minio/release/darwin-amd64/minio';
+const isWin = /^win/.test(process.platform);
+const isMac = /^darwin/.test(process.platform);
+const isLinux = /^linux/.test(process.platform);
+const url = isWin ? winUrl : isMac ? macUrl : isLinux ? linuxUrl : undefined;
+const path = require('path');
+const fs = require('fs-extra');
+const outFile = path.join('bin', 'minio.exe');
+if (!sh.test('-d', 'bin') || !fs.existsSync(outFile)) {
+  sh.exec('curl -o ' + outFile + ' ' + url);
+}

@@ -1,4 +1,6 @@
-/* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
+/*
+ * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
+ */
 import { delay, clearLocalStorage } from './hook';
 import {
   createLocation,
@@ -57,7 +59,7 @@ describe('TST51 - Perspective Grid', () => {
     await closeFileProperties();
   });
 
-  it('TST5112 - Show sub folders', async () => {
+  test('TST5112 - Show sub folders [web,electron]', async () => {
     await openFilesOptionMenu();
     await toggleShowDirectoriesClick();
 

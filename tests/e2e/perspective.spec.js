@@ -9,7 +9,7 @@ import {
   openLocation
 } from './location.helpers';
 
-const winMinio = './tests/bin/minio.exe';
+const winMinio = './bin/minio.exe';
 const unixMinio = 'minio';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const firstFile = '/span';
@@ -24,7 +24,7 @@ export async function startMinio() {
   const command = global.isWin ? pathLib.resolve(winMinio) : unixMinio;
   const minioProcess = await require('child_process').spawn(command, [
     'server',
-    pathLib.resolve('./tests/file-structure')
+    pathLib.resolve('./testdata/file-structure')
   ]);
 
   minioProcess.on('exit', function(code) {
@@ -61,7 +61,7 @@ export async function startChromeDriver() {
   return chromeDriver;
 }
 
-/*export async function startWebServer() {
+export async function startWebServer() {
   const express = await require('express');
   const serveStatic = await require('serve-static');
 
@@ -72,11 +72,11 @@ export async function startChromeDriver() {
   await app.listen(port);
   console.log('Webserver listining on http://127.0.0.1:' + port);
   return app;
-}*/
+}
 
-/*export async function stopWebServer(app) {
+export async function stopWebServer(app) {
   await app.close();
-}*/
+}
 
 export async function stopMinio(process) {
   // Send SIGHUP to process.

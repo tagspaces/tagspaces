@@ -6,8 +6,10 @@ import { closeWelcome } from './welcome.helpers';
 import {
   startChromeDriver,
   startMinio,
+  startWebServer,
   stopChromeDriver,
-  stopMinio
+  stopMinio,
+  stopWebServer
 } from './perspective.spec';
 
 // Spectron API https://github.com/electron/spectron

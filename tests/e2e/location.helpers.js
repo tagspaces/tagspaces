@@ -3,7 +3,7 @@ import { delay } from './hook';
 import { firstFile, openContextEntryMenu } from './perspective.spec';
 
 export const defaultLocationPath =
-  './tests/file-structure/supported-filestypes';
+  './testdata/file-structure/supported-filestypes';
 export const defaultLocationName = 'supported-filestypes';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const newLocationName = 'Location Name Changed';
