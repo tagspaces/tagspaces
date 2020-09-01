@@ -87,7 +87,8 @@ beforeEach(async () => {
           binary: electronPath, // Path to your Electron binary.
           args: [ /!* cli arguments *!/] // Optional, perhaps 'app=' + /path/to/your/app/
         }*/
-      }
+      },
+      logLevel: 'silent'
     };
     global.client = await webdriverio.remote(options);
     await global.client.url('http://localhost:8000');
