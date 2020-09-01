@@ -57,7 +57,7 @@ for (var index in process.argv) {
 
 beforeAll(async () => {
   if (global.isWeb) {
-    // global.webserver = await startWebServer();
+    global.webserver = await startWebServer();
     global.chromeDriver = await startChromeDriver();
   }
   if (global.isMinio) {
@@ -67,7 +67,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   if (global.isWeb) {
-    // await stopWebServer(global.webserver);
+    // await stopWebServer(global.webserver); TODO stop webserver
     await stopChromeDriver(global.chromeDriver);
   }
   if (global.isMinio) {

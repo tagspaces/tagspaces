@@ -17,7 +17,9 @@ export const firstTagButton = '/tbody/tr[1]/td[3]/button[1]';
 
 export async function searchEngine(filename, tagName, resetSearchButton) {
   const searchElem = await global.client.$('[data-tid=search]');
+  await searchElem.waitForDisplayed();
   await searchElem.click();
+  await delay(1000);
   const searchInput = await global.client.$('#textQuery');
   await searchInput.waitForDisplayed();
   await searchInput.setValue(filename);
@@ -37,6 +39,7 @@ export async function searchEngine(filename, tagName, resetSearchButton) {
     await searchButton.waitForDisplayed();
     await searchButton.click();
   }
+  await delay(1000);
 }
 
 export async function createNewFile() {

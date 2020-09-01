@@ -784,6 +784,7 @@ class MainPage extends Component<Props, State> {
               color="secondary"
               size="small"
               onClick={this.props.cancelDirectoryIndexing}
+              data-tid="cancelDirectoryIndexing"
             >
               {i18n.t('core:cancelIndexing')}
             </Button>

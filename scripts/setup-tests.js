@@ -49,7 +49,8 @@ const isLinux = /^linux/.test(process.platform);
 const url = isWin ? winUrl : isMac ? macUrl : isLinux ? linuxUrl : undefined;
 const path = require('path');
 const fs = require('fs-extra');
-const outFile = path.join('bin', 'minio.exe');
-if (!sh.test('-d', 'bin') || !fs.existsSync(outFile)) {
+const outFile = path.resolve(__dirname, '../tests/bin', 'minio.exe');
+if (!fs.existsSync(outFile)) {
+  //!sh.test('-d', 'bin') ||
   sh.exec('curl -o ' + outFile + ' ' + url);
 }

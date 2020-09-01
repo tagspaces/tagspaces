@@ -84,11 +84,10 @@ cordova/www/extconfig.js
 
 reports/*
 
+coverage/
 tests/*
 !tests/unit/
 !tests/e2e/
 
 builds/*
-web/sw-config.js
-
-coverage
+web/sw-con

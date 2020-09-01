@@ -9,7 +9,7 @@ import {
   openLocation
 } from './location.helpers';
 
-const winMinio = './bin/minio.exe';
+const winMinio = pathLib.resolve(__dirname, '../bin/minio.exe');
 const unixMinio = 'minio';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const firstFile = '/span';
@@ -68,7 +68,12 @@ export async function startWebServer() {
   const port = 8000;
   const app = await express();
 
-  await app.use(serveStatic('./web', { index: ['index.html'] }));
+  await app.use(
+    serveStatic(pathLib.resolve(__dirname, '../../web'), {
+      index: ['index.html']
+    })
+  );
+  //await app.use(serveStatic('../app'));
   await app.listen(port);
   console.log('Webserver listining on http://127.0.0.1:' + port);
   return app;
