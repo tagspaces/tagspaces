@@ -40,7 +40,7 @@ extensionList.forEach(extension => {
   sh.cd('..');
 });
 
-/// Download
+// Download
 const winUrl = 'http://dl.min.io/server/minio/release/windows-amd64/minio.exe';
 const linuxUrl = 'https://dl.min.io/server/minio/release/linux-amd64/minio';
 const macUrl = 'https://dl.min.io/server/minio/release/darwin-amd64/minio';
@@ -49,8 +49,14 @@ const isMac = /^darwin/.test(process.platform);
 const isLinux = /^linux/.test(process.platform);
 const url = isWin ? winUrl : isMac ? macUrl : isLinux ? linuxUrl : undefined;
 
-const outFile = path.resolve(__dirname, '../tests/bin', 'minio.exe');
-if (!fs.existsSync(outFile)) {
-  //!sh.test('-d', 'bin') ||
-  sh.exec('curl -o ' + outFile + ' ' + url);
+const outDir = path.resolve(__dirname, '../tests/bin');
+if (!sh.test('-d', outDir)) {
+  sh.mkdir(outDir);
+  sh.cd(outDir);
+  sh.exec('curl -O -J ' + url);
 }
+/* const outFile = path.join(outDir, 'minio.exe');
+if (!fs.existsSync(outFile)) {
+  //! sh.test('-d', 'bin') ||
+  sh.exec('curl -O -J ' + outFile + ' ' + url);
+} */
