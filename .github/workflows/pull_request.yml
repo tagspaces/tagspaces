@@ -21,3 +21,5 @@ jobs:
           yarn type-check
       - name: Run Unit tests
         run: yarn test-unit
+      - name: Run Electron tests
+        run: yarn test-e2e-electron
