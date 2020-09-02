@@ -8,7 +8,7 @@ import {
   perspectiveGridTable,
   firstFile,
   firstFileName
-} from './perspective.spec';
+} from './test-utils.spec';
 import {
   createLocation,
   openLocation,

@@ -1,4 +1,4 @@
-const CACHE_NAME = "TS-3.6.1-1598969350244";
+const CACHE_NAME = "TS-3.6.1-1599029525759";
 const FILES_TO_CACHE = [
   "offline.html",
   "dist/0.bundle.js",

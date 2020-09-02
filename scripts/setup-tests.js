@@ -1,5 +1,6 @@
 const sh = require('shelljs');
-// const path = require('path');
+const path = require('path');
+const fs = require('fs-extra');
 
 if (!sh.which('git')) {
   sh.echo('Sorry, this script requires git');
@@ -11,7 +12,7 @@ if (!sh.which('yarn')) {
   sh.exit(1);
 }
 
-const extensionDir = 'tests';
+const extensionDir = path.resolve(__dirname, '../tests');
 const extensionBranch = 'master';
 
 const extensionList = [
@@ -47,8 +48,7 @@ const isWin = /^win/.test(process.platform);
 const isMac = /^darwin/.test(process.platform);
 const isLinux = /^linux/.test(process.platform);
 const url = isWin ? winUrl : isMac ? macUrl : isLinux ? linuxUrl : undefined;
-const path = require('path');
-const fs = require('fs-extra');
+
 const outFile = path.resolve(__dirname, '../tests/bin', 'minio.exe');
 if (!fs.existsSync(outFile)) {
   //!sh.test('-d', 'bin') ||

@@ -30,7 +30,7 @@ import {
   stopMinio,
   startWebServer,
   stopWebServer
-} from './perspective.spec';
+} from './test-utils.spec';
 
 const subFolderName = '/test-perspective-grid';
 const subFolderContentExtractionPath =
@@ -177,7 +177,7 @@ describe('TST51 - Perspective Grid', () => {
   });*/
 
   // Scenarios for sorting files in grid perspective
-  describe('TST5117 - Testing sort files in the grid perspective:', () => {
+  describe('TST5117 - Testing sort files in the grid perspective', () => {
     beforeEach(async () => {
       // await delay(500);
       const sortMenu = await global.client.$(
@@ -186,7 +186,7 @@ describe('TST51 - Perspective Grid', () => {
       await sortMenu.click();
     });
 
-    test('TST10** - Sort by name', async () => {
+    test('TST10** - Sort by name [web,electron]', async () => {
       const sortByName = await global.client.$(
         '[data-tid=gridPerspectiveSortByName]'
       );

@@ -13,7 +13,7 @@ import {
   openDirectoryMenu,
   openFile,
   perspectiveGridTable
-} from './perspective.spec';
+} from './test-utils.spec';
 
 const testLocationName = '' + new Date().getTime();
 

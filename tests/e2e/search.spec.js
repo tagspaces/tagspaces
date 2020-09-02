@@ -1,5 +1,5 @@
 import { delay, clearLocalStorage } from './hook';
-import { checkFilenameForExist } from './perspective.spec';
+import { checkFilenameForExist } from './test-utils.spec';
 import {
   createLocation,
   openLocation,

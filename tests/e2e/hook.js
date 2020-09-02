@@ -10,7 +10,7 @@ import {
   stopChromeDriver,
   stopMinio,
   stopWebServer
-} from './perspective.spec';
+} from './test-utils.spec';
 
 // Spectron API https://github.com/electron/spectron
 // Webdriver.io http://webdriver.io/api.html
