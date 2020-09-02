@@ -4,7 +4,7 @@ name: PR
 jobs:
   gitHubActionForNpm:
     name: Validating
-    runs-on: windows-latest
+    runs-on: macos-latest
 
     steps:
       - name: Checking out default branch
