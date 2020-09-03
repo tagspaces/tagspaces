@@ -54,7 +54,7 @@ if (!sh.test('-d', outDir)) {
   sh.mkdir(outDir);
   sh.cd(outDir);
   sh.exec('curl -O -J ' + url);
-  if(!isWin) {
+  if (!isWin) {
     sh.exec('chmod -R +x .');
   }
 }
