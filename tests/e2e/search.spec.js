@@ -19,7 +19,7 @@ export async function searchEngine(filename, tagName, resetSearchButton) {
   const searchElem = await global.client.$('[data-tid=search]');
   await searchElem.waitForDisplayed();
   await searchElem.click();
-  await delay(1000);
+  await delay(1500);
   const searchInput = await global.client.$('#textQuery');
   await searchInput.waitForDisplayed();
   await searchInput.setValue(filename);
