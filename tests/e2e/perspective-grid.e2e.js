@@ -29,7 +29,7 @@ import {
   startMinio,
   stopMinio,
   startWebServer,
-  stopWebServer
+  stopWebServer, toContainTID
 } from './test-utils.spec';
 
 const subFolderName = '/test-perspective-grid';
@@ -245,27 +245,6 @@ describe('TST50** - Right button on a file', () => {
     //await openDirectoryMenu('createNewFile');
   });
 
-  expect.extend({
-    toContainTID(text) {
-      let pass = false;
-      const tids = ['etete&5435'];
-      tids.forEach(tid => {
-        pass = text.indexOf(tid) !== -1;
-      });
-      if (pass) {
-        return {
-          message: () => `expected tid to be found`,
-          pass: true
-        };
-      } else {
-        return {
-          message: () => `expected tid to be not found`,
-          pass: false
-        };
-      }
-    }
-  });
-
   test('TST5016 - Open file [web,electron]', async () => {
     //await searchEngine('bmp');
     await searchEngine('txt');
@@ -279,8 +258,10 @@ describe('TST50** - Right button on a file', () => {
     //await delay(500);
     expect(await webViewer.isDisplayed()).toBe(true);
     await global.client.switchToFrame(webViewer);
-    const iframeBody = await global.client.$('body');
-    expect(await iframeBody.getText()).toContainTID(true);
+    const iframeBody = await global.client.$('body')
+    const bodyTxt = await iframeBody.getText();
+    await global.client.switchToParentFrame();
+    expect(toContainTID(bodyTxt)).toBe(true);
     //expect(webViewer.selector).toBe('#webViewer');
   });
 

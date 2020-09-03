@@ -150,3 +150,12 @@ export async function checkFilenameForExist(filename, selector) {
   await delay(500);
   expect(fileTxt).toBe(filename);
 }
+
+export function toContainTID(text) {
+  let pass = false;
+  const tids = ['etete&5435'];
+  tids.forEach(tid => {
+    pass = text.indexOf(tid) !== -1;
+  });
+  return pass;
+}
