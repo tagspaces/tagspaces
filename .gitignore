@@ -89,6 +89,8 @@ coverage/
 tests/*
 !tests/unit/
 !tests/e2e/
+!tests/minioEnv.js
+!tests/webEnv.js
 
 builds/*
 web/sw-con

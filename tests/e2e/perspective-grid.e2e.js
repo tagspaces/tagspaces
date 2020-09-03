@@ -29,7 +29,8 @@ import {
   startMinio,
   stopMinio,
   startWebServer,
-  stopWebServer, toContainTID
+  stopWebServer,
+  toContainTID
 } from './test-utils.spec';
 
 const subFolderName = '/test-perspective-grid';
@@ -258,7 +259,7 @@ describe('TST50** - Right button on a file', () => {
     //await delay(500);
     expect(await webViewer.isDisplayed()).toBe(true);
     await global.client.switchToFrame(webViewer);
-    const iframeBody = await global.client.$('body')
+    const iframeBody = await global.client.$('body');
     const bodyTxt = await iframeBody.getText();
     await global.client.switchToParentFrame();
     expect(toContainTID(bodyTxt)).toBe(true);
