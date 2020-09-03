@@ -77,6 +77,7 @@ web/files
 web/node_modules
 web/LICENSE.txt
 web/third-party.txt
+web/sw-config.js
 
 app/extconfig*
 web/extconfig*
