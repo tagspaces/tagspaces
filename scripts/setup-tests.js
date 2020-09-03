@@ -54,6 +54,9 @@ if (!sh.test('-d', outDir)) {
   sh.mkdir(outDir);
   sh.cd(outDir);
   sh.exec('curl -O -J ' + url);
+  if(!isWin) {
+    sh.exec('chmod -R +x .');
+  }
 }
 /* const outFile = path.join(outDir, 'minio.exe');
 if (!fs.existsSync(outFile)) {
