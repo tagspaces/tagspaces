@@ -46,14 +46,17 @@ export async function createNewFile() {
   const dirMenu = await global.client.$(
     '[data-tid=folderContainerOpenDirMenu]'
   );
+  await dirMenu.waitForDisplayed();
   await dirMenu.click();
 
   const createNewFile = await global.client.$('[data-tid=createNewFile]');
+  await createNewFile.waitForDisplayed();
   await createNewFile.click();
 
   const createTextFileButton = await global.client.$(
     '[data-tid=createTextFileButton]'
   );
+  await createTextFileButton.waitForDisplayed();
   await createTextFileButton.click();
 }
 
