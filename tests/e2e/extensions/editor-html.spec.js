@@ -1,7 +1,7 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 import { delay, clearLocalStorage } from '../hook';
 import { searchEngine } from '../search.spec';
-import { openFile } from '../perspective.spec';
+import { openFile } from '../test-utils.spec';
 import { createLocation, openLocation, aboutDialogExt, defaultLocationPath, defaultLocationName, perspectiveGridTable } from '../location.spec';
 
 const extButton = '/div[1]/div[2]/button';

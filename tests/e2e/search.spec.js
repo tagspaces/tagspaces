@@ -1,5 +1,5 @@
 import { delay, clearLocalStorage } from './hook';
-import { checkFilenameForExist } from './perspective.spec';
+import { checkFilenameForExist } from './test-utils.spec';
 import {
   createLocation,
   openLocation,
@@ -17,7 +17,9 @@ export const firstTagButton = '/tbody/tr[1]/td[3]/button[1]';
 
 export async function searchEngine(filename, tagName, resetSearchButton) {
   const searchElem = await global.client.$('[data-tid=search]');
+  await searchElem.waitForDisplayed();
   await searchElem.click();
+  await delay(1500);
   const searchInput = await global.client.$('#textQuery');
   await searchInput.waitForDisplayed();
   await searchInput.setValue(filename);
@@ -37,20 +39,24 @@ export async function searchEngine(filename, tagName, resetSearchButton) {
     await searchButton.waitForDisplayed();
     await searchButton.click();
   }
+  await delay(1000);
 }
 
 export async function createNewFile() {
   const dirMenu = await global.client.$(
     '[data-tid=folderContainerOpenDirMenu]'
   );
+  await dirMenu.waitForDisplayed();
   await dirMenu.click();
 
   const createNewFile = await global.client.$('[data-tid=createNewFile]');
+  await createNewFile.waitForDisplayed();
   await createNewFile.click();
 
   const createTextFileButton = await global.client.$(
     '[data-tid=createTextFileButton]'
   );
+  await createTextFileButton.waitForDisplayed();
   await createTextFileButton.click();
 }
 

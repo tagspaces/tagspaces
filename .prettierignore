@@ -12,4 +12,5 @@ extensions
 dll
 app/utils/js-webdav-client.js
 coverage
+tests/testdata
 tests/file-structure

@@ -6,9 +6,11 @@ import { closeWelcome } from './welcome.helpers';
 import {
   startChromeDriver,
   startMinio,
+  startWebServer,
   stopChromeDriver,
-  stopMinio
-} from './perspective.spec';
+  stopMinio,
+  stopWebServer
+} from './test-utils.spec';
 
 // Spectron API https://github.com/electron/spectron
 // Webdriver.io http://webdriver.io/api.html
@@ -55,7 +57,7 @@ for (var index in process.argv) {
 
 beforeAll(async () => {
   if (global.isWeb) {
-    // global.webserver = await startWebServer();
+    global.webserver = await startWebServer();
     global.chromeDriver = await startChromeDriver();
   }
   if (global.isMinio) {
@@ -65,7 +67,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   if (global.isWeb) {
-    // await stopWebServer(global.webserver);
+    // await stopWebServer(global.webserver); TODO stop webserver
     await stopChromeDriver(global.chromeDriver);
   }
   if (global.isMinio) {
@@ -85,7 +87,8 @@ beforeEach(async () => {
           binary: electronPath, // Path to your Electron binary.
           args: [ /!* cli arguments *!/] // Optional, perhaps 'app=' + /path/to/your/app/
         }*/
-      }
+      },
+      logLevel: 'silent'
     };
     global.client = await webdriverio.remote(options);
     await global.client.url('http://localhost:8000');

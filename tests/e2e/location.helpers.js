@@ -1,9 +1,9 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 import { delay } from './hook';
-import { firstFile, openContextEntryMenu } from './perspective.spec';
+import { firstFile, openContextEntryMenu } from './test-utils.spec';
 
 export const defaultLocationPath =
-  './tests/file-structure/supported-filestypes';
+  './testdata/file-structure/supported-filestypes';
 export const defaultLocationName = 'supported-filestypes';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const newLocationName = 'Location Name Changed';
