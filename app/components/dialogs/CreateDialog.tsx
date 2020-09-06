@@ -288,7 +288,7 @@ const CreateDialog = (props: Props) => {
             <Button
               onClick={createTextFile}
               className={classes.createButton}
-              title={i18n.t('createNoteTitle')}
+              title={i18n.t('createTextFileTitle')}
               data-tid="createTextFileButton"
             >
               <TextFileIcon />

@@ -106,7 +106,7 @@ describe('TST51 - Perspective Grid', () => {
     //console.log(style);
     // await delay(90000);
     const containSelectedStyle =
-      style.includes('jss131') || style.includes('jss124') /*Mac Web*/; // || style.includes('jss136')
+      style.includes('jss131') || style.includes('jss124'); /*Mac Web*/ // || style.includes('jss136')
     expect(containSelectedStyle).toBe(true);
   });
 
