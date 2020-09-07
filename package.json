@@ -111,41 +111,6 @@
       "pre-commit": "yarn prettier-check && yarn type-check"
     }
   },
-  "jest": {
-    "setupFiles": [
-      "./scripts/setup-tests.js"
-    ],
-    "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/internals/mocks/fileMock.js",
-      "\\.(css|less|sass|scss)$": "identity-obj-proxy"
-    },
-    "moduleFileExtensions": [
-      "js",
-      "ts",
-      "tsx"
-    ],
-    "moduleDirectories": [
-      "node_modules",
-      "app/node_modules"
-    ],
-    "testMatch": [
-      "**/{unit,e2e,app,test,integration}/**/*.{test,e2e}.{js,tsx,ts,tsx}"
-    ],
-    "testPathIgnorePatterns": [
-      "<rootDir>/extensions"
-    ],
-    "reporters": [
-      "default",
-      [
-        "./node_modules/jest-html-reporter",
-        {
-          "pageTitle": "Test Report"
-        }
-      ]
-    ],
-    "collectCoverage": true,
-    "maxWorkers": 1
-  },
   "devDependencies": {
     "@babel/core": "^7.2.2",
     "@babel/plugin-proposal-class-properties": "^7.2.3",

@@ -1,5 +1,18 @@
 const sh = require('shelljs');
+
+const isWin = /^win/.test(process.platform);
+const isMac = /^darwin/.test(process.platform);
+const isLinux = /^linux/.test(process.platform);
+let os = '';
+if (isWin) {
+  os = '_win';
+} else if (isMac) {
+  os = '_macos';
+} else if (isLinux) {
+  os = '_linux';
+}
 const web = process.env.NODE_JEST === 'test_web' ? '_web' : '';
+const minio = process.env.NODE_JEST === 'test_minio' ? '_minio' : '';
 
 module.exports = async () => {
   const BRANCH_NAME = await new Promise((resolve, reject) => {
@@ -39,7 +52,8 @@ module.exports = async () => {
         '../node_modules/jest-html-reporter',
         {
           pageTitle: BRANCH_NAME + ' Test Report',
-          outputPath: './test-reports/' + BRANCH_NAME + '.html'
+          outputPath:
+            './test-reports/' + BRANCH_NAME + os + web + minio + '.html'
         }
       ]
     ],
