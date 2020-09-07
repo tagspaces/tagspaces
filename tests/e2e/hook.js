@@ -34,6 +34,7 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 150000;
 // global.msPause = 3000;
 
 global.isWin = /^win/.test(process.platform);
+global.isMac = /^darwin/.test(process.platform);
 global.isWeb = process.env.NODE_JEST === 'test_web';
 global.isMinio = global.isWeb || process.env.NODE_JEST === 'test_minio';
 
