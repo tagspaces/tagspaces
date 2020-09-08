@@ -18,7 +18,6 @@ jobs:
       - uses: actions/setup-node@v2-beta
         with:
           node-version: '10.x'
-          check-latest: true
       - name: Running yarn install, prettier and type checks
         run: |
           yarn install
