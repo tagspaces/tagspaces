@@ -5,7 +5,7 @@ on:
       command:
         description: 'Command to execute e2e tests default: yarn test-e2e-electron'
         required: true
-        default: 'jest --config=jest.config.js -t "show_sub_folders"  --verbose ./tests/e2e/'
+        default: 'test-one'
 
 jobs:
   e2eTests:
@@ -31,7 +31,7 @@ jobs:
           yarn setup-ext
           yarn build-main
           yarn build-e2e
-          ${{ github.event.inputs.command }}
+          yarn ${{ github.event.inputs.command }}
       - uses: actions/upload-artifact@v2
         with:
           name: test-reports
