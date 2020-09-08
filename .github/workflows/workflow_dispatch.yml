@@ -1,0 +1,33 @@
+on:
+  workflow_dispatch:
+    inputs:
+      command:
+        description: 'Command to execute e2e tests default: yarn test-e2e-electron'
+        required: true
+        default: 'yarn test-e2e-electron'
+
+jobs:
+  e2eTests:
+    runs-on: macos-latest
+    steps:
+      - name: Checking out default branch
+        uses: actions/checkout@v1
+        with:
+          submodules: true
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
+      - name: Running yarn install, prettier and type checks
+        run: |
+          yarn install
+          yarn prettier-check
+          yarn type-check
+      - name: Run Unit tests
+        run: yarn test-unit
+      - name: Run Electron tests
+        run: |
+          yarn setup-ext
+          yarn build-main
+          yarn build-e2e
+          yarn test-e2e-electron
+          ${{ github.event.inputs.command }}
