@@ -12,12 +12,13 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checking out default branch
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
         with:
           submodules: true
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2-beta
         with:
           node-version: '10.x'
+          check-latest: true
       - name: Running yarn install, prettier and type checks
         run: |
           yarn install
