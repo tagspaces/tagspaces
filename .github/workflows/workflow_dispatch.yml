@@ -31,3 +31,7 @@ jobs:
           yarn build-e2e
           yarn test-e2e-electron
           ${{ github.event.inputs.command }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: test-reports
+          path: tests/test-reports/
