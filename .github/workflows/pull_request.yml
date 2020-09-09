@@ -3,7 +3,7 @@ name: PR
 
 jobs:
   gitHubActionForNpm:
-    name: Validating
+    name: Validating Ubuntu
     runs-on: ubuntu-latest
 
     steps:
@@ -23,8 +23,28 @@ jobs:
         run: yarn test-unit
 
   gitHubActionForNpmWin:
-    name: Validating
+    name: Validating Windows
     runs-on: windows-latest
+
+    steps:
+      - name: Checking out default branch
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: '10.x'
+      - name: Running yarn install, prettier and type checks
+        run: |
+          yarn install --check-files --cache-folder .ycache
+          yarn prettier-check
+          yarn type-check
+      - name: Run Unit tests
+        run: yarn test-unit
+
+  gitHubActionForNpmMac:
+    name: Validating MacOS
+    runs-on: macos-latest
 
     steps:
       - name: Checking out default branch

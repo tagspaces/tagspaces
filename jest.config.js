@@ -1,4 +1,5 @@
-const sh = require('shelljs');
+// const sh = require('shelljs');
+const branchName = require('current-git-branch');
 
 const isWin = /^win/.test(process.platform);
 const isMac = /^darwin/.test(process.platform);
@@ -15,7 +16,7 @@ const web = process.env.NODE_JEST === 'test_web' ? '_web' : '';
 const minio = process.env.NODE_JEST === 'test_minio' ? '_minio' : '';
 
 module.exports = async () => {
-  const BRANCH_NAME = await new Promise((resolve, reject) => {
+  /* const BRANCH_NAME = await new Promise((resolve, reject) => {
     sh.exec(
       'git symbolic-ref HEAD 2>/dev/null | cut -d"/" -f 3',
       (code, stdout, stderr) => {
@@ -29,8 +30,8 @@ module.exports = async () => {
         }
       }
     );
-  });
-
+  }); */
+  const BRANCH_NAME = branchName();
   return {
     rootDir: './tests',
     verbose: true,
