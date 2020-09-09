@@ -48,8 +48,6 @@ import { Progress } from 'aws-sdk/clients/s3';
 import styles from './SidePanels.css';
 import DirectoryMenu from './menus/DirectoryMenu';
 import LocationManagerMenu from './menus/LocationManagerMenu';
-import EditLocationDialog from './dialogs/EditLocationDialog';
-import CreateLocationDialog from './dialogs/CreateLocationDialog';
 import ConfirmDialog from './dialogs/ConfirmDialog';
 import SelectDirectoryDialog from './dialogs/SelectDirectoryDialog';
 import CreateDirectoryDialog from './dialogs/CreateDirectoryDialog';
@@ -74,8 +72,31 @@ import TargetMoveFileBox from './TargetMoveFileBox';
 import DragItemTypes from './DragItemTypes';
 import IOActions from '../reducers/io-actions';
 import DirectoryTreeView from '-/components/DirectoryTreeView';
+import LoadingLazy from '-/components/LoadingLazy';
 
 const isLocationsReadOnly = window.ExtLocationsReadOnly;
+
+const CreateLocationDialog = React.lazy(() =>
+  import(
+    /* webpackChunkName: "CreateLocationDialog" */ './dialogs/CreateLocationDialog'
+  )
+);
+const CreateLocationDialogAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <CreateLocationDialog {...props} />
+  </React.Suspense>
+);
+
+const EditLocationDialog = React.lazy(() =>
+  import(
+    /* webpackChunkName: "CreateLocationDialog" */ './dialogs/EditLocationDialog'
+  )
+);
+const EditLocationDialogAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <EditLocationDialog {...props} />
+  </React.Suspense>
+);
 
 interface Props {
   classes: any;
@@ -632,53 +653,63 @@ class LocationManager extends React.Component<Props, State> {
           </div>
         )}
         <div>
-          <CreateLocationDialog
-            key={this.state.createLocationDialogKey}
-            resetState={this.resetState}
-            open={this.state.isCreateLocationDialogOpened}
-            onClose={this.handleCloseDialogs}
-            addLocation={this.props.addLocation}
-            showSelectDirectoryDialog={this.showSelectDirectoryDialog}
-          />
-          <EditLocationDialog
-            key={this.state.editLocationDialogKey}
-            resetState={this.resetState}
-            open={this.state.isEditLocationDialogOpened}
-            onClose={this.handleCloseDialogs}
-            location={this.state.selectedLocation}
-            editLocation={this.props.editLocation}
-            showSelectDirectoryDialog={this.showSelectDirectoryDialog}
-            selectedDirectoryPath={this.state.selectedDirectoryPath}
-          />
-          <ConfirmDialog
-            open={this.state.isDeleteLocationDialogOpened}
-            onClose={this.handleCloseDialogs}
-            title={i18n.t('core:deleteLocationTitleAlert')}
-            content={i18n.t('core:deleteLocationContentAlert', {
-              locationName: this.state.selectedLocation
-                ? this.state.selectedLocation.name
-                : ''
-            })}
-            confirmCallback={result => {
-              if (result && this.state.selectedLocation) {
-                this.props.removeLocation(this.state.selectedLocation);
-              }
-            }}
-            cancelDialogTID="cancelDeleteLocationDialog"
-            confirmDialogTID="confirmDeleteLocationDialog"
-          />
-          <SelectDirectoryDialog
-            open={this.state.isSelectDirectoryDialogOpened}
-            onClose={this.closeSelectDirectoryExtDialog}
-            createNewDirectoryExt={this.createNewDirectoryExt}
-            chooseDirectoryPath={this.chooseDirectoryPath}
-            selectedDirectoryPath={this.state.selectedDirectoryPath}
-          />
-          <CreateDirectoryDialog
-            open={this.state.isCreateDirectoryDialogOpened}
-            onClose={this.closeNewDirectoryDialog}
-            selectedDirectoryPath={this.state.selectedDirectoryPath}
-          />
+          {this.state.isCreateLocationDialogOpened && (
+            <CreateLocationDialogAsync
+              key={this.state.createLocationDialogKey}
+              resetState={this.resetState}
+              open={this.state.isCreateLocationDialogOpened}
+              onClose={this.handleCloseDialogs}
+              addLocation={this.props.addLocation}
+              showSelectDirectoryDialog={this.showSelectDirectoryDialog}
+            />
+          )}
+          {this.state.isEditLocationDialogOpened && (
+            <EditLocationDialogAsync
+              key={this.state.editLocationDialogKey}
+              resetState={this.resetState}
+              open={this.state.isEditLocationDialogOpened}
+              onClose={this.handleCloseDialogs}
+              location={this.state.selectedLocation}
+              editLocation={this.props.editLocation}
+              showSelectDirectoryDialog={this.showSelectDirectoryDialog}
+              selectedDirectoryPath={this.state.selectedDirectoryPath}
+            />
+          )}
+          {this.state.isDeleteLocationDialogOpened && (
+            <ConfirmDialog
+              open={this.state.isDeleteLocationDialogOpened}
+              onClose={this.handleCloseDialogs}
+              title={i18n.t('core:deleteLocationTitleAlert')}
+              content={i18n.t('core:deleteLocationContentAlert', {
+                locationName: this.state.selectedLocation
+                  ? this.state.selectedLocation.name
+                  : ''
+              })}
+              confirmCallback={result => {
+                if (result && this.state.selectedLocation) {
+                  this.props.removeLocation(this.state.selectedLocation);
+                }
+              }}
+              cancelDialogTID="cancelDeleteLocationDialog"
+              confirmDialogTID="confirmDeleteLocationDialog"
+            />
+          )}
+          {this.state.isSelectDirectoryDialogOpened && (
+            <SelectDirectoryDialog
+              open={this.state.isSelectDirectoryDialogOpened}
+              onClose={this.closeSelectDirectoryExtDialog}
+              createNewDirectoryExt={this.createNewDirectoryExt}
+              chooseDirectoryPath={this.chooseDirectoryPath}
+              selectedDirectoryPath={this.state.selectedDirectoryPath}
+            />
+          )}
+          {this.state.isCreateDirectoryDialogOpened && (
+            <CreateDirectoryDialog
+              open={this.state.isCreateDirectoryDialogOpened}
+              onClose={this.closeNewDirectoryDialog}
+              selectedDirectoryPath={this.state.selectedDirectoryPath}
+            />
+          )}
           <Menu
             anchorEl={this.state.locationDirectoryContextMenuAnchorEl}
             open={this.state.locationContextMenuOpened}
