@@ -2,7 +2,7 @@
 import { delay, clearLocalStorage } from '../hook';
 import { searchEngine } from '../search.spec';
 import { openFile } from '../test-utils.spec';
-import { createLocation, openLocation, aboutDialogExt, defaultLocationPath, defaultLocationName, perspectiveGridTable } from '../location.spec';
+import { createLocation, openLocation, aboutDialogExt, defaultLocationPath, defaultLocationName, perspectiveGridTable } from '../location.e2e';
 
 const extButton = '/div[1]/div[2]/button';
 const firstExtButton = 'div[1]/button';

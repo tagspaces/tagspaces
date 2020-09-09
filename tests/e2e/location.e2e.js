@@ -4,20 +4,33 @@ import {
   createLocation,
   defaultLocationPath,
   openLocationMenu,
-  checkForIdExist
+  checkForIdExist,
+  createMinioLocation,
+  defaultLocationName,
+  openLocation,
+  closeFileProperties, clearInputValue
 } from './location.helpers';
 
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
-export const newLocationName = 'Location Name Changed';
+export const newLocationName = 'Location_Name_Changed';
 
 let testLocationName;
 
 describe('TST03 - Testing locations:', () => {
   beforeEach(async () => {
     testLocationName = '' + new Date().getTime();
-    await delay(1500);
-    await createLocation(defaultLocationPath, testLocationName, true);
-    await delay(2000);
+    await delay(500);
+    //await createLocation(defaultLocationPath, testLocationName, true);
+    if (global.isMinio) {
+      await createMinioLocation('', testLocationName, true);
+    } else {
+      await createLocation(defaultLocationPath, testLocationName, true);
+    }
+    await delay(500);
+
+    await openLocation(testLocationName);
+    // await delay(500);
+    await closeFileProperties();
   });
 
   it('TST0301 - Should create a location', async () => {
@@ -26,12 +39,13 @@ describe('TST03 - Testing locations:', () => {
     // const lastLocation = allLocations[allLocations.length - 1];
     // const lastLocationNameInDom = (await global.client.elementIdText(lastLocation.ELEMENT)).value;
     // const addedLocation = await global.client.getText('//button[contains(., "' + testTagName + '")]');
-    await delay(1500);
-    const addedLocation = await global.client.getText(
+    await delay(500);
+    const addedLocation = await global.client.$(
       '[data-tid=location_' + testLocationName + ']'
     );
     await delay(1500);
-    expect(testLocationName).toBe(addedLocation);
+    expect(await addedLocation.isDisplayed()).toBe(true);
+    //expect(testLocationName).toBe(addedLocation);
   });
 
   it('TST0302 - Should remove a location', async () => {
@@ -42,41 +56,62 @@ describe('TST03 - Testing locations:', () => {
     // const lastLocation = allLocations[allLocations.length - 1];
     // await global.client.elementIdClick(lastLocation.ELEMENT);
     await openLocationMenu(testLocationName);
-    await delay(1500);
-    await global.client.waitForVisible('[data-tid=removeLocation]');
-    await global.client.click('[data-tid=removeLocation]');
-    await delay(1500);
-    await global.client.click('[data-tid=confirmDeleteLocationDialog]');
-    await delay(1500);
-    await global.client.waitForVisible('[data-tid=locationList]');
-    const allLocationsList = await global.client.$$('[data-tid=locationList]');
-    await delay(1500);
-    expect(allLocationsList.indexOf(testLocationName) >= 0).toBe(false);
+    //await delay(1500);
+    const removeLocation = await global.client.$('[data-tid=removeLocation]');
+    await removeLocation.waitForDisplayed();
+    await removeLocation.click();
+    //await delay(1500);
+    const confirmDeleteLocationDialog = await global.client.$(
+        '[data-tid=confirmDeleteLocationDialog]'
+    );
+    await confirmDeleteLocationDialog.click();
+    //await delay(1500);
+    const locationList = await global.client.$('[data-tid=locationList]');
+    await locationList.waitForDisplayed();
+    //await locationList.click();
+    //await global.client.waitForVisible('[data-tid=locationList]');
+    //const allLocationsList = await global.client.$$('[data-tid=locationList]');
+    //await delay(1500);
+    const testLocation = await global.client.$(
+        '[data-tid=location_' + testLocationName + ']'
+    );
+    expect(await testLocation.isDisplayed()).toBe(false);
+    //expect(locationList.indexOf(testLocationName) >= 0).toBe(false);
   });
 
   it('TST0303 - Rename location', async () => {
     await openLocationMenu(testLocationName);
-    await delay(1500);
-    await global.client.waitForVisible('[data-tid=editLocation]');
-    await global.client.click('[data-tid=editLocation]');
-    await delay(1500);
-    await global.client.waitForVisible('[data-tid=locationName]');
-    await global.client.click('[data-tid=locationName]');
-    await delay(1500);
-    await global.client
-      .$('[data-tid=locationName] input')
-      .keys(newLocationName);
+    //await delay(1500);
+    const editLocation = await global.client.$('[data-tid=editLocation]');
+    await editLocation.waitForDisplayed();
+    await editLocation.click();
+    await delay(2000);
+    /*const locationName = await global.client.$('[data-tid=locationName]');
+    await locationName.waitForDisplayed();
+    await locationName.click();
+    await delay(1500);*/
+    const locationInput = await global.client.$('[data-tid=locationName] input');
+    await locationInput.waitForDisplayed();
+    // await locationInput.click();
+    await clearInputValue(locationInput);
+    await locationInput.keys(newLocationName);
     // await global.client.$('[data-tid=locationName] input').setValue(newLocationName);
     await delay(500);
-    await global.client.waitForVisible('[data-tid=confirmEditLocationDialog]');
-    await global.client.click('[data-tid=confirmEditLocationDialog]');
-    await delay(500);
-    await global.client.waitForVisible('[data-tid=locationList]');
+    const confirmEditLocationDialog = await global.client.$('[data-tid=confirmEditLocationDialog]');
+    await confirmEditLocationDialog.waitForDisplayed();
+    await confirmEditLocationDialog.click();
+    /*await delay(500);
+    await global.client.$('[data-tid=locationList]');
     const allLocationsList = await global.client.getText(
       '[data-tid=locationList]'
+    );*/
+    //await delay(500);
+    //expect(allLocationsList.indexOf(newLocationName) >= 0).toBe(true);
+
+    const testLocation = await global.client.$(
+        '[data-tid=location_' + newLocationName + ']'
     );
-    await delay(500);
-    expect(allLocationsList.indexOf(newLocationName) >= 0).toBe(true);
+    expect(await testLocation.isDisplayed()).toBe(true);
   });
 
   it('TST0305 - Set as startup location', async () => {
@@ -91,7 +126,8 @@ describe('TST03 - Testing locations:', () => {
     // await global.client.waitForVisible('[data-tid=confirmEditLocationDialog]');
     // await global.client.click('[data-tid=confirmEditLocationDialog]');
     // await delay(1500);
-    await global.client.waitForVisible('[data-tid=startupIndication]');
+    const startupIndication = await global.client.$('[data-tid=startupIndication]');
+    await startupIndication.waitForDisplayed();
     await checkForIdExist('startupIndication'); // TODO check if the indicator is setted on the correct location
     // TODO evlt reastart the applcatio and see if the loading of default locations works
   });
@@ -107,13 +143,13 @@ describe('TST03 - Testing locations:', () => {
     // await delay(1500);
     // await openLocationMenu(testLocationName);
     // await delay(1500);
-    await global.client.waitForVisible('[data-tid=moveLocationUp]');
-    await global.client.click('[data-tid=moveLocationUp]');
+    const moveUp = await global.client.$('[data-tid=moveLocationUp]');
+    await moveUp.click();
     await delay(1500);
     await openLocationMenu(testLocationName);
     await delay(1500);
-    await global.client.waitForVisible('[data-tid=moveLocationDown]');
-    await global.client.click('[data-tid=moveLocationDown]');
+    const moveDown = await global.client.$('[data-tid=moveLocationDown]');
+    await moveDown.click();
     // TODO no expect, validation
   });
 });

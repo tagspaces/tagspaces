@@ -5,7 +5,7 @@ import {
   openLocation,
   defaultLocationPath,
   checkForIdExist
-} from './location.spec';
+} from './location.helpers';
 
 const testLocationName = '' + new Date().getTime();
 const testNewLocationName = '' + new Date().getTime();
