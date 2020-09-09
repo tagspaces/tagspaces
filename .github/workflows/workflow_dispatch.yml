@@ -20,7 +20,7 @@ jobs:
           node-version: '10.x'
       - name: Running yarn install, prettier and type checks
         run: |
-          yarn install
+          yarn install --check-files --cache-folder .ycache
           yarn prettier-check
           yarn type-check
       - name: Run Unit tests

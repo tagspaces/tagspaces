@@ -220,7 +220,7 @@
     "webpack-dev-server": "^3.10.1",
     "webpack-merge": "^4.2.2",
     "worker-loader": "^2.0.0",
-    "yarn": "^1.21.1"
+    "yarn": "^1.22.5"
   },
   "dependencies": {
     "@date-io/date-fns": "^1.3.9",

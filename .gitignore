@@ -94,3 +94,4 @@ tests/*
 
 builds/*
 web/sw-con
+.ycache/*
