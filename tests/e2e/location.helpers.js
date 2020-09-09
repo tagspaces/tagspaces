@@ -147,7 +147,9 @@ export async function selectAllFilesClick() {
 
 export async function openLocationMenu(locationName) {
   //await delay(500);
-  const locationMoreButton = await global.client.$('[data-tid=locationMoreButton_' + locationName + ']');
+  const locationMoreButton = await global.client.$(
+    '[data-tid=locationMoreButton_' + locationName + ']'
+  );
   await locationMoreButton.waitForDisplayed();
   await locationMoreButton.click();
   /*await global.client.waitForVisible(

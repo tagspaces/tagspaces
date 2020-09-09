@@ -8,7 +8,8 @@ import {
   createMinioLocation,
   defaultLocationName,
   openLocation,
-  closeFileProperties, clearInputValue
+  closeFileProperties,
+  clearInputValue
 } from './location.helpers';
 
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
@@ -62,7 +63,7 @@ describe('TST03 - Testing locations:', () => {
     await removeLocation.click();
     //await delay(1500);
     const confirmDeleteLocationDialog = await global.client.$(
-        '[data-tid=confirmDeleteLocationDialog]'
+      '[data-tid=confirmDeleteLocationDialog]'
     );
     await confirmDeleteLocationDialog.click();
     //await delay(1500);
@@ -73,7 +74,7 @@ describe('TST03 - Testing locations:', () => {
     //const allLocationsList = await global.client.$$('[data-tid=locationList]');
     //await delay(1500);
     const testLocation = await global.client.$(
-        '[data-tid=location_' + testLocationName + ']'
+      '[data-tid=location_' + testLocationName + ']'
     );
     expect(await testLocation.isDisplayed()).toBe(false);
     //expect(locationList.indexOf(testLocationName) >= 0).toBe(false);
@@ -90,14 +91,18 @@ describe('TST03 - Testing locations:', () => {
     await locationName.waitForDisplayed();
     await locationName.click();
     await delay(1500);*/
-    const locationInput = await global.client.$('[data-tid=locationName] input');
+    const locationInput = await global.client.$(
+      '[data-tid=locationName] input'
+    );
     await locationInput.waitForDisplayed();
     // await locationInput.click();
     await clearInputValue(locationInput);
     await locationInput.keys(newLocationName);
     // await global.client.$('[data-tid=locationName] input').setValue(newLocationName);
     await delay(500);
-    const confirmEditLocationDialog = await global.client.$('[data-tid=confirmEditLocationDialog]');
+    const confirmEditLocationDialog = await global.client.$(
+      '[data-tid=confirmEditLocationDialog]'
+    );
     await confirmEditLocationDialog.waitForDisplayed();
     await confirmEditLocationDialog.click();
     /*await delay(500);
@@ -109,7 +114,7 @@ describe('TST03 - Testing locations:', () => {
     //expect(allLocationsList.indexOf(newLocationName) >= 0).toBe(true);
 
     const testLocation = await global.client.$(
-        '[data-tid=location_' + newLocationName + ']'
+      '[data-tid=location_' + newLocationName + ']'
     );
     expect(await testLocation.isDisplayed()).toBe(true);
   });
@@ -126,7 +131,9 @@ describe('TST03 - Testing locations:', () => {
     // await global.client.waitForVisible('[data-tid=confirmEditLocationDialog]');
     // await global.client.click('[data-tid=confirmEditLocationDialog]');
     // await delay(1500);
-    const startupIndication = await global.client.$('[data-tid=startupIndication]');
+    const startupIndication = await global.client.$(
+      '[data-tid=startupIndication]'
+    );
     await startupIndication.waitForDisplayed();
     await checkForIdExist('startupIndication'); // TODO check if the indicator is setted on the correct location
     // TODO evlt reastart the applcatio and see if the loading of default locations works
