@@ -60,7 +60,7 @@ describe('TST51 - Perspective Grid', () => {
     await closeFileProperties();
   });
 
-  test('TST5112 - Show sub folders [web,electron]', async () => {
+  test('TST5112 - Show sub folders [show_sub_folders,web,electron]', async () => {
     await openFilesOptionMenu();
     await toggleShowDirectoriesClick();
 

@@ -4,7 +4,7 @@ import {
   createLocation,
   defaultLocationPath,
   openLocation
-} from './location.spec';
+} from './location.helpers';
 import { openSettings } from './general.spec';
 
 const testLocationName = '' + new Date().getTime();

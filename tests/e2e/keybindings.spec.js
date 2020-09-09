@@ -4,7 +4,7 @@ import {
   createLocation,
   checkForIdExist,
   defaultLocationPath
-} from './location.spec';
+} from './location.helpers';
 import { openSettings } from './general.spec';
 import { searchEngine, testFileInSubDirectory } from './search.spec';
 import {

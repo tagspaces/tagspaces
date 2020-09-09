@@ -146,14 +146,19 @@ export async function selectAllFilesClick() {
 }
 
 export async function openLocationMenu(locationName) {
-  await delay(500);
-  await global.client.waitForVisible(
+  //await delay(500);
+  const locationMoreButton = await global.client.$(
+    '[data-tid=locationMoreButton_' + locationName + ']'
+  );
+  await locationMoreButton.waitForDisplayed();
+  await locationMoreButton.click();
+  /*await global.client.waitForVisible(
     '[data-tid=locationMoreButton_' + locationName + ']'
   );
   await delay(1500);
   await global.client.click(
     '[data-tid=locationMoreButton_' + locationName + ']'
-  );
+  ); */
 }
 
 export async function openLocation(locationName) {
@@ -178,9 +183,10 @@ export async function closeFileProperties() {
 
 export async function checkForIdExist(tid) {
   await delay(500);
-  const dataTid = await global.client.element('[data-tid=' + tid + ']');
+  const dataTid = await global.client.$('[data-tid=' + tid + ']');
   await delay(500);
-  expect(dataTid.selector).toBe('[data-tid=' + tid + ']');
+  expect(await dataTid.isDisplayed()).toBe(true);
+  // expect(dataTid.selector).toBe('[data-tid=' + tid + ']');
 }
 
 export async function clearInputValue(inputElement) {
