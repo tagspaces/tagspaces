@@ -34,7 +34,7 @@ describe('TST03 - Testing locations:', () => {
     await closeFileProperties();
   });
 
-  it('TST0301 - Should create a location', async () => {
+  it('TST0301 - Should create a location [web,electron]', async () => {
     // const allLocations = await global.client.$$('[data-tid=locationTitleElement]');
     // expect(allLocations.length).toBeGreaterThan(0);
     // const lastLocation = allLocations[allLocations.length - 1];
@@ -49,7 +49,7 @@ describe('TST03 - Testing locations:', () => {
     //expect(testLocationName).toBe(addedLocation);
   });
 
-  it('TST0302 - Should remove a location', async () => {
+  it('TST0302 - Should remove a location [web,electron]', async () => {
     // await global.client.waitForVisible('[data-tid=locationList]');
     // const allLocations = await global.client.$$('[data-tid=locationList]');
     // await delay(500);
@@ -80,7 +80,7 @@ describe('TST03 - Testing locations:', () => {
     //expect(locationList.indexOf(testLocationName) >= 0).toBe(false);
   });
 
-  it('TST0303 - Rename location', async () => {
+  it('TST0303 - Rename location [web,electron]', async () => {
     await openLocationMenu(testLocationName);
     //await delay(1500);
     const editLocation = await global.client.$('[data-tid=editLocation]');
@@ -119,7 +119,7 @@ describe('TST03 - Testing locations:', () => {
     expect(await testLocation.isDisplayed()).toBe(true);
   });
 
-  it('TST0305 - Set as startup location', async () => {
+  it('TST0305 - Set as startup location [web,electron]', async () => {
     await openLocationMenu(testLocationName);
     await delay(1500);
     // await global.client.waitForVisible('[data-tid=editLocation]');
@@ -143,7 +143,7 @@ describe('TST03 - Testing locations:', () => {
     // TODO test duplication warning on creating locations
   });
 
-  it('TST0307 - Move location Up and Down', async () => {
+  it('TST0307 - Move location Up and Down [web,electron]', async () => {
     await openLocationMenu(testLocationName);
     await delay(500);
     // await createLocation(defaultLocationPath + '/test', 'New Test Location');
