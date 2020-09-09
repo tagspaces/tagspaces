@@ -79,7 +79,6 @@ interface State {
 }
 
 class EditLocationDialog extends React.Component<Props, State> {
-
   constructor(props) {
     super(props);
 
