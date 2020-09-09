@@ -139,7 +139,7 @@ const styles: any = (theme: any) => ({
   topPanel: {
     height: 50,
     width: '100%',
-    overflowX: 'overlay',
+    // overflowX: 'overlay',
     backgroundColor: theme.palette.background.default
   },
   centerPanel: {
@@ -154,10 +154,11 @@ const styles: any = (theme: any) => ({
   },
   folderButton: {
     minWidth: 30,
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
+    // whiteSpace: 'nowrap',
+    // overflow: 'hidden',
     paddingLeft: 3,
     paddingRight: 3,
+    lineHeight: '17px',
     margin: '0 auto',
     backgroundColor: theme.palette.background.default
   },
@@ -435,6 +436,7 @@ class FolderContainer extends React.Component<Props, State> {
                         paddingLeft: 3,
                         paddingRight: 0,
                         minWidth: 10,
+                        lineHeight: '17px',
                         overflow: 'hidden',
                         backgroundColor: theme.palette.background.default
                       }}
