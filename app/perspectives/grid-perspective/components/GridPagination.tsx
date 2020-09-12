@@ -37,6 +37,7 @@ interface Props {
   currentDirectoryColor: string;
   isAppLoading: boolean;
   currentPage: number;
+  gridPageLimit: number;
 }
 
 const GridPagination = (props: Props) => {
@@ -48,7 +49,8 @@ const GridPagination = (props: Props) => {
     showDirectories,
     renderCell,
     isAppLoading,
-    currentDirectoryColor
+    currentDirectoryColor,
+    gridPageLimit
   } = props;
   let { files, currentPage } = props;
   const [page, setPage] = useState(currentPage);
@@ -62,14 +64,13 @@ const GridPagination = (props: Props) => {
     setPage(value);
   };
 
-  const pageLimit = 10;
   let paginationCount = 10;
 
   let showPagination = false;
-  if (files.length > pageLimit) {
-    paginationCount = Math.ceil(files.length / pageLimit);
-    const start = (page - 1) * pageLimit;
-    files = files.slice(start, start + pageLimit);
+  if (files.length > gridPageLimit) {
+    paginationCount = Math.ceil(files.length / gridPageLimit);
+    const start = (page - 1) * gridPageLimit;
+    files = files.slice(start, start + gridPageLimit);
     showPagination = true;
   }
 
@@ -118,7 +119,14 @@ const GridPagination = (props: Props) => {
             )}
         </div>
         {showPagination && (
-          <p style={{ marginTop: '-180px' }}>
+          <p
+            style={{
+              marginTop: '-180px',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
             {/*<Typography>Page: {page}</Typography>*/}
             <Pagination
               count={paginationCount}
@@ -135,7 +143,8 @@ const GridPagination = (props: Props) => {
 function mapStateToProps(state) {
   return {
     isAppLoading: isLoading(state),
-    currentDirectoryColor: getCurrentDirectoryColor(state)
+    currentDirectoryColor: getCurrentDirectoryColor(state),
+    gridPageLimit: state.app.gridPageLimit
   };
 }
 

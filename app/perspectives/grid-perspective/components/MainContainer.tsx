@@ -62,6 +62,7 @@ import { getLocation, Location, locationType } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-io';
 import { extractFileName } from '-/utils/paths';
 import GridPagination from '-/perspectives/grid-perspective/components/GridPagination';
+import GridSettingsDialog from '-/components/dialogs/GridSettingsDialog';
 
 const settings = JSON.parse(localStorage.getItem('tsPerspectiveGrid')); // loading settings
 
@@ -128,6 +129,7 @@ interface State {
   isMoveCopyFilesDialogOpened: boolean;
   isAddRemoveTagsDialogOpened: boolean;
   isFileRenameDialogOpened: boolean;
+  isGridSettingsDialogOpened: boolean;
   selectedEntryPath: string;
   selectedTag: Tag | null;
 }
@@ -179,6 +181,7 @@ class GridPerspective extends React.Component<Props, State> {
       isMoveCopyFilesDialogOpened: false,
       isAddRemoveTagsDialogOpened: false,
       isFileRenameDialogOpened: false,
+      isGridSettingsDialogOpened: false,
       selectedTag: null
     };
   }
@@ -428,7 +431,7 @@ class GridPerspective extends React.Component<Props, State> {
 
   openSettings = () => {
     this.closeOptionsMenu();
-    // TODO
+    this.openGridSettingsDialog();
   };
 
   handleGridCellDblClick = (event, fsEntry: FileSystemEntry) => {
@@ -548,7 +551,8 @@ class GridPerspective extends React.Component<Props, State> {
       isFileRenameDialogOpened: false,
       isDeleteMultipleFilesDialogOpened: false,
       isAddRemoveTagsDialogOpened: false,
-      isMoveCopyFilesDialogOpened: false
+      isMoveCopyFilesDialogOpened: false,
+      isGridSettingsDialogOpened: false
     });
     if (clearSelection) {
       this.clearSelection();
@@ -569,6 +573,10 @@ class GridPerspective extends React.Component<Props, State> {
 
   openAddRemoveTagsDialog = () => {
     this.setState({ isAddRemoveTagsDialogOpened: true });
+  };
+
+  openGridSettingsDialog = () => {
+    this.setState({ isGridSettingsDialogOpened: true });
   };
 
   handleFileMoveDrop = (item, monitor) => {
@@ -830,6 +838,10 @@ class GridPerspective extends React.Component<Props, State> {
           removeTags={this.props.removeTags}
           removeAllTags={this.props.removeAllTags}
           selectedEntries={this.props.selectedEntries}
+        />
+        <GridSettingsDialog
+          open={this.state.isGridSettingsDialogOpened}
+          onClose={this.handleCloseDialogs}
         />
         <MoveCopyFilesDialog
           key={uuidv1()}

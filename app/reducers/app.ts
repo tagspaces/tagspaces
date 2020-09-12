@@ -47,6 +47,7 @@ import { Tag } from './taglibrary';
 export const types = {
   DEVICE_ONLINE: 'APP/DEVICE_ONLINE',
   DEVICE_OFFLINE: 'APP/DEVICE_OFFLINE',
+  GRID_PAGE_LIMIT: 'APP/GRID_PAGE_LIMIT',
   PROGRESS: 'APP/PROGRESS',
   RESET_PROGRESS: 'APP/RESET_PROGRESS',
   LOGIN_REQUEST: 'APP/LOGIN_REQUEST',
@@ -181,7 +182,8 @@ export const initialState = {
   tagLibraryPanelOpened: showTagLibrary,
   searchPanelOpened: showSearch,
   perspectivesPanelOpened: false,
-  helpFeedbackPanelOpened: false
+  helpFeedbackPanelOpened: false,
+  gridPageLimit: 100
 };
 
 // The state described here will not be persisted
@@ -204,6 +206,9 @@ export default (state: any = initialState, action: any) => {
         return true;
       });
       return { ...state, progress: arrProgress };
+    }
+    case types.GRID_PAGE_LIMIT: {
+      return { ...state, gridPageLimit: action.gridPageLimit };
     }
     case types.RESET_PROGRESS: {
       return { ...state, progress: [] };
@@ -610,6 +615,10 @@ export const actions = {
   setUpdateAvailable: (isUpdateAvailable: boolean) => ({
     type: types.SET_NEW_VERSION_AVAILABLE,
     isUpdateAvailable
+  }),
+  setGridPageLimit: gridPageLimit => ({
+    type: types.GRID_PAGE_LIMIT,
+    gridPageLimit
   }),
   setProgress: (path, progress, abort) => ({
     type: types.PROGRESS,
