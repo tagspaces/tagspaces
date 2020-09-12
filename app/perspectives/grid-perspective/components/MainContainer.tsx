@@ -257,7 +257,7 @@ class GridPerspective extends React.Component<Props, State> {
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
   }; */
 
-  //mainGrid;
+  // mainGrid;
 
   handleLayoutSwitch = (layoutType: string) => {
     this.setState({ layoutType }, this.saveSettings);
@@ -424,6 +424,11 @@ class GridPerspective extends React.Component<Props, State> {
     this.props.openURLExternally(
       AppConfig.documentationLinks.defaultPerspective
     );
+  };
+
+  openSettings = () => {
+    this.closeOptionsMenu();
+    // TODO
   };
 
   handleGridCellDblClick = (event, fsEntry: FileSystemEntry) => {
@@ -810,7 +815,7 @@ class GridPerspective extends React.Component<Props, State> {
                   : 'none'
             }}
             theme={theme}
-            //gridRef={this.mainGrid}
+            // gridRef={this.mainGrid}
             directories={sortedDirectories}
             showDirectories={this.state.showDirectories}
             files={sortedFiles}
@@ -918,6 +923,7 @@ class GridPerspective extends React.Component<Props, State> {
           singleClickAction={this.state.singleClickAction}
           changeEntrySize={this.changeEntrySize}
           openHelpWebPage={this.openHelpWebPage}
+          openSettings={this.openSettings}
         />
       </div>
     );
