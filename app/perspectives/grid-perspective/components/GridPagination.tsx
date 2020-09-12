@@ -55,7 +55,7 @@ const GridPagination = (props: Props) => {
 
   useEffect(() => {
     setPage(props.currentPage);
-  }, [props.currentPage]);
+  }, [props.files]);
 
   const handleChange = (event, value) => {
     // props.currentPage = value;
