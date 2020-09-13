@@ -1523,7 +1523,8 @@ function prepareDirectoryContent(
       enhancedEntry.isFile && // only for files
       settings.useGenerateThumbnails // enabled in the settings
     ) {
-      if (isWorkerAvailable) {
+      const isPDF = enhancedEntry.path.endsWith('.pdf');
+      if (isWorkerAvailable && !isPDF) {
         tmbGenerationList.push(enhancedEntry.path);
       } else {
         tmbGenerationPromises.push(getThumbnailURLPromise(enhancedEntry.path));
@@ -1563,23 +1564,20 @@ function prepareDirectoryContent(
   }
 
   dispatch(actions.setGeneratingThumbnails(false));
-  if (tmbGenerationPromises.length > 0) {
+  if (tmbGenerationList.length > 0) {
     dispatch(actions.setGeneratingThumbnails(true));
-    // dispatch(actions.showNotification(i18n.t('core:checkingThumbnails'), 'info', false));
-    Promise.all(tmbGenerationPromises)
+    PlatformIO.createThumbnailsInWorker(tmbGenerationList)
       .then(handleTmbGenerationResults)
       .catch(handleTmbGenerationFailed);
   }
-  if (tmbGenerationList.length > 0) {
+  if (tmbGenerationPromises.length > 0) {
     dispatch(actions.setGeneratingThumbnails(true));
-    // dispatch(actions.showNotification(i18n.t('core:loadingOrGeneratingThumbnails'), 'info', false));
-    PlatformIO.createThumbnailsInWorker(tmbGenerationList)
+    Promise.all(tmbGenerationPromises)
       .then(handleTmbGenerationResults)
       .catch(handleTmbGenerationFailed);
   }
 
   console.log('Dir ' + directoryPath + ' contains ' + directoryContent.length);
-  console.timeEnd('listDirectoryPromise');
   dispatch(actions.loadDirectorySuccess(directoryPath, directoryContent));
 }
 

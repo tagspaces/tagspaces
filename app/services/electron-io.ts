@@ -250,15 +250,17 @@ export default class ElectronIO {
 
   createThumbnailsInWorker = (tmbGenerationList: Array<string>): Promise<any> =>
     new Promise((resolve, reject) => {
+      const tmbGenChannel = 'TMB_GEN_CHANNEL';
+      this.ipcRenderer.removeAllListeners(tmbGenChannel);
       if (this.isWorkerAvailable()) {
-        const timestamp = new Date().getTime().toString();
         this.workerWindow.webContents.send('worker', {
-          id: timestamp,
+          id: tmbGenChannel,
           action: 'createThumbnails',
           tmbGenerationList
         });
-        this.ipcRenderer.once(timestamp, (event, data) => {
-          // console.log('Answer from worker received ' + data.result);
+        this.ipcRenderer.on(tmbGenChannel, (event, data) => {
+          // console.log('Answer from worker received!');
+          // allSettled => data.result[].status === fulfilled // payload in value
           resolve(data.result);
         });
       } else {
@@ -280,7 +282,7 @@ export default class ElectronIO {
       let containsMetaFolder = false;
       // const metaMetaFolder = AppConfig.metaFolder + AppConfig.dirSeparator + AppConfig.metaFolder;
       if (path.startsWith('./')) {
-        //relative paths
+        // relative paths
         path = pathLib.resolve(path);
       }
       this.fs.readdir(path, (error, entries) => {
