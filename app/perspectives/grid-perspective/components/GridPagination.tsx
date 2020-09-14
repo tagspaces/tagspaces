@@ -18,9 +18,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { FileSystemEntry } from '-/services/utils-io';
 import Typography from '@material-ui/core/Typography';
 import Pagination from '@material-ui/lab/Pagination';
+import Grid from '@material-ui/core/Grid';
+import { FileSystemEntry } from '-/services/utils-io';
 import i18n from '-/services/i18n';
 import { getCurrentDirectoryColor, isLoading } from '-/reducers/app';
 import AppConfig from '-/config';
@@ -50,9 +51,10 @@ const GridPagination = (props: Props) => {
     renderCell,
     isAppLoading,
     currentDirectoryColor,
-    gridPageLimit
+    gridPageLimit,
+    currentPage
   } = props;
-  let { files, currentPage } = props;
+  let { files } = props;
   const [page, setPage] = useState(currentPage);
 
   useEffect(() => {
@@ -75,68 +77,75 @@ const GridPagination = (props: Props) => {
   }
 
   return (
-    <div
+    /* <div
       style={{
         height: '100%',
         backgroundColor: theme.palette.background.default
       }}
+    > */
+    <div
+      style={{
+        height: '100%',
+        flexGrow: 1,
+        // @ts-ignore
+        overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
+        backgroundColor: currentDirectoryColor || 'transparent'
+      }}
     >
-      <div
-        style={{
-          height: '100%',
-          // @ts-ignore
-          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
-          backgroundColor: currentDirectoryColor || 'transparent'
-        }}
-      >
-        <div
-          className={className}
-          style={style}
-          /*ref={ref => {
+      <Grid container>
+        <Grid item xs={12}>
+          <div
+            className={className}
+            style={style}
+            /* ref={ref => {
             gridRef = ref;
-          }}*/
-          data-tid="perspectiveGridFileTable"
-        >
-          {page === 1 && directories.map(entry => renderCell(entry))}
-          {files.map(entry => renderCell(entry))}
-          {isAppLoading && (
-            <Typography style={{ padding: 15 }}>
-              {i18n.t('core:loading')}
-            </Typography>
-          )}
-          {!isAppLoading && files.length < 1 && directories.length < 1 && (
-            <Typography style={{ padding: 15 }}>
-              {i18n.t('core:noFileFolderFound')}
-            </Typography>
-          )}
-          {!isAppLoading &&
-            files.length < 1 &&
-            directories.length >= 1 &&
-            !showDirectories && (
+          }} */
+            data-tid="perspectiveGridFileTable"
+          >
+            {page === 1 && directories.map(entry => renderCell(entry))}
+            {files.map(entry => renderCell(entry))}
+            {isAppLoading && (
               <Typography style={{ padding: 15 }}>
-                {i18n.t('core:noFileButFoldersFound')}
+                {i18n.t('core:loading')}
               </Typography>
             )}
-        </div>
+            {!isAppLoading && files.length < 1 && directories.length < 1 && (
+              <Typography style={{ padding: 15 }}>
+                {i18n.t('core:noFileFolderFound')}
+              </Typography>
+            )}
+            {!isAppLoading &&
+              files.length < 1 &&
+              directories.length >= 1 &&
+              !showDirectories && (
+                <Typography style={{ padding: 15 }}>
+                  {i18n.t('core:noFileButFoldersFound')}
+                </Typography>
+              )}
+          </div>
+        </Grid>
+
         {showPagination && (
-          <p
-            style={{
-              marginTop: '-180px',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
-          >
-            {/*<Typography>Page: {page}</Typography>*/}
-            <Pagination
-              count={paginationCount}
-              page={page}
-              onChange={handleChange}
-            />
-          </p>
+          <Grid item xs={12}>
+            <p
+              style={{
+                paddingBottom: '150px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
+            >
+              <Pagination
+                count={paginationCount}
+                page={page}
+                onChange={handleChange}
+              />
+            </p>
+          </Grid>
         )}
-      </div>
+      </Grid>
     </div>
+    /* </div> */
   );
 };
 
