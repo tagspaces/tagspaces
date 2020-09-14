@@ -264,7 +264,15 @@ class CreateLocationDialog extends React.Component<Props, State> {
         fullScreen={fullScreen}
         keepMounted
         scroll="paper"
-        // onKeyDown={confirmFunction}
+        onKeyDown={event => {
+          if (event.key === 'Enter' || event.keyCode === 13) {
+            event.preventDefault();
+            event.stopPropagation();
+            this.onConfirm();
+          } else if (event.key === 'Escape') {
+            onClose();
+          }
+        }}
       >
         <DialogTitle>{i18n.t('core:createLocationTitle')}</DialogTitle>
         <DialogContent>

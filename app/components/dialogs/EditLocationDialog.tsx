@@ -482,18 +482,21 @@ class EditLocationDialog extends React.Component<Props, State> {
   );
 
   render() {
-    const {
-      open,
-      // onClose,
-      fullScreen,
-      onCancel
-    } = this.props;
+    const { open, onClose, fullScreen, onCancel } = this.props;
     return (
       <Dialog
         open={open}
         onClose={onCancel}
         fullScreen={fullScreen}
-        // onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
+        onKeyDown={event => {
+          if (event.key === 'Enter' || event.keyCode === 13) {
+            event.preventDefault();
+            event.stopPropagation();
+            this.onConfirm();
+          } else if (event.key === 'Escape') {
+            onClose();
+          }
+        }}
       >
         {this.renderTitle()}
         {this.renderContent()}

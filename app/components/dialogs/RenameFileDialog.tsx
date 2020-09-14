@@ -186,6 +186,8 @@ class RenameFileDialog extends React.Component<Props, State> {
         onClose={onClose}
         onKeyDown={event => {
           if (event.key === 'Enter' || event.keyCode === 13) {
+            event.preventDefault();
+            event.stopPropagation();
             this.onConfirm();
           } else if (event.key === 'Escape') {
             onClose();
