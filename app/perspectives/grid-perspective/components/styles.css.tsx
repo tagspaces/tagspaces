@@ -23,7 +23,7 @@ export default (theme: any): any => ({
     gridGap: '0px 0px',
     padding: 0,
     paddingRight: 10,
-    paddingBottom: 200
+    paddingBottom: 20
   },
   rowContainer: {
     display: 'grid',

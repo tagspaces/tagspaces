@@ -122,7 +122,6 @@ const GridPagination = (props: Props) => {
         {showPagination && (
           <p
             style={{
-              marginTop: '-180px',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center'

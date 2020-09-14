@@ -794,7 +794,7 @@ class GridPerspective extends React.Component<Props, State> {
       entryWidth = 300;
     }
     return (
-      <div style={{ height: '100%' }}>
+      <div style={{ height: 'calc(100% - 104px)' }}>
         <style>
           {`
             #gridCellTags:hover, #gridCellDescription:hover {
