@@ -142,8 +142,7 @@ const GridPagination = (props: Props) => {
 function mapStateToProps(state) {
   return {
     isAppLoading: isLoading(state),
-    currentDirectoryColor: getCurrentDirectoryColor(state),
-    // gridPageLimit: state.app.gridPageLimit
+    currentDirectoryColor: getCurrentDirectoryColor(state)
   };
 }
 

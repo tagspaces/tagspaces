@@ -227,12 +227,12 @@ class GridPerspective extends React.Component<Props, State> {
     sortByCriteria(data, criteria, order)
   );
 
-  getDirs = memoize((sortedContent) =>
-      sortedContent.filter(entry => !entry.isFile)
+  getDirs = memoize(sortedContent =>
+    sortedContent.filter(entry => !entry.isFile)
   );
 
-  getFiles = memoize((sortedContent) =>
-      sortedContent.filter(entry => entry.isFile)
+  getFiles = memoize(sortedContent =>
+    sortedContent.filter(entry => entry.isFile)
   );
 
   makeFirstSelectedEntryVisible = () => {
