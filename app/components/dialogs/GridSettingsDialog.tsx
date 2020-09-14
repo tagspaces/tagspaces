@@ -88,10 +88,11 @@ const GridSettingsDialog = (props: Props) => {
             defaultValue={gridPageLimit}
             onChange={handleGridPaginationLimit}
           >
-            <MenuItem value={10}>10</MenuItem>
+            <MenuItem value={10}>20</MenuItem>
             <MenuItem value={50}>50</MenuItem>
             <MenuItem value={100}>100</MenuItem>
             <MenuItem value={500}>500</MenuItem>
+            <MenuItem value={undefined}>Unlimited</MenuItem>
           </Select>
           <FormHelperText>Set number of files per page</FormHelperText>
           {/* <TextField

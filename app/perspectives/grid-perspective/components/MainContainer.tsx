@@ -227,6 +227,14 @@ class GridPerspective extends React.Component<Props, State> {
     sortByCriteria(data, criteria, order)
   );
 
+  getDirs = memoize((sortedContent) =>
+      sortedContent.filter(entry => !entry.isFile)
+  );
+
+  getFiles = memoize((sortedContent) =>
+      sortedContent.filter(entry => entry.isFile)
+  );
+
   makeFirstSelectedEntryVisible = () => {
     const { selectedEntries } = this.props;
     if (selectedEntries && selectedEntries.length > 0) {
@@ -783,8 +791,8 @@ class GridPerspective extends React.Component<Props, State> {
       .filter(fsEntry => fsEntry.isFile)
       .map(fsentry => fsentry.path);
     const sortedContent = this.sort(directoryContent, sortBy, orderBy);
-    const sortedDirectories = sortedContent.filter(entry => !entry.isFile);
-    const sortedFiles = sortedContent.filter(entry => entry.isFile);
+    const sortedDirectories = this.getDirs(sortedContent);
+    const sortedFiles = this.getFiles(sortedContent);
     let entryWidth = 200;
     if (entrySize === 'small') {
       entryWidth = 150;

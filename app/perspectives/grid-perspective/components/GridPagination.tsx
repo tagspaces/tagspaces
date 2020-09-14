@@ -68,7 +68,7 @@ const GridPagination = (props: Props) => {
   let paginationCount = 10;
 
   let showPagination = false;
-  if (files.length > gridPageLimit) {
+  if (gridPageLimit && files.length > gridPageLimit) {
     paginationCount = Math.ceil(files.length / gridPageLimit);
     const start = (page - 1) * gridPageLimit;
     files = files.slice(start, start + gridPageLimit);
