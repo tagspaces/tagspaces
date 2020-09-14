@@ -17,18 +17,21 @@
  */
 
 import React from 'react';
-import Button from '@material-ui/core/Button';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import withMobileDialog from '@material-ui/core/withMobileDialog';
-import Dialog from '@material-ui/core/Dialog';
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  withMobileDialog,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Input,
+  Button,
+  FormHelperText
+} from '@material-ui/core';
 import i18n from '-/services/i18n';
-import FormControl from '@material-ui/core/FormControl';
-import TextField from '@material-ui/core/TextField';
-import { connect } from 'react-redux';
-import { actions as AppActions } from '-/reducers/app';
-import { bindActionCreators } from 'redux';
 
 interface Props {
   open: boolean;
@@ -40,6 +43,7 @@ interface Props {
 
 const GridSettingsDialog = (props: Props) => {
   const { open, onClose, fullScreen, gridPageLimit } = props;
+  let newGridPageLimit = gridPageLimit;
 
   const handleGridPaginationLimit = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -48,7 +52,8 @@ const GridSettingsDialog = (props: Props) => {
     const { value, name } = target;
 
     if (name === 'limit') {
-      props.setGridPageLimit(roughScale(value));
+      // props.setGridPageLimit(roughScale(value));
+      newGridPageLimit = roughScale(value);
     }
   };
 
@@ -72,35 +77,52 @@ const GridSettingsDialog = (props: Props) => {
       <DialogContent>
         <FormControl
           fullWidth={true}
-          /*error={this.state.inputError}*/
+          /* error={this.state.inputError} */
           style={{ overflow: 'visible' }}
         >
-          <TextField
-            /* error={this.state.inputError}*/
+          <InputLabel shrink htmlFor="pageLimit">
+            Page Limit
+          </InputLabel>
+          <Select
+            name="limit"
+            defaultValue={gridPageLimit}
+            onChange={handleGridPaginationLimit}
+          >
+            <MenuItem value="">
+              <em>select the value</em>
+            </MenuItem>
+
+            <MenuItem value={10}>10</MenuItem>
+            <MenuItem value={50}>50</MenuItem>
+            <MenuItem value={100}>100</MenuItem>
+            <MenuItem value={500}>500</MenuItem>
+          </Select>
+          <FormHelperText>Some important helper text</FormHelperText>
+          {/* <TextField
             margin="dense"
             name="limit"
             autoFocus
             label={i18n.t('core:setGridPageLimit')}
             onChange={handleGridPaginationLimit}
-            value={gridPageLimit}
+            defaultValue={gridPageLimit}
             data-tid="editGridPaginationLimit"
             fullWidth={true}
-          />
+          /> */}
         </FormControl>
       </DialogContent>
       <DialogActions>
-        {/*<Button
+        <Button
           data-tid="cancelDialog"
           title={i18n.t('core:cancel')}
           onClick={onClose}
           color="primary"
         >
           {i18n.t('core:cancel')}
-        </Button>*/}
+        </Button>
 
         <Button
           data-tid="closeGridSettingsDialog"
-          onClick={onClose}
+          onClick={() => props.setGridPageLimit(newGridPageLimit)}
           color="primary"
         >
           {i18n.t('core:ok')}
@@ -110,22 +132,19 @@ const GridSettingsDialog = (props: Props) => {
   );
 };
 
-function mapActionCreatorsToProps(dispatch) {
+/* function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
       setGridPageLimit: AppActions.setGridPageLimit
     },
     dispatch
   );
-}
+} */
 
-function mapStateToProps(state) {
+/* function mapStateToProps(state) {
   return {
     gridPageLimit: state.app.gridPageLimit
   };
-}
+} */
 
-export default connect(
-  mapStateToProps,
-  mapActionCreatorsToProps
-)(withMobileDialog()(GridSettingsDialog));
+export default withMobileDialog()(GridSettingsDialog);

@@ -18,9 +18,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { FileSystemEntry } from '-/services/utils-io';
 import Typography from '@material-ui/core/Typography';
 import Pagination from '@material-ui/lab/Pagination';
+import { FileSystemEntry } from '-/services/utils-io';
 import i18n from '-/services/i18n';
 import { getCurrentDirectoryColor, isLoading } from '-/reducers/app';
 import AppConfig from '-/config';
@@ -50,9 +50,10 @@ const GridPagination = (props: Props) => {
     renderCell,
     isAppLoading,
     currentDirectoryColor,
-    gridPageLimit
+    gridPageLimit,
+    currentPage
   } = props;
-  let { files, currentPage } = props;
+  let { files } = props;
   const [page, setPage] = useState(currentPage);
 
   useEffect(() => {
@@ -92,9 +93,9 @@ const GridPagination = (props: Props) => {
         <div
           className={className}
           style={style}
-          /*ref={ref => {
+          /* ref={ref => {
             gridRef = ref;
-          }}*/
+          }} */
           data-tid="perspectiveGridFileTable"
         >
           {page === 1 && directories.map(entry => renderCell(entry))}
@@ -127,7 +128,6 @@ const GridPagination = (props: Props) => {
               alignItems: 'center'
             }}
           >
-            {/*<Typography>Page: {page}</Typography>*/}
             <Pagination
               count={paginationCount}
               page={page}
@@ -144,7 +144,7 @@ function mapStateToProps(state) {
   return {
     isAppLoading: isLoading(state),
     currentDirectoryColor: getCurrentDirectoryColor(state),
-    gridPageLimit: state.app.gridPageLimit
+    // gridPageLimit: state.app.gridPageLimit
   };
 }
 

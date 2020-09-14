@@ -132,6 +132,7 @@ interface State {
   isGridSettingsDialogOpened: boolean;
   selectedEntryPath: string;
   selectedTag: Tag | null;
+  gridPageLimit: number;
 }
 
 class GridPerspective extends React.Component<Props, State> {
@@ -182,7 +183,9 @@ class GridPerspective extends React.Component<Props, State> {
       isAddRemoveTagsDialogOpened: false,
       isFileRenameDialogOpened: false,
       isGridSettingsDialogOpened: false,
-      selectedTag: null
+      selectedTag: null,
+      gridPageLimit:
+        settings && settings.gridPageLimit ? settings.gridPageLimit : 100
     };
   }
 
@@ -250,7 +253,8 @@ class GridPerspective extends React.Component<Props, State> {
       singleClickAction: this.state.singleClickAction,
       doubleClickAction: this.state.doubleClickAction,
       entrySize: this.state.entrySize,
-      thumbnailMode: this.state.thumbnailMode
+      thumbnailMode: this.state.thumbnailMode,
+      gridPageLimit: this.state.gridPageLimit
     };
     localStorage.setItem('tsPerspectiveGrid', JSON.stringify(settingsObj));
   }
@@ -264,6 +268,11 @@ class GridPerspective extends React.Component<Props, State> {
 
   handleLayoutSwitch = (layoutType: string) => {
     this.setState({ layoutType }, this.saveSettings);
+  };
+
+  handleGridPageLimit = (gridPageLimit: number) => {
+    this.handleCloseDialogs();
+    this.setState({ gridPageLimit }, this.saveSettings);
   };
 
   handleSortBy = sortBy => {
@@ -811,6 +820,7 @@ class GridPerspective extends React.Component<Props, State> {
         />
         <GlobalHotKeys keyMap={this.keyMap} handlers={this.keyBindingHandlers}>
           <GridPagination
+            gridPageLimit={this.state.gridPageLimit}
             className={
               layoutType === 'grid'
                 ? classes.gridContainer
@@ -842,6 +852,8 @@ class GridPerspective extends React.Component<Props, State> {
         <GridSettingsDialog
           open={this.state.isGridSettingsDialogOpened}
           onClose={this.handleCloseDialogs}
+          setGridPageLimit={this.handleGridPageLimit}
+          gridPageLimit={this.state.gridPageLimit}
         />
         <MoveCopyFilesDialog
           key={uuidv1()}
