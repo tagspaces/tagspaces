@@ -802,7 +802,14 @@ class GridPerspective extends React.Component<Props, State> {
       entryWidth = 300;
     }
     return (
-      <div style={{ height: 'calc(100% - 104px)' }}>
+      <div
+        style={{
+          height:
+            'calc(100% - ' +
+            (AppConfig.isCordova ? '290' /* '595' */ : '104') +  // todo handle cordova screen sizes
+            'px)'
+        }}
+      >
         <style>
           {`
             #gridCellTags:hover, #gridCellDescription:hover {
