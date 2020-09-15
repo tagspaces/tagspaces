@@ -288,7 +288,8 @@ class LocationManager extends React.Component<Props, State> {
     this.handleRequestCloseContextMenus();
     if (this.state.selectedLocation && this.state.selectedLocation.uuid) {
       this.props.closeLocation(this.state.selectedLocation.uuid);
-      this.directoryTreeRef[this.state.selectedLocation.uuid] = undefined;
+      this.directoryTreeRef[this.state.selectedLocation.uuid].closeLocation();
+      // this.directoryTreeRef[this.state.selectedLocation.uuid] = undefined;
       // this.directoryTreeRef[this.state.selectedLocation.uuid].closeLocation();
       /* this.setState({
         dirs: {}
@@ -688,6 +689,9 @@ class LocationManager extends React.Component<Props, State> {
               confirmCallback={result => {
                 if (result && this.state.selectedLocation) {
                   this.props.removeLocation(this.state.selectedLocation);
+                  this.directoryTreeRef[
+                    this.state.selectedLocation.uuid
+                  ].removeLocation();
                 }
               }}
               cancelDialogTID="cancelDeleteLocationDialog"

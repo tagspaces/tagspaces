@@ -70,6 +70,12 @@ const DirectoryTreeView = forwardRef((props: Props, ref) => {
       }
     },
     closeLocation() {
+      // setData(undefined);
+      if (isExpanded) {
+        setExpanded(false);
+      }
+    },
+    removeLocation() {
       setData(undefined);
     }
   }));
