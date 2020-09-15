@@ -19,13 +19,9 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import { persistStore } from 'redux-persist';
 import thunk from 'redux-thunk';
-import { createHashHistory } from 'history';
-import { routerMiddleware, routerActions } from 'react-router-redux';
 import { createLogger } from 'redux-logger';
 import rootReducer from '../reducers';
 import onlineListener from '../services/onlineListener';
-
-const history = createHashHistory();
 
 const configureStore = initialState => {
   // Redux Configuration
@@ -42,13 +38,9 @@ const configureStore = initialState => {
   });
   middleware.push(logger);
 
-  // Router Middleware
-  const router = routerMiddleware(history);
-  middleware.push(router);
-
   // Redux DevTools Configuration
   const actionCreators = {
-    ...routerActions
+    // ...routerActions
   };
   // If Redux DevTools Extension is installed use it, otherwise use Redux compose
   /* eslint-disable no-underscore-dangle */
@@ -88,4 +80,4 @@ const configureStore = initialState => {
   return { store, persistor };
 };
 
-export default { configureStore, history };
+export default { configureStore };

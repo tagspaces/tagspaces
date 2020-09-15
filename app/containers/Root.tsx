@@ -19,7 +19,7 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-import { ConnectedRouter } from 'react-router-redux';
+import { BrowserRouter } from 'react-router-dom';
 import Routes from '../routes';
 import LoadingScreen from '../components/LoadingScreen';
 import { actions as AppActions } from '../reducers/app';
@@ -37,7 +37,6 @@ import { getURLParameter } from '../utils/misc';
 type RootType = {
   store: {};
   persistor: {};
-  history: {};
 };
 
 function onBeforeLift(store) {
@@ -75,7 +74,7 @@ function onBeforeLift(store) {
   }
 }
 
-export default function Root({ store, persistor, history }: RootType) {
+export default function Root({ store, persistor }: RootType) {
   return (
     <Provider
       // @ts-ignore
@@ -94,9 +93,9 @@ export default function Root({ store, persistor, history }: RootType) {
         // @ts-ignore
         persistor={persistor}
       >
-        <ConnectedRouter history={history}>
+        <BrowserRouter>
           <Routes />
-        </ConnectedRouter>
+        </BrowserRouter>
       </PersistGate>
     </Provider>
   );

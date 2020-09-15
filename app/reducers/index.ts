@@ -16,7 +16,6 @@
  *
  */
 import { persistCombineReducers, PersistConfig } from 'redux-persist';
-import { routerReducer as router } from 'react-router-redux';
 import getStoredStateMigrateV4 from 'redux-persist/lib/integration/getStoredStateMigrateV4';
 // import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import storage from 'redux-persist/lib/storage';
@@ -106,7 +105,6 @@ const rootReducer = persistCombineReducers(rootPersistConfig, {
   app,
   locations: externalLocations ? () => externalLocations : locations,
   taglibrary: externalTagLibrary ? () => externalTagLibrary : taglibrary,
-  router,
   locationIndex
 });
 

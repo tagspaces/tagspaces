@@ -19,15 +19,11 @@
 import { compose, createStore, applyMiddleware } from 'redux';
 import { persistStore } from 'redux-persist';
 import thunk from 'redux-thunk';
-import { createBrowserHistory } from 'history';
-import { routerMiddleware } from 'react-router-redux';
 import rootReducer from '../reducers';
 import onlineListener from '../services/onlineListener';
 
-const history = createBrowserHistory();
-const router = routerMiddleware(history);
 const enhancer = compose(
-  applyMiddleware(thunk, router)
+  applyMiddleware(thunk) // , router)
   // autoRehydrate()
 );
 
@@ -42,4 +38,4 @@ function configureStore(initialState) {
   return { store, persistor };
 }
 
-export default { configureStore, history };
+export default { configureStore };
