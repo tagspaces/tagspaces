@@ -62,7 +62,7 @@ import { getLocation, Location, locationType } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-io';
 import { extractFileName } from '-/utils/paths';
 import GridPagination from '-/perspectives/grid-perspective/components/GridPagination';
-import GridSettingsDialog from '-/components/dialogs/GridSettingsDialog';
+import GridSettingsDialog from '-/perspectives/grid-perspective/components/GridSettingsDialog';
 
 const settings = JSON.parse(localStorage.getItem('tsPerspectiveGrid')); // loading settings
 

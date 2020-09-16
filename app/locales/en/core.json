@@ -469,7 +469,7 @@
   "fileExist": "File with the same name already exist",
   "importMacTags": "Import macOS tags",
   "cantDownloadLocalFile": "You can't download local files",
-  "GridSettingsTitle": "Grid Settings",
+  "gridSettingsTitle": "Grid Settings",
   "setGridPageLimit": "Grid Page Limit",
   "-": "-"
 }

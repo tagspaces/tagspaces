@@ -27,7 +27,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Input,
   Button,
   FormHelperText
 } from '@material-ui/core';
@@ -73,7 +72,7 @@ const GridSettingsDialog = (props: Props) => {
       keepMounted
       scroll="paper"
     >
-      <DialogTitle>{i18n.t('core:GridSettingsTitle')}</DialogTitle>
+      <DialogTitle>{i18n.t('core:gridSettingsTitle')}</DialogTitle>
       <DialogContent>
         <FormControl
           fullWidth={true}
