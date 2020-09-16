@@ -241,7 +241,12 @@ export default function buildDesktopMenu(mainPageProps: any) {
           label: i18n.t('core:toggleFullScreen'),
           accelerator: mainPageProps.keyBindings.toggleFullScreen,
           click: (item, focusedWindow) => {
-            focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
+            if (focusedWindow.isFullScreen()) {
+              document.exitFullscreen();
+              focusedWindow.setFullScreen(false);
+            } else {
+              focusedWindow.setFullScreen(true);
+            }
           }
         },
         {

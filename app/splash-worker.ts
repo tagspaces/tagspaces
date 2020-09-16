@@ -21,8 +21,6 @@ import { walkDirectory, enhanceEntry } from './services/utils-io';
 import AppConfig from './config';
 import { getThumbnailURLPromise } from './services/thumbsgenerator';
 
-let isGeneratingThumbs = false;
-
 function init() {
   console.log('Init worker');
   ipcRenderer.on('worker', (event, arg) => {
@@ -89,11 +87,7 @@ function init() {
       }
       case 'createThumbnails': {
         console.log('createThumbnails started in worker window');
-        if (
-          !arg.tmbGenerationList ||
-          arg.tmbGenerationList.length < 1 ||
-          isGeneratingThumbs
-        ) {
+        if (!arg.tmbGenerationList || arg.tmbGenerationList.length < 1) {
           ipcRenderer.send('worker', {
             id: arg.id,
             action: arg.action,
@@ -102,32 +96,20 @@ function init() {
           });
           break;
         }
-        isGeneratingThumbs = true;
         const tmbGenerationPromises = [];
-        let splashShown = false;
         arg.tmbGenerationList.map(entry => {
-          if (!splashShown && entry.endsWith('pdf')) {
-            splashShown = true;
-            ipcRenderer.send('setSplashVisibility', {
-              visibility: true
-            });
-          }
           tmbGenerationPromises.push(getThumbnailURLPromise(entry));
           return true;
         });
-        Promise.all(tmbGenerationPromises)
+        Promise.all(tmbGenerationPromises) // TODO check allSettled
           .then(tmbResult => {
             console.log('tmb results' + JSON.stringify(tmbResult));
-            ipcRenderer.send('setSplashVisibility', {
-              visibility: false
-            });
             ipcRenderer.send('worker', {
               id: arg.id,
               action: arg.action,
               result: tmbResult,
               error: ''
             });
-            isGeneratingThumbs = false;
             return true;
           })
           .catch(error => {
@@ -138,10 +120,6 @@ function init() {
               result: [],
               error: 'Error generating thumbnails: ' + error
             });
-            ipcRenderer.send('setSplashVisibility', {
-              visibility: false
-            });
-            isGeneratingThumbs = false;
           });
         break;
       }

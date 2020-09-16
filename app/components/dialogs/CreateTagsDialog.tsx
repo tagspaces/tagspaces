@@ -90,6 +90,8 @@ class CreateTagsDialog extends React.Component<Props, State> {
         scroll="paper"
         onKeyDown={event => {
           if (event.key === 'Enter' || event.keyCode === 13) {
+            event.preventDefault();
+            event.stopPropagation();
             this.onConfirm();
           } else if (event.key === 'Escape') {
             onClose();
