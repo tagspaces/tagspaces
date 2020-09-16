@@ -19,9 +19,8 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
-// import { push } from 'react-router-redux';
 import Root from './containers/Root';
-import { configureStore, history } from './store/configureStore';
+import configureStore from './store/configureStore';
 import './app.global.css';
 
 const { store, persistor } = configureStore({});
@@ -36,7 +35,7 @@ if (process.env.NODE_ENV === 'production') {
 
 render(
   <AppContainer>
-    <Root store={store} persistor={persistor} history={history} />
+    <Root store={store} persistor={persistor} />
   </AppContainer>,
   document.getElementById('root')
 );

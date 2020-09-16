@@ -20,7 +20,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { translate } from 'react-i18next';
 import Button from '@material-ui/core/Button';
-import { history } from '../store/configureStore';
 import i18n from '../services/i18n';
 // import Backend from '../services/backend';
 
@@ -47,7 +46,7 @@ class LoginPage extends Component {
 
   handleLogin = e => {
     e.preventDefault(); // dev mode
-    history.push('/');
+    // history.push('/');
   };
 
   render() {
