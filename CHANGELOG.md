@@ -1,5 +1,46 @@
 # Changelog
 
+## Version 3.6.2 / 2020.09.16
+
+### Community
+
+feat: improving using enter for confirming some dialogs
+fix: scrolling in the main folder panel
+fix: move pdf thumb generation in main windows
+fix: exiting full screen from PDF-viewer
+chore: updating ja and cn translations
+fix: typo and wrong tooltip #1167
+chore: update cordova ios v6.1.0 (#1170)
+feat: Android download button from S3 (#1164)
+fix: split pane && improvements
+feat: read macos tags (#1159)
+feat: import files fine tuning (#1157)
+feat: add upload progress dialog (#1152)
+feat: use upload dialog for adding existing file functionality from plus button and directory menu
+fix: loosing tag color on drag and drop
+fix: ui glitch in folder navigation #1095
+impr: custom preview for DnD tags (#1156)
+fix: upload to S3 from/to subdirs tree only
+fix: DnD to leaf nodes
+pro: Upload many files from local folder to a s3 folder in the location manager && from Desktop
+fix Move many files from local folder to subfolder on the same level - change in the default perspectiv
+fix DnD in subfolder
+fix: colors in rc-table by dark-mode
+feat: enable multiple files upload
+feat: add uuid for the folders in the tsm.json
+fix: tag library import functionality
+fix: issue with deleting tags with the same name in different taggroups #1145
+fix: various issues in the tag library
+chore: ui improvement, added hover for row elements
+feat: making running in portable mode visible in the desktop app
+feat: improving entry selection in the row mode of the default perspective
+fix: icon of broken thumbnail images
+fix: toggling file operation on selection change
+fix: open prev and next documents with keyboard shortcuts
+chore: upgrading pdf.js to 2.4.456
+chore: upgrading electron to 9.0.3
+feat: automatic rotation of JPG according to EXIF now native in chrome 81
+
 ## Version 3.5.4 / 2020.06.08
 
 ### Community
