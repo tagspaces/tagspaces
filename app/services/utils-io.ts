@@ -539,14 +539,16 @@ export function findColorForFileEntry(
     return AppConfig.defaultFolderColor;
   }
   let color = AppConfig.defaultFileColor;
-  supportedFileTypes.map(fileType => {
-    if (fileType.type.toLowerCase() === fileExtension.toLowerCase()) {
-      if (fileType.color) {
-        color = fileType.color;
+  if (fileExtension !== undefined) {
+    supportedFileTypes.map(fileType => {
+      if (fileType.type.toLowerCase() === fileExtension.toLowerCase()) {
+        if (fileType.color) {
+          color = fileType.color;
+        }
       }
-    }
-    return true;
-  });
+      return true;
+    });
+  }
   return color;
 }
 

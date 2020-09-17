@@ -94,6 +94,16 @@ const TreeVizPerspectiveAsync = props => (
   </React.Suspense>
 );
 
+let KanBanPerspective = React.Fragment;
+if (Pro && Pro.Perspectives && Pro.Perspectives.KanBanPerspective) {
+  KanBanPerspective = Pro.Perspectives.KanBanPerspective;
+}
+const KanBanPerspectiveAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <KanBanPerspective {...props} />
+  </React.Suspense>
+);
+
 const WelcomePanel = React.lazy(() =>
   import(/* webpackChunkName: "WelcomePanel" */ './WelcomePanel')
 );
@@ -343,6 +353,16 @@ class FolderContainer extends React.Component<Props, State> {
     if (this.state.currentPerspective === 'mapique') {
       return (
         <MapiquePerspectiveAsync
+          directoryContent={this.props.directoryContent}
+          currentDirectoryPath={this.props.currentDirectoryPath}
+          windowWidth={this.props.windowWidth}
+          switchPerspective={this.switchPerspective}
+        />
+      );
+    }
+    if (this.state.currentPerspective === 'kanban') {
+      return (
+        <KanBanPerspectiveAsync
           directoryContent={this.props.directoryContent}
           currentDirectoryPath={this.props.currentDirectoryPath}
           windowWidth={this.props.windowWidth}

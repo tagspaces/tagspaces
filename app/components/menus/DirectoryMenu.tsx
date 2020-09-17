@@ -35,6 +35,7 @@ import DefaultPerspectiveIcon from '@material-ui/icons/GridOn';
 import GalleryPerspectiveIcon from '@material-ui/icons/Camera';
 import MapiquePerspectiveIcon from '@material-ui/icons/Map';
 // import TreeVizPerspectiveIcon from '@material-ui/icons/AccountTree';
+import KanBanPerspectiveIcon from '@material-ui/icons/AccountTree';
 import NewFileIcon from '@material-ui/icons/InsertDriveFile';
 import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import RenameFolderIcon from '@material-ui/icons/FormatTextdirectionLToR';
@@ -523,6 +524,12 @@ const DirectoryMenu = (props: Props) => {
               </ListItemIcon>
               <ListItemText primary="TreeViz Perspective" />
             </MenuItem> */}
+            <MenuItem data-tid="openTreeVizPerspective" onClick={() => switchPerspective('kanban')} title="Switch to kanban visualization perspective">
+              <ListItemIcon>
+                <KanBanPerspectiveIcon />
+              </ListItemIcon>
+              <ListItemText primary="KanBan Perspective" />
+            </MenuItem>
             <Divider />
           </div>
         )}
