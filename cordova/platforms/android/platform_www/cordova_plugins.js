@@ -261,7 +261,6 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
     "cordova-plugin-file": "6.0.2",
     "cordova-plugin-file-opener2": "3.0.4",
     "cordova-plugin-whitelist": "1.3.4",
-    "cordova-plugin-wkwebview-engine": "1.2.1",
     "es6-promise-plugin": "4.2.2",
     "cordova-plugin-x-socialsharing": "5.6.8"
   };
