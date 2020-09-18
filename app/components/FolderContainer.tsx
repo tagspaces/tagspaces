@@ -364,6 +364,7 @@ class FolderContainer extends React.Component<Props, State> {
       return (
         <KanBanPerspectiveAsync
           directoryContent={this.props.directoryContent}
+          openFile={this.props.openFile}
           currentDirectoryPath={this.props.currentDirectoryPath}
           windowWidth={this.props.windowWidth}
           switchPerspective={this.switchPerspective}
