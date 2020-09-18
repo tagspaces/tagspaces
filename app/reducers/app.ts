@@ -25,7 +25,8 @@ import {
   enhanceEntry,
   deleteFilesPromise,
   loadMetaDataPromise,
-  renameFilesPromise
+  renameFilesPromise,
+  enhanceDirectoryContent
 } from '../services/utils-io';
 import {
   extractFileExtension,
@@ -1495,43 +1496,22 @@ function prepareDirectoryContent(
   dispatch,
   getState
 ) {
-  const directoryContent = [];
-  const tmbGenerationPromises = [];
-  const tmbGenerationList = [];
-  const isWorkerAvailable = PlatformIO.isWorkerAvailable();
   const currentLocation: Location = getLocation(
     getState(),
     getState().app.currentLocationId
   );
   const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
 
-  dirEntries.map(entry => {
-    if (!settings.showUnixHiddenEntries && entry.name.startsWith('.')) {
-      return true;
-    }
-
-    if (isCloudLocation) {
-      entry.url = PlatformIO.getURLforPath(entry.path);
-    }
-
-    const enhancedEntry = enhanceEntry(entry);
-    directoryContent.push(enhancedEntry);
-    if (
-      // Enable thumb generation by
-      !AppConfig.isWeb && // not in webdav mode
-      !PlatformIO.haveObjectStoreSupport() && // not in object store mode
-      enhancedEntry.isFile && // only for files
-      settings.useGenerateThumbnails // enabled in the settings
-    ) {
-      const isPDF = enhancedEntry.path.endsWith('.pdf');
-      if (isWorkerAvailable && !isPDF) {
-        tmbGenerationList.push(enhancedEntry.path);
-      } else {
-        tmbGenerationPromises.push(getThumbnailURLPromise(enhancedEntry.path));
-      }
-    }
-    return true;
-  });
+  const {
+    directoryContent,
+    tmbGenerationPromises,
+    tmbGenerationList
+  } = enhanceDirectoryContent(
+    dirEntries,
+    isCloudLocation,
+    settings.showUnixHiddenEntries,
+    settings.useGenerateThumbnails
+  );
 
   function handleTmbGenerationResults(results) {
     // console.log('tmb results' + JSON.stringify(results));

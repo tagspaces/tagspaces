@@ -32,6 +32,8 @@ import {
 // import { formatDateTime4Tag } from '../utils/misc';
 import versionMeta from '../version.json';
 import { Tag } from '../reducers/taglibrary';
+import { getLocation, Location, locationType } from '-/reducers/locations';
+import { getThumbnailURLPromise } from '-/services/thumbsgenerator';
 
 export interface FileSystemEntry {
   uuid?: string;
@@ -58,6 +60,58 @@ export interface FileSystemEntryMeta {
   appName: string;
   appVersionUpdated: string;
   lastUpdated: string;
+}
+
+export function enhanceDirectoryContent(
+  dirEntries,
+  isCloudLocation,
+  showUnixHiddenEntries,
+  useGenerateThumbnails,
+  showDirs = true
+) {
+  const directoryContent = [];
+  const tmbGenerationPromises = [];
+  const tmbGenerationList = [];
+  const isWorkerAvailable = PlatformIO.isWorkerAvailable();
+
+  dirEntries.map(entry => {
+    if (!showUnixHiddenEntries && entry.name.startsWith('.')) {
+      return true;
+    }
+
+    if (!showDirs && !entry.isFile) {
+      return true;
+    }
+
+    if (isCloudLocation) {
+      // eslint-disable-next-line no-param-reassign
+      entry.url = PlatformIO.getURLforPath(entry.path);
+    }
+
+    const enhancedEntry = enhanceEntry(entry);
+    directoryContent.push(enhancedEntry);
+    if (
+      // Enable thumb generation by
+      !AppConfig.isWeb && // not in webdav mode
+      !PlatformIO.haveObjectStoreSupport() && // not in object store mode
+      enhancedEntry.isFile && // only for files
+      useGenerateThumbnails // enabled in the settings
+    ) {
+      const isPDF = enhancedEntry.path.endsWith('.pdf');
+      if (isWorkerAvailable && !isPDF) {
+        tmbGenerationList.push(enhancedEntry.path);
+      } else {
+        tmbGenerationPromises.push(getThumbnailURLPromise(enhancedEntry.path));
+      }
+    }
+    return true;
+  });
+
+  return {
+    directoryContent,
+    tmbGenerationPromises,
+    tmbGenerationList
+  };
 }
 
 export function enhanceEntry(entry: any): FileSystemEntry {
