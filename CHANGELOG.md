@@ -2,44 +2,42 @@
 
 ## Version 3.6.2 / 2020.09.16
 
-### Community
+### 🎉 New features
 
-feat: improving using enter for confirming some dialogs
-fix: scrolling in the main folder panel
-fix: move pdf thumb generation in main windows
-fix: exiting full screen from PDF-viewer
-chore: updating ja and cn translations
-fix: typo and wrong tooltip #1167
-chore: update cordova ios v6.1.0 (#1170)
-feat: Android download button from S3 (#1164)
-fix: split pane && improvements
-feat: read macos tags (#1159)
-feat: import files fine tuning (#1157)
-feat: add upload progress dialog (#1152)
-feat: use upload dialog for adding existing file functionality from plus button and directory menu
-fix: loosing tag color on drag and drop
-fix: ui glitch in folder navigation #1095
-impr: custom preview for DnD tags (#1156)
-fix: upload to S3 from/to subdirs tree only
-fix: DnD to leaf nodes
-pro: Upload many files from local folder to a s3 folder in the location manager && from Desktop
-fix Move many files from local folder to subfolder on the same level - change in the default perspectiv
-fix DnD in subfolder
-fix: colors in rc-table by dark-mode
-feat: enable multiple files upload
-feat: add uuid for the folders in the tsm.json
-fix: tag library import functionality
-fix: issue with deleting tags with the same name in different taggroups #1145
-fix: various issues in the tag library
-chore: ui improvement, added hover for row elements
-feat: making running in portable mode visible in the desktop app
-feat: improving entry selection in the row mode of the default perspective
-fix: icon of broken thumbnail images
-fix: toggling file operation on selection change
-fix: open prev and next documents with keyboard shortcuts
-chore: upgrading pdf.js to 2.4.456
-chore: upgrading electron to 9.0.3
-feat: automatic rotation of JPG according to EXIF now native in chrome 81
+- added upload progress dialog for copying/uploading many files at once
+- running in portable mode now visible in the desktop app
+- taking advantage of the automatic rotation of JPG according to EXIF now native starting from Chrome 81
+- **[PRO]** add a download button for files on S3 in Android
+- **[PRO]** added a feature in beta status for importing macOS tags in TS
+- **[PRO]** upload to S3 from/to sub directories tree only now possible
+- **[PRO]** uploading many files from local folder to a S3 folder in the location manager and from the Desktop now possible
+
+### 🌟 Enhancements
+
+- improved using of the Enter key for confirming most of the dialogs
+- updated Japanese and Chinese translations
+- enabling exit of the full screen from the PDF-viewer in touch screen only systems
+- moving the PDF thumb generation in main windows in order to prevent showing the worker window
+- fine tuning the importing of files
+- added a custom preview for DnD tags
+- added an uuid for the current folder in its tsm.json
+- added hover for row elements in grid perspective
+- improved entry selection in the row mode of the default perspective
+- upgraded pdf.js to 2.4.456 and electron to 9.0.3
+
+### 🐛 Bug fixes
+
+- fixed scrolling in the main folder panel
+- fixed a typo and wrong tooltip (#1167)
+- fixed user interface glitch in folder navigation (#1095)
+- fixed drag and drop to leaf nodes
+- fixed Move many files from local folder to sub folder on the same level
+- fixed tag library import functionality
+- fixed issue with deleting tags with the same name in different tag groups #1145
+- fixed various small issues in the tag library
+- fixed icon of broken thumbnail images
+- fixed toggling file operation on selection change
+- fixed open prev and next documents with keyboard shortcuts
 
 ## Version 3.5.4 / 2020.06.08
 
