@@ -290,6 +290,7 @@ class EntryContainer extends React.Component<Props, State> {
       }
 
       this.setState({ currentEntry: nextEntry });
+      this.shouldReload = nextEntry.shouldReload;
 
       if (nextProps.isReadOnlyMode) {
         this.setState({ editingSupported: false });
@@ -1041,7 +1042,7 @@ class EntryContainer extends React.Component<Props, State> {
           i18n.language +
           (this.shouldReload ? '&t=' + new Date().getTime() : '');
       }
-      this.shouldReload = false;
+      // this.shouldReload = false;
 
       // if (!currentEntry.isFile) {
       //   fileOpenerURL = currentEntry.path + '/index.html';
