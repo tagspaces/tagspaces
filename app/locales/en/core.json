@@ -469,5 +469,9 @@
   "fileExist": "File with the same name already exist",
   "importMacTags": "Import macOS tags",
   "cantDownloadLocalFile": "You can't download local files",
+  "perspectiveSettingsTitle": "Perspective Settings",
+  "unlimited": "Unlimited",
+  "pageLimit": "Page Limit",
+  "pageLimitHelp": "Set number of files per page",
   "-": "-"
 }
