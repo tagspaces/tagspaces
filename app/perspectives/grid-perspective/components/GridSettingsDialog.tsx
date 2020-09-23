@@ -51,7 +51,6 @@ const GridSettingsDialog = (props: Props) => {
     const { value, name } = target;
 
     if (name === 'limit') {
-      // props.setGridPageLimit(roughScale(value));
       newGridPageLimit = roughScale(value);
     }
   };
@@ -72,7 +71,7 @@ const GridSettingsDialog = (props: Props) => {
       keepMounted
       scroll="paper"
     >
-      <DialogTitle>{i18n.t('core:gridSettingsTitle')}</DialogTitle>
+      <DialogTitle>{i18n.t('core:perspectiveSettingsTitle')}</DialogTitle>
       <DialogContent>
         <FormControl
           fullWidth={true}
@@ -80,7 +79,7 @@ const GridSettingsDialog = (props: Props) => {
           style={{ overflow: 'visible' }}
         >
           <InputLabel shrink htmlFor="pageLimit">
-            Page Limit
+            {i18n.t('core:pageLimit')}
           </InputLabel>
           <Select
             name="limit"
@@ -91,19 +90,9 @@ const GridSettingsDialog = (props: Props) => {
             <MenuItem value={50}>50</MenuItem>
             <MenuItem value={100}>100</MenuItem>
             <MenuItem value={500}>500</MenuItem>
-            <MenuItem value={undefined}>Unlimited</MenuItem>
+            <MenuItem value={undefined}>{i18n.t('core:unlimited')}</MenuItem>
           </Select>
-          <FormHelperText>Set number of files per page</FormHelperText>
-          {/* <TextField
-            margin="dense"
-            name="limit"
-            autoFocus
-            label={i18n.t('core:setGridPageLimit')}
-            onChange={handleGridPaginationLimit}
-            defaultValue={gridPageLimit}
-            data-tid="editGridPaginationLimit"
-            fullWidth={true}
-          /> */}
+          <FormHelperText>{i18n.t('core:pageLimitHelp')}</FormHelperText>
         </FormControl>
       </DialogContent>
       <DialogActions>
@@ -127,20 +116,5 @@ const GridSettingsDialog = (props: Props) => {
     </Dialog>
   );
 };
-
-/* function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators(
-    {
-      setGridPageLimit: AppActions.setGridPageLimit
-    },
-    dispatch
-  );
-} */
-
-/* function mapStateToProps(state) {
-  return {
-    gridPageLimit: state.app.gridPageLimit
-  };
-} */
 
 export default withMobileDialog()(GridSettingsDialog);
