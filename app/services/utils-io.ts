@@ -60,6 +60,7 @@ export interface FileSystemEntryMeta {
   appName: string;
   appVersionUpdated: string;
   lastUpdated: string;
+  entriesOrder?: Array<string>
 }
 
 export function enhanceDirectoryContent(
@@ -517,7 +518,8 @@ export async function loadMetaDataPromise(
       appVersionCreated: metaData.appVersionCreated || '',
       appName: metaData.appName || '',
       appVersionUpdated: metaData.appVersionUpdated || '',
-      lastUpdated: metaData.lastUpdated || ''
+      lastUpdated: metaData.lastUpdated || '',
+      entriesOrder: metaData.entriesOrder || []
     };
   }
   return metaDataObject;

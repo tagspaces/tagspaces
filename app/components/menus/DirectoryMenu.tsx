@@ -35,7 +35,7 @@ import DefaultPerspectiveIcon from '@material-ui/icons/GridOn';
 import GalleryPerspectiveIcon from '@material-ui/icons/Camera';
 import MapiquePerspectiveIcon from '@material-ui/icons/Map';
 // import TreeVizPerspectiveIcon from '@material-ui/icons/AccountTree';
-import KanBanPerspectiveIcon from '@material-ui/icons/AccountTree';
+import KanBanPerspectiveIcon from '@material-ui/icons/Dashboard';
 import NewFileIcon from '@material-ui/icons/InsertDriveFile';
 import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import RenameFolderIcon from '@material-ui/icons/FormatTextdirectionLToR';
