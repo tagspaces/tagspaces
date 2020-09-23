@@ -31,7 +31,7 @@ export default (theme: any): any => ({
     padding: 0,
     paddingRight: 10,
     margin: 0,
-    paddingBottom: 200
+    paddingBottom: 10
   },
   gridCell: {
     border: '2px solid transparent',
