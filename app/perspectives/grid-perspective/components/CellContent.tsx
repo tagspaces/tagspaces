@@ -164,7 +164,7 @@ const CellContent = (props: Props) => {
         </div>
         <Typography
           className={classes.gridCellTitle}
-          data-tid="fsEntryName"
+          data-tid={'fsEntryName_' + fsEntry.name}
           title={fsEntry.path}
           noWrap={true}
           variant="body1"
