@@ -60,7 +60,8 @@ export interface FileSystemEntryMeta {
   appName: string;
   appVersionUpdated: string;
   lastUpdated: string;
-  entriesOrder?: Array<string>
+  files?: Array<FileSystemEntry>;
+  dirs?: Array<FileSystemEntry>;
 }
 
 export function enhanceDirectoryContent(
@@ -510,17 +511,20 @@ export async function loadMetaDataPromise(
       PlatformIO.getDirSeparator()
     );
     const metaData = await loadJSONFile(metaFilePath);
-    metaDataObject = {
-      id: metaData.id || uuidv1(),
-      description: metaData.description || '',
-      color: metaData.color || '',
-      tags: metaData.tags || [],
-      appVersionCreated: metaData.appVersionCreated || '',
-      appName: metaData.appName || '',
-      appVersionUpdated: metaData.appVersionUpdated || '',
-      lastUpdated: metaData.lastUpdated || '',
-      entriesOrder: metaData.entriesOrder || []
-    };
+    if (metaData) {
+      metaDataObject = {
+        id: metaData.id || uuidv1(),
+        description: metaData.description || '',
+        color: metaData.color || '',
+        tags: metaData.tags || [],
+        appVersionCreated: metaData.appVersionCreated || '',
+        appName: metaData.appName || '',
+        appVersionUpdated: metaData.appVersionUpdated || '',
+        lastUpdated: metaData.lastUpdated || '',
+        files: metaData.files || [],
+        dirs: metaData.dirs || []
+      };
+    }
   }
   return metaDataObject;
 }
