@@ -15,8 +15,10 @@ import {
   closeSettingsDialog,
   reloadDirectory,
   openEntry,
-  tsFolder
+  tsFolder,
+  checkFileExtForExist
 } from './general.helpers';
+import { searchEngine } from './search.spec';
 
 const subFolderName = '/test-perspective-grid';
 const subFolderContentExtractionPath =
@@ -54,6 +56,10 @@ describe('TST51 - Perspective Grid', () => {
     await reloadDirectory();
     await delay(500);
     await openEntry(tsFolder);
+    await delay(500);
+    // await checkFileExtForExist();
+    await searchEngine('jpg');
+    expect.stringContaining('jpg');
 
     // // should find hidden file with dot in the begin of the filename
     // await global.client.waitForVisible(perspectiveGridTable);
