@@ -41,7 +41,7 @@ extensionList.forEach(extension => {
 });
 
 // Download
-const winUrl = 'http://dl.min.io/server/minio/release/windows-amd64/minio.exe';
+const winUrl = 'https://dl.min.io/server/minio/release/windows-amd64/minio.exe';
 const linuxUrl = 'https://dl.min.io/server/minio/release/linux-amd64/minio';
 const macUrl = 'https://dl.min.io/server/minio/release/darwin-amd64/minio';
 const isWin = /^win/.test(process.platform);
