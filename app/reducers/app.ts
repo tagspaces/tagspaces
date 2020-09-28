@@ -22,7 +22,6 @@ import { Location, getLocation, locationType } from './locations';
 import PlatformIO from '../services/platform-io';
 import AppConfig from '../config';
 import {
-  enhanceEntry,
   deleteFilesPromise,
   loadMetaDataPromise,
   renameFilesPromise,
@@ -41,7 +40,7 @@ import {
 import { formatDateTime4Tag, getURLParameter } from '../utils/misc';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
-import { getThumbnailURLPromise } from '../services/thumbsgenerator';
+// import { getThumbnailURLPromise } from '../services/thumbsgenerator';
 import { actions as LocationIndexActions } from './location-index';
 import { Tag } from './taglibrary';
 

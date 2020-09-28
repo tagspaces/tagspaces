@@ -365,7 +365,19 @@ class FolderContainer extends React.Component<Props, State> {
         <KanBanPerspectiveAsync
           directoryContent={this.props.directoryContent}
           openFile={this.props.openFile}
+          loadParentDirectoryContent={this.props.loadParentDirectoryContent}
+          deleteFile={this.props.deleteFile}
+          renameFile={this.props.renameFile}
+          openDirectory={this.props.openDirectory}
+          showInFileManager={this.props.showInFileManager}
           currentDirectoryPath={this.props.currentDirectoryPath}
+          setLastSelectedEntry={this.props.setLastSelectedEntry}
+          perspectiveCommand={this.state.perspectiveCommand}
+          addTags={this.props.addTags}
+          editTagForEntry={this.props.editTagForEntry}
+          deleteDirectory={this.props.deleteDirectory}
+          removeTags={this.props.removeTags}
+          removeAllTags={this.props.removeAllTags}
           windowWidth={this.props.windowWidth}
           switchPerspective={this.switchPerspective}
         />
