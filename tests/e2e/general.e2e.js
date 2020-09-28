@@ -89,4 +89,24 @@ describe('TST51 - Perspective Grid', () => {
     await searchEngine('mp4');
     expect.stringContaining('mp4');
   });
+
+  it('TST0516 - Generate thumbnail from PDF [generate_thumbnail_PDF,electron]', async () => {
+    await delay(500);
+    await openSettingsDialog();
+    // activate 'Show Hidden File' functionality in the general settings
+    const showUnixHiddenEntries = await global.client.$(
+      '[data-tid=settingsSetShowUnixHiddenEntries]'
+    );
+    await showUnixHiddenEntries.waitForDisplayed();
+    await showUnixHiddenEntries.click();
+    await closeSettingsDialog();
+    await delay(500);
+    await reloadDirectory();
+    await delay(500);
+    await openEntry(tsFolder);
+    await delay(500);
+    // await checkFileExtForExist();
+    await searchEngine('pdf');
+    expect.stringContaining('pdf');
+  });
 });
