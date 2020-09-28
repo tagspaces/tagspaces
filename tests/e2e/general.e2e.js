@@ -42,7 +42,7 @@ describe('TST51 - Perspective Grid', () => {
     await closeFileProperties();
   });
 
-  it('TST0510 - Generate thumbnail from Images [generate_thumbnail,electron]', async () => {
+  it('TST0510 - Generate thumbnail from Images [generate_thumbnail_images,electron]', async () => {
     await delay(500);
     await openSettingsDialog();
     // activate 'Show Hidden File' functionality in the general settings
@@ -68,5 +68,25 @@ describe('TST51 - Perspective Grid', () => {
     //   hiddenFile
     // );
     // expect(hiddenFile).toBe(hiddenEntry);
+  });
+
+  it('TST0511 - Generate thumbnail from Videos [generate_thumbnail_videos,electron]', async () => {
+    await delay(500);
+    await openSettingsDialog();
+    // activate 'Show Hidden File' functionality in the general settings
+    const showUnixHiddenEntries = await global.client.$(
+      '[data-tid=settingsSetShowUnixHiddenEntries]'
+    );
+    await showUnixHiddenEntries.waitForDisplayed();
+    await showUnixHiddenEntries.click();
+    await closeSettingsDialog();
+    await delay(500);
+    await reloadDirectory();
+    await delay(500);
+    await openEntry(tsFolder);
+    await delay(500);
+    // await checkFileExtForExist();
+    await searchEngine('mp4');
+    expect.stringContaining('mp4');
   });
 });
