@@ -1,6 +1,7 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 import { delay } from './hook';
 import { firstFile, openContextEntryMenu } from './test-utils.spec';
+import { clearInputValue } from './location.helpers';
 
 export const defaultLocationPath =
   './testdata/file-structure/supported-filestypes';
@@ -8,6 +9,8 @@ export const defaultLocationName = 'supported-filestypes';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const newLocationName = 'Location Name Changed';
 export const tsFolder = '\\.ts';
+
+const newHTMLFileName = 'newHTMLFile.html';
 
 export async function createLocation(
   locationPath,
@@ -87,5 +90,42 @@ export async function openEntry(entryName) {
   );
   await eName.waitForDisplayed();
   await eName.doubleClick();
+  await delay(500);
+}
+
+export async function newContent() {
+  await delay(500);
+  const newFile = await global.client.$('[data-tid=locationManager]');
+  await newFile.waitForDisplayed();
+  await newFile.click();
+  await delay(500);
+  const newNoteFile = await global.client.$(
+    '[data-tid=createRichTextFileButton]'
+  );
+  await newNoteFile.waitForDisplayed();
+  await newNoteFile.click();
+  await delay(500);
+  const toggleProperties = await global.client.$(
+    '[data-tid=fileContainerToggleProperties]'
+  );
+  await toggleProperties.waitForDisplayed();
+  await toggleProperties.click();
+  await delay(500);
+  const renameFileDialogInput = await global.client.$(
+    '[data-tid=fileNameProperties] input'
+  );
+  await renameFileDialogInput.waitForDisplayed();
+  await clearInputValue(renameFileDialogInput);
+  await renameFileDialogInput.keys(newHTMLFileName);
+  const confirmReanmeFileDialog = await global.client.$(
+    '[data-tid=fileContainerSaveFile]'
+  );
+  await confirmReanmeFileDialog.click();
+  await delay(500);
+  const closeFile = await global.client.$(
+    '[data-tid=fileContainerCloseOpenedFile]'
+  );
+  await closeFile.waitForDisplayed();
+  await closeFile.click();
   await delay(500);
 }

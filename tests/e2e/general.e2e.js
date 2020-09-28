@@ -8,7 +8,8 @@ import {
   defaultLocationPath,
   defaultLocationName,
   closeFileProperties,
-  createMinioLocation
+  createMinioLocation,
+  renameFirstFile
 } from './location.helpers';
 import {
   openSettingsDialog,
@@ -16,7 +17,9 @@ import {
   reloadDirectory,
   openEntry,
   tsFolder,
-  checkFileExtForExist
+  checkFileExtForExist,
+  newContent,
+  newHTMLFileName
 } from './general.helpers';
 import { searchEngine } from './search.spec';
 
@@ -40,6 +43,17 @@ describe('TST51 - Perspective Grid', () => {
     await openLocation(defaultLocationName);
     // await delay(500);
     await closeFileProperties();
+  });
+
+  it('TST0501 - Create HTML file [create_HTML, electron]', async () => {
+    await delay(500);
+    await newContent(newHTMLFileName);
+    await delay(500);
+    // await renameFirstFile(newHTMLFIleName);
+    await delay(500);
+    await searchEngine('html');
+    await delay(500);
+    expect.stringContaining('html');
   });
 
   it('TST0510 - Generate thumbnail from Images [generate_thumbnail_images,electron]', async () => {
