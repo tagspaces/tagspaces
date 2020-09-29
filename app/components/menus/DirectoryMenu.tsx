@@ -524,7 +524,11 @@ const DirectoryMenu = (props: Props) => {
               </ListItemIcon>
               <ListItemText primary="TreeViz Perspective" />
             </MenuItem> */}
-            <MenuItem data-tid="openTreeVizPerspective" onClick={() => switchPerspective('kanban')} title="Switch to kanban visualization perspective">
+            <MenuItem
+              data-tid="openTreeVizPerspective"
+              onClick={() => switchPerspective('kanban')}
+              title="Switch to kanban visualization perspective"
+            >
               <ListItemIcon>
                 <KanBanPerspectiveIcon />
               </ListItemIcon>
