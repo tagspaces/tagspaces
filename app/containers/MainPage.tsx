@@ -721,11 +721,13 @@ class MainPage extends Component<Props, State> {
             onClose={toggleProgressDialog}
           />
         )}
-        <CreateDirectoryDialog
-          open={isCreateDirectoryOpened}
-          onClose={toggleCreateDirectoryDialog}
-          selectedDirectoryPath={directoryPath}
-        />
+        {isCreateDirectoryOpened && (
+          <CreateDirectoryDialog
+            open={isCreateDirectoryOpened}
+            onClose={toggleCreateDirectoryDialog}
+            selectedDirectoryPath={directoryPath}
+          />
+        )}
         <CreateFileDialog
           open={isCreateFileDialogOpened}
           selectedDirectoryPath={
