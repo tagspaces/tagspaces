@@ -32,7 +32,6 @@ import {
 // import { formatDateTime4Tag } from '../utils/misc';
 import versionMeta from '../version.json';
 import { Tag } from '../reducers/taglibrary';
-import { getLocation, Location, locationType } from '-/reducers/locations';
 import { getThumbnailURLPromise } from '-/services/thumbsgenerator';
 
 export interface FileSystemEntry {
@@ -69,7 +68,8 @@ export function enhanceDirectoryContent(
   isCloudLocation,
   showUnixHiddenEntries,
   useGenerateThumbnails,
-  showDirs = true
+  showDirs = true,
+  limit = undefined
 ) {
   const directoryContent = [];
   const tmbGenerationPromises = [];
@@ -82,6 +82,10 @@ export function enhanceDirectoryContent(
     }
 
     if (!showDirs && !entry.isFile) {
+      return true;
+    }
+
+    if (limit !== undefined && directoryContent.length >= limit) {
       return true;
     }
 
