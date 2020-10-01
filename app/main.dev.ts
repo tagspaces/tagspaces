@@ -160,6 +160,7 @@ app.on('ready', async () => {
     height: mainWindowState.height,
     // icon: path.join(__dirname, 'assets/icons/128x128.png'),
     webPreferences: {
+      spellcheck: true,
       nodeIntegration: true,
       webviewTag: true
     }
