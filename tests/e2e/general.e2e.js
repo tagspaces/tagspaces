@@ -17,8 +17,11 @@ import {
   reloadDirectory,
   openEntry,
   tsFolder,
-  checkFileExtForExist,
+  openDirectoryMenu,
+  createNewDirectory,
   newContent,
+  closeOpenedFile,
+  deleteDirectory,
   newHTMLFileName
 } from './general.helpers';
 import { searchEngine } from './search.spec';
@@ -27,6 +30,7 @@ const subFolderName = '/test-perspective-grid';
 const subFolderContentExtractionPath =
   defaultLocationPath + '/content-extraction';
 const subFolderThumbnailsPath = defaultLocationPath + '/thumbnails';
+const testFolder = 'testFolder';
 
 describe('TST51 - Perspective Grid', () => {
   beforeEach(async () => {
@@ -47,13 +51,20 @@ describe('TST51 - Perspective Grid', () => {
 
   it('TST0501 - Create HTML file [create_HTML, electron]', async () => {
     await delay(500);
-    await newContent(newHTMLFileName);
+    await openDirectoryMenu();
     await delay(500);
-    // await renameFirstFile(newHTMLFIleName);
+    await createNewDirectory();
     await delay(500);
-    await searchEngine('html');
+    await openEntry(testFolder);
     await delay(500);
-    expect.stringContaining('html');
+    // create new file
+    await newContent();
+    await delay(500);
+    await closeOpenedFile();
+    await delay(500);
+    // delete directory
+    await deleteDirectory();
+    await delay(500);
   });
 
   it('TST0510 - Generate thumbnail from Images [generate_thumbnail_images,electron]', async () => {

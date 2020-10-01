@@ -1,8 +1,6 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 import { delay } from './hook';
 import { firstFile, openContextEntryMenu } from './test-utils.spec';
-import { clearInputValue } from './location.helpers';
-import { checkFilenameForExist } from './test-utils.spec';
 
 export const defaultLocationPath =
   './testdata/file-structure/supported-filestypes';
@@ -11,7 +9,7 @@ export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const newLocationName = 'Location Name Changed';
 export const tsFolder = '\\.ts';
 
-const newHTMLFileName = 'newHTMLFile.html';
+// const newHTMLFileName = 'newHTMLFile.html';
 const testFolder = 'testFolder';
 
 export async function createLocation(
@@ -95,13 +93,16 @@ export async function openEntry(entryName) {
   await delay(500);
 }
 
-export async function newContent() {
+export async function openDirectoryMenu() {
   const openDirMenu = await global.client.$(
     '[data-tid=folderContainerOpenDirMenu]'
   );
   await openDirMenu.waitForDisplayed();
   await openDirMenu.click();
   await delay(500);
+}
+
+export async function createNewDirectory() {
   const newSubDirectoty = await global.client.$('[data-tid=newSubDirectory]');
   await newSubDirectoty.waitForDisplayed();
   await delay(500);
@@ -118,11 +119,10 @@ export async function newContent() {
   );
   await delay(1500);
   await confirmCreateNewDirectory.waitForDisplayed();
-  await delay(500);
   await confirmCreateNewDirectory.click();
-  // should find the folder with the given name in the UI
-  await checkFilenameForExist(testFolder);
-  await delay(500);
+}
+
+export async function newContent() {
   const newFile = await global.client.$('[data-tid=locationManager]');
   await newFile.waitForDisplayed();
   await newFile.click();
@@ -132,36 +132,29 @@ export async function newContent() {
   );
   await newNoteFile.waitForDisplayed();
   await newNoteFile.click();
-  await delay(55500);
-  // const toggleProperties = await global.client.$(
-  //   '[data-tid=fileContainerToggleProperties]'
-  // );
-  // await toggleProperties.waitForDisplayed();
-  // await toggleProperties.click();
-  // await delay(500);
-  // const renameFileDialogInput = await global.client.$(
-  //   '[data-tid=fileNameProperties] input'
-  // );
-  // await renameFileDialogInput.waitForDisplayed();
-  // await clearInputValue(renameFileDialogInput);
-  // await renameFileDialogInput.keys(newHTMLFileName);
-  // const confirmReanmeFileDialog = await global.client.$(
-  //   '[data-tid=fileContainerSaveFile]'
-  // );
-  // await confirmReanmeFileDialog.click();
-  // await delay(500);
-  // const closeFile = await global.client.$(
-  //   '[data-tid=fileContainerCloseOpenedFile]'
-  // );
-  // await closeFile.waitForDisplayed();
-  // await closeFile.click();
-  // await delay(500);
+  await delay(500);
 }
 
-export async function fileCheck(selector, ext) {
-  const file = await global.client
-    .waitForVisible('//*[@data-tid="perspectiveGridFileTable"]')
-    .getText(selector, ext);
+export async function closeOpenedFile() {
+  const closeFile = await global.client.$(
+    '[data-tid=fileContainerCloseOpenedFile]'
+  );
+  await closeFile.waitForDisplayed();
+  await closeFile.click();
   await delay(500);
-  expect(file).toHaveTextContaining('sample.tiff');
+}
+
+export async function deleteDirectory() {
+  await openDirectoryMenu();
+  await delay(500);
+  const deleteDirectory = await global.client.$('[data-tid=deleteDirectory]');
+  await deleteDirectory.waitForDisplayed();
+  await delay(500);
+  await deleteDirectory.click();
+  const confirmDeleteDirectory = await global.client.$(
+    '[data-tid=confirmDeleteDirectoryDialog]'
+  );
+  await confirmDeleteDirectory.waitForDisplayed();
+  await confirmDeleteDirectory.click();
+  await delay(500);
 }
