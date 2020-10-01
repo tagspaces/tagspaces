@@ -2,6 +2,7 @@
 import { delay } from './hook';
 import { firstFile, openContextEntryMenu } from './test-utils.spec';
 import { clearInputValue } from './location.helpers';
+import { checkFilenameForExist } from './test-utils.spec';
 
 export const defaultLocationPath =
   './testdata/file-structure/supported-filestypes';
@@ -11,6 +12,7 @@ export const newLocationName = 'Location Name Changed';
 export const tsFolder = '\\.ts';
 
 const newHTMLFileName = 'newHTMLFile.html';
+const testFolder = 'testFolder';
 
 export async function createLocation(
   locationPath,
@@ -94,6 +96,32 @@ export async function openEntry(entryName) {
 }
 
 export async function newContent() {
+  const openDirMenu = await global.client.$(
+    '[data-tid=folderContainerOpenDirMenu]'
+  );
+  await openDirMenu.waitForDisplayed();
+  await openDirMenu.click();
+  await delay(500);
+  const newSubDirectoty = await global.client.$('[data-tid=newSubDirectory]');
+  await newSubDirectoty.waitForDisplayed();
+  await delay(500);
+  await newSubDirectoty.click();
+  await delay(1500);
+  // set new dir name
+  const directoryName = await global.client.$('[data-tid=directoryName] input');
+  await delay(500);
+  await directoryName.keys(testFolder);
+  await directoryName.click();
+  await delay(1500);
+  const confirmCreateNewDirectory = await global.client.$(
+    '[data-tid=confirmCreateNewDirectory]'
+  );
+  await delay(1500);
+  await confirmCreateNewDirectory.waitForDisplayed();
+  await delay(500);
+  await confirmCreateNewDirectory.click();
+  // should find the folder with the given name in the UI
+  await checkFilenameForExist(testFolder);
   await delay(500);
   const newFile = await global.client.$('[data-tid=locationManager]');
   await newFile.waitForDisplayed();
@@ -104,28 +132,36 @@ export async function newContent() {
   );
   await newNoteFile.waitForDisplayed();
   await newNoteFile.click();
+  await delay(55500);
+  // const toggleProperties = await global.client.$(
+  //   '[data-tid=fileContainerToggleProperties]'
+  // );
+  // await toggleProperties.waitForDisplayed();
+  // await toggleProperties.click();
+  // await delay(500);
+  // const renameFileDialogInput = await global.client.$(
+  //   '[data-tid=fileNameProperties] input'
+  // );
+  // await renameFileDialogInput.waitForDisplayed();
+  // await clearInputValue(renameFileDialogInput);
+  // await renameFileDialogInput.keys(newHTMLFileName);
+  // const confirmReanmeFileDialog = await global.client.$(
+  //   '[data-tid=fileContainerSaveFile]'
+  // );
+  // await confirmReanmeFileDialog.click();
+  // await delay(500);
+  // const closeFile = await global.client.$(
+  //   '[data-tid=fileContainerCloseOpenedFile]'
+  // );
+  // await closeFile.waitForDisplayed();
+  // await closeFile.click();
+  // await delay(500);
+}
+
+export async function fileCheck(selector, ext) {
+  const file = await global.client
+    .waitForVisible('//*[@data-tid="perspectiveGridFileTable"]')
+    .getText(selector, ext);
   await delay(500);
-  const toggleProperties = await global.client.$(
-    '[data-tid=fileContainerToggleProperties]'
-  );
-  await toggleProperties.waitForDisplayed();
-  await toggleProperties.click();
-  await delay(500);
-  const renameFileDialogInput = await global.client.$(
-    '[data-tid=fileNameProperties] input'
-  );
-  await renameFileDialogInput.waitForDisplayed();
-  await clearInputValue(renameFileDialogInput);
-  await renameFileDialogInput.keys(newHTMLFileName);
-  const confirmReanmeFileDialog = await global.client.$(
-    '[data-tid=fileContainerSaveFile]'
-  );
-  await confirmReanmeFileDialog.click();
-  await delay(500);
-  const closeFile = await global.client.$(
-    '[data-tid=fileContainerCloseOpenedFile]'
-  );
-  await closeFile.waitForDisplayed();
-  await closeFile.click();
-  await delay(500);
+  expect(file).toHaveTextContaining('sample.tiff');
 }
