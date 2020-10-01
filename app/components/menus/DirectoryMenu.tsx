@@ -371,12 +371,14 @@ const DirectoryMenu = (props: Props) => {
         onClose={handleCloseDialogs}
         selectedDirectoryPath={props.directoryPath}
       />
-      <CreateDirectoryDialog
-        key={uuidv1()}
-        open={isCreateDirectoryDialogOpened}
-        onClose={handleCloseDialogs}
-        selectedDirectoryPath={props.directoryPath}
-      />
+      {isCreateDirectoryDialogOpened && (
+        <CreateDirectoryDialog
+          key={uuidv1()}
+          open={isCreateDirectoryDialogOpened}
+          onClose={handleCloseDialogs}
+          selectedDirectoryPath={props.directoryPath}
+        />
+      )}
       <ConfirmDialog
         open={isDeleteDirectoryDialogOpened}
         onClose={handleCloseDialogs}
