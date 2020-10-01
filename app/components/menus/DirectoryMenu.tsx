@@ -379,22 +379,24 @@ const DirectoryMenu = (props: Props) => {
           selectedDirectoryPath={props.directoryPath}
         />
       )}
-      <ConfirmDialog
-        open={isDeleteDirectoryDialogOpened}
-        onClose={handleCloseDialogs}
-        title={i18n.t('core:deleteDirectoryTitleConfirm')}
-        content={i18n.t('core:deleteDirectoryContentConfirm', {
-          dirPath: getDirPath(props.directoryPath)
-        })}
-        confirmCallback={result => {
-          if (result) {
-            props.deleteDirectory(props.directoryPath);
-          }
-        }}
-        confirmDialogContentTID="confirmDialogContent"
-        cancelDialogTID="cancelDeleteDirectoryDialog"
-        confirmDialogTID="confirmDeleteDirectoryDialog"
-      />
+      {isDeleteDirectoryDialogOpened && (
+        <ConfirmDialog
+          open={isDeleteDirectoryDialogOpened}
+          onClose={handleCloseDialogs}
+          title={i18n.t('core:deleteDirectoryTitleConfirm')}
+          content={i18n.t('core:deleteDirectoryContentConfirm', {
+            dirPath: getDirPath(props.directoryPath)
+          })}
+          confirmCallback={result => {
+            if (result) {
+              props.deleteDirectory(props.directoryPath);
+            }
+          }}
+          confirmDialogContentTID="confirmDialogContent"
+          cancelDialogTID="cancelDeleteDirectoryDialog"
+          confirmDialogTID="confirmDeleteDirectoryDialog"
+        />
+      )}
       <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
         {props.perspectiveMode && (
           <MenuItem data-tid="openDirectory" onClick={openDirectory}>
