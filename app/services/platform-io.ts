@@ -16,7 +16,7 @@
  *
  */
 
-import { Progress } from 'aws-sdk/clients/s3';
+// import { ManagedUpload } from 'aws-sdk/clients/s3';
 import { Pro } from '../pro';
 // @ts-ignore
 import NativePlatformIO from './_PLATFORMIO_';
@@ -240,7 +240,7 @@ export default class PlatformIO {
     content: any,
     overwrite: boolean,
     onUploadProgress?: (
-      progress: Progress,
+      progress: any, // ManagedUpload.Progress,
       response: any // AWS.Response<AWS.S3.PutObjectOutput, AWS.AWSError>
     ) => void
   ): Promise<any> => {
@@ -252,7 +252,14 @@ export default class PlatformIO {
         onUploadProgress
       );
     }
-    return nativeAPI.saveBinaryFilePromise(filePath, content, overwrite);
+    return nativeAPI
+      .saveBinaryFilePromise(filePath, content, overwrite)
+      .then(succeeded => {
+        if (succeeded && onUploadProgress) {
+          onUploadProgress({ key: filePath, loaded: 1, total: 1 }, undefined);
+        }
+        return succeeded;
+      });
   };
 
   static deleteFilePromise = (
