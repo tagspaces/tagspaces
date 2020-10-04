@@ -499,7 +499,10 @@ export async function loadMetaDataPromise(
       path,
       PlatformIO.getDirSeparator()
     );
-    const metaData = await loadJSONFile(metaFilePath);
+    let metaData = await loadJSONFile(metaFilePath);
+    if (!metaData) {
+      metaData = {};
+    }
     metaDataObject = {
       description: metaData.description || '',
       color: metaData.color || '',
@@ -514,21 +517,22 @@ export async function loadMetaDataPromise(
       path,
       PlatformIO.getDirSeparator()
     );
-    const metaData = await loadJSONFile(metaFilePath);
-    if (metaData) {
-      metaDataObject = {
-        id: metaData.id || uuidv1(),
-        description: metaData.description || '',
-        color: metaData.color || '',
-        tags: metaData.tags || [],
-        appVersionCreated: metaData.appVersionCreated || '',
-        appName: metaData.appName || '',
-        appVersionUpdated: metaData.appVersionUpdated || '',
-        lastUpdated: metaData.lastUpdated || '',
-        files: metaData.files || [],
-        dirs: metaData.dirs || []
-      };
+    let metaData = await loadJSONFile(metaFilePath);
+    if (!metaData) {
+      metaData = {};
     }
+    metaDataObject = {
+      id: metaData.id || uuidv1(),
+      description: metaData.description || '',
+      color: metaData.color || '',
+      tags: metaData.tags || [],
+      appVersionCreated: metaData.appVersionCreated || '',
+      appName: metaData.appName || '',
+      appVersionUpdated: metaData.appVersionUpdated || '',
+      lastUpdated: metaData.lastUpdated || '',
+      files: metaData.files || [],
+      dirs: metaData.dirs || []
+    };
   }
   return metaDataObject;
 }
