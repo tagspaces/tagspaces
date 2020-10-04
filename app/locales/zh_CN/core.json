@@ -463,7 +463,7 @@
   "objectStorage": "对象存储服务（Amazon S3，Minio）",
   "objectStorageTitle": "Amazon S3 complient object storage",
   "endpointURL": "端点URL",
-  "enableIndexingBySearch": "开启此选项后，搜索质量会提高，但搜索速度会下降",
+  "enableIndexingBySearch": "开启此选项可以提高搜索质量，但速度会下降",
   "importDialogTitle": "导入文件",
   "stopAll": "停止所有操作",
   "fileExist": "已存在同名文件",
