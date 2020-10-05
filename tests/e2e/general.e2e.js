@@ -19,10 +19,10 @@ import {
   tsFolder,
   openDirectoryMenu,
   createNewDirectory,
-  newContent,
+  newContentFileType,
   closeOpenedFile,
   deleteDirectory,
-  newHTMLFileName
+  returnDirectoryBack
 } from './general.helpers';
 import { searchEngine } from './search.spec';
 
@@ -55,15 +55,27 @@ describe('TST51 - Perspective Grid', () => {
     await delay(500);
     await createNewDirectory();
     await delay(500);
+    await reloadDirectory();
+    await delay(500);
     await openEntry(testFolder);
     await delay(500);
+    await openDirectoryMenu();
+    await delay(500);
+    await createNewDirectory();
+    await delay(500);
+    await reloadDirectory();
+    await delay(500);
+    await openEntry(testFolder);
     // create new file
-    await newContent();
+    await newContentFileType();
     await delay(500);
     await closeOpenedFile();
     await delay(500);
+    await reloadDirectory();
+    await delay(500);
+    await returnDirectoryBack();
     // delete directory
-    await deleteDirectory();
+    await deleteDirectory(testFolder);
     await delay(500);
   });
 

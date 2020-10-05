@@ -122,7 +122,7 @@ export async function createNewDirectory() {
   await confirmCreateNewDirectory.click();
 }
 
-export async function newContent() {
+export async function newContentFileType() {
   const newFile = await global.client.$('[data-tid=locationManager]');
   await newFile.waitForDisplayed();
   await newFile.click();
@@ -155,6 +155,28 @@ export async function deleteDirectory() {
     '[data-tid=confirmDeleteDirectoryDialog]'
   );
   await confirmDeleteDirectory.waitForDisplayed();
+  await delay(500);
   await confirmDeleteDirectory.click();
+  await delay(500);
+}
+
+export async function moveToTrashBin() {
+  await openSettingsDialog();
+  await delay(500);
+  const moveToTrashBin = await global.client.$(
+    '[data-tid=settingsSetUseTrashCan]'
+  );
+  await moveToTrashBin.waitForDisplayed();
+  await moveToTrashBin.click();
+  await delay(500);
+  await closeSettingsDialog();
+}
+
+export async function returnDirectoryBack() {
+  await delay(500);
+  const backButton = await global.client.$(
+    '[data-tid=gridPerspectiveOnBackButton]'
+  );
+  await backButton.click();
   await delay(500);
 }
