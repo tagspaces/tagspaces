@@ -24,7 +24,11 @@ import {
   getThumbFileLocationForFile,
   normalizePath
 } from '../utils/paths';
-import { copyFilesPromise, renameFilesPromise } from '../services/utils-io';
+import {
+  copyFilesPromise,
+  enhanceEntry,
+  renameFilesPromise
+} from '../services/utils-io';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import TaggingActions from './tagging-actions';
@@ -270,98 +274,111 @@ const actions = {
     paths: Array<string>,
     targetPath: string,
     onUploadProgress?: (progress: Progress, response: any) => void
-  ) => (dispatch: (actions: Object) => void) => {
-    const uploadJobs = [];
-    paths.map(path => {
-      const target =
-        normalizePath(targetPath) +
-        PlatformIO.getDirSeparator() +
-        extractFileName(path, PlatformIO.getDirSeparator());
-      uploadJobs.push([path, target]);
-      // copy meta
-      uploadJobs.push([
-        getMetaFileLocationForFile(path, PlatformIO.getDirSeparator()),
-        getMetaFileLocationForFile(target, PlatformIO.getDirSeparator())
-      ]);
-      uploadJobs.push([
-        getThumbFileLocationForFile(path, PlatformIO.getDirSeparator()),
-        getThumbFileLocationForFile(target, PlatformIO.getDirSeparator())
-      ]);
-      return true;
-    });
-    uploadJobs.map(job => {
-      // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
-      // const file = selection.currentTarget.files[0];
-      const filePath = job[1];
-      /* normalizePath(props.directoryPath) +
+  ) => (dispatch: (actions: Object) => void) =>
+    new Promise(resolve => {
+      const uploadJobs = [];
+      paths.map(path => {
+        const target =
+          normalizePath(targetPath) +
+          PlatformIO.getDirSeparator() +
+          extractFileName(path, PlatformIO.getDirSeparator());
+        uploadJobs.push([path, target]);
+        // copy meta
+        uploadJobs.push([
+          getMetaFileLocationForFile(path, PlatformIO.getDirSeparator()),
+          getMetaFileLocationForFile(target, PlatformIO.getDirSeparator())
+        ]);
+        uploadJobs.push([
+          getThumbFileLocationForFile(path, PlatformIO.getDirSeparator()),
+          getThumbFileLocationForFile(target, PlatformIO.getDirSeparator())
+        ]);
+        return true;
+      });
+      resolve(
+        uploadJobs.map(job => {
+          // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
+          // const file = selection.currentTarget.files[0];
+          const filePath = job[1];
+          /* normalizePath(props.directoryPath) +
                 PlatformIO.getDirSeparator() +
                 decodeURIComponent(file.name); */
 
-      // TODO try to replace this with <input type="file"
-      if (AppConfig.isElectron) {
-        import('fs-extra')
-          .then(fs => {
-            const fileContent = fs.readFileSync(job[0]);
-            // TODO event.currentTarget.result is ArrayBuffer
-            // Sample call from PRO version using content = Utils.base64ToArrayBuffer(baseString);
-            PlatformIO.getPropertiesPromise(filePath)
-              .then(entryProps => {
-                if (entryProps) {
-                  dispatch(
-                    AppActions.showNotification(
-                      'File with the same name already exist, importing skipped!',
-                      'warning',
-                      true
-                    )
-                  );
-                  dispatch(AppActions.setProgress(filePath, -1, undefined));
-                } else {
-                  // dispatch(AppActions.setProgress(filePath, progress));
-                  PlatformIO.saveBinaryFilePromise(
-                    filePath,
-                    fileContent,
-                    true,
-                    onUploadProgress
-                  )
-                    .then(() => {
+          // TODO try to replace this with <input type="file"
+          if (AppConfig.isElectron) {
+            return import('fs-extra')
+              .then(fs => {
+                const fileContent = fs.readFileSync(job[0]);
+                // TODO event.currentTarget.result is ArrayBuffer
+                // Sample call from PRO version using content = Utils.base64ToArrayBuffer(baseString);
+                return PlatformIO.getPropertiesPromise(filePath)
+                  .then(entryProps => {
+                    if (entryProps) {
                       dispatch(
                         AppActions.showNotification(
-                          'File ' + filePath + ' successfully imported.',
-                          'default',
+                          'File with the same name already exist, importing skipped!',
+                          'warning',
                           true
                         )
                       );
-                      dispatch(AppActions.reflectCreateEntry(filePath, true));
-                      return true;
-                    })
-                    .catch(err => {
-                      console.error(
-                        'Importing file ' + filePath + ' failed ' + err
-                      );
-                      dispatch(
-                        AppActions.showNotification(
-                          'Importing file ' + filePath + ' failed.',
-                          'error',
-                          true
-                        )
-                      );
-                      return true;
-                    });
-                }
-                return true;
+                      dispatch(AppActions.setProgress(filePath, -1, undefined));
+                    } else {
+                      // dispatch(AppActions.setProgress(filePath, progress));
+                      return PlatformIO.saveBinaryFilePromise(
+                        filePath,
+                        fileContent,
+                        true,
+                        onUploadProgress
+                      )
+                        .then(() => {
+                          dispatch(
+                            AppActions.showNotification(
+                              'File ' + filePath + ' successfully imported.',
+                              'default',
+                              true
+                            )
+                          );
+                          dispatch(
+                            AppActions.reflectCreateEntry(filePath, true)
+                          );
+                          return enhanceEntry({
+                            name: filePath.substring(
+                              filePath.lastIndexOf(AppConfig.dirSeparator) + 1,
+                              filePath.length
+                            ),
+                            isFile: true,
+                            size: fileContent.length,
+                            lmdt: Date.now(),
+                            path: filePath
+                          });
+                        })
+                        .catch(err => {
+                          console.error(
+                            'Importing file ' + filePath + ' failed ' + err
+                          );
+                          dispatch(
+                            AppActions.showNotification(
+                              'Importing file ' + filePath + ' failed.',
+                              'error',
+                              true
+                            )
+                          );
+                          return undefined;
+                        });
+                    }
+                    return undefined;
+                  })
+                  .catch(err => {
+                    console.log('Error getting properties ' + err);
+                  });
               })
               .catch(err => {
-                console.log('Error getting properties ' + err);
+                console.log('Error import fs: ' + err);
               });
-            return true;
-          })
-          .catch(err => {
-            console.log('Error import fs: ' + err);
-          });
-      }
-      return true;
-    });
-  }
+          }
+          return undefined;
+        })
+      );
+    })
 };
 
 export default actions;
