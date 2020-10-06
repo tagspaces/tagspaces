@@ -58,7 +58,7 @@ const actions = {
     );
   },
   moveFiles: (paths: Array<string>, targetPath: string) => (
-    dispatch: (actions: Object) => void
+    dispatch: (actions: Object) => Promise<boolean>
   ) => {
     /* const renameJobs = [];
     paths.map((path) => {
@@ -82,7 +82,7 @@ const actions = {
       ]);
       return true;
     });
-    renameFilesPromise(moveJobs)
+    return renameFilesPromise(moveJobs)
       .then(() => {
         dispatch(
           AppActions.showNotification(i18n.t('core:filesMovedSuccessful'))
