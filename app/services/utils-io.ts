@@ -145,6 +145,7 @@ export function enhanceEntry(entry: any): FileSystemEntry {
     });
   }
   const enhancedEntry: FileSystemEntry = {
+    uuid: uuidv1(),
     name: entry.name,
     isFile: entry.isFile,
     extension: entry.isFile

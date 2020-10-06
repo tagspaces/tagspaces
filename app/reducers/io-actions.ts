@@ -340,16 +340,21 @@ const actions = {
                           dispatch(
                             AppActions.reflectCreateEntry(filePath, true)
                           );
-                          return enhanceEntry({
-                            name: filePath.substring(
-                              filePath.lastIndexOf(AppConfig.dirSeparator) + 1,
-                              filePath.length
-                            ),
-                            isFile: true,
-                            size: fileContent.length,
-                            lmdt: Date.now(),
-                            path: filePath
-                          });
+                          // TODO handle Thumbnail
+                          if (filePath.indexOf('/.ts/') === -1) {
+                            return enhanceEntry({
+                              name: filePath.substring(
+                                filePath.lastIndexOf(AppConfig.dirSeparator) +
+                                  1,
+                                filePath.length
+                              ),
+                              isFile: true,
+                              size: fileContent.length,
+                              lmdt: Date.now(),
+                              path: filePath
+                            });
+                          }
+                          return undefined;
                         })
                         .catch(err => {
                           console.error(
