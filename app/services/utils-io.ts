@@ -500,7 +500,12 @@ export async function loadMetaDataPromise(
       path,
       PlatformIO.getDirSeparator()
     );
-    let metaData = await loadJSONFile(metaFilePath);
+    let metaData;
+    try {
+      metaData = await loadJSONFile(metaFilePath);
+    } catch (e) {
+      console.debug('cannot load json:' + metaFilePath, e);
+    }
     if (!metaData) {
       metaData = {};
     }
@@ -518,7 +523,12 @@ export async function loadMetaDataPromise(
       path,
       PlatformIO.getDirSeparator()
     );
-    let metaData = await loadJSONFile(metaFilePath);
+    let metaData;
+    try {
+      metaData = await loadJSONFile(metaFilePath);
+    } catch (e) {
+      console.debug('cannot load json:' + metaFilePath, e);
+    }
     if (!metaData) {
       metaData = {};
     }
