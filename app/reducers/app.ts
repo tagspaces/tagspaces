@@ -1362,7 +1362,7 @@ export const actions = {
     getState: () => any
   ) => {
     const { settings } = getState();
-    PlatformIO.deleteFilePromise(filePath, settings.useTrashCan)
+    return PlatformIO.deleteFilePromise(filePath, settings.useTrashCan)
       .then(() => {
         // TODO close file opener if this file is opened
         dispatch(actions.reflectDeleteEntry(filePath));
