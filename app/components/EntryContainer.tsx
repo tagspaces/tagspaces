@@ -1047,7 +1047,7 @@ class EntryContainer extends React.Component<Props, State> {
           i18n.language +
           (this.shouldReload ? '&t=' + new Date().getTime() : '');
       }
-      this.shouldReload = false;
+      // this.shouldReload = false;
 
       // if (!currentEntry.isFile) {
       //   fileOpenerURL = currentEntry.path + '/index.html';

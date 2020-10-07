@@ -51,8 +51,6 @@ import {
   actions as AppActions,
   getLastSelectedEntry,
   getSelectedEntries,
-  getCurrentDirectoryColor,
-  isLoading,
   isReadOnlyMode
 } from '-/reducers/app';
 import TaggingActions from '-/reducers/tagging-actions';
@@ -63,6 +61,8 @@ import GridOptionsMenu from './GridOptionsMenu';
 import { getLocation, Location, locationType } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-io';
 import { extractFileName } from '-/utils/paths';
+import GridPagination from '-/perspectives/grid-perspective/components/GridPagination';
+import GridSettingsDialog from '-/perspectives/grid-perspective/components/GridSettingsDialog';
 
 const settings = JSON.parse(localStorage.getItem('tsPerspectiveGrid')); // loading settings
 
@@ -71,11 +71,9 @@ interface Props {
   theme: any;
   desktopMode: boolean;
   currentDirectoryPath: string;
-  currentDirectoryColor: string;
   lastSelectedEntryPath: string | null;
   selectedEntries: Array<any>;
   supportedFileTypes: Array<any>;
-  isAppLoading: boolean;
   isReadOnlyMode: boolean;
   openFile: (path: string, isFile: boolean) => void;
   getNextFile: () => any;
@@ -131,8 +129,10 @@ interface State {
   isMoveCopyFilesDialogOpened: boolean;
   isAddRemoveTagsDialogOpened: boolean;
   isFileRenameDialogOpened: boolean;
+  isGridSettingsDialogOpened: boolean;
   selectedEntryPath: string;
   selectedTag: Tag | null;
+  gridPageLimit: number;
 }
 
 class GridPerspective extends React.Component<Props, State> {
@@ -182,7 +182,10 @@ class GridPerspective extends React.Component<Props, State> {
       isMoveCopyFilesDialogOpened: false,
       isAddRemoveTagsDialogOpened: false,
       isFileRenameDialogOpened: false,
-      selectedTag: null
+      isGridSettingsDialogOpened: false,
+      selectedTag: null,
+      gridPageLimit:
+        settings && settings.gridPageLimit ? settings.gridPageLimit : 100
     };
   }
 
@@ -224,6 +227,14 @@ class GridPerspective extends React.Component<Props, State> {
     sortByCriteria(data, criteria, order)
   );
 
+  getDirs = memoize(sortedContent =>
+    sortedContent.filter(entry => !entry.isFile)
+  );
+
+  getFiles = memoize(sortedContent =>
+    sortedContent.filter(entry => entry.isFile)
+  );
+
   makeFirstSelectedEntryVisible = () => {
     const { selectedEntries } = this.props;
     if (selectedEntries && selectedEntries.length > 0) {
@@ -250,7 +261,8 @@ class GridPerspective extends React.Component<Props, State> {
       singleClickAction: this.state.singleClickAction,
       doubleClickAction: this.state.doubleClickAction,
       entrySize: this.state.entrySize,
-      thumbnailMode: this.state.thumbnailMode
+      thumbnailMode: this.state.thumbnailMode,
+      gridPageLimit: this.state.gridPageLimit
     };
     localStorage.setItem('tsPerspectiveGrid', JSON.stringify(settingsObj));
   }
@@ -260,10 +272,15 @@ class GridPerspective extends React.Component<Props, State> {
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
   }; */
 
-  mainGrid;
+  // mainGrid;
 
   handleLayoutSwitch = (layoutType: string) => {
     this.setState({ layoutType }, this.saveSettings);
+  };
+
+  handleGridPageLimit = (gridPageLimit: number) => {
+    this.handleCloseDialogs();
+    this.setState({ gridPageLimit }, this.saveSettings);
   };
 
   handleSortBy = sortBy => {
@@ -429,6 +446,11 @@ class GridPerspective extends React.Component<Props, State> {
     );
   };
 
+  openSettings = () => {
+    this.closeOptionsMenu();
+    this.openGridSettingsDialog();
+  };
+
   handleGridCellDblClick = (event, fsEntry: FileSystemEntry) => {
     this.props.setSelectedEntries([]);
     if (this.props.currentLocation.type === locationType.TYPE_CLOUD) {
@@ -546,7 +568,8 @@ class GridPerspective extends React.Component<Props, State> {
       isFileRenameDialogOpened: false,
       isDeleteMultipleFilesDialogOpened: false,
       isAddRemoveTagsDialogOpened: false,
-      isMoveCopyFilesDialogOpened: false
+      isMoveCopyFilesDialogOpened: false,
+      isGridSettingsDialogOpened: false
     });
     if (clearSelection) {
       this.clearSelection();
@@ -567,6 +590,10 @@ class GridPerspective extends React.Component<Props, State> {
 
   openAddRemoveTagsDialog = () => {
     this.setState({ isAddRemoveTagsDialogOpened: true });
+  };
+
+  openGridSettingsDialog = () => {
+    this.setState({ isGridSettingsDialogOpened: true });
   };
 
   handleFileMoveDrop = (item, monitor) => {
@@ -754,9 +781,7 @@ class GridPerspective extends React.Component<Props, State> {
   render() {
     const {
       classes,
-      isAppLoading,
       directoryContent,
-      currentDirectoryColor,
       selectedEntries,
       loadParentDirectoryContent,
       theme
@@ -766,8 +791,8 @@ class GridPerspective extends React.Component<Props, State> {
       .filter(fsEntry => fsEntry.isFile)
       .map(fsentry => fsentry.path);
     const sortedContent = this.sort(directoryContent, sortBy, orderBy);
-    const sortedDirectories = sortedContent.filter(entry => !entry.isFile);
-    const sortedFiles = sortedContent.filter(entry => entry.isFile);
+    const sortedDirectories = this.getDirs(sortedContent);
+    const sortedFiles = this.getFiles(sortedContent);
     let entryWidth = 200;
     if (entrySize === 'small') {
       entryWidth = 150;
@@ -777,7 +802,14 @@ class GridPerspective extends React.Component<Props, State> {
       entryWidth = 300;
     }
     return (
-      <div style={{ height: 'calc(100% - 104px)' }}>
+      <div
+        style={{
+          height:
+            'calc(100% - ' +
+            (AppConfig.isCordova ? '290' /* '595' */ : '104') + // todo handle cordova screen sizes
+            'px)'
+        }}
+      >
         <style>
           {`
             #gridCellTags:hover, #gridCellDescription:hover {
@@ -802,62 +834,27 @@ class GridPerspective extends React.Component<Props, State> {
           handleOptionsMenu={this.handleOptionsMenu}
         />
         <GlobalHotKeys keyMap={this.keyMap} handlers={this.keyBindingHandlers}>
-          <div
+          <GridPagination
+            gridPageLimit={this.state.gridPageLimit}
+            className={
+              layoutType === 'grid'
+                ? classes.gridContainer
+                : classes.rowContainer
+            }
             style={{
-              height: '100%',
-              backgroundColor: theme.palette.background.default
+              gridTemplateColumns:
+                layoutType === 'grid'
+                  ? 'repeat(auto-fit,minmax(' + entryWidth + 'px,1fr))'
+                  : 'none'
             }}
-          >
-            <div
-              style={{
-                height: '100%',
-                // @ts-ignore
-                overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
-                backgroundColor: currentDirectoryColor || 'transparent'
-              }}
-            >
-              <div
-                className={
-                  layoutType === 'grid'
-                    ? classes.gridContainer
-                    : classes.rowContainer
-                }
-                style={{
-                  gridTemplateColumns:
-                    layoutType === 'grid'
-                      ? 'repeat(auto-fit,minmax(' + entryWidth + 'px,1fr))'
-                      : 'none'
-                }}
-                ref={ref => {
-                  this.mainGrid = ref;
-                }}
-                data-tid="perspectiveGridFileTable"
-              >
-                {sortedDirectories.map(entry => this.renderCell(entry))}
-                {sortedFiles.map(entry => this.renderCell(entry))}
-                {isAppLoading && (
-                  <Typography style={{ padding: 15 }}>
-                    {i18n.t('core:loading')}
-                  </Typography>
-                )}
-                {!isAppLoading &&
-                  sortedFiles.length < 1 &&
-                  sortedDirectories.length < 1 && (
-                    <Typography style={{ padding: 15 }}>
-                      {i18n.t('core:noFileFolderFound')}
-                    </Typography>
-                  )}
-                {!isAppLoading &&
-                  sortedFiles.length < 1 &&
-                  sortedDirectories.length >= 1 &&
-                  !this.state.showDirectories && (
-                    <Typography style={{ padding: 15 }}>
-                      {i18n.t('core:noFileButFoldersFound')}
-                    </Typography>
-                  )}
-              </div>
-            </div>
-          </div>
+            theme={theme}
+            // gridRef={this.mainGrid}
+            directories={sortedDirectories}
+            showDirectories={this.state.showDirectories}
+            files={sortedFiles}
+            renderCell={this.renderCell}
+            currentPage={1}
+          />
         </GlobalHotKeys>
         <AddRemoveTagsDialog
           open={this.state.isAddRemoveTagsDialogOpened}
@@ -866,6 +863,12 @@ class GridPerspective extends React.Component<Props, State> {
           removeTags={this.props.removeTags}
           removeAllTags={this.props.removeAllTags}
           selectedEntries={this.props.selectedEntries}
+        />
+        <GridSettingsDialog
+          open={this.state.isGridSettingsDialogOpened}
+          onClose={this.handleCloseDialogs}
+          setGridPageLimit={this.handleGridPageLimit}
+          gridPageLimit={this.state.gridPageLimit}
         />
         <MoveCopyFilesDialog
           key={uuidv1()}
@@ -959,6 +962,7 @@ class GridPerspective extends React.Component<Props, State> {
           singleClickAction={this.state.singleClickAction}
           changeEntrySize={this.changeEntrySize}
           openHelpWebPage={this.openHelpWebPage}
+          openSettings={this.openSettings}
         />
       </div>
     );
@@ -984,10 +988,8 @@ function mapActionCreatorsToProps(dispatch) {
 function mapStateToProps(state) {
   return {
     supportedFileTypes: getSupportedFileTypes(state),
-    isAppLoading: isLoading(state),
     isReadOnlyMode: isReadOnlyMode(state),
     lastSelectedEntryPath: getLastSelectedEntry(state),
-    currentDirectoryColor: getCurrentDirectoryColor(state),
     desktopMode: getDesktopMode(state),
     selectedEntries: getSelectedEntries(state),
     keyBindings: getKeyBindingObject(state),

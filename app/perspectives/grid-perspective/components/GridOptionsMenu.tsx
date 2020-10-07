@@ -28,6 +28,7 @@ import ThumbnailCoverIcon from '@material-ui/icons/PhotoSizeSelectActual';
 import ThumbnailContainIcon from '@material-ui/icons/PhotoSizeSelectLarge';
 import RadioCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 import RadioUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
+import SettingsIcon from '@material-ui/icons/Settings';
 import HelpIcon from '@material-ui/icons/Help';
 import i18n from '-/services/i18n';
 
@@ -46,6 +47,7 @@ interface Props {
   changeEntrySize: (entrySize: string) => void;
   changeSingleClickAction: (actionType: string) => void;
   openHelpWebPage: () => void;
+  openSettings: () => void;
 }
 
 const GridOptionsMenu = (props: Props) => {
@@ -63,7 +65,8 @@ const GridOptionsMenu = (props: Props) => {
     changeSingleClickAction,
     entrySize,
     singleClickAction,
-    openHelpWebPage
+    openHelpWebPage,
+    openSettings
   } = props;
 
   return (
@@ -193,6 +196,18 @@ const GridOptionsMenu = (props: Props) => {
           )}
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:singleClickSelects')} />
+      </MenuItem>
+      <Divider />
+      <MenuItem
+        data-tid="gridPerspectiveSettings"
+        title={i18n.t('core:settings')}
+        aria-label={i18n.t('core:settings')}
+        onClick={openSettings}
+      >
+        <ListItemIcon>
+          <SettingsIcon />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:settings')} />
       </MenuItem>
       <Divider />
       <MenuItem
