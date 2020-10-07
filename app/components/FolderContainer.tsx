@@ -364,6 +364,7 @@ class FolderContainer extends React.Component<Props, State> {
       return (
         <KanBanPerspectiveAsync
           directoryContent={this.props.directoryContent}
+          loadDirectoryContent={this.props.loadDirectoryContent}
           openFile={this.props.openFile}
           loadParentDirectoryContent={this.props.loadParentDirectoryContent}
           deleteFile={this.props.deleteFile}

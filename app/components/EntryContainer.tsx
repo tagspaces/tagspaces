@@ -289,7 +289,11 @@ class EntryContainer extends React.Component<Props, State> {
         return true;
       }
 
-      this.setState({ currentEntry: nextEntry });
+      const obj: any = { currentEntry: nextEntry };
+      if (!nextEntry.isFile) {
+        obj.isPropertiesPanelVisible = true;
+      }
+      this.setState(obj);
 
       if (nextProps.isReadOnlyMode) {
         this.setState({ editingSupported: false });
@@ -769,16 +773,18 @@ class EntryContainer extends React.Component<Props, State> {
   renderFileToolbar = classes => (
     <div className={classes.toolbar2}>
       <div className={classes.flexLeft}>
-        <IconButton
-          title={i18n.t('core:toggleProperties')}
-          aria-label={i18n.t('core:toggleProperties')}
-          onClick={this.togglePanel}
-          data-tid="fileContainerToggleProperties"
-        >
-          <DetailsIcon
-            color={this.state.isPropertiesPanelVisible ? 'primary' : 'action'}
-          />
-        </IconButton>
+        {this.state.currentEntry.isFile && (
+          <IconButton
+            title={i18n.t('core:toggleProperties')}
+            aria-label={i18n.t('core:toggleProperties')}
+            onClick={this.togglePanel}
+            data-tid="fileContainerToggleProperties"
+          >
+            <DetailsIcon
+              color={this.state.isPropertiesPanelVisible ? 'primary' : 'action'}
+            />
+          </IconButton>
+        )}
         <IconButton
           title={i18n.t('core:switchToFullscreen')}
           aria-label={i18n.t('core:switchToFullscreen')}
