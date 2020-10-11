@@ -286,7 +286,7 @@
   "confirmAllTagsDeletion": "Are you sure you want to remove all tags?",
   "existingTags": "Existing tags",
   "addDescription": "Adding description with markdown support available in TagSpaces PRO",
-  "addMarkdownDescription": "Click to add description, some markdown supported",
+  "addMarkdownDescription": "Click to add description (markdown supported)",
   "addEntryTags": "Add",
   "modifiedDate": "Last modified",
   "latestVersion": "You are on the latest version of {{productName}}",

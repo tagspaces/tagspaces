@@ -734,6 +734,11 @@ class EntryProperties extends Component<Props, State> {
                   inputRef={ref => {
                     this.fileDescription = ref;
                   }}
+                  style={{
+                    padding: 10,
+                    borderRadius: 5,
+                    backgroundColor: 'rgba(255, 216, 115, 0.53)'
+                  }}
                   id="textarea"
                   placeholder=""
                   name="description"
@@ -746,8 +751,11 @@ class EntryProperties extends Component<Props, State> {
                 <Typography
                   style={{
                     display: 'block',
-                    padding: 2,
+                    padding: 10,
+                    borderRadius: 5,
+                    backgroundColor: 'rgba(255, 216, 115, 0.53)',
                     marginBottom: 5,
+
                     color: description
                       ? this.props.theme.palette.text.primary
                       : this.props.theme.palette.text.disabled
@@ -781,9 +789,9 @@ class EntryProperties extends Component<Props, State> {
                   className={classes.header}
                   style={{ display: 'block' }}
                 >
-                  {i18n.t('core:fileLDTM')}
+                  {i18n.t('core:fileLDTM') + ': ' + ldtm}
                 </Typography>
-                <FormControl fullWidth={true} className={classes.formControl}>
+                {/* <FormControl fullWidth={true} className={classes.formControl}>
                   <TextField
                     InputProps={{
                       readOnly: true
@@ -794,7 +802,7 @@ class EntryProperties extends Component<Props, State> {
                     data-tid="fileLdtmProperties"
                     value={ldtm}
                   />
-                </FormControl>
+                </FormControl> */}
               </div>
 
               {isFile ? (
@@ -804,9 +812,9 @@ class EntryProperties extends Component<Props, State> {
                     className={classes.header}
                     style={{ display: 'block' }}
                   >
-                    {i18n.t('core:fileSize')}
+                    {i18n.t('core:fileSize') + ': ' + formatFileSize(size)}
                   </Typography>
-                  <FormControl
+                  {/* <FormControl
                     fullWidth={true}
                     className={classes.formControl}
                     title={size + ' bytes'}
@@ -821,7 +829,7 @@ class EntryProperties extends Component<Props, State> {
                       data-tid="fileSizeProperties"
                       value={formatFileSize(size)}
                     />
-                  </FormControl>
+                  </FormControl> */}
                 </div>
               ) : (
                 <div className="grid-item" style={{ width: '50%' }}>
