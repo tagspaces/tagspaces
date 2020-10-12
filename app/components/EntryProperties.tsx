@@ -230,6 +230,8 @@ class EntryProperties extends Component<Props, State> {
     if (
       (nextProps.entryPath && nextProps.shouldReload) ||
       (nextProps.entryPath && this.state.path !== nextProps.entryPath)
+      /* (nextProps.openedFiles.length > 0 &&
+        nextProps.openedFiles[0].shouldReload) */ // TODO rethink this and not reload all Properties at general !!
     ) {
       // eslint-disable-next-line react/destructuring-assignment
       this.props.resetState('EntryPropertiesKey');
@@ -518,21 +520,31 @@ class EntryProperties extends Component<Props, State> {
       if (!value) {
         // no tags left in the select element
         this.props.removeAllTags([this.state.path]);
+        this.setState({ tags: [] });
       } else {
-        this.state.tags.map(tag => {
+        const { tags } = this.state;
+        const tagsToRemove = [];
+        const newTags = tags.map(tag => {
           if (value.findIndex(obj => obj.title === tag.title) === -1) {
-            this.props.removeTags([this.state.path], [tag]);
+            tagsToRemove.push(tag);
+            return undefined;
           }
-          return true;
+          return tag;
         });
+
+        this.props.removeTags([this.state.path], tagsToRemove);
+        this.setState({ tags: newTags.filter(tag => tag !== undefined) });
       }
     } else if (action === 'clear') {
       this.props.removeAllTags([this.state.path]);
+      this.setState({ tags: [] });
     } else {
       // create-option or select-option
+      const { tags } = this.state;
       value.map(tag => {
         if (this.state.tags.findIndex(obj => obj.title === tag.title) === -1) {
           this.props.addTags([this.state.path], [tag]);
+          this.setState({ tags: [...tags, tag] });
         }
         return true;
       });

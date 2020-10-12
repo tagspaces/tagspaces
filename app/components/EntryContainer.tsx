@@ -773,18 +773,16 @@ class EntryContainer extends React.Component<Props, State> {
   renderFileToolbar = classes => (
     <div className={classes.toolbar2}>
       <div className={classes.flexLeft}>
-        {this.state.currentEntry.isFile && (
-          <IconButton
-            title={i18n.t('core:toggleProperties')}
-            aria-label={i18n.t('core:toggleProperties')}
-            onClick={this.togglePanel}
-            data-tid="fileContainerToggleProperties"
-          >
-            <DetailsIcon
-              color={this.state.isPropertiesPanelVisible ? 'primary' : 'action'}
-            />
-          </IconButton>
-        )}
+        <IconButton
+          title={i18n.t('core:toggleProperties')}
+          aria-label={i18n.t('core:toggleProperties')}
+          onClick={this.togglePanel}
+          data-tid="fileContainerToggleProperties"
+        >
+          <DetailsIcon
+            color={this.state.isPropertiesPanelVisible ? 'primary' : 'action'}
+          />
+        </IconButton>
         <IconButton
           title={i18n.t('core:switchToFullscreen')}
           aria-label={i18n.t('core:switchToFullscreen')}
@@ -926,16 +924,6 @@ class EntryContainer extends React.Component<Props, State> {
   renderFolderToolbar = () => (
     <div className={this.props.classes.toolbar2}>
       <div className={this.props.classes.flexLeft}>
-        <IconButton
-          title={i18n.t('core:toggleProperties')}
-          aria-label={i18n.t('core:toggleProperties')}
-          onClick={this.togglePanel}
-          data-tid="fileContainerToggleProperties"
-        >
-          <DetailsIcon
-            color={this.state.isPropertiesPanelVisible ? 'primary' : 'action'}
-          />
-        </IconButton>
         {!(PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb) && (
           <IconButton
             title={i18n.t('core:openDirectoryExternally')}
