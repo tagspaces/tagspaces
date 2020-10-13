@@ -314,7 +314,7 @@ const EntryContainer = (props: Props) => {
 
   // isPropertiesEditMode = false; // TODO rethink this! why exist?
 
-  let isChanged = false;
+  // let isChanged = false;
   let shouldReload = false;
 
   // logEventsFromExtensions = event => {
@@ -427,12 +427,13 @@ const EntryContainer = (props: Props) => {
           });
         break;
       case 'contentChangedInEditor': {
-        if (currentEntry.editMode && !isChanged) {
-          isChanged = true;
+        if (currentEntry.editMode && !currentEntry.changed) {
+          // !isChanged) {
+          // isChanged = true;
           // dummy state change to rerender for DOT before file name (only first time)
           setCurrentEntry({
-            ...currentEntry
-            // changed: true
+            ...currentEntry,
+            changed: true
           });
         }
         break;
@@ -447,7 +448,7 @@ const EntryContainer = (props: Props) => {
 
   const reloadDocument = () => {
     if (currentEntry) {
-      if (isChanged) {
+      if (currentEntry.changed) {
         setSaveBeforeReloadConfirmDialogOpened(true);
       } else {
         shouldReload = true;
@@ -478,7 +479,7 @@ const EntryContainer = (props: Props) => {
       event.preventDefault(); // Let's stop this event.
       event.stopPropagation();
     }
-    if (currentEntry && isChanged) {
+    if (currentEntry && currentEntry.changed) {
       setSaveBeforeCloseConfirmDialogOpened(true);
     } else {
       closeFile();
@@ -486,7 +487,7 @@ const EntryContainer = (props: Props) => {
   };
 
   const closeFile = () => {
-    isChanged = false;
+    // isChanged = false;
     setCurrentEntry(null);
     setEditingSupported(false);
   };
@@ -513,10 +514,11 @@ const EntryContainer = (props: Props) => {
   const saveFile = (textContent: string) => {
     PlatformIO.saveTextFilePromise(currentEntry.path, textContent, true)
       .then(result => {
-        isChanged = false;
+        // isChanged = false;
         setCurrentEntry({
           ...currentEntry,
-          editMode: false
+          editMode: false,
+          changed: false
         });
         props.showNotification(
           i18n.t('core:fileSavedSuccessfully'),
@@ -1023,12 +1025,13 @@ const EntryContainer = (props: Props) => {
             setSaveBeforeReloadConfirmDialogOpened(false);
             startSavingFile();
           } else {
-            isChanged = false;
+            // isChanged = false;
             shouldReload = true;
             setSaveBeforeReloadConfirmDialogOpened(false);
             setCurrentEntry({
               ...currentEntry,
-              editMode: false
+              editMode: false,
+              changed: false
             });
           }
         }}
@@ -1124,7 +1127,7 @@ const EntryContainer = (props: Props) => {
                           PlatformIO.getDirSeparator()
                         )}
                     </div>
-                    {isChanged // currentEntry.changed
+                    {currentEntry.changed
                       ? String.fromCharCode(0x25cf) + ' '
                       : ''}
                     {fileTitle}
