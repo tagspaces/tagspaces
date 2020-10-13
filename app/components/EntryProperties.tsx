@@ -154,8 +154,8 @@ marked.setOptions({
 interface Props {
   classes: any;
   theme: any;
-  openedEntry: OpenedEntry;
-  // entryPath: string;
+  // openedEntry: OpenedEntry;
+  entryPath: string;
   // entryURL: string;
   // shouldReload: boolean | null;
   // shouldCopyFile: boolean;
@@ -205,10 +205,10 @@ const EntryProperties = (props: Props) => {
   // const [thumbPath, setThumbPath] = useState<string>('');
 
   useEffect(() => {
-    if (props.openedEntry) {
-      loadEntryProperties(props.openedEntry.path);
+    if (props.entryPath) {
+      loadEntryProperties(props.entryPath);
     }
-  }, [props.openedEntry]);
+  }, [props.entryPath]);
 
   /* useEffect(() => { // Rethink and move this Dialog in EntryContainer
     if (props.shouldCopyFile) {

@@ -973,33 +973,6 @@ const EntryContainer = (props: Props) => {
     return defaultSplitSize;
   }
 
-  const renderEntryProperties = memoize(openEntry => (
-    <div className={classes.entryProperties}>
-      {currentEntry.isFile ? renderFileToolbar(classes) : renderFolderToolbar()}
-      <EntryProperties
-        key={uuidv1()}
-        // resetState={this.resetState}
-        // setPropertiesEditMode={this.setPropertiesEditMode}
-        // entryPath={currentEntry.path}
-        // entryURL={currentEntry.url}
-        openedEntry={openEntry}
-        // shouldReload={reload}
-        renameFile={props.renameFile}
-        renameDirectory={props.renameDirectory}
-        editTagForEntry={props.editTagForEntry}
-        // shouldCopyFile={shouldCopyFile}
-        // normalizeShouldCopyFile={() => setShouldCopyFile(false)}
-        addTags={props.addTags}
-        removeTags={props.removeTags}
-        removeAllTags={props.removeAllTags}
-        reflectUpdateSidecarMeta={props.reflectUpdateSidecarMeta}
-        updateThumbnailUrl={props.updateThumbnailUrl}
-        showNotification={props.showNotification}
-        isReadOnlyMode={props.isReadOnlyMode}
-      />
-    </div>
-  ));
-
   return (
     <GlobalHotKeys
       handlers={{
@@ -1242,7 +1215,32 @@ const EntryContainer = (props: Props) => {
                 </div>
               )}
             </div>
-            {renderEntryProperties(currentEntry)}
+            <div className={classes.entryProperties}>
+              {currentEntry.isFile
+                ? renderFileToolbar(classes)
+                : renderFolderToolbar()}
+              <EntryProperties
+                key={uuidv1()}
+                // resetState={this.resetState}
+                // setPropertiesEditMode={this.setPropertiesEditMode}
+                entryPath={currentEntry.path}
+                // entryURL={currentEntry.url}
+                // openedEntry={openEntry}
+                // shouldReload={reload}
+                renameFile={props.renameFile}
+                renameDirectory={props.renameDirectory}
+                editTagForEntry={props.editTagForEntry}
+                // shouldCopyFile={shouldCopyFile}
+                // normalizeShouldCopyFile={() => setShouldCopyFile(false)}
+                addTags={props.addTags}
+                removeTags={props.removeTags}
+                removeAllTags={props.removeAllTags}
+                reflectUpdateSidecarMeta={props.reflectUpdateSidecarMeta}
+                updateThumbnailUrl={props.updateThumbnailUrl}
+                showNotification={props.showNotification}
+                isReadOnlyMode={props.isReadOnlyMode}
+              />
+            </div>
           </div>
         ) : (
           <div>{i18n.t('core:noEntrySelected')}</div>
