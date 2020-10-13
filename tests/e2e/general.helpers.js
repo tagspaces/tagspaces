@@ -1,6 +1,6 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 import { delay } from './hook';
-import { firstFile, openContextEntryMenu } from './test-utils.spec';
+import { firstFile, checkFilenameForExist } from './test-utils.spec';
 
 export const defaultLocationPath =
   './testdata/file-structure/supported-filestypes';
@@ -122,7 +122,7 @@ export async function createNewDirectory() {
   await confirmCreateNewDirectory.click();
 }
 
-export async function newContentFileType() {
+export async function newHTMLFile() {
   const newFile = await global.client.$('[data-tid=locationManager]');
   await newFile.waitForDisplayed();
   await newFile.click();
@@ -130,6 +130,28 @@ export async function newContentFileType() {
   const newNoteFile = await global.client.$(
     '[data-tid=createRichTextFileButton]'
   );
+  await newNoteFile.waitForDisplayed();
+  await newNoteFile.click();
+  await delay(500);
+}
+
+export async function newMDFile() {
+  const newFile = await global.client.$('[data-tid=locationManager]');
+  await newFile.waitForDisplayed();
+  await newFile.click();
+  await delay(500);
+  const newNoteFile = await global.client.$('[data-tid=createMarkdownButton]');
+  await newNoteFile.waitForDisplayed();
+  await newNoteFile.click();
+  await delay(500);
+}
+
+export async function newTEXTFile() {
+  const newFile = await global.client.$('[data-tid=locationManager]');
+  await newFile.waitForDisplayed();
+  await newFile.click();
+  await delay(500);
+  const newNoteFile = await global.client.$('[data-tid=createTextFileButton]');
   await newNoteFile.waitForDisplayed();
   await newNoteFile.click();
   await delay(500);
@@ -179,4 +201,16 @@ export async function returnDirectoryBack() {
   );
   await backButton.click();
   await delay(500);
+}
+
+export async function toHaveText() {
+  await delay(500);
+  const file = await global.client.$(perspectiveGridTable + firstFile);
+  console.log(file.getText());
+  expect(file).toBe(filename);
+  // const classNameAndText = await global.client.$('<img>');
+  // await checkFilenameForExist(filename, selector)
+  // expect(file).toEquale(expect.toHaveTextContaining('jpg'));
+  // expect.stringContaining('jpg');
+  // expect(text1==text2).toBe(true);
 }

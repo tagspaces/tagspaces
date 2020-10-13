@@ -8,8 +8,7 @@ import {
   defaultLocationPath,
   defaultLocationName,
   closeFileProperties,
-  createMinioLocation,
-  renameFirstFile
+  createMinioLocation
 } from './location.helpers';
 import {
   openSettingsDialog,
@@ -19,20 +18,25 @@ import {
   tsFolder,
   openDirectoryMenu,
   createNewDirectory,
-  newContentFileType,
+  newHTMLFile,
+  newMDFile,
+  newTEXTFile,
   closeOpenedFile,
   deleteDirectory,
   returnDirectoryBack
 } from './general.helpers';
+import { checkFilenameForExist, openFile } from './test-utils.spec';
 import { searchEngine } from './search.spec';
 
+export const firstFile = '/span';
+export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 const subFolderName = '/test-perspective-grid';
 const subFolderContentExtractionPath =
   defaultLocationPath + '/content-extraction';
 const subFolderThumbnailsPath = defaultLocationPath + '/thumbnails';
 const testFolder = 'testFolder';
 
-describe('TST51 - Perspective Grid', () => {
+describe('TST51 - Perspective Grid [general]', () => {
   beforeEach(async () => {
     await clearLocalStorage();
     //  await delay(500);
@@ -67,7 +71,67 @@ describe('TST51 - Perspective Grid', () => {
     await delay(500);
     await openEntry(testFolder);
     // create new file
-    await newContentFileType();
+    await newHTMLFile();
+    await delay(500);
+    await closeOpenedFile();
+    await delay(500);
+    await reloadDirectory();
+    await delay(500);
+    await returnDirectoryBack();
+    // delete directory
+    await deleteDirectory(testFolder);
+    await delay(500);
+  });
+
+  it('TST0502 - Create MD file [create_MD, electron]', async () => {
+    await delay(500);
+    await openDirectoryMenu();
+    await delay(500);
+    await createNewDirectory();
+    await delay(500);
+    await reloadDirectory();
+    await delay(500);
+    await openEntry(testFolder);
+    await delay(500);
+    await openDirectoryMenu();
+    await delay(500);
+    await createNewDirectory();
+    await delay(500);
+    await reloadDirectory();
+    await delay(500);
+    await openEntry(testFolder);
+    // create new file
+    await newMDFile();
+    await delay(500);
+    await closeOpenedFile();
+    await delay(500);
+    await reloadDirectory();
+    await delay(500);
+    await returnDirectoryBack();
+    // delete directory
+    await deleteDirectory(testFolder);
+    await delay(500);
+  });
+
+  it('TST0502 - Create TEXT file [create_TEXT, electron]', async () => {
+    await delay(500);
+    await openDirectoryMenu();
+    await delay(500);
+    await createNewDirectory();
+    await delay(500);
+    await reloadDirectory();
+    await delay(500);
+    await openEntry(testFolder);
+    await delay(500);
+    await openDirectoryMenu();
+    await delay(500);
+    await createNewDirectory();
+    await delay(500);
+    await reloadDirectory();
+    await delay(500);
+    await openEntry(testFolder);
+    // create new file
+    await newTEXTFile();
     await delay(500);
     await closeOpenedFile();
     await delay(500);
@@ -80,6 +144,7 @@ describe('TST51 - Perspective Grid', () => {
   });
 
   it('TST0510 - Generate thumbnail from Images [generate_thumbnail_images,electron]', async () => {
+    // let filename = 'sample.jpg';
     await delay(500);
     await openSettingsDialog();
     // activate 'Show Hidden File' functionality in the general settings
@@ -94,17 +159,18 @@ describe('TST51 - Perspective Grid', () => {
     await delay(500);
     await openEntry(tsFolder);
     await delay(500);
-    // await checkFileExtForExist();
     await searchEngine('jpg');
-    expect.stringContaining('jpg');
-
-    // // should find hidden file with dot in the begin of the filename
-    // await global.client.waitForVisible(perspectiveGridTable);
-    // const hiddenEntry = await global.client.getText(
-    //   perspectiveGridTable,
-    //   hiddenFile
+    // await openEntry('sample.jpg');
+    // await openFile();
+    await delay(500);
+    const file = await global.client.$(perspectiveGridTable + firstFile);
+    await file.waitForDisplayed();
+    await file.doubleClick();
+    await closeOpenedFile();
+    // const file = await global.client.$(
+    //   perspectiveGridTable + firstFile
     // );
-    // expect(hiddenFile).toBe(hiddenEntry);
+    // expect(file).toBe(filename);
   });
 
   it('TST0511 - Generate thumbnail from Videos [generate_thumbnail_videos,electron]', async () => {
@@ -122,9 +188,12 @@ describe('TST51 - Perspective Grid', () => {
     await delay(500);
     await openEntry(tsFolder);
     await delay(500);
-    // await checkFileExtForExist();
     await searchEngine('mp4');
-    expect.stringContaining('mp4');
+    await delay(500);
+    const file = await global.client.$(perspectiveGridTable + firstFile);
+    await file.waitForDisplayed();
+    await file.doubleClick();
+    await closeOpenedFile();
   });
 
   it('TST0516 - Generate thumbnail from PDF [generate_thumbnail_PDF,electron]', async () => {
@@ -142,9 +211,12 @@ describe('TST51 - Perspective Grid', () => {
     await delay(500);
     await openEntry(tsFolder);
     await delay(500);
-    // await checkFileExtForExist();
     await searchEngine('pdf');
-    expect.stringContaining('pdf');
+    await delay(500);
+    const file = await global.client.$(perspectiveGridTable + firstFile);
+    await file.waitForDisplayed();
+    await file.doubleClick();
+    await closeOpenedFile();
   });
 
   it('TST0517 - Generate thumbnail from ODT [generate_thumbnail_ODT,electron]', async () => {
@@ -162,9 +234,12 @@ describe('TST51 - Perspective Grid', () => {
     await delay(500);
     await openEntry(tsFolder);
     await delay(500);
-    // await checkFileExtForExist();
     await searchEngine('odt');
-    expect.stringContaining('odt');
+    await delay(500);
+    const file = await global.client.$(perspectiveGridTable + firstFile);
+    await file.waitForDisplayed();
+    await file.doubleClick();
+    await closeOpenedFile();
   });
 
   it('TST0519 - Generate thumbnail from TIFF [generate_thumbnail_TIFF,electron]', async () => {
@@ -182,9 +257,12 @@ describe('TST51 - Perspective Grid', () => {
     await delay(500);
     await openEntry(tsFolder);
     await delay(500);
-    // await checkFileExtForExist();
     await searchEngine('tiff');
-    expect.stringContaining('tiff');
+    await delay(500);
+    const file = await global.client.$(perspectiveGridTable + firstFile);
+    await file.waitForDisplayed();
+    await file.doubleClick();
+    await closeOpenedFile();
   });
 
   it('TST0520 - Generate thumbnail from PSD [generate_thumbnail_PSD,electron]', async () => {
@@ -202,9 +280,12 @@ describe('TST51 - Perspective Grid', () => {
     await delay(500);
     await openEntry(tsFolder);
     await delay(500);
-    // await checkFileExtForExist();
     await searchEngine('psd');
-    expect.stringContaining('psd');
+    await delay(500);
+    const file = await global.client.$(perspectiveGridTable + firstFile);
+    await file.waitForDisplayed();
+    await file.doubleClick();
+    await closeOpenedFile();
   });
 
   it('TST0524 - Generate thumbnail from TXT [generate_thumbnail_TXT,electron]', async () => {
@@ -222,9 +303,12 @@ describe('TST51 - Perspective Grid', () => {
     await delay(500);
     await openEntry(tsFolder);
     await delay(500);
-    // await checkFileExtForExist();
     await searchEngine('txt');
-    expect.stringContaining('txt');
+    await delay(500);
+    const file = await global.client.$(perspectiveGridTable + firstFile);
+    await file.waitForDisplayed();
+    await file.doubleClick();
+    await closeOpenedFile();
   });
 
   it('TST0523 - Generate thumbnail from HTML [generate_thumbnail_HTML,electron]', async () => {
@@ -242,9 +326,12 @@ describe('TST51 - Perspective Grid', () => {
     await delay(500);
     await openEntry(tsFolder);
     await delay(500);
-    // await checkFileExtForExist();
     await searchEngine('html');
-    expect.stringContaining('html');
+    await delay(500);
+    const file = await global.client.$(perspectiveGridTable + firstFile);
+    await file.waitForDisplayed();
+    await file.doubleClick();
+    await closeOpenedFile();
   });
 
   it('TST0522 - Generate thumbnail from URL [generate_thumbnail_URL,electron]', async () => {
@@ -262,8 +349,11 @@ describe('TST51 - Perspective Grid', () => {
     await delay(500);
     await openEntry(tsFolder);
     await delay(500);
-    // await checkFileExtForExist();
     await searchEngine('url');
-    expect.stringContaining('url');
+    await delay(500);
+    const file = await global.client.$(perspectiveGridTable + firstFile);
+    await file.waitForDisplayed();
+    await file.doubleClick();
+    await closeOpenedFile();
   });
 });
