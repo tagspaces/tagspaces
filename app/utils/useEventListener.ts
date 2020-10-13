@@ -43,11 +43,9 @@ function Component() {
 */
 
 // Hook
-export default function useEventListener<T extends HTMLElement = HTMLDivElement>(
-  eventName: string,
-  handler: Function,
-  element?: RefObject<T>
-) {
+export default function useEventListener<
+  T extends HTMLElement = HTMLDivElement
+>(eventName: string, handler: Function, element?: RefObject<T>) {
   // Create a ref that stores handler
   const savedHandler = useRef<Function>();
   useEffect(() => {

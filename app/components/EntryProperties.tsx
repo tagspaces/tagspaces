@@ -16,12 +16,10 @@
  *
  */
 
-import React, { Component, ChangeEvent } from 'react';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import uuidv1 from 'uuid';
 import marked from 'marked';
 import classNames from 'classnames';
-// import { bindActionCreators } from 'redux';
-// import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import FormControl from '@material-ui/core/FormControl';
@@ -33,17 +31,17 @@ import LocationIcon from '@material-ui/icons/WorkOutline';
 import CloudLocationIcon from '@material-ui/icons/CloudQueue';
 import DOMPurify from 'dompurify';
 import TagDropContainer from './TagDropContainer';
-import EntryTagMenu from './menus/EntryTagMenu';
+// import EntryTagMenu from './menus/EntryTagMenu';
 import ColorPickerDialog from './dialogs/ColorPickerDialog';
 import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
 import i18n from '../services/i18n';
-import { getAllPropertiesPromise } from '../services/utils-io';
-import { formatFileSize } from '../utils/misc';
+import { FileSystemEntry, getAllPropertiesPromise } from '-/services/utils-io';
+import { formatFileSize } from '-/utils/misc';
 import {
   extractContainingDirectoryPath,
   getThumbFileLocationForFile,
   getThumbFileLocationForDirectory
-} from '../utils/paths';
+} from '-/utils/paths';
 import AppConfig from '../config';
 import { Pro } from '../pro';
 import PlatformIO from '../services/platform-io';
@@ -52,9 +50,9 @@ import TransparentBackground from './TransparentBackground';
 import {
   replaceThumbnailURLPromise,
   getThumbnailURLPromise
-} from '../services/thumbsgenerator';
+} from '-/services/thumbsgenerator';
 import { Tag } from '-/reducers/taglibrary';
-// import { actions as AppActions } from '../reducers/app';
+import { OpenedEntry } from '-/reducers/app';
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
@@ -156,14 +154,15 @@ marked.setOptions({
 interface Props {
   classes: any;
   theme: any;
-  entryPath: string;
-  entryURL: string;
-  shouldReload: boolean | null;
-  shouldCopyFile: boolean;
+  openedEntry: OpenedEntry;
+  // entryPath: string;
+  // entryURL: string;
+  // shouldReload: boolean | null;
+  // shouldCopyFile: boolean;
   editTagForEntry: () => void;
   renameFile: (path: string, nextPath: string) => void;
   renameDirectory: (path: string, nextPath: string) => void;
-  normalizeShouldCopyFile: () => void;
+  // normalizeShouldCopyFile: () => void;
   showNotification: (message: string) => void;
   reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
   updateThumbnailUrl: (path: string, thumbUrl: string) => void;
@@ -175,54 +174,49 @@ interface Props {
   // setPropertiesEditMode: (editMode: boolean) => void;
 }
 
-interface State {
-  name: string;
-  originalName: string;
-  description: string;
-  color: string;
-  path: string;
-  size: number;
-  ldtm: string;
-  tags: Array<Tag>;
-  tagMenuAnchorEl: boolean | null;
-  tagMenuOpened: boolean | null;
-  selectedTag: Tag;
-  isFileThumbChooseDialogOpened: boolean;
-  isMoveCopyFilesDialogOpened: boolean;
-  isEditName: boolean;
-  isEditDescription: boolean;
-  displayColorPicker: boolean;
-  thumbPath: string;
-  isFile: boolean;
-}
+const EntryProperties = (props: Props) => {
+  const fileName = useRef<HTMLInputElement>(null);
+  const fileDescription = useRef<HTMLInputElement>(null);
 
-class EntryProperties extends Component<Props, State> {
-  fileName: any;
+  let newName = '';
+  const tagMenuAnchorEl = null;
+  // const [name, setName] = useState<string>('');
+  // const [originalName, setOriginalName] = useState<string>('');
+  // const [description, setDescription] = useState<string>('');
+  // const [size, setSize] = useState<number>(0);
+  // const [color, setColor] = useState<string>('#3498db');
+  // const [path, setPath] = useState<string>('');
+  // const [ldtm, setLdtm] = useState<string>('');
+  // const [tags, setTags] = useState<Array<Tag>>([]);
+  const [currentEntry, setCurrentEntry] = useState<FileSystemEntry>(undefined);
+  // const [tagMenuAnchorEl, setTagMenuAnchorEl] = useState<boolean | null>(null);
+  const [tagMenuOpened, setTagMenuOpened] = useState<boolean | null>(false);
+  // const [selectedTag, setSelectedTag] = useState<Tag>(null); // TODO enable selected Tag menu
+  const [isEditName, setEditName] = useState<boolean>(false);
+  const [isEditDescription, setEditDescription] = useState<boolean>(false);
+  const [isMoveCopyFilesDialogOpened, setMoveCopyFilesDialogOpened] = useState<
+    boolean
+  >(false);
+  const [
+    isFileThumbChooseDialogOpened,
+    setFileThumbChooseDialogOpened
+  ] = useState<boolean>(false);
+  const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
+  // const [thumbPath, setThumbPath] = useState<string>('');
 
-  fileDescription: any;
+  useEffect(() => {
+    if (props.openedEntry) {
+      loadEntryProperties(props.openedEntry.path);
+    }
+  }, [props.openedEntry]);
 
-  state = {
-    name: '',
-    originalName: '',
-    description: '',
-    size: 0,
-    color: '#3498db',
-    path: '',
-    ldtm: '',
-    tags: [],
-    tagMenuAnchorEl: null,
-    tagMenuOpened: false,
-    selectedTag: null,
-    isEditName: false,
-    isEditDescription: false,
-    isMoveCopyFilesDialogOpened: false,
-    isFileThumbChooseDialogOpened: false,
-    displayColorPicker: false,
-    thumbPath: '',
-    isFile: false
-  };
+  /* useEffect(() => { // Rethink and move this Dialog in EntryContainer
+    if (props.shouldCopyFile) {
+      setMoveCopyFilesDialogOpened(true);
+    }
+  }, [props.shouldCopyFile]); */
 
-  componentDidMount() {
+  /* componentDidMount() {
     this.loadEntryProperties(this.props.entryPath);
   }
 
@@ -230,8 +224,8 @@ class EntryProperties extends Component<Props, State> {
     if (
       (nextProps.entryPath && nextProps.shouldReload) ||
       (nextProps.entryPath && this.state.path !== nextProps.entryPath)
-      /* (nextProps.openedFiles.length > 0 &&
-        nextProps.openedFiles[0].shouldReload) */ // TODO rethink this and not reload all Properties at general !!
+      /!* (nextProps.openedFiles.length > 0 &&
+        nextProps.openedFiles[0].shouldReload) *!/ // TODO rethink this and not reload all Properties at general !!
     ) {
       // eslint-disable-next-line react/destructuring-assignment
       // this.props.resetState('EntryPropertiesKey'); TODO rethink this
@@ -241,12 +235,13 @@ class EntryProperties extends Component<Props, State> {
     if (nextProps.shouldCopyFile) {
       this.setState({ isMoveCopyFilesDialogOpened: true });
     }
-  }
+  } */
 
-  loadEntryProperties = (entryPath: string) => {
+  const loadEntryProperties = (entryPath: string) => {
     getAllPropertiesPromise(entryPath)
-      .then(entryProps => {
-        this.setState({
+      .then((entryProps: FileSystemEntry) => {
+        setCurrentEntry(entryProps);
+        /* this.setState({
           isEditName: false,
           name: entryProps.name,
           path: entryProps.path,
@@ -263,7 +258,7 @@ class EntryProperties extends Component<Props, State> {
           color: entryProps.color,
           isFile: entryProps.isFile,
           description: entryProps.description ? entryProps.description : ''
-        });
+        }); */
         return true;
       })
       .catch(error =>
@@ -273,53 +268,48 @@ class EntryProperties extends Component<Props, State> {
       );
   };
 
-  renameEntry = () => {
-    if (this.state.isEditName) {
-      const { name, isFile } = this.state;
-      const { entryPath, renameFile, renameDirectory } = this.props;
+  const renameEntry = () => {
+    if (isEditName) {
+      const { renameFile, renameDirectory } = props;
 
       const path = extractContainingDirectoryPath(
-        entryPath,
+        currentEntry.path,
         PlatformIO.getDirSeparator()
       );
-      const nextPath = path + PlatformIO.getDirSeparator() + name;
+      const nextPath = path + PlatformIO.getDirSeparator() + newName;
 
-      this.setState(
-        {
-          isEditName: false,
-          originalName: ''
-        },
-        () => {
-          if (isFile) {
-            renameFile(entryPath, nextPath);
-          } else {
-            renameDirectory(entryPath, name);
-          }
-        }
-      );
+      if (currentEntry.isFile) {
+        renameFile(currentEntry.path, nextPath);
+      } else {
+        renameDirectory(currentEntry.path, newName);
+      }
+
+      newName = '';
+      setEditName(false);
     }
   };
 
-  toggleEditNameField = () => {
-    if (this.props.isReadOnlyMode) {
-      this.setState({
-        isEditName: false
-      });
+  const toggleEditNameField = () => {
+    if (props.isReadOnlyMode) {
+      setEditName(false);
       return;
     }
-    if (this.state.isEditName) {
-      this.setState({
+    if (isEditName) {
+      setEditName(false);
+      /* this.setState({
         isEditName: false,
         name: this.state.originalName
-      });
+      }); */
     } else {
-      this.setState(
+      setEditName(true);
+      newName = currentEntry.name;
+      /* this.setState(
         {
           isEditName: true,
           originalName: this.state.name
         },
         () => {
-          this.fileName.focus();
+          fileName.focus();
           // this.props.setPropertiesEditMode(true);
           const { originalName } = this.state;
           if (originalName) {
@@ -333,193 +323,192 @@ class EntryProperties extends Component<Props, State> {
             } else if (indexOfDot > 0) {
               endRange = indexOfDot;
             }
-            this.fileName.setSelectionRange(0, endRange);
+            fileName.setSelectionRange(0, endRange);
           }
         }
-      );
+      ); */
     }
   };
 
-  toggleEditDescriptionField = () => {
-    if (this.props.isReadOnlyMode) {
-      this.setState({
-        // customRenderer.link = (href, title, text) => `<a href="javascript:window.open('${href}', '_blank', 'nodeIntegration=no')" target="_blank">${text}</a>`;
-        isEditDescription: false
-      });
+  const toggleEditDescriptionField = () => {
+    if (props.isReadOnlyMode) {
+      setEditDescription(false);
       return;
     }
     if (!Pro) {
-      this.props.showNotification(
-        i18n.t('core:thisFunctionalityIsAvailableInPro')
-      );
+      props.showNotification(i18n.t('core:thisFunctionalityIsAvailableInPro'));
       return;
     }
     if (!Pro.MetaOperations) {
-      this.props.showNotification(i18n.t('Saving description not supported'));
+      props.showNotification(i18n.t('Saving description not supported'));
       return;
     }
-    if (this.state.isEditDescription) {
+    if (isEditDescription) {
       Pro.MetaOperations.saveDescription(
-        this.props.entryPath,
-        this.state.description
+        currentEntry.path,
+        currentEntry.description
       )
         .then(entryMeta => {
-          this.setState(
-            {
-              isEditDescription: false
-            },
-            () => {
-              // this.props.setPropertiesEditMode(false);
-              this.props.reflectUpdateSidecarMeta(
-                this.props.entryPath,
-                entryMeta
-              );
-            }
-          );
+          setEditDescription(false);
+          props.reflectUpdateSidecarMeta(currentEntry.path, entryMeta);
           return true;
         })
         .catch(error => {
           console.warn('Error saving description ' + error);
-          this.setState({
-            isEditDescription: false
-          });
-          this.props.showNotification(i18n.t('Error saving description'));
+          setEditDescription(false);
+          props.showNotification(i18n.t('Error saving description'));
         });
     } else {
-      this.setState(
+      setEditDescription(true);
+      /* this.setState(
         {
           isEditDescription: true
         },
         () => {
           // this.props.setPropertiesEditMode(true);
-          if (this.fileDescription) {
-            this.fileDescription.focus();
+          if (fileDescription) { //TODO
+            fileDescription.focus();
           }
         }
-      );
+      ); */
     }
   };
 
-  toggleMoveCopyFilesDialog = () => {
-    this.setState(
+  const toggleMoveCopyFilesDialog = () => {
+    setMoveCopyFilesDialogOpened(!isMoveCopyFilesDialogOpened);
+    /* this.setState(
       ({ isMoveCopyFilesDialogOpened }) => ({
         isMoveCopyFilesDialogOpened: !isMoveCopyFilesDialogOpened
       }),
       () => this.props.normalizeShouldCopyFile()
-    );
+    ); */
   };
 
-  toggleThumbFilesDialog = () => {
+  const toggleThumbFilesDialog = () => {
     if (!Pro) {
-      this.props.showNotification(i18n.t('core:needProVersion'));
+      props.showNotification(i18n.t('core:needProVersion'));
       return true;
     }
-    this.setState(({ isFileThumbChooseDialogOpened }) => ({
+    setFileThumbChooseDialogOpened(!isFileThumbChooseDialogOpened);
+    /* this.setState(({ isFileThumbChooseDialogOpened }) => ({
       isFileThumbChooseDialogOpened: !isFileThumbChooseDialogOpened
-    }));
+    })); */
   };
 
-  setThumb = (filePath, thumbFilePath) => {
+  const setThumb = (filePath, thumbFilePath) => {
     if (filePath !== undefined) {
       return replaceThumbnailURLPromise(filePath, thumbFilePath)
         .then(objUrl => {
-          this.setState({ thumbPath: objUrl.tmbPath });
-          this.props.updateThumbnailUrl(this.props.entryPath, objUrl.tmbPath);
+          setCurrentEntry({
+            ...currentEntry,
+            thumbPath: objUrl.tmbPath
+          });
+          props.updateThumbnailUrl(currentEntry.path, objUrl.tmbPath);
           return true;
         })
         .catch(err => {
           console.warn('Error replaceThumbnailURLPromise ' + err);
-          this.props.showNotification('Error replacing thumbnail');
+          props.showNotification('Error replacing thumbnail');
         });
     }
     // reset Thumbnail
-    return getThumbnailURLPromise(this.props.entryPath)
+    return getThumbnailURLPromise(currentEntry.path)
       .then(objUrl => {
-        this.setState({ thumbPath: objUrl.tmbPath });
-        this.props.updateThumbnailUrl(this.props.entryPath, objUrl.tmbPath);
+        setCurrentEntry({
+          ...currentEntry,
+          thumbPath: objUrl.tmbPath
+        });
+        props.updateThumbnailUrl(currentEntry.path, objUrl.tmbPath);
         return true;
       })
       .catch(err => {
         console.warn('Error getThumbnailURLPromise ' + err);
-        this.props.showNotification('Error reset Thumbnail');
+        props.showNotification('Error reset Thumbnail');
       });
   };
 
-  saveEditDescription = () => {
-    this.setState({ isEditDescription: false });
-  };
-
-  toggleBackgroundColorPicker = () => {
-    if (this.props.isReadOnlyMode) {
+  const toggleBackgroundColorPicker = () => {
+    if (props.isReadOnlyMode) {
       return;
     }
     if (!Pro) {
-      this.props.showNotification(
-        i18n.t('core:thisFunctionalityIsAvailableInPro')
-      );
+      props.showNotification(i18n.t('core:thisFunctionalityIsAvailableInPro'));
       return;
     }
     if (!Pro.MetaOperations) {
-      this.props.showNotification(i18n.t('Saving color not supported'));
+      props.showNotification(i18n.t('Saving color not supported'));
       return;
     }
-    this.setState({
-      displayColorPicker: !this.state.displayColorPicker
-    });
+    setDisplayColorPicker(!displayColorPicker);
   };
 
-  handleChangeColor = color => {
-    this.setState({ color }, () => {
-      Pro.MetaOperations.saveColor(this.props.entryPath, this.state.color)
-        .then(entryMeta => {
-          this.props.reflectUpdateSidecarMeta(this.props.entryPath, entryMeta);
-          return true;
-        })
-        .catch(error => {
-          console.warn('Error saving color for folder ' + error);
-          this.props.showNotification(i18n.t('Error saving color for folder'));
-        });
-    });
+  const handleChangeColor = color => {
+    Pro.MetaOperations.saveColor(currentEntry.path, color)
+      .then(entryMeta => {
+        props.reflectUpdateSidecarMeta(currentEntry.path, entryMeta);
+        setCurrentEntry({ ...currentEntry, color });
+        return true;
+      })
+      .catch(error => {
+        console.warn('Error saving color for folder ' + error);
+        props.showNotification(i18n.t('Error saving color for folder'));
+      });
   };
 
-  handleTagMenu = (event: any, tag: Tag) => {
-    this.setState({
+  // TODO
+  /* const handleTagMenu = (event: any, tag: Tag) => {
+    setTagMenuOpened(true);
+    tagMenuAnchorEl = event.currentTarget;
+    setSelectedTag(tag);
+    /!* this.setState({
       tagMenuOpened: true,
       tagMenuAnchorEl: event.currentTarget,
       selectedTag: tag
-    });
-  };
+    }); *!/
+  }; */
 
-  handleCloseTagMenu = () => this.setState({ tagMenuOpened: false });
+  const handleCloseTagMenu = () => setTagMenuOpened(false); // this.setState({ tagMenuOpened: false });
 
-  handleFileNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleFileNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
     const { value, name } = target;
 
     if (name === 'name') {
-      this.setState({ name: value });
+      newName = value;
+      /* setCurrentEntry({
+        ...currentEntry,
+        name: value
+      }); */
+      // this.setState({ name: value });
     }
   };
 
-  handleDescriptionChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleDescriptionChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
     const { value, name } = target;
 
     if (name === 'description') {
-      this.setState({ description: value });
+      setCurrentEntry({
+        ...currentEntry,
+        description: value
+      });
+      // this.setState({ description: value });
     }
   };
 
-  handleChange = (name: string, value: any, action: string) => {
+  const handleChange = (name: string, value: any, action: string) => {
     if (action === 'remove-value') {
       if (!value) {
         // no tags left in the select element
-        this.props.removeAllTags([this.state.path]);
-        this.setState({ tags: [] });
+        props.removeAllTags([currentEntry.path]); // TODO return promise
+        setCurrentEntry({
+          ...currentEntry,
+          tags: []
+        });
+        // this.setState({ tags: [] });
       } else {
-        const { tags } = this.state;
         const tagsToRemove = [];
-        const newTags = tags.map(tag => {
+        const newTags = currentEntry.tags.map(tag => {
           if (value.findIndex(obj => obj.title === tag.title) === -1) {
             tagsToRemove.push(tag);
             return undefined;
@@ -527,278 +516,268 @@ class EntryProperties extends Component<Props, State> {
           return tag;
         });
 
-        this.props.removeTags([this.state.path], tagsToRemove);
-        this.setState({ tags: newTags.filter(tag => tag !== undefined) });
+        props.removeTags([currentEntry.path], tagsToRemove);
+        setCurrentEntry({
+          ...currentEntry,
+          tags: newTags.filter(tag => tag !== undefined)
+        });
       }
     } else if (action === 'clear') {
-      this.props.removeAllTags([this.state.path]);
-      this.setState({ tags: [] });
+      props.removeAllTags([currentEntry.path]);
+      setCurrentEntry({
+        ...currentEntry,
+        tags: []
+      });
     } else {
       // create-option or select-option
-      const { tags } = this.state;
       value.map(tag => {
-        if (this.state.tags.findIndex(obj => obj.title === tag.title) === -1) {
-          this.props.addTags([this.state.path], [tag]);
-          this.setState({ tags: [...tags, tag] });
+        if (
+          currentEntry.tags.findIndex(obj => obj.title === tag.title) === -1
+        ) {
+          props.addTags([currentEntry.path], [tag]);
+          setCurrentEntry({
+            ...currentEntry,
+            tags: [...currentEntry.tags, tag]
+          });
+          // this.setState({ tags: [...tags, tag] });
         }
         return true;
       });
     }
   };
 
-  render() {
-    const {
-      classes,
-      entryPath,
-      removeTags,
-      isReadOnlyMode,
-      entryURL
-    } = this.props;
-    const {
-      path,
-      tags,
-      size,
-      ldtm,
-      color,
-      isEditName,
-      isFile,
-      isEditDescription,
-      name,
-      description,
-      displayColorPicker,
-      tagMenuAnchorEl,
-      tagMenuOpened,
-      selectedTag,
-      isMoveCopyFilesDialogOpened,
-      isFileThumbChooseDialogOpened
-    } = this.state;
-    let { thumbPath } = this.state;
-    if (!path || path === '') {
-      return <div />;
+  const { classes, removeTags, isReadOnlyMode } = props;
+
+  if (!currentEntry || !currentEntry.path || currentEntry.path === '') {
+    return <div />;
+  }
+
+  let { thumbPath } = currentEntry;
+  if (!thumbPath) {
+    if (currentEntry.isFile) {
+      thumbPath = getThumbFileLocationForFile(
+        currentEntry.path,
+        PlatformIO.getDirSeparator()
+      );
+    } else {
+      thumbPath = getThumbFileLocationForDirectory(
+        currentEntry.path,
+        PlatformIO.getDirSeparator()
+      );
     }
+  }
+  const thumbPathUrl = thumbPath
+    ? 'url("' + thumbPath + '?' + new Date().getTime() + '")'
+    : '';
+  // if (AppConfig.isWin) {
+  //   thumbPathUrl = thumbPathUrl.split('\\').join('\\\\');
+  // }
 
-    if (!thumbPath) {
-      if (isFile) {
-        thumbPath = getThumbFileLocationForFile(
-          path,
-          PlatformIO.getDirSeparator()
-        );
-      } else {
-        thumbPath = getThumbFileLocationForDirectory(
-          path,
-          PlatformIO.getDirSeparator()
-        );
-      }
-    }
-    const thumbPathUrl = thumbPath
-      ? 'url("' + thumbPath + '?' + new Date().getTime() + '")'
-      : '';
-    // if (AppConfig.isWin) {
-    //   thumbPathUrl = thumbPathUrl.split('\\').join('\\\\');
-    // }
+  const ldtm = currentEntry.lmdt
+    ? new Date(currentEntry.lmdt)
+        .toISOString()
+        .substring(0, 19)
+        .split('T')
+        .join(' ')
+    : '';
 
-    return (
-      <div className={classes.entryProperties}>
-        <Grid container spacing={1}>
-          <div className={classes.entryItem}>
-            <div className={classes.fluidGrid}>
-              <div className="grid-item">
-                <Typography
-                  variant="caption"
-                  className={classes.header}
-                  style={{ display: 'block' }}
-                >
-                  {i18n.t('core:editTagMasterName')}
-                </Typography>
-              </div>
-              {!isReadOnlyMode && (
-                <div>
-                  {isEditName ? (
-                    <div className="grid-item">
-                      <Button
-                        color="primary"
-                        className={classes.button}
-                        onClick={this.toggleEditNameField}
-                      >
-                        {i18n.t('core:cancel')}
-                      </Button>
-                      <Button
-                        color="primary"
-                        disabled={isEditDescription}
-                        className={classes.button}
-                        onClick={this.renameEntry}
-                      >
-                        {i18n.t('core:confirmSaveButton')}
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="grid-item">
-                      <Button
-                        color="primary"
-                        disabled={isEditDescription}
-                        className={classes.button}
-                        onClick={this.toggleEditNameField}
-                      >
-                        {i18n.t('core:rename')}
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              )}
+  return (
+    <div className={classes.entryProperties}>
+      <Grid container spacing={1}>
+        <div className={classes.entryItem}>
+          <div className={classes.fluidGrid}>
+            <div className="grid-item">
+              <Typography
+                variant="caption"
+                className={classes.header}
+                style={{ display: 'block' }}
+              >
+                {i18n.t('core:editTagMasterName')}
+              </Typography>
             </div>
-            <FormControl fullWidth={true} className={classes.formControl}>
-              <TextField
-                InputProps={{
-                  readOnly: !isEditName
-                }}
-                margin="dense"
-                name="name"
-                fullWidth={true}
-                data-tid="fileNameProperties"
-                value={name}
-                inputRef={ref => {
-                  this.fileName = ref;
-                }}
-                onClick={() => {
-                  if (!isEditName) {
-                    this.toggleEditNameField();
-                  }
-                }}
-                onKeyDown={event => {
-                  if (event.key === 'Enter') {
-                    this.renameEntry();
-                  }
-                }}
-                onChange={this.handleFileNameChange}
-              />
-            </FormControl>
-          </div>
-
-          <div className={classes.entryItem}>
-            <div className={classes.fluidGrid}>
-              <div className="grid-item">
-                <Typography
-                  variant="caption"
-                  className={classes.header}
-                  style={{ display: 'block' }}
-                >
-                  {i18n.t('core:fileTags')}
-                </Typography>
-              </div>
-              <div className="grid-item" />
-            </div>
-            <TagDropContainer entryPath={path}>
-              <TagsSelect
-                placeholderText={i18n.t('core:dropHere')}
-                isReadOnlyMode={isReadOnlyMode}
-                tags={tags}
-                handleChange={this.handleChange}
-              />
-            </TagDropContainer>
-          </div>
-
-          <div className={classes.entryItem}>
-            <div className={classes.fluidGrid}>
-              <div className="grid-item">
-                <Typography
-                  variant="caption"
-                  className={classNames(classes.header, classes.header)}
-                  style={{ display: 'block' }}
-                >
-                  {i18n.t('core:filePropertiesDescription')}
-                </Typography>
-              </div>
-              <div className="grid-item">
-                {!isReadOnlyMode && (
-                  <div>
-                    {isEditDescription && (
-                      <Button
-                        color="primary"
-                        className={classes.button}
-                        onClick={this.toggleEditDescriptionField}
-                      >
-                        {i18n.t('core:cancel')}
-                      </Button>
-                    )}
+            {!isReadOnlyMode && (
+              <div>
+                {isEditName ? (
+                  <div className="grid-item">
                     <Button
                       color="primary"
-                      disabled={isEditName}
                       className={classes.button}
-                      onClick={this.toggleEditDescriptionField}
+                      onClick={toggleEditNameField}
                     >
-                      {isEditDescription
-                        ? i18n.t('core:confirmSaveButton')
-                        : i18n.t('core:edit')}
+                      {i18n.t('core:cancel')}
+                    </Button>
+                    <Button
+                      color="primary"
+                      disabled={isEditDescription}
+                      className={classes.button}
+                      onClick={renameEntry}
+                    >
+                      {i18n.t('core:confirmSaveButton')}
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="grid-item">
+                    <Button
+                      color="primary"
+                      disabled={isEditDescription}
+                      className={classes.button}
+                      onClick={toggleEditNameField}
+                    >
+                      {i18n.t('core:rename')}
                     </Button>
                   </div>
                 )}
               </div>
-            </div>
-            <FormControl fullWidth={true} className={classes.formControl}>
-              {isEditDescription ? (
-                <TextField
-                  multiline
-                  inputRef={ref => {
-                    this.fileDescription = ref;
-                  }}
-                  style={{
-                    padding: 10,
-                    borderRadius: 5,
-                    backgroundColor: 'rgba(255, 216, 115, 0.53)'
-                  }}
-                  id="textarea"
-                  placeholder=""
-                  name="description"
-                  className={styles.textField}
-                  value={description}
-                  fullWidth={true}
-                  onChange={this.handleDescriptionChange}
-                />
-              ) : (
-                <Typography
-                  style={{
-                    display: 'block',
-                    padding: 10,
-                    borderRadius: 5,
-                    backgroundColor: 'rgba(255, 216, 115, 0.53)',
-                    marginBottom: 5,
-
-                    color: description
-                      ? this.props.theme.palette.text.primary
-                      : this.props.theme.palette.text.disabled
-                  }}
-                  role="button"
-                  id="descriptionArea"
-                  dangerouslySetInnerHTML={{
-                    __html: description
-                      ? marked(DOMPurify.sanitize(description))
-                      : Pro
-                      ? i18n.t('core:addMarkdownDescription')
-                      : i18n.t('core:addDescription')
-                  }}
-                  onClick={() => {
-                    if (!isEditDescription) {
-                      this.toggleEditDescriptionField();
-                    }
-                  }}
-                />
-              )}
-            </FormControl>
+            )}
           </div>
+          <FormControl fullWidth={true} className={classes.formControl}>
+            <TextField
+              InputProps={{
+                readOnly: !isEditName
+              }}
+              margin="dense"
+              name="name"
+              fullWidth={true}
+              data-tid="fileNameProperties"
+              defaultValue={currentEntry.name}
+              inputRef={fileName}
+              onClick={() => {
+                if (!isEditName) {
+                  toggleEditNameField();
+                }
+              }}
+              onKeyDown={event => {
+                if (event.key === 'Enter') {
+                  renameEntry();
+                }
+              }}
+              onChange={handleFileNameChange}
+            />
+          </FormControl>
+        </div>
 
-          <div className={classes.entryItem}>
-            <div
-              className={[classes.fluidGrid, classes.ellipsisText].join(' ')}
-            >
-              <div className="grid-item" style={{ width: '50%' }}>
-                <Typography
-                  variant="caption"
-                  className={classes.header}
-                  style={{ display: 'block' }}
-                >
-                  {i18n.t('core:fileLDTM') + ': ' + ldtm}
-                </Typography>
-                {/* <FormControl fullWidth={true} className={classes.formControl}>
+        <div className={classes.entryItem}>
+          <div className={classes.fluidGrid}>
+            <div className="grid-item">
+              <Typography
+                variant="caption"
+                className={classes.header}
+                style={{ display: 'block' }}
+              >
+                {i18n.t('core:fileTags')}
+              </Typography>
+            </div>
+            <div className="grid-item" />
+          </div>
+          <TagDropContainer entryPath={currentEntry.path}>
+            <TagsSelect
+              placeholderText={i18n.t('core:dropHere')}
+              isReadOnlyMode={isReadOnlyMode}
+              tags={currentEntry.tags}
+              handleChange={handleChange}
+            />
+          </TagDropContainer>
+        </div>
+
+        <div className={classes.entryItem}>
+          <div className={classes.fluidGrid}>
+            <div className="grid-item">
+              <Typography
+                variant="caption"
+                className={classNames(classes.header, classes.header)}
+                style={{ display: 'block' }}
+              >
+                {i18n.t('core:filePropertiesDescription')}
+              </Typography>
+            </div>
+            <div className="grid-item">
+              {!isReadOnlyMode && (
+                <div>
+                  {isEditDescription && (
+                    <Button
+                      color="primary"
+                      className={classes.button}
+                      onClick={toggleEditDescriptionField}
+                    >
+                      {i18n.t('core:cancel')}
+                    </Button>
+                  )}
+                  <Button
+                    color="primary"
+                    disabled={isEditName}
+                    className={classes.button}
+                    onClick={toggleEditDescriptionField}
+                  >
+                    {isEditDescription
+                      ? i18n.t('core:confirmSaveButton')
+                      : i18n.t('core:edit')}
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+          <FormControl fullWidth={true} className={classes.formControl}>
+            {isEditDescription ? (
+              <TextField
+                multiline
+                inputRef={fileDescription}
+                style={{
+                  padding: 10,
+                  borderRadius: 5,
+                  backgroundColor: 'rgba(255, 216, 115, 0.53)'
+                }}
+                id="textarea"
+                placeholder=""
+                name="description"
+                className={styles.textField}
+                value={currentEntry.description}
+                fullWidth={true}
+                onChange={handleDescriptionChange}
+              />
+            ) : (
+              <Typography
+                style={{
+                  display: 'block',
+                  padding: 10,
+                  borderRadius: 5,
+                  backgroundColor: 'rgba(255, 216, 115, 0.53)',
+                  marginBottom: 5,
+
+                  color: currentEntry.description
+                    ? props.theme.palette.text.primary
+                    : props.theme.palette.text.disabled
+                }}
+                role="button"
+                id="descriptionArea"
+                dangerouslySetInnerHTML={{
+                  // eslint-disable-next-line no-nested-ternary
+                  __html: currentEntry.description
+                    ? marked(DOMPurify.sanitize(currentEntry.description))
+                    : Pro
+                    ? i18n.t('core:addMarkdownDescription')
+                    : i18n.t('core:addDescription')
+                }}
+                onClick={() => {
+                  if (!isEditDescription) {
+                    toggleEditDescriptionField();
+                  }
+                }}
+              />
+            )}
+          </FormControl>
+        </div>
+
+        <div className={classes.entryItem}>
+          <div className={[classes.fluidGrid, classes.ellipsisText].join(' ')}>
+            <div className="grid-item" style={{ width: '50%' }}>
+              <Typography
+                variant="caption"
+                className={classes.header}
+                style={{ display: 'block' }}
+              >
+                {i18n.t('core:fileLDTM') + ': ' + ldtm}
+              </Typography>
+              {/* <FormControl fullWidth={true} className={classes.formControl}>
                   <TextField
                     InputProps={{
                       readOnly: true
@@ -810,18 +789,20 @@ class EntryProperties extends Component<Props, State> {
                     value={ldtm}
                   />
                 </FormControl> */}
-              </div>
+            </div>
 
-              {isFile ? (
-                <div className="grid-item" style={{ width: '50%' }}>
-                  <Typography
-                    variant="caption"
-                    className={classes.header}
-                    style={{ display: 'block' }}
-                  >
-                    {i18n.t('core:fileSize') + ': ' + formatFileSize(size)}
-                  </Typography>
-                  {/* <FormControl
+            {currentEntry.isFile ? (
+              <div className="grid-item" style={{ width: '50%' }}>
+                <Typography
+                  variant="caption"
+                  className={classes.header}
+                  style={{ display: 'block' }}
+                >
+                  {i18n.t('core:fileSize') +
+                    ': ' +
+                    formatFileSize(currentEntry.size)}
+                </Typography>
+                {/* <FormControl
                     fullWidth={true}
                     className={classes.formControl}
                     title={size + ' bytes'}
@@ -837,172 +818,180 @@ class EntryProperties extends Component<Props, State> {
                       value={formatFileSize(size)}
                     />
                   </FormControl> */}
-                </div>
-              ) : (
-                <div className="grid-item" style={{ width: '50%' }}>
-                  <Typography
-                    variant="caption"
-                    style={{ display: 'block' }}
-                    className={classes.header}
-                  >
-                    {i18n.t('core:changeBackgroundColor')}
-                  </Typography>
-                  <FormControl fullWidth={true} className={classes.formControl}>
-                    <TransparentBackground>
-                      <Button
-                        fullWidth={true}
-                        className={[
-                          classes.colorChooserButton,
-                          classes.button
-                        ].join(' ')}
-                        style={{
-                          backgroundColor: color
-                        }}
-                        onClick={this.toggleBackgroundColorPicker}
-                      />
-                      <ColorPickerDialog
-                        color={color}
-                        open={displayColorPicker}
-                        setColor={this.handleChangeColor}
-                        onClose={this.toggleBackgroundColorPicker}
-                        presetColors={[
-                          '#FFFFFF44',
-                          '#00000044',
-                          '#ac725e44',
-                          '#f83a2244',
-                          '#fa573c44',
-                          '#ff753744',
-                          '#ffad4644',
-                          '#42d69244',
-                          '#00800044',
-                          '#7bd14844',
-                          '#fad16544',
-                          '#92e1c044',
-                          '#9fe1e744',
-                          '#9fc6e744',
-                          '#4986e744',
-                          '#9a9cff44',
-                          '#c2c2c244',
-                          '#cca6ac44',
-                          '#f691b244',
-                          '#cd74e644',
-                          '#a47ae244'
-                        ]}
-                      />
-                    </TransparentBackground>
-                  </FormControl>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className={classes.entryItem}>
-            <div className={classes.fluidGrid}>
-              <Typography
-                variant="caption"
-                className={classNames(classes.header)}
-                style={{ display: 'block' }}
-              >
-                {i18n.t('core:filePath')}
-              </Typography>
-              {isFile && !isReadOnlyMode && (
-                <Button
-                  color="primary"
-                  disabled={isEditDescription || isEditName}
-                  className={classes.button}
-                  onClick={this.toggleMoveCopyFilesDialog}
+              </div>
+            ) : (
+              <div className="grid-item" style={{ width: '50%' }}>
+                <Typography
+                  variant="caption"
+                  style={{ display: 'block' }}
+                  className={classes.header}
                 >
-                  {i18n.t('core:move')}
-                </Button>
-              )}
-            </div>
-            <FormControl fullWidth={true} className={classes.formControl}>
-              <TextField
-                margin="dense"
-                name="path"
-                title={entryURL || entryPath}
-                fullWidth={true}
-                data-tid="filePathProperties"
-                value={entryPath || ''}
-                InputProps={{
-                  readOnly: true,
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      {entryURL ? <CloudLocationIcon /> : <LocationIcon />}
-                    </InputAdornment>
-                  )
-                }}
-              />
-            </FormControl>
+                  {i18n.t('core:changeBackgroundColor')}
+                </Typography>
+                <FormControl fullWidth={true} className={classes.formControl}>
+                  <TransparentBackground>
+                    <Button
+                      fullWidth={true}
+                      className={[
+                        classes.colorChooserButton,
+                        classes.button
+                      ].join(' ')}
+                      style={{
+                        backgroundColor: currentEntry.color
+                      }}
+                      onClick={toggleBackgroundColorPicker}
+                    />
+                    <ColorPickerDialog
+                      color={currentEntry.color}
+                      open={displayColorPicker}
+                      setColor={handleChangeColor}
+                      onClose={toggleBackgroundColorPicker}
+                      presetColors={[
+                        '#FFFFFF44',
+                        '#00000044',
+                        '#ac725e44',
+                        '#f83a2244',
+                        '#fa573c44',
+                        '#ff753744',
+                        '#ffad4644',
+                        '#42d69244',
+                        '#00800044',
+                        '#7bd14844',
+                        '#fad16544',
+                        '#92e1c044',
+                        '#9fe1e744',
+                        '#9fc6e744',
+                        '#4986e744',
+                        '#9a9cff44',
+                        '#c2c2c244',
+                        '#cca6ac44',
+                        '#f691b244',
+                        '#cd74e644',
+                        '#a47ae244'
+                      ]}
+                    />
+                  </TransparentBackground>
+                </FormControl>
+              </div>
+            )}
           </div>
+        </div>
 
-          <div className={classes.entryItem}>
-            <div className={classes.fluidGrid}>
-              <Typography
-                variant="caption"
-                className={classNames(classes.header)}
-                style={{ display: 'block' }}
+        <div className={classes.entryItem}>
+          <div className={classes.fluidGrid}>
+            <Typography
+              variant="caption"
+              className={classNames(classes.header)}
+              style={{ display: 'block' }}
+            >
+              {i18n.t('core:filePath')}
+            </Typography>
+            {currentEntry.isFile && !isReadOnlyMode && (
+              <Button
+                color="primary"
+                disabled={isEditDescription || isEditName}
+                className={classes.button}
+                onClick={toggleMoveCopyFilesDialog}
               >
-                {i18n.t('core:thumbnail')}
-              </Typography>
-              {!isReadOnlyMode && (
-                <Button
-                  color="primary"
-                  className={classes.button}
-                  onClick={this.toggleThumbFilesDialog}
-                >
-                  {i18n.t('core:changeThumbnail')}
-                </Button>
-              )}
-            </div>
-            <div className={classes.fluidGrid}>
-              <div
-                className={classes.header}
-                onClick={this.toggleThumbFilesDialog}
-                role="button"
-                tabIndex={0}
-                style={{
-                  backgroundSize: 'cover',
-                  backgroundImage: thumbPathUrl,
-                  backgroundPosition: 'center',
-                  height: 100,
-                  width: 100,
-                  display: 'block'
-                }}
-              />
-            </div>
+                {i18n.t('core:move')}
+              </Button>
+            )}
           </div>
-          <div className={classes.entryItem}>
-            <br />
-          </div>
-        </Grid>
+          <FormControl fullWidth={true} className={classes.formControl}>
+            <TextField
+              margin="dense"
+              name="path"
+              title={currentEntry.url || currentEntry.path}
+              fullWidth={true}
+              data-tid="filePathProperties"
+              value={currentEntry.path || ''}
+              InputProps={{
+                readOnly: true,
+                startAdornment: (
+                  <InputAdornment position="start">
+                    {currentEntry.url ? (
+                      <CloudLocationIcon />
+                    ) : (
+                      <LocationIcon />
+                    )}
+                  </InputAdornment>
+                )
+              }}
+            />
+          </FormControl>
+        </div>
 
+        <div className={classes.entryItem}>
+          <div className={classes.fluidGrid}>
+            <Typography
+              variant="caption"
+              className={classNames(classes.header)}
+              style={{ display: 'block' }}
+            >
+              {i18n.t('core:thumbnail')}
+            </Typography>
+            {!isReadOnlyMode && (
+              <Button
+                color="primary"
+                className={classes.button}
+                onClick={toggleThumbFilesDialog}
+              >
+                {i18n.t('core:changeThumbnail')}
+              </Button>
+            )}
+          </div>
+          <div className={classes.fluidGrid}>
+            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events */}
+            <div
+              className={classes.header}
+              onClick={toggleThumbFilesDialog}
+              role="button"
+              tabIndex={0}
+              style={{
+                backgroundSize: 'cover',
+                backgroundImage: thumbPathUrl,
+                backgroundPosition: 'center',
+                height: 100,
+                width: 100,
+                display: 'block'
+              }}
+            />
+          </div>
+        </div>
+        <div className={classes.entryItem}>
+          <br />
+        </div>
+      </Grid>
+
+      {/* {tagMenuOpened && (
         <EntryTagMenu
           anchorEl={tagMenuAnchorEl}
           open={tagMenuOpened}
-          onClose={this.handleCloseTagMenu}
+          onClose={handleCloseTagMenu}
           selectedTag={selectedTag}
-          currentEntryPath={entryPath}
+          currentEntryPath={currentEntry.path}
           removeTags={removeTags}
         />
+      )} */}
+      {isMoveCopyFilesDialogOpened && (
         <MoveCopyFilesDialog
           key={uuidv1()}
           open={isMoveCopyFilesDialogOpened}
-          onClose={this.toggleMoveCopyFilesDialog}
-          selectedFiles={[entryPath]}
+          onClose={toggleMoveCopyFilesDialog}
+          selectedFiles={[currentEntry.path]}
         />
-        {ThumbnailChooserDialog && (
-          <ThumbnailChooserDialog
-            key={uuidv1()}
-            open={isFileThumbChooseDialogOpened}
-            onClose={this.toggleThumbFilesDialog}
-            selectedFile={thumbPath}
-            setThumb={this.setThumb}
-          />
-        )}
-      </div>
-    );
-  }
-}
+      )}
+      {ThumbnailChooserDialog && (
+        <ThumbnailChooserDialog
+          key={uuidv1()}
+          open={isFileThumbChooseDialogOpened}
+          onClose={toggleThumbFilesDialog}
+          selectedFile={thumbPath}
+          setThumb={setThumb}
+        />
+      )}
+    </div>
+  );
+};
 
 export default withStyles(styles, { withTheme: true })(EntryProperties);

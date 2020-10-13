@@ -40,6 +40,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import ShareIcon from '@material-ui/icons/Share';
 import { withStyles } from '@material-ui/core/styles';
 import RefreshIcon from '@material-ui/icons/Refresh';
+import memoize from 'memoize-one';
 import EntryProperties from '-/components/EntryProperties';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import AppConfig from '-/config';
@@ -202,6 +203,12 @@ interface Props {
 }
 
 const EntryContainer = (props: Props) => {
+  const entry = props.openedFiles.length > 0 ? props.openedFiles[0] : undefined;
+  if (!entry) {
+    return null;
+  }
+  const [currentEntry, setCurrentEntry] = useState<OpenedEntry>(entry);
+
   const [isPropertiesPanelVisible, setPropertiesPanelVisible] = useState<
     boolean
   >(false);
@@ -221,18 +228,9 @@ const EntryContainer = (props: Props) => {
   const [isDeleteEntryModalOpened, setDeleteEntryModalOpened] = useState<
     boolean
   >(false);
-  function getCurrentEntry() {
-    if (props.openedFiles.length > 0) {
-      return props.openedFiles[0];
-    }
-    return null;
-  }
-  const [currentEntry, setCurrentEntry] = useState<OpenedEntry | null>(
-    getCurrentEntry()
-  );
   // const [selectedItem, setSelectedItem] = useState<any>({});
-  const [shouldCopyFile, setShouldCopyFile] = useState<boolean>(false);
-  const entryPropertiesKey: string = uuidv1();
+  // const [shouldCopyFile, setShouldCopyFile] = useState<boolean>(false);
+  // const entryPropertiesKey: string = uuidv1();
 
   const fileViewer = useRef<HTMLIFrameElement>(null);
   const fileViewerContainer = useRef<HTMLDivElement>(null);
@@ -280,7 +278,7 @@ const EntryContainer = (props: Props) => {
       }
 
       // set tags
-      const tags = extractTagsAsObjects(
+      /* const tags = extractTagsAsObjects(
         openedFile.path,
         props.settings.tagDelimiter,
         PlatformIO.getDirSeparator()
@@ -288,11 +286,19 @@ const EntryContainer = (props: Props) => {
       setCurrentEntry({
         ...openedFile,
         tags
-      });
+      }); */
     } else {
       setCurrentEntry(null);
     }
   }, [props.openedFiles, props.isReadOnlyMode, props.settings]);
+
+  useEffect(() => {
+    if (props.openedFiles && props.openedFiles.length > 0) {
+      setCurrentEntry(props.openedFiles[0]);
+    } else {
+      setCurrentEntry(undefined);
+    }
+  }, [props.openedFiles]);
 
   useEffect(() => {
     if (currentEntry === null) {
@@ -967,6 +973,33 @@ const EntryContainer = (props: Props) => {
     return defaultSplitSize;
   }
 
+  const renderEntryProperties = memoize(openEntry => (
+    <div className={classes.entryProperties}>
+      {currentEntry.isFile ? renderFileToolbar(classes) : renderFolderToolbar()}
+      <EntryProperties
+        key={uuidv1()}
+        // resetState={this.resetState}
+        // setPropertiesEditMode={this.setPropertiesEditMode}
+        // entryPath={currentEntry.path}
+        // entryURL={currentEntry.url}
+        openedEntry={openEntry}
+        // shouldReload={reload}
+        renameFile={props.renameFile}
+        renameDirectory={props.renameDirectory}
+        editTagForEntry={props.editTagForEntry}
+        // shouldCopyFile={shouldCopyFile}
+        // normalizeShouldCopyFile={() => setShouldCopyFile(false)}
+        addTags={props.addTags}
+        removeTags={props.removeTags}
+        removeAllTags={props.removeAllTags}
+        reflectUpdateSidecarMeta={props.reflectUpdateSidecarMeta}
+        updateThumbnailUrl={props.updateThumbnailUrl}
+        showNotification={props.showNotification}
+        isReadOnlyMode={props.isReadOnlyMode}
+      />
+    </div>
+  ));
+
   return (
     <GlobalHotKeys
       handlers={{
@@ -1209,32 +1242,7 @@ const EntryContainer = (props: Props) => {
                 </div>
               )}
             </div>
-
-            <div className={classes.entryProperties}>
-              {currentEntry.isFile
-                ? renderFileToolbar(classes)
-                : renderFolderToolbar()}
-              <EntryProperties
-                key={entryPropertiesKey}
-                // resetState={this.resetState}
-                // setPropertiesEditMode={this.setPropertiesEditMode}
-                entryPath={currentEntry.path}
-                entryURL={currentEntry.url}
-                shouldReload={shouldReload}
-                renameFile={props.renameFile}
-                renameDirectory={props.renameDirectory}
-                editTagForEntry={props.editTagForEntry}
-                shouldCopyFile={shouldCopyFile}
-                normalizeShouldCopyFile={() => setShouldCopyFile(false)}
-                addTags={props.addTags}
-                removeTags={props.removeTags}
-                removeAllTags={props.removeAllTags}
-                reflectUpdateSidecarMeta={props.reflectUpdateSidecarMeta}
-                updateThumbnailUrl={props.updateThumbnailUrl}
-                showNotification={props.showNotification}
-                isReadOnlyMode={props.isReadOnlyMode}
-              />
-            </div>
+            {renderEntryProperties(currentEntry)}
           </div>
         ) : (
           <div>{i18n.t('core:noEntrySelected')}</div>
