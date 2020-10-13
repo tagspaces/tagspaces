@@ -170,9 +170,9 @@ interface Props {
   addTags: (paths: Array<string>, tags: Array<Tag>) => void;
   removeTags: (paths: Array<string>, tags: Array<Tag>) => void;
   removeAllTags: (paths: Array<string>) => void;
-  resetState: (stateName: string) => void;
+  // resetState: (stateName: string) => void;
   isReadOnlyMode: boolean;
-  setPropertiesEditMode: (editMode: boolean) => void;
+  // setPropertiesEditMode: (editMode: boolean) => void;
 }
 
 interface State {
@@ -234,7 +234,7 @@ class EntryProperties extends Component<Props, State> {
         nextProps.openedFiles[0].shouldReload) */ // TODO rethink this and not reload all Properties at general !!
     ) {
       // eslint-disable-next-line react/destructuring-assignment
-      this.props.resetState('EntryPropertiesKey');
+      // this.props.resetState('EntryPropertiesKey'); TODO rethink this
       this.loadEntryProperties(nextProps.entryPath);
     }
 
@@ -308,15 +308,10 @@ class EntryProperties extends Component<Props, State> {
       return;
     }
     if (this.state.isEditName) {
-      this.setState(
-        {
-          isEditName: false,
-          name: this.state.originalName
-        },
-        () => {
-          this.props.setPropertiesEditMode(false);
-        }
-      );
+      this.setState({
+        isEditName: false,
+        name: this.state.originalName
+      });
     } else {
       this.setState(
         {
@@ -325,7 +320,7 @@ class EntryProperties extends Component<Props, State> {
         },
         () => {
           this.fileName.focus();
-          this.props.setPropertiesEditMode(true);
+          // this.props.setPropertiesEditMode(true);
           const { originalName } = this.state;
           if (originalName) {
             const indexOfBracket = originalName.indexOf(
@@ -374,7 +369,7 @@ class EntryProperties extends Component<Props, State> {
               isEditDescription: false
             },
             () => {
-              this.props.setPropertiesEditMode(false);
+              // this.props.setPropertiesEditMode(false);
               this.props.reflectUpdateSidecarMeta(
                 this.props.entryPath,
                 entryMeta
@@ -396,7 +391,7 @@ class EntryProperties extends Component<Props, State> {
           isEditDescription: true
         },
         () => {
-          this.props.setPropertiesEditMode(true);
+          // this.props.setPropertiesEditMode(true);
           if (this.fileDescription) {
             this.fileDescription.focus();
           }
