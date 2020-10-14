@@ -40,7 +40,6 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import ShareIcon from '@material-ui/icons/Share';
 import { withStyles } from '@material-ui/core/styles';
 import RefreshIcon from '@material-ui/icons/Refresh';
-import memoize from 'memoize-one';
 import EntryProperties from '-/components/EntryProperties';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import AppConfig from '-/config';
@@ -52,7 +51,6 @@ import {
   extractContainingDirectoryPath,
   extractTitle,
   extractFileExtension,
-  extractTagsAsObjects,
   baseName,
   extractFileName,
   extractDirectoryName
@@ -66,7 +64,6 @@ import TaggingActions from '-/reducers/tagging-actions';
 import {
   OpenedEntry,
   NotificationTypes,
-  getOpenedFiles,
   isReadOnlyMode,
   getDirectoryContent,
   actions as AppActions
@@ -203,11 +200,11 @@ interface Props {
 }
 
 const EntryContainer = (props: Props) => {
-  const entry = props.openedFiles.length > 0 ? props.openedFiles[0] : undefined;
-  if (!entry) {
+  if (props.openedFiles.length === 0) {
     return null;
   }
-  const [currentEntry, setCurrentEntry] = useState<OpenedEntry>(entry);
+  const openedFile = props.openedFiles[0];
+  const [currentEntry, setCurrentEntry] = useState<OpenedEntry>(openedFile);
 
   const [isPropertiesPanelVisible, setPropertiesPanelVisible] = useState<
     boolean
@@ -261,7 +258,6 @@ const EntryContainer = (props: Props) => {
 
   useEffect(() => {
     if (props.openedFiles.length > 0) {
-      const openedFile = props.openedFiles[0];
       // / setPropertiesPanelVisible
       if (!openedFile.isFile) {
         // always open for dirs
@@ -287,24 +283,8 @@ const EntryContainer = (props: Props) => {
         ...openedFile,
         tags
       }); */
-    } else {
-      setCurrentEntry(null);
     }
   }, [props.openedFiles, props.isReadOnlyMode, props.settings]);
-
-  useEffect(() => {
-    if (props.openedFiles && props.openedFiles.length > 0) {
-      setCurrentEntry(props.openedFiles[0]);
-    } else {
-      setCurrentEntry(undefined);
-    }
-  }, [props.openedFiles]);
-
-  useEffect(() => {
-    if (currentEntry === null) {
-      props.closeAllFiles();
-    }
-  }, [currentEntry]);
 
   useEffect(() => {
     if (props.settings.entryPropertiesSplitSize === defaultSplitSize) {
@@ -315,7 +295,7 @@ const EntryContainer = (props: Props) => {
   // isPropertiesEditMode = false; // TODO rethink this! why exist?
 
   // let isChanged = false;
-  let shouldReload = false;
+  // let shouldReload = false;
 
   // logEventsFromExtensions = event => {
   //   console.log('Ext. Logging >>> ', event.message);
@@ -347,9 +327,9 @@ const EntryContainer = (props: Props) => {
         editFile();
         break;
       case 'playbackEnded':
-        nextFilePath = props.getNextFile(currentEntry.path);
+        nextFilePath = props.getNextFile(openedFile.path);
         nextFile = props.directoryContent.filter(
-          (entry: any) => entry.path === nextFilePath
+          (dirEntry: any) => dirEntry.path === nextFilePath
         );
         props.openFile(nextFilePath);
         props.setLastSelectedEntry(nextFilePath);
@@ -373,10 +353,10 @@ const EntryContainer = (props: Props) => {
         props.openFileNatively(data.link);
         break;
       case 'loadDefaultTextContent':
-        if (!currentEntry || !currentEntry.path) {
+        if (!openedFile || !openedFile.path) {
           break;
         }
-        textFilePath = currentEntry.path;
+        textFilePath = openedFile.path;
         // TODO make loading index.html for folders configurable
         // if (!this.state.currentEntry.isFile) {
         //   textFilePath += '/index.html';
@@ -428,11 +408,9 @@ const EntryContainer = (props: Props) => {
         break;
       case 'contentChangedInEditor': {
         if (currentEntry.editMode && !currentEntry.changed) {
-          // !isChanged) {
-          // isChanged = true;
-          // dummy state change to rerender for DOT before file name (only first time)
+          // dummy state change to render DOT before file name (only first time)
           setCurrentEntry({
-            ...currentEntry,
+            ...openedFile,
             changed: true
           });
         }
@@ -451,10 +429,11 @@ const EntryContainer = (props: Props) => {
       if (currentEntry.changed) {
         setSaveBeforeReloadConfirmDialogOpened(true);
       } else {
-        shouldReload = true;
+        // shouldReload = true;
         setCurrentEntry({
-          ...currentEntry,
-          editMode: false
+          ...openedFile,
+          editMode: false,
+          shouldReload: true
         });
       }
     }
@@ -487,8 +466,7 @@ const EntryContainer = (props: Props) => {
   };
 
   const closeFile = () => {
-    // isChanged = false;
-    setCurrentEntry(null);
+    props.closeAllFiles();
     setEditingSupported(false);
   };
 
@@ -512,13 +490,14 @@ const EntryContainer = (props: Props) => {
   };
 
   const saveFile = (textContent: string) => {
-    PlatformIO.saveTextFilePromise(currentEntry.path, textContent, true)
+    PlatformIO.saveTextFilePromise(openedFile.path, textContent, true)
       .then(result => {
         // isChanged = false;
         setCurrentEntry({
-          ...currentEntry,
+          ...openedFile,
           editMode: false,
-          changed: false
+          changed: false,
+          shouldReload: false
         });
         props.showNotification(
           i18n.t('core:fileSavedSuccessfully'),
@@ -531,12 +510,12 @@ const EntryContainer = (props: Props) => {
           i18n.t('core:errorSavingFile'),
           NotificationTypes.error
         );
-        console.log('Error saving file ' + currentEntry.path + ' - ' + error);
+        console.log('Error saving file ' + openedFile.path + ' - ' + error);
       });
   };
 
   const editFile = () => {
-    setCurrentEntry({ ...currentEntry, editMode: true });
+    setCurrentEntry({ ...openedFile, editMode: true });
   };
 
   const shareFile = (filePath: string) => {
@@ -620,10 +599,10 @@ const EntryContainer = (props: Props) => {
   };
 
   const openNextFile = () => {
-    if (currentEntry && currentEntry.path) {
-      const nextFilePath = props.getNextFile(currentEntry.path);
+    if (openedFile.path) {
+      const nextFilePath = props.getNextFile(openedFile.path);
       const nextFile = props.directoryContent.filter(
-        (entry: FileSystemEntry) => entry.path === nextFilePath
+        (dirEntry: FileSystemEntry) => dirEntry.path === nextFilePath
       );
       props.openFile(nextFilePath);
       props.setLastSelectedEntry(nextFilePath);
@@ -632,10 +611,10 @@ const EntryContainer = (props: Props) => {
   };
 
   const openPrevFile = () => {
-    if (currentEntry && currentEntry.path) {
-      const prevFilePath = props.getPrevFile(currentEntry.path);
+    if (openedFile.path) {
+      const prevFilePath = props.getPrevFile(openedFile.path);
       const prevFile = props.directoryContent.filter(
-        (entry: FileSystemEntry) => entry.path === prevFilePath
+        (dirEntry: FileSystemEntry) => dirEntry.path === prevFilePath
       );
       props.openFile(prevFilePath);
       props.setLastSelectedEntry(prevFilePath);
@@ -644,8 +623,8 @@ const EntryContainer = (props: Props) => {
   };
 
   const openNatively = () => {
-    if (currentEntry) {
-      props.openFileNatively(currentEntry.path);
+    if (openedFile.path) {
+      props.openFileNatively(openedFile.path);
     }
   };
 
@@ -708,7 +687,7 @@ const EntryContainer = (props: Props) => {
             title={i18n.t('core:shareFile')}
             aria-label={i18n.t('core:shareFile')}
             data-tid="shareFile"
-            onClick={() => shareFile(`file:///${currentEntry.path}`)}
+            onClick={() => shareFile(`file:///${openedFile.path}`)}
           >
             <ShareIcon />
           </IconButton>
@@ -727,7 +706,7 @@ const EntryContainer = (props: Props) => {
           aria-label={i18n.t('core:downloadFile')}
           onClick={() => {
             const entryName = `${baseName(
-              currentEntry.path,
+              openedFile.path,
               PlatformIO.getDirSeparator()
             )}`;
             const fileName = extractFileName(
@@ -736,8 +715,8 @@ const EntryContainer = (props: Props) => {
             );
 
             if (AppConfig.isCordova) {
-              if (currentEntry.url) {
-                downloadCordova(currentEntry.url, entryName);
+              if (openedFile.url) {
+                downloadCordova(openedFile.url, entryName);
               } else {
                 console.log('Can only download HTTP/HTTPS URIs');
                 props.showNotification(
@@ -757,19 +736,19 @@ const EntryContainer = (props: Props) => {
                   const { port } = location;
                   const link = `${protocol}//${hostname}${
                     port !== '' ? `:${port}` : ''
-                  }/${currentEntry.path}`;
+                  }/${openedFile.path}`;
                   downloadLink.setAttribute('href', link);
                 } else {
                   downloadLink.setAttribute(
                     'href',
-                    `file:///${currentEntry.path}`
+                    `file:///${openedFile.path}`
                   );
                 }
 
-                if (currentEntry.url) {
+                if (openedFile.url) {
                   // mostly the s3 case
                   downloadLink.setAttribute('target', '_blank');
-                  downloadLink.setAttribute('href', currentEntry.url);
+                  downloadLink.setAttribute('href', openedFile.url);
                 }
 
                 downloadLink.setAttribute('download', fileName); // works only for same origin
@@ -913,10 +892,10 @@ const EntryContainer = (props: Props) => {
   let fileOpenerURL: string;
   let fileTitle: string = '';
 
-  if (currentEntry && currentEntry.path) {
+  if (openedFile.path) {
     fileTitle = extractTitle(
-      currentEntry.path,
-      !currentEntry.isFile,
+      openedFile.path,
+      !openedFile.isFile,
       PlatformIO.getDirSeparator()
     );
     // if (fileTitle.length > maxCharactersTitleLength) {
@@ -927,25 +906,21 @@ const EntryContainer = (props: Props) => {
       fileOpenerURL =
         currentEntry.editingExtensionPath +
         '/index.html?file=' +
-        encodeURIComponent(
-          currentEntry.url ? currentEntry.url : currentEntry.path
-        ) +
+        encodeURIComponent(openedFile.url ? openedFile.url : openedFile.path) +
         '&locale=' +
         i18n.language +
         '&edit=true' +
-        (shouldReload ? '&t=' + new Date().getTime() : '');
+        (currentEntry.shouldReload ? '&t=' + new Date().getTime() : '');
       // } else if (!currentEntry.isFile) { // TODO needed for loading folder's default html
       //   fileOpenerURL = 'node_modules/@tagspaces/html-viewer/index.html?locale=' + i18n.language;
     } else {
       fileOpenerURL =
-        currentEntry.viewingExtensionPath +
+        openedFile.viewingExtensionPath +
         '/index.html?file=' +
-        encodeURIComponent(
-          currentEntry.url ? currentEntry.url : currentEntry.path
-        ) +
+        encodeURIComponent(openedFile.url ? openedFile.url : openedFile.path) +
         '&locale=' +
         i18n.language +
-        (shouldReload ? '&t=' + new Date().getTime() : '');
+        (currentEntry.shouldReload ? '&t=' + new Date().getTime() : '');
     }
     // this.shouldReload = false;
 
@@ -968,7 +943,7 @@ const EntryContainer = (props: Props) => {
 
   function getSplitPanelSize() {
     if (isPropertiesPanelVisible) {
-      return currentEntry && currentEntry.isFile
+      return openedFile.isFile
         ? props.settings.entryPropertiesSplitSize
         : '100%';
     }
@@ -1026,12 +1001,13 @@ const EntryContainer = (props: Props) => {
             startSavingFile();
           } else {
             // isChanged = false;
-            shouldReload = true;
+            // shouldReload = true;
             setSaveBeforeReloadConfirmDialogOpened(false);
             setCurrentEntry({
-              ...currentEntry,
+              ...openedFile,
               editMode: false,
-              changed: false
+              changed: false,
+              shouldReload: true
             });
           }
         }}
@@ -1045,25 +1021,25 @@ const EntryContainer = (props: Props) => {
           setDeleteEntryModalOpened(false);
         }}
         title={
-          currentEntry && currentEntry.isFile
+          openedFile.isFile
             ? i18n.t('core:deleteConfirmationTitle')
             : i18n.t('core:deleteDirectory')
         }
         content={
-          currentEntry && currentEntry.isFile
+          openedFile.isFile
             ? i18n.t('core:doYouWantToDeleteFile')
             : i18n.t('core:deleteDirectoryContentConfirm', {
-                dirPath: currentEntry
+                dirPath: openedFile.path
                   ? extractDirectoryName(
-                      currentEntry.path,
+                      openedFile.path,
                       PlatformIO.getDirSeparator()
                     )
                   : ''
               })
         }
         confirmCallback={result => {
-          if (result && currentEntry) {
-            props.deleteFile(currentEntry.path);
+          if (result) {
+            props.deleteFile(openedFile.path);
           }
         }}
         cancelDialogTID="cancelSaveBeforeCloseDialog"
@@ -1076,7 +1052,7 @@ const EntryContainer = (props: Props) => {
         addTags={props.addTags}
         removeTags={props.removeTags}
         removeAllTags={props.removeAllTags}
-        selectedEntries={currentEntry ? [currentEntry] : []}
+        selectedEntries={openedFile ? [openedFile] : []}
       />
       {/* <a href="#" id="downloadFile">
       </a> */}
@@ -1088,14 +1064,10 @@ const EntryContainer = (props: Props) => {
         // maxSize={fullSplitSize}
         // defaultSize={this.state.entryPropertiesSplitSize}
         size={getSplitPanelSize()}
-        minSize={
-          currentEntry && currentEntry.isFile ? defaultSplitSize : '100%'
-        }
-        maxSize={currentEntry && currentEntry.isFile ? fullSplitSize : '100%'}
+        minSize={openedFile.isFile ? defaultSplitSize : '100%'}
+        maxSize={openedFile.isFile ? fullSplitSize : '100%'}
         defaultSize={
-          currentEntry && currentEntry.isFile
-            ? props.settings.entryPropertiesSplitSize
-            : '100%'
+          openedFile.isFile ? props.settings.entryPropertiesSplitSize : '100%'
         }
         onChange={size => {
           const propertiesPanelVisible = size > defaultSplitSize;
@@ -1105,25 +1077,25 @@ const EntryContainer = (props: Props) => {
           bufferedSplitResize(() => props.setEntryPropertiesSplitSize(size));
         }}
       >
-        {currentEntry ? (
+        {openedFile.path ? (
           <div className={classes.panel}>
             <div className={classes.toolbar}>
               <div className={classes.flexLeft}>
-                {currentEntry.isFile ? (
+                {openedFile.isFile ? (
                   <Button
                     onClick={togglePanel}
-                    title={currentEntry.url || currentEntry.path}
+                    title={openedFile.url || openedFile.path}
                     aria-label={i18n.t('core:toggleEntryProperties')}
                     className={classes.entryNameButton}
                   >
                     <div
                       className={classes.fileBadge}
                       title={i18n.t('core:toggleEntryProperties')}
-                      style={{ backgroundColor: currentEntry.color }}
+                      style={{ backgroundColor: openedFile.color }}
                     >
                       {'.' +
                         extractFileExtension(
-                          currentEntry.path,
+                          openedFile.path,
                           PlatformIO.getDirSeparator()
                         )}
                     </div>
@@ -1135,7 +1107,7 @@ const EntryContainer = (props: Props) => {
                 ) : (
                   <Button
                     onClick={togglePanel}
-                    title={currentEntry.url || currentEntry.path}
+                    title={openedFile.url || openedFile.path}
                     aria-label={i18n.t('core:toggleEntryProperties')}
                     className={classes.entryNameButton}
                   >
@@ -1219,14 +1191,14 @@ const EntryContainer = (props: Props) => {
               )}
             </div>
             <div className={classes.entryProperties}>
-              {currentEntry.isFile
+              {openedFile.isFile
                 ? renderFileToolbar(classes)
                 : renderFolderToolbar()}
               <EntryProperties
                 key={uuidv1()}
                 // resetState={this.resetState}
                 // setPropertiesEditMode={this.setPropertiesEditMode}
-                entryPath={currentEntry.path}
+                entryPath={openedFile.path}
                 // entryURL={currentEntry.url}
                 // openedEntry={openEntry}
                 // shouldReload={reload}
@@ -1272,7 +1244,6 @@ const EntryContainer = (props: Props) => {
 
 function mapStateToProps(state) {
   return {
-    openedFiles: getOpenedFiles(state),
     settings: state.settings,
     isReadOnlyMode: isReadOnlyMode(state),
     directoryContent: getDirectoryContent(state),
