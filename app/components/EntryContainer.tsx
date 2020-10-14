@@ -411,7 +411,8 @@ const EntryContainer = (props: Props) => {
           // dummy state change to render DOT before file name (only first time)
           setCurrentEntry({
             ...openedFile,
-            changed: true
+            changed: true,
+            editMode: true
           });
         }
         break;
