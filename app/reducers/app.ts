@@ -1721,7 +1721,7 @@ export const isOnline = (state: any) => state.app.isOnline;
 export const getLastSelectedEntry = (state: any) => state.app.lastSelectedEntry;
 export const getSelectedTag = (state: any) => state.app.tag;
 export const getSelectedEntries = (state: any) => state.app.selectedEntries;
-export const isFileOpened = (state: any) => state.app.openedFiles.length > 0;
+// export const isFileOpened = (state: any) => state.app.openedFiles.length > 0;
 export const isGeneratingThumbs = (state: any) => state.app.isGeneratingThumbs;
 // export const isFileDragged = (state: any) => state.app.isFileDragged;
 export const isReadOnlyMode = (state: any) => state.app.isReadOnlyMode;

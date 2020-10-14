@@ -55,7 +55,6 @@ import {
   isKeysDialogOpened,
   isLicenseDialogOpened,
   isThirdPartyLibsDialogOpened,
-  isFileOpened,
   isEntryInFullWidth,
   isUpdateAvailable,
   getDirectoryPath,
@@ -71,13 +70,15 @@ import {
   isCreateFileDialogOpened,
   isSettingsDialogOpened,
   isReadOnlyMode,
-  isProgressOpened
+  isProgressOpened,
+  getOpenedFiles,
+  OpenedEntry
 } from '../reducers/app';
 import {
   actions as LocationIndexActions,
   isIndexing
 } from '../reducers/location-index';
-import { buffer } from '../utils/misc';
+import { buffer } from '-/utils/misc';
 import TargetFileBox from '../components/TargetFileBox';
 import AppConfig from '../config';
 import buildDesktopMenu from '../services/electron-menus';
@@ -135,7 +136,7 @@ interface Props {
   isFirstRun: boolean;
   setFirstRun: (isFirstRun: boolean) => void;
   isDesktopMode: boolean;
-  isFileOpened: boolean;
+  openedFiles: Array<OpenedEntry>;
   isIndexing: boolean;
   isGeneratingThumbs: boolean;
   setGeneratingThumbnails: (isGenerating: boolean) => void;
@@ -336,8 +337,9 @@ class MainPage extends Component<Props, State> {
   };
 
   componentWillReceiveProps(nextProps: Props) {
-    const isEntryOpenedChanged =
-      nextProps.isFileOpened !== this.props.isFileOpened;
+    const isFileOpened = this.props.openedFiles.length > 0;
+    const isFileOpenedNext = nextProps.openedFiles.length > 0;
+    const isEntryOpenedChanged = isFileOpenedNext !== isFileOpened;
     const isEntryOpenedFullWidthChanged =
       nextProps.isEntryInFullWidth !== this.props.isEntryInFullWidth;
     const width =
@@ -348,7 +350,7 @@ class MainPage extends Component<Props, State> {
       window.innerHeight ||
       document.documentElement.clientHeight ||
       body.clientHeight;
-    if (nextProps.isFileOpened) {
+    if (isFileOpenedNext) {
       if (height > width) {
         this.setState({
           mainSplitSize: '0%'
@@ -370,7 +372,7 @@ class MainPage extends Component<Props, State> {
         });
       }
     }
-    if (!nextProps.isFileOpened && isEntryOpenedChanged) {
+    if (!isFileOpenedNext && isEntryOpenedChanged) {
       this.setState({
         mainSplitSize: '100%'
       });
@@ -418,7 +420,7 @@ class MainPage extends Component<Props, State> {
     // console.log('Width: ' + width + ' Height: ' + height);
     this.setState({ width, height });
 
-    if (this.props.isFileOpened) {
+    if (this.props.openedFiles.length > 0) {
       this.props.setEntryFullWidth(height > width);
     }
 
@@ -463,11 +465,11 @@ class MainPage extends Component<Props, State> {
     });
   };
 
-  toggleDrawer = () => {
+  /* toggleDrawer = () => {
     this.setState({
       isDrawerOpened: !this.state.isDrawerOpened
     });
-  };
+  }; */
 
   skipRelease = () => {
     this.props.setUpdateAvailable(false);
@@ -880,7 +882,7 @@ class MainPage extends Component<Props, State> {
                   windowHeight={this.state.height}
                   windowWidth={this.state.width}
                 />
-                <EntryContainer />
+                <EntryContainer openedFiles={this.props.openedFiles} />
               </SplitPane>
             </SplitPane>
           </TargetFileBox>
@@ -919,7 +921,7 @@ class MainPage extends Component<Props, State> {
                 windowWidth={this.state.width}
                 showDrawer={this.showDrawer}
               />
-              <EntryContainer />
+              <EntryContainer openedFiles={this.props.openedFiles} />
             </SplitPane>
           </React.Fragment>
         )}
@@ -945,7 +947,8 @@ function mapStateToProps(state) {
     isIndexing: isIndexing(state),
     isReadOnlyMode: isReadOnlyMode(state),
     isGeneratingThumbs: isGeneratingThumbs(state),
-    isFileOpened: isFileOpened(state),
+    // isFileOpened: isFileOpened(state),
+    openedFiles: getOpenedFiles(state),
     isEntryInFullWidth: isEntryInFullWidth(state),
     isDesktopMode: getDesktopMode(state),
     keyBindings: getKeyBindingObject(state),
