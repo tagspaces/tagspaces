@@ -196,7 +196,9 @@ interface Props {
   updateThumbnailUrl: (path: string, thumbUrl: string) => void;
   setLastSelectedEntry: (path: string) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
+  loadDirectoryContent: (path: string) => void;
   directoryContent: Array<Object>;
+  currentDirectoryPath: string | null;
 }
 
 const EntryContainer = (props: Props) => {
@@ -484,9 +486,13 @@ const EntryContainer = (props: Props) => {
     //   }
     // } else
     if (fileViewer) {
-      // @ts-ignore
-      const textContent = fileViewer.current.contentWindow.getContent();
-      saveFile(textContent);
+      try {
+        // @ts-ignore
+        const textContent = fileViewer.current.contentWindow.getContent();
+        saveFile(textContent);
+      } catch (e) {
+        console.debug('function getContent not exist for video file:', e);
+      }
     }
   };
 
@@ -1200,6 +1206,7 @@ const EntryContainer = (props: Props) => {
                 // resetState={this.resetState}
                 // setPropertiesEditMode={this.setPropertiesEditMode}
                 entryPath={openedFile.path}
+                perspective={openedFile.perspective}
                 // entryURL={currentEntry.url}
                 // openedEntry={openEntry}
                 // shouldReload={reload}
@@ -1215,6 +1222,8 @@ const EntryContainer = (props: Props) => {
                 updateThumbnailUrl={props.updateThumbnailUrl}
                 showNotification={props.showNotification}
                 isReadOnlyMode={props.isReadOnlyMode}
+                currentDirectoryPath={props.currentDirectoryPath}
+                loadDirectoryContent={props.loadDirectoryContent}
               />
             </div>
           </div>
@@ -1274,7 +1283,8 @@ function mapActionCreatorsToProps(dispatch) {
       reflectUpdateSidecarMeta: AppActions.reflectUpdateSidecarMeta,
       updateThumbnailUrl: AppActions.updateThumbnailUrl,
       setLastSelectedEntry: AppActions.setLastSelectedEntry,
-      setSelectedEntries: AppActions.setSelectedEntries
+      setSelectedEntries: AppActions.setSelectedEntries,
+      loadDirectoryContent: AppActions.loadDirectoryContent
     },
     dispatch
   );

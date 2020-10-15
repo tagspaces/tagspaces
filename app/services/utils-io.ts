@@ -41,6 +41,7 @@ export interface FileSystemEntry {
   extension: string;
   thumbPath?: string;
   color?: string;
+  perspective?: string;
   textContent?: string;
   description?: string;
   tags?: Array<Tag>;
@@ -55,6 +56,7 @@ export interface FileSystemEntryMeta {
   description: string;
   tags: Array<Tag>;
   color?: string;
+  perspective?: string;
   appVersionCreated: string;
   appName: string;
   appVersionUpdated: string;
@@ -129,12 +131,14 @@ export function enhanceEntry(entry: any): FileSystemEntry {
       PlatformIO.getDirSeparator()
     );
   }
-  let sidecarDescription = '';
-  let sidecarColor = '';
+  let sidecarDescription;
+  let sidecarColor;
+  let sidecarPerspective;
   let sidecarTags = [];
   if (entry.meta) {
-    sidecarDescription = entry.meta.description || '';
-    sidecarColor = entry.meta.color || '';
+    sidecarDescription = entry.meta.description;
+    sidecarColor = entry.meta.color;
+    sidecarPerspective = entry.meta.perspective;
     sidecarTags = entry.meta.tags || [];
     sidecarTags.map(tag => {
       tag.type = 'sidecar';
@@ -170,6 +174,9 @@ export function enhanceEntry(entry: any): FileSystemEntry {
   }
   if (sidecarColor) {
     enhancedEntry.color = sidecarColor;
+  }
+  if (sidecarPerspective) {
+    enhancedEntry.perspective = sidecarPerspective;
   }
   // console.log('Enhancing ' + entry.path); console.log(enhancedEntry);
   return enhancedEntry;
@@ -536,6 +543,7 @@ export async function loadMetaDataPromise(
       id: metaData.id || uuidv1(),
       description: metaData.description || '',
       color: metaData.color || '',
+      perspective: metaData.perspective || '',
       tags: metaData.tags || [],
       appVersionCreated: metaData.appVersionCreated || '',
       appName: metaData.appName || '',

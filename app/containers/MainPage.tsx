@@ -881,8 +881,12 @@ class MainPage extends Component<Props, State> {
                 <FolderContainer
                   windowHeight={this.state.height}
                   windowWidth={this.state.width}
+                  currentDirectoryPath={this.props.directoryPath}
                 />
-                <EntryContainer openedFiles={this.props.openedFiles} />
+                <EntryContainer
+                  openedFiles={this.props.openedFiles}
+                  currentDirectoryPath={this.props.directoryPath}
+                />
               </SplitPane>
             </SplitPane>
           </TargetFileBox>
@@ -920,8 +924,12 @@ class MainPage extends Component<Props, State> {
                 windowHeight={this.state.height}
                 windowWidth={this.state.width}
                 showDrawer={this.showDrawer}
+                currentDirectoryPath={this.props.directoryPath}
               />
-              <EntryContainer openedFiles={this.props.openedFiles} />
+              <EntryContainer
+                openedFiles={this.props.openedFiles}
+                currentDirectoryPath={this.props.directoryPath}
+              />
             </SplitPane>
           </React.Fragment>
         )}

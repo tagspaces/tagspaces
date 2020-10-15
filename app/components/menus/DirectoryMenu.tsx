@@ -55,7 +55,7 @@ import {
 } from '-/utils/paths';
 import PlatformIO from '-/services/platform-io';
 import { formatDateTime4Tag } from '-/utils/misc';
-import { actions as AppActions } from '-/reducers/app';
+import { actions as AppActions, perspectives } from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
 import { Tag } from '-/reducers/taglibrary';
 import TaggingActions from '-/reducers/tagging-actions';
@@ -494,7 +494,7 @@ const DirectoryMenu = (props: Props) => {
           <div>
             <MenuItem
               data-tid="openDefaultPerspective"
-              onClick={() => switchPerspective('default')}
+              onClick={() => switchPerspective(perspectives.DEFAULT)}
               title="Switch to default perspective"
             >
               <ListItemIcon>
@@ -504,7 +504,11 @@ const DirectoryMenu = (props: Props) => {
             </MenuItem>
             <MenuItem
               data-tid="openGalleryPerspective"
-              onClick={() => switchPerspective('gallery')}
+              onClick={() =>
+                switchPerspective(
+                  Pro.Perspectives.AvailablePerspectives.GALLERY
+                )
+              }
               title="Switch to gallery perspective"
             >
               <ListItemIcon>
@@ -514,7 +518,11 @@ const DirectoryMenu = (props: Props) => {
             </MenuItem>
             <MenuItem
               data-tid="openMapiquePerspective"
-              onClick={() => switchPerspective('mapique')}
+              onClick={() =>
+                switchPerspective(
+                  Pro.Perspectives.AvailablePerspectives.MAPIQUE
+                )
+              }
               title="Switch to mapique perspective"
             >
               <ListItemIcon>
@@ -530,7 +538,9 @@ const DirectoryMenu = (props: Props) => {
             </MenuItem> */}
             <MenuItem
               data-tid="openTreeVizPerspective"
-              onClick={() => switchPerspective('kanban')}
+              onClick={() =>
+                switchPerspective(Pro.Perspectives.AvailablePerspectives.KANBAN)
+              }
               title="Switch to kanban visualization perspective"
             >
               <ListItemIcon>

@@ -25,8 +25,9 @@ import {
   deleteFilesPromise,
   loadMetaDataPromise,
   renameFilesPromise,
-  enhanceDirectoryContent
-} from '../services/utils-io';
+  enhanceDirectoryContent,
+  FileSystemEntryMeta
+} from '-/services/utils-io';
 import {
   extractFileExtension,
   extractDirectoryName,
@@ -36,8 +37,8 @@ import {
   extractParentDirectoryPath,
   extractTagsAsObjects,
   normalizePath
-} from '../utils/paths';
-import { formatDateTime4Tag, getURLParameter } from '../utils/misc';
+} from '-/utils/paths';
+import { formatDateTime4Tag, getURLParameter } from '-/utils/misc';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 // import { getThumbnailURLPromise } from '../services/thumbsgenerator';
@@ -68,7 +69,8 @@ export const types = {
   SET_GENERATING_THUMBNAILS: 'APP/SET_GENERATING_THUMBNAILS',
   SET_NEW_VERSION_AVAILABLE: 'APP/SET_NEW_VERSION_AVAILABLE',
   SET_CURRENLOCATIONID: 'APP/SET_CURRENLOCATIONID',
-  SET_CURRENDIRECTORYCOLOR: 'APP/SET_CURRENDIRECTORYCOLOR',
+  // SET_CURRENDIRECTORYCOLOR: 'APP/SET_CURRENDIRECTORYCOLOR',
+  SET_CURRENDIRECTORYPERSPECTIVE: 'APP/SET_CURRENDIRECTORYPERSPECTIVE',
   SET_LAST_SELECTED_ENTRY: 'APP/SET_LAST_SELECTED_ENTRY',
   SET_SELECTED_ENTRIES: 'APP/SET_SELECTED_ENTRIES',
   SET_FILEDRAGGED: 'APP/SET_FILEDRAGGED',
@@ -98,6 +100,9 @@ export const types = {
   REFLECT_UPDATE_SIDECARTAGS: 'APP/REFLECT_UPDATE_SIDECARTAGS',
   REFLECT_UPDATE_SIDECARMETA: 'APP/REFLECT_UPDATE_SIDECARMETA'
 };
+export const perspectives = {
+  DEFAULT: 'default'
+};
 
 export const NotificationTypes = {
   default: 'default',
@@ -113,6 +118,7 @@ export type OpenedEntry = {
   editingExtensionId?: string;
   isFile?: boolean;
   color?: string;
+  perspective?: string;
   editMode?: boolean;
   changed?: boolean;
   shouldReload?: boolean;
@@ -221,6 +227,12 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         currentDirectoryEntries: action.directoryContent,
+        currentDirectoryColor: action.directoryMeta
+          ? action.directoryMeta.color || ''
+          : '',
+        currentDirectoryPerspective: action.directoryMeta
+          ? action.directoryMeta.perspective
+          : undefined,
         currentDirectoryPath: action.directoryPath,
         isLoading: action.showIsLoading || false
       };
@@ -248,8 +260,11 @@ export default (state: any = initialState, action: any) => {
     case types.SET_SELECTED_ENTRIES: {
       return { ...state, selectedEntries: action.selectedEntries };
     }
-    case types.SET_CURRENDIRECTORYCOLOR: {
+    /* case types.SET_CURRENDIRECTORYCOLOR: {
       return { ...state, currentDirectoryColor: action.color };
+    } */
+    case types.SET_CURRENDIRECTORYPERSPECTIVE: {
+      return { ...state, currentDirectoryPerspective: action.perspective };
     }
     case types.TOGGLE_EDIT_TAG_DIALOG: {
       return {
@@ -739,54 +754,73 @@ export const actions = {
     const { settings } = getState();
     window.walkCanceled = false;
 
+    function loadDirectoryContentInt(fsEntryMeta?: FileSystemEntryMeta) {
+      // Uncomment the following line will to clear all content before loading new dir content
+      dispatch(actions.loadDirectorySuccessInt(directoryPath, [], true)); // this is to reset directoryContent (it will reset color too)
+      // dispatch(actions.setCurrentDirectoryColor('')); // this is to reset color only
+      dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
+      PlatformIO.listDirectoryPromise(directoryPath, false)
+        .then(results => {
+          prepareDirectoryContent(
+            results,
+            directoryPath,
+            settings,
+            dispatch,
+            getState,
+            fsEntryMeta
+          );
+          return true;
+        })
+        .catch(error => {
+          console.timeEnd('listDirectoryPromise');
+          dispatch(actions.loadDirectoryFailure(error)); // Currently this is never called, due the promise always resolve
+        });
+    }
+
     loadMetaDataPromise(
       normalizePath(directoryPath) + PlatformIO.getDirSeparator()
     )
       .then(fsEntryMeta => {
-        if (fsEntryMeta.color) {
+        loadDirectoryContentInt(fsEntryMeta);
+        /* if (fsEntryMeta.color) { // TODO rethink this states changes are expensive
           dispatch(actions.setCurrentDirectoryColor(fsEntryMeta.color));
         }
+        if (fsEntryMeta.perspective) {
+          dispatch(actions.setCurrentDirPerspective(fsEntryMeta.perspective));
+        } */
+
         return true;
       })
       .catch(err => {
-        console.log('Error loading color of the current folder' + err);
-      });
-
-    // Uncomment the following line will to clear all content before loading new dir content
-    dispatch(actions.loadDirectorySuccessInt(directoryPath, [], true));
-    dispatch(actions.setCurrentDirectoryColor(''));
-    dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
-    PlatformIO.listDirectoryPromise(directoryPath, false)
-      .then(results => {
-        prepareDirectoryContent(
-          results,
-          directoryPath,
-          settings,
-          dispatch,
-          getState
-        );
-        return true;
-      })
-      .catch(error => {
-        console.timeEnd('listDirectoryPromise');
-        dispatch(actions.loadDirectoryFailure(error)); // Currently this is never called, due the promise always resolve
+        console.log('Error loading meta of the current folder' + err);
+        loadDirectoryContentInt();
       });
   },
   loadDirectorySuccess: (
     directoryPath: string,
-    directoryContent: Array<Object>
+    directoryContent: Array<Object>,
+    directoryMeta?: FileSystemEntryMeta
   ) => (dispatch: (actions: Object) => void) => {
     dispatch(actions.hideNotifications());
-    dispatch(actions.loadDirectorySuccessInt(directoryPath, directoryContent));
+    dispatch(
+      actions.loadDirectorySuccessInt(
+        directoryPath,
+        directoryContent,
+        false,
+        directoryMeta
+      )
+    );
   },
   loadDirectorySuccessInt: (
     directoryPath: string,
     directoryContent: Array<Object>,
-    showIsLoading?: boolean
+    showIsLoading?: boolean,
+    directoryMeta?: FileSystemEntryMeta
   ) => ({
     type: types.LOAD_DIRECTORY_SUCCESS,
     directoryPath: directoryPath || PlatformIO.getDirSeparator(),
     directoryContent,
+    directoryMeta,
     showIsLoading
   }),
   loadDirectoryFailure: (directoryPath: string, error?: any) => (
@@ -820,9 +854,13 @@ export const actions = {
     type: types.SET_LAST_SELECTED_ENTRY,
     entryPath
   }),
-  setCurrentDirectoryColor: (color: string) => ({
+  /* setCurrentDirectoryColor: (color: string) => ({
     type: types.SET_CURRENDIRECTORYCOLOR,
     color
+  }), */
+  setCurrentDirectoryPerspective: (perspective: string) => ({
+    type: types.SET_CURRENDIRECTORYPERSPECTIVE,
+    perspective
   }),
   setSelectedEntries: (selectedEntries: Array<Object>) => ({
     type: types.SET_SELECTED_ENTRIES,
@@ -1198,8 +1236,13 @@ export const actions = {
     const currentEntry = currentDirectoryEntries.find(
       entry => entry.path === entryPath
     );
-    if (currentEntry && currentEntry.url) {
-      entryForOpening.url = currentEntry.url;
+    if (currentEntry) {
+      if (currentEntry.url) {
+        entryForOpening.url = currentEntry.url;
+      }
+      if (currentEntry.perspective) {
+        entryForOpening.perspective = currentEntry.perspective;
+      }
     }
     if (
       editMode &&
@@ -1336,6 +1379,12 @@ export const actions = {
     path,
     tags
   }),
+  /**
+   * @deprecated to reload use:
+   * if(props.entryPath === props.currentDirectoryPath) props.loadDirectoryContent(props.entryPath);
+   * @param path
+   * @param entryMeta
+   */
   reflectUpdateSidecarMetaInt: (path: string, entryMeta: Object) => ({
     type: types.REFLECT_UPDATE_SIDECARMETA,
     path,
@@ -1493,7 +1542,8 @@ function prepareDirectoryContent(
   directoryPath,
   settings,
   dispatch,
-  getState
+  getState,
+  dirEntryMeta
 ) {
   const currentLocation: Location = getLocation(
     getState(),
@@ -1557,7 +1607,9 @@ function prepareDirectoryContent(
   }
 
   console.log('Dir ' + directoryPath + ' contains ' + directoryContent.length);
-  dispatch(actions.loadDirectorySuccess(directoryPath, directoryContent));
+  dispatch(
+    actions.loadDirectorySuccess(directoryPath, directoryContent, dirEntryMeta)
+  );
 }
 
 function findExtensionPathForId(extensionId: string): string {
@@ -1692,6 +1744,10 @@ export function findAvailableExtensions() {
 // Selectors
 export const getDirectoryContent = (state: any) =>
   state.app.currentDirectoryEntries;
+export const getCurrentDirectoryColor = (state: any) =>
+  state.app.currentDirectoryColor;
+export const getCurrentDirectoryPerspective = (state: any) =>
+  state.app.currentDirectoryPerspective;
 export const getDirectoryPath = (state: any) => state.app.currentDirectoryPath;
 export const getProgress = (state: any) => state.app.progress;
 export const getCurrentLocationPath = (state: any) => {
@@ -1749,8 +1805,6 @@ export const isProgressOpened = (state: any) => state.app.progressDialogOpened;
 export const getOpenedFiles = (state: any) => state.app.openedFiles;
 export const getNotificationStatus = (state: any) =>
   state.app.notificationStatus;
-export const getCurrentDirectoryColor = (state: any) =>
-  state.app.currentDirectoryColor;
 export const getSearchResults = (state: any) =>
   state.app.currentDirectoryEntries;
 export const getSearchResultCount = (state: any) =>

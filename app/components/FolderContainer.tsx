@@ -34,7 +34,7 @@ import {
   getPerspectives,
   getMaxSearchResults,
   getDesktopMode
-} from '../reducers/settings';
+} from '-/reducers/settings';
 import {
   actions as AppActions,
   getDirectoryContent,
@@ -42,10 +42,11 @@ import {
   getLastSelectedEntry,
   getSearchResultCount,
   isReadOnlyMode,
-  getCurrentLocationPath
+  getCurrentLocationPath,
+  getCurrentDirectoryPerspective
 } from '../reducers/app';
 import TaggingActions from '../reducers/tagging-actions';
-import { normalizePath, extractShortDirectoryName } from '../utils/paths';
+import { normalizePath, extractShortDirectoryName } from '-/utils/paths';
 import PlatformIO from '../services/platform-io';
 import LoadingLazy from '../components/LoadingLazy';
 import { Pro } from '../pro';
@@ -209,11 +210,13 @@ interface Props {
   showNotification: (content: string) => void;
   openSearchPanel: () => void;
   showDrawer: () => void;
+  setCurrentDirectoryPerspective: (perspective: string) => void;
   maxSearchResults: number;
+  currentDirectoryPerspective: string;
 }
 
 interface State {
-  currentPerspective: string;
+  // currentPerspective: string;
   currentPath?: string;
   pathParts?: Array<string>;
   // isPropertiesPanelVisible?: boolean;
@@ -230,7 +233,7 @@ interface State {
 
 class FolderContainer extends React.Component<Props, State> {
   state = {
-    currentPerspective: window.ExtDefaultPerspective || 'default',
+    // currentPerspective: window.ExtDefaultPerspective || 'default',
     currentPath: '',
     pathParts: [],
     // isPropertiesPanelVisible: false,
@@ -311,9 +314,10 @@ class FolderContainer extends React.Component<Props, State> {
       this.props.showNotification(i18n.t('core:needProVersion'));
       return;
     }
-    this.setState({
+    /* this.setState({ TODO
       currentPerspective: perspectiveId || 'default'
-    });
+    }); */
+    this.props.setCurrentDirectoryPerspective(perspectiveId || 'default');
   };
 
   togglePerspectiveChooserClose = (event?: any) => {
@@ -330,7 +334,10 @@ class FolderContainer extends React.Component<Props, State> {
     ) {
       return <WelcomePanelAsync />;
     }
-    if (this.state.currentPerspective === 'gallery') {
+    if (
+      this.props.currentDirectoryPerspective ===
+      Pro.Perspectives.AvailablePerspectives.GALLERY
+    ) {
       return (
         <GalleryPerspectiveAsync
           directoryContent={this.props.directoryContent}
@@ -340,7 +347,10 @@ class FolderContainer extends React.Component<Props, State> {
         />
       );
     }
-    if (this.state.currentPerspective === 'treeviz') {
+    if (
+      this.props.currentDirectoryPerspective ===
+      Pro.Perspectives.AvailablePerspectives.TREEVIZ
+    ) {
       return (
         <TreeVizPerspectiveAsync
           directoryContent={this.props.directoryContent}
@@ -350,7 +360,10 @@ class FolderContainer extends React.Component<Props, State> {
         />
       );
     }
-    if (this.state.currentPerspective === 'mapique') {
+    if (
+      this.props.currentDirectoryPerspective ===
+      Pro.Perspectives.AvailablePerspectives.MAPIQUE
+    ) {
       return (
         <MapiquePerspectiveAsync
           directoryContent={this.props.directoryContent}
@@ -360,7 +373,10 @@ class FolderContainer extends React.Component<Props, State> {
         />
       );
     }
-    if (this.state.currentPerspective === 'kanban') {
+    if (
+      this.props.currentDirectoryPerspective ===
+      Pro.Perspectives.AvailablePerspectives.KANBAN
+    ) {
       return (
         <KanBanPerspectiveAsync
           directoryContent={this.props.directoryContent}
@@ -545,10 +561,10 @@ class FolderContainer extends React.Component<Props, State> {
 
 function mapStateToProps(state) {
   return {
-    currentDirectoryPath: getDirectoryPath(state),
     lastSelectedEntry: getLastSelectedEntry(state),
     perspectives: getPerspectives(state),
     directoryContent: getDirectoryContent(state),
+    currentDirectoryPerspective: getCurrentDirectoryPerspective(state),
     searchResultCount: getSearchResultCount(state),
     currentLocationPath: getCurrentLocationPath(state),
     maxSearchResults: getMaxSearchResults(state),
@@ -579,7 +595,8 @@ function mapActionCreatorsToProps(dispatch) {
       loadParentDirectoryContent: AppActions.loadParentDirectoryContent,
       setLastSelectedEntry: AppActions.setLastSelectedEntry,
       showNotification: AppActions.showNotification,
-      openSearchPanel: AppActions.openSearchPanel
+      openSearchPanel: AppActions.openSearchPanel,
+      setCurrentDirectoryPerspective: AppActions.setCurrentDirectoryPerspective
     },
     dispatch
   );
