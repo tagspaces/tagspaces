@@ -232,21 +232,17 @@ const EntryContainer = (props: Props) => {
   const fileViewer = useRef<HTMLIFrameElement>(null);
   const fileViewerContainer = useRef<HTMLDivElement>(null);
 
-  useEventListener(
-    'toggle-resume',
-    () => {
-      // if (AppConfig.isElectron && this.fileViewer) {
-      //   this.fileViewer.executeJavaScript(
-      //     'window.dispatchEvent(new Event("resume"));'
-      //   );
-      // } else
-      if (fileViewer && fileViewer.current.contentWindow) {
-        // @ts-ignore
-        fileViewer.current.contentWindow.togglePlay();
-      }
-    },
-    fileViewer
-  );
+  useEventListener('toggle-resume', () => {
+    // if (AppConfig.isElectron && this.fileViewer) {
+    //   this.fileViewer.executeJavaScript(
+    //     'window.dispatchEvent(new Event("resume"));'
+    //   );
+    // } else
+    if (fileViewer && fileViewer.current.contentWindow) {
+      // @ts-ignore
+      fileViewer.current.contentWindow.togglePlay();
+    }
+  });
 
   useEventListener('message', e => {
     if (typeof e.data === 'string') {

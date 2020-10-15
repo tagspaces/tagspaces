@@ -993,7 +993,7 @@ function mapDispatchToProps(dispatch) {
       toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
       setLastSelectedEntry: AppActions.setLastSelectedEntry,
       setGeneratingThumbnails: AppActions.setGeneratingThumbnails,
-      // openFile: AppActions.openFile,
+      openFile: AppActions.openFile,
       openFileNatively: AppActions.openFileNatively,
       openURLExternally: AppActions.openURLExternally,
       setEntryFullWidth: AppActions.setEntryFullWidth,
