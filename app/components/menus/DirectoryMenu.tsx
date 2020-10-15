@@ -366,12 +366,14 @@ const DirectoryMenu = (props: Props) => {
 
   return (
     <div style={{ overflowY: 'hidden' }}>
-      <RenameDirectoryDialog
-        key={uuidv1()}
-        open={isRenameDirectoryDialogOpened}
-        onClose={handleCloseDialogs}
-        selectedDirectoryPath={props.directoryPath}
-      />
+      {isRenameDirectoryDialogOpened && (
+        <RenameDirectoryDialog
+          key={uuidv1()}
+          open={isRenameDirectoryDialogOpened}
+          onClose={handleCloseDialogs}
+          selectedDirectoryPath={props.directoryPath}
+        />
+      )}
       {isCreateDirectoryDialogOpened && (
         <CreateDirectoryDialog
           key={uuidv1()}
