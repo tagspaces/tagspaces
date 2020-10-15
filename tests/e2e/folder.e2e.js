@@ -11,29 +11,17 @@ import {
   createMinioLocation
 } from './location.helpers';
 import {
-  openSettingsDialog,
-  closeSettingsDialog,
   reloadDirectory,
   openEntry,
-  tsFolder,
+  disableTrashBin,
   openDirectoryMenu,
   createNewDirectory,
-  newHTMLFile,
-  newMDFile,
-  newTEXTFile,
-  closeOpenedFile,
   deleteDirectory,
   returnDirectoryBack
 } from './general.helpers';
-import { renameDirectory } from './test-utils.spec';
-import { searchEngine } from './search.spec';
 
 export const firstFile = '/span';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
-const subFolderName = '/test-perspective-grid';
-const subFolderContentExtractionPath =
-  defaultLocationPath + '/content-extraction';
-const subFolderThumbnailsPath = defaultLocationPath + '/thumbnails';
 const testFolder = 'testFolder';
 const newDirectoryName = 'newDirectory';
 
@@ -107,6 +95,21 @@ describe('TST01 - Folder management [folder_mahagement, electron]', () => {
     await confirmRenameDirectoryDialog.waitForDisplayed();
     await confirmRenameDirectoryDialog.click();
     await delay(55500);
+    await deleteDirectory();
+  });
+
+  it('TST0104 - Delete empty folder [Delete_empty_folder, electron]', async () => {
+    await delay(500);
+    await disableTrashBin();
+    await delay(500);
+    await openDirectoryMenu();
+    await delay(500);
+    await createNewDirectory();
+    await delay(500);
+    await openEntry(testFolder);
+    await delay(500);
+    await reloadDirectory();
+    await delay(500);
     await deleteDirectory();
   });
 });

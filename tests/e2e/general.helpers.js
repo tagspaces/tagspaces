@@ -182,14 +182,14 @@ export async function deleteDirectory() {
   await delay(500);
 }
 
-export async function moveToTrashBin() {
+export async function disableTrashBin() {
   await openSettingsDialog();
   await delay(500);
-  const moveToTrashBin = await global.client.$(
+  const disableTrashBin = await global.client.$(
     '[data-tid=settingsSetUseTrashCan]'
   );
-  await moveToTrashBin.waitForDisplayed();
-  await moveToTrashBin.click();
+  await disableTrashBin.waitForDisplayed();
+  await disableTrashBin.click();
   await delay(500);
   await closeSettingsDialog();
 }
