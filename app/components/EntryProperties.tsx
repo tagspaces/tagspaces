@@ -636,10 +636,9 @@ const EntryProperties = (props: Props) => {
   };
 
   let perspectiveDefault;
-  /* if (currentEntry.perspective) {
+  if (currentEntry.perspective) {
     perspectiveDefault = currentEntry.perspective;
-  } else */
-  if (props.perspective) {
+  } else if (props.perspective) {
     perspectiveDefault = props.perspective;
   } else {
     perspectiveDefault = 'unspecified'; // perspectives.DEFAULT;
