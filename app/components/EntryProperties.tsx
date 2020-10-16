@@ -1028,7 +1028,7 @@ const EntryProperties = (props: Props) => {
                 className={classNames(classes.header)}
                 style={{ display: 'block' }}
               >
-                {i18n.t('core:changePerspective')}
+                {i18n.t('core:choosePerspective')}
               </Typography>
             </div>
             <FormControl fullWidth={true} className={classes.formControl}>

@@ -95,7 +95,13 @@ const OnboardingDialog = (props: Props) => {
       <DialogTitle style={{ justifyContent: 'center', textAlign: 'center' }}>
         Welcome to TagSpaces
       </DialogTitle>
-      <DialogContent style={{ marginTop: 20 }}>
+      <DialogContent
+        style={{
+          marginTop: 20,
+          // @ts-ignore
+          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+        }}
+      >
         <SwipeableViews
           index={activeStep}
           onChangeIndex={handleStepChange}
@@ -132,7 +138,7 @@ const OnboardingDialog = (props: Props) => {
               textAlign: 'center'
             }}
           >
-            <Typography variant="h5">Understand main app navigation</Typography>
+            <Typography variant="h5">Navigation in the app</Typography>
             <img
               style={{ marginTop: 15, maxHeight: 500 }}
               src={NavigationV3}
