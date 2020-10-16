@@ -22,10 +22,10 @@ import { Location, getLocation, locationType } from './locations';
 import PlatformIO from '../services/platform-io';
 import AppConfig from '../config';
 import {
-  enhanceEntry,
   deleteFilesPromise,
   loadMetaDataPromise,
-  renameFilesPromise
+  renameFilesPromise,
+  enhanceDirectoryContent
 } from '../services/utils-io';
 import {
   extractFileExtension,
@@ -40,7 +40,7 @@ import {
 import { formatDateTime4Tag, getURLParameter } from '../utils/misc';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
-import { getThumbnailURLPromise } from '../services/thumbsgenerator';
+// import { getThumbnailURLPromise } from '../services/thumbsgenerator';
 import { actions as LocationIndexActions } from './location-index';
 import { Tag } from './taglibrary';
 
@@ -1362,7 +1362,7 @@ export const actions = {
     getState: () => any
   ) => {
     const { settings } = getState();
-    PlatformIO.deleteFilePromise(filePath, settings.useTrashCan)
+    return PlatformIO.deleteFilePromise(filePath, settings.useTrashCan)
       .then(() => {
         // TODO close file opener if this file is opened
         dispatch(actions.reflectDeleteEntry(filePath));
@@ -1495,43 +1495,22 @@ function prepareDirectoryContent(
   dispatch,
   getState
 ) {
-  const directoryContent = [];
-  const tmbGenerationPromises = [];
-  const tmbGenerationList = [];
-  const isWorkerAvailable = PlatformIO.isWorkerAvailable();
   const currentLocation: Location = getLocation(
     getState(),
     getState().app.currentLocationId
   );
   const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
 
-  dirEntries.map(entry => {
-    if (!settings.showUnixHiddenEntries && entry.name.startsWith('.')) {
-      return true;
-    }
-
-    if (isCloudLocation) {
-      entry.url = PlatformIO.getURLforPath(entry.path);
-    }
-
-    const enhancedEntry = enhanceEntry(entry);
-    directoryContent.push(enhancedEntry);
-    if (
-      // Enable thumb generation by
-      !AppConfig.isWeb && // not in webdav mode
-      !PlatformIO.haveObjectStoreSupport() && // not in object store mode
-      enhancedEntry.isFile && // only for files
-      settings.useGenerateThumbnails // enabled in the settings
-    ) {
-      const isPDF = enhancedEntry.path.endsWith('.pdf');
-      if (isWorkerAvailable && !isPDF) {
-        tmbGenerationList.push(enhancedEntry.path);
-      } else {
-        tmbGenerationPromises.push(getThumbnailURLPromise(enhancedEntry.path));
-      }
-    }
-    return true;
-  });
+  const {
+    directoryContent,
+    tmbGenerationPromises,
+    tmbGenerationList
+  } = enhanceDirectoryContent(
+    dirEntries,
+    isCloudLocation,
+    settings.showUnixHiddenEntries,
+    settings.useGenerateThumbnails
+  );
 
   function handleTmbGenerationResults(results) {
     // console.log('tmb results' + JSON.stringify(results));
@@ -1742,7 +1721,7 @@ export const isOnline = (state: any) => state.app.isOnline;
 export const getLastSelectedEntry = (state: any) => state.app.lastSelectedEntry;
 export const getSelectedTag = (state: any) => state.app.tag;
 export const getSelectedEntries = (state: any) => state.app.selectedEntries;
-export const isFileOpened = (state: any) => state.app.openedFiles.length > 0;
+// export const isFileOpened = (state: any) => state.app.openedFiles.length > 0;
 export const isGeneratingThumbs = (state: any) => state.app.isGeneratingThumbs;
 // export const isFileDragged = (state: any) => state.app.isFileDragged;
 export const isReadOnlyMode = (state: any) => state.app.isReadOnlyMode;

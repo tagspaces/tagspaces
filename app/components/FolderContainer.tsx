@@ -94,6 +94,16 @@ const TreeVizPerspectiveAsync = props => (
   </React.Suspense>
 );
 
+let KanBanPerspective = React.Fragment;
+if (Pro && Pro.Perspectives && Pro.Perspectives.KanBanPerspective) {
+  KanBanPerspective = Pro.Perspectives.KanBanPerspective;
+}
+const KanBanPerspectiveAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <KanBanPerspective {...props} />
+  </React.Suspense>
+);
+
 const WelcomePanel = React.lazy(() =>
   import(/* webpackChunkName: "WelcomePanel" */ './WelcomePanel')
 );
@@ -345,6 +355,30 @@ class FolderContainer extends React.Component<Props, State> {
         <MapiquePerspectiveAsync
           directoryContent={this.props.directoryContent}
           currentDirectoryPath={this.props.currentDirectoryPath}
+          windowWidth={this.props.windowWidth}
+          switchPerspective={this.switchPerspective}
+        />
+      );
+    }
+    if (this.state.currentPerspective === 'kanban') {
+      return (
+        <KanBanPerspectiveAsync
+          directoryContent={this.props.directoryContent}
+          loadDirectoryContent={this.props.loadDirectoryContent}
+          openFile={this.props.openFile}
+          loadParentDirectoryContent={this.props.loadParentDirectoryContent}
+          deleteFile={this.props.deleteFile}
+          renameFile={this.props.renameFile}
+          openDirectory={this.props.openDirectory}
+          showInFileManager={this.props.showInFileManager}
+          currentDirectoryPath={this.props.currentDirectoryPath}
+          setLastSelectedEntry={this.props.setLastSelectedEntry}
+          perspectiveCommand={this.state.perspectiveCommand}
+          addTags={this.props.addTags}
+          editTagForEntry={this.props.editTagForEntry}
+          deleteDirectory={this.props.deleteDirectory}
+          removeTags={this.props.removeTags}
+          removeAllTags={this.props.removeAllTags}
           windowWidth={this.props.windowWidth}
           switchPerspective={this.switchPerspective}
         />

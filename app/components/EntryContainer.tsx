@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { GlobalHotKeys } from 'react-hotkeys';
@@ -51,7 +51,6 @@ import {
   extractContainingDirectoryPath,
   extractTitle,
   extractFileExtension,
-  extractTagsAsObjects,
   baseName,
   extractFileName,
   extractDirectoryName
@@ -65,11 +64,11 @@ import TaggingActions from '-/reducers/tagging-actions';
 import {
   OpenedEntry,
   NotificationTypes,
-  getOpenedFiles,
   isReadOnlyMode,
   getDirectoryContent,
   actions as AppActions
 } from '-/reducers/app';
+import useEventListener from '-/utils/useEventListener';
 
 const defaultSplitSize = 103;
 const openedSplitSize = AppConfig.isElectron ? 560 : 360;
@@ -200,159 +199,99 @@ interface Props {
   directoryContent: Array<Object>;
 }
 
-interface State {
-  isPropertiesPanelVisible?: boolean;
-  isFullscreen: boolean;
-  currentEntry?: OpenedEntry | null;
-  entryProps?: any | null;
-  editingSupported?: boolean;
-  isSaveBeforeCloseConfirmDialogOpened?: boolean;
-  isSaveBeforeReloadConfirmDialogOpened?: boolean;
-  // openedSplitSize?: number;
-  isEditTagsModalOpened?: boolean;
-  selectedItem?: any;
-  isDeleteEntryModalOpened?: boolean;
-  shouldCopyFile?: boolean;
-  // entryPropertiesSplitSize?: number;
-  EntryPropertiesKey: string;
-}
-
-class EntryContainer extends React.Component<Props, State> {
-  state = {
-    isPropertiesPanelVisible: false,
-    isFullscreen: false,
-    editingSupported: false,
-    isSaveBeforeCloseConfirmDialogOpened: false,
-    isSaveBeforeReloadConfirmDialogOpened: false,
-    // openedSplitSize,
-    isEditTagsModalOpened: false,
-    isDeleteEntryModalOpened: false,
-    currentEntry: null,
-    selectedItem: {},
-    shouldCopyFile: false,
-    // entryPropertiesSplitSize: 0,
-    EntryPropertiesKey: uuidv1()
-  };
-
-  componentDidMount() {
-    window.addEventListener('toggle-resume', () => {
-      // if (AppConfig.isElectron && this.fileViewer) {
-      //   this.fileViewer.executeJavaScript(
-      //     'window.dispatchEvent(new Event("resume"));'
-      //   );
-      // } else
-      if (this.fileViewer && this.fileViewer.contentWindow) {
-        this.fileViewer.contentWindow.togglePlay();
-      }
-    });
-    // if (AppConfig.isElectron) {
-    //   if (this.fileViewer) {
-    //     this.fileViewer.addEventListener(
-    //       'console-message',
-    //       this.logEventsFromExtensions
-    //     );
-    //     this.fileViewer.addEventListener(
-    //       'ipc-message',
-    //       this.handleMessageProxy
-    //     );
-    //   }
-    // } else {
-
-    // if (this.fileViewer) {
-    //   this.fileViewer.contentWindow.onbeforeunload = e => {
-    //     console.log('Unloading ' + JSON.stringify(e));
-    //     // e.preventDefault();
-    //     e.returnValue = 'Do you really want to leave this page?';
-    //   };
-    // }
-
-    window.addEventListener(
-      'message',
-      e => {
-        if (typeof e.data === 'string') {
-          // console.log(e.data);
-          const dataObj = JSON.parse(e.data);
-          this.handleMessage(dataObj);
-        }
-      },
-      false
-    );
-    // }
+const EntryContainer = (props: Props) => {
+  if (props.openedFiles.length === 0) {
+    return null;
   }
+  const openedFile = props.openedFiles[0];
+  const [currentEntry, setCurrentEntry] = useState<OpenedEntry>(openedFile);
 
-  componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.openedFiles.length > 0) {
-      const nextEntry = nextProps.openedFiles[0];
-      if (this.state.currentEntry && this.isChanged) {
-        // this.state.currentEntry.changed) {
-        // console.warn(i18n.t('core:currentlyFileChangedSaveOrClose'))
-        return true;
+  const [isPropertiesPanelVisible, setPropertiesPanelVisible] = useState<
+    boolean
+  >(false);
+  const [isFullscreen, setFullscreen] = useState<boolean>(false);
+  const [editingSupported, setEditingSupported] = useState<boolean>(false);
+  const [
+    isSaveBeforeCloseConfirmDialogOpened,
+    setSaveBeforeCloseConfirmDialogOpened
+  ] = useState<boolean>(false);
+  const [
+    isSaveBeforeReloadConfirmDialogOpened,
+    setSaveBeforeReloadConfirmDialogOpened
+  ] = useState<boolean>(false);
+  const [isEditTagsModalOpened, setEditTagsModalOpened] = useState<boolean>(
+    false
+  );
+  const [isDeleteEntryModalOpened, setDeleteEntryModalOpened] = useState<
+    boolean
+  >(false);
+  // const [selectedItem, setSelectedItem] = useState<any>({});
+  // const [shouldCopyFile, setShouldCopyFile] = useState<boolean>(false);
+  // const entryPropertiesKey: string = uuidv1();
+
+  const fileViewer = useRef<HTMLIFrameElement>(null);
+  const fileViewerContainer = useRef<HTMLDivElement>(null);
+
+  useEventListener('toggle-resume', () => {
+    // if (AppConfig.isElectron && this.fileViewer) {
+    //   this.fileViewer.executeJavaScript(
+    //     'window.dispatchEvent(new Event("resume"));'
+    //   );
+    // } else
+    if (fileViewer && fileViewer.current.contentWindow) {
+      // @ts-ignore
+      fileViewer.current.contentWindow.togglePlay();
+    }
+  });
+
+  useEventListener('message', e => {
+    if (typeof e.data === 'string') {
+      // console.log(e.data);
+      const dataObj = JSON.parse(e.data);
+      handleMessage(dataObj);
+    }
+  });
+
+  useEffect(() => {
+    if (props.openedFiles.length > 0) {
+      // / setPropertiesPanelVisible
+      if (!openedFile.isFile) {
+        // always open for dirs
+        setPropertiesPanelVisible(true);
       }
-
-      this.setState({ currentEntry: nextEntry });
-      this.shouldReload = nextEntry.shouldReload;
-
-      if (nextProps.isReadOnlyMode) {
-        this.setState({ editingSupported: false });
+      // / setEditingSupported
+      if (props.isReadOnlyMode) {
+        setEditingSupported(false);
       } else {
-        this.setState({
-          editingSupported:
-            nextEntry.editingExtensionId &&
-            nextEntry.editingExtensionId.length > 3
-        });
+        setEditingSupported(
+          openedFile.editingExtensionId &&
+            openedFile.editingExtensionId.length > 3
+        );
       }
 
-      const { settings } = nextProps;
-
-      const currentEntry = nextProps.openedFiles[0];
-      const tags = extractTagsAsObjects(
-        currentEntry.path,
-        settings.tagDelimiter,
+      // set tags
+      /* const tags = extractTagsAsObjects(
+        openedFile.path,
+        props.settings.tagDelimiter,
         PlatformIO.getDirSeparator()
       );
-      this.setState({
-        selectedItem: {
-          ...currentEntry,
-          tags
-        }
-      });
-
-      /* this.setState({
-        // entryPropertiesSplitSize: settings.entryPropertiesSplitSize,
-        isPropertiesPanelVisible:
-          settings.entryPropertiesSplitSize > defaultSplitSize
+      setCurrentEntry({
+        ...openedFile,
+        tags
       }); */
-    } else {
-      this.setState({ currentEntry: null });
     }
-  }
+  }, [props.openedFiles, props.isReadOnlyMode, props.settings]);
 
-  componentWillUnmount() {
-    // if (AppConfig.isElectron) {
-    //   if (this.fileViewer && this.fileViewer.removeEventListener) {
-    //     this.fileViewer.removeEventListener(
-    //       'console-message',
-    //       this.logEventsFromExtensions
-    //     );
-    //     this.fileViewer.removeEventListener(
-    //       'ipc-message',
-    //       this.handleMessageProxy
-    //     );
-    //   }
-    // } else {
-    window.removeEventListener('message', this.handleMessage);
-    // }
-  }
+  useEffect(() => {
+    if (props.settings.entryPropertiesSplitSize === defaultSplitSize) {
+      props.setEntryPropertiesSplitSize(openedSplitSize);
+    }
+  }, [isPropertiesPanelVisible]);
 
-  fileViewer;
+  // isPropertiesEditMode = false; // TODO rethink this! why exist?
 
-  fileViewerContainer;
-
-  isPropertiesEditMode = false; // TODO rethink this! why exist?
-
-  isChanged = false;
-
-  shouldReload = false;
+  // let isChanged = false;
+  // let shouldReload = false;
 
   // logEventsFromExtensions = event => {
   //   console.log('Ext. Logging >>> ', event.message);
@@ -362,7 +301,7 @@ class EntryContainer extends React.Component<Props, State> {
   //   this.handleMessage(JSON.stringify(event.channel));
   // };
 
-  handleMessage = (data: any) => {
+  const handleMessage = (data: any) => {
     let message;
     let textFilePath;
     let nextFilePath;
@@ -375,22 +314,22 @@ class EntryContainer extends React.Component<Props, State> {
         if (data.message) {
           message = message + ': ' + data.message;
         }
-        this.props.showNotification(message, NotificationTypes.default);
+        props.showNotification(message, NotificationTypes.default);
         break;
       case 'saveDocument':
-        this.startSavingFile();
+        startSavingFile();
         break;
       case 'editDocument':
-        this.editFile();
+        editFile();
         break;
       case 'playbackEnded':
-        nextFilePath = this.props.getNextFile(this.state.currentEntry.path);
-        nextFile = this.props.directoryContent.filter(
-          (entry: any) => entry.path === nextFilePath
+        nextFilePath = props.getNextFile(openedFile.path);
+        nextFile = props.directoryContent.filter(
+          (dirEntry: any) => dirEntry.path === nextFilePath
         );
-        this.props.openFile(nextFilePath);
-        this.props.setLastSelectedEntry(nextFilePath);
-        this.props.setSelectedEntries(nextFile);
+        props.openFile(nextFilePath);
+        props.setLastSelectedEntry(nextFilePath);
+        props.setSelectedEntries(nextFile);
         break;
       case 'openLinkExternally':
         // console.log('Open link externally: ' + data.link);
@@ -400,20 +339,20 @@ class EntryContainer extends React.Component<Props, State> {
           decodedURI.startsWith('https://') ||
           decodedURI.startsWith('file://')
         ) {
-          this.props.openURLExternally(decodedURI);
+          props.openURLExternally(decodedURI);
         } else {
           console.log('Not supported URL format: ' + decodedURI);
         }
         break;
       case 'openFileNatively':
         console.log('Open file natively: ' + data.link);
-        this.props.openFileNatively(data.link);
+        props.openFileNatively(data.link);
         break;
       case 'loadDefaultTextContent':
-        if (!this.state.currentEntry || !this.state.currentEntry.path) {
+        if (!openedFile || !openedFile.path) {
           break;
         }
-        textFilePath = this.state.currentEntry.path;
+        textFilePath = openedFile.path;
         // TODO make loading index.html for folders configurable
         // if (!this.state.currentEntry.isFile) {
         //   textFilePath += '/index.html';
@@ -430,6 +369,7 @@ class EntryContainer extends React.Component<Props, State> {
             if (AppConfig.isWeb) {
               fileDirectory =
                 extractContainingDirectoryPath(
+                  // eslint-disable-next-line no-restricted-globals
                   location.href,
                   PlatformIO.getDirSeparator()
                 ) +
@@ -448,11 +388,12 @@ class EntryContainer extends React.Component<Props, State> {
             //     false
             //   );
             // } else
-            if (this.fileViewer) {
-              this.fileViewer.contentWindow.setContent(
+            if (fileViewer) {
+              // @ts-ignore
+              fileViewer.current.contentWindow.setContent(
                 content,
                 fileDirectory,
-                !this.state.currentEntry.editMode
+                !currentEntry.editMode
               );
             }
             return true;
@@ -462,15 +403,12 @@ class EntryContainer extends React.Component<Props, State> {
           });
         break;
       case 'contentChangedInEditor': {
-        const { currentEntry } = this.state;
-        if (currentEntry.editMode && !this.isChanged) {
-          this.isChanged = true;
-          // dummy state change to rerender for DOT before file name (only first time)
-          this.setState({
-            currentEntry: {
-              ...currentEntry
-              // changed: true
-            }
+        if (currentEntry.editMode && !currentEntry.changed) {
+          // dummy state change to render DOT before file name (only first time)
+          setCurrentEntry({
+            ...openedFile,
+            changed: true,
+            editMode: true
           });
         }
         break;
@@ -483,68 +421,53 @@ class EntryContainer extends React.Component<Props, State> {
     }
   };
 
-  reloadDocument = () => {
-    if (this.state.currentEntry) {
-      if (this.isChanged) {
-        this.setState({
-          isSaveBeforeReloadConfirmDialogOpened: true
-        });
+  const reloadDocument = () => {
+    if (currentEntry) {
+      if (currentEntry.changed) {
+        setSaveBeforeReloadConfirmDialogOpened(true);
       } else {
-        this.shouldReload = true;
-        this.setState({
-          currentEntry: {
-            ...this.state.currentEntry,
-            // shouldReload: true,
-            editMode: false
-          }
+        // shouldReload = true;
+        setCurrentEntry({
+          ...openedFile,
+          editMode: false,
+          shouldReload: true
         });
       }
     }
   };
 
-  cancelEditing = () => {
-    if (this.state.currentEntry && this.isChanged) {
-      // this.state.currentEntry.changed) {
-      this.props.showNotification(
+  /* const cancelEditing = () => {
+    if (currentEntry && isChanged) {
+      props.showNotification(
         i18n.t('core:currentlyFileChangedSaveOrClose')
       );
       return true;
     }
-    this.shouldReload = true;
-    this.setState({
-      currentEntry: {
-        ...this.state.currentEntry,
-        // shouldReload: true,
-        editMode: false
-      }
+    shouldReload = true;
+    setCurrentEntry({
+      ...currentEntry,
+      editMode: false
     });
-  };
+  }; */
 
-  startClosingFile = event => {
+  const startClosingFile = event => {
     if (event) {
       event.preventDefault(); // Let's stop this event.
       event.stopPropagation();
     }
-    if (this.state.currentEntry && this.isChanged) {
-      // this.state.currentEntry.changed) {
-      this.setState({ isSaveBeforeCloseConfirmDialogOpened: true });
+    if (currentEntry && currentEntry.changed) {
+      setSaveBeforeCloseConfirmDialogOpened(true);
     } else {
-      this.closeFile();
+      closeFile();
     }
   };
 
-  closeFile = () => {
-    this.isChanged = false;
-    this.setState(
-      {
-        currentEntry: null,
-        editingSupported: false
-      },
-      this.props.closeAllFiles
-    );
+  const closeFile = () => {
+    props.closeAllFiles();
+    setEditingSupported(false);
   };
 
-  startSavingFile = () => {
+  const startSavingFile = () => {
     // if (AppConfig.isElectron) {
     //   if (this.fileViewer) {
     //     this.fileViewer.executeJavaScript(
@@ -556,55 +479,47 @@ class EntryContainer extends React.Component<Props, State> {
     //     );
     //   }
     // } else
-    if (this.fileViewer) {
-      const textContent = this.fileViewer.contentWindow.getContent();
-      this.saveFile(textContent);
+    if (fileViewer) {
+      // @ts-ignore
+      const textContent = fileViewer.current.contentWindow.getContent();
+      saveFile(textContent);
     }
   };
 
-  saveFile = (textContent: string) => {
-    PlatformIO.saveTextFilePromise(
-      this.state.currentEntry.path,
-      textContent,
-      true
-    )
+  const saveFile = (textContent: string) => {
+    PlatformIO.saveTextFilePromise(openedFile.path, textContent, true)
       .then(result => {
-        this.isChanged = false;
-        this.setState({
-          currentEntry: {
-            ...this.state.currentEntry,
-            editMode: false
-            // shouldReload: false
-          }
+        // isChanged = false;
+        setCurrentEntry({
+          ...openedFile,
+          editMode: false,
+          changed: false,
+          shouldReload: false
         });
-        this.props.showNotification(
+        props.showNotification(
           i18n.t('core:fileSavedSuccessfully'),
           NotificationTypes.default
         );
         return result;
       })
       .catch(error => {
-        this.props.showNotification(
+        props.showNotification(
           i18n.t('core:errorSavingFile'),
           NotificationTypes.error
         );
-        console.log(
-          'Error saving file ' + this.state.currentEntry.path + ' - ' + error
-        );
+        console.log('Error saving file ' + openedFile.path + ' - ' + error);
       });
   };
 
-  editFile = () => {
-    this.setState({
-      currentEntry: { ...this.state.currentEntry, editMode: true }
-    });
+  const editFile = () => {
+    setCurrentEntry({ ...openedFile, editMode: true });
   };
 
-  shareFile = (filePath: string) => {
+  const shareFile = (filePath: string) => {
     PlatformIO.shareFiles([filePath]);
   };
 
-  toggleFullScreen = () => {
+  const toggleFullScreen = () => {
     // this.fileViewerContainer.addEventListener('onfullscreenchange', () => {
     //   alert('Fullscreen change');
     //   if (this.state.isFullscreen) {
@@ -614,12 +529,12 @@ class EntryContainer extends React.Component<Props, State> {
     //   }
     // });
 
-    if (this.state.isFullscreen && document.webkitExitFullscreen) {
+    if (isFullscreen && document.webkitExitFullscreen) {
       document.webkitExitFullscreen();
-      this.setState({ isFullscreen: false });
+      setFullscreen(false);
       return;
     }
-    if (this.state.isFullscreen && document.exitFullscreen) {
+    if (isFullscreen && document.exitFullscreen) {
       // TODO exit fullscreen firefox does not work
       document
         .exitFullscreen()
@@ -628,113 +543,89 @@ class EntryContainer extends React.Component<Props, State> {
           return true;
         })
         .catch(e => {
-          console.log('Error exiting fullscreen');
+          console.log('Error exiting fullscreen', e);
         });
-      this.setState({ isFullscreen: false });
+      setFullscreen(false);
       return;
     } /* else if (this.state.isFullscreen && document.mozExitFullscreen) {
       document.mozExitFullscreen();
       this.setState({ isFullscreen: false });
       return;
     } */
-    if (!this.state.isFullscreen && this.fileViewerContainer) {
+    if (!isFullscreen && fileViewerContainer) {
       if (
-        this.fileViewerContainer &&
-        this.fileViewerContainer.webkitRequestFullscreen
+        fileViewerContainer &&
+        // @ts-ignore
+        fileViewerContainer.current.webkitRequestFullscreen
       ) {
-        this.fileViewerContainer.webkitRequestFullscreen();
-        this.setState({ isFullscreen: true });
+        // @ts-ignore
+        fileViewerContainer.current.webkitRequestFullscreen();
+        setFullscreen(true);
       } else if (
-        this.fileViewerContainer &&
-        this.fileViewerContainer.requestFullscreen
+        fileViewerContainer &&
+        fileViewerContainer.current.requestFullscreen
       ) {
-        this.fileViewerContainer.requestFullscreen();
-        this.setState({ isFullscreen: true });
+        fileViewerContainer.current.requestFullscreen();
+        setFullscreen(true);
       } else if (
-        this.fileViewerContainer &&
-        this.fileViewerContainer.mozRequestFullScreen
+        fileViewerContainer &&
+        // @ts-ignore
+        fileViewerContainer.current.mozRequestFullScreen
       ) {
-        this.fileViewerContainer.mozRequestFullScreen();
-        this.setState({ isFullscreen: true });
+        // @ts-ignore
+        fileViewerContainer.current.mozRequestFullScreen();
+        setFullscreen(true);
       }
     }
   };
 
-  openPanel = () => {
-    /* if (this.state.currentEntry) {
-      getAllPropertiesPromise(this.state.currentEntry.path)
-        .then(entryProps => {
-          console.log(JSON.stringify(entryProps));
-          return true;
-        })
-        .catch(error => {
-          console.warn('Error getting properties for entry: ' + error);
-        });
-    } */
-
-    this.setState(
-      {
-        // openedSplitSize,
-        isPropertiesPanelVisible: true
-      },
-      () => {
-        if (this.props.settings.entryPropertiesSplitSize === defaultSplitSize) {
-          this.props.setEntryPropertiesSplitSize(openedSplitSize);
-        }
-      }
-    );
+  const openPanel = () => {
+    setPropertiesPanelVisible(true);
   };
 
-  closePanel = () => {
-    this.setState(
-      {
-        // openedSplitSize: defaultSplitSize,
-        // entryPropertiesSplitSize: defaultSplitSize,
-        isPropertiesPanelVisible: false
-      }
-      // ,() => this.props.setEntryPropertiesSplitSize(defaultSplitSize)
-    );
+  const closePanel = () => {
+    setPropertiesPanelVisible(false);
   };
 
-  togglePanel = () => {
-    if (this.state.isPropertiesPanelVisible) {
-      this.closePanel();
+  const togglePanel = () => {
+    if (isPropertiesPanelVisible) {
+      closePanel();
     } else {
-      this.openPanel();
+      openPanel();
     }
   };
 
-  openNextFile = () => {
-    if (this.state.currentEntry && this.state.currentEntry.path) {
-      const nextFilePath = this.props.getNextFile(this.state.currentEntry.path);
-      const nextFile = this.props.directoryContent.filter(
-        (entry: FileSystemEntry) => entry.path === nextFilePath
+  const openNextFile = () => {
+    if (openedFile.path) {
+      const nextFilePath = props.getNextFile(openedFile.path);
+      const nextFile = props.directoryContent.filter(
+        (dirEntry: FileSystemEntry) => dirEntry.path === nextFilePath
       );
-      this.props.openFile(nextFilePath);
-      this.props.setLastSelectedEntry(nextFilePath);
-      this.props.setSelectedEntries(nextFile);
+      props.openFile(nextFilePath);
+      props.setLastSelectedEntry(nextFilePath);
+      props.setSelectedEntries(nextFile);
     }
   };
 
-  openPrevFile = () => {
-    if (this.state.currentEntry && this.state.currentEntry.path) {
-      const prevFilePath = this.props.getPrevFile(this.state.currentEntry.path);
-      const prevFile = this.props.directoryContent.filter(
-        (entry: FileSystemEntry) => entry.path === prevFilePath
+  const openPrevFile = () => {
+    if (openedFile.path) {
+      const prevFilePath = props.getPrevFile(openedFile.path);
+      const prevFile = props.directoryContent.filter(
+        (dirEntry: FileSystemEntry) => dirEntry.path === prevFilePath
       );
-      this.props.openFile(prevFilePath);
-      this.props.setLastSelectedEntry(prevFilePath);
-      this.props.setSelectedEntries(prevFile);
+      props.openFile(prevFilePath);
+      props.setLastSelectedEntry(prevFilePath);
+      props.setSelectedEntries(prevFile);
     }
   };
 
-  openNatively = () => {
-    if (this.state.currentEntry) {
-      this.props.openFileNatively(this.state.currentEntry.path);
+  const openNatively = () => {
+    if (openedFile.path) {
+      props.openFileNatively(openedFile.path);
     }
   };
 
-  downloadCordova = (uri, filename) => {
+  const downloadCordova = (uri, filename) => {
     const { Downloader } = window.plugins;
 
     const downloadSuccessCallback = result => {
@@ -767,24 +658,24 @@ class EntryContainer extends React.Component<Props, State> {
     );
   };
 
-  renderFileToolbar = classes => (
+  const renderFileToolbar = classes => (
     <div className={classes.toolbar2}>
       <div className={classes.flexLeft}>
         <IconButton
           title={i18n.t('core:toggleProperties')}
           aria-label={i18n.t('core:toggleProperties')}
-          onClick={this.togglePanel}
+          onClick={togglePanel}
           data-tid="fileContainerToggleProperties"
         >
           <DetailsIcon
-            color={this.state.isPropertiesPanelVisible ? 'primary' : 'action'}
+            color={isPropertiesPanelVisible ? 'primary' : 'action'}
           />
         </IconButton>
         <IconButton
           title={i18n.t('core:switchToFullscreen')}
           aria-label={i18n.t('core:switchToFullscreen')}
           data-tid="fileContainerSwitchToFullScreen"
-          onClick={this.toggleFullScreen}
+          onClick={toggleFullScreen}
         >
           <FullScreenIcon />
         </IconButton>
@@ -793,9 +684,7 @@ class EntryContainer extends React.Component<Props, State> {
             title={i18n.t('core:shareFile')}
             aria-label={i18n.t('core:shareFile')}
             data-tid="shareFile"
-            onClick={() =>
-              this.shareFile(`file:///${this.state.currentEntry.path}`)
-            }
+            onClick={() => shareFile(`file:///${openedFile.path}`)}
           >
             <ShareIcon />
           </IconButton>
@@ -804,7 +693,7 @@ class EntryContainer extends React.Component<Props, State> {
           <IconButton
             title={i18n.t('core:openFileExternally')}
             aria-label={i18n.t('core:openFileExternally')}
-            onClick={this.openNatively}
+            onClick={openNatively}
           >
             <OpenNativelyIcon />
           </IconButton>
@@ -813,9 +702,8 @@ class EntryContainer extends React.Component<Props, State> {
           title={i18n.t('core:downloadFile')}
           aria-label={i18n.t('core:downloadFile')}
           onClick={() => {
-            const { currentEntry } = this.state;
             const entryName = `${baseName(
-              currentEntry.path,
+              openedFile.path,
               PlatformIO.getDirSeparator()
             )}`;
             const fileName = extractFileName(
@@ -824,11 +712,11 @@ class EntryContainer extends React.Component<Props, State> {
             );
 
             if (AppConfig.isCordova) {
-              if (currentEntry.url) {
-                this.downloadCordova(currentEntry.url, entryName);
+              if (openedFile.url) {
+                downloadCordova(openedFile.url, entryName);
               } else {
                 console.log('Can only download HTTP/HTTPS URIs');
-                this.props.showNotification(
+                props.showNotification(
                   i18n.t('core:cantDownloadLocalFile'),
                   NotificationTypes.default
                 );
@@ -837,21 +725,27 @@ class EntryContainer extends React.Component<Props, State> {
               const downloadLink = document.getElementById('downloadFile');
               if (downloadLink) {
                 if (AppConfig.isWeb) {
-                  const link = `${location.protocol}//${location.hostname}${
-                    location.port !== '' ? `:${location.port}` : ''
-                  }/${currentEntry.path}`;
+                  // eslint-disable-next-line no-restricted-globals
+                  const { protocol } = location;
+                  // eslint-disable-next-line no-restricted-globals
+                  const { hostname } = location;
+                  // eslint-disable-next-line no-restricted-globals
+                  const { port } = location;
+                  const link = `${protocol}//${hostname}${
+                    port !== '' ? `:${port}` : ''
+                  }/${openedFile.path}`;
                   downloadLink.setAttribute('href', link);
                 } else {
                   downloadLink.setAttribute(
                     'href',
-                    `file:///${currentEntry.path}`
+                    `file:///${openedFile.path}`
                   );
                 }
 
-                if (currentEntry.url) {
+                if (openedFile.url) {
                   // mostly the s3 case
                   downloadLink.setAttribute('target', '_blank');
-                  downloadLink.setAttribute('href', currentEntry.url);
+                  downloadLink.setAttribute('href', openedFile.url);
                 }
 
                 downloadLink.setAttribute('download', fileName); // works only for same origin
@@ -873,11 +767,11 @@ class EntryContainer extends React.Component<Props, State> {
             <CopyContentIcon />
           </IconButton>
         ) */}
-        {!this.props.isReadOnlyMode && (
+        {!props.isReadOnlyMode && (
           <IconButton
             title={i18n.t('core:deleteEntry')}
             aria-label={i18n.t('core:deleteEntry')}
-            onClick={() => this.setState({ isDeleteEntryModalOpened: true })}
+            onClick={() => setDeleteEntryModalOpened(true)}
           >
             <DeleteIcon />
           </IconButton>
@@ -885,14 +779,14 @@ class EntryContainer extends React.Component<Props, State> {
         <IconButton
           title={i18n.t('core:reloadFile')}
           aria-label={i18n.t('core:reloadFile')}
-          onClick={this.reloadDocument}
+          onClick={reloadDocument}
         >
           <RefreshIcon />
         </IconButton>
         <IconButton
           title={i18n.t('core:openInFullWidth')}
           aria-label={i18n.t('core:openInFullWidth')}
-          onClick={this.props.toggleEntryFullWidth}
+          onClick={props.toggleEntryFullWidth}
         >
           <ExpandIcon />
         </IconButton>
@@ -902,7 +796,7 @@ class EntryContainer extends React.Component<Props, State> {
           title={i18n.t('core:openPrevFileTooltip')}
           aria-label={i18n.t('core:openPrevFileTooltip')}
           data-tid="fileContainerPrevFile"
-          onClick={this.openPrevFile}
+          onClick={openPrevFile}
         >
           <ArrowLeftIcon />
         </IconButton>
@@ -910,7 +804,7 @@ class EntryContainer extends React.Component<Props, State> {
           title={i18n.t('core:openNextFileTooltip')}
           aria-label={i18n.t('core:openNextFileTooltip')}
           data-tid="fileContainerNextFile"
-          onClick={this.openNextFile}
+          onClick={openNextFile}
         >
           <ArrowRightIcon />
         </IconButton>
@@ -918,24 +812,14 @@ class EntryContainer extends React.Component<Props, State> {
     </div>
   );
 
-  renderFolderToolbar = () => (
-    <div className={this.props.classes.toolbar2}>
-      <div className={this.props.classes.flexLeft}>
-        <IconButton
-          title={i18n.t('core:toggleProperties')}
-          aria-label={i18n.t('core:toggleProperties')}
-          onClick={this.togglePanel}
-          data-tid="fileContainerToggleProperties"
-        >
-          <DetailsIcon
-            color={this.state.isPropertiesPanelVisible ? 'primary' : 'action'}
-          />
-        </IconButton>
+  const renderFolderToolbar = () => (
+    <div className={props.classes.toolbar2}>
+      <div className={props.classes.flexLeft}>
         {!(PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb) && (
           <IconButton
             title={i18n.t('core:openDirectoryExternally')}
             aria-label={i18n.t('core:openDirectoryExternally')}
-            onClick={this.openNatively}
+            onClick={openNatively}
           >
             <OpenNativelyIcon />
           </IconButton>
@@ -943,16 +827,16 @@ class EntryContainer extends React.Component<Props, State> {
         <IconButton
           title={i18n.t('core:reloadDirectory')}
           aria-label={i18n.t('core:reloadDirectory')}
-          onClick={this.reloadDocument}
+          onClick={reloadDocument}
         >
           <RefreshIcon />
         </IconButton>
-        {!this.props.isReadOnlyMode && (
+        {!props.isReadOnlyMode && (
           <div>
             <IconButton
               title={i18n.t('core:deleteDirectory')}
               aria-label={i18n.t('core:deleteDirectory')}
-              onClick={() => this.setState({ isDeleteEntryModalOpened: true })}
+              onClick={() => setDeleteEntryModalOpened(true)}
             >
               <DeleteIcon />
             </IconButton>
@@ -962,7 +846,7 @@ class EntryContainer extends React.Component<Props, State> {
     </div>
   );
 
-  renderFileView = fileOpenerURL => (
+  const renderFileView = fileOpenerURL => (
     // if (AppConfig.isElectron) {
     //   return (
     //     <webview
@@ -978,10 +862,8 @@ class EntryContainer extends React.Component<Props, State> {
     //   );
     // }
     <iframe
-      ref={fileViewer => {
-        this.fileViewer = fileViewer;
-      }}
-      className={this.props.classes.fileOpener}
+      ref={fileViewer}
+      className={props.classes.fileOpener}
       src={fileOpenerURL}
       allowFullScreen
       sandbox="allow-same-origin allow-scripts allow-modals"
@@ -990,403 +872,375 @@ class EntryContainer extends React.Component<Props, State> {
     />
   );
 
-  setPropertiesEditMode = (editMode: boolean) => {
+  /* const setPropertiesEditMode = (editMode: boolean) => {
     this.isPropertiesEditMode = editMode;
-  };
+  }; */
 
-  resetState = key => {
+  /* TODO rethink this
+  const resetState = key => {
     // this.isPropertiesEditMode = false;
     // @ts-ignore
     this.setState({
       [key]: uuidv1()
     });
-  };
+  }; */
 
-  render() {
-    const { classes, keyBindings } = this.props;
-    const { isEditTagsModalOpened, currentEntry, isFullscreen } = this.state;
-    let fileOpenerURL: string;
-    let fileTitle: string = '';
+  const { classes, keyBindings } = props;
+  let fileOpenerURL: string;
+  let fileTitle: string = '';
 
-    if (currentEntry && currentEntry.path) {
-      fileTitle = extractTitle(
-        currentEntry.path,
-        !currentEntry.isFile,
-        PlatformIO.getDirSeparator()
-      );
-      // if (fileTitle.length > maxCharactersTitleLength) {
-      //   fileTitle = fileTitle.substr(0, maxCharactersTitleLength) + '...';
-      // }
+  if (openedFile.path) {
+    fileTitle = extractTitle(
+      openedFile.path,
+      !openedFile.isFile,
+      PlatformIO.getDirSeparator()
+    );
+    // if (fileTitle.length > maxCharactersTitleLength) {
+    //   fileTitle = fileTitle.substr(0, maxCharactersTitleLength) + '...';
+    // }
 
-      if (currentEntry.editMode && currentEntry.editingExtensionPath) {
-        fileOpenerURL =
-          currentEntry.editingExtensionPath +
-          '/index.html?file=' +
-          encodeURIComponent(
-            currentEntry.url ? currentEntry.url : currentEntry.path
-          ) +
-          '&locale=' +
-          i18n.language +
-          '&edit=true' +
-          (this.shouldReload ? '&t=' + new Date().getTime() : '');
-        // } else if (!currentEntry.isFile) { // TODO needed for loading folder's default html
-        //   fileOpenerURL = 'node_modules/@tagspaces/html-viewer/index.html?locale=' + i18n.language;
-      } else {
-        fileOpenerURL =
-          currentEntry.viewingExtensionPath +
-          '/index.html?file=' +
-          encodeURIComponent(
-            currentEntry.url ? currentEntry.url : currentEntry.path
-          ) +
-          '&locale=' +
-          i18n.language +
-          (this.shouldReload ? '&t=' + new Date().getTime() : '');
-      }
-      // this.shouldReload = false;
-
-      // if (!currentEntry.isFile) {
-      //   fileOpenerURL = currentEntry.path + '/index.html';
-      // }
-
-      // // Idea for using mhtml native browser in chrome
-      // if (
-      //   !AppConfig.isFirefox && (
-      //     currentEntry.path.endsWith('mht') ||
-      //     currentEntry.path.endsWith('mhtml')
-      //   )
-      // ) {
-      //   fileOpenerURL = currentEntry.path;
-      // }
+    if (currentEntry.editMode && currentEntry.editingExtensionPath) {
+      fileOpenerURL =
+        currentEntry.editingExtensionPath +
+        '/index.html?file=' +
+        encodeURIComponent(openedFile.url ? openedFile.url : openedFile.path) +
+        '&locale=' +
+        i18n.language +
+        '&edit=true' +
+        (currentEntry.shouldReload ? '&t=' + new Date().getTime() : '');
+      // } else if (!currentEntry.isFile) { // TODO needed for loading folder's default html
+      //   fileOpenerURL = 'node_modules/@tagspaces/html-viewer/index.html?locale=' + i18n.language;
     } else {
-      fileOpenerURL = 'about:blank';
+      fileOpenerURL =
+        openedFile.viewingExtensionPath +
+        '/index.html?file=' +
+        encodeURIComponent(openedFile.url ? openedFile.url : openedFile.path) +
+        '&locale=' +
+        i18n.language +
+        (currentEntry.shouldReload ? '&t=' + new Date().getTime() : '');
     }
+    // this.shouldReload = false;
 
-    return (
-      <GlobalHotKeys
-        handlers={{
-          closeViewer: this.startClosingFile,
-          saveDocument: this.startSavingFile,
-          editDocument: this.editFile,
-          nextDocument: this.openNextFile,
-          prevDocument: this.openPrevFile
-          // reloadDocument: this.reloadDocument,
+    // if (!currentEntry.isFile) {
+    //   fileOpenerURL = currentEntry.path + '/index.html';
+    // }
+
+    // // Idea for using mhtml native browser in chrome
+    // if (
+    //   !AppConfig.isFirefox && (
+    //     currentEntry.path.endsWith('mht') ||
+    //     currentEntry.path.endsWith('mhtml')
+    //   )
+    // ) {
+    //   fileOpenerURL = currentEntry.path;
+    // }
+  } else {
+    fileOpenerURL = 'about:blank';
+  }
+
+  function getSplitPanelSize() {
+    if (isPropertiesPanelVisible) {
+      return openedFile.isFile
+        ? props.settings.entryPropertiesSplitSize
+        : '100%';
+    }
+    return defaultSplitSize;
+  }
+
+  return (
+    <GlobalHotKeys
+      handlers={{
+        closeViewer: startClosingFile,
+        saveDocument: startSavingFile,
+        editDocument: editFile,
+        nextDocument: openNextFile,
+        prevDocument: openPrevFile
+        // reloadDocument: this.reloadDocument,
+      }}
+      keyMap={{
+        nextDocument: keyBindings.nextDocument,
+        prevDocument: keyBindings.prevDocument,
+        closeViewer: keyBindings.closeViewer,
+        saveDocument: keyBindings.saveDocument,
+        editDocument: keyBindings.editDocument
+        // reloadDocument: settings.keyBindings.reloadDocument,
+      }}
+    >
+      <ConfirmDialog
+        open={isSaveBeforeCloseConfirmDialogOpened}
+        onClose={() => {
+          setSaveBeforeCloseConfirmDialogOpened(false);
         }}
-        keyMap={{
-          nextDocument: keyBindings.nextDocument,
-          prevDocument: keyBindings.prevDocument,
-          closeViewer: keyBindings.closeViewer,
-          saveDocument: keyBindings.saveDocument,
-          editDocument: keyBindings.editDocument
-          // reloadDocument: settings.keyBindings.reloadDocument,
+        title={i18n.t('core:confirm')}
+        content={i18n.t('core:saveFileBeforeClosingFile')}
+        confirmCallback={result => {
+          if (result) {
+            startSavingFile();
+          } else {
+            closeFile();
+            setSaveBeforeCloseConfirmDialogOpened(false);
+          }
+        }}
+        cancelDialogTID="cancelSaveBeforeCloseDialog"
+        confirmDialogTID="confirmSaveBeforeCloseDialog"
+        confirmDialogContentTID="confirmDialogContent"
+      />
+      <ConfirmDialog
+        open={isSaveBeforeReloadConfirmDialogOpened}
+        onClose={() => {
+          setSaveBeforeReloadConfirmDialogOpened(false);
+        }}
+        title={i18n.t('core:confirm')}
+        content="File was modified, do you want to save the changes?"
+        confirmCallback={result => {
+          if (result) {
+            setSaveBeforeReloadConfirmDialogOpened(false);
+            startSavingFile();
+          } else {
+            // isChanged = false;
+            // shouldReload = true;
+            setSaveBeforeReloadConfirmDialogOpened(false);
+            setCurrentEntry({
+              ...openedFile,
+              editMode: false,
+              changed: false,
+              shouldReload: true
+            });
+          }
+        }}
+        cancelDialogTID="cancelSaveBeforeCloseDialog"
+        confirmDialogTID="confirmSaveBeforeCloseDialog"
+        confirmDialogContentTID="confirmDialogContent"
+      />
+      <ConfirmDialog
+        open={isDeleteEntryModalOpened}
+        onClose={() => {
+          setDeleteEntryModalOpened(false);
+        }}
+        title={
+          openedFile.isFile
+            ? i18n.t('core:deleteConfirmationTitle')
+            : i18n.t('core:deleteDirectory')
+        }
+        content={
+          openedFile.isFile
+            ? i18n.t('core:doYouWantToDeleteFile')
+            : i18n.t('core:deleteDirectoryContentConfirm', {
+                dirPath: openedFile.path
+                  ? extractDirectoryName(
+                      openedFile.path,
+                      PlatformIO.getDirSeparator()
+                    )
+                  : ''
+              })
+        }
+        confirmCallback={result => {
+          if (result) {
+            props.deleteFile(openedFile.path);
+          }
+        }}
+        cancelDialogTID="cancelSaveBeforeCloseDialog"
+        confirmDialogTID="confirmSaveBeforeCloseDialog"
+        confirmDialogContentTID="confirmDialogContent"
+      />
+      <AddRemoveTagsDialog
+        open={isEditTagsModalOpened}
+        onClose={() => setEditTagsModalOpened(false)}
+        addTags={props.addTags}
+        removeTags={props.removeTags}
+        removeAllTags={props.removeAllTags}
+        selectedEntries={openedFile ? [openedFile] : []}
+      />
+      {/* <a href="#" id="downloadFile">
+      </a> */}
+      <SplitPane
+        split="horizontal"
+        resizerStyle={{ backgroundColor: props.theme.palette.divider }}
+        // size={this.state.entryPropertiesSplitSize}
+        // minSize={defaultSplitSize}
+        // maxSize={fullSplitSize}
+        // defaultSize={this.state.entryPropertiesSplitSize}
+        size={getSplitPanelSize()}
+        minSize={openedFile.isFile ? defaultSplitSize : '100%'}
+        maxSize={openedFile.isFile ? fullSplitSize : '100%'}
+        defaultSize={
+          openedFile.isFile ? props.settings.entryPropertiesSplitSize : '100%'
+        }
+        onChange={size => {
+          const propertiesPanelVisible = size > defaultSplitSize;
+          if (isPropertiesPanelVisible !== propertiesPanelVisible) {
+            setPropertiesPanelVisible(propertiesPanelVisible);
+          }
+          bufferedSplitResize(() => props.setEntryPropertiesSplitSize(size));
         }}
       >
-        <ConfirmDialog
-          open={this.state.isSaveBeforeCloseConfirmDialogOpened}
-          onClose={() => {
-            this.setState({ isSaveBeforeCloseConfirmDialogOpened: false });
-          }}
-          title={i18n.t('core:confirm')}
-          content={i18n.t('core:saveFileBeforeClosingFile')}
-          confirmCallback={result => {
-            if (result) {
-              this.startSavingFile();
-            } else {
-              this.closeFile();
-              this.setState({ isSaveBeforeCloseConfirmDialogOpened: false });
-            }
-          }}
-          cancelDialogTID="cancelSaveBeforeCloseDialog"
-          confirmDialogTID="confirmSaveBeforeCloseDialog"
-          confirmDialogContentTID="confirmDialogContent"
-        />
-        <ConfirmDialog
-          open={this.state.isSaveBeforeReloadConfirmDialogOpened}
-          onClose={() => {
-            this.setState({ isSaveBeforeReloadConfirmDialogOpened: false });
-          }}
-          title={i18n.t('core:confirm')}
-          content="File was modified, do you want to save the changes?"
-          confirmCallback={result => {
-            if (result) {
-              this.setState({
-                isSaveBeforeReloadConfirmDialogOpened: false
-              });
-              this.startSavingFile();
-            } else {
-              this.isChanged = false;
-              this.shouldReload = true;
-              this.setState({
-                isSaveBeforeReloadConfirmDialogOpened: false,
-                currentEntry: {
-                  ...this.state.currentEntry,
-                  // shouldReload: true,
-                  editMode: false
-                  // changed: false
-                }
-              });
-            }
-          }}
-          cancelDialogTID="cancelSaveBeforeCloseDialog"
-          confirmDialogTID="confirmSaveBeforeCloseDialog"
-          confirmDialogContentTID="confirmDialogContent"
-        />
-        <ConfirmDialog
-          open={this.state.isDeleteEntryModalOpened}
-          onClose={() => {
-            this.setState({ isDeleteEntryModalOpened: false });
-          }}
-          title={
-            currentEntry && currentEntry.isFile
-              ? i18n.t('core:deleteConfirmationTitle')
-              : i18n.t('core:deleteDirectory')
-          }
-          content={
-            currentEntry && currentEntry.isFile
-              ? i18n.t('core:doYouWantToDeleteFile')
-              : i18n.t('core:deleteDirectoryContentConfirm', {
-                  dirPath: currentEntry
-                    ? extractDirectoryName(
-                        currentEntry.path,
-                        PlatformIO.getDirSeparator()
-                      )
-                    : ''
-                })
-          }
-          confirmCallback={result => {
-            if (result && currentEntry) {
-              this.props.deleteFile(currentEntry.path);
-            }
-          }}
-          cancelDialogTID="cancelSaveBeforeCloseDialog"
-          confirmDialogTID="confirmSaveBeforeCloseDialog"
-          confirmDialogContentTID="confirmDialogContent"
-        />
-        <AddRemoveTagsDialog
-          open={isEditTagsModalOpened}
-          onClose={() => this.setState({ isEditTagsModalOpened: false })}
-          addTags={this.props.addTags}
-          removeTags={this.props.removeTags}
-          removeAllTags={this.props.removeAllTags}
-          selectedEntries={[this.state.selectedItem]}
-        />
-        <a href="#" id="downloadFile">
-          {/* Download link */}
-        </a>
-        <SplitPane
-          split="horizontal"
-          resizerStyle={{ backgroundColor: this.props.theme.palette.divider }}
-          // size={this.state.entryPropertiesSplitSize}
-          // minSize={defaultSplitSize}
-          // maxSize={fullSplitSize}
-          // defaultSize={this.state.entryPropertiesSplitSize}
-          size={
-            this.state.isPropertiesPanelVisible
-              ? currentEntry && currentEntry.isFile
-                ? this.props.settings.entryPropertiesSplitSize
-                : '100%'
-              : defaultSplitSize
-          }
-          minSize={
-            currentEntry && currentEntry.isFile ? defaultSplitSize : '100%'
-          }
-          maxSize={currentEntry && currentEntry.isFile ? fullSplitSize : '100%'}
-          defaultSize={
-            currentEntry && currentEntry.isFile
-              ? this.props.settings.entryPropertiesSplitSize
-              : '100%'
-          }
-          onChange={size => {
-            const isPropertiesPanelVisible = size > defaultSplitSize;
-            if (
-              this.state.isPropertiesPanelVisible !== isPropertiesPanelVisible
-            ) {
-              this.setState({
-                isPropertiesPanelVisible
-                // openedSplitSize: size,
-                // entryPropertiesSplitSize: size
-              });
-            }
-            bufferedSplitResize(() =>
-              this.props.setEntryPropertiesSplitSize(size)
-            );
-          }}
-        >
-          {currentEntry ? (
-            <div className={classes.panel}>
-              <div className={classes.toolbar}>
-                <div className={classes.flexLeft}>
-                  {currentEntry.isFile ? (
-                    <Button
-                      onClick={this.togglePanel}
-                      title={currentEntry.url || currentEntry.path}
-                      aria-label={i18n.t('core:toggleEntryProperties')}
-                      className={classes.entryNameButton}
+        {openedFile.path ? (
+          <div className={classes.panel}>
+            <div className={classes.toolbar}>
+              <div className={classes.flexLeft}>
+                {openedFile.isFile ? (
+                  <Button
+                    onClick={togglePanel}
+                    title={openedFile.url || openedFile.path}
+                    aria-label={i18n.t('core:toggleEntryProperties')}
+                    className={classes.entryNameButton}
+                  >
+                    <div
+                      className={classes.fileBadge}
+                      title={i18n.t('core:toggleEntryProperties')}
+                      style={{ backgroundColor: openedFile.color }}
                     >
-                      <div
-                        className={classes.fileBadge}
-                        title={i18n.t('core:toggleEntryProperties')}
-                        style={{ backgroundColor: currentEntry.color }}
-                      >
-                        {'.' +
-                          extractFileExtension(
-                            currentEntry.path,
-                            PlatformIO.getDirSeparator()
-                          )}
-                      </div>
-                      {this.isChanged // currentEntry.changed
-                        ? String.fromCharCode(0x25cf) + ' '
-                        : ''}
-                      {fileTitle}
-                    </Button>
-                  ) : (
-                    <Button
-                      onClick={this.togglePanel}
-                      title={currentEntry.url || currentEntry.path}
-                      aria-label={i18n.t('core:toggleEntryProperties')}
-                      className={classes.entryNameButton}
+                      {'.' +
+                        extractFileExtension(
+                          openedFile.path,
+                          PlatformIO.getDirSeparator()
+                        )}
+                    </div>
+                    {currentEntry.changed
+                      ? String.fromCharCode(0x25cf) + ' '
+                      : ''}
+                    {fileTitle}
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={togglePanel}
+                    title={openedFile.url || openedFile.path}
+                    aria-label={i18n.t('core:toggleEntryProperties')}
+                    className={classes.entryNameButton}
+                  >
+                    <div
+                      className={classes.fileBadge}
+                      title={i18n.t('core:toggleEntryProperties')}
+                      style={{
+                        backgroundColor: AppConfig.defaultFolderColor,
+                        paddingTop: 5
+                      }}
                     >
-                      <div
-                        className={classes.fileBadge}
-                        title={i18n.t('core:toggleEntryProperties')}
-                        style={{
-                          backgroundColor: AppConfig.defaultFolderColor,
-                          paddingTop: 5
-                        }}
-                      >
-                        <FolderIcon />
-                      </div>
-                      {fileTitle}
-                    </Button>
-                  )}
+                      <FolderIcon />
+                    </div>
+                    {fileTitle}
+                  </Button>
+                )}
+              </div>
+              {editingSupported && currentEntry.editMode && (
+                <div className={classes.entryCloseSection}>
+                  <IconButton
+                    disabled={false}
+                    onClick={startSavingFile}
+                    title={i18n.t('core:saveFile')}
+                    aria-label={i18n.t('core:saveFile')}
+                    data-tid="fileContainerSaveFile"
+                  >
+                    <SaveIcon />
+                  </IconButton>
+                  <IconButton
+                    onClick={reloadDocument}
+                    title="Preview"
+                    aria-label={i18n.t('core:cancelEditing')}
+                  >
+                    <BackIcon />
+                  </IconButton>
+                  <IconButton
+                    onClick={startClosingFile}
+                    title={i18n.t('core:closeEntry')}
+                    aria-label={i18n.t('core:closeEntry')}
+                    data-tid="fileContainerCloseOpenedFile"
+                  >
+                    <CloseIcon />
+                  </IconButton>
                 </div>
-                {this.state.editingSupported && currentEntry.editMode && (
-                  <div className={classes.entryCloseSection}>
-                    <IconButton
-                      disabled={false}
-                      onClick={this.startSavingFile}
-                      title={i18n.t('core:saveFile')}
-                      aria-label={i18n.t('core:saveFile')}
-                      data-tid="fileContainerSaveFile"
-                    >
-                      <SaveIcon />
-                    </IconButton>
-                    <IconButton
-                      onClick={this.reloadDocument}
-                      title="Preview"
-                      aria-label={i18n.t('core:cancelEditing')}
-                    >
-                      <BackIcon />
-                    </IconButton>
-                    <IconButton
-                      onClick={this.startClosingFile}
-                      title={i18n.t('core:closeEntry')}
-                      aria-label={i18n.t('core:closeEntry')}
-                      data-tid="fileContainerCloseOpenedFile"
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </div>
-                )}
-                {this.state.editingSupported && !currentEntry.editMode && (
-                  <div className={classes.entryCloseSection}>
-                    <Button
-                      disabled={false}
-                      size="small"
-                      variant="outlined"
-                      color="primary"
-                      onClick={this.editFile}
-                      title={i18n.t('core:editFile')}
-                      aria-label={i18n.t('core:editFile')}
-                      data-tid="fileContainerEditFile"
-                    >
-                      {i18n.t('core:edit')}
-                    </Button>
-                    <IconButton
-                      onClick={this.startClosingFile}
-                      title={i18n.t('core:closeEntry')}
-                      aria-label={i18n.t('core:closeEntry')}
-                      data-tid="fileContainerCloseOpenedFile"
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </div>
-                )}
-                {!this.state.editingSupported && (
-                  <div className={classes.entryCloseSection}>
-                    <IconButton
-                      onClick={this.startClosingFile}
-                      title={i18n.t('core:closeEntry')}
-                      aria-label={i18n.t('core:closeEntry')}
-                      data-tid="fileContainerCloseOpenedFile"
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </div>
-                )}
-              </div>
-
-              <div className={classes.entryProperties}>
-                {currentEntry.isFile
-                  ? this.renderFileToolbar(classes)
-                  : this.renderFolderToolbar()}
-                <EntryProperties
-                  key={this.state.EntryPropertiesKey}
-                  resetState={this.resetState}
-                  setPropertiesEditMode={this.setPropertiesEditMode}
-                  entryPath={currentEntry.path}
-                  entryURL={currentEntry.url}
-                  shouldReload={this.shouldReload}
-                  renameFile={this.props.renameFile}
-                  renameDirectory={this.props.renameDirectory}
-                  editTagForEntry={this.props.editTagForEntry}
-                  shouldCopyFile={this.state.shouldCopyFile}
-                  normalizeShouldCopyFile={() =>
-                    this.setState({ shouldCopyFile: false })
-                  }
-                  addTags={this.props.addTags}
-                  removeTags={this.props.removeTags}
-                  removeAllTags={this.props.removeAllTags}
-                  reflectUpdateSidecarMeta={this.props.reflectUpdateSidecarMeta}
-                  updateThumbnailUrl={this.props.updateThumbnailUrl}
-                  showNotification={this.props.showNotification}
-                  isReadOnlyMode={this.props.isReadOnlyMode}
-                />
-              </div>
+              )}
+              {editingSupported && !currentEntry.editMode && (
+                <div className={classes.entryCloseSection}>
+                  <Button
+                    disabled={false}
+                    size="small"
+                    variant="outlined"
+                    color="primary"
+                    onClick={editFile}
+                    title={i18n.t('core:editFile')}
+                    aria-label={i18n.t('core:editFile')}
+                    data-tid="fileContainerEditFile"
+                  >
+                    {i18n.t('core:edit')}
+                  </Button>
+                  <IconButton
+                    onClick={startClosingFile}
+                    title={i18n.t('core:closeEntry')}
+                    aria-label={i18n.t('core:closeEntry')}
+                    data-tid="fileContainerCloseOpenedFile"
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                </div>
+              )}
+              {!editingSupported && (
+                <div className={classes.entryCloseSection}>
+                  <IconButton
+                    onClick={startClosingFile}
+                    title={i18n.t('core:closeEntry')}
+                    aria-label={i18n.t('core:closeEntry')}
+                    data-tid="fileContainerCloseOpenedFile"
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                </div>
+              )}
             </div>
-          ) : (
-            <div>{i18n.t('core:noEntrySelected')}</div>
-          )}
-          <div
-            ref={element => {
-              this.fileViewerContainer = element;
-            }}
-            className={classes.fileContent}
-          >
-            {isFullscreen && (
-              <Fab
-                color="primary"
-                style={{
-                  position: 'absolute',
-                  top: 20,
-                  right: 20,
-                  zIndex: 10000
-                }}
-                onClick={this.toggleFullScreen}
-              >
-                <CloseIcon />
-              </Fab>
-            )}
-            {this.renderFileView(fileOpenerURL)}
+            <div className={classes.entryProperties}>
+              {openedFile.isFile
+                ? renderFileToolbar(classes)
+                : renderFolderToolbar()}
+              <EntryProperties
+                key={uuidv1()}
+                // resetState={this.resetState}
+                // setPropertiesEditMode={this.setPropertiesEditMode}
+                entryPath={openedFile.path}
+                // entryURL={currentEntry.url}
+                // openedEntry={openEntry}
+                // shouldReload={reload}
+                renameFile={props.renameFile}
+                renameDirectory={props.renameDirectory}
+                editTagForEntry={props.editTagForEntry}
+                // shouldCopyFile={shouldCopyFile}
+                // normalizeShouldCopyFile={() => setShouldCopyFile(false)}
+                addTags={props.addTags}
+                removeTags={props.removeTags}
+                removeAllTags={props.removeAllTags}
+                reflectUpdateSidecarMeta={props.reflectUpdateSidecarMeta}
+                updateThumbnailUrl={props.updateThumbnailUrl}
+                showNotification={props.showNotification}
+                isReadOnlyMode={props.isReadOnlyMode}
+              />
+            </div>
           </div>
-        </SplitPane>
-      </GlobalHotKeys>
-    );
-  }
-}
+        ) : (
+          <div>{i18n.t('core:noEntrySelected')}</div>
+        )}
+        <div ref={fileViewerContainer} className={classes.fileContent}>
+          {isFullscreen && (
+            <Fab
+              color="primary"
+              style={{
+                position: 'absolute',
+                top: 20,
+                right: 20,
+                zIndex: 10000
+              }}
+              onClick={toggleFullScreen}
+            >
+              <CloseIcon />
+            </Fab>
+          )}
+          {renderFileView(fileOpenerURL)}
+        </div>
+      </SplitPane>
+    </GlobalHotKeys>
+  );
+};
 
 function mapStateToProps(state) {
   return {
-    openedFiles: getOpenedFiles(state),
     settings: state.settings,
     isReadOnlyMode: isReadOnlyMode(state),
     directoryContent: getDirectoryContent(state),

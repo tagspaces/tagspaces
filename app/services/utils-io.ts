@@ -32,6 +32,7 @@ import {
 // import { formatDateTime4Tag } from '../utils/misc';
 import versionMeta from '../version.json';
 import { Tag } from '../reducers/taglibrary';
+import { getThumbnailURLPromise } from '-/services/thumbsgenerator';
 
 export interface FileSystemEntry {
   uuid?: string;
@@ -58,6 +59,65 @@ export interface FileSystemEntryMeta {
   appName: string;
   appVersionUpdated: string;
   lastUpdated: string;
+  files?: Array<FileSystemEntry>;
+  dirs?: Array<FileSystemEntry>;
+}
+
+export function enhanceDirectoryContent(
+  dirEntries,
+  isCloudLocation,
+  showUnixHiddenEntries,
+  useGenerateThumbnails,
+  showDirs = true,
+  limit = undefined
+) {
+  const directoryContent = [];
+  const tmbGenerationPromises = [];
+  const tmbGenerationList = [];
+  const isWorkerAvailable = PlatformIO.isWorkerAvailable();
+
+  dirEntries.map(entry => {
+    if (!showUnixHiddenEntries && entry.name.startsWith('.')) {
+      return true;
+    }
+
+    if (!showDirs && !entry.isFile) {
+      return true;
+    }
+
+    if (limit !== undefined && directoryContent.length >= limit) {
+      return true;
+    }
+
+    if (isCloudLocation) {
+      // eslint-disable-next-line no-param-reassign
+      entry.url = PlatformIO.getURLforPath(entry.path);
+    }
+
+    const enhancedEntry = enhanceEntry(entry);
+    directoryContent.push(enhancedEntry);
+    if (
+      // Enable thumb generation by
+      !AppConfig.isWeb && // not in webdav mode
+      !PlatformIO.haveObjectStoreSupport() && // not in object store mode
+      enhancedEntry.isFile && // only for files
+      useGenerateThumbnails // enabled in the settings
+    ) {
+      const isPDF = enhancedEntry.path.endsWith('.pdf');
+      if (isWorkerAvailable && !isPDF) {
+        tmbGenerationList.push(enhancedEntry.path);
+      } else {
+        tmbGenerationPromises.push(getThumbnailURLPromise(enhancedEntry.path));
+      }
+    }
+    return true;
+  });
+
+  return {
+    directoryContent,
+    tmbGenerationPromises,
+    tmbGenerationList
+  };
 }
 
 export function enhanceEntry(entry: any): FileSystemEntry {
@@ -85,6 +145,7 @@ export function enhanceEntry(entry: any): FileSystemEntry {
     });
   }
   const enhancedEntry: FileSystemEntry = {
+    uuid: uuidv1(),
     name: entry.name,
     isFile: entry.isFile,
     extension: entry.isFile
@@ -439,7 +500,15 @@ export async function loadMetaDataPromise(
       path,
       PlatformIO.getDirSeparator()
     );
-    const metaData = await loadJSONFile(metaFilePath);
+    let metaData;
+    try {
+      metaData = await loadJSONFile(metaFilePath);
+    } catch (e) {
+      console.debug('cannot load json:' + metaFilePath, e);
+    }
+    if (!metaData) {
+      metaData = {};
+    }
     metaDataObject = {
       description: metaData.description || '',
       color: metaData.color || '',
@@ -454,7 +523,15 @@ export async function loadMetaDataPromise(
       path,
       PlatformIO.getDirSeparator()
     );
-    const metaData = await loadJSONFile(metaFilePath);
+    let metaData;
+    try {
+      metaData = await loadJSONFile(metaFilePath);
+    } catch (e) {
+      console.debug('cannot load json:' + metaFilePath, e);
+    }
+    if (!metaData) {
+      metaData = {};
+    }
     metaDataObject = {
       id: metaData.id || uuidv1(),
       description: metaData.description || '',
@@ -463,7 +540,9 @@ export async function loadMetaDataPromise(
       appVersionCreated: metaData.appVersionCreated || '',
       appName: metaData.appName || '',
       appVersionUpdated: metaData.appVersionUpdated || '',
-      lastUpdated: metaData.lastUpdated || ''
+      lastUpdated: metaData.lastUpdated || '',
+      files: metaData.files || [],
+      dirs: metaData.dirs || []
     };
   }
   return metaDataObject;
@@ -539,14 +618,16 @@ export function findColorForFileEntry(
     return AppConfig.defaultFolderColor;
   }
   let color = AppConfig.defaultFileColor;
-  supportedFileTypes.map(fileType => {
-    if (fileType.type.toLowerCase() === fileExtension.toLowerCase()) {
-      if (fileType.color) {
-        color = fileType.color;
+  if (fileExtension !== undefined) {
+    supportedFileTypes.map(fileType => {
+      if (fileType.type.toLowerCase() === fileExtension.toLowerCase()) {
+        if (fileType.color) {
+          color = fileType.color;
+        }
       }
-    }
-    return true;
-  });
+      return true;
+    });
+  }
   return color;
 }
 

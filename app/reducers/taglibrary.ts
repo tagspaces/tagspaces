@@ -551,13 +551,16 @@ export const actions = {
 // Selectors
 export const getTagGroups = (state: any) => state.taglibrary;
 export const getAllTags = (state: any) => {
-  const allTags: Array<Tag> = [];
+  const uniqueTags: Array<Tag> = [];
   state.taglibrary.forEach(tagGroup => {
     tagGroup.children.forEach(tag => {
-      allTags.push(tag);
+      const found = uniqueTags.find(uTag => uTag.title === tag.title);
+      if (!found) {
+        uniqueTags.push(tag);
+      }
     });
   });
-  return allTags.sort((a, b) =>
+  return uniqueTags.sort((a, b) =>
     a.title > b.title ? 1 : a.title < b.title ? -1 : 0
   );
 };
