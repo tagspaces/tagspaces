@@ -19,14 +19,14 @@ import {
   deleteDirectory,
   returnDirectoryBack
 } from './general.helpers';
-import { renameFolder } from './test-utils.spec';
+import { renameFolder, openParentDir } from './test-utils.spec';
 
 export const firstFile = '/span';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 const testFolder = 'testFolder';
 const newDirectoryName = 'newDirectory';
 
-describe('TST01 - Folder management [folder_mahagement, electron]', () => {
+describe('TST01 - Folder management [folder_management, electron]', () => {
   beforeEach(async () => {
     await clearLocalStorage();
     //  await delay(500);
@@ -79,6 +79,9 @@ describe('TST01 - Folder management [folder_mahagement, electron]', () => {
     await delay(500);
     await renameFolder();
     await delay(500);
+    // await reloadDirectory();
+    // await delay(500);
+    // await openParentDir();
     await deleteDirectory();
   });
 

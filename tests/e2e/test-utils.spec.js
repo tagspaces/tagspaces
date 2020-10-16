@@ -6,12 +6,14 @@ import {
   createLocation,
   defaultLocationName,
   defaultLocationPath,
-  openLocation
+  openLocation,
+  clearInputValue
 } from './location.helpers';
 import { openDirectoryMenu } from './general.helpers';
 
 const winMinio = pathLib.resolve(__dirname, '../bin/minio.exe');
 const unixMinio = 'minio';
+const newDirectoryName = 'newDirectory';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const firstFile = '/span';
 export const firstFileName = '/span/div/div/div/p';
@@ -171,10 +173,10 @@ export async function renameFolder() {
   await renameDirectory.waitForDisplayed();
   await delay(500);
   await renameDirectory.click();
-  await delay(555500);
+  await delay(500);
   // set new dir name
   const renameDirectoryDialogInput = await global.client.$(
-    '[data-tid=renameDirectoryDialogInput]'
+    '[data-tid=renameDirectoryDialogInput] input'
   );
   await delay(500);
   await renameDirectoryDialogInput.waitForDisplayed();
@@ -186,4 +188,14 @@ export async function renameFolder() {
   );
   await confirmRenameDirectoryDialog.waitForDisplayed();
   await confirmRenameDirectoryDialog.click();
+}
+
+export async function openParentDir() {
+  await delay(500);
+  const openParentDirectory = await global.client.$(
+    '[data-tid=gridPerspectiveOnBackButton]'
+  );
+  await openParentDirectory.waitForDisplayed();
+  await delay(500);
+  await openParentDirectory.click();
 }
