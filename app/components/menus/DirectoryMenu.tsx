@@ -504,11 +504,7 @@ const DirectoryMenu = (props: Props) => {
             </MenuItem>
             <MenuItem
               data-tid="openGalleryPerspective"
-              onClick={() =>
-                switchPerspective(
-                  Pro.Perspectives.AvailablePerspectives.GALLERY
-                )
-              }
+              onClick={() => switchPerspective(perspectives.GALLERY)}
               title="Switch to gallery perspective"
             >
               <ListItemIcon>
@@ -518,11 +514,7 @@ const DirectoryMenu = (props: Props) => {
             </MenuItem>
             <MenuItem
               data-tid="openMapiquePerspective"
-              onClick={() =>
-                switchPerspective(
-                  Pro.Perspectives.AvailablePerspectives.MAPIQUE
-                )
-              }
+              onClick={() => switchPerspective(perspectives.MAPIQUE)}
               title="Switch to mapique perspective"
             >
               <ListItemIcon>
@@ -538,9 +530,7 @@ const DirectoryMenu = (props: Props) => {
             </MenuItem> */}
             <MenuItem
               data-tid="openTreeVizPerspective"
-              onClick={() =>
-                switchPerspective(Pro.Perspectives.AvailablePerspectives.KANBAN)
-              }
+              onClick={() => switchPerspective(perspectives.KANBAN)}
               title="Switch to kanban visualization perspective"
             >
               <ListItemIcon>

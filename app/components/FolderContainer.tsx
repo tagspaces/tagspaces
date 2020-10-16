@@ -294,7 +294,6 @@ const FolderContainer = (props: Props) => {
         // TODO check if file is loaded
         props.updateCurrentDirEntry(openedFile.path, openedFile);
       }
-      console.log('opened');
     }
   }, [props.openedFiles]);
 
@@ -334,8 +333,9 @@ const FolderContainer = (props: Props) => {
       return <WelcomePanelAsync />;
     }
     if (
+      Pro &&
       props.currentDirectoryPerspective ===
-      Pro.Perspectives.AvailablePerspectives.GALLERY
+        Pro.Perspectives.AvailablePerspectives.GALLERY
     ) {
       return (
         <GalleryPerspectiveAsync
@@ -347,8 +347,9 @@ const FolderContainer = (props: Props) => {
       );
     }
     if (
+      Pro &&
       props.currentDirectoryPerspective ===
-      Pro.Perspectives.AvailablePerspectives.TREEVIZ
+        Pro.Perspectives.AvailablePerspectives.TREEVIZ
     ) {
       return (
         <TreeVizPerspectiveAsync
@@ -360,8 +361,9 @@ const FolderContainer = (props: Props) => {
       );
     }
     if (
+      Pro &&
       props.currentDirectoryPerspective ===
-      Pro.Perspectives.AvailablePerspectives.MAPIQUE
+        Pro.Perspectives.AvailablePerspectives.MAPIQUE
     ) {
       return (
         <MapiquePerspectiveAsync
@@ -373,8 +375,9 @@ const FolderContainer = (props: Props) => {
       );
     }
     if (
+      Pro &&
       props.currentDirectoryPerspective ===
-      Pro.Perspectives.AvailablePerspectives.KANBAN
+        Pro.Perspectives.AvailablePerspectives.KANBAN
     ) {
       return (
         <KanBanPerspectiveAsync

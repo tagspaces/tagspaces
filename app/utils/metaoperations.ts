@@ -12,10 +12,16 @@ export function savePerspective(
   return new Promise((resolve, reject) => {
     loadMetaDataPromise(path)
       .then((fsEntryMeta: FileSystemEntryMeta) => {
-        const updatedFsEntryMeta: FileSystemEntryMeta = {
-          ...fsEntryMeta,
-          perspective
-        };
+        let updatedFsEntryMeta: FileSystemEntryMeta;
+        if (perspective && perspective !== 'unspecified') {
+          updatedFsEntryMeta = {
+            ...fsEntryMeta,
+            perspective
+          };
+        } else {
+          const { perspective: remove, ...rest } = fsEntryMeta;
+          updatedFsEntryMeta = rest;
+        }
         saveMetaDataPromise(path, updatedFsEntryMeta)
           .then(() => {
             resolve(updatedFsEntryMeta);

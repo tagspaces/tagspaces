@@ -102,7 +102,11 @@ export const types = {
   UPDATE_CURRENTDIR_ENTRY: 'APP/UPDATE_CURRENTDIR_ENTRY'
 };
 export const perspectives = {
-  DEFAULT: 'default'
+  DEFAULT: 'default',
+  GALLERY: 'gallery',
+  // TREEVIZ: 'treeviz',
+  MAPIQUE: 'mapique',
+  KANBAN: 'kanban'
 };
 
 export const NotificationTypes = {

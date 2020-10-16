@@ -33,6 +33,12 @@ import DOMPurify from 'dompurify';
 import Select from '@material-ui/core/Select';
 import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import DefaultPerspectiveIcon from '@material-ui/icons/GridOn';
+import ListItemText from '@material-ui/core/ListItemText';
+import GalleryPerspectiveIcon from '@material-ui/icons/Camera';
+import MapiquePerspectiveIcon from '@material-ui/icons/Map';
+import KanBanPerspectiveIcon from '@material-ui/icons/Dashboard';
 import TagDropContainer from './TagDropContainer';
 // import EntryTagMenu from './menus/EntryTagMenu';
 import ColorPickerDialog from './dialogs/ColorPickerDialog';
@@ -630,14 +636,50 @@ const EntryProperties = (props: Props) => {
   };
 
   let perspectiveDefault;
-  if (currentEntry.perspective) {
+  /* if (currentEntry.perspective) {
     perspectiveDefault = currentEntry.perspective;
-  } else if (props.perspective) {
+  } else */
+  if (props.perspective) {
     perspectiveDefault = props.perspective;
   } else {
-    perspectiveDefault = perspectives.DEFAULT;
+    perspectiveDefault = 'unspecified'; // perspectives.DEFAULT;
   }
-  // @ts-ignore
+
+  function getMenuItem(perspective) {
+    let icon;
+    if (perspective === perspectives.DEFAULT) {
+      icon = (
+        <ListItemIcon>
+          <DefaultPerspectiveIcon />
+        </ListItemIcon>
+      );
+    } else if (perspective === perspectives.GALLERY) {
+      icon = (
+        <ListItemIcon>
+          <GalleryPerspectiveIcon />
+        </ListItemIcon>
+      );
+    } else if (perspective === perspectives.MAPIQUE) {
+      icon = (
+        <ListItemIcon>
+          <MapiquePerspectiveIcon />
+        </ListItemIcon>
+      );
+    } else if (perspective === perspectives.KANBAN) {
+      icon = (
+        <ListItemIcon>
+          <KanBanPerspectiveIcon />
+        </ListItemIcon>
+      );
+    }
+    return (
+      <MenuItem key={perspective} value={perspective}>
+        {icon}
+        <ListItemText primary={i18n.t('core:' + perspective)} />
+      </MenuItem>
+    );
+  }
+
   // @ts-ignore
   return (
     <div className={classes.entryProperties}>
@@ -997,20 +1039,16 @@ const EntryProperties = (props: Props) => {
                 onChange={changePerspective}
                 input={<Input id="changePerspectiveId" />}
               >
-                {Object.values(perspectives).map(perspective => (
-                  <MenuItem key={perspective} value={perspective}>
-                    {i18n.t('core:' + perspective)}
-                  </MenuItem>
-                ))}
-                {Pro &&
-                  Object.values(Pro.Perspectives.AvailablePerspectives).map(
-                    perspective => (
-                      // @ts-ignore
-                      <MenuItem key={perspective} value={perspective}>
-                        {i18n.t('core:' + perspective)}
-                      </MenuItem>
-                    )
-                  )}
+                <MenuItem key="unspecified" value="unspecified">
+                  {i18n.t('core:unspecified')}
+                </MenuItem>
+                {Object.values(perspectives).map(perspective =>
+                  getMenuItem(perspective)
+                )}
+                {/* {Pro &&
+                  Object.values(
+                    Pro.Perspectives.AvailablePerspectives
+                  ).map(perspective => getMenuItem(perspective))} */}
               </Select>
             </FormControl>
           </div>

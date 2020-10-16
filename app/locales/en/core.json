@@ -475,5 +475,7 @@
   "unlimited": "Unlimited",
   "pageLimit": "Page Limit",
   "pageLimitHelp": "Set number of files per page",
+  "unspecified": "Unspecified",
+  "changePerspective": "Change Perspective",
   "-": "-"
 }
