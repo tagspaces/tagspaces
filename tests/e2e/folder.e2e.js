@@ -19,6 +19,7 @@ import {
   deleteDirectory,
   returnDirectoryBack
 } from './general.helpers';
+import { renameFolder } from './test-utils.spec';
 
 export const firstFile = '/span';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
@@ -76,25 +77,8 @@ describe('TST01 - Folder management [folder_mahagement, electron]', () => {
     await delay(500);
     await reloadDirectory();
     await delay(500);
-    await openDirectoryMenu();
-    const renameDirectory = await global.client.$('[data-tid=renameDirectory]');
-    await renameDirectory.waitForDisplayed();
-    await renameDirectory.click();
+    await renameFolder();
     await delay(500);
-    const renameDirectoryDialogInput = await global.client.$(
-      '[data-tid=renameDirectoryDialogInput] input'
-    );
-    await delay(1500);
-    await renameDirectoryDialogInput.waitForDisplayed();
-    await clearInputValue(renameDirectoryDialogInput);
-    await delay(500);
-    await renameDirectoryDialogInput.keys(newDirectoryName);
-    const confirmRenameDirectoryDialog = await global.client.$(
-      '[data-tid=confirmRenameDirectory]'
-    );
-    await confirmRenameDirectoryDialog.waitForDisplayed();
-    await confirmRenameDirectoryDialog.click();
-    await delay(55500);
     await deleteDirectory();
   });
 
