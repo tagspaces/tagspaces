@@ -38,7 +38,11 @@ import TagDropContainer from './TagDropContainer';
 import ColorPickerDialog from './dialogs/ColorPickerDialog';
 import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
 import i18n from '../services/i18n';
-import { FileSystemEntry, getAllPropertiesPromise } from '-/services/utils-io';
+import {
+  FileSystemEntry,
+  FileSystemEntryMeta,
+  getAllPropertiesPromise
+} from '-/services/utils-io';
 import { formatFileSize } from '-/utils/misc';
 import {
   extractContainingDirectoryPath,
@@ -56,6 +60,7 @@ import {
 } from '-/services/thumbsgenerator';
 import { Tag } from '-/reducers/taglibrary';
 import { perspectives } from '-/reducers/app';
+import { savePerspective } from '-/utils/metaoperations';
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
@@ -163,17 +168,21 @@ interface Props {
   // entryURL: string;
   // shouldReload: boolean | null;
   // shouldCopyFile: boolean;
-  editTagForEntry: () => void;
+  // editTagForEntry: () => void;
   renameFile: (path: string, nextPath: string) => void;
   renameDirectory: (path: string, nextPath: string) => void;
   // normalizeShouldCopyFile: () => void;
   showNotification: (message: string) => void;
-  reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
+  updateOpenedFile: (
+    entryPath: string,
+    fsEntryMeta: FileSystemEntryMeta,
+    isFile: boolean
+  ) => void;
+  // reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
   updateThumbnailUrl: (path: string, thumbUrl: string) => void;
   addTags: (paths: Array<string>, tags: Array<Tag>) => void;
   removeTags: (paths: Array<string>, tags: Array<Tag>) => void;
   removeAllTags: (paths: Array<string>) => void;
-  loadDirectoryContent: (path: string) => void;
   // resetState: (stateName: string) => void;
   isReadOnlyMode: boolean;
   // setPropertiesEditMode: (editMode: boolean) => void;
@@ -356,7 +365,11 @@ const EntryProperties = (props: Props) => {
       )
         .then(entryMeta => {
           setEditDescription(false);
-          props.reflectUpdateSidecarMeta(currentEntry.path, entryMeta);
+          props.updateOpenedFile(
+            currentEntry.path,
+            entryMeta,
+            currentEntry.isFile
+          );
           return true;
         })
         .catch(error => {
@@ -450,13 +463,16 @@ const EntryProperties = (props: Props) => {
 
   const handleChangeColor = color => {
     Pro.MetaOperations.saveColor(currentEntry.path, color)
-      .then(() => {
-        // props.reflectUpdateSidecarMeta(currentEntry.path, entryMeta);
-        if (props.entryPath === props.currentDirectoryPath) {
-          props.loadDirectoryContent(props.entryPath);
-        } else {
+      .then(entryMeta => {
+        // if (props.entryPath === props.currentDirectoryPath) {
+        props.updateOpenedFile(
+          currentEntry.path,
+          entryMeta,
+          currentEntry.isFile
+        );
+        /* } else {
           setCurrentEntry({ ...currentEntry, color });
-        }
+        } */
         return true;
       })
       .catch(error => {
@@ -594,13 +610,17 @@ const EntryProperties = (props: Props) => {
   const changePerspective = (event: any) => {
     // console.log(perspective);
     const perspective = event.target.value;
-    Pro.MetaOperations.savePerspective(currentEntry.path, perspective)
-      .then(() => {
-        if (props.entryPath === props.currentDirectoryPath) {
-          props.loadDirectoryContent(props.entryPath);
-        } else {
+    savePerspective(currentEntry.path, perspective)
+      .then((entryMeta: FileSystemEntryMeta) => {
+        // if (props.entryPath === props.currentDirectoryPath) {
+        props.updateOpenedFile(
+          currentEntry.path,
+          entryMeta,
+          currentEntry.isFile
+        );
+        /* } else {
           setCurrentEntry({ ...currentEntry, perspective });
-        }
+        } */
         return true;
       })
       .catch(error => {

@@ -91,7 +91,6 @@ interface Props {
   addTags: () => void;
   removeTags: () => void;
   removeAllTags: () => void;
-  perspectiveCommand: any;
   directoryContent: Array<FileSystemEntry>;
   moveFiles: (files: Array<string>, destination: string) => void;
   keyBindings: any;

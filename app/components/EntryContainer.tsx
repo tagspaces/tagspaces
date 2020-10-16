@@ -45,7 +45,7 @@ import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import AppConfig from '-/config';
 import PlatformIO from '-/services/platform-io';
 import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
-import { FileSystemEntry } from '-/services/utils-io';
+import { FileSystemEntry, FileSystemEntryMeta } from '-/services/utils-io';
 import i18n from '-/services/i18n';
 import {
   extractContainingDirectoryPath,
@@ -175,7 +175,7 @@ interface Props {
   renameDirectory: () => void;
   addTags: () => void;
   removeTags: () => void;
-  editTagForEntry: () => void;
+  // editTagForEntry: () => void;
   openFile: (filePath: string) => void;
   getNextFile: (path: string) => string;
   getPrevFile: (path: string) => string;
@@ -192,11 +192,15 @@ interface Props {
   isReadOnlyMode: boolean;
   setEntryPropertiesSplitSize: (size: number) => void;
   entryPropertiesSplitSize?: number;
-  reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
+  updateOpenedFile: (
+    entryPath: string,
+    fsEntryMeta: FileSystemEntryMeta,
+    isFile: boolean
+  ) => void;
+  // reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
   updateThumbnailUrl: (path: string, thumbUrl: string) => void;
   setLastSelectedEntry: (path: string) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
-  loadDirectoryContent: (path: string) => void;
   directoryContent: Array<Object>;
   currentDirectoryPath: string | null;
 }
@@ -1212,18 +1216,17 @@ const EntryContainer = (props: Props) => {
                 // shouldReload={reload}
                 renameFile={props.renameFile}
                 renameDirectory={props.renameDirectory}
-                editTagForEntry={props.editTagForEntry}
+                // editTagForEntry={props.editTagForEntry}
                 // shouldCopyFile={shouldCopyFile}
                 // normalizeShouldCopyFile={() => setShouldCopyFile(false)}
                 addTags={props.addTags}
                 removeTags={props.removeTags}
                 removeAllTags={props.removeAllTags}
-                reflectUpdateSidecarMeta={props.reflectUpdateSidecarMeta}
+                updateOpenedFile={props.updateOpenedFile}
                 updateThumbnailUrl={props.updateThumbnailUrl}
                 showNotification={props.showNotification}
                 isReadOnlyMode={props.isReadOnlyMode}
                 currentDirectoryPath={props.currentDirectoryPath}
-                loadDirectoryContent={props.loadDirectoryContent}
               />
             </div>
           </div>
@@ -1279,12 +1282,11 @@ function mapActionCreatorsToProps(dispatch) {
       addTags: TaggingActions.addTags,
       removeTags: TaggingActions.removeTags,
       removeAllTags: TaggingActions.removeAllTags,
-      editTagForEntry: TaggingActions.editTagForEntry,
-      reflectUpdateSidecarMeta: AppActions.reflectUpdateSidecarMeta,
+      // editTagForEntry: TaggingActions.editTagForEntry,
+      updateOpenedFile: AppActions.updateOpenedFile,
       updateThumbnailUrl: AppActions.updateThumbnailUrl,
       setLastSelectedEntry: AppActions.setLastSelectedEntry,
-      setSelectedEntries: AppActions.setSelectedEntries,
-      loadDirectoryContent: AppActions.loadDirectoryContent
+      setSelectedEntries: AppActions.setSelectedEntries
     },
     dispatch
   );

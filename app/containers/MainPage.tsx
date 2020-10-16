@@ -881,6 +881,7 @@ class MainPage extends Component<Props, State> {
                 <FolderContainer
                   windowHeight={this.state.height}
                   windowWidth={this.state.width}
+                  openedFiles={this.props.openedFiles}
                   currentDirectoryPath={this.props.directoryPath}
                 />
                 <EntryContainer
@@ -924,6 +925,7 @@ class MainPage extends Component<Props, State> {
                 windowHeight={this.state.height}
                 windowWidth={this.state.width}
                 showDrawer={this.showDrawer}
+                openedFiles={this.props.openedFiles}
                 currentDirectoryPath={this.props.directoryPath}
               />
               <EntryContainer
