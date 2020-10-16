@@ -35,6 +35,7 @@ import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import DefaultPerspectiveIcon from '@material-ui/icons/GridOn';
+import LayersClearIcon from '@material-ui/icons/LayersClear';
 import ListItemText from '@material-ui/core/ListItemText';
 import GalleryPerspectiveIcon from '@material-ui/icons/Camera';
 import MapiquePerspectiveIcon from '@material-ui/icons/Map';
@@ -1039,7 +1040,10 @@ const EntryProperties = (props: Props) => {
                 input={<Input id="changePerspectiveId" />}
               >
                 <MenuItem key="unspecified" value="unspecified">
-                  {i18n.t('core:unspecified')}
+                  <ListItemIcon>
+                    <LayersClearIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={i18n.t('core:unspecified')} />
                 </MenuItem>
                 {Object.values(perspectives).map(perspective =>
                   getMenuItem(perspective)
