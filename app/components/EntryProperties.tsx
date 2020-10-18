@@ -675,7 +675,9 @@ const EntryProperties = (props: Props) => {
     return (
       <MenuItem key={perspective} value={perspective}>
         {icon}
-        <ListItemText primary={i18n.t('core:' + perspective)} />
+        <ListItemText
+          primary={perspective.charAt(0).toUpperCase() + perspective.slice(1)}
+        />
       </MenuItem>
     );
   }
@@ -869,13 +871,18 @@ const EntryProperties = (props: Props) => {
 
         <div className={classes.entryItem}>
           <div className={[classes.fluidGrid, classes.ellipsisText].join(' ')}>
-            <div className="grid-item" style={{ width: '50%' }}>
+            <div
+              className="grid-item"
+              style={{ width: '50%', alignSelf: 'baseline' }}
+            >
               <Typography
                 variant="caption"
                 className={classes.header}
                 style={{ display: 'block' }}
               >
-                {i18n.t('core:fileLDTM') + ': ' + ldtm}
+                {i18n.t('core:fileLDTM')}
+                <br />
+                <strong>{ldtm}</strong>
               </Typography>
               {/* <FormControl fullWidth={true} className={classes.formControl}>
                   <TextField
@@ -898,9 +905,9 @@ const EntryProperties = (props: Props) => {
                   className={classes.header}
                   style={{ display: 'block' }}
                 >
-                  {i18n.t('core:fileSize') +
-                    ': ' +
-                    formatFileSize(currentEntry.size)}
+                  {i18n.t('core:fileSize')}
+                  <br />
+                  <strong>{formatFileSize(currentEntry.size)}</strong>
                 </Typography>
                 {/* <FormControl
                     fullWidth={true}
