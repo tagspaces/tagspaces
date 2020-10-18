@@ -510,37 +510,41 @@ const FolderContainer = (props: Props) => {
                   </IconButton>
                 </React.Fragment>
               )}
-              <Button
-                data-tid="folderContainerOpenDirMenu"
-                title={
-                  i18n.t('core:openDirectoryMenu') +
-                  ' - ' +
-                  (currentDirectoryPath || '')
-                }
-                className={classes.folderButton}
-                onClick={openDirectoryMenu}
-                onContextMenu={openDirectoryMenu}
-              >
-                {extractShortDirectoryName(
-                  normalizePath(normalizedCurrentDirPath),
-                  '/'
-                )}
-                <MoreVertIcon />
-              </Button>
-              <DirectoryMenu
-                open={Boolean(directoryContextMenuAnchorEl)}
-                onClose={closeDirectoryMenu}
-                anchorEl={directoryContextMenuAnchorEl}
-                directoryPath={currentDirectoryPath}
-                loadDirectoryContent={props.loadDirectoryContent}
-                openDirectory={props.openDirectory}
-                reflectCreateEntry={props.reflectCreateEntry}
-                openFile={props.openFile}
-                toggleCreateFileDialog={props.toggleCreateFileDialog}
-                deleteDirectory={props.deleteDirectory}
-                switchPerspective={switchPerspective}
-                isReadOnlyMode={props.isReadOnlyMode}
-              />
+              {props.currentDirectoryPath && (
+                <React.Fragment>
+                  <Button
+                    data-tid="folderContainerOpenDirMenu"
+                    title={
+                      i18n.t('core:openDirectoryMenu') +
+                      ' - ' +
+                      (currentDirectoryPath || '')
+                    }
+                    className={classes.folderButton}
+                    onClick={openDirectoryMenu}
+                    onContextMenu={openDirectoryMenu}
+                  >
+                    {extractShortDirectoryName(
+                      normalizePath(normalizedCurrentDirPath),
+                      '/'
+                    )}
+                    <MoreVertIcon />
+                  </Button>
+                  <DirectoryMenu
+                    open={Boolean(directoryContextMenuAnchorEl)}
+                    onClose={closeDirectoryMenu}
+                    anchorEl={directoryContextMenuAnchorEl}
+                    directoryPath={currentDirectoryPath}
+                    loadDirectoryContent={props.loadDirectoryContent}
+                    openDirectory={props.openDirectory}
+                    reflectCreateEntry={props.reflectCreateEntry}
+                    openFile={props.openFile}
+                    toggleCreateFileDialog={props.toggleCreateFileDialog}
+                    deleteDirectory={props.deleteDirectory}
+                    switchPerspective={switchPerspective}
+                    isReadOnlyMode={props.isReadOnlyMode}
+                  />
+                </React.Fragment>
+              )}
             </React.Fragment>
           </div>
         </div>

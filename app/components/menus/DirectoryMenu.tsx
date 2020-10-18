@@ -135,7 +135,15 @@ const DirectoryMenu = (props: Props) => {
 
   function switchPerspective(perspectiveId) {
     props.onClose();
-    props.switchPerspective(perspectiveId);
+    if (Pro) {
+      props.switchPerspective(perspectiveId);
+    } else {
+      props.showNotification(
+        'Perspectives are part of TagSpaces PRO',
+        'default',
+        true
+      );
+    }
   }
 
   function showDeleteDirectoryDialog() {
@@ -528,16 +536,16 @@ const DirectoryMenu = (props: Props) => {
               </ListItemIcon>
               <ListItemText primary="TreeViz Perspective" />
             </MenuItem> */}
-            <MenuItem
+            {/* <MenuItem
               data-tid="openTreeVizPerspective"
               onClick={() => switchPerspective(perspectives.KANBAN)}
-              title="Switch to kanban visualization perspective"
+              title="Switch to kanban perspective"
             >
               <ListItemIcon>
                 <KanBanPerspectiveIcon />
               </ListItemIcon>
-              <ListItemText primary="KanBan Perspective" />
-            </MenuItem>
+              <ListItemText primary="KanBan Perspective - Alpha" />
+            </MenuItem> */}
             <Divider />
           </div>
         )}
