@@ -25,8 +25,9 @@ import {
   deleteFilesPromise,
   loadMetaDataPromise,
   renameFilesPromise,
-  enhanceDirectoryContent
-} from '../services/utils-io';
+  enhanceDirectoryContent,
+  FileSystemEntryMeta
+} from '-/services/utils-io';
 import {
   extractFileExtension,
   extractDirectoryName,
@@ -36,8 +37,8 @@ import {
   extractParentDirectoryPath,
   extractTagsAsObjects,
   normalizePath
-} from '../utils/paths';
-import { formatDateTime4Tag, getURLParameter } from '../utils/misc';
+} from '-/utils/paths';
+import { formatDateTime4Tag, getURLParameter } from '-/utils/misc';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 // import { getThumbnailURLPromise } from '../services/thumbsgenerator';
@@ -69,6 +70,7 @@ export const types = {
   SET_NEW_VERSION_AVAILABLE: 'APP/SET_NEW_VERSION_AVAILABLE',
   SET_CURRENLOCATIONID: 'APP/SET_CURRENLOCATIONID',
   SET_CURRENDIRECTORYCOLOR: 'APP/SET_CURRENDIRECTORYCOLOR',
+  SET_CURRENDIRECTORYPERSPECTIVE: 'APP/SET_CURRENDIRECTORYPERSPECTIVE',
   SET_LAST_SELECTED_ENTRY: 'APP/SET_LAST_SELECTED_ENTRY',
   SET_SELECTED_ENTRIES: 'APP/SET_SELECTED_ENTRIES',
   SET_FILEDRAGGED: 'APP/SET_FILEDRAGGED',
@@ -95,8 +97,16 @@ export const types = {
   REFLECT_DELETE_ENTRY: 'APP/REFLECT_DELETE_ENTRY',
   REFLECT_RENAME_ENTRY: 'APP/REFLECT_RENAME_ENTRY',
   REFLECT_CREATE_ENTRY: 'APP/REFLECT_CREATE_ENTRY',
-  REFLECT_UPDATE_SIDECARTAGS: 'APP/REFLECT_UPDATE_SIDECARTAGS',
-  REFLECT_UPDATE_SIDECARMETA: 'APP/REFLECT_UPDATE_SIDECARMETA'
+  // REFLECT_UPDATE_SIDECARTAGS: 'APP/REFLECT_UPDATE_SIDECARTAGS',
+  REFLECT_UPDATE_SIDECARMETA: 'APP/REFLECT_UPDATE_SIDECARMETA',
+  UPDATE_CURRENTDIR_ENTRY: 'APP/UPDATE_CURRENTDIR_ENTRY'
+};
+export const perspectives = {
+  DEFAULT: 'default',
+  GALLERY: 'gallery',
+  // TREEVIZ: 'treeviz',
+  MAPIQUE: 'mapique',
+  KANBAN: 'kanban'
 };
 
 export const NotificationTypes = {
@@ -113,6 +123,8 @@ export type OpenedEntry = {
   editingExtensionId?: string;
   isFile?: boolean;
   color?: string;
+  description?: string;
+  perspective?: string;
   editMode?: boolean;
   changed?: boolean;
   shouldReload?: boolean;
@@ -221,6 +233,12 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         currentDirectoryEntries: action.directoryContent,
+        currentDirectoryColor: action.directoryMeta
+          ? action.directoryMeta.color || ''
+          : '',
+        currentDirectoryPerspective: action.directoryMeta
+          ? action.directoryMeta.perspective
+          : undefined,
         currentDirectoryPath: action.directoryPath,
         isLoading: action.showIsLoading || false
       };
@@ -249,7 +267,16 @@ export default (state: any = initialState, action: any) => {
       return { ...state, selectedEntries: action.selectedEntries };
     }
     case types.SET_CURRENDIRECTORYCOLOR: {
-      return { ...state, currentDirectoryColor: action.color };
+      if (state.currentDirectoryColor !== action.color) {
+        return { ...state, currentDirectoryColor: action.color };
+      }
+      return state;
+    }
+    case types.SET_CURRENDIRECTORYPERSPECTIVE: {
+      if (state.currentDirectoryPerspective !== action.perspective) {
+        return { ...state, currentDirectoryPerspective: action.perspective };
+      }
+      return state;
     }
     case types.TOGGLE_EDIT_TAG_DIALOG: {
       return {
@@ -481,7 +508,7 @@ export default (state: any = initialState, action: any) => {
         })
       };
     }
-    case types.REFLECT_UPDATE_SIDECARTAGS: {
+    /* case types.REFLECT_UPDATE_SIDECARTAGS: {
       return {
         ...state,
         currentDirectoryEntries: state.currentDirectoryEntries.map(entry => {
@@ -503,6 +530,30 @@ export default (state: any = initialState, action: any) => {
           return {
             ...entry,
             shouldReload: true
+          };
+        })
+      };
+    } */
+    case types.UPDATE_CURRENTDIR_ENTRY: {
+      return {
+        ...state,
+        currentDirectoryEntries: state.currentDirectoryEntries.map(entry => {
+          if (entry.path !== action.path) {
+            return entry;
+          }
+          if (action.entry.tags && action.entry.tags.length > 0) {
+            return {
+              ...entry,
+              ...action.entry,
+              tags: [
+                ...entry.tags.filter(tag => tag.type === 'plain'),
+                ...action.entry.tags
+              ]
+            };
+          }
+          return {
+            ...entry,
+            ...action.entry
           };
         })
       };
@@ -739,54 +790,73 @@ export const actions = {
     const { settings } = getState();
     window.walkCanceled = false;
 
+    function loadDirectoryContentInt(fsEntryMeta?: FileSystemEntryMeta) {
+      // Uncomment the following line will to clear all content before loading new dir content
+      dispatch(actions.loadDirectorySuccessInt(directoryPath, [], true)); // this is to reset directoryContent (it will reset color too)
+      // dispatch(actions.setCurrentDirectoryColor('')); // this is to reset color only
+      dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
+      PlatformIO.listDirectoryPromise(directoryPath, false)
+        .then(results => {
+          prepareDirectoryContent(
+            results,
+            directoryPath,
+            settings,
+            dispatch,
+            getState,
+            fsEntryMeta
+          );
+          return true;
+        })
+        .catch(error => {
+          console.timeEnd('listDirectoryPromise');
+          dispatch(actions.loadDirectoryFailure(error)); // Currently this is never called, due the promise always resolve
+        });
+    }
+
     loadMetaDataPromise(
       normalizePath(directoryPath) + PlatformIO.getDirSeparator()
     )
       .then(fsEntryMeta => {
-        if (fsEntryMeta.color) {
+        loadDirectoryContentInt(fsEntryMeta);
+        /* if (fsEntryMeta.color) { // TODO rethink this states changes are expensive
           dispatch(actions.setCurrentDirectoryColor(fsEntryMeta.color));
         }
+        if (fsEntryMeta.perspective) {
+          dispatch(actions.setCurrentDirPerspective(fsEntryMeta.perspective));
+        } */
+
         return true;
       })
       .catch(err => {
-        console.log('Error loading color of the current folder' + err);
-      });
-
-    // Uncomment the following line will to clear all content before loading new dir content
-    dispatch(actions.loadDirectorySuccessInt(directoryPath, [], true));
-    dispatch(actions.setCurrentDirectoryColor(''));
-    dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
-    PlatformIO.listDirectoryPromise(directoryPath, false)
-      .then(results => {
-        prepareDirectoryContent(
-          results,
-          directoryPath,
-          settings,
-          dispatch,
-          getState
-        );
-        return true;
-      })
-      .catch(error => {
-        console.timeEnd('listDirectoryPromise');
-        dispatch(actions.loadDirectoryFailure(error)); // Currently this is never called, due the promise always resolve
+        console.log('Error loading meta of the current folder' + err);
+        loadDirectoryContentInt();
       });
   },
   loadDirectorySuccess: (
     directoryPath: string,
-    directoryContent: Array<Object>
+    directoryContent: Array<Object>,
+    directoryMeta?: FileSystemEntryMeta
   ) => (dispatch: (actions: Object) => void) => {
     dispatch(actions.hideNotifications());
-    dispatch(actions.loadDirectorySuccessInt(directoryPath, directoryContent));
+    dispatch(
+      actions.loadDirectorySuccessInt(
+        directoryPath,
+        directoryContent,
+        false,
+        directoryMeta
+      )
+    );
   },
   loadDirectorySuccessInt: (
     directoryPath: string,
     directoryContent: Array<Object>,
-    showIsLoading?: boolean
+    showIsLoading?: boolean,
+    directoryMeta?: FileSystemEntryMeta
   ) => ({
     type: types.LOAD_DIRECTORY_SUCCESS,
     directoryPath: directoryPath || PlatformIO.getDirSeparator(),
     directoryContent,
+    directoryMeta,
     showIsLoading
   }),
   loadDirectoryFailure: (directoryPath: string, error?: any) => (
@@ -823,6 +893,10 @@ export const actions = {
   setCurrentDirectoryColor: (color: string) => ({
     type: types.SET_CURRENDIRECTORYCOLOR,
     color
+  }),
+  setCurrentDirectoryPerspective: (perspective: string) => ({
+    type: types.SET_CURRENDIRECTORYPERSPECTIVE,
+    perspective
   }),
   setSelectedEntries: (selectedEntries: Array<Object>) => ({
     type: types.SET_SELECTED_ENTRIES,
@@ -1183,6 +1257,28 @@ export const actions = {
     type: types.SET_READONLYMODE,
     isReadOnlyMode
   }),
+  updateOpenedFile: (
+    entryPath: string,
+    fsEntryMeta: FileSystemEntryMeta,
+    isFile: boolean = true
+  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
+    const { supportedFileTypes } = getState().settings;
+    const entryForOpening: OpenedEntry = findExtensionsForEntry(
+      supportedFileTypes,
+      entryPath,
+      isFile
+    );
+    if (fsEntryMeta.color) {
+      entryForOpening.color = fsEntryMeta.color;
+    }
+    if (fsEntryMeta.description) {
+      entryForOpening.description = fsEntryMeta.description;
+    }
+    if (fsEntryMeta.perspective) {
+      entryForOpening.perspective = fsEntryMeta.perspective;
+    }
+    dispatch(actions.addToEntryContainer(entryForOpening));
+  },
   openFile: (
     entryPath: string,
     isFile: boolean = true,
@@ -1198,8 +1294,13 @@ export const actions = {
     const currentEntry = currentDirectoryEntries.find(
       entry => entry.path === entryPath
     );
-    if (currentEntry && currentEntry.url) {
-      entryForOpening.url = currentEntry.url;
+    if (currentEntry) {
+      if (currentEntry.url) {
+        entryForOpening.url = currentEntry.url;
+      }
+      if (currentEntry.perspective) {
+        entryForOpening.perspective = currentEntry.perspective;
+      }
     }
     if (
       editMode &&
@@ -1331,11 +1432,27 @@ export const actions = {
     dispatch(actions.reflectRenameEntryInt(path, newPath));
     dispatch(LocationIndexActions.reflectRenameEntry(path, newPath));
   },
-  reflectUpdateSidecarTagsInt: (path: string, tags: Array<Tag>) => ({
-    type: types.REFLECT_UPDATE_SIDECARTAGS,
+  updateCurrentDirEntry: (path: string, entry: Object) => ({
+    type: types.UPDATE_CURRENTDIR_ENTRY,
     path,
-    tags
+    entry
   }),
+  /**
+   * @deprecated use updateCurrentDirEntry instead
+   * @param path
+   * @param entryMeta
+   */
+  reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => (
+    dispatch: (actions: Object) => void
+  ) => {
+    dispatch(actions.reflectUpdateSidecarMetaInt(path, entryMeta));
+    dispatch(LocationIndexActions.reflectUpdateSidecarMeta(path, entryMeta));
+  },
+  /**
+   * @deprecated use updateCurrentDirEntry instead
+   * @param path
+   * @param entryMeta
+   */
   reflectUpdateSidecarMetaInt: (path: string, entryMeta: Object) => ({
     type: types.REFLECT_UPDATE_SIDECARMETA,
     path,
@@ -1346,17 +1463,17 @@ export const actions = {
     tags: Array<Tag>,
     updateIndex: boolean = true
   ) => (dispatch: (actions: Object) => void) => {
-    dispatch(actions.reflectUpdateSidecarTagsInt(path, tags));
+    dispatch(actions.updateCurrentDirEntry(path, { tags }));
+    // dispatch(actions.reflectUpdateSidecarTagsInt(path, tags));
     if (updateIndex) {
       dispatch(LocationIndexActions.reflectUpdateSidecarTags(path, tags));
     }
   },
-  reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => (
-    dispatch: (actions: Object) => void
-  ) => {
-    dispatch(actions.reflectUpdateSidecarMetaInt(path, entryMeta));
-    dispatch(LocationIndexActions.reflectUpdateSidecarMeta(path, entryMeta));
-  },
+  /* reflectUpdateSidecarTagsInt: (path: string, tags: Array<Tag>) => ({
+    type: types.REFLECT_UPDATE_SIDECARTAGS,
+    path,
+    tags
+  }), */
   deleteFile: (filePath: string) => (
     dispatch: (actions: Object) => void,
     getState: () => any
@@ -1493,7 +1610,8 @@ function prepareDirectoryContent(
   directoryPath,
   settings,
   dispatch,
-  getState
+  getState,
+  dirEntryMeta
 ) {
   const currentLocation: Location = getLocation(
     getState(),
@@ -1557,7 +1675,9 @@ function prepareDirectoryContent(
   }
 
   console.log('Dir ' + directoryPath + ' contains ' + directoryContent.length);
-  dispatch(actions.loadDirectorySuccess(directoryPath, directoryContent));
+  dispatch(
+    actions.loadDirectorySuccess(directoryPath, directoryContent, dirEntryMeta)
+  );
 }
 
 function findExtensionPathForId(extensionId: string): string {
@@ -1587,9 +1707,9 @@ function findExtensionsForEntry(
   supportedFileTypes.map(fileType => {
     if (fileType.viewer && fileType.type.toLowerCase() === fileExtension) {
       fileForOpening.viewingExtensionId = fileType.viewer;
-      if (fileType.color) {
+      /* if (fileType.color) {
         fileForOpening.color = fileType.color;
-      }
+      } */
       fileForOpening.viewingExtensionPath = findExtensionPathForId(
         fileType.viewer
       );
@@ -1692,6 +1812,10 @@ export function findAvailableExtensions() {
 // Selectors
 export const getDirectoryContent = (state: any) =>
   state.app.currentDirectoryEntries;
+export const getCurrentDirectoryColor = (state: any) =>
+  state.app.currentDirectoryColor;
+export const getCurrentDirectoryPerspective = (state: any) =>
+  state.app.currentDirectoryPerspective;
 export const getDirectoryPath = (state: any) => state.app.currentDirectoryPath;
 export const getProgress = (state: any) => state.app.progress;
 export const getCurrentLocationPath = (state: any) => {
@@ -1749,8 +1873,6 @@ export const isProgressOpened = (state: any) => state.app.progressDialogOpened;
 export const getOpenedFiles = (state: any) => state.app.openedFiles;
 export const getNotificationStatus = (state: any) =>
   state.app.notificationStatus;
-export const getCurrentDirectoryColor = (state: any) =>
-  state.app.currentDirectoryColor;
 export const getSearchResults = (state: any) =>
   state.app.currentDirectoryEntries;
 export const getSearchResultCount = (state: any) =>

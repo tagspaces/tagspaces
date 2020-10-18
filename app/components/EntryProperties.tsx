@@ -30,12 +30,26 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import LocationIcon from '@material-ui/icons/WorkOutline';
 import CloudLocationIcon from '@material-ui/icons/CloudQueue';
 import DOMPurify from 'dompurify';
+import Select from '@material-ui/core/Select';
+import Input from '@material-ui/core/Input';
+import MenuItem from '@material-ui/core/MenuItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import DefaultPerspectiveIcon from '@material-ui/icons/GridOn';
+import LayersClearIcon from '@material-ui/icons/LayersClear';
+import ListItemText from '@material-ui/core/ListItemText';
+import GalleryPerspectiveIcon from '@material-ui/icons/Camera';
+import MapiquePerspectiveIcon from '@material-ui/icons/Map';
+import KanBanPerspectiveIcon from '@material-ui/icons/Dashboard';
 import TagDropContainer from './TagDropContainer';
 // import EntryTagMenu from './menus/EntryTagMenu';
 import ColorPickerDialog from './dialogs/ColorPickerDialog';
 import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
 import i18n from '../services/i18n';
-import { FileSystemEntry, getAllPropertiesPromise } from '-/services/utils-io';
+import {
+  FileSystemEntry,
+  FileSystemEntryMeta,
+  getAllPropertiesPromise
+} from '-/services/utils-io';
 import { formatFileSize } from '-/utils/misc';
 import {
   extractContainingDirectoryPath,
@@ -52,7 +66,8 @@ import {
   getThumbnailURLPromise
 } from '-/services/thumbsgenerator';
 import { Tag } from '-/reducers/taglibrary';
-import { OpenedEntry } from '-/reducers/app';
+import { perspectives } from '-/reducers/app';
+import { savePerspective } from '-/utils/metaoperations';
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
@@ -156,15 +171,21 @@ interface Props {
   theme: any;
   // openedEntry: OpenedEntry;
   entryPath: string;
+  perspective: string;
   // entryURL: string;
   // shouldReload: boolean | null;
   // shouldCopyFile: boolean;
-  editTagForEntry: () => void;
+  // editTagForEntry: () => void;
   renameFile: (path: string, nextPath: string) => void;
   renameDirectory: (path: string, nextPath: string) => void;
   // normalizeShouldCopyFile: () => void;
   showNotification: (message: string) => void;
-  reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
+  updateOpenedFile: (
+    entryPath: string,
+    fsEntryMeta: FileSystemEntryMeta,
+    isFile: boolean
+  ) => void;
+  // reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
   updateThumbnailUrl: (path: string, thumbUrl: string) => void;
   addTags: (paths: Array<string>, tags: Array<Tag>) => void;
   removeTags: (paths: Array<string>, tags: Array<Tag>) => void;
@@ -172,6 +193,7 @@ interface Props {
   // resetState: (stateName: string) => void;
   isReadOnlyMode: boolean;
   // setPropertiesEditMode: (editMode: boolean) => void;
+  currentDirectoryPath: string | null;
 }
 
 const EntryProperties = (props: Props) => {
@@ -179,7 +201,7 @@ const EntryProperties = (props: Props) => {
   const fileDescription = useRef<HTMLInputElement>(null);
 
   let newName = '';
-  const tagMenuAnchorEl = null;
+  // const tagMenuAnchorEl = null;
   // const [name, setName] = useState<string>('');
   // const [originalName, setOriginalName] = useState<string>('');
   // const [description, setDescription] = useState<string>('');
@@ -190,7 +212,7 @@ const EntryProperties = (props: Props) => {
   // const [tags, setTags] = useState<Array<Tag>>([]);
   const [currentEntry, setCurrentEntry] = useState<FileSystemEntry>(undefined);
   // const [tagMenuAnchorEl, setTagMenuAnchorEl] = useState<boolean | null>(null);
-  const [tagMenuOpened, setTagMenuOpened] = useState<boolean | null>(false);
+  // const [tagMenuOpened, setTagMenuOpened] = useState<boolean | null>(false);
   // const [selectedTag, setSelectedTag] = useState<Tag>(null); // TODO enable selected Tag menu
   const [isEditName, setEditName] = useState<boolean>(false);
   const [isEditDescription, setEditDescription] = useState<boolean>(false);
@@ -350,7 +372,11 @@ const EntryProperties = (props: Props) => {
       )
         .then(entryMeta => {
           setEditDescription(false);
-          props.reflectUpdateSidecarMeta(currentEntry.path, entryMeta);
+          props.updateOpenedFile(
+            currentEntry.path,
+            entryMeta,
+            currentEntry.isFile
+          );
           return true;
         })
         .catch(error => {
@@ -445,8 +471,15 @@ const EntryProperties = (props: Props) => {
   const handleChangeColor = color => {
     Pro.MetaOperations.saveColor(currentEntry.path, color)
       .then(entryMeta => {
-        props.reflectUpdateSidecarMeta(currentEntry.path, entryMeta);
-        setCurrentEntry({ ...currentEntry, color });
+        // if (props.entryPath === props.currentDirectoryPath) {
+        props.updateOpenedFile(
+          currentEntry.path,
+          entryMeta,
+          currentEntry.isFile
+        );
+        /* } else {
+          setCurrentEntry({ ...currentEntry, color });
+        } */
         return true;
       })
       .catch(error => {
@@ -467,7 +500,7 @@ const EntryProperties = (props: Props) => {
     }); *!/
   }; */
 
-  const handleCloseTagMenu = () => setTagMenuOpened(false); // this.setState({ tagMenuOpened: false });
+  // const handleCloseTagMenu = () => setTagMenuOpened(false); // this.setState({ tagMenuOpened: false });
 
   const handleFileNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
@@ -546,7 +579,7 @@ const EntryProperties = (props: Props) => {
     }
   };
 
-  const { classes, removeTags, isReadOnlyMode } = props;
+  const { classes, isReadOnlyMode } = props;
 
   if (!currentEntry || !currentEntry.path || currentEntry.path === '') {
     return <div />;
@@ -581,6 +614,75 @@ const EntryProperties = (props: Props) => {
         .join(' ')
     : '';
 
+  const changePerspective = (event: any) => {
+    // console.log(perspective);
+    const perspective = event.target.value;
+    savePerspective(currentEntry.path, perspective)
+      .then((entryMeta: FileSystemEntryMeta) => {
+        // if (props.entryPath === props.currentDirectoryPath) {
+        props.updateOpenedFile(
+          currentEntry.path,
+          entryMeta,
+          currentEntry.isFile
+        );
+        /* } else {
+          setCurrentEntry({ ...currentEntry, perspective });
+        } */
+        return true;
+      })
+      .catch(error => {
+        console.warn('Error saving perspective for folder ' + error);
+        props.showNotification(i18n.t('Error saving perspective for folder'));
+      });
+  };
+
+  let perspectiveDefault;
+  if (currentEntry.perspective) {
+    perspectiveDefault = currentEntry.perspective;
+  } else if (props.perspective) {
+    perspectiveDefault = props.perspective;
+  } else {
+    perspectiveDefault = 'unspecified'; // perspectives.DEFAULT;
+  }
+
+  function getMenuItem(perspective) {
+    let icon;
+    if (perspective === perspectives.DEFAULT) {
+      icon = (
+        <ListItemIcon>
+          <DefaultPerspectiveIcon />
+        </ListItemIcon>
+      );
+    } else if (perspective === perspectives.GALLERY) {
+      icon = (
+        <ListItemIcon>
+          <GalleryPerspectiveIcon />
+        </ListItemIcon>
+      );
+    } else if (perspective === perspectives.MAPIQUE) {
+      icon = (
+        <ListItemIcon>
+          <MapiquePerspectiveIcon />
+        </ListItemIcon>
+      );
+    } else if (perspective === perspectives.KANBAN) {
+      icon = (
+        <ListItemIcon>
+          <KanBanPerspectiveIcon />
+        </ListItemIcon>
+      );
+    }
+    return (
+      <MenuItem key={perspective} value={perspective}>
+        {icon}
+        <ListItemText
+          primary={perspective.charAt(0).toUpperCase() + perspective.slice(1)}
+        />
+      </MenuItem>
+    );
+  }
+
+  // @ts-ignore
   return (
     <div className={classes.entryProperties}>
       <Grid container spacing={1}>
@@ -769,13 +871,18 @@ const EntryProperties = (props: Props) => {
 
         <div className={classes.entryItem}>
           <div className={[classes.fluidGrid, classes.ellipsisText].join(' ')}>
-            <div className="grid-item" style={{ width: '50%' }}>
+            <div
+              className="grid-item"
+              style={{ width: '50%', alignSelf: 'baseline' }}
+            >
               <Typography
                 variant="caption"
                 className={classes.header}
                 style={{ display: 'block' }}
               >
-                {i18n.t('core:fileLDTM') + ': ' + ldtm}
+                {i18n.t('core:fileLDTM')}
+                <br />
+                <strong>{ldtm}</strong>
               </Typography>
               {/* <FormControl fullWidth={true} className={classes.formControl}>
                   <TextField
@@ -798,9 +905,9 @@ const EntryProperties = (props: Props) => {
                   className={classes.header}
                   style={{ display: 'block' }}
                 >
-                  {i18n.t('core:fileSize') +
-                    ': ' +
-                    formatFileSize(currentEntry.size)}
+                  {i18n.t('core:fileSize')}
+                  <br />
+                  <strong>{formatFileSize(currentEntry.size)}</strong>
                 </Typography>
                 {/* <FormControl
                     fullWidth={true}
@@ -920,6 +1027,42 @@ const EntryProperties = (props: Props) => {
             />
           </FormControl>
         </div>
+
+        {!currentEntry.isFile && (
+          <div className={classes.entryItem}>
+            <div className={classes.fluidGrid}>
+              <Typography
+                variant="caption"
+                className={classNames(classes.header)}
+                style={{ display: 'block' }}
+              >
+                {i18n.t('core:choosePerspective')}
+              </Typography>
+            </div>
+            <FormControl fullWidth={true} className={classes.formControl}>
+              <Select
+                data-tid="changePerspectiveTID"
+                defaultValue={perspectiveDefault}
+                onChange={changePerspective}
+                input={<Input id="changePerspectiveId" />}
+              >
+                <MenuItem key="unspecified" value="unspecified">
+                  <ListItemIcon>
+                    <LayersClearIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={i18n.t('core:unspecified')} />
+                </MenuItem>
+                {Object.values(perspectives).map(perspective =>
+                  getMenuItem(perspective)
+                )}
+                {/* {Pro &&
+                  Object.values(
+                    Pro.Perspectives.AvailablePerspectives
+                  ).map(perspective => getMenuItem(perspective))} */}
+              </Select>
+            </FormControl>
+          </div>
+        )}
 
         <div className={classes.entryItem}>
           <div className={classes.fluidGrid}>

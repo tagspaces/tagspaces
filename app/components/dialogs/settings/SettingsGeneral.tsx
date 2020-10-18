@@ -34,7 +34,9 @@ import ColorPickerDialog from '../ColorPickerDialog';
 import TransparentBackground from '../../TransparentBackground';
 
 const styles = theme => ({
-  root: {},
+  root: {
+    overflowX: 'hidden'
+  },
   listItem: {
     paddingLeft: 0,
     paddingRight: 0
@@ -252,7 +254,7 @@ class SettingsGeneral extends React.Component<Props, State> {
           />
         </ListItem>
         <ListItem className={classes.listItem}>
-          <ListItemText primary="Mobile Mode (experimental)" />
+          <ListItemText primary="Enable mobile (small screen) mode" />
           <Switch
             data-tid="settingsSetDesktopMode"
             disabled={!(typeof window.ExtDisplayMode === 'undefined')}

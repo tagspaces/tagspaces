@@ -45,7 +45,7 @@ import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import AppConfig from '-/config';
 import PlatformIO from '-/services/platform-io';
 import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
-import { FileSystemEntry } from '-/services/utils-io';
+import { FileSystemEntry, FileSystemEntryMeta } from '-/services/utils-io';
 import i18n from '-/services/i18n';
 import {
   extractContainingDirectoryPath,
@@ -146,6 +146,7 @@ const styles: any = (theme: any) => ({
     minWidth: 20,
     height: 44,
     justifyContent: 'unset',
+    color: 'inherit !important',
     whiteSpace: 'nowrap'
   },
   entryCloseSection: {
@@ -175,7 +176,7 @@ interface Props {
   renameDirectory: () => void;
   addTags: () => void;
   removeTags: () => void;
-  editTagForEntry: () => void;
+  // editTagForEntry: () => void;
   openFile: (filePath: string) => void;
   getNextFile: (path: string) => string;
   getPrevFile: (path: string) => string;
@@ -192,11 +193,17 @@ interface Props {
   isReadOnlyMode: boolean;
   setEntryPropertiesSplitSize: (size: number) => void;
   entryPropertiesSplitSize?: number;
-  reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
+  updateOpenedFile: (
+    entryPath: string,
+    fsEntryMeta: FileSystemEntryMeta,
+    isFile: boolean
+  ) => void;
+  // reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
   updateThumbnailUrl: (path: string, thumbUrl: string) => void;
   setLastSelectedEntry: (path: string) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   directoryContent: Array<Object>;
+  currentDirectoryPath: string | null;
 }
 
 const EntryContainer = (props: Props) => {
@@ -480,9 +487,13 @@ const EntryContainer = (props: Props) => {
     //   }
     // } else
     if (fileViewer) {
-      // @ts-ignore
-      const textContent = fileViewer.current.contentWindow.getContent();
-      saveFile(textContent);
+      try {
+        // @ts-ignore
+        const textContent = fileViewer.current.contentWindow.getContent();
+        saveFile(textContent);
+      } catch (e) {
+        console.debug('function getContent not exist for video file:', e);
+      }
     }
   };
 
@@ -1080,7 +1091,8 @@ const EntryContainer = (props: Props) => {
               <div className={classes.flexLeft}>
                 {openedFile.isFile ? (
                   <Button
-                    onClick={togglePanel}
+                    // onClick={togglePanel}
+                    disabled
                     title={openedFile.url || openedFile.path}
                     aria-label={i18n.t('core:toggleEntryProperties')}
                     className={classes.entryNameButton}
@@ -1103,7 +1115,8 @@ const EntryContainer = (props: Props) => {
                   </Button>
                 ) : (
                   <Button
-                    onClick={togglePanel}
+                    disabled
+                    // onClick={togglePanel}
                     title={openedFile.url || openedFile.path}
                     aria-label={i18n.t('core:toggleEntryProperties')}
                     className={classes.entryNameButton}
@@ -1196,21 +1209,23 @@ const EntryContainer = (props: Props) => {
                 // resetState={this.resetState}
                 // setPropertiesEditMode={this.setPropertiesEditMode}
                 entryPath={openedFile.path}
+                perspective={openedFile.perspective}
                 // entryURL={currentEntry.url}
                 // openedEntry={openEntry}
                 // shouldReload={reload}
                 renameFile={props.renameFile}
                 renameDirectory={props.renameDirectory}
-                editTagForEntry={props.editTagForEntry}
+                // editTagForEntry={props.editTagForEntry}
                 // shouldCopyFile={shouldCopyFile}
                 // normalizeShouldCopyFile={() => setShouldCopyFile(false)}
                 addTags={props.addTags}
                 removeTags={props.removeTags}
                 removeAllTags={props.removeAllTags}
-                reflectUpdateSidecarMeta={props.reflectUpdateSidecarMeta}
+                updateOpenedFile={props.updateOpenedFile}
                 updateThumbnailUrl={props.updateThumbnailUrl}
                 showNotification={props.showNotification}
                 isReadOnlyMode={props.isReadOnlyMode}
+                currentDirectoryPath={props.currentDirectoryPath}
               />
             </div>
           </div>
@@ -1266,8 +1281,8 @@ function mapActionCreatorsToProps(dispatch) {
       addTags: TaggingActions.addTags,
       removeTags: TaggingActions.removeTags,
       removeAllTags: TaggingActions.removeAllTags,
-      editTagForEntry: TaggingActions.editTagForEntry,
-      reflectUpdateSidecarMeta: AppActions.reflectUpdateSidecarMeta,
+      // editTagForEntry: TaggingActions.editTagForEntry,
+      updateOpenedFile: AppActions.updateOpenedFile,
       updateThumbnailUrl: AppActions.updateThumbnailUrl,
       setLastSelectedEntry: AppActions.setLastSelectedEntry,
       setSelectedEntries: AppActions.setSelectedEntries

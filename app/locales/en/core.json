@@ -93,7 +93,7 @@
   "showMainMenu": "Show main menu (restart needed)",
   "useDefaultLocation": "Use default location as a startup location",
   "enablingUsingMetaFolder": "Enable the use of a hidden folder(.ts) for storing meta data and thumbnails",
-  "persistTagsInSidecarFile": "Use sidecar files for file tagging",
+  "persistTagsInSidecarFile": "Do not rename files on tagging (use sidecar files)",
   "addTagsToLibrary": "Collect new tags in the tag library",
   "useTrashCan": "Move deleted files or folders to trash bin",
   "invalidImportFile": "The imported file has invalid format",
@@ -475,5 +475,9 @@
   "unlimited": "Unlimited",
   "pageLimit": "Page Limit",
   "pageLimitHelp": "Set number of files per page",
+  "unspecified": "Unspecified",
+  "choosePerspective": "Choose Perspective",
+  "folderLimit": "Max. folders to be displayed",
+  "filesLimit": "Max. files to be displayed in a folder",
   "-": "-"
 }
