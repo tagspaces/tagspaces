@@ -34,7 +34,9 @@ import ColorPickerDialog from '../ColorPickerDialog';
 import TransparentBackground from '../../TransparentBackground';
 
 const styles = theme => ({
-  root: {},
+  root: {
+    overflowX: 'hidden'
+  },
   listItem: {
     paddingLeft: 0,
     paddingRight: 0

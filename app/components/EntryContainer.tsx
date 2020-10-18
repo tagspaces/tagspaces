@@ -146,6 +146,7 @@ const styles: any = (theme: any) => ({
     minWidth: 20,
     height: 44,
     justifyContent: 'unset',
+    color: 'inherit !important',
     whiteSpace: 'nowrap'
   },
   entryCloseSection: {
@@ -1094,7 +1095,8 @@ const EntryContainer = (props: Props) => {
               <div className={classes.flexLeft}>
                 {openedFile.isFile ? (
                   <Button
-                    onClick={togglePanel}
+                    // onClick={togglePanel}
+                    disabled
                     title={openedFile.url || openedFile.path}
                     aria-label={i18n.t('core:toggleEntryProperties')}
                     className={classes.entryNameButton}
@@ -1117,7 +1119,8 @@ const EntryContainer = (props: Props) => {
                   </Button>
                 ) : (
                   <Button
-                    onClick={togglePanel}
+                    disabled
+                    // onClick={togglePanel}
                     title={openedFile.url || openedFile.path}
                     aria-label={i18n.t('core:toggleEntryProperties')}
                     className={classes.entryNameButton}
