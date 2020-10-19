@@ -67,6 +67,7 @@ export default (state: any = initialState, action: any) => {
     case types.INDEX_DIRECTORY_CLEAR: {
       // GlobalSearch.index.length = 0;
       GlobalSearch.index.splice(0, GlobalSearch.index.length);
+      GlobalSearch.creationDateTime = undefined;
       return {
         ...state,
         isIndexing: false
@@ -296,20 +297,20 @@ export const actions = {
       AppActions.showNotification(i18n.t('core:searching'), 'default', false)
     );
     dispatch(actions.setSearchQuery(searchQuery));
-    let directoryIndex = GlobalSearch.index;
     setTimeout(async () => {
       // Workaround used to show the start search notification
-      if (searchQuery.forceIndexing) {
+      if (GlobalSearch.index.length < 1 || searchQuery.forceIndexing) {
         const currentPath = currentLocation.paths[0];
         console.log('Start creating index for : ' + currentPath);
-        directoryIndex = await createDirectoryIndex(
+        GlobalSearch.index = await createDirectoryIndex(
           currentPath,
           currentLocation.fullTextIndex
         );
+        GlobalSearch.creationDateTime = new Date();
         if (Pro && Pro.Indexer && Pro.Indexer.persistIndex) {
           Pro.Indexer.persistIndex(
             currentPath,
-            directoryIndex,
+            GlobalSearch.index,
             PlatformIO.getDirSeparator()
           );
         }
@@ -354,7 +355,7 @@ export const actions = {
 
     // Preparing for global search
     dispatch(AppActions.setSearchResults([]));
-    if (currentLocation.type === locationType.TYPE_CLOUD) {
+    if (currentLocation && currentLocation.type === locationType.TYPE_CLOUD) {
       PlatformIO.disableObjectStoreSupport();
     }
     window.walkCanceled = false;

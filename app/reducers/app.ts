@@ -1153,18 +1153,19 @@ export const actions = {
           );
           dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
           if (location.uuid !== currentLocationId) {
-            if (location.persistIndex) {
-              dispatch(
-                LocationIndexActions.loadDirectoryIndex(location.paths[0])
-              );
-            } else {
-              dispatch(
-                LocationIndexActions.createDirectoryIndex(
-                  location.paths[0],
-                  location.fullTextIndex
-                )
-              );
-            }
+            dispatch(LocationIndexActions.clearDirectoryIndex());
+            // if (location.persistIndex) {
+            //   dispatch(
+            //     LocationIndexActions.loadDirectoryIndex(location.paths[0])
+            //   );
+            // } else {
+            //   dispatch(
+            //     LocationIndexActions.createDirectoryIndex(
+            //       location.paths[0],
+            //       location.fullTextIndex
+            //     )
+            //   );
+            // }
           }
           dispatch(actions.setCurrentLocationId(location.uuid));
           dispatch(actions.loadDirectoryContent(location.paths[0]));
@@ -1185,16 +1186,17 @@ export const actions = {
       PlatformIO.disableObjectStoreSupport();
       dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
       if (location.uuid !== currentLocationId) {
-        if (location.persistIndex) {
-          dispatch(LocationIndexActions.loadDirectoryIndex(location.paths[0]));
-        } else {
-          dispatch(
-            LocationIndexActions.createDirectoryIndex(
-              location.paths[0],
-              location.fullTextIndex
-            )
-          );
-        }
+        dispatch(LocationIndexActions.clearDirectoryIndex());
+        // if (location.persistIndex) {
+        //   dispatch(LocationIndexActions.loadDirectoryIndex(location.paths[0]));
+        // } else {
+        //   dispatch(
+        //     LocationIndexActions.createDirectoryIndex(
+        //       location.paths[0],
+        //       location.fullTextIndex
+        //     )
+        //   );
+        // }
       }
       dispatch(actions.setCurrentLocationId(location.uuid));
       dispatch(actions.loadDirectoryContent(location.paths[0]));
