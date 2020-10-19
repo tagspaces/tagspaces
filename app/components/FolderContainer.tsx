@@ -88,9 +88,9 @@ const MapiquePerspectiveAsync = props => (
   </React.Suspense>
 );
 
-let TreeVizPerspective = React.Fragment;
+/* let TreeVizPerspective = React.Fragment;
 if (Pro && Pro.Perspectives && Pro.Perspectives.TreeVizPerspective) {
-  // TreeVizPerspective = React.lazy(() => import(/* webpackChunkName: "TreeVizPerspective" */ '../node_modules/@tagspaces/pro/modules/perspectives/treeviz'));
+  // TreeVizPerspective = React.lazy(() => import(/!* webpackChunkName: "TreeVizPerspective" *!/ '../node_modules/@tagspaces/pro/modules/perspectives/treeviz'));
   // eslint-disable-next-line prefer-destructuring
   TreeVizPerspective = Pro.Perspectives.TreeVizPerspective;
 }
@@ -98,7 +98,7 @@ const TreeVizPerspectiveAsync = props => (
   <React.Suspense fallback={<LoadingLazy />}>
     <TreeVizPerspective {...props} />
   </React.Suspense>
-);
+); */
 
 let KanBanPerspective = React.Fragment;
 if (Pro && Pro.Perspectives && Pro.Perspectives.KanBanPerspective) {
@@ -344,7 +344,7 @@ const FolderContainer = (props: Props) => {
         />
       );
     }
-    if (
+    /* if (
       Pro &&
       props.currentDirectoryPerspective ===
         Pro.Perspectives.AvailablePerspectives.TREEVIZ
@@ -357,7 +357,7 @@ const FolderContainer = (props: Props) => {
           switchPerspective={switchPerspective}
         />
       );
-    }
+    } */
     if (
       Pro &&
       props.currentDirectoryPerspective ===
