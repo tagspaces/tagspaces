@@ -236,50 +236,6 @@ const FolderContainer = (props: Props) => {
   ] = useState<null | HTMLElement>(null);
   // const [perspectiveChooserMenuOpened,setPerspectiveChooserMenuOpened] = useState<boolean>(false);
 
-  let pathParts: Array<string> = [];
-
-  useEffect(() => {
-    if (props.currentDirectoryPath) {
-      // Make the path unix like ending always with /
-      const addSlash = PlatformIO.haveObjectStoreSupport() ? '//' : '/';
-      let normalizedCurrentPath =
-        addSlash +
-        normalizePath(props.currentDirectoryPath.split('\\').join('/'));
-
-      let normalizedCurrentLocationPath = '';
-      if (props.currentLocationPath) {
-        normalizedCurrentLocationPath =
-          addSlash +
-          normalizePath(props.currentLocationPath.split('\\').join('/'));
-      }
-      // console.log('Current path : ' + normalizedCurrentPath);
-      // console.log('Current location path : ' + normalizedCurrentLocationPath);
-
-      while (
-        normalizedCurrentPath.lastIndexOf('/') > 0 &&
-        normalizedCurrentPath.startsWith(normalizedCurrentLocationPath)
-      ) {
-        pathParts.push(
-          normalizedCurrentPath.substring(
-            PlatformIO.haveObjectStoreSupport() ? 2 : 1
-          )
-        );
-        normalizedCurrentPath = normalizedCurrentPath.substring(
-          0,
-          normalizedCurrentPath.lastIndexOf('/')
-        );
-      }
-      // console.log('Path parts : ' + JSON.stringify(pathParts));
-      if (pathParts.length >= 1) {
-        pathParts = pathParts.slice(1, pathParts.length); // remove current directory
-      }
-      pathParts = pathParts.reverse();
-      if (pathParts.length > 2) {
-        pathParts = pathParts.slice(pathParts.length - 2, pathParts.length); // leave only the last 2 dirs in the path
-      }
-    }
-  }, [props.currentDirectoryPath]);
-
   useEffect(() => {
     if (props.openedFiles.length > 0) {
       const openedFile = props.openedFiles[0];
@@ -296,6 +252,48 @@ const FolderContainer = (props: Props) => {
       }
     }
   }, [props.openedFiles]);
+
+  let pathParts: Array<string> = [];
+
+  if (props.currentDirectoryPath) {
+    // Make the path unix like ending always with /
+    const addSlash = PlatformIO.haveObjectStoreSupport() ? '//' : '/';
+    let normalizedCurrentPath =
+      addSlash +
+      normalizePath(props.currentDirectoryPath.split('\\').join('/'));
+
+    let normalizedCurrentLocationPath = '';
+    if (props.currentLocationPath) {
+      normalizedCurrentLocationPath =
+        addSlash +
+        normalizePath(props.currentLocationPath.split('\\').join('/'));
+    }
+    // console.log('Current path : ' + normalizedCurrentPath);
+    // console.log('Current location path : ' + normalizedCurrentLocationPath);
+
+    while (
+      normalizedCurrentPath.lastIndexOf('/') > 0 &&
+      normalizedCurrentPath.startsWith(normalizedCurrentLocationPath)
+    ) {
+      pathParts.push(
+        normalizedCurrentPath.substring(
+          PlatformIO.haveObjectStoreSupport() ? 2 : 1
+        )
+      );
+      normalizedCurrentPath = normalizedCurrentPath.substring(
+        0,
+        normalizedCurrentPath.lastIndexOf('/')
+      );
+    }
+    // console.log('Path parts : ' + JSON.stringify(pathParts));
+    if (pathParts.length >= 1) {
+      pathParts = pathParts.slice(1, pathParts.length); // remove current directory
+    }
+    pathParts = pathParts.reverse();
+    if (pathParts.length > 2) {
+      pathParts = pathParts.slice(pathParts.length - 2, pathParts.length); // leave only the last 2 dirs in the path
+    }
+  }
 
   const openDirectoryMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
     setDirectoryContextMenuAnchorEl(event.currentTarget);
