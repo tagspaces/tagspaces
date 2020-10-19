@@ -61,6 +61,8 @@ const LicenseDialog = (props: Props) => {
       open={open}
       onClose={onClose}
       keepMounted
+      disableBackdropClick
+      disableEscapeKeyDown
       fullScreen={fullScreen}
       scroll="paper"
     >
