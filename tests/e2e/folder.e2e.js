@@ -26,7 +26,7 @@ export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 const testFolder = 'testFolder';
 const newDirectoryName = 'newDirectory';
 
-describe('TST01 - Folder management [folder_management, electron]', () => {
+describe('TST01 - Folder management [electron]', () => {
   beforeEach(async () => {
     await clearLocalStorage();
     //  await delay(500);
@@ -43,7 +43,7 @@ describe('TST01 - Folder management [folder_management, electron]', () => {
     await closeFileProperties();
   });
 
-  it('TST0101 - Create subfolder [create_subfolder, electron]', async () => {
+  it('TST0101 - Create subfolder [electron]', async () => {
     await delay(500);
     await openDirectoryMenu();
     await delay(500);
@@ -54,7 +54,7 @@ describe('TST01 - Folder management [folder_management, electron]', () => {
     await deleteDirectory();
   });
 
-  it('TST0102 - Reload folder [reload_folder, electron]', async () => {
+  it('TST0102 - Reload folder [electron]', async () => {
     await delay(500);
     await openDirectoryMenu();
     await delay(500);
@@ -67,7 +67,7 @@ describe('TST01 - Folder management [folder_management, electron]', () => {
     await deleteDirectory();
   });
 
-  it('TST0103 - Rename folder [rename_folder, electron]', async () => {
+  it('TST0103 - Rename folder [electron]', async () => {
     await delay(500);
     await openDirectoryMenu();
     await delay(500);
@@ -81,11 +81,11 @@ describe('TST01 - Folder management [folder_management, electron]', () => {
     await delay(500);
     // await reloadDirectory();
     // await delay(500);
-    // await openParentDir();
+    await openParentDir();
     await deleteDirectory();
   });
 
-  it('TST0104 - Delete empty folder [Delete_empty_folder, electron]', async () => {
+  it('TST0104 - Delete empty folder [electron]', async () => {
     await delay(500);
     await disableTrashBin();
     await delay(500);
@@ -98,5 +98,13 @@ describe('TST01 - Folder management [folder_management, electron]', () => {
     await reloadDirectory();
     await delay(500);
     await deleteDirectory();
+  });
+
+  it('TST0106 - Show folder tags [electron]', async () => {
+    await delay(500);
+    await openDirectoryMenu();
+    await delay(500);
+    await createNewDirectory();
+    await delay(500);
   });
 });

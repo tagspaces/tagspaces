@@ -25,7 +25,6 @@ import {
   deleteDirectory,
   returnDirectoryBack
 } from './general.helpers';
-import { checkFilenameForExist, openFile } from './test-utils.spec';
 import { searchEngine } from './search.spec';
 
 export const firstFile = '/span';
@@ -53,7 +52,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     await closeFileProperties();
   });
 
-  it('TST0501 - Create HTML file [create_HTML, electron]', async () => {
+  it('TST0501 - Create HTML file [electron]', async () => {
     await delay(500);
     await openDirectoryMenu();
     await delay(500);
@@ -83,7 +82,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     await delay(500);
   });
 
-  it('TST0502 - Create MD file [create_MD, electron]', async () => {
+  it('TST0502 - Create MD file [electron]', async () => {
     await delay(500);
     await openDirectoryMenu();
     await delay(500);
@@ -113,7 +112,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     await delay(500);
   });
 
-  it('TST0502 - Create TEXT file [create_TEXT, electron]', async () => {
+  it('TST0502 - Create TEXT file [electron]', async () => {
     await delay(500);
     await openDirectoryMenu();
     await delay(500);
@@ -143,7 +142,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     await delay(500);
   });
 
-  it('TST0510 - Generate thumbnail from Images [generate_thumbnail_images,electron]', async () => {
+  it('TST0510 - Generate thumbnail from Images [electron]', async () => {
     // let filename = 'sample.jpg';
     await delay(500);
     await openSettingsDialog();
@@ -173,7 +172,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     // expect(file).toBe(filename);
   });
 
-  it('TST0511 - Generate thumbnail from Videos [generate_thumbnail_videos,electron]', async () => {
+  it('TST0511 - Generate thumbnail from Videos [electron]', async () => {
     await delay(500);
     await openSettingsDialog();
     // activate 'Show Hidden File' functionality in the general settings
@@ -196,7 +195,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     await closeOpenedFile();
   });
 
-  it('TST0516 - Generate thumbnail from PDF [generate_thumbnail_PDF,electron]', async () => {
+  it('TST0516 - Generate thumbnail from PDF [electron]', async () => {
     await delay(500);
     await openSettingsDialog();
     // activate 'Show Hidden File' functionality in the general settings
@@ -219,7 +218,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     await closeOpenedFile();
   });
 
-  it('TST0517 - Generate thumbnail from ODT [generate_thumbnail_ODT,electron]', async () => {
+  it('TST0517 - Generate thumbnail from ODT [electron]', async () => {
     await delay(500);
     await openSettingsDialog();
     // activate 'Show Hidden File' functionality in the general settings
@@ -242,7 +241,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     await closeOpenedFile();
   });
 
-  it('TST0519 - Generate thumbnail from TIFF [generate_thumbnail_TIFF,electron]', async () => {
+  it('TST0519 - Generate thumbnail from TIFF [electron]', async () => {
     await delay(500);
     await openSettingsDialog();
     // activate 'Show Hidden File' functionality in the general settings
@@ -265,7 +264,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     await closeOpenedFile();
   });
 
-  it('TST0520 - Generate thumbnail from PSD [generate_thumbnail_PSD,electron]', async () => {
+  it('TST0520 - Generate thumbnail from PSD [electron]', async () => {
     await delay(500);
     await openSettingsDialog();
     // activate 'Show Hidden File' functionality in the general settings
@@ -288,7 +287,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     await closeOpenedFile();
   });
 
-  it('TST0524 - Generate thumbnail from TXT [generate_thumbnail_TXT,electron]', async () => {
+  it('TST0524 - Generate thumbnail from TXT [electron]', async () => {
     await delay(500);
     await openSettingsDialog();
     // activate 'Show Hidden File' functionality in the general settings
@@ -311,7 +310,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     await closeOpenedFile();
   });
 
-  it('TST0523 - Generate thumbnail from HTML [generate_thumbnail_HTML,electron]', async () => {
+  it('TST0523 - Generate thumbnail from HTML [electron]', async () => {
     await delay(500);
     await openSettingsDialog();
     // activate 'Show Hidden File' functionality in the general settings
@@ -334,7 +333,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     await closeOpenedFile();
   });
 
-  it('TST0522 - Generate thumbnail from URL [generate_thumbnail_URL,electron]', async () => {
+  it('TST0522 - Generate thumbnail from URL [electron]', async () => {
     await delay(500);
     await openSettingsDialog();
     // activate 'Show Hidden File' functionality in the general settings
