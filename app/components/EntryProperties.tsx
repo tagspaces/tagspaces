@@ -19,6 +19,7 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import uuidv1 from 'uuid';
 import marked from 'marked';
+import L from 'leaflet';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -40,6 +41,15 @@ import ListItemText from '@material-ui/core/ListItemText';
 import GalleryPerspectiveIcon from '@material-ui/icons/Camera';
 import MapiquePerspectiveIcon from '@material-ui/icons/Map';
 import KanBanPerspectiveIcon from '@material-ui/icons/Dashboard';
+import {
+  AttributionControl,
+  Map,
+  LayerGroup,
+  Marker,
+  Popup,
+  TileLayer,
+  withLeaflet
+} from 'react-leaflet';
 import TagDropContainer from './TagDropContainer';
 // import EntryTagMenu from './menus/EntryTagMenu';
 import ColorPickerDialog from './dialogs/ColorPickerDialog';
@@ -68,6 +78,9 @@ import {
 import { Tag } from '-/reducers/taglibrary';
 import { perspectives } from '-/reducers/app';
 import { savePerspective } from '-/utils/metaoperations';
+import MarkerIcon from '-/assets/icons/marker-icon.png';
+import Marker2xIcon from '-/assets/icons/marker-icon-2x.png';
+import MarkerShadowIcon from '-/assets/icons/marker-shadow.png';
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
@@ -682,6 +695,18 @@ const EntryProperties = (props: Props) => {
     );
   }
 
+  const position = { lat: 51.505, lon: -0.09 };
+  const iconFileMarker = new L.Icon({
+    iconUrl: MarkerIcon,
+    iconRetinaUrl: Marker2xIcon,
+    iconAnchor: [5, 55],
+    popupAnchor: [5, -20],
+    iconSize: [25, 41],
+    shadowUrl: MarkerShadowIcon,
+    shadowSize: [41, 41],
+    shadowAnchor: [5, 55]
+  });
+
   // @ts-ignore
   return (
     <div className={classes.entryProperties}>
@@ -1101,6 +1126,56 @@ const EntryProperties = (props: Props) => {
             />
           </div>
         </div>
+        <div className={classes.entryItem} style={{ height: '300px' }}>
+          <Map
+            tap={true}
+            style={{ height: '100%', width: '100%' }}
+            animate={false}
+            doubleClickZoom={false}
+            draggin={false}
+            keyboard={true}
+            // onDblclick={this.updatePosition}
+            center={position}
+            zoom={13}
+            // position={this.state.position}
+            // onClick={updatePosition}
+            // onViewportChanged={this.onViewportChanged}
+            // onLocationfound={this.handleLocationFound}
+            // viewport={this.state.viewport}
+            // bounds={this.state.bounds}
+            attributionControl={false}
+          >
+            <TileLayer
+              attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.osm.org/{z}/{x}/{y}.png"
+            />
+            <LayerGroup>
+              <Marker
+                icon={iconFileMarker}
+                position={[position.lat, position.lon]}
+              >
+                <Popup
+                  style={{
+                    backgroundColor: 'white'
+                  }}
+                >
+                  <div onClick={() => console.log('click')}>
+                    {/* {entry.name}
+                    <br />
+                    {entry.description && <div>{entry.description}</div>}
+                    {entry.thumbnail && (
+                      <img
+                        style={{ maxHeight: 100, maxLines: 200 }}
+                        src={entry.thumbnail}
+                      ></img>
+                    )} */}
+                  </div>
+                </Popup>
+              </Marker>
+            </LayerGroup>
+            {/* <AttributionControl position="bottomright" prefix="" /> */}
+          </Map>
+        </div>
         <div className={classes.entryItem}>
           <br />
         </div>
@@ -1137,4 +1212,6 @@ const EntryProperties = (props: Props) => {
   );
 };
 
-export default withStyles(styles, { withTheme: true })(EntryProperties);
+export default withLeaflet(
+  withStyles(styles, { withTheme: true })(EntryProperties)
+);
