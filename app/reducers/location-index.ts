@@ -67,7 +67,7 @@ export default (state: any = initialState, action: any) => {
     case types.INDEX_DIRECTORY_CLEAR: {
       // GlobalSearch.index.length = 0;
       GlobalSearch.index.splice(0, GlobalSearch.index.length);
-      GlobalSearch.creationDateTime = undefined;
+      GlobalSearch.indexLoadedOn = undefined;
       return {
         ...state,
         isIndexing: false
@@ -240,36 +240,36 @@ export const actions = {
         console.warn('Resolution is faled!', e);
       });
   },
-  loadDirectoryIndex: (
-    directoryPath: string,
-    isCurrentLocation: boolean = true
-  ) => (dispatch: (actions: Object) => void) => {
-    dispatch(actions.startDirectoryIndexing());
-    dispatch(
-      AppActions.showNotification(i18n.t('core:loadingIndex'), 'default', true)
-    );
-    if (Pro && Pro.Indexer.loadIndex) {
-      Pro.Indexer.loadIndex(directoryPath, PlatformIO.getDirSeparator())
-        .then(directoryIndex => {
-          if (isCurrentLocation) {
-            // Load index only if current location
-            GlobalSearch.index = directoryIndex;
-          }
-          dispatch(actions.indexDirectorySuccess());
-          return true;
-        })
-        .catch(err => {
-          dispatch(actions.indexDirectoryFailure(err));
-          dispatch(
-            AppActions.showNotification(
-              i18n.t('core:loadingIndexFailed'),
-              'warning',
-              true
-            )
-          );
-        });
-    }
-  },
+  // loadDirectoryIndex: (
+  //   directoryPath: string,
+  //   isCurrentLocation: boolean = true
+  // ) => (dispatch: (actions: Object) => void) => {
+  //   dispatch(actions.startDirectoryIndexing());
+  //   dispatch(
+  //     AppActions.showNotification(i18n.t('core:loadingIndex'), 'default', true)
+  //   );
+  //   if (Pro && Pro.Indexer.loadIndex) {
+  //     Pro.Indexer.loadIndex(directoryPath, PlatformIO.getDirSeparator())
+  //       .then(directoryIndex => {
+  //         if (isCurrentLocation) {
+  //           // Load index only if current location
+  //           GlobalSearch.index = directoryIndex;
+  //         }
+  //         dispatch(actions.indexDirectorySuccess());
+  //         return true;
+  //       })
+  //       .catch(err => {
+  //         dispatch(actions.indexDirectoryFailure(err));
+  //         dispatch(
+  //           AppActions.showNotification(
+  //             i18n.t('core:loadingIndexFailed'),
+  //             'warning',
+  //             true
+  //           )
+  //         );
+  //       });
+  //   }
+  // },
   clearDirectoryIndex: () => ({
     type: types.INDEX_DIRECTORY_CLEAR
   }),
@@ -299,20 +299,37 @@ export const actions = {
     dispatch(actions.setSearchQuery(searchQuery));
     setTimeout(async () => {
       // Workaround used to show the start search notification
-      if (GlobalSearch.index.length < 1 || searchQuery.forceIndexing) {
+      const currentTime = new Date().getTime();
+      const indexAge = GlobalSearch.indexLoadedOn
+        ? currentTime - GlobalSearch.indexLoadedOn
+        : 0;
+      if (
+        GlobalSearch.index.length < 1 ||
+        searchQuery.forceIndexing ||
+        indexAge > AppConfig.maxIndexAge
+      ) {
         const currentPath = currentLocation.paths[0];
         console.log('Start creating index for : ' + currentPath);
-        GlobalSearch.index = await createDirectoryIndex(
-          currentPath,
-          currentLocation.fullTextIndex
-        );
-        GlobalSearch.creationDateTime = new Date();
-        if (Pro && Pro.Indexer && Pro.Indexer.persistIndex) {
-          Pro.Indexer.persistIndex(
+        if (currentLocation.persistIndex && Pro && Pro.Indexer.loadIndex) {
+          GlobalSearch.index = await Pro.Indexer.loadIndex(
             currentPath,
-            GlobalSearch.index,
             PlatformIO.getDirSeparator()
           );
+        } else {
+          GlobalSearch.index = await createDirectoryIndex(
+            currentPath,
+            currentLocation.fullTextIndex
+          );
+          if (Pro && Pro.Indexer && Pro.Indexer.persistIndex) {
+            Pro.Indexer.persistIndex(
+              currentPath,
+              GlobalSearch.index,
+              PlatformIO.getDirSeparator()
+            );
+          }
+        }
+        if (GlobalSearch.index && GlobalSearch.index.length > 0) {
+          GlobalSearch.indexLoadedOn = new Date().getTime();
         }
       }
       Search.searchLocationIndex(GlobalSearch.index, searchQuery)

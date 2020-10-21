@@ -17,7 +17,7 @@
  */
 
 const GlobalSearch = {
-  creationDateTime: undefined,
+  indexLoadedOn: undefined,
   index: []
 };
 export default GlobalSearch;
