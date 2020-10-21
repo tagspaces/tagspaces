@@ -34,7 +34,7 @@ const bgColor = AppConfig.thumbBgColor;
 
 const supportedImgs = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'bmp'];
 const supportedContainers = [
-  'zip',
+  // 'zip', // disable ZIP tmb generation due to potential performance issues on large files
   'epub',
   'docx',
   'pptx',
