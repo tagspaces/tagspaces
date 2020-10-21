@@ -88,7 +88,9 @@ const ThumbnailChooserDialog =
 const styles: any = (theme: any) => ({
   entryProperties: {
     overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
-    padding: 10,
+    overflowX: 'hidden',
+    flexGrow: 1,
+    // padding: 10,
     height: '100%'
   },
   tags: {
@@ -146,10 +148,11 @@ const styles: any = (theme: any) => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    ' .grid-item': {
-      width: '100%'
-    }
+    alignItems: 'center'
+  },
+  gridItem: {
+    width: '100%',
+    paddingLeft: 5
   },
   ellipsisText: {
     whiteSpace: 'nowrap',
@@ -159,7 +162,8 @@ const styles: any = (theme: any) => ({
   },
   formControl: {
     width: 'calc(100% - 12px)',
-    marginBottom: 10
+    marginBottom: 10,
+    marginLeft: 5
   }
 });
 
@@ -710,10 +714,10 @@ const EntryProperties = (props: Props) => {
   // @ts-ignore
   return (
     <div className={classes.entryProperties}>
-      <Grid container spacing={1}>
-        <div className={classes.entryItem}>
+      <Grid container>
+        <Grid item xs={12}>
           <div className={classes.fluidGrid}>
-            <div className="grid-item">
+            <div className={classes.gridItem}>
               <Typography
                 variant="caption"
                 className={classes.header}
@@ -725,7 +729,7 @@ const EntryProperties = (props: Props) => {
             {!isReadOnlyMode && (
               <div>
                 {isEditName ? (
-                  <div className="grid-item">
+                  <div className={classes.gridItem}>
                     <Button
                       color="primary"
                       className={classes.button}
@@ -743,7 +747,7 @@ const EntryProperties = (props: Props) => {
                     </Button>
                   </div>
                 ) : (
-                  <div className="grid-item">
+                  <div className={classes.gridItem}>
                     <Button
                       color="primary"
                       disabled={isEditDescription}
@@ -781,11 +785,10 @@ const EntryProperties = (props: Props) => {
               onChange={handleFileNameChange}
             />
           </FormControl>
-        </div>
-
-        <div className={classes.entryItem}>
+        </Grid>
+        <Grid item xs={12}>
           <div className={classes.fluidGrid}>
-            <div className="grid-item">
+            <div className={classes.gridItem}>
               <Typography
                 variant="caption"
                 className={classes.header}
@@ -794,21 +797,76 @@ const EntryProperties = (props: Props) => {
                 {i18n.t('core:fileTags')}
               </Typography>
             </div>
-            <div className="grid-item" />
+            <div className={classes.gridItem} />
           </div>
-          <TagDropContainer entryPath={currentEntry.path}>
-            <TagsSelect
-              placeholderText={i18n.t('core:dropHere')}
-              isReadOnlyMode={isReadOnlyMode}
-              tags={currentEntry.tags}
-              handleChange={handleChange}
-            />
-          </TagDropContainer>
-        </div>
+          <div className={classes.gridItem}>
+            <TagDropContainer entryPath={currentEntry.path}>
+              <TagsSelect
+                placeholderText={i18n.t('core:dropHere')}
+                isReadOnlyMode={isReadOnlyMode}
+                tags={currentEntry.tags}
+                handleChange={handleChange}
+              />
+            </TagDropContainer>
+          </div>
+        </Grid>
 
-        <div className={classes.entryItem}>
+        <Grid item xs={12}>
+          <Map
+            tap={true}
+            style={{ height: '200px', width: '100%' }}
+            animate={false}
+            doubleClickZoom={true}
+            keyboard={false}
+            dragging={true}
+            // onDblclick={this.updatePosition}
+            center={position}
+            zoom={13}
+            scrollWheelZoom={false}
+            // position={this.state.position}
+            // onClick={updatePosition}
+            // onViewportChanged={this.onViewportChanged}
+            // onLocationfound={this.handleLocationFound}
+            // viewport={this.state.viewport}
+            // bounds={this.state.bounds}
+            zoomControl={true}
+            attributionControl={false}
+          >
+            <TileLayer
+              attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.osm.org/{z}/{x}/{y}.png"
+            />
+            <LayerGroup>
+              <Marker
+                icon={iconFileMarker}
+                position={[position.lat, position.lon]}
+              >
+                <Popup
+                  style={{
+                    backgroundColor: 'white'
+                  }}
+                >
+                  <div onClick={() => console.log('click')}>
+                    {/* {entry.name}
+                    <br />
+                    {entry.description && <div>{entry.description}</div>}
+                    {entry.thumbnail && (
+                      <img
+                        style={{ maxHeight: 100, maxLines: 200 }}
+                        src={entry.thumbnail}
+                      ></img>
+                    )} */}
+                  </div>
+                </Popup>
+              </Marker>
+            </LayerGroup>
+            {/* <AttributionControl position="bottomright" prefix="" /> */}
+          </Map>
+        </Grid>
+
+        <Grid item xs={12}>
           <div className={classes.fluidGrid}>
-            <div className="grid-item">
+            <div className={classes.gridItem}>
               <Typography
                 variant="caption"
                 className={classNames(classes.header, classes.header)}
@@ -817,31 +875,29 @@ const EntryProperties = (props: Props) => {
                 {i18n.t('core:filePropertiesDescription')}
               </Typography>
             </div>
-            <div className="grid-item">
-              {!isReadOnlyMode && (
-                <div>
-                  {isEditDescription && (
-                    <Button
-                      color="primary"
-                      className={classes.button}
-                      onClick={toggleEditDescriptionField}
-                    >
-                      {i18n.t('core:cancel')}
-                    </Button>
-                  )}
+            {!isReadOnlyMode && (
+              <div>
+                {isEditDescription && (
                   <Button
                     color="primary"
-                    disabled={isEditName}
                     className={classes.button}
                     onClick={toggleEditDescriptionField}
                   >
-                    {isEditDescription
-                      ? i18n.t('core:confirmSaveButton')
-                      : i18n.t('core:edit')}
+                    {i18n.t('core:cancel')}
                   </Button>
-                </div>
-              )}
-            </div>
+                )}
+                <Button
+                  color="primary"
+                  disabled={isEditName}
+                  className={classes.button}
+                  onClick={toggleEditDescriptionField}
+                >
+                  {isEditDescription
+                    ? i18n.t('core:confirmSaveButton')
+                    : i18n.t('core:edit')}
+                </Button>
+              </div>
+            )}
           </div>
           <FormControl fullWidth={true} className={classes.formControl}>
             {isEditDescription ? (
@@ -892,12 +948,12 @@ const EntryProperties = (props: Props) => {
               />
             )}
           </FormControl>
-        </div>
+        </Grid>
 
-        <div className={classes.entryItem}>
+        <Grid item xs={12}>
           <div className={[classes.fluidGrid, classes.ellipsisText].join(' ')}>
             <div
-              className="grid-item"
+              className={classes.gridItem}
               style={{ width: '50%', alignSelf: 'baseline' }}
             >
               <Typography
@@ -924,7 +980,7 @@ const EntryProperties = (props: Props) => {
             </div>
 
             {currentEntry.isFile ? (
-              <div className="grid-item" style={{ width: '50%' }}>
+              <div className={classes.gridItem} style={{ width: '50%' }}>
                 <Typography
                   variant="caption"
                   className={classes.header}
@@ -952,7 +1008,7 @@ const EntryProperties = (props: Props) => {
                   </FormControl> */}
               </div>
             ) : (
-              <div className="grid-item" style={{ width: '50%' }}>
+              <div className={classes.gridItem} style={{ width: '50%' }}>
                 <Typography
                   variant="caption"
                   style={{ display: 'block' }}
@@ -1007,17 +1063,19 @@ const EntryProperties = (props: Props) => {
               </div>
             )}
           </div>
-        </div>
+        </Grid>
 
-        <div className={classes.entryItem}>
+        <Grid item xs={12}>
           <div className={classes.fluidGrid}>
-            <Typography
-              variant="caption"
-              className={classNames(classes.header)}
-              style={{ display: 'block' }}
-            >
-              {i18n.t('core:filePath')}
-            </Typography>
+            <div className={classes.gridItem}>
+              <Typography
+                variant="caption"
+                className={classNames(classes.header)}
+                style={{ display: 'block' }}
+              >
+                {i18n.t('core:filePath')}
+              </Typography>
+            </div>
             {currentEntry.isFile && !isReadOnlyMode && (
               <Button
                 color="primary"
@@ -1051,18 +1109,20 @@ const EntryProperties = (props: Props) => {
               }}
             />
           </FormControl>
-        </div>
+        </Grid>
 
         {!currentEntry.isFile && (
-          <div className={classes.entryItem}>
+          <Grid item xs={12}>
             <div className={classes.fluidGrid}>
-              <Typography
-                variant="caption"
-                className={classNames(classes.header)}
-                style={{ display: 'block' }}
-              >
-                {i18n.t('core:choosePerspective')}
-              </Typography>
+              <div className={classes.gridItem}>
+                <Typography
+                  variant="caption"
+                  className={classNames(classes.header)}
+                  style={{ display: 'block' }}
+                >
+                  {i18n.t('core:choosePerspective')}
+                </Typography>
+              </div>
             </div>
             <FormControl fullWidth={true} className={classes.formControl}>
               <Select
@@ -1086,18 +1146,20 @@ const EntryProperties = (props: Props) => {
                   ).map(perspective => getMenuItem(perspective))} */}
               </Select>
             </FormControl>
-          </div>
+          </Grid>
         )}
 
-        <div className={classes.entryItem}>
+        <Grid item xs={12}>
           <div className={classes.fluidGrid}>
-            <Typography
-              variant="caption"
-              className={classNames(classes.header)}
-              style={{ display: 'block' }}
-            >
-              {i18n.t('core:thumbnail')}
-            </Typography>
+            <div className={classes.gridItem}>
+              <Typography
+                variant="caption"
+                className={classNames(classes.header)}
+                style={{ display: 'block' }}
+              >
+                {i18n.t('core:thumbnail')}
+              </Typography>
+            </div>
             {!isReadOnlyMode && (
               <Button
                 color="primary"
@@ -1109,76 +1171,26 @@ const EntryProperties = (props: Props) => {
             )}
           </div>
           <div className={classes.fluidGrid}>
-            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events */}
-            <div
-              className={classes.header}
-              onClick={toggleThumbFilesDialog}
-              role="button"
-              tabIndex={0}
-              style={{
-                backgroundSize: 'cover',
-                backgroundImage: thumbPathUrl,
-                backgroundPosition: 'center',
-                height: 100,
-                width: 100,
-                display: 'block'
-              }}
-            />
+            <div className={classes.gridItem}>
+              {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events */}
+              <div
+                className={classes.header}
+                onClick={toggleThumbFilesDialog}
+                role="button"
+                tabIndex={0}
+                style={{
+                  backgroundSize: 'cover',
+                  backgroundImage: thumbPathUrl,
+                  backgroundPosition: 'center',
+                  height: 100,
+                  width: 100,
+                  display: 'block',
+                  marginBottom: 5
+                }}
+              />
+            </div>
           </div>
-        </div>
-        <div className={classes.entryItem} style={{ height: '300px' }}>
-          <Map
-            tap={true}
-            style={{ height: '100%', width: '100%' }}
-            animate={false}
-            doubleClickZoom={false}
-            draggin={false}
-            keyboard={true}
-            // onDblclick={this.updatePosition}
-            center={position}
-            zoom={13}
-            // position={this.state.position}
-            // onClick={updatePosition}
-            // onViewportChanged={this.onViewportChanged}
-            // onLocationfound={this.handleLocationFound}
-            // viewport={this.state.viewport}
-            // bounds={this.state.bounds}
-            attributionControl={false}
-          >
-            <TileLayer
-              attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.osm.org/{z}/{x}/{y}.png"
-            />
-            <LayerGroup>
-              <Marker
-                icon={iconFileMarker}
-                position={[position.lat, position.lon]}
-              >
-                <Popup
-                  style={{
-                    backgroundColor: 'white'
-                  }}
-                >
-                  <div onClick={() => console.log('click')}>
-                    {/* {entry.name}
-                    <br />
-                    {entry.description && <div>{entry.description}</div>}
-                    {entry.thumbnail && (
-                      <img
-                        style={{ maxHeight: 100, maxLines: 200 }}
-                        src={entry.thumbnail}
-                      ></img>
-                    )} */}
-                  </div>
-                </Popup>
-              </Marker>
-            </LayerGroup>
-            {/* <AttributionControl position="bottomright" prefix="" /> */}
-          </Map>
-        </div>
-        <div className={classes.entryItem}>
-          <br />
-        </div>
+        </Grid>
       </Grid>
 
       {/* {tagMenuOpened && (
