@@ -50,6 +50,7 @@ import {
   TileLayer,
   withLeaflet
 } from 'react-leaflet';
+import OpenLocationCode from 'open-location-code-typescript';
 import TagDropContainer from './TagDropContainer';
 // import EntryTagMenu from './menus/EntryTagMenu';
 import ColorPickerDialog from './dialogs/ColorPickerDialog';
@@ -60,7 +61,7 @@ import {
   FileSystemEntryMeta,
   getAllPropertiesPromise
 } from '-/services/utils-io';
-import { formatFileSize } from '-/utils/misc';
+import { formatFileSize, isPlusCode } from '-/utils/misc';
 import {
   extractContainingDirectoryPath,
   getThumbFileLocationForFile,
@@ -699,7 +700,6 @@ const EntryProperties = (props: Props) => {
     );
   }
 
-  const position = { lat: 51.505, lon: -0.09 };
   const iconFileMarker = new L.Icon({
     iconUrl: MarkerIcon,
     iconRetinaUrl: Marker2xIcon,
@@ -711,6 +711,19 @@ const EntryProperties = (props: Props) => {
     shadowAnchor: [5, 55]
   });
 
+  function getGeoLocation(tags: Array<Tag>) {
+    for (let i = 0; i < tags.length; i += 1) {
+      if (isPlusCode(tags[i].title)) {
+        const coord = OpenLocationCode.decode(tags[i].title);
+        const lat = Number(coord.latitudeCenter.toFixed(7));
+        const lng = Number(coord.longitudeCenter.toFixed(7));
+        return { lat, lng };
+      }
+    }
+    return undefined;
+  }
+
+  const geoLocation: any = getGeoLocation(currentEntry.tags);
   // @ts-ignore
   return (
     <div className={classes.entryProperties}>
@@ -811,58 +824,50 @@ const EntryProperties = (props: Props) => {
           </div>
         </Grid>
 
-        <Grid item xs={12}>
-          <Map
-            tap={true}
-            style={{ height: '200px', width: '100%' }}
-            animate={false}
-            doubleClickZoom={true}
-            keyboard={false}
-            dragging={true}
-            // onDblclick={this.updatePosition}
-            center={position}
-            zoom={13}
-            scrollWheelZoom={false}
-            // position={this.state.position}
-            // onClick={updatePosition}
-            // onViewportChanged={this.onViewportChanged}
-            // onLocationfound={this.handleLocationFound}
-            // viewport={this.state.viewport}
-            // bounds={this.state.bounds}
-            zoomControl={true}
-            attributionControl={false}
-          >
-            <TileLayer
-              attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.osm.org/{z}/{x}/{y}.png"
-            />
-            <LayerGroup>
-              <Marker
-                icon={iconFileMarker}
-                position={[position.lat, position.lon]}
-              >
-                <Popup
-                  style={{
-                    backgroundColor: 'white'
-                  }}
+        {geoLocation && (
+          <Grid item xs={12}>
+            <Map
+              tap={true}
+              style={{ height: '200px', width: '100%' }}
+              animate={false}
+              doubleClickZoom={true}
+              keyboard={false}
+              dragging={true}
+              // onDblclick={this.updatePosition}
+              center={geoLocation}
+              zoom={13}
+              scrollWheelZoom={false}
+              // position={this.state.position}
+              // onClick={updatePosition}
+              // onViewportChanged={this.onViewportChanged}
+              // onLocationfound={this.handleLocationFound}
+              // viewport={this.state.viewport}
+              // bounds={this.state.bounds}
+              zoomControl={true}
+              attributionControl={false}
+            >
+              <TileLayer
+                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.osm.org/{z}/{x}/{y}.png"
+              />
+              <LayerGroup>
+                <Marker
+                  icon={iconFileMarker}
+                  position={[geoLocation.lat, geoLocation.lng]}
                 >
-                  <div onClick={() => console.log('click')}>
-                    {/* {entry.name}
-                    <br />
-                    {entry.description && <div>{entry.description}</div>}
-                    {entry.thumbnail && (
-                      <img
-                        style={{ maxHeight: 100, maxLines: 200 }}
-                        src={entry.thumbnail}
-                      ></img>
-                    )} */}
-                  </div>
-                </Popup>
-              </Marker>
-            </LayerGroup>
-            {/* <AttributionControl position="bottomright" prefix="" /> */}
-          </Map>
-        </Grid>
+                  <Popup
+                    style={{
+                      backgroundColor: 'white'
+                    }}
+                  >
+                    <h2>{geoLocation.lat + ', ' + geoLocation.lng}</h2>
+                  </Popup>
+                </Marker>
+              </LayerGroup>
+              <AttributionControl position="bottomright" prefix="" />
+            </Map>
+          </Grid>
+        )}
 
         <Grid item xs={12}>
           <div className={classes.fluidGrid}>
