@@ -325,30 +325,6 @@ const EntryProperties = (props: Props) => {
     } else {
       setEditName(true);
       newName = currentEntry.name;
-      /* this.setState(
-        {
-          isEditName: true,
-          originalName: this.state.name
-        },
-        () => {
-          fileName.focus();
-          // this.props.setPropertiesEditMode(true);
-          const { originalName } = this.state;
-          if (originalName) {
-            const indexOfBracket = originalName.indexOf(
-              AppConfig.beginTagContainer
-            );
-            const indexOfDot = originalName.indexOf('.');
-            let endRange = originalName.length;
-            if (indexOfBracket > 0) {
-              endRange = indexOfBracket;
-            } else if (indexOfDot > 0) {
-              endRange = indexOfDot;
-            }
-            fileName.setSelectionRange(0, endRange);
-          }
-        }
-      ); */
     }
   };
 
@@ -386,28 +362,11 @@ const EntryProperties = (props: Props) => {
         });
     } else {
       setEditDescription(true);
-      /* this.setState(
-        {
-          isEditDescription: true
-        },
-        () => {
-          // this.props.setPropertiesEditMode(true);
-          if (fileDescription) { //TODO
-            fileDescription.focus();
-          }
-        }
-      ); */
     }
   };
 
   const toggleMoveCopyFilesDialog = () => {
     setMoveCopyFilesDialogOpened(!isMoveCopyFilesDialogOpened);
-    /* this.setState(
-      ({ isMoveCopyFilesDialogOpened }) => ({
-        isMoveCopyFilesDialogOpened: !isMoveCopyFilesDialogOpened
-      }),
-      () => this.props.normalizeShouldCopyFile()
-    ); */
   };
 
   const toggleThumbFilesDialog = () => {
@@ -415,10 +374,9 @@ const EntryProperties = (props: Props) => {
       props.showNotification(i18n.t('core:needProVersion'));
       return true;
     }
-    setFileThumbChooseDialogOpened(!isFileThumbChooseDialogOpened);
-    /* this.setState(({ isFileThumbChooseDialogOpened }) => ({
-      isFileThumbChooseDialogOpened: !isFileThumbChooseDialogOpened
-    })); */
+    if (!isEditName && !isEditDescription) {
+      setFileThumbChooseDialogOpened(!isFileThumbChooseDialogOpened);
+    }
   };
 
   const setThumb = (filePath, thumbFilePath) => {
@@ -697,7 +655,7 @@ const EntryProperties = (props: Props) => {
                 {i18n.t('core:editTagMasterName')}
               </Typography>
             </div>
-            {!isReadOnlyMode && (
+            {!isReadOnlyMode && !isEditDescription && (
               <div>
                 {isEditName ? (
                   <div className="grid-item">
@@ -710,7 +668,7 @@ const EntryProperties = (props: Props) => {
                     </Button>
                     <Button
                       color="primary"
-                      disabled={isEditDescription}
+                      // disabled={isEditDescription}
                       className={classes.button}
                       onClick={renameEntry}
                     >
@@ -721,7 +679,7 @@ const EntryProperties = (props: Props) => {
                   <div className="grid-item">
                     <Button
                       color="primary"
-                      disabled={isEditDescription}
+                      // disabled={isEditDescription}
                       className={classes.button}
                       onClick={toggleEditNameField}
                     >
@@ -744,7 +702,7 @@ const EntryProperties = (props: Props) => {
               defaultValue={currentEntry.name}
               inputRef={fileName}
               onClick={() => {
-                if (!isEditName) {
+                if (!isEditName && !isEditDescription) {
                   toggleEditNameField();
                 }
               }}
@@ -774,9 +732,11 @@ const EntryProperties = (props: Props) => {
           <TagDropContainer entryPath={currentEntry.path}>
             <TagsSelect
               placeholderText={i18n.t('core:dropHere')}
-              isReadOnlyMode={isReadOnlyMode}
+              isReadOnlyMode={isReadOnlyMode || isEditDescription || isEditName}
               tags={currentEntry.tags}
+              tagMode="default"
               handleChange={handleChange}
+              selectedEntryPath={currentEntry.path}
             />
           </TagDropContainer>
         </div>
@@ -793,7 +753,7 @@ const EntryProperties = (props: Props) => {
               </Typography>
             </div>
             <div className="grid-item">
-              {!isReadOnlyMode && (
+              {!isReadOnlyMode && !isEditName && (
                 <div>
                   {isEditDescription && (
                     <Button
@@ -806,7 +766,7 @@ const EntryProperties = (props: Props) => {
                   )}
                   <Button
                     color="primary"
-                    disabled={isEditName}
+                    // disabled={isEditName}
                     className={classes.button}
                     onClick={toggleEditDescriptionField}
                   >
@@ -993,16 +953,19 @@ const EntryProperties = (props: Props) => {
             >
               {i18n.t('core:filePath')}
             </Typography>
-            {currentEntry.isFile && !isReadOnlyMode && (
-              <Button
-                color="primary"
-                disabled={isEditDescription || isEditName}
-                className={classes.button}
-                onClick={toggleMoveCopyFilesDialog}
-              >
-                {i18n.t('core:move')}
-              </Button>
-            )}
+            {currentEntry.isFile &&
+              !isReadOnlyMode &&
+              !isEditName &&
+              !isEditDescription && (
+                <Button
+                  color="primary"
+                  // disabled={isEditDescription || isEditName}
+                  className={classes.button}
+                  onClick={toggleMoveCopyFilesDialog}
+                >
+                  {i18n.t('core:move')}
+                </Button>
+              )}
           </div>
           <FormControl fullWidth={true} className={classes.formControl}>
             <TextField
@@ -1073,7 +1036,7 @@ const EntryProperties = (props: Props) => {
             >
               {i18n.t('core:thumbnail')}
             </Typography>
-            {!isReadOnlyMode && (
+            {!isReadOnlyMode && !isEditName && !isEditDescription && (
               <Button
                 color="primary"
                 className={classes.button}

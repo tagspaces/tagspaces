@@ -435,7 +435,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      ...TagLibraryActions, // TODO connect only the really needed
+      editTag: TagLibraryActions.editTag,
+      deleteTag: TagLibraryActions.deleteTag,
       addTags: TaggingActions.addTags,
       collectTagsFromLocation: TaggingActions.collectTagsFromLocation,
       openURLExternally: AppActions.openURLExternally
