@@ -16,6 +16,30 @@ import { searchEngine } from './search.spec';
 export const firstFile = '/span';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 
+export async function aboutDialogExt(title, ext) {
+  await delay(500);
+  // should switch focus to iFrame
+  const switchFocus = await global.client.$('#viewer').frame(0);
+  // await global.client.waitForExist('#viewer').frame(0);
+  await switchFocus.waitForDisplayed();
+  await switchFocus.click();
+  const viewMainMenuButton = await global.client.$('#viewerMainMenuButton');
+  await viewMainMenuButton.waitForDisplayed();
+  await viewMainMenuButton.click();
+  await delay(500);
+  await global.client.waitForVisible('#aboutButton').click('#aboutButton');
+  await delay(1500);
+  const getTitle = await global.client
+    .waitForVisible('h4=' + title)
+    .getText('h4=' + title);
+  // should eventually equals('About HTML Viewer');
+  expect(getTitle).toBe(title);
+  await delay(1500);
+  await global.client
+    .waitForVisible('#closeAboutDialogButton')
+    .click('#closeAboutDialogButton');
+}
+
 describe('TST53 - Image viewer [electron, web]', () => {
   beforeEach(async () => {
     await clearLocalStorage();
@@ -106,7 +130,7 @@ describe('TST53 - Image viewer [electron, web]', () => {
     await closeOpenedFile();
   });
 
-  it('TST5309 - Open TIFF [web,electron]', async () => {
+  it('TST5309 - Open TIFF [generate_thumbnail_URL,electron]', async () => {
     await delay(500);
     await searchEngine('tiff');
     await delay(500);
@@ -114,12 +138,14 @@ describe('TST53 - Image viewer [electron, web]', () => {
     await file.waitForDisplayed();
     await file.doubleClick();
     await delay(500);
-    await closeOpenedFile();
+    // await closeOpenedFile();
+
     // TODO Open and close About dialog
 
-    // const openViewerMenu = await global.client.$('#viewerMainMenuButton');
+    // const openViewerMenu = await global.client('#viewerMainMenuButton');
     // await openViewerMenu.waitForDisplayed();
     // await openViewerMenu.click();
     // await delay(555500);
+    await aboutDialogExt();
   });
 });
