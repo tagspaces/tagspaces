@@ -740,9 +740,9 @@ const EntryProperties = (props: Props) => {
               </Typography>
             </div>
             {!isReadOnlyMode && (
-              <div>
+              <div className={classes.gridItem} style={{ textAlign: 'right' }}>
                 {isEditName ? (
-                  <div className={classes.gridItem}>
+                  <div>
                     <Button
                       color="primary"
                       className={classes.button}
@@ -760,16 +760,14 @@ const EntryProperties = (props: Props) => {
                     </Button>
                   </div>
                 ) : (
-                  <div className={classes.gridItem}>
-                    <Button
-                      color="primary"
-                      disabled={isEditDescription}
-                      className={classes.button}
-                      onClick={toggleEditNameField}
-                    >
-                      {i18n.t('core:rename')}
-                    </Button>
-                  </div>
+                  <Button
+                    color="primary"
+                    disabled={isEditDescription}
+                    className={classes.button}
+                    onClick={toggleEditNameField}
+                  >
+                    {i18n.t('core:rename')}
+                  </Button>
                 )}
               </div>
             )}
@@ -881,7 +879,7 @@ const EntryProperties = (props: Props) => {
               </Typography>
             </div>
             {!isReadOnlyMode && (
-              <div>
+              <div className={classes.gridItem} style={{ textAlign: 'right' }}>
                 {isEditDescription && (
                   <Button
                     color="primary"
