@@ -723,12 +723,11 @@ const EntryProperties = (props: Props) => {
                   <Button
                     color="primary"
                     // disabled={isEditDescription}
-                      className={classes.button}
-                      onClick={toggleEditNameField}
-                    >
-                      {i18n.t('core:rename')}
-                    </Button>
-
+                    className={classes.button}
+                    onClick={toggleEditNameField}
+                  >
+                    {i18n.t('core:rename')}
+                  </Button>
                 )}
               </div>
             )}
@@ -775,11 +774,13 @@ const EntryProperties = (props: Props) => {
             <TagDropContainer entryPath={currentEntry.path}>
               <TagsSelect
                 placeholderText={i18n.t('core:dropHere')}
-                isReadOnlyMode={isReadOnlyMode || isEditDescription || isEditName}
+                isReadOnlyMode={
+                  isReadOnlyMode || isEditDescription || isEditName
+                }
                 tags={currentEntry.tags}
-              tagMode="default"
+                tagMode="default"
                 handleChange={handleChange}
-              selectedEntryPath={currentEntry.path}
+                selectedEntryPath={currentEntry.path}
               />
             </TagDropContainer>
           </div>
@@ -842,7 +843,7 @@ const EntryProperties = (props: Props) => {
               </Typography>
             </div>
             {!isReadOnlyMode && !isEditName && (
-                <div className={classes.gridItem} style={{ textAlign: 'right' }}>
+              <div className={classes.gridItem} style={{ textAlign: 'right' }}>
                 {isEditDescription && (
                   <Button
                     color="primary"
@@ -855,16 +856,15 @@ const EntryProperties = (props: Props) => {
                 <Button
                   color="primary"
                   // disabled={isEditName}
-                    className={classes.button}
-                    onClick={toggleEditDescriptionField}
-                  >
-                    {isEditDescription
-                      ? i18n.t('core:confirmSaveButton')
-                      : i18n.t('core:edit')}
-                  </Button>
-                </div>
-              )}
-
+                  className={classes.button}
+                  onClick={toggleEditDescriptionField}
+                >
+                  {isEditDescription
+                    ? i18n.t('core:confirmSaveButton')
+                    : i18n.t('core:edit')}
+                </Button>
+              </div>
+            )}
           </div>
           <FormControl fullWidth={true} className={classes.formControl}>
             {isEditDescription ? (
@@ -908,7 +908,7 @@ const EntryProperties = (props: Props) => {
                     : i18n.t('core:addDescription')
                 }}
                 onClick={() => {
-                  if (!isEditDescription) {
+                  if (!isEditName) {
                     toggleEditDescriptionField();
                   }
                 }}
