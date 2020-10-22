@@ -23,12 +23,12 @@ import {
   getMetaFileLocationForFile,
   getThumbFileLocationForFile,
   normalizePath
-} from '../utils/paths';
+} from '-/utils/paths';
 import {
   copyFilesPromise,
   enhanceEntry,
   renameFilesPromise
-} from '../services/utils-io';
+} from '-/services/utils-io';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import TaggingActions from './tagging-actions';
