@@ -217,6 +217,8 @@ interface Props {
 const EntryProperties = (props: Props) => {
   const fileName = useRef<HTMLInputElement>(null);
   const fileDescription = useRef<HTMLInputElement>(null);
+  const MB_ATTR =
+    '<b>Leaflet</b> | Map data &copy; <b>https://openstreetmap.org/copyright</b> contributors, <b>CC-BY-SA</b>, Imagery © <b>Mapbox</b>';
 
   let newName = '';
   // const tagMenuAnchorEl = null;
@@ -845,7 +847,7 @@ const EntryProperties = (props: Props) => {
               attributionControl={false}
             >
               <TileLayer
-                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                attribution={MB_ATTR}
                 url="https://{s}.tile.osm.org/{z}/{x}/{y}.png"
               />
               <LayerGroup>
