@@ -36,6 +36,7 @@ import { Pro } from '-/pro';
 import { getSelectedTag } from '-/reducers/app';
 import TaggingActions, { defaultTagLocation } from '-/reducers/tagging-actions';
 import { isDateTimeTag } from '-/utils/dates';
+import { AppConfig } from '-/config';
 
 const styles = () => ({
   root: {
@@ -116,6 +117,7 @@ const EditEntryTagDialog = (props: Props) => {
       <DialogContent
         data-tid="editEntryTagDialog"
         className={props.classes.root}
+        style={{ overflow: AppConfig.isFirefox ? 'auto' : 'overlay' }}
       >
         <FormControl fullWidth={true} error={errorTag}>
           <TextField
