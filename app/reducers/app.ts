@@ -1274,8 +1274,8 @@ export const actions = {
       entry => entry.path === entryPath
     );
     if (currentEntry) {
-      if (currentEntry.url) {
-        entryForOpening.url = currentEntry.url;
+      if (PlatformIO.haveObjectStoreSupport()) {
+        entryForOpening.url = PlatformIO.getURLforPath(currentEntry.path);
       }
       if (currentEntry.perspective) {
         entryForOpening.perspective = currentEntry.perspective;

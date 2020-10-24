@@ -334,11 +334,6 @@ export const actions = {
       }
       Search.searchLocationIndex(GlobalSearch.index, searchQuery)
         .then(searchResults => {
-          if (currentLocation.type === locationType.TYPE_CLOUD) {
-            searchResults.forEach((entry: FileSystemEntry) => {
-              entry.url = PlatformIO.getURLforPath(entry.path);
-            });
-          }
           dispatch(AppActions.setSearchResults(searchResults));
           dispatch(AppActions.hideNotifications());
           return true;
@@ -435,7 +430,6 @@ export const actions = {
                   (entry: FileSystemEntry) => {
                     // Excluding s3 folders from global search
                     if (entry && entry.isFile) {
-                      entry.url = PlatformIO.getURLforPath(entry.path);
                       return entry;
                     }
                   }
