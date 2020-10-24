@@ -431,6 +431,9 @@ class Search extends React.Component<Props, State> {
   render() {
     const { classes, indexing, indexedEntriesCount } = this.props;
 
+    const indexStatus = indexedEntriesCount
+      ? indexedEntriesCount + ' indexed entries'
+      : '';
     return (
       <div className={classes.panel} style={this.props.style}>
         <CustomLogo />
@@ -444,12 +447,9 @@ class Search extends React.Component<Props, State> {
           <Typography
             variant="caption"
             className={classes.header}
-            title="Indexed entries in the current location"
             style={{ alignSelf: 'center', paddingLeft: 5, display: 'block' }}
           >
-            {indexing
-              ? 'disabled while indexing...'
-              : indexedEntriesCount + ' indexed entries'}
+            {indexStatus}
           </Typography>
           <IconButton
             style={{ marginLeft: 'auto' }}

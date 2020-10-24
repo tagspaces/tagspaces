@@ -91,11 +91,6 @@ export function enhanceDirectoryContent(
       return true;
     }
 
-    if (isCloudLocation) {
-      // eslint-disable-next-line no-param-reassign
-      entry.url = PlatformIO.getURLforPath(entry.path);
-    }
-
     const enhancedEntry = enhanceEntry(entry);
     directoryContent.push(enhancedEntry);
     if (

@@ -1153,18 +1153,7 @@ export const actions = {
           );
           dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
           if (location.uuid !== currentLocationId) {
-            if (location.persistIndex) {
-              dispatch(
-                LocationIndexActions.loadDirectoryIndex(location.paths[0])
-              );
-            } else {
-              dispatch(
-                LocationIndexActions.createDirectoryIndex(
-                  location.paths[0],
-                  location.fullTextIndex
-                )
-              );
-            }
+            dispatch(LocationIndexActions.clearDirectoryIndex());
           }
           dispatch(actions.setCurrentLocationId(location.uuid));
           dispatch(actions.loadDirectoryContent(location.paths[0]));
@@ -1181,20 +1170,10 @@ export const actions = {
           PlatformIO.disableObjectStoreSupport();
         });
     } else {
-      // if (location.type === locationType.TYPE_LOCAL) {
       PlatformIO.disableObjectStoreSupport();
       dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
       if (location.uuid !== currentLocationId) {
-        if (location.persistIndex) {
-          dispatch(LocationIndexActions.loadDirectoryIndex(location.paths[0]));
-        } else {
-          dispatch(
-            LocationIndexActions.createDirectoryIndex(
-              location.paths[0],
-              location.fullTextIndex
-            )
-          );
-        }
+        dispatch(LocationIndexActions.clearDirectoryIndex());
       }
       dispatch(actions.setCurrentLocationId(location.uuid));
       dispatch(actions.loadDirectoryContent(location.paths[0]));
@@ -1295,8 +1274,8 @@ export const actions = {
       entry => entry.path === entryPath
     );
     if (currentEntry) {
-      if (currentEntry.url) {
-        entryForOpening.url = currentEntry.url;
+      if (PlatformIO.haveObjectStoreSupport()) {
+        entryForOpening.url = PlatformIO.getURLforPath(currentEntry.path);
       }
       if (currentEntry.perspective) {
         entryForOpening.perspective = currentEntry.perspective;

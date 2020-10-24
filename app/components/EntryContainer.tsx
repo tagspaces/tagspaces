@@ -1062,8 +1062,9 @@ const EntryContainer = (props: Props) => {
         removeAllTags={props.removeAllTags}
         selectedEntries={openedFile ? [openedFile] : []}
       />
-      {/* <a href="#" id="downloadFile">
-      </a> */}
+      <a href="#" id="downloadFile">
+        &nbsp;
+      </a>
       <SplitPane
         split="horizontal"
         resizerStyle={{ backgroundColor: props.theme.palette.divider }}
