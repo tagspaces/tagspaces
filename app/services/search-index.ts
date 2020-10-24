@@ -17,6 +17,7 @@
  */
 
 const GlobalSearch = {
+  indexLoadedOn: undefined,
   index: []
 };
 export default GlobalSearch;
