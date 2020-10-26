@@ -26,7 +26,8 @@ import {
   loadMetaDataPromise,
   renameFilesPromise,
   enhanceDirectoryContent,
-  FileSystemEntryMeta
+  FileSystemEntryMeta,
+  FileSystemEntry
 } from '-/services/utils-io';
 import {
   extractFileExtension,
@@ -1299,6 +1300,38 @@ export const actions = {
     }
     dispatch(actions.addToEntryContainer(entryForOpening));
   },
+  openFsEntry: (fsEntry: FileSystemEntry) => (
+    dispatch: (actions: Object) => void,
+    getState: () => any
+  ) => {
+    const { supportedFileTypes } = getState().settings;
+    const entryForOpening: OpenedEntry = findExtensionsForEntry(
+      supportedFileTypes,
+      fsEntry.path,
+      fsEntry.isFile
+    );
+    if (fsEntry.url) {
+      entryForOpening.url = fsEntry.url;
+    }
+    if (fsEntry.perspective) {
+      entryForOpening.perspective = fsEntry.perspective;
+    }
+    if (fsEntry.description) {
+      entryForOpening.description = fsEntry.description;
+    }
+    if (fsEntry.tags) {
+      entryForOpening.tags = fsEntry.tags;
+    }
+    const localePar = getURLParameter(fsEntry.path);
+    let startPar = '?open=' + encodeURIComponent(fsEntry.path);
+    if (localePar && localePar.length > 1) {
+      startPar += '&locale=' + localePar;
+    }
+    // eslint-disable-next-line no-restricted-globals
+    window.history.pushState('', 'TagSpaces', location.pathname + startPar);
+
+    dispatch(actions.addToEntryContainer(entryForOpening));
+  },
   openFile: (
     entryPath: string,
     isFile: boolean = true,
@@ -1340,6 +1373,7 @@ export const actions = {
     if (localePar && localePar.length > 1) {
       startPar += '&locale=' + localePar;
     }
+    // eslint-disable-next-line no-restricted-globals
     window.history.pushState('', 'TagSpaces', location.pathname + startPar);
 
     dispatch(actions.addToEntryContainer(entryForOpening));

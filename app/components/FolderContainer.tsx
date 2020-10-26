@@ -51,7 +51,11 @@ import PlatformIO from '../services/platform-io';
 import LoadingLazy from '../components/LoadingLazy';
 import { Pro } from '../pro';
 import { savePerspective } from '-/utils/metaoperations';
-import { enhanceOpenedEntry, FileSystemEntryMeta } from '-/services/utils-io';
+import {
+  enhanceOpenedEntry,
+  FileSystemEntry,
+  FileSystemEntryMeta
+} from '-/services/utils-io';
 
 const GridPerspective = React.lazy(() =>
   import(
@@ -207,6 +211,7 @@ interface Props {
   openDirectory: () => void;
   showInFileManager: () => void;
   openFile: (path: string) => void;
+  openFsEntry: (fsEntry: FileSystemEntry) => void;
   deleteDirectory: (path: string) => void;
   reflectCreateEntry: (path: string, isFile: boolean) => void;
   loadDirectoryContent: (path: string) => void;
@@ -386,6 +391,7 @@ const FolderContainer = (props: Props) => {
           directoryContent={props.directoryContent}
           loadDirectoryContent={props.loadDirectoryContent}
           openFile={props.openFile}
+          openFsEntry={props.openFsEntry}
           loadParentDirectoryContent={props.loadParentDirectoryContent}
           deleteFile={props.deleteFile}
           renameFile={props.renameFile}
@@ -592,6 +598,7 @@ function mapActionCreatorsToProps(dispatch) {
       openDirectory: AppActions.openDirectory,
       showInFileManager: AppActions.showInFileManager,
       openFile: AppActions.openFile,
+      openFsEntry: AppActions.openFsEntry,
       deleteDirectory: AppActions.deleteDirectory,
       reflectCreateEntry: AppActions.reflectCreateEntry,
       loadDirectoryContent: AppActions.loadDirectoryContent,
