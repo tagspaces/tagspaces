@@ -246,7 +246,7 @@ const FolderContainer = (props: Props) => {
         if (openedFile.perspective) {
           props.setCurrentDirectoryPerspective(openedFile.perspective);
         }
-      } else {
+      } else if (openedFile.changed) {
         // TODO check if file is loaded
         props.updateCurrentDirEntry(openedFile.path, openedFile);
       }

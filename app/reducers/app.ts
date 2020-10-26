@@ -542,13 +542,22 @@ export default (state: any = initialState, action: any) => {
             return entry;
           }
           if (action.entry.tags && action.entry.tags.length > 0) {
+            /* const tags = [...entry.tags]; // .filter(tag => tag.type === 'plain')];
+            action.entry.tags.map(tag => {
+              if (!entry.tags.some(oldTag => oldTag.title === tag.title)) {
+                tags.push(tag);
+              }
+              return true;
+            }); */
+
             return {
               ...entry,
-              ...action.entry,
-              tags: [
+              ...action.entry
+              // tags
+              /* tags: [
                 ...entry.tags.filter(tag => tag.type === 'plain'),
                 ...action.entry.tags
-              ]
+              ] */
             };
           }
           return {
@@ -1259,15 +1268,23 @@ export const actions = {
   }),
   updateOpenedFile: (
     entryPath: string,
-    fsEntryMeta: FileSystemEntryMeta,
+    fsEntryMeta: any, // FileSystemEntryMeta,
     isFile: boolean = true
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
     const { supportedFileTypes } = getState().settings;
-    const entryForOpening: OpenedEntry = findExtensionsForEntry(
-      supportedFileTypes,
-      entryPath,
-      isFile
-    );
+    const { openedFiles } = getState().app;
+    let entryForOpening: OpenedEntry;
+    if (openedFiles && openedFiles.length > 0) {
+      entryForOpening = openedFiles.find(obj => obj.path === entryPath);
+    }
+    if (!entryForOpening) {
+      entryForOpening = findExtensionsForEntry(
+        supportedFileTypes,
+        entryPath,
+        isFile
+      );
+    }
+    entryForOpening.changed = true;
     if (fsEntryMeta.color) {
       entryForOpening.color = fsEntryMeta.color;
     }
@@ -1276,6 +1293,9 @@ export const actions = {
     }
     if (fsEntryMeta.perspective) {
       entryForOpening.perspective = fsEntryMeta.perspective;
+    }
+    if (fsEntryMeta.tags) {
+      entryForOpening.tags = fsEntryMeta.tags;
     }
     dispatch(actions.addToEntryContainer(entryForOpening));
   },
@@ -1300,6 +1320,12 @@ export const actions = {
       }
       if (currentEntry.perspective) {
         entryForOpening.perspective = currentEntry.perspective;
+      }
+      if (currentEntry.description) {
+        entryForOpening.description = currentEntry.description;
+      }
+      if (currentEntry.tags) {
+        entryForOpening.tags = currentEntry.tags;
       }
     }
     if (

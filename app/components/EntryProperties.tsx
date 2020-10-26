@@ -56,16 +56,13 @@ import TagDropContainer from './TagDropContainer';
 import ColorPickerDialog from './dialogs/ColorPickerDialog';
 import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
 import i18n from '../services/i18n';
-import {
-  FileSystemEntry,
-  FileSystemEntryMeta,
-  getAllPropertiesPromise
-} from '-/services/utils-io';
-import { formatFileSize, isPlusCode } from '-/utils/misc';
+import { FileSystemEntryMeta } from '-/services/utils-io';
+import { isPlusCode } from '-/utils/misc';
 import {
   extractContainingDirectoryPath,
   getThumbFileLocationForFile,
-  getThumbFileLocationForDirectory
+  getThumbFileLocationForDirectory,
+  extractFileName
 } from '-/utils/paths';
 import AppConfig from '../config';
 import { Pro } from '../pro';
@@ -77,7 +74,7 @@ import {
   getThumbnailURLPromise
 } from '-/services/thumbsgenerator';
 import { Tag } from '-/reducers/taglibrary';
-import { perspectives } from '-/reducers/app';
+import { OpenedEntry, perspectives } from '-/reducers/app';
 import { savePerspective } from '-/utils/metaoperations';
 import MarkerIcon from '-/assets/icons/marker-icon.png';
 import Marker2xIcon from '-/assets/icons/marker-icon-2x.png';
@@ -187,9 +184,9 @@ marked.setOptions({
 interface Props {
   classes: any;
   theme: any;
-  // openedEntry: OpenedEntry;
-  entryPath: string;
-  perspective: string;
+  openedEntry: OpenedEntry;
+  // entryPath: string;
+  // perspective: string;
   // entryURL: string;
   // shouldReload: boolean | null;
   // shouldCopyFile: boolean;
@@ -200,7 +197,7 @@ interface Props {
   showNotification: (message: string) => void;
   updateOpenedFile: (
     entryPath: string,
-    fsEntryMeta: FileSystemEntryMeta,
+    fsEntryMeta: any,
     isFile: boolean
   ) => void;
   // reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
@@ -215,14 +212,21 @@ interface Props {
 }
 
 const EntryProperties = (props: Props) => {
-  const fileName = useRef<HTMLInputElement>(null);
-  const fileDescription = useRef<HTMLInputElement>(null);
+  // const EntryProperties = React.memo((props: Props) => {
+  const fileNameRef = useRef<HTMLInputElement>(null);
+  const fileDescriptionRef = useRef<HTMLInputElement>(null);
   const MB_ATTR =
     '<b>Leaflet</b> | Map data &copy; <b>https://openstreetmap.org/copyright</b> contributors, <b>CC-BY-SA</b>, Imagery © <b>Mapbox</b>';
 
-  let newName = '';
+  // let newName = '';
+  // let newDescription = '';
+  const currentEntry = props.openedEntry;
+  const fileName = extractFileName(
+    currentEntry.path,
+    PlatformIO.getDirSeparator()
+  );
   // const tagMenuAnchorEl = null;
-  // const [name, setName] = useState<string>('');
+  // const [thumbPath, setThumbPath] = useState<string>(undefined);
   // const [originalName, setOriginalName] = useState<string>('');
   // const [description, setDescription] = useState<string>('');
   // const [size, setSize] = useState<number>(0);
@@ -230,12 +234,12 @@ const EntryProperties = (props: Props) => {
   // const [path, setPath] = useState<string>('');
   // const [ldtm, setLdtm] = useState<string>('');
   // const [tags, setTags] = useState<Array<Tag>>([]);
-  const [currentEntry, setCurrentEntry] = useState<FileSystemEntry>(undefined);
+  // const [currentEntry, setCurrentEntry] = useState<FileSystemEntry>(undefined);
   // const [tagMenuAnchorEl, setTagMenuAnchorEl] = useState<boolean | null>(null);
   // const [tagMenuOpened, setTagMenuOpened] = useState<boolean | null>(false);
   // const [selectedTag, setSelectedTag] = useState<Tag>(null); // TODO enable selected Tag menu
-  const [isEditName, setEditName] = useState<boolean>(false);
-  const [isEditDescription, setEditDescription] = useState<boolean>(false);
+  const [editName, setEditName] = useState<string>(undefined);
+  const [editDescription, setEditDescription] = useState<string>(undefined);
   const [isMoveCopyFilesDialogOpened, setMoveCopyFilesDialogOpened] = useState<
     boolean
   >(false);
@@ -244,13 +248,35 @@ const EntryProperties = (props: Props) => {
     setFileThumbChooseDialogOpened
   ] = useState<boolean>(false);
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
-  // const [thumbPath, setThumbPath] = useState<string>('');
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (props.entryPath) {
       loadEntryProperties(props.entryPath);
     }
-  }, [props.entryPath]);
+  }, [props.entryPath]); */
+
+  useEffect(() => {
+    if (
+      editDescription === currentEntry.description &&
+      fileDescriptionRef.current
+    ) {
+      fileDescriptionRef.current.focus();
+      fileDescriptionRef.current.setSelectionRange(
+        fileDescriptionRef.current.value.length,
+        fileDescriptionRef.current.value.length
+      );
+    }
+  }, [editDescription]);
+
+  useEffect(() => {
+    if (editName === fileName && fileNameRef.current) {
+      fileNameRef.current.focus();
+      fileNameRef.current.setSelectionRange(
+        fileNameRef.current.value.length,
+        fileNameRef.current.value.length
+      );
+    }
+  }, [editName]);
 
   /* useEffect(() => { // Rethink and move this Dialog in EntryContainer
     if (props.shouldCopyFile) {
@@ -279,28 +305,10 @@ const EntryProperties = (props: Props) => {
     }
   } */
 
-  const loadEntryProperties = (entryPath: string) => {
+  /* const loadEntryProperties = (entryPath: string) => {
     getAllPropertiesPromise(entryPath)
       .then((entryProps: FileSystemEntry) => {
         setCurrentEntry(entryProps);
-        /* this.setState({
-          isEditName: false,
-          name: entryProps.name,
-          path: entryProps.path,
-          size: entryProps.size,
-          tags: entryProps.tags,
-          // @ts-ignore
-          ldtm: entryProps.lmdt
-            ? new Date(entryProps.lmdt)
-                .toISOString()
-                .substring(0, 19)
-                .split('T')
-                .join(' ')
-            : '',
-          color: entryProps.color,
-          isFile: entryProps.isFile,
-          description: entryProps.description ? entryProps.description : ''
-        }); */
         return true;
       })
       .catch(error =>
@@ -308,49 +316,49 @@ const EntryProperties = (props: Props) => {
           'Error getting properties for entry: ' + entryPath + ' - ' + error
         )
       );
-  };
+  }; */
 
   const renameEntry = () => {
-    if (isEditName) {
+    if (editName !== undefined) {
       const { renameFile, renameDirectory } = props;
 
       const path = extractContainingDirectoryPath(
         currentEntry.path,
         PlatformIO.getDirSeparator()
       );
-      const nextPath = path + PlatformIO.getDirSeparator() + newName;
+      const nextPath = path + PlatformIO.getDirSeparator() + editName;
 
       if (currentEntry.isFile) {
         renameFile(currentEntry.path, nextPath);
       } else {
-        renameDirectory(currentEntry.path, newName);
+        renameDirectory(currentEntry.path, editName);
       }
 
-      newName = '';
-      setEditName(false);
+      // newName = '';
+      setEditName(undefined);
     }
   };
 
   const toggleEditNameField = () => {
     if (props.isReadOnlyMode) {
-      setEditName(false);
+      setEditName(undefined);
       return;
     }
-    if (isEditName) {
-      setEditName(false);
+    if (editName !== undefined) {
+      setEditName(undefined);
       /* this.setState({
         isEditName: false,
         name: this.state.originalName
       }); */
     } else {
-      setEditName(true);
-      newName = currentEntry.name;
+      setEditName(fileName);
+      // newName = fileName; // currentEntry.name;
     }
   };
 
   const toggleEditDescriptionField = () => {
     if (props.isReadOnlyMode) {
-      setEditDescription(false);
+      setEditDescription(undefined);
       return;
     }
     if (!Pro) {
@@ -361,13 +369,10 @@ const EntryProperties = (props: Props) => {
       props.showNotification(i18n.t('Saving description not supported'));
       return;
     }
-    if (isEditDescription) {
-      Pro.MetaOperations.saveDescription(
-        currentEntry.path,
-        currentEntry.description
-      )
+    if (editDescription !== undefined) {
+      Pro.MetaOperations.saveDescription(currentEntry.path, editDescription)
         .then(entryMeta => {
-          setEditDescription(false);
+          setEditDescription(undefined);
           props.updateOpenedFile(
             currentEntry.path,
             entryMeta,
@@ -377,11 +382,13 @@ const EntryProperties = (props: Props) => {
         })
         .catch(error => {
           console.warn('Error saving description ' + error);
-          setEditDescription(false);
+          setEditDescription(undefined);
           props.showNotification(i18n.t('Error saving description'));
         });
+    } else if (currentEntry.description) {
+      setEditDescription(currentEntry.description);
     } else {
-      setEditDescription(true);
+      setEditDescription('');
     }
   };
 
@@ -394,7 +401,7 @@ const EntryProperties = (props: Props) => {
       props.showNotification(i18n.t('core:needProVersion'));
       return true;
     }
-    if (!isEditName && !isEditDescription) {
+    if (editName === undefined && editDescription === undefined) {
       setFileThumbChooseDialogOpened(!isFileThumbChooseDialogOpened);
     }
   };
@@ -403,10 +410,11 @@ const EntryProperties = (props: Props) => {
     if (filePath !== undefined) {
       return replaceThumbnailURLPromise(filePath, thumbFilePath)
         .then(objUrl => {
-          setCurrentEntry({
+          // setThumbPath(objUrl.tmbPath);
+          /* setCurrentEntry({
             ...currentEntry,
             thumbPath: objUrl.tmbPath
-          });
+          }); */
           props.updateThumbnailUrl(currentEntry.path, objUrl.tmbPath);
           return true;
         })
@@ -418,10 +426,11 @@ const EntryProperties = (props: Props) => {
     // reset Thumbnail
     return getThumbnailURLPromise(currentEntry.path)
       .then(objUrl => {
-        setCurrentEntry({
+        // setThumbPath(objUrl.tmbPath);
+        /* setCurrentEntry({
           ...currentEntry,
           thumbPath: objUrl.tmbPath
-        });
+        }); */
         props.updateThumbnailUrl(currentEntry.path, objUrl.tmbPath);
         return true;
       })
@@ -485,7 +494,8 @@ const EntryProperties = (props: Props) => {
     const { value, name } = target;
 
     if (name === 'name') {
-      newName = value;
+      setEditName(value);
+      // newName = value;
       /* setCurrentEntry({
         ...currentEntry,
         name: value
@@ -499,58 +509,59 @@ const EntryProperties = (props: Props) => {
     const { value, name } = target;
 
     if (name === 'description') {
-      setCurrentEntry({
+      setEditDescription(value);
+      // newDescription = value;
+      /* setCurrentEntry({
         ...currentEntry,
         description: value
-      });
+      }); */
       // this.setState({ description: value });
     }
   };
 
-  const handleChange = (name: string, value: any, action: string) => {
+  const handleChange = (name: string, value: Array<Tag>, action: string) => {
     if (action === 'remove-value') {
       if (!value) {
         // no tags left in the select element
         props.removeAllTags([currentEntry.path]); // TODO return promise
-        setCurrentEntry({
-          ...currentEntry,
-          tags: []
-        });
-        // this.setState({ tags: [] });
+        props.updateOpenedFile(
+          currentEntry.path,
+          { tags: [] },
+          currentEntry.isFile
+        );
       } else {
-        const tagsToRemove = [];
-        const newTags = currentEntry.tags.map(tag => {
-          if (value.findIndex(obj => obj.title === tag.title) === -1) {
-            tagsToRemove.push(tag);
-            return undefined;
-          }
-          return tag;
-        });
+        /* const newTags = currentEntry.tags.filter(
+          tag => value.findIndex(obj => obj.title === tag.title) === -1
+        ); */
 
-        props.removeTags([currentEntry.path], tagsToRemove);
-        setCurrentEntry({
-          ...currentEntry,
-          tags: newTags.filter(tag => tag !== undefined)
-        });
+        props.removeTags([currentEntry.path], value);
+        /* props.updateOpenedFile(
+          currentEntry.path,
+          { tags: newTags },
+          currentEntry.isFile
+        ); */
       }
     } else if (action === 'clear') {
       props.removeAllTags([currentEntry.path]);
-      setCurrentEntry({
-        ...currentEntry,
-        tags: []
-      });
+      /* props.updateOpenedFile(
+        currentEntry.path,
+        { tags: [] },
+        currentEntry.isFile
+      ); */
     } else {
       // create-option or select-option
       value.map(tag => {
         if (
+          currentEntry.tags === undefined ||
           currentEntry.tags.findIndex(obj => obj.title === tag.title) === -1
         ) {
           props.addTags([currentEntry.path], [tag]);
-          setCurrentEntry({
-            ...currentEntry,
-            tags: [...currentEntry.tags, tag]
-          });
-          // this.setState({ tags: [...tags, tag] });
+
+          /* props.updateOpenedFile(
+            currentEntry.path,
+            { tags: [...(currentEntry.tags ? currentEntry.tags : []), tag] },
+            currentEntry.isFile
+          ); */
         }
         return true;
       });
@@ -563,20 +574,20 @@ const EntryProperties = (props: Props) => {
     return <div />;
   }
 
-  let { thumbPath } = currentEntry;
-  if (!thumbPath) {
-    if (currentEntry.isFile) {
-      thumbPath = getThumbFileLocationForFile(
-        currentEntry.path,
-        PlatformIO.getDirSeparator()
-      );
-    } else {
-      thumbPath = getThumbFileLocationForDirectory(
-        currentEntry.path,
-        PlatformIO.getDirSeparator()
-      );
-    }
+  let thumbPath; // { thumbPath } = currentEntry;
+  // if (!thumbPath) {
+  if (currentEntry.isFile) {
+    thumbPath = getThumbFileLocationForFile(
+      currentEntry.path,
+      PlatformIO.getDirSeparator()
+    );
+  } else {
+    thumbPath = getThumbFileLocationForDirectory(
+      currentEntry.path,
+      PlatformIO.getDirSeparator()
+    );
   }
+  //  }
   const thumbPathUrl = thumbPath
     ? 'url("' + thumbPath + '?' + new Date().getTime() + '")'
     : '';
@@ -584,13 +595,13 @@ const EntryProperties = (props: Props) => {
   //   thumbPathUrl = thumbPathUrl.split('\\').join('\\\\');
   // }
 
-  const ldtm = currentEntry.lmdt
+  /* const ldtm = currentEntry.lmdt
     ? new Date(currentEntry.lmdt)
         .toISOString()
         .substring(0, 19)
         .split('T')
         .join(' ')
-    : '';
+    : ''; */
 
   const changePerspective = (event: any) => {
     // console.log(perspective);
@@ -617,8 +628,8 @@ const EntryProperties = (props: Props) => {
   let perspectiveDefault;
   if (currentEntry.perspective) {
     perspectiveDefault = currentEntry.perspective;
-  } else if (props.perspective) {
-    perspectiveDefault = props.perspective;
+  } else if (currentEntry.perspective) {
+    perspectiveDefault = currentEntry.perspective; // props.perspective;
   } else {
     perspectiveDefault = 'unspecified'; // perspectives.DEFAULT;
   }
@@ -672,12 +683,14 @@ const EntryProperties = (props: Props) => {
   });
 
   function getGeoLocation(tags: Array<Tag>) {
-    for (let i = 0; i < tags.length; i += 1) {
-      if (isPlusCode(tags[i].title)) {
-        const coord = OpenLocationCode.decode(tags[i].title);
-        const lat = Number(coord.latitudeCenter.toFixed(7));
-        const lng = Number(coord.longitudeCenter.toFixed(7));
-        return { lat, lng };
+    if (tags) {
+      for (let i = 0; i < tags.length; i += 1) {
+        if (isPlusCode(tags[i].title)) {
+          const coord = OpenLocationCode.decode(tags[i].title);
+          const lat = Number(coord.latitudeCenter.toFixed(7));
+          const lng = Number(coord.longitudeCenter.toFixed(7));
+          return { lat, lng };
+        }
       }
     }
     return undefined;
@@ -699,9 +712,9 @@ const EntryProperties = (props: Props) => {
                 {i18n.t('core:editTagMasterName')}
               </Typography>
             </div>
-            {!isReadOnlyMode && !isEditDescription && (
+            {!isReadOnlyMode && editDescription === undefined && (
               <div className={classes.gridItem} style={{ textAlign: 'right' }}>
-                {isEditName ? (
+                {editName !== undefined ? (
                   <div>
                     <Button
                       color="primary"
@@ -735,16 +748,16 @@ const EntryProperties = (props: Props) => {
           <FormControl fullWidth={true} className={classes.formControl}>
             <TextField
               InputProps={{
-                readOnly: !isEditName
+                readOnly: editName === undefined
               }}
               margin="dense"
               name="name"
               fullWidth={true}
               data-tid="fileNameProperties"
-              defaultValue={currentEntry.name}
-              inputRef={fileName}
+              defaultValue={fileName} // currentEntry.name}
+              inputRef={fileNameRef}
               onClick={() => {
-                if (!isEditName && !isEditDescription) {
+                if (editName === undefined && editDescription === undefined) {
                   toggleEditNameField();
                 }
               }}
@@ -775,7 +788,9 @@ const EntryProperties = (props: Props) => {
               <TagsSelect
                 placeholderText={i18n.t('core:dropHere')}
                 isReadOnlyMode={
-                  isReadOnlyMode || isEditDescription || isEditName
+                  isReadOnlyMode ||
+                  editDescription !== undefined ||
+                  editName !== undefined
                 }
                 tags={currentEntry.tags}
                 tagMode="default"
@@ -842,13 +857,13 @@ const EntryProperties = (props: Props) => {
                 {i18n.t('core:filePropertiesDescription')}
               </Typography>
             </div>
-            {!isReadOnlyMode && !isEditName && (
+            {!isReadOnlyMode && editName === undefined && (
               <div className={classes.gridItem} style={{ textAlign: 'right' }}>
-                {isEditDescription && (
+                {editDescription !== undefined && (
                   <Button
                     color="primary"
                     className={classes.button}
-                    onClick={toggleEditDescriptionField}
+                    onClick={() => setEditDescription(undefined)}
                   >
                     {i18n.t('core:cancel')}
                   </Button>
@@ -859,7 +874,7 @@ const EntryProperties = (props: Props) => {
                   className={classes.button}
                   onClick={toggleEditDescriptionField}
                 >
-                  {isEditDescription
+                  {editDescription !== undefined
                     ? i18n.t('core:confirmSaveButton')
                     : i18n.t('core:edit')}
                 </Button>
@@ -867,10 +882,10 @@ const EntryProperties = (props: Props) => {
             )}
           </div>
           <FormControl fullWidth={true} className={classes.formControl}>
-            {isEditDescription ? (
+            {editDescription !== undefined ? (
               <TextField
                 multiline
-                inputRef={fileDescription}
+                inputRef={fileDescriptionRef}
                 style={{
                   padding: 10,
                   borderRadius: 5,
@@ -880,7 +895,7 @@ const EntryProperties = (props: Props) => {
                 placeholder=""
                 name="description"
                 className={styles.textField}
-                value={currentEntry.description}
+                defaultValue={currentEntry.description}
                 fullWidth={true}
                 onChange={handleDescriptionChange}
               />
@@ -908,7 +923,7 @@ const EntryProperties = (props: Props) => {
                     : i18n.t('core:addDescription')
                 }}
                 onClick={() => {
-                  if (!isEditName) {
+                  if (editName === undefined) {
                     toggleEditDescriptionField();
                   }
                 }}
@@ -930,7 +945,7 @@ const EntryProperties = (props: Props) => {
               >
                 {i18n.t('core:fileLDTM')}
                 <br />
-                <strong>{ldtm}</strong>
+                {/* <strong>{ldtm}</strong> */}
               </Typography>
               {/* <FormControl fullWidth={true} className={classes.formControl}>
                   <TextField
@@ -955,7 +970,7 @@ const EntryProperties = (props: Props) => {
                 >
                   {i18n.t('core:fileSize')}
                   <br />
-                  <strong>{formatFileSize(currentEntry.size)}</strong>
+                  {/* <strong>{formatFileSize(currentEntry.size)}</strong> */}
                 </Typography>
                 {/* <FormControl
                     fullWidth={true}
@@ -1045,8 +1060,8 @@ const EntryProperties = (props: Props) => {
             </div>
             {currentEntry.isFile &&
               !isReadOnlyMode &&
-              !isEditName &&
-              !isEditDescription && (
+              editName === undefined &&
+              editDescription === undefined && (
                 <Button
                   color="primary"
                   // disabled={isEditDescription || isEditName}
@@ -1130,15 +1145,17 @@ const EntryProperties = (props: Props) => {
                 {i18n.t('core:thumbnail')}
               </Typography>
             </div>
-            {!isReadOnlyMode && !isEditName && !isEditDescription && (
-              <Button
-                color="primary"
-                className={classes.button}
-                onClick={toggleThumbFilesDialog}
-              >
-                {i18n.t('core:changeThumbnail')}
-              </Button>
-            )}
+            {!isReadOnlyMode &&
+              editName === undefined &&
+              editDescription === undefined && (
+                <Button
+                  color="primary"
+                  className={classes.button}
+                  onClick={toggleThumbFilesDialog}
+                >
+                  {i18n.t('core:changeThumbnail')}
+                </Button>
+              )}
           </div>
           <div className={classes.fluidGrid}>
             <div className={classes.gridItem}>

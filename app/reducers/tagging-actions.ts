@@ -149,6 +149,7 @@ const actions = {
     } catch (error) {
       console.log('No sidecar found ' + error);
     }
+
     if (!entryProperties.isFile || settings.persistTagsInSidecarFile) {
       // Handling adding tags in sidecar
       if (fsEntryMeta) {
@@ -169,8 +170,15 @@ const actions = {
           };
           saveMetaDataPromise(path, updatedFsEntryMeta)
             .then(() => {
-              dispatch(
+              /* dispatch(
                 AppActions.reflectUpdateSidecarTags(path, newTags, updateIndex)
+              ); */
+              dispatch(
+                AppActions.updateOpenedFile(
+                  path,
+                  { tags: newTags },
+                  entryProperties.isFile
+                )
               );
               return true;
             })
@@ -190,8 +198,15 @@ const actions = {
         saveMetaDataPromise(path, newFsEntryMeta)
           .then(() => {
             dispatch(
-              AppActions.reflectUpdateSidecarTags(path, tags, updateIndex)
+              AppActions.updateOpenedFile(
+                path,
+                { tags },
+                entryProperties.isFile
+              )
             );
+            /* dispatch(
+              AppActions.reflectUpdateSidecarTags(path, tags, updateIndex)
+            ); */
             return true;
           })
           .catch(error => {
@@ -371,8 +386,11 @@ const actions = {
           saveMetaDataPromise(path, updatedFsEntryMeta)
             .then(() => {
               dispatch(
-                AppActions.reflectUpdateSidecarTags(path, fsEntryMeta.tags)
+                AppActions.updateOpenedFile(path, { tags: fsEntryMeta.tags })
               );
+              /* dispatch(
+                AppActions.reflectUpdateSidecarTags(path, fsEntryMeta.tags)
+              ); */
               return true;
             })
             .catch(err => {
@@ -399,8 +417,11 @@ const actions = {
           saveMetaDataPromise(path, fsEntryMeta)
             .then(() => {
               dispatch(
-                AppActions.reflectUpdateSidecarTags(path, fsEntryMeta.tags)
+                AppActions.updateOpenedFile(path, { tags: fsEntryMeta.tags })
               );
+              /* dispatch(
+                AppActions.reflectUpdateSidecarTags(path, fsEntryMeta.tags)
+              ); */
               return true;
             })
             .catch(err => {
@@ -483,7 +504,8 @@ const actions = {
         };
         saveMetaDataPromise(path, updatedFsEntryMeta)
           .then(() => {
-            dispatch(AppActions.reflectUpdateSidecarTags(path, newTags));
+            // dispatch(AppActions.reflectUpdateSidecarTags(path, newTags));
+            dispatch(AppActions.updateOpenedFile(path, { tags: newTags }));
             removeTagsFromFilename();
             return true;
           })
@@ -561,7 +583,8 @@ const actions = {
         };
         saveMetaDataPromise(path, updatedFsEntryMeta)
           .then(() => {
-            dispatch(AppActions.reflectUpdateSidecarTags(path, []));
+            // dispatch(AppActions.reflectUpdateSidecarTags(path, []));
+            dispatch(AppActions.updateOpenedFile(path, { tags: [] }));
             removeAllTagsFromFilename();
             return true;
           })

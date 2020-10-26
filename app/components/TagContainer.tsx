@@ -43,7 +43,7 @@ interface Props {
     tag: Tag,
     tagGroup: TagGroup | string
   ) => void; // TODO refactor
-  handleRemoveTag?: (event: Object, tag: Tag) => void;
+  handleRemoveTag?: (event: Object, tags: Array<Tag>) => void;
   isDragging?: boolean;
   tagMode?: 'default' | 'display' | 'remove';
   entryPath?: string;
@@ -116,7 +116,7 @@ const TagContainer = React.memo((props: Props) => {
             color: tag.textcolor,
             fontSize: 20
           }}
-          onClick={event => handleRemoveTag(event, tag)}
+          onClick={event => handleRemoveTag(event, [tag])}
         />
       )
     ) : (

@@ -23,7 +23,6 @@ import { GlobalHotKeys } from 'react-hotkeys';
 import Button from '@material-ui/core/Button';
 import Fab from '@material-ui/core/Fab';
 import IconButton from '@material-ui/core/IconButton';
-import uuidv1 from 'uuid';
 import SaveIcon from '@material-ui/icons/Save';
 import CloseIcon from '@material-ui/icons/Close';
 import BackIcon from '@material-ui/icons/RemoveRedEye';
@@ -1205,13 +1204,13 @@ const EntryContainer = (props: Props) => {
                 ? renderFileToolbar(classes)
                 : renderFolderToolbar()}
               <EntryProperties
-                key={uuidv1()}
+                key={openedFile.path}
                 // resetState={this.resetState}
                 // setPropertiesEditMode={this.setPropertiesEditMode}
-                entryPath={openedFile.path}
-                perspective={openedFile.perspective}
+                // entryPath={openedFile.path}
+                // perspective={openedFile.perspective}
+                openedEntry={openedFile}
                 // entryURL={currentEntry.url}
-                // openedEntry={openEntry}
                 // shouldReload={reload}
                 renameFile={props.renameFile}
                 renameDirectory={props.renameDirectory}

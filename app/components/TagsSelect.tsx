@@ -80,7 +80,7 @@ interface Props {
   isReadOnlyMode?: boolean;
   placeholderText?: string;
   selectedEntryPath?: string;
-  removeTags: (paths: Array<string>, tags: Array<Tag>) => void;
+  // removeTags: (paths: Array<string>, tags: Array<Tag>) => void;
 }
 
 const TagsSelect = (props: Props) => {
@@ -135,7 +135,6 @@ const TagsSelect = (props: Props) => {
   const {
     classes,
     allTags,
-    tags,
     defaultBackgroundColor,
     defaultTextColor,
     placeholderText = '',
@@ -143,6 +142,8 @@ const TagsSelect = (props: Props) => {
     tagMode,
     selectedEntryPath
   } = props;
+
+  const tags = props.tags ? props.tags : [];
 
   const handleTagMenu = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>, tag) => {
@@ -153,14 +154,16 @@ const TagsSelect = (props: Props) => {
   );
 
   const handleRemoveTag = useCallback(
-    (event, cTag) => {
-      const reducedTags = [...tags];
+    (event, cTag: Array<Tag>) => {
+      /* const reducedTags = [...tags];
       for (let i = 0; i < reducedTags.length; i += 1) {
         if (reducedTags[i].title === cTag.title) {
           reducedTags.splice(i, 1);
         }
+      } */
+      if (cTag.length > 0) {
+        handleTagChange(event, cTag, 'remove-value');
       }
-      handleTagChange(event, reducedTags, 'remove-value');
     },
     [tags]
   );
@@ -212,7 +215,7 @@ const TagsSelect = (props: Props) => {
           onClose={handleCloseTagMenu}
           selectedTag={selectedTag}
           currentEntryPath={selectedEntryPath}
-          removeTags={props.removeTags}
+          removeTags={handleRemoveTag}
           isReadOnlyMode={props.isReadOnlyMode}
         />
       )}
@@ -226,16 +229,15 @@ const mapStateToProps = state => ({
   defaultTextColor: getTagTextColor(state)
 });
 
-function mapDispatchToProps(dispatch) {
+/* function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
       removeTags: TaggingActions.removeTags
     },
     dispatch
   );
-}
+} */
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles, { withTheme: true })(TagsSelect));
+export default connect(mapStateToProps)(
+  withStyles(styles, { withTheme: true })(TagsSelect)
+);
