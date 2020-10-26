@@ -38,6 +38,7 @@ interface Props {
   isAppLoading: boolean;
   currentPage: number;
   gridPageLimit: number;
+  currentLocationPath: string;
 }
 
 const GridPagination = (props: Props) => {
@@ -58,7 +59,7 @@ const GridPagination = (props: Props) => {
 
   useEffect(() => {
     setPage(props.currentPage);
-  }, [props.files]);
+  }, [props.currentLocationPath]);
 
   const handleChange = (event, value) => {
     // props.currentPage = value;
