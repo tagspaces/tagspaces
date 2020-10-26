@@ -853,6 +853,10 @@ class GridPerspective extends React.Component<Props, State> {
             files={sortedFiles}
             renderCell={this.renderCell}
             currentPage={1}
+            currentLocationPath={
+              this.props.currentLocation.path ||
+              this.props.currentLocation.paths[0]
+            }
           />
         </GlobalHotKeys>
         <AddRemoveTagsDialog
