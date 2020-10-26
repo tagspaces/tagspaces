@@ -1210,6 +1210,7 @@ const EntryContainer = (props: Props) => {
                 // entryPath={openedFile.path}
                 // perspective={openedFile.perspective}
                 openedEntry={openedFile}
+                tagDelimiter={props.settings.tagDelimiter}
                 // entryURL={currentEntry.url}
                 // shouldReload={reload}
                 renameFile={props.renameFile}

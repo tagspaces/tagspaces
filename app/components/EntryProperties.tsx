@@ -56,13 +56,14 @@ import TagDropContainer from './TagDropContainer';
 import ColorPickerDialog from './dialogs/ColorPickerDialog';
 import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
 import i18n from '../services/i18n';
-import { FileSystemEntryMeta } from '-/services/utils-io';
+import { enhanceOpenedEntry, FileSystemEntryMeta } from '-/services/utils-io';
 import { isPlusCode } from '-/utils/misc';
 import {
   extractContainingDirectoryPath,
   getThumbFileLocationForFile,
   getThumbFileLocationForDirectory,
-  extractFileName
+  extractFileName,
+  extractTagsAsObjects
 } from '-/utils/paths';
 import AppConfig from '../config';
 import { Pro } from '../pro';
@@ -209,6 +210,7 @@ interface Props {
   isReadOnlyMode: boolean;
   // setPropertiesEditMode: (editMode: boolean) => void;
   currentDirectoryPath: string | null;
+  tagDelimiter: string;
 }
 
 const EntryProperties = (props: Props) => {
@@ -218,13 +220,16 @@ const EntryProperties = (props: Props) => {
   const MB_ATTR =
     '<b>Leaflet</b> | Map data &copy; <b>https://openstreetmap.org/copyright</b> contributors, <b>CC-BY-SA</b>, Imagery © <b>Mapbox</b>';
 
-  // let newName = '';
-  // let newDescription = '';
-  const currentEntry = props.openedEntry;
   const fileName = extractFileName(
-    currentEntry.path,
+    props.openedEntry.path,
     PlatformIO.getDirSeparator()
   );
+
+  const currentEntry = enhanceOpenedEntry(
+    props.openedEntry,
+    props.tagDelimiter
+  );
+
   // const tagMenuAnchorEl = null;
   // const [thumbPath, setThumbPath] = useState<string>(undefined);
   // const [originalName, setOriginalName] = useState<string>('');

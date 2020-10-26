@@ -51,7 +51,7 @@ import PlatformIO from '../services/platform-io';
 import LoadingLazy from '../components/LoadingLazy';
 import { Pro } from '../pro';
 import { savePerspective } from '-/utils/metaoperations';
-import { FileSystemEntryMeta } from '-/services/utils-io';
+import { enhanceOpenedEntry, FileSystemEntryMeta } from '-/services/utils-io';
 
 const GridPerspective = React.lazy(() =>
   import(
@@ -189,6 +189,7 @@ const styles: any = (theme: any) => ({
 
 interface Props {
   classes: any;
+  settings: any;
   theme: any;
   windowHeight: number;
   windowWidth: number;
@@ -247,8 +248,11 @@ const FolderContainer = (props: Props) => {
           props.setCurrentDirectoryPerspective(openedFile.perspective);
         }
       } else if (openedFile.changed) {
-        // TODO check if file is loaded
-        props.updateCurrentDirEntry(openedFile.path, openedFile);
+        const currentEntry = enhanceOpenedEntry(
+          openedFile,
+          props.settings.tagDelimiter
+        );
+        props.updateCurrentDirEntry(openedFile.path, currentEntry);
       }
     }
   }, [props.openedFiles]);
@@ -559,6 +563,7 @@ const FolderContainer = (props: Props) => {
 
 function mapStateToProps(state) {
   return {
+    settings: state.settings,
     lastSelectedEntry: getLastSelectedEntry(state),
     perspectives: getPerspectives(state),
     directoryContent: getDirectoryContent(state),

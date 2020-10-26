@@ -28,11 +28,12 @@ import {
   getMetaFileLocationForFile,
   getMetaFileLocationForDir,
   extractContainingDirectoryPath
-} from '../utils/paths';
+} from '-/utils/paths';
 // import { formatDateTime4Tag } from '../utils/misc';
 import versionMeta from '../version.json';
-import { Tag } from '../reducers/taglibrary';
+import { Tag } from '-/reducers/taglibrary';
 import { getThumbnailURLPromise } from '-/services/thumbsgenerator';
+import { OpenedEntry } from '-/reducers/app';
 
 export interface FileSystemEntry {
   uuid?: string;
@@ -180,6 +181,33 @@ export function enhanceEntry(entry: any): FileSystemEntry {
   }
   // console.log('Enhancing ' + entry.path); console.log(enhancedEntry);
   return enhancedEntry;
+}
+
+export function enhanceOpenedEntry(
+  entry: OpenedEntry,
+  tagDelimiter
+): OpenedEntry {
+  const fineNameTags = extractTagsAsObjects(
+    entry.path,
+    tagDelimiter,
+    PlatformIO.getDirSeparator()
+  );
+  if (fineNameTags.length > 0) {
+    if (entry.tags && entry.tags.length > 0) {
+      const uniqueTags = entry.tags.filter(
+        tag => fineNameTags.findIndex(obj => obj.title === tag.title) === -1
+      );
+      return {
+        ...entry,
+        tags: [...uniqueTags, ...fineNameTags]
+      };
+    }
+    return {
+      ...entry,
+      tags: fineNameTags
+    };
+  }
+  return entry;
 }
 
 export function createDirectoryIndex(
