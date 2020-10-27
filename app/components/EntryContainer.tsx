@@ -44,7 +44,7 @@ import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import AppConfig from '-/config';
 import PlatformIO from '-/services/platform-io';
 import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
-import { FileSystemEntry, FileSystemEntryMeta } from '-/services/utils-io';
+import { FileSystemEntry } from '-/services/utils-io';
 import i18n from '-/services/i18n';
 import {
   extractContainingDirectoryPath,
@@ -194,8 +194,7 @@ interface Props {
   entryPropertiesSplitSize?: number;
   updateOpenedFile: (
     entryPath: string,
-    fsEntryMeta: FileSystemEntryMeta,
-    isFile: boolean
+    fsEntryMeta: any // FileSystemEntryMeta
   ) => void;
   // reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
   updateThumbnailUrl: (path: string, thumbUrl: string) => void;
@@ -210,7 +209,7 @@ const EntryContainer = (props: Props) => {
     return null;
   }
   const openedFile = props.openedFiles[0];
-  const [currentEntry, setCurrentEntry] = useState<OpenedEntry>(openedFile);
+  // const [currentEntry, setCurrentEntry] = useState<OpenedEntry>(openedFile);
 
   const [isPropertiesPanelVisible, setPropertiesPanelVisible] = useState<
     boolean
@@ -273,18 +272,14 @@ const EntryContainer = (props: Props) => {
           openedFile.editingExtensionId &&
             openedFile.editingExtensionId.length > 3
         );
+        if (
+          openedFile.editMode &&
+          openedFile.changed &&
+          openedFile.shouldReload === false
+        ) {
+          setSaveBeforeReloadConfirmDialogOpened(true);
+        }
       }
-
-      // set tags
-      /* const tags = extractTagsAsObjects(
-        openedFile.path,
-        props.settings.tagDelimiter,
-        PlatformIO.getDirSeparator()
-      );
-      setCurrentEntry({
-        ...openedFile,
-        tags
-      }); */
     }
   }, [props.openedFiles, props.isReadOnlyMode, props.settings]);
 
@@ -399,7 +394,7 @@ const EntryContainer = (props: Props) => {
               fileViewer.current.contentWindow.setContent(
                 content,
                 fileDirectory,
-                !currentEntry.editMode
+                !openedFile.editMode
               );
             }
             return true;
@@ -409,12 +404,13 @@ const EntryContainer = (props: Props) => {
           });
         break;
       case 'contentChangedInEditor': {
-        if (currentEntry.editMode && !currentEntry.changed) {
+        if (openedFile.editMode && !openedFile.changed) {
           // dummy state change to render DOT before file name (only first time)
-          setCurrentEntry({
+          props.updateOpenedFile(openedFile.path, {
             ...openedFile,
             changed: true,
-            editMode: true
+            editMode: true,
+            shouldReload: undefined
           });
         }
         break;
@@ -428,12 +424,11 @@ const EntryContainer = (props: Props) => {
   };
 
   const reloadDocument = () => {
-    if (currentEntry) {
-      if (currentEntry.changed) {
+    if (openedFile) {
+      if (openedFile.changed) {
         setSaveBeforeReloadConfirmDialogOpened(true);
       } else {
-        // shouldReload = true;
-        setCurrentEntry({
+        props.updateOpenedFile(openedFile.path, {
           ...openedFile,
           editMode: false,
           shouldReload: true
@@ -461,7 +456,7 @@ const EntryContainer = (props: Props) => {
       event.preventDefault(); // Let's stop this event.
       event.stopPropagation();
     }
-    if (currentEntry && currentEntry.changed) {
+    if (openedFile && openedFile.changed && openedFile.editMode) {
       setSaveBeforeCloseConfirmDialogOpened(true);
     } else {
       closeFile();
@@ -500,11 +495,11 @@ const EntryContainer = (props: Props) => {
     PlatformIO.saveTextFilePromise(openedFile.path, textContent, true)
       .then(result => {
         // isChanged = false;
-        setCurrentEntry({
+        props.updateOpenedFile(openedFile.path, {
           ...openedFile,
           editMode: false,
           changed: false,
-          shouldReload: false
+          shouldReload: undefined
         });
         props.showNotification(
           i18n.t('core:fileSavedSuccessfully'),
@@ -522,7 +517,10 @@ const EntryContainer = (props: Props) => {
   };
 
   const editFile = () => {
-    setCurrentEntry({ ...openedFile, editMode: true });
+    props.updateOpenedFile(openedFile.path, {
+      ...openedFile,
+      editMode: true
+    });
   };
 
   const shareFile = (filePath: string) => {
@@ -909,15 +907,15 @@ const EntryContainer = (props: Props) => {
     //   fileTitle = fileTitle.substr(0, maxCharactersTitleLength) + '...';
     // }
 
-    if (currentEntry.editMode && currentEntry.editingExtensionPath) {
+    if (openedFile.editMode && openedFile.editingExtensionPath) {
       fileOpenerURL =
-        currentEntry.editingExtensionPath +
+        openedFile.editingExtensionPath +
         '/index.html?file=' +
         encodeURIComponent(openedFile.url ? openedFile.url : openedFile.path) +
         '&locale=' +
         i18n.language +
         '&edit=true' +
-        (currentEntry.shouldReload ? '&t=' + new Date().getTime() : '');
+        (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
       // } else if (!currentEntry.isFile) { // TODO needed for loading folder's default html
       //   fileOpenerURL = 'node_modules/@tagspaces/html-viewer/index.html?locale=' + i18n.language;
     } else {
@@ -927,7 +925,7 @@ const EntryContainer = (props: Props) => {
         encodeURIComponent(openedFile.url ? openedFile.url : openedFile.path) +
         '&locale=' +
         i18n.language +
-        (currentEntry.shouldReload ? '&t=' + new Date().getTime() : '');
+        (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
     }
     // this.shouldReload = false;
 
@@ -1010,7 +1008,7 @@ const EntryContainer = (props: Props) => {
             // isChanged = false;
             // shouldReload = true;
             setSaveBeforeReloadConfirmDialogOpened(false);
-            setCurrentEntry({
+            props.updateOpenedFile(openedFile.path, {
               ...openedFile,
               editMode: false,
               changed: false,
@@ -1107,7 +1105,7 @@ const EntryContainer = (props: Props) => {
                           PlatformIO.getDirSeparator()
                         )}
                     </div>
-                    {currentEntry.changed
+                    {openedFile.changed
                       ? String.fromCharCode(0x25cf) + ' '
                       : ''}
                     {fileTitle}
@@ -1134,7 +1132,7 @@ const EntryContainer = (props: Props) => {
                   </Button>
                 )}
               </div>
-              {editingSupported && currentEntry.editMode && (
+              {editingSupported && openedFile.editMode && (
                 <div className={classes.entryCloseSection}>
                   <IconButton
                     disabled={false}
@@ -1162,7 +1160,7 @@ const EntryContainer = (props: Props) => {
                   </IconButton>
                 </div>
               )}
-              {editingSupported && !currentEntry.editMode && (
+              {editingSupported && !openedFile.editMode && (
                 <div className={classes.entryCloseSection}>
                   <Button
                     disabled={false}

@@ -589,60 +589,67 @@ export async function saveMetaDataPromise(
   metaData: any
 ): Promise<any> {
   const entryProperties = await PlatformIO.getPropertiesPromise(path);
-  let metaFilePath;
-  let newFsEntryMeta;
+  if (entryProperties) {
+    let metaFilePath;
+    let newFsEntryMeta;
+    if (entryProperties.isFile) {
+      metaFilePath = getMetaFileLocationForFile(
+        path,
+        PlatformIO.getDirSeparator()
+      );
+      // check and create meta folder if not exist
+      await PlatformIO.createDirectoryPromise(
+        extractContainingDirectoryPath(
+          metaFilePath,
+          PlatformIO.getDirSeparator()
+        )
+      );
 
-  if (entryProperties.isFile) {
-    metaFilePath = getMetaFileLocationForFile(
-      path,
-      PlatformIO.getDirSeparator()
-    );
-    // check and create meta folder if not exist
-    await PlatformIO.createDirectoryPromise(
-      extractContainingDirectoryPath(metaFilePath, PlatformIO.getDirSeparator())
-    );
-
-    newFsEntryMeta = {
-      ...metaData,
-      appName: versionMeta.name,
-      appVersionUpdated: versionMeta.version,
-      lastUpdated: new Date().toJSON()
-    };
-  } else {
-    // check and create meta folder if not exist
-    // todo not need to check if folder exist first createDirectoryPromise() recursively will skip creation of existing folders https://nodejs.org/api/fs.html#fs_fs_mkdir_path_options_callback
-    const metaDirectoryPath = getMetaDirectoryPath(
-      path,
-      PlatformIO.getDirSeparator()
-    );
-    const metaDirectoryProperties = await PlatformIO.getPropertiesPromise(
-      metaDirectoryPath
-    );
-    if (!metaDirectoryProperties) {
-      await PlatformIO.createDirectoryPromise(metaDirectoryPath);
-    }
-
-    let dirId;
-    if (metaData && metaData.id && metaData.id.length > 1) {
-      dirId = metaData.id;
+      newFsEntryMeta = {
+        ...metaData,
+        appName: versionMeta.name,
+        appVersionUpdated: versionMeta.version,
+        lastUpdated: new Date().toJSON()
+      };
     } else {
-      dirId = uuidv1();
-    }
+      // check and create meta folder if not exist
+      // todo not need to check if folder exist first createDirectoryPromise() recursively will skip creation of existing folders https://nodejs.org/api/fs.html#fs_fs_mkdir_path_options_callback
+      const metaDirectoryPath = getMetaDirectoryPath(
+        path,
+        PlatformIO.getDirSeparator()
+      );
+      const metaDirectoryProperties = await PlatformIO.getPropertiesPromise(
+        metaDirectoryPath
+      );
+      if (!metaDirectoryProperties) {
+        await PlatformIO.createDirectoryPromise(metaDirectoryPath);
+      }
 
-    metaFilePath = getMetaFileLocationForDir(
-      path,
-      PlatformIO.getDirSeparator()
-    );
-    newFsEntryMeta = {
-      ...metaData,
-      id: dirId,
-      appName: versionMeta.name,
-      appVersionUpdated: versionMeta.version,
-      lastUpdated: new Date().toJSON()
-    };
+      let dirId;
+      if (metaData && metaData.id && metaData.id.length > 1) {
+        dirId = metaData.id;
+      } else {
+        dirId = uuidv1();
+      }
+
+      metaFilePath = getMetaFileLocationForDir(
+        path,
+        PlatformIO.getDirSeparator()
+      );
+      newFsEntryMeta = {
+        ...metaData,
+        id: dirId,
+        appName: versionMeta.name,
+        appVersionUpdated: versionMeta.version,
+        lastUpdated: new Date().toJSON()
+      };
+    }
+    const content = JSON.stringify(newFsEntryMeta);
+    return PlatformIO.saveTextFilePromise(metaFilePath, content, true);
   }
-  const content = JSON.stringify(newFsEntryMeta);
-  return PlatformIO.saveTextFilePromise(metaFilePath, content, true);
+  return new Promise((resolve, reject) =>
+    reject(new Error('file not found' + path))
+  );
 }
 
 export function findColorForFileEntry(

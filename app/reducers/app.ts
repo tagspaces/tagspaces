@@ -1269,36 +1269,56 @@ export const actions = {
   }),
   updateOpenedFile: (
     entryPath: string,
-    fsEntryMeta: any, // FileSystemEntryMeta,
-    isFile: boolean = true
+    fsEntryMeta: any // FileSystemEntryMeta,
+    // isFile: boolean = true
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
-    const { supportedFileTypes } = getState().settings;
-    const { openedFiles } = getState().app;
-    let entryForOpening: OpenedEntry;
-    if (openedFiles && openedFiles.length > 0) {
-      entryForOpening = openedFiles.find(obj => obj.path === entryPath);
-    }
-    if (!entryForOpening) {
-      entryForOpening = findExtensionsForEntry(
-        supportedFileTypes,
-        entryPath,
-        isFile
-      );
-    }
-    entryForOpening.changed = true;
-    if (fsEntryMeta.color) {
-      entryForOpening.color = fsEntryMeta.color;
-    }
-    if (fsEntryMeta.description) {
-      entryForOpening.description = fsEntryMeta.description;
-    }
-    if (fsEntryMeta.perspective) {
-      entryForOpening.perspective = fsEntryMeta.perspective;
-    }
-    if (fsEntryMeta.tags) {
-      entryForOpening.tags = fsEntryMeta.tags;
-    }
-    dispatch(actions.addToEntryContainer(entryForOpening));
+    PlatformIO.getPropertiesPromise(entryPath)
+      .then(entryProps => {
+        if (entryProps) {
+          const { supportedFileTypes } = getState().settings;
+          const { openedFiles } = getState().app;
+          let entryForOpening: OpenedEntry;
+          if (openedFiles && openedFiles.length > 0) {
+            entryForOpening = openedFiles.find(obj => obj.path === entryPath);
+          }
+          if (!entryForOpening) {
+            entryForOpening = findExtensionsForEntry(
+              supportedFileTypes,
+              entryPath,
+              entryProps.isFile
+            );
+          }
+
+          if (fsEntryMeta.changed !== undefined) {
+            entryForOpening.changed = fsEntryMeta.changed;
+          } /* else {
+            entryForOpening.changed = true;
+          } */
+          if (fsEntryMeta.editMode !== undefined) {
+            entryForOpening.editMode = fsEntryMeta.editMode;
+          }
+          if (fsEntryMeta.shouldReload !== undefined) {
+            entryForOpening.shouldReload = fsEntryMeta.shouldReload;
+          }
+          if (fsEntryMeta.color) {
+            entryForOpening.color = fsEntryMeta.color;
+          }
+          if (fsEntryMeta.description) {
+            entryForOpening.description = fsEntryMeta.description;
+          }
+          if (fsEntryMeta.perspective) {
+            entryForOpening.perspective = fsEntryMeta.perspective;
+          }
+          if (fsEntryMeta.tags) {
+            entryForOpening.tags = fsEntryMeta.tags;
+          }
+          dispatch(actions.addToEntryContainer(entryForOpening));
+        }
+        return true;
+      })
+      .catch(err => {
+        console.error('updateOpenedFile ' + entryPath + ' not exist ' + err);
+      });
   },
   openFsEntry: (fsEntry: FileSystemEntry) => (
     dispatch: (actions: Object) => void,
@@ -1337,8 +1357,19 @@ export const actions = {
     isFile: boolean = true,
     editMode: boolean = false
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
+    let entryForOpening: OpenedEntry;
+    const { openedFiles } = getState().app;
+    // check for editMode
+    if (openedFiles.length > 0) {
+      const openFile = openedFiles[0];
+      if (openFile.editMode && openFile.changed) {
+        entryForOpening = { ...openFile, shouldReload: false };
+        dispatch(actions.addToEntryContainer(entryForOpening));
+        return false;
+      }
+    }
     const { supportedFileTypes } = getState().settings;
-    const entryForOpening: OpenedEntry = findExtensionsForEntry(
+    entryForOpening = findExtensionsForEntry(
       supportedFileTypes,
       entryPath,
       isFile

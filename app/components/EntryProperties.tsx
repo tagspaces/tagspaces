@@ -196,11 +196,7 @@ interface Props {
   renameDirectory: (path: string, nextPath: string) => void;
   // normalizeShouldCopyFile: () => void;
   showNotification: (message: string) => void;
-  updateOpenedFile: (
-    entryPath: string,
-    fsEntryMeta: any,
-    isFile: boolean
-  ) => void;
+  updateOpenedFile: (entryPath: string, fsEntryMeta: any) => void;
   // reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
   updateThumbnailUrl: (path: string, thumbUrl: string) => void;
   addTags: (paths: Array<string>, tags: Array<Tag>) => void;
@@ -378,11 +374,10 @@ const EntryProperties = (props: Props) => {
       Pro.MetaOperations.saveDescription(currentEntry.path, editDescription)
         .then(entryMeta => {
           setEditDescription(undefined);
-          props.updateOpenedFile(
-            currentEntry.path,
-            entryMeta,
-            currentEntry.isFile
-          );
+          props.updateOpenedFile(currentEntry.path, {
+            ...entryMeta,
+            changed: true
+          });
           return true;
         })
         .catch(error => {
@@ -464,11 +459,10 @@ const EntryProperties = (props: Props) => {
     Pro.MetaOperations.saveColor(currentEntry.path, color)
       .then(entryMeta => {
         // if (props.entryPath === props.currentDirectoryPath) {
-        props.updateOpenedFile(
-          currentEntry.path,
-          entryMeta,
-          currentEntry.isFile
-        );
+        props.updateOpenedFile(currentEntry.path, {
+          ...entryMeta,
+          changed: true
+        });
         /* } else {
           setCurrentEntry({ ...currentEntry, color });
         } */
@@ -529,11 +523,7 @@ const EntryProperties = (props: Props) => {
       if (!value) {
         // no tags left in the select element
         props.removeAllTags([currentEntry.path]); // TODO return promise
-        props.updateOpenedFile(
-          currentEntry.path,
-          { tags: [] },
-          currentEntry.isFile
-        );
+        props.updateOpenedFile(currentEntry.path, { tags: [], changed: true });
       } else {
         /* const newTags = currentEntry.tags.filter(
           tag => value.findIndex(obj => obj.title === tag.title) === -1
@@ -614,11 +604,10 @@ const EntryProperties = (props: Props) => {
     savePerspective(currentEntry.path, perspective)
       .then((entryMeta: FileSystemEntryMeta) => {
         // if (props.entryPath === props.currentDirectoryPath) {
-        props.updateOpenedFile(
-          currentEntry.path,
-          entryMeta,
-          currentEntry.isFile
-        );
+        props.updateOpenedFile(currentEntry.path, {
+          ...entryMeta,
+          changed: true
+        });
         /* } else {
           setCurrentEntry({ ...currentEntry, perspective });
         } */

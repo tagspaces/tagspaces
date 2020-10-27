@@ -174,11 +174,10 @@ const actions = {
                 AppActions.reflectUpdateSidecarTags(path, newTags, updateIndex)
               ); */
               dispatch(
-                AppActions.updateOpenedFile(
-                  path,
-                  { tags: newTags },
-                  entryProperties.isFile
-                )
+                AppActions.updateOpenedFile(path, {
+                  tags: newTags,
+                  changed: true
+                })
               );
               return true;
             })
@@ -198,11 +197,7 @@ const actions = {
         saveMetaDataPromise(path, newFsEntryMeta)
           .then(() => {
             dispatch(
-              AppActions.updateOpenedFile(
-                path,
-                { tags },
-                entryProperties.isFile
-              )
+              AppActions.updateOpenedFile(path, { tags, changed: true })
             );
             /* dispatch(
               AppActions.reflectUpdateSidecarTags(path, tags, updateIndex)
@@ -386,7 +381,10 @@ const actions = {
           saveMetaDataPromise(path, updatedFsEntryMeta)
             .then(() => {
               dispatch(
-                AppActions.updateOpenedFile(path, { tags: fsEntryMeta.tags })
+                AppActions.updateOpenedFile(path, {
+                  tags: fsEntryMeta.tags,
+                  changed: true
+                })
               );
               /* dispatch(
                 AppActions.reflectUpdateSidecarTags(path, fsEntryMeta.tags)
@@ -417,7 +415,10 @@ const actions = {
           saveMetaDataPromise(path, fsEntryMeta)
             .then(() => {
               dispatch(
-                AppActions.updateOpenedFile(path, { tags: fsEntryMeta.tags })
+                AppActions.updateOpenedFile(path, {
+                  tags: fsEntryMeta.tags,
+                  changed: true
+                })
               );
               /* dispatch(
                 AppActions.reflectUpdateSidecarTags(path, fsEntryMeta.tags)
@@ -505,7 +506,12 @@ const actions = {
         saveMetaDataPromise(path, updatedFsEntryMeta)
           .then(() => {
             // dispatch(AppActions.reflectUpdateSidecarTags(path, newTags));
-            dispatch(AppActions.updateOpenedFile(path, { tags: newTags }));
+            dispatch(
+              AppActions.updateOpenedFile(path, {
+                tags: newTags,
+                changed: true
+              })
+            );
             removeTagsFromFilename();
             return true;
           })
@@ -584,7 +590,9 @@ const actions = {
         saveMetaDataPromise(path, updatedFsEntryMeta)
           .then(() => {
             // dispatch(AppActions.reflectUpdateSidecarTags(path, []));
-            dispatch(AppActions.updateOpenedFile(path, { tags: [] }));
+            dispatch(
+              AppActions.updateOpenedFile(path, { tags: [], changed: true })
+            );
             removeAllTagsFromFilename();
             return true;
           })
