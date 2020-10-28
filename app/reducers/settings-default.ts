@@ -498,11 +498,6 @@ export default {
       color: '#c5e4f9'
     },
     {
-      type: 'mp4',
-      viewer: '@tagspaces/media-player',
-      color: '#c5e4f9'
-    },
-    {
       type: 'oga',
       viewer: '@tagspaces/media-player',
       color: '#c5e4f9'
