@@ -210,7 +210,6 @@ interface Props {
   renameFile: () => void;
   openDirectory: () => void;
   showInFileManager: () => void;
-  openFile: (path: string) => void;
   openFsEntry: (fsEntry: FileSystemEntry) => void;
   deleteDirectory: (path: string) => void;
   reflectCreateEntry: (path: string, isFile: boolean) => void;
@@ -347,6 +346,7 @@ const FolderContainer = (props: Props) => {
       return (
         <GalleryPerspectiveAsync
           directoryContent={props.directoryContent}
+          openFsEntry={props.openFsEntry}
           currentDirectoryPath={props.currentDirectoryPath}
           windowWidth={props.windowWidth}
           switchPerspective={switchPerspective}
@@ -390,7 +390,6 @@ const FolderContainer = (props: Props) => {
         <KanBanPerspectiveAsync
           directoryContent={props.directoryContent}
           loadDirectoryContent={props.loadDirectoryContent}
-          openFile={props.openFile}
           openFsEntry={props.openFsEntry}
           loadParentDirectoryContent={props.loadParentDirectoryContent}
           deleteFile={props.deleteFile}
@@ -414,7 +413,7 @@ const FolderContainer = (props: Props) => {
       <GridPerspectiveAsync
         directoryContent={props.directoryContent}
         loadDirectoryContent={props.loadDirectoryContent}
-        openFile={props.openFile}
+        openFsEntry={props.openFsEntry}
         loadParentDirectoryContent={props.loadParentDirectoryContent}
         deleteFile={props.deleteFile}
         renameFile={props.renameFile}
@@ -545,7 +544,7 @@ const FolderContainer = (props: Props) => {
                     loadDirectoryContent={props.loadDirectoryContent}
                     openDirectory={props.openDirectory}
                     reflectCreateEntry={props.reflectCreateEntry}
-                    openFile={props.openFile}
+                    openFsEntry={props.openFsEntry}
                     toggleCreateFileDialog={props.toggleCreateFileDialog}
                     deleteDirectory={props.deleteDirectory}
                     switchPerspective={switchPerspective}
@@ -597,7 +596,6 @@ function mapActionCreatorsToProps(dispatch) {
       getPrevFile: AppActions.getPrevFile,
       openDirectory: AppActions.openDirectory,
       showInFileManager: AppActions.showInFileManager,
-      openFile: AppActions.openFile,
       openFsEntry: AppActions.openFsEntry,
       deleteDirectory: AppActions.deleteDirectory,
       reflectCreateEntry: AppActions.reflectCreateEntry,

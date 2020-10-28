@@ -176,7 +176,7 @@ interface Props {
   addTags: () => void;
   removeTags: () => void;
   // editTagForEntry: () => void;
-  openFile: (filePath: string) => void;
+  openFsEntry: (fsEntry: FileSystemEntry) => void;
   getNextFile: (path: string) => string;
   getPrevFile: (path: string) => string;
   openFileNatively: (path: string) => void;
@@ -200,7 +200,7 @@ interface Props {
   updateThumbnailUrl: (path: string, thumbUrl: string) => void;
   setLastSelectedEntry: (path: string) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
-  directoryContent: Array<Object>;
+  directoryContent: Array<FileSystemEntry>;
   currentDirectoryPath: string | null;
 }
 
@@ -325,12 +325,12 @@ const EntryContainer = (props: Props) => {
         break;
       case 'playbackEnded':
         nextFilePath = props.getNextFile(openedFile.path);
-        nextFile = props.directoryContent.filter(
+        nextFile = props.directoryContent.find(
           (dirEntry: any) => dirEntry.path === nextFilePath
         );
-        props.openFile(nextFilePath);
+        props.openFsEntry(nextFile);
         props.setLastSelectedEntry(nextFilePath);
-        props.setSelectedEntries(nextFile);
+        props.setSelectedEntries([nextFile]);
         break;
       case 'openLinkExternally':
         // console.log('Open link externally: ' + data.link);
@@ -606,24 +606,24 @@ const EntryContainer = (props: Props) => {
   const openNextFile = () => {
     if (openedFile.path) {
       const nextFilePath = props.getNextFile(openedFile.path);
-      const nextFile = props.directoryContent.filter(
+      const nextFile = props.directoryContent.find(
         (dirEntry: FileSystemEntry) => dirEntry.path === nextFilePath
       );
-      props.openFile(nextFilePath);
+      props.openFsEntry(nextFile);
       props.setLastSelectedEntry(nextFilePath);
-      props.setSelectedEntries(nextFile);
+      props.setSelectedEntries([nextFile]);
     }
   };
 
   const openPrevFile = () => {
     if (openedFile.path) {
       const prevFilePath = props.getPrevFile(openedFile.path);
-      const prevFile = props.directoryContent.filter(
+      const prevFile = props.directoryContent.find(
         (dirEntry: FileSystemEntry) => dirEntry.path === prevFilePath
       );
-      props.openFile(prevFilePath);
+      props.openFsEntry(prevFile);
       props.setLastSelectedEntry(prevFilePath);
-      props.setSelectedEntries(prevFile);
+      props.setSelectedEntries([prevFile]);
     }
   };
 
@@ -1105,7 +1105,7 @@ const EntryContainer = (props: Props) => {
                           PlatformIO.getDirSeparator()
                         )}
                     </div>
-                    {openedFile.changed
+                    {openedFile.editMode && openedFile.changed
                       ? String.fromCharCode(0x25cf) + ' '
                       : ''}
                     {fileTitle}
@@ -1268,7 +1268,7 @@ function mapActionCreatorsToProps(dispatch) {
       closeAllFiles: AppActions.closeAllFiles,
       renameFile: AppActions.renameFile,
       renameDirectory: AppActions.renameDirectory,
-      openFile: AppActions.openFile,
+      openFsEntry: AppActions.openFsEntry,
       openFileNatively: AppActions.openFileNatively,
       openURLExternally: AppActions.openURLExternally,
       showNotification: AppActions.showNotification,

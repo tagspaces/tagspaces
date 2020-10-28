@@ -75,7 +75,7 @@ interface Props {
   selectedEntries: Array<any>;
   supportedFileTypes: Array<any>;
   isReadOnlyMode: boolean;
-  openFile: (path: string, isFile: boolean) => void;
+  openFsEntry: (fsEntry: FileSystemEntry) => void;
   getNextFile: () => any;
   getPrevFile: () => any;
   deleteFile: (path: string) => void;
@@ -361,7 +361,7 @@ class GridPerspective extends React.Component<Props, State> {
       setLastSelectedEntry(fsEntry.path);
       if (fsEntry.isFile) {
         if (this.state.singleClickAction === 'openInternal') {
-          this.props.openFile(fsEntry.path, fsEntry.isFile);
+          this.props.openFsEntry(fsEntry);
         } else if (this.state.singleClickAction === 'openExternal') {
           this.props.openFileNatively(fsEntry.path);
         }
@@ -470,7 +470,7 @@ class GridPerspective extends React.Component<Props, State> {
   openLocation = (fsEntry: FileSystemEntry) => {
     if (fsEntry.isFile) {
       this.props.setSelectedEntries([fsEntry]);
-      this.props.openFile(fsEntry.path, true);
+      this.props.openFsEntry(fsEntry);
     } else {
       console.log('Handle Grid cell db click, selected path : ', fsEntry.path);
       this.props.loadDirectoryContent(fsEntry.path);
@@ -634,7 +634,7 @@ class GridPerspective extends React.Component<Props, State> {
       selectedEntries,
       addTags,
       supportedFileTypes,
-      openFile
+      openFsEntry
     } = this.props;
     if (!fsEntry.isFile && !showDirectories) {
       return;
@@ -671,7 +671,7 @@ class GridPerspective extends React.Component<Props, State> {
           handleTagMenu={this.handleTagMenu}
           layoutType={layoutType}
           showTags={this.state.showTags}
-          openFile={openFile}
+          openFsEntry={openFsEntry}
           handleGridContextMenu={this.handleGridContextMenu}
           handleGridCellDblClick={this.handleGridCellDblClick}
           handleGridCellClick={this.handleGridCellClick}
@@ -760,11 +760,11 @@ class GridPerspective extends React.Component<Props, State> {
       e.preventDefault();
       const { lastSelectedEntryPath } = this.props;
       if (lastSelectedEntryPath) {
-        const isLastSelectedEntryFile = this.props.directoryContent.some(
+        const lastSelectedEntryFile = this.props.directoryContent.find(
           fsEntry => fsEntry.isFile && fsEntry.path === lastSelectedEntryPath
         );
-        if (isLastSelectedEntryFile) {
-          this.props.openFile(lastSelectedEntryPath, true);
+        if (lastSelectedEntryFile) {
+          this.props.openFsEntry(lastSelectedEntryFile);
         } else {
           this.props.loadDirectoryContent(lastSelectedEntryPath);
         }
@@ -911,7 +911,7 @@ class GridPerspective extends React.Component<Props, State> {
           openRenameFileDialog={this.openFileRenameDialog}
           openMoveCopyFilesDialog={this.openMoveCopyFilesDialog}
           openAddRemoveTagsDialog={this.openAddRemoveTagsDialog}
-          openFile={this.props.openFile}
+          openFsEntry={this.props.openFsEntry}
           openFileNatively={this.props.openFileNatively}
           showInFileManager={this.props.showInFileManager}
           isReadOnlyMode={this.props.isReadOnlyMode}
@@ -924,7 +924,7 @@ class GridPerspective extends React.Component<Props, State> {
           directoryPath={this.state.selectedEntryPath}
           loadDirectoryContent={this.props.loadDirectoryContent}
           openDirectory={this.props.openDirectory}
-          openFile={this.props.openFile}
+          openFsEntry={this.props.openFsEntry}
           deleteDirectory={this.props.deleteDirectory}
           isReadOnlyMode={this.props.isReadOnlyMode}
           perspectiveMode={true}

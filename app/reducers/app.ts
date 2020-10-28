@@ -27,7 +27,8 @@ import {
   renameFilesPromise,
   enhanceDirectoryContent,
   FileSystemEntryMeta,
-  FileSystemEntry
+  FileSystemEntry,
+  getAllPropertiesPromise
 } from '-/services/utils-io';
 import {
   extractFileExtension,
@@ -118,6 +119,8 @@ export const NotificationTypes = {
 export type OpenedEntry = {
   path: string;
   url?: string;
+  size: number;
+  lmdt: number;
   viewingExtensionPath: string;
   viewingExtensionId: string;
   editingExtensionPath?: string;
@@ -128,6 +131,11 @@ export type OpenedEntry = {
   perspective?: string;
   editMode?: boolean;
   changed?: boolean;
+  /**
+   * if its true iframe will be reloaded
+   * if its false && editMode==true and changed==true => show reload dialog
+   * default: undefined
+   */
   shouldReload?: boolean;
   focused?: boolean; // TODO make it mandatory once support for multiple files is added
   tags?: Array<Tag>;
@@ -592,6 +600,7 @@ export default (state: any = initialState, action: any) => {
       };
     }
     case types.CLOSE_ALL_FILES: {
+      // eslint-disable-next-line no-restricted-globals
       window.history.pushState('', 'TagSpaces', location.pathname);
       return {
         ...state,
@@ -1051,7 +1060,19 @@ export const actions = {
               true
             )
           );
-          dispatch(actions.openFile(filePath));
+          getAllPropertiesPromise(filePath)
+            .then((fsEntry: FileSystemEntry) => {
+              dispatch(actions.openFsEntry(fsEntry)); // TODO return fsEntry from saveFilePromise and simplify
+              return true;
+            })
+            .catch(error =>
+              console.warn(
+                'Error getting properties for entry: ' +
+                  filePath +
+                  ' - ' +
+                  error
+              )
+            );
           // TODO select file // dispatch(actions.setLastSelectedEntry(filePath));
           return true;
         })
@@ -1097,7 +1118,16 @@ export const actions = {
     PlatformIO.saveFilePromise(filePath, fileContent, true)
       .then(() => {
         dispatch(actions.reflectCreateEntry(filePath, true));
-        dispatch(actions.openFile(filePath, true, true));
+        getAllPropertiesPromise(filePath)
+          .then((fsEntry: FileSystemEntry) => {
+            dispatch(actions.openFsEntry(fsEntry)); // TODO return fsEntry from saveFilePromise and simplify
+            return true;
+          })
+          .catch(error =>
+            console.warn(
+              'Error getting properties for entry: ' + filePath + ' - ' + error
+            )
+          );
         dispatch(actions.setLastSelectedEntry(filePath));
         dispatch(
           actions.showNotification(
@@ -1324,8 +1354,23 @@ export const actions = {
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
+    let entryForOpening: OpenedEntry;
+    const { openedFiles } = getState().app;
+    /**
+     * check for editMode in order to show save changes dialog (shouldReload: false)
+     */
+    if (openedFiles.length > 0) {
+      const openFile = openedFiles[0];
+      if (openFile.editMode && openFile.changed) {
+        entryForOpening = { ...openFile, shouldReload: false };
+        dispatch(actions.addToEntryContainer(entryForOpening));
+        return false;
+      }
+    }
+
     const { supportedFileTypes } = getState().settings;
-    const entryForOpening: OpenedEntry = findExtensionsForEntry(
+    // TODO decide to copy all props from {...fsEntry} into openedEntry
+    entryForOpening = findExtensionsForEntry(
       supportedFileTypes,
       fsEntry.path,
       fsEntry.isFile
@@ -1342,6 +1387,12 @@ export const actions = {
     if (fsEntry.tags) {
       entryForOpening.tags = fsEntry.tags;
     }
+    if (fsEntry.lmdt) {
+      entryForOpening.lmdt = fsEntry.lmdt;
+    }
+    if (fsEntry.size) {
+      entryForOpening.size = fsEntry.size;
+    }
     const localePar = getURLParameter(fsEntry.path);
     let startPar = '?open=' + encodeURIComponent(fsEntry.path);
     if (localePar && localePar.length > 1) {
@@ -1352,7 +1403,7 @@ export const actions = {
 
     dispatch(actions.addToEntryContainer(entryForOpening));
   },
-  openFile: (
+  /* openFile: (
     entryPath: string,
     isFile: boolean = true,
     editMode: boolean = false
@@ -1408,7 +1459,7 @@ export const actions = {
     window.history.pushState('', 'TagSpaces', location.pathname + startPar);
 
     dispatch(actions.addToEntryContainer(entryForOpening));
-  },
+  }, */
   toggleEntryFullWidth: () => ({
     type: types.TOGGLE_ENTRY_FULLWIDTH
   }),
@@ -1793,7 +1844,9 @@ function findExtensionsForEntry(
     viewingExtensionPath,
     viewingExtensionId: '',
     isFile,
-    changed: false
+    changed: false,
+    lmdt: 0,
+    size: 0
   };
   supportedFileTypes.map(fileType => {
     if (fileType.viewer && fileType.type.toLowerCase() === fileExtension) {

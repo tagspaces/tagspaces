@@ -57,7 +57,7 @@ import ColorPickerDialog from './dialogs/ColorPickerDialog';
 import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
 import i18n from '../services/i18n';
 import { enhanceOpenedEntry, FileSystemEntryMeta } from '-/services/utils-io';
-import { isPlusCode } from '-/utils/misc';
+import { formatFileSize, isPlusCode } from '-/utils/misc';
 import {
   extractContainingDirectoryPath,
   getThumbFileLocationForFile,
@@ -250,12 +250,6 @@ const EntryProperties = (props: Props) => {
   ] = useState<boolean>(false);
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
 
-  /* useEffect(() => {
-    if (props.entryPath) {
-      loadEntryProperties(props.entryPath);
-    }
-  }, [props.entryPath]); */
-
   useEffect(() => {
     if (
       editDescription === currentEntry.description &&
@@ -278,46 +272,6 @@ const EntryProperties = (props: Props) => {
       );
     }
   }, [editName]);
-
-  /* useEffect(() => { // Rethink and move this Dialog in EntryContainer
-    if (props.shouldCopyFile) {
-      setMoveCopyFilesDialogOpened(true);
-    }
-  }, [props.shouldCopyFile]); */
-
-  /* componentDidMount() {
-    this.loadEntryProperties(this.props.entryPath);
-  }
-
-  componentWillReceiveProps(nextProps: Props) {
-    if (
-      (nextProps.entryPath && nextProps.shouldReload) ||
-      (nextProps.entryPath && this.state.path !== nextProps.entryPath)
-      /!* (nextProps.openedFiles.length > 0 &&
-        nextProps.openedFiles[0].shouldReload) *!/ // TODO rethink this and not reload all Properties at general !!
-    ) {
-      // eslint-disable-next-line react/destructuring-assignment
-      // this.props.resetState('EntryPropertiesKey'); TODO rethink this
-      this.loadEntryProperties(nextProps.entryPath);
-    }
-
-    if (nextProps.shouldCopyFile) {
-      this.setState({ isMoveCopyFilesDialogOpened: true });
-    }
-  } */
-
-  /* const loadEntryProperties = (entryPath: string) => {
-    getAllPropertiesPromise(entryPath)
-      .then((entryProps: FileSystemEntry) => {
-        setCurrentEntry(entryProps);
-        return true;
-      })
-      .catch(error =>
-        console.warn(
-          'Error getting properties for entry: ' + entryPath + ' - ' + error
-        )
-      );
-  }; */
 
   const renameEntry = () => {
     if (editName !== undefined) {
@@ -401,7 +355,11 @@ const EntryProperties = (props: Props) => {
       props.showNotification(i18n.t('core:needProVersion'));
       return true;
     }
-    if (editName === undefined && editDescription === undefined) {
+    if (
+      !currentEntry.editMode &&
+      editName === undefined &&
+      editDescription === undefined
+    ) {
       setFileThumbChooseDialogOpened(!isFileThumbChooseDialogOpened);
     }
   };
@@ -590,13 +548,13 @@ const EntryProperties = (props: Props) => {
   //   thumbPathUrl = thumbPathUrl.split('\\').join('\\\\');
   // }
 
-  /* const ldtm = currentEntry.lmdt
+  const ldtm = currentEntry.lmdt
     ? new Date(currentEntry.lmdt)
         .toISOString()
         .substring(0, 19)
         .split('T')
         .join(' ')
-    : ''; */
+    : '';
 
   const changePerspective = (event: any) => {
     // console.log(perspective);
@@ -706,38 +664,43 @@ const EntryProperties = (props: Props) => {
                 {i18n.t('core:editTagMasterName')}
               </Typography>
             </div>
-            {!isReadOnlyMode && editDescription === undefined && (
-              <div className={classes.gridItem} style={{ textAlign: 'right' }}>
-                {editName !== undefined ? (
-                  <div>
-                    <Button
-                      color="primary"
-                      className={classes.button}
-                      onClick={toggleEditNameField}
-                    >
-                      {i18n.t('core:cancel')}
-                    </Button>
+            {!isReadOnlyMode &&
+              !currentEntry.editMode &&
+              editDescription === undefined && (
+                <div
+                  className={classes.gridItem}
+                  style={{ textAlign: 'right' }}
+                >
+                  {editName !== undefined ? (
+                    <div>
+                      <Button
+                        color="primary"
+                        className={classes.button}
+                        onClick={toggleEditNameField}
+                      >
+                        {i18n.t('core:cancel')}
+                      </Button>
+                      <Button
+                        color="primary"
+                        // disabled={isEditDescription}
+                        className={classes.button}
+                        onClick={renameEntry}
+                      >
+                        {i18n.t('core:confirmSaveButton')}
+                      </Button>
+                    </div>
+                  ) : (
                     <Button
                       color="primary"
                       // disabled={isEditDescription}
                       className={classes.button}
-                      onClick={renameEntry}
+                      onClick={toggleEditNameField}
                     >
-                      {i18n.t('core:confirmSaveButton')}
+                      {i18n.t('core:rename')}
                     </Button>
-                  </div>
-                ) : (
-                  <Button
-                    color="primary"
-                    // disabled={isEditDescription}
-                    className={classes.button}
-                    onClick={toggleEditNameField}
-                  >
-                    {i18n.t('core:rename')}
-                  </Button>
-                )}
-              </div>
-            )}
+                  )}
+                </div>
+              )}
           </div>
           <FormControl fullWidth={true} className={classes.formControl}>
             <TextField
@@ -751,7 +714,11 @@ const EntryProperties = (props: Props) => {
               defaultValue={fileName} // currentEntry.name}
               inputRef={fileNameRef}
               onClick={() => {
-                if (editName === undefined && editDescription === undefined) {
+                if (
+                  !currentEntry.editMode &&
+                  editName === undefined &&
+                  editDescription === undefined
+                ) {
                   toggleEditNameField();
                 }
               }}
@@ -783,6 +750,7 @@ const EntryProperties = (props: Props) => {
                 placeholderText={i18n.t('core:dropHere')}
                 isReadOnlyMode={
                   isReadOnlyMode ||
+                  currentEntry.editMode ||
                   editDescription !== undefined ||
                   editName !== undefined
                 }
@@ -851,29 +819,34 @@ const EntryProperties = (props: Props) => {
                 {i18n.t('core:filePropertiesDescription')}
               </Typography>
             </div>
-            {!isReadOnlyMode && editName === undefined && (
-              <div className={classes.gridItem} style={{ textAlign: 'right' }}>
-                {editDescription !== undefined && (
+            {!isReadOnlyMode &&
+              !currentEntry.editMode &&
+              editName === undefined && (
+                <div
+                  className={classes.gridItem}
+                  style={{ textAlign: 'right' }}
+                >
+                  {editDescription !== undefined && (
+                    <Button
+                      color="primary"
+                      className={classes.button}
+                      onClick={() => setEditDescription(undefined)}
+                    >
+                      {i18n.t('core:cancel')}
+                    </Button>
+                  )}
                   <Button
                     color="primary"
+                    // disabled={isEditName}
                     className={classes.button}
-                    onClick={() => setEditDescription(undefined)}
+                    onClick={toggleEditDescriptionField}
                   >
-                    {i18n.t('core:cancel')}
+                    {editDescription !== undefined
+                      ? i18n.t('core:confirmSaveButton')
+                      : i18n.t('core:edit')}
                   </Button>
-                )}
-                <Button
-                  color="primary"
-                  // disabled={isEditName}
-                  className={classes.button}
-                  onClick={toggleEditDescriptionField}
-                >
-                  {editDescription !== undefined
-                    ? i18n.t('core:confirmSaveButton')
-                    : i18n.t('core:edit')}
-                </Button>
-              </div>
-            )}
+                </div>
+              )}
           </div>
           <FormControl fullWidth={true} className={classes.formControl}>
             {editDescription !== undefined ? (
@@ -917,7 +890,7 @@ const EntryProperties = (props: Props) => {
                     : i18n.t('core:addDescription')
                 }}
                 onClick={() => {
-                  if (editName === undefined) {
+                  if (!currentEntry.editMode && editName === undefined) {
                     toggleEditDescriptionField();
                   }
                 }}
@@ -939,20 +912,20 @@ const EntryProperties = (props: Props) => {
               >
                 {i18n.t('core:fileLDTM')}
                 <br />
-                {/* <strong>{ldtm}</strong> */}
+                <strong>{ldtm}</strong>
               </Typography>
               {/* <FormControl fullWidth={true} className={classes.formControl}>
-                  <TextField
-                    InputProps={{
-                      readOnly: true
-                    }}
-                    margin="dense"
-                    name="ldtm"
-                    fullWidth={true}
-                    data-tid="fileLdtmProperties"
-                    value={ldtm}
-                  />
-                </FormControl> */}
+                <TextField
+                  InputProps={{
+                    readOnly: true
+                  }}
+                  margin="dense"
+                  name="ldtm"
+                  fullWidth={true}
+                  data-tid="fileLdtmProperties"
+                  value={ldtm}
+                />
+              </FormControl> */}
             </div>
 
             {currentEntry.isFile ? (
@@ -964,24 +937,24 @@ const EntryProperties = (props: Props) => {
                 >
                   {i18n.t('core:fileSize')}
                   <br />
-                  {/* <strong>{formatFileSize(currentEntry.size)}</strong> */}
+                  <strong>{formatFileSize(currentEntry.size)}</strong>
                 </Typography>
                 {/* <FormControl
+                  fullWidth={true}
+                  className={classes.formControl}
+                  title={currentEntry.size + ' bytes'}
+                >
+                  <TextField
+                    margin="dense"
+                    name="size"
+                    InputProps={{
+                      readOnly: true
+                    }}
                     fullWidth={true}
-                    className={classes.formControl}
-                    title={size + ' bytes'}
-                  >
-                    <TextField
-                      margin="dense"
-                      name="size"
-                      InputProps={{
-                        readOnly: true
-                      }}
-                      fullWidth={true}
-                      data-tid="fileSizeProperties"
-                      value={formatFileSize(size)}
-                    />
-                  </FormControl> */}
+                    data-tid="fileSizeProperties"
+                    value={formatFileSize(currentEntry.size)}
+                  />
+                </FormControl> */}
               </div>
             ) : (
               <div className={classes.gridItem} style={{ width: '50%' }}>
@@ -1054,6 +1027,7 @@ const EntryProperties = (props: Props) => {
             </div>
             {currentEntry.isFile &&
               !isReadOnlyMode &&
+              !currentEntry.editMode &&
               editName === undefined &&
               editDescription === undefined && (
                 <Button
@@ -1140,6 +1114,7 @@ const EntryProperties = (props: Props) => {
               </Typography>
             </div>
             {!isReadOnlyMode &&
+              !currentEntry.editMode &&
               editName === undefined &&
               editDescription === undefined && (
                 <Button
