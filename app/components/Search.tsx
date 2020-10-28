@@ -567,6 +567,7 @@ class Search extends React.Component<Props, State> {
               tags={this.state.tagsAND}
               handleChange={this.handleTagFieldChange}
               tagSearchType="tagsAND"
+              tagMode="remove"
             />
           </FormControl>
           <FormControl className={classes.formControl} disabled={indexing}>
@@ -576,6 +577,7 @@ class Search extends React.Component<Props, State> {
               label={i18n.t('core:atLeastOneOfTheseTags')}
               handleChange={this.handleTagFieldChange}
               tagSearchType="tagsOR"
+              tagMode="remove"
             />
           </FormControl>
           <FormControl className={classes.formControl} disabled={indexing}>
@@ -585,6 +587,7 @@ class Search extends React.Component<Props, State> {
               label={i18n.t('core:noneOfTheseTags')}
               handleChange={this.handleTagFieldChange}
               tagSearchType="tagsNOT"
+              tagMode="remove"
             />
           </FormControl>
           <FormControl

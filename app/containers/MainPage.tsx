@@ -91,6 +91,7 @@ import { CustomDragLayer } from '-/components/CustomDragLayer';
 import IOActions from '-/reducers/io-actions';
 import FileUploadDialog from '-/components/dialogs/FileUploadDialog';
 import ProgressDialog from '-/components/dialogs/ProgressDialog';
+import { FileSystemEntry } from '-/services/utils-io';
 
 const initialSplitSize = 44;
 const drawerWidth = 300;
@@ -184,7 +185,7 @@ interface Props {
   toggleAboutDialog: () => void; // needed by electron-menus
   toggleOnboardingDialog: () => void; // needed by electron-menus
   setLastSelectedEntry: (path: string) => void; // needed by electron-menus
-  // openFile: (path: string) => void; // needed by electron-menus
+  openFsEntry: (fsEntry: FileSystemEntry) => void; // needed by electron-menus
   openFileNatively: (url: string) => void; // needed by electron-menus
   openURLExternally: (url: string) => void;
   getNextFile: () => void; // needed by electron-menus
@@ -1003,7 +1004,7 @@ function mapDispatchToProps(dispatch) {
       toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
       setLastSelectedEntry: AppActions.setLastSelectedEntry,
       setGeneratingThumbnails: AppActions.setGeneratingThumbnails,
-      openFile: AppActions.openFile,
+      openFsEntry: AppActions.openFsEntry,
       openFileNatively: AppActions.openFileNatively,
       openURLExternally: AppActions.openURLExternally,
       setEntryFullWidth: AppActions.setEntryFullWidth,

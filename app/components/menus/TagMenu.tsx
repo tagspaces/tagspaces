@@ -28,7 +28,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ConfirmDialog from '../dialogs/ConfirmDialog';
 import EditTagDialog from '../dialogs/EditTagDialog';
-import { Tag, TagGroup } from '-/reducers/taglibrary';
+import { Tag, TagGroup, Uuid } from '-/reducers/taglibrary';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import i18n from '-/services/i18n';
 import { SearchQuery } from '-/services/search';
@@ -44,9 +44,9 @@ interface Props {
   onClose: () => void;
   selectedTag?: Tag;
   selectedTagGroupEntry?: TagGroup;
-  deleteTag: (uuid: string, tagGroupUuid: string) => void;
   searchLocationIndex: (searchQuery: SearchQuery) => void;
-  editTag: () => void;
+  editTag: (tag: Tag, parentTagGroupUuid: Uuid, origTitle: string) => void;
+  deleteTag: (tagTitle: string, parentTagGroupUuid: Uuid) => void;
   openSearchPanel: () => void;
   maxSearchResults: number;
 }

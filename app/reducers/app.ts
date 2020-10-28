@@ -26,7 +26,9 @@ import {
   loadMetaDataPromise,
   renameFilesPromise,
   enhanceDirectoryContent,
-  FileSystemEntryMeta
+  FileSystemEntryMeta,
+  FileSystemEntry,
+  getAllPropertiesPromise
 } from '-/services/utils-io';
 import {
   extractFileExtension,
@@ -117,6 +119,8 @@ export const NotificationTypes = {
 export type OpenedEntry = {
   path: string;
   url?: string;
+  size: number;
+  lmdt: number;
   viewingExtensionPath: string;
   viewingExtensionId: string;
   editingExtensionPath?: string;
@@ -127,6 +131,11 @@ export type OpenedEntry = {
   perspective?: string;
   editMode?: boolean;
   changed?: boolean;
+  /**
+   * if its true iframe will be reloaded
+   * if its false && editMode==true and changed==true => show reload dialog
+   * default: undefined
+   */
   shouldReload?: boolean;
   focused?: boolean; // TODO make it mandatory once support for multiple files is added
   tags?: Array<Tag>;
@@ -502,8 +511,8 @@ export default (state: any = initialState, action: any) => {
           }
           return {
             ...entry,
-            path: action.newPath, // TODO handle change extension case
-            shouldReload: true
+            path: action.newPath // TODO handle change extension case
+            // shouldReload: true
           };
         })
       };
@@ -542,13 +551,22 @@ export default (state: any = initialState, action: any) => {
             return entry;
           }
           if (action.entry.tags && action.entry.tags.length > 0) {
+            /* const tags = [...entry.tags]; // .filter(tag => tag.type === 'plain')];
+            action.entry.tags.map(tag => {
+              if (!entry.tags.some(oldTag => oldTag.title === tag.title)) {
+                tags.push(tag);
+              }
+              return true;
+            }); */
+
             return {
               ...entry,
-              ...action.entry,
-              tags: [
+              ...action.entry
+              // tags
+              /* tags: [
                 ...entry.tags.filter(tag => tag.type === 'plain'),
                 ...action.entry.tags
-              ]
+              ] */
             };
           }
           return {
@@ -582,6 +600,7 @@ export default (state: any = initialState, action: any) => {
       };
     }
     case types.CLOSE_ALL_FILES: {
+      // eslint-disable-next-line no-restricted-globals
       window.history.pushState('', 'TagSpaces', location.pathname);
       return {
         ...state,
@@ -1041,7 +1060,19 @@ export const actions = {
               true
             )
           );
-          dispatch(actions.openFile(filePath));
+          getAllPropertiesPromise(filePath)
+            .then((fsEntry: FileSystemEntry) => {
+              dispatch(actions.openFsEntry(fsEntry)); // TODO return fsEntry from saveFilePromise and simplify
+              return true;
+            })
+            .catch(error =>
+              console.warn(
+                'Error getting properties for entry: ' +
+                  filePath +
+                  ' - ' +
+                  error
+              )
+            );
           // TODO select file // dispatch(actions.setLastSelectedEntry(filePath));
           return true;
         })
@@ -1087,7 +1118,16 @@ export const actions = {
     PlatformIO.saveFilePromise(filePath, fileContent, true)
       .then(() => {
         dispatch(actions.reflectCreateEntry(filePath, true));
-        dispatch(actions.openFile(filePath, true, true));
+        getAllPropertiesPromise(filePath)
+          .then((fsEntry: FileSystemEntry) => {
+            dispatch(actions.openFsEntry(fsEntry)); // TODO return fsEntry from saveFilePromise and simplify
+            return true;
+          })
+          .catch(error =>
+            console.warn(
+              'Error getting properties for entry: ' + filePath + ' - ' + error
+            )
+          );
         dispatch(actions.setLastSelectedEntry(filePath));
         dispatch(
           actions.showNotification(
@@ -1238,33 +1278,128 @@ export const actions = {
   }),
   updateOpenedFile: (
     entryPath: string,
-    fsEntryMeta: FileSystemEntryMeta,
-    isFile: boolean = true
+    fsEntryMeta: any // FileSystemEntryMeta,
+    // isFile: boolean = true
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
+    PlatformIO.getPropertiesPromise(entryPath)
+      .then(entryProps => {
+        if (entryProps) {
+          const { supportedFileTypes } = getState().settings;
+          const { openedFiles } = getState().app;
+          let entryForOpening: OpenedEntry;
+          if (openedFiles && openedFiles.length > 0) {
+            entryForOpening = openedFiles.find(obj => obj.path === entryPath);
+          }
+          if (!entryForOpening) {
+            entryForOpening = findExtensionsForEntry(
+              supportedFileTypes,
+              entryPath,
+              entryProps.isFile
+            );
+          }
+
+          if (fsEntryMeta.changed !== undefined) {
+            entryForOpening.changed = fsEntryMeta.changed;
+          } /* else {
+            entryForOpening.changed = true;
+          } */
+          if (fsEntryMeta.editMode !== undefined) {
+            entryForOpening.editMode = fsEntryMeta.editMode;
+          }
+          if (fsEntryMeta.shouldReload !== undefined) {
+            entryForOpening.shouldReload = fsEntryMeta.shouldReload;
+          }
+          if (fsEntryMeta.color) {
+            entryForOpening.color = fsEntryMeta.color;
+          }
+          if (fsEntryMeta.description) {
+            entryForOpening.description = fsEntryMeta.description;
+          }
+          if (fsEntryMeta.perspective) {
+            entryForOpening.perspective = fsEntryMeta.perspective;
+          }
+          if (fsEntryMeta.tags) {
+            entryForOpening.tags = fsEntryMeta.tags;
+          }
+          dispatch(actions.addToEntryContainer(entryForOpening));
+        }
+        return true;
+      })
+      .catch(err => {
+        console.error('updateOpenedFile ' + entryPath + ' not exist ' + err);
+      });
+  },
+  openFsEntry: (fsEntry: FileSystemEntry) => (
+    dispatch: (actions: Object) => void,
+    getState: () => any
+  ) => {
+    let entryForOpening: OpenedEntry;
+    const { openedFiles } = getState().app;
+    /**
+     * check for editMode in order to show save changes dialog (shouldReload: false)
+     */
+    if (openedFiles.length > 0) {
+      const openFile = openedFiles[0];
+      if (openFile.editMode && openFile.changed) {
+        entryForOpening = { ...openFile, shouldReload: false };
+        dispatch(actions.addToEntryContainer(entryForOpening));
+        return false;
+      }
+    }
+
     const { supportedFileTypes } = getState().settings;
-    const entryForOpening: OpenedEntry = findExtensionsForEntry(
+    // TODO decide to copy all props from {...fsEntry} into openedEntry
+    entryForOpening = findExtensionsForEntry(
       supportedFileTypes,
-      entryPath,
-      isFile
+      fsEntry.path,
+      fsEntry.isFile
     );
-    if (fsEntryMeta.color) {
-      entryForOpening.color = fsEntryMeta.color;
+    if (fsEntry.url) {
+      entryForOpening.url = fsEntry.url;
     }
-    if (fsEntryMeta.description) {
-      entryForOpening.description = fsEntryMeta.description;
+    if (fsEntry.perspective) {
+      entryForOpening.perspective = fsEntry.perspective;
     }
-    if (fsEntryMeta.perspective) {
-      entryForOpening.perspective = fsEntryMeta.perspective;
+    if (fsEntry.description) {
+      entryForOpening.description = fsEntry.description;
     }
+    if (fsEntry.tags) {
+      entryForOpening.tags = fsEntry.tags;
+    }
+    if (fsEntry.lmdt) {
+      entryForOpening.lmdt = fsEntry.lmdt;
+    }
+    if (fsEntry.size) {
+      entryForOpening.size = fsEntry.size;
+    }
+    const localePar = getURLParameter(fsEntry.path);
+    let startPar = '?open=' + encodeURIComponent(fsEntry.path);
+    if (localePar && localePar.length > 1) {
+      startPar += '&locale=' + localePar;
+    }
+    // eslint-disable-next-line no-restricted-globals
+    window.history.pushState('', 'TagSpaces', location.pathname + startPar);
+
     dispatch(actions.addToEntryContainer(entryForOpening));
   },
-  openFile: (
+  /* openFile: (
     entryPath: string,
     isFile: boolean = true,
     editMode: boolean = false
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
+    let entryForOpening: OpenedEntry;
+    const { openedFiles } = getState().app;
+    // check for editMode
+    if (openedFiles.length > 0) {
+      const openFile = openedFiles[0];
+      if (openFile.editMode && openFile.changed) {
+        entryForOpening = { ...openFile, shouldReload: false };
+        dispatch(actions.addToEntryContainer(entryForOpening));
+        return false;
+      }
+    }
     const { supportedFileTypes } = getState().settings;
-    const entryForOpening: OpenedEntry = findExtensionsForEntry(
+    entryForOpening = findExtensionsForEntry(
       supportedFileTypes,
       entryPath,
       isFile
@@ -1280,6 +1415,12 @@ export const actions = {
       if (currentEntry.perspective) {
         entryForOpening.perspective = currentEntry.perspective;
       }
+      if (currentEntry.description) {
+        entryForOpening.description = currentEntry.description;
+      }
+      if (currentEntry.tags) {
+        entryForOpening.tags = currentEntry.tags;
+      }
     }
     if (
       editMode &&
@@ -1293,10 +1434,11 @@ export const actions = {
     if (localePar && localePar.length > 1) {
       startPar += '&locale=' + localePar;
     }
+    // eslint-disable-next-line no-restricted-globals
     window.history.pushState('', 'TagSpaces', location.pathname + startPar);
 
     dispatch(actions.addToEntryContainer(entryForOpening));
-  },
+  }, */
   toggleEntryFullWidth: () => ({
     type: types.TOGGLE_ENTRY_FULLWIDTH
   }),
@@ -1501,7 +1643,7 @@ export const actions = {
   ) =>
     PlatformIO.renameFilePromise(filePath, newFilePath)
       .then(() => {
-        // console.log('File renamed ' + filePath + ' to ' + newFilePath);
+        console.info('File renamed ' + filePath + ' to ' + newFilePath);
         dispatch(
           actions.showNotification(
             i18n.t('core:renamingSuccessfully'),
@@ -1509,6 +1651,7 @@ export const actions = {
             true
           )
         );
+        dispatch(actions.reflectRenameEntry(filePath, newFilePath));
         // Update sidecar file and thumb
         renameFilesPromise([
           [
@@ -1527,15 +1670,23 @@ export const actions = {
           ]
         ])
           .then(() => {
-            console.log(
-              'Renaming meta file and thumb successful for ' + filePath
+            console.info(
+              'Renaming meta file and thumb successful from ' +
+                filePath +
+                ' to:' +
+                newFilePath
             );
-            dispatch(actions.reflectRenameEntry(filePath, newFilePath));
             return true;
           })
           .catch(err => {
-            dispatch(actions.reflectRenameEntry(filePath, newFilePath));
-            console.warn('Renaming meta file and thumb failed with ' + err);
+            console.warn(
+              'Renaming meta file and thumb failed from ' +
+                filePath +
+                ' to:' +
+                newFilePath +
+                ' with ' +
+                err
+            );
           });
         return true;
       })
@@ -1681,7 +1832,9 @@ function findExtensionsForEntry(
     viewingExtensionPath,
     viewingExtensionId: '',
     isFile,
-    changed: false
+    changed: false,
+    lmdt: 0,
+    size: 0
   };
   supportedFileTypes.map(fileType => {
     if (fileType.viewer && fileType.type.toLowerCase() === fileExtension) {

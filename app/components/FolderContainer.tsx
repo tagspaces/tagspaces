@@ -51,7 +51,11 @@ import PlatformIO from '../services/platform-io';
 import LoadingLazy from '../components/LoadingLazy';
 import { Pro } from '../pro';
 import { savePerspective } from '-/utils/metaoperations';
-import { FileSystemEntryMeta } from '-/services/utils-io';
+import {
+  enhanceOpenedEntry,
+  FileSystemEntry,
+  FileSystemEntryMeta
+} from '-/services/utils-io';
 
 const GridPerspective = React.lazy(() =>
   import(
@@ -189,6 +193,7 @@ const styles: any = (theme: any) => ({
 
 interface Props {
   classes: any;
+  settings: any;
   theme: any;
   windowHeight: number;
   windowWidth: number;
@@ -205,7 +210,7 @@ interface Props {
   renameFile: () => void;
   openDirectory: () => void;
   showInFileManager: () => void;
-  openFile: (path: string) => void;
+  openFsEntry: (fsEntry: FileSystemEntry) => void;
   deleteDirectory: (path: string) => void;
   reflectCreateEntry: (path: string, isFile: boolean) => void;
   loadDirectoryContent: (path: string) => void;
@@ -246,9 +251,12 @@ const FolderContainer = (props: Props) => {
         if (openedFile.perspective) {
           props.setCurrentDirectoryPerspective(openedFile.perspective);
         }
-      } else {
-        // TODO check if file is loaded
-        props.updateCurrentDirEntry(openedFile.path, openedFile);
+      } else if (openedFile.changed) {
+        const currentEntry = enhanceOpenedEntry(
+          openedFile,
+          props.settings.tagDelimiter
+        );
+        props.updateCurrentDirEntry(openedFile.path, currentEntry);
       }
     }
   }, [props.openedFiles]);
@@ -338,6 +346,7 @@ const FolderContainer = (props: Props) => {
       return (
         <GalleryPerspectiveAsync
           directoryContent={props.directoryContent}
+          openFsEntry={props.openFsEntry}
           currentDirectoryPath={props.currentDirectoryPath}
           windowWidth={props.windowWidth}
           switchPerspective={switchPerspective}
@@ -381,7 +390,7 @@ const FolderContainer = (props: Props) => {
         <KanBanPerspectiveAsync
           directoryContent={props.directoryContent}
           loadDirectoryContent={props.loadDirectoryContent}
-          openFile={props.openFile}
+          openFsEntry={props.openFsEntry}
           loadParentDirectoryContent={props.loadParentDirectoryContent}
           deleteFile={props.deleteFile}
           renameFile={props.renameFile}
@@ -404,7 +413,7 @@ const FolderContainer = (props: Props) => {
       <GridPerspectiveAsync
         directoryContent={props.directoryContent}
         loadDirectoryContent={props.loadDirectoryContent}
-        openFile={props.openFile}
+        openFsEntry={props.openFsEntry}
         loadParentDirectoryContent={props.loadParentDirectoryContent}
         deleteFile={props.deleteFile}
         renameFile={props.renameFile}
@@ -535,7 +544,7 @@ const FolderContainer = (props: Props) => {
                     loadDirectoryContent={props.loadDirectoryContent}
                     openDirectory={props.openDirectory}
                     reflectCreateEntry={props.reflectCreateEntry}
-                    openFile={props.openFile}
+                    openFsEntry={props.openFsEntry}
                     toggleCreateFileDialog={props.toggleCreateFileDialog}
                     deleteDirectory={props.deleteDirectory}
                     switchPerspective={switchPerspective}
@@ -559,6 +568,7 @@ const FolderContainer = (props: Props) => {
 
 function mapStateToProps(state) {
   return {
+    settings: state.settings,
     lastSelectedEntry: getLastSelectedEntry(state),
     perspectives: getPerspectives(state),
     directoryContent: getDirectoryContent(state),
@@ -586,7 +596,7 @@ function mapActionCreatorsToProps(dispatch) {
       getPrevFile: AppActions.getPrevFile,
       openDirectory: AppActions.openDirectory,
       showInFileManager: AppActions.showInFileManager,
-      openFile: AppActions.openFile,
+      openFsEntry: AppActions.openFsEntry,
       deleteDirectory: AppActions.deleteDirectory,
       reflectCreateEntry: AppActions.reflectCreateEntry,
       loadDirectoryContent: AppActions.loadDirectoryContent,

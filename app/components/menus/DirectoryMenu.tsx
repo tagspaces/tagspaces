@@ -35,7 +35,7 @@ import DefaultPerspectiveIcon from '@material-ui/icons/GridOn';
 import GalleryPerspectiveIcon from '@material-ui/icons/Camera';
 import MapiquePerspectiveIcon from '@material-ui/icons/Map';
 // import TreeVizPerspectiveIcon from '@material-ui/icons/AccountTree';
-import KanBanPerspectiveIcon from '@material-ui/icons/Dashboard';
+// import KanBanPerspectiveIcon from '@material-ui/icons/Dashboard';
 import NewFileIcon from '@material-ui/icons/InsertDriveFile';
 import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import RenameFolderIcon from '@material-ui/icons/FormatTextdirectionLToR';
@@ -59,6 +59,7 @@ import { actions as AppActions, perspectives } from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
 import { Tag } from '-/reducers/taglibrary';
 import TaggingActions from '-/reducers/tagging-actions';
+import { FileSystemEntry, getAllPropertiesPromise } from '-/services/utils-io';
 
 interface Props {
   open: boolean;
@@ -68,7 +69,7 @@ interface Props {
   directoryPath: string;
   loadDirectoryContent: (path: string) => void;
   openDirectory: (path: string) => void;
-  openFile: (path: string, isFile: boolean) => void;
+  openFsEntry: (fsEntry: FileSystemEntry) => void;
   deleteDirectory: (path: string) => void;
   reflectCreateEntry?: (path: string, isFile: boolean) => void;
   toggleCreateFileDialog?: () => void;
@@ -125,7 +126,19 @@ const DirectoryMenu = (props: Props) => {
 
   function showProperties() {
     props.onClose();
-    props.openFile(props.directoryPath, false);
+    getAllPropertiesPromise(props.directoryPath)
+      .then((fsEntry: FileSystemEntry) => {
+        props.openFsEntry(fsEntry);
+        return true;
+      })
+      .catch(error =>
+        console.warn(
+          'Error getting properties for entry: ' +
+            props.directoryPath +
+            ' - ' +
+            error
+        )
+      );
   }
 
   // function initContentExtraction() {

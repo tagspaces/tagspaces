@@ -73,6 +73,7 @@ import DragItemTypes from './DragItemTypes';
 import IOActions from '../reducers/io-actions';
 import DirectoryTreeView from '-/components/DirectoryTreeView';
 import LoadingLazy from '-/components/LoadingLazy';
+import { FileSystemEntry } from '-/services/utils-io';
 
 const isLocationsReadOnly = window.ExtLocationsReadOnly;
 
@@ -105,7 +106,7 @@ interface Props {
   currentLocationId: string;
   isReadOnlyMode: boolean;
   hideDrawer: () => void;
-  openFile: (path: string) => void;
+  openFsEntry: (fsEntry: FileSystemEntry) => void;
   openURLExternally: (path: string) => void;
   loadDirectoryContent: (path: string) => void;
   openLocation: (location: Location) => void;
@@ -793,7 +794,7 @@ class LocationManager extends React.Component<Props, State> {
           directoryPath={this.state.selectedDirectoryPath}
           loadDirectoryContent={this.props.loadDirectoryContent}
           openDirectory={this.props.openDirectory}
-          openFile={this.props.openFile}
+          openFsEntry={this.props.openFsEntry}
           reflectCreateEntry={this.props.reflectCreateEntry}
           deleteDirectory={this.props.deleteDirectory}
           classes={this.props.classes}
@@ -829,7 +830,7 @@ function mapDispatchToProps(dispatch) {
       openDirectory: AppActions.openDirectory,
       showInFileManager: AppActions.showInFileManager,
       openFileNatively: AppActions.openFileNatively,
-      openFile: AppActions.openFile,
+      openFsEntry: AppActions.openFsEntry,
       showNotification: AppActions.showNotification,
       moveFiles: IOActions.moveFiles,
       uploadFiles: IOActions.uploadFiles,

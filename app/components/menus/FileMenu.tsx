@@ -32,6 +32,7 @@ import DeleteForever from '@material-ui/icons/DeleteForever';
 import i18n from '-/services/i18n';
 import AppConfig from '-/config';
 import PlatformIO from '-/services/platform-io';
+import { FileSystemEntry, getAllPropertiesPromise } from '-/services/utils-io';
 
 interface Props {
   anchorEl: Element;
@@ -41,7 +42,7 @@ interface Props {
   openRenameFileDialog: () => void;
   openMoveCopyFilesDialog: () => void;
   openAddRemoveTagsDialog: () => void;
-  openFile: (path: string, isFile: boolean) => void;
+  openFsEntry: (fsEntry: FileSystemEntry) => void;
   openFileNatively: (path: string) => void;
   showInFileManager: (path: string) => void;
   selectedFilePath?: string;
@@ -86,7 +87,19 @@ const FileMenu = (props: Props) => {
   function openFile() {
     props.onClose();
     if (props.selectedFilePath) {
-      props.openFile(props.selectedFilePath, true);
+      getAllPropertiesPromise(props.selectedFilePath)
+        .then((fsEntry: FileSystemEntry) => {
+          props.openFsEntry(fsEntry);
+          return true;
+        })
+        .catch(error =>
+          console.warn(
+            'Error getting properties for entry: ' +
+              props.selectedFilePath +
+              ' - ' +
+              error
+          )
+        );
     }
   }
 

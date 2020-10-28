@@ -29,10 +29,11 @@ import {
   isGlobalKeyBindingEnabled,
   isFirstRun
 } from '../reducers/settings';
-import { getDefaultLocationId } from '../reducers/locations';
+import { getDefaultLocationId } from '-/reducers/locations';
 import PlatformIO from '../services/platform-io';
 // import MainPage from './MainPage';
-import { getURLParameter } from '../utils/misc';
+import { getURLParameter } from '-/utils/misc';
+import { FileSystemEntry, getAllPropertiesPromise } from '-/services/utils-io';
 
 type RootType = {
   store: {};
@@ -68,7 +69,17 @@ function onBeforeLift(store) {
   if (openParam && openParam.length > 1) {
     // dispatch toggle full width
     setTimeout(() => {
-      store.dispatch(AppActions.openFile(decodeURIComponent(openParam)));
+      getAllPropertiesPromise(decodeURIComponent(openParam))
+        .then((fsEntry: FileSystemEntry) => {
+          store.dispatch(AppActions.openFsEntry(fsEntry));
+          return true;
+        })
+        .catch(error =>
+          console.warn(
+            'Error getting properties for entry: ' + openParam + ' - ' + error
+          )
+        );
+      // store.dispatch(AppActions.openFile(decodeURIComponent(openParam)));
       store.dispatch(AppActions.setEntryFullWidth(true));
     }, 1000);
   }

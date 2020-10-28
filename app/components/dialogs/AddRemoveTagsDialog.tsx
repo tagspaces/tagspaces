@@ -139,6 +139,7 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
             placeholderText={i18n.t('core:selectTags')}
             tags={newlyAddedTags}
             handleChange={this.handleChange}
+            tagMode="remove"
           />
           <List dense style={{ width: 550 }}>
             {selectedEntries.length > 0 &&
