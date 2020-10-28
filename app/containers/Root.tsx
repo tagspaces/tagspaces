@@ -33,7 +33,7 @@ import { getDefaultLocationId } from '-/reducers/locations';
 import PlatformIO from '../services/platform-io';
 // import MainPage from './MainPage';
 import { getURLParameter } from '-/utils/misc';
-import {FileSystemEntry, getAllPropertiesPromise} from "-/services/utils-io";
+import { FileSystemEntry, getAllPropertiesPromise } from '-/services/utils-io';
 
 type RootType = {
   store: {};
@@ -70,18 +70,15 @@ function onBeforeLift(store) {
     // dispatch toggle full width
     setTimeout(() => {
       getAllPropertiesPromise(decodeURIComponent(openParam))
-          .then((fsEntry: FileSystemEntry) => {
-            store.dispatch(AppActions.openFsEntry(fsEntry));
-            return true;
-          })
-          .catch(error =>
-              console.warn(
-                  'Error getting properties for entry: ' +
-                  openParam +
-                  ' - ' +
-                  error
-              )
-          );
+        .then((fsEntry: FileSystemEntry) => {
+          store.dispatch(AppActions.openFsEntry(fsEntry));
+          return true;
+        })
+        .catch(error =>
+          console.warn(
+            'Error getting properties for entry: ' + openParam + ' - ' + error
+          )
+        );
       // store.dispatch(AppActions.openFile(decodeURIComponent(openParam)));
       store.dispatch(AppActions.setEntryFullWidth(true));
     }, 1000);

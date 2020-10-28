@@ -106,10 +106,7 @@ const CellContent = (props: Props) => {
   tagTitles = tagTitles.substring(0, tagTitles.length - 2);
   const tagPlaceholder =
     tagTitles.length > 0 ? (
-      <IconButton
-        title={tagTitles}
-        onClick={() => openFsEntry(fsEntry)}
-      >
+      <IconButton title={tagTitles} onClick={() => openFsEntry(fsEntry)}>
         <TagIcon />
       </IconButton>
     ) : null;

@@ -91,7 +91,7 @@ import { CustomDragLayer } from '-/components/CustomDragLayer';
 import IOActions from '-/reducers/io-actions';
 import FileUploadDialog from '-/components/dialogs/FileUploadDialog';
 import ProgressDialog from '-/components/dialogs/ProgressDialog';
-import {FileSystemEntry} from "-/services/utils-io";
+import { FileSystemEntry } from '-/services/utils-io';
 
 const initialSplitSize = 44;
 const drawerWidth = 300;
