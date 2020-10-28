@@ -107,4 +107,24 @@ describe('TST01 - Folder management [electron]', () => {
     await createNewDirectory();
     await delay(500);
   });
+
+  it('TST51** - Return directory back [generate_thumbnail_URL,electron]', async () => {
+    const file = await global.client.$(
+      '//*[@data-tid="perspectiveGridFileTable"]/span'
+    );
+    expect(await file.isDisplayed()).toBe(true);
+    //Open folder
+    const folder = await global.client.$(
+      '//*[@data-tid="perspectiveGridFileTable"]/div'
+    );
+
+    await folder.doubleClick();
+    expect(await file.isDisplayed()).toBe(false);
+    const backButton = await global.client.$(
+      '[data-tid=gridPerspectiveOnBackButton]'
+    );
+    await backButton.click();
+    await delay(500);
+    expect(await file.isDisplayed()).toBe(true);
+  });
 });
