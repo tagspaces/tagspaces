@@ -108,7 +108,7 @@ describe('TST01 - Folder management [electron]', () => {
     await delay(500);
   });
 
-  it('TST51** - Return directory back [generate_thumbnail_URL,electron]', async () => {
+  it('TST51** - Return directory back [electron]', async () => {
     const file = await global.client.$(
       '//*[@data-tid="perspectiveGridFileTable"]/span'
     );
