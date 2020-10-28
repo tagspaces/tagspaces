@@ -512,7 +512,7 @@ export default (state: any = initialState, action: any) => {
           return {
             ...entry,
             path: action.newPath, // TODO handle change extension case
-            shouldReload: true
+            // shouldReload: true
           };
         })
       };
@@ -1664,7 +1664,7 @@ export const actions = {
   ) =>
     PlatformIO.renameFilePromise(filePath, newFilePath)
       .then(() => {
-        // console.log('File renamed ' + filePath + ' to ' + newFilePath);
+        console.info('File renamed ' + filePath + ' to ' + newFilePath);
         dispatch(
           actions.showNotification(
             i18n.t('core:renamingSuccessfully'),
@@ -1672,6 +1672,7 @@ export const actions = {
             true
           )
         );
+        dispatch(actions.reflectRenameEntry(filePath, newFilePath));
         // Update sidecar file and thumb
         renameFilesPromise([
           [
@@ -1690,15 +1691,23 @@ export const actions = {
           ]
         ])
           .then(() => {
-            console.log(
-              'Renaming meta file and thumb successful for ' + filePath
+            console.info(
+              'Renaming meta file and thumb successful from ' +
+                filePath +
+                ' to:' +
+                newFilePath
             );
-            dispatch(actions.reflectRenameEntry(filePath, newFilePath));
             return true;
           })
           .catch(err => {
-            dispatch(actions.reflectRenameEntry(filePath, newFilePath));
-            console.warn('Renaming meta file and thumb failed with ' + err);
+            console.warn(
+              'Renaming meta file and thumb failed from ' +
+                filePath +
+                ' to:' +
+                newFilePath +
+                ' with ' +
+                err
+            );
           });
         return true;
       })
