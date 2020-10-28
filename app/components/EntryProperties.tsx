@@ -52,7 +52,6 @@ import {
 } from 'react-leaflet';
 import OpenLocationCode from 'open-location-code-typescript';
 import TagDropContainer from './TagDropContainer';
-// import EntryTagMenu from './menus/EntryTagMenu';
 import ColorPickerDialog from './dialogs/ColorPickerDialog';
 import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
 import i18n from '../services/i18n';
@@ -62,8 +61,7 @@ import {
   extractContainingDirectoryPath,
   getThumbFileLocationForFile,
   getThumbFileLocationForDirectory,
-  extractFileName,
-  extractTagsAsObjects
+  extractFileName
 } from '-/utils/paths';
 import AppConfig from '../config';
 import { Pro } from '../pro';
@@ -89,14 +87,13 @@ const styles: any = (theme: any) => ({
     overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
     overflowX: 'hidden',
     flexGrow: 1,
-    // padding: 10,
+    padding: 7,
     height: '100%'
   },
   tags: {
     padding: '5px 5px 2px 2px',
     margin: 6,
     clear: 'both',
-    // border: '1px dashed rgba(0,0,0,0.75)',
     boxShadow: '0 1px 1px 0 rgba(0,0,0,0.16),0 1px 1px 0 rgba(239,239,239,0.12)'
   },
   editTagsButton: {
@@ -185,25 +182,15 @@ interface Props {
   classes: any;
   theme: any;
   openedEntry: OpenedEntry;
-  // entryPath: string;
-  // perspective: string;
-  // entryURL: string;
-  // shouldReload: boolean | null;
-  // shouldCopyFile: boolean;
-  // editTagForEntry: () => void;
   renameFile: (path: string, nextPath: string) => void;
   renameDirectory: (path: string, nextPath: string) => void;
-  // normalizeShouldCopyFile: () => void;
   showNotification: (message: string) => void;
   updateOpenedFile: (entryPath: string, fsEntryMeta: any) => void;
-  // reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
   updateThumbnailUrl: (path: string, thumbUrl: string) => void;
   addTags: (paths: Array<string>, tags: Array<Tag>) => void;
   removeTags: (paths: Array<string>, tags: Array<Tag>) => void;
   removeAllTags: (paths: Array<string>) => void;
-  // resetState: (stateName: string) => void;
   isReadOnlyMode: boolean;
-  // setPropertiesEditMode: (editMode: boolean) => void;
   currentDirectoryPath: string | null;
   tagDelimiter: string;
 }
@@ -527,7 +514,6 @@ const EntryProperties = (props: Props) => {
   }
 
   let thumbPath; // { thumbPath } = currentEntry;
-  // if (!thumbPath) {
   if (currentEntry.isFile) {
     thumbPath = getThumbFileLocationForFile(
       currentEntry.path,
@@ -539,7 +525,6 @@ const EntryProperties = (props: Props) => {
       PlatformIO.getDirSeparator()
     );
   }
-  //  }
   const thumbPathUrl = thumbPath
     ? 'url("' + thumbPath + '?' + new Date().getTime() + '")'
     : '';
@@ -556,18 +541,13 @@ const EntryProperties = (props: Props) => {
     : '';
 
   const changePerspective = (event: any) => {
-    // console.log(perspective);
     const perspective = event.target.value;
     savePerspective(currentEntry.path, perspective)
       .then((entryMeta: FileSystemEntryMeta) => {
-        // if (props.entryPath === props.currentDirectoryPath) {
         props.updateOpenedFile(currentEntry.path, {
           ...entryMeta,
           changed: true
         });
-        /* } else {
-          setCurrentEntry({ ...currentEntry, perspective });
-        } */
         return true;
       })
       .catch(error => {
@@ -681,7 +661,6 @@ const EntryProperties = (props: Props) => {
                       </Button>
                       <Button
                         color="primary"
-                        // disabled={isEditDescription}
                         className={classes.button}
                         onClick={renameEntry}
                       >
@@ -691,7 +670,6 @@ const EntryProperties = (props: Props) => {
                   ) : (
                     <Button
                       color="primary"
-                      // disabled={isEditDescription}
                       className={classes.button}
                       onClick={toggleEditNameField}
                     >
@@ -766,21 +744,14 @@ const EntryProperties = (props: Props) => {
           <Grid item xs={12}>
             <Map
               tap={true}
-              style={{ height: '200px', width: '100%' }}
+              style={{ height: '200px', width: '100%', margin: 3 }}
               animate={false}
               doubleClickZoom={true}
               keyboard={false}
               dragging={true}
-              // onDblclick={this.updatePosition}
               center={geoLocation}
               zoom={13}
               scrollWheelZoom={false}
-              // position={this.state.position}
-              // onClick={updatePosition}
-              // onViewportChanged={this.onViewportChanged}
-              // onLocationfound={this.handleLocationFound}
-              // viewport={this.state.viewport}
-              // bounds={this.state.bounds}
               zoomControl={true}
               attributionControl={false}
             >
@@ -836,7 +807,6 @@ const EntryProperties = (props: Props) => {
                   )}
                   <Button
                     color="primary"
-                    // disabled={isEditName}
                     className={classes.button}
                     onClick={toggleEditDescriptionField}
                   >
@@ -913,18 +883,6 @@ const EntryProperties = (props: Props) => {
                 <br />
                 <strong>{ldtm}</strong>
               </Typography>
-              {/* <FormControl fullWidth={true} className={classes.formControl}>
-                <TextField
-                  InputProps={{
-                    readOnly: true
-                  }}
-                  margin="dense"
-                  name="ldtm"
-                  fullWidth={true}
-                  data-tid="fileLdtmProperties"
-                  value={ldtm}
-                />
-              </FormControl> */}
             </div>
 
             {currentEntry.isFile ? (
@@ -938,22 +896,6 @@ const EntryProperties = (props: Props) => {
                   <br />
                   <strong>{formatFileSize(currentEntry.size)}</strong>
                 </Typography>
-                {/* <FormControl
-                  fullWidth={true}
-                  className={classes.formControl}
-                  title={currentEntry.size + ' bytes'}
-                >
-                  <TextField
-                    margin="dense"
-                    name="size"
-                    InputProps={{
-                      readOnly: true
-                    }}
-                    fullWidth={true}
-                    data-tid="fileSizeProperties"
-                    value={formatFileSize(currentEntry.size)}
-                  />
-                </FormControl> */}
               </div>
             ) : (
               <div className={classes.gridItem} style={{ width: '50%' }}>
@@ -1031,7 +973,6 @@ const EntryProperties = (props: Props) => {
               editDescription === undefined && (
                 <Button
                   color="primary"
-                  // disabled={isEditDescription || isEditName}
                   className={classes.button}
                   onClick={toggleMoveCopyFilesDialog}
                 >

@@ -511,7 +511,7 @@ export default (state: any = initialState, action: any) => {
           }
           return {
             ...entry,
-            path: action.newPath, // TODO handle change extension case
+            path: action.newPath // TODO handle change extension case
             // shouldReload: true
           };
         })
