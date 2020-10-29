@@ -192,10 +192,13 @@ const actions = {
     function setupReader(i) {
       const file = files[i];
       const reader = new FileReader();
-      const filePath =
+      let filePath =
         normalizePath(targetPath) +
         PlatformIO.getDirSeparator() +
         decodeURIComponent(file.name);
+      if (PlatformIO.haveObjectStoreSupport() && filePath.startsWith('/')) {
+        filePath = filePath.substr(1);
+      }
       reader.onload = (event: any) => {
         readerLoaded(event, i, filePath);
       };
@@ -283,7 +286,7 @@ const actions = {
           AppConfig.dirSeparator +
           extractFileName(path, AppConfig.dirSeparator); // PlatformIO.getDirSeparator()); // with "/" dir separator cannot extractFileName on Win
         // fix for Win
-        if (target.startsWith('\\')) {
+        if (PlatformIO.haveObjectStoreSupport() && target.startsWith('\\')) {
           target = target.substr(1);
         }
         uploadJobs.push([path, target]);
