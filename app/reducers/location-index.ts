@@ -92,6 +92,9 @@ export default (state: any = initialState, action: any) => {
       };
     }
     case types.REFLECT_DELETE_ENTRY: {
+      if (GlobalSearch.index.length < 1) {
+        return state;
+      }
       for (let i = 0; i < GlobalSearch.index.length; i += 1) {
         if (GlobalSearch.index[i].path === action.path) {
           GlobalSearch.index.splice(i, 1);
@@ -101,6 +104,9 @@ export default (state: any = initialState, action: any) => {
       return state;
     }
     case types.REFLECT_CREATE_ENTRY: {
+      if (GlobalSearch.index.length < 1) {
+        return state;
+      }
       let entryFound = false;
       for (let i = 0; i < GlobalSearch.index.length; i += 1) {
         if (GlobalSearch.index[i].path === action.path) {
@@ -114,6 +120,9 @@ export default (state: any = initialState, action: any) => {
       return state;
     }
     case types.REFLECT_RENAME_ENTRY: {
+      if (GlobalSearch.index.length < 1) {
+        return state;
+      }
       for (let i = 0; i < GlobalSearch.index.length; i += 1) {
         if (GlobalSearch.index[i].path === action.path) {
           GlobalSearch.index[i].path = action.newPath;

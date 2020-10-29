@@ -243,7 +243,13 @@ const EntryContainer = (props: Props) => {
     //     'window.dispatchEvent(new Event("resume"));'
     //   );
     // } else
-    if (fileViewer && fileViewer.current.contentWindow) {
+    if (
+      fileViewer &&
+      fileViewer.current &&
+      fileViewer.current.contentWindow &&
+      // @ts-ignore
+      fileViewer.current.contentWindow.togglePlay
+    ) {
       // @ts-ignore
       fileViewer.current.contentWindow.togglePlay();
     }
@@ -389,7 +395,13 @@ const EntryContainer = (props: Props) => {
             //     false
             //   );
             // } else
-            if (fileViewer) {
+            if (
+              fileViewer &&
+              fileViewer.current &&
+              fileViewer.current.contentWindow &&
+              // @ts-ignore
+              fileViewer.current.contentWindow.setContent
+            ) {
               // @ts-ignore
               fileViewer.current.contentWindow.setContent(
                 content,
@@ -480,7 +492,13 @@ const EntryContainer = (props: Props) => {
     //     );
     //   }
     // } else
-    if (fileViewer) {
+    if (
+      fileViewer &&
+      fileViewer.current &&
+      fileViewer.current.contentWindow &&
+      // @ts-ignore
+      fileViewer.current.contentWindow.getContent
+    ) {
       try {
         // @ts-ignore
         const textContent = fileViewer.current.contentWindow.getContent();
