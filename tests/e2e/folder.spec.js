@@ -53,7 +53,7 @@ describe('TST01+TST02 - Folder tests', () => {
     await openDirectoryMenu('[data-tid=deleteDirectory]');
   });
 
-  it.only('TST0201 - Should create a folder in alternative navigation', async () => {
+  it('TST0201 - Should create a folder in alternative navigation', async () => {
     await openDirectoryMenu('newSubDirectory');
     // set new dir name
     await delay(1500);

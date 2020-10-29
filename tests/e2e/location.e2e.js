@@ -9,7 +9,8 @@ import {
   defaultLocationName,
   openLocation,
   closeFileProperties,
-  clearInputValue
+  clearInputValue,
+  startupLocation
 } from './location.helpers';
 
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
@@ -121,7 +122,7 @@ describe('TST03 - Testing locations:', () => {
 
   it('TST0305 - Set as startup location [web,electron]', async () => {
     await openLocationMenu(testLocationName);
-    await delay(1500);
+    await delay(500);
     // await global.client.waitForVisible('[data-tid=editLocation]');
     // await global.client.click('[data-tid=editLocation]');
     // await delay(1500);
@@ -131,6 +132,11 @@ describe('TST03 - Testing locations:', () => {
     // await global.client.waitForVisible('[data-tid=confirmEditLocationDialog]');
     // await global.client.click('[data-tid=confirmEditLocationDialog]');
     // await delay(1500);
+    await startupLocation();
+    await openLocationMenu(testLocationName);
+    await delay(500);
+    await startupLocation();
+    await delay(500);
     const startupIndication = await global.client.$(
       '[data-tid=startupIndication]'
     );
