@@ -282,3 +282,23 @@ export async function aboutDialogExt(title, ext) {
     .waitForVisible('#closeAboutDialogButton')
     .click('#closeAboutDialogButton');
 }
+
+export async function startupLocation() {
+  await delay(500);
+  const editLocation = await global.client.$('[data-tid=editLocation]');
+  await editLocation.waitForDisplayed();
+  await editLocation.click();
+  await delay(1500);
+  const defaultLocation = await global.client.$(
+    '[data-tid=editStartupLocation]'
+  );
+  await defaultLocation.waitForDisplayed();
+  await defaultLocation.click();
+  await delay(1500);
+  const closeEditLocationDialog = await global.client.$(
+    '[data-tid=confirmEditLocationDialog]'
+  );
+  await closeEditLocationDialog.waitForDisplayed();
+  await closeEditLocationDialog.click();
+  await delay(1500);
+}

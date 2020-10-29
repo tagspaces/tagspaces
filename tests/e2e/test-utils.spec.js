@@ -6,11 +6,14 @@ import {
   createLocation,
   defaultLocationName,
   defaultLocationPath,
-  openLocation
+  openLocation,
+  clearInputValue
 } from './location.helpers';
+import { openDirectoryMenu } from './general.helpers';
 
 const winMinio = pathLib.resolve(__dirname, '../bin/minio.exe');
 const unixMinio = 'minio';
+const newDirectoryName = 'newDirectory';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const firstFile = '/span';
 export const firstFileName = '/span/div/div/div/p';
@@ -115,15 +118,15 @@ export async function openFile(perspectiveSelector, inDepth) {
   await fileSelector.click();
 }
 
-export async function openDirectoryMenu(menuOperation) {
-  // menuOption is selector for current menu operation
-  const folderContainerOpenDirMenu = await global.client.$(
-    '[data-tid=folderContainerOpenDirMenu]'
-  );
-  await folderContainerOpenDirMenu.click();
-  const menuElem = await global.client.$('[data-tid=' + menuOperation + ']');
-  menuElem.click();
-}
+// export async function openDirectoryMenu(menuOperation) {
+//   // menuOption is selector for current menu operation
+//   const folderContainerOpenDirMenu = await global.client.$(
+//     '[data-tid=folderContainerOpenDirMenu]'
+//   );
+//   await folderContainerOpenDirMenu.click();
+//   const menuElem = await global.client.$('[data-tid=' + menuOperation + ']');
+//   menuElem.click();
+// }
 
 export async function openContextEntryMenu(selector, menuOperation) {
   await delay(500);
@@ -161,4 +164,38 @@ export function toContainTID(text) {
     pass = text.indexOf(tid) !== -1;
   });
   return pass;
+}
+
+export async function renameFolder() {
+  await delay(500);
+  await openDirectoryMenu();
+  const renameDirectory = await global.client.$('[data-tid=renameDirectory]');
+  await renameDirectory.waitForDisplayed();
+  await delay(500);
+  await renameDirectory.click();
+  await delay(500);
+  // set new dir name
+  const renameDirectoryDialogInput = await global.client.$(
+    '[data-tid=renameDirectoryDialogInput] input'
+  );
+  await delay(500);
+  await renameDirectoryDialogInput.waitForDisplayed();
+  await clearInputValue(renameDirectoryDialogInput);
+  await delay(500);
+  await renameDirectoryDialogInput.keys(newDirectoryName);
+  const confirmRenameDirectoryDialog = await global.client.$(
+    '[data-tid=confirmRenameDirectory]'
+  );
+  await confirmRenameDirectoryDialog.waitForDisplayed();
+  await confirmRenameDirectoryDialog.click();
+}
+
+export async function openParentDir() {
+  await delay(500);
+  const openParentDirectory = await global.client.$(
+    '[data-tid=gridPerspectiveOnBackButton]'
+  );
+  await openParentDirectory.waitForDisplayed();
+  await delay(500);
+  await openParentDirectory.click();
 }
