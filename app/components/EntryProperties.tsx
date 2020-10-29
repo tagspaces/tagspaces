@@ -87,7 +87,7 @@ const styles: any = (theme: any) => ({
     overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
     overflowX: 'hidden',
     flexGrow: 1,
-    padding: 7,
+    padding: '0 7px',
     height: '100%'
   },
   tags: {
