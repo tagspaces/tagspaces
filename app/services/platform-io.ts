@@ -63,7 +63,7 @@ export default class PlatformIO {
 
   static haveObjectStoreSupport = (): boolean => objectStoreAPI !== undefined;
 
-  static getDirSeparator = (): string =>
+  static getDirSeparator = (): string => // TODO rethink usage for S3 on Win
     PlatformIO.haveObjectStoreSupport() ? '/' : AppConfig.dirSeparator;
 
   static initMainMenu = (menuConfig: Array<Object>): void => {

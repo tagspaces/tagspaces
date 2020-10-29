@@ -278,19 +278,23 @@ const actions = {
     new Promise(resolve => {
       const uploadJobs = [];
       paths.map(path => {
-        const target =
+        let target =
           normalizePath(targetPath) +
-          PlatformIO.getDirSeparator() +
-          extractFileName(path, PlatformIO.getDirSeparator());
+          AppConfig.dirSeparator +
+          extractFileName(path, AppConfig.dirSeparator); // PlatformIO.getDirSeparator()); // with "/" dir separator cannot extractFileName on Win
+        // fix for Win
+        if (target.startsWith('\\')) {
+          target = target.substr(1);
+        }
         uploadJobs.push([path, target]);
         // copy meta
         uploadJobs.push([
-          getMetaFileLocationForFile(path, PlatformIO.getDirSeparator()),
-          getMetaFileLocationForFile(target, PlatformIO.getDirSeparator())
+          getMetaFileLocationForFile(path, AppConfig.dirSeparator),
+          getMetaFileLocationForFile(target, AppConfig.dirSeparator)
         ]);
         uploadJobs.push([
-          getThumbFileLocationForFile(path, PlatformIO.getDirSeparator()),
-          getThumbFileLocationForFile(target, PlatformIO.getDirSeparator())
+          getThumbFileLocationForFile(path, AppConfig.dirSeparator),
+          getThumbFileLocationForFile(target, AppConfig.dirSeparator)
         ]);
         return true;
       });
