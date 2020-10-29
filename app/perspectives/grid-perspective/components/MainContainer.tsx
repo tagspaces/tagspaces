@@ -64,8 +64,6 @@ import { extractFileName } from '-/utils/paths';
 import GridPagination from '-/perspectives/grid-perspective/components/GridPagination';
 import GridSettingsDialog from '-/perspectives/grid-perspective/components/GridSettingsDialog';
 
-const settings = JSON.parse(localStorage.getItem('tsPerspectiveGrid')); // loading settings
-
 interface Props {
   classes: any;
   theme: any;
@@ -137,6 +135,7 @@ interface State {
 class GridPerspective extends React.Component<Props, State> {
   constructor(props) {
     super(props);
+    const settings = JSON.parse(localStorage.getItem('tsPerspectiveGrid')); // loading settings
     this.state = {
       fileContextMenuOpened: false,
       fileContextMenuAnchorEl: null,
