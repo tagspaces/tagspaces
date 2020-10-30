@@ -162,9 +162,6 @@ export function enhanceEntry(entry: any): FileSystemEntry {
   if (entry && entry.thumbPath) {
     enhancedEntry.thumbPath = entry.thumbPath;
   }
-  if (entry && entry.url) {
-    enhancedEntry.url = entry.url;
-  }
   if (entry && entry.textContent) {
     enhancedEntry.textContent = entry.textContent;
   }

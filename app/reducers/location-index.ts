@@ -302,6 +302,7 @@ export const actions = {
       );
       return;
     }
+    const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
     dispatch(
       AppActions.showNotification(i18n.t('core:searching'), 'default', false)
     );
@@ -343,6 +344,17 @@ export const actions = {
       }
       Search.searchLocationIndex(GlobalSearch.index, searchQuery)
         .then(searchResults => {
+          if (isCloudLocation) {
+            searchResults.forEach((entry: FileSystemEntry) => {
+              if (
+                entry.thumbPath &&
+                entry.thumbPath.length > 1 &&
+                !entry.thumbPath.startsWith('http')
+              ) {
+                entry.thumbPath = PlatformIO.getURLforPath(entry.thumbPath);
+              }
+            });
+          }
           dispatch(AppActions.setSearchResults(searchResults));
           dispatch(AppActions.hideNotifications());
           return true;
@@ -439,6 +451,16 @@ export const actions = {
                   (entry: FileSystemEntry) => {
                     // Excluding s3 folders from global search
                     if (entry && entry.isFile) {
+                      entry.url = PlatformIO.getURLforPath(entry.path);
+                      if (
+                        entry.thumbPath &&
+                        entry.thumbPath.length > 1 &&
+                        !entry.thumbPath.startsWith('http')
+                      ) {
+                        entry.thumbPath = PlatformIO.getURLforPath(
+                          entry.thumbPath
+                        );
+                      }
                       return entry;
                     }
                   }
