@@ -21,7 +21,9 @@ import AppConfig from '../config';
 import { b64toBlob } from '../utils/misc';
 import {
   extractParentDirectoryPath,
-  cleanTrailingDirSeparator, extractFileName, extractFileExtension
+  cleanTrailingDirSeparator,
+  extractFileName,
+  extractFileExtension
 } from '../utils/paths';
 import { FileSystemEntry } from './utils-io';
 
@@ -828,7 +830,10 @@ export default class CordovaIO {
                     name: extractFileName(filePath, AppConfig.dirSeparator),
                     isFile: true,
                     path: filePath,
-                    extension: extractFileExtension(filePath, AppConfig.dirSeparator),
+                    extension: extractFileExtension(
+                      filePath,
+                      AppConfig.dirSeparator
+                    ),
                     size: 0, // TODO debug evt and set size
                     lmdt: new Date().getTime(),
                     isNewFile

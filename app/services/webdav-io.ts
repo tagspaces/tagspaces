@@ -21,7 +21,8 @@ import {
   extractParentDirectoryPath,
   normalizePath,
   getMetaFileLocationForDir,
-  extractFileName, extractFileExtension
+  extractFileName,
+  extractFileExtension
 } from '../utils/paths';
 import AppConfig from '../config';
 import { FileSystemEntry } from './utils-io';
@@ -479,11 +480,14 @@ export default class WebDAVIO {
                 );
                 if (this.checkStatusCode(status1)) {
                   resolve({
-                    name: extractFileName(filePath,AppConfig.dirSeparator),
+                    name: extractFileName(filePath, AppConfig.dirSeparator),
                     isFile: true,
                     path: filePath,
-                    extension: extractFileExtension(filePath,AppConfig.dirSeparator),
-                    size:0,
+                    extension: extractFileExtension(
+                      filePath,
+                      AppConfig.dirSeparator
+                    ),
+                    size: 0,
                     lmdt: new Date().getTime(),
                     isNewFile
                   });

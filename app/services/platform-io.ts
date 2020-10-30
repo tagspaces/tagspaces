@@ -21,7 +21,7 @@ import { Pro } from '../pro';
 // @ts-ignore
 import NativePlatformIO from './_PLATFORMIO_';
 import AppConfig from '-/config';
-import {FileSystemEntry} from "-/services/utils-io";
+import { FileSystemEntry } from '-/services/utils-io';
 
 const nativeAPI: any = new NativePlatformIO();
 let objectStoreAPI;

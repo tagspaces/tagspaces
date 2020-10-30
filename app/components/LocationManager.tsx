@@ -473,16 +473,15 @@ class LocationManager extends React.Component<Props, State> {
           PlatformIO.enableObjectStoreSupport(targetLocation)
             .then(() => {
               this.props.resetProgress();
-              this.props.uploadFiles(
-                arrPath,
-                targetPath,
-                this.props.onUploadProgress
-              ).then((fsEntries: Array<FileSystemEntry>) => {
-                this.props.reflectCreateEntries(fsEntries);
-                return true
-              }).catch(error => {
-                console.log('uploadFiles', error);
-              });
+              this.props
+                .uploadFiles(arrPath, targetPath, this.props.onUploadProgress)
+                .then((fsEntries: Array<FileSystemEntry>) => {
+                  this.props.reflectCreateEntries(fsEntries);
+                  return true;
+                })
+                .catch(error => {
+                  console.log('uploadFiles', error);
+                });
               this.props.toggleUploadDialog();
               return true;
             })
