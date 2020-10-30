@@ -342,7 +342,7 @@ const actions = {
       }
       if (!tagFound) {
         // needed for the current implementation of geo tagging
-        extractedTags.push(tag.title);
+        extractedTags.push(newTagTitle); // tag.title);
       }
       const newFileName = generateFileName(
         fileName,
