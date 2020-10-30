@@ -1384,63 +1384,6 @@ export const actions = {
 
     dispatch(actions.addToEntryContainer(entryForOpening));
   },
-  /* openFile: (
-    entryPath: string,
-    isFile: boolean = true,
-    editMode: boolean = false
-  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
-    let entryForOpening: OpenedEntry;
-    const { openedFiles } = getState().app;
-    // check for editMode
-    if (openedFiles.length > 0) {
-      const openFile = openedFiles[0];
-      if (openFile.editMode && openFile.changed) {
-        entryForOpening = { ...openFile, shouldReload: false };
-        dispatch(actions.addToEntryContainer(entryForOpening));
-        return false;
-      }
-    }
-    const { supportedFileTypes } = getState().settings;
-    entryForOpening = findExtensionsForEntry(
-      supportedFileTypes,
-      entryPath,
-      isFile
-    );
-    const { currentDirectoryEntries } = getState().app;
-    const currentEntry = currentDirectoryEntries.find(
-      entry => entry.path === entryPath
-    );
-    if (currentEntry) {
-      if (PlatformIO.haveObjectStoreSupport()) {
-        entryForOpening.url = PlatformIO.getURLforPath(currentEntry.path);
-      }
-      if (currentEntry.perspective) {
-        entryForOpening.perspective = currentEntry.perspective;
-      }
-      if (currentEntry.description) {
-        entryForOpening.description = currentEntry.description;
-      }
-      if (currentEntry.tags) {
-        entryForOpening.tags = currentEntry.tags;
-      }
-    }
-    if (
-      editMode &&
-      entryForOpening.editingExtensionId &&
-      entryForOpening.editingExtensionId.length > 1
-    ) {
-      entryForOpening.editMode = true;
-    }
-    const localePar = getURLParameter(entryPath);
-    let startPar = '?open=' + encodeURIComponent(entryPath);
-    if (localePar && localePar.length > 1) {
-      startPar += '&locale=' + localePar;
-    }
-    // eslint-disable-next-line no-restricted-globals
-    window.history.pushState('', 'TagSpaces', location.pathname + startPar);
-
-    dispatch(actions.addToEntryContainer(entryForOpening));
-  }, */
   toggleEntryFullWidth: () => ({
     type: types.TOGGLE_ENTRY_FULLWIDTH
   }),
@@ -1715,31 +1658,9 @@ export const actions = {
       PlatformIO.openUrl(url);
     }
   },
-  saveFile: () => () =>
-    // dispatch: (actions: Object) => void,
-    // getState: () => any
-    {
-      actions.showNotification(
-        i18n.t('core:notImplementedYet'),
-        'warning',
-        true
-      );
-      // const { app } = getState();
-      /* PlatformIO.saveFilePromise(filePath, content, true).then((isNewFile) => {
-      console.log(isNewFile);
-      dispatch(
-        actions.showNotification(i18n.t('core:fileCreatedSuccessfully.'), 'successfully', true)
-      );
-      return true;
-    }).catch((error) => {
-      console.log('Creating the ' + filePath + ' failed ' + error);
-      console.warn('Creating file failed ' + error);
-      dispatch(
-        actions.showNotification('Creating ' + filePath + ' failed.', 'warning', true)
-      );
-      return true;
-    }); */
-    }
+  saveFile: () => () => {
+    actions.showNotification(i18n.t('core:notImplementedYet'), 'warning', true);
+  }
 };
 
 function prepareDirectoryContent(
