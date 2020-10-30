@@ -1523,6 +1523,11 @@ export const actions = {
     type: types.REFLECT_CREATE_ENTRY,
     newEntry
   }),
+  reflectCreateEntries: (fsEntries: Array<FileSystemEntry>) => (
+    dispatch: (actions: Object) => void
+  ) => {
+    fsEntries.map(entry => dispatch(actions.reflectCreateEntryInt(entry))); // TODO remove map and set state once
+  },
   reflectCreateEntry: (path: string, isFile: boolean) => (
     dispatch: (actions: Object) => void
   ) => {

@@ -20,6 +20,7 @@ import { Progress } from 'aws-sdk/clients/s3';
 import { actions as AppActions } from './app';
 import {
   extractFileName,
+  getMetaFileLocationForDir,
   getMetaFileLocationForFile,
   getThumbFileLocationForFile,
   normalizePath
@@ -27,6 +28,9 @@ import {
 import {
   copyFilesPromise,
   enhanceEntry,
+  FileSystemEntry,
+  loadJSONFile,
+  loadJSONString,
   renameFilesPromise
 } from '-/services/utils-io';
 import i18n from '../services/i18n';
@@ -186,85 +190,92 @@ const actions = {
         actions.uploadFiles(arrFiles, targetPath, onUploadProgress)
       );
     }
-    // -> cannot upload meta data (for every upload in web browser its need to have <input> element)
-    setupReader(0);
 
-    function setupReader(i) {
-      const file = files[i];
-      const reader = new FileReader();
-      let filePath =
-        normalizePath(targetPath) +
-        PlatformIO.getDirSeparator() +
-        decodeURIComponent(file.name);
-      if (PlatformIO.haveObjectStoreSupport() && filePath.startsWith('/')) {
-        filePath = filePath.substr(1);
-      }
-      reader.onload = (event: any) => {
-        readerLoaded(event, i, filePath);
-      };
-      if (AppConfig.isCordova) {
-        reader.readAsDataURL(file);
-      } else {
-        reader.readAsArrayBuffer(file);
-      }
-    }
+    return new Promise(resolve => {
+      const fsEntries = [];
+      // -> cannot upload meta data (for every upload in web browser its need to have <input> element)
+      setupReader(0);
 
-    function readerLoaded(event, i, fileTargetPath) {
-      PlatformIO.getPropertiesPromise(fileTargetPath)
-        .then(entryProps => {
-          if (entryProps) {
-            dispatch(
-              AppActions.showNotification(
-                'File with the same name already exist, importing skipped!',
-                'warning',
-                true
+      function setupReader(i) {
+        const file = files[i];
+        const reader = new FileReader();
+        let filePath =
+          normalizePath(targetPath) +
+          PlatformIO.getDirSeparator() +
+          decodeURIComponent(file.name);
+        if (PlatformIO.haveObjectStoreSupport() && filePath.startsWith('/')) {
+          filePath = filePath.substr(1);
+        }
+        reader.onload = (event: any) => {
+          readerLoaded(event, i, filePath);
+        };
+        if (AppConfig.isCordova) {
+          reader.readAsDataURL(file);
+        } else {
+          reader.readAsArrayBuffer(file);
+        }
+      }
+
+      function readerLoaded(event, i, fileTargetPath) {
+        PlatformIO.getPropertiesPromise(fileTargetPath)
+          .then(entryProps => {
+            if (entryProps) {
+              dispatch(
+                AppActions.showNotification(
+                  'File with the same name already exist, importing skipped!',
+                  'warning',
+                  true
+                )
+              );
+            } else {
+              PlatformIO.saveBinaryFilePromise(
+                fileTargetPath,
+                event.currentTarget.result,
+                true,
+                onUploadProgress
               )
-            );
-          } else {
-            PlatformIO.saveBinaryFilePromise(
-              fileTargetPath,
-              event.currentTarget.result,
-              true,
-              onUploadProgress
-            )
-              .then(() => {
-                dispatch(
-                  AppActions.showNotification(
-                    'File ' + fileTargetPath + ' successfully imported.',
-                    'default',
-                    true
-                  )
-                );
-                dispatch(AppActions.reflectCreateEntry(fileTargetPath, true));
-                return true;
-              })
-              .catch(error => {
-                // TODO showAlertDialog("Saving " + filePath + " failed.");
-                console.error(
-                  'Save to file ' + fileTargetPath + ' failed ' + error
-                );
-                dispatch(
-                  AppActions.showNotification(
-                    'Importing file ' + fileTargetPath + ' failed.',
-                    'error',
-                    true
-                  )
-                );
-                return true;
-              });
-          }
-          return true;
-        })
-        .catch(err => {
-          console.log('Error getting properties ' + err);
-        });
+                .then((fsEntry: FileSystemEntry) => {
+                  dispatch(
+                    AppActions.showNotification(
+                      'File ' + fileTargetPath + ' successfully imported.',
+                      'default',
+                      true
+                    )
+                  );
+                  fsEntries.push(fsEntry);
+                  // dispatch(AppActions.reflectCreateEntry(fileTargetPath, true));
+                  return true;
+                })
+                .catch(error => {
+                  // TODO showAlertDialog("Saving " + filePath + " failed.");
+                  console.error(
+                    'Save to file ' + fileTargetPath + ' failed ' + error
+                  );
+                  dispatch(
+                    AppActions.showNotification(
+                      'Importing file ' + fileTargetPath + ' failed.',
+                      'error',
+                      true
+                    )
+                  );
+                  return true;
+                });
+            }
+            return true;
+          })
+          .catch(err => {
+            console.log('Error getting properties ' + err);
+          });
 
-      // If there's a file left to load
-      if (i < files.length - 1) {
-        // Load the next file
-        setupReader(i + 1);
+        // If there's a file left to load
+        if (i < files.length - 1) {
+          // Load the next file
+          setupReader(i + 1);
+        } else {
+          resolve(fsEntries);
+        }
       }
-    }
+    });
   },
 
   /**
@@ -286,7 +297,10 @@ const actions = {
           AppConfig.dirSeparator +
           extractFileName(path, AppConfig.dirSeparator); // PlatformIO.getDirSeparator()); // with "/" dir separator cannot extractFileName on Win
         // fix for Win
-        if (PlatformIO.haveObjectStoreSupport() && target.startsWith('\\')) {
+        if (
+          PlatformIO.haveObjectStoreSupport() &&
+          (target.startsWith('\\') || target.startsWith('/'))
+        ) {
           target = target.substr(1);
         }
         uploadJobs.push([path, target]);
@@ -301,95 +315,145 @@ const actions = {
         ]);
         return true;
       });
-      resolve(
-        uploadJobs.map(job => {
-          // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
-          // const file = selection.currentTarget.files[0];
-          const filePath = job[1];
-          /* normalizePath(props.directoryPath) +
+      const jobsPromises = uploadJobs.map(job => {
+        // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
+        // const file = selection.currentTarget.files[0];
+        const filePath = job[1];
+        /* normalizePath(props.directoryPath) +
                 PlatformIO.getDirSeparator() +
                 decodeURIComponent(file.name); */
 
-          // TODO try to replace this with <input type="file"
-          if (AppConfig.isElectron) {
-            return import('fs-extra')
-              .then(fs => {
-                const fileContent = fs.readFileSync(job[0]);
-                // TODO event.currentTarget.result is ArrayBuffer
-                // Sample call from PRO version using content = Utils.base64ToArrayBuffer(baseString);
-                return PlatformIO.getPropertiesPromise(filePath)
-                  .then(entryProps => {
-                    if (entryProps) {
-                      dispatch(
-                        AppActions.showNotification(
-                          'File with the same name already exist, importing skipped!',
-                          'warning',
-                          true
-                        )
-                      );
-                      dispatch(AppActions.setProgress(filePath, -1, undefined));
-                    } else {
-                      // dispatch(AppActions.setProgress(filePath, progress));
-                      return PlatformIO.saveBinaryFilePromise(
-                        filePath,
-                        fileContent,
-                        true,
-                        onUploadProgress
+        // TODO try to replace this with <input type="file"
+        if (AppConfig.isElectron) {
+          return import('fs-extra')
+            .then(fs => {
+              const fileContent = fs.readFileSync(job[0]);
+              // TODO event.currentTarget.result is ArrayBuffer
+              // Sample call from PRO version using content = Utils.base64ToArrayBuffer(baseString);
+              return PlatformIO.getPropertiesPromise(filePath)
+                .then(entryProps => {
+                  if (entryProps) {
+                    dispatch(
+                      AppActions.showNotification(
+                        'File with the same name already exist, importing skipped!',
+                        'warning',
+                        true
                       )
-                        .then(() => {
-                          dispatch(
-                            AppActions.showNotification(
-                              'File ' + filePath + ' successfully imported.',
-                              'default',
-                              true
-                            )
-                          );
-                          dispatch(
-                            AppActions.reflectCreateEntry(filePath, true)
-                          );
-                          // TODO handle Thumbnail
-                          if (filePath.indexOf('/.ts/') === -1) {
-                            return enhanceEntry({
-                              name: filePath.substring(
-                                filePath.lastIndexOf(AppConfig.dirSeparator) +
-                                  1,
-                                filePath.length
-                              ),
-                              isFile: true,
-                              size: fileContent.length,
-                              lmdt: Date.now(),
-                              path: filePath
-                            });
+                    );
+                    dispatch(AppActions.setProgress(filePath, -1, undefined));
+                  } else {
+                    // dispatch(AppActions.setProgress(filePath, progress));
+                    return PlatformIO.saveBinaryFilePromise(
+                      filePath,
+                      fileContent,
+                      true,
+                      onUploadProgress
+                    )
+                      .then((fsEntry: FileSystemEntry) => {
+                        if (filePath.indexOf('.ts/') !== -1) {
+                          // handle meta file TODO catch thumb
+                          if (fsEntry.path.endsWith('.json')) {
+                            try {
+                              // eslint-disable-next-line no-param-reassign
+                              fsEntry.meta = loadJSONString(
+                                fileContent.toString()
+                              );
+                            } catch (e) {
+                              console.debug('cannot parse entry meta');
+                            }
                           }
-                          return undefined;
-                        })
-                        .catch(err => {
-                          console.error(
-                            'Importing file ' + filePath + ' failed ' + err
-                          );
-                          dispatch(
-                            AppActions.showNotification(
-                              'Importing file ' + filePath + ' failed.',
-                              'error',
-                              true
-                            )
-                          );
-                          return undefined;
-                        });
-                    }
-                    return undefined;
-                  })
-                  .catch(err => {
-                    console.log('Error getting properties ' + err);
-                  });
-              })
-              .catch(err => {
-                console.log('Error import fs: ' + err);
-              });
-          }
-          return undefined;
+                        }
+
+                        return fsEntry;
+                      })
+                      .catch(err => {
+                        console.error(
+                          'Importing file ' + filePath + ' failed ' + err
+                        );
+                        dispatch(
+                          AppActions.showNotification(
+                            'Importing file ' + filePath + ' failed.',
+                            'error',
+                            true
+                          )
+                        );
+                        return undefined;
+                      });
+                  }
+                  return undefined;
+                })
+                .catch(err => {
+                  console.log('Error getting properties ' + err);
+                });
+            })
+            .catch(err => {
+              console.log('Error import fs: ' + err);
+            });
+        }
+        return undefined;
+      });
+      Promise.all(jobsPromises)
+        .then(filesProm => {
+          const arrFiles: Array<FileSystemEntry> = [];
+          const arrMeta: Array<FileSystemEntry> = [];
+          const arrThumb: Array<FileSystemEntry> = [];
+
+          filesProm.map(file => {
+            if (file) {
+              if (file.path.indexOf('.ts/') === -1) {
+                arrFiles.push(file); // enhanceEntry(file));
+              } else if (file.meta) {
+                arrMeta.push(file);
+              } else {
+                arrThumb.push(file);
+              }
+            }
+            /* if (file !== undefined) {
+              // dispatch(AppActions.reflectCreateEntryInt(entryEnhanced));
+                const metaFileProps = await PlatformIO.getPropertiesPromise(metaFilePath);
+                if (metaFileProps.isFile) {
+                    entryProps.meta = await loadJSONFile(metaFilePath);
+                }
+              arrFiles.push(enhanceEntry(file)); // TODO optimize and Enhance Entry with uploaded .ts metafiles
+            } */
+            return true;
+          });
+          dispatch(
+            AppActions.showNotification(
+              'File ' +
+                arrFiles.map(file => file.name).toString() +
+                ' successfully imported.',
+              'default',
+              true
+            )
+          );
+
+          // Enhance entries
+          resolve(
+            arrFiles.map((file: FileSystemEntry) => {
+              const metaFilePath = getMetaFileLocationForFile(
+                file.path,
+                AppConfig.dirSeparator
+              );
+              for (let i = 0; i < arrMeta.length; i += 1) {
+                const metaFile = arrMeta[i];
+                if (metaFile.path === metaFilePath) {
+                  // eslint-disable-next-line no-param-reassign
+                  file.meta = metaFile.meta;
+                }
+              }
+              if (file.meta) {
+                return enhanceEntry(file);
+              }
+              return file;
+            })
+          );
+
+          return true;
         })
-      );
+        .catch(err => {
+          console.log('Error import fs: ' + err);
+        });
     })
 };
 

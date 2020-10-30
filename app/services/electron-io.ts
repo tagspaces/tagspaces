@@ -20,6 +20,8 @@ import fsextra from 'fs-extra';
 import pathLib from 'path';
 import winattr from 'winattr';
 import {
+  extractFileExtension,
+  extractFileName,
   extractParentDirectoryPath,
   getMetaDirectoryPath
 } from '../utils/paths';
@@ -31,6 +33,7 @@ import TrayIcon from '../assets/icons/trayIcon.png';
 import TrayIcon2x from '../assets/icons/trayIcon@2x.png';
 import TrayIcon3x from '../assets/icons/trayIcon@3x.png';
 import { Pro } from '../pro';
+import { FileSystemEntry } from '-/services/utils-io';
 
 export default class ElectronIO {
   electron: any;
@@ -696,25 +699,25 @@ export default class ElectronIO {
     filePath: string,
     content: any,
     overwrite: boolean = true
-  ): Promise<any> =>
+  ): Promise<FileSystemEntry> =>
     new Promise((resolve, reject) => {
       const fileSystem = this.fs;
-      function saveFile(fPath, tContent, isNewFile) {
-        fileSystem.writeFile(fPath, tContent, 'utf8', error => {
+      function saveFile(entry: FileSystemEntry, tContent) {
+        fileSystem.writeFile(entry.path, tContent, 'utf8', error => {
           if (error) {
             reject(error);
             return;
           }
-          resolve(isNewFile);
+          resolve(entry);
         });
       }
 
       this.getPropertiesPromise(filePath)
-        .then(entry => {
+        .then((entry: FileSystemEntry) => {
           if (entry && entry.isFile && overwrite) {
-            saveFile(filePath, content, false);
+            saveFile({ ...entry, isNewFile: false }, content);
           } else {
-            saveFile(filePath, content, true);
+            saveFile({ ...entry, isNewFile: true }, content);
           }
           return true;
         })
@@ -723,7 +726,16 @@ export default class ElectronIO {
           console.log(
             'Getting properties for ' + filePath + ' failed with: ' + error
           );
-          saveFile(filePath, content, true);
+          const fsEntry = {
+            name: extractFileName(filePath, AppConfig.dirSeparator),
+            isFile: true,
+            path: filePath,
+            extension: extractFileExtension(filePath, AppConfig.dirSeparator),
+            size: 0,
+            lmdt: new Date().getTime(),
+            isNewFile: true
+          };
+          saveFile(fsEntry, content);
         });
     });
 
@@ -731,7 +743,7 @@ export default class ElectronIO {
     filePath: string,
     content: string,
     overwrite: boolean
-  ): Promise<any> => {
+  ): Promise<FileSystemEntry> => {
     console.log('Saving file: ' + filePath);
 
     // Handling the UTF8 support for text files
@@ -751,7 +763,7 @@ export default class ElectronIO {
     filePath: string,
     content: any,
     overwrite: boolean
-  ): Promise<any> => {
+  ): Promise<FileSystemEntry> => {
     console.log('Saving binary file: ' + filePath);
     const buff = arrayBufferToBuffer(content);
     return this.saveFilePromise(filePath, buff, overwrite);

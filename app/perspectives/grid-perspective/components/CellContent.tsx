@@ -99,10 +99,12 @@ const CellContent = (props: Props) => {
   );
 
   let tagTitles = '';
-  fsEntry.tags.map(tag => {
-    tagTitles += tag.title + ', ';
-    return true;
-  });
+  if (fsEntry.tags) {
+    fsEntry.tags.map(tag => {
+      tagTitles += tag.title + ', ';
+      return true;
+    });
+  }
   tagTitles = tagTitles.substring(0, tagTitles.length - 2);
   const tagPlaceholder =
     tagTitles.length > 0 ? (
@@ -144,7 +146,7 @@ const CellContent = (props: Props) => {
             />
           )}
           <div id="gridCellTags" className={classes.gridCellTags}>
-            {showTags
+            {showTags && fsEntry.tags
               ? fsEntry.tags.map(tag => renderTag(tag))
               : tagPlaceholder}
           </div>
@@ -271,7 +273,7 @@ const CellContent = (props: Props) => {
             <Typography style={{ wordBreak: 'break-all', alignSelf: 'center' }}>
               {entryTitle}
               &nbsp;
-              {showTags
+              {showTags && fsEntry.tags
                 ? fsEntry.tags.map(tag => renderTag(tag))
                 : tagPlaceholder}
             </Typography>
@@ -281,7 +283,7 @@ const CellContent = (props: Props) => {
             <Typography style={{ wordBreak: 'break-all' }}>
               {entryTitle}
             </Typography>
-            {showTags
+            {showTags && fsEntry.tags
               ? fsEntry.tags.map(tag => renderTag(tag))
               : tagPlaceholder}
             <Typography
