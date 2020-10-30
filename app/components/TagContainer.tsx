@@ -77,6 +77,8 @@ const TagContainer = React.memo((props: Props) => {
   // Check if tag is plus code
   let isGeoTag = false;
   let isTagDate = false;
+  let isDateSmartTag = false;
+  let isGeoSmartTag = false;
   if (!tagGroup) {
     isGeoTag = isPlusCode(title); // || isLatLong
     isTagDate = !isGeoTag && isDateTimeTag(title);
@@ -105,7 +107,10 @@ const TagContainer = React.memo((props: Props) => {
   }
 
   function getActionMenu() {
-    if (props.isReadOnlyMode) {
+    if (
+      props.isReadOnlyMode ||
+      (tag.functionality && tag.functionality.length > 0)
+    ) {
       return <div style={{ width: 10 }} />;
     }
     return tagMode === 'remove' ? (
@@ -130,6 +135,23 @@ const TagContainer = React.memo((props: Props) => {
         }}
       />
     );
+  }
+
+  if (tag.functionality && tag.functionality.length > 0) {
+    const tagFunc = tag.functionality;
+    if (
+      tagFunc === 'now' ||
+      tagFunc === 'today' ||
+      tagFunc === 'tomorrow' ||
+      tagFunc === 'yesterday' ||
+      tagFunc === 'currentMonth' ||
+      tagFunc === 'currentYear' ||
+      tagFunc === 'dateTagging'
+    ) {
+      isDateSmartTag = true;
+    } else if (tagFunc === 'geoTagging') {
+      isGeoSmartTag = true;
+    }
   }
 
   return (
@@ -187,7 +209,7 @@ const TagContainer = React.memo((props: Props) => {
         }}
       >
         <span style={{ flexGrow: 1 }}>
-          {isGeoTag && (
+          {(isGeoTag || isGeoSmartTag) && (
             <PlaceIcon
               style={{
                 color: tag.textcolor,
@@ -196,7 +218,7 @@ const TagContainer = React.memo((props: Props) => {
               }}
             />
           )}
-          {isTagDate && (
+          {(isTagDate || isDateSmartTag) && (
             <DateIcon
               style={{
                 color: tag.textcolor,
