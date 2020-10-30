@@ -20,7 +20,9 @@ import nl from '../utils/js-webdav-client';
 import {
   extractParentDirectoryPath,
   normalizePath,
-  getMetaFileLocationForDir
+  getMetaFileLocationForDir,
+  extractFileName,
+  extractFileExtension
 } from '../utils/paths';
 import AppConfig from '../config';
 import { FileSystemEntry } from './utils-io';
@@ -452,7 +454,7 @@ export default class WebDAVIO {
     content: string,
     overWrite: boolean,
     mode?: string
-  ): Promise<Object> =>
+  ): Promise<FileSystemEntry> =>
     new Promise((resolve, reject) => {
       let isNewFile = false;
       this.davClient.propfind(
@@ -461,25 +463,36 @@ export default class WebDAVIO {
           console.log(
             'Check file exists: Status / Content: ' + status + ' / ' + data
           );
-          if (parseInt(status) === 404) {
+          if (parseInt(status, 10) === 404) {
             isNewFile = true;
           }
           if (isNewFile || overWrite === true || mode === 'text') {
             this.davClient.put(
               encodeURI(filePath),
-              (status, data, headers) => {
+              (status1, data1, headers) => {
                 console.log(
                   'Creating File Status/Content/Headers:  ' +
                     status +
                     ' / ' +
-                    data +
+                    data1 +
                     ' / ' +
                     headers
                 );
-                if (this.checkStatusCode(status)) {
-                  resolve(isNewFile);
+                if (this.checkStatusCode(status1)) {
+                  resolve({
+                    name: extractFileName(filePath, AppConfig.dirSeparator),
+                    isFile: true,
+                    path: filePath,
+                    extension: extractFileExtension(
+                      filePath,
+                      AppConfig.dirSeparator
+                    ),
+                    size: 0,
+                    lmdt: new Date().getTime(),
+                    isNewFile
+                  });
                 } else {
-                  reject('saveFilePromise: ' + filePath + ' failed ' + status);
+                  reject('saveFilePromise: ' + filePath + ' failed ' + status1);
                 }
               },
               content,
@@ -512,7 +525,7 @@ export default class WebDAVIO {
     filePath: string,
     content: string,
     overWrite: boolean
-  ): Promise<Object> {
+  ): Promise<FileSystemEntry> {
     console.log('Saving binary file: ' + filePath);
     return this.saveFilePromise(filePath, content, overWrite);
   }

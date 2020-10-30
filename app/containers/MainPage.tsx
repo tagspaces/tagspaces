@@ -212,12 +212,12 @@ interface Props {
     notificationType?: string,
     autohide?: boolean
   ) => void;
-  reflectCreateEntry: (path: string, isFile: boolean) => void;
+  reflectCreateEntries: (fsEntries: Array<FileSystemEntry>) => void;
   uploadFilesAPI: (
     files: Array<File>,
     destination: string,
     onUploadProgress?: (progress: Progress, response: any) => void
-  ) => void;
+  ) => any;
   onUploadProgress: (progress: Progress, response: any) => void;
 }
 
@@ -513,12 +513,21 @@ class MainPage extends Component<Props, State> {
         );
       } else {
         this.props.resetProgress();
-        this.props.uploadFilesAPI(
-          files,
-          this.props.directoryPath,
-          this.props.onUploadProgress
-        );
+        this.props
+          .uploadFilesAPI(
+            files,
+            this.props.directoryPath,
+            this.props.onUploadProgress
+          )
+          .then(fsEntries => {
+            this.props.reflectCreateEntries(fsEntries);
+            return true;
+          })
+          .catch(error => {
+            console.log('uploadFiles', error);
+          });
         this.props.toggleUploadDialog();
+
         /* files.map(file => {
           let filePath = '';
           let fileName = '';
@@ -1015,7 +1024,7 @@ function mapDispatchToProps(dispatch) {
       setLeftVerticalSplitSize: SettingsActions.setLeftVerticalSplitSize,
       setMainVerticalSplitSize: SettingsActions.setMainVerticalSplitSize,
       showNotification: AppActions.showNotification,
-      reflectCreateEntry: AppActions.reflectCreateEntry,
+      reflectCreateEntries: AppActions.reflectCreateEntries,
       openLocationManagerPanel: AppActions.openLocationManagerPanel,
       openTagLibraryPanel: AppActions.openTagLibraryPanel,
       openSearchPanel: AppActions.openSearchPanel,

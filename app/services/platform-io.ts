@@ -21,6 +21,7 @@ import { Pro } from '../pro';
 // @ts-ignore
 import NativePlatformIO from './_PLATFORMIO_';
 import AppConfig from '-/config';
+import { FileSystemEntry } from '-/services/utils-io';
 
 const nativeAPI: any = new NativePlatformIO();
 let objectStoreAPI;
@@ -63,7 +64,7 @@ export default class PlatformIO {
 
   static haveObjectStoreSupport = (): boolean => objectStoreAPI !== undefined;
 
-  static getDirSeparator = (): string =>
+  static getDirSeparator = (): string => // TODO rethink usage for S3 on Win
     PlatformIO.haveObjectStoreSupport() ? '/' : AppConfig.dirSeparator;
 
   static initMainMenu = (menuConfig: Array<Object>): void => {
@@ -243,7 +244,7 @@ export default class PlatformIO {
       progress: any, // ManagedUpload.Progress,
       response: any // AWS.Response<AWS.S3.PutObjectOutput, AWS.AWSError>
     ) => void
-  ): Promise<any> => {
+  ): Promise<FileSystemEntry> => {
     if (objectStoreAPI) {
       return objectStoreAPI.saveBinaryFilePromise(
         filePath,

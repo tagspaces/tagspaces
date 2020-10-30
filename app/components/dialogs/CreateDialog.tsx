@@ -39,6 +39,7 @@ import { actions as AppActions } from '-/reducers/app';
 import AppConfig from '-/config';
 import { formatDateTime4Tag } from '-/utils/misc';
 import IOActions from '-/reducers/io-actions';
+import { FileSystemEntry } from '-/services/utils-io';
 
 const styles: any = () => ({
   root: {
@@ -67,7 +68,7 @@ interface Props {
   // fullScreen: boolean;
   chooseDirectoryPath: (path: string) => void;
   showNotification: (message: string, type: string, autohide: boolean) => void;
-  reflectCreateEntry: (path: string, isFile: boolean) => void;
+  reflectCreateEntries: (fsEntries: Array<FileSystemEntry>) => void;
   createFileAdvanced: (
     targetPath: string,
     fileName: string,
@@ -79,7 +80,7 @@ interface Props {
     files: Array<File>,
     destination: string,
     onUploadProgress?: (progress: Progress, response: any) => void
-  ) => void;
+  ) => any;
   onUploadProgress: (progress: Progress, response: any) => void;
   toggleUploadDialog: () => void;
   resetProgress: () => void;
@@ -173,11 +174,19 @@ const CreateDialog = (props: Props) => {
     // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
     // const file = selection.currentTarget.files[0];
     props.resetProgress();
-    props.uploadFilesAPI(
-      Array.from(selection.currentTarget.files),
-      selectedDirectoryPath,
-      props.onUploadProgress
-    );
+    props
+      .uploadFilesAPI(
+        Array.from(selection.currentTarget.files),
+        selectedDirectoryPath,
+        props.onUploadProgress
+      )
+      .then(fsEntries => {
+        props.reflectCreateEntries(fsEntries);
+        return true;
+      })
+      .catch(error => {
+        console.log('uploadFiles', error);
+      });
     props.toggleUploadDialog();
     props.onClose();
 
@@ -355,7 +364,7 @@ function mapActionCreatorsToProps(dispatch) {
     {
       createFileAdvanced: AppActions.createFileAdvanced,
       showNotification: AppActions.showNotification,
-      reflectCreateEntry: AppActions.reflectCreateEntry,
+      reflectCreateEntries: AppActions.reflectCreateEntries,
       uploadFilesAPI: IOActions.uploadFilesAPI,
       onUploadProgress: AppActions.onUploadProgress,
       toggleUploadDialog: AppActions.toggleUploadDialog,

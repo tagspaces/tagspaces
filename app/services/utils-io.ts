@@ -39,6 +39,7 @@ export interface FileSystemEntry {
   uuid?: string;
   name: string;
   isFile: boolean;
+  isNewFile?: boolean;
   extension: string;
   thumbPath?: string;
   color?: string;
@@ -366,9 +367,9 @@ export async function getAllPropertiesPromise(
 }
 
 export async function loadJSONFile(filePath: string) {
-  let jsonObject;
-  let jsonContent = await PlatformIO.loadTextFilePromise(filePath);
-  const UTF8_BOM = '\ufeff';
+  const jsonContent = await PlatformIO.loadTextFilePromise(filePath);
+  return loadJSONString(jsonContent);
+  /* const UTF8_BOM = '\ufeff';
   if (jsonContent.indexOf(UTF8_BOM) === 0) {
     jsonContent = jsonContent.substring(1, jsonContent.length);
   }
@@ -376,6 +377,21 @@ export async function loadJSONFile(filePath: string) {
     jsonObject = JSON.parse(jsonContent);
   } catch (err) {
     console.warn('Error parsing meta json file for ' + filePath + ' - ' + err);
+  }
+  return jsonObject; */
+}
+
+export function loadJSONString(jsonContent: string) {
+  let jsonObject;
+  let json;
+  const UTF8_BOM = '\ufeff';
+  if (jsonContent.indexOf(UTF8_BOM) === 0) {
+    json = jsonContent.substring(1, jsonContent.length);
+  }
+  try {
+    jsonObject = JSON.parse(json);
+  } catch (err) {
+    console.error('Error parsing meta json file: ' + json, err);
   }
   return jsonObject;
 }

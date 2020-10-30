@@ -21,7 +21,9 @@ import AppConfig from '../config';
 import { b64toBlob } from '../utils/misc';
 import {
   extractParentDirectoryPath,
-  cleanTrailingDirSeparator
+  cleanTrailingDirSeparator,
+  extractFileName,
+  extractFileExtension
 } from '../utils/paths';
 import { FileSystemEntry } from './utils-io';
 
@@ -792,12 +794,12 @@ export default class CordovaIO {
     content,
     overWrite: boolean,
     isRaw?: boolean
-  ): Promise<any> => {
+  ): Promise<FileSystemEntry> => {
     // eslint-disable-next-line no-param-reassign
     filePath = this.normalizePath(filePath);
     console.log('Saving file: ' + filePath);
     return new Promise((resolve, reject) => {
-      let isFileNew = true;
+      let isNewFile = true;
       // Checks if the file already exists
       this.fsRoot.getFile(
         filePath,
@@ -807,12 +809,12 @@ export default class CordovaIO {
         },
         entry => {
           if (entry.isFile) {
-            isFileNew = false;
+            isNewFile = false;
           }
         },
         () => {}
       );
-      if (isFileNew || overWrite) {
+      if (isNewFile || overWrite) {
         this.fsRoot.getFile(
           filePath,
           {
@@ -824,7 +826,18 @@ export default class CordovaIO {
               writer => {
                 writer.onwriteend = function(evt) {
                   // resolve(this.fsRoot.fullPath + "/" + filePath);
-                  resolve(isFileNew);
+                  resolve({
+                    name: extractFileName(filePath, AppConfig.dirSeparator),
+                    isFile: true,
+                    path: filePath,
+                    extension: extractFileExtension(
+                      filePath,
+                      AppConfig.dirSeparator
+                    ),
+                    size: 0, // TODO debug evt and set size
+                    lmdt: new Date().getTime(),
+                    isNewFile
+                  });
                 };
                 if (isRaw) {
                   writer.write(content);
@@ -888,7 +901,7 @@ export default class CordovaIO {
     filePath: string,
     content: any,
     overWrite: boolean
-  ) => {
+  ): Promise<FileSystemEntry> => {
     console.log('Saving binary file: ' + filePath);
     // var dataView = new Int8Array(content);
     const dataView = content;

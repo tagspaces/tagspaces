@@ -78,7 +78,8 @@ interface Props {
     files: Array<File>,
     destination: string,
     onUploadProgress?: (progress: Progress, response: any) => void
-  ) => void;
+  ) => any;
+  reflectCreateEntries: (fsEntries: Array<FileSystemEntry>) => void;
   onUploadProgress: (progress: Progress, response: any) => void;
   switchPerspective?: (perspectiveId: string) => void;
   perspectiveMode?: boolean;
@@ -309,11 +310,20 @@ const DirectoryMenu = (props: Props) => {
     // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
     // const file = selection.currentTarget.files[0];
     props.resetProgress();
-    props.uploadFilesAPI(
-      Array.from(selection.currentTarget.files),
-      props.directoryPath,
-      props.onUploadProgress
-    );
+
+    props
+      .uploadFilesAPI(
+        Array.from(selection.currentTarget.files),
+        props.directoryPath,
+        props.onUploadProgress
+      )
+      .then(fsEntries => {
+        props.reflectCreateEntries(fsEntries);
+        return true;
+      })
+      .catch(error => {
+        console.log('uploadFiles', error);
+      });
     props.toggleUploadDialog();
     /*
     const filePath =
@@ -603,6 +613,7 @@ function mapDispatchToProps(dispatch) {
       toggleUploadDialog: AppActions.toggleUploadDialog,
       toggleProgressDialog: AppActions.toggleProgressDialog,
       resetProgress: AppActions.resetProgress,
+      reflectCreateEntries: AppActions.reflectCreateEntries,
       extractContent: IOActions.extractContent,
       uploadFilesAPI: IOActions.uploadFilesAPI,
       addTags: TaggingActions.addTags

@@ -107,6 +107,7 @@ interface Props {
   isReadOnlyMode: boolean;
   hideDrawer: () => void;
   openFsEntry: (fsEntry: FileSystemEntry) => void;
+  reflectCreateEntries: (fsEntries: Array<FileSystemEntry>) => void;
   openURLExternally: (path: string) => void;
   loadDirectoryContent: (path: string) => void;
   openLocation: (location: Location) => void;
@@ -137,7 +138,7 @@ interface Props {
     files: Array<string>,
     destination: string,
     onUploadProgress?: (progress: Progress, response: any) => void
-  ) => void;
+  ) => Promise<Array<FileSystemEntry>>;
   toggleUploadDialog: () => void;
   resetProgress: () => void;
 }
@@ -472,11 +473,15 @@ class LocationManager extends React.Component<Props, State> {
           PlatformIO.enableObjectStoreSupport(targetLocation)
             .then(() => {
               this.props.resetProgress();
-              this.props.uploadFiles(
-                arrPath,
-                targetPath,
-                this.props.onUploadProgress
-              );
+              this.props
+                .uploadFiles(arrPath, targetPath, this.props.onUploadProgress)
+                .then((fsEntries: Array<FileSystemEntry>) => {
+                  this.props.reflectCreateEntries(fsEntries);
+                  return true;
+                })
+                .catch(error => {
+                  console.log('uploadFiles', error);
+                });
               this.props.toggleUploadDialog();
               return true;
             })
@@ -832,6 +837,7 @@ function mapDispatchToProps(dispatch) {
       openFileNatively: AppActions.openFileNatively,
       openFsEntry: AppActions.openFsEntry,
       showNotification: AppActions.showNotification,
+      reflectCreateEntries: AppActions.reflectCreateEntries,
       moveFiles: IOActions.moveFiles,
       uploadFiles: IOActions.uploadFiles,
       openURLExternally: AppActions.openURLExternally,
