@@ -16,7 +16,7 @@
  *
  */
 
-import React, {useState, useEffect, useMemo} from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
@@ -89,7 +89,6 @@ const EditEntryTagDialog = (props: Props) => {
     return DateTagEditor && showDatePeriodEditor;
   }, []);
 
-
   function handleValidation() {
     const tagCheck = RegExp(/^[^\#\/\\ \[\]]{1,}$/);
     if (title && tagCheck.test(title)) {
@@ -151,7 +150,10 @@ const EditEntryTagDialog = (props: Props) => {
           />
         )}
         {isShowDatePeriodEditor && (
-          <DateTagEditor datePeriodTag={props.selectedTag && props.selectedTag.title} onChange={setTitle} />
+          <DateTagEditor
+            datePeriodTag={props.selectedTag && props.selectedTag.title}
+            onChange={setTitle}
+          />
         )}
       </DialogContent>
     );
