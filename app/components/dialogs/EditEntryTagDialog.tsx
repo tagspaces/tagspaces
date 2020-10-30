@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
@@ -69,7 +69,25 @@ const EditEntryTagDialog = (props: Props) => {
 
   useEffect(() => {
     handleValidation();
-  });
+  }, [title]);
+
+  const isShowDatePeriodEditor = useMemo(() => {
+    let showDatePeriodEditor = false;
+    if (title.indexOf('-') > -1) {
+      const a = title.split('-');
+      if (a.length === 2) {
+        for (let i = 0; i < a.length; i += 1) {
+          if (isDateTimeTag(a[i])) {
+            showDatePeriodEditor = true;
+          } else {
+            showDatePeriodEditor = false;
+            break;
+          }
+        }
+      }
+    } else showDatePeriodEditor = isDateTimeTag(title);
+    return DateTagEditor && showDatePeriodEditor;
+  }, []);
 
   function handleValidation() {
     const tagCheck = RegExp(/^[^\#\/\\ \[\]]{1,}$/);
@@ -97,21 +115,6 @@ const EditEntryTagDialog = (props: Props) => {
 
   function renderContent() {
     const showGeoEditor = GeoTagEditor && isPlusCode(title);
-    let showDatePeriodEditor = false;
-    if (title.indexOf('-') > -1) {
-      const a = title.split('-');
-      if (a.length === 2) {
-        for (let i = 0; i < a.length; i += 1) {
-          if (isDateTimeTag(a[i])) {
-            showDatePeriodEditor = true;
-          } else {
-            showDatePeriodEditor = false;
-            break;
-          }
-        }
-      }
-    } else showDatePeriodEditor = isDateTimeTag(title);
-    showDatePeriodEditor = DateTagEditor && showDatePeriodEditor;
 
     return (
       <DialogContent
@@ -146,10 +149,9 @@ const EditEntryTagDialog = (props: Props) => {
             zoom={title === defaultTagLocation ? 2 : undefined}
           />
         )}
-        {showDatePeriodEditor && (
+        {isShowDatePeriodEditor && (
           <DateTagEditor
-            key={title}
-            datePeriodTag={title}
+            datePeriodTag={props.selectedTag && props.selectedTag.title}
             onChange={setTitle}
           />
         )}
