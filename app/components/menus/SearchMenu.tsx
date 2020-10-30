@@ -22,6 +22,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import HelpIcon from '@material-ui/icons/Help';
+import UpdateIndexIcon from '@material-ui/icons/Update';
 import i18n from '-/services/i18n';
 import AppConfig from '-/config';
 
@@ -41,6 +42,18 @@ const SearchMenu = (props: Props) => (
         data-tid="searchMenuHelp"
         onClick={() => {
           props.onClose();
+          props.createLocationsIndexes();
+        }}
+      >
+        <ListItemIcon>
+          <UpdateIndexIcon />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:Update all location indexes')} />
+      </MenuItem>
+      <MenuItem
+        data-tid="searchMenuHelp"
+        onClick={() => {
+          props.onClose();
           props.openURLExternally(AppConfig.documentationLinks.search);
         }}
       >
@@ -48,18 +61,6 @@ const SearchMenu = (props: Props) => (
           <HelpIcon />
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:help')} />
-      </MenuItem>
-      <MenuItem
-        data-tid="searchMenuHelp"
-        onClick={() => {
-          props.onClose();
-          props.createLocationsIndexes();
-        }}
-      >
-        <ListItemIcon>
-          <HelpIcon />
-        </ListItemIcon>
-        <ListItemText primary={i18n.t('core:Update all location indexes')} />
       </MenuItem>
     </Menu>
   </div>

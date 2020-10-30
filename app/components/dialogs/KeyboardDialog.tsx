@@ -30,6 +30,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import { withStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import i18n from '-/services/i18n';
+import AppConfig from '-/config';
 import { getKeyBindingObject } from '-/reducers/settings';
 
 const styles = theme => ({
@@ -67,6 +68,7 @@ const KeyboardDialog = (props: Props) => {
       <DialogContent
         className={props.classes.root}
         data-tid="keyboardShortCutsDialog"
+        style={{ overflow: AppConfig.isFirefox ? 'auto' : 'overlay' }}
       >
         <List dense={false}>
           {props.keyBindings &&
