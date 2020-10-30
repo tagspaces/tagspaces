@@ -267,20 +267,23 @@ export async function aboutDialogExt(title, ext) {
   await delay(500);
   // should switch focus to iFrame
   // await global.client.waitForExist('#viewer').frame(0);
-  await global.client
-    .waitForVisible('#viewerMainMenuButton')
-    .click('#viewerMainMenuButton');
-  await global.client.waitForVisible('#aboutButton').click('#aboutButton');
+  const viewerMainMneuButton = await global.client.$('#viewerMainMenuButton');
+  await viewerMainMneuButton.waitForDisplayed();
+  await viewerMainMneuButton.click();
+  const aboutButton = await global.client.$('#aboutButton');
+  await aboutButton.waitForDisplayed();
+  await aboutButton.click();
   await delay(1500);
-  const getTitle = await global.client
-    .waitForVisible('h4=' + title)
-    .getText('h4=' + title);
+  const getTitle = await global.client.$('h4=' + title);
+  await getTitle.waitForDisplayed();
+  // .waitForVisible('h4=' + title)
+  // .getText('h4=' + title);
   // should eventually equals('About HTML Viewer');
   expect(getTitle).toBe(title);
   await delay(1500);
-  await global.client
-    .waitForVisible('#closeAboutDialogButton')
-    .click('#closeAboutDialogButton');
+  // await global.client
+  //   .waitForVisible('#closeAboutDialogButton')
+  //   .click('#closeAboutDialogButton');
 }
 
 export async function startupLocation() {

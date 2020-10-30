@@ -64,7 +64,7 @@ describe('TST65 - HTML viewer [electron]', () => {
     await closeOpenedFile();
   });
 
-  it('TST6501 - Open HTML in reader mode []', async () => {
+  it('TST6502 - Open HTML in reader mode [electron]', async () => {
     await delay(500);
     await searchEngine('html');
     await delay(500);
@@ -72,15 +72,49 @@ describe('TST65 - HTML viewer [electron]', () => {
     await file.waitForDisplayed();
     await file.doubleClick();
     await delay(1500);
+    const webViewer = await global.client.$('#FileViewer');
+    //await delay(500);
+    expect(await webViewer.isDisplayed()).toBe(true);
+    await global.client.switchToFrame(webViewer);
+    await delay(500);
+    // const iframeBody = await global.client.$('body');
+    // const bodyTxt = await iframeBody.getText();
+    // await global.client.switchToParentFrame();
+    // expect(toContainTID(bodyTxt)).toBe(true);
     // const editFile = await global.client.$('data-tid=fileContainerEditFile');
     // await editFile.waitForDisplayed();
     // await editFile.doubleClick();
-    // const viewMainMenuButton = await global.client.$('#viewerMainMenuButton');
-    // await viewMainMenuButton.waitForDisplayed();
-    // await viewMainMenuButton.click();
-    // await delay(500);
-    // await global.client.waitForVisible('#aboutButton').click('#aboutButton');
-    // await delay(1500);
-    await aboutDialogExt();
+    await global.client.switchToParentFrame();
+    await closeOpenedFile();
+  });
+  it('TST6503 - Open about dialog [electron]', async () => {
+    await delay(500);
+    await searchEngine('html');
+    await delay(500);
+    const file = await global.client.$(perspectiveGridTable + firstFile);
+    await file.waitForDisplayed();
+    await file.doubleClick();
+    await delay(1500);
+    const webViewer = await global.client.$('#FileViewer');
+    //await delay(500);
+    expect(await webViewer.isDisplayed()).toBe(true);
+    await global.client.switchToFrame(webViewer);
+    await delay(500);
+    const viewMainMenuButton = await global.client.$('#viewerMainMenuButton');
+    await viewMainMenuButton.waitForDisplayed();
+    await viewMainMenuButton.click();
+    await delay(1500);
+    const aboutButton = await global.client.$('#aboutButton');
+    await aboutButton.waitForDisplayed();
+    await aboutButton.click();
+    await delay(5500);
+    const closeAboutDialogButton = await global.client.$(
+      '#closeAboutDialogButton'
+    );
+    await closeAboutDialogButton.waitForDisplayed();
+    await closeAboutDialogButton.click();
+    await delay(500);
+    await global.client.switchToParentFrame();
+    await closeOpenedFile();
   });
 });
