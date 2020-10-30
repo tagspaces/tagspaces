@@ -783,6 +783,9 @@ class GridPerspective extends React.Component<Props, State> {
     const sortedContent = this.sort(directoryContent, sortBy, orderBy);
     const sortedDirectories = sortedContent.filter(entry => !entry.isFile);
     const sortedFiles = sortedContent.filter(entry => entry.isFile);
+    const locationPath = this.props.currentLocation
+      ? this.props.currentLocation.path || this.props.currentLocation.paths[0]
+      : '';
     let entryWidth = 200;
     if (entrySize === 'small') {
       entryWidth = 150;
@@ -844,10 +847,7 @@ class GridPerspective extends React.Component<Props, State> {
             files={sortedFiles}
             renderCell={this.renderCell}
             currentPage={1}
-            currentLocationPath={
-              this.props.currentLocation.path ||
-              this.props.currentLocation.paths[0]
-            }
+            currentLocationPath={locationPath}
           />
         </GlobalHotKeys>
         <AddRemoveTagsDialog
