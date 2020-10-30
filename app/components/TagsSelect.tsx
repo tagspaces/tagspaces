@@ -203,7 +203,7 @@ const TagsSelect = (props: Props) => {
             label={label}
             placeholder={placeholderText}
             margin="normal"
-            style={{ marginTop: 0, marginBottom: 0 }}
+            style={{ marginTop: 0, marginBottom: 0, whiteSpace: 'nowrap' }}
             fullWidth
           />
         )}
