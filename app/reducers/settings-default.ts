@@ -432,21 +432,6 @@ export default {
       color: '#c5e4f9'
     },
     {
-      type: 'm4a',
-      viewer: '@tagspaces/media-player',
-      color: '#c5e4f9'
-    },
-    {
-      type: 'm4p',
-      viewer: '@tagspaces/media-player',
-      color: '#c5e4f9'
-    },
-    {
-      type: 'm4v',
-      viewer: '@tagspaces/media-player',
-      color: '#c5e4f9'
-    },
-    {
       type: 'md',
       viewer: '@tagspaces/md-viewer',
       editor: '@tagspaces/text-editor',
