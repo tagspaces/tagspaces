@@ -170,9 +170,9 @@ const actions = {
           };
           saveMetaDataPromise(path, updatedFsEntryMeta)
             .then(() => {
-              /* dispatch(
+              dispatch( // TODO this updateCurrentDirEntry and not need for KanBan
                 AppActions.reflectUpdateSidecarTags(path, newTags, updateIndex)
-              ); */
+              );
               dispatch(
                 AppActions.updateOpenedFile(path, {
                   tags: newTags,
@@ -199,9 +199,9 @@ const actions = {
             dispatch(
               AppActions.updateOpenedFile(path, { tags, changed: true })
             );
-            /* dispatch(
+            dispatch( // TODO this updateCurrentDirEntry and not need for KanBan
               AppActions.reflectUpdateSidecarTags(path, tags, updateIndex)
-            ); */
+            );
             return true;
           })
           .catch(error => {
