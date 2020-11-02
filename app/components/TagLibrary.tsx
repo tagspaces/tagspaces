@@ -447,6 +447,7 @@ function mapDispatchToProps(dispatch) {
       moveTag: TagLibraryActions.moveTag,
       editTagGroup: TagLibraryActions.editTagGroup,
       deleteTag: TagLibraryActions.deleteTag,
+      addTag: TagLibraryActions.addTag,
       addTags: TaggingActions.addTags,
       collectTagsFromLocation: TaggingActions.collectTagsFromLocation,
       openURLExternally: AppActions.openURLExternally
