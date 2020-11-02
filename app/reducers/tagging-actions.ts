@@ -238,8 +238,9 @@ const actions = {
           extractedTags.push(uniqueTags[i].title);
         }
         const newFilePath =
-          containingDirectoryPath +
-          PlatformIO.getDirSeparator() +
+          (containingDirectoryPath
+            ? containingDirectoryPath + PlatformIO.getDirSeparator()
+            : '') +
           generateFileName(fileName, extractedTags, settings.tagDelimiter);
         dispatch(AppActions.renameFile(path, newFilePath));
       }
@@ -263,8 +264,9 @@ const actions = {
         }
       }
       const newFilePath =
-        containingDirectoryPath +
-        PlatformIO.getDirSeparator() +
+        (containingDirectoryPath
+          ? containingDirectoryPath + PlatformIO.getDirSeparator()
+          : '') +
         generateFileName(fileName, extractedTags, settings.tagDelimiter);
       if (path !== newFilePath) {
         dispatch(AppActions.renameFile(path, newFilePath));
@@ -559,8 +561,9 @@ const actions = {
           }
         }
         const newFilePath =
-          containingDirectoryPath +
-          PlatformIO.getDirSeparator() +
+          (containingDirectoryPath
+            ? containingDirectoryPath + PlatformIO.getDirSeparator()
+            : '') +
           generateFileName(fileName, extractedTags, settings.tagDelimiter);
         if (path !== newFilePath) {
           dispatch(AppActions.renameFile(path, newFilePath));
@@ -639,8 +642,9 @@ const actions = {
           fileExt = '.' + fileExt;
         }
         const newFilePath =
-          containingDirectoryPath +
-          PlatformIO.getDirSeparator() +
+          (containingDirectoryPath
+            ? containingDirectoryPath + PlatformIO.getDirSeparator()
+            : '') +
           fileTitle +
           fileExt;
         dispatch(AppActions.renameFile(path, newFilePath));

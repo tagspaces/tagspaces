@@ -1116,18 +1116,10 @@ export const actions = {
         newHTMLFileContent.split('<body></body>')[1];
     }
     PlatformIO.saveFilePromise(filePath, fileContent, true)
-      .then(() => {
+      .then((fsEntry: FileSystemEntry) => {
         dispatch(actions.reflectCreateEntry(filePath, true));
-        getAllPropertiesPromise(filePath)
-          .then((fsEntry: FileSystemEntry) => {
-            dispatch(actions.openFsEntry(fsEntry)); // TODO return fsEntry from saveFilePromise and simplify
-            return true;
-          })
-          .catch(error =>
-            console.warn(
-              'Error getting properties for entry: ' + filePath + ' - ' + error
-            )
-          );
+        dispatch(actions.openFsEntry(fsEntry)); // TODO return fsEntry from saveFilePromise and simplify
+
         dispatch(actions.setLastSelectedEntry(filePath));
         dispatch(
           actions.showNotification(
@@ -1281,53 +1273,56 @@ export const actions = {
     fsEntryMeta: any // FileSystemEntryMeta,
     // isFile: boolean = true
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
-    PlatformIO.getPropertiesPromise(entryPath)
-      .then(entryProps => {
-        if (entryProps) {
-          const { supportedFileTypes } = getState().settings;
-          const { openedFiles } = getState().app;
-          let entryForOpening: OpenedEntry;
-          if (openedFiles && openedFiles.length > 0) {
-            entryForOpening = openedFiles.find(obj => obj.path === entryPath);
-          }
-          if (!entryForOpening) {
-            entryForOpening = findExtensionsForEntry(
-              supportedFileTypes,
-              entryPath,
-              entryProps.isFile
-            );
-          }
+    const { openedFiles } = getState().app;
+    if (openedFiles && openedFiles.length > 0) {
+      PlatformIO.getPropertiesPromise(entryPath)
+        .then(entryProps => {
+          if (entryProps) {
+            const { supportedFileTypes } = getState().settings;
 
-          if (fsEntryMeta.changed !== undefined) {
-            entryForOpening.changed = fsEntryMeta.changed;
-          } /* else {
+            let entryForOpening: OpenedEntry = openedFiles.find(
+              obj => obj.path === entryPath
+            );
+
+            if (!entryForOpening) {
+              entryForOpening = findExtensionsForEntry(
+                supportedFileTypes,
+                entryPath,
+                entryProps.isFile
+              );
+            }
+
+            if (fsEntryMeta.changed !== undefined) {
+              entryForOpening.changed = fsEntryMeta.changed;
+            } /* else {
             entryForOpening.changed = true;
           } */
-          if (fsEntryMeta.editMode !== undefined) {
-            entryForOpening.editMode = fsEntryMeta.editMode;
+            if (fsEntryMeta.editMode !== undefined) {
+              entryForOpening.editMode = fsEntryMeta.editMode;
+            }
+            if (fsEntryMeta.shouldReload !== undefined) {
+              entryForOpening.shouldReload = fsEntryMeta.shouldReload;
+            }
+            if (fsEntryMeta.color) {
+              entryForOpening.color = fsEntryMeta.color;
+            }
+            if (fsEntryMeta.description) {
+              entryForOpening.description = fsEntryMeta.description;
+            }
+            if (fsEntryMeta.perspective) {
+              entryForOpening.perspective = fsEntryMeta.perspective;
+            }
+            if (fsEntryMeta.tags) {
+              entryForOpening.tags = fsEntryMeta.tags;
+            }
+            dispatch(actions.addToEntryContainer(entryForOpening));
           }
-          if (fsEntryMeta.shouldReload !== undefined) {
-            entryForOpening.shouldReload = fsEntryMeta.shouldReload;
-          }
-          if (fsEntryMeta.color) {
-            entryForOpening.color = fsEntryMeta.color;
-          }
-          if (fsEntryMeta.description) {
-            entryForOpening.description = fsEntryMeta.description;
-          }
-          if (fsEntryMeta.perspective) {
-            entryForOpening.perspective = fsEntryMeta.perspective;
-          }
-          if (fsEntryMeta.tags) {
-            entryForOpening.tags = fsEntryMeta.tags;
-          }
-          dispatch(actions.addToEntryContainer(entryForOpening));
-        }
-        return true;
-      })
-      .catch(err => {
-        console.error('updateOpenedFile ' + entryPath + ' not exist ' + err);
-      });
+          return true;
+        })
+        .catch(err => {
+          console.error('updateOpenedFile ' + entryPath + ' not exist ' + err);
+        });
+    }
   },
   openFsEntry: (fsEntry: FileSystemEntry) => (
     dispatch: (actions: Object) => void,
@@ -1354,10 +1349,10 @@ export const actions = {
       fsEntry.path,
       fsEntry.isFile
     );
-    if (fsEntry.url) {
-      entryForOpening.url = fsEntry.url;
-    } else if (PlatformIO.haveObjectStoreSupport()) {
+    if (PlatformIO.haveObjectStoreSupport()) {
       entryForOpening.url = PlatformIO.getURLforPath(fsEntry.path);
+    } else if (fsEntry.url) {
+      entryForOpening.url = fsEntry.url;
     }
     if (fsEntry.perspective) {
       entryForOpening.perspective = fsEntry.perspective;
@@ -1373,6 +1368,9 @@ export const actions = {
     }
     if (fsEntry.size) {
       entryForOpening.size = fsEntry.size;
+    }
+    if (fsEntry.isNewFile) {
+      entryForOpening.editMode = true;
     }
     const localePar = getURLParameter(fsEntry.path);
     let startPar = '?open=' + encodeURIComponent(fsEntry.path);
