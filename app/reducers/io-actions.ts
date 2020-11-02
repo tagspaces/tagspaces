@@ -203,7 +203,10 @@ const actions = {
           normalizePath(targetPath) +
           PlatformIO.getDirSeparator() +
           decodeURIComponent(file.name);
-        if (PlatformIO.haveObjectStoreSupport() && filePath.startsWith('/')) {
+        if (
+          PlatformIO.haveObjectStoreSupport() &&
+          (filePath.startsWith('\\') || filePath.startsWith('/'))
+        ) {
           filePath = filePath.substr(1);
         }
         reader.onload = (event: any) => {
@@ -303,15 +306,17 @@ const actions = {
         ) {
           target = target.substr(1);
         }
-        uploadJobs.push([path, target]);
+        uploadJobs.push([path, target, 'file']);
         // copy meta
         uploadJobs.push([
           getMetaFileLocationForFile(path, AppConfig.dirSeparator),
-          getMetaFileLocationForFile(target, AppConfig.dirSeparator)
+          getMetaFileLocationForFile(target, AppConfig.dirSeparator),
+          'meta'
         ]);
         uploadJobs.push([
           getThumbFileLocationForFile(path, AppConfig.dirSeparator),
-          getThumbFileLocationForFile(target, AppConfig.dirSeparator)
+          getThumbFileLocationForFile(target, AppConfig.dirSeparator),
+          'thumb'
         ]);
         return true;
       });
@@ -319,6 +324,7 @@ const actions = {
         // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
         // const file = selection.currentTarget.files[0];
         const filePath = job[1];
+        const fileType = job[2];
         /* normalizePath(props.directoryPath) +
                 PlatformIO.getDirSeparator() +
                 decodeURIComponent(file.name); */
@@ -350,18 +356,19 @@ const actions = {
                       onUploadProgress
                     )
                       .then((fsEntry: FileSystemEntry) => {
-                        if (filePath.indexOf('.ts/') !== -1) {
-                          // handle meta file TODO catch thumb
-                          if (fsEntry.path.endsWith('.json')) {
-                            try {
-                              // eslint-disable-next-line no-param-reassign
-                              fsEntry.meta = loadJSONString(
-                                fileContent.toString()
-                              );
-                            } catch (e) {
-                              console.debug('cannot parse entry meta');
-                            }
+                        // handle meta files
+                        if (fileType === 'meta') {
+                          try {
+                            // eslint-disable-next-line no-param-reassign
+                            fsEntry.meta = loadJSONString(
+                              fileContent.toString()
+                            );
+                          } catch (e) {
+                            console.debug('cannot parse entry meta');
                           }
+                        } else if (fileType === 'thumb') {
+                          // eslint-disable-next-line no-param-reassign
+                          fsEntry.thumbPath = fsEntry.path;
                         }
 
                         return fsEntry;
@@ -400,22 +407,14 @@ const actions = {
 
           filesProm.map(file => {
             if (file) {
-              if (file.path.indexOf('.ts/') === -1) {
-                arrFiles.push(file); // enhanceEntry(file));
-              } else if (file.meta) {
+              if (file.meta) {
                 arrMeta.push(file);
-              } else {
+              } else if (file.thumbPath) {
                 arrThumb.push(file);
+              } else {
+                arrFiles.push(file);
               }
             }
-            /* if (file !== undefined) {
-              // dispatch(AppActions.reflectCreateEntryInt(entryEnhanced));
-                const metaFileProps = await PlatformIO.getPropertiesPromise(metaFilePath);
-                if (metaFileProps.isFile) {
-                    entryProps.meta = await loadJSONFile(metaFilePath);
-                }
-              arrFiles.push(enhanceEntry(file)); // TODO optimize and Enhance Entry with uploaded .ts metafiles
-            } */
             return true;
           });
           dispatch(
@@ -434,12 +433,25 @@ const actions = {
               const metaFilePath = getMetaFileLocationForFile(
                 file.path,
                 AppConfig.dirSeparator
-              );
+              ).replace(/[/\\]/g, '');
+              const thumbFilePath = getThumbFileLocationForFile(
+                file.path,
+                AppConfig.dirSeparator
+              ).replace(/[/\\]/g, '');
               for (let i = 0; i < arrMeta.length; i += 1) {
                 const metaFile = arrMeta[i];
-                if (metaFile.path === metaFilePath) {
+                if (metaFile.path.replace(/[/\\]/g, '') === metaFilePath) {
                   // eslint-disable-next-line no-param-reassign
                   file.meta = metaFile.meta;
+                }
+              }
+              for (let i = 0; i < arrThumb.length; i += 1) {
+                const thumbFile = arrThumb[i];
+                if (thumbFile.path.replace(/[/\\]/g, '') === thumbFilePath) {
+                  // eslint-disable-next-line no-param-reassign
+                  file.thumbPath = PlatformIO.getURLforPath(
+                    thumbFile.thumbPath
+                  );
                 }
               }
               if (file.meta) {

@@ -387,6 +387,8 @@ export function loadJSONString(jsonContent: string) {
   const UTF8_BOM = '\ufeff';
   if (jsonContent.indexOf(UTF8_BOM) === 0) {
     json = jsonContent.substring(1, jsonContent.length);
+  } else {
+    json = jsonContent;
   }
   try {
     jsonObject = JSON.parse(json);

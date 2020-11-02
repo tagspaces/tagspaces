@@ -318,7 +318,8 @@ const FolderContainer = (props: Props) => {
       props.showNotification(i18n.t('core:needProVersion'));
       return;
     } */
-    savePerspective(props.currentDirectoryPath, perspectiveId || 'default')
+    props.setCurrentDirectoryPerspective(perspectiveId);
+    /* savePerspective(props.currentDirectoryPath, perspectiveId || 'default')
       .then((entryMeta: FileSystemEntryMeta) => {
         props.setCurrentDirectoryPerspective(entryMeta.perspective);
         return true;
@@ -326,7 +327,7 @@ const FolderContainer = (props: Props) => {
       .catch(error => {
         console.warn('Error saving perspective for folder ' + error);
         props.showNotification(i18n.t('Error saving perspective for folder'));
-      });
+      }); */
   };
 
   /* const togglePerspectiveChooserClose = (event?: any) => {
