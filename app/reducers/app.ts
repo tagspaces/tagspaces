@@ -100,7 +100,7 @@ export const types = {
   REFLECT_RENAME_ENTRY: 'APP/REFLECT_RENAME_ENTRY',
   REFLECT_CREATE_ENTRY: 'APP/REFLECT_CREATE_ENTRY',
   // REFLECT_UPDATE_SIDECARTAGS: 'APP/REFLECT_UPDATE_SIDECARTAGS',
-  REFLECT_UPDATE_SIDECARMETA: 'APP/REFLECT_UPDATE_SIDECARMETA',
+  // REFLECT_UPDATE_SIDECARMETA: 'APP/REFLECT_UPDATE_SIDECARMETA',
   UPDATE_CURRENTDIR_ENTRY: 'APP/UPDATE_CURRENTDIR_ENTRY'
 };
 export const perspectives = {
@@ -576,7 +576,7 @@ export default (state: any = initialState, action: any) => {
         })
       };
     }
-    case types.REFLECT_UPDATE_SIDECARMETA: {
+    /* case types.REFLECT_UPDATE_SIDECARMETA: {
       return {
         ...state,
         currentDirectoryEntries: state.currentDirectoryEntries.map(entry => {
@@ -598,7 +598,7 @@ export default (state: any = initialState, action: any) => {
           };
         })
       };
-    }
+    } */
     case types.CLOSE_ALL_FILES: {
       // eslint-disable-next-line no-restricted-globals
       window.history.pushState('', 'TagSpaces', location.pathname);
@@ -1511,22 +1511,22 @@ export const actions = {
    * @param path
    * @param entryMeta
    */
-  reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => (
+  /* reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => (
     dispatch: (actions: Object) => void
   ) => {
     dispatch(actions.reflectUpdateSidecarMetaInt(path, entryMeta));
     dispatch(LocationIndexActions.reflectUpdateSidecarMeta(path, entryMeta));
-  },
+  }, */
   /**
    * @deprecated use updateCurrentDirEntry instead
    * @param path
    * @param entryMeta
    */
-  reflectUpdateSidecarMetaInt: (path: string, entryMeta: Object) => ({
+  /* reflectUpdateSidecarMetaInt: (path: string, entryMeta: Object) => ({
     type: types.REFLECT_UPDATE_SIDECARMETA,
     path,
     entryMeta
-  }),
+  }), */
   reflectUpdateSidecarTags: (
     path: string,
     tags: Array<Tag>,

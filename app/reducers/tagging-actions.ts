@@ -170,15 +170,19 @@ const actions = {
           };
           saveMetaDataPromise(path, updatedFsEntryMeta)
             .then(() => {
-              dispatch( // TODO this updateCurrentDirEntry and not need for KanBan
+              dispatch(
+                // TODO rethink this updateCurrentDirEntry and not need for KanBan
                 AppActions.reflectUpdateSidecarTags(path, newTags, updateIndex)
               );
-              dispatch(
-                AppActions.updateOpenedFile(path, {
-                  tags: newTags,
-                  changed: true
-                })
-              );
+              const { openedFiles } = getState().app;
+              if (openedFiles.find(obj => obj.path === path)) {
+                dispatch(
+                  AppActions.updateOpenedFile(path, {
+                    tags: newTags,
+                    changed: true
+                  })
+                );
+              }
               return true;
             })
             .catch(err => {
@@ -197,11 +201,15 @@ const actions = {
         saveMetaDataPromise(path, newFsEntryMeta)
           .then(() => {
             dispatch(
-              AppActions.updateOpenedFile(path, { tags, changed: true })
-            );
-            dispatch( // TODO this updateCurrentDirEntry and not need for KanBan
+              // TODO rethink this updateCurrentDirEntry and not need for KanBan
               AppActions.reflectUpdateSidecarTags(path, tags, updateIndex)
             );
+            const { openedFiles } = getState().app;
+            if (openedFiles.find(obj => obj.path === path)) {
+              dispatch(
+                AppActions.updateOpenedFile(path, { tags, changed: true })
+              );
+            }
             return true;
           })
           .catch(error => {
