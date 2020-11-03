@@ -238,7 +238,7 @@ const EntryProperties = (props: Props) => {
 
   useEffect(() => {
     if (
-      editDescription === currentEntry.description &&
+      // editDescription === currentEntry.description &&
       fileDescriptionRef.current
     ) {
       fileDescriptionRef.current.focus();

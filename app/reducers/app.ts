@@ -1306,7 +1306,7 @@ export const actions = {
             if (fsEntryMeta.color) {
               entryForOpening.color = fsEntryMeta.color;
             }
-            if (fsEntryMeta.description) {
+            if (fsEntryMeta.description !== undefined) {
               entryForOpening.description = fsEntryMeta.description;
             }
             if (fsEntryMeta.perspective) {
