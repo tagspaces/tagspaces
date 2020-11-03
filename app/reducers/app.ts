@@ -1349,10 +1349,10 @@ export const actions = {
       fsEntry.path,
       fsEntry.isFile
     );
-    if (PlatformIO.haveObjectStoreSupport()) {
-      entryForOpening.url = PlatformIO.getURLforPath(fsEntry.path);
-    } else if (fsEntry.url) {
+    if (fsEntry.url) {
       entryForOpening.url = fsEntry.url;
+    } else if (PlatformIO.haveObjectStoreSupport()) {
+      entryForOpening.url = PlatformIO.getURLforPath(fsEntry.path);
     }
     if (fsEntry.perspective) {
       entryForOpening.perspective = fsEntry.perspective;

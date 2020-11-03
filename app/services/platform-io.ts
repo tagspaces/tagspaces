@@ -121,7 +121,7 @@ export default class PlatformIO {
       return objectStoreAPI.getURLforPath(path);
     }
     // console.log('getURLforPath not supported');
-    return path;
+    // return path;
   };
 
   static createDirectoryTree = (directoryPath: string): Object =>
