@@ -104,9 +104,10 @@ const CellContent = (props: Props) => {
     PlatformIO.getDirSeparator()
   );
 
-  const sideCarTagsTitles = fsEntry.tags.map(tag => tag.title);
+  const fsEntryTags = fsEntry.tags ? fsEntry.tags : [];
+  const sideCarTagsTitles = fsEntryTags.map(tag => tag.title);
   const entryTags = [
-    ...fsEntry.tags,
+    ...fsEntryTags,
     ...fileNameTags.filter(tag => !sideCarTagsTitles.includes(tag.title))
   ];
 
