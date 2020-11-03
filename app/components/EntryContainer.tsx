@@ -356,7 +356,7 @@ const EntryContainer = (props: Props) => {
         props.openFileNatively(data.link);
         break;
       case 'loadDefaultTextContent':
-        if (!openedFile || !openedFile.path) {
+        if (!openedFile || !openedFile.path || openedFile.changed) {
           break;
         }
         textFilePath = openedFile.path;
