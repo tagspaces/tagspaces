@@ -29,7 +29,7 @@ import FolderIcon from '@material-ui/icons/FolderOpen';
 // import UnSelectedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import TagIcon from '@material-ui/icons/LocalOfferOutlined';
 import { formatFileSize, formatDateTime } from '-/utils/misc';
-import { extractTitle } from '-/utils/paths';
+import { extractTagsAsObjects, extractTitle } from '-/utils/paths';
 import { FileSystemEntry, findColorForFileEntry } from '-/services/utils-io';
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagContainer from '-/components/TagContainer';
@@ -98,9 +98,21 @@ const CellContent = (props: Props) => {
     supportedFileTypes
   );
 
+  const fileNameTags = extractTagsAsObjects(
+    fsEntry.name,
+    AppConfig.tagDelimiter,
+    PlatformIO.getDirSeparator()
+  );
+
+  const sideCarTagsTitles = fsEntry.tags.map(tag => tag.title);
+  const entryTags = [
+    ...fsEntry.tags,
+    ...fileNameTags.filter(tag => !sideCarTagsTitles.includes(tag.title))
+  ];
+
   let tagTitles = '';
-  if (fsEntry.tags) {
-    fsEntry.tags.map(tag => {
+  if (entryTags) {
+    entryTags.map(tag => {
       tagTitles += tag.title + ', ';
       return true;
     });
@@ -146,8 +158,8 @@ const CellContent = (props: Props) => {
             />
           )}
           <div id="gridCellTags" className={classes.gridCellTags}>
-            {showTags && fsEntry.tags
-              ? fsEntry.tags.map(tag => renderTag(tag))
+            {showTags && entryTags
+              ? entryTags.map(tag => renderTag(tag))
               : tagPlaceholder}
           </div>
           {description.length > 0 && (
@@ -273,8 +285,8 @@ const CellContent = (props: Props) => {
             <Typography style={{ wordBreak: 'break-all', alignSelf: 'center' }}>
               {entryTitle}
               &nbsp;
-              {showTags && fsEntry.tags
-                ? fsEntry.tags.map(tag => renderTag(tag))
+              {showTags && entryTags
+                ? entryTags.map(tag => renderTag(tag))
                 : tagPlaceholder}
             </Typography>
           </Grid>
@@ -283,8 +295,8 @@ const CellContent = (props: Props) => {
             <Typography style={{ wordBreak: 'break-all' }}>
               {entryTitle}
             </Typography>
-            {showTags && fsEntry.tags
-              ? fsEntry.tags.map(tag => renderTag(tag))
+            {showTags && entryTags
+              ? entryTags.map(tag => renderTag(tag))
               : tagPlaceholder}
             <Typography
               style={{
