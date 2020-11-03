@@ -379,6 +379,7 @@ const FolderContainer = (props: Props) => {
           currentDirectoryPath={props.currentDirectoryPath}
           windowWidth={props.windowWidth}
           switchPerspective={switchPerspective}
+          openedFiles={props.openedFiles}
         />
       );
     }
