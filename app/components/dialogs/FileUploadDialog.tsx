@@ -29,14 +29,16 @@ import { LinearProgress, Grid, Tooltip } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import WarningIcon from '@material-ui/icons/Warning';
 import PlatformIO from '-/services/platform-io';
-import { getProgress } from '-/reducers/app';
+import { actions as AppActions, getProgress } from '-/reducers/app';
 import { extractFileName } from '-/utils/paths';
 import i18n from '-/services/i18n';
+import { bindActionCreators } from 'redux';
 
 interface Props {
   open: boolean;
   progress?: Array<any>;
   onClose: () => void;
+  clearUploadDialog: () => void;
 }
 
 const FileUploadDialog = (props: Props) => {
@@ -150,10 +152,17 @@ const FileUploadDialog = (props: Props) => {
       <DialogActions>
         <Button
           data-tid="uploadCloseDialog"
+          onClick={props.clearUploadDialog}
+          color="primary"
+        >
+          {i18n.t('core:closeAndClear')}
+        </Button>
+        <Button
+          data-tid="uploadCloseDialog"
           onClick={props.onClose}
           color="primary"
         >
-          {i18n.t('core:close')}
+          {i18n.t('core:minimize')}
         </Button>
         {haveProgress && (
           <Button
@@ -175,4 +184,13 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(FileUploadDialog);
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(
+    {
+      clearUploadDialog: AppActions.clearUploadDialog
+    },
+    dispatch
+  );
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(FileUploadDialog);
