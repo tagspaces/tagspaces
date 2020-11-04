@@ -1931,8 +1931,6 @@ export const isProgressOpened = (state: any) => state.app.progressDialogOpened;
 export const getOpenedFiles = (state: any) => state.app.openedFiles;
 export const getNotificationStatus = (state: any) =>
   state.app.notificationStatus;
-export const getSearchResults = (state: any) =>
-  state.app.currentDirectoryEntries;
 export const getSearchResultCount = (state: any) =>
   state.app.currentDirectoryEntries.length;
 export const getCurrentLocationId = (state: any) => state.app.currentLocationId;

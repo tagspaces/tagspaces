@@ -848,6 +848,7 @@ class GridPerspective extends React.Component<Props, State> {
             renderCell={this.renderCell}
             currentPage={1}
             currentLocationPath={locationPath}
+            currentDirectoryPath={this.props.currentDirectoryPath}
           />
         </GlobalHotKeys>
         <AddRemoveTagsDialog
