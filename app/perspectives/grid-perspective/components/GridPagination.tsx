@@ -22,7 +22,11 @@ import Typography from '@material-ui/core/Typography';
 import Pagination from '@material-ui/lab/Pagination';
 import { FileSystemEntry } from '-/services/utils-io';
 import i18n from '-/services/i18n';
-import {getCurrentDirectoryColor, getSearchResultCount, isLoading} from '-/reducers/app';
+import {
+  getCurrentDirectoryColor,
+  getSearchResultCount,
+  isLoading
+} from '-/reducers/app';
 import AppConfig from '-/config';
 
 interface Props {
@@ -61,7 +65,11 @@ const GridPagination = (props: Props) => {
 
   useEffect(() => {
     setPage(props.currentPage);
-  }, [props.currentLocationPath, props.currentDirectoryPath, props.searchResultCount]);
+  }, [
+    props.currentLocationPath,
+    props.currentDirectoryPath,
+    props.searchResultCount
+  ]);
 
   const handleChange = (event, value) => {
     // props.currentPage = value;
