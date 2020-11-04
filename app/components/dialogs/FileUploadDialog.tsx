@@ -150,13 +150,15 @@ const FileUploadDialog = (props: Props) => {
             })}
       </DialogContent>
       <DialogActions>
-        <Button
-          data-tid="uploadCloseDialog"
-          onClick={props.clearUploadDialog}
-          color="primary"
-        >
-          {i18n.t('core:closeAndClear')}
-        </Button>
+        {!haveProgress && (
+          <Button
+            data-tid="uploadCloseDialog"
+            onClick={props.clearUploadDialog}
+            color="primary"
+          >
+            {i18n.t('core:closeAndClear')}
+          </Button>
+        )}
         <Button
           data-tid="uploadCloseDialog"
           onClick={props.onClose}
