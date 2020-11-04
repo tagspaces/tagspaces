@@ -191,13 +191,13 @@ const actions = {
       );
     }
 
-    return new Promise(resolve => {
+    return new Promise(async resolve => {
       const fsEntries = [];
       // -> cannot upload meta data (for every upload in web browser its need to have <input> element)
-      setupReader(0);
+      await setupReader(0);
 
-      function setupReader(i) {
-        const file = files[i];
+      async function setupReader(inx) {
+        const file = files[inx];
         const reader = new FileReader();
         let filePath =
           normalizePath(targetPath) +
@@ -209,8 +209,8 @@ const actions = {
         ) {
           filePath = filePath.substr(1);
         }
-        reader.onload = (event: any) => {
-          readerLoaded(event, i, filePath);
+        reader.onload = async (event: any) => {
+          await readerLoaded(event, inx, filePath);
         };
         if (AppConfig.isCordova) {
           reader.readAsDataURL(file);
@@ -219,61 +219,54 @@ const actions = {
         }
       }
 
-      function readerLoaded(event, i, fileTargetPath) {
-        PlatformIO.getPropertiesPromise(fileTargetPath)
-          .then(entryProps => {
-            if (entryProps) {
-              dispatch(
-                AppActions.showNotification(
-                  'File with the same name already exist, importing skipped!',
-                  'warning',
-                  true
-                )
-              );
-            } else {
-              PlatformIO.saveBinaryFilePromise(
-                fileTargetPath,
-                event.currentTarget.result,
-                true,
-                onUploadProgress
+      async function readerLoaded(event, index, fileTargetPath) {
+        const entryProps = await PlatformIO.getPropertiesPromise(
+          fileTargetPath
+        );
+        if (entryProps) {
+          dispatch(
+            AppActions.showNotification(
+              'File with the same name already exist, importing skipped!',
+              'warning',
+              true
+            )
+          );
+        } else {
+          const result = event.currentTarget
+            ? event.currentTarget.result
+            : event.target.result;
+          const fsEntry: FileSystemEntry = await PlatformIO.saveBinaryFilePromise(
+            fileTargetPath,
+            result,
+            true,
+            onUploadProgress
+          );
+          if (fsEntry) {
+            dispatch(
+              AppActions.showNotification(
+                'File ' + fileTargetPath + ' successfully imported.',
+                'default',
+                true
               )
-                .then((fsEntry: FileSystemEntry) => {
-                  dispatch(
-                    AppActions.showNotification(
-                      'File ' + fileTargetPath + ' successfully imported.',
-                      'default',
-                      true
-                    )
-                  );
-                  fsEntries.push(fsEntry);
-                  // dispatch(AppActions.reflectCreateEntry(fileTargetPath, true));
-                  return true;
-                })
-                .catch(error => {
-                  // TODO showAlertDialog("Saving " + filePath + " failed.");
-                  console.error(
-                    'Save to file ' + fileTargetPath + ' failed ' + error
-                  );
-                  dispatch(
-                    AppActions.showNotification(
-                      'Importing file ' + fileTargetPath + ' failed.',
-                      'error',
-                      true
-                    )
-                  );
-                  return true;
-                });
-            }
-            return true;
-          })
-          .catch(err => {
-            console.log('Error getting properties ' + err);
-          });
+            );
+            fsEntries.push(fsEntry);
+            // dispatch(AppActions.reflectCreateEntry(fileTargetPath, true));
+          } else {
+            console.error('Save to file ' + fileTargetPath + ' failed ');
+            dispatch(
+              AppActions.showNotification(
+                'Importing file ' + fileTargetPath + ' failed.',
+                'error',
+                true
+              )
+            );
+          }
+        }
 
         // If there's a file left to load
-        if (i < files.length - 1) {
+        if (index < files.length - 1) {
           // Load the next file
-          setupReader(i + 1);
+          await setupReader(index + 1);
         } else {
           resolve(fsEntries);
         }
