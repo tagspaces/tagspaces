@@ -89,6 +89,7 @@ export const types = {
   TOGGLE_CREATE_FILE_DIALOG: 'APP/TOGGLE_CREATE_FILE_DIALOG',
   TOGGLE_SELECT_DIRECTORY_DIALOG: 'APP/TOGGLE_SELECT_DIRECTORY_DIALOG',
   TOGGLE_UPLOAD_DIALOG: 'APP/TOGGLE_UPLOAD_DIALOG',
+  CLEAR_UPLOAD_DIALOG: 'APP/CLEAR_UPLOAD_DIALOG',
   TOGGLE_PROGRESS_DIALOG: 'APP/TOGGLE_PROGRESS_DIALOG',
   OPEN_LOCATIONMANAGER_PANEL: 'APP/OPEN_LOCATIONMANAGER_PANEL',
   OPEN_TAGLIBRARY_PANEL: 'APP/OPEN_TAGLIBRARY_PANEL',
@@ -343,6 +344,17 @@ export default (state: any = initialState, action: any) => {
           ...state,
           // progress: (state.uploadDialogOpened ? state.progress : []),
           uploadDialogOpened: !state.uploadDialogOpened
+        };
+      }
+      return state;
+    }
+    case types.CLEAR_UPLOAD_DIALOG: {
+      if (PlatformIO.haveObjectStoreSupport()) {
+        // upload dialog have objectStore support only
+        return {
+          ...state,
+          progress: [],
+          uploadDialogOpened: false
         };
       }
       return state;
@@ -756,6 +768,9 @@ export const actions = {
   }),
   toggleUploadDialog: () => ({
     type: types.TOGGLE_UPLOAD_DIALOG
+  }),
+  clearUploadDialog: () => ({
+    type: types.CLEAR_UPLOAD_DIALOG
   }),
   toggleProgressDialog: () => ({
     type: types.TOGGLE_PROGRESS_DIALOG
