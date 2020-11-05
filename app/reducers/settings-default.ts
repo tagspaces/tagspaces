@@ -341,6 +341,11 @@ export default {
       color: ''
     },
     {
+      type: 'acc',
+      viewer: '@tagspaces/media-player',
+      color: ''
+    },
+    {
       type: 'gif',
       viewer: '@tagspaces/image-viewer',
       color: '#9fd5ba'
