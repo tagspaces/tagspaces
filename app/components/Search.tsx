@@ -519,7 +519,11 @@ class Search extends React.Component<Props, State> {
               >
                 {i18n.t('folder')}
               </ToggleButton>
-              <ToggleButton disabled={!Pro} value="global">
+              <ToggleButton
+                title="Search globally in all locations. Feature is in BETA status."
+                disabled={!Pro}
+                value="global"
+              >
                 {i18n.t('globalSearch')}
                 <sub>{Pro ? ' BETA' : ' PRO'}</sub>
               </ToggleButton>
@@ -539,7 +543,7 @@ class Search extends React.Component<Props, State> {
                 name="forceIndexing"
               />
             }
-            label="Force reindexing all locations"
+            label="Force reindexing"
           />
           <br />
           <br />

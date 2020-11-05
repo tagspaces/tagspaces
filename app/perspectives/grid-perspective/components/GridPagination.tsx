@@ -22,7 +22,11 @@ import Typography from '@material-ui/core/Typography';
 import Pagination from '@material-ui/lab/Pagination';
 import { FileSystemEntry } from '-/services/utils-io';
 import i18n from '-/services/i18n';
-import { getCurrentDirectoryColor, isLoading } from '-/reducers/app';
+import {
+  getCurrentDirectoryColor,
+  getSearchResultCount,
+  isLoading
+} from '-/reducers/app';
 import AppConfig from '-/config';
 
 interface Props {
@@ -39,6 +43,8 @@ interface Props {
   currentPage: number;
   gridPageLimit: number;
   currentLocationPath: string;
+  currentDirectoryPath: string;
+  searchResultCount: number;
 }
 
 const GridPagination = (props: Props) => {
@@ -59,7 +65,11 @@ const GridPagination = (props: Props) => {
 
   useEffect(() => {
     setPage(props.currentPage);
-  }, [props.currentLocationPath]);
+  }, [
+    props.currentLocationPath,
+    props.currentDirectoryPath,
+    props.searchResultCount
+  ]);
 
   const handleChange = (event, value) => {
     // props.currentPage = value;
@@ -143,7 +153,8 @@ const GridPagination = (props: Props) => {
 function mapStateToProps(state) {
   return {
     isAppLoading: isLoading(state),
-    currentDirectoryColor: getCurrentDirectoryColor(state)
+    currentDirectoryColor: getCurrentDirectoryColor(state),
+    searchResultCount: getSearchResultCount(state)
   };
 }
 
