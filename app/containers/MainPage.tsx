@@ -185,6 +185,7 @@ interface Props {
   toggleAboutDialog: () => void; // needed by electron-menus
   toggleOnboardingDialog: () => void; // needed by electron-menus
   setLastSelectedEntry: (path: string) => void; // needed by electron-menus
+  setSelectedEntries: (path: string) => void; // needed by electron-menus
   openFsEntry: (fsEntry: FileSystemEntry) => void; // needed by electron-menus
   openFileNatively: (url: string) => void; // needed by electron-menus
   openURLExternally: (url: string) => void;
@@ -1012,6 +1013,7 @@ function mapDispatchToProps(dispatch) {
       toggleAboutDialog: AppActions.toggleAboutDialog,
       toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
       setLastSelectedEntry: AppActions.setLastSelectedEntry,
+      setSelectedEntries: AppActions.setSelectedEntries,
       setGeneratingThumbnails: AppActions.setGeneratingThumbnails,
       openFsEntry: AppActions.openFsEntry,
       openFileNatively: AppActions.openFileNatively,
