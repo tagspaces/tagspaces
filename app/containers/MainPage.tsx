@@ -29,7 +29,6 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { HotKeys } from 'react-hotkeys';
 import { NativeTypes } from 'react-dnd-html5-backend';
-// import { DragDropContext } from 'react-dnd';
 import { Progress } from 'aws-sdk/clients/s3';
 import VerticalNavigation from '../components/VerticalNavigation';
 import MobileNavigation from '../components/MobileNavigation';
@@ -528,82 +527,6 @@ class MainPage extends Component<Props, State> {
             console.log('uploadFiles', error);
           });
         this.props.toggleUploadDialog();
-
-        /* files.map(file => {
-          let filePath = '';
-          let fileName = '';
-          try {
-            fileName = decodeURIComponent(file.name);
-            filePath =
-              normalizePath(this.props.directoryPath) +
-              PlatformIO.getDirSeparator() +
-              fileName;
-          } catch (err) {
-            console.warn(
-              'Error decoding filename: ' + file.name + ' , skipping this file.'
-            );
-          }
-          if (!filePath) {
-            return true;
-          }
-
-          const reader: any = new FileReader();
-          reader.onload = (event: any) => {
-            // console.log('Content on file read complete: ' + JSON.stringify(event));
-            // change name for ios fakepath
-            // if (AppConfig.isCordovaiOS) {
-            //   const fileExt = extractFileExtension(addFileInputName);
-            //   addFileInputName = AppConfig.beginTagContainer + formatDateTime4Tag(new Date(), true) + AppConfig.endTagContainer + fileExt;
-            // }
-            // TODO event.currentTarget.result is ArrayBuffer
-            // Sample call from PRO version using content = Utils.base64ToArrayBuffer(baseString);
-            PlatformIO.getPropertiesPromise(filePath)
-              .then(entryProps => {
-                if (entryProps) {
-                  this.props.showNotification(
-                    'File with the same name already exist, importing skipped!',
-                    'warning',
-                    true
-                  );
-                } else {
-                  PlatformIO.saveBinaryFilePromise(
-                    filePath,
-                    event.currentTarget.result,
-                    true
-                  )
-                    .then(() => {
-                      this.props.showNotification(
-                        'File ' + fileName + '  imported as ' + filePath,
-                        'default',
-                        true
-                      );
-                      this.props.reflectCreateEntry(filePath, true);
-                      // this.props.openFile(filePath);
-                      return true;
-                    })
-                    .catch(() => {
-                      this.props.showNotification(
-                        'Importing file ' + fileName + ' failed.',
-                        'error',
-                        true
-                      );
-                      return true;
-                    });
-                }
-                return true;
-              })
-              .catch(err => {
-                console.log('Error getting properties ' + err);
-              });
-          };
-
-          if (AppConfig.isCordova) {
-            reader.readAsDataURL(file);
-          } else {
-            reader.readAsArrayBuffer(file);
-          }
-          return file;
-        }); */
       }
     }
   };
