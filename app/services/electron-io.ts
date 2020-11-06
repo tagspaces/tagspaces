@@ -79,16 +79,12 @@ export default class ElectronIO {
   };
 
   initTrayMenu = (menuConfig: Array<Object>) => {
-    // Temp. disabling the tray support on Mac OS due to instability‚
-    if (process.platform === 'darwin') {
-      return true;
-    }
-
     const mainWindow = this.win;
     const { Menu } = this.remote;
     const { Tray } = this.remote;
     const { nativeImage } = this.remote;
 
+    let nImage;
     // let trayIconPath;
     // if (process.platform === 'darwin') {
     //   trayIconPath = this.pathUtils.join(__dirname, '/assets/icons/64x64.png');
@@ -97,13 +93,9 @@ export default class ElectronIO {
     // } else {
     //   trayIconPath = this.pathUtils.join(__dirname, '/assets/icons/64x64.png');
     // }
-    // const appPath = this.getAppPath();
-    // const nImage = nativeImage.createFromPath(appPath + trayIconPath);
 
-    let nImage;
     if (process.platform === 'win32') {
       nImage = nativeImage.createFromDataURL(TrayIcon2x);
-      // @ts-ignore
     } else if (process.platform === 'darwin') {
       nImage = nativeImage.createFromDataURL(TrayIcon);
       nImage.addRepresentation({ scaleFactor: 2.0, dataURL: TrayIcon2x });
