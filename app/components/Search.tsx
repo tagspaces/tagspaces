@@ -147,7 +147,7 @@ class Search extends React.Component<Props, State> {
     // ) {
     //   searchBoxing = 'global';
     // }
-    if (
+    /* if (
       prevState.tagsAND.length < 1 &&
       nextProps.searchQuery &&
       nextProps.searchQuery.tagsAND
@@ -157,7 +157,7 @@ class Search extends React.Component<Props, State> {
         searchBoxing,
         tagsAND: nextProps.searchQuery.tagsAND
       };
-    }
+    } */
     return {
       ...prevState,
       searchBoxing
@@ -233,13 +233,24 @@ class Search extends React.Component<Props, State> {
     }
   };
 
-  handleTagFieldChange = (name, value) => {
-    // @ts-ignore
-    this.setState({ [name]: value }, () => {
-      if (this.state.searchBoxing !== 'global') {
+  handleTagFieldChange = (name, value, reason) => {
+    if (reason === 'remove-value') {
+      // eslint-disable-next-line react/no-access-state-in-setstate
+      const newTagsArray = this.state.tagsAND.filter(tag =>
+        value.some(valueTag => valueTag.title !== tag.title)
+      );
+      // @ts-ignore
+      this.setState({ [name]: newTagsArray }, () => {
         this.executeSearch();
-      }
-    });
+      });
+    } else {
+      // @ts-ignore
+      this.setState({ [name]: value }, () => {
+        if (this.state.searchBoxing !== 'global') {
+          this.executeSearch();
+        }
+      });
+    }
   };
 
   handleTimePeriodChange = event => {
