@@ -19,6 +19,7 @@
 import i18n from './i18n';
 import PlatformIO from './platform-io';
 import AppConfig from '../config';
+import { FileSystemEntry, getAllPropertiesPromise } from '-/services/utils-io';
 
 let ipcRenderer;
 
@@ -46,14 +47,34 @@ export default function buildDesktopMenu(mainPageProps: any) {
         break;
       case 'next-file': {
         const path = mainPageProps.getNextFile();
-        mainPageProps.openFile(path);
-        mainPageProps.setLastSelectedEntry(path);
+        getAllPropertiesPromise(path)
+          .then((fsEntry: FileSystemEntry) => {
+            mainPageProps.openFsEntry(fsEntry);
+            mainPageProps.setLastSelectedEntry(path);
+            mainPageProps.setSelectedEntries([path]);
+            return true;
+          })
+          .catch(error =>
+            console.warn(
+              'Error getting properties for entry: ' + path + ' - ' + error
+            )
+          );
         break;
       }
       case 'previous-file': {
         const path = mainPageProps.getPrevFile();
-        mainPageProps.openFile(path);
-        mainPageProps.setLastSelectedEntry(path);
+        getAllPropertiesPromise(path)
+          .then((fsEntry: FileSystemEntry) => {
+            mainPageProps.openFsEntry(fsEntry);
+            mainPageProps.setLastSelectedEntry(path);
+            mainPageProps.setSelectedEntries([path]);
+            return true;
+          })
+          .catch(error =>
+            console.warn(
+              'Error getting properties for entry: ' + path + ' - ' + error
+            )
+          );
         break;
       }
       default:

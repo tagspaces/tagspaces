@@ -20,6 +20,7 @@
 import PlatformIO from './platform-io';
 import i18n from './i18n';
 import AppConfig from '../config';
+import { FileSystemEntry, getAllPropertiesPromise } from '-/services/utils-io';
 
 export default function buildTrayIconMenu(mainPageProps: any) {
   if (!AppConfig.isElectron) {
@@ -30,14 +31,34 @@ export default function buildTrayIconMenu(mainPageProps: any) {
 
   function openNextFile() {
     const path = mainPageProps.getNextFile();
-    mainPageProps.openFile(path);
-    mainPageProps.setLastSelectedEntry(path);
+    getAllPropertiesPromise(path)
+      .then((fsEntry: FileSystemEntry) => {
+        mainPageProps.openFsEntry(fsEntry);
+        mainPageProps.setLastSelectedEntry(path);
+        mainPageProps.setSelectedEntries([path]);
+        return true;
+      })
+      .catch(error =>
+        console.warn(
+          'Error getting properties for entry: ' + path + ' - ' + error
+        )
+      );
   }
 
   function openPrevFile() {
     const path = mainPageProps.getPrevFile();
-    mainPageProps.openFile(path);
-    mainPageProps.setLastSelectedEntry(path);
+    getAllPropertiesPromise(path)
+      .then((fsEntry: FileSystemEntry) => {
+        mainPageProps.openFsEntry(fsEntry);
+        mainPageProps.setLastSelectedEntry(path);
+        mainPageProps.setSelectedEntries([path]);
+        return true;
+      })
+      .catch(error =>
+        console.warn(
+          'Error getting properties for entry: ' + path + ' - ' + error
+        )
+      );
   }
 
   function playResumePlayback() {
