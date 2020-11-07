@@ -242,20 +242,12 @@ const EntryProperties = (props: Props) => {
       fileDescriptionRef.current
     ) {
       fileDescriptionRef.current.focus();
-      fileDescriptionRef.current.setSelectionRange(
-        fileDescriptionRef.current.value.length,
-        fileDescriptionRef.current.value.length
-      );
     }
   }, [editDescription]);
 
   useEffect(() => {
     if (editName === fileName && fileNameRef.current) {
       fileNameRef.current.focus();
-      fileNameRef.current.setSelectionRange(
-        fileNameRef.current.value.length,
-        fileNameRef.current.value.length
-      );
     }
   }, [editName]);
 
@@ -280,7 +272,7 @@ const EntryProperties = (props: Props) => {
     }
   };
 
-  const toggleEditNameField = () => {
+  const activateEditNameField = () => {
     if (props.isReadOnlyMode) {
       setEditName(undefined);
       return;
@@ -291,10 +283,11 @@ const EntryProperties = (props: Props) => {
         isEditName: false,
         name: this.state.originalName
       }); */
-    } else {
-      setEditName(fileName);
-      // newName = fileName; // currentEntry.name;
     }
+  };
+
+  const deactivateEditNameField = () => {
+    setEditName(fileName);
   };
 
   const toggleEditDescriptionField = () => {
@@ -655,7 +648,7 @@ const EntryProperties = (props: Props) => {
                       <Button
                         color="primary"
                         className={classes.button}
-                        onClick={toggleEditNameField}
+                        onClick={deactivateEditNameField}
                       >
                         {i18n.t('core:cancel')}
                       </Button>
@@ -671,7 +664,7 @@ const EntryProperties = (props: Props) => {
                     <Button
                       color="primary"
                       className={classes.button}
-                      onClick={toggleEditNameField}
+                      onClick={activateEditNameField}
                     >
                       {i18n.t('core:rename')}
                     </Button>
@@ -696,7 +689,7 @@ const EntryProperties = (props: Props) => {
                   editName === undefined &&
                   editDescription === undefined
                 ) {
-                  toggleEditNameField();
+                  activateEditNameField();
                 }
               }}
               onKeyDown={event => {
