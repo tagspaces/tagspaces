@@ -35,6 +35,7 @@ import {
   getMaxSearchResults,
   getDesktopMode
 } from '-/reducers/settings';
+import { locationType, getLocations, Location } from '-/reducers/locations';
 import {
   actions as AppActions,
   getDirectoryContent,
@@ -56,8 +57,6 @@ import {
   FileSystemEntry,
   FileSystemEntryMeta
 } from '-/services/utils-io';
-import { getLocations, Location } from '-/reducers/locations';
-import AppConfig from '-/config';
 
 const GridPerspective = React.lazy(() =>
   import(
@@ -285,7 +284,7 @@ const FolderContainer = (props: Props) => {
 
     if (!normalizedCurrentPath.startsWith(normalizedCurrentLocationPath)) {
       const location = getLocation(props.currentDirectoryPath);
-      if (location !== undefined) {
+      if (location !== undefined && location.type === locationType.TYPE_LOCAL) {
         props.setCurrentLocationId(location.uuid); // TODO rethink this maybe its not the right place here
         normalizedCurrentLocationPath =
           addSlash + normalizePath(location.paths[0].split('\\').join('/'));
