@@ -686,6 +686,79 @@ export default (state: any = initialState, action: any) => {
   }
 };
 
+function getNextFile(
+  pivotFilePath?: string,
+  lastSelectedEntry?: string,
+  currentDirectoryEntries?: Array<FileSystemEntry>
+): FileSystemEntry {
+  const currentEntries = currentDirectoryEntries
+    ? currentDirectoryEntries.filter(entry => entry.isFile)
+    : [];
+  let filePath = pivotFilePath;
+  if (!filePath) {
+    if (lastSelectedEntry) {
+      filePath = lastSelectedEntry;
+    } else if (currentEntries.length > 0) {
+      filePath = currentEntries[0].path;
+    } else {
+      return undefined;
+    }
+  }
+  let nextFile;
+  currentEntries.forEach((entry, index) => {
+    if (entry.path === filePath) {
+      const nextIndex = index + 1;
+      if (nextIndex < currentEntries.length) {
+        nextFile = currentEntries[nextIndex];
+      } else {
+        // eslint-disable-next-line prefer-destructuring
+        nextFile = currentEntries[0];
+      }
+    }
+  });
+  if (nextFile === undefined) {
+    // eslint-disable-next-line prefer-destructuring
+    nextFile = currentEntries[0];
+  }
+  return nextFile;
+}
+
+function getPrevFile(
+  pivotFilePath?: string,
+  lastSelectedEntry?: string,
+  currentDirectoryEntries?: Array<FileSystemEntry>
+): FileSystemEntry {
+  const currentEntries = currentDirectoryEntries
+    ? currentDirectoryEntries.filter(entry => entry.isFile)
+    : [];
+  let filePath = pivotFilePath;
+  if (!filePath) {
+    if (lastSelectedEntry) {
+      filePath = lastSelectedEntry;
+    } else if (currentEntries.length > 0) {
+      filePath = currentEntries[0].path;
+    } else {
+      return undefined;
+    }
+  }
+  let prevFile;
+  currentEntries.forEach((entry, index) => {
+    if (entry.path === filePath) {
+      const prevIndex = index - 1;
+      if (prevIndex >= 0) {
+        prevFile = currentEntries[prevIndex];
+      } else {
+        prevFile = currentEntries[currentEntries.length - 1];
+      }
+    }
+  });
+  if (prevFile === undefined) {
+    // eslint-disable-next-line prefer-destructuring
+    prevFile = currentEntries[0];
+  }
+  return prevFile;
+}
+
 export const actions = {
   goOnline: () => ({ type: types.DEVICE_ONLINE }),
   goOffline: () => ({ type: types.DEVICE_OFFLINE }),
@@ -1404,67 +1477,36 @@ export const actions = {
     type: types.SET_ENTRY_FULLWIDTH,
     isFullWidth
   }),
-  getNextFile: (pivotFilePath?: string) => (
+  openNextFile: (path?: string) => (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
-    const currentEntries = getState().app.currentDirectoryEntries.filter(
-      entry => entry.isFile
+    const nextFile = getNextFile(
+      path,
+      getState().app.lastSelectedEntry,
+      getState().app.currentDirectoryEntries
     );
-    const { lastSelectedEntry } = getState().app;
-    let filePath = pivotFilePath;
-    if (!filePath) {
-      if (lastSelectedEntry) {
-        filePath = lastSelectedEntry;
-      } else if (currentEntries.length > 0) {
-        filePath = currentEntries[0].path;
-      } else {
-        return false;
-      }
+    if (nextFile !== undefined) {
+      dispatch(actions.openFsEntry(nextFile));
+      dispatch(actions.setLastSelectedEntry(nextFile.path));
+      dispatch(actions.setSelectedEntries([nextFile]));
+      return nextFile;
     }
-    let nextFilePath;
-    currentEntries.forEach((entry, index) => {
-      if (entry.path === filePath) {
-        const nextIndex = index + 1;
-        if (nextIndex < currentEntries.length) {
-          nextFilePath = currentEntries[nextIndex].path;
-        } else {
-          nextFilePath = currentEntries[0].path;
-        }
-      }
-    });
-    return nextFilePath;
   },
-  getPrevFile: (pivotFilePath?: string) => (
+  openPrevFile: (path?: string) => (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
-    const currentEntries = getState().app.currentDirectoryEntries.filter(
-      entry => entry.isFile
+    const prevFile = getPrevFile(
+      path,
+      getState().app.lastSelectedEntry,
+      getState().app.currentDirectoryEntries
     );
-    const { lastSelectedEntry } = getState().app;
-    let filePath = pivotFilePath;
-    if (!filePath) {
-      if (lastSelectedEntry) {
-        filePath = lastSelectedEntry;
-      } else if (currentEntries.length > 0) {
-        filePath = currentEntries[0].path;
-      } else {
-        return false;
-      }
+    if (prevFile !== undefined) {
+      dispatch(actions.openFsEntry(prevFile));
+      dispatch(actions.setLastSelectedEntry(prevFile.path));
+      dispatch(actions.setSelectedEntries([prevFile]));
     }
-    let prevFilePath;
-    currentEntries.forEach((entry, index) => {
-      if (entry.path === filePath) {
-        const prevIndex = index - 1;
-        if (prevIndex >= 0) {
-          prevFilePath = currentEntries[prevIndex].path;
-        } else {
-          prevFilePath = currentEntries[currentEntries.length - 1].path;
-        }
-      }
-    });
-    return prevFilePath;
   },
   closeAllFiles: () => ({ type: types.CLOSE_ALL_FILES }),
   reflectDeleteEntryInt: (path: string) => ({

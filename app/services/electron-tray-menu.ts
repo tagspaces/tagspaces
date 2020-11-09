@@ -20,7 +20,6 @@
 import PlatformIO from './platform-io';
 import i18n from './i18n';
 import AppConfig from '../config';
-import { FileSystemEntry, getAllPropertiesPromise } from '-/services/utils-io';
 
 export default function buildTrayIconMenu(mainPageProps: any) {
   if (!AppConfig.isElectron) {
@@ -30,35 +29,11 @@ export default function buildTrayIconMenu(mainPageProps: any) {
   const cKey = AppConfig.isMacLike ? '  -  Cmd' : ' - Ctrl';
 
   function openNextFile() {
-    const path = mainPageProps.getNextFile();
-    getAllPropertiesPromise(path)
-      .then((fsEntry: FileSystemEntry) => {
-        mainPageProps.openFsEntry(fsEntry);
-        mainPageProps.setLastSelectedEntry(path);
-        mainPageProps.setSelectedEntries([path]);
-        return true;
-      })
-      .catch(error =>
-        console.warn(
-          'Error getting properties for entry: ' + path + ' - ' + error
-        )
-      );
+    mainPageProps.openNextFile();
   }
 
   function openPrevFile() {
-    const path = mainPageProps.getPrevFile();
-    getAllPropertiesPromise(path)
-      .then((fsEntry: FileSystemEntry) => {
-        mainPageProps.openFsEntry(fsEntry);
-        mainPageProps.setLastSelectedEntry(path);
-        mainPageProps.setSelectedEntries([path]);
-        return true;
-      })
-      .catch(error =>
-        console.warn(
-          'Error getting properties for entry: ' + path + ' - ' + error
-        )
-      );
+    mainPageProps.openPrevFile();
   }
 
   function playResumePlayback() {

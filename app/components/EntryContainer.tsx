@@ -64,7 +64,6 @@ import {
   OpenedEntry,
   NotificationTypes,
   isReadOnlyMode,
-  getDirectoryContent,
   actions as AppActions
 } from '-/reducers/app';
 import useEventListener from '-/utils/useEventListener';
@@ -177,8 +176,8 @@ interface Props {
   removeTags: () => void;
   // editTagForEntry: () => void;
   openFsEntry: (fsEntry: FileSystemEntry) => void;
-  getNextFile: (path: string) => string;
-  getPrevFile: (path: string) => string;
+  openPrevFile: (path: string) => void;
+  openNextFile: (path: string) => void;
   openFileNatively: (path: string) => void;
   openURLExternally: (url: string) => void;
   showNotification: (
@@ -200,7 +199,6 @@ interface Props {
   updateThumbnailUrl: (path: string, thumbUrl: string) => void;
   setLastSelectedEntry: (path: string) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
-  directoryContent: Array<FileSystemEntry>;
   currentDirectoryPath: string | null;
 }
 
@@ -215,7 +213,7 @@ const EntryContainer = (props: Props) => {
     boolean
   >(false);
   const [isFullscreen, setFullscreen] = useState<boolean>(false);
-  const [editingSupported, setEditingSupported] = useState<boolean>(false);
+  // const [editingSupported, setEditingSupported] = useState<boolean>(true);
   const [
     isSaveBeforeCloseConfirmDialogOpened,
     setSaveBeforeCloseConfirmDialogOpened
@@ -266,25 +264,16 @@ const EntryContainer = (props: Props) => {
   useEffect(() => {
     if (props.openedFiles.length > 0) {
       // / setPropertiesPanelVisible
-      if (!openedFile.isFile) {
+      if (!openedFile.isFile && !isPropertiesPanelVisible) {
         // always open for dirs
         setPropertiesPanelVisible(true);
       }
-      // / setEditingSupported
-      if (props.isReadOnlyMode) {
-        setEditingSupported(false);
-      } else {
-        setEditingSupported(
-          openedFile.editingExtensionId &&
-            openedFile.editingExtensionId.length > 3
-        );
-        if (
-          openedFile.editMode &&
-          openedFile.changed &&
-          openedFile.shouldReload === false
-        ) {
-          setSaveBeforeReloadConfirmDialogOpened(true);
-        }
+      if (
+        openedFile.editMode &&
+        openedFile.changed &&
+        openedFile.shouldReload === false
+      ) {
+        setSaveBeforeReloadConfirmDialogOpened(true);
       }
     }
   }, [props.openedFiles, props.isReadOnlyMode, props.settings]);
@@ -295,24 +284,14 @@ const EntryContainer = (props: Props) => {
     }
   }, [isPropertiesPanelVisible]);
 
-  // isPropertiesEditMode = false; // TODO rethink this! why exist?
-
-  // let isChanged = false;
-  // let shouldReload = false;
-
-  // logEventsFromExtensions = event => {
-  //   console.log('Ext. Logging >>> ', event.message);
-  // };
-
-  // handleMessageProxy = event => {
-  //   this.handleMessage(JSON.stringify(event.channel));
-  // };
+  const editingSupported: boolean =
+    !props.isReadOnlyMode &&
+    openedFile.editingExtensionId !== undefined &&
+    openedFile.editingExtensionId.length > 3;
 
   const handleMessage = (data: any) => {
     let message;
     let textFilePath;
-    let nextFilePath;
-    let nextFile;
     let decodedURI;
 
     switch (data.command) {
@@ -330,13 +309,7 @@ const EntryContainer = (props: Props) => {
         editFile();
         break;
       case 'playbackEnded':
-        nextFilePath = props.getNextFile(openedFile.path);
-        nextFile = props.directoryContent.find(
-          (dirEntry: any) => dirEntry.path === nextFilePath
-        );
-        props.openFsEntry(nextFile);
-        props.setLastSelectedEntry(nextFilePath);
-        props.setSelectedEntries([nextFile]);
+        props.openNextFile(openedFile.path);
         break;
       case 'openLinkExternally':
         // console.log('Open link externally: ' + data.link);
@@ -477,7 +450,7 @@ const EntryContainer = (props: Props) => {
 
   const closeFile = () => {
     props.closeAllFiles();
-    setEditingSupported(false);
+    // setEditingSupported(false);
   };
 
   const startSavingFile = () => {
@@ -622,27 +595,11 @@ const EntryContainer = (props: Props) => {
   };
 
   const openNextFile = () => {
-    if (openedFile.path) {
-      const nextFilePath = props.getNextFile(openedFile.path);
-      const nextFile = props.directoryContent.find(
-        (dirEntry: FileSystemEntry) => dirEntry.path === nextFilePath
-      );
-      props.openFsEntry(nextFile);
-      props.setLastSelectedEntry(nextFilePath);
-      props.setSelectedEntries([nextFile]);
-    }
+    props.openNextFile(openedFile.path);
   };
 
   const openPrevFile = () => {
-    if (openedFile.path) {
-      const prevFilePath = props.getPrevFile(openedFile.path);
-      const prevFile = props.directoryContent.find(
-        (dirEntry: FileSystemEntry) => dirEntry.path === prevFilePath
-      );
-      props.openFsEntry(prevFile);
-      props.setLastSelectedEntry(prevFilePath);
-      props.setSelectedEntries([prevFile]);
-    }
+    props.openPrevFile(openedFile.path);
   };
 
   const openNatively = () => {
@@ -1275,7 +1232,6 @@ function mapStateToProps(state) {
   return {
     settings: state.settings,
     isReadOnlyMode: isReadOnlyMode(state),
-    directoryContent: getDirectoryContent(state),
     keyBindings: getKeyBindingObject(state)
   };
 }
@@ -1291,8 +1247,8 @@ function mapActionCreatorsToProps(dispatch) {
       openFileNatively: AppActions.openFileNatively,
       openURLExternally: AppActions.openURLExternally,
       showNotification: AppActions.showNotification,
-      getNextFile: AppActions.getNextFile,
-      getPrevFile: AppActions.getPrevFile,
+      openNextFile: AppActions.openNextFile,
+      openPrevFile: AppActions.openPrevFile,
       deleteFile: AppActions.deleteFile,
       toggleEntryFullWidth: AppActions.toggleEntryFullWidth,
       addTags: TaggingActions.addTags,
