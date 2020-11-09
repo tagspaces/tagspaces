@@ -223,8 +223,9 @@ const Search = React.memo((props: Props) => {
         searchQuery = { ...props.searchQuery, tagsOR: value };
       }
     }
+    props.searchLocationIndex(searchQuery);
     // if (searchBoxing !== 'global') { // TODO disable automatic search in global mode
-    //   props.searchLocationIndex(searchQuery);
+    //
     // }
   };
 
