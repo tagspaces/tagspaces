@@ -17,13 +17,13 @@
  */
 
 import { Location, getLocation, getLocations, locationType } from './locations';
-import { createDirectoryIndex, FileSystemEntry } from '../services/utils-io';
+import { createDirectoryIndex, FileSystemEntry } from '-/services/utils-io';
 import { Pro } from '../pro';
 import {
   extractFileExtension,
   extractFileName,
   extractTagsAsObjects
-} from '../utils/paths';
+} from '-/utils/paths';
 import Search, { SearchQuery } from '../services/search';
 import { actions as AppActions } from './app';
 import i18n from '../services/i18n';

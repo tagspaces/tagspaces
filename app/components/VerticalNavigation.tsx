@@ -399,6 +399,7 @@ class VerticalNavigation extends React.Component<Props, State> {
             />
             {isTagLibraryPanelOpened && <TagLibrary />}
             <Search
+              isSearchPanelOpened={isSearchPanelOpened}
               style={{ display: isSearchPanelOpened ? 'block' : 'none' }}
             />
             {isHelpFeedbackPanelOpened && (
