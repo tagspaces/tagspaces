@@ -410,7 +410,7 @@ const EntryContainer = (props: Props) => {
 
   const reloadDocument = () => {
     if (openedFile) {
-      if (openedFile.changed) {
+      if (openedFile.editMode && openedFile.changed) {
         setSaveBeforeReloadConfirmDialogOpened(true);
       } else {
         props.updateOpenedFile(openedFile.path, {
@@ -510,7 +510,8 @@ const EntryContainer = (props: Props) => {
   const editFile = () => {
     props.updateOpenedFile(openedFile.path, {
       ...openedFile,
-      editMode: true
+      editMode: true,
+      shouldReload: undefined
     });
   };
 
