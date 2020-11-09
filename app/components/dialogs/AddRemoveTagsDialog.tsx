@@ -60,10 +60,21 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
     isConfirmDialogOpened: false
   };
 
-  handleChange = (name, value) => {
-    this.setState({
-      newlyAddedTags: value
-    });
+  handleChange = (name: string, value: Array<Tag>, action: string) => {
+    if (action === 'remove-value') {
+      const tagsToRemove: Array<string> = value.map(tag => tag.title);
+      // eslint-disable-next-line react/no-access-state-in-setstate
+      const newlyAddedTags = this.state.newlyAddedTags.filter(
+        tag => !tagsToRemove.includes(tag.title)
+      );
+      this.setState({
+        newlyAddedTags
+      });
+    } else {
+      this.setState({
+        newlyAddedTags: value
+      });
+    }
   };
 
   onClose = (clearSelection?: boolean) => {
