@@ -117,48 +117,10 @@ const Search = React.memo((props: Props) => {
   ] = useState<null | HTMLElement>(null);
 
   const mainSearchField = useRef<HTMLInputElement>(null);
-  // const firstRender = useRef(true);
-  /* useEffect(() => {
-    if (
-      !textQuery.length &&
-      !tagPlace.length &&
-      !tagTimePeriod.length &&
-      !tagsAND.length &&
-      !tagsOR.length &&
-      !tagsNOT.length
-    ) {
-      focusMainSearchFiled();
-    }
-  }, [textQuery, tagPlace, tagTimePeriod, tagsAND, tagsOR, tagsNOT]); */
 
   useEffect(() => {
     focusMainSearchFiled();
   }, [props.isSearchPanelOpened]);
-
-  /* useEffect(() => {
-      focusMainSearchFiled();
-  }, [fileTypes, fileSize, lastModified, props.searchQuery]); */
-
-  /* componentDidUpdate() {
-    const {
-      textQuery,
-      tagPlace,
-      tagTimePeriod,
-      tagsAND,
-      tagsOR,
-      tagsNOT
-    } = this.state;
-    if (
-      !textQuery.length &&
-      !tagPlace.length &&
-      !tagTimePeriod.length &&
-      !tagsAND.length &&
-      !tagsOR.length &&
-      !tagsNOT.length
-    ) {
-      this.focusMainSearchFiled();
-    }
-  } */
 
   const focusMainSearchFiled = () => {
     if (mainSearchField) {
@@ -187,12 +149,6 @@ const Search = React.memo((props: Props) => {
           fileTypes: value
         });
       }
-      // @ts-ignore
-      /* this.setState({ fileTypes: value }, () => {
-        if (this.state.searchBoxing !== 'global') {
-          this.executeSearch();
-        }
-      }); */
     }
   };
 
@@ -208,11 +164,6 @@ const Search = React.memo((props: Props) => {
           fileSize: value
         });
       }
-      /* this.setState({ fileSize: value }, () => {
-        if (this.state.searchBoxing !== 'global') {
-          this.executeSearch();
-        }
-      }); */
     }
   };
 
@@ -230,11 +181,6 @@ const Search = React.memo((props: Props) => {
           lastModified: value
         });
       }
-      /* this.setState({ lastModified: value }, () => {
-        if (this.state.searchBoxing !== 'global') {
-          this.executeSearch();
-        }
-      }); */
     }
   };
 
@@ -266,7 +212,6 @@ const Search = React.memo((props: Props) => {
       }
       if (!haveSearchFilters(searchQuery)) {
         clearSearch();
-        return;
       }
     } else {
       // eslint-disable-next-line no-lonely-if
@@ -277,16 +222,10 @@ const Search = React.memo((props: Props) => {
       } else if (name === 'tagsOR') {
         searchQuery = { ...props.searchQuery, tagsOR: value };
       }
-      /* // @ts-ignore
-      this.setState({ [name]: value }, () => {
-        if (this.state.searchBoxing !== 'global') {
-          this.executeSearch();
-        }
-      }); */
     }
-    if (searchBoxing !== 'global') {
-      props.searchLocationIndex(searchQuery);
-    }
+    // if (searchBoxing !== 'global') { // TODO disable automatic search in global mode
+    //   props.searchLocationIndex(searchQuery);
+    // }
   };
 
   function haveSearchFilters(searchQuery) {
@@ -326,13 +265,6 @@ const Search = React.memo((props: Props) => {
     setTagTimePeriodFrom(fromDateTime);
     setTagTimePeriodTo(toDateTime);
     setTagTimePeriodHelper(tagTPeriodHelper);
-
-    /* this.setState({
-      tagTimePeriod: value,
-      tagTimePeriodFrom: fromDateTime,
-      tagTimePeriodTo: toDateTime,
-      tagTimePeriodHelper
-    }); */
   };
 
   const handlePlaceChange = event => {
@@ -362,13 +294,6 @@ const Search = React.memo((props: Props) => {
     setTagPlaceLat(lat);
     setTagPlaceLong(lon);
     setTagPlaceHelper(tagPHelper);
-
-    /* this.setState({
-      tagPlace: value,
-      tagPlaceLat: lat,
-      tagPlaceLong: lon,
-      tagPlaceHelper: tagPHelper
-    }); */
   };
 
   const clickSearchButton = () => {
@@ -433,9 +358,6 @@ const Search = React.memo((props: Props) => {
     if (boxing !== null) {
       setSearchBoxing(boxing);
     }
-    /* this.setState(prevState => ({
-      searchBoxing: boxing === null ? prevState.searchBoxing : boxing
-    })); */
   };
 
   const executeSearch = () => {
@@ -469,15 +391,10 @@ const Search = React.memo((props: Props) => {
 
   const handleSearchMenu = (event: any) => {
     setSearchMenuAnchorEl(event.currentTarget);
-    /* this.setState({
-      searchMenuOpened: true,
-      searchMenuAnchorEl: event.currentTarget
-    }); */
   };
 
   const handleCloseSearchMenu = () => {
     setSearchMenuAnchorEl(null);
-    // this.setState({ searchMenuOpened: false });
   };
 
   const { classes, indexing, indexedEntriesCount } = props;
@@ -866,18 +783,6 @@ const Search = React.memo((props: Props) => {
         </FormControl>
         <FormControl className={classes.formControl}>
           <ButtonGroup style={{ justifyContent: 'center' }}>
-            {/* <Button
-                disabled={indexing}
-                id="searchButton"
-                variant="outlined"
-                color="primary"
-                onClick={this.clickSearchButton}
-                style={{ width: '70%' }}
-              >
-                {indexing
-                  ? 'Search disabled while indexing'
-                  : i18n.t('searchTitle')}
-              </Button> */}
             <Button
               variant="outlined"
               color="secondary"
