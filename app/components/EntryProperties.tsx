@@ -160,22 +160,13 @@ const styles: any = (theme: any) => ({
     width: 'calc(100% - 12px)',
     marginBottom: 10,
     marginLeft: 5
+  },
+  mdHelpers: {
+    borderRadius: '0.25rem',
+    paddingLeft: '0.25rem',
+    paddingRight: '0.25rem',
+    backgroundColor: '#bcc0c561'
   }
-});
-
-const customRenderer = new marked.Renderer();
-customRenderer.link = (href, title, text) =>
-  `<a href="#" onClick="event.preventDefault();event.stopPropagation(); window.open('${href}', '_blank', 'nodeIntegration=no');return false;">${text}</a>`;
-
-marked.setOptions({
-  renderer: customRenderer,
-  pedantic: false,
-  gfm: true,
-  tables: true,
-  breaks: false,
-  smartLists: true,
-  smartypants: false,
-  xhtml: true
 });
 
 interface Props {
@@ -201,6 +192,41 @@ const EntryProperties = (props: Props) => {
   const fileDescriptionRef = useRef<HTMLInputElement>(null);
   const MB_ATTR =
     '<b>Leaflet</b> | Map data &copy; <b>https://openstreetmap.org/copyright</b> contributors, <b>CC-BY-SA</b>, Imagery © <b>Mapbox</b>';
+
+  const parentDirectoryPath = extractContainingDirectoryPath(
+    props.openedEntry.path,
+    PlatformIO.getDirSeparator()
+  );
+
+  const customRenderer = new marked.Renderer();
+  customRenderer.link = (href, title, text) => `
+      <a href="#"
+        onClick="event.preventDefault(); event.stopPropagation(); window.postMessage(JSON.stringify({ command: 'openLinkExternally', link: '${href}' }), '*'); return false;">
+        ${text}
+      </a>`;
+
+  customRenderer.image = (href, title, text) => {
+    let sourceUrl = href;
+    if (!sourceUrl.startsWith('http')) {
+      sourceUrl =
+        parentDirectoryPath + PlatformIO.getDirSeparator() + sourceUrl;
+    }
+    return `<img src="${sourceUrl}"
+    >
+        ${text}
+    </img>`;
+  };
+
+  marked.setOptions({
+    renderer: customRenderer,
+    pedantic: false,
+    gfm: true,
+    tables: true,
+    breaks: false,
+    smartLists: true,
+    smartypants: false,
+    xhtml: true
+  });
 
   const fileName = extractFileName(
     props.openedEntry.path,
@@ -813,22 +839,32 @@ const EntryProperties = (props: Props) => {
           </div>
           <FormControl fullWidth={true} className={classes.formControl}>
             {editDescription !== undefined ? (
-              <TextField
-                multiline
-                inputRef={fileDescriptionRef}
-                style={{
-                  padding: 10,
-                  borderRadius: 5,
-                  backgroundColor: 'rgba(255, 216, 115, 0.53)'
-                }}
-                id="textarea"
-                placeholder=""
-                name="description"
-                className={styles.textField}
-                defaultValue={currentEntry.description}
-                fullWidth={true}
-                onChange={handleDescriptionChange}
-              />
+              <React.Fragment>
+                <TextField
+                  multiline
+                  inputRef={fileDescriptionRef}
+                  style={{
+                    padding: 10,
+                    borderRadius: 5,
+                    backgroundColor: 'rgba(255, 216, 115, 0.53)'
+                  }}
+                  id="textarea"
+                  placeholder=""
+                  name="description"
+                  className={styles.textField}
+                  defaultValue={currentEntry.description}
+                  fullWidth={true}
+                  onChange={handleDescriptionChange}
+                />
+                <Typography variant="caption">
+                  Formatting: <i className={classes.mdHelpers}>_italic_</i>{' '}
+                  <b className={classes.mdHelpers}>**bold**</b>{' '}
+                  <span className={classes.mdHelpers}>* list item</span>{' '}
+                  <span className={classes.mdHelpers}>
+                    [Link text](http://...)
+                  </span>
+                </Typography>
+              </React.Fragment>
             ) : (
               <Typography
                 style={{
