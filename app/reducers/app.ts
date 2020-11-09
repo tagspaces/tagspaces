@@ -1388,9 +1388,7 @@ export const actions = {
             if (fsEntryMeta.editMode !== undefined) {
               entryForOpening.editMode = fsEntryMeta.editMode;
             }
-            if (fsEntryMeta.shouldReload !== undefined) {
-              entryForOpening.shouldReload = fsEntryMeta.shouldReload;
-            }
+            entryForOpening.shouldReload = fsEntryMeta.shouldReload;
             if (fsEntryMeta.color) {
               entryForOpening.color = fsEntryMeta.color;
             }

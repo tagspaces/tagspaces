@@ -277,11 +277,7 @@ const EntryProperties = (props: Props) => {
       setEditName(undefined);
       return;
     }
-    if (editName !== undefined) {
-      setEditName(undefined);
-    } else {
-      setEditName(fileName);
-    }
+    setEditName(fileName);
   };
 
   const deactivateEditNameField = () => {
