@@ -279,15 +279,16 @@ const EntryProperties = (props: Props) => {
     }
     if (editName !== undefined) {
       setEditName(undefined);
-      /* this.setState({
-        isEditName: false,
-        name: this.state.originalName
-      }); */
+    } else {
+      setEditName(fileName);
     }
   };
 
   const deactivateEditNameField = () => {
-    setEditName(fileName);
+    setEditName(undefined);
+    if (fileNameRef) {
+      fileNameRef.current.value = fileName;
+    }
   };
 
   const toggleEditDescriptionField = () => {
