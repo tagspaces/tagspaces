@@ -396,9 +396,10 @@ const actions = {
                   changed: true
                 })
               );
-              /* dispatch(
+              // TODO rethink this updateCurrentDirEntry and not need for KanBan
+              dispatch(
                 AppActions.reflectUpdateSidecarTags(path, fsEntryMeta.tags)
-              ); */
+              );
               return true;
             })
             .catch(err => {
@@ -430,9 +431,10 @@ const actions = {
                   changed: true
                 })
               );
-              /* dispatch(
+              // TODO rethink this updateCurrentDirEntry and not need for KanBan
+              dispatch(
                 AppActions.reflectUpdateSidecarTags(path, fsEntryMeta.tags)
-              ); */
+              );
               return true;
             })
             .catch(err => {
@@ -515,7 +517,8 @@ const actions = {
         };
         saveMetaDataPromise(path, updatedFsEntryMeta)
           .then(() => {
-            // dispatch(AppActions.reflectUpdateSidecarTags(path, newTags));
+            // TODO rethink this updateCurrentDirEntry and not need for KanBan
+            dispatch(AppActions.reflectUpdateSidecarTags(path, newTags));
             dispatch(
               AppActions.updateOpenedFile(path, {
                 tags: newTags,
@@ -600,7 +603,8 @@ const actions = {
         };
         saveMetaDataPromise(path, updatedFsEntryMeta)
           .then(() => {
-            // dispatch(AppActions.reflectUpdateSidecarTags(path, []));
+            // TODO rethink this updateCurrentDirEntry and not need for KanBan
+            dispatch(AppActions.reflectUpdateSidecarTags(path, []));
             dispatch(
               AppActions.updateOpenedFile(path, { tags: [], changed: true })
             );
