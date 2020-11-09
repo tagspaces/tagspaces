@@ -87,6 +87,7 @@ interface Props {
   indexedEntriesCount: number;
   maxSearchResults: number;
   indexing: boolean;
+  isSearchPanelOpened: boolean;
 }
 
 const Search = React.memo((props: Props) => {
@@ -116,7 +117,7 @@ const Search = React.memo((props: Props) => {
   ] = useState<null | HTMLElement>(null);
 
   const mainSearchField = useRef<HTMLInputElement>(null);
-  const firstRender = useRef(true);
+  // const firstRender = useRef(true);
   /* useEffect(() => {
     if (
       !textQuery.length &&
@@ -131,40 +132,12 @@ const Search = React.memo((props: Props) => {
   }, [textQuery, tagPlace, tagTimePeriod, tagsAND, tagsOR, tagsNOT]); */
 
   useEffect(() => {
-    if (!firstRender.current) {
-      focusMainSearchFiled();
+    focusMainSearchFiled();
+  }, [props.isSearchPanelOpened]);
 
-      /* if (searchBoxing !== 'global') {
-        executeSearch();
-      } */
-    }
-    firstRender.current = false;
-  }, [fileTypes, fileSize, lastModified, props.searchQuery]);
-  /* static getDerivedStateFromProps(nextProps, prevState) {
-    const { searchBoxing } = prevState;
-    // console.log('Path: ' + nextProps.currentDirectory);
-    // if (
-    //   Pro &&
-    //   (!nextProps.currentDirectory || nextProps.currentDirectory.length < 1)
-    // ) {
-    //   searchBoxing = 'global';
-    // }
-    if (
-      prevState.tagsAND.length < 1 &&
-      nextProps.searchQuery &&
-      nextProps.searchQuery.tagsAND
-    ) {
-      return {
-        ...prevState,
-        searchBoxing,
-        tagsAND: nextProps.searchQuery.tagsAND
-      };
-    }
-    return {
-      ...prevState,
-      searchBoxing
-    };
-  } */
+  /* useEffect(() => {
+      focusMainSearchFiled();
+  }, [fileTypes, fileSize, lastModified, props.searchQuery]); */
 
   /* componentDidUpdate() {
     const {
@@ -189,7 +162,14 @@ const Search = React.memo((props: Props) => {
 
   const focusMainSearchFiled = () => {
     if (mainSearchField) {
-      mainSearchField.current.focus();
+      // https://github.com/mui-org/material-ui/issues/1594
+      const timeout = setTimeout(() => {
+        mainSearchField.current.focus();
+      }, 100);
+
+      return () => {
+        clearTimeout(timeout);
+      };
     }
   };
 
@@ -200,6 +180,13 @@ const Search = React.memo((props: Props) => {
     if (name === 'fileTypes') {
       // @ts-ignore
       setFileTypes(value);
+      if (searchBoxing !== 'global') {
+        props.searchLocationIndex({
+          ...props.searchQuery,
+          // @ts-ignore
+          fileTypes: value
+        });
+      }
       // @ts-ignore
       /* this.setState({ fileTypes: value }, () => {
         if (this.state.searchBoxing !== 'global') {
@@ -215,6 +202,12 @@ const Search = React.memo((props: Props) => {
 
     if (name === 'fileSize') {
       setFileSize(value);
+      if (searchBoxing !== 'global') {
+        props.searchLocationIndex({
+          ...props.searchQuery,
+          fileSize: value
+        });
+      }
       /* this.setState({ fileSize: value }, () => {
         if (this.state.searchBoxing !== 'global') {
           this.executeSearch();
@@ -231,6 +224,12 @@ const Search = React.memo((props: Props) => {
 
     if (name === 'lastModified') {
       setLastModified(value);
+      if (searchBoxing !== 'global') {
+        props.searchLocationIndex({
+          ...props.searchQuery,
+          lastModified: value
+        });
+      }
       /* this.setState({ lastModified: value }, () => {
         if (this.state.searchBoxing !== 'global') {
           this.executeSearch();
@@ -285,9 +284,7 @@ const Search = React.memo((props: Props) => {
         }
       }); */
     }
-    if (searchBoxing === 'global') {
-      props.searchAllLocations(searchQuery);
-    } else {
+    if (searchBoxing !== 'global') {
       props.searchLocationIndex(searchQuery);
     }
   };
