@@ -74,8 +74,8 @@ interface Props {
   supportedFileTypes: Array<any>;
   isReadOnlyMode: boolean;
   openFsEntry: (fsEntry: FileSystemEntry) => void;
-  getNextFile: () => any;
-  getPrevFile: () => any;
+  openNextFile: () => any;
+  openPrevFile: () => any;
   deleteFile: (path: string) => void;
   deleteDirectory: (path: string) => void;
   loadDirectoryContent: (path: string) => void;
@@ -702,26 +702,8 @@ class GridPerspective extends React.Component<Props, State> {
   };
 
   keyBindingHandlers = {
-    nextDocument: () => {
-      const nextFilePath = this.props.getNextFile();
-      if (nextFilePath) {
-        const nextFile = this.props.directoryContent.filter(
-          entry => entry.path === nextFilePath
-        );
-        this.props.setLastSelectedEntry(nextFilePath);
-        this.props.setSelectedEntries(nextFile);
-      }
-    },
-    prevDocument: () => {
-      const prevFilePath = this.props.getPrevFile();
-      if (prevFilePath) {
-        const prevFile = this.props.directoryContent.filter(
-          entry => entry.path === prevFilePath
-        );
-        this.props.setLastSelectedEntry(prevFilePath);
-        this.props.setSelectedEntries(prevFile);
-      }
-    },
+    nextDocument: () => this.props.openNextFile(),
+    prevDocument: () => this.props.openPrevFile(),
     selectAll: () => this.toggleSelectAllFiles(),
     deleteDocument: () => {
       if (this.state.fileOperationsEnabled) {
@@ -972,8 +954,8 @@ function mapActionCreatorsToProps(dispatch) {
       showNotification: AppActions.showNotification,
       openFileNatively: AppActions.openFileNatively,
       openURLExternally: AppActions.openURLExternally,
-      getNextFile: AppActions.getNextFile,
-      getPrevFile: AppActions.getPrevFile,
+      openNextFile: AppActions.openNextFile,
+      openPrevFile: AppActions.openPrevFile,
       addTags: TaggingActions.addTags
     },
     dispatch

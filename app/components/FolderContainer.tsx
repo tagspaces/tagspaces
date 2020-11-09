@@ -626,8 +626,6 @@ function mapActionCreatorsToProps(dispatch) {
       toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
       deleteFile: AppActions.deleteFile,
       renameFile: AppActions.renameFile,
-      getNextFile: AppActions.getNextFile,
-      getPrevFile: AppActions.getPrevFile,
       openDirectory: AppActions.openDirectory,
       showInFileManager: AppActions.showInFileManager,
       openFsEntry: AppActions.openFsEntry,

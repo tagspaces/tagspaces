@@ -19,13 +19,12 @@
 import i18n from './i18n';
 import PlatformIO from './platform-io';
 import AppConfig from '../config';
-import { FileSystemEntry, getAllPropertiesPromise } from '-/services/utils-io';
 
 let ipcRenderer;
 
 if (AppConfig.isElectron && window.require) {
   const electron = window.require('electron');
-  ipcRenderer = electron.ipcRenderer;
+  ({ ipcRenderer } = electron);
 }
 
 export default function buildDesktopMenu(mainPageProps: any) {
@@ -46,35 +45,11 @@ export default function buildDesktopMenu(mainPageProps: any) {
         // console.log('showAudioRecordingDialog');
         break;
       case 'next-file': {
-        const path = mainPageProps.getNextFile();
-        getAllPropertiesPromise(path)
-          .then((fsEntry: FileSystemEntry) => {
-            mainPageProps.openFsEntry(fsEntry);
-            mainPageProps.setLastSelectedEntry(path);
-            mainPageProps.setSelectedEntries([path]);
-            return true;
-          })
-          .catch(error =>
-            console.warn(
-              'Error getting properties for entry: ' + path + ' - ' + error
-            )
-          );
+        mainPageProps.openNextFile();
         break;
       }
       case 'previous-file': {
-        const path = mainPageProps.getPrevFile();
-        getAllPropertiesPromise(path)
-          .then((fsEntry: FileSystemEntry) => {
-            mainPageProps.openFsEntry(fsEntry);
-            mainPageProps.setLastSelectedEntry(path);
-            mainPageProps.setSelectedEntries([path]);
-            return true;
-          })
-          .catch(error =>
-            console.warn(
-              'Error getting properties for entry: ' + path + ' - ' + error
-            )
-          );
+        mainPageProps.openPrevFile();
         break;
       }
       default:

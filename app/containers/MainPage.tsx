@@ -188,8 +188,8 @@ interface Props {
   openFsEntry: (fsEntry: FileSystemEntry) => void; // needed by electron-menus
   openFileNatively: (url: string) => void; // needed by electron-menus
   openURLExternally: (url: string) => void;
-  getNextFile: () => void; // needed by electron-menus
-  getPrevFile: () => void; // needed by electron-menus
+  openNextFile: (path?: string) => void; // needed by electron-menus
+  openPrevFile: (path?: string) => void; // needed by electron-menus
   openLocationManagerPanel: () => void;
   openTagLibraryPanel: () => void;
   openSearchPanel: () => void;
@@ -943,8 +943,8 @@ function mapDispatchToProps(dispatch) {
       openURLExternally: AppActions.openURLExternally,
       setEntryFullWidth: AppActions.setEntryFullWidth,
       setUpdateAvailable: AppActions.setUpdateAvailable,
-      getNextFile: AppActions.getNextFile,
-      getPrevFile: AppActions.getPrevFile,
+      openNextFile: AppActions.openNextFile,
+      openPrevFile: AppActions.openPrevFile,
       toggleShowUnixHiddenEntries: SettingsActions.toggleShowUnixHiddenEntries,
       setLeftVerticalSplitSize: SettingsActions.setLeftVerticalSplitSize,
       setMainVerticalSplitSize: SettingsActions.setMainVerticalSplitSize,
