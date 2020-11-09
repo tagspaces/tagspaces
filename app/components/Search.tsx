@@ -198,7 +198,8 @@ const Search = React.memo((props: Props) => {
     const { value, name } = target;
 
     if (name === 'fileTypes') {
-      setFileTypes([value]);
+      // @ts-ignore
+      setFileTypes(value);
       // @ts-ignore
       /* this.setState({ fileTypes: value }, () => {
         if (this.state.searchBoxing !== 'global') {
