@@ -419,7 +419,7 @@ class TagLibrary extends React.Component<Props, State> {
           className={classes.taggroupsArea}
           data-tid="tagLibraryTagGroupList"
         >
-          <List style={{ paddingTop: 0 }}>
+          <List style={{ paddingTop: 0, paddingBottom: 0 }}>
             {SmartTags(i18n).map(this.renderTagGroup)}
           </List>
           <List style={{ paddingTop: 0 }}>
