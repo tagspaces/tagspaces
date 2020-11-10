@@ -81,7 +81,6 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
             color: entry.color,
             textcolor: entry.textcolor,
             children: entry.children,
-            expanded: entry.expanded,
             selected: true
           });
           return true;
@@ -104,7 +103,6 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
         color: entry.color,
         textcolor: entry.textcolor,
         children: entry.children,
-        expanded: entry.expanded,
         selected: !this.state.selectedAll
       });
       return true;
@@ -154,8 +152,7 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
           title: tagGroup.title,
           color: tagGroup.color,
           textcolor: tagGroup.textcolor,
-          children: tagGroup.children,
-          expanded: tagGroup.expanded
+          children: tagGroup.children
         });
       }
       return true;
