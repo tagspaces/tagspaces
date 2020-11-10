@@ -65,7 +65,8 @@ export const types = {
   SET_ENTRY_PROPERTIES_SPLIT_SIZE: 'SETTINGS/SET_ENTRY_PROPERTIES_SPLIT_SIZE',
   SET_MAIN_VSPLIT_SIZE: 'SETTINGS/SET_MAIN_VSPLIT_SIZE',
   SET_LEFT_VSPLIT_SIZE: 'SETTINGS/SET_LEFT_VSPLIT_SIZE',
-  SET_FIRST_RUN: 'SETTINGS/SET_FIRST_RUN'
+  SET_FIRST_RUN: 'SETTINGS/SET_FIRST_RUN',
+  TOGGLE_TAGGROUP: 'TOGGLE_TAGGROUP'
 };
 
 export default (state: any = defaultSettings, action: any) => {
@@ -285,6 +286,24 @@ export default (state: any = defaultSettings, action: any) => {
         lastPublishedVersion: action.lastPublishedVersion
       };
     }
+    case types.TOGGLE_TAGGROUP: {
+      let tagGroupCollapsed;
+      if (state.tagGroupCollapsed) {
+        if (state.tagGroupCollapsed.includes(action.uuid)) {
+          tagGroupCollapsed = state.tagGroupCollapsed.filter(
+            tagGroupUUID => tagGroupUUID !== action.uuid
+          );
+        } else {
+          tagGroupCollapsed = [...state.tagGroupCollapsed, action.uuid];
+        }
+      } else {
+        tagGroupCollapsed = [action.uuid];
+      }
+      return {
+        ...state,
+        tagGroupCollapsed
+      };
+    }
     default: {
       return state;
     }
@@ -292,6 +311,10 @@ export default (state: any = defaultSettings, action: any) => {
 };
 
 export const actions = {
+  toggleTagGroup: (tagGroupUUID: string) => ({
+    type: types.TOGGLE_TAGGROUP,
+    uuid: tagGroupUUID
+  }),
   setTagDelimiter: (delimiter: string) => ({
     type: types.SET_TAG_DELIMITER,
     delimiter

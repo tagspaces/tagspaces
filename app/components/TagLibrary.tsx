@@ -53,7 +53,11 @@ import {
 } from '../reducers/taglibrary';
 import TaggingActions from '../reducers/tagging-actions';
 import i18n from '../services/i18n';
-import { getTagColor, getTagTextColor } from '../reducers/settings';
+import {
+  actions as SettingsActions,
+  getTagColor,
+  getTagTextColor
+} from '../reducers/settings';
 import {
   actions as AppActions,
   getSelectedEntries,
@@ -74,7 +78,7 @@ interface Props {
   tagGroups: Array<TagGroup>;
   allTags: Array<Tag>;
   openURLExternally: (path: string) => void;
-  toggleTagGroup: (expanded: boolean, uuid: string) => void;
+  toggleTagGroup: (uuid: string) => void;
   removeTagGroup: (uuid: string) => void;
   moveTagGroupUp: (uuid: string) => void;
   moveTagGroupDown: (uuid: string) => void;
@@ -90,6 +94,7 @@ interface Props {
   editTag: () => void;
   deleteTag: () => void;
   selectedEntries: Array<FileSystemEntry>;
+  tagGroupCollapsed: Array<string>;
 }
 
 interface State {
@@ -130,7 +135,7 @@ class TagLibrary extends React.Component<Props, State> {
   };
 
   handleTagGroupTitleClick = (event: Object, tagGroup) => {
-    this.props.toggleTagGroup(tagGroup.expanded, tagGroup.uuid);
+    this.props.toggleTagGroup(tagGroup.uuid);
   };
 
   handleTagGroupMenu = (
@@ -211,6 +216,11 @@ class TagLibrary extends React.Component<Props, State> {
   };
 
   renderTagGroup = tagGroup => {
+    // eslint-disable-next-line no-param-reassign
+    tagGroup.expanded = !(
+      this.props.tagGroupCollapsed &&
+      this.props.tagGroupCollapsed.includes(tagGroup.uuid)
+    );
     const isReadOnly = tagGroup.readOnly || isTagLibraryReadOnly;
     return (
       <div key={tagGroup.uuid}>
@@ -428,14 +438,15 @@ function mapStateToProps(state) {
     tagTextColor: getTagTextColor(state),
     selectedEntries: getSelectedEntries(state),
     allTags: getAllTags(state),
-    isReadOnlyMode: isReadOnlyMode(state)
+    isReadOnlyMode: isReadOnlyMode(state),
+    tagGroupCollapsed: state.settings.tagGroupCollapsed
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      toggleTagGroup: TagLibraryActions.toggleTagGroup,
+      toggleTagGroup: SettingsActions.toggleTagGroup,
       removeTagGroup: TagLibraryActions.removeTagGroup,
       moveTagGroupUp: TagLibraryActions.moveTagGroupUp,
       moveTagGroupDown: TagLibraryActions.moveTagGroupDown,
