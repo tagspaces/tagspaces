@@ -38,7 +38,8 @@ import {
   getThumbFileLocationForFile,
   extractParentDirectoryPath,
   extractTagsAsObjects,
-  normalizePath
+  normalizePath,
+  extractLocation
 } from '-/utils/paths';
 import { formatDateTime4Tag, getURLParameter } from '-/utils/misc';
 import i18n from '../services/i18n';
@@ -894,12 +895,16 @@ export const actions = {
     getState: () => any
   ) => {
     console.time('listDirectoryPromise');
-    const { settings } = getState();
+    const { settings, locations } = getState();
     window.walkCanceled = false;
 
     function loadDirectoryContentInt(fsEntryMeta?: FileSystemEntryMeta) {
       // Uncomment the following line will to clear all content before loading new dir content
       dispatch(actions.loadDirectorySuccessInt(directoryPath, [], true)); // this is to reset directoryContent (it will reset color too)
+      const location = extractLocation(directoryPath, locations);
+      if (location !== undefined) {
+        dispatch(actions.changeLocation(location));
+      }
       // dispatch(actions.setCurrentDirectoryColor('')); // this is to reset color only
       dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
       PlatformIO.listDirectoryPromise(directoryPath, false)
@@ -1241,6 +1246,16 @@ export const actions = {
     type: types.SET_CURRENLOCATIONID,
     locationId
   }),
+  changeLocation: (location: Location) => (
+    dispatch: (actions: Object) => void,
+    getState: () => any
+  ) => {
+    const { currentLocationId } = getState().app;
+    if (location.uuid !== currentLocationId) {
+      dispatch(LocationIndexActions.clearDirectoryIndex());
+      dispatch(actions.setCurrentLocationId(location.uuid));
+    }
+  },
   openLocationById: (locationId: string) => (
     dispatch: (actions: Object) => void,
     getState: () => any
@@ -1254,13 +1269,11 @@ export const actions = {
     });
   },
   openLocation: (location: Location) => (
-    dispatch: (actions: Object) => void,
-    getState: () => any
+    dispatch: (actions: Object) => void
   ) => {
     if (Pro && Pro.Watcher) {
       Pro.Watcher.stopWatching();
     }
-    const { currentLocationId } = getState().app;
     if (location.type === locationType.TYPE_CLOUD) {
       PlatformIO.enableObjectStoreSupport(location)
         .then(() => {
@@ -1272,10 +1285,7 @@ export const actions = {
             )
           );
           dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
-          if (location.uuid !== currentLocationId) {
-            dispatch(LocationIndexActions.clearDirectoryIndex());
-          }
-          dispatch(actions.setCurrentLocationId(location.uuid));
+          dispatch(actions.changeLocation(location));
           dispatch(actions.loadDirectoryContent(location.paths[0]));
           return true;
         })
@@ -1292,10 +1302,7 @@ export const actions = {
     } else {
       PlatformIO.disableObjectStoreSupport();
       dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
-      if (location.uuid !== currentLocationId) {
-        dispatch(LocationIndexActions.clearDirectoryIndex());
-      }
-      dispatch(actions.setCurrentLocationId(location.uuid));
+      dispatch(actions.changeLocation(location));
       dispatch(actions.loadDirectoryContent(location.paths[0]));
       if (Pro && Pro.Watcher && location.watchForChanges) {
         Pro.Watcher.watchFolder(location.paths[0], dispatch, actions);

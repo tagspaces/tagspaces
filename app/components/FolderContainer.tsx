@@ -230,7 +230,7 @@ interface Props {
   openedFiles: Array<OpenedEntry>;
   updateCurrentDirEntry: (path: string, entry: Object) => void;
   setCurrentDirectoryColor: (color: string) => void;
-  setCurrentLocationId: (uuid: string) => void;
+  // changeLocation: (location: Location) => void;
 }
 
 const FolderContainer = (props: Props) => {
@@ -282,14 +282,15 @@ const FolderContainer = (props: Props) => {
     // console.log('Current path : ' + normalizedCurrentPath);
     // console.log('Current location path : ' + normalizedCurrentLocationPath);
 
-    if (!normalizedCurrentPath.startsWith(normalizedCurrentLocationPath)) {
+    /* if (!normalizedCurrentPath.startsWith(normalizedCurrentLocationPath)) {
       const location = getLocation(props.currentDirectoryPath);
       if (location !== undefined && location.type === locationType.TYPE_LOCAL) {
-        props.setCurrentLocationId(location.uuid); // TODO rethink this maybe its not the right place here
+
+        // props.changeLocation(location); // TODO rethink this maybe its not the right place here
         normalizedCurrentLocationPath =
           addSlash + normalizePath(location.paths[0].split('\\').join('/'));
       }
-    }
+    } */
     while (
       normalizedCurrentPath.lastIndexOf('/') > 0 &&
       normalizedCurrentPath.startsWith(normalizedCurrentLocationPath)
@@ -325,14 +326,14 @@ const FolderContainer = (props: Props) => {
     }
   }
 
-  function getLocation(directoryPath) {
+  /* function getLocation(directoryPath) {
     for (let i = 0; i < props.locations.length; i += 1) {
       if (directoryPath.startsWith(props.locations[i].paths[0])) {
         return props.locations[i];
       }
     }
     return undefined;
-  }
+  } */
 
   const openDirectoryMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
     setDirectoryContextMenuAnchorEl(event.currentTarget);
@@ -639,7 +640,7 @@ function mapActionCreatorsToProps(dispatch) {
       setCurrentDirectoryPerspective: AppActions.setCurrentDirectoryPerspective,
       updateCurrentDirEntry: AppActions.updateCurrentDirEntry,
       setCurrentDirectoryColor: AppActions.setCurrentDirectoryColor,
-      setCurrentLocationId: AppActions.setCurrentLocationId
+      // changeLocation: AppActions.changeLocation
     },
     dispatch
   );

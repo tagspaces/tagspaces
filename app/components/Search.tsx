@@ -73,7 +73,7 @@ import PlatformIO from '../services/platform-io';
 
 interface Props {
   classes: any;
-  style: any;
+  style?: any;
   searchLocationIndex: (searchQuery: SearchQuery) => void;
   createLocationsIndexes: () => void;
   searchAllLocations: (searchQuery: SearchQuery) => void;
@@ -87,7 +87,6 @@ interface Props {
   indexedEntriesCount: number;
   maxSearchResults: number;
   indexing: boolean;
-  isSearchPanelOpened: boolean;
 }
 
 const Search = React.memo((props: Props) => {
@@ -120,7 +119,7 @@ const Search = React.memo((props: Props) => {
 
   useEffect(() => {
     focusMainSearchFiled();
-  }, [props.isSearchPanelOpened]);
+  }, []);
 
   const focusMainSearchFiled = () => {
     if (mainSearchField) {

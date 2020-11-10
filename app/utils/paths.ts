@@ -17,7 +17,8 @@
  */
 
 import AppConfig from '../config';
-import { Tag } from '../reducers/taglibrary';
+import { Tag } from '-/reducers/taglibrary';
+import { Location } from '-/reducers/locations';
 
 export function baseName(
   dirPath: string,
@@ -351,4 +352,17 @@ export function extractTags(
     }
   }
   return cleanedTags;
+}
+
+export function extractLocation(filePath: string, locations: Array<Location>) {
+  const path = filePath.replace(/[/\\]/g, '');
+  for (let i = 0; i < locations.length; i += 1) {
+    const locationPath = locations[i].path
+      ? locations[i].path.replace(/[/\\]/g, '')
+      : locations[i].paths[0].replace(/[/\\]/g, '');
+    if (path.startsWith(locationPath)) {
+      return locations[i];
+    }
+  }
+  return undefined;
 }

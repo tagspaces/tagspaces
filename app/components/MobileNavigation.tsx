@@ -144,11 +144,7 @@ class MobileNavigation extends React.Component<Props, State> {
             }}
           />
           {isTagLibraryPanelOpened && <TagLibrary />}
-          <Search
-            isSearchPanelOpened={isSearchPanelOpened}
-            hideDrawer={hideDrawer}
-            style={{ display: isSearchPanelOpened ? 'block' : 'none' }}
-          />
+          {isSearchPanelOpened && <Search hideDrawer={hideDrawer} />}
           {/* {isPerspectivesPanelOpened && <PerspectiveManager />} */}
           {isHelpFeedbackPanelOpened && (
             <HelpFeedbackPanel
