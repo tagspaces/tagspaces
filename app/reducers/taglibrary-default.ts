@@ -23,7 +23,6 @@ export default [
   {
     title: 'ToDo Workflow',
     uuid: '50567824-16ba-4fda-a128-3865df97472f',
-    expanded: true,
     color: '#008000',
     textcolor: '#ffffff',
     children: [
@@ -68,7 +67,6 @@ export default [
   {
     title: 'Common Tags',
     uuid: '17882854-44a7-4b2d-a2b1-b022846ac41d',
-    expanded: true,
     color: '#008000',
     textcolor: '#ffffff',
     children: [
@@ -98,7 +96,6 @@ export default [
   {
     title: 'Priorities',
     uuid: 'e21711da-ee78-4c83-bae3-e0007fe426a3',
-    expanded: true,
     color: '#008000',
     textcolor: '#ffffff',
     children: [
@@ -128,7 +125,6 @@ export default [
   {
     title: 'Ratings',
     uuid: '5cf5173d-738c-4413-9386-3f4411aa7b64',
-    expanded: true,
     color: '#ffcc24',
     textcolor: '#ffffff',
     children: [

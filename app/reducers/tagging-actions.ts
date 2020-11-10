@@ -124,7 +124,6 @@ const actions = {
           const tagGroup = {
             uuid: 'collected_tag_group_id', // uuid needs to be constant here (see mergeTagGroup)
             title: i18n.t('core:collectedTags'),
-            expanded: true,
             color: settings.tagBackgroundColor,
             textcolor: settings.tagTextColor,
             children: uniqueTags,
@@ -473,7 +472,6 @@ const actions = {
         const tagGroup = {
           uuid: 'collected_tag_group_id', // uuid needs to be constant here (see mergeTagGroup)
           title: i18n.t('core:collectedTags'),
-          expanded: true,
           color: settings.tagBackgroundColor,
           textcolor: settings.tagTextColor,
           children: uniqueTags,

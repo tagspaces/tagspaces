@@ -31,7 +31,7 @@ export const types = {
   MERGE_TAGGROUP: 'MERGE_TAGGROUP',
   REMOVE_TAGGROUP: 'REMOVE_TAGGROUP',
   UPDATE_TAGGROUP: 'UPDATE_TAGGROUP',
-  TOGGLE_TAGGROUP: 'TOGGLE_TAGGROUP',
+  // TOGGLE_TAGGROUP: 'TOGGLE_TAGGROUP',
   ADD_TAG: 'ADD_TAG',
   REMOVE_TAG: 'REMOVE_TAG',
   UPDATE_TAG: 'UPDATE_TAG',
@@ -62,7 +62,7 @@ export interface Tag {
 export interface TagGroup {
   uuid: Uuid;
   title: string;
-  expanded: boolean;
+  expanded?: boolean;
   description?: string;
   categoryId?: string;
   readOnly?: boolean;
@@ -79,7 +79,6 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
         {
           uuid: uuidv1(),
           title: action.entry.title,
-          expanded: action.entry.expanded,
           color: action.entry.color,
           textcolor: action.entry.textcolor,
           children: [],
@@ -101,7 +100,6 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
           {
             uuid: action.entry.uuid,
             title: action.entry.title,
-            expanded: action.entry.expanded,
             children: [
               ...state[indexForEditing].children,
               action.entry.children[0]
@@ -129,7 +127,6 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
           {
             uuid: action.entry.uuid,
             title: action.entry.title,
-            expanded: action.entry.expanded,
             children: tags,
             created_date: action.entry.created_date,
             modified_date: new Date()
@@ -142,7 +139,6 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
         {
           uuid: action.entry.uuid || uuidv1(),
           title: action.entry.title,
-          expanded: action.entry.expanded,
           color: action.entry.color,
           textcolor: action.entry.textcolor,
           children: action.entry.children,
@@ -308,25 +304,6 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
       }
       return state;
     }
-    case types.TOGGLE_TAGGROUP: {
-      let indexForUpdating = -1;
-      state.forEach((tagGroup, index) => {
-        if (tagGroup.uuid === action.uuid) {
-          indexForUpdating = index;
-        }
-      });
-      if (indexForUpdating >= 0) {
-        return [
-          ...state.slice(0, indexForUpdating),
-          {
-            ...state[indexForUpdating],
-            expanded: !action.expanded
-          },
-          ...state.slice(indexForUpdating + 1)
-        ];
-      }
-      return state;
-    }
     case types.MOVE_TAG_GROUP_DOWN: {
       let indexForUpdating = -1;
       state.forEach((tagGroup, index) => {
@@ -430,7 +407,6 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
             tagGroup = {
               title: tagGroup.title,
               uuid: tagGroup.key,
-              expanded: true,
               children: tagGroup.children
             };
             const tagsArr = [];
@@ -468,19 +444,26 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
 };
 
 export const actions = {
-  createTagGroup: (entry: TagGroup) => ({ type: types.CREATE_TAGGROUP, entry }),
-  editTagGroup: (entry: TagGroup) => ({ type: types.UPDATE_TAGGROUP, entry }),
+  createTagGroup: (entry: TagGroup) => ({
+    type: types.CREATE_TAGGROUP,
+    entry
+  }),
+  editTagGroup: (entry: TagGroup) => ({
+    type: types.UPDATE_TAGGROUP,
+    entry
+  }),
   removeTagGroup: (parentTagGroupUuid: Uuid) => ({
     type: types.REMOVE_TAGGROUP,
     uuid: parentTagGroupUuid
   }),
-  toggleTagGroup: (expanded: boolean, parentTagGroupUuid: Uuid) => ({
-    type: types.TOGGLE_TAGGROUP,
-    expanded,
-    uuid: parentTagGroupUuid
+  addTagGroup: (entry: TagGroup) => ({
+    type: types.ADD_TAGGROUP,
+    entry
   }),
-  addTagGroup: (entry: TagGroup) => ({ type: types.ADD_TAGGROUP, entry }),
-  mergeTagGroup: (entry: TagGroup) => ({ type: types.MERGE_TAGGROUP, entry }),
+  mergeTagGroup: (entry: TagGroup) => ({
+    type: types.MERGE_TAGGROUP,
+    entry
+  }),
   addTag: (tag: string, parentTagGroupUuid: Uuid) => {
     console.log('INSIDE ADD TAG');
     console.log(tag, parentTagGroupUuid);

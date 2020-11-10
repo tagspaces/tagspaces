@@ -84,7 +84,6 @@ class CreateTagGroupDialog extends React.Component<Props, State> {
       this.props.createTagGroup({
         uuid: this.state.uuid,
         title: this.state.title,
-        expanded: true,
         color: this.state.color,
         textcolor: this.state.textcolor,
         children: []
