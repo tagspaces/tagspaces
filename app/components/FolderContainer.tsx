@@ -639,7 +639,7 @@ function mapActionCreatorsToProps(dispatch) {
       openSearchPanel: AppActions.openSearchPanel,
       setCurrentDirectoryPerspective: AppActions.setCurrentDirectoryPerspective,
       updateCurrentDirEntry: AppActions.updateCurrentDirEntry,
-      setCurrentDirectoryColor: AppActions.setCurrentDirectoryColor,
+      setCurrentDirectoryColor: AppActions.setCurrentDirectoryColor
       // changeLocation: AppActions.changeLocation
     },
     dispatch
