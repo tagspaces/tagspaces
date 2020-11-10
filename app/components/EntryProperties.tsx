@@ -884,7 +884,7 @@ const EntryProperties = (props: Props) => {
                     ? i18n.t('core:addMarkdownDescription')
                     : i18n.t('core:addDescription')
                 }}
-                onClick={() => {
+                onDoubleClick={() => {
                   if (!currentEntry.editMode && editName === undefined) {
                     toggleEditDescriptionField();
                   }
