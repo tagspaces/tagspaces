@@ -35,7 +35,7 @@ import {
   getMaxSearchResults,
   getDesktopMode
 } from '-/reducers/settings';
-import { locationType, getLocations, Location } from '-/reducers/locations';
+import { getLocations, Location } from '-/reducers/locations';
 import {
   actions as AppActions,
   getDirectoryContent,
@@ -161,7 +161,6 @@ const styles: any = (theme: any) => ({
   topPanel: {
     height: 50,
     width: '100%',
-    // overflowX: 'overlay',
     backgroundColor: theme.palette.background.default
   },
   centerPanel: {
@@ -176,8 +175,6 @@ const styles: any = (theme: any) => ({
   },
   folderButton: {
     minWidth: 30,
-    // whiteSpace: 'nowrap',
-    // overflow: 'hidden',
     paddingLeft: 3,
     paddingRight: 3,
     lineHeight: '17px',
@@ -230,7 +227,6 @@ interface Props {
   openedFiles: Array<OpenedEntry>;
   updateCurrentDirEntry: (path: string, entry: Object) => void;
   setCurrentDirectoryColor: (color: string) => void;
-  // changeLocation: (location: Location) => void;
 }
 
 const FolderContainer = (props: Props) => {
@@ -279,18 +275,7 @@ const FolderContainer = (props: Props) => {
         addSlash +
         normalizePath(props.currentLocationPath.split('\\').join('/'));
     }
-    // console.log('Current path : ' + normalizedCurrentPath);
-    // console.log('Current location path : ' + normalizedCurrentLocationPath);
 
-    /* if (!normalizedCurrentPath.startsWith(normalizedCurrentLocationPath)) {
-      const location = getLocation(props.currentDirectoryPath);
-      if (location !== undefined && location.type === locationType.TYPE_LOCAL) {
-
-        // props.changeLocation(location); // TODO rethink this maybe its not the right place here
-        normalizedCurrentLocationPath =
-          addSlash + normalizePath(location.paths[0].split('\\').join('/'));
-      }
-    } */
     while (
       normalizedCurrentPath.lastIndexOf('/') > 0 &&
       normalizedCurrentPath.startsWith(normalizedCurrentLocationPath)
@@ -306,16 +291,6 @@ const FolderContainer = (props: Props) => {
       );
     }
 
-    // diff Location
-    /* const currentPathArray = normalizedCurrentPath.split('/');
-      const currentLocationPathArray = normalizedCurrentLocationPath.split('/');
-      for (let i = 0; i < currentPathArray.length; i += 1) {
-        if (currentPathArray[i] !== currentLocationPathArray[i]) {
-
-          pathParts.push(currentPathArray[i]);
-        }
-      } */
-
     // console.log('Path parts : ' + JSON.stringify(pathParts));
     if (pathParts.length >= 1) {
       pathParts = pathParts.slice(1, pathParts.length); // remove current directory
@@ -325,15 +300,6 @@ const FolderContainer = (props: Props) => {
       pathParts = pathParts.slice(pathParts.length - 2, pathParts.length); // leave only the last 2 dirs in the path
     }
   }
-
-  /* function getLocation(directoryPath) {
-    for (let i = 0; i < props.locations.length; i += 1) {
-      if (directoryPath.startsWith(props.locations[i].paths[0])) {
-        return props.locations[i];
-      }
-    }
-    return undefined;
-  } */
 
   const openDirectoryMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
     setDirectoryContextMenuAnchorEl(event.currentTarget);
