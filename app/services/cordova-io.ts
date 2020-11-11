@@ -720,19 +720,25 @@ export default class CordovaIO {
   /**
    * Load the content of a text file
    */
-  loadTextFilePromise = (filePath: string): Promise<any> =>
-    this.getFileContentPromise(filePath, 'text');
+  loadTextFilePromise = (
+    filePath: string,
+    isPreview: boolean = false
+  ): Promise<any> => this.getFileContentPromise(filePath, 'text', isPreview);
 
   /**
    * Gets the content of file, useful for binary files
    */
   getFileContentPromise = (
     filePath: string,
-    type,
-    resolvePath?: string
+    type: string,
+    isPreview: boolean
+    // resolvePath?: string
   ): Promise<any> => {
     // TODO refactor
-    const getFilePromise = (filePath, resolvePath): Promise<any> => {
+    const getFilePromise = (
+      filePath: string,
+      resolvePath: string
+    ): Promise<any> => {
       const getFile = (fullPath, result, fail) => {
         const filePath = this.normalizePath(fullPath);
 
@@ -768,8 +774,14 @@ export default class CordovaIO {
       });
     };
 
+    if (isPreview) {
+      return new Promise(resolve =>
+        resolve('Previewing files is not supported on this platform')
+      );
+    }
+
     return new Promise((resolve, reject) => {
-      getFilePromise(filePath, resolvePath).then(file => {
+      getFilePromise(filePath, undefined).then(file => {
         const reader = new FileReader();
         reader.onerror = function() {
           reject(reader.error);
