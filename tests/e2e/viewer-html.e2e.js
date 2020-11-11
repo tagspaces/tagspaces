@@ -11,7 +11,7 @@ import {
   createMinioLocation,
   aboutDialogExt
 } from './location.helpers';
-import { closeOpenedFile } from './general.helpers';
+import { closeOpenedFile, openCloseAboutDialog } from './general.helpers';
 import { searchEngine } from './search.spec';
 
 export const firstFile = '/span';
@@ -53,7 +53,7 @@ describe('TST65 - HTML viewer [electron]', () => {
     await closeFileProperties();
   });
 
-  it('TST6501 - Open HTML [electron]', async () => {
+  it('TST6501 - Open HTML [generate_thumbnail_URL, electron]', async () => {
     await delay(500);
     await searchEngine('html');
     await delay(500);
@@ -99,6 +99,7 @@ describe('TST65 - HTML viewer [electron]', () => {
     //await delay(500);
     expect(await webViewer.isDisplayed()).toBe(true);
     await global.client.switchToFrame(webViewer);
+    // await openCloseAboutDialog();
     await delay(500);
     const viewMainMenuButton = await global.client.$('#viewerMainMenuButton');
     await viewMainMenuButton.waitForDisplayed();

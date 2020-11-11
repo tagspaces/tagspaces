@@ -214,3 +214,21 @@ export async function toHaveText() {
   // expect.stringContaining('jpg');
   // expect(text1==text2).toBe(true);
 }
+
+export async function openCloseAboutDialog() {
+  await delay(500);
+  const viewMainMenuButton = await global.client.$('#viewerMainMenuButton');
+  await viewMainMenuButton.waitForDisplayed();
+  await viewMainMenuButton.click();
+  await delay(1500);
+  const aboutButton = await global.client.$('#aboutButton');
+  await aboutButton.waitForDisplayed();
+  await aboutButton.click();
+  await delay(5500);
+  const closeAboutDialogButton = await global.client.$(
+    '#closeAboutDialogButton'
+  );
+  await closeAboutDialogButton.waitForDisplayed();
+  await closeAboutDialogButton.click();
+  await delay(500);
+}
