@@ -203,9 +203,6 @@ interface Props {
 }
 
 const EntryContainer = (props: Props) => {
-  if (props.openedFiles.length === 0) {
-    return null;
-  }
   const openedFile = props.openedFiles[0];
   // const [currentEntry, setCurrentEntry] = useState<OpenedEntry>(openedFile);
 
@@ -256,8 +253,15 @@ const EntryContainer = (props: Props) => {
   useEventListener('message', e => {
     if (typeof e.data === 'string') {
       // console.log(e.data);
-      const dataObj = JSON.parse(e.data);
-      handleMessage(dataObj);
+      try {
+        const dataObj = JSON.parse(e.data);
+        handleMessage(dataObj);
+      } catch (ex) {
+        console.debug(
+          'useEventListener message:' + e.data + ' parse error:',
+          ex
+        );
+      }
     }
   });
 
