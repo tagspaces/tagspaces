@@ -199,6 +199,13 @@ const DirectoryMenu = (props: Props) => {
   function importMacTags() {
     props.onClose();
     if (Pro && Pro.MacTagsImport && Pro.MacTagsImport.importTags) {
+      if (
+        !confirm(`Experimental feature\n
+Depending on how many tags you have in your current directory, the tag extraction process may take a long time in which the application's user interface may appear as blocked.\n
+Do you want to continue?`)
+      ) {
+        return false;
+      }
       props.toggleProgressDialog();
 
       const entryCallback = entry => {
