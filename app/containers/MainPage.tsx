@@ -818,10 +818,12 @@ class MainPage extends Component<Props, State> {
                   openedFiles={this.props.openedFiles}
                   currentDirectoryPath={this.props.directoryPath}
                 />
-                <EntryContainer
-                  openedFiles={this.props.openedFiles}
-                  currentDirectoryPath={this.props.directoryPath}
-                />
+                {this.props.openedFiles.length > 0 && (
+                  <EntryContainer
+                    openedFiles={this.props.openedFiles}
+                    currentDirectoryPath={this.props.directoryPath}
+                  />
+                )}
               </SplitPane>
             </SplitPane>
           </TargetFileBox>
@@ -862,10 +864,12 @@ class MainPage extends Component<Props, State> {
                 openedFiles={this.props.openedFiles}
                 currentDirectoryPath={this.props.directoryPath}
               />
-              <EntryContainer
-                openedFiles={this.props.openedFiles}
-                currentDirectoryPath={this.props.directoryPath}
-              />
+              {this.props.openedFiles.length > 0 && (
+                <EntryContainer
+                  openedFiles={this.props.openedFiles}
+                  currentDirectoryPath={this.props.directoryPath}
+                />
+              )}
             </SplitPane>
           </React.Fragment>
         )}
