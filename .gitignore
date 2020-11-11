@@ -71,6 +71,7 @@ scripts/enablepro.js
 
 tsprofile
 CHANGELOG.TXT
+CHANGELOG-PRO.TXT
 
 web/dist
 web/files
