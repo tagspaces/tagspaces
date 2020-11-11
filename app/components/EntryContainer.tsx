@@ -268,10 +268,10 @@ const EntryContainer = (props: Props) => {
   useEffect(() => {
     if (props.openedFiles.length > 0) {
       // / setPropertiesPanelVisible
-      if (!openedFile.isFile && !isPropertiesPanelVisible) {
+      /* if (!openedFile.isFile && !isPropertiesPanelVisible) {
         // always open for dirs
         setPropertiesPanelVisible(true);
-      }
+      } */
       if (
         openedFile.editMode &&
         openedFile.changed &&
@@ -282,7 +282,15 @@ const EntryContainer = (props: Props) => {
     }
   }, [props.openedFiles, props.isReadOnlyMode, props.settings]);
 
+  /**
+   *  always open for dirs
+   */
+  const isPropPanelVisible = openedFile.isFile
+    ? isPropertiesPanelVisible
+    : true;
+
   useEffect(() => {
+    //  TODO rethink this
     if (props.settings.entryPropertiesSplitSize === defaultSplitSize) {
       props.setEntryPropertiesSplitSize(openedSplitSize);
     }
@@ -333,7 +341,8 @@ const EntryContainer = (props: Props) => {
         props.openFileNatively(data.link);
         break;
       case 'loadDefaultTextContent':
-        if (!openedFile || !openedFile.path || openedFile.changed) {
+        if (!openedFile || !openedFile.path) {
+          // || openedFile.changed) {
           break;
         }
         textFilePath = openedFile.path;
@@ -592,7 +601,7 @@ const EntryContainer = (props: Props) => {
   };
 
   const togglePanel = () => {
-    if (isPropertiesPanelVisible) {
+    if (isPropPanelVisible) {
       closePanel();
     } else {
       openPanel();
@@ -655,9 +664,7 @@ const EntryContainer = (props: Props) => {
           onClick={togglePanel}
           data-tid="fileContainerToggleProperties"
         >
-          <DetailsIcon
-            color={isPropertiesPanelVisible ? 'primary' : 'action'}
-          />
+          <DetailsIcon color={isPropPanelVisible ? 'primary' : 'action'} />
         </IconButton>
         <IconButton
           title={i18n.t('core:switchToFullscreen')}
@@ -927,7 +934,7 @@ const EntryContainer = (props: Props) => {
   }
 
   function getSplitPanelSize() {
-    if (isPropertiesPanelVisible) {
+    if (isPropPanelVisible) {
       return openedFile.isFile
         ? props.settings.entryPropertiesSplitSize
         : '100%';
@@ -1044,7 +1051,9 @@ const EntryContainer = (props: Props) => {
       </a>
       <SplitPane
         split="horizontal"
-        resizerStyle={{ backgroundColor: props.theme.palette.divider }}
+        resizerStyle={{
+          backgroundColor: props.theme.palette.divider
+        }}
         // size={this.state.entryPropertiesSplitSize}
         // minSize={defaultSplitSize}
         // maxSize={fullSplitSize}
@@ -1057,7 +1066,7 @@ const EntryContainer = (props: Props) => {
         }
         onChange={size => {
           const propertiesPanelVisible = size > defaultSplitSize;
-          if (isPropertiesPanelVisible !== propertiesPanelVisible) {
+          if (isPropPanelVisible !== propertiesPanelVisible) {
             setPropertiesPanelVisible(propertiesPanelVisible);
           }
           bufferedSplitResize(() => props.setEntryPropertiesSplitSize(size));
@@ -1078,7 +1087,9 @@ const EntryContainer = (props: Props) => {
                     <div
                       className={classes.fileBadge}
                       title={i18n.t('core:toggleEntryProperties')}
-                      style={{ backgroundColor: openedFile.color }}
+                      style={{
+                        backgroundColor: openedFile.color
+                      }}
                     >
                       {'.' +
                         extractFileExtension(
@@ -1182,30 +1193,32 @@ const EntryContainer = (props: Props) => {
               {openedFile.isFile
                 ? renderFileToolbar(classes)
                 : renderFolderToolbar()}
-              <EntryProperties
-                key={openedFile.path}
-                // resetState={this.resetState}
-                // setPropertiesEditMode={this.setPropertiesEditMode}
-                // entryPath={openedFile.path}
-                // perspective={openedFile.perspective}
-                openedEntry={openedFile}
-                tagDelimiter={props.settings.tagDelimiter}
-                // entryURL={currentEntry.url}
-                // shouldReload={reload}
-                renameFile={props.renameFile}
-                renameDirectory={props.renameDirectory}
-                // editTagForEntry={props.editTagForEntry}
-                // shouldCopyFile={shouldCopyFile}
-                // normalizeShouldCopyFile={() => setShouldCopyFile(false)}
-                addTags={props.addTags}
-                removeTags={props.removeTags}
-                removeAllTags={props.removeAllTags}
-                updateOpenedFile={props.updateOpenedFile}
-                updateThumbnailUrl={props.updateThumbnailUrl}
-                showNotification={props.showNotification}
-                isReadOnlyMode={props.isReadOnlyMode}
-                currentDirectoryPath={props.currentDirectoryPath}
-              />
+              {isPropPanelVisible && (
+                <EntryProperties
+                  key={openedFile.path}
+                  // resetState={this.resetState}
+                  // setPropertiesEditMode={this.setPropertiesEditMode}
+                  // entryPath={openedFile.path}
+                  // perspective={openedFile.perspective}
+                  openedEntry={openedFile}
+                  tagDelimiter={props.settings.tagDelimiter}
+                  // entryURL={currentEntry.url}
+                  // shouldReload={reload}
+                  renameFile={props.renameFile}
+                  renameDirectory={props.renameDirectory}
+                  // editTagForEntry={props.editTagForEntry}
+                  // shouldCopyFile={shouldCopyFile}
+                  // normalizeShouldCopyFile={() => setShouldCopyFile(false)}
+                  addTags={props.addTags}
+                  removeTags={props.removeTags}
+                  removeAllTags={props.removeAllTags}
+                  updateOpenedFile={props.updateOpenedFile}
+                  updateThumbnailUrl={props.updateThumbnailUrl}
+                  showNotification={props.showNotification}
+                  isReadOnlyMode={props.isReadOnlyMode}
+                  currentDirectoryPath={props.currentDirectoryPath}
+                />
+              )}
             </div>
           </div>
         ) : (
