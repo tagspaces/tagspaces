@@ -820,7 +820,6 @@ class MainPage extends Component<Props, State> {
                 />
                 {this.props.openedFiles.length > 0 && (
                   <EntryContainer
-                    // key={this.props.openedFiles[0].path}
                     openedFiles={this.props.openedFiles}
                     currentDirectoryPath={this.props.directoryPath}
                   />
