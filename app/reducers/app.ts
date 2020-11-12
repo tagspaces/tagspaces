@@ -1593,18 +1593,18 @@ export const actions = {
     path: string,
     tags: Array<Tag>,
     updateIndex: boolean = true
-  ) => (dispatch: (actions: Object) => void) => {
-    dispatch(actions.updateCurrentDirEntry(path, { tags }));
-    // dispatch(actions.reflectUpdateSidecarTagsInt(path, tags));
+  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
+    const { openedFiles } = getState().app;
+    /**
+     * if its have openedFiles updateCurrentDirEntry is called from FolderContainer (useEffect -> ... if (openedFile.changed)
+     */
+    if (openedFiles.length === 0) {
+      dispatch(actions.updateCurrentDirEntry(path, { tags }));
+    }
     if (updateIndex) {
       dispatch(LocationIndexActions.reflectUpdateSidecarTags(path, tags));
     }
   },
-  /* reflectUpdateSidecarTagsInt: (path: string, tags: Array<Tag>) => ({
-    type: types.REFLECT_UPDATE_SIDECARTAGS,
-    path,
-    tags
-  }), */
   deleteFile: (filePath: string) => (
     dispatch: (actions: Object) => void,
     getState: () => any
