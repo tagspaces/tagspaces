@@ -5,7 +5,7 @@
 ### 🎉 New features
 
 - Indexing of a location on opening is now disabled
-- Indexing starts on the first search in a given location. The index is valid for 10 minuntes, after this time is elapsed the index is recreated on the next search. Every time a index is created it is saved in the current locations .ts folder as tst.json file
+- Indexing starts on the first search in a given location. The index is valid for 10 minutes, after this time is elapsed the index is recreated on the next search. Every time a index is created it is saved in the current locations .ts folder as tst.json file
 - After a successful indexing the amount of the indexed files is shown in the search panel
 - Size of the location index was significantly reduced
 - If an entry has a geo tag, a map is displayed in the entry properties showing the exact location of the tag
@@ -14,33 +14,33 @@
 - PDF thumb generation in now in the main app windows, the hidden worker window is not shown anymore if a folder contains PDFs
 - Explanation before stating the mac tag extraction was added
 - Previewing files on Android was disabled due to security reasons
-- Added support for acc audio format
-- Added acc and flac file formats in search settings as audio formats
+- Added support for ACC audio format
+- Added ACC and FLAC file formats in search settings as audio formats
 - Close and clear uploads button added in the upload status dialog
 - **[PRO]** Previewing files on S3 is optimized to load only the first 10000 bytes of a given file.
-- **[PRO]** The editing of the description for files anf folder can now be initiated with double click on the description field
-- **[PRO]** Embedding images in the file and folder description and opening external links from there, adding md help
+- **[PRO]** The editing of the description for files and folder can now be initiated with double click on the description field
+- **[PRO]** Embedding images in the file and folder description and opening external links from there, basic markdown help added
 - **[PRO]** In is now possible to select a default perspective for every folder
 - **[PRO]** Format of the date in the date editor dialog changed to YYYY-MM-DD for 2020-09-24
 - **[PRO]** A new perspective in BETA status called KanBan was added
 
 ### 🌟 Enhancements
 
-- The tray menu on macOS was reenabled
+- The tray menu on macOS was re-enabled
 - The Smart Tags group can now be collapsed (#1246)
 - Exiting full screen from the PDF-viewer fixed on touch enabled devices
 - Folder properties are now be opened always with details switched on, switching the details off is not possible anymore
 - The smart tags are now read-only and emoji icons were exchanged with real platform independent icons
 - Generation of thumbnails for ZIP files was disabled due to a potential performance issues on large files
-- Armenian, Japan, Korean and Chinese translation were updated
-- **[PRO]** Button for navigation to parent direcotory added in the mapique and gallery perspectives
+- Armenian, Japan, Korean and Chinese translations were updated
+- **[PRO]** Button for navigation to parent directory added in the Mapique and Gallery perspectives
 
 ### 🐛 Bug fixes
 
 - Fixed showing thumbs and opening files from global search
 - Fixed global search crash on no location
-- Issues on switching dirs and location locally and on S3 fixed
-- **[PRO]** Map in the mapique perspective is now redrawer after closing of a file or folder entry
+- Issues on switching directories and location locally and on S3 fixed
+- **[PRO]** Map in the Mapique perspective is now redrawed after closing of a file or folder entry
 - **[PRO]** Fixed issues with uploading files to S3 from the desktop and the web version
 
 ## Version 3.6.2 / 2020.09.16
