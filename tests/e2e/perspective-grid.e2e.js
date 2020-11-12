@@ -60,7 +60,7 @@ describe('TST51 - Perspective Grid', () => {
     await closeFileProperties();
   });
 
-  test('TST5112 - Show sub folders [show_sub_folders,web,electron]', async () => {
+  test('TST5037 - Show sub folders [show_sub_folders,web,electron]', async () => {
     await openFilesOptionMenu();
     await toggleShowDirectoriesClick();
 
@@ -86,14 +86,14 @@ describe('TST51 - Perspective Grid', () => {
 
   /*test('TST5113 - Show sub folders content', async () => {});*/
 
-  test('TST5101 - Open file with click [web,electron]', async () => {
+  test('TST5002 - Open file with click [web,electron]', async () => {
     await searchEngine('txt'); //testTestFilename);
     await delay(500);
     await openFile(perspectiveGridTable, firstFile);
     await checkFilenameForExist(testTestFilename);
   });
 
-  test('TST5102 - Select/deselect all files [web,electron]', async () => {
+  test('TST5004 - Select/deselect all files [web]', async () => {
     await openFilesOptionMenu();
     await toggleShowDirectoriesClick();
     await selectAllFilesClick();
@@ -106,20 +106,20 @@ describe('TST51 - Perspective Grid', () => {
     //console.log(style);
     // await delay(90000);
     const containSelectedStyle =
-      style.includes('jss131') || style.includes('jss124'); /*Mac Web*/ // || style.includes('jss136')
+      style.includes('jss131') || style.includes('jss124'); /*Mac Web*/ // || style.includes('jss136') //TODO fix this is not stable
     expect(containSelectedStyle).toBe(true);
   });
 
   // This scenario includes "Add tags" && "Remove tags" to be fulfilled
-  test('TST5103 - Add tags to the selected files [web,electron]', async () => {
+  test('TST5005 - Add tags to the selected files [web,electron]', async () => {
     await searchEngine(testTestFilename);
   });
 
-  test('TST5104 - Remove tags from selected files [web,electron]', async () => {
+  test('TST5006 - Remove tags from selected files [web,electron]', async () => {
     await searchEngine(testTestFilename);
   });
 
-  test('TST51** - Return directory back [web,electron]', async () => {
+  test('TST5038 - Return directory back [web,electron]', async () => {
     const file = await global.client.$(
       '//*[@data-tid="perspectiveGridFileTable"]/span'
     );
@@ -151,7 +151,7 @@ describe('TST51 - Perspective Grid', () => {
     // expect(file).toContain(selectedFileStyle);
   });
 
-  test('TST51** - Changing the Perspective View [web,electron]', async () => {
+  test('TST5039 - Changing the Perspective View [web,electron]', async () => {
     const grid = await global.client.$('[data-tid=perspectiveGridFileTable]');
     let gridStyle = await grid.getAttribute('style');
 
@@ -181,7 +181,7 @@ describe('TST51 - Perspective Grid', () => {
   });*/
 
   // Scenarios for sorting files in grid perspective
-  describe('TST5117 - Testing sort files in the grid perspective', () => {
+  describe('TST5003 - Testing sort files in the grid perspective', () => {
     beforeEach(async () => {
       // await delay(500);
       const sortMenu = await global.client.$(
@@ -282,7 +282,7 @@ describe('TST50** - Right button on a file', () => {
     expect(fileName).toContain(oldName);
   });
 
-  test('TST** - Create file [web,electron]', async () => {
+  test('TST5040 - Create file [web,electron]', async () => {
     await createNewFile();
 
     //TODO check if file is created
@@ -307,7 +307,7 @@ describe('TST50** - Right button on a file', () => {
     // check parent directory
   });
 
-  test('TST50** - Open containing folder [electron]', async () => {
+  test('TST5027 - Open containing folder [electron]', async () => {
     if (!global.isMinio) {
       // Show in File Manager option is missing for Minio Location
       await searchEngine('txt');
@@ -333,7 +333,8 @@ describe('TST50** - Right button on a file', () => {
     await cancelButton.click();
   });*/
 
-  test('TST10** - Move / Copy file [web,electron]', async () => {
+  //TODO fix electron: element not interactable
+  test('TST5028 - Move / Copy file [web]', async () => {
     await searchEngine('txt');
     await delay(500);
     await openContextEntryMenu(

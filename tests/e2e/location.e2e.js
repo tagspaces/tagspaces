@@ -153,7 +153,8 @@ describe('TST03 - Testing locations:', () => {
     // TODO test duplication warning on creating locations
   });
 
-  it('TST0307 - Move location Up and Down [web,electron]', async () => {
+  // TODO adjust delays
+  it('TST0307 - Move location Up and Down [web]', async () => {
     await openLocationMenu(testLocationName);
     // await delay(500);
     // await createLocation(defaultLocationPath + '/test', 'New Test Location');
