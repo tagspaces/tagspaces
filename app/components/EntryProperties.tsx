@@ -630,6 +630,9 @@ const EntryProperties = (props: Props) => {
   });
 
   function getGeoLocation(tags: Array<Tag>) {
+    if (!Pro) {
+      return;
+    }
     if (tags) {
       for (let i = 0; i < tags.length; i += 1) {
         if (isPlusCode(tags[i].title)) {
@@ -640,7 +643,6 @@ const EntryProperties = (props: Props) => {
         }
       }
     }
-    return undefined;
   }
 
   const geoLocation: any = getGeoLocation(currentEntry.tags);
