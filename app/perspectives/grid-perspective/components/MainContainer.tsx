@@ -350,13 +350,13 @@ class GridPerspective extends React.Component<Props, State> {
     } else {
       setSelectedEntries([fsEntry]);
       setLastSelectedEntry(fsEntry.path);
-      if (fsEntry.isFile) {
-        if (this.state.singleClickAction === 'openInternal') {
-          this.props.openFsEntry(fsEntry);
-        } else if (this.state.singleClickAction === 'openExternal') {
-          this.props.openFileNatively(fsEntry.path);
-        }
-        // else if (this.state.singleClickAction === 'selects') {}
+      if (this.state.singleClickAction === 'openInternal') {
+        this.props.openFsEntry(fsEntry);
+      } else if (
+        fsEntry.isFile &&
+        this.state.singleClickAction === 'openExternal'
+      ) {
+        this.props.openFileNatively(fsEntry.path);
       }
     }
   };
