@@ -300,3 +300,21 @@ export async function startupLocation() {
   await closeEditLocationDialog.click();
   await delay(1500);
 }
+
+/**
+ *
+ * @param locationIndex - order index in locations Array starting from 0 if index < 0 it will return reversed from the last items
+ * @returns {Promise<string|null>} Location name; example usage: getLocationName(-1) will return the last one
+ */
+export async function getLocationName(locationIndex) {
+  const locationList = await global.client.$$(
+    '//*[@data-tid="locationList"]/div'
+  );
+  let location =
+    locationIndex < 0
+      ? locationList[locationList.length + locationIndex]
+      : locationList[locationIndex];
+  location = await location.$('li');
+  location = await location.$('div');
+  return location.getAttribute('data-tid');
+}

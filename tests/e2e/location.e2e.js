@@ -10,7 +10,8 @@ import {
   openLocation,
   closeFileProperties,
   clearInputValue,
-  startupLocation
+  startupLocation,
+  getLocationName
 } from './location.helpers';
 
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
@@ -145,45 +146,37 @@ describe('TST03 - Testing locations:', () => {
     // TODO evlt reastart the applcatio and see if the loading of default locations works
   });
 
+  /**
+   * You can create two locations with the same name now
+   */
   it('TST0306 - should test duplication warning on creating locations with the same name', async () => {
     // TODO test duplication warning on creating locations
   });
 
   it('TST0307 - Move location Up and Down [web,electron]', async () => {
     await openLocationMenu(testLocationName);
-    await delay(500);
+    // await delay(500);
     // await createLocation(defaultLocationPath + '/test', 'New Test Location');
     // await delay(1500);
     // await openLocationMenu(testLocationName);
     // await delay(1500);
     const moveUp = await global.client.$('[data-tid=moveLocationUp]');
     await moveUp.click();
-    await delay(1500);
+
+    const prevLocation = await getLocationName(-2);
+    expect(prevLocation).toBe('location_' + testLocationName);
+
+    // await delay(500);
     await openLocationMenu(testLocationName);
-    await delay(1500);
+    // await delay(500);
     const moveDown = await global.client.$('[data-tid=moveLocationDown]');
     await moveDown.click();
-    // TODO no expect, validation
+
+    const lastLocation = await getLocationName(-1);
+    expect(lastLocation).toBe('location_' + testLocationName);
   });
 });
-
-describe.skip('TST03 - Testing locations - start up location', () => {
-  beforeEach(() => {
-    // global.shouldClearLocaleStorage = false;
-    // return createLocation(defaultLocationPath, locationName);
-  });
-
-  afterEach(() => {
-    // global.shouldClearLocaleStorage = true;
-  });
-
-  // it.skip('TST0304 - Changing default perspective', async () => {
-  // });
-  //
-  // it.skip('TST0305 - should make a start up location and test if it load on startup', async () => {
-  // });
-});
-
+/*
 describe.skip('TST03 - Testing locations - test Context Menu in Tree Directory', () => {
   beforeEach(async () => {
     const locationPath = defaultLocationPath; // to local path
@@ -195,3 +188,4 @@ describe.skip('TST03 - Testing locations - test Context Menu in Tree Directory',
     // global.shouldClearLocaleStorage = true;
   });
 });
+*/
