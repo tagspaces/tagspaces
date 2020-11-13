@@ -18,7 +18,7 @@
 
 import React from 'react';
 import Toolbar from '@material-ui/core/Toolbar';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import SettingsIcon from '@material-ui/icons/Settings';
 import IconButton from '@material-ui/core/IconButton';
 import ParentDirIcon from '@material-ui/icons/SubdirectoryArrowLeft';
 import ViewGridIcon from '@material-ui/icons/ViewModule';
@@ -156,7 +156,7 @@ const MainToolbar = (props: Props) => {
           handleOptionsMenu(e);
         }}
       >
-        <MoreVertIcon />
+        <SettingsIcon />
       </IconButton>
     </Toolbar>
   );
