@@ -61,7 +61,8 @@ import {
   extractContainingDirectoryPath,
   getThumbFileLocationForFile,
   getThumbFileLocationForDirectory,
-  extractFileName
+  extractFileName,
+  extractDirectoryName
 } from '-/utils/paths';
 import AppConfig from '../config';
 import { Pro } from '../pro';
@@ -228,10 +229,12 @@ const EntryProperties = (props: Props) => {
     xhtml: true
   });
 
-  const fileName = extractFileName(
-    props.openedEntry.path,
-    PlatformIO.getDirSeparator()
-  );
+  const entryName = props.openedEntry.isFile
+    ? extractFileName(props.openedEntry.path, PlatformIO.getDirSeparator())
+    : extractDirectoryName(
+        props.openedEntry.path,
+        PlatformIO.getDirSeparator()
+      );
 
   const currentEntry = enhanceOpenedEntry(
     props.openedEntry,
@@ -272,7 +275,7 @@ const EntryProperties = (props: Props) => {
   }, [editDescription]);
 
   useEffect(() => {
-    if (editName === fileName && fileNameRef.current) {
+    if (editName === entryName && fileNameRef.current) {
       fileNameRef.current.focus();
     }
   }, [editName]);
@@ -303,13 +306,13 @@ const EntryProperties = (props: Props) => {
       setEditName(undefined);
       return;
     }
-    setEditName(fileName);
+    setEditName(entryName);
   };
 
   const deactivateEditNameField = () => {
     setEditName(undefined);
     if (fileNameRef) {
-      fileNameRef.current.value = fileName;
+      fileNameRef.current.value = entryName;
     }
   };
 
@@ -706,7 +709,7 @@ const EntryProperties = (props: Props) => {
               name="name"
               fullWidth={true}
               data-tid="fileNameProperties"
-              defaultValue={fileName} // currentEntry.name}
+              defaultValue={entryName} // currentEntry.name}
               inputRef={fileNameRef}
               onClick={() => {
                 if (
