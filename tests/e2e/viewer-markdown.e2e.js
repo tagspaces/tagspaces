@@ -10,7 +10,7 @@ import {
   closeFileProperties,
   createMinioLocation
 } from './location.helpers';
-import { closeOpenedFile } from './general.helpers';
+import { closeOpenedFile, openCloseAboutDialog } from './general.helpers';
 import { searchEngine } from './search.spec';
 
 export const firstFile = '/span';
@@ -60,6 +60,23 @@ describe('TST54 - Markdown viewer [electron]', () => {
     await file.waitForDisplayed();
     await file.doubleClick();
     await delay(500);
+    await closeOpenedFile();
+  });
+
+  it('TST5407 - Open about dialog [electron]', async () => {
+    await delay(500);
+    await searchEngine('md');
+    await delay(500);
+    const file = await global.client.$(perspectiveGridTable + firstFile);
+    await file.waitForDisplayed();
+    await file.doubleClick();
+    await delay(500);
+    const webViewer = await global.client.$('#FileViewer');
+    expect(await webViewer.isDisplayed()).toBe(true);
+    await global.client.switchToFrame(webViewer);
+    await openCloseAboutDialog();
+    await delay(500);
+    await global.client.switchToParentFrame();
     await closeOpenedFile();
   });
 });
