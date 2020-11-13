@@ -17,10 +17,10 @@ export async function createLocation(
   isDefault = false
 ) {
   // locationPerspective = locationPerspective || 'Grid';
-  const locationManagerMenu = await global.client.$(
-    '[data-tid=locationManagerPanel]'
-  );
-  await locationManagerMenu.click();
+  // const locationManagerMenu = await global.client.$(
+  //   '[data-tid=locationManagerPanel]'
+  // );
+  // await locationManagerMenu.click();
   const elem = await global.client.$('[data-tid=createNewLocation]');
   await elem.click();
   // await delay(1500);
@@ -70,13 +70,13 @@ export async function createMinioLocation(
   isDefault = false
 ) {
   // locationPerspective = locationPerspective || 'Grid';
-  if (!global.isWeb) {
-    //TODO rethink this!!
-    const locationManagerMenu = await global.client.$(
-      '[data-tid=locationManagerPanel]'
-    );
-    await locationManagerMenu.click();
-  }
+  // if (!global.isWeb) {
+  //   //TODO rethink this!!
+  //   const locationManagerMenu = await global.client.$(
+  //     '[data-tid=locationManagerPanel]'
+  //   );
+  //   await locationManagerMenu.click();
+  // }
   const elem = await global.client.$('[data-tid=createNewLocation]');
   await elem.click();
 

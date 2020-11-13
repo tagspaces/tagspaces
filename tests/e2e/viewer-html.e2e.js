@@ -8,38 +8,15 @@ import {
   defaultLocationPath,
   defaultLocationName,
   closeFileProperties,
-  createMinioLocation,
-  aboutDialogExt
+  createMinioLocation
 } from './location.helpers';
 import { closeOpenedFile, openCloseAboutDialog } from './general.helpers';
 import { searchEngine } from './search.spec';
 
+const title = 'About HTML Viewer';
+
 export const firstFile = '/span';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
-
-// export async function aboutDialogExt(title, ext) {
-//   await delay(500);
-//   // should switch focus to iFrame
-//   const switchFocus = await global.client.$('#viewer').frame(0);
-//   // await global.client.waitForExist('#viewer').frame(0);
-//   await switchFocus.waitForDisplayed();
-//   await switchFocus.click();
-//   const viewMainMenuButton = await global.client.$('#viewerMainMenuButton');
-//   await viewMainMenuButton.waitForDisplayed();
-//   await viewMainMenuButton.click();
-//   await delay(500);
-//   await global.client.waitForVisible('#aboutButton').click('#aboutButton');
-//   await delay(1500);
-//   const getTitle = await global.client
-//     .waitForVisible('h4=' + title)
-//     .getText('h4=' + title);
-//   // should eventually equals('About HTML Viewer');
-//   expect(getTitle).toBe(title);
-//   await delay(1500);
-//   await global.client
-//     .waitForVisible('#closeAboutDialogButton')
-//     .click('#closeAboutDialogButton');
-// }
 
 describe('TST65 - HTML viewer [electron]', () => {
   beforeEach(async () => {
@@ -53,7 +30,7 @@ describe('TST65 - HTML viewer [electron]', () => {
     await closeFileProperties();
   });
 
-  it('TST6501 - Open HTML [generate_thumbnail_URL, electron]', async () => {
+  it('TST6501 - Open HTML [electron]', async () => {
     await delay(500);
     await searchEngine('html');
     await delay(500);
@@ -94,26 +71,11 @@ describe('TST65 - HTML viewer [electron]', () => {
     const file = await global.client.$(perspectiveGridTable + firstFile);
     await file.waitForDisplayed();
     await file.doubleClick();
-    await delay(1500);
+    await delay(500);
     const webViewer = await global.client.$('#FileViewer');
-    //await delay(500);
     expect(await webViewer.isDisplayed()).toBe(true);
     await global.client.switchToFrame(webViewer);
-    // await openCloseAboutDialog();
-    await delay(500);
-    const viewMainMenuButton = await global.client.$('#viewerMainMenuButton');
-    await viewMainMenuButton.waitForDisplayed();
-    await viewMainMenuButton.click();
-    await delay(1500);
-    const aboutButton = await global.client.$('#aboutButton');
-    await aboutButton.waitForDisplayed();
-    await aboutButton.click();
-    await delay(5500);
-    const closeAboutDialogButton = await global.client.$(
-      '#closeAboutDialogButton'
-    );
-    await closeAboutDialogButton.waitForDisplayed();
-    await closeAboutDialogButton.click();
+    await openCloseAboutDialog();
     await delay(500);
     await global.client.switchToParentFrame();
     await closeOpenedFile();
