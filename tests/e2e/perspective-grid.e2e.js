@@ -106,7 +106,7 @@ describe('TST51 - Perspective Grid', () => {
       style.includes('jss131') ||
       style.includes('jss124') ||
       style.includes('jss111'); /*Mac Web*/ // || style.includes('jss136') //TODO fix this is not stable
-   // expect(containSelectedStyle).toBe(true);
+    // expect(containSelectedStyle).toBe(true);
   });
 
   // This scenario includes "Add tags" && "Remove tags" to be fulfilled
@@ -252,16 +252,17 @@ describe('TST50** - Right button on a file', () => {
   test('TST5040 - Create file [web,electron]', async () => {
     await clickOn('[data-tid=folderContainerOpenDirMenu]');
     await clickOn('[data-tid=createNewFile]');
+    await global.client.pause(500);
     await clickOn('[data-tid=createTextFileButton]');
-
-    //TODO check if file is created
+    await searchEngine('note');
+    await expectElementExist(selectorFile, true);
   });
 
   test('TST5018 - Delete file [web,electron]', async () => {
     await searchEngine('note'); //select new created file - note[date_created].txt
+    await expectElementExist(selectorFile, true);
     await deleteFirstFile();
-
-    //TODO check if file is deleted
+    await expectElementExist(selectorFile, false);
   });
 
   test('TST5026 - Open file natively [electron]', async () => {

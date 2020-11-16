@@ -6,7 +6,7 @@ import {
   defaultLocationPath,
   defaultLocationName
 } from './location.helpers';
-import {clickOn} from "./general.helpers";
+import { clickOn, setInputValue } from './general.helpers';
 
 export const regexQuery = '!"#$%&\'()*+,-./@:;<=>[\\]^_`{|}~';
 export const searchTag = 'tag1';
@@ -18,15 +18,10 @@ export const firstTagButton = '/tbody/tr[1]/td[3]/button[1]';
 
 export async function searchEngine(filename, tagName, resetSearchButton) {
   await clickOn('[data-tid=search]');
-  // delay(1500);
-  const searchInput = await global.client.$('#textQuery');
-  await searchInput.waitForDisplayed();
-  await searchInput.setValue(filename);
+  await setInputValue('#textQuery', filename);
 
   if (tagName) {
-    const searchTags = await global.client.$('#searchTags');
-    await searchTags.waitForDisplayed();
-    await searchTags.setValue(tagName);
+    await setInputValue('#searchTags', filename);
   }
 
   if (resetSearchButton) {

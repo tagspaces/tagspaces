@@ -99,7 +99,7 @@ beforeEach(async () => {
       args: [path.join(__dirname, '..', '..', 'app')],
       // startTimeout: 500,
       waitTimeout: 500,
-      waitforInterval: 50,
+      waitforInterval: 50
     });
     await global.app.start();
     global.client = global.app.client;

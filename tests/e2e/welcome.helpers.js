@@ -1,4 +1,4 @@
-import {clickOn} from "./general.helpers";
+import { clickOn } from './general.helpers';
 
 export async function closeWelcome() {
   const nextButton = await global.client.$('[data-tid=nextStepOnboarding]');

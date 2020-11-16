@@ -16,7 +16,8 @@ export async function clickOn(selector, options = {}) {
   const element = await global.client.$(selector);
   await element.waitUntil(
     async function() {
-      const displayed = await this.isDisplayed();
+      // const displayed = await this.isDisplayed();
+      const displayed = await this.isDisplayedInViewport();
       return displayed === true;
     },
     {
@@ -31,7 +32,7 @@ export async function doubleClickOn(selector) {
   const element = await global.client.$(selector);
   await element.waitUntil(
     async function() {
-      const displayed = await this.isDisplayed();
+      const displayed = await this.isDisplayedInViewport();
       return displayed === true;
     },
     {
@@ -40,6 +41,22 @@ export async function doubleClickOn(selector) {
     }
   );
   await element.doubleClick();
+}
+
+export async function setInputValue(selector, value) {
+  const element = await global.client.$(selector);
+  await element.waitUntil(
+    async function() {
+      // const displayed = await this.isDisplayed();
+      const displayed = await this.isDisplayedInViewport();
+      return displayed === true;
+    },
+    {
+      timeout: 5000,
+      timeoutMsg: 'setInputValue selector ' + selector + ' to exist after 5s'
+    }
+  );
+  await element.setValue(value);
 }
 
 export async function expectElementExist(selector, exist = true) {

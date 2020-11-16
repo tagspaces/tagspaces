@@ -9,7 +9,7 @@ import {
   openLocation,
   clearInputValue
 } from './location.helpers';
-import {clickOn, openDirectoryMenu} from './general.helpers';
+import { clickOn, openDirectoryMenu } from './general.helpers';
 
 const winMinio = pathLib.resolve(__dirname, '../bin/minio.exe');
 const unixMinio = 'minio';
@@ -137,7 +137,7 @@ export async function openFile(perspectiveSelector, inDepth) {
 export async function openContextEntryMenu(selector, menuOperation) {
   // selector is current selector location for element in perspectiveGridTable or perspectiveListTable (full xpath path to element)
   // menuOption is selector for current menu operation
-  await clickOn(selector,{ button: 'right' });
+  await clickOn(selector, { button: 'right' });
   await global.client.pause(500);
   await clickOn('[data-tid=' + menuOperation + ']');
 }
