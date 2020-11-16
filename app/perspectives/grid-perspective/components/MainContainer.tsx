@@ -847,17 +847,21 @@ class GridPerspective extends React.Component<Props, State> {
           setGridPageLimit={this.handleGridPageLimit}
           gridPageLimit={this.state.gridPageLimit}
         />
-        <MoveCopyFilesDialog
-          key={uuidv1()}
-          open={this.state.isMoveCopyFilesDialogOpened}
-          onClose={this.handleCloseDialogs}
-          selectedFiles={selectedFilePaths}
-        />
-        <RenameFileDialog
-          open={this.state.isFileRenameDialogOpened}
-          onClose={this.handleCloseDialogs}
-          selectedFilePath={this.state.selectedEntryPath}
-        />
+        {this.state.isMoveCopyFilesDialogOpened && (
+          <MoveCopyFilesDialog
+            key={uuidv1()}
+            open={this.state.isMoveCopyFilesDialogOpened}
+            onClose={this.handleCloseDialogs}
+            selectedFiles={selectedFilePaths}
+          />
+        )}
+        {this.state.isFileRenameDialogOpened && (
+          <RenameFileDialog
+            open={this.state.isFileRenameDialogOpened}
+            onClose={this.handleCloseDialogs}
+            selectedFilePath={this.state.selectedEntryPath}
+          />
+        )}
         <ConfirmDialog
           open={this.state.isDeleteMultipleFilesDialogOpened}
           onClose={this.handleCloseDialogs}
@@ -881,20 +885,22 @@ class GridPerspective extends React.Component<Props, State> {
           confirmDialogTID="confirmDeleteFileDialog"
           confirmDialogContentTID="confirmDeleteDialogContent"
         />
-        <FileMenu
-          anchorEl={this.state.fileContextMenuAnchorEl}
-          open={this.state.fileContextMenuOpened}
-          onClose={this.closeFileMenu}
-          openDeleteFileDialog={this.openDeleteFileDialog}
-          openRenameFileDialog={this.openFileRenameDialog}
-          openMoveCopyFilesDialog={this.openMoveCopyFilesDialog}
-          openAddRemoveTagsDialog={this.openAddRemoveTagsDialog}
-          openFsEntry={this.props.openFsEntry}
-          openFileNatively={this.props.openFileNatively}
-          showInFileManager={this.props.showInFileManager}
-          isReadOnlyMode={this.props.isReadOnlyMode}
-          selectedFilePath={this.state.selectedEntryPath}
-        />
+        {this.state.fileContextMenuOpened && (
+          <FileMenu
+            anchorEl={this.state.fileContextMenuAnchorEl}
+            open={this.state.fileContextMenuOpened}
+            onClose={this.closeFileMenu}
+            openDeleteFileDialog={this.openDeleteFileDialog}
+            openRenameFileDialog={this.openFileRenameDialog}
+            openMoveCopyFilesDialog={this.openMoveCopyFilesDialog}
+            openAddRemoveTagsDialog={this.openAddRemoveTagsDialog}
+            openFsEntry={this.props.openFsEntry}
+            openFileNatively={this.props.openFileNatively}
+            showInFileManager={this.props.showInFileManager}
+            isReadOnlyMode={this.props.isReadOnlyMode}
+            selectedFilePath={this.state.selectedEntryPath}
+          />
+        )}
         <DirectoryMenu
           open={this.state.dirContextMenuOpened}
           onClose={this.closeDirMenu}

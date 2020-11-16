@@ -96,7 +96,10 @@ beforeEach(async () => {
   } else {
     global.app = new Application({
       path: electronPath,
-      args: [path.join(__dirname, '..', '..', 'app')]
+      args: [path.join(__dirname, '..', '..', 'app')],
+      // startTimeout: 500,
+      waitTimeout: 500,
+      waitforInterval: 50,
     });
     await global.app.start();
     global.client = global.app.client;

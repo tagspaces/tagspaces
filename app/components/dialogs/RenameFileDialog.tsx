@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
@@ -42,12 +42,6 @@ interface Props {
   onClose: (clearSelection?: boolean) => void;
 }
 
-interface State {
-  inputError: boolean;
-  disableConfirmButton: boolean;
-  fileName: string;
-}
-
 const styles = theme => ({
   root: {
     width: 550,
@@ -57,14 +51,42 @@ const styles = theme => ({
   }
 });
 
-class RenameFileDialog extends React.Component<Props, State> {
-  state = {
-    inputError: false,
-    disableConfirmButton: true,
-    fileName: ''
-  };
+const RenameFileDialog = (props: Props) => {
+  const [inputError, setInputError] = useState(false);
+  // const [disableConfirmButton, setDisableConfirmButton] = useState(true);
+  const fileNameInput = useRef<HTMLInputElement>(null);
+  let fileName = extractFileName(
+    props.selectedFilePath,
+    PlatformIO.getDirSeparator()
+  );
 
-  componentWillReceiveProps = (nextProps: any) => {
+  useEffect(() => {
+    // https://github.com/mui-org/material-ui/issues/1594
+    const timer = setTimeout(() => {
+      if (fileNameInput && fileNameInput.current) {
+        fileNameInput.current.focus();
+        if (fileName) {
+          const indexOfBracket = fileName.indexOf(AppConfig.beginTagContainer);
+          const indexOfDot = fileName.lastIndexOf('.');
+          let endRange = fileName.length;
+          if (indexOfBracket > 0) {
+            endRange = indexOfBracket;
+          } else if (indexOfDot > 0) {
+            endRange = indexOfDot;
+          }
+          fileNameInput.current.setSelectionRange(0, endRange);
+        }
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [props.selectedFilePath]);
+  /**
+   * todo rewrite this to functional componet
+   * its have problem with e2e test dialog is displayed without fileName -> its set here in state later
+   * @param nextProps
+   */
+  /* componentWillReceiveProps = (nextProps: any) => {
     if (nextProps.open) {
       const fileName = extractFileName(
         nextProps.selectedFilePath,
@@ -88,87 +110,85 @@ class RenameFileDialog extends React.Component<Props, State> {
         };
       });
     }
-  };
+  }; */
 
-  fileName;
-
-  handleRenameFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleRenameFile = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
     const { value, name } = target;
 
     if (name === 'fileName') {
-      this.setState({ fileName: value }, this.handleValidation);
+      fileName = value;
+      handleValidation();
+      // this.setState({ fileName: value }, this.handleValidation);
     }
   };
 
-  handleValidation() {
-    if (this.state.fileName.length > 0) {
-      this.setState({ inputError: false, disableConfirmButton: false });
+  const handleValidation = () => {
+    if (fileName.length > 0) {
+      setInputError(false);
+      // this.setState({ inputError: false, disableConfirmButton: false });
     } else {
-      this.setState({ inputError: true, disableConfirmButton: true });
+      setInputError(true);
+      // this.setState({ inputError: true, disableConfirmButton: true });
     }
-  }
+  };
 
-  onConfirm = () => {
-    if (!this.state.disableConfirmButton) {
+  const onConfirm = () => {
+    if (!inputError) {
       const fileDirectory = extractContainingDirectoryPath(
-        this.props.selectedFilePath,
+        props.selectedFilePath,
         PlatformIO.getDirSeparator()
       );
       const newFilePath =
-        fileDirectory + PlatformIO.getDirSeparator() + this.state.fileName;
-      this.props.renameFile(this.props.selectedFilePath, newFilePath);
-      this.props.onClose(true);
-      this.setState({ inputError: false, disableConfirmButton: true });
+        fileDirectory + PlatformIO.getDirSeparator() + fileName;
+      props.renameFile(props.selectedFilePath, newFilePath);
+      props.onClose(true);
+      // this.setState({ inputError: false, disableConfirmButton: true });
     } else {
-      this.handleValidation();
+      handleValidation();
     }
   };
 
-  renderTitle = () => (
+  const renderTitle = () => (
     <DialogTitle>{i18n.t('core:renameFileTitle')}</DialogTitle>
   );
 
-  renderContent = () => (
-    <DialogContent className={this.props.classes.root}>
+  const renderContent = () => (
+    <DialogContent className={props.classes.root}>
       <FormControl
         data-tid="renameFileDialog"
         fullWidth={true}
-        error={this.state.inputError}
+        error={inputError}
       >
         <TextField
-          error={this.state.inputError}
+          error={inputError}
           margin="dense"
           name="fileName"
           autoFocus
-          inputRef={ref => {
-            this.fileName = ref;
-          }}
+          inputRef={fileNameInput}
           label={i18n.t('core:renameNewFileName')}
-          onChange={this.handleRenameFile}
-          value={this.state.fileName}
+          onChange={handleRenameFile}
+          defaultValue={fileName}
           data-tid="renameFileDialogInput"
           fullWidth={true}
         />
-        {this.state.inputError && (
-          <FormHelperText>Empty File Name</FormHelperText>
-        )}
+        {inputError && <FormHelperText>Empty File Name</FormHelperText>}
       </FormControl>
     </DialogContent>
   );
 
-  renderActions = () => (
+  const renderActions = () => (
     <DialogActions>
       <Button
         data-tid="closeRenameFileDialog"
-        onClick={() => this.props.onClose()}
+        onClick={() => props.onClose()}
         color="primary"
       >
         {i18n.t('core:cancel')}
       </Button>
       <Button
-        disabled={this.state.disableConfirmButton}
-        onClick={this.onConfirm}
+        disabled={inputError}
+        onClick={onConfirm}
         data-tid="confirmRenameFileDialog"
         color="primary"
       >
@@ -177,30 +197,28 @@ class RenameFileDialog extends React.Component<Props, State> {
     </DialogActions>
   );
 
-  render() {
-    const { onClose, open } = this.props;
-    return (
-      <Dialog
-        open={open}
-        keepMounted
-        onClose={onClose}
-        onKeyDown={event => {
-          if (event.key === 'Enter' || event.keyCode === 13) {
-            event.preventDefault();
-            event.stopPropagation();
-            this.onConfirm();
-          } else if (event.key === 'Escape') {
-            onClose();
-          }
-        }}
-      >
-        {this.renderTitle()}
-        {this.renderContent()}
-        {this.renderActions()}
-      </Dialog>
-    );
-  }
-}
+  const { onClose, open } = props;
+  return (
+    <Dialog
+      open={open}
+      keepMounted
+      onClose={onClose}
+      onKeyDown={event => {
+        if (event.key === 'Enter' || event.keyCode === 13) {
+          event.preventDefault();
+          event.stopPropagation();
+          onConfirm();
+        } else if (event.key === 'Escape') {
+          onClose();
+        }
+      }}
+    >
+      {renderTitle()}
+      {renderContent()}
+      {renderActions()}
+    </Dialog>
+  );
+};
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(

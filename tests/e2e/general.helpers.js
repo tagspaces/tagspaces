@@ -12,6 +12,51 @@ export const tsFolder = '\\.ts';
 // const newHTMLFileName = 'newHTMLFile.html';
 const testFolder = 'testFolder';
 
+export async function clickOn(selector, options = {}) {
+  const element = await global.client.$(selector);
+  await element.waitUntil(
+    async function() {
+      const displayed = await this.isDisplayed();
+      return displayed === true;
+    },
+    {
+      timeout: 5000,
+      timeoutMsg: 'clickOn selector ' + selector + ' to exist after 5s'
+    }
+  );
+  await element.click(options);
+}
+
+export async function doubleClickOn(selector) {
+  const element = await global.client.$(selector);
+  await element.waitUntil(
+    async function() {
+      const displayed = await this.isDisplayed();
+      return displayed === true;
+    },
+    {
+      timeout: 5000,
+      timeoutMsg: 'doubleClick selector ' + selector + ' to exist after 5s'
+    }
+  );
+  await element.doubleClick();
+}
+
+export async function expectElementExist(selector, exist = true) {
+  const element = await global.client.$(selector);
+  await element.waitUntil(
+    async function() {
+      const displayed = await this.isDisplayed();
+      return displayed === exist;
+    },
+    {
+      timeout: 10000,
+      timeoutMsg: 'expected selector to exist=' + exist + ' after 5s'
+    }
+  );
+  expect(await element.isDisplayed()).toBe(exist);
+}
+
 export async function createLocation(
   locationPath,
   locationName,

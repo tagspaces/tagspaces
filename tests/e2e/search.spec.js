@@ -6,6 +6,7 @@ import {
   defaultLocationPath,
   defaultLocationName
 } from './location.helpers';
+import {clickOn} from "./general.helpers";
 
 export const regexQuery = '!"#$%&\'()*+,-./@:;<=>[\\]^_`{|}~';
 export const searchTag = 'tag1';
@@ -16,10 +17,8 @@ export const testFilename = 'sample.desktop';
 export const firstTagButton = '/tbody/tr[1]/td[3]/button[1]';
 
 export async function searchEngine(filename, tagName, resetSearchButton) {
-  const searchElem = await global.client.$('[data-tid=search]');
-  await searchElem.waitForDisplayed();
-  await searchElem.click();
-  await delay(1500);
+  await clickOn('[data-tid=search]');
+  // delay(1500);
   const searchInput = await global.client.$('#textQuery');
   await searchInput.waitForDisplayed();
   await searchInput.setValue(filename);
@@ -31,33 +30,11 @@ export async function searchEngine(filename, tagName, resetSearchButton) {
   }
 
   if (resetSearchButton) {
-    const resetSearch = await global.client.$('#resetSearchButton');
-    await resetSearch.waitForDisplayed();
-    await resetSearch.click();
+    await clickOn('#resetSearchButton');
   } else {
-    const searchButton = await global.client.$('#searchButton');
-    await searchButton.waitForDisplayed();
-    await searchButton.click();
+    await clickOn('#searchButton');
   }
-  await delay(1000);
-}
-
-export async function createNewFile() {
-  const dirMenu = await global.client.$(
-    '[data-tid=folderContainerOpenDirMenu]'
-  );
-  await dirMenu.waitForDisplayed();
-  await dirMenu.click();
-
-  const createNewFile = await global.client.$('[data-tid=createNewFile]');
-  await createNewFile.waitForDisplayed();
-  await createNewFile.click();
-
-  const createTextFileButton = await global.client.$(
-    '[data-tid=createTextFileButton]'
-  );
-  await createTextFileButton.waitForDisplayed();
-  await createTextFileButton.click();
+  await global.client.pause(500); // TODO wait for search results
 }
 
 /*describe('TST06 - Test Search in file structure:', () => {

@@ -118,21 +118,17 @@ const Search = React.memo((props: Props) => {
   const mainSearchField = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    focusMainSearchFiled();
-  }, []);
-
-  const focusMainSearchFiled = () => {
-    if (mainSearchField) {
-      // https://github.com/mui-org/material-ui/issues/1594
-      const timeout = setTimeout(() => {
+    // https://github.com/mui-org/material-ui/issues/1594
+    const timeout = setTimeout(() => {
+      if (mainSearchField && mainSearchField.current) {
         mainSearchField.current.focus();
-      }, 100);
+      }
+    }, 100);
 
-      return () => {
-        clearTimeout(timeout);
-      };
-    }
-  };
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, []);
 
   const handleFileTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
