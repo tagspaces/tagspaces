@@ -9,7 +9,7 @@ import {
   openLocation,
   clearInputValue
 } from './location.helpers';
-import { openDirectoryMenu } from './general.helpers';
+import { clickOn, openDirectoryMenu } from './general.helpers';
 
 const winMinio = pathLib.resolve(__dirname, '../bin/minio.exe');
 const unixMinio = 'minio';
@@ -104,6 +104,12 @@ export async function stopChromeDriver(chromeDriver) {
   process.kill(); //'SIGHUP');*/
 }
 
+/**
+ * @deprecated use: clickOn();
+ * @param perspectiveSelector
+ * @param inDepth
+ * @returns {Promise<void>}
+ */
 export async function openFile(perspectiveSelector, inDepth) {
   // perspectiveSelector is selector for current perspective
   // inDepth is selector for the depth of the elements
@@ -129,21 +135,11 @@ export async function openFile(perspectiveSelector, inDepth) {
 // }
 
 export async function openContextEntryMenu(selector, menuOperation) {
-  await delay(500);
   // selector is current selector location for element in perspectiveGridTable or perspectiveListTable (full xpath path to element)
   // menuOption is selector for current menu operation
-  const elem = await global.client.$(selector);
-  await elem.waitForDisplayed();
-  await elem.click({ button: 'right' });
-  //const xoffset = await elem.getLocation('x');
-  //const yoffset = await elem.getLocation('y');
-  /*const folderContainerOpenDirMenu = await global.client.$(
-    '[data-tid=folderContainerOpenDirMenu]'
-  );*/
-  await delay(500);
-  const operation = await global.client.$('[data-tid=' + menuOperation + ']');
-  await operation.waitForDisplayed();
-  await operation.click();
+  await clickOn(selector, { button: 'right' });
+  await global.client.pause(500);
+  await clickOn('[data-tid=' + menuOperation + ']');
 }
 
 export async function checkFilenameForExist(filename, selector) {
@@ -153,7 +149,6 @@ export async function checkFilenameForExist(filename, selector) {
     selector || perspectiveGridTable + firstFileName
   );
   const fileTxt = await file.getText();
-  await delay(500);
   expect(fileTxt).toBe(filename);
 }
 

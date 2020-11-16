@@ -12,6 +12,68 @@ export const tsFolder = '\\.ts';
 // const newHTMLFileName = 'newHTMLFile.html';
 const testFolder = 'testFolder';
 
+export async function clickOn(selector, options = {}) {
+  const element = await global.client.$(selector);
+  await element.waitUntil(
+    async function() {
+      // const displayed = await this.isDisplayed();
+      const displayed = await this.isDisplayedInViewport();
+      return displayed === true;
+    },
+    {
+      timeout: 5000,
+      timeoutMsg: 'clickOn selector ' + selector + ' to exist after 5s'
+    }
+  );
+  await element.click(options);
+}
+
+export async function doubleClickOn(selector) {
+  const element = await global.client.$(selector);
+  await element.waitUntil(
+    async function() {
+      const displayed = await this.isDisplayedInViewport();
+      return displayed === true;
+    },
+    {
+      timeout: 5000,
+      timeoutMsg: 'doubleClick selector ' + selector + ' to exist after 5s'
+    }
+  );
+  await element.doubleClick();
+}
+
+export async function setInputValue(selector, value) {
+  const element = await global.client.$(selector);
+  await element.waitUntil(
+    async function() {
+      // const displayed = await this.isDisplayed();
+      const displayed = await this.isDisplayedInViewport();
+      return displayed === true;
+    },
+    {
+      timeout: 5000,
+      timeoutMsg: 'setInputValue selector ' + selector + ' to exist after 5s'
+    }
+  );
+  await element.setValue(value);
+}
+
+export async function expectElementExist(selector, exist = true) {
+  const element = await global.client.$(selector);
+  await element.waitUntil(
+    async function() {
+      const displayed = await this.isDisplayed();
+      return displayed === exist;
+    },
+    {
+      timeout: 10000,
+      timeoutMsg: 'expected selector to exist=' + exist + ' after 5s'
+    }
+  );
+  expect(await element.isDisplayed()).toBe(exist);
+}
+
 export async function createLocation(
   locationPath,
   locationName,
@@ -213,4 +275,26 @@ export async function toHaveText() {
   // expect(file).toEquale(expect.toHaveTextContaining('jpg'));
   // expect.stringContaining('jpg');
   // expect(text1==text2).toBe(true);
+}
+
+export async function openCloseAboutDialog(title) {
+  await delay(500);
+  const viewMainMenuButton = await global.client.$('#viewerMainMenuButton');
+  await viewMainMenuButton.waitForDisplayed();
+  await viewMainMenuButton.click();
+  await delay(1500);
+  const aboutButton = await global.client.$('#aboutButton');
+  await aboutButton.waitForDisplayed();
+  await aboutButton.click();
+  await delay(1500);
+  // const getTitle = await global.client.$('h4=' + title);
+  // await getTitle.waitForDisplayed();
+  // // should eventually equals('About HTML Viewer');
+  // expect(getTitle).toBe(title);
+  const closeAboutDialogButton = await global.client.$(
+    '#closeAboutDialogButton'
+  );
+  await closeAboutDialogButton.waitForDisplayed();
+  await closeAboutDialogButton.click();
+  await delay(500);
 }
