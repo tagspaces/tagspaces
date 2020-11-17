@@ -14,9 +14,9 @@ jobs:
       - uses: actions/setup-node@v2-beta
         with:
           node-version: '10.x'
-      - name: Running yarn install --force, prettier and type checks
+      - name: Running yarn install, prettier and type checks
         run: |
-          yarn install --check-files --cache-folder .ycache
+          yarn install --force --check-files --cache-folder .ycache
           yarn prettier-check
           yarn type-check
       - name: Run Unit tests
