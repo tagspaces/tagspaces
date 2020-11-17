@@ -19,7 +19,7 @@ jobs:
           sudo apt-get install xvfb libxtst6 libxss1 libgtk2.0-0 -y
       - name: Install core libraries for chromium driver
         run: |
-          sudo apt-get install libnss3 libasound2 libgconf-2-4 -y
+          sudo apt-get install libnss3 libasound2 libgconf-2-4 libgbm1 -y
       - name: Running yarn install, prettier and type checks
         run: |
           yarn install --force --check-files --cache-folder .ycache
