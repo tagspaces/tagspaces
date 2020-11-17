@@ -131,7 +131,8 @@ app.on('ready', async () => {
       height: workerDevMode ? 600 : 1,
       frame: false,
       webPreferences: {
-        nodeIntegration: true
+        nodeIntegration: true,
+        enableRemoteModule: true
       }
     });
 
