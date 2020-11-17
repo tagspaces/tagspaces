@@ -24,7 +24,9 @@ import {
   closeOpenedFile,
   deleteDirectory,
   returnDirectoryBack,
-  clickOn, expectElementExist, selectorFile
+  clickOn,
+  expectElementExist,
+  selectorFile
 } from './general.helpers';
 import { searchEngine } from './search.spec';
 
@@ -54,14 +56,11 @@ describe('TST51 - Perspective Grid [general]', () => {
   });
 
   it('TST0501 - Create HTML file [electron]', async () => {
-    await clickOn('[data-tid=folderContainerOpenDirMenu]');
-    // await global.client.pause(100); // TODO the Menu is always in HTML
     await createNewDirectory();
     await reloadDirectory();
     await global.client.pause(500);
     await openEntry(testFolder);
-    await clickOn('[data-tid=folderContainerOpenDirMenu]');
-    // await global.client.pause(100);
+
     await createNewDirectory();
     await reloadDirectory();
     await global.client.pause(500);
@@ -76,10 +75,11 @@ describe('TST51 - Perspective Grid [general]', () => {
     // delete directory
     await global.client.pause(500);
     await deleteDirectory(testFolder);
-    await global.client.pause(500);
-    await returnDirectoryBack();
-    await global.client.pause(500);
-    await expectElementExist('[data-tid=fsEntryName_' + testFolder + ']', false);
+    //    await returnDirectoryBack();
+    await expectElementExist(
+      '[data-tid=fsEntryName_' + testFolder + ']',
+      false
+    );
   });
 
   it('TST0502 - Create MD file [electron]', async () => {

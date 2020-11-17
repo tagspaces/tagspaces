@@ -223,6 +223,8 @@ export async function openDirectoryMenu() {
 }
 
 export async function createNewDirectory() {
+  await clickOn('[data-tid=folderContainerOpenDirMenu]');
+  await global.client.pause(100); // TODO the Menu is always in HTML
   await clickOn('[data-tid=newSubDirectory]');
   await global.client.pause(500);
   // set new dir name
