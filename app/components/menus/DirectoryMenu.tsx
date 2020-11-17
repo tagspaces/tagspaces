@@ -19,7 +19,6 @@
 import React, { useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import uuidv1 from 'uuid';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Menu from '@material-ui/core/Menu';
@@ -406,15 +405,15 @@ Do you want to continue?`)
     <div style={{ overflowY: 'hidden' }}>
       {isRenameDirectoryDialogOpened && (
         <RenameDirectoryDialog
-          key={uuidv1()}
+          key={'renameDir' + props.directoryPath}
           open={isRenameDirectoryDialogOpened}
           onClose={handleCloseDialogs}
           selectedDirectoryPath={props.directoryPath}
         />
       )}
-      {isCreateDirectoryDialogOpened && (
+      {isCreateDirectoryDialogOpened && ( // TODO move dialogs from this Menu and don't include the Menu HTML always
         <CreateDirectoryDialog
-          key={uuidv1()}
+          key={'createDir' + props.directoryPath}
           open={isCreateDirectoryDialogOpened}
           onClose={handleCloseDialogs}
           selectedDirectoryPath={props.directoryPath}

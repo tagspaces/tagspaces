@@ -23,7 +23,8 @@ import {
   newTEXTFile,
   closeOpenedFile,
   deleteDirectory,
-  returnDirectoryBack
+  returnDirectoryBack,
+  clickOn, expectElementExist, selectorFile
 } from './general.helpers';
 import { searchEngine } from './search.spec';
 
@@ -37,7 +38,7 @@ const testFolder = 'testFolder';
 
 describe('TST51 - Perspective Grid [general]', () => {
   beforeEach(async () => {
-    await clearLocalStorage();
+    // await clearLocalStorage();
     //  await delay(500);
     //await closeWelcome();
     //await delay(500);
@@ -46,40 +47,39 @@ describe('TST51 - Perspective Grid [general]', () => {
     } else {
       await createLocation(defaultLocationPath, defaultLocationName, true);
     }
-    // await delay(500);
-    await openLocation(defaultLocationName);
-    // await delay(500);
+    // openLocation
+    await clickOn('[data-tid=location_' + defaultLocationName + ']');
+    // If its have opened file
     await closeFileProperties();
   });
 
   it('TST0501 - Create HTML file [electron]', async () => {
-    await delay(500);
-    await openDirectoryMenu();
-    await delay(500);
+    await clickOn('[data-tid=folderContainerOpenDirMenu]');
+    // await global.client.pause(100); // TODO the Menu is always in HTML
     await createNewDirectory();
-    await delay(500);
     await reloadDirectory();
-    await delay(500);
+    await global.client.pause(500);
     await openEntry(testFolder);
-    await delay(500);
-    await openDirectoryMenu();
-    await delay(500);
+    await clickOn('[data-tid=folderContainerOpenDirMenu]');
+    // await global.client.pause(100);
     await createNewDirectory();
-    await delay(500);
     await reloadDirectory();
-    await delay(500);
+    await global.client.pause(500);
     await openEntry(testFolder);
     // create new file
     await newHTMLFile();
-    await delay(500);
     await closeOpenedFile();
-    await delay(500);
     await reloadDirectory();
-    await delay(500);
+    await expectElementExist(selectorFile, true);
+    await global.client.pause(500);
     await returnDirectoryBack();
     // delete directory
+    await global.client.pause(500);
     await deleteDirectory(testFolder);
-    await delay(500);
+    await global.client.pause(500);
+    await returnDirectoryBack();
+    await global.client.pause(500);
+    await expectElementExist('[data-tid=fsEntryName_' + testFolder + ']', false);
   });
 
   it('TST0502 - Create MD file [electron]', async () => {

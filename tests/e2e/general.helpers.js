@@ -8,6 +8,8 @@ export const defaultLocationName = 'supported-filestypes';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const newLocationName = 'Location Name Changed';
 export const tsFolder = '\\.ts';
+export const selectorFile = '//*[@data-tid="perspectiveGridFileTable"]/span';
+export const selectorFolder = '//*[@data-tid="perspectiveGridFileTable"]/div';
 
 // const newHTMLFileName = 'newHTMLFile.html';
 const testFolder = 'testFolder';
@@ -16,8 +18,8 @@ export async function clickOn(selector, options = {}) {
   const element = await global.client.$(selector);
   await element.waitUntil(
     async function() {
-      // const displayed = await this.isDisplayed();
-      const displayed = await this.isDisplayedInViewport();
+      const displayed = await this.isDisplayed();
+      // const displayed = await this.isDisplayedInViewport();
       return displayed === true;
     },
     {
@@ -58,6 +60,56 @@ export async function setInputValue(selector, value) {
   );
   await element.setValue(value);
 }
+
+export async function setInputKeys(tid, value) {
+  const element = await global.client.$('[data-tid=' + tid + ']');
+  await element.waitUntil(
+    async function() {
+      // const displayed = await this.isDisplayed();
+      const displayed = await this.isDisplayedInViewport();
+      return displayed === true;
+    },
+    {
+      timeout: 5000,
+      timeoutMsg:
+        'setInputKeys selector ' + element.selector + ' to exist after 5s'
+    }
+  );
+  await element.click();
+
+  const elemInput = await global.client.$('[data-tid=' + tid + '] input');
+  await elemInput.waitUntil(
+    async function() {
+      // const displayed = await this.isDisplayed();
+      const displayed = await this.isDisplayedInViewport();
+      return displayed === true;
+    },
+    {
+      timeout: 5000,
+      timeoutMsg:
+        'setInputKeys selector ' + element.selector + ' to exist after 5s'
+    }
+  );
+
+  await elemInput.clearValue();
+  await element.click();
+  await elemInput.keys(value);
+}
+
+/*export async function clearInputValue(inputElement) {
+  const value = await inputElement.getValue();
+  const count = value.length;
+  for (let i = 0; i < count; i++) {
+    const value = await inputElement.getValue();
+    if (value === '') {
+      break;
+    }
+    await inputElement.click();
+    await inputElement.doubleClick();
+    await global.client.keys('Delete');
+    await inputElement.clearValue();
+  }
+}*/
 
 export async function expectElementExist(selector, exist = true) {
   const element = await global.client.$(selector);
@@ -132,69 +184,76 @@ export async function closeSettingsDialog() {
 }
 
 export async function reloadDirectory() {
-  await delay(500);
-  const openDirMenu = await global.client.$(
+  await clickOn('[data-tid=folderContainerOpenDirMenu]');
+  /*const openDirMenu = await global.client.$(
     '[data-tid=folderContainerOpenDirMenu]'
   );
   await openDirMenu.waitForDisplayed();
   await openDirMenu.click();
-  await delay(500);
-  const reloadDirectory = await global.client.$('[data-tid=reloadDirectory]');
+  await delay(500);*/
+  await clickOn('[data-tid=reloadDirectory]');
+  /*const reloadDirectory = await global.client.$('[data-tid=reloadDirectory]');
   await reloadDirectory.waitForDisplayed();
   await reloadDirectory.click();
-  await delay(500);
+  await delay(500);*/
 }
 
 export async function openEntry(entryName) {
-  await delay(500);
-  const eName = await global.client.$(
+  await doubleClickOn('[data-tid=fsEntryName_' + entryName + ']');
+  /*const eName = await global.client.$(
     '[data-tid=fsEntryName_' + entryName + ']'
   );
   await eName.waitForDisplayed();
   await eName.doubleClick();
-  await delay(500);
+  await delay(500);*/
 }
 
+/**
+ * @Deprecated use await clickOn('[data-tid=folderContainerOpenDirMenu]');
+ * @returns {Promise<void>}
+ */
 export async function openDirectoryMenu() {
-  const openDirMenu = await global.client.$(
+  await clickOn('[data-tid=folderContainerOpenDirMenu]');
+  /*const openDirMenu = await global.client.$(
     '[data-tid=folderContainerOpenDirMenu]'
   );
   await openDirMenu.waitForDisplayed();
   await openDirMenu.click();
-  await delay(500);
+  await delay(500);*/
 }
 
 export async function createNewDirectory() {
-  const newSubDirectoty = await global.client.$('[data-tid=newSubDirectory]');
-  await newSubDirectoty.waitForDisplayed();
-  await delay(500);
-  await newSubDirectoty.click();
-  await delay(1500);
+  await clickOn('[data-tid=newSubDirectory]');
+  await global.client.pause(500);
   // set new dir name
-  const directoryName = await global.client.$('[data-tid=directoryName] input');
+  await setInputKeys('directoryName', testFolder);
+  /*const directoryName = await global.client.$('[data-tid=directoryName] input');
   await delay(500);
   await directoryName.keys(testFolder);
   await directoryName.click();
-  await delay(1500);
-  const confirmCreateNewDirectory = await global.client.$(
+  await delay(1500);*/
+  await clickOn('[data-tid=confirmCreateNewDirectory]');
+  /*const confirmCreateNewDirectory = await global.client.$(
     '[data-tid=confirmCreateNewDirectory]'
   );
   await delay(1500);
   await confirmCreateNewDirectory.waitForDisplayed();
-  await confirmCreateNewDirectory.click();
+  await confirmCreateNewDirectory.click();*/
 }
 
 export async function newHTMLFile() {
-  const newFile = await global.client.$('[data-tid=locationManager]');
+  await clickOn('[data-tid=locationManager]');
+  /*const newFile = await global.client.$('[data-tid=locationManager]');
   await newFile.waitForDisplayed();
   await newFile.click();
-  await delay(500);
-  const newNoteFile = await global.client.$(
+  await delay(500);*/
+  await clickOn('[data-tid=createRichTextFileButton]');
+  /*const newNoteFile = await global.client.$(
     '[data-tid=createRichTextFileButton]'
   );
   await newNoteFile.waitForDisplayed();
   await newNoteFile.click();
-  await delay(500);
+  await delay(500);*/
 }
 
 export async function newMDFile() {
@@ -220,28 +279,30 @@ export async function newTEXTFile() {
 }
 
 export async function closeOpenedFile() {
-  const closeFile = await global.client.$(
+  await clickOn('[data-tid=fileContainerCloseOpenedFile]');
+  /*const closeFile = await global.client.$(
     '[data-tid=fileContainerCloseOpenedFile]'
   );
   await closeFile.waitForDisplayed();
   await closeFile.click();
-  await delay(500);
+  await delay(500);*/
 }
 
 export async function deleteDirectory() {
   await openDirectoryMenu();
-  await delay(500);
-  const deleteDirectory = await global.client.$('[data-tid=deleteDirectory]');
+  await clickOn('[data-tid=deleteDirectory]');
+  /*const deleteDirectory = await global.client.$('[data-tid=deleteDirectory]');
   await deleteDirectory.waitForDisplayed();
   await delay(500);
-  await deleteDirectory.click();
-  const confirmDeleteDirectory = await global.client.$(
+  await deleteDirectory.click();*/
+  await clickOn('[data-tid=confirmDeleteDirectoryDialog]');
+  /*const confirmDeleteDirectory = await global.client.$(
     '[data-tid=confirmDeleteDirectoryDialog]'
   );
   await confirmDeleteDirectory.waitForDisplayed();
   await delay(500);
   await confirmDeleteDirectory.click();
-  await delay(500);
+  await delay(500);*/
 }
 
 export async function disableTrashBin() {
@@ -257,12 +318,14 @@ export async function disableTrashBin() {
 }
 
 export async function returnDirectoryBack() {
+  await clickOn('[data-tid=gridPerspectiveOnBackButton]');
+  /*
   await delay(500);
   const backButton = await global.client.$(
     '[data-tid=gridPerspectiveOnBackButton]'
   );
   await backButton.click();
-  await delay(500);
+  await delay(500);*/
 }
 
 export async function toHaveText() {

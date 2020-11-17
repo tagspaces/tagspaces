@@ -29,7 +29,7 @@ export async function searchEngine(filename, tagName, resetSearchButton) {
   } else {
     await clickOn('#searchButton');
   }
-  await global.client.pause(500); // TODO wait for search results
+  await global.client.pause(1000); // TODO wait for search results
 }
 
 /*describe('TST06 - Test Search in file structure:', () => {
