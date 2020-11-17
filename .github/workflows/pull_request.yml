@@ -14,6 +14,12 @@ jobs:
       - uses: actions/setup-node@v2-beta
         with:
           node-version: '10.x'
+      - name: Install display server dependencies
+        run: |
+          sudo apt-get install xvfb libxtst6 libxss1 libgtk2.0-0 -y
+      - name: Install core libraries for chromium driver
+        run: |
+          sudo apt-get install libnss3 libasound2 libgconf-2-4 -y
       - name: Running yarn install, prettier and type checks
         run: |
           yarn install --force --check-files --cache-folder .ycache
