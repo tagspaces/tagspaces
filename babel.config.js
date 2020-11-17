@@ -1,17 +1,17 @@
 /* eslint global-require: off */
-const execa = require('execa')
+const execa = require('execa');
 
 function getElectronVersion() {
   const { stdout } = execa.sync('electron', ['--version'], {
-    env: { ELECTRON_RUN_AS_NODE: true },
-  })
+    env: { ELECTRON_RUN_AS_NODE: true }
+  });
   return (
-      stdout &&
-      stdout
-          .toString()
-          .trim()
-          .slice(1)
-  )
+    stdout &&
+    stdout
+      .toString()
+      .trim()
+      .slice(1)
+  );
 }
 
 const developmentEnvironments = ['development', 'test'];
