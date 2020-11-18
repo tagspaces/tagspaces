@@ -8,6 +8,6 @@ export async function closeWelcome() {
   await nextButton.click();
   await global.client.pause(500);
   await clickOn('[data-tid=startTagSpacesAfterOnboarding]');
-  await global.client.pause(500);
+  await global.client.pause(600);
   await clickOn('[data-tid=agreeLicenseDialog]');
 }

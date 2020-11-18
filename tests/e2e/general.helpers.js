@@ -18,8 +18,8 @@ export async function clickOn(selector, options = {}) {
   const element = await global.client.$(selector);
   await element.waitUntil(
     async function() {
-      const displayed = await this.isDisplayed();
-      // const displayed = await this.isDisplayedInViewport();
+      // const displayed = await this.isDisplayed();
+      const displayed = await this.isDisplayedInViewport();
       return displayed === true;
     },
     {
@@ -119,7 +119,7 @@ export async function expectElementExist(selector, exist = true) {
       return displayed === exist;
     },
     {
-      timeout: 10000,
+      timeout: 5000,
       timeoutMsg: 'expected selector to exist=' + exist + ' after 5s'
     }
   );
@@ -167,20 +167,11 @@ export async function createLocation(
   await confirmLocationCreation.click();
 }
 
-export async function openSettingsDialog() {
-  await delay(500);
-  const openSettings = await global.client.$('[data-tid=settings]');
-  await openSettings.waitForDisplayed();
-  await openSettings.click();
-  await delay(500);
-}
-
-export async function closeSettingsDialog() {
-  await delay(500);
-  const closeSettings = await global.client.$('[data-tid=closeSettingsDialog]');
-  await closeSettings.waitForDisplayed();
-  await closeSettings.click();
-  await delay(500);
+export async function settingsSetShowUnixHiddenEntries() {
+  await clickOn('[data-tid=settings]');
+  await global.client.pause(500);
+  await clickOn('[data-tid=settingsSetShowUnixHiddenEntries]');
+  await clickOn('[data-tid=closeSettingsDialog]');
 }
 
 export async function reloadDirectory() {
@@ -259,25 +250,13 @@ export async function newHTMLFile() {
 }
 
 export async function newMDFile() {
-  const newFile = await global.client.$('[data-tid=locationManager]');
-  await newFile.waitForDisplayed();
-  await newFile.click();
-  await delay(500);
-  const newNoteFile = await global.client.$('[data-tid=createMarkdownButton]');
-  await newNoteFile.waitForDisplayed();
-  await newNoteFile.click();
-  await delay(500);
+  await clickOn('[data-tid=locationManager]');
+  await clickOn('[data-tid=createMarkdownButton]');
 }
 
 export async function newTEXTFile() {
-  const newFile = await global.client.$('[data-tid=locationManager]');
-  await newFile.waitForDisplayed();
-  await newFile.click();
-  await delay(500);
-  const newNoteFile = await global.client.$('[data-tid=createTextFileButton]');
-  await newNoteFile.waitForDisplayed();
-  await newNoteFile.click();
-  await delay(500);
+  await clickOn('[data-tid=locationManager]');
+  await clickOn('[data-tid=createTextFileButton]');
 }
 
 export async function closeOpenedFile() {
