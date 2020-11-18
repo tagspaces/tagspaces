@@ -39,7 +39,8 @@ import {
   extractParentDirectoryPath,
   extractTagsAsObjects,
   normalizePath,
-  extractLocation
+  extractLocation,
+  extractContainingDirectoryPath
 } from '-/utils/paths';
 import { formatDateTime4Tag, getURLParameter } from '-/utils/misc';
 import i18n from '../services/i18n';
@@ -1019,11 +1020,25 @@ export const actions = {
     getState: () => any
   ) => {
     const { settings } = getState();
-    const { currentDirectoryPath } = getState().app;
+    const { currentDirectoryPath, openedFiles } = getState().app;
     PlatformIO.deleteDirectoryPromise(directoryPath, settings.useTrashCan)
       .then(() => {
         if (directoryPath === currentDirectoryPath) {
           dispatch(actions.loadParentDirectoryContent());
+          dispatch(LocationIndexActions.reflectDeleteEntry(directoryPath));
+          // close opened entries in deleted dir
+          if (
+            openedFiles.length > 0 &&
+            openedFiles.some(
+              file =>
+                extractContainingDirectoryPath(
+                  file.path,
+                  PlatformIO.getDirSeparator()
+                ) === directoryPath
+            )
+          ) {
+            dispatch(actions.closeAllFiles());
+          }
         } else {
           dispatch(actions.reflectDeleteEntry(directoryPath));
         }
