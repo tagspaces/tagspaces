@@ -147,6 +147,16 @@ class VerticalNavigation extends React.Component<Props, State> {
     }));
   };
 
+  getProgressValue() {
+    const objProgress = this.props.progress.find(
+      fileProgress => fileProgress.progress < 100 && fileProgress.progress > -1
+    );
+    if (objProgress !== undefined) {
+      return objProgress.progress;
+    }
+    return 100;
+  }
+
   render() {
     const {
       isLocationManagerPanelOpened,
@@ -413,16 +423,6 @@ class VerticalNavigation extends React.Component<Props, State> {
         </SplitPane>
       </div>
     );
-  }
-
-  getProgressValue() {
-    const objProgress = this.props.progress.find(
-      fileProgress => fileProgress.progress < 100 && fileProgress.progress > -1
-    );
-    if (objProgress !== undefined) {
-      return objProgress.progress;
-    }
-    return 100;
   }
 }
 
