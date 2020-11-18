@@ -39,6 +39,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import ShareIcon from '@material-ui/icons/Share';
 import { withStyles } from '@material-ui/core/styles';
 import RefreshIcon from '@material-ui/icons/Refresh';
+import { Box, Typography } from '@material-ui/core';
 import EntryProperties from '-/components/EntryProperties';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import AppConfig from '-/config';
@@ -1073,9 +1074,9 @@ const EntryContainer = (props: Props) => {
         }}
       >
         {openedFile.path ? (
-          <div className={classes.panel}>
-            <div className={classes.toolbar}>
-              <div className={classes.flexLeft}>
+          <Box className={classes.panel}>
+            <Box className={classes.toolbar}>
+              <Box className={classes.flexLeft}>
                 {openedFile.isFile ? (
                   <Button
                     // onClick={togglePanel}
@@ -1084,7 +1085,7 @@ const EntryContainer = (props: Props) => {
                     aria-label={i18n.t('core:toggleEntryProperties')}
                     className={classes.entryNameButton}
                   >
-                    <div
+                    <Box
                       className={classes.fileBadge}
                       title={i18n.t('core:toggleEntryProperties')}
                       style={{
@@ -1096,11 +1097,17 @@ const EntryContainer = (props: Props) => {
                           openedFile.path,
                           PlatformIO.getDirSeparator()
                         )}
-                    </div>
-                    {openedFile.editMode && openedFile.changed
-                      ? String.fromCharCode(0x25cf) + ' '
-                      : ''}
-                    {fileTitle}
+                    </Box>
+                    <Typography
+                      style={{
+                        color: props.theme.palette.text.primary
+                      }}
+                    >
+                      {openedFile.editMode && openedFile.changed
+                        ? String.fromCharCode(0x25cf) + ' '
+                        : ''}
+                      {fileTitle}
+                    </Typography>
                   </Button>
                 ) : (
                   <Button
@@ -1120,10 +1127,16 @@ const EntryContainer = (props: Props) => {
                     >
                       <FolderIcon />
                     </div>
-                    {fileTitle}
+                    <Typography
+                      style={{
+                        color: props.theme.palette.text.primary
+                      }}
+                    >
+                      {fileTitle}
+                    </Typography>
                   </Button>
                 )}
-              </div>
+              </Box>
               {editingSupported && openedFile.editMode && (
                 <div className={classes.entryCloseSection}>
                   <IconButton
@@ -1188,7 +1201,7 @@ const EntryContainer = (props: Props) => {
                   </IconButton>
                 </div>
               )}
-            </div>
+            </Box>
             <div className={classes.entryProperties}>
               {openedFile.isFile
                 ? renderFileToolbar(classes)
@@ -1220,7 +1233,7 @@ const EntryContainer = (props: Props) => {
                 />
               )}
             </div>
-          </div>
+          </Box>
         ) : (
           <div>{i18n.t('core:noEntrySelected')}</div>
         )}
