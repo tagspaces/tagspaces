@@ -17,8 +17,9 @@
  */
 
 import uuidv1 from 'uuid';
-import { immutablySwapItems } from '../utils/misc';
+import { immutablySwapItems } from '-/utils/misc';
 import { actions as AppActions } from '../reducers/app';
+import PlatformIO from '-/services/platform-io';
 
 export const types = {
   ADD_LOCATION: 'APP/ADD_LOCATION',
@@ -164,6 +165,10 @@ export const actions = {
     dispatch: (actions: Object) => void
   ) => {
     dispatch(actions.changeLocation(location));
+    if (PlatformIO.haveObjectStoreSupport()) {
+      // disableObjectStoreSupport to revoke objectStoreAPI cached object
+      PlatformIO.disableObjectStoreSupport();
+    }
     dispatch(AppActions.openLocation(location));
     dispatch(AppActions.setReadOnlyMode(location.isReadOnly || false));
   },
