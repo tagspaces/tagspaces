@@ -901,9 +901,12 @@ export const actions = {
     function loadDirectoryContentInt(fsEntryMeta?: FileSystemEntryMeta) {
       // Uncomment the following line will to clear all content before loading new dir content
       dispatch(actions.loadDirectorySuccessInt(directoryPath, [], true)); // this is to reset directoryContent (it will reset color too)
-      const location = extractLocation(directoryPath, locations);
-      if (location !== undefined) {
-        dispatch(actions.changeLocation(location));
+      if (directoryPath) {
+        // TODO move changeLocation in DirTree
+        const location = extractLocation(directoryPath, locations);
+        if (location !== undefined) {
+          dispatch(actions.changeLocation(location));
+        }
       }
       // dispatch(actions.setCurrentDirectoryColor('')); // this is to reset color only
       dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
