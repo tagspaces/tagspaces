@@ -64,7 +64,11 @@ const CustomLogo = (props: Props) => (
       data-tid="aboutTagSpaces"
       onClick={props.toggleAboutDialog}
     >
-      <img style={{ maxHeight: 50 }} src={logo} alt="TagSpaces Logo" />
+      <img
+        style={{ maxHeight: 50, maxWidth: 200 }}
+        src={logo}
+        alt="TagSpaces Logo"
+      />
     </IconButton>
   </AppVersionBadge>
 );
