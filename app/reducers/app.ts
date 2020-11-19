@@ -1061,7 +1061,7 @@ export const actions = {
   },
   renameDirectory: (directoryPath: string, newDirectoryName: string) => (
     dispatch: (actions: Object) => void
-  ) => {
+  ) =>
     PlatformIO.renameDirectoryPromise(directoryPath, newDirectoryName)
       .then(newDirPath => {
         dispatch(actions.reflectRenameEntry(directoryPath, newDirPath));
@@ -1089,8 +1089,8 @@ export const actions = {
             true
           )
         );
-      });
-  },
+        throw error;
+      }),
   createDirectory: (directoryPath: string) => (
     dispatch: (actions: Object) => void
   ) => {
@@ -1709,6 +1709,7 @@ export const actions = {
             true
           )
         );
+        throw error;
       }),
   openFileNatively: (selectedFile: string) => () => {
     PlatformIO.openFile(selectedFile);
