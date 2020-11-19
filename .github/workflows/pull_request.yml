@@ -27,12 +27,6 @@ jobs:
           yarn type-check
       - name: Run Unit tests
         run: yarn test-unit
-      - name: Run Electron tests
-        run: |
-          yarn setup-ext
-          yarn build-main
-          yarn build-e2e
-          yarn test-e2e-electron
 
   gitHubActionForNpmWin:
     name: Validating Windows

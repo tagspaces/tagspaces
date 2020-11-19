@@ -1,6 +1,6 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 import { delay } from './hook';
-import { firstFile, checkFilenameForExist } from './test-utils.spec';
+import { firstFile } from './test-utils.spec';
 
 export const defaultLocationPath =
   './testdata/file-structure/supported-filestypes';
@@ -200,20 +200,6 @@ export async function openEntry(entryName) {
   await delay(500);*/
 }
 
-/**
- * @Deprecated use await clickOn('[data-tid=folderContainerOpenDirMenu]');
- * @returns {Promise<void>}
- */
-export async function openDirectoryMenu() {
-  await clickOn('[data-tid=folderContainerOpenDirMenu]');
-  /*const openDirMenu = await global.client.$(
-    '[data-tid=folderContainerOpenDirMenu]'
-  );
-  await openDirMenu.waitForDisplayed();
-  await openDirMenu.click();
-  await delay(500);*/
-}
-
 export async function createNewDirectory() {
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
   await global.client.pause(100); // TODO the Menu is always in HTML
@@ -233,6 +219,7 @@ export async function createNewDirectory() {
   await delay(1500);
   await confirmCreateNewDirectory.waitForDisplayed();
   await confirmCreateNewDirectory.click();*/
+  return testFolder;
 }
 
 export async function newHTMLFile() {
@@ -271,7 +258,7 @@ export async function closeOpenedFile() {
 }
 
 export async function deleteDirectory() {
-  await openDirectoryMenu();
+  await clickOn('[data-tid=folderContainerOpenDirMenu]');
   await clickOn('[data-tid=deleteDirectory]');
   /*const deleteDirectory = await global.client.$('[data-tid=deleteDirectory]');
   await deleteDirectory.waitForDisplayed();
@@ -288,15 +275,10 @@ export async function deleteDirectory() {
 }
 
 export async function disableTrashBin() {
-  await openSettingsDialog();
-  await delay(500);
-  const disableTrashBin = await global.client.$(
-    '[data-tid=settingsSetUseTrashCan]'
-  );
-  await disableTrashBin.waitForDisplayed();
-  await disableTrashBin.click();
-  await delay(500);
-  await closeSettingsDialog();
+  await clickOn('[data-tid=settings]');
+  await global.client.pause(500);
+  await clickOn('[data-tid=settingsSetUseTrashCan]');
+  await clickOn('[data-tid=closeSettingsDialog]');
 }
 
 export async function returnDirectoryBack() {
