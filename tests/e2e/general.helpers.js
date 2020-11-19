@@ -91,12 +91,13 @@ export async function setInputKeys(tid, value) {
     }
   );
 
-  await elemInput.clearValue();
+  // await elemInput.clearValue();
+  await clearInputValue(elemInput);
   await element.click();
   await elemInput.keys(value);
 }
 
-/*export async function clearInputValue(inputElement) {
+export async function clearInputValue(inputElement) {
   const value = await inputElement.getValue();
   const count = value.length;
   for (let i = 0; i < count; i++) {
@@ -109,7 +110,7 @@ export async function setInputKeys(tid, value) {
     await global.client.keys('Delete');
     await inputElement.clearValue();
   }
-}*/
+}
 
 export async function expectElementExist(selector, exist = true) {
   const element = await global.client.$(selector);

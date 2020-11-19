@@ -97,19 +97,7 @@ export async function selectAllFilesClick() {
 }
 
 export async function openLocationMenu(locationName) {
-  //await delay(500);
-  const locationMoreButton = await global.client.$(
-    '[data-tid=locationMoreButton_' + locationName + ']'
-  );
-  await locationMoreButton.waitForDisplayed();
-  await locationMoreButton.click();
-  /*await global.client.waitForVisible(
-    '[data-tid=locationMoreButton_' + locationName + ']'
-  );
-  await delay(1500);
-  await global.client.click(
-    '[data-tid=locationMoreButton_' + locationName + ']'
-  ); */
+  await clickOn('[data-tid=locationMoreButton_' + locationName + ']');
 }
 
 /**
@@ -224,23 +212,10 @@ export async function aboutDialogExt(title, ext) {
 }
 
 export async function startupLocation() {
-  await delay(500);
-  const editLocation = await global.client.$('[data-tid=editLocation]');
-  await editLocation.waitForDisplayed();
-  await editLocation.click();
-  await delay(1500);
-  const defaultLocation = await global.client.$(
-    '[data-tid=editStartupLocation]'
-  );
-  await defaultLocation.waitForDisplayed();
-  await defaultLocation.click();
-  await delay(1500);
-  const closeEditLocationDialog = await global.client.$(
-    '[data-tid=confirmEditLocationDialog]'
-  );
-  await closeEditLocationDialog.waitForDisplayed();
-  await closeEditLocationDialog.click();
-  await delay(1500);
+  await clickOn('[data-tid=editLocation]');
+  // await global.client.pause(500);
+  await clickOn('[data-tid=editStartupLocation]');
+  await clickOn('[data-tid=confirmEditLocationDialog]');
 }
 
 /**
