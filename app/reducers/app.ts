@@ -901,9 +901,12 @@ export const actions = {
     function loadDirectoryContentInt(fsEntryMeta?: FileSystemEntryMeta) {
       // Uncomment the following line will to clear all content before loading new dir content
       dispatch(actions.loadDirectorySuccessInt(directoryPath, [], true)); // this is to reset directoryContent (it will reset color too)
-      const location = extractLocation(directoryPath, locations);
-      if (location !== undefined) {
-        dispatch(actions.changeLocation(location));
+      if (directoryPath) {
+        // TODO move changeLocation in DirTree
+        const location = extractLocation(directoryPath, locations);
+        if (location !== undefined) {
+          dispatch(actions.changeLocation(location));
+        }
       }
       // dispatch(actions.setCurrentDirectoryColor('')); // this is to reset color only
       dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
@@ -1061,7 +1064,7 @@ export const actions = {
   },
   renameDirectory: (directoryPath: string, newDirectoryName: string) => (
     dispatch: (actions: Object) => void
-  ) => {
+  ) =>
     PlatformIO.renameDirectoryPromise(directoryPath, newDirectoryName)
       .then(newDirPath => {
         dispatch(actions.reflectRenameEntry(directoryPath, newDirPath));
@@ -1089,8 +1092,8 @@ export const actions = {
             true
           )
         );
-      });
-  },
+        throw error;
+      }),
   createDirectory: (directoryPath: string) => (
     dispatch: (actions: Object) => void
   ) => {
@@ -1709,6 +1712,7 @@ export const actions = {
             true
           )
         );
+        throw error;
       }),
   openFileNatively: (selectedFile: string) => () => {
     PlatformIO.openFile(selectedFile);

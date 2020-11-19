@@ -174,8 +174,8 @@ interface Props {
   classes: any;
   theme: any;
   openedEntry: OpenedEntry;
-  renameFile: (path: string, nextPath: string) => void;
-  renameDirectory: (path: string, nextPath: string) => void;
+  renameFile: (path: string, nextPath: string) => Promise<boolean>;
+  renameDirectory: (path: string, nextPath: string) => Promise<boolean>;
   showNotification: (message: string) => void;
   updateOpenedFile: (entryPath: string, fsEntryMeta: any) => void;
   updateThumbnailUrl: (path: string, thumbUrl: string) => void;
@@ -291,12 +291,19 @@ const EntryProperties = (props: Props) => {
       const nextPath = path + PlatformIO.getDirSeparator() + editName;
 
       if (currentEntry.isFile) {
-        renameFile(currentEntry.path, nextPath);
+        renameFile(currentEntry.path, nextPath)
+          .then(() => true)
+          .catch(() => {
+            fileNameRef.current.value = entryName;
+          });
       } else {
-        renameDirectory(currentEntry.path, editName);
+        renameDirectory(currentEntry.path, editName)
+          .then(() => true)
+          .catch(() => {
+            fileNameRef.current.value = entryName;
+          });
       }
 
-      // newName = '';
       setEditName(undefined);
     }
   };
