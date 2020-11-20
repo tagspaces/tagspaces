@@ -245,7 +245,7 @@ describe('TST50** - Right button on a file', () => {
   test('TST5040 - Create file [web,electron]', async () => {
     await clickOn('[data-tid=folderContainerOpenDirMenu]');
     await clickOn('[data-tid=createNewFile]');
-    await global.client.pause(500);
+    await global.client.pause(1000);
     await clickOn('[data-tid=createTextFileButton]');
     await searchEngine('note');
     await expectElementExist(selectorFile, true);
