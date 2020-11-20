@@ -17,29 +17,33 @@ export async function createLocation(
   locationName,
   isDefault = false
 ) {
-  await clickOn('[data-tid=createNewLocation]');
-  await clickOn('[data-tid=locationPath]');
-  await setInputKeys('locationPath', locationPath || defaultLocationPath);
-  /*const locationPathInput = await global.client.$(
-    '[data-tid=locationPath] input'
-  );
-  await locationPathInput.keys(locationPath || defaultLocationPath);*/
-  // keys is workarround for not working setValue await global.client.$('[data-tid=locationPath] input').setValue(locationPath || defaultLocationPath);
-  await setInputKeys(
-    'locationName',
-    locationName || 'Test Location' + new Date().getTime()
-  );
-  /* await clickOn('[data-tid=locationName]');
-  const locationNameInput = await global.client.$(
-    '[data-tid=locationName] input'
-  );
-  locationNameInput.keys(
-    locationName || 'Test Location' + new Date().getTime()
-  );*/
-  if (isDefault) {
-    await clickOn('[data-tid=locationIsDefault]');
+  const lastLocationTID = await getLocationTid(-1);
+  // Check if location not exist (from extconfig.js)
+  if ('location_' + locationName !== lastLocationTID) {
+    await clickOn('[data-tid=createNewLocation]');
+    await clickOn('[data-tid=locationPath]');
+    await setInputKeys('locationPath', locationPath || defaultLocationPath);
+    /*const locationPathInput = await global.client.$(
+      '[data-tid=locationPath] input'
+    );
+    await locationPathInput.keys(locationPath || defaultLocationPath);*/
+    // keys is workarround for not working setValue await global.client.$('[data-tid=locationPath] input').setValue(locationPath || defaultLocationPath);
+    await setInputKeys(
+      'locationName',
+      locationName || 'Test Location' + new Date().getTime()
+    );
+    /* await clickOn('[data-tid=locationName]');
+    const locationNameInput = await global.client.$(
+      '[data-tid=locationName] input'
+    );
+    locationNameInput.keys(
+      locationName || 'Test Location' + new Date().getTime()
+    );*/
+    if (isDefault) {
+      await clickOn('[data-tid=locationIsDefault]');
+    }
+    await clickOn('[data-tid=confirmLocationCreation]');
   }
-  await clickOn('[data-tid=confirmLocationCreation]');
 }
 
 export async function createMinioLocation(
@@ -221,9 +225,9 @@ export async function startupLocation() {
 /**
  *
  * @param locationIndex - order index in locations Array starting from 0 if index < 0 it will return reversed from the last items
- * @returns {Promise<string|null>} Location name; example usage: getLocationName(-1) will return the last one
+ * @returns {Promise<string|null>} Location Tid ('location_' + name); example usage: getLocationName(-1) will return the last one
  */
-export async function getLocationName(locationIndex) {
+export async function getLocationTid(locationIndex) {
   const locationList = await global.client.$$(
     '//*[@data-tid="locationList"]/div'
   );

@@ -6,7 +6,7 @@ import {
   createMinioLocation,
   closeFileProperties,
   startupLocation,
-  getLocationName
+  getLocationTid
 } from './location.helpers';
 import { clickOn, expectElementExist, setInputKeys } from './general.helpers';
 
@@ -98,14 +98,14 @@ describe('TST03 - Testing locations:', () => {
     await openLocationMenu(testLocationName);
     await clickOn('[data-tid=moveLocationUp]');
 
-    const prevLocation = await getLocationName(-2);
+    const prevLocation = await getLocationTid(-2);
     expect(prevLocation).toBe('location_' + testLocationName);
 
     await global.client.pause(500);
     await openLocationMenu(testLocationName);
     await clickOn('[data-tid=moveLocationDown]');
 
-    const lastLocation = await getLocationName(-1);
+    const lastLocation = await getLocationTid(-1);
     expect(lastLocation).toBe('location_' + testLocationName);
   });
 });
