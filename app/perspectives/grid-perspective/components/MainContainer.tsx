@@ -23,7 +23,6 @@ import { bindActionCreators } from 'redux';
 import memoize from 'memoize-one';
 import { GlobalHotKeys } from 'react-hotkeys';
 import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import { FileSystemEntry } from '-/services/utils-io';
 import { Tag } from '-/reducers/taglibrary';
 import {
