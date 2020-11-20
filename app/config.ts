@@ -105,6 +105,10 @@ export const AppConfig = {
       : true,
   sidebarColor: (window as any).ExtSidebarColor || '#2C001E', // '#00D1A1' // #008023
   sidebarSelectionColor: (window as any).ExtSidebarSelectionColor || '#880E4F',
+  lightThemeLightColor: (window as any).ExtLightThemeLightColor || '#dcf3ec',
+  lightThemeMainColor: (window as any).ExtLightThemeMainColor || '#1dd19f',
+  darkThemeLightColor: (window as any).ExtDarkThemeLightColor || '#56454e',
+  darkThemeMainColor: (window as any).ExtDarkThemeMainColor || '#ff9abe',
   dirSeparator:
     navigator.appVersion.includes('Win') && !document.URL.startsWith('http')
       ? '\\'
