@@ -55,6 +55,7 @@ import {
 } from '../reducers/app';
 import { actions as SettingsActions, isFirstRun } from '../reducers/settings';
 import LoadingLazy from './LoadingLazy';
+import AppConfig from '-/config';
 
 const ProTeaserDialog = React.lazy(() =>
   import(/* webpackChunkName: "ProTeaserDialog" */ './dialogs/ProTeaserDialog')
@@ -97,7 +98,7 @@ interface Props {
 }
 
 interface State {
-  isProTeaserVisible: boolean; // evtl. redux migration
+  isProTeaserVisible: boolean;
 }
 
 class VerticalNavigation extends React.Component<Props, State> {
@@ -108,12 +109,12 @@ class VerticalNavigation extends React.Component<Props, State> {
   styles = {
     panel: {
       height: '100%',
-      backgroundColor: '#2C001E' // 'rgb(89, 89, 89)' // '#00D1A1' // #008023
+      backgroundColor: AppConfig.sidebarColor
     },
     buttonIcon: {
       width: 28,
       height: 28,
-      color: '#d6d6d6' // this.props.theme.palette.text.primary
+      color: '#d6d6d6'
     },
     button: {
       padding: 8,
@@ -122,7 +123,7 @@ class VerticalNavigation extends React.Component<Props, State> {
     },
     selectedButton: {
       borderRadius: 0,
-      backgroundColor: '#880E4F'
+      backgroundColor: AppConfig.sidebarSelectionColor
     },
     settingsButton: {
       position: 'absolute',
@@ -188,7 +189,7 @@ class VerticalNavigation extends React.Component<Props, State> {
           {`
             #verticalNavButton:hover {
               border-radius: 0;
-              background-color: #880E4F;
+              background-color: ${AppConfig.sidebarSelectionColor}
             }
           `}
         </style>
@@ -347,7 +348,6 @@ class VerticalNavigation extends React.Component<Props, State> {
                 <UpgradeIcon
                   style={{
                     ...this.styles.buttonIcon
-                    // color: '1DD19F'
                   }}
                 />
               </IconButton>
@@ -362,11 +362,6 @@ class VerticalNavigation extends React.Component<Props, State> {
                 style={{ ...this.styles.button, ...this.styles.upgradeButton }}
               >
                 <CircularProgressWithLabel value={this.getProgressValue()} />
-                {/* <ProgressIcon
-                  style={{
-                    ...this.styles.buttonIcon
-                  }}
-                /> */}
               </IconButton>
             )}
             <IconButton

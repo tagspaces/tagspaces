@@ -70,6 +70,7 @@ import SearchMenu from './menus/SearchMenu';
 import { formatDateTime, extractTimePeriod } from '-/utils/dates';
 import { isPlusCode, parseLatLon } from '-/utils/misc';
 import PlatformIO from '../services/platform-io';
+import { AppConfig } from '-/config';
 
 interface Props {
   classes: any;
@@ -545,252 +546,272 @@ const Search = React.memo((props: Props) => {
             tagMode="remove"
           />
         </FormControl>
-        <FormControl
-          className={classes.formControl}
-          disabled={indexing || !Pro}
-          title={
-            !Pro ? i18n.t('core:thisFunctionalityIsAvailableInPro') : undefined
-          }
-        >
-          <InputLabel htmlFor="file-type">{i18n.t('core:fileType')}</InputLabel>
-          <Select
-            value={fileTypes}
-            onChange={handleFileTypeChange}
-            input={<Input name="fileTypes" id="file-type" />}
-          >
-            <MenuItem value={FileTypeGroups.any}>
-              {i18n.t('core:anyType')}
-            </MenuItem>
-            <MenuItem value={FileTypeGroups.folders}>
-              <IconButton>
-                <FolderIcon />
-              </IconButton>
-              {i18n.t('core:searchFolders')}
-            </MenuItem>
-            <MenuItem value={FileTypeGroups.files}>
-              <IconButton>
-                <FileIcon />
-              </IconButton>
-              {i18n.t('core:searchFiles')}
-            </MenuItem>
-            <MenuItem value={FileTypeGroups.untagged}>
-              <IconButton>
-                <UntaggedIcon />
-              </IconButton>
-              {i18n.t('core:searchUntaggedEntries')}
-            </MenuItem>
-            <MenuItem
-              value={FileTypeGroups.images}
-              title={FileTypeGroups.images.toString()}
+        {AppConfig.showAdvancedSearch && (
+          <React.Fragment>
+            <FormControl
+              className={classes.formControl}
+              disabled={indexing || !Pro}
+              title={
+                !Pro
+                  ? i18n.t('core:thisFunctionalityIsAvailableInPro')
+                  : undefined
+              }
             >
-              <IconButton>
-                <PictureIcon />
-              </IconButton>
-              {i18n.t('core:searchPictures')}
-            </MenuItem>
-            <MenuItem
-              value={FileTypeGroups.documents}
-              title={FileTypeGroups.documents.toString()}
-            >
-              <IconButton>
-                <DocumentIcon />
-              </IconButton>
-              {i18n.t('core:searchDocuments')}
-            </MenuItem>
-            <MenuItem
-              value={FileTypeGroups.notes}
-              title={FileTypeGroups.notes.toString()}
-            >
-              <IconButton>
-                <NoteIcon />
-              </IconButton>
-              {i18n.t('core:searchNotes')}
-            </MenuItem>
-            <MenuItem
-              value={FileTypeGroups.audio}
-              title={FileTypeGroups.audio.toString()}
-            >
-              <IconButton>
-                <AudioIcon />
-              </IconButton>
-              {i18n.t('core:searchAudio')}
-            </MenuItem>
-            <MenuItem
-              value={FileTypeGroups.video}
-              title={FileTypeGroups.video.toString()}
-            >
-              <IconButton>
-                <VideoIcon />
-              </IconButton>
-              {i18n.t('core:searchVideoFiles')}
-            </MenuItem>
-            <MenuItem
-              value={FileTypeGroups.archives}
-              title={FileTypeGroups.archives.toString()}
-            >
-              <IconButton>
-                <ArchiveIcon />
-              </IconButton>
-              {i18n.t('core:searchArchives')}
-            </MenuItem>
-            <MenuItem
-              value={FileTypeGroups.bookmarks}
-              title={FileTypeGroups.bookmarks.toString()}
-            >
-              <IconButton>
-                <BookmarkIcon />
-              </IconButton>
-              {i18n.t('core:searchBookmarks')}
-            </MenuItem>
-            <MenuItem
-              value={FileTypeGroups.ebooks}
-              title={FileTypeGroups.ebooks.toString()}
-            >
-              <IconButton>
-                <BookIcon />
-              </IconButton>
-              {i18n.t('core:searchEbooks')}
-            </MenuItem>
-          </Select>
-          {/* <FormHelperText>{i18n.t('core:searchFileTypes')}</FormHelperText> */}
-        </FormControl>
-        <FormControl
-          className={classes.formControl}
-          disabled={indexing || !Pro}
-          title={i18n.t('core:thisFunctionalityIsAvailableInPro')}
-        >
-          <InputLabel shrink htmlFor="file-size">
-            {i18n.t('core:sizeSearchTitle')}
-          </InputLabel>
-          <Select
-            value={fileSize}
-            onChange={handleFileSizeChange}
-            input={<Input name="fileSize" id="file-size" />}
-            displayEmpty
-          >
-            <MenuItem value="">{i18n.t('core:sizeAny')}</MenuItem>
-            <MenuItem value="sizeEmpty">{i18n.t('core:sizeEmpty')}</MenuItem>
-            <MenuItem value="sizeTiny">
-              {i18n.t('core:sizeTiny')}
-              &nbsp;(&lt;&nbsp;10KB)
-            </MenuItem>
-            <MenuItem value="sizeVerySmall">
-              {i18n.t('core:sizeVerySmall')}
-              &nbsp;(&lt;&nbsp;100KB)
-            </MenuItem>
-            <MenuItem value="sizeSmall">
-              {i18n.t('core:sizeSmall')}
-              &nbsp;(&lt;&nbsp;1MB)
-            </MenuItem>
-            <MenuItem value="sizeMedium">
-              {i18n.t('core:sizeMedium')}
-              &nbsp;(&lt;&nbsp;50MB)
-            </MenuItem>
-            <MenuItem value="sizeLarge">
-              {i18n.t('core:sizeLarge')}
-              &nbsp;(&lt;&nbsp;1GB)
-            </MenuItem>
-            <MenuItem value="sizeHuge">
-              {i18n.t('core:sizeHuge')}
-              &nbsp;(&gt;&nbsp;1GB)
-            </MenuItem>
-          </Select>
-        </FormControl>
-        <FormControl
-          className={classes.formControl}
-          disabled={indexing || !Pro}
-          title={
-            !Pro ? i18n.t('core:thisFunctionalityIsAvailableInPro') : undefined
-          }
-        >
-          <InputLabel shrink htmlFor="modification-date">
-            {i18n.t('core:lastModifiedSearchTitle')}
-          </InputLabel>
-          <Select
-            value={lastModified}
-            onChange={handleLastModifiedChange}
-            input={<Input name="lastModified" id="modification-date" />}
-            displayEmpty
-          >
-            <MenuItem value="">{i18n.t('core:anyTime')}</MenuItem>
-            <MenuItem value="today">{i18n.t('core:today')}</MenuItem>
-            <MenuItem value="yesterday">{i18n.t('core:yesterday')}</MenuItem>
-            <MenuItem value="past7Days">{i18n.t('core:past7Days')}</MenuItem>
-            <MenuItem value="past30Days">{i18n.t('core:past30Days')}</MenuItem>
-            <MenuItem value="past6Months">
-              {i18n.t('core:past6Months')}
-            </MenuItem>
-            <MenuItem value="pastYear">{i18n.t('core:pastYear')}</MenuItem>
-            <MenuItem value="moreThanYear">
-              {i18n.t('core:moreThanYear')}
-            </MenuItem>
-          </Select>
-        </FormControl>
-        <FormControl
-          className={classes.formControl}
-          title={
-            !Pro ? i18n.t('core:thisFunctionalityIsAvailableInPro') : undefined
-          }
-        >
-          <TextField
-            id="tagTimePeriod"
-            label={i18n.t('Enter time period')}
-            value={tagTimePeriod}
-            disabled={indexing || !Pro}
-            onChange={handleTimePeriodChange}
-            onKeyDown={startSearch}
-            helperText={tagTimePeriodHelper}
-            error={tagTimePeriodHelper.length < 1}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment
-                  position="end"
-                  title="201905 for May 2019 / 20190412 for 12th of April 2019 / 20190501~124523 for specific time"
+              <InputLabel htmlFor="file-type">
+                {i18n.t('core:fileType')}
+              </InputLabel>
+              <Select
+                value={fileTypes}
+                onChange={handleFileTypeChange}
+                input={<Input name="fileTypes" id="file-type" />}
+              >
+                <MenuItem value={FileTypeGroups.any}>
+                  {i18n.t('core:anyType')}
+                </MenuItem>
+                <MenuItem value={FileTypeGroups.folders}>
+                  <IconButton>
+                    <FolderIcon />
+                  </IconButton>
+                  {i18n.t('core:searchFolders')}
+                </MenuItem>
+                <MenuItem value={FileTypeGroups.files}>
+                  <IconButton>
+                    <FileIcon />
+                  </IconButton>
+                  {i18n.t('core:searchFiles')}
+                </MenuItem>
+                <MenuItem value={FileTypeGroups.untagged}>
+                  <IconButton>
+                    <UntaggedIcon />
+                  </IconButton>
+                  {i18n.t('core:searchUntaggedEntries')}
+                </MenuItem>
+                <MenuItem
+                  value={FileTypeGroups.images}
+                  title={FileTypeGroups.images.toString()}
                 >
                   <IconButton>
-                    <DateIcon />
+                    <PictureIcon />
                   </IconButton>
-                </InputAdornment>
-              )
-            }}
-          />
-          <TextField
-            id="tagPlace"
-            label={i18n.t('GPS coordinates or plus code')}
-            value={tagPlace}
-            disabled={indexing || !Pro}
-            onChange={handlePlaceChange}
-            onKeyDown={startSearch}
-            helperText={tagPlaceHelper}
-            error={tagPlaceHelper.length < 1}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment
-                  position="end"
-                  title="GPS: 49.23276,12.43123 PlusCode: 8FRG8Q87+6X"
+                  {i18n.t('core:searchPictures')}
+                </MenuItem>
+                <MenuItem
+                  value={FileTypeGroups.documents}
+                  title={FileTypeGroups.documents.toString()}
                 >
-                  <IconButton onClick={openPlace}>
-                    <PlaceIcon />
+                  <IconButton>
+                    <DocumentIcon />
                   </IconButton>
-                </InputAdornment>
-              )
-            }}
-          />
-        </FormControl>
-        <FormControl className={classes.formControl}>
-          <ButtonGroup style={{ justifyContent: 'center' }}>
-            <Button
-              variant="outlined"
-              color="secondary"
-              size="small"
-              style={{ width: '90%' }}
-              onClick={clearSearch}
-              id="resetSearchButton"
+                  {i18n.t('core:searchDocuments')}
+                </MenuItem>
+                <MenuItem
+                  value={FileTypeGroups.notes}
+                  title={FileTypeGroups.notes.toString()}
+                >
+                  <IconButton>
+                    <NoteIcon />
+                  </IconButton>
+                  {i18n.t('core:searchNotes')}
+                </MenuItem>
+                <MenuItem
+                  value={FileTypeGroups.audio}
+                  title={FileTypeGroups.audio.toString()}
+                >
+                  <IconButton>
+                    <AudioIcon />
+                  </IconButton>
+                  {i18n.t('core:searchAudio')}
+                </MenuItem>
+                <MenuItem
+                  value={FileTypeGroups.video}
+                  title={FileTypeGroups.video.toString()}
+                >
+                  <IconButton>
+                    <VideoIcon />
+                  </IconButton>
+                  {i18n.t('core:searchVideoFiles')}
+                </MenuItem>
+                <MenuItem
+                  value={FileTypeGroups.archives}
+                  title={FileTypeGroups.archives.toString()}
+                >
+                  <IconButton>
+                    <ArchiveIcon />
+                  </IconButton>
+                  {i18n.t('core:searchArchives')}
+                </MenuItem>
+                <MenuItem
+                  value={FileTypeGroups.bookmarks}
+                  title={FileTypeGroups.bookmarks.toString()}
+                >
+                  <IconButton>
+                    <BookmarkIcon />
+                  </IconButton>
+                  {i18n.t('core:searchBookmarks')}
+                </MenuItem>
+                <MenuItem
+                  value={FileTypeGroups.ebooks}
+                  title={FileTypeGroups.ebooks.toString()}
+                >
+                  <IconButton>
+                    <BookIcon />
+                  </IconButton>
+                  {i18n.t('core:searchEbooks')}
+                </MenuItem>
+              </Select>
+              {/* <FormHelperText>{i18n.t('core:searchFileTypes')}</FormHelperText> */}
+            </FormControl>
+            <FormControl
+              className={classes.formControl}
+              disabled={indexing || !Pro}
+              title={i18n.t('core:thisFunctionalityIsAvailableInPro')}
             >
-              {i18n.t('resetBtn')}
-            </Button>
-          </ButtonGroup>
-        </FormControl>
+              <InputLabel shrink htmlFor="file-size">
+                {i18n.t('core:sizeSearchTitle')}
+              </InputLabel>
+              <Select
+                value={fileSize}
+                onChange={handleFileSizeChange}
+                input={<Input name="fileSize" id="file-size" />}
+                displayEmpty
+              >
+                <MenuItem value="">{i18n.t('core:sizeAny')}</MenuItem>
+                <MenuItem value="sizeEmpty">
+                  {i18n.t('core:sizeEmpty')}
+                </MenuItem>
+                <MenuItem value="sizeTiny">
+                  {i18n.t('core:sizeTiny')}
+                  &nbsp;(&lt;&nbsp;10KB)
+                </MenuItem>
+                <MenuItem value="sizeVerySmall">
+                  {i18n.t('core:sizeVerySmall')}
+                  &nbsp;(&lt;&nbsp;100KB)
+                </MenuItem>
+                <MenuItem value="sizeSmall">
+                  {i18n.t('core:sizeSmall')}
+                  &nbsp;(&lt;&nbsp;1MB)
+                </MenuItem>
+                <MenuItem value="sizeMedium">
+                  {i18n.t('core:sizeMedium')}
+                  &nbsp;(&lt;&nbsp;50MB)
+                </MenuItem>
+                <MenuItem value="sizeLarge">
+                  {i18n.t('core:sizeLarge')}
+                  &nbsp;(&lt;&nbsp;1GB)
+                </MenuItem>
+                <MenuItem value="sizeHuge">
+                  {i18n.t('core:sizeHuge')}
+                  &nbsp;(&gt;&nbsp;1GB)
+                </MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl
+              className={classes.formControl}
+              disabled={indexing || !Pro}
+              title={
+                !Pro
+                  ? i18n.t('core:thisFunctionalityIsAvailableInPro')
+                  : undefined
+              }
+            >
+              <InputLabel shrink htmlFor="modification-date">
+                {i18n.t('core:lastModifiedSearchTitle')}
+              </InputLabel>
+              <Select
+                value={lastModified}
+                onChange={handleLastModifiedChange}
+                input={<Input name="lastModified" id="modification-date" />}
+                displayEmpty
+              >
+                <MenuItem value="">{i18n.t('core:anyTime')}</MenuItem>
+                <MenuItem value="today">{i18n.t('core:today')}</MenuItem>
+                <MenuItem value="yesterday">
+                  {i18n.t('core:yesterday')}
+                </MenuItem>
+                <MenuItem value="past7Days">
+                  {i18n.t('core:past7Days')}
+                </MenuItem>
+                <MenuItem value="past30Days">
+                  {i18n.t('core:past30Days')}
+                </MenuItem>
+                <MenuItem value="past6Months">
+                  {i18n.t('core:past6Months')}
+                </MenuItem>
+                <MenuItem value="pastYear">{i18n.t('core:pastYear')}</MenuItem>
+                <MenuItem value="moreThanYear">
+                  {i18n.t('core:moreThanYear')}
+                </MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl
+              className={classes.formControl}
+              title={
+                !Pro
+                  ? i18n.t('core:thisFunctionalityIsAvailableInPro')
+                  : undefined
+              }
+            >
+              <TextField
+                id="tagTimePeriod"
+                label={i18n.t('Enter time period')}
+                value={tagTimePeriod}
+                disabled={indexing || !Pro}
+                onChange={handleTimePeriodChange}
+                onKeyDown={startSearch}
+                helperText={tagTimePeriodHelper}
+                error={tagTimePeriodHelper.length < 1}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment
+                      position="end"
+                      title="201905 for May 2019 / 20190412 for 12th of April 2019 / 20190501~124523 for specific time"
+                    >
+                      <IconButton>
+                        <DateIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }}
+              />
+              <TextField
+                id="tagPlace"
+                label={i18n.t('GPS coordinates or plus code')}
+                value={tagPlace}
+                disabled={indexing || !Pro}
+                onChange={handlePlaceChange}
+                onKeyDown={startSearch}
+                helperText={tagPlaceHelper}
+                error={tagPlaceHelper.length < 1}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment
+                      position="end"
+                      title="GPS: 49.23276,12.43123 PlusCode: 8FRG8Q87+6X"
+                    >
+                      <IconButton onClick={openPlace}>
+                        <PlaceIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }}
+              />
+            </FormControl>
+            <FormControl className={classes.formControl}>
+              <ButtonGroup style={{ justifyContent: 'center' }}>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  size="small"
+                  style={{ width: '90%' }}
+                  onClick={clearSearch}
+                  id="resetSearchButton"
+                >
+                  {i18n.t('resetBtn')}
+                </Button>
+              </ButtonGroup>
+            </FormControl>
+          </React.Fragment>
+        )}
       </div>
     </div>
   );

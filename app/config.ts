@@ -99,6 +99,12 @@ export const AppConfig = {
   isCordovaAndroid,
   isCordova: isCordovaiOS || isCordovaAndroid,
   isMobile: isCordovaiOS || isCordovaAndroid || isIOS || isAndroid,
+  showAdvancedSearch:
+    (window as any).ExtShowAdvancedSearch !== undefined
+      ? (window as any).ExtShowAdvancedSearch
+      : true,
+  sidebarColor: (window as any).ExtSidebarColor || '#2C001E', // '#00D1A1' // #008023
+  sidebarSelectionColor: (window as any).ExtSidebarSelectionColor || '#880E4F',
   dirSeparator:
     navigator.appVersion.includes('Win') && !document.URL.startsWith('http')
       ? '\\'
