@@ -1063,11 +1063,28 @@ export const actions = {
     PlatformIO.showInFileManager(filePath);
   },
   renameDirectory: (directoryPath: string, newDirectoryName: string) => (
-    dispatch: (actions: Object) => void
+    dispatch: (actions: Object) => void,
+    getState: () => any
   ) =>
     PlatformIO.renameDirectoryPromise(directoryPath, newDirectoryName)
       .then(newDirPath => {
-        dispatch(actions.reflectRenameEntry(directoryPath, newDirPath));
+        const { currentDirectoryPath, openedFiles } = getState().app;
+        if (currentDirectoryPath === directoryPath) {
+          dispatch(actions.loadDirectoryContent(newDirPath));
+          if (openedFiles && openedFiles.length > 0) {
+            if (openedFiles[0].path === directoryPath) {
+              const openedFile = openedFiles[0];
+              openedFile.path = newDirPath;
+              dispatch(actions.addToEntryContainer(openedFile));
+            }
+          }
+          dispatch(
+            LocationIndexActions.reflectRenameEntry(directoryPath, newDirPath)
+          );
+        } else {
+          dispatch(actions.reflectRenameEntry(directoryPath, newDirPath));
+        }
+
         dispatch(
           actions.showNotification(
             `Renaming directory ${extractDirectoryName(

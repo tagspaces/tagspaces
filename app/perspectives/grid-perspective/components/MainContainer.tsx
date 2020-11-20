@@ -23,7 +23,6 @@ import { bindActionCreators } from 'redux';
 import memoize from 'memoize-one';
 import { GlobalHotKeys } from 'react-hotkeys';
 import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import { FileSystemEntry } from '-/services/utils-io';
 import { Tag } from '-/reducers/taglibrary';
 import {
@@ -119,7 +118,7 @@ interface State {
   sortBy: string;
   orderBy: null | boolean;
   fileOperationsEnabled: boolean;
-  allFilesSelected: boolean;
+  // allFilesSelected: boolean;
   showDirectories: boolean;
   showTags: boolean;
   isDeleteMultipleFilesDialogOpened: boolean;
@@ -133,8 +132,11 @@ interface State {
 }
 
 class GridPerspective extends React.Component<Props, State> {
+  static allFilesSelected: boolean;
+
   constructor(props) {
     super(props);
+    GridPerspective.allFilesSelected = false;
     const settings = JSON.parse(localStorage.getItem('tsPerspectiveGrid')); // loading settings
     this.state = {
       fileContextMenuOpened: false,
@@ -167,7 +169,7 @@ class GridPerspective extends React.Component<Props, State> {
       thumbnailMode:
         settings && settings.thumbnailMode ? settings.thumbnailMode : 'cover', // contain
       fileOperationsEnabled: false,
-      allFilesSelected: false,
+      // allFilesSelected: false,
       showDirectories:
         settings && typeof settings.showDirectories !== 'undefined'
           ? settings.showDirectories
@@ -204,6 +206,8 @@ class GridPerspective extends React.Component<Props, State> {
         return true;
       });
       fileOperationsEnabled = !selectionContainsDirectories;
+    } else {
+      GridPerspective.allFilesSelected = false;
     }
 
     return {
@@ -364,14 +368,12 @@ class GridPerspective extends React.Component<Props, State> {
   clearSelection = () => {
     const { setSelectedEntries, setLastSelectedEntry } = this.props;
     setSelectedEntries([]);
-    this.setState({
-      allFilesSelected: false
-    });
+    GridPerspective.allFilesSelected = false;
     setLastSelectedEntry(null);
   };
 
   toggleSelectAllFiles = () => {
-    if (this.state.allFilesSelected) {
+    if (GridPerspective.allFilesSelected) {
       this.clearSelection();
     } else {
       const selectedEntries = [];
@@ -382,9 +384,7 @@ class GridPerspective extends React.Component<Props, State> {
         return true;
       });
       this.props.setSelectedEntries(selectedEntries);
-      this.setState({
-        allFilesSelected: !this.state.allFilesSelected
-      });
+      GridPerspective.allFilesSelected = !GridPerspective.allFilesSelected;
     }
   };
 
@@ -799,7 +799,7 @@ class GridPerspective extends React.Component<Props, State> {
           selectedEntries={this.props.selectedEntries}
           loadParentDirectoryContent={loadParentDirectoryContent}
           toggleSelectAllFiles={this.toggleSelectAllFiles}
-          allFilesSelected={this.state.allFilesSelected}
+          allFilesSelected={GridPerspective.allFilesSelected}
           handleLayoutSwitch={this.handleLayoutSwitch}
           openAddRemoveTagsDialog={this.openAddRemoveTagsDialog}
           fileOperationsEnabled={this.state.fileOperationsEnabled}
