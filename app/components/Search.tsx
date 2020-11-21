@@ -75,6 +75,7 @@ import { AppConfig } from '-/config';
 interface Props {
   classes: any;
   style?: any;
+  theme?: any;
   searchLocationIndex: (searchQuery: SearchQuery) => void;
   createLocationsIndexes: () => void;
   searchAllLocations: (searchQuery: SearchQuery) => void;
@@ -495,7 +496,13 @@ const Search = React.memo((props: Props) => {
               name="forceIndexing"
             />
           }
-          label="Force reindexing"
+          label={
+            <Typography
+              style={{ padding: 15, color: props.theme.palette.text.primary }}
+            >
+              {i18n.t('forceReindexing')}
+            </Typography>
+          }
         />
         <br />
         <br />
@@ -842,6 +849,6 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
-export default withStyles(styles)(
+export default withStyles(styles, { withTheme: true })(
   connect(mapStateToProps, mapDispatchToProps)(Search)
 );

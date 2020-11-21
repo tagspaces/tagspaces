@@ -340,6 +340,7 @@
   "sort": "Sort",
   "thirdPartyLibs": "Third Party Libraries",
   "indexLocation": "Refresh Location Index",
+  "forceReindexing": "Force reindexing",
   "readonlyModeSwitch": "Open this location in read-only mode",
   "persistIndexSwitch": "Switch to manual index creation with persisted search index",
   "createFullTextIndex": "Enable full text search for TXT, MD and HTML files (BETA)",
