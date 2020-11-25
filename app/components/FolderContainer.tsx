@@ -57,6 +57,7 @@ import {
   FileSystemEntry,
   FileSystemEntryMeta
 } from '-/services/utils-io';
+import AppConfig from '-/config';
 
 const GridPerspective = React.lazy(() =>
   import(
@@ -335,7 +336,11 @@ const FolderContainer = (props: Props) => {
 
   const renderPerspective = () => {
     if (!props.currentDirectoryPath && props.directoryContent.length < 1) {
-      return <WelcomePanelAsync />;
+      return AppConfig.showWelcomePanel ? (
+        <WelcomePanelAsync />
+      ) : (
+        <React.Fragment />
+      );
     }
     if (
       Pro &&

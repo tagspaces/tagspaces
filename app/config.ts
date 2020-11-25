@@ -103,6 +103,10 @@ export const AppConfig = {
     (window as any).ExtShowAdvancedSearch !== undefined
       ? (window as any).ExtShowAdvancedSearch
       : true,
+  showWelcomePanel:
+    (window as any).ExtShowWelcomePanel !== undefined
+      ? (window as any).ExtShowWelcomePanel
+      : true,
   sidebarColor: (window as any).ExtSidebarColor || '#2C001E', // '#00D1A1' // #008023
   sidebarSelectionColor: (window as any).ExtSidebarSelectionColor || '#880E4F',
   lightThemeLightColor: (window as any).ExtLightThemeLightColor || '#dcf3ec',
