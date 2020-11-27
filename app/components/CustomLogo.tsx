@@ -24,8 +24,10 @@ import { withStyles } from '@material-ui/core/styles';
 import Badge from '@material-ui/core/Badge';
 import { Pro } from '../pro';
 import TextLogoIcon from '../assets/images/text-logo.svg';
+import WebLogoIcon from '../assets/images/text-logo-web.svg';
 import { actions as AppActions } from '../reducers/app';
 import versionMeta from '../version.json';
+import AppConfig from '-/config';
 
 const AppVersionBadge = withStyles(theme => ({
   badge: {
@@ -47,10 +49,11 @@ interface Props {
 }
 
 let logo = Pro ? Pro.TextLogoIcon : TextLogoIcon;
-// logo = 'assets/images/custom-logo.svg';
-const externalLogo = window.ExtLogoURL || false;
-if (externalLogo) {
-  logo = externalLogo;
+if (AppConfig.isWeb) {
+  logo = WebLogoIcon;
+}
+if (AppConfig.customLogo) {
+  logo = AppConfig.customLogo;
 }
 
 const CustomLogo = (props: Props) => (

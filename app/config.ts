@@ -99,6 +99,7 @@ export const AppConfig = {
   isCordovaAndroid,
   isCordova: isCordovaiOS || isCordovaAndroid,
   isMobile: isCordovaiOS || isCordovaAndroid || isIOS || isAndroid,
+  customLogo: (window as any).ExtLogoURL || false,
   showAdvancedSearch:
     (window as any).ExtShowAdvancedSearch !== undefined
       ? (window as any).ExtShowAdvancedSearch
