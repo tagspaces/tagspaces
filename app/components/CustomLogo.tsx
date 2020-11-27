@@ -67,7 +67,7 @@ const CustomLogo = (props: Props) => (
       <img
         style={{ maxHeight: 50, maxWidth: 200 }}
         src={logo}
-        alt="TagSpaces Logo"
+        alt="TagSpaces"
       />
     </IconButton>
   </AppVersionBadge>
