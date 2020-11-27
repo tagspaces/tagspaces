@@ -105,16 +105,7 @@ beforeEach(async () => {
     global.client = global.app.client;
     await global.client.waitUntilWindowLoaded();
   }
-  // global.app.browserWindow.focus();
-  //let windowCount = await global.client.getWindowCount();
-  // expect(windowCount).to.equal(2);
-  // const mainWindow = await global.client.getWindowHandle();
   await closeWelcome();
-  //windowCount = await global.client.getWindowCount();
-  //expect(windowCount).to.equal(1);
-  //const windowHandles = await global.client.getWindowHandles();
-  //global.client.switchToWindow(windowHandles[0]);
-  //global.client.switchToWindow(mainWindow);
 });
 
 afterEach(() => {

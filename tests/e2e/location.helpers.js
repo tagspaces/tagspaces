@@ -1,7 +1,7 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 import { delay } from './hook';
 import { firstFile, openContextEntryMenu } from './test-utils.spec';
-import { clickOn } from './general.helpers';
+import { clickOn, setInputKeys, setInputValue } from './general.helpers';
 
 export const defaultLocationPath =
   './testdata/file-structure/supported-filestypes';
@@ -17,24 +17,33 @@ export async function createLocation(
   locationName,
   isDefault = false
 ) {
-  await clickOn('[data-tid=createNewLocation]');
-  await clickOn('[data-tid=locationPath]');
-  const locationPathInput = await global.client.$(
-    '[data-tid=locationPath] input'
-  );
-  await locationPathInput.keys(locationPath || defaultLocationPath);
-  // keys is workarround for not working setValue await global.client.$('[data-tid=locationPath] input').setValue(locationPath || defaultLocationPath);
-  await clickOn('[data-tid=locationName]');
-  const locationNameInput = await global.client.$(
-    '[data-tid=locationName] input'
-  );
-  locationNameInput.keys(
-    locationName || 'Test Location' + new Date().getTime()
-  );
-  if (isDefault) {
-    await clickOn('[data-tid=locationIsDefault]');
+  const lastLocationTID = await getLocationTid(-1);
+  // Check if location not exist (from extconfig.js)
+  if ('location_' + locationName !== lastLocationTID) {
+    await clickOn('[data-tid=createNewLocation]');
+    await clickOn('[data-tid=locationPath]');
+    await setInputKeys('locationPath', locationPath || defaultLocationPath);
+    /*const locationPathInput = await global.client.$(
+      '[data-tid=locationPath] input'
+    );
+    await locationPathInput.keys(locationPath || defaultLocationPath);*/
+    // keys is workarround for not working setValue await global.client.$('[data-tid=locationPath] input').setValue(locationPath || defaultLocationPath);
+    await setInputKeys(
+      'locationName',
+      locationName || 'Test Location' + new Date().getTime()
+    );
+    /* await clickOn('[data-tid=locationName]');
+    const locationNameInput = await global.client.$(
+      '[data-tid=locationName] input'
+    );
+    locationNameInput.keys(
+      locationName || 'Test Location' + new Date().getTime()
+    );*/
+    if (isDefault) {
+      await clickOn('[data-tid=locationIsDefault]');
+    }
+    await clickOn('[data-tid=confirmLocationCreation]');
   }
-  await clickOn('[data-tid=confirmLocationCreation]');
 }
 
 export async function createMinioLocation(
@@ -57,40 +66,31 @@ export async function createMinioLocation(
   await objectStorageLocation.click();
 
   // SET LOCATION NAME
-  await setInputValue(
+  await setInputKeys(
     'locationName',
     locationName || 'Test Location' + new Date().getTime()
   );
-  await setInputValue('locationPath', locationPath);
-  await setInputValue('accessKeyId', minioAccessKey);
-  await setInputValue('secretAccessKey', minioSecretAccessKey);
-  await setInputValue('bucketName', locationName);
-  await setInputValue('endpointURL', minioEndpointURL);
+  await setInputKeys('locationPath', locationPath);
+  await setInputKeys('accessKeyId', minioAccessKey);
+  await setInputKeys('secretAccessKey', minioSecretAccessKey);
+  await setInputKeys('bucketName', locationName);
+  await setInputKeys('endpointURL', minioEndpointURL);
 
   // await delay(1500);
   if (isDefault) {
-    await delay(1000);
-    const locationIsDefault = await global.client.$(
-      '[data-tid=locationIsDefault]'
-    );
-    await locationIsDefault.click();
+    await clickOn('[data-tid=locationIsDefault]');
   }
-
-  const confirmLocationCreation = await global.client.$(
-    '[data-tid=confirmLocationCreation]'
-  );
-  await confirmLocationCreation.waitForDisplayed();
-  await confirmLocationCreation.click();
+  await clickOn('[data-tid=confirmLocationCreation]');
 }
 
-async function setInputValue(selector, value) {
+/*async function setInputValue(tid, value) {
   // keys is workarround for not working setValue await global.client.$('[data-tid=locationPath] input').setValue(locationPath || defaultLocationPath);
-  const elem = await global.client.$('[data-tid=' + selector + ']');
+  const elem = await global.client.$('[data-tid=' + tid + ']');
   await elem.click();
 
-  const elemInput = await global.client.$('[data-tid=' + selector + '] input');
+  const elemInput = await global.client.$('[data-tid=' + tid + '] input');
   await elemInput.keys(value);
-}
+}*/
 
 export async function selectAllFilesClick() {
   const gridPerspectiveSelectAllFiles = await global.client.$(
@@ -101,19 +101,7 @@ export async function selectAllFilesClick() {
 }
 
 export async function openLocationMenu(locationName) {
-  //await delay(500);
-  const locationMoreButton = await global.client.$(
-    '[data-tid=locationMoreButton_' + locationName + ']'
-  );
-  await locationMoreButton.waitForDisplayed();
-  await locationMoreButton.click();
-  /*await global.client.waitForVisible(
-    '[data-tid=locationMoreButton_' + locationName + ']'
-  );
-  await delay(1500);
-  await global.client.click(
-    '[data-tid=locationMoreButton_' + locationName + ']'
-  ); */
+  await clickOn('[data-tid=locationMoreButton_' + locationName + ']');
 }
 
 /**
@@ -154,35 +142,21 @@ export async function checkForIdExist(tid) {
   // expect(dataTid.selector).toBe('[data-tid=' + tid + ']');
 }
 
-export async function clearInputValue(inputElement) {
-  const value = await inputElement.getValue();
-  const count = value.length;
-  for (let i = 0; i < count; i++) {
-    const value = await inputElement.getValue();
-    if (value === '') {
-      break;
-    }
-    await inputElement.click();
-    await inputElement.doubleClick();
-    await global.client.keys('Delete');
-    await inputElement.clearValue();
-  }
-  // await delay(500);
-}
-
 export async function renameFirstFile(newFileName) {
   await openContextEntryMenu(
     perspectiveGridTable + firstFile,
     'fileMenuRenameFile'
   );
-  const renameFileDialogInput = await global.client.$(
+  await global.client.pause(500);
+  await setInputKeys('renameFileDialogInput', newFileName);
+  /*const renameFileDialogInput = await global.client.$(
     '[data-tid=renameFileDialogInput] input'
   );
   await renameFileDialogInput.waitForDisplayed({ timeout: 5000 });
   //await renameFileDialogInput.clearValue();
   //await clearInputValue(renameFileDialogInput);
   await global.client.pause(50);
-  await renameFileDialogInput.setValue(newFileName);
+  await renameFileDialogInput.setValue(newFileName);*/
   //await delay(1500);
   await clickOn('[data-tid=confirmRenameFileDialog]');
 }
@@ -242,31 +216,18 @@ export async function aboutDialogExt(title, ext) {
 }
 
 export async function startupLocation() {
-  await delay(500);
-  const editLocation = await global.client.$('[data-tid=editLocation]');
-  await editLocation.waitForDisplayed();
-  await editLocation.click();
-  await delay(1500);
-  const defaultLocation = await global.client.$(
-    '[data-tid=editStartupLocation]'
-  );
-  await defaultLocation.waitForDisplayed();
-  await defaultLocation.click();
-  await delay(1500);
-  const closeEditLocationDialog = await global.client.$(
-    '[data-tid=confirmEditLocationDialog]'
-  );
-  await closeEditLocationDialog.waitForDisplayed();
-  await closeEditLocationDialog.click();
-  await delay(1500);
+  await clickOn('[data-tid=editLocation]');
+  // await global.client.pause(500);
+  await clickOn('[data-tid=editStartupLocation]');
+  await clickOn('[data-tid=confirmEditLocationDialog]');
 }
 
 /**
  *
  * @param locationIndex - order index in locations Array starting from 0 if index < 0 it will return reversed from the last items
- * @returns {Promise<string|null>} Location name; example usage: getLocationName(-1) will return the last one
+ * @returns {Promise<string|null>} Location Tid ('location_' + name); example usage: getLocationName(-1) will return the last one
  */
-export async function getLocationName(locationIndex) {
+export async function getLocationTid(locationIndex) {
   const locationList = await global.client.$$(
     '//*[@data-tid="locationList"]/div'
   );

@@ -39,7 +39,8 @@ import {
   extractParentDirectoryPath,
   extractTagsAsObjects,
   normalizePath,
-  extractLocation
+  extractLocation,
+  extractContainingDirectoryPath
 } from '-/utils/paths';
 import { formatDateTime4Tag, getURLParameter } from '-/utils/misc';
 import i18n from '../services/i18n';
@@ -1022,9 +1023,28 @@ export const actions = {
     getState: () => any
   ) => {
     const { settings } = getState();
+    const { currentDirectoryPath, openedFiles } = getState().app;
     PlatformIO.deleteDirectoryPromise(directoryPath, settings.useTrashCan)
       .then(() => {
-        dispatch(actions.reflectDeleteEntry(directoryPath));
+        if (directoryPath === currentDirectoryPath) {
+          dispatch(actions.loadParentDirectoryContent());
+          dispatch(LocationIndexActions.reflectDeleteEntry(directoryPath));
+          // close opened entries in deleted dir
+          if (
+            openedFiles.length > 0 &&
+            openedFiles.some(
+              file =>
+                extractContainingDirectoryPath(
+                  file.path,
+                  PlatformIO.getDirSeparator()
+                ) === directoryPath
+            )
+          ) {
+            dispatch(actions.closeAllFiles());
+          }
+        } else {
+          dispatch(actions.reflectDeleteEntry(directoryPath));
+        }
         dispatch(
           actions.showNotification(
             i18n.t('deletingDirectorySuccessfull', {
@@ -1960,9 +1980,9 @@ export const getCurrentDirectoryPerspective = (state: any) =>
 export const getDirectoryPath = (state: any) => state.app.currentDirectoryPath;
 export const getProgress = (state: any) => state.app.progress;
 export const getCurrentLocationPath = (state: any) => {
-  let pathCurrentLocation;
   if (state.locations) {
-    state.locations.map(location => {
+    for (let i = 0; i < state.locations.length; i += 1) {
+      const location = state.locations[i];
       if (
         state.app.currentLocationId &&
         location.uuid === state.app.currentLocationId
@@ -1970,15 +1990,13 @@ export const getCurrentLocationPath = (state: any) => {
         if (AppConfig.isElectron && location.paths[0].startsWith('./')) {
           // TODO test relative path (Directory Back) with other platforms
           // relative paths
-          pathCurrentLocation = pathLib.resolve(location.paths[0]);
-        } else {
-          pathCurrentLocation = location.paths[0];
+          return pathLib.resolve(location.paths[0]);
         }
+        return location.paths[0];
       }
-      return true;
-    });
+    }
   }
-  return pathCurrentLocation;
+  return undefined;
 };
 export const isUpdateAvailable = (state: any) => state.app.isUpdateAvailable;
 export const isUpdateInProgress = (state: any) => state.app.isUpdateInProgress;

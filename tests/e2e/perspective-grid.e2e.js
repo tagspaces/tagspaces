@@ -1,36 +1,31 @@
 /*
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
-import { delay, clearLocalStorage } from './hook';
 import {
   createLocation,
-  openLocation,
   defaultLocationPath,
   defaultLocationName,
   closeFileProperties,
-  selectAllFilesClick,
-  clearInputValue,
   getFirstFileName,
   renameFirstFile,
   deleteFirstFile,
   createMinioLocation
 } from './location.helpers';
-import { searchEngine, createNewFile } from './search.spec';
+import { searchEngine } from './search.spec';
 import {
-  openFile,
   checkFilenameForExist,
   openContextEntryMenu,
   perspectiveGridTable,
   firstFile,
-  openDirectoryMenu,
-  firstFileName,
-  startMinio,
-  stopMinio,
-  startWebServer,
-  stopWebServer,
   toContainTID
 } from './test-utils.spec';
-import { clickOn, doubleClickOn, expectElementExist } from './general.helpers';
+import {
+  clickOn,
+  doubleClickOn,
+  expectElementExist,
+  selectorFile,
+  selectorFolder
+} from './general.helpers';
 
 const subFolderName = '/test-perspective-grid';
 const subFolderContentExtractionPath =
@@ -41,8 +36,6 @@ const testTagName = 'testTag';
 const testTestFilename = 'sample';
 const newFileName = 'newFileName.txt';
 const newTagName = 'newTagName';
-const selectorFile = '//*[@data-tid="perspectiveGridFileTable"]/span';
-const selectorFolder = '//*[@data-tid="perspectiveGridFileTable"]/div';
 
 describe('TST51 - Perspective Grid', () => {
   beforeEach(async () => {
@@ -59,7 +52,7 @@ describe('TST51 - Perspective Grid', () => {
     await closeFileProperties();
   });
 
-  test('TST5037 - Show sub folders [show_sub_folders,web,electron]', async () => {
+  test('TST5037 - Show sub folders [TST5037,web,electron]', async () => {
     //open Option menu
     await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
     //click on hide directories
@@ -252,7 +245,7 @@ describe('TST50** - Right button on a file', () => {
   test('TST5040 - Create file [web,electron]', async () => {
     await clickOn('[data-tid=folderContainerOpenDirMenu]');
     await clickOn('[data-tid=createNewFile]');
-    await global.client.pause(500);
+    await global.client.pause(1000);
     await clickOn('[data-tid=createTextFileButton]');
     await searchEngine('note');
     await expectElementExist(selectorFile, true);

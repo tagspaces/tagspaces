@@ -131,7 +131,8 @@ app.on('ready', async () => {
       height: workerDevMode ? 600 : 1,
       frame: false,
       webPreferences: {
-        nodeIntegration: true
+        nodeIntegration: true,
+        enableRemoteModule: true
       }
     });
 
@@ -152,6 +153,7 @@ app.on('ready', async () => {
     }
   }
 
+  // TODO remote module is deprecated https://stackoverflow.com/questions/37884130/electron-remote-is-undefined
   mainWindow = new BrowserWindow({
     show: true,
     x: mainWindowState.x,
@@ -162,7 +164,8 @@ app.on('ready', async () => {
     webPreferences: {
       spellcheck: true,
       nodeIntegration: true,
-      webviewTag: true
+      webviewTag: true,
+      enableRemoteModule: true
     }
   });
 

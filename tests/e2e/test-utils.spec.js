@@ -1,15 +1,7 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 
-import { clearLocalStorage, delay } from './hook';
 import pathLib from 'path';
-import {
-  createLocation,
-  defaultLocationName,
-  defaultLocationPath,
-  openLocation,
-  clearInputValue
-} from './location.helpers';
-import { clickOn, openDirectoryMenu } from './general.helpers';
+import { clickOn, setInputKeys } from './general.helpers';
 
 const winMinio = pathLib.resolve(__dirname, '../bin/minio.exe');
 const unixMinio = 'minio';
@@ -162,35 +154,14 @@ export function toContainTID(text) {
 }
 
 export async function renameFolder() {
-  await delay(500);
-  await openDirectoryMenu();
-  const renameDirectory = await global.client.$('[data-tid=renameDirectory]');
-  await renameDirectory.waitForDisplayed();
-  await delay(500);
-  await renameDirectory.click();
-  await delay(500);
+  await clickOn('[data-tid=folderContainerOpenDirMenu]');
+  await clickOn('[data-tid=renameDirectory]');
   // set new dir name
-  const renameDirectoryDialogInput = await global.client.$(
-    '[data-tid=renameDirectoryDialogInput] input'
-  );
-  await delay(500);
-  await renameDirectoryDialogInput.waitForDisplayed();
-  await clearInputValue(renameDirectoryDialogInput);
-  await delay(500);
-  await renameDirectoryDialogInput.keys(newDirectoryName);
-  const confirmRenameDirectoryDialog = await global.client.$(
-    '[data-tid=confirmRenameDirectory]'
-  );
-  await confirmRenameDirectoryDialog.waitForDisplayed();
-  await confirmRenameDirectoryDialog.click();
+  await setInputKeys('renameDirectoryDialogInput', newDirectoryName);
+  await clickOn('[data-tid=confirmRenameDirectory]');
+  return newDirectoryName;
 }
 
 export async function openParentDir() {
-  await delay(500);
-  const openParentDirectory = await global.client.$(
-    '[data-tid=gridPerspectiveOnBackButton]'
-  );
-  await openParentDirectory.waitForDisplayed();
-  await delay(500);
-  await openParentDirectory.click();
+  await clickOn('[data-tid=gridPerspectiveOnBackButton]');
 }
