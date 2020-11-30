@@ -16,6 +16,24 @@ export const newLocationName = 'Location_Name_Changed';
 let testLocationName;
 
 describe('TST03 - Testing locations:', () => {
+  beforeAll(async () => {
+    const fse = require('fs-extra');
+
+    let srcDir = '../scripts/extconfig-without-locations.js';
+    let destDir = '../app/extconfig.js';
+
+    fse.copySync(srcDir, destDir);
+  });
+
+  afterAll(async () => {
+    const fse = require('fs-extra');
+
+    let srcDir = '../scripts/extconfig.js';
+    let destDir = '../app/extconfig.js';
+
+    fse.copySync(srcDir, destDir);
+  });
+
   beforeEach(async () => {
     testLocationName = '' + new Date().getTime();
 

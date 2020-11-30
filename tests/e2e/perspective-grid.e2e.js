@@ -208,7 +208,7 @@ describe('TST50** - Right button on a file', () => {
     await closeFileProperties();
   });
 
-  test('TST5016 - Open file [web,electron]', async () => {
+  test('TST5016 - Open file [TST5016,web,minio,electron]', async () => {
     //await searchEngine('bmp');
     await searchEngine('txt');
     // await delay(5000);
@@ -245,7 +245,7 @@ describe('TST50** - Right button on a file', () => {
   test('TST5040 - Create file [web,electron]', async () => {
     await clickOn('[data-tid=folderContainerOpenDirMenu]');
     await clickOn('[data-tid=createNewFile]');
-    await global.client.pause(1000);
+    //await global.client.pause(1500);
     await clickOn('[data-tid=createTextFileButton]');
     await searchEngine('note');
     await expectElementExist(selectorFile, true);

@@ -63,6 +63,14 @@ beforeAll(async () => {
   }
   if (global.isMinio) {
     global.minio = await startMinio();
+  } else {
+    // copy extconfig
+    const fse = require('fs-extra');
+
+    let srcDir = '../scripts/extconfig.js';
+    let destDir = '../app/extconfig.js';
+
+    fse.copySync(srcDir, destDir);
   }
 });
 
@@ -73,6 +81,10 @@ afterAll(async () => {
   }
   if (global.isMinio) {
     await stopMinio(global.minio);
+  } else {
+    // cleanup extconfig
+    const fse = require('fs-extra');
+    fse.removeSync('../app/extconfig.js');
   }
 });
 
