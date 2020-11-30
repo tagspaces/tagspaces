@@ -1,0 +1,164 @@
+name: scheduled workflow dispatch trigger
+on:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  e2eTestsElectronWin:
+    name: E2E Windows
+    runs-on: windows-latest
+
+    steps:
+      - name: Checking out default branch
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: '10.x'
+      - name: Running yarn install, prettier and type checks
+        run: |
+          yarn install --check-files --cache-folder .ycache
+          yarn prettier-check
+          yarn type-check
+      - name: Run Unit tests
+        run: yarn test-unit
+      - name: Run Electron tests
+        run: |
+          yarn setup-ext
+          yarn build-main
+          yarn build-e2e
+          yarn test-e2e-electron
+
+  e2eTestsMinioWin:
+    name: E2E Windows Minio
+    runs-on: windows-latest
+
+    steps:
+      - name: Checking out default branch
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: '10.x'
+      - name: Running yarn install, prettier and type checks
+        run: |
+          yarn install --check-files --cache-folder .ycache
+          yarn prettier-check
+          yarn type-check
+      - name: Run Unit tests
+        run: yarn test-unit
+      - name: Run Electron tests
+        run: |
+          yarn setup-ext
+          yarn build-main
+          yarn build-e2e
+          yarn test-e2e-electron-minio
+
+  e2eTestsWebWin:
+    name: E2E Windows Web
+    runs-on: windows-latest
+
+    steps:
+      - name: Checking out default branch
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: '10.x'
+      - name: Running yarn install, prettier and type checks
+        run: |
+          yarn install --check-files --cache-folder .ycache
+          yarn prettier-check
+          yarn type-check
+      - name: Run Unit tests
+        run: yarn test-unit
+      - name: Run Electron tests
+        run: |
+          yarn setup-ext
+          yarn build-main
+          yarn build-e2e
+          yarn test-e2e-web
+
+  e2eTestsElectronMac:
+    name: E2E Mac
+    runs-on: macos-latest
+    steps:
+      - name: Checking out default branch
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: '10.x'
+      - name: Running yarn install, prettier and type checks
+        run: |
+          yarn install --check-files --cache-folder .ycache
+          yarn prettier-check
+          yarn type-check
+      - name: Run Unit tests
+        run: yarn test-unit
+      - name: Run Electron tests
+        run: |
+          yarn setup-ext
+          yarn build-main
+          yarn build-e2e
+          yarn test-e2e-electron
+
+  e2eTestsMinioMac:
+    name: E2E Minio Mac
+    runs-on: macos-latest
+    steps:
+      - name: Checking out default branch
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: '10.x'
+      - name: Running yarn install, prettier and type checks
+        run: |
+          yarn install --check-files --cache-folder .ycache
+          yarn prettier-check
+          yarn type-check
+      - name: Run Unit tests
+        run: yarn test-unit
+      - name: Run Electron tests
+        run: |
+          yarn setup-ext
+          yarn build-main
+          yarn build-e2e
+          yarn test-e2e-electron-minio
+
+  e2eTestsWinMac:
+    name: E2E Win Mac
+    runs-on: macos-latest
+    steps:
+      - name: Checking out default branch
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: '10.x'
+      - name: Running yarn install, prettier and type checks
+        run: |
+          yarn install --check-files --cache-folder .ycache
+          yarn prettier-check
+          yarn type-check
+      - name: Run Unit tests
+        run: yarn test-unit
+      - name: Run Electron tests
+        run: |
+          yarn setup-ext
+          yarn build-main
+          yarn build-e2e
+          yarn test-e2e-web
+      - name: 'Tar test reports'
+        run: tar -cvf test_reports.tar /tests/test-reports
+      - uses: actions/upload-artifact@v2
+        with:
+          name: test-reports
+          path: test_reports.tar

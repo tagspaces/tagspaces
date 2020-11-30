@@ -116,7 +116,7 @@ export async function expectElementExist(selector, exist = true) {
   const element = await global.client.$(selector);
   await element.waitUntil(
     async function() {
-      const displayed = await this.isDisplayed();
+      const displayed = await this.isDisplayedInViewport();
       return displayed === exist;
     },
     {
@@ -124,7 +124,7 @@ export async function expectElementExist(selector, exist = true) {
       timeoutMsg: 'expected selector to exist=' + exist + ' after 5s'
     }
   );
-  expect(await element.isDisplayed()).toBe(exist);
+  expect(await element.isDisplayedInViewport()).toBe(exist);
 }
 
 export async function createLocation(

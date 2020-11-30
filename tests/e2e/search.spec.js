@@ -6,7 +6,7 @@ import {
   defaultLocationPath,
   defaultLocationName
 } from './location.helpers';
-import { clickOn, setInputValue } from './general.helpers';
+import { clickOn, expectElementExist, setInputValue } from './general.helpers';
 
 export const regexQuery = '!"#$%&\'()*+,-./@:;<=>[\\]^_`{|}~';
 export const searchTag = 'tag1';
@@ -18,6 +18,7 @@ export const firstTagButton = '/tbody/tr[1]/td[3]/button[1]';
 
 export async function searchEngine(filename, tagName, resetSearchButton) {
   await clickOn('[data-tid=search]');
+  await expectElementExist('#textQuery', true);
   await setInputValue('#textQuery', filename);
 
   if (tagName) {
@@ -29,7 +30,9 @@ export async function searchEngine(filename, tagName, resetSearchButton) {
   } else {
     await clickOn('#searchButton');
   }
-  await global.client.pause(1000); // TODO wait for search results
+  await expectElementExist('[data-tid=TIDSearching]', true);
+  await expectElementExist('[data-tid=TIDSearching]', false);
+  // await global.client.pause(1000); // TODO wait for search results
 }
 
 /*describe('TST06 - Test Search in file structure:', () => {

@@ -664,19 +664,27 @@ class MainPage extends Component<Props, State> {
             selectedDirectoryPath={directoryPath}
           />
         )}
-        <CreateFileDialog
-          open={isCreateFileDialogOpened}
-          selectedDirectoryPath={
-            this.state.selectedDirectoryPath || directoryPath
-          }
-          chooseDirectoryPath={this.chooseDirectoryPath}
-          onClose={toggleCreateFileDialog}
-        />
+        {isCreateFileDialogOpened && (
+          <CreateFileDialog
+            open={isCreateFileDialogOpened}
+            selectedDirectoryPath={
+              this.state.selectedDirectoryPath || directoryPath
+            }
+            chooseDirectoryPath={this.chooseDirectoryPath}
+            onClose={toggleCreateFileDialog}
+          />
+        )}
         <SettingsDialog
           open={isSettingsDialogOpened}
           onClose={toggleSettingsDialog}
         />
         <Snackbar
+          data-tid={
+            'TID' +
+            (this.props.notificationStatus.text
+              ? this.props.notificationStatus.text.replace(/\./g, '')
+              : 'default')
+          }
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           open={this.props.notificationStatus.visible}
           onClose={this.props.hideNotifications}

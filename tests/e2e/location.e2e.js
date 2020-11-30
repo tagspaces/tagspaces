@@ -9,7 +9,6 @@ import {
   getLocationTid
 } from './location.helpers';
 import { clickOn, expectElementExist, setInputKeys } from './general.helpers';
-import {startChromeDriver, startMinio, startWebServer, stopChromeDriver, stopMinio} from "./test-utils.spec";
 
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const newLocationName = 'Location_Name_Changed';
