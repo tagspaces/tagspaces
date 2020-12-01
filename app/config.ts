@@ -99,25 +99,24 @@ export const AppConfig = {
   isCordovaAndroid,
   isCordova: isCordovaiOS || isCordovaAndroid,
   isMobile: isCordovaiOS || isCordovaAndroid || isIOS || isAndroid,
-  customLogo: (window as any).ExtLogoURL || false,
+  customLogo: window.ExtLogoURL || false,
   showAdvancedSearch:
-    (window as any).ExtShowAdvancedSearch !== undefined
-      ? (window as any).ExtShowAdvancedSearch
+    window.ExtShowAdvancedSearch !== undefined
+      ? window.ExtShowAdvancedSearch
       : true,
   showSmartTags:
-    (window as any).ExtShowSmartTags !== undefined
-      ? (window as any).ExtShowSmartTags
-      : true,
+    window.ExtShowSmartTags !== undefined ? window.ExtShowSmartTags : true,
   showWelcomePanel:
-    (window as any).ExtShowWelcomePanel !== undefined
-      ? (window as any).ExtShowWelcomePanel
+    window.ExtShowWelcomePanel !== undefined
+      ? window.ExtShowWelcomePanel
       : true,
-  sidebarColor: (window as any).ExtSidebarColor || '#2C001E', // '#00D1A1' // #008023
-  sidebarSelectionColor: (window as any).ExtSidebarSelectionColor || '#880E4F',
-  lightThemeLightColor: (window as any).ExtLightThemeLightColor || '#dcf3ec',
-  lightThemeMainColor: (window as any).ExtLightThemeMainColor || '#1dd19f',
-  darkThemeLightColor: (window as any).ExtDarkThemeLightColor || '#56454e',
-  darkThemeMainColor: (window as any).ExtDarkThemeMainColor || '#ff9abe',
+  locationsReadOnly: window.ExtLocations !== undefined,
+  sidebarColor: window.ExtSidebarColor || '#2C001E', // '#00D1A1' // #008023
+  sidebarSelectionColor: window.ExtSidebarSelectionColor || '#880E4F',
+  lightThemeLightColor: window.ExtLightThemeLightColor || '#dcf3ec',
+  lightThemeMainColor: window.ExtLightThemeMainColor || '#1dd19f',
+  darkThemeLightColor: window.ExtDarkThemeLightColor || '#56454e',
+  darkThemeMainColor: window.ExtDarkThemeMainColor || '#ff9abe',
   dirSeparator:
     navigator.appVersion.includes('Win') && !document.URL.startsWith('http')
       ? '\\'

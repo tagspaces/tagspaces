@@ -75,8 +75,6 @@ import DirectoryTreeView from '-/components/DirectoryTreeView';
 import LoadingLazy from '-/components/LoadingLazy';
 import { FileSystemEntry } from '-/services/utils-io';
 
-const isLocationsReadOnly = window.ExtLocationsReadOnly;
-
 const CreateLocationDialog = React.lazy(() =>
   import(
     /* webpackChunkName: "CreateLocationDialog" */ './dialogs/CreateLocationDialog'
@@ -569,7 +567,7 @@ class LocationManager extends React.Component<Props, State> {
               </div>
             </TargetMoveFileBox>
           )}
-          {!isLocationsReadOnly && (
+          {!AppConfig.locationsReadOnly && (
             <ListItemSecondaryAction>
               <IconButton
                 aria-label={i18n.t('core:options')}
@@ -642,7 +640,7 @@ class LocationManager extends React.Component<Props, State> {
           onClose={this.handleCloseLocationManagerMenu}
           openURLExternally={this.props.openURLExternally}
         />
-        {!isLocationsReadOnly && (
+        {!AppConfig.locationsReadOnly && (
           <div style={{ width: '100%', textAlign: 'center', marginBottom: 10 }}>
             <Button
               data-tid="createNewLocation"
