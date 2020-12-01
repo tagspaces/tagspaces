@@ -103,6 +103,10 @@ export const AppConfig = {
     (window as any).ExtShowAdvancedSearch !== undefined
       ? (window as any).ExtShowAdvancedSearch
       : true,
+  showSmartTags:
+    (window as any).ExtShowSmartTags !== undefined
+      ? (window as any).ExtShowSmartTags
+      : true,
   showWelcomePanel:
     (window as any).ExtShowWelcomePanel !== undefined
       ? (window as any).ExtShowWelcomePanel

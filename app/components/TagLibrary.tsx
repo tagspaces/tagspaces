@@ -65,6 +65,7 @@ import {
 } from '../reducers/app';
 import SmartTags from '../reducers/smart-tags';
 import { FileSystemEntry } from '-/services/utils-io';
+import { AppConfig } from '-/config';
 
 const isTagLibraryReadOnly =
   window.ExtTagLibrary && window.ExtTagLibrary.length > 0;
@@ -419,9 +420,11 @@ class TagLibrary extends React.Component<Props, State> {
           className={classes.taggroupsArea}
           data-tid="tagLibraryTagGroupList"
         >
-          <List style={{ paddingTop: 0, paddingBottom: 0 }}>
-            {SmartTags(i18n).map(this.renderTagGroup)}
-          </List>
+          {AppConfig.showSmartTags && (
+            <List style={{ paddingTop: 0, paddingBottom: 0 }}>
+              {SmartTags(i18n).map(this.renderTagGroup)}
+            </List>
+          )}
           <List style={{ paddingTop: 0 }}>
             {tagGroups.map(this.renderTagGroup)}
           </List>
