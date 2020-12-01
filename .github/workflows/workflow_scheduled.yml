@@ -5,13 +5,14 @@ on:
 
 jobs:
   e2eTestsElectronWin:
-    name: E2E Windows
+    name: E2E Windows Electron
     runs-on: windows-latest
 
     steps:
       - name: Checking out default branch
         uses: actions/checkout@v2
         with:
+          ref: develop
           submodules: true
       - uses: actions/setup-node@v2-beta
         with:
@@ -38,6 +39,7 @@ jobs:
       - name: Checking out default branch
         uses: actions/checkout@v2
         with:
+          ref: develop
           submodules: true
       - uses: actions/setup-node@v2-beta
         with:
@@ -49,6 +51,13 @@ jobs:
           yarn type-check
       - name: Run Unit tests
         run: yarn test-unit
+      - uses: suisei-cn/actions-download-file@v1
+        id: minio
+        name: Download the Minio.exe
+        with:
+          url: 'https://dl.min.io/server/minio/release/windows-amd64/minio.exe'
+          target: tests/bin/
+          auto-match: true
       - name: Run Electron tests
         run: |
           yarn setup-ext
@@ -64,6 +73,7 @@ jobs:
       - name: Checking out default branch
         uses: actions/checkout@v2
         with:
+          ref: develop
           submodules: true
       - uses: actions/setup-node@v2-beta
         with:
@@ -75,6 +85,13 @@ jobs:
           yarn type-check
       - name: Run Unit tests
         run: yarn test-unit
+      - uses: suisei-cn/actions-download-file@v1
+        id: minio
+        name: Download the Minio.exe
+        with:
+          url: 'https://dl.min.io/server/minio/release/windows-amd64/minio.exe'
+          target: tests/bin/
+          auto-match: true
       - name: Run Electron tests
         run: |
           yarn setup-ext
@@ -83,12 +100,13 @@ jobs:
           yarn test-e2e-web
 
   e2eTestsElectronMac:
-    name: E2E Mac
+    name: E2E Mac Electron
     runs-on: macos-latest
     steps:
       - name: Checking out default branch
         uses: actions/checkout@v2
         with:
+          ref: develop
           submodules: true
       - uses: actions/setup-node@v2-beta
         with:
@@ -108,12 +126,13 @@ jobs:
           yarn test-e2e-electron
 
   e2eTestsMinioMac:
-    name: E2E Minio Mac
+    name: E2E Mac Minio
     runs-on: macos-latest
     steps:
       - name: Checking out default branch
         uses: actions/checkout@v2
         with:
+          ref: develop
           submodules: true
       - uses: actions/setup-node@v2-beta
         with:
@@ -132,13 +151,14 @@ jobs:
           yarn build-e2e
           yarn test-e2e-electron-minio
 
-  e2eTestsWinMac:
-    name: E2E Win Mac
+  e2eTestsWebMac:
+    name: E2E Mac Web
     runs-on: macos-latest
     steps:
       - name: Checking out default branch
         uses: actions/checkout@v2
         with:
+          ref: develop
           submodules: true
       - uses: actions/setup-node@v2-beta
         with:

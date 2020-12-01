@@ -1,6 +1,6 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
-import { delay } from './hook';
-import { firstFile } from './test-utils.spec';
+import {delay} from './hook';
+import {firstFile} from './test-utils.spec';
 
 export const defaultLocationPath =
   './testdata/file-structure/supported-filestypes';
@@ -61,6 +61,38 @@ export async function setInputValue(selector, value) {
   await element.setValue(value);
 }
 
+export async function addInputKeys(tid, value) {
+  const element = await global.client.$('[data-tid=' + tid + ']');
+  await element.waitUntil(
+      async function() {
+        const displayed = await this.isDisplayedInViewport();
+        return displayed === true;
+      },
+      {
+        timeout: 5000,
+        timeoutMsg:
+            'setInputKeys selector ' + element.selector + ' to exist after 5s'
+      }
+  );
+  await element.click();
+
+  const elemInput = await global.client.$('[data-tid=' + tid + '] input');
+  await elemInput.waitUntil(
+      async function() {
+        // const displayed = await this.isDisplayed();
+        const displayed = await this.isDisplayedInViewport();
+        return displayed === true;
+      },
+      {
+        timeout: 5000,
+        timeoutMsg:
+            'setInputKeys selector ' + element.selector + ' to exist after 5s'
+      }
+  );
+  await elemInput.click();
+  await elemInput.keys(value);
+}
+
 export async function setInputKeys(tid, value) {
   const element = await global.client.$('[data-tid=' + tid + ']');
   await element.waitUntil(
@@ -110,6 +142,41 @@ export async function clearInputValue(inputElement) {
     await global.client.keys('Delete');
     await inputElement.clearValue();
   }
+}
+
+/**
+ *
+ * @param fileIndex
+ * @returns {Promise<string>} fileName; example usage: getFileName(-1) will return the last one
+ */
+export async function getGridFileName(fileIndex) {
+  const filesList = await global.client.$$(perspectiveGridTable + firstFile);
+  let file =
+    fileIndex < 0
+      ? filesList[filesList.length + fileIndex]
+      : filesList[fileIndex];
+  file = await file.$('div');
+  file = await file.$('div');
+  file = await file.$('div');
+  const fileNameElem = await file.$('p');
+  const fileName = await fileNameElem.getText();
+  const divs = await file.$$('div');
+  const lastDiv = await divs[divs.length - 1];
+  const fileExtElem = await lastDiv.$('span');
+  const fileExt = await fileExtElem.getText();
+  return fileName + '.' + fileExt.toLowerCase();
+}
+
+export async function getGridCellClass(fileIndex = 0) {
+  const filesList = await global.client.$$(perspectiveGridTable + firstFile);
+  let file =
+    fileIndex < 0
+      ? filesList[filesList.length + fileIndex]
+      : filesList[fileIndex];
+  file = await file.$('div');
+  file = await file.$('div');
+
+  return await file.getAttribute('class');
 }
 
 export async function expectElementExist(selector, exist = true) {

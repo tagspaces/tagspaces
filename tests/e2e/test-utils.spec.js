@@ -134,6 +134,12 @@ export async function openContextEntryMenu(selector, menuOperation) {
   await clickOn('[data-tid=' + menuOperation + ']');
 }
 
+/**
+ * @deprecated use getGridFileName(fileIndex) instead
+ * @param filename
+ * @param selector
+ * @returns {Promise<void>}
+ */
 export async function checkFilenameForExist(filename, selector) {
   // selector is current selector location for element in perspectiveGridTable or perspectiveListTable (full xpath path to element)
 

@@ -752,6 +752,7 @@ const EntryProperties = (props: Props) => {
           <div className={classes.gridItem}>
             <TagDropContainer entryPath={currentEntry.path}>
               <TagsSelect
+                dataTid="PropertiesTagsSelectTID"
                 placeholderText={i18n.t('core:dropHere')}
                 isReadOnlyMode={
                   isReadOnlyMode ||
