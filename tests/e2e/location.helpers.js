@@ -92,14 +92,6 @@ export async function createMinioLocation(
   await elemInput.keys(value);
 }*/
 
-export async function selectAllFilesClick() {
-  const gridPerspectiveSelectAllFiles = await global.client.$(
-    '[data-tid=gridPerspectiveSelectAllFiles]'
-  );
-  await gridPerspectiveSelectAllFiles.waitForDisplayed();
-  await gridPerspectiveSelectAllFiles.click();
-}
-
 export async function openLocationMenu(locationName) {
   await clickOn('[data-tid=locationMoreButton_' + locationName + ']');
 }
@@ -182,6 +174,29 @@ export async function getFirstFileName() {
   fileName = await renameFileDialogInput.getValue();
   await clickOn('[data-tid=closeRenameFileDialog]');
   return fileName;
+}
+
+export async function getPropertiesFileName() {
+  const propsFileNameInput = await global.client.$(
+    '[data-tid=fileNameProperties] input'
+  );
+  await propsFileNameInput.waitForDisplayed({ timeout: 5000 });
+  return await propsFileNameInput.getValue();
+}
+
+export async function getPropertiesTags() {
+  const arrTags = [];
+  const tags = await global.client.$$(
+    '[data-tid=PropertiesTagsSelectTID] div div'
+  );
+  for (let i = 0; i < tags.length; i++) {
+    const dataTid = await tags[i].getAttribute('data-tid');
+    if (dataTid && dataTid.startsWith('tagContainer_')) {
+      const label = await tags[i].$('button span span');
+      arrTags.push(await label.getText());
+    }
+  }
+  return arrTags;
 }
 
 /*export async function checkForValidExt(selector, ext) {

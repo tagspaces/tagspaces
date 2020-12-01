@@ -22,12 +22,10 @@ import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { bindActionCreators } from 'redux';
 import { Tag, getAllTags } from '-/reducers/taglibrary';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import TagContainer from './TagContainer';
 import EntryTagMenu from '-/components/menus/EntryTagMenu';
-import TaggingActions from '-/reducers/tagging-actions';
 
 const styles: any = (theme: any) => ({
   root: {
@@ -67,6 +65,7 @@ const styles: any = (theme: any) => ({
 });
 
 interface Props {
+  dataTid?: string;
   classes?: any;
   theme?: any;
   tags: Array<Tag>;
@@ -175,6 +174,7 @@ const TagsSelect = (props: Props) => {
   return (
     <div className={classes.root}>
       <Autocomplete
+        data-tid={props.dataTid}
         multiple
         options={!props.isReadOnlyMode ? allTags : []}
         getOptionLabel={option => option.title}
