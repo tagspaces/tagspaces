@@ -29,7 +29,8 @@ import {
   getGridFileName,
   selectorFile,
   selectorFolder,
-  setInputKeys
+  setInputKeys,
+  waitUntilClassChanged
 } from './general.helpers';
 
 const subFolderName = '/test-perspective-grid';
@@ -139,8 +140,13 @@ describe('TST50 - Perspective Grid', () => {
 
     //SelectAllFiles
     await clickOn('[data-tid=gridPerspectiveSelectAllFiles]');
-    await global.client.pause(500); // TODO
-    const classSelected = await getGridCellClass(0);
+
+    const classSelected = await waitUntilClassChanged(
+      perspectiveGridTable + firstFile + '/div/div',
+      classNotSelected
+    );
+    // await global.client.pause(1000); // TODO
+    // const classSelected = await getGridCellClass(0);
     expect(classNotSelected).not.toBe(classSelected);
 
     const filesList = await global.client.$$(perspectiveGridTable + firstFile);
@@ -310,12 +316,15 @@ describe('TST50** - Right button on a file', () => {
     );
     // Check if the file is opened
     // await delay(1500);
-    const webViewer = await global.client.$('#FileViewer');
-    await webViewer.waitForDisplayed();
+    const webViewer = await expectElementExist('#FileViewer');
+    // const webViewer = await global.client.$('#FileViewer');
+    // await webViewer.waitForDisplayed();
     //await delay(5000);
-    expect(await webViewer.isDisplayed()).toBe(true);
+    // expect(await webViewer.isDisplayed()).toBe(true);
     await global.client.switchToFrame(webViewer);
+    await global.client.pause(500);
     const iframeBody = await global.client.$('body');
+    await iframeBody.waitForDisplayed();
     const bodyTxt = await iframeBody.getText();
 
     await global.client.switchToParentFrame();

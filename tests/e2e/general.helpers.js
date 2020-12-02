@@ -30,6 +30,32 @@ export async function clickOn(selector, options = {}) {
   await element.click(options);
 }
 
+/**
+ *
+ * @param selector
+ * @param className
+ * @returns {Promise<void>} newClassName
+ */
+export async function waitUntilClassChanged(selector, className) {
+  const element = await global.client.$(selector);
+  await element.waitUntil(
+    async function() {
+      const newClassName = await this.getAttribute('class');
+      return newClassName !== className;
+    },
+    {
+      timeout: 5000,
+      timeoutMsg:
+        'waitUntilClassChanged selector ' +
+        selector +
+        ' className:' +
+        className +
+        ' to changed after 5s'
+    }
+  );
+  return await element.getAttribute('class');
+}
+
 export async function doubleClickOn(selector) {
   const element = await global.client.$(selector);
   await element.waitUntil(
@@ -192,6 +218,7 @@ export async function expectElementExist(selector, exist = true) {
     }
   );
   expect(await element.isDisplayedInViewport()).toBe(exist);
+  return element;
 }
 
 export async function createLocation(
