@@ -19,6 +19,7 @@
         <allow-intent href="market:*" />
         <preference name="android-minSdkVersion" value="22" />
         <preference name="android-targetSdkVersion" value="27" />
+		<preference name="AndroidXEnabled" value="true" />
         <icon density="mdpi" src="res/icon/android/mipmap-mdpi/ic_launcher.png" />
         <icon density="hdpi" src="res/icon/android/mipmap-hdpi/ic_launcher.png" />
         <icon density="xhdpi" src="res/icon/android/mipmap-xhdpi/ic_launcher.png" />
