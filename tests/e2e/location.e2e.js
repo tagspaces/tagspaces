@@ -18,18 +18,26 @@ let testLocationName;
 describe('TST03 - Testing locations:', () => {
   beforeAll(async () => {
     const fse = require('fs-extra');
+    const path = require('path');
 
-    let srcDir = '../scripts/extconfig-without-locations.js';
-    let destDir = '../app/extconfig.js';
+    const srcDir = path.join(
+      __dirname,
+      '..',
+      '..',
+      'scripts',
+      'extconfig-without-locations.js'
+    );
+    const destDir = path.join(__dirname, '..', '..', 'app', 'extconfig.js');
 
     fse.copySync(srcDir, destDir);
   });
 
   afterAll(async () => {
     const fse = require('fs-extra');
+    const path = require('path');
 
-    let srcDir = '../scripts/extconfig.js';
-    let destDir = '../app/extconfig.js';
+    const srcDir = path.join(__dirname, '..', '..', 'scripts', 'extconfig.js');
+    const destDir = path.join(__dirname, '..', '..', 'app', 'extconfig.js');
 
     fse.copySync(srcDir, destDir);
   });
@@ -111,20 +119,19 @@ describe('TST03 - Testing locations:', () => {
     // TODO test duplication warning on creating locations
   });
 
-  // TODO adjust delays
   it('TST0307 - Move location Up and Down [web]', async () => {
     await openLocationMenu(testLocationName);
     await clickOn('[data-tid=moveLocationUp]');
 
     const prevLocation = await getLocationTid(-2);
-    expect(prevLocation).toBe('location_' + testLocationName);
+    expect(prevLocation).toBe(testLocationName);
 
     await global.client.pause(500);
     await openLocationMenu(testLocationName);
     await clickOn('[data-tid=moveLocationDown]');
 
     const lastLocation = await getLocationTid(-1);
-    expect(lastLocation).toBe('location_' + testLocationName);
+    expect(lastLocation).toBe(testLocationName);
   });
 });
 /*

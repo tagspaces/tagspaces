@@ -19,7 +19,7 @@ export async function createLocation(
 ) {
   const lastLocationTID = await getLocationTid(-1);
   // Check if location not exist (from extconfig.js)
-  if ('location_' + locationName !== lastLocationTID) {
+  if (locationName !== lastLocationTID) {
     await clickOn('[data-tid=createNewLocation]');
     await clickOn('[data-tid=locationPath]');
     await setInputKeys('locationPath', locationPath || defaultLocationPath);
@@ -243,14 +243,18 @@ export async function startupLocation() {
  * @returns {Promise<string|null>} Location Tid ('location_' + name); example usage: getLocationName(-1) will return the last one
  */
 export async function getLocationTid(locationIndex) {
+  /*const locationList = await global.client.$$(
+    '//!*[@data-tid="locationList"]/div'
+  );*/
   const locationList = await global.client.$$(
-    '//*[@data-tid="locationList"]/div'
+    '[data-tid=locationTitleElement]'
   );
-  let location =
+  const location =
     locationIndex < 0
       ? locationList[locationList.length + locationIndex]
       : locationList[locationIndex];
-  location = await location.$('li');
-  location = await location.$('div');
-  return location.getAttribute('data-tid');
+  // location = await location.$('li');
+  // location = await location.$('div');
+  // return location.getAttribute('data-tid');
+  return location.getText();
 }

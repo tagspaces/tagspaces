@@ -66,9 +66,10 @@ beforeAll(async () => {
   } else {
     // copy extconfig
     const fse = require('fs-extra');
+    const path = require('path');
 
-    let srcDir = '../scripts/extconfig.js';
-    let destDir = '../app/extconfig.js';
+    let srcDir = path.join(__dirname, '..', '..', 'scripts', 'extconfig.js');
+    let destDir = path.join(__dirname, '..', '..', 'app', 'extconfig.js');
 
     fse.copySync(srcDir, destDir);
   }
@@ -84,7 +85,8 @@ afterAll(async () => {
   } else {
     // cleanup extconfig
     const fse = require('fs-extra');
-    fse.removeSync('../app/extconfig.js');
+    const path = require('path');
+    fse.removeSync(path.join(__dirname, '..', '..', 'app', 'extconfig.js'));
   }
 });
 

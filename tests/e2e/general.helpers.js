@@ -1,6 +1,6 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
-import {delay} from './hook';
-import {firstFile} from './test-utils.spec';
+import { delay } from './hook';
+import { firstFile } from './test-utils.spec';
 
 export const defaultLocationPath =
   './testdata/file-structure/supported-filestypes';
@@ -64,30 +64,30 @@ export async function setInputValue(selector, value) {
 export async function addInputKeys(tid, value) {
   const element = await global.client.$('[data-tid=' + tid + ']');
   await element.waitUntil(
-      async function() {
-        const displayed = await this.isDisplayedInViewport();
-        return displayed === true;
-      },
-      {
-        timeout: 5000,
-        timeoutMsg:
-            'setInputKeys selector ' + element.selector + ' to exist after 5s'
-      }
+    async function() {
+      const displayed = await this.isDisplayedInViewport();
+      return displayed === true;
+    },
+    {
+      timeout: 5000,
+      timeoutMsg:
+        'setInputKeys selector ' + element.selector + ' to exist after 5s'
+    }
   );
   await element.click();
 
   const elemInput = await global.client.$('[data-tid=' + tid + '] input');
   await elemInput.waitUntil(
-      async function() {
-        // const displayed = await this.isDisplayed();
-        const displayed = await this.isDisplayedInViewport();
-        return displayed === true;
-      },
-      {
-        timeout: 5000,
-        timeoutMsg:
-            'setInputKeys selector ' + element.selector + ' to exist after 5s'
-      }
+    async function() {
+      // const displayed = await this.isDisplayed();
+      const displayed = await this.isDisplayedInViewport();
+      return displayed === true;
+    },
+    {
+      timeout: 5000,
+      timeoutMsg:
+        'setInputKeys selector ' + element.selector + ' to exist after 5s'
+    }
   );
   await elemInput.click();
   await elemInput.keys(value);
