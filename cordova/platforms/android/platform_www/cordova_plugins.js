@@ -1,14 +1,6 @@
 cordova.define('cordova/plugin_list', function(require, exports, module) {
   module.exports = [
     {
-      "id": "com.whebcraft.cordova.plugin.downloader.Downloader",
-      "file": "plugins/com.whebcraft.cordova.plugin.downloader/www/Downloader.js",
-      "pluginId": "com.whebcraft.cordova.plugin.downloader",
-      "clobbers": [
-        "plugins.Downloader"
-      ]
-    },
-    {
       "id": "cordova-plugin-device.device",
       "file": "plugins/cordova-plugin-device/www/device.js",
       "pluginId": "cordova-plugin-device",
@@ -251,17 +243,26 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       "clobbers": [
         "window.plugins.socialsharing"
       ]
+    },
+    {
+      "id": "com.whebcraft.cordova.plugin.downloader.Downloader",
+      "file": "plugins/com.whebcraft.cordova.plugin.downloader/www/Downloader.js",
+      "pluginId": "com.whebcraft.cordova.plugin.downloader",
+      "clobbers": [
+        "plugins.Downloader"
+      ]
     }
   ];
   module.exports.metadata = {
-    "com.whebcraft.cordova.plugin.downloader": "0.1.0",
     "cordova-plugin-device": "2.0.3",
     "cordova-plugin-background-mode": "0.7.3",
-    "cordova-plugin-camera": "4.1.0",
+    "cordova-plugin-camera": "5.0.1",
     "cordova-plugin-file": "6.0.2",
     "cordova-plugin-file-opener2": "3.0.4",
     "cordova-plugin-whitelist": "1.3.4",
     "es6-promise-plugin": "4.2.2",
-    "cordova-plugin-x-socialsharing": "5.6.8"
+    "cordova-plugin-x-socialsharing": "6.0.2",
+    "cordova-plugin-androidx-adapter": "1.1.3",
+    "com.whebcraft.cordova.plugin.downloader": "0.1.0"
   };
 });
