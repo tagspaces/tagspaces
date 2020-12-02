@@ -198,6 +198,7 @@ describe('TST50 - Perspective Grid', () => {
     await clickOn('[data-tid=tagMoreButton_' + testTagName + ']');
     await global.client.pause(500);
     await clickOn('[data-tid=deleteTagMenu]');
+    await global.client.pause(500);
     await clickOn('[data-tid=confirmRemoveTagFromFile]');
     await global.client.pause(500);
     const propsNewTags = await getPropertiesTags();
