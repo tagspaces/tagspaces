@@ -352,8 +352,7 @@ describe('TST50** - Right button on a file', () => {
     expect(fileName).toContain(oldName);
   });
 
-  test('TST5018 - Delete file [web,electron]', async () =>
-  {
+  test('TST5018 - Delete file [web,electron]', async () => {
     await createTxtFile();
     await searchEngine('note'); //select new created file - note[date_created].txt
     /*let firstFileName = await getGridFileName(0);
