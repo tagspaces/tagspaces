@@ -922,14 +922,16 @@ class GridPerspective extends React.Component<Props, State> {
           removeTags={this.props.removeTags}
           isReadOnlyMode={this.props.isReadOnlyMode}
         />
-        <SortingMenu
-          open={this.state.sortingContextMenuOpened}
-          onClose={this.closeSortingMenu}
-          anchorEl={this.state.sortingContextMenuAnchorEl}
-          sortBy={this.state.sortBy}
-          orderBy={this.state.orderBy}
-          handleSortBy={this.handleSortBy}
-        />
+        {this.state.sortingContextMenuOpened && (
+          <SortingMenu
+            open={this.state.sortingContextMenuOpened}
+            onClose={this.closeSortingMenu}
+            anchorEl={this.state.sortingContextMenuAnchorEl}
+            sortBy={this.state.sortBy}
+            orderBy={this.state.orderBy}
+            handleSortBy={this.handleSortBy}
+          />
+        )}
         <GridOptionsMenu
           open={this.state.optionsContextMenuOpened}
           onClose={this.closeOptionsMenu}

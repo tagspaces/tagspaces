@@ -280,13 +280,16 @@ export async function createTxtFile() {
 }
 
 export async function waitForNotification(tid = 'notificationTID') {
-  await expectElementExist('[data-tid=' + tid + ']', true);
-  const closeButton = await global.client.$('[data-tid=close' + tid + ']');
-  if (await closeButton.isDisplayed()) {
-    await closeButton.click();
-  } else {
-    // autohide Notification
-    await expectElementExist('[data-tid=' + tid + ']', false, 10000);
+  // await expectElementExist('[data-tid=' + tid + ']', true, 8000);
+  const notificationTID = await global.client.$('[data-tid=' + tid + ']');
+  if (await notificationTID.isDisplayed()) {
+    const closeButton = await global.client.$('[data-tid=close' + tid + ']');
+    if (await closeButton.isDisplayed()) {
+      await closeButton.click();
+    } else {
+      // autohide Notification
+      await expectElementExist('[data-tid=' + tid + ']', false, 10000);
+    }
   }
 }
 

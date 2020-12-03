@@ -30,7 +30,6 @@ import {
   getGridFileName,
   selectorFile,
   selectorFolder,
-  setInputKeys,
   waitUntilClassChanged
 } from './general.helpers';
 
@@ -125,7 +124,7 @@ describe('TST50 - Perspective Grid', () => {
 
     test('TST10** - Sort by extension [web,minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortByExt]');
-      await global.client.pause(500); // TODO
+      await global.client.pause(1000); // TODO
       const firstFileName = await getGridFileName(0);
       expect(firstFileName).toBe('sample.zip');
     });
@@ -353,11 +352,19 @@ describe('TST50** - Right button on a file', () => {
     expect(fileName).toContain(oldName);
   });
 
-  test('TST5018 - Delete file [web,electron]', async () => {
+  test('TST5018 - Delete file [web,electron]', async () =>
+  {
+    await createTxtFile();
     await searchEngine('note'); //select new created file - note[date_created].txt
+    /*let firstFileName = await getGridFileName(0);
+    expect(firstFileName).toBe('note.txt');*/
+
     await expectElementExist(selectorFile, true);
+
     await deleteFirstFile();
     await expectElementExist(selectorFile, false);
+    /*firstFileName = await getGridFileName(0);
+    expect(firstFileName).toBe(undefined);*/
   });
 
   test('TST5026 - Open file natively [electron]', async () => {
