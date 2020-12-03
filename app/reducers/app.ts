@@ -396,6 +396,7 @@ export default (state: any = initialState, action: any) => {
         notificationStatus: {
           visible: action.visible,
           text: action.text,
+          tid: action.tid,
           notificationType: action.notificationType,
           autohide: action.autohide
         }
@@ -1376,13 +1377,15 @@ export const actions = {
   showNotification: (
     text: string,
     notificationType: string = 'default',
-    autohide: boolean = true
+    autohide: boolean = true,
+    tid: string = 'notificationTID'
   ) => ({
     type: types.SET_NOTIFICATION,
     visible: true,
     text,
     notificationType,
-    autohide
+    autohide,
+    tid
   }),
   hideNotifications: () => ({
     type: types.SET_NOTIFICATION,

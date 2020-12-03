@@ -177,20 +177,23 @@ export async function clearInputValue(inputElement) {
  */
 export async function getGridFileName(fileIndex) {
   const filesList = await global.client.$$(perspectiveGridTable + firstFile);
-  let file =
-    fileIndex < 0
-      ? filesList[filesList.length + fileIndex]
-      : filesList[fileIndex];
-  file = await file.$('div');
-  file = await file.$('div');
-  file = await file.$('div');
-  const fileNameElem = await file.$('p');
-  const fileName = await fileNameElem.getText();
-  const divs = await file.$$('div');
-  const lastDiv = await divs[divs.length - 1];
-  const fileExtElem = await lastDiv.$('span');
-  const fileExt = await fileExtElem.getText();
-  return fileName + '.' + fileExt.toLowerCase();
+  if (filesList.length > 0) {
+    let file =
+      fileIndex < 0
+        ? filesList[filesList.length + fileIndex]
+        : filesList[fileIndex];
+    file = await file.$('div');
+    file = await file.$('div');
+    file = await file.$('div');
+    const fileNameElem = await file.$('p');
+    const fileName = await fileNameElem.getText();
+    const divs = await file.$$('div');
+    const lastDiv = await divs[divs.length - 1];
+    const fileExtElem = await lastDiv.$('span');
+    const fileExt = await fileExtElem.getText();
+    return fileName + '.' + fileExt.toLowerCase();
+  }
+  return undefined;
 }
 
 export async function getGridCellClass(fileIndex = 0) {
@@ -205,7 +208,11 @@ export async function getGridCellClass(fileIndex = 0) {
   return await file.getAttribute('class');
 }
 
-export async function expectElementExist(selector, exist = true) {
+export async function expectElementExist(
+  selector,
+  exist = true,
+  timeout = 5000
+) {
   const element = await global.client.$(selector);
   await element.waitUntil(
     async function() {
@@ -213,8 +220,9 @@ export async function expectElementExist(selector, exist = true) {
       return displayed === exist;
     },
     {
-      timeout: 5000,
-      timeoutMsg: 'expected selector to exist=' + exist + ' after 5s'
+      timeout: timeout,
+      timeoutMsg:
+        'expected selector to exist=' + exist + ' after ' + timeout / 1000 + 's'
     }
   );
   expect(await element.isDisplayedInViewport()).toBe(exist);
@@ -260,6 +268,29 @@ export async function createLocation(
   );
   await confirmLocationCreation.waitForDisplayed();
   await confirmLocationCreation.click();
+}
+
+export async function createTxtFile() {
+  await clickOn('[data-tid=folderContainerOpenDirMenu]');
+  await global.client.pause(500);
+  await clickOn('[data-tid=createNewFile]');
+  //await global.client.pause(1500);
+  await clickOn('[data-tid=createTextFileButton]');
+  await waitForNotification();
+}
+
+export async function waitForNotification(tid = 'notificationTID') {
+  // await expectElementExist('[data-tid=' + tid + ']', true, 8000);
+  const notificationTID = await global.client.$('[data-tid=' + tid + ']');
+  if (await notificationTID.isDisplayed()) {
+    const closeButton = await global.client.$('[data-tid=close' + tid + ']');
+    if (await closeButton.isDisplayed()) {
+      await closeButton.click();
+    } else {
+      // autohide Notification
+      await expectElementExist('[data-tid=' + tid + ']', false, 10000);
+    }
+  }
 }
 
 export async function settingsSetShowUnixHiddenEntries() {

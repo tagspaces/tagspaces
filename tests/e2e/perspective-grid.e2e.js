@@ -23,13 +23,13 @@ import {
 import {
   addInputKeys,
   clickOn,
+  createTxtFile,
   doubleClickOn,
   expectElementExist,
   getGridCellClass,
   getGridFileName,
   selectorFile,
   selectorFolder,
-  setInputKeys,
   waitUntilClassChanged
 } from './general.helpers';
 
@@ -110,14 +110,21 @@ describe('TST50 - Perspective Grid', () => {
 
     test('TST10** - Sort by date [web,minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortByDate]');
-      await global.client.pause(500); // TODO
-      const firstFileName = await getGridFileName(0);
-      expect(firstFileName).toBe('sample.txt');
+      await global.client.pause(500);
+
+      await createTxtFile();
+
+      let firstFileName = await getGridFileName(0);
+      expect(firstFileName).toBe('note.txt');
+      //cleanup
+      await deleteFirstFile();
+      firstFileName = await getGridFileName(0);
+      expect(firstFileName).not.toBe('note.txt');
     });
 
     test('TST10** - Sort by extension [web,minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortByExt]');
-      await global.client.pause(500); // TODO
+      await global.client.pause(1000); // TODO
       const firstFileName = await getGridFileName(0);
       expect(firstFileName).toBe('sample.zip');
     });
@@ -272,12 +279,14 @@ describe('TST50 - Perspective Grid', () => {
   });
 
   test('TST5040 - Create file [web,electron]', async () => {
-    await clickOn('[data-tid=folderContainerOpenDirMenu]');
-    await clickOn('[data-tid=createNewFile]');
-    //await global.client.pause(1500);
-    await clickOn('[data-tid=createTextFileButton]');
+    await createTxtFile();
     await searchEngine('note');
     await expectElementExist(selectorFile, true);
+
+    //cleanup
+    await deleteFirstFile();
+    const firstFileName = await getGridFileName(0);
+    expect(firstFileName).toBe(undefined);
   });
 
   /*test('TST51** - Show/Hide directories in perspective view', async () => { //TODO
@@ -344,10 +353,17 @@ describe('TST50** - Right button on a file', () => {
   });
 
   test('TST5018 - Delete file [web,electron]', async () => {
+    await createTxtFile();
     await searchEngine('note'); //select new created file - note[date_created].txt
+    /*let firstFileName = await getGridFileName(0);
+    expect(firstFileName).toBe('note.txt');*/
+
     await expectElementExist(selectorFile, true);
+
     await deleteFirstFile();
     await expectElementExist(selectorFile, false);
+    /*firstFileName = await getGridFileName(0);
+    expect(firstFileName).toBe(undefined);*/
   });
 
   test('TST5026 - Open file natively [electron]', async () => {

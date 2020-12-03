@@ -679,12 +679,7 @@ class MainPage extends Component<Props, State> {
           onClose={toggleSettingsDialog}
         />
         <Snackbar
-          data-tid={
-            'TID' +
-            (this.props.notificationStatus.text
-              ? this.props.notificationStatus.text.replace(/\./g, '')
-              : 'default')
-          }
+          data-tid={this.props.notificationStatus.tid}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           open={this.props.notificationStatus.visible}
           onClose={this.props.hideNotifications}
@@ -694,6 +689,7 @@ class MainPage extends Component<Props, State> {
           message={this.props.notificationStatus.text}
           action={[
             <IconButton
+              data-tid={'close' + this.props.notificationStatus.tid}
               key="close"
               aria-label={i18n.t('core:closeButton')}
               color="inherit"

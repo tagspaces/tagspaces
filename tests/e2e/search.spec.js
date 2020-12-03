@@ -1,12 +1,9 @@
-import { delay, clearLocalStorage } from './hook';
-import { checkFilenameForExist } from './test-utils.spec';
 import {
-  createLocation,
-  openLocation,
-  defaultLocationPath,
-  defaultLocationName
-} from './location.helpers';
-import { clickOn, expectElementExist, setInputValue } from './general.helpers';
+  clickOn,
+  expectElementExist,
+  setInputValue,
+  waitForNotification
+} from './general.helpers';
 
 export const regexQuery = '!"#$%&\'()*+,-./@:;<=>[\\]^_`{|}~';
 export const searchTag = 'tag1';
@@ -30,9 +27,7 @@ export async function searchEngine(filename, tagName, resetSearchButton) {
   } else {
     await clickOn('#searchButton');
   }
-  await expectElementExist('[data-tid=TIDSearching]', true);
-  await expectElementExist('[data-tid=TIDSearching]', false);
-  // await global.client.pause(1000); // TODO wait for search results
+  await waitForNotification('TIDSearching');
 }
 
 /*describe('TST06 - Test Search in file structure:', () => {
