@@ -187,7 +187,7 @@ export async function getPropertiesFileName() {
   const propsFileNameInput = await global.client.$(
     '[data-tid=fileNameProperties] input'
   );
-  await propsFileNameInput.waitForDisplayed({ timeout: 5000 });
+  await propsFileNameInput.waitForDisplayed({ timeout: 10000 });
   return await propsFileNameInput.getValue();
 }
 
