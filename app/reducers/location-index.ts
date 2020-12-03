@@ -304,7 +304,12 @@ export const actions = {
     }
     const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
     dispatch(
-      AppActions.showNotification(i18n.t('core:searching'), 'default', false)
+      AppActions.showNotification(
+        i18n.t('core:searching'),
+        'default',
+        false,
+        'TIDSearching'
+      )
     );
     dispatch(actions.setSearchQuery(searchQuery));
     setTimeout(async () => {
@@ -383,7 +388,12 @@ export const actions = {
     );
     console.time('globalSearch');
     dispatch(
-      AppActions.showNotification(i18n.t('core:searching'), 'default', false)
+      AppActions.showNotification(
+        i18n.t('core:searching'),
+        'default',
+        false,
+        'TIDSearching'
+      )
     );
 
     // Preparing for global search
@@ -414,7 +424,8 @@ export const actions = {
             AppActions.showNotification(
               i18n.t('core:searching') + ' ' + location.name,
               'default',
-              true
+              true,
+              'TIDSearching'
             )
           );
           if (isCloudLocation) {

@@ -1,7 +1,13 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 import { delay } from './hook';
 import { firstFile, openContextEntryMenu } from './test-utils.spec';
-import { clickOn, setInputKeys, setInputValue } from './general.helpers';
+import {
+  clickOn,
+  expectElementExist,
+  setInputKeys,
+  setInputValue,
+  waitForNotification
+} from './general.helpers';
 
 export const defaultLocationPath =
   './testdata/file-structure/supported-filestypes';
@@ -159,6 +165,7 @@ export async function deleteFirstFile() {
     'fileMenuDeleteFile'
   );
   await clickOn('[data-tid=confirmDeleteFileDialog]');
+  await waitForNotification();
 }
 
 export async function getFirstFileName() {
