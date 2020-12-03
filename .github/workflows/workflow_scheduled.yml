@@ -57,7 +57,6 @@ jobs:
         with:
           url: 'https://dl.min.io/server/minio/release/windows-amd64/minio.exe'
           target: tests/bin/
-          auto-match: true
       - name: Run Electron tests
         run: |
           yarn setup-ext
@@ -91,7 +90,6 @@ jobs:
         with:
           url: 'https://dl.min.io/server/minio/release/windows-amd64/minio.exe'
           target: tests/bin/
-          auto-match: true
       - name: Run Electron tests
         run: |
           yarn setup-ext
