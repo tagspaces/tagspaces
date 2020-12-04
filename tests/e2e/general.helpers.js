@@ -279,6 +279,38 @@ export async function createTxtFile() {
   await waitForNotification();
 }
 
+/**
+ *
+ * @param classNotSelected
+ * @returns {Promise<void>} classSelected
+ */
+export async function selectAllFiles(classNotSelected) {
+  await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
+  // todo temp fix: is not clickable
+  await clickOn('[data-tid=gridPerspectiveToggleShowDirectories]');
+  await global.client.pause(500);
+
+  //SelectAllFiles
+  await clickOn('[data-tid=gridPerspectiveSelectAllFiles]');
+
+  return await waitUntilClassChanged(
+    perspectiveGridTable + firstFile + '/div/div',
+    classNotSelected
+  );
+}
+
+export async function extractTags(selectorElement) {
+  const arrTags = [];
+  const tags = await selectorElement.$('#gridCellTags');
+  if (tags) {
+    const tagsList = await tags.$$('button');
+    for (let i = 0; i < tagsList.length; i++) {
+      arrTags.push(await tagsList[i].getAttribute('title'));
+    }
+  }
+  return arrTags;
+}
+
 export async function waitForNotification(tid = 'notificationTID') {
   await global.client.pause(500);
   // await expectElementExist('[data-tid=' + tid + ']', true, 8000);
