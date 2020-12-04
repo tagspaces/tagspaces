@@ -24,6 +24,7 @@ import {
   addInputKeys,
   clickOn,
   createTxtFile,
+  disableTrashBin,
   doubleClickOn,
   expectElementExist,
   getGridCellClass,
@@ -92,6 +93,7 @@ describe('TST50 - Perspective Grid', () => {
   describe('TST5003 - Testing sort files in the grid perspective [TST5003,web,minio,electron]', () => {
     beforeEach(async () => {
       await clickOn('[data-tid=gridPerspectiveSortMenu]');
+      await global.client.pause(500);
     });
 
     test('TST10** - Sort by name [web,minio,electron]', async () => {
@@ -110,16 +112,20 @@ describe('TST50 - Perspective Grid', () => {
 
     test('TST10** - Sort by date [web,minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortByDate]');
-      await global.client.pause(500);
+      await global.client.pause(500); //TODO
 
       await createTxtFile();
-
+      // await global.client.pause(500);
       let firstFileName = await getGridFileName(0);
+
       expect(firstFileName).toBe('note.txt');
+
       //cleanup
+      await disableTrashBin();
+      await global.client.pause(500);
       await deleteFirstFile();
-      firstFileName = await getGridFileName(0);
-      expect(firstFileName).not.toBe('note.txt');
+      // firstFileName = await getGridFileName(0);
+      // expect(firstFileName).not.toBe('note.txt'); TODO its have note.txt from another tests
     });
 
     test('TST10** - Sort by extension [web,minio,electron]', async () => {
@@ -139,11 +145,11 @@ describe('TST50 - Perspective Grid', () => {
 
   test('TST5004 - Select/deselect all files [TST5004,web,minio,electron]', async () => {
     const classNotSelected = await getGridCellClass(0);
-
-    await clickOn('[data-tid=perspectiveGridToolbar]');
-    // await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
+    // await clickOn('[data-tid=perspectiveGridToolbar]');
+    await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
     // todo temp fix: is not clickable
-    // await clickOn('[data-tid=gridPerspectiveToggleShowDirectories]');
+    await clickOn('[data-tid=gridPerspectiveToggleShowDirectories]');
+    await global.client.pause(500);
 
     //SelectAllFiles
     await clickOn('[data-tid=gridPerspectiveSelectAllFiles]');
@@ -177,7 +183,7 @@ describe('TST50 - Perspective Grid', () => {
 
   // This scenario includes "Add tags" && "Remove tags" to be fulfilled
   test('TST5005 - Add tags to the selected files [TST5005,web,minio,electron]', async () => {
-    await searchEngine('txt');
+    await searchEngine('bmp');
 
     // open fileProperties
     await clickOn(perspectiveGridTable + firstFile);
@@ -197,7 +203,7 @@ describe('TST50 - Perspective Grid', () => {
   });
 
   test('TST5006 - Remove tags from selected files [TST5006,web,minio,electron]', async () => {
-    await searchEngine('txt');
+    await searchEngine('bmp');
 
     // open fileProperties
     await clickOn(perspectiveGridTable + firstFile);
@@ -216,77 +222,6 @@ describe('TST50 - Perspective Grid', () => {
     await global.client.pause(500);
     const propsNewTags = await getPropertiesTags();
     expect(propsNewTags.includes(testTagName)).toBe(false);
-  });
-
-  test('TST5037 - Show sub folders [TST5037,web,electron]', async () => {
-    //open Option menu
-    await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
-    //click on hide directories
-    await clickOn('[data-tid=gridPerspectiveToggleShowDirectories]');
-
-    //file
-    await expectElementExist(selectorFile, true);
-    //folder
-    await expectElementExist(selectorFolder, false);
-
-    // show sub folder in the grid perspective
-    await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
-    await clickOn('[data-tid=gridPerspectiveToggleShowDirectories]');
-
-    //file
-    await expectElementExist(selectorFile, true);
-    //folder
-    await expectElementExist(selectorFolder, true);
-  });
-
-  test('TST5038 - Return directory back [web,electron]', async () => {
-    // file exist
-    await expectElementExist(
-      '//*[@data-tid="perspectiveGridFileTable"]/span',
-      true
-    );
-
-    //Open folder
-    await doubleClickOn('//*[@data-tid="perspectiveGridFileTable"]/div');
-
-    await expectElementExist(
-      '//*[@data-tid="perspectiveGridFileTable"]/span',
-      false
-    );
-
-    //Back
-    await clickOn('[data-tid=gridPerspectiveOnBackButton]');
-
-    await expectElementExist(
-      '//*[@data-tid="perspectiveGridFileTable"]/span',
-      true
-    );
-  });
-
-  test('TST5039 - Changing the Perspective View [web,electron]', async () => {
-    const grid = await global.client.$('[data-tid=perspectiveGridFileTable]');
-    let gridStyle = await grid.getAttribute('style');
-
-    expect(gridStyle).toContain(
-      'grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));'
-    );
-
-    await clickOn('[data-tid=gridPerspectiveSwitchLayoutToRow]');
-    // check perspective view
-
-    gridStyle = await grid.getAttribute('style');
-    expect(gridStyle).toContain('grid-template-columns: none;');
-  });
-
-  test('TST5040 - Create file [web,electron]', async () => {
-    await createTxtFile();
-    await searchEngine('note');
-    await expectElementExist(selectorFile, true);
-
-    //cleanup
-    await deleteFirstFile();
-    const firstFileName = await getGridFileName(0);
-    expect(firstFileName).toBe(undefined);
   });
 
   /*test('TST51** - Show/Hide directories in perspective view', async () => { //TODO
@@ -352,7 +287,7 @@ describe('TST50** - Right button on a file', () => {
     expect(fileName).toContain(oldName);
   });
 
-  test('TST5018 - Delete file [web,electron]', async () => {
+  test('TST5018 - Delete file [TST5018,web,minio,electron]', async () => {
     await createTxtFile();
     await searchEngine('note'); //select new created file - note[date_created].txt
     /*let firstFileName = await getGridFileName(0);
@@ -405,7 +340,7 @@ describe('TST50** - Right button on a file', () => {
   });*/
 
   //TODO fix electron: element not interactable
-  test('TST5028 - Move / Copy file [web]', async () => {
+  test('TST5028 - Move / Copy file [TST5028]', async () => {
     await searchEngine('txt');
     await openContextEntryMenu(
       perspectiveGridTable + firstFile,
@@ -415,5 +350,63 @@ describe('TST50** - Right button on a file', () => {
     await clickOn('[data-tid=closeMoveCopyDialog]');
 
     // Check if the directories are displayed
+  });
+
+  test('TST5037 - Show sub folders [TST5037,web,minio,electron]', async () => {
+    //open Option menu
+    await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
+    //click on hide directories
+    await clickOn('[data-tid=gridPerspectiveToggleShowDirectories]');
+
+    //file
+    await expectElementExist(selectorFile, true);
+    //folder
+    await expectElementExist(selectorFolder, false);
+
+    // show sub folder in the grid perspective
+    await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
+    await clickOn('[data-tid=gridPerspectiveToggleShowDirectories]');
+
+    //file
+    await expectElementExist(selectorFile, true);
+    //folder
+    await expectElementExist(selectorFolder, true);
+  });
+
+  test('TST5038 - Return directory back [TST5038,web,minio,electron]', async () => {
+    await expectElementExist(selectorFolder);
+
+    //Open folder
+    await doubleClickOn(selectorFolder);
+
+    await expectElementExist(selectorFolder, false);
+    await clickOn('[data-tid=gridPerspectiveOnBackButton]');
+    await expectElementExist(selectorFolder);
+  });
+
+  test('TST5039 - Changing the Perspective View [TST5039,web,minio,electron]', async () => {
+    const grid = await global.client.$('[data-tid=perspectiveGridFileTable]');
+    let gridStyle = await grid.getAttribute('style');
+
+    expect(gridStyle).toContain(
+      'grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));'
+    );
+
+    await clickOn('[data-tid=gridPerspectiveSwitchLayoutToRow]');
+    // check perspective view
+
+    gridStyle = await grid.getAttribute('style');
+    expect(gridStyle).toContain('grid-template-columns: none;');
+  });
+
+  test('TST5040 - Create file [TST5040,web,minio,electron]', async () => {
+    await createTxtFile();
+    await searchEngine('note');
+    await expectElementExist(selectorFile, true);
+
+    //cleanup
+    await deleteFirstFile();
+    const firstFileName = await getGridFileName(0);
+    expect(firstFileName).toBe(undefined);
   });
 });

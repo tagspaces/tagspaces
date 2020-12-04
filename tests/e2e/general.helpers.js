@@ -280,6 +280,7 @@ export async function createTxtFile() {
 }
 
 export async function waitForNotification(tid = 'notificationTID') {
+  await global.client.pause(500);
   // await expectElementExist('[data-tid=' + tid + ']', true, 8000);
   const notificationTID = await global.client.$('[data-tid=' + tid + ']');
   if (await notificationTID.isDisplayed()) {

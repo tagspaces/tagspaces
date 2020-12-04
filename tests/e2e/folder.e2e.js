@@ -15,15 +15,13 @@ import {
   createNewDirectory,
   deleteDirectory,
   clickOn,
-  expectElementExist,
-  selectorFolder,
-  doubleClickOn
+  expectElementExist
 } from './general.helpers';
 import { renameFolder } from './test-utils.spec';
 
-export const firstFile = '/span';
-export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
-const newDirectoryName = 'newDirectory';
+// export const firstFile = '/span';
+// export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
+// const newDirectoryName = 'newDirectory';
 
 describe('TST01 - Folder management [electron]', () => {
   beforeEach(async () => {
@@ -38,7 +36,7 @@ describe('TST01 - Folder management [electron]', () => {
     await closeFileProperties();
   });
 
-  it('TST0101 - Create subfolder [electron]', async () => {
+  it('TST0101 - Create subfolder [TST0101,web,minio,electron]', async () => {
     const testFolder = await createNewDirectory();
     await expectElementExist('[data-tid=fsEntryName_' + testFolder + ']');
     await openEntry(testFolder);
@@ -49,7 +47,7 @@ describe('TST01 - Folder management [electron]', () => {
     );
   });
 
-  it('TST0102 - Reload folder [electron]', async () => {
+  it('TST0102 - Reload folder [TST0102,web,minio,electron]', async () => {
     const testFolder = await createNewDirectory();
     await openEntry(testFolder);
     await reloadDirectory();
@@ -62,7 +60,7 @@ describe('TST01 - Folder management [electron]', () => {
   });
 
   // TODO
-  it('TST0103 - Rename folder [electron]', async () => {
+  it('TST0103 - Rename folder [TST0103]', async () => {
     const testFolder = await createNewDirectory();
     await openEntry(testFolder);
     const newDirectoryName = await renameFolder();
@@ -76,7 +74,7 @@ describe('TST01 - Folder management [electron]', () => {
     );*/
   });
 
-  it('TST0104 - Delete empty folder [electron]', async () => {
+  it('TST0104 - Delete empty folder [TST0104,electron]', async () => {
     await disableTrashBin();
     await global.client.pause(500);
     const testFolder = await createNewDirectory();
@@ -89,18 +87,7 @@ describe('TST01 - Folder management [electron]', () => {
     );
   });
 
-  it('TST0106 - Show folder tags [electron]', async () => {
+  it('TST0106 - Show folder tags [TST0106]', async () => {
     // await createNewDirectory();
-  });
-
-  it('TST51** - Return directory back [electron]', async () => {
-    await expectElementExist(selectorFolder);
-
-    //Open folder
-    await doubleClickOn(selectorFolder);
-
-    await expectElementExist(selectorFolder, false);
-    await clickOn('[data-tid=gridPerspectiveOnBackButton]');
-    await expectElementExist(selectorFolder);
   });
 });
