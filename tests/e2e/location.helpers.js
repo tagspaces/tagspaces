@@ -188,7 +188,8 @@ export async function getPropertiesFileName() {
     '[data-tid=fileNameProperties] input'
   );
   await propsFileNameInput.waitForDisplayed({ timeout: 10000 });
-  return await propsFileNameInput.getValue();
+  const fileName = await propsFileNameInput.getValue();
+  return fileName.replace(/ *\[[^\]]*]/, '');
 }
 
 export async function getPropertiesTags() {
