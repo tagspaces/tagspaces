@@ -24,6 +24,7 @@ import {
   addInputKeys,
   clickOn,
   createTxtFile,
+  disableTrashBin,
   doubleClickOn,
   expectElementExist,
   getGridCellClass,
@@ -92,6 +93,7 @@ describe('TST50 - Perspective Grid', () => {
   describe('TST5003 - Testing sort files in the grid perspective [TST5003,web,minio,electron]', () => {
     beforeEach(async () => {
       await clickOn('[data-tid=gridPerspectiveSortMenu]');
+      await global.client.pause(500);
     });
 
     test('TST10** - Sort by name [web,minio,electron]', async () => {
@@ -110,16 +112,20 @@ describe('TST50 - Perspective Grid', () => {
 
     test('TST10** - Sort by date [web,minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortByDate]');
-      await global.client.pause(500);
+      await global.client.pause(500); //TODO
 
       await createTxtFile();
-
+      // await global.client.pause(500);
       let firstFileName = await getGridFileName(0);
+
       expect(firstFileName).toBe('note.txt');
+
       //cleanup
+      await disableTrashBin();
+      await global.client.pause(500);
       await deleteFirstFile();
-      firstFileName = await getGridFileName(0);
-      expect(firstFileName).not.toBe('note.txt');
+      // firstFileName = await getGridFileName(0);
+      // expect(firstFileName).not.toBe('note.txt'); TODO its have note.txt from another tests
     });
 
     test('TST10** - Sort by extension [web,minio,electron]', async () => {
@@ -177,7 +183,7 @@ describe('TST50 - Perspective Grid', () => {
 
   // This scenario includes "Add tags" && "Remove tags" to be fulfilled
   test('TST5005 - Add tags to the selected files [TST5005,web,minio,electron]', async () => {
-    await searchEngine('txt');
+    await searchEngine('bmp');
 
     // open fileProperties
     await clickOn(perspectiveGridTable + firstFile);
@@ -197,7 +203,7 @@ describe('TST50 - Perspective Grid', () => {
   });
 
   test('TST5006 - Remove tags from selected files [TST5006,web,minio,electron]', async () => {
-    await searchEngine('txt');
+    await searchEngine('bmp');
 
     // open fileProperties
     await clickOn(perspectiveGridTable + firstFile);
