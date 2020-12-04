@@ -145,11 +145,11 @@ describe('TST50 - Perspective Grid', () => {
 
   test('TST5004 - Select/deselect all files [TST5004,web,minio,electron]', async () => {
     const classNotSelected = await getGridCellClass(0);
-
-    await clickOn('[data-tid=perspectiveGridToolbar]');
-    // await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
+    // await clickOn('[data-tid=perspectiveGridToolbar]');
+    await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
     // todo temp fix: is not clickable
-    // await clickOn('[data-tid=gridPerspectiveToggleShowDirectories]');
+    await clickOn('[data-tid=gridPerspectiveToggleShowDirectories]');
+    await global.client.pause(500);
 
     //SelectAllFiles
     await clickOn('[data-tid=gridPerspectiveSelectAllFiles]');
