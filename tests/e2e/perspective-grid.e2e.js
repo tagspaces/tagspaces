@@ -172,7 +172,7 @@ describe('TST50 - Perspective Grid', () => {
   });
 
   // This scenario includes "Add tags" && "Remove tags" to be fulfilled
-  test('TST5005 - Add tags to the selected files [TST5005]', async () => {
+  test('TST5005 - Add tags to the selected files [TST5005,web,minio,electron]', async () => {
     const classNotSelected = await getGridCellClass(0);
     const classSelected = await selectAllFiles(classNotSelected);
     expect(classNotSelected).not.toBe(classSelected);
@@ -196,7 +196,7 @@ describe('TST50 - Perspective Grid', () => {
     }
   });
 
-  test('TST5006 - Remove tags from selected files [TST5006]', async () => {
+  test('TST5006 - Remove tags from selected files [TST5006,web,minio,electron]', async () => {
     const classNotSelected = await getGridCellClass(0);
     const classSelected = await selectAllFiles(classNotSelected);
     expect(classNotSelected).not.toBe(classSelected);
