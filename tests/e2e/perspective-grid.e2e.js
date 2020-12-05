@@ -27,10 +27,13 @@ import {
   disableTrashBin,
   doubleClickOn,
   expectElementExist,
+  extractTags,
   getGridCellClass,
   getGridFileName,
+  selectAllFiles,
   selectorFile,
   selectorFolder,
+  waitForNotification,
   waitUntilClassChanged
 } from './general.helpers';
 
@@ -145,21 +148,8 @@ describe('TST50 - Perspective Grid', () => {
 
   test('TST5004 - Select/deselect all files [TST5004,web,minio,electron]', async () => {
     const classNotSelected = await getGridCellClass(0);
-    // await clickOn('[data-tid=perspectiveGridToolbar]');
-    await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
-    // todo temp fix: is not clickable
-    await clickOn('[data-tid=gridPerspectiveToggleShowDirectories]');
-    await global.client.pause(500);
+    const classSelected = await selectAllFiles(classNotSelected);
 
-    //SelectAllFiles
-    await clickOn('[data-tid=gridPerspectiveSelectAllFiles]');
-
-    const classSelected = await waitUntilClassChanged(
-      perspectiveGridTable + firstFile + '/div/div',
-      classNotSelected
-    );
-    // await global.client.pause(1000); // TODO
-    // const classSelected = await getGridCellClass(0);
     expect(classNotSelected).not.toBe(classSelected);
 
     const filesList = await global.client.$$(perspectiveGridTable + firstFile);
@@ -183,45 +173,47 @@ describe('TST50 - Perspective Grid', () => {
 
   // This scenario includes "Add tags" && "Remove tags" to be fulfilled
   test('TST5005 - Add tags to the selected files [TST5005,web,minio,electron]', async () => {
-    await searchEngine('bmp');
+    const classNotSelected = await getGridCellClass(0);
+    const classSelected = await selectAllFiles(classNotSelected);
+    expect(classNotSelected).not.toBe(classSelected);
 
-    // open fileProperties
-    await clickOn(perspectiveGridTable + firstFile);
-    //Toggle Properties
-    await clickOn('[data-tid=fileContainerToggleProperties]');
+    /*await openContextEntryMenu( TODO Right button deselect files
+        perspectiveGridTable + firstFile,
+        'fileMenuAddRemoveTags'
+    );*/
+    await clickOn('[data-tid=gridPerspectiveAddRemoveTags]');
 
-    const propsTags = await getPropertiesTags();
-
-    expect(propsTags.includes(testTagName)).toBe(false);
-
-    await addInputKeys('PropertiesTagsSelectTID', testTagName);
+    await addInputKeys('AddRemoveTagsSelectTID', testTagName);
     await global.client.keys('Enter');
     await global.client.pause(500);
-    const propsNewTags = await getPropertiesTags();
-
-    expect(propsNewTags.includes(testTagName)).toBe(true);
+    await clickOn('[data-tid=addTagsMultipleEntries]');
+    // await global.client.pause(500);
+    await waitForNotification();
+    const filesList = await global.client.$$(perspectiveGridTable + firstFile);
+    for (let i = 0; i < filesList.length; i++) {
+      const tags = await extractTags(filesList[i]);
+      expect(tags.includes(testTagName)).toBe(true);
+    }
   });
 
   test('TST5006 - Remove tags from selected files [TST5006,web,minio,electron]', async () => {
-    await searchEngine('bmp');
+    const classNotSelected = await getGridCellClass(0);
+    const classSelected = await selectAllFiles(classNotSelected);
+    expect(classNotSelected).not.toBe(classSelected);
 
-    // open fileProperties
-    await clickOn(perspectiveGridTable + firstFile);
-    //Toggle Properties
-    await clickOn('[data-tid=fileContainerToggleProperties]');
+    await clickOn('[data-tid=gridPerspectiveAddRemoveTags]');
 
-    const propsTags = await getPropertiesTags();
-
-    expect(propsTags.includes(testTagName)).toBe(true);
-
-    await clickOn('[data-tid=tagMoreButton_' + testTagName + ']');
+    await addInputKeys('AddRemoveTagsSelectTID', testTagName);
+    await global.client.keys('Enter');
     await global.client.pause(500);
-    await clickOn('[data-tid=deleteTagMenu]');
-    await global.client.pause(500);
-    await clickOn('[data-tid=confirmRemoveTagFromFile]');
-    await global.client.pause(500);
-    const propsNewTags = await getPropertiesTags();
-    expect(propsNewTags.includes(testTagName)).toBe(false);
+    await clickOn('[data-tid=removeTagsMultipleEntries]');
+    // await global.client.pause(500);
+    await waitForNotification();
+    const filesList = await global.client.$$(perspectiveGridTable + firstFile);
+    for (let i = 0; i < filesList.length; i++) {
+      const tags = await extractTags(filesList[i]);
+      expect(tags.includes(testTagName)).toBe(false);
+    }
   });
 
   /*test('TST51** - Show/Hide directories in perspective view', async () => { //TODO
