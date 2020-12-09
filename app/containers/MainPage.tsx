@@ -674,10 +674,12 @@ class MainPage extends Component<Props, State> {
             onClose={toggleCreateFileDialog}
           />
         )}
-        <SettingsDialog
-          open={isSettingsDialogOpened}
-          onClose={toggleSettingsDialog}
-        />
+        {isSettingsDialogOpened && (
+          <SettingsDialog
+            open={isSettingsDialogOpened}
+            onClose={toggleSettingsDialog}
+          />
+        )}
         <Snackbar
           data-tid={this.props.notificationStatus.tid}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
