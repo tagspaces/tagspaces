@@ -10,15 +10,15 @@ import {
   renameFirstFile,
   deleteFirstFile,
   createMinioLocation,
-  getPropertiesFileName,
-  getPropertiesTags
+  getPropertiesFileName
 } from './location.helpers';
 import { searchEngine } from './search.spec';
 import {
   openContextEntryMenu,
   perspectiveGridTable,
   firstFile,
-  toContainTID
+  toContainTID,
+  firstFolder
 } from './test-utils.spec';
 import {
   addInputKeys,
@@ -31,9 +31,9 @@ import {
   getGridFileName,
   selectAllFiles,
   selectorFile,
-  selectorFolder, setSettings,
-  waitForNotification,
-  waitUntilClassChanged
+  selectorFolder,
+  setSettings,
+  waitForNotification
 } from './general.helpers';
 
 const subFolderName = '/test-perspective-grid';
@@ -215,6 +215,41 @@ describe('TST50 - Perspective Grid', () => {
     }
   });
 
+  test('TST5007 - Remove all tags from selected files [TST5007,web,minio,electron]', async () => {
+    const classNotSelected = await getGridCellClass(0);
+    const classSelected = await selectAllFiles(classNotSelected);
+    expect(classNotSelected).not.toBe(classSelected);
+
+    await clickOn('[data-tid=gridPerspectiveAddRemoveTags]');
+
+    await clickOn('[data-tid=cleanTagsMultipleEntries]');
+    // await global.client.pause(500);
+    await waitForNotification();
+    const filesList = await global.client.$$(perspectiveGridTable + firstFile);
+    for (let i = 0; i < filesList.length; i++) {
+      const tags = await extractTags(filesList[i]);
+      expect(tags.length).toBe(0);
+    }
+  });
+
+  test('TST5008 - Copy file [TST5008,web,minio,electron]', async () => {
+    await searchEngine('bmp');
+
+    // select file
+    await clickOn(perspectiveGridTable + firstFile);
+    // open Copy File Dialog
+    await clickOn('[data-tid=gridPerspectiveCopySelectedFiles]');
+    await addInputKeys(
+      'targetPathInput',
+      defaultLocationPath + '/empty_folder'
+    );
+    await clickOn('[data-tid=confirmCopyFiles]');
+    await waitForNotification();
+    await clickOn('#clearSearchID');
+    await doubleClickOn(perspectiveGridTable + firstFolder);
+    const firstFileName = await getGridFileName(0);
+    expect(firstFileName).toBe('sample.bmp');
+  });
   /*test('TST51** - Show/Hide directories in perspective view', async () => { //TODO
     await global.client.waitForVisible(
       '[data-tid=gridPerspectiveToggleShowDirectories]'

@@ -452,7 +452,7 @@ const Search = React.memo((props: Props) => {
             title={i18n.t('core:searchWordsWithInterval')}
             endAdornment={
               <InputAdornment position="end">
-                <IconButton onClick={clearSearch} size="small" edge="end">
+                <IconButton id="clearSearchID" onClick={clearSearch} size="small" edge="end">
                   <ClearSearchIcon />
                 </IconButton>
               </InputAdornment>
