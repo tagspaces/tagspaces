@@ -326,10 +326,10 @@ export async function waitForNotification(tid = 'notificationTID') {
   }
 }
 
-export async function settingsSetShowUnixHiddenEntries() {
+export async function setSettings(selector) {
   await clickOn('[data-tid=settings]');
   await global.client.pause(500);
-  await clickOn('[data-tid=settingsSetShowUnixHiddenEntries]');
+  await clickOn(selector);
   await clickOn('[data-tid=closeSettingsDialog]');
 }
 
@@ -430,13 +430,6 @@ export async function deleteDirectory() {
   await delay(500);
   await confirmDeleteDirectory.click();
   await delay(500);*/
-}
-
-export async function disableTrashBin() {
-  await clickOn('[data-tid=settings]');
-  await global.client.pause(500);
-  await clickOn('[data-tid=settingsSetUseTrashCan]');
-  await clickOn('[data-tid=closeSettingsDialog]');
 }
 
 export async function returnDirectoryBack() {

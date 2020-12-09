@@ -23,7 +23,7 @@ import {
   clickOn,
   expectElementExist,
   selectorFile,
-  settingsSetShowUnixHiddenEntries,
+  setSettings,
   doubleClickOn
 } from './general.helpers';
 import { searchEngine } from './search.spec';
@@ -125,7 +125,7 @@ describe('TST51 - Perspective Grid [general]', () => {
   it('TST0510 - Generate thumbnail from Images [electron]', async () => {
     // let filename = 'sample.jpg';
     // activate 'Show Hidden File' functionality in the general settings
-    await settingsSetShowUnixHiddenEntries();
+    await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
     await global.client.pause(500);
     await reloadDirectory();
     await global.client.pause(500);
@@ -145,7 +145,7 @@ describe('TST51 - Perspective Grid [general]', () => {
 
   it('TST0511 - Generate thumbnail from Videos [electron]', async () => {
     // activate 'Show Hidden File' functionality in the general settings
-    await settingsSetShowUnixHiddenEntries();
+    await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
     await global.client.pause(500);
     await reloadDirectory();
     await global.client.pause(500);
@@ -159,7 +159,7 @@ describe('TST51 - Perspective Grid [general]', () => {
 
   it('TST0516 - Generate thumbnail from PDF [electron]', async () => {
     // activate 'Show Hidden File' functionality in the general settings
-    await settingsSetShowUnixHiddenEntries();
+    await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
     await global.client.pause(500);
     await reloadDirectory();
     await global.client.pause(500);
@@ -173,7 +173,7 @@ describe('TST51 - Perspective Grid [general]', () => {
 
   it('TST0517 - Generate thumbnail from ODT [electron]', async () => {
     // activate 'Show Hidden File' functionality in the general settings
-    await settingsSetShowUnixHiddenEntries();
+    await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
     await global.client.pause(500);
     await reloadDirectory();
     await global.client.pause(500);
@@ -187,7 +187,7 @@ describe('TST51 - Perspective Grid [general]', () => {
 
   it('TST0519 - Generate thumbnail from TIFF [electron]', async () => {
     // activate 'Show Hidden File' functionality in the general settings
-    await settingsSetShowUnixHiddenEntries();
+    await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
     await global.client.pause(500);
     await reloadDirectory();
     await global.client.pause(500);
@@ -203,7 +203,7 @@ describe('TST51 - Perspective Grid [general]', () => {
 
   it('TST0520 - Generate thumbnail from PSD [electron]', async () => {
     // activate 'Show Hidden File' functionality in the general settings
-    await settingsSetShowUnixHiddenEntries();
+    await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
     await global.client.pause(500);
     await reloadDirectory();
     await global.client.pause(500);
@@ -219,7 +219,7 @@ describe('TST51 - Perspective Grid [general]', () => {
 
   it('TST0524 - Generate thumbnail from TXT [electron]', async () => {
     // activate 'Show Hidden File' functionality in the general settings
-    await settingsSetShowUnixHiddenEntries();
+    await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
     await global.client.pause(500);
     await reloadDirectory();
     await global.client.pause(500);
@@ -235,7 +235,7 @@ describe('TST51 - Perspective Grid [general]', () => {
 
   it('TST0523 - Generate thumbnail from HTML [electron]', async () => {
     // activate 'Show Hidden File' functionality in the general settings
-    await settingsSetShowUnixHiddenEntries();
+    await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
     await global.client.pause(500);
     await reloadDirectory();
     await global.client.pause(500);
@@ -251,7 +251,7 @@ describe('TST51 - Perspective Grid [general]', () => {
 
   it('TST0522 - Generate thumbnail from URL [electron]', async () => {
     // activate 'Show Hidden File' functionality in the general settings
-    await settingsSetShowUnixHiddenEntries();
+    await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
     await global.client.pause(500);
     await reloadDirectory();
     await global.client.pause(500);

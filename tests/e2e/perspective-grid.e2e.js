@@ -24,7 +24,6 @@ import {
   addInputKeys,
   clickOn,
   createTxtFile,
-  disableTrashBin,
   doubleClickOn,
   expectElementExist,
   extractTags,
@@ -32,7 +31,7 @@ import {
   getGridFileName,
   selectAllFiles,
   selectorFile,
-  selectorFolder,
+  selectorFolder, setSettings,
   waitForNotification,
   waitUntilClassChanged
 } from './general.helpers';
@@ -124,7 +123,7 @@ describe('TST50 - Perspective Grid', () => {
       expect(firstFileName).toBe('note.txt');
 
       //cleanup
-      await disableTrashBin();
+      await setSettings('[data-tid=settingsSetUseTrashCan]');
       await global.client.pause(500);
       await deleteFirstFile();
       // firstFileName = await getGridFileName(0);
