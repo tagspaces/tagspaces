@@ -544,6 +544,33 @@ describe('TST50** - Right button on a file', () => {
     expect(firstFileName).toBe('sample.eml');
   });
 
+  test('TST5034 - Rename directory (directory menu) [TST5034,web,minio,electron]', async () => {
+    const newDirName = 'new_dir_name';
+    await openContextEntryMenu(
+      perspectiveGridTable + firstFolder,
+      'renameDirectory'
+    );
+    const oldDirName = await setInputKeys(
+      'renameDirectoryDialogInput',
+      newDirName
+    );
+    await clickOn('[data-tid=confirmRenameDirectory]');
+    await waitForNotification();
+
+    //turn dir name back
+    await openContextEntryMenu(
+      perspectiveGridTable + firstFolder,
+      'renameDirectory'
+    );
+    const renamedDir = await setInputKeys(
+      'renameDirectoryDialogInput',
+      oldDirName
+    );
+    await clickOn('[data-tid=confirmRenameDirectory]');
+    await waitForNotification();
+    expect(renamedDir).toBe(newDirName);
+  });
+
   test('TST5037 - Show sub folders [TST5037,web,minio,electron]', async () => {
     //open Option menu
     await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
