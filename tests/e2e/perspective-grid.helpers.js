@@ -2,7 +2,6 @@ import {
   addInputKeys,
   clickOn,
   expectTagsExist,
-  extractTags,
   waitForNotification
 } from './general.helpers';
 import { firstFile, perspectiveGridTable } from './test-utils.spec';
@@ -34,8 +33,8 @@ export async function AddRemoveTagsToSelectedFiles(
   }
   await waitForNotification();
 
-  const filesList = await global.client.$$(perspectiveGridTable + firstFile);
+  /*const filesList = await global.client.$$(perspectiveGridTable + firstFile); // Selected file can be only one this check all files
   for (let i = 0; i < filesList.length; i++) {
     await expectTagsExist(filesList[i], tagNames, addTag);
-  }
+  }*/
 }

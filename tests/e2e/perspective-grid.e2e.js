@@ -186,7 +186,13 @@ describe('TST50 - Perspective Grid', () => {
         'fileMenuAddRemoveTags'
     );*/
 
-    await AddRemoveTagsToSelectedFiles(['test-tag1', 'test-tag2']);
+    const tags = ['test-tag1', 'test-tag2'];
+    await AddRemoveTagsToSelectedFiles(tags);
+    // Select all file and check if tag exist
+    const filesList = await global.client.$$(perspectiveGridTable + firstFile);
+    for (let i = 0; i < filesList.length; i++) {
+      await expectTagsExist(filesList[i], tags, true);
+    }
     /*await clickOn('[data-tid=gridPerspectiveAddRemoveTags]');
 
     await addInputKeys('AddRemoveTagsSelectTID', testTagName);
@@ -207,8 +213,14 @@ describe('TST50 - Perspective Grid', () => {
     const classSelected = await selectAllFiles(classNotSelected);
     expect(classNotSelected).not.toBe(classSelected);
 
-    await AddRemoveTagsToSelectedFiles(['test-tag1', 'test-tag2'], false);
+    const tags = ['test-tag1', 'test-tag2'];
+    await AddRemoveTagsToSelectedFiles(tags, false);
 
+    // Select all file and check if tag exist
+    const filesList = await global.client.$$(perspectiveGridTable + firstFile);
+    for (let i = 0; i < filesList.length; i++) {
+      await expectTagsExist(filesList[i], tags, false);
+    }
     /*await clickOn('[data-tid=gridPerspectiveAddRemoveTags]');
 
     await addInputKeys('AddRemoveTagsSelectTID', testTagName);
@@ -376,6 +388,9 @@ describe('TST50** - Right button on a file', () => {
     // Select file
     await clickOn(perspectiveGridTable + firstFile);
     await AddRemoveTagsToSelectedFiles([testTagName], true);
+    let file = await global.client.$(perspectiveGridTable + firstFile);
+    await expectTagsExist(file, [testTagName], true);
+
     /*await AddRemoveTagsToFile(perspectiveGridTable + firstFile, [testTagName], {
       add: true
     });*/
@@ -386,12 +401,14 @@ describe('TST50** - Right button on a file', () => {
     await clickOn('[data-tid=confirmEditTagEntryDialog]');
     await waitForNotification();
 
-    const file = await global.client.$(perspectiveGridTable + firstFile);
+    file = await global.client.$(perspectiveGridTable + firstFile);
     await expectTagsExist(file, [testTagName + '-edited'], true);
 
     //cleanup
     await clickOn(perspectiveGridTable + firstFile);
     await AddRemoveTagsToSelectedFiles([testTagName + '-edited'], false);
+    file = await global.client.$(perspectiveGridTable + firstFile);
+    await expectTagsExist(file, [testTagName + '-edited'], false);
   });
 
   test('TST5023 - Remove tag from file (tag menu) [TST5023,web,minio,electron]', async () => {
@@ -399,11 +416,13 @@ describe('TST50** - Right button on a file', () => {
     // select file
     await clickOn(perspectiveGridTable + firstFile);
     await AddRemoveTagsToSelectedFiles([testTagName], true);
+    let file = await global.client.$(perspectiveGridTable + firstFile);
+    await expectTagsExist(file, [testTagName], true);
 
     await removeTagFromTagMenu(testTagName);
     await global.client.pause(500);
 
-    const file = await global.client.$(perspectiveGridTable + firstFile);
+    file = await global.client.$(perspectiveGridTable + firstFile);
     await expectTagsExist(file, [testTagName], false);
   });
 
@@ -424,6 +443,21 @@ describe('TST50** - Right button on a file', () => {
     await selectAllFiles(classNotSelected);
     expect(classNotSelected).not.toBe(classSelected);
     await AddRemoveTagsToSelectedFiles([testTagName], false);
+  });
+
+  test('TST5025 - Add / Remove tags (file menu) [TST5025,web,minio,electron]', async () => {
+    await searchEngine('desktop');
+    const tags = [testTagName, testTagName + '2'];
+    // select file
+    await clickOn(perspectiveGridTable + firstFile);
+    await AddRemoveTagsToSelectedFiles(tags, true);
+
+    const file = await global.client.$(perspectiveGridTable + firstFile);
+    await expectTagsExist(file, tags, true);
+
+    //cleanup
+    await clickOn(perspectiveGridTable + firstFile);
+    await AddRemoveTagsToSelectedFiles(tags, false);
   });
 
   test('TST5026 - Open file natively [electron]', async () => {
