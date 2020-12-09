@@ -246,9 +246,31 @@ describe('TST50 - Perspective Grid', () => {
     await clickOn('[data-tid=confirmCopyFiles]');
     await waitForNotification();
     await clickOn('#clearSearchID');
+    await global.client.pause(500);
     await doubleClickOn(perspectiveGridTable + firstFolder);
     const firstFileName = await getGridFileName(0);
     expect(firstFileName).toBe('sample.bmp');
+  });
+
+  test('TST5010 - Move file [TST5010,web,minio,electron]', async () => {
+    await searchEngine('epub');
+
+    // select file
+    await clickOn(perspectiveGridTable + firstFile);
+    // open Copy File Dialog
+    await clickOn('[data-tid=gridPerspectiveCopySelectedFiles]');
+    await addInputKeys(
+      'targetPathInput',
+      defaultLocationPath + '/empty_folder'
+    );
+    await clickOn('[data-tid=confirmMoveFiles]');
+    await waitForNotification();
+    await clickOn('#clearSearchID');
+    await global.client.pause(500);
+    await doubleClickOn(perspectiveGridTable + firstFolder);
+    await searchEngine('epub', { reindexing: true}); // TODO temp fix: https://trello.com/c/ZfcGGvOM/527-moved-files-is-not-indexing-not-found-in-search
+    const firstFileName = await getGridFileName(0);
+    expect(firstFileName).toBe('sample.epub');
   });
   /*test('TST51** - Show/Hide directories in perspective view', async () => { //TODO
     await global.client.waitForVisible(
