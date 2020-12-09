@@ -498,17 +498,50 @@ describe('TST50** - Right button on a file', () => {
     await cancelButton.click();
   });*/
 
-  //TODO fix electron: element not interactable
-  test('TST5028 - Move / Copy file [TST5028]', async () => {
-    await searchEngine('txt');
+  test('TST5028 - Move / Copy file (file menu) [TST5028,web,minio,electron]', async () => {
+    // Move file in child folder
+    await searchEngine('eml');
     await openContextEntryMenu(
       perspectiveGridTable + firstFile,
       'fileMenuMoveCopyFile'
     );
-    //TODO
-    await clickOn('[data-tid=closeMoveCopyDialog]');
+    await addInputKeys(
+      'targetPathInput',
+      defaultLocationPath + '/empty_folder'
+    );
 
-    // Check if the directories are displayed
+    await clickOn('[data-tid=confirmMoveFiles]');
+    await waitForNotification();
+    await clickOn('#clearSearchID');
+    await global.client.pause(500);
+    await doubleClickOn(perspectiveGridTable + firstFolder);
+    await searchEngine('eml', { reindexing: true }); // TODO temp fix: https://trello.com/c/ZfcGGvOM/527-moved-files-is-not-indexing-not-found-in-search
+    let firstFileName = await getGridFileName(0);
+    expect(firstFileName).toBe('sample.eml');
+
+    //Copy file in parent directory
+    await openContextEntryMenu(
+      perspectiveGridTable + firstFile,
+      'fileMenuMoveCopyFile'
+    );
+    await addInputKeys('targetPathInput', defaultLocationPath);
+    await clickOn('[data-tid=confirmCopyFiles]');
+    await waitForNotification();
+    await clickOn('#clearSearchID');
+    await clickOn('[data-tid=gridPerspectiveOnBackButton]');
+    await global.client.pause(500);
+    await searchEngine('eml');
+    firstFileName = await getGridFileName(0);
+    expect(firstFileName).toBe('sample.eml');
+  });
+
+  test('TST5033 - Open directory (directory menu) [TST5033,web,minio,electron]', async () => {
+    await openContextEntryMenu(
+      perspectiveGridTable + firstFolder,
+      'openDirectory'
+    );
+    const firstFileName = await getGridFileName(0);
+    expect(firstFileName).toBe('sample.eml');
   });
 
   test('TST5037 - Show sub folders [TST5037,web,minio,electron]', async () => {
