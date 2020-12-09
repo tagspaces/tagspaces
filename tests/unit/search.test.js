@@ -1,4 +1,5 @@
 import Search from '../../app/services/search';
+import { entry1, entry2, entry3 } from './testEntries.json';
 
 /*const mockedSearchIndex = { data: {} };
 const SearchMock = jest.fn();
@@ -48,24 +49,31 @@ const tag1 = { title: 'tagTitle1' };
 const tag2 = { title: 'tagTitle2' };
 const tag3 = { title: 'tagTitle3' };
 
-const entry1 = {
-  name: 'entryTitle1',
-  description: 'test description',
-  isFile: true,
-  extension: 'jpg',
-  tags: [tag1],
-  size: 111,
-  path: '/gg/'
-};
+// const entry1 = {
+//   name: 'entryTitle1',
+//   description: 'test description',
+//   isFile: true,
+//   extension: 'jpg',
+//   tags: [tag1],
+//   fileSize: 111,
+//   path: '/gg/'
+// };
 
-const entry2 = {
-  name: 'entryTitle2',
-  isFile: true,
-  extension: 'jpg',
-  tags: [tag2],
-  size: 111,
-  path: '/gg/'
-};
+// const entry2 = {
+//   name: 'entryTitle2',
+//   isFile: true,
+//   extension: 'jpg',
+//   tags: [tag2],
+//   fileSize: 222,
+//   path: '/gg/'
+// };
+
+// const entry3 = {
+//   name: 'testFolder1',
+//   description: 'test folder desciption',
+//   isDirectory: true,
+//   path: '/gg/'
+// };
 
 test('calls Search.searchLocationIndex for tags', () => {
   const locationContent = [entry1, entry2]; //enhanceEntry(entry)];
@@ -87,6 +95,32 @@ test('calls Search.searchLocationIndex for tags', () => {
   expect(
     Search.searchLocationIndex(locationContent, searchQuery)
   ).resolves.not.toStrictEqual([entry2]);
+
+  expect(
+    Search.searchLocationIndex(locationContent, searchQueryNotExist)
+  ).resolves.toStrictEqual([]);
+});
+
+test('calls Search.searchLocationIndex for OR tags', () => {
+  const locationContent = [entry1, entry2, entry3]; //enhanceEntry(entry)];
+
+  const searchQuery = {
+    tagsNOT: [tag1],
+    maxSearchResults: 2
+  };
+
+  const searchQueryNotExist = {
+    tagsNOT: [tag3],
+    maxSearchResults: 2
+  };
+
+  expect(
+    Search.searchLocationIndex(locationContent, searchQuery)
+  ).resolves.toStrictEqual([entry1, entry2]);
+
+  expect(
+    Search.searchLocationIndex(locationContent, searchQuery)
+  ).resolves.not.toStrictEqual([entry3]);
 
   expect(
     Search.searchLocationIndex(locationContent, searchQueryNotExist)
@@ -123,3 +157,39 @@ test('calls Search.searchLocationIndex for Pro', () => {
   ).resolves.toStrictEqual([entry1]);
 });
 */
+
+test('calls Search.searchLocationIndex for extension', () => {
+  const locationContent = [entry1, entry2];
+
+  const searchQuery = {
+    fileTypes: ['jpg']
+  };
+
+  expect(
+    Search.searchLocationIndex(locationContent, searchQuery)
+  ).resolves.toStrictEqual([entry1]);
+});
+
+test('calls Search.searchLocationIndex for fileSize', () => {
+  const locationContent = [entry1, entry2];
+
+  const searchQuery = {
+    fileSize: '111'
+  };
+
+  expect(
+    Search.searchLocationIndex(locationContent, searchQuery)
+  ).resolves.toStrictEqual([entry1]);
+});
+
+test('calls Search.searchLocationIndex for folder', () => {
+  const locationContent = [entry1, entry2, entry3];
+
+  const searchQuery = {
+    textQuery: 'name'
+  };
+
+  expect(
+    Search.searchLocationIndex(locationContent, searchQuery)
+  ).resolves.toStrictEqual([entry3]);
+});
