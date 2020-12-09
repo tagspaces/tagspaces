@@ -30,14 +30,15 @@ import {
   extractTags,
   getGridCellClass,
   getGridFileName,
+  removeTagFromTagMenu,
   selectAllFiles,
   selectorFile,
   selectorFolder,
   setInputKeys,
   setSettings,
+  showFilesWithTag,
   waitForNotification
 } from './general.helpers';
-import { AddRemoveTagsToFile } from './file.properties.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 
 const subFolderName = '/test-perspective-grid';
@@ -387,6 +388,42 @@ describe('TST50** - Right button on a file', () => {
 
     const file = await global.client.$(perspectiveGridTable + firstFile);
     await expectTagsExist(file, [testTagName + '-edited'], true);
+
+    //cleanup
+    await clickOn(perspectiveGridTable + firstFile);
+    await AddRemoveTagsToSelectedFiles([testTagName + '-edited'], false);
+  });
+
+  test('TST5023 - Remove tag from file (tag menu) [TST5023,web,minio,electron]', async () => {
+    await searchEngine('desktop');
+    // select file
+    await clickOn(perspectiveGridTable + firstFile);
+    await AddRemoveTagsToSelectedFiles([testTagName], true);
+
+    await removeTagFromTagMenu(testTagName);
+    await global.client.pause(500);
+
+    const file = await global.client.$(perspectiveGridTable + firstFile);
+    await expectTagsExist(file, [testTagName], false);
+  });
+
+  test('TST5024 - Show files with a given tag (tag menu) [TST5024,web,minio,electron]', async () => {
+    const classNotSelected = await getGridCellClass(0);
+    const classSelected = await selectAllFiles(classNotSelected);
+    expect(classNotSelected).not.toBe(classSelected);
+
+    await AddRemoveTagsToSelectedFiles([testTagName], true);
+    await showFilesWithTag(testTagName);
+
+    const filesList = await global.client.$$(perspectiveGridTable + firstFile);
+    for (let i = 0; i < filesList.length; i++) {
+      await expectTagsExist(filesList[i], [testTagName], true);
+    }
+
+    // cleanup
+    await selectAllFiles(classNotSelected);
+    expect(classNotSelected).not.toBe(classSelected);
+    await AddRemoveTagsToSelectedFiles([testTagName], false);
   });
 
   test('TST5026 - Open file natively [electron]', async () => {

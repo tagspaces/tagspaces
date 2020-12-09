@@ -1,6 +1,6 @@
 /* Copyright (c) 2020-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 
-import { addInputKeys, clickOn } from './general.helpers';
+import { addInputKeys, clickOn, removeTagFromTagMenu } from './general.helpers';
 import { getPropertiesTags } from './location.helpers';
 
 export async function AddRemoveTagsToFile(
@@ -29,11 +29,7 @@ export async function AddRemoveTagsToFile(
   if (options.remove) {
     for (let i = 0; i < tagNames.length; i++) {
       const tagName = tagNames[i];
-      await clickOn('[data-tid=tagMoreButton_' + tagName + ']');
-      await global.client.pause(500);
-      await clickOn('[data-tid=deleteTagMenu]');
-      await global.client.pause(500);
-      await clickOn('[data-tid=confirmRemoveTagFromFile]');
+      await removeTagFromTagMenu(tagName);
       await global.client.pause(500);
       const propsNewTags = await getPropertiesTags();
       expect(propsNewTags.includes(tagName)).toBe(false);

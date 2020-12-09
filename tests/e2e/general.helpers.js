@@ -311,6 +311,20 @@ export async function extractTags(selectorElement) {
   return arrTags;
 }
 
+export async function removeTagFromTagMenu(tagName) {
+  await clickOn('[data-tid=tagMoreButton_' + tagName + ']');
+  await global.client.pause(500);
+  await clickOn('[data-tid=deleteTagMenu]');
+  await global.client.pause(500);
+  await clickOn('[data-tid=confirmRemoveTagFromFile]');
+}
+
+export async function showFilesWithTag(tagName) {
+  await clickOn('[data-tid=tagMoreButton_' + tagName + ']');
+  await global.client.pause(500);
+  await clickOn('[data-tid=showFilesWithThisTag]');
+}
+
 export async function expectTagsExist(gridElement, arrTagNames, exist = true) {
   const tags = await extractTags(gridElement);
   for (let i = 0; i < arrTagNames.length; i++) {
