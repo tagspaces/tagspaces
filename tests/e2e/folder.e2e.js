@@ -14,7 +14,8 @@ import {
   createNewDirectory,
   deleteDirectory,
   clickOn,
-  expectElementExist, setSettings
+  expectElementExist,
+  setSettings
 } from './general.helpers';
 import { renameFolder } from './test-utils.spec';
 

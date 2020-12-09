@@ -26,15 +26,19 @@ import {
   createTxtFile,
   doubleClickOn,
   expectElementExist,
+  expectTagsExist,
   extractTags,
   getGridCellClass,
   getGridFileName,
   selectAllFiles,
   selectorFile,
   selectorFolder,
+  setInputKeys,
   setSettings,
   waitForNotification
 } from './general.helpers';
+import { AddRemoveTagsToFile } from './file.properties.helpers';
+import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 
 const subFolderName = '/test-perspective-grid';
 const subFolderContentExtractionPath =
@@ -180,7 +184,9 @@ describe('TST50 - Perspective Grid', () => {
         perspectiveGridTable + firstFile,
         'fileMenuAddRemoveTags'
     );*/
-    await clickOn('[data-tid=gridPerspectiveAddRemoveTags]');
+
+    await AddRemoveTagsToSelectedFiles(['test-tag1', 'test-tag2']);
+    /*await clickOn('[data-tid=gridPerspectiveAddRemoveTags]');
 
     await addInputKeys('AddRemoveTagsSelectTID', testTagName);
     await global.client.keys('Enter');
@@ -192,7 +198,7 @@ describe('TST50 - Perspective Grid', () => {
     for (let i = 0; i < filesList.length; i++) {
       const tags = await extractTags(filesList[i]);
       expect(tags.includes(testTagName)).toBe(true);
-    }
+    }*/
   });
 
   test('TST5006 - Remove tags from selected files [TST5006,web,minio,electron]', async () => {
@@ -200,7 +206,9 @@ describe('TST50 - Perspective Grid', () => {
     const classSelected = await selectAllFiles(classNotSelected);
     expect(classNotSelected).not.toBe(classSelected);
 
-    await clickOn('[data-tid=gridPerspectiveAddRemoveTags]');
+    await AddRemoveTagsToSelectedFiles(['test-tag1', 'test-tag2'], false);
+
+    /*await clickOn('[data-tid=gridPerspectiveAddRemoveTags]');
 
     await addInputKeys('AddRemoveTagsSelectTID', testTagName);
     await global.client.keys('Enter');
@@ -212,7 +220,7 @@ describe('TST50 - Perspective Grid', () => {
     for (let i = 0; i < filesList.length; i++) {
       const tags = await extractTags(filesList[i]);
       expect(tags.includes(testTagName)).toBe(false);
-    }
+    }*/
   });
 
   test('TST5007 - Remove all tags from selected files [TST5007,web,minio,electron]', async () => {
@@ -268,9 +276,22 @@ describe('TST50 - Perspective Grid', () => {
     await clickOn('#clearSearchID');
     await global.client.pause(500);
     await doubleClickOn(perspectiveGridTable + firstFolder);
-    await searchEngine('epub', { reindexing: true}); // TODO temp fix: https://trello.com/c/ZfcGGvOM/527-moved-files-is-not-indexing-not-found-in-search
+    await searchEngine('epub', { reindexing: true }); // TODO temp fix: https://trello.com/c/ZfcGGvOM/527-moved-files-is-not-indexing-not-found-in-search
     const firstFileName = await getGridFileName(0);
     expect(firstFileName).toBe('sample.epub');
+  });
+
+  test('TST5013 - Delete files from selection (many files) [TST5013,web,minio,electron]', async () => {
+    await doubleClickOn(perspectiveGridTable + firstFolder);
+
+    const classNotSelected = await getGridCellClass(0);
+    const classSelected = await selectAllFiles(classNotSelected);
+    expect(classNotSelected).not.toBe(classSelected);
+
+    await clickOn('[data-tid=gridPerspectiveDeleteMultipleFiles]');
+    await clickOn('[data-tid=confirmDeleteFileDialog]');
+    await waitForNotification();
+    await expectElementExist(perspectiveGridTable + firstFile, false);
   });
   /*test('TST51** - Show/Hide directories in perspective view', async () => { //TODO
     await global.client.waitForVisible(
@@ -347,6 +368,25 @@ describe('TST50** - Right button on a file', () => {
     await expectElementExist(selectorFile, false);
     /*firstFileName = await getGridFileName(0);
     expect(firstFileName).toBe(undefined);*/
+  });
+
+  test('TST5019 - Rename tag in file [TST5019,web,minio,electron]', async () => {
+    await searchEngine('desktop');
+    // Select file
+    await clickOn(perspectiveGridTable + firstFile);
+    await AddRemoveTagsToSelectedFiles([testTagName], true);
+    /*await AddRemoveTagsToFile(perspectiveGridTable + firstFile, [testTagName], {
+      add: true
+    });*/
+    await clickOn('[data-tid=tagMoreButton_' + testTagName + ']');
+    await global.client.pause(500);
+    await clickOn('[data-tid=editTagDialogMenu]');
+    await setInputKeys('editTagEntryDialog_input', testTagName + '-edited');
+    await clickOn('[data-tid=confirmEditTagEntryDialog]');
+    await waitForNotification();
+
+    const file = await global.client.$(perspectiveGridTable + firstFile);
+    await expectTagsExist(file, [testTagName + '-edited'], true);
   });
 
   test('TST5026 - Open file natively [electron]', async () => {

@@ -7,6 +7,8 @@ import {
 } from './location.helpers';
 import { clickOn, setSettings } from './general.helpers';
 import { AddRemoveTagsToFile } from './file.properties.helpers';
+import { searchEngine } from './search.spec';
+import { firstFile, perspectiveGridTable } from './test-utils.spec';
 
 describe('TST08 - File / folder properties', () => {
   beforeEach(async () => {
@@ -22,11 +24,16 @@ describe('TST08 - File / folder properties', () => {
   });
 
   it('TST0808 - Add and remove tags to a file (file names) [TST0808,web,minio,electron]', async () => {
-    await AddRemoveTagsToFile();
+    await searchEngine('bmp');
+    await AddRemoveTagsToFile(perspectiveGridTable + firstFile, [
+      'test-tag1',
+      'test-tag2'
+    ]);
   });
 
   it('TST0809 - Add and remove tag to a file (sidecar files) [TST0809,web,minio,electron]', async () => {
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]');
-    await AddRemoveTagsToFile();
+    await searchEngine('bmp');
+    await AddRemoveTagsToFile(perspectiveGridTable + firstFile);
   });
 });

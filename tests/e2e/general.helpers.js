@@ -311,6 +311,14 @@ export async function extractTags(selectorElement) {
   return arrTags;
 }
 
+export async function expectTagsExist(gridElement, arrTagNames, exist = true) {
+  const tags = await extractTags(gridElement);
+  for (let i = 0; i < arrTagNames.length; i++) {
+    const tagName = arrTagNames[i];
+    expect(tags.includes(tagName)).toBe(exist);
+  }
+}
+
 export async function waitForNotification(tid = 'notificationTID') {
   await global.client.pause(500);
   // await expectElementExist('[data-tid=' + tid + ']', true, 8000);

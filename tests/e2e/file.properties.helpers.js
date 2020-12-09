@@ -1,38 +1,42 @@
 /* Copyright (c) 2020-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 
+import { addInputKeys, clickOn } from './general.helpers';
+import { getPropertiesTags } from './location.helpers';
 
-import {searchEngine} from "./search.spec";
-import {addInputKeys, clickOn} from "./general.helpers";
-import {firstFile, perspectiveGridTable} from "./test-utils.spec";
-import {getPropertiesTags} from "./location.helpers";
-
-const testTagName = 'test-tag'; // TODO fix camelCase tag name
-
-export async function AddRemoveTagsToFile () {
-  await searchEngine('bmp');
-
+export async function AddRemoveTagsToFile(
+  fileSelector,
+  tagNames = ['test-props-tag'], // TODO fix camelCase tag name
+  options = { add: true, remove: true }
+) {
   // open fileProperties
-  await clickOn(perspectiveGridTable + firstFile);
+  await clickOn(fileSelector);
   //Toggle Properties
   await clickOn('[data-tid=fileContainerToggleProperties]');
 
-  const propsTags = await getPropertiesTags();
+  if (options.add) {
+    for (let i = 0; i < tagNames.length; i++) {
+      const tagName = tagNames[i];
+      const propsTags = await getPropertiesTags();
+      expect(propsTags.includes(tagName)).toBe(false);
+      await addInputKeys('PropertiesTagsSelectTID', tagName);
+      await global.client.keys('Enter');
+      await global.client.pause(500);
+      const propsNewTags = await getPropertiesTags();
+      expect(propsNewTags.includes(tagName)).toBe(true);
+    }
+  }
 
-  expect(propsTags.includes(testTagName)).toBe(false);
-
-  await addInputKeys('PropertiesTagsSelectTID', testTagName);
-  await global.client.keys('Enter');
-  await global.client.pause(500);
-  let propsNewTags = await getPropertiesTags();
-
-  expect(propsNewTags.includes(testTagName)).toBe(true);
-
-  await clickOn('[data-tid=tagMoreButton_' + testTagName + ']');
-  await global.client.pause(500);
-  await clickOn('[data-tid=deleteTagMenu]');
-  await global.client.pause(500);
-  await clickOn('[data-tid=confirmRemoveTagFromFile]');
-  await global.client.pause(500);
-  propsNewTags = await getPropertiesTags();
-  expect(propsNewTags.includes(testTagName)).toBe(false);
+  if (options.remove) {
+    for (let i = 0; i < tagNames.length; i++) {
+      const tagName = tagNames[i];
+      await clickOn('[data-tid=tagMoreButton_' + tagName + ']');
+      await global.client.pause(500);
+      await clickOn('[data-tid=deleteTagMenu]');
+      await global.client.pause(500);
+      await clickOn('[data-tid=confirmRemoveTagFromFile]');
+      await global.client.pause(500);
+      const propsNewTags = await getPropertiesTags();
+      expect(propsNewTags.includes(tagName)).toBe(false);
+    }
+  }
 }
