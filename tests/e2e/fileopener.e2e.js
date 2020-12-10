@@ -10,14 +10,20 @@ import {
   expectElementExist,
   getGridFileName,
   setInputKeys,
-  setSettings
+  setSettings,
+  waitForNotification
 } from './general.helpers';
 import {
   AddRemoveTagsToFile,
   getPropertiesFileName
 } from './file.properties.helpers';
 import { searchEngine } from './search.spec';
-import { firstFile, perspectiveGridTable } from './test-utils.spec';
+import {
+  firstFile,
+  firstFolder,
+  openContextEntryMenu,
+  perspectiveGridTable
+} from './test-utils.spec';
 
 describe('TST08 - File / folder properties', () => {
   beforeEach(async () => {
@@ -99,8 +105,8 @@ describe('TST08 - File / folder properties', () => {
     await expectElementExist('[data-tid=fullscreenTID]', false);
   });
 
-  it('TST0805 - Change title of the opened file / rename [TST0805,web,minio,electron]', async () => {
-    const newTile = 'titleRenamed.txt';
+  it('TST0805 - Rename opened file [TST0805,web,minio,electron]', async () => {
+    const newTile = 'fileRenamed.txt';
     await searchEngine('txt');
     // open fileProperties
     await clickOn(perspectiveGridTable + firstFile);
@@ -111,15 +117,42 @@ describe('TST08 - File / folder properties', () => {
     await clickOn('[data-tid=startRenameEntryTID]');
     await setInputKeys('fileNameProperties', newTile);
     await clickOn('[data-tid=confirmRenameEntryTID]');
+    await waitForNotification();
     const propsNewFileName = await getPropertiesFileName();
     expect(propsFileName).not.toBe(propsNewFileName);
 
-    //turn fineName back
+    //turn fileName back
     await clickOn('[data-tid=startRenameEntryTID]');
     await setInputKeys('fileNameProperties', propsFileName);
     await clickOn('[data-tid=confirmRenameEntryTID]');
+    await waitForNotification();
     const propsOldFileName = await getPropertiesFileName();
     expect(propsOldFileName).toBe(propsFileName);
+  });
+
+  it('TST0807 - Rename opened folder [TST0807,web,minio,electron]', async () => {
+    const newTile = 'folderRenamed';
+    // open folderProperties
+    await openContextEntryMenu(
+      perspectiveGridTable + firstFolder,
+      'showProperties'
+    );
+
+    const propsFolderName = await getPropertiesFileName();
+    await clickOn('[data-tid=startRenameEntryTID]');
+    await setInputKeys('fileNameProperties', newTile);
+    await clickOn('[data-tid=confirmRenameEntryTID]');
+    await waitForNotification();
+    const propsNewFolderName = await getPropertiesFileName();
+    expect(propsFolderName).not.toBe(propsNewFolderName);
+
+    //turn folderName back
+    await clickOn('[data-tid=startRenameEntryTID]');
+    await setInputKeys('fileNameProperties', propsFolderName);
+    await clickOn('[data-tid=confirmRenameEntryTID]');
+    await waitForNotification();
+    const propsOldFileName = await getPropertiesFileName();
+    expect(propsOldFileName).toBe(propsFolderName);
   });
 
   it('TST0808 - Add and remove tags to a file (file names) [TST0808,web,minio,electron]', async () => {
