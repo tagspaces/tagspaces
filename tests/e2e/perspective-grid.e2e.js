@@ -23,6 +23,7 @@ import {
 import {
   addInputKeys,
   clickOn,
+  createNewDirectory,
   createTxtFile,
   doubleClickOn,
   expectElementExist,
@@ -569,6 +570,23 @@ describe('TST50** - Right button on a file', () => {
     await clickOn('[data-tid=confirmRenameDirectory]');
     await waitForNotification();
     expect(renamedDir).toBe(newDirName);
+  });
+
+  test('TST5035 - Delete directory (directory menu) [TST5035,web,minio,electron]', async () => {
+    await setSettings('[data-tid=settingsSetUseTrashCan]');
+    await global.client.pause(500);
+    const testFolder = await createNewDirectory('aaa');
+
+    await openContextEntryMenu(
+      perspectiveGridTable + firstFolder,
+      'deleteDirectory'
+    );
+    await clickOn('[data-tid=confirmDeleteDirectoryDialog]');
+
+    await expectElementExist(
+      '[data-tid=fsEntryName_' + testFolder + ']',
+      false
+    );
   });
 
   test('TST5037 - Show sub folders [TST5037,web,minio,electron]', async () => {

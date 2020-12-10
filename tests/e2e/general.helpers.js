@@ -382,13 +382,13 @@ export async function openEntry(entryName) {
   await delay(500);*/
 }
 
-export async function createNewDirectory() {
+export async function createNewDirectory(dirName = testFolder) {
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
   await global.client.pause(100); // TODO the Menu is always in HTML
   await clickOn('[data-tid=newSubDirectory]');
   await global.client.pause(500);
   // set new dir name
-  await setInputKeys('directoryName', testFolder);
+  await setInputKeys('directoryName', dirName);
   /*const directoryName = await global.client.$('[data-tid=directoryName] input');
   await delay(500);
   await directoryName.keys(testFolder);
@@ -401,7 +401,7 @@ export async function createNewDirectory() {
   await delay(1500);
   await confirmCreateNewDirectory.waitForDisplayed();
   await confirmCreateNewDirectory.click();*/
-  return testFolder;
+  return dirName;
 }
 
 export async function newHTMLFile() {
