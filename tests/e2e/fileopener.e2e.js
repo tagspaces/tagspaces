@@ -40,6 +40,46 @@ describe('TST08 - File / folder properties', () => {
 
     const secondFileName = await getGridFileName(1);
     expect(secondFileName).toBe(propsNextFileName);
+
+    await global.client.keys('ArrowUp');
+    const propsPrevFileName = await getPropertiesFileName();
+    expect(propsPrevFileName).toBe(propsFileName);
+  });
+
+  it('TST0802 - Open next file buttons [TST0802,web,minio,electron]', async () => {
+    const firstFileName = await getGridFileName(0);
+
+    // open fileProperties
+    await clickOn(perspectiveGridTable + firstFile);
+    //Toggle Properties
+    await clickOn('[data-tid=fileContainerToggleProperties]');
+
+    const propsFileName = await getPropertiesFileName();
+    expect(firstFileName).toBe(propsFileName);
+
+    await clickOn('[data-tid=fileContainerNextFile]');
+    const propsNextFileName = await getPropertiesFileName();
+
+    const secondFileName = await getGridFileName(1);
+    expect(secondFileName).toBe(propsNextFileName);
+  });
+
+  it('TST0803 - Open previous files buttons [TST0803,web,minio,electron]', async () => {
+    const firstFileName = await getGridFileName(0);
+
+    // open fileProperties
+    await clickOn(perspectiveGridTable + firstFile);
+    //Toggle Properties
+    await clickOn('[data-tid=fileContainerToggleProperties]');
+
+    const propsFileName = await getPropertiesFileName();
+    expect(firstFileName).toBe(propsFileName);
+
+    await clickOn('[data-tid=fileContainerPrevFile]');
+    const propsNextFileName = await getPropertiesFileName();
+
+    const lastFileName = await getGridFileName(-1);
+    expect(lastFileName).toBe(propsNextFileName);
   });
 
   it('TST0808 - Add and remove tags to a file (file names) [TST0808,web,minio,electron]', async () => {

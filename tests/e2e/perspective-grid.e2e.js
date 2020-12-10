@@ -66,26 +66,6 @@ describe('TST50 - Perspective Grid', () => {
     await closeFileProperties();
   });
 
-  /*test('TST5113 - Show sub folders content', async () => {});*/
-
-  test('TST5001 - Arrow keys select next/prev file [TST5001,web,minio,electron]', async () => {
-    const firstFileName = await getGridFileName(0);
-
-    // open fileProperties
-    await clickOn(perspectiveGridTable + firstFile);
-    //Toggle Properties
-    await clickOn('[data-tid=fileContainerToggleProperties]');
-
-    const propsFileName = await getPropertiesFileName();
-    expect(firstFileName).toBe(propsFileName);
-
-    await clickOn('[data-tid=fileContainerNextFile]');
-    const propsNextFileName = await getPropertiesFileName();
-
-    const secondFileName = await getGridFileName(1);
-    expect(secondFileName).toBe(propsNextFileName);
-  });
-
   test('TST5002 - Open file with click [TST5002,web,minio,electron]', async () => {
     await searchEngine('txt'); //testTestFilename);
     const firstFileName = await getGridFileName(0);
