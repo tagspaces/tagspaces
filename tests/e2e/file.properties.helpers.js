@@ -1,18 +1,19 @@
 /* Copyright (c) 2020-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 
-import { addInputKeys, clickOn, removeTagFromTagMenu } from './general.helpers';
+import { addInputKeys, removeTagFromTagMenu } from './general.helpers';
 import { getPropertiesTags } from './location.helpers';
 
-export async function AddRemoveTagsToFile(
-  fileSelector,
+/**
+ * Add and then Remove tags from file/folder Properties (open Properties first)
+ * @param tagNames
+ * @param options
+ * @returns {Promise<void>}
+ * @constructor
+ */
+export async function AddRemovePropertiesTags(
   tagNames = ['test-props-tag'], // TODO fix camelCase tag name
   options = { add: true, remove: true }
 ) {
-  // open fileProperties
-  await clickOn(fileSelector);
-  //Toggle Properties
-  await clickOn('[data-tid=fileContainerToggleProperties]');
-
   if (options.add) {
     for (let i = 0; i < tagNames.length; i++) {
       const tagName = tagNames[i];

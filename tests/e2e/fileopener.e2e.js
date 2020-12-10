@@ -14,7 +14,7 @@ import {
   waitForNotification
 } from './general.helpers';
 import {
-  AddRemoveTagsToFile,
+  AddRemovePropertiesTags,
   getPropertiesFileName
 } from './file.properties.helpers';
 import { searchEngine } from './search.spec';
@@ -157,15 +157,29 @@ describe('TST08 - File / folder properties', () => {
 
   it('TST0808 - Add and remove tags to a file (file names) [TST0808,web,minio,electron]', async () => {
     await searchEngine('bmp');
-    await AddRemoveTagsToFile(perspectiveGridTable + firstFile, [
-      'test-tag1',
-      'test-tag2'
-    ]);
+    // open fileProperties
+    await clickOn(perspectiveGridTable + firstFile);
+    //Toggle Properties
+    await clickOn('[data-tid=fileContainerToggleProperties]');
+
+    await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
   });
 
   it('TST0809 - Add and remove tag to a file (sidecar files) [TST0809,web,minio,electron]', async () => {
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]');
     await searchEngine('bmp');
-    await AddRemoveTagsToFile(perspectiveGridTable + firstFile);
+    // open fileProperties
+    await clickOn(perspectiveGridTable + firstFile);
+    //Toggle Properties
+    await clickOn('[data-tid=fileContainerToggleProperties]');
+    await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
+  });
+
+  it('TST3002 - Add and remove tag to a folder [TST3002,web,minio,electron]', async () => {
+    await openContextEntryMenu(
+      perspectiveGridTable + firstFolder,
+      'showProperties'
+    );
+    await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
   });
 });
