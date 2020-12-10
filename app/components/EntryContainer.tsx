@@ -765,6 +765,7 @@ const EntryContainer = (props: Props) => {
         ) */}
         {!props.isReadOnlyMode && (
           <IconButton
+            data-tid="deleteEntryTID"
             title={i18n.t('core:deleteEntry')}
             aria-label={i18n.t('core:deleteEntry')}
             onClick={() => setDeleteEntryModalOpened(true)}
@@ -773,6 +774,7 @@ const EntryContainer = (props: Props) => {
           </IconButton>
         )}
         <IconButton
+          data-tid="reloadFileTID"
           title={i18n.t('core:reloadFile')}
           aria-label={i18n.t('core:reloadFile')}
           onClick={reloadDocument}
@@ -962,91 +964,99 @@ const EntryContainer = (props: Props) => {
         // reloadDocument: settings.keyBindings.reloadDocument,
       }}
     >
-      <ConfirmDialog
-        open={isSaveBeforeCloseConfirmDialogOpened}
-        onClose={() => {
-          setSaveBeforeCloseConfirmDialogOpened(false);
-        }}
-        title={i18n.t('core:confirm')}
-        content={i18n.t('core:saveFileBeforeClosingFile')}
-        confirmCallback={result => {
-          if (result) {
-            startSavingFile();
-          } else {
-            closeFile();
+      {isSaveBeforeCloseConfirmDialogOpened && (
+        <ConfirmDialog
+          open={isSaveBeforeCloseConfirmDialogOpened}
+          onClose={() => {
             setSaveBeforeCloseConfirmDialogOpened(false);
-          }
-        }}
-        cancelDialogTID="cancelSaveBeforeCloseDialog"
-        confirmDialogTID="confirmSaveBeforeCloseDialog"
-        confirmDialogContentTID="confirmDialogContent"
-      />
-      <ConfirmDialog
-        open={isSaveBeforeReloadConfirmDialogOpened}
-        onClose={() => {
-          setSaveBeforeReloadConfirmDialogOpened(false);
-        }}
-        title={i18n.t('core:confirm')}
-        content="File was modified, do you want to save the changes?"
-        confirmCallback={result => {
-          if (result) {
+          }}
+          title={i18n.t('core:confirm')}
+          content={i18n.t('core:saveFileBeforeClosingFile')}
+          confirmCallback={result => {
+            if (result) {
+              startSavingFile();
+            } else {
+              closeFile();
+              setSaveBeforeCloseConfirmDialogOpened(false);
+            }
+          }}
+          cancelDialogTID="cancelSaveBeforeCloseDialog"
+          confirmDialogTID="confirmSaveBeforeCloseDialog"
+          confirmDialogContentTID="confirmDialogContent"
+        />
+      )}
+      {isSaveBeforeReloadConfirmDialogOpened && (
+        <ConfirmDialog
+          open={isSaveBeforeReloadConfirmDialogOpened}
+          onClose={() => {
             setSaveBeforeReloadConfirmDialogOpened(false);
-            startSavingFile();
-          } else {
-            // isChanged = false;
-            // shouldReload = true;
-            setSaveBeforeReloadConfirmDialogOpened(false);
-            props.updateOpenedFile(openedFile.path, {
-              ...openedFile,
-              editMode: false,
-              changed: false,
-              shouldReload: true
-            });
+          }}
+          title={i18n.t('core:confirm')}
+          content="File was modified, do you want to save the changes?"
+          confirmCallback={result => {
+            if (result) {
+              setSaveBeforeReloadConfirmDialogOpened(false);
+              startSavingFile();
+            } else {
+              // isChanged = false;
+              // shouldReload = true;
+              setSaveBeforeReloadConfirmDialogOpened(false);
+              props.updateOpenedFile(openedFile.path, {
+                ...openedFile,
+                editMode: false,
+                changed: false,
+                shouldReload: true
+              });
+            }
+          }}
+          cancelDialogTID="cancelSaveBeforeCloseDialog"
+          confirmDialogTID="confirmSaveBeforeCloseDialog"
+          confirmDialogContentTID="confirmDialogContent"
+        />
+      )}
+      {isDeleteEntryModalOpened && (
+        <ConfirmDialog
+          open={isDeleteEntryModalOpened}
+          onClose={() => {
+            setDeleteEntryModalOpened(false);
+          }}
+          title={
+            openedFile.isFile
+              ? i18n.t('core:deleteConfirmationTitle')
+              : i18n.t('core:deleteDirectory')
           }
-        }}
-        cancelDialogTID="cancelSaveBeforeCloseDialog"
-        confirmDialogTID="confirmSaveBeforeCloseDialog"
-        confirmDialogContentTID="confirmDialogContent"
-      />
-      <ConfirmDialog
-        open={isDeleteEntryModalOpened}
-        onClose={() => {
-          setDeleteEntryModalOpened(false);
-        }}
-        title={
-          openedFile.isFile
-            ? i18n.t('core:deleteConfirmationTitle')
-            : i18n.t('core:deleteDirectory')
-        }
-        content={
-          openedFile.isFile
-            ? i18n.t('core:doYouWantToDeleteFile')
-            : i18n.t('core:deleteDirectoryContentConfirm', {
-                dirPath: openedFile.path
-                  ? extractDirectoryName(
-                      openedFile.path,
-                      PlatformIO.getDirSeparator()
-                    )
-                  : ''
-              })
-        }
-        confirmCallback={result => {
-          if (result) {
-            props.deleteFile(openedFile.path);
+          content={
+            openedFile.isFile
+              ? i18n.t('core:doYouWantToDeleteFile')
+              : i18n.t('core:deleteDirectoryContentConfirm', {
+                  dirPath: openedFile.path
+                    ? extractDirectoryName(
+                        openedFile.path,
+                        PlatformIO.getDirSeparator()
+                      )
+                    : ''
+                })
           }
-        }}
-        cancelDialogTID="cancelSaveBeforeCloseDialog"
-        confirmDialogTID="confirmSaveBeforeCloseDialog"
-        confirmDialogContentTID="confirmDialogContent"
-      />
-      <AddRemoveTagsDialog
-        open={isEditTagsModalOpened}
-        onClose={() => setEditTagsModalOpened(false)}
-        addTags={props.addTags}
-        removeTags={props.removeTags}
-        removeAllTags={props.removeAllTags}
-        selectedEntries={openedFile ? [openedFile] : []}
-      />
+          confirmCallback={result => {
+            if (result) {
+              props.deleteFile(openedFile.path);
+            }
+          }}
+          cancelDialogTID="cancelSaveBeforeCloseDialog"
+          confirmDialogTID="confirmSaveBeforeCloseDialog"
+          confirmDialogContentTID="confirmDialogContent"
+        />
+      )}
+      {isEditTagsModalOpened && (
+        <AddRemoveTagsDialog
+          open={isEditTagsModalOpened}
+          onClose={() => setEditTagsModalOpened(false)}
+          addTags={props.addTags}
+          removeTags={props.removeTags}
+          removeAllTags={props.removeAllTags}
+          selectedEntries={openedFile ? [openedFile] : []}
+        />
+      )}
       <a href="#" id="downloadFile">
         &nbsp;
       </a>

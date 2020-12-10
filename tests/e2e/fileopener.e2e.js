@@ -7,8 +7,10 @@ import {
 } from './location.helpers';
 import {
   clickOn,
+  createTxtFile,
   expectElementExist,
   getGridFileName,
+  selectorFile,
   setInputKeys,
   setSettings,
   waitForNotification
@@ -181,5 +183,33 @@ describe('TST08 - File / folder properties', () => {
       'showProperties'
     );
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
+  });
+
+  it('TST0812 - Reload file [TST0812,web,minio,electron]', async () => {
+    // open fileProperties
+    await clickOn(perspectiveGridTable + firstFile);
+    //Toggle Properties
+    await clickOn('[data-tid=fileContainerToggleProperties]');
+    await clickOn('[data-tid=reloadFileTID]');
+    // TODO externally change the file to check if its reloaded
+  });
+
+  it('TST0813 - Delete file [TST0813,web,minio,electron]', async () => {
+    await createTxtFile();
+    await searchEngine('note');
+
+    await expectElementExist(selectorFile, true);
+
+    // open fileProperties
+    await clickOn(selectorFile);
+    //Toggle Properties
+    await clickOn('[data-tid=fileContainerToggleProperties]');
+
+    const propsFileName = await getPropertiesFileName();
+    await clickOn('[data-tid=deleteEntryTID]');
+    await clickOn('[data-tid=confirmSaveBeforeCloseDialog]');
+    await waitForNotification();
+    const firstFileName = await getGridFileName(0);
+    expect(propsFileName).not.toBe(firstFileName);
   });
 });
