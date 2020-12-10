@@ -1240,6 +1240,7 @@ const EntryContainer = (props: Props) => {
         <div ref={fileViewerContainer} className={classes.fileContent}>
           {isFullscreen && (
             <Fab
+              data-tid="fullscreenTID"
               color="primary"
               style={{
                 position: 'absolute',

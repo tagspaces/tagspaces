@@ -681,6 +681,7 @@ const EntryProperties = (props: Props) => {
                   {editName !== undefined ? (
                     <div>
                       <Button
+                        data-tid="cancelRenameEntryTID"
                         color="primary"
                         className={classes.button}
                         onClick={deactivateEditNameField}
@@ -688,6 +689,7 @@ const EntryProperties = (props: Props) => {
                         {i18n.t('core:cancel')}
                       </Button>
                       <Button
+                        data-tid="confirmRenameEntryTID"
                         color="primary"
                         className={classes.button}
                         onClick={renameEntry}
@@ -697,6 +699,7 @@ const EntryProperties = (props: Props) => {
                     </div>
                   ) : (
                     <Button
+                      data-tid="startRenameEntryTID"
                       color="primary"
                       className={classes.button}
                       onClick={activateEditNameField}

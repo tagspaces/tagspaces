@@ -3,11 +3,19 @@ import {
   createLocation,
   createMinioLocation,
   defaultLocationName,
-  defaultLocationPath,
-  getPropertiesFileName
+  defaultLocationPath
 } from './location.helpers';
-import { clickOn, getGridFileName, setSettings } from './general.helpers';
-import { AddRemoveTagsToFile } from './file.properties.helpers';
+import {
+  clickOn,
+  expectElementExist,
+  getGridFileName,
+  setInputKeys,
+  setSettings
+} from './general.helpers';
+import {
+  AddRemoveTagsToFile,
+  getPropertiesFileName
+} from './file.properties.helpers';
 import { searchEngine } from './search.spec';
 import { firstFile, perspectiveGridTable } from './test-utils.spec';
 
@@ -80,6 +88,38 @@ describe('TST08 - File / folder properties', () => {
 
     const lastFileName = await getGridFileName(-1);
     expect(lastFileName).toBe(propsNextFileName);
+  });
+
+  it('TST0804 - Open file in full width [TST0804,web,minio,electron]', async () => {
+    // open fileProperties
+    await clickOn(perspectiveGridTable + firstFile);
+    await clickOn('[data-tid=fileContainerSwitchToFullScreen]');
+    await expectElementExist('[data-tid=fullscreenTID]', true);
+    await clickOn('[data-tid=fullscreenTID]');
+    await expectElementExist('[data-tid=fullscreenTID]', false);
+  });
+
+  it('TST0805 - Change title of the opened file / rename [TST0805,web,minio,electron]', async () => {
+    const newTile = 'titleRenamed.txt';
+    await searchEngine('txt');
+    // open fileProperties
+    await clickOn(perspectiveGridTable + firstFile);
+    //Toggle Properties
+    await clickOn('[data-tid=fileContainerToggleProperties]');
+
+    const propsFileName = await getPropertiesFileName();
+    await clickOn('[data-tid=startRenameEntryTID]');
+    await setInputKeys('fileNameProperties', newTile);
+    await clickOn('[data-tid=confirmRenameEntryTID]');
+    const propsNewFileName = await getPropertiesFileName();
+    expect(propsFileName).not.toBe(propsNewFileName);
+
+    //turn fineName back
+    await clickOn('[data-tid=startRenameEntryTID]');
+    await setInputKeys('fileNameProperties', propsFileName);
+    await clickOn('[data-tid=confirmRenameEntryTID]');
+    const propsOldFileName = await getPropertiesFileName();
+    expect(propsOldFileName).toBe(propsFileName);
   });
 
   it('TST0808 - Add and remove tags to a file (file names) [TST0808,web,minio,electron]', async () => {

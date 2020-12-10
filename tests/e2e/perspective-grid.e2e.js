@@ -9,8 +9,7 @@ import {
   getFirstFileName,
   renameFirstFile,
   deleteFirstFile,
-  createMinioLocation,
-  getPropertiesFileName
+  createMinioLocation
 } from './location.helpers';
 import { searchEngine } from './search.spec';
 import {
@@ -41,6 +40,7 @@ import {
   waitForNotification
 } from './general.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
+import {getPropertiesFileName} from "./file.properties.helpers";
 
 const subFolderName = '/test-perspective-grid';
 const subFolderContentExtractionPath =
