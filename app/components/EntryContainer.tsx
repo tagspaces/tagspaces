@@ -782,6 +782,7 @@ const EntryContainer = (props: Props) => {
           <RefreshIcon />
         </IconButton>
         <IconButton
+          data-tid="openInFullWidthTID"
           title={i18n.t('core:openInFullWidth')}
           aria-label={i18n.t('core:openInFullWidth')}
           onClick={props.toggleEntryFullWidth}

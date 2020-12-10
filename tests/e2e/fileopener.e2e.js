@@ -101,10 +101,10 @@ describe('TST08 - File / folder properties', () => {
   it('TST0804 - Open file in full width [TST0804,web,minio,electron]', async () => {
     // open fileProperties
     await clickOn(perspectiveGridTable + firstFile);
-    await clickOn('[data-tid=fileContainerSwitchToFullScreen]');
-    await expectElementExist('[data-tid=fullscreenTID]', true);
-    await clickOn('[data-tid=fullscreenTID]');
-    await expectElementExist('[data-tid=fullscreenTID]', false);
+    await global.client.pause(500);
+    await clickOn('[data-tid=openInFullWidthTID]'); // dummy click -first click in openInFullWidthTID dont work
+    await clickOn('[data-tid=openInFullWidthTID]');
+    await expectElementExist('[data-tid=folderContainerTID]', false);
   });
 
   it('TST0805 - Rename opened file [TST0805,web,minio,electron]', async () => {
@@ -211,5 +211,14 @@ describe('TST08 - File / folder properties', () => {
     await waitForNotification();
     const firstFileName = await getGridFileName(0);
     expect(propsFileName).not.toBe(firstFileName);
+  });
+
+  it('TST0814 - Open file fullscreen and exit with close button [TST0813,web,minio,electron]', async () => {
+    // open fileProperties
+    await clickOn(perspectiveGridTable + firstFile);
+    await clickOn('[data-tid=fileContainerSwitchToFullScreen]');
+    await expectElementExist('[data-tid=fullscreenTID]', true);
+    await clickOn('[data-tid=fullscreenTID]');
+    await expectElementExist('[data-tid=fullscreenTID]', false);
   });
 });

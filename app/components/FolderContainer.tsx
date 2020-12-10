@@ -459,7 +459,7 @@ const FolderContainer = (props: Props) => {
       ' entries.';
   }
   return (
-    <div>
+    <div data-tid="folderContainerTID">
       <div className={classes.mainPanel}>
         <div className={classes.topPanel}>
           <div className={classes.toolbar}>
