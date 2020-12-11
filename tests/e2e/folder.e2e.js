@@ -25,8 +25,6 @@ import { renameFolder } from './test-utils.spec';
 
 describe('TST01 - Folder management [electron]', () => {
   beforeEach(async () => {
-    // await clearLocalStorage();
-
     if (global.isMinio) {
       await createMinioLocation('', defaultLocationName, true);
     } else {

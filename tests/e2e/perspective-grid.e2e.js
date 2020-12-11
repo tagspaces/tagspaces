@@ -53,8 +53,6 @@ const newFileName = 'newFileName.txt';
 
 describe('TST50 - Perspective Grid', () => {
   beforeEach(async () => {
-    // await clearLocalStorage();
-    // await closeWelcome();
     if (global.isMinio) {
       await createMinioLocation('', defaultLocationName, true);
     } else {

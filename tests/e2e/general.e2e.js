@@ -1,7 +1,6 @@
 /*
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
-import { delay, clearLocalStorage } from './hook';
 import {
   createLocation,
   defaultLocationPath,
@@ -38,8 +37,6 @@ const testFolder = 'testFolder';
 
 describe('TST51 - Perspective Grid [general]', () => {
   beforeEach(async () => {
-    // await clearLocalStorage();
-    //  await delay(500);
     //await closeWelcome();
     //await delay(500);
     if (global.isMinio) {
