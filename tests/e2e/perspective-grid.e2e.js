@@ -9,33 +9,38 @@ import {
   getFirstFileName,
   renameFirstFile,
   deleteFirstFile,
-  createMinioLocation,
-  getPropertiesFileName,
-  getPropertiesTags
+  createMinioLocation
 } from './location.helpers';
 import { searchEngine } from './search.spec';
 import {
   openContextEntryMenu,
   perspectiveGridTable,
   firstFile,
-  toContainTID
+  toContainTID,
+  firstFolder
 } from './test-utils.spec';
 import {
   addInputKeys,
   clickOn,
+  createNewDirectory,
   createTxtFile,
-  disableTrashBin,
   doubleClickOn,
   expectElementExist,
+  expectTagsExist,
   extractTags,
   getGridCellClass,
   getGridFileName,
+  removeTagFromTagMenu,
   selectAllFiles,
   selectorFile,
   selectorFolder,
-  waitForNotification,
-  waitUntilClassChanged
+  setInputKeys,
+  setSettings,
+  showFilesWithTag,
+  waitForNotification
 } from './general.helpers';
+import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
+import { getPropertiesFileName } from './file.properties.helpers';
 
 const subFolderName = '/test-perspective-grid';
 const subFolderContentExtractionPath =
@@ -59,26 +64,6 @@ describe('TST50 - Perspective Grid', () => {
     await clickOn('[data-tid=location_' + defaultLocationName + ']');
     // If its have opened file
     await closeFileProperties();
-  });
-
-  /*test('TST5113 - Show sub folders content', async () => {});*/
-
-  test('TST5001 - Arrow keys select next/prev file [TST5001,web,minio,electron]', async () => {
-    const firstFileName = await getGridFileName(0);
-
-    // open fileProperties
-    await clickOn(perspectiveGridTable + firstFile);
-    //Toggle Properties
-    await clickOn('[data-tid=fileContainerToggleProperties]');
-
-    const propsFileName = await getPropertiesFileName();
-    expect(firstFileName).toBe(propsFileName);
-
-    await clickOn('[data-tid=fileContainerNextFile]');
-    const propsNextFileName = await getPropertiesFileName();
-
-    const secondFileName = await getGridFileName(1);
-    expect(secondFileName).toBe(propsNextFileName);
   });
 
   test('TST5002 - Open file with click [TST5002,web,minio,electron]', async () => {
@@ -124,7 +109,7 @@ describe('TST50 - Perspective Grid', () => {
       expect(firstFileName).toBe('note.txt');
 
       //cleanup
-      await disableTrashBin();
+      await setSettings('[data-tid=settingsSetUseTrashCan]');
       await global.client.pause(500);
       await deleteFirstFile();
       // firstFileName = await getGridFileName(0);
@@ -181,7 +166,15 @@ describe('TST50 - Perspective Grid', () => {
         perspectiveGridTable + firstFile,
         'fileMenuAddRemoveTags'
     );*/
-    await clickOn('[data-tid=gridPerspectiveAddRemoveTags]');
+
+    const tags = ['test-tag1', 'test-tag2'];
+    await AddRemoveTagsToSelectedFiles(tags);
+    // Select all file and check if tag exist
+    const filesList = await global.client.$$(perspectiveGridTable + firstFile);
+    for (let i = 0; i < filesList.length; i++) {
+      await expectTagsExist(filesList[i], tags, true);
+    }
+    /*await clickOn('[data-tid=gridPerspectiveAddRemoveTags]');
 
     await addInputKeys('AddRemoveTagsSelectTID', testTagName);
     await global.client.keys('Enter');
@@ -193,7 +186,7 @@ describe('TST50 - Perspective Grid', () => {
     for (let i = 0; i < filesList.length; i++) {
       const tags = await extractTags(filesList[i]);
       expect(tags.includes(testTagName)).toBe(true);
-    }
+    }*/
   });
 
   test('TST5006 - Remove tags from selected files [TST5006,web,minio,electron]', async () => {
@@ -201,7 +194,15 @@ describe('TST50 - Perspective Grid', () => {
     const classSelected = await selectAllFiles(classNotSelected);
     expect(classNotSelected).not.toBe(classSelected);
 
-    await clickOn('[data-tid=gridPerspectiveAddRemoveTags]');
+    const tags = ['test-tag1', 'test-tag2'];
+    await AddRemoveTagsToSelectedFiles(tags, false);
+
+    // Select all file and check if tag exist
+    const filesList = await global.client.$$(perspectiveGridTable + firstFile);
+    for (let i = 0; i < filesList.length; i++) {
+      await expectTagsExist(filesList[i], tags, false);
+    }
+    /*await clickOn('[data-tid=gridPerspectiveAddRemoveTags]');
 
     await addInputKeys('AddRemoveTagsSelectTID', testTagName);
     await global.client.keys('Enter');
@@ -213,9 +214,79 @@ describe('TST50 - Perspective Grid', () => {
     for (let i = 0; i < filesList.length; i++) {
       const tags = await extractTags(filesList[i]);
       expect(tags.includes(testTagName)).toBe(false);
+    }*/
+  });
+
+  test('TST5007 - Remove all tags from selected files [TST5007,web,minio,electron]', async () => {
+    const classNotSelected = await getGridCellClass(0);
+    const classSelected = await selectAllFiles(classNotSelected);
+    expect(classNotSelected).not.toBe(classSelected);
+
+    await clickOn('[data-tid=gridPerspectiveAddRemoveTags]');
+
+    await clickOn('[data-tid=cleanTagsMultipleEntries]');
+    // await global.client.pause(500);
+    await waitForNotification();
+    const filesList = await global.client.$$(perspectiveGridTable + firstFile);
+    for (let i = 0; i < filesList.length; i++) {
+      const tags = await extractTags(filesList[i]);
+      expect(tags.length).toBe(0);
     }
   });
 
+  test('TST5008 - Copy file [TST5008,web,minio,electron]', async () => {
+    await searchEngine('bmp');
+
+    // select file
+    await clickOn(perspectiveGridTable + firstFile);
+    // open Copy File Dialog
+    await clickOn('[data-tid=gridPerspectiveCopySelectedFiles]');
+    await addInputKeys(
+      'targetPathInput',
+      defaultLocationPath + '/empty_folder'
+    );
+    await clickOn('[data-tid=confirmCopyFiles]');
+    await waitForNotification();
+    await clickOn('#clearSearchID');
+    await global.client.pause(500);
+    await doubleClickOn(perspectiveGridTable + firstFolder);
+    const firstFileName = await getGridFileName(0);
+    expect(firstFileName).toBe('sample.bmp');
+  });
+
+  test('TST5010 - Move file [TST5010,web,minio,electron]', async () => {
+    await searchEngine('epub');
+
+    // select file
+    await clickOn(perspectiveGridTable + firstFile);
+    // open Copy File Dialog
+    await clickOn('[data-tid=gridPerspectiveCopySelectedFiles]');
+    await addInputKeys(
+      'targetPathInput',
+      defaultLocationPath + '/empty_folder'
+    );
+    await clickOn('[data-tid=confirmMoveFiles]');
+    await waitForNotification();
+    await clickOn('#clearSearchID');
+    await global.client.pause(500);
+    await doubleClickOn(perspectiveGridTable + firstFolder);
+    await searchEngine('epub', { reindexing: true }); // TODO temp fix: https://trello.com/c/ZfcGGvOM/527-moved-files-is-not-indexing-not-found-in-search
+    const firstFileName = await getGridFileName(0);
+    expect(firstFileName).toBe('sample.epub');
+  });
+
+  test('TST5013 - Delete files from selection (many files) [TST5013,web,minio,electron]', async () => {
+    await doubleClickOn(perspectiveGridTable + firstFolder);
+
+    const classNotSelected = await getGridCellClass(0);
+    const classSelected = await selectAllFiles(classNotSelected);
+    expect(classNotSelected).not.toBe(classSelected);
+
+    await clickOn('[data-tid=gridPerspectiveDeleteMultipleFiles]');
+    await clickOn('[data-tid=confirmDeleteFileDialog]');
+    await waitForNotification();
+    await expectElementExist(perspectiveGridTable + firstFile, false);
+  });
   /*test('TST51** - Show/Hide directories in perspective view', async () => { //TODO
     await global.client.waitForVisible(
       '[data-tid=gridPerspectiveToggleShowDirectories]'
@@ -293,6 +364,83 @@ describe('TST50** - Right button on a file', () => {
     expect(firstFileName).toBe(undefined);*/
   });
 
+  test('TST5019 - Rename tag in file [TST5019,web,minio,electron]', async () => {
+    await searchEngine('desktop');
+    // Select file
+    await clickOn(perspectiveGridTable + firstFile);
+    await AddRemoveTagsToSelectedFiles([testTagName], true);
+    let file = await global.client.$(perspectiveGridTable + firstFile);
+    await expectTagsExist(file, [testTagName], true);
+
+    /*await AddRemoveTagsToFile(perspectiveGridTable + firstFile, [testTagName], {
+      add: true
+    });*/
+    await clickOn('[data-tid=tagMoreButton_' + testTagName + ']');
+    await global.client.pause(500);
+    await clickOn('[data-tid=editTagDialogMenu]');
+    await setInputKeys('editTagEntryDialog_input', testTagName + '-edited');
+    await clickOn('[data-tid=confirmEditTagEntryDialog]');
+    await waitForNotification();
+
+    file = await global.client.$(perspectiveGridTable + firstFile);
+    await expectTagsExist(file, [testTagName + '-edited'], true);
+
+    //cleanup
+    await clickOn(perspectiveGridTable + firstFile);
+    await AddRemoveTagsToSelectedFiles([testTagName + '-edited'], false);
+    file = await global.client.$(perspectiveGridTable + firstFile);
+    await expectTagsExist(file, [testTagName + '-edited'], false);
+  });
+
+  test('TST5023 - Remove tag from file (tag menu) [TST5023,web,minio,electron]', async () => {
+    await searchEngine('desktop');
+    // select file
+    await clickOn(perspectiveGridTable + firstFile);
+    await AddRemoveTagsToSelectedFiles([testTagName], true);
+    let file = await global.client.$(perspectiveGridTable + firstFile);
+    await expectTagsExist(file, [testTagName], true);
+
+    await removeTagFromTagMenu(testTagName);
+    await global.client.pause(500);
+
+    file = await global.client.$(perspectiveGridTable + firstFile);
+    await expectTagsExist(file, [testTagName], false);
+  });
+
+  test('TST5024 - Show files with a given tag (tag menu) [TST5024,web,minio,electron]', async () => {
+    const classNotSelected = await getGridCellClass(0);
+    const classSelected = await selectAllFiles(classNotSelected);
+    expect(classNotSelected).not.toBe(classSelected);
+
+    await AddRemoveTagsToSelectedFiles([testTagName], true);
+    await showFilesWithTag(testTagName);
+
+    const filesList = await global.client.$$(perspectiveGridTable + firstFile);
+    for (let i = 0; i < filesList.length; i++) {
+      await expectTagsExist(filesList[i], [testTagName], true);
+    }
+
+    // cleanup
+    await selectAllFiles(classNotSelected);
+    expect(classNotSelected).not.toBe(classSelected);
+    await AddRemoveTagsToSelectedFiles([testTagName], false);
+  });
+
+  test('TST5025 - Add / Remove tags (file menu) [TST5025,web,minio,electron]', async () => {
+    await searchEngine('desktop');
+    const tags = [testTagName, testTagName + '2'];
+    // select file
+    await clickOn(perspectiveGridTable + firstFile);
+    await AddRemoveTagsToSelectedFiles(tags, true);
+
+    const file = await global.client.$(perspectiveGridTable + firstFile);
+    await expectTagsExist(file, tags, true);
+
+    //cleanup
+    await clickOn(perspectiveGridTable + firstFile);
+    await AddRemoveTagsToSelectedFiles(tags, false);
+  });
+
   test('TST5026 - Open file natively [electron]', async () => {
     if (!global.isMinio) {
       // Open file natively option is missing for Minio Location
@@ -331,17 +479,102 @@ describe('TST50** - Right button on a file', () => {
     await cancelButton.click();
   });*/
 
-  //TODO fix electron: element not interactable
-  test('TST5028 - Move / Copy file [TST5028]', async () => {
-    await searchEngine('txt');
+  test('TST5028 - Move / Copy file (file menu) [TST5028,web,minio,electron]', async () => {
+    // Move file in child folder
+    await searchEngine('eml');
     await openContextEntryMenu(
       perspectiveGridTable + firstFile,
       'fileMenuMoveCopyFile'
     );
-    //TODO
-    await clickOn('[data-tid=closeMoveCopyDialog]');
+    await addInputKeys(
+      'targetPathInput',
+      defaultLocationPath + '/empty_folder'
+    );
 
-    // Check if the directories are displayed
+    await clickOn('[data-tid=confirmMoveFiles]');
+    await waitForNotification();
+    await clickOn('#clearSearchID');
+    await global.client.pause(500);
+    await doubleClickOn(perspectiveGridTable + firstFolder);
+    await searchEngine('eml', { reindexing: true }); // TODO temp fix: https://trello.com/c/ZfcGGvOM/527-moved-files-is-not-indexing-not-found-in-search
+    let firstFileName = await getGridFileName(0);
+    expect(firstFileName).toBe('sample.eml');
+
+    //Copy file in parent directory
+    await openContextEntryMenu(
+      perspectiveGridTable + firstFile,
+      'fileMenuMoveCopyFile'
+    );
+    await addInputKeys('targetPathInput', defaultLocationPath);
+    await clickOn('[data-tid=confirmCopyFiles]');
+    await waitForNotification();
+    await clickOn('#clearSearchID');
+    await clickOn('[data-tid=gridPerspectiveOnBackButton]');
+    await global.client.pause(500);
+    await searchEngine('eml');
+    firstFileName = await getGridFileName(0);
+    expect(firstFileName).toBe('sample.eml');
+  });
+
+  test('TST5033 - Open directory (directory menu) [TST5033,web,minio,electron]', async () => {
+    await openContextEntryMenu(
+      perspectiveGridTable + firstFolder,
+      'openDirectory'
+    );
+    const firstFileName = await getGridFileName(0);
+    expect(firstFileName).toBe('sample.eml');
+  });
+
+  test('TST5034 - Rename directory (directory menu) [TST5034,web,minio,electron]', async () => {
+    const newDirName = 'new_dir_name';
+    await openContextEntryMenu(
+      perspectiveGridTable + firstFolder,
+      'renameDirectory'
+    );
+    const oldDirName = await setInputKeys(
+      'renameDirectoryDialogInput',
+      newDirName
+    );
+    await clickOn('[data-tid=confirmRenameDirectory]');
+    await waitForNotification();
+
+    //turn dir name back
+    await openContextEntryMenu(
+      perspectiveGridTable + firstFolder,
+      'renameDirectory'
+    );
+    const renamedDir = await setInputKeys(
+      'renameDirectoryDialogInput',
+      oldDirName
+    );
+    await clickOn('[data-tid=confirmRenameDirectory]');
+    await waitForNotification();
+    expect(renamedDir).toBe(newDirName);
+  });
+
+  test('TST5035 - Delete directory (directory menu) [TST5035,web,minio,electron]', async () => {
+    await setSettings('[data-tid=settingsSetUseTrashCan]');
+    await global.client.pause(500);
+    const testFolder = await createNewDirectory('aaa');
+
+    await openContextEntryMenu(
+      perspectiveGridTable + firstFolder,
+      'deleteDirectory'
+    );
+    await clickOn('[data-tid=confirmDeleteDirectoryDialog]');
+
+    await expectElementExist(
+      '[data-tid=fsEntryName_' + testFolder + ']',
+      false
+    );
+  });
+
+  test('TST5036 - Open directory properties (directory menu) [TST5036,web,minio,electron]', async () => {
+    await openContextEntryMenu(
+      perspectiveGridTable + firstFolder,
+      'showProperties'
+    );
+    await expectElementExist('[data-tid=fileNameProperties]', true);
   });
 
   test('TST5037 - Show sub folders [TST5037,web,minio,electron]', async () => {

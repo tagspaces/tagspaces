@@ -11,11 +11,11 @@ import {
 import {
   reloadDirectory,
   openEntry,
-  disableTrashBin,
   createNewDirectory,
   deleteDirectory,
   clickOn,
-  expectElementExist
+  expectElementExist,
+  setSettings
 } from './general.helpers';
 import { renameFolder } from './test-utils.spec';
 
@@ -75,7 +75,7 @@ describe('TST01 - Folder management [electron]', () => {
   });
 
   it('TST0104 - Delete empty folder [TST0104,electron]', async () => {
-    await disableTrashBin();
+    await setSettings('[data-tid=settingsSetUseTrashCan]');
     await global.client.pause(500);
     const testFolder = await createNewDirectory();
     await expectElementExist('[data-tid=fsEntryName_' + testFolder + ']');

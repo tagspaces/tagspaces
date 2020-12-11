@@ -183,15 +183,6 @@ export async function getFirstFileName() {
   return fileName;
 }
 
-export async function getPropertiesFileName() {
-  const propsFileNameInput = await global.client.$(
-    '[data-tid=fileNameProperties] input'
-  );
-  await propsFileNameInput.waitForDisplayed({ timeout: 10000 });
-  const fileName = await propsFileNameInput.getValue();
-  return fileName.replace(/ *\[[^\]]*]/, '');
-}
-
 export async function getPropertiesTags() {
   const arrTags = [];
   const tags = await global.client.$$(

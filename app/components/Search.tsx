@@ -452,7 +452,12 @@ const Search = React.memo((props: Props) => {
             title={i18n.t('core:searchWordsWithInterval')}
             endAdornment={
               <InputAdornment position="end">
-                <IconButton onClick={clearSearch} size="small" edge="end">
+                <IconButton
+                  id="clearSearchID"
+                  onClick={clearSearch}
+                  size="small"
+                  edge="end"
+                >
                   <ClearSearchIcon />
                 </IconButton>
               </InputAdornment>
@@ -491,6 +496,7 @@ const Search = React.memo((props: Props) => {
           title={i18n.t('core:enableIndexingBySearch')}
           control={
             <Switch
+              data-tid="forceIndexingTID"
               checked={forceIndexing}
               onChange={() => setForceIndexing(!forceIndexing)}
               name="forceIndexing"

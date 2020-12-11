@@ -8,6 +8,7 @@ const unixMinio = 'minio';
 const newDirectoryName = 'newDirectory';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const firstFile = '/span';
+export const firstFolder = '/div';
 export const firstFileName = '/span/div/div/div/p';
 
 // add perspective, remove perspective, change perspective

@@ -150,14 +150,15 @@ export async function setInputKeys(tid, value) {
   );
 
   // await elemInput.clearValue();
-  await clearInputValue(elemInput);
+  const oldValue = await clearInputValue(elemInput);
   await element.click();
   await elemInput.keys(value);
+  return oldValue;
 }
 
 export async function clearInputValue(inputElement) {
-  const value = await inputElement.getValue();
-  const count = value.length;
+  const oldValue = await inputElement.getValue();
+  const count = oldValue.length;
   for (let i = 0; i < count; i++) {
     const value = await inputElement.getValue();
     if (value === '') {
@@ -168,6 +169,7 @@ export async function clearInputValue(inputElement) {
     await global.client.keys('Delete');
     await inputElement.clearValue();
   }
+  return oldValue;
 }
 
 /**
@@ -311,6 +313,28 @@ export async function extractTags(selectorElement) {
   return arrTags;
 }
 
+export async function removeTagFromTagMenu(tagName) {
+  await clickOn('[data-tid=tagMoreButton_' + tagName + ']');
+  await global.client.pause(500);
+  await clickOn('[data-tid=deleteTagMenu]');
+  await global.client.pause(500);
+  await clickOn('[data-tid=confirmRemoveTagFromFile]');
+}
+
+export async function showFilesWithTag(tagName) {
+  await clickOn('[data-tid=tagMoreButton_' + tagName + ']');
+  await global.client.pause(500);
+  await clickOn('[data-tid=showFilesWithThisTag]');
+}
+
+export async function expectTagsExist(gridElement, arrTagNames, exist = true) {
+  const tags = await extractTags(gridElement);
+  for (let i = 0; i < arrTagNames.length; i++) {
+    const tagName = arrTagNames[i];
+    expect(tags.includes(tagName)).toBe(exist);
+  }
+}
+
 export async function waitForNotification(tid = 'notificationTID') {
   await global.client.pause(500);
   // await expectElementExist('[data-tid=' + tid + ']', true, 8000);
@@ -326,10 +350,10 @@ export async function waitForNotification(tid = 'notificationTID') {
   }
 }
 
-export async function settingsSetShowUnixHiddenEntries() {
+export async function setSettings(selector) {
   await clickOn('[data-tid=settings]');
   await global.client.pause(500);
-  await clickOn('[data-tid=settingsSetShowUnixHiddenEntries]');
+  await clickOn(selector);
   await clickOn('[data-tid=closeSettingsDialog]');
 }
 
@@ -358,13 +382,13 @@ export async function openEntry(entryName) {
   await delay(500);*/
 }
 
-export async function createNewDirectory() {
+export async function createNewDirectory(dirName = testFolder) {
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
   await global.client.pause(100); // TODO the Menu is always in HTML
   await clickOn('[data-tid=newSubDirectory]');
   await global.client.pause(500);
   // set new dir name
-  await setInputKeys('directoryName', testFolder);
+  await setInputKeys('directoryName', dirName);
   /*const directoryName = await global.client.$('[data-tid=directoryName] input');
   await delay(500);
   await directoryName.keys(testFolder);
@@ -377,7 +401,7 @@ export async function createNewDirectory() {
   await delay(1500);
   await confirmCreateNewDirectory.waitForDisplayed();
   await confirmCreateNewDirectory.click();*/
-  return testFolder;
+  return dirName;
 }
 
 export async function newHTMLFile() {
@@ -430,13 +454,6 @@ export async function deleteDirectory() {
   await delay(500);
   await confirmDeleteDirectory.click();
   await delay(500);*/
-}
-
-export async function disableTrashBin() {
-  await clickOn('[data-tid=settings]');
-  await global.client.pause(500);
-  await clickOn('[data-tid=settingsSetUseTrashCan]');
-  await clickOn('[data-tid=closeSettingsDialog]');
 }
 
 export async function returnDirectoryBack() {
