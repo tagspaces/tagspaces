@@ -11,7 +11,6 @@ import {
   stopMinio,
   stopWebServer
 } from './test-utils.spec';
-import { clickOn } from './general.helpers';
 import { clearStorage } from './clearstorage.helpers';
 
 // Spectron API https://github.com/electron/spectron
@@ -51,6 +50,44 @@ async function clearLocalStorage() {
   // global.app.client.reload(false);
 }
 
+export async function startSpectronApp() {
+  if (global.isWeb) {
+    const webdriverio = await require('webdriverio');
+    const options = {
+      host: 'localhost', // Use localhost as chrome driver server
+      port: 9515, // "9515" is the port opened by chrome driver.
+      capabilities: {
+        browserName: 'chrome'
+        /*'goog:chromeOptions': {
+          binary: electronPath, // Path to your Electron binary.
+          args: [ /!* cli arguments *!/] // Optional, perhaps 'app=' + /path/to/your/app/
+        }*/
+      },
+      logLevel: 'silent'
+    };
+    global.client = await webdriverio.remote(options);
+    await global.client.url('http://localhost:8000');
+  } else {
+    global.app = new Application({
+      path: electronPath,
+      args: [path.join(__dirname, '..', '..', 'app')],
+      // startTimeout: 500,
+      waitTimeout: 500,
+      waitforInterval: 50
+    });
+    await global.app.start();
+    global.client = global.app.client;
+    await global.client.waitUntilWindowLoaded();
+  }
+}
+
+export async function stopSpectronApp() {
+  if (global.app && global.app.isRunning()) {
+    // await clearLocalStorage();
+    return global.app.stop();
+  }
+}
+
 // the path the electron app, that will be tested
 /* let testPath = '../tsn/app'; // '../repo/app';
 if (global.isWin) {
@@ -82,34 +119,7 @@ beforeAll(async () => {
     fse.copySync(srcDir, destDir);
   }
 
-  if (global.isWeb) {
-    const webdriverio = await require('webdriverio');
-    const options = {
-      host: 'localhost', // Use localhost as chrome driver server
-      port: 9515, // "9515" is the port opened by chrome driver.
-      capabilities: {
-        browserName: 'chrome'
-        /*'goog:chromeOptions': {
-          binary: electronPath, // Path to your Electron binary.
-          args: [ /!* cli arguments *!/] // Optional, perhaps 'app=' + /path/to/your/app/
-        }*/
-      },
-      logLevel: 'silent'
-    };
-    global.client = await webdriverio.remote(options);
-    await global.client.url('http://localhost:8000');
-  } else {
-    global.app = new Application({
-      path: electronPath,
-      args: [path.join(__dirname, '..', '..', 'app')],
-      // startTimeout: 500,
-      waitTimeout: 500,
-      waitforInterval: 50
-    });
-    await global.app.start();
-    global.client = global.app.client;
-    await global.client.waitUntilWindowLoaded();
-  }
+  await startSpectronApp();
 });
 
 afterAll(async () => {
@@ -125,10 +135,7 @@ afterAll(async () => {
     const path = require('path');
     fse.removeSync(path.join(__dirname, '..', '..', 'app', 'extconfig.js'));
   }
-  if (global.app && global.app.isRunning()) {
-    // await clearLocalStorage();
-    return global.app.stop();
-  }
+  await stopSpectronApp();
 });
 
 beforeEach(async () => {

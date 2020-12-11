@@ -9,6 +9,7 @@ import {
   getLocationTid
 } from './location.helpers';
 import { clickOn, expectElementExist, setInputKeys } from './general.helpers';
+import { startSpectronApp, stopSpectronApp } from './hook';
 
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const newLocationName = 'Location_Name_Changed';
@@ -30,6 +31,9 @@ describe('TST03 - Testing locations:', () => {
     const destDir = path.join(__dirname, '..', '..', 'app', 'extconfig.js');
 
     fse.copySync(srcDir, destDir);
+
+    await stopSpectronApp();
+    await startSpectronApp();
   });
 
   afterAll(async () => {
@@ -40,6 +44,9 @@ describe('TST03 - Testing locations:', () => {
     const destDir = path.join(__dirname, '..', '..', 'app', 'extconfig.js');
 
     fse.copySync(srcDir, destDir);
+
+    await stopSpectronApp();
+    await startSpectronApp();
   });
 
   beforeEach(async () => {
