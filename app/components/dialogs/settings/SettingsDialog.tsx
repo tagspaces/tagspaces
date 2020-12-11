@@ -64,6 +64,10 @@ const SettingsDialog = (props: Props) => {
   const [isConfirmDialogOpened, setIsConfirmDialogOpened] = useState<boolean>(
     false
   );
+  const [
+    isResetSettingsDialogOpened,
+    setIsResetSettingsDialogOpened
+  ] = useState<boolean>(false);
   const settingsFileTypeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -227,6 +231,28 @@ const SettingsDialog = (props: Props) => {
         />
       )}
 
+      {isResetSettingsDialogOpened && (
+        <ConfirmDialog
+          open={isResetSettingsDialogOpened}
+          onClose={() => {
+            setIsResetSettingsDialogOpened(false);
+          }}
+          title="Confirm"
+          content={i18n.t('core:confirmResetSettings')}
+          confirmCallback={result => {
+            if (result) {
+              const electron = window.require('electron');
+              const webContents = electron.remote.getCurrentWebContents();
+              webContents.session.clearStorageData();
+              webContents.reload();
+            }
+          }}
+          cancelDialogTID="cancelResetSettingsDialogTID"
+          confirmDialogTID="confirmResetSettingsDialogTID"
+          confirmDialogContentTID="confirmResetSettingsDialogContentTID"
+        />
+      )}
+
       <div
         data-tid="settingsDialog"
         className={props.classes.mainContent}
@@ -254,9 +280,22 @@ const SettingsDialog = (props: Props) => {
   const renderActions = () => (
     <DialogActions
       style={{
-        justifyContent: currentTab === 1 ? 'space-between' : 'flex-end'
+        justifyContent:
+          currentTab === 1 || AppConfig.isElectron
+            ? 'space-between'
+            : 'flex-end'
       }}
     >
+      {AppConfig.isElectron && (
+        <Button
+          data-tid="resetSettingsTID"
+          onClick={() => setIsResetSettingsDialogOpened(true)}
+          color="secondary"
+        >
+          {i18n.t('core:resetSettings')}
+        </Button>
+      )}
+
       {currentTab === 1 && (
         <Button
           data-tid="addNewFileTypeTID"

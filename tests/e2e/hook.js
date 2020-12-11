@@ -11,6 +11,8 @@ import {
   stopMinio,
   stopWebServer
 } from './test-utils.spec';
+import { clickOn } from './general.helpers';
+import { clearStorage } from './clearstorage.helpers';
 
 // Spectron API https://github.com/electron/spectron
 // Webdriver.io http://webdriver.io/api.html
@@ -38,7 +40,13 @@ global.isMac = /^darwin/.test(process.platform);
 global.isWeb = process.env.NODE_JEST === 'test_web';
 global.isMinio = global.isWeb || process.env.NODE_JEST === 'test_minio';
 
-export function clearLocalStorage() {
+async function clearLocalStorage() {
+  if (!(await clearStorage())) {
+    // TODO session is not implemented https://github.com/electron-userland/spectron/issues/117
+    // await global.app.webContents.session.clearStorageData();
+    global.app.webContents.reload();
+  }
+  // browser.clearLocalStorage();
   // global.app.client.localStorage('DELETE');
   // global.app.client.reload(false);
 }
@@ -73,24 +81,7 @@ beforeAll(async () => {
 
     fse.copySync(srcDir, destDir);
   }
-});
 
-afterAll(async () => {
-  if (global.isWeb) {
-    // await stopWebServer(global.webserver); TODO stop webserver
-    await stopChromeDriver(global.chromeDriver);
-  }
-  if (global.isMinio) {
-    await stopMinio(global.minio);
-  } else {
-    // cleanup extconfig
-    const fse = require('fs-extra');
-    const path = require('path');
-    fse.removeSync(path.join(__dirname, '..', '..', 'app', 'extconfig.js'));
-  }
-});
-
-beforeEach(async () => {
   if (global.isWeb) {
     const webdriverio = await require('webdriverio');
     const options = {
@@ -119,12 +110,64 @@ beforeEach(async () => {
     global.client = global.app.client;
     await global.client.waitUntilWindowLoaded();
   }
+});
+
+afterAll(async () => {
+  if (global.isWeb) {
+    // await stopWebServer(global.webserver); TODO stop webserver
+    await stopChromeDriver(global.chromeDriver);
+  }
+  if (global.isMinio) {
+    await stopMinio(global.minio);
+  } else {
+    // cleanup extconfig
+    const fse = require('fs-extra');
+    const path = require('path');
+    fse.removeSync(path.join(__dirname, '..', '..', 'app', 'extconfig.js'));
+  }
+  if (global.app && global.app.isRunning()) {
+    // await clearLocalStorage();
+    return global.app.stop();
+  }
+});
+
+beforeEach(async () => {
+  /*if (global.isWeb) {
+    const webdriverio = await require('webdriverio');
+    const options = {
+      host: 'localhost', // Use localhost as chrome driver server
+      port: 9515, // "9515" is the port opened by chrome driver.
+      capabilities: {
+        browserName: 'chrome'
+        /!*'goog:chromeOptions': {
+          binary: electronPath, // Path to your Electron binary.
+          args: [ /!* cli arguments *!/] // Optional, perhaps 'app=' + /path/to/your/app/
+        }*!/
+      },
+      logLevel: 'silent'
+    };
+    global.client = await webdriverio.remote(options);
+    await global.client.url('http://localhost:8000');
+  } else {
+    global.app = new Application({
+      path: electronPath,
+      args: [path.join(__dirname, '..', '..', 'app')],
+      // startTimeout: 500,
+      waitTimeout: 500,
+      waitforInterval: 50
+    });
+    await global.app.start();
+    global.client = global.app.client;
+    await global.client.waitUntilWindowLoaded();
+  }*/
   await closeWelcome();
 });
 
-afterEach(() => {
-  if (global.app && global.app.isRunning()) {
+afterEach(async () => {
+  await clearLocalStorage();
+
+  /*if (global.app && global.app.isRunning()) {
     clearLocalStorage();
     return global.app.stop();
-  }
+  }*/
 });

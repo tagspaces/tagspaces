@@ -278,6 +278,8 @@
   "moveDown": "Move Down",
   "chooseSearchQuery": "Choose a search query",
   "closeButton": "Close",
+  "resetSettings": "Restore Default Settings",
+  "confirmResetSettings": "Do you want to Restore all Default Settings?",
   "minimize": "Minimize",
   "closeAndClear": "Close & Clear",
   "addNewFileType": "Add new file type",
