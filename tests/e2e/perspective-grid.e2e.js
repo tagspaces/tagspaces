@@ -40,7 +40,7 @@ import {
   waitForNotification
 } from './general.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
-import {getPropertiesFileName} from "./file.properties.helpers";
+import { getPropertiesFileName } from './file.properties.helpers';
 
 const subFolderName = '/test-perspective-grid';
 const subFolderContentExtractionPath =

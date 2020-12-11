@@ -40,7 +40,7 @@ export async function AddRemovePropertiesTags(
 
 export async function getPropertiesFileName() {
   const propsFileNameInput = await global.client.$(
-      '[data-tid=fileNameProperties] input'
+    '[data-tid=fileNameProperties] input'
   );
   await propsFileNameInput.waitForDisplayed({ timeout: 10000 });
   const fileName = await propsFileNameInput.getValue();
