@@ -2,6 +2,10 @@ const sh = require('shelljs');
 const path = require('path');
 const fs = require('fs-extra');
 
+/**
+ * @Deprecated use github action script for setup instead
+ */
+
 if (!sh.which('git')) {
   sh.echo('Sorry, this script requires git');
   sh.exit(1);

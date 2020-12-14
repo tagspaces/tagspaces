@@ -15,6 +15,11 @@ jobs:
         uses: actions/checkout@v2
         with:
           submodules: true
+      - name: Checkout TestData
+        uses: actions/checkout@v2
+        with:
+          repository: tagspaces/testdata
+          path: tests/testdata
       - name: Checkout TagspacesPro
         uses: actions/checkout@v2
         with:
@@ -39,7 +44,7 @@ jobs:
           target: tests/bin/
       - name: Run Electron tests
         run: |
-          yarn setup-ext
+          yarn install-ext
           yarn build-main
           yarn build-e2e
           yarn ${{ github.event.inputs.command }}

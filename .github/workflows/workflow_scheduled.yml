@@ -14,6 +14,11 @@ jobs:
         with:
           ref: develop
           submodules: true
+      - name: Checkout TestData
+        uses: actions/checkout@v2
+        with:
+          repository: tagspaces/testdata
+          path: tests/testdata
       - uses: actions/setup-node@v2-beta
         with:
           node-version: '10.x'
@@ -26,7 +31,7 @@ jobs:
         run: yarn test-unit
       - name: Run Electron tests
         run: |
-          yarn setup-ext
+          yarn install-ext
           yarn build-main
           yarn build-e2e
           yarn test-e2e-electron
@@ -41,6 +46,11 @@ jobs:
         with:
           ref: develop
           submodules: true
+      - name: Checkout TestData
+        uses: actions/checkout@v2
+        with:
+          repository: tagspaces/testdata
+          path: tests/testdata
       - uses: actions/setup-node@v2-beta
         with:
           node-version: '10.x'
@@ -59,7 +69,7 @@ jobs:
           target: tests/bin/
       - name: Run Electron tests
         run: |
-          yarn setup-ext
+          yarn install-ext
           yarn build-main
           yarn build-e2e
           yarn test-e2e-electron-minio
@@ -74,6 +84,11 @@ jobs:
         with:
           ref: develop
           submodules: true
+      - name: Checkout TestData
+        uses: actions/checkout@v2
+        with:
+          repository: tagspaces/testdata
+          path: tests/testdata
       - uses: actions/setup-node@v2-beta
         with:
           node-version: '10.x'
@@ -92,7 +107,7 @@ jobs:
           target: tests/bin/
       - name: Run Electron tests
         run: |
-          yarn setup-ext
+          yarn install-ext
           yarn build-main
           yarn build-e2e
           yarn test-e2e-web
@@ -106,6 +121,11 @@ jobs:
         with:
           ref: develop
           submodules: true
+      - name: Checkout TestData
+        uses: actions/checkout@v2
+        with:
+          repository: tagspaces/testdata
+          path: tests/testdata
       - uses: actions/setup-node@v2-beta
         with:
           node-version: '10.x'
@@ -118,7 +138,7 @@ jobs:
         run: yarn test-unit
       - name: Run Electron tests
         run: |
-          yarn setup-ext
+          yarn install-ext
           yarn build-main
           yarn build-e2e
           yarn test-e2e-electron
@@ -132,6 +152,11 @@ jobs:
         with:
           ref: develop
           submodules: true
+      - name: Checkout TestData
+        uses: actions/checkout@v2
+        with:
+          repository: tagspaces/testdata
+          path: tests/testdata
       - uses: actions/setup-node@v2-beta
         with:
           node-version: '10.x'
@@ -144,7 +169,7 @@ jobs:
         run: yarn test-unit
       - name: Run Electron tests
         run: |
-          yarn setup-ext
+          yarn install-ext
           yarn build-main
           yarn build-e2e
           yarn test-e2e-electron-minio
@@ -158,6 +183,11 @@ jobs:
         with:
           ref: develop
           submodules: true
+      - name: Checkout TestData
+        uses: actions/checkout@v2
+        with:
+          repository: tagspaces/testdata
+          path: tests/testdata
       - uses: actions/setup-node@v2-beta
         with:
           node-version: '10.x'
@@ -170,7 +200,7 @@ jobs:
         run: yarn test-unit
       - name: Run Electron tests
         run: |
-          yarn setup-ext
+          yarn install-ext
           yarn build-main
           yarn build-e2e
           yarn test-e2e-web
