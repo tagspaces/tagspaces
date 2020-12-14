@@ -133,7 +133,7 @@ describe('TST08 - File / folder properties', () => {
     expect(propsOldFileName).toBe(propsFileName);
   });
 
-  it('TST0807 - Rename opened folder [TST0807,web,minio,electron]', async () => {
+  it('TST0807 - Rename opened folder [TST0807,electron]', async () => {
     const newTile = 'folderRenamed';
     // open folderProperties
     await openContextEntryMenu(
