@@ -9,7 +9,7 @@ on:
 
 jobs:
   e2eTests:
-    runs-on: macos-latest
+    runs-on: windows-latest
     steps:
       - name: Checking out default branch
         uses: actions/checkout@v2
