@@ -40,11 +40,13 @@ global.isWeb = process.env.NODE_JEST === 'test_web';
 global.isMinio = global.isWeb || process.env.NODE_JEST === 'test_minio';
 
 async function clearLocalStorage() {
-  if (!(await clearStorage())) {
+  /*if (!(await clearStorage())) {
     // TODO session is not implemented https://github.com/electron-userland/spectron/issues/117
     // await global.app.webContents.session.clearStorageData();
     global.app.webContents.reload();
-  }
+  }*/
+  await global.app.webContents.executeJavaScript('localStorage.clear()');
+  global.app.webContents.reload();
   // browser.clearLocalStorage();
   // global.app.client.localStorage('DELETE');
   // global.app.client.reload(false);
