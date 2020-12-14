@@ -31,6 +31,12 @@ jobs:
           yarn type-check
       - name: Run Unit tests
         run: yarn test-unit
+      - uses: suisei-cn/actions-download-file@v1
+        id: minio
+        name: Download the Minio.exe
+        with:
+          url: 'https://dl.min.io/server/minio/release/windows-amd64/minio.exe'
+          target: tests/bin/
       - name: Run Electron tests
         run: |
           yarn setup-ext
