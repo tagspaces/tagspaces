@@ -20,7 +20,7 @@ jobs:
         with:
           repository: tagspaces/tagspacespro
           token: ${{ secrets.CHECKOUT_TSPRO  }}
-          path: extensions
+          path: extensions/tagspacespro
       - uses: actions/setup-node@v2-beta
         with:
           node-version: '10.x'
