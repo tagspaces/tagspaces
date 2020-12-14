@@ -15,6 +15,12 @@ jobs:
         uses: actions/checkout@v2
         with:
           submodules: true
+      - name: Checkout TagspacesPro
+        uses: actions/checkout@v2
+        with:
+          repository: tagspaces/tagspacespro
+          token: ${{ secrets.CHECKOUT_TSPRO  }}
+          path: extensions
       - uses: actions/setup-node@v2-beta
         with:
           node-version: '10.x'
