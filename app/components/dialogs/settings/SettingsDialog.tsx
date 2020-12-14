@@ -241,10 +241,14 @@ const SettingsDialog = (props: Props) => {
           content={i18n.t('core:confirmResetSettings')}
           confirmCallback={result => {
             if (result) {
-              const electron = window.require('electron');
+              localStorage.clear();
+              // eslint-disable-next-line no-restricted-globals
+              location.reload();
+
+              /* const electron = window.require('electron');
               const webContents = electron.remote.getCurrentWebContents();
               webContents.session.clearStorageData();
-              webContents.reload();
+              webContents.reload(); */
             }
           }}
           cancelDialogTID="cancelResetSettingsDialogTID"
@@ -280,21 +284,16 @@ const SettingsDialog = (props: Props) => {
   const renderActions = () => (
     <DialogActions
       style={{
-        justifyContent:
-          currentTab === 1 || AppConfig.isElectron
-            ? 'space-between'
-            : 'flex-end'
+        justifyContent: currentTab === 1 ? 'space-between' : 'flex-end'
       }}
     >
-      {AppConfig.isElectron && (
-        <Button
-          data-tid="resetSettingsTID"
-          onClick={() => setIsResetSettingsDialogOpened(true)}
-          color="secondary"
-        >
-          {i18n.t('core:resetSettings')}
-        </Button>
-      )}
+      <Button
+        data-tid="resetSettingsTID"
+        onClick={() => setIsResetSettingsDialogOpened(true)}
+        color="secondary"
+      >
+        {i18n.t('core:resetSettings')}
+      </Button>
 
       {currentTab === 1 && (
         <Button
