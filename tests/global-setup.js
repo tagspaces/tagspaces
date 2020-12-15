@@ -2,13 +2,13 @@ import pathLib from 'path';
 import sh from 'shelljs';
 
 module.exports = async function() {
-  const winMinio = pathLib.resolve(__dirname, './bin/minio.exe');
-  const unixMinio = 'minio';
+  // const winMinio = pathLib.resolve(__dirname, './bin/minio.exe');
+  // const unixMinio = 'minio';
 
   global.isWin = /^win/.test(process.platform);
   global.isMac = /^darwin/.test(process.platform);
-  global.isWeb = process.env.NODE_JEST === 'test_web';
-  global.isMinio = global.isWeb || process.env.NODE_JEST === 'test_minio';
+  // global.isWeb = process.env.NODE_JEST === 'test_web';
+  // global.isMinio = global.isWeb || process.env.NODE_JEST === 'test_minio';
 
   async function startMinio() {
     const command = global.isWin ? pathLib.resolve(winMinio) : unixMinio;

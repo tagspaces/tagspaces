@@ -12,6 +12,7 @@ global.isWin = /^win/.test(process.platform);
 global.isMac = /^darwin/.test(process.platform);
 global.isWeb = process.env.NODE_JEST === 'test_web';
 global.isMinio = global.isWeb || process.env.NODE_JEST === 'test_minio';
+global.isUnitTest = process.env.NODE_JEST === 'unit_test';
 
 beforeAll(async () => {
   /*if (global.isWeb) {
@@ -30,8 +31,9 @@ beforeAll(async () => {
 
     fse.copySync(srcDir, destDir);
   }*/
-
-  await startSpectronApp();
+  if (!global.isUnitTest) {
+    await startSpectronApp();
+  }
 });
 
 afterAll(async () => {
@@ -47,13 +49,19 @@ afterAll(async () => {
     const path = require('path');
     fse.removeSync(path.join(__dirname, '..', 'app', 'extconfig.js'));
   }*/
-  await stopSpectronApp();
+  if (!global.isUnitTest) {
+    await stopSpectronApp();
+  }
 });
 
 beforeEach(async () => {
-  await closeWelcome();
+  if (!global.isUnitTest) {
+    await closeWelcome();
+  }
 });
 
 afterEach(async () => {
-  await clearLocalStorage();
+  if (!global.isUnitTest) {
+    await clearLocalStorage();
+  }
 });

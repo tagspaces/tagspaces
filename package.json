@@ -79,7 +79,7 @@
     "test-watch": "yarn test --watch",
     "test-e2e-old": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings ./tests/runTests.js e2e",
     "test-e2e-dev": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings ./tests/runTests.js e2e-dev",
-    "test-unit": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 jest --verbose ./tests/unit/",
+    "test-unit": "cross-env NODE_JEST=unit_test BABEL_DISABLE_CACHE=1 jest --config=jest.config.js --verbose ./tests/unit/",
     "test-all": "yarn build && yarn test-unit && yarn build-e2e && yarn test-e2e",
     "test-one": "cross-env NODE_JEST=test_minio jest --config=jest.config.minio.js -t 'TST5037' --verbose ./tests/e2e/",
     "test-e2e-electron": "node -r @babel/register ./internals/scripts/CheckBuiltsExist.js && cross-env NODE_ENV=test jest --config=jest.config.js -t 'electron'  --verbose ./tests/e2e/",
