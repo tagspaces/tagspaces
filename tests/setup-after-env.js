@@ -1,7 +1,8 @@
 import {
   clearLocalStorage,
   startSpectronApp,
-  stopSpectronApp
+  stopSpectronApp,
+  testDataRefresh
 } from './e2e/hook';
 import { closeWelcome } from './e2e/welcome.helpers';
 
@@ -56,6 +57,7 @@ afterAll(async () => {
 
 beforeEach(async () => {
   if (!global.isUnitTest) {
+    testDataRefresh();
     await closeWelcome();
   }
 });
