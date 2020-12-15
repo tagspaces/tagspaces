@@ -41,6 +41,8 @@ import {
 } from './general.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 import { getPropertiesFileName } from './file.properties.helpers';
+import { closeWelcome } from './welcome.helpers';
+import { clearLocalStorage } from './hook';
 
 const subFolderName = '/test-perspective-grid';
 const subFolderContentExtractionPath =
@@ -187,7 +189,7 @@ describe('TST50 - Perspective Grid', () => {
     }*/
   });
 
-  test('TST5006 - Remove tags from selected files [TST5006,electron]', async () => {
+  test('TST5006 - Remove tags from selected files [TST5006, electron]', async () => {
     const classNotSelected = await getGridCellClass(0);
     const classSelected = await selectAllFiles(classNotSelected);
     expect(classNotSelected).not.toBe(classSelected);
@@ -215,7 +217,7 @@ describe('TST50 - Perspective Grid', () => {
     }*/
   });
 
-  test('TST5007 - Remove all tags from selected files [TST5007,electron]', async () => {
+  test('TST5007 - Remove all tags from selected files [TST5007, electron]', async () => {
     const classNotSelected = await getGridCellClass(0);
     const classSelected = await selectAllFiles(classNotSelected);
     expect(classNotSelected).not.toBe(classSelected);

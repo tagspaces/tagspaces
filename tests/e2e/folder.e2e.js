@@ -72,7 +72,7 @@ describe('TST01 - Folder management [electron]', () => {
     );*/
   });
 
-  it('TST0104 - Delete empty folder [TST0104,electron]', async () => {
+  it('TST0104 - Delete empty folder [TST0104, electron]', async () => {
     await setSettings('[data-tid=settingsSetUseTrashCan]');
     await global.client.pause(500);
     const testFolder = await createNewDirectory();
