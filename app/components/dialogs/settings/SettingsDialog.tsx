@@ -183,6 +183,10 @@ const SettingsDialog = (props: Props) => {
     saveFileTypes(filteredItems);
   };
 
+  const showResetSettings = (showDialog: boolean) => {
+    setIsResetSettingsDialogOpened(showDialog);
+  };
+
   const renderTitle = () => (
     <React.Fragment>
       <DialogTitle>{i18n.t('core:options')}</DialogTitle>
@@ -262,7 +266,10 @@ const SettingsDialog = (props: Props) => {
         className={props.classes.mainContent}
         ref={settingsFileTypeRef}
       >
-        {currentTab === 0 && <SettingsGeneral />}
+        {currentTab === 0 && (
+          // @ts-ignore
+          <SettingsGeneral showResetSettings={showResetSettings} />
+        )}
         {currentTab === 1 && (
           <SettingsFileTypes
             items={items}
@@ -287,19 +294,12 @@ const SettingsDialog = (props: Props) => {
         justifyContent: currentTab === 1 ? 'space-between' : 'flex-end'
       }}
     >
-      <Button
-        data-tid="resetSettingsTID"
-        onClick={() => setIsResetSettingsDialogOpened(true)}
-        color="secondary"
-      >
-        {i18n.t('core:resetSettings')}
-      </Button>
-
       {currentTab === 1 && (
         <Button
           data-tid="addNewFileTypeTID"
           onClick={() => onAddFileType()}
           color="secondary"
+          style={{ float: 'left' }}
         >
           {i18n.t('core:addNewFileType')}
         </Button>
