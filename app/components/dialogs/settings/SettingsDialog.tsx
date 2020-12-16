@@ -183,10 +183,6 @@ const SettingsDialog = (props: Props) => {
     saveFileTypes(filteredItems);
   };
 
-  const showResetSettings = (showDialog: boolean) => {
-    setIsResetSettingsDialogOpened(showDialog);
-  };
-
   const renderTitle = () => (
     <React.Fragment>
       <DialogTitle>{i18n.t('core:options')}</DialogTitle>
@@ -267,8 +263,7 @@ const SettingsDialog = (props: Props) => {
         ref={settingsFileTypeRef}
       >
         {currentTab === 0 && (
-          // @ts-ignore
-          <SettingsGeneral showResetSettings={showResetSettings} />
+          <SettingsGeneral showResetSettings={setIsResetSettingsDialogOpened} />
         )}
         {currentTab === 1 && (
           <SettingsFileTypes

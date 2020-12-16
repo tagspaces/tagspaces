@@ -33,7 +33,8 @@ import { actions as SettingsActions, getSettings } from '-/reducers/settings';
 import ColorPickerDialog from '../ColorPickerDialog';
 import TransparentBackground from '../../TransparentBackground';
 
-const styles = theme => ({
+const styles: any = (theme: any) => ({
+  // const styles = theme => ({
   root: {
     overflowX: 'hidden'
   },
@@ -366,4 +367,4 @@ export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
   // @ts-ignore
-)(withStyles(styles)(SettingsGeneral));
+)(withStyles(styles, { withTheme: true })(SettingsGeneral));
