@@ -45,6 +45,7 @@ export async function searchEngine(filename, options = {}) {
     await clickOn('#searchButton');
   }
   await waitForNotification('TIDSearching');
+  await global.client.pause(1500); //todo: for minio search is slow
 }
 
 /*describe('TST06 - Test Search in file structure:', () => {

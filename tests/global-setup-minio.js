@@ -13,7 +13,7 @@ module.exports = async function() {
     const command = global.isWin ? pathLib.resolve(winMinio) : unixMinio;
     const minioProcess = await require('child_process').spawn(command, [
       'server',
-      pathLib.resolve('./testdata/file-structure')
+      pathLib.resolve('./testdata-tmp/file-structure')
     ]);
 
     minioProcess.on('exit', function(code) {
@@ -40,5 +40,7 @@ module.exports = async function() {
 
   sh.cd(extensionDir);
   // testDataRefresh();
+  const fse = require('fs-extra');
+  fse.removeSync(pathLib.join(__dirname, '..', 'app', 'extconfig.js'));
   global.minio = await startMinio();
 };

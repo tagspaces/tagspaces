@@ -325,6 +325,7 @@ export async function showFilesWithTag(tagName) {
   await clickOn('[data-tid=tagMoreButton_' + tagName + ']');
   await global.client.pause(500);
   await clickOn('[data-tid=showFilesWithThisTag]');
+  await global.client.pause(1500); // minio
 }
 
 export async function expectTagsExist(gridElement, arrTagNames, exist = true) {
