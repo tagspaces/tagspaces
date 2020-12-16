@@ -385,7 +385,7 @@ export async function openEntry(entryName) {
 
 export async function createNewDirectory(dirName = testFolder) {
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
-  await global.client.pause(100); // TODO the Menu is always in HTML
+  await global.client.pause(500); // TODO the Menu is always in HTML
   await clickOn('[data-tid=newSubDirectory]');
   await global.client.pause(500);
   // set new dir name
@@ -402,6 +402,7 @@ export async function createNewDirectory(dirName = testFolder) {
   await delay(1500);
   await confirmCreateNewDirectory.waitForDisplayed();
   await confirmCreateNewDirectory.click();*/
+  await global.client.pause(500); // minio
   return dirName;
 }
 
