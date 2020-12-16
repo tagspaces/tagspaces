@@ -57,7 +57,6 @@ afterAll(async () => {
 
 beforeEach(async () => {
   if (!global.isUnitTest) {
-    testDataRefresh();
     await closeWelcome();
   }
 });
@@ -65,5 +64,6 @@ beforeEach(async () => {
 afterEach(async () => {
   if (!global.isUnitTest) {
     await clearLocalStorage();
+    testDataRefresh();
   }
 });

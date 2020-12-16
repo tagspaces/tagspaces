@@ -1,5 +1,6 @@
 import pathLib from 'path';
 import sh from 'shelljs';
+import { testDataRefresh } from './e2e/hook';
 
 module.exports = async function() {
   const winMinio = pathLib.resolve(__dirname, './bin/minio.exe');
@@ -38,6 +39,6 @@ module.exports = async function() {
   }
 
   sh.cd(extensionDir);
-
+  testDataRefresh();
   global.minio = await startMinio();
 };

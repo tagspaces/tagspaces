@@ -1,5 +1,6 @@
 import pathLib from 'path';
 import sh from 'shelljs';
+import { testDataRefresh } from './e2e/hook';
 
 module.exports = async function() {
   // const winMinio = pathLib.resolve(__dirname, './bin/minio.exe');
@@ -94,5 +95,6 @@ module.exports = async function() {
   let destDir = path.join(__dirname, '..', 'app', 'extconfig.js');
 
   fse.copySync(srcDir, destDir);
+  testDataRefresh();
   // }
 };
