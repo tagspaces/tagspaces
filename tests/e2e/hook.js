@@ -59,7 +59,7 @@ export async function startSpectronApp() {
       path: electronPath,
       args: [pathLib.join(__dirname, '..', '..', 'app')],
       // startTimeout: 500,
-      waitTimeout: 500,
+      waitTimeout: 1000,
       waitforInterval: 50
     });
     await global.app.start();
