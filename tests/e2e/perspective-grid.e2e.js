@@ -274,7 +274,10 @@ describe('TST50 - Perspective Grid', () => {
   });
 
   test('TST5013 - Delete files from selection (many files) [TST5013,web,minio,electron]', async () => {
-    // await doubleClickOn(perspectiveGridTable + firstFolder);
+    await doubleClickOn(perspectiveGridTable + firstFolder);
+    await createTxtFile();
+    await searchEngine('note');
+    await expectElementExist(selectorFile, true);
 
     const classNotSelected = await getGridCellClass(0);
     const classSelected = await selectAllFiles(classNotSelected);
@@ -283,7 +286,7 @@ describe('TST50 - Perspective Grid', () => {
     await clickOn('[data-tid=gridPerspectiveDeleteMultipleFiles]');
     await clickOn('[data-tid=confirmDeleteFileDialog]');
     await waitForNotification();
-    await expectElementExist(perspectiveGridTable + firstFile, false);
+    await expectElementExist(selectorFile, false);
   });
   /*test('TST51** - Show/Hide directories in perspective view', async () => { //TODO
     await global.client.waitForVisible(
@@ -514,6 +517,7 @@ describe('TST50** - Right button on a file', () => {
   });
 
   test('TST5033 - Open directory (directory menu) [TST5033,web,minio,electron]', async () => {
+    // open empty_folder
     await openContextEntryMenu(
       perspectiveGridTable + firstFolder,
       'openDirectory'
