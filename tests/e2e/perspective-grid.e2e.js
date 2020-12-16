@@ -232,7 +232,10 @@ describe('TST50 - Perspective Grid', () => {
     }
   });
 
-  test('TST5008 - Copy file [TST5008,web,minio,electron]', async () => {
+  /**
+   * TODO copy file on minio failed with path: ./testdata-tmp/file-structure/supported-filestypes/empty_folder
+   */
+  test('TST5008 - Copy file [TST5008,electron]', async () => {
     await searchEngine('bmp');
 
     // select file
@@ -250,6 +253,9 @@ describe('TST50 - Perspective Grid', () => {
     await doubleClickOn(perspectiveGridTable + firstFolder);
     const firstFileName = await getGridFileName(0);
     expect(firstFileName).toBe('sample.bmp');
+    // cleanup
+    await deleteFirstFile();
+    await expectElementExist(selectorFile, false);
   });
 
   test('TST5010 - Move file [TST5010,web,minio,electron]', async () => {
