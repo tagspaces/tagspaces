@@ -15,6 +15,12 @@ global.isWeb = process.env.NODE_JEST === 'test_web';
 global.isMinio = global.isWeb || process.env.NODE_JEST === 'test_minio';
 global.isUnitTest = process.env.NODE_JEST === 'unit_test';
 
+/*jasmine.getEnv().addReporter({
+  specStarted: function(result) {
+    console.log(`Spec name: ${result.fullName}, description: ${result.description}`);
+  }
+});*/
+
 beforeAll(async () => {
   /*if (global.isWeb) {
     global.webserver = await startWebServer();
@@ -33,6 +39,7 @@ beforeAll(async () => {
     fse.copySync(srcDir, destDir);
   }*/
   if (!global.isUnitTest) {
+    testDataRefresh();
     await startSpectronApp();
   }
 });
@@ -64,6 +71,5 @@ beforeEach(async () => {
 afterEach(async () => {
   if (!global.isUnitTest) {
     await clearLocalStorage();
-    testDataRefresh();
   }
 });

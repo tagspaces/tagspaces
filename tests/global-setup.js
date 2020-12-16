@@ -95,6 +95,6 @@ module.exports = async function() {
   let destDir = path.join(__dirname, '..', 'app', 'extconfig.js');
 
   fse.copySync(srcDir, destDir);
-  testDataRefresh();
+  // testDataRefresh();
   // }
 };

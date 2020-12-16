@@ -39,6 +39,6 @@ module.exports = async function() {
   }
 
   sh.cd(extensionDir);
-  testDataRefresh();
+  // testDataRefresh();
   global.minio = await startMinio();
 };

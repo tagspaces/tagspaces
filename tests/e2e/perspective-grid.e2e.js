@@ -41,8 +41,6 @@ import {
 } from './general.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 import { getPropertiesFileName } from './file.properties.helpers';
-import { closeWelcome } from './welcome.helpers';
-import { clearLocalStorage } from './hook';
 
 const subFolderName = '/test-perspective-grid';
 const subFolderContentExtractionPath =
