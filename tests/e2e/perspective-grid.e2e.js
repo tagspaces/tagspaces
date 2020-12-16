@@ -520,6 +520,10 @@ describe('TST50** - Right button on a file', () => {
     await searchEngine('eml');
     firstFileName = await getGridFileName(0);
     expect(firstFileName).toBe('sample.eml');
+
+    // cleanup
+    await deleteFirstFile();
+    await expectElementExist(selectorFile, false);
   });
 
   test('TST5033 - Open directory (directory menu) [TST5033,web,minio,electron]', async () => {

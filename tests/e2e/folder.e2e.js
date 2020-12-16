@@ -34,7 +34,8 @@ describe('TST01 - Folder management [electron]', () => {
     await closeFileProperties();
   });
 
-  it('TST0101 - Create subfolder [TST0101,web,minio,electron]', async () => {
+  // TODO minio
+  it('TST0101 - Create subfolder [TST0101,electron]', async () => {
     const testFolder = await createNewDirectory();
     await expectElementExist('[data-tid=fsEntryName_' + testFolder + ']');
     await openEntry(testFolder);
@@ -45,7 +46,8 @@ describe('TST01 - Folder management [electron]', () => {
     );
   });
 
-  it('TST0102 - Reload folder [TST0102,web,minio,electron]', async () => {
+  // TODO minio
+  it('TST0102 - Reload folder [TST0102,electron]', async () => {
     const testFolder = await createNewDirectory();
     await openEntry(testFolder);
     await reloadDirectory();
