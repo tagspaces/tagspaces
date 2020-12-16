@@ -31,7 +31,7 @@ export async function AddRemovePropertiesTags(
     for (let i = 0; i < tagNames.length; i++) {
       const tagName = tagNames[i];
       await removeTagFromTagMenu(tagName);
-      await global.client.pause(500);
+      await global.client.pause(800);
       const propsNewTags = await getPropertiesTags();
       expect(propsNewTags.includes(tagName)).toBe(false);
     }
