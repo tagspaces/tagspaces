@@ -88,7 +88,7 @@ export function testDataRefresh() {
 
   let newPath = pathLib.join(dst, pathLib.basename(src));
   fse.emptyDirSync(newPath);
-  fse.copySync(src, dst, { overwrite: true });
+  fse.copySync(src, newPath, { overwrite: true });
 }
 
 // the path the electron app, that will be tested

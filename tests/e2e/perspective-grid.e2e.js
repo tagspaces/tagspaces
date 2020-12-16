@@ -276,7 +276,7 @@ describe('TST50 - Perspective Grid', () => {
   });
 
   test('TST5013 - Delete files from selection (many files) [TST5013,web,minio,electron]', async () => {
-    await doubleClickOn(perspectiveGridTable + firstFolder);
+    // await doubleClickOn(perspectiveGridTable + firstFolder);
 
     const classNotSelected = await getGridCellClass(0);
     const classSelected = await selectAllFiles(classNotSelected);
