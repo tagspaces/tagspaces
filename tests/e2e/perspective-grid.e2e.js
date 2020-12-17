@@ -601,6 +601,9 @@ describe('TST50** - Right button on a file', () => {
   });
 
   test('TST5037 - Show sub folders [TST5037,web,minio,electron]', async () => {
+    if (global.isWeb) {
+      await global.client.pause(500);
+    }
     //open Option menu
     await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
     //click on hide directories

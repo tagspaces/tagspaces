@@ -93,9 +93,12 @@ tests/*
 !tests/webEnv.js
 !tests/global-setup.js
 !tests/global-setup-minio.js
+!tests/global-setup-web.js
 !tests/global-teardown.js
 !tests/global-teardown-minio.js
+!tests/global-teardown-web.js
 !tests/setup-after-env.js
+!tests/setup-functions.js
 
 builds/*
 web/sw-con

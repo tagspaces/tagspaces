@@ -30,8 +30,13 @@ export async function clearLocalStorage() {
     // await global.app.webContents.session.clearStorageData();
     global.app.webContents.reload();
   }*/
-  await global.app.webContents.executeJavaScript('localStorage.clear()');
-  global.app.webContents.reload();
+  if (global.isWeb) {
+    localStorage.clear();
+    location.reload();
+  } else {
+    await global.app.webContents.executeJavaScript('localStorage.clear()');
+    global.app.webContents.reload();
+  }
   // browser.clearLocalStorage();
   // global.app.client.localStorage('DELETE');
   // global.app.client.reload(false);
