@@ -436,7 +436,7 @@ describe('TST50** - Right button on a file', () => {
   });
 
   /**
-   * TODO web: stale element reference: stale element reference: element is not attached to the page document
+   * TODO web sometimes: stale element reference: stale element reference: element is not attached to the page document
    */
   test('TST5025 - Add / Remove tags (file menu) [TST5025,minio,electron]', async () => {
     await searchEngine('desktop');

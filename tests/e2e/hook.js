@@ -27,15 +27,13 @@ export async function clearLocalStorage() {
     // await global.app.webContents.session.clearStorageData();
     global.app.webContents.reload();
   }*/
-  if (!global.isUnitTest) {
-    if (global.isWeb) {
-      // global.client.executeScript('localStorage.clear()');
-      // global.client.clearLocalStorage();
-      global.client.refresh();
-    } else {
-      await global.app.webContents.executeJavaScript('localStorage.clear()');
-      global.app.webContents.reload();
-    }
+  if (global.isWeb) {
+    // global.client.executeScript('localStorage.clear()');
+    // global.client.clearLocalStorage();
+    global.client.refresh();
+  } else {
+    await global.app.webContents.executeJavaScript('localStorage.clear()');
+    global.app.webContents.reload();
   }
   // browser.clearLocalStorage();
   // global.app.client.localStorage('DELETE');
@@ -44,13 +42,18 @@ export async function clearLocalStorage() {
 
 export async function startSpectronApp() {
   if (global.isWeb) {
-    const webdriverio = await require('webdriverio');
+    const webdriverio = require('webdriverio');
     // https://webdriver.io/docs/configurationfile.html
     const options = {
       host: 'localhost', // Use localhost as chrome driver server
       port: 9515, // "9515" is the port opened by chrome driver.
       capabilities: {
         browserName: 'chrome',
+        'goog:chromeOptions': {
+          // to run chrome headless the following flags are required
+          // (see https://developers.google.com/web/updates/2017/04/headless-chrome)
+          args: ['--headless', '--disable-gpu']
+        },
         /*'goog:chromeOptions': {
           binary: electronPath, // Path to your Electron binary.
           args: [ /!* cli arguments *!/] // Optional, perhaps 'app=' + /path/to/your/app/
@@ -95,6 +98,10 @@ export async function stopSpectronApp() {
   if (global.app && global.app.isRunning()) {
     // await clearLocalStorage();
     return global.app.stop();
+  }
+  if (global.isWeb) {
+    await global.client.closeWindow();
+    // await global.client.end();
   }
 }
 

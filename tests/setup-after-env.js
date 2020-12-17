@@ -25,30 +25,22 @@ global.isUnitTest =
 });*/
 
 beforeAll(async () => {
-  if (!global.isUnitTest) {
-    testDataRefresh();
-    await startSpectronApp();
-  }
+  testDataRefresh();
+  await startSpectronApp();
 });
 
 afterAll(async () => {
-  if (!global.isUnitTest) {
-    await stopSpectronApp();
-  }
+  await stopSpectronApp();
 });
 
 beforeEach(async () => {
-  if (!global.isUnitTest) {
-    if (global.isWeb) {
-      await global.client.pause(500);
-    }
-
-    await closeWelcome();
+  if (global.isWeb) {
+    await global.client.pause(500);
   }
+
+  await closeWelcome();
 });
 
 afterEach(async () => {
-  if (!global.isUnitTest) {
-    await clearLocalStorage();
-  }
+  await clearLocalStorage();
 });
