@@ -78,7 +78,8 @@ module.exports = async () => {
           outputPath:
             './test-reports/' + BRANCH_NAME + os + web + minio + '.html'
         }
-      ]
+      ],
+      'jest-junit'
     ],
     collectCoverage: true,
     maxWorkers: 1
