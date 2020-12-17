@@ -52,3 +52,7 @@ jobs:
         with:
           name: test-reports
           path: tests/test-reports/
+      - uses: IgnusG/jest-report-action@v2.3.3
+        if: always() # Run regardless of whether other steps failed
+        with:
+          access-token: ${{ secrets.GITHUB_TOKEN }}

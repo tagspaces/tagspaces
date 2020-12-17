@@ -46,6 +46,12 @@ jobs:
         with:
           ref: develop
           submodules: true
+      - name: Checkout TagspacesPro
+        uses: actions/checkout@v2
+        with:
+          repository: tagspaces/tagspacespro
+          token: ${{ secrets.CHECKOUT_TSPRO  }}
+          path: extensions/tagspacespro
       - name: Checkout TestData
         uses: actions/checkout@v2
         with:
@@ -84,6 +90,12 @@ jobs:
         with:
           ref: develop
           submodules: true
+      - name: Checkout TagspacesPro
+        uses: actions/checkout@v2
+        with:
+          repository: tagspaces/tagspacespro
+          token: ${{ secrets.CHECKOUT_TSPRO  }}
+          path: extensions/tagspacespro
       - name: Checkout TestData
         uses: actions/checkout@v2
         with:
@@ -152,6 +164,12 @@ jobs:
         with:
           ref: develop
           submodules: true
+      - name: Checkout TagspacesPro
+        uses: actions/checkout@v2
+        with:
+          repository: tagspaces/tagspacespro
+          token: ${{ secrets.CHECKOUT_TSPRO  }}
+          path: extensions/tagspacespro
       - name: Checkout TestData
         uses: actions/checkout@v2
         with:
@@ -183,6 +201,12 @@ jobs:
         with:
           ref: develop
           submodules: true
+      - name: Checkout TagspacesPro
+        uses: actions/checkout@v2
+        with:
+          repository: tagspaces/tagspacespro
+          token: ${{ secrets.CHECKOUT_TSPRO  }}
+          path: extensions/tagspacespro
       - name: Checkout TestData
         uses: actions/checkout@v2
         with:
@@ -204,9 +228,7 @@ jobs:
           yarn build-main
           yarn build-e2e
           yarn test-e2e-web
-      - name: 'Tar test reports'
-        run: tar -cvf test_reports.tar /tests/test-reports
       - uses: actions/upload-artifact@v2
         with:
           name: test-reports
-          path: test_reports.tar
+          path: tests/test-reports/
