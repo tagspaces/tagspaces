@@ -82,6 +82,7 @@ module.exports = async () => {
       'jest-junit'
     ],
     collectCoverage: true,
-    maxWorkers: 1
+    maxWorkers: 1,
+    testTimeout: 30000
   };
 };

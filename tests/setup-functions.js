@@ -78,7 +78,7 @@ export async function startWebServer() {
   const serveStatic = await require('serve-static');
 
   const port = 8000;
-  const app = await express();
+  const app = express();
 
   await app.use(
     serveStatic(pathLib.resolve(__dirname, '../web'), {
@@ -89,12 +89,12 @@ export async function startWebServer() {
     //todo copyfiles do not work for MacOS
     await app.use(serveStatic('../app'));
   }
-  await app.listen(port);
+  app.server = app.listen(port);
   console.log('Webserver listining on http://127.0.0.1:' + port);
   return app;
 }
 
 export async function stopWebServer(app) {
-  // TODO TypeError: app.close is not a function
-  // await app.close();
+  await app.server.close();
+  app = null;
 }

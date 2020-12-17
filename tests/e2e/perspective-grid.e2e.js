@@ -435,7 +435,10 @@ describe('TST50** - Right button on a file', () => {
     await AddRemoveTagsToSelectedFiles([testTagName], false);
   });
 
-  test('TST5025 - Add / Remove tags (file menu) [TST5025,web,minio,electron]', async () => {
+  /**
+   * TODO web: stale element reference: stale element reference: element is not attached to the page document
+   */
+  test('TST5025 - Add / Remove tags (file menu) [TST5025,minio,electron]', async () => {
     await searchEngine('desktop');
     const tags = [testTagName, testTagName + '2'];
     // select file
@@ -462,7 +465,7 @@ describe('TST50** - Right button on a file', () => {
     // check parent directory
   });
 
-  test('TST5027 - Open containing folder [electron]', async () => {
+  test('TST5027 - Open containing folder [electron,web]', async () => {
     if (!global.isMinio) {
       // Show in File Manager option is missing for Minio Location
       await searchEngine('txt');
@@ -614,6 +617,9 @@ describe('TST50** - Right button on a file', () => {
     //folder
     await expectElementExist(selectorFolder, false);
 
+    if (global.isWeb) {
+      await global.client.pause(500);
+    }
     // show sub folder in the grid perspective
     await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
     await clickOn('[data-tid=gridPerspectiveToggleShowDirectories]');
