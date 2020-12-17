@@ -13,5 +13,6 @@ dll
 app/utils/js-webdav-client.js
 coverage
 tests/testdata
+tests/testdata-tmp
 tests/file-structure
 .ycache

@@ -3,7 +3,7 @@ import { delay } from './hook';
 import { firstFile } from './test-utils.spec';
 
 export const defaultLocationPath =
-  './testdata/file-structure/supported-filestypes';
+  './testdata-tmp/file-structure/supported-filestypes';
 export const defaultLocationName = 'supported-filestypes';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const newLocationName = 'Location Name Changed';
@@ -325,6 +325,7 @@ export async function showFilesWithTag(tagName) {
   await clickOn('[data-tid=tagMoreButton_' + tagName + ']');
   await global.client.pause(500);
   await clickOn('[data-tid=showFilesWithThisTag]');
+  await global.client.pause(1500); // minio
 }
 
 export async function expectTagsExist(gridElement, arrTagNames, exist = true) {
@@ -384,7 +385,7 @@ export async function openEntry(entryName) {
 
 export async function createNewDirectory(dirName = testFolder) {
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
-  await global.client.pause(100); // TODO the Menu is always in HTML
+  await global.client.pause(500); // TODO the Menu is always in HTML
   await clickOn('[data-tid=newSubDirectory]');
   await global.client.pause(500);
   // set new dir name
@@ -401,6 +402,7 @@ export async function createNewDirectory(dirName = testFolder) {
   await delay(1500);
   await confirmCreateNewDirectory.waitForDisplayed();
   await confirmCreateNewDirectory.click();*/
+  await global.client.pause(500); // minio
   return dirName;
 }
 

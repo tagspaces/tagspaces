@@ -1,6 +1,6 @@
 const sh = require('shelljs');
 const path = require('path');
-const fs = require('fs-extra');
+// const fs = require('fs-extra');
 
 if (!sh.which('git')) {
   sh.echo('Sorry, this script requires git');
@@ -13,20 +13,23 @@ if (!sh.which('yarn')) {
 }
 
 const extensionDir = path.resolve(__dirname, '../tests');
-const extensionBranch = 'master';
+if (!sh.test('-d', extensionDir)) {
+  sh.mkdir(extensionDir);
+}
 
+sh.cd(extensionDir);
+
+/**
+ * @Deprecated use github action script for setup instead
+ */
+/*
+const extensionBranch = 'master';
 const extensionList = [
   {
     path: 'testdata',
     url: 'https://github.com/tagspaces/testdata'
   }
 ];
-
-if (!sh.test('-d', extensionDir)) {
-  sh.mkdir(extensionDir);
-}
-
-sh.cd(extensionDir);
 
 extensionList.forEach(extension => {
   if (sh.test('-d', extension.path)) {
@@ -58,6 +61,7 @@ if (!sh.test('-d', outDir)) {
     sh.exec('chmod -R +x .');
   }
 }
+*/
 /* const outFile = path.join(outDir, 'minio.exe');
 if (!fs.existsSync(outFile)) {
   //! sh.test('-d', 'bin') ||

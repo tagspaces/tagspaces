@@ -10,7 +10,7 @@ import {
 } from './general.helpers';
 
 export const defaultLocationPath =
-  './testdata/file-structure/supported-filestypes';
+  './testdata-tmp/file-structure/supported-filestypes';
 export const defaultLocationName = 'supported-filestypes';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const newLocationName = 'Location Name Changed';

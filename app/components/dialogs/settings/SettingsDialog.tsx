@@ -64,6 +64,10 @@ const SettingsDialog = (props: Props) => {
   const [isConfirmDialogOpened, setIsConfirmDialogOpened] = useState<boolean>(
     false
   );
+  const [
+    isResetSettingsDialogOpened,
+    setIsResetSettingsDialogOpened
+  ] = useState<boolean>(false);
   const settingsFileTypeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -227,12 +231,40 @@ const SettingsDialog = (props: Props) => {
         />
       )}
 
+      {isResetSettingsDialogOpened && (
+        <ConfirmDialog
+          open={isResetSettingsDialogOpened}
+          onClose={() => {
+            setIsResetSettingsDialogOpened(false);
+          }}
+          title="Confirm"
+          content={i18n.t('core:confirmResetSettings')}
+          confirmCallback={result => {
+            if (result) {
+              localStorage.clear();
+              // eslint-disable-next-line no-restricted-globals
+              location.reload();
+
+              /* const electron = window.require('electron');
+              const webContents = electron.remote.getCurrentWebContents();
+              webContents.session.clearStorageData();
+              webContents.reload(); */
+            }
+          }}
+          cancelDialogTID="cancelResetSettingsDialogTID"
+          confirmDialogTID="confirmResetSettingsDialogTID"
+          confirmDialogContentTID="confirmResetSettingsDialogContentTID"
+        />
+      )}
+
       <div
         data-tid="settingsDialog"
         className={props.classes.mainContent}
         ref={settingsFileTypeRef}
       >
-        {currentTab === 0 && <SettingsGeneral />}
+        {currentTab === 0 && (
+          <SettingsGeneral showResetSettings={setIsResetSettingsDialogOpened} />
+        )}
         {currentTab === 1 && (
           <SettingsFileTypes
             items={items}
@@ -262,6 +294,7 @@ const SettingsDialog = (props: Props) => {
           data-tid="addNewFileTypeTID"
           onClick={() => onAddFileType()}
           color="secondary"
+          style={{ float: 'left' }}
         >
           {i18n.t('core:addNewFileType')}
         </Button>

@@ -19,7 +19,7 @@
 let tsPro;
 
 try {
-  tsPro = require('../../extensions/pro');
+  tsPro = require('../../extensions/tagspacespro');
 } catch (e) {
   if (e && e.code && e.code === 'MODULE_NOT_FOUND') {
     console.log('PRO functionality not available');

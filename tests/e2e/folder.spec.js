@@ -1,5 +1,5 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
-import { delay, clearLocalStorage } from './hook';
+import { delay } from './hook';
 import {
   openFile,
   checkFilenameForExist,
@@ -26,7 +26,6 @@ const lastSubFolder = 'search';
 
 describe('TST01+TST02 - Folder tests', () => {
   beforeEach(async () => {
-    await clearLocalStorage();
     await delay(1000);
     await createLocation(defaultLocationPath, defaultLocationName, true);
     await delay(1000);

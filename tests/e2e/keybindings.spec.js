@@ -1,5 +1,5 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
-import { clearLocalStorage, delay } from './hook';
+import { delay } from './hook';
 import {
   createLocation,
   checkForIdExist,
@@ -19,7 +19,6 @@ const testLocationName = '' + new Date().getTime();
 
 describe('TST13 - Settings Key Bindings:', async () => {
   beforeEach(async () => {
-    await clearLocalStorage();
     await delay(500);
     await createLocation(defaultLocationPath, testLocationName);
     await delay(2000);

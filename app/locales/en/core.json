@@ -278,6 +278,8 @@
   "moveDown": "Move Down",
   "chooseSearchQuery": "Choose a search query",
   "closeButton": "Close",
+  "resetSettings": "Restore Default Settings",
+  "confirmResetSettings": "Attention!!! Confirming this dailog will irreversible remove all connected locations, all the tags from the tag library and will restore the default settings of the app. Do you want to proceed?",
   "minimize": "Minimize",
   "closeAndClear": "Close & Clear",
   "addNewFileType": "Add new file type",
