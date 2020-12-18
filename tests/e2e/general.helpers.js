@@ -203,6 +203,9 @@ export async function getGridFileName(fileIndex) {
 }
 
 export async function getGridCellClass(fileIndex = 0) {
+  if (global.isWeb) {
+    await global.client.pause(500);
+  }
   const filesList = await global.client.$$(perspectiveGridTable + firstFile);
   let file =
     fileIndex < 0
