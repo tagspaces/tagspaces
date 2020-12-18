@@ -62,6 +62,9 @@ describe('TST50 - Perspective Grid', () => {
     await clickOn('[data-tid=location_' + defaultLocationName + ']');
     // If its have opened file
     await closeFileProperties();
+    if (global.isWeb) {
+      await global.client.pause(500);
+    }
   });
 
   test('TST5002 - Open file with click [TST5002,web,minio,electron]', async () => {
@@ -605,9 +608,6 @@ describe('TST50** - Right button on a file', () => {
   });
 
   test('TST5037 - Show sub folders [TST5037,web,minio,electron]', async () => {
-    if (global.isWeb) {
-      await global.client.pause(500);
-    }
     //open Option menu
     await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
     //click on hide directories

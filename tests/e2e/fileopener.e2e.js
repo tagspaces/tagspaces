@@ -208,13 +208,16 @@ describe('TST08 - File / folder properties', () => {
 
     const propsFileName = await getPropertiesFileName();
     await clickOn('[data-tid=deleteEntryTID]');
+    /*if (global.isWeb) {
+      await global.client.pause(500);
+    }*/
     await clickOn('[data-tid=confirmSaveBeforeCloseDialog]');
     await waitForNotification();
     const firstFileName = await getGridFileName(0);
     expect(propsFileName).not.toBe(firstFileName);
   });
 
-  it('TST0814 - Open file fullscreen and exit with close button [TST0813,web,minio,electron]', async () => {
+  it('TST0814 - Open file fullscreen and exit with close button [TST0814,web,minio,electron]', async () => {
     // open fileProperties
     await clickOn(perspectiveGridTable + firstFile);
     await clickOn('[data-tid=fileContainerSwitchToFullScreen]');
