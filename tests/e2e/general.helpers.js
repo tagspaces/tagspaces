@@ -178,22 +178,26 @@ export async function clearInputValue(inputElement) {
  * @returns {Promise<string>} fileName; example usage: getFileName(-1) will return the last one
  */
 export async function getGridFileName(fileIndex) {
-  const filesList = await global.client.$$(perspectiveGridTable + firstFile);
-  if (filesList.length > 0) {
-    let file =
-      fileIndex < 0
-        ? filesList[filesList.length + fileIndex]
-        : filesList[fileIndex];
-    file = await file.$('div');
-    file = await file.$('div');
-    file = await file.$('div');
-    const fileNameElem = await file.$('p');
-    const fileName = await fileNameElem.getText();
-    const divs = await file.$$('div');
-    const lastDiv = await divs[divs.length - 1];
-    const fileExtElem = await lastDiv.$('span');
-    const fileExt = await fileExtElem.getText();
-    return fileName + '.' + fileExt.toLowerCase();
+  try {
+    const filesList = await global.client.$$(perspectiveGridTable + firstFile);
+    if (filesList.length > 0) {
+      let file =
+        fileIndex < 0
+          ? filesList[filesList.length + fileIndex]
+          : filesList[fileIndex];
+      file = await file.$('div');
+      file = await file.$('div');
+      file = await file.$('div');
+      const fileNameElem = await file.$('p');
+      const fileName = await fileNameElem.getText();
+      const divs = await file.$$('div');
+      const lastDiv = await divs[divs.length - 1];
+      const fileExtElem = await lastDiv.$('span');
+      const fileExt = await fileExtElem.getText();
+      return fileName + '.' + fileExt.toLowerCase();
+    }
+  } catch (e) {
+    console.log("Can't find getGridFileName:" + fileIndex);
   }
   return undefined;
 }

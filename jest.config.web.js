@@ -39,7 +39,7 @@ module.exports = async () => {
      * setupFiles: ran once per test file before all tests
      * https://jestjs.io/docs/en/configuration#setupfiles-array
      */
-    setupFiles: ['../scripts/test-config-env.js'],
+    setupFiles: ['../scripts/test-config-env-web.js'],
     /**
      * setupFilesAfterEnv: ran before each test
      *
@@ -51,13 +51,13 @@ module.exports = async () => {
      *
      * https://jestjs.io/docs/en/configuration#globalsetup-string
      */
-    globalSetup: './global-setup.js',
+    globalSetup: './global-setup-web.js',
     /**
      * globalTeardown: ran once after all tests
      *
      * https://jestjs.io/docs/en/configuration#globalteardown-string
      */
-    globalTeardown: './global-teardown.js',
+    globalTeardown: './global-teardown-web.js',
     moduleNameMapper: {
       '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
         '<rootDir>/internals/mocks/fileMock.js',
@@ -82,6 +82,7 @@ module.exports = async () => {
       'jest-junit'
     ],
     collectCoverage: true,
-    maxWorkers: 1
+    maxWorkers: 1,
+    testTimeout: 30000
   };
 };

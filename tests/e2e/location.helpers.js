@@ -57,36 +57,34 @@ export async function createMinioLocation(
   locationName,
   isDefault = false
 ) {
-  /*if (!global.isWeb) {
-    const locationManagerMenu = await global.client.$(
-      '[data-tid=locationManagerPanel]'
+  const lastLocationTID = await getLocationTid(-1);
+  // Check if location not exist (from extconfig.js)
+  if (locationName !== lastLocationTID) {
+    const elem = await global.client.$('[data-tid=createNewLocation]');
+    await elem.click();
+
+    const objectStorageLocation = await global.client.$(
+      '[data-tid=objectStorageLocation]'
     );
-    await locationManagerMenu.click();
-  }*/
-  const elem = await global.client.$('[data-tid=createNewLocation]');
-  await elem.click();
+    await objectStorageLocation.click();
 
-  const objectStorageLocation = await global.client.$(
-    '[data-tid=objectStorageLocation]'
-  );
-  await objectStorageLocation.click();
+    // SET LOCATION NAME
+    await setInputKeys(
+      'locationName',
+      locationName || 'Test Location' + new Date().getTime()
+    );
+    await setInputKeys('locationPath', locationPath);
+    await setInputKeys('accessKeyId', minioAccessKey);
+    await setInputKeys('secretAccessKey', minioSecretAccessKey);
+    await setInputKeys('bucketName', locationName);
+    await setInputKeys('endpointURL', minioEndpointURL);
 
-  // SET LOCATION NAME
-  await setInputKeys(
-    'locationName',
-    locationName || 'Test Location' + new Date().getTime()
-  );
-  await setInputKeys('locationPath', locationPath);
-  await setInputKeys('accessKeyId', minioAccessKey);
-  await setInputKeys('secretAccessKey', minioSecretAccessKey);
-  await setInputKeys('bucketName', locationName);
-  await setInputKeys('endpointURL', minioEndpointURL);
-
-  // await delay(1500);
-  if (isDefault) {
-    await clickOn('[data-tid=locationIsDefault]');
+    // await delay(1500);
+    if (isDefault) {
+      await clickOn('[data-tid=locationIsDefault]');
+    }
+    await clickOn('[data-tid=confirmLocationCreation]');
   }
-  await clickOn('[data-tid=confirmLocationCreation]');
 }
 
 /*async function setInputValue(tid, value) {

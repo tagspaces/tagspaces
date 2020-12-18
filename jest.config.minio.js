@@ -39,7 +39,7 @@ module.exports = async () => {
      * setupFiles: ran once per test file before all tests
      * https://jestjs.io/docs/en/configuration#setupfiles-array
      */
-    // setupFiles: ['../scripts/setup-tests.js'],
+    setupFiles: ['../scripts/test-config-env-minio.js'],
     /**
      * setupFilesAfterEnv: ran before each test
      *
@@ -78,7 +78,8 @@ module.exports = async () => {
           outputPath:
             './test-reports/' + BRANCH_NAME + os + web + minio + '.html'
         }
-      ]
+      ],
+      'jest-junit'
     ],
     collectCoverage: true,
     maxWorkers: 1

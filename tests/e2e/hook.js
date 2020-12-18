@@ -3,9 +3,6 @@ import { Application } from 'spectron';
 import electronPath from 'electron';
 import pathLib from 'path';
 
-const winMinio = pathLib.resolve(__dirname, '../bin/minio.exe');
-const unixMinio = 'minio';
-
 // Spectron API https://github.com/electron/spectron
 // Webdriver.io http://webdriver.io/api.html
 
@@ -30,8 +27,15 @@ export async function clearLocalStorage() {
     // await global.app.webContents.session.clearStorageData();
     global.app.webContents.reload();
   }*/
-  await global.app.webContents.executeJavaScript('localStorage.clear()');
-  global.app.webContents.reload();
+  if (global.isWeb) {
+    // global.client.executeScript('window.localStorage.clear()');
+    // global.client.clearLocalStorage();
+    // window.localStorage.clear();
+    global.client.refresh();
+  } else {
+    await global.app.webContents.executeJavaScript('localStorage.clear()');
+    global.app.webContents.reload();
+  }
   // browser.clearLocalStorage();
   // global.app.client.localStorage('DELETE');
   // global.app.client.reload(false);
@@ -39,20 +43,41 @@ export async function clearLocalStorage() {
 
 export async function startSpectronApp() {
   if (global.isWeb) {
-    const webdriverio = await require('webdriverio');
+    const webdriverio = require('webdriverio');
+    // https://webdriver.io/docs/configurationfile.html
     const options = {
       host: 'localhost', // Use localhost as chrome driver server
       port: 9515, // "9515" is the port opened by chrome driver.
       capabilities: {
-        browserName: 'chrome'
-        /*'goog:chromeOptions': {
-          binary: electronPath, // Path to your Electron binary.
-          args: [ /!* cli arguments *!/] // Optional, perhaps 'app=' + /path/to/your/app/
-        }*/
+        browserName: 'chrome',
+        'goog:chromeOptions': {
+          // binary: electronPath, // Path to your Electron binary.
+          // to run chrome headless the following flags are required
+          // (see https://developers.google.com/web/updates/2017/04/headless-chrome)
+          args: ['--headless', '--disable-gpu']
+        },
+        timeouts: {
+          script: 60000
+        }
       },
-      logLevel: 'silent'
+      waitforTimeout: 5000,
+      logLevel: 'debug'
+      // logLevel: 'silent'
     };
+    // global.client = browser
     global.client = await webdriverio.remote(options);
+    // global.client.setTimeout({ 'script': 60000 });
+    /*client = await client
+      .init()
+      .setViewportSize({ width: 1024, height: 768 }, false)
+      .timeouts('script', 6000)
+      /!*
+                 Cannot set 'implicit' timeout because of a bug in webdriverio [1].
+                 [1] https://github.com/webdriverio/webdriverio/issues/974
+                 *!/
+      // .timeouts('implicit', 5000)
+      .timeouts('pageLoad', 30000);*/
+
     await global.client.url('http://localhost:8000');
   } else {
     global.app = new Application({
@@ -72,6 +97,10 @@ export async function stopSpectronApp() {
   if (global.app && global.app.isRunning()) {
     // await clearLocalStorage();
     return global.app.stop();
+  }
+  if (global.isWeb) {
+    await global.client.closeWindow();
+    // await global.client.end();
   }
 }
 

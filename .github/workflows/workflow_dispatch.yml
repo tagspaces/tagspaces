@@ -56,3 +56,4 @@ jobs:
         if: always() # Run regardless of whether other steps failed
         with:
           access-token: ${{ secrets.GITHUB_TOKEN }}
+          working-directory: tests

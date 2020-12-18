@@ -39,25 +39,7 @@ module.exports = async () => {
      * setupFiles: ran once per test file before all tests
      * https://jestjs.io/docs/en/configuration#setupfiles-array
      */
-    setupFiles: ['../scripts/test-config-env.js'],
-    /**
-     * setupFilesAfterEnv: ran before each test
-     *
-     * https://jestjs.io/docs/en/configuration#setupfilesafterenv-array
-     */
-    setupFilesAfterEnv: ['./setup-after-env.js'],
-    /**
-     * globalSetup: ran once before all tests
-     *
-     * https://jestjs.io/docs/en/configuration#globalsetup-string
-     */
-    globalSetup: './global-setup.js',
-    /**
-     * globalTeardown: ran once after all tests
-     *
-     * https://jestjs.io/docs/en/configuration#globalteardown-string
-     */
-    globalTeardown: './global-teardown.js',
+    setupFiles: ['../scripts/test-config-unit.js'],
     moduleNameMapper: {
       '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
         '<rootDir>/internals/mocks/fileMock.js',

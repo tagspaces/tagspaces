@@ -62,6 +62,9 @@ describe('TST50 - Perspective Grid', () => {
     await clickOn('[data-tid=location_' + defaultLocationName + ']');
     // If its have opened file
     await closeFileProperties();
+    if (global.isWeb) {
+      await global.client.pause(500);
+    }
   });
 
   test('TST5002 - Open file with click [TST5002,web,minio,electron]', async () => {
@@ -89,7 +92,10 @@ describe('TST50 - Perspective Grid', () => {
       expect(firstFileName).toBe('sample_exif.jpg');
     });
 
-    test('TST10** - Sort by size [web,minio,electron]', async () => {
+    /**
+     * TODO web https://trello.com/c/b2isDaUc/533-switch-asc-desc-while-sort-by-options
+     */
+    test('TST10** - Sort by size [minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortBySize]');
       await global.client.pause(500); // TODO
       const firstFileName = await getGridFileName(0);
@@ -114,7 +120,10 @@ describe('TST50 - Perspective Grid', () => {
       // expect(firstFileName).not.toBe('note.txt'); TODO its have note.txt from another tests
     });
 
-    test('TST10** - Sort by extension [web,minio,electron]', async () => {
+    /**
+     * TODO web https://trello.com/c/b2isDaUc/533-switch-asc-desc-while-sort-by-options
+     */
+    test('TST10** - Sort by extension [minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortByExt]');
       await global.client.pause(1000); // TODO
       const firstFileName = await getGridFileName(0);
@@ -151,7 +160,7 @@ describe('TST50 - Perspective Grid', () => {
     const containSelectedStyle =
       style.includes('jss131') ||
       style.includes('jss124') ||
-      style.includes('jss111'); /!*Mac Web*!/ // || style.includes('jss136') //TODO fix this is not stable*/
+      style.includes('jss111'); /!*Mac Web*!/ // || style.includes('jss136') */
   });
 
   // This scenario includes "Add tags" && "Remove tags" to be fulfilled
@@ -435,7 +444,11 @@ describe('TST50** - Right button on a file', () => {
     await AddRemoveTagsToSelectedFiles([testTagName], false);
   });
 
-  test('TST5025 - Add / Remove tags (file menu) [TST5025,web,minio,electron]', async () => {
+  /**
+   * TODO web sometimes: stale element reference: stale element reference: element is not attached to the page document
+   * TODO minio sometimes: stale element reference: stale element reference: element is not attached to the page document
+   */
+  test('TST5025 - Add / Remove tags (file menu) [TST5025,electron]', async () => {
     await searchEngine('desktop');
     const tags = [testTagName, testTagName + '2'];
     // select file
@@ -462,7 +475,7 @@ describe('TST50** - Right button on a file', () => {
     // check parent directory
   });
 
-  test('TST5027 - Open containing folder [electron]', async () => {
+  test('TST5027 - Open containing folder [electron,web]', async () => {
     if (!global.isMinio) {
       // Show in File Manager option is missing for Minio Location
       await searchEngine('txt');
@@ -611,6 +624,9 @@ describe('TST50** - Right button on a file', () => {
     //folder
     await expectElementExist(selectorFolder, false);
 
+    if (global.isWeb) {
+      await global.client.pause(500);
+    }
     // show sub folder in the grid perspective
     await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
     await clickOn('[data-tid=gridPerspectiveToggleShowDirectories]');
