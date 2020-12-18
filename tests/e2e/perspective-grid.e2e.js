@@ -92,7 +92,10 @@ describe('TST50 - Perspective Grid', () => {
       expect(firstFileName).toBe('sample_exif.jpg');
     });
 
-    test('TST10** - Sort by size [web,minio,electron]', async () => {
+    /**
+     * TODO web https://trello.com/c/b2isDaUc/533-switch-asc-desc-while-sort-by-options
+     */
+    test('TST10** - Sort by size [minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortBySize]');
       await global.client.pause(500); // TODO
       const firstFileName = await getGridFileName(0);
@@ -117,7 +120,10 @@ describe('TST50 - Perspective Grid', () => {
       // expect(firstFileName).not.toBe('note.txt'); TODO its have note.txt from another tests
     });
 
-    test('TST10** - Sort by extension [web,minio,electron]', async () => {
+    /**
+     * TODO web https://trello.com/c/b2isDaUc/533-switch-asc-desc-while-sort-by-options
+     */
+    test('TST10** - Sort by extension [minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortByExt]');
       await global.client.pause(1000); // TODO
       const firstFileName = await getGridFileName(0);

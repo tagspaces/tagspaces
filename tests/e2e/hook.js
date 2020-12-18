@@ -28,8 +28,9 @@ export async function clearLocalStorage() {
     global.app.webContents.reload();
   }*/
   if (global.isWeb) {
-    // global.client.executeScript('localStorage.clear()');
+    // global.client.executeScript('window.localStorage.clear()');
     // global.client.clearLocalStorage();
+    // window.localStorage.clear();
     global.client.refresh();
   } else {
     await global.app.webContents.executeJavaScript('localStorage.clear()');
@@ -49,21 +50,19 @@ export async function startSpectronApp() {
       port: 9515, // "9515" is the port opened by chrome driver.
       capabilities: {
         browserName: 'chrome',
-        /*'goog:chromeOptions': {
+        'goog:chromeOptions': {
+          // binary: electronPath, // Path to your Electron binary.
           // to run chrome headless the following flags are required
           // (see https://developers.google.com/web/updates/2017/04/headless-chrome)
           args: ['--headless', '--disable-gpu']
-        },*/
-        /*'goog:chromeOptions': {
-          binary: electronPath, // Path to your Electron binary.
-          args: [ /!* cli arguments *!/] // Optional, perhaps 'app=' + /path/to/your/app/
-        }*/
+        },
         timeouts: {
           script: 60000
         }
       },
       waitforTimeout: 5000,
-      logLevel: 'silent'
+      logLevel: 'debug'
+      // logLevel: 'silent'
     };
     // global.client = browser
     global.client = await webdriverio.remote(options);
