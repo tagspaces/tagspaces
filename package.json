@@ -294,5 +294,10 @@
     "node": ">=8.x",
     "npm": ">=5.x",
     "yarn": ">=1.6.0"
+  },
+  "jest-junit": {
+    "suiteNameTemplate": "{filepath}",
+    "classNameTemplate": "{classname}",
+    "titleTemplate": "{title}"
   }
 }
