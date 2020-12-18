@@ -58,6 +58,11 @@ jobs:
           yarn build-main
           yarn build-e2e
           yarn test-e2e-electron
+      - uses: IgnusG/jest-report-action@v2.3.3
+        if: always() # Run regardless of whether other steps failed
+        with:
+          access-token: ${{ secrets.GITHUB_TOKEN }}
+          working-directory: tests
   # gitHubActionForNpmMac:
   #  name: Validating MacOS
   #  runs-on: macos-latest
