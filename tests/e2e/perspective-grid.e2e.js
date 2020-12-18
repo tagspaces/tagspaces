@@ -151,7 +151,7 @@ describe('TST50 - Perspective Grid', () => {
     const containSelectedStyle =
       style.includes('jss131') ||
       style.includes('jss124') ||
-      style.includes('jss111'); /!*Mac Web*!/ // || style.includes('jss136') //TODO fix this is not stable*/
+      style.includes('jss111'); /!*Mac Web*!/ // || style.includes('jss136') */
   });
 
   // This scenario includes "Add tags" && "Remove tags" to be fulfilled
@@ -437,8 +437,9 @@ describe('TST50** - Right button on a file', () => {
 
   /**
    * TODO web sometimes: stale element reference: stale element reference: element is not attached to the page document
+   * TODO minio sometimes: stale element reference: stale element reference: element is not attached to the page document
    */
-  test('TST5025 - Add / Remove tags (file menu) [TST5025,minio,electron]', async () => {
+  test('TST5025 - Add / Remove tags (file menu) [TST5025,electron]', async () => {
     await searchEngine('desktop');
     const tags = [testTagName, testTagName + '2'];
     // select file
