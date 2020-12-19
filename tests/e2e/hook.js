@@ -61,8 +61,8 @@ export async function startSpectronApp() {
         }
       },
       waitforTimeout: 5000,
-      logLevel: 'debug'
-      // logLevel: 'silent'
+      // logLevel: 'debug'
+      logLevel: 'silent'
     };
     // global.client = browser
     global.client = await webdriverio.remote(options);
