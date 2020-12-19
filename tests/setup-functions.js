@@ -17,7 +17,7 @@ export async function globalSetup() {
 
 export async function startMinio() {
   const winMinio = pathLib.resolve(__dirname, './bin/minio.exe');
-  const unixMinio = 'minio'; // TODO unix path
+  const unixMinio = pathLib.resolve(__dirname, './bin/minio');
 
   const command = global.isWin ? winMinio : unixMinio;
   const minioProcess = await require('child_process').spawn(command, [

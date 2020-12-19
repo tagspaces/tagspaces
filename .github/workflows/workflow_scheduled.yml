@@ -185,6 +185,12 @@ jobs:
           yarn type-check
       - name: Run Unit tests
         run: yarn test-unit
+      - uses: suisei-cn/actions-download-file@v1
+        id: minio
+        name: Download the Minio.exe
+        with:
+          url: 'https://dl.min.io/server/minio/release/darwin-amd64/minio'
+          target: tests/bin/
       - name: Run Electron tests
         run: |
           yarn install-ext
@@ -222,6 +228,12 @@ jobs:
           yarn type-check
       - name: Run Unit tests
         run: yarn test-unit
+      - uses: suisei-cn/actions-download-file@v1
+        id: minio
+        name: Download the Minio.exe
+        with:
+          url: 'https://dl.min.io/server/minio/release/darwin-amd64/minio'
+          target: tests/bin/
       - name: Run Electron tests
         run: |
           yarn install-ext
