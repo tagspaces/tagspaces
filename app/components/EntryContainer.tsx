@@ -95,11 +95,14 @@ const styles: any = (theme: any) => ({
   entryProperties: {
     display: 'inline',
     flex: '1 1 100%',
+    backgroundColor: theme.palette.background.default,
+    zIndex: 1,
     padding: '0 0 60px 0',
     height: '50%'
   },
   fileOpener: {
     width: '100%',
+    zIndex: 3,
     border: 0
   },
   toolbar: {
@@ -119,6 +122,7 @@ const styles: any = (theme: any) => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-start',
+    zIndex: 2,
     borderBottom: '1px solid ' + theme.palette.divider,
     overflowX: AppConfig.isFirefox ? 'auto' : 'overlay'
   },

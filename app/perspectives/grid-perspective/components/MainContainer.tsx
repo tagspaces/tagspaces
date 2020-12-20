@@ -817,6 +817,7 @@ class GridPerspective extends React.Component<Props, State> {
                 : classes.rowContainer
             }
             style={{
+              marginTop: 53,
               gridTemplateColumns:
                 layoutType === 'grid'
                   ? 'repeat(auto-fit,minmax(' + entryWidth + 'px,1fr))'
