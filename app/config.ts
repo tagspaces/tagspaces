@@ -44,7 +44,7 @@ export const AppConfig = {
   maxIndexAge: 10 * 60 * 1000, // 10 minutes
   // maxSearchResult: 1000,
   defaultFileColor: '#808080',
-  defaultFolderColor: '#555', // transparent #FDEEBD #ff791b #2c001e #880e4f
+  defaultFolderColor: '#582727', // 555 transparent #FDEEBD #ff791b #2c001e #880e4f
   links: {
     checkNewVersionURL: 'https://www.tagspaces.org/releases/tagspaces.json',
     productsOverview: 'https://www.tagspaces.org/products/',

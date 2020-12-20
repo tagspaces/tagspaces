@@ -135,15 +135,15 @@ const styles: any = (theme: any) => ({
   fileBadge: {
     color: 'white',
     backgroundColor: AppConfig.defaultFileColor,
-    padding: '2px 6px 0px 6px',
+    padding: '2px 5px 0px 5px',
     minHeight: 18,
-    fontSize: 10,
+    fontSize: 13,
     marginLeft: 3,
     marginTop: -2,
     borderRadius: 3
   },
   entryNameButton: {
-    paddingTop: 0,
+    paddingTop: 1,
     paddingRight: 0,
     paddingLeft: 6,
     paddingBottom: 0,
@@ -1095,13 +1095,12 @@ const EntryContainer = (props: Props) => {
               <Box className={classes.flexLeft}>
                 {openedFile.isFile ? (
                   <Button
-                    // onClick={togglePanel}
                     disabled
                     title={openedFile.url || openedFile.path}
                     aria-label={i18n.t('core:toggleEntryProperties')}
                     className={classes.entryNameButton}
                   >
-                    <Typography
+                    <Box
                       style={{
                         color: props.theme.palette.text.primary
                       }}
@@ -1110,7 +1109,7 @@ const EntryContainer = (props: Props) => {
                         ? String.fromCharCode(0x25cf) + ' '
                         : ''}
                       {fileTitle}
-                    </Typography>
+                    </Box>
                     <Box
                       className={classes.fileBadge}
                       title={i18n.t('core:toggleEntryProperties')}
@@ -1128,18 +1127,17 @@ const EntryContainer = (props: Props) => {
                 ) : (
                   <Button
                     disabled
-                    // onClick={togglePanel}
                     title={openedFile.url || openedFile.path}
                     aria-label={i18n.t('core:toggleEntryProperties')}
                     className={classes.entryNameButton}
                   >
-                    <Typography
+                    <Box
                       style={{
                         color: props.theme.palette.text.primary
                       }}
                     >
                       {fileTitle}
-                    </Typography>
+                    </Box>
                     <Box
                       className={classes.fileBadge}
                       title={i18n.t('core:toggleEntryProperties')}
