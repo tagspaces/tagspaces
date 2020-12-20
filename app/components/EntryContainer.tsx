@@ -139,6 +139,7 @@ const styles: any = (theme: any) => ({
     minHeight: 18,
     fontSize: 10,
     marginLeft: 3,
+    marginTop: -2,
     borderRadius: 3
   },
   entryNameButton: {
