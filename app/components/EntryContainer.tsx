@@ -33,7 +33,6 @@ import ArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import FileDownloadIcon from '@material-ui/icons/AssignmentReturned';
 import DetailsIcon from '@material-ui/icons/Info';
 import ExpandIcon from '@material-ui/icons/SettingsEthernet';
-import FolderIcon from '@material-ui/icons/FolderOpen';
 import SplitPane from 'react-split-pane';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ShareIcon from '@material-ui/icons/Share';
@@ -95,11 +94,14 @@ const styles: any = (theme: any) => ({
   entryProperties: {
     display: 'inline',
     flex: '1 1 100%',
+    backgroundColor: theme.palette.background.default,
+    zIndex: 1,
     padding: '0 0 60px 0',
     height: '50%'
   },
   fileOpener: {
     width: '100%',
+    zIndex: 3,
     border: 0
   },
   toolbar: {
@@ -119,6 +121,7 @@ const styles: any = (theme: any) => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-start',
+    zIndex: 2,
     borderBottom: '1px solid ' + theme.palette.divider,
     overflowX: AppConfig.isFirefox ? 'auto' : 'overlay'
   },
@@ -133,14 +136,15 @@ const styles: any = (theme: any) => ({
     color: 'white',
     backgroundColor: AppConfig.defaultFileColor,
     padding: '2px 6px 0px 6px',
-    minHeight: 22,
-    marginRight: 5,
-    borderRadius: 5
+    minHeight: 18,
+    fontSize: 10,
+    marginLeft: 3,
+    borderRadius: 3
   },
   entryNameButton: {
     paddingTop: 0,
     paddingRight: 0,
-    paddingLeft: 0,
+    paddingLeft: 6,
     paddingBottom: 0,
     minWidth: 20,
     height: 44,
@@ -1096,6 +1100,16 @@ const EntryContainer = (props: Props) => {
                     aria-label={i18n.t('core:toggleEntryProperties')}
                     className={classes.entryNameButton}
                   >
+                    <Typography
+                      style={{
+                        color: props.theme.palette.text.primary
+                      }}
+                    >
+                      {openedFile.editMode && openedFile.changed
+                        ? String.fromCharCode(0x25cf) + ' '
+                        : ''}
+                      {fileTitle}
+                    </Typography>
                     <Box
                       className={classes.fileBadge}
                       title={i18n.t('core:toggleEntryProperties')}
@@ -1109,16 +1123,6 @@ const EntryContainer = (props: Props) => {
                           PlatformIO.getDirSeparator()
                         )}
                     </Box>
-                    <Typography
-                      style={{
-                        color: props.theme.palette.text.primary
-                      }}
-                    >
-                      {openedFile.editMode && openedFile.changed
-                        ? String.fromCharCode(0x25cf) + ' '
-                        : ''}
-                      {fileTitle}
-                    </Typography>
                   </Button>
                 ) : (
                   <Button
@@ -1128,16 +1132,6 @@ const EntryContainer = (props: Props) => {
                     aria-label={i18n.t('core:toggleEntryProperties')}
                     className={classes.entryNameButton}
                   >
-                    <div
-                      className={classes.fileBadge}
-                      title={i18n.t('core:toggleEntryProperties')}
-                      style={{
-                        backgroundColor: AppConfig.defaultFolderColor,
-                        paddingTop: 5
-                      }}
-                    >
-                      <FolderIcon />
-                    </div>
                     <Typography
                       style={{
                         color: props.theme.palette.text.primary
@@ -1145,6 +1139,15 @@ const EntryContainer = (props: Props) => {
                     >
                       {fileTitle}
                     </Typography>
+                    <Box
+                      className={classes.fileBadge}
+                      title={i18n.t('core:toggleEntryProperties')}
+                      style={{
+                        backgroundColor: AppConfig.defaultFolderColor
+                      }}
+                    >
+                      {i18n.t('core:folder')}
+                    </Box>
                   </Button>
                 )}
               </Box>
