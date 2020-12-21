@@ -193,7 +193,7 @@ const CellContent = (props: Props) => {
             variant="button"
             title={fsEntry.path}
           >
-            {fsEntry.isFile ? '.' + fsEntry.extension : i18n.t('core:folder')}
+            {fsEntry.isFile ? fsEntry.extension : i18n.t('core:folder')}
           </Typography>
           {fsEntry.isFile && fsEntry.lmdt && (
             <Typography className={classes.gridSizeDate} variant="caption">
