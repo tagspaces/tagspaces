@@ -1871,9 +1871,9 @@ function findExtensionsForEntry(
   supportedFileTypes.map(fileType => {
     if (fileType.viewer && fileType.type.toLowerCase() === fileExtension) {
       fileForOpening.viewingExtensionId = fileType.viewer;
-      /* if (fileType.color) {
+      if (fileType.color) {
         fileForOpening.color = fileType.color;
-      } */
+      }
       fileForOpening.viewingExtensionPath = findExtensionPathForId(
         fileType.viewer
       );

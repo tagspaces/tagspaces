@@ -33,7 +33,6 @@ import ArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import FileDownloadIcon from '@material-ui/icons/AssignmentReturned';
 import DetailsIcon from '@material-ui/icons/Info';
 import ExpandIcon from '@material-ui/icons/SettingsEthernet';
-import FolderIcon from '@material-ui/icons/FolderOpen';
 import SplitPane from 'react-split-pane';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ShareIcon from '@material-ui/icons/Share';
@@ -136,15 +135,17 @@ const styles: any = (theme: any) => ({
   fileBadge: {
     color: 'white',
     backgroundColor: AppConfig.defaultFileColor,
-    padding: '2px 6px 0px 6px',
-    minHeight: 22,
-    marginRight: 5,
-    borderRadius: 5
+    padding: '2px 5px 0px 5px',
+    minHeight: 18,
+    fontSize: 13,
+    marginLeft: 3,
+    marginTop: -2,
+    borderRadius: 3
   },
   entryNameButton: {
-    paddingTop: 0,
+    paddingTop: 1,
     paddingRight: 0,
-    paddingLeft: 0,
+    paddingLeft: 6,
     paddingBottom: 0,
     minWidth: 20,
     height: 44,
@@ -1094,12 +1095,21 @@ const EntryContainer = (props: Props) => {
               <Box className={classes.flexLeft}>
                 {openedFile.isFile ? (
                   <Button
-                    // onClick={togglePanel}
                     disabled
                     title={openedFile.url || openedFile.path}
                     aria-label={i18n.t('core:toggleEntryProperties')}
                     className={classes.entryNameButton}
                   >
+                    <Box
+                      style={{
+                        color: props.theme.palette.text.primary
+                      }}
+                    >
+                      {openedFile.editMode && openedFile.changed
+                        ? String.fromCharCode(0x25cf) + ' '
+                        : ''}
+                      {fileTitle}
+                    </Box>
                     <Box
                       className={classes.fileBadge}
                       title={i18n.t('core:toggleEntryProperties')}
@@ -1113,42 +1123,30 @@ const EntryContainer = (props: Props) => {
                           PlatformIO.getDirSeparator()
                         )}
                     </Box>
-                    <Typography
-                      style={{
-                        color: props.theme.palette.text.primary
-                      }}
-                    >
-                      {openedFile.editMode && openedFile.changed
-                        ? String.fromCharCode(0x25cf) + ' '
-                        : ''}
-                      {fileTitle}
-                    </Typography>
                   </Button>
                 ) : (
                   <Button
                     disabled
-                    // onClick={togglePanel}
                     title={openedFile.url || openedFile.path}
                     aria-label={i18n.t('core:toggleEntryProperties')}
                     className={classes.entryNameButton}
                   >
-                    <div
-                      className={classes.fileBadge}
-                      title={i18n.t('core:toggleEntryProperties')}
-                      style={{
-                        backgroundColor: AppConfig.defaultFolderColor,
-                        paddingTop: 5
-                      }}
-                    >
-                      <FolderIcon />
-                    </div>
-                    <Typography
+                    <Box
                       style={{
                         color: props.theme.palette.text.primary
                       }}
                     >
                       {fileTitle}
-                    </Typography>
+                    </Box>
+                    <Box
+                      className={classes.fileBadge}
+                      title={i18n.t('core:toggleEntryProperties')}
+                      style={{
+                        backgroundColor: AppConfig.defaultFolderColor
+                      }}
+                    >
+                      {i18n.t('core:folder')}
+                    </Box>
                   </Button>
                 )}
               </Box>

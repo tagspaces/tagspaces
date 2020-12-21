@@ -17,7 +17,6 @@
  */
 
 import React from 'react';
-import formatDistance from 'date-fns/formatDistance';
 import removeMd from 'remove-markdown';
 import classNames from 'classnames';
 import Grid from '@material-ui/core/Grid';
@@ -183,17 +182,20 @@ const CellContent = (props: Props) => {
         >
           {entryTitle}
         </Typography>
-        {fsEntry.isFile ? (
-          <div className={classes.gridDetails}>
-            <Typography
-              className={classes.gridFileExtension}
-              style={{ backgroundColor: fsEntryColor }}
-              noWrap={true}
-              variant="button"
-              title={fsEntry.path}
-            >
-              {fsEntry.extension}
-            </Typography>
+        <div className={classes.gridDetails}>
+          <Typography
+            className={classes.gridFileExtension}
+            style={{
+              backgroundColor: fsEntryColor,
+              maxWidth: fsEntry.isFile ? 50 : 100
+            }}
+            noWrap={true}
+            variant="button"
+            title={fsEntry.path}
+          >
+            {fsEntry.isFile ? fsEntry.extension : i18n.t('core:folder')}
+          </Typography>
+          {fsEntry.isFile && fsEntry.lmdt && (
             <Typography className={classes.gridSizeDate} variant="caption">
               <span
                 title={
@@ -202,25 +204,14 @@ const CellContent = (props: Props) => {
                   formatDateTime(fsEntry.lmdt, true)
                 }
               >
-                {fsEntry.lmdt &&
-                  ' ' +
-                    formatDistance(fsEntry.lmdt, new Date(), {
-                      addSuffix: true
-                    })}
+                {formatDateTime(fsEntry.lmdt, false)}
               </span>
               <span title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
-                {' ' + formatFileSize(fsEntry.size)}
+                {' | ' + formatFileSize(fsEntry.size)}
               </span>
             </Typography>
-          </div>
-        ) : (
-          <div className={classes.gridDetails} title={fsEntry.path}>
-            <FolderIcon
-              className={classes.gridFolder}
-              style={{ backgroundColor: fsEntryColor }}
-            />
-          </div>
-        )}
+          )}
+        </div>
       </div>
     );
   }
@@ -317,14 +308,10 @@ const CellContent = (props: Props) => {
               >
                 {fsEntry.isFile &&
                   fsEntry.lmdt &&
-                  '️ ' +
-                    formatDistance(fsEntry.lmdt, new Date(), {
-                      addSuffix: true
-                    }) +
-                    ' '}
+                  formatDateTime(fsEntry.lmdt, false)}
               </span>
               <span title={i18n.t('core:entryDescription')}>
-                {description && description}
+                {description && ' | ' + description}
               </span>
             </Typography>
           </Grid>

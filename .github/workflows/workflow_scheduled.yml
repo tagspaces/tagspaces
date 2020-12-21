@@ -191,6 +191,8 @@ jobs:
         with:
           url: 'https://dl.min.io/server/minio/release/darwin-amd64/minio'
           target: tests/bin/
+      - name: Make the Minio executable
+        run: chmod +x ./tests/bin/minio
       - name: Run Electron tests
         run: |
           yarn install-ext
@@ -234,6 +236,8 @@ jobs:
         with:
           url: 'https://dl.min.io/server/minio/release/darwin-amd64/minio'
           target: tests/bin/
+      - name: Make the Minio executable
+        run: chmod +x ./tests/bin/minio
       - name: Run Electron tests
         run: |
           yarn install-ext
