@@ -5,6 +5,7 @@ import {
   testDataRefresh
 } from './e2e/hook';
 import { closeWelcome } from './e2e/welcome.helpers';
+import pathLib from 'path';
 
 // the default timeout before starting every test
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 300000;
@@ -42,5 +43,33 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
+  if (global.isElectron) {
+    // await global.client.takeScreenshot();
+    const filename = `errorShot-${
+      expect.getState().currentTestName
+    }-${new Date().toISOString()}.png`
+      .replace(/\s/g, '_')
+      .replace(/:/g, '')
+      .replace(/\*/g, '')
+      .replace(/-/g, '');
+    global.app.browserWindow.capturePage().then(function(imageBuffer) {
+      const fs = require('fs');
+      // const mkdirp = require('mkdirp');
+      const path = pathLib.resolve(__dirname, 'test-pages', filename);
+      // mkdirp.sync(path);
+      fs.writeFileSync(path, imageBuffer);
+    });
+    /*global.app.webContents
+      .savePage(
+        pathLib.resolve(__dirname, 'test-pages', filename),
+        'HTMLComplete'
+      )
+      .then(function() {
+        console.log('page saved');
+      })
+      .catch(function(error) {
+        console.error('saving page failed', error.message);
+      });*/
+  }
   await clearLocalStorage();
 });
