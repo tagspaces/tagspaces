@@ -88,13 +88,14 @@ export default (theme: any): any => ({
     display: 'block'
   },
   gridFileExtension: {
-    flex: 1,
     padding: 5,
-    lineHeight: '20px',
+    paddingTop: 3,
+    paddingBottom: 7,
+    fontSize: 13,
     marginRight: 5,
-    maxWidth: 50,
-    minWidth: 40,
-    height: 20,
+    marginTop: 7,
+    minWidth: 20,
+    height: 16,
     color: 'white',
     borderRadius: 3,
     textAlign: 'center'
@@ -120,11 +121,10 @@ export default (theme: any): any => ({
   },
   gridSizeDate: {
     overflow: AppConfig.isFirefox ? 'auto' : 'overlay',
-    flex: 3,
-    textAlign: 'right',
     whiteSpace: 'nowrap',
     marginRight: 5,
-    paddingTop: 5
+    marginLeft: 'auto',
+    paddingTop: 12
   },
   gridDetails: {
     display: 'flex',
