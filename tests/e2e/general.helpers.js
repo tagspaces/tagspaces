@@ -120,7 +120,11 @@ export async function addInputKeys(tid, value) {
 }
 
 export async function setInputKeys(tid, value) {
-  const element = await global.client.$('[data-tid=' + tid + ']');
+  return await setSelectorKeys('[data-tid=' + tid + ']', value);
+}
+
+export async function setSelectorKeys(selector, value) {
+  const element = await global.client.$(selector);
   await element.waitUntil(
     async function() {
       // const displayed = await this.isDisplayed();
@@ -130,12 +134,13 @@ export async function setInputKeys(tid, value) {
     {
       timeout: 5000,
       timeoutMsg:
-        'setInputKeys selector ' + element.selector + ' to exist after 5s'
+        'setSelectorKeys selector ' + element.selector + ' to exist after 5s'
     }
   );
   await element.click();
 
-  const elemInput = await global.client.$('[data-tid=' + tid + '] input');
+  const elemInput = await element.$('input');
+  // const elemInput = await global.client.$(selector + ' input');
   await elemInput.waitUntil(
     async function() {
       // const displayed = await this.isDisplayed();
@@ -145,13 +150,13 @@ export async function setInputKeys(tid, value) {
     {
       timeout: 5000,
       timeoutMsg:
-        'setInputKeys selector ' + element.selector + ' to exist after 5s'
+        'setSelectorKeys selector ' + element.selector + ' to exist after 5s'
     }
   );
 
   // await elemInput.clearValue();
   const oldValue = await clearInputValue(elemInput);
-  await element.click();
+  // await element.click();
   await elemInput.keys(value);
   return oldValue;
 }

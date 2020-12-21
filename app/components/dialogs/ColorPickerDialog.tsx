@@ -109,6 +109,7 @@ const ColorPickerDialog = (props: Props) => {
         {i18n.t('core:colorPickerDialogTitle')}
       </DialogTitle>
       <DialogContent
+        data-tid="colorPickerDialogContent"
         style={{
           marginLeft: 'auto',
           marginRight: 'auto'

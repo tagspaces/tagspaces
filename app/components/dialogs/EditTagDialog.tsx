@@ -242,12 +242,14 @@ class EditTagDialog extends React.Component<Props, State> {
                 &nbsp;
               </Button>
             </TransparentBackground>
-            <ColorPickerDialog
-              open={this.state.displayColorPicker}
-              setColor={this.handleChangeColor}
-              onClose={this.toggleDefaultTagBackgroundColorPicker}
-              color={this.state.color}
-            />
+            {this.state.displayColorPicker && (
+              <ColorPickerDialog
+                open={this.state.displayColorPicker}
+                setColor={this.handleChangeColor}
+                onClose={this.toggleDefaultTagBackgroundColorPicker}
+                color={this.state.color}
+              />
+            )}
           </FormControl>
           <FormControl fullWidth={true}>
             <FormHelperText style={styles.helpText}>
@@ -263,12 +265,14 @@ class EditTagDialog extends React.Component<Props, State> {
                 &nbsp;
               </Button>
             </TransparentBackground>
-            <ColorPickerDialog
-              open={this.state.displayTextColorPicker}
-              setColor={this.handleChangeTextColor}
-              onClose={this.toggleDefaultTagTextColorPicker}
-              color={this.state.textcolor}
-            />
+            {this.state.displayTextColorPicker && (
+              <ColorPickerDialog
+                open={this.state.displayTextColorPicker}
+                setColor={this.handleChangeTextColor}
+                onClose={this.toggleDefaultTagTextColorPicker}
+                color={this.state.textcolor}
+              />
+            )}
           </FormControl>
         </DialogContent>
         <DialogActions>

@@ -961,35 +961,37 @@ const EntryProperties = (props: Props) => {
                       }}
                       onClick={toggleBackgroundColorPicker}
                     />
-                    <ColorPickerDialog
-                      color={currentEntry.color}
-                      open={displayColorPicker}
-                      setColor={handleChangeColor}
-                      onClose={toggleBackgroundColorPicker}
-                      presetColors={[
-                        '#FFFFFF44',
-                        '#00000044',
-                        '#ac725e44',
-                        '#f83a2244',
-                        '#fa573c44',
-                        '#ff753744',
-                        '#ffad4644',
-                        '#42d69244',
-                        '#00800044',
-                        '#7bd14844',
-                        '#fad16544',
-                        '#92e1c044',
-                        '#9fe1e744',
-                        '#9fc6e744',
-                        '#4986e744',
-                        '#9a9cff44',
-                        '#c2c2c244',
-                        '#cca6ac44',
-                        '#f691b244',
-                        '#cd74e644',
-                        '#a47ae244'
-                      ]}
-                    />
+                    {displayColorPicker && (
+                      <ColorPickerDialog
+                        color={currentEntry.color}
+                        open={displayColorPicker}
+                        setColor={handleChangeColor}
+                        onClose={toggleBackgroundColorPicker}
+                        presetColors={[
+                          '#FFFFFF44',
+                          '#00000044',
+                          '#ac725e44',
+                          '#f83a2244',
+                          '#fa573c44',
+                          '#ff753744',
+                          '#ffad4644',
+                          '#42d69244',
+                          '#00800044',
+                          '#7bd14844',
+                          '#fad16544',
+                          '#92e1c044',
+                          '#9fe1e744',
+                          '#9fc6e744',
+                          '#4986e744',
+                          '#9a9cff44',
+                          '#c2c2c244',
+                          '#cca6ac44',
+                          '#f691b244',
+                          '#cd74e644',
+                          '#a47ae244'
+                        ]}
+                      />
+                    )}
                   </TransparentBackground>
                 </FormControl>
               </div>
