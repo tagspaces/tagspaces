@@ -302,7 +302,7 @@ export default function buildDesktopMenu(mainPageProps: any) {
         {
           label: '&' + i18n.t('core:whatsNew'),
           click: () => {
-            mainPageProps.openURLExternally(AppConfig.links.changelogURL);
+            mainPageProps.openURLExternally(AppConfig.links.changelogURL, true);
           }
         },
         {
@@ -341,13 +341,19 @@ export default function buildDesktopMenu(mainPageProps: any) {
         {
           label: i18n.t('core:webClipperChrome'),
           click: () => {
-            mainPageProps.openURLExternally(AppConfig.links.webClipperChrome);
+            mainPageProps.openURLExternally(
+              AppConfig.links.webClipperChrome,
+              true
+            );
           }
         },
         {
           label: i18n.t('core:webClipperFirefox'),
           click: () => {
-            mainPageProps.openURLExternally(AppConfig.links.webClipperFirefox);
+            mainPageProps.openURLExternally(
+              AppConfig.links.webClipperFirefox,
+              true
+            );
           }
         },
         {

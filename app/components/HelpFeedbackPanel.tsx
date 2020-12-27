@@ -50,7 +50,7 @@ import { Pro } from '../pro';
 interface Props {
   classes?: any;
   theme?: any;
-  openURLExternally: (url: string) => void;
+  openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   openFileNatively: (url: string) => void;
   toggleAboutDialog?: () => void;
   toggleKeysDialog: () => void;
@@ -96,7 +96,7 @@ const HelpFeedbackPanel = (props: Props) => {
           <ListItem
             button
             onClick={() =>
-              openURLExternally(AppConfig.documentationLinks.general)
+              openURLExternally(AppConfig.documentationLinks.general, true)
             }
           >
             <ListItemIcon>
@@ -116,7 +116,9 @@ const HelpFeedbackPanel = (props: Props) => {
           </ListItem>
           <ListItem
             button
-            onClick={() => openURLExternally(AppConfig.links.changelogURL)}
+            onClick={() =>
+              openURLExternally(AppConfig.links.changelogURL, true)
+            }
             title="Opens the changelog of the app"
           >
             <ListItemIcon>
@@ -136,7 +138,7 @@ const HelpFeedbackPanel = (props: Props) => {
           </ListItem>
           <ListItem
             button
-            onClick={() => openURLExternally(AppConfig.links.webClipper)}
+            onClick={() => openURLExternally(AppConfig.links.webClipper, true)}
           >
             <ListItemIcon>
               <WebClipperIcon />
@@ -274,7 +276,7 @@ const HelpFeedbackPanel = (props: Props) => {
                   onClick={(event: any) => {
                     event.preventDefault();
                     event.stopPropagation();
-                    openURLExternally(AppConfig.links.productsOverview);
+                    openURLExternally(AppConfig.links.productsOverview, true);
                   }}
                 >
                   Get It

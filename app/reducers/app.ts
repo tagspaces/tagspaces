@@ -615,8 +615,7 @@ export default (state: any = initialState, action: any) => {
       };
     } */
     case types.CLOSE_ALL_FILES: {
-      // eslint-disable-next-line no-restricted-globals
-      window.history.pushState('', 'TagSpaces', location.pathname);
+      window.history.pushState('', document.title, window.location.pathname);
       return {
         ...state,
         openedFiles: [],
@@ -1464,6 +1463,12 @@ export const actions = {
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
+    const currentLocation: Location = getLocation(
+      getState(),
+      getState().app.currentLocationId
+    );
+    // const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
+
     let entryForOpening: OpenedEntry;
     const { openedFiles } = getState().app;
     /**
@@ -1510,11 +1515,16 @@ export const actions = {
     }
     const localePar = getURLParameter(fsEntry.path);
     let startPar = '?open=' + encodeURIComponent(fsEntry.path);
+
+    if (currentLocation && currentLocation.uuid) {
+      startPar += '&lid=' + currentLocation.uuid;
+    }
+
     if (localePar && localePar.length > 1) {
       startPar += '&locale=' + localePar;
     }
-    // eslint-disable-next-line no-restricted-globals
-    window.history.pushState('', 'TagSpaces', location.pathname + startPar);
+
+    window.history.pushState('', document.title, startPar);
 
     dispatch(actions.addToEntryContainer(entryForOpening));
   },
@@ -1757,8 +1767,12 @@ export const actions = {
   openFileNatively: (selectedFile: string) => () => {
     PlatformIO.openFile(selectedFile);
   },
-  openURLExternally: (url: string, addAppVersion: boolean = false) => () => {
-    if (window.confirm('Do you really want to open this url: ' + url + ' ?')) {
+  openURLExternally: (url: string, skipConfirmation: boolean = false) => () => {
+    if (skipConfirmation) {
+      PlatformIO.openUrl(url);
+    } else if (
+      window.confirm('Do you really want to open this url: ' + url + ' ?')
+    ) {
       PlatformIO.openUrl(url);
     }
   },

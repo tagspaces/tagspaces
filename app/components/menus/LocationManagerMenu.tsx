@@ -30,7 +30,7 @@ interface Props {
   open: boolean;
   anchorEl: Element;
   onClose: () => void;
-  openURLExternally: (url: string) => void;
+  openURLExternally: (url: string, skipConfirmation?: boolean) => void;
 }
 
 const LocationManagerMenu = (props: Props) => (
@@ -40,7 +40,7 @@ const LocationManagerMenu = (props: Props) => (
         data-tid="locationManagerHelp"
         onClick={() => {
           props.onClose();
-          props.openURLExternally(AppConfig.documentationLinks.locations);
+          props.openURLExternally(AppConfig.documentationLinks.locations, true);
         }}
       >
         <ListItemIcon>

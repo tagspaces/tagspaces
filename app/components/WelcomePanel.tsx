@@ -77,7 +77,7 @@ const styles: any = (theme: any) => ({
 interface Props {
   classes: any;
   toggleKeysDialog: () => void;
-  openURLExternally: (url: string) => void;
+  openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   openFileNatively: (url: string) => void;
   toggleAboutDialog: () => void;
   isDesktopMode: boolean;
@@ -121,7 +121,7 @@ const WelcomePanel = (props: Props) => {
         <ListItem
           button
           onClick={() =>
-            openURLExternally(AppConfig.documentationLinks.general)
+            openURLExternally(AppConfig.documentationLinks.general, true)
           }
         >
           <Button startIcon={<DocumentationIcon />}>Open Documentation</Button>
@@ -133,7 +133,7 @@ const WelcomePanel = (props: Props) => {
         </ListItem>
         <ListItem
           button
-          onClick={() => openURLExternally(AppConfig.links.changelogURL)}
+          onClick={() => openURLExternally(AppConfig.links.changelogURL, true)}
         >
           <Button
             startIcon={<ChangeLogIcon />}
@@ -142,15 +142,9 @@ const WelcomePanel = (props: Props) => {
             {i18n.t('core:whatsNew')}
           </Button>
         </ListItem>
-        {/* <ListItem button onClick={() => toggleOnboardingDialog()}>
-          <ListItemIcon>
-            <OnboardingIcon />
-          </ListItemIcon>
-          <ListItemText primary={i18n.t('core:onboardingWizard')} />
-        </ListItem> */}
         <ListItem
           button
-          onClick={() => openURLExternally(AppConfig.links.webClipper)}
+          onClick={() => openURLExternally(AppConfig.links.webClipper, true)}
         >
           <Button startIcon={<WebClipperIcon />}>
             {i18n.t('core:webClipper')}
@@ -184,7 +178,7 @@ const WelcomePanel = (props: Props) => {
         <Divider />
         <ListItem
           button
-          onClick={() => openURLExternally(AppConfig.links.emailContact)}
+          onClick={() => openURLExternally(AppConfig.links.emailContact, true)}
         >
           <Button startIcon={<EmailIcon />}>
             {i18n.t('core:emailContact')}
