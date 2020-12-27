@@ -1767,6 +1767,18 @@ export const actions = {
   openFileNatively: (selectedFile: string) => () => {
     PlatformIO.openFile(selectedFile);
   },
+  openLink: (url: string) => (dispatch: (actions: Object) => void) => {
+    const decodedURI = decodeURIComponent(url);
+    if (
+      decodedURI.startsWith('http://') ||
+      decodedURI.startsWith('https://') ||
+      decodedURI.startsWith('file://')
+    ) {
+      dispatch(actions.openURLExternally(decodedURI));
+    } else {
+      console.log('Not supported URL format: ' + decodedURI);
+    }
+  },
   openURLExternally: (url: string, skipConfirmation: boolean = false) => () => {
     if (skipConfirmation) {
       PlatformIO.openUrl(url);
@@ -1776,8 +1788,14 @@ export const actions = {
       PlatformIO.openUrl(url);
     }
   },
-  saveFile: () => () => {
-    actions.showNotification(i18n.t('core:notImplementedYet'), 'warning', true);
+  saveFile: () => (dispatch: (actions: Object) => void) => {
+    dispatch(
+      actions.showNotification(
+        i18n.t('core:notImplementedYet'),
+        'warning',
+        true
+      )
+    );
   }
 };
 

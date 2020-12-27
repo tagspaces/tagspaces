@@ -185,7 +185,7 @@ interface Props {
   openPrevFile: (path: string) => void;
   openNextFile: (path: string) => void;
   openFileNatively: (path: string) => void;
-  openURLExternally: (url: string) => void;
+  openLink: (url: string) => void;
   showNotification: (
     text: string,
     notificationType?: string, // NotificationTypes
@@ -310,8 +310,6 @@ const EntryContainer = (props: Props) => {
   const handleMessage = (data: any) => {
     let message;
     let textFilePath;
-    let decodedURI;
-
     switch (data.command) {
       case 'showAlertDialog':
         message = data.title ? data.title : '';
@@ -331,16 +329,7 @@ const EntryContainer = (props: Props) => {
         break;
       case 'openLinkExternally':
         // console.log('Open link externally: ' + data.link);
-        decodedURI = decodeURIComponent(data.link);
-        if (
-          decodedURI.startsWith('http://') ||
-          decodedURI.startsWith('https://') ||
-          decodedURI.startsWith('file://')
-        ) {
-          props.openURLExternally(decodedURI);
-        } else {
-          console.log('Not supported URL format: ' + decodedURI);
-        }
+        props.openLink(data.link);
         break;
       case 'openFileNatively':
         console.log('Open file natively: ' + data.link);
@@ -1290,7 +1279,7 @@ function mapActionCreatorsToProps(dispatch) {
       renameDirectory: AppActions.renameDirectory,
       openFsEntry: AppActions.openFsEntry,
       openFileNatively: AppActions.openFileNatively,
-      openURLExternally: AppActions.openURLExternally,
+      openLink: AppActions.openLink,
       showNotification: AppActions.showNotification,
       openNextFile: AppActions.openNextFile,
       openPrevFile: AppActions.openPrevFile,
