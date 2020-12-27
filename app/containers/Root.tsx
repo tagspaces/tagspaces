@@ -66,12 +66,17 @@ function onBeforeLift(store) {
   }
 
   const openParam = getURLParameter('open');
+  const locationIdParam = getURLParameter('lid');
   if (openParam && openParam.length > 1) {
     // dispatch toggle full width
     setTimeout(() => {
       getAllPropertiesPromise(decodeURIComponent(openParam))
         .then((fsEntry: FileSystemEntry) => {
-          store.dispatch(AppActions.openFsEntry(fsEntry));
+          if (fsEntry.isFile) {
+            store.dispatch(AppActions.openFsEntry(fsEntry));
+          } else {
+            store.dispatch(AppActions.loadDirectoryContent(fsEntry.path));
+          }
           return true;
         })
         .catch(error =>
