@@ -108,23 +108,24 @@ export default function buildDesktopMenu(mainPageProps: any) {
         {
           type: 'separator'
         },
+        // {
+        //   label: i18n.t('core:openTagSpacesID'),
+        //   accelerator: 'Ctrl+o',
+        //   click: () => {
+        //     // const url = ;
+        //     // console.log('URL: ' + url);
+        //   }
+        // },
         /* {
           label: i18n.t('core:saveFile'),
           accelerator: mainPageProps.keyBindings.saveDocument,
           click: () => {
             mainPageProps.saveFile();
           }
-        },
+        }, */
         {
           type: 'separator'
-        }, */
-        /* {
-          label: i18n.t('core:closeWin'),
-          accelerator: '',
-          click: (item, focusedWindow) => {
-            focusedWindow.destroy();
-          }
-        }, */
+        },
         {
           label: i18n.t('core:exitApp'),
           accelerator: 'CmdOrCtrl+Q',
@@ -207,6 +208,25 @@ export default function buildDesktopMenu(mainPageProps: any) {
           click: (item, focusedWindow) => {
             // ipcRenderer.send('relaunch-app', 'relaunch');
             focusedWindow.webContents.reload();
+          }
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: i18n.t('core:goback'),
+          accelerator: 'Alt+Left',
+          click: () => {
+            window.history.back();
+            console.log('navigate to: ' + window.location.href);
+          }
+        },
+        {
+          label: i18n.t('core:goforward'),
+          accelerator: 'Alt+Right',
+          click: () => {
+            window.history.forward();
+            console.log('navigate to: ' + window.location.href);
           }
         },
         {
