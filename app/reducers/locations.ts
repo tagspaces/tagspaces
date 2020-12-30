@@ -36,6 +36,7 @@ export const locationType = {
 
 export type Location = {
   uuid: string;
+  newuuid?: string;
   name: string;
   type: string;
   accessKeyId?: string;
@@ -89,7 +90,11 @@ export default (state: Array<Location> = initialState, action: any) => {
       if (indexForEditing >= 0) {
         return [
           ...state.slice(0, indexForEditing),
-          { ...state[indexForEditing], ...action.location },
+          {
+            ...state[indexForEditing],
+            ...action.location,
+            uuid: action.location.newuuid
+          },
           ...state.slice(indexForEditing + 1)
         ];
       }

@@ -305,6 +305,20 @@ class ObjectStoreForm extends React.Component<Props, State> {
             />
           </FormControl>
         </Grid>
+        <Grid item xs={12}>
+          <FormControl fullWidth={true}>
+            <InputLabel htmlFor="newuuid">{i18n.t('core:uuid')}</InputLabel>
+            <Input
+              margin="dense"
+              name="newuuid"
+              fullWidth={true}
+              data-tid="newuuid"
+              placeholder="Advanced setting"
+              onChange={handleInputChange}
+              value={state.newuuid}
+            />
+          </FormControl>
+        </Grid>
       </Grid>
     );
   }

@@ -61,6 +61,7 @@ interface State {
   cloudErrorAccessKey: boolean;
   cloudErrorSecretAccessKey: boolean;
   uuid: string;
+  newuuid: string;
   name: string;
   path: string;
   endpointURL: string;
@@ -104,6 +105,7 @@ class EditLocationDialog extends React.Component<Props, State> {
       this.state = {
         ...properties,
         uuid: props.location.uuid,
+        newuuid: props.location.uuid,
         isDefault: props.location.isDefault,
         isReadOnly: props.location.isReadOnly,
         watchForChanges: props.location.watchForChanges,
@@ -127,6 +129,7 @@ class EditLocationDialog extends React.Component<Props, State> {
         cloudErrorAccessKey: false,
         cloudErrorSecretAccessKey: false,
         uuid: '',
+        newuuid: '',
         name: '',
         path: '',
         endpointURL: '',
@@ -145,44 +148,6 @@ class EditLocationDialog extends React.Component<Props, State> {
       };
     }
   }
-
-  /* componentWillReceiveProps = (nextProps: any) => {
-    if (nextProps.open === true && nextProps.location) {
-      const dir = nextProps.selectedDirectoryPath;
-      let properties;
-      if (nextProps.location.type === locationType.TYPE_CLOUD) {
-        properties = {
-          storeName: dir
-            ? extractDirectoryName(dir, PlatformIO.getDirSeparator())
-            : nextProps.location.name,
-          storePath: dir || nextProps.location.paths[0]
-        };
-      } else {
-        properties = {
-          // TODO maybe its better to separate name/path keys for different locationTypes ??
-          name: dir
-            ? extractDirectoryName(dir, PlatformIO.getDirSeparator())
-            : nextProps.location.name,
-          path: dir || nextProps.location.paths[0]
-        };
-      }
-      this.setState({
-        ...properties,
-        uuid: nextProps.location.uuid,
-        isDefault: nextProps.location.isDefault,
-        isReadOnly: nextProps.location.isReadOnly,
-        watchForChanges: nextProps.location.watchForChanges,
-        persistIndex: nextProps.location.persistIndex,
-        fullTextIndex: nextProps.location.fullTextIndex,
-        type: nextProps.location.type || locationType.TYPE_LOCAL,
-        accessKeyId: nextProps.location.accessKeyId,
-        secretAccessKey: nextProps.location.secretAccessKey,
-        bucketName: nextProps.location.bucketName,
-        endpointURL: nextProps.location.endpointURL,
-        region: nextProps.location.region
-      });
-    }
-  }; */
 
   handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
@@ -284,6 +249,7 @@ class EditLocationDialog extends React.Component<Props, State> {
       if (this.state.type === locationType.TYPE_LOCAL) {
         this.props.editLocation({
           uuid: this.state.uuid,
+          newuuid: this.state.newuuid,
           type: locationType.TYPE_LOCAL,
           name: this.state.name,
           paths: [this.state.path],
@@ -296,6 +262,7 @@ class EditLocationDialog extends React.Component<Props, State> {
       } else if (this.state.type === locationType.TYPE_CLOUD) {
         this.props.editLocation({
           uuid: this.state.uuid,
+          newuuid: this.state.newuuid,
           type: locationType.TYPE_CLOUD,
           name: this.state.storeName,
           paths: [this.state.storePath],

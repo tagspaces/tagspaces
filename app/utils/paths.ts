@@ -160,6 +160,7 @@ export function cleanTrailingDirSeparator(dirPath: string): string {
  * @returns {string} -> root/subFolder
  */
 export function normalizePath(path: string): string {
+  if (!path) return '';
   return cleanTrailingDirSeparator(path.replace(/\/\//g, '/'));
 }
 
