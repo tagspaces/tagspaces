@@ -43,7 +43,7 @@ export type Location = {
   secretAccessKey?: string;
   bucketName?: string;
   region?: string;
-  paths: Array<string>;
+  paths?: Array<string>; // deprecated
   path?: string;
   endpointURL?: string;
   children?: Array<any>;

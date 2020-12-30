@@ -54,8 +54,10 @@ interface Props {
 interface State {
   errorTextPath: boolean;
   errorTextName: boolean;
+  errorTextId: boolean;
   disableConfirmButton: boolean;
   cloudErrorTextName: boolean;
+  cloudErrorId: boolean;
   cloudErrorBucketName: boolean;
   cloudErrorRegion: boolean;
   cloudErrorAccessKey: boolean;
@@ -91,7 +93,7 @@ class EditLocationDialog extends React.Component<Props, State> {
           storeName: dir
             ? extractDirectoryName(dir, PlatformIO.getDirSeparator())
             : props.location.name,
-          storePath: dir || props.location.paths[0]
+          storePath: dir || props.location.path || props.location.paths[0]
         };
       } else {
         properties = {
@@ -99,7 +101,7 @@ class EditLocationDialog extends React.Component<Props, State> {
           name: dir
             ? extractDirectoryName(dir, PlatformIO.getDirSeparator())
             : props.location.name,
-          path: dir || props.location.paths[0]
+          path: dir || props.location.path || props.location.paths[0]
         };
       }
       this.state = {
@@ -122,12 +124,14 @@ class EditLocationDialog extends React.Component<Props, State> {
       this.state = {
         errorTextPath: false,
         errorTextName: false,
+        errorTextId: false,
         disableConfirmButton: true,
         cloudErrorTextName: false,
         cloudErrorBucketName: false,
         cloudErrorRegion: false,
         cloudErrorAccessKey: false,
         cloudErrorSecretAccessKey: false,
+        cloudErrorId: false,
         uuid: '',
         newuuid: '',
         name: '',
@@ -181,6 +185,7 @@ class EditLocationDialog extends React.Component<Props, State> {
       let cloudErrorTextName = false;
       let cloudErrorAccessKey = false;
       let cloudErrorSecretAccessKey = false;
+      let cloudErrorId = false;
       let disableConfirmButton = false;
       if (!this.state.storeName || this.state.storeName.length === 0) {
         cloudErrorTextName = true;
@@ -189,6 +194,11 @@ class EditLocationDialog extends React.Component<Props, State> {
 
       if (!this.state.accessKeyId || this.state.accessKeyId.length === 0) {
         cloudErrorAccessKey = true;
+        disableConfirmButton = true;
+      }
+
+      if (!this.state.uuid || this.state.uuid.length === 0) {
+        cloudErrorId = true;
         disableConfirmButton = true;
       }
 
@@ -205,11 +215,13 @@ class EditLocationDialog extends React.Component<Props, State> {
         cloudErrorTextName,
         cloudErrorAccessKey,
         cloudErrorSecretAccessKey,
+        cloudErrorId,
         disableConfirmButton
       });
     } else {
       let errorTextName = false;
       let errorTextPath = false;
+      let errorTextId = false;
       let disableConfirmButton = false;
       if (!this.state.name || this.state.name.length === 0) {
         errorTextName = true;
@@ -219,7 +231,16 @@ class EditLocationDialog extends React.Component<Props, State> {
         errorTextPath = true; // make in optional in cloud mode
         disableConfirmButton = true;
       }
-      this.setState({ errorTextName, errorTextPath, disableConfirmButton });
+      if (!this.state.newuuid || this.state.newuuid.length === 0) {
+        errorTextId = true;
+        disableConfirmButton = true;
+      }
+      this.setState({
+        errorTextName,
+        errorTextPath,
+        errorTextId,
+        disableConfirmButton
+      });
     }
   }
 
@@ -252,7 +273,7 @@ class EditLocationDialog extends React.Component<Props, State> {
           newuuid: this.state.newuuid,
           type: locationType.TYPE_LOCAL,
           name: this.state.name,
-          paths: [this.state.path],
+          path: this.state.path,
           isDefault: this.state.isDefault,
           isReadOnly: this.state.isReadOnly,
           persistIndex: this.state.persistIndex,
@@ -265,7 +286,7 @@ class EditLocationDialog extends React.Component<Props, State> {
           newuuid: this.state.newuuid,
           type: locationType.TYPE_CLOUD,
           name: this.state.storeName,
-          paths: [this.state.storePath],
+          path: this.state.storePath,
           endpointURL: this.state.endpointURL,
           accessKeyId: this.state.accessKeyId,
           secretAccessKey: this.state.secretAccessKey,

@@ -465,6 +465,7 @@
   "noFileButFoldersFound": "Some folders found! Turn on the folder visibility from the perspective's toolbar to view them.",
   "selectTags": "Select tags",
   "location": "Location",
+  "locationId": "Location ID",
   "folder": "Folder",
   "globalSearch": "Global",
   "objectStorage": "Object Storage (Amazon S3, Minio)",

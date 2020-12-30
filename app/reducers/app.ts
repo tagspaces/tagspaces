@@ -615,7 +615,7 @@ export default (state: any = initialState, action: any) => {
       };
     } */
     case types.CLOSE_ALL_FILES: {
-      window.history.pushState('', document.title, window.location.pathname);
+      clearURLParam('tsepath');
       return {
         ...state,
         openedFiles: [],
@@ -952,7 +952,13 @@ export const actions = {
     directoryPath: string,
     directoryContent: Array<Object>,
     directoryMeta?: FileSystemEntryMeta
-  ) => (dispatch: (actions: Object) => void) => {
+  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
+    const currentLocation: Location = getLocation(
+      getState(),
+      getState().app.currentLocationId
+    );
+    updateHistory(currentLocation, directoryPath);
+
     dispatch(actions.hideNotifications());
     dispatch(
       actions.loadDirectorySuccessInt(
@@ -1326,7 +1332,9 @@ export const actions = {
           );
           dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
           dispatch(actions.changeLocation(location));
-          dispatch(actions.loadDirectoryContent(location.paths[0]));
+          dispatch(
+            actions.loadDirectoryContent(location.path || location.paths[0])
+          );
           return true;
         })
         .catch(() => {
@@ -1343,9 +1351,15 @@ export const actions = {
       PlatformIO.disableObjectStoreSupport();
       dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
       dispatch(actions.changeLocation(location));
-      dispatch(actions.loadDirectoryContent(location.paths[0]));
+      dispatch(
+        actions.loadDirectoryContent(location.path || location.paths[0])
+      );
       if (Pro && Pro.Watcher && location.watchForChanges) {
-        Pro.Watcher.watchFolder(location.paths[0], dispatch, actions);
+        Pro.Watcher.watchFolder(
+          location.path || location.paths[0],
+          dispatch,
+          actions
+        );
       }
     }
   },
@@ -1366,6 +1380,7 @@ export const actions = {
             Pro.Watcher.stopWatching();
           }
         }
+        clearAllURLParams();
         return true;
       });
     }
@@ -1463,12 +1478,6 @@ export const actions = {
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
-    const currentLocation: Location = getLocation(
-      getState(),
-      getState().app.currentLocationId
-    );
-    // const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
-
     let entryForOpening: OpenedEntry;
     const { openedFiles } = getState().app;
     /**
@@ -1513,18 +1522,12 @@ export const actions = {
     if (fsEntry.isNewFile) {
       entryForOpening.editMode = true;
     }
-    const localePar = getURLParameter(fsEntry.path);
-    let startPar = '?open=' + encodeURIComponent(fsEntry.path);
-
-    if (currentLocation && currentLocation.uuid) {
-      startPar += '&lid=' + currentLocation.uuid;
-    }
-
-    if (localePar && localePar.length > 1) {
-      startPar += '&locale=' + localePar;
-    }
-
-    window.history.pushState('', document.title, startPar);
+    const currentLocation: Location = getLocation(
+      getState(),
+      getState().app.currentLocationId
+    );
+    const { currentDirectoryPath } = getState().app;
+    updateHistory(currentLocation, currentDirectoryPath, fsEntry.path);
 
     dispatch(actions.addToEntryContainer(entryForOpening));
   },
@@ -1767,9 +1770,104 @@ export const actions = {
   openFileNatively: (selectedFile: string) => () => {
     PlatformIO.openFile(selectedFile);
   },
-  openLink: (url: string) => (dispatch: (actions: Object) => void) => {
-    const decodedURI = decodeURIComponent(url);
-    if (
+  openLink: (url: string) => (
+    dispatch: (actions: Object) => void,
+    getState: () => any
+  ) => {
+    const decodedURI = decodeURI(url);
+    // if openfile and location.id open location.path + relative entry.path
+    const lid = getURLParameter('tslid', url);
+    const dPath = getURLParameter('tsdpath', url);
+    const ePath = getURLParameter('tsepath', url);
+    const cmdOpen = getURLParameter('cmdopen', url);
+    if (cmdOpen && cmdOpen.length > 0) {
+      const entryPath = decodeURIComponent(cmdOpen);
+      getAllPropertiesPromise(entryPath)
+        .then((fsEntry: FileSystemEntry) => {
+          if (fsEntry.isFile) {
+            dispatch(actions.openFsEntry(fsEntry));
+          } else {
+            dispatch(actions.loadDirectoryContent(fsEntry.path));
+          }
+          return true;
+        })
+        .catch(() =>
+          dispatch(
+            actions.showNotification(
+              i18n.t('missing file or folder'),
+              'warning',
+              true
+            )
+          )
+        );
+    } else if (lid && lid.length > 0) {
+      const locationId = decodeURIComponent(lid);
+      const directoryPath = decodeURIComponent(dPath);
+      const entryPath = decodeURIComponent(ePath);
+      const targetLocation: Location = getLocation(getState(), locationId);
+      if (targetLocation) {
+        dispatch(actions.openLocation(targetLocation));
+        const isCloudLocation = targetLocation.type === locationType.TYPE_CLOUD;
+
+        setTimeout(() => {
+          if (isCloudLocation) {
+            if (directoryPath) {
+              const dirFullPath = directoryPath;
+              dispatch(actions.loadDirectoryContent(dirFullPath));
+            }
+
+            if (entryPath) {
+              getAllPropertiesPromise(entryPath)
+                .then((fsEntry: FileSystemEntry) => {
+                  if (fsEntry) {
+                    dispatch(actions.openFsEntry(fsEntry));
+                  }
+                  return true;
+                })
+                .catch(() =>
+                  dispatch(
+                    actions.showNotification(
+                      i18n.t('missing file or folder'),
+                      'warning',
+                      true
+                    )
+                  )
+                );
+            }
+          } else {
+            let locationPath = '';
+            if (targetLocation && targetLocation.path) {
+              locationPath = targetLocation.path;
+            }
+            if (directoryPath) {
+              const dirFullPath = locationPath + '/' + directoryPath;
+              dispatch(actions.loadDirectoryContent(dirFullPath));
+            }
+
+            if (entryPath) {
+              const entryFullPath = locationPath + '/' + entryPath; // TODO dir sep
+              getAllPropertiesPromise(entryFullPath)
+                .then((fsEntry: FileSystemEntry) => {
+                  if (fsEntry) {
+                    dispatch(actions.openFsEntry(fsEntry));
+                  }
+                  return true;
+                })
+                .catch(() =>
+                  dispatch(
+                    actions.showNotification(
+                      i18n.t('missing file or folder'),
+                      'warning',
+                      true
+                    )
+                  )
+                );
+            }
+          }
+        }, 2000);
+      }
+    } else if (
+      // External URL case
       decodedURI.startsWith('http://') ||
       decodedURI.startsWith('https://') ||
       decodedURI.startsWith('file://')
@@ -1798,6 +1896,61 @@ export const actions = {
     );
   }
 };
+
+function clearAllURLParams() {
+  window.history.pushState('', document.title, window.location.pathname);
+  console.log(window.location.href);
+}
+
+function clearURLParam(paramName) {
+  const url = new URL(window.location.href);
+  const params = new URLSearchParams(url.search);
+
+  // Delete the foo parameter.
+  params.delete(paramName);
+  window.history.pushState(
+    '',
+    document.title,
+    window.location.pathname + '?' + params
+  );
+  console.log(window.location.href);
+}
+
+/*
+  cmdopen - open file or folder as cmd parameter
+  tslid - location id
+  tsdpath - folder path
+  tsepath - entry path
+  tspersp - folder perspective
+*/
+function updateHistory(
+  currentLocation: Location,
+  currentDirectory: string,
+  entryPath?: string
+) {
+  // const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
+  let urlParams = '?';
+
+  if (currentLocation && currentLocation.uuid) {
+    urlParams += 'tslid=' + encodeURIComponent(currentLocation.uuid);
+  }
+
+  if (currentDirectory && currentDirectory.length > 0) {
+    urlParams += '&tsdpath=' + encodeURIComponent(currentDirectory);
+  }
+
+  if (entryPath && entryPath.length > 0) {
+    urlParams += '&tsepath=' + encodeURIComponent(entryPath);
+  }
+
+  const localePar = getURLParameter('locale');
+  if (localePar && localePar.length > 1) {
+    urlParams += '&locale=' + localePar;
+  }
+
+  window.history.pushState('', document.title, urlParams);
+  console.log(window.location.href);
+}
 
 function prepareDirectoryContent(
   dirEntries,
@@ -2022,12 +2175,17 @@ export const getCurrentLocationPath = (state: any) => {
         state.app.currentLocationId &&
         location.uuid === state.app.currentLocationId
       ) {
-        if (AppConfig.isElectron && location.paths[0].startsWith('./')) {
+        const locationPath = location.path || location.paths[0];
+        if (
+          AppConfig.isElectron &&
+          locationPath &&
+          locationPath.startsWith('./')
+        ) {
           // TODO test relative path (Directory Back) with other platforms
           // relative paths
-          return pathLib.resolve(location.paths[0]);
+          return pathLib.resolve(locationPath);
         }
-        return location.paths[0];
+        return locationPath;
       }
     }
   }

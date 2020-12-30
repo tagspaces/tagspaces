@@ -109,18 +109,26 @@ class LocalForm extends React.Component<Props> {
             <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>
           )}
         </FormControl>
-        <FormControl fullWidth={true}>
-          <InputLabel htmlFor="newuuid">{i18n.t('core:uuid')}</InputLabel>
-          <Input
-            margin="dense"
-            name="newuuid"
-            fullWidth={true}
-            data-tid="newuuid"
-            placeholder="Advanced setting"
-            onChange={handleInputChange}
-            value={state.newuuid}
-          />
-        </FormControl>
+        {state.newuuid && (
+          <FormControl fullWidth={true}>
+            <InputLabel htmlFor="newuuid">
+              {i18n.t('core:locationId')}
+            </InputLabel>
+            <Input
+              required
+              margin="dense"
+              name="newuuid"
+              fullWidth={true}
+              data-tid="newuuid"
+              placeholder="Location ID"
+              onChange={handleInputChange}
+              value={state.newuuid}
+            />
+            {state.errorTextId && (
+              <FormHelperText>{i18n.t('core:invalidId')}</FormHelperText>
+            )}
+          </FormControl>
+        )}
       </div>
     );
   }

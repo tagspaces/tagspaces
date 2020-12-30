@@ -303,22 +303,29 @@ class ObjectStoreForm extends React.Component<Props, State> {
               onChange={handleInputChange}
               value={state.endpointURL}
             />
+            {state.cloudErrorId && (
+              <FormHelperText>{i18n.t('core:missingId')}</FormHelperText>
+            )}
           </FormControl>
         </Grid>
-        <Grid item xs={12}>
-          <FormControl fullWidth={true}>
-            <InputLabel htmlFor="newuuid">{i18n.t('core:uuid')}</InputLabel>
-            <Input
-              margin="dense"
-              name="newuuid"
-              fullWidth={true}
-              data-tid="newuuid"
-              placeholder="Advanced setting"
-              onChange={handleInputChange}
-              value={state.newuuid}
-            />
-          </FormControl>
-        </Grid>
+        {state.newuuid && (
+          <Grid item xs={12}>
+            <FormControl fullWidth={true}>
+              <InputLabel htmlFor="newuuid">
+                {i18n.t('core:locationId')}
+              </InputLabel>
+              <Input
+                margin="dense"
+                name="newuuid"
+                fullWidth={true}
+                data-tid="newuuid"
+                placeholder="Advanced setting"
+                onChange={handleInputChange}
+                value={state.newuuid}
+              />
+            </FormControl>
+          </Grid>
+        )}
       </Grid>
     );
   }
