@@ -135,16 +135,10 @@ export function isVisibleOnScreen(element: any) {
   return isVisible;
 }
 
-export function getURLParameter(variable: string) {
-  const query = window.location.search.substring(1);
-  const vars = query.split('&');
-  for (let i = 0; i < vars.length; i += 1) {
-    const pair = vars[i].split('=');
-    if (pair[0] === variable) {
-      return pair[1];
-    }
-  }
-  return false;
+export function getURLParameter(paramName: string, url?: string): string {
+  const intUrl = url || window.location.href;
+  const params = new URL(intUrl).searchParams;
+  return params.get(paramName);
 }
 
 export function dataURLtoBlob(dataURI) {
