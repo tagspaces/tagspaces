@@ -52,6 +52,8 @@ interface Props {
 }
 
 interface State {
+  showAdvancedMode: boolean;
+  showSecretAccessKey: boolean;
   errorTextPath: boolean;
   errorTextName: boolean;
   errorTextId: boolean;
@@ -106,6 +108,8 @@ class EditLocationDialog extends React.Component<Props, State> {
       }
       this.state = {
         ...properties,
+        showAdvancedMode: false,
+        showSecretAccessKey: false,
         uuid: props.location.uuid,
         newuuid: props.location.uuid,
         isDefault: props.location.isDefault,
@@ -122,6 +126,8 @@ class EditLocationDialog extends React.Component<Props, State> {
       };
     } else {
       this.state = {
+        showAdvancedMode: false,
+        showSecretAccessKey: false,
         errorTextPath: false,
         errorTextName: false,
         errorTextId: false,
@@ -152,6 +158,18 @@ class EditLocationDialog extends React.Component<Props, State> {
       };
     }
   }
+
+  switchAdvancedMode = () => {
+    this.setState(prevState => ({
+      showAdvancedMode: !prevState.showAdvancedMode
+    }));
+  };
+
+  switchSecretAccessKeyVisibility = () => {
+    this.setState(prevState => ({
+      showSecretAccessKey: !prevState.showSecretAccessKey
+    }));
+  };
 
   handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
@@ -318,6 +336,7 @@ class EditLocationDialog extends React.Component<Props, State> {
     if (this.state.type === locationType.TYPE_CLOUD) {
       content = (
         <ObjectStoreForm
+          switchSecretAccessKeyVisibility={this.switchSecretAccessKeyVisibility}
           handleInputChange={this.handleInputChange}
           handleChange={this.handleChange}
           state={this.state}
@@ -380,21 +399,23 @@ class EditLocationDialog extends React.Component<Props, State> {
               }
               label={i18n.t('core:startupLocation')}
             />
-            <FormControlLabel
-              control={
-                <Switch
-                  disabled={!Pro}
-                  data-tid="changeReadOnlyMode"
-                  name="isReadOnly"
-                  checked={this.state.isReadOnly}
-                  onChange={this.handleInputChange}
-                />
-              }
-              label={
-                i18n.t('core:readonlyModeSwitch') +
-                (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
-              }
-            />
+            {this.state.showAdvancedMode && (
+              <FormControlLabel
+                control={
+                  <Switch
+                    disabled={!Pro}
+                    data-tid="changeReadOnlyMode"
+                    name="isReadOnly"
+                    checked={this.state.isReadOnly}
+                    onChange={this.handleInputChange}
+                  />
+                }
+                label={
+                  i18n.t('core:readonlyModeSwitch') +
+                  (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
+                }
+              />
+            )}
             <FormControlLabel
               control={
                 <Switch
@@ -410,21 +431,23 @@ class EditLocationDialog extends React.Component<Props, State> {
                 (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
               }
             />
-            <FormControlLabel
-              control={
-                <Switch
-                  disabled={!Pro}
-                  data-tid="changePersistIndex"
-                  name="persistIndex"
-                  checked={this.state.persistIndex}
-                  onChange={this.handleInputChange}
-                />
-              }
-              label={
-                i18n.t('core:persistIndexSwitch') +
-                (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
-              }
-            />
+            {this.state.showAdvancedMode && (
+              <FormControlLabel
+                control={
+                  <Switch
+                    disabled={!Pro}
+                    data-tid="changePersistIndex"
+                    name="persistIndex"
+                    checked={this.state.persistIndex}
+                    onChange={this.handleInputChange}
+                  />
+                }
+                label={
+                  i18n.t('core:persistIndexSwitch') +
+                  (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
+                }
+              />
+            )}
             <FormControlLabel
               control={
                 <Switch
@@ -448,6 +471,11 @@ class EditLocationDialog extends React.Component<Props, State> {
 
   renderActions = () => (
     <DialogActions>
+      <Button onClick={this.switchAdvancedMode}>
+        {this.state.showAdvancedMode
+          ? i18n.t('core:switchSimpleMode')
+          : i18n.t('core:switchAdvancedMode')}
+      </Button>
       <Button
         data-tid="closeEditLocationDialog"
         color="primary"

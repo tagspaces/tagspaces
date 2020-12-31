@@ -487,5 +487,7 @@
   "filesLimit": "Max. files to be displayed in a folder",
   "goback": "Go Back",
   "goforward": "Go Forward",
+  "switchSimpleMode": "Simpe Mode",
+  "switchAdvancedMode": "Advanced Mode",
   "-": "-"
 }
