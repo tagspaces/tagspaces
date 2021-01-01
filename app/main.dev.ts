@@ -147,9 +147,9 @@ app.on('ready', async () => {
   if (startupFilePath) {
     if (startupFilePath.startsWith('./') || startupFilePath.startsWith('.\\')) {
       startupParameter =
-        '?open=' + encodeURIComponent(path.join(__dirname, startupFilePath));
+        '?cmdopen=' + encodeURIComponent(path.join(__dirname, startupFilePath));
     } else {
-      startupParameter = '?open=' + encodeURIComponent(startupFilePath);
+      startupParameter = '?cmdopen=' + encodeURIComponent(startupFilePath);
     }
   }
 
