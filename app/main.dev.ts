@@ -177,7 +177,8 @@ app.on('ready', async () => {
     mainHTML + startupParameter,
     testWinOnUnix ? { userAgent: winUserAgent } : {}
   );
-  mainWindow.setMenuBarVisibility(true);
+  mainWindow.setMenuBarVisibility(false);
+  mainWindow.setAutoHideMenuBar(true);
 
   mainWindow.webContents.on('did-finish-load', () => {
     if (!mainWindow) {

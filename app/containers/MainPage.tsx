@@ -775,12 +775,12 @@ class MainPage extends Component<Props, State> {
             <CustomDragLayer />
             <SplitPane
               split="vertical"
-              style={{
-                borderTop:
-                  AppConfig.isElectron && !AppConfig.isMacLike
-                    ? '1px solid lightgray'
-                    : 'none'
-              }}
+              // style={{
+              //   borderTop:
+              //     AppConfig.isElectron && !AppConfig.isMacLike
+              //       ? '1px solid lightgray'
+              //       : 'none'
+              // }}
               minSize={200}
               maxSize={450}
               resizerStyle={{ backgroundColor: theme.palette.divider }}
