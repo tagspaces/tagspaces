@@ -25,10 +25,13 @@ import {
   deleteFilesPromise,
   loadMetaDataPromise,
   renameFilesPromise,
-  enhanceDirectoryContent,
   FileSystemEntryMeta,
   FileSystemEntry,
-  getAllPropertiesPromise
+  getAllPropertiesPromise,
+  prepareDirectoryContent,
+  findExtensionsForEntry,
+  getNextFile,
+  getPrevFile
 } from '-/services/utils-io';
 import {
   extractFileExtension,
@@ -42,7 +45,13 @@ import {
   extractLocation,
   extractContainingDirectoryPath
 } from '-/utils/paths';
-import { formatDateTime4Tag, getURLParameter } from '-/utils/misc';
+import {
+  formatDateTime4Tag,
+  getURLParameter,
+  clearURLParam,
+  updateHistory,
+  clearAllURLParams
+} from '-/utils/misc';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 // import { getThumbnailURLPromise } from '../services/thumbsgenerator';
@@ -688,79 +697,6 @@ export default (state: any = initialState, action: any) => {
   }
 };
 
-function getNextFile(
-  pivotFilePath?: string,
-  lastSelectedEntry?: string,
-  currentDirectoryEntries?: Array<FileSystemEntry>
-): FileSystemEntry {
-  const currentEntries = currentDirectoryEntries
-    ? currentDirectoryEntries.filter(entry => entry.isFile)
-    : [];
-  let filePath = pivotFilePath;
-  if (!filePath) {
-    if (lastSelectedEntry) {
-      filePath = lastSelectedEntry;
-    } else if (currentEntries.length > 0) {
-      filePath = currentEntries[0].path;
-    } else {
-      return undefined;
-    }
-  }
-  let nextFile;
-  currentEntries.forEach((entry, index) => {
-    if (entry.path === filePath) {
-      const nextIndex = index + 1;
-      if (nextIndex < currentEntries.length) {
-        nextFile = currentEntries[nextIndex];
-      } else {
-        // eslint-disable-next-line prefer-destructuring
-        nextFile = currentEntries[0];
-      }
-    }
-  });
-  if (nextFile === undefined) {
-    // eslint-disable-next-line prefer-destructuring
-    nextFile = currentEntries[0];
-  }
-  return nextFile;
-}
-
-function getPrevFile(
-  pivotFilePath?: string,
-  lastSelectedEntry?: string,
-  currentDirectoryEntries?: Array<FileSystemEntry>
-): FileSystemEntry {
-  const currentEntries = currentDirectoryEntries
-    ? currentDirectoryEntries.filter(entry => entry.isFile)
-    : [];
-  let filePath = pivotFilePath;
-  if (!filePath) {
-    if (lastSelectedEntry) {
-      filePath = lastSelectedEntry;
-    } else if (currentEntries.length > 0) {
-      filePath = currentEntries[0].path;
-    } else {
-      return undefined;
-    }
-  }
-  let prevFile;
-  currentEntries.forEach((entry, index) => {
-    if (entry.path === filePath) {
-      const prevIndex = index - 1;
-      if (prevIndex >= 0) {
-        prevFile = currentEntries[prevIndex];
-      } else {
-        prevFile = currentEntries[currentEntries.length - 1];
-      }
-    }
-  });
-  if (prevFile === undefined) {
-    // eslint-disable-next-line prefer-destructuring
-    prevFile = currentEntries[0];
-  }
-  return prevFile;
-}
-
 export const actions = {
   goOnline: () => ({ type: types.DEVICE_ONLINE }),
   goOffline: () => ({ type: types.DEVICE_OFFLINE }),
@@ -953,11 +889,14 @@ export const actions = {
     directoryContent: Array<Object>,
     directoryMeta?: FileSystemEntryMeta
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
-    const currentLocation: Location = getLocation(
-      getState(),
-      getState().app.currentLocationId
-    );
-    updateHistory(currentLocation, directoryPath);
+    // const currentLocation: Location = getLocation(
+    //  getState(),
+    //  getState().app.currentLocationId
+    // );
+    // const { openedFiles } = getState().app;
+    // const entryPath =
+    //  openedFiles && openedFiles.length > 0 && openedFiles[0].path;
+    // updateHistory(currentLocation, directoryPath, entryPath);
 
     dispatch(actions.hideNotifications());
     dispatch(
@@ -1775,7 +1714,6 @@ export const actions = {
     getState: () => any
   ) => {
     const decodedURI = decodeURI(url);
-    // if openfile and location.id open location.path + relative entry.path
     const lid = getURLParameter('tslid', url);
     const dPath = getURLParameter('tsdpath', url);
     const ePath = getURLParameter('tsepath', url);
@@ -1806,9 +1744,14 @@ export const actions = {
       const entryPath = decodeURIComponent(ePath);
       const targetLocation: Location = getLocation(getState(), locationId);
       if (targetLocation) {
-        dispatch(actions.openLocation(targetLocation));
+        let openLocationTimer = 1000;
         const isCloudLocation = targetLocation.type === locationType.TYPE_CLOUD;
-
+        const { currentLocationId } = getState().app;
+        if (targetLocation.uuid !== currentLocationId) {
+          dispatch(actions.openLocation(targetLocation));
+        } else {
+          openLocationTimer = 0;
+        }
         setTimeout(() => {
           if (isCloudLocation) {
             if (directoryPath) {
@@ -1827,7 +1770,7 @@ export const actions = {
                 .catch(() =>
                   dispatch(
                     actions.showNotification(
-                      i18n.t('missing file or folder'),
+                      i18n.t('core:Invalid link'),
                       'warning',
                       true
                     )
@@ -1856,7 +1799,7 @@ export const actions = {
                 .catch(() =>
                   dispatch(
                     actions.showNotification(
-                      i18n.t('missing file or folder'),
+                      i18n.t('core:Invalid link'),
                       'warning',
                       true
                     )
@@ -1864,7 +1807,11 @@ export const actions = {
                 );
             }
           }
-        }, 2000);
+        }, openLocationTimer);
+      } else {
+        dispatch(
+          actions.showNotification(i18n.t('core:Invalid link'), 'warning', true)
+        );
       }
     } else if (
       // External URL case
@@ -1896,183 +1843,6 @@ export const actions = {
     );
   }
 };
-
-function clearAllURLParams() {
-  window.history.pushState('', document.title, window.location.pathname);
-  console.log(window.location.href);
-}
-
-function clearURLParam(paramName) {
-  const url = new URL(window.location.href);
-  const params = new URLSearchParams(url.search);
-
-  // Delete the foo parameter.
-  params.delete(paramName);
-  window.history.pushState(
-    '',
-    document.title,
-    window.location.pathname + '?' + params
-  );
-  console.log(window.location.href);
-}
-
-/*
-  cmdopen - open file or folder as cmd parameter
-  tslid - location id
-  tsdpath - folder path
-  tsepath - entry path
-  tspersp - folder perspective
-*/
-function updateHistory(
-  currentLocation: Location,
-  currentDirectory: string,
-  entryPath?: string
-) {
-  // const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
-  let urlParams = '?';
-
-  if (currentLocation && currentLocation.uuid) {
-    urlParams += 'tslid=' + encodeURIComponent(currentLocation.uuid);
-  }
-
-  if (currentDirectory && currentDirectory.length > 0) {
-    urlParams += '&tsdpath=' + encodeURIComponent(currentDirectory);
-  }
-
-  if (entryPath && entryPath.length > 0) {
-    urlParams += '&tsepath=' + encodeURIComponent(entryPath);
-  }
-
-  const localePar = getURLParameter('locale');
-  if (localePar && localePar.length > 1) {
-    urlParams += '&locale=' + localePar;
-  }
-
-  window.history.pushState('', document.title, urlParams);
-  console.log(window.location.href);
-}
-
-function prepareDirectoryContent(
-  dirEntries,
-  directoryPath,
-  settings,
-  dispatch,
-  getState,
-  dirEntryMeta
-) {
-  const currentLocation: Location = getLocation(
-    getState(),
-    getState().app.currentLocationId
-  );
-  const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
-
-  const {
-    directoryContent,
-    tmbGenerationPromises,
-    tmbGenerationList
-  } = enhanceDirectoryContent(
-    dirEntries,
-    isCloudLocation,
-    settings.showUnixHiddenEntries,
-    settings.useGenerateThumbnails
-  );
-
-  function handleTmbGenerationResults(results) {
-    // console.log('tmb results' + JSON.stringify(results));
-    const tmbURLs = [];
-    results.map(tmbResult => {
-      if (tmbResult.tmbPath && tmbResult.tmbPath.length > 0) {
-        // dispatch(actions.updateThumbnailUrl(tmbResult.filePath, tmbResult.tmbPath));
-        tmbURLs.push(tmbResult);
-      }
-      return true;
-    });
-    dispatch(actions.setGeneratingThumbnails(false));
-    // dispatch(actions.hideNotifications());
-    if (tmbURLs.length > 0) {
-      dispatch(actions.updateThumbnailUrls(tmbURLs));
-    }
-    return true;
-  }
-
-  function handleTmbGenerationFailed(error) {
-    console.warn('Thumb generation failed: ' + error);
-    dispatch(actions.setGeneratingThumbnails(false));
-    dispatch(
-      actions.showNotification(
-        i18n.t('core:generatingThumbnailsFailed'),
-        'warning',
-        true
-      )
-    );
-  }
-
-  dispatch(actions.setGeneratingThumbnails(false));
-  if (tmbGenerationList.length > 0) {
-    dispatch(actions.setGeneratingThumbnails(true));
-    PlatformIO.createThumbnailsInWorker(tmbGenerationList)
-      .then(handleTmbGenerationResults)
-      .catch(handleTmbGenerationFailed);
-  }
-  if (tmbGenerationPromises.length > 0) {
-    dispatch(actions.setGeneratingThumbnails(true));
-    Promise.all(tmbGenerationPromises)
-      .then(handleTmbGenerationResults)
-      .catch(handleTmbGenerationFailed);
-  }
-
-  console.log('Dir ' + directoryPath + ' contains ' + directoryContent.length);
-  dispatch(
-    actions.loadDirectorySuccess(directoryPath, directoryContent, dirEntryMeta)
-  );
-}
-
-function findExtensionPathForId(extensionId: string): string {
-  const extensionPath = 'node_modules/' + extensionId;
-  return extensionPath;
-}
-
-function findExtensionsForEntry(
-  supportedFileTypes: Array<any>,
-  entryPath: string,
-  isFile: boolean = true
-): OpenedEntry {
-  const fileExtension = extractFileExtension(
-    entryPath,
-    PlatformIO.getDirSeparator()
-  ).toLowerCase();
-  const viewingExtensionPath = isFile
-    ? findExtensionPathForId('@tagspaces/text-viewer')
-    : 'about:blank';
-  const fileForOpening: OpenedEntry = {
-    path: entryPath,
-    viewingExtensionPath,
-    viewingExtensionId: '',
-    isFile,
-    changed: false,
-    lmdt: 0,
-    size: 0
-  };
-  supportedFileTypes.map(fileType => {
-    if (fileType.viewer && fileType.type.toLowerCase() === fileExtension) {
-      fileForOpening.viewingExtensionId = fileType.viewer;
-      if (fileType.color) {
-        fileForOpening.color = fileType.color;
-      }
-      fileForOpening.viewingExtensionPath = findExtensionPathForId(
-        fileType.viewer
-      );
-      if (fileType.editor && fileType.editor.length > 0) {
-        fileForOpening.editingExtensionId = fileType.editor;
-        fileForOpening.editingExtensionPath = findExtensionPathForId(
-          fileType.editor
-        );
-      }
-    }
-    return true;
-  });
-  return fileForOpening;
-}
 
 // Selectors
 export const getDirectoryContent = (state: any) =>
@@ -2113,9 +1883,7 @@ export const isOnline = (state: any) => state.app.isOnline;
 export const getLastSelectedEntry = (state: any) => state.app.lastSelectedEntry;
 export const getSelectedTag = (state: any) => state.app.tag;
 export const getSelectedEntries = (state: any) => state.app.selectedEntries;
-// export const isFileOpened = (state: any) => state.app.openedFiles.length > 0;
 export const isGeneratingThumbs = (state: any) => state.app.isGeneratingThumbs;
-// export const isFileDragged = (state: any) => state.app.isFileDragged;
 export const isReadOnlyMode = (state: any) => state.app.isReadOnlyMode;
 export const isOnboardingDialogOpened = (state: any) =>
   state.app.onboardingDialogOpened;

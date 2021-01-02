@@ -662,7 +662,10 @@ const EntryProperties = (props: Props) => {
 
   let sharingLink = window.location.href;
   if (sharingLink.indexOf('?') > 0) {
-    sharingLink = 'ts:' + sharingLink.substr(sharingLink.indexOf('?'));
+    const url = new URL(sharingLink);
+    const params = new URLSearchParams(url.search);
+    params.delete('tsdpath');
+    sharingLink = 'ts:?' + params;
   }
 
   // @ts-ignore

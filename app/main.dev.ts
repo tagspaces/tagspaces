@@ -112,7 +112,7 @@ app.on('ready', async () => {
   }
 
   if (process.env.NODE_ENV === 'development') {
-    workerDevMode = true;
+    // workerDevMode = true; // hide worker window in dev mode
     mainHTML = `file://${__dirname}/appd.html`;
   }
 

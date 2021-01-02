@@ -16,6 +16,8 @@
  *
  */
 
+import { Location, locationType } from '-/reducers/locations';
+
 /** Returns true is a string is plus code e.g. 8FWH4HVG+3V 8FWH4HVG+ 8FWH4H+ */
 export function isPlusCode(plusCode: string): boolean {
   if (!plusCode) {
@@ -139,6 +141,63 @@ export function getURLParameter(paramName: string, url?: string): string {
   const intUrl = url || window.location.href;
   const params = new URL(intUrl).searchParams;
   return params.get(paramName);
+}
+
+export function clearAllURLParams() {
+  window.history.pushState('', document.title, window.location.pathname);
+  console.log(window.location.href);
+}
+
+export function clearURLParam(paramName) {
+  const url = new URL(window.location.href);
+  const params = new URLSearchParams(url.search);
+
+  // Delete the foo parameter.
+  params.delete(paramName);
+  window.history.pushState(
+    '',
+    document.title,
+    window.location.pathname + '?' + params
+  );
+  console.log(window.location.href);
+}
+
+export function updateHistory(
+  currentLocation: Location,
+  currentDirectory: string,
+  entryPath?: string
+) {
+  // const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
+  let urlParams = '?';
+  let currentLocationPath = '';
+  const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
+
+  if (currentLocation && currentLocation.uuid) {
+    urlParams += 'tslid=' + encodeURIComponent(currentLocation.uuid);
+    currentLocationPath = currentLocation.path || currentLocation.paths[0];
+  }
+
+  if (currentDirectory && currentDirectory.length > 0) {
+    const currentDir = isCloudLocation
+      ? currentDirectory
+      : currentDirectory.replace(currentLocationPath, '');
+    urlParams += '&tsdpath=' + encodeURIComponent(currentDir);
+  }
+
+  if (entryPath && entryPath.length > 0) {
+    const ePath = isCloudLocation
+      ? entryPath
+      : entryPath.replace(currentLocationPath, '');
+    urlParams += '&tsepath=' + encodeURIComponent(ePath);
+  }
+
+  const localePar = getURLParameter('locale');
+  if (localePar && localePar.length > 1) {
+    urlParams += '&locale=' + localePar;
+  }
+
+  window.history.pushState('', document.title, urlParams);
+  // console.log(window.location.href);
 }
 
 export function dataURLtoBlob(dataURI) {
