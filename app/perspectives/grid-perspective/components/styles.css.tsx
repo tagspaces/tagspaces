@@ -22,14 +22,14 @@ export default (theme: any): any => ({
     display: 'grid',
     gridGap: '0px 0px',
     padding: 0,
-    paddingRight: 10,
+    paddingRight: 4,
     paddingBottom: 20
   },
   rowContainer: {
     display: 'grid',
     gridGap: '0px 0px',
     padding: 0,
-    paddingRight: 10,
+    paddingRight: 4,
     margin: 0,
     paddingBottom: 10
   },
@@ -103,9 +103,6 @@ export default (theme: any): any => ({
   rowFileExtension: {
     flex: 1,
     padding: 5,
-    marginTop: 5,
-    marginRight: 5,
-    marginLeft: 5,
     width: 35,
     maxWidth: 60,
     minHeight: 15,
