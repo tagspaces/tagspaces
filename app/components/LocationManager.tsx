@@ -111,6 +111,7 @@ interface Props {
   openLocation: (location: Location) => void;
   openFileNatively: (path: string) => void;
   openDirectory: (path: string) => void;
+  toggleOpenLinkDialog: () => void;
   showInFileManager: (path: string) => void;
   createDirectoryIndex: (
     path: string,
@@ -640,6 +641,8 @@ class LocationManager extends React.Component<Props, State> {
           open={this.state.locationManagerMenuOpened}
           onClose={this.handleCloseLocationManagerMenu}
           openURLExternally={this.props.openURLExternally}
+          showCreateLocationDialog={this.showCreateLocationDialog}
+          toggleOpenLinkDialog={this.props.toggleOpenLinkDialog}
         />
         {!AppConfig.locationsReadOnly && (
           <div style={{ width: '100%', textAlign: 'center', marginBottom: 10 }}>
@@ -837,6 +840,7 @@ function mapDispatchToProps(dispatch) {
       openFsEntry: AppActions.openFsEntry,
       showNotification: AppActions.showNotification,
       reflectCreateEntries: AppActions.reflectCreateEntries,
+      toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
       moveFiles: IOActions.moveFiles,
       uploadFiles: IOActions.uploadFiles,
       openURLExternally: AppActions.openURLExternally,

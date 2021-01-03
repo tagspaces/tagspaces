@@ -68,6 +68,7 @@ import {
   isUploadDialogOpened,
   isCreateFileDialogOpened,
   isSettingsDialogOpened,
+  isOpenLinkDialogOpened,
   isReadOnlyMode,
   isProgressOpened,
   getOpenedFiles,
@@ -161,6 +162,7 @@ interface Props {
   isProgressDialogOpened: boolean;
   toggleSelectDirectoryDialog: () => void;
   toggleUploadDialog: () => void;
+  toggleOpenLinkDialog: () => void;
   toggleProgressDialog: () => void;
   resetProgress: () => void;
   isEditTagDialogOpened: boolean;
@@ -202,6 +204,7 @@ interface Props {
   setLeftVerticalSplitSize: (splitSize: number) => void;
   setMainVerticalSplitSize: (splitSize: string) => void;
   isLocationManagerPanelOpened: boolean;
+  isOpenLinkDialogOpened: boolean;
   isTagLibraryPanelOpened: boolean;
   isSearchPanelOpened: boolean;
   isPerspectivesPanelOpened: boolean;
@@ -284,6 +287,17 @@ const EditEntryTagDialog = React.lazy(() =>
 const EditEntryTagDialogAsync = props => (
   <React.Suspense fallback={<LoadingLazy />}>
     <EditEntryTagDialog {...props} />
+  </React.Suspense>
+);
+
+const OpenLinkDialog = React.lazy(() =>
+  import(
+    /* webpackChunkName: "OpenLinkDialog" */ '../components/dialogs/OpenLinkDialog'
+  )
+);
+const OpenLinkDialogAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <OpenLinkDialog {...props} />
   </React.Suspense>
 );
 
@@ -569,6 +583,7 @@ class MainPage extends Component<Props, State> {
       isCreateDirectoryOpened,
       isEditTagDialogOpened,
       isUploadProgressDialogOpened,
+      isOpenLinkDialogOpened,
       isProgressDialogOpened,
       toggleOnboardingDialog,
       toggleSettingsDialog,
@@ -582,6 +597,7 @@ class MainPage extends Component<Props, State> {
       toggleUploadDialog,
       toggleProgressDialog,
       toggleEditTagDialog,
+      toggleOpenLinkDialog,
       setFirstRun,
       openURLExternally,
       directoryPath
@@ -633,6 +649,12 @@ class MainPage extends Component<Props, State> {
           <EditEntryTagDialogAsync
             open={isEditTagDialogOpened}
             onClose={toggleEditTagDialog}
+          />
+        )}
+        {isOpenLinkDialogOpened && (
+          <OpenLinkDialogAsync
+            open={isOpenLinkDialogOpened}
+            onClose={toggleOpenLinkDialog}
           />
         )}
         {isSelectDirectoryDialogOpened && (
@@ -897,6 +919,7 @@ function mapStateToProps(state) {
     isLicenseDialogOpened: isLicenseDialogOpened(state),
     isThirdPartyLibsDialogOpened: isThirdPartyLibsDialogOpened(state),
     isUploadProgressDialogOpened: isUploadDialogOpened(state),
+    isOpenLinkDialogOpened: isOpenLinkDialogOpened(state),
     isProgressDialogOpened: isProgressOpened(state),
     isIndexing: isIndexing(state),
     isReadOnlyMode: isReadOnlyMode(state),
@@ -945,6 +968,7 @@ function mapDispatchToProps(dispatch) {
       toggleThirdPartyLibsDialog: AppActions.toggleThirdPartyLibsDialog,
       toggleAboutDialog: AppActions.toggleAboutDialog,
       toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
+      toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
       setLastSelectedEntry: AppActions.setLastSelectedEntry,
       setSelectedEntries: AppActions.setSelectedEntries,
       setGeneratingThumbnails: AppActions.setGeneratingThumbnails,

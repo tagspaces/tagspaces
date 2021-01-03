@@ -94,6 +94,7 @@ export const types = {
   TOGGLE_ONBOARDING_DIALOG: 'APP/TOGGLE_ONBOARDING_DIALOG',
   TOGGLE_KEYBOARD_DIALOG: 'APP/TOGGLE_KEYBOARD_DIALOG',
   TOGGLE_LICENSE_DIALOG: 'APP/TOGGLE_LICENSE_DIALOG',
+  TOGGLE_OPENLINK_DIALOG: 'APP/TOGGLE_OPENLINK_DIALOG',
   TOGGLE_THIRD_PARTY_LIBS_DIALOG: 'APP/TOGGLE_THIRD_PARTY_LIBS_DIALOG',
   TOGGLE_SETTINGS_DIALOG: 'APP/TOGGLE_SETTINGS_DIALOG',
   TOGGLE_CREATE_DIRECTORY_DIALOG: 'APP/TOGGLE_CREATE_DIRECTORY_DIALOG',
@@ -198,6 +199,7 @@ export const initialState = {
   openedFiles: [],
   editTagDialogOpened: false,
   aboutDialogOpened: false,
+  openLinkDialogOpened: false,
   onboardingDialogOpened: false,
   keysDialogOpened: false,
   createFileDialogOpened: false,
@@ -313,6 +315,12 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         onboardingDialogOpened: !state.onboardingDialogOpened
+      };
+    }
+    case types.TOGGLE_OPENLINK_DIALOG: {
+      return {
+        ...state,
+        openLinkDialogOpened: !state.openLinkDialogOpened
       };
     }
     case types.TOGGLE_KEYBOARD_DIALOG: {
@@ -765,6 +773,7 @@ export const actions = {
   toggleAboutDialog: () => ({ type: types.TOGGLE_ABOUT_DIALOG }),
   toggleOnboardingDialog: () => ({ type: types.TOGGLE_ONBOARDING_DIALOG }),
   toggleKeysDialog: () => ({ type: types.TOGGLE_KEYBOARD_DIALOG }),
+  toggleOpenLinkDialog: () => ({ type: types.TOGGLE_OPENLINK_DIALOG }),
   toggleLicenseDialog: () => ({ type: types.TOGGLE_LICENSE_DIALOG }),
   toggleThirdPartyLibsDialog: () => ({
     type: types.TOGGLE_THIRD_PARTY_LIBS_DIALOG
@@ -1740,8 +1749,9 @@ export const actions = {
         );
     } else if (lid && lid.length > 0) {
       const locationId = decodeURIComponent(lid);
-      const directoryPath = decodeURIComponent(dPath);
-      const entryPath = decodeURIComponent(ePath);
+      const directoryPath = dPath && decodeURIComponent(dPath);
+      const entryPath = ePath && decodeURIComponent(ePath);
+      // Check for relative paths
       const targetLocation: Location = getLocation(getState(), locationId);
       if (targetLocation) {
         let openLocationTimer = 1000;
@@ -1754,7 +1764,7 @@ export const actions = {
         }
         setTimeout(() => {
           if (isCloudLocation) {
-            if (directoryPath) {
+            if (directoryPath && directoryPath.length > 0) {
               const dirFullPath = directoryPath;
               dispatch(actions.loadDirectoryContent(dirFullPath));
             }
@@ -1778,17 +1788,46 @@ export const actions = {
                 );
             }
           } else {
+            // local files case
             let locationPath = '';
-            if (targetLocation && targetLocation.path) {
-              locationPath = targetLocation.path;
+            if (
+              targetLocation &&
+              (targetLocation.path || targetLocation.paths)
+            ) {
+              locationPath = targetLocation.path || targetLocation.paths[0];
             }
-            if (directoryPath) {
-              const dirFullPath = locationPath + '/' + directoryPath;
+            if (directoryPath && directoryPath.length > 0) {
+              if (
+                directoryPath.includes('../') ||
+                directoryPath.includes('..\\')
+              ) {
+                dispatch(
+                  actions.showNotification(
+                    i18n.t('core:invalidLink'),
+                    'warning',
+                    true
+                  )
+                );
+                return true;
+              }
+              const dirFullPath =
+                locationPath + PlatformIO.getDirSeparator() + directoryPath;
               dispatch(actions.loadDirectoryContent(dirFullPath));
             }
 
-            if (entryPath) {
-              const entryFullPath = locationPath + '/' + entryPath; // TODO dir sep
+            if (entryPath && entryPath.length > 0) {
+              if (entryPath.includes('../') || entryPath.includes('..\\')) {
+                dispatch(
+                  actions.showNotification(
+                    i18n.t('core:invalidLink'),
+                    'warning',
+                    true
+                  )
+                );
+                return true;
+              }
+              const entryFullPath =
+                locationPath + PlatformIO.getDirSeparator() + entryPath;
               getAllPropertiesPromise(entryFullPath)
                 .then((fsEntry: FileSystemEntry) => {
                   if (fsEntry) {
@@ -1799,7 +1838,7 @@ export const actions = {
                 .catch(() =>
                   dispatch(
                     actions.showNotification(
-                      i18n.t('core:Invalid link'),
+                      i18n.t('core:invalidLink'),
                       'warning',
                       true
                     )
@@ -1810,14 +1849,14 @@ export const actions = {
         }, openLocationTimer);
       } else {
         dispatch(
-          actions.showNotification(i18n.t('core:Invalid link'), 'warning', true)
+          actions.showNotification(i18n.t('core:invalidLink'), 'warning', true)
         );
       }
     } else if (
       // External URL case
       decodedURI.startsWith('http://') ||
-      decodedURI.startsWith('https://') ||
-      decodedURI.startsWith('file://')
+      decodedURI.startsWith('https://')
+      // decodedURI.startsWith('file://')
     ) {
       dispatch(actions.openURLExternally(decodedURI));
     } else {
@@ -1905,6 +1944,8 @@ export const isSelectDirectoryDialogOpened = (state: any) =>
   state.app.selectDirectoryDialogOpened;
 export const isUploadDialogOpened = (state: any) =>
   state.app.uploadDialogOpened;
+export const isOpenLinkDialogOpened = (state: any) =>
+  state.app.openLinkDialogOpened;
 export const isProgressOpened = (state: any) => state.app.progressDialogOpened;
 export const getOpenedFiles = (state: any) => state.app.openedFiles;
 export const getNotificationStatus = (state: any) =>

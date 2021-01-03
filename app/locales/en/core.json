@@ -489,5 +489,8 @@
   "goforward": "Go Forward",
   "switchSimpleMode": "Simpe Mode",
   "switchAdvancedMode": "Advanced Mode",
+  "openLink": "Open Link",
+  "invalidLink": "Invalid Link",
+  "link": "Link",
   "-": "-"
 }

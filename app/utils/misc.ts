@@ -76,15 +76,6 @@ export function immutablySwapItems(
   return results;
 }
 
-export function hasURLProtocol(url: string) {
-  return (
-    url.startsWith('http://') ||
-    url.startsWith('https://') ||
-    url.startsWith('file://') ||
-    url.startsWith('data:')
-  );
-}
-
 export function arrayBufferToDataURL(arrayBuffer: any, mime: string) {
   const blob = new Blob([arrayBuffer], { type: mime });
   const url = window.URL || window.webkitURL;
