@@ -55,7 +55,7 @@ process.argv.forEach((arg, count) => {
   } else if (arg.length > 2) {
     // console.warn('Opening file: ' + arg);
     if (arg !== './app/main.dev.js' && arg !== './app/') {
-      startupFilePath = arg;
+      startupFilePath = ''; // arg;
     }
   }
 
