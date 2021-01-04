@@ -1855,8 +1855,8 @@ export const actions = {
     } else if (
       // External URL case
       decodedURI.startsWith('http://') ||
-      decodedURI.startsWith('https://')
-      // decodedURI.startsWith('file://')
+      decodedURI.startsWith('https://') ||
+      decodedURI.startsWith('file://')
     ) {
       dispatch(actions.openURLExternally(decodedURI));
     } else {

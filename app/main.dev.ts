@@ -36,20 +36,17 @@ if (process.env.NODE_ENV === 'production') {
 let startupFilePath;
 let portableMode;
 
+const testMode = process.env.NODE_ENV === 'test';
+const devMode =
+  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
+
 process.argv.forEach((arg, count) => {
   if (arg.toLowerCase() === '-d' || arg.toLowerCase() === '--debug') {
     // debugMode = true;
   } else if (arg.toLowerCase() === '-p' || arg.toLowerCase() === '--portable') {
     app.setPath('userData', process.cwd() + '/tsprofile'); // making the app portable
     portableMode = true;
-  } else if (arg.indexOf('-psn') >= 0) {
-    // ignoring the -psn process serial number parameter on MacOS by double click
-    arg = '';
-  } else if (
-    arg === 'data:,' ||
-    arg.indexOf('--user-data-dir') >= 0 ||
-    arg.indexOf('--use-mock-keychain') >= 0
-  ) {
+  } else if (testMode || devMode) {
     // ignoring the spectron testing
     arg = '';
   } else if (arg === './app/main.dev.babel.js' || arg === '.' || count === 0) {
@@ -58,7 +55,7 @@ process.argv.forEach((arg, count) => {
   } else if (arg.length > 2) {
     // console.warn('Opening file: ' + arg);
     if (arg !== './app/main.dev.js' && arg !== './app/') {
-      startupFilePath = ''; // arg; TODO create custom -open= command line parameter to open file
+      startupFilePath = arg;
     }
   }
 
@@ -67,10 +64,7 @@ process.argv.forEach((arg, count) => {
   }
 });
 
-if (
-  process.env.NODE_ENV === 'development' ||
-  process.env.DEBUG_PROD === 'true'
-) {
+if (devMode) {
   // eslint-disable-next-line
   require('electron-debug')({ showDevTools: false, devToolsMode: 'right' });
   const p = path.join(__dirname, '..', 'app', 'node_modules');
