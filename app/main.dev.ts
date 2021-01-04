@@ -45,13 +45,20 @@ process.argv.forEach((arg, count) => {
   } else if (arg.indexOf('-psn') >= 0) {
     // ignoring the -psn process serial number parameter on MacOS by double click
     arg = '';
+  } else if (
+    arg === 'data:,' ||
+    arg.indexOf('--user-data-dir') >= 0 ||
+    arg.indexOf('--use-mock-keychain') >= 0
+  ) {
+    // ignoring the spectron testing
+    arg = '';
   } else if (arg === './app/main.dev.babel.js' || arg === '.' || count === 0) {
     // ignoring the first argument
     // Ignore these argument
   } else if (arg.length > 2) {
     // console.warn('Opening file: ' + arg);
     if (arg !== './app/main.dev.js' && arg !== './app/') {
-      startupFilePath = arg;
+      startupFilePath = ''; // arg; TODO create custom -open= command line parameter to open file
     }
   }
 

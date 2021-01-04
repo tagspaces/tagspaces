@@ -268,10 +268,7 @@ const FolderContainer = (props: Props) => {
     const addSlash = PlatformIO.haveObjectStoreSupport() ? '//' : '/';
     let normalizedCurrentPath =
       addSlash +
-      normalizePath(
-        props.currentDirectoryPath.split &&
-          props.currentDirectoryPath.split('\\').join('/')
-      );
+      normalizePath(props.currentDirectoryPath.split('\\').join('/'));
 
     let normalizedCurrentLocationPath = '';
     if (props.currentLocationPath) {
@@ -452,7 +449,7 @@ const FolderContainer = (props: Props) => {
     loadParentDirectoryContent
   } = props;
   const normalizedCurrentDirPath = normalizePath(
-    currentDirectoryPath.split && currentDirectoryPath.split('\\').join('/')
+    currentDirectoryPath.split('\\').join('/')
   );
   let searchResultCounterText = searchResultCount + ' ' + i18n.t('entries');
   if (searchResultCount >= maxSearchResults) {
