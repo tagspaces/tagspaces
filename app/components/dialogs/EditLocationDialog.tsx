@@ -292,6 +292,7 @@ class EditLocationDialog extends React.Component<Props, State> {
           type: locationType.TYPE_LOCAL,
           name: this.state.name,
           path: this.state.path,
+          paths: [this.state.path], // deprecated, kept for compatibility with older versions
           isDefault: this.state.isDefault,
           isReadOnly: this.state.isReadOnly,
           persistIndex: this.state.persistIndex,
@@ -305,6 +306,7 @@ class EditLocationDialog extends React.Component<Props, State> {
           type: locationType.TYPE_CLOUD,
           name: this.state.storeName,
           path: this.state.storePath,
+          paths: [this.state.path], // deprecated, kept for compatibility with older versions
           endpointURL: this.state.endpointURL,
           accessKeyId: this.state.accessKeyId,
           secretAccessKey: this.state.secretAccessKey,
