@@ -63,11 +63,14 @@ interface Props {
 }
 
 interface State {
+  showAdvancedMode: boolean;
+  showSecretAccessKey: boolean;
   errorTextPath: boolean;
   errorTextName: boolean;
   disableConfirmButton: boolean;
   name: string;
   path: string;
+  newuuid: string;
   endpointURL: string;
   perspective: string;
   isDefault: boolean;
@@ -91,9 +94,12 @@ interface State {
 
 class CreateLocationDialog extends React.Component<Props, State> {
   state = {
+    showAdvancedMode: false,
+    showSecretAccessKey: false,
     errorTextPath: false,
     errorTextName: false,
     disableConfirmButton: true,
+    newuuid: uuidv1(),
     name: '',
     path: '',
     endpointURL: '',
@@ -140,6 +146,18 @@ class CreateLocationDialog extends React.Component<Props, State> {
       },
       this.handleValidation
     );
+  };
+
+  switchAdvancedMode = () => {
+    this.setState(prevState => ({
+      showAdvancedMode: !prevState.showAdvancedMode
+    }));
+  };
+
+  switchSecretAccessKeyVisibility = () => {
+    this.setState(prevState => ({
+      showSecretAccessKey: !prevState.showSecretAccessKey
+    }));
   };
 
   handleValidation() {
@@ -195,10 +213,10 @@ class CreateLocationDialog extends React.Component<Props, State> {
     if (!this.state.disableConfirmButton) {
       if (this.state.type === locationType.TYPE_LOCAL) {
         this.props.addLocation({
-          uuid: uuidv1(),
+          uuid: this.state.newuuid,
           type: locationType.TYPE_LOCAL,
           name: this.state.name,
-          paths: [this.state.path],
+          path: this.state.path,
           isDefault: this.state.isDefault,
           isReadOnly: this.state.isReadOnly,
           persistIndex: this.state.persistIndex,
@@ -207,10 +225,10 @@ class CreateLocationDialog extends React.Component<Props, State> {
         });
       } else if (this.state.type === locationType.TYPE_CLOUD) {
         this.props.addLocation({
-          uuid: uuidv1(),
+          uuid: this.state.newuuid,
           type: locationType.TYPE_CLOUD,
           name: this.state.storeName,
-          paths: [this.state.storePath],
+          path: this.state.storePath,
           endpointURL: this.state.endpointURL,
           accessKeyId: this.state.accessKeyId,
           secretAccessKey: this.state.secretAccessKey,
@@ -241,6 +259,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
     if (this.state.type === locationType.TYPE_CLOUD) {
       content = (
         <ObjectStoreForm
+          switchSecretAccessKeyVisibility={this.switchSecretAccessKeyVisibility}
           handleInputChange={this.handleInputChange}
           handleChange={this.handleChange}
           state={this.state}
@@ -322,21 +341,23 @@ class CreateLocationDialog extends React.Component<Props, State> {
               }
               label={i18n.t('core:startupLocation')}
             />
-            <FormControlLabel
-              control={
-                <Switch
-                  disabled={!Pro}
-                  data-tid="changeReadOnlyMode"
-                  name="isReadOnly"
-                  checked={this.state.isReadOnly}
-                  onChange={this.handleInputChange}
-                />
-              }
-              label={
-                i18n.t('core:readonlyModeSwitch') +
-                (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
-              }
-            />
+            {this.state.showAdvancedMode && (
+              <FormControlLabel
+                control={
+                  <Switch
+                    disabled={!Pro}
+                    data-tid="changeReadOnlyMode"
+                    name="isReadOnly"
+                    checked={this.state.isReadOnly}
+                    onChange={this.handleInputChange}
+                  />
+                }
+                label={
+                  i18n.t('core:readonlyModeSwitch') +
+                  (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
+                }
+              />
+            )}
             <FormControlLabel
               control={
                 <Switch
@@ -352,21 +373,23 @@ class CreateLocationDialog extends React.Component<Props, State> {
                 (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
               }
             />
-            <FormControlLabel
-              control={
-                <Switch
-                  disabled={!Pro}
-                  data-tid="changePersistIndex"
-                  name="persistIndex"
-                  checked={this.state.persistIndex}
-                  onChange={this.handleInputChange}
-                />
-              }
-              label={
-                i18n.t('core:persistIndexSwitch') +
-                (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
-              }
-            />
+            {this.state.showAdvancedMode && (
+              <FormControlLabel
+                control={
+                  <Switch
+                    disabled={!Pro}
+                    data-tid="changePersistIndex"
+                    name="persistIndex"
+                    checked={this.state.persistIndex}
+                    onChange={this.handleInputChange}
+                  />
+                }
+                label={
+                  i18n.t('core:persistIndexSwitch') +
+                  (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
+                }
+              />
+            )}
             <FormControlLabel
               control={
                 <Switch
@@ -385,6 +408,11 @@ class CreateLocationDialog extends React.Component<Props, State> {
           </FormGroup>
         </DialogContent>
         <DialogActions>
+          <Button onClick={this.switchAdvancedMode}>
+            {this.state.showAdvancedMode
+              ? i18n.t('core:switchSimpleMode')
+              : i18n.t('core:switchAdvancedMode')}
+          </Button>
           <Button onClick={this.onCancel} color="primary">
             {i18n.t('core:cancel')}
           </Button>

@@ -33,7 +33,7 @@ interface Props {
   classes?: any;
   anchorEl: Element;
   tagGroups: Array<Object>;
-  openURLExternally: (path: string) => void;
+  openURLExternally: (path: string, skipConfirmation?: boolean) => void;
   open: boolean;
   onClose: () => void;
   importTagGroups: () => void;
@@ -159,7 +159,10 @@ const TagLibraryMenu = (props: Props) => {
           data-tid="taglibraryHelp"
           onClick={() => {
             props.onClose();
-            props.openURLExternally(AppConfig.documentationLinks.taglibrary);
+            props.openURLExternally(
+              AppConfig.documentationLinks.taglibrary,
+              true
+            );
           }}
         >
           <ListItemIcon>

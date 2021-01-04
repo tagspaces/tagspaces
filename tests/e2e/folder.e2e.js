@@ -10,12 +10,12 @@ import {
 } from './location.helpers';
 import {
   reloadDirectory,
-  openEntry,
   createNewDirectory,
   deleteDirectory,
   clickOn,
   expectElementExist,
-  setSettings
+  setSettings,
+  doubleClickOn
 } from './general.helpers';
 import { renameFolder } from './test-utils.spec';
 
@@ -38,7 +38,7 @@ describe('TST01 - Folder management [electron]', () => {
   it('TST0101 - Create subfolder [TST0101,electron]', async () => {
     const testFolder = await createNewDirectory();
     await expectElementExist('[data-tid=fsEntryName_' + testFolder + ']');
-    await openEntry(testFolder);
+    await doubleClickOn('[data-tid=fsEntryName_' + testFolder + ']');
     await deleteDirectory();
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
@@ -49,7 +49,7 @@ describe('TST01 - Folder management [electron]', () => {
   // TODO minio
   it('TST0102 - Reload folder [TST0102,electron]', async () => {
     const testFolder = await createNewDirectory();
-    await openEntry(testFolder);
+    await doubleClickOn('[data-tid=fsEntryName_' + testFolder + ']');
     await reloadDirectory();
     await global.client.pause(500);
     await deleteDirectory();
@@ -62,7 +62,7 @@ describe('TST01 - Folder management [electron]', () => {
   // TODO
   it('TST0103 - Rename folder [TST0103]', async () => {
     const testFolder = await createNewDirectory();
-    await openEntry(testFolder);
+    await doubleClickOn('[data-tid=fsEntryName_' + testFolder + ']');
     const newDirectoryName = await renameFolder();
     //await openParentDir();
     /*await expectElementExist('[data-tid=fsEntryName_' + newDirectoryName + ']');
@@ -79,7 +79,7 @@ describe('TST01 - Folder management [electron]', () => {
     await global.client.pause(500);
     const testFolder = await createNewDirectory();
     await expectElementExist('[data-tid=fsEntryName_' + testFolder + ']');
-    await openEntry(testFolder);
+    await doubleClickOn('[data-tid=fsEntryName_' + testFolder + ']');
     await deleteDirectory();
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',

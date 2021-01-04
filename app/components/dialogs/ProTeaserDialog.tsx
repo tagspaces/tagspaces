@@ -38,7 +38,7 @@ import AppConfig from '-/config';
 interface Props {
   open: boolean;
   fullScreen: boolean;
-  openURLExternally: (url: string) => void;
+  openURLExternally: (url: string, skipConfirmation: boolean) => void;
   onClose: () => void;
 }
 
@@ -134,7 +134,8 @@ class ProTeaserDialog extends React.Component<Props, State> {
                 <Button
                   onClick={() => {
                     this.props.openURLExternally(
-                      AppConfig.links.productsOverview
+                      AppConfig.links.productsOverview,
+                      true
                     );
                   }}
                   variant="contained"
@@ -184,7 +185,8 @@ class ProTeaserDialog extends React.Component<Props, State> {
                 <Button
                   onClick={() =>
                     this.props.openURLExternally(
-                      AppConfig.links.productProAdvancedSearch
+                      AppConfig.links.productProAdvancedSearch,
+                      true
                     )
                   }
                   variant="contained"
@@ -225,7 +227,8 @@ class ProTeaserDialog extends React.Component<Props, State> {
                 <Button
                   onClick={() =>
                     this.props.openURLExternally(
-                      AppConfig.links.productProObjectStore
+                      AppConfig.links.productProObjectStore,
+                      true
                     )
                   }
                   variant="contained"
@@ -272,7 +275,8 @@ class ProTeaserDialog extends React.Component<Props, State> {
                 <Button
                   onClick={() =>
                     this.props.openURLExternally(
-                      AppConfig.links.productProFileFolderMeta
+                      AppConfig.links.productProFileFolderMeta,
+                      true
                     )
                   }
                   variant="contained"
@@ -318,7 +322,8 @@ class ProTeaserDialog extends React.Component<Props, State> {
                 <Button
                   onClick={() =>
                     this.props.openURLExternally(
-                      AppConfig.links.productProGeoTagging
+                      AppConfig.links.productProGeoTagging,
+                      true
                     )
                   }
                   variant="contained"
@@ -352,7 +357,8 @@ class ProTeaserDialog extends React.Component<Props, State> {
                 <Button
                   onClick={() =>
                     this.props.openURLExternally(
-                      AppConfig.links.productProThumbnailsGeneration
+                      AppConfig.links.productProThumbnailsGeneration,
+                      true
                     )
                   }
                   variant="contained"
@@ -402,7 +408,8 @@ class ProTeaserDialog extends React.Component<Props, State> {
                 <Button
                   onClick={() =>
                     this.props.openURLExternally(
-                      AppConfig.links.productsOverview
+                      AppConfig.links.productsOverview,
+                      true
                     )
                   }
                   variant="outlined"
@@ -413,7 +420,10 @@ class ProTeaserDialog extends React.Component<Props, State> {
                 &nbsp;
                 <Button
                   onClick={() =>
-                    this.props.openURLExternally('mailto:contact@tagspaces.org')
+                    this.props.openURLExternally(
+                      AppConfig.links.emailContact,
+                      true
+                    )
                   }
                   variant="outlined"
                   color="primary"

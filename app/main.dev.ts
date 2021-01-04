@@ -36,14 +36,18 @@ if (process.env.NODE_ENV === 'production') {
 let startupFilePath;
 let portableMode;
 
+const testMode = process.env.NODE_ENV === 'test';
+const devMode =
+  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
+
 process.argv.forEach((arg, count) => {
   if (arg.toLowerCase() === '-d' || arg.toLowerCase() === '--debug') {
     // debugMode = true;
   } else if (arg.toLowerCase() === '-p' || arg.toLowerCase() === '--portable') {
     app.setPath('userData', process.cwd() + '/tsprofile'); // making the app portable
     portableMode = true;
-  } else if (arg.indexOf('-psn') >= 0) {
-    // ignoring the -psn process serial number parameter on MacOS by double click
+  } else if (testMode || devMode) {
+    // ignoring the spectron testing
     arg = '';
   } else if (arg === './app/main.dev.babel.js' || arg === '.' || count === 0) {
     // ignoring the first argument
@@ -51,7 +55,7 @@ process.argv.forEach((arg, count) => {
   } else if (arg.length > 2) {
     // console.warn('Opening file: ' + arg);
     if (arg !== './app/main.dev.js' && arg !== './app/') {
-      startupFilePath = arg;
+      startupFilePath = ''; // arg;
     }
   }
 
@@ -60,10 +64,7 @@ process.argv.forEach((arg, count) => {
   }
 });
 
-if (
-  process.env.NODE_ENV === 'development' ||
-  process.env.DEBUG_PROD === 'true'
-) {
+if (devMode) {
   // eslint-disable-next-line
   require('electron-debug')({ showDevTools: false, devToolsMode: 'right' });
   const p = path.join(__dirname, '..', 'app', 'node_modules');
@@ -112,7 +113,7 @@ app.on('ready', async () => {
   }
 
   if (process.env.NODE_ENV === 'development') {
-    workerDevMode = true;
+    // workerDevMode = true; // hide worker window in dev mode
     mainHTML = `file://${__dirname}/appd.html`;
   }
 
@@ -147,9 +148,9 @@ app.on('ready', async () => {
   if (startupFilePath) {
     if (startupFilePath.startsWith('./') || startupFilePath.startsWith('.\\')) {
       startupParameter =
-        '?open=' + encodeURIComponent(path.join(__dirname, startupFilePath));
+        '?cmdopen=' + encodeURIComponent(path.join(__dirname, startupFilePath));
     } else {
-      startupParameter = '?open=' + encodeURIComponent(startupFilePath);
+      startupParameter = '?cmdopen=' + encodeURIComponent(startupFilePath);
     }
   }
 
@@ -177,7 +178,8 @@ app.on('ready', async () => {
     mainHTML + startupParameter,
     testWinOnUnix ? { userAgent: winUserAgent } : {}
   );
-  mainWindow.setMenuBarVisibility(true);
+  mainWindow.setMenuBarVisibility(false);
+  mainWindow.setAutoHideMenuBar(true);
 
   mainWindow.webContents.on('did-finish-load', () => {
     if (!mainWindow) {
