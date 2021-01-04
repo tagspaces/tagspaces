@@ -119,7 +119,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     );
   });
 
-  it('TST0510 - Generate thumbnail from Images [electron]', async () => {
+  it('TST0510 - Generate thumbnail from Images', async () => {
     // let filename = 'sample.jpg';
     // activate 'Show Hidden File' functionality in the general settings
     await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
@@ -140,7 +140,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     // expect(file).toBe(filename);
   });
 
-  it('TST0511 - Generate thumbnail from Videos [electron]', async () => {
+  it('TST0511 - Generate thumbnail from Videos', async () => {
     // activate 'Show Hidden File' functionality in the general settings
     await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
     await global.client.pause(500);
@@ -154,7 +154,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     //TODO expect
   });
 
-  it('TST0516 - Generate thumbnail from PDF [electron]', async () => {
+  it('TST0516 - Generate thumbnail from PDF', async () => {
     // activate 'Show Hidden File' functionality in the general settings
     await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
     await global.client.pause(500);
@@ -168,7 +168,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     //TODO expect
   });
 
-  it('TST0517 - Generate thumbnail from ODT [electron]', async () => {
+  it('TST0517 - Generate thumbnail from ODT', async () => {
     // activate 'Show Hidden File' functionality in the general settings
     await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
     await global.client.pause(500);
@@ -182,7 +182,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     //TODO expect
   });
 
-  it('TST0519 - Generate thumbnail from TIFF [electron]', async () => {
+  it('TST0519 - Generate thumbnail from TIFF', async () => {
     // activate 'Show Hidden File' functionality in the general settings
     await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
     await global.client.pause(500);
@@ -198,7 +198,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     //TODO expect
   });
 
-  it('TST0520 - Generate thumbnail from PSD [electron]', async () => {
+  it('TST0520 - Generate thumbnail from PSD', async () => {
     // activate 'Show Hidden File' functionality in the general settings
     await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
     await global.client.pause(500);
@@ -214,7 +214,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     //TODO expect
   });
 
-  it('TST0524 - Generate thumbnail from TXT [electron]', async () => {
+  it('TST0524 - Generate thumbnail from TXT', async () => {
     // activate 'Show Hidden File' functionality in the general settings
     await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
     await global.client.pause(500);
@@ -230,7 +230,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     //TODO expect
   });
 
-  it('TST0523 - Generate thumbnail from HTML [electron]', async () => {
+  it('TST0523 - Generate thumbnail from HTML', async () => {
     // activate 'Show Hidden File' functionality in the general settings
     await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
     await global.client.pause(500);
@@ -246,7 +246,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     //TODO expect
   });
 
-  it('TST0522 - Generate thumbnail from URL [electron]', async () => {
+  it('TST0522 - Generate thumbnail from URL', async () => {
     // activate 'Show Hidden File' functionality in the general settings
     await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
     await global.client.pause(500);
