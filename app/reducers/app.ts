@@ -25,10 +25,13 @@ import {
   deleteFilesPromise,
   loadMetaDataPromise,
   renameFilesPromise,
-  enhanceDirectoryContent,
   FileSystemEntryMeta,
   FileSystemEntry,
-  getAllPropertiesPromise
+  getAllPropertiesPromise,
+  prepareDirectoryContent,
+  findExtensionsForEntry,
+  getNextFile,
+  getPrevFile
 } from '-/services/utils-io';
 import {
   extractFileExtension,
@@ -42,7 +45,13 @@ import {
   extractLocation,
   extractContainingDirectoryPath
 } from '-/utils/paths';
-import { formatDateTime4Tag, getURLParameter } from '-/utils/misc';
+import {
+  formatDateTime4Tag,
+  getURLParameter,
+  clearURLParam,
+  updateHistory,
+  clearAllURLParams
+} from '-/utils/misc';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 // import { getThumbnailURLPromise } from '../services/thumbsgenerator';
@@ -85,6 +94,7 @@ export const types = {
   TOGGLE_ONBOARDING_DIALOG: 'APP/TOGGLE_ONBOARDING_DIALOG',
   TOGGLE_KEYBOARD_DIALOG: 'APP/TOGGLE_KEYBOARD_DIALOG',
   TOGGLE_LICENSE_DIALOG: 'APP/TOGGLE_LICENSE_DIALOG',
+  TOGGLE_OPENLINK_DIALOG: 'APP/TOGGLE_OPENLINK_DIALOG',
   TOGGLE_THIRD_PARTY_LIBS_DIALOG: 'APP/TOGGLE_THIRD_PARTY_LIBS_DIALOG',
   TOGGLE_SETTINGS_DIALOG: 'APP/TOGGLE_SETTINGS_DIALOG',
   TOGGLE_CREATE_DIRECTORY_DIALOG: 'APP/TOGGLE_CREATE_DIRECTORY_DIALOG',
@@ -189,6 +199,7 @@ export const initialState = {
   openedFiles: [],
   editTagDialogOpened: false,
   aboutDialogOpened: false,
+  openLinkDialogOpened: false,
   onboardingDialogOpened: false,
   keysDialogOpened: false,
   createFileDialogOpened: false,
@@ -304,6 +315,12 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         onboardingDialogOpened: !state.onboardingDialogOpened
+      };
+    }
+    case types.TOGGLE_OPENLINK_DIALOG: {
+      return {
+        ...state,
+        openLinkDialogOpened: !state.openLinkDialogOpened
       };
     }
     case types.TOGGLE_KEYBOARD_DIALOG: {
@@ -615,7 +632,7 @@ export default (state: any = initialState, action: any) => {
       };
     } */
     case types.CLOSE_ALL_FILES: {
-      window.history.pushState('', document.title, window.location.pathname);
+      clearURLParam('tsepath');
       return {
         ...state,
         openedFiles: [],
@@ -688,79 +705,6 @@ export default (state: any = initialState, action: any) => {
   }
 };
 
-function getNextFile(
-  pivotFilePath?: string,
-  lastSelectedEntry?: string,
-  currentDirectoryEntries?: Array<FileSystemEntry>
-): FileSystemEntry {
-  const currentEntries = currentDirectoryEntries
-    ? currentDirectoryEntries.filter(entry => entry.isFile)
-    : [];
-  let filePath = pivotFilePath;
-  if (!filePath) {
-    if (lastSelectedEntry) {
-      filePath = lastSelectedEntry;
-    } else if (currentEntries.length > 0) {
-      filePath = currentEntries[0].path;
-    } else {
-      return undefined;
-    }
-  }
-  let nextFile;
-  currentEntries.forEach((entry, index) => {
-    if (entry.path === filePath) {
-      const nextIndex = index + 1;
-      if (nextIndex < currentEntries.length) {
-        nextFile = currentEntries[nextIndex];
-      } else {
-        // eslint-disable-next-line prefer-destructuring
-        nextFile = currentEntries[0];
-      }
-    }
-  });
-  if (nextFile === undefined) {
-    // eslint-disable-next-line prefer-destructuring
-    nextFile = currentEntries[0];
-  }
-  return nextFile;
-}
-
-function getPrevFile(
-  pivotFilePath?: string,
-  lastSelectedEntry?: string,
-  currentDirectoryEntries?: Array<FileSystemEntry>
-): FileSystemEntry {
-  const currentEntries = currentDirectoryEntries
-    ? currentDirectoryEntries.filter(entry => entry.isFile)
-    : [];
-  let filePath = pivotFilePath;
-  if (!filePath) {
-    if (lastSelectedEntry) {
-      filePath = lastSelectedEntry;
-    } else if (currentEntries.length > 0) {
-      filePath = currentEntries[0].path;
-    } else {
-      return undefined;
-    }
-  }
-  let prevFile;
-  currentEntries.forEach((entry, index) => {
-    if (entry.path === filePath) {
-      const prevIndex = index - 1;
-      if (prevIndex >= 0) {
-        prevFile = currentEntries[prevIndex];
-      } else {
-        prevFile = currentEntries[currentEntries.length - 1];
-      }
-    }
-  });
-  if (prevFile === undefined) {
-    // eslint-disable-next-line prefer-destructuring
-    prevFile = currentEntries[0];
-  }
-  return prevFile;
-}
-
 export const actions = {
   goOnline: () => ({ type: types.DEVICE_ONLINE }),
   goOffline: () => ({ type: types.DEVICE_OFFLINE }),
@@ -829,6 +773,7 @@ export const actions = {
   toggleAboutDialog: () => ({ type: types.TOGGLE_ABOUT_DIALOG }),
   toggleOnboardingDialog: () => ({ type: types.TOGGLE_ONBOARDING_DIALOG }),
   toggleKeysDialog: () => ({ type: types.TOGGLE_KEYBOARD_DIALOG }),
+  toggleOpenLinkDialog: () => ({ type: types.TOGGLE_OPENLINK_DIALOG }),
   toggleLicenseDialog: () => ({ type: types.TOGGLE_LICENSE_DIALOG }),
   toggleThirdPartyLibsDialog: () => ({
     type: types.TOGGLE_THIRD_PARTY_LIBS_DIALOG
@@ -952,7 +897,16 @@ export const actions = {
     directoryPath: string,
     directoryContent: Array<Object>,
     directoryMeta?: FileSystemEntryMeta
-  ) => (dispatch: (actions: Object) => void) => {
+  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
+    // const currentLocation: Location = getLocation(
+    //  getState(),
+    //  getState().app.currentLocationId
+    // );
+    // const { openedFiles } = getState().app;
+    // const entryPath =
+    //  openedFiles && openedFiles.length > 0 && openedFiles[0].path;
+    // updateHistory(currentLocation, directoryPath, entryPath);
+
     dispatch(actions.hideNotifications());
     dispatch(
       actions.loadDirectorySuccessInt(
@@ -1326,7 +1280,9 @@ export const actions = {
           );
           dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
           dispatch(actions.changeLocation(location));
-          dispatch(actions.loadDirectoryContent(location.paths[0]));
+          dispatch(
+            actions.loadDirectoryContent(location.path || location.paths[0])
+          );
           return true;
         })
         .catch(() => {
@@ -1343,9 +1299,15 @@ export const actions = {
       PlatformIO.disableObjectStoreSupport();
       dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
       dispatch(actions.changeLocation(location));
-      dispatch(actions.loadDirectoryContent(location.paths[0]));
+      dispatch(
+        actions.loadDirectoryContent(location.path || location.paths[0])
+      );
       if (Pro && Pro.Watcher && location.watchForChanges) {
-        Pro.Watcher.watchFolder(location.paths[0], dispatch, actions);
+        Pro.Watcher.watchFolder(
+          location.path || location.paths[0],
+          dispatch,
+          actions
+        );
       }
     }
   },
@@ -1366,6 +1328,7 @@ export const actions = {
             Pro.Watcher.stopWatching();
           }
         }
+        clearAllURLParams();
         return true;
       });
     }
@@ -1463,12 +1426,6 @@ export const actions = {
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
-    const currentLocation: Location = getLocation(
-      getState(),
-      getState().app.currentLocationId
-    );
-    // const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
-
     let entryForOpening: OpenedEntry;
     const { openedFiles } = getState().app;
     /**
@@ -1513,18 +1470,12 @@ export const actions = {
     if (fsEntry.isNewFile) {
       entryForOpening.editMode = true;
     }
-    const localePar = getURLParameter(fsEntry.path);
-    let startPar = '?open=' + encodeURIComponent(fsEntry.path);
-
-    if (currentLocation && currentLocation.uuid) {
-      startPar += '&lid=' + currentLocation.uuid;
-    }
-
-    if (localePar && localePar.length > 1) {
-      startPar += '&locale=' + localePar;
-    }
-
-    window.history.pushState('', document.title, startPar);
+    const currentLocation: Location = getLocation(
+      getState(),
+      getState().app.currentLocationId
+    );
+    const { currentDirectoryPath } = getState().app;
+    updateHistory(currentLocation, currentDirectoryPath, fsEntry.path);
 
     dispatch(actions.addToEntryContainer(entryForOpening));
   },
@@ -1767,9 +1718,142 @@ export const actions = {
   openFileNatively: (selectedFile: string) => () => {
     PlatformIO.openFile(selectedFile);
   },
-  openLink: (url: string) => (dispatch: (actions: Object) => void) => {
-    const decodedURI = decodeURIComponent(url);
-    if (
+  openLink: (url: string) => (
+    dispatch: (actions: Object) => void,
+    getState: () => any
+  ) => {
+    const decodedURI = decodeURI(url);
+    const lid = getURLParameter('tslid', url);
+    const dPath = getURLParameter('tsdpath', url);
+    const ePath = getURLParameter('tsepath', url);
+    const cmdOpen = getURLParameter('cmdopen', url);
+    if (cmdOpen && cmdOpen.length > 0) {
+      const entryPath = decodeURIComponent(cmdOpen);
+      getAllPropertiesPromise(entryPath)
+        .then((fsEntry: FileSystemEntry) => {
+          if (fsEntry.isFile) {
+            dispatch(actions.openFsEntry(fsEntry));
+          } else {
+            dispatch(actions.loadDirectoryContent(fsEntry.path));
+          }
+          return true;
+        })
+        .catch(() =>
+          dispatch(
+            actions.showNotification(
+              i18n.t('missing file or folder'),
+              'warning',
+              true
+            )
+          )
+        );
+    } else if (lid && lid.length > 0) {
+      const locationId = decodeURIComponent(lid);
+      const directoryPath = dPath && decodeURIComponent(dPath);
+      const entryPath = ePath && decodeURIComponent(ePath);
+      // Check for relative paths
+      const targetLocation: Location = getLocation(getState(), locationId);
+      if (targetLocation) {
+        let openLocationTimer = 1000;
+        const isCloudLocation = targetLocation.type === locationType.TYPE_CLOUD;
+        const { currentLocationId } = getState().app;
+        if (targetLocation.uuid !== currentLocationId) {
+          dispatch(actions.openLocation(targetLocation));
+        } else {
+          openLocationTimer = 0;
+        }
+        setTimeout(() => {
+          if (isCloudLocation) {
+            if (directoryPath && directoryPath.length > 0) {
+              const dirFullPath = directoryPath;
+              dispatch(actions.loadDirectoryContent(dirFullPath));
+            }
+
+            if (entryPath) {
+              getAllPropertiesPromise(entryPath)
+                .then((fsEntry: FileSystemEntry) => {
+                  if (fsEntry) {
+                    dispatch(actions.openFsEntry(fsEntry));
+                  }
+                  return true;
+                })
+                .catch(() =>
+                  dispatch(
+                    actions.showNotification(
+                      i18n.t('core:Invalid link'),
+                      'warning',
+                      true
+                    )
+                  )
+                );
+            }
+          } else {
+            // local files case
+            let locationPath = '';
+            if (
+              targetLocation &&
+              (targetLocation.path || targetLocation.paths)
+            ) {
+              locationPath = targetLocation.path || targetLocation.paths[0];
+            }
+            if (directoryPath && directoryPath.length > 0) {
+              if (
+                directoryPath.includes('../') ||
+                directoryPath.includes('..\\')
+              ) {
+                dispatch(
+                  actions.showNotification(
+                    i18n.t('core:invalidLink'),
+                    'warning',
+                    true
+                  )
+                );
+                return true;
+              }
+              const dirFullPath =
+                locationPath + PlatformIO.getDirSeparator() + directoryPath;
+              dispatch(actions.loadDirectoryContent(dirFullPath));
+            }
+
+            if (entryPath && entryPath.length > 0) {
+              if (entryPath.includes('../') || entryPath.includes('..\\')) {
+                dispatch(
+                  actions.showNotification(
+                    i18n.t('core:invalidLink'),
+                    'warning',
+                    true
+                  )
+                );
+                return true;
+              }
+              const entryFullPath =
+                locationPath + PlatformIO.getDirSeparator() + entryPath;
+              getAllPropertiesPromise(entryFullPath)
+                .then((fsEntry: FileSystemEntry) => {
+                  if (fsEntry) {
+                    dispatch(actions.openFsEntry(fsEntry));
+                  }
+                  return true;
+                })
+                .catch(() =>
+                  dispatch(
+                    actions.showNotification(
+                      i18n.t('core:invalidLink'),
+                      'warning',
+                      true
+                    )
+                  )
+                );
+            }
+          }
+        }, openLocationTimer);
+      } else {
+        dispatch(
+          actions.showNotification(i18n.t('core:invalidLink'), 'warning', true)
+        );
+      }
+    } else if (
+      // External URL case
       decodedURI.startsWith('http://') ||
       decodedURI.startsWith('https://') ||
       decodedURI.startsWith('file://')
@@ -1799,212 +1883,6 @@ export const actions = {
   }
 };
 
-function prepareDirectoryContent(
-  dirEntries,
-  directoryPath,
-  settings,
-  dispatch,
-  getState,
-  dirEntryMeta
-) {
-  const currentLocation: Location = getLocation(
-    getState(),
-    getState().app.currentLocationId
-  );
-  const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
-
-  const {
-    directoryContent,
-    tmbGenerationPromises,
-    tmbGenerationList
-  } = enhanceDirectoryContent(
-    dirEntries,
-    isCloudLocation,
-    settings.showUnixHiddenEntries,
-    settings.useGenerateThumbnails
-  );
-
-  function handleTmbGenerationResults(results) {
-    // console.log('tmb results' + JSON.stringify(results));
-    const tmbURLs = [];
-    results.map(tmbResult => {
-      if (tmbResult.tmbPath && tmbResult.tmbPath.length > 0) {
-        // dispatch(actions.updateThumbnailUrl(tmbResult.filePath, tmbResult.tmbPath));
-        tmbURLs.push(tmbResult);
-      }
-      return true;
-    });
-    dispatch(actions.setGeneratingThumbnails(false));
-    // dispatch(actions.hideNotifications());
-    if (tmbURLs.length > 0) {
-      dispatch(actions.updateThumbnailUrls(tmbURLs));
-    }
-    return true;
-  }
-
-  function handleTmbGenerationFailed(error) {
-    console.warn('Thumb generation failed: ' + error);
-    dispatch(actions.setGeneratingThumbnails(false));
-    dispatch(
-      actions.showNotification(
-        i18n.t('core:generatingThumbnailsFailed'),
-        'warning',
-        true
-      )
-    );
-  }
-
-  dispatch(actions.setGeneratingThumbnails(false));
-  if (tmbGenerationList.length > 0) {
-    dispatch(actions.setGeneratingThumbnails(true));
-    PlatformIO.createThumbnailsInWorker(tmbGenerationList)
-      .then(handleTmbGenerationResults)
-      .catch(handleTmbGenerationFailed);
-  }
-  if (tmbGenerationPromises.length > 0) {
-    dispatch(actions.setGeneratingThumbnails(true));
-    Promise.all(tmbGenerationPromises)
-      .then(handleTmbGenerationResults)
-      .catch(handleTmbGenerationFailed);
-  }
-
-  console.log('Dir ' + directoryPath + ' contains ' + directoryContent.length);
-  dispatch(
-    actions.loadDirectorySuccess(directoryPath, directoryContent, dirEntryMeta)
-  );
-}
-
-function findExtensionPathForId(extensionId: string): string {
-  const extensionPath = 'node_modules/' + extensionId;
-  return extensionPath;
-}
-
-function findExtensionsForEntry(
-  supportedFileTypes: Array<any>,
-  entryPath: string,
-  isFile: boolean = true
-): OpenedEntry {
-  const fileExtension = extractFileExtension(
-    entryPath,
-    PlatformIO.getDirSeparator()
-  ).toLowerCase();
-  const viewingExtensionPath = isFile
-    ? findExtensionPathForId('@tagspaces/text-viewer')
-    : 'about:blank';
-  const fileForOpening: OpenedEntry = {
-    path: entryPath,
-    viewingExtensionPath,
-    viewingExtensionId: '',
-    isFile,
-    changed: false,
-    lmdt: 0,
-    size: 0
-  };
-  supportedFileTypes.map(fileType => {
-    if (fileType.viewer && fileType.type.toLowerCase() === fileExtension) {
-      fileForOpening.viewingExtensionId = fileType.viewer;
-      if (fileType.color) {
-        fileForOpening.color = fileType.color;
-      }
-      fileForOpening.viewingExtensionPath = findExtensionPathForId(
-        fileType.viewer
-      );
-      if (fileType.editor && fileType.editor.length > 0) {
-        fileForOpening.editingExtensionId = fileType.editor;
-        fileForOpening.editingExtensionPath = findExtensionPathForId(
-          fileType.editor
-        );
-      }
-    }
-    return true;
-  });
-  return fileForOpening;
-}
-
-export function findAvailableExtensions() {
-  // TODO Search in users tagspaces folder
-  // Search in the installation folder
-  const extensionsFound = [
-    {
-      extensionId: '@tagspaces/archive-viewer',
-      extensionName: 'Archive Viewer',
-      extensionType: 'viewer'
-    },
-    {
-      extensionId: '@tagspaces/document-viewer',
-      extensionName: 'Documents Viewer',
-      extensionType: 'viewer'
-    },
-    // { extensionId: '@tagspaces/ebook-viewer', extensionName: 'EPUB Viewer', extensionType: 'viewer' },
-    {
-      extensionId: '@tagspaces/html-editor',
-      extensionName: 'HTML Editor',
-      extensionType: 'editor'
-    },
-    {
-      extensionId: '@tagspaces/html-viewer',
-      extensionName: 'HTML Viewer',
-      extensionType: 'viewer'
-    },
-    {
-      extensionId: '@tagspaces/image-viewer',
-      extensionName: 'Image Viewer',
-      extensionType: 'viewer'
-    },
-    {
-      extensionId: '@tagspaces/json-editor',
-      extensionName: 'JSON Viewer',
-      extensionType: 'editor'
-    },
-    {
-      extensionId: '@tagspaces/md-viewer',
-      extensionName: 'MarkDown Viewer',
-      extensionType: 'viewer'
-    },
-    {
-      extensionId: '@tagspaces/media-player',
-      extensionName: 'Media Player',
-      extensionType: 'viewer'
-    },
-    {
-      extensionId: '@tagspaces/mhtml-viewer',
-      extensionName: 'MHTML Viewer',
-      extensionType: 'viewer'
-    },
-    {
-      extensionId: '@tagspaces/pdf-viewer',
-      extensionName: 'PDF Viewer',
-      extensionType: 'viewer'
-    },
-    {
-      extensionId: '@tagspaces/plain-viewer',
-      extensionName: 'Experimental Viewer - insecure!!!',
-      extensionType: 'viewer'
-    },
-    {
-      extensionId: '@tagspaces/rtf-viewer',
-      extensionName: 'RTF Viewer',
-      extensionType: 'viewer'
-    },
-    {
-      extensionId: '@tagspaces/text-editor',
-      extensionName: 'Text Editor',
-      extensionType: 'editor'
-    },
-    {
-      extensionId: '@tagspaces/text-viewer',
-      extensionName: 'Text Viewer',
-      extensionType: 'viewer'
-    },
-    {
-      extensionId: '@tagspaces/url-viewer',
-      extensionName: 'URL Viewer',
-      extensionType: 'viewer'
-    }
-  ];
-  return extensionsFound;
-}
-
 // Selectors
 export const getDirectoryContent = (state: any) =>
   state.app.currentDirectoryEntries;
@@ -2022,12 +1900,17 @@ export const getCurrentLocationPath = (state: any) => {
         state.app.currentLocationId &&
         location.uuid === state.app.currentLocationId
       ) {
-        if (AppConfig.isElectron && location.paths[0].startsWith('./')) {
+        const locationPath = location.path || location.paths[0];
+        if (
+          AppConfig.isElectron &&
+          locationPath &&
+          locationPath.startsWith('./')
+        ) {
           // TODO test relative path (Directory Back) with other platforms
           // relative paths
-          return pathLib.resolve(location.paths[0]);
+          return pathLib.resolve(locationPath);
         }
-        return location.paths[0];
+        return locationPath;
       }
     }
   }
@@ -2039,9 +1922,7 @@ export const isOnline = (state: any) => state.app.isOnline;
 export const getLastSelectedEntry = (state: any) => state.app.lastSelectedEntry;
 export const getSelectedTag = (state: any) => state.app.tag;
 export const getSelectedEntries = (state: any) => state.app.selectedEntries;
-// export const isFileOpened = (state: any) => state.app.openedFiles.length > 0;
 export const isGeneratingThumbs = (state: any) => state.app.isGeneratingThumbs;
-// export const isFileDragged = (state: any) => state.app.isFileDragged;
 export const isReadOnlyMode = (state: any) => state.app.isReadOnlyMode;
 export const isOnboardingDialogOpened = (state: any) =>
   state.app.onboardingDialogOpened;
@@ -2063,6 +1944,8 @@ export const isSelectDirectoryDialogOpened = (state: any) =>
   state.app.selectDirectoryDialogOpened;
 export const isUploadDialogOpened = (state: any) =>
   state.app.uploadDialogOpened;
+export const isOpenLinkDialogOpened = (state: any) =>
+  state.app.openLinkDialogOpened;
 export const isProgressOpened = (state: any) => state.app.progressDialogOpened;
 export const getOpenedFiles = (state: any) => state.app.openedFiles;
 export const getNotificationStatus = (state: any) =>
