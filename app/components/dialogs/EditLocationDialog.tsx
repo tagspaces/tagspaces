@@ -52,15 +52,20 @@ interface Props {
 }
 
 interface State {
+  showAdvancedMode: boolean;
+  showSecretAccessKey: boolean;
   errorTextPath: boolean;
   errorTextName: boolean;
+  errorTextId: boolean;
   disableConfirmButton: boolean;
   cloudErrorTextName: boolean;
+  cloudErrorId: boolean;
   cloudErrorBucketName: boolean;
   cloudErrorRegion: boolean;
   cloudErrorAccessKey: boolean;
   cloudErrorSecretAccessKey: boolean;
   uuid: string;
+  newuuid: string;
   name: string;
   path: string;
   endpointURL: string;
@@ -90,7 +95,7 @@ class EditLocationDialog extends React.Component<Props, State> {
           storeName: dir
             ? extractDirectoryName(dir, PlatformIO.getDirSeparator())
             : props.location.name,
-          storePath: dir || props.location.paths[0]
+          storePath: dir || props.location.path || props.location.paths[0]
         };
       } else {
         properties = {
@@ -98,12 +103,15 @@ class EditLocationDialog extends React.Component<Props, State> {
           name: dir
             ? extractDirectoryName(dir, PlatformIO.getDirSeparator())
             : props.location.name,
-          path: dir || props.location.paths[0]
+          path: dir || props.location.path || props.location.paths[0]
         };
       }
       this.state = {
         ...properties,
+        showAdvancedMode: false,
+        showSecretAccessKey: false,
         uuid: props.location.uuid,
+        newuuid: props.location.uuid,
         isDefault: props.location.isDefault,
         isReadOnly: props.location.isReadOnly,
         watchForChanges: props.location.watchForChanges,
@@ -118,15 +126,20 @@ class EditLocationDialog extends React.Component<Props, State> {
       };
     } else {
       this.state = {
+        showAdvancedMode: false,
+        showSecretAccessKey: false,
         errorTextPath: false,
         errorTextName: false,
+        errorTextId: false,
         disableConfirmButton: true,
         cloudErrorTextName: false,
         cloudErrorBucketName: false,
         cloudErrorRegion: false,
         cloudErrorAccessKey: false,
         cloudErrorSecretAccessKey: false,
+        cloudErrorId: false,
         uuid: '',
+        newuuid: '',
         name: '',
         path: '',
         endpointURL: '',
@@ -146,43 +159,17 @@ class EditLocationDialog extends React.Component<Props, State> {
     }
   }
 
-  /* componentWillReceiveProps = (nextProps: any) => {
-    if (nextProps.open === true && nextProps.location) {
-      const dir = nextProps.selectedDirectoryPath;
-      let properties;
-      if (nextProps.location.type === locationType.TYPE_CLOUD) {
-        properties = {
-          storeName: dir
-            ? extractDirectoryName(dir, PlatformIO.getDirSeparator())
-            : nextProps.location.name,
-          storePath: dir || nextProps.location.paths[0]
-        };
-      } else {
-        properties = {
-          // TODO maybe its better to separate name/path keys for different locationTypes ??
-          name: dir
-            ? extractDirectoryName(dir, PlatformIO.getDirSeparator())
-            : nextProps.location.name,
-          path: dir || nextProps.location.paths[0]
-        };
-      }
-      this.setState({
-        ...properties,
-        uuid: nextProps.location.uuid,
-        isDefault: nextProps.location.isDefault,
-        isReadOnly: nextProps.location.isReadOnly,
-        watchForChanges: nextProps.location.watchForChanges,
-        persistIndex: nextProps.location.persistIndex,
-        fullTextIndex: nextProps.location.fullTextIndex,
-        type: nextProps.location.type || locationType.TYPE_LOCAL,
-        accessKeyId: nextProps.location.accessKeyId,
-        secretAccessKey: nextProps.location.secretAccessKey,
-        bucketName: nextProps.location.bucketName,
-        endpointURL: nextProps.location.endpointURL,
-        region: nextProps.location.region
-      });
-    }
-  }; */
+  switchAdvancedMode = () => {
+    this.setState(prevState => ({
+      showAdvancedMode: !prevState.showAdvancedMode
+    }));
+  };
+
+  switchSecretAccessKeyVisibility = () => {
+    this.setState(prevState => ({
+      showSecretAccessKey: !prevState.showSecretAccessKey
+    }));
+  };
 
   handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
@@ -216,6 +203,7 @@ class EditLocationDialog extends React.Component<Props, State> {
       let cloudErrorTextName = false;
       let cloudErrorAccessKey = false;
       let cloudErrorSecretAccessKey = false;
+      let cloudErrorId = false;
       let disableConfirmButton = false;
       if (!this.state.storeName || this.state.storeName.length === 0) {
         cloudErrorTextName = true;
@@ -224,6 +212,11 @@ class EditLocationDialog extends React.Component<Props, State> {
 
       if (!this.state.accessKeyId || this.state.accessKeyId.length === 0) {
         cloudErrorAccessKey = true;
+        disableConfirmButton = true;
+      }
+
+      if (!this.state.uuid || this.state.uuid.length === 0) {
+        cloudErrorId = true;
         disableConfirmButton = true;
       }
 
@@ -240,11 +233,13 @@ class EditLocationDialog extends React.Component<Props, State> {
         cloudErrorTextName,
         cloudErrorAccessKey,
         cloudErrorSecretAccessKey,
+        cloudErrorId,
         disableConfirmButton
       });
     } else {
       let errorTextName = false;
       let errorTextPath = false;
+      let errorTextId = false;
       let disableConfirmButton = false;
       if (!this.state.name || this.state.name.length === 0) {
         errorTextName = true;
@@ -254,7 +249,16 @@ class EditLocationDialog extends React.Component<Props, State> {
         errorTextPath = true; // make in optional in cloud mode
         disableConfirmButton = true;
       }
-      this.setState({ errorTextName, errorTextPath, disableConfirmButton });
+      if (!this.state.newuuid || this.state.newuuid.length === 0) {
+        errorTextId = true;
+        disableConfirmButton = true;
+      }
+      this.setState({
+        errorTextName,
+        errorTextPath,
+        errorTextId,
+        disableConfirmButton
+      });
     }
   }
 
@@ -284,9 +288,11 @@ class EditLocationDialog extends React.Component<Props, State> {
       if (this.state.type === locationType.TYPE_LOCAL) {
         this.props.editLocation({
           uuid: this.state.uuid,
+          newuuid: this.state.newuuid,
           type: locationType.TYPE_LOCAL,
           name: this.state.name,
-          paths: [this.state.path],
+          path: this.state.path,
+          paths: [this.state.path], // deprecated, kept for compatibility with older versions
           isDefault: this.state.isDefault,
           isReadOnly: this.state.isReadOnly,
           persistIndex: this.state.persistIndex,
@@ -296,9 +302,11 @@ class EditLocationDialog extends React.Component<Props, State> {
       } else if (this.state.type === locationType.TYPE_CLOUD) {
         this.props.editLocation({
           uuid: this.state.uuid,
+          newuuid: this.state.newuuid,
           type: locationType.TYPE_CLOUD,
           name: this.state.storeName,
-          paths: [this.state.storePath],
+          path: this.state.storePath,
+          paths: [this.state.storePath], // deprecated, kept for compatibility with older versions
           endpointURL: this.state.endpointURL,
           accessKeyId: this.state.accessKeyId,
           secretAccessKey: this.state.secretAccessKey,
@@ -330,6 +338,7 @@ class EditLocationDialog extends React.Component<Props, State> {
     if (this.state.type === locationType.TYPE_CLOUD) {
       content = (
         <ObjectStoreForm
+          switchSecretAccessKeyVisibility={this.switchSecretAccessKeyVisibility}
           handleInputChange={this.handleInputChange}
           handleChange={this.handleChange}
           state={this.state}
@@ -392,21 +401,23 @@ class EditLocationDialog extends React.Component<Props, State> {
               }
               label={i18n.t('core:startupLocation')}
             />
-            <FormControlLabel
-              control={
-                <Switch
-                  disabled={!Pro}
-                  data-tid="changeReadOnlyMode"
-                  name="isReadOnly"
-                  checked={this.state.isReadOnly}
-                  onChange={this.handleInputChange}
-                />
-              }
-              label={
-                i18n.t('core:readonlyModeSwitch') +
-                (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
-              }
-            />
+            {this.state.showAdvancedMode && (
+              <FormControlLabel
+                control={
+                  <Switch
+                    disabled={!Pro}
+                    data-tid="changeReadOnlyMode"
+                    name="isReadOnly"
+                    checked={this.state.isReadOnly}
+                    onChange={this.handleInputChange}
+                  />
+                }
+                label={
+                  i18n.t('core:readonlyModeSwitch') +
+                  (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
+                }
+              />
+            )}
             <FormControlLabel
               control={
                 <Switch
@@ -422,21 +433,23 @@ class EditLocationDialog extends React.Component<Props, State> {
                 (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
               }
             />
-            <FormControlLabel
-              control={
-                <Switch
-                  disabled={!Pro}
-                  data-tid="changePersistIndex"
-                  name="persistIndex"
-                  checked={this.state.persistIndex}
-                  onChange={this.handleInputChange}
-                />
-              }
-              label={
-                i18n.t('core:persistIndexSwitch') +
-                (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
-              }
-            />
+            {this.state.showAdvancedMode && (
+              <FormControlLabel
+                control={
+                  <Switch
+                    disabled={!Pro}
+                    data-tid="changePersistIndex"
+                    name="persistIndex"
+                    checked={this.state.persistIndex}
+                    onChange={this.handleInputChange}
+                  />
+                }
+                label={
+                  i18n.t('core:persistIndexSwitch') +
+                  (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
+                }
+              />
+            )}
             <FormControlLabel
               control={
                 <Switch
@@ -460,6 +473,11 @@ class EditLocationDialog extends React.Component<Props, State> {
 
   renderActions = () => (
     <DialogActions>
+      <Button onClick={this.switchAdvancedMode}>
+        {this.state.showAdvancedMode
+          ? i18n.t('core:switchSimpleMode')
+          : i18n.t('core:switchAdvancedMode')}
+      </Button>
       <Button
         data-tid="closeEditLocationDialog"
         color="primary"

@@ -892,13 +892,16 @@ const EntryContainer = (props: Props) => {
     //   fileTitle = fileTitle.substr(0, maxCharactersTitleLength) + '...';
     // }
 
+    const locale = '&locale=' + i18n.language;
+    const theme = '&theme=' + props.settings.currentTheme;
+
     if (openedFile.editMode && openedFile.editingExtensionPath) {
       fileOpenerURL =
         openedFile.editingExtensionPath +
         '/index.html?file=' +
         encodeURIComponent(openedFile.url ? openedFile.url : openedFile.path) +
-        '&locale=' +
-        i18n.language +
+        locale +
+        theme +
         '&edit=true' +
         (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
       // } else if (!currentEntry.isFile) { // TODO needed for loading folder's default html
@@ -908,8 +911,8 @@ const EntryContainer = (props: Props) => {
         openedFile.viewingExtensionPath +
         '/index.html?file=' +
         encodeURIComponent(openedFile.url ? openedFile.url : openedFile.path) +
-        '&locale=' +
-        i18n.language +
+        locale +
+        theme +
         (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
     }
     // this.shouldReload = false;

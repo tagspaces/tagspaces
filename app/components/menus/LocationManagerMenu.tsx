@@ -21,6 +21,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import CreateLocationIcon from '@material-ui/icons/CreateNewFolder';
+import OpenLinkIcon from '@material-ui/icons/Link';
 import HelpIcon from '@material-ui/icons/Help';
 import i18n from '-/services/i18n';
 import AppConfig from '-/config';
@@ -30,14 +32,42 @@ interface Props {
   open: boolean;
   anchorEl: Element;
   onClose: () => void;
+  showCreateLocationDialog: () => void;
+  toggleOpenLinkDialog: () => void;
   openURLExternally: (url: string, skipConfirmation?: boolean) => void;
 }
 
 const LocationManagerMenu = (props: Props) => (
   <div style={{ overflowY: 'hidden' }}>
     <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
+      {!AppConfig.locationsReadOnly && (
+        <MenuItem
+          data-tid="locationManagerMenuCreateLocation"
+          onClick={() => {
+            props.onClose();
+            props.showCreateLocationDialog();
+          }}
+        >
+          <ListItemIcon>
+            <CreateLocationIcon />
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:createLocationTitle')} />
+        </MenuItem>
+      )}
       <MenuItem
-        data-tid="locationManagerHelp"
+        data-tid="locationManagerMenuOpenLink"
+        onClick={() => {
+          props.onClose();
+          props.toggleOpenLinkDialog();
+        }}
+      >
+        <ListItemIcon>
+          <OpenLinkIcon />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:openLink')} />
+      </MenuItem>
+      <MenuItem
+        data-tid="locationManagerMenuHelp"
         onClick={() => {
           props.onClose();
           props.openURLExternally(AppConfig.documentationLinks.locations, true);

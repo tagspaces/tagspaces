@@ -111,6 +111,7 @@ interface Props {
   openLocation: (location: Location) => void;
   openFileNatively: (path: string) => void;
   openDirectory: (path: string) => void;
+  toggleOpenLinkDialog: () => void;
   showInFileManager: (path: string) => void;
   createDirectoryIndex: (
     path: string,
@@ -199,7 +200,7 @@ class LocationManager extends React.Component<Props, State> {
             uuid: uuidv1(),
             type: locationType.TYPE_LOCAL,
             name: key, // TODO use i18n
-            paths: [devicePaths[key]],
+            path: devicePaths[key],
             isDefault: AppConfig.isWeb && devicePaths[key] === '/files/', // Used for the web ts demo
             isReadOnly: false,
             persistIndex: false
@@ -246,7 +247,7 @@ class LocationManager extends React.Component<Props, State> {
       PlatformIO.enableObjectStoreSupport(selectedLocation)
         .then(() => {
           createDirectoryIndex(
-            selectedLocation.paths[0],
+            selectedLocation.path || selectedLocation.paths[0],
             selectedLocation.fullTextIndex,
             isCurrentLocation
           );
@@ -258,7 +259,7 @@ class LocationManager extends React.Component<Props, State> {
     } else if (selectedLocation.type === locationType.TYPE_LOCAL) {
       PlatformIO.disableObjectStoreSupport();
       createDirectoryIndex(
-        selectedLocation.paths[0],
+        selectedLocation.path || selectedLocation.paths[0],
         selectedLocation.fullTextIndex,
         isCurrentLocation
       );
@@ -281,7 +282,9 @@ class LocationManager extends React.Component<Props, State> {
 
   showInFileManager = () => {
     this.handleRequestCloseContextMenus();
-    this.props.openDirectory(this.state.selectedLocation.paths[0]);
+    this.props.openDirectory(
+      this.state.selectedLocation.path || this.state.selectedLocation.pathS[0]
+    );
   };
 
   closeLocation = () => {
@@ -382,7 +385,7 @@ class LocationManager extends React.Component<Props, State> {
   handleLocationClick = (location: Location) => {
     this.directoryTreeRef[location.uuid].changeLocation(location);
     if (location.uuid === this.props.currentLocationId) {
-      this.props.loadDirectoryContent(location.paths[0]);
+      this.props.loadDirectoryContent(location.path || location.paths[0]);
     } else {
       // this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
       this.props.setSelectedEntries([]);
@@ -510,10 +513,9 @@ class LocationManager extends React.Component<Props, State> {
           }
           title={
             location.isDefault
-              ? i18n.t('core: thisIsStartupLocation') +
-                ' : ' +
+              ? i18n.t('core: thisIsStartupLocation') + ' : ' + location.path ||
                 location.paths[0]
-              : location.paths[0]
+              : location.path || location.paths[0]
           }
           button
           onClick={() => this.handleLocationClick(location)}
@@ -551,7 +553,7 @@ class LocationManager extends React.Component<Props, State> {
             <TargetMoveFileBox
               accepts={[DragItemTypes.FILE]}
               onDrop={this.handleFileMoveDrop}
-              path={location.paths[0]}
+              path={location.path || location.paths[0]}
               location={location}
             >
               <div style={{ maxWidth: 250 }}>
@@ -639,6 +641,8 @@ class LocationManager extends React.Component<Props, State> {
           open={this.state.locationManagerMenuOpened}
           onClose={this.handleCloseLocationManagerMenu}
           openURLExternally={this.props.openURLExternally}
+          showCreateLocationDialog={this.showCreateLocationDialog}
+          toggleOpenLinkDialog={this.props.toggleOpenLinkDialog}
         />
         {!AppConfig.locationsReadOnly && (
           <div style={{ width: '100%', textAlign: 'center', marginBottom: 10 }}>
@@ -836,6 +840,7 @@ function mapDispatchToProps(dispatch) {
       openFsEntry: AppActions.openFsEntry,
       showNotification: AppActions.showNotification,
       reflectCreateEntries: AppActions.reflectCreateEntries,
+      toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
       moveFiles: IOActions.moveFiles,
       uploadFiles: IOActions.uploadFiles,
       openURLExternally: AppActions.openURLExternally,
