@@ -219,11 +219,11 @@ const CellContent = (props: Props) => {
   function renderRowCell(selected: boolean) {
     let tmbSize = 85;
     if (entrySize === 'small') {
-      tmbSize = 50;
+      tmbSize = 30;
     } else if (entrySize === 'normal') {
-      tmbSize = 85;
+      tmbSize = 70;
     } else if (entrySize === 'big') {
-      tmbSize = 120;
+      tmbSize = 100;
     }
     return (
       <Grid
@@ -240,11 +240,11 @@ const CellContent = (props: Props) => {
           item
           style={{
             minHeight: entryHeight,
-            width: 70,
-            maxWidth: 70,
-            padding: 10,
+            width: 50,
+            maxWidth: 50,
+            padding: 3,
             marginRight: 5,
-            textAlign: 'center',
+            textAlign: 'left',
             backgroundColor: fsEntryBackgroundColor
           }}
         >
@@ -362,11 +362,11 @@ const CellContent = (props: Props) => {
 
   let entryHeight = 130;
   if (entrySize === 'small') {
-    entryHeight = 50;
+    entryHeight = 35;
   } else if (entrySize === 'normal') {
-    entryHeight = 80;
+    entryHeight = 70;
   } else if (entrySize === 'big') {
-    entryHeight = 130;
+    entryHeight = 100;
   }
 
   let gridCell: any = React.Fragment;
