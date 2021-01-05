@@ -50,7 +50,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     await closeFileProperties();
   });
 
-  it('TST0501 - Create HTML file', async () => {
+  it('TST0501 - Create HTML file [electron]', async () => {
     /*await createNewDirectory();
     await reloadDirectory();
     // await global.client.pause(500);
@@ -72,7 +72,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     await returnDirectoryBack();*/
     // delete directory
 
-    await deleteFirstFile();
+    // await deleteFirstFile();
     await deleteDirectory(testFolder);
     //    await returnDirectoryBack();
     await global.client.pause(500);
@@ -82,7 +82,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     );
   });
 
-  it('TST0502 - Create MD file', async () => {
+  it('TST0502 - Create MD file [electron]', async () => {
     await createNewDirectory();
     // await reloadDirectory();
     // await global.client.pause(500);
@@ -95,7 +95,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     await expectElementExist(selectorFile, true);
     await global.client.pause(500);
 
-    await deleteFirstFile();
+    // await deleteFirstFile();
     await deleteDirectory(testFolder);
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
@@ -103,7 +103,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     );
   });
 
-  it('TST0502 - Create TEXT file', async () => {
+  it('TST0502 - Create TEXT file [electron]', async () => {
     await createNewDirectory();
     // await reloadDirectory();
     // await global.client.pause(500);
@@ -116,7 +116,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     await expectElementExist(selectorFile, true);
     await global.client.pause(500);
 
-    await deleteFirstFile();
+    // await deleteFirstFile();
     await deleteDirectory(testFolder);
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
