@@ -296,6 +296,9 @@ export default class PlatformIO {
 
   static openFile = (filePath: string): void => nativeAPI.openFile(filePath);
 
+  static resolveFilePath = (filePath: string): string =>
+    objectStoreAPI ? filePath : nativeAPI.resolveFilePath(filePath);
+
   static openUrl = (url: string): void => nativeAPI.openUrl(url);
 
   static selectFileDialog = (): Promise<any> => nativeAPI.selectFileDialog();

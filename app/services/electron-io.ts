@@ -849,6 +849,8 @@ export default class ElectronIO {
     this.electron.shell.openExternal(url);
   };
 
+  resolveFilePath = (filePath: string): string => pathLib.resolve(filePath);
+
   selectFileDialog = (): Promise<any> => {
     const options = {
       /* filters: [
