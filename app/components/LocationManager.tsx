@@ -17,7 +17,7 @@
  *
  */
 
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { bindActionCreators } from 'redux';
 import uuidv1 from 'uuid';
 import classNames from 'classnames';
@@ -142,23 +142,6 @@ interface Props {
   resetProgress: () => void;
 }
 
-interface State {
-  locationDirectoryContextMenuAnchorEl?: Object | null;
-  locationContextMenuOpened?: boolean;
-  directoryContextMenuAnchorEl?: Object | null;
-  directoryContextMenuOpened?: boolean;
-  selectedLocation: Location | null;
-  selectedDirectoryPath?: string | null;
-  isCreateLocationDialogOpened?: boolean;
-  isEditLocationDialogOpened?: boolean;
-  isDeleteLocationDialogOpened?: boolean;
-  isSelectDirectoryDialogOpened?: boolean;
-  createLocationDialogKey: string;
-  isCreateDirectoryDialogOpened?: boolean;
-  locationManagerMenuOpened: boolean;
-  locationManagerMenuAnchorEl: Object | null;
-}
-
 type SubFolder = {
   uuid: string;
   name: string;
@@ -166,31 +149,73 @@ type SubFolder = {
   children?: Array<SubFolder>;
 };
 
-class LocationManager extends React.Component<Props, State> {
-  constructor(props) {
-    super(props);
-    this.directoryTreeRef = [];
-  }
+const LocationManager = (props: Props) => {
+  const directoryTreeRef = useRef([]);
+  const [
+    locationDirectoryContextMenuAnchorEl,
+    setLocationDirectoryContextMenuAnchorEl
+  ] = useState<null | HTMLElement>(null);
+  const [
+    directoryContextMenuAnchorEl,
+    setDirectoryContextMenuAnchorEl
+  ] = useState<null | HTMLElement>(null);
+  const [
+    locationManagerMenuAnchorEl,
+    setLocationManagerMenuAnchorEl
+  ] = useState<null | HTMLElement>(null);
+  const [selectedLocation, setSelectedLocation] = useState<Location>(null);
+  const [selectedDirectoryPath, setSelectedDirectoryPath] = useState<string>(
+    null
+  );
+  const [
+    isCreateLocationDialogOpened,
+    setCreateLocationDialogOpened
+  ] = useState<boolean>(false);
+  const [isEditLocationDialogOpened, setEditLocationDialogOpened] = useState<
+    boolean
+  >(false);
+  const [
+    isDeleteLocationDialogOpened,
+    setDeleteLocationDialogOpened
+  ] = useState<boolean>(false);
+  const [
+    isCreateDirectoryDialogOpened,
+    setCreateDirectoryDialogOpened
+  ] = useState<boolean>(false);
+  const [
+    isSelectDirectoryDialogOpened,
+    setSelectDirectoryDialogOpened
+  ] = useState<boolean>(false);
 
-  state = {
-    locationDirectoryContextMenuAnchorEl: null,
-    locationContextMenuOpened: false,
-    directoryContextMenuAnchorEl: null,
-    directoryContextMenuOpened: false,
-    selectedLocation: null,
-    selectedDirectoryPath: null,
-    isCreateLocationDialogOpened: false,
-    isEditLocationDialogOpened: false,
-    isDeleteLocationDialogOpened: false,
-    isCreateDirectoryDialogOpened: false,
-    isSelectDirectoryDialogOpened: false,
-    locationManagerMenuOpened: false,
-    locationManagerMenuAnchorEl: null,
+  useEffect(() => {
+    // directoryTreeRef.current = directoryTreeRef.current.slice(0, props.locations.length);
+    if (props.locations.length < 1) {
+      // init locations
+      const devicePaths = PlatformIO.getDevicePaths();
+
+      Object.keys(devicePaths).forEach(key => {
+        props.addLocation(
+          {
+            uuid: uuidv1(),
+            type: locationType.TYPE_LOCAL,
+            name: key, // TODO use i18n
+            path: devicePaths[key],
+            isDefault: AppConfig.isWeb && devicePaths[key] === '/files/', // Used for the web ts demo
+            isReadOnly: false,
+            persistIndex: false
+          },
+          false
+        );
+      });
+    }
+  }, []); // props.locations]);
+
+  /* state = {
     createLocationDialogKey: uuidv1(),
     editLocationDialogKey: uuidv1()
-  };
+  }; */
 
-  componentDidMount() {
+  /* componentDidMount() {
     if (this.props.locations.length < 1) {
       const devicePaths = PlatformIO.getDevicePaths();
 
@@ -209,35 +234,20 @@ class LocationManager extends React.Component<Props, State> {
         );
       });
     }
-  }
+  } */
 
-  handleCloseDialogs = () => {
-    this.setState({
-      isCreateLocationDialogOpened: false,
-      isEditLocationDialogOpened: false,
-      isDeleteLocationDialogOpened: false,
-      selectedDirectoryPath: undefined
-    });
-  };
-
-  showCreateLocationDialog = () => {
-    this.handleRequestCloseContextMenus();
-    this.setState({ isCreateLocationDialogOpened: true });
-  };
-
-  closeChromeExtDialog = () => {
+  /* const closeChromeExtDialog = () => {
     this.handleRequestCloseContextMenus();
     this.setState({
       isCreateLocationDialogOpened: false,
       isEditLocationDialogOpened: false,
       selectedDirectoryPath: undefined
     });
-  };
+  }; */
 
-  indexLocation = () => {
-    this.handleRequestCloseContextMenus();
-    const { selectedLocation } = this.state;
-    const { currentLocationId, createDirectoryIndex } = this.props;
+  const indexLocation = () => {
+    setLocationDirectoryContextMenuAnchorEl(null);
+    const { currentLocationId, createDirectoryIndex } = props;
     const isCurrentLocation =
       selectedLocation &&
       selectedLocation.uuid &&
@@ -266,32 +276,30 @@ class LocationManager extends React.Component<Props, State> {
     }
   };
 
-  moveLocationUp = () => {
-    this.handleRequestCloseContextMenus();
-    if (this.state.selectedLocation && this.state.selectedLocation.uuid) {
-      this.props.moveLocationUp(this.state.selectedLocation.uuid);
+  const moveLocationUp = () => {
+    setLocationDirectoryContextMenuAnchorEl(null);
+    if (selectedLocation && selectedLocation.uuid) {
+      props.moveLocationUp(selectedLocation.uuid);
     }
   };
 
-  moveLocationDown = () => {
-    this.handleRequestCloseContextMenus();
-    if (this.state.selectedLocation && this.state.selectedLocation.uuid) {
-      this.props.moveLocationDown(this.state.selectedLocation.uuid);
+  const moveLocationDown = () => {
+    setLocationDirectoryContextMenuAnchorEl(null);
+    if (selectedLocation && selectedLocation.uuid) {
+      props.moveLocationDown(selectedLocation.uuid);
     }
   };
 
-  showInFileManager = () => {
-    this.handleRequestCloseContextMenus();
-    this.props.openDirectory(
-      this.state.selectedLocation.path || this.state.selectedLocation.pathS[0]
-    );
+  const showInFileManager = () => {
+    setLocationDirectoryContextMenuAnchorEl(null);
+    props.openDirectory(selectedLocation.path || selectedLocation.paths[0]);
   };
 
-  closeLocation = () => {
-    this.handleRequestCloseContextMenus();
-    if (this.state.selectedLocation && this.state.selectedLocation.uuid) {
-      this.props.closeLocation(this.state.selectedLocation.uuid);
-      this.directoryTreeRef[this.state.selectedLocation.uuid].closeLocation();
+  const closeLocation = () => {
+    setLocationDirectoryContextMenuAnchorEl(null);
+    if (selectedLocation && selectedLocation.uuid) {
+      props.closeLocation(selectedLocation.uuid);
+      directoryTreeRef.current[selectedLocation.uuid].closeLocation();
       // this.directoryTreeRef[this.state.selectedLocation.uuid] = undefined;
       // this.directoryTreeRef[this.state.selectedLocation.uuid].closeLocation();
       /* this.setState({
@@ -300,17 +308,17 @@ class LocationManager extends React.Component<Props, State> {
     }
   };
 
-  showEditLocationDialog = () => {
-    this.handleRequestCloseContextMenus();
-    this.setState({ isEditLocationDialogOpened: true });
+  const showEditLocationDialog = () => {
+    setLocationDirectoryContextMenuAnchorEl(null);
+    setEditLocationDialogOpened(true);
   };
 
-  showDeleteLocationDialog = () => {
-    this.handleRequestCloseContextMenus();
-    this.setState({ isDeleteLocationDialogOpened: true });
+  const showDeleteLocationDialog = () => {
+    setLocationDirectoryContextMenuAnchorEl(null);
+    setDeleteLocationDialogOpened(true);
   };
 
-  handleDirectoryContextMenu = (
+  /* handleDirectoryContextMenu = (
     event: React.ChangeEvent<HTMLInputElement>,
     directoryPath: string
   ) => {
@@ -319,46 +327,36 @@ class LocationManager extends React.Component<Props, State> {
       directoryContextMenuAnchorEl: event.currentTarget,
       selectedDirectoryPath: directoryPath
     });
-  };
+  }; */
 
-  toggleDirectoryMenuClose = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const opened = this.state.directoryContextMenuOpened;
-    this.setState({
-      directoryContextMenuOpened: !opened,
-      directoryContextMenuAnchorEl: event ? event.currentTarget : null
-    });
-  };
-
-  createNewDirectoryExt = (path: string) => {
-    this.setState({
+  const createNewDirectoryExt = (path: string) => {
+    setCreateDirectoryDialogOpened(true);
+    setSelectedDirectoryPath(path);
+    /* this.setState({
       isCreateDirectoryDialogOpened: true,
       selectedDirectoryPath: path
-    });
+    }); */
   };
 
-  closeNewDirectoryDialog = () => {
-    this.setState({ isCreateDirectoryDialogOpened: false });
-  };
-
-  showSelectDirectoryDialog = () => {
-    this.setState({
+  const showSelectDirectoryDialog = () => {
+    setSelectDirectoryDialogOpened(true);
+    setSelectedDirectoryPath('');
+    /* this.setState({
       isSelectDirectoryDialogOpened: true,
       selectedDirectoryPath: ''
-    });
+    }); */
   };
 
-  chooseDirectoryPath = (currentPath: string) => {
-    this.setState({
+  const chooseDirectoryPath = (currentPath: string) => {
+    setSelectDirectoryDialogOpened(true);
+    setSelectedDirectoryPath(currentPath);
+    /* this.setState({
       isSelectDirectoryDialogOpened: false,
       selectedDirectoryPath: currentPath
-    });
+    }); */
   };
 
-  closeSelectDirectoryExtDialog = () => {
-    this.setState({ isSelectDirectoryDialogOpened: false });
-  };
-
-  handleRequestCloseContextMenus = () => {
+  /* const handleRequestCloseContextMenus = () => {
     this.setState({
       directoryContextMenuOpened: false,
       directoryContextMenuAnchorEl: null,
@@ -367,31 +365,33 @@ class LocationManager extends React.Component<Props, State> {
       // selectedLocation: null,
       // selectedDirectoryPath: null,
     });
-  };
+  }; */
 
-  handleLocationContextMenuClick = (event: any, location: Location) => {
+  const handleLocationContextMenuClick = (event: any, location: Location) => {
     event.preventDefault();
     event.stopPropagation();
-    this.setState({
+    setLocationDirectoryContextMenuAnchorEl(event.currentTarget);
+    setSelectedLocation(location);
+    /* this.setState({
       locationContextMenuOpened: true,
       locationDirectoryContextMenuAnchorEl: event.currentTarget,
       selectedLocation: location
-    });
+    }); */
   };
 
   // todo https://stackoverflow.com/questions/37949981/call-child-method-from-parent
   // const directoryTreeRef = useRef();
 
-  handleLocationClick = (location: Location) => {
-    this.directoryTreeRef[location.uuid].changeLocation(location);
-    if (location.uuid === this.props.currentLocationId) {
-      this.props.loadDirectoryContent(location.path || location.paths[0]);
+  const handleLocationClick = (location: Location) => {
+    directoryTreeRef.current[location.uuid].changeLocation(location);
+    if (location.uuid === props.currentLocationId) {
+      props.loadDirectoryContent(location.path || location.paths[0]);
     } else {
       // this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
-      this.props.setSelectedEntries([]);
-      this.props.openLocation(location);
-      if (this.props.hideDrawer) {
-        this.props.hideDrawer();
+      props.setSelectedEntries([]);
+      props.openLocation(location);
+      if (props.hideDrawer) {
+        props.hideDrawer();
       }
     }
 
@@ -402,26 +402,28 @@ class LocationManager extends React.Component<Props, State> {
     // }
   };
 
-  reloadDirectory = () => {
+  /* const reloadDirectory = () => {
     this.handleRequestCloseContextMenus();
     if (this.state.selectedDirectoryPath) {
       this.props.loadDirectoryContent(this.state.selectedDirectoryPath);
     }
+  }; */
+
+  const resetState = dialogKey => {
+    // @ts-ignore
+    /* this.setState({
+      [dialogKey]: uuidv1()
+    }); */
   };
 
-  resetState = dialogKey => {
-    // @ts-ignore
-    this.setState({
-      [dialogKey]: uuidv1()
-    });
-  };
+  // const handleFileMoveDropMemo = useMemo(() => handleFileMoveDrop, []);
 
   /**
    * https://github.com/react-component/table/blob/master/examples/react-dnd.js
    * @param item
    * @param monitor
    */
-  handleFileMoveDrop = (item, monitor) => {
+  const handleFileMoveDrop = (item, monitor) => {
     if (monitor) {
       const { path, selectedEntries } = monitor.getItem();
       const arrPath = [];
@@ -433,8 +435,8 @@ class LocationManager extends React.Component<Props, State> {
       } else {
         arrPath.push(path);
       }
-      if (this.props.isReadOnlyMode) {
-        this.props.showNotification(
+      if (props.isReadOnlyMode) {
+        props.showNotification(
           i18n.t('core:dndDisabledReadOnlyMode'),
           'error',
           true
@@ -442,7 +444,7 @@ class LocationManager extends React.Component<Props, State> {
         return;
       }
       if (!AppConfig.isWin && !path.startsWith('/')) {
-        this.props.showNotification(
+        props.showNotification(
           i18n.t('Moving file not possible'),
           'error',
           true
@@ -450,7 +452,7 @@ class LocationManager extends React.Component<Props, State> {
         return;
       }
       if (AppConfig.isWin && !path.substr(1).startsWith(':')) {
-        this.props.showNotification(
+        props.showNotification(
           i18n.t('Moving file not possible'),
           'error',
           true
@@ -473,17 +475,17 @@ class LocationManager extends React.Component<Props, State> {
         if (targetLocation.type === locationType.TYPE_CLOUD) {
           PlatformIO.enableObjectStoreSupport(targetLocation)
             .then(() => {
-              this.props.resetProgress();
-              this.props
-                .uploadFiles(arrPath, targetPath, this.props.onUploadProgress)
+              props.resetProgress();
+              props
+                .uploadFiles(arrPath, targetPath, props.onUploadProgress)
                 .then((fsEntries: Array<FileSystemEntry>) => {
-                  this.props.reflectCreateEntries(fsEntries);
+                  props.reflectCreateEntries(fsEntries);
                   return true;
                 })
                 .catch(error => {
                   console.log('uploadFiles', error);
                 });
-              this.props.toggleUploadDialog();
+              props.toggleUploadDialog();
               return true;
             })
             .catch(error => {
@@ -491,15 +493,15 @@ class LocationManager extends React.Component<Props, State> {
             });
         } else if (targetLocation.type === locationType.TYPE_LOCAL) {
           PlatformIO.disableObjectStoreSupport();
-          this.props.moveFiles(arrPath, targetPath);
+          props.moveFiles(arrPath, targetPath);
         }
-        this.props.setSelectedEntries([]);
+        props.setSelectedEntries([]);
       }
     }
   };
 
   // <Tooltip id="tooltip-icon" title={i18n.t('core:moreOperations')} placement="bottom"></Tooltip>
-  renderLocation = (location: Location) => {
+  const renderLocation = (location: Location) => {
     const isCloudLocation = location.type === locationType.TYPE_CLOUD;
 
     return (
@@ -507,9 +509,9 @@ class LocationManager extends React.Component<Props, State> {
         <ListItem
           data-tid={'location_' + location.name.replace(/ /g, '_')}
           className={
-            this.props.currentLocationId === location.uuid
-              ? this.props.classes.listItemSelected
-              : this.props.classes.listItem
+            props.currentLocationId === location.uuid
+              ? props.classes.listItemSelected
+              : props.classes.listItem
           }
           title={
             location.isDefault
@@ -518,9 +520,9 @@ class LocationManager extends React.Component<Props, State> {
               : location.path || location.paths[0]
           }
           button
-          onClick={() => this.handleLocationClick(location)}
+          onClick={() => handleLocationClick(location)}
           onContextMenu={event =>
-            this.handleLocationContextMenuClick(event, location)
+            handleLocationContextMenuClick(event, location)
           }
         >
           <ListItemIcon
@@ -528,21 +530,30 @@ class LocationManager extends React.Component<Props, State> {
             //   e.preventDefault();
             //   this.loadSubDirectories(location, 1);
             // }}
-            style={{ minWidth: 'auto' }}
+            style={{
+              minWidth: 'auto'
+            }}
           >
             {isCloudLocation ? (
-              <CloudLocationIcon className={this.props.classes.icon} />
+              <CloudLocationIcon className={props.classes.icon} />
             ) : (
-              <LocationIcon className={this.props.classes.icon} />
+              <LocationIcon className={props.classes.icon} />
             )}
           </ListItemIcon>
 
           {isCloudLocation && !AppConfig.isElectron ? (
-            <div style={{ maxWidth: 250 }}>
+            <div
+              style={{
+                maxWidth: 250
+              }}
+            >
               <Typography
                 variant="inherit"
-                style={{ paddingLeft: 5, paddingRight: 5 }}
-                className={this.props.classes.header}
+                style={{
+                  paddingLeft: 5,
+                  paddingRight: 5
+                }}
+                className={props.classes.header}
                 data-tid="locationTitleElement"
                 noWrap
               >
@@ -552,15 +563,22 @@ class LocationManager extends React.Component<Props, State> {
           ) : (
             <TargetMoveFileBox
               accepts={[DragItemTypes.FILE]}
-              onDrop={this.handleFileMoveDrop}
+              onDrop={handleFileMoveDrop}
               path={location.path || location.paths[0]}
               location={location}
             >
-              <div style={{ maxWidth: 250 }}>
+              <div
+                style={{
+                  maxWidth: 250
+                }}
+              >
                 <Typography
                   variant="inherit"
-                  style={{ paddingLeft: 5, paddingRight: 5 }}
-                  className={this.props.classes.header}
+                  style={{
+                    paddingLeft: 5,
+                    paddingRight: 5
+                  }}
+                  className={props.classes.header}
                   data-tid="locationTitleElement"
                   noWrap
                 >
@@ -577,10 +595,10 @@ class LocationManager extends React.Component<Props, State> {
                 edge="end"
                 data-tid={'locationMoreButton_' + location.name}
                 onClick={event =>
-                  this.handleLocationContextMenuClick(event, location)
+                  handleLocationContextMenuClick(event, location)
                 }
                 onContextMenu={event =>
-                  this.handleLocationContextMenuClick(event, location)
+                  handleLocationContextMenuClick(event, location)
                 }
               >
                 {location.isDefault && (
@@ -592,224 +610,220 @@ class LocationManager extends React.Component<Props, State> {
           )}
         </ListItem>
         <DirectoryTreeView
+          // key={location.uuid} TODO dont display not expanded
           ref={dirTree => {
-            this.directoryTreeRef[location.uuid] = dirTree;
+            if (dirTree && !(location.uuid in directoryTreeRef.current)) {
+              directoryTreeRef.current[location.uuid] = dirTree;
+            }
           }}
-          classes={this.props.classes}
-          loadDirectoryContent={this.props.loadDirectoryContent}
+          classes={props.classes}
+          loadDirectoryContent={props.loadDirectoryContent}
           location={location}
-          showUnixHiddenEntries={this.props.showUnixHiddenEntries}
-          moveFiles={this.props.moveFiles}
-          handleFileMoveDrop={this.handleFileMoveDrop}
+          showUnixHiddenEntries={props.showUnixHiddenEntries}
+          moveFiles={props.moveFiles}
+          handleFileMoveDrop={handleFileMoveDrop}
         />
       </div>
     );
   };
 
-  handleLocationManagerMenu = (event: any) => {
-    this.setState({
-      locationManagerMenuOpened: true,
-      locationManagerMenuAnchorEl: event.currentTarget
-    });
+  const handleLocationManagerMenu = (event: any) => {
+    setLocationManagerMenuAnchorEl(event.currentTarget);
   };
 
-  handleCloseLocationManagerMenu = () => {
-    this.setState({ locationManagerMenuOpened: false });
+  const handleCloseLocationManagerMenu = () => {
+    setLocationManagerMenuAnchorEl(null);
   };
 
-  render() {
-    const { classes } = this.props;
-    return (
-      <div className={classes.panel} style={this.props.style}>
-        <CustomLogo />
-        <div className={classes.toolbar}>
-          <Typography
-            className={classNames(classes.panelTitle, classes.header)}
-            variant="subtitle1"
+  const { classes } = props;
+  return (
+    <div className={classes.panel} style={props.style}>
+      <CustomLogo />
+      <div className={classes.toolbar}>
+        <Typography
+          className={classNames(classes.panelTitle, classes.header)}
+          variant="subtitle1"
+        >
+          {i18n.t('core:locationManager')}
+        </Typography>
+        <IconButton
+          data-tid="locationManagerMenu"
+          onClick={handleLocationManagerMenu}
+        >
+          <MoreVertIcon />
+        </IconButton>
+      </div>
+      <LocationManagerMenu
+        anchorEl={locationManagerMenuAnchorEl}
+        open={Boolean(locationManagerMenuAnchorEl)}
+        onClose={handleCloseLocationManagerMenu}
+        openURLExternally={props.openURLExternally}
+        showCreateLocationDialog={() => {
+          setLocationManagerMenuAnchorEl(null);
+          setCreateLocationDialogOpened(true);
+        }}
+        toggleOpenLinkDialog={props.toggleOpenLinkDialog}
+      />
+      {!AppConfig.locationsReadOnly && (
+        <div
+          style={{
+            width: '100%',
+            textAlign: 'center',
+            marginBottom: 10
+          }}
+        >
+          <Button
+            data-tid="createNewLocation"
+            onClick={() => setCreateLocationDialogOpened(true)}
+            title={i18n.t('core:createLocationTitle')}
+            className={classes.mainActionButton}
+            size="small"
+            variant="outlined"
+            color="primary"
+            style={{ width: '95%' }}
           >
-            {i18n.t('core:locationManager')}
-          </Typography>
-          <IconButton
-            data-tid="locationManagerMenu"
-            onClick={this.handleLocationManagerMenu}
-          >
-            <MoreVertIcon />
-          </IconButton>
+            {/* <CreateLocationIcon className={classNames(classes.leftIcon)} /> */}
+            {i18n.t('core:createLocationTitle')}
+          </Button>
         </div>
-        <LocationManagerMenu
-          anchorEl={this.state.locationManagerMenuAnchorEl}
-          open={this.state.locationManagerMenuOpened}
-          onClose={this.handleCloseLocationManagerMenu}
-          openURLExternally={this.props.openURLExternally}
-          showCreateLocationDialog={this.showCreateLocationDialog}
-          toggleOpenLinkDialog={this.props.toggleOpenLinkDialog}
-        />
-        {!AppConfig.locationsReadOnly && (
-          <div style={{ width: '100%', textAlign: 'center', marginBottom: 10 }}>
-            <Button
-              data-tid="createNewLocation"
-              onClick={this.showCreateLocationDialog}
-              title={i18n.t('core:createLocationTitle')}
-              className={classes.mainActionButton}
-              size="small"
-              variant="outlined"
-              color="primary"
-              style={{ width: '95%' }}
-            >
-              {/* <CreateLocationIcon className={classNames(classes.leftIcon)} /> */}
-              {i18n.t('core:createLocationTitle')}
-            </Button>
-          </div>
+      )}
+      <div>
+        {isCreateLocationDialogOpened && (
+          <CreateLocationDialogAsync
+            // key={createLocationDialogKey}
+            resetState={resetState}
+            open={isCreateLocationDialogOpened}
+            onClose={() => setCreateLocationDialogOpened(false)}
+            addLocation={props.addLocation}
+            showSelectDirectoryDialog={showSelectDirectoryDialog}
+          />
         )}
-        <div>
-          {this.state.isCreateLocationDialogOpened && (
-            <CreateLocationDialogAsync
-              key={this.state.createLocationDialogKey}
-              resetState={this.resetState}
-              open={this.state.isCreateLocationDialogOpened}
-              onClose={this.handleCloseDialogs}
-              addLocation={this.props.addLocation}
-              showSelectDirectoryDialog={this.showSelectDirectoryDialog}
-            />
-          )}
-          {this.state.isEditLocationDialogOpened && (
-            <EditLocationDialogAsync
-              key={this.state.editLocationDialogKey}
-              resetState={this.resetState}
-              open={this.state.isEditLocationDialogOpened}
-              onClose={this.handleCloseDialogs}
-              location={this.state.selectedLocation}
-              editLocation={this.props.editLocation}
-              showSelectDirectoryDialog={this.showSelectDirectoryDialog}
-              selectedDirectoryPath={this.state.selectedDirectoryPath}
-            />
-          )}
-          {this.state.isDeleteLocationDialogOpened && (
-            <ConfirmDialog
-              open={this.state.isDeleteLocationDialogOpened}
-              onClose={this.handleCloseDialogs}
-              title={i18n.t('core:deleteLocationTitleAlert')}
-              content={i18n.t('core:deleteLocationContentAlert', {
-                locationName: this.state.selectedLocation
-                  ? this.state.selectedLocation.name
-                  : ''
-              })}
-              confirmCallback={result => {
-                if (result && this.state.selectedLocation) {
-                  this.props.removeLocation(this.state.selectedLocation);
-                  this.directoryTreeRef[
-                    this.state.selectedLocation.uuid
-                  ].removeLocation();
-                }
-              }}
-              cancelDialogTID="cancelDeleteLocationDialog"
-              confirmDialogTID="confirmDeleteLocationDialog"
-            />
-          )}
-          {this.state.isSelectDirectoryDialogOpened && (
-            <SelectDirectoryDialog
-              open={this.state.isSelectDirectoryDialogOpened}
-              onClose={this.closeSelectDirectoryExtDialog}
-              createNewDirectoryExt={this.createNewDirectoryExt}
-              chooseDirectoryPath={this.chooseDirectoryPath}
-              selectedDirectoryPath={this.state.selectedDirectoryPath}
-            />
-          )}
-          {this.state.isCreateDirectoryDialogOpened && (
-            <CreateDirectoryDialog
-              open={this.state.isCreateDirectoryDialogOpened}
-              onClose={this.closeNewDirectoryDialog}
-              selectedDirectoryPath={this.state.selectedDirectoryPath}
-            />
-          )}
-          <Menu
-            anchorEl={this.state.locationDirectoryContextMenuAnchorEl}
-            open={this.state.locationContextMenuOpened}
-            onClose={this.handleRequestCloseContextMenus}
-          >
-            <MenuItem
-              data-tid="editLocation"
-              onClick={this.showEditLocationDialog}
-            >
-              <ListItemIcon>
-                <EditIcon />
-              </ListItemIcon>
-              <ListItemText primary={i18n.t('core:editLocationTitle')} />
-            </MenuItem>
-            <MenuItem data-tid="indexLocation" onClick={this.indexLocation}>
-              <ListItemIcon>
-                <RefreshIcon />
-              </ListItemIcon>
-              <ListItemText primary={i18n.t('core:indexLocation')} />
-            </MenuItem>
-            <MenuItem data-tid="moveLocationUp" onClick={this.moveLocationUp}>
-              <ListItemIcon>
-                <ArrowUpwardIcon />
-              </ListItemIcon>
-              <ListItemText primary={i18n.t('core:moveUp')} />
-            </MenuItem>
-            <MenuItem
-              data-tid="moveLocationDown"
-              onClick={this.moveLocationDown}
-            >
-              <ListItemIcon>
-                <ArrowDownwardIcon />
-              </ListItemIcon>
-              <ListItemText primary={i18n.t('core:moveDown')} />
-            </MenuItem>
-            <MenuItem
-              data-tid="removeLocation"
-              onClick={this.showDeleteLocationDialog}
-            >
-              <ListItemIcon>
-                <DeleteIcon />
-              </ListItemIcon>
-              <ListItemText primary={i18n.t('core:removeLocation')} />
-            </MenuItem>
-            <MenuItem
-              data-tid="showInFileManager"
-              onClick={this.showInFileManager}
-            >
-              <ListItemIcon>
-                <OpenFolderNativelyIcon />
-              </ListItemIcon>
-              <ListItemText primary={i18n.t('core:showInFileManager')} />
-            </MenuItem>
-            <MenuItem data-tid="removeLocation" onClick={this.closeLocation}>
-              <ListItemIcon>
-                <CloseIcon />
-              </ListItemIcon>
-              <ListItemText primary={i18n.t('core:closeLocation')} />
-            </MenuItem>
-          </Menu>
-          <List
-            className={classes.locationListArea}
-            data-tid="locationList"
-            style={{
-              maxHeight: 'calc(100vh - 175px)',
-              // @ts-ignore
-              overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+        {isEditLocationDialogOpened && (
+          <EditLocationDialogAsync
+            // key={this.state.editLocationDialogKey}
+            resetState={resetState}
+            open={isEditLocationDialogOpened}
+            onClose={() => setEditLocationDialogOpened(false)}
+            location={selectedLocation}
+            editLocation={props.editLocation}
+            showSelectDirectoryDialog={showSelectDirectoryDialog}
+            selectedDirectoryPath={selectedDirectoryPath}
+          />
+        )}
+        {isDeleteLocationDialogOpened && (
+          <ConfirmDialog
+            open={isDeleteLocationDialogOpened}
+            onClose={() => setDeleteLocationDialogOpened(false)}
+            title={i18n.t('core:deleteLocationTitleAlert')}
+            content={i18n.t('core:deleteLocationContentAlert', {
+              locationName: selectedLocation ? selectedLocation.name : ''
+            })}
+            confirmCallback={result => {
+              if (result && selectedLocation) {
+                props.removeLocation(selectedLocation);
+                directoryTreeRef.current[
+                  selectedLocation.uuid
+                ].removeLocation();
+              }
             }}
+            cancelDialogTID="cancelDeleteLocationDialog"
+            confirmDialogTID="confirmDeleteLocationDialog"
+          />
+        )}
+        {isSelectDirectoryDialogOpened && (
+          <SelectDirectoryDialog
+            open={isSelectDirectoryDialogOpened}
+            onClose={() => setSelectDirectoryDialogOpened(false)}
+            createNewDirectoryExt={createNewDirectoryExt}
+            chooseDirectoryPath={chooseDirectoryPath}
+            selectedDirectoryPath={selectedDirectoryPath}
+          />
+        )}
+        {isCreateDirectoryDialogOpened && (
+          <CreateDirectoryDialog
+            open={isCreateDirectoryDialogOpened}
+            onClose={() => setCreateDirectoryDialogOpened(false)}
+            selectedDirectoryPath={selectedDirectoryPath}
+          />
+        )}
+        <Menu
+          anchorEl={locationDirectoryContextMenuAnchorEl}
+          open={Boolean(locationDirectoryContextMenuAnchorEl)}
+          onClose={() => setLocationDirectoryContextMenuAnchorEl(null)}
+        >
+          <MenuItem data-tid="editLocation" onClick={showEditLocationDialog}>
+            <ListItemIcon>
+              <EditIcon />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:editLocationTitle')} />
+          </MenuItem>
+          <MenuItem data-tid="indexLocation" onClick={indexLocation}>
+            <ListItemIcon>
+              <RefreshIcon />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:indexLocation')} />
+          </MenuItem>
+          <MenuItem data-tid="moveLocationUp" onClick={moveLocationUp}>
+            <ListItemIcon>
+              <ArrowUpwardIcon />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:moveUp')} />
+          </MenuItem>
+          <MenuItem data-tid="moveLocationDown" onClick={moveLocationDown}>
+            <ListItemIcon>
+              <ArrowDownwardIcon />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:moveDown')} />
+          </MenuItem>
+          <MenuItem
+            data-tid="removeLocation"
+            onClick={showDeleteLocationDialog}
           >
-            {this.props.locations.map(this.renderLocation)}
-          </List>
-        </div>
-        <DirectoryMenu
-          open={this.state.directoryContextMenuOpened}
-          onClose={this.toggleDirectoryMenuClose}
-          anchorEl={this.state.directoryContextMenuAnchorEl}
-          directoryPath={this.state.selectedDirectoryPath}
-          loadDirectoryContent={this.props.loadDirectoryContent}
-          openDirectory={this.props.openDirectory}
-          openFsEntry={this.props.openFsEntry}
-          reflectCreateEntry={this.props.reflectCreateEntry}
-          deleteDirectory={this.props.deleteDirectory}
-          classes={this.props.classes}
-        />
+            <ListItemIcon>
+              <DeleteIcon />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:removeLocation')} />
+          </MenuItem>
+          <MenuItem data-tid="showInFileManager" onClick={showInFileManager}>
+            <ListItemIcon>
+              <OpenFolderNativelyIcon />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:showInFileManager')} />
+          </MenuItem>
+          <MenuItem data-tid="removeLocation" onClick={closeLocation}>
+            <ListItemIcon>
+              <CloseIcon />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:closeLocation')} />
+          </MenuItem>
+        </Menu>
+        <List
+          className={classes.locationListArea}
+          data-tid="locationList"
+          style={{
+            maxHeight: 'calc(100vh - 175px)',
+            // @ts-ignore
+            overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+          }}
+        >
+          {props.locations.map(renderLocation)}
+        </List>
       </div>
-    );
-  }
-}
+      <DirectoryMenu
+        open={Boolean(directoryContextMenuAnchorEl)}
+        onClose={() => setDirectoryContextMenuAnchorEl(null)}
+        anchorEl={directoryContextMenuAnchorEl}
+        directoryPath={selectedDirectoryPath}
+        loadDirectoryContent={props.loadDirectoryContent}
+        openDirectory={props.openDirectory}
+        openFsEntry={props.openFsEntry}
+        reflectCreateEntry={props.reflectCreateEntry}
+        deleteDirectory={props.deleteDirectory}
+        classes={props.classes}
+      />
+    </div>
+  );
+};
 
 function mapStateToProps(state) {
   return {
