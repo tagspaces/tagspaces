@@ -156,7 +156,7 @@ export async function setSelectorKeys(selector, value) {
 
   // await elemInput.clearValue();
   const oldValue = await clearInputValue(elemInput);
-  // await element.click();
+  await element.click();
   await elemInput.keys(value);
   return oldValue;
 }
