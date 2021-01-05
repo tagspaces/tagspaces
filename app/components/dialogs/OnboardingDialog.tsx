@@ -58,7 +58,7 @@ interface Props {
   // setFirstRun: (isFirstRun: boolean) => void,
   setPersistTagsInSidecarFile: (isPersistTagsInSidecar: boolean) => void;
   setCurrentTheme: (theme: string) => void;
-  openURLExternally: (url: string) => void;
+  openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   onClose: () => void;
 }
 
@@ -238,7 +238,7 @@ const OnboardingDialog = (props: Props) => {
             <Button
               style={{ marginTop: 20 }}
               onClick={() => {
-                props.openURLExternally(AppConfig.links.webClipper);
+                props.openURLExternally(AppConfig.links.webClipper, true);
               }}
               variant="contained"
               color="primary"

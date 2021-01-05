@@ -6,11 +6,11 @@ import {
   defaultLocationPath,
   defaultLocationName,
   closeFileProperties,
-  createMinioLocation
+  createMinioLocation,
+  deleteFirstFile
 } from './location.helpers';
 import {
   reloadDirectory,
-  openEntry,
   tsFolder,
   createNewDirectory,
   newHTMLFile,
@@ -50,47 +50,52 @@ describe('TST51 - Perspective Grid [general]', () => {
     await closeFileProperties();
   });
 
-  it('TST0501 - Create HTML file [electron]', async () => {
-    await createNewDirectory();
+  it('TST0501 - Create HTML file', async () => {
+    /*await createNewDirectory();
     await reloadDirectory();
-    await global.client.pause(500);
-    await openEntry(testFolder);
+    // await global.client.pause(500);
+    await expectElementExist('[data-tid=fsEntryName_' + testFolder + ']');
+    await doubleClickOn('[data-tid=fsEntryName_' + testFolder + ']');*/
 
+    //await setSettings('[data-tid=settingsSetUseTrashCan]');
+    //await global.client.pause(500);
     await createNewDirectory();
-    await reloadDirectory();
-    await global.client.pause(500);
-    await openEntry(testFolder);
+    // await reloadDirectory();
+    // await global.client.pause(500);
+    await doubleClickOn('[data-tid=fsEntryName_' + testFolder + ']');
     // create new file
     await newHTMLFile();
     await closeOpenedFile();
-    await reloadDirectory();
+    // await reloadDirectory();
     await expectElementExist(selectorFile, true);
-    await global.client.pause(500);
-    await returnDirectoryBack();
+    /*await global.client.pause(500);
+    await returnDirectoryBack();*/
     // delete directory
-    await global.client.pause(500);
+
+    await deleteFirstFile();
     await deleteDirectory(testFolder);
     //    await returnDirectoryBack();
+    await global.client.pause(500);
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       false
     );
   });
 
-  it('TST0502 - Create MD file [electron]', async () => {
+  it('TST0502 - Create MD file', async () => {
     await createNewDirectory();
-    await reloadDirectory();
-    await global.client.pause(500);
-    await openEntry(testFolder);
+    // await reloadDirectory();
+    // await global.client.pause(500);
+    await doubleClickOn('[data-tid=fsEntryName_' + testFolder + ']');
 
     // create new file
     await newMDFile();
     await closeOpenedFile();
-    await reloadDirectory();
+    // await reloadDirectory();
     await expectElementExist(selectorFile, true);
     await global.client.pause(500);
 
-    // delete directory
+    await deleteFirstFile();
     await deleteDirectory(testFolder);
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
@@ -98,20 +103,20 @@ describe('TST51 - Perspective Grid [general]', () => {
     );
   });
 
-  it('TST0502 - Create TEXT file [electron]', async () => {
+  it('TST0502 - Create TEXT file', async () => {
     await createNewDirectory();
-    await reloadDirectory();
-    await global.client.pause(500);
-    await openEntry(testFolder);
+    // await reloadDirectory();
+    // await global.client.pause(500);
+    await doubleClickOn('[data-tid=fsEntryName_' + testFolder + ']');
 
     // create new file
     await newTEXTFile();
     await closeOpenedFile();
-    await reloadDirectory();
+    // await reloadDirectory();
     await expectElementExist(selectorFile, true);
     await global.client.pause(500);
 
-    // delete directory
+    await deleteFirstFile();
     await deleteDirectory(testFolder);
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
@@ -119,14 +124,14 @@ describe('TST51 - Perspective Grid [general]', () => {
     );
   });
 
-  it('TST0510 - Generate thumbnail from Images [electron]', async () => {
+  it('TST0510 - Generate thumbnail from Images', async () => {
     // let filename = 'sample.jpg';
     // activate 'Show Hidden File' functionality in the general settings
     await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
     await global.client.pause(500);
     await reloadDirectory();
     await global.client.pause(500);
-    await openEntry(tsFolder);
+    await doubleClickOn('[data-tid=fsEntryName_' + tsFolder + ']');
 
     await searchEngine('jpg');
     // await openEntry('sample.jpg');
@@ -140,13 +145,13 @@ describe('TST51 - Perspective Grid [general]', () => {
     // expect(file).toBe(filename);
   });
 
-  it('TST0511 - Generate thumbnail from Videos [electron]', async () => {
+  it('TST0511 - Generate thumbnail from Videos', async () => {
     // activate 'Show Hidden File' functionality in the general settings
     await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
     await global.client.pause(500);
     await reloadDirectory();
     await global.client.pause(500);
-    await openEntry(tsFolder);
+    await doubleClickOn('[data-tid=fsEntryName_' + tsFolder + ']');
 
     await searchEngine('mp4');
     await doubleClickOn(perspectiveGridTable + firstFile);
@@ -154,13 +159,13 @@ describe('TST51 - Perspective Grid [general]', () => {
     //TODO expect
   });
 
-  it('TST0516 - Generate thumbnail from PDF [electron]', async () => {
+  it('TST0516 - Generate thumbnail from PDF', async () => {
     // activate 'Show Hidden File' functionality in the general settings
     await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
     await global.client.pause(500);
     await reloadDirectory();
     await global.client.pause(500);
-    await openEntry(tsFolder);
+    await doubleClickOn('[data-tid=fsEntryName_' + tsFolder + ']');
 
     await searchEngine('pdf');
     await doubleClickOn(perspectiveGridTable + firstFile);
@@ -168,13 +173,13 @@ describe('TST51 - Perspective Grid [general]', () => {
     //TODO expect
   });
 
-  it('TST0517 - Generate thumbnail from ODT [electron]', async () => {
+  it('TST0517 - Generate thumbnail from ODT', async () => {
     // activate 'Show Hidden File' functionality in the general settings
     await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
     await global.client.pause(500);
     await reloadDirectory();
     await global.client.pause(500);
-    await openEntry(tsFolder);
+    await doubleClickOn('[data-tid=fsEntryName_' + tsFolder + ']');
 
     await searchEngine('odt');
     await doubleClickOn(perspectiveGridTable + firstFile);
@@ -182,13 +187,13 @@ describe('TST51 - Perspective Grid [general]', () => {
     //TODO expect
   });
 
-  it('TST0519 - Generate thumbnail from TIFF [electron]', async () => {
+  it('TST0519 - Generate thumbnail from TIFF', async () => {
     // activate 'Show Hidden File' functionality in the general settings
     await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
     await global.client.pause(500);
     await reloadDirectory();
     await global.client.pause(500);
-    await openEntry(tsFolder);
+    await doubleClickOn('[data-tid=fsEntryName_' + tsFolder + ']');
 
     await searchEngine('tiff');
     // await openEntry('sample.jpg');
@@ -198,13 +203,13 @@ describe('TST51 - Perspective Grid [general]', () => {
     //TODO expect
   });
 
-  it('TST0520 - Generate thumbnail from PSD [electron]', async () => {
+  it('TST0520 - Generate thumbnail from PSD', async () => {
     // activate 'Show Hidden File' functionality in the general settings
     await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
     await global.client.pause(500);
     await reloadDirectory();
     await global.client.pause(500);
-    await openEntry(tsFolder);
+    await doubleClickOn('[data-tid=fsEntryName_' + tsFolder + ']');
 
     await searchEngine('psd');
     // await openEntry('sample.jpg');
@@ -214,13 +219,13 @@ describe('TST51 - Perspective Grid [general]', () => {
     //TODO expect
   });
 
-  it('TST0524 - Generate thumbnail from TXT [electron]', async () => {
+  it('TST0524 - Generate thumbnail from TXT', async () => {
     // activate 'Show Hidden File' functionality in the general settings
     await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
     await global.client.pause(500);
     await reloadDirectory();
     await global.client.pause(500);
-    await openEntry(tsFolder);
+    await doubleClickOn('[data-tid=fsEntryName_' + tsFolder + ']');
 
     await searchEngine('txt');
     // await openEntry('sample.jpg');
@@ -230,13 +235,13 @@ describe('TST51 - Perspective Grid [general]', () => {
     //TODO expect
   });
 
-  it('TST0523 - Generate thumbnail from HTML [electron]', async () => {
+  it('TST0523 - Generate thumbnail from HTML', async () => {
     // activate 'Show Hidden File' functionality in the general settings
     await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
     await global.client.pause(500);
     await reloadDirectory();
     await global.client.pause(500);
-    await openEntry(tsFolder);
+    await doubleClickOn('[data-tid=fsEntryName_' + tsFolder + ']');
 
     await searchEngine('html');
     // await openEntry('sample.jpg');
@@ -246,13 +251,13 @@ describe('TST51 - Perspective Grid [general]', () => {
     //TODO expect
   });
 
-  it('TST0522 - Generate thumbnail from URL [electron]', async () => {
+  it('TST0522 - Generate thumbnail from URL', async () => {
     // activate 'Show Hidden File' functionality in the general settings
     await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
     await global.client.pause(500);
     await reloadDirectory();
     await global.client.pause(500);
-    await openEntry(tsFolder);
+    await doubleClickOn('[data-tid=fsEntryName_' + tsFolder + ']');
 
     await searchEngine('url');
     // await openEntry('sample.jpg');

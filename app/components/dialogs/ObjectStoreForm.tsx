@@ -123,172 +123,162 @@ const styles: any = (theme: any) => ({
 
 interface Props {
   state: any;
-  handleChange: (name: string, value: any, action: string) => void;
+  handleChange: (name: string, value: any, action?: string) => void;
   handleInputChange: (event: any) => void;
+  switchSecretAccessKeyVisibility: () => void;
   classes: any;
   theme: any;
 }
-
-interface State {
-  showPassword: boolean;
-}
-
-class ObjectStoreForm extends React.Component<Props, State> {
-  state = { showPassword: false };
-
-  handleRegionChange = (inputValue: any, region: string, reason: string) => {
+const ObjectStoreForm = (props: Props) => {
+  function handleRegionChange(inputValue: any, region: string, reason: string) {
     if (reason === 'input') {
-      this.props.handleChange('region', region, reason);
+      props.handleChange('region', region, reason);
     } else if (reason === 'select-option') {
-      this.props.handleChange('region', region, reason);
+      props.handleChange('region', region, reason);
     }
     if (reason === 'clear') {
-      this.props.handleChange('region', '', reason);
+      props.handleChange('region', '', reason);
     }
-  };
+  }
 
-  handleClickShowPassword = () => {
-    this.setState(prevState => ({ showPassword: !prevState.showPassword }));
-  };
+  const { handleInputChange, switchSecretAccessKeyVisibility, state } = props;
 
-  render() {
-    const { handleInputChange, state } = this.props;
-
-    return (
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <FormControl fullWidth={true} error={state.cloudErrorTextName}>
-            <InputLabel htmlFor="storeName">
-              {i18n.t('core:createLocationName')}
-            </InputLabel>
-            <Input
-              required
-              autoFocus
-              margin="dense"
-              name="storeName"
-              fullWidth={true}
-              data-tid="locationName"
-              onChange={handleInputChange}
-              value={state.storeName}
-            />
-            {state.cloudErrorTextName && (
-              <FormHelperText>{i18n.t('core:invalidName')}</FormHelperText>
+  return (
+    <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <FormControl fullWidth={true} error={state.cloudErrorTextName}>
+          <InputLabel htmlFor="storeName">
+            {i18n.t('core:createLocationName')}
+          </InputLabel>
+          <Input
+            required
+            autoFocus
+            margin="dense"
+            name="storeName"
+            fullWidth={true}
+            data-tid="locationName"
+            onChange={handleInputChange}
+            value={state.storeName}
+          />
+          {/* {state.cloudErrorTextName && (
+          <FormHelperText>{i18n.t('core:invalidName')}</FormHelperText>
+          )} */}
+        </FormControl>
+      </Grid>
+      <Grid item xs={12}>
+        <FormControl fullWidth={true} error={state.cloudErrorTextPath}>
+          <InputLabel htmlFor="path">
+            {i18n.t('core:createLocationPath')}
+          </InputLabel>
+          <Input
+            margin="dense"
+            name="storePath"
+            fullWidth={true}
+            data-tid="locationPath"
+            onChange={handleInputChange}
+            value={state.storePath}
+          />
+          {/* {state.cloudErrorTextPath && (
+          <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>
+          )} */}
+        </FormControl>
+      </Grid>
+      <Grid item xs={12}>
+        <FormControl fullWidth={true} error={state.cloudErrorAccessKey}>
+          <InputLabel htmlFor="accessKeyId">
+            {i18n.t('core:accessKeyId')}
+          </InputLabel>
+          <Input
+            margin="dense"
+            name="accessKeyId"
+            fullWidth={true}
+            data-tid="accessKeyId"
+            onChange={handleInputChange}
+            value={state.accessKeyId}
+          />
+          {/* {state.cloudErrorAccessKey && (
+          <FormHelperText>{i18n.t('core:invalidAccessKey')}</FormHelperText>
+          )} */}
+        </FormControl>
+      </Grid>
+      <Grid item xs={12}>
+        <FormControl fullWidth={true} error={state.cloudErrorSecretAccessKey}>
+          <InputLabel htmlFor="secretAccessKey">
+            {i18n.t('core:secretAccessKey')}
+          </InputLabel>
+          <Input
+            margin="dense"
+            name="secretAccessKey"
+            type={state.showSecretAccessKey ? 'text' : 'password'}
+            fullWidth={true}
+            data-tid="secretAccessKey"
+            onChange={handleInputChange}
+            value={state.secretAccessKey}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={switchSecretAccessKeyVisibility}
+                >
+                  {state.showSecretAccessKey ? (
+                    <Visibility />
+                  ) : (
+                    <VisibilityOff />
+                  )}
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+          {/* {state.cloudErrorSecretAccessKey && (
+          <FormHelperText>
+            {i18n.t('core:invalidSecretAccessKey')}
+          </FormHelperText>
+          )} */}
+        </FormControl>
+      </Grid>
+      <Grid item xs={12}>
+        <FormControl fullWidth={true} error={state.cloudErrorBucketName}>
+          <InputLabel htmlFor="bucketName">
+            {i18n.t('core:bucketName')}
+          </InputLabel>
+          <Input
+            margin="dense"
+            name="bucketName"
+            fullWidth={true}
+            data-tid="bucketName"
+            onChange={handleInputChange}
+            value={state.bucketName}
+          />
+          {/* {state.cloudErrorBucketName && (
+          <FormHelperText>
+            {i18n.t('core:invalidBucketName')}
+          </FormHelperText>
+          )} */}
+        </FormControl>
+      </Grid>
+      <Grid item xs={12}>
+        <FormControl fullWidth={true} error={state.cloudErrorRegion}>
+          <Autocomplete
+            options={regions}
+            value={state.region}
+            freeSolo
+            onChange={handleRegionChange}
+            onInputChange={handleRegionChange}
+            placeholder={i18n.t('core:regionSearch')}
+            renderInput={params => (
+              <TextField
+                {...params}
+                label={i18n.t('core:regionSearch')}
+                margin="normal"
+              />
             )}
-          </FormControl>
-        </Grid>
-        <Grid item xs={12}>
-          <FormControl fullWidth={true} error={state.cloudErrorTextPath}>
-            <InputLabel htmlFor="path">
-              {i18n.t('core:createLocationPath')}
-            </InputLabel>
-            <Input
-              margin="dense"
-              name="storePath"
-              fullWidth={true}
-              data-tid="locationPath"
-              onChange={handleInputChange}
-              value={state.storePath}
-            />
-            {state.cloudErrorTextPath && (
-              <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>
-            )}
-          </FormControl>
-        </Grid>
-        <Grid item xs={12}>
-          <FormControl fullWidth={true} error={state.cloudErrorAccessKey}>
-            <InputLabel htmlFor="accessKeyId">
-              {i18n.t('core:accessKeyId')}
-            </InputLabel>
-            <Input
-              margin="dense"
-              name="accessKeyId"
-              fullWidth={true}
-              data-tid="accessKeyId"
-              onChange={handleInputChange}
-              value={state.accessKeyId}
-            />
-            {state.cloudErrorAccessKey && (
-              <FormHelperText>{i18n.t('core:invalidAccessKey')}</FormHelperText>
-            )}
-          </FormControl>
-        </Grid>
-        <Grid item xs={12}>
-          <FormControl fullWidth={true} error={state.cloudErrorSecretAccessKey}>
-            <InputLabel htmlFor="secretAccessKey">
-              {i18n.t('core:secretAccessKey')}
-            </InputLabel>
-            <Input
-              margin="dense"
-              name="secretAccessKey"
-              type={this.state.showPassword ? 'text' : 'password'}
-              fullWidth={true}
-              data-tid="secretAccessKey"
-              onChange={handleInputChange}
-              value={state.secretAccessKey}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={this.handleClickShowPassword}
-                  >
-                    {this.state.showPassword ? (
-                      <Visibility />
-                    ) : (
-                      <VisibilityOff />
-                    )}
-                  </IconButton>
-                </InputAdornment>
-              }
-            />
-            {state.cloudErrorSecretAccessKey && (
-              <FormHelperText>
-                {i18n.t('core:invalidSecretAccessKey')}
-              </FormHelperText>
-            )}
-          </FormControl>
-        </Grid>
-        <Grid item xs={12}>
-          <FormControl fullWidth={true} error={state.cloudErrorBucketName}>
-            <InputLabel htmlFor="bucketName">
-              {i18n.t('core:bucketName')}
-            </InputLabel>
-            <Input
-              margin="dense"
-              name="bucketName"
-              fullWidth={true}
-              data-tid="bucketName"
-              onChange={handleInputChange}
-              value={state.bucketName}
-            />
-            {state.cloudErrorBucketName && (
-              <FormHelperText>
-                {i18n.t('core:invalidBucketName')}
-              </FormHelperText>
-            )}
-          </FormControl>
-        </Grid>
-        <Grid item xs={12}>
-          <FormControl fullWidth={true} error={state.cloudErrorRegion}>
-            <Autocomplete
-              options={regions}
-              value={state.region}
-              freeSolo
-              onChange={this.handleRegionChange}
-              onInputChange={this.handleRegionChange}
-              placeholder={i18n.t('core:regionSearch')}
-              renderInput={params => (
-                <TextField
-                  {...params}
-                  label={i18n.t('core:regionSearch')}
-                  margin="normal"
-                />
-              )}
-            />
-            {state.cloudErrorRegion && (
-              <FormHelperText>{i18n.t('core:invalidRegion')}</FormHelperText>
-            )}
-          </FormControl>
-        </Grid>
+          />
+          {/* {state.cloudErrorRegion && (
+          <FormHelperText>{i18n.t('core:invalidRegion')}</FormHelperText>
+          )} */}
+        </FormControl>
+      </Grid>
+      {state.showAdvancedMode && (
         <Grid item xs={12}>
           <FormControl fullWidth={true}>
             <InputLabel htmlFor="endpointURL">
@@ -303,11 +293,32 @@ class ObjectStoreForm extends React.Component<Props, State> {
               onChange={handleInputChange}
               value={state.endpointURL}
             />
+            {/* {state.cloudErrorId && (
+          <FormHelperText>{i18n.t('core:missingId')}</FormHelperText>
+          )} */}
           </FormControl>
         </Grid>
-      </Grid>
-    );
-  }
-}
+      )}
+      {state.showAdvancedMode && (
+        <Grid item xs={12}>
+          <FormControl fullWidth={true}>
+            <InputLabel htmlFor="newuuid">
+              {i18n.t('core:locationId')}
+            </InputLabel>
+            <Input
+              margin="dense"
+              name="newuuid"
+              fullWidth={true}
+              data-tid="newuuid"
+              placeholder="Advanced setting"
+              onChange={handleInputChange}
+              value={state.newuuid}
+            />
+          </FormControl>
+        </Grid>
+      )}
+    </Grid>
+  );
+};
 
 export default withStyles(styles, { withTheme: true })(ObjectStoreForm);

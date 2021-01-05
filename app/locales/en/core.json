@@ -465,6 +465,7 @@
   "noFileButFoldersFound": "Some folders found! Turn on the folder visibility from the perspective's toolbar to view them.",
   "selectTags": "Select tags",
   "location": "Location",
+  "locationId": "Location ID",
   "folder": "Folder",
   "globalSearch": "Global",
   "objectStorage": "Object Storage (Amazon S3, Minio)",
@@ -484,5 +485,12 @@
   "choosePerspective": "Choose Perspective",
   "folderLimit": "Max. folders to be displayed",
   "filesLimit": "Max. files to be displayed in a folder",
+  "goback": "Go Back",
+  "goforward": "Go Forward",
+  "switchSimpleMode": "Simpe Mode",
+  "switchAdvancedMode": "Advanced Mode",
+  "openLink": "Open Link",
+  "invalidLink": "Invalid Link",
+  "link": "Link",
   "-": "-"
 }

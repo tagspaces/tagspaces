@@ -33,7 +33,6 @@ import ArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import FileDownloadIcon from '@material-ui/icons/AssignmentReturned';
 import DetailsIcon from '@material-ui/icons/Info';
 import ExpandIcon from '@material-ui/icons/SettingsEthernet';
-import FolderIcon from '@material-ui/icons/FolderOpen';
 import SplitPane from 'react-split-pane';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ShareIcon from '@material-ui/icons/Share';
@@ -95,11 +94,14 @@ const styles: any = (theme: any) => ({
   entryProperties: {
     display: 'inline',
     flex: '1 1 100%',
+    backgroundColor: theme.palette.background.default,
+    zIndex: 1,
     padding: '0 0 60px 0',
     height: '50%'
   },
   fileOpener: {
     width: '100%',
+    zIndex: 3,
     border: 0
   },
   toolbar: {
@@ -119,6 +121,7 @@ const styles: any = (theme: any) => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-start',
+    zIndex: 2,
     borderBottom: '1px solid ' + theme.palette.divider,
     overflowX: AppConfig.isFirefox ? 'auto' : 'overlay'
   },
@@ -132,15 +135,17 @@ const styles: any = (theme: any) => ({
   fileBadge: {
     color: 'white',
     backgroundColor: AppConfig.defaultFileColor,
-    padding: '2px 6px 0px 6px',
-    minHeight: 22,
-    marginRight: 5,
-    borderRadius: 5
+    padding: '2px 5px 0px 5px',
+    minHeight: 18,
+    fontSize: 13,
+    marginLeft: 3,
+    marginTop: -2,
+    borderRadius: 3
   },
   entryNameButton: {
-    paddingTop: 0,
+    paddingTop: 1,
     paddingRight: 0,
-    paddingLeft: 0,
+    paddingLeft: 6,
     paddingBottom: 0,
     minWidth: 20,
     height: 44,
@@ -180,7 +185,7 @@ interface Props {
   openPrevFile: (path: string) => void;
   openNextFile: (path: string) => void;
   openFileNatively: (path: string) => void;
-  openURLExternally: (url: string) => void;
+  openLink: (url: string) => void;
   showNotification: (
     text: string,
     notificationType?: string, // NotificationTypes
@@ -305,8 +310,6 @@ const EntryContainer = (props: Props) => {
   const handleMessage = (data: any) => {
     let message;
     let textFilePath;
-    let decodedURI;
-
     switch (data.command) {
       case 'showAlertDialog':
         message = data.title ? data.title : '';
@@ -326,16 +329,7 @@ const EntryContainer = (props: Props) => {
         break;
       case 'openLinkExternally':
         // console.log('Open link externally: ' + data.link);
-        decodedURI = decodeURIComponent(data.link);
-        if (
-          decodedURI.startsWith('http://') ||
-          decodedURI.startsWith('https://') ||
-          decodedURI.startsWith('file://')
-        ) {
-          props.openURLExternally(decodedURI);
-        } else {
-          console.log('Not supported URL format: ' + decodedURI);
-        }
+        props.openLink(data.link);
         break;
       case 'openFileNatively':
         console.log('Open file natively: ' + data.link);
@@ -898,13 +892,16 @@ const EntryContainer = (props: Props) => {
     //   fileTitle = fileTitle.substr(0, maxCharactersTitleLength) + '...';
     // }
 
+    const locale = '&locale=' + i18n.language;
+    const theme = '&theme=' + props.settings.currentTheme;
+
     if (openedFile.editMode && openedFile.editingExtensionPath) {
       fileOpenerURL =
         openedFile.editingExtensionPath +
         '/index.html?file=' +
         encodeURIComponent(openedFile.url ? openedFile.url : openedFile.path) +
-        '&locale=' +
-        i18n.language +
+        locale +
+        theme +
         '&edit=true' +
         (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
       // } else if (!currentEntry.isFile) { // TODO needed for loading folder's default html
@@ -914,8 +911,8 @@ const EntryContainer = (props: Props) => {
         openedFile.viewingExtensionPath +
         '/index.html?file=' +
         encodeURIComponent(openedFile.url ? openedFile.url : openedFile.path) +
-        '&locale=' +
-        i18n.language +
+        locale +
+        theme +
         (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
     }
     // this.shouldReload = false;
@@ -1090,12 +1087,21 @@ const EntryContainer = (props: Props) => {
               <Box className={classes.flexLeft}>
                 {openedFile.isFile ? (
                   <Button
-                    // onClick={togglePanel}
                     disabled
                     title={openedFile.url || openedFile.path}
                     aria-label={i18n.t('core:toggleEntryProperties')}
                     className={classes.entryNameButton}
                   >
+                    <Box
+                      style={{
+                        color: props.theme.palette.text.primary
+                      }}
+                    >
+                      {openedFile.editMode && openedFile.changed
+                        ? String.fromCharCode(0x25cf) + ' '
+                        : ''}
+                      {fileTitle}
+                    </Box>
                     <Box
                       className={classes.fileBadge}
                       title={i18n.t('core:toggleEntryProperties')}
@@ -1109,42 +1115,30 @@ const EntryContainer = (props: Props) => {
                           PlatformIO.getDirSeparator()
                         )}
                     </Box>
-                    <Typography
-                      style={{
-                        color: props.theme.palette.text.primary
-                      }}
-                    >
-                      {openedFile.editMode && openedFile.changed
-                        ? String.fromCharCode(0x25cf) + ' '
-                        : ''}
-                      {fileTitle}
-                    </Typography>
                   </Button>
                 ) : (
                   <Button
                     disabled
-                    // onClick={togglePanel}
                     title={openedFile.url || openedFile.path}
                     aria-label={i18n.t('core:toggleEntryProperties')}
                     className={classes.entryNameButton}
                   >
-                    <div
-                      className={classes.fileBadge}
-                      title={i18n.t('core:toggleEntryProperties')}
-                      style={{
-                        backgroundColor: AppConfig.defaultFolderColor,
-                        paddingTop: 5
-                      }}
-                    >
-                      <FolderIcon />
-                    </div>
-                    <Typography
+                    <Box
                       style={{
                         color: props.theme.palette.text.primary
                       }}
                     >
                       {fileTitle}
-                    </Typography>
+                    </Box>
+                    <Box
+                      className={classes.fileBadge}
+                      title={i18n.t('core:toggleEntryProperties')}
+                      style={{
+                        backgroundColor: AppConfig.defaultFolderColor
+                      }}
+                    >
+                      {i18n.t('core:folder')}
+                    </Box>
                   </Button>
                 )}
               </Box>
@@ -1288,7 +1282,7 @@ function mapActionCreatorsToProps(dispatch) {
       renameDirectory: AppActions.renameDirectory,
       openFsEntry: AppActions.openFsEntry,
       openFileNatively: AppActions.openFileNatively,
-      openURLExternally: AppActions.openURLExternally,
+      openLink: AppActions.openLink,
       showNotification: AppActions.showNotification,
       openNextFile: AppActions.openNextFile,
       openPrevFile: AppActions.openPrevFile,

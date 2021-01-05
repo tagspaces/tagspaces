@@ -131,16 +131,6 @@ export default class WebDAVIO {
     return false;
   };
 
-  // TODO
-  handleStartParameters = (): void => {
-    /* let filePath = getURLParameter('open');
-    if (filePath && filePath.length > 0) {
-      filePath = decodeURIComponent(filePath);
-      console.log('Opening file in browser: ' + filePath);
-      FileOpener.openFileOnStartup(filePath);
-    } */
-  };
-
   /**
    * Creates recursively a tree structure for a given directory path
    * @param {string} dirPath - the full path of the directory for which the tree will be generated

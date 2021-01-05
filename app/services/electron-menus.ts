@@ -80,30 +80,20 @@ export default function buildDesktopMenu(mainPageProps: any) {
         {
           label: i18n.t('core:newFileNote'),
           // accelerator: 'CommandOrControl+Alt+N',
-          click: () => {
-            mainPageProps.toggleCreateFileDialog();
-          }
-        },
-        /* {
-          label: i18n.t('core:createMarkdown'),
-          accelerator: '',
-          // click: createMDFile
-        },
-        {
-          label: i18n.t('core:createRichTextFile'),
-          accelerator: '',
-          // click: createHTMLFile
-        },
-        */
-        {
-          type: 'separator'
+          click: mainPageProps.toggleCreateFileDialog
         },
         {
           label: i18n.t('core:createDirectory'),
           accelerator: '',
-          click: () => {
-            mainPageProps.showCreateDirectoryDialog();
-          }
+          click: mainPageProps.showCreateDirectoryDialog
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: i18n.t('core:openLink'),
+          accelerator: 'Ctrl+o',
+          click: mainPageProps.toggleOpenLinkDialog
         },
         {
           type: 'separator'
@@ -114,17 +104,10 @@ export default function buildDesktopMenu(mainPageProps: any) {
           click: () => {
             mainPageProps.saveFile();
           }
-        },
+        }, */
         {
           type: 'separator'
-        }, */
-        /* {
-          label: i18n.t('core:closeWin'),
-          accelerator: '',
-          click: (item, focusedWindow) => {
-            focusedWindow.destroy();
-          }
-        }, */
+        },
         {
           label: i18n.t('core:exitApp'),
           accelerator: 'CmdOrCtrl+Q',
@@ -176,23 +159,17 @@ export default function buildDesktopMenu(mainPageProps: any) {
         {
           label: i18n.t('core:showLocationManager'),
           accelerator: mainPageProps.keyBindings.showLocationManager,
-          click: () => {
-            mainPageProps.openLocationManagerPanel();
-          }
+          click: mainPageProps.openLocationManagerPanel
         },
         {
           label: i18n.t('core:showTagLibrary'),
           accelerator: mainPageProps.keyBindings.showTagLibrary,
-          click: () => {
-            mainPageProps.openTagLibraryPanel();
-          }
+          click: mainPageProps.openTagLibraryPanel
         },
         {
           label: i18n.t('core:showSearch'),
           accelerator: mainPageProps.keyBindings.showSearch,
-          click: () => {
-            mainPageProps.openSearchPanel();
-          }
+          click: mainPageProps.openSearchPanel
         },
         {
           label: i18n.t('core:showDevTools'),
@@ -213,25 +190,38 @@ export default function buildDesktopMenu(mainPageProps: any) {
           type: 'separator'
         },
         {
+          label: i18n.t('core:goback'),
+          accelerator: 'Alt+Left',
+          click: () => {
+            window.history.back();
+            console.log('navigate to: ' + window.location.href);
+          }
+        },
+        {
+          label: i18n.t('core:goforward'),
+          accelerator: 'Alt+Right',
+          click: () => {
+            window.history.forward();
+            console.log('navigate to: ' + window.location.href);
+          }
+        },
+        {
+          type: 'separator'
+        },
+        {
           label: i18n.t('core:zoomReset'),
           accelerator: 'CmdOrCtrl+0',
-          click: () => {
-            mainPageProps.setZoomResetApp();
-          }
+          click: mainPageProps.setZoomResetApp
         },
         {
           label: i18n.t('core:zoomIn'),
           accelerator: 'CmdOrCtrl+Plus',
-          click: () => {
-            mainPageProps.setZoomInApp();
-          }
+          click: mainPageProps.setZoomInApp
         },
         {
           label: i18n.t('core:zoomOut'),
           accelerator: 'CmdOrCtrl+-',
-          click: () => {
-            mainPageProps.setZoomOutApp();
-          }
+          click: mainPageProps.setZoomOutApp
         },
         {
           label: i18n.t('core:toggleFullScreen'),
@@ -250,9 +240,7 @@ export default function buildDesktopMenu(mainPageProps: any) {
         },
         {
           label: i18n.t('core:settings'),
-          click: () => {
-            mainPageProps.toggleSettingsDialog();
-          }
+          click: mainPageProps.toggleSettingsDialog
         }
       ]
     },
@@ -262,27 +250,20 @@ export default function buildDesktopMenu(mainPageProps: any) {
         {
           label: '&' + i18n.t('core:documentation'),
           accelerator: mainPageProps.keyBindings.showHelp,
-          click: () => {
-            // mainPageProps.openURLExternally(AppConfig.documentationLinks.general);
-            mainPageProps.openHelpFeedbackPanel();
-          }
+          click: mainPageProps.openHelpFeedbackPanel
         },
         {
           label: '&' + i18n.t('core:shortcutKeys'),
-          click: () => {
-            mainPageProps.toggleKeysDialog();
-          }
+          click: mainPageProps.toggleKeysDialog
         },
         {
           label: 'Welcome Wizzard',
-          click: () => {
-            mainPageProps.toggleOnboardingDialog();
-          }
+          click: mainPageProps.toggleOnboardingDialog
         },
         {
           label: '&' + i18n.t('core:whatsNew'),
           click: () => {
-            mainPageProps.openURLExternally(AppConfig.links.changelogURL);
+            mainPageProps.openURLExternally(AppConfig.links.changelogURL, true);
           }
         },
         {
@@ -321,13 +302,19 @@ export default function buildDesktopMenu(mainPageProps: any) {
         {
           label: i18n.t('core:webClipperChrome'),
           click: () => {
-            mainPageProps.openURLExternally(AppConfig.links.webClipperChrome);
+            mainPageProps.openURLExternally(
+              AppConfig.links.webClipperChrome,
+              true
+            );
           }
         },
         {
           label: i18n.t('core:webClipperFirefox'),
           click: () => {
-            mainPageProps.openURLExternally(AppConfig.links.webClipperFirefox);
+            mainPageProps.openURLExternally(
+              AppConfig.links.webClipperFirefox,
+              true
+            );
           }
         },
         {
@@ -335,21 +322,15 @@ export default function buildDesktopMenu(mainPageProps: any) {
         },
         {
           label: '&' + i18n.t('core:license'),
-          click: () => {
-            mainPageProps.toggleLicenseDialog();
-          }
+          click: mainPageProps.toggleLicenseDialog
         },
         {
           label: '&' + i18n.t('core:thirdPartyLibs'),
-          click: () => {
-            mainPageProps.toggleThirdPartyLibsDialog();
-          }
+          click: mainPageProps.toggleThirdPartyLibsDialog
         },
         {
           label: '&' + i18n.t('core:aboutTagSpaces'),
-          click: () => {
-            mainPageProps.toggleAboutDialog();
-          }
+          click: mainPageProps.toggleAboutDialog
         }
       ]
     }

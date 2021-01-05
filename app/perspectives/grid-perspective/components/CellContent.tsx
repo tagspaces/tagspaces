@@ -17,7 +17,6 @@
  */
 
 import React from 'react';
-import formatDistance from 'date-fns/formatDistance';
 import removeMd from 'remove-markdown';
 import classNames from 'classnames';
 import Grid from '@material-ui/core/Grid';
@@ -183,17 +182,20 @@ const CellContent = (props: Props) => {
         >
           {entryTitle}
         </Typography>
-        {fsEntry.isFile ? (
-          <div className={classes.gridDetails}>
-            <Typography
-              className={classes.gridFileExtension}
-              style={{ backgroundColor: fsEntryColor }}
-              noWrap={true}
-              variant="button"
-              title={fsEntry.path}
-            >
-              {fsEntry.extension}
-            </Typography>
+        <div className={classes.gridDetails}>
+          <Typography
+            className={classes.gridFileExtension}
+            style={{
+              backgroundColor: fsEntryColor,
+              maxWidth: fsEntry.isFile ? 50 : 100
+            }}
+            noWrap={true}
+            variant="button"
+            title={fsEntry.path}
+          >
+            {fsEntry.isFile ? fsEntry.extension : i18n.t('core:folder')}
+          </Typography>
+          {fsEntry.isFile && fsEntry.lmdt && (
             <Typography className={classes.gridSizeDate} variant="caption">
               <span
                 title={
@@ -202,25 +204,14 @@ const CellContent = (props: Props) => {
                   formatDateTime(fsEntry.lmdt, true)
                 }
               >
-                {fsEntry.lmdt &&
-                  ' ' +
-                    formatDistance(fsEntry.lmdt, new Date(), {
-                      addSuffix: true
-                    })}
+                {formatDateTime(fsEntry.lmdt, false)}
               </span>
               <span title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
-                {' ' + formatFileSize(fsEntry.size)}
+                {' | ' + formatFileSize(fsEntry.size)}
               </span>
             </Typography>
-          </div>
-        ) : (
-          <div className={classes.gridDetails} title={fsEntry.path}>
-            <FolderIcon
-              className={classes.gridFolder}
-              style={{ backgroundColor: fsEntryColor }}
-            />
-          </div>
-        )}
+          )}
+        </div>
       </div>
     );
   }
@@ -228,11 +219,11 @@ const CellContent = (props: Props) => {
   function renderRowCell(selected: boolean) {
     let tmbSize = 85;
     if (entrySize === 'small') {
-      tmbSize = 50;
+      tmbSize = 30;
     } else if (entrySize === 'normal') {
-      tmbSize = 85;
+      tmbSize = 70;
     } else if (entrySize === 'big') {
-      tmbSize = 120;
+      tmbSize = 100;
     }
     return (
       <Grid
@@ -249,11 +240,11 @@ const CellContent = (props: Props) => {
           item
           style={{
             minHeight: entryHeight,
-            width: 70,
-            maxWidth: 70,
-            padding: 10,
+            width: 50,
+            maxWidth: 50,
+            padding: 3,
             marginRight: 5,
-            textAlign: 'center',
+            textAlign: 'left',
             backgroundColor: fsEntryBackgroundColor
           }}
         >
@@ -317,14 +308,10 @@ const CellContent = (props: Props) => {
               >
                 {fsEntry.isFile &&
                   fsEntry.lmdt &&
-                  '️ ' +
-                    formatDistance(fsEntry.lmdt, new Date(), {
-                      addSuffix: true
-                    }) +
-                    ' '}
+                  formatDateTime(fsEntry.lmdt, false)}
               </span>
               <span title={i18n.t('core:entryDescription')}>
-                {description && description}
+                {description && ' | ' + description}
               </span>
             </Typography>
           </Grid>
@@ -375,11 +362,11 @@ const CellContent = (props: Props) => {
 
   let entryHeight = 130;
   if (entrySize === 'small') {
-    entryHeight = 50;
+    entryHeight = 35;
   } else if (entrySize === 'normal') {
-    entryHeight = 80;
+    entryHeight = 70;
   } else if (entrySize === 'big') {
-    entryHeight = 130;
+    entryHeight = 100;
   }
 
   let gridCell: any = React.Fragment;

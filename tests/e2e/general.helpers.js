@@ -382,16 +382,6 @@ export async function reloadDirectory() {
   await delay(500);*/
 }
 
-export async function openEntry(entryName) {
-  await doubleClickOn('[data-tid=fsEntryName_' + entryName + ']');
-  /*const eName = await global.client.$(
-    '[data-tid=fsEntryName_' + entryName + ']'
-  );
-  await eName.waitForDisplayed();
-  await eName.doubleClick();
-  await delay(500);*/
-}
-
 export async function createNewDirectory(dirName = testFolder) {
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
   await global.client.pause(500); // TODO the Menu is always in HTML
@@ -411,7 +401,8 @@ export async function createNewDirectory(dirName = testFolder) {
   await delay(1500);
   await confirmCreateNewDirectory.waitForDisplayed();
   await confirmCreateNewDirectory.click();*/
-  await global.client.pause(500); // minio
+  await waitForNotification();
+  // await global.client.pause(500); // minio
   return dirName;
 }
 
@@ -451,6 +442,7 @@ export async function closeOpenedFile() {
 }
 
 export async function deleteDirectory() {
+  await global.client.pause(500);
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
   await clickOn('[data-tid=deleteDirectory]');
   /*const deleteDirectory = await global.client.$('[data-tid=deleteDirectory]');
@@ -458,6 +450,7 @@ export async function deleteDirectory() {
   await delay(500);
   await deleteDirectory.click();*/
   await clickOn('[data-tid=confirmDeleteDirectoryDialog]');
+  await waitForNotification();
   /*const confirmDeleteDirectory = await global.client.$(
     '[data-tid=confirmDeleteDirectoryDialog]'
   );
