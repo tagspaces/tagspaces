@@ -43,7 +43,7 @@ interface Props {
 export interface DirectoryTreeViewRef {
   changeLocation: (location: Location) => void;
   closeLocation: () => void;
-  removeLocation: () => void;
+  // removeLocation: () => void;
 }
 
 const DirectoryTreeView = forwardRef(
@@ -74,14 +74,14 @@ const DirectoryTreeView = forwardRef(
         }
       },
       closeLocation() {
-        // setData(undefined);
+        setData(undefined);
         if (isExpanded) {
           setExpanded(false);
         }
-      },
-      removeLocation() {
-        setData(undefined);
       }
+      /*removeLocation() {
+        setData(undefined);
+      }*/
     }));
 
     /*const changeLocation = (location: Location) => {

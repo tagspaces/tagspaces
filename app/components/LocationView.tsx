@@ -81,7 +81,7 @@ interface Props {
   setSelectedLocation: (loc: Location) => void;
 }
 
-const LocationView = (props: Props) => {
+const LocationView = React.memo((props: Props) => {
   const directoryTreeRef = useRef<DirectoryTreeViewRef>(null);
   const [
     locationDirectoryContextMenuAnchorEl,
@@ -324,7 +324,7 @@ const LocationView = (props: Props) => {
       />
     </>
   );
-};
+});
 
 function mapStateToProps(state) {
   return {

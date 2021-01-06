@@ -19,13 +19,9 @@
 import React, { useEffect, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import uuidv1 from 'uuid';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import styles from './SidePanels.css';
 import LocationManagerMenu from './menus/LocationManagerMenu';
@@ -74,11 +70,9 @@ interface Props {
   style: any;
   locations: Array<Location>;
   perspectives: Array<Object>;
-  // currentLocationId: string;
   hideDrawer: () => void;
   openURLExternally: (path: string) => void;
   openFileNatively: (path: string) => void;
-  // openDirectory: (path: string) => void;
   toggleOpenLinkDialog: () => void;
   addLocation: (location: Location, openAfterCreate?: boolean) => void;
   editLocation: () => void;
@@ -93,12 +87,6 @@ type SubFolder = {
 };
 
 const LocationManager = (props: Props) => {
-  // const directoryTreeRef = useRef([]);
-
-  const [
-    locationManagerMenuAnchorEl,
-    setLocationManagerMenuAnchorEl
-  ] = useState<null | HTMLElement>(null);
   const [selectedLocation, setSelectedLocation] = useState<Location>(null);
   const [selectedDirectoryPath, setSelectedDirectoryPath] = useState<string>(
     null
@@ -124,7 +112,6 @@ const LocationManager = (props: Props) => {
   ] = useState<boolean>(false);
 
   useEffect(() => {
-    // directoryTreeRef.current = directoryTreeRef.current.slice(0, props.locations.length);
     if (props.locations.length < 1) {
       // init locations
       const devicePaths = PlatformIO.getDevicePaths();
@@ -161,39 +148,15 @@ const LocationManager = (props: Props) => {
     setSelectedDirectoryPath(currentPath);
   };
 
-  const handleLocationManagerMenu = (event: any) => {
-    setLocationManagerMenuAnchorEl(event.currentTarget);
-  };
-
-  const handleCloseLocationManagerMenu = () => {
-    setLocationManagerMenuAnchorEl(null);
-  };
-
   const { classes } = props;
   return (
     <div className={classes.panel} style={props.style}>
       <CustomLogo />
-      <div className={classes.toolbar}>
-        <Typography
-          className={classNames(classes.panelTitle, classes.header)}
-          variant="subtitle1"
-        >
-          {i18n.t('core:locationManager')}
-        </Typography>
-        <IconButton
-          data-tid="locationManagerMenu"
-          onClick={handleLocationManagerMenu}
-        >
-          <MoreVertIcon />
-        </IconButton>
-      </div>
+
       <LocationManagerMenu
-        anchorEl={locationManagerMenuAnchorEl}
-        open={Boolean(locationManagerMenuAnchorEl)}
-        onClose={handleCloseLocationManagerMenu}
+        classes={classes}
         openURLExternally={props.openURLExternally}
         showCreateLocationDialog={() => {
-          setLocationManagerMenuAnchorEl(null);
           setCreateLocationDialogOpened(true);
         }}
         toggleOpenLinkDialog={props.toggleOpenLinkDialog}
@@ -224,7 +187,6 @@ const LocationManager = (props: Props) => {
       <div>
         {isCreateLocationDialogOpened && (
           <CreateLocationDialogAsync
-            // key={createLocationDialogKey}
             open={isCreateLocationDialogOpened}
             onClose={() => setCreateLocationDialogOpened(false)}
             addLocation={props.addLocation}
@@ -233,7 +195,6 @@ const LocationManager = (props: Props) => {
         )}
         {isEditLocationDialogOpened && (
           <EditLocationDialogAsync
-            // key={this.state.editLocationDialogKey}
             open={isEditLocationDialogOpened}
             onClose={() => setEditLocationDialogOpened(false)}
             location={selectedLocation}
@@ -253,9 +214,6 @@ const LocationManager = (props: Props) => {
             confirmCallback={result => {
               if (result && selectedLocation) {
                 props.removeLocation(selectedLocation);
-                /* directoryTreeRef.current[
-                  selectedLocation.uuid
-                ].removeLocation(); */
               }
             }}
             cancelDialogTID="cancelDeleteLocationDialog"
@@ -307,7 +265,6 @@ const LocationManager = (props: Props) => {
 function mapStateToProps(state) {
   return {
     locations: getLocations(state),
-    // currentLocationId: getCurrentLocationId(state),
     perspectives: getPerspectives(state)
   };
 }
@@ -318,7 +275,6 @@ function mapDispatchToProps(dispatch) {
       addLocation: LocationActions.addLocation,
       editLocation: LocationActions.editLocation,
       removeLocation: LocationActions.removeLocation,
-      // openDirectory: AppActions.openDirectory,
       openFileNatively: AppActions.openFileNatively,
       toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
       openURLExternally: AppActions.openURLExternally
