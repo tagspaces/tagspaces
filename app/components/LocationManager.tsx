@@ -39,7 +39,6 @@ import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import OpenFolderNativelyIcon from '@material-ui/icons/Launch';
 import styles from './SidePanels.css';
-import DirectoryMenu from './menus/DirectoryMenu';
 import LocationManagerMenu from './menus/LocationManagerMenu';
 import ConfirmDialog from './dialogs/ConfirmDialog';
 import SelectDirectoryDialog from './dialogs/SelectDirectoryDialog';
@@ -51,14 +50,13 @@ import {
   locationType,
   Location
 } from '../reducers/locations';
-import { actions as AppActions, getCurrentLocationId } from '../reducers/app';
+import { actions as AppActions } from '../reducers/app';
 import { actions as LocationIndexActions } from '../reducers/location-index';
 import { getPerspectives } from '-/reducers/settings';
 import i18n from '../services/i18n';
 import AppConfig from '../config';
 import PlatformIO from '../services/platform-io';
 import LoadingLazy from '-/components/LoadingLazy';
-import { FileSystemEntry } from '-/services/utils-io';
 import LocationView from '-/components/LocationView';
 
 const CreateLocationDialog = React.lazy(() =>
@@ -88,11 +86,9 @@ interface Props {
   style: any;
   locations: Array<Location>;
   perspectives: Array<Object>;
-  currentLocationId: string;
+  // currentLocationId: string;
   hideDrawer: () => void;
-  openFsEntry: (fsEntry: FileSystemEntry) => void;
   openURLExternally: (path: string) => void;
-  loadDirectoryContent: (path: string) => void;
   openFileNatively: (path: string) => void;
   openDirectory: (path: string) => void;
   toggleOpenLinkDialog: () => void;
@@ -108,8 +104,7 @@ interface Props {
   moveLocationDown: (locationId: string) => void;
   closeLocation: (locationId: string) => void;
   removeLocation: (location: Location) => void;
-  reflectCreateEntry: (path: string, isFile: boolean) => void;
-  deleteDirectory: (directoryPath: string) => void;
+  isCurrentLocation: (uuid: string) => boolean;
 }
 
 type SubFolder = {
@@ -124,10 +119,6 @@ const LocationManager = (props: Props) => {
   const [
     locationDirectoryContextMenuAnchorEl,
     setLocationDirectoryContextMenuAnchorEl
-  ] = useState<null | HTMLElement>(null);
-  const [
-    directoryContextMenuAnchorEl,
-    setDirectoryContextMenuAnchorEl
   ] = useState<null | HTMLElement>(null);
   const [
     locationManagerMenuAnchorEl,
@@ -180,49 +171,15 @@ const LocationManager = (props: Props) => {
     }
   }, []); // props.locations]);
 
-  /* state = {
-    createLocationDialogKey: uuidv1(),
-    editLocationDialogKey: uuidv1()
-  }; */
-
-  /* componentDidMount() {
-    if (this.props.locations.length < 1) {
-      const devicePaths = PlatformIO.getDevicePaths();
-
-      Object.keys(devicePaths).forEach(key => {
-        this.props.addLocation(
-          {
-            uuid: uuidv1(),
-            type: locationType.TYPE_LOCAL,
-            name: key, // TODO use i18n
-            path: devicePaths[key],
-            isDefault: AppConfig.isWeb && devicePaths[key] === '/files/', // Used for the web ts demo
-            isReadOnly: false,
-            persistIndex: false
-          },
-          false
-        );
-      });
-    }
-  } */
-
-  /* const closeChromeExtDialog = () => {
-    this.handleRequestCloseContextMenus();
-    this.setState({
-      isCreateLocationDialogOpened: false,
-      isEditLocationDialogOpened: false,
-      selectedDirectoryPath: undefined
-    });
-  }; */
-
   const indexLocation = () => {
     setLocationDirectoryContextMenuAnchorEl(null);
-    const { currentLocationId, createDirectoryIndex } = props;
-    const isCurrentLocation =
+    const { createDirectoryIndex } = props;
+    /* const isCurrentLocation =
       selectedLocation &&
       selectedLocation.uuid &&
-      selectedLocation.uuid === currentLocationId;
-
+      selectedLocation.uuid === currentLocationId; */
+    const isCurrentLocation =
+      selectedLocation && props.isCurrentLocation(selectedLocation.uuid);
     if (selectedLocation.type === locationType.TYPE_CLOUD) {
       PlatformIO.enableObjectStoreSupport(selectedLocation)
         .then(() => {
@@ -270,11 +227,6 @@ const LocationManager = (props: Props) => {
     if (selectedLocation && selectedLocation.uuid) {
       props.closeLocation(selectedLocation.uuid);
       directoryTreeRef.current[selectedLocation.uuid].closeLocation();
-      // this.directoryTreeRef[this.state.selectedLocation.uuid] = undefined;
-      // this.directoryTreeRef[this.state.selectedLocation.uuid].closeLocation();
-      /* this.setState({
-        dirs: {}
-      }); */
     }
   };
 
@@ -288,76 +240,27 @@ const LocationManager = (props: Props) => {
     setDeleteLocationDialogOpened(true);
   };
 
-  /* handleDirectoryContextMenu = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    directoryPath: string
-  ) => {
-    this.setState({
-      directoryContextMenuOpened: true,
-      directoryContextMenuAnchorEl: event.currentTarget,
-      selectedDirectoryPath: directoryPath
-    });
-  }; */
-
   const createNewDirectoryExt = (path: string) => {
     setCreateDirectoryDialogOpened(true);
     setSelectedDirectoryPath(path);
-    /* this.setState({
-      isCreateDirectoryDialogOpened: true,
-      selectedDirectoryPath: path
-    }); */
   };
 
   const showSelectDirectoryDialog = () => {
     setSelectDirectoryDialogOpened(true);
     setSelectedDirectoryPath('');
-    /* this.setState({
-      isSelectDirectoryDialogOpened: true,
-      selectedDirectoryPath: ''
-    }); */
   };
 
   const chooseDirectoryPath = (currentPath: string) => {
     setSelectDirectoryDialogOpened(true);
     setSelectedDirectoryPath(currentPath);
-    /* this.setState({
-      isSelectDirectoryDialogOpened: false,
-      selectedDirectoryPath: currentPath
-    }); */
   };
-
-  /* const handleRequestCloseContextMenus = () => {
-    this.setState({
-      directoryContextMenuOpened: false,
-      directoryContextMenuAnchorEl: null,
-      locationContextMenuOpened: false,
-      locationDirectoryContextMenuAnchorEl: null
-      // selectedLocation: null,
-      // selectedDirectoryPath: null,
-    });
-  }; */
 
   const handleLocationContextMenuClick = (event: any, location: Location) => {
     event.preventDefault();
     event.stopPropagation();
     setLocationDirectoryContextMenuAnchorEl(event.currentTarget);
     setSelectedLocation(location);
-    /* this.setState({
-      locationContextMenuOpened: true,
-      locationDirectoryContextMenuAnchorEl: event.currentTarget,
-      selectedLocation: location
-    }); */
   };
-
-  // todo https://stackoverflow.com/questions/37949981/call-child-method-from-parent
-  // const directoryTreeRef = useRef();
-
-  /* const reloadDirectory = () => {
-    this.handleRequestCloseContextMenus();
-    if (this.state.selectedDirectoryPath) {
-      this.props.loadDirectoryContent(this.state.selectedDirectoryPath);
-    }
-  }; */
 
   const handleLocationManagerMenu = (event: any) => {
     setLocationManagerMenuAnchorEl(event.currentTarget);
@@ -541,24 +444,11 @@ const LocationManager = (props: Props) => {
               classes={props.classes}
               location={location}
               handleLocationContextMenuClick={handleLocationContextMenuClick}
-              loadDirectoryContent={props.loadDirectoryContent}
               hideDrawer={props.hideDrawer}
             />
           ))}
         </List>
       </div>
-      <DirectoryMenu
-        open={Boolean(directoryContextMenuAnchorEl)}
-        onClose={() => setDirectoryContextMenuAnchorEl(null)}
-        anchorEl={directoryContextMenuAnchorEl}
-        directoryPath={selectedDirectoryPath}
-        loadDirectoryContent={props.loadDirectoryContent}
-        openDirectory={props.openDirectory}
-        openFsEntry={props.openFsEntry}
-        reflectCreateEntry={props.reflectCreateEntry}
-        deleteDirectory={props.deleteDirectory}
-        classes={props.classes}
-      />
     </div>
   );
 };
@@ -566,7 +456,7 @@ const LocationManager = (props: Props) => {
 function mapStateToProps(state) {
   return {
     locations: getLocations(state),
-    currentLocationId: getCurrentLocationId(state),
+    // currentLocationId: getCurrentLocationId(state),
     perspectives: getPerspectives(state)
   };
 }
@@ -581,15 +471,12 @@ function mapDispatchToProps(dispatch) {
       removeLocation: LocationActions.removeLocation,
       createDirectoryIndex: LocationIndexActions.createDirectoryIndex,
       closeLocation: AppActions.closeLocation,
-      loadDirectoryContent: AppActions.loadDirectoryContent,
-      reflectCreateEntry: AppActions.reflectCreateEntry,
-      deleteDirectory: AppActions.deleteDirectory,
       openDirectory: AppActions.openDirectory,
       showInFileManager: AppActions.showInFileManager,
       openFileNatively: AppActions.openFileNatively,
-      openFsEntry: AppActions.openFsEntry,
       toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
-      openURLExternally: AppActions.openURLExternally
+      openURLExternally: AppActions.openURLExternally,
+      isCurrentLocation: AppActions.isCurrentLocation
     },
     dispatch
   );

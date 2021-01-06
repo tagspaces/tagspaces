@@ -318,7 +318,8 @@ function mapDispatchToProps(dispatch) {
       moveFiles: IOActions.moveFiles,
       onUploadProgress: AppActions.onUploadProgress,
       setSelectedEntries: AppActions.setSelectedEntries,
-      openLocation: AppActions.openLocation
+      openLocation: AppActions.openLocation,
+      loadDirectoryContent: AppActions.loadDirectoryContent
     },
     dispatch
   );

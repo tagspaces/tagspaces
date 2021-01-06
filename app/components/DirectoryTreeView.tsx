@@ -110,7 +110,6 @@ const DirectoryTreeView = forwardRef(
         // DnD to S3 location is not permitted in web browser without <input> element
         return (
           <TargetTableMoveFileBox
-            // @ts-ignore
             accepts={[DragItemTypes.FILE]}
             onDrop={props.handleFileMoveDrop}
             location={props.location}

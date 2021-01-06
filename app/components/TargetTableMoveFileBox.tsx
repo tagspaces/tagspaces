@@ -26,6 +26,8 @@ const boxTarget = {
 };
 
 interface Props {
+  accepts: Array<string>;
+  onDrop: (item: any, monitor: any) => void;
   canDrop: boolean;
   isOver: boolean;
   connectDropTarget: any;
@@ -37,6 +39,7 @@ const TargetTableMoveFileBox = (props: Props) => {
   if (canDrop && isOver) {
     restProps.className += ' dropzone'; // TODO set props.location type and add dropzonecopy based on this type
   }
+  // @ts-ignore
   return connectDropTarget(<tr {...restProps} />);
 };
 

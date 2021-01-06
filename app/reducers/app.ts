@@ -1880,6 +1880,13 @@ export const actions = {
         true
       )
     );
+  },
+  isCurrentLocation: (uuid: string) => (
+    dispatch: (actions: Object) => void,
+    getState: () => any
+  ) => {
+    const { currentLocationId } = getState().app;
+    return currentLocationId === uuid;
   }
 };
 
