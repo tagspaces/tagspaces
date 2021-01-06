@@ -59,7 +59,6 @@ interface Props {
   fullScreen: boolean;
   addLocation: (location: Location) => void;
   showSelectDirectoryDialog: () => void;
-  resetState: (stateMember: string) => void;
 }
 
 interface State {
@@ -242,13 +241,13 @@ class CreateLocationDialog extends React.Component<Props, State> {
         });
       }
       this.props.onClose();
-      this.props.resetState('createLocationDialogKey');
+      // this.props.resetState('createLocationDialogKey');
     }
   };
 
   onCancel = () => {
     this.props.onClose();
-    this.props.resetState('createLocationDialogKey');
+    // this.props.resetState('createLocationDialogKey');
   };
 
   render() {

@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useState, forwardRef, useImperativeHandle } from 'react';
+import React, { useState, forwardRef, useImperativeHandle, Ref } from 'react';
 import Table from 'rc-table';
 import FolderIcon from '@material-ui/icons/FolderOpen';
 import { Location, locationType } from '-/reducers/locations';
@@ -40,18 +40,21 @@ interface Props {
   handleFileMoveDrop: (item, monitor) => void;
 }
 
-const DirectoryTreeView = React.memo(
-  forwardRef((props: Props, ref) => {
+export interface DirectoryTreeViewRef {
+  changeLocation: (location: Location) => void;
+  closeLocation: () => void;
+  removeLocation: () => void;
+}
+
+const DirectoryTreeView = forwardRef(
+  (props: Props, ref: Ref<DirectoryTreeViewRef>) => {
     const [data, setData] = useState(undefined);
     const [isExpanded, setExpanded] = useState(false);
 
     useImperativeHandle(ref, () => ({
       changeLocation(location: Location) {
         if (isExpanded && data[location.uuid] !== undefined) {
-          /*const dirsTree = data;
-        dirsTree[location.uuid] = undefined;
-        setData(dirsTree);*/
-          //setData(undefined);
+          setData(undefined); // comment this to use cached data after expand
           setExpanded(false);
         } else {
           if (location.type === locationType.TYPE_CLOUD) {
@@ -400,7 +403,7 @@ const DirectoryTreeView = React.memo(
       );
     }
     return null;
-  })
+  }
 );
 
 export default DirectoryTreeView;

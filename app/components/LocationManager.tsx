@@ -1,4 +1,3 @@
-// @ts-nocheck @ts-ignore
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -17,34 +16,28 @@
  *
  */
 
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import uuidv1 from 'uuid';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
-import LocationIcon from '@material-ui/icons/WorkOutline';
-import CloudLocationIcon from '@material-ui/icons/CloudQueue';
 import EditIcon from '@material-ui/icons/Edit';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import DeleteIcon from '@material-ui/icons/DeleteForever';
 import CloseIcon from '@material-ui/icons/Close';
-import DefaultLocationIcon from '@material-ui/icons/Highlight';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import OpenFolderNativelyIcon from '@material-ui/icons/Launch';
-import { Progress } from 'aws-sdk/clients/s3';
 import styles from './SidePanels.css';
 import DirectoryMenu from './menus/DirectoryMenu';
 import LocationManagerMenu from './menus/LocationManagerMenu';
@@ -58,22 +51,15 @@ import {
   locationType,
   Location
 } from '../reducers/locations';
-import {
-  actions as AppActions,
-  getCurrentLocationId,
-  isReadOnlyMode
-} from '../reducers/app';
+import { actions as AppActions, getCurrentLocationId } from '../reducers/app';
 import { actions as LocationIndexActions } from '../reducers/location-index';
-import { getPerspectives, getShowUnixHiddenEntries } from '-/reducers/settings';
+import { getPerspectives } from '-/reducers/settings';
 import i18n from '../services/i18n';
 import AppConfig from '../config';
 import PlatformIO from '../services/platform-io';
-import TargetMoveFileBox from './TargetMoveFileBox';
-import DragItemTypes from './DragItemTypes';
-import IOActions from '../reducers/io-actions';
-import DirectoryTreeView from '-/components/DirectoryTreeView';
 import LoadingLazy from '-/components/LoadingLazy';
 import { FileSystemEntry } from '-/services/utils-io';
+import LocationView from '-/components/LocationView';
 
 const CreateLocationDialog = React.lazy(() =>
   import(
@@ -99,16 +85,14 @@ const EditLocationDialogAsync = props => (
 
 interface Props {
   classes: any;
+  style: any;
   locations: Array<Location>;
   perspectives: Array<Object>;
   currentLocationId: string;
-  isReadOnlyMode: boolean;
   hideDrawer: () => void;
   openFsEntry: (fsEntry: FileSystemEntry) => void;
-  reflectCreateEntries: (fsEntries: Array<FileSystemEntry>) => void;
   openURLExternally: (path: string) => void;
   loadDirectoryContent: (path: string) => void;
-  openLocation: (location: Location) => void;
   openFileNatively: (path: string) => void;
   openDirectory: (path: string) => void;
   toggleOpenLinkDialog: () => void;
@@ -126,20 +110,6 @@ interface Props {
   removeLocation: (location: Location) => void;
   reflectCreateEntry: (path: string, isFile: boolean) => void;
   deleteDirectory: (directoryPath: string) => void;
-  showUnixHiddenEntries: boolean;
-  showNotification: (
-    text: string,
-    notificationType: string,
-    autohide: boolean
-  ) => void;
-  moveFiles: (files: Array<string>, destination: string) => void;
-  uploadFiles: (
-    files: Array<string>,
-    destination: string,
-    onUploadProgress?: (progress: Progress, response: any) => void
-  ) => Promise<Array<FileSystemEntry>>;
-  toggleUploadDialog: () => void;
-  resetProgress: () => void;
 }
 
 type SubFolder = {
@@ -382,250 +352,12 @@ const LocationManager = (props: Props) => {
   // todo https://stackoverflow.com/questions/37949981/call-child-method-from-parent
   // const directoryTreeRef = useRef();
 
-  const handleLocationClick = (location: Location) => {
-    directoryTreeRef.current[location.uuid].changeLocation(location);
-    if (location.uuid === props.currentLocationId) {
-      props.loadDirectoryContent(location.path || location.paths[0]);
-    } else {
-      // this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
-      props.setSelectedEntries([]);
-      props.openLocation(location);
-      if (props.hideDrawer) {
-        props.hideDrawer();
-      }
-    }
-
-    // const grid = document.querySelector('[data-tid="perspectiveGridFileTable"]');
-    // const firstGridItem = grid.querySelector('div');
-    // if (isObj(firstGridItem)) {
-    //   firstGridItem.parentNode.scrollTop = target.offsetTop;
-    // }
-  };
-
   /* const reloadDirectory = () => {
     this.handleRequestCloseContextMenus();
     if (this.state.selectedDirectoryPath) {
       this.props.loadDirectoryContent(this.state.selectedDirectoryPath);
     }
   }; */
-
-  const resetState = dialogKey => {
-    // @ts-ignore
-    /* this.setState({
-      [dialogKey]: uuidv1()
-    }); */
-  };
-
-  // const handleFileMoveDropMemo = useMemo(() => handleFileMoveDrop, []);
-
-  /**
-   * https://github.com/react-component/table/blob/master/examples/react-dnd.js
-   * @param item
-   * @param monitor
-   */
-  const handleFileMoveDrop = (item, monitor) => {
-    if (monitor) {
-      const { path, selectedEntries } = monitor.getItem();
-      const arrPath = [];
-      if (selectedEntries && selectedEntries.length > 0) {
-        selectedEntries.map(entry => {
-          arrPath.push(entry.path);
-          return true;
-        });
-      } else {
-        arrPath.push(path);
-      }
-      if (props.isReadOnlyMode) {
-        props.showNotification(
-          i18n.t('core:dndDisabledReadOnlyMode'),
-          'error',
-          true
-        );
-        return;
-      }
-      if (!AppConfig.isWin && !path.startsWith('/')) {
-        props.showNotification(
-          i18n.t('Moving file not possible'),
-          'error',
-          true
-        );
-        return;
-      }
-      if (AppConfig.isWin && !path.substr(1).startsWith(':')) {
-        props.showNotification(
-          i18n.t('Moving file not possible'),
-          'error',
-          true
-        );
-        return;
-      }
-      let targetPath = item.path;
-      const targetLocation = item.location;
-      if (targetPath === undefined) {
-        targetPath = targetLocation.path;
-      }
-      /* if (item.children && item.children.props && item.children.props.path) {
-        targetPath = item.children.props.path;
-      } else {
-        targetPath = item.children[1].props.record.path;
-      } */
-      if (monitor && targetPath !== undefined && targetLocation !== undefined) {
-        // TODO handle monitor -> isOver and change folder icon
-        console.log('Dropped files: ' + path);
-        if (targetLocation.type === locationType.TYPE_CLOUD) {
-          PlatformIO.enableObjectStoreSupport(targetLocation)
-            .then(() => {
-              props.resetProgress();
-              props
-                .uploadFiles(arrPath, targetPath, props.onUploadProgress)
-                .then((fsEntries: Array<FileSystemEntry>) => {
-                  props.reflectCreateEntries(fsEntries);
-                  return true;
-                })
-                .catch(error => {
-                  console.log('uploadFiles', error);
-                });
-              props.toggleUploadDialog();
-              return true;
-            })
-            .catch(error => {
-              console.log('enableObjectStoreSupport', error);
-            });
-        } else if (targetLocation.type === locationType.TYPE_LOCAL) {
-          PlatformIO.disableObjectStoreSupport();
-          props.moveFiles(arrPath, targetPath);
-        }
-        props.setSelectedEntries([]);
-      }
-    }
-  };
-
-  // <Tooltip id="tooltip-icon" title={i18n.t('core:moreOperations')} placement="bottom"></Tooltip>
-  const renderLocation = (location: Location) => {
-    const isCloudLocation = location.type === locationType.TYPE_CLOUD;
-
-    return (
-      <div key={location.uuid}>
-        <ListItem
-          data-tid={'location_' + location.name.replace(/ /g, '_')}
-          className={
-            props.currentLocationId === location.uuid
-              ? props.classes.listItemSelected
-              : props.classes.listItem
-          }
-          title={
-            location.isDefault
-              ? i18n.t('core: thisIsStartupLocation') + ' : ' + location.path ||
-                location.paths[0]
-              : location.path || location.paths[0]
-          }
-          button
-          onClick={() => handleLocationClick(location)}
-          onContextMenu={event =>
-            handleLocationContextMenuClick(event, location)
-          }
-        >
-          <ListItemIcon
-            // onClick={(e) => {
-            //   e.preventDefault();
-            //   this.loadSubDirectories(location, 1);
-            // }}
-            style={{
-              minWidth: 'auto'
-            }}
-          >
-            {isCloudLocation ? (
-              <CloudLocationIcon className={props.classes.icon} />
-            ) : (
-              <LocationIcon className={props.classes.icon} />
-            )}
-          </ListItemIcon>
-
-          {isCloudLocation && !AppConfig.isElectron ? (
-            <div
-              style={{
-                maxWidth: 250
-              }}
-            >
-              <Typography
-                variant="inherit"
-                style={{
-                  paddingLeft: 5,
-                  paddingRight: 5
-                }}
-                className={props.classes.header}
-                data-tid="locationTitleElement"
-                noWrap
-              >
-                {location.name}
-              </Typography>
-            </div>
-          ) : (
-            <TargetMoveFileBox
-              accepts={[DragItemTypes.FILE]}
-              onDrop={handleFileMoveDrop}
-              path={location.path || location.paths[0]}
-              location={location}
-            >
-              <div
-                style={{
-                  maxWidth: 250
-                }}
-              >
-                <Typography
-                  variant="inherit"
-                  style={{
-                    paddingLeft: 5,
-                    paddingRight: 5
-                  }}
-                  className={props.classes.header}
-                  data-tid="locationTitleElement"
-                  noWrap
-                >
-                  {location.name}
-                </Typography>
-              </div>
-            </TargetMoveFileBox>
-          )}
-          {!AppConfig.locationsReadOnly && (
-            <ListItemSecondaryAction>
-              <IconButton
-                aria-label={i18n.t('core:options')}
-                aria-haspopup="true"
-                edge="end"
-                data-tid={'locationMoreButton_' + location.name}
-                onClick={event =>
-                  handleLocationContextMenuClick(event, location)
-                }
-                onContextMenu={event =>
-                  handleLocationContextMenuClick(event, location)
-                }
-              >
-                {location.isDefault && (
-                  <DefaultLocationIcon data-tid="startupIndication" />
-                )}
-                <MoreVertIcon />
-              </IconButton>
-            </ListItemSecondaryAction>
-          )}
-        </ListItem>
-        <DirectoryTreeView
-          // key={location.uuid} TODO dont display not expanded
-          ref={dirTree => {
-            if (dirTree && !(location.uuid in directoryTreeRef.current)) {
-              directoryTreeRef.current[location.uuid] = dirTree;
-            }
-          }}
-          classes={props.classes}
-          loadDirectoryContent={props.loadDirectoryContent}
-          location={location}
-          showUnixHiddenEntries={props.showUnixHiddenEntries}
-          moveFiles={props.moveFiles}
-          handleFileMoveDrop={handleFileMoveDrop}
-        />
-      </div>
-    );
-  };
 
   const handleLocationManagerMenu = (event: any) => {
     setLocationManagerMenuAnchorEl(event.currentTarget);
@@ -691,7 +423,6 @@ const LocationManager = (props: Props) => {
         {isCreateLocationDialogOpened && (
           <CreateLocationDialogAsync
             // key={createLocationDialogKey}
-            resetState={resetState}
             open={isCreateLocationDialogOpened}
             onClose={() => setCreateLocationDialogOpened(false)}
             addLocation={props.addLocation}
@@ -701,7 +432,6 @@ const LocationManager = (props: Props) => {
         {isEditLocationDialogOpened && (
           <EditLocationDialogAsync
             // key={this.state.editLocationDialogKey}
-            resetState={resetState}
             open={isEditLocationDialogOpened}
             onClose={() => setEditLocationDialogOpened(false)}
             location={selectedLocation}
@@ -736,7 +466,6 @@ const LocationManager = (props: Props) => {
             onClose={() => setSelectDirectoryDialogOpened(false)}
             createNewDirectoryExt={createNewDirectoryExt}
             chooseDirectoryPath={chooseDirectoryPath}
-            selectedDirectoryPath={selectedDirectoryPath}
           />
         )}
         {isCreateDirectoryDialogOpened && (
@@ -806,7 +535,16 @@ const LocationManager = (props: Props) => {
             overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
           }}
         >
-          {props.locations.map(renderLocation)}
+          {props.locations.map(location => (
+            <LocationView
+              key={location.uuid}
+              classes={props.classes}
+              location={location}
+              handleLocationContextMenuClick={handleLocationContextMenuClick}
+              loadDirectoryContent={props.loadDirectoryContent}
+              hideDrawer={props.hideDrawer}
+            />
+          ))}
         </List>
       </div>
       <DirectoryMenu
@@ -829,20 +567,18 @@ function mapStateToProps(state) {
   return {
     locations: getLocations(state),
     currentLocationId: getCurrentLocationId(state),
-    perspectives: getPerspectives(state),
-    isReadOnlyMode: isReadOnlyMode(state),
-    showUnixHiddenEntries: getShowUnixHiddenEntries(state)
+    perspectives: getPerspectives(state)
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      ...LocationActions,
-      openLocation: AppActions.openLocation,
-      onUploadProgress: AppActions.onUploadProgress,
-      toggleUploadDialog: AppActions.toggleUploadDialog,
-      resetProgress: AppActions.resetProgress,
+      addLocation: LocationActions.addLocation,
+      moveLocationUp: LocationActions.moveLocationUp,
+      moveLocationDown: LocationActions.moveLocationDown,
+      editLocation: LocationActions.editLocation,
+      removeLocation: LocationActions.removeLocation,
       createDirectoryIndex: LocationIndexActions.createDirectoryIndex,
       closeLocation: AppActions.closeLocation,
       loadDirectoryContent: AppActions.loadDirectoryContent,
@@ -852,13 +588,8 @@ function mapDispatchToProps(dispatch) {
       showInFileManager: AppActions.showInFileManager,
       openFileNatively: AppActions.openFileNatively,
       openFsEntry: AppActions.openFsEntry,
-      showNotification: AppActions.showNotification,
-      reflectCreateEntries: AppActions.reflectCreateEntries,
       toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
-      moveFiles: IOActions.moveFiles,
-      uploadFiles: IOActions.uploadFiles,
-      openURLExternally: AppActions.openURLExternally,
-      setSelectedEntries: AppActions.setSelectedEntries
+      openURLExternally: AppActions.openURLExternally
     },
     dispatch
   );

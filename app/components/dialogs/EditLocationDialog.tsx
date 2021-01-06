@@ -42,7 +42,6 @@ import PlatformIO from '-/services/platform-io';
 interface Props {
   open: boolean;
   fullScreen?: boolean;
-  resetState: (param: string) => void;
   onClose: () => void;
   location: Location | null;
   editLocation: (location: Location) => void;
@@ -320,13 +319,13 @@ class EditLocationDialog extends React.Component<Props, State> {
         });
       }
       this.props.onClose();
-      this.props.resetState('editLocationDialogKey');
+      // this.props.resetState('editLocationDialogKey');
     }
   };
 
   onCancel = () => {
     this.props.onClose();
-    this.props.resetState('editLocationDialogKey');
+    // this.props.resetState('editLocationDialogKey');
   };
 
   renderTitle = () => (
@@ -483,7 +482,7 @@ class EditLocationDialog extends React.Component<Props, State> {
         color="primary"
         onClick={() => {
           this.props.onClose();
-          this.props.resetState('editLocationDialogKey');
+          // this.props.resetState('editLocationDialogKey');
         }}
       >
         {i18n.t('core:cancel')}
