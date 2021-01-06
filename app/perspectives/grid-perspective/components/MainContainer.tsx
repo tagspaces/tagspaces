@@ -502,6 +502,19 @@ class GridPerspective extends React.Component<Props, State> {
     }
   };
 
+  selectEntry = (fsEntry: FileSystemEntry) => {
+    const { setSelectedEntries, selectedEntries } = this.props;
+    setSelectedEntries([...selectedEntries, fsEntry]);
+  };
+
+  deselectEntry = (fsEntry: FileSystemEntry) => {
+    const { setSelectedEntries, selectedEntries } = this.props;
+    const newSelection = selectedEntries.filter(
+      data => data.path !== fsEntry.path
+    );
+    setSelectedEntries(newSelection);
+  };
+
   handleTagMenu = (
     event: React.ChangeEvent<HTMLInputElement>,
     tag: Tag,
@@ -658,6 +671,8 @@ class GridPerspective extends React.Component<Props, State> {
           thumbnailMode={thumbnailMode}
           addTags={addTags}
           selectedEntries={selectedEntries}
+          selectEntry={this.selectEntry}
+          deselectEntry={this.deselectEntry}
           isReadOnlyMode={this.props.isReadOnlyMode}
           handleTagMenu={this.handleTagMenu}
           layoutType={layoutType}

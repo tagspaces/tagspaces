@@ -24,8 +24,8 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import FolderIcon from '@material-ui/icons/Folder';
-// import SelectedIcon from '@material-ui/icons/CheckCircle';
-// import UnSelectedIcon from '@material-ui/icons/RadioButtonUnchecked';
+import SelectedIcon from '@material-ui/icons/CheckBox';
+import UnSelectedIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import TagIcon from '@material-ui/icons/LocalOfferOutlined';
 import { formatFileSize, formatDateTime } from '-/utils/misc';
 import { extractTagsAsObjects, extractTitle } from '-/utils/paths';
@@ -50,6 +50,8 @@ interface Props {
   addTags: () => void;
   openFsEntry: (fsEntry: FileSystemEntry) => void;
   selectedEntries: Array<FileSystemEntry>;
+  selectEntry: (fsEntry: FileSystemEntry) => void;
+  deselectEntry: (fsEntry: FileSystemEntry) => void;
   isReadOnlyMode: boolean;
   showTags: boolean;
   handleTagMenu: (event: Object, tag: Tag, entryPath: string) => void;
@@ -77,7 +79,9 @@ const CellContent = (props: Props) => {
     handleGridCellDblClick,
     handleGridCellClick,
     showTags,
-    openFsEntry
+    openFsEntry,
+    selectEntry,
+    deselectEntry
   } = props;
   const fsEntryBackgroundColor = fsEntry.color; //  ? fsEntry.color : 'transparent';
   const entryTitle = extractTitle(
@@ -248,25 +252,32 @@ const CellContent = (props: Props) => {
             display: 'flex'
           }}
         >
-          {fsEntry.isFile ? (
-            <div
-              className={classes.rowFileExtension}
-              title={fsEntry.path}
-              style={{ backgroundColor: fsEntryColor }}
-            >
-              {fsEntry.extension}
-            </div>
-          ) : (
-            <div
-              className={classes.rowFileExtension}
-              title={fsEntry.path}
-              style={{
-                backgroundColor: fsEntryBackgroundColor || fsEntryColor
-              }}
-            >
-              <FolderIcon />
-            </div>
-          )}
+          <div
+            className={classes.rowFileExtension}
+            role="presentation"
+            title={fsEntry.path}
+            onClick={e => {
+              e.stopPropagation();
+              if (selected) {
+                deselectEntry(fsEntry);
+              } else {
+                selectEntry(fsEntry);
+              }
+            }}
+            style={{
+              backgroundColor: fsEntry.isFile
+                ? fsEntryColor
+                : fsEntryBackgroundColor || fsEntryColor
+            }}
+          >
+            {fsEntry.isFile ? fsEntry.extension : <FolderIcon />}
+            {entrySize !== 'small' &&
+              (selected ? (
+                <SelectedIcon style={{ paddingTop: 5 }} />
+              ) : (
+                <UnSelectedIcon style={{ paddingTop: 5 }} />
+              ))}
+          </div>
         </Grid>
         {entrySize === 'small' ? (
           <Grid
