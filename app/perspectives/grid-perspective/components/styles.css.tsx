@@ -103,6 +103,7 @@ export default (theme: any): any => ({
   rowFileExtension: {
     flex: 1,
     padding: 5,
+    paddingTop: 7,
     width: 35,
     maxWidth: 60,
     minHeight: 15,
@@ -111,7 +112,7 @@ export default (theme: any): any => ({
     textTransform: 'uppercase',
     fontSize: 12,
     fontWeight: 'bold',
-    borderRadius: 3,
+    borderRadius: 4,
     textAlign: 'center',
     overflow: 'hidden',
     textOverflow: 'ellipsis'
@@ -126,13 +127,6 @@ export default (theme: any): any => ({
   gridDetails: {
     display: 'flex',
     whiteSpace: 'nowrap'
-  },
-  rowFolder: {
-    color: 'white',
-    padding: 5,
-    minHeight: 10,
-    height: 20,
-    borderRadius: 3
   },
   gridFolder: {
     color: 'white',
