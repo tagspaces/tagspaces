@@ -23,7 +23,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
-import FolderIcon from '@material-ui/icons/FolderOpen';
+import FolderIcon from '@material-ui/icons/Folder';
 // import SelectedIcon from '@material-ui/icons/CheckCircle';
 // import UnSelectedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import TagIcon from '@material-ui/icons/LocalOfferOutlined';
@@ -79,7 +79,7 @@ const CellContent = (props: Props) => {
     showTags,
     openFsEntry
   } = props;
-  const fsEntryBackgroundColor = fsEntry.color ? fsEntry.color : 'transparent';
+  const fsEntryBackgroundColor = fsEntry.color; //  ? fsEntry.color : 'transparent';
   const entryTitle = extractTitle(
     fsEntry.name,
     !fsEntry.isFile,
@@ -245,7 +245,7 @@ const CellContent = (props: Props) => {
             padding: 3,
             marginRight: 5,
             textAlign: 'left',
-            backgroundColor: fsEntryBackgroundColor
+            display: 'flex'
           }}
         >
           {fsEntry.isFile ? (
@@ -257,12 +257,15 @@ const CellContent = (props: Props) => {
               {fsEntry.extension}
             </div>
           ) : (
-            <span title={fsEntry.path}>
-              <FolderIcon
-                className={classes.rowFolder}
-                style={{ backgroundColor: fsEntryColor }}
-              />
-            </span>
+            <div
+              className={classes.rowFileExtension}
+              title={fsEntry.path}
+              style={{
+                backgroundColor: fsEntryBackgroundColor || fsEntryColor
+              }}
+            >
+              <FolderIcon />
+            </div>
           )}
         </Grid>
         {entrySize === 'small' ? (
@@ -292,9 +295,9 @@ const CellContent = (props: Props) => {
               : tagPlaceholder}
             <Typography
               style={{
-                color: 'gray',
-                padding: 5
+                color: 'gray'
               }}
+              variant="body2"
             >
               <span title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
                 {fsEntry.isFile && formatFileSize(fsEntry.size) + ' - '}
@@ -311,7 +314,7 @@ const CellContent = (props: Props) => {
                   formatDateTime(fsEntry.lmdt, false)}
               </span>
               <span title={i18n.t('core:entryDescription')}>
-                {description && ' | ' + description}
+                {description && (fsEntry.isFile && ' | ') + description}
               </span>
             </Typography>
           </Grid>
