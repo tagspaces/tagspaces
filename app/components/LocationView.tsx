@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
@@ -48,13 +48,13 @@ import DirectoryTreeView, {
 } from '-/components/DirectoryTreeView';
 import { FileSystemEntry } from '-/services/utils-io';
 import { getShowUnixHiddenEntries } from '-/reducers/settings';
+import LocationContextMenu from '-/components/menus/LocationContextMenu';
 
 interface Props {
   classes: any;
   location: Location;
   currentLocationId: string;
   openLocation: (location: Location) => void;
-  handleLocationContextMenuClick: (event: any, location: Location) => void;
   loadDirectoryContent: (path: string) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   hideDrawer: () => void;
@@ -75,10 +75,18 @@ interface Props {
   toggleUploadDialog: () => void;
   moveFiles: (files: Array<string>, destination: string) => void;
   showUnixHiddenEntries: boolean;
+  setEditLocationDialogOpened: boolean;
+  setDeleteLocationDialogOpened: boolean;
+  selectedLocation: Location;
+  setSelectedLocation: (loc: Location) => void;
 }
 
 const LocationView = (props: Props) => {
   const directoryTreeRef = useRef<DirectoryTreeViewRef>(null);
+  const [
+    locationDirectoryContextMenuAnchorEl,
+    setLocationDirectoryContextMenuAnchorEl
+  ] = useState<null | HTMLElement>(null);
 
   const { location } = props;
   const isCloudLocation = location.type === locationType.TYPE_CLOUD;
@@ -96,6 +104,17 @@ const LocationView = (props: Props) => {
         props.hideDrawer();
       }
     }
+  };
+
+  const closeLocationTree = () => {
+    directoryTreeRef.current.closeLocation();
+  };
+
+  const handleLocationContextMenuClick = (event: any) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setLocationDirectoryContextMenuAnchorEl(event.currentTarget);
+    props.setSelectedLocation(location);
   };
 
   /**
@@ -183,6 +202,20 @@ const LocationView = (props: Props) => {
   return (
     /* <div key={location.uuid}> */
     <>
+      {locationDirectoryContextMenuAnchorEl && (
+        <LocationContextMenu
+          setEditLocationDialogOpened={props.setEditLocationDialogOpened}
+          setDeleteLocationDialogOpened={props.setDeleteLocationDialogOpened}
+          selectedLocation={props.selectedLocation}
+          locationDirectoryContextMenuAnchorEl={
+            locationDirectoryContextMenuAnchorEl
+          }
+          setLocationDirectoryContextMenuAnchorEl={
+            setLocationDirectoryContextMenuAnchorEl
+          }
+          closeLocationTree={closeLocationTree}
+        />
+      )}
       <ListItem
         data-tid={'location_' + location.name.replace(/ /g, '_')}
         className={
@@ -198,9 +231,7 @@ const LocationView = (props: Props) => {
         }
         button
         onClick={() => handleLocationClick()}
-        onContextMenu={event =>
-          props.handleLocationContextMenuClick(event, location)
-        }
+        onContextMenu={event => handleLocationContextMenuClick(event)}
       >
         <ListItemIcon
           // onClick={(e) => {
@@ -271,12 +302,8 @@ const LocationView = (props: Props) => {
               aria-haspopup="true"
               edge="end"
               data-tid={'locationMoreButton_' + location.name}
-              onClick={event =>
-                props.handleLocationContextMenuClick(event, location)
-              }
-              onContextMenu={event =>
-                props.handleLocationContextMenuClick(event, location)
-              }
+              onClick={event => handleLocationContextMenuClick(event)}
+              onContextMenu={event => handleLocationContextMenuClick(event)}
             >
               {location.isDefault && (
                 <DefaultLocationIcon data-tid="startupIndication" />

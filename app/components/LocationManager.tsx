@@ -16,28 +16,17 @@
  *
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import uuidv1 from 'uuid';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
-import EditIcon from '@material-ui/icons/Edit';
-import RefreshIcon from '@material-ui/icons/Refresh';
-import DeleteIcon from '@material-ui/icons/DeleteForever';
-import CloseIcon from '@material-ui/icons/Close';
-import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
-import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
-import OpenFolderNativelyIcon from '@material-ui/icons/Launch';
 import styles from './SidePanels.css';
 import LocationManagerMenu from './menus/LocationManagerMenu';
 import ConfirmDialog from './dialogs/ConfirmDialog';
@@ -51,7 +40,6 @@ import {
   Location
 } from '../reducers/locations';
 import { actions as AppActions } from '../reducers/app';
-import { actions as LocationIndexActions } from '../reducers/location-index';
 import { getPerspectives } from '-/reducers/settings';
 import i18n from '../services/i18n';
 import AppConfig from '../config';
@@ -90,21 +78,11 @@ interface Props {
   hideDrawer: () => void;
   openURLExternally: (path: string) => void;
   openFileNatively: (path: string) => void;
-  openDirectory: (path: string) => void;
+  // openDirectory: (path: string) => void;
   toggleOpenLinkDialog: () => void;
-  showInFileManager: (path: string) => void;
-  createDirectoryIndex: (
-    path: string,
-    fullTextIndex: boolean,
-    isCurrentLocation: boolean
-  ) => void;
   addLocation: (location: Location, openAfterCreate?: boolean) => void;
   editLocation: () => void;
-  moveLocationUp: (locationId: string) => void;
-  moveLocationDown: (locationId: string) => void;
-  closeLocation: (locationId: string) => void;
   removeLocation: (location: Location) => void;
-  isCurrentLocation: (uuid: string) => boolean;
 }
 
 type SubFolder = {
@@ -115,11 +93,8 @@ type SubFolder = {
 };
 
 const LocationManager = (props: Props) => {
-  const directoryTreeRef = useRef([]);
-  const [
-    locationDirectoryContextMenuAnchorEl,
-    setLocationDirectoryContextMenuAnchorEl
-  ] = useState<null | HTMLElement>(null);
+  // const directoryTreeRef = useRef([]);
+
   const [
     locationManagerMenuAnchorEl,
     setLocationManagerMenuAnchorEl
@@ -171,75 +146,6 @@ const LocationManager = (props: Props) => {
     }
   }, []); // props.locations]);
 
-  const indexLocation = () => {
-    setLocationDirectoryContextMenuAnchorEl(null);
-    const { createDirectoryIndex } = props;
-    /* const isCurrentLocation =
-      selectedLocation &&
-      selectedLocation.uuid &&
-      selectedLocation.uuid === currentLocationId; */
-    const isCurrentLocation =
-      selectedLocation && props.isCurrentLocation(selectedLocation.uuid);
-    if (selectedLocation.type === locationType.TYPE_CLOUD) {
-      PlatformIO.enableObjectStoreSupport(selectedLocation)
-        .then(() => {
-          createDirectoryIndex(
-            selectedLocation.path || selectedLocation.paths[0],
-            selectedLocation.fullTextIndex,
-            isCurrentLocation
-          );
-          return true;
-        })
-        .catch(() => {
-          PlatformIO.disableObjectStoreSupport();
-        });
-    } else if (selectedLocation.type === locationType.TYPE_LOCAL) {
-      PlatformIO.disableObjectStoreSupport();
-      createDirectoryIndex(
-        selectedLocation.path || selectedLocation.paths[0],
-        selectedLocation.fullTextIndex,
-        isCurrentLocation
-      );
-    }
-  };
-
-  const moveLocationUp = () => {
-    setLocationDirectoryContextMenuAnchorEl(null);
-    if (selectedLocation && selectedLocation.uuid) {
-      props.moveLocationUp(selectedLocation.uuid);
-    }
-  };
-
-  const moveLocationDown = () => {
-    setLocationDirectoryContextMenuAnchorEl(null);
-    if (selectedLocation && selectedLocation.uuid) {
-      props.moveLocationDown(selectedLocation.uuid);
-    }
-  };
-
-  const showInFileManager = () => {
-    setLocationDirectoryContextMenuAnchorEl(null);
-    props.openDirectory(selectedLocation.path || selectedLocation.paths[0]);
-  };
-
-  const closeLocation = () => {
-    setLocationDirectoryContextMenuAnchorEl(null);
-    if (selectedLocation && selectedLocation.uuid) {
-      props.closeLocation(selectedLocation.uuid);
-      directoryTreeRef.current[selectedLocation.uuid].closeLocation();
-    }
-  };
-
-  const showEditLocationDialog = () => {
-    setLocationDirectoryContextMenuAnchorEl(null);
-    setEditLocationDialogOpened(true);
-  };
-
-  const showDeleteLocationDialog = () => {
-    setLocationDirectoryContextMenuAnchorEl(null);
-    setDeleteLocationDialogOpened(true);
-  };
-
   const createNewDirectoryExt = (path: string) => {
     setCreateDirectoryDialogOpened(true);
     setSelectedDirectoryPath(path);
@@ -253,13 +159,6 @@ const LocationManager = (props: Props) => {
   const chooseDirectoryPath = (currentPath: string) => {
     setSelectDirectoryDialogOpened(true);
     setSelectedDirectoryPath(currentPath);
-  };
-
-  const handleLocationContextMenuClick = (event: any, location: Location) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setLocationDirectoryContextMenuAnchorEl(event.currentTarget);
-    setSelectedLocation(location);
   };
 
   const handleLocationManagerMenu = (event: any) => {
@@ -354,9 +253,9 @@ const LocationManager = (props: Props) => {
             confirmCallback={result => {
               if (result && selectedLocation) {
                 props.removeLocation(selectedLocation);
-                directoryTreeRef.current[
+                /* directoryTreeRef.current[
                   selectedLocation.uuid
-                ].removeLocation();
+                ].removeLocation(); */
               }
             }}
             cancelDialogTID="cancelDeleteLocationDialog"
@@ -378,57 +277,6 @@ const LocationManager = (props: Props) => {
             selectedDirectoryPath={selectedDirectoryPath}
           />
         )}
-        <Menu
-          anchorEl={locationDirectoryContextMenuAnchorEl}
-          open={Boolean(locationDirectoryContextMenuAnchorEl)}
-          onClose={() => setLocationDirectoryContextMenuAnchorEl(null)}
-        >
-          <MenuItem data-tid="editLocation" onClick={showEditLocationDialog}>
-            <ListItemIcon>
-              <EditIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:editLocationTitle')} />
-          </MenuItem>
-          <MenuItem data-tid="indexLocation" onClick={indexLocation}>
-            <ListItemIcon>
-              <RefreshIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:indexLocation')} />
-          </MenuItem>
-          <MenuItem data-tid="moveLocationUp" onClick={moveLocationUp}>
-            <ListItemIcon>
-              <ArrowUpwardIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:moveUp')} />
-          </MenuItem>
-          <MenuItem data-tid="moveLocationDown" onClick={moveLocationDown}>
-            <ListItemIcon>
-              <ArrowDownwardIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:moveDown')} />
-          </MenuItem>
-          <MenuItem
-            data-tid="removeLocation"
-            onClick={showDeleteLocationDialog}
-          >
-            <ListItemIcon>
-              <DeleteIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:removeLocation')} />
-          </MenuItem>
-          <MenuItem data-tid="showInFileManager" onClick={showInFileManager}>
-            <ListItemIcon>
-              <OpenFolderNativelyIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:showInFileManager')} />
-          </MenuItem>
-          <MenuItem data-tid="removeLocation" onClick={closeLocation}>
-            <ListItemIcon>
-              <CloseIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:closeLocation')} />
-          </MenuItem>
-        </Menu>
         <List
           className={classes.locationListArea}
           data-tid="locationList"
@@ -443,8 +291,11 @@ const LocationManager = (props: Props) => {
               key={location.uuid}
               classes={props.classes}
               location={location}
-              handleLocationContextMenuClick={handleLocationContextMenuClick}
               hideDrawer={props.hideDrawer}
+              setEditLocationDialogOpened={setEditLocationDialogOpened}
+              setDeleteLocationDialogOpened={setDeleteLocationDialogOpened}
+              selectedLocation={selectedLocation}
+              setSelectedLocation={setSelectedLocation}
             />
           ))}
         </List>
@@ -465,18 +316,12 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
       addLocation: LocationActions.addLocation,
-      moveLocationUp: LocationActions.moveLocationUp,
-      moveLocationDown: LocationActions.moveLocationDown,
       editLocation: LocationActions.editLocation,
       removeLocation: LocationActions.removeLocation,
-      createDirectoryIndex: LocationIndexActions.createDirectoryIndex,
-      closeLocation: AppActions.closeLocation,
-      openDirectory: AppActions.openDirectory,
-      showInFileManager: AppActions.showInFileManager,
+      // openDirectory: AppActions.openDirectory,
       openFileNatively: AppActions.openFileNatively,
       toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
-      openURLExternally: AppActions.openURLExternally,
-      isCurrentLocation: AppActions.isCurrentLocation
+      openURLExternally: AppActions.openURLExternally
     },
     dispatch
   );
