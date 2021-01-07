@@ -20,6 +20,7 @@ import uuidv1 from 'uuid';
 import { immutablySwapItems } from '-/utils/misc';
 import { actions as AppActions } from '../reducers/app';
 import PlatformIO from '-/services/platform-io';
+import AppConfig from '-/config';
 
 export const types = {
   ADD_LOCATION: 'APP/ADD_LOCATION',
@@ -149,6 +150,26 @@ export default (state: Array<Location> = initialState, action: any) => {
 };
 
 export const actions = {
+  setDefaultLocations: () => (dispatch: (actions: Object) => void) => {
+    const devicePaths = PlatformIO.getDevicePaths();
+
+    Object.keys(devicePaths).forEach(key => {
+      dispatch(
+        actions.addLocation(
+          {
+            uuid: uuidv1(),
+            type: locationType.TYPE_LOCAL,
+            name: key, // TODO use i18n
+            path: devicePaths[key],
+            isDefault: AppConfig.isWeb && devicePaths[key] === '/files/', // Used for the web ts demo
+            isReadOnly: false,
+            persistIndex: false
+          },
+          false
+        )
+      );
+    });
+  },
   addLocation: (location: Location, openAfterCreate: boolean = true) => (
     dispatch: (actions: Object) => void
   ) => {
