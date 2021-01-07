@@ -407,7 +407,10 @@ class CreateLocationDialog extends React.Component<Props, State> {
           </FormGroup>
         </DialogContent>
         <DialogActions>
-          <Button onClick={this.switchAdvancedMode}>
+          <Button
+            data-tid="switchAdvancedModeTID"
+            onClick={this.switchAdvancedMode}
+          >
             {this.state.showAdvancedMode
               ? i18n.t('core:switchSimpleMode')
               : i18n.t('core:switchAdvancedMode')}
