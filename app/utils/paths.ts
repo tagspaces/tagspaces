@@ -367,13 +367,16 @@ export function getLocationPath(location: Location) {
   return '';
 }
 
+/**
+ * @deprecated fail on S3 locations
+ * @param filePath
+ * @param locations
+ */
 export function extractLocation(filePath: string, locations: Array<Location>) {
   let currentLocation;
   const path = filePath.replace(/[/\\]/g, '');
   for (let i = 0; i < locations.length; i += 1) {
-    const locationPath = locations[i].path
-      ? locations[i].path.replace(/[/\\]/g, '')
-      : locations[i].paths[0].replace(/[/\\]/g, '');
+    const locationPath = getLocationPath(locations[i]).replace(/[/\\]/g, '');
 
     // Handle S3 empty location
     if (locationPath.length === 0) {

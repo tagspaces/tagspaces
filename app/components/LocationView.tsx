@@ -80,6 +80,7 @@ interface Props {
   setDeleteLocationDialogOpened: boolean;
   selectedLocation: Location;
   setSelectedLocation: (loc: Location) => void;
+  changeLocation: (loc: Location) => void;
 }
 
 const LocationView = React.memo((props: Props) => {
@@ -323,6 +324,7 @@ const LocationView = React.memo((props: Props) => {
         location={location}
         showUnixHiddenEntries={props.showUnixHiddenEntries}
         handleFileMoveDrop={handleFileMoveDrop}
+        changeLocation={props.changeLocation}
       />
     </>
   );
@@ -348,7 +350,8 @@ function mapDispatchToProps(dispatch) {
       onUploadProgress: AppActions.onUploadProgress,
       setSelectedEntries: AppActions.setSelectedEntries,
       openLocation: AppActions.openLocation,
-      loadDirectoryContent: AppActions.loadDirectoryContent
+      loadDirectoryContent: AppActions.loadDirectoryContent,
+      changeLocation: AppActions.changeLocation
     },
     dispatch
   );

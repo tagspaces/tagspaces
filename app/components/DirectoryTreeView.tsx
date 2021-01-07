@@ -39,6 +39,7 @@ interface Props {
     autohide: boolean
   ) => void;
   handleFileMoveDrop: (item, monitor) => void;
+  changeLocation: (loc: Location) => void;
 }
 
 export interface DirectoryTreeViewRef {
@@ -163,6 +164,7 @@ const DirectoryTreeView = forwardRef(
         PlatformIO.enableObjectStoreSupport(subDir)
           .then(() => {
             loadSubDirectories(subDir, 1);
+            props.changeLocation(subDir);
             props.loadDirectoryContent(subDir.path);
           })
           .catch(error => {
@@ -171,6 +173,7 @@ const DirectoryTreeView = forwardRef(
       } else if (subDir.type === locationType.TYPE_LOCAL) {
         PlatformIO.disableObjectStoreSupport();
         loadSubDirectories(subDir, 1);
+        props.changeLocation(subDir);
         props.loadDirectoryContent(subDir.path);
       }
     };
