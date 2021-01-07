@@ -49,6 +49,7 @@ import DirectoryTreeView, {
 import { FileSystemEntry } from '-/services/utils-io';
 import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import LocationContextMenu from '-/components/menus/LocationContextMenu';
+import { getLocationPath } from '-/utils/paths';
 
 interface Props {
   classes: any;
@@ -95,7 +96,7 @@ const LocationView = React.memo((props: Props) => {
     directoryTreeRef.current.changeLocation(location);
     if (location.uuid === props.currentLocationId) {
       // the same location click
-      props.loadDirectoryContent(location.path || location.paths[0]);
+      props.loadDirectoryContent(getLocationPath(location));
     } else {
       // this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
       props.setSelectedEntries([]);
@@ -225,9 +226,10 @@ const LocationView = React.memo((props: Props) => {
         }
         title={
           location.isDefault
-            ? i18n.t('core: thisIsStartupLocation') + ' : ' + location.path ||
-              location.paths[0]
-            : location.path || location.paths[0]
+            ? i18n.t('core: thisIsStartupLocation') +
+              ' : ' +
+              getLocationPath(location)
+            : getLocationPath(location)
         }
         button
         onClick={() => handleLocationClick()}
@@ -272,7 +274,7 @@ const LocationView = React.memo((props: Props) => {
           <TargetMoveFileBox
             accepts={[DragItemTypes.FILE]}
             onDrop={handleFileMoveDrop}
-            path={location.path || location.paths[0]}
+            path={getLocationPath(location)}
             location={location}
           >
             <div

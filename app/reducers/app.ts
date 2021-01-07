@@ -43,7 +43,8 @@ import {
   extractTagsAsObjects,
   normalizePath,
   extractLocation,
-  extractContainingDirectoryPath
+  extractContainingDirectoryPath,
+  getLocationPath
 } from '-/utils/paths';
 import {
   formatDateTime4Tag,
@@ -1280,9 +1281,7 @@ export const actions = {
           );
           dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
           dispatch(actions.changeLocation(location));
-          dispatch(
-            actions.loadDirectoryContent(location.path || location.paths[0])
-          );
+          dispatch(actions.loadDirectoryContent(getLocationPath(location)));
           return true;
         })
         .catch(() => {
@@ -1299,15 +1298,9 @@ export const actions = {
       PlatformIO.disableObjectStoreSupport();
       dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
       dispatch(actions.changeLocation(location));
-      dispatch(
-        actions.loadDirectoryContent(location.path || location.paths[0])
-      );
+      dispatch(actions.loadDirectoryContent(getLocationPath(location)));
       if (Pro && Pro.Watcher && location.watchForChanges) {
-        Pro.Watcher.watchFolder(
-          location.path || location.paths[0],
-          dispatch,
-          actions
-        );
+        Pro.Watcher.watchFolder(getLocationPath(location), dispatch, actions);
       }
     }
   },
@@ -1789,13 +1782,7 @@ export const actions = {
             }
           } else {
             // local files case
-            let locationPath = '';
-            if (
-              targetLocation &&
-              (targetLocation.path || targetLocation.paths)
-            ) {
-              locationPath = targetLocation.path || targetLocation.paths[0];
-            }
+            const locationPath = getLocationPath(targetLocation);
             if (directoryPath && directoryPath.length > 0) {
               if (
                 directoryPath.includes('../') ||
@@ -1907,7 +1894,7 @@ export const getCurrentLocationPath = (state: any) => {
         state.app.currentLocationId &&
         location.uuid === state.app.currentLocationId
       ) {
-        const locationPath = location.path || location.paths[0];
+        const locationPath = getLocationPath(location);
         if (
           AppConfig.isElectron &&
           locationPath &&

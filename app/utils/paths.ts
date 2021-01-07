@@ -355,6 +355,18 @@ export function extractTags(
   return cleanedTags;
 }
 
+export function getLocationPath(location: Location) {
+  if (location) {
+    if (location.path) {
+      return location.path;
+    }
+    if (location.paths && location.paths[0]) {
+      return location.paths[0];
+    }
+  }
+  return '';
+}
+
 export function extractLocation(filePath: string, locations: Array<Location>) {
   let currentLocation;
   const path = filePath.replace(/[/\\]/g, '');

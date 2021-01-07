@@ -39,6 +39,7 @@ import PlatformIO from '-/services/platform-io';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import i18n from '-/services/i18n';
 import { actions as AppActions } from '-/reducers/app';
+import { getLocationPath } from '-/utils/paths';
 
 interface Props {
   setEditLocationDialogOpened: (open: boolean) => void;
@@ -73,7 +74,7 @@ const LocationContextMenu = (props: Props) => {
       PlatformIO.enableObjectStoreSupport(selectedLocation)
         .then(() => {
           createDirectoryIndex(
-            selectedLocation.path || selectedLocation.paths[0],
+            getLocationPath(selectedLocation),
             selectedLocation.fullTextIndex,
             isCurrentLocation
           );
@@ -85,7 +86,7 @@ const LocationContextMenu = (props: Props) => {
     } else if (selectedLocation.type === locationType.TYPE_LOCAL) {
       PlatformIO.disableObjectStoreSupport();
       createDirectoryIndex(
-        selectedLocation.path || selectedLocation.paths[0],
+        getLocationPath(selectedLocation),
         selectedLocation.fullTextIndex,
         isCurrentLocation
       );
@@ -118,9 +119,7 @@ const LocationContextMenu = (props: Props) => {
 
   const showInFileManager = () => {
     props.setLocationDirectoryContextMenuAnchorEl(null);
-    props.showInFileManager(
-      props.selectedLocation.path || props.selectedLocation.paths[0]
-    );
+    props.showInFileManager(getLocationPath(props.selectedLocation));
     // props.openDirectory(selectedLocation.path || selectedLocation.paths[0]);
   };
 

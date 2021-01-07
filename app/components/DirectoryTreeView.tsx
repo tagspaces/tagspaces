@@ -24,6 +24,7 @@ import DragItemTypes from '-/components/DragItemTypes';
 import AppConfig from '-/config';
 import PlatformIO from '-/services/platform-io';
 import TargetTableMoveFileBox from '-/components/TargetTableMoveFileBox';
+import { getLocationPath } from '-/utils/paths';
 
 interface Props {
   classes: any;
@@ -61,7 +62,7 @@ const DirectoryTreeView = forwardRef(
             PlatformIO.enableObjectStoreSupport(location)
               .then(() => {
                 loadSubDirectories(location, 1);
-                props.loadDirectoryContent(location.path || location.paths[0]);
+                props.loadDirectoryContent(getLocationPath(location));
               })
               .catch(error => {
                 console.log('enableObjectStoreSupport', error);
@@ -69,7 +70,7 @@ const DirectoryTreeView = forwardRef(
           } else if (location.type === locationType.TYPE_LOCAL) {
             PlatformIO.disableObjectStoreSupport();
             loadSubDirectories(location, 1);
-            props.loadDirectoryContent(location.path || location.paths[0]);
+            props.loadDirectoryContent(getLocationPath(location));
           }
         }
       },
@@ -196,7 +197,7 @@ const DirectoryTreeView = forwardRef(
         uuid: location.uuid,
         name: location.name,
         type: location.type,
-        path: location.path || location.paths[0]
+        path: getLocationPath(location)
       };
       getDirectoriesTree(subFolder, deepLevel)
         .then(children => {
