@@ -59,7 +59,7 @@ import SortingMenu from './SortingMenu';
 import GridOptionsMenu from './GridOptionsMenu';
 import { getLocation, Location, locationType } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-io';
-import { extractFileName } from '-/utils/paths';
+import { extractFileName, getLocationPath } from '-/utils/paths';
 import GridPagination from '-/perspectives/grid-perspective/components/GridPagination';
 import GridSettingsDialog from '-/perspectives/grid-perspective/components/GridSettingsDialog';
 
@@ -781,7 +781,7 @@ class GridPerspective extends React.Component<Props, State> {
     const sortedDirectories = sortedContent.filter(entry => !entry.isFile);
     const sortedFiles = sortedContent.filter(entry => entry.isFile);
     const locationPath = this.props.currentLocation
-      ? this.props.currentLocation.path || this.props.currentLocation.paths[0]
+      ? getLocationPath(this.props.currentLocation)
       : '';
     let entryWidth = 200;
     if (entrySize === 'small') {

@@ -74,6 +74,7 @@ interface Props {
   openURLExternally: (path: string) => void;
   openFileNatively: (path: string) => void;
   toggleOpenLinkDialog: () => void;
+  setDefaultLocations: () => void;
   addLocation: (location: Location, openAfterCreate?: boolean) => void;
   editLocation: () => void;
   removeLocation: (location: Location) => void;
@@ -114,22 +115,7 @@ const LocationManager = (props: Props) => {
   useEffect(() => {
     if (props.locations.length < 1) {
       // init locations
-      const devicePaths = PlatformIO.getDevicePaths();
-
-      Object.keys(devicePaths).forEach(key => {
-        props.addLocation(
-          {
-            uuid: uuidv1(),
-            type: locationType.TYPE_LOCAL,
-            name: key, // TODO use i18n
-            path: devicePaths[key],
-            isDefault: AppConfig.isWeb && devicePaths[key] === '/files/', // Used for the web ts demo
-            isReadOnly: false,
-            persistIndex: false
-          },
-          false
-        );
-      });
+      props.setDefaultLocations();
     }
   }, []); // props.locations]);
 
@@ -272,6 +258,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
+      setDefaultLocations: LocationActions.setDefaultLocations,
       addLocation: LocationActions.addLocation,
       editLocation: LocationActions.editLocation,
       removeLocation: LocationActions.removeLocation,

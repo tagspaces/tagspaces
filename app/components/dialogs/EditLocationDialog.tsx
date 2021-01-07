@@ -32,7 +32,7 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import { Typography } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
 import i18n from '-/services/i18n';
-import { extractDirectoryName } from '-/utils/paths';
+import { extractDirectoryName, getLocationPath } from '-/utils/paths';
 import { Location, locationType } from '-/reducers/locations';
 import ObjectStoreForm from './ObjectStoreForm';
 import LocalForm from './LocalForm';
@@ -94,7 +94,7 @@ class EditLocationDialog extends React.Component<Props, State> {
           storeName: dir
             ? extractDirectoryName(dir, PlatformIO.getDirSeparator())
             : props.location.name,
-          storePath: dir || props.location.path || props.location.paths[0]
+          storePath: dir || getLocationPath(props.location)
         };
       } else {
         properties = {
@@ -102,7 +102,7 @@ class EditLocationDialog extends React.Component<Props, State> {
           name: dir
             ? extractDirectoryName(dir, PlatformIO.getDirSeparator())
             : props.location.name,
-          path: dir || props.location.path || props.location.paths[0]
+          path: dir || getLocationPath(props.location)
         };
       }
       this.state = {

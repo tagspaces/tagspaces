@@ -49,6 +49,7 @@ import DirectoryTreeView, {
 import { FileSystemEntry } from '-/services/utils-io';
 import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import LocationContextMenu from '-/components/menus/LocationContextMenu';
+import { getLocationPath } from '-/utils/paths';
 
 interface Props {
   classes: any;
@@ -79,6 +80,7 @@ interface Props {
   setDeleteLocationDialogOpened: boolean;
   selectedLocation: Location;
   setSelectedLocation: (loc: Location) => void;
+  changeLocation: (loc: Location) => void;
 }
 
 const LocationView = React.memo((props: Props) => {
@@ -95,7 +97,7 @@ const LocationView = React.memo((props: Props) => {
     directoryTreeRef.current.changeLocation(location);
     if (location.uuid === props.currentLocationId) {
       // the same location click
-      props.loadDirectoryContent(location.path || location.paths[0]);
+      props.loadDirectoryContent(getLocationPath(location));
     } else {
       // this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
       props.setSelectedEntries([]);
@@ -225,9 +227,10 @@ const LocationView = React.memo((props: Props) => {
         }
         title={
           location.isDefault
-            ? i18n.t('core: thisIsStartupLocation') + ' : ' + location.path ||
-              location.paths[0]
-            : location.path || location.paths[0]
+            ? i18n.t('core: thisIsStartupLocation') +
+              ' : ' +
+              getLocationPath(location)
+            : getLocationPath(location)
         }
         button
         onClick={() => handleLocationClick()}
@@ -272,7 +275,7 @@ const LocationView = React.memo((props: Props) => {
           <TargetMoveFileBox
             accepts={[DragItemTypes.FILE]}
             onDrop={handleFileMoveDrop}
-            path={location.path || location.paths[0]}
+            path={getLocationPath(location)}
             location={location}
           >
             <div
@@ -321,6 +324,7 @@ const LocationView = React.memo((props: Props) => {
         location={location}
         showUnixHiddenEntries={props.showUnixHiddenEntries}
         handleFileMoveDrop={handleFileMoveDrop}
+        changeLocation={props.changeLocation}
       />
     </>
   );
@@ -346,7 +350,8 @@ function mapDispatchToProps(dispatch) {
       onUploadProgress: AppActions.onUploadProgress,
       setSelectedEntries: AppActions.setSelectedEntries,
       openLocation: AppActions.openLocation,
-      loadDirectoryContent: AppActions.loadDirectoryContent
+      loadDirectoryContent: AppActions.loadDirectoryContent,
+      changeLocation: AppActions.changeLocation
     },
     dispatch
   );
