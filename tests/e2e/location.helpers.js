@@ -225,8 +225,8 @@ export async function aboutDialogExt(title, ext) {
 export async function startupLocation() {
   await clickOn('[data-tid=editLocation]');
   // await global.client.pause(500);
-  await clickOn('[data-tid=editStartupLocation]');
-  await clickOn('[data-tid=confirmEditLocationDialog]');
+  await clickOn('[data-tid=locationIsDefault]');
+  await clickOn('[data-tid=confirmLocationCreation]');
 }
 
 /**
