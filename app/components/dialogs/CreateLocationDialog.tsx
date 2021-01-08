@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import Button from '@material-ui/core/Button';
 import uuidv1 from 'uuid';
 import { withStyles } from '@material-ui/core/styles';
@@ -38,6 +38,7 @@ import { Location, locationType } from '-/reducers/locations';
 import { Pro } from '-/pro';
 import ObjectStoreForm from './ObjectStoreForm';
 import LocalForm from './LocalForm';
+import useFirstRender from '-/utils/useFirstRender';
 
 const styles: any = theme => ({
   root: {
@@ -54,382 +55,433 @@ const styles: any = theme => ({
 });
 
 interface Props {
+  location?: Location;
   open: boolean;
   onClose: () => void;
   fullScreen: boolean;
-  addLocation: (location: Location) => void;
+  addLocation?: (location: Location) => void;
+  editLocation?: (location: Location) => void;
   showSelectDirectoryDialog: () => void;
 }
 
-interface State {
-  showAdvancedMode: boolean;
-  showSecretAccessKey: boolean;
-  errorTextPath: boolean;
-  errorTextName: boolean;
-  disableConfirmButton: boolean;
-  name: string;
-  path: string;
-  newuuid: string;
-  endpointURL: string;
-  perspective: string;
-  isDefault: boolean;
-  isReadOnly: boolean;
-  watchForChanges: boolean;
-  persistIndex: boolean;
-  fullTextIndex: boolean;
-  storeName: string;
-  cloudErrorTextName: boolean;
-  cloudErrorAccessKey: boolean;
-  cloudErrorSecretAccessKey: boolean;
-  cloudErrorBucketName: boolean;
-  cloudErrorRegion: boolean;
-  accessKeyId: string;
-  secretAccessKey: string;
-  bucketName: string;
-  region?: any;
-  storePath: string;
-  type: string;
-}
+const CreateLocationDialog = (props: Props) => {
+  const [showAdvancedMode, setShowAdvancedMode] = useState<boolean>(false);
+  const [showSecretAccessKey, setShowSecretAccessKey] = useState<boolean>(
+    false
+  );
+  const [errorTextPath, setErrorTextPath] = useState<boolean>(false);
+  const [errorTextName, setErrorTextName] = useState<boolean>(false);
+  // const [errorTextId, setErrorTextId] = useState<boolean>(false);
+  const [name, setName] = useState<string>(
+    props.location && props.location.type === locationType.TYPE_LOCAL
+      ? props.location.name
+      : ''
+  );
+  const [path, setPath] = useState<string>(
+    props.location && props.location.type === locationType.TYPE_LOCAL
+      ? props.location.path
+      : ''
+  );
+  const [endpointURL, setEndpointURL] = useState<string>(
+    props.location ? props.location.endpointURL : ''
+  );
+  const [isDefault, setIsDefault] = useState<boolean>(
+    props.location ? props.location.isDefault : false
+  );
+  const [isReadOnly, setIsReadOnly] = useState<boolean>(
+    props.location ? props.location.isReadOnly : false
+  );
+  const [watchForChanges, setWatchForChanges] = useState<boolean>(
+    props.location ? props.location.watchForChanges : false
+  );
+  const [persistIndex, setPersistIndex] = useState<boolean>(
+    props.location ? props.location.persistIndex : false
+  );
+  const [fullTextIndex, setFullTextIndex] = useState<boolean>(
+    props.location ? props.location.fullTextIndex : false
+  );
+  const [storeName, setStoreName] = useState<string>(
+    props.location && props.location.type === locationType.TYPE_CLOUD
+      ? props.location.name
+      : ''
+  );
+  const [cloudErrorTextName, setCloudErrorTextName] = useState<boolean>(false);
+  // const [cloudErrorTextPath, setCloudErrorTextPath] = useState<boolean>(false);
+  const [cloudErrorAccessKey, setCloudErrorAccessKey] = useState<boolean>(
+    false
+  );
+  const [cloudErrorSecretAccessKey, setCloudErrorSecretAccessKey] = useState<
+    boolean
+  >(false);
+  // const [cloudErrorBucketName, setCloudErrorBucketName] = useState<boolean>(false);
+  // const [cloudErrorRegion, setCloudErrorRegion] = useState<boolean>(false);
+  const [accessKeyId, setAccessKeyId] = useState<string>(
+    props.location ? props.location.accessKeyId : ''
+  );
+  const [secretAccessKey, setSecretAccessKey] = useState<string>(
+    props.location ? props.location.secretAccessKey : ''
+  );
+  const [bucketName, setBucketName] = useState<string>(
+    props.location ? props.location.bucketName : ''
+  );
+  const [region, setRegion] = useState<string>(
+    props.location ? props.location.region : ''
+  );
+  const [storePath, setStorePath] = useState<string>(
+    props.location && props.location.type === locationType.TYPE_CLOUD
+      ? props.location.path
+      : ''
+  );
+  const [type, setType] = useState<string>(
+    props.location ? props.location.type : locationType.TYPE_LOCAL
+  );
+  const [newuuid, setNewUuid] = useState<string>(
+    props.location ? props.location.uuid : uuidv1()
+  );
 
-class CreateLocationDialog extends React.Component<Props, State> {
-  state = {
-    showAdvancedMode: false,
-    showSecretAccessKey: false,
-    errorTextPath: false,
-    errorTextName: false,
-    disableConfirmButton: true,
-    newuuid: uuidv1(),
-    name: '',
-    path: '',
-    endpointURL: '',
-    perspective: '',
-    isDefault: false,
-    isReadOnly: false,
-    watchForChanges: false,
-    persistIndex: false,
-    fullTextIndex: false,
-    storeName: '',
-    cloudErrorTextName: false,
-    cloudErrorAccessKey: false,
-    cloudErrorSecretAccessKey: false,
-    cloudErrorBucketName: false,
-    cloudErrorRegion: false,
-    accessKeyId: '',
-    secretAccessKey: '',
-    bucketName: '',
-    region: undefined,
-    storePath: '',
-    type: locationType.TYPE_LOCAL
-  };
+  const firstRender = useFirstRender();
 
-  handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { target } = event;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const { name } = target;
-    if (target.type === 'radio') {
-      // type is changed (skip validation)
-      // @ts-ignore
-      this.setState({
-        [name]: value
-      });
-    } else {
-      this.handleChange(name, value);
+  useEffect(() => {
+    if (!firstRender) {
+      validateObjectStore();
     }
+  }, [storeName, accessKeyId, secretAccessKey]);
+
+  useEffect(() => {
+    if (!firstRender) {
+      validateLocal();
+    }
+  }, [name, path]);
+
+  /**
+   * @param checkOnly - switch to set errors or only to check validation
+   * return true - have errors; false - no errors
+   */
+  const validateObjectStore = (checkOnly: boolean = false): boolean => {
+    if (!storeName || storeName.length === 0) {
+      if (checkOnly) return true;
+      setCloudErrorTextName(true);
+    } else if (!checkOnly) {
+      setCloudErrorTextName(false);
+    }
+
+    if (!accessKeyId || accessKeyId.length === 0) {
+      if (checkOnly) return true;
+      setCloudErrorAccessKey(true);
+    } else if (!checkOnly) {
+      setCloudErrorAccessKey(false);
+    }
+
+    if (!secretAccessKey || secretAccessKey.length === 0) {
+      if (checkOnly) return true;
+      setCloudErrorSecretAccessKey(true);
+    } else if (!checkOnly) {
+      setCloudErrorSecretAccessKey(false);
+    }
+    return false;
   };
 
-  handleChange = (name, value) => {
-    this.setState(
-      // @ts-ignore
-      {
-        [name]: value
-      },
-      this.handleValidation
+  /**
+   * @param checkOnly - switch to set errors or only to check validation
+   * return true - have errors; false - no errors
+   */
+  const validateLocal = (checkOnly: boolean = false): boolean => {
+    if (!name || name.length === 0) {
+      if (checkOnly) return true;
+      setErrorTextName(true);
+    } else if (!checkOnly) {
+      setErrorTextName(false);
+    }
+    if (!path || path.length === 0) {
+      if (checkOnly) return true;
+      setErrorTextPath(true);
+    } else if (!checkOnly) {
+      setErrorTextPath(false);
+    }
+    return false;
+  };
+
+  const disableConfirmButton = () => {
+    if (type === locationType.TYPE_LOCAL) {
+      return errorTextName || errorTextPath || validateLocal(true);
+    }
+    return (
+      cloudErrorTextName ||
+      cloudErrorAccessKey ||
+      cloudErrorSecretAccessKey ||
+      validateObjectStore(true)
     );
   };
 
-  switchAdvancedMode = () => {
-    this.setState(prevState => ({
-      showAdvancedMode: !prevState.showAdvancedMode
-    }));
-  };
+  const { fullScreen, open, onClose } = props;
 
-  switchSecretAccessKeyVisibility = () => {
-    this.setState(prevState => ({
-      showSecretAccessKey: !prevState.showSecretAccessKey
-    }));
-  };
-
-  handleValidation() {
-    // const pathRegex = this.state.path.match('^((\.\./|[a-zA-Z0-9_/\-\\])*\.[a-zA-Z0-9]+)$');
-    // const nameRegex = this.state.name.match('^[A-Z][-a-zA-Z]+$');
-    if (this.state.type === locationType.TYPE_CLOUD) {
-      let cloudErrorTextName = false;
-      let cloudErrorAccessKey = false;
-      let cloudErrorSecretAccessKey = false;
-      let disableConfirmButton = false;
-      if (!this.state.storeName || this.state.storeName.length === 0) {
-        cloudErrorTextName = true;
-        disableConfirmButton = true;
-      }
-
-      if (!this.state.accessKeyId || this.state.accessKeyId.length === 0) {
-        cloudErrorAccessKey = true;
-        disableConfirmButton = true;
-      }
-
-      if (
-        !this.state.secretAccessKey ||
-        this.state.secretAccessKey.length === 0
-      ) {
-        cloudErrorSecretAccessKey = true;
-        disableConfirmButton = true;
-      }
-
-      // @ts-ignore
-      this.setState({
-        cloudErrorTextName,
-        cloudErrorAccessKey,
-        cloudErrorSecretAccessKey,
-        disableConfirmButton
-      });
-    } else {
-      let errorTextName = false;
-      let errorTextPath = false;
-      let disableConfirmButton = false;
-      if (!this.state.name || this.state.name.length === 0) {
-        errorTextName = true;
-        disableConfirmButton = true;
-      }
-      if (!this.state.path || this.state.path.length === 0) {
-        errorTextPath = true;
-        disableConfirmButton = true;
-      }
-      this.setState({ errorTextName, errorTextPath, disableConfirmButton });
-    }
-  }
-
-  onConfirm = () => {
-    if (!this.state.disableConfirmButton) {
-      if (this.state.type === locationType.TYPE_LOCAL) {
-        this.props.addLocation({
-          uuid: this.state.newuuid,
-          type: locationType.TYPE_LOCAL,
-          name: this.state.name,
-          path: this.state.path,
-          isDefault: this.state.isDefault,
-          isReadOnly: this.state.isReadOnly,
-          persistIndex: this.state.persistIndex,
-          fullTextIndex: this.state.fullTextIndex,
-          watchForChanges: this.state.watchForChanges
-        });
-      } else if (this.state.type === locationType.TYPE_CLOUD) {
-        this.props.addLocation({
-          uuid: this.state.newuuid,
-          type: locationType.TYPE_CLOUD,
-          name: this.state.storeName,
-          path: this.state.storePath,
-          endpointURL: this.state.endpointURL,
-          accessKeyId: this.state.accessKeyId,
-          secretAccessKey: this.state.secretAccessKey,
-          bucketName: this.state.bucketName,
-          region: this.state.region,
-          isDefault: this.state.isDefault,
-          isReadOnly: this.state.isReadOnly,
-          persistIndex: this.state.persistIndex,
-          fullTextIndex: this.state.fullTextIndex,
+  const onConfirm = () => {
+    if (!disableConfirmButton()) {
+      let loc;
+      if (type === locationType.TYPE_LOCAL) {
+        loc = {
+          uuid: props.location ? props.location.uuid : newuuid,
+          type,
+          name,
+          path,
+          isDefault,
+          isReadOnly,
+          persistIndex,
+          fullTextIndex,
+          watchForChanges
+        };
+      } else if (type === locationType.TYPE_CLOUD) {
+        loc = {
+          uuid: props.location ? props.location.uuid : newuuid,
+          type,
+          name: storeName,
+          path: storePath,
+          endpointURL,
+          accessKeyId,
+          secretAccessKey,
+          bucketName,
+          region,
+          isDefault,
+          isReadOnly,
+          persistIndex,
+          fullTextIndex,
           watchForChanges: false
-        });
+        };
       }
-      this.props.onClose();
+
+      if (props.addLocation) {
+        props.addLocation(loc);
+      } else if (props.editLocation) {
+        loc.newuuid = newuuid;
+        props.editLocation(loc);
+      } else {
+        console.error('No addLocation or editLocation props exist');
+      }
+      onClose();
       // this.props.resetState('createLocationDialogKey');
     }
   };
 
-  onCancel = () => {
-    this.props.onClose();
-    // this.props.resetState('createLocationDialogKey');
-  };
+  let content;
+  if (type === locationType.TYPE_CLOUD) {
+    content = (
+      <ObjectStoreForm
+        cloudErrorTextName={cloudErrorTextName}
+        cloudErrorTextPath={false}
+        cloudErrorAccessKey={cloudErrorAccessKey}
+        cloudErrorSecretAccessKey={cloudErrorSecretAccessKey}
+        cloudErrorBucketName={false}
+        cloudErrorRegion={false}
+        errorTextId={false}
+        showAdvancedMode={showAdvancedMode}
+        showSecretAccessKey={showSecretAccessKey}
+        storeName={storeName}
+        storePath={storePath}
+        accessKeyId={accessKeyId}
+        secretAccessKey={secretAccessKey}
+        setShowSecretAccessKey={setShowSecretAccessKey}
+        bucketName={bucketName}
+        region={region}
+        endpointURL={endpointURL}
+        newuuid={newuuid}
+        setStoreName={setStoreName}
+        setStorePath={setStorePath}
+        setAccessKeyId={setAccessKeyId}
+        setSecretAccessKey={setSecretAccessKey}
+        setBucketName={setBucketName}
+        setEndpointURL={setEndpointURL}
+        setNewUuid={setNewUuid}
+        setRegion={setRegion}
+      />
+    );
+  } else {
+    content = (
+      <LocalForm
+        showSelectDirectoryDialog={props.showSelectDirectoryDialog}
+        showAdvancedMode={showAdvancedMode}
+        errorTextPath={errorTextPath}
+        errorTextName={errorTextName}
+        errorTextId={false}
+        setName={setName}
+        setPath={setPath}
+        setNewUuid={setNewUuid}
+        path={path}
+        name={name}
+        newuuid={newuuid}
+      />
+    );
+  }
 
-  render() {
-    const { fullScreen, open, onClose } = this.props;
-
-    // const { classes } = this.props;
-    let content;
-    if (this.state.type === locationType.TYPE_CLOUD) {
-      content = (
-        <ObjectStoreForm
-          switchSecretAccessKeyVisibility={this.switchSecretAccessKeyVisibility}
-          handleInputChange={this.handleInputChange}
-          handleChange={this.handleChange}
-          state={this.state}
-        />
-      );
-    } else {
-      content = (
-        <LocalForm
-          showSelectDirectoryDialog={this.props.showSelectDirectoryDialog}
-          handleInputChange={this.handleInputChange}
-          handleChange={this.handleChange}
-          state={this.state}
-        />
-      );
-    }
-
-    return (
-      <Dialog
-        open={open}
-        onClose={onClose}
-        fullScreen={fullScreen}
-        keepMounted
-        scroll="paper"
-        onKeyDown={event => {
-          if (event.key === 'Enter' || event.keyCode === 13) {
-            event.preventDefault();
-            event.stopPropagation();
-            this.onConfirm();
-          } else if (event.key === 'Escape') {
-            onClose();
-          }
-        }}
-      >
-        <DialogTitle>{i18n.t('core:createLocationTitle')}</DialogTitle>
-        <DialogContent>
-          <Grid container spacing={2}>
-            <Grid item xs={2} style={{ marginTop: 13, textAlign: 'left' }}>
-              <Typography>{i18n.t('core:locationType')}</Typography>
-            </Grid>
-            <Grid item xs={10}>
-              <FormControl disabled={!Pro}>
-                <RadioGroup
-                  title={
-                    Pro ? '' : i18n.t('core:thisFunctionalityIsAvailableInPro')
-                  }
-                  aria-label={i18n.t('core:locationType')}
-                  name="type"
-                  value={this.state.type}
-                  onChange={this.handleInputChange}
-                  row
-                >
-                  <FormControlLabel
-                    data-tid="localLocation"
-                    value={locationType.TYPE_LOCAL}
-                    control={<Radio />}
-                    label="Local"
-                  />
-                  <FormControlLabel
-                    data-tid="objectStorageLocation"
-                    value={locationType.TYPE_CLOUD}
-                    control={<Radio />}
-                    title={i18n.t('core:objectStorageTitle')}
-                    label={i18n.t('core:objectStorage')}
-                  />
-                </RadioGroup>
-              </FormControl>
-            </Grid>
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullScreen={fullScreen}
+      keepMounted
+      scroll="paper"
+      onKeyDown={event => {
+        if (event.key === 'Enter' || event.keyCode === 13) {
+          event.preventDefault();
+          event.stopPropagation();
+          onConfirm();
+        } else if (event.key === 'Escape') {
+          onClose();
+        }
+      }}
+    >
+      <DialogTitle>
+        {props.location
+          ? i18n.t('core:editLocationTitle')
+          : i18n.t('core:createLocationTitle')}
+      </DialogTitle>
+      <DialogContent>
+        <Grid container spacing={2}>
+          <Grid item xs={2} style={{ marginTop: 13, textAlign: 'left' }}>
+            <Typography>{i18n.t('core:locationType')}</Typography>
           </Grid>
-          {content}
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Switch
-                  data-tid="locationIsDefault"
-                  name="isDefault"
-                  checked={this.state.isDefault}
-                  onChange={this.handleInputChange}
-                />
-              }
-              label={i18n.t('core:startupLocation')}
-            />
-            {this.state.showAdvancedMode && (
-              <FormControlLabel
-                control={
-                  <Switch
-                    disabled={!Pro}
-                    data-tid="changeReadOnlyMode"
-                    name="isReadOnly"
-                    checked={this.state.isReadOnly}
-                    onChange={this.handleInputChange}
-                  />
+          <Grid item xs={10}>
+            <FormControl disabled={!Pro}>
+              <RadioGroup
+                title={
+                  Pro ? '' : i18n.t('core:thisFunctionalityIsAvailableInPro')
                 }
-                label={
-                  i18n.t('core:readonlyModeSwitch') +
-                  (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
+                aria-label={i18n.t('core:locationType')}
+                name="type"
+                value={type}
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  setType(event.target.value)
+                }
+                row
+              >
+                <FormControlLabel
+                  data-tid="localLocation"
+                  value={locationType.TYPE_LOCAL}
+                  control={<Radio />}
+                  label="Local"
+                />
+                <FormControlLabel
+                  data-tid="objectStorageLocation"
+                  value={locationType.TYPE_CLOUD}
+                  control={<Radio />}
+                  title={i18n.t('core:objectStorageTitle')}
+                  label={i18n.t('core:objectStorage')}
+                />
+              </RadioGroup>
+            </FormControl>
+          </Grid>
+        </Grid>
+        {content}
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Switch
+                data-tid="locationIsDefault"
+                name="isDefault"
+                checked={isDefault}
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  setIsDefault(event.target.checked)
                 }
               />
-            )}
+            }
+            label={i18n.t('core:startupLocation')}
+          />
+          {showAdvancedMode && (
             <FormControlLabel
               control={
                 <Switch
                   disabled={!Pro}
-                  data-tid="changeFullTextIndex"
-                  name="fullTextIndex"
-                  checked={this.state.fullTextIndex}
-                  onChange={this.handleInputChange}
+                  data-tid="changeReadOnlyMode"
+                  name="isReadOnly"
+                  checked={isReadOnly}
+                  onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                    setIsReadOnly(event.target.checked)
+                  }
                 />
               }
               label={
-                i18n.t('core:createFullTextIndex') +
+                i18n.t('core:readonlyModeSwitch') +
                 (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
               }
             />
-            {this.state.showAdvancedMode && (
-              <FormControlLabel
-                control={
-                  <Switch
-                    disabled={!Pro}
-                    data-tid="changePersistIndex"
-                    name="persistIndex"
-                    checked={this.state.persistIndex}
-                    onChange={this.handleInputChange}
-                  />
-                }
-                label={
-                  i18n.t('core:persistIndexSwitch') +
-                  (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
+          )}
+          <FormControlLabel
+            control={
+              <Switch
+                disabled={!Pro}
+                data-tid="changeFullTextIndex"
+                name="fullTextIndex"
+                checked={fullTextIndex}
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  setFullTextIndex(event.target.checked)
                 }
               />
-            )}
+            }
+            label={
+              i18n.t('core:createFullTextIndex') +
+              (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
+            }
+          />
+          {showAdvancedMode && (
             <FormControlLabel
               control={
                 <Switch
-                  disabled={!Pro || this.state.type === locationType.TYPE_CLOUD}
-                  data-tid="changeWatchForChanges"
-                  name="watchForChanges"
-                  checked={this.state.watchForChanges}
-                  onChange={this.handleInputChange}
+                  disabled={!Pro}
+                  data-tid="changePersistIndex"
+                  name="persistIndex"
+                  checked={persistIndex}
+                  onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                    setPersistIndex(event.target.checked)
+                  }
                 />
               }
               label={
-                i18n.t('core:watchForChangesInLocation') +
+                i18n.t('core:persistIndexSwitch') +
                 (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
               }
             />
-          </FormGroup>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            data-tid="switchAdvancedModeTID"
-            onClick={this.switchAdvancedMode}
-          >
-            {this.state.showAdvancedMode
-              ? i18n.t('core:switchSimpleMode')
-              : i18n.t('core:switchAdvancedMode')}
-          </Button>
-          <Button onClick={this.onCancel} color="primary">
-            {i18n.t('core:cancel')}
-          </Button>
-          <Button
-            disabled={this.state.disableConfirmButton}
-            onClick={this.onConfirm}
-            data-tid="confirmLocationCreation"
-            color="primary"
-          >
-            {i18n.t('core:ok')}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
-}
+          )}
+          <FormControlLabel
+            control={
+              <Switch
+                disabled={!Pro || type === locationType.TYPE_CLOUD}
+                data-tid="changeWatchForChanges"
+                name="watchForChanges"
+                checked={watchForChanges}
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  setWatchForChanges(event.target.checked)
+                }
+              />
+            }
+            label={
+              i18n.t('core:watchForChangesInLocation') +
+              (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
+            }
+          />
+        </FormGroup>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          data-tid="switchAdvancedModeTID"
+          onClick={() => setShowAdvancedMode(!showAdvancedMode)}
+        >
+          {showAdvancedMode
+            ? i18n.t('core:switchSimpleMode')
+            : i18n.t('core:switchAdvancedMode')}
+        </Button>
+        <Button onClick={() => onClose()} color="primary">
+          {i18n.t('core:cancel')}
+        </Button>
+        <Button
+          disabled={disableConfirmButton()}
+          onClick={onConfirm}
+          data-tid="confirmLocationCreation"
+          color="primary"
+        >
+          {i18n.t('core:ok')}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
 
 export default withStyles(styles)(withMobileDialog()(CreateLocationDialog));

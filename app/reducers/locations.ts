@@ -195,7 +195,16 @@ export const actions = {
       // disableObjectStoreSupport to revoke objectStoreAPI cached object
       PlatformIO.disableObjectStoreSupport();
     }
-    dispatch(AppActions.openLocation(location));
+    /**
+     * check if location uuid is changed
+     */
+    if (location.newuuid !== location.uuid) {
+      dispatch(
+        AppActions.openLocation({ ...location, uuid: location.newuuid })
+      );
+    } else {
+      dispatch(AppActions.openLocation(location));
+    }
     dispatch(AppActions.setReadOnlyMode(location.isReadOnly || false));
   },
   changeLocation: (location: Location) => ({
