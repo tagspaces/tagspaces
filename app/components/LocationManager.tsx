@@ -18,7 +18,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { bindActionCreators } from 'redux';
-import uuidv1 from 'uuid';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
@@ -32,36 +31,23 @@ import CustomLogo from './CustomLogo';
 import {
   actions as LocationActions,
   getLocations,
-  locationType,
   Location
 } from '../reducers/locations';
 import { actions as AppActions } from '../reducers/app';
 import { getPerspectives } from '-/reducers/settings';
 import i18n from '../services/i18n';
 import AppConfig from '../config';
-import PlatformIO from '../services/platform-io';
 import LoadingLazy from '-/components/LoadingLazy';
 import LocationView from '-/components/LocationView';
 
-const CreateLocationDialog = React.lazy(() =>
+const CreateEditLocationDialog = React.lazy(() =>
   import(
-    /* webpackChunkName: "CreateLocationDialog" */ './dialogs/CreateLocationDialog'
+    /* webpackChunkName: "CreateEditLocationDialog" */ './dialogs/CreateEditLocationDialog'
   )
 );
-const CreateLocationDialogAsync = props => (
+const CreateEditLocationDialogAsync = props => (
   <React.Suspense fallback={<LoadingLazy />}>
-    <CreateLocationDialog {...props} />
-  </React.Suspense>
-);
-
-const EditLocationDialog = React.lazy(() =>
-  import(
-    /* webpackChunkName: "CreateLocationDialog" */ './dialogs/EditLocationDialog'
-  )
-);
-const EditLocationDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <EditLocationDialog {...props} />
+    <CreateEditLocationDialog {...props} />
   </React.Suspense>
 );
 
@@ -172,7 +158,7 @@ const LocationManager = (props: Props) => {
       )}
       <div>
         {isCreateLocationDialogOpened && (
-          <CreateLocationDialogAsync
+          <CreateEditLocationDialogAsync
             open={isCreateLocationDialogOpened}
             onClose={() => setCreateLocationDialogOpened(false)}
             addLocation={props.addLocation}
@@ -180,13 +166,12 @@ const LocationManager = (props: Props) => {
           />
         )}
         {isEditLocationDialogOpened && (
-          <EditLocationDialogAsync
+          <CreateEditLocationDialogAsync
             open={isEditLocationDialogOpened}
             onClose={() => setEditLocationDialogOpened(false)}
             location={selectedLocation}
             editLocation={props.editLocation}
             showSelectDirectoryDialog={showSelectDirectoryDialog}
-            selectedDirectoryPath={selectedDirectoryPath}
           />
         )}
         {isDeleteLocationDialogOpened && (

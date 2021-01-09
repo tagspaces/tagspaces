@@ -60,13 +60,9 @@ export async function createMinioLocation(
   const lastLocationTID = await getLocationTid(-1);
   // Check if location not exist (from extconfig.js)
   if (locationName !== lastLocationTID) {
-    const elem = await global.client.$('[data-tid=createNewLocation]');
-    await elem.click();
-
-    const objectStorageLocation = await global.client.$(
-      '[data-tid=objectStorageLocation]'
-    );
-    await objectStorageLocation.click();
+    await clickOn('[data-tid=createNewLocation]');
+    await clickOn('[data-tid=objectStorageLocation]');
+    await clickOn('[data-tid=switchAdvancedModeTID]');
 
     // SET LOCATION NAME
     await setInputKeys(
@@ -79,7 +75,6 @@ export async function createMinioLocation(
     await setInputKeys('bucketName', locationName);
     await setInputKeys('endpointURL', minioEndpointURL);
 
-    // await delay(1500);
     if (isDefault) {
       await clickOn('[data-tid=locationIsDefault]');
     }
@@ -230,8 +225,8 @@ export async function aboutDialogExt(title, ext) {
 export async function startupLocation() {
   await clickOn('[data-tid=editLocation]');
   // await global.client.pause(500);
-  await clickOn('[data-tid=editStartupLocation]');
-  await clickOn('[data-tid=confirmEditLocationDialog]');
+  await clickOn('[data-tid=locationIsDefault]');
+  await clickOn('[data-tid=confirmLocationCreation]');
 }
 
 /**
