@@ -64,7 +64,7 @@ interface Props {
   showSelectDirectoryDialog: () => void;
 }
 
-const CreateLocationDialog = (props: Props) => {
+const CreateEditLocationDialog = (props: Props) => {
   const [showAdvancedMode, setShowAdvancedMode] = useState<boolean>(false);
   const [showSecretAccessKey, setShowSecretAccessKey] = useState<boolean>(
     false
@@ -224,6 +224,7 @@ const CreateLocationDialog = (props: Props) => {
           type,
           name,
           path,
+          paths: [path],
           isDefault,
           isReadOnly,
           persistIndex,
@@ -236,6 +237,7 @@ const CreateLocationDialog = (props: Props) => {
           type,
           name: storeName,
           path: storePath,
+          paths: [storePath],
           endpointURL,
           accessKeyId,
           secretAccessKey,
@@ -486,4 +488,4 @@ const CreateLocationDialog = (props: Props) => {
   );
 };
 
-export default withStyles(styles)(withMobileDialog()(CreateLocationDialog));
+export default withStyles(styles)(withMobileDialog()(CreateEditLocationDialog));

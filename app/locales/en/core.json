@@ -492,5 +492,11 @@
   "openLink": "Open Link",
   "invalidLink": "Invalid Link",
   "link": "Link",
+  "desktopFolder": "Desktop",
+  "documentsFolder": "Documents",
+  "downloadsFolder": "Downloads",
+  "musicFolder": "Music",
+  "picturesFolder": "Pictures",
+  "videosFolder": "Videos",
   "-": "-"
 }

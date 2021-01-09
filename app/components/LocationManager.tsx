@@ -40,14 +40,14 @@ import AppConfig from '../config';
 import LoadingLazy from '-/components/LoadingLazy';
 import LocationView from '-/components/LocationView';
 
-const CreateLocationDialog = React.lazy(() =>
+const CreateEditLocationDialog = React.lazy(() =>
   import(
-    /* webpackChunkName: "CreateLocationDialog" */ './dialogs/CreateLocationDialog'
+    /* webpackChunkName: "CreateEditLocationDialog" */ './dialogs/CreateEditLocationDialog'
   )
 );
-const CreateLocationDialogAsync = props => (
+const CreateEditLocationDialogAsync = props => (
   <React.Suspense fallback={<LoadingLazy />}>
-    <CreateLocationDialog {...props} />
+    <CreateEditLocationDialog {...props} />
   </React.Suspense>
 );
 
@@ -158,7 +158,7 @@ const LocationManager = (props: Props) => {
       )}
       <div>
         {isCreateLocationDialogOpened && (
-          <CreateLocationDialogAsync
+          <CreateEditLocationDialogAsync
             open={isCreateLocationDialogOpened}
             onClose={() => setCreateLocationDialogOpened(false)}
             addLocation={props.addLocation}
@@ -166,21 +166,13 @@ const LocationManager = (props: Props) => {
           />
         )}
         {isEditLocationDialogOpened && (
-          <CreateLocationDialogAsync
+          <CreateEditLocationDialogAsync
             open={isEditLocationDialogOpened}
             onClose={() => setEditLocationDialogOpened(false)}
             location={selectedLocation}
             editLocation={props.editLocation}
             showSelectDirectoryDialog={showSelectDirectoryDialog}
           />
-          /* <EditLocationDialogAsync
-            open={isEditLocationDialogOpened}
-            onClose={() => setEditLocationDialogOpened(false)}
-            location={selectedLocation}
-            editLocation={props.editLocation}
-            showSelectDirectoryDialog={showSelectDirectoryDialog}
-            selectedDirectoryPath={selectedDirectoryPath}
-          /> */
         )}
         {isDeleteLocationDialogOpened && (
           <ConfirmDialog

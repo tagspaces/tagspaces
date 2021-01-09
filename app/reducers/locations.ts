@@ -18,7 +18,8 @@
 
 import uuidv1 from 'uuid';
 import { immutablySwapItems } from '-/utils/misc';
-import { actions as AppActions } from '../reducers/app';
+import { actions as AppActions } from '-/reducers/app';
+import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-io';
 import AppConfig from '-/config';
 
@@ -159,7 +160,7 @@ export const actions = {
           {
             uuid: uuidv1(),
             type: locationType.TYPE_LOCAL,
-            name: key, // TODO use i18n
+            name: i18n.t(key),
             path: devicePaths[key],
             isDefault: AppConfig.isWeb && devicePaths[key] === '/files/', // Used for the web ts demo
             isReadOnly: false,
