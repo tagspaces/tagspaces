@@ -385,6 +385,40 @@ const CreateLocationDialog = (props: Props) => {
             }
             label={i18n.t('core:startupLocation')}
           />
+          <FormControlLabel
+            control={
+              <Switch
+                disabled={!Pro}
+                data-tid="changeFullTextIndex"
+                name="fullTextIndex"
+                checked={fullTextIndex}
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  setFullTextIndex(event.target.checked)
+                }
+              />
+            }
+            label={
+              i18n.t('core:createFullTextIndex') +
+              (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
+            }
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                disabled={!Pro || type === locationType.TYPE_CLOUD}
+                data-tid="changeWatchForChanges"
+                name="watchForChanges"
+                checked={watchForChanges}
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  setWatchForChanges(event.target.checked)
+                }
+              />
+            }
+            label={
+              i18n.t('core:watchForChangesInLocation') +
+              (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
+            }
+          />
           {showAdvancedMode && (
             <FormControlLabel
               control={
@@ -404,23 +438,6 @@ const CreateLocationDialog = (props: Props) => {
               }
             />
           )}
-          <FormControlLabel
-            control={
-              <Switch
-                disabled={!Pro}
-                data-tid="changeFullTextIndex"
-                name="fullTextIndex"
-                checked={fullTextIndex}
-                onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                  setFullTextIndex(event.target.checked)
-                }
-              />
-            }
-            label={
-              i18n.t('core:createFullTextIndex') +
-              (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
-            }
-          />
           {showAdvancedMode && (
             <FormControlLabel
               control={
@@ -440,26 +457,9 @@ const CreateLocationDialog = (props: Props) => {
               }
             />
           )}
-          <FormControlLabel
-            control={
-              <Switch
-                disabled={!Pro || type === locationType.TYPE_CLOUD}
-                data-tid="changeWatchForChanges"
-                name="watchForChanges"
-                checked={watchForChanges}
-                onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                  setWatchForChanges(event.target.checked)
-                }
-              />
-            }
-            label={
-              i18n.t('core:watchForChangesInLocation') +
-              (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
-            }
-          />
         </FormGroup>
       </DialogContent>
-      <DialogActions>
+      <DialogActions style={{ justifyContent: 'space-between' }}>
         <Button
           data-tid="switchAdvancedModeTID"
           onClick={() => setShowAdvancedMode(!showAdvancedMode)}
@@ -468,17 +468,19 @@ const CreateLocationDialog = (props: Props) => {
             ? i18n.t('core:switchSimpleMode')
             : i18n.t('core:switchAdvancedMode')}
         </Button>
-        <Button onClick={() => onClose()} color="primary">
-          {i18n.t('core:cancel')}
-        </Button>
-        <Button
-          disabled={disableConfirmButton()}
-          onClick={onConfirm}
-          data-tid="confirmLocationCreation"
-          color="primary"
-        >
-          {i18n.t('core:ok')}
-        </Button>
+        <div>
+          <Button onClick={() => onClose()} color="primary">
+            {i18n.t('core:cancel')}
+          </Button>
+          <Button
+            disabled={disableConfirmButton()}
+            onClick={onConfirm}
+            data-tid="confirmLocationCreation"
+            color="primary"
+          >
+            {i18n.t('core:ok')}
+          </Button>
+        </div>
       </DialogActions>
     </Dialog>
   );
