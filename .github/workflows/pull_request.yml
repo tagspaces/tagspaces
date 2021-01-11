@@ -63,6 +63,11 @@ jobs:
         with:
           access-token: ${{ secrets.GITHUB_TOKEN }}
           working-directory: tests
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: test-pages
+          path: tests/test-pages/
   # gitHubActionForNpmMac:
   #  name: Validating MacOS
   #  runs-on: macos-latest

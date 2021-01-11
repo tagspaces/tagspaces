@@ -90,16 +90,22 @@ describe('TST50 - Perspective Grid', () => {
       await global.client.pause(500); // TODO
       const firstFileName = await getGridFileName(0);
       expect(firstFileName).toBe('sample_exif.jpg');
+      // asc/desc
+      await clickOn('[data-tid=gridPerspectiveSortMenu]');
+      await clickOn('[data-tid=gridPerspectiveSortByName]');
     });
 
     /**
      * TODO web https://trello.com/c/b2isDaUc/533-switch-asc-desc-while-sort-by-options
      */
-    test('TST10** - Sort by size [minio,electron]', async () => {
+    test('TST10** - Sort by size [web,minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortBySize]');
       await global.client.pause(500); // TODO
       const firstFileName = await getGridFileName(0);
       expect(firstFileName).toBe('sample.ogv');
+      // asc/desc
+      await clickOn('[data-tid=gridPerspectiveSortMenu]');
+      await clickOn('[data-tid=gridPerspectiveSortBySize]');
     });
 
     test('TST10** - Sort by date [web,minio,electron]', async () => {
@@ -111,6 +117,9 @@ describe('TST50 - Perspective Grid', () => {
       let firstFileName = await getGridFileName(0);
 
       expect(firstFileName).toBe('note.txt');
+      // asc/desc
+      await clickOn('[data-tid=gridPerspectiveSortMenu]');
+      await clickOn('[data-tid=gridPerspectiveSortByDate]');
 
       //cleanup
       await setSettings('[data-tid=settingsSetUseTrashCan]');
@@ -123,11 +132,14 @@ describe('TST50 - Perspective Grid', () => {
     /**
      * TODO web https://trello.com/c/b2isDaUc/533-switch-asc-desc-while-sort-by-options
      */
-    test('TST10** - Sort by extension [minio,electron]', async () => {
+    test('TST10** - Sort by extension [web,minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortByExt]');
       await global.client.pause(1000); // TODO
       const firstFileName = await getGridFileName(0);
       expect(firstFileName).toBe('sample.zip');
+      // asc/desc
+      await clickOn('[data-tid=gridPerspectiveSortMenu]');
+      await clickOn('[data-tid=gridPerspectiveSortByExt]');
     });
 
     test('TST10** - Sort by tags [web,minio,electron]', async () => {
@@ -135,6 +147,9 @@ describe('TST50 - Perspective Grid', () => {
       await global.client.pause(1000); // TODO
       const firstFileName = await getGridFileName(0);
       expect(firstFileName).toBe('sample_exif.jpg');
+      // asc/desc
+      await clickOn('[data-tid=gridPerspectiveSortMenu]');
+      await clickOn('[data-tid=gridPerspectiveSortByFirstTag]');
     });
   });
 
@@ -164,7 +179,7 @@ describe('TST50 - Perspective Grid', () => {
   });
 
   // This scenario includes "Add tags" && "Remove tags" to be fulfilled
-  test('TST5005 - Add tags to the selected files [TST5005,electron]', async () => {
+  test('TST5005 - Add tags to the selected files [TST5005,web,minio,electron]', async () => {
     const classNotSelected = await getGridCellClass(0);
     const classSelected = await selectAllFiles(classNotSelected);
     expect(classNotSelected).not.toBe(classSelected);
@@ -196,7 +211,7 @@ describe('TST50 - Perspective Grid', () => {
     }*/
   });
 
-  test('TST5006 - Remove tags from selected files [TST5006, electron]', async () => {
+  test('TST5006 - Remove tags from selected files [TST5006,web,minio,electron]', async () => {
     const classNotSelected = await getGridCellClass(0);
     const classSelected = await selectAllFiles(classNotSelected);
     expect(classNotSelected).not.toBe(classSelected);
@@ -224,7 +239,7 @@ describe('TST50 - Perspective Grid', () => {
     }*/
   });
 
-  test('TST5007 - Remove all tags from selected files [TST5007, electron]', async () => {
+  test('TST5007 - Remove all tags from selected files [TST5007,web,minio,electron]', async () => {
     const classNotSelected = await getGridCellClass(0);
     const classSelected = await selectAllFiles(classNotSelected);
     expect(classNotSelected).not.toBe(classSelected);
@@ -267,7 +282,10 @@ describe('TST50 - Perspective Grid', () => {
     await expectElementExist(selectorFile, false);
   });
 
-  test('TST5010 - Move file [TST5010,web,minio,electron]', async () => {
+  /**
+   * TODO reindexing don't work in web
+   */
+  test('TST5010 - Move file [TST5010,minio,electron]', async () => {
     await searchEngine('epub');
 
     // select file

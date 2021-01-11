@@ -35,6 +35,11 @@ jobs:
           yarn build-main
           yarn build-e2e
           yarn test-e2e-electron
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: test-pages
+          path: tests/test-pages/
 
   e2eTestsMinioWin:
     name: E2E Windows Minio
@@ -79,6 +84,11 @@ jobs:
           yarn build-main
           yarn build-e2e
           yarn test-e2e-electron-minio
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: test-pages
+          path: tests/test-pages/
 
   e2eTestsWebWin:
     name: E2E Windows Web
@@ -123,6 +133,11 @@ jobs:
           yarn build-main
           yarn build-e2e
           yarn test-e2e-web
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: test-pages
+          path: tests/test-pages/
 
   e2eTestsElectronMac:
     name: E2E Mac Electron
@@ -154,6 +169,11 @@ jobs:
           yarn build-main
           yarn build-e2e
           yarn test-e2e-electron
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: test-pages
+          path: tests/test-pages/
 
   e2eTestsMinioMac:
     name: E2E Mac Minio
@@ -199,6 +219,11 @@ jobs:
           yarn build-main
           yarn build-e2e
           yarn test-e2e-electron-minio
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: test-pages
+          path: tests/test-pages/
 
   e2eTestsWebMac:
     name: E2E Mac Web
@@ -245,9 +270,10 @@ jobs:
           yarn build-e2e
           yarn test-e2e-web
       - uses: actions/upload-artifact@v2
+        if: always()
         with:
-          name: test-reports
-          path: tests/test-reports/
+          name: test-pages
+          path: tests/test-pages/
 
   e2eTestsElectronUbuntu:
     name: E2E Ubuntu Electron
@@ -279,6 +305,11 @@ jobs:
           yarn build-main
           yarn build-e2e
           yarn test-e2e-electron
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: test-pages
+          path: tests/test-pages/
 
   e2eTestsMinioUbuntu:
     name: E2E Ubuntu Minio
@@ -324,6 +355,11 @@ jobs:
           yarn build-main
           yarn build-e2e
           yarn test-e2e-electron-minio
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: test-pages
+          path: tests/test-pages/
 
   e2eTestsWebUbuntu:
     name: E2E Ubuntu Web
@@ -370,6 +406,7 @@ jobs:
           yarn build-e2e
           yarn test-e2e-web
       - uses: actions/upload-artifact@v2
+        if: always()
         with:
           name: test-reports
           path: tests/test-reports/

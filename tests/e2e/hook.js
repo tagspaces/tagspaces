@@ -50,11 +50,18 @@ export async function startSpectronApp() {
       port: 9515, // "9515" is the port opened by chrome driver.
       capabilities: {
         browserName: 'chrome',
+        'goog:chromeOptions': {
+          args: [
+            '--no-sandbox',
+            '--window-size=1920,1080',
+            '--disable-dev-shm-usage'
+          ]
+        },
         timeouts: {
           script: 60000
         }
       },
-      waitforTimeout: 5000,
+      // waitforTimeout: 5000,
       // logLevel: 'debug'
       logLevel: 'silent'
     };
@@ -67,7 +74,14 @@ export async function startSpectronApp() {
             // binary: electronPath, // Path to your Electron binary.
             // to run chrome headless the following flags are required
             // (see https://developers.google.com/web/updates/2017/04/headless-chrome)
-            args: ['--headless', '--disable-gpu']
+            // args: ['--headless', '--disable-gpu']
+            args: [
+              '--headless',
+              '--disable-gpu',
+              '--no-sandbox',
+              '--window-size=1920,1080',
+              '--disable-dev-shm-usage'
+            ]
           },
           timeouts: {
             script: 60000
@@ -88,6 +102,7 @@ export async function startSpectronApp() {
                  *!/
       // .timeouts('implicit', 5000)
       .timeouts('pageLoad', 30000);*/
+    setWdioImageComparisonService(global.client);
 
     await global.client.url('http://localhost:8000');
   } else {
@@ -102,6 +117,26 @@ export async function startSpectronApp() {
     global.client = global.app.client;
     await global.client.waitUntilWindowLoaded();
   }
+}
+
+function setWdioImageComparisonService(browser) {
+  global.browser = browser;
+  const WdioImageComparisonService = require('wdio-image-comparison-service')
+    .default;
+  let wdioImageComparisonService = new WdioImageComparisonService({
+    baselineFolder: pathLib.join(__dirname, '../test-pages/Baseline/'),
+    formatImageName: '{tag}-{logName}-{width}x{height}',
+    screenshotPath: pathLib.join(__dirname, '../test-pages/'),
+    savePerInstance: true,
+    autoSaveBaseline: true,
+    blockOutStatusBar: true,
+    blockOutToolBar: true
+  });
+  // wdioImageComparisonService.defaultOptions.autoSaveBaseline = true;
+  browser.defaultOptions = wdioImageComparisonService.defaultOptions;
+  browser.folders = wdioImageComparisonService.folders;
+
+  wdioImageComparisonService.before(browser.capabilities);
 }
 
 export async function stopSpectronApp() {
