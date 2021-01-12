@@ -16,10 +16,11 @@
  *
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
+import CryptoJS from 'crypto-js';
 import List from '@material-ui/core/List';
 import Button from '@material-ui/core/Button';
 import styles from './SidePanels.css';
@@ -39,6 +40,7 @@ import i18n from '../services/i18n';
 import AppConfig from '../config';
 import LoadingLazy from '-/components/LoadingLazy';
 import LocationView from '-/components/LocationView';
+import {Pro} from "-/pro";
 
 const CreateEditLocationDialog = React.lazy(() =>
   import(
@@ -62,6 +64,7 @@ interface Props {
   toggleOpenLinkDialog: () => void;
   setDefaultLocations: () => void;
   addLocation: (location: Location, openAfterCreate?: boolean) => void;
+  importLocations: (locations: Array<Location>) => void;
   editLocation: () => void;
   removeLocation: (location: Location) => void;
 }
@@ -74,6 +77,7 @@ type SubFolder = {
 };
 
 const LocationManager = (props: Props) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedLocation, setSelectedLocation] = useState<Location>(null);
   const [selectedDirectoryPath, setSelectedDirectoryPath] = useState<string>(
     null
@@ -120,12 +124,43 @@ const LocationManager = (props: Props) => {
     setSelectedDirectoryPath(currentPath);
   };
 
+  function handleFileInputChange(selection: any) {
+    const target = selection.currentTarget;
+    const file = target.files[0];
+    const reader: any = new FileReader();
+
+    reader.onload = () => {
+      try {
+        const bytes = CryptoJS.AES.decrypt(reader.result, 'secret key 123');
+        const jsonObj = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+        if (jsonObj && jsonObj.locations) {
+          props.importLocations(jsonObj.locations);
+        }
+      } catch (e) {
+        console.error('Error : ', e);
+      }
+    };
+    reader.readAsText(file);
+    target.value = null;
+  }
+
   const { classes } = props;
   return (
     <div className={classes.panel} style={props.style}>
       <CustomLogo />
 
       <LocationManagerMenu
+        importLocations={() => {
+          if (AppConfig.isCordovaAndroid && AppConfig.isCordovaiOS) {
+            // TODO Select directory or file from dialog
+            showSelectDirectoryDialog();
+          } else {
+            fileInputRef.current.click();
+          }
+        }}
+        exportLocations={() => {
+          Pro.LocationsExport.exportLocations(props.locations);
+        }}
         classes={classes}
         openURLExternally={props.openURLExternally}
         showCreateLocationDialog={() => {
@@ -229,6 +264,13 @@ const LocationManager = (props: Props) => {
           ))}
         </List>
       </div>
+      <input
+        style={{ display: 'none' }}
+        ref={fileInputRef}
+        accept="*"
+        type="file"
+        onChange={handleFileInputChange}
+      />
     </div>
   );
 };
@@ -245,6 +287,7 @@ function mapDispatchToProps(dispatch) {
     {
       setDefaultLocations: LocationActions.setDefaultLocations,
       addLocation: LocationActions.addLocation,
+      importLocations: LocationActions.importLocations,
       editLocation: LocationActions.editLocation,
       removeLocation: LocationActions.removeLocation,
       openFileNatively: AppActions.openFileNatively,

@@ -48,6 +48,8 @@
   "filePropertiesDescription": "Description",
   "directoryPropertiesTitle": "Directory Properties",
   "createLocationTitle": "Connect a Location",
+  "exportLocationTitle": "Export Locations",
+  "importLocationTitle": "Import Locations",
   "createLocationPath": "Location Path",
   "createLocationName": "Location Name",
   "createLocationDefaultPerspective": "Default Perspective",

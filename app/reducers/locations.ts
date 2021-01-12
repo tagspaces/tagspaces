@@ -221,7 +221,21 @@ export const actions = {
   deleteLocation: (location: Location) => ({
     type: types.REMOVE_LOCATION,
     location
-  })
+  }),
+  importLocations: (arrLocations: Array<Location>) => (
+    dispatch: (actions: Object) => void,
+    getState: () => any
+  ) => {
+    arrLocations.forEach((newLocation: Location) => {
+      const { locations } = getState();
+      const locationExist: boolean = locations.some(
+        location => location.uuid === newLocation.uuid
+      );
+      if (!locationExist) {
+        dispatch(actions.addLocation(newLocation));
+      }
+    });
+  }
 };
 
 // Selectors
