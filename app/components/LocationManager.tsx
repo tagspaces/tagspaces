@@ -20,7 +20,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
-import CryptoJS from 'crypto-js';
 import List from '@material-ui/core/List';
 import Button from '@material-ui/core/Button';
 import styles from './SidePanels.css';
@@ -40,7 +39,7 @@ import i18n from '../services/i18n';
 import AppConfig from '../config';
 import LoadingLazy from '-/components/LoadingLazy';
 import LocationView from '-/components/LocationView';
-import {Pro} from "-/pro";
+import { Pro } from '-/pro';
 
 const CreateEditLocationDialog = React.lazy(() =>
   import(
@@ -131,10 +130,9 @@ const LocationManager = (props: Props) => {
 
     reader.onload = () => {
       try {
-        const bytes = CryptoJS.AES.decrypt(reader.result, 'secret key 123');
-        const jsonObj = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-        if (jsonObj && jsonObj.locations) {
-          props.importLocations(jsonObj.locations);
+        const locations = Pro.LocationsExport.importLocations(reader.result);
+        if (locations) {
+          props.importLocations(locations);
         }
       } catch (e) {
         console.error('Error : ', e);
