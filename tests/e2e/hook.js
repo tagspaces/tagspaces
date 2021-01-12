@@ -28,6 +28,8 @@ export async function clearLocalStorage() {
     global.app.webContents.reload();
   }*/
   if (global.isWeb) {
+    //clears everything in localStorage
+    await global.client.execute('localStorage.clear()');
     // global.client.executeScript('window.localStorage.clear()');
     // global.client.clearLocalStorage();
     // window.localStorage.clear();
@@ -43,6 +45,7 @@ export async function clearLocalStorage() {
 
 export async function startSpectronApp() {
   if (global.isWeb) {
+    //require('scripts/wdio.conf');
     const webdriverio = require('webdriverio');
     // https://webdriver.io/docs/configurationfile.html
     let options = {
@@ -61,7 +64,11 @@ export async function startSpectronApp() {
           script: 60000
         }
       },
-      // waitforTimeout: 5000,
+      /*afterTest: async (test, context, result) => {
+        takeScreenshot();
+        await clearLocalStorage();
+      },*/
+      waitforTimeout: 5000,
       // logLevel: 'debug'
       logLevel: 'silent'
     };
@@ -77,7 +84,7 @@ export async function startSpectronApp() {
             // args: ['--headless', '--disable-gpu']
             args: [
               '--headless',
-              '--disable-gpu',
+              // '--disable-gpu',
               '--no-sandbox',
               '--window-size=1920,1080',
               '--disable-dev-shm-usage'
@@ -164,6 +171,41 @@ export function testDataRefresh() {
   let newPath = pathLib.join(dst, pathLib.basename(src));
   fse.emptyDirSync(newPath);
   fse.copySync(src, newPath, { overwrite: true });
+}
+
+export async function takeScreenshot() {
+  // if (jasmine.currentTest.failedExpectations.length > 0) {
+  if (global.isElectron) {
+    // await global.client.takeScreenshot();
+    const filename = `${expect.getState().currentTestName}.png`; // -${new Date().toISOString()}
+    //.replace(/\s/g, '_')
+    //.replace(/:/g, '')
+    //.replace(/\*/g, '')
+    //.replace(/-/g, '');
+    const imageBuffer = await global.app.browserWindow.capturePage();
+    const fs = require('fs-extra');
+    const path = pathLib.resolve(__dirname, 'test-pages', filename);
+    fs.outputFile(path, imageBuffer, 'base64');
+    /*global.app.webContents
+        .savePage(
+          pathLib.resolve(__dirname, 'test-pages', filename),
+          'HTMLComplete'
+        )
+        .then(function() {
+          console.log('page saved');
+        })
+        .catch(function(error) {
+          console.error('saving page failed', error.message);
+        });*/
+  } else {
+    await global.client.saveFullPageScreen(
+      `${expect.getState().currentTestName}`,
+      {
+        fullPageScrollTimeout: '1500'
+      }
+    );
+  }
+  // }
 }
 
 // the path the electron app, that will be tested

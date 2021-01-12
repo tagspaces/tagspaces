@@ -258,6 +258,7 @@ describe('TST50 - Perspective Grid', () => {
 
   /**
    * TODO copy file on minio failed with path: ./testdata-tmp/file-structure/supported-filestypes/empty_folder
+   * web cannot find bmp file
    */
   test('TST5008 - Copy file [TST5008,electron]', async () => {
     await searchEngine('bmp');
@@ -466,7 +467,7 @@ describe('TST50** - Right button on a file', () => {
    * TODO web sometimes: stale element reference: stale element reference: element is not attached to the page document
    * TODO minio sometimes: stale element reference: stale element reference: element is not attached to the page document
    */
-  test('TST5025 - Add / Remove tags (file menu) [TST5025,electron]', async () => {
+  test('TST5025 - Add - Remove tags (file menu) [TST5025,electron]', async () => {
     await searchEngine('desktop');
     const tags = [testTagName, testTagName + '2'];
     // select file
@@ -522,7 +523,7 @@ describe('TST50** - Right button on a file', () => {
   /**
    * TODO github minio (expected selector to exist=false after 5s)
    */
-  test('TST5028 - Move / Copy file (file menu) [TST5028,electron]', async () => {
+  test('TST5028 - Move - Copy file (file menu) [TST5028,electron]', async () => {
     // Move file in child folder
     await searchEngine('eml');
     await openContextEntryMenu(

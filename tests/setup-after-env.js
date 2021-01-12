@@ -1,11 +1,12 @@
 import pathLib from 'path';
 import {
-  clearLocalStorage,
   startSpectronApp,
   stopSpectronApp,
+  takeScreenshot,
   testDataRefresh
 } from './e2e/hook';
 import { closeWelcome } from './e2e/welcome.helpers';
+import { clearStorage } from './e2e/clearstorage.helpers';
 
 // the default timeout before starting every test
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 300000;
@@ -26,8 +27,20 @@ global.isUnitTest =
   }
 });*/
 
-jasmine.getEnv().addReporter({
+/*jasmine.getEnv().addReporter({
   specStarted: result => (jasmine.currentTest = result)
+});*/
+
+jasmine.getEnv().addReporter({
+  specDone: async result => {
+    if (result.status !== 'disabled') {
+      console.log('specDone Done' + JSON.stringify(result));
+      if (result.status === 'failed') {
+        await takeScreenshot();
+      }
+      // await clearLocalStorage(); //todo https://trello.com/c/hMCSKXWU/554-fix-takescreenshots-in-tests
+    }
+  }
 });
 
 beforeAll(async () => {
@@ -48,35 +61,7 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
-  if (jasmine.currentTest.failedExpectations.length > 0) {
-    if (global.isElectron) {
-      // await global.client.takeScreenshot();
-      const filename = `${expect.getState().currentTestName}.png`; // -${new Date().toISOString()}
-      //.replace(/\s/g, '_')
-      //.replace(/:/g, '')
-      //.replace(/\*/g, '')
-      //.replace(/-/g, '');
-      global.app.browserWindow.capturePage().then(function(imageBuffer) {
-        const fs = require('fs-extra');
-        const path = pathLib.resolve(__dirname, 'test-pages', filename);
-        fs.outputFile(path, imageBuffer, 'base64');
-      });
-      /*global.app.webContents
-        .savePage(
-          pathLib.resolve(__dirname, 'test-pages', filename),
-          'HTMLComplete'
-        )
-        .then(function() {
-          console.log('page saved');
-        })
-        .catch(function(error) {
-          console.error('saving page failed', error.message);
-        });*/
-    } else {
-      global.client.saveFullPageScreen(`${expect.getState().currentTestName}`, {
-        /* some options*/
-      });
-    }
-  }
-  await clearLocalStorage();
+  // takeScreenshot();
+  // await clearLocalStorage();
+  await clearStorage();
 });
