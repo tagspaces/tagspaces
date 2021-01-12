@@ -34,7 +34,7 @@ global.isUnitTest =
 jasmine.getEnv().addReporter({
   specDone: async result => {
     if (result.status !== 'disabled') {
-      console.log('specDone Done' + JSON.stringify(result));
+      // console.log('specDone Done' + JSON.stringify(result));
       if (result.status === 'failed') {
         await takeScreenshot();
       }
