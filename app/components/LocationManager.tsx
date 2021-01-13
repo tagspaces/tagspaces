@@ -17,6 +17,7 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
+import uuidv1 from 'uuid';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
@@ -100,6 +101,17 @@ const LocationManager = (props: Props) => {
     isSelectDirectoryDialogOpened,
     setSelectDirectoryDialogOpened
   ] = useState<boolean>(false);
+  const [
+    isExportLocationsDialogOpened,
+    setExportLocationsDialogOpened
+  ] = useState<boolean>(false);
+  const [importFile, setImportFile] = useState<File>(undefined);
+
+  const ExportLocationsDialog =
+    Pro && Pro.UI ? Pro.UI.ExportLocationsDialog : false;
+
+  const ImportLocationsDialog =
+    Pro && Pro.UI ? Pro.UI.ImportLocationsDialog : false;
 
   useEffect(() => {
     if (props.locations.length < 1) {
@@ -126,7 +138,8 @@ const LocationManager = (props: Props) => {
   function handleFileInputChange(selection: any) {
     const target = selection.currentTarget;
     const file = target.files[0];
-    const reader: any = new FileReader();
+    setImportFile(file);
+    /* const reader: any = new FileReader();
 
     reader.onload = () => {
       try {
@@ -138,7 +151,7 @@ const LocationManager = (props: Props) => {
         console.error('Error : ', e);
       }
     };
-    reader.readAsText(file);
+    reader.readAsText(file); */
     target.value = null;
   }
 
@@ -156,9 +169,8 @@ const LocationManager = (props: Props) => {
             fileInputRef.current.click();
           }
         }}
-        exportLocations={() => {
-          Pro.LocationsExport.exportLocations(props.locations);
-        }}
+        // importLocations={() => setImportLocationsDialogOpened(true)}
+        exportLocations={() => setExportLocationsDialogOpened(true)}
         classes={classes}
         openURLExternally={props.openURLExternally}
         showCreateLocationDialog={() => {
@@ -269,6 +281,23 @@ const LocationManager = (props: Props) => {
         type="file"
         onChange={handleFileInputChange}
       />
+      {ExportLocationsDialog && isExportLocationsDialogOpened && (
+        <ExportLocationsDialog
+          open={isExportLocationsDialogOpened}
+          onClose={() => setExportLocationsDialogOpened(false)}
+          locations={props.locations}
+        />
+      )}
+      {ImportLocationsDialog && importFile && (
+        <ImportLocationsDialog
+          key={uuidv1()}
+          open={Boolean(importFile)}
+          onClose={() => setImportFile(undefined)}
+          importFile={importFile}
+          importLocations={props.importLocations}
+          locations={props.locations}
+        />
+      )}
     </div>
   );
 };
