@@ -322,11 +322,11 @@ const MainPage = (props: Props) => {
   const [selectedDirectoryPath, setSelectedDirectoryPath] = useState<string>(
     ''
   );
-  const [isManagementPanelVisible, setManagementPanelVisible] = useState<
+  /* const [isManagementPanelVisible, setManagementPanelVisible] = useState<
     boolean
-  >(window.ExtDefaultVerticalPanel !== 'none' && !props.isEntryInFullWidth);
-  const [mainSplitSize, setMainSplitSize] = useState<any>('100%');
-  const [isDrawerOpened, setDrawerOpened] = useState<boolean>(true);
+  >(window.ExtDefaultVerticalPanel !== 'none' && !props.isEntryInFullWidth); */
+  // const [mainSplitSize, setMainSplitSize] = useState<any>('100%');
+  // const [isDrawerOpened, setDrawerOpened] = useState<boolean>(true);
   const [dimensions, setDimensions] = useState<any>({
     width: 1000,
     height: 1000
@@ -344,35 +344,22 @@ const MainPage = (props: Props) => {
   useEffect(() => {
     if (props.isEntryInFullWidth) {
       props.closeAllVerticalPanels();
-      setMainSplitSize('0%');
+      // setMainSplitSize('0%');
     } else {
-      setMainSplitSize(props.mainSplitSize);
-      setManagementPanelVisible(true);
+      // setMainSplitSize(props.mainSplitSize);
+      // setManagementPanelVisible(true);
       showDrawer();
     }
   }, [props.isEntryInFullWidth]);
 
-  useEffect(() => {
-    if (
-      props.isLocationManagerPanelOpened ||
-      props.isTagLibraryPanelOpened ||
-      props.isSearchPanelOpened ||
-      props.isPerspectivesPanelOpened ||
-      props.isHelpFeedbackPanelOpened
-    ) {
-      setManagementPanelVisible(true);
-    } else {
-      setManagementPanelVisible(false);
+  const getMainSplitSize = () => {
+    if (props.openedFiles.length === 0) {
+      return '100%';
     }
-  }, [
-    props.isLocationManagerPanelOpened,
-    props.isTagLibraryPanelOpened,
-    props.isSearchPanelOpened,
-    props.isPerspectivesPanelOpened,
-    props.isHelpFeedbackPanelOpened
-  ]);
 
-  useEffect(() => {
+    if (props.isEntryInFullWidth) {
+      return '0%';
+    }
     const width =
       window.innerWidth ||
       document.documentElement.clientWidth ||
@@ -382,13 +369,25 @@ const MainPage = (props: Props) => {
       document.documentElement.clientHeight ||
       body.clientHeight;
     if (height > width) {
-      setMainSplitSize('0%');
-    } else if (props.openedFiles.length === 0) {
-      setMainSplitSize('100%');
-    } else if (props.mainSplitSize) {
-      setMainSplitSize(props.mainSplitSize);
+      return '0%';
     }
-  }, [props.openedFiles]);
+
+    return props.mainSplitSize;
+  };
+
+  const isManagementPanelVisible = () => {
+    if (
+      props.isLocationManagerPanelOpened ||
+      props.isTagLibraryPanelOpened ||
+      props.isSearchPanelOpened ||
+      props.isPerspectivesPanelOpened ||
+      props.isHelpFeedbackPanelOpened
+    ) {
+      return true;
+    }
+    return false;
+    // return window.ExtDefaultVerticalPanel !== 'none' && !props.isEntryInFullWidth;
+  };
 
   useEventListener('resize', () => {
     if (!AppConfig.isCordova) {
@@ -440,7 +439,7 @@ const MainPage = (props: Props) => {
     ) {
       props.openLocationManagerPanel();
     }
-    setDrawerOpened(true);
+    // setDrawerOpened(true);
   };
 
   const skipRelease = () => {
@@ -521,7 +520,7 @@ const MainPage = (props: Props) => {
       const sizeInPercent =
         // @ts-ignore
         parseInt((size * 100) / dimensions.width, 10) + '%';
-      setMainSplitSize(sizeInPercent);
+      // setMainSplitSize(sizeInPercent);
       props.setMainVerticalSplitSize(sizeInPercent);
     }
   };
@@ -604,7 +603,9 @@ const MainPage = (props: Props) => {
         <SelectDirectoryAsync
           open={props.isSelectDirectoryDialogOpened}
           onClose={toggleSelectDirectoryDialog}
-          chooseDirectoryPath={(currentPath) => setSelectedDirectoryPath(currentPath)}
+          chooseDirectoryPath={currentPath =>
+            setSelectedDirectoryPath(currentPath)
+          }
           selectedDirectoryPath={selectedDirectoryPath || directoryPath}
         />
       )}
@@ -631,7 +632,9 @@ const MainPage = (props: Props) => {
         <CreateFileDialog
           open={props.isCreateFileDialogOpened}
           selectedDirectoryPath={selectedDirectoryPath || directoryPath}
-          chooseDirectoryPath={(currentPath) => setSelectedDirectoryPath(currentPath)}
+          chooseDirectoryPath={currentPath =>
+            setSelectedDirectoryPath(currentPath)
+          }
           onClose={toggleCreateFileDialog}
         />
       )}
@@ -745,10 +748,12 @@ const MainPage = (props: Props) => {
             resizerStyle={{ backgroundColor: theme.palette.divider }}
             defaultSize={props.leftSplitSize}
             size={
-              isManagementPanelVisible ? props.leftSplitSize : initialSplitSize
+              isManagementPanelVisible()
+                ? props.leftSplitSize
+                : initialSplitSize
             }
             onChange={size => {
-              setManagementPanelVisible(size > initialSplitSize);
+              // setManagementPanelVisible(size > initialSplitSize);
               bufferedLeftSplitResize(() =>
                 props.setLeftVerticalSplitSize(size)
               );
@@ -759,7 +764,7 @@ const MainPage = (props: Props) => {
               split="vertical"
               minSize="200"
               resizerStyle={{ backgroundColor: theme.palette.divider }}
-              size={mainSplitSize}
+              size={getMainSplitSize()}
               onChange={handleSplitSizeChange}
             >
               <FolderContainer
@@ -780,20 +785,22 @@ const MainPage = (props: Props) => {
       ) : (
         <React.Fragment>
           <SwipeableDrawer
-            open={isDrawerOpened}
-            onClose={() => setDrawerOpened(false)}
+            open={isManagementPanelVisible()}
+            onClose={() => props.closeAllVerticalPanels()}
             onOpen={showDrawer}
             hysteresis={0.1}
             disableBackdropTransition={!AppConfig.isIOS}
             disableDiscovery={AppConfig.isIOS}
           >
-            <MobileNavigation hideDrawer={() => setDrawerOpened(false)} />
+            <MobileNavigation
+              hideDrawer={() => props.closeAllVerticalPanels()}
+            />
           </SwipeableDrawer>
           <SplitPane
             split="vertical"
             minSize="200"
             resizerStyle={{ backgroundColor: theme.palette.divider }}
-            size={mainSplitSize}
+            size={getMainSplitSize()}
             onChange={handleSplitSizeChange}
           >
             <FolderContainer
