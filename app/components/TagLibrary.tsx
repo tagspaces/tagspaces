@@ -377,12 +377,14 @@ class TagLibrary extends React.Component<Props, State> {
           addTag={this.props.addTag}
           selectedTagGroupEntry={this.state.selectedTagGroupEntry}
         />
-        <EditTagGroupDialog
-          open={this.state.isEditTagGroupDialogOpened}
-          onClose={this.handleCloseDialogs}
-          editTagGroup={this.props.editTagGroup}
-          selectedTagGroupEntry={this.state.selectedTagGroupEntry}
-        />
+        {this.state.isEditTagGroupDialogOpened && (
+          <EditTagGroupDialog
+            open={this.state.isEditTagGroupDialogOpened}
+            onClose={this.handleCloseDialogs}
+            editTagGroup={this.props.editTagGroup}
+            selectedTagGroupEntry={this.state.selectedTagGroupEntry}
+          />
+        )}
         <TagGroupMenu
           anchorEl={this.state.tagGroupMenuAnchorEl}
           open={this.state.tagGroupMenuOpened}
