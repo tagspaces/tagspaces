@@ -17,7 +17,6 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import uuidv1 from 'uuid';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
@@ -64,7 +63,7 @@ interface Props {
   toggleOpenLinkDialog: () => void;
   setDefaultLocations: () => void;
   addLocation: (location: Location, openAfterCreate?: boolean) => void;
-  importLocations: (locations: Array<Location>) => void;
+  addLocations: (locations: Array<Location>) => void;
   editLocation: () => void;
   removeLocation: (location: Location) => void;
 }
@@ -290,11 +289,10 @@ const LocationManager = (props: Props) => {
       )}
       {ImportLocationsDialog && importFile && (
         <ImportLocationsDialog
-          key={uuidv1()}
           open={Boolean(importFile)}
           onClose={() => setImportFile(undefined)}
           importFile={importFile}
-          importLocations={props.importLocations}
+          addLocations={props.addLocations}
           locations={props.locations}
         />
       )}
@@ -314,7 +312,7 @@ function mapDispatchToProps(dispatch) {
     {
       setDefaultLocations: LocationActions.setDefaultLocations,
       addLocation: LocationActions.addLocation,
-      importLocations: LocationActions.importLocations,
+      addLocations: LocationActions.addLocations,
       editLocation: LocationActions.editLocation,
       removeLocation: LocationActions.removeLocation,
       openFileNatively: AppActions.openFileNatively,

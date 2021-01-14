@@ -59,6 +59,7 @@
   "wrongPasswordError": "Wrong password",
   "retypePasswordDiffError": "Retyped password does not match",
   "locationExist": "Location exist",
+  "notImportedLocation": "Location will be not imported",
   "createLocationPath": "Location Path",
   "createLocationName": "Location Name",
   "createLocationDefaultPerspective": "Default Perspective",
