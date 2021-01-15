@@ -12,6 +12,7 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 300000;
 // global.isWin = /^win/.test(process.platform);
 // global.isMac = /^darwin/.test(process.platform);
 global.isWeb = process.env.NODE_JEST === 'test_web';
+global.isHeadlessChrome = process.env.HEADLESS_CHROME === 'headless_chrome';
 global.isMinio = global.isWeb || process.env.NODE_JEST === 'test_minio';
 global.isElectron = process.env.NODE_JEST === 'test_electron';
 global.isUnitTest =

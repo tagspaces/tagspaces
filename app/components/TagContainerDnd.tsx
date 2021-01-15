@@ -22,7 +22,7 @@ import { DragSource, ConnectDragPreview, ConnectDragSource } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import DragItemTypes from './DragItemTypes';
 import TagContainer from './TagContainer';
-import { TagGroup, Tag } from '../reducers/taglibrary';
+import { TagGroup, Tag } from '-/reducers/taglibrary';
 import { FileSystemEntry } from '-/services/utils-io';
 
 const boxSource = {
@@ -70,7 +70,6 @@ const boxSource = {
 
 interface Props {
   tag: Tag;
-  key: string;
   tagGroup?: TagGroup;
   handleTagMenu: (event: Object, tag: Tag, param: any) => void;
   handleRemoveTag?: (event: Object, tag: Tag) => void;
@@ -87,7 +86,6 @@ interface Props {
 
 const TagContainerDnd = (props: Props) => {
   const {
-    key,
     tag,
     tagGroup,
     entryPath,
@@ -111,7 +109,6 @@ const TagContainerDnd = (props: Props) => {
   return connectDragSource(
     <span>
       <TagContainer
-        key={key}
         tag={tag}
         tagGroup={tagGroup}
         handleTagMenu={handleTagMenu}

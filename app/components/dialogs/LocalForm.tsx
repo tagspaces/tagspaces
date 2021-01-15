@@ -32,28 +32,46 @@ import { extractDirectoryName } from '-/utils/paths';
 import PlatformIO from '-/services/platform-io';
 
 interface Props {
-  state: any;
-  handleChange: (param1: string, param2: string) => void;
-  handleInputChange: (event: any) => void;
   showSelectDirectoryDialog: () => void;
+  showAdvancedMode: boolean;
+  errorTextPath: boolean;
+  errorTextName: boolean;
+  errorTextId: boolean;
+  setName: (string) => void;
+  setPath: (string) => void;
+  setNewUuid: (string) => void;
+  path: string;
+  name: string;
+  newuuid: string;
 }
 
 const LocalForm = (props: Props) => {
-  function openDirectory() {
+  const {
+    errorTextPath,
+    errorTextName,
+    errorTextId,
+    setName,
+    setPath,
+    setNewUuid,
+    path,
+    name,
+    newuuid,
+    showAdvancedMode,
+    showSelectDirectoryDialog
+  } = props;
+
+  const openDirectory = () => {
     if (AppConfig.isElectron) {
       PlatformIO.selectDirectoryDialog()
         .then(selectedPaths => {
           const selectedPath = selectedPaths[0];
-          props.handleChange('path', selectedPath);
-          if (props.state.name.length < 1 && selectedPath.length > 0) {
+          setPath(selectedPath);
+          if (name.length < 1 && selectedPath.length > 0) {
             const dirName = extractDirectoryName(
               selectedPath,
               PlatformIO.getDirSeparator()
             );
-            props.handleChange(
-              'name',
-              dirName.charAt(0).toUpperCase() + dirName.slice(1)
-            );
+            setName(dirName.charAt(0).toUpperCase() + dirName.slice(1));
           }
           return true;
         })
@@ -61,15 +79,14 @@ const LocalForm = (props: Props) => {
           console.log('selectDirectoryDialog failed with: ' + err);
         });
     } else {
-      props.showSelectDirectoryDialog();
+      showSelectDirectoryDialog();
     }
-  }
+  };
 
-  const { handleInputChange, state } = props;
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>
-        <FormControl fullWidth={true} error={state.errorTextPath}>
+        <FormControl fullWidth={true} error={errorTextPath}>
           <InputLabel htmlFor="path">
             {i18n.t('core:createLocationPath')}
           </InputLabel>
@@ -80,8 +97,8 @@ const LocalForm = (props: Props) => {
             name="path"
             fullWidth={true}
             data-tid="locationPath"
-            onChange={handleInputChange}
-            value={state.path}
+            onChange={event => setPath(event.target.value)}
+            value={path}
             placeholder="Enter a folder path or select it with the button on the right"
             endAdornment={
               <InputAdornment position="end" style={{ height: 32 }}>
@@ -97,7 +114,7 @@ const LocalForm = (props: Props) => {
         </FormControl>
       </Grid>
       <Grid item xs={12}>
-        <FormControl fullWidth={true} error={state.errorTextName}>
+        <FormControl fullWidth={true} error={errorTextName}>
           <InputLabel htmlFor="path">
             {i18n.t('core:createLocationName')}
           </InputLabel>
@@ -105,8 +122,8 @@ const LocalForm = (props: Props) => {
             required
             margin="dense"
             name="name"
-            onChange={handleInputChange}
-            value={state.name}
+            onChange={event => setName(event.target.value)}
+            value={name}
             data-tid="locationName"
             fullWidth={true}
           />
@@ -115,9 +132,9 @@ const LocalForm = (props: Props) => {
         )} */}
         </FormControl>
       </Grid>
-      {state.showAdvancedMode && (
+      {showAdvancedMode && (
         <Grid item xs={12}>
-          <FormControl fullWidth={true} error={state.errorTextId}>
+          <FormControl fullWidth={true} error={errorTextId}>
             <InputLabel htmlFor="newuuid">
               {i18n.t('core:locationId')}
             </InputLabel>
@@ -128,8 +145,8 @@ const LocalForm = (props: Props) => {
               fullWidth={true}
               data-tid="newuuid"
               placeholder="Unique location identifier"
-              onChange={handleInputChange}
-              value={state.newuuid}
+              onChange={event => setNewUuid(event.target.value)}
+              value={newuuid}
             />
             {/* {state.errorTextId && (
             <FormHelperText>{i18n.t('core:invalidId')}</FormHelperText>
