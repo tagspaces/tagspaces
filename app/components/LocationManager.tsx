@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
@@ -39,6 +39,7 @@ import i18n from '../services/i18n';
 import AppConfig from '../config';
 import LoadingLazy from '-/components/LoadingLazy';
 import LocationView from '-/components/LocationView';
+import { Pro } from '-/pro';
 
 const CreateEditLocationDialog = React.lazy(() =>
   import(
@@ -62,6 +63,7 @@ interface Props {
   toggleOpenLinkDialog: () => void;
   setDefaultLocations: () => void;
   addLocation: (location: Location, openAfterCreate?: boolean) => void;
+  addLocations: (locations: Array<Location>) => void;
   editLocation: () => void;
   removeLocation: (location: Location) => void;
 }
@@ -74,6 +76,7 @@ type SubFolder = {
 };
 
 const LocationManager = (props: Props) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedLocation, setSelectedLocation] = useState<Location>(null);
   const [selectedDirectoryPath, setSelectedDirectoryPath] = useState<string>(
     null
@@ -97,6 +100,17 @@ const LocationManager = (props: Props) => {
     isSelectDirectoryDialogOpened,
     setSelectDirectoryDialogOpened
   ] = useState<boolean>(false);
+  const [
+    isExportLocationsDialogOpened,
+    setExportLocationsDialogOpened
+  ] = useState<boolean>(false);
+  const [importFile, setImportFile] = useState<File>(undefined);
+
+  const ExportLocationsDialog =
+    Pro && Pro.UI ? Pro.UI.ExportLocationsDialog : false;
+
+  const ImportLocationsDialog =
+    Pro && Pro.UI ? Pro.UI.ImportLocationsDialog : false;
 
   useEffect(() => {
     if (props.locations.length < 1) {
@@ -120,12 +134,42 @@ const LocationManager = (props: Props) => {
     setSelectedDirectoryPath(currentPath);
   };
 
+  function handleFileInputChange(selection: any) {
+    const target = selection.currentTarget;
+    const file = target.files[0];
+    setImportFile(file);
+    /* const reader: any = new FileReader();
+
+    reader.onload = () => {
+      try {
+        const locations = Pro.LocationsExport.importLocations(reader.result);
+        if (locations) {
+          props.importLocations(locations);
+        }
+      } catch (e) {
+        console.error('Error : ', e);
+      }
+    };
+    reader.readAsText(file); */
+    target.value = null;
+  }
+
   const { classes } = props;
   return (
     <div className={classes.panel} style={props.style}>
       <CustomLogo />
 
       <LocationManagerMenu
+        importLocations={() => {
+          if (AppConfig.isCordovaAndroid && AppConfig.isCordovaiOS) {
+            // TODO Select directory or file from dialog
+            showSelectDirectoryDialog();
+          } else {
+            fileInputRef.current.click();
+          }
+        }}
+        // importLocations={() => setImportLocationsDialogOpened(true)}
+        exportLocations={() => setExportLocationsDialogOpened(true)}
         classes={classes}
         openURLExternally={props.openURLExternally}
         showCreateLocationDialog={() => {
@@ -229,6 +273,29 @@ const LocationManager = (props: Props) => {
           ))}
         </List>
       </div>
+      <input
+        style={{ display: 'none' }}
+        ref={fileInputRef}
+        accept="*"
+        type="file"
+        onChange={handleFileInputChange}
+      />
+      {ExportLocationsDialog && isExportLocationsDialogOpened && (
+        <ExportLocationsDialog
+          open={isExportLocationsDialogOpened}
+          onClose={() => setExportLocationsDialogOpened(false)}
+          locations={props.locations}
+        />
+      )}
+      {ImportLocationsDialog && importFile && (
+        <ImportLocationsDialog
+          open={Boolean(importFile)}
+          onClose={() => setImportFile(undefined)}
+          importFile={importFile}
+          addLocations={props.addLocations}
+          locations={props.locations}
+        />
+      )}
     </div>
   );
 };
@@ -245,6 +312,7 @@ function mapDispatchToProps(dispatch) {
     {
       setDefaultLocations: LocationActions.setDefaultLocations,
       addLocation: LocationActions.addLocation,
+      addLocations: LocationActions.addLocations,
       editLocation: LocationActions.editLocation,
       removeLocation: LocationActions.removeLocation,
       openFileNatively: AppActions.openFileNatively,

@@ -95,7 +95,10 @@ export default (state: Array<Location> = initialState, action: any) => {
           {
             ...state[indexForEditing],
             ...action.location,
-            uuid: action.location.newuuid
+            uuid:
+              action.location.newuuid !== undefined
+                ? action.location.newuuid
+                : action.location.uuid
           },
           ...state.slice(indexForEditing + 1)
         ];
@@ -179,6 +182,27 @@ export const actions = {
       dispatch(AppActions.openLocation(location));
     }
   },
+  /**
+   * @param arrLocations
+   * @param override = true - if location exist override else skip
+   */
+  addLocations: (arrLocations: Array<Location>, override: boolean = true) => (
+    dispatch: (actions: Object) => void,
+    getState: () => any
+  ) => {
+    arrLocations.forEach((newLocation: Location, idx, array) => {
+      const { locations } = getState();
+      const locationExist: boolean = locations.some(
+        location => location.uuid === newLocation.uuid
+      );
+      const isLast = idx === array.length - 1;
+      if (!locationExist) {
+        dispatch(actions.addLocation(newLocation, isLast));
+      } else if (override) {
+        dispatch(actions.editLocation(newLocation, isLast));
+      }
+    });
+  },
   createLocation: (location: Location) => ({
     type: types.ADD_LOCATION,
     location
@@ -188,7 +212,7 @@ export const actions = {
     type: types.MOVE_DOWN_LOCATION,
     uuid
   }),
-  editLocation: (location: Location) => (
+  editLocation: (location: Location, openAfterEdit: boolean = true) => (
     dispatch: (actions: Object) => void
   ) => {
     dispatch(actions.changeLocation(location));
@@ -196,17 +220,22 @@ export const actions = {
       // disableObjectStoreSupport to revoke objectStoreAPI cached object
       PlatformIO.disableObjectStoreSupport();
     }
-    /**
-     * check if location uuid is changed
-     */
-    if (location.newuuid !== location.uuid) {
-      dispatch(
-        AppActions.openLocation({ ...location, uuid: location.newuuid })
-      );
-    } else {
-      dispatch(AppActions.openLocation(location));
+    if (openAfterEdit) {
+      /**
+       * check if location uuid is changed
+       */
+      if (
+        location.newuuid !== undefined &&
+        location.newuuid !== location.uuid
+      ) {
+        dispatch(
+          AppActions.openLocation({ ...location, uuid: location.newuuid })
+        );
+      } else {
+        dispatch(AppActions.openLocation(location));
+      }
+      dispatch(AppActions.setReadOnlyMode(location.isReadOnly || false));
     }
-    dispatch(AppActions.setReadOnlyMode(location.isReadOnly || false));
   },
   changeLocation: (location: Location) => ({
     type: types.EDIT_LOCATION,
