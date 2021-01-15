@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -27,6 +27,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
 import i18n from '-/services/i18n';
 import { TagGroup } from '-/reducers/taglibrary';
+import useFirstRender from '-/utils/useFirstRender';
 
 interface Props {
   open: boolean;
@@ -36,102 +37,98 @@ interface Props {
   selectedTagGroupEntry: TagGroup;
 }
 
-interface State {
-  inputError: boolean;
-  disableConfirmButton: boolean;
-  tagTitle: string;
-}
+const CreateTagsDialog = (props: Props) => {
+  const [inputError, setInputError] = useState<boolean>(false);
+  const [tagTitle, setTagTitle] = useState<string>('');
 
-class CreateTagsDialog extends React.Component<Props, State> {
-  state = {
-    inputError: false,
-    disableConfirmButton: true,
-    tagTitle: ''
-  };
+  const firstRender = useFirstRender();
 
-  handleTagTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    if (!firstRender) {
+      handleValidation();
+    }
+  }, [tagTitle]);
+
+  const handleTagTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
-    const { value, name } = target;
+    // const { value, name } = target;
 
-    if (name === 'tagTitle') {
+    setTagTitle(target.value);
+    /* if (name === 'tagTitle') {
       this.setState({ tagTitle: value }, this.handleValidation);
+    } */
+  };
+
+  const handleValidation = () => {
+    const tagCheck = RegExp(/^[^#/\\[\]]{1,}$/);
+    if (tagTitle && tagCheck.test(tagTitle)) {
+      if (inputError) {
+        setInputError(false);
+      }
+    } else if (!inputError) {
+      setInputError(true);
     }
   };
 
-  handleValidation() {
-    const tagCheck = RegExp(/^[^\#\/\\[\]]{1,}$/);
-    if (this.state.tagTitle && tagCheck.test(this.state.tagTitle)) {
-      this.setState({ inputError: false, disableConfirmButton: false });
-    } else {
-      this.setState({ inputError: true, disableConfirmButton: true });
-    }
-  }
-
-  onConfirm = () => {
-    if (!this.state.disableConfirmButton) {
-      this.setState({ disableConfirmButton: true });
-      this.props.addTag(
-        this.state.tagTitle,
-        this.props.selectedTagGroupEntry.uuid
-      );
-      this.props.onClose();
+  const onConfirm = () => {
+    if (!inputError) {
+      props.addTag(tagTitle, props.selectedTagGroupEntry.uuid);
+      props.onClose();
     }
   };
 
-  render() {
-    const { fullScreen, open, onClose } = this.props;
+  const { fullScreen, open, onClose } = props;
 
-    return (
-      <Dialog
-        open={open}
-        onClose={onClose}
-        fullScreen={fullScreen}
-        keepMounted
-        scroll="paper"
-        onKeyDown={event => {
-          if (event.key === 'Enter' || event.keyCode === 13) {
-            event.preventDefault();
-            event.stopPropagation();
-            this.onConfirm();
-          } else if (event.key === 'Escape') {
-            onClose();
-          }
-        }}
-      >
-        <DialogTitle>{i18n.t('core:addTagsToGroupTitle')}</DialogTitle>
-        <DialogContent style={{ minWidth: 400 }}>
-          <FormControl fullWidth={true} error={this.state.inputError}>
-            <TextField
-              error={this.state.inputError}
-              name="tagTitle"
-              autoFocus
-              label={i18n.t('core:addTagsToGroupTagsPlaceholder')}
-              onChange={this.handleTagTitleChange}
-              value={this.state.tagTitle}
-              data-tid="addTagsInput"
-              fullWidth={true}
-            />
-            {this.state.inputError && (
-              <FormHelperText>{i18n.t('core:tagTitleHelper')}</FormHelperText>
-            )}
-          </FormControl>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={this.props.onClose} color="primary">
-            {i18n.t('core:cancel')}
-          </Button>
-          <Button
-            disabled={this.state.disableConfirmButton}
-            onClick={this.onConfirm}
-            data-tid="createTagsConfirmButton"
-            color="primary"
-          >
-            {i18n.t('core:ok')}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
-}
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullScreen={fullScreen}
+      keepMounted
+      scroll="paper"
+      onKeyDown={event => {
+        if (event.key === 'Enter' || event.keyCode === 13) {
+          event.preventDefault();
+          event.stopPropagation();
+          onConfirm();
+        } else if (event.key === 'Escape') {
+          onClose();
+        }
+      }}
+    >
+      <DialogTitle>{i18n.t('core:addTagsToGroupTitle')}</DialogTitle>
+      <DialogContent style={{ minWidth: 400 }}>
+        <FormControl fullWidth={true} error={inputError}>
+          <TextField
+            error={inputError}
+            name="tagTitle"
+            autoFocus
+            label={i18n.t('core:addTagsToGroupTagsPlaceholder')}
+            onChange={handleTagTitleChange}
+            value={tagTitle}
+            data-tid="addTagsInput"
+            fullWidth={true}
+          />
+          {inputError && (
+            <FormHelperText>{i18n.t('core:tagTitleHelper')}</FormHelperText>
+          )}
+        </FormControl>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="primary">
+          {i18n.t('core:cancel')}
+        </Button>
+        <Button
+          disabled={inputError}
+          onClick={onConfirm}
+          data-tid="createTagsConfirmButton"
+          color="primary"
+        >
+          {i18n.t('core:ok')}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
 
 export default CreateTagsDialog;
