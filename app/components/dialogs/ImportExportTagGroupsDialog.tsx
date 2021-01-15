@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
@@ -56,122 +56,56 @@ interface Props {
   exportTagGroups: (taggroup: any) => void;
 }
 
-interface State {
-  disableConfirmButton: boolean;
-  tagGroupList: Array<Object>;
-  selectedAll: boolean;
-}
+const ImportExportTagGroupsDialog = (props: Props) => {
+  // const [selectedAll, setSelectedAll] = useState<boolean>(true);
+  const selectedAll = useRef(true);
+  const [tagGroupList, setTagGroupList] = useState<Array<any>>(
+    props.tagGroups.map(entry => ({ ...entry, selected: selectedAll.current }))
+  );
 
-class ImportExportTagGroupsDialog extends React.Component<Props, State> {
-  state = {
-    disableConfirmButton: true,
-    selectedAll: false,
-    tagGroupList: []
+  const handleToggleSelectAll = () => {
+    selectedAll.current = !selectedAll.current;
+    setTagGroupList(
+      tagGroupList.map(entry => ({ ...entry, selected: selectedAll.current }))
+    );
   };
 
-  componentWillReceiveProps = (nextProps: Props) => {
-    if (nextProps.open === true) {
-      const tagGroupList = [];
-      const { tagGroups } = nextProps;
-      if (tagGroups) {
-        tagGroups.map(entry => {
-          tagGroupList.push({
-            uuid: entry.uuid || entry.key,
-            title: entry.title,
-            color: entry.color,
-            textcolor: entry.textcolor,
-            children: entry.children,
-            selected: true
-          });
-          return true;
-        });
-        this.setState(
-          { tagGroupList, selectedAll: true },
-          this.handleValidation
-        );
-      }
-    }
-  };
-
-  handleToggleSelectAll = () => {
-    const tagGroupList = [];
-    const tagGroups = this.state.tagGroupList;
-    tagGroups.map(entry => {
-      tagGroupList.push({
-        uuid: entry.uuid || entry.key,
-        title: entry.title,
-        color: entry.color,
-        textcolor: entry.textcolor,
-        children: entry.children,
-        selected: !this.state.selectedAll
-      });
-      return true;
-    });
-    this.setState({ tagGroupList }, this.handleValidation);
-  };
-
-  handleChange = name => (event: any, checked: boolean) => {
+  /* const handleChange = name => (event: any, checked: boolean) => {
     // @ts-ignore
     this.setState({ [name]: !checked });
+  }; */
+
+  const isSelected = () => tagGroupList.some(n => n.selected === true);
+
+  const handleTagGroup = (tagGroup: any, checked: boolean, index) => {
+    setTagGroupList([
+      ...tagGroupList.slice(0, index),
+      {
+        ...tagGroupList[index],
+        selected: !checked
+      },
+      ...tagGroupList.slice(index + 1)
+    ]);
   };
 
-  handleValidation() {
-    let selected = false;
-    this.state.tagGroupList.map(n => {
-      if (n.selected === true) {
-        selected = true;
-      }
-      return true;
-    });
-    if (selected) {
-      this.setState({ disableConfirmButton: false });
-    } else {
-      this.setState({ disableConfirmButton: true });
-    }
-  }
-
-  handleTagGroup = (tagGroup: any, checked: boolean, index) => {
-    const groups = this.state.tagGroupList;
-    if (!checked) {
-      groups[index].selected = true;
-      this.setState({ tagGroupList: groups }, this.handleValidation);
-    } else {
-      groups[index].selected = false;
-      this.setState({ tagGroupList: groups }, this.handleValidation);
-    }
-  };
-
-  onConfirm = () => {
-    const { showNotification } = this.props;
-    const groupList = [];
-    const selectedTagGroup = this.state.tagGroupList;
-    selectedTagGroup.map(tagGroup => {
-      if (tagGroup.selected) {
-        groupList.push({
-          uuid: tagGroup.uuid || tagGroup.key,
-          title: tagGroup.title,
-          color: tagGroup.color,
-          textcolor: tagGroup.textcolor,
-          children: tagGroup.children
-        });
-      }
-      return true;
-    });
-    this.props.onClose();
-    if (this.props.dialogModeImport) {
-      this.props.importTagGroups(groupList);
+  const onConfirm = () => {
+    const { showNotification } = props;
+    const groupList = tagGroupList.filter(tagGroup => tagGroup.selected);
+    props.onClose();
+    if (props.dialogModeImport) {
+      props.importTagGroups(groupList);
       if (isFunc(showNotification)) {
         showNotification(i18n.t('core:successfullyImportedGroupTags'));
       }
     } else {
-      this.props.exportTagGroups(groupList);
+      props.exportTagGroups(groupList);
       if (isFunc(showNotification)) {
         showNotification(i18n.t('core:successfullyExportedGroupTags'));
       }
     }
   };
 
-  renderTagGroups = (tagGroup, index) => (
+  const renderTagGroups = (tagGroup, index) => (
     <div key={tagGroup.uuid || tagGroup.key}>
       <FormControl component="fieldset">
         <FormGroup>
@@ -180,8 +114,8 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
               <Checkbox
                 id={tagGroup.uuid || tagGroup.key}
                 checked={tagGroup.selected}
-                onClick={e => this.handleTagGroup(e, tagGroup.selected, index)}
-                onChange={e => this.handleChange(e)}
+                onClick={e => handleTagGroup(e, tagGroup.selected, index)}
+                // onChange={e => handleChange(e)}
                 value={tagGroup.title}
                 name={tagGroup.title}
               />
@@ -199,56 +133,54 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
     </div>
   );
 
-  renderTitle = () => {
-    if (this.props.dialogModeImport) {
+  const renderTitle = () => {
+    if (props.dialogModeImport) {
       return <DialogTitle>{i18n.t('core:importGroupTagsTitle')}</DialogTitle>;
     }
     return <DialogTitle>{i18n.t('core:exportGroupTagsTitle')}</DialogTitle>;
   };
 
-  renderContent = () => (
-    <DialogContent className={this.props.classes.root}>
-      <Button color="primary" onClick={this.handleToggleSelectAll}>
+  const renderContent = () => (
+    <DialogContent className={props.classes.root}>
+      <Button color="primary" onClick={handleToggleSelectAll}>
         {i18n.t('core:selectAllTagGroups')}
       </Button>
       <FormControl fullWidth={true}>
-        {this.state.tagGroupList.map(this.renderTagGroups)}
+        {tagGroupList.map(renderTagGroups)}
       </FormControl>
     </DialogContent>
   );
 
-  renderActions = () => (
+  const renderActions = () => (
     <DialogActions>
-      <Button onClick={this.props.onClose} color="primary">
+      <Button onClick={props.onClose} color="primary">
         {i18n.t('core:cancel')}
       </Button>
       <Button
-        disabled={this.state.disableConfirmButton}
-        onClick={this.onConfirm}
+        disabled={!isSelected()}
+        onClick={onConfirm}
         data-tid="confirmImportExport"
         color="primary"
       >
-        {this.props.dialogModeImport ? 'Import' : 'Export'}
+        {props.dialogModeImport ? 'Import' : 'Export'}
       </Button>
     </DialogActions>
   );
 
-  render() {
-    const { onClose, open, fullScreen } = this.props;
-    return (
-      <Dialog
-        open={open}
-        fullScreen={fullScreen}
-        onClose={onClose}
-        // onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
-      >
-        {this.renderTitle()}
-        {this.renderContent()}
-        {this.renderActions()}
-      </Dialog>
-    );
-  }
-}
+  const { onClose, open, fullScreen } = props;
+  return (
+    <Dialog
+      open={open}
+      fullScreen={fullScreen}
+      onClose={onClose}
+      // onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
+    >
+      {renderTitle()}
+      {renderContent()}
+      {renderActions()}
+    </Dialog>
+  );
+};
 
 export default withStyles(styles)(
   withMobileDialog()(ImportExportTagGroupsDialog)
