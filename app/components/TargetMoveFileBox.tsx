@@ -19,6 +19,7 @@
 import React from 'react';
 import { DropTarget } from 'react-dnd';
 import { withStyles } from '@material-ui/core/styles/index';
+import { Location } from '-/reducers/locations';
 
 const styles: any = () => ({
   dropzone: {
@@ -42,11 +43,15 @@ const boxTarget = {
 };
 
 interface Props {
+  accepts: Array<string>;
+  onDrop: (item: any, monitor: any) => void;
   classes?: any;
   canDrop: boolean;
   isOver: boolean;
   connectDropTarget: any;
   children: Object;
+  path?: string;
+  location?: Location;
 }
 
 const TargetMoveFileBox = (props: Props) => {

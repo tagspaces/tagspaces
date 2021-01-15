@@ -17,6 +17,7 @@
  */
 
 import { Location, locationType } from '-/reducers/locations';
+import { getLocationPath } from '-/utils/paths';
 
 /** Returns true is a string is plus code e.g. 8FWH4HVG+3V 8FWH4HVG+ 8FWH4H+ */
 export function isPlusCode(plusCode: string): boolean {
@@ -165,7 +166,7 @@ export function updateHistory(
 
   if (currentLocation && currentLocation.uuid) {
     urlParams += 'tslid=' + encodeURIComponent(currentLocation.uuid);
-    currentLocationPath = currentLocation.path || currentLocation.paths[0];
+    currentLocationPath = getLocationPath(currentLocation);
   }
 
   if (currentDirectory && currentDirectory.length > 0) {

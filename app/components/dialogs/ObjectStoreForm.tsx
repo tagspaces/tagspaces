@@ -22,7 +22,6 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import IconButton from '@material-ui/core/IconButton';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -122,31 +121,80 @@ const styles: any = (theme: any) => ({
 });
 
 interface Props {
-  state: any;
-  handleChange: (name: string, value: any, action?: string) => void;
-  handleInputChange: (event: any) => void;
-  switchSecretAccessKeyVisibility: () => void;
   classes: any;
   theme: any;
+  cloudErrorTextName: boolean;
+  cloudErrorTextPath: boolean;
+  cloudErrorAccessKey: boolean;
+  cloudErrorSecretAccessKey: boolean;
+  cloudErrorBucketName: boolean;
+  cloudErrorRegion: boolean;
+  errorTextId: boolean;
+  showAdvancedMode: boolean;
+  showSecretAccessKey: boolean;
+  storeName: string;
+  storePath: string;
+  accessKeyId: string;
+  secretAccessKey: string;
+  bucketName: string;
+  region: string;
+  endpointURL: string;
+  newuuid: string;
+  setStoreName: (string) => void;
+  setStorePath: (string) => void;
+  setAccessKeyId: (string) => void;
+  setSecretAccessKey: (string) => void;
+  setShowSecretAccessKey: (boolean) => void;
+  setBucketName: (string) => void;
+  setRegion: (string) => void;
+  setEndpointURL: (string) => void;
+  setNewUuid: (string) => void;
 }
 const ObjectStoreForm = (props: Props) => {
-  function handleRegionChange(inputValue: any, region: string, reason: string) {
+  const {
+    setShowSecretAccessKey,
+    cloudErrorTextName,
+    cloudErrorTextPath,
+    cloudErrorAccessKey,
+    cloudErrorSecretAccessKey,
+    cloudErrorBucketName,
+    cloudErrorRegion,
+    errorTextId,
+    showAdvancedMode,
+    showSecretAccessKey,
+    storeName,
+    storePath,
+    accessKeyId,
+    secretAccessKey,
+    bucketName,
+    region,
+    endpointURL,
+    newuuid,
+    setStoreName,
+    setStorePath,
+    setAccessKeyId,
+    setSecretAccessKey,
+    setBucketName,
+    setEndpointURL,
+    setNewUuid,
+    setRegion
+  } = props;
+
+  function handleRegionChange(inputValue: any, value: string, reason: string) {
     if (reason === 'input') {
-      props.handleChange('region', region, reason);
+      setRegion(value);
     } else if (reason === 'select-option') {
-      props.handleChange('region', region, reason);
+      setRegion(value);
     }
     if (reason === 'clear') {
-      props.handleChange('region', '', reason);
+      setRegion('');
     }
   }
-
-  const { handleInputChange, switchSecretAccessKeyVisibility, state } = props;
 
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>
-        <FormControl fullWidth={true} error={state.cloudErrorTextName}>
+        <FormControl fullWidth={true} error={cloudErrorTextName}>
           <InputLabel htmlFor="storeName">
             {i18n.t('core:createLocationName')}
           </InputLabel>
@@ -157,8 +205,8 @@ const ObjectStoreForm = (props: Props) => {
             name="storeName"
             fullWidth={true}
             data-tid="locationName"
-            onChange={handleInputChange}
-            value={state.storeName}
+            onChange={event => setStoreName(event.target.value)}
+            value={storeName}
           />
           {/* {state.cloudErrorTextName && (
           <FormHelperText>{i18n.t('core:invalidName')}</FormHelperText>
@@ -166,7 +214,7 @@ const ObjectStoreForm = (props: Props) => {
         </FormControl>
       </Grid>
       <Grid item xs={12}>
-        <FormControl fullWidth={true} error={state.cloudErrorTextPath}>
+        <FormControl fullWidth={true} error={cloudErrorTextPath}>
           <InputLabel htmlFor="path">
             {i18n.t('core:createLocationPath')}
           </InputLabel>
@@ -175,8 +223,8 @@ const ObjectStoreForm = (props: Props) => {
             name="storePath"
             fullWidth={true}
             data-tid="locationPath"
-            onChange={handleInputChange}
-            value={state.storePath}
+            onChange={event => setStorePath(event.target.value)}
+            value={storePath}
           />
           {/* {state.cloudErrorTextPath && (
           <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>
@@ -184,7 +232,7 @@ const ObjectStoreForm = (props: Props) => {
         </FormControl>
       </Grid>
       <Grid item xs={12}>
-        <FormControl fullWidth={true} error={state.cloudErrorAccessKey}>
+        <FormControl fullWidth={true} error={cloudErrorAccessKey}>
           <InputLabel htmlFor="accessKeyId">
             {i18n.t('core:accessKeyId')}
           </InputLabel>
@@ -193,8 +241,8 @@ const ObjectStoreForm = (props: Props) => {
             name="accessKeyId"
             fullWidth={true}
             data-tid="accessKeyId"
-            onChange={handleInputChange}
-            value={state.accessKeyId}
+            onChange={event => setAccessKeyId(event.target.value)}
+            value={accessKeyId}
           />
           {/* {state.cloudErrorAccessKey && (
           <FormHelperText>{i18n.t('core:invalidAccessKey')}</FormHelperText>
@@ -202,29 +250,25 @@ const ObjectStoreForm = (props: Props) => {
         </FormControl>
       </Grid>
       <Grid item xs={12}>
-        <FormControl fullWidth={true} error={state.cloudErrorSecretAccessKey}>
+        <FormControl fullWidth={true} error={cloudErrorSecretAccessKey}>
           <InputLabel htmlFor="secretAccessKey">
             {i18n.t('core:secretAccessKey')}
           </InputLabel>
           <Input
             margin="dense"
             name="secretAccessKey"
-            type={state.showSecretAccessKey ? 'text' : 'password'}
+            type={showSecretAccessKey ? 'text' : 'password'}
             fullWidth={true}
             data-tid="secretAccessKey"
-            onChange={handleInputChange}
-            value={state.secretAccessKey}
+            onChange={event => setSecretAccessKey(event.target.value)}
+            value={secretAccessKey}
             endAdornment={
               <InputAdornment position="end">
                 <IconButton
                   aria-label="toggle password visibility"
-                  onClick={switchSecretAccessKeyVisibility}
+                  onClick={() => setShowSecretAccessKey(!showSecretAccessKey)}
                 >
-                  {state.showSecretAccessKey ? (
-                    <Visibility />
-                  ) : (
-                    <VisibilityOff />
-                  )}
+                  {showSecretAccessKey ? <Visibility /> : <VisibilityOff />}
                 </IconButton>
               </InputAdornment>
             }
@@ -237,7 +281,7 @@ const ObjectStoreForm = (props: Props) => {
         </FormControl>
       </Grid>
       <Grid item xs={12}>
-        <FormControl fullWidth={true} error={state.cloudErrorBucketName}>
+        <FormControl fullWidth={true} error={cloudErrorBucketName}>
           <InputLabel htmlFor="bucketName">
             {i18n.t('core:bucketName')}
           </InputLabel>
@@ -246,8 +290,8 @@ const ObjectStoreForm = (props: Props) => {
             name="bucketName"
             fullWidth={true}
             data-tid="bucketName"
-            onChange={handleInputChange}
-            value={state.bucketName}
+            onChange={event => setBucketName(event.target.value)}
+            value={bucketName}
           />
           {/* {state.cloudErrorBucketName && (
           <FormHelperText>
@@ -257,10 +301,10 @@ const ObjectStoreForm = (props: Props) => {
         </FormControl>
       </Grid>
       <Grid item xs={12}>
-        <FormControl fullWidth={true} error={state.cloudErrorRegion}>
+        <FormControl fullWidth={true} error={cloudErrorRegion}>
           <Autocomplete
             options={regions}
-            value={state.region}
+            value={region}
             freeSolo
             onChange={handleRegionChange}
             onInputChange={handleRegionChange}
@@ -278,7 +322,7 @@ const ObjectStoreForm = (props: Props) => {
           )} */}
         </FormControl>
       </Grid>
-      {state.showAdvancedMode && (
+      {showAdvancedMode && (
         <Grid item xs={12}>
           <FormControl fullWidth={true}>
             <InputLabel htmlFor="endpointURL">
@@ -290,8 +334,8 @@ const ObjectStoreForm = (props: Props) => {
               fullWidth={true}
               data-tid="endpointURL"
               placeholder="Advanced setting, could be left empty"
-              onChange={handleInputChange}
-              value={state.endpointURL}
+              onChange={event => setEndpointURL(event.target.value)}
+              value={endpointURL}
             />
             {/* {state.cloudErrorId && (
           <FormHelperText>{i18n.t('core:missingId')}</FormHelperText>
@@ -299,9 +343,9 @@ const ObjectStoreForm = (props: Props) => {
           </FormControl>
         </Grid>
       )}
-      {state.showAdvancedMode && (
+      {showAdvancedMode && (
         <Grid item xs={12}>
-          <FormControl fullWidth={true}>
+          <FormControl fullWidth={true} error={errorTextId}>
             <InputLabel htmlFor="newuuid">
               {i18n.t('core:locationId')}
             </InputLabel>
@@ -311,8 +355,8 @@ const ObjectStoreForm = (props: Props) => {
               fullWidth={true}
               data-tid="newuuid"
               placeholder="Advanced setting"
-              onChange={handleInputChange}
-              value={state.newuuid}
+              onChange={event => setNewUuid(event.target.value)}
+              value={newuuid}
             />
           </FormControl>
         </Grid>

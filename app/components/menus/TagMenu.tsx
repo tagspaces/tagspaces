@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useState } from 'react';
+import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import ShowEntriesWithTagIcon from '@material-ui/icons/Launch';
@@ -26,9 +26,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import ConfirmDialog from '../dialogs/ConfirmDialog';
-import EditTagDialog from '../dialogs/EditTagDialog';
-import { Tag, TagGroup, Uuid } from '-/reducers/taglibrary';
+import { Tag } from '-/reducers/taglibrary';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import i18n from '-/services/i18n';
 import { SearchQuery } from '-/services/search';
@@ -43,18 +41,14 @@ interface Props {
   open?: boolean;
   onClose: () => void;
   selectedTag?: Tag;
-  selectedTagGroupEntry?: TagGroup;
   searchLocationIndex: (searchQuery: SearchQuery) => void;
-  editTag: (tag: Tag, parentTagGroupUuid: Uuid, origTitle: string) => void;
-  deleteTag: (tagTitle: string, parentTagGroupUuid: Uuid) => void;
   openSearchPanel: () => void;
+  showEditTagDialog: () => void;
+  showDeleteTagDialog: () => void;
   maxSearchResults: number;
 }
 
 const TagLibraryMenu = (props: Props) => {
-  const [isEditTagDialogOpened, setIsEditTagDialogOpened] = useState(false);
-  const [isDeleteTagDialogOpened, setIsDeleteTagDialogOpened] = useState(false);
-
   function showFilesWithThisTag() {
     if (props.selectedTag) {
       props.openSearchPanel();
@@ -68,26 +62,12 @@ const TagLibraryMenu = (props: Props) => {
 
   function showEditTagDialog() {
     props.onClose();
-    setIsEditTagDialogOpened(true);
+    props.showEditTagDialog();
   }
 
   function showDeleteTagDialog() {
     props.onClose();
-    setIsDeleteTagDialogOpened(true);
-  }
-
-  function handleCloseDialogs() {
-    setIsEditTagDialogOpened(false);
-    setIsDeleteTagDialogOpened(false);
-  }
-
-  function confirmDeleteTag() {
-    if (props.selectedTag && props.selectedTagGroupEntry) {
-      props.deleteTag(
-        props.selectedTag.title,
-        props.selectedTagGroupEntry.uuid
-      );
-    }
+    props.showDeleteTagDialog();
   }
 
   return (
@@ -119,28 +99,6 @@ const TagLibraryMenu = (props: Props) => {
           </MenuItem>
         )}
       </Menu>
-      <EditTagDialog
-        open={isEditTagDialogOpened}
-        onClose={handleCloseDialogs}
-        editTag={props.editTag}
-        selectedTagGroupEntry={props.selectedTagGroupEntry}
-        selectedTag={props.selectedTag}
-      />
-      <ConfirmDialog
-        open={isDeleteTagDialogOpened}
-        onClose={handleCloseDialogs}
-        title={i18n.t('core:deleteTagFromTagGroup')}
-        content={i18n.t('core:deleteTagFromTagGroupContentConfirm', {
-          tagName: props.selectedTag ? props.selectedTag.title : ''
-        })}
-        confirmCallback={result => {
-          if (result) {
-            confirmDeleteTag();
-          }
-        }}
-        cancelDialogTID="cancelDeleteTagDialogTagMenu"
-        confirmDialogTID="confirmDeleteTagDialogTagMenu"
-      />
     </div>
   );
 };

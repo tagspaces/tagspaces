@@ -22,7 +22,8 @@ import { Pro } from '../pro';
 import {
   extractFileExtension,
   extractFileName,
-  extractTagsAsObjects
+  extractTagsAsObjects,
+  getLocationPath
 } from '-/utils/paths';
 import Search, { SearchQuery } from '../services/search';
 import { actions as AppActions } from './app';
@@ -216,7 +217,7 @@ export const actions = {
     const allLocations = getLocations(state);
     const locationPaths = [];
     allLocations.forEach(location => {
-      locationPaths.push(location.path || location.paths[0]);
+      locationPaths.push(getLocationPath(location));
     });
     const result = locationPaths.reduce(
       (accumulatorPromise, nextPath) =>
@@ -323,7 +324,7 @@ export const actions = {
         searchQuery.forceIndexing ||
         indexAge > AppConfig.maxIndexAge
       ) {
-        const currentPath = currentLocation.path || currentLocation.paths[0];
+        const currentPath = getLocationPath(currentLocation);
         console.log('Start creating index for : ' + currentPath);
         if (currentLocation.persistIndex && Pro && Pro.Indexer.loadIndex) {
           GlobalSearch.index = await Pro.Indexer.loadIndex(
@@ -415,7 +416,7 @@ export const actions = {
             Promise.resolve();
             return true;
           }
-          const nextPath = location.path || location.paths[0];
+          const nextPath = getLocationPath(location);
           let directoryIndex = [];
           let hasIndex = false;
           const isCloudLocation = location.type === locationType.TYPE_CLOUD;

@@ -95,7 +95,7 @@ describe('TST03 - Testing locations:', () => {
     await openLocationMenu(testLocationName);
     await clickOn('[data-tid=editLocation]');
     await setInputKeys('locationName', newLocationName);
-    await clickOn('[data-tid=confirmEditLocationDialog]');
+    await clickOn('[data-tid=confirmLocationCreation]');
     /*await delay(500);
     await global.client.$('[data-tid=locationList]');
     const allLocationsList = await global.client.getText(

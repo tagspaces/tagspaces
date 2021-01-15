@@ -42,8 +42,8 @@ import {
   extractParentDirectoryPath,
   extractTagsAsObjects,
   normalizePath,
-  extractLocation,
-  extractContainingDirectoryPath
+  extractContainingDirectoryPath,
+  getLocationPath
 } from '-/utils/paths';
 import {
   formatDateTime4Tag,
@@ -848,19 +848,12 @@ export const actions = {
     getState: () => any
   ) => {
     console.time('listDirectoryPromise');
-    const { settings, locations } = getState();
+    const { settings } = getState();
     window.walkCanceled = false;
 
     function loadDirectoryContentInt(fsEntryMeta?: FileSystemEntryMeta) {
       // Uncomment the following line will to clear all content before loading new dir content
       dispatch(actions.loadDirectorySuccessInt(directoryPath, [], true)); // this is to reset directoryContent (it will reset color too)
-      if (directoryPath) {
-        // TODO move changeLocation in DirTree
-        const location = extractLocation(directoryPath, locations);
-        if (location !== undefined) {
-          dispatch(actions.changeLocation(location));
-        }
-      }
       // dispatch(actions.setCurrentDirectoryColor('')); // this is to reset color only
       dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
       PlatformIO.listDirectoryPromise(directoryPath, false)
@@ -1287,9 +1280,7 @@ export const actions = {
           );
           dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
           dispatch(actions.changeLocation(location));
-          dispatch(
-            actions.loadDirectoryContent(location.path || location.paths[0])
-          );
+          dispatch(actions.loadDirectoryContent(getLocationPath(location)));
           return true;
         })
         .catch(() => {
@@ -1306,15 +1297,9 @@ export const actions = {
       PlatformIO.disableObjectStoreSupport();
       dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
       dispatch(actions.changeLocation(location));
-      dispatch(
-        actions.loadDirectoryContent(location.path || location.paths[0])
-      );
+      dispatch(actions.loadDirectoryContent(getLocationPath(location)));
       if (Pro && Pro.Watcher && location.watchForChanges) {
-        Pro.Watcher.watchFolder(
-          location.path || location.paths[0],
-          dispatch,
-          actions
-        );
+        Pro.Watcher.watchFolder(getLocationPath(location), dispatch, actions);
       }
     }
   },
@@ -1796,13 +1781,7 @@ export const actions = {
             }
           } else {
             // local files case
-            let locationPath = '';
-            if (
-              targetLocation &&
-              (targetLocation.path || targetLocation.paths)
-            ) {
-              locationPath = targetLocation.path || targetLocation.paths[0];
-            }
+            const locationPath = getLocationPath(targetLocation);
             if (directoryPath && directoryPath.length > 0) {
               if (
                 directoryPath.includes('../') ||
@@ -1887,6 +1866,13 @@ export const actions = {
         true
       )
     );
+  },
+  isCurrentLocation: (uuid: string) => (
+    dispatch: (actions: Object) => void,
+    getState: () => any
+  ) => {
+    const { currentLocationId } = getState().app;
+    return currentLocationId === uuid;
   }
 };
 
@@ -1907,7 +1893,7 @@ export const getCurrentLocationPath = (state: any) => {
         state.app.currentLocationId &&
         location.uuid === state.app.currentLocationId
       ) {
-        const locationPath = location.path || location.paths[0];
+        const locationPath = getLocationPath(location);
         if (
           AppConfig.isElectron &&
           locationPath &&
