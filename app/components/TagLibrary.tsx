@@ -345,38 +345,46 @@ class TagLibrary extends React.Component<Props, State> {
             </IconButton>
           )}
         </div>
-        <ConfirmDialog
-          open={this.state.isDeleteTagGroupDialogOpened}
-          onClose={this.handleCloseDialogs}
-          title={i18n.t('core:deleteTagGroup')}
-          content={i18n.t('core:deleteTagGroupContentConfirm', {
-            tagGroup: this.state.selectedTagGroupEntry
-              ? this.state.selectedTagGroupEntry.title
-              : ''
-          })}
-          confirmCallback={result => {
-            if (result && this.state.selectedTagGroupEntry) {
-              this.props.removeTagGroup(this.state.selectedTagGroupEntry.uuid);
-            }
-          }}
-          cancelDialogTID="cancelDeleteTagGroupDialog"
-          confirmDialogTID="confirmDeleteTagGroupDialog"
-        />
-        <CreateTagGroupDialog
-          key={uuidv1()}
-          open={this.state.isCreateTagGroupDialogOpened}
-          onClose={this.handleCloseDialogs}
-          createTagGroup={this.props.createTagGroup}
-          color={this.props.tagBackgroundColor}
-          textcolor={this.props.tagTextColor}
-        />
-        <CreateTagsDialog
-          key={uuidv1()}
-          open={this.state.isCreateTagDialogOpened}
-          onClose={this.handleCloseDialogs}
-          addTag={this.props.addTag}
-          selectedTagGroupEntry={this.state.selectedTagGroupEntry}
-        />
+        {this.state.isDeleteTagGroupDialogOpened && (
+          <ConfirmDialog
+            open={this.state.isDeleteTagGroupDialogOpened}
+            onClose={this.handleCloseDialogs}
+            title={i18n.t('core:deleteTagGroup')}
+            content={i18n.t('core:deleteTagGroupContentConfirm', {
+              tagGroup: this.state.selectedTagGroupEntry
+                ? this.state.selectedTagGroupEntry.title
+                : ''
+            })}
+            confirmCallback={result => {
+              if (result && this.state.selectedTagGroupEntry) {
+                this.props.removeTagGroup(
+                  this.state.selectedTagGroupEntry.uuid
+                );
+              }
+            }}
+            cancelDialogTID="cancelDeleteTagGroupDialog"
+            confirmDialogTID="confirmDeleteTagGroupDialog"
+          />
+        )}
+        {this.state.isCreateTagGroupDialogOpened && (
+          <CreateTagGroupDialog
+            key={uuidv1()}
+            open={this.state.isCreateTagGroupDialogOpened}
+            onClose={this.handleCloseDialogs}
+            createTagGroup={this.props.createTagGroup}
+            color={this.props.tagBackgroundColor}
+            textcolor={this.props.tagTextColor}
+          />
+        )}
+        {this.state.isCreateTagDialogOpened && (
+          <CreateTagsDialog
+            key={uuidv1()}
+            open={this.state.isCreateTagDialogOpened}
+            onClose={this.handleCloseDialogs}
+            addTag={this.props.addTag}
+            selectedTagGroupEntry={this.state.selectedTagGroupEntry}
+          />
+        )}
         {this.state.isEditTagGroupDialogOpened && (
           <EditTagGroupDialog
             open={this.state.isEditTagGroupDialogOpened}
@@ -385,20 +393,22 @@ class TagLibrary extends React.Component<Props, State> {
             selectedTagGroupEntry={this.state.selectedTagGroupEntry}
           />
         )}
-        <TagGroupMenu
-          anchorEl={this.state.tagGroupMenuAnchorEl}
-          open={this.state.tagGroupMenuOpened}
-          onClose={this.handleCloseTagGroupMenu}
-          selectedTagGroupEntry={this.state.selectedTagGroupEntry}
-          showCreateTagsDialog={this.showCreateTagsDialog}
-          showDeleteTagGroupDialog={this.showDeleteTagGroupDialog}
-          handleCloseTagGroupMenu={this.handleCloseTagGroupMenu}
-          showEditTagGroupDialog={this.showEditTagGroupDialog}
-          moveTagGroupUp={this.props.moveTagGroupUp}
-          moveTagGroupDown={this.props.moveTagGroupDown}
-          sortTagGroup={this.props.sortTagGroup}
-          collectTagsFromLocation={this.props.collectTagsFromLocation}
-        />
+        {this.state.tagGroupMenuOpened && (
+          <TagGroupMenu
+            anchorEl={this.state.tagGroupMenuAnchorEl}
+            open={this.state.tagGroupMenuOpened}
+            onClose={this.handleCloseTagGroupMenu}
+            selectedTagGroupEntry={this.state.selectedTagGroupEntry}
+            showCreateTagsDialog={this.showCreateTagsDialog}
+            showDeleteTagGroupDialog={this.showDeleteTagGroupDialog}
+            handleCloseTagGroupMenu={this.handleCloseTagGroupMenu}
+            showEditTagGroupDialog={this.showEditTagGroupDialog}
+            moveTagGroupUp={this.props.moveTagGroupUp}
+            moveTagGroupDown={this.props.moveTagGroupDown}
+            sortTagGroup={this.props.sortTagGroup}
+            collectTagsFromLocation={this.props.collectTagsFromLocation}
+          />
+        )}
         <TagLibraryMenu
           anchorEl={this.state.tagLibraryMenuAnchorEl}
           open={this.state.tagLibraryMenuOpened}
