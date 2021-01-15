@@ -58,8 +58,8 @@
   "decryptFile": "Decrypt file",
   "wrongPasswordError": "Wrong password",
   "retypePasswordDiffError": "Retyped password does not match",
-  "locationExist": "Location exist",
-  "notImportedLocation": "Location will be not imported",
+  "locationExist": "Location already exist, it will be replaced with this one",
+  "notImportedLocation": "Location will not be imported",
   "createLocationPath": "Location Path",
   "createLocationName": "Location Name",
   "createLocationDefaultPerspective": "Default Perspective",
@@ -510,5 +510,7 @@
   "musicFolder": "Music",
   "picturesFolder": "Pictures",
   "videosFolder": "Videos",
+  "startImportButton": "Import",
+  "startExportButton": "Export",
   "-": "-"
 }

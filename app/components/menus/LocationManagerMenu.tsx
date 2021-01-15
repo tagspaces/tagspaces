@@ -22,6 +22,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import CreateLocationIcon from '@material-ui/icons/CreateNewFolder';
+import ExportImportIcon from '@material-ui/icons/SwapHoriz';
 import OpenLinkIcon from '@material-ui/icons/Link';
 import HelpIcon from '@material-ui/icons/Help';
 import classNames from 'classnames';
@@ -63,7 +64,6 @@ const LocationManagerMenu = (props: Props) => {
           <MoreVertIcon />
         </IconButton>
       </div>
-      {/* <div style={{ overflowY: 'hidden' }}> */}
       <Menu
         anchorEl={locationManagerMenuAnchorEl}
         open={Boolean(locationManagerMenuAnchorEl)}
@@ -85,34 +85,6 @@ const LocationManagerMenu = (props: Props) => {
             <ListItemText primary={i18n.t('core:createLocationTitle')} />
           </MenuItem>
         )}
-        {Pro && (
-          <>
-            <MenuItem
-              data-tid="locationManagerMenuExportLocationsTID"
-              onClick={() => {
-                setLocationManagerMenuAnchorEl(null);
-                props.exportLocations();
-              }}
-            >
-              <ListItemIcon>
-                <CreateLocationIcon />
-              </ListItemIcon>
-              <ListItemText primary={i18n.t('core:exportLocationTitle')} />
-            </MenuItem>
-            <MenuItem
-              data-tid="locationManagerMenuImportLocationsTID"
-              onClick={() => {
-                setLocationManagerMenuAnchorEl(null);
-                props.importLocations();
-              }}
-            >
-              <ListItemIcon>
-                <CreateLocationIcon />
-              </ListItemIcon>
-              <ListItemText primary={i18n.t('core:importLocationTitle')} />
-            </MenuItem>
-          </>
-        )}
         <MenuItem
           data-tid="locationManagerMenuOpenLink"
           onClick={() => {
@@ -125,6 +97,34 @@ const LocationManagerMenu = (props: Props) => {
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:openLink')} />
         </MenuItem>
+        {Pro && (
+          <>
+            <MenuItem
+              data-tid="locationManagerMenuExportLocationsTID"
+              onClick={() => {
+                setLocationManagerMenuAnchorEl(null);
+                props.exportLocations();
+              }}
+            >
+              <ListItemIcon>
+                <ExportImportIcon />
+              </ListItemIcon>
+              <ListItemText primary={i18n.t('core:exportLocationTitle')} />
+            </MenuItem>
+            <MenuItem
+              data-tid="locationManagerMenuImportLocationsTID"
+              onClick={() => {
+                setLocationManagerMenuAnchorEl(null);
+                props.importLocations();
+              }}
+            >
+              <ListItemIcon>
+                <ExportImportIcon />
+              </ListItemIcon>
+              <ListItemText primary={i18n.t('core:importLocationTitle')} />
+            </MenuItem>
+          </>
+        )}
         <MenuItem
           data-tid="locationManagerMenuHelp"
           onClick={() => {
