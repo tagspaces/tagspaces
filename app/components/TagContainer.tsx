@@ -17,7 +17,7 @@
  */
 
 import React from 'react';
-import uuidv1 from 'uuid';
+// import uuidv1 from 'uuid';
 import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -34,7 +34,6 @@ interface Props {
   tag: Tag;
   isReadOnlyMode?: boolean;
   allTags?: Array<Tag>;
-  key?: string;
   defaultTextColor?: string;
   defaultBackgroundColor?: string;
   tagGroup?: TagGroup;
@@ -55,7 +54,6 @@ interface Props {
 
 const TagContainer = React.memo((props: Props) => {
   const {
-    key,
     tag,
     deleteIcon,
     isDragging,
@@ -158,7 +156,7 @@ const TagContainer = React.memo((props: Props) => {
     <div
       role="presentation"
       data-tid={tid}
-      key={key || tag.id || uuidv1()}
+      key={tag.id || (tagGroup ? tagGroup.uuid : '') + tid} // don't set unique uuidv1() here - menu anchorEl needs to be the same for the same TagContainer key (or TagMenu will be displayed in top left corner)
       onClick={event => {
         if (event.ctrlKey && addTags) {
           const selectedEntryPaths = [];

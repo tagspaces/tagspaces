@@ -16,8 +16,7 @@
  *
  */
 
-import React from 'react';
-import uuidv1 from 'uuid';
+import React, { useCallback, useMemo, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -49,7 +48,8 @@ import {
   Tag,
   actions as TagLibraryActions,
   getAllTags,
-  getTagGroups
+  getTagGroups,
+  Uuid
 } from '../reducers/taglibrary';
 import TaggingActions from '../reducers/tagging-actions';
 import i18n from '../services/i18n';
@@ -66,9 +66,7 @@ import {
 import SmartTags from '../reducers/smart-tags';
 import { FileSystemEntry } from '-/services/utils-io';
 import { AppConfig } from '-/config';
-
-const isTagLibraryReadOnly =
-  window.ExtTagLibrary && window.ExtTagLibrary.length > 0;
+import EditTagDialog from '-/components/dialogs/EditTagDialog';
 
 interface Props {
   classes: any;
@@ -93,134 +91,120 @@ interface Props {
   moveTag: () => void;
   editTagGroup: () => void;
   editTag: () => void;
-  deleteTag: () => void;
+  deleteTag: (tagTitle: string, parentTagGroupUuid: Uuid) => void;
   selectedEntries: Array<FileSystemEntry>;
   tagGroupCollapsed: Array<string>;
 }
 
-interface State {
-  tagLibraryMenuAnchorEl: Element;
-  tagLibraryMenuOpened: boolean;
-  tagGroupMenuAnchorEl: Element;
-  tagGroupMenuOpened: boolean;
-  tagMenuAnchorEl: Element;
-  tagMenuOpened: boolean;
-  selectedTagEntry: TagGroup;
-  selectedTag: Tag;
-  selectedTagGroupEntry: TagGroup;
-  isCreateTagGroupDialogOpened: boolean;
-  isEditTagGroupDialogOpened: boolean;
-  isDeleteTagGroupDialogOpened: boolean;
-  isCreateTagDialogOpened: boolean;
-  isEditTagDialogOpened: boolean;
-  isDeleteTagDialogOpened: boolean;
-}
+const TagLibrary = (props: Props) => {
+  const [
+    tagGroupMenuAnchorEl,
+    setTagGroupMenuAnchorEl
+  ] = useState<null | HTMLElement>(null);
+  const [tagMenuAnchorEl, setTagMenuAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
+  const [
+    tagLibraryMenuAnchorEl,
+    setTagLibraryMenuAnchorEl
+  ] = useState<null | HTMLElement>(null);
+  const [selectedTagGroupEntry, setSelectedTagGroupEntry] = useState<TagGroup>(
+    null
+  );
+  // const [selectedTagEntry, setSelectedTagEntry] = useState<TagGroup>(null);
+  const [selectedTag, setSelectedTag] = useState<Tag>(null);
+  const [
+    isCreateTagGroupDialogOpened,
+    setIsCreateTagGroupDialogOpened
+  ] = useState<boolean>(false);
+  const [isEditTagGroupDialogOpened, setIsEditTagGroupDialogOpened] = useState<
+    boolean
+  >(false);
+  const [
+    isDeleteTagGroupDialogOpened,
+    setIsDeleteTagGroupDialogOpened
+  ] = useState<boolean>(false);
+  const [isCreateTagDialogOpened, setIsCreateTagDialogOpened] = useState<
+    boolean
+  >(false);
+  const [isEditTagDialogOpened, setIsEditTagDialogOpened] = useState<boolean>(
+    false
+  );
+  const [isDeleteTagDialogOpened, setIsDeleteTagDialogOpened] = useState<
+    boolean
+  >(false);
 
-class TagLibrary extends React.Component<Props, State> {
-  state = {
-    tagGroupMenuAnchorEl: null,
-    tagGroupMenuOpened: false,
-    tagMenuAnchorEl: null,
-    tagMenuOpened: false,
-    tagLibraryMenuAnchorEl: null,
-    tagLibraryMenuOpened: false,
-    selectedTagGroupEntry: null,
-    selectedTagEntry: null,
-    selectedTag: null,
-    isCreateTagGroupDialogOpened: false,
-    isEditTagGroupDialogOpened: false,
-    isDeleteTagGroupDialogOpened: false,
-    isCreateTagDialogOpened: false,
-    isEditTagDialogOpened: false,
-    isDeleteTagDialogOpened: false
+  const isTagLibraryReadOnly =
+    window.ExtTagLibrary && window.ExtTagLibrary.length > 0;
+
+  const handleTagGroupTitleClick = (event: Object, tagGroup) => {
+    props.toggleTagGroup(tagGroup.uuid);
   };
 
-  handleTagGroupTitleClick = (event: Object, tagGroup) => {
-    this.props.toggleTagGroup(tagGroup.uuid);
-  };
-
-  handleTagGroupMenu = (
+  const handleTagGroupMenu = (
     event: React.ChangeEvent<HTMLInputElement>,
     tagGroup
   ) => {
-    this.setState({
+    setTagGroupMenuAnchorEl(event.currentTarget);
+    setSelectedTagGroupEntry(tagGroup);
+    /* this.setState({
       tagGroupMenuOpened: true,
       tagGroupMenuAnchorEl: event.currentTarget,
       selectedTagGroupEntry: tagGroup
-    });
+    }); */
   };
 
-  handleTagMenu = (
+  const handleTagMenuCallback = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>, tag, tagGroup: TagGroup) => {
+      handleTagMenu(event, tag, tagGroup);
+    },
+    []
+  );
+
+  const handleTagMenu = (
     event: React.ChangeEvent<HTMLInputElement>,
     tag,
     tagGroup: TagGroup
   ) => {
-    this.setState({
-      tagMenuOpened: true,
-      tagMenuAnchorEl: event.currentTarget,
-      selectedTagGroupEntry: tagGroup,
-      selectedTag: tag
-    });
+    if (!tagGroup.readOnly) {
+      setTagMenuAnchorEl(event.currentTarget);
+      setSelectedTagGroupEntry(tagGroup);
+      setSelectedTag(tag);
+    }
   };
 
-  handleTagLibraryMenu = (event: any) => {
-    this.setState({
+  const handleTagLibraryMenu = (event: any) => {
+    setTagLibraryMenuAnchorEl(event.currentTarget);
+    /* this.setState({
       tagLibraryMenuOpened: true,
       tagLibraryMenuAnchorEl: event.currentTarget
-    });
+    }); */
   };
 
-  showCreateTagGroupDialog = () => {
-    this.setState({ isCreateTagGroupDialogOpened: true });
+  const showCreateTagGroupDialog = () => {
+    setIsCreateTagGroupDialogOpened(true);
+    // this.setState({ isCreateTagGroupDialogOpened: true });
   };
 
-  showCreateTagsDialog = () => {
-    this.setState({ isCreateTagDialogOpened: true });
-    this.handleCloseTagGroupMenu();
+  const showCreateTagsDialog = () => {
+    setIsCreateTagDialogOpened(true);
+    setTagGroupMenuAnchorEl(null);
   };
 
-  showEditTagGroupDialog = () => {
-    this.setState({ isEditTagGroupDialogOpened: true });
-    this.handleCloseTagGroupMenu();
+  const showEditTagGroupDialog = () => {
+    setIsEditTagGroupDialogOpened(true);
+    setTagGroupMenuAnchorEl(null);
   };
 
-  showDeleteTagGroupDialog = () => {
-    this.setState({ isDeleteTagGroupDialogOpened: true });
-    this.handleCloseTagGroupMenu();
+  const showDeleteTagGroupDialog = () => {
+    setIsDeleteTagGroupDialogOpened(true);
+    setTagGroupMenuAnchorEl(null);
   };
 
-  handleCloseDialogs = () => {
-    this.setState({
-      isCreateTagGroupDialogOpened: false,
-      isEditTagGroupDialogOpened: false,
-      isDeleteTagGroupDialogOpened: false,
-      isCreateTagDialogOpened: false,
-      isEditTagDialogOpened: false,
-      isDeleteTagDialogOpened: false
-    });
-  };
-
-  handleCloseTagGroupMenu = () => {
-    this.setState({
-      tagGroupMenuOpened: false
-    });
-  };
-
-  handleCloseTagMenu = () => {
-    this.setState({
-      tagMenuOpened: false
-    });
-  };
-
-  handleCloseImportExportMenu = () => {
-    this.setState({ tagLibraryMenuOpened: false });
-  };
-
-  renderTagGroup = tagGroup => {
+  const renderTagGroup = tagGroup => {
     // eslint-disable-next-line no-param-reassign
     tagGroup.expanded = !(
-      this.props.tagGroupCollapsed &&
-      this.props.tagGroupCollapsed.includes(tagGroup.uuid)
+      props.tagGroupCollapsed && props.tagGroupCollapsed.includes(tagGroup.uuid)
     );
     const isReadOnly = tagGroup.readOnly || isTagLibraryReadOnly;
     return (
@@ -229,13 +213,9 @@ class TagLibrary extends React.Component<Props, State> {
           data-tid={'tagLibraryTagGroupTitle_' + tagGroup.title}
           button
           style={{ maxWidth: 250 }}
-          className={this.props.classes.listItem}
-          onClick={(event: any) =>
-            this.handleTagGroupTitleClick(event, tagGroup)
-          }
-          onContextMenu={(event: any) =>
-            this.handleTagGroupMenu(event, tagGroup)
-          }
+          className={props.classes.listItem}
+          onClick={(event: any) => handleTagGroupTitleClick(event, tagGroup)}
+          onContextMenu={(event: any) => handleTagGroupMenu(event, tagGroup)}
           title={
             'Number of tags in this tag group: ' + tagGroup.children.length
           }
@@ -245,14 +225,14 @@ class TagLibrary extends React.Component<Props, State> {
           </ListItemIcon>
           <Typography
             variant="inherit"
-            className={this.props.classes.header}
+            className={props.classes.header}
             style={{ paddingLeft: 0 }}
             data-tid="locationTitleElement"
             noWrap
           >
             {tagGroup.title + ' '}
             {!tagGroup.expanded && (
-              <span className={this.props.classes.badge}>
+              <span className={props.classes.badge}>
                 {tagGroup.children.length}
               </span>
             )}
@@ -266,11 +246,9 @@ class TagLibrary extends React.Component<Props, State> {
                 data-tid={
                   'tagLibraryMoreButton_' + tagGroup.title.replace(/ /g, '_')
                 }
-                onClick={(event: any) =>
-                  this.handleTagGroupMenu(event, tagGroup)
-                }
+                onClick={(event: any) => handleTagGroupMenu(event, tagGroup)}
                 onContextMenu={(event: any) =>
-                  this.handleTagGroupMenu(event, tagGroup)
+                  handleTagGroupMenu(event, tagGroup)
                 }
               >
                 <MoreVertIcon />
@@ -285,16 +263,16 @@ class TagLibrary extends React.Component<Props, State> {
           >
             {tagGroup.children &&
               tagGroup.children.map((tag: Tag) => {
-                if (this.props.isReadOnlyMode) {
+                if (props.isReadOnlyMode) {
                   return (
                     <TagContainer
                       key={tagGroup.uuid + tag.title}
                       tag={tag}
                       tagGroup={tagGroup}
-                      handleTagMenu={this.handleTagMenu}
-                      addTags={this.props.addTags}
-                      moveTag={this.props.moveTag}
-                      selectedEntries={this.props.selectedEntries}
+                      handleTagMenu={handleTagMenuCallback}
+                      addTags={props.addTags}
+                      moveTag={props.moveTag}
+                      selectedEntries={props.selectedEntries}
                     />
                   );
                 }
@@ -303,10 +281,10 @@ class TagLibrary extends React.Component<Props, State> {
                     key={tagGroup.uuid + tag.title}
                     tag={tag}
                     tagGroup={tagGroup}
-                    handleTagMenu={this.handleTagMenu}
-                    addTags={this.props.addTags}
-                    moveTag={this.props.moveTag}
-                    selectedEntries={this.props.selectedEntries}
+                    handleTagMenu={handleTagMenuCallback}
+                    addTags={props.addTags}
+                    moveTag={props.moveTag}
+                    selectedEntries={props.selectedEntries}
                   />
                 );
               })}
@@ -316,123 +294,155 @@ class TagLibrary extends React.Component<Props, State> {
     );
   };
 
-  render() {
-    const { tagGroups, classes, allTags } = this.props;
+  function confirmDeleteTag() {
+    if (selectedTag && selectedTagGroupEntry) {
+      props.deleteTag(selectedTag.title, selectedTagGroupEntry.uuid);
+    }
+  }
 
-    return (
-      <div className={classes.panel} style={this.props.style}>
-        <CustomLogo />
-        <div className={classes.toolbar}>
-          <Typography
-            className={classNames(classes.panelTitle, classes.header)}
-            title={
-              'Your tag library contains ' +
-              allTags.length +
-              ' tags \ndistributed in ' +
-              tagGroups.length +
-              ' tag groups'
-            }
-            variant="subtitle1"
-          >
-            {i18n.t('core:tagLibrary')}
-          </Typography>
-          {!isTagLibraryReadOnly && (
-            <IconButton
-              data-tid="tagLibraryMenu"
-              onClick={this.handleTagLibraryMenu}
-            >
-              <MoreVertIcon />
-            </IconButton>
-          )}
-        </div>
+  const { tagGroups, classes, allTags } = props;
+
+  return (
+    <div className={classes.panel} style={props.style}>
+      <CustomLogo />
+      <div className={classes.toolbar}>
+        <Typography
+          className={classNames(classes.panelTitle, classes.header)}
+          title={
+            'Your tag library contains ' +
+            allTags.length +
+            ' tags \ndistributed in ' +
+            tagGroups.length +
+            ' tag groups'
+          }
+          variant="subtitle1"
+        >
+          {i18n.t('core:tagLibrary')}
+        </Typography>
+        {!isTagLibraryReadOnly && (
+          <IconButton data-tid="tagLibraryMenu" onClick={handleTagLibraryMenu}>
+            <MoreVertIcon />
+          </IconButton>
+        )}
+      </div>
+      {isDeleteTagGroupDialogOpened && (
         <ConfirmDialog
-          open={this.state.isDeleteTagGroupDialogOpened}
-          onClose={this.handleCloseDialogs}
+          open={isDeleteTagGroupDialogOpened}
+          onClose={() => setIsDeleteTagGroupDialogOpened(false)}
           title={i18n.t('core:deleteTagGroup')}
           content={i18n.t('core:deleteTagGroupContentConfirm', {
-            tagGroup: this.state.selectedTagGroupEntry
-              ? this.state.selectedTagGroupEntry.title
-              : ''
+            tagGroup: selectedTagGroupEntry ? selectedTagGroupEntry.title : ''
           })}
           confirmCallback={result => {
-            if (result && this.state.selectedTagGroupEntry) {
-              this.props.removeTagGroup(this.state.selectedTagGroupEntry.uuid);
+            if (result && selectedTagGroupEntry) {
+              props.removeTagGroup(selectedTagGroupEntry.uuid);
             }
           }}
           cancelDialogTID="cancelDeleteTagGroupDialog"
           confirmDialogTID="confirmDeleteTagGroupDialog"
         />
+      )}
+      {isCreateTagGroupDialogOpened && (
         <CreateTagGroupDialog
-          key={uuidv1()}
-          open={this.state.isCreateTagGroupDialogOpened}
-          onClose={this.handleCloseDialogs}
-          createTagGroup={this.props.createTagGroup}
-          color={this.props.tagBackgroundColor}
-          textcolor={this.props.tagTextColor}
+          // key={uuidv1()}
+          open={isCreateTagGroupDialogOpened}
+          onClose={() => setIsCreateTagGroupDialogOpened(false)}
+          createTagGroup={props.createTagGroup}
+          color={props.tagBackgroundColor}
+          textcolor={props.tagTextColor}
         />
+      )}
+      {isCreateTagDialogOpened && (
         <CreateTagsDialog
-          key={uuidv1()}
-          open={this.state.isCreateTagDialogOpened}
-          onClose={this.handleCloseDialogs}
-          addTag={this.props.addTag}
-          selectedTagGroupEntry={this.state.selectedTagGroupEntry}
+          // key={uuidv1()}
+          open={isCreateTagDialogOpened}
+          onClose={() => setIsCreateTagDialogOpened(false)}
+          addTag={props.addTag}
+          selectedTagGroupEntry={selectedTagGroupEntry}
         />
+      )}
+      {isEditTagGroupDialogOpened && (
         <EditTagGroupDialog
-          open={this.state.isEditTagGroupDialogOpened}
-          onClose={this.handleCloseDialogs}
-          editTagGroup={this.props.editTagGroup}
-          selectedTagGroupEntry={this.state.selectedTagGroupEntry}
+          open={isEditTagGroupDialogOpened}
+          onClose={() => setIsEditTagGroupDialogOpened(false)}
+          editTagGroup={props.editTagGroup}
+          selectedTagGroupEntry={selectedTagGroupEntry}
         />
+      )}
+      {Boolean(tagGroupMenuAnchorEl) && (
         <TagGroupMenu
-          anchorEl={this.state.tagGroupMenuAnchorEl}
-          open={this.state.tagGroupMenuOpened}
-          onClose={this.handleCloseTagGroupMenu}
-          selectedTagGroupEntry={this.state.selectedTagGroupEntry}
-          showCreateTagsDialog={this.showCreateTagsDialog}
-          showDeleteTagGroupDialog={this.showDeleteTagGroupDialog}
-          handleCloseTagGroupMenu={this.handleCloseTagGroupMenu}
-          showEditTagGroupDialog={this.showEditTagGroupDialog}
-          moveTagGroupUp={this.props.moveTagGroupUp}
-          moveTagGroupDown={this.props.moveTagGroupDown}
-          sortTagGroup={this.props.sortTagGroup}
-          collectTagsFromLocation={this.props.collectTagsFromLocation}
+          anchorEl={tagGroupMenuAnchorEl}
+          open={Boolean(tagGroupMenuAnchorEl)}
+          onClose={() => setTagGroupMenuAnchorEl(null)}
+          selectedTagGroupEntry={selectedTagGroupEntry}
+          showCreateTagsDialog={showCreateTagsDialog}
+          showDeleteTagGroupDialog={showDeleteTagGroupDialog}
+          handleCloseTagGroupMenu={() => setTagGroupMenuAnchorEl(null)}
+          showEditTagGroupDialog={showEditTagGroupDialog}
+          moveTagGroupUp={props.moveTagGroupUp}
+          moveTagGroupDown={props.moveTagGroupDown}
+          sortTagGroup={props.sortTagGroup}
+          collectTagsFromLocation={props.collectTagsFromLocation}
         />
-        <TagLibraryMenu
-          anchorEl={this.state.tagLibraryMenuAnchorEl}
-          open={this.state.tagLibraryMenuOpened}
-          onClose={this.handleCloseImportExportMenu}
-          tagGroups={tagGroups}
-          importTagGroups={this.props.importTagGroups}
-          exportTagGroups={this.props.exportTagGroups}
-          showCreateTagGroupDialog={this.showCreateTagGroupDialog}
-          openURLExternally={this.props.openURLExternally}
-        />
+      )}
+      <TagLibraryMenu
+        anchorEl={tagLibraryMenuAnchorEl}
+        open={Boolean(tagLibraryMenuAnchorEl)}
+        onClose={() => setTagLibraryMenuAnchorEl(null)}
+        tagGroups={tagGroups}
+        importTagGroups={props.importTagGroups}
+        exportTagGroups={props.exportTagGroups}
+        showCreateTagGroupDialog={showCreateTagGroupDialog}
+        openURLExternally={props.openURLExternally}
+      />
+      {Boolean(tagMenuAnchorEl) && (
         <TagMenu
-          anchorEl={this.state.tagMenuAnchorEl}
-          open={this.state.tagMenuOpened}
-          onClose={this.handleCloseTagMenu}
-          selectedTagGroupEntry={this.state.selectedTagGroupEntry}
-          selectedTag={this.state.selectedTag}
-          editTag={this.props.editTag}
-          deleteTag={this.props.deleteTag}
+          // key={'tag_' + selectedTag.path}
+          anchorEl={tagMenuAnchorEl}
+          open={Boolean(tagMenuAnchorEl)}
+          onClose={() => setTagMenuAnchorEl(null)}
+          showEditTagDialog={() => setIsEditTagDialogOpened(true)}
+          showDeleteTagDialog={() => setIsDeleteTagDialogOpened(true)}
+          selectedTag={selectedTag}
         />
-        <div
-          className={classes.taggroupsArea}
-          data-tid="tagLibraryTagGroupList"
-        >
-          {AppConfig.showSmartTags && (
-            <List style={{ paddingTop: 0, paddingBottom: 0 }}>
-              {SmartTags(i18n).map(this.renderTagGroup)}
-            </List>
-          )}
-          <List style={{ paddingTop: 0 }}>
-            {tagGroups.map(this.renderTagGroup)}
+      )}
+      {isEditTagDialogOpened && (
+        <EditTagDialog
+          open={isEditTagDialogOpened}
+          onClose={() => setIsEditTagDialogOpened(false)}
+          editTag={props.editTag}
+          selectedTagGroupEntry={selectedTagGroupEntry}
+          selectedTag={selectedTag}
+        />
+      )}
+      {isDeleteTagDialogOpened && (
+        <ConfirmDialog
+          open={isDeleteTagDialogOpened}
+          onClose={() => setIsDeleteTagDialogOpened(false)}
+          title={i18n.t('core:deleteTagFromTagGroup')}
+          content={i18n.t('core:deleteTagFromTagGroupContentConfirm', {
+            tagName: selectedTag ? selectedTag.title : ''
+          })}
+          confirmCallback={result => {
+            if (result) {
+              confirmDeleteTag();
+            }
+          }}
+          cancelDialogTID="cancelDeleteTagDialogTagMenu"
+          confirmDialogTID="confirmDeleteTagDialogTagMenu"
+        />
+      )}
+      <div className={classes.taggroupsArea} data-tid="tagLibraryTagGroupList">
+        {AppConfig.showSmartTags && (
+          <List style={{ paddingTop: 0, paddingBottom: 0 }}>
+            {SmartTags(i18n).map(renderTagGroup)}
           </List>
-        </div>
+        )}
+        <List style={{ paddingTop: 0 }}>{tagGroups.map(renderTagGroup)}</List>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 function mapStateToProps(state) {
   return {
