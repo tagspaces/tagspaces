@@ -34,6 +34,7 @@ import TranslationIcon from '@material-ui/icons/Translate';
 import NewFeatureIcon from '@material-ui/icons/Gesture';
 import SocialIcon from '@material-ui/icons/ThumbUp';
 import Social2Icon from '@material-ui/icons/Mood';
+import LogoutIcon from '@material-ui/icons/MeetingRoom';
 import KeyShortcutsIcon from '@material-ui/icons/Keyboard';
 import WelcomeBackground from '../assets/images/background.png';
 import WelcomeLogo from '../assets/images/welcome-logo.png';
@@ -200,6 +201,18 @@ const WelcomePanel = (props: Props) => {
             {i18n.t('core:likeUsOnFacebook')}
           </Button>
         </ListItem>
+        {AppConfig.isWeb && (
+          <ListItem
+            button
+            onClick={() => {
+              const p = window.location.protocol + '//';
+              // @ts-ignore
+              window.location = window.location.href.replace(p, p + 'log:out@');
+            }}
+          >
+            <Button startIcon={<LogoutIcon />}>{i18n.t('core:Logout')}</Button>
+          </ListItem>
+        )}
       </List>
     </div>
   );
