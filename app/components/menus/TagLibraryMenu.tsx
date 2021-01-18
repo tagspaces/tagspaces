@@ -25,7 +25,6 @@ import ImportExportIcon from '@material-ui/icons/ImportExport';
 import HelpIcon from '@material-ui/icons/Help';
 import AddIcon from '@material-ui/icons/Add';
 import ImportExportTagGroupsDialog from '../dialogs/ImportExportTagGroupsDialog';
-// import SelectDirectoryDialog from '../dialogs/SelectDirectoryDialog';
 import i18n from '-/services/i18n';
 import AppConfig from '-/config';
 
@@ -39,17 +38,17 @@ interface Props {
   importTagGroups: () => void;
   exportTagGroups: () => void;
   showCreateTagGroupDialog: () => void;
+  showNotification: (
+    text: string,
+    notificationType?: string, // NotificationTypes
+    autohide?: boolean
+  ) => void;
 }
 
 const TagLibraryMenu = (props: Props) => {
   const fileInput = useRef<HTMLInputElement>(null);
   const tagGroupsImported = useRef([]);
   // const [tagGroups, setTagGroups] = useState(null);
-  // const [selectedDirectoryPath, setSelectedDirectoryPath] = useState('');
-  // const [
-  //   isSelectDirectoryDialogOpened,
-  //   setIsSelectDirectoryDialogOpened
-  // ] = useState(false);
   const [
     isImportExportTagGroupDialogOpened,
     setIsImportExportTagGroupDialogOpened
@@ -67,25 +66,10 @@ const TagLibraryMenu = (props: Props) => {
     setIsImportExportTagGroupDialogOpened(true);
   }
 
-  // function showSelectDirectoryDialog() {
-  //   setIsSelectDirectoryDialogOpened(true);
-  //   // setSelectedDirectoryPath('');
-  // }
-
-  // function closeSelectDirectoryExtDialog() {
-  //   setIsSelectDirectoryDialogOpened(false);
-  // }
-
   function handleImportTagGroup() {
     props.onClose();
     setDialogModeImport(true);
-
-    // if (AppConfig.isCordovaAndroid && AppConfig.isCordovaiOS) {
-    //   // TODO Select directory or file from dialog
-    //   showSelectDirectoryDialog();
-    // } else {
     fileInput.current.click();
-    // }
   }
 
   function handleFileInputChange(selection: any) {
@@ -100,17 +84,14 @@ const TagLibraryMenu = (props: Props) => {
           tagGroupsImported.current = jsonObj.tagGroups;
           setIsImportExportTagGroupDialogOpened(true);
         } else {
-          // TODO connect showNotification
-          /* props.showNotification(
+          props.showNotification(
             i18n.t('core:invalidImportFile', 'warning', true)
-          ); */
+          );
         }
       } catch (e) {
-        console.error('Error : ', e);
-        // TODO connect showNotification
-        /* props.showNotification(
+        props.showNotification(
           i18n.t('core:invalidImportFile', 'warning', true)
-        ); */
+        );
       }
     };
     reader.readAsText(file);
@@ -131,10 +112,6 @@ const TagLibraryMenu = (props: Props) => {
           importTagGroups={props.importTagGroups}
         />
       )}
-      {/* <SelectDirectoryDialog
-        open={isSelectDirectoryDialogOpened}
-        onClose={closeSelectDirectoryExtDialog}
-      /> */}
       <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
         <MenuItem
           data-tid="createNewTagGroup"
