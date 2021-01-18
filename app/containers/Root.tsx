@@ -33,13 +33,29 @@ import { getDefaultLocationId } from '-/reducers/locations';
 import PlatformIO from '../services/platform-io';
 // import MainPage from './MainPage';
 import { getURLParameter } from '-/utils/misc';
+import AppConfig from '-/config';
 
 type RootType = {
   store: {};
   persistor: {};
 };
 
+function disableBackGestureMac() {
+  if (AppConfig.isMacLike) {
+    const element = document.querySelector('body');
+    element.addEventListener('touchstart', (e: MouseEvent) => {
+      // is not near edge of view, exit
+      if (e.pageX > 10 && e.pageX < window.innerWidth - 10) return;
+
+      // prevent swipe to navigate gesture
+      e.preventDefault();
+    });
+  }
+}
+
 function onBeforeLift(store) {
+  disableBackGestureMac();
+
   store.dispatch(SettingsActions.setZoomRestoreApp());
   store.dispatch(SettingsActions.upgradeSettings()); // TODO call this only on app version update
   const state = store.getState();
