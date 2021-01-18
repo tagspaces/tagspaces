@@ -190,7 +190,7 @@ class GridPerspective extends React.Component<Props, State> {
   }
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    const { lastSelectedEntryPath, selectedEntries } = nextProps;
+    const { selectedEntries } = nextProps;
     let fileOperationsEnabled = false;
 
     // if (lastSelectedEntryPath !== null) {
@@ -280,26 +280,28 @@ class GridPerspective extends React.Component<Props, State> {
   handleSortBy = sortBy => {
     this.closeSortingMenu();
     this.setState(
-      {
-        orderBy: !this.state.orderBy,
+      prevState => ({
+        orderBy: !prevState.orderBy,
         sortBy
-      },
+      }),
       this.saveSettings
     );
   };
 
   handleSortingMenu = event => {
-    this.setState({
-      sortingContextMenuOpened: !this.state.sortingContextMenuOpened,
-      sortingContextMenuAnchorEl: event ? event.currentTarget : null
-    });
+    const anchor = event ? event.currentTarget : null;
+    this.setState(prevState => ({
+      sortingContextMenuOpened: !prevState.sortingContextMenuOpened,
+      sortingContextMenuAnchorEl: anchor
+    }));
   };
 
   handleOptionsMenu = event => {
-    this.setState({
-      optionsContextMenuOpened: !this.state.optionsContextMenuOpened,
-      optionsContextMenuAnchorEl: event ? event.currentTarget : null
-    });
+    const anchor = event ? event.currentTarget : null;
+    this.setState(prevState => ({
+      optionsContextMenuOpened: !prevState.optionsContextMenuOpened,
+      optionsContextMenuAnchorEl: anchor
+    }));
   };
 
   handleGridCellClick = (event, fsEntry: FileSystemEntry) => {
@@ -391,9 +393,9 @@ class GridPerspective extends React.Component<Props, State> {
   toggleShowDirectories = () => {
     this.closeOptionsMenu();
     this.setState(
-      {
-        showDirectories: !this.state.showDirectories
-      },
+      prevState => ({
+        showDirectories: !prevState.showDirectories
+      }),
       this.saveSettings
     );
   };
@@ -401,9 +403,9 @@ class GridPerspective extends React.Component<Props, State> {
   toggleShowTags = () => {
     this.closeOptionsMenu();
     this.setState(
-      {
-        showTags: !this.state.showTags
-      },
+      prevState => ({
+        showTags: !prevState.showTags
+      }),
       this.saveSettings
     );
   };
@@ -411,10 +413,9 @@ class GridPerspective extends React.Component<Props, State> {
   toggleThumbnailsMode = () => {
     this.closeOptionsMenu();
     this.setState(
-      {
-        thumbnailMode:
-          this.state.thumbnailMode === 'cover' ? 'contain' : 'cover'
-      },
+      prevState => ({
+        thumbnailMode: prevState.thumbnailMode === 'cover' ? 'contain' : 'cover'
+      }),
       this.saveSettings
     );
   };
@@ -796,7 +797,7 @@ class GridPerspective extends React.Component<Props, State> {
         style={{
           height:
             'calc(100% - ' +
-            (AppConfig.isCordova ? '595' : '104') + // todo handle cordova screen sizes
+            (AppConfig.isCordova ? '290' : '104') + // todo handle cordova screen sizes
             'px)'
         }}
       >
