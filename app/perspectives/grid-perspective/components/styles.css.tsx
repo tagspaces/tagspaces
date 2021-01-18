@@ -22,14 +22,14 @@ export default (theme: any): any => ({
     display: 'grid',
     gridGap: '0px 0px',
     padding: 0,
-    paddingRight: 10,
+    paddingRight: 4,
     paddingBottom: 20
   },
   rowContainer: {
     display: 'grid',
     gridGap: '0px 0px',
     padding: 0,
-    paddingRight: 10,
+    paddingRight: 4,
     margin: 0,
     paddingBottom: 10
   },
@@ -88,13 +88,14 @@ export default (theme: any): any => ({
     display: 'block'
   },
   gridFileExtension: {
-    flex: 1,
     padding: 5,
-    lineHeight: '20px',
+    paddingTop: 3,
+    paddingBottom: 7,
+    fontSize: 13,
     marginRight: 5,
-    maxWidth: 50,
+    marginTop: 7,
     minWidth: 40,
-    height: 20,
+    height: 16,
     color: 'white',
     borderRadius: 3,
     textAlign: 'center'
@@ -102,9 +103,7 @@ export default (theme: any): any => ({
   rowFileExtension: {
     flex: 1,
     padding: 5,
-    marginTop: 5,
-    marginRight: 5,
-    marginLeft: 5,
+    paddingTop: 7,
     width: 35,
     maxWidth: 60,
     minHeight: 15,
@@ -113,29 +112,21 @@ export default (theme: any): any => ({
     textTransform: 'uppercase',
     fontSize: 12,
     fontWeight: 'bold',
-    borderRadius: 3,
+    borderRadius: 4,
     textAlign: 'center',
     overflow: 'hidden',
     textOverflow: 'ellipsis'
   },
   gridSizeDate: {
     overflow: AppConfig.isFirefox ? 'auto' : 'overlay',
-    flex: 3,
-    textAlign: 'right',
     whiteSpace: 'nowrap',
     marginRight: 5,
-    paddingTop: 5
+    marginLeft: 'auto',
+    paddingTop: 12
   },
   gridDetails: {
     display: 'flex',
     whiteSpace: 'nowrap'
-  },
-  rowFolder: {
-    color: 'white',
-    padding: 5,
-    minHeight: 10,
-    height: 20,
-    borderRadius: 3
   },
   gridFolder: {
     color: 'white',

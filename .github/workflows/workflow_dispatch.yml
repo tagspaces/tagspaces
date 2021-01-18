@@ -3,18 +3,29 @@ on:
   workflow_dispatch:
     inputs:
       command:
-        description: 'Command to execute e2e tests default: yarn test-e2e-electron'
+        description: 'Command to execute e2e tests default: yarn test-e2e-electron-minio'
         required: true
-        default: 'test-one'
+        default: 'test-e2e-electron-minio'
 
 jobs:
   e2eTests:
-    runs-on: macos-latest
+    runs-on: windows-latest
     steps:
       - name: Checking out default branch
         uses: actions/checkout@v2
         with:
           submodules: true
+      - name: Checkout TestData
+        uses: actions/checkout@v2
+        with:
+          repository: tagspaces/testdata
+          path: tests/testdata
+      - name: Checkout TagspacesPro
+        uses: actions/checkout@v2
+        with:
+          repository: tagspaces/tagspacespro
+          token: ${{ secrets.CHECKOUT_TSPRO  }}
+          path: extensions/tagspacespro
       - uses: actions/setup-node@v2-beta
         with:
           node-version: '10.x'
@@ -25,9 +36,15 @@ jobs:
           yarn type-check
       - name: Run Unit tests
         run: yarn test-unit
+      - uses: suisei-cn/actions-download-file@v1
+        id: minio
+        name: Download the Minio.exe
+        with:
+          url: 'https://dl.min.io/server/minio/release/windows-amd64/minio.exe'
+          target: tests/bin/
       - name: Run Electron tests
         run: |
-          yarn setup-ext
+          yarn install-ext
           yarn build-main
           yarn build-e2e
           yarn ${{ github.event.inputs.command }}
@@ -35,3 +52,8 @@ jobs:
         with:
           name: test-reports
           path: tests/test-reports/
+      - uses: IgnusG/jest-report-action@v2.3.3
+        if: always() # Run regardless of whether other steps failed
+        with:
+          access-token: ${{ secrets.GITHUB_TOKEN }}
+          working-directory: tests

@@ -13,7 +13,7 @@
     "version.json",
     "package.json"
   ],
-  "copyright": "Copyright © 2020 TagSpaces UG (haftungsbeschraenkt)",
+  "copyright": "Copyright © 2021 TagSpaces UG (haftungsbeschraenkt)",
   "artifactName": "${name}-${os}-${arch}-${version}.${ext}",
   "win": {
     "target": [

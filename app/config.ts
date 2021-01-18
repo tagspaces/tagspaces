@@ -44,7 +44,7 @@ export const AppConfig = {
   maxIndexAge: 10 * 60 * 1000, // 10 minutes
   // maxSearchResult: 1000,
   defaultFileColor: '#808080',
-  defaultFolderColor: '#555', // transparent #FDEEBD #ff791b #2c001e #880e4f
+  defaultFolderColor: '#582727', // 555 transparent #FDEEBD #ff791b #2c001e #880e4f
   links: {
     checkNewVersionURL: 'https://www.tagspaces.org/releases/tagspaces.json',
     productsOverview: 'https://www.tagspaces.org/products/',
@@ -99,6 +99,24 @@ export const AppConfig = {
   isCordovaAndroid,
   isCordova: isCordovaiOS || isCordovaAndroid,
   isMobile: isCordovaiOS || isCordovaAndroid || isIOS || isAndroid,
+  customLogo: window.ExtLogoURL || false,
+  showAdvancedSearch:
+    window.ExtShowAdvancedSearch !== undefined
+      ? window.ExtShowAdvancedSearch
+      : true,
+  showSmartTags:
+    window.ExtShowSmartTags !== undefined ? window.ExtShowSmartTags : true,
+  showWelcomePanel:
+    window.ExtShowWelcomePanel !== undefined
+      ? window.ExtShowWelcomePanel
+      : true,
+  locationsReadOnly: window.ExtLocations !== undefined,
+  sidebarColor: window.ExtSidebarColor || '#2C001E', // '#00D1A1' // #008023
+  sidebarSelectionColor: window.ExtSidebarSelectionColor || '#880E4F',
+  lightThemeLightColor: window.ExtLightThemeLightColor || '#dcf3ec',
+  lightThemeMainColor: window.ExtLightThemeMainColor || '#1dd19f',
+  darkThemeLightColor: window.ExtDarkThemeLightColor || '#56454e',
+  darkThemeMainColor: window.ExtDarkThemeMainColor || '#ff9abe',
   dirSeparator:
     navigator.appVersion.includes('Win') && !document.URL.startsWith('http')
       ? '\\'

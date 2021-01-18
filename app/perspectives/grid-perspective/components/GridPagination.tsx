@@ -112,12 +112,16 @@ const GridPagination = (props: Props) => {
           {page === 1 && directories.map(entry => renderCell(entry))}
           {files.map(entry => renderCell(entry))}
           {isAppLoading && (
-            <Typography style={{ padding: 15 }}>
+            <Typography
+              style={{ padding: 15, color: theme.palette.text.primary }}
+            >
               {i18n.t('core:loading')}
             </Typography>
           )}
           {!isAppLoading && files.length < 1 && directories.length < 1 && (
-            <Typography style={{ padding: 15 }}>
+            <Typography
+              style={{ padding: 15, color: theme.palette.text.primary }}
+            >
               {i18n.t('core:noFileFolderFound')}
             </Typography>
           )}
@@ -125,7 +129,9 @@ const GridPagination = (props: Props) => {
             files.length < 1 &&
             directories.length >= 1 &&
             !showDirectories && (
-              <Typography style={{ padding: 15 }}>
+              <Typography
+                style={{ padding: 15, color: theme.palette.text.primary }}
+              >
                 {i18n.t('core:noFileButFoldersFound')}
               </Typography>
             )}

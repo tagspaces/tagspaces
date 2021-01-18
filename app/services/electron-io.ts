@@ -160,12 +160,12 @@ export default class ElectronIO {
 
   getDevicePaths = (): Object => {
     const paths = {
-      Desktop: this.app.getPath('desktop'),
-      Documents: this.app.getPath('documents'),
-      Downloads: this.app.getPath('downloads'),
-      Music: this.app.getPath('music'),
-      Pictures: this.app.getPath('pictures'),
-      Videos: this.app.getPath('videos')
+      desktopFolder: this.app.getPath('desktop'),
+      documentsFolder: this.app.getPath('documents'),
+      downloadsFolder: this.app.getPath('downloads'),
+      musicFolder: this.app.getPath('music'),
+      picturesFolder: this.app.getPath('pictures'),
+      videosFolder: this.app.getPath('videos')
     };
     return paths;
   };

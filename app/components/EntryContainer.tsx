@@ -33,12 +33,12 @@ import ArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import FileDownloadIcon from '@material-ui/icons/AssignmentReturned';
 import DetailsIcon from '@material-ui/icons/Info';
 import ExpandIcon from '@material-ui/icons/SettingsEthernet';
-import FolderIcon from '@material-ui/icons/FolderOpen';
 import SplitPane from 'react-split-pane';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ShareIcon from '@material-ui/icons/Share';
 import { withStyles } from '@material-ui/core/styles';
 import RefreshIcon from '@material-ui/icons/Refresh';
+import { Box, Typography } from '@material-ui/core';
 import EntryProperties from '-/components/EntryProperties';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import AppConfig from '-/config';
@@ -94,11 +94,14 @@ const styles: any = (theme: any) => ({
   entryProperties: {
     display: 'inline',
     flex: '1 1 100%',
+    backgroundColor: theme.palette.background.default,
+    zIndex: 1,
     padding: '0 0 60px 0',
     height: '50%'
   },
   fileOpener: {
     width: '100%',
+    zIndex: 3,
     border: 0
   },
   toolbar: {
@@ -118,6 +121,7 @@ const styles: any = (theme: any) => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-start',
+    zIndex: 2,
     borderBottom: '1px solid ' + theme.palette.divider,
     overflowX: AppConfig.isFirefox ? 'auto' : 'overlay'
   },
@@ -131,15 +135,17 @@ const styles: any = (theme: any) => ({
   fileBadge: {
     color: 'white',
     backgroundColor: AppConfig.defaultFileColor,
-    padding: '2px 6px 0px 6px',
-    minHeight: 22,
-    marginRight: 5,
-    borderRadius: 5
+    padding: '2px 5px 0px 5px',
+    minHeight: 18,
+    fontSize: 13,
+    marginLeft: 3,
+    marginTop: -2,
+    borderRadius: 3
   },
   entryNameButton: {
-    paddingTop: 0,
+    paddingTop: 1,
     paddingRight: 0,
-    paddingLeft: 0,
+    paddingLeft: 6,
     paddingBottom: 0,
     minWidth: 20,
     height: 44,
@@ -179,7 +185,7 @@ interface Props {
   openPrevFile: (path: string) => void;
   openNextFile: (path: string) => void;
   openFileNatively: (path: string) => void;
-  openURLExternally: (url: string) => void;
+  openLink: (url: string) => void;
   showNotification: (
     text: string,
     notificationType?: string, // NotificationTypes
@@ -304,8 +310,6 @@ const EntryContainer = (props: Props) => {
   const handleMessage = (data: any) => {
     let message;
     let textFilePath;
-    let decodedURI;
-
     switch (data.command) {
       case 'showAlertDialog':
         message = data.title ? data.title : '';
@@ -325,16 +329,7 @@ const EntryContainer = (props: Props) => {
         break;
       case 'openLinkExternally':
         // console.log('Open link externally: ' + data.link);
-        decodedURI = decodeURIComponent(data.link);
-        if (
-          decodedURI.startsWith('http://') ||
-          decodedURI.startsWith('https://') ||
-          decodedURI.startsWith('file://')
-        ) {
-          props.openURLExternally(decodedURI);
-        } else {
-          console.log('Not supported URL format: ' + decodedURI);
-        }
+        props.openLink(data.link);
         break;
       case 'openFileNatively':
         console.log('Open file natively: ' + data.link);
@@ -764,6 +759,7 @@ const EntryContainer = (props: Props) => {
         ) */}
         {!props.isReadOnlyMode && (
           <IconButton
+            data-tid="deleteEntryTID"
             title={i18n.t('core:deleteEntry')}
             aria-label={i18n.t('core:deleteEntry')}
             onClick={() => setDeleteEntryModalOpened(true)}
@@ -772,6 +768,7 @@ const EntryContainer = (props: Props) => {
           </IconButton>
         )}
         <IconButton
+          data-tid="reloadFileTID"
           title={i18n.t('core:reloadFile')}
           aria-label={i18n.t('core:reloadFile')}
           onClick={reloadDocument}
@@ -779,6 +776,7 @@ const EntryContainer = (props: Props) => {
           <RefreshIcon />
         </IconButton>
         <IconButton
+          data-tid="openInFullWidthTID"
           title={i18n.t('core:openInFullWidth')}
           aria-label={i18n.t('core:openInFullWidth')}
           onClick={props.toggleEntryFullWidth}
@@ -894,13 +892,16 @@ const EntryContainer = (props: Props) => {
     //   fileTitle = fileTitle.substr(0, maxCharactersTitleLength) + '...';
     // }
 
+    const locale = '&locale=' + i18n.language;
+    const theme = '&theme=' + props.settings.currentTheme;
+
     if (openedFile.editMode && openedFile.editingExtensionPath) {
       fileOpenerURL =
         openedFile.editingExtensionPath +
         '/index.html?file=' +
         encodeURIComponent(openedFile.url ? openedFile.url : openedFile.path) +
-        '&locale=' +
-        i18n.language +
+        locale +
+        theme +
         '&edit=true' +
         (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
       // } else if (!currentEntry.isFile) { // TODO needed for loading folder's default html
@@ -910,8 +911,8 @@ const EntryContainer = (props: Props) => {
         openedFile.viewingExtensionPath +
         '/index.html?file=' +
         encodeURIComponent(openedFile.url ? openedFile.url : openedFile.path) +
-        '&locale=' +
-        i18n.language +
+        locale +
+        theme +
         (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
     }
     // this.shouldReload = false;
@@ -961,91 +962,99 @@ const EntryContainer = (props: Props) => {
         // reloadDocument: settings.keyBindings.reloadDocument,
       }}
     >
-      <ConfirmDialog
-        open={isSaveBeforeCloseConfirmDialogOpened}
-        onClose={() => {
-          setSaveBeforeCloseConfirmDialogOpened(false);
-        }}
-        title={i18n.t('core:confirm')}
-        content={i18n.t('core:saveFileBeforeClosingFile')}
-        confirmCallback={result => {
-          if (result) {
-            startSavingFile();
-          } else {
-            closeFile();
+      {isSaveBeforeCloseConfirmDialogOpened && (
+        <ConfirmDialog
+          open={isSaveBeforeCloseConfirmDialogOpened}
+          onClose={() => {
             setSaveBeforeCloseConfirmDialogOpened(false);
-          }
-        }}
-        cancelDialogTID="cancelSaveBeforeCloseDialog"
-        confirmDialogTID="confirmSaveBeforeCloseDialog"
-        confirmDialogContentTID="confirmDialogContent"
-      />
-      <ConfirmDialog
-        open={isSaveBeforeReloadConfirmDialogOpened}
-        onClose={() => {
-          setSaveBeforeReloadConfirmDialogOpened(false);
-        }}
-        title={i18n.t('core:confirm')}
-        content="File was modified, do you want to save the changes?"
-        confirmCallback={result => {
-          if (result) {
+          }}
+          title={i18n.t('core:confirm')}
+          content={i18n.t('core:saveFileBeforeClosingFile')}
+          confirmCallback={result => {
+            if (result) {
+              startSavingFile();
+            } else {
+              closeFile();
+              setSaveBeforeCloseConfirmDialogOpened(false);
+            }
+          }}
+          cancelDialogTID="cancelSaveBeforeCloseDialog"
+          confirmDialogTID="confirmSaveBeforeCloseDialog"
+          confirmDialogContentTID="confirmDialogContent"
+        />
+      )}
+      {isSaveBeforeReloadConfirmDialogOpened && (
+        <ConfirmDialog
+          open={isSaveBeforeReloadConfirmDialogOpened}
+          onClose={() => {
             setSaveBeforeReloadConfirmDialogOpened(false);
-            startSavingFile();
-          } else {
-            // isChanged = false;
-            // shouldReload = true;
-            setSaveBeforeReloadConfirmDialogOpened(false);
-            props.updateOpenedFile(openedFile.path, {
-              ...openedFile,
-              editMode: false,
-              changed: false,
-              shouldReload: true
-            });
+          }}
+          title={i18n.t('core:confirm')}
+          content="File was modified, do you want to save the changes?"
+          confirmCallback={result => {
+            if (result) {
+              setSaveBeforeReloadConfirmDialogOpened(false);
+              startSavingFile();
+            } else {
+              // isChanged = false;
+              // shouldReload = true;
+              setSaveBeforeReloadConfirmDialogOpened(false);
+              props.updateOpenedFile(openedFile.path, {
+                ...openedFile,
+                editMode: false,
+                changed: false,
+                shouldReload: true
+              });
+            }
+          }}
+          cancelDialogTID="cancelSaveBeforeCloseDialog"
+          confirmDialogTID="confirmSaveBeforeCloseDialog"
+          confirmDialogContentTID="confirmDialogContent"
+        />
+      )}
+      {isDeleteEntryModalOpened && (
+        <ConfirmDialog
+          open={isDeleteEntryModalOpened}
+          onClose={() => {
+            setDeleteEntryModalOpened(false);
+          }}
+          title={
+            openedFile.isFile
+              ? i18n.t('core:deleteConfirmationTitle')
+              : i18n.t('core:deleteDirectory')
           }
-        }}
-        cancelDialogTID="cancelSaveBeforeCloseDialog"
-        confirmDialogTID="confirmSaveBeforeCloseDialog"
-        confirmDialogContentTID="confirmDialogContent"
-      />
-      <ConfirmDialog
-        open={isDeleteEntryModalOpened}
-        onClose={() => {
-          setDeleteEntryModalOpened(false);
-        }}
-        title={
-          openedFile.isFile
-            ? i18n.t('core:deleteConfirmationTitle')
-            : i18n.t('core:deleteDirectory')
-        }
-        content={
-          openedFile.isFile
-            ? i18n.t('core:doYouWantToDeleteFile')
-            : i18n.t('core:deleteDirectoryContentConfirm', {
-                dirPath: openedFile.path
-                  ? extractDirectoryName(
-                      openedFile.path,
-                      PlatformIO.getDirSeparator()
-                    )
-                  : ''
-              })
-        }
-        confirmCallback={result => {
-          if (result) {
-            props.deleteFile(openedFile.path);
+          content={
+            openedFile.isFile
+              ? i18n.t('core:doYouWantToDeleteFile')
+              : i18n.t('core:deleteDirectoryContentConfirm', {
+                  dirPath: openedFile.path
+                    ? extractDirectoryName(
+                        decodeURIComponent(openedFile.path),
+                        PlatformIO.getDirSeparator()
+                      )
+                    : ''
+                })
           }
-        }}
-        cancelDialogTID="cancelSaveBeforeCloseDialog"
-        confirmDialogTID="confirmSaveBeforeCloseDialog"
-        confirmDialogContentTID="confirmDialogContent"
-      />
-      <AddRemoveTagsDialog
-        open={isEditTagsModalOpened}
-        onClose={() => setEditTagsModalOpened(false)}
-        addTags={props.addTags}
-        removeTags={props.removeTags}
-        removeAllTags={props.removeAllTags}
-        selectedEntries={openedFile ? [openedFile] : []}
-      />
+          confirmCallback={result => {
+            if (result) {
+              props.deleteFile(openedFile.path);
+            }
+          }}
+          cancelDialogTID="cancelSaveBeforeCloseDialog"
+          confirmDialogTID="confirmSaveBeforeCloseDialog"
+          confirmDialogContentTID="confirmDialogContent"
+        />
+      )}
+      {isEditTagsModalOpened && (
+        <AddRemoveTagsDialog
+          open={isEditTagsModalOpened}
+          onClose={() => setEditTagsModalOpened(false)}
+          addTags={props.addTags}
+          removeTags={props.removeTags}
+          removeAllTags={props.removeAllTags}
+          selectedEntries={openedFile ? [openedFile] : []}
+        />
+      )}
       <a href="#" id="downloadFile">
         &nbsp;
       </a>
@@ -1073,18 +1082,27 @@ const EntryContainer = (props: Props) => {
         }}
       >
         {openedFile.path ? (
-          <div className={classes.panel}>
-            <div className={classes.toolbar}>
-              <div className={classes.flexLeft}>
+          <Box className={classes.panel}>
+            <Box className={classes.toolbar}>
+              <Box className={classes.flexLeft}>
                 {openedFile.isFile ? (
                   <Button
-                    // onClick={togglePanel}
                     disabled
                     title={openedFile.url || openedFile.path}
                     aria-label={i18n.t('core:toggleEntryProperties')}
                     className={classes.entryNameButton}
                   >
-                    <div
+                    <Box
+                      style={{
+                        color: props.theme.palette.text.primary
+                      }}
+                    >
+                      {openedFile.editMode && openedFile.changed
+                        ? String.fromCharCode(0x25cf) + ' '
+                        : ''}
+                      {fileTitle}
+                    </Box>
+                    <Box
                       className={classes.fileBadge}
                       title={i18n.t('core:toggleEntryProperties')}
                       style={{
@@ -1096,34 +1114,34 @@ const EntryContainer = (props: Props) => {
                           openedFile.path,
                           PlatformIO.getDirSeparator()
                         )}
-                    </div>
-                    {openedFile.editMode && openedFile.changed
-                      ? String.fromCharCode(0x25cf) + ' '
-                      : ''}
-                    {fileTitle}
+                    </Box>
                   </Button>
                 ) : (
                   <Button
                     disabled
-                    // onClick={togglePanel}
                     title={openedFile.url || openedFile.path}
                     aria-label={i18n.t('core:toggleEntryProperties')}
                     className={classes.entryNameButton}
                   >
-                    <div
+                    <Box
+                      style={{
+                        color: props.theme.palette.text.primary
+                      }}
+                    >
+                      {fileTitle}
+                    </Box>
+                    <Box
                       className={classes.fileBadge}
                       title={i18n.t('core:toggleEntryProperties')}
                       style={{
-                        backgroundColor: AppConfig.defaultFolderColor,
-                        paddingTop: 5
+                        backgroundColor: AppConfig.defaultFolderColor
                       }}
                     >
-                      <FolderIcon />
-                    </div>
-                    {fileTitle}
+                      {i18n.t('core:folder')}
+                    </Box>
                   </Button>
                 )}
-              </div>
+              </Box>
               {editingSupported && openedFile.editMode && (
                 <div className={classes.entryCloseSection}>
                   <IconButton
@@ -1188,7 +1206,7 @@ const EntryContainer = (props: Props) => {
                   </IconButton>
                 </div>
               )}
-            </div>
+            </Box>
             <div className={classes.entryProperties}>
               {openedFile.isFile
                 ? renderFileToolbar(classes)
@@ -1220,13 +1238,14 @@ const EntryContainer = (props: Props) => {
                 />
               )}
             </div>
-          </div>
+          </Box>
         ) : (
           <div>{i18n.t('core:noEntrySelected')}</div>
         )}
         <div ref={fileViewerContainer} className={classes.fileContent}>
           {isFullscreen && (
             <Fab
+              data-tid="fullscreenTID"
               color="primary"
               style={{
                 position: 'absolute',
@@ -1263,7 +1282,7 @@ function mapActionCreatorsToProps(dispatch) {
       renameDirectory: AppActions.renameDirectory,
       openFsEntry: AppActions.openFsEntry,
       openFileNatively: AppActions.openFileNatively,
-      openURLExternally: AppActions.openURLExternally,
+      openLink: AppActions.openLink,
       showNotification: AppActions.showNotification,
       openNextFile: AppActions.openNextFile,
       openPrevFile: AppActions.openPrevFile,

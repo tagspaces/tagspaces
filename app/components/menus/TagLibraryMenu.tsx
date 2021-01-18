@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Menu from '@material-ui/core/Menu';
@@ -33,7 +33,7 @@ interface Props {
   classes?: any;
   anchorEl: Element;
   tagGroups: Array<Object>;
-  openURLExternally: (path: string) => void;
+  openURLExternally: (path: string, skipConfirmation?: boolean) => void;
   open: boolean;
   onClose: () => void;
   importTagGroups: () => void;
@@ -42,9 +42,10 @@ interface Props {
 }
 
 const TagLibraryMenu = (props: Props) => {
-  let fileInput;
-  const [tagGroups, setTagGroups] = useState(null);
-  const [selectedDirectoryPath, setSelectedDirectoryPath] = useState('');
+  const fileInput = useRef<HTMLInputElement>(null);
+  const tagGroupsImported = useRef([]);
+  // const [tagGroups, setTagGroups] = useState(null);
+  // const [selectedDirectoryPath, setSelectedDirectoryPath] = useState('');
   const [
     isSelectDirectoryDialogOpened,
     setIsSelectDirectoryDialogOpened
@@ -62,13 +63,13 @@ const TagLibraryMenu = (props: Props) => {
   function handleExportTagGroup() {
     props.onClose();
     setDialogModeImport(false);
-    setTagGroups(props.tagGroups);
+    // setTagGroups(props.tagGroups);
     setIsImportExportTagGroupDialogOpened(true);
   }
 
   function showSelectDirectoryDialog() {
     setIsSelectDirectoryDialogOpened(true);
-    setSelectedDirectoryPath('');
+    // setSelectedDirectoryPath('');
   }
 
   function closeSelectDirectoryExtDialog() {
@@ -83,7 +84,7 @@ const TagLibraryMenu = (props: Props) => {
       // TODO Select directory or file from dialog
       showSelectDirectoryDialog();
     } else {
-      fileInput.click();
+      fileInput.current.click();
     }
   }
 
@@ -96,7 +97,7 @@ const TagLibraryMenu = (props: Props) => {
       try {
         const jsonObj = JSON.parse(reader.result);
         if (jsonObj.tagGroups) {
-          setTagGroups(jsonObj.tagGroups);
+          tagGroupsImported.current = jsonObj.tagGroups;
           setIsImportExportTagGroupDialogOpened(true);
         } else {
           // TODO connect showNotification
@@ -118,14 +119,18 @@ const TagLibraryMenu = (props: Props) => {
 
   return (
     <div style={{ overflowY: 'hidden' }}>
-      <ImportExportTagGroupsDialog
-        open={isImportExportTagGroupDialogOpened}
-        onClose={handleCloseDialogs}
-        tagGroups={tagGroups}
-        dialogModeImport={dialogModeImport}
-        exportTagGroups={props.exportTagGroups}
-        importTagGroups={props.importTagGroups}
-      />
+      {isImportExportTagGroupDialogOpened && (
+        <ImportExportTagGroupsDialog
+          open={isImportExportTagGroupDialogOpened}
+          onClose={handleCloseDialogs}
+          tagGroups={
+            dialogModeImport ? tagGroupsImported.current : props.tagGroups
+          }
+          dialogModeImport={dialogModeImport}
+          exportTagGroups={props.exportTagGroups}
+          importTagGroups={props.importTagGroups}
+        />
+      )}
       <SelectDirectoryDialog
         open={isSelectDirectoryDialogOpened}
         onClose={closeSelectDirectoryExtDialog}
@@ -159,7 +164,10 @@ const TagLibraryMenu = (props: Props) => {
           data-tid="taglibraryHelp"
           onClick={() => {
             props.onClose();
-            props.openURLExternally(AppConfig.documentationLinks.taglibrary);
+            props.openURLExternally(
+              AppConfig.documentationLinks.taglibrary,
+              true
+            );
           }}
         >
           <ListItemIcon>
@@ -170,9 +178,7 @@ const TagLibraryMenu = (props: Props) => {
       </Menu>
       <input
         style={{ display: 'none' }}
-        ref={input => {
-          fileInput = input;
-        }}
+        ref={fileInput}
         accept="*"
         type="file"
         onChange={handleFileInputChange}

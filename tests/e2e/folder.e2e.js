@@ -1,10 +1,8 @@
 /*
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
-import { delay, clearLocalStorage } from './hook';
 import {
   createLocation,
-  openLocation,
   defaultLocationPath,
   defaultLocationName,
   closeFileProperties,
@@ -12,119 +10,84 @@ import {
 } from './location.helpers';
 import {
   reloadDirectory,
-  openEntry,
-  disableTrashBin,
-  openDirectoryMenu,
   createNewDirectory,
   deleteDirectory,
-  returnDirectoryBack
+  clickOn,
+  expectElementExist,
+  setSettings,
+  doubleClickOn
 } from './general.helpers';
-import { renameFolder, openParentDir } from './test-utils.spec';
+import { renameFolder } from './test-utils.spec';
 
-export const firstFile = '/span';
-export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
-const testFolder = 'testFolder';
-const newDirectoryName = 'newDirectory';
+// export const firstFile = '/span';
+// export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
+// const newDirectoryName = 'newDirectory';
 
 describe('TST01 - Folder management [electron]', () => {
   beforeEach(async () => {
-    await clearLocalStorage();
-    //  await delay(500);
-    //await closeWelcome();
-    //await delay(500);
     if (global.isMinio) {
       await createMinioLocation('', defaultLocationName, true);
     } else {
       await createLocation(defaultLocationPath, defaultLocationName, true);
     }
-    // await delay(500);
-    await openLocation(defaultLocationName);
-    // await delay(500);
+    await clickOn('[data-tid=location_' + defaultLocationName + ']');
     await closeFileProperties();
   });
 
-  it('TST0101 - Create subfolder [electron]', async () => {
-    await delay(500);
-    await openDirectoryMenu();
-    await delay(500);
-    await createNewDirectory();
-    await delay(500);
-    await openEntry(testFolder);
-    await delay(500);
+  // TODO minio
+  it('TST0101 - Create subfolder [TST0101,electron]', async () => {
+    const testFolder = await createNewDirectory();
+    await expectElementExist('[data-tid=fsEntryName_' + testFolder + ']');
+    await doubleClickOn('[data-tid=fsEntryName_' + testFolder + ']');
     await deleteDirectory();
-  });
-
-  it('TST0102 - Reload folder [electron]', async () => {
-    await delay(500);
-    await openDirectoryMenu();
-    await delay(500);
-    await createNewDirectory();
-    await delay(500);
-    await openEntry(testFolder);
-    await delay(500);
-    await reloadDirectory();
-    await delay(500);
-    await deleteDirectory();
-  });
-
-  it('TST0103 - Rename folder [electron]', async () => {
-    await delay(500);
-    await openDirectoryMenu();
-    await delay(500);
-    await createNewDirectory();
-    await delay(500);
-    await openEntry(testFolder);
-    await delay(500);
-    await reloadDirectory();
-    await delay(500);
-    await renameFolder();
-    await delay(500);
-    // await reloadDirectory();
-    // await delay(500);
-    await openParentDir();
-    await deleteDirectory();
-  });
-
-  it('TST0104 - Delete empty folder [electron]', async () => {
-    await delay(500);
-    await disableTrashBin();
-    await delay(500);
-    await openDirectoryMenu();
-    await delay(500);
-    await createNewDirectory();
-    await delay(500);
-    await openEntry(testFolder);
-    await delay(500);
-    await reloadDirectory();
-    await delay(500);
-    await deleteDirectory();
-  });
-
-  it('TST0106 - Show folder tags [electron]', async () => {
-    await delay(500);
-    await openDirectoryMenu();
-    await delay(500);
-    await createNewDirectory();
-    await delay(500);
-  });
-
-  it('TST51** - Return directory back [electron]', async () => {
-    const file = await global.client.$(
-      '//*[@data-tid="perspectiveGridFileTable"]/span'
+    await expectElementExist(
+      '[data-tid=fsEntryName_' + testFolder + ']',
+      false
     );
-    expect(await file.isDisplayed()).toBe(true);
-    //Open folder
-    const folder = await global.client.$(
-      '//*[@data-tid="perspectiveGridFileTable"]/div'
-    );
+  });
 
-    await folder.doubleClick();
-    expect(await file.isDisplayed()).toBe(false);
-    const backButton = await global.client.$(
-      '[data-tid=gridPerspectiveOnBackButton]'
+  // TODO minio
+  it('TST0102 - Reload folder [TST0102,electron]', async () => {
+    const testFolder = await createNewDirectory();
+    await doubleClickOn('[data-tid=fsEntryName_' + testFolder + ']');
+    await reloadDirectory();
+    await global.client.pause(500);
+    await deleteDirectory();
+    await expectElementExist(
+      '[data-tid=fsEntryName_' + testFolder + ']',
+      false
     );
-    await backButton.click();
-    await delay(500);
-    expect(await file.isDisplayed()).toBe(true);
+  });
+
+  // TODO
+  it('TST0103 - Rename folder [TST0103]', async () => {
+    const testFolder = await createNewDirectory();
+    await doubleClickOn('[data-tid=fsEntryName_' + testFolder + ']');
+    const newDirectoryName = await renameFolder();
+    //await openParentDir();
+    /*await expectElementExist('[data-tid=fsEntryName_' + newDirectoryName + ']');
+    await openEntry(newDirectoryName);
+    await deleteDirectory();
+    await expectElementExist(
+        '[data-tid=fsEntryName_' + newDirectoryName + ']',
+        false
+    );*/
+  });
+
+  it('TST0104 - Delete empty folder [TST0104, electron]', async () => {
+    await setSettings('[data-tid=settingsSetUseTrashCan]');
+    await global.client.pause(500);
+    const testFolder = await createNewDirectory();
+    await expectElementExist('[data-tid=fsEntryName_' + testFolder + ']');
+    await doubleClickOn('[data-tid=fsEntryName_' + testFolder + ']');
+    await deleteDirectory();
+    await expectElementExist(
+      '[data-tid=fsEntryName_' + testFolder + ']',
+      false
+    );
+  });
+
+  it('TST0106 - Show folder tags [TST0106]', async () => {
+    // await createNewDirectory();
   });
 });

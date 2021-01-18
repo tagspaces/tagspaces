@@ -20,6 +20,7 @@
 import { Pro } from '../pro';
 // @ts-ignore
 import NativePlatformIO from './_PLATFORMIO_';
+import ObjectStoreIO from './objectstore-io';
 import AppConfig from '-/config';
 import { FileSystemEntry } from '-/services/utils-io';
 
@@ -31,7 +32,7 @@ export default class PlatformIO {
     objectStoreConfig: any // S3.Types.ClientConfiguration
   ): Promise<any> =>
     new Promise((resolve, reject) => {
-      if (Pro && Pro.ObjectStoreIO) {
+      if (Pro) {
         if (
           objectStoreAPI !== undefined &&
           objectStoreAPI.config.bucketName === objectStoreConfig.bucketName &&
@@ -42,7 +43,7 @@ export default class PlatformIO {
         ) {
           resolve();
         } else {
-          objectStoreAPI = new Pro.ObjectStoreIO();
+          objectStoreAPI = new ObjectStoreIO();
           objectStoreAPI
             .configure(objectStoreConfig)
             .then(() => {

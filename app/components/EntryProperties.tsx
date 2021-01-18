@@ -28,6 +28,7 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import ShareIcon from '@material-ui/icons/Link';
 import LocationIcon from '@material-ui/icons/WorkOutline';
 import CloudLocationIcon from '@material-ui/icons/CloudQueue';
 import DOMPurify from 'dompurify';
@@ -174,8 +175,8 @@ interface Props {
   classes: any;
   theme: any;
   openedEntry: OpenedEntry;
-  renameFile: (path: string, nextPath: string) => void;
-  renameDirectory: (path: string, nextPath: string) => void;
+  renameFile: (path: string, nextPath: string) => Promise<boolean>;
+  renameDirectory: (path: string, nextPath: string) => Promise<boolean>;
   showNotification: (message: string) => void;
   updateOpenedFile: (entryPath: string, fsEntryMeta: any) => void;
   updateThumbnailUrl: (path: string, thumbUrl: string) => void;
@@ -190,6 +191,7 @@ interface Props {
 const EntryProperties = (props: Props) => {
   // const EntryProperties = React.memo((props: Props) => {
   const fileNameRef = useRef<HTMLInputElement>(null);
+  const sharingLinkRef = useRef<HTMLInputElement>(null);
   const fileDescriptionRef = useRef<HTMLInputElement>(null);
   const MB_ATTR =
     '<b>Leaflet</b> | Map data &copy; <b>https://openstreetmap.org/copyright</b> contributors, <b>CC-BY-SA</b>, Imagery © <b>Mapbox</b>';
@@ -202,6 +204,7 @@ const EntryProperties = (props: Props) => {
   const customRenderer = new marked.Renderer();
   customRenderer.link = (href, title, text) => `
       <a href="#"
+        title="${href}"
         onClick="event.preventDefault(); event.stopPropagation(); window.postMessage(JSON.stringify({ command: 'openLinkExternally', link: '${href}' }), '*'); return false;">
         ${text}
       </a>`;
@@ -291,12 +294,19 @@ const EntryProperties = (props: Props) => {
       const nextPath = path + PlatformIO.getDirSeparator() + editName;
 
       if (currentEntry.isFile) {
-        renameFile(currentEntry.path, nextPath);
+        renameFile(currentEntry.path, nextPath)
+          .then(() => true)
+          .catch(() => {
+            fileNameRef.current.value = entryName;
+          });
       } else {
-        renameDirectory(currentEntry.path, editName);
+        renameDirectory(currentEntry.path, editName)
+          .then(() => true)
+          .catch(() => {
+            fileNameRef.current.value = entryName;
+          });
       }
 
-      // newName = '';
       setEditName(undefined);
     }
   };
@@ -649,6 +659,15 @@ const EntryProperties = (props: Props) => {
   }
 
   const geoLocation: any = getGeoLocation(currentEntry.tags);
+
+  let sharingLink = window.location.href;
+  if (sharingLink.indexOf('?') > 0) {
+    const url = new URL(sharingLink);
+    const params = new URLSearchParams(url.search);
+    params.delete('tsdpath');
+    sharingLink = 'ts:?' + params;
+  }
+
   // @ts-ignore
   return (
     <div className={classes.entryProperties}>
@@ -664,46 +683,50 @@ const EntryProperties = (props: Props) => {
                 {i18n.t('core:editTagMasterName')}
               </Typography>
             </div>
-            {!isReadOnlyMode &&
-              !currentEntry.editMode &&
-              editDescription === undefined && (
-                <div
-                  className={classes.gridItem}
-                  style={{ textAlign: 'right' }}
-                >
-                  {editName !== undefined ? (
-                    <div>
-                      <Button
-                        color="primary"
-                        className={classes.button}
-                        onClick={deactivateEditNameField}
-                      >
-                        {i18n.t('core:cancel')}
-                      </Button>
-                      <Button
-                        color="primary"
-                        className={classes.button}
-                        onClick={renameEntry}
-                      >
-                        {i18n.t('core:confirmSaveButton')}
-                      </Button>
-                    </div>
-                  ) : (
-                    <Button
-                      color="primary"
-                      className={classes.button}
-                      onClick={activateEditNameField}
-                    >
-                      {i18n.t('core:rename')}
-                    </Button>
-                  )}
-                </div>
-              )}
           </div>
           <FormControl fullWidth={true} className={classes.formControl}>
             <TextField
               InputProps={{
-                readOnly: editName === undefined
+                readOnly: editName === undefined,
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {!isReadOnlyMode &&
+                      !currentEntry.editMode &&
+                      editDescription === undefined && (
+                        <div
+                          className={classes.gridItem}
+                          style={{ textAlign: 'right' }}
+                        >
+                          {editName !== undefined ? (
+                            <div>
+                              <Button
+                                data-tid="cancelRenameEntryTID"
+                                color="primary"
+                                onClick={deactivateEditNameField}
+                              >
+                                {i18n.t('core:cancel')}
+                              </Button>
+                              <Button
+                                data-tid="confirmRenameEntryTID"
+                                color="primary"
+                                onClick={renameEntry}
+                              >
+                                {i18n.t('core:confirmSaveButton')}
+                              </Button>
+                            </div>
+                          ) : (
+                            <Button
+                              data-tid="startRenameEntryTID"
+                              color="primary"
+                              onClick={activateEditNameField}
+                            >
+                              {i18n.t('core:rename')}
+                            </Button>
+                          )}
+                        </div>
+                      )}
+                  </InputAdornment>
+                )
               }}
               margin="dense"
               name="name"
@@ -745,6 +768,7 @@ const EntryProperties = (props: Props) => {
           <div className={classes.gridItem}>
             <TagDropContainer entryPath={currentEntry.path}>
               <TagsSelect
+                dataTid="PropertiesTagsSelectTID"
                 placeholderText={i18n.t('core:dropHere')}
                 isReadOnlyMode={
                   isReadOnlyMode ||
@@ -950,35 +974,38 @@ const EntryProperties = (props: Props) => {
                       }}
                       onClick={toggleBackgroundColorPicker}
                     />
-                    <ColorPickerDialog
-                      color={currentEntry.color}
-                      open={displayColorPicker}
-                      setColor={handleChangeColor}
-                      onClose={toggleBackgroundColorPicker}
-                      presetColors={[
-                        '#FFFFFF44',
-                        '#00000044',
-                        '#ac725e44',
-                        '#f83a2244',
-                        '#fa573c44',
-                        '#ff753744',
-                        '#ffad4644',
-                        '#42d69244',
-                        '#00800044',
-                        '#7bd14844',
-                        '#fad16544',
-                        '#92e1c044',
-                        '#9fe1e744',
-                        '#9fc6e744',
-                        '#4986e744',
-                        '#9a9cff44',
-                        '#c2c2c244',
-                        '#cca6ac44',
-                        '#f691b244',
-                        '#cd74e644',
-                        '#a47ae244'
-                      ]}
-                    />
+                    {displayColorPicker && (
+                      <ColorPickerDialog
+                        color={currentEntry.color}
+                        open={displayColorPicker}
+                        setColor={handleChangeColor}
+                        onClose={toggleBackgroundColorPicker}
+                        presetColors={[
+                          'transparent',
+                          '#FFFFFF44',
+                          '#00000044',
+                          '#ac725e44',
+                          '#f83a2244',
+                          '#fa573c44',
+                          '#ff753744',
+                          '#ffad4644',
+                          '#42d69244',
+                          '#00800044',
+                          '#7bd14844',
+                          '#fad16544',
+                          '#92e1c044',
+                          '#9fe1e744',
+                          '#9fc6e744',
+                          '#4986e744',
+                          '#9a9cff44',
+                          '#c2c2c244',
+                          '#cca6ac44',
+                          '#f691b244',
+                          '#cd74e644',
+                          '#a47ae244'
+                        ]}
+                      />
+                    )}
                   </TransparentBackground>
                 </FormControl>
               </div>
@@ -997,19 +1024,6 @@ const EntryProperties = (props: Props) => {
                 {i18n.t('core:filePath')}
               </Typography>
             </div>
-            {currentEntry.isFile &&
-              !isReadOnlyMode &&
-              !currentEntry.editMode &&
-              editName === undefined &&
-              editDescription === undefined && (
-                <Button
-                  color="primary"
-                  className={classes.button}
-                  onClick={toggleMoveCopyFilesDialog}
-                >
-                  {i18n.t('core:move')}
-                </Button>
-              )}
           </div>
           <FormControl fullWidth={true} className={classes.formControl}>
             <TextField
@@ -1028,6 +1042,67 @@ const EntryProperties = (props: Props) => {
                     ) : (
                       <LocationIcon />
                     )}
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {currentEntry.isFile &&
+                      !isReadOnlyMode &&
+                      !currentEntry.editMode &&
+                      editName === undefined &&
+                      editDescription === undefined && (
+                        <Button
+                          color="primary"
+                          onClick={toggleMoveCopyFilesDialog}
+                        >
+                          {i18n.t('core:move')}
+                        </Button>
+                      )}
+                  </InputAdornment>
+                )
+              }}
+            />
+          </FormControl>
+        </Grid>
+
+        <Grid item xs={12}>
+          <div className={classes.fluidGrid}>
+            <div className={classes.gridItem}>
+              <Typography
+                variant="caption"
+                className={classNames(classes.header)}
+                style={{ display: 'block' }}
+              >
+                {i18n.t('core:SharingLink')}
+              </Typography>
+            </div>
+          </div>
+          <FormControl fullWidth={true} className={classes.formControl}>
+            <TextField
+              margin="dense"
+              name="path"
+              title="Sharing Link"
+              fullWidth={true}
+              value={sharingLink}
+              inputRef={sharingLinkRef}
+              InputProps={{
+                readOnly: true,
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <ShareIcon />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Button
+                      color="primary"
+                      onClick={() => {
+                        sharingLinkRef.current.select();
+                        document.execCommand('copy');
+                      }}
+                    >
+                      {i18n.t('core:copy')}
+                    </Button>
                   </InputAdornment>
                 )
               }}
@@ -1091,6 +1166,7 @@ const EntryProperties = (props: Props) => {
                 <Button
                   color="primary"
                   className={classes.button}
+                  style={{ whiteSpace: 'nowrap' }}
                   onClick={toggleThumbFilesDialog}
                 >
                   {i18n.t('core:changeThumbnail')}

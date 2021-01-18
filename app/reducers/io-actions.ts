@@ -20,7 +20,6 @@ import { Progress } from 'aws-sdk/clients/s3';
 import { actions as AppActions } from './app';
 import {
   extractFileName,
-  getMetaFileLocationForDir,
   getMetaFileLocationForFile,
   getThumbFileLocationForFile,
   normalizePath
@@ -29,7 +28,6 @@ import {
   copyFilesPromise,
   enhanceEntry,
   FileSystemEntry,
-  loadJSONFile,
   loadJSONString,
   renameFilesPromise
 } from '-/services/utils-io';
@@ -285,7 +283,7 @@ const actions = {
     targetPath: string,
     onUploadProgress?: (progress: Progress, response: any) => void
   ) => (dispatch: (actions: Object) => void) =>
-    new Promise(resolve => {
+    new Promise((resolve, reject) => {
       const uploadJobs = [];
       paths.map(path => {
         let target =
@@ -410,54 +408,59 @@ const actions = {
             }
             return true;
           });
-          dispatch(
-            AppActions.showNotification(
-              'File ' +
-                arrFiles.map(file => file.name).toString() +
-                ' successfully imported.',
-              'default',
-              true
-            )
-          );
+          if (arrFiles.length > 0) {
+            dispatch(
+              AppActions.showNotification(
+                'File ' +
+                  arrFiles.map(file => file.name).toString() +
+                  ' successfully imported.',
+                'default',
+                true
+              )
+            );
 
-          // Enhance entries
-          resolve(
-            arrFiles.map((file: FileSystemEntry) => {
-              const metaFilePath = getMetaFileLocationForFile(
-                file.path,
-                AppConfig.dirSeparator
-              ).replace(/[/\\]/g, '');
-              const thumbFilePath = getThumbFileLocationForFile(
-                file.path,
-                AppConfig.dirSeparator
-              ).replace(/[/\\]/g, '');
-              for (let i = 0; i < arrMeta.length; i += 1) {
-                const metaFile = arrMeta[i];
-                if (metaFile.path.replace(/[/\\]/g, '') === metaFilePath) {
-                  // eslint-disable-next-line no-param-reassign
-                  file.meta = metaFile.meta;
+            // Enhance entries
+            resolve(
+              arrFiles.map((file: FileSystemEntry) => {
+                const metaFilePath = getMetaFileLocationForFile(
+                  file.path,
+                  AppConfig.dirSeparator
+                ).replace(/[/\\]/g, '');
+                const thumbFilePath = getThumbFileLocationForFile(
+                  file.path,
+                  AppConfig.dirSeparator
+                ).replace(/[/\\]/g, '');
+                for (let i = 0; i < arrMeta.length; i += 1) {
+                  const metaFile = arrMeta[i];
+                  if (metaFile.path.replace(/[/\\]/g, '') === metaFilePath) {
+                    // eslint-disable-next-line no-param-reassign
+                    file.meta = metaFile.meta;
+                  }
                 }
-              }
-              for (let i = 0; i < arrThumb.length; i += 1) {
-                const thumbFile = arrThumb[i];
-                if (thumbFile.path.replace(/[/\\]/g, '') === thumbFilePath) {
-                  // eslint-disable-next-line no-param-reassign
-                  file.thumbPath = PlatformIO.getURLforPath(
-                    thumbFile.thumbPath
-                  );
+                for (let i = 0; i < arrThumb.length; i += 1) {
+                  const thumbFile = arrThumb[i];
+                  if (thumbFile.path.replace(/[/\\]/g, '') === thumbFilePath) {
+                    // eslint-disable-next-line no-param-reassign
+                    file.thumbPath = PlatformIO.getURLforPath(
+                      thumbFile.thumbPath
+                    );
+                  }
                 }
-              }
-              if (file.meta) {
-                return enhanceEntry(file);
-              }
-              return file;
-            })
-          );
-
+                if (file.meta) {
+                  return enhanceEntry(file);
+                }
+                return file;
+              })
+            );
+          } else {
+            // eslint-disable-next-line prefer-promise-reject-errors
+            reject('Upload failed');
+          }
           return true;
         })
         .catch(err => {
           console.log('Error import fs: ' + err);
+          reject(err);
         });
     })
 };

@@ -1,12 +1,9 @@
-import { delay, clearLocalStorage } from './hook';
-import { checkFilenameForExist } from './test-utils.spec';
 import {
-  createLocation,
-  openLocation,
-  defaultLocationPath,
-  defaultLocationName
-} from './location.helpers';
-import { clickOn, setInputValue } from './general.helpers';
+  clickOn,
+  expectElementExist,
+  setInputValue,
+  waitForNotification
+} from './general.helpers';
 
 export const regexQuery = '!"#$%&\'()*+,-./@:;<=>[\\]^_`{|}~';
 export const searchTag = 'tag1';
@@ -16,20 +13,39 @@ export const testFileInSubDirectory = 'sample_exif';
 export const testFilename = 'sample.desktop';
 export const firstTagButton = '/tbody/tr[1]/td[3]/button[1]';
 
-export async function searchEngine(filename, tagName, resetSearchButton) {
-  await clickOn('[data-tid=search]');
+/**
+ *
+ * @param filename
+ * @param options = {
+ *     tagName: true
+ *     resetSearchButton: true
+ *     reindexing: true
+ * }
+ * @returns {Promise<void>}
+ */
+export async function searchEngine(filename, options = {}) {
+  const textQuery = await global.client.$('#textQuery');
+  if (!(await textQuery.isDisplayed())) {
+    await clickOn('[data-tid=search]');
+  }
+  await expectElementExist('#textQuery', true);
   await setInputValue('#textQuery', filename);
 
-  if (tagName) {
+  if (options.tagName) {
     await setInputValue('#searchTags', filename);
   }
 
-  if (resetSearchButton) {
+  if (options.reindexing) {
+    await clickOn('[data-tid=forceIndexingTID]');
+  }
+
+  if (options.resetSearchButton) {
     await clickOn('#resetSearchButton');
   } else {
     await clickOn('#searchButton');
   }
-  await global.client.pause(500); // TODO wait for search results
+  await waitForNotification('TIDSearching');
+  await global.client.pause(1500); //todo: for minio search is slow
 }
 
 /*describe('TST06 - Test Search in file structure:', () => {

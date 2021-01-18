@@ -1,29 +1,29 @@
 /*
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
-import { delay, clearLocalStorage } from './hook';
 import {
   createLocation,
-  openLocation,
   defaultLocationPath,
   defaultLocationName,
   closeFileProperties,
-  createMinioLocation
+  createMinioLocation,
+  deleteFirstFile
 } from './location.helpers';
 import {
-  openSettingsDialog,
-  closeSettingsDialog,
   reloadDirectory,
-  openEntry,
   tsFolder,
-  openDirectoryMenu,
   createNewDirectory,
   newHTMLFile,
   newMDFile,
   newTEXTFile,
   closeOpenedFile,
   deleteDirectory,
-  returnDirectoryBack
+  returnDirectoryBack,
+  clickOn,
+  expectElementExist,
+  selectorFile,
+  setSettings,
+  doubleClickOn
 } from './general.helpers';
 import { searchEngine } from './search.spec';
 
@@ -37,8 +37,6 @@ const testFolder = 'testFolder';
 
 describe('TST51 - Perspective Grid [general]', () => {
   beforeEach(async () => {
-    await clearLocalStorage();
-    //  await delay(500);
     //await closeWelcome();
     //await delay(500);
     if (global.isMinio) {
@@ -46,313 +44,226 @@ describe('TST51 - Perspective Grid [general]', () => {
     } else {
       await createLocation(defaultLocationPath, defaultLocationName, true);
     }
-    // await delay(500);
-    await openLocation(defaultLocationName);
-    // await delay(500);
+    // openLocation
+    await clickOn('[data-tid=location_' + defaultLocationName + ']');
+    // If its have opened file
     await closeFileProperties();
   });
 
-  it('TST0501 - Create HTML file [electron]', async () => {
-    await delay(500);
-    await openDirectoryMenu();
-    await delay(500);
-    await createNewDirectory();
-    await delay(500);
+  it('TST0501 - Create HTML file', async () => {
+    /*await createNewDirectory();
     await reloadDirectory();
-    await delay(500);
-    await openEntry(testFolder);
-    await delay(500);
-    await openDirectoryMenu();
-    await delay(500);
+    // await global.client.pause(500);
+    await expectElementExist('[data-tid=fsEntryName_' + testFolder + ']');
+    await doubleClickOn('[data-tid=fsEntryName_' + testFolder + ']');*/
+
+    //await setSettings('[data-tid=settingsSetUseTrashCan]');
+    //await global.client.pause(500);
     await createNewDirectory();
-    await delay(500);
-    await reloadDirectory();
-    await delay(500);
-    await openEntry(testFolder);
+    // await reloadDirectory();
+    // await global.client.pause(500);
+    await doubleClickOn('[data-tid=fsEntryName_' + testFolder + ']');
     // create new file
     await newHTMLFile();
-    await delay(500);
     await closeOpenedFile();
-    await delay(500);
-    await reloadDirectory();
-    await delay(500);
-    await returnDirectoryBack();
+    // await reloadDirectory();
+    await expectElementExist(selectorFile, true);
+    /*await global.client.pause(500);
+    await returnDirectoryBack();*/
     // delete directory
+
+    await deleteFirstFile();
     await deleteDirectory(testFolder);
-    await delay(500);
+    //    await returnDirectoryBack();
+    await global.client.pause(500);
+    await expectElementExist(
+      '[data-tid=fsEntryName_' + testFolder + ']',
+      false
+    );
   });
 
-  it('TST0502 - Create MD file [electron]', async () => {
-    await delay(500);
-    await openDirectoryMenu();
-    await delay(500);
+  it('TST0502 - Create MD file', async () => {
     await createNewDirectory();
-    await delay(500);
-    await reloadDirectory();
-    await delay(500);
-    await openEntry(testFolder);
-    await delay(500);
-    await openDirectoryMenu();
-    await delay(500);
-    await createNewDirectory();
-    await delay(500);
-    await reloadDirectory();
-    await delay(500);
-    await openEntry(testFolder);
+    // await reloadDirectory();
+    // await global.client.pause(500);
+    await doubleClickOn('[data-tid=fsEntryName_' + testFolder + ']');
+
     // create new file
     await newMDFile();
-    await delay(500);
     await closeOpenedFile();
-    await delay(500);
-    await reloadDirectory();
-    await delay(500);
-    await returnDirectoryBack();
-    // delete directory
+    // await reloadDirectory();
+    await expectElementExist(selectorFile, true);
+    await global.client.pause(500);
+
+    await deleteFirstFile();
     await deleteDirectory(testFolder);
-    await delay(500);
+    await expectElementExist(
+      '[data-tid=fsEntryName_' + testFolder + ']',
+      false
+    );
   });
 
-  it('TST0502 - Create TEXT file [electron]', async () => {
-    await delay(500);
-    await openDirectoryMenu();
-    await delay(500);
+  it('TST0502 - Create TEXT file', async () => {
     await createNewDirectory();
-    await delay(500);
-    await reloadDirectory();
-    await delay(500);
-    await openEntry(testFolder);
-    await delay(500);
-    await openDirectoryMenu();
-    await delay(500);
-    await createNewDirectory();
-    await delay(500);
-    await reloadDirectory();
-    await delay(500);
-    await openEntry(testFolder);
+    // await reloadDirectory();
+    // await global.client.pause(500);
+    await doubleClickOn('[data-tid=fsEntryName_' + testFolder + ']');
+
     // create new file
     await newTEXTFile();
-    await delay(500);
     await closeOpenedFile();
-    await delay(500);
-    await reloadDirectory();
-    await delay(500);
-    await returnDirectoryBack();
-    // delete directory
+    // await reloadDirectory();
+    await expectElementExist(selectorFile, true);
+    await global.client.pause(500);
+
+    await deleteFirstFile();
     await deleteDirectory(testFolder);
-    await delay(500);
+    await expectElementExist(
+      '[data-tid=fsEntryName_' + testFolder + ']',
+      false
+    );
   });
 
-  it('TST0510 - Generate thumbnail from Images [electron]', async () => {
+  it('TST0510 - Generate thumbnail from Images', async () => {
     // let filename = 'sample.jpg';
-    await delay(500);
-    await openSettingsDialog();
     // activate 'Show Hidden File' functionality in the general settings
-    const showUnixHiddenEntries = await global.client.$(
-      '[data-tid=settingsSetShowUnixHiddenEntries]'
-    );
-    await showUnixHiddenEntries.waitForDisplayed();
-    await showUnixHiddenEntries.click();
-    await closeSettingsDialog();
-    await delay(500);
+    await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
+    await global.client.pause(500);
     await reloadDirectory();
-    await delay(500);
-    await openEntry(tsFolder);
-    await delay(500);
+    await global.client.pause(500);
+    await doubleClickOn('[data-tid=fsEntryName_' + tsFolder + ']');
+
     await searchEngine('jpg');
     // await openEntry('sample.jpg');
     // await openFile();
-    await delay(500);
-    const file = await global.client.$(perspectiveGridTable + firstFile);
-    await file.waitForDisplayed();
-    await file.doubleClick();
+    await doubleClickOn(perspectiveGridTable + firstFile);
     await closeOpenedFile();
+    //TODO expect
     // const file = await global.client.$(
     //   perspectiveGridTable + firstFile
     // );
     // expect(file).toBe(filename);
   });
 
-  it('TST0511 - Generate thumbnail from Videos [electron]', async () => {
-    await delay(500);
-    await openSettingsDialog();
+  it('TST0511 - Generate thumbnail from Videos', async () => {
     // activate 'Show Hidden File' functionality in the general settings
-    const showUnixHiddenEntries = await global.client.$(
-      '[data-tid=settingsSetShowUnixHiddenEntries]'
-    );
-    await showUnixHiddenEntries.waitForDisplayed();
-    await showUnixHiddenEntries.click();
-    await closeSettingsDialog();
-    await delay(500);
+    await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
+    await global.client.pause(500);
     await reloadDirectory();
-    await delay(500);
-    await openEntry(tsFolder);
-    await delay(500);
+    await global.client.pause(500);
+    await doubleClickOn('[data-tid=fsEntryName_' + tsFolder + ']');
+
     await searchEngine('mp4');
-    await delay(500);
-    const file = await global.client.$(perspectiveGridTable + firstFile);
-    await file.waitForDisplayed();
-    await file.doubleClick();
+    await doubleClickOn(perspectiveGridTable + firstFile);
     await closeOpenedFile();
+    //TODO expect
   });
 
-  it('TST0516 - Generate thumbnail from PDF [electron]', async () => {
-    await delay(500);
-    await openSettingsDialog();
+  it('TST0516 - Generate thumbnail from PDF', async () => {
     // activate 'Show Hidden File' functionality in the general settings
-    const showUnixHiddenEntries = await global.client.$(
-      '[data-tid=settingsSetShowUnixHiddenEntries]'
-    );
-    await showUnixHiddenEntries.waitForDisplayed();
-    await showUnixHiddenEntries.click();
-    await closeSettingsDialog();
-    await delay(500);
+    await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
+    await global.client.pause(500);
     await reloadDirectory();
-    await delay(500);
-    await openEntry(tsFolder);
-    await delay(500);
+    await global.client.pause(500);
+    await doubleClickOn('[data-tid=fsEntryName_' + tsFolder + ']');
+
     await searchEngine('pdf');
-    await delay(500);
-    const file = await global.client.$(perspectiveGridTable + firstFile);
-    await file.waitForDisplayed();
-    await file.doubleClick();
+    await doubleClickOn(perspectiveGridTable + firstFile);
     await closeOpenedFile();
+    //TODO expect
   });
 
-  it('TST0517 - Generate thumbnail from ODT [electron]', async () => {
-    await delay(500);
-    await openSettingsDialog();
+  it('TST0517 - Generate thumbnail from ODT', async () => {
     // activate 'Show Hidden File' functionality in the general settings
-    const showUnixHiddenEntries = await global.client.$(
-      '[data-tid=settingsSetShowUnixHiddenEntries]'
-    );
-    await showUnixHiddenEntries.waitForDisplayed();
-    await showUnixHiddenEntries.click();
-    await closeSettingsDialog();
-    await delay(500);
+    await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
+    await global.client.pause(500);
     await reloadDirectory();
-    await delay(500);
-    await openEntry(tsFolder);
-    await delay(500);
+    await global.client.pause(500);
+    await doubleClickOn('[data-tid=fsEntryName_' + tsFolder + ']');
+
     await searchEngine('odt');
-    await delay(500);
-    const file = await global.client.$(perspectiveGridTable + firstFile);
-    await file.waitForDisplayed();
-    await file.doubleClick();
+    await doubleClickOn(perspectiveGridTable + firstFile);
     await closeOpenedFile();
+    //TODO expect
   });
 
-  it('TST0519 - Generate thumbnail from TIFF [electron]', async () => {
-    await delay(500);
-    await openSettingsDialog();
+  it('TST0519 - Generate thumbnail from TIFF', async () => {
     // activate 'Show Hidden File' functionality in the general settings
-    const showUnixHiddenEntries = await global.client.$(
-      '[data-tid=settingsSetShowUnixHiddenEntries]'
-    );
-    await showUnixHiddenEntries.waitForDisplayed();
-    await showUnixHiddenEntries.click();
-    await closeSettingsDialog();
-    await delay(500);
+    await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
+    await global.client.pause(500);
     await reloadDirectory();
-    await delay(500);
-    await openEntry(tsFolder);
-    await delay(500);
+    await global.client.pause(500);
+    await doubleClickOn('[data-tid=fsEntryName_' + tsFolder + ']');
+
     await searchEngine('tiff');
-    await delay(500);
-    const file = await global.client.$(perspectiveGridTable + firstFile);
-    await file.waitForDisplayed();
-    await file.doubleClick();
+    // await openEntry('sample.jpg');
+    // await openFile();
+    await doubleClickOn(perspectiveGridTable + firstFile);
     await closeOpenedFile();
+    //TODO expect
   });
 
-  it('TST0520 - Generate thumbnail from PSD [electron]', async () => {
-    await delay(500);
-    await openSettingsDialog();
+  it('TST0520 - Generate thumbnail from PSD', async () => {
     // activate 'Show Hidden File' functionality in the general settings
-    const showUnixHiddenEntries = await global.client.$(
-      '[data-tid=settingsSetShowUnixHiddenEntries]'
-    );
-    await showUnixHiddenEntries.waitForDisplayed();
-    await showUnixHiddenEntries.click();
-    await closeSettingsDialog();
-    await delay(500);
+    await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
+    await global.client.pause(500);
     await reloadDirectory();
-    await delay(500);
-    await openEntry(tsFolder);
-    await delay(500);
+    await global.client.pause(500);
+    await doubleClickOn('[data-tid=fsEntryName_' + tsFolder + ']');
+
     await searchEngine('psd');
-    await delay(500);
-    const file = await global.client.$(perspectiveGridTable + firstFile);
-    await file.waitForDisplayed();
-    await file.doubleClick();
+    // await openEntry('sample.jpg');
+    // await openFile();
+    await doubleClickOn(perspectiveGridTable + firstFile);
     await closeOpenedFile();
+    //TODO expect
   });
 
-  it('TST0524 - Generate thumbnail from TXT [electron]', async () => {
-    await delay(500);
-    await openSettingsDialog();
+  it('TST0524 - Generate thumbnail from TXT', async () => {
     // activate 'Show Hidden File' functionality in the general settings
-    const showUnixHiddenEntries = await global.client.$(
-      '[data-tid=settingsSetShowUnixHiddenEntries]'
-    );
-    await showUnixHiddenEntries.waitForDisplayed();
-    await showUnixHiddenEntries.click();
-    await closeSettingsDialog();
-    await delay(500);
+    await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
+    await global.client.pause(500);
     await reloadDirectory();
-    await delay(500);
-    await openEntry(tsFolder);
-    await delay(500);
+    await global.client.pause(500);
+    await doubleClickOn('[data-tid=fsEntryName_' + tsFolder + ']');
+
     await searchEngine('txt');
-    await delay(500);
-    const file = await global.client.$(perspectiveGridTable + firstFile);
-    await file.waitForDisplayed();
-    await file.doubleClick();
+    // await openEntry('sample.jpg');
+    // await openFile();
+    await doubleClickOn(perspectiveGridTable + firstFile);
     await closeOpenedFile();
+    //TODO expect
   });
 
-  it('TST0523 - Generate thumbnail from HTML [electron]', async () => {
-    await delay(500);
-    await openSettingsDialog();
+  it('TST0523 - Generate thumbnail from HTML', async () => {
     // activate 'Show Hidden File' functionality in the general settings
-    const showUnixHiddenEntries = await global.client.$(
-      '[data-tid=settingsSetShowUnixHiddenEntries]'
-    );
-    await showUnixHiddenEntries.waitForDisplayed();
-    await showUnixHiddenEntries.click();
-    await closeSettingsDialog();
-    await delay(500);
+    await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
+    await global.client.pause(500);
     await reloadDirectory();
-    await delay(500);
-    await openEntry(tsFolder);
-    await delay(500);
+    await global.client.pause(500);
+    await doubleClickOn('[data-tid=fsEntryName_' + tsFolder + ']');
+
     await searchEngine('html');
-    await delay(500);
-    const file = await global.client.$(perspectiveGridTable + firstFile);
-    await file.waitForDisplayed();
-    await file.doubleClick();
+    // await openEntry('sample.jpg');
+    // await openFile();
+    await doubleClickOn(perspectiveGridTable + firstFile);
     await closeOpenedFile();
+    //TODO expect
   });
 
-  it('TST0522 - Generate thumbnail from URL [electron]', async () => {
-    await delay(500);
-    await openSettingsDialog();
+  it('TST0522 - Generate thumbnail from URL', async () => {
     // activate 'Show Hidden File' functionality in the general settings
-    const showUnixHiddenEntries = await global.client.$(
-      '[data-tid=settingsSetShowUnixHiddenEntries]'
-    );
-    await showUnixHiddenEntries.waitForDisplayed();
-    await showUnixHiddenEntries.click();
-    await closeSettingsDialog();
-    await delay(500);
+    await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
+    await global.client.pause(500);
     await reloadDirectory();
-    await delay(500);
-    await openEntry(tsFolder);
-    await delay(500);
+    await global.client.pause(500);
+    await doubleClickOn('[data-tid=fsEntryName_' + tsFolder + ']');
+
     await searchEngine('url');
-    await delay(500);
-    const file = await global.client.$(perspectiveGridTable + firstFile);
-    await file.waitForDisplayed();
-    await file.doubleClick();
+    // await openEntry('sample.jpg');
+    // await openFile();
+    await doubleClickOn(perspectiveGridTable + firstFile);
     await closeOpenedFile();
+    //TODO expect
   });
 });

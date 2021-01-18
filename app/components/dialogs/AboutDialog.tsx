@@ -35,7 +35,7 @@ import AppConfig from '-/config';
 interface Props {
   open: boolean;
   fullScreen: boolean;
-  openURLExternally: (url: string) => void;
+  openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   toggleLicenseDialog: () => void;
   toggleThirdPartyLibsDialog: () => void;
   onClose: () => void;
@@ -56,7 +56,7 @@ const AboutDialog = (props: Props) => {
 
   function checkForUpdates() {
     if (updateAvailable) {
-      props.openURLExternally(AppConfig.links.downloadURL);
+      props.openURLExternally(AppConfig.links.downloadURL, true);
     } else {
       getLastVersionPromise()
         .then(lastVersion => {
@@ -155,7 +155,7 @@ const AboutDialog = (props: Props) => {
             size="small"
             color="primary"
             onClick={() => {
-              props.openURLExternally(AppConfig.links.imprintURL);
+              props.openURLExternally(AppConfig.links.imprintURL, true);
             }}
           >
             Imprint
@@ -164,7 +164,7 @@ const AboutDialog = (props: Props) => {
             size="small"
             color="primary"
             onClick={() => {
-              props.openURLExternally(AppConfig.links.privacyURL);
+              props.openURLExternally(AppConfig.links.privacyURL, true);
             }}
           >
             Privacy Policy
@@ -173,7 +173,7 @@ const AboutDialog = (props: Props) => {
             size="small"
             color="primary"
             onClick={() => {
-              props.openURLExternally(AppConfig.links.changelogURL);
+              props.openURLExternally(AppConfig.links.changelogURL, true);
             }}
           >
             Changelog
@@ -194,7 +194,7 @@ const AboutDialog = (props: Props) => {
             data-tid="checkForUpdates"
             title={i18n.t('core:checkForNewVersion')}
             onClick={() => {
-              props.openURLExternally(AppConfig.links.productsOverview);
+              props.openURLExternally(AppConfig.links.productsOverview, true);
             }}
             color="primary"
           >

@@ -32,12 +32,20 @@ declare interface Window {
   ExtDefaultVerticalPanel?: string;
   ExtDisplayMode?: string;
   ExtDefaultPerspective?: string;
-  ExtLocationsReadOnly?: string;
   ExtTagLibrary?: Array<any>;
   ExtLocations?: Array<any>;
   ExtTheme?: string;
   ExtIsFirstRun?: boolean;
   ExtDefaultVerticalPanel?: string;
+  ExtSidebarColor?: string;
+  ExtSidebarSelectionColor?: string;
+  ExtLightThemeLightColor?: string;
+  ExtLightThemeMainColor?: string;
+  ExtDarkThemeLightColor?: string;
+  ExtDarkThemeMainColor?: string;
+  ExtShowWelcomePanel?: string;
+  ExtShowSmartTags?: string;
+  ExtShowAdvancedSearch?: string;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: any;
   plugins?: any; // needed for Cordova
   resolveLocalFileSystemURL?: any; // needed for Cordova

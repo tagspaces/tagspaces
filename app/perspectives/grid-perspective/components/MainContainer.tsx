@@ -23,7 +23,6 @@ import { bindActionCreators } from 'redux';
 import memoize from 'memoize-one';
 import { GlobalHotKeys } from 'react-hotkeys';
 import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import { FileSystemEntry } from '-/services/utils-io';
 import { Tag } from '-/reducers/taglibrary';
 import {
@@ -60,7 +59,7 @@ import SortingMenu from './SortingMenu';
 import GridOptionsMenu from './GridOptionsMenu';
 import { getLocation, Location, locationType } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-io';
-import { extractFileName } from '-/utils/paths';
+import { extractFileName, getLocationPath } from '-/utils/paths';
 import GridPagination from '-/perspectives/grid-perspective/components/GridPagination';
 import GridSettingsDialog from '-/perspectives/grid-perspective/components/GridSettingsDialog';
 
@@ -119,7 +118,7 @@ interface State {
   sortBy: string;
   orderBy: null | boolean;
   fileOperationsEnabled: boolean;
-  allFilesSelected: boolean;
+  // allFilesSelected: boolean;
   showDirectories: boolean;
   showTags: boolean;
   isDeleteMultipleFilesDialogOpened: boolean;
@@ -133,8 +132,11 @@ interface State {
 }
 
 class GridPerspective extends React.Component<Props, State> {
+  static allFilesSelected: boolean;
+
   constructor(props) {
     super(props);
+    GridPerspective.allFilesSelected = false;
     const settings = JSON.parse(localStorage.getItem('tsPerspectiveGrid')); // loading settings
     this.state = {
       fileContextMenuOpened: false,
@@ -167,7 +169,7 @@ class GridPerspective extends React.Component<Props, State> {
       thumbnailMode:
         settings && settings.thumbnailMode ? settings.thumbnailMode : 'cover', // contain
       fileOperationsEnabled: false,
-      allFilesSelected: false,
+      // allFilesSelected: false,
       showDirectories:
         settings && typeof settings.showDirectories !== 'undefined'
           ? settings.showDirectories
@@ -204,6 +206,8 @@ class GridPerspective extends React.Component<Props, State> {
         return true;
       });
       fileOperationsEnabled = !selectionContainsDirectories;
+    } else {
+      GridPerspective.allFilesSelected = false;
     }
 
     return {
@@ -364,14 +368,12 @@ class GridPerspective extends React.Component<Props, State> {
   clearSelection = () => {
     const { setSelectedEntries, setLastSelectedEntry } = this.props;
     setSelectedEntries([]);
-    this.setState({
-      allFilesSelected: false
-    });
+    GridPerspective.allFilesSelected = false;
     setLastSelectedEntry(null);
   };
 
   toggleSelectAllFiles = () => {
-    if (this.state.allFilesSelected) {
+    if (GridPerspective.allFilesSelected) {
       this.clearSelection();
     } else {
       const selectedEntries = [];
@@ -382,9 +384,7 @@ class GridPerspective extends React.Component<Props, State> {
         return true;
       });
       this.props.setSelectedEntries(selectedEntries);
-      this.setState({
-        allFilesSelected: !this.state.allFilesSelected
-      });
+      GridPerspective.allFilesSelected = !GridPerspective.allFilesSelected;
     }
   };
 
@@ -500,6 +500,19 @@ class GridPerspective extends React.Component<Props, State> {
         selectedEntryPath: fsEntry.path
       });
     }
+  };
+
+  selectEntry = (fsEntry: FileSystemEntry) => {
+    const { setSelectedEntries, selectedEntries } = this.props;
+    setSelectedEntries([...selectedEntries, fsEntry]);
+  };
+
+  deselectEntry = (fsEntry: FileSystemEntry) => {
+    const { setSelectedEntries, selectedEntries } = this.props;
+    const newSelection = selectedEntries.filter(
+      data => data.path !== fsEntry.path
+    );
+    setSelectedEntries(newSelection);
   };
 
   handleTagMenu = (
@@ -658,6 +671,8 @@ class GridPerspective extends React.Component<Props, State> {
           thumbnailMode={thumbnailMode}
           addTags={addTags}
           selectedEntries={selectedEntries}
+          selectEntry={this.selectEntry}
+          deselectEntry={this.deselectEntry}
           isReadOnlyMode={this.props.isReadOnlyMode}
           handleTagMenu={this.handleTagMenu}
           layoutType={layoutType}
@@ -766,7 +781,7 @@ class GridPerspective extends React.Component<Props, State> {
     const sortedDirectories = sortedContent.filter(entry => !entry.isFile);
     const sortedFiles = sortedContent.filter(entry => entry.isFile);
     const locationPath = this.props.currentLocation
-      ? this.props.currentLocation.path || this.props.currentLocation.paths[0]
+      ? getLocationPath(this.props.currentLocation)
       : '';
     let entryWidth = 200;
     if (entrySize === 'small') {
@@ -799,7 +814,7 @@ class GridPerspective extends React.Component<Props, State> {
           selectedEntries={this.props.selectedEntries}
           loadParentDirectoryContent={loadParentDirectoryContent}
           toggleSelectAllFiles={this.toggleSelectAllFiles}
-          allFilesSelected={this.state.allFilesSelected}
+          allFilesSelected={GridPerspective.allFilesSelected}
           handleLayoutSwitch={this.handleLayoutSwitch}
           openAddRemoveTagsDialog={this.openAddRemoveTagsDialog}
           fileOperationsEnabled={this.state.fileOperationsEnabled}
@@ -922,14 +937,16 @@ class GridPerspective extends React.Component<Props, State> {
           removeTags={this.props.removeTags}
           isReadOnlyMode={this.props.isReadOnlyMode}
         />
-        <SortingMenu
-          open={this.state.sortingContextMenuOpened}
-          onClose={this.closeSortingMenu}
-          anchorEl={this.state.sortingContextMenuAnchorEl}
-          sortBy={this.state.sortBy}
-          orderBy={this.state.orderBy}
-          handleSortBy={this.handleSortBy}
-        />
+        {this.state.sortingContextMenuOpened && (
+          <SortingMenu
+            open={this.state.sortingContextMenuOpened}
+            onClose={this.closeSortingMenu}
+            anchorEl={this.state.sortingContextMenuAnchorEl}
+            sortBy={this.state.sortBy}
+            orderBy={this.state.orderBy}
+            handleSortBy={this.handleSortBy}
+          />
+        )}
         <GridOptionsMenu
           open={this.state.optionsContextMenuOpened}
           onClose={this.closeOptionsMenu}

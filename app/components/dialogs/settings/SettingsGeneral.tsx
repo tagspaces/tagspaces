@@ -33,7 +33,8 @@ import { actions as SettingsActions, getSettings } from '-/reducers/settings';
 import ColorPickerDialog from '../ColorPickerDialog';
 import TransparentBackground from '../../TransparentBackground';
 
-const styles = theme => ({
+const styles: any = (theme: any) => ({
+  // const styles = theme => ({
   root: {
     overflowX: 'hidden'
   },
@@ -66,6 +67,7 @@ interface Props {
   setTagDelimiter: (tagDelimiter: string) => void;
   setMaxSearchResult: (maxResult: string) => void;
   setDesktopMode: (desktopMode: boolean) => void;
+  showResetSettings: (showDialog: boolean) => void;
 }
 
 interface State {
@@ -315,6 +317,16 @@ class SettingsGeneral extends React.Component<Props, State> {
             checked={this.props.settings.loadsLocationMetaData}
           />
         </ListItem> */}
+        <ListItem className={classes.listItem}>
+          <Button
+            data-tid="resetSettingsTID"
+            onClick={() => this.props.showResetSettings(true)}
+            color="secondary"
+            style={{ marginLeft: -7 }}
+          >
+            {i18n.t('core:resetSettings')}
+          </Button>
+        </ListItem>
       </List>
     );
   }
@@ -355,4 +367,4 @@ export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
   // @ts-ignore
-)(withStyles(styles)(SettingsGeneral));
+)(withStyles(styles, { withTheme: true })(SettingsGeneral));

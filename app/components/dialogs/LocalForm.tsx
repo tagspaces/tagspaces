@@ -19,39 +19,59 @@
 import React from 'react';
 
 import InputAdornment from '@material-ui/core/InputAdornment';
-import TextField from '@material-ui/core/TextField';
 import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
+// import FormHelperText from '@material-ui/core/FormHelperText';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import IconButton from '@material-ui/core/IconButton';
 import FolderIcon from '@material-ui/icons/Folder';
+import Grid from '@material-ui/core/Grid';
 import i18n from '-/services/i18n';
 import AppConfig from '-/config';
 import { extractDirectoryName } from '-/utils/paths';
 import PlatformIO from '-/services/platform-io';
 
 interface Props {
-  state: any;
-  handleChange: (param1: string, param2: string) => void;
-  handleInputChange: (event: any) => void;
   showSelectDirectoryDialog: () => void;
+  showAdvancedMode: boolean;
+  errorTextPath: boolean;
+  errorTextName: boolean;
+  errorTextId: boolean;
+  setName: (string) => void;
+  setPath: (string) => void;
+  setNewUuid: (string) => void;
+  path: string;
+  name: string;
+  newuuid: string;
 }
 
-class LocalForm extends React.Component<Props> {
-  openDirectory = () => {
+const LocalForm = (props: Props) => {
+  const {
+    errorTextPath,
+    errorTextName,
+    errorTextId,
+    setName,
+    setPath,
+    setNewUuid,
+    path,
+    name,
+    newuuid,
+    showAdvancedMode,
+    showSelectDirectoryDialog
+  } = props;
+
+  const openDirectory = () => {
     if (AppConfig.isElectron) {
       PlatformIO.selectDirectoryDialog()
         .then(selectedPaths => {
-          this.props.handleChange('path', selectedPaths[0]);
-          if (this.props.state.name.length < 1) {
-            this.props.handleChange(
-              'name',
-              extractDirectoryName(
-                selectedPaths[0],
-                PlatformIO.getDirSeparator()
-              )
+          const selectedPath = selectedPaths[0];
+          setPath(selectedPath);
+          if (name.length < 1 && selectedPath.length > 0) {
+            const dirName = extractDirectoryName(
+              selectedPath,
+              PlatformIO.getDirSeparator()
             );
+            setName(dirName.charAt(0).toUpperCase() + dirName.slice(1));
           }
           return true;
         })
@@ -59,59 +79,83 @@ class LocalForm extends React.Component<Props> {
           console.log('selectDirectoryDialog failed with: ' + err);
         });
     } else {
-      this.props.showSelectDirectoryDialog();
+      showSelectDirectoryDialog();
     }
   };
 
-  render() {
-    const { handleInputChange, state } = this.props;
-
-    return (
-      <div>
-        <FormControl fullWidth={true} error={state.errorTextName}>
-          <TextField
-            error={state.errorTextName}
-            required
-            autoFocus
-            margin="dense"
-            name="name"
-            label={i18n.t('core:createLocationName')}
-            onChange={handleInputChange}
-            value={state.name}
-            data-tid="locationName"
-            fullWidth={true}
-          />
-          {state.errorTextName && (
-            <FormHelperText>{i18n.t('core:invalidName')}</FormHelperText>
-          )}
-        </FormControl>
-        <FormControl fullWidth={true} error={state.errorTextPath}>
+  return (
+    <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <FormControl fullWidth={true} error={errorTextPath}>
           <InputLabel htmlFor="path">
             {i18n.t('core:createLocationPath')}
           </InputLabel>
           <Input
             required
+            autoFocus
             margin="dense"
             name="path"
             fullWidth={true}
             data-tid="locationPath"
-            onChange={handleInputChange}
-            value={state.path}
+            onChange={event => setPath(event.target.value)}
+            value={path}
+            placeholder="Enter a folder path or select it with the button on the right"
             endAdornment={
               <InputAdornment position="end" style={{ height: 32 }}>
-                <IconButton onClick={this.openDirectory}>
+                <IconButton onClick={openDirectory}>
                   <FolderIcon />
                 </IconButton>
               </InputAdornment>
             }
           />
-          {state.errorTextPath && (
+          {/* {state.errorTextPath && (
             <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>
-          )}
+          )} */}
         </FormControl>
-      </div>
-    );
-  }
-}
+      </Grid>
+      <Grid item xs={12}>
+        <FormControl fullWidth={true} error={errorTextName}>
+          <InputLabel htmlFor="path">
+            {i18n.t('core:createLocationName')}
+          </InputLabel>
+          <Input
+            required
+            margin="dense"
+            name="name"
+            onChange={event => setName(event.target.value)}
+            value={name}
+            data-tid="locationName"
+            fullWidth={true}
+          />
+          {/* {state.errorTextName && (
+          <FormHelperText>{i18n.t('core:invalidName')}</FormHelperText>
+        )} */}
+        </FormControl>
+      </Grid>
+      {showAdvancedMode && (
+        <Grid item xs={12}>
+          <FormControl fullWidth={true} error={errorTextId}>
+            <InputLabel htmlFor="newuuid">
+              {i18n.t('core:locationId')}
+            </InputLabel>
+            <Input
+              required
+              margin="dense"
+              name="newuuid"
+              fullWidth={true}
+              data-tid="newuuid"
+              placeholder="Unique location identifier"
+              onChange={event => setNewUuid(event.target.value)}
+              value={newuuid}
+            />
+            {/* {state.errorTextId && (
+            <FormHelperText>{i18n.t('core:invalidId')}</FormHelperText>
+          )} */}
+          </FormControl>
+        </Grid>
+      )}
+    </Grid>
+  );
+};
 
 export default LocalForm;

@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
@@ -28,13 +28,14 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import uuidv1 from 'uuid';
+import { useStateWithCallbackLazy } from 'use-state-with-callback';
 import ConfirmDialog from '../ConfirmDialog';
 import GenericDialog from '../GenericDialog';
 import SettingsGeneral from '../settings/SettingsGeneral';
 import SettingsKeyBindings from '../settings/SettingsKeyBindings';
 import SettingsFileTypes from '../settings/SettingsFileTypes';
 import i18n from '-/services/i18n';
-import { getSettings, actions } from '-/reducers/settings';
+import { actions, getSupportedFileTypes } from '-/reducers/settings';
 import { extend } from '-/utils/misc';
 import AppConfig from '-/config';
 
@@ -49,32 +50,28 @@ interface Props {
   fullScreen?: boolean;
   classes?: any;
   onClose: () => void;
-  setSupportedFileTypes?: (fileTypes: Array<Object>) => void;
-  supportedFileTypes?: Array<Object>;
-  settings?: Array<Object>;
+  setSupportedFileTypes?: (fileTypes: Array<any>) => void;
+  supportedFileTypes?: Array<any>;
 }
 
-interface State {
-  currentTab: number;
-  items: Array<Object>;
-  selectedItem: any;
-  activeItem?: any;
-  isValidationInProgress: boolean;
-  isConfirmDialogOpened: boolean;
-}
+const SettingsDialog = (props: Props) => {
+  const [items, setItems] = useStateWithCallbackLazy<Array<any>>([]);
+  const [currentTab, setCurrentTab] = useState<number>(0);
+  const [selectedItem, setSelectedItem] = useState<any>({});
+  const [isValidationInProgress, setIsValidationInProgress] = useState<boolean>(
+    false
+  );
+  const [isConfirmDialogOpened, setIsConfirmDialogOpened] = useState<boolean>(
+    false
+  );
+  const [
+    isResetSettingsDialogOpened,
+    setIsResetSettingsDialogOpened
+  ] = useState<boolean>(false);
+  const settingsFileTypeRef = useRef<HTMLDivElement>(null);
 
-class SettingsDialog extends React.Component<Props, State> {
-  state = {
-    currentTab: 0,
-    items: [],
-    selectedItem: {},
-    isValidationInProgress: false,
-    isConfirmDialogOpened: false
-  };
-
-  componentWillReceiveProps = nextProps => {
-    const { settings } = nextProps;
-    const supportedFileTypes = settings.supportedFileTypes.reduce(
+  useEffect(() => {
+    const initSupportedFileTypes = props.supportedFileTypes.reduce(
       (accumulator, fileType) => {
         const modifiedFileType = extend({}, fileType, {
           id: fileType.id || uuidv1()
@@ -86,40 +83,32 @@ class SettingsDialog extends React.Component<Props, State> {
       },
       []
     );
+    setItems(initSupportedFileTypes, undefined);
+    setIsValidationInProgress(false);
+  }, [props.supportedFileTypes]);
 
-    this.setState({
-      items: supportedFileTypes,
-      isValidationInProgress: false
+  const handleTabClick = (event, tab) => {
+    setCurrentTab(tab);
+  };
+
+  const onAddFileType = (item = defaultFileTypeObject) => {
+    setItems([...items, item], () => {
+      if (settingsFileTypeRef && settingsFileTypeRef.current) {
+        const lastFileType = settingsFileTypeRef.current.querySelector(
+          'li:last-child'
+        );
+        lastFileType.scrollIntoView({ behavior: 'smooth' });
+      }
     });
   };
 
-  settingsFileTypeRef;
-
-  handleTabClick = (event, currentTab) => {
-    this.setState({ currentTab });
-  };
-
-  onAddFileType = item => {
-    const { items } = this.state;
-    this.setState({ items: [...items, item] }, () => {
-      const { settingsFileTypeRef } = this;
-      const lastFileType = settingsFileTypeRef.querySelector('li:last-child');
-      lastFileType.scrollIntoView({ behavior: 'smooth' });
-    });
-  };
-
-  setSelectedItem = selectedItem => {
-    this.setState({ selectedItem });
-  };
-
-  updateItems = (
+  const updateItems = (
     identifierKey,
     identifierValue,
     targetKey,
     targetValue,
     disableSave = false
   ) => {
-    const { items } = this.state;
     let isSaveable = false;
     let hasViewer = false;
     const modifiedItems = items.reduce((accumulator, item) => {
@@ -135,48 +124,39 @@ class SettingsDialog extends React.Component<Props, State> {
       return accumulator;
     }, []);
 
-    this.setState(
-      {
-        items: modifiedItems
-      },
-      () => {
-        if (
-          (targetKey !== 'type' && isSaveable && !disableSave) ||
-          (targetKey === 'type' && hasViewer && isSaveable && !disableSave)
-        ) {
-          this.saveFileTypes();
-        }
+    setItems(modifiedItems, () => {
+      if (
+        (targetKey !== 'type' && isSaveable && !disableSave) ||
+        (targetKey === 'type' && hasViewer && isSaveable && !disableSave)
+      ) {
+        saveFileTypes(modifiedItems);
       }
-    );
+    });
   };
 
-  getDefaultFileTypeObject = () => ({
+  const defaultFileTypeObject = {
     id: uuidv1(),
     type: '',
     viewer: '',
     editor: '',
     color: '#2196f3'
-  });
+  };
 
-  saveFileTypes = () => {
-    const { setSupportedFileTypes } = this.props;
-    const { items } = this.state;
+  const saveFileTypes = newItems => {
+    const { setSupportedFileTypes } = props;
 
-    this.setState({
-      isValidationInProgress: true
-    });
+    setIsValidationInProgress(true);
 
-    const isValid = this.validateSelectedFileTypes();
+    const isValid = validateSelectedFileTypes();
 
     if (!isValid) {
       return false;
     }
 
-    setSupportedFileTypes(items);
+    setSupportedFileTypes(newItems);
   };
 
-  validateSelectedFileTypes = () => {
-    const { items } = this.state;
+  const validateSelectedFileTypes = () => {
     let isValid = true;
 
     items.map(item => {
@@ -195,21 +175,21 @@ class SettingsDialog extends React.Component<Props, State> {
     return isValid;
   };
 
-  removeItem = (itemForRemoval: any) => {
-    const { items } = this.state;
+  const removeItem = (itemForRemoval: any) => {
     const filteredItems = items.filter(
       item => item.type !== itemForRemoval.type
     );
-    this.setState({ items: filteredItems }, () => this.saveFileTypes());
+    // setItems(filteredItems, undefined);
+    saveFileTypes(filteredItems);
   };
 
-  renderTitle = () => (
+  const renderTitle = () => (
     <React.Fragment>
       <DialogTitle>{i18n.t('core:options')}</DialogTitle>
       <AppBar position="static" color="default">
         <Tabs
-          value={this.state.currentTab}
-          onChange={this.handleTabClick}
+          value={currentTab}
+          onChange={handleTabClick}
           indicatorColor="primary"
           variant="fullWidth"
         >
@@ -230,69 +210,91 @@ class SettingsDialog extends React.Component<Props, State> {
     </React.Fragment>
   );
 
-  renderContent = () => (
-    <DialogContent className={this.props.classes.mainContent}>
-      <ConfirmDialog
-        open={this.state.isConfirmDialogOpened}
-        onClose={() => {
-          this.setState({
-            activeItem: {},
-            isConfirmDialogOpened: false
-          });
-        }}
-        title="Confirm"
-        content={i18n.t('core:confirmFileTypeDeletion')}
-        confirmCallback={result => {
-          if (result) {
-            const { selectedItem } = this.state;
-            this.removeItem(selectedItem);
-          }
-        }}
-        cancelDialogTID="cancelDeleteFileTypeDialog"
-        confirmDialogTID="confirmDeleteFileTypeDialog"
-        confirmDialogContentTID="confirmDeleteFileTypeDialogContent"
-      />
+  const renderContent = () => (
+    <DialogContent className={props.classes.mainContent}>
+      {isConfirmDialogOpened && (
+        <ConfirmDialog
+          open={isConfirmDialogOpened}
+          onClose={() => {
+            setIsConfirmDialogOpened(false);
+          }}
+          title="Confirm"
+          content={i18n.t('core:confirmFileTypeDeletion')}
+          confirmCallback={result => {
+            if (result) {
+              removeItem(selectedItem);
+            }
+          }}
+          cancelDialogTID="cancelDeleteFileTypeDialog"
+          confirmDialogTID="confirmDeleteFileTypeDialog"
+          confirmDialogContentTID="confirmDeleteFileTypeDialogContent"
+        />
+      )}
+
+      {isResetSettingsDialogOpened && (
+        <ConfirmDialog
+          open={isResetSettingsDialogOpened}
+          onClose={() => {
+            setIsResetSettingsDialogOpened(false);
+          }}
+          title="Confirm"
+          content={i18n.t('core:confirmResetSettings')}
+          confirmCallback={result => {
+            if (result) {
+              localStorage.clear();
+              // eslint-disable-next-line no-restricted-globals
+              location.reload();
+
+              /* const electron = window.require('electron');
+              const webContents = electron.remote.getCurrentWebContents();
+              webContents.session.clearStorageData();
+              webContents.reload(); */
+            }
+          }}
+          cancelDialogTID="cancelResetSettingsDialogTID"
+          confirmDialogTID="confirmResetSettingsDialogTID"
+          confirmDialogContentTID="confirmResetSettingsDialogContentTID"
+        />
+      )}
 
       <div
         data-tid="settingsDialog"
-        className={this.props.classes.mainContent}
-        ref={el => {
-          this.settingsFileTypeRef = el;
-        }}
+        className={props.classes.mainContent}
+        ref={settingsFileTypeRef}
       >
-        {this.state.currentTab === 0 && <SettingsGeneral />}
-        {this.state.currentTab === 1 && (
+        {currentTab === 0 && (
+          <SettingsGeneral showResetSettings={setIsResetSettingsDialogOpened} />
+        )}
+        {currentTab === 1 && (
           <SettingsFileTypes
-            items={this.state.items}
-            selectedItem={this.state.selectedItem}
-            setSelectedItem={this.setSelectedItem}
-            updateItems={this.updateItems}
-            isValidationInProgress={this.state.isValidationInProgress}
-            onRemoveItem={selectedItem => {
-              this.setState({
-                selectedItem,
-                isConfirmDialogOpened: true
-              });
+            items={items}
+            selectedItem={selectedItem}
+            setSelectedItem={item => setSelectedItem(item)}
+            updateItems={updateItems}
+            isValidationInProgress={isValidationInProgress}
+            onRemoveItem={item => {
+              setSelectedItem(item);
+              setIsConfirmDialogOpened(true);
             }}
           />
         )}
-        {this.state.currentTab === 2 && <SettingsKeyBindings />}
+        {currentTab === 2 && <SettingsKeyBindings />}
       </div>
     </DialogContent>
   );
 
-  renderActions = () => (
+  const renderActions = () => (
     <DialogActions
       style={{
-        justifyContent:
-          this.state.currentTab === 1 ? 'space-between' : 'flex-end'
+        justifyContent: currentTab === 1 ? 'space-between' : 'flex-end'
       }}
     >
-      {this.state.currentTab === 1 && (
+      {currentTab === 1 && (
         <Button
-          data-tid="closeSettingsDialog"
-          onClick={() => this.onAddFileType(this.getDefaultFileTypeObject())}
+          data-tid="addNewFileTypeTID"
+          onClick={() => onAddFileType()}
           color="secondary"
+          style={{ float: 'left' }}
         >
           {i18n.t('core:addNewFileType')}
         </Button>
@@ -300,7 +302,7 @@ class SettingsDialog extends React.Component<Props, State> {
 
       <Button
         data-tid="closeSettingsDialog"
-        onClick={this.props.onClose}
+        onClick={props.onClose}
         color="primary"
       >
         {i18n.t('core:closeButton')}
@@ -308,23 +310,21 @@ class SettingsDialog extends React.Component<Props, State> {
     </DialogActions>
   );
 
-  render() {
-    const { fullScreen, open, onClose } = this.props;
-    return (
-      <GenericDialog
-        open={open}
-        onClose={onClose}
-        fullScreen={fullScreen}
-        renderTitle={this.renderTitle}
-        renderContent={this.renderContent}
-        renderActions={this.renderActions}
-      />
-    );
-  }
-}
+  const { fullScreen, open, onClose } = props;
+  return (
+    <GenericDialog
+      open={open}
+      onClose={onClose}
+      fullScreen={fullScreen}
+      renderTitle={renderTitle}
+      renderContent={renderContent}
+      renderActions={renderActions}
+    />
+  );
+};
 
 const mapStateToProps = state => ({
-  settings: getSettings(state)
+  supportedFileTypes: getSupportedFileTypes(state)
 });
 
 const mapDispatchToProps = dispatch => ({

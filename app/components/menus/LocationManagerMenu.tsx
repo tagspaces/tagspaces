@@ -16,40 +16,133 @@
  *
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import CreateLocationIcon from '@material-ui/icons/CreateNewFolder';
+import ExportImportIcon from '@material-ui/icons/SwapHoriz';
+import OpenLinkIcon from '@material-ui/icons/Link';
 import HelpIcon from '@material-ui/icons/Help';
-import i18n from '-/services/i18n';
+import classNames from 'classnames';
+import Typography from '@material-ui/core/Typography';
+import IconButton from '@material-ui/core/IconButton';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 import AppConfig from '-/config';
+import i18n from '-/services/i18n';
+import { Pro } from '../../pro';
 
 interface Props {
-  classes?: any;
-  open: boolean;
-  anchorEl: Element;
-  onClose: () => void;
-  openURLExternally: (url: string) => void;
+  classes: any;
+  exportLocations: () => void;
+  importLocations: () => void;
+  showCreateLocationDialog: () => void;
+  toggleOpenLinkDialog: () => void;
+  openURLExternally: (url: string, skipConfirmation?: boolean) => void;
 }
 
-const LocationManagerMenu = (props: Props) => (
-  <div style={{ overflowY: 'hidden' }}>
-    <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
-      <MenuItem
-        data-tid="locationManagerHelp"
-        onClick={() => {
-          props.onClose();
-          props.openURLExternally(AppConfig.documentationLinks.locations);
+const LocationManagerMenu = (props: Props) => {
+  const [
+    locationManagerMenuAnchorEl,
+    setLocationManagerMenuAnchorEl
+  ] = useState<null | HTMLElement>(null);
+
+  return (
+    <>
+      <div className={props.classes.toolbar}>
+        <Typography
+          className={classNames(props.classes.panelTitle, props.classes.header)}
+          variant="subtitle1"
+        >
+          {i18n.t('core:locationManager')}
+        </Typography>
+        <IconButton
+          data-tid="locationManagerMenu"
+          onClick={event => setLocationManagerMenuAnchorEl(event.currentTarget)}
+        >
+          <MoreVertIcon />
+        </IconButton>
+      </div>
+      <Menu
+        anchorEl={locationManagerMenuAnchorEl}
+        open={Boolean(locationManagerMenuAnchorEl)}
+        onClose={() => {
+          setLocationManagerMenuAnchorEl(null);
         }}
       >
-        <ListItemIcon>
-          <HelpIcon />
-        </ListItemIcon>
-        <ListItemText primary={i18n.t('core:help')} />
-      </MenuItem>
-    </Menu>
-  </div>
-);
+        {!AppConfig.locationsReadOnly && (
+          <MenuItem
+            data-tid="locationManagerMenuCreateLocation"
+            onClick={() => {
+              setLocationManagerMenuAnchorEl(null);
+              props.showCreateLocationDialog();
+            }}
+          >
+            <ListItemIcon>
+              <CreateLocationIcon />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:createLocationTitle')} />
+          </MenuItem>
+        )}
+        <MenuItem
+          data-tid="locationManagerMenuOpenLink"
+          onClick={() => {
+            setLocationManagerMenuAnchorEl(null);
+            props.toggleOpenLinkDialog();
+          }}
+        >
+          <ListItemIcon>
+            <OpenLinkIcon />
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:openLink')} />
+        </MenuItem>
+        {Pro && (
+          <>
+            <MenuItem
+              data-tid="locationManagerMenuExportLocationsTID"
+              onClick={() => {
+                setLocationManagerMenuAnchorEl(null);
+                props.exportLocations();
+              }}
+            >
+              <ListItemIcon>
+                <ExportImportIcon />
+              </ListItemIcon>
+              <ListItemText primary={i18n.t('core:exportLocationTitle')} />
+            </MenuItem>
+            <MenuItem
+              data-tid="locationManagerMenuImportLocationsTID"
+              onClick={() => {
+                setLocationManagerMenuAnchorEl(null);
+                props.importLocations();
+              }}
+            >
+              <ListItemIcon>
+                <ExportImportIcon />
+              </ListItemIcon>
+              <ListItemText primary={i18n.t('core:importLocationTitle')} />
+            </MenuItem>
+          </>
+        )}
+        <MenuItem
+          data-tid="locationManagerMenuHelp"
+          onClick={() => {
+            setLocationManagerMenuAnchorEl(null);
+            props.openURLExternally(
+              AppConfig.documentationLinks.locations,
+              true
+            );
+          }}
+        >
+          <ListItemIcon>
+            <HelpIcon />
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:help')} />
+        </MenuItem>
+      </Menu>
+    </>
+  );
+};
 
 export default LocationManagerMenu;

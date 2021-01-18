@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
-import { delay, clearLocalStorage } from './hook';
+import { delay } from './hook';
 import {
   createLocation,
   openLocation,
@@ -42,7 +42,6 @@ export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 
 describe('TST54 - Markdown viewer [electron]', () => {
   beforeEach(async () => {
-    await clearLocalStorage();
     if (global.isMinio) {
       await createMinioLocation('', defaultLocationName, true);
     } else {

@@ -33,7 +33,6 @@ import { getDefaultLocationId } from '-/reducers/locations';
 import PlatformIO from '../services/platform-io';
 // import MainPage from './MainPage';
 import { getURLParameter } from '-/utils/misc';
-import { FileSystemEntry, getAllPropertiesPromise } from '-/services/utils-io';
 
 type RootType = {
   store: {};
@@ -65,22 +64,21 @@ function onBeforeLift(store) {
     store.dispatch(SettingsActions.setLanguage(langURLParam));
   }
 
-  const openParam = getURLParameter('open');
-  if (openParam && openParam.length > 1) {
-    // dispatch toggle full width
+  const lid = getURLParameter('tslid');
+  const dPath = getURLParameter('tsdpath');
+  const ePath = getURLParameter('tsepath');
+  const cmdOpen = getURLParameter('cmdopen');
+  if (lid || dPath || ePath) {
     setTimeout(() => {
-      getAllPropertiesPromise(decodeURIComponent(openParam))
-        .then((fsEntry: FileSystemEntry) => {
-          store.dispatch(AppActions.openFsEntry(fsEntry));
-          return true;
-        })
-        .catch(error =>
-          console.warn(
-            'Error getting properties for entry: ' + openParam + ' - ' + error
-          )
-        );
-      // store.dispatch(AppActions.openFile(decodeURIComponent(openParam)));
-      store.dispatch(AppActions.setEntryFullWidth(true));
+      store.dispatch(AppActions.openLink(window.location.href));
+    }, 1000);
+  } else if (cmdOpen) {
+    setTimeout(() => {
+      store.dispatch(
+        AppActions.openLink(
+          window.location.href.split('?')[0] + '?cmdopen=' + cmdOpen
+        )
+      );
     }, 1000);
   }
 }

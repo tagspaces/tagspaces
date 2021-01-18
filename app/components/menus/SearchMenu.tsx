@@ -31,7 +31,7 @@ interface Props {
   open: boolean;
   anchorEl: Element;
   onClose: () => void;
-  openURLExternally: (url: string) => void;
+  openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   createLocationsIndexes: () => void;
 }
 
@@ -54,7 +54,7 @@ const SearchMenu = (props: Props) => (
         data-tid="searchMenuHelp"
         onClick={() => {
           props.onClose();
-          props.openURLExternally(AppConfig.documentationLinks.search);
+          props.openURLExternally(AppConfig.documentationLinks.search, true);
         }}
       >
         <ListItemIcon>

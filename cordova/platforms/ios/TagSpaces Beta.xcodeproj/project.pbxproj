@@ -427,7 +427,7 @@
 				INFOPLIST_FILE = "TagSpaces Beta/TagSpaces Beta-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = org.tagspaces.iosn;
+				PRODUCT_BUNDLE_IDENTIFIER = org.tagspaces.mobile;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -450,7 +450,7 @@
 				INFOPLIST_FILE = "TagSpaces Beta/TagSpaces Beta-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = org.tagspaces.iosn;
+				PRODUCT_BUNDLE_IDENTIFIER = org.tagspaces.mobile;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

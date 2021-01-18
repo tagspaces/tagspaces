@@ -16,7 +16,7 @@
  *
  */
 
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
@@ -68,6 +68,7 @@ import {
   isUploadDialogOpened,
   isCreateFileDialogOpened,
   isSettingsDialogOpened,
+  isOpenLinkDialogOpened,
   isReadOnlyMode,
   isProgressOpened,
   getOpenedFiles,
@@ -91,6 +92,7 @@ import IOActions from '-/reducers/io-actions';
 import FileUploadDialog from '-/components/dialogs/FileUploadDialog';
 import ProgressDialog from '-/components/dialogs/ProgressDialog';
 import { FileSystemEntry } from '-/services/utils-io';
+import useEventListener from '-/utils/useEventListener';
 
 const initialSplitSize = 44;
 const drawerWidth = 300;
@@ -161,6 +163,7 @@ interface Props {
   isProgressDialogOpened: boolean;
   toggleSelectDirectoryDialog: () => void;
   toggleUploadDialog: () => void;
+  toggleOpenLinkDialog: () => void;
   toggleProgressDialog: () => void;
   resetProgress: () => void;
   isEditTagDialogOpened: boolean;
@@ -202,6 +205,7 @@ interface Props {
   setLeftVerticalSplitSize: (splitSize: number) => void;
   setMainVerticalSplitSize: (splitSize: string) => void;
   isLocationManagerPanelOpened: boolean;
+  isOpenLinkDialogOpened: boolean;
   isTagLibraryPanelOpened: boolean;
   isSearchPanelOpened: boolean;
   isPerspectivesPanelOpened: boolean;
@@ -287,6 +291,17 @@ const EditEntryTagDialogAsync = props => (
   </React.Suspense>
 );
 
+const OpenLinkDialog = React.lazy(() =>
+  import(
+    /* webpackChunkName: "OpenLinkDialog" */ '../components/dialogs/OpenLinkDialog'
+  )
+);
+const OpenLinkDialogAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <OpenLinkDialog {...props} />
+  </React.Suspense>
+);
+
 const SelectDirectoryDialog = React.lazy(() =>
   import(
     /* webpackChunkName: "LicenseDialog" */ '../components/dialogs/SelectDirectoryDialog'
@@ -298,51 +313,53 @@ const SelectDirectoryAsync = props => (
   </React.Suspense>
 );
 
-interface State {
-  selectedDirectoryPath: string;
-  isManagementPanelVisible: boolean;
-  mainSplitSize: any;
-  isDrawerOpened: boolean;
-  width: number;
-  height: number;
-}
-
-let showVerticalPanel = true;
+/* let showVerticalPanel = true;
 if (window.ExtDefaultVerticalPanel === 'none') {
   showVerticalPanel = false;
-}
+} */
 
-class MainPage extends Component<Props, State> {
-  state = {
-    selectedDirectoryPath: '',
-    isManagementPanelVisible: showVerticalPanel,
-    mainSplitSize: '100%',
-    isDrawerOpened: true,
+const MainPage = (props: Props) => {
+  const [selectedDirectoryPath, setSelectedDirectoryPath] = useState<string>(
+    ''
+  );
+  /* const [isManagementPanelVisible, setManagementPanelVisible] = useState<
+    boolean
+  >(window.ExtDefaultVerticalPanel !== 'none' && !props.isEntryInFullWidth); */
+  // const [mainSplitSize, setMainSplitSize] = useState<any>('100%');
+  // const [isDrawerOpened, setDrawerOpened] = useState<boolean>(true);
+  const [dimensions, setDimensions] = useState<any>({
     width: 1000,
     height: 1000
-  };
+  });
 
-  UNSAFE_componentWillMount() {
+  useEffect(() => {
     if (!AppConfig.isCordova) {
-      this.updateDimensions();
-    }
-  }
-
-  componentDidMount = () => {
-    if (!AppConfig.isCordova) {
-      window.addEventListener('resize', this.updateDimensions);
+      updateDimensions();
     }
     // this.setupDesktopMenu();
-    buildDesktopMenu(this.props);
-    buildTrayIconMenu(this.props);
-  };
+    buildDesktopMenu(props);
+    buildTrayIconMenu(props);
+  }, []);
 
-  componentWillReceiveProps(nextProps: Props) {
-    const isFileOpened = this.props.openedFiles.length > 0;
-    const isFileOpenedNext = nextProps.openedFiles.length > 0;
-    const isEntryOpenedChanged = isFileOpenedNext !== isFileOpened;
-    const isEntryOpenedFullWidthChanged =
-      nextProps.isEntryInFullWidth !== this.props.isEntryInFullWidth;
+  useEffect(() => {
+    if (props.isEntryInFullWidth) {
+      props.closeAllVerticalPanels();
+      // setMainSplitSize('0%');
+    } else {
+      // setMainSplitSize(props.mainSplitSize);
+      // setManagementPanelVisible(true);
+      showDrawer();
+    }
+  }, [props.isEntryInFullWidth]);
+
+  const getMainSplitSize = () => {
+    if (props.openedFiles.length === 0) {
+      return '100%';
+    }
+
+    if (props.isEntryInFullWidth) {
+      return '0%';
+    }
     const width =
       window.innerWidth ||
       document.documentElement.clientWidth ||
@@ -351,64 +368,34 @@ class MainPage extends Component<Props, State> {
       window.innerHeight ||
       document.documentElement.clientHeight ||
       body.clientHeight;
-    if (isFileOpenedNext) {
-      if (height > width) {
-        this.setState({
-          mainSplitSize: '0%'
-          // isManagementPanelVisible: !nextProps.isEntryInFullWidth
-        });
-      } else if (isEntryOpenedFullWidthChanged) {
-        if (nextProps.isEntryInFullWidth) {
-          this.props.closeAllVerticalPanels();
-        }
-        this.setState({
-          mainSplitSize: nextProps.isEntryInFullWidth
-            ? '0%'
-            : this.props.mainSplitSize,
-          isManagementPanelVisible: !nextProps.isEntryInFullWidth
-        });
-      } else if (isEntryOpenedChanged) {
-        this.setState({
-          mainSplitSize: this.props.mainSplitSize
-        });
-      }
-    }
-    if (!isFileOpenedNext && isEntryOpenedChanged) {
-      this.setState({
-        mainSplitSize: '100%'
-      });
-    }
-    if (
-      nextProps.isLocationManagerPanelOpened ||
-      nextProps.isTagLibraryPanelOpened ||
-      nextProps.isSearchPanelOpened ||
-      nextProps.isPerspectivesPanelOpened ||
-      nextProps.isHelpFeedbackPanelOpened
-    ) {
-      this.setManagementPanelVisibility(true);
-      // if (!nextProps.isDesktopMode) {
-      //   this.showDrawer();
-      // }
+    if (height > width) {
+      return '0%';
     }
 
-    if (
-      !nextProps.isLocationManagerPanelOpened &&
-      !nextProps.isTagLibraryPanelOpened &&
-      !nextProps.isSearchPanelOpened &&
-      !nextProps.isPerspectivesPanelOpened &&
-      !nextProps.isHelpFeedbackPanelOpened
-    ) {
-      this.setManagementPanelVisibility(false);
-    }
-  }
+    return props.mainSplitSize;
+  };
 
-  componentWillUnmount() {
+  const isManagementPanelVisible = () => {
+    if (
+      props.isLocationManagerPanelOpened ||
+      props.isTagLibraryPanelOpened ||
+      props.isSearchPanelOpened ||
+      props.isPerspectivesPanelOpened ||
+      props.isHelpFeedbackPanelOpened
+    ) {
+      return true;
+    }
+    return false;
+    // return window.ExtDefaultVerticalPanel !== 'none' && !props.isEntryInFullWidth;
+  };
+
+  useEventListener('resize', () => {
     if (!AppConfig.isCordova) {
-      window.removeEventListener('resize', this.updateDimensions);
+      updateDimensions();
     }
-  }
+  });
 
-  updateDimensions = () => {
+  const updateDimensions = () => {
     const width =
       window.innerWidth ||
       document.documentElement.clientWidth ||
@@ -419,10 +406,13 @@ class MainPage extends Component<Props, State> {
       body.clientHeight;
 
     // console.log('Width: ' + width + ' Height: ' + height);
-    this.setState({ width, height });
+    setDimensions({ width, height });
 
-    if (this.props.openedFiles.length > 0) {
-      this.props.setEntryFullWidth(height > width);
+    if (props.openedFiles.length > 0) {
+      const isFillWidth = height > width;
+      if (isFillWidth !== props.isEntryInFullWidth) {
+        props.setEntryFullWidth(isFillWidth);
+      }
     }
 
     // Hide folder container on windows resize or on mobile
@@ -441,61 +431,41 @@ class MainPage extends Component<Props, State> {
     } */
   };
 
-  setManagementPanelVisibility = isVisible => {
-    this.setState({
-      isManagementPanelVisible: isVisible
-    });
-  };
-
-  hideDrawer = () => {
-    this.setState({
-      isDrawerOpened: false
-    });
-  };
-
-  showDrawer = () => {
+  const showDrawer = () => {
     if (
-      !this.props.isLocationManagerPanelOpened &&
-      !this.props.isSearchPanelOpened &&
-      !this.props.isTagLibraryPanelOpened
+      !props.isLocationManagerPanelOpened &&
+      !props.isSearchPanelOpened &&
+      !props.isTagLibraryPanelOpened
     ) {
-      this.props.openLocationManagerPanel();
+      props.openLocationManagerPanel();
     }
-    this.setState({
-      isDrawerOpened: true
-    });
+    // setDrawerOpened(true);
   };
 
-  /* toggleDrawer = () => {
-    this.setState({
-      isDrawerOpened: !this.state.isDrawerOpened
-    });
-  }; */
-
-  skipRelease = () => {
-    this.props.setUpdateAvailable(false);
+  const skipRelease = () => {
+    props.setUpdateAvailable(false);
   };
 
-  getLatestVersion = () => {
+  const getLatestVersion = () => {
     if (Pro) {
-      this.props.showNotification(
+      props.showNotification(
         i18n.t('core:getLatestVersionPro'),
         'default',
         false
       );
     } else {
-      this.props.openFileNatively(AppConfig.links.downloadURL);
+      props.openFileNatively(AppConfig.links.downloadURL);
     }
-    this.props.setUpdateAvailable(false);
+    props.setUpdateAvailable(false);
   };
 
-  openChangelogPage = () => {
-    this.props.openFileNatively(AppConfig.links.changelogURL);
+  const openChangelogPage = () => {
+    props.openFileNatively(AppConfig.links.changelogURL);
   };
 
-  handleFileDrop = (item, monitor) => {
-    if (this.props.isReadOnlyMode) {
-      this.props.showNotification(
+  const handleFileDrop = (item, monitor) => {
+    if (props.isReadOnlyMode) {
+      props.showNotification(
         i18n.t('core:dndDisabledReadOnlyMode'),
         'error',
         true
@@ -505,378 +475,353 @@ class MainPage extends Component<Props, State> {
     if (monitor) {
       const { files } = monitor.getItem();
       console.log('Dropped files: ' + JSON.stringify(files));
-      if (!this.props.directoryPath) {
-        this.props.showNotification(
+      if (!props.directoryPath) {
+        props.showNotification(
           'Importing files failed, because no folder is opened in TagSpaces!',
           'error',
           true
         );
       } else {
-        this.props.resetProgress();
-        this.props
-          .uploadFilesAPI(
-            files,
-            this.props.directoryPath,
-            this.props.onUploadProgress
-          )
+        props.resetProgress();
+        props
+          .uploadFilesAPI(files, props.directoryPath, props.onUploadProgress)
           .then(fsEntries => {
-            this.props.reflectCreateEntries(fsEntries);
+            props.reflectCreateEntries(fsEntries);
             return true;
           })
           .catch(error => {
             console.log('uploadFiles', error);
           });
-        this.props.toggleUploadDialog();
+        props.toggleUploadDialog();
       }
     }
   };
 
-  chooseDirectoryPath = (currentPath: string) => {
-    this.setState({
-      selectedDirectoryPath: currentPath
-    });
+  const keyBindingHandlers = {
+    openParentDirectory: props.loadParentDirectoryContent,
+    toggleShowHiddenEntries: props.toggleShowUnixHiddenEntries,
+    showFolderNavigator: props.openLocationManagerPanel,
+    showTagLibrary: props.openTagLibraryPanel,
+    openSearch: props.openSearchPanel,
+    showHelp: props.openHelpFeedbackPanel
   };
 
-  keyBindingHandlers = {
-    openParentDirectory: this.props.loadParentDirectoryContent,
-    toggleShowHiddenEntries: this.props.toggleShowUnixHiddenEntries,
-    showFolderNavigator: this.props.openLocationManagerPanel,
-    showTagLibrary: this.props.openTagLibraryPanel,
-    openSearch: this.props.openSearchPanel,
-    showHelp: this.props.openHelpFeedbackPanel
+  const keyMap = {
+    openParentDirectory: props.keyBindings.openParentDirectory,
+    toggleShowHiddenEntries: props.keyBindings.toggleShowHiddenEntries,
+    showFolderNavigator: props.keyBindings.showFolderNavigator,
+    showTagLibrary: props.keyBindings.showTagLibrary,
+    openSearch: props.keyBindings.openSearch,
+    showHelp: props.keyBindings.showHelp
   };
 
-  keyMap = {
-    openParentDirectory: this.props.keyBindings.openParentDirectory,
-    toggleShowHiddenEntries: this.props.keyBindings.toggleShowHiddenEntries,
-    showFolderNavigator: this.props.keyBindings.showFolderNavigator,
-    showTagLibrary: this.props.keyBindings.showTagLibrary,
-    openSearch: this.props.keyBindings.openSearch,
-    showHelp: this.props.keyBindings.showHelp
+  const handleSplitSizeChange = size => {
+    if (size > 0 && dimensions.width) {
+      const sizeInPercent =
+        // @ts-ignore
+        parseInt((size * 100) / dimensions.width, 10) + '%';
+      // setMainSplitSize(sizeInPercent);
+      props.setMainVerticalSplitSize(sizeInPercent);
+    }
   };
 
-  render() {
-    const {
-      theme,
-      isCreateFileDialogOpened,
-      isSettingsDialogOpened,
-      isAboutDialogOpened,
-      isKeysDialogOpened,
-      isOnboardingDialogOpened,
-      isLicenseDialogOpened,
-      isThirdPartyLibsDialogOpened,
-      isSelectDirectoryDialogOpened,
-      isCreateDirectoryOpened,
-      isEditTagDialogOpened,
-      isUploadProgressDialogOpened,
-      isProgressDialogOpened,
-      toggleOnboardingDialog,
-      toggleSettingsDialog,
-      toggleKeysDialog,
-      toggleLicenseDialog,
-      toggleThirdPartyLibsDialog,
-      toggleAboutDialog,
-      toggleCreateDirectoryDialog,
-      toggleCreateFileDialog,
-      toggleSelectDirectoryDialog,
-      toggleUploadDialog,
-      toggleProgressDialog,
-      toggleEditTagDialog,
-      setFirstRun,
-      openURLExternally,
-      directoryPath
-    } = this.props;
-    const { FILE } = NativeTypes;
+  const {
+    theme,
+    toggleOnboardingDialog,
+    toggleSettingsDialog,
+    toggleKeysDialog,
+    toggleLicenseDialog,
+    toggleThirdPartyLibsDialog,
+    toggleAboutDialog,
+    toggleCreateDirectoryDialog,
+    toggleCreateFileDialog,
+    toggleSelectDirectoryDialog,
+    toggleUploadDialog,
+    toggleProgressDialog,
+    toggleEditTagDialog,
+    toggleOpenLinkDialog,
+    setFirstRun,
+    openURLExternally,
+    directoryPath
+  } = props;
+  const { FILE } = NativeTypes;
 
-    /* if (this.state.width < 400) {
+  /* if (this.state.width < 400) {
       this.setManagementPanelVisibility(false);
     } */
-    return (
-      <HotKeys handlers={this.keyBindingHandlers} keyMap={this.keyMap}>
-        {isAboutDialogOpened && (
-          <AboutDialogAsync
-            open={isAboutDialogOpened}
-            openURLExternally={openURLExternally}
-            toggleLicenseDialog={toggleLicenseDialog}
-            toggleThirdPartyLibsDialog={toggleThirdPartyLibsDialog}
-            onClose={toggleAboutDialog}
-          />
-        )}
-        {isKeysDialogOpened && (
-          <KeyboardDialogAsync
-            open={isKeysDialogOpened}
-            onClose={toggleKeysDialog}
-          />
-        )}
-        {isLicenseDialogOpened && (
-          <LicenseDialogAsync
-            open={isLicenseDialogOpened}
-            onClose={() => {
-              setFirstRun(false);
-              toggleLicenseDialog();
-            }}
-          />
-        )}
-        {isOnboardingDialogOpened && (
-          <OnboardingDialogAsync
-            open={isOnboardingDialogOpened}
-            onClose={toggleOnboardingDialog}
-          />
-        )}
-        {isThirdPartyLibsDialogOpened && (
-          <ThirdPartyLibsDialogAsync
-            open={isThirdPartyLibsDialogOpened}
-            onClose={toggleThirdPartyLibsDialog}
-          />
-        )}
-        {isEditTagDialogOpened && (
-          <EditEntryTagDialogAsync
-            open={isEditTagDialogOpened}
-            onClose={toggleEditTagDialog}
-          />
-        )}
-        {isSelectDirectoryDialogOpened && (
-          <SelectDirectoryAsync
-            open={isSelectDirectoryDialogOpened}
-            onClose={toggleSelectDirectoryDialog}
-            chooseDirectoryPath={this.chooseDirectoryPath}
-            selectedDirectoryPath={
-              this.state.selectedDirectoryPath || directoryPath
-            }
-          />
-        )}
-        {isUploadProgressDialogOpened && (
-          <FileUploadDialog
-            open={isUploadProgressDialogOpened}
-            onClose={toggleUploadDialog}
-          />
-        )}
-        {isProgressDialogOpened && (
-          <ProgressDialog
-            open={isProgressDialogOpened}
-            onClose={toggleProgressDialog}
-          />
-        )}
-        {isCreateDirectoryOpened && (
-          <CreateDirectoryDialog
-            open={isCreateDirectoryOpened}
-            onClose={toggleCreateDirectoryDialog}
-            selectedDirectoryPath={directoryPath}
-          />
-        )}
-        <CreateFileDialog
-          open={isCreateFileDialogOpened}
-          selectedDirectoryPath={
-            this.state.selectedDirectoryPath || directoryPath
+  return (
+    <HotKeys handlers={keyBindingHandlers} keyMap={keyMap}>
+      {props.isAboutDialogOpened && (
+        <AboutDialogAsync
+          open={props.isAboutDialogOpened}
+          openURLExternally={openURLExternally}
+          toggleLicenseDialog={toggleLicenseDialog}
+          toggleThirdPartyLibsDialog={toggleThirdPartyLibsDialog}
+          onClose={toggleAboutDialog}
+        />
+      )}
+      {props.isKeysDialogOpened && (
+        <KeyboardDialogAsync
+          open={props.isKeysDialogOpened}
+          onClose={toggleKeysDialog}
+        />
+      )}
+      {props.isLicenseDialogOpened && (
+        <LicenseDialogAsync
+          open={props.isLicenseDialogOpened}
+          onClose={() => {
+            setFirstRun(false);
+            toggleLicenseDialog();
+          }}
+        />
+      )}
+      {props.isOnboardingDialogOpened && (
+        <OnboardingDialogAsync
+          open={props.isOnboardingDialogOpened}
+          onClose={toggleOnboardingDialog}
+        />
+      )}
+      {props.isThirdPartyLibsDialogOpened && (
+        <ThirdPartyLibsDialogAsync
+          open={props.isThirdPartyLibsDialogOpened}
+          onClose={toggleThirdPartyLibsDialog}
+        />
+      )}
+      {props.isEditTagDialogOpened && (
+        <EditEntryTagDialogAsync
+          open={props.isEditTagDialogOpened}
+          onClose={toggleEditTagDialog}
+        />
+      )}
+      {props.isOpenLinkDialogOpened && (
+        <OpenLinkDialogAsync
+          open={props.isOpenLinkDialogOpened}
+          onClose={toggleOpenLinkDialog}
+        />
+      )}
+      {props.isSelectDirectoryDialogOpened && (
+        <SelectDirectoryAsync
+          open={props.isSelectDirectoryDialogOpened}
+          onClose={toggleSelectDirectoryDialog}
+          chooseDirectoryPath={currentPath =>
+            setSelectedDirectoryPath(currentPath)
           }
-          chooseDirectoryPath={this.chooseDirectoryPath}
+          selectedDirectoryPath={selectedDirectoryPath || directoryPath}
+        />
+      )}
+      {props.isUploadProgressDialogOpened && (
+        <FileUploadDialog
+          open={props.isUploadProgressDialogOpened}
+          onClose={toggleUploadDialog}
+        />
+      )}
+      {props.isProgressDialogOpened && (
+        <ProgressDialog
+          open={props.isProgressDialogOpened}
+          onClose={toggleProgressDialog}
+        />
+      )}
+      {props.isCreateDirectoryOpened && (
+        <CreateDirectoryDialog
+          open={props.isCreateDirectoryOpened}
+          onClose={toggleCreateDirectoryDialog}
+          selectedDirectoryPath={directoryPath}
+        />
+      )}
+      {props.isCreateFileDialogOpened && (
+        <CreateFileDialog
+          open={props.isCreateFileDialogOpened}
+          selectedDirectoryPath={selectedDirectoryPath || directoryPath}
+          chooseDirectoryPath={currentPath =>
+            setSelectedDirectoryPath(currentPath)
+          }
           onClose={toggleCreateFileDialog}
         />
+      )}
+      {props.isSettingsDialogOpened && (
         <SettingsDialog
-          open={isSettingsDialogOpened}
+          open={props.isSettingsDialogOpened}
           onClose={toggleSettingsDialog}
         />
-        <Snackbar
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-          open={this.props.notificationStatus.visible}
-          onClose={this.props.hideNotifications}
-          autoHideDuration={
-            this.props.notificationStatus.autohide ? 3000 : undefined
-          }
-          message={this.props.notificationStatus.text}
-          action={[
-            <IconButton
-              key="close"
-              aria-label={i18n.t('core:closeButton')}
-              color="inherit"
-              onClick={this.props.hideNotifications}
-            >
-              <CloseIcon />
-            </IconButton>
-          ]}
-        />
-        <Snackbar
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-          open={this.props.isGeneratingThumbs}
-          autoHideDuration={undefined}
-          message="Loading or generating thumbnails..."
-          action={[
-            <IconButton
-              key="closeButton"
-              aria-label={i18n.t('core:closeButton')}
-              color="inherit"
-              onClick={() => this.props.setGeneratingThumbnails(false)}
-            >
-              <CloseIcon />
-            </IconButton>
-          ]}
-        />
-        <Snackbar
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-          open={this.props.isIndexing}
-          autoHideDuration={undefined}
-          message="Indexing"
-          action={[
-            <Button
-              key="cancelIndexButton"
-              color="secondary"
-              size="small"
-              onClick={this.props.cancelDirectoryIndexing}
-              data-tid="cancelDirectoryIndexing"
-            >
-              {i18n.t('core:cancelIndexing')}
-            </Button>
-          ]}
-        />
-        <Snackbar
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-          open={this.props.isUpdateAvailable}
-          autoHideDuration={undefined}
-          message={'Version ' + this.props.lastPublishedVersion + ' available.'}
-          action={[
-            <Button
-              key="laterButton"
-              color="secondary"
-              size="small"
-              onClick={this.skipRelease}
-            >
-              {i18n.t('core:later')}
-            </Button>,
-            <Button
-              key="changelogButton"
-              color="secondary"
-              size="small"
-              onClick={this.openChangelogPage}
-            >
-              {i18n.t('core:releaseNotes')}
-            </Button>,
-            <Button
-              key="latestVersionButton"
-              color="primary"
-              size="small"
-              onClick={this.getLatestVersion}
-            >
-              {i18n.t('core:getItNow')}
-            </Button>
-          ]}
-        />
-        {this.props.isDesktopMode ? (
-          <TargetFileBox
-            // @ts-ignore
-            accepts={[FILE]}
-            onDrop={this.handleFileDrop}
+      )}
+      <Snackbar
+        data-tid={props.notificationStatus.tid}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        open={props.notificationStatus.visible}
+        onClose={props.hideNotifications}
+        autoHideDuration={props.notificationStatus.autohide ? 3000 : undefined}
+        message={props.notificationStatus.text}
+        action={[
+          <IconButton
+            data-tid={'close' + props.notificationStatus.tid}
+            key="close"
+            aria-label={i18n.t('core:closeButton')}
+            color="inherit"
+            onClick={props.hideNotifications}
           >
-            <CustomDragLayer />
-            <SplitPane
-              split="vertical"
-              style={{
-                borderTop:
-                  AppConfig.isElectron && !AppConfig.isMacLike
-                    ? '1px solid lightgray'
-                    : 'none'
-              }}
-              minSize={200}
-              maxSize={450}
-              resizerStyle={{ backgroundColor: theme.palette.divider }}
-              defaultSize={this.props.leftSplitSize}
-              size={
-                this.state.isManagementPanelVisible
-                  ? this.props.leftSplitSize
-                  : initialSplitSize
-              }
-              onChange={size => {
-                this.setState({
-                  isManagementPanelVisible: size > initialSplitSize
-                });
-                bufferedLeftSplitResize(() =>
-                  this.props.setLeftVerticalSplitSize(size)
-                );
-              }}
-            >
-              <VerticalNavigation />
-              <SplitPane
-                split="vertical"
-                minSize="200"
-                resizerStyle={{ backgroundColor: theme.palette.divider }}
-                size={this.state.mainSplitSize}
-                onChange={size => {
-                  if (size > 0 && this.state.width) {
-                    const sizeInPercent =
-                      // @ts-ignore
-                      parseInt((size * 100) / this.state.width, 10) + '%';
-                    this.setState({
-                      mainSplitSize: sizeInPercent
-                    });
-                    // bufferedMainSplitResize(() => this.props.setMainVerticalSplitSize(sizeInPercent));
-                    this.props.setMainVerticalSplitSize(sizeInPercent);
-                  }
-                }}
-              >
-                <FolderContainer
-                  windowHeight={this.state.height}
-                  windowWidth={this.state.width}
-                  openedFiles={this.props.openedFiles}
-                  currentDirectoryPath={this.props.directoryPath}
-                />
-                {this.props.openedFiles.length > 0 && (
-                  <EntryContainer
-                    openedFiles={this.props.openedFiles}
-                    currentDirectoryPath={this.props.directoryPath}
-                  />
-                )}
-              </SplitPane>
-            </SplitPane>
-          </TargetFileBox>
-        ) : (
-          <React.Fragment>
-            <SwipeableDrawer
-              open={this.state.isDrawerOpened}
-              onClose={this.hideDrawer}
-              onOpen={this.showDrawer}
-              hysteresis={0.1}
-              disableBackdropTransition={!AppConfig.isIOS}
-              disableDiscovery={AppConfig.isIOS}
-            >
-              <MobileNavigation hideDrawer={this.hideDrawer} />
-            </SwipeableDrawer>
+            <CloseIcon />
+          </IconButton>
+        ]}
+      />
+      <Snackbar
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        open={props.isGeneratingThumbs}
+        autoHideDuration={undefined}
+        message="Loading or generating thumbnails..."
+        action={[
+          <IconButton
+            key="closeButton"
+            aria-label={i18n.t('core:closeButton')}
+            color="inherit"
+            onClick={() => props.setGeneratingThumbnails(false)}
+          >
+            <CloseIcon />
+          </IconButton>
+        ]}
+      />
+      <Snackbar
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        open={props.isIndexing}
+        autoHideDuration={undefined}
+        message="Indexing"
+        action={[
+          <Button
+            key="cancelIndexButton"
+            color="secondary"
+            size="small"
+            onClick={props.cancelDirectoryIndexing}
+            data-tid="cancelDirectoryIndexing"
+          >
+            {i18n.t('core:cancelIndexing')}
+          </Button>
+        ]}
+      />
+      <Snackbar
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        open={props.isUpdateAvailable}
+        autoHideDuration={undefined}
+        message={'Version ' + props.lastPublishedVersion + ' available.'}
+        action={[
+          <Button
+            key="laterButton"
+            color="secondary"
+            size="small"
+            onClick={skipRelease}
+          >
+            {i18n.t('core:later')}
+          </Button>,
+          <Button
+            key="changelogButton"
+            color="secondary"
+            size="small"
+            onClick={openChangelogPage}
+          >
+            {i18n.t('core:releaseNotes')}
+          </Button>,
+          <Button
+            key="latestVersionButton"
+            color="primary"
+            size="small"
+            onClick={getLatestVersion}
+          >
+            {i18n.t('core:getItNow')}
+          </Button>
+        ]}
+      />
+      {props.isDesktopMode ? (
+        <TargetFileBox
+          // @ts-ignore
+          accepts={[FILE]}
+          onDrop={handleFileDrop}
+        >
+          <CustomDragLayer />
+          <SplitPane
+            split="vertical"
+            // style={{
+            //   borderTop:
+            //     AppConfig.isElectron && !AppConfig.isMacLike
+            //       ? '1px solid lightgray'
+            //       : 'none'
+            // }}
+            minSize={200}
+            maxSize={450}
+            resizerStyle={{ backgroundColor: theme.palette.divider }}
+            defaultSize={props.leftSplitSize}
+            size={
+              isManagementPanelVisible()
+                ? props.leftSplitSize
+                : initialSplitSize
+            }
+            onChange={size => {
+              // setManagementPanelVisible(size > initialSplitSize);
+              bufferedLeftSplitResize(() =>
+                props.setLeftVerticalSplitSize(size)
+              );
+            }}
+          >
+            <VerticalNavigation />
             <SplitPane
               split="vertical"
               minSize="200"
               resizerStyle={{ backgroundColor: theme.palette.divider }}
-              size={this.state.mainSplitSize}
-              onChange={size => {
-                if (size > 0 && this.state.width) {
-                  const sizeInPercent =
-                    // @ts-ignore
-                    parseInt((size * 100) / this.state.width, 10) + '%';
-                  this.setState({
-                    mainSplitSize: sizeInPercent
-                  });
-                  // bufferedMainSplitResize(() => this.props.setMainVerticalSplitSize(sizeInPercent));
-                  this.props.setMainVerticalSplitSize(sizeInPercent);
-                }
-              }}
+              size={getMainSplitSize()}
+              onChange={handleSplitSizeChange}
             >
               <FolderContainer
-                windowHeight={this.state.height}
-                windowWidth={this.state.width}
-                showDrawer={this.showDrawer}
-                openedFiles={this.props.openedFiles}
-                currentDirectoryPath={this.props.directoryPath}
+                windowHeight={dimensions.height}
+                windowWidth={dimensions.width}
+                openedFiles={props.openedFiles}
+                currentDirectoryPath={props.directoryPath}
               />
-              {this.props.openedFiles.length > 0 && (
+              {props.openedFiles.length > 0 && (
                 <EntryContainer
-                  openedFiles={this.props.openedFiles}
-                  currentDirectoryPath={this.props.directoryPath}
+                  openedFiles={props.openedFiles}
+                  currentDirectoryPath={props.directoryPath}
                 />
               )}
             </SplitPane>
-          </React.Fragment>
-        )}
-      </HotKeys>
-    );
-  }
-}
+          </SplitPane>
+        </TargetFileBox>
+      ) : (
+        <React.Fragment>
+          <SwipeableDrawer
+            open={isManagementPanelVisible()}
+            onClose={() => props.closeAllVerticalPanels()}
+            onOpen={showDrawer}
+            hysteresis={0.1}
+            disableBackdropTransition={!AppConfig.isIOS}
+            disableDiscovery={AppConfig.isIOS}
+          >
+            <MobileNavigation
+              hideDrawer={() => props.closeAllVerticalPanels()}
+            />
+          </SwipeableDrawer>
+          <SplitPane
+            split="vertical"
+            minSize="200"
+            resizerStyle={{ backgroundColor: theme.palette.divider }}
+            size={getMainSplitSize()}
+            onChange={handleSplitSizeChange}
+          >
+            <FolderContainer
+              windowHeight={dimensions.height}
+              windowWidth={dimensions.width}
+              showDrawer={showDrawer}
+              openedFiles={props.openedFiles}
+              currentDirectoryPath={props.directoryPath}
+            />
+            {props.openedFiles.length > 0 && (
+              <EntryContainer
+                openedFiles={props.openedFiles}
+                currentDirectoryPath={props.directoryPath}
+              />
+            )}
+          </SplitPane>
+        </React.Fragment>
+      )}
+    </HotKeys>
+  );
+};
 
 function mapStateToProps(state) {
   return {
@@ -891,6 +836,7 @@ function mapStateToProps(state) {
     isLicenseDialogOpened: isLicenseDialogOpened(state),
     isThirdPartyLibsDialogOpened: isThirdPartyLibsDialogOpened(state),
     isUploadProgressDialogOpened: isUploadDialogOpened(state),
+    isOpenLinkDialogOpened: isOpenLinkDialogOpened(state),
     isProgressDialogOpened: isProgressOpened(state),
     isIndexing: isIndexing(state),
     isReadOnlyMode: isReadOnlyMode(state),
@@ -939,6 +885,7 @@ function mapDispatchToProps(dispatch) {
       toggleThirdPartyLibsDialog: AppActions.toggleThirdPartyLibsDialog,
       toggleAboutDialog: AppActions.toggleAboutDialog,
       toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
+      toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
       setLastSelectedEntry: AppActions.setLastSelectedEntry,
       setSelectedEntries: AppActions.setSelectedEntries,
       setGeneratingThumbnails: AppActions.setGeneratingThumbnails,

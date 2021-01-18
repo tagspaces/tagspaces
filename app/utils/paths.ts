@@ -160,6 +160,7 @@ export function cleanTrailingDirSeparator(dirPath: string): string {
  * @returns {string} -> root/subFolder
  */
 export function normalizePath(path: string): string {
+  if (!path) return '';
   return cleanTrailingDirSeparator(path.replace(/\/\//g, '/'));
 }
 
@@ -354,13 +355,28 @@ export function extractTags(
   return cleanedTags;
 }
 
+export function getLocationPath(location: Location) {
+  if (location) {
+    if (location.path) {
+      return location.path;
+    }
+    if (location.paths && location.paths[0]) {
+      return location.paths[0];
+    }
+  }
+  return '';
+}
+
+/**
+ * @deprecated fail on S3 locations
+ * @param filePath
+ * @param locations
+ */
 export function extractLocation(filePath: string, locations: Array<Location>) {
   let currentLocation;
   const path = filePath.replace(/[/\\]/g, '');
   for (let i = 0; i < locations.length; i += 1) {
-    const locationPath = locations[i].path
-      ? locations[i].path.replace(/[/\\]/g, '')
-      : locations[i].paths[0].replace(/[/\\]/g, '');
+    const locationPath = getLocationPath(locations[i]).replace(/[/\\]/g, '');
 
     // Handle S3 empty location
     if (locationPath.length === 0) {

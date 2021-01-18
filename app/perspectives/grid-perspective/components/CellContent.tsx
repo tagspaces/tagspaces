@@ -17,16 +17,15 @@
  */
 
 import React from 'react';
-import formatDistance from 'date-fns/formatDistance';
 import removeMd from 'remove-markdown';
 import classNames from 'classnames';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
-import FolderIcon from '@material-ui/icons/FolderOpen';
-// import SelectedIcon from '@material-ui/icons/CheckCircle';
-// import UnSelectedIcon from '@material-ui/icons/RadioButtonUnchecked';
+import FolderIcon from '@material-ui/icons/Folder';
+import SelectedIcon from '@material-ui/icons/CheckBox';
+import UnSelectedIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import TagIcon from '@material-ui/icons/LocalOfferOutlined';
 import { formatFileSize, formatDateTime } from '-/utils/misc';
 import { extractTagsAsObjects, extractTitle } from '-/utils/paths';
@@ -51,6 +50,8 @@ interface Props {
   addTags: () => void;
   openFsEntry: (fsEntry: FileSystemEntry) => void;
   selectedEntries: Array<FileSystemEntry>;
+  selectEntry: (fsEntry: FileSystemEntry) => void;
+  deselectEntry: (fsEntry: FileSystemEntry) => void;
   isReadOnlyMode: boolean;
   showTags: boolean;
   handleTagMenu: (event: Object, tag: Tag, entryPath: string) => void;
@@ -78,9 +79,11 @@ const CellContent = (props: Props) => {
     handleGridCellDblClick,
     handleGridCellClick,
     showTags,
-    openFsEntry
+    openFsEntry,
+    selectEntry,
+    deselectEntry
   } = props;
-  const fsEntryBackgroundColor = fsEntry.color ? fsEntry.color : 'transparent';
+  const fsEntryBackgroundColor = fsEntry.color; //  ? fsEntry.color : 'transparent';
   const entryTitle = extractTitle(
     fsEntry.name,
     !fsEntry.isFile,
@@ -183,17 +186,20 @@ const CellContent = (props: Props) => {
         >
           {entryTitle}
         </Typography>
-        {fsEntry.isFile ? (
-          <div className={classes.gridDetails}>
-            <Typography
-              className={classes.gridFileExtension}
-              style={{ backgroundColor: fsEntryColor }}
-              noWrap={true}
-              variant="button"
-              title={fsEntry.path}
-            >
-              {fsEntry.extension}
-            </Typography>
+        <div className={classes.gridDetails}>
+          <Typography
+            className={classes.gridFileExtension}
+            style={{
+              backgroundColor: fsEntryColor,
+              maxWidth: fsEntry.isFile ? 50 : 100
+            }}
+            noWrap={true}
+            variant="button"
+            title={fsEntry.path}
+          >
+            {fsEntry.isFile ? fsEntry.extension : i18n.t('core:folder')}
+          </Typography>
+          {fsEntry.isFile && fsEntry.lmdt && (
             <Typography className={classes.gridSizeDate} variant="caption">
               <span
                 title={
@@ -202,25 +208,14 @@ const CellContent = (props: Props) => {
                   formatDateTime(fsEntry.lmdt, true)
                 }
               >
-                {fsEntry.lmdt &&
-                  ' ' +
-                    formatDistance(fsEntry.lmdt, new Date(), {
-                      addSuffix: true
-                    })}
+                {formatDateTime(fsEntry.lmdt, false)}
               </span>
               <span title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
-                {' ' + formatFileSize(fsEntry.size)}
+                {' | ' + formatFileSize(fsEntry.size)}
               </span>
             </Typography>
-          </div>
-        ) : (
-          <div className={classes.gridDetails} title={fsEntry.path}>
-            <FolderIcon
-              className={classes.gridFolder}
-              style={{ backgroundColor: fsEntryColor }}
-            />
-          </div>
-        )}
+          )}
+        </div>
       </div>
     );
   }
@@ -228,11 +223,11 @@ const CellContent = (props: Props) => {
   function renderRowCell(selected: boolean) {
     let tmbSize = 85;
     if (entrySize === 'small') {
-      tmbSize = 50;
+      tmbSize = 30;
     } else if (entrySize === 'normal') {
-      tmbSize = 85;
+      tmbSize = 70;
     } else if (entrySize === 'big') {
-      tmbSize = 120;
+      tmbSize = 100;
     }
     return (
       <Grid
@@ -249,30 +244,40 @@ const CellContent = (props: Props) => {
           item
           style={{
             minHeight: entryHeight,
-            width: 70,
-            maxWidth: 70,
-            padding: 10,
+            width: 50,
+            maxWidth: 50,
+            padding: 3,
             marginRight: 5,
-            textAlign: 'center',
-            backgroundColor: fsEntryBackgroundColor
+            textAlign: 'left',
+            display: 'flex'
           }}
         >
-          {fsEntry.isFile ? (
-            <div
-              className={classes.rowFileExtension}
-              title={fsEntry.path}
-              style={{ backgroundColor: fsEntryColor }}
-            >
-              {fsEntry.extension}
-            </div>
-          ) : (
-            <span title={fsEntry.path}>
-              <FolderIcon
-                className={classes.rowFolder}
-                style={{ backgroundColor: fsEntryColor }}
-              />
-            </span>
-          )}
+          <div
+            className={classes.rowFileExtension}
+            role="presentation"
+            title={fsEntry.path}
+            onClick={e => {
+              e.stopPropagation();
+              if (selected) {
+                deselectEntry(fsEntry);
+              } else {
+                selectEntry(fsEntry);
+              }
+            }}
+            style={{
+              backgroundColor: fsEntry.isFile
+                ? fsEntryColor
+                : fsEntryBackgroundColor || fsEntryColor
+            }}
+          >
+            {fsEntry.isFile ? fsEntry.extension : <FolderIcon />}
+            {entrySize !== 'small' &&
+              (selected ? (
+                <SelectedIcon style={{ paddingTop: 5 }} />
+              ) : (
+                <UnSelectedIcon style={{ paddingTop: 5 }} />
+              ))}
+          </div>
         </Grid>
         {entrySize === 'small' ? (
           <Grid
@@ -301,9 +306,9 @@ const CellContent = (props: Props) => {
               : tagPlaceholder}
             <Typography
               style={{
-                color: 'gray',
-                padding: 5
+                color: 'gray'
               }}
+              variant="body2"
             >
               <span title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
                 {fsEntry.isFile && formatFileSize(fsEntry.size) + ' - '}
@@ -317,14 +322,10 @@ const CellContent = (props: Props) => {
               >
                 {fsEntry.isFile &&
                   fsEntry.lmdt &&
-                  '️ ' +
-                    formatDistance(fsEntry.lmdt, new Date(), {
-                      addSuffix: true
-                    }) +
-                    ' '}
+                  formatDateTime(fsEntry.lmdt, false)}
               </span>
               <span title={i18n.t('core:entryDescription')}>
-                {description && description}
+                {description && (fsEntry.isFile && ' | ') + description}
               </span>
             </Typography>
           </Grid>
@@ -375,11 +376,11 @@ const CellContent = (props: Props) => {
 
   let entryHeight = 130;
   if (entrySize === 'small') {
-    entryHeight = 50;
+    entryHeight = 35;
   } else if (entrySize === 'normal') {
-    entryHeight = 80;
+    entryHeight = 70;
   } else if (entrySize === 'big') {
-    entryHeight = 130;
+    entryHeight = 100;
   }
 
   let gridCell: any = React.Fragment;

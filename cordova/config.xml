@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="org.tagspaces.mobile" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>TagSpaces Beta</name>
+    <name>TagSpaces</name>
     <description>
 		Offline file organizer and browser with tagging support.
     </description>
@@ -19,6 +19,7 @@
         <allow-intent href="market:*" />
         <preference name="android-minSdkVersion" value="22" />
         <preference name="android-targetSdkVersion" value="27" />
+		<preference name="AndroidXEnabled" value="true" />
         <icon density="mdpi" src="res/icon/android/mipmap-mdpi/ic_launcher.png" />
         <icon density="hdpi" src="res/icon/android/mipmap-hdpi/ic_launcher.png" />
         <icon density="xhdpi" src="res/icon/android/mipmap-xhdpi/ic_launcher.png" />

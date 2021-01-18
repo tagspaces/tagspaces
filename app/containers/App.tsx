@@ -23,18 +23,19 @@ import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import i18n from '../services/i18n';
 import { getCurrentTheme } from '../reducers/settings';
 import AppOnBoarding from '../components/AppOnboarding';
+import AppConfig from '-/config';
 
 const lightTheme = createMuiTheme({
   palette: {
     type: 'light', // Switching the dark mode on is a single property value change.
     primary: {
-      light: '#dcf3ec',
-      main: '#1DD19F',
-      dark: '#1DD19F',
+      light: AppConfig.lightThemeLightColor,
+      main: AppConfig.lightThemeMainColor,
+      dark: AppConfig.lightThemeMainColor,
       contrastText: '#ffffff'
     },
     secondary: {
-      main: '#1DD19F'
+      main: AppConfig.lightThemeMainColor
     },
     divider: '#ddd'
     // secondary: { main: '#cccccc', 200: '#ddd' }
@@ -45,13 +46,13 @@ const darkTheme = createMuiTheme({
   palette: {
     type: 'dark',
     primary: {
-      light: '#56454e',
-      main: '#ff9abe',
-      dark: '#a21547',
+      light: AppConfig.darkThemeLightColor,
+      main: AppConfig.darkThemeMainColor,
+      dark: AppConfig.darkThemeMainColor,
       contrastText: '#ffffff'
     },
     secondary: {
-      main: '#ff9abe'
+      main: AppConfig.darkThemeMainColor
     },
     divider: '#555'
     // secondary: { main: '#555', 200: '#777' }

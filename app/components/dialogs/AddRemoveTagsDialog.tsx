@@ -147,6 +147,7 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
         <DialogTitle>{i18n.t('core:tagOperationTitle')}</DialogTitle>
         <DialogContent style={{ minHeight: 330 }}>
           <TagsSelect
+            dataTid="AddRemoveTagsSelectTID"
             placeholderText={i18n.t('core:selectTags')}
             tags={newlyAddedTags}
             handleChange={this.handleChange}

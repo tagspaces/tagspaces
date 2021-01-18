@@ -17,8 +17,11 @@
  */
 
 import uuidv1 from 'uuid';
-import { immutablySwapItems } from '../utils/misc';
-import { actions as AppActions } from '../reducers/app';
+import { immutablySwapItems } from '-/utils/misc';
+import { actions as AppActions } from '-/reducers/app';
+import i18n from '-/services/i18n';
+import PlatformIO from '-/services/platform-io';
+import AppConfig from '-/config';
 
 export const types = {
   ADD_LOCATION: 'APP/ADD_LOCATION',
@@ -35,13 +38,14 @@ export const locationType = {
 
 export type Location = {
   uuid: string;
+  newuuid?: string;
   name: string;
   type: string;
   accessKeyId?: string;
   secretAccessKey?: string;
   bucketName?: string;
   region?: string;
-  paths: Array<string>;
+  paths?: Array<string>; // deprecated
   path?: string;
   endpointURL?: string;
   children?: Array<any>;
@@ -88,7 +92,14 @@ export default (state: Array<Location> = initialState, action: any) => {
       if (indexForEditing >= 0) {
         return [
           ...state.slice(0, indexForEditing),
-          { ...state[indexForEditing], ...action.location },
+          {
+            ...state[indexForEditing],
+            ...action.location,
+            uuid:
+              action.location.newuuid !== undefined
+                ? action.location.newuuid
+                : action.location.uuid
+          },
           ...state.slice(indexForEditing + 1)
         ];
       }
@@ -143,6 +154,26 @@ export default (state: Array<Location> = initialState, action: any) => {
 };
 
 export const actions = {
+  setDefaultLocations: () => (dispatch: (actions: Object) => void) => {
+    const devicePaths = PlatformIO.getDevicePaths();
+
+    Object.keys(devicePaths).forEach(key => {
+      dispatch(
+        actions.addLocation(
+          {
+            uuid: uuidv1(),
+            type: locationType.TYPE_LOCAL,
+            name: i18n.t(key),
+            path: devicePaths[key],
+            isDefault: AppConfig.isWeb && devicePaths[key] === '/files/', // Used for the web ts demo
+            isReadOnly: false,
+            persistIndex: false
+          },
+          false
+        )
+      );
+    });
+  },
   addLocation: (location: Location, openAfterCreate: boolean = true) => (
     dispatch: (actions: Object) => void
   ) => {
@@ -150,6 +181,27 @@ export const actions = {
     if (openAfterCreate) {
       dispatch(AppActions.openLocation(location));
     }
+  },
+  /**
+   * @param arrLocations
+   * @param override = true - if location exist override else skip
+   */
+  addLocations: (arrLocations: Array<Location>, override: boolean = true) => (
+    dispatch: (actions: Object) => void,
+    getState: () => any
+  ) => {
+    arrLocations.forEach((newLocation: Location, idx, array) => {
+      const { locations } = getState();
+      const locationExist: boolean = locations.some(
+        location => location.uuid === newLocation.uuid
+      );
+      const isLast = idx === array.length - 1;
+      if (!locationExist) {
+        dispatch(actions.addLocation(newLocation, isLast));
+      } else if (override) {
+        dispatch(actions.editLocation(newLocation, isLast));
+      }
+    });
   },
   createLocation: (location: Location) => ({
     type: types.ADD_LOCATION,
@@ -160,12 +212,30 @@ export const actions = {
     type: types.MOVE_DOWN_LOCATION,
     uuid
   }),
-  editLocation: (location: Location) => (
+  editLocation: (location: Location, openAfterEdit: boolean = true) => (
     dispatch: (actions: Object) => void
   ) => {
     dispatch(actions.changeLocation(location));
-    dispatch(AppActions.openLocation(location));
-    dispatch(AppActions.setReadOnlyMode(location.isReadOnly || false));
+    if (PlatformIO.haveObjectStoreSupport()) {
+      // disableObjectStoreSupport to revoke objectStoreAPI cached object
+      PlatformIO.disableObjectStoreSupport();
+    }
+    if (openAfterEdit) {
+      /**
+       * check if location uuid is changed
+       */
+      if (
+        location.newuuid !== undefined &&
+        location.newuuid !== location.uuid
+      ) {
+        dispatch(
+          AppActions.openLocation({ ...location, uuid: location.newuuid })
+        );
+      } else {
+        dispatch(AppActions.openLocation(location));
+      }
+      dispatch(AppActions.setReadOnlyMode(location.isReadOnly || false));
+    }
   },
   changeLocation: (location: Location) => ({
     type: types.EDIT_LOCATION,
