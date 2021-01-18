@@ -23,6 +23,9 @@ export async function createTagGroup(tagGroupName) {
 
     await setInputKeys('createTagGroupInput', tagGroupName);
     await clickOn('[data-tid=createTagGroupConfirmButton]');
+    if (isWeb) {
+      await global.client.pause(500);
+    }
   }
 }
 
@@ -59,6 +62,7 @@ describe('TST04 - Testing the tag library:', () => {
     );
 
     await clickOn('[data-tid=tagLibraryMoreButton_' + testGroup + ']');
+    await global.client.pause(500);
     await clickOn('[data-tid=deleteTagGroup]');
     await global.client.pause(500);
     await clickOn('[data-tid=confirmDeleteTagGroupDialog]');
@@ -108,9 +112,10 @@ describe('TST04 - Testing the tag library:', () => {
     );
     const color = await colorElem.getCSSProperty('background');
 
-    expect(color.value).toContain(
-      'rgb(0,0,0)'
-    ); /*await openTagGroupMenu(
+    expect(color.value).toContain('rgb(0,0,0)');
+    await clickOn('[data-tid=editTagGroupConfirmButton]');
+
+    /*await openTagGroupMenu(
       testGroup
     );
     await delay(500);
@@ -174,7 +179,7 @@ describe('TST04 - Testing the tag library:', () => {
     await tagMenu('next', 'deleteTagDialog');
     await global.client.pause(500);
     await clickOn('[data-tid=confirmDeleteTagDialogTagMenu]');
-    await expectElementExist('[data-tid=tagContainer_done]', false);
+    await expectElementExist('[data-tid=tagContainer_next]', false);
   });
 
   it('TST0409 - Should sort tags in a tag group lexicographically [TST0409,web,minio,electron]', async () => {

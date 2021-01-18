@@ -18,8 +18,8 @@ export async function clickOn(selector, options = {}) {
   const element = await global.client.$(selector);
   await element.waitUntil(
     async function() {
-      // const displayed = await this.isDisplayed();
-      const displayed = await this.isDisplayedInViewport();
+      const displayed = await this.isDisplayed();
+      // const displayed = await this.isDisplayedInViewport();
       return displayed === true;
     },
     {
@@ -27,6 +27,8 @@ export async function clickOn(selector, options = {}) {
       timeoutMsg: 'clickOn selector ' + selector + ' to exist after 5s'
     }
   );
+  await element.scrollIntoView();
+  await element.moveTo(selector);
   await element.click(options);
 }
 

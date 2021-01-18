@@ -67,7 +67,9 @@ jobs:
         if: always()
         with:
           name: test-pages
-          path: tests/test-pages/
+          path: |
+            tests/test-pages/
+            tests/test-reports/
   # gitHubActionForNpmMac:
   #  name: Validating MacOS
   #  runs-on: macos-latest

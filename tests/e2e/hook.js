@@ -64,11 +64,16 @@ export async function startSpectronApp() {
           script: 60000
         }
       },
-      /*afterTest: async (test, context, result) => {
-        takeScreenshot();
+      /* afterTest: [async function(
+        test,
+        context,
+        { error, result, duration, passed, retries }
+      ) {
+        await takeScreenshot();
         await clearLocalStorage();
-      },*/
+      }], */
       waitforTimeout: 5000,
+      maxInstances: 1,
       // logLevel: 'debug'
       logLevel: 'silent'
     };

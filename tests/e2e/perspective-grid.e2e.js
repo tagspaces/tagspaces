@@ -153,7 +153,7 @@ describe('TST50 - Perspective Grid', () => {
     });
   });
 
-  test('TST5004 - Select/deselect all files [TST5004,web,minio,electron]', async () => {
+  test('TST5004 - Select-deselect all files [TST5004,web,minio,electron]', async () => {
     const classNotSelected = await getGridCellClass(0);
     const classSelected = await selectAllFiles(classNotSelected);
 
