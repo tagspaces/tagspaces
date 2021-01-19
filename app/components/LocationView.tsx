@@ -76,8 +76,8 @@ interface Props {
   toggleUploadDialog: () => void;
   moveFiles: (files: Array<string>, destination: string) => void;
   showUnixHiddenEntries: boolean;
-  setEditLocationDialogOpened: boolean;
-  setDeleteLocationDialogOpened: boolean;
+  setEditLocationDialogOpened: (open: boolean) => void;
+  setDeleteLocationDialogOpened: (open: boolean) => void;
   selectedLocation: Location;
   setSelectedLocation: (loc: Location) => void;
   changeLocation: (loc: Location) => void;
