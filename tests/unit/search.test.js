@@ -1,5 +1,5 @@
 import Search from '../../app/services/search';
-import { entry1, entry2, entry3 } from './testEntries.json';
+// import searchdata from '-/testEntries.json';
 
 /*const mockedSearchIndex = { data: {} };
 const SearchMock = jest.fn();
@@ -49,52 +49,78 @@ const tag1 = { title: 'tagTitle1' };
 const tag2 = { title: 'tagTitle2' };
 const tag3 = { title: 'tagTitle3' };
 
-// const entry1 = {
-//   name: 'entryTitle1',
-//   description: 'test description',
-//   isFile: true,
-//   extension: 'jpg',
-//   tags: [tag1],
-//   fileSize: 111,
-//   path: '/gg/'
-// };
+const entry1 = {
+  name: 'entryTitle1',
+  description: 'test description',
+  isFile: true,
+  extension: 'jpg',
+  tags: [tag1],
+  fileSize: 111,
+  path: '/gg/'
+};
 
-// const entry2 = {
-//   name: 'entryTitle2',
-//   isFile: true,
-//   extension: 'jpg',
-//   tags: [tag2],
-//   fileSize: 222,
-//   path: '/gg/'
-// };
+const entry2 = {
+  name: 'entryTitle2',
+  isFile: true,
+  extension: 'jpg',
+  tags: [tag2],
+  fileSize: 222,
+  path: '/gg/'
+};
 
-// const entry3 = {
-//   name: 'testFolder1',
-//   description: 'test folder desciption',
-//   isDirectory: true,
-//   path: '/gg/'
-// };
+const entry3 = {
+  name: 'testFolder1',
+  description: 'test folder desciption',
+  isDirectory: true,
+  path: '/gg/'
+};
+
+// test('calls Search.searchLocationIndex for tags', () => {
+//   const locationContent = [entry1, entry2]; //enhanceEntry(entry)];
+
+//   const searchQuery = {
+//     tagsAND: [tag1],
+//     maxSearchResults: 2
+//   };
+
+//   const searchQueryNotExist = {
+//     tagsAND: [tag3],
+//     maxSearchResults: 2
+//   };
+
+//   expect(
+//     Search.searchLocationIndex(locationContent, searchQuery)
+//   ).resolves.toStrictEqual([entry1]);
+
+//   expect(
+//     Search.searchLocationIndex(locationContent, searchQuery)
+//   ).resolves.not.toStrictEqual([entry2]);
+
+//   expect(
+//     Search.searchLocationIndex(locationContent, searchQueryNotExist)
+//   ).resolves.toStrictEqual([]);
+// });
 
 test('calls Search.searchLocationIndex for tags', () => {
-  const locationContent = [entry1, entry2]; //enhanceEntry(entry)];
+  const locationContent = [entry1, entry2];
 
   const searchQuery = {
     tagsAND: [tag1],
     maxSearchResults: 2
   };
 
+  expect(
+    Search.searchLocationIndex(locationContent, searchQuery)
+  ).resolves.toStrictEqual([entry1]);
+});
+
+test.only('calls Search.searchLocationIndex for not exist tags', () => {
+  const locationContent = [entry1, entry2];
+
   const searchQueryNotExist = {
     tagsAND: [tag3],
     maxSearchResults: 2
   };
-
-  expect(
-    Search.searchLocationIndex(locationContent, searchQuery)
-  ).resolves.toStrictEqual([entry1]);
-
-  expect(
-    Search.searchLocationIndex(locationContent, searchQuery)
-  ).resolves.not.toStrictEqual([entry2]);
 
   expect(
     Search.searchLocationIndex(locationContent, searchQueryNotExist)

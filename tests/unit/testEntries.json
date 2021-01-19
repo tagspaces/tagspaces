@@ -1,57 +1,50 @@
 {
-  "appName": "TagSpaces",
-  "appVersion": "3.7.7",
-  "settingsVersion": 3,
   "entries": [
     {
-      "entry1": [
+      "name": "entryTitle1",
+      "description": "test description",
+      "isFile": true,
+      "extension": "jpg",
+      "tags": [
         {
-          "name": "entryTitle1",
-          "description": "test description",
-          "isFile": true,
-          "extension": "jpg",
-          "tags": [
-            {
-              "style": "color: #333333 !important; background-color: #ffad46 !important;",
-              "title": "tagTitle1",
-              "type": "sidecar"
-            }
-          ],
-          "textConten": "adsadas dasda",
-          "lat": "",
-          "lon": "",
-          "fromTime": "",
-          "toTime": "",
-          "fileSize": 111
+          "style": "color: #333333 !important; background-color: #ffad46 !important;",
+          "title": "tagTitle1",
+          "type": "sidecar"
         }
       ],
-      "entry2": [
+      "textConten": "adsadas dasda",
+      "lat": "",
+      "lon": "",
+      "fromTime": "",
+      "toTime": "",
+      "fileSize": 111
+    }
+  ],
+  "entry2": [
+    {
+      "name": "entryTitle2",
+      "isFile": true,
+      "extension": "jpg",
+      "tags": [
         {
-          "name": "entryTitle2",
-          "isFile": true,
-          "extension": "jpg",
-          "tags": [
-            {
-              "style": "color: #333333 !important; background-color: #ffad46 !important;",
-              "title": "tagTitle2",
-              "type": "sidecar"
-            }
-          ],
-          "textConten": "adsadas",
-          "lat": "",
-          "lon": "",
-          "fromTime": "",
-          "toTime": "",
-          "fileSize": 222
+          "style": "color: #333333 !important; background-color: #ffad46 !important;",
+          "title": "tagTitle2",
+          "type": "sidecar"
         }
       ],
-      "entry3": [
-        {
-          "name": "testFolder1",
-          "description": "test folder description",
-          "isDirecotory": true
-        }
-      ]
+      "textConten": "adsadas",
+      "lat": "",
+      "lon": "",
+      "fromTime": "",
+      "toTime": "",
+      "fileSize": 222
+    }
+  ],
+  "entry3": [
+    {
+      "name": "testFolder1",
+      "description": "test folder description",
+      "isDirecotory": true
     }
   ]
 }
