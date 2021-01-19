@@ -66,7 +66,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         if: always()
         with:
-          name: test-pages
+          name: test-artifacts
           path: |
             tests/test-pages/
             tests/test-reports/
@@ -79,7 +79,6 @@ jobs:
       - name: Checking out default branch
         uses: actions/checkout@v2
         with:
-          ref: develop
           submodules: true
       - name: Checkout TagspacesPro
         uses: actions/checkout@v2
@@ -114,11 +113,18 @@ jobs:
           yarn build-main
           yarn build-e2e
           yarn test-e2e-web
+      - uses: IgnusG/jest-report-action@v2.3.3
+        if: always() # Run regardless of whether other steps failed
+        with:
+          access-token: ${{ secrets.GITHUB_TOKEN }}
+          working-directory: tests
       - uses: actions/upload-artifact@v2
         if: always()
         with:
-          name: test-pages
-          path: tests/test-pages/
+          name: test-artifacts
+          path: |
+            tests/test-pages/
+            tests/test-reports/
   # gitHubActionForNpmMac:
   #  name: Validating MacOS
   #  runs-on: macos-latest

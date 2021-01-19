@@ -250,7 +250,7 @@ describe('TST50 - Perspective Grid', () => {
    * web cannot find bmp file
    */
   test('TST5008 - Copy file [TST5008,electron]', async () => {
-    await searchEngine('bmp');
+    await searchEngine('bmp', { reindexing: true });
 
     // select file
     await clickOn(selectorFile);
