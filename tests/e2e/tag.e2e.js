@@ -220,6 +220,7 @@ describe('TST04 - Testing the tag library:', () => {
     const color = await colorElem.getCSSProperty('background');
 
     expect(color.value).toContain('rgb(0,0,0)');
+    await clickOn('[data-tid=createTagGroupCancelButton]');
 
     /* await global.client.waitForVisible('[data-tid=settings]');
     await global.client.click('[data-tid=settings]');

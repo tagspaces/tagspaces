@@ -63,6 +63,6 @@ beforeEach(async () => {
 
 afterEach(async () => {
   // takeScreenshot();
-  await clearLocalStorage();
-  // await clearStorage();
+  // await clearLocalStorage();
+  await clearStorage();
 });

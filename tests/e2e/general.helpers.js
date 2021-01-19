@@ -27,8 +27,8 @@ export async function clickOn(selector, options = {}) {
       timeoutMsg: 'clickOn selector ' + selector + ' to exist after 5s'
     }
   );
-  await element.scrollIntoView();
-  await element.moveTo(selector);
+  //await element.scrollIntoView();
+  //await element.moveTo(selector);
   await element.click(options);
 }
 

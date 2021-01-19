@@ -68,14 +68,15 @@ export async function startSpectronApp() {
         test,
         context,
         { error, result, duration, passed, retries }
-      ) {
+      ) => {
         await takeScreenshot();
         await clearLocalStorage();
       }], */
       waitforTimeout: 5000,
       maxInstances: 1,
       // logLevel: 'debug'
-      logLevel: 'silent'
+      logLevel: 'silent',
+      coloredLogs: true
     };
     if (global.isHeadlessChrome) {
       options = {
@@ -180,7 +181,14 @@ export function testDataRefresh() {
 
 export async function takeScreenshot() {
   // if (jasmine.currentTest.failedExpectations.length > 0) {
-  if (global.isElectron) {
+  if (global.isWeb){
+    await global.client.saveFullPageScreen(
+        `${expect.getState().currentTestName}`,
+        {
+          fullPageScrollTimeout: '1500'
+        }
+    );
+  } else {
     // await global.client.takeScreenshot();
     const filename = `${expect.getState().currentTestName}.png`; // -${new Date().toISOString()}
     //.replace(/\s/g, '_')
@@ -202,15 +210,7 @@ export async function takeScreenshot() {
         .catch(function(error) {
           console.error('saving page failed', error.message);
         });*/
-  } else {
-    await global.client.saveFullPageScreen(
-      `${expect.getState().currentTestName}`,
-      {
-        fullPageScrollTimeout: '1500'
-      }
-    );
   }
-  // }
 }
 
 // the path the electron app, that will be tested

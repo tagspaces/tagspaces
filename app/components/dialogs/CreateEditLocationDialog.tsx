@@ -488,4 +488,4 @@ const CreateEditLocationDialog = (props: Props) => {
   );
 };
 
-export default withStyles(styles)(withMobileDialog()(CreateEditLocationDialog));
+export default withMobileDialog()(withStyles(styles)(CreateEditLocationDialog));
