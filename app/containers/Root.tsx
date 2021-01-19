@@ -42,10 +42,10 @@ type RootType = {
 
 function disableBackGestureMac() {
   if (AppConfig.isMacLike) {
-    const element = document.querySelector('body');
+    const element = document.getElementById('root');
     element.addEventListener('touchstart', (e: MouseEvent) => {
       // is not near edge of view, exit
-      if (e.pageX > 10 && e.pageX < window.innerWidth - 10) return;
+      // if (e.pageX > 10 && e.pageX < window.innerWidth - 10) return;
 
       // prevent swipe to navigate gesture
       e.preventDefault();
