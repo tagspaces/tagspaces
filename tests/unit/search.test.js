@@ -114,7 +114,7 @@ test('calls Search.searchLocationIndex for tags', () => {
   ).resolves.toStrictEqual([entry1]);
 });
 
-test.only('calls Search.searchLocationIndex for not exist tags', () => {
+test('calls Search.searchLocationIndex for not exist tags', () => {
   const locationContent = [entry1, entry2];
 
   const searchQueryNotExist = {
