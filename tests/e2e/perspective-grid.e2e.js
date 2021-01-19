@@ -7,7 +7,8 @@ import {
   defaultLocationName,
   closeFileProperties,
   deleteFirstFile,
-  createMinioLocation
+  createMinioLocation,
+  getFirstFileName
 } from './location.helpers';
 import { searchEngine } from './search.spec';
 import {
@@ -250,7 +251,7 @@ describe('TST50 - Perspective Grid', () => {
    * web cannot find bmp file
    */
   test('TST5008 - Copy file [TST5008,electron]', async () => {
-    await searchEngine('bmp', { reindexing: true });
+    const fileName = await getFirstFileName();
 
     // select file
     await clickOn(selectorFile);
@@ -262,11 +263,10 @@ describe('TST50 - Perspective Grid', () => {
     );
     await clickOn('[data-tid=confirmCopyFiles]');
     await waitForNotification();
-    await clickOn('#clearSearchID');
-    await global.client.pause(500);
+
     await doubleClickOn(perspectiveGridTable + firstFolder);
     const firstFileName = await getGridFileName(0);
-    expect(firstFileName).toBe('sample.bmp');
+    expect(firstFileName).toBe(fileName);
     // cleanup
     await deleteFirstFile();
     await expectElementExist(selectorFile, false);
