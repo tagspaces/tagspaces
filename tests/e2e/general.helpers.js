@@ -19,8 +19,9 @@ export async function clickOn(selector, options = {}) {
   await element.waitUntil(
     async function() {
       const displayed = await this.isDisplayed();
+      const clickable = await this.isClickable();
       // const displayed = await this.isDisplayedInViewport();
-      return displayed === true;
+      return displayed && clickable;
     },
     {
       timeout: 5000,
@@ -32,6 +33,10 @@ export async function clickOn(selector, options = {}) {
   await element.click(options);
 }
 
+/*export async function waitUntilOpen(element) {
+  // const element = await global.client.$(selector);
+  await element.waitUntil(async () => await this.isOpen());
+}*/
 /**
  *
  * @param selector

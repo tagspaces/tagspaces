@@ -284,6 +284,9 @@ describe('TST50** - Right button on a file', () => {
       perspectiveGridTable + firstFolder,
       'openDirectory'
     );
+    if (isWeb) {
+      await global.client.pause(500);
+    }
     const firstFileName = await getGridFileName(0);
     expect(firstFileName).toBe(undefined); //'sample.eml');
   });
