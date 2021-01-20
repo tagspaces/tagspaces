@@ -19,9 +19,9 @@ export async function clickOn(selector, options = {}) {
   await element.waitUntil(
     async function() {
       const displayed = await this.isDisplayed();
-      const clickable = await this.isClickable();
+      // const clickable = await this.isClickable();
       // const displayed = await this.isDisplayedInViewport();
-      return displayed && clickable;
+      return displayed; // && clickable;
     },
     {
       timeout: 5000,
@@ -67,8 +67,9 @@ export async function doubleClickOn(selector) {
   const element = await global.client.$(selector);
   await element.waitUntil(
     async function() {
-      const displayed = await this.isDisplayedInViewport();
-      return displayed === true;
+      const displayed = await this.isDisplayed();
+      // const displayed = await this.isDisplayedInViewport();
+      return displayed; //=== true;
     },
     {
       timeout: 5000,
@@ -238,16 +239,23 @@ export async function expectElementExist(
   const element = await global.client.$(selector);
   await element.waitUntil(
     async function() {
-      const displayed = await this.isDisplayedInViewport();
+      const displayed = await this.isDisplayed();
+      // const displayed = await this.isDisplayedInViewport();
       return displayed === exist;
     },
     {
       timeout: timeout,
       timeoutMsg:
-        'expected selector to exist=' + exist + ' after ' + timeout / 1000 + 's'
+        'expectElementExist selector:' +
+        selector +
+        ' to exist=' +
+        exist +
+        ' after ' +
+        timeout / 1000 +
+        's'
     }
   );
-  expect(await element.isDisplayedInViewport()).toBe(exist);
+  expect(await element.isDisplayed()).toBe(exist);
   return element;
 }
 
@@ -329,12 +337,21 @@ export async function selectRowFiles(arrIndex = []) {
   for (let i = 0; i < arrIndex.length; i++) {
     const index =
       arrIndex[i] < 0 ? filesList.length + arrIndex[i] : arrIndex[i];
-
-    let parent = await filesList[index].$('..');
-    parent = await parent.$('..');
-    parent = await parent.$('..');
-    arrElements.push(await parent.getAttribute('data-entry-id'));
-    filesList[index].click();
+    if (filesList[index]) {
+      let parent = await filesList[index].$('..');
+      parent = await parent.$('..');
+      parent = await parent.$('..');
+      arrElements.push(await parent.getAttribute('data-entry-id'));
+      filesList[index].click();
+    } else {
+      console.log(
+        'selectRowFiles filesList.length:' +
+          filesList.length +
+          ' with index:' +
+          index +
+          ' not exist'
+      );
+    }
   }
   await clickOn('[data-tid=gridPerspectiveSwitchLayoutToGrid]');
   return arrElements;

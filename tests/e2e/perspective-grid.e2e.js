@@ -204,31 +204,34 @@ describe('TST50 - Perspective Grid', () => {
     }*/
   });
 
+  /**
+   * TODO merge with TST5005
+   */
   test('TST5006 - Remove tags from selected files [TST5006,web,minio,electron]', async () => {
-    const classNotSelected = await getGridCellClass(0);
+    /*const classNotSelected = await getGridCellClass(0);
     const classSelected = await selectAllFiles(classNotSelected);
-    expect(classNotSelected).not.toBe(classSelected);
+    expect(classNotSelected).not.toBe(classSelected);*/
+
+    //open Option menu
+    await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
+    //click on hide directories
+    await clickOn('[data-tid=gridPerspectiveToggleShowDirectories]');
+
+    const selectedIds = await selectRowFiles([0, 1, 2]);
 
     const tags = ['test-tag1', 'test-tag2'];
     await AddRemoveTagsToSelectedFiles(tags, false);
 
+    for (let i = 0; i < selectedIds.length; i++) {
+      const element = await global.client.$(
+        '[data-entry-id="' + selectedIds[i] + '"]'
+      );
+      await expectTagsExist(element, tags, false);
+    }
     // Select all file and check if tag exist
-    const filesList = await global.client.$$(perspectiveGridTable + firstFile);
+    /*const filesList = await global.client.$$(perspectiveGridTable + firstFile);
     for (let i = 0; i < filesList.length; i++) {
       await expectTagsExist(filesList[i], tags, false);
-    }
-    /*await clickOn('[data-tid=gridPerspectiveAddRemoveTags]');
-
-    await addInputKeys('AddRemoveTagsSelectTID', testTagName);
-    await global.client.keys('Enter');
-    await global.client.pause(500);
-    await clickOn('[data-tid=removeTagsMultipleEntries]');
-    // await global.client.pause(500);
-    await waitForNotification();
-    const filesList = await global.client.$$(perspectiveGridTable + firstFile);
-    for (let i = 0; i < filesList.length; i++) {
-      const tags = await extractTags(filesList[i]);
-      expect(tags.includes(testTagName)).toBe(false);
     }*/
   });
 
@@ -303,7 +306,26 @@ describe('TST50 - Perspective Grid', () => {
   });
 
   test('TST5013 - Delete files from selection (many files) [TST5013,web,minio,electron]', async () => {
-    await doubleClickOn(selectorFolder);
+    //open Option menu
+    await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
+    //click on hide directories
+    await clickOn('[data-tid=gridPerspectiveToggleShowDirectories]');
+    await global.client.pause(500);
+    const selectedIds = await selectRowFiles([0, 1, 2]);
+
+    await clickOn('[data-tid=gridPerspectiveDeleteMultipleFiles]');
+    await clickOn('[data-tid=confirmDeleteFileDialog]');
+    await waitForNotification();
+
+    for (let i = 0; i < selectedIds.length; i++) {
+      await expectElementExist(
+        '[data-entry-id="' + selectedIds[i] + '"]',
+        false,
+        1000
+      );
+    }
+
+    /*await doubleClickOn(selectorFolder);
     await createTxtFile();
     await searchEngine('note');
     await expectElementExist(selectorFile, true);
@@ -319,7 +341,7 @@ describe('TST50 - Perspective Grid', () => {
     await clickOn('[data-tid=gridPerspectiveDeleteMultipleFiles]');
     await clickOn('[data-tid=confirmDeleteFileDialog]');
     await waitForNotification();
-    await expectElementExist(selectorFile, false);
+    await expectElementExist(selectorFile, false);*/
   });
   /*test('TST51** - Show/Hide directories in perspective view', async () => { //TODO
     await global.client.waitForVisible(
