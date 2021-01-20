@@ -28,14 +28,19 @@ export async function clearLocalStorage() {
     global.app.webContents.reload();
   }*/
   if (global.isWeb) {
-    //clears everything in localStorage
-    await global.client.execute('localStorage.clear()');
+    //clearAllURLParams && clears everything in localStorage
+    await global.client.execute(
+      "window.history.pushState('', document.title, window.location.pathname);localStorage.clear();"
+    );
     // global.client.executeScript('window.localStorage.clear()');
     // global.client.clearLocalStorage();
     // window.localStorage.clear();
-    global.client.refresh();
+    //await global.client.reloadSession();
+    await global.client.refresh();
   } else {
-    await global.app.webContents.executeJavaScript('localStorage.clear()');
+    await global.app.webContents.executeJavaScript(
+      "window.history.pushState('', document.title, window.location.pathname);localStorage.clear()"
+    );
     global.app.webContents.reload();
   }
   // browser.clearLocalStorage();
@@ -54,6 +59,7 @@ export async function startSpectronApp() {
       capabilities: {
         browserName: 'chrome',
         'goog:chromeOptions': {
+          w3c: true,
           args: [
             '--no-sandbox',
             '--window-size=1920,1080',
@@ -64,6 +70,12 @@ export async function startSpectronApp() {
           script: 60000
         }
       },
+      // Warns when a deprecated command is used
+      deprecationWarnings: true,
+      // If you only want to run your tests until a specific amount of tests have failed use
+      // bail (default is 0 - don't bail, run all tests).
+      bail: 0,
+      reporters: ['spec'],
       /* afterTest: [async function(
         test,
         context,
@@ -179,18 +191,15 @@ export function testDataRefresh() {
   fse.copySync(src, newPath, { overwrite: true });
 }
 
-export async function takeScreenshot() {
+export async function takeScreenshot(name = expect.getState().currentTestName) {
   // if (jasmine.currentTest.failedExpectations.length > 0) {
-  if (global.isWeb){
-    await global.client.saveFullPageScreen(
-        `${expect.getState().currentTestName}`,
-        {
-          fullPageScrollTimeout: '1500'
-        }
-    );
+  if (global.isWeb) {
+    await global.client.saveFullPageScreen(`${name}`, {
+      fullPageScrollTimeout: '1500'
+    });
   } else {
     // await global.client.takeScreenshot();
-    const filename = `${expect.getState().currentTestName}.png`; // -${new Date().toISOString()}
+    const filename = `${name}.png`; // -${new Date().toISOString()}
     //.replace(/\s/g, '_')
     //.replace(/:/g, '')
     //.replace(/\*/g, '')

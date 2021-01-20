@@ -64,7 +64,7 @@ jobs:
           access-token: ${{ secrets.GITHUB_TOKEN }}
           working-directory: tests
       - uses: actions/upload-artifact@v2
-        if: always()
+        if: failure()
         with:
           name: test-artifacts
           path: |

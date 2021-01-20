@@ -59,11 +59,11 @@ describe('TST50** - Right button on a file', () => {
     await closeFileProperties();
   });
 
-  afterEach(async () => {
+  /*afterEach(async () => {
     if (global.isMinio || global.isWeb) {
       await closeLocation(defaultLocationName);
     }
-  });
+  });*/
 
   test('TST5016 - Open file [TST5016,web,minio,electron]', async () => {
     //await searchEngine('bmp');
@@ -402,8 +402,8 @@ describe('TST50** - Right button on a file', () => {
     await expectElementExist(selectorFile, true);
 
     //cleanup
-    await deleteFirstFile();
-    const firstFileName = await getGridFileName(0);
-    expect(firstFileName).toBe(undefined);
+    //await deleteFirstFile();
+    //const firstFileName = await getGridFileName(0);
+    //expect(firstFileName).toBe(undefined);
   });
 });

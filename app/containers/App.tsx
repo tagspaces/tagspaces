@@ -21,8 +21,8 @@ import { connect } from 'react-redux';
 import { I18nextProvider } from 'react-i18next'; // as we build ourself via webpack
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import i18n from '../services/i18n';
-import { getCurrentTheme } from '../reducers/settings';
-import AppOnBoarding from '../components/AppOnboarding';
+import { getCurrentTheme } from '-/reducers/settings';
+// import AppOnBoarding from '../components/AppOnboarding';
 import AppConfig from '-/config';
 
 const lightTheme = createMuiTheme({
@@ -102,7 +102,7 @@ class App extends Component {
     return (
       <ThemeProvider theme={theme}>
         <I18nextProvider i18n={i18n}>{this.props.children}</I18nextProvider>
-        <AppOnBoarding />
+        {/* <AppOnBoarding /> */}
       </ThemeProvider>
     );
   }
