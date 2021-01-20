@@ -214,7 +214,7 @@ export async function getGridFileName(fileIndex) {
   return undefined;
 }
 
-export async function getGridCellClass(fileIndex = 0) {
+export async function getGridElement(fileIndex = 0) {
   const filesList = await global.client.$$(perspectiveGridTable + firstFile);
   let file =
     fileIndex < 0
@@ -222,8 +222,12 @@ export async function getGridCellClass(fileIndex = 0) {
       : filesList[fileIndex];
   file = await file.$('div');
   file = await file.$('div');
+  return file;
+}
 
-  return await file.getAttribute('class');
+export async function getGridCellClass(fileIndex = 0) {
+  const file = await getGridElement(fileIndex);
+  return file.getAttribute('class');
 }
 
 export async function expectElementExist(
@@ -315,6 +319,25 @@ export async function selectAllFiles(classNotSelected) {
     perspectiveGridTable + firstFile + '/div/div',
     classNotSelected
   );
+}
+
+export async function selectRowFiles(arrIndex = []) {
+  await clickOn('[data-tid=gridPerspectiveSwitchLayoutToRow]');
+  // const filesList = await global.client.$('[data-tid=perspectiveGridFileTable]');
+  const filesList = await global.client.$$('[data-tid=rowCellTID]');
+  const arrElements = [];
+  for (let i = 0; i < arrIndex.length; i++) {
+    const index =
+      arrIndex[i] < 0 ? filesList.length + arrIndex[i] : arrIndex[i];
+
+    let parent = await filesList[index].$('..');
+    parent = await parent.$('..');
+    parent = await parent.$('..');
+    arrElements.push(await parent.getAttribute('data-entry-id'));
+    filesList[index].click();
+  }
+  await clickOn('[data-tid=gridPerspectiveSwitchLayoutToGrid]');
+  return arrElements;
 }
 
 /**

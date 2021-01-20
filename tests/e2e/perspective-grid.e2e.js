@@ -29,6 +29,7 @@ import {
   selectAllFiles,
   selectorFile,
   selectorFolder,
+  selectRowFiles,
   setSettings,
   waitForNotification,
   waitUntilClassChanged
@@ -172,34 +173,34 @@ describe('TST50 - Perspective Grid', () => {
 
   // This scenario includes "Add tags" && "Remove tags" to be fulfilled
   test('TST5005 - Add tags to the selected files [TST5005,web,minio,electron]', async () => {
-    const classNotSelected = await getGridCellClass(0);
+    /*const classNotSelected = await getGridCellClass(0);
     const classSelected = await selectAllFiles(classNotSelected);
-    expect(classNotSelected).not.toBe(classSelected);
+    expect(classNotSelected).not.toBe(classSelected);*/
 
-    /*await openContextEntryMenu( TODO Right button deselect files
-        perspectiveGridTable + firstFile,
-        'fileMenuAddRemoveTags'
-    );*/
+    //open Option menu
+    await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
+    //click on hide directories
+    await clickOn('[data-tid=gridPerspectiveToggleShowDirectories]');
+
+    const selectedIds = await selectRowFiles([0, 1, 2]);
 
     const tags = ['test-tag1', 'test-tag2'];
     await AddRemoveTagsToSelectedFiles(tags);
+
+    for (let i = 0; i < selectedIds.length; i++) {
+      // const selectBox = await global.client.$('[data-tid=perspectiveGridFileTable]');
+      const element = await global.client.$(
+        '[data-entry-id="' + selectedIds[i] + '"]'
+      );
+      // await getGridElement(arrSelected[i]);
+      // await element.moveTo();
+      await expectTagsExist(element, tags, true);
+    }
+
     // Select all file and check if tag exist
-    const filesList = await global.client.$$(perspectiveGridTable + firstFile);
+    /*const filesList = await global.client.$$(perspectiveGridTable + firstFile);
     for (let i = 0; i < filesList.length; i++) {
       await expectTagsExist(filesList[i], tags, true);
-    }
-    /*await clickOn('[data-tid=gridPerspectiveAddRemoveTags]');
-
-    await addInputKeys('AddRemoveTagsSelectTID', testTagName);
-    await global.client.keys('Enter');
-    await global.client.pause(500);
-    await clickOn('[data-tid=addTagsMultipleEntries]');
-    // await global.client.pause(500);
-    await waitForNotification();
-    const filesList = await global.client.$$(perspectiveGridTable + firstFile);
-    for (let i = 0; i < filesList.length; i++) {
-      const tags = await extractTags(filesList[i]);
-      expect(tags.includes(testTagName)).toBe(true);
     }*/
   });
 
