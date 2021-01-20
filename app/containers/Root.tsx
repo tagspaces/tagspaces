@@ -40,21 +40,21 @@ type RootType = {
   persistor: {};
 };
 
-function disableBackGestureMac() {
-  if (AppConfig.isMacLike) {
-    const element = document.getElementById('root');
-    element.addEventListener('touchstart', (e: MouseEvent) => {
-      // is not near edge of view, exit
-      // if (e.pageX > 10 && e.pageX < window.innerWidth - 10) return;
+// function disableBackGestureMac() {
+//   if (AppConfig.isMacLike) {
+//     const element = document.getElementById('root');
+//     element.addEventListener('touchstart', (e: MouseEvent) => {
+//       // is not near edge of view, exit
+//       if (e.pageX > 10 && e.pageX < window.innerWidth - 10) return;
 
-      // prevent swipe to navigate gesture
-      e.preventDefault();
-    });
-  }
-}
+//       // prevent swipe to navigate gesture
+//       e.preventDefault();
+//     });
+//   }
+// }
 
 function onBeforeLift(store) {
-  disableBackGestureMac();
+  // disableBackGestureMac();
 
   store.dispatch(SettingsActions.setZoomRestoreApp());
   store.dispatch(SettingsActions.upgradeSettings()); // TODO call this only on app version update
