@@ -136,7 +136,16 @@ export async function startSpectronApp() {
       args: [pathLib.join(__dirname, '..', '..', 'app')],
       // startTimeout: 500,
       waitTimeout: 1000,
-      waitforInterval: 50
+      waitforInterval: 50,
+      chromeDriverArgs: [
+        '--headless',
+        '--disable-gpu',
+        '--disable-infobars',
+        '--no-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-extensions',
+        '--window-size=1920,1080'
+      ]
     });
     await global.app.start();
     global.client = global.app.client;
