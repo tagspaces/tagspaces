@@ -797,7 +797,7 @@ class GridPerspective extends React.Component<Props, State> {
         style={{
           height:
             'calc(100% - ' +
-            (AppConfig.isCordova ? '320' : '104') + // 51 todo handle cordova screen sizes
+            (AppConfig.isCordova ? '320' : '51') + // todo handle cordova screen sizes
             'px)'
         }}
       >
