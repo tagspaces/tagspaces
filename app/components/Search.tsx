@@ -71,6 +71,7 @@ import { formatDateTime, extractTimePeriod } from '-/utils/dates';
 import { isPlusCode, parseLatLon } from '-/utils/misc';
 import PlatformIO from '../services/platform-io';
 import { AppConfig } from '-/config';
+import withMobileDialog from '@material-ui/core/withMobileDialog';
 
 interface Props {
   classes: any;
@@ -855,6 +856,7 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
-export default withStyles(styles, { withTheme: true })(
-  connect(mapStateToProps, mapDispatchToProps)(Search)
-);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles, { withTheme: true })(Search));

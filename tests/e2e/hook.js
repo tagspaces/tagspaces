@@ -28,12 +28,19 @@ export async function clearLocalStorage() {
     global.app.webContents.reload();
   }*/
   if (global.isWeb) {
+    //clearAllURLParams && clears everything in localStorage
+    await global.client.execute(
+      "window.history.pushState('', document.title, window.location.pathname);localStorage.clear();"
+    );
     // global.client.executeScript('window.localStorage.clear()');
     // global.client.clearLocalStorage();
     // window.localStorage.clear();
-    global.client.refresh();
+    //await global.client.reloadSession();
+    await global.client.refresh();
   } else {
-    await global.app.webContents.executeJavaScript('localStorage.clear()');
+    await global.app.webContents.executeJavaScript(
+      "window.history.pushState('', document.title, window.location.pathname);localStorage.clear()"
+    );
     global.app.webContents.reload();
   }
   // browser.clearLocalStorage();
@@ -43,6 +50,7 @@ export async function clearLocalStorage() {
 
 export async function startSpectronApp() {
   if (global.isWeb) {
+    //require('scripts/wdio.conf');
     const webdriverio = require('webdriverio');
     // https://webdriver.io/docs/configurationfile.html
     let options = {
@@ -50,13 +58,37 @@ export async function startSpectronApp() {
       port: 9515, // "9515" is the port opened by chrome driver.
       capabilities: {
         browserName: 'chrome',
+        'goog:chromeOptions': {
+          w3c: true,
+          args: [
+            '--no-sandbox',
+            '--window-size=1920,1080',
+            '--disable-dev-shm-usage'
+          ]
+        },
         timeouts: {
           script: 60000
         }
       },
+      // Warns when a deprecated command is used
+      deprecationWarnings: true,
+      // If you only want to run your tests until a specific amount of tests have failed use
+      // bail (default is 0 - don't bail, run all tests).
+      bail: 0,
+      reporters: ['spec'],
+      /* afterTest: [async function(
+        test,
+        context,
+        { error, result, duration, passed, retries }
+      ) => {
+        await takeScreenshot();
+        await clearLocalStorage();
+      }], */
       waitforTimeout: 5000,
+      maxInstances: 1,
       // logLevel: 'debug'
-      logLevel: 'silent'
+      logLevel: 'silent',
+      coloredLogs: true
     };
     if (global.isHeadlessChrome) {
       options = {
@@ -67,7 +99,14 @@ export async function startSpectronApp() {
             // binary: electronPath, // Path to your Electron binary.
             // to run chrome headless the following flags are required
             // (see https://developers.google.com/web/updates/2017/04/headless-chrome)
-            args: ['--headless', '--disable-gpu']
+            // args: ['--headless', '--disable-gpu']
+            args: [
+              '--headless',
+              // '--disable-gpu',
+              '--no-sandbox',
+              '--window-size=1920,1080',
+              '--disable-dev-shm-usage'
+            ]
           },
           timeouts: {
             script: 60000
@@ -88,6 +127,7 @@ export async function startSpectronApp() {
                  *!/
       // .timeouts('implicit', 5000)
       .timeouts('pageLoad', 30000);*/
+    setWdioImageComparisonService(global.client);
 
     await global.client.url('http://localhost:8000');
   } else {
@@ -102,6 +142,26 @@ export async function startSpectronApp() {
     global.client = global.app.client;
     await global.client.waitUntilWindowLoaded();
   }
+}
+
+function setWdioImageComparisonService(browser) {
+  global.browser = browser;
+  const WdioImageComparisonService = require('wdio-image-comparison-service')
+    .default;
+  let wdioImageComparisonService = new WdioImageComparisonService({
+    baselineFolder: pathLib.join(__dirname, '../test-pages/Baseline/'),
+    formatImageName: '{tag}-{logName}-{width}x{height}',
+    screenshotPath: pathLib.join(__dirname, '../test-pages/'),
+    savePerInstance: true,
+    autoSaveBaseline: true,
+    blockOutStatusBar: true,
+    blockOutToolBar: true
+  });
+  // wdioImageComparisonService.defaultOptions.autoSaveBaseline = true;
+  browser.defaultOptions = wdioImageComparisonService.defaultOptions;
+  browser.folders = wdioImageComparisonService.folders;
+
+  wdioImageComparisonService.before(browser.capabilities);
 }
 
 export async function stopSpectronApp() {
@@ -129,6 +189,37 @@ export function testDataRefresh() {
   let newPath = pathLib.join(dst, pathLib.basename(src));
   fse.emptyDirSync(newPath);
   fse.copySync(src, newPath, { overwrite: true });
+}
+
+export async function takeScreenshot(name = expect.getState().currentTestName) {
+  // if (jasmine.currentTest.failedExpectations.length > 0) {
+  if (global.isWeb) {
+    await global.client.saveFullPageScreen(`${name}`, {
+      fullPageScrollTimeout: '1500'
+    });
+  } else {
+    // await global.client.takeScreenshot();
+    const filename = `${name}.png`; // -${new Date().toISOString()}
+    //.replace(/\s/g, '_')
+    //.replace(/:/g, '')
+    //.replace(/\*/g, '')
+    //.replace(/-/g, '');
+    const imageBuffer = await global.app.browserWindow.capturePage();
+    const fs = require('fs-extra');
+    const path = pathLib.resolve(__dirname, 'test-pages', filename);
+    fs.outputFile(path, imageBuffer, 'base64');
+    /*global.app.webContents
+        .savePage(
+          pathLib.resolve(__dirname, 'test-pages', filename),
+          'HTMLComplete'
+        )
+        .then(function() {
+          console.log('page saved');
+        })
+        .catch(function(error) {
+          console.error('saving page failed', error.message);
+        });*/
+  }
 }
 
 // the path the electron app, that will be tested

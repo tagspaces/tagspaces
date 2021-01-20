@@ -1,10 +1,13 @@
+import pathLib from 'path';
 import {
   clearLocalStorage,
   startSpectronApp,
   stopSpectronApp,
+  takeScreenshot,
   testDataRefresh
 } from './e2e/hook';
 import { closeWelcome } from './e2e/welcome.helpers';
+import { clearStorage } from './e2e/clearstorage.helpers';
 
 // the default timeout before starting every test
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 300000;
@@ -25,6 +28,23 @@ global.isUnitTest =
   }
 });*/
 
+jasmine.getEnv().addReporter({
+  specStarted: result => (jasmine.currentTest = result),
+  specDone: result => (jasmine.previousTest = result)
+});
+
+/*jasmine.getEnv().addReporter({
+  specDone: async result => {
+    if (result.status !== 'disabled') {
+      // console.log('specDone Done' + JSON.stringify(result));
+      if (result.status === 'failed') {
+        await takeScreenshot();
+      }
+      // await clearLocalStorage(); //todo https://trello.com/c/hMCSKXWU/554-fix-takescreenshots-in-tests
+    }
+  }
+});*/
+
 beforeAll(async () => {
   testDataRefresh();
   await startSpectronApp();
@@ -35,6 +55,14 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
+  if (jasmine.currentTest && jasmine.currentTest.status !== 'disabled') {
+    // console.log('specDone Done' + JSON.stringify(result));
+    if (jasmine.previousTest && jasmine.previousTest.status === 'failed') {
+      await takeScreenshot(jasmine.previousTest.description);
+    }
+    await clearLocalStorage(); //todo https://trello.com/c/hMCSKXWU/554-fix-takescreenshots-in-tests
+  }
+
   if (global.isWeb) {
     await global.client.pause(500);
   }
@@ -42,6 +70,8 @@ beforeEach(async () => {
   await closeWelcome();
 });
 
-afterEach(async () => {
-  await clearLocalStorage();
-});
+// afterEach(async () => {
+//   // takeScreenshot();
+//   // await clearLocalStorage();
+//   await clearStorage();
+// });

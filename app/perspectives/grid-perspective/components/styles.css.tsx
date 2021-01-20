@@ -76,8 +76,8 @@ export default (theme: any): any => ({
     zIndex: 100,
     maxHeight: 100,
     overflowY: 'auto',
-    overflowX: 'hidden',
-    opacity: 0.6
+    overflowX: 'hidden'
+    // opacity: 0.9
   },
   gridCellDescription: {
     padding: 2,

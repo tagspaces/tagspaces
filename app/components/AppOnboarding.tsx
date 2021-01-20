@@ -1,4 +1,5 @@
-/**
+/*
+/!**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
  *
@@ -14,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- */
+ *!/
 
 import React, { Component } from 'react';
 import Joyride from 'react-joyride';
@@ -25,13 +26,13 @@ class AppOnboarding extends Component {
     run: false
   };
 
-  /* componentDidMount() {
+  /!* componentDidMount() {
     setTimeout(() => {
       this.setState({
         run: true
       });
     }, 1000);
-  } */
+  } *!/
 
   callback = data => {
     // const { action, index, type } = data;
@@ -57,3 +58,4 @@ class AppOnboarding extends Component {
 }
 
 export default AppOnboarding;
+*/
