@@ -28,8 +28,10 @@ import {
   getGridFileName,
   selectAllFiles,
   selectorFile,
+  selectorFolder,
   setSettings,
-  waitForNotification
+  waitForNotification,
+  waitUntilClassChanged
 } from './general.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 import { getPropertiesFileName } from './file.properties.helpers';
@@ -300,13 +302,17 @@ describe('TST50 - Perspective Grid', () => {
   });
 
   test('TST5013 - Delete files from selection (many files) [TST5013,web,minio,electron]', async () => {
-    await doubleClickOn(perspectiveGridTable + firstFolder);
+    await doubleClickOn(selectorFolder);
     await createTxtFile();
     await searchEngine('note');
     await expectElementExist(selectorFile, true);
 
     const classNotSelected = await getGridCellClass(0);
-    const classSelected = await selectAllFiles(classNotSelected);
+    await clickOn(selectorFile);
+    const classSelected = await waitUntilClassChanged(
+      selectorFile + '/div/div',
+      classNotSelected
+    );
     expect(classNotSelected).not.toBe(classSelected);
 
     await clickOn('[data-tid=gridPerspectiveDeleteMultipleFiles]');

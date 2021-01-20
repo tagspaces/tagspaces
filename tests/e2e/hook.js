@@ -138,8 +138,8 @@ export async function startSpectronApp() {
       waitTimeout: 1000,
       waitforInterval: 50,
       chromeDriverArgs: [
-        '--headless',
-        '--disable-gpu',
+        // '--headless',
+        // '--disable-gpu',
         '--disable-infobars',
         '--no-sandbox',
         '--disable-dev-shm-usage',

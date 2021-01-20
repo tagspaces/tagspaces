@@ -31,6 +31,7 @@ export async function AddRemoveTagsToSelectedFiles(
   } else {
     await clickOn('[data-tid=removeTagsMultipleEntries]');
   }
+  await global.client.pause(1000);
   await waitForNotification();
 
   /*const filesList = await global.client.$$(perspectiveGridTable + firstFile); // Selected file can be only one this check all files
