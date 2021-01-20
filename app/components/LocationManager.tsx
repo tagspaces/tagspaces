@@ -138,19 +138,6 @@ const LocationManager = (props: Props) => {
     const target = selection.currentTarget;
     const file = target.files[0];
     setImportFile(file);
-    /* const reader: any = new FileReader();
-
-    reader.onload = () => {
-      try {
-        const locations = Pro.LocationsExport.importLocations(reader.result);
-        if (locations) {
-          props.importLocations(locations);
-        }
-      } catch (e) {
-        console.error('Error : ', e);
-      }
-    };
-    reader.readAsText(file); */
     target.value = null;
   }
 
@@ -161,12 +148,7 @@ const LocationManager = (props: Props) => {
 
       <LocationManagerMenu
         importLocations={() => {
-          if (AppConfig.isCordovaAndroid && AppConfig.isCordovaiOS) {
-            // TODO Select directory or file from dialog
-            showSelectDirectoryDialog();
-          } else {
-            fileInputRef.current.click();
-          }
+          fileInputRef.current.click();
         }}
         // importLocations={() => setImportLocationsDialogOpened(true)}
         exportLocations={() => setExportLocationsDialogOpened(true)}
