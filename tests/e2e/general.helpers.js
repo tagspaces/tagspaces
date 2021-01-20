@@ -18,8 +18,8 @@ export async function clickOn(selector, options = {}) {
   const element = await global.client.$(selector);
   await element.waitUntil(
     async function() {
-      // const displayed = await this.isDisplayed();
-      const displayed = await this.isDisplayedInViewport();
+      const displayed = await this.isDisplayed();
+      // const displayed = await this.isDisplayedInViewport();
       return displayed === true;
     },
     {
@@ -27,6 +27,8 @@ export async function clickOn(selector, options = {}) {
       timeoutMsg: 'clickOn selector ' + selector + ' to exist after 5s'
     }
   );
+  //await element.scrollIntoView();
+  //await element.moveTo(selector);
   await element.click(options);
 }
 
@@ -202,7 +204,7 @@ export async function getGridFileName(fileIndex) {
       return fileName + '.' + fileExt.toLowerCase();
     }
   } catch (e) {
-    console.log("Can't find getGridFileName:" + fileIndex);
+    console.log("Can't find getGridFileName:" + fileIndex, e);
   }
   return undefined;
 }
@@ -308,6 +310,54 @@ export async function selectAllFiles(classNotSelected) {
     perspectiveGridTable + firstFile + '/div/div',
     classNotSelected
   );
+}
+
+/**
+ * TODO holdDownKey + click not work:
+ * @param arrIndex
+ * @returns {Promise<[]>}
+ */
+export async function selectFiles(arrIndex = []) {
+  // console.debug(JSON.stringify(await global.client.status()));
+
+  const filesList = await global.client.$$(perspectiveGridTable + firstFile);
+  const arrElements = [];
+  //await global.client.keys('Shift');
+  await holdDownKey('\uE008');
+  for (let i = 0; i < arrIndex.length; i++) {
+    const index =
+      arrIndex[i] < 0 ? filesList.length + arrIndex[i] : arrIndex[i];
+
+    // await holdDownKey('\uE008');
+    filesList[index].click();
+    //await global.client.keys('Shift');
+    //await releaseKey('\uE008');
+    // await global.client.releaseActions();
+    arrElements.push(filesList[index]);
+  }
+  await releaseKey('\uE008');
+  await global.client.releaseActions();
+  return arrElements;
+}
+
+export async function holdDownKey(character) {
+  await global.client.performActions([
+    {
+      type: 'key',
+      id: 'keyboard',
+      actions: [{ type: 'keyDown', value: character }]
+    }
+  ]);
+}
+
+export async function releaseKey(character) {
+  await global.client.performActions([
+    {
+      type: 'key',
+      id: 'keyboard',
+      actions: [{ type: 'keyUp', value: character }]
+    }
+  ]);
 }
 
 export async function extractTags(selectorElement) {

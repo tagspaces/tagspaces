@@ -305,7 +305,8 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
-export default withStyles(styles)(
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
   // @ts-ignore
-  connect(mapStateToProps, mapDispatchToProps)(LocationManager)
-);
+)(withStyles(styles)(LocationManager));

@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withStyles } from '@material-ui/core/styles';
@@ -33,8 +33,7 @@ import { actions as SettingsActions, getSettings } from '-/reducers/settings';
 import ColorPickerDialog from '../ColorPickerDialog';
 import TransparentBackground from '../../TransparentBackground';
 
-const styles: any = (theme: any) => ({
-  // const styles = theme => ({
+const styles: any = {
   root: {
     overflowX: 'hidden'
   },
@@ -49,7 +48,7 @@ const styles: any = (theme: any) => ({
     minHeight: 30,
     border: '1px solid lightgray'
   }
-});
+};
 
 interface Props {
   setTagColor: (tagColor: string) => void;
@@ -70,203 +69,186 @@ interface Props {
   showResetSettings: (showDialog: boolean) => void;
 }
 
-interface State {
-  displayColorPicker: boolean;
-  displayTextColorPicker: boolean;
-  currentTheme?: any;
-}
+const SettingsGeneral = (props: Props) => {
+  const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
+  const [displayTextColorPicker, setDisplayTextColorPicker] = useState<boolean>(
+    false
+  );
 
-class SettingsGeneral extends React.Component<Props, State> {
-  state = {
-    displayColorPicker: false,
-    displayTextColorPicker: false
+  const toggleDefaultTagBackgroundColorPicker = () => {
+    setDisplayColorPicker(!displayColorPicker);
   };
 
-  toggleDefaultTagBackgroundColorPicker = () => {
-    this.setState({ displayColorPicker: !this.state.displayColorPicker });
+  const toggleDefaultTagTextColorPicker = () => {
+    setDisplayTextColorPicker(!displayTextColorPicker);
   };
 
-  toggleDefaultTagTextColorPicker = () => {
-    this.setState({
-      displayTextColorPicker: !this.state.displayTextColorPicker
-    });
-  };
-
-  handleChange = event => {
+  /* handleChange = event => {
     this.setState({ currentTheme: event.target.value });
-  };
+  }; */
 
-  handleTagDelimiterChange = event => {
+  /* handleTagDelimiterChange = event => {
     this.props.setTagDelimiter(event.target.value);
+  }; */
+
+  const handleMaxSearchResult = event => {
+    props.setMaxSearchResult(event.target.value);
   };
 
-  handleMaxSearchResult = event => {
-    this.props.setMaxSearchResult(event.target.value);
-  };
+  const { classes } = props;
 
-  render() {
-    const { classes } = this.props;
-
-    return (
-      <List className={classes.root}>
-        <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:interfaceLanguage')} />
-          <Select
-            data-tid="settingsSetLanguage"
-            value={this.props.settings.interfaceLanguage}
-            onChange={(event: any) =>
-              this.props.setLanguage(event.target.value)
-            }
-            input={<Input id="languageSelector" />}
-          >
-            {this.props.settings.supportedLanguages.map(language => (
-              <MenuItem key={language.iso} value={language.iso}>
-                {language.title}
-              </MenuItem>
-            ))}
-          </Select>
-        </ListItem>
-        <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:themeSelector')} />
-          <Select
-            data-tid="settingsSetCurrentTheme"
-            value={this.props.settings.currentTheme}
-            onChange={(event: any) =>
-              this.props.setCurrentTheme(event.target.value)
-            }
-            input={<Input id="themeSelector" />}
-          >
-            {this.props.settings.supportedThemes.map(theme => (
-              <MenuItem key={theme} value={theme}>
-                {theme}
-              </MenuItem>
-            ))}
-          </Select>
-        </ListItem>
-        <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:checkForNewVersionOnStartup')} />
-          <Switch
-            data-tid="settingsSetCheckForUpdates"
-            onClick={() =>
-              this.props.setCheckForUpdates(
-                !this.props.settings.checkForUpdates
-              )
-            }
-            checked={this.props.settings.checkForUpdates}
-          />
-        </ListItem>
-        <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:persistTagsInSidecarFile')} />
-          <Switch
-            data-tid="settingsSetPersistTagsInSidecarFile"
-            onClick={() =>
-              this.props.setPersistTagsInSidecarFile(
-                !this.props.settings.persistTagsInSidecarFile
-              )
-            }
-            checked={this.props.settings.persistTagsInSidecarFile}
-          />
-        </ListItem>
-        <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:addTagsToLibrary')} />
-          <Switch
-            data-tid="settingsSetAddTagsToLibrary"
-            onClick={() =>
-              this.props.setAddTagsToLibrary(
-                !this.props.settings.addTagsToLibrary
-              )
-            }
-            checked={this.props.settings.addTagsToLibrary}
-          />
-        </ListItem>
-        <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:useGenerateThumbnails')} />
-          <Switch
-            data-tid="settingsUseGenerateThumbnails"
-            onClick={() =>
-              this.props.setUseGenerateThumbnails(
-                !this.props.settings.useGenerateThumbnails
-              )
-            }
-            checked={this.props.settings.useGenerateThumbnails}
-          />
-        </ListItem>
-        <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:tagBackgroundColor')} />
-          <TransparentBackground>
-            <Button
-              data-tid="settingsToggleDefaultTagBackgroundColor"
-              className={classes.colorChooserButton}
-              size="small"
-              style={{
-                backgroundColor: this.props.settings.tagBackgroundColor
-              }}
-              onClick={this.toggleDefaultTagBackgroundColorPicker}
-            >
-              &nbsp;
-            </Button>
-          </TransparentBackground>
-          <ColorPickerDialog
-            open={this.state.displayColorPicker}
-            setColor={color => {
-              this.props.setTagColor(color);
+  return (
+    <List className={classes.root}>
+      <ListItem className={classes.listItem}>
+        <ListItemText primary={i18n.t('core:interfaceLanguage')} />
+        <Select
+          data-tid="settingsSetLanguage"
+          value={props.settings.interfaceLanguage}
+          onChange={(event: any) => props.setLanguage(event.target.value)}
+          input={<Input id="languageSelector" />}
+        >
+          {props.settings.supportedLanguages.map(language => (
+            <MenuItem key={language.iso} value={language.iso}>
+              {language.title}
+            </MenuItem>
+          ))}
+        </Select>
+      </ListItem>
+      <ListItem className={classes.listItem}>
+        <ListItemText primary={i18n.t('core:themeSelector')} />
+        <Select
+          data-tid="settingsSetCurrentTheme"
+          value={props.settings.currentTheme}
+          onChange={(event: any) => props.setCurrentTheme(event.target.value)}
+          input={<Input id="themeSelector" />}
+        >
+          {props.settings.supportedThemes.map(theme => (
+            <MenuItem key={theme} value={theme}>
+              {theme}
+            </MenuItem>
+          ))}
+        </Select>
+      </ListItem>
+      <ListItem className={classes.listItem}>
+        <ListItemText primary={i18n.t('core:checkForNewVersionOnStartup')} />
+        <Switch
+          data-tid="settingsSetCheckForUpdates"
+          onClick={() =>
+            props.setCheckForUpdates(!props.settings.checkForUpdates)
+          }
+          checked={props.settings.checkForUpdates}
+        />
+      </ListItem>
+      <ListItem className={classes.listItem}>
+        <ListItemText primary={i18n.t('core:persistTagsInSidecarFile')} />
+        <Switch
+          data-tid="settingsSetPersistTagsInSidecarFile"
+          onClick={() =>
+            props.setPersistTagsInSidecarFile(
+              !props.settings.persistTagsInSidecarFile
+            )
+          }
+          checked={props.settings.persistTagsInSidecarFile}
+        />
+      </ListItem>
+      <ListItem className={classes.listItem}>
+        <ListItemText primary={i18n.t('core:addTagsToLibrary')} />
+        <Switch
+          data-tid="settingsSetAddTagsToLibrary"
+          onClick={() =>
+            props.setAddTagsToLibrary(!props.settings.addTagsToLibrary)
+          }
+          checked={props.settings.addTagsToLibrary}
+        />
+      </ListItem>
+      <ListItem className={classes.listItem}>
+        <ListItemText primary={i18n.t('core:useGenerateThumbnails')} />
+        <Switch
+          data-tid="settingsUseGenerateThumbnails"
+          onClick={() =>
+            props.setUseGenerateThumbnails(
+              !props.settings.useGenerateThumbnails
+            )
+          }
+          checked={props.settings.useGenerateThumbnails}
+        />
+      </ListItem>
+      <ListItem className={classes.listItem}>
+        <ListItemText primary={i18n.t('core:tagBackgroundColor')} />
+        <TransparentBackground>
+          <Button
+            data-tid="settingsToggleDefaultTagBackgroundColor"
+            className={classes.colorChooserButton}
+            size="small"
+            style={{
+              backgroundColor: props.settings.tagBackgroundColor
             }}
-            onClose={this.toggleDefaultTagBackgroundColorPicker}
-            color={this.props.settings.tagBackgroundColor}
-          />
-        </ListItem>
-        <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:tagForegroundColor')} />
-          <TransparentBackground>
-            <Button
-              data-tid="settingsToggleDefaultTagForegroundColor"
-              className={classes.colorChooserButton}
-              size="small"
-              style={{ backgroundColor: this.props.settings.tagTextColor }}
-              onClick={this.toggleDefaultTagTextColorPicker}
-            >
-              &nbsp;
-            </Button>
-          </TransparentBackground>
+            onClick={toggleDefaultTagBackgroundColorPicker}
+          >
+            &nbsp;
+          </Button>
+        </TransparentBackground>
+        {displayColorPicker && (
           <ColorPickerDialog
-            open={this.state.displayTextColorPicker}
+            open={displayColorPicker}
             setColor={color => {
-              this.props.setTagTextColor(color);
+              props.setTagColor(color);
             }}
-            onClose={this.toggleDefaultTagTextColorPicker}
-            color={this.props.settings.tagTextColor}
+            onClose={toggleDefaultTagBackgroundColorPicker}
+            color={props.settings.tagBackgroundColor}
           />
-        </ListItem>
-        <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:useTrashCan')} />
-          <Switch
-            data-tid="settingsSetUseTrashCan"
-            onClick={() =>
-              this.props.setUseTrashCan(!this.props.settings.useTrashCan)
-            }
-            checked={this.props.settings.useTrashCan}
+        )}
+      </ListItem>
+      <ListItem className={classes.listItem}>
+        <ListItemText primary={i18n.t('core:tagForegroundColor')} />
+        <TransparentBackground>
+          <Button
+            data-tid="settingsToggleDefaultTagForegroundColor"
+            className={classes.colorChooserButton}
+            size="small"
+            style={{ backgroundColor: props.settings.tagTextColor }}
+            onClick={toggleDefaultTagTextColorPicker}
+          >
+            &nbsp;
+          </Button>
+        </TransparentBackground>
+        {displayTextColorPicker && (
+          <ColorPickerDialog
+            open={displayTextColorPicker}
+            setColor={color => {
+              props.setTagTextColor(color);
+            }}
+            onClose={toggleDefaultTagTextColorPicker}
+            color={props.settings.tagTextColor}
           />
-        </ListItem>
-        <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:showUnixHiddenFiles')} />
-          <Switch
-            data-tid="settingsSetShowUnixHiddenEntries"
-            onClick={this.props.toggleShowUnixHiddenEntries}
-            checked={this.props.settings.showUnixHiddenEntries}
-          />
-        </ListItem>
-        <ListItem className={classes.listItem}>
-          <ListItemText primary="Enable mobile (small screen) mode" />
-          <Switch
-            data-tid="settingsSetDesktopMode"
-            disabled={!(typeof window.ExtDisplayMode === 'undefined')}
-            onClick={() =>
-              this.props.setDesktopMode(!this.props.settings.desktopMode)
-            }
-            checked={!this.props.settings.desktopMode}
-          />
-        </ListItem>
-        {/* <ListItem className={classes.listItem}>
+        )}
+      </ListItem>
+      <ListItem className={classes.listItem}>
+        <ListItemText primary={i18n.t('core:useTrashCan')} />
+        <Switch
+          data-tid="settingsSetUseTrashCan"
+          onClick={() => props.setUseTrashCan(!props.settings.useTrashCan)}
+          checked={props.settings.useTrashCan}
+        />
+      </ListItem>
+      <ListItem className={classes.listItem}>
+        <ListItemText primary={i18n.t('core:showUnixHiddenFiles')} />
+        <Switch
+          data-tid="settingsSetShowUnixHiddenEntries"
+          onClick={props.toggleShowUnixHiddenEntries}
+          checked={props.settings.showUnixHiddenEntries}
+        />
+      </ListItem>
+      <ListItem className={classes.listItem}>
+        <ListItemText primary="Enable mobile (small screen) mode" />
+        <Switch
+          data-tid="settingsSetDesktopMode"
+          disabled={!(typeof window.ExtDisplayMode === 'undefined')}
+          onClick={() => props.setDesktopMode(!props.settings.desktopMode)}
+          checked={!props.settings.desktopMode}
+        />
+      </ListItem>
+      {/* <ListItem className={classes.listItem}>
           <ListItemText style={{ maxWidth: '300px' }} primary={i18n.t('core:tagDelimiterChoose')} />
           <Select
             style={{ minWidth: '170px' }}
@@ -283,17 +265,17 @@ class SettingsGeneral extends React.Component<Props, State> {
             <MenuItem value=",">{i18n.t('core:tagDelimiterComma')}</MenuItem>
           </Select>
         </ListItem> */}
-        <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:maxSearchResultChoose')} />
-          <Input
-            style={{ maxWidth: '100px' }}
-            type="number"
-            data-tid="settingsMaxSearchResult"
-            value={this.props.settings.maxSearchResult}
-            onChange={this.handleMaxSearchResult}
-          />
-        </ListItem>
-        {/* <ListItem className={classes.listItem}>
+      <ListItem className={classes.listItem}>
+        <ListItemText primary={i18n.t('core:maxSearchResultChoose')} />
+        <Input
+          style={{ maxWidth: '100px' }}
+          type="number"
+          data-tid="settingsMaxSearchResult"
+          value={props.settings.maxSearchResult}
+          onChange={handleMaxSearchResult}
+        />
+      </ListItem>
+      {/* <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:coloredFileExtensionsEnabled')} />
           <Switch
             data-tid="settingsSetColoredFileExtension"
@@ -305,7 +287,7 @@ class SettingsGeneral extends React.Component<Props, State> {
             checked={this.props.settings.coloredFileExtension}
           />
         </ListItem> */}
-        {/* <ListItem className={classes.listItem}>
+      {/* <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:loadLocationMetaData')} />
           <Switch
             data-tid="settingsSetLoadsLocationMetaData"
@@ -317,20 +299,19 @@ class SettingsGeneral extends React.Component<Props, State> {
             checked={this.props.settings.loadsLocationMetaData}
           />
         </ListItem> */}
-        <ListItem className={classes.listItem}>
-          <Button
-            data-tid="resetSettingsTID"
-            onClick={() => this.props.showResetSettings(true)}
-            color="secondary"
-            style={{ marginLeft: -7 }}
-          >
-            {i18n.t('core:resetSettings')}
-          </Button>
-        </ListItem>
-      </List>
-    );
-  }
-}
+      <ListItem className={classes.listItem}>
+        <Button
+          data-tid="resetSettingsTID"
+          onClick={() => props.showResetSettings(true)}
+          color="secondary"
+          style={{ marginLeft: -7 }}
+        >
+          {i18n.t('core:resetSettings')}
+        </Button>
+      </ListItem>
+    </List>
+  );
+};
 
 /*
         <ListItem className={classes.listItem}>

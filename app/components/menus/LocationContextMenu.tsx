@@ -173,7 +173,7 @@ const LocationContextMenu = (props: Props) => {
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:showInFileManager')} />
       </MenuItem>
-      <MenuItem data-tid="removeLocation" onClick={closeLocation}>
+      <MenuItem data-tid="closeLocationTID" onClick={closeLocation}>
         <ListItemIcon>
           <CloseIcon />
         </ListItemIcon>
