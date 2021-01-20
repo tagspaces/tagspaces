@@ -49,9 +49,10 @@ jobs:
           yarn build-e2e
           yarn ${{ github.event.inputs.command }}
       - uses: actions/upload-artifact@v2
+        if: always()
         with:
-          name: test-reports
-          path: tests/test-reports/
+          name: test-pages
+          path: tests/test-pages/
       - uses: IgnusG/jest-report-action@v2.3.3
         if: always() # Run regardless of whether other steps failed
         with:

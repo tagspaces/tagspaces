@@ -28,7 +28,7 @@ jobs:
   #      - name: Run Unit tests
   #        run: yarn test-unit
 
-  gitHubActionForNpmWin:
+  e2eTestsWin:
     name: Validating Windows
     runs-on: windows-latest
 
@@ -63,6 +63,66 @@ jobs:
         with:
           access-token: ${{ secrets.GITHUB_TOKEN }}
           working-directory: tests
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: test-artifacts
+          path: |
+            tests/test-pages/
+            tests/test-reports/
+  # e2eTestsWebWin:
+  #  name: E2E Windows Web
+  #  runs-on: windows-latest
+  #  steps:
+  #    - name: Checking out default branch
+  #      uses: actions/checkout@v2
+  #      with:
+  #        submodules: true
+  #    - name: Checkout TagspacesPro
+  #      uses: actions/checkout@v2
+  #      with:
+  #        repository: tagspaces/tagspacespro
+  #        token: ${{ secrets.CHECKOUT_TSPRO  }}
+  #        path: extensions/tagspacespro
+  #    - name: Checkout TestData
+  #      uses: actions/checkout@v2
+  #      with:
+  #        repository: tagspaces/testdata
+  #        path: tests/testdata
+  #    - uses: actions/setup-node@v2-beta
+  #     with:
+  #        node-version: '10.x'
+  #    - name: Running yarn install, prettier and type checks
+  #      run: |
+  #        yarn install --check-files --cache-folder .ycache
+  #        yarn prettier-check
+  #        yarn type-check
+  #    - name: Run Unit tests
+  #      run: yarn test-unit
+  #    - uses: suisei-cn/actions-download-file@v1
+  #      id: minio
+  #      name: Download the Minio.exe
+  #      with:
+  #        url: 'https://dl.min.io/server/minio/release/windows-amd64/minio.exe'
+  #        target: tests/bin/
+  #    - name: Run Electron tests
+  #      run: |
+  #        yarn install-ext
+  #        yarn build-main
+  #        yarn build-e2e
+  #        yarn test-e2e-web
+  #    - uses: IgnusG/jest-report-action@v2.3.3
+  #      if: always() # Run regardless of whether other steps failed
+  #      with:
+  #        access-token: ${{ secrets.GITHUB_TOKEN }}
+  #        working-directory: tests
+  #    - uses: actions/upload-artifact@v2
+  #      if: always()
+  #      with:
+  #        name: test-artifacts-web
+  #        path: |
+  #          tests/test-pages/
+  #          tests/test-reports/
   # gitHubActionForNpmMac:
   #  name: Validating MacOS
   #  runs-on: macos-latest

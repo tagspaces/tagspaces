@@ -14,11 +14,19 @@ const testGroup = 'testGroupName';
 const editedGroupName = 'testGroup';
 
 export async function createTagGroup(tagGroupName) {
-  await clickOn('[data-tid=tagLibraryMenu]');
-  await clickOn('[data-tid=createNewTagGroup]');
+  const tagGroup = await global.client.$(
+    '[data-tid=tagLibraryMoreButton_' + testGroup + ']'
+  );
+  if (!(await tagGroup.isDisplayed())) {
+    await clickOn('[data-tid=tagLibraryMenu]');
+    await clickOn('[data-tid=createNewTagGroup]');
 
-  await setInputKeys('createTagGroupInput', tagGroupName);
-  await clickOn('[data-tid=createTagGroupConfirmButton]');
+    await setInputKeys('createTagGroupInput', tagGroupName);
+    await clickOn('[data-tid=createTagGroupConfirmButton]');
+    if (isWeb) {
+      await global.client.pause(500);
+    }
+  }
 }
 
 export async function addTags(arrTags) {
@@ -54,6 +62,7 @@ describe('TST04 - Testing the tag library:', () => {
     );
 
     await clickOn('[data-tid=tagLibraryMoreButton_' + testGroup + ']');
+    await global.client.pause(500);
     await clickOn('[data-tid=deleteTagGroup]');
     await global.client.pause(500);
     await clickOn('[data-tid=confirmDeleteTagGroupDialog]');
@@ -103,9 +112,10 @@ describe('TST04 - Testing the tag library:', () => {
     );
     const color = await colorElem.getCSSProperty('background');
 
-    expect(color.value).toContain(
-      'rgb(0,0,0)'
-    ); /*await openTagGroupMenu(
+    expect(color.value).toContain('rgb(0,0,0)');
+    await clickOn('[data-tid=editTagGroupConfirmButton]');
+
+    /*await openTagGroupMenu(
       testGroup
     );
     await delay(500);
@@ -141,7 +151,7 @@ describe('TST04 - Testing the tag library:', () => {
     expect(addedTag.selector).toBe('[data-tid=' + newTagName + ']');*/
   });
 
-  it('TST0405 - Add tag (s) / Should add comma separated tags to a tag group [TST0405,web,minio,electron]', async () => {
+  it('TST0405 - Add tag (s) Should add comma separated tags to a tag group [TST0405,web,minio,electron]', async () => {
     await createTagGroup(testGroup);
     await clickOn('[data-tid=tagLibraryMoreButton_' + testGroup + ']');
     await addTags(arrTags);
@@ -166,10 +176,10 @@ describe('TST04 - Testing the tag library:', () => {
   });
 
   it('TST0408 - Should delete tag from a tag group [TST0408,web,minio,electron]', async () => {
-    await tagMenu('done', 'deleteTagDialog');
+    await tagMenu('next', 'deleteTagDialog');
     await global.client.pause(500);
     await clickOn('[data-tid=confirmDeleteTagDialogTagMenu]');
-    await expectElementExist('[data-tid=tagContainer_done]', false);
+    await expectElementExist('[data-tid=tagContainer_next]', false);
   });
 
   it('TST0409 - Should sort tags in a tag group lexicographically [TST0409,web,minio,electron]', async () => {
@@ -210,6 +220,7 @@ describe('TST04 - Testing the tag library:', () => {
     const color = await colorElem.getCSSProperty('background');
 
     expect(color.value).toContain('rgb(0,0,0)');
+    await clickOn('[data-tid=createTagGroupCancelButton]');
 
     /* await global.client.waitForVisible('[data-tid=settings]');
     await global.client.click('[data-tid=settings]');

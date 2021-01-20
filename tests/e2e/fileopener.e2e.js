@@ -27,7 +27,7 @@ import {
   perspectiveGridTable
 } from './test-utils.spec';
 
-describe('TST08 - File / folder properties', () => {
+describe('TST08 - File folder properties', () => {
   beforeEach(async () => {
     if (global.isMinio) {
       await createMinioLocation('', defaultLocationName, true);
@@ -40,7 +40,7 @@ describe('TST08 - File / folder properties', () => {
     await closeFileProperties();
   });
 
-  it('TST0801 - Arrow keys select next/prev file (keybindings) [TST0801,web,minio,electron]', async () => {
+  it('TST0801 - Arrow keys select next prev file (keybindings) [TST0801,web,minio,electron]', async () => {
     const firstFileName = await getGridFileName(0);
 
     // open fileProperties

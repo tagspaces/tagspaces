@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
@@ -319,9 +319,13 @@ if (window.ExtDefaultVerticalPanel === 'none') {
 } */
 
 const MainPage = (props: Props) => {
-  const [selectedDirectoryPath, setSelectedDirectoryPath] = useState<string>(
+  /* const [selectedDirectoryPath, setSelectedDirectoryPath] = useState<string>(
     ''
-  );
+  ); */
+  const selectedDirectoryPath = useRef<string>('');
+  const setSelectedDirectoryPath = (path: string) => {
+    selectedDirectoryPath.current = path;
+  };
   /* const [isManagementPanelVisible, setManagementPanelVisible] = useState<
     boolean
   >(window.ExtDefaultVerticalPanel !== 'none' && !props.isEntryInFullWidth); */
@@ -606,7 +610,7 @@ const MainPage = (props: Props) => {
           chooseDirectoryPath={currentPath =>
             setSelectedDirectoryPath(currentPath)
           }
-          selectedDirectoryPath={selectedDirectoryPath || directoryPath}
+          selectedDirectoryPath={selectedDirectoryPath.current || directoryPath}
         />
       )}
       {props.isUploadProgressDialogOpened && (
@@ -631,7 +635,7 @@ const MainPage = (props: Props) => {
       {props.isCreateFileDialogOpened && (
         <CreateFileDialog
           open={props.isCreateFileDialogOpened}
-          selectedDirectoryPath={selectedDirectoryPath || directoryPath}
+          selectedDirectoryPath={selectedDirectoryPath.current || directoryPath}
           chooseDirectoryPath={currentPath =>
             setSelectedDirectoryPath(currentPath)
           }

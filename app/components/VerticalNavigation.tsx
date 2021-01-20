@@ -30,7 +30,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import ThemingIcon from '@material-ui/icons/InvertColors';
 import UpgradeIcon from '@material-ui/icons/FlightTakeoff';
 import HelpIcon from '@material-ui/icons/HelpOutline';
-import { withTheme } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import SplitPane from 'react-split-pane';
 import { CircularProgress, Typography } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
@@ -66,7 +66,44 @@ const ProTeaserDialogAsync = props => (
   </React.Suspense>
 );
 
+const styles: any = (theme: any) => ({
+  panel: {
+    height: '100%',
+    backgroundColor: AppConfig.sidebarColor
+  },
+  buttonIcon: {
+    width: 28,
+    height: 28,
+    color: '#d6d6d6'
+  },
+  button: {
+    padding: 8,
+    width: 44,
+    height: 44
+  },
+  selectedButton: {
+    borderRadius: 0,
+    backgroundColor: AppConfig.sidebarSelectionColor
+  },
+  settingsButton: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0
+  },
+  themingButton: {
+    position: 'absolute',
+    bottom: 45,
+    left: 0
+  },
+  upgradeButton: {
+    position: 'absolute',
+    bottom: 90,
+    left: 0
+  }
+});
+
 interface Props {
+  classes: any;
   theme: any;
   isFirstRun: boolean;
   directoryPath: string;
@@ -91,7 +128,7 @@ interface Props {
   closeAllVerticalPanels: () => void;
   openFileNatively: (url: string) => void;
   openURLExternally: (url: string) => void;
-  switchTheme: (theme: string) => void;
+  switchTheme: () => void;
   showNotification: (message: string) => void;
   isReadOnlyMode: boolean;
   progress?: Array<any>;
@@ -104,42 +141,6 @@ interface State {
 class VerticalNavigation extends React.Component<Props, State> {
   state = {
     isProTeaserVisible: false
-  };
-
-  styles = {
-    panel: {
-      height: '100%',
-      backgroundColor: AppConfig.sidebarColor
-    },
-    buttonIcon: {
-      width: 28,
-      height: 28,
-      color: '#d6d6d6'
-    },
-    button: {
-      padding: 8,
-      width: 44,
-      height: 44
-    },
-    selectedButton: {
-      borderRadius: 0,
-      backgroundColor: AppConfig.sidebarSelectionColor
-    },
-    settingsButton: {
-      position: 'absolute',
-      bottom: 0,
-      left: 0
-    },
-    themingButton: {
-      position: 'absolute',
-      bottom: 45,
-      left: 0
-    },
-    upgradeButton: {
-      position: 'absolute',
-      bottom: 90,
-      left: 0
-    }
   };
 
   toggleProTeaser = () => {
@@ -160,6 +161,7 @@ class VerticalNavigation extends React.Component<Props, State> {
 
   render() {
     const {
+      classes,
       isLocationManagerPanelOpened,
       isTagLibraryPanelOpened,
       isSearchPanelOpened,
@@ -208,16 +210,17 @@ class VerticalNavigation extends React.Component<Props, State> {
           defaultSize={44}
           resizerStyle={{ backgroundColor: theme.palette.divider }}
         >
-          <div style={this.styles.panel}>
+          <div className={classes.panel}>
             <IconButton
               onClick={toggleAboutDialog}
-              style={{ ...this.styles.button, marginTop: 10, marginBottom: 16 }}
+              className={classes.button}
+              style={{ marginTop: 10, marginBottom: 16 }}
               title={i18n.t('core:aboutTitle')}
               data-tid="aboutTagSpaces"
             >
               <img
+                className={classes.buttonIcon}
                 style={{
-                  ...this.styles.buttonIcon,
                   color: this.props.theme.palette.text.primary
                 }}
                 src={LogoIcon}
@@ -235,11 +238,12 @@ class VerticalNavigation extends React.Component<Props, State> {
                   toggleCreateFileDialog();
                 }
               }}
-              style={{ ...this.styles.button, marginBottom: 20 }}
+              className={classes.button}
+              style={{ marginBottom: 20 }}
               title={i18n.t('core:createFileTitle')}
               data-tid="locationManager"
             >
-              <NewFileIcon style={this.styles.buttonIcon} />
+              <NewFileIcon className={classes.buttonIcon} />
             </IconButton>
             <IconButton
               id="verticalNavButton"
@@ -250,15 +254,15 @@ class VerticalNavigation extends React.Component<Props, State> {
                   openLocationManagerPanel();
                 }
               }}
-              style={
+              className={
                 isLocationManagerPanelOpened
-                  ? { ...this.styles.button, ...this.styles.selectedButton }
-                  : this.styles.button
+                  ? [classes.button, classes.selectedButton].join(' ')
+                  : classes.button
               }
               title={i18n.t('core:locationManager')}
               data-tid="locationManagerPanel"
             >
-              <LocationsIcon style={this.styles.buttonIcon} />
+              <LocationsIcon className={classes.buttonIcon} />
             </IconButton>
             <IconButton
               id="verticalNavButton"
@@ -271,13 +275,13 @@ class VerticalNavigation extends React.Component<Props, State> {
                   openTagLibraryPanel();
                 }
               }}
-              style={
+              className={
                 isTagLibraryPanelOpened
-                  ? { ...this.styles.button, ...this.styles.selectedButton }
-                  : this.styles.button
+                  ? [classes.button, classes.selectedButton].join(' ')
+                  : classes.button
               }
             >
-              <TagLibraryIcon style={this.styles.buttonIcon} />
+              <TagLibraryIcon className={classes.buttonIcon} />
             </IconButton>
             <IconButton
               id="verticalNavButton"
@@ -290,13 +294,13 @@ class VerticalNavigation extends React.Component<Props, State> {
                   openSearchPanel();
                 }
               }}
-              style={
+              className={
                 isSearchPanelOpened
-                  ? { ...this.styles.button, ...this.styles.selectedButton }
-                  : this.styles.button
+                  ? [classes.button, classes.selectedButton].join(' ')
+                  : classes.button
               }
             >
-              <SearchIcon style={this.styles.buttonIcon} />
+              <SearchIcon className={classes.buttonIcon} />
             </IconButton>
             {/* <IconButton
               title={i18n.t('core:perspectiveManager')}
@@ -311,11 +315,11 @@ class VerticalNavigation extends React.Component<Props, State> {
               disabled={false}
               style={
                 isPerspectivePanelOpened
-                  ? { ...this.styles.button, ...this.styles.selectedButton }
-                  : this.styles.button
+                  ? { ...classes.button, ...classes.selectedButton }
+                  : classes.button
               }
             >
-              <PerspectivesIcon style={this.styles.buttonIcon} />
+              <PerspectivesIcon style={classes.buttonIcon} />
             </IconButton> */}
             <IconButton
               id="verticalNavButton"
@@ -328,13 +332,13 @@ class VerticalNavigation extends React.Component<Props, State> {
                   openHelpFeedbackPanel();
                 }
               }}
-              style={
+              className={
                 isHelpFeedbackPanelOpened
-                  ? { ...this.styles.button, ...this.styles.selectedButton }
-                  : this.styles.button
+                  ? [classes.button, classes.selectedButton].join(' ')
+                  : classes.button
               }
             >
-              <HelpIcon style={this.styles.buttonIcon} />
+              <HelpIcon className={classes.buttonIcon} />
             </IconButton>
             {!Pro && (
               <IconButton
@@ -343,13 +347,9 @@ class VerticalNavigation extends React.Component<Props, State> {
                 data-tid="upgradeToPro"
                 onClick={this.toggleProTeaser}
                 // @ts-ignore
-                style={{ ...this.styles.button, ...this.styles.upgradeButton }}
+                className={[classes.button, classes.upgradeButton].join(' ')}
               >
-                <UpgradeIcon
-                  style={{
-                    ...this.styles.buttonIcon
-                  }}
-                />
+                <UpgradeIcon className={classes.buttonIcon} />
               </IconButton>
             )}
             {this.props.progress && this.props.progress.length > 0 && (
@@ -359,7 +359,7 @@ class VerticalNavigation extends React.Component<Props, State> {
                 data-tid="uploadProgress"
                 onClick={() => this.props.toggleUploadDialog()}
                 // @ts-ignore
-                style={{ ...this.styles.button, ...this.styles.upgradeButton }}
+                className={[classes.button, classes.upgradeButton].join(' ')}
               >
                 <CircularProgressWithLabel value={this.getProgressValue()} />
               </IconButton>
@@ -369,10 +369,9 @@ class VerticalNavigation extends React.Component<Props, State> {
               title={i18n.t('core:switchTheme')}
               data-tid="switchTheme"
               onClick={switchTheme}
-              // @ts-ignore
-              style={{ ...this.styles.button, ...this.styles.themingButton }}
+              className={[classes.button, classes.themingButton].join(' ')}
             >
-              <ThemingIcon style={this.styles.buttonIcon} />
+              <ThemingIcon className={classes.buttonIcon} />
             </IconButton>
             <IconButton
               id="verticalNavButton"
@@ -380,28 +379,21 @@ class VerticalNavigation extends React.Component<Props, State> {
               data-tid="settings"
               onClick={toggleSettingsDialog}
               // @ts-ignore
-              style={
+              className={
                 isSettingsDialogOpened
-                  ? {
-                      ...this.styles.button,
-                      ...this.styles.settingsButton,
-                      ...this.styles.selectedButton
-                    }
-                  : {
-                      ...this.styles.button,
-                      ...this.styles.settingsButton
-                    }
+                  ? [
+                      classes.button,
+                      classes.settingsButton,
+                      classes.selectedButton
+                    ].join(' ')
+                  : [classes.button, classes.settingsButton].join(' ')
               }
             >
-              <SettingsIcon style={this.styles.buttonIcon} />
+              <SettingsIcon className={classes.buttonIcon} />
             </IconButton>
           </div>
-          <div style={this.styles.panel}>
-            <LocationManager
-              style={{
-                display: isLocationManagerPanelOpened ? 'block' : 'none'
-              }}
-            />
+          <div className={classes.panel}>
+            {isLocationManagerPanelOpened && <LocationManager />}
             {isTagLibraryPanelOpened && <TagLibrary />}
             {isSearchPanelOpened && <Search />}
             {isHelpFeedbackPanelOpened && (
@@ -490,4 +482,4 @@ function mapActionCreatorsToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
-)(withTheme(VerticalNavigation));
+)(withStyles(styles, { withTheme: true })(VerticalNavigation));
