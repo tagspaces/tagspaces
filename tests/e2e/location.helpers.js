@@ -95,6 +95,17 @@ export async function openLocationMenu(locationName) {
   await clickOn('[data-tid=locationMoreButton_' + locationName + ']');
 }
 
+export async function closeLocation(locationName) {
+  const locationSelector = '[data-tid=locationMoreButton_' + locationName + ']';
+  const element = await global.client.$(locationSelector);
+  if (!(await element.isDisplayed())) {
+    await clickOn('[data-tid=locationManagerPanel]');
+  }
+  await global.client.pause(500);
+  await clickOn(locationSelector);
+  await clickOn('[data-tid=closeLocationTID]');
+}
+
 /**
  * @deprecated use await clickOn('[data-tid=location_' + defaultLocationName + ']');
  * @param locationName
@@ -248,5 +259,8 @@ export async function getLocationTid(locationIndex) {
   // location = await location.$('li');
   // location = await location.$('div');
   // return location.getAttribute('data-tid');
-  return location.getText();
+  if (location !== undefined) {
+    return await location.getText();
+  }
+  return undefined;
 }

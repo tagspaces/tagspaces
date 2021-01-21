@@ -16,6 +16,8 @@
  *
  */
 
+import AppConfig from '-/config';
+
 let tsPro;
 
 try {
@@ -26,6 +28,10 @@ try {
   } else {
     throw e;
   }
+}
+
+if (AppConfig.isCordovaAndroid) {
+  tsPro = undefined;
 }
 
 export { tsPro as Pro };

@@ -1772,7 +1772,7 @@ export const actions = {
                 .catch(() =>
                   dispatch(
                     actions.showNotification(
-                      i18n.t('core:Invalid link'),
+                      i18n.t('core:invalidLink'),
                       'warning',
                       true
                     )

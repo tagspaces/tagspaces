@@ -126,7 +126,11 @@ describe('TST03 - Testing locations:', () => {
     // TODO test duplication warning on creating locations
   });
 
-  it('TST0307 - Move location Up and Down [web]', async () => {
+  it('TST0307 - Move location Up and Down [web,electron]', async () => {
+    if (global.isWeb) {
+      // in web there is no other locations
+      await createMinioLocation('', 'dummyLocation', false);
+    }
     await openLocationMenu(testLocationName);
     await clickOn('[data-tid=moveLocationUp]');
 

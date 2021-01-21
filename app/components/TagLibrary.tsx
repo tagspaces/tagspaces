@@ -92,6 +92,11 @@ interface Props {
   editTagGroup: () => void;
   editTag: () => void;
   deleteTag: (tagTitle: string, parentTagGroupUuid: Uuid) => void;
+  showNotification: (
+    text: string,
+    notificationType?: string, // NotificationTypes
+    autohide?: boolean
+  ) => void;
   selectedEntries: Array<FileSystemEntry>;
   tagGroupCollapsed: Array<string>;
 }
@@ -300,7 +305,7 @@ const TagLibrary = (props: Props) => {
     }
   }
 
-  const { tagGroups, classes, allTags } = props;
+  const { tagGroups, classes, allTags, showNotification } = props;
 
   return (
     <div className={classes.panel} style={props.style}>
@@ -393,6 +398,7 @@ const TagLibrary = (props: Props) => {
         importTagGroups={props.importTagGroups}
         exportTagGroups={props.exportTagGroups}
         showCreateTagGroupDialog={showCreateTagGroupDialog}
+        showNotification={showNotification}
         openURLExternally={props.openURLExternally}
       />
       {Boolean(tagMenuAnchorEl) && (
@@ -474,13 +480,15 @@ function mapDispatchToProps(dispatch) {
       addTag: TagLibraryActions.addTag,
       addTags: TaggingActions.addTags,
       collectTagsFromLocation: TaggingActions.collectTagsFromLocation,
-      openURLExternally: AppActions.openURLExternally
+      openURLExternally: AppActions.openURLExternally,
+      showNotification: AppActions.showNotification
     },
     dispatch
   );
 }
 
-export default withStyles(styles)(
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
   // @ts-ignore
-  connect(mapStateToProps, mapDispatchToProps)(TagLibrary)
-);
+)(withStyles(styles)(TagLibrary));

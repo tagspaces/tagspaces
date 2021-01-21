@@ -16,3 +16,8 @@ div[tabindex='-1']:focus {
 .tagspaces-main-color {
   color: #1dd19f;
 }
+
+html,
+body {
+  overscroll-behavior-x: none;
+}

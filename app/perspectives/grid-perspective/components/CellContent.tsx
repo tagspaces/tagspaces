@@ -253,6 +253,7 @@ const CellContent = (props: Props) => {
           }}
         >
           <div
+            data-tid="rowCellTID"
             className={classes.rowFileExtension}
             role="presentation"
             title={fsEntry.path}

@@ -182,6 +182,6 @@ const ImportExportTagGroupsDialog = (props: Props) => {
   );
 };
 
-export default withStyles(styles)(
-  withMobileDialog()(ImportExportTagGroupsDialog)
+export default withMobileDialog()(
+  withStyles(styles)(ImportExportTagGroupsDialog)
 );
