@@ -49,25 +49,31 @@ export async function clearLocalStorage() {
 }
 
 export async function startSpectronApp() {
+  const chromeDriverArgs = [
+    // '--disable-gpu',
+    '--disable-infobars',
+    '--no-sandbox',
+    '--disable-dev-shm-usage',
+    '--disable-extensions',
+    '--window-size=1920,1080'
+  ];
+  if (global.isHeadlessMode) {
+    chromeDriverArgs.push('--headless');
+  }
+
   if (global.isWeb) {
     //require('scripts/wdio.conf');
     const webdriverio = require('webdriverio');
     // https://webdriver.io/docs/configurationfile.html
-    let options = {
+
+    const options = {
       host: 'localhost', // Use localhost as chrome driver server
       port: 9515, // "9515" is the port opened by chrome driver.
       capabilities: {
         browserName: 'chrome',
         'goog:chromeOptions': {
           w3c: true,
-          args: [
-            '--no-sandbox',
-            '--window-size=1920,1080',
-            '--disable-dev-shm-usage'
-          ]
-        },
-        timeouts: {
-          script: 60000
+          args: chromeDriverArgs
         }
       },
       // Warns when a deprecated command is used
@@ -90,30 +96,6 @@ export async function startSpectronApp() {
       logLevel: 'silent',
       coloredLogs: true
     };
-    if (global.isHeadlessChrome) {
-      options = {
-        ...options,
-        capabilities: {
-          browserName: 'chrome',
-          'goog:chromeOptions': {
-            // binary: electronPath, // Path to your Electron binary.
-            // to run chrome headless the following flags are required
-            // (see https://developers.google.com/web/updates/2017/04/headless-chrome)
-            // args: ['--headless', '--disable-gpu']
-            args: [
-              '--headless',
-              // '--disable-gpu',
-              '--no-sandbox',
-              '--window-size=1920,1080',
-              '--disable-dev-shm-usage'
-            ]
-          },
-          timeouts: {
-            script: 60000
-          }
-        }
-      };
-    }
     // global.client = browser
     global.client = await webdriverio.remote(options);
     // global.client.setTimeout({ 'script': 60000 });
@@ -136,7 +118,8 @@ export async function startSpectronApp() {
       args: [pathLib.join(__dirname, '..', '..', 'app')],
       // startTimeout: 500,
       waitTimeout: 1000,
-      waitforInterval: 50
+      waitforInterval: 50,
+      chromeDriverArgs: chromeDriverArgs
     });
     await global.app.start();
     global.client = global.app.client;

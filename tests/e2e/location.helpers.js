@@ -259,5 +259,8 @@ export async function getLocationTid(locationIndex) {
   // location = await location.$('li');
   // location = await location.$('div');
   // return location.getAttribute('data-tid');
-  return location.getText();
+  if (location !== undefined) {
+    return await location.getText();
+  }
+  return undefined;
 }
