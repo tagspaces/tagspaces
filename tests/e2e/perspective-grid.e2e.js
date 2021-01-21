@@ -22,7 +22,7 @@ import {
   createTxtFile,
   doubleClickOn,
   expectElementExist,
-  expectTagsExist,
+  expectTagsExistBySelector,
   extractTags,
   getGridCellClass,
   getGridFileName,
@@ -189,12 +189,11 @@ describe('TST50 - Perspective Grid', () => {
 
     for (let i = 0; i < selectedIds.length; i++) {
       // const selectBox = await global.client.$('[data-tid=perspectiveGridFileTable]');
-      const element = await global.client.$(
-        '[data-entry-id="' + selectedIds[i] + '"]'
+      await expectTagsExistBySelector(
+        '[data-entry-id="' + selectedIds[i] + '"]',
+        tags,
+        true
       );
-      // await getGridElement(arrSelected[i]);
-      // await element.moveTo();
-      await expectTagsExist(element, tags, true);
     }
 
     // Select all file and check if tag exist
@@ -223,10 +222,11 @@ describe('TST50 - Perspective Grid', () => {
     await AddRemoveTagsToSelectedFiles(tags, false);
 
     for (let i = 0; i < selectedIds.length; i++) {
-      const element = await global.client.$(
-        '[data-entry-id="' + selectedIds[i] + '"]'
+      await expectTagsExistBySelector(
+        '[data-entry-id="' + selectedIds[i] + '"]',
+        tags,
+        false
       );
-      await expectTagsExist(element, tags, false);
     }
     // Select all file and check if tag exist
     /*const filesList = await global.client.$$(perspectiveGridTable + firstFile);
@@ -310,7 +310,7 @@ describe('TST50 - Perspective Grid', () => {
     await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
     //click on hide directories
     await clickOn('[data-tid=gridPerspectiveToggleShowDirectories]');
-    await global.client.pause(500);
+
     const selectedIds = await selectRowFiles([0, 1, 2]);
 
     await clickOn('[data-tid=gridPerspectiveDeleteMultipleFiles]');

@@ -330,6 +330,7 @@ export async function selectAllFiles(classNotSelected) {
 }
 
 export async function selectRowFiles(arrIndex = []) {
+  await global.client.pause(500);
   await clickOn('[data-tid=gridPerspectiveSwitchLayoutToRow]');
   // const filesList = await global.client.$('[data-tid=perspectiveGridFileTable]');
   const filesList = await global.client.$$('[data-tid=rowCellTID]');
@@ -432,7 +433,17 @@ export async function showFilesWithTag(tagName) {
   await global.client.pause(1500); // minio
 }
 
+export async function expectTagsExistBySelector(
+  selector,
+  arrTagNames,
+  exist = true
+) {
+  const gridElement = await global.client.$(selector);
+  await expectTagsExist(gridElement, arrTagNames, exist);
+}
+
 export async function expectTagsExist(gridElement, arrTagNames, exist = true) {
+  await expectElementExist(gridElement);
   const tags = await extractTags(gridElement);
   for (let i = 0; i < arrTagNames.length; i++) {
     const tagName = arrTagNames[i];

@@ -28,6 +28,7 @@ import {
   doubleClickOn,
   expectElementExist,
   expectTagsExist,
+  expectTagsExistBySelector,
   getGridCellClass,
   getGridFileName,
   removeTagFromTagMenu,
@@ -118,10 +119,9 @@ describe('TST50** - Right button on a file', () => {
   test('TST5019 - Rename tag in file [TST5019,web,minio,electron]', async () => {
     await searchEngine('desktop');
     // Select file
-    await clickOn(perspectiveGridTable + firstFile);
+    await clickOn(selectorFile);
     await AddRemoveTagsToSelectedFiles([testTagName], true);
-    let file = await global.client.$(perspectiveGridTable + firstFile);
-    await expectTagsExist(file, [testTagName], true);
+    await expectTagsExistBySelector(selectorFile, [testTagName], true);
 
     /*await AddRemoveTagsToFile(perspectiveGridTable + firstFile, [testTagName], {
       add: true
@@ -133,29 +133,33 @@ describe('TST50** - Right button on a file', () => {
     await clickOn('[data-tid=confirmEditTagEntryDialog]');
     await waitForNotification();
 
-    file = await global.client.$(perspectiveGridTable + firstFile);
-    await expectTagsExist(file, [testTagName + '-edited'], true);
+    await expectTagsExistBySelector(
+      selectorFile,
+      [testTagName + '-edited'],
+      true
+    );
 
     //cleanup
-    await clickOn(perspectiveGridTable + firstFile);
+    await clickOn(selectorFile);
     await AddRemoveTagsToSelectedFiles([testTagName + '-edited'], false);
-    file = await global.client.$(perspectiveGridTable + firstFile);
-    await expectTagsExist(file, [testTagName + '-edited'], false);
+    await expectTagsExistBySelector(
+      selectorFile,
+      [testTagName + '-edited'],
+      false
+    );
   });
 
   test('TST5023 - Remove tag from file (tag menu) [TST5023,web,minio,electron]', async () => {
     await searchEngine('desktop');
     // select file
-    await clickOn(perspectiveGridTable + firstFile);
+    await clickOn(selectorFile);
     await AddRemoveTagsToSelectedFiles([testTagName], true);
-    let file = await global.client.$(perspectiveGridTable + firstFile);
-    await expectTagsExist(file, [testTagName], true);
+    await expectTagsExistBySelector(selectorFile, [testTagName], true);
 
     await removeTagFromTagMenu(testTagName);
     await global.client.pause(500);
 
-    file = await global.client.$(perspectiveGridTable + firstFile);
-    await expectTagsExist(file, [testTagName], false);
+    await expectTagsExistBySelector(selectorFile, [testTagName], false);
   });
 
   test('TST5024 - Show files with a given tag (tag menu) [TST5024,web,minio,electron]', async () => {
@@ -185,25 +189,23 @@ describe('TST50** - Right button on a file', () => {
     await searchEngine('desktop');
     const tags = [testTagName, testTagName + '2'];
     // select file
-    await clickOn(perspectiveGridTable + firstFile);
+    await clickOn(selectorFile);
     await AddRemoveTagsToSelectedFiles(tags, true);
 
-    const file = await global.client.$(perspectiveGridTable + firstFile);
-    await expectTagsExist(file, tags, true);
+    await expectTagsExistBySelector(selectorFile, tags, true);
 
-    //cleanup
-    await clickOn(perspectiveGridTable + firstFile);
+    // remove tags
+    await clickOn(selectorFile);
     await AddRemoveTagsToSelectedFiles(tags, false);
+
+    await expectTagsExistBySelector(selectorFile, tags, false);
   });
 
   test('TST5026 - Open file natively [electron]', async () => {
     if (!global.isMinio) {
       // Open file natively option is missing for Minio Location
       await searchEngine('txt');
-      await openContextEntryMenu(
-        perspectiveGridTable + firstFile,
-        'fileMenuOpenFileNatively'
-      );
+      await openContextEntryMenu(selectorFile, 'fileMenuOpenFileNatively');
     }
     // check parent directory
   });
@@ -212,10 +214,7 @@ describe('TST50** - Right button on a file', () => {
     if (!global.isMinio) {
       // Show in File Manager option is missing for Minio Location
       await searchEngine('txt');
-      await openContextEntryMenu(
-        perspectiveGridTable + firstFile,
-        'fileMenuOpenContainingFolder'
-      );
+      await openContextEntryMenu(selectorFile, 'fileMenuOpenContainingFolder');
     }
     // check parent directory
   });

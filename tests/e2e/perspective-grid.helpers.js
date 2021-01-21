@@ -1,10 +1,4 @@
-import {
-  addInputKeys,
-  clickOn,
-  expectTagsExist,
-  waitForNotification
-} from './general.helpers';
-import { firstFile, perspectiveGridTable } from './test-utils.spec';
+import { addInputKeys, clickOn, waitForNotification } from './general.helpers';
 
 /**
  *
