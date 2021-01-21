@@ -794,7 +794,7 @@ const MainPage = (props: Props) => {
             onOpen={showDrawer}
             hysteresis={0.1}
             disableBackdropTransition={!AppConfig.isIOS}
-            disableDiscovery={AppConfig.isIOS}
+            // disableDiscovery={AppConfig.isIOS}
           >
             <MobileNavigation
               hideDrawer={() => props.closeAllVerticalPanels()}

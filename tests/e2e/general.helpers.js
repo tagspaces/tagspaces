@@ -19,8 +19,9 @@ export async function clickOn(selector, options = {}) {
   await element.waitUntil(
     async function() {
       const displayed = await this.isDisplayed();
+      // const clickable = await this.isClickable();
       // const displayed = await this.isDisplayedInViewport();
-      return displayed === true;
+      return displayed; // && clickable;
     },
     {
       timeout: 5000,
@@ -32,6 +33,10 @@ export async function clickOn(selector, options = {}) {
   await element.click(options);
 }
 
+/*export async function waitUntilOpen(element) {
+  // const element = await global.client.$(selector);
+  await element.waitUntil(async () => await this.isOpen());
+}*/
 /**
  *
  * @param selector
@@ -62,8 +67,9 @@ export async function doubleClickOn(selector) {
   const element = await global.client.$(selector);
   await element.waitUntil(
     async function() {
-      const displayed = await this.isDisplayedInViewport();
-      return displayed === true;
+      const displayed = await this.isDisplayed();
+      // const displayed = await this.isDisplayedInViewport();
+      return displayed; //=== true;
     },
     {
       timeout: 5000,
@@ -209,7 +215,7 @@ export async function getGridFileName(fileIndex) {
   return undefined;
 }
 
-export async function getGridCellClass(fileIndex = 0) {
+export async function getGridElement(fileIndex = 0) {
   const filesList = await global.client.$$(perspectiveGridTable + firstFile);
   let file =
     fileIndex < 0
@@ -217,8 +223,12 @@ export async function getGridCellClass(fileIndex = 0) {
       : filesList[fileIndex];
   file = await file.$('div');
   file = await file.$('div');
+  return file;
+}
 
-  return await file.getAttribute('class');
+export async function getGridCellClass(fileIndex = 0) {
+  const file = await getGridElement(fileIndex);
+  return file.getAttribute('class');
 }
 
 export async function expectElementExist(
@@ -227,18 +237,42 @@ export async function expectElementExist(
   timeout = 5000
 ) {
   const element = await global.client.$(selector);
-  await element.waitUntil(
+  await expectExist(element, exist, timeout);
+  return element;
+}
+
+export async function expectExist(element, exist = true, timeout = 5000) {
+  await element.waitForDisplayed({
+    timeout: timeout,
+    reverse: !exist,
+    timeoutMsg:
+      'expectElementExist selector:' +
+      element.selector +
+      ' to exist=' +
+      exist +
+      ' after ' +
+      timeout / 1000 +
+      's'
+  });
+  /*await element.waitUntil(
     async function() {
-      const displayed = await this.isDisplayedInViewport();
+      const displayed = await this.isDisplayed();
+      // const displayed = await this.isDisplayedInViewport();
       return displayed === exist;
     },
     {
       timeout: timeout,
       timeoutMsg:
-        'expected selector to exist=' + exist + ' after ' + timeout / 1000 + 's'
+        'expectElementExist selector:' +
+        element.selector +
+        ' to exist=' +
+        exist +
+        ' after ' +
+        timeout / 1000 +
+        's'
     }
-  );
-  expect(await element.isDisplayedInViewport()).toBe(exist);
+  );*/
+  expect(await element.isDisplayed()).toBe(exist);
   return element;
 }
 
@@ -310,6 +344,48 @@ export async function selectAllFiles(classNotSelected) {
     perspectiveGridTable + firstFile + '/div/div',
     classNotSelected
   );
+}
+
+export async function selectFilesByID(arrEntryIds = []) {
+  await global.client.pause(500);
+  await clickOn('[data-tid=gridPerspectiveSwitchLayoutToRow]');
+  for (let i = 0; i < arrEntryIds.length; i++) {
+    let entry = await global.client.$(
+      '[data-entry-id="' + arrEntryIds[i] + '"]'
+    );
+    entry = await entry.$('[data-tid=rowCellTID]');
+    await entry.click();
+  }
+  await clickOn('[data-tid=gridPerspectiveSwitchLayoutToGrid]');
+}
+
+export async function selectRowFiles(arrIndex = []) {
+  await global.client.pause(500);
+  await clickOn('[data-tid=gridPerspectiveSwitchLayoutToRow]');
+  // const filesList = await global.client.$('[data-tid=perspectiveGridFileTable]');
+  const filesList = await global.client.$$('[data-tid=rowCellTID]');
+  const arrElements = [];
+  for (let i = 0; i < arrIndex.length; i++) {
+    const index =
+      arrIndex[i] < 0 ? filesList.length + arrIndex[i] : arrIndex[i];
+    if (filesList[index]) {
+      let parent = await filesList[index].$('..');
+      parent = await parent.$('..');
+      parent = await parent.$('..');
+      arrElements.push(await parent.getAttribute('data-entry-id'));
+      filesList[index].click();
+    } else {
+      console.log(
+        'selectRowFiles filesList.length:' +
+          filesList.length +
+          ' with index:' +
+          index +
+          ' not exist'
+      );
+    }
+  }
+  await clickOn('[data-tid=gridPerspectiveSwitchLayoutToGrid]');
+  return arrElements;
 }
 
 /**
@@ -384,10 +460,21 @@ export async function showFilesWithTag(tagName) {
   await clickOn('[data-tid=tagMoreButton_' + tagName + ']');
   await global.client.pause(500);
   await clickOn('[data-tid=showFilesWithThisTag]');
-  await global.client.pause(1500); // minio
+  await waitForNotification();
+  await global.client.pause(1500); // web && minio search is slow
+}
+
+export async function expectTagsExistBySelector(
+  selector,
+  arrTagNames,
+  exist = true
+) {
+  const gridElement = await global.client.$(selector);
+  await expectTagsExist(gridElement, arrTagNames, exist);
 }
 
 export async function expectTagsExist(gridElement, arrTagNames, exist = true) {
+  await expectExist(gridElement);
   const tags = await extractTags(gridElement);
   for (let i = 0; i < arrTagNames.length; i++) {
     const tagName = arrTagNames[i];
