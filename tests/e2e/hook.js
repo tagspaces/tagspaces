@@ -58,7 +58,7 @@ export async function startSpectronApp() {
     '--window-size=1920,1080'
   ];
   if (global.isHeadlessMode) {
-    chromeDriverArgs.push('--headless')
+    chromeDriverArgs.push('--headless');
   }
 
   if (global.isWeb) {

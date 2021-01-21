@@ -29,12 +29,11 @@ import {
   expectElementExist,
   expectTagsExist,
   expectTagsExistBySelector,
-  getGridCellClass,
   getGridFileName,
   removeTagFromTagMenu,
-  selectAllFiles,
   selectorFile,
   selectorFolder,
+  selectRowFiles,
   setInputKeys,
   setSettings,
   showFilesWithTag,
@@ -163,7 +162,21 @@ describe('TST50** - Right button on a file', () => {
   });
 
   test('TST5024 - Show files with a given tag (tag menu) [TST5024,web,minio,electron]', async () => {
-    const classNotSelected = await getGridCellClass(0);
+    //open Option menu
+    await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
+    //click on hide directories
+    await clickOn('[data-tid=gridPerspectiveToggleShowDirectories]');
+
+    await selectRowFiles([0, 1, 2]);
+    await AddRemoveTagsToSelectedFiles([testTagName], true);
+    await showFilesWithTag(testTagName);
+
+    const filesList = await global.client.$$(selectorFile);
+    for (let i = 0; i < filesList.length; i++) {
+      await expectTagsExist(filesList[i], [testTagName], true);
+    }
+
+    /*const classNotSelected = await getGridCellClass(0);
     const classSelected = await selectAllFiles(classNotSelected);
     expect(classNotSelected).not.toBe(classSelected);
 
@@ -178,7 +191,7 @@ describe('TST50** - Right button on a file', () => {
     // cleanup
     await selectAllFiles(classNotSelected);
     expect(classNotSelected).not.toBe(classSelected);
-    await AddRemoveTagsToSelectedFiles([testTagName], false);
+    await AddRemoveTagsToSelectedFiles([testTagName], false);*/
   });
 
   /**

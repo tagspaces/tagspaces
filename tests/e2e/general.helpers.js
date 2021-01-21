@@ -237,7 +237,23 @@ export async function expectElementExist(
   timeout = 5000
 ) {
   const element = await global.client.$(selector);
-  await element.waitUntil(
+  await expectExist(element, exist, timeout);
+}
+
+export async function expectExist(element, exist = true, timeout = 5000) {
+  await element.waitForDisplayed({
+    timeout: timeout,
+    reverse: !exist,
+    timeoutMsg:
+      'expectElementExist selector:' +
+      element.selector +
+      ' to exist=' +
+      exist +
+      ' after ' +
+      timeout / 1000 +
+      's'
+  });
+  /*await element.waitUntil(
     async function() {
       const displayed = await this.isDisplayed();
       // const displayed = await this.isDisplayedInViewport();
@@ -254,7 +270,7 @@ export async function expectElementExist(
         timeout / 1000 +
         's'
     }
-  );
+  );*/
   expect(await element.isDisplayed()).toBe(exist);
   return element;
 }
@@ -430,7 +446,8 @@ export async function showFilesWithTag(tagName) {
   await clickOn('[data-tid=tagMoreButton_' + tagName + ']');
   await global.client.pause(500);
   await clickOn('[data-tid=showFilesWithThisTag]');
-  await global.client.pause(1500); // minio
+  await waitForNotification();
+  await global.client.pause(1500); // web && minio search is slow
 }
 
 export async function expectTagsExistBySelector(
@@ -443,7 +460,7 @@ export async function expectTagsExistBySelector(
 }
 
 export async function expectTagsExist(gridElement, arrTagNames, exist = true) {
-  await expectElementExist(gridElement);
+  await expectExist(gridElement);
   const tags = await extractTags(gridElement);
   for (let i = 0; i < arrTagNames.length; i++) {
     const tagName = arrTagNames[i];
