@@ -62,6 +62,10 @@ test('calls Search.searchLocationIndex for tags', () => {
   expect(
     Search.searchLocationIndex(locationContent, searchQuery)
   ).resolves.toStrictEqual([entry1]);
+
+  expect(
+    Search.searchLocationIndex(locationContent, searchQuery)
+  ).resolves.not.toStrictEqual([entry2]);
 });
 
 test('calls Search.searchLocationIndex for tags with not to equal', () => {

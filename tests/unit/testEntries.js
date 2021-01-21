@@ -3,7 +3,7 @@ export const entry1 = {
   description: 'test description',
   isFile: true,
   extension: 'jpg',
-  tags: ['tag1'],
+  tags: [{ title: 'tagTitle1' }],
   textConten: 'adsadas dasda',
   fromTime: '',
   toTime: '',
@@ -14,7 +14,7 @@ export const entry2 = {
   name: 'entryTitle2',
   isFile: true,
   extension: 'jpg',
-  tags: ['tag2'],
+  tags: [{ title: 'tagTitle2' }],
   fileSize: 222,
   path: '/gg/'
 };
