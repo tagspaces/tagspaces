@@ -346,6 +346,19 @@ export async function selectAllFiles(classNotSelected) {
   );
 }
 
+export async function selectFilesByID(arrEntryIds = []) {
+  await global.client.pause(500);
+  await clickOn('[data-tid=gridPerspectiveSwitchLayoutToRow]');
+  for (let i = 0; i < arrEntryIds.length; i++) {
+    let entry = await global.client.$(
+      '[data-entry-id="' + arrEntryIds[i] + '"]'
+    );
+    entry = await entry.$('[data-tid=rowCellTID]');
+    await entry.click();
+  }
+  await clickOn('[data-tid=gridPerspectiveSwitchLayoutToGrid]');
+}
+
 export async function selectRowFiles(arrIndex = []) {
   await global.client.pause(500);
   await clickOn('[data-tid=gridPerspectiveSwitchLayoutToRow]');

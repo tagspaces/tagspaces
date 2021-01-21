@@ -22,11 +22,13 @@ import {
   createTxtFile,
   doubleClickOn,
   expectElementExist,
+  expectExist,
   expectTagsExistBySelector,
   extractTags,
   getGridCellClass,
   getGridFileName,
   selectAllFiles,
+  selectFilesByID,
   selectorFile,
   selectorFolder,
   selectRowFiles,
@@ -236,7 +238,31 @@ describe('TST50 - Perspective Grid', () => {
   });
 
   test('TST5007 - Remove all tags from selected files [TST5007,web,minio,electron]', async () => {
-    const classNotSelected = await getGridCellClass(0);
+    //open Option menu
+    await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
+    //click on hide directories
+    await clickOn('[data-tid=gridPerspectiveToggleShowDirectories]');
+
+    const selectedIds = await selectRowFiles([0, 1, 2]);
+    const tags = ['test-tag1', 'test-tag2', 'test-tag3'];
+    await AddRemoveTagsToSelectedFiles(tags, true);
+
+    await selectFilesByID(selectedIds);
+
+    await clickOn('[data-tid=gridPerspectiveAddRemoveTags]');
+    await clickOn('[data-tid=cleanTagsMultipleEntries]');
+    await global.client.pause(500);
+
+    for (let i = 0; i < selectedIds.length; i++) {
+      const gridElement = await global.client.$(
+        '[data-entry-id="' + selectedIds[i] + '"]'
+      );
+      await expectExist(gridElement);
+      const tags = await extractTags(gridElement);
+      expect(tags.length).toBe(0);
+    }
+
+    /*const classNotSelected = await getGridCellClass(0);
     const classSelected = await selectAllFiles(classNotSelected);
     expect(classNotSelected).not.toBe(classSelected);
 
@@ -249,7 +275,7 @@ describe('TST50 - Perspective Grid', () => {
     for (let i = 0; i < filesList.length; i++) {
       const tags = await extractTags(filesList[i]);
       expect(tags.length).toBe(0);
-    }
+    }*/
   });
 
   /**
