@@ -797,7 +797,7 @@ class GridPerspective extends React.Component<Props, State> {
         style={{
           height:
             'calc(100% - ' +
-            (AppConfig.isCordova ? '320' : '104') + // todo handle cordova screen sizes
+            (AppConfig.isCordova ? '320' : '51') + // todo handle cordova screen sizes
             'px)'
         }}
       >
@@ -833,6 +833,7 @@ class GridPerspective extends React.Component<Props, State> {
                 : classes.rowContainer
             }
             style={{
+              marginTop: 53,
               gridTemplateColumns:
                 layoutType === 'grid'
                   ? 'repeat(auto-fit,minmax(' + entryWidth + 'px,1fr))'
