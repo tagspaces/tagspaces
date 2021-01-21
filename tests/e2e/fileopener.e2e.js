@@ -112,7 +112,7 @@ describe('TST08 - File folder properties', () => {
     const newTile = 'fileRenamed.txt';
     await searchEngine('txt');
     // open fileProperties
-    await clickOn(perspectiveGridTable + firstFile);
+    await clickOn(selectorFile);
     //Toggle Properties
     await clickOn('[data-tid=fileContainerToggleProperties]');
 
@@ -195,10 +195,7 @@ describe('TST08 - File folder properties', () => {
     // TODO externally change the file to check if its reloaded
   });
 
-  /** TODO
-   * web clickOn selector [data-tid=confirmSaveBeforeCloseDialog] to exist after 5s
-   */
-  it('TST0813 - Delete file [TST0813,minio,electron]', async () => {
+  it('TST0813 - Delete file [TST0813,web,minio,electron]', async () => {
     await createTxtFile();
     await searchEngine('note');
 

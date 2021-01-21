@@ -238,6 +238,7 @@ export async function expectElementExist(
 ) {
   const element = await global.client.$(selector);
   await expectExist(element, exist, timeout);
+  return element;
 }
 
 export async function expectExist(element, exist = true, timeout = 5000) {
@@ -263,7 +264,7 @@ export async function expectExist(element, exist = true, timeout = 5000) {
       timeout: timeout,
       timeoutMsg:
         'expectElementExist selector:' +
-        selector +
+        element.selector +
         ' to exist=' +
         exist +
         ' after ' +
