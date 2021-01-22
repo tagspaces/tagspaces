@@ -26,7 +26,7 @@
  *  This workflow would not have the `package.json` file.
  */
 // Coho updates this line
-const VERSION = '6.1.0';
+const VERSION = '6.1.1';
 
 const fs = require('fs-extra');
 const path = require('path');

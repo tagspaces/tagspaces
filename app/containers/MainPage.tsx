@@ -64,7 +64,6 @@ import {
   isHelpFeedbackPanelOpened,
   isEditTagDialogOpened,
   isCreateDirectoryOpened,
-  isSelectDirectoryDialogOpened,
   isUploadDialogOpened,
   isCreateFileDialogOpened,
   isSettingsDialogOpened,
@@ -158,10 +157,8 @@ interface Props {
   isLicenseDialogOpened: boolean;
   isThirdPartyLibsDialogOpened: boolean;
   isOnboardingDialogOpened: boolean;
-  isSelectDirectoryDialogOpened: boolean;
   isUploadProgressDialogOpened: boolean;
   isProgressDialogOpened: boolean;
-  toggleSelectDirectoryDialog: () => void;
   toggleUploadDialog: () => void;
   toggleOpenLinkDialog: () => void;
   toggleProgressDialog: () => void;
@@ -299,17 +296,6 @@ const OpenLinkDialog = React.lazy(() =>
 const OpenLinkDialogAsync = props => (
   <React.Suspense fallback={<LoadingLazy />}>
     <OpenLinkDialog {...props} />
-  </React.Suspense>
-);
-
-const SelectDirectoryDialog = React.lazy(() =>
-  import(
-    /* webpackChunkName: "LicenseDialog" */ '../components/dialogs/SelectDirectoryDialog'
-  )
-);
-const SelectDirectoryAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <SelectDirectoryDialog {...props} />
   </React.Suspense>
 );
 
@@ -539,7 +525,6 @@ const MainPage = (props: Props) => {
     toggleAboutDialog,
     toggleCreateDirectoryDialog,
     toggleCreateFileDialog,
-    toggleSelectDirectoryDialog,
     toggleUploadDialog,
     toggleProgressDialog,
     toggleEditTagDialog,
@@ -601,16 +586,6 @@ const MainPage = (props: Props) => {
         <OpenLinkDialogAsync
           open={props.isOpenLinkDialogOpened}
           onClose={toggleOpenLinkDialog}
-        />
-      )}
-      {props.isSelectDirectoryDialogOpened && (
-        <SelectDirectoryAsync
-          open={props.isSelectDirectoryDialogOpened}
-          onClose={toggleSelectDirectoryDialog}
-          chooseDirectoryPath={currentPath =>
-            setSelectedDirectoryPath(currentPath)
-          }
-          selectedDirectoryPath={selectedDirectoryPath.current || directoryPath}
         />
       )}
       {props.isUploadProgressDialogOpened && (
@@ -832,7 +807,6 @@ function mapStateToProps(state) {
     isEditTagDialogOpened: isEditTagDialogOpened(state),
     isCreateDirectoryOpened: isCreateDirectoryOpened(state),
     isCreateFileDialogOpened: isCreateFileDialogOpened(state),
-    isSelectDirectoryDialogOpened: isSelectDirectoryDialogOpened(state),
     isSettingsDialogOpened: isSettingsDialogOpened(state),
     isAboutDialogOpened: isAboutDialogOpened(state),
     isKeysDialogOpened: isKeysDialogOpened(state),
@@ -869,7 +843,6 @@ function mapDispatchToProps(dispatch) {
     {
       loadParentDirectoryContent: AppActions.loadParentDirectoryContent,
       toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog,
-      toggleSelectDirectoryDialog: AppActions.toggleSelectDirectoryDialog,
       toggleUploadDialog: AppActions.toggleUploadDialog,
       toggleProgressDialog: AppActions.toggleProgressDialog,
       resetProgress: AppActions.resetProgress,

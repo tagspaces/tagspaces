@@ -27,12 +27,10 @@ import IconButton from '@material-ui/core/IconButton';
 import FolderIcon from '@material-ui/icons/Folder';
 import Grid from '@material-ui/core/Grid';
 import i18n from '-/services/i18n';
-import AppConfig from '-/config';
 import { extractDirectoryName } from '-/utils/paths';
 import PlatformIO from '-/services/platform-io';
 
 interface Props {
-  showSelectDirectoryDialog: () => void;
   showAdvancedMode: boolean;
   errorTextPath: boolean;
   errorTextName: boolean;
@@ -56,31 +54,26 @@ const LocalForm = (props: Props) => {
     path,
     name,
     newuuid,
-    showAdvancedMode,
-    showSelectDirectoryDialog
+    showAdvancedMode
   } = props;
 
   const openDirectory = () => {
-    if (AppConfig.isElectron) {
-      PlatformIO.selectDirectoryDialog()
-        .then(selectedPaths => {
-          const selectedPath = selectedPaths[0];
-          setPath(selectedPath);
-          if (name.length < 1 && selectedPath.length > 0) {
-            const dirName = extractDirectoryName(
-              selectedPath,
-              PlatformIO.getDirSeparator()
-            );
-            setName(dirName.charAt(0).toUpperCase() + dirName.slice(1));
-          }
-          return true;
-        })
-        .catch(err => {
-          console.log('selectDirectoryDialog failed with: ' + err);
-        });
-    } else {
-      showSelectDirectoryDialog();
-    }
+    PlatformIO.selectDirectoryDialog()
+      .then(selectedPaths => {
+        const selectedPath = selectedPaths[0];
+        setPath(selectedPath);
+        if (name.length < 1 && selectedPath.length > 0) {
+          const dirName = extractDirectoryName(
+            selectedPath,
+            PlatformIO.getDirSeparator()
+          );
+          setName(dirName.charAt(0).toUpperCase() + dirName.slice(1));
+        }
+        return true;
+      })
+      .catch(err => {
+        console.log('selectDirectoryDialog failed with: ' + err);
+      });
   };
 
   return (

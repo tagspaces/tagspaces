@@ -251,6 +251,14 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       "clobbers": [
         "plugins.Downloader"
       ]
+    },
+    {
+      "id": "com.ourcodeworld.plugins.Filebrowser.Filebrowser",
+      "file": "plugins/com.ourcodeworld.plugins.Filebrowser/www/filebrowser.js",
+      "pluginId": "com.ourcodeworld.plugins.Filebrowser",
+      "clobbers": [
+        "window.OurCodeWorld.Filebrowser"
+      ]
     }
   ];
   module.exports.metadata = {
@@ -263,6 +271,8 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
     "es6-promise-plugin": "4.2.2",
     "cordova-plugin-x-socialsharing": "6.0.2",
     "cordova-plugin-androidx-adapter": "1.1.3",
-    "com.whebcraft.cordova.plugin.downloader": "0.1.0"
+    "com.whebcraft.cordova.plugin.downloader": "0.1.0",
+    "com.ourcodeworld.plugins.Filebrowser": "1.0.0",
+    "cordova-plugin-add-swift-support": "2.0.2"
   };
 });

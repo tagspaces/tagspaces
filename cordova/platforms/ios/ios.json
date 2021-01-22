@@ -68,41 +68,55 @@
     }
   },
   "installed_plugins": {
+    "com.ourcodeworld.plugins.Filebrowser": {
+      "PACKAGE_NAME": "org.tagspaces.mobile"
+    },
     "com.whebcraft.cordova.plugin.downloader": {
-      "PACKAGE_NAME": "org.tagspaces.iosn"
+      "PACKAGE_NAME": "org.tagspaces.mobile"
+    },
+    "cordova-plugin-add-swift-support": {
+      "PACKAGE_NAME": "org.tagspaces.mobile"
+    },
+    "cordova-plugin-androidx-adapter": {
+      "PACKAGE_NAME": "org.tagspaces.mobile"
     },
     "cordova-plugin-device": {
-      "PACKAGE_NAME": "org.tagspaces.iosn"
+      "PACKAGE_NAME": "org.tagspaces.mobile"
     },
     "cordova-plugin-background-mode": {
-      "PACKAGE_NAME": "org.tagspaces.iosn"
+      "PACKAGE_NAME": "org.tagspaces.mobile"
     },
     "cordova-plugin-camera": {
-      "PACKAGE_NAME": "org.tagspaces.iosn"
+      "PACKAGE_NAME": "org.tagspaces.mobile"
     },
     "cordova-plugin-file": {
-      "PACKAGE_NAME": "org.tagspaces.iosn"
+      "PACKAGE_NAME": "org.tagspaces.mobile"
     },
     "cordova-plugin-file-opener2": {
-      "PACKAGE_NAME": "org.tagspaces.iosn"
+      "PACKAGE_NAME": "org.tagspaces.mobile"
     },
     "cordova-plugin-whitelist": {
-      "PACKAGE_NAME": "org.tagspaces.iosn"
+      "PACKAGE_NAME": "org.tagspaces.mobile"
     },
     "es6-promise-plugin": {
-      "PACKAGE_NAME": "org.tagspaces.iosn"
+      "PACKAGE_NAME": "org.tagspaces.mobile"
     },
     "cordova-plugin-x-socialsharing": {
       "PHOTO_LIBRARY_ADD_USAGE_DESCRIPTION": "This app requires photo library access to function properly.",
       "PHOTO_LIBRARY_USAGE_DESCRIPTION": "This app requires photo library access to function properly.",
-      "PACKAGE_NAME": "org.tagspaces.iosn"
-    },
-    "cordova-plugin-androidx-adapter": {
-      "PACKAGE_NAME": "org.tagspaces.iosn"
+      "PACKAGE_NAME": "org.tagspaces.mobile"
     }
   },
   "dependent_plugins": {},
   "modules": [
+    {
+      "id": "com.ourcodeworld.plugins.Filebrowser.Filebrowser",
+      "file": "plugins/com.ourcodeworld.plugins.Filebrowser/www/filebrowser.js",
+      "pluginId": "com.ourcodeworld.plugins.Filebrowser",
+      "clobbers": [
+        "window.OurCodeWorld.Filebrowser"
+      ]
+    },
     {
       "id": "com.whebcraft.cordova.plugin.downloader.Downloader",
       "file": "plugins/com.whebcraft.cordova.plugin.downloader/www/Downloader.js",
@@ -357,7 +371,10 @@
     }
   ],
   "plugin_metadata": {
+    "com.ourcodeworld.plugins.Filebrowser": "1.0.0",
     "com.whebcraft.cordova.plugin.downloader": "0.1.0",
+    "cordova-plugin-add-swift-support": "2.0.2",
+    "cordova-plugin-androidx-adapter": "1.1.3",
     "cordova-plugin-device": "2.0.3",
     "cordova-plugin-background-mode": "0.7.3",
     "cordova-plugin-camera": "4.1.0",
@@ -365,7 +382,6 @@
     "cordova-plugin-file-opener2": "3.0.4",
     "cordova-plugin-whitelist": "1.3.4",
     "es6-promise-plugin": "4.2.2",
-    "cordova-plugin-x-socialsharing": "5.6.8",
-    "cordova-plugin-androidx-adapter": "1.1.3"
+    "cordova-plugin-x-socialsharing": "5.6.8"
   }
 }

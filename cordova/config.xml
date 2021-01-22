@@ -31,6 +31,7 @@
         <preference name="allowFileAccessFromFileURLs" value="true" />-->
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
+        <preference name="UseSwiftLanguageVersion" value="5" />
     </platform>
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
     <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root" />

@@ -2,7 +2,7 @@
 
 platform :ios, '11.0'
 
-target 'TagSpaces Beta' do
-	project 'TagSpaces Beta.xcodeproj'
+target 'TagSpaces' do
+	project 'TagSpaces.xcodeproj'
 
 end

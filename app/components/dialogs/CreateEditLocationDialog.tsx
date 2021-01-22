@@ -61,7 +61,6 @@ interface Props {
   fullScreen: boolean;
   addLocation?: (location: Location) => void;
   editLocation?: (location: Location) => void;
-  showSelectDirectoryDialog: () => void;
 }
 
 const CreateEditLocationDialog = (props: Props) => {
@@ -299,7 +298,6 @@ const CreateEditLocationDialog = (props: Props) => {
   } else {
     content = (
       <LocalForm
-        showSelectDirectoryDialog={props.showSelectDirectoryDialog}
         showAdvancedMode={showAdvancedMode}
         errorTextPath={errorTextPath}
         errorTextName={errorTextName}
