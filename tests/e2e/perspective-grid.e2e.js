@@ -33,7 +33,7 @@ import {
   selectorFolder,
   selectRowFiles,
   setSettings,
-  waitForNotification,
+  waitForNotification
 } from './general.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 import { getPropertiesFileName } from './file.properties.helpers';

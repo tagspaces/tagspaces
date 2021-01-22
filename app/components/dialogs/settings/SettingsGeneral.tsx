@@ -308,6 +308,15 @@ const SettingsGeneral = (props: Props) => {
         >
           {i18n.t('core:resetSettings')}
         </Button>
+        <Button
+          data-tid="reloadAppTID"
+          onClick={() => {
+            location.reload();
+          }}
+          color="secondary"
+        >
+          {i18n.t('core:reloadApplication')}
+        </Button>
       </ListItem>
     </List>
   );
