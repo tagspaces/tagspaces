@@ -27,6 +27,7 @@ import NewFileIcon from '@material-ui/icons/AddCircle';
 import LocationsIcon from '@material-ui/icons/WorkOutline';
 import TagLibraryIcon from '@material-ui/icons/LocalOfferOutlined';
 import SearchIcon from '@material-ui/icons/SearchOutlined';
+import HelpIcon from '@material-ui/icons/HelpOutline';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { withStyles } from '@material-ui/core/styles';
 import TagLibrary from '../components/TagLibrary';
@@ -121,6 +122,7 @@ class MobileNavigation extends React.Component<Props, State> {
       openLocationManagerPanel,
       openTagLibraryPanel,
       openSearchPanel,
+      openHelpFeedbackPanel,
       showNotification,
       hideDrawer,
       openFileNatively,
@@ -165,7 +167,7 @@ class MobileNavigation extends React.Component<Props, State> {
               toggleSettingsDialog();
               hideDrawer();
             }}
-            style={{ marginTop: -15, marginRight: 10 }}
+            style={{ marginTop: -15, marginRight: 2 }}
           >
             <SettingsIcon className={classes.buttonIcon} />
           </IconButton>
@@ -209,6 +211,19 @@ class MobileNavigation extends React.Component<Props, State> {
             >
               <SearchIcon className={classes.buttonIcon} />
             </ToggleButton>
+            <ToggleButton
+              id="verticalNavButton"
+              title={i18n.t('core:helpFeedback')}
+              data-tid="helpFeedback"
+              onClick={openHelpFeedbackPanel}
+              className={
+                isHelpFeedbackPanelOpened
+                  ? classNames(classes.button, classes.selectedButton)
+                  : classes.button
+              }
+            >
+              <HelpIcon className={classes.buttonIcon} />
+            </ToggleButton>
           </ToggleButtonGroup>
           <IconButton
             id="verticalNavButton"
@@ -222,7 +237,7 @@ class MobileNavigation extends React.Component<Props, State> {
                 hideDrawer();
               }
             }}
-            style={{ marginTop: -15, marginLeft: 10 }}
+            style={{ marginTop: -15, marginLeft: 2 }}
             title={i18n.t('core:createFileTitle')}
             data-tid="locationManager"
           >
