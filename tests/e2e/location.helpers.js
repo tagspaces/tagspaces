@@ -3,9 +3,8 @@ import { delay } from './hook';
 import { firstFile, openContextEntryMenu } from './test-utils.spec';
 import {
   clickOn,
-  expectElementExist,
+  selectorFile,
   setInputKeys,
-  setInputValue,
   waitForNotification
 } from './general.helpers';
 
@@ -161,6 +160,7 @@ export async function renameFirstFile(newFileName) {
   await renameFileDialogInput.setValue(newFileName);*/
   //await delay(1500);
   await clickOn('[data-tid=confirmRenameFileDialog]');
+  await waitForNotification();
 }
 
 export async function deleteFirstFile() {
@@ -174,10 +174,7 @@ export async function deleteFirstFile() {
 
 export async function getFirstFileName() {
   let fileName;
-  await openContextEntryMenu(
-    perspectiveGridTable + firstFile,
-    'fileMenuRenameFile'
-  );
+  await openContextEntryMenu(selectorFile, 'fileMenuRenameFile');
   const renameFileDialogInput = await global.client.$(
     '[data-tid=renameFileDialogInput] input'
   );
