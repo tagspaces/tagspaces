@@ -401,7 +401,7 @@ export default class CordovaIO {
         Download: 'sdcard/Download/',
         Music: 'sdcard/Music/',
         Movies: 'sdcard/Movies/',
-        SDCard: cordova.file.externalRootDirectory // 'sdcard/'
+        SDCard: 'sdcard/' // cordova.file.externalRootDirectory
       };
     }
     return paths;
@@ -1233,6 +1233,8 @@ export default class CordovaIO {
 
             // Array with paths
             // ["file:///storage/emulated/0/360/security", "file:///storage/emulated/0/360/security"]
+            // fix https://trello.com/c/vV7D0kGf/500-tsn500-fix-folder-selector-in-create-edit-location-on-android-or-use-native-dialog
+            data[0] = data[0].replace('file:///storage/emulated/0', 'file:///sdcard');
             resolve(data);
           },
           error: function(err) {
