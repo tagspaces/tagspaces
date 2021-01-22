@@ -22,7 +22,8 @@ export default (theme: any) =>
     panel: {
       height: '100%',
       // maxHeight: '100%',
-      // padding: 5,
+      paddingLeft: 5,
+      paddingRight: 5,
       // paddingBottom: 50,
       // overflowY: 'hidden',
       backgroundColor: theme.palette.background.default

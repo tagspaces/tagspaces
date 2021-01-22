@@ -506,7 +506,7 @@ const FolderContainer = (props: Props) => {
                     <FolderSeparatorIcon />
                   </Button>
                 ))}
-              {!isDesktopMode && pathParts.length > 0 && (
+              {!isDesktopMode && pathParts.length >= 0 && (
                 <React.Fragment>
                   <IconButton
                     onClick={loadParentDirectoryContent}

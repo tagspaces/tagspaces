@@ -17,6 +17,7 @@
  */
 
 import React from 'react';
+import uuidv1 from 'uuid';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
@@ -46,11 +47,13 @@ import {
   isReadOnlyMode,
   getDirectoryPath
 } from '../reducers/app';
+import LoadingLazy from './LoadingLazy';
 import { actions as SettingsActions, isFirstRun } from '../reducers/settings';
 
 const styles: any = (theme: any) => ({
   bottomToolbar: {
-    marginTop: 9,
+    paddingTop: 9,
+    paddingBottom: 3,
     textAlign: 'center',
     backgroundColor: theme.palette.background.default
   },
@@ -62,6 +65,15 @@ const styles: any = (theme: any) => ({
     backgroundColor: '#880E4F'
   }
 });
+
+const ProTeaserDialog = React.lazy(() =>
+  import(/* webpackChunkName: "ProTeaserDialog" */ './dialogs/ProTeaserDialog')
+);
+const ProTeaserDialogAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <ProTeaserDialog {...props} />
+  </React.Suspense>
+);
 
 interface Props {
   classes: any;
@@ -104,7 +116,9 @@ class MobileNavigation extends React.Component<Props, State> {
   };
 
   toggleProTeaser = () => {
-    this.setState({ isProTeaserVisible: !this.state.isProTeaserVisible });
+    this.setState(prevState => ({
+      isProTeaserVisible: !prevState.isProTeaserVisible
+    }));
   };
 
   render() {
@@ -119,6 +133,7 @@ class MobileNavigation extends React.Component<Props, State> {
       toggleOnboardingDialog,
       toggleSettingsDialog,
       toggleKeysDialog,
+      toggleAboutDialog,
       openLocationManagerPanel,
       openTagLibraryPanel,
       openSearchPanel,
@@ -152,6 +167,7 @@ class MobileNavigation extends React.Component<Props, State> {
             <HelpFeedbackPanel
               openFileNatively={openFileNatively}
               openURLExternally={openURLExternally}
+              toggleAboutDialog={toggleAboutDialog}
               toggleKeysDialog={toggleKeysDialog}
               toggleOnboardingDialog={toggleOnboardingDialog}
               toggleProTeaser={this.toggleProTeaser}
@@ -243,6 +259,14 @@ class MobileNavigation extends React.Component<Props, State> {
           >
             <NewFileIcon color="primary" />
           </IconButton>
+          {this.state.isProTeaserVisible && (
+            <ProTeaserDialogAsync
+              open={this.state.isProTeaserVisible}
+              onClose={this.toggleProTeaser}
+              openURLExternally={openURLExternally}
+              key={uuidv1()}
+            />
+          )}
         </div>
       </div>
     );

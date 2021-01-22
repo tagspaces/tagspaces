@@ -206,27 +206,48 @@ const WelcomePanel = (props: Props) => {
             button
             onClick={() => {
               // const p = window.location.protocol + '//';
-              // @ts-ignore
               // window.location = window.location.href.replace(p, p + 'log:out@');
 
+              // @ts-ignore
               const newHref = window.location.href.replace(
                 'http://',
                 'http://' + new Date().getTime() + '@'
               );
-              let xmlhttp;
-              if (window.XMLHttpRequest) {
-                xmlhttp = new XMLHttpRequest();
-              } else {
-                // @ts-ignore
-                xmlhttp = new ActiveXObject('Microsoft.XMLHTTP');
-              }
-              xmlhttp.onreadystatechange = () => {
-                if (xmlhttp.readyState === 4) window.location.reload();
-              };
-              xmlhttp.open('GET', newHref, true);
-              xmlhttp.setRequestHeader('Authorization', 'Basic YXNkc2E6');
-              xmlhttp.send();
-              return false;
+              // @ts-ignore
+              window.location.href = newHref;
+
+              // const newHref = window.location.href.replace(
+              //   'http://',
+              //   'http://' + new Date().getTime() + '@'
+              // );
+              // let xmlhttp;
+              // if (window.XMLHttpRequest) {
+              //   xmlhttp = new XMLHttpRequest();
+              // } else {
+              //   // @ts-ignore
+              //   xmlhttp = new ActiveXObject('Microsoft.XMLHTTP');
+              // }
+              // xmlhttp.onreadystatechange = () => {
+              //   if (xmlhttp.readyState === 4) window.location.reload();
+              // };
+              // xmlhttp.open('GET', newHref, true);
+              // xmlhttp.setRequestHeader('Authorization', 'Basic YXNkc2E6');
+              // xmlhttp.send();
+              // return false;
+              // let xmlhttp;
+              // if (window.XMLHttpRequest) {
+              //   xmlhttp = new XMLHttpRequest();
+              // } else {
+              //   // @ts-ignore
+              //   xmlhttp = new ActiveXObject('Microsoft.XMLHTTP');
+              // }
+              // xmlhttp.onreadystatechange = () => {
+              //   if (xmlhttp.readyState === 4) window.location.reload();
+              // };
+              // xmlhttp.open('GET', newHref, true);
+              // xmlhttp.setRequestHeader('Authorization', 'Basic YXNkc2E6');
+              // xmlhttp.send();
+              // return false;
             }}
           >
             <Button startIcon={<LogoutIcon />}>{i18n.t('core:Logout')}</Button>

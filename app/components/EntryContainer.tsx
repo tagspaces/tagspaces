@@ -785,7 +785,7 @@ const EntryContainer = (props: Props) => {
           <Tooltip title={i18n.t('core:openInFullWidth')}>
             <IconButton
               data-tid="openInFullWidthTID"
-              title={i18n.t('core:openInFullWidth')}
+              // title={i18n.t('core:openInFullWidth')}
               aria-label={i18n.t('core:openInFullWidth')}
               onClick={props.toggleEntryFullWidth}
             >

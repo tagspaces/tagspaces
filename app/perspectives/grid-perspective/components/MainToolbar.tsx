@@ -95,7 +95,7 @@ const MainToolbar = (props: Props) => {
       {layoutType === 'row' ? (
         <Tooltip title={i18n.t('core:switchToGridView')}>
           <IconButton
-            title={i18n.t('core:switchToGridView')}
+            // title={i18n.t('core:switchToGridView')}
             aria-label={i18n.t('core:switchToGridView')}
             data-tid="gridPerspectiveSwitchLayoutToGrid"
             onClick={() => {
@@ -108,7 +108,7 @@ const MainToolbar = (props: Props) => {
       ) : (
         <Tooltip title={i18n.t('core:switchToListView')}>
           <IconButton
-            title={i18n.t('core:switchToListView')}
+            // title={i18n.t('core:switchToListView')}
             aria-label={i18n.t('core:switchToListView')}
             data-tid="gridPerspectiveSwitchLayoutToRow"
             onClick={() => {
@@ -122,7 +122,7 @@ const MainToolbar = (props: Props) => {
       {!isReadOnlyMode && (
         <Tooltip title={i18n.t('core:tagSelectedEntries')}>
           <IconButton
-            title={i18n.t('core:tagSelectedEntries')}
+            // title={i18n.t('core:tagSelectedEntries')}
             aria-label={i18n.t('core:tagSelectedEntries')}
             data-tid="gridPerspectiveAddRemoveTags"
             disabled={selectedEntries.length < 1}
@@ -135,7 +135,7 @@ const MainToolbar = (props: Props) => {
       {!isReadOnlyMode && (
         <Tooltip title={i18n.t('core:copyMoveSelectedEntries')}>
           <IconButton
-            title={i18n.t('core:copyMoveSelectedEntries')}
+            // title={i18n.t('core:copyMoveSelectedEntries')}
             aria-label={i18n.t('core:copyMoveSelectedEntries')}
             data-tid="gridPerspectiveCopySelectedFiles"
             disabled={!fileOperationsEnabled}
@@ -148,7 +148,7 @@ const MainToolbar = (props: Props) => {
       {!isReadOnlyMode && (
         <Tooltip title={i18n.t('core:deleteSelectedEntries')}>
           <IconButton
-            title={i18n.t('core:deleteSelectedEntries')}
+            // title={i18n.t('core:deleteSelectedEntries')}
             aria-label={i18n.t('core:deleteSelectedEntries')}
             data-tid="gridPerspectiveDeleteMultipleFiles"
             disabled={!fileOperationsEnabled}
@@ -160,7 +160,7 @@ const MainToolbar = (props: Props) => {
       )}
       <Tooltip title={i18n.t('core:sort')}>
         <IconButton
-          title={i18n.t('core:sort')}
+          // title={i18n.t('core:sort')}
           aria-label={i18n.t('core:sort')}
           data-tid="gridPerspectiveSortMenu"
           onClick={e => {
@@ -172,7 +172,7 @@ const MainToolbar = (props: Props) => {
       </Tooltip>
       <Tooltip title={i18n.t('core:options')}>
         <IconButton
-          title={i18n.t('core:options')}
+          // title={i18n.t('core:options')}
           data-tid="gridPerspectiveOptionsMenu"
           onClick={e => {
             handleOptionsMenu(e);
