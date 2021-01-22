@@ -88,7 +88,7 @@ export default (theme: any) =>
     panelTitle: {
       textTransform: 'uppercase',
       flex: 1,
-      paddingLeft: 5,
+      paddingLeft: 7,
       paddingTop: 12
     },
     nested: {
