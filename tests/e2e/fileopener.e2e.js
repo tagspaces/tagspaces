@@ -11,6 +11,7 @@ import {
   expectElementExist,
   getGridFileName,
   selectorFile,
+  selectorFolder,
   setInputKeys,
   setSettings,
   waitForNotification
@@ -20,12 +21,7 @@ import {
   getPropertiesFileName
 } from './file.properties.helpers';
 import { searchEngine } from './search.spec';
-import {
-  firstFile,
-  firstFolder,
-  openContextEntryMenu,
-  perspectiveGridTable
-} from './test-utils.spec';
+import { openContextEntryMenu } from './test-utils.spec';
 
 describe('TST08 - File folder properties', () => {
   beforeEach(async () => {
@@ -44,7 +40,7 @@ describe('TST08 - File folder properties', () => {
     const firstFileName = await getGridFileName(0);
 
     // open fileProperties
-    await clickOn(perspectiveGridTable + firstFile);
+    await clickOn(selectorFile);
     //Toggle Properties
     await clickOn('[data-tid=fileContainerToggleProperties]');
 
@@ -66,7 +62,7 @@ describe('TST08 - File folder properties', () => {
     const firstFileName = await getGridFileName(0);
 
     // open fileProperties
-    await clickOn(perspectiveGridTable + firstFile);
+    await clickOn(selectorFile);
     //Toggle Properties
     await clickOn('[data-tid=fileContainerToggleProperties]');
 
@@ -84,7 +80,7 @@ describe('TST08 - File folder properties', () => {
     const firstFileName = await getGridFileName(0);
 
     // open fileProperties
-    await clickOn(perspectiveGridTable + firstFile);
+    await clickOn(selectorFile);
     //Toggle Properties
     await clickOn('[data-tid=fileContainerToggleProperties]');
 
@@ -101,7 +97,7 @@ describe('TST08 - File folder properties', () => {
   // TODO the last button full width is not visible (maybe its need to add scroll)
   it('TST0804 - Open file in full width [TST0804]', async () => {
     // open fileProperties
-    await clickOn(perspectiveGridTable + firstFile);
+    await clickOn(selectorFile);
     await global.client.pause(500);
     await clickOn('[data-tid=openInFullWidthTID]'); // dummy click -first click in openInFullWidthTID dont work
     await clickOn('[data-tid=openInFullWidthTID]');
@@ -136,10 +132,7 @@ describe('TST08 - File folder properties', () => {
   it('TST0807 - Rename opened folder [TST0807, electron]', async () => {
     const newTile = 'folderRenamed';
     // open folderProperties
-    await openContextEntryMenu(
-      perspectiveGridTable + firstFolder,
-      'showProperties'
-    );
+    await openContextEntryMenu(selectorFolder, 'showProperties');
 
     const propsFolderName = await getPropertiesFileName();
     await clickOn('[data-tid=startRenameEntryTID]');
@@ -159,9 +152,9 @@ describe('TST08 - File folder properties', () => {
   });
 
   it('TST0808 - Add and remove tags to a file (file names) [TST0808,web,minio,electron]', async () => {
-    await searchEngine('bmp');
+    // await searchEngine('bmp');
     // open fileProperties
-    await clickOn(perspectiveGridTable + firstFile);
+    await clickOn(selectorFile);
     //Toggle Properties
     await clickOn('[data-tid=fileContainerToggleProperties]');
 
@@ -170,25 +163,22 @@ describe('TST08 - File folder properties', () => {
 
   it('TST0809 - Add and remove tag to a file (sidecar files) [TST0809,web,minio,electron]', async () => {
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]');
-    await searchEngine('bmp');
+    // await searchEngine('bmp');
     // open fileProperties
-    await clickOn(perspectiveGridTable + firstFile);
+    await clickOn(selectorFile);
     //Toggle Properties
     await clickOn('[data-tid=fileContainerToggleProperties]');
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
   });
 
   it('TST3002 - Add and remove tag to a folder [TST3002,web,minio,electron]', async () => {
-    await openContextEntryMenu(
-      perspectiveGridTable + firstFolder,
-      'showProperties'
-    );
+    await openContextEntryMenu(selectorFolder, 'showProperties');
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
   });
 
   it('TST0812 - Reload file [TST0812,web,minio,electron]', async () => {
     // open fileProperties
-    await clickOn(perspectiveGridTable + firstFile);
+    await clickOn(selectorFile);
     //Toggle Properties
     await clickOn('[data-tid=fileContainerToggleProperties]');
     await clickOn('[data-tid=reloadFileTID]');
@@ -219,7 +209,7 @@ describe('TST08 - File folder properties', () => {
 
   it('TST0814 - Open file fullscreen and exit with close button [TST0803,web,minio,electron]', async () => {
     // open fileProperties
-    await clickOn(perspectiveGridTable + firstFile);
+    await clickOn(selectorFile);
     await clickOn('[data-tid=fileContainerSwitchToFullScreen]');
     await expectElementExist('[data-tid=fullscreenTID]', true);
     await clickOn('[data-tid=fullscreenTID]');
