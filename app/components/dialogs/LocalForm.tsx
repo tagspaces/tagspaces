@@ -89,6 +89,7 @@ const LocalForm = (props: Props) => {
             margin="dense"
             name="path"
             fullWidth={true}
+            inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
             data-tid="locationPath"
             onChange={event => setPath(event.target.value)}
             value={path}
@@ -115,6 +116,7 @@ const LocalForm = (props: Props) => {
             required
             margin="dense"
             name="name"
+            inputProps={{ autoCorrect: 'off' }}
             onChange={event => setName(event.target.value)}
             value={name}
             data-tid="locationName"

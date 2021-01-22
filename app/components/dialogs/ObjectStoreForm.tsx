@@ -203,6 +203,7 @@ const ObjectStoreForm = (props: Props) => {
             autoFocus
             margin="dense"
             name="storeName"
+            inputProps={{ autoCorrect: 'off' }}
             fullWidth={true}
             data-tid="locationName"
             onChange={event => setStoreName(event.target.value)}
@@ -222,6 +223,7 @@ const ObjectStoreForm = (props: Props) => {
             margin="dense"
             name="storePath"
             fullWidth={true}
+            inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
             data-tid="locationPath"
             onChange={event => setStorePath(event.target.value)}
             value={storePath}
@@ -241,6 +243,7 @@ const ObjectStoreForm = (props: Props) => {
             name="accessKeyId"
             fullWidth={true}
             data-tid="accessKeyId"
+            inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
             onChange={event => setAccessKeyId(event.target.value)}
             value={accessKeyId}
           />
@@ -260,6 +263,7 @@ const ObjectStoreForm = (props: Props) => {
             type={showSecretAccessKey ? 'text' : 'password'}
             fullWidth={true}
             data-tid="secretAccessKey"
+            inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
             onChange={event => setSecretAccessKey(event.target.value)}
             value={secretAccessKey}
             endAdornment={
@@ -290,6 +294,7 @@ const ObjectStoreForm = (props: Props) => {
             name="bucketName"
             fullWidth={true}
             data-tid="bucketName"
+            inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
             onChange={event => setBucketName(event.target.value)}
             value={bucketName}
           />

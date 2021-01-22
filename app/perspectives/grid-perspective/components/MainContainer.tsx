@@ -28,7 +28,8 @@ import { Tag } from '-/reducers/taglibrary';
 import {
   getSupportedFileTypes,
   getDesktopMode,
-  getKeyBindingObject
+  getKeyBindingObject,
+  isDesktopMode
 } from '-/reducers/settings';
 import { sortByCriteria, isObj, isVisibleOnScreen } from '-/utils/misc';
 import styles from './styles.css';
@@ -97,6 +98,7 @@ interface Props {
     autohide: boolean
   ) => void;
   currentLocation: Location;
+  isDesktopMode: boolean;
 }
 
 interface State {
@@ -772,7 +774,8 @@ class GridPerspective extends React.Component<Props, State> {
       directoryContent,
       selectedEntries,
       loadParentDirectoryContent,
-      theme
+      theme,
+      isDesktopMode
     } = this.props;
     const { layoutType, entrySize, sortBy, orderBy } = this.state;
     const selectedFilePaths = selectedEntries
@@ -823,6 +826,7 @@ class GridPerspective extends React.Component<Props, State> {
           openDeleteFileDialog={this.openDeleteFileDialog}
           handleSortingMenu={this.handleSortingMenu}
           handleOptionsMenu={this.handleOptionsMenu}
+          isDesktopMode={isDesktopMode}
         />
         <GlobalHotKeys keyMap={this.keyMap} handlers={this.keyBindingHandlers}>
           <GridPagination
@@ -995,7 +999,8 @@ function mapStateToProps(state) {
     desktopMode: getDesktopMode(state),
     selectedEntries: getSelectedEntries(state),
     keyBindings: getKeyBindingObject(state),
-    currentLocation: getLocation(state, state.app.currentLocationId)
+    currentLocation: getLocation(state, state.app.currentLocationId),
+    isDesktopMode: isDesktopMode(state)
   };
 }
 
