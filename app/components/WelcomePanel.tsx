@@ -211,7 +211,11 @@ const WelcomePanel = (props: Props) => {
               // @ts-ignore
               const newHref = window.location.href.replace(
                 'http://',
-                'http://' + new Date().getTime() + '@'
+                'http://' +
+                  new Date().getTime() +
+                  ':' +
+                  new Date().getTime() +
+                  '@'
               );
               // @ts-ignore
               window.location.href = newHref;
