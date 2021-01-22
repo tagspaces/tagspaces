@@ -18,13 +18,13 @@
 
 /* globals cordova */
 import AppConfig from '../config';
-import { b64toBlob } from '../utils/misc';
+import { b64toBlob } from '-/utils/misc';
 import {
   extractParentDirectoryPath,
   cleanTrailingDirSeparator,
   extractFileName,
   extractFileExtension
-} from '../utils/paths';
+} from '-/utils/paths';
 import { FileSystemEntry } from './utils-io';
 
 const appSettingFile = 'settings.json';
@@ -1216,6 +1216,31 @@ export default class CordovaIO {
    */
   selectFile = () => {
     console.log('Operation selectFile not supported.');
+  };
+
+  selectDirectoryDialog = (): Promise<any> => {
+    if (AppConfig.isCordovaiOS) {
+      console.log('Operation selectDirectoryDialog not supported.');
+    } else {
+      return new Promise((resolve, reject) => {
+        // @ts-ignore
+        window.OurCodeWorld.Filebrowser.folderPicker.single({
+          success: function(data) {
+            if (!data.length) {
+              reject('No folders selected');
+              return;
+            }
+
+            // Array with paths
+            // ["file:///storage/emulated/0/360/security", "file:///storage/emulated/0/360/security"]
+            resolve(data);
+          },
+          error: function(err) {
+            reject('Folders selection err:' + err);
+          }
+        });
+      });
+    }
   };
 
   /**

@@ -207,7 +207,6 @@ export const initialState = {
   thirdPartyLibsDialogOpened: false,
   settingsDialogOpened: false,
   createDirectoryDialogOpened: false,
-  selectDirectoryDialogOpened: false,
   lastSelectedEntry: null,
   selectedEntries: [],
   isEntryInFullWidth: false,
@@ -348,12 +347,6 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         createDirectoryDialogOpened: !state.createDirectoryDialogOpened
-      };
-    }
-    case types.TOGGLE_SELECT_DIRECTORY_DIALOG: {
-      return {
-        ...state,
-        selectDirectoryDialogOpened: !state.selectDirectoryDialogOpened
       };
     }
     case types.TOGGLE_UPLOAD_DIALOG: {
@@ -763,9 +756,6 @@ export const actions = {
       dispatch(actions.toggleCreateFileDialog());
     }
   },
-  showSelectDirectoryDialog: () => (dispatch: (actions: Object) => void) => {
-    dispatch(actions.toggleSelectDirectoryDialog());
-  },
   toggleEditTagDialog: (tag: Tag) => ({
     type: types.TOGGLE_EDIT_TAG_DIALOG,
     tag
@@ -783,9 +773,6 @@ export const actions = {
     type: types.TOGGLE_CREATE_DIRECTORY_DIALOG
   }),
   toggleCreateFileDialog: () => ({ type: types.TOGGLE_CREATE_FILE_DIALOG }),
-  toggleSelectDirectoryDialog: () => ({
-    type: types.TOGGLE_SELECT_DIRECTORY_DIALOG
-  }),
   toggleUploadDialog: () => ({
     type: types.TOGGLE_UPLOAD_DIALOG
   }),
@@ -1926,8 +1913,6 @@ export const isCreateDirectoryOpened = (state: any) =>
   state.app.createDirectoryDialogOpened;
 export const isCreateFileDialogOpened = (state: any) =>
   state.app.createFileDialogOpened;
-export const isSelectDirectoryDialogOpened = (state: any) =>
-  state.app.selectDirectoryDialogOpened;
 export const isUploadDialogOpened = (state: any) =>
   state.app.uploadDialogOpened;
 export const isOpenLinkDialogOpened = (state: any) =>

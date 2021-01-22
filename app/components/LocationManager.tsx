@@ -25,8 +25,6 @@ import Button from '@material-ui/core/Button';
 import styles from './SidePanels.css';
 import LocationManagerMenu from './menus/LocationManagerMenu';
 import ConfirmDialog from './dialogs/ConfirmDialog';
-import SelectDirectoryDialog from './dialogs/SelectDirectoryDialog';
-import CreateDirectoryDialog from './dialogs/CreateDirectoryDialog';
 import CustomLogo from './CustomLogo';
 import {
   actions as LocationActions,
@@ -78,9 +76,6 @@ type SubFolder = {
 const LocationManager = (props: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedLocation, setSelectedLocation] = useState<Location>(null);
-  const [selectedDirectoryPath, setSelectedDirectoryPath] = useState<string>(
-    null
-  );
   const [
     isCreateLocationDialogOpened,
     setCreateLocationDialogOpened
@@ -91,14 +86,6 @@ const LocationManager = (props: Props) => {
   const [
     isDeleteLocationDialogOpened,
     setDeleteLocationDialogOpened
-  ] = useState<boolean>(false);
-  const [
-    isCreateDirectoryDialogOpened,
-    setCreateDirectoryDialogOpened
-  ] = useState<boolean>(false);
-  const [
-    isSelectDirectoryDialogOpened,
-    setSelectDirectoryDialogOpened
   ] = useState<boolean>(false);
   const [
     isExportLocationsDialogOpened,
@@ -118,21 +105,6 @@ const LocationManager = (props: Props) => {
       props.setDefaultLocations();
     }
   }, []); // props.locations]);
-
-  const createNewDirectoryExt = (path: string) => {
-    setCreateDirectoryDialogOpened(true);
-    setSelectedDirectoryPath(path);
-  };
-
-  const showSelectDirectoryDialog = () => {
-    setSelectDirectoryDialogOpened(true);
-    setSelectedDirectoryPath('');
-  };
-
-  const chooseDirectoryPath = (currentPath: string) => {
-    setSelectDirectoryDialogOpened(true);
-    setSelectedDirectoryPath(currentPath);
-  };
 
   function handleFileInputChange(selection: any) {
     const target = selection.currentTarget;
@@ -188,7 +160,6 @@ const LocationManager = (props: Props) => {
             open={isCreateLocationDialogOpened}
             onClose={() => setCreateLocationDialogOpened(false)}
             addLocation={props.addLocation}
-            showSelectDirectoryDialog={showSelectDirectoryDialog}
           />
         )}
         {isEditLocationDialogOpened && (
@@ -197,7 +168,6 @@ const LocationManager = (props: Props) => {
             onClose={() => setEditLocationDialogOpened(false)}
             location={selectedLocation}
             editLocation={props.editLocation}
-            showSelectDirectoryDialog={showSelectDirectoryDialog}
           />
         )}
         {isDeleteLocationDialogOpened && (
@@ -215,21 +185,6 @@ const LocationManager = (props: Props) => {
             }}
             cancelDialogTID="cancelDeleteLocationDialog"
             confirmDialogTID="confirmDeleteLocationDialog"
-          />
-        )}
-        {isSelectDirectoryDialogOpened && (
-          <SelectDirectoryDialog
-            open={isSelectDirectoryDialogOpened}
-            onClose={() => setSelectDirectoryDialogOpened(false)}
-            createNewDirectoryExt={createNewDirectoryExt}
-            chooseDirectoryPath={chooseDirectoryPath}
-          />
-        )}
-        {isCreateDirectoryDialogOpened && (
-          <CreateDirectoryDialog
-            open={isCreateDirectoryDialogOpened}
-            onClose={() => setCreateDirectoryDialogOpened(false)}
-            selectedDirectoryPath={selectedDirectoryPath}
           />
         )}
         <List
