@@ -34,7 +34,6 @@ import {
   selectRowFiles,
   setSettings,
   waitForNotification,
-  waitUntilClassChanged
 } from './general.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 import { getPropertiesFileName } from './file.properties.helpers';
@@ -296,7 +295,7 @@ describe('TST50 - Perspective Grid', () => {
     await clickOn('[data-tid=confirmCopyFiles]');
     await waitForNotification();
 
-    await doubleClickOn(perspectiveGridTable + firstFolder);
+    await doubleClickOn(selectorFolder);
     const firstFileName = await getGridFileName(0);
     expect(firstFileName).toBe(fileName);
     // cleanup
