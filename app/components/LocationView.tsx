@@ -113,6 +113,9 @@ const LocationView = React.memo((props: Props) => {
   };
 
   const handleLocationContextMenuClick = (event: any) => {
+    if (props.isReadOnlyMode) {
+      return true;
+    }
     event.preventDefault();
     event.stopPropagation();
     setLocationDirectoryContextMenuAnchorEl(event.currentTarget);
