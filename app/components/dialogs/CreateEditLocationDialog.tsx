@@ -78,7 +78,7 @@ const CreateEditLocationDialog = (props: Props) => {
   );
   const [path, setPath] = useState<string>(
     props.location && props.location.type === locationType.TYPE_LOCAL
-      ? props.location.path
+      ? props.location.path || props.location.paths[0]
       : ''
   );
   const [endpointURL, setEndpointURL] = useState<string>(

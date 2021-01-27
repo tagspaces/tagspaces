@@ -21,6 +21,7 @@ import uuidv1 from 'uuid';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
+import Tooltip from '@material-ui/core/Tooltip';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import IconButton from '@material-ui/core/IconButton';
@@ -111,7 +112,6 @@ interface State {
 
 class MobileNavigation extends React.Component<Props, State> {
   state = {
-    isManagementPanelVisible: true,
     isProTeaserVisible: false
   };
 
@@ -154,12 +154,9 @@ class MobileNavigation extends React.Component<Props, State> {
           `}
         </style>
         <div style={{ width: 300, maxWidth: 300, height: 'calc(100% - 60px)' }}>
-          <LocationManager
-            hideDrawer={hideDrawer}
-            style={{
-              display: isLocationManagerPanelOpened ? 'block' : 'none'
-            }}
-          />
+          {isLocationManagerPanelOpened && (
+            <LocationManager hideDrawer={hideDrawer} />
+          )}
           {isTagLibraryPanelOpened && <TagLibrary />}
           {isSearchPanelOpened && <Search hideDrawer={hideDrawer} />}
           {/* {isPerspectivesPanelOpened && <PerspectiveManager />} */}
@@ -175,90 +172,96 @@ class MobileNavigation extends React.Component<Props, State> {
           )}
         </div>
         <div className={classes.bottomToolbar}>
-          <IconButton
-            id="verticalNavButton"
-            title={i18n.t('core:settings')}
-            data-tid="settings"
-            onClick={() => {
-              toggleSettingsDialog();
-              hideDrawer();
-            }}
-            style={{ marginTop: -15, marginRight: 2 }}
-          >
-            <SettingsIcon className={classes.buttonIcon} />
-          </IconButton>
-          <ToggleButtonGroup exclusive>
-            <ToggleButton
+          <Tooltip title={i18n.t('core:settings')}>
+            <IconButton
               id="verticalNavButton"
-              onClick={openLocationManagerPanel}
-              className={
-                isLocationManagerPanelOpened
-                  ? classNames(classes.button, classes.selectedButton)
-                  : classes.button
-              }
-              title={i18n.t('core:locationManager')}
+              data-tid="settings"
+              onClick={() => {
+                toggleSettingsDialog();
+                hideDrawer();
+              }}
+              style={{ marginTop: -15, marginRight: 2 }}
+            >
+              <SettingsIcon className={classes.buttonIcon} />
+            </IconButton>
+          </Tooltip>
+          <ToggleButtonGroup exclusive>
+            <Tooltip title={i18n.t('core:locationManager')}>
+              <ToggleButton
+                id="verticalNavButton"
+                onClick={openLocationManagerPanel}
+                className={
+                  isLocationManagerPanelOpened
+                    ? classNames(classes.button, classes.selectedButton)
+                    : classes.button
+                }
+                data-tid="locationManager"
+              >
+                <LocationsIcon className={classes.buttonIcon} />
+              </ToggleButton>
+            </Tooltip>
+            <Tooltip title={i18n.t('core:tagLibrary')}>
+              <ToggleButton
+                id="verticalNavButton"
+                data-tid="tagLibrary"
+                onClick={openTagLibraryPanel}
+                className={
+                  isTagLibraryPanelOpened
+                    ? classNames(classes.button, classes.selectedButton)
+                    : classes.button
+                }
+              >
+                <TagLibraryIcon className={classes.buttonIcon} />
+              </ToggleButton>
+            </Tooltip>
+            <Tooltip title={i18n.t('core:searchTitle')}>
+              <ToggleButton
+                id="verticalNavButton"
+                data-tid="search"
+                onClick={openSearchPanel}
+                className={
+                  isSearchPanelOpened
+                    ? classNames(classes.button, classes.selectedButton)
+                    : classes.button
+                }
+              >
+                <SearchIcon className={classes.buttonIcon} />
+              </ToggleButton>
+            </Tooltip>
+            <Tooltip title={i18n.t('core:helpFeedback')}>
+              <ToggleButton
+                id="verticalNavButton"
+                data-tid="helpFeedback"
+                onClick={openHelpFeedbackPanel}
+                className={
+                  isHelpFeedbackPanelOpened
+                    ? classNames(classes.button, classes.selectedButton)
+                    : classes.button
+                }
+              >
+                <HelpIcon className={classes.buttonIcon} />
+              </ToggleButton>
+            </Tooltip>
+          </ToggleButtonGroup>
+          <Tooltip title={i18n.t('core:createFileTitle')}>
+            <IconButton
+              id="verticalNavButton"
+              onClick={() => {
+                if (isReadOnlyMode || !directoryPath) {
+                  showNotification(
+                    'You are in read-only mode or there is no opened location'
+                  );
+                } else {
+                  toggleCreateFileDialog();
+                  hideDrawer();
+                }
+              }}
+              style={{ marginTop: -15, marginLeft: 2 }}
               data-tid="locationManager"
             >
-              <LocationsIcon className={classes.buttonIcon} />
-            </ToggleButton>
-            <ToggleButton
-              id="verticalNavButton"
-              title={i18n.t('core:tagGroupOperations')}
-              data-tid="tagLibrary"
-              onClick={openTagLibraryPanel}
-              className={
-                isTagLibraryPanelOpened
-                  ? classNames(classes.button, classes.selectedButton)
-                  : classes.button
-              }
-            >
-              <TagLibraryIcon className={classes.buttonIcon} />
-            </ToggleButton>
-            <ToggleButton
-              id="verticalNavButton"
-              title={i18n.t('core:searchTitle')}
-              data-tid="search"
-              onClick={openSearchPanel}
-              className={
-                isSearchPanelOpened
-                  ? classNames(classes.button, classes.selectedButton)
-                  : classes.button
-              }
-            >
-              <SearchIcon className={classes.buttonIcon} />
-            </ToggleButton>
-            <ToggleButton
-              id="verticalNavButton"
-              title={i18n.t('core:helpFeedback')}
-              data-tid="helpFeedback"
-              onClick={openHelpFeedbackPanel}
-              className={
-                isHelpFeedbackPanelOpened
-                  ? classNames(classes.button, classes.selectedButton)
-                  : classes.button
-              }
-            >
-              <HelpIcon className={classes.buttonIcon} />
-            </ToggleButton>
-          </ToggleButtonGroup>
-          <IconButton
-            id="verticalNavButton"
-            onClick={() => {
-              if (isReadOnlyMode || !directoryPath) {
-                showNotification(
-                  'You are in read-only mode or there is no opened location'
-                );
-              } else {
-                toggleCreateFileDialog();
-                hideDrawer();
-              }
-            }}
-            style={{ marginTop: -15, marginLeft: 2 }}
-            title={i18n.t('core:createFileTitle')}
-            data-tid="locationManager"
-          >
-            <NewFileIcon color="primary" />
-          </IconButton>
+              <NewFileIcon color="primary" />
+            </IconButton>
+          </Tooltip>
           {this.state.isProTeaserVisible && (
             <ProTeaserDialogAsync
               open={this.state.isProTeaserVisible}
