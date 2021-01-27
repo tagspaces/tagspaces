@@ -63,7 +63,6 @@ export const types = {
   DEVICE_OFFLINE: 'APP/DEVICE_OFFLINE',
   PROGRESS: 'APP/PROGRESS',
   RESET_PROGRESS: 'APP/RESET_PROGRESS',
-  LOGIN_REQUEST: 'APP/LOGIN_REQUEST',
   LOGIN_SUCCESS: 'APP/LOGIN_SUCCESS',
   LOGIN_FAILURE: 'APP/LOGIN_FAILURE',
   LOGOUT: 'APP/LOGOUT',
@@ -221,6 +220,9 @@ export const initialState = {
 // The state described here will not be persisted
 export default (state: any = initialState, action: any) => {
   switch (action.type) {
+    case types.LOGIN_SUCCESS: {
+      return { ...state, user: action.user };
+    }
     case types.DEVICE_ONLINE: {
       return { ...state, isOnline: true, error: null };
     }
@@ -699,6 +701,7 @@ export default (state: any = initialState, action: any) => {
 };
 
 export const actions = {
+  loggedIn: user => ({ type: types.LOGIN_SUCCESS, user }),
   goOnline: () => ({ type: types.DEVICE_ONLINE }),
   goOffline: () => ({ type: types.DEVICE_OFFLINE }),
   setUpdateAvailable: (isUpdateAvailable: boolean) => ({

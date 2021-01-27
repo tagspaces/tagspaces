@@ -1,0 +1,17 @@
+{
+  "projectName": "tagspaces",
+  "version": "3.0",
+  "frontend": "javascript",
+  "javascript": {
+    "framework": "react",
+    "config": {
+      "SourceDir": "app",
+      "DistributionDir": "web",
+      "BuildCommand": "npm run-script build",
+      "StartCommand": "npm run-script run-web-dev"
+    }
+  },
+  "providers": [
+    "awscloudformation"
+  ]
+}

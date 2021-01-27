@@ -1,6 +1,8 @@
 node_modules
 builds
 cordova
+amplify
+app/aws-exports.js
 web
 web/files
 app/node_modules

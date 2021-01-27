@@ -16,14 +16,23 @@
  *
  */
 
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { I18nextProvider } from 'react-i18next'; // as we build ourself via webpack
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { AmplifyAuthenticator } from '@aws-amplify/ui-react';
+import { Amplify } from 'aws-amplify';
+import {
+  onAuthUIStateChange,
+  CognitoUserInterface,
+  AuthState
+} from '@aws-amplify/ui-components';
+import { bindActionCreators } from 'redux';
 import i18n from '../services/i18n';
 import { getCurrentTheme } from '-/reducers/settings';
-// import AppOnBoarding from '../components/AppOnboarding';
 import AppConfig from '-/config';
+import awsconfig from '../aws-exports';
+import { actions as AppActions } from '-/reducers/app';
 
 const lightTheme = createMuiTheme({
   palette: {
@@ -76,42 +85,64 @@ const darkTheme = createMuiTheme({
 //   }
 // });
 
-class App extends Component {
-  props: {
-    children: Object;
-    currentTheme: string;
-  };
-
-  render() {
-    let theme;
-    switch (this.props.currentTheme) {
-      case 'light': {
-        theme = lightTheme;
-        break;
-      }
-      case 'dark': {
-        theme = darkTheme;
-        break;
-      }
-      default: {
-        theme = lightTheme;
-        break;
-      }
-    }
-
-    return (
-      <ThemeProvider theme={theme}>
-        <I18nextProvider i18n={i18n}>{this.props.children}</I18nextProvider>
-        {/* <AppOnBoarding /> */}
-      </ThemeProvider>
-    );
-  }
+interface Props {
+  children: Object;
+  currentTheme: string;
+  loggedIn: (user: CognitoUserInterface) => void;
 }
+const App = (props: Props) => {
+  React.useEffect(() => {
+    onAuthUIStateChange((nextAuthState, authData) => {
+      // setAuthState(nextAuthState);
+      if (nextAuthState === AuthState.SignedIn) {
+        // @ts-ignore
+        props.loggedIn(authData);
+      } else {
+        props.loggedIn(undefined);
+      }
+    });
+  }, []);
+
+  let theme;
+  switch (props.currentTheme) {
+    case 'light': {
+      theme = lightTheme;
+      break;
+    }
+    case 'dark': {
+      theme = darkTheme;
+      break;
+    }
+    default: {
+      theme = lightTheme;
+      break;
+    }
+  }
+
+  const themeProvider = (
+    <ThemeProvider theme={theme}>
+      <I18nextProvider i18n={i18n}>{props.children}</I18nextProvider>
+      {/* <AppOnBoarding /> */}
+    </ThemeProvider>
+  );
+  if (AppConfig.isWeb) {
+    Amplify.configure(awsconfig);
+    return <AmplifyAuthenticator>{themeProvider}</AmplifyAuthenticator>;
+  }
+  return themeProvider;
+};
 
 function mapStateToProps(state) {
   return {
     currentTheme: getCurrentTheme(state)
   };
 }
-
-export default connect(mapStateToProps)(App);
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(
+    {
+      loggedIn: AppActions.loggedIn
+    },
+    dispatch
+  );
+}
+export default connect(mapStateToProps, mapDispatchToProps)(App);

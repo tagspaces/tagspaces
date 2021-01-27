@@ -36,6 +36,8 @@ import SocialIcon from '@material-ui/icons/ThumbUp';
 import Social2Icon from '@material-ui/icons/Mood';
 import LogoutIcon from '@material-ui/icons/MeetingRoom';
 import KeyShortcutsIcon from '@material-ui/icons/Keyboard';
+import { AmplifySignOut } from '@aws-amplify/ui-react';
+import { CognitoUserInterface } from '@aws-amplify/ui-components';
 import WelcomeBackground from '../assets/images/background.png';
 import WelcomeLogo from '../assets/images/welcome-logo.png';
 import { actions as AppActions } from '../reducers/app';
@@ -82,6 +84,7 @@ interface Props {
   openFileNatively: (url: string) => void;
   toggleAboutDialog: () => void;
   isDesktopMode: boolean;
+  user: CognitoUserInterface;
 }
 
 const WelcomePanel = (props: Props) => {
@@ -201,6 +204,12 @@ const WelcomePanel = (props: Props) => {
             {i18n.t('core:likeUsOnFacebook')}
           </Button>
         </ListItem>
+        {props.user && (
+          <>
+            <AmplifySignOut buttonText="Sign Out" />
+            <div>Hello, {props.user.attributes.email}</div>
+          </>
+        )}
         {AppConfig.isWeb && (
           <ListItem
             button
@@ -265,7 +274,8 @@ const WelcomePanel = (props: Props) => {
 function mapStateToProps(state) {
   return {
     isFirstRun: isFirstRun(state),
-    isDesktopMode: getDesktopMode(state)
+    isDesktopMode: getDesktopMode(state),
+    user: state.app.user
     // locations: getLocations(state),
   };
 }

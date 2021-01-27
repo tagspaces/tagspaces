@@ -16,14 +16,17 @@
  *
  */
 
-/* eslint flowtype-errors/show-errors: 0 */
 import React from 'react';
 import { Switch, Route } from 'react-router';
 import App from './containers/App';
 import LoginPage from './containers/LoginPage';
 import MainPage from './containers/MainPage';
 
+/**
+ * TODO why this file (routes) exist ??
+ */
 export default () => (
+  // withAuthenticator(
   <App>
     <Switch>
       <Route path="/login" component={LoginPage} />
