@@ -1,4 +1,4 @@
-name: scheduled workflow dispatch trigger
+name: Nightly E2E Tests Electon Windows
 on:
   schedule:
     - cron: '0 0 * * *'
