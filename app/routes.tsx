@@ -24,6 +24,7 @@ import MainPage from './containers/MainPage';
 
 /**
  * TODO why this file (routes) exist ??
+ * @Deprecated
  */
 export default () => (
   // withAuthenticator(

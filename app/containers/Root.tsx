@@ -19,8 +19,8 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-import { BrowserRouter } from 'react-router-dom';
-import Routes from '../routes';
+// import { BrowserRouter } from 'react-router-dom';
+// import Routes from '../routes';
 import LoadingScreen from '../components/LoadingScreen';
 import { actions as AppActions } from '../reducers/app';
 import {
@@ -34,6 +34,8 @@ import PlatformIO from '../services/platform-io';
 // import MainPage from './MainPage';
 import { getURLParameter } from '-/utils/misc';
 import AppConfig from '-/config';
+import App from '-/containers/App';
+import MainPage from '-/containers/MainPage';
 
 type RootType = {
   store: {};
@@ -118,9 +120,12 @@ export default function Root({ store, persistor }: RootType) {
         // @ts-ignore
         persistor={persistor}
       >
-        <BrowserRouter>
+        <App>
+          <MainPage />
+        </App>
+        {/* <BrowserRouter>
           <Routes />
-        </BrowserRouter>
+        </BrowserRouter> */}
       </PersistGate>
     </Provider>
   );

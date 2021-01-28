@@ -1,0 +1,17 @@
+{
+  "trigger": true,
+  "modules": [
+    "add-to-group"
+  ],
+  "parentResource": "tagspacesdf5c4ca5",
+  "functionName": "tagspacesdf5c4ca5PostConfirmation",
+  "resourceName": "tagspacesdf5c4ca5PostConfirmation",
+  "parentStack": "auth",
+  "triggerEnvs": [],
+  "triggerDir": "/Users/sytolk/.nvm/versions/node/v12.13.0/lib/node_modules/@aws-amplify/cli/node_modules/amplify-category-auth/provider-utils/awscloudformation/triggers/PostConfirmation",
+  "triggerTemplate": "PostConfirmation.json.ejs",
+  "roleName": "tagspacesdf5c4ca5PostConfirmation",
+  "skipEdit": true,
+  "GROUP": "tagspaces-amplify",
+  "enableCors": false
+}

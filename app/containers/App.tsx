@@ -21,7 +21,7 @@ import { connect } from 'react-redux';
 import { I18nextProvider } from 'react-i18next'; // as we build ourself via webpack
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { AmplifyAuthenticator } from '@aws-amplify/ui-react';
-import { Amplify } from 'aws-amplify';
+import { Amplify, Auth } from 'aws-amplify';
 import {
   onAuthUIStateChange,
   CognitoUserInterface,
@@ -95,13 +95,37 @@ const App = (props: Props) => {
     onAuthUIStateChange((nextAuthState, authData) => {
       // setAuthState(nextAuthState);
       if (nextAuthState === AuthState.SignedIn) {
+        // authData.signInUserSession.idToken.payload['custom:tenant']
+        fetchExtconfig()
+          .then(extconfig => {
+            if (extconfig) {
+              // eslint-disable-next-line no-eval
+              window.eval(extconfig);
+            }
+            return true;
+          })
+          .catch(e => {
+            console.error(e);
+          });
         // @ts-ignore
         props.loggedIn(authData);
-      } else {
+      } else if (nextAuthState === AuthState.SignedOut) {
         props.loggedIn(undefined);
       }
     });
   }, []);
+
+  const fetchExtconfig = () =>
+    // get the id token of the signed in user
+    Auth.currentSession()
+      .then(session => {
+        const idToken = session.getIdToken();
+        // get the tenant custom attribute from the id token
+        return idToken.payload['custom:tenant'];
+      })
+      .catch(e => {
+        console.error(e);
+      });
 
   let theme;
   switch (props.currentTheme) {

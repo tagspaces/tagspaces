@@ -11,6 +11,18 @@ Parameters:
 
 
 
+  functiontagspacesdf5c4ca5PostConfirmationArn:
+    Type: String
+    Default: functiontagspacesdf5c4ca5PostConfirmationArn
+
+  functiontagspacesdf5c4ca5PostConfirmationName:
+    Type: String
+    Default: functiontagspacesdf5c4ca5PostConfirmationName
+
+
+
+
+
   identityPoolName:
     Type: String
 
@@ -117,9 +129,14 @@ Parameters:
   usernameAttributes:
     Type: CommaDelimitedList
 
+  triggers:
+    Type: String
+
+
 
   userPoolGroupList:
     Type: CommaDelimitedList
+
 
   serviceName:
     Type: String
@@ -130,15 +147,15 @@ Parameters:
     Type: String
 
 
-  dependsOn:
-    Type: CommaDelimitedList
-
-
-  hostedUI:
+  parentStack:
     Type: String
 
 
-  hostedUIProviderCreds:
+  permissions:
+    Type: CommaDelimitedList
+
+
+  dependsOn:
     Type: CommaDelimitedList
 
 Conditions:
@@ -152,7 +169,7 @@ Resources:
   # Created to allow the UserPool SMS Config to publish via the Simple Notification Service during MFA Process
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !If [ShouldNotCreateEnvResources, 'tagspa96743d89_sns-role', !Join ['',[ 'sns', '96743d89', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
+      RoleName: !If [ShouldNotCreateEnvResources, 'tagspadf5c4ca5_sns-role', !Join ['',[ 'sns', 'df5c4ca5', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -164,10 +181,10 @@ Resources:
               - "sts:AssumeRole"
             Condition:
               StringEquals:
-                sts:ExternalId: tagspa96743d89_role_external_id
+                sts:ExternalId: tagspadf5c4ca5_role_external_id
       Policies:
         -
-          PolicyName: tagspa96743d89-sns-policy
+          PolicyName: tagspadf5c4ca5-sns-policy
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -198,6 +215,19 @@ Resources:
 
 
 
+      LambdaConfig:
+
+
+
+
+
+          PostConfirmation: !Ref functiontagspacesdf5c4ca5PostConfirmationArn
+
+
+
+
+
+
 
       AutoVerifiedAttributes: !Ref autoVerifiedAttributes
 
@@ -219,7 +249,53 @@ Resources:
       SmsVerificationMessage: !Ref smsVerificationMessage
       SmsConfiguration:
         SnsCallerArn: !GetAtt SNSRole.Arn
-        ExternalId: tagspa96743d89_role_external_id
+        ExternalId: tagspadf5c4ca5_role_external_id
+
+
+
+
+
+
+
+  UserPoolPostConfirmationLambdaInvokePermission:
+    Type: "AWS::Lambda::Permission"
+    DependsOn: UserPool
+    Properties:
+      Action: "lambda:invokeFunction"
+      Principal: "cognito-idp.amazonaws.com"
+      FunctionName: !Ref functiontagspacesdf5c4ca5PostConfirmationName
+      SourceArn: !GetAtt UserPool.Arn
+
+
+
+
+
+  # Updating lambda role with permissions to Cognito
+
+
+  tagspacesdf5c4ca5PostConfirmationAddToGroupCognito:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: tagspacesdf5c4ca5PostConfirmationAddToGroupCognito
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - cognito-idp:AdminUpdateUserAttributes
+
+            Resource: !GetAtt
+
+              - UserPool
+
+              - Arn
+
+
+
+
+      Roles:
+        - !Join ['',["tagspacesdf5c4ca5PostConfirmation", '-', !Ref env]]
+
 
 
   UserPoolClientWeb:
@@ -227,7 +303,7 @@ Resources:
   # Depends on UserPool for ID reference
     Type: "AWS::Cognito::UserPoolClient"
     Properties:
-      ClientName: tagspa96743d89_app_clientWeb
+      ClientName: tagspadf5c4ca5_app_clientWeb
 
       RefreshTokenValidity: !Ref userpoolClientRefreshTokenValidity
       UserPoolId: !Ref UserPool
@@ -237,7 +313,7 @@ Resources:
   # Depends on UserPool for ID reference
     Type: "AWS::Cognito::UserPoolClient"
     Properties:
-      ClientName: tagspa96743d89_app_client
+      ClientName: tagspadf5c4ca5_app_client
 
       GenerateSecret: !Ref userpoolClientGenerateSecret
       RefreshTokenValidity: !Ref userpoolClientRefreshTokenValidity
@@ -248,7 +324,7 @@ Resources:
   # Created to execute Lambda which gets userpool app client config values
     Type: 'AWS::IAM::Role'
     Properties:
-      RoleName: !If [ShouldNotCreateEnvResources, !Ref userpoolClientLambdaRole, !Join ['',['upClientLambdaRole', '96743d89', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
+      RoleName: !If [ShouldNotCreateEnvResources, !Ref userpoolClientLambdaRole, !Join ['',['upClientLambdaRole', 'df5c4ca5', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -302,7 +378,7 @@ Resources:
   # Marked as depending on UserPoolClientRole for easier to understand CFN sequencing
     Type: 'AWS::IAM::Policy'
     Properties:
-      PolicyName: tagspa96743d89_userpoolclient_lambda_iam_policy
+      PolicyName: tagspadf5c4ca5_userpoolclient_lambda_iam_policy
       Roles:
         - !Ref UserPoolClientRole
       PolicyDocument:
@@ -319,7 +395,7 @@ Resources:
   # Marked as depending on UserPoolClientLambdaPolicy for easier to understand CFN sequencing
     Type: 'AWS::IAM::Policy'
     Properties:
-      PolicyName: tagspa96743d89_userpoolclient_lambda_log_policy
+      PolicyName: tagspadf5c4ca5_userpoolclient_lambda_log_policy
       Roles:
         - !Ref UserPoolClientRole
       PolicyDocument:
@@ -359,7 +435,7 @@ Resources:
   # Always created
     Type: AWS::Cognito::IdentityPool
     Properties:
-      IdentityPoolName: !If [ShouldNotCreateEnvResources, 'tagspaces96743d89_identitypool_96743d89', !Join ['',['tagspaces96743d89_identitypool_96743d89', '__', !Ref env]]]
+      IdentityPoolName: !If [ShouldNotCreateEnvResources, 'tagspacesdf5c4ca5_identitypool_df5c4ca5', !Join ['',['tagspacesdf5c4ca5_identitypool_df5c4ca5', '__', !Ref env]]]
 
       CognitoIdentityProviders:
         - ClientId:  !Ref UserPoolClient
