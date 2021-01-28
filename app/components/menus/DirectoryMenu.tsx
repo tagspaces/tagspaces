@@ -539,7 +539,7 @@ Do you want to continue?`)
               <ListItemIcon>
                 <DefaultPerspectiveIcon />
               </ListItemIcon>
-              <ListItemText primary="Default perspective" />
+              <ListItemText primary="Default Perspective" />
             </MenuItem>
             <MenuItem
               data-tid="openGalleryPerspective"
