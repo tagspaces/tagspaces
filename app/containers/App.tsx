@@ -21,7 +21,7 @@ import { connect } from 'react-redux';
 import { I18nextProvider } from 'react-i18next'; // as we build ourself via webpack
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { AmplifyAuthenticator } from '@aws-amplify/ui-react';
-import { Amplify, Auth } from 'aws-amplify';
+import { Amplify, API, Auth } from 'aws-amplify';
 import {
   onAuthUIStateChange,
   CognitoUserInterface,
@@ -33,6 +33,8 @@ import { getCurrentTheme } from '-/reducers/settings';
 import AppConfig from '-/config';
 import awsconfig from '../aws-exports';
 import { actions as AppActions } from '-/reducers/app';
+import { getExtconfig } from '-/graphql/queries';
+import { actions as LocationActions, Location } from '../reducers/locations';
 
 const lightTheme = createMuiTheme({
   palette: {
@@ -89,6 +91,7 @@ interface Props {
   children: Object;
   currentTheme: string;
   loggedIn: (user: CognitoUserInterface) => void;
+  addLocations: (locations: Array<Location>, override: boolean) => void;
 }
 const App = (props: Props) => {
   React.useEffect(() => {
@@ -96,12 +99,18 @@ const App = (props: Props) => {
       // setAuthState(nextAuthState);
       if (nextAuthState === AuthState.SignedIn) {
         // authData.signInUserSession.idToken.payload['custom:tenant']
-        fetchExtconfig()
-          .then(extconfig => {
-            if (extconfig) {
-              // eslint-disable-next-line no-eval
-              window.eval(extconfig);
+        fetchTenant()
+          .then(async tenant => {
+            // @ts-ignore
+            const { data } = await API.graphql({
+              query: getExtconfig,
+              variables: { id: tenant }
+            });
+            if (data) {
+              // console.log(data.getExtconfig.Locations.items);
+              props.addLocations(data.getExtconfig.Locations.items, false);
             }
+
             return true;
           })
           .catch(e => {
@@ -115,7 +124,19 @@ const App = (props: Props) => {
     });
   }, []);
 
-  const fetchExtconfig = () =>
+  const fetchTenant = () =>
+    // get the access token of the signed in user
+    Auth.currentSession()
+      .then(session => {
+        const accessToken = session.getAccessToken();
+        const cognitogroups = accessToken.payload['cognito:groups'];
+        return cognitogroups[0];
+      })
+      .catch(e => {
+        console.error(e);
+      });
+
+  /* const fetchExtconfig = () =>
     // get the id token of the signed in user
     Auth.currentSession()
       .then(session => {
@@ -125,7 +146,7 @@ const App = (props: Props) => {
       })
       .catch(e => {
         console.error(e);
-      });
+      }); */
 
   let theme;
   switch (props.currentTheme) {
@@ -164,7 +185,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      loggedIn: AppActions.loggedIn
+      loggedIn: AppActions.loggedIn,
+      addLocations: LocationActions.addLocations
     },
     dispatch
   );

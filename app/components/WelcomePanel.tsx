@@ -38,6 +38,7 @@ import LogoutIcon from '@material-ui/icons/MeetingRoom';
 import KeyShortcutsIcon from '@material-ui/icons/Keyboard';
 import { AmplifySignOut } from '@aws-amplify/ui-react';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
+import { API } from 'aws-amplify';
 import WelcomeBackground from '../assets/images/background.png';
 import WelcomeLogo from '../assets/images/welcome-logo.png';
 import { actions as AppActions } from '../reducers/app';
@@ -48,6 +49,7 @@ import {
   actions as SettingsActions
 } from '../reducers/settings';
 import AppConfig from '../config';
+import {createExtconfig, createLocation} from '-/graphql/mutations';
 
 const styles: any = (theme: any) => ({
   mainPanel: {
@@ -202,6 +204,51 @@ const WelcomePanel = (props: Props) => {
         >
           <Button startIcon={<SocialIcon />}>
             {i18n.t('core:likeUsOnFacebook')}
+          </Button>
+        </ListItem>
+        <ListItem
+          button
+          onClick={() => {
+            try {
+              const extConfig = {
+                id: 'extconfig1',
+                tenant: 'extconfig1',
+                IsFirstRun: false
+              };
+              const location = {
+                id: 1,
+                tenant: 'extconfig1',
+                uuid: 'uuid1',
+                type: '1',
+                name: 'S3',
+                path: '',
+                accessKeyId: 'AKIAJXOUGX3VY6RHHSWQ',
+                secretAccessKey: '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',
+                bucketName: 'issexperimental',
+                region: 'eu-central-1',
+                isDefault: true,
+                isReadOnly: false,
+                persistIndex: false,
+                fullTextIndex: false,
+                watchForChanges: false,
+                locationConfigIdId: 'extconfig1'
+              };
+
+              API.graphql({
+                query: createExtconfig,
+                variables: { input: extConfig }
+              });
+              API.graphql({
+                query: createLocation,
+                variables: { input: location }
+              });
+            } catch (e) {
+              console.error(e);
+            }
+          }}
+        >
+          <Button startIcon={<SocialIcon />}>
+            {i18n.t('core:InsertGraphQL')}
           </Button>
         </ListItem>
         {props.user && (

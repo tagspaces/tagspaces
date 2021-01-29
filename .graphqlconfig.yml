@@ -1,0 +1,15 @@
+projects:
+  tagspaces:
+    schemaPath: amplify/backend/api/tagspaces/build/schema.graphql
+    includes:
+      - src/graphql/**/*.ts
+    excludes:
+      - ./amplify/**
+    extensions:
+      amplify:
+        codeGenTarget: typescript
+        generatedFileName: src/API.ts
+        docsFilePath: app/graphql
+extensions:
+  amplify:
+    version: 3

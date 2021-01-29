@@ -102,7 +102,7 @@
         "Timeout": "25",
         "Code": {
           "S3Bucket": "amplify-tagspaces-dev-130739-deployment",
-          "S3Key": "amplify-builds/tagspacesdf5c4ca5PostConfirmation-56524259304b30433350-build.zip"
+          "S3Key": "amplify-builds/tagspacesdf5c4ca5PostConfirmation-437a3947642f53434958-build.zip"
         }
       }
     },

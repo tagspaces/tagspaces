@@ -282,7 +282,10 @@ Resources:
         Statement:
           - Effect: Allow
             Action:
-              - cognito-idp:AdminUpdateUserAttributes
+              - cognito-idp:getGroup
+              - cognito-idp:createGroup
+              - cognito-idp:adminAddUserToGroup
+           #   - cognito-idp:AdminUpdateUserAttributes
 
             Resource: !GetAtt
 
