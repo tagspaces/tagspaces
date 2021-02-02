@@ -1,5 +1,55 @@
 # Changelog
 
+## Version 3.8.4 / 2021.01.29
+
+### 🎉 New features
+
+- integration of the help panel for mobile mode
+- add reload app button in the setting general tab
+- make uuid of locations visible and editable
+- introducing openLink for handling external and internal links
+- enable opening folders from command line as parameter
+- added tooltip in about dialog showing detailed version infos
+- improve showing paths for cloud locations
+- add open link dialog
+- added link in entry properties for sharing files and folders, refactoring entry properties
+- adding history navigation in the desktop app as a experimental feature
+- redesign entry extension badge in the entry opener and grid perspective
+- readonly externally configured locations
+- **[PRO]** adding support for importing and exporting location configurations
+
+### 🌟 Enhancements
+
+- hide file menu by default, showing it with ALT
+- removing transparency of tags in default perspective
+- making default perspecitive toolbar transluent (#1280)
+- limit the logo width to 200px
+- disable context menu on locations in readonly mode
+- update german, indonesian and italian translations
+- added current ui theme as url parameter for the viewers and editors
+- **[PRO]** making smart tag deactivatable in the UI
+- **[PRO]** theme colors are now customizable
+- **[PRO]** added custom logo for the web version
+- **[PRO]** welcome panel is configurable
+- **[PRO]** make sidebar color and advanced search configurable
+- **[PRO]** polish PWA app
+
+### 🐛 Bug fixes
+
+- **[android]** fix folder selection for location in the Android app
+- **[android]** fix cordova sdcard paths
+- correct folder name in the deletion dialog
+- re-enable open file from command line
+- fix issue with two cloud locations with the same or no path are not selected properly
+- fix update issue on folder deletion from top left direcory menu
+- fix rename a folder from the 3-dot menu
+- fix select all entries state after change to empty location
+- handle renames and uploads on read-only s3 connection
+- switching s3 locations with no path broken
+- fix colors of the file and folder title in dark mode
+- fix broken file editing after changing description or adding tag
+- **[PRO]** enable exiting fullscreen in gallery perspective on mobile devices
+
 ## Version 3.7.6 / 2020.11.11
 
 ### 🎉 New features
