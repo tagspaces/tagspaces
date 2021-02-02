@@ -71,7 +71,7 @@
         "Timeout": "25",
         "Code": {
           "S3Bucket": "amplify-tagspaces-dev-130739-deployment",
-          "S3Key": "amplify-builds/createTagspaceIndex-2f627034724c49353347-build.zip"
+          "S3Key": "amplify-builds/createTagspaceIndex-77767454784f316d4343-build.zip"
         }
       }
     },
