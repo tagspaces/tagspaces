@@ -1,39 +1,11 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "Lambda resource stack creation using Amplify CLI",
+  "Description": "Lambda Function resource stack creation using Amplify CLI",
   "Parameters": {
-    "GROUP": {
+    "CloudWatchRule": {
       "Type": "String",
-      "Default": ""
-    },
-    "modules": {
-      "Type": "String",
-      "Default": "",
-      "Description": "Comma-delimmited list of modules to be executed by a lambda trigger. Sent to resource as an env variable."
-    },
-    "resourceName": {
-      "Type": "String",
-      "Default": ""
-    },
-    "trigger": {
-      "Type": "String",
-      "Default": "true"
-    },
-    "functionName": {
-      "Type": "String",
-      "Default": ""
-    },
-    "roleName": {
-      "Type": "String",
-      "Default": ""
-    },
-    "parentResource": {
-      "Type": "String",
-      "Default": ""
-    },
-    "parentStack": {
-      "Type": "String",
-      "Default": ""
+      "Default": "NONE",
+      "Description": " Schedule Expression"
     },
     "env": {
       "Type": "String"
@@ -61,12 +33,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "tagspacesdf5c4ca5PostConfirmation",
+            "createTagspaceIndex",
             {
               "Fn::Join": [
                 "",
                 [
-                  "tagspacesdf5c4ca5PostConfirmation",
+                  "createTagspaceIndex",
                   "-",
                   {
                     "Ref": "env"
@@ -81,14 +53,8 @@
             "ENV": {
               "Ref": "env"
             },
-            "MODULES": {
-              "Ref": "modules"
-            },
             "REGION": {
               "Ref": "AWS::Region"
-            },
-            "GROUP": {
-              "Ref": "GROUP"
             }
           }
         },
@@ -98,11 +64,14 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs10.x",
+        "Runtime": "nodejs12.x",
+        "Layers": [
+          "arn:aws:lambda:eu-central-1:615763143317:layer:tagspaceLambdaLayer-dev:3"
+        ],
         "Timeout": "25",
         "Code": {
           "S3Bucket": "amplify-tagspaces-dev-130739-deployment",
-          "S3Key": "amplify-builds/tagspacesdf5c4ca5PostConfirmation-76785354485a74414847-build.zip"
+          "S3Key": "amplify-builds/createTagspaceIndex-666d767a43674e556b4d-build.zip"
         }
       }
     },
@@ -112,12 +81,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "tagspacesdf5c4ca5PostConfirmation",
+            "tagspacesLambdaRole96e8f103",
             {
               "Fn::Join": [
                 "",
                 [
-                  "tagspacesdf5c4ca5PostConfirmation",
+                  "tagspacesLambdaRole96e8f103",
                   "-",
                   {
                     "Ref": "env"
@@ -203,14 +172,14 @@
         ]
       }
     },
-    "LambdaExecutionRole": {
-      "Value": {
-        "Ref": "LambdaExecutionRole"
-      }
-    },
     "Region": {
       "Value": {
         "Ref": "AWS::Region"
+      }
+    },
+    "LambdaExecutionRole": {
+      "Value": {
+        "Ref": "LambdaExecutionRole"
       }
     }
   }
