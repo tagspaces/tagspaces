@@ -49,7 +49,6 @@ import {
   actions as SettingsActions
 } from '../reducers/settings';
 import AppConfig from '../config';
-import {createExtconfig, createLocation} from '-/graphql/mutations';
 
 const styles: any = (theme: any) => ({
   mainPanel: {
@@ -206,51 +205,6 @@ const WelcomePanel = (props: Props) => {
             {i18n.t('core:likeUsOnFacebook')}
           </Button>
         </ListItem>
-        {/* <ListItem
-          button
-          onClick={() => {
-            try {
-              const extConfig = {
-                id: 'extconfig1',
-                tenant: 'extconfig1',
-                IsFirstRun: false
-              };
-              const location = {
-                id: 1,
-                tenant: 'extconfig1',
-                uuid: 'uuid1',
-                type: '1',
-                name: 'S3',
-                path: '',
-                accessKeyId: 'XXX',
-                secretAccessKey: 'XXX',
-                bucketName: 'xxx',
-                region: 'eu-central-1',
-                isDefault: true,
-                isReadOnly: false,
-                persistIndex: false,
-                fullTextIndex: false,
-                watchForChanges: false,
-                locationConfigIdId: 'extconfig1'
-              };
-
-              API.graphql({
-                query: createExtconfig,
-                variables: { input: extConfig }
-              });
-              API.graphql({
-                query: createLocation,
-                variables: { input: location }
-              });
-            } catch (e) {
-              console.error(e);
-            }
-          }}
-        >
-          <Button startIcon={<SocialIcon />}>
-            {i18n.t('core:InsertGraphQL')}
-          </Button>
-        </ListItem> */}
         {props.user && (
           <>
             <AmplifySignOut buttonText="Sign Out" />

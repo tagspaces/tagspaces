@@ -62,6 +62,7 @@
     "setup-pro": "node scripts/setuppro.js",
     "run-webdav": "yarn build-web && yarn prepare-web && node scripts/webdavserver.js",
     "run-web": "yarn build-web && yarn prepare-web && node scripts/webserver.js",
+    "run-web-aws": "yarn prepare-web && node scripts/webserver.js",
     "run-web-dev": "yarn build-web-dev && yarn prepare-web && node scripts/webserver.js",
     "run-android": "yarn prepare-cordova && yarn build-cordova && cd cordova && cordova run android && cd ..",
     "run-android-dev": "yarn prepare-cordova && yarn build-cordova-dev && cd cordova && cordova run android && cd ..",

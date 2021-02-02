@@ -7,8 +7,8 @@
     "config": {
       "SourceDir": "app",
       "DistributionDir": "web",
-      "BuildCommand": "npm run-script build",
-      "StartCommand": "npm run-script run-web-dev"
+      "BuildCommand": "npm run-script build-web",
+      "StartCommand": "npm run-script run-web-aws"
     }
   },
   "providers": [

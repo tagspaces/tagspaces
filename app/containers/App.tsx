@@ -20,7 +20,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { I18nextProvider } from 'react-i18next'; // as we build ourself via webpack
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
-import { AmplifyAuthenticator } from '@aws-amplify/ui-react';
+import {
+  AmplifyAuthenticator,
+  AmplifySignIn,
+  AmplifySignUp
+} from '@aws-amplify/ui-react';
 import { Amplify, API, Auth } from 'aws-amplify';
 import {
   onAuthUIStateChange,
@@ -172,7 +176,38 @@ const App = (props: Props) => {
   );
   if (AppConfig.isWeb) {
     Amplify.configure(awsconfig);
-    return <AmplifyAuthenticator>{themeProvider}</AmplifyAuthenticator>;
+    return (
+      <AmplifyAuthenticator
+        usernameAlias="email"
+        style={{
+          // @ts-ignore
+          '--amplify-primary-color': '#1dd19f',
+          '--amplify-primary-tint': '#1dd19f',
+          '--amplify-primary-shade': '#4A5568'
+        }}
+      >
+        <AmplifySignUp
+          slot="sign-up"
+          usernameAlias="email"
+          formFields={[
+            {
+              type: 'email',
+              label: 'Email',
+              placeholder: 'Enter your email',
+              required: true
+            },
+            {
+              type: 'password',
+              label: 'Password',
+              placeholder: 'Enter your password',
+              required: true
+            }
+          ]}
+        />
+        <AmplifySignIn slot="sign-in" usernameAlias="email" />
+        {themeProvider}
+      </AmplifyAuthenticator>
+    );
   }
   return themeProvider;
 };
