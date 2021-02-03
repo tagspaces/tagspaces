@@ -20,26 +20,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { I18nextProvider } from 'react-i18next'; // as we build ourself via webpack
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
-import {
-  AmplifyAuthenticator,
-  AmplifySignIn,
-  AmplifySignUp
-} from '@aws-amplify/ui-react';
-import { Amplify, API, Auth } from 'aws-amplify';
-import {
-  onAuthUIStateChange,
-  CognitoUserInterface,
-  AuthState
-} from '@aws-amplify/ui-components';
-import { bindActionCreators } from 'redux';
-import LogoIcon from '../assets/images/icon100x100.svg';
 import i18n from '../services/i18n';
 import { getCurrentTheme } from '-/reducers/settings';
 import AppConfig from '-/config';
-import awsconfig from '../aws-exports';
-import { actions as AppActions } from '-/reducers/app';
-import { getExtconfig } from '-/graphql/queries';
-import { actions as LocationActions, Location } from '../reducers/locations';
 
 const lightTheme = createMuiTheme({
   palette: {
@@ -95,64 +78,8 @@ const darkTheme = createMuiTheme({
 interface Props {
   children: Object;
   currentTheme: string;
-  loggedIn: (user: CognitoUserInterface) => void;
-  addLocations: (locations: Array<Location>, override: boolean) => void;
 }
 const App = (props: Props) => {
-  React.useEffect(() => {
-    onAuthUIStateChange((nextAuthState, authData) => {
-      // setAuthState(nextAuthState);
-      if (nextAuthState === AuthState.SignedIn) {
-        // authData.signInUserSession.idToken.payload['custom:tenant']
-        fetchTenant()
-          .then(async tenant => {
-            // @ts-ignore
-            const { data } = await API.graphql({
-              query: getExtconfig,
-              variables: { id: tenant }
-            });
-            if (data) {
-              // console.log(data.getExtconfig.Locations.items);
-              props.addLocations(data.getExtconfig.Locations.items, false);
-            }
-
-            return true;
-          })
-          .catch(e => {
-            console.error(e);
-          });
-        // @ts-ignore
-        props.loggedIn(authData);
-      } else if (nextAuthState === AuthState.SignedOut) {
-        props.loggedIn(undefined);
-      }
-    });
-  }, []);
-
-  const fetchTenant = () =>
-    // get the access token of the signed in user
-    Auth.currentSession()
-      .then(session => {
-        const accessToken = session.getAccessToken();
-        const cognitogroups = accessToken.payload['cognito:groups'];
-        return cognitogroups[0];
-      })
-      .catch(e => {
-        console.error(e);
-      });
-
-  /* const fetchExtconfig = () =>
-    // get the id token of the signed in user
-    Auth.currentSession()
-      .then(session => {
-        const idToken = session.getIdToken();
-        // get the tenant custom attribute from the id token
-        return idToken.payload['custom:tenant'];
-      })
-      .catch(e => {
-        console.error(e);
-      }); */
-
   let theme;
   switch (props.currentTheme) {
     case 'light': {
@@ -169,56 +96,11 @@ const App = (props: Props) => {
     }
   }
 
-  const themeProvider = (
+  return (
     <ThemeProvider theme={theme}>
       <I18nextProvider i18n={i18n}>{props.children}</I18nextProvider>
-      {/* <AppOnBoarding /> */}
     </ThemeProvider>
   );
-  if (AppConfig.isWeb) {
-    Amplify.configure(awsconfig);
-    return (
-      <AmplifyAuthenticator
-        usernameAlias="email"
-        style={{
-          // @ts-ignore
-          '--amplify-primary-color': '#1dd19f',
-          '--amplify-primary-tint': '#1dd19f',
-          '--amplify-primary-shade': '#4A5568'
-        }}
-      >
-        <AmplifySignUp
-          slot="sign-up"
-          usernameAlias="email"
-          formFields={[
-            {
-              type: 'email',
-              label: 'Email',
-              placeholder: 'Enter your email',
-              required: true
-            },
-            {
-              type: 'password',
-              label: 'Password',
-              placeholder: 'Enter your password',
-              required: true
-            }
-          ]}
-        />
-        <AmplifySignIn
-          headerText="Sign in to your TagSpaces account"
-          slot="sign-in"
-          usernameAlias="email"
-        >
-          <div slot="header-subtitle" style={{ textAlign: 'center' }}>
-            <img alt="logo" src={LogoIcon} />
-          </div>
-        </AmplifySignIn>
-        {themeProvider}
-      </AmplifyAuthenticator>
-    );
-  }
-  return themeProvider;
 };
 
 function mapStateToProps(state) {
@@ -226,13 +108,4 @@ function mapStateToProps(state) {
     currentTheme: getCurrentTheme(state)
   };
 }
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      loggedIn: AppActions.loggedIn,
-      addLocations: LocationActions.addLocations
-    },
-    dispatch
-  );
-}
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps)(App);
