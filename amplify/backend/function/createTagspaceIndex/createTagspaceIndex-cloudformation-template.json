@@ -66,12 +66,12 @@
         },
         "Runtime": "nodejs12.x",
         "Layers": [
-          "arn:aws:lambda:eu-central-1:615763143317:layer:tagspaceLambdaLayer-dev:5"
+          "arn:aws:lambda:eu-central-1:615763143317:layer:tagspaceLambdaLayer-dev:7"
         ],
         "Timeout": "25",
         "Code": {
           "S3Bucket": "amplify-tagspaces-dev-130739-deployment",
-          "S3Key": "amplify-builds/createTagspaceIndex-77767454784f316d4343-build.zip"
+          "S3Key": "amplify-builds/createTagspaceIndex-717250494c48424e6c31-build.zip"
         }
       }
     },
