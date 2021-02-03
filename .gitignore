@@ -122,4 +122,5 @@ amplify-build-config.json
 amplify-gradle-config.json
 amplifytools.xcconfig
 .secret-*
+amplify/team-provider-info.json
 src/API.ts
