@@ -32,6 +32,7 @@ import {
   AuthState
 } from '@aws-amplify/ui-components';
 import { bindActionCreators } from 'redux';
+import LogoIcon from '../assets/images/icon100x100.svg';
 import i18n from '../services/i18n';
 import { getCurrentTheme } from '-/reducers/settings';
 import AppConfig from '-/config';
@@ -204,7 +205,15 @@ const App = (props: Props) => {
             }
           ]}
         />
-        <AmplifySignIn slot="sign-in" usernameAlias="email" />
+        <AmplifySignIn
+          headerText="Sign in to your TagSpaces account"
+          slot="sign-in"
+          usernameAlias="email"
+        >
+          <div slot="header-subtitle" style={{ textAlign: 'center' }}>
+            <img alt="logo" src={LogoIcon} />
+          </div>
+        </AmplifySignIn>
         {themeProvider}
       </AmplifyAuthenticator>
     );
