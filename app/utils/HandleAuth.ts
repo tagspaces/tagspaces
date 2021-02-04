@@ -24,7 +24,7 @@ const HandleAuth = React.memo((props: Props) => {
         let getExtconfig;
         try {
           // eslint-disable-next-line global-require
-          getExtconfig = require('../../../src/graphql/queries');
+          getExtconfig = require('-/graphql/queries');
         } catch (e) {
           if (e && e.code && e.code === 'MODULE_NOT_FOUND') {
             console.debug('graphql/queries is missing. You must run "amplify codegen" first');

@@ -106,3 +106,4 @@ web/sw-con
 .ycache/*
 
 /app/aws-exports.js
+/app/graphql/*
