@@ -104,3 +104,5 @@ tests/*
 builds/*
 web/sw-con
 .ycache/*
+
+/app/aws-exports.js
