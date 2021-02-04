@@ -1,5 +1,5 @@
 /* eslint global-require: off */
-const execa = require('execa');
+/* const execa = require('execa');
 
 function getElectronVersion() {
   const { stdout } = execa.sync('electron', ['--version'], {
@@ -12,7 +12,7 @@ function getElectronVersion() {
       .trim()
       .slice(1)
   );
-}
+} */
 
 const developmentEnvironments = ['development', 'test'];
 
@@ -37,7 +37,7 @@ module.exports = api => {
       [
         require('@babel/preset-env'),
         {
-          targets: { electron: getElectronVersion() },
+          targets: { electron: require('electron/package.json').version },
           useBuiltIns: 'usage',
           corejs: '3.0.0'
         }

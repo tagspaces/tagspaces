@@ -157,7 +157,7 @@
     "babel-plugin-module-resolver": "^4.0.0",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "chalk": "^2.4.1",
-    "chromedriver": "^87.0.4",
+    "chromedriver": "^88.0.0",
     "concat-licenses": "^2.0.1",
     "concurrently": "^4.1.0",
     "cross-env": "^5.2.0",

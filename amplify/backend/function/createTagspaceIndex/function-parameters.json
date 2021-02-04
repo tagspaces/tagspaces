@@ -1,9 +1,0 @@
-{
-  "lambdaLayers": [
-    {
-      "type": "ExternalLayer",
-      "arn": "arn:aws:lambda:eu-central-1:615763143317:layer:tagspaceLambdaLayer-dev:7"
-    }
-  ],
-  "permissions": {}
-}

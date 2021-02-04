@@ -1,6 +1,0 @@
-{
-  "pluginId": "amplify-nodejs-function-runtime-provider",
-  "functionRuntime": "nodejs",
-  "useLegacyBuild": true,
-  "defaultEditorFile": "src/index.js"
-}
