@@ -21,25 +21,27 @@ const HandleAuth = React.memo((props: Props) => {
   React.useEffect(() => {
     onAuthUIStateChange((nextAuthState, authData) => {
       if (nextAuthState === AuthState.SignedIn) {
-        let getExtconfig;
+        let queries;
         try {
           // eslint-disable-next-line global-require
-          getExtconfig = require('-/graphql/queries');
+          queries = require('-/graphql/queries');
         } catch (e) {
           if (e && e.code && e.code === 'MODULE_NOT_FOUND') {
-            console.debug('graphql/queries is missing. You must run "amplify codegen" first');
+            console.debug(
+              'graphql/queries is missing. You must run "amplify codegen" first'
+            );
           }
         }
 
         // authData.signInUserSession.idToken.payload['custom:tenant']
         // TODO AuthState.SignedIn is called twice after login
         // @ts-ignore
-        if (username.current !== authData && getExtconfig) {
+        if (username.current !== authData && queries) {
           fetchTenant()
             .then(async tenant => {
               // @ts-ignore
               const { data } = await API.graphql({
-                query: getExtconfig,
+                query: queries.getExtconfig,
                 variables: { id: tenant }
               });
               if (data) {
