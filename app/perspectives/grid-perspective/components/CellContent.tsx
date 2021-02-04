@@ -91,8 +91,13 @@ const CellContent = (props: Props) => {
   );
 
   let description = removeMd(fsEntry.description);
+
   if (description.length > maxDescriptionPreviewLength) {
     description = description.substr(0, maxDescriptionPreviewLength) + '...';
+  }
+
+  if (description && fsEntry.isFile) {
+    description = ' | ' + description;
   }
 
   const fsEntryColor = findColorForFileEntry(
@@ -325,9 +330,7 @@ const CellContent = (props: Props) => {
                   fsEntry.lmdt &&
                   formatDateTime(fsEntry.lmdt, false)}
               </span>
-              <span title={i18n.t('core:entryDescription')}>
-                {description && (fsEntry.isFile && ' | ') + description}
-              </span>
+              <span title={i18n.t('core:entryDescription')}>{description}</span>
             </Typography>
           </Grid>
         )}
