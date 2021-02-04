@@ -7,7 +7,6 @@ import {
 import { API, Auth } from 'aws-amplify';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { getExtconfig } from '-/graphql/queries';
 import { actions as LocationActions, Location } from '-/reducers/locations';
 import { actions as AppActions } from '-/reducers/app';
 
@@ -21,12 +20,21 @@ const HandleAuth = React.memo((props: Props) => {
 
   React.useEffect(() => {
     onAuthUIStateChange((nextAuthState, authData) => {
-      // setAuthState(nextAuthState);
-      // TODO AuthState.SignedIn is called twice after login
       if (nextAuthState === AuthState.SignedIn) {
+        let getExtconfig;
+        try {
+          // eslint-disable-next-line global-require
+          getExtconfig = require('-/graphql/queries');
+        } catch (e) {
+          if (e && e.code && e.code === 'MODULE_NOT_FOUND') {
+            console.debug('-/graphql/queries is missing.');
+          }
+        }
+
         // authData.signInUserSession.idToken.payload['custom:tenant']
+        // TODO AuthState.SignedIn is called twice after login
         // @ts-ignore
-        if (username.current !== authData.username) {
+        if (username.current !== authData && getExtconfig) {
           fetchTenant()
             .then(async tenant => {
               // @ts-ignore
