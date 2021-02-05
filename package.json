@@ -62,6 +62,7 @@
     "setup-pro": "node scripts/setuppro.js",
     "run-webdav": "yarn build-web && yarn prepare-web && node scripts/webdavserver.js",
     "run-web": "yarn build-web && yarn prepare-web && node scripts/webserver.js",
+    "run-web-aws": "yarn prepare-web && node scripts/webserver.js",
     "run-web-dev": "yarn build-web-dev && yarn prepare-web && node scripts/webserver.js",
     "run-android": "yarn prepare-cordova && yarn build-cordova && cd cordova && cordova run android && cd ..",
     "run-android-dev": "yarn prepare-cordova && yarn build-cordova-dev && cd cordova && cordova run android && cd ..",
@@ -116,6 +117,7 @@
     }
   },
   "devDependencies": {
+    "@aws-amplify/cli": "^4.41.2",
     "@babel/core": "^7.12.9",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
     "@babel/plugin-proposal-decorators": "^7.12.1",
@@ -155,7 +157,7 @@
     "babel-plugin-module-resolver": "^4.0.0",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "chalk": "^2.4.1",
-    "chromedriver": "^87.0.4",
+    "chromedriver": "^88.0.0",
     "concat-licenses": "^2.0.1",
     "concurrently": "^4.1.0",
     "cross-env": "^5.2.0",
@@ -230,12 +232,15 @@
     "yarn": "^1.22.10"
   },
   "dependencies": {
+    "@aws-amplify/ui-react": "^0.2.34",
     "@date-io/date-fns": "^1.3.9",
     "@gorillastack/jmespath": "^1.3.0",
     "@material-ui/core": "^4.11.1",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.56",
     "@material-ui/pickers": "^3.2.10",
+    "aws-amplify": "^3.3.14",
+    "aws-amplify-react": "^4.2.18",
     "aws-sdk": "^2.652.0",
     "babel-polyfill": "^6.26.0",
     "chokidar": "^3.4.3",

@@ -16,13 +16,12 @@
  *
  */
 
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { I18nextProvider } from 'react-i18next'; // as we build ourself via webpack
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import i18n from '../services/i18n';
 import { getCurrentTheme } from '-/reducers/settings';
-// import AppOnBoarding from '../components/AppOnboarding';
 import AppConfig from '-/config';
 
 const lightTheme = createMuiTheme({
@@ -76,42 +75,37 @@ const darkTheme = createMuiTheme({
 //   }
 // });
 
-class App extends Component {
-  props: {
-    children: Object;
-    currentTheme: string;
-  };
-
-  render() {
-    let theme;
-    switch (this.props.currentTheme) {
-      case 'light': {
-        theme = lightTheme;
-        break;
-      }
-      case 'dark': {
-        theme = darkTheme;
-        break;
-      }
-      default: {
-        theme = lightTheme;
-        break;
-      }
-    }
-
-    return (
-      <ThemeProvider theme={theme}>
-        <I18nextProvider i18n={i18n}>{this.props.children}</I18nextProvider>
-        {/* <AppOnBoarding /> */}
-      </ThemeProvider>
-    );
-  }
+interface Props {
+  children: Object;
+  currentTheme: string;
 }
+const App = (props: Props) => {
+  let theme;
+  switch (props.currentTheme) {
+    case 'light': {
+      theme = lightTheme;
+      break;
+    }
+    case 'dark': {
+      theme = darkTheme;
+      break;
+    }
+    default: {
+      theme = lightTheme;
+      break;
+    }
+  }
+
+  return (
+    <ThemeProvider theme={theme}>
+      <I18nextProvider i18n={i18n}>{props.children}</I18nextProvider>
+    </ThemeProvider>
+  );
+};
 
 function mapStateToProps(state) {
   return {
     currentTheme: getCurrentTheme(state)
   };
 }
-
 export default connect(mapStateToProps)(App);
