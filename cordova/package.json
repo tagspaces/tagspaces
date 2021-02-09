@@ -10,6 +10,7 @@
   "author": "Apache Cordova Team",
   "license": "Apache-2.0",
   "dependencies": {
+    "cordova-plugin-add-swift-support": "2.0.2",
     "cordova-plugin-background-mode": "^0.7.3",
     "cordova-plugin-device": "^2.0.3",
     "cordova-plugin-file": "6.0.2",
@@ -35,18 +36,21 @@
       "cordova-plugin-camera": {
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
       },
-      "cordova-plugin-androidx-adapter": {}
+      "cordova-plugin-androidx-adapter": {},
+      "com.ourcodeworld.plugins.Filebrowser": {},
+      "cordova-plugin-add-swift-support": {}
     },
     "platforms": [
-      "ios",
-      "android"
+      "android",
+      "ios"
     ]
   },
   "devDependencies": {
     "@globules-io/cordova-plugin-ios-xhr": "^1.0.4",
     "bamboo.cordova.plugin.downloader": "git+https://github.com/sytolk/cordova-plugin-downloader.git",
     "cordova-android": "^9.0.0",
-    "cordova-ios": "^6.1.0",
+    "cordova-ios": "^6.1.1",
+    "cordova-ourcodeworld-filebrowser": "git+https://github.com/ourcodeworld/cordova-ourcodeworld-filebrowser.git",
     "cordova-plugin-androidx-adapter": "^1.1.3"
   }
 }

@@ -18,13 +18,13 @@
 
 /* globals cordova */
 import AppConfig from '../config';
-import { b64toBlob } from '../utils/misc';
+import { b64toBlob } from '-/utils/misc';
 import {
   extractParentDirectoryPath,
   cleanTrailingDirSeparator,
   extractFileName,
   extractFileExtension
-} from '../utils/paths';
+} from '-/utils/paths';
 import { FileSystemEntry } from './utils-io';
 
 const appSettingFile = 'settings.json';
@@ -401,7 +401,7 @@ export default class CordovaIO {
         Download: 'sdcard/Download/',
         Music: 'sdcard/Music/',
         Movies: 'sdcard/Movies/',
-        SDCard: cordova.file.externalRootDirectory // 'sdcard/'
+        SDCard: 'sdcard/' // cordova.file.externalRootDirectory
       };
     }
     return paths;
@@ -1216,6 +1216,36 @@ export default class CordovaIO {
    */
   selectFile = () => {
     console.log('Operation selectFile not supported.');
+  };
+
+  selectDirectoryDialog = (): Promise<any> => {
+    if (AppConfig.isCordovaiOS) {
+      console.log('Operation selectDirectoryDialog not supported.');
+    } else {
+      return new Promise((resolve, reject) => {
+        // @ts-ignore
+        window.OurCodeWorld.Filebrowser.folderPicker.single({
+          success: function(data) {
+            if (!data.length) {
+              reject('No folders selected');
+              return;
+            }
+
+            // Array with paths
+            // ["file:///storage/emulated/0/360/security", "file:///storage/emulated/0/360/security"]
+            // fix https://trello.com/c/vV7D0kGf/500-tsn500-fix-folder-selector-in-create-edit-location-on-android-or-use-native-dialog
+            data[0] = data[0].replace(
+              'file:///storage/emulated/0',
+              'file:///sdcard'
+            );
+            resolve(data);
+          },
+          error: function(err) {
+            reject('Folders selection err:' + err);
+          }
+        });
+      });
+    }
   };
 
   /**

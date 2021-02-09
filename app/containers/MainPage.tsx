@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
@@ -64,7 +64,6 @@ import {
   isHelpFeedbackPanelOpened,
   isEditTagDialogOpened,
   isCreateDirectoryOpened,
-  isSelectDirectoryDialogOpened,
   isUploadDialogOpened,
   isCreateFileDialogOpened,
   isSettingsDialogOpened,
@@ -158,10 +157,8 @@ interface Props {
   isLicenseDialogOpened: boolean;
   isThirdPartyLibsDialogOpened: boolean;
   isOnboardingDialogOpened: boolean;
-  isSelectDirectoryDialogOpened: boolean;
   isUploadProgressDialogOpened: boolean;
   isProgressDialogOpened: boolean;
-  toggleSelectDirectoryDialog: () => void;
   toggleUploadDialog: () => void;
   toggleOpenLinkDialog: () => void;
   toggleProgressDialog: () => void;
@@ -302,26 +299,19 @@ const OpenLinkDialogAsync = props => (
   </React.Suspense>
 );
 
-const SelectDirectoryDialog = React.lazy(() =>
-  import(
-    /* webpackChunkName: "LicenseDialog" */ '../components/dialogs/SelectDirectoryDialog'
-  )
-);
-const SelectDirectoryAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <SelectDirectoryDialog {...props} />
-  </React.Suspense>
-);
-
 /* let showVerticalPanel = true;
 if (window.ExtDefaultVerticalPanel === 'none') {
   showVerticalPanel = false;
 } */
 
 const MainPage = (props: Props) => {
-  const [selectedDirectoryPath, setSelectedDirectoryPath] = useState<string>(
+  /* const [selectedDirectoryPath, setSelectedDirectoryPath] = useState<string>(
     ''
-  );
+  ); */
+  const selectedDirectoryPath = useRef<string>('');
+  const setSelectedDirectoryPath = (path: string) => {
+    selectedDirectoryPath.current = path;
+  };
   /* const [isManagementPanelVisible, setManagementPanelVisible] = useState<
     boolean
   >(window.ExtDefaultVerticalPanel !== 'none' && !props.isEntryInFullWidth); */
@@ -535,7 +525,6 @@ const MainPage = (props: Props) => {
     toggleAboutDialog,
     toggleCreateDirectoryDialog,
     toggleCreateFileDialog,
-    toggleSelectDirectoryDialog,
     toggleUploadDialog,
     toggleProgressDialog,
     toggleEditTagDialog,
@@ -599,16 +588,6 @@ const MainPage = (props: Props) => {
           onClose={toggleOpenLinkDialog}
         />
       )}
-      {props.isSelectDirectoryDialogOpened && (
-        <SelectDirectoryAsync
-          open={props.isSelectDirectoryDialogOpened}
-          onClose={toggleSelectDirectoryDialog}
-          chooseDirectoryPath={currentPath =>
-            setSelectedDirectoryPath(currentPath)
-          }
-          selectedDirectoryPath={selectedDirectoryPath || directoryPath}
-        />
-      )}
       {props.isUploadProgressDialogOpened && (
         <FileUploadDialog
           open={props.isUploadProgressDialogOpened}
@@ -631,7 +610,7 @@ const MainPage = (props: Props) => {
       {props.isCreateFileDialogOpened && (
         <CreateFileDialog
           open={props.isCreateFileDialogOpened}
-          selectedDirectoryPath={selectedDirectoryPath || directoryPath}
+          selectedDirectoryPath={selectedDirectoryPath.current || directoryPath}
           chooseDirectoryPath={currentPath =>
             setSelectedDirectoryPath(currentPath)
           }
@@ -790,7 +769,7 @@ const MainPage = (props: Props) => {
             onOpen={showDrawer}
             hysteresis={0.1}
             disableBackdropTransition={!AppConfig.isIOS}
-            disableDiscovery={AppConfig.isIOS}
+            // disableDiscovery={AppConfig.isIOS}
           >
             <MobileNavigation
               hideDrawer={() => props.closeAllVerticalPanels()}
@@ -828,7 +807,6 @@ function mapStateToProps(state) {
     isEditTagDialogOpened: isEditTagDialogOpened(state),
     isCreateDirectoryOpened: isCreateDirectoryOpened(state),
     isCreateFileDialogOpened: isCreateFileDialogOpened(state),
-    isSelectDirectoryDialogOpened: isSelectDirectoryDialogOpened(state),
     isSettingsDialogOpened: isSettingsDialogOpened(state),
     isAboutDialogOpened: isAboutDialogOpened(state),
     isKeysDialogOpened: isKeysDialogOpened(state),
@@ -865,7 +843,6 @@ function mapDispatchToProps(dispatch) {
     {
       loadParentDirectoryContent: AppActions.loadParentDirectoryContent,
       toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog,
-      toggleSelectDirectoryDialog: AppActions.toggleSelectDirectoryDialog,
       toggleUploadDialog: AppActions.toggleUploadDialog,
       toggleProgressDialog: AppActions.toggleProgressDialog,
       resetProgress: AppActions.resetProgress,

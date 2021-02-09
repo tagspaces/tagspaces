@@ -18,7 +18,12 @@
 
 import uuidv1 from 'uuid';
 import pathLib from 'path';
-import { Location, getLocation, locationType } from './locations';
+import {
+  Location,
+  getLocation,
+  locationType,
+  getDefaultLocationId
+} from './locations';
 import PlatformIO from '../services/platform-io';
 import AppConfig from '../config';
 import {
@@ -57,13 +62,18 @@ import { Pro } from '../pro';
 // import { getThumbnailURLPromise } from '../services/thumbsgenerator';
 import { actions as LocationIndexActions } from './location-index';
 import { Tag } from './taglibrary';
+import {
+  actions as SettingsActions,
+  getCheckForUpdateOnStartup,
+  isFirstRun,
+  isGlobalKeyBindingEnabled
+} from '-/reducers/settings';
 
 export const types = {
   DEVICE_ONLINE: 'APP/DEVICE_ONLINE',
   DEVICE_OFFLINE: 'APP/DEVICE_OFFLINE',
   PROGRESS: 'APP/PROGRESS',
   RESET_PROGRESS: 'APP/RESET_PROGRESS',
-  LOGIN_REQUEST: 'APP/LOGIN_REQUEST',
   LOGIN_SUCCESS: 'APP/LOGIN_SUCCESS',
   LOGIN_FAILURE: 'APP/LOGIN_FAILURE',
   LOGOUT: 'APP/LOGOUT',
@@ -207,7 +217,6 @@ export const initialState = {
   thirdPartyLibsDialogOpened: false,
   settingsDialogOpened: false,
   createDirectoryDialogOpened: false,
-  selectDirectoryDialogOpened: false,
   lastSelectedEntry: null,
   selectedEntries: [],
   isEntryInFullWidth: false,
@@ -222,6 +231,9 @@ export const initialState = {
 // The state described here will not be persisted
 export default (state: any = initialState, action: any) => {
   switch (action.type) {
+    case types.LOGIN_SUCCESS: {
+      return { ...state, user: action.user };
+    }
     case types.DEVICE_ONLINE: {
       return { ...state, isOnline: true, error: null };
     }
@@ -348,12 +360,6 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         createDirectoryDialogOpened: !state.createDirectoryDialogOpened
-      };
-    }
-    case types.TOGGLE_SELECT_DIRECTORY_DIALOG: {
-      return {
-        ...state,
-        selectDirectoryDialogOpened: !state.selectDirectoryDialogOpened
       };
     }
     case types.TOGGLE_UPLOAD_DIALOG: {
@@ -705,7 +711,66 @@ export default (state: any = initialState, action: any) => {
   }
 };
 
+function disableBackGestureMac() {
+  if (AppConfig.isMacLike) {
+    const element = document.getElementById('root');
+    element.addEventListener('touchstart', (e: MouseEvent) => {
+      // is not near edge of view, exit
+      if (e.pageX > 10 && e.pageX < window.innerWidth - 10) return;
+
+      // prevent swipe to navigate gesture
+      e.preventDefault();
+    });
+  }
+}
+
 export const actions = {
+  loggedIn: user => ({ type: types.LOGIN_SUCCESS, user }),
+  initApp: () => (dispatch: (actions: Object) => void, getState: () => any) => {
+    disableBackGestureMac();
+
+    dispatch(SettingsActions.setZoomRestoreApp());
+    dispatch(SettingsActions.upgradeSettings()); // TODO call this only on app version update
+    const state = getState();
+    const defaultLocationId = getDefaultLocationId(state);
+    if (defaultLocationId && defaultLocationId.length > 0) {
+      dispatch(actions.openLocationById(defaultLocationId));
+    }
+    if (getCheckForUpdateOnStartup(state)) {
+      dispatch(SettingsActions.checkForUpdate());
+    }
+    if (isFirstRun(state)) {
+      dispatch(actions.toggleOnboardingDialog());
+      dispatch(actions.toggleLicenseDialog());
+    }
+    PlatformIO.setGlobalShortcuts(isGlobalKeyBindingEnabled(state));
+    const langURLParam = getURLParameter('locale');
+    if (
+      langURLParam &&
+      langURLParam.length > 1 &&
+      /^[a-zA-Z\-_]+$/.test('langURLParam')
+    ) {
+      dispatch(SettingsActions.setLanguage(langURLParam));
+    }
+
+    const lid = getURLParameter('tslid');
+    const dPath = getURLParameter('tsdpath');
+    const ePath = getURLParameter('tsepath');
+    const cmdOpen = getURLParameter('cmdopen');
+    if (lid || dPath || ePath) {
+      setTimeout(() => {
+        dispatch(actions.openLink(window.location.href));
+      }, 1000);
+    } else if (cmdOpen) {
+      setTimeout(() => {
+        dispatch(
+          actions.openLink(
+            window.location.href.split('?')[0] + '?cmdopen=' + cmdOpen
+          )
+        );
+      }, 1000);
+    }
+  },
   goOnline: () => ({ type: types.DEVICE_ONLINE }),
   goOffline: () => ({ type: types.DEVICE_OFFLINE }),
   setUpdateAvailable: (isUpdateAvailable: boolean) => ({
@@ -763,9 +828,6 @@ export const actions = {
       dispatch(actions.toggleCreateFileDialog());
     }
   },
-  showSelectDirectoryDialog: () => (dispatch: (actions: Object) => void) => {
-    dispatch(actions.toggleSelectDirectoryDialog());
-  },
   toggleEditTagDialog: (tag: Tag) => ({
     type: types.TOGGLE_EDIT_TAG_DIALOG,
     tag
@@ -783,9 +845,6 @@ export const actions = {
     type: types.TOGGLE_CREATE_DIRECTORY_DIALOG
   }),
   toggleCreateFileDialog: () => ({ type: types.TOGGLE_CREATE_FILE_DIALOG }),
-  toggleSelectDirectoryDialog: () => ({
-    type: types.TOGGLE_SELECT_DIRECTORY_DIALOG
-  }),
   toggleUploadDialog: () => ({
     type: types.TOGGLE_UPLOAD_DIALOG
   }),
@@ -1765,7 +1824,7 @@ export const actions = {
                 .catch(() =>
                   dispatch(
                     actions.showNotification(
-                      i18n.t('core:Invalid link'),
+                      i18n.t('core:invalidLink'),
                       'warning',
                       true
                     )
@@ -1926,8 +1985,6 @@ export const isCreateDirectoryOpened = (state: any) =>
   state.app.createDirectoryDialogOpened;
 export const isCreateFileDialogOpened = (state: any) =>
   state.app.createFileDialogOpened;
-export const isSelectDirectoryDialogOpened = (state: any) =>
-  state.app.selectDirectoryDialogOpened;
 export const isUploadDialogOpened = (state: any) =>
   state.app.uploadDialogOpened;
 export const isOpenLinkDialogOpened = (state: any) =>

@@ -21,10 +21,11 @@ export default (theme: any) =>
   ({
     panel: {
       height: '100%',
-      maxHeight: '100%',
-      padding: 5,
-      paddingBottom: 50,
-      overflowY: 'hidden',
+      // maxHeight: '100%',
+      paddingLeft: 5,
+      paddingRight: 5,
+      // paddingBottom: 50,
+      // overflowY: 'hidden',
       backgroundColor: theme.palette.background.default
     },
     fontIcon: {
@@ -88,7 +89,7 @@ export default (theme: any) =>
     panelTitle: {
       textTransform: 'uppercase',
       flex: 1,
-      paddingLeft: 5,
+      paddingLeft: 7,
       paddingTop: 12
     },
     nested: {

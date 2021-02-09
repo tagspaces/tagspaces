@@ -92,19 +92,14 @@ const MoveCopyFilesDialog = (props: Props) => {
   }
 
   function selectDirectory() {
-    if (AppConfig.isElectron) {
-      PlatformIO.selectDirectoryDialog()
-        .then(selectedPaths => {
-          setTargetPath(selectedPaths[0]);
-          return true;
-        })
-        .catch(err => {
-          console.log('selectDirectoryDialog failed with: ' + err);
-        });
-    } else {
-      // TODO handle case on other platforms
-      // this.props.showSelectDirectoryDialog();
-    }
+    PlatformIO.selectDirectoryDialog()
+      .then(selectedPaths => {
+        setTargetPath(selectedPaths[0]);
+        return true;
+      })
+      .catch(err => {
+        console.log('selectDirectoryDialog failed with: ' + err);
+      });
   }
 
   return (

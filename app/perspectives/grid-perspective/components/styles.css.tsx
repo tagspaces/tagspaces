@@ -76,8 +76,8 @@ export default (theme: any): any => ({
     zIndex: 100,
     maxHeight: 100,
     overflowY: 'auto',
-    overflowX: 'hidden',
-    opacity: 0.6
+    overflowX: 'hidden'
+    // opacity: 0.9
   },
   gridCellDescription: {
     padding: 2,
@@ -140,8 +140,16 @@ export default (theme: any): any => ({
     paddingRight: 5,
     minHeight: 40,
     height: 53,
-    backgroundColor: theme.palette.background.default,
-    borderBottom: '1px solid ' + theme.palette.divider,
+    position: 'absolute',
+    zIndex: 1,
+    background:
+      'linear-gradient(0deg, ' +
+      theme.palette.background.default +
+      'AA 0%, ' +
+      theme.palette.background.default +
+      ' 99%)',
+    backdropFilter: 'blur(5px)',
+    // borderBottom: '1px solid ' + theme.palette.divider,
     width: '100%',
     overflowX: AppConfig.isFirefox ? 'auto' : 'overlay'
   }

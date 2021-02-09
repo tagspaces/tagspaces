@@ -28,7 +28,7 @@ jobs:
           path: extensions/tagspacespro
       - uses: actions/setup-node@v2-beta
         with:
-          node-version: '10.x'
+          node-version: '12.x'
       - name: Running yarn install, prettier and type checks
         run: |
           yarn install --check-files --cache-folder .ycache
@@ -49,11 +49,19 @@ jobs:
           yarn build-e2e
           yarn ${{ github.event.inputs.command }}
       - uses: actions/upload-artifact@v2
+        if: always()
         with:
-          name: test-reports
-          path: tests/test-reports/
+          name: test-pages
+          path: tests/test-pages/
       - uses: IgnusG/jest-report-action@v2.3.3
         if: always() # Run regardless of whether other steps failed
         with:
           access-token: ${{ secrets.GITHUB_TOKEN }}
           working-directory: tests
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: test-artifacts
+          path: |
+            tests/test-pages/
+            tests/test-reports/

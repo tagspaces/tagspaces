@@ -476,7 +476,7 @@ Do you want to continue?`)
             <ListItemText primary={i18n.t('core:deleteDirectory')} />
           </MenuItem>
         )}
-        {!AppConfig.isWeb && (
+        {!(PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb) && (
           <MenuItem data-tid="showInFileManager" onClick={showInFileManager}>
             <ListItemIcon>
               <OpenFolderNativelyIcon />
@@ -539,7 +539,7 @@ Do you want to continue?`)
               <ListItemIcon>
                 <DefaultPerspectiveIcon />
               </ListItemIcon>
-              <ListItemText primary="Default perspective" />
+              <ListItemText primary="Default Perspective" />
             </MenuItem>
             <MenuItem
               data-tid="openGalleryPerspective"
@@ -549,7 +549,7 @@ Do you want to continue?`)
               <ListItemIcon>
                 <GalleryPerspectiveIcon />
               </ListItemIcon>
-              <ListItemText primary="Gallery Perspective - Beta" />
+              <ListItemText primary="Gallery Perspective" />
             </MenuItem>
             <MenuItem
               data-tid="openMapiquePerspective"
@@ -559,7 +559,7 @@ Do you want to continue?`)
               <ListItemIcon>
                 <MapiquePerspectiveIcon />
               </ListItemIcon>
-              <ListItemText primary="Mapique Perspective - Beta" />
+              <ListItemText primary="Mapique Perspective" />
             </MenuItem>
             {/* <MenuItem data-tid="openTreeVizPerspective" onClick={() => switchPerspective('treeviz')} title="Switch to tree visualization perspective">
               <ListItemIcon>
@@ -575,7 +575,7 @@ Do you want to continue?`)
               <ListItemIcon>
                 <KanBanPerspectiveIcon />
               </ListItemIcon>
-              <ListItemText primary="KanBan Perspective - Alpha" />
+              <ListItemText primary="KanBan Perspective - Beta" />
             </MenuItem> */}
             <Divider />
           </div>

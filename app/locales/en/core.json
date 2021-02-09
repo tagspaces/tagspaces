@@ -510,5 +510,10 @@
   "videosFolder": "Videos",
   "startImportButton": "Import",
   "startExportButton": "Export",
+  "extractGeoCoordinates": "Extract geo-coordinates from files as tags",
+  "geoTagCurrentFolder": "Geo-tag current folder",
+  "toggleMapTheme": "Toggle map theme",
+  "pauseSlideShow": "pauseSlideShow",
+  "startSlideShow": "startSlideShow",
   "-": "-"
 }

@@ -76,8 +76,8 @@ interface Props {
   toggleUploadDialog: () => void;
   moveFiles: (files: Array<string>, destination: string) => void;
   showUnixHiddenEntries: boolean;
-  setEditLocationDialogOpened: boolean;
-  setDeleteLocationDialogOpened: boolean;
+  setEditLocationDialogOpened: (open: boolean) => void;
+  setDeleteLocationDialogOpened: (open: boolean) => void;
   selectedLocation: Location;
   setSelectedLocation: (loc: Location) => void;
   changeLocation: (loc: Location) => void;
@@ -113,6 +113,9 @@ const LocationView = React.memo((props: Props) => {
   };
 
   const handleLocationContextMenuClick = (event: any) => {
+    if (props.isReadOnlyMode) {
+      return true;
+    }
     event.preventDefault();
     event.stopPropagation();
     setLocationDirectoryContextMenuAnchorEl(event.currentTarget);
@@ -357,7 +360,8 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
-export default withStyles(styles)(
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
   // @ts-ignore
-  connect(mapStateToProps, mapDispatchToProps)(LocationView)
-);
+)(withStyles(styles)(LocationView));

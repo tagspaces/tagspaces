@@ -25,8 +25,6 @@ import Button from '@material-ui/core/Button';
 import styles from './SidePanels.css';
 import LocationManagerMenu from './menus/LocationManagerMenu';
 import ConfirmDialog from './dialogs/ConfirmDialog';
-import SelectDirectoryDialog from './dialogs/SelectDirectoryDialog';
-import CreateDirectoryDialog from './dialogs/CreateDirectoryDialog';
 import CustomLogo from './CustomLogo';
 import {
   actions as LocationActions,
@@ -34,7 +32,7 @@ import {
   Location
 } from '../reducers/locations';
 import { actions as AppActions } from '../reducers/app';
-import { getPerspectives } from '-/reducers/settings';
+import { getPerspectives, isDesktopMode } from '-/reducers/settings';
 import i18n from '../services/i18n';
 import AppConfig from '../config';
 import LoadingLazy from '-/components/LoadingLazy';
@@ -66,6 +64,7 @@ interface Props {
   addLocations: (locations: Array<Location>) => void;
   editLocation: () => void;
   removeLocation: (location: Location) => void;
+  isDesktop: boolean;
 }
 
 type SubFolder = {
@@ -78,9 +77,6 @@ type SubFolder = {
 const LocationManager = (props: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedLocation, setSelectedLocation] = useState<Location>(null);
-  const [selectedDirectoryPath, setSelectedDirectoryPath] = useState<string>(
-    null
-  );
   const [
     isCreateLocationDialogOpened,
     setCreateLocationDialogOpened
@@ -91,14 +87,6 @@ const LocationManager = (props: Props) => {
   const [
     isDeleteLocationDialogOpened,
     setDeleteLocationDialogOpened
-  ] = useState<boolean>(false);
-  const [
-    isCreateDirectoryDialogOpened,
-    setCreateDirectoryDialogOpened
-  ] = useState<boolean>(false);
-  const [
-    isSelectDirectoryDialogOpened,
-    setSelectDirectoryDialogOpened
   ] = useState<boolean>(false);
   const [
     isExportLocationsDialogOpened,
@@ -119,54 +107,21 @@ const LocationManager = (props: Props) => {
     }
   }, []); // props.locations]);
 
-  const createNewDirectoryExt = (path: string) => {
-    setCreateDirectoryDialogOpened(true);
-    setSelectedDirectoryPath(path);
-  };
-
-  const showSelectDirectoryDialog = () => {
-    setSelectDirectoryDialogOpened(true);
-    setSelectedDirectoryPath('');
-  };
-
-  const chooseDirectoryPath = (currentPath: string) => {
-    setSelectDirectoryDialogOpened(true);
-    setSelectedDirectoryPath(currentPath);
-  };
-
   function handleFileInputChange(selection: any) {
     const target = selection.currentTarget;
     const file = target.files[0];
     setImportFile(file);
-    /* const reader: any = new FileReader();
-
-    reader.onload = () => {
-      try {
-        const locations = Pro.LocationsExport.importLocations(reader.result);
-        if (locations) {
-          props.importLocations(locations);
-        }
-      } catch (e) {
-        console.error('Error : ', e);
-      }
-    };
-    reader.readAsText(file); */
     target.value = null;
   }
 
-  const { classes } = props;
+  const { classes, isDesktop } = props;
   return (
     <div className={classes.panel} style={props.style}>
       <CustomLogo />
 
       <LocationManagerMenu
         importLocations={() => {
-          if (AppConfig.isCordovaAndroid && AppConfig.isCordovaiOS) {
-            // TODO Select directory or file from dialog
-            showSelectDirectoryDialog();
-          } else {
-            fileInputRef.current.click();
-          }
+          fileInputRef.current.click();
         }}
         // importLocations={() => setImportLocationsDialogOpened(true)}
         exportLocations={() => setExportLocationsDialogOpened(true)}
@@ -206,7 +161,6 @@ const LocationManager = (props: Props) => {
             open={isCreateLocationDialogOpened}
             onClose={() => setCreateLocationDialogOpened(false)}
             addLocation={props.addLocation}
-            showSelectDirectoryDialog={showSelectDirectoryDialog}
           />
         )}
         {isEditLocationDialogOpened && (
@@ -215,7 +169,6 @@ const LocationManager = (props: Props) => {
             onClose={() => setEditLocationDialogOpened(false)}
             location={selectedLocation}
             editLocation={props.editLocation}
-            showSelectDirectoryDialog={showSelectDirectoryDialog}
           />
         )}
         {isDeleteLocationDialogOpened && (
@@ -235,26 +188,13 @@ const LocationManager = (props: Props) => {
             confirmDialogTID="confirmDeleteLocationDialog"
           />
         )}
-        {isSelectDirectoryDialogOpened && (
-          <SelectDirectoryDialog
-            open={isSelectDirectoryDialogOpened}
-            onClose={() => setSelectDirectoryDialogOpened(false)}
-            createNewDirectoryExt={createNewDirectoryExt}
-            chooseDirectoryPath={chooseDirectoryPath}
-          />
-        )}
-        {isCreateDirectoryDialogOpened && (
-          <CreateDirectoryDialog
-            open={isCreateDirectoryDialogOpened}
-            onClose={() => setCreateDirectoryDialogOpened(false)}
-            selectedDirectoryPath={selectedDirectoryPath}
-          />
-        )}
         <List
           className={classes.locationListArea}
           data-tid="locationList"
           style={{
-            maxHeight: 'calc(100vh - 175px)',
+            maxHeight: isDesktop
+              ? 'calc(100vh - 175px)'
+              : 'calc(100vh - 225px)',
             // @ts-ignore
             overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
           }}
@@ -303,7 +243,8 @@ const LocationManager = (props: Props) => {
 function mapStateToProps(state) {
   return {
     locations: getLocations(state),
-    perspectives: getPerspectives(state)
+    perspectives: getPerspectives(state),
+    isDesktop: isDesktopMode(state)
   };
 }
 
@@ -323,7 +264,8 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
-export default withStyles(styles)(
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
   // @ts-ignore
-  connect(mapStateToProps, mapDispatchToProps)(LocationManager)
-);
+)(withStyles(styles)(LocationManager));

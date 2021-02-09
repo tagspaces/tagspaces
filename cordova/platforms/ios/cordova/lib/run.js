@@ -86,7 +86,7 @@ module.exports.run = runOptions => {
                         // delete the existing platform/ios/build/device/appname.app
                         fs.removeSync(appFile);
                         // move the platform/ios/build/device/Payload/appname.app to parent
-                        fs.moveSync(appFileInflated, buildOutputDir);
+                        fs.moveSync(appFileInflated, appFile);
                         // delete the platform/ios/build/device/Payload folder
                         fs.removeSync(payloadFolder);
 

@@ -22,6 +22,7 @@ import { bindActionCreators } from 'redux';
 import { GlobalHotKeys } from 'react-hotkeys';
 import Button from '@material-ui/core/Button';
 import Fab from '@material-ui/core/Fab';
+import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import SaveIcon from '@material-ui/icons/Save';
 import CloseIcon from '@material-ui/icons/Close';
@@ -38,7 +39,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import ShareIcon from '@material-ui/icons/Share';
 import { withStyles } from '@material-ui/core/styles';
 import RefreshIcon from '@material-ui/icons/Refresh';
-import { Box, Typography } from '@material-ui/core';
+import Box from '@material-ui/core/Box';
 import EntryProperties from '-/components/EntryProperties';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import AppConfig from '-/config';
@@ -57,6 +58,7 @@ import {
 import { buffer } from '-/utils/misc';
 import {
   actions as SettingsActions,
+  isDesktopMode,
   getKeyBindingObject
 } from '-/reducers/settings';
 import TaggingActions from '-/reducers/tagging-actions';
@@ -206,6 +208,7 @@ interface Props {
   setLastSelectedEntry: (path: string) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   currentDirectoryPath: string | null;
+  isDesktopMode: boolean;
 }
 
 const EntryContainer = (props: Props) => {
@@ -653,154 +656,165 @@ const EntryContainer = (props: Props) => {
   const renderFileToolbar = classes => (
     <div className={classes.toolbar2}>
       <div className={classes.flexLeft}>
-        <IconButton
-          title={i18n.t('core:toggleProperties')}
-          aria-label={i18n.t('core:toggleProperties')}
-          onClick={togglePanel}
-          data-tid="fileContainerToggleProperties"
-        >
-          <DetailsIcon color={isPropPanelVisible ? 'primary' : 'action'} />
-        </IconButton>
-        <IconButton
-          title={i18n.t('core:switchToFullscreen')}
-          aria-label={i18n.t('core:switchToFullscreen')}
-          data-tid="fileContainerSwitchToFullScreen"
-          onClick={toggleFullScreen}
-        >
-          <FullScreenIcon />
-        </IconButton>
-        {AppConfig.isCordova && (
+        <Tooltip title={i18n.t('core:toggleProperties')}>
           <IconButton
-            title={i18n.t('core:shareFile')}
-            aria-label={i18n.t('core:shareFile')}
-            data-tid="shareFile"
-            onClick={() => shareFile(`file:///${openedFile.path}`)}
+            // title={i18n.t('core:toggleProperties')}
+            aria-label={i18n.t('core:toggleProperties')}
+            onClick={togglePanel}
+            data-tid="fileContainerToggleProperties"
           >
-            <ShareIcon />
+            <DetailsIcon color={isPropPanelVisible ? 'primary' : 'action'} />
           </IconButton>
+        </Tooltip>
+        <Tooltip title={i18n.t('core:switchToFullscreen')}>
+          <IconButton
+            // title={i18n.t('core:switchToFullscreen')}
+            aria-label={i18n.t('core:switchToFullscreen')}
+            data-tid="fileContainerSwitchToFullScreen"
+            onClick={toggleFullScreen}
+          >
+            <FullScreenIcon />
+          </IconButton>
+        </Tooltip>
+        {AppConfig.isCordova && (
+          <Tooltip title={i18n.t('core:shareFile')}>
+            <IconButton
+              // title={i18n.t('core:shareFile')}
+              aria-label={i18n.t('core:shareFile')}
+              data-tid="shareFile"
+              onClick={() => shareFile(`file:///${openedFile.path}`)}
+            >
+              <ShareIcon />
+            </IconButton>
+          </Tooltip>
         )}
         {!(PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb) && (
-          <IconButton
-            title={i18n.t('core:openFileExternally')}
-            aria-label={i18n.t('core:openFileExternally')}
-            onClick={openNatively}
-          >
-            <OpenNativelyIcon />
-          </IconButton>
+          <Tooltip title={i18n.t('core:openFileExternally')}>
+            <IconButton
+              // title={i18n.t('core:openFileExternally')}
+              aria-label={i18n.t('core:openFileExternally')}
+              onClick={openNatively}
+            >
+              <OpenNativelyIcon />
+            </IconButton>
+          </Tooltip>
         )}
-        <IconButton
-          title={i18n.t('core:downloadFile')}
-          aria-label={i18n.t('core:downloadFile')}
-          onClick={() => {
-            const entryName = `${baseName(
-              openedFile.path,
-              PlatformIO.getDirSeparator()
-            )}`;
-            const fileName = extractFileName(
-              entryName,
-              PlatformIO.getDirSeparator()
-            );
+        <Tooltip title={i18n.t('core:downloadFile')}>
+          <IconButton
+            // title={i18n.t('core:downloadFile')}
+            aria-label={i18n.t('core:downloadFile')}
+            onClick={() => {
+              const entryName = `${baseName(
+                openedFile.path,
+                PlatformIO.getDirSeparator()
+              )}`;
+              const fileName = extractFileName(
+                entryName,
+                PlatformIO.getDirSeparator()
+              );
 
-            if (AppConfig.isCordova) {
-              if (openedFile.url) {
-                downloadCordova(openedFile.url, entryName);
-              } else {
-                console.log('Can only download HTTP/HTTPS URIs');
-                props.showNotification(
-                  i18n.t('core:cantDownloadLocalFile'),
-                  NotificationTypes.default
-                );
-              }
-            } else {
-              const downloadLink = document.getElementById('downloadFile');
-              if (downloadLink) {
-                if (AppConfig.isWeb) {
-                  // eslint-disable-next-line no-restricted-globals
-                  const { protocol } = location;
-                  // eslint-disable-next-line no-restricted-globals
-                  const { hostname } = location;
-                  // eslint-disable-next-line no-restricted-globals
-                  const { port } = location;
-                  const link = `${protocol}//${hostname}${
-                    port !== '' ? `:${port}` : ''
-                  }/${openedFile.path}`;
-                  downloadLink.setAttribute('href', link);
+              if (AppConfig.isCordova) {
+                if (openedFile.url) {
+                  downloadCordova(openedFile.url, entryName);
                 } else {
-                  downloadLink.setAttribute(
-                    'href',
-                    `file:///${openedFile.path}`
+                  console.log('Can only download HTTP/HTTPS URIs');
+                  props.showNotification(
+                    i18n.t('core:cantDownloadLocalFile'),
+                    NotificationTypes.default
                   );
                 }
+              } else {
+                const downloadLink = document.getElementById('downloadFile');
+                if (downloadLink) {
+                  if (AppConfig.isWeb) {
+                    // eslint-disable-next-line no-restricted-globals
+                    const { protocol } = location;
+                    // eslint-disable-next-line no-restricted-globals
+                    const { hostname } = location;
+                    // eslint-disable-next-line no-restricted-globals
+                    const { port } = location;
+                    const link = `${protocol}//${hostname}${
+                      port !== '' ? `:${port}` : ''
+                    }/${openedFile.path}`;
+                    downloadLink.setAttribute('href', link);
+                  } else {
+                    downloadLink.setAttribute(
+                      'href',
+                      `file:///${openedFile.path}`
+                    );
+                  }
 
-                if (openedFile.url) {
-                  // mostly the s3 case
-                  downloadLink.setAttribute('target', '_blank');
-                  downloadLink.setAttribute('href', openedFile.url);
+                  if (openedFile.url) {
+                    // mostly the s3 case
+                    downloadLink.setAttribute('target', '_blank');
+                    downloadLink.setAttribute('href', openedFile.url);
+                  }
+
+                  downloadLink.setAttribute('download', fileName); // works only for same origin
+                  downloadLink.click();
                 }
-
-                downloadLink.setAttribute('download', fileName); // works only for same origin
-                downloadLink.click();
               }
-            }
-          }}
-        >
-          <FileDownloadIcon />
-        </IconButton>
-        {/* !this.props.isReadOnlyMode && (
-          <IconButton
-            aria-label={i18n.t('core:duplicateFile')}
-            title={i18n.t('core:duplicateFile')}
-            onClick={() => {
-              this.setState({ shouldCopyFile: true });
             }}
           >
-            <CopyContentIcon />
+            <FileDownloadIcon />
           </IconButton>
-        ) */}
+        </Tooltip>
         {!props.isReadOnlyMode && (
-          <IconButton
-            data-tid="deleteEntryTID"
-            title={i18n.t('core:deleteEntry')}
-            aria-label={i18n.t('core:deleteEntry')}
-            onClick={() => setDeleteEntryModalOpened(true)}
-          >
-            <DeleteIcon />
-          </IconButton>
+          <Tooltip title={i18n.t('core:deleteEntry')}>
+            <IconButton
+              data-tid="deleteEntryTID"
+              // title={i18n.t('core:deleteEntry')}
+              aria-label={i18n.t('core:deleteEntry')}
+              onClick={() => setDeleteEntryModalOpened(true)}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
         )}
-        <IconButton
-          data-tid="reloadFileTID"
-          title={i18n.t('core:reloadFile')}
-          aria-label={i18n.t('core:reloadFile')}
-          onClick={reloadDocument}
-        >
-          <RefreshIcon />
-        </IconButton>
-        <IconButton
-          data-tid="openInFullWidthTID"
-          title={i18n.t('core:openInFullWidth')}
-          aria-label={i18n.t('core:openInFullWidth')}
-          onClick={props.toggleEntryFullWidth}
-        >
-          <ExpandIcon />
-        </IconButton>
+        <Tooltip title={i18n.t('core:reloadFile')}>
+          <IconButton
+            data-tid="reloadFileTID"
+            // title={i18n.t('core:reloadFile')}
+            aria-label={i18n.t('core:reloadFile')}
+            onClick={reloadDocument}
+          >
+            <RefreshIcon />
+          </IconButton>
+        </Tooltip>
+        {props.isDesktopMode && (
+          <Tooltip title={i18n.t('core:openInFullWidth')}>
+            <IconButton
+              data-tid="openInFullWidthTID"
+              // title={i18n.t('core:openInFullWidth')}
+              aria-label={i18n.t('core:openInFullWidth')}
+              onClick={props.toggleEntryFullWidth}
+            >
+              <ExpandIcon />
+            </IconButton>
+          </Tooltip>
+        )}
       </div>
       <div className={classes.entryNavigationSection}>
-        <IconButton
-          title={i18n.t('core:openPrevFileTooltip')}
-          aria-label={i18n.t('core:openPrevFileTooltip')}
-          data-tid="fileContainerPrevFile"
-          onClick={openPrevFile}
-        >
-          <ArrowLeftIcon />
-        </IconButton>
-        <IconButton
-          title={i18n.t('core:openNextFileTooltip')}
-          aria-label={i18n.t('core:openNextFileTooltip')}
-          data-tid="fileContainerNextFile"
-          onClick={openNextFile}
-        >
-          <ArrowRightIcon />
-        </IconButton>
+        <Tooltip title={i18n.t('core:openPrevFileTooltip')}>
+          <IconButton
+            // title={i18n.t('core:openPrevFileTooltip')}
+            aria-label={i18n.t('core:openPrevFileTooltip')}
+            data-tid="fileContainerPrevFile"
+            onClick={openPrevFile}
+          >
+            <ArrowLeftIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title={i18n.t('core:openNextFileTooltip')}>
+          <IconButton
+            // title={i18n.t('core:openNextFileTooltip')}
+            aria-label={i18n.t('core:openNextFileTooltip')}
+            data-tid="fileContainerNextFile"
+            onClick={openNextFile}
+          >
+            <ArrowRightIcon />
+          </IconButton>
+        </Tooltip>
       </div>
     </div>
   );
@@ -809,31 +823,35 @@ const EntryContainer = (props: Props) => {
     <div className={props.classes.toolbar2}>
       <div className={props.classes.flexLeft}>
         {!(PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb) && (
-          <IconButton
-            title={i18n.t('core:openDirectoryExternally')}
-            aria-label={i18n.t('core:openDirectoryExternally')}
-            onClick={openNatively}
-          >
-            <OpenNativelyIcon />
-          </IconButton>
-        )}
-        <IconButton
-          title={i18n.t('core:reloadDirectory')}
-          aria-label={i18n.t('core:reloadDirectory')}
-          onClick={reloadDocument}
-        >
-          <RefreshIcon />
-        </IconButton>
-        {!props.isReadOnlyMode && (
-          <div>
+          <Tooltip title={i18n.t('core:openDirectoryExternally')}>
             <IconButton
-              title={i18n.t('core:deleteDirectory')}
+              // title={i18n.t('core:openDirectoryExternally')}
+              aria-label={i18n.t('core:openDirectoryExternally')}
+              onClick={openNatively}
+            >
+              <OpenNativelyIcon />
+            </IconButton>
+          </Tooltip>
+        )}
+        <Tooltip title={i18n.t('core:reloadDirectory')}>
+          <IconButton
+            // title={i18n.t('core:reloadDirectory')}
+            aria-label={i18n.t('core:reloadDirectory')}
+            onClick={reloadDocument}
+          >
+            <RefreshIcon />
+          </IconButton>
+        </Tooltip>
+        {!props.isReadOnlyMode && (
+          <Tooltip title={i18n.t('core:deleteDirectory')}>
+            <IconButton
+              // title={i18n.t('core:deleteDirectory')}
               aria-label={i18n.t('core:deleteDirectory')}
               onClick={() => setDeleteEntryModalOpened(true)}
             >
               <DeleteIcon />
             </IconButton>
-          </div>
+          </Tooltip>
         )}
       </div>
     </div>
@@ -1269,7 +1287,8 @@ function mapStateToProps(state) {
   return {
     settings: state.settings,
     isReadOnlyMode: isReadOnlyMode(state),
-    keyBindings: getKeyBindingObject(state)
+    keyBindings: getKeyBindingObject(state),
+    isDesktopMode: isDesktopMode(state)
   };
 }
 

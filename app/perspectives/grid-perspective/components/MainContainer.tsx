@@ -28,7 +28,8 @@ import { Tag } from '-/reducers/taglibrary';
 import {
   getSupportedFileTypes,
   getDesktopMode,
-  getKeyBindingObject
+  getKeyBindingObject,
+  isDesktopMode
 } from '-/reducers/settings';
 import { sortByCriteria, isObj, isVisibleOnScreen } from '-/utils/misc';
 import styles from './styles.css';
@@ -97,6 +98,7 @@ interface Props {
     autohide: boolean
   ) => void;
   currentLocation: Location;
+  isDesktopMode: boolean;
 }
 
 interface State {
@@ -190,7 +192,7 @@ class GridPerspective extends React.Component<Props, State> {
   }
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    const { lastSelectedEntryPath, selectedEntries } = nextProps;
+    const { selectedEntries } = nextProps;
     let fileOperationsEnabled = false;
 
     // if (lastSelectedEntryPath !== null) {
@@ -280,26 +282,28 @@ class GridPerspective extends React.Component<Props, State> {
   handleSortBy = sortBy => {
     this.closeSortingMenu();
     this.setState(
-      {
-        orderBy: !this.state.orderBy,
+      prevState => ({
+        orderBy: !prevState.orderBy,
         sortBy
-      },
+      }),
       this.saveSettings
     );
   };
 
   handleSortingMenu = event => {
-    this.setState({
-      sortingContextMenuOpened: !this.state.sortingContextMenuOpened,
-      sortingContextMenuAnchorEl: event ? event.currentTarget : null
-    });
+    const anchor = event ? event.currentTarget : null;
+    this.setState(prevState => ({
+      sortingContextMenuOpened: !prevState.sortingContextMenuOpened,
+      sortingContextMenuAnchorEl: anchor
+    }));
   };
 
   handleOptionsMenu = event => {
-    this.setState({
-      optionsContextMenuOpened: !this.state.optionsContextMenuOpened,
-      optionsContextMenuAnchorEl: event ? event.currentTarget : null
-    });
+    const anchor = event ? event.currentTarget : null;
+    this.setState(prevState => ({
+      optionsContextMenuOpened: !prevState.optionsContextMenuOpened,
+      optionsContextMenuAnchorEl: anchor
+    }));
   };
 
   handleGridCellClick = (event, fsEntry: FileSystemEntry) => {
@@ -391,9 +395,9 @@ class GridPerspective extends React.Component<Props, State> {
   toggleShowDirectories = () => {
     this.closeOptionsMenu();
     this.setState(
-      {
-        showDirectories: !this.state.showDirectories
-      },
+      prevState => ({
+        showDirectories: !prevState.showDirectories
+      }),
       this.saveSettings
     );
   };
@@ -401,9 +405,9 @@ class GridPerspective extends React.Component<Props, State> {
   toggleShowTags = () => {
     this.closeOptionsMenu();
     this.setState(
-      {
-        showTags: !this.state.showTags
-      },
+      prevState => ({
+        showTags: !prevState.showTags
+      }),
       this.saveSettings
     );
   };
@@ -411,10 +415,9 @@ class GridPerspective extends React.Component<Props, State> {
   toggleThumbnailsMode = () => {
     this.closeOptionsMenu();
     this.setState(
-      {
-        thumbnailMode:
-          this.state.thumbnailMode === 'cover' ? 'contain' : 'cover'
-      },
+      prevState => ({
+        thumbnailMode: prevState.thumbnailMode === 'cover' ? 'contain' : 'cover'
+      }),
       this.saveSettings
     );
   };
@@ -771,7 +774,8 @@ class GridPerspective extends React.Component<Props, State> {
       directoryContent,
       selectedEntries,
       loadParentDirectoryContent,
-      theme
+      theme,
+      isDesktopMode
     } = this.props;
     const { layoutType, entrySize, sortBy, orderBy } = this.state;
     const selectedFilePaths = selectedEntries
@@ -796,7 +800,7 @@ class GridPerspective extends React.Component<Props, State> {
         style={{
           height:
             'calc(100% - ' +
-            (AppConfig.isCordova ? '290' /* '595' */ : '104') + // todo handle cordova screen sizes
+            (AppConfig.isCordova ? '320' : '51') + // todo handle cordova screen sizes
             'px)'
         }}
       >
@@ -822,6 +826,7 @@ class GridPerspective extends React.Component<Props, State> {
           openDeleteFileDialog={this.openDeleteFileDialog}
           handleSortingMenu={this.handleSortingMenu}
           handleOptionsMenu={this.handleOptionsMenu}
+          isDesktopMode={isDesktopMode}
         />
         <GlobalHotKeys keyMap={this.keyMap} handlers={this.keyBindingHandlers}>
           <GridPagination
@@ -832,6 +837,7 @@ class GridPerspective extends React.Component<Props, State> {
                 : classes.rowContainer
             }
             style={{
+              marginTop: 53,
               gridTemplateColumns:
                 layoutType === 'grid'
                   ? 'repeat(auto-fit,minmax(' + entryWidth + 'px,1fr))'
@@ -993,7 +999,8 @@ function mapStateToProps(state) {
     desktopMode: getDesktopMode(state),
     selectedEntries: getSelectedEntries(state),
     keyBindings: getKeyBindingObject(state),
-    currentLocation: getLocation(state, state.app.currentLocationId)
+    currentLocation: getLocation(state, state.app.currentLocationId),
+    isDesktopMode: isDesktopMode(state)
   };
 }
 

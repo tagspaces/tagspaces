@@ -435,7 +435,7 @@ const Search = React.memo((props: Props) => {
       <div className={classes.searchArea}>
         <FormControl
           className={classes.formControl}
-          style={{ marginTop: 10 }}
+          style={{ marginTop: 10, width: '98%' }}
           disabled={indexing}
         >
           <OutlinedInput
@@ -786,7 +786,7 @@ const Search = React.memo((props: Props) => {
                   )
                 }}
               />
-              <TextField
+              {/* <TextField
                 id="tagPlace"
                 label={i18n.t('GPS coordinates or plus code')}
                 value={tagPlace}
@@ -807,7 +807,7 @@ const Search = React.memo((props: Props) => {
                     </InputAdornment>
                   )
                 }}
-              />
+              /> */}
             </FormControl>
             <FormControl className={classes.formControl}>
               <ButtonGroup style={{ justifyContent: 'center' }}>
@@ -855,6 +855,7 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
-export default withStyles(styles, { withTheme: true })(
-  connect(mapStateToProps, mapDispatchToProps)(Search)
-);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles, { withTheme: true })(Search));

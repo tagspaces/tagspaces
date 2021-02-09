@@ -3,9 +3,8 @@ import { delay } from './hook';
 import { firstFile, openContextEntryMenu } from './test-utils.spec';
 import {
   clickOn,
-  expectElementExist,
+  selectorFile,
   setInputKeys,
-  setInputValue,
   waitForNotification
 } from './general.helpers';
 
@@ -61,7 +60,7 @@ export async function createMinioLocation(
   // Check if location not exist (from extconfig.js)
   if (locationName !== lastLocationTID) {
     await clickOn('[data-tid=createNewLocation]');
-    await clickOn('[data-tid=objectStorageLocation]');
+    // await clickOn('[data-tid=objectStorageLocation]');
     await clickOn('[data-tid=switchAdvancedModeTID]');
 
     // SET LOCATION NAME
@@ -93,6 +92,17 @@ export async function createMinioLocation(
 
 export async function openLocationMenu(locationName) {
   await clickOn('[data-tid=locationMoreButton_' + locationName + ']');
+}
+
+export async function closeLocation(locationName) {
+  const locationSelector = '[data-tid=locationMoreButton_' + locationName + ']';
+  const element = await global.client.$(locationSelector);
+  if (!(await element.isDisplayed())) {
+    await clickOn('[data-tid=locationManagerPanel]');
+  }
+  await global.client.pause(500);
+  await clickOn(locationSelector);
+  await clickOn('[data-tid=closeLocationTID]');
 }
 
 /**
@@ -150,6 +160,7 @@ export async function renameFirstFile(newFileName) {
   await renameFileDialogInput.setValue(newFileName);*/
   //await delay(1500);
   await clickOn('[data-tid=confirmRenameFileDialog]');
+  await waitForNotification();
 }
 
 export async function deleteFirstFile() {
@@ -163,10 +174,7 @@ export async function deleteFirstFile() {
 
 export async function getFirstFileName() {
   let fileName;
-  await openContextEntryMenu(
-    perspectiveGridTable + firstFile,
-    'fileMenuRenameFile'
-  );
+  await openContextEntryMenu(selectorFile, 'fileMenuRenameFile');
   const renameFileDialogInput = await global.client.$(
     '[data-tid=renameFileDialogInput] input'
   );
@@ -248,5 +256,8 @@ export async function getLocationTid(locationIndex) {
   // location = await location.$('li');
   // location = await location.$('div');
   // return location.getAttribute('data-tid');
-  return location.getText();
+  if (location !== undefined) {
+    return await location.getText();
+  }
+  return undefined;
 }

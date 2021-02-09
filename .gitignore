@@ -42,6 +42,7 @@ main.js.map
 
 .idea
 *.iml
+.vscode
 npm-debug.log.*
 
 # Cordova files
@@ -103,3 +104,6 @@ tests/*
 builds/*
 web/sw-con
 .ycache/*
+
+/app/aws-exports.js
+/app/graphql/*

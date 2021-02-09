@@ -39,6 +39,7 @@ import { Pro } from '-/pro';
 import ObjectStoreForm from './ObjectStoreForm';
 import LocalForm from './LocalForm';
 import useFirstRender from '-/utils/useFirstRender';
+import AppConfig from '-/config';
 
 const styles: any = theme => ({
   root: {
@@ -61,83 +62,77 @@ interface Props {
   fullScreen: boolean;
   addLocation?: (location: Location) => void;
   editLocation?: (location: Location) => void;
-  showSelectDirectoryDialog: () => void;
 }
 
 const CreateEditLocationDialog = (props: Props) => {
+  const { location } = props;
   const [showAdvancedMode, setShowAdvancedMode] = useState<boolean>(false);
   const [showSecretAccessKey, setShowSecretAccessKey] = useState<boolean>(
     false
   );
   const [errorTextPath, setErrorTextPath] = useState<boolean>(false);
   const [errorTextName, setErrorTextName] = useState<boolean>(false);
-  // const [errorTextId, setErrorTextId] = useState<boolean>(false);
   const [name, setName] = useState<string>(
-    props.location && props.location.type === locationType.TYPE_LOCAL
-      ? props.location.name
-      : ''
+    location && location.name ? location.name : ''
+  );
+  const [storeName, setStoreName] = useState<string>(
+    location && location.name ? location.name : ''
   );
   const [path, setPath] = useState<string>(
-    props.location && props.location.type === locationType.TYPE_LOCAL
-      ? props.location.path
+    location && (location.path || location.paths)
+      ? location.path || location.paths[0]
+      : ''
+  );
+  const [storePath, setStorePath] = useState<string>(
+    location && (location.path || location.paths)
+      ? location.path || location.paths[0]
       : ''
   );
   const [endpointURL, setEndpointURL] = useState<string>(
-    props.location ? props.location.endpointURL : ''
+    location ? location.endpointURL : ''
   );
   const [isDefault, setIsDefault] = useState<boolean>(
-    props.location ? props.location.isDefault : false
+    location ? location.isDefault : false
   );
   const [isReadOnly, setIsReadOnly] = useState<boolean>(
-    props.location ? props.location.isReadOnly : false
+    location ? location.isReadOnly : false
   );
   const [watchForChanges, setWatchForChanges] = useState<boolean>(
-    props.location ? props.location.watchForChanges : false
+    location ? location.watchForChanges : false
   );
   const [persistIndex, setPersistIndex] = useState<boolean>(
-    props.location ? props.location.persistIndex : false
+    location ? location.persistIndex : false
   );
   const [fullTextIndex, setFullTextIndex] = useState<boolean>(
-    props.location ? props.location.fullTextIndex : false
+    location ? location.fullTextIndex : false
   );
-  const [storeName, setStoreName] = useState<string>(
-    props.location && props.location.type === locationType.TYPE_CLOUD
-      ? props.location.name
-      : ''
+  const [accessKeyId, setAccessKeyId] = useState<string>(
+    location ? location.accessKeyId : ''
+  );
+  const [secretAccessKey, setSecretAccessKey] = useState<string>(
+    location ? location.secretAccessKey : ''
+  );
+  const [bucketName, setBucketName] = useState<string>(
+    location ? location.bucketName : ''
+  );
+  const [region, setRegion] = useState<string>(location ? location.region : '');
+  const [type, setType] = useState<string>(
+    location
+      ? location.type
+      : AppConfig.isWeb
+      ? locationType.TYPE_CLOUD
+      : locationType.TYPE_LOCAL
+  );
+  const [newuuid, setNewUuid] = useState<string>(
+    location ? location.uuid : uuidv1()
   );
   const [cloudErrorTextName, setCloudErrorTextName] = useState<boolean>(false);
-  // const [cloudErrorTextPath, setCloudErrorTextPath] = useState<boolean>(false);
   const [cloudErrorAccessKey, setCloudErrorAccessKey] = useState<boolean>(
     false
   );
   const [cloudErrorSecretAccessKey, setCloudErrorSecretAccessKey] = useState<
     boolean
   >(false);
-  // const [cloudErrorBucketName, setCloudErrorBucketName] = useState<boolean>(false);
-  // const [cloudErrorRegion, setCloudErrorRegion] = useState<boolean>(false);
-  const [accessKeyId, setAccessKeyId] = useState<string>(
-    props.location ? props.location.accessKeyId : ''
-  );
-  const [secretAccessKey, setSecretAccessKey] = useState<string>(
-    props.location ? props.location.secretAccessKey : ''
-  );
-  const [bucketName, setBucketName] = useState<string>(
-    props.location ? props.location.bucketName : ''
-  );
-  const [region, setRegion] = useState<string>(
-    props.location ? props.location.region : ''
-  );
-  const [storePath, setStorePath] = useState<string>(
-    props.location && props.location.type === locationType.TYPE_CLOUD
-      ? props.location.path
-      : ''
-  );
-  const [type, setType] = useState<string>(
-    props.location ? props.location.type : locationType.TYPE_LOCAL
-  );
-  const [newuuid, setNewUuid] = useState<string>(
-    props.location ? props.location.uuid : uuidv1()
-  );
 
   const firstRender = useFirstRender();
 
@@ -299,7 +294,6 @@ const CreateEditLocationDialog = (props: Props) => {
   } else {
     content = (
       <LocalForm
-        showSelectDirectoryDialog={props.showSelectDirectoryDialog}
         showAdvancedMode={showAdvancedMode}
         errorTextPath={errorTextPath}
         errorTextName={errorTextName}
@@ -342,7 +336,7 @@ const CreateEditLocationDialog = (props: Props) => {
             <Typography>{i18n.t('core:locationType')}</Typography>
           </Grid>
           <Grid item xs={10}>
-            <FormControl disabled={!Pro}>
+            <FormControl disabled={!Pro || AppConfig.isWeb}>
               <RadioGroup
                 title={
                   Pro ? '' : i18n.t('core:thisFunctionalityIsAvailableInPro')
@@ -488,4 +482,4 @@ const CreateEditLocationDialog = (props: Props) => {
   );
 };
 
-export default withStyles(styles)(withMobileDialog()(CreateEditLocationDialog));
+export default withMobileDialog()(withStyles(styles)(CreateEditLocationDialog));

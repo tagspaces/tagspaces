@@ -50,7 +50,8 @@
     "react/prefer-stateless-function": "off",
     "react/forbid-prop-types": "warn",
     "react/destructuring-assignment": "off",
-    "react/jsx-boolean-value": "off"
+    "react/jsx-boolean-value": "off",
+    "react/prop-types": ["off"]
   },
   "plugins": ["import", "promise", "compat", "react"]
 }

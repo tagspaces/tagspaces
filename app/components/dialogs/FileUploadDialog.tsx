@@ -23,6 +23,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import { LinearProgress, Grid, Tooltip } from '@material-ui/core';
@@ -32,7 +33,6 @@ import PlatformIO from '-/services/platform-io';
 import { actions as AppActions, getProgress } from '-/reducers/app';
 import { extractFileName } from '-/utils/paths';
 import i18n from '-/services/i18n';
-import { bindActionCreators } from 'redux';
 
 interface Props {
   open: boolean;

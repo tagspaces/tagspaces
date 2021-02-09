@@ -67,7 +67,6 @@ interface Props {
   fullScreen: boolean;
   onClose: () => void;
   selectedDirectoryPath: string | null;
-  showSelectDirectoryDialog: () => void;
   createFileAdvanced: (
     targetPath: string,
     fileName: string,
@@ -85,6 +84,7 @@ interface State {
   fileContent: string;
   fileType: string;
 }
+// todo rewrite
 class CreateFileDialog extends React.Component<Props, State> {
   state = {
     errorTextName: false,
@@ -161,23 +161,19 @@ class CreateFileDialog extends React.Component<Props, State> {
   }
 
   openFolderChooser = () => {
-    if (AppConfig.isElectron) {
-      PlatformIO.selectDirectoryDialog()
-        .then(selectedPaths => {
-          this.setState(
-            {
-              selectedDirectoryPath: selectedPaths[0]
-            },
-            this.handleValidation
-          );
-          return true;
-        })
-        .catch(err => {
-          console.log('selectDirectoryDialog failed with: ' + err);
-        });
-    } else {
-      this.props.showSelectDirectoryDialog();
-    }
+    PlatformIO.selectDirectoryDialog()
+      .then(selectedPaths => {
+        this.setState(
+          {
+            selectedDirectoryPath: selectedPaths[0]
+          },
+          this.handleValidation
+        );
+        return true;
+      })
+      .catch(err => {
+        console.log('selectDirectoryDialog failed with: ' + err);
+      });
   };
 
   onConfirm = () => {
@@ -327,7 +323,6 @@ function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
       createFileAdvanced: AppActions.createFileAdvanced,
-      showSelectDirectoryDialog: AppActions.showSelectDirectoryDialog,
       ...TaggingActions
     },
     dispatch

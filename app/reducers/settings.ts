@@ -549,6 +549,7 @@ export const getMainVerticalSplitSize = (state: any) =>
 export const getTagDelimiter = (state: any) => state.settings.tagDelimiter;
 export const getMaxSearchResults = (state: any) =>
   state.settings.maxSearchResult;
+export const isDesktopMode = (state: any) => state.settings.desktopMode;
 export const isFirstRun = (state: any) => {
   if (typeof window.ExtIsFirstRun === 'undefined') {
     return state.settings.firstRun;
