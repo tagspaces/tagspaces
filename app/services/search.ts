@@ -18,8 +18,8 @@
  */
 
 import Fuse from 'fuse.js';
-import jmespath from 'jmespath';
-import { Tag } from '../reducers/taglibrary';
+import jmespath from '@gorillastack/jmespath';
+import { Tag } from '-/reducers/taglibrary';
 import { Pro } from '../pro';
 import { FileSystemEntry } from './utils-io';
 

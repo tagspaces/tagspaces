@@ -18,6 +18,13 @@
 
 import uuidv1 from 'uuid';
 import { ManagedUpload } from 'aws-sdk/clients/s3';
+import {
+  GetObjectCommand,
+  HeadObjectCommand,
+  ListObjectsCommand,
+  S3Client
+} from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import AppConfig from '-/config';
 import {
   extractFileName,
@@ -30,6 +37,11 @@ import {
 } from '-/utils/paths';
 import { FileSystemEntry } from '-/services/utils-io';
 
+/* const { CognitoIdentityClient } = require("@aws-sdk/client-cognito-identity");
+const {
+  fromCognitoIdentityPool,
+} = require("@aws-sdk/credential-provider-cognito-identity"); */
+
 export default class ObjectStoreIO {
   objectStore = undefined;
 
@@ -39,257 +51,312 @@ export default class ObjectStoreIO {
     new Promise((resolve, reject) => {
       this.config = objectStoreConfig; // s3Config switch
 
-      import(/* webpackChunkName: "AWS" */ 'aws-sdk')
-        .then(({ default: AWS }) => {
-          const advancedMode =
-            this.config.endpointURL && this.config.endpointURL.length > 7;
-          if (advancedMode) {
-            const endpoint: unknown = new AWS.Endpoint(this.config.endpointURL);
-            this.objectStore = new AWS.S3({
-              endpoint: endpoint as string,
-              accessKeyId: this.config.accessKeyId,
-              secretAccessKey: this.config.secretAccessKey,
-              s3ForcePathStyle: true, // needed for minio
-              signatureVersion: 'v4', // needed for minio
-              logger: console
-            });
-          } else {
-            this.objectStore = new AWS.S3({
-              region: this.config.region,
-              accessKeyId: this.config.accessKeyId,
-              secretAccessKey: this.config.secretAccessKey,
-              signatureVersion: 'v4'
-            });
+      // import(/* webpackChunkName: "AWS" */ 'aws-sdk')
+      //  .then(({ default: AWS }) => {
+      const advancedMode =
+        this.config.endpointURL && this.config.endpointURL.length > 7;
+      if (advancedMode) {
+        // const endpoint: unknown = new AWS.Endpoint(this.config.endpointURL);
+        this.objectStore = new S3Client({
+          endpoint: this.config.endpointURL, // endpoint as string,
+          credentials: {
+            accessKeyId: this.config.accessKeyId,
+            secretAccessKey: this.config.secretAccessKey
+          },
+          // s3ForcePathStyle: true, // needed for minio
+          // signatureVersion: 'v4', // needed for minio
+          logger: console
+        });
+      } else {
+        this.objectStore = new S3Client({
+          region: this.config.region,
+          credentials: {
+            accessKeyId: this.config.accessKeyId,
+            secretAccessKey: this.config.secretAccessKey
           }
+          // signatureVersion: 'v4'
+        });
+      }
 
-          // return this.objectStore.getBucketPolicy({ Bucket: this.config.bucketName }).promise();
-          // Getting the properties of the root folder means the connections to AWS was successful
-          resolve();
-          // return this.getPropertiesPromise('/');
-        })
+      // return this.objectStore.getBucketPolicy({ Bucket: this.config.bucketName }).promise();
+      // Getting the properties of the root folder means the connections to AWS was successful
+      resolve();
+      // return this.getPropertiesPromise('/');
+      /* })
         .catch(error => {
           console.warn('An error occurred while loading the AWS-SDK: ' + error);
           reject();
-        });
+        }); */
     });
 
-  getURLforPath = (path: string, expirationInSeconds: number = 900): string => {
+  /**
+   * @private creates an S3 client with new V3 aws sdk
+   */
+  /* private createNewS3Client(config) {
+    const {
+      region,
+      credentials,
+    } = config;
+    let localTestingConfig = {};
+
+    const s3 = new S3Client({
+      region: region,
+      credentials: fromCognitoIdentityPool({
+        client: new CognitoIdentityClient({ region: region }),
+        identityPoolId: "IDENTITY_POOL_ID", // IDENTITY_POOL_ID e.g., eu-west-1:xxxxxx-xxxx-xxxx-xxxx-xxxxxxxxx
+      }),
+    })
+    const cfg = {
+      credentials: {
+        accessKeyId: process.env.KEY,
+        secretAccessKey: process.env.SECRET,
+      },
+      endpoint: process.env.HOST,
+      // s3ForcePathStyle is deprecated in v3, every endpoint is now virtual host style
+      // signatureVersion is deprecated in v3, signature v4 for all the services
+    };
+
+    const s3 = new S3Client(cfg);
+    /!*const s3client = new S3Client({
+      region,
+      credentials,
+      customUserAgent: getAmplifyUserAgent(),
+      ...localTestingConfig,
+      requestHandler: new AxiosHttpHandler({}, emitter),
+    });*!/
+    return s3;
+  } */
+
+  getURLforPath = (
+    path: string,
+    expirationInSeconds: number = 900
+  ): Promise<string> => {
     if (!path || path.length < 1) {
       console.warn('Wrong path param for getURLforPath');
-      return '';
+      return Promise.resolve('');
     }
     const params = {
       Bucket: this.config.bucketName,
       Key: path,
       Expires: expirationInSeconds
     };
-    return this.objectStore.getSignedUrl('getObject', params);
-  };
-
-  listMetaDirectoryPromise = async (path: string): Promise<Array<any>> => {
-    const promise: Promise<Array<any>> = new Promise(resolve => {
-      const entries = [];
-      let entry;
-      if (!this.objectStore) {
-        console.log('Object store not configured. Exiting');
-        return false;
-      }
-
-      const normalizedPath = normalizePath(this.normalizeRootPath(path));
-      const metaDirPath =
-        normalizedPath.length > 0
-          ? normalizedPath + '/' + AppConfig.metaFolder + '/'
-          : AppConfig.metaFolder + '/';
-      const params = {
-        Delimiter: '/',
-        Prefix: metaDirPath,
-        Bucket: this.config.bucketName
-      };
-      this.objectStore.listObjectsV2(params, (error, data) => {
-        // console.log('listObjectsV2 ' + JSON.stringify(params));
-        if (error) {
-          console.warn('Error listing meta directory ' + path);
-          return resolve(entries); // returning results even if any promise fails
-        }
-
-        if (window.walkCanceled) {
-          return resolve(entries); // returning results even if walk canceled
-        }
-
-        // const truncated = data.IsTruncated;
-        // const nextMarker = data.NextMarker;
-
-        // Handling files
-        data.Contents.forEach(file => {
-          // console.warn('Meta: ' + JSON.stringify(file));
-          entry = {};
-          entry.name = file.Key;
-          entry.path = file.Key;
-          entry.isFile = true;
-          entry.size = file.Size;
-          entry.lmdt = Date.parse(file.LastModified);
-          if (file.Key !== params.Prefix) {
-            // skipping the current folder
-            entries.push(entry);
-          }
-        });
-        return resolve(entries);
-      });
+    const command = new GetObjectCommand(params);
+    return getSignedUrl(this.objectStore, command, {
+      expiresIn: expirationInSeconds
     });
-    const result = await promise;
-    return result;
+    // return this.objectStore.getSignedUrl('getObject', params);
   };
 
-  listDirectoryPromise = (
+  listMetaDirectoryPromise = (path: string): Promise<Array<any>> => {
+    // const promise: Promise<Array<any>> = new Promise(resolve => {
+    const entries = [];
+    let entry;
+    if (!this.objectStore) {
+      console.log('Object store not configured. Exiting');
+      // eslint-disable-next-line prefer-promise-reject-errors
+      return Promise.reject('Object store not configured.'); // false;
+    }
+
+    const normalizedPath = normalizePath(this.normalizeRootPath(path));
+    const metaDirPath =
+      normalizedPath.length > 0
+        ? normalizedPath + '/' + AppConfig.metaFolder + '/'
+        : AppConfig.metaFolder + '/';
+    const params = {
+      Delimiter: '/',
+      Prefix: metaDirPath,
+      Bucket: this.config.bucketName
+    };
+    try {
+      return this.objectStore
+        .send(new ListObjectsCommand(params))
+        .then(data => {
+          // console.log('listObjectsV2 ' + JSON.stringify(params));
+          /* if (error) {
+            console.warn('Error listing meta directory ' + path);
+            return resolve(entries); // returning results even if any promise fails
+          }
+
+          if (window.walkCanceled) {
+            return resolve(entries); // returning results even if walk canceled
+          } */
+
+          // const truncated = data.IsTruncated;
+          // const nextMarker = data.NextMarker;
+
+          // Handling files
+          data.Contents.forEach(file => {
+            // console.warn('Meta: ' + JSON.stringify(file));
+            entry = {};
+            entry.name = file.Key;
+            entry.path = file.Key;
+            entry.isFile = true;
+            entry.size = file.Size;
+            entry.lmdt = Date.parse(file.LastModified);
+            if (file.Key !== params.Prefix) {
+              // skipping the current folder
+              entries.push(entry);
+            }
+          });
+          return entries; // resolve(entries);
+        });
+    } catch (error) {
+      console.log('error', error);
+      return Promise.reject(error);
+    }
+    // });
+    // const result = await promise;
+    // return result;
+  };
+
+  listDirectoryPromise = async (
     path: string,
     lite: boolean = true
-  ): Promise<Array<Object>> =>
-    new Promise(async resolve => {
-      const enhancedEntries = [];
-      let entryPath;
-      let metaFolderPath;
-      let stats;
-      let eentry;
-      const containsMetaFolder = false;
-      // const metaMetaFolder = AppConfig.metaFolder + AppConfig.dirSeparator + AppConfig.metaFolder;
+  ): Promise<Array<Object>> => {
+    //  new Promise(async resolve => {
+    const enhancedEntries = [];
+    let entryPath;
+    let metaFolderPath;
+    let stats;
+    let eentry;
+    const containsMetaFolder = false;
+    // const metaMetaFolder = AppConfig.metaFolder + AppConfig.dirSeparator + AppConfig.metaFolder;
 
-      if (!this.objectStore) {
-        console.log('Object store not configured. Exiting');
-        return false;
+    if (!this.objectStore) {
+      console.log('Object store not configured. Exiting');
+      return Promise.reject('Object store not configured.'); // false;
+    }
+
+    // this.listMetaDirectoryPromise(path).then((entries) => {
+    //   console.log('Meta folder content: ' + JSON.stringify(entries));
+    //   return true;
+    // }).catch((error) => {
+    //   console.warn('Error loading meta files: ' + JSON.stringify(error));
+    // });
+    const metaContent = await this.listMetaDirectoryPromise(path);
+    // console.log('Meta folder content: ' + JSON.stringify(metaContent));
+
+    const params = {
+      Delimiter: '/', // '/',
+      Prefix:
+        path.length > 0 && path !== '/'
+          ? normalizePath(this.normalizeRootPath(path)) + '/'
+          : '',
+      // MaxKeys: 10000, // It returns actually up to 1000
+      Bucket: this.config.bucketName
+    };
+    // this.objectStore.listObjectsV2(params, (error, data) => {
+    return this.objectStore.send(new ListObjectsCommand(params)).then(data => {
+      // console.warn(data);
+      /* data = {
+      Contents: [
+         {
+        ETag: "\"70ee1738b6b21\"",
+        Key: "example11.jpg",
+        LastModified: <Date Representation>,
+        Owner: {
+         DisplayName: "myname12",
+         ID: "12345example251"
+        },
+        Size: 112311,
+        StorageClass: "STANDARD"
+       },..
+      ],
+      NextMarker: "eyJNYXJrZXIiOiBudWxsLCAiYm90b190cnVuY2F0ZV9hbW91bnQiOiAyfQ=="
+     }
+     */
+      /* if (error) {
+        console.warn('Error listing directory ' + path);
+        resolve(enhancedEntries); // returning results even if any promise fails
+        return;
+      }
+*/
+      if (window.walkCanceled) {
+        return enhancedEntries; // returning results even if walk canceled
       }
 
-      // this.listMetaDirectoryPromise(path).then((entries) => {
-      //   console.log('Meta folder content: ' + JSON.stringify(entries));
-      //   return true;
-      // }).catch((error) => {
-      //   console.warn('Error loading meta files: ' + JSON.stringify(error));
-      // });
-      const metaContent = await this.listMetaDirectoryPromise(path);
-      // console.log('Meta folder content: ' + JSON.stringify(metaContent));
+      // const truncated = data.IsTruncated;
+      // const nextMarker = data.NextMarker;
 
-      const params = {
-        Delimiter: '/', // '/',
-        Prefix:
-          path.length > 0 && path !== '/'
-            ? normalizePath(this.normalizeRootPath(path)) + '/'
-            : '',
-        // MaxKeys: 10000, // It returns actually up to 1000
-        Bucket: this.config.bucketName
-      };
-      this.objectStore.listObjectsV2(params, (error, data) => {
-        // console.warn(data);
-        /* data = {
-        Contents: [
-           {
-          ETag: "\"70ee1738b6b21\"",
-          Key: "example11.jpg",
-          LastModified: <Date Representation>,
-          Owner: {
-           DisplayName: "myname12",
-           ID: "12345example251"
-          },
-          Size: 112311,
-          StorageClass: "STANDARD"
-         },..
-        ],
-        NextMarker: "eyJNYXJrZXIiOiBudWxsLCAiYm90b190cnVuY2F0ZV9hbW91bnQiOiAyfQ=="
-       }
-       */
-        if (error) {
-          console.warn('Error listing directory ' + path);
-          resolve(enhancedEntries); // returning results even if any promise fails
-          return;
+      const metaPromises = [];
+
+      // Handling "directories"
+      data.CommonPrefixes.forEach(dir => {
+        // console.warn(JSON.stringify(dir));
+        const prefix = normalizePath(this.normalizeRootPath(dir.Prefix));
+        eentry = {};
+        const prefixArray = prefix.split('/');
+        eentry.name = prefixArray[prefixArray.length - 1]; // dir.Prefix.substring(0, dir.Prefix.length - 1);
+        eentry.path = prefix + '/';
+        eentry.tags = [];
+        eentry.thumbPath = '';
+        eentry.meta = {};
+        eentry.isFile = false;
+        eentry.size = 0;
+        eentry.lmdt = 0;
+
+        if (eentry.path !== params.Prefix) {
+          // skipping the current directory
+          enhancedEntries.push(eentry);
+          metaPromises.push(this.getEntryMeta(eentry));
         }
-
         if (window.walkCanceled) {
-          resolve(enhancedEntries); // returning results even if walk canceled
-          return;
+          return enhancedEntries;
+        }
+      });
+
+      // Handling files
+      data.Contents.forEach(async file => {
+        // console.warn(JSON.stringify(file));
+        let thumbPath = getThumbFileLocationForFile(file.Key, '/');
+        const thumbAvailable = metaContent.find(
+          (obj: any) => obj.path === thumbPath
+        );
+        if (thumbAvailable) {
+          thumbPath = await this.getURLforPath(thumbPath, 604800); // 60 * 60 * 24 * 7 = 1 week
+        } else {
+          thumbPath = '';
         }
 
-        // const truncated = data.IsTruncated;
-        // const nextMarker = data.NextMarker;
-
-        const metaPromises = [];
-
-        // Handling "directories"
-        data.CommonPrefixes.forEach(dir => {
-          // console.warn(JSON.stringify(dir));
-          const prefix = normalizePath(this.normalizeRootPath(dir.Prefix));
-          eentry = {};
-          const prefixArray = prefix.split('/');
-          eentry.name = prefixArray[prefixArray.length - 1]; // dir.Prefix.substring(0, dir.Prefix.length - 1);
-          eentry.path = prefix + '/';
-          eentry.tags = [];
-          eentry.thumbPath = '';
-          eentry.meta = {};
-          eentry.isFile = false;
-          eentry.size = 0;
-          eentry.lmdt = 0;
-
-          if (eentry.path !== params.Prefix) {
-            // skipping the current directory
-            enhancedEntries.push(eentry);
+        eentry = {};
+        eentry.name = extractFileName(file.Key, '/');
+        eentry.path = file.Key;
+        eentry.tags = [];
+        eentry.thumbPath = thumbPath;
+        eentry.meta = {};
+        eentry.isFile = true;
+        eentry.size = file.Size;
+        eentry.lmdt = Date.parse(file.LastModified);
+        if (file.Key !== params.Prefix) {
+          // skipping the current folder
+          enhancedEntries.push(eentry);
+          const metaFilePath = getMetaFileLocationForFile(file.Key, '/');
+          const metaFileAvailable = metaContent.find(
+            (obj: any) => obj.path === metaFilePath
+          );
+          if (metaFileAvailable) {
             metaPromises.push(this.getEntryMeta(eentry));
           }
-          if (window.walkCanceled) {
-            resolve(enhancedEntries);
-          }
-        });
-
-        // Handling files
-        data.Contents.forEach(file => {
-          // console.warn(JSON.stringify(file));
-          let thumbPath = getThumbFileLocationForFile(file.Key, '/');
-          const thumbAvailable = metaContent.find(
-            (obj: any) => obj.path === thumbPath
-          );
-          if (thumbAvailable) {
-            thumbPath = this.getURLforPath(thumbPath, 604800); // 60 * 60 * 24 * 7 = 1 week
-          } else {
-            thumbPath = '';
-          }
-
-          eentry = {};
-          eentry.name = extractFileName(file.Key, '/');
-          eentry.path = file.Key;
-          eentry.tags = [];
-          eentry.thumbPath = thumbPath;
-          eentry.meta = {};
-          eentry.isFile = true;
-          eentry.size = file.Size;
-          eentry.lmdt = Date.parse(file.LastModified);
-          if (file.Key !== params.Prefix) {
-            // skipping the current folder
-            enhancedEntries.push(eentry);
-            const metaFilePath = getMetaFileLocationForFile(file.Key, '/');
-            const metaFileAvailable = metaContent.find(
-              (obj: any) => obj.path === metaFilePath
-            );
-            if (metaFileAvailable) {
-              metaPromises.push(this.getEntryMeta(eentry));
-            }
-          }
-        });
-
-        Promise.all(metaPromises)
-          .then(entriesMeta => {
-            entriesMeta.forEach(entryMeta => {
-              enhancedEntries.some(enhancedEntry => {
-                if (enhancedEntry.path === entryMeta.path) {
-                  enhancedEntry = entryMeta;
-                  return true;
-                }
-                return false;
-              });
-            });
-            resolve(enhancedEntries);
-            return true;
-          })
-          .catch(() => {
-            resolve(enhancedEntries);
-          });
+        }
       });
+
+      Promise.all(metaPromises)
+        .then(entriesMeta => {
+          entriesMeta.forEach(entryMeta => {
+            enhancedEntries.some(enhancedEntry => {
+              if (enhancedEntry.path === entryMeta.path) {
+                enhancedEntry = entryMeta;
+                return true;
+              }
+              return false;
+            });
+          });
+          return enhancedEntries;
+        })
+        .catch(() => enhancedEntries);
     });
+    // });
+  };
 
   getEntryMeta = async (eentry: FileSystemEntry): Promise<Object> => {
     const promise = new Promise(async resolve => {
@@ -314,7 +381,7 @@ export default class ObjectStoreIO {
             folderTmbPath
           );
           if (folderThumbProps.isFile) {
-            eentry.thumbPath = this.getURLforPath(folderTmbPath, 604800); // 60 * 60 * 24 * 7 = 1 week ;
+            eentry.thumbPath = await this.getURLforPath(folderTmbPath, 604800); // 60 * 60 * 24 * 7 = 1 week ;
           }
           // }
           // if (!eentry.path.endsWith(AppConfig.metaFolder + '/')) { // Skip the /.ts folder
@@ -340,64 +407,30 @@ export default class ObjectStoreIO {
     return result;
   };
 
-  getPropertiesPromise = (path: string): Promise<any> =>
-    new Promise((resolve, reject) => {
-      const normalizedPath = this.normalizeRootPath(path); // normalizePath(path); don't clean trailing / for dir properties
-      if (normalizedPath) {
-        const params = {
-          Bucket: this.config.bucketName,
-          Key: normalizedPath
-        };
-        this.objectStore.headObject(params, (err, data) => {
-          if (err) {
-            // workaround for checking if a folder exists on s3
-            const listParams = {
-              Bucket: this.config.bucketName,
-              Prefix: normalizedPath,
-              MaxKeys: 1,
-              Delimiter: '/'
-            };
-            this.objectStore.listObjectsV2(
-              listParams,
-              (listError, listData) => {
-                if (listError) {
-                  resolve(false);
-                  return;
-                }
-                const folderExists =
-                  (listData && listData.KeyCount && listData.KeyCount > 0) || // supported on aws s3
-                  (listData &&
-                    listData.CommonPrefixes &&
-                    listData.CommonPrefixes.length > 0); // needed for DO
-                if (folderExists) {
-                  resolve({
-                    name: extractDirectoryName(normalizedPath, '/'),
-                    isFile: false,
-                    size: 0,
-                    lmdt: undefined,
-                    path: normalizedPath
-                  });
-                } else {
-                  resolve(false);
-                }
-              }
-            );
-            return;
-          }
+  getPropertiesPromise = (path: string): Promise<any> => {
+    // new Promise((resolve, reject) => {
+    const normalizedPath = this.normalizeRootPath(path); // normalizePath(path); don't clean trailing / for dir properties
+    if (normalizedPath) {
+      const params = {
+        Bucket: this.config.bucketName,
+        Key: normalizedPath
+      };
+      try {
+        return this.objectStore.send(new HeadObjectCommand(params)).then(data => {
           /*
-        data = {
-          "AcceptRanges":"bytes",
-          "LastModified":"2018-10-22T12:57:16.000Z",
-          "ContentLength":101003,
-          "ETag":"\"02cb1c856f4fdcde6b39062a29b95030\"",
-          "ContentType":"image/png",
-          "ServerSideEncryption":"AES256",
-          "Metadata":{}
-        }
-        */
+      data = {
+        "AcceptRanges":"bytes",
+        "LastModified":"2018-10-22T12:57:16.000Z",
+        "ContentLength":101003,
+        "ETag":"\"02cb1c856f4fdcde6b39062a29b95030\"",
+        "ContentType":"image/png",
+        "ServerSideEncryption":"AES256",
+        "Metadata":{}
+      }
+      */
           // console.log('Properties: ' + path + ' - ' + JSON.stringify(data));
           const isFile = !normalizedPath.endsWith('/');
-          resolve({
+          return {
             name: isFile
               ? extractFileName(normalizedPath, '/')
               : extractDirectoryName(normalizedPath, '/'),
@@ -405,24 +438,97 @@ export default class ObjectStoreIO {
             size: data.ContentLength,
             lmdt: Date.parse(data.LastModified),
             path: normalizedPath
-          });
+          };
         });
-      } else {
-        // root folder
-        resolve({
-          name: this.config.bucketName,
-          isFile: false,
-          size: 0,
-          lmdt: undefined,
-          path: '/'
-        });
+      } catch (e) {
+        console.log(JSON.stringify(e, null, 2));
+        // workaround for checking if a folder exists on s3
+        const listParams = {
+          Bucket: this.config.bucketName,
+          Prefix: normalizedPath,
+          MaxKeys: 1,
+          Delimiter: '/'
+        };
+        return this.objectStore.send(
+          new ListObjectsCommand(listParams),
+          (listError, listData) => {
+            // this.objectStore.listObjectsV2(listParams, (listError, listData) => {
+            if (listError) {
+              return false;
+            }
+            const folderExists =
+              (listData && listData.KeyCount && listData.KeyCount > 0) || // supported on aws s3
+              (listData &&
+                listData.CommonPrefixes &&
+                listData.CommonPrefixes.length > 0); // needed for DO
+            if (folderExists) {
+              return {
+                name: extractDirectoryName(normalizedPath, '/'),
+                isFile: false,
+                size: 0,
+                lmdt: undefined,
+                path: normalizedPath
+              };
+            }
+            return false;
+          }
+        );
       }
-    });
+    } else {
+      // root folder
+      return Promise.resolve({
+        name: this.config.bucketName,
+        isFile: false,
+        size: 0,
+        lmdt: undefined,
+        path: '/'
+      });
+    }
+  };
+  // });
 
   loadTextFilePromise = (
     filePath: string,
     isPreview?: boolean
   ): Promise<string> => this.getFileContentPromise(filePath, 'text', isPreview);
+
+  streamToString = (stream): Promise<string> =>
+    new Promise((resolve, reject) => {
+      if (stream instanceof ReadableStream === false) {
+        // eslint-disable-next-line prefer-promise-reject-errors
+        reject(
+          'Expected stream to be instance of ReadableStream, but got ' +
+            typeof stream
+        );
+      }
+      let text = '';
+      const decoder = new TextDecoder('utf-8');
+
+      const reader = stream.getReader();
+      const processRead = ({ done, value }) => {
+        if (done) {
+          // resolve promise with chunks
+          console.log('done');
+          // resolve(Buffer.concat(chunks).toString("utf8"));
+          resolve(text);
+          return;
+        }
+
+        text += decoder.decode(value);
+
+        // Not done, keep reading
+        reader
+          .read()
+          .then(processRead)
+          .catch(err => console.debug(err));
+      };
+
+      // start read
+      reader
+        .read()
+        .then(processRead)
+        .catch(err => console.debug(err));
+    });
 
   /**
    * Use only for files (will not work for dirs)
@@ -436,19 +542,22 @@ export default class ObjectStoreIO {
     type: string,
     isPreview?: boolean
   ): Promise<any> => {
-    const promise = new Promise((resolve, reject) => {
-      const normalizedPath = normalizePath(this.normalizeRootPath(filePath));
-      const params = {
-        Bucket: this.config.bucketName,
-        Key: normalizedPath,
-        Range: isPreview ? 'bytes=0-10000' : ''
-      };
-      this.objectStore.getObject(params, (err, data) => {
-        if (err) {
+    // const promise = new Promise((resolve, reject) => {
+    const normalizedPath = normalizePath(this.normalizeRootPath(filePath));
+    const params = {
+      Bucket: this.config.bucketName,
+      Key: normalizedPath,
+      Range: isPreview ? 'bytes=0-10000' : ''
+    };
+    try {
+      return this.objectStore
+        .send(new GetObjectCommand(params))
+        .then(async data => {
+          /* if (err) {
           console.log('Error getObject ' + normalizedPath); // an error occurred
           console.log(err, err.stack); // an error occurred
           reject('getFileContentPromise error');
-        } else {
+        } else { */
           // data: {
           // "AcceptRanges":"bytes",
           // "LastModified":"2018-10-22T16:24:42.000Z",
@@ -467,14 +576,17 @@ export default class ObjectStoreIO {
           //   reject('Error getting s3 content - wrong response type');
           // }
           // console.log('Content Raw for : ' + filePath + ' - ' + data);
-          const content = data.Body.toString('utf8');
+          const content = await this.streamToString(data.Body); // data.Body.toString('utf8');
           // console.log('Content: ' + content);
-          resolve(content);
-        }
-      });
-    });
-    const result = await promise;
-    return result;
+          return content;
+        });
+    } catch (error) {
+      console.log('getFileContentPromise:' + normalizedPath, error);
+      return Promise.reject(error);
+    }
+    // });
+    // const result = await promise;
+    // return result;
   };
 
   /**
