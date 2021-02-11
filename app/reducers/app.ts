@@ -1320,7 +1320,10 @@ export const actions = {
     if (Pro && Pro.Watcher) {
       Pro.Watcher.stopWatching();
     }
-    if (location.type === locationType.TYPE_CLOUD) {
+    if (
+      location.type === locationType.TYPE_CLOUD ||
+      location.type === locationType.TYPE_AMPLIFY
+    ) {
       PlatformIO.enableObjectStoreSupport(location)
         .then(() => {
           dispatch(

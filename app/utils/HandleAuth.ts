@@ -7,10 +7,15 @@ import {
 import { API, Auth } from 'aws-amplify';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { actions as LocationActions, Location } from '-/reducers/locations';
+import {
+  actions as LocationActions,
+  Location,
+  locationType
+} from '-/reducers/locations';
 import { actions as AppActions } from '-/reducers/app';
 
 interface Props {
+  awsconfig: any;
   loggedIn: (user: CognitoUserInterface) => void;
   initApp: () => void;
   addLocations: (locations: Array<Location>, override: boolean) => void;
@@ -19,7 +24,7 @@ const HandleAuth = React.memo((props: Props) => {
   const username = useRef(undefined);
 
   React.useEffect(() => {
-    onAuthUIStateChange((nextAuthState, authData) => {
+    onAuthUIStateChange((nextAuthState, authData: any) => {
       if (nextAuthState === AuthState.SignedIn) {
         let queries;
         try {
@@ -37,6 +42,21 @@ const HandleAuth = React.memo((props: Props) => {
         // TODO AuthState.SignedIn is called twice after login
         // @ts-ignore
         if (username.current !== authData && queries) {
+          // @ts-ignore
+          username.current = authData.username;
+
+          props.addLocations(
+            [
+              {
+                uuid: props.awsconfig.aws_user_files_s3_bucket,
+                name: 'TagspacesBucket',
+                type: locationType.TYPE_AMPLIFY,
+                isDefault: false
+              }
+            ],
+            false
+          );
+
           fetchTenant()
             .then(async tenant => {
               // @ts-ignore
@@ -49,13 +69,16 @@ const HandleAuth = React.memo((props: Props) => {
                 props.addLocations(data.getExtconfig.Locations.items, false);
               }
 
+              /* Auth.currentSession()
+                .then(session => {
+                  PlatformIO.listBuckets(/!*authData.client.endpoint +*!/ authData.pool.userPoolId, session.getIdToken().getJwtToken());
+                }); */
+
               return true;
             })
             .catch(e => {
               console.error(e);
             });
-          // @ts-ignore
-          username.current = authData.username;
           // @ts-ignore
           props.loggedIn(authData);
           props.initApp();

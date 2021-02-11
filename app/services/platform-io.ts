@@ -23,6 +23,8 @@ import NativePlatformIO from './_PLATFORMIO_';
 import ObjectStoreIO from './objectstore-io';
 import AppConfig from '-/config';
 import { FileSystemEntry } from '-/services/utils-io';
+import { locationType } from '-/reducers/locations';
+import AmplifyStoreIO from '-/services/amplify-store-io';
 
 const nativeAPI: any = new NativePlatformIO();
 let objectStoreAPI;
@@ -33,7 +35,10 @@ export default class PlatformIO {
   ): Promise<any> =>
     new Promise((resolve, reject) => {
       if (Pro) {
-        if (
+        if(objectStoreConfig.type === locationType.TYPE_AMPLIFY){
+          objectStoreAPI = new AmplifyStoreIO();
+          resolve();
+        } else if (
           objectStoreAPI !== undefined &&
           objectStoreAPI.config.bucketName === objectStoreConfig.bucketName &&
           objectStoreAPI.config.secretAccessKey ===
@@ -124,6 +129,14 @@ export default class PlatformIO {
     // console.log('getURLforPath not supported');
     // return path;
   };
+
+  /*static listBuckets = (userPoolId, jwtToken): string => {
+    if (objectStoreAPI) {
+      return objectStoreAPI.listBuckets(userPoolId, jwtToken);
+    }
+    // console.log('getURLforPath not supported');
+    // return path;
+  };*/
 
   static createDirectoryTree = (directoryPath: string): Object =>
     nativeAPI.createDirectoryTree(directoryPath);

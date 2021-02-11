@@ -45,7 +45,7 @@ const Auth: React.FC<any> = props => {
     Amplify.configure(awsconfig.default);
     return (
       <>
-        <HandleAuth />
+        <HandleAuth awsconfig={awsconfig.default} />
         <AmplifyAuthenticator
           usernameAlias="email"
           style={{

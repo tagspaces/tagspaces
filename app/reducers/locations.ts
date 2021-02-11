@@ -33,7 +33,8 @@ export const types = {
 
 export const locationType = {
   TYPE_LOCAL: '0',
-  TYPE_CLOUD: '1'
+  TYPE_CLOUD: '1',
+  TYPE_AMPLIFY: '2'
 };
 
 export type Location = {
