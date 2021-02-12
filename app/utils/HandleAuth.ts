@@ -36,7 +36,7 @@ const HandleAuth = React.memo((props: Props) => {
         // authData.signInUserSession.idToken.payload['custom:tenant']
         // TODO AuthState.SignedIn is called twice after login
         // @ts-ignore
-        if (username.current !== authData && queries) {
+        if (username.current !== authData.username && queries) {
           fetchTenant()
             .then(async tenant => {
               // @ts-ignore
