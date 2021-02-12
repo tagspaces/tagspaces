@@ -374,15 +374,15 @@ export default (state: any = initialState, action: any) => {
       return state;
     }
     case types.CLEAR_UPLOAD_DIALOG: {
-      if (PlatformIO.haveObjectStoreSupport()) {
-        // upload dialog have objectStore support only
-        return {
-          ...state,
-          progress: [],
-          uploadDialogOpened: false
-        };
-      }
-      return state;
+      // if (PlatformIO.haveObjectStoreSupport()) {
+      // upload dialog have objectStore support only
+      return {
+        ...state,
+        progress: [],
+        uploadDialogOpened: false
+      };
+      // }
+      // return state;
     }
     case types.TOGGLE_PROGRESS_DIALOG: {
       return {
@@ -848,7 +848,17 @@ export const actions = {
   toggleUploadDialog: () => ({
     type: types.TOGGLE_UPLOAD_DIALOG
   }),
-  clearUploadDialog: () => ({
+  clearUploadDialog: () => (
+    dispatch: (actions: Object) => void,
+    getState: () => any
+  ) => {
+    if (PlatformIO.haveObjectStoreSupport()) {
+      const { currentDirectoryPath } = getState().app;
+      dispatch(actions.clearUploadDialogInt());
+      dispatch(actions.loadDirectoryContent(currentDirectoryPath));
+    }
+  },
+  clearUploadDialogInt: () => ({
     type: types.CLEAR_UPLOAD_DIALOG
   }),
   toggleProgressDialog: () => ({
