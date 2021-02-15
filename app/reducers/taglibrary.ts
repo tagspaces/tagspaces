@@ -17,8 +17,8 @@
  */
 
 import uuidv1 from 'uuid';
-import { immutablySwapItems, formatDateTime4Tag, extend } from '../utils/misc';
-import { saveAsTextFile } from '../services/utils-io';
+import { immutablySwapItems, formatDateTime4Tag, extend } from '-/utils/misc';
+import { saveAsTextFile } from '-/services/utils-io';
 import versionMeta from '../version.json';
 import defaultTagLibrary from './taglibrary-default';
 import AppConfig from '../config';
@@ -503,6 +503,20 @@ export const actions = {
     toTagGroupId: toTagGroupUuid
   }),
   importTagGroups: entry => ({ type: types.IMPORT_TAGGROUP, entry }),
+  /**
+   * GraphQL API return TagGroup Tags array with tags.items: []
+   * This migrate tagGroups model tag.items to children
+   * @param entries
+   */
+  addTagGroups: (entries: Array<any>) => (
+    dispatch: (actions: Object) => void
+  ) => {
+    const tagGroups: Array<TagGroup> = entries.map(tagGroup => {
+      const { tags, ...tagGroupProps } = tagGroup;
+      return { children: tags.items, ...tagGroupProps };
+    });
+    dispatch(actions.importTagGroups(tagGroups));
+  },
   exportTagGroups: (entry: Array<Object>) => (
     dispatch: (actions: Object) => void,
     getState: () => any
