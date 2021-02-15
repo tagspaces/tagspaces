@@ -397,7 +397,7 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
       return state;
     }
     case types.IMPORT_TAGGROUP: {
-      const arr = [...state];
+      const arr = action.replace ? [] : [...state];
       console.log(arr);
       if (action.entry[0].key) {
         action.entry.forEach((tagGroup, index) => {
@@ -419,10 +419,10 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
         });
       } else {
         action.entry.forEach(tagGroup => {
-          const index = state.findIndex(obj => obj.uuid === tagGroup.uuid);
+          const index = arr.findIndex(obj => obj.uuid === tagGroup.uuid);
           if (index > -1) {
             tagGroup.children.forEach(tag => {
-              const stateTag = state[index].children.find(
+              const stateTag = arr[index].children.find(
                 obj => obj.title === tag.title
               );
               if (stateTag === undefined) {
@@ -502,7 +502,11 @@ export const actions = {
     fromTagGroupId: fromTagGroupUuid,
     toTagGroupId: toTagGroupUuid
   }),
-  importTagGroups: entry => ({ type: types.IMPORT_TAGGROUP, entry }),
+  importTagGroups: (entry, replace: boolean = false) => ({
+    type: types.IMPORT_TAGGROUP,
+    entry,
+    replace
+  }),
   /**
    * GraphQL API return TagGroup Tags array with tags.items: []
    * This migrate tagGroups model tag.items to children
@@ -511,11 +515,13 @@ export const actions = {
   addTagGroups: (entries: Array<any>) => (
     dispatch: (actions: Object) => void
   ) => {
-    const tagGroups: Array<TagGroup> = entries.map(tagGroup => {
-      const { tags, ...tagGroupProps } = tagGroup;
-      return { children: tags.items, ...tagGroupProps };
-    });
-    dispatch(actions.importTagGroups(tagGroups));
+    if (entries && entries.length > 0) {
+      const tagGroups: Array<TagGroup> = entries.map(tagGroup => {
+        const { tags, ...tagGroupProps } = tagGroup;
+        return { children: tags.items, ...tagGroupProps };
+      });
+      dispatch(actions.importTagGroups(tagGroups, true));
+    }
   },
   exportTagGroups: (entry: Array<Object>) => (
     dispatch: (actions: Object) => void,
