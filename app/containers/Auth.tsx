@@ -77,6 +77,7 @@ const Auth: React.FC<any> = props => {
             headerText="Sign in to your TagSpaces account"
             slot="sign-in"
             usernameAlias="email"
+            hideSignUp={true}
           >
             <div slot="header-subtitle" style={{ textAlign: 'center' }}>
               <img alt="logo" src={LogoIcon} />
