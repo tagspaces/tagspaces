@@ -16,3 +16,4 @@ tests/testdata
 tests/testdata-tmp
 tests/file-structure
 .ycache
+app/aws-exports.js
