@@ -10,10 +10,6 @@ import { connect } from 'react-redux';
 import { actions as LocationActions, Location } from '-/reducers/locations';
 import { actions as TagGroupActions, TagGroup } from '-/reducers/taglibrary';
 import { actions as AppActions } from '-/reducers/app';
-import {
-  TagGroupsByTenantQuery,
-  TagGroupsByTenantQueryVariables
-} from '-/graphql/API';
 
 interface Props {
   loggedIn: (user: CognitoUserInterface) => void;
@@ -78,21 +74,18 @@ const HandleAuth = React.memo((props: Props) => {
     }
   };
 
-  const addTagGroups = async (
-    tenant: string,
-    query: TagGroupsByTenantQuery
-  ) => {
+  const addTagGroups = async (tenant: string, query: any) => {
     /* const filter = {
       tenant: {
         eq: tenant
       }
     }; */
-    const variables: TagGroupsByTenantQueryVariables = { tenant };
+    // const variables: TagGroupsByTenantQueryVariables = { tenant };
 
     // @ts-ignore
     const { data } = await API.graphql({
       query,
-      variables
+      variables: { tenant }
     });
     if (data && data.TagGroupsByTenant.items.length > 0) {
       const tagGroupsByTenant = data.TagGroupsByTenant.items[0];
