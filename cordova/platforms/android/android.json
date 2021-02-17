@@ -122,6 +122,16 @@
               "xml": "<receiver android:enabled=\"true\" android:name=\"nl.xservices.plugins.ShareChooserPendingIntent\"><intent-filter><action android:name=\"android.intent.action.SEND\" /></intent-filter></receiver>",
               "count": 1
             }
+          ],
+          "./application/activity": [
+            {
+              "xml": "<intent-filter><action android:name=\"android.intent.action.VIEW\" /><category android:name=\"android.intent.category.DEFAULT\" /><category android:name=\"android.intent.category.BROWSABLE\" /><data android:mimeType=\"application/pdf\" android:scheme=\"file\" /><data android:mimeType=\"text/plain\" android:scheme=\"file\" /><data android:mimeType=\"image/x-windows-bmp\" android:scheme=\"file\" /><data android:mimeType=\"image/gif\" android:scheme=\"file\" /><data android:mimeType=\"image/png\" android:scheme=\"file\" /><data android:mimeType=\"image/jpeg\" android:scheme=\"file\" /><data android:mimeType=\"text/html\" android:scheme=\"file\" /><data android:mimeType=\"application/json\" android:scheme=\"file\" /></intent-filter>",
+              "count": 1
+            },
+            {
+              "xml": "<intent-filter><action android:name=\"android.intent.action.VIEW\" /><category android:name=\"android.intent.category.DEFAULT\" /><category android:name=\"android.intent.category.BROWSABLE\" /><data android:host=\"*\" android:mimeType=\"*/*\" android:pathPattern=\"..json\" android:scheme=\"file\" /><data android:host=\"*\" android:mimeType=\"*/*\" android:pathPattern=\"..mht\" android:scheme=\"file\" /><data android:host=\"*\" android:mimeType=\"*/*\" android:pathPattern=\"..mhtml\" android:scheme=\"file\" /><data android:host=\"*\" android:mimeType=\"*/*\" android:pathPattern=\"..md\" android:scheme=\"file\" /><data android:host=\"*\" android:mimeType=\"*/*\" android:pathPattern=\"..md.txt\" android:scheme=\"file\" /><data android:host=\"*\" android:mimeType=\"*/*\" android:pathPattern=\"..markdown\" android:scheme=\"file\" /></intent-filter>",
+              "count": 1
+            }
           ]
         }
       }
