@@ -336,7 +336,7 @@ const CreateEditLocationDialog = (props: Props) => {
             <Typography>{i18n.t('core:locationType')}</Typography>
           </Grid>
           <Grid item xs={10}>
-            <FormControl disabled={!Pro || AppConfig.isWeb}>
+            <FormControl disabled={!Pro}>
               <RadioGroup
                 title={
                   Pro ? '' : i18n.t('core:thisFunctionalityIsAvailableInPro')

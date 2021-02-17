@@ -508,21 +508,21 @@ export const actions = {
     replace
   }),
   /**
-   * GraphQL API return TagGroup Tags array with tags.items: []
-   * This migrate tagGroups model tag.items to children
+   * GraphQL API return TagGroup Tags array like String
+   * This migrate tagGroups model to children []
    * @param entries
    */
-  addTagGroups: (entries: Array<any>) => (
+  /* addTagGroups: (entries: Array<any>) => (
     dispatch: (actions: Object) => void
   ) => {
     if (entries && entries.length > 0) {
       const tagGroups: Array<TagGroup> = entries.map(tagGroup => {
-        const { tags, ...tagGroupProps } = tagGroup;
-        return { children: tags.items, ...tagGroupProps };
+        const { children, ...tagGroupProps } = tagGroup;
+        return { children: JSON.parse(children), ...tagGroupProps };
       });
       dispatch(actions.importTagGroups(tagGroups, true));
     }
-  },
+  }, */
   exportTagGroups: (entry: Array<Object>) => (
     dispatch: (actions: Object) => void,
     getState: () => any
