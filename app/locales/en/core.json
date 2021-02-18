@@ -50,6 +50,7 @@
   "createLocationTitle": "Connect a Location",
   "exportLocationTitle": "Export Location Configuration",
   "importLocationTitle": "Import Location Configuration",
+  "closeAllLocations": "Close All Locations",
   "addAES": "Encrypt with AES",
   "aesPassword": "Encryption password",
   "retypePassword": "Retype password",

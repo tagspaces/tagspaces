@@ -42,7 +42,7 @@ import KeyShortcutsIcon from '@material-ui/icons/Keyboard';
 import ProTeaserIcon from '@material-ui/icons/FlightTakeoff';
 import { AmplifySignOut } from '@aws-amplify/ui-react';
 import { connect } from 'react-redux';
-import {CognitoUserInterface} from "@aws-amplify/ui-components";
+import { CognitoUserInterface } from '@aws-amplify/ui-components';
 import CustomLogo from './CustomLogo';
 import ProTeaser from '../assets/images/spacerocket_undraw.svg';
 import styles from './SidePanels.css';
