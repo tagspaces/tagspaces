@@ -25,7 +25,7 @@
         <icon density="xhdpi" src="res/icon/android/mipmap-xhdpi/ic_launcher.png" />
         <icon density="xxhdpi" src="res/icon/android/mipmap-xxhdpi/ic_launcher.png" />
         <icon density="xxxhdpi" src="res/icon/android/mipmap-xxxhdpi/ic_launcher.png" />
-		<config-file parent="./application/activity" target="AndroidManifest.xml">
+		<config-file platform="android" parent="/manifest/application/activity" target="AndroidManifest.xml" mode="merge">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
 				<category android:name="android.intent.category.DEFAULT" />
@@ -36,6 +36,9 @@
 				<data android:mimeType="image/gif" android:scheme="file" />
 				<data android:mimeType="image/png" android:scheme="file" />
 				<data android:mimeType="image/jpeg" android:scheme="file" />
+				<data android:mimeType="image/webp" android:scheme="file" />
+				<data android:mimeType="video/webm" android:scheme="file" />
+				<data android:mimeType="video/ogg" android:scheme="file" />
 				<data android:mimeType="text/html" android:scheme="file" />
 				<data android:mimeType="application/json" android:scheme="file" />
 			</intent-filter>
@@ -49,6 +52,7 @@
 				<data android:host="*" android:mimeType="*/*" android:pathPattern="..md" android:scheme="file" />
 				<data android:host="*" android:mimeType="*/*" android:pathPattern="..md.txt" android:scheme="file" />
 				<data android:host="*" android:mimeType="*/*" android:pathPattern="..markdown" android:scheme="file" />
+				<data android:host="*" android:mimeType="*/*" android:pathPattern="..ogv" android:scheme="file" />
 			</intent-filter>
 		</config-file>
     </platform>

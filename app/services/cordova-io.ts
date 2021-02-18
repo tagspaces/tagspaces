@@ -45,7 +45,7 @@ export default class CordovaIO {
 
   fsRoot;
   urlFromIntent;
-  widgetAction;
+  // widgetAction;
   loadedSettings: any;
   loadedSettingsTags: any;
 
@@ -85,7 +85,37 @@ export default class CordovaIO {
       window.plugins.fileOpener = cordova.plugins.fileOpener2;
     }
 
-    if (window.plugins.webintent) {
+    window.plugins.intentShim.onIntent(function(intent) {
+      /**
+       * intent:
+       action: "android.intent.action.VIEW"
+       component: "ComponentInfo{org.tagspaces.mobile/org.tagspaces.mobile.MainActivity}"
+       data: "file:///storage/emulated/0/Download/%D0%B4%D0%B5%D0%BA%D0%BB%D0%B0%D1%80%D0%B0%D1%86%D0%B8%D1%8F%20%D0%B7%D0%B0%20%D1%86%D0%BB%D1%80.pdf"
+       flags: 306184195
+       type: "application/pdf"
+       */
+      console.debug('Received Intent: ' + JSON.stringify(intent));
+      const protocol = window.location.protocol,
+        host = '//' + window.location.host,
+        path = window.location.pathname;
+      // query = window.location.search;
+
+      const newUrl =
+        protocol +
+        host +
+        path +
+        // query +
+        // (query ? '&' : '?') +
+        '?cmdopen=' +
+        intent.data.replace('file:///storage/emulated/0', 'file:///sdcard');
+      // encodeURIComponent(intent.data);
+
+      // window.history.pushState({ path: newUrl }, '', newUrl);
+      // TODO use event
+      window.location.replace(newUrl);
+    });
+
+    /* if (window.plugins.webintent) {
       window.plugins.webintent.getUri(
         url => {
           if (url) {
@@ -96,15 +126,12 @@ export default class CordovaIO {
             }
           }
         }
-        // , function(error) {
-        //  showAlertDialog("WebIntent Error: " + error);
-        // }
       );
       window.plugins.webintent.onNewIntent(url => {
         this.widgetAction = url;
         this.widgetActionHandler();
       });
-    }
+    } */
 
     if (AppConfig.isCordovaiOS) {
       setTimeout(() => {
@@ -151,8 +178,8 @@ export default class CordovaIO {
     // TODO: reload curtent dir after background operation
   };
 
-  widgetActionHandler = () => {
-    /* if (currentPath === null) {
+  // widgetActionHandler = () => {
+  /* if (currentPath === null) {
       showAlertDialog('Please set location folder to use widget');
       return;
     }
@@ -168,12 +195,12 @@ export default class CordovaIO {
     }
 
     widgetAction = undefined; */
-  };
+  // };
 
   onApplicationLoad = () => {
-    if (this.widgetAction) {
+    /* if (this.widgetAction) {
       this.widgetActionHandler();
-    }
+    } */
   };
 
   getFileSystemPromise = (localPath: string): Promise<any> => {

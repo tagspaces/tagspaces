@@ -38,7 +38,8 @@
       },
       "cordova-plugin-androidx-adapter": {},
       "com.ourcodeworld.plugins.Filebrowser": {},
-      "cordova-plugin-add-swift-support": {}
+      "cordova-plugin-add-swift-support": {},
+      "com-darryncampbell-cordova-plugin-intent": {}
     },
     "platforms": [
       "android",
@@ -48,6 +49,7 @@
   "devDependencies": {
     "@globules-io/cordova-plugin-ios-xhr": "^1.0.4",
     "bamboo.cordova.plugin.downloader": "git+https://github.com/sytolk/cordova-plugin-downloader.git",
+    "com-darryncampbell-cordova-plugin-intent": "^2.0.0",
     "cordova-android": "^9.0.0",
     "cordova-ios": "^6.1.1",
     "cordova-ourcodeworld-filebrowser": "git+https://github.com/ourcodeworld/cordova-ourcodeworld-filebrowser.git",
