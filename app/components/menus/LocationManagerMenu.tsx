@@ -25,7 +25,7 @@ import CreateLocationIcon from '@material-ui/icons/CreateNewFolder';
 import ExportImportIcon from '@material-ui/icons/SwapHoriz';
 import OpenLinkIcon from '@material-ui/icons/Link';
 import HelpIcon from '@material-ui/icons/Help';
-import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
+import CloseIcon from '@material-ui/icons/Close';
 import classNames from 'classnames';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
@@ -138,7 +138,7 @@ const LocationManagerMenu = (props: Props) => {
           }}
         >
           <ListItemIcon>
-            <CancelOutlinedIcon />
+            <CloseIcon />
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:closeAllLocations')} />
         </MenuItem>
