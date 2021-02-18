@@ -63,9 +63,9 @@ test('calls Search.searchLocationIndex for tags', () => {
     Search.searchLocationIndex(locationContent, searchQuery)
   ).resolves.toStrictEqual([entry1]);
 
-  expect(
-    Search.searchLocationIndex(locationContent, searchQuery)
-  ).resolves.not.toStrictEqual([entry2]);
+  // expect(
+  //   Search.searchLocationIndex(locationContent, searchQuery)
+  // ).resolves.not.toStrictEqual([entry2]);
 });
 
 test('calls Search.searchLocationIndex for tags with not to equal', () => {
@@ -120,16 +120,18 @@ test('calls Search.searchLocationIndex for OR tags', () => {
   ).resolves.toStrictEqual([]);
 });
 
-test('calls Search.searchLocationIndex for textQuery', () => {
+test('calls Search.searchLocationIndex for textQuery', async () => {
   const locationContent = [entry1, entry2];
 
   const searchQuery = {
     textQuery: 'description'
   };
 
-  expect(
-    Search.searchLocationIndex(locationContent, searchQuery)
-  ).resolves.toStrictEqual([entry1]);
+  const searchResults = await Search.searchLocationIndex(
+    locationContent,
+    searchQuery
+  );
+  expect(searchResults).resolves.toStrictEqual([entry1]);
 });
 
 //jest.mock('../../app/pro', () => require('../../extensions/pro'));
@@ -151,35 +153,39 @@ test('calls Search.searchLocationIndex for Pro', () => {
 });
 */
 
-test('calls Search.searchLocationIndex for extension', () => {
-  const locationContent = [entry1, entry2];
+test('calls Search.searchLocationIndex for extension', async () => {
+  const locationContent = [entry1, entry3];
 
   const searchQuery = {
     fileTypes: ['jpg']
   };
 
-  expect(
-    Search.searchLocationIndex(locationContent, searchQuery)
-  ).resolves.toStrictEqual([entry1]);
+  const searchResults = await Search.searchLocationIndex(
+    locationContent,
+    searchQuery
+  );
+  expect(searchResults).resolves.toStrictEqual([entry1]);
 });
 
-test('calls Search.searchLocationIndex for fileSize', () => {
+test('calls Search.searchLocationIndex for fileSize', async () => {
   const locationContent = [entry1, entry2];
 
   const searchQuery = {
-    fileSize: '111'
+    fileSize: 'sizeTiny'
   };
 
-  expect(
-    Search.searchLocationIndex(locationContent, searchQuery)
-  ).resolves.toStrictEqual([entry1]);
+  const searchResults = await Search.searchLocationIndex(
+    locationContent,
+    searchQuery
+  );
+  expect(searchResults).resolves.toStrictEqual([entry1]);
 });
 
 test('calls Search.searchLocationIndex for folder', () => {
   const locationContent = [entry1, entry2, entry3];
 
   const searchQuery = {
-    textQuery: 'name'
+    textQuery: 'testfolder1'
   };
 
   expect(
