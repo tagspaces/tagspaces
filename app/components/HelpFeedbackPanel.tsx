@@ -40,6 +40,9 @@ import SocialIcon from '@material-ui/icons/ThumbUp';
 import Social2Icon from '@material-ui/icons/Mood';
 import KeyShortcutsIcon from '@material-ui/icons/Keyboard';
 import ProTeaserIcon from '@material-ui/icons/FlightTakeoff';
+import { AmplifySignOut } from '@aws-amplify/ui-react';
+import { connect } from 'react-redux';
+import {CognitoUserInterface} from "@aws-amplify/ui-components";
 import CustomLogo from './CustomLogo';
 import ProTeaser from '../assets/images/spacerocket_undraw.svg';
 import styles from './SidePanels.css';
@@ -56,6 +59,7 @@ interface Props {
   toggleKeysDialog: () => void;
   toggleOnboardingDialog: () => void;
   toggleProTeaser: () => void;
+  user: CognitoUserInterface;
   style?: any;
 }
 
@@ -73,6 +77,20 @@ const HelpFeedbackPanel = (props: Props) => {
   return (
     <div className={classes.panel} style={props.style}>
       <CustomLogo />
+      {props.user && (
+        <>
+          <Typography
+            className={classNames(classes.panelTitle, classes.header)}
+            variant="subtitle1"
+          >
+            User Profile
+          </Typography>
+          <div>
+            <div>Hello, {props.user.attributes.email}</div>
+            <AmplifySignOut buttonText="Sign Out" />
+          </div>
+        </>
+      )}
       <Typography
         className={classNames(classes.panelTitle, classes.header)}
         variant="subtitle1"
@@ -291,4 +309,12 @@ const HelpFeedbackPanel = (props: Props) => {
   );
 };
 
-export default withStyles(styles, { withTheme: true })(HelpFeedbackPanel);
+function mapStateToProps(state) {
+  return {
+    user: state.app.user
+  };
+}
+
+export default connect(mapStateToProps)(
+  withStyles(styles, { withTheme: true })(HelpFeedbackPanel)
+);
