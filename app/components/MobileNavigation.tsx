@@ -30,8 +30,10 @@ import LocationsIcon from '@material-ui/icons/WorkOutline';
 import TagLibraryIcon from '@material-ui/icons/LocalOfferOutlined';
 import SearchIcon from '@material-ui/icons/SearchOutlined';
 import HelpIcon from '@material-ui/icons/HelpOutline';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { withStyles } from '@material-ui/core/styles';
+import { CognitoUserInterface } from '@aws-amplify/ui-components';
 import TagLibrary from '../components/TagLibrary';
 import Search from '../components/Search';
 import LocationManager from '../components/LocationManager';
@@ -104,6 +106,7 @@ interface Props {
   isReadOnlyMode: boolean;
   showNotification: (message: string) => void;
   directoryPath: string;
+  user: CognitoUserInterface;
 }
 
 interface State {
@@ -142,7 +145,8 @@ class MobileNavigation extends React.Component<Props, State> {
       hideDrawer,
       openFileNatively,
       openURLExternally,
-      directoryPath
+      directoryPath,
+      user
     } = this.props;
     return (
       <div style={{ height: '100%' }}>
@@ -239,7 +243,11 @@ class MobileNavigation extends React.Component<Props, State> {
                     : classes.button
                 }
               >
-                <HelpIcon className={classes.buttonIcon} />
+                {user ? (
+                  <AccountCircleIcon className={classes.buttonIcon} />
+                ) : (
+                  <HelpIcon className={classes.buttonIcon} />
+                )}
               </ToggleButton>
             </Tooltip>
           </ToggleButtonGroup>
@@ -286,7 +294,8 @@ function mapStateToProps(state) {
     isPerspectivesPanelOpened: isPerspectivesPanelOpened(state),
     isHelpFeedbackPanelOpened: isHelpFeedbackPanelOpened(state),
     isReadOnlyMode: isReadOnlyMode(state),
-    directoryPath: getDirectoryPath(state)
+    directoryPath: getDirectoryPath(state),
+    user: state.app.user
   };
 }
 

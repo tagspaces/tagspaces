@@ -30,10 +30,12 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import ThemingIcon from '@material-ui/icons/InvertColors';
 import UpgradeIcon from '@material-ui/icons/FlightTakeoff';
 import HelpIcon from '@material-ui/icons/HelpOutline';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { withStyles } from '@material-ui/core/styles';
 import SplitPane from 'react-split-pane';
 import { CircularProgress, Typography } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
+import { CognitoUserInterface } from '@aws-amplify/ui-components';
 import LogoIcon from '../assets/images/icon100x100.svg';
 import TagLibrary from '../components/TagLibrary';
 import Search from '../components/Search';
@@ -132,6 +134,7 @@ interface Props {
   showNotification: (message: string) => void;
   isReadOnlyMode: boolean;
   progress?: Array<any>;
+  user: CognitoUserInterface;
 }
 
 interface State {
@@ -183,7 +186,8 @@ class VerticalNavigation extends React.Component<Props, State> {
       openURLExternally,
       showNotification,
       directoryPath,
-      theme
+      theme,
+      user
     } = this.props;
     return (
       <div>
@@ -338,7 +342,11 @@ class VerticalNavigation extends React.Component<Props, State> {
                   : classes.button
               }
             >
-              <HelpIcon className={classes.buttonIcon} />
+              {user ? (
+                <AccountCircleIcon className={classes.buttonIcon} />
+              ) : (
+                <HelpIcon className={classes.buttonIcon} />
+              )}
             </IconButton>
             {!Pro && (
               <IconButton
@@ -450,7 +458,8 @@ function mapStateToProps(state) {
     isHelpFeedbackPanelOpened: isHelpFeedbackOpened(state),
     isReadOnlyMode: isReadOnlyMode(state),
     directoryPath: getDirectoryPath(state),
-    progress: getProgress(state)
+    progress: getProgress(state),
+    user: state.app.user
   };
 }
 

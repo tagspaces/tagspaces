@@ -1387,6 +1387,17 @@ export const actions = {
       });
     }
   },
+  closeAllLocations: () => (dispatch: (actions: Object) => void) => {
+    // location needed evtl. to unwatch many loc. root folders if available
+    dispatch(actions.setCurrentLocationId(null));
+    dispatch(actions.clearDirectoryContent());
+    dispatch(LocationIndexActions.clearDirectoryIndex());
+    if (Pro && Pro.Watcher) {
+      Pro.Watcher.stopWatching();
+    }
+    clearAllURLParams();
+    return true;
+  },
   clearDirectoryContent: () => ({
     type: types.CLEAR_DIRECTORY_CONTENT
   }),
