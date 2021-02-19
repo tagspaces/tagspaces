@@ -79,4 +79,14 @@ describe('TST65 - HTML viewer [electron]', () => {
     await global.client.switchToParentFrame();
     await closeOpenedFile();
   });
+
+  it.skip('TST6504 - Open source url [Electron]', async () => {});
+
+  it.skip('TST6505 - Find in document [Electron]', async () => {});
+
+  it.skip('TST6506 - Change theme [Electron]', async () => {});
+
+  it.skip('TST6507 - Open print dialog [Electron]', async () => {});
+
+  it.skip('TST6508 - Testing embedding local content like images [Electron]', async () => {});
 });
