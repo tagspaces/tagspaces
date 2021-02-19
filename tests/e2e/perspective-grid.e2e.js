@@ -61,7 +61,7 @@ describe('TST50 - Perspective Grid', () => {
     }
   });
 
-  test('TST5002 - Open file with click [TST5002,web,minio,electron]', async () => {
+  test('TST5002 - Open file with click [web,minio,electron]', async () => {
     await searchEngine('txt'); //testTestFilename);
     const firstFileName = await getGridFileName(0);
     await clickOn(perspectiveGridTable + firstFile);
@@ -73,7 +73,7 @@ describe('TST50 - Perspective Grid', () => {
   });
 
   // Scenarios for sorting files in grid perspective
-  describe('TST5003 - Testing sort files in the grid perspective [TST5003,web,minio,electron]', () => {
+  describe('TST5003 - Testing sort files in the grid perspective [web,minio,electron]', () => {
     beforeEach(async () => {
       await clickOn('[data-tid=gridPerspectiveSortMenu]');
       await global.client.pause(500);
@@ -147,7 +147,7 @@ describe('TST50 - Perspective Grid', () => {
     });
   });
 
-  test('TST5004 - Select-deselect all files [TST5004,web,minio,electron]', async () => {
+  test('TST5004 - Select-deselect all files [web,minio,electron]', async () => {
     const classNotSelected = await getGridCellClass(0);
     const classSelected = await selectAllFiles(classNotSelected);
 
@@ -173,7 +173,7 @@ describe('TST50 - Perspective Grid', () => {
   });
 
   // This scenario includes "Add tags" && "Remove tags" to be fulfilled
-  test('TST5005 - Add tags to the selected files [TST5005,web,minio,electron]', async () => {
+  test('TST5005 - Add tags to the selected files [web,minio,electron]', async () => {
     /*const classNotSelected = await getGridCellClass(0);
     const classSelected = await selectAllFiles(classNotSelected);
     expect(classNotSelected).not.toBe(classSelected);*/
@@ -207,7 +207,7 @@ describe('TST50 - Perspective Grid', () => {
   /**
    * TODO merge with TST5005
    */
-  test('TST5006 - Remove tags from selected files [TST5006,web,minio,electron]', async () => {
+  test('TST5006 - Remove tags from selected files [web,minio,electron]', async () => {
     /*const classNotSelected = await getGridCellClass(0);
     const classSelected = await selectAllFiles(classNotSelected);
     expect(classNotSelected).not.toBe(classSelected);*/
@@ -236,7 +236,7 @@ describe('TST50 - Perspective Grid', () => {
     }*/
   });
 
-  test('TST5007 - Remove all tags from selected files [TST5007,web,minio,electron]', async () => {
+  test('TST5007 - Remove all tags from selected files [web,minio,electron]', async () => {
     //open Option menu
     await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
     //click on hide directories
@@ -281,7 +281,7 @@ describe('TST50 - Perspective Grid', () => {
    * TODO copy file on minio failed with path: ./testdata-tmp/file-structure/supported-filestypes/empty_folder
    * web cannot find bmp file
    */
-  test('TST5008 - Copy file [TST5008,electron]', async () => {
+  test('TST5008 - Copy file [electron]', async () => {
     const fileName = await getFirstFileName();
 
     // select file
@@ -303,10 +303,12 @@ describe('TST50 - Perspective Grid', () => {
     await expectElementExist(selectorFile, false);
   });
 
+  it.skip('TST5009 - Copy file on different partition [Electron, manual]', async () => {});
+
   /**
    * TODO reindexing don't work in web
    */
-  test('TST5010 - Move file [TST5010,minio,electron]', async () => {
+  test('TST5010 - Move file [minio,electron]', async () => {
     await searchEngine('epub');
 
     // select file
@@ -330,7 +332,11 @@ describe('TST50 - Perspective Grid', () => {
     await expectElementExist(selectorFile, false);
   });
 
-  test('TST5013 - Delete files from selection (many files) [TST5013,web,minio,electron]', async () => {
+  it.skip('TST5011 - Move file drag&drop in location navigator [Electron, manual]', async () => {});
+
+  it.skip('TST5012 - Move file different partition [Electron, manual]', async () => {});
+
+  test('TST5013 - Delete files from selection (many files) [web,minio,electron]', async () => {
     //open Option menu
     await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
     //click on hide directories
@@ -368,6 +374,9 @@ describe('TST50 - Perspective Grid', () => {
     await waitForNotification();
     await expectElementExist(selectorFile, false);*/
   });
+
+  it.skip('TST5015 - Tag file drag&drop in perspective [Electron, manual]', async () => {});
+
   /*test('TST51** - Show/Hide directories in perspective view', async () => { //TODO
     await global.client.waitForVisible(
       '[data-tid=gridPerspectiveToggleShowDirectories]'
