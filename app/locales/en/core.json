@@ -262,7 +262,7 @@
   "error": "Error",
   "warning": "Warning",
   "info": "Info",
-
+  "signOut": "Sign Out",
   "fileExtension": "File Ext.",
   "fileTitle": "Title",
   "fileTags": "Tags",
