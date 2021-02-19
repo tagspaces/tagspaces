@@ -74,7 +74,7 @@ const Auth: React.FC<any> = props => {
             ]}
           />
           <AmplifySignIn
-            headerText="Sign in to your TagSpaces account"
+            headerText="Welcome to TagSpaces"
             slot="sign-in"
             usernameAlias="email"
             hideSignUp={true}
