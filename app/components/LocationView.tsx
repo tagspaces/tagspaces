@@ -113,7 +113,9 @@ const LocationView = React.memo((props: Props) => {
   };
 
   const handleLocationContextMenuClick = (event: any) => {
-    if (props.isReadOnlyMode) {
+    // TODO Maybe its better to remove the whole if. How we can remove this readonly location without ContextMenu??
+    if (location.isReadOnly) {
+      // props.isReadOnlyMode) {
       return true;
     }
     event.preventDefault();
