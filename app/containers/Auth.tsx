@@ -74,12 +74,13 @@ const Auth: React.FC<any> = props => {
             ]}
           />
           <AmplifySignIn
-            headerText="Welcome to TagSpaces"
+            // headerText=""
             slot="sign-in"
             usernameAlias="email"
             hideSignUp={true}
           >
             <div slot="header-subtitle" style={{ textAlign: 'center' }}>
+              <h3>Welcome to TagSpaces</h3>
               <img alt="logo" src={LogoIcon} />
             </div>
           </AmplifySignIn>
