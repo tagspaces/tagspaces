@@ -40,9 +40,11 @@ import SocialIcon from '@material-ui/icons/ThumbUp';
 import Social2Icon from '@material-ui/icons/Mood';
 import KeyShortcutsIcon from '@material-ui/icons/Keyboard';
 import ProTeaserIcon from '@material-ui/icons/FlightTakeoff';
-import { AmplifySignOut } from '@aws-amplify/ui-react';
+// import { AmplifySignOut } from '@aws-amplify/ui-react';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { connect } from 'react-redux';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
+import { Auth } from 'aws-amplify';
 import CustomLogo from './CustomLogo';
 import ProTeaser from '../assets/images/spacerocket_undraw.svg';
 import styles from './SidePanels.css';
@@ -87,7 +89,28 @@ const HelpFeedbackPanel = (props: Props) => {
           </Typography>
           <div>
             <div>Hello, {props.user.attributes.email}</div>
-            <AmplifySignOut buttonText="Sign Out" />
+            <div
+              style={{
+                width: '100%',
+                textAlign: 'center',
+                marginBottom: 10
+              }}
+            >
+              <Button
+                data-tid="signOutTID"
+                onClick={() => Auth.signOut()}
+                title={i18n.t('core:signOut')}
+                className={classes.mainActionButton}
+                size="small"
+                variant="outlined"
+                color="primary"
+                style={{ width: '95%' }}
+              >
+                <ExitToAppIcon className={classNames(classes.leftIcon)} />
+                {i18n.t('core:signOut')}
+              </Button>
+            </div>
+            {/* <AmplifySignOut buttonText="Sign Out" /> */}
           </div>
         </>
       )}
