@@ -53,7 +53,7 @@ describe('TST53 - Image viewer [electron]', () => {
     await closeFileProperties();
   });
 
-  it('TST5301 - Open JPG [TST5301]', async () => {
+  it('TST5301 - Open JPG [electron]', async () => {
     await delay(500);
     await searchEngine('_exif');
     await delay(500);
@@ -65,7 +65,7 @@ describe('TST53 - Image viewer [electron]', () => {
     // TODO test for finding a text in the exif
   });
 
-  it('TST5302 - Open BMP [TST5302]', async () => {
+  it('TST5302 - Open BMP [electron]', async () => {
     await delay(500);
     await searchEngine('bmp');
     await delay(500);
@@ -76,7 +76,7 @@ describe('TST53 - Image viewer [electron]', () => {
     await closeOpenedFile();
   });
 
-  it('TST5303 - Open GIF [TST5303]', async () => {
+  it('TST5303 - Open GIF [electron]', async () => {
     await delay(500);
     await searchEngine('gif');
     await delay(500);
@@ -87,7 +87,9 @@ describe('TST53 - Image viewer [electron]', () => {
     await closeOpenedFile();
   });
 
-  it('TST5305 - Open W-E-B-P [TST5305]', async () => {
+  it.skip('TST5304 - Open Animated GIF, check if plays [Electron]', async () => {});
+
+  it('TST5305 - Open W-E-B-P [electron]', async () => {
     await delay(500);
     await searchEngine('webp');
     await delay(500);
@@ -98,7 +100,7 @@ describe('TST53 - Image viewer [electron]', () => {
     await closeOpenedFile();
   });
 
-  it('TST5306 - Open SVG [TST5306]', async () => {
+  it('TST5306 - Open SVG [electron]', async () => {
     await delay(500);
     await searchEngine('svg');
     await delay(500);
@@ -109,7 +111,7 @@ describe('TST53 - Image viewer [electron]', () => {
     await closeOpenedFile();
   });
 
-  it('TST5307 - Open PNG [TST5307]', async () => {
+  it('TST5307 - Open PNG [electron]', async () => {
     await delay(500);
     await searchEngine('png');
     await delay(500);
@@ -120,7 +122,7 @@ describe('TST53 - Image viewer [electron]', () => {
     await closeOpenedFile();
   });
 
-  it('TST5308 - Open PSD [TST5308]', async () => {
+  it('TST5308 - Open PSD [electron]', async () => {
     await delay(500);
     await searchEngine('psd');
     await delay(500);
@@ -131,7 +133,7 @@ describe('TST53 - Image viewer [electron]', () => {
     await closeOpenedFile();
   });
 
-  it('TST5309 - Open TIFF [TST5309]', async () => {
+  it('TST5309 - Open TIFF [electron]', async () => {
     await delay(500);
     await searchEngine('tiff');
     await delay(500);
@@ -140,9 +142,26 @@ describe('TST53 - Image viewer [electron]', () => {
     await file.doubleClick();
     await delay(500);
     await closeOpenedFile();
+  });
 
+  it.skip('TST5310 - Rotate Image Left, Right, Zoom In, Out, Reset [Electron]', async () => {});
+
+  it.skip('TST5311 - Zoom with mouse wheel [Electron]', async () => {});
+
+  it.skip('TST5312 - Zoom with touch [Electron]', async () => {});
+
+  it.skip('TST5313 - Rotate JPG according to EXIF [Electron]', async () => {});
+
+  it.skip('TST5314 - Change background colors  [Electron]', async () => {});
+
+  it.skip('TST5315 - Remove unneeded rotation css classes, reset rotation [Electron]', async () => {});
+
+  it.skip('TST5316 - Switching between Color / Black&White mode [Electron]', async () => {});
+
+  it.skip('TST5317 - Read exif data from JPG [Electron]', async () => {});
+
+  it.skip('TST5318 - Open and close about dialog [Electron]', async () => {
     // TODO Open and close About dialog
-
     // const openViewerMenu = await global.client('#viewerMainMenuButton');
     // await openViewerMenu.waitForDisplayed();
     // await openViewerMenu.click();
