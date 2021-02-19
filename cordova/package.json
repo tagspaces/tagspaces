@@ -37,8 +37,7 @@
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
       },
       "cordova-plugin-androidx-adapter": {},
-      "cordova-plugin-add-swift-support": {},
-      "com.whebcraft.cordova.plugin.downloader": {}
+      "cordova-plugin-add-swift-support": {}
     },
     "platforms": [
       "android",
