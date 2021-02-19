@@ -29,9 +29,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 @implementation FileOpener2
 @synthesize controller = docController;
 
-- (void) open: (CDVInvokedUrlCommand*)command {
+CDVPluginResult* pluginResult = nil;
+NSString* callbackId = nil;
 
-  NSString *path = [command.arguments objectAtIndex:0];
+- (void) open: (CDVInvokedUrlCommand*)command {
+	callbackId = command.callbackId;
+	NSString *path = [command.arguments objectAtIndex:0];
 	NSString *contentType = [command.arguments objectAtIndex:1];
 	BOOL showPreview = YES;
 
@@ -43,7 +46,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 	self.cdvViewController = cont;
 	NSString *uti = nil;
 
-	if([contentType length] == 0){
+	if ([contentType length] == 0) {
 		NSArray *dotParts = [path componentsSeparatedByString:@"."];
 		NSString *fileExt = [dotParts lastObject];
 
@@ -55,42 +58,43 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 	dispatch_async(dispatch_get_main_queue(), ^{
 		NSURL *fileURL = NULL;
 		NSString *decodedPath = [path stringByRemovingPercentEncoding];
+
 		if ([path isEqualToString:decodedPath]) {
-				NSLog(@"Path parameter not encoded. Building file URL encoding it...");
-				fileURL = [NSURL fileURLWithPath:[path stringByReplacingOccurrencesOfString:@"file://" withString:@""]];;
+			NSLog(@"Path parameter not encoded. Building file URL encoding it...");
+			fileURL = [NSURL fileURLWithPath:[path stringByReplacingOccurrencesOfString:@"file://" withString:@""]];;
 		} else {
-				NSLog(@"Path parameter already encoded. Building file URL without encoding it...");
-				fileURL = [NSURL URLWithString:path];
+			NSLog(@"Path parameter already encoded. Building file URL without encoding it...");
+			fileURL = [NSURL URLWithString:path];
 		}
 
 		localFile = fileURL.path;
 
-	    NSLog(@"looking for file at %@", fileURL);
-	    NSFileManager *fm = [NSFileManager defaultManager];
-	    if(![fm fileExistsAtPath:localFile]) {
+		NSLog(@"looking for file at %@", fileURL);
+		NSFileManager *fm = [NSFileManager defaultManager];
+
+    	if (![fm fileExistsAtPath:localFile]) {
 	    	NSDictionary *jsonObj = @{@"status" : @"9",
 	    	@"message" : @"File does not exist"};
 	    	CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:jsonObj];
-	      	[self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-	      	return;
+	    	[self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+	    	return;
     	}
 
 		docController = [UIDocumentInteractionController  interactionControllerWithURL:fileURL];
 		docController.delegate = self;
 		docController.UTI = uti;
 
-		CDVPluginResult* pluginResult = nil;
-
 		//Opens the file preview
 		CGRect rect;
+
 		if ([command.arguments count] >= 4) {
 			NSArray *positionValues = [command.arguments objectAtIndex:3];
-          
-        		if (![positionValues isEqual:[NSNull null]] && [positionValues count] >= 2) {
-                		rect = CGRectMake(0, 0, [[positionValues objectAtIndex:0] floatValue], [[positionValues objectAtIndex:1] floatValue]);
-        		} else {
-                		rect = CGRectMake(0, 0, 0, 0);
-        		}
+
+			if (![positionValues isEqual:[NSNull null]] && [positionValues count] >= 2) {
+				rect = CGRectMake(0, 0, [[positionValues objectAtIndex:0] floatValue], [[positionValues objectAtIndex:1] floatValue]);
+			} else {
+				rect = CGRectMake(0, 0, 0, 0);
+			}
 		} else {
 			rect = CGRectMake(0, 0, cont.view.bounds.size.width, cont.view.bounds.size.height);
 		}
@@ -104,9 +108,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 			wasOpened = [docController presentOpenInMenuFromRect:rect inView:cont.view animated:YES];
 		}
 
-		if(wasOpened) {
+		if (wasOpened) {
 			pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: @""];
-			//NSLog(@"Success");
 		} else {
 			NSDictionary *jsonObj = [ [NSDictionary alloc]
 				initWithObjectsAndKeys :
@@ -115,23 +118,34 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 				nil
 			];
 			pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:jsonObj];
+        	[self.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
 		}
-		[self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 	});
 }
 
 @end
 
 @implementation FileOpener2 (UIDocumentInteractionControllerDelegate)
-	- (UIViewController *)documentInteractionControllerViewControllerForPreview:(UIDocumentInteractionController *)controller {
-		UIViewController *presentingViewController = self.viewController;
-		if (presentingViewController.view.window != [UIApplication sharedApplication].keyWindow){
-			presentingViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
-		}
+- (void)documentInteractionControllerDidDismissOpenInMenu:(UIDocumentInteractionController *)controller {
+	[self.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
+}
 
-		while (presentingViewController.presentedViewController != nil && ![presentingViewController.presentedViewController isBeingDismissed]){
-			presentingViewController = presentingViewController.presentedViewController;
-		}
-		return presentingViewController;
+- (void)documentInteractionControllerDidEndPreview:(UIDocumentInteractionController *)controller {
+	[self.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
+}
+
+- (UIViewController *)documentInteractionControllerViewControllerForPreview:(UIDocumentInteractionController *)controller {
+	UIViewController *presentingViewController = self.viewController;
+
+	if (presentingViewController.view.window != [UIApplication sharedApplication].keyWindow) {
+		presentingViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
 	}
+
+	while (presentingViewController.presentedViewController != nil && ![presentingViewController.presentedViewController isBeingDismissed]) {
+		presentingViewController = presentingViewController.presentedViewController;
+	}
+
+	return presentingViewController;
+}
+
 @end

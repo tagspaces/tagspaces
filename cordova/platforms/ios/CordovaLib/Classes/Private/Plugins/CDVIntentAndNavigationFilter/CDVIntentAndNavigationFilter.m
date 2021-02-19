@@ -108,9 +108,11 @@
 
 + (BOOL)shouldOpenURLRequest:(NSURLRequest*)request navigationType:(CDVWebViewNavigationType)navigationType
 {
+    BOOL isMainNavigation = [[request.mainDocumentURL absoluteString] isEqualToString:[request.URL absoluteString]];
+
     return (
         navigationType == CDVWebViewNavigationTypeLinkClicked ||
-        navigationType == CDVWebViewNavigationTypeLinkOther
+        (navigationType == CDVWebViewNavigationTypeLinkOther && isMainNavigation)
     );
 }
 

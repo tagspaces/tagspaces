@@ -27,7 +27,7 @@
       "cordova-plugin-file-opener2": {
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
       },
-      "com.whebcraft.cordova.plugin.downloader": {},
+      "bamboo.cordova.plugin.downloader": {},
       "cordova-plugin-x-socialsharing": {
         "ANDROID_SUPPORT_V4_VERSION": "24.1.1+",
         "PHOTO_LIBRARY_ADD_USAGE_DESCRIPTION": "This app requires photo library access to function properly.",
@@ -37,8 +37,8 @@
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
       },
       "cordova-plugin-androidx-adapter": {},
-      "com.ourcodeworld.plugins.Filebrowser": {},
-      "cordova-plugin-add-swift-support": {}
+      "cordova-plugin-add-swift-support": {},
+      "com.whebcraft.cordova.plugin.downloader": {}
     },
     "platforms": [
       "android",
@@ -49,8 +49,10 @@
     "@globules-io/cordova-plugin-ios-xhr": "^1.0.4",
     "bamboo.cordova.plugin.downloader": "git+https://github.com/sytolk/cordova-plugin-downloader.git",
     "cordova-android": "^9.0.0",
-    "cordova-ios": "^6.1.1",
-    "cordova-ourcodeworld-filebrowser": "git+https://github.com/ourcodeworld/cordova-ourcodeworld-filebrowser.git",
-    "cordova-plugin-androidx-adapter": "^1.1.3"
+    "cordova-ios": "^6.2.0",
+    "cordova-ourcodeworld-filebrowser": "git+https://github.com/muhammed-noufal/cordova-ourcodeworld-filebrowser.git",
+    "cordova-plugin-androidx-adapter": "^1.1.3",
+    "cordova-plugin-camera": "^5.0.1",
+    "cordova-plugin-x-socialsharing": "^6.0.3"
   }
 }

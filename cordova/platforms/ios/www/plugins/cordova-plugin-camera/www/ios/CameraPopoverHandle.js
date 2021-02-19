@@ -59,7 +59,7 @@ var CameraPopoverHandle = function () {
      * @param {module:CameraPopoverOptions} popoverOptions
      */
     this.setPosition = function (popoverOptions) {
-        var args = [ popoverOptions ];
+        var args = [popoverOptions];
         exec(null, null, 'Camera', 'repositionPopover', args);
     };
 };

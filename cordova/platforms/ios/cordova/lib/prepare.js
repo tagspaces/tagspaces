@@ -416,7 +416,7 @@ function getBackgroundColorDir (projectRoot, platformProjDir) {
 }
 
 function colorPreferenceToComponents (pref) {
-    if (!pref || !pref.match(/^(#[0-9A-F]{3}|(0x|#)([0-9A-F]{2})?[0-9A-F]{6})$/)) {
+    if (!pref || !pref.match(/^(#[0-9A-Fa-f]{3}|(0x|#)([0-9A-Fa-f]{2})?[0-9A-Fa-f]{6})$/)) {
         return {
             platform: 'ios',
             reference: 'systemBackgroundColor'
@@ -450,9 +450,9 @@ function colorPreferenceToComponents (pref) {
     return {
         'color-space': 'srgb',
         components: {
-            red: '0x' + red,
-            green: '0x' + green,
-            blue: '0x' + blue,
+            red: '0x' + red.toUpperCase(),
+            green: '0x' + green.toUpperCase(),
+            blue: '0x' + blue.toUpperCase(),
             alpha: alpha.toFixed(3)
         }
     };

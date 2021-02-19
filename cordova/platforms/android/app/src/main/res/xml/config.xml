@@ -1,5 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="org.tagspaces.mobile" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <feature name="Filebrowser">
+        <param name="android-package" value="com.ourcodeworld.plugins.filebrowser.Filebrowser" />
+    </feature>
+    <feature name="Downloader">
+        <param name="android-package" value="com.whebcraft.android.plugin.Downloader" />
+    </feature>
     <feature name="Device">
         <param name="android-package" value="org.apache.cordova.device.Device" />
     </feature>
@@ -26,12 +32,6 @@
     </feature>
     <feature name="SocialSharing">
         <param name="android-package" value="nl.xservices.plugins.SocialSharing" />
-    </feature>
-    <feature name="Downloader">
-        <param name="android-package" value="com.whebcraft.android.plugin.Downloader" />
-    </feature>
-    <feature name="Filebrowser">
-        <param name="android-package" value="com.ourcodeworld.plugins.filebrowser.Filebrowser" />
     </feature>
     <name>TagSpaces</name>
     <description>

@@ -33,17 +33,6 @@ static NSString *const kShareOptionIPadCoordinates = @"iPadCoordinates";
 - (NSString*)getIPadPopupCoordinates {
   // see https://github.com/EddyVerbruggen/SocialSharing-PhoneGap-Plugin/issues/1052
   return nil;
-  /*
-  if (_popupCoordinates != nil) {
-    return _popupCoordinates;
-  }
-  if ([self.webView respondsToSelector:@selector(stringByEvaluatingJavaScriptFromString:)]) {
-    return [(UIWebView*)self.webView stringByEvaluatingJavaScriptFromString:@"window.plugins.socialsharing.iPadPopupCoordinates();"];
-  } else {
-    // prolly a wkwebview, ignoring for now
-    return nil;
-  }
-  */
 }
 
 - (void)setIPadPopupCoordinates:(CDVInvokedUrlCommand*)command {
@@ -80,7 +69,6 @@ static NSString *const kShareOptionIPadCoordinates = @"iPadCoordinates";
 }
 
 - (void)shareInternal:(CDVInvokedUrlCommand*)command withOptions:(NSDictionary*)options isBooleanResponse:(BOOL)boolResponse {
-  [self.commandDelegate runInBackground:^{ //avoid main thread block  especially if sharing big files from url
     if (!NSClassFromString(@"UIActivityViewController")) {
       CDVPluginResult * pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"not available"];
       [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -134,7 +122,9 @@ static NSString *const kShareOptionIPadCoordinates = @"iPadCoordinates";
 
     if ([activityVC respondsToSelector:(@selector(setCompletionWithItemsHandler:))]) {
       [activityVC setCompletionWithItemsHandler:^(NSString *activityType, BOOL completed, NSArray * returnedItems, NSError * activityError) {
-        [self cleanupStoredFiles];
+        if (completed == YES || activityType == nil) {
+            [self cleanupStoredFiles];
+        }
         if (boolResponse) {
           [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:completed]
                                       callbackId:command.callbackId];
@@ -148,7 +138,9 @@ static NSString *const kShareOptionIPadCoordinates = @"iPadCoordinates";
       // let's suppress this warning otherwise folks will start opening issues while it's not relevant
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         [activityVC setCompletionHandler:^(NSString *activityType, BOOL completed) {
-          [self cleanupStoredFiles];
+          if (completed == YES || activityType == nil) {
+              [self cleanupStoredFiles];
+          }
           NSDictionary * result = @{@"completed":@(completed), @"app":activityType == nil ? @"" : activityType};
           CDVPluginResult * pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:result];
           [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -207,7 +199,6 @@ static NSString *const kShareOptionIPadCoordinates = @"iPadCoordinates";
       }
       [[self getTopMostViewController] presentViewController:activityVC animated:YES completion:nil];
     });
-  }];
 }
 
 - (void)shareViaTwitter:(CDVInvokedUrlCommand*)command {
@@ -822,7 +813,9 @@ static NSString *const kShareOptionIPadCoordinates = @"iPadCoordinates";
                 fileData: (NSData*) fileData {
   NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
   NSString *documentsDirectory = [paths objectAtIndex:0];
-  NSString *filePath = [documentsDirectory stringByAppendingPathComponent:fileName];
+  // remove filename wrapping quotes
+  NSString *filenameWithoutQuote = [fileName stringByReplacingOccurrencesOfString:@"'" withString:@""];
+  NSString *filePath = [documentsDirectory stringByAppendingPathComponent:filenameWithoutQuote];
   [fileData writeToFile:filePath atomically:YES];
   _tempStoredFile = filePath;
   return filePath;
