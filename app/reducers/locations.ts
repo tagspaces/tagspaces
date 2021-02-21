@@ -53,6 +53,7 @@ export type Location = {
   creationDate?: string;
   isDefault: boolean;
   isReadOnly?: boolean;
+  isNotEditable?: boolean;
   watchForChanges?: boolean;
   persistIndex?: boolean;
   fullTextIndex?: boolean;

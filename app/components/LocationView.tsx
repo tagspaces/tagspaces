@@ -301,7 +301,7 @@ const LocationView = React.memo((props: Props) => {
             </div>
           </TargetMoveFileBox>
         )}
-        {!AppConfig.locationsReadOnly && (
+        {!AppConfig.locationsReadOnly && !location.isNotEditable && (
           <ListItemSecondaryAction>
             <IconButton
               aria-label={i18n.t('core:options')}
