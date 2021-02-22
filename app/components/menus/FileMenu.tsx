@@ -51,6 +51,11 @@ interface Props {
   openFsEntry: (fsEntry: FileSystemEntry) => void;
   openFileNatively: (path: string) => void;
   showInFileManager: (path: string) => void;
+  showNotification: (
+    text: string,
+    notificationType?: string,
+    autohide?: boolean
+  ) => void;
   selectedFilePath?: string;
   isReadOnlyMode: boolean;
 }
@@ -74,25 +79,32 @@ const FileMenu = (props: Props) => {
   function setFolderThumbnail() {
     props.onClose();
     setFolderThumbnailPromise(props.selectedFilePath)
-      .then((directoryPath: string) =>
-        getAllPropertiesPromise(directoryPath)
-          .then((fsEntry: FileSystemEntry) => {
-            props.openFsEntry(fsEntry);
-            return true;
-          })
-          .catch(error =>
-            console.warn(
-              'Error getAllPropertiesPromise for: ' + directoryPath,
-              error
-            )
-          )
+      .then(
+        (directoryPath: string) => {
+          props.showNotification('Thumbnail created for: ' + directoryPath);
+          return true;
+        }
+
+        // getAllPropertiesPromise(directoryPath)
+        //   .then((fsEntry: FileSystemEntry) => {
+        //     props.openFsEntry(fsEntry);
+        //     return true;
+        //   })
+        //   .catch(error =>
+        //     console.warn(
+        //       'Error getAllPropertiesPromise for: ' + directoryPath,
+        //       error
+        //     )
+        //   )
       )
-      .catch(error =>
+      .catch(error => {
+        props.showNotification('Thumbnail creation failed.');
         console.warn(
           'Error setting Thumb for entry: ' + props.selectedFilePath,
           error
-        )
-      );
+        );
+        return true;
+      });
   }
 
   function showAddRemoveTagsDialog() {

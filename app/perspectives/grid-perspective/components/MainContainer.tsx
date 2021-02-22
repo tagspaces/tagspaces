@@ -918,6 +918,7 @@ class GridPerspective extends React.Component<Props, State> {
             openFsEntry={this.props.openFsEntry}
             openFileNatively={this.props.openFileNatively}
             showInFileManager={this.props.showInFileManager}
+            showNotification={this.props.showNotification}
             isReadOnlyMode={this.props.isReadOnlyMode}
             selectedFilePath={this.state.selectedEntryPath}
           />
