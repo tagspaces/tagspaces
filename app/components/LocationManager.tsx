@@ -224,7 +224,9 @@ const LocationManager = (props: Props) => {
         <ExportLocationsDialog
           open={isExportLocationsDialogOpened}
           onClose={() => setExportLocationsDialogOpened(false)}
-          locations={props.locations.filter(location => !location.isNotEditable)}
+          locations={props.locations.filter(
+            location => !location.isNotEditable
+          )}
         />
       )}
       {ImportLocationsDialog && importFile && (

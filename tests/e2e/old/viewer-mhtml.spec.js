@@ -2,13 +2,21 @@
 import { delay, clearLocalStorage } from './hook';
 import { searchEngine } from './search.helpers';
 import { openFile } from './perspective.spec';
-import { createLocation, openLocation, aboutDialogExt, defaultLocationPath, defaultLocationName, perspectiveGridTable } from './location.spec';
+import {
+  createLocation,
+  openLocation,
+  aboutDialogExt,
+  defaultLocationPath,
+  defaultLocationName,
+  perspectiveGridTable
+} from './location.spec';
 
 const extButton = '/div[1]/div[2]/button';
 const firstFile = '/div[1]/div';
 
 let iFrame = '#viewerMHTMLViewer';
-let text = 'This week at TechCrunch Disrupt ambitious startups took the stage and shared their vision of changing the world™.';
+let text =
+  'This week at TechCrunch Disrupt ambitious startups took the stage and shared their vision of changing the world™.';
 
 describe('TST61 - MHTML Viewer', () => {
   beforeEach(async () => {
@@ -89,5 +97,3 @@ describe('TST61 - MHTML Viewer', () => {
     //   .waitForVisible('#readabilityOn').should.eventually.exist
   });
 });
-
-

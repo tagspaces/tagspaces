@@ -2,15 +2,18 @@
 import { delay, clearLocalStorage } from './hook';
 import { searchEngine } from './search.helpers';
 import { openFile } from './perspective.spec';
-import { createLocation, openLocation, defaultLocationPath, defaultLocationName, perspectiveGridTable } from './location.spec';
+import {
+  createLocation,
+  openLocation,
+  defaultLocationPath,
+  defaultLocationName,
+  perspectiveGridTable
+} from './location.spec';
 
-const extButton = '/tbody/tr/td[1]/button[1]';
+const extButton = '/div[1]/div[2]/button';
 const firstFile = '/div[1]/div';
 
-let iFrame = '#iframeViewer';
-let text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
-
-describe('TST62 - Text viewer', () => {
+describe('TST58 - PDF viewer', () => {
   beforeEach(async () => {
     await clearLocalStorage();
     await delay(500);
@@ -20,13 +23,8 @@ describe('TST62 - Text viewer', () => {
     await delay(500);
   });
 
-  it('TST6201 - Open text file', async () => {
-    await searchEngine('txt');
+  it('TST5801 - Open PDF file', async () => {
+    await searchEngine('pdf');
     await openFile(perspectiveGridTable, firstFile);
-    //   // should switch focus to iFrame
-    //   .waitForVisible('//*[@id="mainLayout"]/textarea')
-    //   .getText('//*[@id="mainLayout"]/textarea').should.eventually.contain(text)
   });
 });
-
-

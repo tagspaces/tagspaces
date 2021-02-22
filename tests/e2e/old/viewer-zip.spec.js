@@ -2,14 +2,22 @@
 import { delay, clearLocalStorage } from './hook';
 import { searchEngine } from './search.helpers';
 import { openFile } from './perspective.spec';
-import { createLocation, openLocation, aboutDialogExt, defaultLocationPath, defaultLocationName, perspectiveGridTable } from './location.spec';
+import {
+  createLocation,
+  openLocation,
+  aboutDialogExt,
+  defaultLocationPath,
+  defaultLocationName,
+  perspectiveGridTable
+} from './location.spec';
 
 const extButton = '/tbody/tr/td[1]/button[1]';
 const firstFile = '/div[1]/div';
 
 const iFrame = '#iframeViewer';
 const someFileNameInExt = 'TestData-DirectoryMeta/201410/.ts/tsm.json';
-const firstFileNameInExt = 'TestData-DirectoryMeta/.ts/034-IMG_29263[5star 20130809].jpg.png';
+const firstFileNameInExt =
+  'TestData-DirectoryMeta/.ts/034-IMG_29263[5star 20130809].jpg.png';
 let text = 'Contents of file';
 
 describe('TST64 - Zip viewer', () => {
@@ -47,4 +55,3 @@ describe('TST64 - Zip viewer', () => {
     await aboutDialogExt('About URL Viewer');
   });
 });
-

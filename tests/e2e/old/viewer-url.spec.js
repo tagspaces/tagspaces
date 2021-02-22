@@ -2,7 +2,14 @@
 import { delay, clearLocalStorage } from './hook';
 import { searchEngine } from './search.helpers';
 import { openFile } from './perspective.spec';
-import { createLocation, openLocation, aboutDialogExt, defaultLocationPath, defaultLocationName, perspectiveGridTable } from './location.spec';
+import {
+  createLocation,
+  openLocation,
+  aboutDialogExt,
+  defaultLocationPath,
+  defaultLocationName,
+  perspectiveGridTable
+} from './location.spec';
 
 const extButton = '/tbody/tr/td[1]/button[1]';
 const firstFile = '/div[1]/div';
@@ -42,5 +49,3 @@ describe('TST63 - URL viewer', () => {
     //   .waitForVisible('#closeAboutDialogButton').click('#closeAboutDialogButton')
   });
 });
-
-

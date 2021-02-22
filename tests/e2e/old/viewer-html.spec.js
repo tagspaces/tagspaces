@@ -2,7 +2,14 @@
 import { delay, clearLocalStorage } from './hook';
 import { searchEngine } from './search.helpers';
 import { openFile } from './perspective.spec';
-import { createLocation, openLocation, aboutDialogExt, defaultLocationPath, defaultLocationName, perspectiveGridTable } from './location.spec';
+import {
+  createLocation,
+  openLocation,
+  aboutDialogExt,
+  defaultLocationPath,
+  defaultLocationName,
+  perspectiveGridTable
+} from './location.spec';
 
 const extButton = '/div[1]/div[2]/button';
 const firstExtButton = '/div[1]/button';
@@ -94,5 +101,3 @@ describe('TST61 - HTML Viewer', () => {
     //   .should.eventually.equals('markdown zoomDefault')
   });
 });
-
-
