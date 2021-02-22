@@ -17,7 +17,7 @@ import {
   setSettings,
   doubleClickOn
 } from './general.helpers';
-import { renameFolder } from './test-utils.spec';
+import { renameFolder } from './test-utils';
 
 // export const firstFile = '/span';
 // export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';

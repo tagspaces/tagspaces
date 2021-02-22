@@ -20,8 +20,8 @@ import {
   AddRemovePropertiesTags,
   getPropertiesFileName
 } from './file.properties.helpers';
-import { searchEngine } from './search.spec';
-import { openContextEntryMenu } from './test-utils.spec';
+import { searchEngine } from './search.helpers';
+import { openContextEntryMenu } from './test-utils';
 
 describe('TST08 - File folder properties', () => {
   beforeEach(async () => {

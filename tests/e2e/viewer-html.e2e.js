@@ -11,7 +11,7 @@ import {
   createMinioLocation
 } from './location.helpers';
 import { closeOpenedFile, openCloseAboutDialog } from './general.helpers';
-import { searchEngine } from './search.spec';
+import { searchEngine } from './search.helpers';
 
 const title = 'About HTML Viewer';
 

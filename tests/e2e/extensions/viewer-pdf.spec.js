@@ -1,6 +1,6 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 import { delay, clearLocalStorage } from './hook';
-import { searchEngine } from './search.spec';
+import { searchEngine } from './search.helpers';
 import { openFile } from './perspective.spec';
 import { createLocation, openLocation, defaultLocationPath, defaultLocationName, perspectiveGridTable } from './location.spec';
 

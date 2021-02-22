@@ -12,14 +12,14 @@ import {
   createMinioLocation,
   closeLocation
 } from './location.helpers';
-import { searchEngine } from './search.spec';
+import { searchEngine } from './search.helpers';
 import {
   openContextEntryMenu,
   perspectiveGridTable,
   firstFile,
   toContainTID,
   firstFolder
-} from './test-utils.spec';
+} from './test-utils';
 import {
   addInputKeys,
   clickOn,

@@ -10,7 +10,7 @@ import {
   createMinioLocation
 } from './location.helpers';
 import { clickOn, closeOpenedFile } from './general.helpers';
-import { searchEngine } from './search.spec';
+import { searchEngine } from './search.helpers';
 
 export const firstFile = '/span';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';

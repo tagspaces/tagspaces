@@ -10,12 +10,8 @@ import {
   createMinioLocation,
   getFirstFileName
 } from './location.helpers';
-import { searchEngine } from './search.spec';
-import {
-  perspectiveGridTable,
-  firstFile,
-  firstFolder
-} from './test-utils.spec';
+import { searchEngine } from './search.helpers';
+import { perspectiveGridTable, firstFile, firstFolder } from './test-utils';
 import {
   addInputKeys,
   clickOn,
