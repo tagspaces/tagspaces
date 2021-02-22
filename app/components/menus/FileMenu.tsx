@@ -27,12 +27,18 @@ import OpenFileNatively from '@material-ui/icons/Launch';
 import OpenContainingFolder from '@material-ui/icons/FolderOpen';
 import AddRemoveTags from '@material-ui/icons/Loyalty';
 import MoveCopy from '@material-ui/icons/FileCopy';
+import ImageIcon from '@material-ui/icons/Image';
 import RenameFile from '@material-ui/icons/FormatTextdirectionLToR';
 import DeleteForever from '@material-ui/icons/DeleteForever';
 import i18n from '-/services/i18n';
 import AppConfig from '-/config';
 import PlatformIO from '-/services/platform-io';
-import { FileSystemEntry, getAllPropertiesPromise } from '-/services/utils-io';
+import {
+  FileSystemEntry,
+  getAllPropertiesPromise,
+  setFolderThumbnailPromise
+} from '-/services/utils-io';
+import { Pro } from '-/pro';
 
 interface Props {
   anchorEl: Element;
@@ -63,6 +69,30 @@ const FileMenu = (props: Props) => {
   function showMoveCopyFilesDialog() {
     props.onClose();
     props.openMoveCopyFilesDialog();
+  }
+
+  function setFolderThumbnail() {
+    props.onClose();
+    setFolderThumbnailPromise(props.selectedFilePath)
+      .then((directoryPath: string) =>
+        getAllPropertiesPromise(directoryPath)
+          .then((fsEntry: FileSystemEntry) => {
+            props.openFsEntry(fsEntry);
+            return true;
+          })
+          .catch(error =>
+            console.warn(
+              'Error getAllPropertiesPromise for: ' + directoryPath,
+              error
+            )
+          )
+      )
+      .catch(error =>
+        console.warn(
+          'Error setting Thumb for entry: ' + props.selectedFilePath,
+          error
+        )
+      );
   }
 
   function showAddRemoveTagsDialog() {
@@ -164,6 +194,14 @@ const FileMenu = (props: Props) => {
               </ListItemIcon>
               <ListItemText primary={i18n.t('core:moveCopyFile')} />
             </MenuItem>
+            {Pro && (
+              <MenuItem data-tid="setAsThumbTID" onClick={setFolderThumbnail}>
+                <ListItemIcon>
+                  <ImageIcon />
+                </ListItemIcon>
+                <ListItemText primary={i18n.t('core:setAsThumbnail')} />
+              </MenuItem>
+            )}
             <MenuItem
               data-tid="fileMenuDeleteFile"
               onClick={showDeleteFileDialog}

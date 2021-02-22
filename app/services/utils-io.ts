@@ -27,7 +27,9 @@ import {
   getMetaDirectoryPath,
   getMetaFileLocationForFile,
   getMetaFileLocationForDir,
-  extractContainingDirectoryPath
+  extractContainingDirectoryPath,
+  getThumbFileLocationForFile,
+  getThumbFileLocationForDirectory
 } from '-/utils/paths';
 import i18n from '../services/i18n';
 import versionMeta from '../version.json';
@@ -860,6 +862,25 @@ export async function saveMetaDataPromise(
   return new Promise((resolve, reject) =>
     reject(new Error('file not found' + path))
   );
+}
+
+/**
+ * @param filePath
+ * return Promise<directoryPath> of directory in order to open Folder properties next
+ */
+export function setFolderThumbnailPromise(filePath: string): Promise<string> {
+  const directoryPath = extractContainingDirectoryPath(
+    filePath,
+    PlatformIO.getDirSeparator()
+  );
+  return PlatformIO.copyFilePromise(
+    getThumbFileLocationForFile(filePath, PlatformIO.getDirSeparator()),
+    getThumbFileLocationForDirectory(
+      directoryPath,
+      PlatformIO.getDirSeparator()
+    ),
+    'Thumbnail for ' + directoryPath + ' exist do you want to override it?'
+  ).then(() => directoryPath);
 }
 
 export function findColorForFileEntry(

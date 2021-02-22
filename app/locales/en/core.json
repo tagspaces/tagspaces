@@ -263,6 +263,7 @@
   "warning": "Warning",
   "info": "Info",
   "signOut": "Sign Out",
+  "setAsThumbnail": "Set as Thumbnail of the current folder",
   "fileExtension": "File Ext.",
   "fileTitle": "Title",
   "fileTags": "Tags",
