@@ -76,6 +76,7 @@
   "reloadDocument": "Reload Document",
   "selectAllFiles": "Select all files",
   "selectAllTagGroups": "Select/Deselect All Tag Groups",
+  "selectAllLocations": "Select/Deselect All Locations",
   "closeViewer": "Close Document",
   "propertiesDocument": "Document Properties",
   "saveDocument": "Save Document",
