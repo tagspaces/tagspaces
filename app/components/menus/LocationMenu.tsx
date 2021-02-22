@@ -121,8 +121,13 @@ class LocationMenu extends React.Component<Props, State> {
             }
           }}
         >
-          <div style={{ display: 'none' }} />
-          <ListSubHeader>{i18n.t('core:chooseLocation')}</ListSubHeader>
+          <ListSubHeader
+            style={{
+              backgroundColor: theme.palette.background.default
+            }}
+          >
+            {i18n.t('core:chooseLocation')}
+          </ListSubHeader>
           {this.props.locations.map((location: Location) => (
             <MenuItem
               data-tid="folderContainerMenuOpenLocation"

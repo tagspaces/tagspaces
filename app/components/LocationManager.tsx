@@ -32,7 +32,7 @@ import {
   Location
 } from '../reducers/locations';
 import { actions as AppActions } from '../reducers/app';
-import { getPerspectives } from '-/reducers/settings';
+import { getPerspectives, isDesktopMode } from '-/reducers/settings';
 import i18n from '../services/i18n';
 import AppConfig from '../config';
 import LoadingLazy from '-/components/LoadingLazy';
@@ -64,6 +64,7 @@ interface Props {
   addLocations: (locations: Array<Location>) => void;
   editLocation: () => void;
   removeLocation: (location: Location) => void;
+  isDesktop: boolean;
 }
 
 type SubFolder = {
@@ -113,7 +114,7 @@ const LocationManager = (props: Props) => {
     target.value = null;
   }
 
-  const { classes } = props;
+  const { classes, isDesktop } = props;
   return (
     <div className={classes.panel} style={props.style}>
       <CustomLogo />
@@ -191,7 +192,9 @@ const LocationManager = (props: Props) => {
           className={classes.locationListArea}
           data-tid="locationList"
           style={{
-            maxHeight: 'calc(100vh - 175px)',
+            maxHeight: isDesktop
+              ? 'calc(100vh - 175px)'
+              : 'calc(100vh - 225px)',
             // @ts-ignore
             overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
           }}
@@ -240,7 +243,8 @@ const LocationManager = (props: Props) => {
 function mapStateToProps(state) {
   return {
     locations: getLocations(state),
-    perspectives: getPerspectives(state)
+    perspectives: getPerspectives(state),
+    isDesktop: isDesktopMode(state)
   };
 }
 

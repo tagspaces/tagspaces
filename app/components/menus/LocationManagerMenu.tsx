@@ -25,13 +25,17 @@ import CreateLocationIcon from '@material-ui/icons/CreateNewFolder';
 import ExportImportIcon from '@material-ui/icons/SwapHoriz';
 import OpenLinkIcon from '@material-ui/icons/Link';
 import HelpIcon from '@material-ui/icons/Help';
+import CloseIcon from '@material-ui/icons/Close';
 import classNames from 'classnames';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import AppConfig from '-/config';
 import i18n from '-/services/i18n';
 import { Pro } from '../../pro';
+import { actions as AppActions } from '-/reducers/app';
 
 interface Props {
   classes: any;
@@ -39,6 +43,7 @@ interface Props {
   importLocations: () => void;
   showCreateLocationDialog: () => void;
   toggleOpenLinkDialog: () => void;
+  closeAllLocations: () => void;
   openURLExternally: (url: string, skipConfirmation?: boolean) => void;
 }
 
@@ -126,6 +131,18 @@ const LocationManagerMenu = (props: Props) => {
           </>
         )}
         <MenuItem
+          data-tid="locationManagerMenuCloseAll"
+          onClick={() => {
+            setLocationManagerMenuAnchorEl(null);
+            props.closeAllLocations();
+          }}
+        >
+          <ListItemIcon>
+            <CloseIcon />
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:closeAllLocations')} />
+        </MenuItem>
+        <MenuItem
           data-tid="locationManagerMenuHelp"
           onClick={() => {
             setLocationManagerMenuAnchorEl(null);
@@ -145,4 +162,12 @@ const LocationManagerMenu = (props: Props) => {
   );
 };
 
-export default LocationManagerMenu;
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(
+    {
+      closeAllLocations: AppActions.closeAllLocations
+    },
+    dispatch
+  );
+}
+export default connect(undefined, mapDispatchToProps)(LocationManagerMenu);

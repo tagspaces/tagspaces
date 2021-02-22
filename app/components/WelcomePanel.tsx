@@ -34,7 +34,7 @@ import TranslationIcon from '@material-ui/icons/Translate';
 import NewFeatureIcon from '@material-ui/icons/Gesture';
 import SocialIcon from '@material-ui/icons/ThumbUp';
 import Social2Icon from '@material-ui/icons/Mood';
-import LogoutIcon from '@material-ui/icons/MeetingRoom';
+// import LogoutIcon from '@material-ui/icons/MeetingRoom';
 import KeyShortcutsIcon from '@material-ui/icons/Keyboard';
 import WelcomeBackground from '../assets/images/background.png';
 import WelcomeLogo from '../assets/images/welcome-logo.png';
@@ -201,13 +201,10 @@ const WelcomePanel = (props: Props) => {
             {i18n.t('core:likeUsOnFacebook')}
           </Button>
         </ListItem>
-        {AppConfig.isWeb && (
+        {/* {AppConfig.isWeb && (
           <ListItem
             button
             onClick={() => {
-              // const p = window.location.protocol + '//';
-              // window.location = window.location.href.replace(p, p + 'log:out@');
-
               // @ts-ignore
               const newHref = window.location.href.replace(
                 'http://',
@@ -219,44 +216,11 @@ const WelcomePanel = (props: Props) => {
               );
               // @ts-ignore
               window.location.href = newHref;
-
-              // const newHref = window.location.href.replace(
-              //   'http://',
-              //   'http://' + new Date().getTime() + '@'
-              // );
-              // let xmlhttp;
-              // if (window.XMLHttpRequest) {
-              //   xmlhttp = new XMLHttpRequest();
-              // } else {
-              //   // @ts-ignore
-              //   xmlhttp = new ActiveXObject('Microsoft.XMLHTTP');
-              // }
-              // xmlhttp.onreadystatechange = () => {
-              //   if (xmlhttp.readyState === 4) window.location.reload();
-              // };
-              // xmlhttp.open('GET', newHref, true);
-              // xmlhttp.setRequestHeader('Authorization', 'Basic YXNkc2E6');
-              // xmlhttp.send();
-              // return false;
-              // let xmlhttp;
-              // if (window.XMLHttpRequest) {
-              //   xmlhttp = new XMLHttpRequest();
-              // } else {
-              //   // @ts-ignore
-              //   xmlhttp = new ActiveXObject('Microsoft.XMLHTTP');
-              // }
-              // xmlhttp.onreadystatechange = () => {
-              //   if (xmlhttp.readyState === 4) window.location.reload();
-              // };
-              // xmlhttp.open('GET', newHref, true);
-              // xmlhttp.setRequestHeader('Authorization', 'Basic YXNkc2E6');
-              // xmlhttp.send();
-              // return false;
             }}
           >
             <Button startIcon={<LogoutIcon />}>{i18n.t('core:Logout')}</Button>
           </ListItem>
-        )}
+        )} */}
       </List>
     </div>
   );
@@ -266,7 +230,6 @@ function mapStateToProps(state) {
   return {
     isFirstRun: isFirstRun(state),
     isDesktopMode: getDesktopMode(state)
-    // locations: getLocations(state),
   };
 }
 

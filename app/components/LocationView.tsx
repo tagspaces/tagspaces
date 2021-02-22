@@ -113,9 +113,6 @@ const LocationView = React.memo((props: Props) => {
   };
 
   const handleLocationContextMenuClick = (event: any) => {
-    if (props.isReadOnlyMode) {
-      return true;
-    }
     event.preventDefault();
     event.stopPropagation();
     setLocationDirectoryContextMenuAnchorEl(event.currentTarget);
@@ -301,23 +298,21 @@ const LocationView = React.memo((props: Props) => {
             </div>
           </TargetMoveFileBox>
         )}
-        {!AppConfig.locationsReadOnly && (
-          <ListItemSecondaryAction>
-            <IconButton
-              aria-label={i18n.t('core:options')}
-              aria-haspopup="true"
-              edge="end"
-              data-tid={'locationMoreButton_' + location.name}
-              onClick={event => handleLocationContextMenuClick(event)}
-              onContextMenu={event => handleLocationContextMenuClick(event)}
-            >
-              {location.isDefault && (
-                <DefaultLocationIcon data-tid="startupIndication" />
-              )}
-              <MoreVertIcon />
-            </IconButton>
-          </ListItemSecondaryAction>
-        )}
+        <ListItemSecondaryAction>
+          <IconButton
+            aria-label={i18n.t('core:options')}
+            aria-haspopup="true"
+            edge="end"
+            data-tid={'locationMoreButton_' + location.name}
+            onClick={event => handleLocationContextMenuClick(event)}
+            onContextMenu={event => handleLocationContextMenuClick(event)}
+          >
+            {location.isDefault && (
+              <DefaultLocationIcon data-tid="startupIndication" />
+            )}
+            <MoreVertIcon />
+          </IconButton>
+        </ListItemSecondaryAction>
       </ListItem>
       <DirectoryTreeView
         key={'tree_' + location.uuid}

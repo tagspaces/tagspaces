@@ -24,6 +24,7 @@ import app from './app';
 import locations from './locations';
 import taglibrary from './taglibrary';
 import locationIndex from './location-index';
+import AppConfig from '-/config';
 
 const externalLocations = window.ExtLocations || false;
 const externalTagLibrary = window.ExtTagLibrary || false;
@@ -31,7 +32,7 @@ const externalTagLibrary = window.ExtTagLibrary || false;
 const blacklist = [
   'app',
   'locationIndex',
-  externalLocations ? 'locations' : '',
+  externalLocations || AppConfig.isWeb ? 'locations' : '',
   externalTagLibrary ? 'taglibrary' : ''
 ];
 

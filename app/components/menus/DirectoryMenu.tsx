@@ -398,7 +398,7 @@ Do you want to continue?`)
             <ListItemText primary={i18n.t('core:deleteDirectory')} />
           </MenuItem>
         )}
-        {!AppConfig.isWeb && (
+        {!(PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb) && (
           <MenuItem data-tid="showInFileManager" onClick={showInFileManager}>
             <ListItemIcon>
               <OpenFolderNativelyIcon />
@@ -461,7 +461,7 @@ Do you want to continue?`)
               <ListItemIcon>
                 <DefaultPerspectiveIcon />
               </ListItemIcon>
-              <ListItemText primary="Default perspective" />
+              <ListItemText primary="Default Perspective" />
             </MenuItem>
             <MenuItem
               data-tid="openGalleryPerspective"

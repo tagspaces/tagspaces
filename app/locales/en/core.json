@@ -50,6 +50,7 @@
   "createLocationTitle": "Connect a Location",
   "exportLocationTitle": "Export Location Configuration",
   "importLocationTitle": "Import Location Configuration",
+  "closeAllLocations": "Close All Locations",
   "addAES": "Encrypt with AES",
   "aesPassword": "Encryption password",
   "retypePassword": "Retype password",
@@ -261,7 +262,8 @@
   "error": "Error",
   "warning": "Warning",
   "info": "Info",
-
+  "signOut": "Sign Out",
+  "setAsThumbnail": "Use Thumbnail for this Folder",
   "fileExtension": "File Ext.",
   "fileTitle": "Title",
   "fileTags": "Tags",

@@ -1,4 +1,4 @@
-name: scheduled workflow dispatch trigger
+name: Nightly E2E Tests Web Minio Windows
 on:
   schedule:
     - cron: '0 2 * * *'
@@ -37,7 +37,7 @@ jobs:
         run: yarn test-unit
       - uses: suisei-cn/actions-download-file@v1
         id: minio
-        name: Download the Minio.exe
+        name: Download the Minio
         with:
           url: 'https://dl.min.io/server/minio/release/windows-amd64/minio.exe'
           target: tests/bin/

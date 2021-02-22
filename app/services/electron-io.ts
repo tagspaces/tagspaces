@@ -24,8 +24,8 @@ import {
   extractFileName,
   extractParentDirectoryPath,
   getMetaDirectoryPath
-} from '../utils/paths';
-import { arrayBufferToBuffer } from '../utils/misc';
+} from '-/utils/paths';
+import { arrayBufferToBuffer } from '-/utils/misc';
 import AppConfig from '../config';
 import PlatformIO from './platform-io';
 import TrayIcon from '../assets/icons/trayIcon.png';
@@ -530,8 +530,8 @@ export default class ElectronIO {
         );
       } else if (this.fs.lstatSync(sourceFilePath).isDirectory()) {
         reject('Trying to copy a file: ' + sourceFilePath + '. Copying failed');
-      } else if (this.fs.existsSync(targetFilePath)) {
-        reject('File "' + targetFilePath + '" exists. Copying failed.');
+        /* } else if (this.fs.existsSync(targetFilePath)) {
+        reject('File "' + targetFilePath + '" exists. Copying failed.'); */
       } else {
         this.fs.copy(sourceFilePath, targetFilePath, error => {
           if (error) {
