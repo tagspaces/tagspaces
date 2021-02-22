@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -59,6 +59,9 @@ import IOActions from '-/reducers/io-actions';
 import { Tag } from '-/reducers/taglibrary';
 import TaggingActions from '-/reducers/tagging-actions';
 import { FileSystemEntry, getAllPropertiesPromise } from '-/services/utils-io';
+import FileUploadContainer, {
+  FileUploadContainerRef
+} from '-/components/FileUploadContainer';
 
 interface Props {
   open: boolean;
@@ -99,7 +102,8 @@ interface Props {
 }
 
 const DirectoryMenu = (props: Props) => {
-  let fileInput; // Object | null;
+  // let fileInput; // Object | null;
+  const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
 
   const [
     isCreateDirectoryDialogOpened,
@@ -192,7 +196,7 @@ const DirectoryMenu = (props: Props) => {
 
   function addExistingFile() {
     props.onClose();
-    fileInput.click();
+    fileUploadContainerRef.current.onFileUpload();
   }
 
   function importMacTags() {
@@ -310,88 +314,6 @@ Do you want to continue?`)
       // @ts-ignore
       mediaType: Camera.MediaType.PICTURE // ALLMEDIA
     });
-  }
-
-  function handleFileInputChange(selection: any) {
-    // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
-    // const file = selection.currentTarget.files[0];
-    props.resetProgress();
-
-    props
-      .uploadFilesAPI(
-        Array.from(selection.currentTarget.files),
-        props.directoryPath,
-        props.onUploadProgress
-      )
-      .then(fsEntries => {
-        props.reflectCreateEntries(fsEntries);
-        return true;
-      })
-      .catch(error => {
-        console.log('uploadFiles', error);
-      });
-    props.toggleUploadDialog();
-    /*
-    const filePath =
-      normalizePath(props.directoryPath) +
-      PlatformIO.getDirSeparator() +
-      decodeURIComponent(file.name);
-    const reader = new FileReader();
-    reader.onload = (event: any) => {
-      // console.log('Content on file read complete: ' + JSON.stringify(event));
-      // change name for ios fakepath
-      // if (AppConfig.isCordovaiOS) {
-      //   const fileExt = extractFileExtension(addFileInputName);
-      //   addFileInputName = AppConfig.beginTagContainer + formatDateTime4Tag(new Date(), true) + AppConfig.endTagContainer + fileExt;
-      // }
-      // TODO event.currentTarget.result is ArrayBuffer
-      // Sample call from PRO version using content = Utils.base64ToArrayBuffer(baseString);
-      PlatformIO.getPropertiesPromise(filePath)
-        .then(entryProps => {
-          if (entryProps) {
-            props.showNotification(
-              'File with the same name already exist, importing skipped!',
-              'warning',
-              true
-            );
-          } else {
-            PlatformIO.saveBinaryFilePromise(
-              filePath,
-              event.currentTarget.result,
-              true
-            )
-              .then(() => {
-                props.showNotification(
-                  'File ' + filePath + ' successfully imported.',
-                  'default',
-                  true
-                );
-                props.reflectCreateEntry(filePath, true);
-                return true;
-              })
-              .catch(error => {
-                // TODO showAlertDialog("Saving " + filePath + " failed.");
-                console.error('Save to file ' + filePath + ' failed ' + error);
-                props.showNotification(
-                  'Importing file ' + filePath + ' failed.',
-                  'error',
-                  true
-                );
-                return true;
-              });
-          }
-          return true;
-        })
-        .catch(err => {
-          console.log('Error getting properties ' + err);
-        });
-    };
-
-    if (AppConfig.isCordova) {
-      reader.readAsDataURL(file);
-    } else {
-      reader.readAsArrayBuffer(file);
-    } */
   }
 
   function getDirPath(dirPath: string) {
@@ -597,15 +519,15 @@ Do you want to continue?`)
           <ListItemText primary={i18n.t('core:directoryPropertiesTitle')} />
         </MenuItem>
       </Menu>
-      <input
-        style={{ display: 'none' }}
-        ref={input => {
-          fileInput = input;
-        }}
-        accept="*"
-        type="file"
-        multiple
-        onChange={handleFileInputChange}
+      <FileUploadContainer
+        ref={fileUploadContainerRef}
+        directoryPath={props.directoryPath}
+        onUploadProgress={props.onUploadProgress}
+        toggleUploadDialog={props.toggleUploadDialog}
+        toggleProgressDialog={props.toggleProgressDialog}
+        resetProgress={props.resetProgress}
+        reflectCreateEntries={props.reflectCreateEntries}
+        uploadFilesAPI={props.uploadFilesAPI}
       />
     </div>
   );
