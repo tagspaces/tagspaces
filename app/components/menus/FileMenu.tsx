@@ -149,7 +149,7 @@ const FileMenu = (props: Props) => {
   return (
     <div style={{ overflowY: 'hidden' }}>
       <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
-        {props.selectedEntries.length === 1 && (
+        {props.selectedEntries.length < 2 && (
           <MenuItem data-tid="fileMenuOpenFile" onClick={openFile}>
             <ListItemIcon>
               <OpenFile />
@@ -158,7 +158,7 @@ const FileMenu = (props: Props) => {
           </MenuItem>
         )}
         {!(PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb) &&
-          props.selectedEntries.length === 1 && (
+          props.selectedEntries.length < 2 && (
             <>
               <MenuItem
                 data-tid="fileMenuOpenFileNatively"
@@ -210,7 +210,7 @@ const FileMenu = (props: Props) => {
               </ListItemIcon>
               <ListItemText primary={i18n.t('core:moveCopyFile')} />
             </MenuItem>
-            {Pro && props.selectedEntries.length === 1 && (
+            {Pro && props.selectedEntries.length < 2 && (
               <MenuItem data-tid="setAsThumbTID" onClick={setFolderThumbnail}>
                 <ListItemIcon>
                   <ImageIcon />
