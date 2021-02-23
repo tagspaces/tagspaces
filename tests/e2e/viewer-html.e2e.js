@@ -11,7 +11,7 @@ import {
   createMinioLocation
 } from './location.helpers';
 import { closeOpenedFile, openCloseAboutDialog } from './general.helpers';
-import { searchEngine } from './search.spec';
+import { searchEngine } from './search.helpers';
 
 const title = 'About HTML Viewer';
 
@@ -79,4 +79,14 @@ describe('TST65 - HTML viewer [electron]', () => {
     await global.client.switchToParentFrame();
     await closeOpenedFile();
   });
+
+  it.skip('TST6504 - Open source url [Electron, manual]', async () => {});
+
+  it.skip('TST6505 - Find in document [Electron, manual]', async () => {});
+
+  it.skip('TST6506 - Change theme [Electron, manual]', async () => {});
+
+  it.skip('TST6507 - Open print dialog [Electron, manual]', async () => {});
+
+  it.skip('TST6508 - Testing embedding local content like images [Electron, manual]', async () => {});
 });

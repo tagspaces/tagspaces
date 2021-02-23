@@ -1,8 +1,15 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 import { delay, clearLocalStorage } from '../hook';
-import { searchEngine } from '../search.spec';
-import { openFile } from '../test-utils.spec';
-import { createLocation, openLocation, aboutDialogExt, defaultLocationPath, defaultLocationName, perspectiveGridTable } from '../location.e2e';
+import { searchEngine } from '../search.helpers';
+import { openFile } from '../test-utils';
+import {
+  createLocation,
+  openLocation,
+  aboutDialogExt,
+  defaultLocationPath,
+  defaultLocationName,
+  perspectiveGridTable
+} from '../location.e2e';
 
 const extButton = '/div[1]/div[2]/button';
 const firstExtButton = 'div[1]/button';
@@ -32,7 +39,7 @@ describe('TST56 - Editor Extension', () => {
     //   window.$htmlEditor.append('Opening dialog simulated');
     // });
 
-    await webview.executeJavaScript((e) => {
+    await webview.executeJavaScript(e => {
       console.log(e);
       window.$htmlEditor.append('Opening dialog simulated');
     });
@@ -76,4 +83,3 @@ describe('TST56 - Editor Extension', () => {
     //   .waitForVisible('#closeAboutDialogButton').click('#closeAboutDialogButton')
   });
 });
-

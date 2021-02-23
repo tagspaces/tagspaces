@@ -17,7 +17,7 @@ import {
   setSettings,
   doubleClickOn
 } from './general.helpers';
-import { renameFolder } from './test-utils.spec';
+import { renameFolder } from './test-utils';
 
 // export const firstFile = '/span';
 // export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
@@ -35,7 +35,7 @@ describe('TST01 - Folder management [electron]', () => {
   });
 
   // TODO minio
-  it('TST0101 - Create subfolder [TST0101,electron]', async () => {
+  it('TST0101 - Create subfolder [electron]', async () => {
     const testFolder = await createNewDirectory();
     await expectElementExist('[data-tid=fsEntryName_' + testFolder + ']');
     await doubleClickOn('[data-tid=fsEntryName_' + testFolder + ']');
@@ -47,7 +47,7 @@ describe('TST01 - Folder management [electron]', () => {
   });
 
   // TODO minio
-  it('TST0102 - Reload folder [TST0102,electron]', async () => {
+  it('TST0102 - Reload folder [electron]', async () => {
     const testFolder = await createNewDirectory();
     await doubleClickOn('[data-tid=fsEntryName_' + testFolder + ']');
     await reloadDirectory();
@@ -59,8 +59,7 @@ describe('TST01 - Folder management [electron]', () => {
     );
   });
 
-  // TODO
-  it('TST0103 - Rename folder [TST0103]', async () => {
+  it.skip('TST0103 - Rename folder [TODO]', async () => {
     const testFolder = await createNewDirectory();
     await doubleClickOn('[data-tid=fsEntryName_' + testFolder + ']');
     const newDirectoryName = await renameFolder();
@@ -74,7 +73,7 @@ describe('TST01 - Folder management [electron]', () => {
     );*/
   });
 
-  it('TST0104 - Delete empty folder [TST0104, electron]', async () => {
+  it('TST0104 - Delete empty folder [electron]', async () => {
     await setSettings('[data-tid=settingsSetUseTrashCan]');
     await global.client.pause(500);
     const testFolder = await createNewDirectory();
@@ -87,7 +86,19 @@ describe('TST01 - Folder management [electron]', () => {
     );
   });
 
-  it('TST0106 - Show folder tags [TST0106]', async () => {
+  it.skip('TST0105 - Show folder tags [Electron, TODO]', async () => {});
+
+  it.skip('TST0106 - Show folder tags [TODO]', async () => {
     // await createNewDirectory();
   });
+
+  it.skip('TST0107 - Show in file manager [Electron, manual]', async () => {});
+
+  it.skip('TST0108 - Show directory properties [Electron, TODO]', async () => {});
+
+  it.skip('TST0109 - Delete non empty folder by disabled trashcan should not be possible [Electron, TODO]', async () => {});
+
+  it.skip('TST0110 - Delete not empty folder to trashcan [Electron, TODO]', async () => {});
+
+  it.skip('TST0111 - Open parent directory [Electron, TODO]', async () => {});
 });
