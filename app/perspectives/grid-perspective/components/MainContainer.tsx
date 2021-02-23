@@ -886,6 +886,7 @@ const GridPerspective = (props: Props) => {
           showNotification={props.showNotification}
           isReadOnlyMode={props.isReadOnlyMode}
           selectedFilePath={selectedEntryPath.current}
+          selectedEntries={props.selectedEntries}
         />
       )}
       {dirContextMenuAnchorEl && (

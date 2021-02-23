@@ -19,7 +19,7 @@
     "build-web-dev": "rimraf web/dist && cross-env NODE_ENV=production webpack --config ./configs/webpack.config.web.dev.babel.js --colors",
     "build-cordova": "cross-env NODE_ENV=production webpack --config ./configs/webpack.config.cordova.prod.babel.js --colors",
     "build-cordova-dev": "cross-env NODE_ENV=development webpack --config ./configs/webpack.config.cordova.dev.babel.js --colors",
-    "dev": "cross-env START_HOT=1 node -r @babel/register ./internals/scripts/CheckPortInUse.js && cross-env START_HOT=1 yarn start-renderer-dev",
+    "dev": "yarn install-ext && cross-env START_HOT=1 node -r @babel/register ./internals/scripts/CheckPortInUse.js && cross-env START_HOT=1 yarn start-renderer-dev",
     "lint-old": "cross-env NODE_ENV=development eslint --cache --format=pretty .",
     "lint": "tsc --noEmit && eslint '*/**/*.{js,ts,tsx}'",
     "lint-fix": "yarn --silent lint --fix; exit 0",
