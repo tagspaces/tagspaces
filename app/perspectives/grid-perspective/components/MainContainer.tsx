@@ -923,17 +923,16 @@ const GridPerspective = (props: Props) => {
         isReadOnlyMode={props.isReadOnlyMode}
         perspectiveMode={true}
       />
-      {Boolean(tagContextMenuAnchorEl) && (
-        <EntryTagMenu
-          anchorEl={tagContextMenuAnchorEl}
-          open={Boolean(tagContextMenuAnchorEl)}
-          onClose={() => setTagContextMenuAnchorEl(null)}
-          selectedTag={selectedTag.current}
-          currentEntryPath={selectedEntryPath.current}
-          removeTags={props.removeTags}
-          isReadOnlyMode={props.isReadOnlyMode}
-        />
-      )}
+      {/* {Boolean(tagContextMenuAnchorEl) && ( // TODO EntryTagMenu is used in TagSelect we cannot move confirm dialog from menu */}
+      <EntryTagMenu
+        anchorEl={tagContextMenuAnchorEl}
+        open={Boolean(tagContextMenuAnchorEl)}
+        onClose={() => setTagContextMenuAnchorEl(null)}
+        selectedTag={selectedTag.current}
+        currentEntryPath={selectedEntryPath.current}
+        removeTags={props.removeTags}
+        isReadOnlyMode={props.isReadOnlyMode}
+      />
       {Boolean(sortingContextMenuAnchorEl) && (
         <SortingMenu
           open={Boolean(sortingContextMenuAnchorEl)}
