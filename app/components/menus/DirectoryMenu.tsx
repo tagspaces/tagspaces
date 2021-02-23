@@ -411,7 +411,7 @@ Do you want to continue?`)
           selectedDirectoryPath={props.directoryPath}
         />
       )}
-      {isCreateDirectoryDialogOpened && ( // TODO move dialogs from this Menu and don't include the Menu HTML always
+      {isCreateDirectoryDialogOpened && ( // TODO move dialogs in MainContainer and don't include the Menu HTML always
         <CreateDirectoryDialog
           key={'createDir' + props.directoryPath}
           open={isCreateDirectoryDialogOpened}
@@ -419,7 +419,7 @@ Do you want to continue?`)
           selectedDirectoryPath={props.directoryPath}
         />
       )}
-      {isDeleteDirectoryDialogOpened && (
+      {isDeleteDirectoryDialogOpened && ( // TODO replace with props.openDeleteFileDialog();
         <ConfirmDialog
           open={isDeleteDirectoryDialogOpened}
           onClose={handleCloseDialogs}

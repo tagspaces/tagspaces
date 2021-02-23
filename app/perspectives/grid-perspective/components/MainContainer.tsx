@@ -60,7 +60,7 @@ import SortingMenu from './SortingMenu';
 import GridOptionsMenu from './GridOptionsMenu';
 import { getLocation, Location, locationType } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-io';
-import { extractFileName, getLocationPath } from '-/utils/paths';
+import { getLocationPath } from '-/utils/paths';
 import GridPagination from '-/perspectives/grid-perspective/components/GridPagination';
 import GridSettingsDialog from '-/perspectives/grid-perspective/components/GridSettingsDialog';
 
@@ -87,7 +87,7 @@ interface Props {
   setLastSelectedEntry: (entryPath: string | null) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   addTags: () => void;
-  removeTags: () => void;
+  removeTags: (paths: Array<string>, tags: Array<Tag>) => void;
   removeAllTags: () => void;
   directoryContent: Array<FileSystemEntry>;
   moveFiles: (files: Array<string>, destination: string) => void;
@@ -486,35 +486,47 @@ const GridPerspective = (props: Props) => {
 
   const handleGridContextMenu = (event, fsEntry: FileSystemEntry) => {
     const { desktopMode, selectedEntries } = props;
+    const isEntryExist = selectedEntries.some(
+      entry => entry.uuid === fsEntry.uuid
+    );
     if (fsEntry.isFile) {
-      const isEntryExist = selectedEntries.some(
-        entry => entry.path === fsEntry.path
-      );
       if (!desktopMode) {
         if (selectedEntries && isEntryExist) {
           props.setSelectedEntries(
-            selectedEntries.filter(entry => entry.path !== fsEntry.path)
+            selectedEntries.filter(entry => entry.uuid !== fsEntry.uuid)
           ); // deselect selected entry
         } else {
           props.setSelectedEntries([...selectedEntries, fsEntry]);
         }
       } else {
-        if (!fileOperationsEnabled()) {
+        if (props.selectedEntries.length === 0 || !fileOperationsEnabled()) {
           props.setSelectedEntries([fsEntry]);
         } else if (event.ctrlKey) {
           if (!isEntryExist) {
             props.setSelectedEntries([...selectedEntries, fsEntry]);
           }
+        } else if (isEntryExist) {
+          // update selected entry
+          props.setSelectedEntries([
+            ...selectedEntries.filter(entry => entry.uuid !== fsEntry.uuid),
+            fsEntry
+          ]);
         }
         setFileContextMenuAnchorEl(event.currentTarget);
         selectedEntryPath.current = fsEntry.path;
       }
     } else {
-      if (!folderOperationsEnabled()) {
+      if (props.selectedEntries.length === 0 || !folderOperationsEnabled()) {
         props.setSelectedEntries([fsEntry]);
+      } else if (isEntryExist) {
+        // update selected entry
+        props.setSelectedEntries([
+          ...selectedEntries.filter(entry => entry.uuid !== fsEntry.uuid),
+          fsEntry
+        ]);
       }
       selectedEntryPath.current = fsEntry.path;
-      setFileContextMenuAnchorEl(event.currentTarget);
+      setDirContextMenuAnchorEl(event.currentTarget);
     }
   };
 
@@ -852,17 +864,26 @@ const GridPerspective = (props: Props) => {
           onClose={() => setIsDeleteMultipleFilesDialogOpened(false)}
           title={i18n.t('core:deleteConfirmationTitle')}
           content={i18n.t('core:deleteConfirmationContent')}
-          list={selectedFilePaths.map(path =>
-            extractFileName(path, PlatformIO.getDirSeparator())
-          )}
+          list={selectedEntries.map(fsEntry => fsEntry.name)}
           confirmCallback={result => {
             if (result && selectedEntries) {
-              selectedEntries.map(fsentry => {
-                if (fsentry.isFile) {
-                  props.deleteFile(fsentry.path);
+              const deletePromises = selectedEntries.map(fsEntry => {
+                if (fsEntry.isFile) {
+                  return props.deleteFile(fsEntry.path);
                 }
-                return true;
+                return props.deleteDirectory(fsEntry.path);
               });
+              Promise.all(deletePromises)
+                .then(delResult => {
+                  // console.debug(delResult);
+                  if (delResult.some(del => del)) {
+                    props.setSelectedEntries([]);
+                  } // TODO else { remove only deleted from setSelectedEntries}
+                  return true;
+                })
+                .catch(err => {
+                  console.warn('Deleting file failed', err);
+                });
             }
             setIsDeleteMultipleFilesDialogOpened(false);
           }}
@@ -889,20 +910,19 @@ const GridPerspective = (props: Props) => {
           selectedEntries={props.selectedEntries}
         />
       )}
-      {dirContextMenuAnchorEl && (
-        <DirectoryMenu
-          open={Boolean(dirContextMenuAnchorEl)}
-          onClose={() => setDirContextMenuAnchorEl(null)}
-          anchorEl={dirContextMenuAnchorEl}
-          directoryPath={selectedEntryPath.current}
-          loadDirectoryContent={props.loadDirectoryContent}
-          openDirectory={props.openDirectory}
-          openFsEntry={props.openFsEntry}
-          deleteDirectory={props.deleteDirectory}
-          isReadOnlyMode={props.isReadOnlyMode}
-          perspectiveMode={true}
-        />
-      )}
+      {/* {Boolean(dirContextMenuAnchorEl) && ( // todo move dialogs from DirectoryMenu */}
+      <DirectoryMenu
+        open={Boolean(dirContextMenuAnchorEl)}
+        onClose={() => setDirContextMenuAnchorEl(null)}
+        anchorEl={dirContextMenuAnchorEl}
+        directoryPath={selectedEntryPath.current}
+        loadDirectoryContent={props.loadDirectoryContent}
+        openDirectory={props.openDirectory}
+        openFsEntry={props.openFsEntry}
+        deleteDirectory={props.deleteDirectory}
+        isReadOnlyMode={props.isReadOnlyMode}
+        perspectiveMode={true}
+      />
       {Boolean(tagContextMenuAnchorEl) && (
         <EntryTagMenu
           anchorEl={tagContextMenuAnchorEl}

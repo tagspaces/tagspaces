@@ -968,7 +968,19 @@ export const actions = {
     // const entryPath =
     //  openedFiles && openedFiles.length > 0 && openedFiles[0].path;
     // updateHistory(currentLocation, directoryPath, entryPath);
-
+    /* const { selectedEntries } = getState().app;
+    if (selectedEntries.length > 0) {
+      // check and remove obsolete selectedEntries
+      const newSelectedEntries = selectedEntries.filter(
+        (entry: FileSystemEntry) =>
+          directoryContent.some(
+            (fsEntry: FileSystemEntry) => fsEntry.path === entry.path
+          )
+      );
+      if (newSelectedEntries.length !== selectedEntries.length) {
+        dispatch(actions.setSelectedEntries(newSelectedEntries));
+      }
+    } */
     dispatch(actions.hideNotifications());
     dispatch(
       actions.loadDirectorySuccessInt(
@@ -1040,7 +1052,10 @@ export const actions = {
   ) => {
     const { settings } = getState();
     const { currentDirectoryPath, openedFiles } = getState().app;
-    PlatformIO.deleteDirectoryPromise(directoryPath, settings.useTrashCan)
+    return PlatformIO.deleteDirectoryPromise(
+      directoryPath,
+      settings.useTrashCan
+    )
       .then(() => {
         if (directoryPath === currentDirectoryPath) {
           dispatch(actions.loadParentDirectoryContent());
@@ -1631,6 +1646,7 @@ export const actions = {
   ) => {
     dispatch(actions.reflectRenameEntryInt(path, newPath));
     dispatch(LocationIndexActions.reflectRenameEntry(path, newPath));
+    dispatch(actions.setSelectedEntries([]));
   },
   updateCurrentDirEntry: (path: string, entry: Object) => ({
     type: types.UPDATE_CURRENTDIR_ENTRY,
