@@ -107,8 +107,8 @@ describe('TST50 - Perspective Grid', () => {
       expect(firstFileName).toBe('note.txt');
 
       //cleanup
-      await setSettings('[data-tid=settingsSetUseTrashCan]');
-      await global.client.pause(500);
+      // await setSettings('[data-tid=settingsSetUseTrashCan]');
+      // await global.client.pause(500);
       await deleteFirstFile();
       // firstFileName = await getGridFileName(0);
       // expect(firstFileName).not.toBe('note.txt'); TODO its have note.txt from another tests

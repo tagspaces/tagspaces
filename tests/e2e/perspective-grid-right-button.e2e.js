@@ -339,14 +339,12 @@ describe('TST50** - Right button on a file', () => {
    * delete dir is not supported on minio
    */
   test('TST5035 - Delete directory (directory menu) [electron]', async () => {
-    await setSettings('[data-tid=settingsSetUseTrashCan]');
-    await global.client.pause(500);
+    // await setSettings('[data-tid=settingsSetUseTrashCan]');
+    // await global.client.pause(500);
+    await doubleClickOn(selectorFolder);
     const testFolder = await createNewDirectory('aaa');
 
-    await openContextEntryMenu(
-      perspectiveGridTable + firstFolder,
-      'deleteDirectory'
-    );
+    await openContextEntryMenu(selectorFolder, 'deleteDirectory');
     await clickOn('[data-tid=confirmDeleteDirectoryDialog]');
 
     await expectElementExist(
