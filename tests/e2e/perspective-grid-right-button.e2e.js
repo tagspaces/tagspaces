@@ -79,6 +79,7 @@ describe('TST50** - Right button on a file', () => {
     // await webViewer.waitForDisplayed();
     //await delay(5000);
     // expect(await webViewer.isDisplayed()).toBe(true);
+    await global.client.pause(500);
     await global.client.switchToFrame(webViewer);
     await global.client.pause(500);
     const iframeBody = await global.client.$('body');
