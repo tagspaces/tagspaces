@@ -727,6 +727,7 @@ export default class WebDAVIO {
     window.open(url, '_blank');
   };
 
+  resolveFilePath = (filePath: string): string => filePath;
   /**
    * Places the application window on top of the other windows
    */

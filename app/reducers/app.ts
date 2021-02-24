@@ -265,6 +265,13 @@ export default (state: any = initialState, action: any) => {
       };
     }
     case types.LOAD_DIRECTORY_SUCCESS: {
+      let directoryPath;
+      if (action.directoryPath.startsWith('./')) {
+        // relative paths
+        directoryPath = PlatformIO.resolveFilePath(action.directoryPath);
+      } else {
+        ({ directoryPath } = action);
+      }
       return {
         ...state,
         currentDirectoryEntries: action.directoryContent,
@@ -274,7 +281,7 @@ export default (state: any = initialState, action: any) => {
         currentDirectoryPerspective: action.directoryMeta
           ? action.directoryMeta.perspective
           : undefined,
-        currentDirectoryPath: action.directoryPath,
+        currentDirectoryPath: directoryPath,
         isLoading: action.showIsLoading || false
       };
     }
