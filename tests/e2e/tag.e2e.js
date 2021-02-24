@@ -112,7 +112,9 @@ describe('TST04 - Testing the tag library:', () => {
     );
     const color = await colorElem.getCSSProperty('background');
 
-    expect(color.value).toContain('rgb(0,0,0)');
+    const rgb2hex = require('rgb2hex');
+    const hex = rgb2hex(color.value);
+    expect(hex.hex).toBe('#000000'); //'rgb(0,0,0)');
     await clickOn('[data-tid=editTagGroupConfirmButton]');
 
     /*await openTagGroupMenu(
@@ -220,8 +222,9 @@ describe('TST04 - Testing the tag library:', () => {
       '[data-tid=createTagGroupBackgroundColor]'
     );
     const color = await colorElem.getCSSProperty('background');
-
-    expect(color.value).toContain('rgb(0,0,0)');
+    const rgb2hex = require('rgb2hex');
+    const hex = rgb2hex(color.value);
+    expect(hex.hex).toBe('#000000'); //'rgb(0,0,0)');
     await clickOn('[data-tid=createTagGroupCancelButton]');
 
     /* await global.client.waitForVisible('[data-tid=settings]');
