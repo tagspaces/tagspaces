@@ -37,7 +37,6 @@ import FileMenu from '-/components/menus/FileMenu';
 import DirectoryMenu from '-/components/menus/DirectoryMenu';
 import EntryTagMenu from '-/components/menus/EntryTagMenu';
 import i18n from '-/services/i18n';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
 import MoveCopyFilesDialog from '-/components/dialogs/MoveCopyFilesDialog';
 import RenameFileDialog from '-/components/dialogs/RenameFileDialog';
@@ -51,6 +50,7 @@ import {
   actions as AppActions,
   getLastSelectedEntry,
   getSelectedEntries,
+  isDeleteMultipleEntriesDialogOpened,
   isReadOnlyMode
 } from '-/reducers/app';
 import TaggingActions from '-/reducers/tagging-actions';
@@ -76,8 +76,8 @@ interface Props {
   openFsEntry: (fsEntry: FileSystemEntry) => void;
   openNextFile: () => any;
   openPrevFile: () => any;
-  deleteFile: (path: string) => void;
-  deleteDirectory: (path: string) => void;
+  // deleteFile: (path: string) => void;
+  // deleteDirectory: (path: string) => void;
   loadDirectoryContent: (path: string) => void;
   openDirectory: (path: string) => void;
   showInFileManager: (path: string) => void;
@@ -99,6 +99,7 @@ interface Props {
   ) => void;
   currentLocation: Location;
   isDesktopMode: boolean;
+  toggleDeleteMultipleEntriesDialog: () => void;
 }
 
 /* interface State {
@@ -197,10 +198,6 @@ const GridPerspective = (props: Props) => {
       ? settings.showTags
       : true
   );
-  const [
-    isDeleteMultipleFilesDialogOpened,
-    setIsDeleteMultipleFilesDialogOpened
-  ] = useState<boolean>(false);
   const [
     isMoveCopyFilesDialogOpened,
     setIsMoveCopyFilesDialogOpened
@@ -578,7 +575,7 @@ const GridPerspective = (props: Props) => {
   };
 
   const openDeleteFileDialog = () => {
-    setIsDeleteMultipleFilesDialogOpened(true);
+    props.toggleDeleteMultipleEntriesDialog();
   };
 
   const openAddRemoveTagsDialog = () => {
@@ -672,7 +669,12 @@ const GridPerspective = (props: Props) => {
     }
 
     return (
-      <div style={{ position: 'relative' }} key={key}>
+      <div
+        style={{
+          position: 'relative'
+        }}
+        key={key}
+      >
         <TargetMoveFileBox
           // @ts-ignore
           accepts={[DragItemTypes.FILE]}
@@ -858,40 +860,7 @@ const GridPerspective = (props: Props) => {
           selectedFilePath={selectedEntryPath.current}
         />
       )}
-      {isDeleteMultipleFilesDialogOpened && (
-        <ConfirmDialog
-          open={isDeleteMultipleFilesDialogOpened}
-          onClose={() => setIsDeleteMultipleFilesDialogOpened(false)}
-          title={i18n.t('core:deleteConfirmationTitle')}
-          content={i18n.t('core:deleteConfirmationContent')}
-          list={selectedEntries.map(fsEntry => fsEntry.name)}
-          confirmCallback={result => {
-            if (result && selectedEntries) {
-              const deletePromises = selectedEntries.map(fsEntry => {
-                if (fsEntry.isFile) {
-                  return props.deleteFile(fsEntry.path);
-                }
-                return props.deleteDirectory(fsEntry.path);
-              });
-              Promise.all(deletePromises)
-                .then(delResult => {
-                  // console.debug(delResult);
-                  if (delResult.some(del => del)) {
-                    props.setSelectedEntries([]);
-                  } // TODO else { remove only deleted from setSelectedEntries}
-                  return true;
-                })
-                .catch(err => {
-                  console.warn('Deleting file failed', err);
-                });
-            }
-            setIsDeleteMultipleFilesDialogOpened(false);
-          }}
-          cancelDialogTID="cancelDeleteFileDialog"
-          confirmDialogTID="confirmDeleteFileDialog"
-          confirmDialogContentTID="confirmDeleteDialogContent"
-        />
-      )}
+
       {Boolean(fileContextMenuAnchorEl) && (
         <FileMenu
           anchorEl={fileContextMenuAnchorEl}
@@ -919,7 +888,6 @@ const GridPerspective = (props: Props) => {
         loadDirectoryContent={props.loadDirectoryContent}
         openDirectory={props.openDirectory}
         openFsEntry={props.openFsEntry}
-        deleteDirectory={props.deleteDirectory}
         isReadOnlyMode={props.isReadOnlyMode}
         perspectiveMode={true}
       />
@@ -976,6 +944,8 @@ function mapActionCreatorsToProps(dispatch) {
       openURLExternally: AppActions.openURLExternally,
       openNextFile: AppActions.openNextFile,
       openPrevFile: AppActions.openPrevFile,
+      toggleDeleteMultipleEntriesDialog:
+        AppActions.toggleDeleteMultipleEntriesDialog,
       addTags: TaggingActions.addTags
     },
     dispatch
@@ -991,7 +961,10 @@ function mapStateToProps(state) {
     selectedEntries: getSelectedEntries(state),
     keyBindings: getKeyBindingObject(state),
     currentLocation: getLocation(state, state.app.currentLocationId),
-    isDesktopMode: isDesktopMode(state)
+    isDesktopMode: isDesktopMode(state),
+    isDeleteMultipleEntriesDialogOpened: isDeleteMultipleEntriesDialogOpened(
+      state
+    )
   };
 }
 
