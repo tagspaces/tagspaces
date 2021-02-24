@@ -346,7 +346,7 @@ describe('TST50** - Right button on a file', () => {
     const testFolder = await createNewDirectory('aaa');
 
     await openContextEntryMenu(selectorFolder, 'deleteDirectory');
-    await clickOn('[data-tid=confirmDeleteDirectoryDialog]');
+    await clickOn('[data-tid=confirmDeleteFileDialog]');
 
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
@@ -387,7 +387,7 @@ describe('TST50** - Right button on a file', () => {
   });
 
   test('TST5038 - Return directory back [web,minio,electron]', async () => {
-    await expectElementExist(selectorFolder);
+    // await expectElementExist(selectorFolder);
 
     //Open folder
     await doubleClickOn(selectorFolder);
