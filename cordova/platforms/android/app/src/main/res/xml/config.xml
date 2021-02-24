@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="org.tagspaces.mobile" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="org.tagspaces.mobile" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <feature name="Filebrowser">
         <param name="android-package" value="com.ourcodeworld.plugins.filebrowser.Filebrowser" />
     </feature>
@@ -36,10 +36,10 @@
     <name>TagSpaces</name>
     <description>
 		Offline file organizer and browser with tagging support.
-    </description>
+	</description>
     <author email="contact@tagspaces.org" href="https://tagspaces.org">
-        TagSpaces UG (haftungsbeschraenkt)
-    </author>
+		TagSpaces UG (haftungsbeschraenkt)
+	</author>
     <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
@@ -54,6 +54,12 @@
     <icon density="xhdpi" src="res/icon/android/mipmap-xhdpi/ic_launcher.png" />
     <icon density="xxhdpi" src="res/icon/android/mipmap-xxhdpi/ic_launcher.png" />
     <icon density="xxxhdpi" src="res/icon/android/mipmap-xxxhdpi/ic_launcher.png" />
+    <config-file parent="/manifest/application" target="AndroidManifest.xml">
+        <provider android:authorities="${applicationId}.provider" android:exported="false" android:grantUriPermissions="true" android:name="androidx.core.content.FileProvider">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/mnk_file_path" />
+        </provider>
+    </config-file>
+    <resource-file src="res/android/mnk_file_path.xml" target="app/src/main/res/xml/mnk_file_path.xml" />
     <preference name="loglevel" value="DEBUG" />
     <preference name="KeepRunning" value="true" />
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />

@@ -1,43 +1,55 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="org.tagspaces.mobile" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>TagSpaces</name>
-    <description>
+<widget id="org.tagspaces.mobile" version="1.0.0" xmlns="http://www.w3.org/ns/widgets"
+		xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+	<name>TagSpaces</name>
+	<description>
 		Offline file organizer and browser with tagging support.
-    </description>
-    <author email="contact@tagspaces.org" href="https://tagspaces.org">
-        TagSpaces UG (haftungsbeschraenkt)
-    </author>
-    <content src="index.html" />
-    <access origin="*" />
-    <allow-intent href="http://*/*" />
-    <allow-intent href="https://*/*" />
-    <allow-intent href="tel:*" />
-    <allow-intent href="sms:*" />
-    <allow-intent href="mailto:*" />
-    <allow-intent href="geo:*" />
-    <platform name="android">
-        <allow-intent href="market:*" />
-        <preference name="android-minSdkVersion" value="22" />
-        <preference name="android-targetSdkVersion" value="29" />
-		<preference name="AndroidXEnabled" value="true" />
-        <icon density="mdpi" src="res/icon/android/mipmap-mdpi/ic_launcher.png" />
-        <icon density="hdpi" src="res/icon/android/mipmap-hdpi/ic_launcher.png" />
-        <icon density="xhdpi" src="res/icon/android/mipmap-xhdpi/ic_launcher.png" />
-        <icon density="xxhdpi" src="res/icon/android/mipmap-xxhdpi/ic_launcher.png" />
-        <icon density="xxxhdpi" src="res/icon/android/mipmap-xxxhdpi/ic_launcher.png" />
-    </platform>
-    <platform name="ios">
-        <!--<preference name="NativeXHRLogging" value="full" />
-        <preference name="allowFileAccessFromFileURLs" value="true" />-->
-        <allow-intent href="itms:*" />
-        <allow-intent href="itms-apps:*" />
-        <preference name="UseSwiftLanguageVersion" value="5" />
-    </platform>
-    <preference name="AndroidPersistentFileLocation" value="Compatibility" />
-    <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root" />
-    <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,cache,cache-external,assets,root" />
-    <plugin name="cordova-plugin-device" spec="^2.0.2" />
-    <plugin name="cordova-plugin-whitelist" spec="^1.3.3" />
-    <plugin name="cordova-plugin-background-mode" spec="^0.7.3" />
-    <plugin name="cordova-plugin-file" spec="6.0.2" />
+	</description>
+	<author email="contact@tagspaces.org" href="https://tagspaces.org">
+		TagSpaces UG (haftungsbeschraenkt)
+	</author>
+	<content src="index.html"/>
+	<access origin="*"/>
+	<allow-intent href="http://*/*"/>
+	<allow-intent href="https://*/*"/>
+	<allow-intent href="tel:*"/>
+	<allow-intent href="sms:*"/>
+	<allow-intent href="mailto:*"/>
+	<allow-intent href="geo:*"/>
+	<platform name="android">
+		<allow-intent href="market:*"/>
+		<preference name="android-minSdkVersion" value="22"/>
+		<preference name="android-targetSdkVersion" value="29"/>
+		<preference name="AndroidXEnabled" value="true"/>
+		<icon density="mdpi" src="res/icon/android/mipmap-mdpi/ic_launcher.png"/>
+		<icon density="hdpi" src="res/icon/android/mipmap-hdpi/ic_launcher.png"/>
+		<icon density="xhdpi" src="res/icon/android/mipmap-xhdpi/ic_launcher.png"/>
+		<icon density="xxhdpi" src="res/icon/android/mipmap-xxhdpi/ic_launcher.png"/>
+		<icon density="xxxhdpi" src="res/icon/android/mipmap-xxxhdpi/ic_launcher.png"/>
+		<config-file parent="/manifest/application" target="AndroidManifest.xml">
+			<provider android:name="android.support.v4.content.FileProvider"
+					  android:authorities="${applicationId}.provider"
+					  android:exported="false"
+					  android:grantUriPermissions="true">
+				<meta-data android:name="android.support.FILE_PROVIDER_PATHS"
+						   android:resource="@xml/mnk_file_path"/>
+			</provider>
+		</config-file>
+		<resource-file src="res/android/mnk_file_path.xml" target="app/src/main/res/xml/mnk_file_path.xml"/>
+	</platform>
+	<platform name="ios">
+		<!--<preference name="NativeXHRLogging" value="full" />
+		<preference name="allowFileAccessFromFileURLs" value="true" />-->
+		<allow-intent href="itms:*"/>
+		<allow-intent href="itms-apps:*"/>
+		<preference name="UseSwiftLanguageVersion" value="5"/>
+	</platform>
+	<preference name="AndroidPersistentFileLocation" value="Compatibility"/>
+	<preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root"/>
+	<preference name="AndroidExtraFilesystems"
+				value="files,files-external,documents,sdcard,cache,cache-external,assets,root"/>
+	<plugin name="cordova-plugin-device" spec="^2.0.2"/>
+	<plugin name="cordova-plugin-whitelist" spec="^1.3.3"/>
+	<plugin name="cordova-plugin-background-mode" spec="^0.7.3"/>
+	<plugin name="cordova-plugin-file" spec="6.0.2"/>
 </widget>

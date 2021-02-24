@@ -105,6 +105,9 @@
       "PHOTO_LIBRARY_ADD_USAGE_DESCRIPTION": "This app requires photo library access to function properly.",
       "PHOTO_LIBRARY_USAGE_DESCRIPTION": "This app requires photo library access to function properly.",
       "PACKAGE_NAME": "org.tagspaces.mobile"
+    },
+    "cordova-plugin-androidx": {
+      "PACKAGE_NAME": "org.tagspaces.mobile"
     }
   },
   "dependent_plugins": {},
@@ -382,6 +385,7 @@
     "cordova-plugin-file-opener2": "3.0.5",
     "cordova-plugin-whitelist": "1.3.4",
     "es6-promise-plugin": "4.2.2",
-    "cordova-plugin-x-socialsharing": "6.0.3"
+    "cordova-plugin-x-socialsharing": "6.0.3",
+    "cordova-plugin-androidx": "3.0.0"
   }
 }

@@ -273,6 +273,7 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
     "cordova-plugin-file-opener2": "3.0.5",
     "cordova-plugin-whitelist": "1.3.4",
     "es6-promise-plugin": "4.2.2",
-    "cordova-plugin-x-socialsharing": "6.0.3"
+    "cordova-plugin-x-socialsharing": "6.0.3",
+    "cordova-plugin-androidx": "3.0.0"
   };
 });
