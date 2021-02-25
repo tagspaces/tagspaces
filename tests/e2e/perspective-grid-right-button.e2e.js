@@ -79,6 +79,7 @@ describe('TST50** - Right button on a file', () => {
     // await webViewer.waitForDisplayed();
     //await delay(5000);
     // expect(await webViewer.isDisplayed()).toBe(true);
+    await global.client.pause(500);
     await global.client.switchToFrame(webViewer);
     await global.client.pause(500);
     const iframeBody = await global.client.$('body');
@@ -198,7 +199,7 @@ describe('TST50** - Right button on a file', () => {
    * TODO web sometimes: stale element reference: stale element reference: element is not attached to the page document
    * TODO minio sometimes: stale element reference: stale element reference: element is not attached to the page document
    */
-  test('TST5025 - Add - Remove tags (file menu) [electron]', async () => {
+  test('TST5025 - Add - Remove tags (file menu) [web,electron]', async () => {
     await searchEngine('desktop');
     const tags = [testTagName, testTagName + '2'];
     // select file
@@ -339,15 +340,13 @@ describe('TST50** - Right button on a file', () => {
    * delete dir is not supported on minio
    */
   test('TST5035 - Delete directory (directory menu) [electron]', async () => {
-    await setSettings('[data-tid=settingsSetUseTrashCan]');
-    await global.client.pause(500);
+    // await setSettings('[data-tid=settingsSetUseTrashCan]');
+    // await global.client.pause(500);
+    await doubleClickOn(selectorFolder);
     const testFolder = await createNewDirectory('aaa');
 
-    await openContextEntryMenu(
-      perspectiveGridTable + firstFolder,
-      'deleteDirectory'
-    );
-    await clickOn('[data-tid=confirmDeleteDirectoryDialog]');
+    await openContextEntryMenu(selectorFolder, 'deleteDirectory');
+    await clickOn('[data-tid=confirmDeleteFileDialog]');
 
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
@@ -388,7 +387,7 @@ describe('TST50** - Right button on a file', () => {
   });
 
   test('TST5038 - Return directory back [web,minio,electron]', async () => {
-    await expectElementExist(selectorFolder);
+    // await expectElementExist(selectorFolder);
 
     //Open folder
     await doubleClickOn(selectorFolder);

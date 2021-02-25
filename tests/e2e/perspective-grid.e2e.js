@@ -78,24 +78,22 @@ describe('TST50 - Perspective Grid', () => {
     test('TST10** - Sort by name [web,minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortByName]');
       await global.client.pause(500); // TODO
-      const firstFileName = await getGridFileName(0);
-      expect(firstFileName).toBe('sample_exif.jpg');
-      // asc/desc
+      let firstFileName = await getGridFileName(0);
+      expect(firstFileName).toBe('sample.bmp');
+      // ASC
       await clickOn('[data-tid=gridPerspectiveSortMenu]');
+      await global.client.pause(500);
       await clickOn('[data-tid=gridPerspectiveSortByName]');
+      await global.client.pause(500); // TODO
+      firstFileName = await getGridFileName(0);
+      expect(firstFileName).toBe('sample_exif.jpg');
     });
 
-    /**
-     * TODO web https://trello.com/c/b2isDaUc/533-switch-asc-desc-while-sort-by-options
-     */
     test('TST10** - Sort by size [web,minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortBySize]');
       await global.client.pause(500); // TODO
       const firstFileName = await getGridFileName(0);
       expect(firstFileName).toBe('sample.ogv');
-      // asc/desc
-      await clickOn('[data-tid=gridPerspectiveSortMenu]');
-      await clickOn('[data-tid=gridPerspectiveSortBySize]');
     });
 
     test('TST10** - Sort by date [web,minio,electron]', async () => {
@@ -107,29 +105,20 @@ describe('TST50 - Perspective Grid', () => {
       let firstFileName = await getGridFileName(0);
 
       expect(firstFileName).toBe('note.txt');
-      // asc/desc
-      await clickOn('[data-tid=gridPerspectiveSortMenu]');
-      await clickOn('[data-tid=gridPerspectiveSortByDate]');
 
       //cleanup
-      await setSettings('[data-tid=settingsSetUseTrashCan]');
-      await global.client.pause(500);
+      // await setSettings('[data-tid=settingsSetUseTrashCan]');
+      // await global.client.pause(500);
       await deleteFirstFile();
       // firstFileName = await getGridFileName(0);
       // expect(firstFileName).not.toBe('note.txt'); TODO its have note.txt from another tests
     });
 
-    /**
-     * TODO web https://trello.com/c/b2isDaUc/533-switch-asc-desc-while-sort-by-options
-     */
     test('TST10** - Sort by extension [web,minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortByExt]');
       await global.client.pause(1000); // TODO
       const firstFileName = await getGridFileName(0);
       expect(firstFileName).toBe('sample.zip');
-      // asc/desc
-      await clickOn('[data-tid=gridPerspectiveSortMenu]');
-      await clickOn('[data-tid=gridPerspectiveSortByExt]');
     });
 
     test('TST10** - Sort by tags [web,minio,electron]', async () => {
@@ -137,9 +126,6 @@ describe('TST50 - Perspective Grid', () => {
       await global.client.pause(1000); // TODO
       const firstFileName = await getGridFileName(0);
       expect(firstFileName).toBe('sample_exif.jpg');
-      // asc/desc
-      await clickOn('[data-tid=gridPerspectiveSortMenu]');
-      await clickOn('[data-tid=gridPerspectiveSortByFirstTag]');
     });
   });
 

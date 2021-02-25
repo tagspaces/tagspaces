@@ -51,12 +51,7 @@ import { normalizePath, extractShortDirectoryName } from '-/utils/paths';
 import PlatformIO from '../services/platform-io';
 import LoadingLazy from '../components/LoadingLazy';
 import { Pro } from '../pro';
-import { savePerspective } from '-/utils/metaoperations';
-import {
-  enhanceOpenedEntry,
-  FileSystemEntry,
-  FileSystemEntryMeta
-} from '-/services/utils-io';
+import { enhanceOpenedEntry, FileSystemEntry } from '-/services/utils-io';
 import AppConfig from '-/config';
 
 const GridPerspective = React.lazy(() =>
@@ -205,12 +200,12 @@ interface Props {
   editTagForEntry: () => void;
   openFileNatively: (path: string) => void;
   toggleCreateFileDialog: () => void;
-  deleteFile: () => void;
+  // deleteFile: () => void;
   renameFile: () => void;
   openDirectory: () => void;
   showInFileManager: () => void;
   openFsEntry: (fsEntry: FileSystemEntry) => void;
-  deleteDirectory: (path: string) => void;
+  // deleteDirectory: (path: string) => void;
   reflectCreateEntry: (path: string, isFile: boolean) => void;
   loadDirectoryContent: (path: string) => void;
   loadParentDirectoryContent: () => void;
@@ -397,7 +392,7 @@ const FolderContainer = (props: Props) => {
           loadDirectoryContent={props.loadDirectoryContent}
           openFsEntry={props.openFsEntry}
           loadParentDirectoryContent={props.loadParentDirectoryContent}
-          deleteFile={props.deleteFile}
+          // deleteFile={props.deleteFile}
           renameFile={props.renameFile}
           openDirectory={props.openDirectory}
           showInFileManager={props.showInFileManager}
@@ -405,7 +400,7 @@ const FolderContainer = (props: Props) => {
           setLastSelectedEntry={props.setLastSelectedEntry}
           addTags={props.addTags}
           editTagForEntry={props.editTagForEntry}
-          deleteDirectory={props.deleteDirectory}
+          // deleteDirectory={props.deleteDirectory}
           removeTags={props.removeTags}
           removeAllTags={props.removeAllTags}
           windowWidth={props.windowWidth}
@@ -420,7 +415,7 @@ const FolderContainer = (props: Props) => {
         loadDirectoryContent={props.loadDirectoryContent}
         openFsEntry={props.openFsEntry}
         loadParentDirectoryContent={props.loadParentDirectoryContent}
-        deleteFile={props.deleteFile}
+        // deleteFile={props.deleteFile}
         renameFile={props.renameFile}
         openDirectory={props.openDirectory}
         showInFileManager={props.showInFileManager}
@@ -428,7 +423,7 @@ const FolderContainer = (props: Props) => {
         setLastSelectedEntry={props.setLastSelectedEntry}
         addTags={props.addTags}
         editTagForEntry={props.editTagForEntry}
-        deleteDirectory={props.deleteDirectory}
+        // deleteDirectory={props.deleteDirectory}
         removeTags={props.removeTags}
         removeAllTags={props.removeAllTags}
         windowWidth={props.windowWidth}
@@ -551,7 +546,6 @@ const FolderContainer = (props: Props) => {
                     reflectCreateEntry={props.reflectCreateEntry}
                     openFsEntry={props.openFsEntry}
                     toggleCreateFileDialog={props.toggleCreateFileDialog}
-                    deleteDirectory={props.deleteDirectory}
                     switchPerspective={switchPerspective}
                     isReadOnlyMode={props.isReadOnlyMode}
                   />
@@ -596,12 +590,12 @@ function mapActionCreatorsToProps(dispatch) {
       editTagForEntry: TaggingActions.editTagForEntry,
       openFileNatively: AppActions.openFileNatively,
       toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
-      deleteFile: AppActions.deleteFile,
+      // deleteFile: AppActions.deleteFile,
       renameFile: AppActions.renameFile,
       openDirectory: AppActions.openDirectory,
       showInFileManager: AppActions.showInFileManager,
       openFsEntry: AppActions.openFsEntry,
-      deleteDirectory: AppActions.deleteDirectory,
+      // deleteDirectory: AppActions.deleteDirectory,
       reflectCreateEntry: AppActions.reflectCreateEntry,
       loadDirectoryContent: AppActions.loadDirectoryContent,
       loadParentDirectoryContent: AppActions.loadParentDirectoryContent,

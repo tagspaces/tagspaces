@@ -58,6 +58,7 @@ interface Props {
   ) => void;
   selectedFilePath?: string;
   isReadOnlyMode: boolean;
+  selectedEntries: Array<any>;
 }
 
 const FileMenu = (props: Props) => {
@@ -148,37 +149,40 @@ const FileMenu = (props: Props) => {
   return (
     <div style={{ overflowY: 'hidden' }}>
       <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
-        <MenuItem data-tid="fileMenuOpenFile" onClick={openFile}>
-          <ListItemIcon>
-            <OpenFile />
-          </ListItemIcon>
-          <ListItemText primary={i18n.t('core:openFile')} />
-        </MenuItem>
-        {!(PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb) && (
-          <div>
-            <MenuItem
-              data-tid="fileMenuOpenFileNatively"
-              onClick={openFileNatively}
-            >
-              <ListItemIcon>
-                <OpenFileNatively />
-              </ListItemIcon>
-              <ListItemText primary={i18n.t('core:openFileNatively')} />
-            </MenuItem>
-            <MenuItem
-              data-tid="fileMenuOpenContainingFolder"
-              onClick={showInFileManager}
-            >
-              <ListItemIcon>
-                <OpenContainingFolder />
-              </ListItemIcon>
-              <ListItemText primary={i18n.t('core:showInFileManager')} />
-            </MenuItem>
-          </div>
+        {props.selectedEntries.length < 2 && (
+          <MenuItem data-tid="fileMenuOpenFile" onClick={openFile}>
+            <ListItemIcon>
+              <OpenFile />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:openFile')} />
+          </MenuItem>
         )}
+        {!(PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb) &&
+          props.selectedEntries.length < 2 && (
+            <>
+              <MenuItem
+                data-tid="fileMenuOpenFileNatively"
+                onClick={openFileNatively}
+              >
+                <ListItemIcon>
+                  <OpenFileNatively />
+                </ListItemIcon>
+                <ListItemText primary={i18n.t('core:openFileNatively')} />
+              </MenuItem>
+              <MenuItem
+                data-tid="fileMenuOpenContainingFolder"
+                onClick={showInFileManager}
+              >
+                <ListItemIcon>
+                  <OpenContainingFolder />
+                </ListItemIcon>
+                <ListItemText primary={i18n.t('core:showInFileManager')} />
+              </MenuItem>
+              <Divider />
+            </>
+          )}
         {!props.isReadOnlyMode && (
-          <div>
-            <Divider />
+          <>
             <MenuItem
               data-tid="fileMenuAddRemoveTags"
               onClick={showAddRemoveTagsDialog}
@@ -206,7 +210,7 @@ const FileMenu = (props: Props) => {
               </ListItemIcon>
               <ListItemText primary={i18n.t('core:moveCopyFile')} />
             </MenuItem>
-            {Pro && (
+            {Pro && props.selectedEntries.length < 2 && (
               <MenuItem data-tid="setAsThumbTID" onClick={setFolderThumbnail}>
                 <ListItemIcon>
                   <ImageIcon />
@@ -223,7 +227,7 @@ const FileMenu = (props: Props) => {
               </ListItemIcon>
               <ListItemText primary={i18n.t('core:deleteEntry')} />
             </MenuItem>
-          </div>
+          </>
         )}
       </Menu>
     </div>

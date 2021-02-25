@@ -587,7 +587,7 @@ export async function deleteDirectory() {
   await deleteDirectory.waitForDisplayed();
   await delay(500);
   await deleteDirectory.click();*/
-  await clickOn('[data-tid=confirmDeleteDirectoryDialog]');
+  await clickOn('[data-tid=confirmDeleteFileDialog]');
   await waitForNotification();
   /*const confirmDeleteDirectory = await global.client.$(
     '[data-tid=confirmDeleteDirectoryDialog]'

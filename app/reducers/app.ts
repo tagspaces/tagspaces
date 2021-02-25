@@ -109,7 +109,9 @@ export const types = {
   TOGGLE_SETTINGS_DIALOG: 'APP/TOGGLE_SETTINGS_DIALOG',
   TOGGLE_CREATE_DIRECTORY_DIALOG: 'APP/TOGGLE_CREATE_DIRECTORY_DIALOG',
   TOGGLE_CREATE_FILE_DIALOG: 'APP/TOGGLE_CREATE_FILE_DIALOG',
-  TOGGLE_SELECT_DIRECTORY_DIALOG: 'APP/TOGGLE_SELECT_DIRECTORY_DIALOG',
+  TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG:
+    'APP/TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG',
+  // TOGGLE_SELECT_DIRECTORY_DIALOG: 'APP/TOGGLE_SELECT_DIRECTORY_DIALOG',
   TOGGLE_UPLOAD_DIALOG: 'APP/TOGGLE_UPLOAD_DIALOG',
   CLEAR_UPLOAD_DIALOG: 'APP/CLEAR_UPLOAD_DIALOG',
   TOGGLE_PROGRESS_DIALOG: 'APP/TOGGLE_PROGRESS_DIALOG',
@@ -349,6 +351,12 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         createFileDialogOpened: !state.createFileDialogOpened
+      };
+    }
+    case types.TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG: {
+      return {
+        ...state,
+        deleteMultipleEntriesDialogOpened: !state.deleteMultipleEntriesDialogOpened
       };
     }
     case types.TOGGLE_LICENSE_DIALOG: {
@@ -852,6 +860,9 @@ export const actions = {
     type: types.TOGGLE_CREATE_DIRECTORY_DIALOG
   }),
   toggleCreateFileDialog: () => ({ type: types.TOGGLE_CREATE_FILE_DIALOG }),
+  toggleDeleteMultipleEntriesDialog: () => ({
+    type: types.TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG
+  }),
   toggleUploadDialog: () => ({
     type: types.TOGGLE_UPLOAD_DIALOG
   }),
@@ -966,7 +977,7 @@ export const actions = {
     directoryPath: string,
     directoryContent: Array<Object>,
     directoryMeta?: FileSystemEntryMeta
-  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
+  ) => (dispatch: (actions: Object) => void) => {
     // const currentLocation: Location = getLocation(
     //  getState(),
     //  getState().app.currentLocationId
@@ -975,7 +986,19 @@ export const actions = {
     // const entryPath =
     //  openedFiles && openedFiles.length > 0 && openedFiles[0].path;
     // updateHistory(currentLocation, directoryPath, entryPath);
-
+    /* const { selectedEntries } = getState().app;
+    if (selectedEntries.length > 0) {
+      // check and remove obsolete selectedEntries
+      const newSelectedEntries = selectedEntries.filter(
+        (entry: FileSystemEntry) =>
+          directoryContent.some(
+            (fsEntry: FileSystemEntry) => fsEntry.path === entry.path
+          )
+      );
+      if (newSelectedEntries.length !== selectedEntries.length) {
+        dispatch(actions.setSelectedEntries(newSelectedEntries));
+      }
+    } */
     dispatch(actions.hideNotifications());
     dispatch(
       actions.loadDirectorySuccessInt(
@@ -1047,7 +1070,10 @@ export const actions = {
   ) => {
     const { settings } = getState();
     const { currentDirectoryPath, openedFiles } = getState().app;
-    PlatformIO.deleteDirectoryPromise(directoryPath, settings.useTrashCan)
+    return PlatformIO.deleteDirectoryPromise(
+      directoryPath,
+      settings.useTrashCan
+    )
       .then(() => {
         if (directoryPath === currentDirectoryPath) {
           dispatch(actions.loadParentDirectoryContent());
@@ -1638,6 +1664,7 @@ export const actions = {
   ) => {
     dispatch(actions.reflectRenameEntryInt(path, newPath));
     dispatch(LocationIndexActions.reflectRenameEntry(path, newPath));
+    dispatch(actions.setSelectedEntries([]));
   },
   updateCurrentDirEntry: (path: string, entry: Object) => ({
     type: types.UPDATE_CURRENTDIR_ENTRY,
@@ -2013,6 +2040,8 @@ export const isCreateDirectoryOpened = (state: any) =>
   state.app.createDirectoryDialogOpened;
 export const isCreateFileDialogOpened = (state: any) =>
   state.app.createFileDialogOpened;
+export const isDeleteMultipleEntriesDialogOpened = (state: any) =>
+  state.app.deleteMultipleEntriesDialogOpened;
 export const isUploadDialogOpened = (state: any) =>
   state.app.uploadDialogOpened;
 export const isOpenLinkDialogOpened = (state: any) =>
