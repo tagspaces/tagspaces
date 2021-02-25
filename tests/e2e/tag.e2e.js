@@ -112,28 +112,10 @@ describe('TST04 - Testing the tag library:', () => {
     );
     const color = await colorElem.getCSSProperty('background');
 
-    expect(color.value).toContain('rgb(0,0,0)');
+    const rgb2hex = require('rgb2hex');
+    const hex = rgb2hex(color.value);
+    expect(hex.hex).toBe('#000000'); //'rgb(0,0,0)');
     await clickOn('[data-tid=editTagGroupConfirmButton]');
-
-    /*await openTagGroupMenu(
-      testGroup
-    );
-    await delay(500);
-    await addTag(newTagName);
-    const style = await global.client.getAttribute(
-      '//button[contains(., "' + newTagName + '")]',
-      'style'
-    );
-    await delay(500);
-    expect(style).toContain('rgb(208, 107, 100)');*/
-    // select color from ColorChoosier Dialog
-    /*await global.client.click(
-      '/html/body/div[18]/div/div[2]/div[2]/div/div[4]/div[4]/span/div'
-    ); // TODO xpath is not accepted*/
-    // modal confirmation
-    /*await global.client.click(
-      '/html/body/div[18]/div/div[2]/div[3]/div[2]/button'
-    );*/
   });
 
   it('TST0405 - Should add tag to a tag group [web,minio,electron]', async () => {
@@ -220,8 +202,9 @@ describe('TST04 - Testing the tag library:', () => {
       '[data-tid=createTagGroupBackgroundColor]'
     );
     const color = await colorElem.getCSSProperty('background');
-
-    expect(color.value).toContain('rgb(0,0,0)');
+    const rgb2hex = require('rgb2hex');
+    const hex = rgb2hex(color.value);
+    expect(hex.hex).toBe('#000000'); //'rgb(0,0,0)');
     await clickOn('[data-tid=createTagGroupCancelButton]');
 
     /* await global.client.waitForVisible('[data-tid=settings]');
