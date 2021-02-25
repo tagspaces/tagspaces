@@ -495,11 +495,7 @@ const actions = {
     getState: () => any
   ) => {
     const { settings } = getState();
-    const tagTitlesForRemoving = [];
-    tags.map(tag => {
-      tagTitlesForRemoving.push(tag.title);
-      return true;
-    });
+    const tagTitlesForRemoving = tags.map(tag => tag.title);
     loadMetaDataPromise(path)
       .then(fsEntryMeta => {
         const newTags = [];
@@ -517,12 +513,15 @@ const actions = {
           .then(() => {
             // TODO rethink this updateCurrentDirEntry and not need for KanBan
             dispatch(AppActions.reflectUpdateSidecarTags(path, newTags));
-            dispatch(
-              AppActions.updateOpenedFile(path, {
-                tags: newTags,
-                changed: true
-              })
-            );
+            const { openedFiles } = getState().app;
+            if (openedFiles.find(obj => obj.path === path)) {
+              dispatch(
+                AppActions.updateOpenedFile(path, {
+                  tags: newTags,
+                  changed: true
+                })
+              );
+            }
             removeTagsFromFilename();
             return true;
           })
