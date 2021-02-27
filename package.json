@@ -41,6 +41,8 @@
     "package-ci": "yarn postinstall && yarn build && electron-builder --publish always",
     "package-mac": "electron-builder --mac --x64 --config resources/builder.json",
     "package-mac-pro": "electron-builder --mac --x64 --config extensions/tagspacespro/resources/builder-pro.json",
+    "package-mac-arm64": "electron-builder --mac --arm64 --config resources/builder.json",
+    "package-mac-arm64-pro": "electron-builder --mac --arm64 --config extensions/tagspacespro/resources/builder-pro.json",
     "package-win": "electron-builder --win --x64 --config resources/builder.json",
     "package-win-pro": "electron-builder --win --x64 --config extensions/tagspacespro/resources/builder-pro.json",
     "package-linux": "electron-builder --linux --config resources/builder.json",
