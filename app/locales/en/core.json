@@ -518,5 +518,6 @@
   "toggleMapTheme": "Toggle map theme",
   "pauseSlideShow": "pauseSlideShow",
   "startSlideShow": "startSlideShow",
+  "thumbAlreadyExists": "Thumbnail for '{{directoryName}}' already exists, do you want to override it?",
   "-": "-"
 }

@@ -28,6 +28,7 @@ import {
   getMetaFileLocationForFile,
   getMetaFileLocationForDir,
   extractContainingDirectoryPath,
+  extractDirectoryName,
   getThumbFileLocationForFile,
   getThumbFileLocationForDirectory
 } from '-/utils/paths';
@@ -873,13 +874,17 @@ export function setFolderThumbnailPromise(filePath: string): Promise<string> {
     filePath,
     PlatformIO.getDirSeparator()
   );
+  const directoryName = extractDirectoryName(
+    directoryPath,
+    PlatformIO.getDirSeparator()
+  );
   return PlatformIO.copyFilePromise(
     getThumbFileLocationForFile(filePath, PlatformIO.getDirSeparator()),
     getThumbFileLocationForDirectory(
       directoryPath,
       PlatformIO.getDirSeparator()
     ),
-    'Thumbnail for ' + directoryPath + ' exist do you want to override it?'
+    i18n.t('core:thumbAlreadyExists', { directoryName })
   ).then(() => directoryPath);
 }
 
