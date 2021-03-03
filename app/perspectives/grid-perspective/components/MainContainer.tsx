@@ -16,11 +16,9 @@
  *
  */
 
-import React, { useEffect, useRef, useState } from 'react';
-import uuidv1 from 'uuid';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import memoize from 'memoize-one';
 import { GlobalHotKeys } from 'react-hotkeys';
 import { withStyles } from '@material-ui/core/styles';
 import { FileSystemEntry } from '-/services/utils-io';
@@ -284,8 +282,9 @@ const GridPerspective = (props: Props) => {
     };
   } */
 
-  const sort = memoize((data, criteria, order) =>
-    sortByCriteria(data, criteria, order)
+  const sortedDirContentMemoized = useMemo(
+    () => sortByCriteria(props.directoryContent, sortBy, orderBy),
+    [props.directoryContent, sortBy, orderBy]
   );
 
   /* const makeFirstSelectedEntryVisible = () => {
@@ -743,20 +742,15 @@ const GridPerspective = (props: Props) => {
     }
   };
 
-  const {
-    classes,
-    directoryContent,
-    selectedEntries,
-    loadParentDirectoryContent,
-    theme
-  } = props;
+  const { classes, selectedEntries, loadParentDirectoryContent, theme } = props;
   // const { layoutType, entrySize, sortBy, orderBy } = this.state;
   const selectedFilePaths = selectedEntries
     .filter(fsEntry => fsEntry.isFile)
     .map(fsentry => fsentry.path);
-  const sortedContent = sort(directoryContent, sortBy, orderBy);
-  const sortedDirectories = sortedContent.filter(entry => !entry.isFile);
-  const sortedFiles = sortedContent.filter(entry => entry.isFile);
+  const sortedDirectories = sortedDirContentMemoized.filter(
+    entry => !entry.isFile
+  );
+  const sortedFiles = sortedDirContentMemoized.filter(entry => entry.isFile);
   const locationPath = props.currentLocation
     ? getLocationPath(props.currentLocation)
     : '';
@@ -847,7 +841,6 @@ const GridPerspective = (props: Props) => {
       )}
       {isMoveCopyFilesDialogOpened && (
         <MoveCopyFilesDialog
-          key={uuidv1()}
           open={isMoveCopyFilesDialogOpened}
           onClose={() => setIsMoveCopyFilesDialogOpened(false)}
           selectedFiles={selectedFilePaths}
