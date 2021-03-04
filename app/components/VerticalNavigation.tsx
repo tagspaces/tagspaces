@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import uuidv1 from 'uuid';
@@ -137,176 +137,164 @@ interface Props {
   user: CognitoUserInterface;
 }
 
-interface State {
-  isProTeaserVisible: boolean;
-}
+const VerticalNavigation = (props: Props) => {
+  const [isProTeaserVisible, setIsProTeaserVisible] = useState<boolean>(false);
 
-class VerticalNavigation extends React.Component<Props, State> {
-  state = {
-    isProTeaserVisible: false
+  const toggleProTeaser = () => {
+    setIsProTeaserVisible(!isProTeaserVisible);
   };
 
-  toggleProTeaser = () => {
-    this.setState(prevState => ({
-      isProTeaserVisible: !prevState.isProTeaserVisible
-    }));
-  };
-
-  getProgressValue() {
-    const objProgress = this.props.progress.find(
+  const getProgressValue = () => {
+    const objProgress = props.progress.find(
       fileProgress => fileProgress.progress < 100 && fileProgress.progress > -1
     );
     if (objProgress !== undefined) {
       return objProgress.progress;
     }
     return 100;
-  }
+  };
 
-  render() {
-    const {
-      classes,
-      isLocationManagerPanelOpened,
-      isTagLibraryPanelOpened,
-      isSearchPanelOpened,
-      isSettingsDialogOpened,
-      isHelpFeedbackPanelOpened,
-      isReadOnlyMode,
-      toggleCreateFileDialog,
-      toggleAboutDialog,
-      toggleOnboardingDialog,
-      toggleSettingsDialog,
-      toggleKeysDialog,
-      openLocationManagerPanel,
-      openTagLibraryPanel,
-      openSearchPanel,
-      openHelpFeedbackPanel,
-      closeAllVerticalPanels,
-      switchTheme,
-      openFileNatively,
-      openURLExternally,
-      showNotification,
-      directoryPath,
-      theme,
-      user
-    } = this.props;
-    return (
-      <div>
-        <style>
-          {`
+  const {
+    classes,
+    isTagLibraryPanelOpened,
+    isSearchPanelOpened,
+    isHelpFeedbackPanelOpened,
+    toggleCreateFileDialog,
+    toggleAboutDialog,
+    toggleOnboardingDialog,
+    toggleSettingsDialog,
+    toggleKeysDialog,
+    openLocationManagerPanel,
+    openTagLibraryPanel,
+    openSearchPanel,
+    openHelpFeedbackPanel,
+    closeAllVerticalPanels,
+    switchTheme,
+    openFileNatively,
+    openURLExternally,
+    showNotification,
+    directoryPath,
+    theme,
+    user
+  } = props;
+  return (
+    <div>
+      <style>
+        {`
             #verticalNavButton:hover {
               border-radius: 0;
               background-color: ${AppConfig.sidebarSelectionColor}
             }
           `}
-        </style>
-        {this.state.isProTeaserVisible && (
-          <ProTeaserDialogAsync
-            open={this.state.isProTeaserVisible}
-            onClose={this.toggleProTeaser}
-            openURLExternally={openURLExternally}
-            key={uuidv1()}
-          />
-        )}
-        <SplitPane
-          split="vertical"
-          minSize={44}
-          maxSize={44}
-          defaultSize={44}
-          resizerStyle={{ backgroundColor: theme.palette.divider }}
-        >
-          <div className={classes.panel}>
-            <IconButton
-              onClick={toggleAboutDialog}
-              className={classes.button}
-              style={{ marginTop: 10, marginBottom: 16 }}
-              title={i18n.t('core:aboutTitle')}
-              data-tid="aboutTagSpaces"
-            >
-              <img
-                className={classes.buttonIcon}
-                style={{
-                  color: this.props.theme.palette.text.primary
-                }}
-                src={LogoIcon}
-                alt="TagSpaces Logo"
-              />
-            </IconButton>
-            <IconButton
-              id="verticalNavButton"
-              onClick={() => {
-                if (isReadOnlyMode || !directoryPath) {
-                  showNotification(
-                    'You are in read-only mode or there is no opened location'
-                  );
-                } else {
-                  toggleCreateFileDialog();
-                }
+      </style>
+      {isProTeaserVisible && (
+        <ProTeaserDialogAsync
+          open={isProTeaserVisible}
+          onClose={toggleProTeaser}
+          openURLExternally={openURLExternally}
+          key={uuidv1()}
+        />
+      )}
+      <SplitPane
+        split="vertical"
+        minSize={44}
+        maxSize={44}
+        defaultSize={44}
+        resizerStyle={{ backgroundColor: theme.palette.divider }}
+      >
+        <div className={classes.panel}>
+          <IconButton
+            onClick={toggleAboutDialog}
+            className={classes.button}
+            style={{ marginTop: 10, marginBottom: 16 }}
+            title={i18n.t('core:aboutTitle')}
+            data-tid="aboutTagSpaces"
+          >
+            <img
+              className={classes.buttonIcon}
+              style={{
+                color: props.theme.palette.text.primary
               }}
-              className={classes.button}
-              style={{ marginBottom: 20 }}
-              title={i18n.t('core:createFileTitle')}
-              data-tid="locationManager"
-            >
-              <NewFileIcon className={classes.buttonIcon} />
-            </IconButton>
-            <IconButton
-              id="verticalNavButton"
-              onClick={() => {
-                if (isLocationManagerPanelOpened) {
-                  closeAllVerticalPanels();
-                } else {
-                  openLocationManagerPanel();
-                }
-              }}
-              className={
-                isLocationManagerPanelOpened
-                  ? [classes.button, classes.selectedButton].join(' ')
-                  : classes.button
+              src={LogoIcon}
+              alt="TagSpaces Logo"
+            />
+          </IconButton>
+          <IconButton
+            id="verticalNavButton"
+            onClick={() => {
+              if (props.isReadOnlyMode || !directoryPath) {
+                showNotification(
+                  'You are in read-only mode or there is no opened location'
+                );
+              } else {
+                toggleCreateFileDialog();
               }
-              title={i18n.t('core:locationManager')}
-              data-tid="locationManagerPanel"
-            >
-              <LocationsIcon className={classes.buttonIcon} />
-            </IconButton>
-            <IconButton
-              id="verticalNavButton"
-              title={i18n.t('core:tagGroupOperations')}
-              data-tid="tagLibrary"
-              onClick={() => {
-                if (isTagLibraryPanelOpened) {
-                  closeAllVerticalPanels();
-                } else {
-                  openTagLibraryPanel();
-                }
-              }}
-              className={
-                isTagLibraryPanelOpened
-                  ? [classes.button, classes.selectedButton].join(' ')
-                  : classes.button
+            }}
+            className={classes.button}
+            style={{ marginBottom: 20 }}
+            title={i18n.t('core:createFileTitle')}
+            data-tid="locationManager"
+          >
+            <NewFileIcon className={classes.buttonIcon} />
+          </IconButton>
+          <IconButton
+            id="verticalNavButton"
+            onClick={() => {
+              if (props.isLocationManagerPanelOpened) {
+                closeAllVerticalPanels();
+              } else {
+                openLocationManagerPanel();
               }
-            >
-              <TagLibraryIcon className={classes.buttonIcon} />
-            </IconButton>
-            <IconButton
-              id="verticalNavButton"
-              title={i18n.t('core:searchTitle')}
-              data-tid="search"
-              onClick={() => {
-                if (isSearchPanelOpened) {
-                  closeAllVerticalPanels();
-                } else {
-                  openSearchPanel();
-                }
-              }}
-              className={
-                isSearchPanelOpened
-                  ? [classes.button, classes.selectedButton].join(' ')
-                  : classes.button
+            }}
+            className={
+              props.isLocationManagerPanelOpened
+                ? [classes.button, classes.selectedButton].join(' ')
+                : classes.button
+            }
+            title={i18n.t('core:locationManager')}
+            data-tid="locationManagerPanel"
+          >
+            <LocationsIcon className={classes.buttonIcon} />
+          </IconButton>
+          <IconButton
+            id="verticalNavButton"
+            title={i18n.t('core:tagGroupOperations')}
+            data-tid="tagLibrary"
+            onClick={() => {
+              if (isTagLibraryPanelOpened) {
+                closeAllVerticalPanels();
+              } else {
+                openTagLibraryPanel();
               }
-            >
-              <SearchIcon className={classes.buttonIcon} />
-            </IconButton>
-            {/* <IconButton
+            }}
+            className={
+              isTagLibraryPanelOpened
+                ? [classes.button, classes.selectedButton].join(' ')
+                : classes.button
+            }
+          >
+            <TagLibraryIcon className={classes.buttonIcon} />
+          </IconButton>
+          <IconButton
+            id="verticalNavButton"
+            title={i18n.t('core:searchTitle')}
+            data-tid="search"
+            onClick={() => {
+              if (isSearchPanelOpened) {
+                closeAllVerticalPanels();
+              } else {
+                openSearchPanel();
+              }
+            }}
+            className={
+              isSearchPanelOpened
+                ? [classes.button, classes.selectedButton].join(' ')
+                : classes.button
+            }
+          >
+            <SearchIcon className={classes.buttonIcon} />
+          </IconButton>
+          {/* <IconButton
               title={i18n.t('core:perspectiveManager')}
               data-tid="perspectiveManager"
               onClick={() => {
@@ -325,101 +313,100 @@ class VerticalNavigation extends React.Component<Props, State> {
             >
               <PerspectivesIcon style={classes.buttonIcon} />
             </IconButton> */}
-            <IconButton
-              id="verticalNavButton"
-              title={i18n.t('core:helpFeedback')}
-              data-tid="helpFeedback"
-              onClick={() => {
-                if (isHelpFeedbackPanelOpened) {
-                  closeAllVerticalPanels();
-                } else {
-                  openHelpFeedbackPanel();
-                }
-              }}
-              className={
-                isHelpFeedbackPanelOpened
-                  ? [classes.button, classes.selectedButton].join(' ')
-                  : classes.button
+          <IconButton
+            id="verticalNavButton"
+            title={i18n.t('core:helpFeedback')}
+            data-tid="helpFeedback"
+            onClick={() => {
+              if (isHelpFeedbackPanelOpened) {
+                closeAllVerticalPanels();
+              } else {
+                openHelpFeedbackPanel();
               }
-            >
-              {user ? (
-                <AccountCircleIcon className={classes.buttonIcon} />
-              ) : (
-                <HelpIcon className={classes.buttonIcon} />
-              )}
-            </IconButton>
-            {!Pro && (
-              <IconButton
-                id="verticalNavButton"
-                title={i18n.t('core:upgradeToPro')}
-                data-tid="upgradeToPro"
-                onClick={this.toggleProTeaser}
-                // @ts-ignore
-                className={[classes.button, classes.upgradeButton].join(' ')}
-              >
-                <UpgradeIcon className={classes.buttonIcon} />
-              </IconButton>
+            }}
+            className={
+              isHelpFeedbackPanelOpened
+                ? [classes.button, classes.selectedButton].join(' ')
+                : classes.button
+            }
+          >
+            {user ? (
+              <AccountCircleIcon className={classes.buttonIcon} />
+            ) : (
+              <HelpIcon className={classes.buttonIcon} />
             )}
-            {this.props.progress && this.props.progress.length > 0 && (
-              <IconButton
-                id="progressButton"
-                title={i18n.t('core:progress')}
-                data-tid="uploadProgress"
-                onClick={() => this.props.toggleUploadDialog()}
-                // @ts-ignore
-                className={[classes.button, classes.upgradeButton].join(' ')}
-              >
-                <CircularProgressWithLabel value={this.getProgressValue()} />
-              </IconButton>
-            )}
+          </IconButton>
+          {!Pro && (
             <IconButton
               id="verticalNavButton"
-              title={i18n.t('core:switchTheme')}
-              data-tid="switchTheme"
-              onClick={switchTheme}
-              className={[classes.button, classes.themingButton].join(' ')}
-            >
-              <ThemingIcon className={classes.buttonIcon} />
-            </IconButton>
-            <IconButton
-              id="verticalNavButton"
-              title={i18n.t('core:settings')}
-              data-tid="settings"
-              onClick={toggleSettingsDialog}
+              title={i18n.t('core:upgradeToPro')}
+              data-tid="upgradeToPro"
+              onClick={toggleProTeaser}
               // @ts-ignore
-              className={
-                isSettingsDialogOpened
-                  ? [
-                      classes.button,
-                      classes.settingsButton,
-                      classes.selectedButton
-                    ].join(' ')
-                  : [classes.button, classes.settingsButton].join(' ')
-              }
+              className={[classes.button, classes.upgradeButton].join(' ')}
             >
-              <SettingsIcon className={classes.buttonIcon} />
+              <UpgradeIcon className={classes.buttonIcon} />
             </IconButton>
-          </div>
-          <div className={classes.panel}>
-            {isLocationManagerPanelOpened && <LocationManager />}
-            {isTagLibraryPanelOpened && <TagLibrary />}
-            {isSearchPanelOpened && <Search />}
-            {isHelpFeedbackPanelOpened && (
-              <HelpFeedbackPanel
-                openFileNatively={openFileNatively}
-                openURLExternally={openURLExternally}
-                toggleAboutDialog={toggleAboutDialog}
-                toggleKeysDialog={toggleKeysDialog}
-                toggleOnboardingDialog={toggleOnboardingDialog}
-                toggleProTeaser={this.toggleProTeaser}
-              />
-            )}
-          </div>
-        </SplitPane>
-      </div>
-    );
-  }
-}
+          )}
+          {props.progress && props.progress.length > 0 && (
+            <IconButton
+              id="progressButton"
+              title={i18n.t('core:progress')}
+              data-tid="uploadProgress"
+              onClick={() => props.toggleUploadDialog()}
+              // @ts-ignore
+              className={[classes.button, classes.upgradeButton].join(' ')}
+            >
+              <CircularProgressWithLabel value={getProgressValue()} />
+            </IconButton>
+          )}
+          <IconButton
+            id="verticalNavButton"
+            title={i18n.t('core:switchTheme')}
+            data-tid="switchTheme"
+            onClick={switchTheme}
+            className={[classes.button, classes.themingButton].join(' ')}
+          >
+            <ThemingIcon className={classes.buttonIcon} />
+          </IconButton>
+          <IconButton
+            id="verticalNavButton"
+            title={i18n.t('core:settings')}
+            data-tid="settings"
+            onClick={toggleSettingsDialog}
+            // @ts-ignore
+            className={
+              props.isSettingsDialogOpened
+                ? [
+                    classes.button,
+                    classes.settingsButton,
+                    classes.selectedButton
+                  ].join(' ')
+                : [classes.button, classes.settingsButton].join(' ')
+            }
+          >
+            <SettingsIcon className={classes.buttonIcon} />
+          </IconButton>
+        </div>
+        <div className={classes.panel}>
+          {props.isLocationManagerPanelOpened && <LocationManager />}
+          {isTagLibraryPanelOpened && <TagLibrary />}
+          {isSearchPanelOpened && <Search />}
+          {isHelpFeedbackPanelOpened && (
+            <HelpFeedbackPanel
+              openFileNatively={openFileNatively}
+              openURLExternally={openURLExternally}
+              toggleAboutDialog={toggleAboutDialog}
+              toggleKeysDialog={toggleKeysDialog}
+              toggleOnboardingDialog={toggleOnboardingDialog}
+              toggleProTeaser={toggleProTeaser}
+            />
+          )}
+        </div>
+      </SplitPane>
+    </div>
+  );
+};
 
 function CircularProgressWithLabel(prop) {
   return (
