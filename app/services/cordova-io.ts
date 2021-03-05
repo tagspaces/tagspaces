@@ -848,7 +848,8 @@ export default class CordovaIO {
                     ),
                     size: 0, // TODO debug evt and set size
                     lmdt: new Date().getTime(),
-                    isNewFile
+                    isNewFile,
+                    tags: []
                   });
                 };
                 if (isRaw) {

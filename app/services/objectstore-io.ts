@@ -626,6 +626,7 @@ export default class ObjectStoreIO {
                     extension: extractFileExtension(filePath, '/'),
                     size: content.length,
                     lmdt: new Date().getTime(),
+                    tags: [],
                     isNewFile
                   });
                 })
@@ -707,7 +708,7 @@ export default class ObjectStoreIO {
     return this.objectStore
       .copyObject({
         Bucket: this.config.bucketName,
-        CopySource: this.config.bucketName + '/' + nFilePath,
+        CopySource: this.config.bucketName + '/' + nFilePath, // this.encodeS3URI(nFilePath),
         Key: nNewFilePath
       })
       .promise()

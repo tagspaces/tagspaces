@@ -707,9 +707,9 @@ export default class ElectronIO {
       this.getPropertiesPromise(filePath)
         .then((entry: FileSystemEntry) => {
           if (entry && entry.isFile && overwrite) {
-            saveFile({ ...entry, isNewFile: false }, content);
+            saveFile({ ...entry, isNewFile: false, tags: [] }, content);
           } else {
-            saveFile({ ...entry, isNewFile: true }, content);
+            saveFile({ ...entry, isNewFile: true, tags: [] }, content);
           }
           return true;
         })
@@ -725,7 +725,8 @@ export default class ElectronIO {
             extension: extractFileExtension(filePath, AppConfig.dirSeparator),
             size: 0,
             lmdt: new Date().getTime(),
-            isNewFile: true
+            isNewFile: true,
+            tags: []
           };
           saveFile(fsEntry, content);
         });
