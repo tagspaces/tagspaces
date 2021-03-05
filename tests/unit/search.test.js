@@ -131,7 +131,7 @@ test('calls Search.searchLocationIndex for textQuery', async () => {
     locationContent,
     searchQuery
   );
-  expect(searchResults).resolves.toStrictEqual([entry1]);
+  expect(searchResults[0].name).toStrictEqual('entryTitle1');
 });
 
 //jest.mock('../../app/pro', () => require('../../extensions/pro'));
