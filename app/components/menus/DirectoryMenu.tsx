@@ -526,6 +526,7 @@ function mapDispatchToProps(dispatch) {
       onUploadProgress: AppActions.onUploadProgress,
       toggleUploadDialog: AppActions.toggleUploadDialog,
       toggleProgressDialog: AppActions.toggleProgressDialog,
+      toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
       resetProgress: AppActions.resetProgress,
       reflectCreateEntries: AppActions.reflectCreateEntries,
       extractContent: IOActions.extractContent,

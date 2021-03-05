@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
@@ -75,7 +75,7 @@ interface Props {
   ) => void;
 }
 
-interface State {
+/* interface State {
   errorTextName: boolean;
   errorTextPath: boolean;
   disableConfirmButton: boolean;
@@ -83,10 +83,28 @@ interface State {
   fileName: string;
   fileContent: string;
   fileType: string;
-}
-// todo rewrite
-class CreateFileDialog extends React.Component<Props, State> {
-  state = {
+} */
+
+/**
+ * @deprecated use CreateDialog instead
+ */
+const CreateFileDialog = (props: Props) => {
+  const [errorTextName, setErrorTextName] = useState<boolean>(false);
+  const [errorTextPath, setErrorTextPath] = useState<boolean>(false);
+  const [fileName, setFileName] = useState<string>(
+    'note' +
+      AppConfig.beginTagContainer +
+      formatDateTime4Tag(new Date(), true) +
+      AppConfig.endTagContainer
+  );
+  const [fileType, setFileType] = useState<string>('txt');
+  const disableConfirmButton = useRef(
+    !(props.selectedDirectoryPath && props.selectedDirectoryPath.length > 0)
+  );
+  const selectedDirectoryPath = useRef(props.selectedDirectoryPath);
+  const fileContent = useRef('');
+
+  /* state = {
     errorTextName: false,
     errorTextPath: false,
     openFolder: false,
@@ -102,73 +120,57 @@ class CreateFileDialog extends React.Component<Props, State> {
       AppConfig.endTagContainer,
     fileContent: '',
     fileType: 'txt'
-  };
+  }; */
 
-  fileName;
+  useEffect(() => {
+    handleValidation();
+  }, [fileName, selectedDirectoryPath]);
 
-  handleTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
-    this.setState({ fileType: target.value });
+    setFileType(target.value);
   };
 
-  handleFileNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
     const { value, name } = target;
 
     if (name === 'fileName') {
-      this.setState({ fileName: value }, this.handleValidation);
+      setFileName(value);
+      setFileName(value);
+    } else if (name === 'fileContent') {
+      fileContent.current = value;
+    } else if (name === 'selectedDirectoryPath') {
+      selectedDirectoryPath.current = value;
     }
   };
 
-  handleFileContentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { target } = event;
-    const { value, name } = target;
-
-    if (name === 'fileContent') {
-      this.setState({ fileContent: value }, this.handleValidation);
-    }
-  };
-
-  handleFilePathChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { target } = event;
-    const { value, name } = target;
-
-    if (name === 'selectedDirectoryPath') {
-      this.setState({ selectedDirectoryPath: value }, this.handleValidation);
-    }
-  };
-
-  handleValidation() {
-    if (this.state.fileName && this.state.fileName.length > 0) {
-      this.setState({ errorTextName: false });
+  const handleValidation = () => {
+    if (fileName && fileName.length > 0) {
+      setErrorTextName(false);
+      disableConfirmButton.current = false;
     } else {
-      this.setState({ errorTextName: true });
+      setErrorTextName(true);
+      disableConfirmButton.current = true;
     }
 
     if (
-      this.state.selectedDirectoryPath &&
-      this.state.selectedDirectoryPath.length > 0
+      selectedDirectoryPath.current &&
+      selectedDirectoryPath.current.length > 0
     ) {
-      this.setState({ errorTextPath: false });
+      setErrorTextPath(false);
+      disableConfirmButton.current = false;
     } else {
-      this.setState({ errorTextPath: true });
+      setErrorTextPath(true);
+      disableConfirmButton.current = true;
     }
+  };
 
-    this.setState({
-      disableConfirmButton:
-        !this.state.fileName || !this.state.selectedDirectoryPath
-    });
-  }
-
-  openFolderChooser = () => {
+  const openFolderChooser = () => {
     PlatformIO.selectDirectoryDialog()
       .then(selectedPaths => {
-        this.setState(
-          {
-            selectedDirectoryPath: selectedPaths[0]
-          },
-          this.handleValidation
-        );
+        // eslint-disable-next-line prefer-destructuring
+        selectedDirectoryPath.current = selectedPaths[0];
         return true;
       })
       .catch(err => {
@@ -176,57 +178,48 @@ class CreateFileDialog extends React.Component<Props, State> {
       });
   };
 
-  onConfirm = () => {
-    if (!this.state.disableConfirmButton) {
-      const {
+  const onConfirm = () => {
+    if (!disableConfirmButton.current) {
+      props.createFileAdvanced(
+        selectedDirectoryPath.current,
         fileName,
-        fileContent,
-        fileType,
-        selectedDirectoryPath
-      } = this.state;
-      this.props.createFileAdvanced(
-        selectedDirectoryPath,
-        fileName,
-        fileContent,
+        fileContent.current,
         fileType
       );
-      this.props.onClose();
+      props.onClose();
     }
   };
 
-  handleKeyPress = (event: any) => {
+  const handleKeyPress = (event: any) => {
     if (event.key === 'Enter' || event.keyCode === 13) {
       event.stopPropagation();
     }
   };
 
-  return = () => {
+  return (
     <Dialog
-      open={this.props.open}
-      onClose={this.props.onClose}
-      fullScreen={this.props.fullScreen}
+      open={props.open}
+      onClose={props.onClose}
+      fullScreen={props.fullScreen}
       keepMounted
       scroll="paper"
       // onKeyDown={confirmFunction}
     >
       <DialogTitle>{i18n.t('core:createFileTitle')}</DialogTitle>
       <DialogContent data-tid="createFileDialog">
-        <FormControl fullWidth={true} error={this.state.errorTextName}>
+        <FormControl fullWidth={true} error={errorTextName}>
           <TextField
             fullWidth={true}
-            error={this.state.errorTextName}
+            error={errorTextName}
             autoFocus
             margin="dense"
             name="fileName"
             label={i18n.t('core:fileName')}
-            inputRef={ref => {
-              this.fileName = ref;
-            }}
-            onChange={this.handleFileNameChange}
-            value={this.state.fileName}
+            onChange={handleFileChange}
+            value={fileName}
             data-tid="createFileDialog_fileName"
           />
-          {this.state.errorTextName && (
+          {errorTextName && (
             <FormHelperText>{i18n.t('core:fileNameHelp')}</FormHelperText>
           )}
         </FormControl>
@@ -236,9 +229,9 @@ class CreateFileDialog extends React.Component<Props, State> {
             placeholder="Enter the content of your file / note"
             multiline
             name="fileContent"
-            value={this.state.fileContent}
-            onChange={this.handleFileContentChange}
-            onKeyDown={this.handleKeyPress}
+            defaultValue={fileContent.current}
+            onChange={handleFileChange}
+            onKeyDown={handleKeyPress}
             margin="normal"
             fullWidth={true}
             rows={4}
@@ -247,24 +240,24 @@ class CreateFileDialog extends React.Component<Props, State> {
         </FormControl>
         <ListItem>
           <Radio
-            checked={this.state.fileType === 'txt'}
-            onChange={this.handleTypeChange}
+            checked={fileType === 'txt'}
+            onChange={handleTypeChange}
             value="txt"
             name="type"
             aria-label={i18n.t('core:createTextFile')}
           />
           <FormHelperText>{i18n.t('core:createTextFile')}</FormHelperText>
           <Radio
-            checked={this.state.fileType === 'md'}
-            onChange={this.handleTypeChange}
+            checked={fileType === 'md'}
+            onChange={handleTypeChange}
             value="md"
             name="type"
             aria-label={i18n.t('core:createMarkdown')}
           />
           <FormHelperText>{i18n.t('core:createMarkdown')}</FormHelperText>
           <Radio
-            checked={this.state.fileType === 'html'}
-            onChange={this.handleTypeChange}
+            checked={fileType === 'html'}
+            onChange={handleTypeChange}
             value="html"
             name="html"
             aria-label={i18n.t('core:createRichTextFile')}
@@ -279,21 +272,21 @@ class CreateFileDialog extends React.Component<Props, State> {
             name="selectedDirectoryPath"
             fullWidth={true}
             data-tid="createFileDialog_filePath"
-            value={this.state.selectedDirectoryPath}
-            onChange={this.handleFilePathChange}
+            value={selectedDirectoryPath}
+            onChange={handleFileChange}
             endAdornment={
               PlatformIO.haveObjectStoreSupport() ? (
                 undefined
               ) : (
                 <InputAdornment position="end" style={{ height: 32 }}>
-                  <IconButton onClick={this.openFolderChooser}>
+                  <IconButton onClick={openFolderChooser}>
                     <FolderIcon />
                   </IconButton>
                 </InputAdornment>
               )
             }
           />
-          {this.state.errorTextPath && (
+          {errorTextPath && (
             <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>
           )}
         </FormControl>
@@ -301,23 +294,23 @@ class CreateFileDialog extends React.Component<Props, State> {
       <DialogActions>
         <Button
           data-tid="closeCreateFileDialog"
-          onClick={this.props.onClose}
+          onClick={props.onClose}
           color="primary"
         >
           {i18n.t('core:cancel')}
         </Button>
         <Button
-          disabled={this.state.disableConfirmButton}
-          onClick={this.onConfirm}
+          disabled={disableConfirmButton.current}
+          onClick={onConfirm}
           data-tid="confirmCreateFileDialog"
           color="primary"
         >
           {i18n.t('core:ok')}
         </Button>
       </DialogActions>
-    </Dialog>;
-  };
-}
+    </Dialog>
+  );
+};
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(

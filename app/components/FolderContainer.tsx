@@ -199,7 +199,6 @@ interface Props {
   removeAllTags: () => void;
   editTagForEntry: () => void;
   openFileNatively: (path: string) => void;
-  toggleCreateFileDialog: () => void;
   // deleteFile: () => void;
   renameFile: () => void;
   openDirectory: () => void;
@@ -545,7 +544,6 @@ const FolderContainer = (props: Props) => {
                     openDirectory={props.openDirectory}
                     reflectCreateEntry={props.reflectCreateEntry}
                     openFsEntry={props.openFsEntry}
-                    toggleCreateFileDialog={props.toggleCreateFileDialog}
                     switchPerspective={switchPerspective}
                     isReadOnlyMode={props.isReadOnlyMode}
                   />
@@ -589,7 +587,6 @@ function mapActionCreatorsToProps(dispatch) {
       removeAllTags: TaggingActions.removeAllTags,
       editTagForEntry: TaggingActions.editTagForEntry,
       openFileNatively: AppActions.openFileNatively,
-      toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
       // deleteFile: AppActions.deleteFile,
       renameFile: AppActions.renameFile,
       openDirectory: AppActions.openDirectory,
