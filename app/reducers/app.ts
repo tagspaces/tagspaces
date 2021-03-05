@@ -267,12 +267,10 @@ export default (state: any = initialState, action: any) => {
       };
     }
     case types.LOAD_DIRECTORY_SUCCESS: {
-      let directoryPath;
-      if (action.directoryPath.startsWith('./')) {
+      let { directoryPath } = action;
+      if (directoryPath && directoryPath.startsWith('./')) {
         // relative paths
-        directoryPath = PlatformIO.resolveFilePath(action.directoryPath);
-      } else {
-        ({ directoryPath } = action);
+        directoryPath = PlatformIO.resolveFilePath(directoryPath);
       }
       return {
         ...state,

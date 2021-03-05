@@ -407,10 +407,7 @@ const ProTeaserDialog = (props: Props) => {
               &nbsp;
               <Button
                 onClick={() =>
-                  props.openURLExternally(
-                    AppConfig.links.emailContact,
-                    true
-                  )
+                  props.openURLExternally(AppConfig.links.emailContact, true)
                 }
                 variant="outlined"
                 color="primary"

@@ -70,14 +70,16 @@ const CreateTagGroupDialog = (props: Props) => {
     if (title.current.length > 0) {
       if (inputError) {
         setInputError(false);
-      } else { // rerender
+      } else {
+        // rerender
         forceUpdate();
       }
       disableConfirmButton.current = false;
     } else {
       if (!inputError) {
         setInputError(true);
-      } else { // rerender
+      } else {
+        // rerender
         forceUpdate();
       }
       disableConfirmButton.current = true;

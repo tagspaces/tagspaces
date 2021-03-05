@@ -55,7 +55,7 @@ const LocationMenu = (props: Props) => {
   let currentLocation;
   if (props.currentLocationId && props.locations) {
     currentLocation = props.locations.find(
-        (location: Location) => location.uuid === props.currentLocationId
+      (location: Location) => location.uuid === props.currentLocationId
     );
   }
 
@@ -76,7 +76,7 @@ const LocationMenu = (props: Props) => {
       <Button
         data-tid="folderContainerLocationChooser"
         id="locationMenuButton"
-        onClick={(event) => setLocationChooserMenuAnchorEl(event.currentTarget)}
+        onClick={event => setLocationChooserMenuAnchorEl(event.currentTarget)}
         title={currentLocation && currentLocation.name}
         style={{ paddingRight: 0, paddingLeft: 11 }}
       >
