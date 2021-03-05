@@ -764,16 +764,42 @@ export default class ObjectStoreIO {
       .promise();
 
   /**
-   * Delete a specified directory, the directory should be empty, if the trash can functionality is not enabled (partial: works for files and empty dirs)
-   * TODO empty dir (its have invisible .ts dir)
+   * Delete a specified directory
    */
-  deleteDirectoryPromise = (path: string): Promise<Object> =>
-    this.objectStore
+  deleteDirectoryPromise = async (path: string): Promise<Object> => {
+    const listParams = {
+      Bucket: this.config.bucketName,
+      Prefix: path
+    };
+    const listedObjects = await this.objectStore
+      .listObjectsV2(listParams)
+      .promise();
+
+    if (listedObjects.Contents.length > 0) {
+      const deleteParams = {
+        Bucket: this.config.bucketName,
+        Delete: { Objects: [] }
+      };
+
+      listedObjects.Contents.forEach(({ Key }) => {
+        deleteParams.Delete.Objects.push({ Key });
+      });
+
+      return this.objectStore.deleteObjects(deleteParams).promise();
+
+      /*if (!listedObjects.IsTruncated) {
+        return Promise.reject(
+          'Folder is not empty:' + JSON.stringify(listedObjects)
+        );
+      }*/
+    }
+    return this.objectStore
       .deleteObject({
         Bucket: this.config.bucketName,
         Key: path
       })
       .promise();
+  };
 
   /**
    * Choosing directory
