@@ -87,7 +87,7 @@ describe('TST53 - Image viewer [electron]', () => {
     await closeOpenedFile();
   });
 
-  it.skip('TST5304 - Open Animated GIF, check if plays [Electron, manual]', async () => {});
+  it.skip('TST5304 - Open Animated GIF, check if plays [manual]', async () => {});
 
   it('TST5305 - Open W-E-B-P [electron]', async () => {
     await delay(500);
@@ -144,23 +144,23 @@ describe('TST53 - Image viewer [electron]', () => {
     await closeOpenedFile();
   });
 
-  it.skip('TST5310 - Rotate Image Left, Right, Zoom In, Out, Reset [Electron, manual]', async () => {});
+  it.skip('TST5310 - Rotate Image Left, Right, Zoom In, Out, Reset [manual]', async () => {});
 
-  it.skip('TST5311 - Zoom with mouse wheel [Electron, manual]', async () => {});
+  it.skip('TST5311 - Zoom with mouse wheel [manual]', async () => {});
 
-  it.skip('TST5312 - Zoom with touch [Electron, manual]', async () => {});
+  it.skip('TST5312 - Zoom with touch [manual]', async () => {});
 
-  it.skip('TST5313 - Rotate JPG according to EXIF [Electron, manual]', async () => {});
+  it.skip('TST5313 - Rotate JPG according to EXIF [manual]', async () => {});
 
-  it.skip('TST5314 - Change background colors  [Electron, manual]', async () => {});
+  it.skip('TST5314 - Change background colors  [manual]', async () => {});
 
-  it.skip('TST5315 - Remove unneeded rotation css classes, reset rotation [Electron, manual]', async () => {});
+  it.skip('TST5315 - Remove unneeded rotation css classes, reset rotation [manual]', async () => {});
 
-  it.skip('TST5316 - Switching between Color / Black&White mode [Electron, manual]', async () => {});
+  it.skip('TST5316 - Switching between Color / Black&White mode [manual]', async () => {});
 
-  it.skip('TST5317 - Read exif data from JPG [Electron]', async () => {});
+  it.skip('TST5317 - Read exif data from JPG [electron]', async () => {});
 
-  it.skip('TST5318 - Open and close about dialog [Electron]', async () => {
+  it.skip('TST5318 - Open and close about dialog [electron]', async () => {
     // TODO Open and close About dialog
     // const openViewerMenu = await global.client('#viewerMainMenuButton');
     // await openViewerMenu.waitForDisplayed();

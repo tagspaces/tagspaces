@@ -285,7 +285,7 @@ describe('TST50 - Perspective Grid', () => {
     await expectElementExist(selectorFile, false);
   });
 
-  it.skip('TST5009 - Copy file on different partition [Electron, manual]', async () => {});
+  it.skip('TST5009 - Copy file on different partition [manual]', async () => {});
 
   /**
    * TODO reindexing don't work in web
@@ -314,9 +314,9 @@ describe('TST50 - Perspective Grid', () => {
     await expectElementExist(selectorFile, false);
   });
 
-  it.skip('TST5011 - Move file drag&drop in location navigator [Electron, manual]', async () => {});
+  it.skip('TST5011 - Move file drag&drop in location navigator [manual]', async () => {});
 
-  it.skip('TST5012 - Move file different partition [Electron, manual]', async () => {});
+  it.skip('TST5012 - Move file different partition [manual]', async () => {});
 
   test('TST5013 - Delete files from selection (many files) [web,minio,electron]', async () => {
     //open Option menu
@@ -357,7 +357,7 @@ describe('TST50 - Perspective Grid', () => {
     await expectElementExist(selectorFile, false);*/
   });
 
-  it.skip('TST5015 - Tag file drag&drop in perspective [Electron, manual]', async () => {});
+  it.skip('TST5015 - Tag file drag&drop in perspective [manual]', async () => {});
 
   /*test('TST51** - Show/Hide directories in perspective view', async () => { //TODO
     await global.client.waitForVisible(
