@@ -309,10 +309,10 @@ export default class PlatformIO {
     useTrash?: boolean
   ): Promise<any> => {
     if (objectStoreAPI) {
-      // return objectStoreAPI.deleteDirectoryPromise(path, useTrash);
-      return Promise.reject(
+      return objectStoreAPI.deleteDirectoryPromise(path, useTrash);
+      /* return Promise.reject(
         'Deleting directories not supported on this platform'
-      );
+      ); */
     }
     return nativeAPI.deleteDirectoryPromise(path, useTrash);
   };
