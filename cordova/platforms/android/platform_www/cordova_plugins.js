@@ -259,6 +259,14 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       "clobbers": [
         "window.OurCodeWorld.Filebrowser"
       ]
+    },
+    {
+      "id": "com-darryncampbell-cordova-plugin-intent.IntentShim",
+      "file": "plugins/com-darryncampbell-cordova-plugin-intent/www/IntentShim.js",
+      "pluginId": "com-darryncampbell-cordova-plugin-intent",
+      "clobbers": [
+        "intentShim"
+      ]
     }
   ];
   module.exports.metadata = {
@@ -273,6 +281,7 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
     "cordova-plugin-androidx-adapter": "1.1.3",
     "com.whebcraft.cordova.plugin.downloader": "0.1.0",
     "com.ourcodeworld.plugins.Filebrowser": "1.0.0",
-    "cordova-plugin-add-swift-support": "2.0.2"
+    "cordova-plugin-add-swift-support": "2.0.2",
+    "com-darryncampbell-cordova-plugin-intent": "2.0.0"
   };
 });

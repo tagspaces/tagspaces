@@ -8,6 +8,38 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="com.darryncampbell.cordova.plugin.intent.ACTION" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:mimeType="application/pdf" android:scheme="file" />
+                <data android:mimeType="text/plain" android:scheme="file" />
+                <data android:mimeType="image/x-windows-bmp" android:scheme="file" />
+                <data android:mimeType="image/gif" android:scheme="file" />
+                <data android:mimeType="image/png" android:scheme="file" />
+                <data android:mimeType="image/jpeg" android:scheme="file" />
+                <data android:mimeType="image/webp" android:scheme="file" />
+                <data android:mimeType="video/webm" android:scheme="file" />
+                <data android:mimeType="video/ogg" android:scheme="file" />
+                <data android:mimeType="text/html" android:scheme="file" />
+                <data android:mimeType="application/json" android:scheme="file" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern="..json" android:scheme="file" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern="..mht" android:scheme="file" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern="..mhtml" android:scheme="file" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern="..md" android:scheme="file" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern="..md.txt" android:scheme="file" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern="..markdown" android:scheme="file" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern="..ogv" android:scheme="file" />
+            </intent-filter>
         </activity>
         <service android:name="de.appplant.cordova.plugin.background.ForegroundService" />
         <provider android:authorities="${applicationId}.cordova.plugin.camera.provider" android:exported="false" android:grantUriPermissions="true" android:name="org.apache.cordova.camera.FileProvider">
@@ -36,6 +68,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <provider android:authorities="${applicationId}.darryncampbell.cordova.plugin.intent.fileprovider" android:exported="false" android:grantUriPermissions="true" android:name="com.darryncampbell.cordova.plugin.intent.CordovaPluginIntentFileProvider">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/provider_paths" />
+        </provider>
     </application>
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
