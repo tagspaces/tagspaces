@@ -70,8 +70,8 @@ describe('TST01 - Folder management', () => {
     await doubleClickOn('[data-tid=fsEntryName_' + newDirectoryName + ']');
     await deleteDirectory();
     await expectElementExist(
-        '[data-tid=fsEntryName_' + newDirectoryName + ']',
-        false
+      '[data-tid=fsEntryName_' + newDirectoryName + ']',
+      false
     );
   });
 
