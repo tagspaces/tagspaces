@@ -224,7 +224,7 @@ describe('TST50** - Right button on a file', () => {
     // check parent directory
   });
 
-  test('TST5027 - Open containing folder [electron,web]', async () => {
+  test('TST5027 - Open containing folder [web,minio,electron]', async () => {
     if (!global.isMinio) {
       // Show in File Manager option is missing for Minio Location
       await searchEngine('txt');
@@ -250,7 +250,7 @@ describe('TST50** - Right button on a file', () => {
   /**
    * TODO github minio (expected selector to exist=false after 5s)
    */
-  test('TST5028 - Move - Copy file (file menu) [electron]', async () => {
+  test('TST5028 - Move - Copy file (file menu) [minio,electron]', async () => {
     // Move file in child folder
     await searchEngine('eml');
     await openContextEntryMenu(
@@ -306,10 +306,7 @@ describe('TST50** - Right button on a file', () => {
     expect(firstFileName).toBe(undefined); //'sample.eml');
   });
 
-  /**
-   * minio not support rename folder
-   */
-  test('TST5034 - Rename directory (directory menu) [electron]', async () => {
+  test('TST5034 - Rename directory (directory menu) [web,minio,electron]', async () => {
     const newDirName = 'new_dir_name';
     await openContextEntryMenu(
       perspectiveGridTable + firstFolder,
@@ -339,7 +336,7 @@ describe('TST50** - Right button on a file', () => {
   /**
    * delete dir is not supported on minio
    */
-  test('TST5035 - Delete directory (directory menu) [electron]', async () => {
+  test('TST5035 - Delete directory (directory menu) [web,minio,electron]', async () => {
     // await setSettings('[data-tid=settingsSetUseTrashCan]');
     // await global.client.pause(500);
     await doubleClickOn(selectorFolder);

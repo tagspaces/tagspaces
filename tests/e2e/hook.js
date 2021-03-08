@@ -75,7 +75,7 @@ export async function startSpectronApp() {
           w3c: true,
           args: chromeDriverArgs
         },
-        pageLoadStrategy: 'normal'
+        // pageLoadStrategy: 'normal'
       },
       // Warns when a deprecated command is used
       deprecationWarnings: true,
