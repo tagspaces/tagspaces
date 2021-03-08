@@ -50,7 +50,7 @@ export interface FileSystemEntry {
   perspective?: string;
   textContent?: string;
   description?: string;
-  tags?: Array<Tag>;
+  tags: Array<Tag>;
   size: number;
   lmdt: number;
   path: string;

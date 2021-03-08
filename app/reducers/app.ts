@@ -868,7 +868,9 @@ export const actions = {
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
+    // const currentLocation: Location = getState().locations.find(location => location.uuid === getCurrentLocationId(getState()))
     if (PlatformIO.haveObjectStoreSupport()) {
+      // && currentLocation.type === locationType.TYPE_AMPLIFY) {
       const { currentDirectoryPath } = getState().app;
       dispatch(actions.clearUploadDialogInt());
       dispatch(actions.loadDirectoryContent(currentDirectoryPath));
@@ -1632,6 +1634,7 @@ export const actions = {
     dispatch: (actions: Object) => void
   ) => {
     fsEntries.map(entry => dispatch(actions.reflectCreateEntryInt(entry))); // TODO remove map and set state once
+    dispatch(actions.setSelectedEntries(fsEntries));
   },
   reflectCreateEntry: (path: string, isFile: boolean) => (
     dispatch: (actions: Object) => void
