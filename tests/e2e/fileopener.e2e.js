@@ -131,7 +131,7 @@ describe('TST08 - File folder properties', () => {
 
   it.skip('TST0806 - Download file [Electron, manual]', async () => {});
 
-  it('TST0807 - Rename opened folder [electron]', async () => {
+  it('TST0807 - Rename opened folder [web,minio,electron]', async () => {
     const newTile = 'folderRenamed';
     // open folderProperties
     await openContextEntryMenu(selectorFolder, 'showProperties');
@@ -217,7 +217,7 @@ describe('TST08 - File folder properties', () => {
     expect(propsFileName).not.toBe(firstFileName);
   });
 
-  it('TST0814 - Open file fullscreen and exit with close button [ web,minio,electron]', async () => {
+  it('TST0814 - Open file fullscreen and exit with close button [web,minio,electron]', async () => {
     // open fileProperties
     await clickOn(selectorFile);
     await clickOn('[data-tid=fileContainerSwitchToFullScreen]');

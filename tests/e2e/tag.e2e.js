@@ -85,7 +85,7 @@ describe('TST04 - Testing the tag library:', () => {
     );
   });
 
-  it('TST0404 - Change default tag group tag colors [minio,electron]', async () => {
+  it('TST0404 - Change default tag group tag colors [web,minio,electron]', async () => {
     await createTagGroup(testGroup);
     await clickOn('[data-tid=tagLibraryMoreButton_' + testGroup + ']');
     await clickOn('[data-tid=editTagGroup]');
@@ -110,10 +110,11 @@ describe('TST04 - Testing the tag library:', () => {
     const colorElem = await global.client.$(
       '[data-tid=editTagGroupBackgroundColor]'
     );
-    const color = await colorElem.getCSSProperty('background');
+    let colorStyle = await colorElem.getAttribute('style');
+    // const color = await colorElem.getCSSProperty('background');
 
     const rgb2hex = require('rgb2hex');
-    const hex = rgb2hex(color.value);
+    const hex = rgb2hex(colorStyle); //color.value);
     expect(hex.hex).toBe('#000000'); //'rgb(0,0,0)');
     await clickOn('[data-tid=editTagGroupConfirmButton]');
   });
@@ -201,9 +202,10 @@ describe('TST04 - Testing the tag library:', () => {
     const colorElem = await global.client.$(
       '[data-tid=createTagGroupBackgroundColor]'
     );
-    const color = await colorElem.getCSSProperty('background');
+    let colorStyle = await colorElem.getAttribute('style');
+    // const color = await colorElem.getCSSProperty('background');
     const rgb2hex = require('rgb2hex');
-    const hex = rgb2hex(color.value);
+    const hex = rgb2hex(colorStyle);// color.value);
     expect(hex.hex).toBe('#000000'); //'rgb(0,0,0)');
     await clickOn('[data-tid=createTagGroupCancelButton]');
 

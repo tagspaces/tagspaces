@@ -23,7 +23,7 @@ import { renameFolder } from './test-utils';
 // export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 // const newDirectoryName = 'newDirectory';
 
-describe('TST01 - Folder management [electron]', () => {
+describe('TST01 - Folder management', () => {
   beforeEach(async () => {
     if (global.isMinio) {
       await createMinioLocation('', defaultLocationName, true);
@@ -35,7 +35,7 @@ describe('TST01 - Folder management [electron]', () => {
   });
 
   // TODO minio
-  it('TST0101 - Create subfolder [electron]', async () => {
+  it('TST0101 - Create subfolder [web,minio,electron]', async () => {
     const testFolder = await createNewDirectory();
     await expectElementExist('[data-tid=fsEntryName_' + testFolder + ']');
     await doubleClickOn('[data-tid=fsEntryName_' + testFolder + ']');
@@ -47,7 +47,7 @@ describe('TST01 - Folder management [electron]', () => {
   });
 
   // TODO minio
-  it('TST0102 - Reload folder [electron]', async () => {
+  it('TST0102 - Reload folder [web,minio,electron]', async () => {
     const testFolder = await createNewDirectory();
     await doubleClickOn('[data-tid=fsEntryName_' + testFolder + ']');
     await reloadDirectory();
@@ -59,21 +59,23 @@ describe('TST01 - Folder management [electron]', () => {
     );
   });
 
-  it.skip('TST0103 - Rename folder [TODO]', async () => {
+  it('TST0103 - Rename folder [web,minio,electron]', async () => {
     const testFolder = await createNewDirectory();
     await doubleClickOn('[data-tid=fsEntryName_' + testFolder + ']');
     const newDirectoryName = await renameFolder();
-    //await openParentDir();
-    /*await expectElementExist('[data-tid=fsEntryName_' + newDirectoryName + ']');
-    await openEntry(newDirectoryName);
+    await global.client.pause(500);
+    await clickOn('[data-tid=gridPerspectiveOnBackButton]');
+    await expectElementExist('[data-tid=fsEntryName_' + newDirectoryName + ']');
+    // cleanup
+    await doubleClickOn('[data-tid=fsEntryName_' + newDirectoryName + ']');
     await deleteDirectory();
     await expectElementExist(
-        '[data-tid=fsEntryName_' + newDirectoryName + ']',
-        false
-    );*/
+      '[data-tid=fsEntryName_' + newDirectoryName + ']',
+      false
+    );
   });
 
-  it('TST0104 - Delete empty folder [electron]', async () => {
+  it('TST0104 - Delete empty folder [web,minio,electron]', async () => {
     // await setSettings('[data-tid=settingsSetUseTrashCan]');
     // await global.client.pause(500);
     const testFolder = await createNewDirectory();

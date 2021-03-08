@@ -6,8 +6,7 @@ import {
   defaultLocationPath,
   defaultLocationName,
   closeFileProperties,
-  createMinioLocation,
-  deleteFirstFile
+  createMinioLocation
 } from './location.helpers';
 import {
   reloadDirectory,
@@ -18,7 +17,6 @@ import {
   newTEXTFile,
   closeOpenedFile,
   deleteDirectory,
-  returnDirectoryBack,
   clickOn,
   expectElementExist,
   selectorFile,
@@ -68,13 +66,11 @@ describe('TST51 - Perspective Grid [general]', () => {
     await closeOpenedFile();
     // await reloadDirectory();
     await expectElementExist(selectorFile, true);
-    /*await global.client.pause(500);
-    await returnDirectoryBack();*/
+    /*await global.client.pause(500);*/
     // delete directory
 
     // await deleteFirstFile();
     await deleteDirectory(testFolder);
-    //    await returnDirectoryBack();
     await global.client.pause(500);
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',

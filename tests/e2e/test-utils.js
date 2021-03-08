@@ -85,7 +85,3 @@ export async function renameFolder() {
   await clickOn('[data-tid=confirmRenameDirectory]');
   return newDirectoryName;
 }
-
-export async function openParentDir() {
-  await clickOn('[data-tid=gridPerspectiveOnBackButton]');
-}
