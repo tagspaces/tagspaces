@@ -729,27 +729,51 @@ export default class ObjectStoreIO {
   };
 
   /**
-   * Rename a directory TODO list and copy all content in new DIR
+   * Rename a directory
    */
-  renameDirectoryPromise = (
+  renameDirectoryPromise = async (
     dirPath: string,
     newDirectoryPath: string
   ): Promise<Object> => {
-    const newDirPath =
-      extractParentDirectoryPath(dirPath, '/') + '/' + newDirectoryPath;
+    const parenDirPath = extractParentDirectoryPath(dirPath, '/');
+    const newDirPath = this.normalizeRootPath(
+      parenDirPath + '/' + newDirectoryPath
+    );
     console.log('Renaming directory: ' + dirPath + ' to ' + newDirPath);
     if (dirPath === newDirPath) {
-      return new Promise((resolve, reject) => {
-        reject('Renaming directory failed, directories have the same path');
-      });
+      return Promise.reject('Renaming directory failed, directories have the same path');
     }
-    return this.objectStore
-      .copyObject({
-        Bucket: this.config.bucketName,
-        CopySource: this.config.bucketName + '/' + dirPath,
-        Key: newDirPath
-      })
+
+    const listParams = {
+      Bucket: this.config.bucketName,
+      Prefix: dirPath
+    };
+    const listedObjects = await this.objectStore
+      .listObjectsV2(listParams)
       .promise();
+
+    if (listedObjects.Contents.length > 0) {
+      const promises = [];
+      listedObjects.Contents.forEach(({ Key }) => {
+        if (Key.endsWith('/')) {
+          promises.push(this.createDirectoryPromise(newDirectoryPath));
+        } else {
+          promises.push(
+            this.copyFilePromise(
+              Key,
+              parenDirPath +
+                '/' +
+                Key.replace(normalizePath(dirPath), newDirectoryPath)
+            )
+          );
+        }
+      });
+
+      return Promise.all(promises).then(() =>
+        this.deleteDirectoryPromise(dirPath).then(() => newDirectoryPath)
+      );
+    }
+    return Promise.reject('No directory exist:' + dirPath);
   };
 
   /**

@@ -217,10 +217,10 @@ export default class PlatformIO {
     newDirName: string
   ): Promise<any> => {
     if (objectStoreAPI) {
-      // return objectStoreAPI.renameDirectoryPromise(dirPath, newDirName);
-      return Promise.reject(
+      return objectStoreAPI.renameDirectoryPromise(dirPath, newDirName);
+      /* return Promise.reject(
         'Renaming directories not supported on this platform'
-      );
+      ); */
     }
     return nativeAPI.renameDirectoryPromise(dirPath, newDirName);
   };
