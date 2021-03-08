@@ -26,7 +26,8 @@ import {
   normalizePath,
   getThumbFileLocationForFile,
   getMetaFileLocationForFile,
-  extractFileExtension
+  extractFileExtension,
+  cleanTrailingDirSeparator
 } from '-/utils/paths';
 import { FileSystemEntry } from '-/services/utils-io';
 
@@ -741,37 +742,49 @@ export default class ObjectStoreIO {
     );
     console.log('Renaming directory: ' + dirPath + ' to ' + newDirPath);
     if (dirPath === newDirPath) {
-      return Promise.reject('Renaming directory failed, directories have the same path');
+      return Promise.reject(
+        'Renaming directory failed, directories have the same path'
+      );
     }
 
-    const listParams = {
-      Bucket: this.config.bucketName,
-      Prefix: dirPath
-    };
-    const listedObjects = await this.objectStore
-      .listObjectsV2(listParams)
-      .promise();
+    try {
+      const listParams = {
+        Bucket: this.config.bucketName,
+        Prefix: dirPath,
+        Delimiter: '/'
+      };
+      const listedObjects = await this.objectStore
+        .listObjectsV2(listParams)
+        .promise();
 
-    if (listedObjects.Contents.length > 0) {
-      const promises = [];
-      listedObjects.Contents.forEach(({ Key }) => {
-        if (Key.endsWith('/')) {
-          promises.push(this.createDirectoryPromise(newDirectoryPath));
-        } else {
-          promises.push(
-            this.copyFilePromise(
-              Key,
-              parenDirPath +
-                '/' +
-                Key.replace(normalizePath(dirPath), newDirectoryPath)
-            )
-          );
-        }
-      });
+      if (listedObjects.Contents.length > 0) {
+        const promises = [];
+        listedObjects.Contents.forEach(({ Key }) => {
+          if (Key.endsWith('/')) {
+            promises.push(this.createDirectoryPromise(newDirectoryPath));
+          } else {
+            promises.push(
+              this.copyFilePromise(
+                Key,
+                parenDirPath +
+                  '/' +
+                  Key.replace(normalizePath(dirPath), newDirectoryPath)
+              )
+            );
+          }
+        });
 
-      return Promise.all(promises).then(() =>
-        this.deleteDirectoryPromise(dirPath).then(() => newDirectoryPath)
-      );
+        return Promise.all(promises).then(() =>
+          this.deleteDirectoryPromise(dirPath).then(() => newDirectoryPath)
+        );
+      } else {
+        // empty Dir
+        return this.createDirectoryPromise(newDirectoryPath).then(() =>
+          this.deleteDirectoryPromise(dirPath).then(() => newDirectoryPath)
+        );
+      }
+    } catch (e) {
+      console.log(e);
     }
     return Promise.reject('No directory exist:' + dirPath);
   };
@@ -793,7 +806,8 @@ export default class ObjectStoreIO {
   deleteDirectoryPromise = async (path: string): Promise<Object> => {
     const listParams = {
       Bucket: this.config.bucketName,
-      Prefix: path
+      Prefix: path,
+      Delimiter: '/'
     };
     const listedObjects = await this.objectStore
       .listObjectsV2(listParams)

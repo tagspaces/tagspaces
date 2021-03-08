@@ -8,7 +8,7 @@
     "update-i18n": "tx pull -a -d",
     "version-meta": "node scripts/versionmeta.js",
     "third-party": "yarn licenses generate-disclaimer --silent > app/third-party.txt",
-    "build": "rimraf app/dist && yarn version-meta && concurrently \"yarn build-main\" \"yarn build-renderer\" \"yarn build-worker\" \"yarn build-web\"",
+    "build": "rimraf app/dist && yarn version-meta && concurrently \"yarn build-main\" \"yarn build-renderer\" \"yarn build-worker\" \"yarn build-web-dev\"",
     "build-dll": "cross-env NODE_ENV=development webpack --config ./configs/webpack.config.renderer.dev.dll.babel.js --colors",
     "build-e2e": "cross-env E2E_BUILD=true yarn build",
     "build-main": "cross-env NODE_ENV=production webpack --config ./configs/webpack.config.main.prod.babel.js --colors",

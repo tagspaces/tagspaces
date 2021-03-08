@@ -598,17 +598,6 @@ export async function deleteDirectory() {
   await delay(500);*/
 }
 
-export async function returnDirectoryBack() {
-  await clickOn('[data-tid=gridPerspectiveOnBackButton]');
-  /*
-  await delay(500);
-  const backButton = await global.client.$(
-    '[data-tid=gridPerspectiveOnBackButton]'
-  );
-  await backButton.click();
-  await delay(500);*/
-}
-
 export async function toHaveText() {
   await delay(500);
   const file = await global.client.$(perspectiveGridTable + firstFile);

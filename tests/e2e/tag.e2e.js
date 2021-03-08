@@ -85,7 +85,7 @@ describe('TST04 - Testing the tag library:', () => {
     );
   });
 
-  it('TST0404 - Change default tag group tag colors [minio,electron]', async () => {
+  it('TST0404 - Change default tag group tag colors [web,minio,electron]', async () => {
     await createTagGroup(testGroup);
     await clickOn('[data-tid=tagLibraryMoreButton_' + testGroup + ']');
     await clickOn('[data-tid=editTagGroup]');
