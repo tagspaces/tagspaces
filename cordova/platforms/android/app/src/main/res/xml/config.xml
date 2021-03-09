@@ -1,5 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="org.tagspaces.mobile" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <feature name="Filebrowser">
+        <param name="android-package" value="com.ourcodeworld.plugins.filebrowser.Filebrowser" />
+    </feature>
+    <feature name="Downloader">
+        <param name="android-package" value="com.whebcraft.android.plugin.Downloader" />
+    </feature>
     <feature name="Device">
         <param name="android-package" value="org.apache.cordova.device.Device" />
     </feature>
@@ -27,15 +33,12 @@
     <feature name="SocialSharing">
         <param name="android-package" value="nl.xservices.plugins.SocialSharing" />
     </feature>
-    <feature name="Downloader">
-        <param name="android-package" value="com.whebcraft.android.plugin.Downloader" />
-    </feature>
-    <feature name="Filebrowser">
-        <param name="android-package" value="com.ourcodeworld.plugins.filebrowser.Filebrowser" />
-    </feature>
     <feature name="IntentShim">
         <param name="android-package" value="com.darryncampbell.cordova.plugin.intent.IntentShim" />
         <param name="onload" value="true" />
+    </feature>
+    <feature name="Chooser">
+        <param name="android-package" value="com.cyph.cordova.Chooser" />
     </feature>
     <name>TagSpaces</name>
     <description>
@@ -83,6 +86,12 @@
             <data android:host="*" android:mimeType="*/*" android:pathPattern="..ogv" android:scheme="file" />
         </intent-filter>
     </config-file>
+    <config-file parent="/manifest/application" target="AndroidManifest.xml">
+        <provider android:authorities="${applicationId}.provider" android:exported="false" android:grantUriPermissions="true" android:name="androidx.core.content.FileProvider">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/mnk_file_path" />
+        </provider>
+    </config-file>
+    <resource-file src="res/android/mnk_file_path.xml" target="app/src/main/res/xml/mnk_file_path.xml" />
     <preference name="loglevel" value="DEBUG" />
     <preference name="KeepRunning" value="true" />
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />

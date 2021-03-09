@@ -1,7 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="org.tagspaces.mobile" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
-    <name>TagSpaces</name>
-    <description>
+<widget id="org.tagspaces.mobile" version="1.0.0" xmlns="http://www.w3.org/ns/widgets"
+		xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+	<name>TagSpaces</name>
+	<description>
 		Offline file organizer and browser with tagging support.
     </description>
     <author email="contact@tagspaces.org" href="https://tagspaces.org">
@@ -55,7 +56,17 @@
 				<data android:host="*" android:mimeType="*/*" android:pathPattern="..ogv" android:scheme="file" />
 			</intent-filter>
 		</config-file>
-    </platform>
+		<config-file parent="/manifest/application" target="AndroidManifest.xml">
+			<provider android:name="android.support.v4.content.FileProvider"
+					  android:authorities="${applicationId}.provider"
+					  android:exported="false"
+					  android:grantUriPermissions="true">
+				<meta-data android:name="android.support.FILE_PROVIDER_PATHS"
+						   android:resource="@xml/mnk_file_path"/>
+			</provider>
+		</config-file>
+		<resource-file src="res/android/mnk_file_path.xml" target="app/src/main/res/xml/mnk_file_path.xml"/>
+	</platform>
     <platform name="ios">
         <!--<preference name="NativeXHRLogging" value="full" />
         <preference name="allowFileAccessFromFileURLs" value="true" />-->

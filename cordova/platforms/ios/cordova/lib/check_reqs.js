@@ -68,7 +68,14 @@ function os_platform_is_supported () {
  * @return {Promise} Returns a promise either resolved or rejected
  */
 module.exports.check_cocoapods = toolChecker => {
-    return checkTool('pod', COCOAPODS_MIN_VERSION, COCOAPODS_NOT_FOUND_MESSAGE, 'CocoaPods');
+    if (os_platform_is_supported()) {
+        return checkTool('pod', COCOAPODS_MIN_VERSION, COCOAPODS_NOT_FOUND_MESSAGE, 'CocoaPods');
+    }
+
+    return Promise.resolve({
+        ignore: true,
+        ignoreMessage: `CocoaPods check and installation ignored on ${process.platform}`
+    });
 };
 
 /**
