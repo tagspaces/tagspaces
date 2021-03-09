@@ -33,23 +33,20 @@
     <feature name="SocialSharing">
         <param name="android-package" value="nl.xservices.plugins.SocialSharing" />
     </feature>
-    <feature name="Downloader">
-        <param name="android-package" value="com.whebcraft.android.plugin.Downloader" />
-    </feature>
-    <feature name="Filebrowser">
-        <param name="android-package" value="com.ourcodeworld.plugins.filebrowser.Filebrowser" />
-    </feature>
     <feature name="IntentShim">
         <param name="android-package" value="com.darryncampbell.cordova.plugin.intent.IntentShim" />
         <param name="onload" value="true" />
     </feature>
+    <feature name="Chooser">
+        <param name="android-package" value="com.cyph.cordova.Chooser" />
+    </feature>
     <name>TagSpaces</name>
     <description>
 		Offline file organizer and browser with tagging support.
-	</description>
+    </description>
     <author email="contact@tagspaces.org" href="https://tagspaces.org">
-		TagSpaces UG (haftungsbeschraenkt)
-	</author>
+        TagSpaces UG (haftungsbeschraenkt)
+    </author>
     <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />

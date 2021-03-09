@@ -41,7 +41,7 @@
     NSURL * url = urlSchemeTask.request.URL;
     NSString * stringToLoad = url.path;
     NSString * scheme = url.scheme;
-
+    
     CDVViewController* vc = (CDVViewController*)self.viewController;
 
     /*

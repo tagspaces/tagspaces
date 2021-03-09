@@ -65,7 +65,8 @@
 						   android:resource="@xml/mnk_file_path"/>
 			</provider>
 		</config-file>
-    </platform>
+		<resource-file src="res/android/mnk_file_path.xml" target="app/src/main/res/xml/mnk_file_path.xml"/>
+	</platform>
     <platform name="ios">
         <!--<preference name="NativeXHRLogging" value="full" />
         <preference name="allowFileAccessFromFileURLs" value="true" />-->
