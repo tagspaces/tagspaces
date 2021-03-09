@@ -27,12 +27,18 @@ import OpenFileNatively from '@material-ui/icons/Launch';
 import OpenContainingFolder from '@material-ui/icons/FolderOpen';
 import AddRemoveTags from '@material-ui/icons/Loyalty';
 import MoveCopy from '@material-ui/icons/FileCopy';
+import ImageIcon from '@material-ui/icons/Image';
 import RenameFile from '@material-ui/icons/FormatTextdirectionLToR';
 import DeleteForever from '@material-ui/icons/DeleteForever';
 import i18n from '-/services/i18n';
 import AppConfig from '-/config';
 import PlatformIO from '-/services/platform-io';
-import { FileSystemEntry, getAllPropertiesPromise } from '-/services/utils-io';
+import {
+  FileSystemEntry,
+  getAllPropertiesPromise,
+  setFolderThumbnailPromise
+} from '-/services/utils-io';
+import { Pro } from '-/pro';
 
 interface Props {
   anchorEl: Element;
@@ -45,8 +51,14 @@ interface Props {
   openFsEntry: (fsEntry: FileSystemEntry) => void;
   openFileNatively: (path: string) => void;
   showInFileManager: (path: string) => void;
+  showNotification: (
+    text: string,
+    notificationType?: string,
+    autohide?: boolean
+  ) => void;
   selectedFilePath?: string;
   isReadOnlyMode: boolean;
+  selectedEntries: Array<any>;
 }
 
 const FileMenu = (props: Props) => {
@@ -63,6 +75,37 @@ const FileMenu = (props: Props) => {
   function showMoveCopyFilesDialog() {
     props.onClose();
     props.openMoveCopyFilesDialog();
+  }
+
+  function setFolderThumbnail() {
+    props.onClose();
+    setFolderThumbnailPromise(props.selectedFilePath)
+      .then(
+        (directoryPath: string) => {
+          props.showNotification('Thumbnail created for: ' + directoryPath);
+          return true;
+        }
+
+        // getAllPropertiesPromise(directoryPath)
+        //   .then((fsEntry: FileSystemEntry) => {
+        //     props.openFsEntry(fsEntry);
+        //     return true;
+        //   })
+        //   .catch(error =>
+        //     console.warn(
+        //       'Error getAllPropertiesPromise for: ' + directoryPath,
+        //       error
+        //     )
+        //   )
+      )
+      .catch(error => {
+        props.showNotification('Thumbnail creation failed.');
+        console.warn(
+          'Error setting Thumb for entry: ' + props.selectedFilePath,
+          error
+        );
+        return true;
+      });
   }
 
   function showAddRemoveTagsDialog() {
@@ -106,37 +149,40 @@ const FileMenu = (props: Props) => {
   return (
     <div style={{ overflowY: 'hidden' }}>
       <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
-        <MenuItem data-tid="fileMenuOpenFile" onClick={openFile}>
-          <ListItemIcon>
-            <OpenFile />
-          </ListItemIcon>
-          <ListItemText primary={i18n.t('core:openFile')} />
-        </MenuItem>
-        {!(PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb) && (
-          <div>
-            <MenuItem
-              data-tid="fileMenuOpenFileNatively"
-              onClick={openFileNatively}
-            >
-              <ListItemIcon>
-                <OpenFileNatively />
-              </ListItemIcon>
-              <ListItemText primary={i18n.t('core:openFileNatively')} />
-            </MenuItem>
-            <MenuItem
-              data-tid="fileMenuOpenContainingFolder"
-              onClick={showInFileManager}
-            >
-              <ListItemIcon>
-                <OpenContainingFolder />
-              </ListItemIcon>
-              <ListItemText primary={i18n.t('core:showInFileManager')} />
-            </MenuItem>
-          </div>
+        {props.selectedEntries.length < 2 && (
+          <MenuItem data-tid="fileMenuOpenFile" onClick={openFile}>
+            <ListItemIcon>
+              <OpenFile />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:openFile')} />
+          </MenuItem>
         )}
+        {!(PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb) &&
+          props.selectedEntries.length < 2 && (
+            <>
+              <MenuItem
+                data-tid="fileMenuOpenFileNatively"
+                onClick={openFileNatively}
+              >
+                <ListItemIcon>
+                  <OpenFileNatively />
+                </ListItemIcon>
+                <ListItemText primary={i18n.t('core:openFileNatively')} />
+              </MenuItem>
+              <MenuItem
+                data-tid="fileMenuOpenContainingFolder"
+                onClick={showInFileManager}
+              >
+                <ListItemIcon>
+                  <OpenContainingFolder />
+                </ListItemIcon>
+                <ListItemText primary={i18n.t('core:showInFileManager')} />
+              </MenuItem>
+              <Divider />
+            </>
+          )}
         {!props.isReadOnlyMode && (
-          <div>
-            <Divider />
+          <>
             <MenuItem
               data-tid="fileMenuAddRemoveTags"
               onClick={showAddRemoveTagsDialog}
@@ -164,6 +210,14 @@ const FileMenu = (props: Props) => {
               </ListItemIcon>
               <ListItemText primary={i18n.t('core:moveCopyFile')} />
             </MenuItem>
+            {Pro && props.selectedEntries.length < 2 && (
+              <MenuItem data-tid="setAsThumbTID" onClick={setFolderThumbnail}>
+                <ListItemIcon>
+                  <ImageIcon />
+                </ListItemIcon>
+                <ListItemText primary={i18n.t('core:setAsThumbnail')} />
+              </MenuItem>
+            )}
             <MenuItem
               data-tid="fileMenuDeleteFile"
               onClick={showDeleteFileDialog}
@@ -173,7 +227,7 @@ const FileMenu = (props: Props) => {
               </ListItemIcon>
               <ListItemText primary={i18n.t('core:deleteEntry')} />
             </MenuItem>
-          </div>
+          </>
         )}
       </Menu>
     </div>

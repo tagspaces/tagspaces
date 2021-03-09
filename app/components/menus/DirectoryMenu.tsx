@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -42,23 +42,25 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { Progress } from 'aws-sdk/clients/s3';
 import { Pro } from '../../pro';
-import ConfirmDialog from '../dialogs/ConfirmDialog';
 import CreateDirectoryDialog from '../dialogs/CreateDirectoryDialog';
 import RenameDirectoryDialog from '../dialogs/RenameDirectoryDialog';
 import AppConfig from '-/config';
 import i18n from '-/services/i18n';
-import {
-  extractFileName,
-  normalizePath,
-  cleanTrailingDirSeparator
-} from '-/utils/paths';
+import { normalizePath } from '-/utils/paths';
 import PlatformIO from '-/services/platform-io';
 import { formatDateTime4Tag } from '-/utils/misc';
-import { actions as AppActions, perspectives } from '-/reducers/app';
+import {
+  actions as AppActions,
+  getSelectedEntries,
+  perspectives
+} from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
 import { Tag } from '-/reducers/taglibrary';
 import TaggingActions from '-/reducers/tagging-actions';
 import { FileSystemEntry, getAllPropertiesPromise } from '-/services/utils-io';
+import FileUploadContainer, {
+  FileUploadContainerRef
+} from '-/components/FileUploadContainer';
 
 interface Props {
   open: boolean;
@@ -69,7 +71,6 @@ interface Props {
   loadDirectoryContent: (path: string) => void;
   openDirectory: (path: string) => void;
   openFsEntry: (fsEntry: FileSystemEntry) => void;
-  deleteDirectory: (path: string) => void;
   reflectCreateEntry?: (path: string, isFile: boolean) => void;
   toggleCreateFileDialog?: () => void;
   // extractContent: (config: Object) => void,
@@ -96,18 +97,18 @@ interface Props {
     tags: Array<Tag>,
     updateIndex: boolean
   ) => void;
+  toggleDeleteMultipleEntriesDialog: () => void;
+  selectedEntries: Array<any>;
+  setSelectedEntries: (selectedEntries: Array<Object>) => void;
 }
 
 const DirectoryMenu = (props: Props) => {
-  let fileInput; // Object | null;
+  // let fileInput; // Object | null;
+  const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
 
   const [
     isCreateDirectoryDialogOpened,
     setIsCreateDirectoryDialogOpened
-  ] = useState(false);
-  const [
-    isDeleteDirectoryDialogOpened,
-    setIsDeleteDirectoryDialogOpened
   ] = useState(false);
   const [
     isRenameDirectoryDialogOpened,
@@ -161,7 +162,10 @@ const DirectoryMenu = (props: Props) => {
 
   function showDeleteDirectoryDialog() {
     props.onClose();
-    setIsDeleteDirectoryDialogOpened(true);
+    props.setSelectedEntries([
+      { isFile: false, name: props.directoryPath, path: props.directoryPath }
+    ]);
+    props.toggleDeleteMultipleEntriesDialog();
   }
 
   function showRenameDirectoryDialog() {
@@ -179,12 +183,6 @@ const DirectoryMenu = (props: Props) => {
     props.toggleCreateFileDialog();
   }
 
-  function handleCloseDialogs() {
-    setIsCreateDirectoryDialogOpened(false);
-    setIsDeleteDirectoryDialogOpened(false);
-    setIsRenameDirectoryDialogOpened(false);
-  }
-
   function showInFileManager() {
     props.onClose();
     props.openDirectory(props.directoryPath);
@@ -192,7 +190,7 @@ const DirectoryMenu = (props: Props) => {
 
   function addExistingFile() {
     props.onClose();
-    fileInput.click();
+    fileUploadContainerRef.current.onFileUpload();
   }
 
   function importMacTags() {
@@ -312,94 +310,12 @@ Do you want to continue?`)
     });
   }
 
-  function handleFileInputChange(selection: any) {
-    // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
-    // const file = selection.currentTarget.files[0];
-    props.resetProgress();
-
-    props
-      .uploadFilesAPI(
-        Array.from(selection.currentTarget.files),
-        props.directoryPath,
-        props.onUploadProgress
-      )
-      .then(fsEntries => {
-        props.reflectCreateEntries(fsEntries);
-        return true;
-      })
-      .catch(error => {
-        console.log('uploadFiles', error);
-      });
-    props.toggleUploadDialog();
-    /*
-    const filePath =
-      normalizePath(props.directoryPath) +
-      PlatformIO.getDirSeparator() +
-      decodeURIComponent(file.name);
-    const reader = new FileReader();
-    reader.onload = (event: any) => {
-      // console.log('Content on file read complete: ' + JSON.stringify(event));
-      // change name for ios fakepath
-      // if (AppConfig.isCordovaiOS) {
-      //   const fileExt = extractFileExtension(addFileInputName);
-      //   addFileInputName = AppConfig.beginTagContainer + formatDateTime4Tag(new Date(), true) + AppConfig.endTagContainer + fileExt;
-      // }
-      // TODO event.currentTarget.result is ArrayBuffer
-      // Sample call from PRO version using content = Utils.base64ToArrayBuffer(baseString);
-      PlatformIO.getPropertiesPromise(filePath)
-        .then(entryProps => {
-          if (entryProps) {
-            props.showNotification(
-              'File with the same name already exist, importing skipped!',
-              'warning',
-              true
-            );
-          } else {
-            PlatformIO.saveBinaryFilePromise(
-              filePath,
-              event.currentTarget.result,
-              true
-            )
-              .then(() => {
-                props.showNotification(
-                  'File ' + filePath + ' successfully imported.',
-                  'default',
-                  true
-                );
-                props.reflectCreateEntry(filePath, true);
-                return true;
-              })
-              .catch(error => {
-                // TODO showAlertDialog("Saving " + filePath + " failed.");
-                console.error('Save to file ' + filePath + ' failed ' + error);
-                props.showNotification(
-                  'Importing file ' + filePath + ' failed.',
-                  'error',
-                  true
-                );
-                return true;
-              });
-          }
-          return true;
-        })
-        .catch(err => {
-          console.log('Error getting properties ' + err);
-        });
-    };
-
-    if (AppConfig.isCordova) {
-      reader.readAsDataURL(file);
-    } else {
-      reader.readAsArrayBuffer(file);
-    } */
-  }
-
-  function getDirPath(dirPath: string) {
+  /* function getDirPath(dirPath: string) {
     const fileName = extractFileName(dirPath, PlatformIO.getDirSeparator());
     return props.directoryPath && fileName
       ? fileName
       : cleanTrailingDirSeparator(props.directoryPath);
-  }
+  } */
 
   return (
     <div style={{ overflowY: 'hidden' }}>
@@ -407,38 +323,20 @@ Do you want to continue?`)
         <RenameDirectoryDialog
           key={'renameDir' + props.directoryPath}
           open={isRenameDirectoryDialogOpened}
-          onClose={handleCloseDialogs}
+          onClose={() => setIsRenameDirectoryDialogOpened(false)}
           selectedDirectoryPath={props.directoryPath}
         />
       )}
-      {isCreateDirectoryDialogOpened && ( // TODO move dialogs from this Menu and don't include the Menu HTML always
+      {isCreateDirectoryDialogOpened && ( // TODO move dialogs in MainContainer and don't include the Menu HTML always
         <CreateDirectoryDialog
           key={'createDir' + props.directoryPath}
           open={isCreateDirectoryDialogOpened}
-          onClose={handleCloseDialogs}
+          onClose={() => setIsCreateDirectoryDialogOpened(false)}
           selectedDirectoryPath={props.directoryPath}
         />
       )}
-      {isDeleteDirectoryDialogOpened && (
-        <ConfirmDialog
-          open={isDeleteDirectoryDialogOpened}
-          onClose={handleCloseDialogs}
-          title={i18n.t('core:deleteDirectoryTitleConfirm')}
-          content={i18n.t('core:deleteDirectoryContentConfirm', {
-            dirPath: getDirPath(props.directoryPath)
-          })}
-          confirmCallback={result => {
-            if (result) {
-              props.deleteDirectory(props.directoryPath);
-            }
-          }}
-          confirmDialogContentTID="confirmDialogContent"
-          cancelDialogTID="cancelDeleteDirectoryDialog"
-          confirmDialogTID="confirmDeleteDirectoryDialog"
-        />
-      )}
       <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
-        {props.perspectiveMode && (
+        {props.selectedEntries.length < 2 && props.perspectiveMode && (
           <MenuItem data-tid="openDirectory" onClick={openDirectory}>
             <ListItemIcon>
               <OpenFolderIcon />
@@ -446,7 +344,7 @@ Do you want to continue?`)
             <ListItemText primary={i18n.t('core:openDirectory')} />
           </MenuItem>
         )}
-        {!props.perspectiveMode && (
+        {props.selectedEntries.length < 2 && !props.perspectiveMode && (
           <MenuItem data-tid="reloadDirectory" onClick={reloadDirectory}>
             <ListItemIcon>
               <AutoRenew />
@@ -454,7 +352,7 @@ Do you want to continue?`)
             <ListItemText primary={i18n.t('core:reloadDirectory')} />
           </MenuItem>
         )}
-        {!props.isReadOnlyMode && (
+        {props.selectedEntries.length < 2 && !props.isReadOnlyMode && (
           <MenuItem
             data-tid="renameDirectory"
             onClick={showRenameDirectoryDialog}
@@ -476,14 +374,15 @@ Do you want to continue?`)
             <ListItemText primary={i18n.t('core:deleteDirectory')} />
           </MenuItem>
         )}
-        {!(PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb) && (
-          <MenuItem data-tid="showInFileManager" onClick={showInFileManager}>
-            <ListItemIcon>
-              <OpenFolderNativelyIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:showInFileManager')} />
-          </MenuItem>
-        )}
+        {props.selectedEntries.length < 2 &&
+          !(PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb) && (
+            <MenuItem data-tid="showInFileManager" onClick={showInFileManager}>
+              <ListItemIcon>
+                <OpenFolderNativelyIcon />
+              </ListItemIcon>
+              <ListItemText primary={i18n.t('core:showInFileManager')} />
+            </MenuItem>
+          )}
         {!props.perspectiveMode && <Divider />}
         {!props.isReadOnlyMode && !props.perspectiveMode && (
           <MenuItem
@@ -512,7 +411,7 @@ Do you want to continue?`)
             <ListItemText primary={i18n.t('core:addFiles')} />
           </MenuItem>
         )}
-        {process.platform === 'darwin' && (
+        {props.selectedEntries.length < 2 && process.platform === 'darwin' && (
           <MenuItem data-tid="importMacTags" onClick={importMacTags}>
             <ListItemIcon>
               <ImportTagsIcon />
@@ -528,9 +427,8 @@ Do you want to continue?`)
             <ListItemText primary={i18n.t('core:cameraTakePicture')} />
           </MenuItem>
         )}
-        <Divider />
         {!props.perspectiveMode && (
-          <div>
+          <>
             <MenuItem
               data-tid="openDefaultPerspective"
               onClick={() => switchPerspective(perspectives.DEFAULT)}
@@ -577,8 +475,7 @@ Do you want to continue?`)
               </ListItemIcon>
               <ListItemText primary="KanBan Perspective - Beta" />
             </MenuItem> */}
-            <Divider />
-          </div>
+          </>
         )}
         {/* {!props.isReadOnlyMode && (
           <React.Fragment>
@@ -590,26 +487,37 @@ Do you want to continue?`)
             </MenuItem>
           </React.Fragment>
         )} */}
-        <MenuItem data-tid="showProperties" onClick={showProperties}>
-          <ListItemIcon>
-            <SettingsIcon />
-          </ListItemIcon>
-          <ListItemText primary={i18n.t('core:directoryPropertiesTitle')} />
-        </MenuItem>
+        {props.selectedEntries.length < 2 && (
+          <>
+            <Divider />
+            <MenuItem data-tid="showProperties" onClick={showProperties}>
+              <ListItemIcon>
+                <SettingsIcon />
+              </ListItemIcon>
+              <ListItemText primary={i18n.t('core:directoryPropertiesTitle')} />
+            </MenuItem>
+          </>
+        )}
       </Menu>
-      <input
-        style={{ display: 'none' }}
-        ref={input => {
-          fileInput = input;
-        }}
-        accept="*"
-        type="file"
-        multiple
-        onChange={handleFileInputChange}
+      <FileUploadContainer
+        ref={fileUploadContainerRef}
+        directoryPath={props.directoryPath}
+        onUploadProgress={props.onUploadProgress}
+        toggleUploadDialog={props.toggleUploadDialog}
+        toggleProgressDialog={props.toggleProgressDialog}
+        resetProgress={props.resetProgress}
+        reflectCreateEntries={props.reflectCreateEntries}
+        uploadFilesAPI={props.uploadFilesAPI}
       />
     </div>
   );
 };
+
+function mapStateToProps(state) {
+  return {
+    selectedEntries: getSelectedEntries(state)
+  };
+}
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
@@ -618,14 +526,18 @@ function mapDispatchToProps(dispatch) {
       onUploadProgress: AppActions.onUploadProgress,
       toggleUploadDialog: AppActions.toggleUploadDialog,
       toggleProgressDialog: AppActions.toggleProgressDialog,
+      toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
       resetProgress: AppActions.resetProgress,
       reflectCreateEntries: AppActions.reflectCreateEntries,
       extractContent: IOActions.extractContent,
       uploadFilesAPI: IOActions.uploadFilesAPI,
-      addTags: TaggingActions.addTags
+      addTags: TaggingActions.addTags,
+      toggleDeleteMultipleEntriesDialog:
+        AppActions.toggleDeleteMultipleEntriesDialog,
+      setSelectedEntries: AppActions.setSelectedEntries
     },
     dispatch
   );
 }
 
-export default connect(null, mapDispatchToProps)(DirectoryMenu);
+export default connect(mapStateToProps, mapDispatchToProps)(DirectoryMenu);

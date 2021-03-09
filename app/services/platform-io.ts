@@ -163,7 +163,36 @@ export default class PlatformIO {
     return nativeAPI.createDirectoryPromise(dirPath);
   };
 
-  static copyFilePromise = (
+  static copyFilePromise = async (
+    sourceFilePath: string,
+    targetFilePath: string,
+    confirmMessage: string = 'File ' +
+      targetFilePath +
+      ' exist do you want to override it?'
+  ): Promise<any> => {
+    const isTargetExist = await PlatformIO.getPropertiesPromise(targetFilePath); // TODO rethink to create PlatformIO.isExistSync function
+    if (isTargetExist) {
+      // eslint-disable-next-line no-alert
+      const confirmOverwrite = window.confirm(confirmMessage);
+      if (confirmOverwrite === true) {
+        return PlatformIO.copyFilePromiseOverwrite(
+          sourceFilePath,
+          targetFilePath
+        );
+      }
+      // eslint-disable-next-line prefer-promise-reject-errors
+      return Promise.reject(
+        'File "' + targetFilePath + '" exists. Copying failed.'
+      );
+    }
+    return PlatformIO.copyFilePromiseOverwrite(sourceFilePath, targetFilePath);
+  };
+
+  /**
+   * @param sourceFilePath
+   * @param targetFilePath - if exist overwrite it
+   */
+  static copyFilePromiseOverwrite = (
     sourceFilePath: string,
     targetFilePath: string
   ): Promise<any> => {
@@ -188,10 +217,10 @@ export default class PlatformIO {
     newDirName: string
   ): Promise<any> => {
     if (objectStoreAPI) {
-      // return objectStoreAPI.renameDirectoryPromise(dirPath, newDirName);
-      return Promise.reject(
+      return objectStoreAPI.renameDirectoryPromise(dirPath, newDirName);
+      /* return Promise.reject(
         'Renaming directories not supported on this platform'
-      );
+      ); */
     }
     return nativeAPI.renameDirectoryPromise(dirPath, newDirName);
   };
@@ -280,10 +309,10 @@ export default class PlatformIO {
     useTrash?: boolean
   ): Promise<any> => {
     if (objectStoreAPI) {
-      // return objectStoreAPI.deleteDirectoryPromise(path, useTrash);
-      return Promise.reject(
+      return objectStoreAPI.deleteDirectoryPromise(path, useTrash);
+      /* return Promise.reject(
         'Deleting directories not supported on this platform'
-      );
+      ); */
     }
     return nativeAPI.deleteDirectoryPromise(path, useTrash);
   };
@@ -295,6 +324,9 @@ export default class PlatformIO {
     nativeAPI.showInFileManager(dirPath);
 
   static openFile = (filePath: string): void => nativeAPI.openFile(filePath);
+
+  static resolveFilePath = (filePath: string): string =>
+    objectStoreAPI ? filePath : nativeAPI.resolveFilePath(filePath);
 
   static openUrl = (url: string): void => nativeAPI.openUrl(url);
 

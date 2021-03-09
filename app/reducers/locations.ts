@@ -33,7 +33,8 @@ export const types = {
 
 export const locationType = {
   TYPE_LOCAL: '0',
-  TYPE_CLOUD: '1'
+  TYPE_CLOUD: '1',
+  TYPE_AMPLIFY: '2'
 };
 
 export type Location = {
@@ -53,6 +54,7 @@ export type Location = {
   creationDate?: string;
   isDefault: boolean;
   isReadOnly?: boolean;
+  isNotEditable?: boolean;
   watchForChanges?: boolean;
   persistIndex?: boolean;
   fullTextIndex?: boolean;
@@ -255,19 +257,8 @@ export const actions = {
 
 // Selectors
 export const getLocations = (state: any): Array<Location> => state.locations;
-export const getLocation = (
-  state: any,
-  locationId: string
-): Location | null => {
-  let foundLocation = null;
-  state.locations.map(location => {
-    if (location.uuid === locationId) {
-      foundLocation = location;
-    }
-    return true;
-  });
-  return foundLocation;
-};
+export const getLocation = (state: any, locationId: string): Location | null =>
+  state.locations.find(location => location.uuid === locationId);
 export const getDefaultLocationId = (state: any): string | undefined => {
   let defaultLocationID;
   state.locations.map(location => {

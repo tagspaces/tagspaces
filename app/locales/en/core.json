@@ -76,6 +76,7 @@
   "reloadDocument": "Reload Document",
   "selectAllFiles": "Select all files",
   "selectAllTagGroups": "Select/Deselect All Tag Groups",
+  "selectAllLocations": "Select/Deselect All Locations",
   "closeViewer": "Close Document",
   "propertiesDocument": "Document Properties",
   "saveDocument": "Save Document",
@@ -263,6 +264,7 @@
   "warning": "Warning",
   "info": "Info",
   "signOut": "Sign Out",
+  "setAsThumbnail": "Use Thumbnail for this Folder",
   "fileExtension": "File Ext.",
   "fileTitle": "Title",
   "fileTags": "Tags",
@@ -516,5 +518,6 @@
   "toggleMapTheme": "Toggle map theme",
   "pauseSlideShow": "pauseSlideShow",
   "startSlideShow": "startSlideShow",
+  "thumbAlreadyExists": "Thumbnail for '{{directoryName}}' already exists, do you want to override it?",
   "-": "-"
 }

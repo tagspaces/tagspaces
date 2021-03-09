@@ -259,6 +259,30 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       "clobbers": [
         "window.plugins.socialsharing"
       ]
+    },
+    {
+      "id": "com.whebcraft.cordova.plugin.downloader.Downloader",
+      "file": "plugins/com.whebcraft.cordova.plugin.downloader/www/Downloader.js",
+      "pluginId": "com.whebcraft.cordova.plugin.downloader",
+      "clobbers": [
+        "plugins.Downloader"
+      ]
+    },
+    {
+      "id": "com.ourcodeworld.plugins.Filebrowser.Filebrowser",
+      "file": "plugins/com.ourcodeworld.plugins.Filebrowser/www/filebrowser.js",
+      "pluginId": "com.ourcodeworld.plugins.Filebrowser",
+      "clobbers": [
+        "window.OurCodeWorld.Filebrowser"
+      ]
+    },
+    {
+      "id": "com-darryncampbell-cordova-plugin-intent.IntentShim",
+      "file": "plugins/com-darryncampbell-cordova-plugin-intent/www/IntentShim.js",
+      "pluginId": "com-darryncampbell-cordova-plugin-intent",
+      "clobbers": [
+        "intentShim"
+      ]
     }
   ];
   module.exports.metadata = {
@@ -273,6 +297,7 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
     "cordova-plugin-whitelist": "1.3.4",
     "es6-promise-plugin": "4.2.2",
     "cordova-plugin-x-socialsharing": "6.0.3",
-    "cordova-plugin-add-swift-support": "2.0.2"
+    "cordova-plugin-add-swift-support": "2.0.2",
+    "com-darryncampbell-cordova-plugin-intent": "2.0.0"
   };
 });

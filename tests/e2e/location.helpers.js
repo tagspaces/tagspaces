@@ -1,6 +1,6 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 import { delay } from './hook';
-import { firstFile, openContextEntryMenu } from './test-utils.spec';
+import { firstFile, openContextEntryMenu } from './test-utils';
 import {
   clickOn,
   selectorFile,
@@ -60,7 +60,9 @@ export async function createMinioLocation(
   // Check if location not exist (from extconfig.js)
   if (locationName !== lastLocationTID) {
     await clickOn('[data-tid=createNewLocation]');
-    // await clickOn('[data-tid=objectStorageLocation]');
+    if (global.isMinio) {
+      await clickOn('[data-tid=objectStorageLocation]');
+    }
     await clickOn('[data-tid=switchAdvancedModeTID]');
 
     // SET LOCATION NAME

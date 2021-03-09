@@ -155,7 +155,7 @@ cordova-common@^4.0.1, cordova-common@^4.0.2:
     strip-bom "^4.0.0"
     underscore "^1.9.2"
 
-cordova-ios@^6.2.0:
+cordova-ios@^6.1.1:
   version "6.2.0"
   resolved "https://registry.yarnpkg.com/cordova-ios/-/cordova-ios-6.2.0.tgz#3aaec7376b9a202cdcaf28faab6a79823b04c519"
   integrity sha512-sLjZg2QBI1SpQVwfe0MSn89YNVkBGLW9Q1vcFJBsqKBrhvoEOJ5Ytq0gwqdhgTOGzlwJUfxC6OHM3jcsRjtYrw==
@@ -171,9 +171,9 @@ cordova-ios@^6.2.0:
     xcode "^3.0.1"
     xml-escape "^1.1.0"
 
-"cordova-ourcodeworld-filebrowser@git+https://github.com/muhammed-noufal/cordova-ourcodeworld-filebrowser.git":
+"cordova-ourcodeworld-filebrowser@git+https://github.com/ourcodeworld/cordova-ourcodeworld-filebrowser.git":
   version "1.0.0"
-  resolved "git+https://github.com/muhammed-noufal/cordova-ourcodeworld-filebrowser.git#07b8d2298a53691913101da5f704cb11159aed70"
+  resolved "git+https://github.com/ourcodeworld/cordova-ourcodeworld-filebrowser.git#b4824ea23d9e359708207158420b43cd5e816790"
 
 cordova-plugin-add-swift-support@2.0.2:
   version "2.0.2"
@@ -197,11 +197,6 @@ cordova-plugin-background-mode@^0.7.3:
   resolved "https://registry.yarnpkg.com/cordova-plugin-background-mode/-/cordova-plugin-background-mode-0.7.3.tgz#066f92c99f403b3ed3d6fb91f281a0a7ccbc84ba"
   integrity sha512-LsU1v7EgTUROaks+tcQ8TnMzVUcU/TwjDVwj2O/4e4aI2q2ldLGsiZorqKqfqvwh2HoIssmY73OwJk91hQi62w==
 
-cordova-plugin-camera@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/cordova-plugin-camera/-/cordova-plugin-camera-5.0.1.tgz#9e0e94a7d29b15e6708f186bf9e59a28fcc0ee53"
-  integrity sha512-9gXyZvI8u9KzsZuqmB8Yw+uheF+7f+usMAwvOMw7L7pqbykg+bm9US5zjhJbwit3A1cSblgZkpBafe5cFiMcTA==
-
 cordova-plugin-device@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/cordova-plugin-device/-/cordova-plugin-device-2.0.3.tgz#c2b41b7efd0455dd097f89356d85bfdd5dadeb0f"
@@ -221,11 +216,6 @@ cordova-plugin-whitelist@^1.3.4:
   version "1.3.4"
   resolved "https://registry.yarnpkg.com/cordova-plugin-whitelist/-/cordova-plugin-whitelist-1.3.4.tgz#31938545c7c3e7de35c20ab08c2c3afa06e8a3f9"
   integrity sha512-EYC5eQFVkoYXq39l7tYKE6lEjHJ04mvTmKXxGL7quHLdFPfJMNzru/UYpn92AOfpl3PQaZmou78C7EgmFOwFQQ==
-
-cordova-plugin-x-socialsharing@^6.0.3:
-  version "6.0.3"
-  resolved "https://registry.yarnpkg.com/cordova-plugin-x-socialsharing/-/cordova-plugin-x-socialsharing-6.0.3.tgz#5ae9276a73f4201b7af8727219a6372ccc8ba2cd"
-  integrity sha512-pnrE2CXsz4G0n0WoFDAasLS1VT3nIsNpddvXgfpiqX3wyOlSjO2NdF+sjYaTvs1B+f7z8EWbYCHpCrgBQiMLIg==
 
 cross-spawn@^7.0.0, cross-spawn@^7.0.1:
   version "7.0.3"

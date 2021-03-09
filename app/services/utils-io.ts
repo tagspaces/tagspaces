@@ -27,7 +27,10 @@ import {
   getMetaDirectoryPath,
   getMetaFileLocationForFile,
   getMetaFileLocationForDir,
-  extractContainingDirectoryPath
+  extractContainingDirectoryPath,
+  extractDirectoryName,
+  getThumbFileLocationForFile,
+  getThumbFileLocationForDirectory
 } from '-/utils/paths';
 import i18n from '../services/i18n';
 import versionMeta from '../version.json';
@@ -47,7 +50,7 @@ export interface FileSystemEntry {
   perspective?: string;
   textContent?: string;
   description?: string;
-  tags?: Array<Tag>;
+  tags: Array<Tag>;
   size: number;
   lmdt: number;
   path: string;
@@ -860,6 +863,29 @@ export async function saveMetaDataPromise(
   return new Promise((resolve, reject) =>
     reject(new Error('file not found' + path))
   );
+}
+
+/**
+ * @param filePath
+ * return Promise<directoryPath> of directory in order to open Folder properties next
+ */
+export function setFolderThumbnailPromise(filePath: string): Promise<string> {
+  const directoryPath = extractContainingDirectoryPath(
+    filePath,
+    PlatformIO.getDirSeparator()
+  );
+  const directoryName = extractDirectoryName(
+    directoryPath,
+    PlatformIO.getDirSeparator()
+  );
+  return PlatformIO.copyFilePromise(
+    getThumbFileLocationForFile(filePath, PlatformIO.getDirSeparator()),
+    getThumbFileLocationForDirectory(
+      directoryPath,
+      PlatformIO.getDirSeparator()
+    ),
+    i18n.t('core:thumbAlreadyExists', { directoryName })
+  ).then(() => directoryPath);
 }
 
 export function findColorForFileEntry(

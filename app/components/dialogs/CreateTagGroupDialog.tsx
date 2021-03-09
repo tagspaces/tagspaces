@@ -16,7 +16,8 @@
  *
  */
 
-import React from 'react';
+import React, { useReducer, useRef, useState } from 'react';
+import uuidv1 from 'uuid';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -39,218 +40,217 @@ interface Props {
   textcolor: string;
 }
 
-interface State {
-  inputError: boolean;
-  displayColorPicker: boolean;
-  displayTextColorPicker: boolean;
-  disableConfirmButton: boolean;
-  uuid: string;
-  title: string;
-  color: string;
-  textcolor: string;
-}
+const CreateTagGroupDialog = (props: Props) => {
+  const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
+  const [displayTextColorPicker, setDisplayTextColorPicker] = useState<boolean>(
+    false
+  );
+  const [inputError, setInputError] = useState<boolean>(false);
 
-class CreateTagGroupDialog extends React.Component<Props, State> {
-  state = {
-    displayColorPicker: false,
-    displayTextColorPicker: false,
-    inputError: false,
-    disableConfirmButton: true,
-    title: '',
-    color: this.props.color,
-    textcolor: this.props.textcolor,
-    uuid: ''
-  };
+  const title = useRef<string>('');
+  const disableConfirmButton = useRef<boolean>(true);
+  const color = useRef<string>(props.color);
+  const textcolor = useRef<string>(props.textcolor);
+  // eslint-disable-next-line no-unused-vars
+  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
-  handleTagGroupTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTagGroupTitleChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const { target } = event;
     const { value, name } = target;
 
     if (name === 'title') {
-      this.setState({ title: value }, this.handleValidation);
+      title.current = value;
+      handleValidation();
     }
   };
 
-  handleValidation() {
-    if (this.state.title.length > 0) {
-      this.setState({ inputError: false, disableConfirmButton: false });
+  const handleValidation = () => {
+    if (title.current.length > 0) {
+      if (inputError) {
+        setInputError(false);
+      } else {
+        // rerender
+        forceUpdate();
+      }
+      disableConfirmButton.current = false;
     } else {
-      this.setState({ inputError: true, disableConfirmButton: true });
+      if (!inputError) {
+        setInputError(true);
+      } else {
+        // rerender
+        forceUpdate();
+      }
+      disableConfirmButton.current = true;
     }
-  }
+  };
 
-  onConfirm = () => {
-    if (!this.state.disableConfirmButton) {
-      this.props.createTagGroup({
-        uuid: this.state.uuid,
-        title: this.state.title,
-        color: this.state.color,
-        textcolor: this.state.textcolor,
+  const onConfirm = () => {
+    if (!disableConfirmButton.current) {
+      props.createTagGroup({
+        uuid: uuidv1(),
+        title: title.current,
+        color: color.current,
+        textcolor: textcolor.current,
         children: []
       });
-      this.setState({ inputError: false, disableConfirmButton: true });
-      this.props.onClose();
+      props.onClose();
     }
   };
 
-  toggleDefaultTagBackgroundColorPicker = () => {
-    this.setState(prevState => ({
-      displayColorPicker: !prevState.displayColorPicker
-    }));
+  const toggleDefaultTagBackgroundColorPicker = () => {
+    setDisplayColorPicker(!displayColorPicker);
   };
 
-  toggleDefaultTagTextColorPicker = () => {
-    this.setState(prevState => ({
-      displayTextColorPicker: !prevState.displayTextColorPicker
-    }));
+  const toggleDefaultTagTextColorPicker = () => {
+    setDisplayTextColorPicker(!displayTextColorPicker);
   };
 
-  handleChangeColor = (color: string) => {
-    this.setState({ color });
+  const handleChangeColor = (value: string) => {
+    color.current = value;
   };
 
-  handleChangeTextColor = (color: string) => {
-    this.setState({ textcolor: color });
+  const handleChangeTextColor = (value: string) => {
+    textcolor.current = value;
   };
 
-  render() {
-    const { fullScreen, open, onClose } = this.props;
+  const { fullScreen, open, onClose } = props;
 
-    const styles = {
-      color: {
-        width: '100%',
-        height: 30,
-        borderRadius: 2,
-        borderWidth: 1,
-        borderStyle: 'solid',
-        borderColor: 'gray',
-        background: this.state.color
-      },
-      textcolor: {
-        width: '100%',
-        height: 30,
-        borderRadius: 2,
-        borderWidth: 1,
-        borderStyle: 'solid',
-        borderColor: 'gray',
-        background: this.state.textcolor
-      },
-      swatch: {
-        padding: '5px',
-        borderRadius: '1px',
-        boxShadow: '0 0 0 1px rgba(0,0,0,.1)',
-        display: 'inline-block',
-        cursor: 'pointer'
-      },
-      helpText: {
-        marginBottom: '5px',
-        fontSize: '1rem'
-      }
-    };
+  const styles = {
+    color: {
+      width: '100%',
+      height: 30,
+      borderRadius: 2,
+      borderWidth: 1,
+      borderStyle: 'solid',
+      borderColor: 'gray',
+      background: color.current
+    },
+    textcolor: {
+      width: '100%',
+      height: 30,
+      borderRadius: 2,
+      borderWidth: 1,
+      borderStyle: 'solid',
+      borderColor: 'gray',
+      background: textcolor.current
+    },
+    swatch: {
+      padding: '5px',
+      borderRadius: '1px',
+      boxShadow: '0 0 0 1px rgba(0,0,0,.1)',
+      display: 'inline-block',
+      cursor: 'pointer'
+    },
+    helpText: {
+      marginBottom: '5px',
+      fontSize: '1rem'
+    }
+  };
 
-    return (
-      <Dialog
-        open={open}
-        onClose={onClose}
-        fullScreen={fullScreen}
-        keepMounted
-        scroll="paper"
-        onKeyDown={event => {
-          if (event.key === 'Enter' || event.keyCode === 13) {
-            event.preventDefault();
-            event.stopPropagation();
-            this.onConfirm();
-          } else if (event.key === 'Escape') {
-            onClose();
-          }
-        }}
-      >
-        <DialogTitle>{i18n.t('core:createTagGroupTitle')}</DialogTitle>
-        <DialogContent>
-          <FormControl fullWidth={true} error={this.state.inputError}>
-            <TextField
-              fullWidth={true}
-              error={this.state.inputError}
-              autoFocus
-              name="title"
-              label={i18n.t('core:createTagGroupName')}
-              value={this.state.title}
-              onChange={this.handleTagGroupTitleChange}
-              data-tid="createTagGroupInput"
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullScreen={fullScreen}
+      keepMounted
+      scroll="paper"
+      onKeyDown={event => {
+        if (event.key === 'Enter' || event.keyCode === 13) {
+          event.preventDefault();
+          event.stopPropagation();
+          onConfirm();
+        } else if (event.key === 'Escape') {
+          onClose();
+        }
+      }}
+    >
+      <DialogTitle>{i18n.t('core:createTagGroupTitle')}</DialogTitle>
+      <DialogContent>
+        <FormControl fullWidth={true} error={inputError}>
+          <TextField
+            fullWidth={true}
+            error={inputError}
+            autoFocus
+            name="title"
+            label={i18n.t('core:createTagGroupName')}
+            defaultValue={title.current}
+            onChange={handleTagGroupTitleChange}
+            data-tid="createTagGroupInput"
+          />
+          {inputError && (
+            <FormHelperText>
+              {i18n.t('core:taggroupTitleHelper')}
+            </FormHelperText>
+          )}
+        </FormControl>
+        <FormControl fullWidth={true}>
+          <FormHelperText style={styles.helpText}>
+            {i18n.t('core:tagBackgroundColor')}
+          </FormHelperText>
+          <TransparentBackground>
+            <Button
+              onClick={toggleDefaultTagBackgroundColorPicker}
+              data-tid="createTagGroupBackgroundColor"
+              style={styles.color}
+              role="presentation"
+            >
+              &nbsp;
+            </Button>
+          </TransparentBackground>
+          {displayColorPicker && (
+            <ColorPickerDialog
+              open={displayColorPicker}
+              setColor={handleChangeColor}
+              onClose={toggleDefaultTagBackgroundColorPicker}
+              color={color.current}
             />
-            {this.state.inputError && (
-              <FormHelperText>
-                {i18n.t('core:taggroupTitleHelper')}
-              </FormHelperText>
-            )}
-          </FormControl>
-          <FormControl fullWidth={true}>
-            <FormHelperText style={styles.helpText}>
-              {i18n.t('core:tagBackgroundColor')}
-            </FormHelperText>
-            <TransparentBackground>
-              <Button
-                onClick={this.toggleDefaultTagBackgroundColorPicker}
-                data-tid="createTagGroupBackgroundColor"
-                style={styles.color}
-                role="presentation"
-              >
-                &nbsp;
-              </Button>
-            </TransparentBackground>
-            {this.state.displayColorPicker && (
-              <ColorPickerDialog
-                open={this.state.displayColorPicker}
-                setColor={this.handleChangeColor}
-                onClose={this.toggleDefaultTagBackgroundColorPicker}
-                color={this.state.color}
-              />
-            )}
-          </FormControl>
-          <FormControl fullWidth={true}>
-            <FormHelperText style={styles.helpText}>
-              {i18n.t('core:tagForegroundColor')}
-            </FormHelperText>
-            <TransparentBackground>
-              <Button
-                onClick={this.toggleDefaultTagTextColorPicker}
-                data-tid="createTagGroupForegroundColor"
-                style={styles.textcolor}
-                role="presentation"
-              >
-                &nbsp;
-              </Button>
-            </TransparentBackground>
-            {this.state.displayTextColorPicker && (
-              <ColorPickerDialog
-                open={this.state.displayTextColorPicker}
-                setColor={this.handleChangeTextColor}
-                onClose={this.toggleDefaultTagTextColorPicker}
-                color={this.state.textcolor}
-              />
-            )}
-          </FormControl>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            data-tid="createTagGroupCancelButton"
-            onClick={this.props.onClose}
-            color="primary"
-          >
-            {i18n.t('core:cancel')}
-          </Button>
-          <Button
-            disabled={this.state.disableConfirmButton}
-            onClick={this.onConfirm}
-            data-tid="createTagGroupConfirmButton"
-            color="primary"
-          >
-            {i18n.t('core:ok')}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
-}
+          )}
+        </FormControl>
+        <FormControl fullWidth={true}>
+          <FormHelperText style={styles.helpText}>
+            {i18n.t('core:tagForegroundColor')}
+          </FormHelperText>
+          <TransparentBackground>
+            <Button
+              onClick={toggleDefaultTagTextColorPicker}
+              data-tid="createTagGroupForegroundColor"
+              style={styles.textcolor}
+              role="presentation"
+            >
+              &nbsp;
+            </Button>
+          </TransparentBackground>
+          {displayTextColorPicker && (
+            <ColorPickerDialog
+              open={displayTextColorPicker}
+              setColor={handleChangeTextColor}
+              onClose={toggleDefaultTagTextColorPicker}
+              color={textcolor.current}
+            />
+          )}
+        </FormControl>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          data-tid="createTagGroupCancelButton"
+          onClick={props.onClose}
+          color="primary"
+        >
+          {i18n.t('core:cancel')}
+        </Button>
+        <Button
+          disabled={disableConfirmButton.current}
+          onClick={onConfirm}
+          data-tid="createTagGroupConfirmButton"
+          color="primary"
+        >
+          {i18n.t('core:ok')}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
 
 export default CreateTagGroupDialog;

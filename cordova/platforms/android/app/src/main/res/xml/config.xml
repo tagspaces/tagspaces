@@ -33,6 +33,16 @@
     <feature name="SocialSharing">
         <param name="android-package" value="nl.xservices.plugins.SocialSharing" />
     </feature>
+    <feature name="Downloader">
+        <param name="android-package" value="com.whebcraft.android.plugin.Downloader" />
+    </feature>
+    <feature name="Filebrowser">
+        <param name="android-package" value="com.ourcodeworld.plugins.filebrowser.Filebrowser" />
+    </feature>
+    <feature name="IntentShim">
+        <param name="android-package" value="com.darryncampbell.cordova.plugin.intent.IntentShim" />
+        <param name="onload" value="true" />
+    </feature>
     <name>TagSpaces</name>
     <description>
 		Offline file organizer and browser with tagging support.
@@ -54,6 +64,31 @@
     <icon density="xhdpi" src="res/icon/android/mipmap-xhdpi/ic_launcher.png" />
     <icon density="xxhdpi" src="res/icon/android/mipmap-xxhdpi/ic_launcher.png" />
     <icon density="xxxhdpi" src="res/icon/android/mipmap-xxxhdpi/ic_launcher.png" />
+    <config-file mode="merge" parent="/manifest/application/activity" platform="android" target="AndroidManifest.xml">
+        <intent-filter>
+            <data android:mimeType="application/pdf" android:scheme="file" />
+            <data android:mimeType="text/plain" android:scheme="file" />
+            <data android:mimeType="image/x-windows-bmp" android:scheme="file" />
+            <data android:mimeType="image/gif" android:scheme="file" />
+            <data android:mimeType="image/png" android:scheme="file" />
+            <data android:mimeType="image/jpeg" android:scheme="file" />
+            <data android:mimeType="image/webp" android:scheme="file" />
+            <data android:mimeType="video/webm" android:scheme="file" />
+            <data android:mimeType="video/ogg" android:scheme="file" />
+            <data android:mimeType="text/html" android:scheme="file" />
+            <data android:mimeType="application/json" android:scheme="file" />
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:host="*" android:mimeType="*/*" android:pathPattern="..json" android:scheme="file" />
+            <data android:host="*" android:mimeType="*/*" android:pathPattern="..mht" android:scheme="file" />
+            <data android:host="*" android:mimeType="*/*" android:pathPattern="..mhtml" android:scheme="file" />
+            <data android:host="*" android:mimeType="*/*" android:pathPattern="..md" android:scheme="file" />
+            <data android:host="*" android:mimeType="*/*" android:pathPattern="..md.txt" android:scheme="file" />
+            <data android:host="*" android:mimeType="*/*" android:pathPattern="..markdown" android:scheme="file" />
+            <data android:host="*" android:mimeType="*/*" android:pathPattern="..ogv" android:scheme="file" />
+        </intent-filter>
+    </config-file>
     <config-file parent="/manifest/application" target="AndroidManifest.xml">
         <provider android:authorities="${applicationId}.provider" android:exported="false" android:grantUriPermissions="true" android:name="androidx.core.content.FileProvider">
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/mnk_file_path" />

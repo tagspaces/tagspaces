@@ -479,7 +479,8 @@ export default class WebDAVIO {
                     ),
                     size: 0,
                     lmdt: new Date().getTime(),
-                    isNewFile
+                    isNewFile,
+                    tags: []
                   });
                 } else {
                   reject('saveFilePromise: ' + filePath + ' failed ' + status1);
@@ -727,6 +728,7 @@ export default class WebDAVIO {
     window.open(url, '_blank');
   };
 
+  resolveFilePath = (filePath: string): string => filePath;
   /**
    * Places the application window on top of the other windows
    */

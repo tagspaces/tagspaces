@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Menu from '@material-ui/core/Menu';
@@ -41,79 +41,56 @@ interface Props {
   openLocation: (location: Location) => void;
 }
 
-interface State {
-  currentLocation: Location | null;
-  locationChooserMenuOpened: boolean;
-  locationChooserMenuAnchorEl: Element;
-}
+const LocationMenu = (props: Props) => {
+  const [
+    locationChooserMenuAnchorEl,
+    setLocationChooserMenuAnchorEl
+  ] = useState<null | HTMLElement>(null);
 
-class LocationMenu extends React.Component<Props, State> {
-  state = {
-    currentLocation: null,
-    locationChooserMenuOpened: false,
-    locationChooserMenuAnchorEl: null
+  const openLocation = location => {
+    props.openLocation(location);
+    setLocationChooserMenuAnchorEl(null);
   };
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    let currentLocation;
-    if (nextProps.currentLocationId && nextProps.locations) {
-      nextProps.locations.map((location: Location) => {
-        if (location.uuid === nextProps.currentLocationId) {
-          currentLocation = location;
-        }
-      });
-    }
-    return {
-      ...prevState,
-      currentLocation
-    };
+  let currentLocation;
+  if (props.currentLocationId && props.locations) {
+    currentLocation = props.locations.find(
+      (location: Location) => location.uuid === props.currentLocationId
+    );
   }
 
-  openLocation = location => {
-    this.props.openLocation(location);
-    this.toggleLocationChooser(undefined);
-  };
+  const { theme } = props;
+  const locationIcon =
+    currentLocation && currentLocation.type === locationType.TYPE_CLOUD ? (
+      <CloudLocationIcon />
+    ) : (
+      <LocationIcon />
+    );
 
-  toggleLocationChooser = (event: any) => {
-    this.setState({
-      locationChooserMenuOpened: !this.state.locationChooserMenuOpened,
-      locationChooserMenuAnchorEl: event ? event.currentTarget : null
-    });
-  };
-
-  render() {
-    const { theme } = this.props;
-    const { currentLocation } = this.state;
-    const locationIcon =
-      currentLocation && currentLocation.type === locationType.TYPE_CLOUD ? (
-        <CloudLocationIcon />
-      ) : (
-        <LocationIcon />
-      );
-
-    return (
-      <div
-        style={{
-          backgroundColor: theme.palette.background.default
-        }}
+  return (
+    <div
+      style={{
+        backgroundColor: theme.palette.background.default
+      }}
+    >
+      <Button
+        data-tid="folderContainerLocationChooser"
+        id="locationMenuButton"
+        onClick={event => setLocationChooserMenuAnchorEl(event.currentTarget)}
+        title={currentLocation && currentLocation.name}
+        style={{ paddingRight: 0, paddingLeft: 11 }}
       >
-        <Button
-          data-tid="folderContainerLocationChooser"
-          id="locationMenuButton"
-          onClick={this.toggleLocationChooser}
-          title={this.state.currentLocation && this.state.currentLocation.name}
-          style={{ paddingRight: 0, paddingLeft: 11 }}
-        >
-          {this.state.currentLocation
-            ? locationIcon // this.state.currentLocation.name
-            : i18n.t('core:pleaseOpenLocation')}
-          <ArrowDropDownIcon />
-        </Button>
+        {currentLocation
+          ? locationIcon // this.state.currentLocation.name
+          : i18n.t('core:pleaseOpenLocation')}
+        <ArrowDropDownIcon />
+      </Button>
+      {Boolean(locationChooserMenuAnchorEl) && (
         <Menu
           id="simple-menu"
-          open={this.state.locationChooserMenuOpened}
-          anchorEl={this.state.locationChooserMenuAnchorEl}
-          onClose={this.toggleLocationChooser}
+          open={Boolean(locationChooserMenuAnchorEl)}
+          anchorEl={locationChooserMenuAnchorEl}
+          onClose={() => setLocationChooserMenuAnchorEl(null)}
           PaperProps={{
             style: {
               maxHeight: 48 * 6.5,
@@ -128,11 +105,11 @@ class LocationMenu extends React.Component<Props, State> {
           >
             {i18n.t('core:chooseLocation')}
           </ListSubHeader>
-          {this.props.locations.map((location: Location) => (
+          {props.locations.map((location: Location) => (
             <MenuItem
               data-tid="folderContainerMenuOpenLocation"
               key={location.uuid}
-              onClick={() => this.openLocation(location)}
+              onClick={() => openLocation(location)}
               style={
                 currentLocation && currentLocation.uuid === location.uuid
                   ? { backgroundColor: theme.palette.primary.light }
@@ -150,10 +127,10 @@ class LocationMenu extends React.Component<Props, State> {
             </MenuItem>
           ))}
         </Menu>
-      </div>
-    );
-  }
-}
+      )}
+    </div>
+  );
+};
 
 function mapStateToProps(state) {
   return {

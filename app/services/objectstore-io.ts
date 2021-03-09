@@ -26,7 +26,8 @@ import {
   normalizePath,
   getThumbFileLocationForFile,
   getMetaFileLocationForFile,
-  extractFileExtension
+  extractFileExtension,
+  cleanTrailingDirSeparator
 } from '-/utils/paths';
 import { FileSystemEntry } from '-/services/utils-io';
 
@@ -626,6 +627,7 @@ export default class ObjectStoreIO {
                     extension: extractFileExtension(filePath, '/'),
                     size: content.length,
                     lmdt: new Date().getTime(),
+                    tags: [],
                     isNewFile
                   });
                 })
@@ -707,7 +709,7 @@ export default class ObjectStoreIO {
     return this.objectStore
       .copyObject({
         Bucket: this.config.bucketName,
-        CopySource: this.config.bucketName + '/' + nFilePath,
+        CopySource: this.config.bucketName + '/' + nFilePath, // this.encodeS3URI(nFilePath),
         Key: nNewFilePath
       })
       .promise()
@@ -729,27 +731,63 @@ export default class ObjectStoreIO {
   };
 
   /**
-   * Rename a directory TODO list and copy all content in new DIR
+   * Rename a directory
    */
-  renameDirectoryPromise = (
+  renameDirectoryPromise = async (
     dirPath: string,
     newDirectoryPath: string
   ): Promise<Object> => {
-    const newDirPath =
-      extractParentDirectoryPath(dirPath, '/') + '/' + newDirectoryPath;
+    const parenDirPath = extractParentDirectoryPath(dirPath, '/');
+    const newDirPath = this.normalizeRootPath(
+      parenDirPath + '/' + newDirectoryPath
+    );
     console.log('Renaming directory: ' + dirPath + ' to ' + newDirPath);
     if (dirPath === newDirPath) {
-      return new Promise((resolve, reject) => {
-        reject('Renaming directory failed, directories have the same path');
-      });
+      return Promise.reject(
+        'Renaming directory failed, directories have the same path'
+      );
     }
-    return this.objectStore
-      .copyObject({
+
+    try {
+      const listParams = {
         Bucket: this.config.bucketName,
-        CopySource: this.config.bucketName + '/' + dirPath,
-        Key: newDirPath
-      })
-      .promise();
+        Prefix: dirPath,
+        Delimiter: '/'
+      };
+      const listedObjects = await this.objectStore
+        .listObjectsV2(listParams)
+        .promise();
+
+      if (listedObjects.Contents.length > 0) {
+        const promises = [];
+        listedObjects.Contents.forEach(({ Key }) => {
+          if (Key.endsWith('/')) {
+            promises.push(this.createDirectoryPromise(newDirectoryPath));
+          } else {
+            promises.push(
+              this.copyFilePromise(
+                Key,
+                parenDirPath +
+                  '/' +
+                  Key.replace(normalizePath(dirPath), newDirectoryPath)
+              )
+            );
+          }
+        });
+
+        return Promise.all(promises).then(() =>
+          this.deleteDirectoryPromise(dirPath).then(() => newDirectoryPath)
+        );
+      } else {
+        // empty Dir
+        return this.createDirectoryPromise(newDirectoryPath).then(() =>
+          this.deleteDirectoryPromise(dirPath).then(() => newDirectoryPath)
+        );
+      }
+    } catch (e) {
+      console.log(e);
+    }
+    return Promise.reject('No directory exist:' + dirPath);
   };
 
   /**
@@ -764,16 +802,43 @@ export default class ObjectStoreIO {
       .promise();
 
   /**
-   * Delete a specified directory, the directory should be empty, if the trash can functionality is not enabled (partial: works for files and empty dirs)
-   * TODO empty dir (its have invisible .ts dir)
+   * Delete a specified directory
    */
-  deleteDirectoryPromise = (path: string): Promise<Object> =>
-    this.objectStore
+  deleteDirectoryPromise = async (path: string): Promise<Object> => {
+    const listParams = {
+      Bucket: this.config.bucketName,
+      Prefix: path,
+      Delimiter: '/'
+    };
+    const listedObjects = await this.objectStore
+      .listObjectsV2(listParams)
+      .promise();
+
+    if (listedObjects.Contents.length > 0) {
+      const deleteParams = {
+        Bucket: this.config.bucketName,
+        Delete: { Objects: [] }
+      };
+
+      listedObjects.Contents.forEach(({ Key }) => {
+        deleteParams.Delete.Objects.push({ Key });
+      });
+
+      return this.objectStore.deleteObjects(deleteParams).promise();
+
+      /*if (!listedObjects.IsTruncated) {
+        return Promise.reject(
+          'Folder is not empty:' + JSON.stringify(listedObjects)
+        );
+      }*/
+    }
+    return this.objectStore
       .deleteObject({
         Bucket: this.config.bucketName,
         Key: path
       })
       .promise();
+  };
 
   /**
    * Choosing directory
