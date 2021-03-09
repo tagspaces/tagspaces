@@ -23,6 +23,8 @@ import Typography from '@material-ui/core/Typography';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
+import Avatar from '@material-ui/core/Avatar';
+import Box from '@material-ui/core/Box';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -32,6 +34,7 @@ import AboutIcon from '@material-ui/icons/BlurOn';
 import ChangeLogIcon from '@material-ui/icons/ImportContacts';
 import OnboardingIcon from '@material-ui/icons/Explore';
 import WebClipperIcon from '@material-ui/icons/Transform';
+import AccountIcon from '@material-ui/icons/AccountCircle';
 import EmailIcon from '@material-ui/icons/Email';
 import IssueIcon from '@material-ui/icons/BugReport';
 import TranslationIcon from '@material-ui/icons/Translate';
@@ -73,8 +76,22 @@ const HelpFeedbackPanel = (props: Props) => {
     toggleAboutDialog,
     toggleKeysDialog,
     toggleOnboardingDialog,
-    toggleProTeaser
+    toggleProTeaser,
+    theme
   } = props;
+
+  let email;
+  let initials;
+  if (props.user && props.user.attributes && props.user.attributes.email) {
+    email = props.user.attributes.email;
+    const fullName = email.split('@')[0].split('.');
+    const firstName = fullName[0];
+    const lastName = fullName[fullName.length - 1];
+    initials = firstName.charAt(0).toUpperCase();
+    if (lastName) {
+      initials += lastName.charAt(0).toUpperCase();
+    }
+  }
 
   return (
     <div className={classes.panel} style={props.style}>
@@ -87,9 +104,26 @@ const HelpFeedbackPanel = (props: Props) => {
           >
             User Profile
           </Typography>
-          <div>
-            <div>Hello, {props.user.attributes.email}</div>
-            <div
+          <Box>
+            <ListItem>
+              <ListItemIcon>
+                <Avatar
+                  variant="rounded"
+                  style={{
+                    color: theme.palette.getContrastText(
+                      theme.palette.primary.light
+                    ),
+                    backgroundColor: theme.palette.primary.light
+                  }}
+                >
+                  {initials}
+                </Avatar>
+              </ListItemIcon>
+              <Typography style={{ color: theme.palette.text.primary }}>
+                {email}
+              </Typography>
+            </ListItem>
+            <Box
               style={{
                 width: '100%',
                 textAlign: 'center',
@@ -98,9 +132,9 @@ const HelpFeedbackPanel = (props: Props) => {
             >
               <Button
                 data-tid="signOutTID"
-                onClick={() => Auth.signOut()}
                 title={i18n.t('core:signOut')}
                 className={classes.mainActionButton}
+                onClick={() => Auth.signOut()}
                 size="small"
                 variant="outlined"
                 color="primary"
@@ -109,9 +143,8 @@ const HelpFeedbackPanel = (props: Props) => {
                 <ExitToAppIcon className={classNames(classes.leftIcon)} />
                 {i18n.t('core:signOut')}
               </Button>
-            </div>
-            {/* <AmplifySignOut buttonText="Sign Out" /> */}
-          </div>
+            </Box>
+          </Box>
         </>
       )}
       <Typography
@@ -130,7 +163,7 @@ const HelpFeedbackPanel = (props: Props) => {
             <ListItemIcon>
               <AboutIcon />
             </ListItemIcon>
-            <Typography style={{ color: props.theme.palette.text.primary }}>
+            <Typography style={{ color: theme.palette.text.primary }}>
               {i18n.t('core:aboutTitle')}
             </Typography>
           </ListItem>
@@ -143,7 +176,7 @@ const HelpFeedbackPanel = (props: Props) => {
             <ListItemIcon>
               <DocumentationIcon />
             </ListItemIcon>
-            <Typography style={{ color: props.theme.palette.text.primary }}>
+            <Typography style={{ color: theme.palette.text.primary }}>
               {i18n.t('Open Documentation')}
             </Typography>
           </ListItem>
@@ -151,7 +184,7 @@ const HelpFeedbackPanel = (props: Props) => {
             <ListItemIcon>
               <KeyShortcutsIcon />
             </ListItemIcon>
-            <Typography style={{ color: props.theme.palette.text.primary }}>
+            <Typography style={{ color: theme.palette.text.primary }}>
               {i18n.t('core:shortcutKeys')}
             </Typography>
           </ListItem>
@@ -165,7 +198,7 @@ const HelpFeedbackPanel = (props: Props) => {
             <ListItemIcon>
               <ChangeLogIcon />
             </ListItemIcon>
-            <Typography style={{ color: props.theme.palette.text.primary }}>
+            <Typography style={{ color: theme.palette.text.primary }}>
               {i18n.t('core:whatsNew')}
             </Typography>
           </ListItem>
@@ -173,7 +206,7 @@ const HelpFeedbackPanel = (props: Props) => {
             <ListItemIcon>
               <OnboardingIcon />
             </ListItemIcon>
-            <Typography style={{ color: props.theme.palette.text.primary }}>
+            <Typography style={{ color: theme.palette.text.primary }}>
               {i18n.t('core:onboardingWizard')}
             </Typography>
           </ListItem>
@@ -184,7 +217,7 @@ const HelpFeedbackPanel = (props: Props) => {
             <ListItemIcon>
               <WebClipperIcon />
             </ListItemIcon>
-            <Typography style={{ color: props.theme.palette.text.primary }}>
+            <Typography style={{ color: theme.palette.text.primary }}>
               {i18n.t('core:webClipper')}
             </Typography>
           </ListItem>
@@ -196,7 +229,7 @@ const HelpFeedbackPanel = (props: Props) => {
             <ListItemIcon>
               <NewFeatureIcon />
             </ListItemIcon>
-            <Typography style={{ color: props.theme.palette.text.primary }}>
+            <Typography style={{ color: theme.palette.text.primary }}>
               {i18n.t('core:suggestNewFeatures')}
             </Typography>
           </ListItem>
@@ -207,7 +240,7 @@ const HelpFeedbackPanel = (props: Props) => {
             <ListItemIcon>
               <IssueIcon />
             </ListItemIcon>
-            <Typography style={{ color: props.theme.palette.text.primary }}>
+            <Typography style={{ color: theme.palette.text.primary }}>
               {i18n.t('core:reportIssues')}
             </Typography>
           </ListItem>
@@ -218,7 +251,7 @@ const HelpFeedbackPanel = (props: Props) => {
             <ListItemIcon>
               <TranslationIcon />
             </ListItemIcon>
-            <Typography style={{ color: props.theme.palette.text.primary }}>
+            <Typography style={{ color: theme.palette.text.primary }}>
               {i18n.t('core:helpWithTranslation')}
             </Typography>
           </ListItem>
@@ -230,7 +263,7 @@ const HelpFeedbackPanel = (props: Props) => {
             <ListItemIcon>
               <EmailIcon />
             </ListItemIcon>
-            <Typography style={{ color: props.theme.palette.text.primary }}>
+            <Typography style={{ color: theme.palette.text.primary }}>
               {i18n.t('core:emailContact')}
             </Typography>
           </ListItem>
@@ -241,7 +274,7 @@ const HelpFeedbackPanel = (props: Props) => {
             <ListItemIcon>
               <Social2Icon />
             </ListItemIcon>
-            <Typography style={{ color: props.theme.palette.text.primary }}>
+            <Typography style={{ color: theme.palette.text.primary }}>
               {i18n.t('core:followOnTwitter')}
             </Typography>
           </ListItem>
@@ -252,7 +285,7 @@ const HelpFeedbackPanel = (props: Props) => {
             <ListItemIcon>
               <SocialIcon />
             </ListItemIcon>
-            <Typography style={{ color: props.theme.palette.text.primary }}>
+            <Typography style={{ color: theme.palette.text.primary }}>
               {i18n.t('core:likeUsOnFacebook')}
             </Typography>
           </ListItem>
@@ -263,7 +296,7 @@ const HelpFeedbackPanel = (props: Props) => {
                 <ListItemIcon>
                   <ProTeaserIcon />
                 </ListItemIcon>
-                <Typography style={{ color: props.theme.palette.text.primary }}>
+                <Typography style={{ color: theme.palette.text.primary }}>
                   {i18n.t('TagSpaces Pro Overview')}
                 </Typography>
               </ListItem>
