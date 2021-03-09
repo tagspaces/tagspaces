@@ -20,6 +20,9 @@
   "installed_plugins": {
     "com.whebcraft.cordova.plugin.downloader": {
       "PACKAGE_NAME": "org.tagspaces.mobile"
+    },
+    "cordova-plugin-androidx": {
+      "PACKAGE_NAME": "org.tagspaces.mobile"
     }
   },
   "dependent_plugins": {},
@@ -34,6 +37,7 @@
     }
   ],
   "plugin_metadata": {
-    "com.whebcraft.cordova.plugin.downloader": "0.1.0"
+    "com.whebcraft.cordova.plugin.downloader": "0.1.0",
+    "cordova-plugin-androidx": "3.0.0"
   }
 }

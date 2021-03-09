@@ -10,6 +10,7 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
     }
   ];
   module.exports.metadata = {
-    "com.whebcraft.cordova.plugin.downloader": "0.1.0"
+    "com.whebcraft.cordova.plugin.downloader": "0.1.0",
+    "cordova-plugin-androidx": "3.0.0"
   };
 });

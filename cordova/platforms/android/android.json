@@ -10,11 +10,11 @@
           "/manifest/application/activity": [
             {
               "xml": "<intent-filter><action android:name=\"android.intent.action.VIEW\" /><category android:name=\"android.intent.category.DEFAULT\" /><category android:name=\"android.intent.category.BROWSABLE\" /><data android:mimeType=\"application/pdf\" android:scheme=\"file\" /><data android:mimeType=\"text/plain\" android:scheme=\"file\" /><data android:mimeType=\"image/x-windows-bmp\" android:scheme=\"file\" /><data android:mimeType=\"image/gif\" android:scheme=\"file\" /><data android:mimeType=\"image/png\" android:scheme=\"file\" /><data android:mimeType=\"image/jpeg\" android:scheme=\"file\" /><data android:mimeType=\"image/webp\" android:scheme=\"file\" /><data android:mimeType=\"video/webm\" android:scheme=\"file\" /><data android:mimeType=\"video/ogg\" android:scheme=\"file\" /><data android:mimeType=\"text/html\" android:scheme=\"file\" /><data android:mimeType=\"application/json\" android:scheme=\"file\" /></intent-filter>",
-              "count": 5
+              "count": 7
             },
             {
               "xml": "<intent-filter><action android:name=\"android.intent.action.VIEW\" /><category android:name=\"android.intent.category.DEFAULT\" /><category android:name=\"android.intent.category.BROWSABLE\" /><data android:host=\"*\" android:mimeType=\"*/*\" android:pathPattern=\"..json\" android:scheme=\"file\" /><data android:host=\"*\" android:mimeType=\"*/*\" android:pathPattern=\"..mht\" android:scheme=\"file\" /><data android:host=\"*\" android:mimeType=\"*/*\" android:pathPattern=\"..mhtml\" android:scheme=\"file\" /><data android:host=\"*\" android:mimeType=\"*/*\" android:pathPattern=\"..md\" android:scheme=\"file\" /><data android:host=\"*\" android:mimeType=\"*/*\" android:pathPattern=\"..md.txt\" android:scheme=\"file\" /><data android:host=\"*\" android:mimeType=\"*/*\" android:pathPattern=\"..markdown\" android:scheme=\"file\" /><data android:host=\"*\" android:mimeType=\"*/*\" android:pathPattern=\"..ogv\" android:scheme=\"file\" /></intent-filter>",
-              "count": 5
+              "count": 7
             },
             {
               "xml": "<intent-filter><action android:name=\"com.darryncampbell.cordova.plugin.intent.ACTION\" /><category android:name=\"android.intent.category.DEFAULT\" /></intent-filter>",
@@ -24,7 +24,7 @@
           "/manifest/application": [
             {
               "xml": "<provider android:authorities=\"${applicationId}.provider\" android:exported=\"false\" android:grantUriPermissions=\"true\" android:name=\"android.support.v4.content.FileProvider\"><meta-data android:name=\"android.support.FILE_PROVIDER_PATHS\" android:resource=\"@xml/mnk_file_path\" /></provider>",
-              "count": 5
+              "count": 7
             },
             {
               "xml": "<activity android:label=\"Our Code World filepicker\" android:name=\"com.ourcodeworld.plugins.filebrowser.DialogShowPicker\"><intent-filter><action android:name=\"com.ourcodeworld.plugins.filebrowser.DialogShowPicker\" /><category android:name=\"android.intent.category.DEFAULT\" /></intent-filter></activity>",
