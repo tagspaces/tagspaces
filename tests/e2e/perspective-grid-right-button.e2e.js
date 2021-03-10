@@ -66,10 +66,9 @@ describe('TST50** - Right button on a file', () => {
   });*/
 
   test('TST5016 - Open file [web,minio,electron]', async () => {
-    //await searchEngine('bmp');
-    await searchEngine('txt');
+    //await searchEngine('txt');
     await openContextEntryMenu(
-      perspectiveGridTable + firstFile,
+      '[data-tid="fsEntryName_sample.txt"]', // perspectiveGridTable + firstFile,
       'fileMenuOpenFile'
     );
     // Check if the file is opened

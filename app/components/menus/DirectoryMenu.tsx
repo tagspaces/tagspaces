@@ -34,7 +34,7 @@ import DefaultPerspectiveIcon from '@material-ui/icons/GridOn';
 import GalleryPerspectiveIcon from '@material-ui/icons/Camera';
 import MapiquePerspectiveIcon from '@material-ui/icons/Map';
 // import TreeVizPerspectiveIcon from '@material-ui/icons/AccountTree';
-// import KanBanPerspectiveIcon from '@material-ui/icons/Dashboard';
+import KanBanPerspectiveIcon from '@material-ui/icons/Dashboard';
 import NewFileIcon from '@material-ui/icons/InsertDriveFile';
 import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import RenameFolderIcon from '@material-ui/icons/FormatTextdirectionLToR';
@@ -484,16 +484,16 @@ Do you want to continue?`)
               </ListItemIcon>
               <ListItemText primary="TreeViz Perspective" />
             </MenuItem> */}
-            {/* <MenuItem
-              data-tid="openTreeVizPerspective"
+            <MenuItem
+              data-tid="openKanBanPerspectiveTID"
               onClick={() => switchPerspective(perspectives.KANBAN)}
               title="Switch to kanban perspective"
             >
               <ListItemIcon>
                 <KanBanPerspectiveIcon />
               </ListItemIcon>
-              <ListItemText primary="KanBan Perspective - Beta" />
-            </MenuItem> */}
+              <ListItemText primary="KanBan Perspective" />
+            </MenuItem>
           </>
         )}
         {/* {!props.isReadOnlyMode && (
