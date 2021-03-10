@@ -338,7 +338,6 @@ Do you want to continue?`)
         />
       )}
       <Menu
-        keepMounted
         anchorEl={props.anchorEl}
         open={props.open}
         onClose={props.onClose}
