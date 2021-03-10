@@ -82,6 +82,7 @@ interface Props {
   reflectCreateEntries: (fsEntries: Array<FileSystemEntry>) => void;
   onUploadProgress: (progress: Progress, response: any) => void;
   switchPerspective?: (perspectiveId: string) => void;
+  setCurrentDirectoryPerspective: (perspective: string) => void;
   perspectiveMode?: boolean;
   showNotification?: (
     text: string,
@@ -152,7 +153,11 @@ const DirectoryMenu = (props: Props) => {
   function switchPerspective(perspectiveId) {
     props.onClose();
     if (Pro) {
-      props.switchPerspective(perspectiveId);
+      if (props.switchPerspective) {
+        props.switchPerspective(perspectiveId);
+      } else {
+        props.setCurrentDirectoryPerspective(perspectiveId);
+      }
     } else {
       props.showNotification(
         'Perspectives are part of TagSpaces PRO',
@@ -543,6 +548,7 @@ function mapDispatchToProps(dispatch) {
       toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
       resetProgress: AppActions.resetProgress,
       reflectCreateEntries: AppActions.reflectCreateEntries,
+      setCurrentDirectoryPerspective: AppActions.setCurrentDirectoryPerspective,
       extractContent: IOActions.extractContent,
       uploadFilesAPI: IOActions.uploadFilesAPI,
       addTags: TaggingActions.addTags,
