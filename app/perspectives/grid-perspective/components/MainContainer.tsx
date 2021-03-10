@@ -101,6 +101,8 @@ interface Props {
 const GridPerspective = (props: Props) => {
   const settings = JSON.parse(localStorage.getItem('tsPerspectiveGrid')); // loading settings
 
+  const mouseX = useRef<number>(undefined);
+  const mouseY = useRef<number>(undefined);
   const allFilesSelected = useRef<boolean>(false);
   const selectedEntryPath = useRef<string>('');
   const selectedTag = useRef<Tag | null>(null);
@@ -417,6 +419,10 @@ const GridPerspective = (props: Props) => {
   };
 
   const handleGridContextMenu = (event, fsEntry: FileSystemEntry) => {
+    event.preventDefault();
+    event.stopPropagation();
+    mouseX.current = undefined;
+    mouseY.current = undefined;
     const { desktopMode, selectedEntries } = props;
     const isEntryExist = selectedEntries.some(
       entry => entry.uuid === fsEntry.uuid
@@ -620,6 +626,17 @@ const GridPerspective = (props: Props) => {
     openFileExternally: props.keyBindings.openFileExternally
   };
 
+  const onContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    mouseX.current = e.pageX;
+    mouseY.current = e.pageY;
+    if (props.selectedEntries.length > 0) {
+      props.setSelectedEntries([]);
+    }
+    selectedEntryPath.current = props.currentDirectoryPath;
+    setDirContextMenuAnchorEl(e.currentTarget);
+  };
+
   const keyBindingHandlers = {
     nextDocument: () => props.openNextFile(),
     prevDocument: () => props.openPrevFile(),
@@ -741,6 +758,7 @@ const GridPerspective = (props: Props) => {
           currentPage={1}
           currentLocationPath={locationPath}
           currentDirectoryPath={props.currentDirectoryPath}
+          onContextMenu={onContextMenu}
         />
       </GlobalHotKeys>
       {isAddRemoveTagsDialogOpened && (
@@ -804,7 +822,11 @@ const GridPerspective = (props: Props) => {
         openDirectory={props.openDirectory}
         openFsEntry={props.openFsEntry}
         isReadOnlyMode={props.isReadOnlyMode}
-        perspectiveMode={true}
+        perspectiveMode={
+          selectedEntryPath.current !== props.currentDirectoryPath
+        }
+        mouseX={mouseX.current}
+        mouseY={mouseY.current}
       />
       {/* {Boolean(tagContextMenuAnchorEl) && ( // TODO EntryTagMenu is used in TagSelect we cannot move confirm dialog from menu */}
       <EntryTagMenu

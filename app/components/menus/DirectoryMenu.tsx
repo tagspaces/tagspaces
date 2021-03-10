@@ -100,6 +100,8 @@ interface Props {
   toggleDeleteMultipleEntriesDialog: () => void;
   selectedEntries: Array<any>;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
+  mouseX?: number;
+  mouseY?: number;
 }
 
 const DirectoryMenu = (props: Props) => {
@@ -335,7 +337,20 @@ Do you want to continue?`)
           selectedDirectoryPath={props.directoryPath}
         />
       )}
-      <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
+      <Menu
+        keepMounted
+        anchorEl={props.anchorEl}
+        open={props.open}
+        onClose={props.onClose}
+        anchorReference={
+          props.mouseY && props.mouseX ? 'anchorPosition' : undefined
+        }
+        anchorPosition={
+          props.mouseY && props.mouseX
+            ? { top: props.mouseY, left: props.mouseX }
+            : undefined
+        }
+      >
         {props.selectedEntries.length < 2 && props.perspectiveMode && (
           <MenuItem data-tid="openDirectory" onClick={openDirectory}>
             <ListItemIcon>
