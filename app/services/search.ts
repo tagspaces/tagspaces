@@ -19,7 +19,7 @@
 
 import Fuse from 'fuse.js';
 import jmespath from 'jmespath';
-import { Tag } from '../reducers/taglibrary';
+import { Tag } from '-/reducers/taglibrary';
 import { Pro } from '../pro';
 import { FileSystemEntry } from './utils-io';
 
@@ -235,7 +235,10 @@ function prepareIndex(index: Array<Object>) {
       const tags = [...entry.tags];
       if (tags && tags.length) {
         tags.map(tag => {
-          tag.title = tag.title.toLowerCase();
+          if (tag.title.toLowerCase() !== tag.title) {
+            tag.originTitle = tag.title;
+            tag.title = tag.title.toLowerCase();
+          }
           return tag;
         });
       }
@@ -247,6 +250,20 @@ function prepareIndex(index: Array<Object>) {
   }
   console.timeEnd('PreparingIndex');
   return resultIndex;
+}
+
+function setOriginTitle(results: Array<Object>) {
+  return results.map((entry: any) => {
+    if (entry.tags && entry.tags.length) {
+      entry.tags.map(tag => {
+        if (tag.originTitle) {
+          tag.title = tag.originTitle;
+        }
+        return tag;
+      });
+    }
+    return entry;
+  });
 }
 
 export default class Search {
@@ -312,7 +329,7 @@ export default class Search {
         }
         console.log('Results send: ' + results.length);
         console.timeEnd('searchtime');
-        resolve(results);
+        resolve(setOriginTitle(results));
         return true;
       }
       results = [];
