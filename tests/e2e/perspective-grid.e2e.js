@@ -23,6 +23,7 @@ import {
   extractTags,
   getGridCellClass,
   getGridFileName,
+  getGridFileSelector,
   selectAllFiles,
   selectFilesByID,
   selectorFile,
@@ -59,12 +60,14 @@ describe('TST50 - Perspective Grid', () => {
 
   test('TST5002 - Open file with click [web,minio,electron]', async () => {
     // await searchEngine('txt'); //testTestFilename);
-    const firstFileName = await getGridFileName(0);
-    await clickOn(perspectiveGridTable + firstFile);
+    const fileName = 'sample.txt';
+
+    // const firstFileName = await getGridFileName(0);
+    await clickOn(getGridFileSelector(fileName)); // perspectiveGridTable + firstFile);
     //Toggle Properties
     await clickOn('[data-tid=fileContainerToggleProperties]');
     const propsFileName = await getPropertiesFileName();
-    expect(firstFileName).toBe(propsFileName);
+    expect(fileName).toBe(propsFileName);
     // await checkFilenameForExist(testTestFilename);
   });
 
