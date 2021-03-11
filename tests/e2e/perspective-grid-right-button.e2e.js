@@ -8,7 +8,7 @@ import {
   closeFileProperties,
   getFirstFileName,
   renameFirstFile,
-  deleteFirstFile,
+  deleteFileFromMenu,
   createMinioLocation,
   closeLocation
 } from './location.helpers';
@@ -104,17 +104,17 @@ describe('TST50** - Right button on a file', () => {
   });
 
   test('TST5018 - Delete file [web,minio,electron]', async () => {
-    await createTxtFile();
-    await searchEngine('note'); //select new created file - note[date_created].txt
-    /*let firstFileName = await getGridFileName(0);
-    expect(firstFileName).toBe('note.txt');*/
+    // await createTxtFile();
+    // await searchEngine('note'); //select new created file - note[date_created].txt
+    let lastFileName = await getGridFileName(-1);
+    // expect(firstFileName).toBe('note.txt');
 
-    await expectElementExist(selectorFile, true);
+    // await expectElementExist(selectorFile, true);
 
-    await deleteFirstFile();
-    await expectElementExist(selectorFile, false);
-    /*firstFileName = await getGridFileName(0);
-    expect(firstFileName).toBe(undefined);*/
+    await deleteFileFromMenu(getGridFileSelector(lastFileName));
+    await expectElementExist(getGridFileSelector(lastFileName), false);
+    /* firstFileName = await getGridFileName(0);
+    expect(firstFileName).toBe(undefined); */
   });
 
   test('TST5019 - Rename tag in file [web,minio,electron]', async () => {
@@ -300,7 +300,7 @@ describe('TST50** - Right button on a file', () => {
     expect(firstFileName).toBe('sample.eml');
 
     // cleanup
-    await deleteFirstFile();
+    await deleteFileFromMenu();
     await expectElementExist(selectorFile, false);
   });
 

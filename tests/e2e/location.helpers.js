@@ -165,11 +165,8 @@ export async function renameFirstFile(newFileName) {
   await waitForNotification();
 }
 
-export async function deleteFirstFile() {
-  await openContextEntryMenu(
-    perspectiveGridTable + firstFile,
-    'fileMenuDeleteFile'
-  );
+export async function deleteFileFromMenu(fileSelector = selectorFile) {
+  await openContextEntryMenu(fileSelector, 'fileMenuDeleteFile');
   await clickOn('[data-tid=confirmDeleteFileDialog]');
   await waitForNotification();
 }

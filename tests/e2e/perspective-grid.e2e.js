@@ -6,7 +6,7 @@ import {
   defaultLocationPath,
   defaultLocationName,
   closeFileProperties,
-  deleteFirstFile,
+  deleteFileFromMenu,
   createMinioLocation,
   getFirstFileName
 } from './location.helpers';
@@ -112,7 +112,7 @@ describe('TST50 - Perspective Grid', () => {
       //cleanup
       // await setSettings('[data-tid=settingsSetUseTrashCan]');
       // await global.client.pause(500);
-      await deleteFirstFile();
+      await deleteFileFromMenu();
       // firstFileName = await getGridFileName(0);
       // expect(firstFileName).not.toBe('note.txt'); TODO its have note.txt from another tests
     });
@@ -284,7 +284,7 @@ describe('TST50 - Perspective Grid', () => {
     const firstFileName = await getGridFileName(0);
     expect(firstFileName).toBe(fileName);
     // cleanup
-    await deleteFirstFile();
+    await deleteFileFromMenu();
     await expectElementExist(selectorFile, false);
   });
 
@@ -313,7 +313,7 @@ describe('TST50 - Perspective Grid', () => {
     const firstFileName = await getGridFileName(0);
     expect(firstFileName).toBe('sample.epub');
     // cleanup
-    await deleteFirstFile();
+    await deleteFileFromMenu();
     await expectElementExist(selectorFile, false);
   });
 
