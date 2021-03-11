@@ -37,22 +37,18 @@ describe('TST08 - File folder properties', () => {
   });
 
   it('TST0801 - Arrow keys select next prev file (keybindings) [web,minio,electron]', async () => {
-    const firstFileName = await getGridFileName(0);
-    const secondFileName = await getGridFileName(1);
-
     // open fileProperties
     await clickOn(selectorFile);
     //Toggle Properties
     await clickOn('[data-tid=fileContainerToggleProperties]');
-    if (global.isWeb) {
-      await global.client.pause(500);
-    }
 
     const propsFileName = await getPropertiesFileName();
+    const firstFileName = await getGridFileName(0);
     expect(firstFileName).toBe(propsFileName);
 
     await global.client.keys('ArrowDown');
     const propsNextFileName = await getPropertiesFileName();
+    const secondFileName = await getGridFileName(1);
     expect(secondFileName).toBe(propsNextFileName);
 
     await global.client.keys('ArrowUp');
@@ -61,17 +57,13 @@ describe('TST08 - File folder properties', () => {
   });
 
   it('TST0802 - Open next file buttons [web,minio,electron]', async () => {
-    const firstFileName = await getGridFileName(0);
-
     // open fileProperties
     await clickOn(selectorFile);
     //Toggle Properties
     await clickOn('[data-tid=fileContainerToggleProperties]');
-    if (global.isWeb) {
-      await global.client.pause(500);
-    }
 
     const propsFileName = await getPropertiesFileName();
+    const firstFileName = await getGridFileName(0);
     expect(firstFileName).toBe(propsFileName);
 
     await clickOn('[data-tid=fileContainerNextFile]');
@@ -82,17 +74,13 @@ describe('TST08 - File folder properties', () => {
   });
 
   it('TST0803 - Open previous files buttons [web,minio,electron]', async () => {
-    const firstFileName = await getGridFileName(0);
-
     // open fileProperties
     await clickOn(selectorFile);
     //Toggle Properties
     await clickOn('[data-tid=fileContainerToggleProperties]');
-    if (global.isWeb) {
-      await global.client.pause(500);
-    }
 
     const propsFileName = await getPropertiesFileName();
+    const firstFileName = await getGridFileName(0);
     expect(firstFileName).toBe(propsFileName);
 
     await clickOn('[data-tid=fileContainerPrevFile]');
