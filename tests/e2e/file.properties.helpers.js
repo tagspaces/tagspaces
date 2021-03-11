@@ -39,13 +39,14 @@ export async function AddRemovePropertiesTags(
 }
 
 export async function getPropertiesFileName() {
-  /*if (global.isWeb) {
-    await global.client.pause(500);
-  }*/
+  /* const fileNameProperties = await global.client.$('#descriptionArea');
+  await fileNameProperties.waitForDisplayed({ timeout: 5000 });
+  await fileNameProperties.click(); */
+
   const propsFileNameInput = await global.client.$(
     '[data-tid=fileNameProperties] input'
   );
-  await propsFileNameInput.waitForDisplayed({ timeout: 10000 });
+  await propsFileNameInput.waitForDisplayed({ timeout: 5000 });
   const fileName = await propsFileNameInput.getValue();
   return fileName.replace(/ *\[[^\]]*]/, '');
 }

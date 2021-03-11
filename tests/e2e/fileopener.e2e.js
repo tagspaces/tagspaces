@@ -38,6 +38,7 @@ describe('TST08 - File folder properties', () => {
 
   it('TST0801 - Arrow keys select next prev file (keybindings) [web,minio,electron]', async () => {
     const firstFileName = await getGridFileName(0);
+    const secondFileName = await getGridFileName(1);
 
     // open fileProperties
     await clickOn(selectorFile);
@@ -49,13 +50,11 @@ describe('TST08 - File folder properties', () => {
 
     await global.client.keys('ArrowDown');
     const propsNextFileName = await getPropertiesFileName();
-
-    const secondFileName = await getGridFileName(1);
     expect(secondFileName).toBe(propsNextFileName);
 
     await global.client.keys('ArrowUp');
     const propsPrevFileName = await getPropertiesFileName();
-    expect(propsPrevFileName).toBe(propsFileName);
+    expect(propsPrevFileName).toBe(firstFileName);
   });
 
   it('TST0802 - Open next file buttons [web,minio,electron]', async () => {

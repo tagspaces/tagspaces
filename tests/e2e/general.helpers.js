@@ -187,7 +187,6 @@ export async function clearInputValue(inputElement) {
 }
 
 /**
- *
  * @param fileIndex
  * @returns {Promise<string>} fileName; example usage: getFileName(-1) will return the last one
  */
@@ -199,6 +198,7 @@ export async function getGridFileName(fileIndex) {
         fileIndex < 0
           ? filesList[filesList.length + fileIndex]
           : filesList[fileIndex];
+      // await file.waitForDisplayed({ timeout: 5000 });
       file = await file.$('div');
       file = await file.$('div');
       file = await file.$('div');
@@ -209,6 +209,10 @@ export async function getGridFileName(fileIndex) {
       const fileExtElem = await lastDiv.$('span');
       const fileExt = await fileExtElem.getText();
       return fileName + '.' + fileExt.toLowerCase();
+    } else {
+      console.log(
+        "Can't find getGridFileName:" + fileIndex + ' filesList is empty'
+      );
     }
   } catch (e) {
     console.log("Can't find getGridFileName:" + fileIndex, e);
@@ -218,19 +222,27 @@ export async function getGridFileName(fileIndex) {
 
 export async function getGridElement(fileIndex = 0) {
   const filesList = await global.client.$$(selectorFile);
-  let file =
-    fileIndex < 0
-      ? filesList[filesList.length + fileIndex]
-      : filesList[fileIndex];
-  await file.waitForDisplayed({ timeout: 5000 });
-  file = await file.$('div');
-  file = await file.$('div');
-  return file;
+  if (filesList.length > 0) {
+    let file =
+      fileIndex < 0
+        ? filesList[filesList.length + fileIndex]
+        : filesList[fileIndex];
+    // await file.waitForDisplayed({ timeout: 5000 });
+    file = await file.$('div');
+    file = await file.$('div');
+    return file;
+  } else {
+    console.log("Can't getGridElement:" + fileIndex + ' filesList is empty');
+  }
+  return undefined;
 }
 
 export async function getGridCellClass(fileIndex = 0) {
   const file = await getGridElement(fileIndex);
-  return file.getAttribute('class');
+  if (file !== undefined) {
+    return file.getAttribute('class');
+  }
+  return undefined;
 }
 
 export async function expectElementExist(
@@ -343,7 +355,7 @@ export async function selectAllFiles(classNotSelected) {
   await clickOn('[data-tid=gridPerspectiveSelectAllFiles]');
 
   return await waitUntilClassChanged(
-    perspectiveGridTable + firstFile + '/div/div',
+    selectorFile + '/div/div',
     classNotSelected
   );
 }

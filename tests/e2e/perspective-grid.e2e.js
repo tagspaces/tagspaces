@@ -138,7 +138,7 @@ describe('TST50 - Perspective Grid', () => {
 
     expect(classNotSelected).not.toBe(classSelected);
 
-    const filesList = await global.client.$$(perspectiveGridTable + firstFile);
+    const filesList = await global.client.$$(selectorFile);
     for (let i = 0; i < filesList.length; i++) {
       let file = await filesList[i].$('div');
       file = await file.$('div');

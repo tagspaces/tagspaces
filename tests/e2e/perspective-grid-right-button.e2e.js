@@ -116,13 +116,13 @@ describe('TST50** - Right button on a file', () => {
   test('TST5018 - Delete file [web,minio,electron]', async () => {
     // await createTxtFile();
     // await searchEngine('note'); //select new created file - note[date_created].txt
-    let lastFileName = await getGridFileName(-1);
+    let fileName = 'sample.html'; // await getGridFileName(-1);
     // expect(firstFileName).toBe('note.txt');
 
     // await expectElementExist(selectorFile, true);
 
-    await deleteFileFromMenu(getGridFileSelector(lastFileName));
-    await expectElementExist(getGridFileSelector(lastFileName), false);
+    await deleteFileFromMenu(getGridFileSelector(fileName));
+    await expectElementExist(getGridFileSelector(fileName), false);
     /* firstFileName = await getGridFileName(0);
     expect(firstFileName).toBe(undefined); */
   });
