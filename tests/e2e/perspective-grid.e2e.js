@@ -262,27 +262,25 @@ describe('TST50 - Perspective Grid', () => {
     }*/
   });
 
-  /**
-   * TODO copy file on minio failed with path: ./testdata-tmp/file-structure/supported-filestypes/empty_folder
-   * web cannot find bmp file
-   */
   test('TST5008 - Copy file [electron]', async () => {
-    const fileName = await getFirstFileName();
+    const sampleFileName = 'sample.txt';
+    // Electron path: ./testdata-tmp/file-structure/supported-filestypes/empty_folder
+    let copyLocationPath = global.isElectron
+      ? defaultLocationPath + '/empty_folder'
+      : 'empty_folder';
+    // const fileName = await getFirstFileName();
 
     // select file
-    await clickOn(selectorFile);
+    await clickOn(getGridFileSelector(sampleFileName));
     // open Copy File Dialog
     await clickOn('[data-tid=gridPerspectiveCopySelectedFiles]');
-    await addInputKeys(
-      'targetPathInput',
-      defaultLocationPath + '/empty_folder'
-    );
+    await addInputKeys('targetPathInput', copyLocationPath);
     await clickOn('[data-tid=confirmCopyFiles]');
     await waitForNotification();
 
     await doubleClickOn(selectorFolder);
     const firstFileName = await getGridFileName(0);
-    expect(firstFileName).toBe(fileName);
+    expect(firstFileName).toBe(sampleFileName);
     // cleanup
     await deleteFileFromMenu();
     await expectElementExist(selectorFile, false);

@@ -6,8 +6,7 @@ import {
   defaultLocationPath,
   defaultLocationName,
   closeFileProperties,
-  getFirstFileName,
-  renameFirstFile,
+  renameFileFromMenu,
   deleteFileFromMenu,
   createMinioLocation,
   closeLocation
@@ -92,15 +91,26 @@ describe('TST50** - Right button on a file', () => {
   });
 
   test('TST5017 - Rename file [web,minio,electron]', async () => {
-    await searchEngine('txt');
-    const oldName = await getFirstFileName();
-    await renameFirstFile(newFileName);
-    const fileNameTxt = await getFirstFileName();
-    expect(fileNameTxt).toContain(newFileName);
-    //rename back to oldName
-    await renameFirstFile(oldName);
-    const fileName = await getFirstFileName();
-    expect(fileName).toContain(oldName);
+    // await searchEngine('txt');
+    const sampleFileName = 'sample.txt';
+    const oldName = await renameFileFromMenu(
+      newFileName,
+      getGridFileSelector(sampleFileName)
+    );
+    expect(oldName).toBe(sampleFileName);
+
+    await expectElementExist(getGridFileSelector(newFileName));
+    await expectElementExist(getGridFileSelector(oldName), false);
+
+    // const fileNameTxt = await getFirstFileName();
+    // expect(fileNameTxt).toContain(newFileName);
+
+    // rename back to oldName
+    const fileName = await renameFileFromMenu(
+      oldName,
+      getGridFileSelector(newFileName)
+    );
+    expect(fileName).toBe(newFileName);
   });
 
   test('TST5018 - Delete file [web,minio,electron]', async () => {
@@ -312,7 +322,7 @@ describe('TST50** - Right button on a file', () => {
       perspectiveGridTable + firstFolder,
       'openDirectory'
     );
-    if (isWeb) {
+    if (global.isWeb) {
       await global.client.pause(500);
     }
     const firstFileName = await getGridFileName(0);
