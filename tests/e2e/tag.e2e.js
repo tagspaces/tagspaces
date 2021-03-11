@@ -205,7 +205,7 @@ describe('TST04 - Testing the tag library:', () => {
     let colorStyle = await colorElem.getAttribute('style');
     // const color = await colorElem.getCSSProperty('background');
     const rgb2hex = require('rgb2hex');
-    const hex = rgb2hex(colorStyle);// color.value);
+    const hex = rgb2hex(colorStyle); // color.value);
     expect(hex.hex).toBe('#000000'); //'rgb(0,0,0)');
     await clickOn('[data-tid=createTagGroupCancelButton]');
 

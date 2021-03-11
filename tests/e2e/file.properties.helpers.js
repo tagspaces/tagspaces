@@ -39,9 +39,9 @@ export async function AddRemovePropertiesTags(
 }
 
 export async function getPropertiesFileName() {
-  if (global.isWeb) {
+  /*if (global.isWeb) {
     await global.client.pause(500);
-  }
+  }*/
   const propsFileNameInput = await global.client.$(
     '[data-tid=fileNameProperties] input'
   );

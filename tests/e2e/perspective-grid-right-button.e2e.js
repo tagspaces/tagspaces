@@ -118,7 +118,7 @@ describe('TST50** - Right button on a file', () => {
   });
 
   test('TST5019 - Rename tag in file [web,minio,electron]', async () => {
-    await searchEngine('desktop');
+    // await searchEngine('desktop');
     // Select file
     await clickOn(selectorFile);
     await AddRemoveTagsToSelectedFiles([testTagName], true);
@@ -151,7 +151,7 @@ describe('TST50** - Right button on a file', () => {
   });
 
   test('TST5023 - Remove tag from file (tag menu) [web,minio,electron]', async () => {
-    await searchEngine('desktop');
+    // await searchEngine('desktop');
     // select file
     await clickOn(selectorFile);
     await AddRemoveTagsToSelectedFiles([testTagName], true);
