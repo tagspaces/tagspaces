@@ -44,6 +44,9 @@ describe('TST08 - File folder properties', () => {
     await clickOn(selectorFile);
     //Toggle Properties
     await clickOn('[data-tid=fileContainerToggleProperties]');
+    if (global.isWeb) {
+      await global.client.pause(500);
+    }
 
     const propsFileName = await getPropertiesFileName();
     expect(firstFileName).toBe(propsFileName);
@@ -64,6 +67,9 @@ describe('TST08 - File folder properties', () => {
     await clickOn(selectorFile);
     //Toggle Properties
     await clickOn('[data-tid=fileContainerToggleProperties]');
+    if (global.isWeb) {
+      await global.client.pause(500);
+    }
 
     const propsFileName = await getPropertiesFileName();
     expect(firstFileName).toBe(propsFileName);
@@ -82,6 +88,9 @@ describe('TST08 - File folder properties', () => {
     await clickOn(selectorFile);
     //Toggle Properties
     await clickOn('[data-tid=fileContainerToggleProperties]');
+    if (global.isWeb) {
+      await global.client.pause(500);
+    }
 
     const propsFileName = await getPropertiesFileName();
     expect(firstFileName).toBe(propsFileName);
