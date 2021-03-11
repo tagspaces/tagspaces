@@ -58,7 +58,7 @@ describe('TST50 - Perspective Grid', () => {
   });
 
   test('TST5002 - Open file with click [web,minio,electron]', async () => {
-    await searchEngine('txt'); //testTestFilename);
+    // await searchEngine('txt'); //testTestFilename);
     const firstFileName = await getGridFileName(0);
     await clickOn(perspectiveGridTable + firstFile);
     //Toggle Properties
