@@ -217,11 +217,12 @@ export async function getGridFileName(fileIndex) {
 }
 
 export async function getGridElement(fileIndex = 0) {
-  const filesList = await global.client.$$(perspectiveGridTable + firstFile);
+  const filesList = await global.client.$$(selectorFile);
   let file =
     fileIndex < 0
       ? filesList[filesList.length + fileIndex]
       : filesList[fileIndex];
+  await file.waitForDisplayed({ timeout: 5000 });
   file = await file.$('div');
   file = await file.$('div');
   return file;
