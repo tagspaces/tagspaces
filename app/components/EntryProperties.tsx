@@ -381,14 +381,29 @@ const EntryProperties = (props: Props) => {
 
   const setThumb = (filePath, thumbFilePath) => {
     if (filePath !== undefined) {
+      if (PlatformIO.haveObjectStoreSupport()) {
+        return PlatformIO.copyFilePromiseOverwrite(filePath, thumbFilePath)
+          .then(() =>
+            props.updateThumbnailUrl(
+              currentEntry.path,
+              PlatformIO.getURLforPath(thumbFilePath)
+            )
+          )
+          .catch(error => {
+            console.error('copyFilePromise ' + filePath + ' failed ' + error);
+          });
+      }
       return replaceThumbnailURLPromise(filePath, thumbFilePath)
         .then(objUrl => {
           // setThumbPath(objUrl.tmbPath);
           /* setCurrentEntry({
-            ...currentEntry,
-            thumbPath: objUrl.tmbPath
-          }); */
-          props.updateThumbnailUrl(currentEntry.path, objUrl.tmbPath);
+                ...currentEntry,
+                thumbPath: objUrl.tmbPath
+              }); */
+          props.updateThumbnailUrl(
+            currentEntry.path,
+            objUrl.tmbPath + '?' + new Date().getTime()
+          );
           return true;
         })
         .catch(err => {
@@ -554,9 +569,13 @@ const EntryProperties = (props: Props) => {
       PlatformIO.getDirSeparator()
     );
   }
-  const thumbPathUrl = thumbPath
-    ? 'url("' + thumbPath + '?' + new Date().getTime() + '")'
-    : '';
+  let url;
+  if (PlatformIO.haveObjectStoreSupport()) {
+    url = PlatformIO.getURLforPath(thumbPath);
+  } else {
+    url = thumbPath + '?' + new Date().getTime();
+  }
+  const thumbPathUrl = thumbPath ? 'url("' + url + '")' : '';
   // if (AppConfig.isWin) {
   //   thumbPathUrl = thumbPathUrl.split('\\').join('\\\\');
   // }
@@ -1214,9 +1233,9 @@ const EntryProperties = (props: Props) => {
           selectedFiles={[currentEntry.path]}
         />
       )}
-      {ThumbnailChooserDialog && (
+      {ThumbnailChooserDialog && isFileThumbChooseDialogOpened && (
         <ThumbnailChooserDialog
-          key={uuidv1()}
+          // key={uuidv1()}
           open={isFileThumbChooseDialogOpened}
           onClose={toggleThumbFilesDialog}
           selectedFile={thumbPath}
