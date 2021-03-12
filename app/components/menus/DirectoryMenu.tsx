@@ -448,6 +448,7 @@ Do you want to continue?`)
         )}
         {!props.perspectiveMode && (
           <>
+            <Divider />
             <MenuItem
               data-tid="openDefaultPerspective"
               onClick={() => switchPerspective(perspectives.DEFAULT)}
@@ -478,12 +479,6 @@ Do you want to continue?`)
               </ListItemIcon>
               <ListItemText primary="Mapique Perspective" />
             </MenuItem>
-            {/* <MenuItem data-tid="openTreeVizPerspective" onClick={() => switchPerspective('treeviz')} title="Switch to tree visualization perspective">
-              <ListItemIcon>
-                <TreeVizPerspectiveIcon />
-              </ListItemIcon>
-              <ListItemText primary="TreeViz Perspective" />
-            </MenuItem> */}
             <MenuItem
               data-tid="openKanBanPerspectiveTID"
               onClick={() => switchPerspective(perspectives.KANBAN)}
