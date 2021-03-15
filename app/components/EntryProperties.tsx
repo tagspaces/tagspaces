@@ -382,16 +382,9 @@ const EntryProperties = (props: Props) => {
   const setThumb = (filePath, thumbFilePath) => {
     if (filePath !== undefined) {
       if (PlatformIO.haveObjectStoreSupport()) {
-        return PlatformIO.copyFilePromiseOverwrite(filePath, thumbFilePath)
-          .then(() =>
-            props.updateThumbnailUrl(
-              currentEntry.path,
-              PlatformIO.getURLforPath(thumbFilePath)
-            )
-          )
-          .catch(error => {
-            console.error('copyFilePromise ' + filePath + ' failed ' + error);
-          });
+        const thumbUrl = PlatformIO.getURLforPath(thumbFilePath);
+        props.updateThumbnailUrl(currentEntry.path, thumbUrl);
+        return Promise.resolve(true);
       }
       return replaceThumbnailURLPromise(filePath, thumbFilePath)
         .then(objUrl => {
