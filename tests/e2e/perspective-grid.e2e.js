@@ -262,7 +262,7 @@ describe('TST50 - Perspective Grid', () => {
     }*/
   });
 
-  test('TST5008 - Copy file [electron]', async () => {
+  test('TST5008 - Copy file [web,minio,electron]', async () => {
     const sampleFileName = 'sample.txt';
     // Electron path: ./testdata-tmp/file-structure/supported-filestypes/empty_folder
     let copyLocationPath = global.isElectron
