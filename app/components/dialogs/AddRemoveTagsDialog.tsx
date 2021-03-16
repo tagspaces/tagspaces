@@ -127,6 +127,7 @@ const AddRemoveTagsDialog = (props: Props) => {
           tags={newlyAddedTags}
           handleChange={handleChange}
           tagMode="remove"
+          autoFocus={true}
         />
         <List dense style={{ width: 550 }}>
           {selectedEntries.length > 0 &&
