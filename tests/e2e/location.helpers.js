@@ -60,7 +60,9 @@ export async function createMinioLocation(
   // Check if location not exist (from extconfig.js)
   if (locationName !== lastLocationTID) {
     await clickOn('[data-tid=createNewLocation]');
-    // await clickOn('[data-tid=objectStorageLocation]');
+    if (global.isMinio) {
+      await clickOn('[data-tid=objectStorageLocation]');
+    }
     await clickOn('[data-tid=switchAdvancedModeTID]');
 
     // SET LOCATION NAME
@@ -143,35 +145,32 @@ export async function checkForIdExist(tid) {
   // expect(dataTid.selector).toBe('[data-tid=' + tid + ']');
 }
 
-export async function renameFirstFile(newFileName) {
-  await openContextEntryMenu(
-    perspectiveGridTable + firstFile,
-    'fileMenuRenameFile'
-  );
-  await global.client.pause(500);
-  await setInputKeys('renameFileDialogInput', newFileName);
-  /*const renameFileDialogInput = await global.client.$(
+export async function renameFileFromMenu(newFileName, selector = selectorFile) {
+  let fileName;
+  await openContextEntryMenu(selector, 'fileMenuRenameFile');
+  // await global.client.pause(500);
+  const renameFileDialogInput = await global.client.$(
     '[data-tid=renameFileDialogInput] input'
   );
   await renameFileDialogInput.waitForDisplayed({ timeout: 5000 });
-  //await renameFileDialogInput.clearValue();
-  //await clearInputValue(renameFileDialogInput);
-  await global.client.pause(50);
-  await renameFileDialogInput.setValue(newFileName);*/
-  //await delay(1500);
+  fileName = await renameFileDialogInput.getValue();
+
+  await setInputKeys('renameFileDialogInput', newFileName);
   await clickOn('[data-tid=confirmRenameFileDialog]');
   await waitForNotification();
+  return fileName;
 }
 
-export async function deleteFirstFile() {
-  await openContextEntryMenu(
-    perspectiveGridTable + firstFile,
-    'fileMenuDeleteFile'
-  );
+export async function deleteFileFromMenu(fileSelector = selectorFile) {
+  await openContextEntryMenu(fileSelector, 'fileMenuDeleteFile');
   await clickOn('[data-tid=confirmDeleteFileDialog]');
   await waitForNotification();
 }
 
+/**
+ * @deprecated too heavy
+ * @returns {Promise<string>}
+ */
 export async function getFirstFileName() {
   let fileName;
   await openContextEntryMenu(selectorFile, 'fileMenuRenameFile');

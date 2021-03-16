@@ -107,3 +107,5 @@ web/sw-con
 
 /app/aws-exports.js
 /app/graphql/*
+cordova/platforms/ios/www/yarn.lock
+cordova/platforms/ios/www/package.json

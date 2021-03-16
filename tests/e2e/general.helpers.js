@@ -187,7 +187,6 @@ export async function clearInputValue(inputElement) {
 }
 
 /**
- *
  * @param fileIndex
  * @returns {Promise<string>} fileName; example usage: getFileName(-1) will return the last one
  */
@@ -199,6 +198,7 @@ export async function getGridFileName(fileIndex) {
         fileIndex < 0
           ? filesList[filesList.length + fileIndex]
           : filesList[fileIndex];
+      // await file.waitForDisplayed({ timeout: 5000 });
       file = await file.$('div');
       file = await file.$('div');
       file = await file.$('div');
@@ -209,6 +209,10 @@ export async function getGridFileName(fileIndex) {
       const fileExtElem = await lastDiv.$('span');
       const fileExt = await fileExtElem.getText();
       return fileName + '.' + fileExt.toLowerCase();
+    } else {
+      console.log(
+        "Can't find getGridFileName:" + fileIndex + ' filesList is empty'
+      );
     }
   } catch (e) {
     console.log("Can't find getGridFileName:" + fileIndex, e);
@@ -217,19 +221,28 @@ export async function getGridFileName(fileIndex) {
 }
 
 export async function getGridElement(fileIndex = 0) {
-  const filesList = await global.client.$$(perspectiveGridTable + firstFile);
-  let file =
-    fileIndex < 0
-      ? filesList[filesList.length + fileIndex]
-      : filesList[fileIndex];
-  file = await file.$('div');
-  file = await file.$('div');
-  return file;
+  const filesList = await global.client.$$(selectorFile);
+  if (filesList.length > 0) {
+    let file =
+      fileIndex < 0
+        ? filesList[filesList.length + fileIndex]
+        : filesList[fileIndex];
+    // await file.waitForDisplayed({ timeout: 5000 });
+    file = await file.$('div');
+    file = await file.$('div');
+    return file;
+  } else {
+    console.log("Can't getGridElement:" + fileIndex + ' filesList is empty');
+  }
+  return undefined;
 }
 
 export async function getGridCellClass(fileIndex = 0) {
   const file = await getGridElement(fileIndex);
-  return file.getAttribute('class');
+  if (file !== undefined) {
+    return file.getAttribute('class');
+  }
+  return undefined;
 }
 
 export async function expectElementExist(
@@ -342,7 +355,7 @@ export async function selectAllFiles(classNotSelected) {
   await clickOn('[data-tid=gridPerspectiveSelectAllFiles]');
 
   return await waitUntilClassChanged(
-    perspectiveGridTable + firstFile + '/div/div',
+    selectorFile + '/div/div',
     classNotSelected
   );
 }
@@ -463,6 +476,56 @@ export async function showFilesWithTag(tagName) {
   await clickOn('[data-tid=showFilesWithThisTag]');
   await waitForNotification();
   await global.client.pause(1500); // web && minio search is slow
+}
+
+export function getGridFileSelector(fileName) {
+  return '[data-tid="fsEntryName_' + fileName + '"]';
+}
+
+export function generateFileName(fileName, fileExt, tags, tagDelimiter = ' ') {
+  let tagsString = '';
+  let beginTagContainer = '[';
+  let endTagContainer = ']';
+  const prefixTagContainer = '';
+  // Creating the string will all the tags by more that 0 tags
+  if (tags && tags.length > 0) {
+    tagsString = beginTagContainer;
+    for (let i = 0; i < tags.length; i += 1) {
+      if (i === tags.length - 1) {
+        tagsString += tags[i].trim();
+      } else {
+        tagsString += tags[i].trim() + tagDelimiter;
+      }
+    }
+    tagsString = tagsString.trim() + endTagContainer;
+  }
+  // Assembling the new filename with the tags
+  let newFileName = '';
+  beginTagContainer = fileName.indexOf(beginTagContainer);
+  endTagContainer = fileName.indexOf(endTagContainer);
+  if (
+    beginTagContainer < 0 ||
+    endTagContainer < 0 ||
+    beginTagContainer >= endTagContainer
+  ) {
+    // File does not have an extension
+    newFileName = fileName.trim() + tagsString + '.' + fileExt;
+  } else {
+    // File does not have an extension
+    newFileName =
+      fileName.substring(0, beginTagContainer).trim() +
+      prefixTagContainer +
+      tagsString +
+      fileName.substring(endTagContainer + 1, fileName.length).trim();
+  }
+  if (newFileName.length < 1) {
+    throw new Error('Generated filename is invalid');
+  }
+  // Removing double prefix
+  newFileName = newFileName
+    .split(prefixTagContainer + '' + prefixTagContainer)
+    .join(prefixTagContainer);
+  return newFileName;
 }
 
 export async function expectTagsExistBySelector(
@@ -595,17 +658,6 @@ export async function deleteDirectory() {
   await confirmDeleteDirectory.waitForDisplayed();
   await delay(500);
   await confirmDeleteDirectory.click();
-  await delay(500);*/
-}
-
-export async function returnDirectoryBack() {
-  await clickOn('[data-tid=gridPerspectiveOnBackButton]');
-  /*
-  await delay(500);
-  const backButton = await global.client.$(
-    '[data-tid=gridPerspectiveOnBackButton]'
-  );
-  await backButton.click();
   await delay(500);*/
 }
 

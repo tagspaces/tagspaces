@@ -34,7 +34,7 @@ import DefaultPerspectiveIcon from '@material-ui/icons/GridOn';
 import GalleryPerspectiveIcon from '@material-ui/icons/Camera';
 import MapiquePerspectiveIcon from '@material-ui/icons/Map';
 // import TreeVizPerspectiveIcon from '@material-ui/icons/AccountTree';
-// import KanBanPerspectiveIcon from '@material-ui/icons/Dashboard';
+import KanBanPerspectiveIcon from '@material-ui/icons/Dashboard';
 import NewFileIcon from '@material-ui/icons/InsertDriveFile';
 import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import RenameFolderIcon from '@material-ui/icons/FormatTextdirectionLToR';
@@ -82,6 +82,7 @@ interface Props {
   reflectCreateEntries: (fsEntries: Array<FileSystemEntry>) => void;
   onUploadProgress: (progress: Progress, response: any) => void;
   switchPerspective?: (perspectiveId: string) => void;
+  setCurrentDirectoryPerspective: (perspective: string) => void;
   perspectiveMode?: boolean;
   showNotification?: (
     text: string,
@@ -100,6 +101,8 @@ interface Props {
   toggleDeleteMultipleEntriesDialog: () => void;
   selectedEntries: Array<any>;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
+  mouseX?: number;
+  mouseY?: number;
 }
 
 const DirectoryMenu = (props: Props) => {
@@ -150,7 +153,11 @@ const DirectoryMenu = (props: Props) => {
   function switchPerspective(perspectiveId) {
     props.onClose();
     if (Pro) {
-      props.switchPerspective(perspectiveId);
+      if (props.switchPerspective) {
+        props.switchPerspective(perspectiveId);
+      } else {
+        props.setCurrentDirectoryPerspective(perspectiveId);
+      }
     } else {
       props.showNotification(
         'Perspectives are part of TagSpaces PRO',
@@ -335,7 +342,19 @@ Do you want to continue?`)
           selectedDirectoryPath={props.directoryPath}
         />
       )}
-      <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
+      <Menu
+        anchorEl={props.anchorEl}
+        open={props.open}
+        onClose={props.onClose}
+        anchorReference={
+          props.mouseY && props.mouseX ? 'anchorPosition' : undefined
+        }
+        anchorPosition={
+          props.mouseY && props.mouseX
+            ? { top: props.mouseY, left: props.mouseX }
+            : undefined
+        }
+      >
         {props.selectedEntries.length < 2 && props.perspectiveMode && (
           <MenuItem data-tid="openDirectory" onClick={openDirectory}>
             <ListItemIcon>
@@ -429,6 +448,7 @@ Do you want to continue?`)
         )}
         {!props.perspectiveMode && (
           <>
+            <Divider />
             <MenuItem
               data-tid="openDefaultPerspective"
               onClick={() => switchPerspective(perspectives.DEFAULT)}
@@ -459,22 +479,16 @@ Do you want to continue?`)
               </ListItemIcon>
               <ListItemText primary="Mapique Perspective" />
             </MenuItem>
-            {/* <MenuItem data-tid="openTreeVizPerspective" onClick={() => switchPerspective('treeviz')} title="Switch to tree visualization perspective">
-              <ListItemIcon>
-                <TreeVizPerspectiveIcon />
-              </ListItemIcon>
-              <ListItemText primary="TreeViz Perspective" />
-            </MenuItem> */}
-            {/* <MenuItem
-              data-tid="openTreeVizPerspective"
+            <MenuItem
+              data-tid="openKanBanPerspectiveTID"
               onClick={() => switchPerspective(perspectives.KANBAN)}
               title="Switch to kanban perspective"
             >
               <ListItemIcon>
                 <KanBanPerspectiveIcon />
               </ListItemIcon>
-              <ListItemText primary="KanBan Perspective - Beta" />
-            </MenuItem> */}
+              <ListItemText primary="KanBan Perspective" />
+            </MenuItem>
           </>
         )}
         {/* {!props.isReadOnlyMode && (
@@ -529,6 +543,7 @@ function mapDispatchToProps(dispatch) {
       toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
       resetProgress: AppActions.resetProgress,
       reflectCreateEntries: AppActions.reflectCreateEntries,
+      setCurrentDirectoryPerspective: AppActions.setCurrentDirectoryPerspective,
       extractContent: IOActions.extractContent,
       uploadFilesAPI: IOActions.uploadFilesAPI,
       addTags: TaggingActions.addTags,

@@ -113,7 +113,7 @@ export function getThumbFileLocationForDirectory(
 ) {
   return (
     entryPath +
-    dirSeparator +
+    (entryPath.endsWith(dirSeparator) ? '' : dirSeparator) +
     AppConfig.metaFolder +
     dirSeparator +
     AppConfig.folderThumbFile

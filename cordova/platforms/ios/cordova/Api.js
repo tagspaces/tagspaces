@@ -26,7 +26,7 @@
  *  This workflow would not have the `package.json` file.
  */
 // Coho updates this line
-const VERSION = '6.1.1';
+const VERSION = '6.2.0';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -354,52 +354,60 @@ Api.prototype.addPodSpecs = function (plugin, podSpecs, frameworkPods, installOp
         events.emit('verbose', 'Adding pods since the plugin contained <podspecs>');
         podSpecs.forEach(obj => {
             // declarations
-            Object.keys(obj.declarations).forEach(key => {
-                if (obj.declarations[key] === 'true') {
-                    const declaration = Podfile.proofDeclaration(key);
+            if (obj.declarations) {
+                Object.keys(obj.declarations).forEach(key => {
+                    if (obj.declarations[key] === 'true') {
+                        const declaration = Podfile.proofDeclaration(key);
+                        const podJson = {
+                            declaration
+                        };
+                        const val = podsjsonFile.getDeclaration(declaration);
+                        if (val) {
+                            podsjsonFile.incrementDeclaration(declaration);
+                        } else {
+                            podJson.count = 1;
+                            podsjsonFile.setJsonDeclaration(declaration, podJson);
+                            podfileFile.addDeclaration(podJson.declaration);
+                        }
+                    }
+                });
+            }
+
+            // sources
+            if (obj.sources) {
+                Object.keys(obj.sources).forEach(key => {
                     const podJson = {
-                        declaration
+                        source: obj.sources[key].source
                     };
-                    const val = podsjsonFile.getDeclaration(declaration);
+                    const val = podsjsonFile.getSource(key);
                     if (val) {
-                        podsjsonFile.incrementDeclaration(declaration);
+                        podsjsonFile.incrementSource(key);
                     } else {
                         podJson.count = 1;
-                        podsjsonFile.setJsonDeclaration(declaration, podJson);
-                        podfileFile.addDeclaration(podJson.declaration);
+                        podsjsonFile.setJsonSource(key, podJson);
+                        podfileFile.addSource(podJson.source);
                     }
-                }
-            });
-            // sources
-            Object.keys(obj.sources).forEach(key => {
-                const podJson = {
-                    source: obj.sources[key].source
-                };
-                const val = podsjsonFile.getSource(key);
-                if (val) {
-                    podsjsonFile.incrementSource(key);
-                } else {
-                    podJson.count = 1;
-                    podsjsonFile.setJsonSource(key, podJson);
-                    podfileFile.addSource(podJson.source);
-                }
-            });
+                });
+            }
+
             // libraries
-            Object.keys(obj.libraries).forEach(key => {
-                const podJson = Object.assign({}, obj.libraries[key]);
-                if (podJson.spec) {
-                    podJson.spec = getVariableSpec(podJson.spec, installOptions);
-                }
-                const val = podsjsonFile.getLibrary(key);
-                if (val) {
-                    events.emit('warn', `${plugin.id} depends on ${podJson.name}, which may conflict with another plugin. ${podJson.name}@${val.spec} is already installed and was not overwritten.`);
-                    podsjsonFile.incrementLibrary(key);
-                } else {
-                    podJson.count = 1;
-                    podsjsonFile.setJsonLibrary(key, podJson);
-                    podfileFile.addSpec(podJson.name, podJson);
-                }
-            });
+            if (obj.libraries) {
+                Object.keys(obj.libraries).forEach(key => {
+                    const podJson = Object.assign({}, obj.libraries[key]);
+                    if (podJson.spec) {
+                        podJson.spec = getVariableSpec(podJson.spec, installOptions);
+                    }
+                    const val = podsjsonFile.getLibrary(key);
+                    if (val) {
+                        events.emit('warn', `${plugin.id} depends on ${podJson.name}, which may conflict with another plugin. ${podJson.name}@${val.spec} is already installed and was not overwritten.`);
+                        podsjsonFile.incrementLibrary(key);
+                    } else {
+                        podJson.count = 1;
+                        podsjsonFile.setJsonLibrary(key, podJson);
+                        podfileFile.addSpec(podJson.name, podJson);
+                    }
+                });
+            }
         });
     }
 

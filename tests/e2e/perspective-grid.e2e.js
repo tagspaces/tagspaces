@@ -6,7 +6,7 @@ import {
   defaultLocationPath,
   defaultLocationName,
   closeFileProperties,
-  deleteFirstFile,
+  deleteFileFromMenu,
   createMinioLocation,
   getFirstFileName
 } from './location.helpers';
@@ -23,6 +23,7 @@ import {
   extractTags,
   getGridCellClass,
   getGridFileName,
+  getGridFileSelector,
   selectAllFiles,
   selectFilesByID,
   selectorFile,
@@ -58,13 +59,15 @@ describe('TST50 - Perspective Grid', () => {
   });
 
   test('TST5002 - Open file with click [web,minio,electron]', async () => {
-    await searchEngine('txt'); //testTestFilename);
-    const firstFileName = await getGridFileName(0);
-    await clickOn(perspectiveGridTable + firstFile);
+    // await searchEngine('txt'); //testTestFilename);
+    const fileName = 'sample.txt';
+
+    // const firstFileName = await getGridFileName(0);
+    await clickOn(getGridFileSelector(fileName)); // perspectiveGridTable + firstFile);
     //Toggle Properties
     await clickOn('[data-tid=fileContainerToggleProperties]');
     const propsFileName = await getPropertiesFileName();
-    expect(firstFileName).toBe(propsFileName);
+    expect(fileName).toBe(propsFileName);
     // await checkFilenameForExist(testTestFilename);
   });
 
@@ -109,7 +112,7 @@ describe('TST50 - Perspective Grid', () => {
       //cleanup
       // await setSettings('[data-tid=settingsSetUseTrashCan]');
       // await global.client.pause(500);
-      await deleteFirstFile();
+      await deleteFileFromMenu();
       // firstFileName = await getGridFileName(0);
       // expect(firstFileName).not.toBe('note.txt'); TODO its have note.txt from another tests
     });
@@ -135,7 +138,7 @@ describe('TST50 - Perspective Grid', () => {
 
     expect(classNotSelected).not.toBe(classSelected);
 
-    const filesList = await global.client.$$(perspectiveGridTable + firstFile);
+    const filesList = await global.client.$$(selectorFile);
     for (let i = 0; i < filesList.length; i++) {
       let file = await filesList[i].$('div');
       file = await file.$('div');
@@ -259,29 +262,27 @@ describe('TST50 - Perspective Grid', () => {
     }*/
   });
 
-  /**
-   * TODO copy file on minio failed with path: ./testdata-tmp/file-structure/supported-filestypes/empty_folder
-   * web cannot find bmp file
-   */
-  test('TST5008 - Copy file [electron]', async () => {
-    const fileName = await getFirstFileName();
+  test('TST5008 - Copy file [web,minio,electron]', async () => {
+    const sampleFileName = 'sample.txt';
+    // Electron path: ./testdata-tmp/file-structure/supported-filestypes/empty_folder
+    let copyLocationPath = global.isElectron
+      ? defaultLocationPath + '/empty_folder'
+      : 'empty_folder';
+    // const fileName = await getFirstFileName();
 
     // select file
-    await clickOn(selectorFile);
+    await clickOn(getGridFileSelector(sampleFileName));
     // open Copy File Dialog
     await clickOn('[data-tid=gridPerspectiveCopySelectedFiles]');
-    await addInputKeys(
-      'targetPathInput',
-      defaultLocationPath + '/empty_folder'
-    );
+    await addInputKeys('targetPathInput', copyLocationPath);
     await clickOn('[data-tid=confirmCopyFiles]');
     await waitForNotification();
 
     await doubleClickOn(selectorFolder);
     const firstFileName = await getGridFileName(0);
-    expect(firstFileName).toBe(fileName);
+    expect(firstFileName).toBe(sampleFileName);
     // cleanup
-    await deleteFirstFile();
+    await deleteFileFromMenu();
     await expectElementExist(selectorFile, false);
   });
 
@@ -310,7 +311,7 @@ describe('TST50 - Perspective Grid', () => {
     const firstFileName = await getGridFileName(0);
     expect(firstFileName).toBe('sample.epub');
     // cleanup
-    await deleteFirstFile();
+    await deleteFileFromMenu();
     await expectElementExist(selectorFile, false);
   });
 

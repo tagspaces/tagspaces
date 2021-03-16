@@ -6,9 +6,8 @@ import {
   defaultLocationPath,
   defaultLocationName,
   closeFileProperties,
-  getFirstFileName,
-  renameFirstFile,
-  deleteFirstFile,
+  renameFileFromMenu,
+  deleteFileFromMenu,
   createMinioLocation,
   closeLocation
 } from './location.helpers';
@@ -29,7 +28,9 @@ import {
   expectElementExist,
   expectTagsExist,
   expectTagsExistBySelector,
+  generateFileName,
   getGridFileName,
+  getGridFileSelector,
   removeTagFromTagMenu,
   selectorFile,
   selectorFolder,
@@ -66,10 +67,9 @@ describe('TST50** - Right button on a file', () => {
   });*/
 
   test('TST5016 - Open file [web,minio,electron]', async () => {
-    //await searchEngine('bmp');
-    await searchEngine('txt');
+    //await searchEngine('txt');
     await openContextEntryMenu(
-      perspectiveGridTable + firstFile,
+      '[data-tid="fsEntryName_sample.txt"]', // perspectiveGridTable + firstFile,
       'fileMenuOpenFile'
     );
     // Check if the file is opened
@@ -91,33 +91,44 @@ describe('TST50** - Right button on a file', () => {
   });
 
   test('TST5017 - Rename file [web,minio,electron]', async () => {
-    await searchEngine('txt');
-    const oldName = await getFirstFileName();
-    await renameFirstFile(newFileName);
-    const fileNameTxt = await getFirstFileName();
-    expect(fileNameTxt).toContain(newFileName);
-    //rename back to oldName
-    await renameFirstFile(oldName);
-    const fileName = await getFirstFileName();
-    expect(fileName).toContain(oldName);
+    // await searchEngine('txt');
+    const sampleFileName = 'sample.txt';
+    const oldName = await renameFileFromMenu(
+      newFileName,
+      getGridFileSelector(sampleFileName)
+    );
+    expect(oldName).toBe(sampleFileName);
+
+    await expectElementExist(getGridFileSelector(newFileName));
+    await expectElementExist(getGridFileSelector(oldName), false);
+
+    // const fileNameTxt = await getFirstFileName();
+    // expect(fileNameTxt).toContain(newFileName);
+
+    // rename back to oldName
+    const fileName = await renameFileFromMenu(
+      oldName,
+      getGridFileSelector(newFileName)
+    );
+    expect(fileName).toBe(newFileName);
   });
 
   test('TST5018 - Delete file [web,minio,electron]', async () => {
-    await createTxtFile();
-    await searchEngine('note'); //select new created file - note[date_created].txt
-    /*let firstFileName = await getGridFileName(0);
-    expect(firstFileName).toBe('note.txt');*/
+    // await createTxtFile();
+    // await searchEngine('note'); //select new created file - note[date_created].txt
+    let fileName = 'sample.html'; // await getGridFileName(-1);
+    // expect(firstFileName).toBe('note.txt');
 
-    await expectElementExist(selectorFile, true);
+    // await expectElementExist(selectorFile, true);
 
-    await deleteFirstFile();
-    await expectElementExist(selectorFile, false);
-    /*firstFileName = await getGridFileName(0);
-    expect(firstFileName).toBe(undefined);*/
+    await deleteFileFromMenu(getGridFileSelector(fileName));
+    await expectElementExist(getGridFileSelector(fileName), false);
+    /* firstFileName = await getGridFileName(0);
+    expect(firstFileName).toBe(undefined); */
   });
 
   test('TST5019 - Rename tag in file [web,minio,electron]', async () => {
-    await searchEngine('desktop');
+    // await searchEngine('desktop');
     // Select file
     await clickOn(selectorFile);
     await AddRemoveTagsToSelectedFiles([testTagName], true);
@@ -150,7 +161,7 @@ describe('TST50** - Right button on a file', () => {
   });
 
   test('TST5023 - Remove tag from file (tag menu) [web,minio,electron]', async () => {
-    await searchEngine('desktop');
+    // await searchEngine('desktop');
     // select file
     await clickOn(selectorFile);
     await AddRemoveTagsToSelectedFiles([testTagName], true);
@@ -200,19 +211,31 @@ describe('TST50** - Right button on a file', () => {
    * TODO minio sometimes: stale element reference: stale element reference: element is not attached to the page document
    */
   test('TST5025 - Add - Remove tags (file menu) [web,electron]', async () => {
-    await searchEngine('desktop');
+    // await searchEngine('desktop');
+    const fileName = 'sample';
+    const fileExt = 'desktop';
     const tags = [testTagName, testTagName + '2'];
     // select file
-    await clickOn(selectorFile);
+    await clickOn(getGridFileSelector(fileName + '.' + fileExt));
     await AddRemoveTagsToSelectedFiles(tags, true);
 
-    await expectTagsExistBySelector(selectorFile, tags, true);
+    let gridElement = await global.client.$(
+      getGridFileSelector(generateFileName(fileName, fileExt, tags, ' '))
+    );
+    gridElement = await gridElement.$('..');
+    await expectTagsExist(gridElement, tags, true);
+    // await expectTagsExistBySelector(selectorFile, tags, true);
 
     // remove tags
-    await clickOn(selectorFile);
+    await clickOn(gridElement);
     await AddRemoveTagsToSelectedFiles(tags, false);
 
-    await expectTagsExistBySelector(selectorFile, tags, false);
+    gridElement = await global.client.$(
+      getGridFileSelector(fileName + '.' + fileExt)
+    );
+    gridElement = await gridElement.$('..');
+    await expectTagsExist(gridElement, tags, false);
+    // await expectTagsExistBySelector(selectorFile, tags, false);
   });
 
   test('TST5026 - Open file natively [electron]', async () => {
@@ -224,7 +247,7 @@ describe('TST50** - Right button on a file', () => {
     // check parent directory
   });
 
-  test('TST5027 - Open containing folder [electron,web]', async () => {
+  test('TST5027 - Open containing folder [web,minio,electron]', async () => {
     if (!global.isMinio) {
       // Show in File Manager option is missing for Minio Location
       await searchEngine('txt');
@@ -250,7 +273,7 @@ describe('TST50** - Right button on a file', () => {
   /**
    * TODO github minio (expected selector to exist=false after 5s)
    */
-  test('TST5028 - Move - Copy file (file menu) [electron]', async () => {
+  test('TST5028 - Move - Copy file (file menu) [minio,electron]', async () => {
     // Move file in child folder
     await searchEngine('eml');
     await openContextEntryMenu(
@@ -287,7 +310,7 @@ describe('TST50** - Right button on a file', () => {
     expect(firstFileName).toBe('sample.eml');
 
     // cleanup
-    await deleteFirstFile();
+    await deleteFileFromMenu();
     await expectElementExist(selectorFile, false);
   });
 
@@ -299,17 +322,14 @@ describe('TST50** - Right button on a file', () => {
       perspectiveGridTable + firstFolder,
       'openDirectory'
     );
-    if (isWeb) {
+    if (global.isWeb) {
       await global.client.pause(500);
     }
     const firstFileName = await getGridFileName(0);
     expect(firstFileName).toBe(undefined); //'sample.eml');
   });
 
-  /**
-   * minio not support rename folder
-   */
-  test('TST5034 - Rename directory (directory menu) [electron]', async () => {
+  test('TST5034 - Rename directory (directory menu) [web,minio,electron]', async () => {
     const newDirName = 'new_dir_name';
     await openContextEntryMenu(
       perspectiveGridTable + firstFolder,
@@ -339,7 +359,7 @@ describe('TST50** - Right button on a file', () => {
   /**
    * delete dir is not supported on minio
    */
-  test('TST5035 - Delete directory (directory menu) [electron]', async () => {
+  test('TST5035 - Delete directory (directory menu) [web,minio,electron]', async () => {
     // await setSettings('[data-tid=settingsSetUseTrashCan]');
     // await global.client.pause(500);
     await doubleClickOn(selectorFolder);

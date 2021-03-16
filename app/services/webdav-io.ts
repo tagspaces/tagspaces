@@ -479,7 +479,8 @@ export default class WebDAVIO {
                     ),
                     size: 0,
                     lmdt: new Date().getTime(),
-                    isNewFile
+                    isNewFile,
+                    tags: []
                   });
                 } else {
                   reject('saveFilePromise: ' + filePath + ' failed ' + status1);
