@@ -314,7 +314,7 @@ describe('TST50** - Right button on a file', () => {
     await expectElementExist(selectorFile, false);
   });
 
-  it.skip('TST5029 - Add file from file manager with dnd [Electron, manual]', async () => {});
+  it.skip('TST5029 - Add file from file manager with dnd [manual]', async () => {});
 
   test('TST5033 - Open directory (directory menu) [web,minio,electron]', async () => {
     // open empty_folder

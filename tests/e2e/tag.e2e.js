@@ -134,7 +134,7 @@ describe('TST04 - Testing the tag library:', () => {
     expect(addedTag.selector).toBe('[data-tid=' + newTagName + ']');*/
   });
 
-  it.skip('TST0406 - Import tag groups [Electron, manual]', async () => {});
+  it.skip('TST0406 - Import tag groups [manual]', async () => {});
 
   it('TST0405 - Add tag (s) Should add comma separated tags to a tag group [web,minio,electron]', async () => {
     await createTagGroup(testGroup);
@@ -253,7 +253,7 @@ describe('TST04 - Testing the tag library:', () => {
     expect(style).toContain('rgb(208, 107, 100)');*/
   });
 
-  it.skip('TST0411 - Should move tag group down [Electron]', async () => {
+  it.skip('TST0411 - Should move tag group down [electron]', async () => {
     await clickOn('[data-tid=tagLibraryMoreButton_ToDo_Workflow]');
     await clickOn('[data-tid=moveTagGroupDown]'); // TODO no test confirmation, expect
     // await global.client.getText('[data-tid=tagLibraryTagGroupList]').then((name) => {
@@ -265,7 +265,7 @@ describe('TST04 - Testing the tag library:', () => {
     // });
   });
 
-  it.skip('TST0412 - Should move tag group up [Electron]', async () => {
+  it.skip('TST0412 - Should move tag group up [electron]', async () => {
     await clickOn('[data-tid=tagLibraryMoreButton_Common_Tags]');
     await clickOn('[data-tid=moveTagGroupUp]'); // TODO no test confirmation
     // await global.client.getText('[data-tid=tagLibraryTagGroupList]').then((name) => {
@@ -276,11 +276,11 @@ describe('TST04 - Testing the tag library:', () => {
     // });
   });
 
-  it.skip('TST0414 - Tag file with drag and drop [Electron, manual]', async () => {});
+  it.skip('TST0414 - Tag file with drag and drop [manual]', async () => {});
 
-  it.skip('TST0415 - Open export tag groups dialog [Electron]', async () => {});
+  it.skip('TST0415 - Open export tag groups dialog [electron]', async () => {});
 
-  it.skip('TST0416 - Export tag groups / all / some [Electron, manual]', async () => {});
+  it.skip('TST0416 - Export tag groups / all / some [manual]', async () => {});
 
-  it.skip('TST0417 - Collect tags from current location [Electron, Pro]', async () => {});
+  it.skip('TST0417 - Collect tags from current location [electron, Pro]', async () => {});
 });

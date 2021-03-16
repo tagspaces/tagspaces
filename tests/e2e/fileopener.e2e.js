@@ -125,7 +125,7 @@ describe('TST08 - File folder properties', () => {
     expect(propsOldFileName).toBe(propsFileName);
   });
 
-  it.skip('TST0806 - Download file [Electron, manual]', async () => {});
+  it.skip('TST0806 - Download file [manual]', async () => {});
 
   it('TST0807 - Rename opened folder [web,minio,electron]', async () => {
     const newTile = 'folderRenamed';
@@ -169,7 +169,7 @@ describe('TST08 - File folder properties', () => {
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
   });
 
-  it.skip('TST0810 - Tag file drag&drop in file opener [Electron, manual]', async () => {});
+  it.skip('TST0810 - Tag file drag&drop in file opener [manual]', async () => {});
 
   it('TST3002 - Add and remove tag to a folder [web,minio,electron]', async () => {
     await openContextEntryMenu(selectorFolder, 'showProperties');
@@ -222,19 +222,19 @@ describe('TST08 - File folder properties', () => {
     await expectElementExist('[data-tid=fullscreenTID]', false);
   });
 
-  it.skip('TST0815 - Test opening file, while TS is in fullscreen(F11) [Electron, manual]', async () => {});
+  it.skip('TST0815 - Test opening file, while TS is in fullscreen(F11) [manual]', async () => {});
 
-  it.skip('TST0817 - Open file fullscreen and exit with ESC button [Electron]', async () => {});
+  it.skip('TST0817 - Open file fullscreen and exit with ESC button [electron]', async () => {});
 
   it.skip('TST0818 - Open in new tab in the web version [Web]', async () => {});
 
-  it.skip('TST0819 - Open file natively [Electron, manual]', async () => {});
+  it.skip('TST0819 - Open file natively [manual]', async () => {});
 
-  it.skip('TST0820 - Open containing folder [Electron, manual]', async () => {});
+  it.skip('TST0820 - Open containing folder [manual]', async () => {});
 
-  it.skip('TST0821 - Toggle File Properties [Electron]', async () => {});
+  it.skip('TST0821 - Toggle File Properties [electron]', async () => {});
 
-  it.skip('TST0822 - Open Folder Properties [Electron]', async () => {});
+  it.skip('TST0822 - Open Folder Properties [electron]', async () => {});
 
   it.skip('TST0823 - Show thumbnail in the properties if available [Pro]', async () => {});
 

@@ -62,17 +62,17 @@ describe('TST54 - Markdown viewer [electron]', () => {
     await closeOpenedFile();
   });
 
-  it.skip('TST5402 - Test opening of links [Electron, manual]', async () => {});
+  it.skip('TST5402 - Test opening of links [manual]', async () => {});
 
-  it.skip('TST5403 - Find in document [Electron, manual]', async () => {});
+  it.skip('TST5403 - Find in document [manual]', async () => {});
 
-  it.skip('TST5404 - Change zoom [Electron, manual]', async () => {});
+  it.skip('TST5404 - Change zoom [manual]', async () => {});
 
-  it.skip('TST5405 - Change theme [Electron, manual]', async () => {});
+  it.skip('TST5405 - Change theme [manual]', async () => {});
 
-  it.skip('TST5406 - Show print dialog [Electron, manual]', async () => {});
+  it.skip('TST5406 - Show print dialog [manual]', async () => {});
 
-  it.skip('TST5407 - Open and close about dialog [Electron]', async () => {});
+  it.skip('TST5407 - Open and close about dialog [electron]', async () => {});
 
-  it.skip('TST5408 - Testing embedding local content like images [Electron, manual]', async () => {});
+  it.skip('TST5408 - Testing embedding local content like images [manual]', async () => {});
 });

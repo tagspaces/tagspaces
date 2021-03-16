@@ -80,13 +80,13 @@ describe('TST65 - HTML viewer [electron]', () => {
     await closeOpenedFile();
   });
 
-  it.skip('TST6504 - Open source url [Electron, manual]', async () => {});
+  it.skip('TST6504 - Open source url [manual]', async () => {});
 
-  it.skip('TST6505 - Find in document [Electron, manual]', async () => {});
+  it.skip('TST6505 - Find in document [manual]', async () => {});
 
-  it.skip('TST6506 - Change theme [Electron, manual]', async () => {});
+  it.skip('TST6506 - Change theme [manual]', async () => {});
 
-  it.skip('TST6507 - Open print dialog [Electron, manual]', async () => {});
+  it.skip('TST6507 - Open print dialog [manual]', async () => {});
 
-  it.skip('TST6508 - Testing embedding local content like images [Electron, manual]', async () => {});
+  it.skip('TST6508 - Testing embedding local content like images [manual]', async () => {});
 });

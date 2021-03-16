@@ -88,19 +88,19 @@ describe('TST01 - Folder management', () => {
     );
   });
 
-  it.skip('TST0105 - Show folder tags [Electron, TODO]', async () => {});
+  it.skip('TST0105 - Show folder tags [electron, TODO]', async () => {});
 
   it.skip('TST0106 - Show folder tags [TODO]', async () => {
     // await createNewDirectory();
   });
 
-  it.skip('TST0107 - Show in file manager [Electron, manual]', async () => {});
+  it.skip('TST0107 - Show in file manager [manual]', async () => {});
 
-  it.skip('TST0108 - Show directory properties [Electron, TODO]', async () => {});
+  it.skip('TST0108 - Show directory properties [electron, TODO]', async () => {});
 
-  it.skip('TST0109 - Delete non empty folder by disabled trashcan should not be possible [Electron, TODO]', async () => {});
+  it.skip('TST0109 - Delete non empty folder by disabled trashcan should not be possible [electron, TODO]', async () => {});
 
-  it.skip('TST0110 - Delete not empty folder to trashcan [Electron, TODO]', async () => {});
+  it.skip('TST0110 - Delete not empty folder to trashcan [electron, TODO]', async () => {});
 
-  it.skip('TST0111 - Open parent directory [Electron, TODO]', async () => {});
+  it.skip('TST0111 - Open parent directory [electron, TODO]', async () => {});
 });
