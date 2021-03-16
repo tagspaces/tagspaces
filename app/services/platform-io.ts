@@ -264,7 +264,17 @@ export default class PlatformIO {
     if (objectStoreAPI) {
       return objectStoreAPI.saveTextFilePromise(filePath, content, overwrite);
     }
-    return nativeAPI.saveTextFilePromise(filePath, content, overwrite);
+    if (Pro && Pro.Watcher && Pro.Watcher.isWatching()) {
+      Pro.Watcher.addToIgnored(filePath);
+    }
+    return nativeAPI
+      .saveTextFilePromise(filePath, content, overwrite)
+      .then(result => {
+        if (Pro && Pro.Watcher && Pro.Watcher.isWatching()) {
+          Pro.Watcher.removeFromIgnored(filePath);
+        }
+        return result;
+      });
   };
 
   static saveBinaryFilePromise = (

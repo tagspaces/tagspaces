@@ -1396,7 +1396,7 @@ export const actions = {
       dispatch(actions.loadDirectoryContent(getLocationPath(location)));
       if (Pro && Pro.Watcher && location.watchForChanges) {
         const perspective = getCurrentDirectoryPerspective(getState());
-        const depth = perspective === perspectives.DEFAULT ? 1 : 3;
+        const depth = perspective === perspectives.KANBAN ? 3 : 1;
         Pro.Watcher.watchFolder(
           getLocationPath(location),
           dispatch,
