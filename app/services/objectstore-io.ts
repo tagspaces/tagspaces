@@ -50,6 +50,7 @@ export default class ObjectStoreIO {
               endpoint: endpoint as string,
               accessKeyId: this.config.accessKeyId,
               secretAccessKey: this.config.secretAccessKey,
+              sessionToken: this.config.sessionToken,
               s3ForcePathStyle: true, // needed for minio
               signatureVersion: 'v4', // needed for minio
               logger: console
