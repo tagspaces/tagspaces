@@ -44,6 +44,7 @@ export type Location = {
   type: string;
   accessKeyId?: string;
   secretAccessKey?: string;
+  sessionToken?: string;
   bucketName?: string;
   region?: string;
   paths?: Array<string>; // deprecated

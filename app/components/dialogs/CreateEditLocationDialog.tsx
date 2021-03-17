@@ -112,6 +112,9 @@ const CreateEditLocationDialog = (props: Props) => {
   const [secretAccessKey, setSecretAccessKey] = useState<string>(
     location ? location.secretAccessKey : ''
   );
+  const [sessionToken, setSessionToken] = useState<string>(
+    location ? location.sessionToken : undefined
+  );
   const [bucketName, setBucketName] = useState<string>(
     location ? location.bucketName : ''
   );
@@ -236,6 +239,7 @@ const CreateEditLocationDialog = (props: Props) => {
           endpointURL,
           accessKeyId,
           secretAccessKey,
+          sessionToken,
           bucketName,
           region,
           isDefault,
@@ -276,6 +280,7 @@ const CreateEditLocationDialog = (props: Props) => {
         storePath={storePath}
         accessKeyId={accessKeyId}
         secretAccessKey={secretAccessKey}
+        sessionToken={sessionToken}
         setShowSecretAccessKey={setShowSecretAccessKey}
         bucketName={bucketName}
         region={region}
@@ -285,6 +290,7 @@ const CreateEditLocationDialog = (props: Props) => {
         setStorePath={setStorePath}
         setAccessKeyId={setAccessKeyId}
         setSecretAccessKey={setSecretAccessKey}
+        setSessionToken={setSessionToken}
         setBucketName={setBucketName}
         setEndpointURL={setEndpointURL}
         setNewUuid={setNewUuid}
