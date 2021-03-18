@@ -48,7 +48,7 @@ interface Props {
   maxSearchResults: number;
 }
 
-const TagLibraryMenu = (props: Props) => {
+const TagMenu = (props: Props) => {
   function showFilesWithThisTag() {
     if (props.selectedTag) {
       props.openSearchPanel();
@@ -119,4 +119,4 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(TagLibraryMenu);
+export default connect(mapStateToProps, mapDispatchToProps)(TagMenu);

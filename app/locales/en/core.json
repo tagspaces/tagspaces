@@ -160,6 +160,7 @@
   "openNextFileTooltip": "Open next file",
   "openNextFile": "Next File",
   "showFilesWithThisTag": "Show Files With This Tag",
+  "showFilesWithTags": "Show Files With This Tags",
   "editTag": "Edit Tag",
   "removeTagTooltip": "Do you really want to remove this tag?",
   "removeTag": "Remove Tag",
