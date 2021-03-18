@@ -19,7 +19,7 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import ShowEntriesWithTagIcon from '@material-ui/icons/Launch';
+import ShowEntriesWithTagIcon from '@material-ui/icons/SearchOutlined';
 import Edit from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/DeleteForever';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -48,7 +48,7 @@ interface Props {
   maxSearchResults: number;
 }
 
-const TagLibraryMenu = (props: Props) => {
+const TagMenu = (props: Props) => {
   function showFilesWithThisTag() {
     if (props.selectedTag) {
       props.openSearchPanel();
@@ -119,4 +119,4 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(TagLibraryMenu);
+export default connect(mapStateToProps, mapDispatchToProps)(TagMenu);

@@ -160,6 +160,8 @@
   "openNextFileTooltip": "Open next file",
   "openNextFile": "Next File",
   "showFilesWithThisTag": "Show Files With This Tag",
+  "showFilesWithTags": "Search for tags from this group",
+  "showFilesWithTagsTooltip": "Show files or folders tagged with at least one tag from this tag group",
   "editTag": "Edit Tag",
   "removeTagTooltip": "Do you really want to remove this tag?",
   "removeTag": "Remove Tag",
