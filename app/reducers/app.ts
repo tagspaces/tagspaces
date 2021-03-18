@@ -1474,6 +1474,21 @@ export const actions = {
     type: types.SET_READONLYMODE,
     isReadOnlyMode
   }),
+  reflectUpdateOpenedFileContent: (entryPath: string) => (
+    dispatch: (actions: Object) => void,
+    getState: () => any
+  ) => {
+    const { openedFiles } = getState().app;
+    if (openedFiles && openedFiles.length > 0) {
+      const openedFile: OpenedEntry = openedFiles.find(
+        obj => obj.path === entryPath
+      );
+      if (openedFile) {
+        openedFile.shouldReload = true;
+        dispatch(actions.addToEntryContainer(openedFile));
+      }
+    }
+  },
   updateOpenedFile: (
     entryPath: string,
     fsEntryMeta: any // FileSystemEntryMeta,

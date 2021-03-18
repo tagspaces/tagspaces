@@ -156,11 +156,32 @@ export default class PlatformIO {
     return nativeAPI.getPropertiesPromise(path);
   };
 
+  static before = (...paths) => {
+    if (Pro && Pro.Watcher && Pro.Watcher.isWatching()) {
+      for (let i = 0; i < paths.length; i += 1) {
+        Pro.Watcher.addToIgnored(paths[i]);
+      }
+    }
+  };
+
+  static after = (...paths) => {
+    if (Pro && Pro.Watcher && Pro.Watcher.isWatching()) {
+      for (let i = 0; i < paths.length; i += 1) {
+        Pro.Watcher.removeFromIgnored(paths[i]);
+      }
+    }
+  };
+
   static createDirectoryPromise = (dirPath: string): Promise<any> => {
     if (objectStoreAPI) {
       return objectStoreAPI.createDirectoryPromise(dirPath);
     }
-    return nativeAPI.createDirectoryPromise(dirPath);
+    PlatformIO.before(dirPath);
+
+    return nativeAPI.createDirectoryPromise(dirPath).then(result => {
+      PlatformIO.after(dirPath);
+      return result;
+    });
   };
 
   static copyFilePromise = async (
@@ -199,7 +220,14 @@ export default class PlatformIO {
     if (objectStoreAPI) {
       return objectStoreAPI.copyFilePromise(sourceFilePath, targetFilePath);
     }
-    return nativeAPI.copyFilePromise(sourceFilePath, targetFilePath);
+    PlatformIO.before(targetFilePath);
+
+    return nativeAPI
+      .copyFilePromise(sourceFilePath, targetFilePath)
+      .then(result => {
+        PlatformIO.after(targetFilePath);
+        return result;
+      });
   };
 
   static renameFilePromise = (
@@ -209,7 +237,12 @@ export default class PlatformIO {
     if (objectStoreAPI) {
       return objectStoreAPI.renameFilePromise(filePath, newFilePath);
     }
-    return nativeAPI.renameFilePromise(filePath, newFilePath);
+    PlatformIO.before(filePath, newFilePath);
+
+    return nativeAPI.renameFilePromise(filePath, newFilePath).then(result => {
+      PlatformIO.after(filePath, newFilePath);
+      return result;
+    });
   };
 
   static renameDirectoryPromise = (
@@ -218,11 +251,15 @@ export default class PlatformIO {
   ): Promise<any> => {
     if (objectStoreAPI) {
       return objectStoreAPI.renameDirectoryPromise(dirPath, newDirName);
-      /* return Promise.reject(
-        'Renaming directories not supported on this platform'
-      ); */
     }
-    return nativeAPI.renameDirectoryPromise(dirPath, newDirName);
+    PlatformIO.before(dirPath, newDirName);
+
+    return nativeAPI
+      .renameDirectoryPromise(dirPath, newDirName)
+      .then(result => {
+        PlatformIO.after(dirPath, newDirName);
+        return result;
+      });
   };
 
   static loadTextFilePromise = (
@@ -253,7 +290,14 @@ export default class PlatformIO {
     if (objectStoreAPI) {
       return objectStoreAPI.saveFilePromise(filePath, content, overwrite);
     }
-    return nativeAPI.saveFilePromise(filePath, content, overwrite);
+    PlatformIO.before(filePath);
+
+    return nativeAPI
+      .saveFilePromise(filePath, content, overwrite)
+      .then(result => {
+        PlatformIO.after(filePath);
+        return result;
+      });
   };
 
   static saveTextFilePromise = (
@@ -264,15 +308,13 @@ export default class PlatformIO {
     if (objectStoreAPI) {
       return objectStoreAPI.saveTextFilePromise(filePath, content, overwrite);
     }
-    if (Pro && Pro.Watcher && Pro.Watcher.isWatching()) {
-      Pro.Watcher.addToIgnored(filePath);
-    }
+
+    PlatformIO.before(filePath);
+
     return nativeAPI
       .saveTextFilePromise(filePath, content, overwrite)
       .then(result => {
-        if (Pro && Pro.Watcher && Pro.Watcher.isWatching()) {
-          Pro.Watcher.removeFromIgnored(filePath);
-        }
+        PlatformIO.after(filePath);
         return result;
       });
   };
@@ -294,12 +336,15 @@ export default class PlatformIO {
         onUploadProgress
       );
     }
+    PlatformIO.before(filePath);
+
     return nativeAPI
       .saveBinaryFilePromise(filePath, content, overwrite)
       .then(succeeded => {
         if (succeeded && onUploadProgress) {
           onUploadProgress({ key: filePath, loaded: 1, total: 1 }, undefined);
         }
+        PlatformIO.after(filePath);
         return succeeded;
       });
   };
@@ -311,7 +356,12 @@ export default class PlatformIO {
     if (objectStoreAPI) {
       return objectStoreAPI.deleteFilePromise(path, useTrash);
     }
-    return nativeAPI.deleteFilePromise(path, useTrash);
+    PlatformIO.before(path);
+
+    return nativeAPI.deleteFilePromise(path, useTrash).then(result => {
+      PlatformIO.after(path);
+      return result;
+    });
   };
 
   static deleteDirectoryPromise = (
@@ -320,11 +370,13 @@ export default class PlatformIO {
   ): Promise<any> => {
     if (objectStoreAPI) {
       return objectStoreAPI.deleteDirectoryPromise(path, useTrash);
-      /* return Promise.reject(
-        'Deleting directories not supported on this platform'
-      ); */
     }
-    return nativeAPI.deleteDirectoryPromise(path, useTrash);
+    PlatformIO.before(path);
+
+    return nativeAPI.deleteDirectoryPromise(path, useTrash).then(result => {
+      PlatformIO.after(path);
+      return result;
+    });
   };
 
   static openDirectory = (dirPath: string): void =>
