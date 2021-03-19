@@ -28,6 +28,10 @@
     <feature name="Downloader">
         <param name="ios-package" value="Downloader" />
     </feature>
+    <feature name="File">
+        <param name="ios-package" value="CDVFile" />
+        <param name="onload" value="true" />
+    </feature>
     <name>TagSpaces</name>
     <description>
 		Offline file organizer and browser with tagging support.
