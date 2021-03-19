@@ -143,6 +143,7 @@
   "openFile": "Open File",
   "downloadFile": "Download",
   "openFileNatively": "Open File Natively",
+  "openParentFolder": "Open Parent Folder",
   "openContainingFolder": "Open Containing Folder",
   "showInFileManager": "Show in File Manager",
   "fullscreen": "Open in Fullscreen",

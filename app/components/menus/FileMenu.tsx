@@ -24,7 +24,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Divider from '@material-ui/core/Divider';
 import OpenFile from '@material-ui/icons/SubdirectoryArrowRight';
 import OpenFileNatively from '@material-ui/icons/Launch';
-import OpenContainingFolder from '@material-ui/icons/FolderOpen';
+import OpenParentFolder from '@material-ui/icons/FolderOpen';
+import OpenFolderInternally from '@material-ui/icons/Folder';
 import AddRemoveTags from '@material-ui/icons/Loyalty';
 import MoveCopy from '@material-ui/icons/FileCopy';
 import ImageIcon from '@material-ui/icons/Image';
@@ -39,6 +40,7 @@ import {
   setFolderThumbnailPromise
 } from '-/services/utils-io';
 import { Pro } from '-/pro';
+import { extractParentDirectoryPath } from '-/utils/paths';
 
 interface Props {
   anchorEl: Element;
@@ -49,6 +51,7 @@ interface Props {
   openMoveCopyFilesDialog: () => void;
   openAddRemoveTagsDialog: () => void;
   openFsEntry: (fsEntry: FileSystemEntry) => void;
+  loadDirectoryContent: (path: string) => void;
   openFileNatively: (path: string) => void;
   showInFileManager: (path: string) => void;
   showNotification: (
@@ -127,6 +130,17 @@ const FileMenu = (props: Props) => {
     }
   }
 
+  function openParentFolderInternally() {
+    props.onClose();
+    if (props.selectedFilePath) {
+      const parentFolder = extractParentDirectoryPath(
+        props.selectedFilePath,
+        PlatformIO.getDirSeparator()
+      );
+      props.loadDirectoryContent(parentFolder);
+    }
+  }
+
   function openFile() {
     props.onClose();
     if (props.selectedFilePath) {
@@ -150,12 +164,23 @@ const FileMenu = (props: Props) => {
     <div style={{ overflowY: 'hidden' }}>
       <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
         {props.selectedEntries.length < 2 && (
-          <MenuItem data-tid="fileMenuOpenFile" onClick={openFile}>
-            <ListItemIcon>
-              <OpenFile />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:openFile')} />
-          </MenuItem>
+          <>
+            <MenuItem data-tid="fileMenuOpenFile" onClick={openFile}>
+              <ListItemIcon>
+                <OpenFile />
+              </ListItemIcon>
+              <ListItemText primary={i18n.t('core:openFile')} />
+            </MenuItem>
+            <MenuItem
+              data-tid="fileMenuOpenParentFolderInternally"
+              onClick={openParentFolderInternally}
+            >
+              <ListItemIcon>
+                <OpenParentFolder />
+              </ListItemIcon>
+              <ListItemText primary={i18n.t('core:openParentFolder')} />
+            </MenuItem>
+          </>
         )}
         {!(PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb) &&
           props.selectedEntries.length < 2 && (
@@ -174,7 +199,7 @@ const FileMenu = (props: Props) => {
                 onClick={showInFileManager}
               >
                 <ListItemIcon>
-                  <OpenContainingFolder />
+                  <OpenFolderInternally />
                 </ListItemIcon>
                 <ListItemText primary={i18n.t('core:showInFileManager')} />
               </MenuItem>

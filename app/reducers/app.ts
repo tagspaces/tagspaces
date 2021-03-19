@@ -923,42 +923,42 @@ export const actions = {
       );
     }
   },
+  loadDirectoryContentInt: (
+    directoryPath: string,
+    fsEntryMeta?: FileSystemEntryMeta
+  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
+    const { settings } = getState();
+    dispatch(actions.loadDirectorySuccessInt(directoryPath, [], true)); // this is to reset directoryContent (it will reset color too)
+    // dispatch(actions.setCurrentDirectoryColor('')); // this is to reset color only
+    dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
+    PlatformIO.listDirectoryPromise(directoryPath, false)
+      .then(results => {
+        prepareDirectoryContent(
+          results,
+          directoryPath,
+          settings,
+          dispatch,
+          getState,
+          fsEntryMeta
+        );
+        return true;
+      })
+      .catch(error => {
+        console.timeEnd('listDirectoryPromise');
+        dispatch(actions.loadDirectoryFailure(error)); // Currently this is never called, due the promise always resolve
+      });
+  },
   loadDirectoryContent: (directoryPath: string) => (
-    dispatch: (actions: Object) => void,
-    getState: () => any
+    dispatch: (actions: Object) => void
   ) => {
     console.time('listDirectoryPromise');
-    const { settings } = getState();
     window.walkCanceled = false;
-
-    function loadDirectoryContentInt(fsEntryMeta?: FileSystemEntryMeta) {
-      // Uncomment the following line will to clear all content before loading new dir content
-      dispatch(actions.loadDirectorySuccessInt(directoryPath, [], true)); // this is to reset directoryContent (it will reset color too)
-      // dispatch(actions.setCurrentDirectoryColor('')); // this is to reset color only
-      dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
-      PlatformIO.listDirectoryPromise(directoryPath, false)
-        .then(results => {
-          prepareDirectoryContent(
-            results,
-            directoryPath,
-            settings,
-            dispatch,
-            getState,
-            fsEntryMeta
-          );
-          return true;
-        })
-        .catch(error => {
-          console.timeEnd('listDirectoryPromise');
-          dispatch(actions.loadDirectoryFailure(error)); // Currently this is never called, due the promise always resolve
-        });
-    }
 
     loadMetaDataPromise(
       normalizePath(directoryPath) + PlatformIO.getDirSeparator()
     )
       .then(fsEntryMeta => {
-        loadDirectoryContentInt(fsEntryMeta);
+        dispatch(actions.loadDirectoryContentInt(directoryPath, fsEntryMeta));
         /* if (fsEntryMeta.color) { // TODO rethink this states changes are expensive
           dispatch(actions.setCurrentDirectoryColor(fsEntryMeta.color));
         }
@@ -970,7 +970,7 @@ export const actions = {
       })
       .catch(err => {
         console.log('Error loading meta of the current folder' + err);
-        loadDirectoryContentInt();
+        dispatch(actions.loadDirectoryContentInt(directoryPath));
       });
   },
   loadDirectorySuccess: (
@@ -1358,7 +1358,8 @@ export const actions = {
     });
   },
   openLocation: (location: Location) => (
-    dispatch: (actions: Object) => void
+    dispatch: (actions: Object) => void,
+    getState: () => any
   ) => {
     if (Pro && Pro.Watcher) {
       Pro.Watcher.stopWatching();
@@ -1394,7 +1395,14 @@ export const actions = {
       dispatch(actions.changeLocation(location));
       dispatch(actions.loadDirectoryContent(getLocationPath(location)));
       if (Pro && Pro.Watcher && location.watchForChanges) {
-        Pro.Watcher.watchFolder(getLocationPath(location), dispatch, actions);
+        const perspective = getCurrentDirectoryPerspective(getState());
+        const depth = perspective === perspectives.KANBAN ? 3 : 1;
+        Pro.Watcher.watchFolder(
+          getLocationPath(location),
+          dispatch,
+          actions,
+          depth
+        );
       }
     }
   },
@@ -1466,6 +1474,21 @@ export const actions = {
     type: types.SET_READONLYMODE,
     isReadOnlyMode
   }),
+  reflectUpdateOpenedFileContent: (entryPath: string) => (
+    dispatch: (actions: Object) => void,
+    getState: () => any
+  ) => {
+    const { openedFiles } = getState().app;
+    if (openedFiles && openedFiles.length > 0) {
+      const openedFile: OpenedEntry = openedFiles.find(
+        obj => obj.path === entryPath
+      );
+      if (openedFile) {
+        openedFile.shouldReload = true;
+        dispatch(actions.addToEntryContainer(openedFile));
+      }
+    }
+  },
   updateOpenedFile: (
     entryPath: string,
     fsEntryMeta: any // FileSystemEntryMeta,
