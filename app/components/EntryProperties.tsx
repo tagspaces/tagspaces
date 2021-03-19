@@ -609,36 +609,24 @@ const EntryProperties = (props: Props) => {
   function getMenuItem(perspective) {
     let icon;
     if (perspective === perspectives.DEFAULT) {
-      icon = (
-        <ListItemIcon>
-          <DefaultPerspectiveIcon />
-        </ListItemIcon>
-      );
+      icon = <DefaultPerspectiveIcon />;
     } else if (perspective === perspectives.GALLERY) {
-      icon = (
-        <ListItemIcon>
-          <GalleryPerspectiveIcon />
-        </ListItemIcon>
-      );
+      icon = <GalleryPerspectiveIcon />;
     } else if (perspective === perspectives.MAPIQUE) {
-      icon = (
-        <ListItemIcon>
-          <MapiquePerspectiveIcon />
-        </ListItemIcon>
-      );
+      icon = <MapiquePerspectiveIcon />;
     } else if (perspective === perspectives.KANBAN) {
-      icon = (
-        <ListItemIcon>
-          <KanBanPerspectiveIcon />
-        </ListItemIcon>
-      );
+      icon = <KanBanPerspectiveIcon />;
     }
     return (
       <MenuItem key={perspective} value={perspective}>
-        {icon}
-        <ListItemText
-          primary={perspective.charAt(0).toUpperCase() + perspective.slice(1)}
-        />
+        <div style={{ display: 'flex' }}>
+          <ListItemIcon style={{ paddingLeft: 3, paddingTop: 3 }}>
+            {icon}
+          </ListItemIcon>
+          <ListItemText>
+            {perspective.charAt(0).toUpperCase() + perspective.slice(1)}
+          </ListItemText>
+        </div>
       </MenuItem>
     );
   }
@@ -1085,7 +1073,7 @@ const EntryProperties = (props: Props) => {
                 className={classNames(classes.header)}
                 style={{ display: 'block' }}
               >
-                {i18n.t('core:SharingLink')}
+                {i18n.t('core:sharingLink')}
               </Typography>
             </div>
           </div>
@@ -1142,11 +1130,17 @@ const EntryProperties = (props: Props) => {
                 onChange={changePerspective}
                 input={<Input id="changePerspectiveId" />}
               >
-                <MenuItem key="unspecified" value="unspecified">
-                  <ListItemIcon>
-                    <LayersClearIcon />
-                  </ListItemIcon>
-                  <ListItemText primary={i18n.t('core:unspecified')} />
+                <MenuItem
+                  style={{ display: 'flex' }}
+                  key="unspecified"
+                  value="unspecified"
+                >
+                  <div style={{ display: 'flex' }}>
+                    <ListItemIcon style={{ paddingLeft: 3, paddingTop: 3 }}>
+                      <LayersClearIcon />
+                    </ListItemIcon>
+                    <ListItemText>{i18n.t('core:unspecified')}</ListItemText>
+                  </div>
                 </MenuItem>
                 {Object.values(perspectives).map(perspective =>
                   getMenuItem(perspective)
