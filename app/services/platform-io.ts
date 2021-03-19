@@ -156,7 +156,7 @@ export default class PlatformIO {
     return nativeAPI.getPropertiesPromise(path);
   };
 
-  static before = (...paths) => {
+  static ignoreByWatcher = (...paths) => {
     if (Pro && Pro.Watcher && Pro.Watcher.isWatching()) {
       for (let i = 0; i < paths.length; i += 1) {
         Pro.Watcher.addToIgnored(paths[i]);
@@ -164,7 +164,7 @@ export default class PlatformIO {
     }
   };
 
-  static after = (...paths) => {
+  static deignoreByWatcher = (...paths) => {
     if (Pro && Pro.Watcher && Pro.Watcher.isWatching()) {
       for (let i = 0; i < paths.length; i += 1) {
         Pro.Watcher.removeFromIgnored(paths[i]);
@@ -176,10 +176,10 @@ export default class PlatformIO {
     if (objectStoreAPI) {
       return objectStoreAPI.createDirectoryPromise(dirPath);
     }
-    PlatformIO.before(dirPath);
+    PlatformIO.ignoreByWatcher(dirPath);
 
     return nativeAPI.createDirectoryPromise(dirPath).then(result => {
-      PlatformIO.after(dirPath);
+      PlatformIO.deignoreByWatcher(dirPath);
       return result;
     });
   };
@@ -220,12 +220,12 @@ export default class PlatformIO {
     if (objectStoreAPI) {
       return objectStoreAPI.copyFilePromise(sourceFilePath, targetFilePath);
     }
-    PlatformIO.before(targetFilePath);
+    PlatformIO.ignoreByWatcher(targetFilePath);
 
     return nativeAPI
       .copyFilePromise(sourceFilePath, targetFilePath)
       .then(result => {
-        PlatformIO.after(targetFilePath);
+        PlatformIO.deignoreByWatcher(targetFilePath);
         return result;
       });
   };
@@ -237,10 +237,10 @@ export default class PlatformIO {
     if (objectStoreAPI) {
       return objectStoreAPI.renameFilePromise(filePath, newFilePath);
     }
-    PlatformIO.before(filePath, newFilePath);
+    PlatformIO.ignoreByWatcher(filePath, newFilePath);
 
     return nativeAPI.renameFilePromise(filePath, newFilePath).then(result => {
-      PlatformIO.after(filePath, newFilePath);
+      PlatformIO.deignoreByWatcher(filePath, newFilePath);
       return result;
     });
   };
@@ -252,12 +252,12 @@ export default class PlatformIO {
     if (objectStoreAPI) {
       return objectStoreAPI.renameDirectoryPromise(dirPath, newDirName);
     }
-    PlatformIO.before(dirPath, newDirName);
+    PlatformIO.ignoreByWatcher(dirPath, newDirName);
 
     return nativeAPI
       .renameDirectoryPromise(dirPath, newDirName)
       .then(result => {
-        PlatformIO.after(dirPath, newDirName);
+        PlatformIO.deignoreByWatcher(dirPath, newDirName);
         return result;
       });
   };
@@ -290,12 +290,12 @@ export default class PlatformIO {
     if (objectStoreAPI) {
       return objectStoreAPI.saveFilePromise(filePath, content, overwrite);
     }
-    PlatformIO.before(filePath);
+    PlatformIO.ignoreByWatcher(filePath);
 
     return nativeAPI
       .saveFilePromise(filePath, content, overwrite)
       .then(result => {
-        PlatformIO.after(filePath);
+        PlatformIO.deignoreByWatcher(filePath);
         return result;
       });
   };
@@ -309,12 +309,12 @@ export default class PlatformIO {
       return objectStoreAPI.saveTextFilePromise(filePath, content, overwrite);
     }
 
-    PlatformIO.before(filePath);
+    PlatformIO.ignoreByWatcher(filePath);
 
     return nativeAPI
       .saveTextFilePromise(filePath, content, overwrite)
       .then(result => {
-        PlatformIO.after(filePath);
+        PlatformIO.deignoreByWatcher(filePath);
         return result;
       });
   };
@@ -336,7 +336,7 @@ export default class PlatformIO {
         onUploadProgress
       );
     }
-    PlatformIO.before(filePath);
+    PlatformIO.ignoreByWatcher(filePath);
 
     return nativeAPI
       .saveBinaryFilePromise(filePath, content, overwrite)
@@ -344,7 +344,7 @@ export default class PlatformIO {
         if (succeeded && onUploadProgress) {
           onUploadProgress({ key: filePath, loaded: 1, total: 1 }, undefined);
         }
-        PlatformIO.after(filePath);
+        PlatformIO.deignoreByWatcher(filePath);
         return succeeded;
       });
   };
@@ -356,10 +356,10 @@ export default class PlatformIO {
     if (objectStoreAPI) {
       return objectStoreAPI.deleteFilePromise(path, useTrash);
     }
-    PlatformIO.before(path);
+    PlatformIO.ignoreByWatcher(path);
 
     return nativeAPI.deleteFilePromise(path, useTrash).then(result => {
-      PlatformIO.after(path);
+      PlatformIO.deignoreByWatcher(path);
       return result;
     });
   };
@@ -371,10 +371,10 @@ export default class PlatformIO {
     if (objectStoreAPI) {
       return objectStoreAPI.deleteDirectoryPromise(path, useTrash);
     }
-    PlatformIO.before(path);
+    PlatformIO.ignoreByWatcher(path);
 
     return nativeAPI.deleteDirectoryPromise(path, useTrash).then(result => {
-      PlatformIO.after(path);
+      PlatformIO.deignoreByWatcher(path);
       return result;
     });
   };

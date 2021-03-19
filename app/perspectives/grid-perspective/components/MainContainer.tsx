@@ -805,6 +805,7 @@ const GridPerspective = (props: Props) => {
           openAddRemoveTagsDialog={openAddRemoveTagsDialog}
           openFsEntry={props.openFsEntry}
           openFileNatively={props.openFileNatively}
+          loadDirectoryContent={props.loadDirectoryContent}
           showInFileManager={props.showInFileManager}
           showNotification={props.showNotification}
           isReadOnlyMode={props.isReadOnlyMode}
