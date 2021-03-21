@@ -150,7 +150,7 @@ export default (theme: any): any => ({
       ' 99%)',
     backdropFilter: 'blur(5px)',
     // borderBottom: '1px solid ' + theme.palette.divider,
-    width: '100%',
+    width: 'calc(100% - 10px)',
     overflowX: AppConfig.isFirefox ? 'auto' : 'overlay'
   }
 });
