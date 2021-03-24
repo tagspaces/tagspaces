@@ -54,6 +54,7 @@ import styles from './SidePanels.css';
 import AppConfig from '../config';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
+import { clearAllURLParams } from '-/utils/misc';
 
 interface Props {
   classes?: any;
@@ -67,6 +68,11 @@ interface Props {
   user: CognitoUserInterface;
   style?: any;
 }
+
+const signOut = () => {
+  Auth.signOut();
+  clearAllURLParams();
+};
 
 const HelpFeedbackPanel = (props: Props) => {
   const {
@@ -134,7 +140,7 @@ const HelpFeedbackPanel = (props: Props) => {
                 data-tid="signOutTID"
                 title={i18n.t('core:signOut')}
                 className={classes.mainActionButton}
-                onClick={() => Auth.signOut()}
+                onClick={signOut}
                 size="small"
                 variant="outlined"
                 color="primary"

@@ -137,7 +137,7 @@ export function getURLParameter(paramName: string, url?: string): string {
 
 export function clearAllURLParams() {
   window.history.pushState('', document.title, window.location.pathname);
-  console.log(window.location.href);
+  // console.log(window.location.href);
 }
 
 export function clearURLParam(paramName) {
@@ -151,7 +151,7 @@ export function clearURLParam(paramName) {
     document.title,
     window.location.pathname + '?' + params
   );
-  console.log(window.location.href);
+  // console.log(window.location.href);
 }
 
 export function updateHistory(
