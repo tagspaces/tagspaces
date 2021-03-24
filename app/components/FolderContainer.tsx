@@ -26,7 +26,14 @@ import IconButton from '@material-ui/core/IconButton';
 import FolderSeparatorIcon from '@material-ui/icons/ChevronRight';
 import MenuIcon from '@material-ui/icons/Menu';
 import Badge from '@material-ui/core/Badge';
+import { Tooltip } from '@material-ui/core';
 import { withStyles, withTheme } from '@material-ui/core/styles';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import DefaultPerspectiveIcon from '@material-ui/icons/GridOn';
+import GalleryPerspectiveIcon from '@material-ui/icons/Camera';
+import MapiquePerspectiveIcon from '@material-ui/icons/Map';
+import KanBanPerspectiveIcon from '@material-ui/icons/Dashboard';
 import LocationMenu from './menus/LocationMenu';
 import DirectoryMenu from './menus/DirectoryMenu';
 import i18n from '../services/i18n';
@@ -44,7 +51,8 @@ import {
   isReadOnlyMode,
   getCurrentLocationPath,
   getCurrentDirectoryPerspective,
-  OpenedEntry
+  OpenedEntry,
+  perspectives
 } from '../reducers/app';
 import TaggingActions from '../reducers/tagging-actions';
 import { normalizePath, extractShortDirectoryName } from '-/utils/paths';
@@ -182,6 +190,13 @@ const styles: any = (theme: any) => ({
     paddingLeft: 10,
     paddingRight: 10,
     alignItems: 'center'
+  },
+  perspecitveSwitch: {
+    bottom: 25,
+    right: 25,
+    zIndex: 1000,
+    position: 'absolute',
+    backgroundColor: theme.palette.background.default
   }
 });
 
@@ -199,12 +214,10 @@ interface Props {
   removeAllTags: () => void;
   editTagForEntry: () => void;
   openFileNatively: (path: string) => void;
-  // deleteFile: () => void;
   renameFile: () => void;
   openDirectory: () => void;
   showInFileManager: () => void;
   openFsEntry: (fsEntry: FileSystemEntry) => void;
-  // deleteDirectory: (path: string) => void;
   reflectCreateEntry: (path: string, isFile: boolean) => void;
   loadDirectoryContent: (path: string) => void;
   loadParentDirectoryContent: () => void;
@@ -225,15 +238,10 @@ interface Props {
 }
 
 const FolderContainer = (props: Props) => {
-  // const [isDirectoryMenuOpened, setDirectoryMenuOpened] = useState<boolean>(false);
-  /* const [directoryContextMenuOpened, setDirectoryContextMenuOpened] = useState<
-    boolean
-  >(false); */
   const [
     directoryContextMenuAnchorEl,
     setDirectoryContextMenuAnchorEl
   ] = useState<null | HTMLElement>(null);
-  // const [perspectiveChooserMenuOpened,setPerspectiveChooserMenuOpened] = useState<boolean>(false);
 
   useEffect(() => {
     if (props.openedFiles.length > 0) {
@@ -298,35 +306,15 @@ const FolderContainer = (props: Props) => {
 
   const openDirectoryMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
     setDirectoryContextMenuAnchorEl(event.currentTarget);
-    // setDirectoryContextMenuOpened(true);
   };
 
   const closeDirectoryMenu = () => {
     setDirectoryContextMenuAnchorEl(null);
-    // setDirectoryContextMenuOpened(false);
   };
 
   const switchPerspective = (perspectiveId: string) => {
-    /* if (!Pro) {
-      props.showNotification(i18n.t('core:needProVersion'));
-      return;
-    } */
     props.setCurrentDirectoryPerspective(perspectiveId);
-    /* savePerspective(props.currentDirectoryPath, perspectiveId || 'default')
-      .then((entryMeta: FileSystemEntryMeta) => {
-        props.setCurrentDirectoryPerspective(entryMeta.perspective);
-        return true;
-      })
-      .catch(error => {
-        console.warn('Error saving perspective for folder ' + error);
-        props.showNotification(i18n.t('Error saving perspective for folder'));
-      }); */
   };
-
-  /* const togglePerspectiveChooserClose = (event?: any) => {
-    perspectiveChooserMenuAnchorEl = event ? event.currentTarget : null;
-    setPerspectiveChooserMenuOpened(!perspectiveChooserMenuOpened);
-  }; */
 
   const renderPerspective = () => {
     if (!props.currentDirectoryPath && props.directoryContent.length < 1) {
@@ -351,20 +339,6 @@ const FolderContainer = (props: Props) => {
         />
       );
     }
-    /* if (
-      Pro &&
-      props.currentDirectoryPerspective ===
-        Pro.Perspectives.AvailablePerspectives.TREEVIZ
-    ) {
-      return (
-        <TreeVizPerspectiveAsync
-          directoryContent={props.directoryContent}
-          currentDirectoryPath={props.currentDirectoryPath}
-          windowWidth={props.windowWidth}
-          switchPerspective={switchPerspective}
-        />
-      );
-    } */
     if (
       Pro &&
       props.currentDirectoryPerspective ===
@@ -391,7 +365,6 @@ const FolderContainer = (props: Props) => {
           loadDirectoryContent={props.loadDirectoryContent}
           openFsEntry={props.openFsEntry}
           loadParentDirectoryContent={props.loadParentDirectoryContent}
-          // deleteFile={props.deleteFile}
           renameFile={props.renameFile}
           openDirectory={props.openDirectory}
           showInFileManager={props.showInFileManager}
@@ -399,7 +372,6 @@ const FolderContainer = (props: Props) => {
           setLastSelectedEntry={props.setLastSelectedEntry}
           addTags={props.addTags}
           editTagForEntry={props.editTagForEntry}
-          // deleteDirectory={props.deleteDirectory}
           removeTags={props.removeTags}
           removeAllTags={props.removeAllTags}
           windowWidth={props.windowWidth}
@@ -414,7 +386,6 @@ const FolderContainer = (props: Props) => {
         loadDirectoryContent={props.loadDirectoryContent}
         openFsEntry={props.openFsEntry}
         loadParentDirectoryContent={props.loadParentDirectoryContent}
-        // deleteFile={props.deleteFile}
         renameFile={props.renameFile}
         openDirectory={props.openDirectory}
         showInFileManager={props.showInFileManager}
@@ -422,7 +393,6 @@ const FolderContainer = (props: Props) => {
         setLastSelectedEntry={props.setLastSelectedEntry}
         addTags={props.addTags}
         editTagForEntry={props.editTagForEntry}
-        // deleteDirectory={props.deleteDirectory}
         removeTags={props.removeTags}
         removeAllTags={props.removeAllTags}
         windowWidth={props.windowWidth}
@@ -559,6 +529,46 @@ const FolderContainer = (props: Props) => {
           {renderPerspective()}
         </div>
       </div>
+      {Pro && props.isDesktopMode && (
+        <ToggleButtonGroup
+          exclusive
+          value={props.currentDirectoryPerspective}
+          size="small"
+          aria-label="change perspective"
+          className={classes.perspecitveSwitch}
+          onChange={(
+            event: React.MouseEvent<HTMLElement>,
+            perspectiveId: string
+          ) => {
+            switchPerspective(perspectiveId);
+          }}
+        >
+          <Tooltip title="Switch to default perspective">
+            <ToggleButton value={perspectives.DEFAULT} aria-label="Default">
+              <DefaultPerspectiveIcon />
+              Default
+            </ToggleButton>
+          </Tooltip>
+          <Tooltip title="Switch to Gallery perspective">
+            <ToggleButton value={perspectives.GALLERY} aria-label="Gallery">
+              <GalleryPerspectiveIcon />
+              Gallery
+            </ToggleButton>
+          </Tooltip>
+          <Tooltip title="Switch to Mapique perspective">
+            <ToggleButton value={perspectives.MAPIQUE} aria-label="Mapique">
+              <MapiquePerspectiveIcon />
+              Mapique
+            </ToggleButton>
+          </Tooltip>
+          <Tooltip title="Switch to KanBan perspective">
+            <ToggleButton value={perspectives.KANBAN} aria-label="KanBan">
+              <KanBanPerspectiveIcon />
+              KanBan
+            </ToggleButton>
+          </Tooltip>
+        </ToggleButtonGroup>
+      )}
     </div>
   );
 };
@@ -587,12 +597,10 @@ function mapActionCreatorsToProps(dispatch) {
       removeAllTags: TaggingActions.removeAllTags,
       editTagForEntry: TaggingActions.editTagForEntry,
       openFileNatively: AppActions.openFileNatively,
-      // deleteFile: AppActions.deleteFile,
       renameFile: AppActions.renameFile,
       openDirectory: AppActions.openDirectory,
       showInFileManager: AppActions.showInFileManager,
       openFsEntry: AppActions.openFsEntry,
-      // deleteDirectory: AppActions.deleteDirectory,
       reflectCreateEntry: AppActions.reflectCreateEntry,
       loadDirectoryContent: AppActions.loadDirectoryContent,
       loadParentDirectoryContent: AppActions.loadParentDirectoryContent,
