@@ -134,6 +134,33 @@ const CellContent = (props: Props) => {
       </IconButton>
     ) : null;
 
+  const entryDefaultIcon = fsEntry.isFile ? (
+    <div />
+  ) : (
+    <svg
+      style={{
+        width: '60%',
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        height: 150
+      }}
+      id="i-folder"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 32 32"
+      width="32"
+      height="32"
+      fill="none"
+      stroke="#8c8c8c33"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+    >
+      <path d="M2 26 L30 26 30 7 14 7 10 4 2 4 Z M30 12 L2 12" />
+    </svg>
+  );
+
   function renderGridCell() {
     return (
       <div
@@ -149,7 +176,7 @@ const CellContent = (props: Props) => {
             height: 150 // fsEntry.isFile ? 150 : 70
           }}
         >
-          {fsEntry.thumbPath && (
+          {fsEntry.thumbPath ? (
             <img
               alt="thumbnail"
               className={classes.gridCellThumb}
@@ -165,6 +192,8 @@ const CellContent = (props: Props) => {
                 height: 150
               }}
             />
+          ) : (
+            entryDefaultIcon
           )}
           <div id="gridCellTags" className={classes.gridCellTags}>
             {showTags && entryTags
