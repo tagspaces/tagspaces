@@ -247,6 +247,7 @@
     "aws-amplify": "^3.3.19",
     "aws-sdk": "^2.652.0",
     "babel-polyfill": "^6.26.0",
+    "bytesize-icons": "^1.4.0",
     "chokidar": "^3.5.1",
     "classnames": "^2.2.6",
     "clone": "^2.1.2",

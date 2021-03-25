@@ -561,12 +561,12 @@ const FolderContainer = (props: Props) => {
               Mapique
             </ToggleButton>
           </Tooltip>
-          <Tooltip title="Switch to KanBan perspective">
+          {/* <Tooltip title="Switch to KanBan perspective">
             <ToggleButton value={perspectives.KANBAN} aria-label="KanBan">
               <KanBanPerspectiveIcon />
               KanBan
             </ToggleButton>
-          </Tooltip>
+          </Tooltip> */}
         </ToggleButtonGroup>
       )}
     </div>
