@@ -5741,6 +5741,11 @@ bytes@3.1.0:
   resolved "https://registry.yarnpkg.com/bytes/-/bytes-3.1.0.tgz#f6cf7933a360e0588fa9fde85651cdc7f805d1f6"
   integrity sha512-zauLjrfCG+xvoyaqLoV8bLVXXNGC4JqlxFCutSDWA6fJrTo2ZuvLYTqZ7aHBLZSMOopbzwv8f+wZcVzfVTI2Dg==
 
+bytesize-icons@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/bytesize-icons/-/bytesize-icons-1.4.0.tgz#d21a4f20852860b899af7a80b0dcf06198b5e563"
+  integrity sha512-Hk4ruH7tAaRJcRPRNUlKFN1crsREksgzA5Fv+12a1HkinVNWCb8QZL5qEbVKfsA/VjRjBHn/TvpooooQn02Tlg==
+
 cacache@^10.0.0:
   version "10.0.4"
   resolved "https://registry.yarnpkg.com/cacache/-/cacache-10.0.4.tgz#6452367999eff9d4188aefd9a14e9d7c6a263460"
