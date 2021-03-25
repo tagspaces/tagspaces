@@ -134,11 +134,10 @@ const CellContent = (props: Props) => {
       </IconButton>
     ) : null;
 
-  const entryDefaultIcon = fsEntry.isFile ? (
-    <div />
-  ) : (
+  const entryDefaultIcon = (
     <svg
       style={{
+        marginTop: 25,
         width: '60%',
         position: 'absolute',
         top: '50%',
@@ -146,18 +145,21 @@ const CellContent = (props: Props) => {
         transform: 'translate(-50%, -50%)',
         height: 150
       }}
-      id="i-folder"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 32 32"
       width="32"
       height="32"
       fill="none"
-      stroke="#8c8c8c33"
+      stroke="#bbbbbb22"
       stroke-linecap="round"
       stroke-linejoin="round"
       stroke-width="2"
     >
-      <path d="M2 26 L30 26 30 7 14 7 10 4 2 4 Z M30 12 L2 12" />
+      {fsEntry.isFile ? (
+        <path d="M6 2 L6 30 26 30 26 10 18 2 Z M18 2 L18 10 26 10" />
+      ) : (
+        <path d="M2 26 L30 26 30 7 14 7 10 4 2 4 Z M30 12 L2 12" />
+      )}
     </svg>
   );
 
