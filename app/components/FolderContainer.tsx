@@ -316,8 +316,11 @@ const FolderContainer = (props: Props) => {
     props.setCurrentDirectoryPerspective(perspectiveId);
   };
 
+  const showWelcomePanel =
+    !props.currentDirectoryPath && props.directoryContent.length < 1;
+
   const renderPerspective = () => {
-    if (!props.currentDirectoryPath && props.directoryContent.length < 1) {
+    if (showWelcomePanel) {
       return AppConfig.showWelcomePanel ? (
         <WelcomePanelAsync />
       ) : (
@@ -379,7 +382,6 @@ const FolderContainer = (props: Props) => {
         />
       );
     }
-    //  else if (this.state.currentPerspective === 'default') {
     return (
       <GridPerspectiveAsync
         directoryContent={props.directoryContent}
@@ -410,7 +412,8 @@ const FolderContainer = (props: Props) => {
     showDrawer,
     isDesktopMode,
     theme,
-    loadParentDirectoryContent
+    loadParentDirectoryContent,
+    currentDirectoryPerspective
   } = props;
   const normalizedCurrentDirPath = normalizePath(
     currentDirectoryPath.split('\\').join('/')
@@ -422,6 +425,10 @@ const FolderContainer = (props: Props) => {
       searchResultCount +
       ' entries.';
   }
+
+  const currentPerspective =
+    currentDirectoryPerspective || perspectives.DEFAULT;
+
   return (
     <div data-tid="folderContainerTID">
       <div className={classes.mainPanel}>
@@ -529,44 +536,65 @@ const FolderContainer = (props: Props) => {
           {renderPerspective()}
         </div>
       </div>
-      {Pro && props.isDesktopMode && (
+      {Pro && props.isDesktopMode && !showWelcomePanel && (
         <ToggleButtonGroup
-          exclusive
-          value={props.currentDirectoryPerspective}
+          value={currentPerspective}
           size="small"
           aria-label="change perspective"
+          exclusive
           className={classes.perspecitveSwitch}
-          onChange={(
-            event: React.MouseEvent<HTMLElement>,
-            perspectiveId: string
-          ) => {
-            switchPerspective(perspectiveId);
-          }}
         >
           <Tooltip title="Switch to default perspective">
-            <ToggleButton value={perspectives.DEFAULT} aria-label="Default">
+            <ToggleButton
+              value={perspectives.DEFAULT}
+              aria-label={perspectives.DEFAULT}
+              onClick={() => switchPerspective(perspectives.DEFAULT)}
+              style={
+                currentPerspective === perspectives.DEFAULT
+                  ? {
+                      backgroundColor: 'rgba(0, 0, 0, 0.2)'
+                    }
+                  : {}
+              }
+            >
               <DefaultPerspectiveIcon />
-              Default
+              {' ' + perspectives.DEFAULT}
             </ToggleButton>
           </Tooltip>
           <Tooltip title="Switch to Gallery perspective">
-            <ToggleButton value={perspectives.GALLERY} aria-label="Gallery">
+            <ToggleButton
+              value={perspectives.GALLERY}
+              aria-label={perspectives.GALLERY}
+              onClick={() => switchPerspective(perspectives.GALLERY)}
+              style={
+                currentPerspective === perspectives.GALLERY
+                  ? {
+                      backgroundColor: 'rgba(0, 0, 0, 0.2)'
+                    }
+                  : {}
+              }
+            >
               <GalleryPerspectiveIcon />
-              Gallery
+              {' ' + perspectives.GALLERY}
             </ToggleButton>
           </Tooltip>
           <Tooltip title="Switch to Mapique perspective">
-            <ToggleButton value={perspectives.MAPIQUE} aria-label="Mapique">
+            <ToggleButton
+              value={perspectives.MAPIQUE}
+              aria-label={perspectives.MAPIQUE}
+              onClick={() => switchPerspective(perspectives.MAPIQUE)}
+              style={
+                currentPerspective === perspectives.MAPIQUE
+                  ? {
+                      backgroundColor: 'rgba(0, 0, 0, 0.2)'
+                    }
+                  : {}
+              }
+            >
               <MapiquePerspectiveIcon />
-              Mapique
+              {' ' + perspectives.MAPIQUE}
             </ToggleButton>
           </Tooltip>
-          {/* <Tooltip title="Switch to KanBan perspective">
-            <ToggleButton value={perspectives.KANBAN} aria-label="KanBan">
-              <KanBanPerspectiveIcon />
-              KanBan
-            </ToggleButton>
-          </Tooltip> */}
         </ToggleButtonGroup>
       )}
     </div>
