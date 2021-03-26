@@ -59,7 +59,7 @@ export default function Root({ store, persistor }: RootType) {
         onBeforeLift={() => {
           // @ts-ignore
           // eslint-disable-next-line react/prop-types
-          if (!AppConfig.isWeb) {
+          if (!AppConfig.isAmplify) {
             // || store.app.user !== undefined
             // @ts-ignore
             // eslint-disable-next-line react/prop-types

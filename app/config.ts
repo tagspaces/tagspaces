@@ -99,6 +99,13 @@ export const AppConfig = {
   isCordovaAndroid,
   isCordova: isCordovaiOS || isCordovaAndroid,
   isMobile: isCordovaiOS || isCordovaAndroid || isIOS || isAndroid,
+  isAmplify: window.ExtIsAmplify !== undefined ? window.ExtIsAmplify : false,
+  useSidecarsForFileTagging:
+    window.ExtUseSidecarsForFileTagging !== undefined
+      ? window.ExtUseSidecarsForFileTagging
+      : false,
+  useSidecarsForFileTaggingDisableSetting:
+    window.ExtUseSidecarsForFileTagging !== undefined,
   customLogo: window.ExtLogoURL || false,
   showAdvancedSearch:
     window.ExtShowAdvancedSearch !== undefined

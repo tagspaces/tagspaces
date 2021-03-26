@@ -36,6 +36,7 @@ import { formatDateTime4Tag, isPlusCode } from '../utils/misc';
 import PlatformIO from '../services/platform-io';
 import { Pro } from '../pro';
 import GlobalSearch from '../services/search-index';
+import { getPersistTagsInSidecarFile } from './settings';
 
 export const defaultTagLocation = OpenLocationCode.encode(51.48, 0, undefined); // default tag coordinate Greenwich
 
@@ -149,7 +150,7 @@ const actions = {
       console.log('No sidecar found ' + error);
     }
 
-    if (!entryProperties.isFile || settings.persistTagsInSidecarFile) {
+    if (!entryProperties.isFile || getPersistTagsInSidecarFile(getState())) {
       // Handling adding tags in sidecar
       if (fsEntryMeta) {
         const uniqueTags = getNonExistingTags(
@@ -321,7 +322,7 @@ const actions = {
       // Work around solution
       delete tag.functionality;
       const entryProperties = await PlatformIO.getPropertiesPromise(path);
-      if (entryProperties.isFile && !settings.persistTagsInSidecarFile) {
+      if (entryProperties.isFile && !getPersistTagsInSidecarFile(getState())) {
         tag.type = 'plain';
       }
     }

@@ -525,7 +525,9 @@ export const getSupportedLanguages = (state: any) => state.settings.languages;
 export const getCalculateTags = (state: any) => state.settings.calculateTags;
 export const getUseTrashCan = (state: any) => state.settings.useTrashCan;
 export const getPersistTagsInSidecarFile = (state: any) =>
-  state.settings.persistTagsInSidecarFile;
+  AppConfig.useSidecarsForFileTaggingDisableSetting
+    ? AppConfig.useSidecarsForFileTagging
+    : state.settings.persistTagsInSidecarFile;
 export const getUseGenerateThumbnails = (state: any) =>
   state.settings.useGenerateThumbnails;
 export const getUseTextExtraction = (state: any) =>
