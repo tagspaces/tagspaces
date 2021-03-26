@@ -1,5 +1,42 @@
 # Changelog
 
+## Version 3.9.x / 2021.03.xx
+
+### 🎉 New features
+
+- Added "Open parent folder internally" to the file menu, useful for file and folder entries in search results
+- Searched for any of the tags in a given tag group (OR search) (#1364)
+- Show directory menu on right click in the default and KanBan perspective
+- Added experimental support for Mac arm64 architecture
+- Changes in the context menu for files in the default perspective depending on the current selection
+- Added "Close All Locations" functionality in the locations context menu
+- Added "Use as Thumbnail for Current Folder" menu item in the file menu of the default perspective
+- **[PRO]** Added support for deleting not empty folders on object storages (#1351)
+- **[PRO]** Added missing rename folder functionality on object storages (#1352)
+- **[PRO]** Enable setting custom thumbnails on object storage locations
+- **[PRO]** Directory watching adjusted to the new indexing strategy, changes in the sidecar are now reflected in the user interface
+- **[PRO]** Added switcher toolbar for easy switching between perspectives
+- **[PRO]** Added optional sessionToken parameter to object store locations
+- **[PRO]** Many improvements in the KanBan perspective
+- **[Enterprise]** Added login screen with Cognito support
+- **[Enterprise]** Added user profile area and a sign out button in the help section
+
+### 🌟 Enhancements
+
+- Korean, Spanish, Armenian and Japanize translations updated
+- Added autofocus on the tagging input field in the tagging dialog #1320
+- Added extra close button to some dialogs
+- **[PRO]** Improving file uploading experience on object storages
+- **[PRO]** Improvements in location export dialog, added select/deselect locations functionality
+- **[PRO]** Refresh current dir after closing upload dialog in object storage mode
+- **[PRO]** add isNotEditable in location's model, preventing exporting and editing locations
+- **[Enterprise]** Allow tag library to be loaded from dynamoDB
+
+### 🐛 Bug fixes
+
+- Fixing double tags in search results fixing #1354
+- Fixing issue with deleting tags on multiple files
+
 ## Version 3.8.4 / 2021.01.29
 
 ### 🎉 New features

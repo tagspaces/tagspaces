@@ -267,7 +267,7 @@
   "warning": "Warning",
   "info": "Info",
   "signOut": "Sign Out",
-  "setAsThumbnail": "Use Thumbnail for this Folder",
+  "setAsThumbnail": "Use as Thumbnail for Current Folder",
   "fileExtension": "File Ext.",
   "fileTitle": "Title",
   "fileTags": "Tags",
@@ -520,8 +520,8 @@
   "extractGeoCoordinates": "Extract geo-coordinates from files as tags",
   "geoTagCurrentFolder": "Geo-tag current folder",
   "toggleMapTheme": "Toggle map theme",
-  "pauseSlideShow": "pauseSlideShow",
-  "startSlideShow": "startSlideShow",
+  "pauseSlideShow": "Pause Slide Show",
+  "startSlideShow": "Start Slide Show",
   "thumbAlreadyExists": "Thumbnail for '{{directoryName}}' already exists, do you want to override it?",
   "-": "-"
 }
