@@ -96,7 +96,7 @@ const CellContent = (props: Props) => {
     description = description.substr(0, maxDescriptionPreviewLength) + '...';
   }
 
-  if (description && fsEntry.isFile) {
+  if (description && layoutType === 'row' && fsEntry.isFile) {
     description = ' | ' + description;
   }
 

@@ -710,13 +710,13 @@ const GridPerspective = (props: Props) => {
           'px)'
       }}
     >
-      <style>
+      {/* <style>
         {`
-            #gridCellTags:hover, #gridCellDescription:hover {
-              opacity: 1
-            }
-          `}
-      </style>
+          #gridCellTags:hover, #gridCellDescription:hover {
+            opacity: 1
+          }
+        `}
+      </style> */}
       <MainToolbar
         classes={classes}
         layoutType={layoutType}
