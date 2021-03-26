@@ -544,57 +544,42 @@ const FolderContainer = (props: Props) => {
           exclusive
           className={classes.perspecitveSwitch}
         >
-          <Tooltip title="Switch to default perspective">
-            <ToggleButton
-              value={perspectives.DEFAULT}
-              aria-label={perspectives.DEFAULT}
-              onClick={() => switchPerspective(perspectives.DEFAULT)}
-              style={
-                currentPerspective === perspectives.DEFAULT
-                  ? {
-                      backgroundColor: 'rgba(0, 0, 0, 0.2)'
-                    }
-                  : {}
-              }
-            >
-              <DefaultPerspectiveIcon />
-              {' ' + perspectives.DEFAULT}
-            </ToggleButton>
-          </Tooltip>
-          <Tooltip title="Switch to Gallery perspective">
-            <ToggleButton
-              value={perspectives.GALLERY}
-              aria-label={perspectives.GALLERY}
-              onClick={() => switchPerspective(perspectives.GALLERY)}
-              style={
-                currentPerspective === perspectives.GALLERY
-                  ? {
-                      backgroundColor: 'rgba(0, 0, 0, 0.2)'
-                    }
-                  : {}
-              }
-            >
-              <GalleryPerspectiveIcon />
-              {' ' + perspectives.GALLERY}
-            </ToggleButton>
-          </Tooltip>
-          <Tooltip title="Switch to Mapique perspective">
-            <ToggleButton
-              value={perspectives.MAPIQUE}
-              aria-label={perspectives.MAPIQUE}
-              onClick={() => switchPerspective(perspectives.MAPIQUE)}
-              style={
-                currentPerspective === perspectives.MAPIQUE
-                  ? {
-                      backgroundColor: 'rgba(0, 0, 0, 0.2)'
-                    }
-                  : {}
-              }
-            >
-              <MapiquePerspectiveIcon />
-              {' ' + perspectives.MAPIQUE}
-            </ToggleButton>
-          </Tooltip>
+          <ToggleButton
+            value={perspectives.DEFAULT}
+            aria-label={perspectives.DEFAULT}
+            onClick={() => switchPerspective(perspectives.DEFAULT)}
+          >
+            <Tooltip arrow title="Switch to default perspective">
+              <div style={{ display: 'flex' }}>
+                <DefaultPerspectiveIcon />
+                {perspectives.DEFAULT}
+              </div>
+            </Tooltip>
+          </ToggleButton>
+          <ToggleButton
+            value={perspectives.GALLERY}
+            aria-label={perspectives.GALLERY}
+            onClick={() => switchPerspective(perspectives.GALLERY)}
+          >
+            <Tooltip arrow title="Switch to Gallery perspective">
+              <div style={{ display: 'flex' }}>
+                <GalleryPerspectiveIcon />
+                {perspectives.GALLERY}
+              </div>
+            </Tooltip>
+          </ToggleButton>
+          <ToggleButton
+            value={perspectives.MAPIQUE}
+            aria-label={perspectives.MAPIQUE}
+            onClick={() => switchPerspective(perspectives.MAPIQUE)}
+          >
+            <Tooltip arrow title="Switch to Mapique perspective">
+              <div style={{ display: 'flex' }}>
+                <MapiquePerspectiveIcon />
+                {perspectives.MAPIQUE}
+              </div>
+            </Tooltip>
+          </ToggleButton>
         </ToggleButtonGroup>
       )}
     </div>
