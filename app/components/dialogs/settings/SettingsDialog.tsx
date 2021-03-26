@@ -26,6 +26,8 @@ import Tab from '@material-ui/core/Tab';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import uuidv1 from 'uuid';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
@@ -185,7 +187,20 @@ const SettingsDialog = (props: Props) => {
 
   const renderTitle = () => (
     <React.Fragment>
-      <DialogTitle>{i18n.t('core:options')}</DialogTitle>
+      <DialogTitle>
+        {i18n.t('core:settings')}{' '}
+        <IconButton
+          aria-label="close"
+          style={{
+            position: 'absolute',
+            right: 5,
+            top: 5
+          }}
+          onClick={onClose}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
       <AppBar position="static" color="default">
         <Tabs
           value={currentTab}
