@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 3.9.x / 2021.03.xx
+## Version 3.9.5 / 2021.03.27
 
 ### 🎉 New features
 
@@ -11,8 +11,8 @@
 - Changes in the context menu for files in the default perspective depending on the current selection
 - Added "Close All Locations" functionality in the locations context menu
 - Added "Use as Thumbnail for Current Folder" menu item in the file menu of the default perspective
-- **[PRO]** Added support for deleting not empty folders on object storages (#1351)
-- **[PRO]** Added missing rename folder functionality on object storages (#1352)
+- **[PRO]** Added support for deleting not empty folders on object storage (#1351)
+- **[PRO]** Added missing rename folder functionality on object storage (#1352)
 - **[PRO]** Enable setting custom thumbnails on object storage locations
 - **[PRO]** Directory watching adjusted to the new indexing strategy, changes in the sidecar are now reflected in the user interface
 - **[PRO]** Added switcher toolbar for easy switching between perspectives
@@ -23,12 +23,12 @@
 
 ### 🌟 Enhancements
 
-- Korean, Spanish, Armenian and Japanize translations updated
-- Added autofocus on the tagging input field in the tagging dialog #1320
+- Korean, Spanish, Armenian and Japanese translations updated
+- Added auto-focus on the tagging input field in the tagging dialog #1320
 - Added extra close button to some dialogs
-- **[PRO]** Improving file uploading experience on object storages
+- **[PRO]** Improving file uploading experience on object storage
 - **[PRO]** Improvements in location export dialog, added select/deselect locations functionality
-- **[PRO]** Refresh current dir after closing upload dialog in object storage mode
+- **[PRO]** Refresh current folder after closing upload dialog in object storage mode
 - **[PRO]** add isNotEditable in location's model, preventing exporting and editing locations
 - **[Enterprise]** Allow tag library to be loaded from dynamoDB
 
