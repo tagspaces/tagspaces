@@ -108,7 +108,13 @@ function mapStateToProps(state) {
 }
 
 function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators(SettingsActions, dispatch);
+  return bindActionCreators(
+    {
+      setKeyBinding: SettingsActions.setKeyBinding,
+      setGlobalKeyBinding: SettingsActions.setGlobalKeyBinding
+    },
+    dispatch
+  );
 }
 
 export default connect(

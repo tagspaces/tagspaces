@@ -104,7 +104,8 @@ const GridPerspective = (props: Props) => {
   const mouseX = useRef<number>(undefined);
   const mouseY = useRef<number>(undefined);
   const allFilesSelected = useRef<boolean>(false);
-  const selectedEntryPath = useRef<string>('');
+  const selectedEntry = useRef<FileSystemEntry>(undefined);
+  const selectedEntryPath = useRef<string>(undefined);
   const selectedTag = useRef<Tag | null>(null);
   const [
     fileContextMenuAnchorEl,
@@ -304,6 +305,7 @@ const GridPerspective = (props: Props) => {
       } else if (currentSelectedIndex === lastSelectedIndex) {
         entriesToSelect = [fsEntry];
         setLastSelectedEntry(fsEntry.path);
+        selectedEntry.current = fsEntry;
       }
 
       setSelectedEntries(entriesToSelect);
@@ -316,11 +318,13 @@ const GridPerspective = (props: Props) => {
           selectedEntries.filter(entry => entry.path !== fsEntry.path)
         ); // deselect selected entry
       } else {
+        selectedEntry.current = fsEntry;
         setSelectedEntries([...selectedEntries, fsEntry]);
       }
     } else {
       setSelectedEntries([fsEntry]);
       setLastSelectedEntry(fsEntry.path);
+      selectedEntry.current = fsEntry;
       if (fsEntry.isFile) {
         if (singleClickAction === 'openInternal') {
           props.openFsEntry(fsEntry);
@@ -336,6 +340,8 @@ const GridPerspective = (props: Props) => {
     props.setSelectedEntries([]);
     allFilesSelected.current = false;
     props.setLastSelectedEntry(null);
+    selectedEntry.current = undefined;
+    selectedEntryPath.current = undefined;
   };
 
   const toggleSelectAllFiles = () => {
@@ -451,7 +457,7 @@ const GridPerspective = (props: Props) => {
           ]);
         }
         setFileContextMenuAnchorEl(event.currentTarget);
-        selectedEntryPath.current = fsEntry.path;
+        selectedEntry.current = fsEntry;
       }
     } else {
       if (props.selectedEntries.length === 0 || !folderOperationsEnabled()) {
@@ -463,7 +469,7 @@ const GridPerspective = (props: Props) => {
           fsEntry
         ]);
       }
-      selectedEntryPath.current = fsEntry.path;
+      selectedEntry.current = fsEntry;
       setDirContextMenuAnchorEl(event.currentTarget);
     }
   };
@@ -637,6 +643,16 @@ const GridPerspective = (props: Props) => {
     setDirContextMenuAnchorEl(e.currentTarget);
   };
 
+  const getSelEntryPath = () => {
+    if (selectedEntryPath.current) {
+      return selectedEntryPath.current;
+    }
+    if (selectedEntry.current) {
+      return selectedEntry.current.path;
+    }
+    return undefined;
+  };
+
   const keyBindingHandlers = {
     nextDocument: () => props.openNextFile(),
     prevDocument: () => props.openPrevFile(),
@@ -647,37 +663,47 @@ const GridPerspective = (props: Props) => {
       }
     },
     addRemoveTags: () => {
-      if (props.selectedEntries && props.selectedEntries.length > 0) {
+      // if (props.selectedEntries && props.selectedEntries.length > 0) {
+      if (getSelEntryPath()) {
         openAddRemoveTagsDialog();
       }
     },
     renameFile: () => {
-      if (
+      /* if (
         props.selectedEntries &&
         props.selectedEntries.length === 1 &&
         props.selectedEntries[0].isFile
-      ) {
-        selectedEntryPath.current = props.selectedEntries[0].path;
-        setIsFileRenameDialogOpened(true);
+      ) { */
+      // selectedEntryPath.current = props.selectedEntries[0].path;
+      if (selectedEntry.current) {
+        if (selectedEntry.current.isFile) {
+          setIsFileRenameDialogOpened(true);
+        } else {
+          // TODO move RenameDirectoryDialog in MainContainer to open here
+        }
       }
     },
     openEntry: e => {
       e.preventDefault();
-      const { lastSelectedEntryPath } = props;
-      if (lastSelectedEntryPath) {
-        const lastSelectedEntryFile = props.directoryContent.find(
-          fsEntry => fsEntry.isFile && fsEntry.path === lastSelectedEntryPath
-        );
-        if (lastSelectedEntryFile) {
-          props.openFsEntry(lastSelectedEntryFile);
+      // const { lastSelectedEntryPath } = props;
+      // if (lastSelectedEntryPath) {
+      /* const lastSelectedEntryFile = props.directoryContent.find(
+          fsEntry => fsEntry.isFile && fsEntry.path === selectedEntryPath.current // lastSelectedEntryPath
+        ); */
+      if (selectedEntry.current) {
+        if (selectedEntry.current.isFile) {
+          props.openFsEntry(selectedEntry.current);
         } else {
-          props.loadDirectoryContent(lastSelectedEntryPath);
+          props.loadDirectoryContent(selectedEntry.current.path); // lastSelectedEntryPath);
         }
       }
     },
     openFileExternally: () => {
-      if (props.lastSelectedEntryPath) {
-        props.openFileNatively(props.lastSelectedEntryPath);
+      // if (props.lastSelectedEntryPath) {
+      if (selectedEntry.current) {
+        if (selectedEntry.current.isFile) {
+          props.openFileNatively(selectedEntry.current.path);
+        }
       }
     }
   };
@@ -790,7 +816,7 @@ const GridPerspective = (props: Props) => {
         <RenameFileDialog
           open={isFileRenameDialogOpened}
           onClose={() => setIsFileRenameDialogOpened(false)}
-          selectedFilePath={selectedEntryPath.current}
+          selectedFilePath={getSelEntryPath()}
         />
       )}
 
@@ -809,7 +835,7 @@ const GridPerspective = (props: Props) => {
           showInFileManager={props.showInFileManager}
           showNotification={props.showNotification}
           isReadOnlyMode={props.isReadOnlyMode}
-          selectedFilePath={selectedEntryPath.current}
+          selectedFilePath={getSelEntryPath()}
           selectedEntries={props.selectedEntries}
         />
       )}
@@ -818,14 +844,12 @@ const GridPerspective = (props: Props) => {
         open={Boolean(dirContextMenuAnchorEl)}
         onClose={() => setDirContextMenuAnchorEl(null)}
         anchorEl={dirContextMenuAnchorEl}
-        directoryPath={selectedEntryPath.current}
+        directoryPath={getSelEntryPath()}
         loadDirectoryContent={props.loadDirectoryContent}
         openDirectory={props.openDirectory}
         openFsEntry={props.openFsEntry}
         isReadOnlyMode={props.isReadOnlyMode}
-        perspectiveMode={
-          selectedEntryPath.current !== props.currentDirectoryPath
-        }
+        perspectiveMode={getSelEntryPath() !== props.currentDirectoryPath}
         mouseX={mouseX.current}
         mouseY={mouseY.current}
       />
@@ -835,7 +859,7 @@ const GridPerspective = (props: Props) => {
         open={Boolean(tagContextMenuAnchorEl)}
         onClose={() => setTagContextMenuAnchorEl(null)}
         selectedTag={selectedTag.current}
-        currentEntryPath={selectedEntryPath.current}
+        currentEntryPath={getSelEntryPath()}
         removeTags={props.removeTags}
         isReadOnlyMode={props.isReadOnlyMode}
       />
