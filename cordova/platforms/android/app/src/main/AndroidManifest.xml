@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<manifest android:hardwareAccelerated="true" android:versionCode="10000" android:versionName="1.0.0" package="org.tagspaces.mobile" xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest android:hardwareAccelerated="true" android:versionCode="10000" android:versionName="1.0.0" package="org.tagspaces.mobileapp" xmlns:android="http://schemas.android.com/apk/res/android">
     <supports-screens android:anyDensity="true" android:largeScreens="true" android:normalScreens="true" android:resizeable="true" android:smallScreens="true" android:xlargeScreens="true" />
     <uses-permission android:name="android.permission.INTERNET" />
     <application android:hardwareAccelerated="true" android:icon="@mipmap/ic_launcher" android:label="@string/app_name" android:requestLegacyExternalStorage="true" android:supportsRtl="true">
@@ -73,12 +73,6 @@
         </receiver>
         <provider android:authorities="${applicationId}.sharing.provider" android:exported="false" android:grantUriPermissions="true" android:name="nl.xservices.plugins.FileProvider">
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/sharing_paths" />
-        </provider>
-        <provider android:authorities="${applicationId}.provider" android:exported="false" android:grantUriPermissions="true" android:name="androidx.core.content.FileProvider">
-            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/mnk_file_path" />
-        </provider>
-        <provider android:authorities="${applicationId}.provider" android:exported="false" android:grantUriPermissions="true" android:name="androidx.core.content.FileProvider">
-            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/mnk_file_path" />
         </provider>
     </application>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
