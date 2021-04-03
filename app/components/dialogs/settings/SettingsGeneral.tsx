@@ -23,6 +23,7 @@ import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
 import Switch from '@material-ui/core/Switch';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -30,6 +31,7 @@ import Input from '@material-ui/core/Input';
 import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
 import InfoIcon from '@material-ui/icons/InfoOutlined';
+import CheckIcon from '@material-ui/icons/Check';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import i18n from '-/services/i18n';
@@ -41,7 +43,6 @@ import {
 import ColorPickerDialog from '../ColorPickerDialog';
 import TransparentBackground from '../../TransparentBackground';
 import AppConfig from '-/config';
-import Typography from '@material-ui/core/Typography';
 
 const styles: any = {
   root: {
@@ -106,7 +107,7 @@ const SettingsGeneral = (props: Props) => {
     props.setMaxSearchResult(event.target.value);
   };
 
-  const { classes } = props;
+  const { classes, persistTagsInSidecarFile } = props;
 
   return (
     <List className={classes.root}>
@@ -151,13 +152,11 @@ const SettingsGeneral = (props: Props) => {
         <ListItemText primary="File tagging method" />
         {AppConfig.useSidecarsForFileTaggingDisableSetting ? (
           <Button size="small" variant="outlined" disabled>
-            {props.persistTagsInSidecarFile
-              ? 'Use Sidecar Files'
-              : 'Rename Files'}
+            {persistTagsInSidecarFile ? 'Use Sidecar Files' : 'Rename Files'}
           </Button>
         ) : (
           <ToggleButtonGroup
-            value={props.persistTagsInSidecarFile}
+            value={persistTagsInSidecarFile}
             size="small"
             exclusive
           >
@@ -177,7 +176,8 @@ const SettingsGeneral = (props: Props) => {
                 }
               >
                 <div style={{ display: 'flex' }}>
-                  Rename Files&nbsp;&nbsp;
+                  {!persistTagsInSidecarFile && <CheckIcon />}
+                  &nbsp;Rename Files&nbsp;&nbsp;
                   <InfoIcon />
                 </div>
               </Tooltip>
@@ -199,7 +199,8 @@ const SettingsGeneral = (props: Props) => {
                 }
               >
                 <div style={{ display: 'flex' }}>
-                  Use Sidecar Files&nbsp;&nbsp;
+                  {persistTagsInSidecarFile && <CheckIcon />}
+                  &nbsp;Use Sidecar Files&nbsp;&nbsp;
                   <InfoIcon />
                 </div>
               </Tooltip>
