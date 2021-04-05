@@ -1,4 +1,5 @@
-/**
+/*
+/!**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
  *
@@ -14,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- */
+ *!/
 
 import React, { useEffect, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
@@ -81,12 +82,11 @@ const RenameFileDialog = (props: Props) => {
 
     return () => clearTimeout(timer);
   }, [props.selectedFilePath]);
-  /**
-   * todo rewrite this to functional componet
+  /!**
    * its have problem with e2e test dialog is displayed without fileName -> its set here in state later
    * @param nextProps
-   */
-  /* componentWillReceiveProps = (nextProps: any) => {
+   *!/
+  /!* componentWillReceiveProps = (nextProps: any) => {
     if (nextProps.open) {
       const fileName = extractFileName(
         nextProps.selectedFilePath,
@@ -110,7 +110,7 @@ const RenameFileDialog = (props: Props) => {
         };
       });
     }
-  }; */
+  }; *!/
 
   const handleRenameFile = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
@@ -233,3 +233,4 @@ export default connect(
   null,
   mapActionCreatorsToProps
 )(withStyles(styles)(RenameFileDialog));
+*/

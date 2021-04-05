@@ -1,5 +1,4 @@
-/*
-/!**
+/**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
  *
@@ -15,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- *!/
+ */
 
 import React, { useReducer, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
@@ -29,31 +28,85 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
 import i18n from '-/services/i18n';
-import { extractDirectoryName } from '-/utils/paths';
-import { actions as AppActions } from '-/reducers/app';
+import {
+  extractContainingDirectoryPath,
+  extractDirectoryName,
+  extractFileName
+} from '-/utils/paths';
+import { actions as AppActions, getLastSelectedEntry } from '-/reducers/app';
 import PlatformIO from '-/services/platform-io';
+import AppConfig from '-/config';
 
 interface Props {
   open: boolean;
-  selectedDirectoryPath: string;
+  currentDirectoryPath?: string;
+  lastSelectedEntry: any;
   onClose: () => void;
+  renameFile: (source: string, target: string) => void;
   renameDirectory: (directoryPath: string, newDirectoryName: string) => void;
 }
 
-const RenameDirectoryDialog = (props: Props) => {
+const RenameEntryDialog = (props: Props) => {
   const [inputError, setInputError] = useState<boolean>(false);
   const disableConfirmButton = useRef<boolean>(true);
-  const name = useRef<string>(
-    props.selectedDirectoryPath
-      ? extractDirectoryName(
-          props.selectedDirectoryPath,
-          PlatformIO.getDirSeparator()
-        )
-      : ''
-  );
+
+  let defaultName = '';
+  let isFile;
+  if (props.lastSelectedEntry) {
+    ({ isFile } = props.lastSelectedEntry);
+    if (isFile) {
+      defaultName = extractFileName(
+        props.lastSelectedEntry.path,
+        PlatformIO.getDirSeparator()
+      );
+    } else {
+      defaultName = extractDirectoryName(
+        props.lastSelectedEntry.path,
+        PlatformIO.getDirSeparator()
+      );
+    }
+  } else if (props.currentDirectoryPath) {
+    isFile = false;
+    defaultName = extractDirectoryName(
+      props.currentDirectoryPath,
+      PlatformIO.getDirSeparator()
+    );
+  } else {
+    return (
+      <Dialog open={props.open} onClose={props.onClose}>
+        <DialogTitle>{i18n.t('core:noSelectedEntryError')}</DialogTitle>
+      </Dialog>
+    );
+  }
+  const name = useRef<string>(defaultName);
 
   // eslint-disable-next-line no-unused-vars
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+
+  const onInputFocus = event => {
+    // https://github.com/mui-org/material-ui/issues/1594
+    // const timer = setTimeout(() => {
+    if (name.current) {
+      event.preventDefault();
+      const { target } = event;
+      target.focus();
+      // inputElement.focus();
+      // if (defaultName) {
+      const indexOfBracket = name.current.indexOf(AppConfig.beginTagContainer);
+      const indexOfDot = name.current.lastIndexOf('.');
+      let endRange = name.current.length;
+      if (indexOfBracket > 0) {
+        endRange = indexOfBracket;
+      } else if (indexOfDot > 0) {
+        endRange = indexOfDot;
+      }
+      target.setSelectionRange(0, endRange);
+      // }
+    }
+    // }, 100);
+
+    // return () => clearTimeout(timer);
+  };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     name.current = event.target.value;
@@ -83,7 +136,17 @@ const RenameDirectoryDialog = (props: Props) => {
 
   const onConfirm = () => {
     if (!disableConfirmButton.current) {
-      props.renameDirectory(props.selectedDirectoryPath, name.current);
+      if (isFile) {
+        const fileDirectory = extractContainingDirectoryPath(
+          props.lastSelectedEntry.path,
+          PlatformIO.getDirSeparator()
+        );
+        const newFilePath =
+          fileDirectory + PlatformIO.getDirSeparator() + name.current;
+        props.renameFile(props.lastSelectedEntry.path, newFilePath);
+      } else {
+        props.renameDirectory(props.lastSelectedEntry.path, name.current);
+      }
       props.onClose();
     }
   };
@@ -106,27 +169,35 @@ const RenameDirectoryDialog = (props: Props) => {
         }
       }}
     >
-      <DialogTitle>{i18n.t('core:renameDirectory')}</DialogTitle>
+      <DialogTitle>
+        {i18n.t('core:' + (isFile ? 'renameFileTitle' : 'renameDirectory'))}
+      </DialogTitle>
       <DialogContent>
         <FormControl fullWidth={true} error={inputError}>
           <TextField
-            fullWidth={true}
             autoFocus
             required
             error={inputError}
             margin="dense"
-            name="name"
-            label={i18n.t('core:renameDirectoryTitleName')}
+            name="entryName"
+            label={i18n.t(
+              'core:' +
+                (isFile ? 'renameNewFileName' : 'renameDirectoryTitleName')
+            )}
             onChange={handleInputChange}
+            onFocus={onInputFocus}
             defaultValue={name.current}
-            data-tid="renameDirectoryDialogInput"
+            fullWidth={true}
+            data-tid="renameEntryDialogInput"
           />
-          <FormHelperText>{i18n.t('core:directoryNameHelp')}</FormHelperText>
+          <FormHelperText>
+            {i18n.t('core:' + (isFile ? 'fileNameHelp' : 'directoryNameHelp'))}
+          </FormHelperText>
         </FormControl>
       </DialogContent>
       <DialogActions>
         <Button
-          data-tid="closeRenameDirectoryDialog"
+          data-tid="closeRenameEntryDialog"
           onClick={props.onClose}
           color="primary"
         >
@@ -135,7 +206,7 @@ const RenameDirectoryDialog = (props: Props) => {
         <Button
           disabled={disableConfirmButton.current}
           onClick={onConfirm}
-          data-tid="confirmRenameDirectory"
+          data-tid="confirmRenameEntry"
           color="primary"
         >
           {i18n.t('core:ok')}
@@ -145,14 +216,23 @@ const RenameDirectoryDialog = (props: Props) => {
   );
 };
 
+function mapStateToProps(state) {
+  return {
+    lastSelectedEntry: getLastSelectedEntry(state)
+  };
+}
+
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
+      renameFile: AppActions.renameFile,
       renameDirectory: AppActions.renameDirectory
     },
     dispatch
   );
 }
 
-export default connect(null, mapActionCreatorsToProps)(RenameDirectoryDialog);
-*/
+export default connect(
+  mapStateToProps,
+  mapActionCreatorsToProps
+)(RenameEntryDialog);

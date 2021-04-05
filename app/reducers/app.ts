@@ -217,7 +217,7 @@ export const initialState = {
   thirdPartyLibsDialogOpened: false,
   settingsDialogOpened: false,
   createDirectoryDialogOpened: false,
-  lastSelectedEntry: null,
+  // lastSelectedEntry: null,
   selectedEntries: [],
   isEntryInFullWidth: false,
   isGeneratingThumbs: false,
@@ -296,13 +296,9 @@ export default (state: any = initialState, action: any) => {
         currentLocationId: action.locationId
       };
     }
-    case types.SET_LAST_SELECTED_ENTRY: {
-      /* console.time('SET_LAST_SELECTED_ENTRY'); // Measure set last selected entry
-    const result = { ...state, lastSelectedEntry: action.entryPath };
-    console.timeEnd('SET_LAST_SELECTED_ENTRY');
-    return result; */
+    /* case types.SET_LAST_SELECTED_ENTRY: {
       return { ...state, lastSelectedEntry: action.entryPath };
-    }
+    } */
     case types.SET_SELECTED_ENTRIES: {
       return { ...state, selectedEntries: action.selectedEntries };
     }
@@ -1046,10 +1042,10 @@ export const actions = {
     type: types.SET_GENERATING_THUMBNAILS,
     isGeneratingThumbs
   }),
-  setLastSelectedEntry: (entryPath: string | null) => ({
+  /* setLastSelectedEntry: (entryPath: string | null) => ({
     type: types.SET_LAST_SELECTED_ENTRY,
     entryPath
-  }),
+  }), */
   setCurrentDirectoryColor: (color: string) => ({
     type: types.SET_CURRENDIRECTORYCOLOR,
     color
@@ -1243,6 +1239,7 @@ export const actions = {
           getAllPropertiesPromise(filePath)
             .then((fsEntry: FileSystemEntry) => {
               dispatch(actions.openFsEntry(fsEntry)); // TODO return fsEntry from saveFilePromise and simplify
+              dispatch(actions.setSelectedEntries([fsEntry]));
               return true;
             })
             .catch(error =>
@@ -1253,7 +1250,6 @@ export const actions = {
                   error
               )
             );
-          // TODO select file // dispatch(actions.setLastSelectedEntry(filePath));
           return true;
         })
         .catch(err => {
@@ -1300,7 +1296,7 @@ export const actions = {
         dispatch(actions.reflectCreateEntry(filePath, true));
         dispatch(actions.openFsEntry(fsEntry)); // TODO return fsEntry from saveFilePromise and simplify
 
-        dispatch(actions.setLastSelectedEntry(filePath));
+        dispatch(actions.setSelectedEntries([fsEntry]));
         dispatch(
           actions.showNotification(
             `File '${fileNameAndExt}' created.`,
@@ -1541,10 +1537,21 @@ export const actions = {
         });
     }
   },
-  openFsEntry: (fsEntry: FileSystemEntry) => (
+  openFsEntry: (fsEntry?: FileSystemEntry) => (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
+    if (fsEntry === undefined) {
+      // eslint-disable-next-line no-param-reassign
+      fsEntry = getLastSelectedEntry(getState());
+      if (fsEntry === undefined) {
+        return;
+      }
+      if (!fsEntry.isFile) {
+        dispatch(actions.loadDirectoryContent(fsEntry.path));
+        return;
+      }
+    }
     let entryForOpening: OpenedEntry;
     const { openedFiles } = getState().app;
     /**
@@ -1609,14 +1616,15 @@ export const actions = {
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
+    const lastSelectedEntry = getLastSelectedEntry(getState());
     const nextFile = getNextFile(
       path,
-      getState().app.lastSelectedEntry,
+      lastSelectedEntry ? lastSelectedEntry.path : undefined,
       getState().app.currentDirectoryEntries
     );
     if (nextFile !== undefined) {
       dispatch(actions.openFsEntry(nextFile));
-      dispatch(actions.setLastSelectedEntry(nextFile.path));
+      // dispatch(actions.setLastSelectedEntry(nextFile.path));
       dispatch(actions.setSelectedEntries([nextFile]));
       return nextFile;
     }
@@ -1625,14 +1633,15 @@ export const actions = {
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
+    const lastSelectedEntry = getLastSelectedEntry(getState());
     const prevFile = getPrevFile(
       path,
-      getState().app.lastSelectedEntry,
+      lastSelectedEntry ? lastSelectedEntry.path : undefined,
       getState().app.currentDirectoryEntries
     );
     if (prevFile !== undefined) {
       dispatch(actions.openFsEntry(prevFile));
-      dispatch(actions.setLastSelectedEntry(prevFile.path));
+      // dispatch(actions.setLastSelectedEntry(prevFile.path));
       dispatch(actions.setSelectedEntries([prevFile]));
     }
   },
@@ -1836,8 +1845,24 @@ export const actions = {
         );
         throw error;
       }),
-  openFileNatively: (selectedFile: string) => () => {
-    PlatformIO.openFile(selectedFile);
+  openFileNatively: (selectedFile?: string) => (
+    dispatch: (actions: Object) => void,
+    getState: () => any
+  ) => {
+    if (selectedFile === undefined) {
+      // eslint-disable-next-line no-param-reassign
+      const fsEntry = getLastSelectedEntry(getState());
+      if (fsEntry === undefined) {
+        return;
+      }
+      if (fsEntry.isFile) {
+        PlatformIO.openFile(fsEntry.path);
+      } else {
+        PlatformIO.openDirectory(fsEntry.path);
+      }
+    } else {
+      PlatformIO.openFile(selectedFile);
+    }
   },
   openLink: (url: string) => (
     dispatch: (actions: Object) => void,
@@ -2041,9 +2066,16 @@ export const getCurrentLocationPath = (state: any) => {
 export const isUpdateAvailable = (state: any) => state.app.isUpdateAvailable;
 export const isUpdateInProgress = (state: any) => state.app.isUpdateInProgress;
 export const isOnline = (state: any) => state.app.isOnline;
-export const getLastSelectedEntry = (state: any) => state.app.lastSelectedEntry;
+export const getLastSelectedEntry = (state: any) => {
+  const { selectedEntries } = state.app;
+  if (selectedEntries && selectedEntries.length > 0) {
+    return selectedEntries[selectedEntries.length - 1];
+  }
+  return undefined;
+};
 export const getSelectedTag = (state: any) => state.app.tag;
-export const getSelectedEntries = (state: any) => state.app.selectedEntries;
+export const getSelectedEntries = (state: any) =>
+  state.app.selectedEntries ? state.app.selectedEntries : [];
 export const isGeneratingThumbs = (state: any) => state.app.isGeneratingThumbs;
 export const isReadOnlyMode = (state: any) => state.app.isReadOnlyMode;
 export const isOnboardingDialogOpened = (state: any) =>

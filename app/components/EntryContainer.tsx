@@ -205,7 +205,7 @@ interface Props {
   ) => void;
   // reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
   updateThumbnailUrl: (path: string, thumbUrl: string) => void;
-  setLastSelectedEntry: (path: string) => void;
+  // setLastSelectedEntry: (path: string) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   currentDirectoryPath: string | null;
   isDesktopMode: boolean;
@@ -1313,7 +1313,7 @@ function mapActionCreatorsToProps(dispatch) {
       // editTagForEntry: TaggingActions.editTagForEntry,
       updateOpenedFile: AppActions.updateOpenedFile,
       updateThumbnailUrl: AppActions.updateThumbnailUrl,
-      setLastSelectedEntry: AppActions.setLastSelectedEntry,
+      // setLastSelectedEntry: AppActions.setLastSelectedEntry,
       setSelectedEntries: AppActions.setSelectedEntries
     },
     dispatch

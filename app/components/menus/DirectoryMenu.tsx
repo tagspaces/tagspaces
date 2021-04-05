@@ -43,7 +43,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import { Progress } from 'aws-sdk/clients/s3';
 import { Pro } from '../../pro';
 import CreateDirectoryDialog from '../dialogs/CreateDirectoryDialog';
-import RenameDirectoryDialog from '../dialogs/RenameDirectoryDialog';
+// import RenameDirectoryDialog from '../dialogs/RenameDirectoryDialog';
 import AppConfig from '-/config';
 import i18n from '-/services/i18n';
 import { normalizePath } from '-/utils/paths';
@@ -99,6 +99,7 @@ interface Props {
     updateIndex: boolean
   ) => void;
   toggleDeleteMultipleEntriesDialog: () => void;
+  openRenameDirectoryDialog: () => void;
   selectedEntries: Array<any>;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   mouseX?: number;
@@ -113,10 +114,10 @@ const DirectoryMenu = (props: Props) => {
     isCreateDirectoryDialogOpened,
     setIsCreateDirectoryDialogOpened
   ] = useState(false);
-  const [
+  /* const [
     isRenameDirectoryDialogOpened,
     setIsRenameDirectoryDialogOpened
-  ] = useState(false);
+  ] = useState(false); */
 
   function reloadDirectory() {
     props.onClose();
@@ -177,7 +178,8 @@ const DirectoryMenu = (props: Props) => {
 
   function showRenameDirectoryDialog() {
     props.onClose();
-    setIsRenameDirectoryDialogOpened(true);
+    props.openRenameDirectoryDialog();
+    // setIsRenameDirectoryDialogOpened(true);
   }
 
   function showCreateDirectoryDialog() {
@@ -326,14 +328,14 @@ Do you want to continue?`)
 
   return (
     <div style={{ overflowY: 'hidden' }}>
-      {isRenameDirectoryDialogOpened && (
+      {/* {isRenameDirectoryDialogOpened && (
         <RenameDirectoryDialog
           key={'renameDir' + props.directoryPath}
           open={isRenameDirectoryDialogOpened}
           onClose={() => setIsRenameDirectoryDialogOpened(false)}
           selectedDirectoryPath={props.directoryPath}
         />
-      )}
+      )} */}
       {isCreateDirectoryDialogOpened && ( // TODO move dialogs in MainContainer and don't include the Menu HTML always
         <CreateDirectoryDialog
           key={'createDir' + props.directoryPath}

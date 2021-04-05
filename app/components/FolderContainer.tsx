@@ -33,7 +33,7 @@ import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import DefaultPerspectiveIcon from '@material-ui/icons/GridOn';
 import GalleryPerspectiveIcon from '@material-ui/icons/Camera';
 import MapiquePerspectiveIcon from '@material-ui/icons/Map';
-import KanBanPerspectiveIcon from '@material-ui/icons/Dashboard';
+// import KanBanPerspectiveIcon from '@material-ui/icons/Dashboard';
 import LocationMenu from './menus/LocationMenu';
 import DirectoryMenu from './menus/DirectoryMenu';
 import i18n from '../services/i18n';
@@ -61,6 +61,7 @@ import LoadingLazy from '../components/LoadingLazy';
 import { Pro } from '../pro';
 import { enhanceOpenedEntry, FileSystemEntry } from '-/services/utils-io';
 import AppConfig from '-/config';
+import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
 
 const GridPerspective = React.lazy(() =>
   import(
@@ -221,7 +222,8 @@ interface Props {
   reflectCreateEntry: (path: string, isFile: boolean) => void;
   loadDirectoryContent: (path: string) => void;
   loadParentDirectoryContent: () => void;
-  setLastSelectedEntry: (entryPath: string | null) => void;
+  setSelectedEntries: (selectedEntries: Array<Object>) => void;
+  // setLastSelectedEntry: (entryPath: string | null) => void;
   isReadOnlyMode: boolean;
   isDesktopMode: boolean;
   showNotification: (content: string) => void;
@@ -242,6 +244,10 @@ const FolderContainer = (props: Props) => {
     directoryContextMenuAnchorEl,
     setDirectoryContextMenuAnchorEl
   ] = useState<null | HTMLElement>(null);
+
+  const [isRenameEntryDialogOpened, setIsRenameEntryDialogOpened] = useState<
+    boolean
+  >(false);
 
   useEffect(() => {
     if (props.openedFiles.length > 0) {
@@ -305,6 +311,7 @@ const FolderContainer = (props: Props) => {
   }
 
   const openDirectoryMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+    props.setSelectedEntries([]);
     setDirectoryContextMenuAnchorEl(event.currentTarget);
   };
 
@@ -367,12 +374,13 @@ const FolderContainer = (props: Props) => {
           directoryContent={props.directoryContent}
           loadDirectoryContent={props.loadDirectoryContent}
           openFsEntry={props.openFsEntry}
+          openRenameEntryDialog={() => setIsRenameEntryDialogOpened(true)}
           loadParentDirectoryContent={props.loadParentDirectoryContent}
           renameFile={props.renameFile}
           openDirectory={props.openDirectory}
           showInFileManager={props.showInFileManager}
           currentDirectoryPath={props.currentDirectoryPath}
-          setLastSelectedEntry={props.setLastSelectedEntry}
+          // setLastSelectedEntry={props.setLastSelectedEntry}
           addTags={props.addTags}
           editTagForEntry={props.editTagForEntry}
           removeTags={props.removeTags}
@@ -387,12 +395,13 @@ const FolderContainer = (props: Props) => {
         directoryContent={props.directoryContent}
         loadDirectoryContent={props.loadDirectoryContent}
         openFsEntry={props.openFsEntry}
+        openRenameEntryDialog={() => setIsRenameEntryDialogOpened(true)}
         loadParentDirectoryContent={props.loadParentDirectoryContent}
         renameFile={props.renameFile}
         openDirectory={props.openDirectory}
         showInFileManager={props.showInFileManager}
         currentDirectoryPath={props.currentDirectoryPath}
-        setLastSelectedEntry={props.setLastSelectedEntry}
+        // setLastSelectedEntry={props.setLastSelectedEntry}
         addTags={props.addTags}
         editTagForEntry={props.editTagForEntry}
         removeTags={props.removeTags}
@@ -518,6 +527,9 @@ const FolderContainer = (props: Props) => {
                     anchorEl={directoryContextMenuAnchorEl}
                     directoryPath={currentDirectoryPath}
                     loadDirectoryContent={props.loadDirectoryContent}
+                    openRenameDirectoryDialog={() =>
+                      setIsRenameEntryDialogOpened(true)
+                    }
                     openDirectory={props.openDirectory}
                     reflectCreateEntry={props.reflectCreateEntry}
                     openFsEntry={props.openFsEntry}
@@ -534,6 +546,13 @@ const FolderContainer = (props: Props) => {
           style={{ height: props.windowHeight }}
         >
           {renderPerspective()}
+          {isRenameEntryDialogOpened && (
+            <RenameEntryDialog
+              open={isRenameEntryDialogOpened}
+              currentDirectoryPath={props.currentDirectoryPath}
+              onClose={() => setIsRenameEntryDialogOpened(false)}
+            />
+          )}
         </div>
       </div>
       {Pro && props.isDesktopMode && !showWelcomePanel && (
@@ -617,7 +636,7 @@ function mapActionCreatorsToProps(dispatch) {
       reflectCreateEntry: AppActions.reflectCreateEntry,
       loadDirectoryContent: AppActions.loadDirectoryContent,
       loadParentDirectoryContent: AppActions.loadParentDirectoryContent,
-      setLastSelectedEntry: AppActions.setLastSelectedEntry,
+      setSelectedEntries: AppActions.setSelectedEntries,
       showNotification: AppActions.showNotification,
       openSearchPanel: AppActions.openSearchPanel,
       setCurrentDirectoryPerspective: AppActions.setCurrentDirectoryPerspective,
