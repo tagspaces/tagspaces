@@ -51,6 +51,7 @@ const RenameEntryDialog = (props: Props) => {
   const disableConfirmButton = useRef<boolean>(true);
 
   let defaultName = '';
+  let originPath;
   let isFile;
   if (props.lastSelectedEntry) {
     ({ isFile } = props.lastSelectedEntry);
@@ -65,12 +66,14 @@ const RenameEntryDialog = (props: Props) => {
         PlatformIO.getDirSeparator()
       );
     }
+    originPath = props.lastSelectedEntry.path;
   } else if (props.currentDirectoryPath) {
     isFile = false;
     defaultName = extractDirectoryName(
       props.currentDirectoryPath,
       PlatformIO.getDirSeparator()
     );
+    originPath = props.currentDirectoryPath;
   } else {
     return (
       <Dialog open={props.open} onClose={props.onClose}>
@@ -143,9 +146,9 @@ const RenameEntryDialog = (props: Props) => {
         );
         const newFilePath =
           fileDirectory + PlatformIO.getDirSeparator() + name.current;
-        props.renameFile(props.lastSelectedEntry.path, newFilePath);
+        props.renameFile(originPath, newFilePath);
       } else {
-        props.renameDirectory(props.lastSelectedEntry.path, name.current);
+        props.renameDirectory(originPath, name.current);
       }
       props.onClose();
     }

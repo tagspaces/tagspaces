@@ -156,7 +156,7 @@ export async function renameFileFromMenu(newFileName, selector = selectorFile) {
   fileName = await renameFileDialogInput.getValue();
 
   await setInputKeys('renameEntryDialogInput', newFileName);
-  await clickOn('[data-tid=confirmRenameFileDialog]');
+  await clickOn('[data-tid=confirmRenameEntry]');
   await waitForNotification();
   return fileName;
 }
