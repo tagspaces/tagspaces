@@ -150,12 +150,12 @@ export async function renameFileFromMenu(newFileName, selector = selectorFile) {
   await openContextEntryMenu(selector, 'fileMenuRenameFile');
   // await global.client.pause(500);
   const renameFileDialogInput = await global.client.$(
-    '[data-tid=renameFileDialogInput] input'
+    '[data-tid=renameEntryDialogInput] input'
   );
   await renameFileDialogInput.waitForDisplayed({ timeout: 5000 });
   fileName = await renameFileDialogInput.getValue();
 
-  await setInputKeys('renameFileDialogInput', newFileName);
+  await setInputKeys('renameEntryDialogInput', newFileName);
   await clickOn('[data-tid=confirmRenameFileDialog]');
   await waitForNotification();
   return fileName;
@@ -175,7 +175,7 @@ export async function getFirstFileName() {
   let fileName;
   await openContextEntryMenu(selectorFile, 'fileMenuRenameFile');
   const renameFileDialogInput = await global.client.$(
-    '[data-tid=renameFileDialogInput] input'
+    '[data-tid=renameEntryDialogInput] input'
   );
   await renameFileDialogInput.waitForDisplayed({ timeout: 5000 });
   fileName = await renameFileDialogInput.getValue();

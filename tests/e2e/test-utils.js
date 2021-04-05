@@ -81,7 +81,7 @@ export async function renameFolder() {
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
   await clickOn('[data-tid=renameDirectory]');
   // set new dir name
-  await setInputKeys('renameDirectoryDialogInput', newDirectoryName);
+  await setInputKeys('renameEntryDialogInput', newDirectoryName);
   await clickOn('[data-tid=confirmRenameDirectory]');
   return newDirectoryName;
 }
