@@ -105,7 +105,7 @@ const GridPerspective = (props: Props) => {
   const mouseY = useRef<number>(undefined);
   const allFilesSelected = useRef<boolean>(false);
   // const selectedEntry = useRef<FileSystemEntry>(undefined);
-  // const selectedEntryPath = useRef<string>(undefined);
+  const selectedEntryPath = useRef<string>(undefined);
   const selectedTag = useRef<Tag | null>(null);
   const [
     fileContextMenuAnchorEl,
@@ -343,7 +343,7 @@ const GridPerspective = (props: Props) => {
     allFilesSelected.current = false;
     // props.setLastSelectedEntry(null);
     // selectedEntry.current = undefined;
-    // selectedEntryPath.current = undefined;
+    selectedEntryPath.current = undefined;
   };
 
   const toggleSelectAllFiles = () => {
@@ -498,7 +498,7 @@ const GridPerspective = (props: Props) => {
     event.stopPropagation();
 
     selectedTag.current = tag;
-    // selectedEntryPath.current = entryPath;
+    selectedEntryPath.current = entryPath;
     setTagContextMenuAnchorEl(event.currentTarget);
   };
 
@@ -853,7 +853,7 @@ const GridPerspective = (props: Props) => {
         open={Boolean(tagContextMenuAnchorEl)}
         onClose={() => setTagContextMenuAnchorEl(null)}
         selectedTag={selectedTag.current}
-        currentEntryPath={getSelEntryPath()}
+        currentEntryPath={selectedEntryPath.current} // getSelEntryPath()}
         removeTags={props.removeTags}
         isReadOnlyMode={props.isReadOnlyMode}
       />
