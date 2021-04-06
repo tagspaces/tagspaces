@@ -335,11 +335,8 @@ describe('TST50** - Right button on a file', () => {
       perspectiveGridTable + firstFolder,
       'renameDirectory'
     );
-    const oldDirName = await setInputKeys(
-      'renameDirectoryDialogInput',
-      newDirName
-    );
-    await clickOn('[data-tid=confirmRenameDirectory]');
+    const oldDirName = await setInputKeys('renameEntryDialogInput', newDirName);
+    await clickOn('[data-tid=confirmRenameEntry]');
     await waitForNotification();
 
     //turn dir name back
@@ -347,11 +344,8 @@ describe('TST50** - Right button on a file', () => {
       perspectiveGridTable + firstFolder,
       'renameDirectory'
     );
-    const renamedDir = await setInputKeys(
-      'renameDirectoryDialogInput',
-      oldDirName
-    );
-    await clickOn('[data-tid=confirmRenameDirectory]');
+    const renamedDir = await setInputKeys('renameEntryDialogInput', oldDirName);
+    await clickOn('[data-tid=confirmRenameEntry]');
     await waitForNotification();
     expect(renamedDir).toBe(newDirName);
   });
