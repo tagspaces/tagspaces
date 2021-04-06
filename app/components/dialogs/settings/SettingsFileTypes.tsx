@@ -16,7 +16,7 @@
  *
  */
 
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -29,7 +29,7 @@ import Button from '@material-ui/core/Button';
 import Select from '@material-ui/core/Select';
 import ColorPickerDialog from '../ColorPickerDialog';
 import { findAvailableExtensions } from '-/reducers/settings-default';
-import { sortBy } from '-/utils/misc';
+// import { sortBy } from '-/utils/misc';
 import i18n from '-/services/i18n';
 import TransparentBackground from '../../TransparentBackground';
 
@@ -82,208 +82,183 @@ interface Props {
   onRemoveItem: Function;
 }
 
-interface State {
-  isColorPickerVisible: boolean;
-  availableExtensions: Array<any>;
-  isComponentActive: boolean;
-}
+const SettingsFileTypes = (props: Props) => {
+  const [isColorPickerVisible, setColorPickerVisible] = useState<boolean>(
+    false
+  );
+  const availableExtensions = findAvailableExtensions();
 
-class SettingsFileTypes extends Component<Props, State> {
-  state = {
-    isColorPickerVisible: false,
-    availableExtensions: [], // TODO evtl. performance issue, constructing time,
-    isComponentActive: false
+  const openColorPicker = selectedItem => {
+    const { setSelectedItem } = props;
+    setColorPickerVisible(true);
+    setSelectedItem(selectedItem);
   };
 
-  UNSAFE_componentWillMount() {
-    this.setState({ availableExtensions: findAvailableExtensions() });
-  }
-
-  componentDidMount = () => {
-    this.setState({ isComponentActive: true });
+  const closeColorPicker = () => {
+    const { setSelectedItem } = props;
+    setColorPickerVisible(false);
+    setSelectedItem({});
   };
 
-  openColorPicker = selectedItem => {
-    const { setSelectedItem } = this.props;
-    this.setState({ isColorPickerVisible: true }, () =>
-      setSelectedItem(selectedItem)
-    );
-  };
-
-  closeColorPicker = () => {
-    const { setSelectedItem } = this.props;
-    this.setState({ isColorPickerVisible: false }, () => setSelectedItem({}));
-  };
-
-  handleChangeColor = color => {
-    const { updateItems, selectedItem } = this.props;
+  const handleChangeColor = color => {
+    const { updateItems, selectedItem } = props;
     updateItems('id', selectedItem.id, 'color', color);
   };
 
-  sanitizeFileTypeInput = fileTypeInput =>
+  const sanitizeFileTypeInput = fileTypeInput =>
     fileTypeInput.replace(/[^a-zA-Z0-9 ]/g, '');
 
-  render() {
-    const { classes } = this.props;
-    const {
-      items,
-      selectedItem,
-      updateItems = () => {},
-      onRemoveItem = () => {},
-      isValidationInProgress = false
-    } = this.props;
-    const {
-      availableExtensions,
-      isColorPickerVisible,
-      isComponentActive
-    } = this.state;
-    const modifiedItems = !isComponentActive
+  const {
+    classes,
+    items,
+    selectedItem,
+    updateItems = () => {},
+    onRemoveItem = () => {},
+    isValidationInProgress = false
+  } = props;
+
+  /* const modifiedItems = !isComponentActive
       ? sortBy(items, 'type', 'string', 'asc')
-      : items;
+      : items; */
 
-    return (
-      <div className={classes.root}>
-        <ColorPickerDialog
-          open={isColorPickerVisible}
-          setColor={this.handleChangeColor}
-          onClose={this.closeColorPicker}
-          color={selectedItem.color}
-        />
+  return (
+    <div className={classes.root}>
+      <ColorPickerDialog
+        open={isColorPickerVisible}
+        setColor={handleChangeColor}
+        onClose={closeColorPicker}
+        color={selectedItem.color}
+      />
 
-        {modifiedItems.map(item => (
-          <ListItem
-            data-id={item.id}
-            key={item.id}
-            className={classes.fileType}
-            style={{
-              borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
-              padding: '16px 0',
-              alignItems: 'flex-end'
-            }}
+      {items.map(item => (
+        <ListItem
+          data-id={item.id}
+          key={item.id}
+          className={classes.fileType}
+          style={{
+            borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
+            padding: '16px 0',
+            alignItems: 'flex-end'
+          }}
+        >
+          <FormControl
+            className={classes.fileExtension}
+            error={
+              (isValidationInProgress && item.type === '') ||
+              items.filter(targetItem => targetItem.type === item.type).length >
+                1
+            }
           >
-            <FormControl
-              className={classes.fileExtension}
+            <InputLabel htmlFor="name-disabled" data-shrink={false}>
+              {i18n.t('core:fileExtension')}
+            </InputLabel>
+            <Input
+              defaultValue={item.type}
               error={
                 (isValidationInProgress && item.type === '') ||
                 items.filter(targetItem => targetItem.type === item.type)
                   .length > 1
               }
-            >
-              <InputLabel htmlFor="name-disabled" data-shrink={false}>
-                {i18n.t('core:fileExtension')}
-              </InputLabel>
-              <Input
-                value={item.type}
-                error={
-                  (isValidationInProgress && item.type === '') ||
-                  items.filter(targetItem => targetItem.type === item.type)
-                    .length > 1
-                }
-                onChange={event => {
-                  event.persist();
-                  const nextValue = event.target.value;
-                  const withoutSpecialChars = this.sanitizeFileTypeInput(
-                    nextValue
-                  );
-                  updateItems(
-                    'type',
-                    item.type,
-                    'type',
-                    withoutSpecialChars,
-                    true
-                  );
-                }}
-                onBlur={event => {
-                  const nextValue = event.target.value;
-                  const withoutSpecialChars = this.sanitizeFileTypeInput(
-                    nextValue
-                  );
-                  updateItems('type', item.type, 'type', withoutSpecialChars);
-                }}
-              />
-            </FormControl>
-            <FormControl
-              className={classes.fileOpener}
+              /* onChange={event => {
+                event.persist();
+                const nextValue = event.target.value;
+                const withoutSpecialChars = sanitizeFileTypeInput(nextValue);
+                updateItems(
+                  'type',
+                  item.type,
+                  'type',
+                  withoutSpecialChars,
+                  true
+                );
+              }} */
+              onBlur={event => {
+                const nextValue = event.target.value;
+                const withoutSpecialChars = sanitizeFileTypeInput(nextValue);
+                updateItems('type', item.type, 'type', withoutSpecialChars);
+              }}
+            />
+          </FormControl>
+          <FormControl
+            className={classes.fileOpener}
+            error={isValidationInProgress && item.viewer === ''}
+          >
+            <InputLabel htmlFor="">{i18n.t('core:fileOpener')}</InputLabel>
+            <Select
               error={isValidationInProgress && item.viewer === ''}
+              value={item.viewer}
+              input={<Input id="" />}
+              onChange={event =>
+                updateItems('id', item.id, 'viewer', event.target.value)
+              }
             >
-              <InputLabel htmlFor="">{i18n.t('core:fileOpener')}</InputLabel>
-              <Select
-                error={isValidationInProgress && item.viewer === ''}
-                value={item.viewer}
-                input={<Input id="" />}
-                onChange={event =>
-                  updateItems('id', item.id, 'viewer', event.target.value)
-                }
-              >
-                <MenuItem value="" />
-                {availableExtensions.map(
-                  extension =>
-                    (extension.extensionType === 'viewer' ||
-                      extension.extensionType === 'editor') && (
-                      <MenuItem
-                        key={extension.extensionName}
-                        value={extension.extensionId}
-                      >
-                        {extension.extensionName}
-                      </MenuItem>
-                    )
-                )}
-              </Select>
-            </FormControl>
-            <FormControl className={classes.fileOpener}>
-              <InputLabel htmlFor="">{i18n.t('core:fileEditor')}</InputLabel>
-              <Select
-                value={item.editor}
-                input={<Input id="" />}
-                onChange={event =>
-                  updateItems('id', item.id, 'editor', event.target.value)
-                }
-              >
-                <MenuItem value="" />
-                {availableExtensions
-                  .filter(extension => extension.extensionType === 'editor')
-                  .map(extension => (
+              <MenuItem value="" />
+              {availableExtensions.map(
+                extension =>
+                  (extension.extensionType === 'viewer' ||
+                    extension.extensionType === 'editor') && (
                     <MenuItem
                       key={extension.extensionName}
                       value={extension.extensionId}
                     >
                       {extension.extensionName}
                     </MenuItem>
-                  ))}
-              </Select>
-            </FormControl>
-            <FormControl className={classes.fileTypeColorDialogButton}>
-              <TransparentBackground>
-                <Button
-                  data-tid="settingsFileTypes_openColorPicker_"
-                  className={classes.colorChooserButton}
-                  style={{
-                    backgroundColor: `${item.color}`,
-                    minWidth: '100px',
-                    cursor: 'pointer'
-                  }}
-                  onClick={() => {
-                    this.openColorPicker(item);
-                  }}
-                >
-                  &nbsp;
-                  <div style={styles.color} />
-                </Button>
-              </TransparentBackground>
-            </FormControl>
-            <IconButton
-              data-tid="settingsFileTypes_remove_"
-              className={classes.fileExtRemove}
-              title={i18n.t('removeFileType', { itemType: item.type })}
-              onClick={() => onRemoveItem(item)}
+                  )
+              )}
+            </Select>
+          </FormControl>
+          <FormControl className={classes.fileOpener}>
+            <InputLabel htmlFor="">{i18n.t('core:fileEditor')}</InputLabel>
+            <Select
+              value={item.editor}
+              input={<Input id="" />}
+              onChange={event =>
+                updateItems('id', item.id, 'editor', event.target.value)
+              }
             >
-              <RemoveIcon />
-            </IconButton>
-          </ListItem>
-        ))}
-      </div>
-    );
-  }
-}
+              <MenuItem value="" />
+              {availableExtensions
+                .filter(extension => extension.extensionType === 'editor')
+                .map(extension => (
+                  <MenuItem
+                    key={extension.extensionName}
+                    value={extension.extensionId}
+                  >
+                    {extension.extensionName}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+          <FormControl className={classes.fileTypeColorDialogButton}>
+            <TransparentBackground>
+              <Button
+                data-tid="settingsFileTypes_openColorPicker_"
+                className={classes.colorChooserButton}
+                style={{
+                  backgroundColor: `${item.color}`,
+                  minWidth: '100px',
+                  cursor: 'pointer'
+                }}
+                onClick={() => {
+                  openColorPicker(item);
+                }}
+              >
+                &nbsp;
+                <div style={styles.color} />
+              </Button>
+            </TransparentBackground>
+          </FormControl>
+          <IconButton
+            data-tid="settingsFileTypes_remove_"
+            className={classes.fileExtRemove}
+            title={i18n.t('removeFileType', { itemType: item.type })}
+            onClick={() => onRemoveItem(item)}
+          >
+            <RemoveIcon />
+          </IconButton>
+        </ListItem>
+      ))}
+    </div>
+  );
+};
 
 export default withStyles(styles)(SettingsFileTypes);
