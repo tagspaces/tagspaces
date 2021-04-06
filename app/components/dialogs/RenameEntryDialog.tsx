@@ -117,23 +117,24 @@ const RenameEntryDialog = (props: Props) => {
   };
 
   const handleValidation = () => {
-    // const nameRegex = this.state.name.match('^[A-Z][-a-zA-Z]+$');
+    const initValid = disableConfirmButton.current;
     if (name.current.length > 0) {
-      if (inputError) {
-        setInputError(false);
-      } else {
-        // rerender
-        forceUpdate();
-      }
-      disableConfirmButton.current = false;
+      const rg1 = /^[^#\\/:*?"<>|]+$/; // forbidden characters # \ / : * ? " < > |
+      if (isFile) {
+        // https://stackoverflow.com/a/11101624/2285631
+        const rg2 = /^\./; // cannot start with dot (.)
+        const rg3 = /^(nul|prn|con|lpt[0-9]|com[0-9])(\.|$)/i; // forbidden file names
+        disableConfirmButton.current = !(rg1.test(name.current) &&
+            !rg2.test(name.current) &&
+            !rg3.test(name.current));
+      } else disableConfirmButton.current = !rg1.test(name.current);
+      setInputError(disableConfirmButton.current);
     } else {
-      if (!inputError) {
-        setInputError(true);
-      } else {
-        // rerender
-        forceUpdate();
-      }
       disableConfirmButton.current = true;
+    }
+    if (initValid !== disableConfirmButton.current) {
+      setInputError(disableConfirmButton.current);
+      forceUpdate();
     }
   };
 
