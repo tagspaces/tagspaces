@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useRef, useState } from 'react';
+import React, { useReducer, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
@@ -84,7 +84,7 @@ const RenameEntryDialog = (props: Props) => {
   const name = useRef<string>(defaultName);
 
   // eslint-disable-next-line no-unused-vars
-  // const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
   const onInputFocus = event => {
     // https://github.com/mui-org/material-ui/issues/1594
@@ -136,7 +136,7 @@ const RenameEntryDialog = (props: Props) => {
     }
     if (initValid !== disableConfirmButton.current) {
       setInputError(disableConfirmButton.current);
-      // forceUpdate();
+      forceUpdate();
     }
   };
 
