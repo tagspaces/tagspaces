@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useReducer, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
@@ -84,7 +84,7 @@ const RenameEntryDialog = (props: Props) => {
   const name = useRef<string>(defaultName);
 
   // eslint-disable-next-line no-unused-vars
-  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  // const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
   const onInputFocus = event => {
     // https://github.com/mui-org/material-ui/issues/1594
@@ -124,9 +124,11 @@ const RenameEntryDialog = (props: Props) => {
         // https://stackoverflow.com/a/11101624/2285631
         const rg2 = /^\./; // cannot start with dot (.)
         const rg3 = /^(nul|prn|con|lpt[0-9]|com[0-9])(\.|$)/i; // forbidden file names
-        disableConfirmButton.current = !(rg1.test(name.current) &&
-            !rg2.test(name.current) &&
-            !rg3.test(name.current));
+        disableConfirmButton.current = !(
+          rg1.test(name.current) &&
+          !rg2.test(name.current) &&
+          !rg3.test(name.current)
+        );
       } else disableConfirmButton.current = !rg1.test(name.current);
       setInputError(disableConfirmButton.current);
     } else {
@@ -134,7 +136,7 @@ const RenameEntryDialog = (props: Props) => {
     }
     if (initValid !== disableConfirmButton.current) {
       setInputError(disableConfirmButton.current);
-      forceUpdate();
+      // forceUpdate();
     }
   };
 
