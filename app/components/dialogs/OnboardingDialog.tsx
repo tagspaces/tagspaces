@@ -122,7 +122,8 @@ const OnboardingDialog = (props: Props) => {
         >
           <div
             style={{
-              textAlign: 'center'
+              textAlign: 'center',
+              overflowX: 'hidden'
             }}
           >
             <Typography variant="h5">Welcome to TagSpaces</Typography>

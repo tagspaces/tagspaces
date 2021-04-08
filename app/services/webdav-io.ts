@@ -131,6 +131,10 @@ export default class WebDAVIO {
     return false;
   };
 
+  quitApp = (): void => {
+    window.close();
+  };
+
   /**
    * Creates recursively a tree structure for a given directory path
    * @param {string} dirPath - the full path of the directory for which the tree will be generated

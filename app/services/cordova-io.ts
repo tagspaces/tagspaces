@@ -449,6 +449,10 @@ export default class CordovaIO {
     }
   };
 
+  quitApp = (): void => {
+    navigator.app.exitApp();
+  };
+
   /**
    * Creates recursively a tree structure for a given directory path
    */

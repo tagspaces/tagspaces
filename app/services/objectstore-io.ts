@@ -88,6 +88,10 @@ export default class ObjectStoreIO {
     return this.objectStore.getSignedUrl('getObject', params);
   };
 
+  quitApp = (): void => {
+    window.close();
+  };
+
   listMetaDirectoryPromise = async (path: string): Promise<Array<any>> => {
     const promise: Promise<Array<any>> = new Promise(resolve => {
       const entries = [];
