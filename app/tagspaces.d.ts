@@ -38,6 +38,7 @@ declare interface Window {
   ExtIsFirstRun?: boolean;
   ExtIsAmplify?: boolean;
   ExtUseSidecarsForFileTagging?: boolean;
+  ExtSaveLocationsInBrowser?: boolean;
   ExtDefaultVerticalPanel?: string;
   ExtSidebarColor?: string;
   ExtSidebarSelectionColor?: string;

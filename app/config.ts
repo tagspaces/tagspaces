@@ -100,6 +100,10 @@ export const AppConfig = {
   isCordova: isCordovaiOS || isCordovaAndroid,
   isMobile: isCordovaiOS || isCordovaAndroid || isIOS || isAndroid,
   isAmplify: window.ExtIsAmplify !== undefined ? window.ExtIsAmplify : false,
+  saveLocationsInBrowser:
+    window.ExtSaveLocationsInBrowser !== undefined
+      ? window.ExtSaveLocationsInBrowser
+      : false,
   useSidecarsForFileTagging:
     window.ExtUseSidecarsForFileTagging !== undefined
       ? window.ExtUseSidecarsForFileTagging

@@ -29,10 +29,20 @@ import AppConfig from '-/config';
 const externalLocations = window.ExtLocations || false;
 const externalTagLibrary = window.ExtTagLibrary || false;
 
+let locationsInBlackList = false; // electron case
+
+if (externalLocations || AppConfig.isWeb) {
+  locationsInBlackList = true;
+}
+
+if (AppConfig.saveLocationsInBrowser) {
+  locationsInBlackList = false;
+}
+
 const blacklist = [
   'app',
   'locationIndex',
-  externalLocations || AppConfig.isWeb ? 'locations' : '',
+  locationsInBlackList ? 'locations' : '',
   externalTagLibrary ? 'taglibrary' : ''
 ];
 
