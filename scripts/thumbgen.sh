@@ -13,8 +13,9 @@ generate_thumbnails() {
     find "$dirname" -type f -maxdepth 1 | while read file
     do
       # next line checks the mime-type of the file
-      CHECKTYPE=`file --mime-type -b "$file" | awk -F'/' '{print $1}'`
-      if [ "x$CHECKTYPE" == "ximage" ]; 
+      # CHECKTYPE=`file --mime-type -b "$file" | awk -F'/' '{print $1}'`
+      # if [ "x$CHECKTYPE" == "ximage" ];
+			if [[ $file =~ .*\.(jpg|JPG|jpeg|JPEG|png|PNG|bmp|BMP|gif|GIF|webp|WEBP|tiff|TIFF|svg|SVG) ]]
     then
         thumbfile="$thumbdir/$(basename "$file").jpg"
         CHECKWIDTH=`identify -format "%W" "$file"`     # this returns the image width
@@ -35,10 +36,10 @@ generate_thumbnails() {
             continue
           fi
         fi
-        
+
         # next 'if' is true if either filesize >= 200000 bytes  OR  if image width >=201
         if [ $CHECKSIZE -ge  200000 ] || [ $CHECKWIDTH -ge 201 ]; then
-            echo "$file -> $thumbfile" 
+            echo "$file -> $thumbfile"
             convert -thumbnail 400 "$file" "$thumbfile"
         fi
       fi
@@ -46,8 +47,8 @@ generate_thumbnails() {
 }
 
 if [ $# -ne 1 ]; then
-  echo "Usage $0 <path>"    
-  exit 2                    
+  echo "Usage $0 <path>"
+  exit 2
 fi
 
 find $1 -type d -not -path "*.ts" | while read dir
