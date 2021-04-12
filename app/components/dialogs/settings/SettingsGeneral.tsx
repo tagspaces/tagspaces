@@ -116,7 +116,15 @@ const SettingsGeneral = (props: Props) => {
         <Select
           data-tid="settingsSetLanguage"
           value={props.settings.interfaceLanguage}
-          onChange={(event: any) => props.setLanguage(event.target.value)}
+          onChange={(event: any) => {
+            props.setLanguage(event.target.value);
+            const { currentTheme } = props.settings;
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            props.setCurrentTheme(newTheme);
+            setTimeout(() => {
+              props.setCurrentTheme(currentTheme);
+            }, 500);
+          }}
           input={<Input id="languageSelector" />}
         >
           {props.settings.supportedLanguages.map(language => (
@@ -380,7 +388,7 @@ const SettingsGeneral = (props: Props) => {
         <Button
           data-tid="reloadAppTID"
           onClick={() => {
-            location.reload();
+            window.location.reload();
           }}
           color="secondary"
         >
