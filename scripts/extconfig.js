@@ -7,7 +7,6 @@ window.ExtLightThemeMainColor = '#3bc8ff';
 window.ExtDarkThemeLightColor = '#a6def4';
 window.ExtDarkThemeMainColor = '#3bc8ff';
 window.ExtIsFirstRun = false;
-window.ExtSaveLocationsInBrowser = true;
 window.ExtLocations = [
   {
     uuid: '30565f09-c7fd-2333-fc67-a75db27rt5ba', // an inique id of the location
