@@ -194,6 +194,7 @@ const DirectoryTreeView = forwardRef(
         ...(location.accessKeyId && { accessKeyId: location.accessKeyId }),
         ...(location.bucketName && { bucketName: location.bucketName }),
         ...(location.region && { region: location.region }),
+        ...(location.endpointURL && { endpointURL: location.endpointURL }),
         ...(location.secretAccessKey && {
           secretAccessKey: location.secretAccessKey
         }),
