@@ -194,6 +194,7 @@ const DirectoryTreeView = forwardRef(
         ...(location.accessKeyId && { accessKeyId: location.accessKeyId }),
         ...(location.bucketName && { bucketName: location.bucketName }),
         ...(location.region && { region: location.region }),
+        ...(location.endpointURL && { endpointURL: location.endpointURL }),
         ...(location.secretAccessKey && {
           secretAccessKey: location.secretAccessKey
         }),
@@ -238,6 +239,7 @@ const DirectoryTreeView = forwardRef(
       accessKeyId?: string;
       bucketName?: string;
       region?: string;
+      endpointURL?: string;
       secretAccessKey?: string;
       uuid: string;
       name: string;
@@ -248,7 +250,7 @@ const DirectoryTreeView = forwardRef(
 
     const getDirectoriesTree = (subFolder: SubFolder, deepLevel: number) =>
       // const { settings } = getState();
-      PlatformIO.listDirectoryPromise(subFolder.path, false)
+      PlatformIO.listDirectoryPromise(subFolder.path, true)
         // @ts-ignore
         .then(dirEntries => {
           const directoryContent = [];
@@ -271,6 +273,9 @@ const DirectoryTreeView = forwardRef(
               }
               if (subFolder.region) {
                 entry.region = subFolder.region;
+              }
+              if (subFolder.endpointURL) {
+                entry.endpointURL = subFolder.endpointURL;
               }
               if (subFolder.secretAccessKey) {
                 entry.secretAccessKey = subFolder.secretAccessKey;

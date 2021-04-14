@@ -39,6 +39,7 @@ export default class PlatformIO {
           objectStoreAPI.config.secretAccessKey ===
             objectStoreConfig.secretAccessKey &&
           objectStoreAPI.config.region === objectStoreConfig.region &&
+          objectStoreAPI.config.endpointURL === objectStoreConfig.endpointURL &&
           objectStoreAPI.config.accessKeyId === objectStoreConfig.accessKeyId
         ) {
           resolve();

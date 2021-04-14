@@ -943,11 +943,17 @@ export const actions = {
       });
   },
   loadDirectoryContent: (directoryPath: string) => (
-    dispatch: (actions: Object) => void
+    dispatch: (actions: Object) => void,
+    getState: () => any
   ) => {
     console.time('listDirectoryPromise');
     window.walkCanceled = false;
 
+    const state = getState();
+    const { selectedEntries } = state.app;
+    if (selectedEntries.length > 0) {
+      dispatch(actions.setSelectedEntries([]));
+    }
     loadMetaDataPromise(
       normalizePath(directoryPath) + PlatformIO.getDirSeparator()
     )
