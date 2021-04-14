@@ -250,7 +250,7 @@ const DirectoryTreeView = forwardRef(
 
     const getDirectoriesTree = (subFolder: SubFolder, deepLevel: number) =>
       // const { settings } = getState();
-      PlatformIO.listDirectoryPromise(subFolder.path, false)
+      PlatformIO.listDirectoryPromise(subFolder.path, true)
         // @ts-ignore
         .then(dirEntries => {
           const directoryContent = [];
