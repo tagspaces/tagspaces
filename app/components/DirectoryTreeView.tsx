@@ -239,6 +239,7 @@ const DirectoryTreeView = forwardRef(
       accessKeyId?: string;
       bucketName?: string;
       region?: string;
+      endpointURL?: string;
       secretAccessKey?: string;
       uuid: string;
       name: string;
@@ -272,6 +273,9 @@ const DirectoryTreeView = forwardRef(
               }
               if (subFolder.region) {
                 entry.region = subFolder.region;
+              }
+              if (subFolder.endpointURL) {
+                entry.endpointURL = subFolder.endpointURL;
               }
               if (subFolder.secretAccessKey) {
                 entry.secretAccessKey = subFolder.secretAccessKey;
