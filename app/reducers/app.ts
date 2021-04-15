@@ -1792,7 +1792,8 @@ export const actions = {
     dispatch: (actions: Object) => void
   ) =>
     PlatformIO.renameFilePromise(filePath, newFilePath)
-      .then(() => {
+      .then(result => {
+        const newFilePathFromPromise = result[1];
         console.info('File renamed ' + filePath + ' to ' + newFilePath);
         dispatch(
           actions.showNotification(
@@ -1801,7 +1802,7 @@ export const actions = {
             true
           )
         );
-        dispatch(actions.reflectRenameEntry(filePath, newFilePath));
+        dispatch(actions.reflectRenameEntry(filePath, newFilePathFromPromise));
         // Update sidecar file and thumb
         renameFilesPromise([
           [

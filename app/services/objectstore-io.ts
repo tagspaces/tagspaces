@@ -84,7 +84,12 @@ export default class ObjectStoreIO {
       Key: path,
       Expires: expirationInSeconds
     };
-    return this.objectStore.getSignedUrl('getObject', params);
+    try {
+      return this.objectStore.getSignedUrl('getObject', params);
+    } catch (e) {
+      console.warn('Error by getSignedUrl' + e.toString());
+      return '';
+    }
   };
 
   quitApp = (): void => {
@@ -710,28 +715,31 @@ export default class ObjectStoreIO {
       });
     }
     // Copy the object to a new location
-    return this.objectStore
-      .copyObject({
-        Bucket: this.config.bucketName,
-        CopySource: encodeURI(this.config.bucketName + '/' + nFilePath), // this.encodeS3URI(nFilePath),
-        Key: nNewFilePath
-      })
-      .promise()
-      .then(() =>
-        // Delete the old object
-        this.objectStore
-          .deleteObject({
-            Bucket: this.config.bucketName,
-            Key: nFilePath
-          })
-          .promise()
-      )
-      .catch(e => {
-        console.log(e);
-        return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
+      this.objectStore
+        .copyObject({
+          Bucket: this.config.bucketName,
+          CopySource: encodeURI(this.config.bucketName + '/' + nFilePath), // this.encodeS3URI(nFilePath),
+          Key: nNewFilePath
+        })
+        .promise()
+        .then(() =>
+          // Delete the old object
+          this.objectStore
+            .deleteObject({
+              Bucket: this.config.bucketName,
+              Key: nFilePath
+            })
+            .promise()
+            .then(() => {
+              resolve([filePath, nNewFilePath]);
+            })
+        )
+        .catch(e => {
+          console.log(e);
           reject('Renaming file failed' + e.code);
         });
-      });
+    });
   };
 
   /**
