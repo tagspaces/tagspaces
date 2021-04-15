@@ -26,8 +26,7 @@ import {
   normalizePath,
   getThumbFileLocationForFile,
   getMetaFileLocationForFile,
-  extractFileExtension,
-  cleanTrailingDirSeparator
+  extractFileExtension
 } from '-/utils/paths';
 import { FileSystemEntry } from '-/services/utils-io';
 
@@ -689,7 +688,7 @@ export default class ObjectStoreIO {
     return this.objectStore
       .copyObject({
         Bucket: this.config.bucketName,
-        CopySource: this.config.bucketName + '/' + nFilePath,
+        CopySource: encodeURI(this.config.bucketName + '/' + nFilePath),
         Key: nNewFilePath
       })
       .promise();
@@ -714,7 +713,7 @@ export default class ObjectStoreIO {
     return this.objectStore
       .copyObject({
         Bucket: this.config.bucketName,
-        CopySource: this.config.bucketName + '/' + nFilePath, // this.encodeS3URI(nFilePath),
+        CopySource: encodeURI(this.config.bucketName + '/' + nFilePath), // this.encodeS3URI(nFilePath),
         Key: nNewFilePath
       })
       .promise()
