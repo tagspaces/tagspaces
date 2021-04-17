@@ -34,7 +34,7 @@ import AboutIcon from '@material-ui/icons/BlurOn';
 import ChangeLogIcon from '@material-ui/icons/ImportContacts';
 import OnboardingIcon from '@material-ui/icons/Explore';
 import WebClipperIcon from '@material-ui/icons/Transform';
-import AccountIcon from '@material-ui/icons/AccountCircle';
+// import AccountIcon from '@material-ui/icons/AccountCircle';
 import EmailIcon from '@material-ui/icons/Email';
 import IssueIcon from '@material-ui/icons/BugReport';
 import TranslationIcon from '@material-ui/icons/Translate';
@@ -48,6 +48,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { connect } from 'react-redux';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
 import { Auth } from 'aws-amplify';
+import { AmplifySelectMfaType } from '@aws-amplify/ui-react';
 import CustomLogo from './CustomLogo';
 import ProTeaser from '../assets/images/spacerocket_undraw.svg';
 import styles from './SidePanels.css';
@@ -99,6 +100,12 @@ const HelpFeedbackPanel = (props: Props) => {
     }
   }
 
+  const MFATypeOptions = {
+    SMS: true,
+    Optional: true,
+    TOTP: true
+  };
+
   return (
     <div className={classes.panel} style={props.style}>
       <CustomLogo />
@@ -129,6 +136,14 @@ const HelpFeedbackPanel = (props: Props) => {
                 {email}
               </Typography>
             </ListItem>
+            <Box
+              style={{
+                width: '100%',
+                textAlign: 'center'
+              }}
+            >
+              <AmplifySelectMfaType MFATypes={MFATypeOptions} authData={props.user} />
+            </Box>
             <Box
               style={{
                 width: '100%',

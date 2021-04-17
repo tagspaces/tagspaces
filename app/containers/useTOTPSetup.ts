@@ -14,7 +14,10 @@ export default function useTOTPSetup(user, setCode) {
 
   const verifyTotpToken = async (totpCode: string) => {
     try {
-      await Auth.verifyTotpToken(user, totpCode);
+      await Auth.verifyTotpToken(user, totpCode).then(data => {
+        console.log(data);
+        return data;
+      });
       await Auth.setPreferredMFA(user, 'TOTP');
     } catch (error) {
       console.error(error);
@@ -22,7 +25,7 @@ export default function useTOTPSetup(user, setCode) {
     }
   };
 
-  if (user && 'SOFTWARE_TOKEN_MFA'.indexOf(user.preferredMFA) > -1) {
+  const setupTOTP = () => {
     Auth.setupTOTP(user)
       .then(data => {
         console.debug('secret key', data);
@@ -33,6 +36,18 @@ export default function useTOTPSetup(user, setCode) {
         return data;
       })
       .catch(e => console.error('setupTOTP error:', e));
+  };
+
+  if (user && 'SOFTWARE_TOKEN_MFA'.indexOf(user.preferredMFA) > -1) {
+    setupTOTP();
+  } else if ('NOMFA'.indexOf(user.preferredMFA) === 0) {
+    Auth.setPreferredMFA(user, 'TOTP')
+      .then(data => {
+        console.log(data);
+        setupTOTP();
+        return true;
+      })
+      .catch(e => console.error('setupTOTP MFA error:', e));
   }
 
   return verifyTotpToken;

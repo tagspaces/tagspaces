@@ -19,12 +19,16 @@
 import React from 'react';
 import {
   AmplifyAuthenticator,
+  AmplifySelectMfaType,
   AmplifySignIn,
-  AmplifySignUp
+  AmplifySignUp,
+  AmplifyTotpSetup
 } from '@aws-amplify/ui-react';
 import { Amplify } from 'aws-amplify';
+import { connect } from 'react-redux';
 import HandleAuth from '-/utils/HandleAuth';
 import LogoIcon from '-/assets/images/icon100x100.svg';
+import { currentUser } from '-/reducers/app';
 
 const TsAuth: React.FC<any> = props => {
   let awsconfig;
@@ -55,6 +59,16 @@ const TsAuth: React.FC<any> = props => {
             '--amplify-primary-shade': '#4A5568'
           }}
         >
+          <AmplifySelectMfaType
+            MFATypes={{ SMS: true, Optional: true, TOTP: true }}
+            authData={props.user}
+          />
+          <AmplifyTotpSetup
+            headerText="My Custom TOTP Setup Text"
+            slot="totp-setup"
+            issuer="TagSpaces"
+            user={props.user}
+          />
           <AmplifySignUp
             slot="sign-up"
             usernameAlias="email"
@@ -92,4 +106,9 @@ const TsAuth: React.FC<any> = props => {
   return <h1>Loading...</h1>;
 };
 
-export default TsAuth;
+function mapStateToProps(state) {
+  return {
+    user: currentUser(state)
+  };
+}
+export default connect(mapStateToProps)(TsAuth);

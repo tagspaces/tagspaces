@@ -8,10 +8,15 @@ import QRCode from 'qrcode.react';
 import { API, Auth } from 'aws-amplify';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import InputLabel from '@material-ui/core/InputLabel';
+import Input from '@material-ui/core/Input';
+import FormControl from '@material-ui/core/FormControl';
+import { FormHelperText } from '@material-ui/core';
 import { actions as LocationActions, Location } from '-/reducers/locations';
 import { actions as TagGroupActions, TagGroup } from '-/reducers/taglibrary';
 import { actions as AppActions } from '-/reducers/app';
 import useTOTPSetup from '-/containers/useTOTPSetup';
+import i18n from '-/services/i18n';
 
 interface Props {
   loggedIn: (user: CognitoUserInterface) => void;
@@ -21,12 +26,13 @@ interface Props {
 }
 const HandleAuth = React.memo((props: Props) => {
   const username = useRef(undefined);
+  const verifyTotpToken = useRef(undefined);
   const [code, setCode] = useState<string | null>(null);
 
   React.useEffect(() => {
     onAuthUIStateChange((nextAuthState, authData) => {
       if (nextAuthState === AuthState.SignedIn) {
-        const verifyTotpToken = useTOTPSetup(authData, setCode);
+        // verifyTotpToken.current = useTOTPSetup(authData, setCode);
 
         let queries;
         try {
@@ -46,9 +52,10 @@ const HandleAuth = React.memo((props: Props) => {
         if (username.current !== authData.username && queries) {
           fetchTenant()
             .then(async tenant => {
-              await addLocations(tenant, queries.getExtconfig);
-              await addTagGroups(tenant, queries.tagGroupsByTenant);
-
+              if (tenant) {
+                await addLocations(tenant, queries.getExtconfig);
+                await addTagGroups(tenant, queries.tagGroupsByTenant);
+              }
               return true;
             })
             .catch(e => {
@@ -107,7 +114,10 @@ const HandleAuth = React.memo((props: Props) => {
       .then(session => {
         const accessToken = session.getAccessToken();
         const cognitogroups = accessToken.payload['cognito:groups'];
-        return cognitogroups[0];
+        if (cognitogroups) {
+          return cognitogroups[0];
+        }
+        return undefined;
       })
       .catch(e => {
         console.error(e);
@@ -117,7 +127,29 @@ const HandleAuth = React.memo((props: Props) => {
     return null;
   }
 
-  return <QRCode value={code} />;
+  return (
+    <>
+      <QRCode value={code} />
+      <FormControl fullWidth={true} /* error={cloudErrorTextName} */>
+        <InputLabel htmlFor="validationCode">
+          {i18n.t('core:validationCodeLabel')}
+        </InputLabel>
+        <Input
+          required
+          autoFocus
+          margin="dense"
+          name="validationCode"
+          inputProps={{ autoCorrect: 'off' }}
+          fullWidth={true}
+          data-tid="validationCodeTID"
+          onChange={event => verifyTotpToken.current(event.target.value)}
+        />
+        <FormHelperText>
+          scan QR with Google Authenticator App and write the response
+        </FormHelperText>
+      </FormControl>
+    </>
+  );
 });
 
 function mapDispatchToProps(dispatch) {
