@@ -1,15 +1,17 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   AuthState,
   CognitoUserInterface,
   onAuthUIStateChange
 } from '@aws-amplify/ui-components';
+import QRCode from 'qrcode.react';
 import { API, Auth } from 'aws-amplify';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { actions as LocationActions, Location } from '-/reducers/locations';
 import { actions as TagGroupActions, TagGroup } from '-/reducers/taglibrary';
 import { actions as AppActions } from '-/reducers/app';
+import useTOTPSetup from '-/containers/useTOTPSetup';
 
 interface Props {
   loggedIn: (user: CognitoUserInterface) => void;
@@ -19,10 +21,13 @@ interface Props {
 }
 const HandleAuth = React.memo((props: Props) => {
   const username = useRef(undefined);
+  const [code, setCode] = useState<string | null>(null);
 
   React.useEffect(() => {
     onAuthUIStateChange((nextAuthState, authData) => {
       if (nextAuthState === AuthState.SignedIn) {
+        const verifyTotpToken = useTOTPSetup(authData, setCode);
+
         let queries;
         try {
           // eslint-disable-next-line global-require
@@ -108,7 +113,11 @@ const HandleAuth = React.memo((props: Props) => {
         console.error(e);
       });
 
-  return null;
+  if (!code) {
+    return null;
+  }
+
+  return <QRCode value={code} />;
 });
 
 function mapDispatchToProps(dispatch) {

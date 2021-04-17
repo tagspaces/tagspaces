@@ -26,7 +26,7 @@ import { Amplify } from 'aws-amplify';
 import HandleAuth from '-/utils/HandleAuth';
 import LogoIcon from '-/assets/images/icon100x100.svg';
 
-const Auth: React.FC<any> = props => {
+const TsAuth: React.FC<any> = props => {
   let awsconfig;
   try {
     // eslint-disable-next-line global-require
@@ -92,4 +92,4 @@ const Auth: React.FC<any> = props => {
   return <h1>Loading...</h1>;
 };
 
-export default Auth;
+export default TsAuth;

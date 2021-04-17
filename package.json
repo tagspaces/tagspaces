@@ -273,6 +273,7 @@
     "open-location-code-typescript": "^1.5.0",
     "path": "^0.12.7",
     "pdfjs-dist": "^2.4.456",
+    "qrcode.react": "^1.0.1",
     "rc-table": "^7.8.0",
     "react": "^16.13.1",
     "react-beautiful-dnd": "^13.0.0",
