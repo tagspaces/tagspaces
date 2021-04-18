@@ -133,7 +133,7 @@ const GridPerspective = (props: Props) => {
   const [orderBy, setOrderBy] = useState<null | boolean>(
     settings && typeof settings.orderBy !== 'undefined'
       ? settings.orderBy
-      : false
+      : true
   );
   const [layoutType, setLayoutType] = useState<string>(
     settings && settings.layoutType ? settings.layoutType : 'grid'
