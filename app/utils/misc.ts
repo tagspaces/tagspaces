@@ -17,7 +17,7 @@
  */
 
 import { Location, locationType } from '-/reducers/locations';
-import { getLocationPath } from '-/utils/paths';
+import { cleanFileName, getLocationPath } from '-/utils/paths';
 
 /** Returns true is a string is plus code e.g. 8FWH4HVG+3V 8FWH4HVG+ 8FWH4H+ */
 export function isPlusCode(plusCode: string): boolean {
@@ -389,8 +389,8 @@ export function sortAlphaNum(a: any, b: any) {
   const reDigit = /\d/;
 
   // Get rid of casing issues.
-  a = a.name.toLowerCase();
-  b = b.name.toLowerCase();
+  a = cleanFileName(a.name.toLowerCase());
+  b = cleanFileName(b.name.toLowerCase());
 
   // Separates the strings into substrings that have only digits and those
   // that have no digits.

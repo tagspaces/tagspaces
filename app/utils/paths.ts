@@ -324,6 +324,22 @@ export function extractTitle(
   return title;
 }
 
+/**
+ * Remove Tags from fileName
+ * @param fileName
+ */
+export function cleanFileName(fileName: string) {
+  const beginTagContainer = fileName.indexOf(AppConfig.beginTagContainer);
+  const endTagContainer = fileName.lastIndexOf(AppConfig.endTagContainer);
+  if (beginTagContainer >= 0 && beginTagContainer < endTagContainer) {
+    return (
+      fileName.slice(0, beginTagContainer) +
+      fileName.slice(endTagContainer + 1, fileName.length)
+    );
+  }
+  return fileName;
+}
+
 export function extractTagsAsObjects(
   filePath: string,
   tagDelimiter: string = AppConfig.tagDelimiter,
