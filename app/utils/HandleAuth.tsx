@@ -1,22 +1,15 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import {
   AuthState,
   CognitoUserInterface,
   onAuthUIStateChange
 } from '@aws-amplify/ui-components';
-import QRCode from 'qrcode.react';
 import { API, Auth } from 'aws-amplify';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import InputLabel from '@material-ui/core/InputLabel';
-import Input from '@material-ui/core/Input';
-import FormControl from '@material-ui/core/FormControl';
-import { FormHelperText } from '@material-ui/core';
 import { actions as LocationActions, Location } from '-/reducers/locations';
 import { actions as TagGroupActions, TagGroup } from '-/reducers/taglibrary';
 import { actions as AppActions } from '-/reducers/app';
-import useTOTPSetup from '-/containers/useTOTPSetup';
-import i18n from '-/services/i18n';
 
 interface Props {
   loggedIn: (user: CognitoUserInterface) => void;
@@ -26,8 +19,6 @@ interface Props {
 }
 const HandleAuth = React.memo((props: Props) => {
   const username = useRef(undefined);
-  const verifyTotpToken = useRef(undefined);
-  const [code, setCode] = useState<string | null>(null);
 
   React.useEffect(() => {
     onAuthUIStateChange((nextAuthState, authData) => {
@@ -123,33 +114,7 @@ const HandleAuth = React.memo((props: Props) => {
         console.error(e);
       });
 
-  if (!code) {
-    return null;
-  }
-
-  return (
-    <>
-      <QRCode value={code} />
-      <FormControl fullWidth={true} /* error={cloudErrorTextName} */>
-        <InputLabel htmlFor="validationCode">
-          {i18n.t('core:validationCodeLabel')}
-        </InputLabel>
-        <Input
-          required
-          autoFocus
-          margin="dense"
-          name="validationCode"
-          inputProps={{ autoCorrect: 'off' }}
-          fullWidth={true}
-          data-tid="validationCodeTID"
-          onChange={event => verifyTotpToken.current(event.target.value)}
-        />
-        <FormHelperText>
-          scan QR with Google Authenticator App and write the response
-        </FormHelperText>
-      </FormControl>
-    </>
-  );
+  return null;
 });
 
 function mapDispatchToProps(dispatch) {
