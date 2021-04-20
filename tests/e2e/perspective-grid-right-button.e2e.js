@@ -188,6 +188,10 @@ describe('TST50** - Right button on a file', () => {
       await expectTagsExist(filesList[i], [testTagName], true);
     }
 
+    //cleanup
+    await selectRowFiles([0, 1, 2]);
+    await AddRemoveTagsToSelectedFiles([testTagName], false);
+
     /*const classNotSelected = await getGridCellClass(0);
     const classSelected = await selectAllFiles(classNotSelected);
     expect(classNotSelected).not.toBe(classSelected);
