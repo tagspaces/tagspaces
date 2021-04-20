@@ -52,12 +52,12 @@ const HandleAuth = React.memo((props: Props) => {
             .catch(e => {
               console.error(e);
             });
-          // @ts-ignore
-          username.current = authData.username;
-          // @ts-ignore
-          props.loggedIn(authData);
           props.initApp();
         }
+        // @ts-ignore
+        username.current = authData.username;
+        // @ts-ignore
+        props.loggedIn(authData);
       } else if (nextAuthState === AuthState.SignedOut) {
         username.current = undefined;
         props.loggedIn(undefined);
