@@ -16,10 +16,9 @@
  *
  */
 
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
-import QRCode from 'qrcode.react';
 import Typography from '@material-ui/core/Typography';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
@@ -49,18 +48,13 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { connect } from 'react-redux';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
 import Auth from '@aws-amplify/auth';
-import InputLabel from '@material-ui/core/InputLabel';
-import Input from '@material-ui/core/Input';
-import { FormHelperText } from '@material-ui/core';
-import FormControl from '@material-ui/core/FormControl';
 import CustomLogo from './CustomLogo';
 import ProTeaser from '../assets/images/spacerocket_undraw.svg';
 import styles from './SidePanels.css';
 import AppConfig from '../config';
 import i18n from '../services/i18n';
-import { Pro } from '../pro';
 import { clearAllURLParams } from '-/utils/misc';
-import TOTPSetup from '-/containers/TOTPSetup';
+import { Pro } from '-/pro';
 
 interface Props {
   classes?: any;
@@ -81,9 +75,9 @@ const signOut = () => {
 };
 
 const HelpFeedbackPanel = (props: Props) => {
-  const [code, setCode] = useState<string>(undefined);
-  const verifyCode = useRef<string>(undefined);
-  const verifyTotpToken = useRef(undefined);
+  const [isSetupTOTPOpened, setSetupTOTPOpened] = useState<boolean>(false);
+
+  const SetupTOTPDialog = Pro && Pro.UI ? Pro.UI.SetupTOTPDialog : false;
 
   const {
     classes,
@@ -108,12 +102,6 @@ const HelpFeedbackPanel = (props: Props) => {
       initials += lastName.charAt(0).toUpperCase();
     }
   }
-
-  /* const MFATypeOptions = {
-    SMS: true,
-    Optional: true,
-    TOTP: true
-  }; */
 
   return (
     <div className={classes.panel} style={props.style}>
@@ -145,111 +133,66 @@ const HelpFeedbackPanel = (props: Props) => {
                 {email}
               </Typography>
             </ListItem>
-            {'SOFTWARE_TOKEN_MFA'.indexOf(props.user.preferredMFA) === -1 ? (
+            {SetupTOTPDialog && (
               <Box
                 style={{
                   width: '100%',
                   textAlign: 'center'
                 }}
               >
-                {/* <AmplifySelectMfaType
-                MFATypes={MFATypeOptions}
-                authData={props.user}
-                handleSubmit={verify}
-              /> */}
-                {/* <AmplifyTotpSetup
-                headerText="My Custom TOTP Setup Text"
-                // slot="totp-setup"
-                issuer="TagSpaces"
-                user={props.user}
-              /> */}
-                {/* <TOTPSetup/> */}
-                <Button
-                  data-tid="setupTOTP"
-                  title={i18n.t('core:setupTOTP')}
-                  className={classes.mainActionButton}
-                  onClick={async () => {
-                    verifyTotpToken.current = await TOTPSetup(
-                      props.user,
-                      setCode
-                    );
-                  }}
-                  size="small"
-                  variant="outlined"
-                  color="primary"
-                  style={{ width: '95%' }}
-                >
-                  {i18n.t('core:setupTOTP')}
-                </Button>
-                {code && (
+                {isSetupTOTPOpened && (
+                  <SetupTOTPDialog
+                    open={isSetupTOTPOpened}
+                    onClose={() => setSetupTOTPOpened(false)}
+                    user={props.user}
+                    confirmCallback={result => {
+                      if (result) {
+                        window.location.reload(); // TODO SOFTWARE_TOKEN_MFA is not refreshed in signed user without window.reload()
+                      }
+                      console.log('TOTP is:' + result);
+                    }}
+                  />
+                )}
+                {'SOFTWARE_TOKEN_MFA'.indexOf(props.user.preferredMFA) ===
+                -1 ? (
+                  <Button
+                    data-tid="setupTOTP"
+                    title={i18n.t('core:setupTOTP')}
+                    className={classes.mainActionButton}
+                    onClick={() => {
+                      setSetupTOTPOpened(true);
+                    }}
+                    size="small"
+                    variant="outlined"
+                    color="primary"
+                    style={{ width: '95%' }}
+                  >
+                    {i18n.t('core:setupTOTP')}
+                  </Button>
+                ) : (
                   <>
-                    <QRCode value={code} />
-                    <FormControl
-                      fullWidth={true} /* error={cloudErrorTextName} */
-                    >
-                      <InputLabel htmlFor="validationCode">
-                        {i18n.t('core:validationCodeLabel')}
-                      </InputLabel>
-                      <Input
-                        required
-                        autoFocus
-                        margin="dense"
-                        name="validationCode"
-                        inputProps={{ autoCorrect: 'off' }}
-                        fullWidth={true}
-                        data-tid="validationCodeTID"
-                        onChange={event => {
-                          verifyCode.current = event.target.value;
-                          return true;
-                        }}
-                      />
-                      <FormHelperText>
-                        scan QR with Google Authenticator App and write the
-                        response
-                      </FormHelperText>
-                    </FormControl>
+                    <Typography style={{ color: theme.palette.text.primary }}>
+                      {i18n.t('core:TOTPEnabled')}
+                    </Typography>
                     <Button
-                      data-tid="verifyTOTP"
-                      title={i18n.t('core:verifyTOTP')}
                       className={classes.mainActionButton}
                       onClick={async () => {
-                        await verifyTotpToken.current(verifyCode.current);
+                        try {
+                          await Auth.setPreferredMFA(props.user, 'NOMFA');
+                          signOut();
+                        } catch (error) {
+                          console.error(error);
+                        }
                       }}
                       size="small"
                       variant="outlined"
                       color="primary"
                       style={{ width: '95%' }}
                     >
-                      {i18n.t('core:verifyTOTP')}
+                      {i18n.t('core:disableTOTP')}
                     </Button>
                   </>
                 )}
-              </Box>
-            ) : (
-              <Box
-                style={{
-                  width: '100%',
-                  textAlign: 'center',
-                  marginBottom: 10
-                }}
-              >
-                <Button
-                  className={classes.mainActionButton}
-                  onClick={async () => {
-                    try {
-                      await Auth.setPreferredMFA(props.user, 'NOMFA');
-                      signOut();
-                    } catch (error) {
-                      console.error(error);
-                    }
-                  }}
-                  size="small"
-                  variant="outlined"
-                  color="primary"
-                  style={{ width: '95%' }}
-                >
-                  {i18n.t('core:MFA TOTP enabled')}
-                </Button>
               </Box>
             )}
             <Box
