@@ -16,9 +16,10 @@
  *
  */
 
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
+import QRCode from 'qrcode.react';
 import Typography from '@material-ui/core/Typography';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
@@ -34,7 +35,7 @@ import AboutIcon from '@material-ui/icons/BlurOn';
 import ChangeLogIcon from '@material-ui/icons/ImportContacts';
 import OnboardingIcon from '@material-ui/icons/Explore';
 import WebClipperIcon from '@material-ui/icons/Transform';
-import AccountIcon from '@material-ui/icons/AccountCircle';
+// import AccountIcon from '@material-ui/icons/AccountCircle';
 import EmailIcon from '@material-ui/icons/Email';
 import IssueIcon from '@material-ui/icons/BugReport';
 import TranslationIcon from '@material-ui/icons/Translate';
@@ -47,7 +48,11 @@ import ProTeaserIcon from '@material-ui/icons/FlightTakeoff';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { connect } from 'react-redux';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
-import { Auth } from 'aws-amplify';
+import Auth from '@aws-amplify/auth';
+import InputLabel from '@material-ui/core/InputLabel';
+import Input from '@material-ui/core/Input';
+import { FormHelperText } from '@material-ui/core';
+import FormControl from '@material-ui/core/FormControl';
 import CustomLogo from './CustomLogo';
 import ProTeaser from '../assets/images/spacerocket_undraw.svg';
 import styles from './SidePanels.css';
@@ -55,6 +60,7 @@ import AppConfig from '../config';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import { clearAllURLParams } from '-/utils/misc';
+import TOTPSetup from '-/containers/TOTPSetup';
 
 interface Props {
   classes?: any;
@@ -75,6 +81,10 @@ const signOut = () => {
 };
 
 const HelpFeedbackPanel = (props: Props) => {
+  const [code, setCode] = useState<string>(undefined);
+  const verifyCode = useRef<string>(undefined);
+  const verifyTotpToken = useRef(undefined);
+
   const {
     classes,
     openURLExternally,
@@ -98,6 +108,12 @@ const HelpFeedbackPanel = (props: Props) => {
       initials += lastName.charAt(0).toUpperCase();
     }
   }
+
+  /* const MFATypeOptions = {
+    SMS: true,
+    Optional: true,
+    TOTP: true
+  }; */
 
   return (
     <div className={classes.panel} style={props.style}>
@@ -129,6 +145,113 @@ const HelpFeedbackPanel = (props: Props) => {
                 {email}
               </Typography>
             </ListItem>
+            {'SOFTWARE_TOKEN_MFA'.indexOf(props.user.preferredMFA) === -1 ? (
+              <Box
+                style={{
+                  width: '100%',
+                  textAlign: 'center'
+                }}
+              >
+                {/* <AmplifySelectMfaType
+                MFATypes={MFATypeOptions}
+                authData={props.user}
+                handleSubmit={verify}
+              /> */}
+                {/* <AmplifyTotpSetup
+                headerText="My Custom TOTP Setup Text"
+                // slot="totp-setup"
+                issuer="TagSpaces"
+                user={props.user}
+              /> */}
+                {/* <TOTPSetup/> */}
+                <Button
+                  data-tid="setupTOTP"
+                  title={i18n.t('core:setupTOTP')}
+                  className={classes.mainActionButton}
+                  onClick={async () => {
+                    verifyTotpToken.current = await TOTPSetup(
+                      props.user,
+                      setCode
+                    );
+                  }}
+                  size="small"
+                  variant="outlined"
+                  color="primary"
+                  style={{ width: '95%' }}
+                >
+                  {i18n.t('core:setupTOTP')}
+                </Button>
+                {code && (
+                  <>
+                    <QRCode value={code} />
+                    <FormControl
+                      fullWidth={true} /* error={cloudErrorTextName} */
+                    >
+                      <InputLabel htmlFor="validationCode">
+                        {i18n.t('core:validationCodeLabel')}
+                      </InputLabel>
+                      <Input
+                        required
+                        autoFocus
+                        margin="dense"
+                        name="validationCode"
+                        inputProps={{ autoCorrect: 'off' }}
+                        fullWidth={true}
+                        data-tid="validationCodeTID"
+                        onChange={event => {
+                          verifyCode.current = event.target.value;
+                          return true;
+                        }}
+                      />
+                      <FormHelperText>
+                        scan QR with Google Authenticator App and write the
+                        response
+                      </FormHelperText>
+                    </FormControl>
+                    <Button
+                      data-tid="verifyTOTP"
+                      title={i18n.t('core:verifyTOTP')}
+                      className={classes.mainActionButton}
+                      onClick={async () => {
+                        await verifyTotpToken.current(verifyCode.current);
+                      }}
+                      size="small"
+                      variant="outlined"
+                      color="primary"
+                      style={{ width: '95%' }}
+                    >
+                      {i18n.t('core:verifyTOTP')}
+                    </Button>
+                  </>
+                )}
+              </Box>
+            ) : (
+              <Box
+                style={{
+                  width: '100%',
+                  textAlign: 'center',
+                  marginBottom: 10
+                }}
+              >
+                <Button
+                  className={classes.mainActionButton}
+                  onClick={async () => {
+                    try {
+                      await Auth.setPreferredMFA(props.user, 'NOMFA');
+                      signOut();
+                    } catch (error) {
+                      console.error(error);
+                    }
+                  }}
+                  size="small"
+                  variant="outlined"
+                  color="primary"
+                  style={{ width: '95%' }}
+                >
+                  {i18n.t('core:MFA TOTP enabled')}
+                </Button>
+              </Box>
+            )}
             <Box
               style={{
                 width: '100%',

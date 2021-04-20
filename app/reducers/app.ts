@@ -2038,6 +2038,8 @@ export const actions = {
 };
 
 // Selectors
+export const currentUser = (state: any) =>
+  state.app.user;
 export const getDirectoryContent = (state: any) =>
   state.app.currentDirectoryEntries;
 export const getCurrentDirectoryColor = (state: any) =>
