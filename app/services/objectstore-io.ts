@@ -26,8 +26,7 @@ import {
   normalizePath,
   getThumbFileLocationForFile,
   getMetaFileLocationForFile,
-  extractFileExtension,
-  cleanTrailingDirSeparator
+  extractFileExtension
 } from '-/utils/paths';
 import { FileSystemEntry } from '-/services/utils-io';
 
@@ -89,7 +88,12 @@ export default class ObjectStoreIO {
       Key: path,
       Expires: expirationInSeconds
     };
-    return this.objectStore.getSignedUrl('getObject', params);
+    try {
+      return this.objectStore.getSignedUrl('getObject', params);
+    } catch (e) {
+      console.warn('Error by getSignedUrl' + e.toString());
+      return '';
+    }
   };
 
   quitApp = (): void => {
@@ -699,7 +703,7 @@ export default class ObjectStoreIO {
     return this.objectStore
       .copyObject({
         Bucket: this.config.bucketName,
-        CopySource: this.config.bucketName + '/' + nFilePath,
+        CopySource: encodeURI(this.config.bucketName + '/' + nFilePath),
         Key: nNewFilePath
       })
       .promise();
@@ -721,28 +725,31 @@ export default class ObjectStoreIO {
       });
     }
     // Copy the object to a new location
-    return this.objectStore
-      .copyObject({
-        Bucket: this.config.bucketName,
-        CopySource: this.config.bucketName + '/' + nFilePath, // this.encodeS3URI(nFilePath),
-        Key: nNewFilePath
-      })
-      .promise()
-      .then(() =>
-        // Delete the old object
-        this.objectStore
-          .deleteObject({
-            Bucket: this.config.bucketName,
-            Key: nFilePath
-          })
-          .promise()
-      )
-      .catch(e => {
-        console.log(e);
-        return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
+      this.objectStore
+        .copyObject({
+          Bucket: this.config.bucketName,
+          CopySource: encodeURI(this.config.bucketName + '/' + nFilePath), // this.encodeS3URI(nFilePath),
+          Key: nNewFilePath
+        })
+        .promise()
+        .then(() =>
+          // Delete the old object
+          this.objectStore
+            .deleteObject({
+              Bucket: this.config.bucketName,
+              Key: nFilePath
+            })
+            .promise()
+            .then(() => {
+              resolve([filePath, nNewFilePath]);
+            })
+        )
+        .catch(e => {
+          console.log(e);
           reject('Renaming file failed' + e.code);
         });
-      });
+    });
   };
 
   /**
@@ -820,32 +827,15 @@ export default class ObjectStoreIO {
    * Delete a specified directory
    */
   deleteDirectoryPromise = async (path: string): Promise<Object> => {
-    const listParams = {
-      Bucket: this.config.bucketName,
-      Prefix: path,
-      Delimiter: '/'
-    };
-    const listedObjects = await this.objectStore
-      .listObjectsV2(listParams)
-      .promise();
+    const prefixes = await this.getDirectoryPrefixes(path);
 
-    if (listedObjects.Contents.length > 0) {
+    if (prefixes.length > 0) {
       const deleteParams = {
         Bucket: this.config.bucketName,
-        Delete: { Objects: [] }
+        Delete: { Objects: prefixes }
       };
 
-      listedObjects.Contents.forEach(({ Key }) => {
-        deleteParams.Delete.Objects.push({ Key });
-      });
-
       return this.objectStore.deleteObjects(deleteParams).promise();
-
-      /*if (!listedObjects.IsTruncated) {
-        return Promise.reject(
-          'Folder is not empty:' + JSON.stringify(listedObjects)
-        );
-      }*/
     }
     return this.objectStore
       .deleteObject({
@@ -853,6 +843,45 @@ export default class ObjectStoreIO {
         Key: path
       })
       .promise();
+  };
+
+  /**
+   * get recursively all aws directory prefixes
+   * @param path
+   */
+  getDirectoryPrefixes = async (path: string): Promise<any[]> => {
+    const prefixes = [];
+    const promises = [];
+    const listParams = {
+      Bucket: this.config.bucketName,
+      Prefix: this.normalizeRootPath(path),
+      Delimiter: '/'
+    };
+    const listedObjects = await this.objectStore
+      .listObjectsV2(listParams)
+      .promise();
+
+    if (
+      listedObjects.Contents.length > 0 ||
+      listedObjects.CommonPrefixes.length > 0
+    ) {
+      listedObjects.Contents.forEach(({ Key }) => {
+        prefixes.push({ Key });
+      });
+
+      listedObjects.CommonPrefixes.forEach(({ Prefix }) => {
+        prefixes.push({ Key: Prefix });
+        promises.push(this.getDirectoryPrefixes(Prefix));
+      });
+      // if (listedObjects.IsTruncated) await this.deleteDirectoryPromise(path);
+    }
+    const subPrefixes = await Promise.all(promises);
+    subPrefixes.map(arrPrefixes => {
+      arrPrefixes.map(prefix => {
+        prefixes.push(prefix);
+      });
+    });
+    return prefixes;
   };
 
   /**

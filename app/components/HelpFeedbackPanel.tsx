@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import Typography from '@material-ui/core/Typography';
@@ -34,7 +34,7 @@ import AboutIcon from '@material-ui/icons/BlurOn';
 import ChangeLogIcon from '@material-ui/icons/ImportContacts';
 import OnboardingIcon from '@material-ui/icons/Explore';
 import WebClipperIcon from '@material-ui/icons/Transform';
-import AccountIcon from '@material-ui/icons/AccountCircle';
+// import AccountIcon from '@material-ui/icons/AccountCircle';
 import EmailIcon from '@material-ui/icons/Email';
 import IssueIcon from '@material-ui/icons/BugReport';
 import TranslationIcon from '@material-ui/icons/Translate';
@@ -47,14 +47,14 @@ import ProTeaserIcon from '@material-ui/icons/FlightTakeoff';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { connect } from 'react-redux';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
-import { Auth } from 'aws-amplify';
+import Auth from '@aws-amplify/auth';
 import CustomLogo from './CustomLogo';
 import ProTeaser from '../assets/images/spacerocket_undraw.svg';
 import styles from './SidePanels.css';
 import AppConfig from '../config';
 import i18n from '../services/i18n';
-import { Pro } from '../pro';
 import { clearAllURLParams } from '-/utils/misc';
+import { Pro } from '-/pro';
 
 interface Props {
   classes?: any;
@@ -75,6 +75,10 @@ const signOut = () => {
 };
 
 const HelpFeedbackPanel = (props: Props) => {
+  const [isSetupTOTPOpened, setSetupTOTPOpened] = useState<boolean>(false);
+
+  const SetupTOTPDialog = Pro && Pro.UI ? Pro.UI.SetupTOTPDialog : false;
+
   const {
     classes,
     openURLExternally,
@@ -129,6 +133,68 @@ const HelpFeedbackPanel = (props: Props) => {
                 {email}
               </Typography>
             </ListItem>
+            {SetupTOTPDialog && (
+              <Box
+                style={{
+                  width: '100%',
+                  textAlign: 'center'
+                }}
+              >
+                {isSetupTOTPOpened && (
+                  <SetupTOTPDialog
+                    open={isSetupTOTPOpened}
+                    onClose={() => setSetupTOTPOpened(false)}
+                    user={props.user}
+                    confirmCallback={result => {
+                      if (result) {
+                        window.location.reload(); // TODO SOFTWARE_TOKEN_MFA is not refreshed in signed user without window.reload()
+                      }
+                      console.log('TOTP is:' + result);
+                    }}
+                  />
+                )}
+                {'SOFTWARE_TOKEN_MFA'.indexOf(props.user.preferredMFA) ===
+                -1 ? (
+                  <Button
+                    data-tid="setupTOTP"
+                    title={i18n.t('core:setupTOTP')}
+                    className={classes.mainActionButton}
+                    onClick={() => {
+                      setSetupTOTPOpened(true);
+                    }}
+                    size="small"
+                    variant="outlined"
+                    color="primary"
+                    style={{ width: '95%' }}
+                  >
+                    {i18n.t('core:setupTOTP')}
+                  </Button>
+                ) : (
+                  <>
+                    <Typography style={{ color: theme.palette.text.primary }}>
+                      {i18n.t('core:TOTPEnabled')}
+                    </Typography>
+                    <Button
+                      className={classes.mainActionButton}
+                      onClick={async () => {
+                        try {
+                          await Auth.setPreferredMFA(props.user, 'NOMFA');
+                          signOut();
+                        } catch (error) {
+                          console.error(error);
+                        }
+                      }}
+                      size="small"
+                      variant="outlined"
+                      color="primary"
+                      style={{ width: '95%' }}
+                    >
+                      {i18n.t('core:disableTOTP')}
+                    </Button>
+                  </>
+                )}
+              </Box>
+            )}
             <Box
               style={{
                 width: '100%',

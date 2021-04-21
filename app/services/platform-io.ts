@@ -39,6 +39,7 @@ export default class PlatformIO {
           objectStoreAPI.config.secretAccessKey ===
             objectStoreConfig.secretAccessKey &&
           objectStoreAPI.config.region === objectStoreConfig.region &&
+          objectStoreAPI.config.endpointURL === objectStoreConfig.endpointURL &&
           objectStoreAPI.config.accessKeyId === objectStoreConfig.accessKeyId
         ) {
           resolve();
@@ -117,12 +118,13 @@ export default class PlatformIO {
 
   static getUserHomePath = (): string => nativeAPI.getUserHomePath();
 
-  static getURLforPath = (path: string): string => {
+  static getURLforPath = (
+    path: string,
+    expirationInSeconds?: number
+  ): string => {
     if (objectStoreAPI) {
-      return objectStoreAPI.getURLforPath(path);
+      return objectStoreAPI.getURLforPath(path, expirationInSeconds);
     }
-    // console.log('getURLforPath not supported');
-    // return path;
   };
 
   static createDirectoryTree = (directoryPath: string): Object =>
@@ -235,7 +237,11 @@ export default class PlatformIO {
     newFilePath: string
   ): Promise<any> => {
     if (objectStoreAPI) {
-      return objectStoreAPI.renameFilePromise(filePath, newFilePath);
+      return objectStoreAPI
+        .renameFilePromise(filePath, newFilePath)
+        .then(result => {
+          return result;
+        });
     }
     PlatformIO.ignoreByWatcher(filePath, newFilePath);
 

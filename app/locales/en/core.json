@@ -523,5 +523,10 @@
   "pauseSlideShow": "Pause Slide Show",
   "startSlideShow": "Start Slide Show",
   "thumbAlreadyExists": "Thumbnail for '{{directoryName}}' already exists, do you want to override it?",
+  "setupTOTP": "Setup Time-based One-Time Password",
+  "validationCodeLabel": "Validation Code",
+  "verifyTOTP": "Verify",
+  "TOTPEnabled": "TOTP Is Enabled",
+  "disableTOTP": "disable TOTP",
   "-": "-"
 }

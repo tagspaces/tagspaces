@@ -943,11 +943,17 @@ export const actions = {
       });
   },
   loadDirectoryContent: (directoryPath: string) => (
-    dispatch: (actions: Object) => void
+    dispatch: (actions: Object) => void,
+    getState: () => any
   ) => {
     console.time('listDirectoryPromise');
     window.walkCanceled = false;
 
+    const state = getState();
+    const { selectedEntries } = state.app;
+    if (selectedEntries.length > 0) {
+      dispatch(actions.setSelectedEntries([]));
+    }
     loadMetaDataPromise(
       normalizePath(directoryPath) + PlatformIO.getDirSeparator()
     )
@@ -1786,7 +1792,8 @@ export const actions = {
     dispatch: (actions: Object) => void
   ) =>
     PlatformIO.renameFilePromise(filePath, newFilePath)
-      .then(() => {
+      .then(result => {
+        const newFilePathFromPromise = result[1];
         console.info('File renamed ' + filePath + ' to ' + newFilePath);
         dispatch(
           actions.showNotification(
@@ -1795,7 +1802,7 @@ export const actions = {
             true
           )
         );
-        dispatch(actions.reflectRenameEntry(filePath, newFilePath));
+        dispatch(actions.reflectRenameEntry(filePath, newFilePathFromPromise));
         // Update sidecar file and thumb
         renameFilesPromise([
           [
@@ -2031,6 +2038,8 @@ export const actions = {
 };
 
 // Selectors
+export const currentUser = (state: any) =>
+  state.app.user;
 export const getDirectoryContent = (state: any) =>
   state.app.currentDirectoryEntries;
 export const getCurrentDirectoryColor = (state: any) =>

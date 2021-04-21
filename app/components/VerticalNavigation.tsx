@@ -53,7 +53,8 @@ import {
   isPerspectivesPanelOpened as isPerspectivesOpened,
   isHelpFeedbackPanelOpened as isHelpFeedbackOpened,
   isReadOnlyMode,
-  getProgress
+  getProgress,
+  currentUser
 } from '../reducers/app';
 import { actions as SettingsActions, isFirstRun } from '../reducers/settings';
 import LoadingLazy from './LoadingLazy';
@@ -446,7 +447,7 @@ function mapStateToProps(state) {
     isReadOnlyMode: isReadOnlyMode(state),
     directoryPath: getDirectoryPath(state),
     progress: getProgress(state),
-    user: state.app.user
+    user: currentUser(state)
   };
 }
 

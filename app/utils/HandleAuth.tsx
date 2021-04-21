@@ -23,6 +23,8 @@ const HandleAuth = React.memo((props: Props) => {
   React.useEffect(() => {
     onAuthUIStateChange((nextAuthState, authData) => {
       if (nextAuthState === AuthState.SignedIn) {
+        // verifyTotpToken.current = useTOTPSetup(authData, setCode);
+
         let queries;
         try {
           // eslint-disable-next-line global-require
@@ -41,20 +43,21 @@ const HandleAuth = React.memo((props: Props) => {
         if (username.current !== authData.username && queries) {
           fetchTenant()
             .then(async tenant => {
-              await addLocations(tenant, queries.getExtconfig);
-              await addTagGroups(tenant, queries.tagGroupsByTenant);
-
+              if (tenant) {
+                await addLocations(tenant, queries.getExtconfig);
+                await addTagGroups(tenant, queries.tagGroupsByTenant);
+              }
               return true;
             })
             .catch(e => {
               console.error(e);
             });
-          // @ts-ignore
-          username.current = authData.username;
-          // @ts-ignore
-          props.loggedIn(authData);
           props.initApp();
         }
+        // @ts-ignore
+        username.current = authData.username;
+        // @ts-ignore
+        props.loggedIn(authData);
       } else if (nextAuthState === AuthState.SignedOut) {
         username.current = undefined;
         props.loggedIn(undefined);
@@ -102,7 +105,10 @@ const HandleAuth = React.memo((props: Props) => {
       .then(session => {
         const accessToken = session.getAccessToken();
         const cognitogroups = accessToken.payload['cognito:groups'];
-        return cognitogroups[0];
+        if (cognitogroups) {
+          return cognitogroups[0];
+        }
+        return undefined;
       })
       .catch(e => {
         console.error(e);

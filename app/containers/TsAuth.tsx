@@ -20,13 +20,15 @@ import React from 'react';
 import {
   AmplifyAuthenticator,
   AmplifySignIn,
-  AmplifySignUp
+  AmplifySignUp,
+  AmplifyTotpSetup
 } from '@aws-amplify/ui-react';
 import { Amplify } from 'aws-amplify';
 import HandleAuth from '-/utils/HandleAuth';
 import LogoIcon from '-/assets/images/icon100x100.svg';
+import i18n from '-/services/i18n';
 
-const Auth: React.FC<any> = props => {
+const TsAuth: React.FC<any> = props => {
   let awsconfig;
   try {
     // eslint-disable-next-line global-require
@@ -55,6 +57,12 @@ const Auth: React.FC<any> = props => {
             '--amplify-primary-shade': '#4A5568'
           }}
         >
+          <AmplifyTotpSetup
+            headerText="TagSpaces Time-Based One-Time Password Login"
+            slot="totp-setup"
+            issuer={i18n.t('core:name')}
+            // user={props.user}
+          />
           <AmplifySignUp
             slot="sign-up"
             usernameAlias="email"
@@ -92,4 +100,4 @@ const Auth: React.FC<any> = props => {
   return <h1>Loading...</h1>;
 };
 
-export default Auth;
+export default TsAuth;

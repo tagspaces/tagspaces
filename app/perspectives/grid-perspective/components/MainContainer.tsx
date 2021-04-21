@@ -133,7 +133,7 @@ const GridPerspective = (props: Props) => {
   const [orderBy, setOrderBy] = useState<null | boolean>(
     settings && typeof settings.orderBy !== 'undefined'
       ? settings.orderBy
-      : false
+      : true
   );
   const [layoutType, setLayoutType] = useState<string>(
     settings && settings.layoutType ? settings.layoutType : 'grid'
@@ -457,6 +457,8 @@ const GridPerspective = (props: Props) => {
             ...selectedEntries.filter(entry => entry.uuid !== fsEntry.uuid),
             fsEntry
           ]);
+        } else {
+          props.setSelectedEntries([fsEntry]);
         }
         setFileContextMenuAnchorEl(event.currentTarget);
         // selectedEntry.current = fsEntry;
