@@ -78,7 +78,7 @@ describe('TST50 - Perspective Grid', () => {
       await global.client.pause(500);
     });
 
-    test('TST10** - Sort by name [web,minio,electron]', async () => {
+    test('TST10xx - Sort by name [web,minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortByName]');
       await global.client.pause(500); // TODO
       let firstFileName = await getGridFileName(0);
@@ -92,14 +92,14 @@ describe('TST50 - Perspective Grid', () => {
       expect(firstFileName).toBe('sample_exif.jpg');
     });
 
-    test('TST10** - Sort by size [web,minio,electron]', async () => {
+    test('TST10xx - Sort by size [web,minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortBySize]');
       await global.client.pause(500); // TODO
       const firstFileName = await getGridFileName(0);
       expect(firstFileName).toBe('sample.ogv');
     });
 
-    test('TST10** - Sort by date [web,minio,electron]', async () => {
+    test('TST10xx - Sort by date [web,minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortByDate]');
       await global.client.pause(500); //TODO
 
@@ -117,14 +117,14 @@ describe('TST50 - Perspective Grid', () => {
       // expect(firstFileName).not.toBe('note.txt'); TODO its have note.txt from another tests
     });
 
-    test('TST10** - Sort by extension [web,minio,electron]', async () => {
+    test('TST10xx - Sort by extension [web,minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortByExt]');
       await global.client.pause(1000); // TODO
       const firstFileName = await getGridFileName(0);
       expect(firstFileName).toBe('sample.zip');
     });
 
-    test('TST10** - Sort by tags [web,minio,electron]', async () => {
+    test('TST10xx - Sort by tags [web,minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortByFirstTag]');
       await global.client.pause(1000); // TODO
       const firstFileName = await getGridFileName(0);

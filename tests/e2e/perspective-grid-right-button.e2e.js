@@ -279,7 +279,8 @@ describe('TST50** - Right button on a file', () => {
    */
   test('TST5028 - Move - Copy file (file menu) [minio,electron]', async () => {
     // Move file in child folder
-    await searchEngine('eml');
+    const fileExtension = 'pdf'; //'eml' -> todo search found extra files (.gitkeep) with fuseOptions = {threshold: 0.4,
+    await searchEngine(fileExtension);
     await openContextEntryMenu(
       perspectiveGridTable + firstFile,
       'fileMenuMoveCopyFile'
@@ -294,9 +295,9 @@ describe('TST50** - Right button on a file', () => {
     await clickOn('#clearSearchID');
     await global.client.pause(500);
     await doubleClickOn(perspectiveGridTable + firstFolder);
-    await searchEngine('eml', { reindexing: true }); // TODO temp fix: https://trello.com/c/ZfcGGvOM/527-moved-files-is-not-indexing-not-found-in-search
+    await searchEngine(fileExtension, { reindexing: true }); // TODO temp fix: https://trello.com/c/ZfcGGvOM/527-moved-files-is-not-indexing-not-found-in-search
     let firstFileName = await getGridFileName(0);
-    expect(firstFileName).toBe('sample.eml');
+    expect(firstFileName).toBe('sample.' + fileExtension);
 
     //Copy file in parent directory
     await openContextEntryMenu(
@@ -309,9 +310,9 @@ describe('TST50** - Right button on a file', () => {
     await clickOn('#clearSearchID');
     await clickOn('[data-tid=gridPerspectiveOnBackButton]');
     await global.client.pause(500);
-    await searchEngine('eml');
+    await searchEngine(fileExtension);
     firstFileName = await getGridFileName(0);
-    expect(firstFileName).toBe('sample.eml');
+    expect(firstFileName).toBe('sample.' + fileExtension);
 
     // cleanup
     await deleteFileFromMenu();
