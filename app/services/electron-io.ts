@@ -323,8 +323,9 @@ export default class ElectronIO {
                 const folderMetaPath =
                   eentry.path +
                   AppConfig.dirSeparator +
-                  AppConfig.metaFolder +
-                  AppConfig.dirSeparator +
+                  (!eentry.path.includes('/' + AppConfig.metaFolder)
+                    ? AppConfig.metaFolder + AppConfig.dirSeparator
+                    : '') +
                   AppConfig.metaFolderFile;
                 try {
                   const folderMeta = this.fs.readJsonSync(folderMetaPath);
