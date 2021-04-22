@@ -568,10 +568,7 @@ export default class ObjectStoreIO {
   }
 
   normalizeRootPath(filePath: string) {
-    filePath = filePath.replace(
-      new RegExp(AppConfig.dirSeparator + AppConfig.dirSeparator + '+', 'g'),
-      '/'
-    );
+    filePath = filePath.replace(new RegExp('//+', 'g'), '/');
     /* if(filePath.indexOf(AppConfig.dirSeparator) === 0){
       filePath = filePath.substr(AppConfig.dirSeparator.length);
     } */
@@ -701,6 +698,7 @@ export default class ObjectStoreIO {
 
   /**
    * Renames a given file (tested)
+   * TODO for web minio copyObject -> The request signature we calculated does not match the signature you provided. Check your key and signing method.
    */
   renameFilePromise = (
     filePath: string,
