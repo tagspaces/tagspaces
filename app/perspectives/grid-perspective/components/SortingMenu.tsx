@@ -48,7 +48,7 @@ const SortingMenu = (props: Props) => {
       >
         <ListItemIcon style={{ minWidth: 25 }}>
           {sortBy === 'byName' &&
-            (orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />)}
+            (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:fileTitle')} />
       </MenuItem>
@@ -60,7 +60,7 @@ const SortingMenu = (props: Props) => {
       >
         <ListItemIcon style={{ minWidth: 25 }}>
           {sortBy === 'byFileSize' &&
-            (orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />)}
+            (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:fileSize')} />
       </MenuItem>
@@ -72,7 +72,7 @@ const SortingMenu = (props: Props) => {
       >
         <ListItemIcon style={{ minWidth: 25 }}>
           {sortBy === 'byDateModified' &&
-            (orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />)}
+            (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:fileLDTM')} />
       </MenuItem>
@@ -84,7 +84,7 @@ const SortingMenu = (props: Props) => {
       >
         <ListItemIcon style={{ minWidth: 25 }}>
           {sortBy === 'byFirstTag' &&
-            (orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />)}
+            (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:fileFirstTag')} />
       </MenuItem>
@@ -96,7 +96,7 @@ const SortingMenu = (props: Props) => {
       >
         <ListItemIcon style={{ minWidth: 25 }}>
           {sortBy === 'byExtension' &&
-            (orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />)}
+            (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:fileExtension')} />
       </MenuItem>

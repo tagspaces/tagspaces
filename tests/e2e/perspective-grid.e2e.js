@@ -79,23 +79,32 @@ describe('TST50 - Perspective Grid', () => {
     });
 
     test('TST10xx - Sort by name [web,minio,electron]', async () => {
+      //DESC
       await clickOn('[data-tid=gridPerspectiveSortByName]');
       await global.client.pause(500); // TODO
       let firstFileName = await getGridFileName(0);
-      expect(firstFileName).toBe('sample.bmp');
+      expect(firstFileName).toBe('sample_exif.jpg');
       // ASC
       await clickOn('[data-tid=gridPerspectiveSortMenu]');
       await global.client.pause(500);
       await clickOn('[data-tid=gridPerspectiveSortByName]');
       await global.client.pause(500); // TODO
       firstFileName = await getGridFileName(0);
-      expect(firstFileName).toBe('sample_exif.jpg');
+      expect(firstFileName).toBe('sample.bmp');
     });
 
     test('TST10xx - Sort by size [web,minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortBySize]');
       await global.client.pause(500); // TODO
-      const firstFileName = await getGridFileName(0);
+      let firstFileName = await getGridFileName(0);
+      expect(firstFileName).toBe('sample.desktop');
+
+      //ASC
+      await clickOn('[data-tid=gridPerspectiveSortMenu]');
+      await global.client.pause(500);
+      await clickOn('[data-tid=gridPerspectiveSortBySize]');
+      await global.client.pause(500); // TODO
+      firstFileName = await getGridFileName(0);
       expect(firstFileName).toBe('sample.ogv');
     });
 
@@ -107,7 +116,7 @@ describe('TST50 - Perspective Grid', () => {
       // await global.client.pause(500);
       let firstFileName = await getGridFileName(0);
 
-      expect(firstFileName).toBe('note.txt');
+      expect(firstFileName).toBe('sample.desktop'); //'note.txt');
 
       //cleanup
       // await setSettings('[data-tid=settingsSetUseTrashCan]');
@@ -120,14 +129,28 @@ describe('TST50 - Perspective Grid', () => {
     test('TST10xx - Sort by extension [web,minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortByExt]');
       await global.client.pause(1000); // TODO
-      const firstFileName = await getGridFileName(0);
+      let firstFileName = await getGridFileName(0);
+      expect(firstFileName).toBe('sample.bmp');
+
+      await clickOn('[data-tid=gridPerspectiveSortMenu]');
+      await global.client.pause(500);
+      await clickOn('[data-tid=gridPerspectiveSortByExt]');
+      await global.client.pause(500); // TODO
+      firstFileName = await getGridFileName(0);
       expect(firstFileName).toBe('sample.zip');
     });
 
     test('TST10xx - Sort by tags [web,minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortByFirstTag]');
       await global.client.pause(1000); // TODO
-      const firstFileName = await getGridFileName(0);
+      let firstFileName = await getGridFileName(0);
+      expect(firstFileName).toBe('sample.bmp');
+      //ASC
+      await clickOn('[data-tid=gridPerspectiveSortMenu]');
+      await global.client.pause(500);
+      await clickOn('[data-tid=gridPerspectiveSortByFirstTag]');
+      await global.client.pause(500); // TODO
+      firstFileName = await getGridFileName(0);
       expect(firstFileName).toBe('sample_exif.jpg');
     });
   });
