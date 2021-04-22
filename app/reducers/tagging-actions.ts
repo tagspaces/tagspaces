@@ -26,13 +26,13 @@ import {
   extractTags,
   extractTitle,
   extractContainingDirectoryPath
-} from '../utils/paths';
+} from '-/utils/paths';
 import {
   loadMetaDataPromise,
   saveMetaDataPromise,
   generateFileName
-} from '../services/utils-io';
-import { formatDateTime4Tag, isPlusCode } from '../utils/misc';
+} from '-/services/utils-io';
+import { formatDateTime4Tag, isPlusCode } from '-/utils/misc';
 import PlatformIO from '../services/platform-io';
 import { Pro } from '../pro';
 import GlobalSearch from '../services/search-index';

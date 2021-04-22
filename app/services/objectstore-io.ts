@@ -26,7 +26,8 @@ import {
   normalizePath,
   getThumbFileLocationForFile,
   getMetaFileLocationForFile,
-  extractFileExtension
+  extractFileExtension,
+  getMetaFileLocationForDir
 } from '-/utils/paths';
 import { FileSystemEntry } from '-/services/utils-io';
 
@@ -676,10 +677,16 @@ export default class ObjectStoreIO {
         Key: dirPath
       })
       .promise()
-      .then(result => ({
-        ...result,
-        dirPath
-      }));
+      .then(result => {
+        const metaFilePath = getMetaFileLocationForDir(dirPath, '/');
+        const metaContent = '{"id":"' + uuidv1() + '"}';
+        return this.saveTextFilePromise(metaFilePath, metaContent, false).then(
+          () => ({
+            ...result,
+            dirPath
+          })
+        );
+      });
   };
 
   /**

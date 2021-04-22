@@ -44,7 +44,6 @@ jasmine.getEnv().addReporter({
 });*/
 
 beforeAll(async () => {
-  testDataRefresh();
   await startSpectronApp();
 });
 
@@ -53,6 +52,7 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
+  testDataRefresh();
   if (jasmine.currentTest && jasmine.currentTest.status !== 'disabled') {
     // console.log('specDone Done' + JSON.stringify(result));
     if (jasmine.previousTest && jasmine.previousTest.status === 'failed') {

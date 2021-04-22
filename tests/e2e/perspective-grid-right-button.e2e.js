@@ -371,13 +371,13 @@ describe('TST50** - Right button on a file', () => {
       '[data-tid=fsEntryName_' + testFolder + ']',
       false
     );
+    // dir back to check if parent folder exist
+    await clickOn('[data-tid=gridPerspectiveOnBackButton]');
+    await expectElementExist(selectorFolder, true);
   });
 
   test('TST5036 - Open directory properties (directory menu) [web,minio,electron]', async () => {
-    await openContextEntryMenu(
-      perspectiveGridTable + firstFolder,
-      'showProperties'
-    );
+    await openContextEntryMenu(selectorFolder, 'showProperties');
     await expectElementExist('[data-tid=fileNameProperties]', true);
   });
 
