@@ -75,6 +75,10 @@ export default class ObjectStoreIO {
     });
 
   getURLforPath = (path: string, expirationInSeconds: number = 900): string => {
+    if (!this.objectStore) {
+      console.log('Object store not configured in getURLforPath');
+      return '';
+    }
     if (!path || path.length < 1) {
       console.warn('Wrong path param for getURLforPath');
       return '';
@@ -96,13 +100,13 @@ export default class ObjectStoreIO {
     window.close();
   };
 
-  listMetaDirectoryPromise = async (path: string): Promise<Array<any>> => {
-    const promise: Promise<Array<any>> = new Promise(resolve => {
+  listMetaDirectoryPromise = async (path: string): Promise<Array<any>> =>
+    new Promise(resolve => {
       const entries = [];
       let entry;
       if (!this.objectStore) {
         console.log('Object store not configured. Exiting');
-        return false;
+        return resolve(entries);
       }
 
       const normalizedPath = normalizePath(this.normalizeRootPath(path));
@@ -146,9 +150,6 @@ export default class ObjectStoreIO {
         return resolve(entries);
       });
     });
-    const result = await promise;
-    return result;
-  };
 
   listDirectoryPromise = (
     path: string,
@@ -156,16 +157,17 @@ export default class ObjectStoreIO {
   ): Promise<Array<Object>> =>
     new Promise(async resolve => {
       const enhancedEntries = [];
-      let entryPath;
-      let metaFolderPath;
-      let stats;
+      // let entryPath;
+      // let metaFolderPath;
+      // let stats;
       let eentry;
-      const containsMetaFolder = false;
+      // const containsMetaFolder = false;
       // const metaMetaFolder = AppConfig.metaFolder + AppConfig.dirSeparator + AppConfig.metaFolder;
 
       if (!this.objectStore) {
         console.log('Object store not configured. Exiting');
-        return false;
+        resolve(undefined); //enhancedEntries); empty dir is not the same with this state
+        return;
       }
 
       // this.listMetaDirectoryPromise(path).then((entries) => {
@@ -174,7 +176,10 @@ export default class ObjectStoreIO {
       // }).catch((error) => {
       //   console.warn('Error loading meta files: ' + JSON.stringify(error));
       // });
-      const metaContent = await this.listMetaDirectoryPromise(path);
+      let metaContent = [];
+      if (!lite) {
+        metaContent = await this.listMetaDirectoryPromise(path);
+      }
       // console.log('Meta folder content: ' + JSON.stringify(metaContent));
 
       const params = {
@@ -239,7 +244,9 @@ export default class ObjectStoreIO {
           if (eentry.path !== params.Prefix) {
             // skipping the current directory
             enhancedEntries.push(eentry);
-            metaPromises.push(this.getEntryMeta(eentry));
+            if (!lite) {
+              metaPromises.push(this.getEntryMeta(eentry));
+            }
           }
           if (window.walkCanceled) {
             resolve(enhancedEntries);
@@ -249,14 +256,15 @@ export default class ObjectStoreIO {
         // Handling files
         data.Contents.forEach(file => {
           // console.warn(JSON.stringify(file));
-          let thumbPath = getThumbFileLocationForFile(file.Key, '/');
-          const thumbAvailable = metaContent.find(
-            (obj: any) => obj.path === thumbPath
-          );
-          if (thumbAvailable) {
-            thumbPath = this.getURLforPath(thumbPath, 604800); // 60 * 60 * 24 * 7 = 1 week
-          } else {
-            thumbPath = '';
+          let thumbPath = '';
+          if (!lite) {
+            const thumbFilePath = getThumbFileLocationForFile(file.Key, '/');
+            const thumbAvailable = metaContent.find(
+              (obj: any) => obj.path === thumbFilePath
+            );
+            if (thumbAvailable) {
+              thumbPath = this.getURLforPath(thumbFilePath, 604800); // 60 * 60 * 24 * 7 = 1 week
+            }
           }
 
           eentry = {};
@@ -271,12 +279,14 @@ export default class ObjectStoreIO {
           if (file.Key !== params.Prefix) {
             // skipping the current folder
             enhancedEntries.push(eentry);
-            const metaFilePath = getMetaFileLocationForFile(file.Key, '/');
-            const metaFileAvailable = metaContent.find(
-              (obj: any) => obj.path === metaFilePath
-            );
-            if (metaFileAvailable) {
-              metaPromises.push(this.getEntryMeta(eentry));
+            if (!lite) {
+              const metaFilePath = getMetaFileLocationForFile(file.Key, '/');
+              const metaFileAvailable = metaContent.find(
+                (obj: any) => obj.path === metaFilePath
+              );
+              if (metaFileAvailable) {
+                metaPromises.push(this.getEntryMeta(eentry));
+              }
             }
           }
         });
