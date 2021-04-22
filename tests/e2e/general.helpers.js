@@ -192,7 +192,7 @@ export async function clearInputValue(inputElement) {
  */
 export async function getGridFileName(fileIndex) {
   try {
-    const filesList = await global.client.$$(perspectiveGridTable + firstFile);
+    const filesList = await global.client.$$(selectorFile);
     if (filesList.length > 0) {
       let file =
         fileIndex < 0

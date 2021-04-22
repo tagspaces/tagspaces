@@ -307,6 +307,9 @@ describe('TST50 - Perspective Grid', () => {
     await waitForNotification();
 
     await doubleClickOn(selectorFolder);
+    if (global.isWeb) {
+      await global.client.pause(500);
+    }
     const firstFileName = await getGridFileName(0);
     expect(firstFileName).toBe(sampleFileName);
     // cleanup
