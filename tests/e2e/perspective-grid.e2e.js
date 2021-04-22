@@ -114,9 +114,14 @@ describe('TST50 - Perspective Grid', () => {
 
       await createTxtFile();
       // await global.client.pause(500);
-      let firstFileName = await getGridFileName(0);
 
-      expect(firstFileName).toBe('sample.desktop'); //'note.txt');
+      // ASC
+      await clickOn('[data-tid=gridPerspectiveSortMenu]');
+      await global.client.pause(500);
+      await clickOn('[data-tid=gridPerspectiveSortByDate]');
+
+      let firstFileName = await getGridFileName(0);
+      expect(firstFileName).toBe('note.txt');
 
       //cleanup
       // await setSettings('[data-tid=settingsSetUseTrashCan]');

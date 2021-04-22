@@ -372,8 +372,8 @@ describe('TST50** - Right button on a file', () => {
       false
     );
     // dir back to check if parent folder exist
-    await clickOn('[data-tid=gridPerspectiveOnBackButton]');
-    await expectElementExist(selectorFolder, true);
+    // await clickOn('[data-tid=gridPerspectiveOnBackButton]');
+    // await expectElementExist(selectorFolder, true);
   });
 
   test('TST5036 - Open directory properties (directory menu) [web,minio,electron]', async () => {
