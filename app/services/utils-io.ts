@@ -488,7 +488,7 @@ export function walkDirectory(
     PlatformIO.listDirectoryPromise(path, false, mergedOptions.extractText)
       // @ts-ignore
       .then(entries => {
-        if (window.walkCanceled) {
+        if (window.walkCanceled || entries === undefined) {
           return false;
         }
         return Promise.all(
@@ -639,11 +639,26 @@ export async function loadSubFolders(
   const subfolders = [];
   let i = 0;
   let isHidden = false;
-  folderContent.map(entry => {
-    if (!entry.isFile) {
-      isHidden = entry.name.startsWith('.');
-      if (isHidden) {
-        if (loadHidden) {
+  if (folderContent !== undefined) {
+    folderContent.map(entry => {
+      if (!entry.isFile) {
+        isHidden = entry.name.startsWith('.');
+        if (isHidden) {
+          if (loadHidden) {
+            subfolders.push({
+              key: '0-' + (i += 1),
+              isLeaf: false,
+              name: entry.name,
+              isFile: entry.isFile,
+              lmdt: entry.lmdt,
+              meta: entry.meta,
+              path: entry.path,
+              tags: entry.tags
+            });
+          } else {
+            // do nothing
+          }
+        } else {
           subfolders.push({
             key: '0-' + (i += 1),
             isLeaf: false,
@@ -654,24 +669,11 @@ export async function loadSubFolders(
             path: entry.path,
             tags: entry.tags
           });
-        } else {
-          // do nothing
         }
-      } else {
-        subfolders.push({
-          key: '0-' + (i += 1),
-          isLeaf: false,
-          name: entry.name,
-          isFile: entry.isFile,
-          lmdt: entry.lmdt,
-          meta: entry.meta,
-          path: entry.path,
-          tags: entry.tags
-        });
       }
-    }
-    return true;
-  });
+      return true;
+    });
+  }
   return subfolders;
 }
 

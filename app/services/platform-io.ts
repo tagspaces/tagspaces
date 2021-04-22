@@ -140,6 +140,12 @@ export default class PlatformIO {
     tmbGenerationList: Array<string>
   ): Promise<any> => nativeAPI.createThumbnailsInWorker(tmbGenerationList);
 
+  /**
+   * Promise === undefined on error
+   * @param path
+   * @param lite
+   * @param extractText
+   */
   static listDirectoryPromise = (
     path: string,
     lite: boolean = true,
@@ -237,11 +243,8 @@ export default class PlatformIO {
     newFilePath: string
   ): Promise<any> => {
     if (objectStoreAPI) {
-      return objectStoreAPI
-        .renameFilePromise(filePath, newFilePath)
-        .then(result => {
-          return result;
-        });
+      return objectStoreAPI.renameFilePromise(filePath, newFilePath);
+      // .then(result => result);
     }
     PlatformIO.ignoreByWatcher(filePath, newFilePath);
 

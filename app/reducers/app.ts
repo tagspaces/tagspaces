@@ -927,14 +927,16 @@ export const actions = {
     dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
     PlatformIO.listDirectoryPromise(directoryPath, false)
       .then(results => {
-        prepareDirectoryContent(
-          results,
-          directoryPath,
-          settings,
-          dispatch,
-          getState,
-          fsEntryMeta
-        );
+        if (results !== undefined) {
+          prepareDirectoryContent(
+            results,
+            directoryPath,
+            settings,
+            dispatch,
+            getState,
+            fsEntryMeta
+          );
+        }
         return true;
       })
       .catch(error => {
@@ -2038,8 +2040,7 @@ export const actions = {
 };
 
 // Selectors
-export const currentUser = (state: any) =>
-  state.app.user;
+export const currentUser = (state: any) => state.app.user;
 export const getDirectoryContent = (state: any) =>
   state.app.currentDirectoryEntries;
 export const getCurrentDirectoryColor = (state: any) =>

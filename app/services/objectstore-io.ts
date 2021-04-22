@@ -166,7 +166,7 @@ export default class ObjectStoreIO {
 
       if (!this.objectStore) {
         console.log('Object store not configured. Exiting');
-        resolve(enhancedEntries);
+        resolve(undefined); //enhancedEntries); empty dir is not the same with this state
         return;
       }
 
@@ -258,12 +258,12 @@ export default class ObjectStoreIO {
           // console.warn(JSON.stringify(file));
           let thumbPath = '';
           if (!lite) {
-            let thumbPath = getThumbFileLocationForFile(file.Key, '/');
+            const thumbFilePath = getThumbFileLocationForFile(file.Key, '/');
             const thumbAvailable = metaContent.find(
-              (obj: any) => obj.path === thumbPath
+              (obj: any) => obj.path === thumbFilePath
             );
             if (thumbAvailable) {
-              thumbPath = this.getURLforPath(thumbPath, 604800); // 60 * 60 * 24 * 7 = 1 week
+              thumbPath = this.getURLforPath(thumbFilePath, 604800); // 60 * 60 * 24 * 7 = 1 week
             }
           }
 
