@@ -100,7 +100,7 @@ export async function addInputKeys(tid, value) {
   const element = await global.client.$('[data-tid=' + tid + ']');
   await element.waitUntil(
     async function() {
-      const displayed = await this.isDisplayed(); // isDisplayedInViewport();
+      const displayed = await this.isDisplayedInViewport();
       return displayed === true;
     },
     {
@@ -115,7 +115,7 @@ export async function addInputKeys(tid, value) {
   await elemInput.waitUntil(
     async function() {
       // const displayed = await this.isDisplayed();
-      const displayed = await this.isDisplayed(); // isDisplayedInViewport();
+      const displayed = await this.isDisplayedInViewport();
       return displayed === true;
     },
     {

@@ -472,6 +472,8 @@ const GridPerspective = (props: Props) => {
           ...selectedEntries.filter(entry => entry.uuid !== fsEntry.uuid),
           fsEntry
         ]);
+      } else {
+        props.setSelectedEntries([fsEntry]);
       }
       // selectedEntry.current = fsEntry;
       setDirContextMenuAnchorEl(event.currentTarget);

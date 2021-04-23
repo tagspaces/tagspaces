@@ -528,5 +528,6 @@
   "verifyTOTP": "Verify",
   "TOTPEnabled": "TOTP Is Enabled",
   "disableTOTP": "disable TOTP",
+  "confirmResetColor": "Are you sure that you want to reset background color?",
   "-": "-"
 }
