@@ -1589,6 +1589,9 @@ export const actions = {
     if (fsEntry.perspective) {
       entryForOpening.perspective = fsEntry.perspective;
     }
+    if (fsEntry.color) {
+      entryForOpening.color = fsEntry.color;
+    }
     if (fsEntry.description) {
       entryForOpening.description = fsEntry.description;
     }
