@@ -857,12 +857,12 @@ export async function saveMetaDataPromise(
         PlatformIO.getDirSeparator()
       );
       // check and create meta folder if not exist
-      await PlatformIO.createDirectoryPromise(
+      /* await PlatformIO.createDirectoryPromise(
         extractContainingDirectoryPath(
           metaFilePath,
           PlatformIO.getDirSeparator()
         )
-      );
+      ); */
     } else {
       // check and create meta folder if not exist
       // todo not need to check if folder exist first createDirectoryPromise() recursively will skip creation of existing folders https://nodejs.org/api/fs.html#fs_fs_mkdir_path_options_callback

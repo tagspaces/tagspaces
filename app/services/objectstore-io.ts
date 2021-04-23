@@ -678,13 +678,17 @@ export default class ObjectStoreIO {
       })
       .promise()
       .then(result => {
+        const out = {
+          ...result,
+          dirPath
+        };
+        if (dirPath.endsWith(AppConfig.metaFolder + '/')) {
+          return out;
+        }
         const metaFilePath = getMetaFileLocationForDir(dirPath, '/');
         const metaContent = '{"id":"' + uuidv1() + '"}';
         return this.saveTextFilePromise(metaFilePath, metaContent, false).then(
-          () => ({
-            ...result,
-            dirPath
-          })
+          () => out
         );
       });
   };

@@ -67,6 +67,9 @@ export function getMetaDirectoryPath(
   directoryPath: string,
   dirSeparator: string // = AppConfig.dirSeparator
 ) {
+  if (directoryPath.endsWith(AppConfig.metaFolder + dirSeparator)) {
+    return directoryPath;
+  }
   return (
     (directoryPath ? normalizePath(directoryPath) + dirSeparator : '') +
     AppConfig.metaFolder
