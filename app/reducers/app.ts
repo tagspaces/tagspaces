@@ -1247,7 +1247,7 @@ export const actions = {
           getAllPropertiesPromise(filePath)
             .then((fsEntry: FileSystemEntry) => {
               dispatch(actions.openFsEntry(fsEntry)); // TODO return fsEntry from saveFilePromise and simplify
-              dispatch(actions.setSelectedEntries([fsEntry]));
+              // dispatch(actions.setSelectedEntries([fsEntry])); -> moved in reflectCreateEntry
               return true;
             })
             .catch(error =>
@@ -1690,6 +1690,7 @@ export const actions = {
       lmdt: new Date().getTime(),
       path
     };
+    dispatch(actions.setSelectedEntries([newEntry]));
     dispatch(actions.reflectCreateEntryInt(newEntry));
     dispatch(LocationIndexActions.reflectCreateEntry(newEntry));
   },

@@ -67,6 +67,9 @@ export function getMetaDirectoryPath(
   directoryPath: string,
   dirSeparator: string // = AppConfig.dirSeparator
 ) {
+  if (directoryPath.endsWith(AppConfig.metaFolder + dirSeparator)) {
+    return directoryPath;
+  }
   return (
     (directoryPath ? normalizePath(directoryPath) + dirSeparator : '') +
     AppConfig.metaFolder
@@ -322,6 +325,22 @@ export function extractTitle(
     console.warn('Decoding URI failed on: ' + title + ' with ' + e);
   }
   return title;
+}
+
+/**
+ * Remove Tags from fileName
+ * @param fileName
+ */
+export function cleanFileName(fileName: string) {
+  const beginTagContainer = fileName.indexOf(AppConfig.beginTagContainer);
+  const endTagContainer = fileName.lastIndexOf(AppConfig.endTagContainer);
+  if (beginTagContainer >= 0 && beginTagContainer < endTagContainer) {
+    return (
+      fileName.slice(0, beginTagContainer) +
+      fileName.slice(endTagContainer + 1, fileName.length)
+    );
+  }
+  return fileName;
 }
 
 export function extractTagsAsObjects(

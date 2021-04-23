@@ -15,5 +15,6 @@ coverage
 tests/testdata
 tests/testdata-tmp
 tests/file-structure
+tests/bin
 .ycache
 app/aws-exports.js
