@@ -90,6 +90,25 @@ export function getMetaFileLocationForFile(
   );
 }
 
+export function getFileLocationFromMetaFile(
+  entryPath: string,
+  dirSeparator: string // = AppConfig.dirSeparator
+) {
+  let containingFolder = extractContainingDirectoryPath(
+    entryPath,
+    dirSeparator
+  );
+  containingFolder = containingFolder.replace(
+    dirSeparator + AppConfig.metaFolder,
+    ''
+  );
+  const fileName = extractFileName(entryPath, dirSeparator).replace(
+    AppConfig.metaFileExt,
+    ''
+  );
+  return containingFolder + dirSeparator + fileName;
+}
+
 export function getThumbFileLocationForFile(
   entryPath: string,
   dirSeparator: string // = AppConfig.dirSeparator
@@ -113,7 +132,7 @@ export function getThumbFileLocationForDirectory(
 ) {
   return (
     entryPath +
-    dirSeparator +
+    (entryPath.endsWith(dirSeparator) ? '' : dirSeparator) +
     AppConfig.metaFolder +
     dirSeparator +
     AppConfig.folderThumbFile

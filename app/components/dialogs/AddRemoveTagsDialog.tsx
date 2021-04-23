@@ -16,13 +16,14 @@
  *
  */
 
-import React from 'react';
-import uuidv1 from 'uuid';
+import React, { useState } from 'react';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+// import IconButton from '@material-ui/core/IconButton';
+// import CloseIcon from '@material-ui/icons/Close';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -45,167 +46,141 @@ interface Props {
   removeAllTags: (paths: Array<string>) => void;
 }
 
-interface State {
-  disableConfirmButton: boolean;
-  open: boolean;
-  newlyAddedTags: Array<Tag>;
-  isConfirmDialogOpened: boolean;
-}
+const AddRemoveTagsDialog = (props: Props) => {
+  const [newlyAddedTags, setNewlyAddedTags] = useState<Array<Tag>>([]);
 
-class AddRemoveTagsDialog extends React.Component<Props, State> {
-  state = {
-    disableConfirmButton: true,
-    newlyAddedTags: [],
-    open: false,
-    isConfirmDialogOpened: false
-  };
-
-  handleChange = (name: string, value: Array<Tag>, action: string) => {
+  const handleChange = (name: string, value: Array<Tag>, action: string) => {
     if (action === 'remove-value') {
       const tagsToRemove: Array<string> = value.map(tag => tag.title);
-      // eslint-disable-next-line react/no-access-state-in-setstate
-      const newlyAddedTags = this.state.newlyAddedTags.filter(
-        tag => !tagsToRemove.includes(tag.title)
+      setNewlyAddedTags(
+        newlyAddedTags.filter(tag => !tagsToRemove.includes(tag.title))
       );
-      this.setState({
-        newlyAddedTags
-      });
     } else {
-      this.setState({
-        newlyAddedTags: value
-      });
+      setNewlyAddedTags(value);
     }
   };
 
-  onClose = (clearSelection?: boolean) => {
-    this.setState({ newlyAddedTags: [] });
-    this.props.onClose(clearSelection);
+  const onCloseDialog = (clearSelection?: boolean) => {
+    setNewlyAddedTags([]);
+    props.onClose(clearSelection);
   };
 
-  addTags = () => {
-    if (this.props.selectedEntries && this.props.selectedEntries.length > 0) {
-      const paths = [];
-      this.props.selectedEntries.map(entry => {
-        paths.push(entry.path);
-        return true;
-      });
-      this.props.addTags(paths, this.state.newlyAddedTags);
+  const addTags = () => {
+    if (props.selectedEntries && props.selectedEntries.length > 0) {
+      props.addTags(
+        selectedEntries.map(entry => entry.path),
+        newlyAddedTags
+      );
     }
-    this.onClose(true);
+    onCloseDialog(true);
   };
 
-  removeTags = () => {
-    const { selectedEntries = [], removeTags } = this.props;
-    const { newlyAddedTags = [] } = this.state;
+  const removeTags = () => {
+    const { selectedEntries } = props;
     if (selectedEntries && selectedEntries.length > 0) {
-      const paths = [];
-      selectedEntries.map(entry => {
-        paths.push(entry.path);
-        return true;
-      });
-      removeTags(paths, newlyAddedTags);
+      props.removeTags(
+        selectedEntries.map(entry => entry.path),
+        newlyAddedTags
+      );
     }
-    this.onClose(true);
+    onCloseDialog(true);
   };
 
-  removeAllTags = () => {
-    const { selectedEntries = [], removeAllTags } = this.props;
+  const removeAllTags = () => {
+    const { selectedEntries } = props;
     if (selectedEntries && selectedEntries.length > 0) {
-      const paths = [];
-      selectedEntries.map(entry => {
-        paths.push(entry.path);
-        return true;
-      });
-      removeAllTags(paths);
+      props.removeAllTags(selectedEntries.map(entry => entry.path));
     }
-    this.onClose(true);
+    onCloseDialog(true);
   };
 
-  render() {
-    const {
-      open,
-      selectedEntries = [],
-      removeTags,
-      removeAllTags,
-      fullScreen,
-      onClose
-    } = this.props;
-    const { newlyAddedTags = [] } = this.state;
-    const disabledButtons =
-      !newlyAddedTags ||
-      newlyAddedTags.length < 1 ||
-      selectedEntries.length < 1;
+  const { open, selectedEntries = [], fullScreen, onClose } = props;
+  const disabledButtons =
+    !newlyAddedTags || newlyAddedTags.length < 1 || selectedEntries.length < 1;
 
-    return (
-      <Dialog
-        open={open}
-        fullScreen={fullScreen}
-        onClose={onClose}
-        keepMounted
-        scroll="paper"
-      >
-        <DialogTitle>{i18n.t('core:tagOperationTitle')}</DialogTitle>
-        <DialogContent style={{ minHeight: 330 }}>
-          <TagsSelect
-            dataTid="AddRemoveTagsSelectTID"
-            placeholderText={i18n.t('core:selectTags')}
-            tags={newlyAddedTags}
-            handleChange={this.handleChange}
-            tagMode="remove"
-          />
-          <List dense style={{ width: 550 }}>
-            {selectedEntries.length > 0 &&
-              selectedEntries.map(entry => (
-                <ListItem key={uuidv1()} title={entry.path}>
-                  <ListItemIcon>
-                    <FileIcon />
-                  </ListItemIcon>
-                  <Typography variant="inherit" noWrap>
-                    {extractFileName(
-                      entry.path || '',
-                      PlatformIO.getDirSeparator()
-                    )}
-                  </Typography>
-                </ListItem>
-              ))}
-          </List>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            data-tid="cancelTagsMultipleEntries"
-            onClick={() => this.onClose()}
-            color="primary"
-          >
-            {i18n.t('core:cancel')}
-          </Button>
-          <Button
-            data-tid="cleanTagsMultipleEntries"
-            disabled={selectedEntries.length < 1}
-            color="primary"
-            onClick={this.removeAllTags}
-          >
-            {i18n.t('core:tagOperationCleanTags')}
-          </Button>
-          <Button
-            data-tid="removeTagsMultipleEntries"
-            disabled={disabledButtons}
-            color="primary"
-            onClick={this.removeTags}
-          >
-            {i18n.t('core:tagOperationRemoveTag')}
-          </Button>
-          <Button
-            data-tid="addTagsMultipleEntries"
-            disabled={disabledButtons}
-            color="primary"
-            onClick={this.addTags}
-          >
-            {i18n.t('core:tagOperationAddTag')}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
-}
+  return (
+    <Dialog
+      open={open}
+      fullScreen={fullScreen}
+      onClose={onClose}
+      keepMounted
+      scroll="paper"
+    >
+      <DialogTitle>
+        {i18n.t('core:tagOperationTitle')}
+        {/* <IconButton
+          aria-label="close"
+          style={{
+            position: 'absolute',
+            right: 5,
+            top: 5
+          }}
+          onClick={onCloseDialog}
+        >
+          <CloseIcon />
+        </IconButton> */}
+      </DialogTitle>
+      <DialogContent style={{ minHeight: 330 }}>
+        <TagsSelect
+          dataTid="AddRemoveTagsSelectTID"
+          placeholderText={i18n.t('core:selectTags')}
+          tags={newlyAddedTags}
+          handleChange={handleChange}
+          tagMode="remove"
+          autoFocus={true}
+        />
+        <List dense style={{ width: 550 }}>
+          {selectedEntries.length > 0 &&
+            selectedEntries.map(entry => (
+              <ListItem key={entry.path} title={entry.path}>
+                <ListItemIcon>
+                  <FileIcon />
+                </ListItemIcon>
+                <Typography variant="inherit" noWrap>
+                  {extractFileName(
+                    entry.path || '',
+                    PlatformIO.getDirSeparator()
+                  )}
+                </Typography>
+              </ListItem>
+            ))}
+        </List>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          data-tid="cancelTagsMultipleEntries"
+          onClick={() => onCloseDialog()}
+          color="primary"
+        >
+          {i18n.t('core:cancel')}
+        </Button>
+        <Button
+          data-tid="cleanTagsMultipleEntries"
+          disabled={selectedEntries.length < 1}
+          color="primary"
+          onClick={removeAllTags}
+        >
+          {i18n.t('core:tagOperationCleanTags')}
+        </Button>
+        <Button
+          data-tid="removeTagsMultipleEntries"
+          disabled={disabledButtons}
+          color="primary"
+          onClick={removeTags}
+        >
+          {i18n.t('core:tagOperationRemoveTag')}
+        </Button>
+        <Button
+          data-tid="addTagsMultipleEntries"
+          disabled={disabledButtons}
+          color="primary"
+          onClick={addTags}
+        >
+          {i18n.t('core:tagOperationAddTag')}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
 
 export default withMobileDialog()(AddRemoveTagsDialog);

@@ -39,6 +39,7 @@ export default class PlatformIO {
           objectStoreAPI.config.secretAccessKey ===
             objectStoreConfig.secretAccessKey &&
           objectStoreAPI.config.region === objectStoreConfig.region &&
+          objectStoreAPI.config.endpointURL === objectStoreConfig.endpointURL &&
           objectStoreAPI.config.accessKeyId === objectStoreConfig.accessKeyId
         ) {
           resolve();
@@ -117,12 +118,13 @@ export default class PlatformIO {
 
   static getUserHomePath = (): string => nativeAPI.getUserHomePath();
 
-  static getURLforPath = (path: string): string => {
+  static getURLforPath = (
+    path: string,
+    expirationInSeconds?: number
+  ): string => {
     if (objectStoreAPI) {
-      return objectStoreAPI.getURLforPath(path);
+      return objectStoreAPI.getURLforPath(path, expirationInSeconds);
     }
-    // console.log('getURLforPath not supported');
-    // return path;
   };
 
   static createDirectoryTree = (directoryPath: string): Object =>
@@ -138,6 +140,12 @@ export default class PlatformIO {
     tmbGenerationList: Array<string>
   ): Promise<any> => nativeAPI.createThumbnailsInWorker(tmbGenerationList);
 
+  /**
+   * Promise === undefined on error
+   * @param path
+   * @param lite
+   * @param extractText
+   */
   static listDirectoryPromise = (
     path: string,
     lite: boolean = true,
@@ -156,21 +164,78 @@ export default class PlatformIO {
     return nativeAPI.getPropertiesPromise(path);
   };
 
+  static ignoreByWatcher = (...paths) => {
+    if (Pro && Pro.Watcher && Pro.Watcher.isWatching()) {
+      for (let i = 0; i < paths.length; i += 1) {
+        Pro.Watcher.addToIgnored(paths[i]);
+      }
+    }
+  };
+
+  static deignoreByWatcher = (...paths) => {
+    if (Pro && Pro.Watcher && Pro.Watcher.isWatching()) {
+      for (let i = 0; i < paths.length; i += 1) {
+        Pro.Watcher.removeFromIgnored(paths[i]);
+      }
+    }
+  };
+
   static createDirectoryPromise = (dirPath: string): Promise<any> => {
     if (objectStoreAPI) {
       return objectStoreAPI.createDirectoryPromise(dirPath);
     }
-    return nativeAPI.createDirectoryPromise(dirPath);
+    PlatformIO.ignoreByWatcher(dirPath);
+
+    return nativeAPI.createDirectoryPromise(dirPath).then(result => {
+      PlatformIO.deignoreByWatcher(dirPath);
+      return result;
+    });
   };
 
-  static copyFilePromise = (
+  static copyFilePromise = async (
+    sourceFilePath: string,
+    targetFilePath: string,
+    confirmMessage: string = 'File ' +
+      targetFilePath +
+      ' exist do you want to override it?'
+  ): Promise<any> => {
+    const isTargetExist = await PlatformIO.getPropertiesPromise(targetFilePath); // TODO rethink to create PlatformIO.isExistSync function
+    if (isTargetExist) {
+      // eslint-disable-next-line no-alert
+      const confirmOverwrite = window.confirm(confirmMessage);
+      if (confirmOverwrite === true) {
+        return PlatformIO.copyFilePromiseOverwrite(
+          sourceFilePath,
+          targetFilePath
+        );
+      }
+      // eslint-disable-next-line prefer-promise-reject-errors
+      return Promise.reject(
+        'File "' + targetFilePath + '" exists. Copying failed.'
+      );
+    }
+    return PlatformIO.copyFilePromiseOverwrite(sourceFilePath, targetFilePath);
+  };
+
+  /**
+   * @param sourceFilePath
+   * @param targetFilePath - if exist overwrite it
+   */
+  static copyFilePromiseOverwrite = (
     sourceFilePath: string,
     targetFilePath: string
   ): Promise<any> => {
     if (objectStoreAPI) {
       return objectStoreAPI.copyFilePromise(sourceFilePath, targetFilePath);
     }
-    return nativeAPI.copyFilePromise(sourceFilePath, targetFilePath);
+    PlatformIO.ignoreByWatcher(targetFilePath);
+
+    return nativeAPI
+      .copyFilePromise(sourceFilePath, targetFilePath)
+      .then(result => {
+        PlatformIO.deignoreByWatcher(targetFilePath);
+        return result;
+      });
   };
 
   static renameFilePromise = (
@@ -179,8 +244,14 @@ export default class PlatformIO {
   ): Promise<any> => {
     if (objectStoreAPI) {
       return objectStoreAPI.renameFilePromise(filePath, newFilePath);
+      // .then(result => result);
     }
-    return nativeAPI.renameFilePromise(filePath, newFilePath);
+    PlatformIO.ignoreByWatcher(filePath, newFilePath);
+
+    return nativeAPI.renameFilePromise(filePath, newFilePath).then(result => {
+      PlatformIO.deignoreByWatcher(filePath, newFilePath);
+      return result;
+    });
   };
 
   static renameDirectoryPromise = (
@@ -188,12 +259,16 @@ export default class PlatformIO {
     newDirName: string
   ): Promise<any> => {
     if (objectStoreAPI) {
-      // return objectStoreAPI.renameDirectoryPromise(dirPath, newDirName);
-      return Promise.reject(
-        'Renaming directories not supported on this platform'
-      );
+      return objectStoreAPI.renameDirectoryPromise(dirPath, newDirName);
     }
-    return nativeAPI.renameDirectoryPromise(dirPath, newDirName);
+    PlatformIO.ignoreByWatcher(dirPath, newDirName);
+
+    return nativeAPI
+      .renameDirectoryPromise(dirPath, newDirName)
+      .then(result => {
+        PlatformIO.deignoreByWatcher(dirPath, newDirName);
+        return result;
+      });
   };
 
   static loadTextFilePromise = (
@@ -224,7 +299,14 @@ export default class PlatformIO {
     if (objectStoreAPI) {
       return objectStoreAPI.saveFilePromise(filePath, content, overwrite);
     }
-    return nativeAPI.saveFilePromise(filePath, content, overwrite);
+    PlatformIO.ignoreByWatcher(filePath);
+
+    return nativeAPI
+      .saveFilePromise(filePath, content, overwrite)
+      .then(result => {
+        PlatformIO.deignoreByWatcher(filePath);
+        return result;
+      });
   };
 
   static saveTextFilePromise = (
@@ -235,7 +317,15 @@ export default class PlatformIO {
     if (objectStoreAPI) {
       return objectStoreAPI.saveTextFilePromise(filePath, content, overwrite);
     }
-    return nativeAPI.saveTextFilePromise(filePath, content, overwrite);
+
+    PlatformIO.ignoreByWatcher(filePath);
+
+    return nativeAPI
+      .saveTextFilePromise(filePath, content, overwrite)
+      .then(result => {
+        PlatformIO.deignoreByWatcher(filePath);
+        return result;
+      });
   };
 
   static saveBinaryFilePromise = (
@@ -255,12 +345,15 @@ export default class PlatformIO {
         onUploadProgress
       );
     }
+    PlatformIO.ignoreByWatcher(filePath);
+
     return nativeAPI
       .saveBinaryFilePromise(filePath, content, overwrite)
       .then(succeeded => {
         if (succeeded && onUploadProgress) {
           onUploadProgress({ key: filePath, loaded: 1, total: 1 }, undefined);
         }
+        PlatformIO.deignoreByWatcher(filePath);
         return succeeded;
       });
   };
@@ -272,7 +365,12 @@ export default class PlatformIO {
     if (objectStoreAPI) {
       return objectStoreAPI.deleteFilePromise(path, useTrash);
     }
-    return nativeAPI.deleteFilePromise(path, useTrash);
+    PlatformIO.ignoreByWatcher(path);
+
+    return nativeAPI.deleteFilePromise(path, useTrash).then(result => {
+      PlatformIO.deignoreByWatcher(path);
+      return result;
+    });
   };
 
   static deleteDirectoryPromise = (
@@ -280,12 +378,14 @@ export default class PlatformIO {
     useTrash?: boolean
   ): Promise<any> => {
     if (objectStoreAPI) {
-      // return objectStoreAPI.deleteDirectoryPromise(path, useTrash);
-      return Promise.reject(
-        'Deleting directories not supported on this platform'
-      );
+      return objectStoreAPI.deleteDirectoryPromise(path, useTrash);
     }
-    return nativeAPI.deleteDirectoryPromise(path, useTrash);
+    PlatformIO.ignoreByWatcher(path);
+
+    return nativeAPI.deleteDirectoryPromise(path, useTrash).then(result => {
+      PlatformIO.deignoreByWatcher(path);
+      return result;
+    });
   };
 
   static openDirectory = (dirPath: string): void =>
@@ -295,6 +395,9 @@ export default class PlatformIO {
     nativeAPI.showInFileManager(dirPath);
 
   static openFile = (filePath: string): void => nativeAPI.openFile(filePath);
+
+  static resolveFilePath = (filePath: string): string =>
+    objectStoreAPI ? filePath : nativeAPI.resolveFilePath(filePath);
 
   static openUrl = (url: string): void => nativeAPI.openUrl(url);
 

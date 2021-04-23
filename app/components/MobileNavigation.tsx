@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import uuidv1 from 'uuid';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -30,8 +30,10 @@ import LocationsIcon from '@material-ui/icons/WorkOutline';
 import TagLibraryIcon from '@material-ui/icons/LocalOfferOutlined';
 import SearchIcon from '@material-ui/icons/SearchOutlined';
 import HelpIcon from '@material-ui/icons/HelpOutline';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { withStyles } from '@material-ui/core/styles';
+import { CognitoUserInterface } from '@aws-amplify/ui-components';
 import TagLibrary from '../components/TagLibrary';
 import Search from '../components/Search';
 import LocationManager from '../components/LocationManager';
@@ -104,177 +106,168 @@ interface Props {
   isReadOnlyMode: boolean;
   showNotification: (message: string) => void;
   directoryPath: string;
+  user: CognitoUserInterface;
 }
 
-interface State {
-  isProTeaserVisible: boolean;
-}
+const MobileNavigation = (props: Props) => {
+  const [isProTeaserVisible, setIsProTeaserVisible] = useState<boolean>(false);
 
-class MobileNavigation extends React.Component<Props, State> {
-  state = {
-    isProTeaserVisible: false
+  const toggleProTeaser = () => {
+    setIsProTeaserVisible(!isProTeaserVisible);
   };
 
-  toggleProTeaser = () => {
-    this.setState(prevState => ({
-      isProTeaserVisible: !prevState.isProTeaserVisible
-    }));
-  };
-
-  render() {
-    const {
-      classes,
-      isLocationManagerPanelOpened,
-      isTagLibraryPanelOpened,
-      isSearchPanelOpened,
-      isHelpFeedbackPanelOpened,
-      isReadOnlyMode,
-      toggleCreateFileDialog,
-      toggleOnboardingDialog,
-      toggleSettingsDialog,
-      toggleKeysDialog,
-      toggleAboutDialog,
-      openLocationManagerPanel,
-      openTagLibraryPanel,
-      openSearchPanel,
-      openHelpFeedbackPanel,
-      showNotification,
-      hideDrawer,
-      openFileNatively,
-      openURLExternally,
-      directoryPath
-    } = this.props;
-    return (
-      <div style={{ height: '100%' }}>
-        <style>
-          {`
+  const {
+    classes,
+    toggleCreateFileDialog,
+    toggleOnboardingDialog,
+    toggleSettingsDialog,
+    toggleKeysDialog,
+    toggleAboutDialog,
+    openLocationManagerPanel,
+    openTagLibraryPanel,
+    openSearchPanel,
+    openHelpFeedbackPanel,
+    showNotification,
+    hideDrawer,
+    openFileNatively,
+    openURLExternally,
+    directoryPath,
+    user
+  } = props;
+  return (
+    <div style={{ height: '100%' }}>
+      <style>
+        {`
             #verticalNavButton:hover {
               background-color: #880E4F;
             }
           `}
-        </style>
-        <div style={{ width: 300, maxWidth: 300, height: 'calc(100% - 60px)' }}>
-          {isLocationManagerPanelOpened && (
-            <LocationManager hideDrawer={hideDrawer} />
-          )}
-          {isTagLibraryPanelOpened && <TagLibrary />}
-          {isSearchPanelOpened && <Search hideDrawer={hideDrawer} />}
-          {/* {isPerspectivesPanelOpened && <PerspectiveManager />} */}
-          {isHelpFeedbackPanelOpened && (
-            <HelpFeedbackPanel
-              openFileNatively={openFileNatively}
-              openURLExternally={openURLExternally}
-              toggleAboutDialog={toggleAboutDialog}
-              toggleKeysDialog={toggleKeysDialog}
-              toggleOnboardingDialog={toggleOnboardingDialog}
-              toggleProTeaser={this.toggleProTeaser}
-            />
-          )}
-        </div>
-        <div className={classes.bottomToolbar}>
-          <Tooltip title={i18n.t('core:settings')}>
-            <IconButton
+      </style>
+      <div style={{ width: 300, maxWidth: 300, height: 'calc(100% - 60px)' }}>
+        {props.isLocationManagerPanelOpened && (
+          <LocationManager hideDrawer={hideDrawer} />
+        )}
+        {props.isTagLibraryPanelOpened && <TagLibrary />}
+        {props.isSearchPanelOpened && <Search hideDrawer={hideDrawer} />}
+        {/* {isPerspectivesPanelOpened && <PerspectiveManager />} */}
+        {props.isHelpFeedbackPanelOpened && (
+          <HelpFeedbackPanel
+            openFileNatively={openFileNatively}
+            openURLExternally={openURLExternally}
+            toggleAboutDialog={toggleAboutDialog}
+            toggleKeysDialog={toggleKeysDialog}
+            toggleOnboardingDialog={toggleOnboardingDialog}
+            toggleProTeaser={toggleProTeaser}
+          />
+        )}
+      </div>
+      <div className={classes.bottomToolbar}>
+        <Tooltip title={i18n.t('core:settings')}>
+          <IconButton
+            id="verticalNavButton"
+            data-tid="settings"
+            onClick={() => {
+              toggleSettingsDialog();
+              hideDrawer();
+            }}
+            style={{ marginTop: -15, marginRight: 2 }}
+          >
+            <SettingsIcon className={classes.buttonIcon} />
+          </IconButton>
+        </Tooltip>
+        <ToggleButtonGroup exclusive>
+          <Tooltip title={i18n.t('core:locationManager')}>
+            <ToggleButton
               id="verticalNavButton"
-              data-tid="settings"
-              onClick={() => {
-                toggleSettingsDialog();
-                hideDrawer();
-              }}
-              style={{ marginTop: -15, marginRight: 2 }}
-            >
-              <SettingsIcon className={classes.buttonIcon} />
-            </IconButton>
-          </Tooltip>
-          <ToggleButtonGroup exclusive>
-            <Tooltip title={i18n.t('core:locationManager')}>
-              <ToggleButton
-                id="verticalNavButton"
-                onClick={openLocationManagerPanel}
-                className={
-                  isLocationManagerPanelOpened
-                    ? classNames(classes.button, classes.selectedButton)
-                    : classes.button
-                }
-                data-tid="locationManager"
-              >
-                <LocationsIcon className={classes.buttonIcon} />
-              </ToggleButton>
-            </Tooltip>
-            <Tooltip title={i18n.t('core:tagLibrary')}>
-              <ToggleButton
-                id="verticalNavButton"
-                data-tid="tagLibrary"
-                onClick={openTagLibraryPanel}
-                className={
-                  isTagLibraryPanelOpened
-                    ? classNames(classes.button, classes.selectedButton)
-                    : classes.button
-                }
-              >
-                <TagLibraryIcon className={classes.buttonIcon} />
-              </ToggleButton>
-            </Tooltip>
-            <Tooltip title={i18n.t('core:searchTitle')}>
-              <ToggleButton
-                id="verticalNavButton"
-                data-tid="search"
-                onClick={openSearchPanel}
-                className={
-                  isSearchPanelOpened
-                    ? classNames(classes.button, classes.selectedButton)
-                    : classes.button
-                }
-              >
-                <SearchIcon className={classes.buttonIcon} />
-              </ToggleButton>
-            </Tooltip>
-            <Tooltip title={i18n.t('core:helpFeedback')}>
-              <ToggleButton
-                id="verticalNavButton"
-                data-tid="helpFeedback"
-                onClick={openHelpFeedbackPanel}
-                className={
-                  isHelpFeedbackPanelOpened
-                    ? classNames(classes.button, classes.selectedButton)
-                    : classes.button
-                }
-              >
-                <HelpIcon className={classes.buttonIcon} />
-              </ToggleButton>
-            </Tooltip>
-          </ToggleButtonGroup>
-          <Tooltip title={i18n.t('core:createFileTitle')}>
-            <IconButton
-              id="verticalNavButton"
-              onClick={() => {
-                if (isReadOnlyMode || !directoryPath) {
-                  showNotification(
-                    'You are in read-only mode or there is no opened location'
-                  );
-                } else {
-                  toggleCreateFileDialog();
-                  hideDrawer();
-                }
-              }}
-              style={{ marginTop: -15, marginLeft: 2 }}
+              onClick={openLocationManagerPanel}
+              className={
+                props.isLocationManagerPanelOpened
+                  ? classNames(classes.button, classes.selectedButton)
+                  : classes.button
+              }
               data-tid="locationManager"
             >
-              <NewFileIcon color="primary" />
-            </IconButton>
+              <LocationsIcon className={classes.buttonIcon} />
+            </ToggleButton>
           </Tooltip>
-          {this.state.isProTeaserVisible && (
-            <ProTeaserDialogAsync
-              open={this.state.isProTeaserVisible}
-              onClose={this.toggleProTeaser}
-              openURLExternally={openURLExternally}
-              key={uuidv1()}
-            />
-          )}
-        </div>
+          <Tooltip title={i18n.t('core:tagLibrary')}>
+            <ToggleButton
+              id="verticalNavButton"
+              data-tid="tagLibrary"
+              onClick={openTagLibraryPanel}
+              className={
+                props.isTagLibraryPanelOpened
+                  ? classNames(classes.button, classes.selectedButton)
+                  : classes.button
+              }
+            >
+              <TagLibraryIcon className={classes.buttonIcon} />
+            </ToggleButton>
+          </Tooltip>
+          <Tooltip title={i18n.t('core:searchTitle')}>
+            <ToggleButton
+              id="verticalNavButton"
+              data-tid="search"
+              onClick={openSearchPanel}
+              className={
+                props.isSearchPanelOpened
+                  ? classNames(classes.button, classes.selectedButton)
+                  : classes.button
+              }
+            >
+              <SearchIcon className={classes.buttonIcon} />
+            </ToggleButton>
+          </Tooltip>
+          <Tooltip title={i18n.t('core:helpFeedback')}>
+            <ToggleButton
+              id="verticalNavButton"
+              data-tid="helpFeedback"
+              onClick={openHelpFeedbackPanel}
+              className={
+                props.isHelpFeedbackPanelOpened
+                  ? classNames(classes.button, classes.selectedButton)
+                  : classes.button
+              }
+            >
+              {user ? (
+                <AccountCircleIcon className={classes.buttonIcon} />
+              ) : (
+                <HelpIcon className={classes.buttonIcon} />
+              )}
+            </ToggleButton>
+          </Tooltip>
+        </ToggleButtonGroup>
+        <Tooltip title={i18n.t('core:createFileTitle')}>
+          <IconButton
+            id="verticalNavButton"
+            onClick={() => {
+              if (props.isReadOnlyMode || !directoryPath) {
+                showNotification(
+                  'You are in read-only mode or there is no opened location'
+                );
+              } else {
+                toggleCreateFileDialog();
+                hideDrawer();
+              }
+            }}
+            style={{ marginTop: -15, marginLeft: 2 }}
+            data-tid="locationManager"
+          >
+            <NewFileIcon color="primary" />
+          </IconButton>
+        </Tooltip>
+        {isProTeaserVisible && (
+          <ProTeaserDialogAsync
+            open={isProTeaserVisible}
+            onClose={toggleProTeaser}
+            openURLExternally={openURLExternally}
+            key={uuidv1()} // TODO rethink to remove this
+          />
+        )}
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 function mapStateToProps(state) {
   return {
@@ -286,7 +279,8 @@ function mapStateToProps(state) {
     isPerspectivesPanelOpened: isPerspectivesPanelOpened(state),
     isHelpFeedbackPanelOpened: isHelpFeedbackPanelOpened(state),
     isReadOnlyMode: isReadOnlyMode(state),
-    directoryPath: getDirectoryPath(state)
+    directoryPath: getDirectoryPath(state),
+    user: state.app.user
   };
 }
 

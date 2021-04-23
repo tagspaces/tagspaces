@@ -353,6 +353,17 @@ function loadLocales(url, options, callback, data) {
         });
       break;
     }
+    case 'nb': {
+      import('../locales/nb/core.json')
+        .then(locale => {
+          callback(locale, { status: '200' });
+          return true;
+        })
+        .catch(() => {
+          console.log('Error loading ' + url + ' locale.');
+        });
+      break;
+    }
     default: {
       callback(en, { status: '200' });
       break;

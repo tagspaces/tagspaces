@@ -6,8 +6,7 @@ import {
   defaultLocationPath,
   defaultLocationName,
   closeFileProperties,
-  createMinioLocation,
-  deleteFirstFile
+  createMinioLocation
 } from './location.helpers';
 import {
   reloadDirectory,
@@ -18,14 +17,13 @@ import {
   newTEXTFile,
   closeOpenedFile,
   deleteDirectory,
-  returnDirectoryBack,
   clickOn,
   expectElementExist,
   selectorFile,
   setSettings,
   doubleClickOn
 } from './general.helpers';
-import { searchEngine } from './search.spec';
+import { searchEngine } from './search.helpers';
 
 export const firstFile = '/span';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
@@ -34,6 +32,67 @@ const subFolderContentExtractionPath =
   defaultLocationPath + '/content-extraction';
 const subFolderThumbnailsPath = defaultLocationPath + '/thumbnails';
 const testFolder = 'testFolder';
+
+describe('TST07 - General', () => {
+  beforeEach(async () => {
+    await clearLocalStorage();
+    await delay(500);
+  });
+
+  it.skip('TST0701 - Open About TagSpaces', async () => {
+    await global.client.waitForVisible('[data-tid=aboutTagSpaces]');
+    await global.client.click('[data-tid=aboutTagSpaces]');
+    await global.client.waitForVisible('[data-tid=closeAboutDialog]');
+    await global.client.click('[data-tid=closeAboutDialog]');
+  });
+
+  it.skip('TST0705 - Open Settings Dialog', async () => {
+    await global.client.waitForVisible('[data-tid=settings]');
+    await global.client.click('[data-tid=settings]');
+    await checkForIdExist('settingsDialog');
+    await global.client.waitForVisible('[data-tid=closeSettingsDialog]');
+    await global.client.click('[data-tid=closeSettingsDialog]');
+  });
+
+  it.skip('TST07** - Change theme color', async () => {
+    await global.client.waitForVisible('[data-tid=settings]');
+    await global.client.click('[data-tid=settings]');
+    await delay(500);
+    // activate dark theme
+    await global.client.waitForVisible('[data-tid=settingsSetCurrentTheme]');
+    await global.client.selectByValue(
+      '[data-tid=settingsSetCurrentTheme]/div/select',
+      'dark'
+    );
+    await delay(500);
+    // const style = await global.client.getAttribute('//button[contains(., "done")]', 'style');
+    // await delay(500);
+    // expect(style).toContain('rgb(208, 107, 100)');
+    // await global.client.waitForVisible('[data-tid=closeSettingsDialog]');
+    // await global.client.click('[data-tid=closeSettingsDialog]');
+  });
+
+  /* it('TST10** - Desktop Mode', async () => {
+    await createLocation(defaultLocationPath, testLocationName, false);
+    await checkForIdExist('folderContainerLocationChooser');
+    await delay(500);
+    await global.client.waitForVisible('[data-tid=settings]');
+    await global.client.click('[data-tid=settings]');
+    await global.client.waitForVisible('[data-tid=settingsSetDesktopMode]');
+    await global.client.click('[data-tid=settingsSetDesktopMode]');
+    await delay(2000);
+    await global.client.waitForVisible('[data-tid=closeSettingsDialog]');
+    await global.client.click('[data-tid=closeSettingsDialog]');
+    // set desktop mode and check for desktop text / Location Chooser bottom in Toolbar
+    const isDesktopMode = await global.client.element('[data-tid=folderContainerLocationChooser]');
+    await delay(500);
+    expect(isDesktopMode.selector).not.toBe('[data-tid=folderContainerLocationChooser]');
+  }); */
+
+  // it('TST1003 - Checkbox in the settings to open the tag library on startup', async () => {
+  //
+  // });
+});
 
 describe('TST51 - Perspective Grid [general]', () => {
   beforeEach(async () => {
@@ -50,7 +109,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     await closeFileProperties();
   });
 
-  it('TST0501 - Create HTML file', async () => {
+  it('TST0501 - Create HTML file [electron]', async () => {
     /*await createNewDirectory();
     await reloadDirectory();
     // await global.client.pause(500);
@@ -68,13 +127,11 @@ describe('TST51 - Perspective Grid [general]', () => {
     await closeOpenedFile();
     // await reloadDirectory();
     await expectElementExist(selectorFile, true);
-    /*await global.client.pause(500);
-    await returnDirectoryBack();*/
+    /*await global.client.pause(500);*/
     // delete directory
 
-    await deleteFirstFile();
+    // await deleteFirstFile();
     await deleteDirectory(testFolder);
-    //    await returnDirectoryBack();
     await global.client.pause(500);
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
@@ -82,7 +139,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     );
   });
 
-  it('TST0502 - Create MD file', async () => {
+  it('TST0502 - Create MD file [electron]', async () => {
     await createNewDirectory();
     // await reloadDirectory();
     // await global.client.pause(500);
@@ -95,7 +152,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     await expectElementExist(selectorFile, true);
     await global.client.pause(500);
 
-    await deleteFirstFile();
+    // await deleteFirstFile();
     await deleteDirectory(testFolder);
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
@@ -103,7 +160,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     );
   });
 
-  it('TST0502 - Create TEXT file', async () => {
+  it('TST0502 - Create TEXT file [electron]', async () => {
     await createNewDirectory();
     // await reloadDirectory();
     // await global.client.pause(500);
@@ -116,7 +173,7 @@ describe('TST51 - Perspective Grid [general]', () => {
     await expectElementExist(selectorFile, true);
     await global.client.pause(500);
 
-    await deleteFirstFile();
+    // await deleteFirstFile();
     await deleteDirectory(testFolder);
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',

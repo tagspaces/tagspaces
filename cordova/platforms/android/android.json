@@ -5,9 +5,113 @@
   },
   "config_munge": {
     "files": {
+      "AndroidManifest.xml": {
+        "parents": {
+          "/manifest/application/activity": [
+            {
+              "xml": "<intent-filter><action android:name=\"android.intent.action.VIEW\" /><category android:name=\"android.intent.category.DEFAULT\" /><category android:name=\"android.intent.category.BROWSABLE\" /><data android:mimeType=\"application/pdf\" android:scheme=\"file\" /><data android:mimeType=\"text/plain\" android:scheme=\"file\" /><data android:mimeType=\"image/x-windows-bmp\" android:scheme=\"file\" /><data android:mimeType=\"image/gif\" android:scheme=\"file\" /><data android:mimeType=\"image/png\" android:scheme=\"file\" /><data android:mimeType=\"image/jpeg\" android:scheme=\"file\" /><data android:mimeType=\"image/webp\" android:scheme=\"file\" /><data android:mimeType=\"video/webm\" android:scheme=\"file\" /><data android:mimeType=\"video/ogg\" android:scheme=\"file\" /><data android:mimeType=\"text/html\" android:scheme=\"file\" /><data android:mimeType=\"application/json\" android:scheme=\"file\" /></intent-filter>",
+              "count": 3
+            },
+            {
+              "xml": "<intent-filter><action android:name=\"android.intent.action.VIEW\" /><category android:name=\"android.intent.category.DEFAULT\" /><category android:name=\"android.intent.category.BROWSABLE\" /><data android:host=\"*\" android:mimeType=\"*/*\" android:pathPattern=\"..json\" android:scheme=\"file\" /><data android:host=\"*\" android:mimeType=\"*/*\" android:pathPattern=\"..mht\" android:scheme=\"file\" /><data android:host=\"*\" android:mimeType=\"*/*\" android:pathPattern=\"..mhtml\" android:scheme=\"file\" /><data android:host=\"*\" android:mimeType=\"*/*\" android:pathPattern=\"..md\" android:scheme=\"file\" /><data android:host=\"*\" android:mimeType=\"*/*\" android:pathPattern=\"..md.txt\" android:scheme=\"file\" /><data android:host=\"*\" android:mimeType=\"*/*\" android:pathPattern=\"..markdown\" android:scheme=\"file\" /><data android:host=\"*\" android:mimeType=\"*/*\" android:pathPattern=\"..ogv\" android:scheme=\"file\" /></intent-filter>",
+              "count": 3
+            },
+            {
+              "xml": "<intent-filter><action android:name=\"com.darryncampbell.cordova.plugin.intent.ACTION\" /><category android:name=\"android.intent.category.DEFAULT\" /></intent-filter>",
+              "count": 1
+            }
+          ],
+          "/manifest/application": [
+            {
+              "xml": "<provider android:authorities=\"${applicationId}.provider\" android:exported=\"false\" android:grantUriPermissions=\"true\" android:name=\"android.support.v4.content.FileProvider\"><meta-data android:name=\"android.support.FILE_PROVIDER_PATHS\" android:resource=\"@xml/mnk_file_path\" /></provider>",
+              "count": 3
+            },
+            {
+              "xml": "<provider android:authorities=\"${applicationId}.darryncampbell.cordova.plugin.intent.fileprovider\" android:exported=\"false\" android:grantUriPermissions=\"true\" android:name=\"com.darryncampbell.cordova.plugin.intent.CordovaPluginIntentFileProvider\"><meta-data android:name=\"android.support.FILE_PROVIDER_PATHS\" android:resource=\"@xml/provider_paths\" /></provider>",
+              "count": 1
+            },
+            {
+              "xml": "<activity android:label=\"Our Code World filepicker\" android:name=\"com.ourcodeworld.plugins.filebrowser.DialogShowPicker\"><intent-filter><action android:name=\"com.ourcodeworld.plugins.filebrowser.DialogShowPicker\" /><category android:name=\"android.intent.category.DEFAULT\" /></intent-filter></activity>",
+              "count": 1
+            },
+            {
+              "xml": "<activity android:label=\"Filepicker\" android:name=\"com.nononsenseapps.filepicker.FilePickerActivity\" android:theme=\"@style/FilePickerTheme\"><intent-filter><action android:name=\"android.intent.action.GET_CONTENT\" /><category android:name=\"android.intent.category.DEFAULT\" /></intent-filter></activity>",
+              "count": 1
+            },
+            {
+              "xml": "<service android:name=\"de.appplant.cordova.plugin.background.ForegroundService\" />",
+              "count": 1
+            },
+            {
+              "xml": "<provider android:authorities=\"${applicationId}.sharing.provider\" android:exported=\"false\" android:grantUriPermissions=\"true\" android:name=\"nl.xservices.plugins.FileProvider\"><meta-data android:name=\"android.support.FILE_PROVIDER_PATHS\" android:resource=\"@xml/sharing_paths\" /></provider>",
+              "count": 1
+            }
+          ],
+          "/manifest": [
+            {
+              "xml": "<uses-permission android:name=\"android.permission.READ_EXTERNAL_STORAGE\" />",
+              "count": 3
+            },
+            {
+              "xml": "<uses-permission android:name=\"android.permission.REQUEST_INSTALL_PACKAGES\" />",
+              "count": 1
+            },
+            {
+              "xml": "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />",
+              "count": 2
+            },
+            {
+              "xml": "<uses-permission android:name=\"android.permission.WAKE_LOCK\" />",
+              "count": 1
+            }
+          ],
+          "/*": [
+            {
+              "xml": "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />",
+              "count": 3
+            },
+            {
+              "xml": "<uses-permission android:name=\"android.permission.READ_EXTERNAL_STORAGE\" />",
+              "count": 1
+            },
+            {
+              "xml": "<uses-permission android:name=\"android.permission.REQUEST_INSTALL_PACKAGES\" />",
+              "count": 1
+            }
+          ],
+          "application": [
+            {
+              "xml": "<provider android:authorities=\"${applicationId}.provider\" android:exported=\"false\" android:grantUriPermissions=\"true\" android:name=\"org.apache.cordova.camera.FileProvider\"><meta-data android:name=\"android.support.FILE_PROVIDER_PATHS\" android:resource=\"@xml/camera_provider_paths\" /></provider>",
+              "count": 1
+            },
+            {
+              "xml": "<provider android:authorities=\"${applicationId}.fileOpener2.provider\" android:exported=\"false\" android:grantUriPermissions=\"true\" android:name=\"io.github.pwlin.cordova.plugins.fileopener2.FileProvider\"><meta-data android:name=\"android.support.FILE_PROVIDER_PATHS\" android:resource=\"@xml/opener_paths\" /></provider>",
+              "count": 1
+            }
+          ],
+          "/*/application": [
+            {
+              "xml": "<receiver android:enabled=\"true\" android:name=\"nl.xservices.plugins.ShareChooserPendingIntent\"><intent-filter><action android:name=\"android.intent.action.SEND\" /></intent-filter></receiver>",
+              "count": 1
+            }
+          ]
+        }
+      },
       "res/xml/config.xml": {
         "parents": {
           "/*": [
+            {
+              "xml": "<feature name=\"IntentShim\"><param name=\"android-package\" value=\"com.darryncampbell.cordova.plugin.intent.IntentShim\" /><param name=\"onload\" value=\"true\" /></feature>",
+              "count": 1
+            },
+            {
+              "xml": "<feature name=\"Filebrowser\"><param name=\"android-package\" value=\"com.ourcodeworld.plugins.filebrowser.Filebrowser\" /></feature>",
+              "count": 1
+            },
+            {
+              "xml": "<feature name=\"Downloader\"><param name=\"android-package\" value=\"com.whebcraft.android.plugin.Downloader\" /></feature>",
+              "count": 1
+            },
             {
               "xml": "<feature name=\"Device\"><param name=\"android-package\" value=\"org.apache.cordova.device.Device\" /></feature>",
               "count": 1
@@ -47,80 +151,35 @@
             {
               "xml": "<feature name=\"SocialSharing\"><param name=\"android-package\" value=\"nl.xservices.plugins.SocialSharing\" /></feature>",
               "count": 1
-            },
+            }
+          ]
+        }
+      },
+      "config.xml": {
+        "parents": {
+          "/*": [
             {
-              "xml": "<feature name=\"Downloader\"><param name=\"android-package\" value=\"com.whebcraft.android.plugin.Downloader\" /></feature>",
-              "count": 1
-            },
-            {
-              "xml": "<feature name=\"Filebrowser\"><param name=\"android-package\" value=\"com.ourcodeworld.plugins.filebrowser.Filebrowser\" /></feature>",
+              "xml": "<feature name=\"Chooser\"><param name=\"android-package\" value=\"com.cyph.cordova.Chooser\" /></feature>",
               "count": 1
             }
           ]
         }
       },
-      "AndroidManifest.xml": {
+      "app/src/main/AndroidManifest.xml": {
         "parents": {
           "/manifest/application": [
             {
-              "xml": "<service android:name=\"de.appplant.cordova.plugin.background.ForegroundService\" />",
-              "count": 1
-            },
-            {
-              "xml": "<provider android:authorities=\"${applicationId}.sharing.provider\" android:exported=\"false\" android:grantUriPermissions=\"true\" android:name=\"nl.xservices.plugins.FileProvider\"><meta-data android:name=\"android.support.FILE_PROVIDER_PATHS\" android:resource=\"@xml/sharing_paths\" /></provider>",
-              "count": 1
-            },
-            {
-              "xml": "<activity android:label=\"Our Code World filepicker\" android:name=\"com.ourcodeworld.plugins.filebrowser.DialogShowPicker\"><intent-filter><action android:name=\"com.ourcodeworld.plugins.filebrowser.DialogShowPicker\" /><category android:name=\"android.intent.category.DEFAULT\" /></intent-filter></activity>",
-              "count": 1
-            },
-            {
-              "xml": "<activity android:label=\"Filepicker\" android:name=\"com.nononsenseapps.filepicker.FilePickerActivity\" android:theme=\"@style/FilePickerTheme\"><intent-filter><action android:name=\"android.intent.action.GET_CONTENT\" /><category android:name=\"android.intent.category.DEFAULT\" /></intent-filter></activity>",
-              "count": 1
-            }
-          ],
-          "/manifest": [
-            {
-              "xml": "<uses-permission android:name=\"android.permission.WAKE_LOCK\" />",
-              "count": 1
-            },
-            {
-              "xml": "<uses-permission android:name=\"android.permission.READ_EXTERNAL_STORAGE\" />",
-              "count": 2
-            },
-            {
-              "xml": "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />",
-              "count": 2
-            }
-          ],
-          "/*": [
-            {
-              "xml": "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />",
-              "count": 3
-            },
-            {
-              "xml": "<uses-permission android:name=\"android.permission.READ_EXTERNAL_STORAGE\" />",
-              "count": 1
-            },
-            {
-              "xml": "<uses-permission android:name=\"android.permission.REQUEST_INSTALL_PACKAGES\" />",
-              "count": 1
-            }
-          ],
-          "application": [
-            {
-              "xml": "<provider android:authorities=\"${applicationId}.cordova.plugin.camera.provider\" android:exported=\"false\" android:grantUriPermissions=\"true\" android:name=\"org.apache.cordova.camera.FileProvider\"><meta-data android:name=\"android.support.FILE_PROVIDER_PATHS\" android:resource=\"@xml/camera_provider_paths\" /></provider>",
-              "count": 1
-            },
-            {
-              "xml": "<provider android:authorities=\"${applicationId}.fileOpener2.provider\" android:exported=\"false\" android:grantUriPermissions=\"true\" android:name=\"io.github.pwlin.cordova.plugins.fileopener2.FileProvider\"><meta-data android:name=\"android.support.FILE_PROVIDER_PATHS\" android:resource=\"@xml/opener_paths\" /></provider>",
-              "count": 1
-            }
-          ],
-          "/*/application": [
-            {
-              "xml": "<receiver android:enabled=\"true\" android:name=\"nl.xservices.plugins.ShareChooserPendingIntent\"><intent-filter><action android:name=\"android.intent.action.SEND\" /></intent-filter></receiver>",
-              "count": 1
+              "xml": "<application android:requestLegacyExternalStorage=\"true\" />",
+              "count": 1,
+              "mode": "merge",
+              "plugin": "cordova-plugin-file",
+              "oldAttrib": {
+                "android:hardwareAccelerated": "true",
+                "android:icon": "@mipmap/ic_launcher",
+                "android:label": "@string/app_name",
+                "android:requestLegacyExternalStorage": "true",
+                "android:supportsRtl": "true"
+              }
             }
           ]
         }
@@ -128,47 +187,78 @@
     }
   },
   "installed_plugins": {
+    "com-darryncampbell-cordova-plugin-intent": {
+      "PACKAGE_NAME": "org.tagspaces.mobileapp"
+    },
+    "com.ourcodeworld.plugins.Filebrowser": {
+      "PACKAGE_NAME": "org.tagspaces.mobileapp"
+    },
+    "com.whebcraft.cordova.plugin.downloader": {
+      "PACKAGE_NAME": "org.tagspaces.mobileapp"
+    },
+    "cordova-plugin-add-swift-support": {
+      "PACKAGE_NAME": "org.tagspaces.mobileapp"
+    },
+    "cordova-plugin-androidx-adapter": {
+      "PACKAGE_NAME": "org.tagspaces.mobileapp"
+    },
     "cordova-plugin-device": {
-      "PACKAGE_NAME": "org.tagspaces.mobile"
+      "PACKAGE_NAME": "org.tagspaces.mobileapp"
     },
     "cordova-plugin-background-mode": {
-      "PACKAGE_NAME": "org.tagspaces.mobile"
+      "PACKAGE_NAME": "org.tagspaces.mobileapp"
     },
     "cordova-plugin-camera": {
       "ANDROID_SUPPORT_V4_VERSION": "27.+",
-      "PACKAGE_NAME": "org.tagspaces.mobile"
+      "PACKAGE_NAME": "org.tagspaces.mobileapp"
+    },
+    "cordova-plugin-chooser": {
+      "PACKAGE_NAME": "org.tagspaces.mobileapp"
     },
     "cordova-plugin-file": {
-      "PACKAGE_NAME": "org.tagspaces.mobile"
+      "PACKAGE_NAME": "org.tagspaces.mobileapp"
     },
     "cordova-plugin-file-opener2": {
       "ANDROID_SUPPORT_V4_VERSION": "27.+",
-      "PACKAGE_NAME": "org.tagspaces.mobile"
+      "PACKAGE_NAME": "org.tagspaces.mobileapp"
     },
     "cordova-plugin-whitelist": {
-      "PACKAGE_NAME": "org.tagspaces.mobile"
+      "PACKAGE_NAME": "org.tagspaces.mobileapp"
     },
     "es6-promise-plugin": {
-      "PACKAGE_NAME": "org.tagspaces.mobile"
+      "PACKAGE_NAME": "org.tagspaces.mobileapp"
     },
     "cordova-plugin-x-socialsharing": {
-      "PACKAGE_NAME": "org.tagspaces.mobile"
-    },
-    "cordova-plugin-androidx-adapter": {
-      "PACKAGE_NAME": "org.tagspaces.mobile"
-    },
-    "com.whebcraft.cordova.plugin.downloader": {
-      "PACKAGE_NAME": "org.tagspaces.mobile"
-    },
-    "com.ourcodeworld.plugins.Filebrowser": {
-      "PACKAGE_NAME": "org.tagspaces.mobile"
-    },
-    "cordova-plugin-add-swift-support": {
-      "PACKAGE_NAME": "org.tagspaces.mobile"
+      "ANDROID_SUPPORT_V4_VERSION": "24.1.1+",
+      "PACKAGE_NAME": "org.tagspaces.mobileapp"
     }
   },
   "dependent_plugins": {},
   "modules": [
+    {
+      "id": "com-darryncampbell-cordova-plugin-intent.IntentShim",
+      "file": "plugins/com-darryncampbell-cordova-plugin-intent/www/IntentShim.js",
+      "pluginId": "com-darryncampbell-cordova-plugin-intent",
+      "clobbers": [
+        "intentShim"
+      ]
+    },
+    {
+      "id": "com.ourcodeworld.plugins.Filebrowser.Filebrowser",
+      "file": "plugins/com.ourcodeworld.plugins.Filebrowser/www/filebrowser.js",
+      "pluginId": "com.ourcodeworld.plugins.Filebrowser",
+      "clobbers": [
+        "window.OurCodeWorld.Filebrowser"
+      ]
+    },
+    {
+      "id": "com.whebcraft.cordova.plugin.downloader.Downloader",
+      "file": "plugins/com.whebcraft.cordova.plugin.downloader/www/Downloader.js",
+      "pluginId": "com.whebcraft.cordova.plugin.downloader",
+      "clobbers": [
+        "plugins.Downloader"
+      ]
+    },
     {
       "id": "cordova-plugin-device.device",
       "file": "plugins/cordova-plugin-device/www/device.js",
@@ -216,6 +306,14 @@
       "pluginId": "cordova-plugin-camera",
       "clobbers": [
         "CameraPopoverHandle"
+      ]
+    },
+    {
+      "id": "cordova-plugin-chooser.Chooser",
+      "file": "plugins/cordova-plugin-chooser/www/chooser.js",
+      "pluginId": "cordova-plugin-chooser",
+      "clobbers": [
+        "chooser"
       ]
     },
     {
@@ -412,36 +510,22 @@
       "clobbers": [
         "window.plugins.socialsharing"
       ]
-    },
-    {
-      "id": "com.whebcraft.cordova.plugin.downloader.Downloader",
-      "file": "plugins/com.whebcraft.cordova.plugin.downloader/www/Downloader.js",
-      "pluginId": "com.whebcraft.cordova.plugin.downloader",
-      "clobbers": [
-        "plugins.Downloader"
-      ]
-    },
-    {
-      "id": "com.ourcodeworld.plugins.Filebrowser.Filebrowser",
-      "file": "plugins/com.ourcodeworld.plugins.Filebrowser/www/filebrowser.js",
-      "pluginId": "com.ourcodeworld.plugins.Filebrowser",
-      "clobbers": [
-        "window.OurCodeWorld.Filebrowser"
-      ]
     }
   ],
   "plugin_metadata": {
+    "com-darryncampbell-cordova-plugin-intent": "2.0.0",
+    "com.ourcodeworld.plugins.Filebrowser": "1.0.0",
+    "com.whebcraft.cordova.plugin.downloader": "0.1.0",
+    "cordova-plugin-add-swift-support": "2.0.2",
+    "cordova-plugin-androidx-adapter": "1.1.3",
     "cordova-plugin-device": "2.0.3",
     "cordova-plugin-background-mode": "0.7.3",
-    "cordova-plugin-camera": "5.0.1",
-    "cordova-plugin-file": "6.0.2",
+    "cordova-plugin-camera": "4.1.0",
+    "cordova-plugin-chooser": "1.3.1",
+    "cordova-plugin-file": "7.0.0-dev",
     "cordova-plugin-file-opener2": "3.0.4",
     "cordova-plugin-whitelist": "1.3.4",
     "es6-promise-plugin": "4.2.2",
-    "cordova-plugin-x-socialsharing": "6.0.2",
-    "cordova-plugin-androidx-adapter": "1.1.3",
-    "com.whebcraft.cordova.plugin.downloader": "0.1.0",
-    "com.ourcodeworld.plugins.Filebrowser": "1.0.0",
-    "cordova-plugin-add-swift-support": "2.0.2"
+    "cordova-plugin-x-socialsharing": "5.6.8"
   }
 }

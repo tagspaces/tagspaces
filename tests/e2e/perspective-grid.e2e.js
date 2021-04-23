@@ -6,16 +6,12 @@ import {
   defaultLocationPath,
   defaultLocationName,
   closeFileProperties,
-  deleteFirstFile,
+  deleteFileFromMenu,
   createMinioLocation,
   getFirstFileName
 } from './location.helpers';
-import { searchEngine } from './search.spec';
-import {
-  perspectiveGridTable,
-  firstFile,
-  firstFolder
-} from './test-utils.spec';
+import { searchEngine } from './search.helpers';
+import { perspectiveGridTable, firstFile, firstFolder } from './test-utils';
 import {
   addInputKeys,
   clickOn,
@@ -27,6 +23,7 @@ import {
   extractTags,
   getGridCellClass,
   getGridFileName,
+  getGridFileSelector,
   selectAllFiles,
   selectFilesByID,
   selectorFile,
@@ -61,19 +58,21 @@ describe('TST50 - Perspective Grid', () => {
     }
   });
 
-  test('TST5002 - Open file with click [TST5002,web,minio,electron]', async () => {
-    await searchEngine('txt'); //testTestFilename);
-    const firstFileName = await getGridFileName(0);
-    await clickOn(perspectiveGridTable + firstFile);
+  test('TST5002 - Open file with click [web,minio,electron]', async () => {
+    // await searchEngine('txt'); //testTestFilename);
+    const fileName = 'sample.txt';
+
+    // const firstFileName = await getGridFileName(0);
+    await clickOn(getGridFileSelector(fileName)); // perspectiveGridTable + firstFile);
     //Toggle Properties
     await clickOn('[data-tid=fileContainerToggleProperties]');
     const propsFileName = await getPropertiesFileName();
-    expect(firstFileName).toBe(propsFileName);
+    expect(fileName).toBe(propsFileName);
     // await checkFilenameForExist(testTestFilename);
   });
 
   // Scenarios for sorting files in grid perspective
-  describe('TST5003 - Testing sort files in the grid perspective [TST5003,web,minio,electron]', () => {
+  describe('TST5003 - Testing sort files in the grid perspective [web,minio,electron]', () => {
     beforeEach(async () => {
       await clickOn('[data-tid=gridPerspectiveSortMenu]');
       await global.client.pause(500);
@@ -82,24 +81,22 @@ describe('TST50 - Perspective Grid', () => {
     test('TST10** - Sort by name [web,minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortByName]');
       await global.client.pause(500); // TODO
-      const firstFileName = await getGridFileName(0);
-      expect(firstFileName).toBe('sample_exif.jpg');
-      // asc/desc
+      let firstFileName = await getGridFileName(0);
+      expect(firstFileName).toBe('sample.bmp');
+      // ASC
       await clickOn('[data-tid=gridPerspectiveSortMenu]');
+      await global.client.pause(500);
       await clickOn('[data-tid=gridPerspectiveSortByName]');
+      await global.client.pause(500); // TODO
+      firstFileName = await getGridFileName(0);
+      expect(firstFileName).toBe('sample_exif.jpg');
     });
 
-    /**
-     * TODO web https://trello.com/c/b2isDaUc/533-switch-asc-desc-while-sort-by-options
-     */
     test('TST10** - Sort by size [web,minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortBySize]');
       await global.client.pause(500); // TODO
       const firstFileName = await getGridFileName(0);
       expect(firstFileName).toBe('sample.ogv');
-      // asc/desc
-      await clickOn('[data-tid=gridPerspectiveSortMenu]');
-      await clickOn('[data-tid=gridPerspectiveSortBySize]');
     });
 
     test('TST10** - Sort by date [web,minio,electron]', async () => {
@@ -111,29 +108,20 @@ describe('TST50 - Perspective Grid', () => {
       let firstFileName = await getGridFileName(0);
 
       expect(firstFileName).toBe('note.txt');
-      // asc/desc
-      await clickOn('[data-tid=gridPerspectiveSortMenu]');
-      await clickOn('[data-tid=gridPerspectiveSortByDate]');
 
       //cleanup
-      await setSettings('[data-tid=settingsSetUseTrashCan]');
-      await global.client.pause(500);
-      await deleteFirstFile();
+      // await setSettings('[data-tid=settingsSetUseTrashCan]');
+      // await global.client.pause(500);
+      await deleteFileFromMenu();
       // firstFileName = await getGridFileName(0);
       // expect(firstFileName).not.toBe('note.txt'); TODO its have note.txt from another tests
     });
 
-    /**
-     * TODO web https://trello.com/c/b2isDaUc/533-switch-asc-desc-while-sort-by-options
-     */
     test('TST10** - Sort by extension [web,minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortByExt]');
       await global.client.pause(1000); // TODO
       const firstFileName = await getGridFileName(0);
       expect(firstFileName).toBe('sample.zip');
-      // asc/desc
-      await clickOn('[data-tid=gridPerspectiveSortMenu]');
-      await clickOn('[data-tid=gridPerspectiveSortByExt]');
     });
 
     test('TST10** - Sort by tags [web,minio,electron]', async () => {
@@ -141,19 +129,16 @@ describe('TST50 - Perspective Grid', () => {
       await global.client.pause(1000); // TODO
       const firstFileName = await getGridFileName(0);
       expect(firstFileName).toBe('sample_exif.jpg');
-      // asc/desc
-      await clickOn('[data-tid=gridPerspectiveSortMenu]');
-      await clickOn('[data-tid=gridPerspectiveSortByFirstTag]');
     });
   });
 
-  test('TST5004 - Select-deselect all files [TST5004,web,minio,electron]', async () => {
+  test('TST5004 - Select-deselect all files [web,minio,electron]', async () => {
     const classNotSelected = await getGridCellClass(0);
     const classSelected = await selectAllFiles(classNotSelected);
 
     expect(classNotSelected).not.toBe(classSelected);
 
-    const filesList = await global.client.$$(perspectiveGridTable + firstFile);
+    const filesList = await global.client.$$(selectorFile);
     for (let i = 0; i < filesList.length; i++) {
       let file = await filesList[i].$('div');
       file = await file.$('div');
@@ -173,7 +158,7 @@ describe('TST50 - Perspective Grid', () => {
   });
 
   // This scenario includes "Add tags" && "Remove tags" to be fulfilled
-  test('TST5005 - Add tags to the selected files [TST5005,web,minio,electron]', async () => {
+  test('TST5005 - Add tags to the selected files [web,minio,electron]', async () => {
     /*const classNotSelected = await getGridCellClass(0);
     const classSelected = await selectAllFiles(classNotSelected);
     expect(classNotSelected).not.toBe(classSelected);*/
@@ -207,7 +192,7 @@ describe('TST50 - Perspective Grid', () => {
   /**
    * TODO merge with TST5005
    */
-  test('TST5006 - Remove tags from selected files [TST5006,web,minio,electron]', async () => {
+  test('TST5006 - Remove tags from selected files [web,minio,electron]', async () => {
     /*const classNotSelected = await getGridCellClass(0);
     const classSelected = await selectAllFiles(classNotSelected);
     expect(classNotSelected).not.toBe(classSelected);*/
@@ -236,7 +221,7 @@ describe('TST50 - Perspective Grid', () => {
     }*/
   });
 
-  test('TST5007 - Remove all tags from selected files [TST5007,web,minio,electron]', async () => {
+  test('TST5007 - Remove all tags from selected files [web,minio,electron]', async () => {
     //open Option menu
     await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
     //click on hide directories
@@ -277,36 +262,36 @@ describe('TST50 - Perspective Grid', () => {
     }*/
   });
 
-  /**
-   * TODO copy file on minio failed with path: ./testdata-tmp/file-structure/supported-filestypes/empty_folder
-   * web cannot find bmp file
-   */
-  test('TST5008 - Copy file [TST5008,electron]', async () => {
-    const fileName = await getFirstFileName();
+  test('TST5008 - Copy file [web,minio,electron]', async () => {
+    const sampleFileName = 'sample.txt';
+    // Electron path: ./testdata-tmp/file-structure/supported-filestypes/empty_folder
+    let copyLocationPath = global.isElectron
+      ? defaultLocationPath + '/empty_folder'
+      : 'empty_folder';
+    // const fileName = await getFirstFileName();
 
     // select file
-    await clickOn(selectorFile);
+    await clickOn(getGridFileSelector(sampleFileName));
     // open Copy File Dialog
     await clickOn('[data-tid=gridPerspectiveCopySelectedFiles]');
-    await addInputKeys(
-      'targetPathInput',
-      defaultLocationPath + '/empty_folder'
-    );
+    await addInputKeys('targetPathInput', copyLocationPath);
     await clickOn('[data-tid=confirmCopyFiles]');
     await waitForNotification();
 
     await doubleClickOn(selectorFolder);
     const firstFileName = await getGridFileName(0);
-    expect(firstFileName).toBe(fileName);
+    expect(firstFileName).toBe(sampleFileName);
     // cleanup
-    await deleteFirstFile();
+    await deleteFileFromMenu();
     await expectElementExist(selectorFile, false);
   });
+
+  it.skip('TST5009 - Copy file on different partition [manual]', async () => {});
 
   /**
    * TODO reindexing don't work in web
    */
-  test('TST5010 - Move file [TST5010,minio,electron]', async () => {
+  test('TST5010 - Move file [minio,electron]', async () => {
     await searchEngine('epub');
 
     // select file
@@ -326,11 +311,15 @@ describe('TST50 - Perspective Grid', () => {
     const firstFileName = await getGridFileName(0);
     expect(firstFileName).toBe('sample.epub');
     // cleanup
-    await deleteFirstFile();
+    await deleteFileFromMenu();
     await expectElementExist(selectorFile, false);
   });
 
-  test('TST5013 - Delete files from selection (many files) [TST5013,web,minio,electron]', async () => {
+  it.skip('TST5011 - Move file drag&drop in location navigator [manual]', async () => {});
+
+  it.skip('TST5012 - Move file different partition [manual]', async () => {});
+
+  test('TST5013 - Delete files from selection (many files) [web,minio,electron]', async () => {
     //open Option menu
     await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
     //click on hide directories
@@ -368,6 +357,9 @@ describe('TST50 - Perspective Grid', () => {
     await waitForNotification();
     await expectElementExist(selectorFile, false);*/
   });
+
+  it.skip('TST5015 - Tag file drag&drop in perspective [manual]', async () => {});
+
   /*test('TST51** - Show/Hide directories in perspective view', async () => { //TODO
     await global.client.waitForVisible(
       '[data-tid=gridPerspectiveToggleShowDirectories]'

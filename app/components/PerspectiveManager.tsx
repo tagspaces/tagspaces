@@ -26,17 +26,15 @@ interface Props {
   style: any;
 }
 
-class PerspectiveManager extends React.Component<Props> {
-  render() {
-    const { classes } = this.props;
+const PerspectiveManager = (props: Props) => {
+  const { classes } = props;
 
-    return (
-      <div className={classes.panel} style={this.props.style}>
-        <Typography className={classes.panelTitle}>Perspectives</Typography>
-      </div>
-    );
-  }
+  return (
+    <div className={classes.panel} style={props.style}>
+      <Typography className={classes.panelTitle}>Perspectives</Typography>
+    </div>
+  );
   //         <Button onClick={() => history.push('/login')}>Login</Button>
-}
+};
 
 export default withStyles(styles)(PerspectiveManager);

@@ -27,7 +27,7 @@ static NSString* toBase64(NSData* data) {
     SEL s1 = NSSelectorFromString(@"cdv_base64EncodedString");
     SEL s2 = NSSelectorFromString(@"base64EncodedString");
     SEL s3 = NSSelectorFromString(@"base64EncodedStringWithOptions:");
-    
+
     if ([data respondsToSelector:s1]) {
         NSString* (*func)(id, SEL) = (void *)[data methodForSelector:s1];
         return func(data, s1);
@@ -160,7 +160,7 @@ NSString* const kCDVFilesystemURLPrefix = @"cdvfile";
     CDVFilesystemURL* url = [CDVFilesystemURL fileSystemURLWithURL:[[self request] URL]];
     NSObject<CDVFileSystem> *fs = [filePlugin filesystemForURL:url];
     __weak CDVFilesystemURLProtocol* weakSelf = self;
-    
+
     [fs readFileAtURL:url start:0 end:-1 callback:^void(NSData *data, NSString *mimetype, CDVFileError error) {
         NSMutableDictionary* responseHeaders = [[NSMutableDictionary alloc] init];
         responseHeaders[@"Cache-Control"] = @"no-cache";
@@ -1074,7 +1074,7 @@ NSString* const kCDVFilesystemURLPrefix = @"cdvfile";
 - (void)getFreeDiskSpace:(CDVInvokedUrlCommand*)command
 {
     // no arguments
-    
+
     NSNumber* pNumAvail = [self checkFreeDiskSpace:self.rootDocsPath];
 
     NSString* strFreeSpace = [NSString stringWithFormat:@"%qu", [pNumAvail unsignedLongLongValue]];

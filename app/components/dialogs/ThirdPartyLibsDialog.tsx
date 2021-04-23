@@ -21,6 +21,8 @@ import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Dialog from '@material-ui/core/Dialog';
 import i18n from '-/services/i18n';
@@ -42,9 +44,24 @@ const ThirdPartyLibsDialog = (props: Props) => {
       keepMounted
       scroll="paper"
     >
-      <DialogTitle>{i18n.t('core:thirdPartyLibs')}</DialogTitle>
+      <DialogTitle>
+        {i18n.t('core:thirdPartyLibs')}{' '}
+        <IconButton
+          aria-label="close"
+          style={{
+            position: 'absolute',
+            right: 5,
+            top: 5
+          }}
+          onClick={onClose}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
       <DialogContent style={{ overflowX: 'auto' }}>
-        <pre style={{ whiteSpace: 'pre-wrap' }}>{ThirdPartyLibs}</pre>
+        <pre style={{ whiteSpace: 'pre-wrap', userSelect: 'text' }}>
+          {ThirdPartyLibs}
+        </pre>
       </DialogContent>
       <DialogActions>
         <Button

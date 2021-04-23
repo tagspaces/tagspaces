@@ -23,14 +23,16 @@ import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import uuidv1 from 'uuid';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
 import ConfirmDialog from '../ConfirmDialog';
-import GenericDialog from '../GenericDialog';
 import SettingsGeneral from '../settings/SettingsGeneral';
 import SettingsKeyBindings from '../settings/SettingsKeyBindings';
 import SettingsFileTypes from '../settings/SettingsFileTypes';
@@ -184,8 +186,21 @@ const SettingsDialog = (props: Props) => {
   };
 
   const renderTitle = () => (
-    <React.Fragment>
-      <DialogTitle>{i18n.t('core:options')}</DialogTitle>
+    <>
+      <DialogTitle>
+        {i18n.t('core:settings')}{' '}
+        <IconButton
+          aria-label="close"
+          style={{
+            position: 'absolute',
+            right: 5,
+            top: 5
+          }}
+          onClick={onClose}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
       <AppBar position="static" color="default">
         <Tabs
           value={currentTab}
@@ -207,7 +222,7 @@ const SettingsDialog = (props: Props) => {
           />
         </Tabs>
       </AppBar>
-    </React.Fragment>
+    </>
   );
 
   const renderContent = () => (
@@ -312,14 +327,17 @@ const SettingsDialog = (props: Props) => {
 
   const { fullScreen, open, onClose } = props;
   return (
-    <GenericDialog
-      open={open}
-      onClose={onClose}
+    <Dialog
       fullScreen={fullScreen}
-      renderTitle={renderTitle}
-      renderContent={renderContent}
-      renderActions={renderActions}
-    />
+      open={open}
+      keepMounted
+      scroll="paper"
+      onClose={onClose}
+    >
+      {renderTitle()}
+      {renderContent()}
+      {renderActions()}
+    </Dialog>
   );
 };
 

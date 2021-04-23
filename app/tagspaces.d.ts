@@ -36,7 +36,9 @@ declare interface Window {
   ExtLocations?: Array<any>;
   ExtTheme?: string;
   ExtIsFirstRun?: boolean;
-  ExtDefaultVerticalPanel?: string;
+  ExtIsAmplify?: boolean;
+  ExtUseSidecarsForFileTagging?: boolean;
+  ExtSaveLocationsInBrowser?: boolean;
   ExtSidebarColor?: string;
   ExtSidebarSelectionColor?: string;
   ExtLightThemeLightColor?: string;

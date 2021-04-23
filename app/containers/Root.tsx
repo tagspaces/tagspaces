@@ -19,15 +19,16 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
+import { Store } from 'redux';
 import LoadingScreen from '../components/LoadingScreen';
 import { actions as AppActions } from '../reducers/app';
 import AppConfig from '-/config';
 import App from '-/containers/App';
 import MainPage from '-/containers/MainPage';
-import Auth from '-/containers/Auth';
+import TsAuth from '-/containers/TsAuth';
 
 type RootType = {
-  store: {};
+  store: Store<{}>;
   persistor: {};
 };
 
@@ -39,7 +40,7 @@ export default function Root({ store, persistor }: RootType) {
   );
 
   if (AppConfig.isWeb) {
-    appContent = <Auth>{appContent}</Auth>;
+    appContent = <TsAuth>{appContent}</TsAuth>;
   }
 
   return (
@@ -59,7 +60,7 @@ export default function Root({ store, persistor }: RootType) {
         onBeforeLift={() => {
           // @ts-ignore
           // eslint-disable-next-line react/prop-types
-          if (!AppConfig.isWeb) {
+          if (!AppConfig.isAmplify) {
             // || store.app.user !== undefined
             // @ts-ignore
             // eslint-disable-next-line react/prop-types

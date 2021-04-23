@@ -194,6 +194,7 @@ const DirectoryTreeView = forwardRef(
         ...(location.accessKeyId && { accessKeyId: location.accessKeyId }),
         ...(location.bucketName && { bucketName: location.bucketName }),
         ...(location.region && { region: location.region }),
+        ...(location.endpointURL && { endpointURL: location.endpointURL }),
         ...(location.secretAccessKey && {
           secretAccessKey: location.secretAccessKey
         }),
@@ -238,6 +239,7 @@ const DirectoryTreeView = forwardRef(
       accessKeyId?: string;
       bucketName?: string;
       region?: string;
+      endpointURL?: string;
       secretAccessKey?: string;
       uuid: string;
       name: string;
@@ -248,48 +250,53 @@ const DirectoryTreeView = forwardRef(
 
     const getDirectoriesTree = (subFolder: SubFolder, deepLevel: number) =>
       // const { settings } = getState();
-      PlatformIO.listDirectoryPromise(subFolder.path, false)
+      PlatformIO.listDirectoryPromise(subFolder.path, true)
         // @ts-ignore
         .then(dirEntries => {
-          const directoryContent = [];
-          dirEntries.map(entry => {
-            if (
-              entry.name === AppConfig.metaFolder ||
-              entry.name.endsWith('/' + AppConfig.metaFolder) ||
-              (!props.showUnixHiddenEntries && entry.name.startsWith('.'))
-            ) {
+          if (dirEntries !== undefined) {
+            const directoryContent = [];
+            dirEntries.map(entry => {
+              if (
+                entry.name === AppConfig.metaFolder ||
+                entry.name.endsWith('/' + AppConfig.metaFolder) ||
+                (!props.showUnixHiddenEntries && entry.name.startsWith('.'))
+              ) {
+                return true;
+              }
+              // const enhancedEntry = enhanceEntry(entry);
+              if (!entry.isFile) {
+                // eslint-disable-next-line no-param-reassign
+                if (subFolder.accessKeyId) {
+                  entry.accessKeyId = subFolder.accessKeyId;
+                }
+                if (subFolder.bucketName) {
+                  entry.bucketName = subFolder.bucketName;
+                }
+                if (subFolder.region) {
+                  entry.region = subFolder.region;
+                }
+                if (subFolder.endpointURL) {
+                  entry.endpointURL = subFolder.endpointURL;
+                }
+                if (subFolder.secretAccessKey) {
+                  entry.secretAccessKey = subFolder.secretAccessKey;
+                }
+                entry.uuid = subFolder.uuid;
+                entry.type = subFolder.type;
+                directoryContent.push(entry);
+              }
               return true;
-            }
-            // const enhancedEntry = enhanceEntry(entry);
-            if (!entry.isFile) {
+            });
+            if (directoryContent.length > 0) {
               // eslint-disable-next-line no-param-reassign
-              if (subFolder.accessKeyId) {
-                entry.accessKeyId = subFolder.accessKeyId;
+              subFolder.children = directoryContent;
+              if (deepLevel > 0) {
+                const promisesArr = [];
+                directoryContent.map(directory =>
+                  promisesArr.push(getDirectoriesTree(directory, deepLevel - 1))
+                );
+                return Promise.all(promisesArr);
               }
-              if (subFolder.bucketName) {
-                entry.bucketName = subFolder.bucketName;
-              }
-              if (subFolder.region) {
-                entry.region = subFolder.region;
-              }
-              if (subFolder.secretAccessKey) {
-                entry.secretAccessKey = subFolder.secretAccessKey;
-              }
-              entry.uuid = subFolder.uuid;
-              entry.type = subFolder.type;
-              directoryContent.push(entry);
-            }
-            return true;
-          });
-          if (directoryContent.length > 0) {
-            // eslint-disable-next-line no-param-reassign
-            subFolder.children = directoryContent;
-            if (deepLevel > 0) {
-              const promisesArr = [];
-              directoryContent.map(directory =>
-                promisesArr.push(getDirectoriesTree(directory, deepLevel - 1))
-              );
-              return Promise.all(promisesArr);
             }
           }
           return subFolder;

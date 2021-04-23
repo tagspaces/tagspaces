@@ -131,6 +131,10 @@ export default class WebDAVIO {
     return false;
   };
 
+  quitApp = (): void => {
+    window.close();
+  };
+
   /**
    * Creates recursively a tree structure for a given directory path
    * @param {string} dirPath - the full path of the directory for which the tree will be generated
@@ -479,7 +483,8 @@ export default class WebDAVIO {
                     ),
                     size: 0,
                     lmdt: new Date().getTime(),
-                    isNewFile
+                    isNewFile,
+                    tags: []
                   });
                 } else {
                   reject('saveFilePromise: ' + filePath + ' failed ' + status1);
@@ -727,6 +732,7 @@ export default class WebDAVIO {
     window.open(url, '_blank');
   };
 
+  resolveFilePath = (filePath: string): string => filePath;
   /**
    * Places the application window on top of the other windows
    */

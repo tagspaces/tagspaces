@@ -59,7 +59,6 @@ import {
 } from '-/utils/misc';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
-// import { getThumbnailURLPromise } from '../services/thumbsgenerator';
 import { actions as LocationIndexActions } from './location-index';
 import { Tag } from './taglibrary';
 import {
@@ -109,7 +108,8 @@ export const types = {
   TOGGLE_SETTINGS_DIALOG: 'APP/TOGGLE_SETTINGS_DIALOG',
   TOGGLE_CREATE_DIRECTORY_DIALOG: 'APP/TOGGLE_CREATE_DIRECTORY_DIALOG',
   TOGGLE_CREATE_FILE_DIALOG: 'APP/TOGGLE_CREATE_FILE_DIALOG',
-  TOGGLE_SELECT_DIRECTORY_DIALOG: 'APP/TOGGLE_SELECT_DIRECTORY_DIALOG',
+  TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG:
+    'APP/TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG',
   TOGGLE_UPLOAD_DIALOG: 'APP/TOGGLE_UPLOAD_DIALOG',
   CLEAR_UPLOAD_DIALOG: 'APP/CLEAR_UPLOAD_DIALOG',
   TOGGLE_PROGRESS_DIALOG: 'APP/TOGGLE_PROGRESS_DIALOG',
@@ -217,7 +217,7 @@ export const initialState = {
   thirdPartyLibsDialogOpened: false,
   settingsDialogOpened: false,
   createDirectoryDialogOpened: false,
-  lastSelectedEntry: null,
+  // lastSelectedEntry: null,
   selectedEntries: [],
   isEntryInFullWidth: false,
   isGeneratingThumbs: false,
@@ -265,6 +265,11 @@ export default (state: any = initialState, action: any) => {
       };
     }
     case types.LOAD_DIRECTORY_SUCCESS: {
+      let { directoryPath } = action;
+      if (directoryPath && directoryPath.startsWith('./')) {
+        // relative paths
+        directoryPath = PlatformIO.resolveFilePath(directoryPath);
+      }
       return {
         ...state,
         currentDirectoryEntries: action.directoryContent,
@@ -274,7 +279,7 @@ export default (state: any = initialState, action: any) => {
         currentDirectoryPerspective: action.directoryMeta
           ? action.directoryMeta.perspective
           : undefined,
-        currentDirectoryPath: action.directoryPath,
+        currentDirectoryPath: directoryPath,
         isLoading: action.showIsLoading || false
       };
     }
@@ -291,13 +296,9 @@ export default (state: any = initialState, action: any) => {
         currentLocationId: action.locationId
       };
     }
-    case types.SET_LAST_SELECTED_ENTRY: {
-      /* console.time('SET_LAST_SELECTED_ENTRY'); // Measure set last selected entry
-    const result = { ...state, lastSelectedEntry: action.entryPath };
-    console.timeEnd('SET_LAST_SELECTED_ENTRY');
-    return result; */
+    /* case types.SET_LAST_SELECTED_ENTRY: {
       return { ...state, lastSelectedEntry: action.entryPath };
-    }
+    } */
     case types.SET_SELECTED_ENTRIES: {
       return { ...state, selectedEntries: action.selectedEntries };
     }
@@ -342,6 +343,12 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         createFileDialogOpened: !state.createFileDialogOpened
+      };
+    }
+    case types.TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG: {
+      return {
+        ...state,
+        deleteMultipleEntriesDialogOpened: !state.deleteMultipleEntriesDialogOpened
       };
     }
     case types.TOGGLE_LICENSE_DIALOG: {
@@ -845,6 +852,9 @@ export const actions = {
     type: types.TOGGLE_CREATE_DIRECTORY_DIALOG
   }),
   toggleCreateFileDialog: () => ({ type: types.TOGGLE_CREATE_FILE_DIALOG }),
+  toggleDeleteMultipleEntriesDialog: () => ({
+    type: types.TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG
+  }),
   toggleUploadDialog: () => ({
     type: types.TOGGLE_UPLOAD_DIALOG
   }),
@@ -852,7 +862,9 @@ export const actions = {
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
+    // const currentLocation: Location = getState().locations.find(location => location.uuid === getCurrentLocationId(getState()))
     if (PlatformIO.haveObjectStoreSupport()) {
+      // && currentLocation.type === locationType.TYPE_AMPLIFY) {
       const { currentDirectoryPath } = getState().app;
       dispatch(actions.clearUploadDialogInt());
       dispatch(actions.loadDirectoryContent(currentDirectoryPath));
@@ -905,21 +917,17 @@ export const actions = {
       );
     }
   },
-  loadDirectoryContent: (directoryPath: string) => (
-    dispatch: (actions: Object) => void,
-    getState: () => any
-  ) => {
-    console.time('listDirectoryPromise');
+  loadDirectoryContentInt: (
+    directoryPath: string,
+    fsEntryMeta?: FileSystemEntryMeta
+  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
     const { settings } = getState();
-    window.walkCanceled = false;
-
-    function loadDirectoryContentInt(fsEntryMeta?: FileSystemEntryMeta) {
-      // Uncomment the following line will to clear all content before loading new dir content
-      dispatch(actions.loadDirectorySuccessInt(directoryPath, [], true)); // this is to reset directoryContent (it will reset color too)
-      // dispatch(actions.setCurrentDirectoryColor('')); // this is to reset color only
-      dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
-      PlatformIO.listDirectoryPromise(directoryPath, false)
-        .then(results => {
+    dispatch(actions.loadDirectorySuccessInt(directoryPath, [], true)); // this is to reset directoryContent (it will reset color too)
+    // dispatch(actions.setCurrentDirectoryColor('')); // this is to reset color only
+    dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
+    PlatformIO.listDirectoryPromise(directoryPath, false)
+      .then(results => {
+        if (results !== undefined) {
           prepareDirectoryContent(
             results,
             directoryPath,
@@ -928,19 +936,31 @@ export const actions = {
             getState,
             fsEntryMeta
           );
-          return true;
-        })
-        .catch(error => {
-          console.timeEnd('listDirectoryPromise');
-          dispatch(actions.loadDirectoryFailure(error)); // Currently this is never called, due the promise always resolve
-        });
-    }
+        }
+        return true;
+      })
+      .catch(error => {
+        console.timeEnd('listDirectoryPromise');
+        dispatch(actions.loadDirectoryFailure(error)); // Currently this is never called, due the promise always resolve
+      });
+  },
+  loadDirectoryContent: (directoryPath: string) => (
+    dispatch: (actions: Object) => void,
+    getState: () => any
+  ) => {
+    console.time('listDirectoryPromise');
+    window.walkCanceled = false;
 
+    const state = getState();
+    const { selectedEntries } = state.app;
+    if (selectedEntries.length > 0) {
+      dispatch(actions.setSelectedEntries([]));
+    }
     loadMetaDataPromise(
       normalizePath(directoryPath) + PlatformIO.getDirSeparator()
     )
       .then(fsEntryMeta => {
-        loadDirectoryContentInt(fsEntryMeta);
+        dispatch(actions.loadDirectoryContentInt(directoryPath, fsEntryMeta));
         /* if (fsEntryMeta.color) { // TODO rethink this states changes are expensive
           dispatch(actions.setCurrentDirectoryColor(fsEntryMeta.color));
         }
@@ -952,14 +972,14 @@ export const actions = {
       })
       .catch(err => {
         console.log('Error loading meta of the current folder' + err);
-        loadDirectoryContentInt();
+        dispatch(actions.loadDirectoryContentInt(directoryPath));
       });
   },
   loadDirectorySuccess: (
     directoryPath: string,
     directoryContent: Array<Object>,
     directoryMeta?: FileSystemEntryMeta
-  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
+  ) => (dispatch: (actions: Object) => void) => {
     // const currentLocation: Location = getLocation(
     //  getState(),
     //  getState().app.currentLocationId
@@ -968,7 +988,19 @@ export const actions = {
     // const entryPath =
     //  openedFiles && openedFiles.length > 0 && openedFiles[0].path;
     // updateHistory(currentLocation, directoryPath, entryPath);
-
+    /* const { selectedEntries } = getState().app;
+    if (selectedEntries.length > 0) {
+      // check and remove obsolete selectedEntries
+      const newSelectedEntries = selectedEntries.filter(
+        (entry: FileSystemEntry) =>
+          directoryContent.some(
+            (fsEntry: FileSystemEntry) => fsEntry.path === entry.path
+          )
+      );
+      if (newSelectedEntries.length !== selectedEntries.length) {
+        dispatch(actions.setSelectedEntries(newSelectedEntries));
+      }
+    } */
     dispatch(actions.hideNotifications());
     dispatch(
       actions.loadDirectorySuccessInt(
@@ -1008,7 +1040,7 @@ export const actions = {
   updateThumbnailUrl: (filePath: string, thumbUrl: string) => ({
     type: types.UPDATE_THUMB_URL,
     filePath,
-    thumbUrl: thumbUrl + '?' + new Date().getTime()
+    thumbUrl // + '?' + new Date().getTime()
   }),
   updateThumbnailUrls: (tmbURLs: Array<any>) => ({
     type: types.UPDATE_THUMB_URLS,
@@ -1018,10 +1050,10 @@ export const actions = {
     type: types.SET_GENERATING_THUMBNAILS,
     isGeneratingThumbs
   }),
-  setLastSelectedEntry: (entryPath: string | null) => ({
+  /* setLastSelectedEntry: (entryPath: string | null) => ({
     type: types.SET_LAST_SELECTED_ENTRY,
     entryPath
-  }),
+  }), */
   setCurrentDirectoryColor: (color: string) => ({
     type: types.SET_CURRENDIRECTORYCOLOR,
     color
@@ -1040,7 +1072,10 @@ export const actions = {
   ) => {
     const { settings } = getState();
     const { currentDirectoryPath, openedFiles } = getState().app;
-    PlatformIO.deleteDirectoryPromise(directoryPath, settings.useTrashCan)
+    return PlatformIO.deleteDirectoryPromise(
+      directoryPath,
+      settings.useTrashCan
+    )
       .then(() => {
         if (directoryPath === currentDirectoryPath) {
           dispatch(actions.loadParentDirectoryContent());
@@ -1212,6 +1247,7 @@ export const actions = {
           getAllPropertiesPromise(filePath)
             .then((fsEntry: FileSystemEntry) => {
               dispatch(actions.openFsEntry(fsEntry)); // TODO return fsEntry from saveFilePromise and simplify
+              dispatch(actions.setSelectedEntries([fsEntry]));
               return true;
             })
             .catch(error =>
@@ -1222,7 +1258,6 @@ export const actions = {
                   error
               )
             );
-          // TODO select file // dispatch(actions.setLastSelectedEntry(filePath));
           return true;
         })
         .catch(err => {
@@ -1269,7 +1304,7 @@ export const actions = {
         dispatch(actions.reflectCreateEntry(filePath, true));
         dispatch(actions.openFsEntry(fsEntry)); // TODO return fsEntry from saveFilePromise and simplify
 
-        dispatch(actions.setLastSelectedEntry(filePath));
+        dispatch(actions.setSelectedEntries([fsEntry]));
         dispatch(
           actions.showNotification(
             `File '${fileNameAndExt}' created.`,
@@ -1325,7 +1360,8 @@ export const actions = {
     });
   },
   openLocation: (location: Location) => (
-    dispatch: (actions: Object) => void
+    dispatch: (actions: Object) => void,
+    getState: () => any
   ) => {
     if (Pro && Pro.Watcher) {
       Pro.Watcher.stopWatching();
@@ -1361,7 +1397,14 @@ export const actions = {
       dispatch(actions.changeLocation(location));
       dispatch(actions.loadDirectoryContent(getLocationPath(location)));
       if (Pro && Pro.Watcher && location.watchForChanges) {
-        Pro.Watcher.watchFolder(getLocationPath(location), dispatch, actions);
+        const perspective = getCurrentDirectoryPerspective(getState());
+        const depth = perspective === perspectives.KANBAN ? 3 : 1;
+        Pro.Watcher.watchFolder(
+          getLocationPath(location),
+          dispatch,
+          actions,
+          depth
+        );
       }
     }
   },
@@ -1386,6 +1429,17 @@ export const actions = {
         return true;
       });
     }
+  },
+  closeAllLocations: () => (dispatch: (actions: Object) => void) => {
+    // location needed evtl. to unwatch many loc. root folders if available
+    dispatch(actions.setCurrentLocationId(null));
+    dispatch(actions.clearDirectoryContent());
+    dispatch(LocationIndexActions.clearDirectoryIndex());
+    if (Pro && Pro.Watcher) {
+      Pro.Watcher.stopWatching();
+    }
+    clearAllURLParams();
+    return true;
   },
   clearDirectoryContent: () => ({
     type: types.CLEAR_DIRECTORY_CONTENT
@@ -1422,6 +1476,21 @@ export const actions = {
     type: types.SET_READONLYMODE,
     isReadOnlyMode
   }),
+  reflectUpdateOpenedFileContent: (entryPath: string) => (
+    dispatch: (actions: Object) => void,
+    getState: () => any
+  ) => {
+    const { openedFiles } = getState().app;
+    if (openedFiles && openedFiles.length > 0) {
+      const openedFile: OpenedEntry = openedFiles.find(
+        obj => obj.path === entryPath
+      );
+      if (openedFile) {
+        openedFile.shouldReload = true;
+        dispatch(actions.addToEntryContainer(openedFile));
+      }
+    }
+  },
   updateOpenedFile: (
     entryPath: string,
     fsEntryMeta: any // FileSystemEntryMeta,
@@ -1476,10 +1545,21 @@ export const actions = {
         });
     }
   },
-  openFsEntry: (fsEntry: FileSystemEntry) => (
+  openFsEntry: (fsEntry?: FileSystemEntry) => (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
+    if (fsEntry === undefined) {
+      // eslint-disable-next-line no-param-reassign
+      fsEntry = getLastSelectedEntry(getState());
+      if (fsEntry === undefined) {
+        return;
+      }
+      if (!fsEntry.isFile) {
+        dispatch(actions.loadDirectoryContent(fsEntry.path));
+        return;
+      }
+    }
     let entryForOpening: OpenedEntry;
     const { openedFiles } = getState().app;
     /**
@@ -1544,14 +1624,15 @@ export const actions = {
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
+    const lastSelectedEntry = getLastSelectedEntry(getState());
     const nextFile = getNextFile(
       path,
-      getState().app.lastSelectedEntry,
+      lastSelectedEntry ? lastSelectedEntry.path : undefined,
       getState().app.currentDirectoryEntries
     );
     if (nextFile !== undefined) {
       dispatch(actions.openFsEntry(nextFile));
-      dispatch(actions.setLastSelectedEntry(nextFile.path));
+      // dispatch(actions.setLastSelectedEntry(nextFile.path));
       dispatch(actions.setSelectedEntries([nextFile]));
       return nextFile;
     }
@@ -1560,14 +1641,15 @@ export const actions = {
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
+    const lastSelectedEntry = getLastSelectedEntry(getState());
     const prevFile = getPrevFile(
       path,
-      getState().app.lastSelectedEntry,
+      lastSelectedEntry ? lastSelectedEntry.path : undefined,
       getState().app.currentDirectoryEntries
     );
     if (prevFile !== undefined) {
       dispatch(actions.openFsEntry(prevFile));
-      dispatch(actions.setLastSelectedEntry(prevFile.path));
+      // dispatch(actions.setLastSelectedEntry(prevFile.path));
       dispatch(actions.setSelectedEntries([prevFile]));
     }
   },
@@ -1590,6 +1672,7 @@ export const actions = {
     dispatch: (actions: Object) => void
   ) => {
     fsEntries.map(entry => dispatch(actions.reflectCreateEntryInt(entry))); // TODO remove map and set state once
+    dispatch(actions.setSelectedEntries(fsEntries));
   },
   reflectCreateEntry: (path: string, isFile: boolean) => (
     dispatch: (actions: Object) => void
@@ -1620,6 +1703,7 @@ export const actions = {
   ) => {
     dispatch(actions.reflectRenameEntryInt(path, newPath));
     dispatch(LocationIndexActions.reflectRenameEntry(path, newPath));
+    dispatch(actions.setSelectedEntries([]));
   },
   updateCurrentDirEntry: (path: string, entry: Object) => ({
     type: types.UPDATE_CURRENTDIR_ENTRY,
@@ -1710,7 +1794,8 @@ export const actions = {
     dispatch: (actions: Object) => void
   ) =>
     PlatformIO.renameFilePromise(filePath, newFilePath)
-      .then(() => {
+      .then(result => {
+        const newFilePathFromPromise = result[1];
         console.info('File renamed ' + filePath + ' to ' + newFilePath);
         dispatch(
           actions.showNotification(
@@ -1719,7 +1804,7 @@ export const actions = {
             true
           )
         );
-        dispatch(actions.reflectRenameEntry(filePath, newFilePath));
+        dispatch(actions.reflectRenameEntry(filePath, newFilePathFromPromise));
         // Update sidecar file and thumb
         renameFilesPromise([
           [
@@ -1769,8 +1854,24 @@ export const actions = {
         );
         throw error;
       }),
-  openFileNatively: (selectedFile: string) => () => {
-    PlatformIO.openFile(selectedFile);
+  openFileNatively: (selectedFile?: string) => (
+    dispatch: (actions: Object) => void,
+    getState: () => any
+  ) => {
+    if (selectedFile === undefined) {
+      // eslint-disable-next-line no-param-reassign
+      const fsEntry = getLastSelectedEntry(getState());
+      if (fsEntry === undefined) {
+        return;
+      }
+      if (fsEntry.isFile) {
+        PlatformIO.openFile(fsEntry.path);
+      } else {
+        PlatformIO.openDirectory(fsEntry.path);
+      }
+    } else {
+      PlatformIO.openFile(selectedFile);
+    }
   },
   openLink: (url: string) => (
     dispatch: (actions: Object) => void,
@@ -1939,6 +2040,7 @@ export const actions = {
 };
 
 // Selectors
+export const currentUser = (state: any) => state.app.user;
 export const getDirectoryContent = (state: any) =>
   state.app.currentDirectoryEntries;
 export const getCurrentDirectoryColor = (state: any) =>
@@ -1974,9 +2076,16 @@ export const getCurrentLocationPath = (state: any) => {
 export const isUpdateAvailable = (state: any) => state.app.isUpdateAvailable;
 export const isUpdateInProgress = (state: any) => state.app.isUpdateInProgress;
 export const isOnline = (state: any) => state.app.isOnline;
-export const getLastSelectedEntry = (state: any) => state.app.lastSelectedEntry;
+export const getLastSelectedEntry = (state: any) => {
+  const { selectedEntries } = state.app;
+  if (selectedEntries && selectedEntries.length > 0) {
+    return selectedEntries[selectedEntries.length - 1];
+  }
+  return undefined;
+};
 export const getSelectedTag = (state: any) => state.app.tag;
-export const getSelectedEntries = (state: any) => state.app.selectedEntries;
+export const getSelectedEntries = (state: any) =>
+  state.app.selectedEntries ? state.app.selectedEntries : [];
 export const isGeneratingThumbs = (state: any) => state.app.isGeneratingThumbs;
 export const isReadOnlyMode = (state: any) => state.app.isReadOnlyMode;
 export const isOnboardingDialogOpened = (state: any) =>
@@ -1995,6 +2104,8 @@ export const isCreateDirectoryOpened = (state: any) =>
   state.app.createDirectoryDialogOpened;
 export const isCreateFileDialogOpened = (state: any) =>
   state.app.createFileDialogOpened;
+export const isDeleteMultipleEntriesDialogOpened = (state: any) =>
+  state.app.deleteMultipleEntriesDialogOpened;
 export const isUploadDialogOpened = (state: any) =>
   state.app.uploadDialogOpened;
 export const isOpenLinkDialogOpened = (state: any) =>

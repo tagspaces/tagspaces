@@ -20,6 +20,7 @@ import React, { useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
+import Tooltip from '@material-ui/core/Tooltip';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
@@ -113,9 +114,6 @@ const LocationView = React.memo((props: Props) => {
   };
 
   const handleLocationContextMenuClick = (event: any) => {
-    if (props.isReadOnlyMode) {
-      return true;
-    }
     event.preventDefault();
     event.stopPropagation();
     setLocationDirectoryContextMenuAnchorEl(event.currentTarget);
@@ -228,13 +226,7 @@ const LocationView = React.memo((props: Props) => {
             ? props.classes.listItemSelected
             : props.classes.listItem
         }
-        title={
-          location.isDefault
-            ? i18n.t('core: thisIsStartupLocation') +
-              ' : ' +
-              getLocationPath(location)
-            : getLocationPath(location)
-        }
+        title={getLocationPath(location)}
         button
         onClick={() => handleLocationClick()}
         onContextMenu={event => handleLocationContextMenuClick(event)}
@@ -301,23 +293,23 @@ const LocationView = React.memo((props: Props) => {
             </div>
           </TargetMoveFileBox>
         )}
-        {!AppConfig.locationsReadOnly && (
-          <ListItemSecondaryAction>
-            <IconButton
-              aria-label={i18n.t('core:options')}
-              aria-haspopup="true"
-              edge="end"
-              data-tid={'locationMoreButton_' + location.name}
-              onClick={event => handleLocationContextMenuClick(event)}
-              onContextMenu={event => handleLocationContextMenuClick(event)}
-            >
-              {location.isDefault && (
+        <ListItemSecondaryAction>
+          <IconButton
+            aria-label={i18n.t('core:options')}
+            aria-haspopup="true"
+            edge="end"
+            data-tid={'locationMoreButton_' + location.name}
+            onClick={event => handleLocationContextMenuClick(event)}
+            onContextMenu={event => handleLocationContextMenuClick(event)}
+          >
+            {location.isDefault && (
+              <Tooltip title={i18n.t('core:thisIsStartupLocation')}>
                 <DefaultLocationIcon data-tid="startupIndication" />
-              )}
-              <MoreVertIcon />
-            </IconButton>
-          </ListItemSecondaryAction>
-        )}
+              </Tooltip>
+            )}
+            <MoreVertIcon />
+          </IconButton>
+        </ListItemSecondaryAction>
       </ListItem>
       <DirectoryTreeView
         key={'tree_' + location.uuid}

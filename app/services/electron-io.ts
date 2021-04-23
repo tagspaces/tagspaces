@@ -24,8 +24,8 @@ import {
   extractFileName,
   extractParentDirectoryPath,
   getMetaDirectoryPath
-} from '../utils/paths';
-import { arrayBufferToBuffer } from '../utils/misc';
+} from '-/utils/paths';
+import { arrayBufferToBuffer } from '-/utils/misc';
 import AppConfig from '../config';
 import PlatformIO from './platform-io';
 import TrayIcon from '../assets/icons/trayIcon.png';
@@ -323,8 +323,9 @@ export default class ElectronIO {
                 const folderMetaPath =
                   eentry.path +
                   AppConfig.dirSeparator +
-                  AppConfig.metaFolder +
-                  AppConfig.dirSeparator +
+                  (!eentry.path.includes('/' + AppConfig.metaFolder)
+                    ? AppConfig.metaFolder + AppConfig.dirSeparator
+                    : '') +
                   AppConfig.metaFolderFile;
                 try {
                   const folderMeta = this.fs.readJsonSync(folderMetaPath);
@@ -530,8 +531,8 @@ export default class ElectronIO {
         );
       } else if (this.fs.lstatSync(sourceFilePath).isDirectory()) {
         reject('Trying to copy a file: ' + sourceFilePath + '. Copying failed');
-      } else if (this.fs.existsSync(targetFilePath)) {
-        reject('File "' + targetFilePath + '" exists. Copying failed.');
+        /* } else if (this.fs.existsSync(targetFilePath)) {
+        reject('File "' + targetFilePath + '" exists. Copying failed.'); */
       } else {
         this.fs.copy(sourceFilePath, targetFilePath, error => {
           if (error) {
@@ -707,9 +708,9 @@ export default class ElectronIO {
       this.getPropertiesPromise(filePath)
         .then((entry: FileSystemEntry) => {
           if (entry && entry.isFile && overwrite) {
-            saveFile({ ...entry, isNewFile: false }, content);
+            saveFile({ ...entry, isNewFile: false, tags: [] }, content);
           } else {
-            saveFile({ ...entry, isNewFile: true }, content);
+            saveFile({ ...entry, isNewFile: true, tags: [] }, content);
           }
           return true;
         })
@@ -725,7 +726,8 @@ export default class ElectronIO {
             extension: extractFileExtension(filePath, AppConfig.dirSeparator),
             size: 0,
             lmdt: new Date().getTime(),
-            isNewFile: true
+            isNewFile: true,
+            tags: []
           };
           saveFile(fsEntry, content);
         });
@@ -848,6 +850,8 @@ export default class ElectronIO {
     console.log(url);
     this.electron.shell.openExternal(url);
   };
+
+  resolveFilePath = (filePath: string): string => pathLib.resolve(filePath);
 
   selectFileDialog = (): Promise<any> => {
     const options = {

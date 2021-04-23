@@ -70,7 +70,7 @@ cordova.define("cordova-plugin-file.resolveLocalFileSystemURI", function(require
                     fileSystems.getFs(fsName, function (fs) {
                         // This should happen only on platforms that haven't implemented requestAllFileSystems (windows)
                         if (!fs) {
-                            fs = new FileSystem(fsName, {name: '', fullPath: '/'}); // eslint-disable-line no-undef
+                            fs = new FileSystem(fsName, { name: '', fullPath: '/' }); // eslint-disable-line no-undef
                         }
                         var result = (entry.isDirectory) ? new DirectoryEntry(entry.name, entry.fullPath, fs, entry.nativeURL) : new FileEntry(entry.name, entry.fullPath, fs, entry.nativeURL);
                         successCallback(result);

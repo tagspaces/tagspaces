@@ -272,7 +272,7 @@ public class LocalFilesystem extends Filesystem {
         }
 
         CordovaResourceApi.OpenForReadResult offr = resourceApi.openForRead(srcFs.toNativeUri(srcURL));
-        copyResource(offr, new FileOutputStream(destFile));
+        resourceApi.copyResource(offr, new FileOutputStream(destFile));
 
         if (move) {
             srcFs.removeFileAtLocalURL(srcURL);
@@ -470,44 +470,4 @@ public class LocalFilesystem extends Filesystem {
 		File file = new File(path);
 		return file.exists();
 	}
-
-    // This is a copy & paste from CordovaResource API that is required since CordovaResourceApi
-    // has a bug pre-4.0.0.
-    // TODO: Once cordova-android@4.0.0 is released, delete this copy and make the plugin depend on
-    // 4.0.0 with an engine tag.
-    private static void copyResource(CordovaResourceApi.OpenForReadResult input, OutputStream outputStream) throws IOException {
-        try {
-            InputStream inputStream = input.inputStream;
-            if (inputStream instanceof FileInputStream && outputStream instanceof FileOutputStream) {
-                FileChannel inChannel = ((FileInputStream)input.inputStream).getChannel();
-                FileChannel outChannel = ((FileOutputStream)outputStream).getChannel();
-                long offset = 0;
-                long length = input.length;
-                if (input.assetFd != null) {
-                    offset = input.assetFd.getStartOffset();
-                }
-                // transferFrom()'s 2nd arg is a relative position. Need to set the absolute
-                // position first.
-                inChannel.position(offset);
-                outChannel.transferFrom(inChannel, 0, length);
-            } else {
-                final int BUFFER_SIZE = 8192;
-                byte[] buffer = new byte[BUFFER_SIZE];
-
-                for (;;) {
-                    int bytesRead = inputStream.read(buffer, 0, BUFFER_SIZE);
-
-                    if (bytesRead <= 0) {
-                        break;
-                    }
-                    outputStream.write(buffer, 0, bytesRead);
-                }
-            }
-        } finally {
-            input.inputStream.close();
-            if (outputStream != null) {
-                outputStream.close();
-            }
-        }
-    }
 }

@@ -152,7 +152,7 @@ Entry.prototype.copyTo = function (parent, newName, successCallback, errorCallba
         errorCallback(new FileError(code));
     };
     var srcURL = this.toInternalURL();
-        // entry name
+    // entry name
     var name = newName || this.name;
     // success callback
     var success = function (entry) {

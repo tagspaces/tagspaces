@@ -736,11 +736,11 @@
     if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
         return nil;
     }
-    
+
     CFStringRef UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (__bridge CFStringRef)[path pathExtension], NULL);
     CFStringRef mimeType = UTTypeCopyPreferredTagWithClass (UTI, kUTTagClassMIMEType);
     CFRelease(UTI);
-    
+
     if (!mimeType) {
         return @"application/octet-stream";
     }

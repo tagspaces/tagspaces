@@ -137,7 +137,7 @@ export function getURLParameter(paramName: string, url?: string): string {
 
 export function clearAllURLParams() {
   window.history.pushState('', document.title, window.location.pathname);
-  console.log(window.location.href);
+  // console.log(window.location.href);
 }
 
 export function clearURLParam(paramName) {
@@ -151,7 +151,7 @@ export function clearURLParam(paramName) {
     document.title,
     window.location.pathname + '?' + params
   );
-  console.log(window.location.href);
+  // console.log(window.location.href);
 }
 
 export function updateHistory(
@@ -159,37 +159,39 @@ export function updateHistory(
   currentDirectory: string,
   entryPath?: string
 ) {
-  // const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
-  let urlParams = '?';
-  let currentLocationPath = '';
-  const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
+  if (currentLocation) {
+    // const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
+    let urlParams = '?';
+    let currentLocationPath = '';
+    const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
 
-  if (currentLocation && currentLocation.uuid) {
-    urlParams += 'tslid=' + encodeURIComponent(currentLocation.uuid);
-    currentLocationPath = getLocationPath(currentLocation);
+    if (currentLocation && currentLocation.uuid) {
+      urlParams += 'tslid=' + encodeURIComponent(currentLocation.uuid);
+      currentLocationPath = getLocationPath(currentLocation);
+    }
+
+    if (currentDirectory && currentDirectory.length > 0) {
+      const currentDir = isCloudLocation
+        ? currentDirectory
+        : currentDirectory.replace(currentLocationPath, '');
+      urlParams += '&tsdpath=' + encodeURIComponent(currentDir);
+    }
+
+    if (entryPath && entryPath.length > 0) {
+      const ePath = isCloudLocation
+        ? entryPath
+        : entryPath.replace(currentLocationPath, '');
+      urlParams += '&tsepath=' + encodeURIComponent(ePath);
+    }
+
+    const localePar = getURLParameter('locale');
+    if (localePar && localePar.length > 1) {
+      urlParams += '&locale=' + localePar;
+    }
+
+    window.history.pushState('', document.title, urlParams);
+    // console.log(window.location.href);
   }
-
-  if (currentDirectory && currentDirectory.length > 0) {
-    const currentDir = isCloudLocation
-      ? currentDirectory
-      : currentDirectory.replace(currentLocationPath, '');
-    urlParams += '&tsdpath=' + encodeURIComponent(currentDir);
-  }
-
-  if (entryPath && entryPath.length > 0) {
-    const ePath = isCloudLocation
-      ? entryPath
-      : entryPath.replace(currentLocationPath, '');
-    urlParams += '&tsepath=' + encodeURIComponent(ePath);
-  }
-
-  const localePar = getURLParameter('locale');
-  if (localePar && localePar.length > 1) {
-    urlParams += '&locale=' + localePar;
-  }
-
-  window.history.pushState('', document.title, urlParams);
-  // console.log(window.location.href);
 }
 
 export function dataURLtoBlob(dataURI) {

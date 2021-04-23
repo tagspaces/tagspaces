@@ -71,6 +71,7 @@ function createProjectObject (projectPath, projectName) {
  * @return {Promise}
  */
 function getDefaultSimulatorTarget () {
+    events.emit('log', 'Select last emulator from list as default.');
     return require('./listEmulatorBuildTargets').run()
         .then(emulators => {
             let targetEmulator;

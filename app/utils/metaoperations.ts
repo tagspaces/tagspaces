@@ -38,8 +38,7 @@ export function savePerspective(
       .catch(() => {
         const newFsEntryMeta: FileSystemEntryMeta = {
           appName: '',
-          appVersionCreated: '',
-          appVersionUpdated: '',
+          appVersion: '',
           description: '',
           lastUpdated: '',
           tags: undefined,

@@ -26,6 +26,8 @@
 
 @property (nonatomic, strong) CDVViewController* viewController;
 
+@property (nonatomic) CDVPlugin* schemePlugin;
+
 - (instancetype)initWithVC:(CDVViewController *)controller;
 
 

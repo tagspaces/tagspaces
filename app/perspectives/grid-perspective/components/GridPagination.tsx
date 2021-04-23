@@ -45,6 +45,7 @@ interface Props {
   currentLocationPath: string;
   currentDirectoryPath: string;
   searchResultCount: number;
+  onContextMenu: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 const GridPagination = (props: Props) => {
@@ -94,6 +95,9 @@ const GridPagination = (props: Props) => {
       }}
     >
       <div
+        onContextMenu={(e: React.MouseEvent<HTMLDivElement>) =>
+          props.onContextMenu(e)
+        }
         style={{
           height: '100%',
           // @ts-ignore

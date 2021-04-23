@@ -258,6 +258,10 @@ export default {
     {
       iso: 'hy',
       title: 'հայերեն (Armenian)'
+    },
+    {
+      iso: 'nb',
+      title: 'Bokmål (Norwegian)'
     }
   ],
   keyBindings: [

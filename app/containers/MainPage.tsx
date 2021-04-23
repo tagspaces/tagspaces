@@ -71,7 +71,9 @@ import {
   isReadOnlyMode,
   isProgressOpened,
   getOpenedFiles,
-  OpenedEntry
+  OpenedEntry,
+  isDeleteMultipleEntriesDialogOpened,
+  getSelectedEntries
 } from '../reducers/app';
 import {
   actions as LocationIndexActions,
@@ -92,6 +94,7 @@ import FileUploadDialog from '-/components/dialogs/FileUploadDialog';
 import ProgressDialog from '-/components/dialogs/ProgressDialog';
 import { FileSystemEntry } from '-/services/utils-io';
 import useEventListener from '-/utils/useEventListener';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 
 const initialSplitSize = 44;
 const drawerWidth = 300;
@@ -183,8 +186,8 @@ interface Props {
   toggleThirdPartyLibsDialog: () => void; // neede by electron-menus
   toggleAboutDialog: () => void; // needed by electron-menus
   toggleOnboardingDialog: () => void; // needed by electron-menus
-  setLastSelectedEntry: (path: string) => void; // needed by electron-menus
-  setSelectedEntries: (path: string) => void; // needed by electron-menus
+  // setLastSelectedEntry: (path: string) => void; // needed by electron-menus
+  setSelectedEntries: (selectedEntries: Array<Object>) => void; // needed by electron-menus
   openFsEntry: (fsEntry: FileSystemEntry) => void; // needed by electron-menus
   openFileNatively: (url: string) => void; // needed by electron-menus
   openURLExternally: (url: string) => void;
@@ -220,6 +223,11 @@ interface Props {
     onUploadProgress?: (progress: Progress, response: any) => void
   ) => any;
   onUploadProgress: (progress: Progress, response: any) => void;
+  isDeleteMultipleEntriesDialogOpened: boolean;
+  toggleDeleteMultipleEntriesDialog: () => void;
+  selectedEntries: Array<any>;
+  deleteFile: (path: string) => void;
+  deleteDirectory: (path: string) => void;
 }
 
 const AboutDialog = React.lazy(() =>
@@ -623,6 +631,39 @@ const MainPage = (props: Props) => {
           onClose={toggleSettingsDialog}
         />
       )}
+      {props.isDeleteMultipleEntriesDialogOpened && (
+        <ConfirmDialog
+          open={props.isDeleteMultipleEntriesDialogOpened}
+          onClose={() => props.toggleDeleteMultipleEntriesDialog()}
+          title={i18n.t('core:deleteConfirmationTitle')}
+          content={i18n.t('core:deleteConfirmationContent')}
+          list={props.selectedEntries.map(fsEntry => fsEntry.name)}
+          confirmCallback={result => {
+            if (result && props.selectedEntries) {
+              const deletePromises = props.selectedEntries.map(fsEntry => {
+                if (fsEntry.isFile) {
+                  return props.deleteFile(fsEntry.path);
+                }
+                return props.deleteDirectory(fsEntry.path);
+              });
+              Promise.all(deletePromises)
+                .then(delResult => {
+                  // console.debug(delResult);
+                  if (delResult.some(del => del)) {
+                    props.setSelectedEntries([]);
+                  } // TODO else { remove only deleted from setSelectedEntries}
+                  return true;
+                })
+                .catch(err => {
+                  console.warn('Deleting file failed', err);
+                });
+            }
+          }}
+          cancelDialogTID="cancelDeleteFileDialog"
+          confirmDialogTID="confirmDeleteFileDialog"
+          confirmDialogContentTID="confirmDeleteDialogContent"
+        />
+      )}
       <Snackbar
         data-tid={props.notificationStatus.tid}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
@@ -834,7 +875,11 @@ function mapStateToProps(state) {
     isSearchPanelOpened: isSearchPanelOpened(state),
     isPerspectivesPanelOpened: isPerspectivesPanelOpened(state),
     isHelpFeedbackPanelOpened: isHelpFeedbackPanelOpened(state),
-    directoryPath: getDirectoryPath(state)
+    directoryPath: getDirectoryPath(state),
+    isDeleteMultipleEntriesDialogOpened: isDeleteMultipleEntriesDialogOpened(
+      state
+    ),
+    selectedEntries: getSelectedEntries(state)
   };
 }
 
@@ -863,7 +908,7 @@ function mapDispatchToProps(dispatch) {
       toggleAboutDialog: AppActions.toggleAboutDialog,
       toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
       toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
-      setLastSelectedEntry: AppActions.setLastSelectedEntry,
+      // setLastSelectedEntry: AppActions.setLastSelectedEntry,
       setSelectedEntries: AppActions.setSelectedEntries,
       setGeneratingThumbnails: AppActions.setGeneratingThumbnails,
       openFsEntry: AppActions.openFsEntry,
@@ -884,8 +929,12 @@ function mapDispatchToProps(dispatch) {
       openPerspectivesPanel: AppActions.openPerspectivesPanel,
       openHelpFeedbackPanel: AppActions.openHelpFeedbackPanel,
       closeAllVerticalPanels: AppActions.closeAllVerticalPanels,
+      toggleDeleteMultipleEntriesDialog:
+        AppActions.toggleDeleteMultipleEntriesDialog,
       setFirstRun: SettingsActions.setFirstRun,
-      uploadFilesAPI: IOActions.uploadFilesAPI
+      uploadFilesAPI: IOActions.uploadFilesAPI,
+      deleteDirectory: AppActions.deleteDirectory,
+      deleteFile: AppActions.deleteFile
     },
     dispatch
   );

@@ -147,7 +147,7 @@ ext {
 }
 
 // PLUGIN GRADLE EXTENSIONS START
-apply from: "../com.ourcodeworld.plugins.Filebrowser/mobile-plugin.gradle"
+apply from: "../com.ourcodeworld.plugins.Filebrowser/mobileapp-plugin.gradle"
 // PLUGIN GRADLE EXTENSIONS END
 
 def hasBuildExtras1 = file('build-extras.gradle').exists()
@@ -352,6 +352,7 @@ dependencies {
 
     // SUB-PROJECT DEPENDENCIES START
     implementation(project(path: ":CordovaLib"))
+    implementation "androidx.core:core:1.1.0"
     implementation "androidx.legacy:legacy-support-v4:1.0.0"
     // SUB-PROJECT DEPENDENCIES END
 }

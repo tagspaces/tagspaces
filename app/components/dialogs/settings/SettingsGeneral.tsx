@@ -23,15 +23,26 @@ import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
 import Switch from '@material-ui/core/Switch';
+import Tooltip from '@material-ui/core/Tooltip';
 import Input from '@material-ui/core/Input';
 import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
+import InfoIcon from '@material-ui/icons/InfoOutlined';
+import CheckIcon from '@material-ui/icons/Check';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import i18n from '-/services/i18n';
-import { actions as SettingsActions, getSettings } from '-/reducers/settings';
+import {
+  actions as SettingsActions,
+  getPersistTagsInSidecarFile,
+  getSettings
+} from '-/reducers/settings';
 import ColorPickerDialog from '../ColorPickerDialog';
 import TransparentBackground from '../../TransparentBackground';
+import AppConfig from '-/config';
 
 const styles: any = {
   root: {
@@ -55,6 +66,7 @@ interface Props {
   setTagTextColor: (tagTextColor: string) => void;
   classes: any;
   settings: any;
+  persistTagsInSidecarFile: boolean;
   toggleShowUnixHiddenEntries: () => void;
   setCurrentTheme: (theme: string) => void;
   setLanguage: (language: string) => void;
@@ -95,7 +107,7 @@ const SettingsGeneral = (props: Props) => {
     props.setMaxSearchResult(event.target.value);
   };
 
-  const { classes } = props;
+  const { classes, persistTagsInSidecarFile } = props;
 
   return (
     <List className={classes.root}>
@@ -104,7 +116,15 @@ const SettingsGeneral = (props: Props) => {
         <Select
           data-tid="settingsSetLanguage"
           value={props.settings.interfaceLanguage}
-          onChange={(event: any) => props.setLanguage(event.target.value)}
+          onChange={(event: any) => {
+            props.setLanguage(event.target.value);
+            const { currentTheme } = props.settings;
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            props.setCurrentTheme(newTheme);
+            setTimeout(() => {
+              props.setCurrentTheme(currentTheme);
+            }, 500);
+          }}
           input={<Input id="languageSelector" />}
         >
           {props.settings.supportedLanguages.map(language => (
@@ -129,6 +149,73 @@ const SettingsGeneral = (props: Props) => {
           ))}
         </Select>
       </ListItem>
+      <ListItem
+        className={classes.listItem}
+        title={
+          AppConfig.useSidecarsForFileTaggingDisableSetting
+            ? 'This setting is managed with an external configuration'
+            : ''
+        }
+      >
+        <ListItemText primary="File tagging method" />
+        {AppConfig.useSidecarsForFileTaggingDisableSetting ? (
+          <Button size="small" variant="outlined" disabled>
+            {persistTagsInSidecarFile ? 'Use Sidecar Files' : 'Rename Files'}
+          </Button>
+        ) : (
+          <ToggleButtonGroup
+            value={persistTagsInSidecarFile}
+            size="small"
+            exclusive
+          >
+            <ToggleButton
+              value={false}
+              data-tid="settingsSetPersistTagsInFileName"
+              onClick={() => props.setPersistTagsInSidecarFile(false)}
+            >
+              <Tooltip
+                arrow
+                title={
+                  <Typography color="inherit">
+                    Use the name of file for saving the tags - Tagging the file{' '}
+                    <b>image.jpg</b> with a tag <b>sunset</b> will rename it to{' '}
+                    <b>image[sunset].jpg</b>
+                  </Typography>
+                }
+              >
+                <div style={{ display: 'flex' }}>
+                  {!persistTagsInSidecarFile && <CheckIcon />}
+                  &nbsp;Rename Files&nbsp;&nbsp;
+                  <InfoIcon />
+                </div>
+              </Tooltip>
+            </ToggleButton>
+            <ToggleButton
+              value={true}
+              data-tid="settingsSetPersistTagsInSidecarFile"
+              onClick={() => props.setPersistTagsInSidecarFile(true)}
+            >
+              <Tooltip
+                arrow
+                title={
+                  <Typography color="inherit">
+                    Use sidecar file for saving the tags - Tagging the file{' '}
+                    <b>image.jpg</b> with a tag <b>sunset</b> will save this tag{' '}
+                    in an additional sidecar file called <b>image.jpg.json</b>{' '}
+                    located in a sub folder with the name <b>.ts</b>
+                  </Typography>
+                }
+              >
+                <div style={{ display: 'flex' }}>
+                  {persistTagsInSidecarFile && <CheckIcon />}
+                  &nbsp;Use Sidecar Files&nbsp;&nbsp;
+                  <InfoIcon />
+                </div>
+              </Tooltip>
+            </ToggleButton>
+          </ToggleButtonGroup>
+        )}
+      </ListItem>
       <ListItem className={classes.listItem}>
         <ListItemText primary={i18n.t('core:checkForNewVersionOnStartup')} />
         <Switch
@@ -137,18 +224,6 @@ const SettingsGeneral = (props: Props) => {
             props.setCheckForUpdates(!props.settings.checkForUpdates)
           }
           checked={props.settings.checkForUpdates}
-        />
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <ListItemText primary={i18n.t('core:persistTagsInSidecarFile')} />
-        <Switch
-          data-tid="settingsSetPersistTagsInSidecarFile"
-          onClick={() =>
-            props.setPersistTagsInSidecarFile(
-              !props.settings.persistTagsInSidecarFile
-            )
-          }
-          checked={props.settings.persistTagsInSidecarFile}
         />
       </ListItem>
       <ListItem className={classes.listItem}>
@@ -223,14 +298,16 @@ const SettingsGeneral = (props: Props) => {
           />
         )}
       </ListItem>
-      <ListItem className={classes.listItem}>
-        <ListItemText primary={i18n.t('core:useTrashCan')} />
-        <Switch
-          data-tid="settingsSetUseTrashCan"
-          onClick={() => props.setUseTrashCan(!props.settings.useTrashCan)}
-          checked={props.settings.useTrashCan}
-        />
-      </ListItem>
+      {AppConfig.isElectron && (
+        <ListItem className={classes.listItem}>
+          <ListItemText primary={i18n.t('core:useTrashCan')} />
+          <Switch
+            data-tid="settingsSetUseTrashCan"
+            onClick={() => props.setUseTrashCan(!props.settings.useTrashCan)}
+            checked={props.settings.useTrashCan}
+          />
+        </ListItem>
+      )}
       <ListItem className={classes.listItem}>
         <ListItemText primary={i18n.t('core:showUnixHiddenFiles')} />
         <Switch
@@ -311,7 +388,7 @@ const SettingsGeneral = (props: Props) => {
         <Button
           data-tid="reloadAppTID"
           onClick={() => {
-            location.reload();
+            window.location.reload();
           }}
           color="secondary"
         >
@@ -345,7 +422,8 @@ const SettingsGeneral = (props: Props) => {
 
 function mapStateToProps(state) {
   return {
-    settings: getSettings(state)
+    settings: getSettings(state),
+    persistTagsInSidecarFile: getPersistTagsInSidecarFile(state)
   };
 }
 

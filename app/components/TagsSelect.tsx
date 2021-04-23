@@ -79,6 +79,7 @@ interface Props {
   isReadOnlyMode?: boolean;
   placeholderText?: string;
   selectedEntryPath?: string;
+  autoFocus?: boolean;
   // removeTags: (paths: Array<string>, tags: Array<Tag>) => void;
 }
 
@@ -139,7 +140,8 @@ const TagsSelect = (props: Props) => {
     placeholderText = '',
     label,
     tagMode,
-    selectedEntryPath
+    selectedEntryPath,
+    autoFocus = false
   } = props;
 
   const tags = props.tags ? props.tags : [];
@@ -203,6 +205,7 @@ const TagsSelect = (props: Props) => {
             label={label}
             placeholder={placeholderText}
             margin="normal"
+            autoFocus={autoFocus}
             style={{ marginTop: 0, marginBottom: 0, whiteSpace: 'nowrap' }}
             fullWidth
           />

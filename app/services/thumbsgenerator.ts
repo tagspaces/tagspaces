@@ -282,7 +282,7 @@ function generateDefaultThumbnail() {
   return Promise.resolve('');
 }
 
-function generateImageThumbnail(fileURL): Promise<string> {
+export function generateImageThumbnail(fileURL): Promise<string> {
   return new Promise(resolve => {
     let canvas: HTMLCanvasElement = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
