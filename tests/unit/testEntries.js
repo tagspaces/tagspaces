@@ -7,7 +7,7 @@ export const entry1 = {
   textConten: 'adsadas dasda',
   fromTime: '',
   toTime: '',
-  size: 111
+  fileSize: 9
 };
 
 export const entry2 = {
