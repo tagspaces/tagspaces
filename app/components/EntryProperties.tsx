@@ -38,7 +38,7 @@ import DOMPurify from 'dompurify';
 import Select from '@material-ui/core/Select';
 import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
-import CloseIcon from '@material-ui/icons/Close';
+import ClearColorIcon from '@material-ui/icons/Backspace';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import DefaultPerspectiveIcon from '@material-ui/icons/GridOn';
 import LayersClearIcon from '@material-ui/icons/LayersClear';
@@ -112,7 +112,9 @@ const styles: any = (theme: any) => ({
     minHeight: 35,
     width: '100%',
     border: '1px solid lightgray',
-    margin: '0 8px 0 0'
+    margin: '0 8px 0 0',
+    textTransform: 'none',
+    fontWeight: 'lighter'
   },
   textField: {
     marginLeft: theme.spacing(1),
@@ -911,10 +913,10 @@ const EntryProperties = (props: Props) => {
             <Grid item xs={6}>
               <Typography
                 variant="caption"
-                style={{ display: 'block' }}
+                style={{ display: 'block', paddingLeft: 6 }}
                 className={classes.header}
               >
-                {i18n.t('core:changeBackgroundColor')}
+                {i18n.t('core:backgroundColor')}
               </Typography>
               <Grid container item xs={12}>
                 <Grid item xs={10}>
@@ -930,20 +932,25 @@ const EntryProperties = (props: Props) => {
                           backgroundColor: currentEntry.color
                         }}
                         onClick={toggleBackgroundColorPicker}
-                      />
+                      >
+                        {i18n.t('core:changeBackgroundColor')}
+                      </Button>
                     </TransparentBackground>
                   </FormControl>
                 </Grid>
                 <Grid item xs={2}>
                   {currentEntry.color && (
-                    <TransparentBackground>
-                      <IconButton
-                        aria-label="clear"
-                        size="small"
-                        onClick={() => setConfirmResetColorDialogOpened(true)}
-                      >
-                        <CloseIcon fontSize="inherit" />
-                      </IconButton>
+                    <>
+                      <Tooltip title="Clears the background color of this folder">
+                        <IconButton
+                          aria-label="clear"
+                          size="small"
+                          style={{ marginTop: 5 }}
+                          onClick={() => setConfirmResetColorDialogOpened(true)}
+                        >
+                          <ClearColorIcon />
+                        </IconButton>
+                      </Tooltip>
                       {isConfirmResetColorDialogOpened && (
                         <ConfirmDialog
                           open={isConfirmResetColorDialogOpened}
@@ -964,7 +971,7 @@ const EntryProperties = (props: Props) => {
                           confirmDialogContentTID="confirmResetColorDialogContent"
                         />
                       )}
-                    </TransparentBackground>
+                    </>
                   )}
                 </Grid>
               </Grid>
