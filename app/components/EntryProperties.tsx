@@ -417,6 +417,10 @@ const EntryProperties = (props: Props) => {
   };
 
   const handleChangeColor = color => {
+    if (color === 'transparent0') {
+      // eslint-disable-next-line no-param-reassign
+      color = 'transparent';
+    }
     Pro.MetaOperations.saveColor(currentEntry.path, color)
       .then(entryMeta => {
         // if (props.entryPath === props.currentDirectoryPath) {
