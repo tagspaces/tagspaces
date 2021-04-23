@@ -38,6 +38,7 @@ import DOMPurify from 'dompurify';
 import Select from '@material-ui/core/Select';
 import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
+import ClearColorIcon from '@material-ui/icons/Backspace';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import DefaultPerspectiveIcon from '@material-ui/icons/GridOn';
 import LayersClearIcon from '@material-ui/icons/LayersClear';
@@ -55,6 +56,7 @@ import {
   withLeaflet
 } from 'react-leaflet';
 import OpenLocationCode from 'open-location-code-typescript';
+import { IconButton } from '@material-ui/core';
 import TagDropContainer from './TagDropContainer';
 import ColorPickerDialog from './dialogs/ColorPickerDialog';
 import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
@@ -83,6 +85,7 @@ import { savePerspective } from '-/utils/metaoperations';
 import MarkerIcon from '-/assets/icons/marker-icon.png';
 import Marker2xIcon from '-/assets/icons/marker-icon-2x.png';
 import MarkerShadowIcon from '-/assets/icons/marker-shadow.png';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
@@ -109,7 +112,9 @@ const styles: any = (theme: any) => ({
     minHeight: 35,
     width: '100%',
     border: '1px solid lightgray',
-    margin: '0 8px 0 0'
+    margin: '0 8px 0 0',
+    textTransform: 'none',
+    fontWeight: 'lighter'
   },
   textField: {
     marginLeft: theme.spacing(1),
@@ -252,6 +257,10 @@ const EntryProperties = (props: Props) => {
   const [isMoveCopyFilesDialogOpened, setMoveCopyFilesDialogOpened] = useState<
     boolean
   >(false);
+  const [
+    isConfirmResetColorDialogOpened,
+    setConfirmResetColorDialogOpened
+  ] = useState<boolean>(false);
   const [
     isFileThumbChooseDialogOpened,
     setFileThumbChooseDialogOpened
@@ -873,12 +882,9 @@ const EntryProperties = (props: Props) => {
           </FormControl>
         </Grid>
 
-        <Grid item xs={12}>
-          <div className={classes.fluidGrid}>
-            <div
-              className={classes.gridItem}
-              style={{ width: '50%', alignSelf: 'baseline' }}
-            >
+        <Grid container item xs={12}>
+          <Grid item xs={6}>
+            <div className={classes.gridItem}>
               <Typography
                 variant="caption"
                 className={classes.header}
@@ -889,78 +895,120 @@ const EntryProperties = (props: Props) => {
                 <strong>{ldtm}</strong>
               </Typography>
             </div>
+          </Grid>
 
-            {currentEntry.isFile ? (
-              <div className={classes.gridItem} style={{ width: '50%' }}>
-                <Typography
-                  variant="caption"
-                  className={classes.header}
-                  style={{ display: 'block' }}
-                >
-                  {i18n.t('core:fileSize')}
-                  <br />
-                  <strong>{formatFileSize(currentEntry.size)}</strong>
-                </Typography>
-              </div>
-            ) : (
-              <div className={classes.gridItem} style={{ width: '50%' }}>
-                <Typography
-                  variant="caption"
-                  style={{ display: 'block' }}
-                  className={classes.header}
-                >
-                  {i18n.t('core:changeBackgroundColor')}
-                </Typography>
-                <FormControl fullWidth={true} className={classes.formControl}>
-                  <TransparentBackground>
-                    <Button
-                      fullWidth={true}
-                      className={[
-                        classes.colorChooserButton,
-                        classes.button
-                      ].join(' ')}
-                      style={{
-                        backgroundColor: currentEntry.color
-                      }}
-                      onClick={toggleBackgroundColorPicker}
-                    />
-                    {displayColorPicker && (
-                      <ColorPickerDialog
-                        color={currentEntry.color}
-                        open={displayColorPicker}
-                        setColor={handleChangeColor}
-                        onClose={toggleBackgroundColorPicker}
-                        presetColors={[
-                          'transparent',
-                          '#FFFFFF44',
-                          '#00000044',
-                          '#ac725e44',
-                          '#f83a2244',
-                          '#fa573c44',
-                          '#ff753744',
-                          '#ffad4644',
-                          '#42d69244',
-                          '#00800044',
-                          '#7bd14844',
-                          '#fad16544',
-                          '#92e1c044',
-                          '#9fe1e744',
-                          '#9fc6e744',
-                          '#4986e744',
-                          '#9a9cff44',
-                          '#c2c2c244',
-                          '#cca6ac44',
-                          '#f691b244',
-                          '#cd74e644',
-                          '#a47ae244'
-                        ]}
-                      />
-                    )}
-                  </TransparentBackground>
-                </FormControl>
-              </div>
-            )}
-          </div>
+          {currentEntry.isFile ? (
+            <Grid item xs={6}>
+              <Typography
+                variant="caption"
+                className={classes.header}
+                style={{ display: 'block' }}
+              >
+                {i18n.t('core:fileSize')}
+                <br />
+                <strong>{formatFileSize(currentEntry.size)}</strong>
+              </Typography>
+            </Grid>
+          ) : (
+            <Grid item xs={6}>
+              <Typography
+                variant="caption"
+                style={{ display: 'block', paddingLeft: 6 }}
+                className={classes.header}
+              >
+                {i18n.t('core:backgroundColor')}
+              </Typography>
+              <Grid container item xs={12}>
+                <Grid item xs={10}>
+                  <FormControl fullWidth={true} className={classes.formControl}>
+                    <TransparentBackground>
+                      <Button
+                        fullWidth={true}
+                        className={[
+                          classes.colorChooserButton,
+                          classes.button
+                        ].join(' ')}
+                        style={{
+                          backgroundColor: currentEntry.color
+                        }}
+                        onClick={toggleBackgroundColorPicker}
+                      >
+                        {i18n.t('core:changeBackgroundColor')}
+                      </Button>
+                    </TransparentBackground>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={2}>
+                  {currentEntry.color && (
+                    <>
+                      <Tooltip title="Clears the background color of this folder">
+                        <IconButton
+                          aria-label="clear"
+                          size="small"
+                          style={{ marginTop: 5 }}
+                          onClick={() => setConfirmResetColorDialogOpened(true)}
+                        >
+                          <ClearColorIcon />
+                        </IconButton>
+                      </Tooltip>
+                      {isConfirmResetColorDialogOpened && (
+                        <ConfirmDialog
+                          open={isConfirmResetColorDialogOpened}
+                          onClose={() => {
+                            setConfirmResetColorDialogOpened(false);
+                          }}
+                          title={i18n.t('core:confirm')}
+                          content={i18n.t('core:confirmResetColor')}
+                          confirmCallback={result => {
+                            if (result) {
+                              handleChangeColor('transparent');
+                            } else {
+                              setConfirmResetColorDialogOpened(false);
+                            }
+                          }}
+                          cancelDialogTID="cancelConfirmResetColorDialog"
+                          confirmDialogTID="confirmConfirmResetColorDialog"
+                          confirmDialogContentTID="confirmResetColorDialogContent"
+                        />
+                      )}
+                    </>
+                  )}
+                </Grid>
+              </Grid>
+              {displayColorPicker && (
+                <ColorPickerDialog
+                  color={currentEntry.color}
+                  open={displayColorPicker}
+                  setColor={handleChangeColor}
+                  onClose={toggleBackgroundColorPicker}
+                  presetColors={[
+                    'transparent',
+                    '#FFFFFF44',
+                    '#00000044',
+                    '#ac725e44',
+                    '#f83a2244',
+                    '#fa573c44',
+                    '#ff753744',
+                    '#ffad4644',
+                    '#42d69244',
+                    '#00800044',
+                    '#7bd14844',
+                    '#fad16544',
+                    '#92e1c044',
+                    '#9fe1e744',
+                    '#9fc6e744',
+                    '#4986e744',
+                    '#9a9cff44',
+                    '#c2c2c244',
+                    '#cca6ac44',
+                    '#f691b244',
+                    '#cd74e644',
+                    '#a47ae244'
+                  ]}
+                />
+              )}
+            </Grid>
+          )}
         </Grid>
 
         <Grid item xs={12}>

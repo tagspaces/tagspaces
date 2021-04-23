@@ -27,13 +27,14 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
+import FolderIcon from '@material-ui/icons/FolderOpen';
 import FileIcon from '@material-ui/icons/InsertDriveFileOutlined';
 import Typography from '@material-ui/core/Typography';
 import Dialog from '@material-ui/core/Dialog';
 import { Tag } from '-/reducers/taglibrary';
 import TagsSelect from '../TagsSelect';
 import i18n from '-/services/i18n';
-import { extractFileName } from '-/utils/paths';
+import { extractFileName, extractDirectoryName } from '-/utils/paths';
 import PlatformIO from '-/services/platform-io';
 
 interface Props {
@@ -134,13 +135,18 @@ const AddRemoveTagsDialog = (props: Props) => {
             selectedEntries.map(entry => (
               <ListItem key={entry.path} title={entry.path}>
                 <ListItemIcon>
-                  <FileIcon />
+                  {entry.isFile ? <FileIcon /> : <FolderIcon />}
                 </ListItemIcon>
                 <Typography variant="inherit" noWrap>
-                  {extractFileName(
-                    entry.path || '',
-                    PlatformIO.getDirSeparator()
-                  )}
+                  {entry.isFile
+                    ? extractFileName(
+                        entry.path || '',
+                        PlatformIO.getDirSeparator()
+                      )
+                    : extractDirectoryName(
+                        entry.path || '',
+                        PlatformIO.getDirSeparator()
+                      )}
                 </Typography>
               </ListItem>
             ))}

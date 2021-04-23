@@ -1525,7 +1525,11 @@ export const actions = {
             }
             entryForOpening.shouldReload = fsEntryMeta.shouldReload;
             if (fsEntryMeta.color) {
-              entryForOpening.color = fsEntryMeta.color;
+              if (fsEntryMeta.color === 'transparent') {
+                entryForOpening.color = undefined;
+              } else {
+                entryForOpening.color = fsEntryMeta.color;
+              }
             }
             if (fsEntryMeta.description !== undefined) {
               entryForOpening.description = fsEntryMeta.description;

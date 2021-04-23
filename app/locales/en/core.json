@@ -282,6 +282,7 @@
   "cameraTakePicture": "Take Picture",
   "deleteConfirmationTitle": "Confirm Delete",
   "deleteConfirmationContent": "The selected entries will be permanently deleted. Are you sure?",
+  "backgroundColor": "Background Color",
   "changeBackgroundColor": "Change Background Color",
   "moreOperations": "More Operations",
   "options": "Options",
@@ -528,5 +529,6 @@
   "verifyTOTP": "Verify",
   "TOTPEnabled": "TOTP Is Enabled",
   "disableTOTP": "disable TOTP",
+  "confirmResetColor": "Do you really want to clear this color?",
   "-": "-"
 }
