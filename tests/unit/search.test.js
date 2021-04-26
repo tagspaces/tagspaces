@@ -1,4 +1,5 @@
 import Search from '../../app/services/search';
+import { entry1, entry2, entry3 } from './testEntries';
 
 /*const mockedSearchIndex = { data: {} };
 const SearchMock = jest.fn();
@@ -20,60 +21,68 @@ test('calls Search.searchLocationIndex with the params', () => {
   expect(SearchMock).toHaveBeenCalledWith(locationContent, searchQuery);
 });*/
 
-/*const searchQuery: SearchQuery = {
-  textQuery: this.state.textQuery,
-  tagsAND: this.state.tagsAND,
-  tagsOR: this.state.tagsOR,
-  tagsNOT: this.state.tagsNOT,
-  // @ts-ignore
-  searchBoxing: this.state.searchBoxing,
-  fileTypes: this.state.fileTypes,
-  lastModified: this.state.lastModified,
-  fileSize: this.state.fileSize,
-  tagTimePeriodFrom: this.state.tagTimePeriodFrom
-      ? this.state.tagTimePeriodFrom.getTime()
-      : null,
-  tagTimePeriodTo: this.state.tagTimePeriodTo
-      ? this.state.tagTimePeriodTo.getTime()
-      : null,
-  tagPlaceLat: this.state.tagPlaceLat,
-  tagPlaceLong: this.state.tagPlaceLong,
-  tagPlaceRadius: this.state.tagPlaceRadius,
-  maxSearchResults: this.props.maxSearchResults,
-  currentDirectory: this.props.currentDirectory,
-  forceIndexing: this.state.forceIndexing
-};*/
-
 const tag1 = { title: 'tagTitle1' };
 const tag2 = { title: 'tagTitle2' };
 const tag3 = { title: 'tagTitle3' };
 
-const entry1 = {
-  name: 'entryTitle1',
-  description: 'test description',
-  isFile: true,
-  extension: 'jpg',
-  tags: [tag1],
-  size: 111,
-  path: '/gg/'
-};
+// test('calls Search.searchLocationIndex for tags', () => {
+//   const locationContent = [entry1, entry2]; //enhanceEntry(entry)];
 
-const entry2 = {
-  name: 'entryTitle2',
-  isFile: true,
-  extension: 'jpg',
-  tags: [tag2],
-  size: 111,
-  path: '/gg/'
-};
+//   const searchQuery = {
+//     tagsAND: [tag1],
+//     maxSearchResults: 2
+//   };
+
+//   const searchQueryNotExist = {
+//     tagsAND: [tag3],
+//     maxSearchResults: 2
+//   };
+
+//   expect(
+//     Search.searchLocationIndex(locationContent, searchQuery)
+//   ).resolves.toStrictEqual([entry1]);
+
+//   expect(
+//     Search.searchLocationIndex(locationContent, searchQuery)
+//   ).resolves.not.toStrictEqual([entry2]);
+
+//   expect(
+//     Search.searchLocationIndex(locationContent, searchQueryNotExist)
+//   ).resolves.toStrictEqual([]);
+// });
 
 test('calls Search.searchLocationIndex for tags', () => {
-  const locationContent = [entry1, entry2]; //enhanceEntry(entry)];
+  const locationContent = [entry1, entry2];
 
   const searchQuery = {
     tagsAND: [tag1],
     maxSearchResults: 2
   };
+
+  expect(
+    Search.searchLocationIndex(locationContent, searchQuery)
+  ).resolves.toStrictEqual([entry1]);
+
+  // expect(
+  //   Search.searchLocationIndex(locationContent, searchQuery)
+  // ).resolves.not.toStrictEqual([entry2]);
+});
+
+test('calls Search.searchLocationIndex for tags with not to equal', () => {
+  const locationContent = [entry1, entry2];
+
+  const searchQuery = {
+    tagsAND: [tag1],
+    maxSearchResults: 2
+  };
+
+  expect(
+    Search.searchLocationIndex(locationContent, searchQuery)
+  ).resolves.not.toStrictEqual([entry2]);
+});
+
+test('calls Search.searchLocationIndex for not exist tags', () => {
+  const locationContent = [entry1, entry2];
 
   const searchQueryNotExist = {
     tagsAND: [tag3],
@@ -81,28 +90,48 @@ test('calls Search.searchLocationIndex for tags', () => {
   };
 
   expect(
-    Search.searchLocationIndex(locationContent, searchQuery)
-  ).resolves.toStrictEqual([entry1]);
+    Search.searchLocationIndex(locationContent, searchQueryNotExist)
+  ).resolves.toStrictEqual([]);
+});
+
+test('calls Search.searchLocationIndex for OR tags', () => {
+  const locationContent = [entry1, entry2, entry3]; //enhanceEntry(entry)];
+
+  const searchQuery = {
+    tagsNOT: [tag1],
+    maxSearchResults: 2
+  };
+
+  const searchQueryNotExist = {
+    tagsNOT: [tag3],
+    maxSearchResults: 2
+  };
 
   expect(
     Search.searchLocationIndex(locationContent, searchQuery)
-  ).resolves.not.toStrictEqual([entry2]);
+  ).resolves.toStrictEqual([entry1, entry2]);
+
+  expect(
+    Search.searchLocationIndex(locationContent, searchQuery)
+  ).resolves.not.toStrictEqual([entry3]);
 
   expect(
     Search.searchLocationIndex(locationContent, searchQueryNotExist)
   ).resolves.toStrictEqual([]);
 });
 
-test('calls Search.searchLocationIndex for textQuery', () => {
+test('calls Search.searchLocationIndex for textQuery', async () => {
   const locationContent = [entry1, entry2];
 
   const searchQuery = {
     textQuery: 'description'
   };
 
-  expect(
-    Search.searchLocationIndex(locationContent, searchQuery)
-  ).resolves.toStrictEqual([entry1]);
+  const searchResults = await Search.searchLocationIndex(
+    locationContent,
+    searchQuery
+  );
+  expect(searchResults[0].name).toStrictEqual('entryTitle1');
 });
 
 //jest.mock('../../app/pro', () => require('../../extensions/pro'));
@@ -123,3 +152,46 @@ test('calls Search.searchLocationIndex for Pro', () => {
   ).resolves.toStrictEqual([entry1]);
 });
 */
+
+test.skip('calls Search.searchLocationIndex for extension', async () => {
+  const locationContent = [entry2, entry3];
+
+  const searchQuery = {
+    fileTypes: 'jpg'
+  };
+
+  const searchResults = await Search.searchLocationIndex(
+    locationContent,
+    searchQuery
+  );
+  expect(searchResults).resolves.toStrictEqual('jpg');
+});
+
+test.skip('calls Search.searchLocationIndex for fileSize', async () => {
+  const locationContent = [entry1, entry2];
+
+  const searchQuery = {
+    fileSize: 'sizeTiny'
+  };
+
+  const searchResults = await Search.searchLocationIndex(
+    locationContent,
+    searchQuery
+  );
+  expect(searchResults[9].fileSize).resolves.toStrictEqual('sizeTiny');
+});
+
+test('calls Search.searchLocationIndex for folder', async () => {
+  const locationContent = [entry1, entry2, entry3];
+
+  const searchQuery = {
+    textQuery: 'testfolder1'
+  };
+
+  const searchResults = await Search.searchLocationIndex(
+    locationContent,
+    searchQuery
+  );
+
+  expect(searchResults[0].name).toStrictEqual('testFolder1');
+});
