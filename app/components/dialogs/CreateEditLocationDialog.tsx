@@ -31,8 +31,9 @@ import FormGroup from '@material-ui/core/FormGroup';
 import Grid from '@material-ui/core/Grid';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
-import { Typography } from '@material-ui/core';
+import { InputAdornment, Typography } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
+import Input from '@material-ui/core/Input';
 import i18n from '-/services/i18n';
 import { Location, locationType } from '-/reducers/locations';
 import { Pro } from '-/pro';
@@ -74,6 +75,11 @@ const CreateEditLocationDialog = (props: Props) => {
   const [errorTextName, setErrorTextName] = useState<boolean>(false);
   const [name, setName] = useState<string>(
     location && location.name ? location.name : ''
+  );
+  const [maxIndexAge, setMaxIndexAge] = useState<number>(
+    location && location.maxIndexAge
+      ? location.maxIndexAge
+      : AppConfig.maxIndexAge
   );
   const [storeName, setStoreName] = useState<string>(
     location && location.name ? location.name : ''
@@ -227,7 +233,8 @@ const CreateEditLocationDialog = (props: Props) => {
           isReadOnly,
           persistIndex,
           fullTextIndex,
-          watchForChanges
+          watchForChanges,
+          maxIndexAge
         };
       } else if (type === locationType.TYPE_CLOUD) {
         loc = {
@@ -246,7 +253,8 @@ const CreateEditLocationDialog = (props: Props) => {
           isReadOnly,
           persistIndex,
           fullTextIndex,
-          watchForChanges: false
+          watchForChanges: false,
+          maxIndexAge
         };
       }
 
@@ -457,6 +465,26 @@ const CreateEditLocationDialog = (props: Props) => {
                 i18n.t('core:persistIndexSwitch') +
                 (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
               }
+            />
+          )}
+          {showAdvancedMode && (
+            <FormControlLabel
+              control={
+                <Input
+                  name="maxIndexAge"
+                  style={{ maxWidth: '150px', marginLeft: 15, marginRight: 15 }}
+                  type="number"
+                  data-tid="maxIndexAgeTID"
+                  value={maxIndexAge}
+                  endAdornment={
+                    <InputAdornment position="end">ms</InputAdornment>
+                  }
+                  onChange={event =>
+                    setMaxIndexAge(parseInt(event.target.value, 10))
+                  }
+                />
+              }
+              label={i18n.t('core:maxIndexAge')}
             />
           )}
         </FormGroup>

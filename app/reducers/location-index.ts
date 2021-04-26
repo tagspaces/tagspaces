@@ -322,7 +322,9 @@ export const actions = {
       if (
         GlobalSearch.index.length < 1 ||
         searchQuery.forceIndexing ||
-        indexAge > AppConfig.maxIndexAge
+        indexAge > currentLocation.maxIndexAge
+          ? currentLocation.maxIndexAge
+          : AppConfig.maxIndexAge
       ) {
         const currentPath = getLocationPath(currentLocation);
         console.log('Start creating index for : ' + currentPath);
