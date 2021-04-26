@@ -748,7 +748,7 @@ const MainPage = (props: Props) => {
           </Button>
         ]}
       />
-      {props.isDesktopMode ? (
+      {props.isDesktopMode || AppConfig.isAmplify ? (
         <TargetFileBox
           // @ts-ignore
           accepts={[FILE]}
