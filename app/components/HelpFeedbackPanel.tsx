@@ -48,6 +48,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { connect } from 'react-redux';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
 import Auth from '@aws-amplify/auth';
+import { bindActionCreators } from 'redux';
 import CustomLogo from './CustomLogo';
 import ProTeaser from '../assets/images/spacerocket_undraw.svg';
 import styles from './SidePanels.css';
@@ -55,6 +56,7 @@ import AppConfig from '../config';
 import i18n from '../services/i18n';
 import { clearAllURLParams } from '-/utils/misc';
 import { Pro } from '-/pro';
+import { actions as AppActions } from '-/reducers/app';
 
 interface Props {
   classes?: any;
@@ -67,12 +69,8 @@ interface Props {
   toggleProTeaser: () => void;
   user: CognitoUserInterface;
   style?: any;
+  closeAllVerticalPanels: () => void;
 }
-
-const signOut = () => {
-  Auth.signOut();
-  clearAllURLParams();
-};
 
 const HelpFeedbackPanel = (props: Props) => {
   const [isSetupTOTPOpened, setSetupTOTPOpened] = useState<boolean>(false);
@@ -89,6 +87,12 @@ const HelpFeedbackPanel = (props: Props) => {
     toggleProTeaser,
     theme
   } = props;
+
+  const signOut = () => {
+    Auth.signOut();
+    clearAllURLParams();
+    props.closeAllVerticalPanels();
+  };
 
   let email;
   let initials;
@@ -443,6 +447,16 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(
-  withStyles(styles, { withTheme: true })(HelpFeedbackPanel)
-);
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(
+    {
+      closeAllVerticalPanels: AppActions.closeAllVerticalPanels
+    },
+    dispatch
+  );
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles, { withTheme: true })(HelpFeedbackPanel));
