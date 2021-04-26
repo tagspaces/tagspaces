@@ -30,6 +30,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { HotKeys } from 'react-hotkeys';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { Progress } from 'aws-sdk/clients/s3';
+import { CognitoUserInterface } from '@aws-amplify/ui-components';
 import VerticalNavigation from '../components/VerticalNavigation';
 import MobileNavigation from '../components/MobileNavigation';
 import FolderContainer from '../components/FolderContainer';
@@ -73,7 +74,8 @@ import {
   getOpenedFiles,
   OpenedEntry,
   isDeleteMultipleEntriesDialogOpened,
-  getSelectedEntries
+  getSelectedEntries,
+  currentUser
 } from '../reducers/app';
 import {
   actions as LocationIndexActions,
@@ -228,6 +230,7 @@ interface Props {
   selectedEntries: Array<any>;
   deleteFile: (path: string) => void;
   deleteDirectory: (path: string) => void;
+  user: CognitoUserInterface;
 }
 
 const AboutDialog = React.lazy(() =>
@@ -748,7 +751,7 @@ const MainPage = (props: Props) => {
           </Button>
         ]}
       />
-      {props.isDesktopMode ? (
+      {props.isDesktopMode || (AppConfig.isAmplify && !props.user) ? (
         <TargetFileBox
           // @ts-ignore
           accepts={[FILE]}
@@ -879,7 +882,8 @@ function mapStateToProps(state) {
     isDeleteMultipleEntriesDialogOpened: isDeleteMultipleEntriesDialogOpened(
       state
     ),
-    selectedEntries: getSelectedEntries(state)
+    selectedEntries: getSelectedEntries(state),
+    user: currentUser(state)
   };
 }
 
