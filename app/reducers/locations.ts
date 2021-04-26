@@ -59,6 +59,7 @@ export type Location = {
   watchForChanges?: boolean;
   persistIndex?: boolean;
   fullTextIndex?: boolean;
+  maxIndexAge?: number;
 };
 
 export const initialState = [];

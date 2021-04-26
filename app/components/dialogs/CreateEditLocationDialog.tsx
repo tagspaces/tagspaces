@@ -31,8 +31,9 @@ import FormGroup from '@material-ui/core/FormGroup';
 import Grid from '@material-ui/core/Grid';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
-import { Typography } from '@material-ui/core';
+import { Tooltip, Typography } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
+import Input from '@material-ui/core/Input';
 import i18n from '-/services/i18n';
 import { Location, locationType } from '-/reducers/locations';
 import { Pro } from '-/pro';
@@ -75,6 +76,12 @@ const CreateEditLocationDialog = (props: Props) => {
   const [name, setName] = useState<string>(
     location && location.name ? location.name : ''
   );
+  let defaultIndexAge = AppConfig.maxIndexAge;
+  if (location && location.maxIndexAge && location.maxIndexAge > 0) {
+    const maxIndexAsString = location.maxIndexAge + '';
+    defaultIndexAge = parseInt(maxIndexAsString, 10);
+  }
+  const [maxIndexAge, setMaxIndexAge] = useState<number>(defaultIndexAge);
   const [storeName, setStoreName] = useState<string>(
     location && location.name ? location.name : ''
   );
@@ -138,6 +145,13 @@ const CreateEditLocationDialog = (props: Props) => {
   >(false);
 
   const firstRender = useFirstRender();
+
+  function changeMaxIndexAge(ageInMinutes) {
+    if (ageInMinutes) {
+      const age = parseInt(ageInMinutes, 10);
+      setMaxIndexAge(age * 1000 * 60);
+    }
+  }
 
   useEffect(() => {
     if (!firstRender) {
@@ -227,7 +241,8 @@ const CreateEditLocationDialog = (props: Props) => {
           isReadOnly,
           persistIndex,
           fullTextIndex,
-          watchForChanges
+          watchForChanges,
+          maxIndexAge
         };
       } else if (type === locationType.TYPE_CLOUD) {
         loc = {
@@ -246,7 +261,8 @@ const CreateEditLocationDialog = (props: Props) => {
           isReadOnly,
           persistIndex,
           fullTextIndex,
-          watchForChanges: false
+          watchForChanges: false,
+          maxIndexAge
         };
       }
 
@@ -457,6 +473,28 @@ const CreateEditLocationDialog = (props: Props) => {
                 i18n.t('core:persistIndexSwitch') +
                 (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
               }
+            />
+          )}
+          {showAdvancedMode && (
+            <FormControlLabel
+              control={
+                <Tooltip title={i18n.t('core:maxIndexAgeHelp')}>
+                  <Input
+                    name="maxIndexAge"
+                    style={{
+                      maxWidth: 70,
+                      marginLeft: 15,
+                      marginRight: 15
+                    }}
+                    type="number"
+                    data-tid="maxIndexAgeTID"
+                    inputProps={{ min: 0 }}
+                    value={maxIndexAge / (1000 * 60)}
+                    onChange={event => changeMaxIndexAge(event.target.value)}
+                  />
+                </Tooltip>
+              }
+              label={i18n.t('core:maxIndexAge')}
             />
           )}
         </FormGroup>
