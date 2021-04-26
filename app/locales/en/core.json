@@ -530,5 +530,6 @@
   "TOTPEnabled": "TOTP Is Enabled",
   "disableTOTP": "disable TOTP",
   "confirmResetColor": "Do you really want to clear this color?",
+  "maxIndexAge": "Max Index Age",
   "-": "-"
 }

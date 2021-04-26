@@ -319,12 +319,13 @@ export const actions = {
       const indexAge = GlobalSearch.indexLoadedOn
         ? currentTime - GlobalSearch.indexLoadedOn
         : 0;
+      const maxIndexAge = currentLocation.maxIndexAge
+          ? currentLocation.maxIndexAge
+          : AppConfig.maxIndexAge;
       if (
         GlobalSearch.index.length < 1 ||
         searchQuery.forceIndexing ||
-        indexAge > currentLocation.maxIndexAge
-          ? currentLocation.maxIndexAge
-          : AppConfig.maxIndexAge
+        indexAge > maxIndexAge
       ) {
         const currentPath = getLocationPath(currentLocation);
         console.log('Start creating index for : ' + currentPath);
