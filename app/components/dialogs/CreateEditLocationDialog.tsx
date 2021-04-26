@@ -31,7 +31,7 @@ import FormGroup from '@material-ui/core/FormGroup';
 import Grid from '@material-ui/core/Grid';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
-import { InputAdornment, Typography } from '@material-ui/core';
+import { Tooltip, Typography } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
 import Input from '@material-ui/core/Input';
 import i18n from '-/services/i18n';
@@ -76,11 +76,12 @@ const CreateEditLocationDialog = (props: Props) => {
   const [name, setName] = useState<string>(
     location && location.name ? location.name : ''
   );
-  const [maxIndexAge, setMaxIndexAge] = useState<number>(
-    location && location.maxIndexAge
-      ? location.maxIndexAge
-      : AppConfig.maxIndexAge
-  );
+  let defaultIndexAge = AppConfig.maxIndexAge;
+  if (location && location.maxIndexAge && location.maxIndexAge > 0) {
+    const maxIndexAsString = location.maxIndexAge + '';
+    defaultIndexAge = parseInt(maxIndexAsString, 10);
+  }
+  const [maxIndexAge, setMaxIndexAge] = useState<number>(defaultIndexAge);
   const [storeName, setStoreName] = useState<string>(
     location && location.name ? location.name : ''
   );
@@ -144,6 +145,13 @@ const CreateEditLocationDialog = (props: Props) => {
   >(false);
 
   const firstRender = useFirstRender();
+
+  function changeMaxIndexAge(ageInMinutes) {
+    if (ageInMinutes) {
+      const age = parseInt(ageInMinutes, 10);
+      setMaxIndexAge(age * 1000 * 60);
+    }
+  }
 
   useEffect(() => {
     if (!firstRender) {
@@ -470,19 +478,21 @@ const CreateEditLocationDialog = (props: Props) => {
           {showAdvancedMode && (
             <FormControlLabel
               control={
-                <Input
-                  name="maxIndexAge"
-                  style={{ maxWidth: '150px', marginLeft: 15, marginRight: 15 }}
-                  type="number"
-                  data-tid="maxIndexAgeTID"
-                  value={maxIndexAge}
-                  endAdornment={
-                    <InputAdornment position="end">ms</InputAdornment>
-                  }
-                  onChange={event =>
-                    setMaxIndexAge(parseInt(event.target.value, 10))
-                  }
-                />
+                <Tooltip title={i18n.t('core:maxIndexAgeHelp')}>
+                  <Input
+                    name="maxIndexAge"
+                    style={{
+                      maxWidth: 70,
+                      marginLeft: 15,
+                      marginRight: 15
+                    }}
+                    type="number"
+                    data-tid="maxIndexAgeTID"
+                    inputProps={{ min: 0 }}
+                    value={maxIndexAge / (1000 * 60)}
+                    onChange={event => changeMaxIndexAge(event.target.value)}
+                  />
+                </Tooltip>
               }
               label={i18n.t('core:maxIndexAge')}
             />

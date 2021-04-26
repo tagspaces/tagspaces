@@ -320,8 +320,8 @@ export const actions = {
         ? currentTime - GlobalSearch.indexLoadedOn
         : 0;
       const maxIndexAge = currentLocation.maxIndexAge
-          ? currentLocation.maxIndexAge
-          : AppConfig.maxIndexAge;
+        ? currentLocation.maxIndexAge
+        : AppConfig.maxIndexAge;
       if (
         GlobalSearch.index.length < 1 ||
         searchQuery.forceIndexing ||
