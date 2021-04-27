@@ -23,6 +23,7 @@ import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
+import Tooltip from '@material-ui/core/Tooltip';
 import PictureIcon from '@material-ui/icons/Panorama';
 import DocumentIcon from '@material-ui/icons/PictureAsPdf';
 import NoteIcon from '@material-ui/icons/Note';
@@ -100,6 +101,9 @@ const Search = React.memo((props: Props) => {
   const [searchBoxing, setSearchBoxing] = useState<
     'location' | 'folder' | 'global'
   >('location');
+  const [searchType, setSearchType] = useState<
+    'fussy' | 'semistrict' | 'strict'
+  >('fussy');
   const [lastModified, setLastModified] = useState<string>('');
   const [tagTimePeriod, setTagTimePeriod] = useState<string>('');
   const [tagTimePeriodHelper, setTagTimePeriodHelper] = useState<string>(' ');
@@ -334,6 +338,7 @@ const Search = React.memo((props: Props) => {
     openCurrentDirectory();
     setTextQuery('');
     setSearchBoxing('location');
+    setSearchType('fussy');
     setFileTypes(FileTypeGroups.any);
     setLastModified('');
     setTagTimePeriod('');
@@ -358,6 +363,15 @@ const Search = React.memo((props: Props) => {
     }
   };
 
+  const switchSearchType = (
+    event: React.MouseEvent<HTMLElement>,
+    type: 'fussy' | 'semistrict' | 'strict'
+  ) => {
+    if (type !== null) {
+      setSearchType(type);
+    }
+  };
+
   const executeSearch = () => {
     const { searchAllLocations, searchLocationIndex } = props;
     const searchQuery: SearchQuery = {
@@ -367,6 +381,7 @@ const Search = React.memo((props: Props) => {
       tagsNOT: props.searchQuery.tagsNOT,
       // @ts-ignore
       searchBoxing,
+      searchType,
       fileTypes,
       lastModified,
       fileSize,
@@ -472,27 +487,86 @@ const Search = React.memo((props: Props) => {
             style={{ marginBottom: 10, alignSelf: 'center' }}
             value={searchBoxing}
           >
-            <ToggleButton value="location" title={i18n.t('searchPlaceholder')}>
-              {i18n.t('location')}
+            <ToggleButton value="location">
+              <Tooltip arrow title={i18n.t('searchPlaceholder')}>
+                <div>{i18n.t('location')}</div>
+              </Tooltip>
             </ToggleButton>
-            <ToggleButton
-              value="folder"
-              title={i18n.t('searchCurrentFolderWithSubFolders')}
-            >
-              {i18n.t('folder')}
+            <ToggleButton value="folder">
+              <Tooltip
+                arrow
+                title={i18n.t('searchCurrentFolderWithSubFolders')}
+              >
+                <div>{i18n.t('folder')}</div>
+              </Tooltip>
             </ToggleButton>
-            <ToggleButton
-              title="Search globally in all locations. Feature is in BETA status."
-              disabled={!Pro}
-              value="global"
-            >
-              {i18n.t('globalSearch')}
+            <ToggleButton disabled={!Pro} value="global">
+              <Tooltip
+                arrow
+                title="Search globally in all locations. Feature is in BETA status."
+              >
+                <div>{i18n.t('globalSearch')}</div>
+              </Tooltip>
               <sub>{Pro ? ' BETA' : ' PRO'}</sub>
             </ToggleButton>
           </ToggleButtonGroup>
         </FormControl>
-        <br />
-        <FormControlLabel
+        <FormControl className={classes.formControl} disabled={indexing}>
+          <ToggleButtonGroup
+            onChange={switchSearchType}
+            size="small"
+            exclusive
+            style={{ marginBottom: 10, alignSelf: 'center' }}
+            value={searchType}
+          >
+            <ToggleButton value="fussy">
+              <Tooltip
+                arrow
+                title={i18n.t(
+                  'Delivering broader search results, tolerating typos'
+                )}
+              >
+                <div>{i18n.t('fussy')}</div>
+              </Tooltip>
+            </ToggleButton>
+            <ToggleButton value="semistrict">
+              <Tooltip
+                arrow
+                title={i18n.t(
+                  'Exact search in file path, description and text content (by enabled full-text search)'
+                )}
+              >
+                <div>{i18n.t('semistrict')}</div>
+              </Tooltip>
+            </ToggleButton>
+            <ToggleButton value="strict">
+              <Tooltip arrow title="Same as semistrict but case sensitive">
+                <div>{i18n.t('strict')}</div>
+              </Tooltip>
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </FormControl>
+        <FormControl className={classes.formControl} disabled={indexing}>
+          <ToggleButtonGroup
+            onChange={() => setForceIndexing(!forceIndexing)}
+            size="small"
+            exclusive
+            style={{ marginBottom: 10, alignSelf: 'center' }}
+            value={forceIndexing}
+          >
+            <ToggleButton value={false}>
+              <Tooltip arrow title={i18n.t('')}>
+                <div>{i18n.t('default index')}</div>
+              </Tooltip>
+            </ToggleButton>
+            <ToggleButton value={true} data-tid="forceIndexingTID">
+              <Tooltip arrow title={i18n.t('')}>
+                <div>{i18n.t('force re-indexing')}</div>
+              </Tooltip>
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </FormControl>
+        {/* <FormControlLabel
           title={i18n.t('core:enableIndexingBySearch')}
           control={
             <Switch
@@ -509,19 +583,18 @@ const Search = React.memo((props: Props) => {
               {i18n.t('forceReindexing')}
             </Typography>
           }
-        />
-        <br />
+        /> */}
         <br />
         <FormControl className={classes.formControl}>
           <ButtonGroup style={{ justifyContent: 'center' }}>
             <Button
               disabled={indexing}
               id="searchButton"
-              variant="outlined"
+              // variant="outlined"
               color="primary"
               onClick={clickSearchButton}
-              style={{ width: '90%' }}
-              size="small"
+              style={{ width: '98%' }}
+              size="medium"
             >
               {indexing
                 ? 'Search disabled while indexing'
@@ -814,8 +887,8 @@ const Search = React.memo((props: Props) => {
                 <Button
                   variant="outlined"
                   color="secondary"
-                  size="small"
-                  style={{ width: '90%' }}
+                  size="medium"
+                  style={{ width: '98%' }}
                   onClick={clearSearch}
                   id="resetSearchButton"
                 >

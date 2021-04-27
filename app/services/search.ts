@@ -60,6 +60,7 @@ export type SearchQuery = {
   lastModified?: string;
   fileSize?: string;
   searchBoxing?: 'location' | 'folder';
+  searchType?: 'fussy' | 'semistrict' | 'strict';
   forceIndexing?: boolean;
   currentDirectory?: string;
   tagTimePeriodFrom?: number | null;
@@ -303,8 +304,35 @@ export default class Search {
         const resultCount = results.length;
         console.log('fuse query: ' + searchQuery.textQuery);
         console.time('fuse');
-        const fuse = new Fuse(results, fuseOptions);
-        results = fuse.search(searchQuery.textQuery);
+        if (searchQuery.searchType === 'fussy') {
+          const fuse = new Fuse(results, fuseOptions);
+          results = fuse.search(searchQuery.textQuery);
+        } else {
+          results = results.filter(entry => {
+            const ignoreCase = searchQuery.searchType === 'semistrict';
+            const textQuery = ignoreCase
+              ? searchQuery.textQuery.toLowerCase()
+              : searchQuery.textQuery;
+            // const name = ignoreCase ? entry.name && entry.name.toLowerCase() : entry.name;
+            const description =
+              ignoreCase && entry.description
+                ? entry.description.toLowerCase()
+                : entry.description;
+            const textContent =
+              ignoreCase && entry.textContent
+                ? entry.textContent.toLowerCase()
+                : entry.textContent;
+            const path = ignoreCase
+              ? entry.path && entry.path.toLowerCase()
+              : entry.path;
+            // const foundInName = name && name.includes(textQuery);
+            const foundInDescr = description && description.includes(textQuery);
+            const foundInContent =
+              textContent && textContent.includes(textQuery);
+            const foundInPath = path && path.includes(textQuery);
+            return foundInPath || foundInDescr || foundInContent; // || foundInName;
+          });
+        }
         console.timeEnd('fuse');
         searched = searched || results.length <= resultCount;
       }
