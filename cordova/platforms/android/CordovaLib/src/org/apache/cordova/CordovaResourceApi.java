@@ -41,6 +41,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.util.Locale;
+import java.util.zip.GZIPInputStream;
 
 /**
  * What this class provides:
@@ -286,13 +287,19 @@ public class CordovaResourceApi {
             case URI_TYPE_HTTP:
             case URI_TYPE_HTTPS: {
                 HttpURLConnection conn = (HttpURLConnection)new URL(uri.toString()).openConnection();
+                conn.setRequestProperty("Accept-Encoding", "gzip");
                 conn.setDoInput(true);
                 String mimeType = conn.getHeaderField("Content-Type");
                 if (mimeType != null) {
                     mimeType = mimeType.split(";")[0];
                 }
                 int length = conn.getContentLength();
-                InputStream inputStream = conn.getInputStream();
+                InputStream inputStream;
+                if ("gzip".equals(conn.getContentEncoding())) {
+                    inputStream = new GZIPInputStream(conn.getInputStream());
+                } else {
+                    inputStream = conn.getInputStream();
+                }
                 return new OpenForReadResult(uri, inputStream, mimeType, length, null);
             }
             case URI_TYPE_PLUGIN: {

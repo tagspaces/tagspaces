@@ -29,7 +29,7 @@ cordova.define("cordova-plugin-file.File", function(require, exports, module) {
  * size {Number} size of the file in bytes
  */
 
-var File = function (name, localURL, type, lastModifiedDate, size) {
+var File = function(name, localURL, type, lastModifiedDate, size){
     this.name = name || '';
     this.localURL = localURL || null;
     this.type = type || null;
@@ -50,7 +50,7 @@ var File = function (name, localURL, type, lastModifiedDate, size) {
  * start {Number} The index at which to start the slice (inclusive).
  * end {Number} The index at which to end the slice (exclusive).
  */
-File.prototype.slice = function (start, end) {
+File.prototype.slice = function(start, end) {
     var size = this.end - this.start;
     var newStart = 0;
     var newEnd = size;
@@ -75,6 +75,7 @@ File.prototype.slice = function (start, end) {
     newFile.end = this.start + newEnd;
     return newFile;
 };
+
 
 module.exports = File;
 

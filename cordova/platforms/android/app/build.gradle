@@ -44,23 +44,20 @@ buildscript {
         ext.kotlin_version = gradlePluginKotlinVersion
     }
 
-    repositories {
-        mavenCentral()
-        google()
-        jcenter()
-    }
+    apply from: 'repositories.gradle'
+    repositories repos
 
     dependencies {
         apply from: '../CordovaLib/cordova.gradle'
 
-        classpath 'com.android.tools.build:gradle:4.0.0'
+        classpath 'com.android.tools.build:gradle:4.1.3'
 
         if (cdvHelpers.getConfigPreference('GradlePluginKotlinEnabled', 'false').toBoolean()) {
             classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         }
 
         if(cdvHelpers.getConfigPreference('GradlePluginGoogleServicesEnabled', 'false').toBoolean()) {
-            String defaultGradlePluginGoogleServicesVersion = '4.2.0'
+            String defaultGradlePluginGoogleServicesVersion = '4.3.5'
 
             /**
              * Fetches the user's defined Google Services Plugin Version from config.xml.
@@ -82,14 +79,12 @@ buildscript {
 
 // Allow plugins to declare Maven dependencies via build-extras.gradle.
 allprojects {
-    repositories {
-        mavenCentral()
-        jcenter()
-    }
+    apply from: 'repositories.gradle'
+    repositories repos
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '6.5'
+    gradleVersion = '6.8.3'
 }
 
 // Configuration properties. Set these via environment variables, build-extras.gradle, or gradle.properties.
@@ -142,12 +137,16 @@ ext {
         cdvBuildArch = null
     }
 
+    // Sets the default cdvAndroidXAppCompatVersion to the given value.
+    if (!project.hasProperty('cdvAndroidXAppCompatVersion')) {
+        cdvAndroidXAppCompatVersion = null
+    }
+
     // Plugin gradle extensions can append to this to have code run at the end.
     cdvPluginPostBuildExtras = []
 }
 
 // PLUGIN GRADLE EXTENSIONS START
-apply from: "../com.ourcodeworld.plugins.Filebrowser/mobileapp-plugin.gradle"
 // PLUGIN GRADLE EXTENSIONS END
 
 def hasBuildExtras1 = file('build-extras.gradle').exists()
@@ -191,6 +190,8 @@ ext.cdvTargetSdkVersion = cdvTargetSdkVersion == null ? defaultTargetSdkVersion 
 
 ext.cdvVersionCode = cdvVersionCode == null ? null : Integer.parseInt('' + cdvVersionCode)
 
+ext.cdvAndroidXAppCompatVersion = cdvAndroidXAppCompatVersion == null ? defaultAndroidXAppCompatVersion : cdvAndroidXAppCompatVersion
+
 def computeBuildTargetName(debugBuild) {
     def ret = 'assemble'
     if (cdvBuildMultipleApks && cdvBuildArch) {
@@ -225,6 +226,7 @@ task cdvPrintProps {
         println('cdvDebugSigningPropertiesFile=' + cdvDebugSigningPropertiesFile)
         println('cdvBuildArch=' + cdvBuildArch)
         println('computedVersionCode=' + android.defaultConfig.versionCode)
+        println('cdvAndroidXAppCompatVersion=' + cdvAndroidXAppCompatVersion)
         android.productFlavors.each { flavor ->
             println('computed' + flavor.name.capitalize() + 'VersionCode=' + flavor.versionCode)
         }
@@ -314,9 +316,9 @@ android {
             release {
                 // These must be set or Gradle will complain (even if they are overridden).
                 keyAlias = ""
-                keyPassword = "__unset" // And these must be set to non-empty in order to have the signing step added to the task graph.
+                keyPassword = ""
                 storeFile = null
-                storePassword = "__unset"
+                storePassword = ""
             }
         }
         buildTypes {
@@ -345,6 +347,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: '*.jar')
+    implementation "androidx.appcompat:appcompat:$cdvAndroidXAppCompatVersion"
 
     if (cdvHelpers.getConfigPreference('GradlePluginKotlinEnabled', 'false').toBoolean()) {
         implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -352,29 +355,9 @@ dependencies {
 
     // SUB-PROJECT DEPENDENCIES START
     implementation(project(path: ":CordovaLib"))
-    implementation "androidx.core:core:1.1.0"
     implementation "androidx.legacy:legacy-support-v4:1.0.0"
+    implementation "androidx.core:core:1.1.0"
     // SUB-PROJECT DEPENDENCIES END
-}
-
-def promptForReleaseKeyPassword() {
-    if (!cdvReleaseSigningPropertiesFile) {
-        return;
-    }
-    if ('__unset'.equals(android.signingConfigs.release.storePassword)) {
-        android.signingConfigs.release.storePassword = privateHelpers.promptForPassword('Enter key store password: ')
-    }
-    if ('__unset'.equals(android.signingConfigs.release.keyPassword)) {
-        android.signingConfigs.release.keyPassword = privateHelpers.promptForPassword('Enter key password: ');
-    }
-}
-
-gradle.taskGraph.whenReady { taskGraph ->
-    taskGraph.getAllTasks().each() { task ->
-      if(['validateReleaseSigning', 'validateSigningRelease', 'validateSigningArmv7Release', 'validateSigningX76Release'].contains(task.name)) {
-         promptForReleaseKeyPassword()
-      }
-    }
 }
 
 def addSigningProps(propsFilePath, signingConfig) {

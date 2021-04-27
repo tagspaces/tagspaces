@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <style name="FilePickerTheme" parent="NNF_BaseTheme">
-        <item name="colorPrimary">#2196f3</item>
-        <item name="colorPrimaryDark">#4285f4</item>
-        <item name="colorAccent">#4285f4</item>
-    </style>
-</resources>

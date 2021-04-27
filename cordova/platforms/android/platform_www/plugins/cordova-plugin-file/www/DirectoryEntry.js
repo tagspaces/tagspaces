@@ -20,12 +20,12 @@ cordova.define("cordova-plugin-file.DirectoryEntry", function(require, exports, 
  *
 */
 
-var argscheck = require('cordova/argscheck');
-var utils = require('cordova/utils');
-var exec = require('cordova/exec');
-var Entry = require('./Entry');
-var FileError = require('./FileError');
-var DirectoryReader = require('./DirectoryReader');
+var argscheck = require('cordova/argscheck'),
+    utils = require('cordova/utils'),
+    exec = require('cordova/exec'),
+    Entry = require('./Entry'),
+    FileError = require('./FileError'),
+    DirectoryReader = require('./DirectoryReader');
 
 /**
  * An interface representing a directory on the file system.
@@ -36,14 +36,15 @@ var DirectoryReader = require('./DirectoryReader');
  * {DOMString} fullPath the absolute full path to the directory (readonly)
  * {FileSystem} filesystem on which the directory resides (readonly)
  */
-var DirectoryEntry = function (name, fullPath, fileSystem, nativeURL) {
+var DirectoryEntry = function(name, fullPath, fileSystem, nativeURL) {
+
     // add trailing slash if it is missing
     if ((fullPath) && !/\/$/.test(fullPath)) {
-        fullPath += '/';
+        fullPath += "/";
     }
     // add trailing slash if it is missing
     if (nativeURL && !/\/$/.test(nativeURL)) {
-        nativeURL += '/';
+        nativeURL += "/";
     }
     DirectoryEntry.__super__.constructor.call(this, false, true, name, fullPath, fileSystem, nativeURL);
 };
@@ -53,7 +54,7 @@ utils.extend(DirectoryEntry, Entry);
 /**
  * Creates a new DirectoryReader to read entries from this directory
  */
-DirectoryEntry.prototype.createReader = function () {
+DirectoryEntry.prototype.createReader = function() {
     return new DirectoryReader(this.toInternalURL());
 };
 
@@ -65,17 +66,17 @@ DirectoryEntry.prototype.createReader = function () {
  * @param {Function} successCallback is called with the new entry
  * @param {Function} errorCallback is called with a FileError
  */
-DirectoryEntry.prototype.getDirectory = function (path, options, successCallback, errorCallback) {
+DirectoryEntry.prototype.getDirectory = function(path, options, successCallback, errorCallback) {
     argscheck.checkArgs('sOFF', 'DirectoryEntry.getDirectory', arguments);
     var fs = this.filesystem;
-    var win = successCallback && function (result) {
+    var win = successCallback && function(result) {
         var entry = new DirectoryEntry(result.name, result.fullPath, fs, result.nativeURL);
         successCallback(entry);
     };
-    var fail = errorCallback && function (code) {
+    var fail = errorCallback && function(code) {
         errorCallback(new FileError(code));
     };
-    exec(win, fail, 'File', 'getDirectory', [this.toInternalURL(), path, options]);
+    exec(win, fail, "File", "getDirectory", [this.toInternalURL(), path, options]);
 };
 
 /**
@@ -84,12 +85,12 @@ DirectoryEntry.prototype.getDirectory = function (path, options, successCallback
  * @param {Function} successCallback is called with no parameters
  * @param {Function} errorCallback is called with a FileError
  */
-DirectoryEntry.prototype.removeRecursively = function (successCallback, errorCallback) {
+DirectoryEntry.prototype.removeRecursively = function(successCallback, errorCallback) {
     argscheck.checkArgs('FF', 'DirectoryEntry.removeRecursively', arguments);
-    var fail = errorCallback && function (code) {
+    var fail = errorCallback && function(code) {
         errorCallback(new FileError(code));
     };
-    exec(successCallback, fail, 'File', 'removeRecursively', [this.toInternalURL()]);
+    exec(successCallback, fail, "File", "removeRecursively", [this.toInternalURL()]);
 };
 
 /**
@@ -100,18 +101,18 @@ DirectoryEntry.prototype.removeRecursively = function (successCallback, errorCal
  * @param {Function} successCallback is called with the new entry
  * @param {Function} errorCallback is called with a FileError
  */
-DirectoryEntry.prototype.getFile = function (path, options, successCallback, errorCallback) {
+DirectoryEntry.prototype.getFile = function(path, options, successCallback, errorCallback) {
     argscheck.checkArgs('sOFF', 'DirectoryEntry.getFile', arguments);
     var fs = this.filesystem;
-    var win = successCallback && function (result) {
+    var win = successCallback && function(result) {
         var FileEntry = require('./FileEntry');
         var entry = new FileEntry(result.name, result.fullPath, fs, result.nativeURL);
         successCallback(entry);
     };
-    var fail = errorCallback && function (code) {
+    var fail = errorCallback && function(code) {
         errorCallback(new FileError(code));
     };
-    exec(win, fail, 'File', 'getFile', [this.toInternalURL(), path, options]);
+    exec(win, fail, "File", "getFile", [this.toInternalURL(), path, options]);
 };
 
 module.exports = DirectoryEntry;

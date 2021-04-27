@@ -1,7 +1,0 @@
-repositories {
-    jcenter()
-}
-
-dependencies {
-    compile 'com.nononsenseapps:filepicker:3.1.0'
-}

@@ -24,10 +24,9 @@ cordova.define("cordova-plugin-file.FileUploadResult", function(require, exports
  * FileUploadResult
  * @constructor
  */
-module.exports = function FileUploadResult (size, code, content) {
-    this.bytesSent = size;
-    this.responseCode = code;
-    this.response = content;
-};
-
+module.exports = function FileUploadResult(size, code, content) {
+	this.bytesSent = size;
+	this.responseCode = code;
+	this.response = content;
+ };
 });

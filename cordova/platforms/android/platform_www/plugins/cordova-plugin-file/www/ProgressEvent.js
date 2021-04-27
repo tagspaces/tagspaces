@@ -26,7 +26,7 @@ cordova.define("cordova-plugin-file.ProgressEvent", function(require, exports, m
 // otherwise fill-in with our own implementation.
 //
 // NOTE: right now we always fill in with our own. Down the road would be nice if we can use whatever is native in the webview.
-var ProgressEvent = (function () {
+var ProgressEvent = (function() {
     /*
     var createEvent = function(data) {
         var event = document.createEvent('Events');
@@ -52,17 +52,17 @@ var ProgressEvent = (function () {
         };
     } catch(e){
     */
-    return function ProgressEvent (type, dict) {
-        this.type = type;
-        this.bubbles = false;
-        this.cancelBubble = false;
-        this.cancelable = false;
-        this.lengthComputable = false;
-        this.loaded = dict && dict.loaded ? dict.loaded : 0;
-        this.total = dict && dict.total ? dict.total : 0;
-        this.target = dict && dict.target ? dict.target : null;
-    };
-    // }
+        return function ProgressEvent(type, dict) {
+            this.type = type;
+            this.bubbles = false;
+            this.cancelBubble = false;
+            this.cancelable = false;
+            this.lengthComputable = false;
+            this.loaded = dict && dict.loaded ? dict.loaded : 0;
+            this.total = dict && dict.total ? dict.total : 0;
+            this.target = dict && dict.target ? dict.target : null;
+        };
+    //}
 })();
 
 module.exports = ProgressEvent;
