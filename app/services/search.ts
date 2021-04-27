@@ -304,10 +304,10 @@ export default class Search {
         const resultCount = results.length;
         console.log('fuse query: ' + searchQuery.textQuery);
         console.time('fuse');
-        if (searchQuery.searchType === 'fussy') {
-          const fuse = new Fuse(results, fuseOptions);
-          results = fuse.search(searchQuery.textQuery);
-        } else {
+        if (
+          searchQuery.searchType &&
+          searchQuery.searchType.includes('strict')
+        ) {
           results = results.filter(entry => {
             const ignoreCase = searchQuery.searchType === 'semistrict';
             const textQuery = ignoreCase
@@ -332,6 +332,9 @@ export default class Search {
             const foundInPath = path && path.includes(textQuery);
             return foundInPath || foundInDescr || foundInContent; // || foundInName;
           });
+        } else {
+          const fuse = new Fuse(results, fuseOptions);
+          results = fuse.search(searchQuery.textQuery);
         }
         console.timeEnd('fuse');
         searched = searched || results.length <= resultCount;
