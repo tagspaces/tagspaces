@@ -145,7 +145,8 @@ const GridPagination = (props: Props) => {
             style={{
               display: 'flex',
               justifyContent: 'center',
-              alignItems: 'center'
+              alignItems: 'center',
+              marginBottom: 2
             }}
           >
             <Pagination

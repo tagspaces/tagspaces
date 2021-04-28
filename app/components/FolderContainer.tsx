@@ -193,9 +193,10 @@ const styles: any = (theme: any) => ({
     alignItems: 'center'
   },
   perspecitveSwitch: {
-    bottom: 25,
-    right: 25,
+    bottom: 30,
+    right: 30,
     zIndex: 1000,
+    opacity: 0.9,
     position: 'absolute',
     backgroundColor: theme.palette.background.default
   }
