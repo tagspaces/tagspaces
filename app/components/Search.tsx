@@ -555,12 +555,20 @@ const Search = React.memo((props: Props) => {
             value={forceIndexing}
           >
             <ToggleButton value={false}>
-              <Tooltip arrow title={i18n.t('')}>
+              <Tooltip
+                arrow
+                title={i18n.t(
+                  'Will the use the already create index, if it is not expired'
+                )}
+              >
                 <div>{i18n.t('default index')}</div>
               </Tooltip>
             </ToggleButton>
             <ToggleButton value={true} data-tid="forceIndexingTID">
-              <Tooltip arrow title={i18n.t('')}>
+              <Tooltip
+                arrow
+                title={i18n.t('Will force the recreation of the index')}
+              >
                 <div>{i18n.t('force re-indexing')}</div>
               </Tooltip>
             </ToggleButton>

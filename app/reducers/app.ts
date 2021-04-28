@@ -1046,10 +1046,33 @@ export const actions = {
     type: types.UPDATE_THUMB_URLS,
     tmbURLs
   }),
-  setGeneratingThumbnails: (isGeneratingThumbs: boolean) => ({
-    type: types.SET_GENERATING_THUMBNAILS,
-    isGeneratingThumbs
-  }),
+  // setGeneratingThumbnails: (isGeneratingThumbs: boolean) => ({
+  //   type: types.SET_GENERATING_THUMBNAILS,
+  //   isGeneratingThumbs
+  // }),
+  setGeneratingThumbnails: (isGeneratingThumbs: boolean) => (
+    dispatch: (actions: Object) => void
+  ) => {
+    dispatch(actions.hideNotifications());
+    if (isGeneratingThumbs) {
+      dispatch(
+        actions.showNotification(
+          i18n.t('core:loadingOrGeneratingThumbnails'),
+          'info',
+          true
+        )
+      );
+    } else {
+      console.log('Thumbnail generation ready');
+      // dispatch(
+      //   actions.showNotification(
+      //     i18n.t('Thumbnail ready'),
+      //     'info',
+      //     true
+      //   )
+      // );
+    }
+  },
   /* setLastSelectedEntry: (entryPath: string | null) => ({
     type: types.SET_LAST_SELECTED_ENTRY,
     entryPath

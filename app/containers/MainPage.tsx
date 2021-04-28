@@ -686,11 +686,11 @@ const MainPage = (props: Props) => {
           </IconButton>
         ]}
       />
-      <Snackbar
+      {/* <Snackbar
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         open={props.isGeneratingThumbs}
         autoHideDuration={undefined}
-        message="Loading or generating thumbnails..."
+        message={i18n.t('core:loadingOrGeneratingThumbnails')}
         action={[
           <IconButton
             key="closeButton"
@@ -701,7 +701,7 @@ const MainPage = (props: Props) => {
             <CloseIcon />
           </IconButton>
         ]}
-      />
+      /> */}
       <Snackbar
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         open={props.isIndexing}
