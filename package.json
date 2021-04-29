@@ -99,7 +99,8 @@
     "minio-start": "./tests/bin/minio server ./tests/testdata/file-structure",
     "minio-start-windows": "./tests/bin/minio.exe server ./tests/testdata/file-structure",
     "start-chrome-driver": "./node_modules/.bin/chromedriver --url-base=/ --port=9515 --no-sandbox --disable-dev-shm-usage",
-    "setup-tests": "node scripts/setup-tests.js"
+    "setup-tests": "node scripts/setup-tests.js",
+    "browserslist:update": "npx browserslist@latest --update-db"
   },
   "repository": {
     "type": "git",
