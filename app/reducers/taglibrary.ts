@@ -489,14 +489,41 @@ export const actions = {
     type: types.MERGE_TAGGROUP,
     entry
   }),
-  addTag: (tag: string | Object, parentTagGroupUuid: Uuid) => {
-    console.log('INSIDE ADD TAG');
-    console.log(tag, parentTagGroupUuid);
+  addTag: (tag: string | Object, parentTagGroupUuid: Uuid) => (
+    dispatch: (actions: Object) => void,
+    getState: () => any
+  ) => {
+    const { settings } = getState();
+    const { tagTextColor, tagBackgroundColor } = settings;
+    // console.log('INSIDE ADD TAG');
+    // console.log(tag, parentTagGroupUuid);
     if (typeof tag === 'object' && tag !== null) {
-      return { type: types.COPY_TAG, tag, uuid: parentTagGroupUuid };
+      dispatch(
+        actions.copyTag(
+          {
+            ...tag,
+            // @ts-ignore
+            textcolor: tag.textcolor || tagTextColor,
+            // @ts-ignore
+            color: tag.color || tagBackgroundColor
+          },
+          parentTagGroupUuid
+        )
+      );
+    } else {
+      dispatch(actions.addTagIntern(tag, parentTagGroupUuid));
     }
-    return { type: types.ADD_TAG, tag, uuid: parentTagGroupUuid };
   },
+  addTagIntern: (tag: string | Object, parentTagGroupUuid: Uuid) => ({
+    type: types.UPDATE_TAG,
+    tag,
+    uuid: parentTagGroupUuid
+  }),
+  copyTag: (tag: Tag, parentTagGroupUuid: Uuid) => ({
+    type: types.COPY_TAG,
+    tag,
+    uuid: parentTagGroupUuid
+  }),
   editTag: (tag: Tag, parentTagGroupUuid: Uuid, origTitle: string) => ({
     type: types.UPDATE_TAG,
     tag,

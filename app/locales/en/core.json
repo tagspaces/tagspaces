@@ -532,5 +532,7 @@
   "confirmResetColor": "Do you really want to clear this color?",
   "maxIndexAge": "Index validity duration in minutes",
   "maxIndexAgeHelp": "After this time the search index will be invalidated",
+  "chooseTagGroup": "Choose Tag Group",
+  "addTagToTagGroup": "Add Tag to Tag Group",
   "-": "-"
 }

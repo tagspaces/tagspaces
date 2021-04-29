@@ -26,9 +26,11 @@ import Dialog from '@material-ui/core/Dialog';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import Input from '@material-ui/core/Input';
+import MenuItem from '@material-ui/core/MenuItem';
 import { connect } from 'react-redux';
 import { getTagGroups, Tag, TagGroup } from '-/reducers/taglibrary';
 import i18n from '-/services/i18n';
+import { getTagColor, getTagTextColor } from '-/reducers/settings';
 
 interface Props {
   open: boolean;
@@ -36,6 +38,8 @@ interface Props {
   addTag: (tag: Tag, uuid: string) => void;
   fullScreen?: boolean;
   selectedTag: Tag;
+  defaultBackgroundColor?: string;
+  defaultTextColor?: string;
   tagGroups: Array<TagGroup>;
 }
 
@@ -47,7 +51,14 @@ const AddTagToTagGroupDialog = (props: Props) => {
   };
 
   const onConfirm = () => {
-    props.addTag(props.selectedTag, tagGroup);
+    const { defaultBackgroundColor, defaultTextColor, selectedTag } = props;
+    if (!selectedTag.textcolor) {
+      selectedTag.textcolor = defaultTextColor;
+    }
+    if (!selectedTag.color) {
+      selectedTag.color = defaultBackgroundColor;
+    }
+    props.addTag(selectedTag, tagGroup);
     props.onClose();
   };
 
@@ -71,22 +82,20 @@ const AddTagToTagGroupDialog = (props: Props) => {
       }}
     >
       <DialogTitle>
-        {i18n.t('core:addTagsToGroupTitle') + ': ' + props.selectedTag.title}
+        {i18n.t('core:addTagToTagGroup') + ': ' + props.selectedTag.title}
       </DialogTitle>
       <DialogContent style={{ minWidth: 400 }}>
         <FormControl fullWidth={true}>
           <InputLabel htmlFor="addTagToTagGroupInput">
-            {i18n.t('core:tagGroups')}
+            {i18n.t('core:chooseTagGroup')}
           </InputLabel>
           <Select
-            native
             value={tagGroup}
             onChange={handleTagGroupChange}
             input={<Input id="addTagToTagGroupInput" />}
           >
-            <option aria-label="None" value="" />
             {props.tagGroups.map(tg => (
-              <option value={tg.uuid}>{tg.title}</option>
+              <MenuItem value={tg.uuid}>{tg.title}</MenuItem>
             ))}
           </Select>
         </FormControl>
@@ -108,9 +117,10 @@ const AddTagToTagGroupDialog = (props: Props) => {
   );
 };
 
-function mapStateToProps(state) {
-  return {
-    tagGroups: getTagGroups(state)
-  };
-}
+const mapStateToProps = state => ({
+  tagGroups: getTagGroups(state),
+  defaultBackgroundColor: getTagColor(state),
+  defaultTextColor: getTagTextColor(state)
+});
+
 export default connect(mapStateToProps)(AddTagToTagGroupDialog);
