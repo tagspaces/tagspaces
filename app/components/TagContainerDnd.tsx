@@ -22,7 +22,7 @@ import { DragSource, ConnectDragPreview, ConnectDragSource } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import DragItemTypes from './DragItemTypes';
 import TagContainer from './TagContainer';
-import { TagGroup, Tag } from '-/reducers/taglibrary';
+import { TagGroup, Tag, Uuid } from '-/reducers/taglibrary';
 import { FileSystemEntry } from '-/services/utils-io';
 
 const boxSource = {
@@ -44,15 +44,19 @@ const boxSource = {
     if (
       dropResult &&
       dropResult.tagGroupId &&
-      dropResult.tagGroupId !== item.sourceTagGroupId &&
-      props.moveTag
+      dropResult.tagGroupId !== item.sourceTagGroupId
     ) {
-      // console.log(`Dropped ${item.tagId} from ${item.sourceTagGroupId} into ${dropResult.tagGroupId}!`);
-      props.moveTag(
-        item.tagTitle,
-        item.sourceTagGroupId,
-        dropResult.tagGroupId
-      );
+      if (props.moveTag) {
+        // console.log(`Dropped ${item.tagId} from ${item.sourceTagGroupId} into ${dropResult.tagGroupId}!`);
+        props.moveTag(
+          item.tagTitle,
+          item.sourceTagGroupId,
+          dropResult.tagGroupId
+        );
+      } else if (props.addTag) {
+        // add from file DnD to tagGroup
+        props.addTag(props.tag, dropResult.tagGroupId);
+      }
     } else if (dropResult && dropResult.entryPath && props.addTags) {
       // console.log(`Dropped item: ${item.tag.title} onto file: ${dropResult.entryPath}!`);
       if (
@@ -77,6 +81,7 @@ interface Props {
   tagMode?: 'default' | 'display' | 'remove';
   entryPath?: string;
   addTags?: (paths: Array<string>, tags: Array<Tag>) => void;
+  addTag?: (tag: Tag, parentTagGroupUuid: Uuid) => void;
   moveTag?: () => void;
   connectDragSource?: ConnectDragSource;
   connectDragPreview?: ConnectDragPreview;

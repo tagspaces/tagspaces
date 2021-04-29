@@ -33,6 +33,7 @@ export const types = {
   UPDATE_TAGGROUP: 'UPDATE_TAGGROUP',
   // TOGGLE_TAGGROUP: 'TOGGLE_TAGGROUP',
   ADD_TAG: 'ADD_TAG',
+  COPY_TAG: 'COPY_TAG',
   REMOVE_TAG: 'REMOVE_TAG',
   UPDATE_TAG: 'UPDATE_TAG',
   SORT_TAG_GROUP_UP: 'SORT_TAG_GROUP_UP',
@@ -231,6 +232,30 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
           },
           ...state.slice(indexForEditing + 1)
         ];
+      }
+      return state;
+    }
+    case types.COPY_TAG: {
+      let indexForEditing = -1;
+      state.forEach((tagGroup, index) => {
+        if (tagGroup.uuid === action.uuid) {
+          indexForEditing = index;
+        }
+      });
+
+      if (indexForEditing >= 0) {
+        const taggroupTags = state[indexForEditing].children;
+        const copyTag = action.tag;
+        if (!taggroupTags.some(tag => tag.title === copyTag.title)) {
+          return [
+            ...state.slice(0, indexForEditing),
+            {
+              ...state[indexForEditing],
+              children: [...taggroupTags, copyTag]
+            },
+            ...state.slice(indexForEditing + 1)
+          ];
+        }
       }
       return state;
     }
@@ -464,9 +489,12 @@ export const actions = {
     type: types.MERGE_TAGGROUP,
     entry
   }),
-  addTag: (tag: string, parentTagGroupUuid: Uuid) => {
+  addTag: (tag: string | Object, parentTagGroupUuid: Uuid) => {
     console.log('INSIDE ADD TAG');
     console.log(tag, parentTagGroupUuid);
+    if (typeof tag === 'object' && tag !== null) {
+      return { type: types.COPY_TAG, tag, uuid: parentTagGroupUuid };
+    }
     return { type: types.ADD_TAG, tag, uuid: parentTagGroupUuid };
   },
   editTag: (tag: Tag, parentTagGroupUuid: Uuid, origTitle: string) => ({

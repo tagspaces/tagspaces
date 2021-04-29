@@ -21,6 +21,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/DeleteForever';
+import AddIcon from '@material-ui/icons/Add';
 import ShowEntriesWithTagIcon from '@material-ui/icons/SearchOutlined';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -44,6 +45,7 @@ interface Props {
   searchLocationIndex?: (searchQuery: SearchQuery) => void;
   maxSearchResults?: number;
   openSearchPanel?: () => void;
+  setIsAddTagDialogOpened?: (tag: Tag) => void;
   toggleEditTagDialog?: (tag: Tag) => void;
   isReadOnlyMode?: boolean;
 }
@@ -62,6 +64,11 @@ const EntryTagMenu = (props: Props) => {
   function showDeleteTagDialog() {
     props.onClose();
     setIsDeleteTagDialogOpened(true);
+  }
+
+  function showAddTagDialog() {
+    props.onClose();
+    props.setIsAddTagDialogOpened(props.selectedTag);
   }
 
   function showFilesWithThisTag() {
@@ -103,14 +110,22 @@ const EntryTagMenu = (props: Props) => {
           <ListItemText primary={i18n.t('core:editTagTitle')} />
         </MenuItem>
         {!props.isReadOnlyMode && (
-          <div>
+          <>
             <MenuItem data-tid="deleteTagMenu" onClick={showDeleteTagDialog}>
               <ListItemIcon>
                 <DeleteIcon />
               </ListItemIcon>
               <ListItemText primary={i18n.t('core:removeTag')} />
             </MenuItem>
-          </div>
+            {props.setIsAddTagDialogOpened && (
+              <MenuItem data-tid="addTagMenuTID" onClick={showAddTagDialog}>
+                <ListItemIcon>
+                  <AddIcon />
+                </ListItemIcon>
+                <ListItemText primary={i18n.t('core:addTag')} />
+              </MenuItem>
+            )}
+          </>
         )}
       </Menu>
       <ConfirmDialog

@@ -33,7 +33,7 @@ import { FileSystemEntry, findColorForFileEntry } from '-/services/utils-io';
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagContainer from '-/components/TagContainer';
 import i18n from '-/services/i18n';
-import { Tag } from '-/reducers/taglibrary';
+import { Tag, Uuid } from '-/reducers/taglibrary';
 import PlatformIO from '-/services/platform-io';
 import { AppConfig } from '-/config';
 
@@ -48,6 +48,7 @@ interface Props {
   supportedFileTypes: Array<Object>;
   thumbnailMode: any;
   addTags: () => void;
+  addTag: (tag: Tag, parentTagGroupUuid: Uuid) => void;
   openFsEntry: (fsEntry: FileSystemEntry) => void;
   selectedEntries: Array<FileSystemEntry>;
   selectEntry: (fsEntry: FileSystemEntry) => void;
@@ -71,6 +72,7 @@ const CellContent = (props: Props) => {
     supportedFileTypes,
     thumbnailMode,
     addTags,
+    addTag,
     selectedEntries,
     isReadOnlyMode,
     handleTagMenu,
@@ -403,6 +405,7 @@ const CellContent = (props: Props) => {
         key={fsEntry.path + tag.title}
         entryPath={fsEntry.path}
         addTags={addTags}
+        addTag={addTag}
         handleTagMenu={handleTagMenu}
         selectedEntries={selectedEntries}
       />
