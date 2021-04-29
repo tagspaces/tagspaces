@@ -533,14 +533,19 @@ const GridPerspective = (props: Props) => {
     }
     if (monitor) {
       const { path, selectedEntries } = monitor.getItem();
-      const arrPath = [];
+      let arrPath;
       if (selectedEntries && selectedEntries.length > 0) {
-        selectedEntries.map(entry => {
-          arrPath.push(entry.path);
-          return true;
-        });
+        const arrSelected = selectedEntries
+          .map(entry => entry.path)
+          // remove target folder selection
+          .filter(epath => epath !== item.path);
+        if (arrSelected.length > 0) {
+          arrPath = arrSelected;
+        } else {
+          arrPath = [path];
+        }
       } else {
-        arrPath.push(path);
+        arrPath = [path];
       }
       console.log('Dropped files: ' + path);
       props.moveFiles(arrPath, item.path);
