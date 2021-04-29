@@ -22,7 +22,7 @@ import { bindActionCreators } from 'redux';
 import { GlobalHotKeys } from 'react-hotkeys';
 import { withStyles } from '@material-ui/core/styles';
 import { FileSystemEntry } from '-/services/utils-io';
-import { Tag } from '-/reducers/taglibrary';
+import { actions as TagLibraryActions, Tag, Uuid } from '-/reducers/taglibrary';
 import {
   getSupportedFileTypes,
   getDesktopMode,
@@ -60,6 +60,7 @@ import PlatformIO from '-/services/platform-io';
 import { getLocationPath } from '-/utils/paths';
 import GridPagination from '-/perspectives/grid-perspective/components/GridPagination';
 import GridSettingsDialog from '-/perspectives/grid-perspective/components/GridSettingsDialog';
+import AddTagToTagGroupDialog from '-/components/dialogs/AddTagToTagGroupDialog';
 
 interface Props {
   classes: any;
@@ -83,6 +84,7 @@ interface Props {
   // setLastSelectedEntry: (entryPath: string | null) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   addTags: () => void;
+  addTag: (tag: Tag, parentTagGroupUuid: Uuid) => void;
   removeTags: (paths: Array<string>, tags: Array<Tag>) => void;
   removeAllTags: () => void;
   directoryContent: Array<FileSystemEntry>;
@@ -127,6 +129,9 @@ const GridPerspective = (props: Props) => {
     optionsContextMenuAnchorEl,
     setOptionsContextMenuAnchorEl
   ] = useState<null | HTMLElement>(null);
+  const [isAddTagDialogOpened, setIsAddTagDialogOpened] = useState<Tag>(
+    undefined
+  );
   const [sortBy, setSortBy] = useState<string>(
     settings && settings.sortBy ? settings.sortBy : 'byName'
   );
@@ -559,6 +564,7 @@ const GridPerspective = (props: Props) => {
       theme,
       selectedEntries,
       addTags,
+      addTag,
       supportedFileTypes,
       openFsEntry
     } = props;
@@ -592,6 +598,7 @@ const GridPerspective = (props: Props) => {
           supportedFileTypes={supportedFileTypes}
           thumbnailMode={thumbnailMode}
           addTags={addTags}
+          addTag={addTag}
           selectedEntries={selectedEntries}
           selectEntry={selectEntry}
           deselectEntry={deselectEntry}
@@ -806,6 +813,14 @@ const GridPerspective = (props: Props) => {
           selectedEntries={props.selectedEntries}
         />
       )}
+      {isAddTagDialogOpened !== undefined && (
+        <AddTagToTagGroupDialog
+          open={isAddTagDialogOpened !== undefined}
+          onClose={() => setIsAddTagDialogOpened(undefined)}
+          addTag={props.addTag}
+          selectedTag={isAddTagDialogOpened}
+        />
+      )}
       {isGridSettingsDialogOpened && (
         <GridSettingsDialog
           open={isGridSettingsDialogOpened}
@@ -861,6 +876,7 @@ const GridPerspective = (props: Props) => {
         anchorEl={tagContextMenuAnchorEl}
         open={Boolean(tagContextMenuAnchorEl)}
         onClose={() => setTagContextMenuAnchorEl(null)}
+        setIsAddTagDialogOpened={setIsAddTagDialogOpened}
         selectedTag={selectedTag.current}
         currentEntryPath={selectedEntryPath.current} // getSelEntryPath()}
         removeTags={props.removeTags}
@@ -911,7 +927,8 @@ function mapActionCreatorsToProps(dispatch) {
       openPrevFile: AppActions.openPrevFile,
       toggleDeleteMultipleEntriesDialog:
         AppActions.toggleDeleteMultipleEntriesDialog,
-      addTags: TaggingActions.addTags
+      addTags: TaggingActions.addTags,
+      addTag: TagLibraryActions.addTag
     },
     dispatch
   );
