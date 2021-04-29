@@ -52,7 +52,6 @@ import ButtonGroup from '@material-ui/core/ButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import OpenLocationCode from 'open-location-code-typescript';
-import { FormControlLabel, Switch } from '@material-ui/core';
 import TagsSelect from './TagsSelect';
 import CustomLogo from './CustomLogo';
 import { actions as AppActions, getDirectoryPath } from '../reducers/app';
@@ -72,6 +71,7 @@ import { formatDateTime, extractTimePeriod } from '-/utils/dates';
 import { isPlusCode, parseLatLon } from '-/utils/misc';
 import PlatformIO from '../services/platform-io';
 import { AppConfig } from '-/config';
+import { Tag } from '-/reducers/taglibrary';
 
 interface Props {
   classes: any;
@@ -94,9 +94,9 @@ interface Props {
 
 const Search = React.memo((props: Props) => {
   const [textQuery, setTextQuery] = useState<string>('');
-  // const [tagsAND, setTagsAND] = useState<Array<Tag>>(props.searchQuery.tagsAND);
-  // const [tagsOR, setTagsOR] = useState<Array<Tag>>(props.searchQuery.tagsAND);
-  // const [tagsNOT, setTagsNOT] = useState<Array<Tag>>(props.searchQuery.tagsAND);
+  const [tagsAND, setTagsAND] = useState<Array<Tag>>(props.searchQuery.tagsAND);
+  // const [tagsOR, setTagsOR] = useState<Array<Tag>>(props.searchQuery.setTagsOR);
+  // const [tagsNOT, setTagsNOT] = useState<Array<Tag>>(props.searchQuery.setTagsNOT);
   const [fileTypes, setFileTypes] = useState<Array<string>>(FileTypeGroups.any);
   const [searchBoxing, setSearchBoxing] = useState<
     'location' | 'folder' | 'global'
@@ -198,7 +198,7 @@ const Search = React.memo((props: Props) => {
       if (name === 'tagsAND') {
         searchQuery = {
           ...props.searchQuery,
-          tagsAND: removeTags(props.searchQuery.tagsAND, value)
+          tagsAND: removeTags(tagsAND, value)
         };
       } else if (name === 'tagsNOT') {
         searchQuery = {
@@ -298,8 +298,32 @@ const Search = React.memo((props: Props) => {
     setTagPlaceHelper(tagPHelper);
   };
 
+  const parseTextQuery = () => {
+    const textQueryParts = textQuery.trim().split(' ');
+    let newTextQuery = '';
+    if (textQueryParts && textQueryParts.length > 1) {
+      textQueryParts.forEach(part => {
+        const trimmedPart = part.trim();
+        if (trimmedPart.startsWith('+')) {
+          setTagsAND([...tagsAND, { title: trimmedPart }]);
+        } else if (trimmedPart.startsWith('-')) {
+          // add to searchQuery.tagsNOT
+        } else if (trimmedPart.startsWith('?')) {
+          // add to searchQuery.tagsOR
+        } else {
+          newTextQuery += trimmedPart + ' ';
+        }
+      });
+    }
+    if (newTextQuery.length > 0) {
+      setTextQuery(newTextQuery.trim());
+    }
+  };
+
   const clickSearchButton = () => {
+    parseTextQuery();
     executeSearch();
+
     if (props.hideDrawer) {
       props.hideDrawer();
     }
@@ -376,7 +400,7 @@ const Search = React.memo((props: Props) => {
     const { searchAllLocations, searchLocationIndex } = props;
     const searchQuery: SearchQuery = {
       textQuery,
-      tagsAND: props.searchQuery.tagsAND,
+      tagsAND,
       tagsOR: props.searchQuery.tagsOR,
       tagsNOT: props.searchQuery.tagsNOT,
       // @ts-ignore
@@ -574,24 +598,6 @@ const Search = React.memo((props: Props) => {
             </ToggleButton>
           </ToggleButtonGroup>
         </FormControl>
-        {/* <FormControlLabel
-          title={i18n.t('core:enableIndexingBySearch')}
-          control={
-            <Switch
-              data-tid="forceIndexingTID"
-              checked={forceIndexing}
-              onChange={() => setForceIndexing(!forceIndexing)}
-              name="forceIndexing"
-            />
-          }
-          label={
-            <Typography
-              style={{ padding: 15, color: props.theme.palette.text.primary }}
-            >
-              {i18n.t('forceReindexing')}
-            </Typography>
-          }
-        /> */}
         <br />
         <FormControl className={classes.formControl}>
           <ButtonGroup style={{ justifyContent: 'center' }}>
@@ -614,7 +620,7 @@ const Search = React.memo((props: Props) => {
           <TagsSelect
             placeholderText={i18n.t('core:selectTags')}
             label={i18n.t('core:mustContainTheseTags')}
-            tags={props.searchQuery.tagsAND}
+            tags={tagsAND}
             handleChange={handleTagFieldChange}
             tagSearchType="tagsAND"
             tagMode="remove"
