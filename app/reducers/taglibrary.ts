@@ -515,7 +515,7 @@ export const actions = {
     }
   },
   addTagIntern: (tag: string | Object, parentTagGroupUuid: Uuid) => ({
-    type: types.UPDATE_TAG,
+    type: types.ADD_TAG,
     tag,
     uuid: parentTagGroupUuid
   }),
