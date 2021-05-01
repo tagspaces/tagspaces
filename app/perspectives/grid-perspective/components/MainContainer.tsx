@@ -152,7 +152,7 @@ const GridPerspective = (props: Props) => {
     settings && settings.entrySize ? settings.entrySize : 'normal' // small, big
   );
   const [thumbnailMode, setThumbnailMode] = useState<string>(
-    settings && settings.thumbnailMode ? settings.thumbnailMode : 'cover' // contain
+    settings && settings.thumbnailMode ? settings.thumbnailMode : 'contain' // cover contain
   );
   const [showDirectories, setShowDirectories] = useState<boolean>(
     settings && typeof settings.showDirectories !== 'undefined'
