@@ -112,7 +112,7 @@ export type SearchQuery = {
 const fuseOptions = {
   shouldSort: true,
   threshold: 0.4,
-  location: 0,
+  ignoreLocation: true,
   distance: 100,
   tokenize: true,
   minMatchCharLength: 1,
