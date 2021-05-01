@@ -525,7 +525,7 @@
   "startSlideShow": "Start Slide Show",
   "thumbAlreadyExists": "Thumbnail for '{{directoryName}}' already exists, do you want to override it?",
   "setupTOTP": "Setup MFA with TOTP",
-  "setupTOTPHelp": "Setup mutli factor auth (MFA) with time-based one-time password (TOTP) generated from auth apps (e.g. Google Authenticator)",
+  "setupTOTPHelp": "Setup mutli-factor authentication (MFA) with time-based one-time password (TOTP) generated from auth apps (e.g. Google Authenticator)",
   "validationCodeLabel": "Validation Code",
   "verifyTOTP": "Verify",
   "verifyTOTPCodeHelp": "Scan the QR with an auth app (e.g. Google Authenticator) and enter the generated code here",
