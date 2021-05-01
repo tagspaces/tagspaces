@@ -23,6 +23,7 @@ import Typography from '@material-ui/core/Typography';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
+import Tooltip from '@material-ui/core/Tooltip';
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import List from '@material-ui/core/List';
@@ -159,20 +160,22 @@ const HelpFeedbackPanel = (props: Props) => {
                 )}
                 {'SOFTWARE_TOKEN_MFA'.indexOf(props.user.preferredMFA) ===
                 -1 ? (
-                  <Button
-                    data-tid="setupTOTP"
-                    title={i18n.t('core:setupTOTP')}
-                    className={classes.mainActionButton}
-                    onClick={() => {
-                      setSetupTOTPOpened(true);
-                    }}
-                    size="small"
-                    variant="outlined"
-                    color="primary"
-                    style={{ width: '95%' }}
-                  >
-                    {i18n.t('core:setupTOTP')}
-                  </Button>
+                  <Tooltip title={i18n.t('core:setupTOTPHelp')}>
+                    <Button
+                      data-tid="setupTOTP"
+                      title={i18n.t('core:setupTOTP')}
+                      className={classes.mainActionButton}
+                      onClick={() => {
+                        setSetupTOTPOpened(true);
+                      }}
+                      size="small"
+                      variant="outlined"
+                      color="primary"
+                      style={{ width: '95%' }}
+                    >
+                      {i18n.t('core:setupTOTP')}
+                    </Button>
+                  </Tooltip>
                 ) : (
                   <>
                     <Typography style={{ color: theme.palette.text.primary }}>
