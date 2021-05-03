@@ -220,10 +220,10 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
                 icon: '',
                 color: state[indexForEditing].color
                   ? state[indexForEditing].color
-                  : '', // default color
+                  : action.defaultTagBackgroundColor,
                 textcolor: state[indexForEditing].textcolor
                   ? state[indexForEditing].textcolor
-                  : '', // default color
+                  : action.defaultTagTextColor,
                 style: taggroupTags.length > 0 ? taggroupTags[0].style : '',
                 created_date: new Date(),
                 modified_date: new Date()
@@ -511,13 +511,28 @@ export const actions = {
         )
       );
     } else {
-      dispatch(actions.addTagIntern(tag, parentTagGroupUuid));
+      dispatch(
+        actions.addTagIntern(
+          // @ts-ignore
+          tag,
+          parentTagGroupUuid,
+          tagTextColor,
+          tagBackgroundColor
+        )
+      );
     }
   },
-  addTagIntern: (tag: string | Object, parentTagGroupUuid: Uuid) => ({
+  addTagIntern: (
+    tag: string,
+    parentTagGroupUuid: Uuid,
+    defaultTagTextColor: string,
+    defaultTagBackgroundColor: string
+  ) => ({
     type: types.ADD_TAG,
     tag,
-    uuid: parentTagGroupUuid
+    uuid: parentTagGroupUuid,
+    defaultTagTextColor,
+    defaultTagBackgroundColor
   }),
   copyTag: (tag: Tag, parentTagGroupUuid: Uuid) => ({
     type: types.COPY_TAG,
