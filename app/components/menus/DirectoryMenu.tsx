@@ -343,8 +343,8 @@ Do you want to continue?`)
       props.directoryPath,
       PlatformIO.getDirSeparator()
     );
-    const directoryName = extractDirectoryName(
-      props.directoryPath,
+    const parentDirectoryName = extractDirectoryName(
+      parentDirectoryPath,
       PlatformIO.getDirSeparator()
     );
 
@@ -357,7 +357,7 @@ Do you want to continue?`)
         parentDirectoryPath,
         PlatformIO.getDirSeparator()
       ),
-      i18n.t('core:thumbAlreadyExists', { directoryName })
+      i18n.t('core:thumbAlreadyExists', { directoryName: parentDirectoryName })
     )
       .then(() => {
         props.showNotification(
@@ -483,7 +483,7 @@ Do you want to continue?`)
             <ListItemText primary={i18n.t('core:addFiles')} />
           </MenuItem>
         )}
-        {Pro && props.selectedEntries.length < 2 && (
+        {Pro && props.perspectiveMode && props.selectedEntries.length < 2 && (
           <MenuItem data-tid="setAsThumbTID" onClick={setFolderThumbnail}>
             <ListItemIcon>
               <ImageIcon />
