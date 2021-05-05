@@ -46,7 +46,13 @@ import CreateDirectoryDialog from '../dialogs/CreateDirectoryDialog';
 // import RenameDirectoryDialog from '../dialogs/RenameDirectoryDialog';
 import AppConfig from '-/config';
 import i18n from '-/services/i18n';
-import { normalizePath } from '-/utils/paths';
+import {
+  extractContainingDirectoryPath,
+  extractDirectoryName,
+  getThumbFileLocationForDirectory,
+  getThumbFileLocationForFile,
+  normalizePath
+} from '-/utils/paths';
 import PlatformIO from '-/services/platform-io';
 import { formatDateTime4Tag } from '-/utils/misc';
 import {
@@ -57,10 +63,15 @@ import {
 import IOActions from '-/reducers/io-actions';
 import { Tag } from '-/reducers/taglibrary';
 import TaggingActions from '-/reducers/tagging-actions';
-import { FileSystemEntry, getAllPropertiesPromise } from '-/services/utils-io';
+import {
+  FileSystemEntry,
+  getAllPropertiesPromise,
+  setFolderThumbnailPromise
+} from '-/services/utils-io';
 import FileUploadContainer, {
   FileUploadContainerRef
 } from '-/components/FileUploadContainer';
+import ImageIcon from '@material-ui/icons/Image';
 
 interface Props {
   open: boolean;
@@ -326,6 +337,46 @@ Do you want to continue?`)
       : cleanTrailingDirSeparator(props.directoryPath);
   } */
 
+  function setFolderThumbnail() {
+    props.onClose();
+    const parentDirectoryPath = extractContainingDirectoryPath(
+      props.directoryPath,
+      PlatformIO.getDirSeparator()
+    );
+    const directoryName = extractDirectoryName(
+      props.directoryPath,
+      PlatformIO.getDirSeparator()
+    );
+
+    PlatformIO.copyFilePromise(
+      getThumbFileLocationForDirectory(
+        props.directoryPath,
+        PlatformIO.getDirSeparator()
+      ),
+      getThumbFileLocationForDirectory(
+        parentDirectoryPath,
+        PlatformIO.getDirSeparator()
+      ),
+      i18n.t('core:thumbAlreadyExists', { directoryName })
+    )
+      .then(() => {
+        props.showNotification(
+          'Thumbnail created for: ' + parentDirectoryPath,
+          'default',
+          true
+        );
+        return true;
+      })
+      .catch(error => {
+        props.showNotification('Thumbnail creation failed.', 'default', true);
+        console.warn(
+          'Error setting Thumb for entry: ' + props.directoryPath,
+          error
+        );
+        return true;
+      });
+  }
+
   return (
     <div style={{ overflowY: 'hidden' }}>
       {/* {isRenameDirectoryDialogOpened && (
@@ -430,6 +481,14 @@ Do you want to continue?`)
               <AddExistingFileIcon />
             </ListItemIcon>
             <ListItemText primary={i18n.t('core:addFiles')} />
+          </MenuItem>
+        )}
+        {Pro && props.selectedEntries.length < 2 && (
+          <MenuItem data-tid="setAsThumbTID" onClick={setFolderThumbnail}>
+            <ListItemIcon>
+              <ImageIcon />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:setAsParentFolderThumbnail')} />
           </MenuItem>
         )}
         {props.selectedEntries.length < 2 && process.platform === 'darwin' && (
