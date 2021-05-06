@@ -1,7 +1,5 @@
 ![tagspaces logo](https://raw.github.com/tagspaces/tagspaces/master/app/assets/icons/96x96.png)
 
-<!-- ![tagspaces@travis](https://travis-ci.org/tagspaces/tagspaces.svg?branch=master) -->
-
 [![Join the chat at https://gitter.im/tagspaces/tagspaces](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/tagspaces/tagspaces?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Github All Releases](https://img.shields.io/github/downloads/tagspaces/tagspaces/total.svg)]()
 
 **TagSpaces** is a free, non-locking, open source application for organizing and managing your local files with the help of tags. It features note taking and some to-do app capabilities. The application is available for Windows, Linux, Mac OS and Android. We provide a web clipper extension for Firefox and Chrome for easy collecting of online content as local files.
@@ -10,21 +8,17 @@
 
 More information about can be found from the following sources:
 
-- [Website: tagspaces.org](https://www.tagspaces.org/) - official web site of the project.
+- [Website](https://www.tagspaces.org/) - official web site of the project.
 - [Blog](https://www.tagspaces.org/blog/) for news about TagSpaces
 - [Documentation](https://docs.tagspaces.org/) for our latest generated documentation
 - [Video Introduction](https://www.youtube.com/embed/CJ2hYU6U-C8) - This is a short video presenting the main concepts of the application. It is made from a pretty old application version but it is still valid for the most of the use cases.
 - [Issues Tracker](https://github.com/tagspaces/tagspaces/issues) for developer support requests
 
-<!-- To get updates you can:
-- Subscribe to GitHub updates by clicking the "watch" button up the top right of this page.
-- Subscribe to RSS feed updates for the [master branch](https://github.com/tagspaces/tagspaces/commits/master.atom) -->
-
 ## Downloads
 
 You can find the latest release of TagSpaces in the Github [release section](https://github.com/tagspaces/tagspaces/releases/)
 
-A full list of the changes is available on the [changelog](CHANGELOG.md)
+A full list of the changes is available in the [changelog](CHANGELOG.md)
 
 ## Main Features
 
@@ -45,20 +39,20 @@ The core of TagSpaces starting from version 3 is built with [react.js](https://r
 
 The native Windows, Linux and Mac OS versions of TagSpaces are built with [Electron](https://electron.atom.io/). Electron is an app runtime based on Chromium and node.js. In order to combine it with react we have used the [electron-react-boilerplate](https://github.com/chentsulin/electron-react-boilerplate).
 
-### Repository Directory Structure
+## Repository Directory Structure
 
     ./app................ contains the application core
     ./app/locales........ contains the language files needed for the application internationalization
     ./app/node_modules... contains the TagSpaces extension modules
     ./cordova............ contains the code needed for running the Android version
     ./dll................ contains the files needed for live reload in development mode
-    ./flow-typed......... contains for the Flow static type checker
     ./internals.......... contains files needed for supporting Flow and Eslint
     ./node_modules....... after yarn install, you will find here the external dependencies of the application
     ./resources.......... contains images and other files needed for the application building
     ./scripts............ contains js script needed for the yarn/npm tasks
+    ./web................ contains assets needed for the web version of the app
 
-### How to run TagSpaces from the source code?
+## How to run TagSpaces from the source code?
 
 In order to run TagSpaces on your Windows, Mac OS or Linux from the source code published here, you will need the following prerequisites:
 
@@ -86,7 +80,7 @@ and install the project dependencies:
 
 **Note:** If you experience any errors with the above command, please try this command first before filing a bug report:
 
-    $ yarn install --network-timeout 1000000
+    $ yarn install
 
 The last command will automatically build the application with webpack. Now it is time to install all the TagSpaces extensions:
 
@@ -102,71 +96,41 @@ If you want to try the development mode, you can start it by:
 
 This will start a development server in background, which watches for changes in background and refreshes the application automatically once you have done some changes in the source code.
 
-### How to create the packages for Windows, Linux and Mac OS?
+## Package the app for Windows, Linux and Mac OS
 
 Building of the packages can be accomplished with the integrated yarn scripts:
 
-    $ yarn package-win
+```bash
+$ yarn package-win
 
-    $ yarn package-linux
+$ yarn package-linux
 
-    $ yarn package-osx
+$ yarn package-mac
+```
 
 For creating the packages for Windows, Linux and Mac OS respectively.
 
-### Developing extensions for TagSpaces
+## Start the web version locally
 
-TagSpaces can be easily extended with the help of extensions. Currently we use the extensions for supporting the opening and editing of different file types in the application. More information about this topic can be found on the [extension page](https://www.tagspaces.org/extensions/) of our website.
-
-### How to start the WebDAV edition for testing?
-
-#### Development Server
-
-For developing purposes and local tests, the WebDAV version of the app can be started with the following yarn command:
+For developing purposes and local tests, the web version of the app can be started with the following yarn command:
 
     $ yarn run-web
 
-This command will start a local node.js-WebDAV server on `http://127.0.0.1:8000`. Open your browser and enter the following URL:
+## Running Tests
 
-    http://127.0.0.1:8000/index.html
+To run tests, run the following command
 
-You will be prompted for user credentials, which are username: `demo` and password: `demo` and now you should be able to work with the WebDAV version of TagSpaces.
+```bash
+yarn test-unit
 
-#### Apache server with WedDAV module
+yarn test-e2e-electron
 
-In order to install TagSpaces on a Apache webserver you have to enable the **mod_dav** module, which comes with the Apache Server. More information about the installation and configuration can be found on [apache.org](https://httpd.apache.org/docs/current/mod/mod_dav.html). Please make sure that you have read and understood the potential security issues by running a WebDAV server on internet.
+yarn test-e2e-web
+```
 
-Here is a sample config file for Apache on Linux:
+## Developing viewer and editor for TagSpaces
 
-    <VirtualHost *:80>
-    	ServerAdmin admin@somedomain.com
-    	ServerName somedomain.com
-    	DocumentRoot /var/www/somedomain.com/public_html
-    	ErrorLog ${APACHE_LOG_DIR}/error-somedomain.log
-    	CustomLog ${APACHE_LOG_DIR}/access-somedomain.log combined
-    </VirtualHost>
-
-    <Directory /var/www/somedomain.com/public_html>
-    	Options FollowSymLinks MultiViews
-    	AllowOverride None
-    	Order allow,deny
-    	allow from all
-    </Directory>
-
-    Alias /files /var/yourFilesForWebDAV # this alias is useful if you do not want to store your files in the apache folder
-
-    <Location /files>
-    	Options Indexes
-    	DAV On
-    	AuthType Basic # this way you can enable simple auth mechanism for protecting your files (basic auth should be used only over https with SSL/TSL)
-    	AuthName "webdav"
-    	AuthUserFile /somepath/webdav.password
-    	Require valid-user
-    </Location>
-
-With some modification it can be also used for Apache on Windows, for a detailed manual refer to this article: [How to enable WebDAV in Apache Server 2.2.x – Windows](http://www.mkyong.com/apache/how-to-enable-webdav-in-apache-server-2-2-x-windows/)
-
-You can find more details about the Nextcloud integration here: [Self-hosted TagSpaces with WebDAV](https://docs.tagspaces.org/selfhosting.html).
+TagSpaces can be easily extended with the help of extensions. Currently we use the extensions for supporting the opening and editing of different file types in the application. More information about this topic can be found on the [extension page](https://www.tagspaces.org/extensions/) of our website.
 
 ## Contribute
 
@@ -189,7 +153,7 @@ If you have ideas or suggestions on how we can improve our application, you can 
 
 If you are having troubles using TagSpaces or have found a bug please [open a ticket](https://github.com/tagspaces/tagspaces/issues) on GitHub.
 
-### Known issues
+## Known issues
 
 - TagSpaces is not suitable for searching in locations containing more than 100000 files.
 - TagSpaces has performance issue displaying folders directly containing more than 1000 files. There is no such problem if the files are distributed in sub folders.
