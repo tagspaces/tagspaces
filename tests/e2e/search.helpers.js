@@ -38,6 +38,11 @@ export async function searchEngine(filename, options = {}) {
   if (options.reindexing) {
     await clickOn('[data-tid=forceIndexingTID]');
   }
+  if (options.searchType) {
+    await clickOn('[data-tid=' + options.searchType + ']');
+  } else {
+    await clickOn('[data-tid=strictSearchTID]');
+  }
 
   if (options.resetSearchButton) {
     await clickOn('#resetSearchButton');

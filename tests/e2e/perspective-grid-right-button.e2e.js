@@ -277,7 +277,7 @@ describe('TST50** - Right button on a file', () => {
   /**
    * TODO github minio (expected selector to exist=false after 5s)
    */
-  test('TST5028 - Move - Copy file (file menu) [minio,electron]', async () => {
+  test('TST5028 - Move - Copy file (file menu) [web,minio,electron]', async () => {
     // Move file in child folder
     const fileExtension = 'pdf'; //'eml' -> todo search found extra files (.gitkeep) with fuseOptions = {threshold: 0.4,
     await searchEngine(fileExtension);
@@ -296,6 +296,9 @@ describe('TST50** - Right button on a file', () => {
     await global.client.pause(500);
     await doubleClickOn(perspectiveGridTable + firstFolder);
     await searchEngine(fileExtension, { reindexing: true }); // TODO temp fix: https://trello.com/c/ZfcGGvOM/527-moved-files-is-not-indexing-not-found-in-search
+    if (global.isWeb) {
+      await global.client.pause(500);
+    }
     let firstFileName = await getGridFileName(0);
     expect(firstFileName).toBe('sample.' + fileExtension);
 

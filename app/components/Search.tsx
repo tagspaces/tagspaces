@@ -519,7 +519,7 @@ const Search = React.memo((props: Props) => {
             style={{ marginBottom: 10, alignSelf: 'center' }}
             value={searchType}
           >
-            <ToggleButton value="fussy">
+            <ToggleButton value="fussy" data-tid="fussySearchTID">
               <Tooltip
                 arrow
                 title={i18n.t(
@@ -529,7 +529,7 @@ const Search = React.memo((props: Props) => {
                 <div>{i18n.t('fussy')}</div>
               </Tooltip>
             </ToggleButton>
-            <ToggleButton value="semistrict">
+            <ToggleButton value="semistrict" data-tid="semiStrictSearchTID">
               <Tooltip
                 arrow
                 title={i18n.t(
@@ -539,7 +539,7 @@ const Search = React.memo((props: Props) => {
                 <div>{i18n.t('semistrict')}</div>
               </Tooltip>
             </ToggleButton>
-            <ToggleButton value="strict">
+            <ToggleButton value="strict" data-tid="strictSearchTID">
               <Tooltip arrow title="Same as semistrict but case sensitive">
                 <div>{i18n.t('strict')}</div>
               </Tooltip>
