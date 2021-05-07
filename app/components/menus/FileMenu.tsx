@@ -44,6 +44,8 @@ import { extractParentDirectoryPath } from '-/utils/paths';
 
 interface Props {
   anchorEl: Element;
+  mouseX?: number;
+  mouseY?: number;
   open: boolean;
   onClose: () => void;
   openDeleteFileDialog: () => void;
@@ -162,7 +164,19 @@ const FileMenu = (props: Props) => {
 
   return (
     <div style={{ overflowY: 'hidden' }}>
-      <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
+      <Menu
+        anchorEl={props.anchorEl}
+        anchorReference={
+          props.mouseY && props.mouseX ? 'anchorPosition' : undefined
+        }
+        anchorPosition={
+          props.mouseY && props.mouseX
+            ? { top: props.mouseY, left: props.mouseX }
+            : undefined
+        }
+        open={props.open}
+        onClose={props.onClose}
+      >
         {props.selectedEntries.length < 2 && (
           <>
             <MenuItem data-tid="fileMenuOpenFile" onClick={openFile}>
