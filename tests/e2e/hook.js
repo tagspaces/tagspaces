@@ -120,6 +120,7 @@ export async function startSpectronApp() {
       // startTimeout: 500,
       waitTimeout: 1000,
       waitforInterval: 50,
+      maxInstances: 1,
       chromeDriverArgs: chromeDriverArgs
     });
     await global.app.start();
