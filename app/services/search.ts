@@ -19,6 +19,9 @@
 
 import Fuse from 'fuse.js';
 import jmespath from 'jmespath';
+import OpenLocationCode from 'open-location-code-typescript';
+import { isPlusCode } from '-/utils/misc';
+import { extractTimePeriod } from '-/utils/dates';
 import { Tag } from '-/reducers/taglibrary';
 import { Pro } from '../pro';
 import { FileSystemEntry } from './utils-io';
@@ -228,26 +231,58 @@ function constructjmespathQuery(searchQuery: SearchQuery): string {
 function prepareIndex(index: Array<Object>) {
   console.time('PreparingIndex');
   let resultIndex = [];
-  if (Pro && Pro.Search && Pro.Search.prepareIndex) {
-    resultIndex = Pro.Search.prepareIndex(index);
-  } else {
-    resultIndex = index.map((entry: any) => {
-      const tags = [...entry.tags];
-      if (tags && tags.length) {
-        tags.map(tag => {
-          if (tag.title.toLowerCase() !== tag.title) {
-            tag.originTitle = tag.title;
-            tag.title = tag.title.toLowerCase();
+  resultIndex = index.map((entry: any) => {
+    const tags = [...entry.tags];
+    let lat = null;
+    let lon = null;
+    let fromTime = null;
+    let toTime = null;
+    if (tags && tags.length) {
+      tags.map(tag => {
+        const enhancedTag: Tag = {
+          ...tag
+        };
+        try {
+          if (isPlusCode(tag.title)) {
+            const coord = OpenLocationCode.decode(tag.title);
+            lat = Number(coord.latitudeCenter.toFixed(7));
+            lon = Number(coord.longitudeCenter.toFixed(7));
           }
-          return tag;
-        });
-      }
-      return {
-        ...entry,
-        tags
-      };
-    });
-  }
+          const { fromDateTime, toDateTime } = extractTimePeriod(tag.title);
+          if (fromDateTime && toDateTime) {
+            fromTime = fromDateTime.getTime();
+            toTime = toDateTime.getTime();
+          }
+          if (tag.title.toLowerCase() !== tag.title) {
+            enhancedTag.originTitle = tag.title;
+            enhancedTag.title = tag.title.toLowerCase();
+          }
+        } catch (e) {
+          console.warn(
+            'Error parsing tag ' + JSON.stringify(tag) + ' from ' + entry.path
+          );
+        }
+        return enhancedTag;
+      });
+    }
+    const enhancedEntry = {
+      ...entry,
+      tags
+    };
+    if (lat) {
+      enhancedEntry.lat = lat;
+    }
+    if (lon) {
+      enhancedEntry.lon = lon;
+    }
+    if (fromTime) {
+      enhancedEntry.fromTime = fromTime;
+    }
+    if (toTime) {
+      enhancedEntry.toTime = toTime;
+    }
+    return enhancedEntry;
+  });
   console.timeEnd('PreparingIndex');
   return resultIndex;
 }

@@ -58,6 +58,7 @@ export interface Tag {
   keyBinding?: string;
   color?: string;
   textcolor?: string;
+  originTitle?: string;
 }
 
 export interface TagGroup {
