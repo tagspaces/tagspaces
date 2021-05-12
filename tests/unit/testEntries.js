@@ -4,7 +4,7 @@ export const entry1 = {
   isFile: true,
   extension: 'jpg',
   tags: [{ title: 'tagTitle1' }],
-  textConten: 'adsadas dasda',
+  textContent: 'adsadas dasda',
   fromTime: '',
   toTime: '',
   fileSize: 9
@@ -21,7 +21,7 @@ export const entry2 = {
 
 export const entry3 = {
   name: 'testFolder1',
-  description: 'test folder desciption',
+  description: 'test folder description',
   isDirectory: true,
   path: '/gg/',
   tags: []

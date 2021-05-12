@@ -1,4 +1,5 @@
 import Search from '../../app/services/search';
+import FileTypeGroups from '../../app/services/search';
 import { entry1, entry2, entry3 } from './testEntries';
 
 /*const mockedSearchIndex = { data: {} };
@@ -153,7 +154,7 @@ test('calls Search.searchLocationIndex for Pro', () => {
 });
 */
 
-test.skip('calls Search.searchLocationIndex for extension', async () => {
+test('calls Search.searchLocationIndex for extension', async () => {
   const locationContent = [entry2, entry3];
 
   const searchQuery = {
@@ -164,10 +165,11 @@ test.skip('calls Search.searchLocationIndex for extension', async () => {
     locationContent,
     searchQuery
   );
-  expect(searchResults).resolves.toStrictEqual('jpg');
+
+  expect(searchResults).toStrictEqual(FileTypeGroups.images);
 });
 
-test.skip('calls Search.searchLocationIndex for fileSize', async () => {
+test('calls Search.searchLocationIndex for fileSize', async () => {
   const locationContent = [entry1, entry2];
 
   const searchQuery = {
