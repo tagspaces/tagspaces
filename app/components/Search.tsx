@@ -96,10 +96,7 @@ interface Props {
 }
 
 const Search = React.memo((props: Props) => {
-  const textQuery = useRef<string>(
-    props.searchQuery ? props.searchQuery.textQuery : ''
-  );
-  // const [textQuery, setTextQuery] = useState<string>('');
+  const [textQuery, setTextQuery] = useState<string>('');
   // const [tagsAND, setTagsAND] = useState<Array<Tag>>(props.searchQuery.tagsAND);
   // const [tagsOR, setTagsOR] = useState<Array<Tag>>(props.searchQuery.tagsAND);
   // const [tagsNOT, setTagsNOT] = useState<Array<Tag>>(props.searchQuery.tagsAND);
@@ -201,6 +198,7 @@ const Search = React.memo((props: Props) => {
     const { value } = target;
 
     const savedSearch = props.searches.find(search => search.uuid === value);
+    setTextQuery(savedSearch.textQuery);
     if (savedSearch.searchBoxing === 'global') {
       props.searchAllLocations(savedSearch);
     } else {
@@ -359,7 +357,7 @@ const Search = React.memo((props: Props) => {
   const clearSearch = () => {
     props.setSearchQuery({});
     openCurrentDirectory();
-    textQuery.current = ''; // setTextQuery('');
+    setTextQuery(''); // textQuery.current = '';
     setSearchBoxing('location');
     setSearchType('fussy');
     setFileTypes(FileTypeGroups.any);
@@ -379,7 +377,7 @@ const Search = React.memo((props: Props) => {
 
   const saveSearch = () => {
     setSaveSearchDialogOpened({
-      textQuery: textQuery.current,
+      textQuery, // .current,
       tagsAND: props.searchQuery.tagsAND,
       tagsOR: props.searchQuery.tagsOR,
       tagsNOT: props.searchQuery.tagsNOT,
@@ -421,7 +419,7 @@ const Search = React.memo((props: Props) => {
   const executeSearch = () => {
     const { searchAllLocations, searchLocationIndex } = props;
     const searchQuery: SearchQuery = {
-      textQuery: textQuery.current,
+      textQuery, // .current,
       tagsAND: props.searchQuery.tagsAND,
       tagsOR: props.searchQuery.tagsOR,
       tagsNOT: props.searchQuery.tagsNOT,
@@ -500,12 +498,10 @@ const Search = React.memo((props: Props) => {
           disabled={indexing}
         >
           <OutlinedInput
-            id="textQuery"
             name="textQuery"
-            defaultValue={textQuery.current}
+            value={textQuery}
             onChange={event => {
-              textQuery.current = event.target.value;
-              // setTextQuery(event.target.value);
+              setTextQuery(event.target.value);
             }}
             inputRef={mainSearchField}
             margin="dense"
