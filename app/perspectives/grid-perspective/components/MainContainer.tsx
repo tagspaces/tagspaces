@@ -790,6 +790,11 @@ const GridPerspective = (props: Props) => {
           showTags={showTags}
           toggleThumbnailsMode={toggleThumbnailsMode}
           thumbnailMode={thumbnailMode}
+          changeEntrySize={changeEntrySize}
+          entrySize={entrySize}
+          changeSingleClickAction={changeSingleClickAction}
+          singleClickAction={singleClickAction}
+          openHelpWebPage={openHelpWebPage}
         />
       )}
       {isMoveCopyFilesDialogOpened && (
