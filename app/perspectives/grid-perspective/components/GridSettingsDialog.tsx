@@ -190,7 +190,11 @@ const GridSettingsDialog = (props: Props) => {
           onClick={() => changeEntrySize('big')}
         >
           <ListItemIcon>
-            {entrySize === 'big' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
+            {entrySize === 'big' ? (
+              <RadioCheckedIcon />
+            ) : (
+              <RadioUncheckedIcon />
+            )}
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:entrySizeBig')} />
         </MenuItem>
