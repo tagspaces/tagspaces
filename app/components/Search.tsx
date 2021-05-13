@@ -36,7 +36,7 @@ import FileIcon from '@material-ui/icons/InsertDriveFileOutlined';
 import ClearSearchIcon from '@material-ui/icons/Clear';
 import BookmarkIcon from '@material-ui/icons/BookmarkBorder';
 import BookIcon from '@material-ui/icons/LocalLibraryOutlined';
-import PlaceIcon from '@material-ui/icons/Place';
+// import PlaceIcon from '@material-ui/icons/Place';
 import DateIcon from '@material-ui/icons/DateRange';
 import Button from '@material-ui/core/Button';
 import Input from '@material-ui/core/Input';
@@ -52,7 +52,7 @@ import ButtonGroup from '@material-ui/core/ButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import OpenLocationCode from 'open-location-code-typescript';
-import { FormControlLabel, Switch } from '@material-ui/core';
+// import { FormControlLabel, Switch } from '@material-ui/core';
 import TagsSelect from './TagsSelect';
 import CustomLogo from './CustomLogo';
 import { actions as AppActions, getDirectoryPath } from '../reducers/app';
@@ -72,6 +72,8 @@ import { formatDateTime, extractTimePeriod } from '-/utils/dates';
 import { isPlusCode, parseLatLon } from '-/utils/misc';
 import PlatformIO from '../services/platform-io';
 import { AppConfig } from '-/config';
+import { getSearches } from '-/reducers/searches';
+import SaveSearchDialog from '-/components/dialogs/SaveSearchDialog';
 
 interface Props {
   classes: any;
@@ -90,10 +92,14 @@ interface Props {
   indexedEntriesCount: number;
   maxSearchResults: number;
   indexing: boolean;
+  searches: Array<SearchQuery>;
 }
 
 const Search = React.memo((props: Props) => {
-  const [textQuery, setTextQuery] = useState<string>('');
+  const textQuery = useRef<string>(
+    props.searchQuery ? props.searchQuery.textQuery : ''
+  );
+  // const [textQuery, setTextQuery] = useState<string>('');
   // const [tagsAND, setTagsAND] = useState<Array<Tag>>(props.searchQuery.tagsAND);
   // const [tagsOR, setTagsOR] = useState<Array<Tag>>(props.searchQuery.tagsAND);
   // const [tagsNOT, setTagsNOT] = useState<Array<Tag>>(props.searchQuery.tagsAND);
@@ -105,6 +111,9 @@ const Search = React.memo((props: Props) => {
     'fussy' | 'semistrict' | 'strict'
   >('fussy');
   const [lastModified, setLastModified] = useState<string>('');
+  const [saveSearchDialogOpened, setSaveSearchDialogOpened] = useState<
+    SearchQuery
+  >(undefined);
   const [tagTimePeriod, setTagTimePeriod] = useState<string>('');
   const [tagTimePeriodHelper, setTagTimePeriodHelper] = useState<string>(' ');
   const [tagPlace, setTagPlace] = useState<string>(' ');
@@ -182,6 +191,20 @@ const Search = React.memo((props: Props) => {
           lastModified: value
         });
       }
+    }
+  };
+
+  const handleSavedSearchChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { target } = event;
+    const { value } = target;
+
+    const savedSearch = props.searches.find(search => search.uuid === value);
+    if (savedSearch.searchBoxing === 'global') {
+      props.searchAllLocations(savedSearch);
+    } else {
+      props.searchLocationIndex(savedSearch);
     }
   };
 
@@ -336,7 +359,7 @@ const Search = React.memo((props: Props) => {
   const clearSearch = () => {
     props.setSearchQuery({});
     openCurrentDirectory();
-    setTextQuery('');
+    textQuery.current = ''; // setTextQuery('');
     setSearchBoxing('location');
     setSearchType('fussy');
     setFileTypes(FileTypeGroups.any);
@@ -352,6 +375,29 @@ const Search = React.memo((props: Props) => {
     // setTagPlaceRadius(0);
     setForceIndexing(false);
     setFileSize('');
+  };
+
+  const saveSearch = () => {
+    setSaveSearchDialogOpened({
+      textQuery: textQuery.current,
+      tagsAND: props.searchQuery.tagsAND,
+      tagsOR: props.searchQuery.tagsOR,
+      tagsNOT: props.searchQuery.tagsNOT,
+      // @ts-ignore
+      searchBoxing,
+      searchType,
+      fileTypes,
+      lastModified,
+      fileSize,
+      tagTimePeriodFrom: tagTimePeriodFrom ? tagTimePeriodFrom.getTime() : null,
+      tagTimePeriodTo: tagTimePeriodTo ? tagTimePeriodTo.getTime() : null,
+      tagPlaceLat,
+      tagPlaceLong,
+      // tagPlaceRadius,
+      maxSearchResults: props.maxSearchResults,
+      currentDirectory: props.currentDirectory,
+      forceIndexing
+    });
   };
 
   const switchSearchBoxing = (
@@ -375,7 +421,7 @@ const Search = React.memo((props: Props) => {
   const executeSearch = () => {
     const { searchAllLocations, searchLocationIndex } = props;
     const searchQuery: SearchQuery = {
-      textQuery,
+      textQuery: textQuery.current,
       tagsAND: props.searchQuery.tagsAND,
       tagsOR: props.searchQuery.tagsOR,
       tagsNOT: props.searchQuery.tagsNOT,
@@ -456,9 +502,10 @@ const Search = React.memo((props: Props) => {
           <OutlinedInput
             id="textQuery"
             name="textQuery"
-            value={textQuery}
+            defaultValue={textQuery.current}
             onChange={event => {
-              setTextQuery(event.target.value);
+              textQuery.current = event.target.value;
+              // setTextQuery(event.target.value);
             }}
             inputRef={mainSearchField}
             margin="dense"
@@ -890,19 +937,60 @@ const Search = React.memo((props: Props) => {
                 }}
               /> */}
             </FormControl>
+            <FormControl
+              className={classes.formControl}
+              disabled={indexing || !Pro}
+              title={
+                !Pro
+                  ? i18n.t('core:thisFunctionalityIsAvailableInPro')
+                  : undefined
+              }
+            >
+              <InputLabel shrink htmlFor="saved-searches">
+                {i18n.t('core:savedSearchesTitle')}
+              </InputLabel>
+              <Select
+                onChange={handleSavedSearchChange}
+                input={<Input name="savedSearch" id="saved-searches" />}
+                displayEmpty
+              >
+                {props.searches.map(search => (
+                  <MenuItem key={search.uuid} value={search.uuid}>
+                    {search.title}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
             <FormControl className={classes.formControl}>
               <ButtonGroup style={{ justifyContent: 'center' }}>
                 <Button
                   variant="outlined"
                   color="secondary"
                   size="medium"
-                  style={{ width: '98%' }}
+                  style={{ width: '48%' }}
                   onClick={clearSearch}
                   id="resetSearchButton"
                 >
                   {i18n.t('resetBtn')}
                 </Button>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  size="medium"
+                  style={{ width: '48%' }}
+                  onClick={saveSearch}
+                  id="saveSearchButton"
+                >
+                  {i18n.t('saveBtn')}
+                </Button>
               </ButtonGroup>
+              {saveSearchDialogOpened !== undefined && (
+                <SaveSearchDialog
+                  open={saveSearchDialogOpened !== undefined}
+                  onClose={() => setSaveSearchDialogOpened(undefined)}
+                  searchQuery={saveSearchDialogOpened}
+                />
+              )}
             </FormControl>
           </React.Fragment>
         )}
@@ -917,7 +1005,8 @@ function mapStateToProps(state) {
     searchQuery: getSearchQuery(state),
     currentDirectory: getDirectoryPath(state),
     indexedEntriesCount: getIndexedEntriesCount(state),
-    maxSearchResults: getMaxSearchResults(state)
+    maxSearchResults: getMaxSearchResults(state),
+    searches: getSearches(state)
   };
 }
 

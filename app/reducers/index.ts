@@ -24,6 +24,7 @@ import app from './app';
 import locations from './locations';
 import taglibrary from './taglibrary';
 import locationIndex from './location-index';
+import searches from './searches';
 import AppConfig from '-/config';
 
 const externalLocations = window.ExtLocations || false;
@@ -116,7 +117,8 @@ const rootReducer = persistCombineReducers(rootPersistConfig, {
   app,
   locations: externalLocations ? () => externalLocations : locations,
   taglibrary: externalTagLibrary ? () => externalTagLibrary : taglibrary,
-  locationIndex
+  locationIndex,
+  searches
 });
 
 export default rootReducer;
