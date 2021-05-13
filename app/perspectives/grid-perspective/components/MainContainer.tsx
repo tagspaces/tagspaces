@@ -788,6 +788,8 @@ const GridPerspective = (props: Props) => {
           toggleShowTags={toggleShowTags}
           showDirectories={showDirectories}
           showTags={showTags}
+          toggleThumbnailsMode={toggleThumbnailsMode}
+          thumbnailMode={thumbnailMode}
         />
       )}
       {isMoveCopyFilesDialogOpened && (

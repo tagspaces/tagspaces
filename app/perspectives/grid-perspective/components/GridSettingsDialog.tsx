@@ -34,6 +34,10 @@ import {
   Button,
   FormHelperText
 } from '@material-ui/core';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import ThumbnailCoverIcon from '@material-ui/icons/PhotoSizeSelectActual';
+import ThumbnailContainIcon from '@material-ui/icons/PhotoSizeSelectLarge';
 import i18n from '-/services/i18n';
 
 interface Props {
@@ -46,6 +50,8 @@ interface Props {
   toggleShowTags: () => void;
   showDirectories: boolean;
   showTags: boolean;
+  toggleThumbnailsMode: () => void;
+  thumbnailMode: string;
 }
 
 const GridSettingsDialog = (props: Props) => {
@@ -57,7 +63,9 @@ const GridSettingsDialog = (props: Props) => {
     toggleShowDirectories,
     showDirectories,
     toggleShowTags,
-    showTags
+    showTags,
+    toggleThumbnailsMode,
+    thumbnailMode
   } = props;
 
   let newGridPageLimit = gridPageLimit;
@@ -115,6 +123,22 @@ const GridSettingsDialog = (props: Props) => {
             label={i18n.t('core:showTags')}
           />
         </FormGroup>
+        <Divider />
+        <MenuItem
+          data-tid="gridPerspectiveToggleThumbnailsMode"
+          title={i18n.t('core:toggleThumbnailModeTitle')}
+          aria-label={i18n.t('core:toggleThumbnailMode')}
+          onClick={toggleThumbnailsMode}
+        >
+          <ListItemIcon>
+            {thumbnailMode === 'cover' ? (
+              <ThumbnailCoverIcon />
+            ) : (
+              <ThumbnailContainIcon />
+            )}
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:toggleThumbnailMode')} />
+        </MenuItem>
         <Divider />
         <FormControl
           fullWidth={true}
