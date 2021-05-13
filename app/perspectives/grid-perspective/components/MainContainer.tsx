@@ -784,6 +784,10 @@ const GridPerspective = (props: Props) => {
           onClose={() => setIsGridSettingsDialogOpened(false)}
           setGridPageLimit={handleGridPageLimit}
           gridPageLimit={gridPageLimit}
+          toggleShowDirectories={toggleShowDirectories}
+          toggleShowTags={toggleShowTags}
+          showDirectories={showDirectories}
+          showTags={showTags}
         />
       )}
       {isMoveCopyFilesDialogOpened && (

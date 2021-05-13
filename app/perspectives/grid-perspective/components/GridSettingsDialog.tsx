@@ -24,6 +24,10 @@ import {
   DialogTitle,
   withMobileDialog,
   FormControl,
+  FormControlLabel,
+  FormGroup,
+  Checkbox,
+  Divider,
   InputLabel,
   Select,
   MenuItem,
@@ -38,10 +42,24 @@ interface Props {
   gridPageLimit: number;
   onClose: () => void;
   setGridPageLimit: (number) => void;
+  toggleShowDirectories: () => void;
+  toggleShowTags: () => void;
+  showDirectories: boolean;
+  showTags: boolean;
 }
 
 const GridSettingsDialog = (props: Props) => {
-  const { open, onClose, fullScreen, gridPageLimit } = props;
+  const {
+    open,
+    onClose,
+    fullScreen,
+    gridPageLimit,
+    toggleShowDirectories,
+    showDirectories,
+    toggleShowTags,
+    showTags
+  } = props;
+
   let newGridPageLimit = gridPageLimit;
 
   const handleGridPaginationLimit = (
@@ -73,6 +91,31 @@ const GridSettingsDialog = (props: Props) => {
     >
       <DialogTitle>{i18n.t('core:perspectiveSettingsTitle')}</DialogTitle>
       <DialogContent>
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={showDirectories}
+                onChange={toggleShowDirectories}
+                name="checkedB"
+                color="primary"
+              />
+            }
+            label={i18n.t('core:showHideDirectories')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={showTags}
+                onChange={toggleShowTags}
+                name="checkedB"
+                color="primary"
+              />
+            }
+            label={i18n.t('core:showTags')}
+          />
+        </FormGroup>
+        <Divider />
         <FormControl
           fullWidth={true}
           /* error={this.state.inputError} */
