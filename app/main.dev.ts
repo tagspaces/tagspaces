@@ -86,11 +86,15 @@ const installExtensions = async () => {
     REDUX_DEVTOOLS
   } = require('electron-devtools-installer'); // eslint-disable-line
 
-  const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
+  // const forceDownload = !!process.env.UPGRADE_EXTENSIONS; // temp fix for electron-devtools-installer issue
   const extensions = [REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS];
+  const extOptions = {
+    loadExtensionOptions: { allowFileAccess: true },
+    forceDownload: false
+  };
 
   return Promise.all(
-    extensions.map(name => installExtension(name.id, forceDownload))
+    extensions.map(name => installExtension(name.id, extOptions))
   ).catch(console.log);
 };
 
