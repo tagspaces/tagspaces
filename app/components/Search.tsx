@@ -73,7 +73,8 @@ import { isPlusCode, parseLatLon } from '-/utils/misc';
 import PlatformIO from '../services/platform-io';
 import { AppConfig } from '-/config';
 import { getSearches } from '-/reducers/searches';
-import SaveSearchDialog from '-/components/dialogs/SaveSearchDialog';
+
+const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
 
 interface Props {
   classes: any;
@@ -199,6 +200,18 @@ const Search = React.memo((props: Props) => {
 
     const savedSearch = props.searches.find(search => search.uuid === value);
     setTextQuery(savedSearch.textQuery);
+    if (savedSearch.searchBoxing === 'global') {
+      props.searchAllLocations(savedSearch);
+    } else {
+      props.searchLocationIndex(savedSearch);
+    }
+  };
+
+  const handleSavedSearchEdit = (event: React.MouseEvent<HTMLButtonElement>, uuid: string) => {
+    event.preventDefault();
+    const savedSearch = props.searches.find(search => search.uuid === uuid);
+    setTextQuery(savedSearch.textQuery);
+    savedSearch.mode = 'edit';
     if (savedSearch.searchBoxing === 'global') {
       props.searchAllLocations(savedSearch);
     } else {
@@ -377,6 +390,8 @@ const Search = React.memo((props: Props) => {
 
   const saveSearch = () => {
     setSaveSearchDialogOpened({
+      title: props.searchQuery.title,
+      mode: props.searchQuery.mode,
       textQuery, // .current,
       tagsAND: props.searchQuery.tagsAND,
       tagsOR: props.searchQuery.tagsOR,
@@ -952,7 +967,12 @@ const Search = React.memo((props: Props) => {
               >
                 {props.searches.map(search => (
                   <MenuItem key={search.uuid} value={search.uuid}>
-                    {search.title}
+                    <span style={{ width: '100%' }}>{search.title}</span>
+                    <IconButton
+                      onClick={(event) => handleSavedSearchEdit(event, search.uuid)}
+                    >
+                      <FolderIcon />
+                    </IconButton>
                   </MenuItem>
                 ))}
               </Select>
@@ -977,10 +997,12 @@ const Search = React.memo((props: Props) => {
                   onClick={saveSearch}
                   id="saveSearchButton"
                 >
-                  {i18n.t('saveBtn')}
+                  {i18n.t(
+                    props.searchQuery.mode === 'edit' ? 'editBtn' : 'saveBtn'
+                  )}
                 </Button>
               </ButtonGroup>
-              {saveSearchDialogOpened !== undefined && (
+              {SaveSearchDialog && saveSearchDialogOpened !== undefined && (
                 <SaveSearchDialog
                   open={saveSearchDialogOpened !== undefined}
                   onClose={() => setSaveSearchDialogOpened(undefined)}
