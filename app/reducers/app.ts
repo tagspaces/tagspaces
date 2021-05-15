@@ -1611,7 +1611,10 @@ export const actions = {
     if (fsEntry.url) {
       entryForOpening.url = fsEntry.url;
     } else if (PlatformIO.haveObjectStoreSupport()) {
-      entryForOpening.url = PlatformIO.getURLforPath(fsEntry.path);
+      const cleanedPath = fsEntry.path.startsWith('/')
+        ? fsEntry.path.substr(1)
+        : fsEntry.path;
+      entryForOpening.url = PlatformIO.getURLforPath(cleanedPath);
     }
     if (fsEntry.perspective) {
       entryForOpening.perspective = fsEntry.perspective;
