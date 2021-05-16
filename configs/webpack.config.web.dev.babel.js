@@ -15,7 +15,7 @@ import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 const targetPlatform = 'webdav-io'; // electron-io | webdav-io | cordova-io | process.env.APP_TARGET ||
 
 CheckNodeEnv('production');
-export default merge.smart(baseConfig, {
+export default merge(baseConfig, {
   devtool: 'inline-source-map',
 
   mode: 'development',
