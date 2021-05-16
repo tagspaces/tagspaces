@@ -466,7 +466,10 @@ export const actions = {
                   (entry: FileSystemEntry) => {
                     // Excluding s3 folders from global search
                     if (entry && entry.isFile) {
-                      entry.url = PlatformIO.getURLforPath(entry.path);
+                      const cleanedPath = entry.path.startsWith('/')
+                        ? entry.path.substr(1)
+                        : entry.path;
+                      entry.url = PlatformIO.getURLforPath(cleanedPath);
                       if (
                         entry.thumbPath &&
                         entry.thumbPath.length > 1 &&

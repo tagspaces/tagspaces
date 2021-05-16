@@ -13,7 +13,7 @@ import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 const targetPlatform = 'cordova-io'; // electron-io | webdav-io | cordova-io | process.env.APP_TARGET ||
 
 CheckNodeEnv('development');
-export default merge.smart(baseConfig, {
+export default merge(baseConfig, {
   cache: false,
   devtool: 'inline-source-map',
 

@@ -110,3 +110,5 @@ web/sw-con
 /app/models/*
 cordova/platforms/ios/www/yarn.lock
 cordova/platforms/ios/www/package.json
+junit.xml
+test-reports/*
