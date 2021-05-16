@@ -14,7 +14,7 @@ CheckNodeEnv('production');
 
 const targetPlatform = 'electron-io'; // electron-io | webdav-io | cordova-io | process.env.APP_TARGET ||
 
-export default merge.smart(baseConfig, {
+export default merge(baseConfig, {
   devtool: 'source-map',
 
   mode: 'production',
