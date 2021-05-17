@@ -97,11 +97,17 @@ interface Props {
 }
 
 const Search = React.memo((props: Props) => {
-  const [textQuery, setTextQuery] = useState<string>('');
+  const [textQuery, setTextQuery] = useState<string>(
+    props.searchQuery.textQuery
+  );
   // const [tagsAND, setTagsAND] = useState<Array<Tag>>(props.searchQuery.tagsAND);
   // const [tagsOR, setTagsOR] = useState<Array<Tag>>(props.searchQuery.tagsAND);
   // const [tagsNOT, setTagsNOT] = useState<Array<Tag>>(props.searchQuery.tagsAND);
-  const [fileTypes, setFileTypes] = useState<Array<string>>(FileTypeGroups.any);
+  const [fileTypes, setFileTypes] = useState<Array<string>>(
+    props.searchQuery.fileTypes
+      ? props.searchQuery.fileTypes
+      : FileTypeGroups.any
+  );
   const [searchBoxing, setSearchBoxing] = useState<
     'location' | 'folder' | 'global'
   >('location');
@@ -148,13 +154,12 @@ const Search = React.memo((props: Props) => {
     const { value, name } = target;
 
     if (name === 'fileTypes') {
-      // @ts-ignore
-      setFileTypes(value);
+      const types = JSON.parse(value);
+      setFileTypes(types);
       if (searchBoxing !== 'global') {
         props.searchLocationIndex({
           ...props.searchQuery,
-          // @ts-ignore
-          fileTypes: value
+          fileTypes: types
         });
       }
     }
@@ -200,18 +205,10 @@ const Search = React.memo((props: Props) => {
 
     const savedSearch = props.searches.find(search => search.uuid === value);
     setTextQuery(savedSearch.textQuery);
-    if (savedSearch.searchBoxing === 'global') {
-      props.searchAllLocations(savedSearch);
-    } else {
-      props.searchLocationIndex(savedSearch);
-    }
-  };
+    setFileTypes(
+      savedSearch.fileTypes ? savedSearch.fileTypes : FileTypeGroups.any
+    );
 
-  const handleSavedSearchEdit = (event: React.MouseEvent<HTMLButtonElement>, uuid: string) => {
-    event.preventDefault();
-    const savedSearch = props.searches.find(search => search.uuid === uuid);
-    setTextQuery(savedSearch.textQuery);
-    savedSearch.mode = 'edit';
     if (savedSearch.searchBoxing === 'global') {
       props.searchAllLocations(savedSearch);
     } else {
@@ -388,10 +385,10 @@ const Search = React.memo((props: Props) => {
     setFileSize('');
   };
 
-  const saveSearch = () => {
+  const saveSearch = (isNew: boolean = true) => {
     setSaveSearchDialogOpened({
+      uuid: isNew ? undefined : props.searchQuery.uuid,
       title: props.searchQuery.title,
-      mode: props.searchQuery.mode,
       textQuery, // .current,
       tagsAND: props.searchQuery.tagsAND,
       tagsOR: props.searchQuery.tagsOR,
@@ -713,33 +710,33 @@ const Search = React.memo((props: Props) => {
                 {i18n.t('core:fileType')}
               </InputLabel>
               <Select
-                value={fileTypes}
+                value={JSON.stringify(fileTypes)}
                 onChange={handleFileTypeChange}
                 input={<Input name="fileTypes" id="file-type" />}
               >
-                <MenuItem value={FileTypeGroups.any}>
+                <MenuItem value={JSON.stringify(FileTypeGroups.any)}>
                   {i18n.t('core:anyType')}
                 </MenuItem>
-                <MenuItem value={FileTypeGroups.folders}>
+                <MenuItem value={JSON.stringify(FileTypeGroups.folders)}>
                   <IconButton>
                     <FolderIcon />
                   </IconButton>
                   {i18n.t('core:searchFolders')}
                 </MenuItem>
-                <MenuItem value={FileTypeGroups.files}>
+                <MenuItem value={JSON.stringify(FileTypeGroups.files)}>
                   <IconButton>
                     <FileIcon />
                   </IconButton>
                   {i18n.t('core:searchFiles')}
                 </MenuItem>
-                <MenuItem value={FileTypeGroups.untagged}>
+                <MenuItem value={JSON.stringify(FileTypeGroups.untagged)}>
                   <IconButton>
                     <UntaggedIcon />
                   </IconButton>
                   {i18n.t('core:searchUntaggedEntries')}
                 </MenuItem>
                 <MenuItem
-                  value={FileTypeGroups.images}
+                  value={JSON.stringify(FileTypeGroups.images)}
                   title={FileTypeGroups.images.toString()}
                 >
                   <IconButton>
@@ -748,7 +745,7 @@ const Search = React.memo((props: Props) => {
                   {i18n.t('core:searchPictures')}
                 </MenuItem>
                 <MenuItem
-                  value={FileTypeGroups.documents}
+                  value={JSON.stringify(FileTypeGroups.documents)}
                   title={FileTypeGroups.documents.toString()}
                 >
                   <IconButton>
@@ -757,7 +754,7 @@ const Search = React.memo((props: Props) => {
                   {i18n.t('core:searchDocuments')}
                 </MenuItem>
                 <MenuItem
-                  value={FileTypeGroups.notes}
+                  value={JSON.stringify(FileTypeGroups.notes)}
                   title={FileTypeGroups.notes.toString()}
                 >
                   <IconButton>
@@ -766,7 +763,7 @@ const Search = React.memo((props: Props) => {
                   {i18n.t('core:searchNotes')}
                 </MenuItem>
                 <MenuItem
-                  value={FileTypeGroups.audio}
+                  value={JSON.stringify(FileTypeGroups.audio)}
                   title={FileTypeGroups.audio.toString()}
                 >
                   <IconButton>
@@ -775,7 +772,7 @@ const Search = React.memo((props: Props) => {
                   {i18n.t('core:searchAudio')}
                 </MenuItem>
                 <MenuItem
-                  value={FileTypeGroups.video}
+                  value={JSON.stringify(FileTypeGroups.video)}
                   title={FileTypeGroups.video.toString()}
                 >
                   <IconButton>
@@ -784,7 +781,7 @@ const Search = React.memo((props: Props) => {
                   {i18n.t('core:searchVideoFiles')}
                 </MenuItem>
                 <MenuItem
-                  value={FileTypeGroups.archives}
+                  value={JSON.stringify(FileTypeGroups.archives)}
                   title={FileTypeGroups.archives.toString()}
                 >
                   <IconButton>
@@ -793,7 +790,7 @@ const Search = React.memo((props: Props) => {
                   {i18n.t('core:searchArchives')}
                 </MenuItem>
                 <MenuItem
-                  value={FileTypeGroups.bookmarks}
+                  value={JSON.stringify(FileTypeGroups.bookmarks)}
                   title={FileTypeGroups.bookmarks.toString()}
                 >
                   <IconButton>
@@ -802,7 +799,7 @@ const Search = React.memo((props: Props) => {
                   {i18n.t('core:searchBookmarks')}
                 </MenuItem>
                 <MenuItem
-                  value={FileTypeGroups.ebooks}
+                  value={JSON.stringify(FileTypeGroups.ebooks)}
                   title={FileTypeGroups.ebooks.toString()}
                 >
                   <IconButton>
@@ -964,15 +961,19 @@ const Search = React.memo((props: Props) => {
                 onChange={handleSavedSearchChange}
                 input={<Input name="savedSearch" id="saved-searches" />}
                 displayEmpty
+                value={props.searchQuery.uuid ? props.searchQuery.uuid : -1}
               >
+                <MenuItem value={-1} style={{ display: 'none' }} />
                 {props.searches.map(search => (
                   <MenuItem key={search.uuid} value={search.uuid}>
                     <span style={{ width: '100%' }}>{search.title}</span>
-                    <IconButton
-                      onClick={(event) => handleSavedSearchEdit(event, search.uuid)}
+                    {/* <IconButton
+                      onClick={event =>
+                        handleSavedSearchEdit(event, search.uuid)
+                      }
                     >
                       <FolderIcon />
-                    </IconButton>
+                    </IconButton> */}
                   </MenuItem>
                 ))}
               </Select>
@@ -983,33 +984,59 @@ const Search = React.memo((props: Props) => {
                   variant="outlined"
                   color="secondary"
                   size="medium"
-                  style={{ width: '48%' }}
+                  style={
+                    props.searchQuery.uuid
+                      ? { width: '48%' }
+                      : { width: '100%' }
+                  }
+                  onClick={() => saveSearch()}
+                >
+                  {i18n.t('saveBtn')}
+                </Button>
+                {props.searchQuery.uuid && (
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    size="medium"
+                    style={{ width: '48%' }}
+                    onClick={() => saveSearch(false)}
+                  >
+                    {i18n.t('editBtn')}
+                  </Button>
+                )}
+              </ButtonGroup>
+            </FormControl>
+            <FormControl className={classes.formControl}>
+              <ButtonGroup style={{ justifyContent: 'center' }}>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  size="medium"
+                  style={{ width: '100%' }}
                   onClick={clearSearch}
                   id="resetSearchButton"
                 >
                   {i18n.t('resetBtn')}
                 </Button>
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  size="medium"
-                  style={{ width: '48%' }}
-                  onClick={saveSearch}
-                  id="saveSearchButton"
-                >
-                  {i18n.t(
-                    props.searchQuery.mode === 'edit' ? 'editBtn' : 'saveBtn'
-                  )}
-                </Button>
               </ButtonGroup>
-              {SaveSearchDialog && saveSearchDialogOpened !== undefined && (
-                <SaveSearchDialog
-                  open={saveSearchDialogOpened !== undefined}
-                  onClose={() => setSaveSearchDialogOpened(undefined)}
-                  searchQuery={saveSearchDialogOpened}
-                />
-              )}
             </FormControl>
+            {SaveSearchDialog && saveSearchDialogOpened !== undefined && (
+              <SaveSearchDialog
+                open={saveSearchDialogOpened !== undefined}
+                onClose={(searchQuery: SearchQuery) => {
+                  setSaveSearchDialogOpened(undefined);
+                  if (searchQuery) {
+                    if (searchQuery.searchBoxing === 'global') {
+                      props.searchAllLocations(searchQuery);
+                    } else {
+                      props.searchLocationIndex(searchQuery);
+                    }
+                  }
+                }}
+                onClearSearch={() => clearSearch()}
+                searchQuery={saveSearchDialogOpened}
+              />
+            )}
           </React.Fragment>
         )}
       </div>

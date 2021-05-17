@@ -16,7 +16,6 @@
  *
  */
 
-import uuidv1 from 'uuid';
 import { immutablySwapItems } from '-/utils/misc';
 import { SearchQuery } from '-/services/search';
 
@@ -36,8 +35,7 @@ export default (state: Array<SearchQuery> = initialState, action: any) => {
       return [
         ...state,
         {
-          ...action.search,
-          uuid: uuidv1()
+          ...action.search
           // creationDate: new Date().getTime()
         }
       ];

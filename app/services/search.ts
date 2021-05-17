@@ -57,7 +57,6 @@ export const FileTypeGroups = {
 export type SearchQuery = {
   uuid?: string; // for saved searches
   title?: string; // for saved searches
-  mode?: string; // for saved searches
   // creationDate?: number; // for saved searches TODO rethink if this needed ?
   textQuery?: string;
   fileTypes?: Array<string>;
