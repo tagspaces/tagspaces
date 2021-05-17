@@ -830,7 +830,7 @@ const EntryProperties = (props: Props) => {
                   style={{
                     padding: 10,
                     borderRadius: 5,
-                    backgroundColor: 'rgba(255, 216, 115, 0.53)'
+                    backgroundColor: 'rgba(255, 216, 115, 0.20)'
                   }}
                   id="textarea"
                   placeholder=""
@@ -840,7 +840,12 @@ const EntryProperties = (props: Props) => {
                   fullWidth={true}
                   onChange={handleDescriptionChange}
                 />
-                <Typography variant="caption">
+                <Typography
+                  variant="caption"
+                  style={{
+                    color: theme.palette.text.primary
+                  }}
+                >
                   Formatting: <i className={classes.mdHelpers}>_italic_</i>{' '}
                   <b className={classes.mdHelpers}>**bold**</b>{' '}
                   <span className={classes.mdHelpers}>* list item</span>{' '}
@@ -855,12 +860,12 @@ const EntryProperties = (props: Props) => {
                   display: 'block',
                   padding: 10,
                   borderRadius: 5,
-                  backgroundColor: 'rgba(255, 216, 115, 0.53)',
+                  backgroundColor: 'rgba(255, 216, 115, 0.20)',
                   marginBottom: 5,
 
                   color: currentEntry.description
-                    ? props.theme.palette.text.primary
-                    : props.theme.palette.text.disabled
+                    ? theme.palette.text.primary
+                    : theme.palette.text.disabled
                 }}
                 role="button"
                 id="descriptionArea"
