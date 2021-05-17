@@ -32,6 +32,8 @@ interface Props {
   anchorEl: Element;
   onClose: () => void;
   openURLExternally: (url: string, skipConfirmation?: boolean) => void;
+  importSearches: () => void;
+  exportSearches: () => void;
   createLocationsIndexes: () => void;
 }
 
@@ -48,7 +50,7 @@ const SearchMenu = (props: Props) => (
         <ListItemIcon>
           <UpdateIndexIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:Update all location indexes')} />
+        <ListItemText primary={i18n.t('core:updateAllLocationIndexes')} />
       </MenuItem>
       <MenuItem
         data-tid="searchMenuHelp"
@@ -61,6 +63,30 @@ const SearchMenu = (props: Props) => (
           <HelpIcon />
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:help')} />
+      </MenuItem>
+      <MenuItem
+        data-tid="exportSavedSearchTID"
+        onClick={() => {
+          props.onClose();
+          props.exportSearches();
+        }}
+      >
+        <ListItemIcon>
+          <HelpIcon />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:exportSavedSearch')} />
+      </MenuItem>
+      <MenuItem
+        data-tid="importSavedSearchTID"
+        onClick={() => {
+          props.onClose();
+          props.importSearches();
+        }}
+      >
+        <ListItemIcon>
+          <HelpIcon />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:importSavedSearch')} />
       </MenuItem>
     </Menu>
   </div>

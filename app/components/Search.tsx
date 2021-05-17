@@ -72,7 +72,7 @@ import { formatDateTime, extractTimePeriod } from '-/utils/dates';
 import { isPlusCode, parseLatLon } from '-/utils/misc';
 import PlatformIO from '../services/platform-io';
 import { AppConfig } from '-/config';
-import { getSearches } from '-/reducers/searches';
+import { actions as SearchActions, getSearches } from '-/reducers/searches';
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
 
@@ -94,6 +94,7 @@ interface Props {
   maxSearchResults: number;
   indexing: boolean;
   searches: Array<SearchQuery>;
+  addSearches: (searches: Array<SearchQuery>) => void;
 }
 
 const Search = React.memo((props: Props) => {
@@ -142,6 +143,20 @@ const Search = React.memo((props: Props) => {
     setSearchMenuAnchorEl
   ] = useState<null | HTMLElement>(null);
 
+  const [
+    isExportSearchesDialogOpened,
+    setExportSearchesDialogOpened
+  ] = useState<boolean>(false);
+
+  const ExportSearchesDialog =
+    Pro && Pro.UI ? Pro.UI.ExportSearchesDialog : false;
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [importFile, setImportFile] = useState<File>(undefined);
+
+  const ImportSearchesDialog =
+    Pro && Pro.UI ? Pro.UI.ImportSearchesDialog : false;
+
   const mainSearchField = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -156,6 +171,13 @@ const Search = React.memo((props: Props) => {
       clearTimeout(timeout);
     };
   }, []);
+
+  function handleFileInputChange(selection: any) {
+    const target = selection.currentTarget;
+    const file = target.files[0];
+    setImportFile(file);
+    target.value = null;
+  }
 
   const handleFileTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
@@ -519,6 +541,12 @@ const Search = React.memo((props: Props) => {
         onClose={handleCloseSearchMenu}
         createLocationsIndexes={props.createLocationsIndexes}
         openURLExternally={props.openURLExternally}
+        exportSearches={() => {
+          setExportSearchesDialogOpened(true);
+        }}
+        importSearches={() => {
+          fileInputRef.current.click();
+        }}
       />
       <div className={classes.searchArea}>
         <FormControl
@@ -1008,7 +1036,7 @@ const Search = React.memo((props: Props) => {
                   }
                   onClick={() => saveSearch()}
                 >
-                  {i18n.t('saveBtn')}
+                  {i18n.t('searchSaveBtn')}
                 </Button>
                 {props.searchQuery.uuid && (
                   <Button
@@ -1018,7 +1046,7 @@ const Search = React.memo((props: Props) => {
                     style={{ width: '48%' }}
                     onClick={() => saveSearch(false)}
                   >
-                    {i18n.t('editBtn')}
+                    {i18n.t('searchEditBtn')}
                   </Button>
                 )}
               </ButtonGroup>
@@ -1054,6 +1082,29 @@ const Search = React.memo((props: Props) => {
                 searchQuery={saveSearchDialogOpened}
               />
             )}
+            <input
+              style={{ display: 'none' }}
+              ref={fileInputRef}
+              accept="*"
+              type="file"
+              onChange={handleFileInputChange}
+            />
+            {ExportSearchesDialog && isExportSearchesDialogOpened && (
+              <ExportSearchesDialog
+                open={isExportSearchesDialogOpened}
+                onClose={() => setExportSearchesDialogOpened(false)}
+                searches={props.searches}
+              />
+            )}
+            {ImportSearchesDialog && importFile && (
+              <ImportSearchesDialog
+                open={Boolean(importFile)}
+                onClose={() => setImportFile(undefined)}
+                importFile={importFile}
+                addSearches={props.addSearches}
+                searches={props.searches}
+              />
+            )}
           </React.Fragment>
         )}
       </div>
@@ -1081,7 +1132,8 @@ function mapDispatchToProps(dispatch) {
       createLocationsIndexes: LocationIndexActions.createLocationsIndexes,
       loadDirectoryContent: AppActions.loadDirectoryContent,
       openURLExternally: AppActions.openURLExternally,
-      setSearchResults: AppActions.setSearchResults
+      setSearchResults: AppActions.setSearchResults,
+      addSearches: SearchActions.addSearches
     },
     dispatch
   );

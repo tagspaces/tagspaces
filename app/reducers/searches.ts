@@ -18,6 +18,7 @@
 
 import { immutablySwapItems } from '-/utils/misc';
 import { SearchQuery } from '-/services/search';
+import { Location } from '-/reducers/locations';
 
 export const initialState = [];
 
@@ -103,6 +104,22 @@ export const actions = {
     type: types.ADD_SEARCH,
     search
   }),
+  addSearches: (arrSearches: Array<SearchQuery>, override: boolean = true) => (
+    dispatch: (actions: Object) => void,
+    getState: () => any
+  ) => {
+    arrSearches.forEach((newSearch: SearchQuery) => {
+      const { searches } = getState();
+      const searchExist: boolean = searches.some(
+        location => location.uuid === newSearch.uuid
+      );
+      if (!searchExist) {
+        dispatch(actions.addSearch(newSearch));
+      } else if (override) {
+        dispatch(actions.editSearch(newSearch));
+      }
+    });
+  },
   moveSearchUp: (uuid: string) => ({ type: types.MOVE_UP_SEARCH, uuid }),
   moveSearchDown: (uuid: string) => ({
     type: types.MOVE_DOWN_SEARCH,
