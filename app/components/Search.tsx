@@ -110,11 +110,15 @@ const Search = React.memo((props: Props) => {
   );
   const [searchBoxing, setSearchBoxing] = useState<
     'location' | 'folder' | 'global'
-  >('location');
+  >(
+    props.searchQuery.searchBoxing ? props.searchQuery.searchBoxing : 'location'
+  );
   const [searchType, setSearchType] = useState<
     'fussy' | 'semistrict' | 'strict'
-  >('fussy');
-  const [lastModified, setLastModified] = useState<string>('');
+  >(props.searchQuery.searchType ? props.searchQuery.searchType : 'fussy');
+  const [lastModified, setLastModified] = useState<string>(
+    props.searchQuery.lastModified ? props.searchQuery.lastModified : ''
+  );
   const [saveSearchDialogOpened, setSaveSearchDialogOpened] = useState<
     SearchQuery
   >(undefined);
@@ -127,8 +131,12 @@ const Search = React.memo((props: Props) => {
   const [tagPlaceLat, setTagPlaceLat] = useState<number | null>(null);
   const [tagPlaceLong, setTagPlaceLong] = useState<number | null>(null);
   // const [tagPlaceRadius, setTagPlaceRadius] = useState<number>(0);
-  const [forceIndexing, setForceIndexing] = useState<boolean>(false);
-  const [fileSize, setFileSize] = useState<string>('');
+  const [forceIndexing, setForceIndexing] = useState<boolean>(
+    props.searchQuery.forceIndexing ? props.searchQuery.forceIndexing : false
+  );
+  const [fileSize, setFileSize] = useState<string>(
+    props.searchQuery.fileSize ? props.searchQuery.fileSize : ''
+  );
   const [
     searchMenuAnchorEl,
     setSearchMenuAnchorEl
@@ -207,6 +215,15 @@ const Search = React.memo((props: Props) => {
     setTextQuery(savedSearch.textQuery);
     setFileTypes(
       savedSearch.fileTypes ? savedSearch.fileTypes : FileTypeGroups.any
+    );
+    setFileSize(savedSearch.fileSize ? savedSearch.fileSize : '');
+    setLastModified(savedSearch.lastModified ? savedSearch.lastModified : '');
+    setSearchType(savedSearch.searchType ? savedSearch.searchType : 'fussy');
+    setSearchBoxing(
+      savedSearch.searchBoxing ? savedSearch.searchBoxing : 'location'
+    );
+    setForceIndexing(
+      savedSearch.forceIndexing ? savedSearch.forceIndexing : false
     );
 
     if (savedSearch.searchBoxing === 'global') {
