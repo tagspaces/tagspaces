@@ -546,12 +546,12 @@
   "searchExist": "Search already exist, it will be replaced with this one",
   "searchSaveBtn": "Save Search",
   "searchEditBtn": "Edit Search",
-  "createNewSavedSearchTitle": "Create New Saved Search",
-  "editSavedSearchTitle": "Edit Saved Search",
-  "createNewSavedSearchName": "Saved Search Short Name",
-  "savedSearchHelp": "With Saved Searches you can have the same search results",
+  "createNewSavedSearchTitle": "Create New Search",
+  "editSavedSearchTitle": "Edit Search",
+  "createNewSavedSearchName": "Search Name",
+  "savedSearchHelp": "Save the current search parameters for a later use of this search",
   "emptyTitle": "Title cannot be empty!",
-  "duplicateTitle": "Title already exist!",
+  "duplicateTitle": "Search name already exist!",
   "savedSearchesTitle": "Saved Searches",
   "-": "-"
 }
