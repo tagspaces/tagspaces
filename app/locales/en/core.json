@@ -547,6 +547,7 @@
   "searchSaveBtn": "Save Search",
   "searchEditBtn": "Edit Search",
   "createNewSavedSearchTitle": "Create New Saved Search",
+  "editSavedSearchTitle": "Edit Saved Search",
   "createNewSavedSearchName": "Saved Search Short Name",
   "savedSearchHelp": "With Saved Searches you can have the same search results",
   "emptyTitle": "Title cannot be empty!",
