@@ -23,9 +23,10 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import HelpIcon from '@material-ui/icons/Help';
 import UpdateIndexIcon from '@material-ui/icons/Update';
-import ExportImportIcon from "@material-ui/icons/SwapHoriz";
+import ExportImportIcon from '@material-ui/icons/SwapHoriz';
 import i18n from '-/services/i18n';
 import AppConfig from '-/config';
+import { Pro } from '../../pro';
 
 interface Props {
   classes?: any;
@@ -65,30 +66,34 @@ const SearchMenu = (props: Props) => (
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:help')} />
       </MenuItem>
-      <MenuItem
-        data-tid="exportSavedSearchTID"
-        onClick={() => {
-          props.onClose();
-          props.exportSearches();
-        }}
-      >
-        <ListItemIcon>
-          <ExportImportIcon />
-        </ListItemIcon>
-        <ListItemText primary={i18n.t('core:exportSavedSearch')} />
-      </MenuItem>
-      <MenuItem
-        data-tid="importSavedSearchTID"
-        onClick={() => {
-          props.onClose();
-          props.importSearches();
-        }}
-      >
-        <ListItemIcon>
-          <ExportImportIcon />
-        </ListItemIcon>
-        <ListItemText primary={i18n.t('core:importSavedSearch')} />
-      </MenuItem>
+      {Pro && (
+        <>
+          <MenuItem
+            data-tid="exportSavedSearchTID"
+            onClick={() => {
+              props.onClose();
+              props.exportSearches();
+            }}
+          >
+            <ListItemIcon>
+              <ExportImportIcon />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:exportSavedSearch')} />
+          </MenuItem>
+          <MenuItem
+            data-tid="importSavedSearchTID"
+            onClick={() => {
+              props.onClose();
+              props.importSearches();
+            }}
+          >
+            <ListItemIcon>
+              <ExportImportIcon />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:importSavedSearch')} />
+          </MenuItem>
+        </>
+      )}
     </Menu>
   </div>
 );

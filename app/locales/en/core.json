@@ -551,5 +551,6 @@
   "savedSearchHelp": "With Saved Searches you can have the same search results",
   "emptyTitle": "Title cannot be empty!",
   "duplicateTitle": "Title already exist!",
+  "savedSearchesTitle": "Saved Searches",
   "-": "-"
 }

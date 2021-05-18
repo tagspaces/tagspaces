@@ -1059,34 +1059,36 @@ const Search = React.memo((props: Props) => {
                 ))}
               </Select>
             </FormControl>
-            <FormControl className={classes.formControl}>
-              <ButtonGroup style={{ justifyContent: 'center' }}>
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  size="medium"
-                  style={
-                    props.searchQuery.uuid
-                      ? { width: '48%' }
-                      : { width: '100%' }
-                  }
-                  onClick={() => saveSearch()}
-                >
-                  {i18n.t('searchSaveBtn')}
-                </Button>
-                {props.searchQuery.uuid && (
+            {Pro && (
+              <FormControl className={classes.formControl}>
+                <ButtonGroup style={{ justifyContent: 'center' }}>
                   <Button
                     variant="outlined"
                     color="secondary"
                     size="medium"
-                    style={{ width: '48%' }}
-                    onClick={() => saveSearch(false)}
+                    style={
+                      props.searchQuery.uuid
+                        ? { width: '48%' }
+                        : { width: '100%' }
+                    }
+                    onClick={() => saveSearch()}
                   >
-                    {i18n.t('searchEditBtn')}
+                    {i18n.t('searchSaveBtn')}
                   </Button>
-                )}
-              </ButtonGroup>
-            </FormControl>
+                  {props.searchQuery.uuid && (
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      size="medium"
+                      style={{ width: '48%' }}
+                      onClick={() => saveSearch(false)}
+                    >
+                      {i18n.t('searchEditBtn')}
+                    </Button>
+                  )}
+                </ButtonGroup>
+              </FormControl>
+            )}
             <FormControl className={classes.formControl}>
               <ButtonGroup style={{ justifyContent: 'center' }}>
                 <Button
