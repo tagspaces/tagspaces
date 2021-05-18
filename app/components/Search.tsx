@@ -21,6 +21,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
+import format from 'date-fns/format';
 import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -36,7 +37,7 @@ import FileIcon from '@material-ui/icons/InsertDriveFileOutlined';
 import ClearSearchIcon from '@material-ui/icons/Clear';
 import BookmarkIcon from '@material-ui/icons/BookmarkBorder';
 import BookIcon from '@material-ui/icons/LocalLibraryOutlined';
-import PlaceIcon from '@material-ui/icons/Place';
+// import PlaceIcon from '@material-ui/icons/Place';
 import DateIcon from '@material-ui/icons/DateRange';
 import Button from '@material-ui/core/Button';
 import Input from '@material-ui/core/Input';
@@ -52,7 +53,7 @@ import ButtonGroup from '@material-ui/core/ButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import OpenLocationCode from 'open-location-code-typescript';
-import { FormControlLabel, Switch } from '@material-ui/core';
+// import { FormControlLabel, Switch } from '@material-ui/core';
 import TagsSelect from './TagsSelect';
 import CustomLogo from './CustomLogo';
 import { actions as AppActions, getDirectoryPath } from '../reducers/app';
@@ -72,6 +73,9 @@ import { formatDateTime, extractTimePeriod } from '-/utils/dates';
 import { isPlusCode, parseLatLon } from '-/utils/misc';
 import PlatformIO from '../services/platform-io';
 import { AppConfig } from '-/config';
+import { actions as SearchActions, getSearches } from '-/reducers/searches';
+
+const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
 
 interface Props {
   classes: any;
@@ -90,36 +94,75 @@ interface Props {
   indexedEntriesCount: number;
   maxSearchResults: number;
   indexing: boolean;
+  searches: Array<SearchQuery>;
+  addSearches: (searches: Array<SearchQuery>) => void;
 }
 
 const Search = React.memo((props: Props) => {
-  const [textQuery, setTextQuery] = useState<string>('');
+  const [textQuery, setTextQuery] = useState<string>(
+    props.searchQuery.textQuery
+  );
   // const [tagsAND, setTagsAND] = useState<Array<Tag>>(props.searchQuery.tagsAND);
   // const [tagsOR, setTagsOR] = useState<Array<Tag>>(props.searchQuery.tagsAND);
   // const [tagsNOT, setTagsNOT] = useState<Array<Tag>>(props.searchQuery.tagsAND);
-  const [fileTypes, setFileTypes] = useState<Array<string>>(FileTypeGroups.any);
+  const [fileTypes, setFileTypes] = useState<Array<string>>(
+    props.searchQuery.fileTypes
+      ? props.searchQuery.fileTypes
+      : FileTypeGroups.any
+  );
   const [searchBoxing, setSearchBoxing] = useState<
     'location' | 'folder' | 'global'
-  >('location');
+  >(
+    props.searchQuery.searchBoxing ? props.searchQuery.searchBoxing : 'location'
+  );
   const [searchType, setSearchType] = useState<
     'fussy' | 'semistrict' | 'strict'
-  >('fussy');
-  const [lastModified, setLastModified] = useState<string>('');
+  >(props.searchQuery.searchType ? props.searchQuery.searchType : 'fussy');
+  const [lastModified, setLastModified] = useState<string>(
+    props.searchQuery.lastModified ? props.searchQuery.lastModified : ''
+  );
+  const [saveSearchDialogOpened, setSaveSearchDialogOpened] = useState<
+    SearchQuery
+  >(undefined);
   const [tagTimePeriod, setTagTimePeriod] = useState<string>('');
   const [tagTimePeriodHelper, setTagTimePeriodHelper] = useState<string>(' ');
   const [tagPlace, setTagPlace] = useState<string>(' ');
   const [tagPlaceHelper, setTagPlaceHelper] = useState<string>(' ');
-  const [tagTimePeriodFrom, setTagTimePeriodFrom] = useState<Date | null>(null);
-  const [tagTimePeriodTo, setTagTimePeriodTo] = useState<Date | null>(null);
+  const [tagTimePeriodFrom, setTagTimePeriodFrom] = useState<number | null>(
+    props.searchQuery.tagTimePeriodFrom
+      ? props.searchQuery.tagTimePeriodFrom
+      : null
+  );
+  const [tagTimePeriodTo, setTagTimePeriodTo] = useState<number | null>(
+    props.searchQuery.tagTimePeriodTo ? props.searchQuery.tagTimePeriodTo : null
+  );
   const [tagPlaceLat, setTagPlaceLat] = useState<number | null>(null);
   const [tagPlaceLong, setTagPlaceLong] = useState<number | null>(null);
   // const [tagPlaceRadius, setTagPlaceRadius] = useState<number>(0);
-  const [forceIndexing, setForceIndexing] = useState<boolean>(false);
-  const [fileSize, setFileSize] = useState<string>('');
+  const [forceIndexing, setForceIndexing] = useState<boolean>(
+    props.searchQuery.forceIndexing ? props.searchQuery.forceIndexing : false
+  );
+  const [fileSize, setFileSize] = useState<string>(
+    props.searchQuery.fileSize ? props.searchQuery.fileSize : ''
+  );
   const [
     searchMenuAnchorEl,
     setSearchMenuAnchorEl
   ] = useState<null | HTMLElement>(null);
+
+  const [
+    isExportSearchesDialogOpened,
+    setExportSearchesDialogOpened
+  ] = useState<boolean>(false);
+
+  const ExportSearchesDialog =
+    Pro && Pro.UI ? Pro.UI.ExportSearchesDialog : false;
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [importFile, setImportFile] = useState<File>(undefined);
+
+  const ImportSearchesDialog =
+    Pro && Pro.UI ? Pro.UI.ImportSearchesDialog : false;
 
   const mainSearchField = useRef<HTMLInputElement>(null);
 
@@ -136,18 +179,24 @@ const Search = React.memo((props: Props) => {
     };
   }, []);
 
+  function handleFileInputChange(selection: any) {
+    const target = selection.currentTarget;
+    const file = target.files[0];
+    setImportFile(file);
+    target.value = null;
+  }
+
   const handleFileTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
     const { value, name } = target;
 
     if (name === 'fileTypes') {
-      // @ts-ignore
-      setFileTypes(value);
+      const types = JSON.parse(value);
+      setFileTypes(types);
       if (searchBoxing !== 'global') {
         props.searchLocationIndex({
           ...props.searchQuery,
-          // @ts-ignore
-          fileTypes: value
+          fileTypes: types
         });
       }
     }
@@ -182,6 +231,63 @@ const Search = React.memo((props: Props) => {
           lastModified: value
         });
       }
+    }
+  };
+
+  const handleSavedSearchChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { target } = event;
+    const { value } = target;
+
+    const savedSearch = props.searches.find(search => search.uuid === value);
+    setTextQuery(savedSearch.textQuery);
+    if (savedSearch.fileTypes && savedSearch.fileTypes !== fileTypes) {
+      setFileTypes(savedSearch.fileTypes);
+    }
+    if (savedSearch.fileSize && savedSearch.fileSize !== fileSize) {
+      setFileSize(savedSearch.fileSize);
+    }
+    if (savedSearch.lastModified && savedSearch.lastModified !== lastModified) {
+      setLastModified(savedSearch.lastModified);
+    }
+    if (savedSearch.searchType && savedSearch.searchType !== searchType) {
+      setSearchType(savedSearch.searchType);
+    }
+    if (savedSearch.searchBoxing && savedSearch.searchBoxing !== searchBoxing) {
+      setSearchBoxing(savedSearch.searchBoxing);
+    }
+    if (
+      savedSearch.forceIndexing &&
+      savedSearch.forceIndexing !== forceIndexing
+    ) {
+      setForceIndexing(savedSearch.forceIndexing);
+    }
+    let ttPeriod;
+    if (
+      savedSearch.tagTimePeriodFrom &&
+      savedSearch.tagTimePeriodFrom !== tagTimePeriodFrom
+    ) {
+      setTagTimePeriodFrom(savedSearch.tagTimePeriodFrom);
+      ttPeriod = format(new Date(savedSearch.tagTimePeriodFrom), 'yyyyMMdd');
+    }
+    if (
+      savedSearch.tagTimePeriodTo &&
+      savedSearch.tagTimePeriodTo !== tagTimePeriodTo
+    ) {
+      setTagTimePeriodTo(savedSearch.tagTimePeriodTo);
+      ttPeriod +=
+        '-' + format(new Date(savedSearch.tagTimePeriodTo), 'yyyyMMdd');
+    }
+
+    if (ttPeriod) {
+      setTagTimePeriod(ttPeriod);
+    }
+
+    if (savedSearch.searchBoxing === 'global') {
+      props.searchAllLocations(savedSearch);
+    } else {
+      props.searchLocationIndex(savedSearch);
     }
   };
 
@@ -250,23 +356,22 @@ const Search = React.memo((props: Props) => {
   const handleTimePeriodChange = event => {
     const { target } = event;
     const { value } = target;
-    let tagTPeriodHelper = '';
     const { fromDateTime, toDateTime } = extractTimePeriod(value);
 
     if (toDateTime && fromDateTime) {
-      tagTPeriodHelper =
+      const tagTPeriodHelper =
         'From: ' +
         formatDateTime(fromDateTime) +
         ' To: ' +
         formatDateTime(toDateTime);
+      setTagTimePeriodFrom(fromDateTime.getTime());
+      setTagTimePeriodTo(toDateTime.getTime());
+      setTagTimePeriodHelper(tagTPeriodHelper);
     } else {
-      tagTPeriodHelper = '';
+      setTagTimePeriodHelper('');
     }
 
     setTagTimePeriod(value);
-    setTagTimePeriodFrom(fromDateTime);
-    setTagTimePeriodTo(toDateTime);
-    setTagTimePeriodHelper(tagTPeriodHelper);
   };
 
   const handlePlaceChange = event => {
@@ -336,7 +441,7 @@ const Search = React.memo((props: Props) => {
   const clearSearch = () => {
     props.setSearchQuery({});
     openCurrentDirectory();
-    setTextQuery('');
+    setTextQuery(''); // textQuery.current = '';
     setSearchBoxing('location');
     setSearchType('fussy');
     setFileTypes(FileTypeGroups.any);
@@ -352,6 +457,31 @@ const Search = React.memo((props: Props) => {
     // setTagPlaceRadius(0);
     setForceIndexing(false);
     setFileSize('');
+  };
+
+  const saveSearch = (isNew: boolean = true) => {
+    setSaveSearchDialogOpened({
+      uuid: isNew ? undefined : props.searchQuery.uuid,
+      title: props.searchQuery.title,
+      textQuery, // .current,
+      tagsAND: props.searchQuery.tagsAND,
+      tagsOR: props.searchQuery.tagsOR,
+      tagsNOT: props.searchQuery.tagsNOT,
+      // @ts-ignore
+      searchBoxing,
+      searchType,
+      fileTypes,
+      lastModified,
+      fileSize,
+      tagTimePeriodFrom: tagTimePeriodFrom || null,
+      tagTimePeriodTo: tagTimePeriodTo || null,
+      tagPlaceLat,
+      tagPlaceLong,
+      // tagPlaceRadius,
+      maxSearchResults: props.maxSearchResults,
+      currentDirectory: props.currentDirectory,
+      forceIndexing
+    });
   };
 
   const switchSearchBoxing = (
@@ -375,7 +505,7 @@ const Search = React.memo((props: Props) => {
   const executeSearch = () => {
     const { searchAllLocations, searchLocationIndex } = props;
     const searchQuery: SearchQuery = {
-      textQuery,
+      textQuery, // .current,
       tagsAND: props.searchQuery.tagsAND,
       tagsOR: props.searchQuery.tagsOR,
       tagsNOT: props.searchQuery.tagsNOT,
@@ -385,8 +515,8 @@ const Search = React.memo((props: Props) => {
       fileTypes,
       lastModified,
       fileSize,
-      tagTimePeriodFrom: tagTimePeriodFrom ? tagTimePeriodFrom.getTime() : null,
-      tagTimePeriodTo: tagTimePeriodTo ? tagTimePeriodTo.getTime() : null,
+      tagTimePeriodFrom: tagTimePeriodFrom || null,
+      tagTimePeriodTo: tagTimePeriodTo || null,
       tagPlaceLat,
       tagPlaceLong,
       // tagPlaceRadius,
@@ -446,6 +576,12 @@ const Search = React.memo((props: Props) => {
         onClose={handleCloseSearchMenu}
         createLocationsIndexes={props.createLocationsIndexes}
         openURLExternally={props.openURLExternally}
+        exportSearches={() => {
+          setExportSearchesDialogOpened(true);
+        }}
+        importSearches={() => {
+          fileInputRef.current.click();
+        }}
       />
       <div className={classes.searchArea}>
         <FormControl
@@ -655,33 +791,33 @@ const Search = React.memo((props: Props) => {
                 {i18n.t('core:fileType')}
               </InputLabel>
               <Select
-                value={fileTypes}
+                value={JSON.stringify(fileTypes)}
                 onChange={handleFileTypeChange}
                 input={<Input name="fileTypes" id="file-type" />}
               >
-                <MenuItem value={FileTypeGroups.any}>
+                <MenuItem value={JSON.stringify(FileTypeGroups.any)}>
                   {i18n.t('core:anyType')}
                 </MenuItem>
-                <MenuItem value={FileTypeGroups.folders}>
+                <MenuItem value={JSON.stringify(FileTypeGroups.folders)}>
                   <IconButton>
                     <FolderIcon />
                   </IconButton>
                   {i18n.t('core:searchFolders')}
                 </MenuItem>
-                <MenuItem value={FileTypeGroups.files}>
+                <MenuItem value={JSON.stringify(FileTypeGroups.files)}>
                   <IconButton>
                     <FileIcon />
                   </IconButton>
                   {i18n.t('core:searchFiles')}
                 </MenuItem>
-                <MenuItem value={FileTypeGroups.untagged}>
+                <MenuItem value={JSON.stringify(FileTypeGroups.untagged)}>
                   <IconButton>
                     <UntaggedIcon />
                   </IconButton>
                   {i18n.t('core:searchUntaggedEntries')}
                 </MenuItem>
                 <MenuItem
-                  value={FileTypeGroups.images}
+                  value={JSON.stringify(FileTypeGroups.images)}
                   title={FileTypeGroups.images.toString()}
                 >
                   <IconButton>
@@ -690,7 +826,7 @@ const Search = React.memo((props: Props) => {
                   {i18n.t('core:searchPictures')}
                 </MenuItem>
                 <MenuItem
-                  value={FileTypeGroups.documents}
+                  value={JSON.stringify(FileTypeGroups.documents)}
                   title={FileTypeGroups.documents.toString()}
                 >
                   <IconButton>
@@ -699,7 +835,7 @@ const Search = React.memo((props: Props) => {
                   {i18n.t('core:searchDocuments')}
                 </MenuItem>
                 <MenuItem
-                  value={FileTypeGroups.notes}
+                  value={JSON.stringify(FileTypeGroups.notes)}
                   title={FileTypeGroups.notes.toString()}
                 >
                   <IconButton>
@@ -708,7 +844,7 @@ const Search = React.memo((props: Props) => {
                   {i18n.t('core:searchNotes')}
                 </MenuItem>
                 <MenuItem
-                  value={FileTypeGroups.audio}
+                  value={JSON.stringify(FileTypeGroups.audio)}
                   title={FileTypeGroups.audio.toString()}
                 >
                   <IconButton>
@@ -717,7 +853,7 @@ const Search = React.memo((props: Props) => {
                   {i18n.t('core:searchAudio')}
                 </MenuItem>
                 <MenuItem
-                  value={FileTypeGroups.video}
+                  value={JSON.stringify(FileTypeGroups.video)}
                   title={FileTypeGroups.video.toString()}
                 >
                   <IconButton>
@@ -726,7 +862,7 @@ const Search = React.memo((props: Props) => {
                   {i18n.t('core:searchVideoFiles')}
                 </MenuItem>
                 <MenuItem
-                  value={FileTypeGroups.archives}
+                  value={JSON.stringify(FileTypeGroups.archives)}
                   title={FileTypeGroups.archives.toString()}
                 >
                   <IconButton>
@@ -735,7 +871,7 @@ const Search = React.memo((props: Props) => {
                   {i18n.t('core:searchArchives')}
                 </MenuItem>
                 <MenuItem
-                  value={FileTypeGroups.bookmarks}
+                  value={JSON.stringify(FileTypeGroups.bookmarks)}
                   title={FileTypeGroups.bookmarks.toString()}
                 >
                   <IconButton>
@@ -744,7 +880,7 @@ const Search = React.memo((props: Props) => {
                   {i18n.t('core:searchBookmarks')}
                 </MenuItem>
                 <MenuItem
-                  value={FileTypeGroups.ebooks}
+                  value={JSON.stringify(FileTypeGroups.ebooks)}
                   title={FileTypeGroups.ebooks.toString()}
                 >
                   <IconButton>
@@ -890,13 +1026,76 @@ const Search = React.memo((props: Props) => {
                 }}
               /> */}
             </FormControl>
+            <FormControl
+              className={classes.formControl}
+              disabled={indexing || !Pro}
+              title={
+                !Pro
+                  ? i18n.t('core:thisFunctionalityIsAvailableInPro')
+                  : undefined
+              }
+            >
+              <InputLabel shrink htmlFor="saved-searches">
+                {i18n.t('core:savedSearchesTitle')}
+              </InputLabel>
+              <Select
+                onChange={handleSavedSearchChange}
+                input={<Input name="savedSearch" id="saved-searches" />}
+                displayEmpty
+                value={props.searchQuery.uuid ? props.searchQuery.uuid : -1}
+              >
+                <MenuItem value={-1} style={{ display: 'none' }} />
+                {props.searches.map(search => (
+                  <MenuItem key={search.uuid} value={search.uuid}>
+                    <span style={{ width: '100%' }}>{search.title}</span>
+                    {/* <IconButton
+                      onClick={event =>
+                        handleSavedSearchEdit(event, search.uuid)
+                      }
+                    >
+                      <FolderIcon />
+                    </IconButton> */}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            {Pro && (
+              <FormControl className={classes.formControl}>
+                <ButtonGroup style={{ justifyContent: 'center' }}>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    size="medium"
+                    style={
+                      props.searchQuery.uuid
+                        ? { width: '48%' }
+                        : { width: '100%' }
+                    }
+                    onClick={() => saveSearch()}
+                  >
+                    {i18n.t('searchSaveBtn')}
+                  </Button>
+                  {props.searchQuery.uuid && (
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      size="medium"
+                      style={{ width: '48%' }}
+                      onClick={() => saveSearch(false)}
+                    >
+                      {i18n.t('searchEditBtn')}
+                    </Button>
+                  )}
+                </ButtonGroup>
+              </FormControl>
+            )}
             <FormControl className={classes.formControl}>
               <ButtonGroup style={{ justifyContent: 'center' }}>
                 <Button
                   variant="outlined"
                   color="secondary"
                   size="medium"
-                  style={{ width: '98%' }}
+                  style={{ width: '100%' }}
                   onClick={clearSearch}
                   id="resetSearchButton"
                 >
@@ -904,6 +1103,46 @@ const Search = React.memo((props: Props) => {
                 </Button>
               </ButtonGroup>
             </FormControl>
+            {SaveSearchDialog && saveSearchDialogOpened !== undefined && (
+              <SaveSearchDialog
+                open={saveSearchDialogOpened !== undefined}
+                onClose={(searchQuery: SearchQuery) => {
+                  setSaveSearchDialogOpened(undefined);
+                  if (searchQuery) {
+                    if (searchQuery.searchBoxing === 'global') {
+                      props.searchAllLocations(searchQuery);
+                    } else {
+                      props.searchLocationIndex(searchQuery);
+                    }
+                  }
+                }}
+                onClearSearch={() => clearSearch()}
+                searchQuery={saveSearchDialogOpened}
+              />
+            )}
+            <input
+              style={{ display: 'none' }}
+              ref={fileInputRef}
+              accept="*"
+              type="file"
+              onChange={handleFileInputChange}
+            />
+            {ExportSearchesDialog && isExportSearchesDialogOpened && (
+              <ExportSearchesDialog
+                open={isExportSearchesDialogOpened}
+                onClose={() => setExportSearchesDialogOpened(false)}
+                searches={props.searches}
+              />
+            )}
+            {ImportSearchesDialog && importFile && (
+              <ImportSearchesDialog
+                open={Boolean(importFile)}
+                onClose={() => setImportFile(undefined)}
+                importFile={importFile}
+                addSearches={props.addSearches}
+                searches={props.searches}
+              />
+            )}
           </React.Fragment>
         )}
       </div>
@@ -917,7 +1156,8 @@ function mapStateToProps(state) {
     searchQuery: getSearchQuery(state),
     currentDirectory: getDirectoryPath(state),
     indexedEntriesCount: getIndexedEntriesCount(state),
-    maxSearchResults: getMaxSearchResults(state)
+    maxSearchResults: getMaxSearchResults(state),
+    searches: getSearches(state)
   };
 }
 
@@ -930,7 +1170,8 @@ function mapDispatchToProps(dispatch) {
       createLocationsIndexes: LocationIndexActions.createLocationsIndexes,
       loadDirectoryContent: AppActions.loadDirectoryContent,
       openURLExternally: AppActions.openURLExternally,
-      setSearchResults: AppActions.setSearchResults
+      setSearchResults: AppActions.setSearchResults,
+      addSearches: SearchActions.addSearches
     },
     dispatch
   );
