@@ -215,7 +215,6 @@ interface Props {
   removeTags: () => void;
   removeAllTags: () => void;
   editTagForEntry: () => void;
-  openFileNatively: (path: string) => void;
   renameFile: () => void;
   openDirectory: () => void;
   showInFileManager: () => void;
@@ -629,7 +628,6 @@ function mapActionCreatorsToProps(dispatch) {
       removeTags: TaggingActions.removeTags,
       removeAllTags: TaggingActions.removeAllTags,
       editTagForEntry: TaggingActions.editTagForEntry,
-      openFileNatively: AppActions.openFileNatively,
       renameFile: AppActions.renameFile,
       openDirectory: AppActions.openDirectory,
       showInFileManager: AppActions.showInFileManager,

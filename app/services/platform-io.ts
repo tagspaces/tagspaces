@@ -394,7 +394,17 @@ export default class PlatformIO {
   static showInFileManager = (dirPath: string): void =>
     nativeAPI.showInFileManager(dirPath);
 
-  static openFile = (filePath: string): void => nativeAPI.openFile(filePath);
+  static openFile = (filePath: string): void => {
+    if (
+      confirm(
+        'Do you really want to open "' +
+          filePath +
+          '"? Execution of some files can be potentially dangerous!'
+      )
+    ) {
+      nativeAPI.openFile(filePath);
+    }
+  };
 
   static resolveFilePath = (filePath: string): string =>
     objectStoreAPI ? filePath : nativeAPI.resolveFilePath(filePath);

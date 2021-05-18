@@ -334,10 +334,6 @@ const EntryContainer = (props: Props) => {
         // console.log('Open link externally: ' + data.link);
         props.openLink(data.link);
         break;
-      case 'openFileNatively':
-        console.log('Open file natively: ' + data.link);
-        props.openFileNatively(data.link);
-        break;
       case 'loadDefaultTextContent':
         if (!openedFile || !openedFile.path) {
           // || openedFile.changed) {

@@ -129,7 +129,6 @@ interface Props {
   isHelpFeedbackPanelOpened: boolean;
   openHelpFeedbackPanel: () => void;
   closeAllVerticalPanels: () => void;
-  openFileNatively: (url: string) => void;
   openURLExternally: (url: string) => void;
   switchTheme: () => void;
   showNotification: (message: string) => void;
@@ -171,7 +170,6 @@ const VerticalNavigation = (props: Props) => {
     openHelpFeedbackPanel,
     closeAllVerticalPanels,
     switchTheme,
-    openFileNatively,
     openURLExternally,
     showNotification,
     directoryPath,
@@ -395,7 +393,6 @@ const VerticalNavigation = (props: Props) => {
           {isSearchPanelOpened && <Search />}
           {isHelpFeedbackPanelOpened && (
             <HelpFeedbackPanel
-              openFileNatively={openFileNatively}
               openURLExternally={openURLExternally}
               toggleAboutDialog={toggleAboutDialog}
               toggleKeysDialog={toggleKeysDialog}
@@ -465,7 +462,6 @@ function mapActionCreatorsToProps(dispatch) {
       openSearchPanel: AppActions.openSearchPanel,
       openPerspectivesPanel: AppActions.openPerspectivesPanel,
       openHelpFeedbackPanel: AppActions.openHelpFeedbackPanel,
-      openFileNatively: AppActions.openFileNatively,
       openURLExternally: AppActions.openURLExternally,
       closeAllVerticalPanels: AppActions.closeAllVerticalPanels,
       showNotification: AppActions.showNotification,

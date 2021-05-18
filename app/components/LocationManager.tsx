@@ -57,7 +57,6 @@ interface Props {
   perspectives: Array<Object>;
   hideDrawer: () => void;
   openURLExternally: (path: string) => void;
-  openFileNatively: (path: string) => void;
   toggleOpenLinkDialog: () => void;
   setDefaultLocations: () => void;
   addLocation: (location: Location, openAfterCreate?: boolean) => void;
@@ -258,7 +257,6 @@ function mapDispatchToProps(dispatch) {
       addLocations: LocationActions.addLocations,
       editLocation: LocationActions.editLocation,
       removeLocation: LocationActions.removeLocation,
-      openFileNatively: AppActions.openFileNatively,
       toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
       openURLExternally: AppActions.openURLExternally
     },

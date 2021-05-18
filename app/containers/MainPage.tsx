@@ -191,8 +191,7 @@ interface Props {
   // setLastSelectedEntry: (path: string) => void; // needed by electron-menus
   setSelectedEntries: (selectedEntries: Array<Object>) => void; // needed by electron-menus
   openFsEntry: (fsEntry: FileSystemEntry) => void; // needed by electron-menus
-  openFileNatively: (url: string) => void; // needed by electron-menus
-  openURLExternally: (url: string) => void;
+  openURLExternally: (url: string, skipConfirm: boolean) => void;
   openNextFile: (path?: string) => void; // needed by electron-menus
   openPrevFile: (path?: string) => void; // needed by electron-menus
   openLocationManagerPanel: () => void;
@@ -455,13 +454,13 @@ const MainPage = (props: Props) => {
         false
       );
     } else {
-      props.openFileNatively(AppConfig.links.downloadURL);
+      props.openURLExternally(AppConfig.links.downloadURL, true);
     }
     props.setUpdateAvailable(false);
   };
 
   const openChangelogPage = () => {
-    props.openFileNatively(AppConfig.links.changelogURL);
+    props.openURLExternally(AppConfig.links.changelogURL, true);
   };
 
   const handleFileDrop = (item, monitor) => {
@@ -916,7 +915,6 @@ function mapDispatchToProps(dispatch) {
       setSelectedEntries: AppActions.setSelectedEntries,
       setGeneratingThumbnails: AppActions.setGeneratingThumbnails,
       openFsEntry: AppActions.openFsEntry,
-      openFileNatively: AppActions.openFileNatively,
       openURLExternally: AppActions.openURLExternally,
       setEntryFullWidth: AppActions.setEntryFullWidth,
       setUpdateAvailable: AppActions.setUpdateAvailable,

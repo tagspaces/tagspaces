@@ -63,7 +63,6 @@ interface Props {
   classes?: any;
   theme?: any;
   openURLExternally: (url: string, skipConfirmation?: boolean) => void;
-  openFileNatively: (url: string) => void;
   toggleAboutDialog?: () => void;
   toggleKeysDialog: () => void;
   toggleOnboardingDialog: () => void;
@@ -81,7 +80,6 @@ const HelpFeedbackPanel = (props: Props) => {
   const {
     classes,
     openURLExternally,
-    openFileNatively,
     toggleAboutDialog,
     toggleKeysDialog,
     toggleOnboardingDialog,
@@ -303,7 +301,9 @@ const HelpFeedbackPanel = (props: Props) => {
           <Divider />
           <ListItem
             button
-            onClick={() => openURLExternally(AppConfig.links.suggestFeature)}
+            onClick={() =>
+              openURLExternally(AppConfig.links.suggestFeature, true)
+            }
           >
             <ListItemIcon>
               <NewFeatureIcon />
@@ -314,7 +314,7 @@ const HelpFeedbackPanel = (props: Props) => {
           </ListItem>
           <ListItem
             button
-            onClick={() => openURLExternally(AppConfig.links.reportIssue)}
+            onClick={() => openURLExternally(AppConfig.links.reportIssue, true)}
           >
             <ListItemIcon>
               <IssueIcon />
@@ -325,7 +325,9 @@ const HelpFeedbackPanel = (props: Props) => {
           </ListItem>
           <ListItem
             button
-            onClick={() => openURLExternally(AppConfig.links.helpTranslating)}
+            onClick={() =>
+              openURLExternally(AppConfig.links.helpTranslating, true)
+            }
           >
             <ListItemIcon>
               <TranslationIcon />
@@ -337,7 +339,9 @@ const HelpFeedbackPanel = (props: Props) => {
           <Divider />
           <ListItem
             button
-            onClick={() => openFileNatively(AppConfig.links.emailContact)}
+            onClick={() =>
+              openURLExternally(AppConfig.links.emailContact, true)
+            }
           >
             <ListItemIcon>
               <EmailIcon />

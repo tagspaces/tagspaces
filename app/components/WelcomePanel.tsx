@@ -79,19 +79,12 @@ interface Props {
   classes: any;
   toggleKeysDialog: () => void;
   openURLExternally: (url: string, skipConfirmation?: boolean) => void;
-  openFileNatively: (url: string) => void;
   toggleAboutDialog: () => void;
   isDesktopMode: boolean;
 }
 
 const WelcomePanel = (props: Props) => {
-  const {
-    classes,
-    openURLExternally,
-    openFileNatively,
-    toggleKeysDialog,
-    isDesktopMode
-  } = props;
+  const { classes, openURLExternally, toggleKeysDialog, isDesktopMode } = props;
   return (
     <div className={classes.mainPanel}>
       {/* <div className={classes.slogan}>
@@ -154,7 +147,9 @@ const WelcomePanel = (props: Props) => {
         <Divider />
         <ListItem
           button
-          onClick={() => openURLExternally(AppConfig.links.suggestFeature)}
+          onClick={() =>
+            openURLExternally(AppConfig.links.suggestFeature, true)
+          }
         >
           <Button startIcon={<NewFeatureIcon />}>
             {i18n.t('core:suggestNewFeatures')}
@@ -162,7 +157,7 @@ const WelcomePanel = (props: Props) => {
         </ListItem>
         <ListItem
           button
-          onClick={() => openURLExternally(AppConfig.links.reportIssue)}
+          onClick={() => openURLExternally(AppConfig.links.reportIssue, true)}
         >
           <Button startIcon={<IssueIcon />}>
             {i18n.t('core:reportIssues')}
@@ -187,7 +182,7 @@ const WelcomePanel = (props: Props) => {
         </ListItem>
         <ListItem
           button
-          onClick={() => openFileNatively(AppConfig.links.twitter)}
+          onClick={() => openURLExternally(AppConfig.links.twitter)}
         >
           <Button startIcon={<Social2Icon />}>
             {i18n.t('core:followOnTwitter')}
@@ -238,7 +233,6 @@ function mapActionCreatorsToProps(dispatch) {
     {
       setFirstRun: SettingsActions.setFirstRun,
       openURLExternally: AppActions.openURLExternally,
-      openFileNatively: AppActions.openFileNatively,
       toggleKeysDialog: AppActions.toggleKeysDialog,
       toggleAboutDialog: AppActions.toggleAboutDialog
     },
