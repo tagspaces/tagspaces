@@ -21,6 +21,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
+import format from 'date-fns/format';
 import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -127,8 +128,14 @@ const Search = React.memo((props: Props) => {
   const [tagTimePeriodHelper, setTagTimePeriodHelper] = useState<string>(' ');
   const [tagPlace, setTagPlace] = useState<string>(' ');
   const [tagPlaceHelper, setTagPlaceHelper] = useState<string>(' ');
-  const [tagTimePeriodFrom, setTagTimePeriodFrom] = useState<Date | null>(null);
-  const [tagTimePeriodTo, setTagTimePeriodTo] = useState<Date | null>(null);
+  const [tagTimePeriodFrom, setTagTimePeriodFrom] = useState<number | null>(
+    props.searchQuery.tagTimePeriodFrom
+      ? props.searchQuery.tagTimePeriodFrom
+      : null
+  );
+  const [tagTimePeriodTo, setTagTimePeriodTo] = useState<number | null>(
+    props.searchQuery.tagTimePeriodTo ? props.searchQuery.tagTimePeriodTo : null
+  );
   const [tagPlaceLat, setTagPlaceLat] = useState<number | null>(null);
   const [tagPlaceLong, setTagPlaceLong] = useState<number | null>(null);
   // const [tagPlaceRadius, setTagPlaceRadius] = useState<number>(0);
@@ -235,18 +242,47 @@ const Search = React.memo((props: Props) => {
 
     const savedSearch = props.searches.find(search => search.uuid === value);
     setTextQuery(savedSearch.textQuery);
-    setFileTypes(
-      savedSearch.fileTypes ? savedSearch.fileTypes : FileTypeGroups.any
-    );
-    setFileSize(savedSearch.fileSize ? savedSearch.fileSize : '');
-    setLastModified(savedSearch.lastModified ? savedSearch.lastModified : '');
-    setSearchType(savedSearch.searchType ? savedSearch.searchType : 'fussy');
-    setSearchBoxing(
-      savedSearch.searchBoxing ? savedSearch.searchBoxing : 'location'
-    );
-    setForceIndexing(
-      savedSearch.forceIndexing ? savedSearch.forceIndexing : false
-    );
+    if (savedSearch.fileTypes && savedSearch.fileTypes !== fileTypes) {
+      setFileTypes(savedSearch.fileTypes);
+    }
+    if (savedSearch.fileSize && savedSearch.fileSize !== fileSize) {
+      setFileSize(savedSearch.fileSize);
+    }
+    if (savedSearch.lastModified && savedSearch.lastModified !== lastModified) {
+      setLastModified(savedSearch.lastModified);
+    }
+    if (savedSearch.searchType && savedSearch.searchType !== searchType) {
+      setSearchType(savedSearch.searchType);
+    }
+    if (savedSearch.searchBoxing && savedSearch.searchBoxing !== searchBoxing) {
+      setSearchBoxing(savedSearch.searchBoxing);
+    }
+    if (
+      savedSearch.forceIndexing &&
+      savedSearch.forceIndexing !== forceIndexing
+    ) {
+      setForceIndexing(savedSearch.forceIndexing);
+    }
+    let ttPeriod;
+    if (
+      savedSearch.tagTimePeriodFrom &&
+      savedSearch.tagTimePeriodFrom !== tagTimePeriodFrom
+    ) {
+      setTagTimePeriodFrom(savedSearch.tagTimePeriodFrom);
+      ttPeriod = format(new Date(savedSearch.tagTimePeriodFrom), 'yyyyMMdd');
+    }
+    if (
+      savedSearch.tagTimePeriodTo &&
+      savedSearch.tagTimePeriodTo !== tagTimePeriodTo
+    ) {
+      setTagTimePeriodTo(savedSearch.tagTimePeriodTo);
+      ttPeriod +=
+        '-' + format(new Date(savedSearch.tagTimePeriodTo), 'yyyyMMdd');
+    }
+
+    if (ttPeriod) {
+      setTagTimePeriod(ttPeriod);
+    }
 
     if (savedSearch.searchBoxing === 'global') {
       props.searchAllLocations(savedSearch);
@@ -320,23 +356,22 @@ const Search = React.memo((props: Props) => {
   const handleTimePeriodChange = event => {
     const { target } = event;
     const { value } = target;
-    let tagTPeriodHelper = '';
     const { fromDateTime, toDateTime } = extractTimePeriod(value);
 
     if (toDateTime && fromDateTime) {
-      tagTPeriodHelper =
+      const tagTPeriodHelper =
         'From: ' +
         formatDateTime(fromDateTime) +
         ' To: ' +
         formatDateTime(toDateTime);
+      setTagTimePeriodFrom(fromDateTime.getTime());
+      setTagTimePeriodTo(toDateTime.getTime());
+      setTagTimePeriodHelper(tagTPeriodHelper);
     } else {
-      tagTPeriodHelper = '';
+      setTagTimePeriodHelper('');
     }
 
     setTagTimePeriod(value);
-    setTagTimePeriodFrom(fromDateTime);
-    setTagTimePeriodTo(toDateTime);
-    setTagTimePeriodHelper(tagTPeriodHelper);
   };
 
   const handlePlaceChange = event => {
@@ -438,8 +473,8 @@ const Search = React.memo((props: Props) => {
       fileTypes,
       lastModified,
       fileSize,
-      tagTimePeriodFrom: tagTimePeriodFrom ? tagTimePeriodFrom.getTime() : null,
-      tagTimePeriodTo: tagTimePeriodTo ? tagTimePeriodTo.getTime() : null,
+      tagTimePeriodFrom: tagTimePeriodFrom || null,
+      tagTimePeriodTo: tagTimePeriodTo || null,
       tagPlaceLat,
       tagPlaceLong,
       // tagPlaceRadius,
@@ -480,8 +515,8 @@ const Search = React.memo((props: Props) => {
       fileTypes,
       lastModified,
       fileSize,
-      tagTimePeriodFrom: tagTimePeriodFrom ? tagTimePeriodFrom.getTime() : null,
-      tagTimePeriodTo: tagTimePeriodTo ? tagTimePeriodTo.getTime() : null,
+      tagTimePeriodFrom: tagTimePeriodFrom || null,
+      tagTimePeriodTo: tagTimePeriodTo || null,
       tagPlaceLat,
       tagPlaceLong,
       // tagPlaceRadius,
