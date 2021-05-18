@@ -29,6 +29,7 @@ import AppConfig from '-/config';
 
 const externalLocations = window.ExtLocations || false;
 const externalTagLibrary = window.ExtTagLibrary || false;
+const externalSearches = window.ExtSearches || false;
 
 let locationsInBlackList = false; // electron case
 
@@ -44,7 +45,8 @@ const blacklist = [
   'app',
   'locationIndex',
   locationsInBlackList ? 'locations' : '',
-  externalTagLibrary ? 'taglibrary' : ''
+  externalTagLibrary ? 'taglibrary' : '',
+  externalSearches ? 'searches' : ''
 ];
 
 // const migrations = {
@@ -117,8 +119,8 @@ const rootReducer = persistCombineReducers(rootPersistConfig, {
   app,
   locations: externalLocations ? () => externalLocations : locations,
   taglibrary: externalTagLibrary ? () => externalTagLibrary : taglibrary,
-  locationIndex,
-  searches
+  searches: externalSearches ? () => externalSearches : searches,
+  locationIndex
 });
 
 export default rootReducer;

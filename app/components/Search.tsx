@@ -555,6 +555,7 @@ const Search = React.memo((props: Props) => {
           disabled={indexing}
         >
           <OutlinedInput
+            id="textQuery"
             name="textQuery"
             value={textQuery}
             onChange={event => {

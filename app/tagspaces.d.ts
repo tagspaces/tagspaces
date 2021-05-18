@@ -34,6 +34,7 @@ declare interface Window {
   ExtDefaultPerspective?: string;
   ExtTagLibrary?: Array<any>;
   ExtLocations?: Array<any>;
+  ExtSearches?: Array<any>;
   ExtTheme?: string;
   ExtIsFirstRun?: boolean;
   ExtIsAmplify?: boolean;

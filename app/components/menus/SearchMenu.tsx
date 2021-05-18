@@ -23,6 +23,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import HelpIcon from '@material-ui/icons/Help';
 import UpdateIndexIcon from '@material-ui/icons/Update';
+import ExportImportIcon from "@material-ui/icons/SwapHoriz";
 import i18n from '-/services/i18n';
 import AppConfig from '-/config';
 
@@ -72,7 +73,7 @@ const SearchMenu = (props: Props) => (
         }}
       >
         <ListItemIcon>
-          <HelpIcon />
+          <ExportImportIcon />
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:exportSavedSearch')} />
       </MenuItem>
@@ -84,7 +85,7 @@ const SearchMenu = (props: Props) => (
         }}
       >
         <ListItemIcon>
-          <HelpIcon />
+          <ExportImportIcon />
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:importSavedSearch')} />
       </MenuItem>
