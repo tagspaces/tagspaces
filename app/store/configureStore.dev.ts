@@ -15,7 +15,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
+/* global TagSpaces */
+/* eslint no-undef: "error" */
 import { createStore, applyMiddleware, compose } from 'redux';
 import { persistStore } from 'redux-persist';
 import thunk from 'redux-thunk';

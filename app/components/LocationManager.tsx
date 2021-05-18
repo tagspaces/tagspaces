@@ -15,7 +15,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
+/* global TagSpaces */
+/* eslint no-undef: "error" */
 import React, { useEffect, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -28,8 +29,7 @@ import ConfirmDialog from './dialogs/ConfirmDialog';
 import CustomLogo from './CustomLogo';
 import {
   actions as LocationActions,
-  getLocations,
-  Location
+  getLocations
 } from '../reducers/locations';
 import { actions as AppActions } from '../reducers/app';
 import { getPerspectives, isDesktopMode } from '-/reducers/settings';
@@ -53,16 +53,19 @@ const CreateEditLocationDialogAsync = props => (
 interface Props {
   classes: any;
   style: any;
-  locations: Array<Location>;
+  locations: Array<TagSpaces.Location>;
   perspectives: Array<Object>;
   hideDrawer: () => void;
   openURLExternally: (path: string) => void;
   toggleOpenLinkDialog: () => void;
   setDefaultLocations: () => void;
-  addLocation: (location: Location, openAfterCreate?: boolean) => void;
-  addLocations: (locations: Array<Location>) => void;
+  addLocation: (
+    location: TagSpaces.Location,
+    openAfterCreate?: boolean
+  ) => void;
+  addLocations: (locations: Array<TagSpaces.Location>) => void;
   editLocation: () => void;
-  removeLocation: (location: Location) => void;
+  removeLocation: (location: TagSpaces.Location) => void;
   isDesktop: boolean;
 }
 
@@ -75,7 +78,9 @@ type SubFolder = {
 
 const LocationManager = (props: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [selectedLocation, setSelectedLocation] = useState<Location>(null);
+  const [selectedLocation, setSelectedLocation] = useState<TagSpaces.Location>(
+    null
+  );
   const [
     isCreateLocationDialogOpened,
     setCreateLocationDialogOpened

@@ -15,7 +15,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
+/* global TagSpaces */
+/* eslint no-undef: "error" */
 import React, { useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -32,7 +33,7 @@ import CloudLocationIcon from '@material-ui/icons/CloudQueue';
 import DefaultLocationIcon from '@material-ui/icons/Highlight';
 import { Progress } from 'aws-sdk/clients/s3';
 import styles from './SidePanels.css';
-import { locationType, Location } from '-/reducers/locations';
+import { locationType } from '-/reducers/locations';
 import {
   actions as AppActions,
   getCurrentLocationId,
@@ -54,9 +55,9 @@ import { getLocationPath } from '-/utils/paths';
 
 interface Props {
   classes: any;
-  location: Location;
+  location: TagSpaces.Location;
   currentLocationId: string;
-  openLocation: (location: Location) => void;
+  openLocation: (location: TagSpaces.Location) => void;
   loadDirectoryContent: (path: string) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   hideDrawer: () => void;
@@ -79,9 +80,9 @@ interface Props {
   showUnixHiddenEntries: boolean;
   setEditLocationDialogOpened: (open: boolean) => void;
   setDeleteLocationDialogOpened: (open: boolean) => void;
-  selectedLocation: Location;
-  setSelectedLocation: (loc: Location) => void;
-  changeLocation: (loc: Location) => void;
+  selectedLocation: TagSpaces.Location;
+  setSelectedLocation: (loc: TagSpaces.Location) => void;
+  changeLocation: (loc: TagSpaces.Location) => void;
 }
 
 const LocationView = React.memo((props: Props) => {

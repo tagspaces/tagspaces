@@ -15,8 +15,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
-import { Location, getLocation, getLocations, locationType } from './locations';
+/* global TagSpaces */
+/* eslint no-undef: "error" */
+import { getLocation, getLocations, locationType } from './locations';
 import { createDirectoryIndex, FileSystemEntry } from '-/services/utils-io';
 import { Pro } from '../pro';
 import {
@@ -25,11 +26,10 @@ import {
   extractTagsAsObjects,
   getLocationPath
 } from '-/utils/paths';
-import Search, { SearchQuery } from '../services/search';
+import Search from '../services/search';
 import { actions as AppActions } from './app';
 import i18n from '../services/i18n';
 import PlatformIO from '../services/platform-io';
-import { Tag } from './taglibrary';
 import GlobalSearch from '../services/search-index';
 import AppConfig from '-/config';
 
@@ -176,7 +176,7 @@ export default (state: any = initialState, action: any) => {
 };
 
 export const actions = {
-  setSearchQuery: (searchQuery: SearchQuery) => ({
+  setSearchQuery: (searchQuery: TagSpaces.SearchQuery) => ({
     type: types.SET_SEARCH_QUERY,
     searchQuery
   }),
@@ -283,12 +283,12 @@ export const actions = {
   clearDirectoryIndex: () => ({
     type: types.INDEX_DIRECTORY_CLEAR
   }),
-  searchLocationIndex: (searchQuery: SearchQuery) => (
+  searchLocationIndex: (searchQuery: TagSpaces.SearchQuery) => (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
     const state = getState();
-    const currentLocation: Location = getLocation(
+    const currentLocation: TagSpaces.Location = getLocation(
       state,
       state.app.currentLocationId
     );
@@ -381,12 +381,12 @@ export const actions = {
         });
     }, 50);
   },
-  searchAllLocations: (searchQuery: SearchQuery) => (
+  searchAllLocations: (searchQuery: TagSpaces.SearchQuery) => (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
     const state = getState();
-    const currentLocation: Location = getLocation(
+    const currentLocation: TagSpaces.Location = getLocation(
       state,
       state.app.currentLocationId
     );
@@ -574,7 +574,7 @@ export const actions = {
     path,
     newPath
   }),
-  reflectUpdateSidecarTags: (path: string, tags: Array<Tag>) => ({
+  reflectUpdateSidecarTags: (path: string, tags: Array<TagSpaces.Tag>) => ({
     type: types.REFLECT_UPDATE_SIDECARTAGS,
     path,
     tags

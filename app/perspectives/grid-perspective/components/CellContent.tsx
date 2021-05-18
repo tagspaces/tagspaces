@@ -15,7 +15,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
+/* global TagSpaces */
+/* eslint no-undef: "error" */
 import React from 'react';
 import removeMd from 'remove-markdown';
 import classNames from 'classnames';
@@ -33,7 +34,6 @@ import { FileSystemEntry, findColorForFileEntry } from '-/services/utils-io';
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagContainer from '-/components/TagContainer';
 import i18n from '-/services/i18n';
-import { Tag, Uuid } from '-/reducers/taglibrary';
 import PlatformIO from '-/services/platform-io';
 import { AppConfig } from '-/config';
 import EntryIcon from '-/components/EntryIcon';
@@ -49,14 +49,14 @@ interface Props {
   supportedFileTypes: Array<Object>;
   thumbnailMode: any;
   addTags: () => void;
-  addTag: (tag: Tag, parentTagGroupUuid: Uuid) => void;
+  addTag: (tag: TagSpaces.Tag, parentTagGroupUuid: TagSpaces.Uuid) => void;
   openFsEntry: (fsEntry: FileSystemEntry) => void;
   selectedEntries: Array<FileSystemEntry>;
   selectEntry: (fsEntry: FileSystemEntry) => void;
   deselectEntry: (fsEntry: FileSystemEntry) => void;
   isReadOnlyMode: boolean;
   showTags: boolean;
-  handleTagMenu: (event: Object, tag: Tag, entryPath: string) => void;
+  handleTagMenu: (event: Object, tag: TagSpaces.Tag, entryPath: string) => void;
   layoutType: string;
   handleGridContextMenu: (event: Object, fsEntry: FileSystemEntry) => void;
   handleGridCellDblClick: (event: Object, fsEntry: FileSystemEntry) => void;
@@ -361,7 +361,7 @@ const CellContent = (props: Props) => {
     );
   }
 
-  function renderTag(tag: Tag) {
+  function renderTag(tag: TagSpaces.Tag) {
     return isReadOnlyMode ? (
       <TagContainer
         tag={tag}

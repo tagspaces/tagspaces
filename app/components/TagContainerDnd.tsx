@@ -15,14 +15,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
+/* global TagSpaces */
+/* eslint no-undef: "error" */
 import React from 'react';
 import { DragSource, ConnectDragPreview, ConnectDragSource } from 'react-dnd';
 
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import DragItemTypes from './DragItemTypes';
 import TagContainer from './TagContainer';
-import { TagGroup, Tag, Uuid } from '-/reducers/taglibrary';
 import { FileSystemEntry } from '-/services/utils-io';
 
 const boxSource = {
@@ -73,15 +73,15 @@ const boxSource = {
 };
 
 interface Props {
-  tag: Tag;
-  tagGroup?: TagGroup;
-  handleTagMenu: (event: Object, tag: Tag, param: any) => void;
-  handleRemoveTag?: (event: Object, tag: Tag) => void;
+  tag: TagSpaces.Tag;
+  tagGroup?: TagSpaces.TagGroup;
+  handleTagMenu: (event: Object, tag: TagSpaces.Tag, param: any) => void;
+  handleRemoveTag?: (event: Object, tag: TagSpaces.Tag) => void;
   isDragging?: boolean;
   tagMode?: 'default' | 'display' | 'remove';
   entryPath?: string;
-  addTags?: (paths: Array<string>, tags: Array<Tag>) => void;
-  addTag?: (tag: Tag, parentTagGroupUuid: Uuid) => void;
+  addTags?: (paths: Array<string>, tags: Array<TagSpaces.Tag>) => void;
+  addTag?: (tag: TagSpaces.Tag, parentTagGroupUuid: TagSpaces.Uuid) => void;
   moveTag?: () => void;
   connectDragSource?: ConnectDragSource;
   connectDragPreview?: ConnectDragPreview;

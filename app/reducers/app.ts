@@ -15,15 +15,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
+/* global TagSpaces */
+/* eslint no-undef: "error" */
 import uuidv1 from 'uuid';
 import pathLib from 'path';
-import {
-  Location,
-  getLocation,
-  locationType,
-  getDefaultLocationId
-} from './locations';
+import { getLocation, locationType, getDefaultLocationId } from './locations';
 import PlatformIO from '../services/platform-io';
 import AppConfig from '../config';
 import {
@@ -60,7 +56,6 @@ import {
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import { actions as LocationIndexActions } from './location-index';
-import { Tag } from './taglibrary';
 import {
   actions as SettingsActions,
   getCheckForUpdateOnStartup,
@@ -161,7 +156,7 @@ export type OpenedEntry = {
    */
   shouldReload?: boolean;
   focused?: boolean; // TODO make it mandatory once support for multiple files is added
-  tags?: Array<Tag>;
+  tags?: Array<TagSpaces.Tag>;
 };
 
 let showLocations = true;
@@ -835,7 +830,7 @@ export const actions = {
       dispatch(actions.toggleCreateFileDialog());
     }
   },
-  toggleEditTagDialog: (tag: Tag) => ({
+  toggleEditTagDialog: (tag: TagSpaces.Tag) => ({
     type: types.TOGGLE_EDIT_TAG_DIALOG,
     tag
   }),
@@ -1360,7 +1355,7 @@ export const actions = {
     type: types.SET_CURRENLOCATIONID,
     locationId
   }),
-  changeLocation: (location: Location) => (
+  changeLocation: (location: TagSpaces.Location) => (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
@@ -1382,7 +1377,7 @@ export const actions = {
       return true;
     });
   },
-  openLocation: (location: Location) => (
+  openLocation: (location: TagSpaces.Location) => (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
@@ -1637,7 +1632,7 @@ export const actions = {
     if (fsEntry.isNewFile) {
       entryForOpening.editMode = true;
     }
-    const currentLocation: Location = getLocation(
+    const currentLocation: TagSpaces.Location = getLocation(
       getState(),
       getState().app.currentLocationId
     );
@@ -1767,7 +1762,7 @@ export const actions = {
   }), */
   reflectUpdateSidecarTags: (
     path: string,
-    tags: Array<Tag>,
+    tags: Array<TagSpaces.Tag>,
     updateIndex: boolean = true
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
     const { openedFiles } = getState().app;
@@ -1941,7 +1936,10 @@ export const actions = {
       const directoryPath = dPath && decodeURIComponent(dPath);
       const entryPath = ePath && decodeURIComponent(ePath);
       // Check for relative paths
-      const targetLocation: Location = getLocation(getState(), locationId);
+      const targetLocation: TagSpaces.Location = getLocation(
+        getState(),
+        locationId
+      );
       if (targetLocation) {
         let openLocationTimer = 1000;
         const isCloudLocation = targetLocation.type === locationType.TYPE_CLOUD;

@@ -15,7 +15,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
+/* global TagSpaces */
+/* eslint no-undef: "error" */
 import React from 'react';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -30,11 +31,7 @@ import OpenFolderNativelyIcon from '@material-ui/icons/Launch';
 import CloseIcon from '@material-ui/icons/Close';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import {
-  actions as LocationActions,
-  Location,
-  locationType
-} from '-/reducers/locations';
+import { actions as LocationActions, locationType } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-io';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import i18n from '-/services/i18n';
@@ -50,7 +47,7 @@ interface Props {
     fullTextIndex: boolean,
     isCurrentLocation: boolean
   ) => void;
-  selectedLocation: Location;
+  selectedLocation: TagSpaces.Location;
   isCurrentLocation: (uuid: string) => boolean;
   moveLocationUp: (locationId: string) => void;
   moveLocationDown: (locationId: string) => void;

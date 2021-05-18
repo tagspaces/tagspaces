@@ -15,7 +15,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
+/* global TagSpaces */
+/* eslint no-undef: "error" */
 import uuidv1 from 'uuid';
 import { saveAs } from 'file-saver';
 import PlatformIO from './platform-io';
@@ -34,10 +35,9 @@ import {
 } from '-/utils/paths';
 import i18n from '../services/i18n';
 import versionMeta from '../version.json';
-import { Tag } from '-/reducers/taglibrary';
 import { getThumbnailURLPromise } from '-/services/thumbsgenerator';
 import { OpenedEntry, actions as AppActions } from '-/reducers/app';
-import { Location, locationType, getLocation } from '-/reducers/locations';
+import { locationType, getLocation } from '-/reducers/locations';
 
 export interface FileSystemEntry {
   uuid?: string;
@@ -50,7 +50,7 @@ export interface FileSystemEntry {
   perspective?: string;
   textContent?: string;
   description?: string;
-  tags: Array<Tag>;
+  tags: Array<TagSpaces.Tag>;
   size: number;
   lmdt: number;
   path: string;
@@ -61,7 +61,7 @@ export interface FileSystemEntry {
 export interface FileSystemEntryMeta {
   id?: string;
   description?: string;
-  tags?: Array<Tag>;
+  tags?: Array<TagSpaces.Tag>;
   color?: string;
   perspective?: string;
   appName: string;
@@ -215,7 +215,7 @@ export function prepareDirectoryContent(
   getState,
   dirEntryMeta
 ) {
-  const currentLocation: Location = getLocation(
+  const currentLocation: TagSpaces.Location = getLocation(
     getState(),
     getState().app.currentLocationId
   );
@@ -822,7 +822,7 @@ export function cleanMetaData(
   if (metaData.tags && metaData.tags.length > 0) {
     cleanedMeta.tags = [];
     metaData.tags.forEach(tag => {
-      const cleanedTag: Tag = {};
+      const cleanedTag: TagSpaces.Tag = {};
       if (tag.title) {
         cleanedTag.title = tag.title;
       }

@@ -15,7 +15,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
+/* global TagSpaces */
+/* eslint no-undef: "error" */
 import React, { useState } from 'react';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Button from '@material-ui/core/Button';
@@ -31,7 +32,6 @@ import FolderIcon from '@material-ui/icons/FolderOpen';
 import FileIcon from '@material-ui/icons/InsertDriveFileOutlined';
 import Typography from '@material-ui/core/Typography';
 import Dialog from '@material-ui/core/Dialog';
-import { Tag } from '-/reducers/taglibrary';
 import TagsSelect from '../TagsSelect';
 import i18n from '-/services/i18n';
 import { extractFileName, extractDirectoryName } from '-/utils/paths';
@@ -42,15 +42,21 @@ interface Props {
   fullScreen: boolean;
   selectedEntries: Array<any>;
   onClose: (clearSelection?: boolean) => void;
-  addTags: (paths: Array<string>, tags: Array<Tag>) => void;
-  removeTags: (paths: Array<string>, tags: Array<Tag>) => void;
+  addTags: (paths: Array<string>, tags: Array<TagSpaces.Tag>) => void;
+  removeTags: (paths: Array<string>, tags: Array<TagSpaces.Tag>) => void;
   removeAllTags: (paths: Array<string>) => void;
 }
 
 const AddRemoveTagsDialog = (props: Props) => {
-  const [newlyAddedTags, setNewlyAddedTags] = useState<Array<Tag>>([]);
+  const [newlyAddedTags, setNewlyAddedTags] = useState<Array<TagSpaces.Tag>>(
+    []
+  );
 
-  const handleChange = (name: string, value: Array<Tag>, action: string) => {
+  const handleChange = (
+    name: string,
+    value: Array<TagSpaces.Tag>,
+    action: string
+  ) => {
     if (action === 'remove-value') {
       const tagsToRemove: Array<string> = value.map(tag => tag.title);
       setNewlyAddedTags(

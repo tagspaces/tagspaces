@@ -15,7 +15,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
+/* global TagSpaces */
+/* eslint no-undef: "error" */
 import React, { useCallback, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -44,12 +45,9 @@ import CustomLogo from './CustomLogo';
 import TagLibraryMenu from './menus/TagLibraryMenu';
 import TagGroupMenu from './menus/TagGroupMenu';
 import {
-  TagGroup,
-  Tag,
   actions as TagLibraryActions,
   getAllTags,
-  getTagGroups,
-  Uuid
+  getTagGroups
 } from '../reducers/taglibrary';
 import TaggingActions from '../reducers/tagging-actions';
 import i18n from '../services/i18n';
@@ -74,15 +72,15 @@ interface Props {
   isReadOnlyMode: boolean;
   tagTextColor: string;
   tagBackgroundColor: string;
-  tagGroups: Array<TagGroup>;
-  allTags: Array<Tag>;
+  tagGroups: Array<TagSpaces.TagGroup>;
+  allTags: Array<TagSpaces.Tag>;
   openURLExternally: (path: string) => void;
   toggleTagGroup: (uuid: string) => void;
   removeTagGroup: (uuid: string) => void;
   moveTagGroupUp: (uuid: string) => void;
   moveTagGroupDown: (uuid: string) => void;
   sortTagGroup: (uuid: string) => void;
-  collectTagsFromLocation: (tagGroup: TagGroup) => void;
+  collectTagsFromLocation: (tagGroup: TagSpaces.TagGroup) => void;
   addTags: () => void;
   importTagGroups: () => void;
   exportTagGroups: () => void;
@@ -91,7 +89,7 @@ interface Props {
   moveTag: () => void;
   editTagGroup: () => void;
   editTag: () => void;
-  deleteTag: (tagTitle: string, parentTagGroupUuid: Uuid) => void;
+  deleteTag: (tagTitle: string, parentTagGroupUuid: TagSpaces.Uuid) => void;
   showNotification: (
     text: string,
     notificationType?: string, // NotificationTypes
@@ -113,11 +111,11 @@ const TagLibrary = (props: Props) => {
     tagLibraryMenuAnchorEl,
     setTagLibraryMenuAnchorEl
   ] = useState<null | HTMLElement>(null);
-  const [selectedTagGroupEntry, setSelectedTagGroupEntry] = useState<TagGroup>(
-    null
-  );
+  const [selectedTagGroupEntry, setSelectedTagGroupEntry] = useState<
+    TagSpaces.TagGroup
+  >(null);
   // const [selectedTagEntry, setSelectedTagEntry] = useState<TagGroup>(null);
-  const [selectedTag, setSelectedTag] = useState<Tag>(null);
+  const [selectedTag, setSelectedTag] = useState<TagSpaces.Tag>(null);
   const [
     isCreateTagGroupDialogOpened,
     setIsCreateTagGroupDialogOpened
@@ -160,7 +158,11 @@ const TagLibrary = (props: Props) => {
   };
 
   const handleTagMenuCallback = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>, tag, tagGroup: TagGroup) => {
+    (
+      event: React.ChangeEvent<HTMLInputElement>,
+      tag,
+      tagGroup: TagSpaces.TagGroup
+    ) => {
       handleTagMenu(event, tag, tagGroup);
     },
     []
@@ -169,7 +171,7 @@ const TagLibrary = (props: Props) => {
   const handleTagMenu = (
     event: React.ChangeEvent<HTMLInputElement>,
     tag,
-    tagGroup: TagGroup
+    tagGroup: TagSpaces.TagGroup
   ) => {
     if (!tagGroup.readOnly) {
       setTagMenuAnchorEl(event.currentTarget);
@@ -267,7 +269,7 @@ const TagLibrary = (props: Props) => {
             data-tid={'tagGroupContainer_' + tagGroup.title}
           >
             {tagGroup.children &&
-              tagGroup.children.map((tag: Tag) => {
+              tagGroup.children.map((tag: TagSpaces.Tag) => {
                 if (props.isReadOnlyMode) {
                   return (
                     <TagContainer

@@ -15,7 +15,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
+/* global TagSpaces */
+/* eslint no-undef: "error" */
 import uuidv1 from 'uuid';
 import { immutablySwapItems } from '-/utils/misc';
 import { actions as AppActions } from '-/reducers/app';
@@ -37,7 +38,7 @@ export const locationType = {
   TYPE_AMPLIFY: '2'
 };
 
-export type Location = {
+/* export type Location = {
   uuid: string;
   newuuid?: string;
   name: string;
@@ -60,11 +61,14 @@ export type Location = {
   persistIndex?: boolean;
   fullTextIndex?: boolean;
   maxIndexAge?: number;
-};
+}; */
 
 export const initialState = [];
 
-export default (state: Array<Location> = initialState, action: any) => {
+export default (
+  state: Array<TagSpaces.Location> = initialState,
+  action: any
+) => {
   switch (action.type) {
     case types.ADD_LOCATION: {
       if (action.location.isDefault) {
@@ -178,9 +182,10 @@ export const actions = {
       );
     });
   },
-  addLocation: (location: Location, openAfterCreate: boolean = true) => (
-    dispatch: (actions: Object) => void
-  ) => {
+  addLocation: (
+    location: TagSpaces.Location,
+    openAfterCreate: boolean = true
+  ) => (dispatch: (actions: Object) => void) => {
     dispatch(actions.createLocation(location));
     if (openAfterCreate) {
       dispatch(AppActions.openLocation(location));
@@ -190,11 +195,11 @@ export const actions = {
    * @param arrLocations
    * @param override = true - if location exist override else skip
    */
-  addLocations: (arrLocations: Array<Location>, override: boolean = true) => (
-    dispatch: (actions: Object) => void,
-    getState: () => any
-  ) => {
-    arrLocations.forEach((newLocation: Location, idx, array) => {
+  addLocations: (
+    arrLocations: Array<TagSpaces.Location>,
+    override: boolean = true
+  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
+    arrLocations.forEach((newLocation: TagSpaces.Location, idx, array) => {
       const { locations } = getState();
       const locationExist: boolean = locations.some(
         location => location.uuid === newLocation.uuid
@@ -207,7 +212,7 @@ export const actions = {
       }
     });
   },
-  createLocation: (location: Location) => ({
+  createLocation: (location: TagSpaces.Location) => ({
     type: types.ADD_LOCATION,
     location
   }),
@@ -216,9 +221,10 @@ export const actions = {
     type: types.MOVE_DOWN_LOCATION,
     uuid
   }),
-  editLocation: (location: Location, openAfterEdit: boolean = true) => (
-    dispatch: (actions: Object) => void
-  ) => {
+  editLocation: (
+    location: TagSpaces.Location,
+    openAfterEdit: boolean = true
+  ) => (dispatch: (actions: Object) => void) => {
     dispatch(actions.changeLocation(location));
     if (PlatformIO.haveObjectStoreSupport()) {
       // disableObjectStoreSupport to revoke objectStoreAPI cached object
@@ -241,25 +247,29 @@ export const actions = {
       dispatch(AppActions.setReadOnlyMode(location.isReadOnly || false));
     }
   },
-  changeLocation: (location: Location) => ({
+  changeLocation: (location: TagSpaces.Location) => ({
     type: types.EDIT_LOCATION,
     location
   }),
-  removeLocation: (location: Location) => (
+  removeLocation: (location: TagSpaces.Location) => (
     dispatch: (actions: Object) => void
   ) => {
     dispatch(AppActions.closeLocation(location.uuid));
     dispatch(actions.deleteLocation(location));
   },
-  deleteLocation: (location: Location) => ({
+  deleteLocation: (location: TagSpaces.Location) => ({
     type: types.REMOVE_LOCATION,
     location
   })
 };
 
 // Selectors
-export const getLocations = (state: any): Array<Location> => state.locations;
-export const getLocation = (state: any, locationId: string): Location | null =>
+export const getLocations = (state: any): Array<TagSpaces.Location> =>
+  state.locations;
+export const getLocation = (
+  state: any,
+  locationId: string
+): TagSpaces.Location | null =>
   state.locations.find(location => location.uuid === locationId);
 export const getDefaultLocationId = (state: any): string | undefined => {
   let defaultLocationID;

@@ -15,7 +15,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
+/* global TagSpaces */
+/* eslint no-undef: "error" */
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -26,10 +27,8 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { Tag } from '-/reducers/taglibrary';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import i18n from '-/services/i18n';
-import { SearchQuery } from '-/services/search';
 import { getMaxSearchResults } from '-/reducers/settings';
 import { actions as AppActions } from '-/reducers/app';
 
@@ -40,8 +39,8 @@ interface Props {
   anchorEl?: Element;
   open?: boolean;
   onClose: () => void;
-  selectedTag?: Tag;
-  searchLocationIndex: (searchQuery: SearchQuery) => void;
+  selectedTag?: TagSpaces.Tag;
+  searchLocationIndex: (searchQuery: TagSpaces.SearchQuery) => void;
   openSearchPanel: () => void;
   showEditTagDialog: () => void;
   showDeleteTagDialog: () => void;

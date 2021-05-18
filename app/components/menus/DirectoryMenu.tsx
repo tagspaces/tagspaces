@@ -15,7 +15,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
+/* global TagSpaces */
+/* eslint no-undef: "error" */
 import React, { useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -41,6 +42,7 @@ import RenameFolderIcon from '@material-ui/icons/FormatTextdirectionLToR';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { Progress } from 'aws-sdk/clients/s3';
+import ImageIcon from '@material-ui/icons/Image';
 import { Pro } from '../../pro';
 import CreateDirectoryDialog from '../dialogs/CreateDirectoryDialog';
 // import RenameDirectoryDialog from '../dialogs/RenameDirectoryDialog';
@@ -61,7 +63,6 @@ import {
   perspectives
 } from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
-import { Tag } from '-/reducers/taglibrary';
 import TaggingActions from '-/reducers/tagging-actions';
 import {
   FileSystemEntry,
@@ -71,7 +72,6 @@ import {
 import FileUploadContainer, {
   FileUploadContainerRef
 } from '-/components/FileUploadContainer';
-import ImageIcon from '@material-ui/icons/Image';
 
 interface Props {
   open: boolean;
@@ -106,7 +106,7 @@ interface Props {
   resetProgress: () => void;
   addTags: (
     paths: Array<string>,
-    tags: Array<Tag>,
+    tags: Array<TagSpaces.Tag>,
     updateIndex: boolean
   ) => void;
   toggleDeleteMultipleEntriesDialog: () => void;

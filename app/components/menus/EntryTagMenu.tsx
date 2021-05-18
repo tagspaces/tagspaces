@@ -15,7 +15,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
+/* global TagSpaces */
+/* eslint no-undef: "error" */
 import React, { useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -29,9 +30,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ConfirmDialog from '../dialogs/ConfirmDialog';
 import i18n from '-/services/i18n';
-import { Tag } from '-/reducers/taglibrary';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
-import { SearchQuery } from '-/services/search';
 import { getMaxSearchResults } from '-/reducers/settings';
 import { actions as AppActions } from '-/reducers/app';
 
@@ -39,14 +38,14 @@ interface Props {
   open: boolean;
   onClose: () => void;
   anchorEl: Element | null;
-  selectedTag: Tag | null;
+  selectedTag: TagSpaces.Tag | null;
   currentEntryPath: string;
-  removeTags: (paths: Array<string>, tags: Array<Tag>) => void;
-  searchLocationIndex?: (searchQuery: SearchQuery) => void;
+  removeTags: (paths: Array<string>, tags: Array<TagSpaces.Tag>) => void;
+  searchLocationIndex?: (searchQuery: TagSpaces.SearchQuery) => void;
   maxSearchResults?: number;
   openSearchPanel?: () => void;
-  setIsAddTagDialogOpened?: (tag: Tag) => void;
-  toggleEditTagDialog?: (tag: Tag) => void;
+  setIsAddTagDialogOpened?: (tag: TagSpaces.Tag) => void;
+  toggleEditTagDialog?: (tag: TagSpaces.Tag) => void;
   isReadOnlyMode?: boolean;
 }
 

@@ -15,7 +15,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
+/* global TagSpaces */
+/* eslint no-undef: "error" */
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -30,15 +31,15 @@ import { withTheme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import i18n from '-/services/i18n';
-import { getLocations, Location, locationType } from '-/reducers/locations';
+import { getLocations, locationType } from '-/reducers/locations';
 import { actions as AppActions, getCurrentLocationId } from '-/reducers/app';
 
 interface Props {
   currentLocationId: string | null;
   theme: any;
-  locations: Array<Location>;
+  locations: Array<TagSpaces.Location>;
   menuAnchorEl?: Element;
-  openLocation: (location: Location) => void;
+  openLocation: (location: TagSpaces.Location) => void;
 }
 
 const LocationMenu = (props: Props) => {
@@ -55,7 +56,8 @@ const LocationMenu = (props: Props) => {
   let currentLocation;
   if (props.currentLocationId && props.locations) {
     currentLocation = props.locations.find(
-      (location: Location) => location.uuid === props.currentLocationId
+      (location: TagSpaces.Location) =>
+        location.uuid === props.currentLocationId
     );
   }
 
@@ -105,7 +107,7 @@ const LocationMenu = (props: Props) => {
           >
             {i18n.t('core:chooseLocation')}
           </ListSubHeader>
-          {props.locations.map((location: Location) => (
+          {props.locations.map((location: TagSpaces.Location) => (
             <MenuItem
               data-tid="folderContainerMenuOpenLocation"
               key={location.uuid}

@@ -1,3 +1,5 @@
+/* global TagSpaces */
+/* eslint no-undef: "error" */
 import React, { useRef } from 'react';
 import {
   AuthState,
@@ -7,15 +9,21 @@ import {
 import { API, Auth } from 'aws-amplify';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { actions as LocationActions, Location } from '-/reducers/locations';
-import { actions as TagGroupActions, TagGroup } from '-/reducers/taglibrary';
+import { actions as LocationActions } from '-/reducers/locations';
+import { actions as TagGroupActions } from '-/reducers/taglibrary';
 import { actions as AppActions } from '-/reducers/app';
 
 interface Props {
   loggedIn: (user: CognitoUserInterface) => void;
   initApp: () => void;
-  addLocations: (locations: Array<Location>, override: boolean) => void;
-  importTagGroups: (tagGroups: Array<TagGroup>, replace: boolean) => void;
+  addLocations: (
+    locations: Array<TagSpaces.Location>,
+    override: boolean
+  ) => void;
+  importTagGroups: (
+    tagGroups: Array<TagSpaces.TagGroup>,
+    replace: boolean
+  ) => void;
 }
 const HandleAuth = React.memo((props: Props) => {
   const username = useRef(undefined);

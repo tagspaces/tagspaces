@@ -16,13 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
+/* global TagSpaces */
+/* eslint no-undef: "error" */
 import Fuse from 'fuse.js';
 import jmespath from 'jmespath';
 import OpenLocationCode from 'open-location-code-typescript';
 import { isPlusCode } from '-/utils/misc';
 import { extractTimePeriod } from '-/utils/dates';
-import { Tag } from '-/reducers/taglibrary';
 import { Pro } from '../pro';
 import { FileSystemEntry } from './utils-io';
 
@@ -52,29 +52,6 @@ export const FileTypeGroups = {
   folders: ['folders'],
   files: ['files'],
   untagged: ['untagged']
-};
-
-export type SearchQuery = {
-  uuid?: string; // for saved searches
-  title?: string; // for saved searches
-  // creationDate?: number; // for saved searches TODO rethink if this needed ?
-  textQuery?: string;
-  fileTypes?: Array<string>;
-  tagsAND?: Array<Tag>;
-  tagsOR?: Array<Tag>;
-  tagsNOT?: Array<Tag>;
-  lastModified?: string;
-  fileSize?: string;
-  searchBoxing?: 'location' | 'folder' | 'global';
-  searchType?: 'fussy' | 'semistrict' | 'strict';
-  forceIndexing?: boolean;
-  currentDirectory?: string;
-  tagTimePeriodFrom?: number | null;
-  tagTimePeriodTo?: number | null;
-  tagPlaceLat?: number | null;
-  tagPlaceLong?: number | null;
-  tagPlaceRadius?: number | null;
-  maxSearchResults?: number;
 };
 
 // id, name, isFile, tags, extension, size, lmdt, path
@@ -150,7 +127,7 @@ const fuseOptions = {
 // filters for all AND and NOT tags. The Pro version can pipe the result into an additional filter for extension instead of tags.title.
 // The final string for the tag search should look like this:
 // index[? tags[? title=='ORTag1' || title=='ORTag2']] | [? tags[? title=='ANDTag1']] | [? tags[? title=='ANDTag2']] | [?!(tags[? title=='NOTTag1'])] | [?!(tags[? title=='NOTTag2'])] | extensionFilter
-function constructjmespathQuery(searchQuery: SearchQuery): string {
+function constructjmespathQuery(searchQuery: TagSpaces.SearchQuery): string {
   let jmespathQuery = '';
   const ANDtagsExist = searchQuery.tagsAND && searchQuery.tagsAND.length >= 1;
   const ORtagsExist = searchQuery.tagsOR && searchQuery.tagsOR.length >= 1;
@@ -242,7 +219,7 @@ function prepareIndex(index: Array<Object>) {
     let toTime = null;
     if (tags && tags.length) {
       tags.map(tag => {
-        const enhancedTag: Tag = {
+        const enhancedTag: TagSpaces.Tag = {
           ...tag
         };
         try {
@@ -307,7 +284,7 @@ function setOriginTitle(results: Array<Object>) {
 export default class Search {
   static searchLocationIndex = (
     locationContent: Array<FileSystemEntry>,
-    searchQuery: SearchQuery
+    searchQuery: TagSpaces.SearchQuery
   ): Promise<Array<FileSystemEntry> | []> =>
     new Promise(resolve => {
       console.time('searchtime');

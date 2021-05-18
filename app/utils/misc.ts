@@ -15,8 +15,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
-import { Location, locationType } from '-/reducers/locations';
+/* global TagSpaces */
+/* eslint no-undef: "error" */
+import { locationType } from '-/reducers/locations';
 import { cleanFileName, getLocationPath } from '-/utils/paths';
 
 /** Returns true is a string is plus code e.g. 8FWH4HVG+3V 8FWH4HVG+ 8FWH4H+ */
@@ -155,7 +156,7 @@ export function clearURLParam(paramName) {
 }
 
 export function updateHistory(
-  currentLocation: Location,
+  currentLocation: TagSpaces.Location,
   currentDirectory: string,
   entryPath?: string
 ) {

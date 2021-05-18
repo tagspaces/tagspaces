@@ -15,14 +15,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
+/* global TagSpaces */
+/* eslint no-undef: "error" */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { GlobalHotKeys } from 'react-hotkeys';
 import { withStyles } from '@material-ui/core/styles';
 import { FileSystemEntry } from '-/services/utils-io';
-import { actions as TagLibraryActions, Tag, Uuid } from '-/reducers/taglibrary';
+import { actions as TagLibraryActions } from '-/reducers/taglibrary';
 import {
   getSupportedFileTypes,
   getDesktopMode,
@@ -55,7 +56,7 @@ import CellContent from './CellContent';
 import MainToolbar from './MainToolbar';
 import SortingMenu from './SortingMenu';
 import GridOptionsMenu from './GridOptionsMenu';
-import { getLocation, Location, locationType } from '-/reducers/locations';
+import { getLocation, locationType } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-io';
 import { getLocationPath } from '-/utils/paths';
 import GridPagination from '-/perspectives/grid-perspective/components/GridPagination';
@@ -84,8 +85,8 @@ interface Props {
   // setLastSelectedEntry: (entryPath: string | null) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   addTags: () => void;
-  addTag: (tag: Tag, parentTagGroupUuid: Uuid) => void;
-  removeTags: (paths: Array<string>, tags: Array<Tag>) => void;
+  addTag: (tag: TagSpaces.Tag, parentTagGroupUuid: TagSpaces.Uuid) => void;
+  removeTags: (paths: Array<string>, tags: Array<TagSpaces.Tag>) => void;
   removeAllTags: () => void;
   directoryContent: Array<FileSystemEntry>;
   moveFiles: (files: Array<string>, destination: string) => void;
@@ -95,7 +96,7 @@ interface Props {
     notificationType: string,
     autohide: boolean
   ) => void;
-  currentLocation: Location;
+  currentLocation: TagSpaces.Location;
   isDesktopMode: boolean;
   toggleDeleteMultipleEntriesDialog: () => void;
 }
@@ -108,7 +109,7 @@ const GridPerspective = (props: Props) => {
   const allFilesSelected = useRef<boolean>(false);
   // const selectedEntry = useRef<FileSystemEntry>(undefined);
   const selectedEntryPath = useRef<string>(undefined);
-  const selectedTag = useRef<Tag | null>(null);
+  const selectedTag = useRef<TagSpaces.Tag | null>(null);
   const [
     fileContextMenuAnchorEl,
     setFileContextMenuAnchorEl
@@ -129,9 +130,9 @@ const GridPerspective = (props: Props) => {
     optionsContextMenuAnchorEl,
     setOptionsContextMenuAnchorEl
   ] = useState<null | HTMLElement>(null);
-  const [isAddTagDialogOpened, setIsAddTagDialogOpened] = useState<Tag>(
-    undefined
-  );
+  const [isAddTagDialogOpened, setIsAddTagDialogOpened] = useState<
+    TagSpaces.Tag
+  >(undefined);
   const [sortBy, setSortBy] = useState<string>(
     settings && settings.sortBy ? settings.sortBy : 'byName'
   );
@@ -489,7 +490,7 @@ const GridPerspective = (props: Props) => {
 
   const handleTagMenu = (
     event: React.ChangeEvent<HTMLInputElement>,
-    tag: Tag,
+    tag: TagSpaces.Tag,
     entryPath: string
   ) => {
     event.preventDefault();

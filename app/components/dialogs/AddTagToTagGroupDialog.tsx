@@ -15,7 +15,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
+/* global TagSpaces */
+/* eslint no-undef: "error" */
 import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -28,19 +29,19 @@ import Select from '@material-ui/core/Select';
 import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
 import { connect } from 'react-redux';
-import { getTagGroups, Tag, TagGroup } from '-/reducers/taglibrary';
+import { getTagGroups } from '-/reducers/taglibrary';
 import i18n from '-/services/i18n';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
 
 interface Props {
   open: boolean;
   onClose: () => void;
-  addTag: (tag: Tag, uuid: string) => void;
+  addTag: (tag: TagSpaces.Tag, uuid: string) => void;
   fullScreen?: boolean;
-  selectedTag: Tag;
+  selectedTag: TagSpaces.Tag;
   defaultBackgroundColor?: string;
   defaultTextColor?: string;
-  tagGroups: Array<TagGroup>;
+  tagGroups: Array<TagSpaces.TagGroup>;
 }
 
 const AddTagToTagGroupDialog = (props: Props) => {

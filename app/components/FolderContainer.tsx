@@ -42,7 +42,7 @@ import {
   getMaxSearchResults,
   getDesktopMode
 } from '-/reducers/settings';
-import { getLocations, Location } from '-/reducers/locations';
+import { getLocations } from '-/reducers/locations';
 import {
   actions as AppActions,
   getDirectoryContent,

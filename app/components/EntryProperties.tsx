@@ -15,7 +15,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
+/* global TagSpaces */
+/* eslint no-undef: "error" */
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
 import uuidv1 from 'uuid';
@@ -79,7 +80,6 @@ import {
   replaceThumbnailURLPromise,
   getThumbnailURLPromise
 } from '-/services/thumbsgenerator';
-import { Tag } from '-/reducers/taglibrary';
 import { OpenedEntry, perspectives } from '-/reducers/app';
 import { savePerspective } from '-/utils/metaoperations';
 import MarkerIcon from '-/assets/icons/marker-icon.png';
@@ -182,8 +182,8 @@ interface Props {
   showNotification: (message: string) => void;
   updateOpenedFile: (entryPath: string, fsEntryMeta: any) => void;
   updateThumbnailUrl: (path: string, thumbUrl: string) => void;
-  addTags: (paths: Array<string>, tags: Array<Tag>) => void;
-  removeTags: (paths: Array<string>, tags: Array<Tag>) => void;
+  addTags: (paths: Array<string>, tags: Array<TagSpaces.Tag>) => void;
+  removeTags: (paths: Array<string>, tags: Array<TagSpaces.Tag>) => void;
   removeAllTags: (paths: Array<string>) => void;
   isReadOnlyMode: boolean;
   currentDirectoryPath: string | null;
@@ -466,7 +466,11 @@ const EntryProperties = (props: Props) => {
     }
   };
 
-  const handleChange = (name: string, value: Array<Tag>, action: string) => {
+  const handleChange = (
+    name: string,
+    value: Array<TagSpaces.Tag>,
+    action: string
+  ) => {
     if (action === 'remove-value') {
       if (!value) {
         // no tags left in the select element
@@ -586,7 +590,7 @@ const EntryProperties = (props: Props) => {
     shadowAnchor: [5, 55]
   });
 
-  function getGeoLocation(tags: Array<Tag>) {
+  function getGeoLocation(tags: Array<TagSpaces.Tag>) {
     if (!Pro) {
       return;
     }

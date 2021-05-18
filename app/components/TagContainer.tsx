@@ -15,7 +15,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
+/* global TagSpaces */
+/* eslint no-undef: "error" */
 import React from 'react';
 // import uuidv1 from 'uuid';
 import { connect } from 'react-redux';
@@ -24,30 +25,30 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import PlaceIcon from '@material-ui/icons/Place';
 import DateIcon from '@material-ui/icons/DateRange';
 import RemoveTagIcon from '@material-ui/icons/Close';
-import { getAllTags, Tag, TagGroup } from '-/reducers/taglibrary';
+import { getAllTags } from '-/reducers/taglibrary';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import { isPlusCode } from '-/utils/misc';
 import { isDateTimeTag } from '-/utils/dates';
 import { FileSystemEntry } from '-/services/utils-io';
 
 interface Props {
-  tag: Tag;
+  tag: TagSpaces.Tag;
   isReadOnlyMode?: boolean;
-  allTags?: Array<Tag>;
+  allTags?: Array<TagSpaces.Tag>;
   defaultTextColor?: string;
   defaultBackgroundColor?: string;
-  tagGroup?: TagGroup;
+  tagGroup?: TagSpaces.TagGroup;
   handleTagMenu?: (
     event: Object,
-    tag: Tag,
-    tagGroup: TagGroup | string
+    tag: TagSpaces.Tag,
+    tagGroup: TagSpaces.TagGroup | string
   ) => void; // TODO refactor
-  handleRemoveTag?: (event: Object, tags: Array<Tag>) => void;
+  handleRemoveTag?: (event: Object, tags: Array<TagSpaces.Tag>) => void;
   isDragging?: boolean;
   tagMode?: 'default' | 'display' | 'remove';
   entryPath?: string;
   deleteIcon?: Object;
-  addTags?: (paths: Array<string>, tags: Array<Tag>) => void;
+  addTags?: (paths: Array<string>, tags: Array<TagSpaces.Tag>) => void;
   moveTag?: () => void;
   selectedEntries?: Array<FileSystemEntry>;
 }
@@ -85,7 +86,7 @@ const TagContainer = React.memo((props: Props) => {
     title = title.substr(0, 8) + '...';
   }
 
-  allTags.some((currentTag: Tag) => {
+  allTags.some((currentTag: TagSpaces.Tag) => {
     if (currentTag.title === title) {
       textColor = currentTag.textcolor;
       backgroundColor = currentTag.color;

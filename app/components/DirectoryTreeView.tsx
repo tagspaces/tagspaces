@@ -15,11 +15,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
+/* global TagSpaces */
+/* eslint no-undef: "error" */
 import React, { useState, forwardRef, useImperativeHandle, Ref } from 'react';
 import Table from 'rc-table';
 import FolderIcon from '@material-ui/icons/FolderOpen';
-import { Location, locationType } from '-/reducers/locations';
+import { locationType } from '-/reducers/locations';
 import DragItemTypes from '-/components/DragItemTypes';
 import AppConfig from '-/config';
 import PlatformIO from '-/services/platform-io';
@@ -29,7 +30,7 @@ import { getLocationPath } from '-/utils/paths';
 interface Props {
   classes: any;
   loadDirectoryContent: (path: string) => void;
-  location: Location;
+  location: TagSpaces.Location;
   data?: any;
   isReadOnlyMode?: boolean;
   showUnixHiddenEntries: boolean;
@@ -39,11 +40,11 @@ interface Props {
     autohide: boolean
   ) => void;
   handleFileMoveDrop: (item, monitor) => void;
-  changeLocation: (loc: Location) => void;
+  changeLocation: (loc: TagSpaces.Location) => void;
 }
 
 export interface DirectoryTreeViewRef {
-  changeLocation: (location: Location) => void;
+  changeLocation: (location: TagSpaces.Location) => void;
   closeLocation: () => void;
   // removeLocation: () => void;
 }
@@ -54,7 +55,7 @@ const DirectoryTreeView = forwardRef(
     const [isExpanded, setExpanded] = useState(false);
 
     useImperativeHandle(ref, () => ({
-      changeLocation(location: Location) {
+      changeLocation(location: TagSpaces.Location) {
         if (isExpanded && data[location.uuid] !== undefined) {
           setData(undefined); // comment this to use cached data after expand
           setExpanded(false);
@@ -189,7 +190,10 @@ const DirectoryTreeView = forwardRef(
       }
     ];
 
-    const loadSubDirectories = (location: Location, deepLevel: number) => {
+    const loadSubDirectories = (
+      location: TagSpaces.Location,
+      deepLevel: number
+    ) => {
       const subFolder = {
         ...(location.accessKeyId && { accessKeyId: location.accessKeyId }),
         ...(location.bucketName && { bucketName: location.bucketName }),
