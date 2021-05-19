@@ -66,7 +66,7 @@ import {
 import { getMaxSearchResults } from '-/reducers/settings';
 import styles from './SidePanels.css';
 import i18n from '../services/i18n';
-import { FileTypeGroups, SearchQuery } from '-/services/search';
+import { FileTypeGroups } from '-/services/search';
 import { Pro } from '../pro';
 import SearchMenu from './menus/SearchMenu';
 import { formatDateTime, extractTimePeriod } from '-/utils/dates';
@@ -74,6 +74,7 @@ import { isPlusCode, parseLatLon } from '-/utils/misc';
 import PlatformIO from '../services/platform-io';
 import { AppConfig } from '-/config';
 import { actions as SearchActions, getSearches } from '-/reducers/searches';
+import { TS } from '-/tagspaces.namespace';
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
 
@@ -81,21 +82,21 @@ interface Props {
   classes: any;
   style?: any;
   theme?: any;
-  searchLocationIndex: (searchQuery: SearchQuery) => void;
+  searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
   createLocationsIndexes: () => void;
-  searchAllLocations: (searchQuery: SearchQuery) => void;
+  searchAllLocations: (searchQuery: TS.SearchQuery) => void;
   loadDirectoryContent: (path: string) => void;
   openURLExternally: (url: string) => void;
   hideDrawer?: () => void;
-  searchQuery: SearchQuery; // () => any;
+  searchQuery: TS.SearchQuery; // () => any;
   setSearchResults: (entries: Array<any>) => void;
-  setSearchQuery: (searchQuery: SearchQuery) => void;
+  setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   currentDirectory: string;
   indexedEntriesCount: number;
   maxSearchResults: number;
   indexing: boolean;
-  searches: Array<SearchQuery>;
-  addSearches: (searches: Array<SearchQuery>) => void;
+  searches: Array<TS.SearchQuery>;
+  addSearches: (searches: Array<TS.SearchQuery>) => void;
 }
 
 const Search = React.memo((props: Props) => {
@@ -122,7 +123,7 @@ const Search = React.memo((props: Props) => {
     props.searchQuery.lastModified ? props.searchQuery.lastModified : ''
   );
   const [saveSearchDialogOpened, setSaveSearchDialogOpened] = useState<
-    SearchQuery
+    TS.SearchQuery
   >(undefined);
   const [tagTimePeriod, setTagTimePeriod] = useState<string>('');
   const [tagTimePeriodHelper, setTagTimePeriodHelper] = useState<string>(' ');
@@ -504,7 +505,7 @@ const Search = React.memo((props: Props) => {
 
   const executeSearch = () => {
     const { searchAllLocations, searchLocationIndex } = props;
-    const searchQuery: SearchQuery = {
+    const searchQuery: TS.SearchQuery = {
       textQuery, // .current,
       tagsAND: props.searchQuery.tagsAND,
       tagsOR: props.searchQuery.tagsOR,
@@ -1106,7 +1107,7 @@ const Search = React.memo((props: Props) => {
             {SaveSearchDialog && saveSearchDialogOpened !== undefined && (
               <SaveSearchDialog
                 open={saveSearchDialogOpened !== undefined}
-                onClose={(searchQuery: SearchQuery) => {
+                onClose={(searchQuery: TS.SearchQuery) => {
                   setSaveSearchDialogOpened(undefined);
                   if (searchQuery) {
                     if (searchQuery.searchBoxing === 'global') {

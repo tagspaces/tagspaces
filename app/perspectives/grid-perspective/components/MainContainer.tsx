@@ -21,15 +21,14 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { GlobalHotKeys } from 'react-hotkeys';
 import { withStyles } from '@material-ui/core/styles';
-import { FileSystemEntry } from '-/services/utils-io';
-import { actions as TagLibraryActions, Tag, Uuid } from '-/reducers/taglibrary';
+import { actions as TagLibraryActions } from '-/reducers/taglibrary';
 import {
   getSupportedFileTypes,
   getDesktopMode,
   getKeyBindingObject,
   isDesktopMode
 } from '-/reducers/settings';
-import { sortByCriteria } from '-/utils/misc';
+import { locationType, sortByCriteria } from '-/utils/misc';
 import styles from './styles.css';
 import FileMenu from '-/components/menus/FileMenu';
 import DirectoryMenu from '-/components/menus/DirectoryMenu';
@@ -55,12 +54,13 @@ import CellContent from './CellContent';
 import MainToolbar from './MainToolbar';
 import SortingMenu from './SortingMenu';
 import GridOptionsMenu from './GridOptionsMenu';
-import { getLocation, Location, locationType } from '-/reducers/locations';
+import { getLocation } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-io';
 import { getLocationPath } from '-/utils/paths';
 import GridPagination from '-/perspectives/grid-perspective/components/GridPagination';
 import GridSettingsDialog from '-/perspectives/grid-perspective/components/GridSettingsDialog';
 import AddTagToTagGroupDialog from '-/components/dialogs/AddTagToTagGroupDialog';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   classes: any;
@@ -71,7 +71,7 @@ interface Props {
   selectedEntries: Array<any>;
   supportedFileTypes: Array<any>;
   isReadOnlyMode: boolean;
-  openFsEntry: (fsEntry?: FileSystemEntry) => void;
+  openFsEntry: (fsEntry?: TS.FileSystemEntry) => void;
   openNextFile: () => any;
   openPrevFile: () => any;
   openRenameEntryDialog: () => void;
@@ -84,10 +84,10 @@ interface Props {
   // setLastSelectedEntry: (entryPath: string | null) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   addTags: () => void;
-  addTag: (tag: Tag, parentTagGroupUuid: Uuid) => void;
-  removeTags: (paths: Array<string>, tags: Array<Tag>) => void;
+  addTag: (tag: TS.Tag, parentTagGroupUuid: TS.Uuid) => void;
+  removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
   removeAllTags: () => void;
-  directoryContent: Array<FileSystemEntry>;
+  directoryContent: Array<TS.FileSystemEntry>;
   moveFiles: (files: Array<string>, destination: string) => void;
   keyBindings: any;
   showNotification: (
@@ -95,7 +95,7 @@ interface Props {
     notificationType: string,
     autohide: boolean
   ) => void;
-  currentLocation: Location;
+  currentLocation: TS.Location;
   isDesktopMode: boolean;
   toggleDeleteMultipleEntriesDialog: () => void;
 }
@@ -108,7 +108,7 @@ const GridPerspective = (props: Props) => {
   const allFilesSelected = useRef<boolean>(false);
   // const selectedEntry = useRef<FileSystemEntry>(undefined);
   const selectedEntryPath = useRef<string>(undefined);
-  const selectedTag = useRef<Tag | null>(null);
+  const selectedTag = useRef<TS.Tag | null>(null);
   const [
     fileContextMenuAnchorEl,
     setFileContextMenuAnchorEl
@@ -129,7 +129,7 @@ const GridPerspective = (props: Props) => {
     optionsContextMenuAnchorEl,
     setOptionsContextMenuAnchorEl
   ] = useState<null | HTMLElement>(null);
-  const [isAddTagDialogOpened, setIsAddTagDialogOpened] = useState<Tag>(
+  const [isAddTagDialogOpened, setIsAddTagDialogOpened] = useState<TS.Tag>(
     undefined
   );
   const [sortBy, setSortBy] = useState<string>(
@@ -271,7 +271,7 @@ const GridPerspective = (props: Props) => {
     setOptionsContextMenuAnchorEl(anchor);
   };
 
-  const handleGridCellClick = (event, fsEntry: FileSystemEntry) => {
+  const handleGridCellClick = (event, fsEntry: TS.FileSystemEntry) => {
     const {
       selectedEntries,
       directoryContent,
@@ -394,7 +394,7 @@ const GridPerspective = (props: Props) => {
     setIsGridSettingsDialogOpened(true);
   };
 
-  const handleGridCellDblClick = (event, fsEntry: FileSystemEntry) => {
+  const handleGridCellDblClick = (event, fsEntry: TS.FileSystemEntry) => {
     props.setSelectedEntries([]);
     if (props.currentLocation.type === locationType.TYPE_CLOUD) {
       PlatformIO.enableObjectStoreSupport(props.currentLocation)
@@ -411,7 +411,7 @@ const GridPerspective = (props: Props) => {
     }
   };
 
-  const openLocation = (fsEntry: FileSystemEntry) => {
+  const openLocation = (fsEntry: TS.FileSystemEntry) => {
     if (fsEntry.isFile) {
       props.setSelectedEntries([fsEntry]);
       props.openFsEntry(fsEntry);
@@ -421,7 +421,7 @@ const GridPerspective = (props: Props) => {
     }
   };
 
-  const handleGridContextMenu = (event, fsEntry: FileSystemEntry) => {
+  const handleGridContextMenu = (event, fsEntry: TS.FileSystemEntry) => {
     event.preventDefault();
     event.stopPropagation();
     setMouseX(event.clientX);
@@ -474,12 +474,12 @@ const GridPerspective = (props: Props) => {
     }
   };
 
-  const selectEntry = (fsEntry: FileSystemEntry) => {
+  const selectEntry = (fsEntry: TS.FileSystemEntry) => {
     const { setSelectedEntries, selectedEntries } = props;
     setSelectedEntries([...selectedEntries, fsEntry]);
   };
 
-  const deselectEntry = (fsEntry: FileSystemEntry) => {
+  const deselectEntry = (fsEntry: TS.FileSystemEntry) => {
     const { setSelectedEntries, selectedEntries } = props;
     const newSelection = selectedEntries.filter(
       data => data.path !== fsEntry.path
@@ -489,7 +489,7 @@ const GridPerspective = (props: Props) => {
 
   const handleTagMenu = (
     event: React.ChangeEvent<HTMLInputElement>,
-    tag: Tag,
+    tag: TS.Tag,
     entryPath: string
   ) => {
     event.preventDefault();
@@ -547,7 +547,7 @@ const GridPerspective = (props: Props) => {
     }
   };
 
-  const renderCell = (fsEntry: FileSystemEntry) => {
+  const renderCell = (fsEntry: TS.FileSystemEntry) => {
     const {
       classes,
       theme,

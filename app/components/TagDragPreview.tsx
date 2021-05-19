@@ -1,9 +1,9 @@
 import React, { memo } from 'react';
 import TagContainer from '-/components/TagContainer';
-import { Tag } from '-/reducers/taglibrary';
+import { TS } from '-/tagspaces.namespace';
 
 export interface Props {
-  tag: Tag;
+  tag: TS.Tag;
 }
 
 export const TagDragPreview = memo((props: Props) => {

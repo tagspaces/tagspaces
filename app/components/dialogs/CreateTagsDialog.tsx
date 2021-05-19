@@ -26,15 +26,15 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
 import i18n from '-/services/i18n';
-import { TagGroup } from '-/reducers/taglibrary';
 import useFirstRender from '-/utils/useFirstRender';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   open: boolean;
   onClose: () => void;
   addTag: (tags: string, uuid: string) => void;
   fullScreen?: boolean;
-  selectedTagGroupEntry: TagGroup;
+  selectedTagGroupEntry: TS.TagGroup;
 }
 
 const CreateTagsDialog = (props: Props) => {

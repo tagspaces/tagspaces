@@ -20,7 +20,6 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import Pagination from '@material-ui/lab/Pagination';
-import { FileSystemEntry } from '-/services/utils-io';
 import i18n from '-/services/i18n';
 import {
   getCurrentDirectoryColor,
@@ -28,16 +27,17 @@ import {
   isLoading
 } from '-/reducers/app';
 import AppConfig from '-/config';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   className: string;
   style: Object;
   theme: any;
   // gridRef: Object;
-  directories: Array<FileSystemEntry>;
+  directories: Array<TS.FileSystemEntry>;
   showDirectories: boolean;
-  files: Array<FileSystemEntry>;
-  renderCell: (FileSystemEntry) => void;
+  files: Array<TS.FileSystemEntry>;
+  renderCell: (entry: TS.FileSystemEntry) => void;
   currentDirectoryColor: string;
   isAppLoading: boolean;
   currentPage: number;

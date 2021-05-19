@@ -17,8 +17,7 @@
  */
 
 import { immutablySwapItems } from '-/utils/misc';
-import { SearchQuery } from '-/services/search';
-import { Location } from '-/reducers/locations';
+import { TS } from '-/tagspaces.namespace';
 
 export const initialState = [];
 
@@ -30,7 +29,7 @@ export const types = {
   REMOVE_SEARCH: 'SEARCH/REMOVE_SEARCH'
 };
 
-export default (state: Array<SearchQuery> = initialState, action: any) => {
+export default (state: Array<TS.SearchQuery> = initialState, action: any) => {
   switch (action.type) {
     case types.ADD_SEARCH: {
       return [
@@ -100,15 +99,15 @@ export default (state: Array<SearchQuery> = initialState, action: any) => {
 };
 
 export const actions = {
-  addSearch: (search: SearchQuery) => ({
+  addSearch: (search: TS.SearchQuery) => ({
     type: types.ADD_SEARCH,
     search
   }),
-  addSearches: (arrSearches: Array<SearchQuery>, override: boolean = true) => (
-    dispatch: (actions: Object) => void,
-    getState: () => any
-  ) => {
-    arrSearches.forEach((newSearch: SearchQuery) => {
+  addSearches: (
+    arrSearches: Array<TS.SearchQuery>,
+    override: boolean = true
+  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
+    arrSearches.forEach((newSearch: TS.SearchQuery) => {
       const { searches } = getState();
       const searchExist: boolean = searches.some(
         location => location.uuid === newSearch.uuid
@@ -125,7 +124,7 @@ export const actions = {
     type: types.MOVE_DOWN_SEARCH,
     uuid
   }),
-  editSearch: (search: SearchQuery) => ({
+  editSearch: (search: TS.SearchQuery) => ({
     type: types.EDIT_SEARCH,
     search
   }),
@@ -140,4 +139,5 @@ export const actions = {
 };
 
 // Selectors
-export const getSearches = (state: any): Array<SearchQuery> => state.searches;
+export const getSearches = (state: any): Array<TS.SearchQuery> =>
+  state.searches;

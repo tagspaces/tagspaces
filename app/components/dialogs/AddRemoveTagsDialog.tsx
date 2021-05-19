@@ -31,26 +31,26 @@ import FolderIcon from '@material-ui/icons/FolderOpen';
 import FileIcon from '@material-ui/icons/InsertDriveFileOutlined';
 import Typography from '@material-ui/core/Typography';
 import Dialog from '@material-ui/core/Dialog';
-import { Tag } from '-/reducers/taglibrary';
 import TagsSelect from '../TagsSelect';
 import i18n from '-/services/i18n';
 import { extractFileName, extractDirectoryName } from '-/utils/paths';
 import PlatformIO from '-/services/platform-io';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   open: boolean;
   fullScreen: boolean;
   selectedEntries: Array<any>;
   onClose: (clearSelection?: boolean) => void;
-  addTags: (paths: Array<string>, tags: Array<Tag>) => void;
-  removeTags: (paths: Array<string>, tags: Array<Tag>) => void;
+  addTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
+  removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
   removeAllTags: (paths: Array<string>) => void;
 }
 
 const AddRemoveTagsDialog = (props: Props) => {
-  const [newlyAddedTags, setNewlyAddedTags] = useState<Array<Tag>>([]);
+  const [newlyAddedTags, setNewlyAddedTags] = useState<Array<TS.Tag>>([]);
 
-  const handleChange = (name: string, value: Array<Tag>, action: string) => {
+  const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
     if (action === 'remove-value') {
       const tagsToRemove: Array<string> = value.map(tag => tag.title);
       setNewlyAddedTags(

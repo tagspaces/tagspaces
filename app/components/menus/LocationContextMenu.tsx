@@ -30,17 +30,15 @@ import OpenFolderNativelyIcon from '@material-ui/icons/Launch';
 import CloseIcon from '@material-ui/icons/Close';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import {
-  actions as LocationActions,
-  Location,
-  locationType
-} from '-/reducers/locations';
+import { actions as LocationActions } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-io';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import i18n from '-/services/i18n';
 import { actions as AppActions } from '-/reducers/app';
 import { getLocationPath } from '-/utils/paths';
 import AppConfig from '-/config';
+import { TS } from '-/tagspaces.namespace';
+import { locationType } from '-/utils/misc';
 
 interface Props {
   setEditLocationDialogOpened: (open: boolean) => void;
@@ -50,7 +48,7 @@ interface Props {
     fullTextIndex: boolean,
     isCurrentLocation: boolean
   ) => void;
-  selectedLocation: Location;
+  selectedLocation: TS.Location;
   isCurrentLocation: (uuid: string) => boolean;
   moveLocationUp: (locationId: string) => void;
   moveLocationDown: (locationId: string) => void;

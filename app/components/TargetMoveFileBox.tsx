@@ -19,7 +19,7 @@
 import React from 'react';
 import { DropTarget } from 'react-dnd';
 import { withStyles } from '@material-ui/core/styles/index';
-import { Location } from '-/reducers/locations';
+import { TS } from '-/tagspaces.namespace';
 
 const styles: any = () => ({
   dropzone: {
@@ -51,7 +51,7 @@ interface Props {
   connectDropTarget: any;
   children: Object;
   path?: string;
-  location?: Location;
+  location?: TS.Location;
 }
 
 const TargetMoveFileBox = (props: Props) => {

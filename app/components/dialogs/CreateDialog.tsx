@@ -39,7 +39,7 @@ import { actions as AppActions } from '-/reducers/app';
 import AppConfig from '-/config';
 import { formatDateTime4Tag } from '-/utils/misc';
 import IOActions from '-/reducers/io-actions';
-import { FileSystemEntry } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
 
 const styles: any = () => ({
   root: {
@@ -68,7 +68,7 @@ interface Props {
   // fullScreen: boolean;
   chooseDirectoryPath: (path: string) => void;
   showNotification: (message: string, type: string, autohide: boolean) => void;
-  reflectCreateEntries: (fsEntries: Array<FileSystemEntry>) => void;
+  reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => void;
   createFileAdvanced: (
     targetPath: string,
     fileName: string,

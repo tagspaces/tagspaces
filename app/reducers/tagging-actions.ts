@@ -15,11 +15,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 import OpenLocationCode from 'open-location-code-typescript';
 import i18n from '../services/i18n';
 import { actions as AppActions } from './app';
-import { actions as TagLibraryActions, Tag, TagGroup } from './taglibrary';
+import { actions as TagLibraryActions } from './taglibrary';
 import {
   extractFileExtension,
   extractFileName,
@@ -37,13 +36,14 @@ import PlatformIO from '../services/platform-io';
 import { Pro } from '../pro';
 import GlobalSearch from '../services/search-index';
 import { getPersistTagsInSidecarFile } from './settings';
+import { TS } from '-/tagspaces.namespace';
 
 export const defaultTagLocation = OpenLocationCode.encode(51.48, 0, undefined); // default tag coordinate Greenwich
 
 const actions = {
   addTags: (
     paths: Array<string>,
-    tags: Array<Tag>,
+    tags: Array<TS.Tag>,
     updateIndex: boolean = true
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
     const { settings, taglibrary } = getState();
@@ -138,7 +138,7 @@ const actions = {
   },
   addTagsToEntry: (
     path: string,
-    tags: Array<Tag>,
+    tags: Array<TS.Tag>,
     updateIndex: boolean = true
   ) => async (dispatch: (actions: Object) => void, getState: () => any) => {
     const { settings } = getState();
@@ -282,9 +282,9 @@ const actions = {
     }
 
     function getNonExistingTags(
-      newTagsArray: Array<Tag>,
+      newTagsArray: Array<TS.Tag>,
       fileTagsArray: Array<string>,
-      sideCarTagsArray: Array<Tag>
+      sideCarTagsArray: Array<TS.Tag>
     ) {
       const newTags = [];
       for (let i = 0; i < newTagsArray.length; i += 1) {
@@ -310,7 +310,7 @@ const actions = {
    * @param newTagTitle
    * @returns {Function}
    */
-  editTagForEntry: (path: string, tag: Tag, newTagTitle: string) => async (
+  editTagForEntry: (path: string, tag: TS.Tag, newTagTitle: string) => async (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
@@ -483,7 +483,7 @@ const actions = {
       }
     }
   },
-  removeTags: (paths: Array<string>, tags: Array<Tag>) => (
+  removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => (
     dispatch: (actions: Object) => void
   ) => {
     paths.map(path => {
@@ -491,7 +491,7 @@ const actions = {
       return true;
     });
   },
-  removeTagsFromEntry: (path: string, tags: Array<Tag>) => (
+  removeTagsFromEntry: (path: string, tags: Array<TS.Tag>) => (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
@@ -663,7 +663,7 @@ const actions = {
   },
   changeTagOrder: (
     path: string,
-    tag: Tag,
+    tag: TS.Tag,
     direction: 'prev' | 'next' | 'first'
   ) => () =>
     // dispatch: (actions: Object) => void
@@ -723,7 +723,7 @@ const actions = {
     {
       // dispatch(actions.createLocation(location));
     },
-  collectTagsFromLocation: (tagGroup: TagGroup) => (
+  collectTagsFromLocation: (tagGroup: TS.TagGroup) => (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {

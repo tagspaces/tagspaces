@@ -28,19 +28,20 @@ import Select from '@material-ui/core/Select';
 import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
 import { connect } from 'react-redux';
-import { getTagGroups, Tag, TagGroup } from '-/reducers/taglibrary';
+import { getTagGroups } from '-/reducers/taglibrary';
 import i18n from '-/services/i18n';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   open: boolean;
   onClose: () => void;
-  addTag: (tag: Tag, uuid: string) => void;
+  addTag: (tag: TS.Tag, uuid: string) => void;
   fullScreen?: boolean;
-  selectedTag: Tag;
+  selectedTag: TS.Tag;
   defaultBackgroundColor?: string;
   defaultTextColor?: string;
-  tagGroups: Array<TagGroup>;
+  tagGroups: Array<TS.TagGroup>;
 }
 
 const AddTagToTagGroupDialog = (props: Props) => {

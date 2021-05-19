@@ -22,8 +22,7 @@ import { DragSource, ConnectDragPreview, ConnectDragSource } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import DragItemTypes from './DragItemTypes';
 import TagContainer from './TagContainer';
-import { TagGroup, Tag, Uuid } from '-/reducers/taglibrary';
-import { FileSystemEntry } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
 
 const boxSource = {
   beginDrag(props) {
@@ -73,20 +72,20 @@ const boxSource = {
 };
 
 interface Props {
-  tag: Tag;
-  tagGroup?: TagGroup;
-  handleTagMenu: (event: Object, tag: Tag, param: any) => void;
-  handleRemoveTag?: (event: Object, tag: Tag) => void;
+  tag: TS.Tag;
+  tagGroup?: TS.TagGroup;
+  handleTagMenu: (event: Object, tag: TS.Tag, param: any) => void;
+  handleRemoveTag?: (event: Object, tag: TS.Tag) => void;
   isDragging?: boolean;
   tagMode?: 'default' | 'display' | 'remove';
   entryPath?: string;
-  addTags?: (paths: Array<string>, tags: Array<Tag>) => void;
-  addTag?: (tag: Tag, parentTagGroupUuid: Uuid) => void;
+  addTags?: (paths: Array<string>, tags: Array<TS.Tag>) => void;
+  addTag?: (tag: TS.Tag, parentTagGroupUuid: TS.Uuid) => void;
   moveTag?: () => void;
   connectDragSource?: ConnectDragSource;
   connectDragPreview?: ConnectDragPreview;
   deleteIcon?: Object;
-  selectedEntries: Array<FileSystemEntry>;
+  selectedEntries: Array<TS.FileSystemEntry>;
 }
 
 const TagContainerDnd = (props: Props) => {

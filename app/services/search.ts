@@ -22,9 +22,8 @@ import jmespath from 'jmespath';
 import OpenLocationCode from 'open-location-code-typescript';
 import { isPlusCode } from '-/utils/misc';
 import { extractTimePeriod } from '-/utils/dates';
-import { Tag } from '-/reducers/taglibrary';
 import { Pro } from '../pro';
-import { FileSystemEntry } from './utils-io';
+import { TS } from '-/tagspaces.namespace';
 
 // export type FileTypeGroups = 'images' | 'notes' | 'documents' | 'audio' | 'video' | 'archives';
 
@@ -52,29 +51,6 @@ export const FileTypeGroups = {
   folders: ['folders'],
   files: ['files'],
   untagged: ['untagged']
-};
-
-export type SearchQuery = {
-  uuid?: string; // for saved searches
-  title?: string; // for saved searches
-  // creationDate?: number; // for saved searches TODO rethink if this needed ?
-  textQuery?: string;
-  fileTypes?: Array<string>;
-  tagsAND?: Array<Tag>;
-  tagsOR?: Array<Tag>;
-  tagsNOT?: Array<Tag>;
-  lastModified?: string;
-  fileSize?: string;
-  searchBoxing?: 'location' | 'folder' | 'global';
-  searchType?: 'fussy' | 'semistrict' | 'strict';
-  forceIndexing?: boolean;
-  currentDirectory?: string;
-  tagTimePeriodFrom?: number | null;
-  tagTimePeriodTo?: number | null;
-  tagPlaceLat?: number | null;
-  tagPlaceLong?: number | null;
-  tagPlaceRadius?: number | null;
-  maxSearchResults?: number;
 };
 
 // id, name, isFile, tags, extension, size, lmdt, path
@@ -150,7 +126,7 @@ const fuseOptions = {
 // filters for all AND and NOT tags. The Pro version can pipe the result into an additional filter for extension instead of tags.title.
 // The final string for the tag search should look like this:
 // index[? tags[? title=='ORTag1' || title=='ORTag2']] | [? tags[? title=='ANDTag1']] | [? tags[? title=='ANDTag2']] | [?!(tags[? title=='NOTTag1'])] | [?!(tags[? title=='NOTTag2'])] | extensionFilter
-function constructjmespathQuery(searchQuery: SearchQuery): string {
+function constructjmespathQuery(searchQuery: TS.SearchQuery): string {
   let jmespathQuery = '';
   const ANDtagsExist = searchQuery.tagsAND && searchQuery.tagsAND.length >= 1;
   const ORtagsExist = searchQuery.tagsOR && searchQuery.tagsOR.length >= 1;
@@ -242,7 +218,7 @@ function prepareIndex(index: Array<Object>) {
     let toTime = null;
     if (tags && tags.length) {
       tags.map(tag => {
-        const enhancedTag: Tag = {
+        const enhancedTag: TS.Tag = {
           ...tag
         };
         try {
@@ -306,9 +282,9 @@ function setOriginTitle(results: Array<Object>) {
 
 export default class Search {
   static searchLocationIndex = (
-    locationContent: Array<FileSystemEntry>,
-    searchQuery: SearchQuery
-  ): Promise<Array<FileSystemEntry> | []> =>
+    locationContent: Array<TS.FileSystemEntry>,
+    searchQuery: TS.SearchQuery
+  ): Promise<Array<TS.FileSystemEntry> | []> =>
     new Promise(resolve => {
       console.time('searchtime');
       const jmespathQuery = constructjmespathQuery(searchQuery);

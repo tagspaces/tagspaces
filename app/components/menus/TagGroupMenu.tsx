@@ -35,29 +35,28 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { TagGroup } from '-/reducers/taglibrary';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import { getMaxSearchResults } from '-/reducers/settings';
 import { actions as AppActions } from '-/reducers/app';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
-import { SearchQuery } from '-/services/search';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   classes?: any;
   anchorEl: Element;
   open: boolean;
   onClose: () => void;
-  selectedTagGroupEntry: TagGroup;
+  selectedTagGroupEntry: TS.TagGroup;
   showCreateTagsDialog: () => void;
   showDeleteTagGroupDialog: () => void;
   showEditTagGroupDialog: () => void;
   moveTagGroupUp: (tagGroupId: string) => void;
   moveTagGroupDown: (tagGroupId: string) => void;
   sortTagGroup: (tagGroupId: string) => void;
-  collectTagsFromLocation: (tagGroup: TagGroup) => void;
+  collectTagsFromLocation: (tagGroup: TS.TagGroup) => void;
   handleCloseTagGroupMenu: () => void;
-  searchLocationIndex: (searchQuery: SearchQuery) => void;
+  searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
   openSearchPanel: () => void;
   maxSearchResults: number;
 }

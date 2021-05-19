@@ -27,7 +27,6 @@ import {
 import {
   copyFilesPromise,
   enhanceEntry,
-  FileSystemEntry,
   loadJSONString,
   renameFilesPromise
 } from '-/services/utils-io';
@@ -36,6 +35,7 @@ import { Pro } from '../pro';
 import TaggingActions from './tagging-actions';
 import PlatformIO from '-/services/platform-io';
 import AppConfig from '-/config';
+import { TS } from '-/tagspaces.namespace';
 
 const actions = {
   extractContent: (
@@ -233,7 +233,7 @@ const actions = {
           const result = event.currentTarget
             ? event.currentTarget.result
             : event.target.result;
-          const fsEntry: FileSystemEntry = await PlatformIO.saveBinaryFilePromise(
+          const fsEntry: TS.FileSystemEntry = await PlatformIO.saveBinaryFilePromise(
             fileTargetPath,
             result,
             true,
@@ -346,7 +346,7 @@ const actions = {
                       true,
                       onUploadProgress
                     )
-                      .then((fsEntry: FileSystemEntry) => {
+                      .then((fsEntry: TS.FileSystemEntry) => {
                         // handle meta files
                         if (fileType === 'meta') {
                           try {
@@ -392,9 +392,9 @@ const actions = {
       });
       Promise.all(jobsPromises)
         .then(filesProm => {
-          const arrFiles: Array<FileSystemEntry> = [];
-          const arrMeta: Array<FileSystemEntry> = [];
-          const arrThumb: Array<FileSystemEntry> = [];
+          const arrFiles: Array<TS.FileSystemEntry> = [];
+          const arrMeta: Array<TS.FileSystemEntry> = [];
+          const arrThumb: Array<TS.FileSystemEntry> = [];
 
           filesProm.map(file => {
             if (file) {
@@ -421,7 +421,7 @@ const actions = {
 
             // Enhance entries
             resolve(
-              arrFiles.map((file: FileSystemEntry) => {
+              arrFiles.map((file: TS.FileSystemEntry) => {
                 const metaFilePath = getMetaFileLocationForFile(
                   file.path,
                   AppConfig.dirSeparator
