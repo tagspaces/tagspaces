@@ -16,7 +16,7 @@
  *
  */
 
-import { getLocation, getLocations, locationType } from './locations';
+import { getLocation, getLocations } from './locations';
 import { createDirectoryIndex } from '-/services/utils-io';
 import { Pro } from '../pro';
 import {
@@ -32,6 +32,7 @@ import PlatformIO from '../services/platform-io';
 import GlobalSearch from '../services/search-index';
 import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
+import { locationType } from '-/utils/misc';
 
 export const types = {
   SET_SEARCH_QUERY: 'SET_SEARCH_QUERY',

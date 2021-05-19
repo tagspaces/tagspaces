@@ -466,11 +466,7 @@ const EntryProperties = (props: Props) => {
     }
   };
 
-  const handleChange = (
-    name: string,
-    value: Array<TS.Tag>,
-    action: string
-  ) => {
+  const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
     if (action === 'remove-value') {
       if (!value) {
         // no tags left in the select element

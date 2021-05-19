@@ -17,7 +17,7 @@
  */
 
 import uuidv1 from 'uuid';
-import { immutablySwapItems } from '-/utils/misc';
+import { immutablySwapItems, locationType } from '-/utils/misc';
 import { actions as AppActions } from '-/reducers/app';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-io';
@@ -32,43 +32,9 @@ export const types = {
   REMOVE_LOCATION: 'APP/REMOVE_LOCATION'
 };
 
-export const locationType = {
-  TYPE_LOCAL: '0',
-  TYPE_CLOUD: '1',
-  TYPE_AMPLIFY: '2'
-};
-
-/* export type Location = {
-  uuid: string;
-  newuuid?: string;
-  name: string;
-  type: string;
-  accessKeyId?: string;
-  secretAccessKey?: string;
-  sessionToken?: string;
-  bucketName?: string;
-  region?: string;
-  paths?: Array<string>; // deprecated
-  path?: string;
-  endpointURL?: string;
-  children?: Array<any>;
-  perspective?: string; // id of the perspective
-  creationDate?: string;
-  isDefault: boolean;
-  isReadOnly?: boolean;
-  isNotEditable?: boolean;
-  watchForChanges?: boolean;
-  persistIndex?: boolean;
-  fullTextIndex?: boolean;
-  maxIndexAge?: number;
-}; */
-
 export const initialState = [];
 
-export default (
-  state: Array<TS.Location> = initialState,
-  action: any
-) => {
+export default (state: Array<TS.Location> = initialState, action: any) => {
   switch (action.type) {
     case types.ADD_LOCATION: {
       if (action.location.isDefault) {
@@ -182,10 +148,9 @@ export const actions = {
       );
     });
   },
-  addLocation: (
-    location: TS.Location,
-    openAfterCreate: boolean = true
-  ) => (dispatch: (actions: Object) => void) => {
+  addLocation: (location: TS.Location, openAfterCreate: boolean = true) => (
+    dispatch: (actions: Object) => void
+  ) => {
     dispatch(actions.createLocation(location));
     if (openAfterCreate) {
       dispatch(AppActions.openLocation(location));
@@ -221,10 +186,9 @@ export const actions = {
     type: types.MOVE_DOWN_LOCATION,
     uuid
   }),
-  editLocation: (
-    location: TS.Location,
-    openAfterEdit: boolean = true
-  ) => (dispatch: (actions: Object) => void) => {
+  editLocation: (location: TS.Location, openAfterEdit: boolean = true) => (
+    dispatch: (actions: Object) => void
+  ) => {
     dispatch(actions.changeLocation(location));
     if (PlatformIO.haveObjectStoreSupport()) {
       // disableObjectStoreSupport to revoke objectStoreAPI cached object
@@ -264,8 +228,7 @@ export const actions = {
 };
 
 // Selectors
-export const getLocations = (state: any): Array<TS.Location> =>
-  state.locations;
+export const getLocations = (state: any): Array<TS.Location> => state.locations;
 export const getLocation = (
   state: any,
   locationId: string

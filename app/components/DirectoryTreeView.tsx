@@ -19,13 +19,13 @@
 import React, { useState, forwardRef, useImperativeHandle, Ref } from 'react';
 import Table from 'rc-table';
 import FolderIcon from '@material-ui/icons/FolderOpen';
-import { locationType } from '-/reducers/locations';
 import DragItemTypes from '-/components/DragItemTypes';
 import AppConfig from '-/config';
 import PlatformIO from '-/services/platform-io';
 import TargetTableMoveFileBox from '-/components/TargetTableMoveFileBox';
 import { getLocationPath } from '-/utils/paths';
 import { TS } from '-/tagspaces.namespace';
+import { locationType } from '-/utils/misc';
 
 interface Props {
   classes: any;
@@ -190,10 +190,7 @@ const DirectoryTreeView = forwardRef(
       }
     ];
 
-    const loadSubDirectories = (
-      location: TS.Location,
-      deepLevel: number
-    ) => {
+    const loadSubDirectories = (location: TS.Location, deepLevel: number) => {
       const subFolder = {
         ...(location.accessKeyId && { accessKeyId: location.accessKeyId }),
         ...(location.bucketName && { bucketName: location.bucketName }),

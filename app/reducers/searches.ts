@@ -29,10 +29,7 @@ export const types = {
   REMOVE_SEARCH: 'SEARCH/REMOVE_SEARCH'
 };
 
-export default (
-  state: Array<TS.SearchQuery> = initialState,
-  action: any
-) => {
+export default (state: Array<TS.SearchQuery> = initialState, action: any) => {
   switch (action.type) {
     case types.ADD_SEARCH: {
       return [

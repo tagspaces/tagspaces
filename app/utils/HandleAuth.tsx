@@ -15,14 +15,8 @@ import { TS } from '-/tagspaces.namespace';
 interface Props {
   loggedIn: (user: CognitoUserInterface) => void;
   initApp: () => void;
-  addLocations: (
-    locations: Array<TS.Location>,
-    override: boolean
-  ) => void;
-  importTagGroups: (
-    tagGroups: Array<TS.TagGroup>,
-    replace: boolean
-  ) => void;
+  addLocations: (locations: Array<TS.Location>, override: boolean) => void;
+  importTagGroups: (tagGroups: Array<TS.TagGroup>, replace: boolean) => void;
 }
 const HandleAuth = React.memo((props: Props) => {
   const username = useRef(undefined);

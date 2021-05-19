@@ -28,7 +28,7 @@ import {
   getKeyBindingObject,
   isDesktopMode
 } from '-/reducers/settings';
-import { sortByCriteria } from '-/utils/misc';
+import { locationType, sortByCriteria } from '-/utils/misc';
 import styles from './styles.css';
 import FileMenu from '-/components/menus/FileMenu';
 import DirectoryMenu from '-/components/menus/DirectoryMenu';
@@ -54,7 +54,7 @@ import CellContent from './CellContent';
 import MainToolbar from './MainToolbar';
 import SortingMenu from './SortingMenu';
 import GridOptionsMenu from './GridOptionsMenu';
-import { getLocation, locationType } from '-/reducers/locations';
+import { getLocation } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-io';
 import { getLocationPath } from '-/utils/paths';
 import GridPagination from '-/perspectives/grid-perspective/components/GridPagination';
@@ -129,9 +129,9 @@ const GridPerspective = (props: Props) => {
     optionsContextMenuAnchorEl,
     setOptionsContextMenuAnchorEl
   ] = useState<null | HTMLElement>(null);
-  const [isAddTagDialogOpened, setIsAddTagDialogOpened] = useState<
-    TS.Tag
-  >(undefined);
+  const [isAddTagDialogOpened, setIsAddTagDialogOpened] = useState<TS.Tag>(
+    undefined
+  );
   const [sortBy, setSortBy] = useState<string>(
     settings && settings.sortBy ? settings.sortBy : 'byName'
   );

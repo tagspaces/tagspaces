@@ -48,15 +48,9 @@ interface Props {
 }
 
 const AddRemoveTagsDialog = (props: Props) => {
-  const [newlyAddedTags, setNewlyAddedTags] = useState<Array<TS.Tag>>(
-    []
-  );
+  const [newlyAddedTags, setNewlyAddedTags] = useState<Array<TS.Tag>>([]);
 
-  const handleChange = (
-    name: string,
-    value: Array<TS.Tag>,
-    action: string
-  ) => {
+  const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
     if (action === 'remove-value') {
       const tagsToRemove: Array<string> = value.map(tag => tag.title);
       setNewlyAddedTags(

@@ -1,7 +1,4 @@
-import {
-  loadMetaDataPromise,
-  saveMetaDataPromise
-} from '-/services/utils-io';
+import { loadMetaDataPromise, saveMetaDataPromise } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 
 // eslint-disable-next-line import/prefer-default-export

@@ -32,7 +32,6 @@ import CloudLocationIcon from '@material-ui/icons/CloudQueue';
 import DefaultLocationIcon from '@material-ui/icons/Highlight';
 import { Progress } from 'aws-sdk/clients/s3';
 import styles from './SidePanels.css';
-import { locationType } from '-/reducers/locations';
 import {
   actions as AppActions,
   getCurrentLocationId,
@@ -51,6 +50,7 @@ import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import LocationContextMenu from '-/components/menus/LocationContextMenu';
 import { getLocationPath } from '-/utils/paths';
 import { TS } from '-/tagspaces.namespace';
+import { locationType } from '-/utils/misc';
 
 interface Props {
   classes: any;

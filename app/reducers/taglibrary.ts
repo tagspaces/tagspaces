@@ -43,10 +43,7 @@ export const types = {
   MOVE_TAG: 'MOVE_TAG'
 };
 
-export default (
-  state: Array<TS.TagGroup> = defaultTagLibrary,
-  action: any
-) => {
+export default (state: Array<TS.TagGroup> = defaultTagLibrary, action: any) => {
   switch (action.type) {
     case types.CREATE_TAGGROUP: {
       return [
@@ -513,11 +510,7 @@ export const actions = {
     tag,
     uuid: parentTagGroupUuid
   }),
-  editTag: (
-    tag: TS.Tag,
-    parentTagGroupUuid: TS.Uuid,
-    origTitle: string
-  ) => ({
+  editTag: (tag: TS.Tag, parentTagGroupUuid: TS.Uuid, origTitle: string) => ({
     type: types.UPDATE_TAG,
     tag,
     uuid: parentTagGroupUuid,

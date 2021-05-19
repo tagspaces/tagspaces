@@ -18,7 +18,7 @@
 
 import uuidv1 from 'uuid';
 import pathLib from 'path';
-import { getLocation, locationType, getDefaultLocationId } from './locations';
+import { getLocation, getDefaultLocationId } from './locations';
 import PlatformIO from '../services/platform-io';
 import AppConfig from '../config';
 import {
@@ -48,7 +48,8 @@ import {
   getURLParameter,
   clearURLParam,
   updateHistory,
-  clearAllURLParams
+  clearAllURLParams,
+  locationType
 } from '-/utils/misc';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
@@ -1934,10 +1935,7 @@ export const actions = {
       const directoryPath = dPath && decodeURIComponent(dPath);
       const entryPath = ePath && decodeURIComponent(ePath);
       // Check for relative paths
-      const targetLocation: TS.Location = getLocation(
-        getState(),
-        locationId
-      );
+      const targetLocation: TS.Location = getLocation(getState(), locationId);
       if (targetLocation) {
         let openLocationTimer = 1000;
         const isCloudLocation = targetLocation.type === locationType.TYPE_CLOUD;

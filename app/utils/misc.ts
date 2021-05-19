@@ -15,9 +15,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-import { locationType } from '-/reducers/locations';
 import { cleanFileName, getLocationPath } from '-/utils/paths';
 import { TS } from '-/tagspaces.namespace';
+
+export const locationType = {
+  TYPE_LOCAL: '0',
+  TYPE_CLOUD: '1',
+  TYPE_AMPLIFY: '2'
+};
 
 /** Returns true is a string is plus code e.g. 8FWH4HVG+3V 8FWH4HVG+ 8FWH4H+ */
 export function isPlusCode(plusCode: string): boolean {

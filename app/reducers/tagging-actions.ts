@@ -310,11 +310,10 @@ const actions = {
    * @param newTagTitle
    * @returns {Function}
    */
-  editTagForEntry: (
-    path: string,
-    tag: TS.Tag,
-    newTagTitle: string
-  ) => async (dispatch: (actions: Object) => void, getState: () => any) => {
+  editTagForEntry: (path: string, tag: TS.Tag, newTagTitle: string) => async (
+    dispatch: (actions: Object) => void,
+    getState: () => any
+  ) => {
     const { settings, taglibrary } = getState();
     if (
       tag.functionality === 'geoTagging' ||

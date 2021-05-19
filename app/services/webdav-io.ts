@@ -325,7 +325,10 @@ export default class WebDAVIO {
         dav.resourcetype._xmlvalue[0].localName === 'collection')
     );
 
-  getEntryMeta = (eentry: TS.FileSystemEntry, metaPath: string): Promise<Object> =>
+  getEntryMeta = (
+    eentry: TS.FileSystemEntry,
+    metaPath: string
+  ): Promise<Object> =>
     new Promise(resolve => {
       if (eentry.isFile) {
         this.loadTextFilePromise(metaPath)

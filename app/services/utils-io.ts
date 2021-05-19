@@ -36,8 +36,9 @@ import i18n from '../services/i18n';
 import versionMeta from '../version.json';
 import { getThumbnailURLPromise } from '-/services/thumbsgenerator';
 import { OpenedEntry, actions as AppActions } from '-/reducers/app';
-import { locationType, getLocation } from '-/reducers/locations';
+import { getLocation } from '-/reducers/locations';
 import { TS } from '-/tagspaces.namespace';
+import { locationType } from '-/utils/misc';
 
 export function enhanceDirectoryContent(
   dirEntries,

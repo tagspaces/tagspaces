@@ -59,10 +59,7 @@ interface Props {
   openURLExternally: (path: string) => void;
   toggleOpenLinkDialog: () => void;
   setDefaultLocations: () => void;
-  addLocation: (
-    location: TS.Location,
-    openAfterCreate?: boolean
-  ) => void;
+  addLocation: (location: TS.Location, openAfterCreate?: boolean) => void;
   addLocations: (locations: Array<TS.Location>) => void;
   editLocation: () => void;
   removeLocation: (location: TS.Location) => void;
@@ -78,9 +75,7 @@ type SubFolder = {
 
 const LocationManager = (props: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [selectedLocation, setSelectedLocation] = useState<TS.Location>(
-    null
-  );
+  const [selectedLocation, setSelectedLocation] = useState<TS.Location>(null);
   const [
     isCreateLocationDialogOpened,
     setCreateLocationDialogOpened

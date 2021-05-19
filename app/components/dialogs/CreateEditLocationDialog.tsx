@@ -35,13 +35,13 @@ import { Tooltip, Typography } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
 import Input from '@material-ui/core/Input';
 import i18n from '-/services/i18n';
-import { locationType } from '-/reducers/locations';
 import { Pro } from '-/pro';
 import ObjectStoreForm from './ObjectStoreForm';
 import LocalForm from './LocalForm';
 import useFirstRender from '-/utils/useFirstRender';
 import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
+import { locationType } from '-/utils/misc';
 
 const styles: any = theme => ({
   root: {

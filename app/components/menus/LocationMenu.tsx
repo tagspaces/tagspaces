@@ -30,9 +30,10 @@ import { withTheme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import i18n from '-/services/i18n';
-import { getLocations, locationType } from '-/reducers/locations';
+import { getLocations } from '-/reducers/locations';
 import { actions as AppActions, getCurrentLocationId } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
+import { locationType } from '-/utils/misc';
 
 interface Props {
   currentLocationId: string | null;
@@ -56,8 +57,7 @@ const LocationMenu = (props: Props) => {
   let currentLocation;
   if (props.currentLocationId && props.locations) {
     currentLocation = props.locations.find(
-      (location: TS.Location) =>
-        location.uuid === props.currentLocationId
+      (location: TS.Location) => location.uuid === props.currentLocationId
     );
   }
 

@@ -670,7 +670,10 @@ export default class CordovaIO {
         });
     });
 
-  getEntryMeta = (eentry: TS.FileSystemEntry, metaPath: string): Promise<any> => {
+  getEntryMeta = (
+    eentry: TS.FileSystemEntry,
+    metaPath: string
+  ): Promise<any> => {
     if (eentry.isFile) {
       // const metaFilePath = getMetaFileLocationForFile(eentry.path);
       return this.loadTextFilePromise(metaPath).then(result => {
