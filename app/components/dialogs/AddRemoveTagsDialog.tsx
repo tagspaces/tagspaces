@@ -15,8 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-/* global TagSpaces */
-/* eslint no-undef: "error" */
+
 import React, { useState } from 'react';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Button from '@material-ui/core/Button';
@@ -36,25 +35,26 @@ import TagsSelect from '../TagsSelect';
 import i18n from '-/services/i18n';
 import { extractFileName, extractDirectoryName } from '-/utils/paths';
 import PlatformIO from '-/services/platform-io';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   open: boolean;
   fullScreen: boolean;
   selectedEntries: Array<any>;
   onClose: (clearSelection?: boolean) => void;
-  addTags: (paths: Array<string>, tags: Array<TagSpaces.Tag>) => void;
-  removeTags: (paths: Array<string>, tags: Array<TagSpaces.Tag>) => void;
+  addTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
+  removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
   removeAllTags: (paths: Array<string>) => void;
 }
 
 const AddRemoveTagsDialog = (props: Props) => {
-  const [newlyAddedTags, setNewlyAddedTags] = useState<Array<TagSpaces.Tag>>(
+  const [newlyAddedTags, setNewlyAddedTags] = useState<Array<TS.Tag>>(
     []
   );
 
   const handleChange = (
     name: string,
-    value: Array<TagSpaces.Tag>,
+    value: Array<TS.Tag>,
     action: string
   ) => {
     if (action === 'remove-value') {

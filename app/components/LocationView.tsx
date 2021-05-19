@@ -15,8 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-/* global TagSpaces */
-/* eslint no-undef: "error" */
+
 import React, { useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -48,16 +47,16 @@ import IOActions from '../reducers/io-actions';
 import DirectoryTreeView, {
   DirectoryTreeViewRef
 } from '-/components/DirectoryTreeView';
-import { FileSystemEntry } from '-/services/utils-io';
 import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import LocationContextMenu from '-/components/menus/LocationContextMenu';
 import { getLocationPath } from '-/utils/paths';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   classes: any;
-  location: TagSpaces.Location;
+  location: TS.Location;
   currentLocationId: string;
-  openLocation: (location: TagSpaces.Location) => void;
+  openLocation: (location: TS.Location) => void;
   loadDirectoryContent: (path: string) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   hideDrawer: () => void;
@@ -72,17 +71,17 @@ interface Props {
     files: Array<string>,
     destination: string,
     onUploadProgress?: (progress: Progress, response: any) => void
-  ) => Promise<Array<FileSystemEntry>>;
+  ) => Promise<Array<TS.FileSystemEntry>>;
   onUploadProgress: (progress: Progress, response: any) => void;
-  reflectCreateEntries: (fsEntries: Array<FileSystemEntry>) => void;
+  reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => void;
   toggleUploadDialog: () => void;
   moveFiles: (files: Array<string>, destination: string) => void;
   showUnixHiddenEntries: boolean;
   setEditLocationDialogOpened: (open: boolean) => void;
   setDeleteLocationDialogOpened: (open: boolean) => void;
-  selectedLocation: TagSpaces.Location;
-  setSelectedLocation: (loc: TagSpaces.Location) => void;
-  changeLocation: (loc: TagSpaces.Location) => void;
+  selectedLocation: TS.Location;
+  setSelectedLocation: (loc: TS.Location) => void;
+  changeLocation: (loc: TS.Location) => void;
 }
 
 const LocationView = React.memo((props: Props) => {
@@ -181,7 +180,7 @@ const LocationView = React.memo((props: Props) => {
               props.resetProgress();
               props
                 .uploadFiles(arrPath, targetPath, props.onUploadProgress)
-                .then((fsEntries: Array<FileSystemEntry>) => {
+                .then((fsEntries: Array<TS.FileSystemEntry>) => {
                   props.reflectCreateEntries(fsEntries);
                   return true;
                 })

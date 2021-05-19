@@ -59,9 +59,10 @@ import { normalizePath, extractShortDirectoryName } from '-/utils/paths';
 import PlatformIO from '../services/platform-io';
 import LoadingLazy from '../components/LoadingLazy';
 import { Pro } from '../pro';
-import { enhanceOpenedEntry, FileSystemEntry } from '-/services/utils-io';
+import { enhanceOpenedEntry } from '-/services/utils-io';
 import AppConfig from '-/config';
 import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
+import { TS } from '-/tagspaces.namespace';
 
 const GridPerspective = React.lazy(() =>
   import(
@@ -218,7 +219,7 @@ interface Props {
   renameFile: () => void;
   openDirectory: () => void;
   showInFileManager: () => void;
-  openFsEntry: (fsEntry: FileSystemEntry) => void;
+  openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   reflectCreateEntry: (path: string, isFile: boolean) => void;
   loadDirectoryContent: (path: string) => void;
   loadParentDirectoryContent: () => void;

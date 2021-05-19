@@ -15,10 +15,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-/* global TagSpaces */
-/* eslint no-undef: "error" */
 import { locationType } from '-/reducers/locations';
 import { cleanFileName, getLocationPath } from '-/utils/paths';
+import { TS } from '-/tagspaces.namespace';
 
 /** Returns true is a string is plus code e.g. 8FWH4HVG+3V 8FWH4HVG+ 8FWH4H+ */
 export function isPlusCode(plusCode: string): boolean {
@@ -156,7 +155,7 @@ export function clearURLParam(paramName) {
 }
 
 export function updateHistory(
-  currentLocation: TagSpaces.Location,
+  currentLocation: TS.Location,
   currentDirectory: string,
   entryPath?: string
 ) {

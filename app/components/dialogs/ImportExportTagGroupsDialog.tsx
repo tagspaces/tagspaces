@@ -15,8 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-/* global TagSpaces */
-/* eslint no-undef: "error" */
+
 import React, { useRef, useState } from 'react';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
@@ -34,6 +33,7 @@ import TagContainer from '../TagContainer';
 import i18n from '-/services/i18n';
 import { isFunc } from '-/utils/misc';
 import AppConfig from '-/config';
+import { TS } from '-/tagspaces.namespace';
 
 const styles: any = {
   root: {
@@ -126,7 +126,7 @@ const ImportExportTagGroupsDialog = (props: Props) => {
       </FormControl>
       <TagGroupContainer taggroup={tagGroup}>
         {tagGroup.children &&
-          tagGroup.children.map((tag: TagSpaces.Tag) => (
+          tagGroup.children.map((tag: TS.Tag) => (
             <TagContainer tag={tag} tagMode="display" />
           ))}
       </TagGroupContainer>

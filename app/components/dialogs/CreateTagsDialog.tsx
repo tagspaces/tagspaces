@@ -15,8 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-/* global TagSpaces */
-/* eslint no-undef: "error" */
+
 import React, { useEffect, useState } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -28,13 +27,14 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
 import i18n from '-/services/i18n';
 import useFirstRender from '-/utils/useFirstRender';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   open: boolean;
   onClose: () => void;
   addTag: (tags: string, uuid: string) => void;
   fullScreen?: boolean;
-  selectedTagGroupEntry: TagSpaces.TagGroup;
+  selectedTagGroupEntry: TS.TagGroup;
 }
 
 const CreateTagsDialog = (props: Props) => {

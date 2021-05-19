@@ -94,9 +94,9 @@ import { CustomDragLayer } from '-/components/CustomDragLayer';
 import IOActions from '-/reducers/io-actions';
 import FileUploadDialog from '-/components/dialogs/FileUploadDialog';
 import ProgressDialog from '-/components/dialogs/ProgressDialog';
-import { FileSystemEntry } from '-/services/utils-io';
 import useEventListener from '-/utils/useEventListener';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import { TS } from '-/tagspaces.namespace';
 
 const initialSplitSize = 44;
 const drawerWidth = 300;
@@ -190,7 +190,7 @@ interface Props {
   toggleOnboardingDialog: () => void; // needed by electron-menus
   // setLastSelectedEntry: (path: string) => void; // needed by electron-menus
   setSelectedEntries: (selectedEntries: Array<Object>) => void; // needed by electron-menus
-  openFsEntry: (fsEntry: FileSystemEntry) => void; // needed by electron-menus
+  openFsEntry: (fsEntry: TS.FileSystemEntry) => void; // needed by electron-menus
   openURLExternally: (url: string, skipConfirm: boolean) => void;
   openNextFile: (path?: string) => void; // needed by electron-menus
   openPrevFile: (path?: string) => void; // needed by electron-menus
@@ -217,7 +217,7 @@ interface Props {
     notificationType?: string,
     autohide?: boolean
   ) => void;
-  reflectCreateEntries: (fsEntries: Array<FileSystemEntry>) => void;
+  reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => void;
   uploadFilesAPI: (
     files: Array<File>,
     destination: string,

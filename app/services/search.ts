@@ -16,15 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-/* global TagSpaces */
-/* eslint no-undef: "error" */
+
 import Fuse from 'fuse.js';
 import jmespath from 'jmespath';
 import OpenLocationCode from 'open-location-code-typescript';
 import { isPlusCode } from '-/utils/misc';
 import { extractTimePeriod } from '-/utils/dates';
 import { Pro } from '../pro';
-import { FileSystemEntry } from './utils-io';
+import { TS } from '-/tagspaces.namespace';
 
 // export type FileTypeGroups = 'images' | 'notes' | 'documents' | 'audio' | 'video' | 'archives';
 
@@ -127,7 +126,7 @@ const fuseOptions = {
 // filters for all AND and NOT tags. The Pro version can pipe the result into an additional filter for extension instead of tags.title.
 // The final string for the tag search should look like this:
 // index[? tags[? title=='ORTag1' || title=='ORTag2']] | [? tags[? title=='ANDTag1']] | [? tags[? title=='ANDTag2']] | [?!(tags[? title=='NOTTag1'])] | [?!(tags[? title=='NOTTag2'])] | extensionFilter
-function constructjmespathQuery(searchQuery: TagSpaces.SearchQuery): string {
+function constructjmespathQuery(searchQuery: TS.SearchQuery): string {
   let jmespathQuery = '';
   const ANDtagsExist = searchQuery.tagsAND && searchQuery.tagsAND.length >= 1;
   const ORtagsExist = searchQuery.tagsOR && searchQuery.tagsOR.length >= 1;
@@ -219,7 +218,7 @@ function prepareIndex(index: Array<Object>) {
     let toTime = null;
     if (tags && tags.length) {
       tags.map(tag => {
-        const enhancedTag: TagSpaces.Tag = {
+        const enhancedTag: TS.Tag = {
           ...tag
         };
         try {
@@ -283,9 +282,9 @@ function setOriginTitle(results: Array<Object>) {
 
 export default class Search {
   static searchLocationIndex = (
-    locationContent: Array<FileSystemEntry>,
-    searchQuery: TagSpaces.SearchQuery
-  ): Promise<Array<FileSystemEntry> | []> =>
+    locationContent: Array<TS.FileSystemEntry>,
+    searchQuery: TS.SearchQuery
+  ): Promise<Array<TS.FileSystemEntry> | []> =>
     new Promise(resolve => {
       console.time('searchtime');
       const jmespathQuery = constructjmespathQuery(searchQuery);

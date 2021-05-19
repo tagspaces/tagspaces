@@ -15,11 +15,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-/* global TagSpaces */
-/* eslint no-undef: "error" */
+
 import React from 'react';
 import { DropTarget } from 'react-dnd';
 import { withStyles } from '@material-ui/core/styles/index';
+import { TS } from '-/tagspaces.namespace';
 
 const styles: any = () => ({
   dropzone: {
@@ -51,7 +51,7 @@ interface Props {
   connectDropTarget: any;
   children: Object;
   path?: string;
-  location?: TagSpaces.Location;
+  location?: TS.Location;
 }
 
 const TargetMoveFileBox = (props: Props) => {

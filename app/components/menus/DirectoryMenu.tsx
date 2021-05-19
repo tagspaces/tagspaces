@@ -15,8 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-/* global TagSpaces */
-/* eslint no-undef: "error" */
+
 import React, { useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -65,13 +64,13 @@ import {
 import IOActions from '-/reducers/io-actions';
 import TaggingActions from '-/reducers/tagging-actions';
 import {
-  FileSystemEntry,
   getAllPropertiesPromise,
   setFolderThumbnailPromise
 } from '-/services/utils-io';
 import FileUploadContainer, {
   FileUploadContainerRef
 } from '-/components/FileUploadContainer';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   open: boolean;
@@ -81,7 +80,7 @@ interface Props {
   directoryPath: string;
   loadDirectoryContent: (path: string) => void;
   openDirectory: (path: string) => void;
-  openFsEntry: (fsEntry: FileSystemEntry) => void;
+  openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   reflectCreateEntry?: (path: string, isFile: boolean) => void;
   toggleCreateFileDialog?: () => void;
   // extractContent: (config: Object) => void,
@@ -90,7 +89,7 @@ interface Props {
     destination: string,
     onUploadProgress?: (progress: Progress, response: any) => void
   ) => any;
-  reflectCreateEntries: (fsEntries: Array<FileSystemEntry>) => void;
+  reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => void;
   onUploadProgress: (progress: Progress, response: any) => void;
   switchPerspective?: (perspectiveId: string) => void;
   setCurrentDirectoryPerspective: (perspective: string) => void;
@@ -106,7 +105,7 @@ interface Props {
   resetProgress: () => void;
   addTags: (
     paths: Array<string>,
-    tags: Array<TagSpaces.Tag>,
+    tags: Array<TS.Tag>,
     updateIndex: boolean
   ) => void;
   toggleDeleteMultipleEntriesDialog: () => void;
@@ -143,7 +142,7 @@ const DirectoryMenu = (props: Props) => {
   function showProperties() {
     props.onClose();
     getAllPropertiesPromise(props.directoryPath)
-      .then((fsEntry: FileSystemEntry) => {
+      .then((fsEntry: TS.FileSystemEntry) => {
         props.openFsEntry(fsEntry);
         return true;
       })

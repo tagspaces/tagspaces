@@ -15,8 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-/* global TagSpaces */
-/* eslint no-undef: "error" */
+
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -33,13 +32,14 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import i18n from '-/services/i18n';
 import { getLocations, locationType } from '-/reducers/locations';
 import { actions as AppActions, getCurrentLocationId } from '-/reducers/app';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   currentLocationId: string | null;
   theme: any;
-  locations: Array<TagSpaces.Location>;
+  locations: Array<TS.Location>;
   menuAnchorEl?: Element;
-  openLocation: (location: TagSpaces.Location) => void;
+  openLocation: (location: TS.Location) => void;
 }
 
 const LocationMenu = (props: Props) => {
@@ -56,7 +56,7 @@ const LocationMenu = (props: Props) => {
   let currentLocation;
   if (props.currentLocationId && props.locations) {
     currentLocation = props.locations.find(
-      (location: TagSpaces.Location) =>
+      (location: TS.Location) =>
         location.uuid === props.currentLocationId
     );
   }
@@ -107,7 +107,7 @@ const LocationMenu = (props: Props) => {
           >
             {i18n.t('core:chooseLocation')}
           </ListSubHeader>
-          {props.locations.map((location: TagSpaces.Location) => (
+          {props.locations.map((location: TS.Location) => (
             <MenuItem
               data-tid="folderContainerMenuOpenLocation"
               key={location.uuid}

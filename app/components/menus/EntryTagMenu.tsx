@@ -15,8 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-/* global TagSpaces */
-/* eslint no-undef: "error" */
+
 import React, { useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -33,19 +32,20 @@ import i18n from '-/services/i18n';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { getMaxSearchResults } from '-/reducers/settings';
 import { actions as AppActions } from '-/reducers/app';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   open: boolean;
   onClose: () => void;
   anchorEl: Element | null;
-  selectedTag: TagSpaces.Tag | null;
+  selectedTag: TS.Tag | null;
   currentEntryPath: string;
-  removeTags: (paths: Array<string>, tags: Array<TagSpaces.Tag>) => void;
-  searchLocationIndex?: (searchQuery: TagSpaces.SearchQuery) => void;
+  removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
+  searchLocationIndex?: (searchQuery: TS.SearchQuery) => void;
   maxSearchResults?: number;
   openSearchPanel?: () => void;
-  setIsAddTagDialogOpened?: (tag: TagSpaces.Tag) => void;
-  toggleEditTagDialog?: (tag: TagSpaces.Tag) => void;
+  setIsAddTagDialogOpened?: (tag: TS.Tag) => void;
+  toggleEditTagDialog?: (tag: TS.Tag) => void;
   isReadOnlyMode?: boolean;
 }
 

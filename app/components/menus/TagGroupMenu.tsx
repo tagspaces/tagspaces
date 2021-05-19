@@ -15,8 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-/* global TagSpaces */
-/* eslint no-undef: "error" */
+
 import React from 'react';
 import Edit from '@material-ui/icons/Edit';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
@@ -41,22 +40,23 @@ import { Pro } from '-/pro';
 import { getMaxSearchResults } from '-/reducers/settings';
 import { actions as AppActions } from '-/reducers/app';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   classes?: any;
   anchorEl: Element;
   open: boolean;
   onClose: () => void;
-  selectedTagGroupEntry: TagSpaces.TagGroup;
+  selectedTagGroupEntry: TS.TagGroup;
   showCreateTagsDialog: () => void;
   showDeleteTagGroupDialog: () => void;
   showEditTagGroupDialog: () => void;
   moveTagGroupUp: (tagGroupId: string) => void;
   moveTagGroupDown: (tagGroupId: string) => void;
   sortTagGroup: (tagGroupId: string) => void;
-  collectTagsFromLocation: (tagGroup: TagSpaces.TagGroup) => void;
+  collectTagsFromLocation: (tagGroup: TS.TagGroup) => void;
   handleCloseTagGroupMenu: () => void;
-  searchLocationIndex: (searchQuery: TagSpaces.SearchQuery) => void;
+  searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
   openSearchPanel: () => void;
   maxSearchResults: number;
 }

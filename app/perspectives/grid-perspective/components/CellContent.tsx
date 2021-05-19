@@ -15,8 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-/* global TagSpaces */
-/* eslint no-undef: "error" */
+
 import React from 'react';
 import removeMd from 'remove-markdown';
 import classNames from 'classnames';
@@ -30,37 +29,38 @@ import UnSelectedIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import TagIcon from '@material-ui/icons/LocalOfferOutlined';
 import { formatFileSize, formatDateTime } from '-/utils/misc';
 import { extractTagsAsObjects, extractTitle } from '-/utils/paths';
-import { FileSystemEntry, findColorForFileEntry } from '-/services/utils-io';
+import { findColorForFileEntry } from '-/services/utils-io';
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagContainer from '-/components/TagContainer';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-io';
 import { AppConfig } from '-/config';
 import EntryIcon from '-/components/EntryIcon';
+import { TS } from '-/tagspaces.namespace';
 
 const maxDescriptionPreviewLength = 100;
 
 interface Props {
   selected: boolean;
-  fsEntry: FileSystemEntry;
+  fsEntry: TS.FileSystemEntry;
   entrySize: string;
   classes: any;
   theme: any;
   supportedFileTypes: Array<Object>;
   thumbnailMode: any;
   addTags: () => void;
-  addTag: (tag: TagSpaces.Tag, parentTagGroupUuid: TagSpaces.Uuid) => void;
-  openFsEntry: (fsEntry: FileSystemEntry) => void;
-  selectedEntries: Array<FileSystemEntry>;
-  selectEntry: (fsEntry: FileSystemEntry) => void;
-  deselectEntry: (fsEntry: FileSystemEntry) => void;
+  addTag: (tag: TS.Tag, parentTagGroupUuid: TS.Uuid) => void;
+  openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
+  selectedEntries: Array<TS.FileSystemEntry>;
+  selectEntry: (fsEntry: TS.FileSystemEntry) => void;
+  deselectEntry: (fsEntry: TS.FileSystemEntry) => void;
   isReadOnlyMode: boolean;
   showTags: boolean;
-  handleTagMenu: (event: Object, tag: TagSpaces.Tag, entryPath: string) => void;
+  handleTagMenu: (event: Object, tag: TS.Tag, entryPath: string) => void;
   layoutType: string;
-  handleGridContextMenu: (event: Object, fsEntry: FileSystemEntry) => void;
-  handleGridCellDblClick: (event: Object, fsEntry: FileSystemEntry) => void;
-  handleGridCellClick: (event: Object, fsEntry: FileSystemEntry) => void;
+  handleGridContextMenu: (event: Object, fsEntry: TS.FileSystemEntry) => void;
+  handleGridCellDblClick: (event: Object, fsEntry: TS.FileSystemEntry) => void;
+  handleGridCellClick: (event: Object, fsEntry: TS.FileSystemEntry) => void;
 }
 
 const CellContent = (props: Props) => {
@@ -361,7 +361,7 @@ const CellContent = (props: Props) => {
     );
   }
 
-  function renderTag(tag: TagSpaces.Tag) {
+  function renderTag(tag: TS.Tag) {
     return isReadOnlyMode ? (
       <TagContainer
         tag={tag}

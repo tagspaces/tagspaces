@@ -35,12 +35,12 @@ import i18n from '-/services/i18n';
 import AppConfig from '-/config';
 import PlatformIO from '-/services/platform-io';
 import {
-  FileSystemEntry,
   getAllPropertiesPromise,
   setFolderThumbnailPromise
 } from '-/services/utils-io';
 import { Pro } from '-/pro';
 import { extractParentDirectoryPath } from '-/utils/paths';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   anchorEl: Element;
@@ -52,7 +52,7 @@ interface Props {
   openRenameFileDialog: () => void;
   openMoveCopyFilesDialog: () => void;
   openAddRemoveTagsDialog: () => void;
-  openFsEntry: (fsEntry: FileSystemEntry) => void;
+  openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   loadDirectoryContent: (path: string) => void;
   openFileNatively: (path: string) => void;
   showInFileManager: (path: string) => void;
@@ -147,7 +147,7 @@ const FileMenu = (props: Props) => {
     props.onClose();
     if (props.selectedFilePath) {
       getAllPropertiesPromise(props.selectedFilePath)
-        .then((fsEntry: FileSystemEntry) => {
+        .then((fsEntry: TS.FileSystemEntry) => {
           props.openFsEntry(fsEntry);
           return true;
         })

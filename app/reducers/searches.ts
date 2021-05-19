@@ -15,9 +15,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-/* global TagSpaces */
-/* eslint no-undef: "error" */
+
 import { immutablySwapItems } from '-/utils/misc';
+import { TS } from '-/tagspaces.namespace';
 
 export const initialState = [];
 
@@ -30,7 +30,7 @@ export const types = {
 };
 
 export default (
-  state: Array<TagSpaces.SearchQuery> = initialState,
+  state: Array<TS.SearchQuery> = initialState,
   action: any
 ) => {
   switch (action.type) {
@@ -102,15 +102,15 @@ export default (
 };
 
 export const actions = {
-  addSearch: (search: TagSpaces.SearchQuery) => ({
+  addSearch: (search: TS.SearchQuery) => ({
     type: types.ADD_SEARCH,
     search
   }),
   addSearches: (
-    arrSearches: Array<TagSpaces.SearchQuery>,
+    arrSearches: Array<TS.SearchQuery>,
     override: boolean = true
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
-    arrSearches.forEach((newSearch: TagSpaces.SearchQuery) => {
+    arrSearches.forEach((newSearch: TS.SearchQuery) => {
       const { searches } = getState();
       const searchExist: boolean = searches.some(
         location => location.uuid === newSearch.uuid
@@ -127,7 +127,7 @@ export const actions = {
     type: types.MOVE_DOWN_SEARCH,
     uuid
   }),
-  editSearch: (search: TagSpaces.SearchQuery) => ({
+  editSearch: (search: TS.SearchQuery) => ({
     type: types.EDIT_SEARCH,
     search
   }),
@@ -142,5 +142,5 @@ export const actions = {
 };
 
 // Selectors
-export const getSearches = (state: any): Array<TagSpaces.SearchQuery> =>
+export const getSearches = (state: any): Array<TS.SearchQuery> =>
   state.searches;

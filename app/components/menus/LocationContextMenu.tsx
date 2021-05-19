@@ -15,8 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-/* global TagSpaces */
-/* eslint no-undef: "error" */
+
 import React from 'react';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -38,6 +37,7 @@ import i18n from '-/services/i18n';
 import { actions as AppActions } from '-/reducers/app';
 import { getLocationPath } from '-/utils/paths';
 import AppConfig from '-/config';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   setEditLocationDialogOpened: (open: boolean) => void;
@@ -47,7 +47,7 @@ interface Props {
     fullTextIndex: boolean,
     isCurrentLocation: boolean
   ) => void;
-  selectedLocation: TagSpaces.Location;
+  selectedLocation: TS.Location;
   isCurrentLocation: (uuid: string) => boolean;
   moveLocationUp: (locationId: string) => void;
   moveLocationDown: (locationId: string) => void;

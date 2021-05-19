@@ -15,8 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-/* global TagSpaces */
-/* eslint no-undef: "error" */
+
 import React, { useCallback, useState } from 'react';
 import uuidv1 from 'uuid';
 import { connect } from 'react-redux';
@@ -27,6 +26,7 @@ import { getAllTags } from '-/reducers/taglibrary';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import TagContainer from './TagContainer';
 import EntryTagMenu from '-/components/menus/EntryTagMenu';
+import { TS } from '-/tagspaces.namespace';
 
 const styles: any = (theme: any) => ({
   root: {
@@ -69,13 +69,13 @@ interface Props {
   dataTid?: string;
   classes?: any;
   theme?: any;
-  tags: Array<TagSpaces.Tag>;
+  tags: Array<TS.Tag>;
   label?: string;
   tagSearchType?: string;
   defaultBackgroundColor?: string;
   defaultTextColor?: string;
   handleChange?: (param1: any, param2: any, param3?: any) => void;
-  allTags?: Array<TagSpaces.Tag>;
+  allTags?: Array<TS.Tag>;
   tagMode?: 'default' | 'display' | 'remove';
   isReadOnlyMode?: boolean;
   placeholderText?: string;
@@ -93,7 +93,7 @@ const TagsSelect = (props: Props) => {
 
   function handleTagChange(
     event: Object,
-    selectedTags: Array<TagSpaces.Tag>,
+    selectedTags: Array<TS.Tag>,
     reason: string
   ) {
     if (reason === 'select-option') {
@@ -104,7 +104,7 @@ const TagsSelect = (props: Props) => {
         selectedTags.length &&
         isValidNewOption(selectedTags[selectedTags.length - 1], selectedTags)
       ) {
-        const newTag: TagSpaces.Tag = {
+        const newTag: TS.Tag = {
           id: uuidv1(),
           title: '' + selectedTags[selectedTags.length - 1],
           color: defaultBackgroundColor,
@@ -156,7 +156,7 @@ const TagsSelect = (props: Props) => {
   );
 
   const handleRemoveTag = useCallback(
-    (event, cTag: Array<TagSpaces.Tag>) => {
+    (event, cTag: Array<TS.Tag>) => {
       /* const reducedTags = [...tags];
       for (let i = 0; i < reducedTags.length; i += 1) {
         if (reducedTags[i].title === cTag.title) {
@@ -187,8 +187,8 @@ const TagsSelect = (props: Props) => {
         disableClearable
         value={tags}
         onChange={handleTagChange}
-        renderTags={(value: TagSpaces.Tag[]) =>
-          value.map((tag: TagSpaces.Tag) => (
+        renderTags={(value: TS.Tag[]) =>
+          value.map((tag: TS.Tag) => (
             <TagContainer
               key={selectedEntryPath + tag.title}
               isReadOnlyMode={props.isReadOnlyMode}

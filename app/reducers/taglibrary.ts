@@ -15,14 +15,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-/* global TagSpaces */
-/* eslint no-undef: "error" */
 import uuidv1 from 'uuid';
 import { immutablySwapItems, formatDateTime4Tag, extend } from '-/utils/misc';
 import { saveAsTextFile } from '-/services/utils-io';
 import versionMeta from '../version.json';
 import defaultTagLibrary from './taglibrary-default';
 import AppConfig from '../config';
+import { TS } from '-/tagspaces.namespace';
 
 export const types = {
   CREATE_TAGGROUP: 'CREATE_TAGGROUP',
@@ -45,7 +44,7 @@ export const types = {
 };
 
 export default (
-  state: Array<TagSpaces.TagGroup> = defaultTagLibrary,
+  state: Array<TS.TagGroup> = defaultTagLibrary,
   action: any
 ) => {
   switch (action.type) {
@@ -444,27 +443,27 @@ export default (
 };
 
 export const actions = {
-  createTagGroup: (entry: TagSpaces.TagGroup) => ({
+  createTagGroup: (entry: TS.TagGroup) => ({
     type: types.CREATE_TAGGROUP,
     entry
   }),
-  editTagGroup: (entry: TagSpaces.TagGroup) => ({
+  editTagGroup: (entry: TS.TagGroup) => ({
     type: types.UPDATE_TAGGROUP,
     entry
   }),
-  removeTagGroup: (parentTagGroupUuid: TagSpaces.Uuid) => ({
+  removeTagGroup: (parentTagGroupUuid: TS.Uuid) => ({
     type: types.REMOVE_TAGGROUP,
     uuid: parentTagGroupUuid
   }),
-  addTagGroup: (entry: TagSpaces.TagGroup) => ({
+  addTagGroup: (entry: TS.TagGroup) => ({
     type: types.ADD_TAGGROUP,
     entry
   }),
-  mergeTagGroup: (entry: TagSpaces.TagGroup) => ({
+  mergeTagGroup: (entry: TS.TagGroup) => ({
     type: types.MERGE_TAGGROUP,
     entry
   }),
-  addTag: (tag: string | Object, parentTagGroupUuid: TagSpaces.Uuid) => (
+  addTag: (tag: string | Object, parentTagGroupUuid: TS.Uuid) => (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
@@ -499,7 +498,7 @@ export const actions = {
   },
   addTagIntern: (
     tag: string,
-    parentTagGroupUuid: TagSpaces.Uuid,
+    parentTagGroupUuid: TS.Uuid,
     defaultTagTextColor: string,
     defaultTagBackgroundColor: string
   ) => ({
@@ -509,14 +508,14 @@ export const actions = {
     defaultTagTextColor,
     defaultTagBackgroundColor
   }),
-  copyTag: (tag: TagSpaces.Tag, parentTagGroupUuid: TagSpaces.Uuid) => ({
+  copyTag: (tag: TS.Tag, parentTagGroupUuid: TS.Uuid) => ({
     type: types.COPY_TAG,
     tag,
     uuid: parentTagGroupUuid
   }),
   editTag: (
-    tag: TagSpaces.Tag,
-    parentTagGroupUuid: TagSpaces.Uuid,
+    tag: TS.Tag,
+    parentTagGroupUuid: TS.Uuid,
     origTitle: string
   ) => ({
     type: types.UPDATE_TAG,
@@ -524,27 +523,27 @@ export const actions = {
     uuid: parentTagGroupUuid,
     origTitle
   }),
-  deleteTag: (tagTitle: string, parentTagGroupUuid: TagSpaces.Uuid) => ({
+  deleteTag: (tagTitle: string, parentTagGroupUuid: TS.Uuid) => ({
     type: types.REMOVE_TAG,
     tagTitle,
     uuid: parentTagGroupUuid
   }),
-  moveTagGroupUp: (parentTagGroupUuid: TagSpaces.Uuid) => ({
+  moveTagGroupUp: (parentTagGroupUuid: TS.Uuid) => ({
     type: types.MOVE_TAG_GROUP_UP,
     uuid: parentTagGroupUuid
   }),
-  moveTagGroupDown: (parentTagGroupUuid: TagSpaces.Uuid) => ({
+  moveTagGroupDown: (parentTagGroupUuid: TS.Uuid) => ({
     type: types.MOVE_TAG_GROUP_DOWN,
     uuid: parentTagGroupUuid
   }),
-  sortTagGroup: (parentTagGroupUuid: TagSpaces.Uuid) => ({
+  sortTagGroup: (parentTagGroupUuid: TS.Uuid) => ({
     type: types.SORT_TAG_GROUP_UP,
     uuid: parentTagGroupUuid
   }),
   moveTag: (
     tagTitle: string,
-    fromTagGroupUuid: TagSpaces.Uuid,
-    toTagGroupUuid: TagSpaces.Uuid
+    fromTagGroupUuid: TS.Uuid,
+    toTagGroupUuid: TS.Uuid
   ) => ({
     type: types.MOVE_TAG,
     tagTitle,
@@ -603,7 +602,7 @@ export const actions = {
 // Selectors
 export const getTagGroups = (state: any) => state.taglibrary;
 export const getAllTags = (state: any) => {
-  const uniqueTags: Array<TagSpaces.Tag> = [];
+  const uniqueTags: Array<TS.Tag> = [];
   state.taglibrary.forEach(tagGroup => {
     tagGroup.children.forEach(tag => {
       const found = uniqueTags.find(uTag => uTag.title === tag.title);
@@ -623,7 +622,7 @@ export const getTagColors = (state: any, tagTitle: string) => {
     color: state.settings.tagBackgroundColor
   };
   state.taglibrary.forEach(tagGroup => {
-    tagGroup.children.forEach((tag: TagSpaces.Tag) => {
+    tagGroup.children.forEach((tag: TS.Tag) => {
       if (tag.title === tagTitle) {
         tagColors.textcolor = tag.textcolor;
         tagColors.color = tag.color;

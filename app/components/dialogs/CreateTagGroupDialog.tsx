@@ -15,8 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-/* global TagSpaces */
-/* eslint no-undef: "error" */
+
 import React, { useReducer, useRef, useState } from 'react';
 import uuidv1 from 'uuid';
 import Button from '@material-ui/core/Button';
@@ -30,11 +29,12 @@ import Dialog from '@material-ui/core/Dialog';
 import ColorPickerDialog from './ColorPickerDialog';
 import i18n from '-/services/i18n';
 import TransparentBackground from '../TransparentBackground';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   open: boolean;
   onClose: () => void;
-  createTagGroup: (tagGroup: TagSpaces.TagGroup) => void;
+  createTagGroup: (tagGroup: TS.TagGroup) => void;
   fullScreen?: boolean;
   color: string;
   textcolor: string;

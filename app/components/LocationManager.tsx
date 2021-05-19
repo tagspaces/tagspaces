@@ -15,8 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-/* global TagSpaces */
-/* eslint no-undef: "error" */
+
 import React, { useEffect, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -38,6 +37,7 @@ import AppConfig from '../config';
 import LoadingLazy from '-/components/LoadingLazy';
 import LocationView from '-/components/LocationView';
 import { Pro } from '-/pro';
+import { TS } from '-/tagspaces.namespace';
 
 const CreateEditLocationDialog = React.lazy(() =>
   import(
@@ -53,19 +53,19 @@ const CreateEditLocationDialogAsync = props => (
 interface Props {
   classes: any;
   style: any;
-  locations: Array<TagSpaces.Location>;
+  locations: Array<TS.Location>;
   perspectives: Array<Object>;
   hideDrawer: () => void;
   openURLExternally: (path: string) => void;
   toggleOpenLinkDialog: () => void;
   setDefaultLocations: () => void;
   addLocation: (
-    location: TagSpaces.Location,
+    location: TS.Location,
     openAfterCreate?: boolean
   ) => void;
-  addLocations: (locations: Array<TagSpaces.Location>) => void;
+  addLocations: (locations: Array<TS.Location>) => void;
   editLocation: () => void;
-  removeLocation: (location: TagSpaces.Location) => void;
+  removeLocation: (location: TS.Location) => void;
   isDesktop: boolean;
 }
 
@@ -78,7 +78,7 @@ type SubFolder = {
 
 const LocationManager = (props: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [selectedLocation, setSelectedLocation] = useState<TagSpaces.Location>(
+  const [selectedLocation, setSelectedLocation] = useState<TS.Location>(
     null
   );
   const [

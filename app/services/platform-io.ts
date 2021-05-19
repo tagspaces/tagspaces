@@ -22,7 +22,7 @@ import { Pro } from '../pro';
 import NativePlatformIO from './_PLATFORMIO_';
 import ObjectStoreIO from './objectstore-io';
 import AppConfig from '-/config';
-import { FileSystemEntry } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
 
 const nativeAPI: any = new NativePlatformIO();
 let objectStoreAPI;
@@ -336,7 +336,7 @@ export default class PlatformIO {
       progress: any, // ManagedUpload.Progress,
       response: any // AWS.Response<AWS.S3.PutObjectOutput, AWS.AWSError>
     ) => void
-  ): Promise<FileSystemEntry> => {
+  ): Promise<TS.FileSystemEntry> => {
     if (objectStoreAPI) {
       return objectStoreAPI.saveBinaryFilePromise(
         filePath,

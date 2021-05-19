@@ -15,8 +15,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-/* global TagSpaces */
-/* eslint no-undef: "error" */
 
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import Button from '@material-ui/core/Button';
@@ -43,6 +41,7 @@ import ObjectStoreForm from './ObjectStoreForm';
 import LocalForm from './LocalForm';
 import useFirstRender from '-/utils/useFirstRender';
 import AppConfig from '-/config';
+import { TS } from '-/tagspaces.namespace';
 
 const styles: any = theme => ({
   root: {
@@ -59,12 +58,12 @@ const styles: any = theme => ({
 });
 
 interface Props {
-  location?: TagSpaces.Location;
+  location?: TS.Location;
   open: boolean;
   onClose: () => void;
   fullScreen: boolean;
-  addLocation?: (location: TagSpaces.Location) => void;
-  editLocation?: (location: TagSpaces.Location) => void;
+  addLocation?: (location: TS.Location) => void;
+  editLocation?: (location: TS.Location) => void;
 }
 
 const CreateEditLocationDialog = (props: Props) => {

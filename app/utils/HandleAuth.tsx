@@ -1,5 +1,3 @@
-/* global TagSpaces */
-/* eslint no-undef: "error" */
 import React, { useRef } from 'react';
 import {
   AuthState,
@@ -12,16 +10,17 @@ import { connect } from 'react-redux';
 import { actions as LocationActions } from '-/reducers/locations';
 import { actions as TagGroupActions } from '-/reducers/taglibrary';
 import { actions as AppActions } from '-/reducers/app';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   loggedIn: (user: CognitoUserInterface) => void;
   initApp: () => void;
   addLocations: (
-    locations: Array<TagSpaces.Location>,
+    locations: Array<TS.Location>,
     override: boolean
   ) => void;
   importTagGroups: (
-    tagGroups: Array<TagSpaces.TagGroup>,
+    tagGroups: Array<TS.TagGroup>,
     replace: boolean
   ) => void;
 }

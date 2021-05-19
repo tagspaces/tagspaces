@@ -1,10 +1,9 @@
-/* global TagSpaces */
-/* eslint no-undef: "error" */
 import React, { memo } from 'react';
 import TagContainer from '-/components/TagContainer';
+import { TS } from '-/tagspaces.namespace';
 
 export interface Props {
-  tag: TagSpaces.Tag;
+  tag: TS.Tag;
 }
 
 export const TagDragPreview = memo((props: Props) => {

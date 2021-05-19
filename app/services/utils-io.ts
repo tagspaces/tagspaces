@@ -15,8 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-/* global TagSpaces */
-/* eslint no-undef: "error" */
+
 import uuidv1 from 'uuid';
 import { saveAs } from 'file-saver';
 import PlatformIO from './platform-io';
@@ -38,38 +37,7 @@ import versionMeta from '../version.json';
 import { getThumbnailURLPromise } from '-/services/thumbsgenerator';
 import { OpenedEntry, actions as AppActions } from '-/reducers/app';
 import { locationType, getLocation } from '-/reducers/locations';
-
-export interface FileSystemEntry {
-  uuid?: string;
-  name: string;
-  isFile: boolean;
-  isNewFile?: boolean;
-  extension: string;
-  thumbPath?: string;
-  color?: string;
-  perspective?: string;
-  textContent?: string;
-  description?: string;
-  tags: Array<TagSpaces.Tag>;
-  size: number;
-  lmdt: number;
-  path: string;
-  url?: string;
-  meta?: FileSystemEntryMeta;
-}
-
-export interface FileSystemEntryMeta {
-  id?: string;
-  description?: string;
-  tags?: Array<TagSpaces.Tag>;
-  color?: string;
-  perspective?: string;
-  appName: string;
-  appVersion: string;
-  lastUpdated: string;
-  files?: Array<FileSystemEntry>;
-  dirs?: Array<FileSystemEntry>;
-}
+import { TS } from '-/tagspaces.namespace';
 
 export function enhanceDirectoryContent(
   dirEntries,
@@ -123,7 +91,7 @@ export function enhanceDirectoryContent(
   };
 }
 
-export function enhanceEntry(entry: any): FileSystemEntry {
+export function enhanceEntry(entry: any): TS.FileSystemEntry {
   let fileNameTags = [];
   if (entry.isFile) {
     fileNameTags = extractTagsAsObjects(
@@ -149,7 +117,7 @@ export function enhanceEntry(entry: any): FileSystemEntry {
       return true;
     });
   }
-  const enhancedEntry: FileSystemEntry = {
+  const enhancedEntry: TS.FileSystemEntry = {
     uuid: uuidv1(),
     name: entry.name,
     isFile: entry.isFile,
@@ -215,7 +183,7 @@ export function prepareDirectoryContent(
   getState,
   dirEntryMeta
 ) {
-  const currentLocation: TagSpaces.Location = getLocation(
+  const currentLocation: TS.Location = getLocation(
     getState(),
     getState().app.currentLocationId
   );
@@ -336,8 +304,8 @@ export function findExtensionsForEntry(
 export function getNextFile(
   pivotFilePath?: string,
   lastSelectedEntry?: string,
-  currentDirectoryEntries?: Array<FileSystemEntry>
-): FileSystemEntry {
+  currentDirectoryEntries?: Array<TS.FileSystemEntry>
+): TS.FileSystemEntry {
   const currentEntries = currentDirectoryEntries
     ? currentDirectoryEntries.filter(entry => entry.isFile)
     : [];
@@ -373,8 +341,8 @@ export function getNextFile(
 export function getPrevFile(
   pivotFilePath?: string,
   lastSelectedEntry?: string,
-  currentDirectoryEntries?: Array<FileSystemEntry>
-): FileSystemEntry {
+  currentDirectoryEntries?: Array<TS.FileSystemEntry>
+): TS.FileSystemEntry {
   const currentEntries = currentDirectoryEntries
     ? currentDirectoryEntries.filter(entry => entry.isFile)
     : [];
@@ -409,7 +377,7 @@ export function getPrevFile(
 export function createDirectoryIndex(
   directoryPath: string,
   extractText: boolean = false
-): Promise<Array<FileSystemEntry>> {
+): Promise<Array<TS.FileSystemEntry>> {
   const dirPath = cleanTrailingDirSeparator(directoryPath);
   if (PlatformIO.isWorkerAvailable() && !PlatformIO.haveObjectStoreSupport()) {
     // Start indexing in worker if not in the object store mode
@@ -551,7 +519,7 @@ export function walkDirectory(
 
 export async function getAllPropertiesPromise(
   entryPath: string
-): Promise<FileSystemEntry> {
+): Promise<TS.FileSystemEntry> {
   const entryProps = await PlatformIO.getPropertiesPromise(entryPath);
   let metaFilePath;
   const dirSep = PlatformIO.getDirSeparator();
@@ -742,7 +710,7 @@ export function generateFileName(
 
 export async function loadMetaDataPromise(
   path: string
-): Promise<FileSystemEntryMeta> {
+): Promise<TS.FileSystemEntryMeta> {
   const entryProperties = await PlatformIO.getPropertiesPromise(path);
   let metaDataObject;
   if (entryProperties.isFile) {
@@ -798,8 +766,8 @@ export async function loadMetaDataPromise(
 }
 
 export function cleanMetaData(
-  metaData: FileSystemEntryMeta
-): FileSystemEntryMeta {
+  metaData: TS.FileSystemEntryMeta
+): TS.FileSystemEntryMeta {
   const cleanedMeta: any = {};
   if (metaData.id) {
     cleanedMeta.id = metaData.id;
@@ -822,7 +790,7 @@ export function cleanMetaData(
   if (metaData.tags && metaData.tags.length > 0) {
     cleanedMeta.tags = [];
     metaData.tags.forEach(tag => {
-      const cleanedTag: TagSpaces.Tag = {};
+      const cleanedTag: TS.Tag = {};
       if (tag.title) {
         cleanedTag.title = tag.title;
       }

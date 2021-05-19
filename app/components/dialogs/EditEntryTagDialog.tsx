@@ -15,8 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-/* global TagSpaces */
-/* eslint no-undef: "error" */
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -37,6 +36,7 @@ import { getSelectedTag } from '-/reducers/app';
 import TaggingActions, { defaultTagLocation } from '-/reducers/tagging-actions';
 import { isDateTimeTag } from '-/utils/dates';
 import { AppConfig } from '-/config';
+import { TS } from '-/tagspaces.namespace';
 
 const styles = () => ({
   root: {
@@ -51,9 +51,9 @@ interface Props {
   open: boolean;
   fullScreen: boolean;
   onClose: () => void;
-  editTagForEntry: (path: string, tag: TagSpaces.Tag, title: string) => void;
+  editTagForEntry: (path: string, tag: TS.Tag, title: string) => void;
   currentEntryPath: string;
-  selectedTag: TagSpaces.Tag;
+  selectedTag: TS.Tag;
 }
 
 const GeoTagEditor = Pro && Pro.UI ? Pro.UI.GeoTagEditor : React.Fragment;

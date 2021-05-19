@@ -15,8 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-/* global TagSpaces */
-/* eslint no-undef: "error" */
+
 import React, { useState, forwardRef, useImperativeHandle, Ref } from 'react';
 import Table from 'rc-table';
 import FolderIcon from '@material-ui/icons/FolderOpen';
@@ -26,11 +25,12 @@ import AppConfig from '-/config';
 import PlatformIO from '-/services/platform-io';
 import TargetTableMoveFileBox from '-/components/TargetTableMoveFileBox';
 import { getLocationPath } from '-/utils/paths';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   classes: any;
   loadDirectoryContent: (path: string) => void;
-  location: TagSpaces.Location;
+  location: TS.Location;
   data?: any;
   isReadOnlyMode?: boolean;
   showUnixHiddenEntries: boolean;
@@ -40,11 +40,11 @@ interface Props {
     autohide: boolean
   ) => void;
   handleFileMoveDrop: (item, monitor) => void;
-  changeLocation: (loc: TagSpaces.Location) => void;
+  changeLocation: (loc: TS.Location) => void;
 }
 
 export interface DirectoryTreeViewRef {
-  changeLocation: (location: TagSpaces.Location) => void;
+  changeLocation: (location: TS.Location) => void;
   closeLocation: () => void;
   // removeLocation: () => void;
 }
@@ -55,7 +55,7 @@ const DirectoryTreeView = forwardRef(
     const [isExpanded, setExpanded] = useState(false);
 
     useImperativeHandle(ref, () => ({
-      changeLocation(location: TagSpaces.Location) {
+      changeLocation(location: TS.Location) {
         if (isExpanded && data[location.uuid] !== undefined) {
           setData(undefined); // comment this to use cached data after expand
           setExpanded(false);
@@ -191,7 +191,7 @@ const DirectoryTreeView = forwardRef(
     ];
 
     const loadSubDirectories = (
-      location: TagSpaces.Location,
+      location: TS.Location,
       deepLevel: number
     ) => {
       const subFolder = {

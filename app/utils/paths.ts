@@ -15,9 +15,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-/* global TagSpaces */
-/* eslint no-undef: "error" */
+
 import AppConfig from '../config';
+import { TS } from '-/tagspaces.namespace';
 
 export function baseName(
   dirPath: string,
@@ -346,7 +346,7 @@ export function extractTagsAsObjects(
   filePath: string,
   tagDelimiter: string = AppConfig.tagDelimiter,
   dirSeparator: string // = AppConfig.dirSeparator
-): Array<TagSpaces.Tag> {
+): Array<TS.Tag> {
   const tagsInFileName = extractTags(filePath, tagDelimiter, dirSeparator);
   const tagArray = [];
   tagsInFileName.map(tag => {
@@ -392,7 +392,7 @@ export function extractTags(
   return cleanedTags;
 }
 
-export function getLocationPath(location: TagSpaces.Location) {
+export function getLocationPath(location: TS.Location) {
   if (location) {
     if (location.path) {
       return location.path;
@@ -411,7 +411,7 @@ export function getLocationPath(location: TagSpaces.Location) {
  */
 export function extractLocation(
   filePath: string,
-  locations: Array<TagSpaces.Location>
+  locations: Array<TS.Location>
 ) {
   let currentLocation;
   const path = filePath.replace(/[/\\]/g, '');
