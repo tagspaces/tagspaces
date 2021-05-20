@@ -102,9 +102,7 @@ interface Props {
 const Search = React.memo((props: Props) => {
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   const textQuery = useRef<string>(props.searchQuery.textQuery);
-  // const [tagsAND, setTagsAND] = useState<Array<Tag>>(props.searchQuery.tagsAND);
-  // const [tagsOR, setTagsOR] = useState<Array<Tag>>(props.searchQuery.tagsAND);
-  // const [tagsNOT, setTagsNOT] = useState<Array<Tag>>(props.searchQuery.tagsAND);
+  // const tagsAND = useRef<Array<TS.Tag>>(props.searchQuery.tagsAND);
   const fileTypes = useRef<Array<string>>(
     props.searchQuery.fileTypes
       ? props.searchQuery.fileTypes
@@ -385,6 +383,64 @@ const Search = React.memo((props: Props) => {
     setTagPlaceHelper(tagPHelper);
   };
 
+  const mergeWithExtractedTags = (tags: Array<TS.Tag>, identifier: string) => {
+    const extractedTags = parseTextQuery(identifier);
+    if (tags) {
+      if (extractedTags.length > 0) {
+        return getUniqueTags(tags, extractedTags);
+      }
+      return tags;
+    }
+    if (extractedTags.length > 0) {
+      return extractedTags;
+    }
+    return undefined;
+  };
+
+  function getUniqueTags(tags1: Array<TS.Tag>, tags2: Array<TS.Tag>) {
+    const mergedArray = [...tags1, ...tags2];
+    // mergedArray have duplicates, lets remove the duplicates using Set
+    const set = new Set();
+    return mergedArray.filter(tag => {
+      if (!set.has(tag.title)) {
+        set.add(tag.title);
+        return true;
+      }
+      return false;
+    }, set);
+  }
+
+  function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+  }
+
+  const parseTextQuery = (identifier: string) => {
+    const extractedTags = [];
+    const txt = textQuery.current
+      .trim()
+      .replace(new RegExp(escapeRegExp(identifier) + '\\s+', 'g'), identifier);
+    const textQueryParts = txt.split(' ');
+    let newTextQuery = '';
+    if (textQueryParts) {
+      // && textQueryParts.length > 1) {
+      textQueryParts.forEach(part => {
+        const trimmedPart = part.trim();
+        if (trimmedPart.startsWith(identifier)) {
+          const tagTitle = trimmedPart.substr(1).trim();
+          extractedTags.push({ title: tagTitle });
+        } /* else if (trimmedPart.startsWith('-')) {
+          // add to searchQuery.tagsNOT
+        } else if (trimmedPart.startsWith('?')) {
+          // add to searchQuery.tagsOR
+        */ else {
+          newTextQuery += trimmedPart + ' ';
+        }
+      });
+    }
+    textQuery.current = newTextQuery.trim();
+    return extractedTags;
+  };
+
   const clickSearchButton = () => {
     executeSearch();
     if (props.hideDrawer) {
@@ -442,13 +498,16 @@ const Search = React.memo((props: Props) => {
   };
 
   const saveSearch = (isNew: boolean = true) => {
+    const tagsAND = mergeWithExtractedTags(props.searchQuery.tagsAND, '+');
+    const tagsOR = mergeWithExtractedTags(props.searchQuery.tagsOR, '?');
+    const tagsNOT = mergeWithExtractedTags(props.searchQuery.tagsNOT, '-');
     setSaveSearchDialogOpened({
       uuid: isNew ? undefined : props.searchQuery.uuid,
       title: props.searchQuery.title,
       textQuery: textQuery.current,
-      tagsAND: props.searchQuery.tagsAND,
-      tagsOR: props.searchQuery.tagsOR,
-      tagsNOT: props.searchQuery.tagsNOT,
+      tagsAND,
+      tagsOR,
+      tagsNOT,
       // @ts-ignore
       searchBoxing: searchBoxing.current,
       searchType: searchType.current,
@@ -488,11 +547,14 @@ const Search = React.memo((props: Props) => {
 
   const executeSearch = () => {
     const { searchAllLocations, searchLocationIndex } = props;
+    const tagsAND = mergeWithExtractedTags(props.searchQuery.tagsAND, '+');
+    const tagsOR = mergeWithExtractedTags(props.searchQuery.tagsOR, '?');
+    const tagsNOT = mergeWithExtractedTags(props.searchQuery.tagsNOT, '-');
     const searchQuery: TS.SearchQuery = {
       textQuery: textQuery.current,
-      tagsAND: props.searchQuery.tagsAND,
-      tagsOR: props.searchQuery.tagsOR,
-      tagsNOT: props.searchQuery.tagsNOT,
+      tagsAND,
+      tagsOR,
+      tagsNOT,
       // @ts-ignore
       searchBoxing: searchBoxing.current,
       searchType: searchType.current,
