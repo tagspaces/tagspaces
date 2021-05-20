@@ -30,15 +30,17 @@ import { withTheme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import i18n from '-/services/i18n';
-import { getLocations, Location, locationType } from '-/reducers/locations';
+import { getLocations } from '-/reducers/locations';
 import { actions as AppActions, getCurrentLocationId } from '-/reducers/app';
+import { TS } from '-/tagspaces.namespace';
+import { locationType } from '-/utils/misc';
 
 interface Props {
   currentLocationId: string | null;
   theme: any;
-  locations: Array<Location>;
+  locations: Array<TS.Location>;
   menuAnchorEl?: Element;
-  openLocation: (location: Location) => void;
+  openLocation: (location: TS.Location) => void;
 }
 
 const LocationMenu = (props: Props) => {
@@ -55,7 +57,7 @@ const LocationMenu = (props: Props) => {
   let currentLocation;
   if (props.currentLocationId && props.locations) {
     currentLocation = props.locations.find(
-      (location: Location) => location.uuid === props.currentLocationId
+      (location: TS.Location) => location.uuid === props.currentLocationId
     );
   }
 
@@ -105,7 +107,7 @@ const LocationMenu = (props: Props) => {
           >
             {i18n.t('core:chooseLocation')}
           </ListSubHeader>
-          {props.locations.map((location: Location) => (
+          {props.locations.map((location: TS.Location) => (
             <MenuItem
               data-tid="folderContainerMenuOpenLocation"
               key={location.uuid}

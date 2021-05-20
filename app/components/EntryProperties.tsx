@@ -61,7 +61,7 @@ import TagDropContainer from './TagDropContainer';
 import ColorPickerDialog from './dialogs/ColorPickerDialog';
 import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
 import i18n from '../services/i18n';
-import { enhanceOpenedEntry, FileSystemEntryMeta } from '-/services/utils-io';
+import { enhanceOpenedEntry } from '-/services/utils-io';
 import { formatFileSize, isPlusCode } from '-/utils/misc';
 import {
   extractContainingDirectoryPath,
@@ -79,13 +79,13 @@ import {
   replaceThumbnailURLPromise,
   getThumbnailURLPromise
 } from '-/services/thumbsgenerator';
-import { Tag } from '-/reducers/taglibrary';
 import { OpenedEntry, perspectives } from '-/reducers/app';
 import { savePerspective } from '-/utils/metaoperations';
 import MarkerIcon from '-/assets/icons/marker-icon.png';
 import Marker2xIcon from '-/assets/icons/marker-icon-2x.png';
 import MarkerShadowIcon from '-/assets/icons/marker-shadow.png';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import { TS } from '-/tagspaces.namespace';
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
@@ -182,8 +182,8 @@ interface Props {
   showNotification: (message: string) => void;
   updateOpenedFile: (entryPath: string, fsEntryMeta: any) => void;
   updateThumbnailUrl: (path: string, thumbUrl: string) => void;
-  addTags: (paths: Array<string>, tags: Array<Tag>) => void;
-  removeTags: (paths: Array<string>, tags: Array<Tag>) => void;
+  addTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
+  removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
   removeAllTags: (paths: Array<string>) => void;
   isReadOnlyMode: boolean;
   currentDirectoryPath: string | null;
@@ -466,7 +466,7 @@ const EntryProperties = (props: Props) => {
     }
   };
 
-  const handleChange = (name: string, value: Array<Tag>, action: string) => {
+  const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
     if (action === 'remove-value') {
       if (!value) {
         // no tags left in the select element
@@ -528,7 +528,7 @@ const EntryProperties = (props: Props) => {
   const changePerspective = (event: any) => {
     const perspective = event.target.value;
     savePerspective(currentEntry.path, perspective)
-      .then((entryMeta: FileSystemEntryMeta) => {
+      .then((entryMeta: TS.FileSystemEntryMeta) => {
         props.updateOpenedFile(currentEntry.path, {
           ...entryMeta,
           changed: true
@@ -586,7 +586,7 @@ const EntryProperties = (props: Props) => {
     shadowAnchor: [5, 55]
   });
 
-  function getGeoLocation(tags: Array<Tag>) {
+  function getGeoLocation(tags: Array<TS.Tag>) {
     if (!Pro) {
       return;
     }

@@ -22,10 +22,11 @@ import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { Tag, getAllTags } from '-/reducers/taglibrary';
+import { getAllTags } from '-/reducers/taglibrary';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import TagContainer from './TagContainer';
 import EntryTagMenu from '-/components/menus/EntryTagMenu';
+import { TS } from '-/tagspaces.namespace';
 
 const styles: any = (theme: any) => ({
   root: {
@@ -68,13 +69,13 @@ interface Props {
   dataTid?: string;
   classes?: any;
   theme?: any;
-  tags: Array<Tag>;
+  tags: Array<TS.Tag>;
   label?: string;
   tagSearchType?: string;
   defaultBackgroundColor?: string;
   defaultTextColor?: string;
   handleChange?: (param1: any, param2: any, param3?: any) => void;
-  allTags?: Array<Tag>;
+  allTags?: Array<TS.Tag>;
   tagMode?: 'default' | 'display' | 'remove';
   isReadOnlyMode?: boolean;
   placeholderText?: string;
@@ -92,7 +93,7 @@ const TagsSelect = (props: Props) => {
 
   function handleTagChange(
     event: Object,
-    selectedTags: Array<Tag>,
+    selectedTags: Array<TS.Tag>,
     reason: string
   ) {
     if (reason === 'select-option') {
@@ -103,7 +104,7 @@ const TagsSelect = (props: Props) => {
         selectedTags.length &&
         isValidNewOption(selectedTags[selectedTags.length - 1], selectedTags)
       ) {
-        const newTag: Tag = {
+        const newTag: TS.Tag = {
           id: uuidv1(),
           title: '' + selectedTags[selectedTags.length - 1],
           color: defaultBackgroundColor,
@@ -155,7 +156,7 @@ const TagsSelect = (props: Props) => {
   );
 
   const handleRemoveTag = useCallback(
-    (event, cTag: Array<Tag>) => {
+    (event, cTag: Array<TS.Tag>) => {
       /* const reducedTags = [...tags];
       for (let i = 0; i < reducedTags.length; i += 1) {
         if (reducedTags[i].title === cTag.title) {
@@ -186,8 +187,8 @@ const TagsSelect = (props: Props) => {
         disableClearable
         value={tags}
         onChange={handleTagChange}
-        renderTags={(value: Tag[]) =>
-          value.map((tag: Tag) => (
+        renderTags={(value: TS.Tag[]) =>
+          value.map((tag: TS.Tag) => (
             <TagContainer
               key={selectedEntryPath + tag.title}
               isReadOnlyMode={props.isReadOnlyMode}

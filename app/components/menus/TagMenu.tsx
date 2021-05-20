@@ -26,12 +26,11 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { Tag } from '-/reducers/taglibrary';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import i18n from '-/services/i18n';
-import { SearchQuery } from '-/services/search';
 import { getMaxSearchResults } from '-/reducers/settings';
 import { actions as AppActions } from '-/reducers/app';
+import { TS } from '-/tagspaces.namespace';
 
 const isTagLibraryReadOnly =
   window.ExtTagLibrary && window.ExtTagLibrary.length > 0;
@@ -40,8 +39,8 @@ interface Props {
   anchorEl?: Element;
   open?: boolean;
   onClose: () => void;
-  selectedTag?: Tag;
-  searchLocationIndex: (searchQuery: SearchQuery) => void;
+  selectedTag?: TS.Tag;
+  searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
   openSearchPanel: () => void;
   showEditTagDialog: () => void;
   showDeleteTagDialog: () => void;

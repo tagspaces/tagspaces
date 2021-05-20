@@ -45,7 +45,6 @@ import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import AppConfig from '-/config';
 import PlatformIO from '-/services/platform-io';
 import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
-import { FileSystemEntry } from '-/services/utils-io';
 import i18n from '-/services/i18n';
 import {
   extractContainingDirectoryPath,
@@ -69,6 +68,7 @@ import {
   actions as AppActions
 } from '-/reducers/app';
 import useEventListener from '-/utils/useEventListener';
+import { TS } from '-/tagspaces.namespace';
 
 const defaultSplitSize = 103;
 const openedSplitSize = AppConfig.isElectron ? 560 : 360;
@@ -183,7 +183,7 @@ interface Props {
   addTags: () => void;
   removeTags: () => void;
   // editTagForEntry: () => void;
-  openFsEntry: (fsEntry: FileSystemEntry) => void;
+  openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   openPrevFile: (path: string) => void;
   openNextFile: (path: string) => void;
   openFileNatively: (path: string) => void;

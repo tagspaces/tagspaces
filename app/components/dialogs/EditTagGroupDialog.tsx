@@ -27,15 +27,15 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Switch from '@material-ui/core/Switch';
 import Dialog from '@material-ui/core/Dialog';
 import ColorPickerDialog from './ColorPickerDialog';
-import { TagGroup } from '-/reducers/taglibrary';
 import i18n from '-/services/i18n';
 import TransparentBackground from '../TransparentBackground';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   open: boolean;
   fullScreen?: boolean;
-  editTagGroup: (tagGroup: TagGroup) => void;
-  selectedTagGroupEntry: TagGroup;
+  editTagGroup: (tagGroup: TS.TagGroup) => void;
+  selectedTagGroupEntry: TS.TagGroup;
   onClose: () => void;
 }
 

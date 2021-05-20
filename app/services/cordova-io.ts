@@ -25,7 +25,7 @@ import {
   extractFileName,
   extractFileExtension
 } from '-/utils/paths';
-import { FileSystemEntry } from './utils-io';
+import { TS } from '-/tagspaces.namespace';
 
 const appSettingFile = 'settings.json';
 const appSettingTagsFile = 'settingsTags.json';
@@ -670,7 +670,10 @@ export default class CordovaIO {
         });
     });
 
-  getEntryMeta = (eentry: FileSystemEntry, metaPath: string): Promise<any> => {
+  getEntryMeta = (
+    eentry: TS.FileSystemEntry,
+    metaPath: string
+  ): Promise<any> => {
     if (eentry.isFile) {
       // const metaFilePath = getMetaFileLocationForFile(eentry.path);
       return this.loadTextFilePromise(metaPath).then(result => {
@@ -837,7 +840,7 @@ export default class CordovaIO {
     content,
     overWrite: boolean,
     isRaw?: boolean
-  ): Promise<FileSystemEntry> => {
+  ): Promise<TS.FileSystemEntry> => {
     // eslint-disable-next-line no-param-reassign
     filePath = this.normalizePath(filePath);
     console.log('Saving file: ' + filePath);
@@ -945,7 +948,7 @@ export default class CordovaIO {
     filePath: string,
     content: any,
     overWrite: boolean
-  ): Promise<FileSystemEntry> => {
+  ): Promise<TS.FileSystemEntry> => {
     console.log('Saving binary file: ' + filePath);
     // var dataView = new Int8Array(content);
     const dataView = content;

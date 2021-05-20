@@ -15,7 +15,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 import fsextra from 'fs-extra';
 import pathLib from 'path';
 import winattr from 'winattr';
@@ -33,7 +32,7 @@ import TrayIcon from '../assets/icons/trayIcon.png';
 import TrayIcon2x from '../assets/icons/trayIcon@2x.png';
 import TrayIcon3x from '../assets/icons/trayIcon@3x.png';
 import { Pro } from '../pro';
-import { FileSystemEntry } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
 
 export default class ElectronIO {
   electron: any;
@@ -692,10 +691,10 @@ export default class ElectronIO {
     filePath: string,
     content: any,
     overwrite: boolean = true
-  ): Promise<FileSystemEntry> =>
+  ): Promise<TS.FileSystemEntry> =>
     new Promise((resolve, reject) => {
       const fileSystem = this.fs;
-      function saveFile(entry: FileSystemEntry, tContent) {
+      function saveFile(entry: TS.FileSystemEntry, tContent) {
         fileSystem.writeFile(entry.path, tContent, 'utf8', error => {
           if (error) {
             reject(error);
@@ -706,7 +705,7 @@ export default class ElectronIO {
       }
 
       this.getPropertiesPromise(filePath)
-        .then((entry: FileSystemEntry) => {
+        .then((entry: TS.FileSystemEntry) => {
           if (entry && entry.isFile && overwrite) {
             saveFile({ ...entry, isNewFile: false, tags: [] }, content);
           } else {
@@ -737,7 +736,7 @@ export default class ElectronIO {
     filePath: string,
     content: string,
     overwrite: boolean
-  ): Promise<FileSystemEntry> => {
+  ): Promise<TS.FileSystemEntry> => {
     console.log('Saving file: ' + filePath);
 
     // Handling the UTF8 support for text files
@@ -757,7 +756,7 @@ export default class ElectronIO {
     filePath: string,
     content: any,
     overwrite: boolean
-  ): Promise<FileSystemEntry> => {
+  ): Promise<TS.FileSystemEntry> => {
     console.log('Saving binary file: ' + filePath);
     const buff = arrayBufferToBuffer(content);
     return this.saveFilePromise(filePath, buff, overwrite);

@@ -29,15 +29,15 @@ import Dialog from '@material-ui/core/Dialog';
 import ColorPickerDialog from './ColorPickerDialog';
 import TransparentBackground from '../TransparentBackground';
 import i18n from '-/services/i18n';
-import { Tag, TagGroup } from '-/reducers/taglibrary';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   open: boolean;
   fullScreen?: boolean;
   onClose: () => void;
-  editTag: (tag: Tag, tagGroupId: string, origTitle: string) => void;
-  selectedTag: Tag;
-  selectedTagGroupEntry: TagGroup;
+  editTag: (tag: TS.Tag, tagGroupId: string, origTitle: string) => void;
+  selectedTag: TS.Tag;
+  selectedTagGroupEntry: TS.TagGroup;
 }
 
 const EditTagDialog = (props: Props) => {

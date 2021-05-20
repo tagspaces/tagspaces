@@ -15,13 +15,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 import uuidv1 from 'uuid';
 import { immutablySwapItems, formatDateTime4Tag, extend } from '-/utils/misc';
 import { saveAsTextFile } from '-/services/utils-io';
 import versionMeta from '../version.json';
 import defaultTagLibrary from './taglibrary-default';
 import AppConfig from '../config';
+import { TS } from '-/tagspaces.namespace';
 
 export const types = {
   CREATE_TAGGROUP: 'CREATE_TAGGROUP',
@@ -43,37 +43,7 @@ export const types = {
   MOVE_TAG: 'MOVE_TAG'
 };
 
-export type Uuid = string;
-
-export interface Tag {
-  title?: string;
-  type?: 'plain' | 'sidecar' | 'smart'; // smart should be eventually removed from this list, functionality should be enough
-  id?: Uuid;
-  icon?: string;
-  description?: string;
-  style?: string;
-  path?: string; // needed for geo tagging should be removed
-  modified_date?: string;
-  functionality?: string;
-  keyBinding?: string;
-  color?: string;
-  textcolor?: string;
-  originTitle?: string;
-}
-
-export interface TagGroup {
-  uuid: Uuid;
-  title: string;
-  expanded?: boolean;
-  description?: string;
-  categoryId?: string;
-  readOnly?: boolean;
-  color?: string;
-  textcolor?: string;
-  children?: Array<Tag>;
-}
-
-export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
+export default (state: Array<TS.TagGroup> = defaultTagLibrary, action: any) => {
   switch (action.type) {
     case types.CREATE_TAGGROUP: {
       return [
@@ -470,27 +440,27 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: any) => {
 };
 
 export const actions = {
-  createTagGroup: (entry: TagGroup) => ({
+  createTagGroup: (entry: TS.TagGroup) => ({
     type: types.CREATE_TAGGROUP,
     entry
   }),
-  editTagGroup: (entry: TagGroup) => ({
+  editTagGroup: (entry: TS.TagGroup) => ({
     type: types.UPDATE_TAGGROUP,
     entry
   }),
-  removeTagGroup: (parentTagGroupUuid: Uuid) => ({
+  removeTagGroup: (parentTagGroupUuid: TS.Uuid) => ({
     type: types.REMOVE_TAGGROUP,
     uuid: parentTagGroupUuid
   }),
-  addTagGroup: (entry: TagGroup) => ({
+  addTagGroup: (entry: TS.TagGroup) => ({
     type: types.ADD_TAGGROUP,
     entry
   }),
-  mergeTagGroup: (entry: TagGroup) => ({
+  mergeTagGroup: (entry: TS.TagGroup) => ({
     type: types.MERGE_TAGGROUP,
     entry
   }),
-  addTag: (tag: string | Object, parentTagGroupUuid: Uuid) => (
+  addTag: (tag: string | Object, parentTagGroupUuid: TS.Uuid) => (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
@@ -525,7 +495,7 @@ export const actions = {
   },
   addTagIntern: (
     tag: string,
-    parentTagGroupUuid: Uuid,
+    parentTagGroupUuid: TS.Uuid,
     defaultTagTextColor: string,
     defaultTagBackgroundColor: string
   ) => ({
@@ -535,38 +505,38 @@ export const actions = {
     defaultTagTextColor,
     defaultTagBackgroundColor
   }),
-  copyTag: (tag: Tag, parentTagGroupUuid: Uuid) => ({
+  copyTag: (tag: TS.Tag, parentTagGroupUuid: TS.Uuid) => ({
     type: types.COPY_TAG,
     tag,
     uuid: parentTagGroupUuid
   }),
-  editTag: (tag: Tag, parentTagGroupUuid: Uuid, origTitle: string) => ({
+  editTag: (tag: TS.Tag, parentTagGroupUuid: TS.Uuid, origTitle: string) => ({
     type: types.UPDATE_TAG,
     tag,
     uuid: parentTagGroupUuid,
     origTitle
   }),
-  deleteTag: (tagTitle: string, parentTagGroupUuid: Uuid) => ({
+  deleteTag: (tagTitle: string, parentTagGroupUuid: TS.Uuid) => ({
     type: types.REMOVE_TAG,
     tagTitle,
     uuid: parentTagGroupUuid
   }),
-  moveTagGroupUp: (parentTagGroupUuid: Uuid) => ({
+  moveTagGroupUp: (parentTagGroupUuid: TS.Uuid) => ({
     type: types.MOVE_TAG_GROUP_UP,
     uuid: parentTagGroupUuid
   }),
-  moveTagGroupDown: (parentTagGroupUuid: Uuid) => ({
+  moveTagGroupDown: (parentTagGroupUuid: TS.Uuid) => ({
     type: types.MOVE_TAG_GROUP_DOWN,
     uuid: parentTagGroupUuid
   }),
-  sortTagGroup: (parentTagGroupUuid: Uuid) => ({
+  sortTagGroup: (parentTagGroupUuid: TS.Uuid) => ({
     type: types.SORT_TAG_GROUP_UP,
     uuid: parentTagGroupUuid
   }),
   moveTag: (
     tagTitle: string,
-    fromTagGroupUuid: Uuid,
-    toTagGroupUuid: Uuid
+    fromTagGroupUuid: TS.Uuid,
+    toTagGroupUuid: TS.Uuid
   ) => ({
     type: types.MOVE_TAG,
     tagTitle,
@@ -625,7 +595,7 @@ export const actions = {
 // Selectors
 export const getTagGroups = (state: any) => state.taglibrary;
 export const getAllTags = (state: any) => {
-  const uniqueTags: Array<Tag> = [];
+  const uniqueTags: Array<TS.Tag> = [];
   state.taglibrary.forEach(tagGroup => {
     tagGroup.children.forEach(tag => {
       const found = uniqueTags.find(uTag => uTag.title === tag.title);
@@ -645,7 +615,7 @@ export const getTagColors = (state: any, tagTitle: string) => {
     color: state.settings.tagBackgroundColor
   };
   state.taglibrary.forEach(tagGroup => {
-    tagGroup.children.forEach((tag: Tag) => {
+    tagGroup.children.forEach((tag: TS.Tag) => {
       if (tag.title === tagTitle) {
         tagColors.textcolor = tag.textcolor;
         tagColors.color = tag.color;

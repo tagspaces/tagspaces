@@ -27,14 +27,14 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
 import ColorPickerDialog from './ColorPickerDialog';
-import { TagGroup } from '-/reducers/taglibrary';
 import i18n from '-/services/i18n';
 import TransparentBackground from '../TransparentBackground';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   open: boolean;
   onClose: () => void;
-  createTagGroup: (tagGroup: TagGroup) => void;
+  createTagGroup: (tagGroup: TS.TagGroup) => void;
   fullScreen?: boolean;
   color: string;
   textcolor: string;

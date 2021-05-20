@@ -28,8 +28,7 @@ import ConfirmDialog from './dialogs/ConfirmDialog';
 import CustomLogo from './CustomLogo';
 import {
   actions as LocationActions,
-  getLocations,
-  Location
+  getLocations
 } from '../reducers/locations';
 import { actions as AppActions } from '../reducers/app';
 import { getPerspectives, isDesktopMode } from '-/reducers/settings';
@@ -38,6 +37,7 @@ import AppConfig from '../config';
 import LoadingLazy from '-/components/LoadingLazy';
 import LocationView from '-/components/LocationView';
 import { Pro } from '-/pro';
+import { TS } from '-/tagspaces.namespace';
 
 const CreateEditLocationDialog = React.lazy(() =>
   import(
@@ -53,16 +53,16 @@ const CreateEditLocationDialogAsync = props => (
 interface Props {
   classes: any;
   style: any;
-  locations: Array<Location>;
+  locations: Array<TS.Location>;
   perspectives: Array<Object>;
   hideDrawer: () => void;
   openURLExternally: (path: string) => void;
   toggleOpenLinkDialog: () => void;
   setDefaultLocations: () => void;
-  addLocation: (location: Location, openAfterCreate?: boolean) => void;
-  addLocations: (locations: Array<Location>) => void;
+  addLocation: (location: TS.Location, openAfterCreate?: boolean) => void;
+  addLocations: (locations: Array<TS.Location>) => void;
   editLocation: () => void;
-  removeLocation: (location: Location) => void;
+  removeLocation: (location: TS.Location) => void;
   isDesktop: boolean;
 }
 
@@ -75,7 +75,7 @@ type SubFolder = {
 
 const LocationManager = (props: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [selectedLocation, setSelectedLocation] = useState<Location>(null);
+  const [selectedLocation, setSelectedLocation] = useState<TS.Location>(null);
   const [
     isCreateLocationDialogOpened,
     setCreateLocationDialogOpened

@@ -29,24 +29,23 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ConfirmDialog from '../dialogs/ConfirmDialog';
 import i18n from '-/services/i18n';
-import { Tag } from '-/reducers/taglibrary';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
-import { SearchQuery } from '-/services/search';
 import { getMaxSearchResults } from '-/reducers/settings';
 import { actions as AppActions } from '-/reducers/app';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   open: boolean;
   onClose: () => void;
   anchorEl: Element | null;
-  selectedTag: Tag | null;
+  selectedTag: TS.Tag | null;
   currentEntryPath: string;
-  removeTags: (paths: Array<string>, tags: Array<Tag>) => void;
-  searchLocationIndex?: (searchQuery: SearchQuery) => void;
+  removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
+  searchLocationIndex?: (searchQuery: TS.SearchQuery) => void;
   maxSearchResults?: number;
   openSearchPanel?: () => void;
-  setIsAddTagDialogOpened?: (tag: Tag) => void;
-  toggleEditTagDialog?: (tag: Tag) => void;
+  setIsAddTagDialogOpened?: (tag: TS.Tag) => void;
+  toggleEditTagDialog?: (tag: TS.Tag) => void;
   isReadOnlyMode?: boolean;
 }
 

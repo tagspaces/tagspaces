@@ -33,7 +33,7 @@ import TagContainer from '../TagContainer';
 import i18n from '-/services/i18n';
 import { isFunc } from '-/utils/misc';
 import AppConfig from '-/config';
-import { Tag } from '-/reducers/taglibrary';
+import { TS } from '-/tagspaces.namespace';
 
 const styles: any = {
   root: {
@@ -126,7 +126,7 @@ const ImportExportTagGroupsDialog = (props: Props) => {
       </FormControl>
       <TagGroupContainer taggroup={tagGroup}>
         {tagGroup.children &&
-          tagGroup.children.map((tag: Tag) => (
+          tagGroup.children.map((tag: TS.Tag) => (
             <TagContainer tag={tag} tagMode="display" />
           ))}
       </TagGroupContainer>

@@ -18,7 +18,7 @@
 
 import React, { forwardRef, Ref, useImperativeHandle, useRef } from 'react';
 import { Progress } from 'aws-sdk/clients/s3';
-import { FileSystemEntry } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   directoryPath: string;
@@ -27,7 +27,7 @@ interface Props {
     destination: string,
     onUploadProgress?: (progress: Progress, response: any) => void
   ) => any;
-  reflectCreateEntries: (fsEntries: Array<FileSystemEntry>) => void;
+  reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => void;
   onUploadProgress: (progress: Progress, response: any) => void;
   toggleUploadDialog: () => void;
   toggleProgressDialog: () => void;

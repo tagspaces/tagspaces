@@ -16,8 +16,8 @@
  *
  */
 
-import { Location, getLocation, getLocations, locationType } from './locations';
-import { createDirectoryIndex, FileSystemEntry } from '-/services/utils-io';
+import { getLocation, getLocations } from './locations';
+import { createDirectoryIndex } from '-/services/utils-io';
 import { Pro } from '../pro';
 import {
   extractFileExtension,
@@ -25,13 +25,14 @@ import {
   extractTagsAsObjects,
   getLocationPath
 } from '-/utils/paths';
-import Search, { SearchQuery } from '../services/search';
+import Search from '../services/search';
 import { actions as AppActions } from './app';
 import i18n from '../services/i18n';
 import PlatformIO from '../services/platform-io';
-import { Tag } from './taglibrary';
 import GlobalSearch from '../services/search-index';
 import AppConfig from '-/config';
+import { TS } from '-/tagspaces.namespace';
+import { locationType } from '-/utils/misc';
 
 export const types = {
   SET_SEARCH_QUERY: 'SET_SEARCH_QUERY',
@@ -176,7 +177,7 @@ export default (state: any = initialState, action: any) => {
 };
 
 export const actions = {
-  setSearchQuery: (searchQuery: SearchQuery) => ({
+  setSearchQuery: (searchQuery: TS.SearchQuery) => ({
     type: types.SET_SEARCH_QUERY,
     searchQuery
   }),
@@ -283,12 +284,12 @@ export const actions = {
   clearDirectoryIndex: () => ({
     type: types.INDEX_DIRECTORY_CLEAR
   }),
-  searchLocationIndex: (searchQuery: SearchQuery) => (
+  searchLocationIndex: (searchQuery: TS.SearchQuery) => (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
     const state = getState();
-    const currentLocation: Location = getLocation(
+    const currentLocation: TS.Location = getLocation(
       state,
       state.app.currentLocationId
     );
@@ -354,7 +355,7 @@ export const actions = {
       Search.searchLocationIndex(GlobalSearch.index, searchQuery)
         .then(searchResults => {
           if (isCloudLocation) {
-            searchResults.forEach((entry: FileSystemEntry) => {
+            searchResults.forEach((entry: TS.FileSystemEntry) => {
               if (
                 entry.thumbPath &&
                 entry.thumbPath.length > 1 &&
@@ -381,12 +382,12 @@ export const actions = {
         });
     }, 50);
   },
-  searchAllLocations: (searchQuery: SearchQuery) => (
+  searchAllLocations: (searchQuery: TS.SearchQuery) => (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
     const state = getState();
-    const currentLocation: Location = getLocation(
+    const currentLocation: TS.Location = getLocation(
       state,
       state.app.currentLocationId
     );
@@ -463,7 +464,7 @@ export const actions = {
               let enhancedSearchResult = searchResults;
               if (isCloudLocation) {
                 enhancedSearchResult = searchResults.filter(
-                  (entry: FileSystemEntry) => {
+                  (entry: TS.FileSystemEntry) => {
                     // Excluding s3 folders from global search
                     if (entry && entry.isFile) {
                       const cleanedPath = entry.path.startsWith('/')
@@ -574,7 +575,7 @@ export const actions = {
     path,
     newPath
   }),
-  reflectUpdateSidecarTags: (path: string, tags: Array<Tag>) => ({
+  reflectUpdateSidecarTags: (path: string, tags: Array<TS.Tag>) => ({
     type: types.REFLECT_UPDATE_SIDECARTAGS,
     path,
     tags
