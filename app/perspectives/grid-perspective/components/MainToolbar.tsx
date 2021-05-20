@@ -30,7 +30,9 @@ import SelectAllIcon from '@material-ui/icons/CheckBox';
 import DeSelectAllIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CopyIcon from '@material-ui/icons/FileCopy';
 import DeleteIcon from '@material-ui/icons/Delete';
+import ExportIcon from '@material-ui/icons/SwapHoriz';
 import i18n from '-/services/i18n';
+import { Pro } from '-/pro';
 
 interface Props {
   classes: any;
@@ -46,6 +48,7 @@ interface Props {
   openDeleteFileDialog: () => void;
   handleSortingMenu: (event: Object) => void;
   handleOptionsMenu: (event: Object) => void;
+  handleExportCsvMenu: () => void;
   layoutType: string;
   isDesktopMode: boolean;
 }
@@ -170,6 +173,17 @@ const MainToolbar = (props: Props) => {
           <SwapVertIcon />
         </IconButton>
       </Tooltip>
+      {Pro && (
+        <Tooltip title={i18n.t('core:exportCsv')}>
+          <IconButton
+            // title={i18n.t('core:options')}
+            data-tid="gridPerspectiveExportCsvMenuTID"
+            onClick={props.handleExportCsvMenu}
+          >
+            <ExportIcon />
+          </IconButton>
+        </Tooltip>
+      )}
       <Tooltip title={i18n.t('core:options')}>
         <IconButton
           // title={i18n.t('core:options')}

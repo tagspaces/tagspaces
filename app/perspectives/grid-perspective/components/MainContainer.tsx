@@ -44,6 +44,7 @@ import TagDropContainer from '-/components/TagDropContainer';
 import IOActions from '-/reducers/io-actions';
 import {
   actions as AppActions,
+  getDirectoryContent,
   getLastSelectedEntry,
   getSelectedEntries,
   isDeleteMultipleEntriesDialogOpened,
@@ -61,6 +62,7 @@ import GridPagination from '-/perspectives/grid-perspective/components/GridPagin
 import GridSettingsDialog from '-/perspectives/grid-perspective/components/GridSettingsDialog';
 import AddTagToTagGroupDialog from '-/components/dialogs/AddTagToTagGroupDialog';
 import { TS } from '-/tagspaces.namespace';
+import { Pro } from '-/pro';
 
 interface Props {
   classes: any;
@@ -269,6 +271,12 @@ const GridPerspective = (props: Props) => {
   const handleOptionsMenu = event => {
     const anchor = event ? event.currentTarget : null;
     setOptionsContextMenuAnchorEl(anchor);
+  };
+
+  const handleExportCsvMenu = () => {
+    if (Pro) {
+      Pro.exportAsCsv.ExportAsCsv(props.directoryContent);
+    }
   };
 
   const handleGridCellClick = (event, fsEntry: TS.FileSystemEntry) => {
@@ -729,6 +737,7 @@ const GridPerspective = (props: Props) => {
         openDeleteFileDialog={openDeleteFileDialog}
         handleSortingMenu={handleSortingMenu}
         handleOptionsMenu={handleOptionsMenu}
+        handleExportCsvMenu={handleExportCsvMenu}
         isDesktopMode={props.isDesktopMode}
       />
       <GlobalHotKeys
@@ -905,7 +914,8 @@ function mapStateToProps(state) {
     isDesktopMode: isDesktopMode(state),
     isDeleteMultipleEntriesDialogOpened: isDeleteMultipleEntriesDialogOpened(
       state
-    )
+    ),
+    directoryContent: getDirectoryContent(state)
   };
 }
 
