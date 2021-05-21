@@ -44,7 +44,6 @@ import TagDropContainer from '-/components/TagDropContainer';
 import IOActions from '-/reducers/io-actions';
 import {
   actions as AppActions,
-  getDirectoryContent,
   getLastSelectedEntry,
   getSelectedEntries,
   isDeleteMultipleEntriesDialogOpened,
@@ -914,8 +913,7 @@ function mapStateToProps(state) {
     isDesktopMode: isDesktopMode(state),
     isDeleteMultipleEntriesDialogOpened: isDeleteMultipleEntriesDialogOpened(
       state
-    ),
-    directoryContent: getDirectoryContent(state)
+    )
   };
 }
 
