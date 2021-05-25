@@ -30,6 +30,11 @@ export function findAvailableExtensions() {
   // Search in the installation folder
   const extensionsFound = [
     {
+      extensionId: '@tagspaces/xlsx-viewer',
+      extensionName: 'Sheet Editor',
+      extensionType: 'viewer'
+    },
+    {
       extensionId: '@tagspaces/archive-viewer',
       extensionName: 'Archive Viewer',
       extensionType: 'viewer'
