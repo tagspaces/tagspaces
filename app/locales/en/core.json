@@ -553,5 +553,6 @@
   "emptyTitle": "Title cannot be empty!",
   "duplicateTitle": "Search name already exist!",
   "savedSearchesTitle": "Saved Searches",
+  "exportCsv": "Export current files and folders as CSV file",
   "-": "-"
 }
