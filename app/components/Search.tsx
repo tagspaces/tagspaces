@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
@@ -100,50 +100,46 @@ interface Props {
 }
 
 const Search = React.memo((props: Props) => {
-  const [textQuery, setTextQuery] = useState<string>(
-    props.searchQuery.textQuery
-  );
-  // const [tagsAND, setTagsAND] = useState<Array<Tag>>(props.searchQuery.tagsAND);
-  // const [tagsOR, setTagsOR] = useState<Array<Tag>>(props.searchQuery.tagsAND);
-  // const [tagsNOT, setTagsNOT] = useState<Array<Tag>>(props.searchQuery.tagsAND);
-  const [fileTypes, setFileTypes] = useState<Array<string>>(
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
+  const textQuery = useRef<string>(props.searchQuery.textQuery);
+  // const tagsAND = useRef<Array<TS.Tag>>(props.searchQuery.tagsAND);
+  const fileTypes = useRef<Array<string>>(
     props.searchQuery.fileTypes
       ? props.searchQuery.fileTypes
       : FileTypeGroups.any
   );
-  const [searchBoxing, setSearchBoxing] = useState<
-    'location' | 'folder' | 'global'
-  >(
+
+  const searchBoxing = useRef<'location' | 'folder' | 'global'>(
     props.searchQuery.searchBoxing ? props.searchQuery.searchBoxing : 'location'
   );
-  const [searchType, setSearchType] = useState<
-    'fussy' | 'semistrict' | 'strict'
-  >(props.searchQuery.searchType ? props.searchQuery.searchType : 'fussy');
-  const [lastModified, setLastModified] = useState<string>(
+  const searchType = useRef<'fussy' | 'semistrict' | 'strict'>(
+    props.searchQuery.searchType ? props.searchQuery.searchType : 'fussy'
+  );
+  const lastModified = useRef<string>(
     props.searchQuery.lastModified ? props.searchQuery.lastModified : ''
   );
   const [saveSearchDialogOpened, setSaveSearchDialogOpened] = useState<
     TS.SearchQuery
   >(undefined);
-  const [tagTimePeriod, setTagTimePeriod] = useState<string>('');
-  const [tagTimePeriodHelper, setTagTimePeriodHelper] = useState<string>(' ');
+  const tagTimePeriod = useRef<string>('');
+  const tagTimePeriodHelper = useRef<string>(' ');
   const [tagPlace, setTagPlace] = useState<string>(' ');
   const [tagPlaceHelper, setTagPlaceHelper] = useState<string>(' ');
-  const [tagTimePeriodFrom, setTagTimePeriodFrom] = useState<number | null>(
+  const tagTimePeriodFrom = useRef<number | null>(
     props.searchQuery.tagTimePeriodFrom
       ? props.searchQuery.tagTimePeriodFrom
       : null
   );
-  const [tagTimePeriodTo, setTagTimePeriodTo] = useState<number | null>(
+  const tagTimePeriodTo = useRef<number | null>(
     props.searchQuery.tagTimePeriodTo ? props.searchQuery.tagTimePeriodTo : null
   );
   const [tagPlaceLat, setTagPlaceLat] = useState<number | null>(null);
   const [tagPlaceLong, setTagPlaceLong] = useState<number | null>(null);
   // const [tagPlaceRadius, setTagPlaceRadius] = useState<number>(0);
-  const [forceIndexing, setForceIndexing] = useState<boolean>(
+  const forceIndexing = useRef<boolean>(
     props.searchQuery.forceIndexing ? props.searchQuery.forceIndexing : false
   );
-  const [fileSize, setFileSize] = useState<string>(
+  const fileSize = useRef<string>(
     props.searchQuery.fileSize ? props.searchQuery.fileSize : ''
   );
   const [
@@ -193,8 +189,8 @@ const Search = React.memo((props: Props) => {
 
     if (name === 'fileTypes') {
       const types = JSON.parse(value);
-      setFileTypes(types);
-      if (searchBoxing !== 'global') {
+      fileTypes.current = types;
+      if (searchBoxing.current !== 'global') {
         props.searchLocationIndex({
           ...props.searchQuery,
           fileTypes: types
@@ -208,8 +204,8 @@ const Search = React.memo((props: Props) => {
     const { value, name } = target;
 
     if (name === 'fileSize') {
-      setFileSize(value);
-      if (searchBoxing !== 'global') {
+      fileSize.current = value;
+      if (searchBoxing.current !== 'global') {
         props.searchLocationIndex({
           ...props.searchQuery,
           fileSize: value
@@ -225,8 +221,8 @@ const Search = React.memo((props: Props) => {
     const { value, name } = target;
 
     if (name === 'lastModified') {
-      setLastModified(value);
-      if (searchBoxing !== 'global') {
+      lastModified.current = value;
+      if (searchBoxing.current !== 'global') {
         props.searchLocationIndex({
           ...props.searchQuery,
           lastModified: value
@@ -242,47 +238,28 @@ const Search = React.memo((props: Props) => {
     const { value } = target;
 
     const savedSearch = props.searches.find(search => search.uuid === value);
-    setTextQuery(savedSearch.textQuery);
-    if (savedSearch.fileTypes && savedSearch.fileTypes !== fileTypes) {
-      setFileTypes(savedSearch.fileTypes);
-    }
-    if (savedSearch.fileSize && savedSearch.fileSize !== fileSize) {
-      setFileSize(savedSearch.fileSize);
-    }
-    if (savedSearch.lastModified && savedSearch.lastModified !== lastModified) {
-      setLastModified(savedSearch.lastModified);
-    }
-    if (savedSearch.searchType && savedSearch.searchType !== searchType) {
-      setSearchType(savedSearch.searchType);
-    }
-    if (savedSearch.searchBoxing && savedSearch.searchBoxing !== searchBoxing) {
-      setSearchBoxing(savedSearch.searchBoxing);
-    }
-    if (
-      savedSearch.forceIndexing &&
-      savedSearch.forceIndexing !== forceIndexing
-    ) {
-      setForceIndexing(savedSearch.forceIndexing);
-    }
+    textQuery.current = savedSearch.textQuery;
+    fileTypes.current = savedSearch.fileTypes;
+    lastModified.current = savedSearch.lastModified;
+    fileSize.current = savedSearch.fileSize;
+    searchType.current = savedSearch.searchType;
+    searchBoxing.current = savedSearch.searchBoxing;
+    forceIndexing.current = savedSearch.forceIndexing;
+
     let ttPeriod;
-    if (
-      savedSearch.tagTimePeriodFrom &&
-      savedSearch.tagTimePeriodFrom !== tagTimePeriodFrom
-    ) {
-      setTagTimePeriodFrom(savedSearch.tagTimePeriodFrom);
+    tagTimePeriodFrom.current = savedSearch.tagTimePeriodFrom;
+    if (savedSearch.tagTimePeriodFrom) {
       ttPeriod = format(new Date(savedSearch.tagTimePeriodFrom), 'yyyyMMdd');
     }
-    if (
-      savedSearch.tagTimePeriodTo &&
-      savedSearch.tagTimePeriodTo !== tagTimePeriodTo
-    ) {
-      setTagTimePeriodTo(savedSearch.tagTimePeriodTo);
+
+    tagTimePeriodTo.current = savedSearch.tagTimePeriodTo;
+    if (savedSearch.tagTimePeriodTo) {
       ttPeriod +=
         '-' + format(new Date(savedSearch.tagTimePeriodTo), 'yyyyMMdd');
     }
 
     if (ttPeriod) {
-      setTagTimePeriod(ttPeriod);
+      tagTimePeriod.current = ttPeriod;
     }
 
     if (savedSearch.searchBoxing === 'global') {
@@ -365,14 +342,16 @@ const Search = React.memo((props: Props) => {
         formatDateTime(fromDateTime) +
         ' To: ' +
         formatDateTime(toDateTime);
-      setTagTimePeriodFrom(fromDateTime.getTime());
-      setTagTimePeriodTo(toDateTime.getTime());
-      setTagTimePeriodHelper(tagTPeriodHelper);
+      tagTimePeriodFrom.current = fromDateTime.getTime();
+      tagTimePeriodTo.current = toDateTime.getTime();
+      tagTimePeriodHelper.current = tagTPeriodHelper;
     } else {
-      setTagTimePeriodHelper('');
+      tagTimePeriodFrom.current = null;
+      tagTimePeriodTo.current = null;
+      tagTimePeriodHelper.current = ' ';
     }
-
-    setTagTimePeriod(value);
+    tagTimePeriod.current = value;
+    forceUpdate();
   };
 
   const handlePlaceChange = event => {
@@ -402,6 +381,64 @@ const Search = React.memo((props: Props) => {
     setTagPlaceLat(lat);
     setTagPlaceLong(lon);
     setTagPlaceHelper(tagPHelper);
+  };
+
+  const mergeWithExtractedTags = (tags: Array<TS.Tag>, identifier: string) => {
+    const extractedTags = parseTextQuery(identifier);
+    if (tags) {
+      if (extractedTags.length > 0) {
+        return getUniqueTags(tags, extractedTags);
+      }
+      return tags;
+    }
+    if (extractedTags.length > 0) {
+      return extractedTags;
+    }
+    return undefined;
+  };
+
+  function getUniqueTags(tags1: Array<TS.Tag>, tags2: Array<TS.Tag>) {
+    const mergedArray = [...tags1, ...tags2];
+    // mergedArray have duplicates, lets remove the duplicates using Set
+    const set = new Set();
+    return mergedArray.filter(tag => {
+      if (!set.has(tag.title)) {
+        set.add(tag.title);
+        return true;
+      }
+      return false;
+    }, set);
+  }
+
+  function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+  }
+
+  const parseTextQuery = (identifier: string) => {
+    const extractedTags = [];
+    const txt = textQuery.current
+      .trim()
+      .replace(new RegExp(escapeRegExp(identifier) + '\\s+', 'g'), identifier);
+    const textQueryParts = txt.split(' ');
+    let newTextQuery = '';
+    if (textQueryParts) {
+      // && textQueryParts.length > 1) {
+      textQueryParts.forEach(part => {
+        const trimmedPart = part.trim();
+        if (trimmedPart.startsWith(identifier)) {
+          const tagTitle = trimmedPart.substr(1).trim();
+          extractedTags.push({ title: tagTitle });
+        } /* else if (trimmedPart.startsWith('-')) {
+          // add to searchQuery.tagsNOT
+        } else if (trimmedPart.startsWith('?')) {
+          // add to searchQuery.tagsOR
+        */ else {
+          newTextQuery += trimmedPart + ' ';
+        }
+      });
+    }
+    textQuery.current = newTextQuery.trim();
+    return extractedTags;
   };
 
   const clickSearchButton = () => {
@@ -440,48 +477,51 @@ const Search = React.memo((props: Props) => {
   }
 
   const clearSearch = () => {
-    props.setSearchQuery({});
-    openCurrentDirectory();
-    setTextQuery(''); // textQuery.current = '';
-    setSearchBoxing('location');
-    setSearchType('fussy');
-    setFileTypes(FileTypeGroups.any);
-    setLastModified('');
-    setTagTimePeriod('');
-    setTagTimePeriodHelper(' ');
+    textQuery.current = '';
+    searchBoxing.current = 'location';
+    searchType.current = 'fussy';
+    fileTypes.current = FileTypeGroups.any;
+    lastModified.current = '';
+    tagTimePeriod.current = '';
+    tagTimePeriodHelper.current = ' ';
     setTagPlace(' ');
     setTagPlaceHelper(' ');
-    setTagTimePeriodFrom(null);
-    setTagTimePeriodTo(null);
+    tagTimePeriodFrom.current = null;
+    tagTimePeriodTo.current = null;
     setTagPlaceLat(null);
     setTagPlaceLong(null);
     // setTagPlaceRadius(0);
-    setForceIndexing(false);
-    setFileSize('');
+    forceIndexing.current = false;
+    fileSize.current = '';
+    props.setSearchQuery({});
+    openCurrentDirectory();
   };
 
   const saveSearch = (isNew: boolean = true) => {
+    const tagsAND = mergeWithExtractedTags(props.searchQuery.tagsAND, '+');
+    const tagsOR = mergeWithExtractedTags(props.searchQuery.tagsOR, '?');
+    const tagsNOT = mergeWithExtractedTags(props.searchQuery.tagsNOT, '-');
     setSaveSearchDialogOpened({
       uuid: isNew ? undefined : props.searchQuery.uuid,
       title: props.searchQuery.title,
-      textQuery, // .current,
-      tagsAND: props.searchQuery.tagsAND,
-      tagsOR: props.searchQuery.tagsOR,
-      tagsNOT: props.searchQuery.tagsNOT,
+      textQuery: textQuery.current,
+      tagsAND,
+      tagsOR,
+      tagsNOT,
       // @ts-ignore
-      searchBoxing,
-      searchType,
-      fileTypes,
-      lastModified,
-      fileSize,
-      tagTimePeriodFrom: tagTimePeriodFrom || null,
-      tagTimePeriodTo: tagTimePeriodTo || null,
+      searchBoxing: searchBoxing.current,
+      searchType: searchType.current,
+      fileTypes: fileTypes.current,
+      lastModified: lastModified.current,
+      fileSize: fileSize.current,
+      tagTimePeriodFrom: tagTimePeriodFrom.current,
+      tagTimePeriodTo: tagTimePeriodTo.current,
       tagPlaceLat,
       tagPlaceLong,
       // tagPlaceRadius,
       maxSearchResults: props.maxSearchResults,
       currentDirectory: props.currentDirectory,
-      forceIndexing
+      forceIndexing: forceIndexing.current
     });
   };
 
@@ -490,7 +530,8 @@ const Search = React.memo((props: Props) => {
     boxing: 'location' | 'folder' | 'global'
   ) => {
     if (boxing !== null) {
-      setSearchBoxing(boxing);
+      searchBoxing.current = boxing;
+      forceUpdate();
     }
   };
 
@@ -499,34 +540,38 @@ const Search = React.memo((props: Props) => {
     type: 'fussy' | 'semistrict' | 'strict'
   ) => {
     if (type !== null) {
-      setSearchType(type);
+      searchType.current = type;
+      forceUpdate();
     }
   };
 
   const executeSearch = () => {
     const { searchAllLocations, searchLocationIndex } = props;
+    const tagsAND = mergeWithExtractedTags(props.searchQuery.tagsAND, '+');
+    const tagsOR = mergeWithExtractedTags(props.searchQuery.tagsOR, '?');
+    const tagsNOT = mergeWithExtractedTags(props.searchQuery.tagsNOT, '-');
     const searchQuery: TS.SearchQuery = {
-      textQuery, // .current,
-      tagsAND: props.searchQuery.tagsAND,
-      tagsOR: props.searchQuery.tagsOR,
-      tagsNOT: props.searchQuery.tagsNOT,
+      textQuery: textQuery.current,
+      tagsAND,
+      tagsOR,
+      tagsNOT,
       // @ts-ignore
-      searchBoxing,
-      searchType,
-      fileTypes,
-      lastModified,
-      fileSize,
-      tagTimePeriodFrom: tagTimePeriodFrom || null,
-      tagTimePeriodTo: tagTimePeriodTo || null,
+      searchBoxing: searchBoxing.current,
+      searchType: searchType.current,
+      fileTypes: fileTypes.current,
+      lastModified: lastModified.current,
+      fileSize: fileSize.current,
+      tagTimePeriodFrom: tagTimePeriodFrom.current,
+      tagTimePeriodTo: tagTimePeriodTo.current,
       tagPlaceLat,
       tagPlaceLong,
       // tagPlaceRadius,
       maxSearchResults: props.maxSearchResults,
       currentDirectory: props.currentDirectory,
-      forceIndexing
+      forceIndexing: forceIndexing.current
     };
     console.log('Search object: ' + JSON.stringify(searchQuery));
-    if (searchBoxing === 'global') {
+    if (searchBoxing.current === 'global') {
       searchAllLocations(searchQuery);
     } else {
       searchLocationIndex(searchQuery);
@@ -593,9 +638,11 @@ const Search = React.memo((props: Props) => {
           <OutlinedInput
             id="textQuery"
             name="textQuery"
-            value={textQuery}
+            value={textQuery.current}
             onChange={event => {
-              setTextQuery(event.target.value);
+              textQuery.current = event.target.value;
+              // rerender
+              forceUpdate();
             }}
             inputRef={mainSearchField}
             margin="dense"
@@ -622,7 +669,7 @@ const Search = React.memo((props: Props) => {
             size="small"
             exclusive
             style={{ marginBottom: 10, alignSelf: 'center' }}
-            value={searchBoxing}
+            value={searchBoxing.current}
           >
             <ToggleButton value="location">
               <Tooltip arrow title={i18n.t('searchPlaceholder')}>
@@ -654,7 +701,7 @@ const Search = React.memo((props: Props) => {
             size="small"
             exclusive
             style={{ marginBottom: 10, alignSelf: 'center' }}
-            value={searchType}
+            value={searchType.current}
           >
             <ToggleButton value="fussy" data-tid="fussySearchTID">
               <Tooltip
@@ -685,11 +732,14 @@ const Search = React.memo((props: Props) => {
         </FormControl>
         <FormControl className={classes.formControl} disabled={indexing}>
           <ToggleButtonGroup
-            onChange={() => setForceIndexing(!forceIndexing)}
+            onChange={() => {
+              forceIndexing.current = !forceIndexing.current;
+              forceUpdate();
+            }}
             size="small"
             exclusive
             style={{ marginBottom: 10, alignSelf: 'center' }}
-            value={forceIndexing}
+            value={forceIndexing.current}
           >
             <ToggleButton value={false}>
               <Tooltip
@@ -792,7 +842,7 @@ const Search = React.memo((props: Props) => {
                 {i18n.t('core:fileType')}
               </InputLabel>
               <Select
-                value={JSON.stringify(fileTypes)}
+                value={JSON.stringify(fileTypes.current)}
                 onChange={handleFileTypeChange}
                 input={<Input name="fileTypes" id="file-type" />}
               >
@@ -901,7 +951,7 @@ const Search = React.memo((props: Props) => {
                 {i18n.t('core:sizeSearchTitle')}
               </InputLabel>
               <Select
-                value={fileSize}
+                value={fileSize.current}
                 onChange={handleFileSizeChange}
                 input={<Input name="fileSize" id="file-size" />}
                 displayEmpty
@@ -949,7 +999,7 @@ const Search = React.memo((props: Props) => {
                 {i18n.t('core:lastModifiedSearchTitle')}
               </InputLabel>
               <Select
-                value={lastModified}
+                value={lastModified.current}
                 onChange={handleLastModifiedChange}
                 input={<Input name="lastModified" id="modification-date" />}
                 displayEmpty
@@ -985,12 +1035,12 @@ const Search = React.memo((props: Props) => {
               <TextField
                 id="tagTimePeriod"
                 label={i18n.t('Enter time period')}
-                value={tagTimePeriod}
+                value={tagTimePeriod.current}
                 disabled={indexing || !Pro}
                 onChange={handleTimePeriodChange}
                 onKeyDown={startSearch}
-                helperText={tagTimePeriodHelper}
-                error={tagTimePeriodHelper.length < 1}
+                helperText={tagTimePeriodHelper.current}
+                error={tagTimePeriodHelper.current.length < 1}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment
