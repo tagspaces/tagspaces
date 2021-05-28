@@ -745,11 +745,21 @@ export default {
       type: 'docx',
       viewer: '@tagspaces/document-viewer',
       color: '#2196f3'
-    }
-    /* {
+    },
+    {
       type: 'xlsx',
-      viewer: '@tagspaces/document-viewer',
+      viewer: '@tagspaces/xlsx-viewer',
       color: '#b2f30e'
-    } */
+    },
+    {
+      type: 'xls',
+      viewer: '@tagspaces/xlsx-viewer',
+      color: '#b2f30e'
+    },
+    {
+      type: 'csv',
+      viewer: '@tagspaces/xlsx-viewer',
+      color: '#b2f30e'
+    }
   ]
 };
