@@ -266,21 +266,16 @@ const GridSettingsDialog = (props: Props) => {
           </Select>
           <FormHelperText>{i18n.t('core:pageLimitHelp')}</FormHelperText>
         </FormControl>
-        <Divider />
-        <MenuItem
-          data-tid="gridPerspectiveHelp"
-          title={i18n.t('core:help')}
-          aria-label={i18n.t('core:perspectiveHelp')}
-          onClick={openHelpWebPage}
-        >
-          <ListItemIcon>
-            <HelpIcon />
-          </ListItemIcon>
-          <ListItemText primary={i18n.t('core:help')} />
-        </MenuItem>
-        <Divider />
       </DialogContent>
       <DialogActions>
+        <Button
+          data-tid="gridPerspectiveHelp"
+          title={i18n.t('core:help')}
+          onClick={openHelpWebPage}
+          color="primary"
+        >
+          {i18n.t('core:help')}
+        </Button>
         <Button
           data-tid="cancelDialog"
           title={i18n.t('core:cancel')}
@@ -292,6 +287,7 @@ const GridSettingsDialog = (props: Props) => {
 
         <Button
           data-tid="closeGridSettingsDialog"
+          title={i18n.t('core:Ok')}
           onClick={() => props.setGridPageLimit(newGridPageLimit)}
           color="primary"
         >
