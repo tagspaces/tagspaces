@@ -143,7 +143,6 @@ const EditEntryTagDialog = (props: Props) => {
         </FormControl>
         {showGeoEditor && (
           <GeoTagEditor
-            key={title}
             geoTag={title}
             onChange={setTitle}
             zoom={title === defaultTagLocation ? 2 : undefined}

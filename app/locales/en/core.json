@@ -554,5 +554,7 @@
   "duplicateTitle": "Search name already exist!",
   "savedSearchesTitle": "Saved Searches",
   "exportCsv": "Export current files and folders as CSV file",
+  "lat": "Latitude",
+  "lng": "Longitude",
   "-": "-"
 }
