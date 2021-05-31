@@ -348,22 +348,21 @@ export function extractTagsAsObjects(
   dirSeparator: string // = AppConfig.dirSeparator
 ): Array<TS.Tag> {
   const tagsInFileName = extractTags(filePath, tagDelimiter, dirSeparator);
-  const tagArray = [];
-  tagsInFileName.map(tag => {
-    tagArray.push({
-      title: '' + tag,
-      type: 'plain'
-    });
-    return true;
-  });
-  return tagArray;
+  return tagsAsObjects(tagsInFileName);
+}
+
+export function tagsAsObjects(tags: Array<string>): Array<TS.Tag> {
+  return tags.map(tag => ({
+    title: '' + tag,
+    type: 'plain'
+  }));
 }
 
 export function extractTags(
   filePath: string,
   tagDelimiter: string = AppConfig.tagDelimiter,
   dirSeparator: string // = AppConfig.dirSeparator
-) {
+): Array<string> {
   // console.log('Extracting tags from: ' + filePath);
   const fileName = extractFileName(filePath, dirSeparator);
   // WithoutExt
