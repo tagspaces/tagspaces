@@ -60,8 +60,8 @@ const GeoTagEditor = Pro && Pro.UI ? Pro.UI.GeoTagEditor : React.Fragment;
 const DateTagEditor = Pro && Pro.UI ? Pro.UI.DateTagEditor : React.Fragment;
 
 const EditEntryTagDialog = (props: Props) => {
-  const [disableConfirmButton, setDisableConfirmButton] = useState(true);
-  const [errorTag, setErrorTag] = useState(false);
+  const [showAdvancedMode, setShowAdvancedMode] = useState<boolean>(false);
+  const [errorTag, setErrorTag] = useState<boolean>(false);
   const [title, setTitle] = useState(
     props.selectedTag && props.selectedTag.title
   );
@@ -93,18 +93,15 @@ const EditEntryTagDialog = (props: Props) => {
     const tagCheck = RegExp(/^[^#/\\ [\]]{1,}$/);
     if (title && tagCheck.test(title)) {
       setErrorTag(false);
-      setDisableConfirmButton(false);
     } else {
       setErrorTag(true);
-      setDisableConfirmButton(true);
     }
   }
 
   function onConfirm() {
-    if (!disableConfirmButton) {
+    if (!errorTag) {
       props.editTagForEntry(props.currentEntryPath, props.selectedTag, title);
       setErrorTag(false);
-      setDisableConfirmButton(true);
       props.onClose();
     }
   }
@@ -143,10 +140,10 @@ const EditEntryTagDialog = (props: Props) => {
         </FormControl>
         {showGeoEditor && (
           <GeoTagEditor
-            key={title}
             geoTag={title}
             onChange={setTitle}
             zoom={title === defaultTagLocation ? 2 : undefined}
+            showAdvancedMode={showAdvancedMode}
           />
         )}
         {isShowDatePeriodEditor && (
@@ -161,22 +158,36 @@ const EditEntryTagDialog = (props: Props) => {
 
   function renderActions() {
     return (
-      <DialogActions>
-        <Button
-          data-tid="closeEditTagEntryDialog"
-          onClick={props.onClose}
-          color="primary"
-        >
-          {i18n.t('core:cancel')}
-        </Button>
-        <Button
-          disabled={disableConfirmButton}
-          onClick={onConfirm}
-          data-tid="confirmEditTagEntryDialog"
-          color="primary"
-        >
-          {i18n.t('core:ok')}
-        </Button>
+      <DialogActions style={{ justifyContent: 'space-between' }}>
+        {GeoTagEditor && isPlusCode(title) ? (
+          <Button
+            data-tid="switchAdvancedModeTID"
+            onClick={() => setShowAdvancedMode(!showAdvancedMode)}
+          >
+            {showAdvancedMode
+              ? i18n.t('core:switchSimpleMode')
+              : i18n.t('core:switchAdvancedMode')}
+          </Button>
+        ) : (
+          <div />
+        )}
+        <div>
+          <Button
+            data-tid="closeEditTagEntryDialog"
+            onClick={props.onClose}
+            color="primary"
+          >
+            {i18n.t('core:cancel')}
+          </Button>
+          <Button
+            disabled={errorTag}
+            onClick={onConfirm}
+            data-tid="confirmEditTagEntryDialog"
+            color="primary"
+          >
+            {i18n.t('core:ok')}
+          </Button>
+        </div>
       </DialogActions>
     );
   }

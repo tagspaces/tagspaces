@@ -519,6 +519,12 @@ export default (state: any = initialState, action: any) => {
       return state;
     }
     case types.REFLECT_RENAME_ENTRY: {
+      const extractedTags = extractTagsAsObjects(
+        action.newPath,
+        AppConfig.tagDelimiter,
+        PlatformIO.getDirSeparator()
+      );
+
       return {
         ...state,
         currentDirectoryEntries: state.currentDirectoryEntries.map(entry => {
@@ -536,11 +542,7 @@ export default (state: any = initialState, action: any) => {
             ),
             tags: [
               ...entry.tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
-              ...extractTagsAsObjects(
-                action.newPath,
-                AppConfig.tagDelimiter,
-                PlatformIO.getDirSeparator()
-              )
+              ...extractedTags
             ]
           };
         }),
@@ -550,7 +552,11 @@ export default (state: any = initialState, action: any) => {
           }
           return {
             ...entry,
-            path: action.newPath // TODO handle change extension case
+            path: action.newPath, // TODO handle change extension case
+            tags: [
+              ...entry.tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
+              ...extractedTags
+            ]
             // shouldReload: true
           };
         })
