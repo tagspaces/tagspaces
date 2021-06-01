@@ -32,7 +32,7 @@ import Dialog from '@material-ui/core/Dialog';
 import i18n from '-/services/i18n';
 import { isPlusCode } from '-/utils/misc';
 import { Pro } from '-/pro';
-import { getSelectedTag } from '-/reducers/app';
+import { getSelectedEntries, getSelectedTag } from '-/reducers/app';
 import TaggingActions, { defaultTagLocation } from '-/reducers/tagging-actions';
 import { isDateTimeTag } from '-/utils/dates';
 import { AppConfig } from '-/config';
@@ -52,7 +52,8 @@ interface Props {
   fullScreen: boolean;
   onClose: () => void;
   editTagForEntry: (path: string, tag: TS.Tag, title: string) => void;
-  currentEntryPath: string;
+  // currentEntryPath: string;
+  selectedEntries: Array<TS.FileSystemEntry>;
   selectedTag: TS.Tag;
 }
 
@@ -102,7 +103,13 @@ const EditEntryTagDialog = (props: Props) => {
 
   function onConfirm() {
     if (!disableConfirmButton) {
-      props.editTagForEntry(props.currentEntryPath, props.selectedTag, title);
+      if (props.selectedEntries.length > 0) {
+        props.selectedEntries.forEach(entry =>
+          props.editTagForEntry(entry.path, props.selectedTag, title)
+        );
+      } else {
+        props.editTagForEntry(props.selectedTag.path, props.selectedTag, title);
+      }
       setErrorTag(false);
       setDisableConfirmButton(true);
       props.onClose();
@@ -206,9 +213,10 @@ const EditEntryTagDialog = (props: Props) => {
 function mapStateToProps(state) {
   return {
     selectedTag: getSelectedTag(state),
-    currentEntryPath: getSelectedTag(state)
+    /* currentEntryPath: getSelectedTag(state)
       ? getSelectedTag(state).path
-      : undefined
+      : undefined, */
+    selectedEntries: getSelectedEntries(state)
   };
 }
 
