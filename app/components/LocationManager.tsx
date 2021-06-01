@@ -20,8 +20,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
-import List from '@material-ui/core/List';
 import Button from '@material-ui/core/Button';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { List } from '@material-ui/core';
 import styles from './SidePanels.css';
 import LocationManagerMenu from './menus/LocationManagerMenu';
 import ConfirmDialog from './dialogs/ConfirmDialog';
@@ -63,6 +64,7 @@ interface Props {
   addLocations: (locations: Array<TS.Location>) => void;
   editLocation: () => void;
   removeLocation: (location: TS.Location) => void;
+  moveLocation: (uuid: string, position: number) => void;
   isDesktop: boolean;
 }
 
@@ -112,6 +114,29 @@ const LocationManager = (props: Props) => {
     setImportFile(file);
     target.value = null;
   }
+
+  /* const getItemStyle = (isDragging, draggableStyle) => ({
+    // some basic styles to make the items look a bit nicer
+    userSelect: 'none',
+    // change background colour if dragging
+    background: isDragging ? 'lightgreen' : 'transparent',
+
+    // styles we need to apply on draggables
+    ...draggableStyle
+  });
+
+  const getListStyle = isDraggingOver => ({
+    background: isDraggingOver ? 'lightblue' : 'transparent',
+  }); */
+
+  const onDragEnd = result => {
+    // dropped outside the list
+    if (!result.destination) {
+      return;
+    }
+
+    props.moveLocation(result.draggableId, result.destination.index);
+  };
 
   const { classes, isDesktop } = props;
   return (
@@ -198,18 +223,53 @@ const LocationManager = (props: Props) => {
             overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
           }}
         >
-          {props.locations.map(location => (
-            <LocationView
-              key={location.uuid}
-              classes={props.classes}
-              location={location}
-              hideDrawer={props.hideDrawer}
-              setEditLocationDialogOpened={setEditLocationDialogOpened}
-              setDeleteLocationDialogOpened={setDeleteLocationDialogOpened}
-              selectedLocation={selectedLocation}
-              setSelectedLocation={setSelectedLocation}
-            />
-          ))}
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="droppable">
+              {(provided, snapshot) => (
+                <div
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                  /* style={getListStyle(snapshot.isDraggingOver)} */
+                >
+                  {props.locations.map((location, index) => (
+                    <Draggable
+                      key={location.uuid}
+                      draggableId={location.uuid}
+                      index={index}
+                    >
+                      {(prov, snap) => (
+                        <div
+                          ref={prov.innerRef}
+                          {...prov.draggableProps}
+                          {...prov.dragHandleProps}
+                          /* style={getItemStyle(
+                            snap.isDragging,
+                            prov.draggableProps.style
+                          )} */
+                        >
+                          <LocationView
+                            key={location.uuid}
+                            classes={props.classes}
+                            location={location}
+                            hideDrawer={props.hideDrawer}
+                            setEditLocationDialogOpened={
+                              setEditLocationDialogOpened
+                            }
+                            setDeleteLocationDialogOpened={
+                              setDeleteLocationDialogOpened
+                            }
+                            selectedLocation={selectedLocation}
+                            setSelectedLocation={setSelectedLocation}
+                          />
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
         </List>
       </div>
       <input
@@ -257,6 +317,7 @@ function mapDispatchToProps(dispatch) {
       addLocations: LocationActions.addLocations,
       editLocation: LocationActions.editLocation,
       removeLocation: LocationActions.removeLocation,
+      moveLocation: LocationActions.moveLocation,
       toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
       openURLExternally: AppActions.openURLExternally
     },
