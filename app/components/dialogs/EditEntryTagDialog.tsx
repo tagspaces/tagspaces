@@ -158,8 +158,8 @@ const EditEntryTagDialog = (props: Props) => {
 
   function renderActions() {
     return (
-      <DialogActions>
-        {GeoTagEditor && isPlusCode(title) && (
+      <DialogActions style={{ justifyContent: 'space-between' }}>
+        {GeoTagEditor && isPlusCode(title) ? (
           <Button
             data-tid="switchAdvancedModeTID"
             onClick={() => setShowAdvancedMode(!showAdvancedMode)}
@@ -168,22 +168,26 @@ const EditEntryTagDialog = (props: Props) => {
               ? i18n.t('core:switchSimpleMode')
               : i18n.t('core:switchAdvancedMode')}
           </Button>
+        ) : (
+          <div />
         )}
-        <Button
-          data-tid="closeEditTagEntryDialog"
-          onClick={props.onClose}
-          color="primary"
-        >
-          {i18n.t('core:cancel')}
-        </Button>
-        <Button
-          disabled={errorTag}
-          onClick={onConfirm}
-          data-tid="confirmEditTagEntryDialog"
-          color="primary"
-        >
-          {i18n.t('core:ok')}
-        </Button>
+        <div>
+          <Button
+            data-tid="closeEditTagEntryDialog"
+            onClick={props.onClose}
+            color="primary"
+          >
+            {i18n.t('core:cancel')}
+          </Button>
+          <Button
+            disabled={errorTag}
+            onClick={onConfirm}
+            data-tid="confirmEditTagEntryDialog"
+            color="primary"
+          >
+            {i18n.t('core:ok')}
+          </Button>
+        </div>
       </DialogActions>
     );
   }
