@@ -20,6 +20,7 @@ import React, { useCallback, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
@@ -76,6 +77,7 @@ interface Props {
   openURLExternally: (path: string) => void;
   toggleTagGroup: (uuid: string) => void;
   removeTagGroup: (uuid: string) => void;
+  moveTagGroup: (uuid: string, position: number) => void;
   moveTagGroupUp: (uuid: string) => void;
   moveTagGroupDown: (uuid: string) => void;
   sortTagGroup: (uuid: string) => void;
@@ -306,6 +308,14 @@ const TagLibrary = (props: Props) => {
     }
   }
 
+  const onDragEnd = result => {
+    // dropped outside the list
+    if (!result.destination) {
+      return;
+    }
+    props.moveTagGroup(result.draggableId, result.destination.index);
+  };
+
   const { tagGroups, classes, allTags, showNotification } = props;
 
   return (
@@ -445,7 +455,34 @@ const TagLibrary = (props: Props) => {
             {SmartTags(i18n).map(renderTagGroup)}
           </List>
         )}
-        <List style={{ paddingTop: 0 }}>{tagGroups.map(renderTagGroup)}</List>
+        <List style={{ paddingTop: 0 }}>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="droppable">
+              {provided => (
+                <div {...provided.droppableProps} ref={provided.innerRef}>
+                  {tagGroups.map((tagGroup, index) => (
+                    <Draggable
+                      key={tagGroup.uuid}
+                      draggableId={tagGroup.uuid}
+                      index={index}
+                    >
+                      {prov => (
+                        <div
+                          ref={prov.innerRef}
+                          {...prov.draggableProps}
+                          {...prov.dragHandleProps}
+                        >
+                          {renderTagGroup(tagGroup)}
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+        </List>
       </div>
     </div>
   );
@@ -468,6 +505,7 @@ function mapDispatchToProps(dispatch) {
     {
       toggleTagGroup: SettingsActions.toggleTagGroup,
       removeTagGroup: TagLibraryActions.removeTagGroup,
+      moveTagGroup: TagLibraryActions.moveTagGroup,
       moveTagGroupUp: TagLibraryActions.moveTagGroupUp,
       moveTagGroupDown: TagLibraryActions.moveTagGroupDown,
       sortTagGroup: TagLibraryActions.sortTagGroup,
