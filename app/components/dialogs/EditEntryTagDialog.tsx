@@ -37,6 +37,7 @@ import TaggingActions, { defaultTagLocation } from '-/reducers/tagging-actions';
 import { isDateTimeTag } from '-/utils/dates';
 import { AppConfig } from '-/config';
 import { TS } from '-/tagspaces.namespace';
+import useValidation from '-/utils/useValidation';
 
 const styles = () => ({
   root: {
@@ -61,27 +62,15 @@ const DateTagEditor = Pro && Pro.UI ? Pro.UI.DateTagEditor : React.Fragment;
 
 const EditEntryTagDialog = (props: Props) => {
   const [showAdvancedMode, setShowAdvancedMode] = useState<boolean>(false);
-  const [errorInput, setErrorInput] = useState<Array<string>>([]);
   const [title, setTitle] = useState(
     props.selectedTag && props.selectedTag.title
   );
+  const { setError, haveError } = useValidation();
   const { onClose, open, fullScreen } = props;
 
   useEffect(() => {
     handleValidation();
   }, [title]);
-
-  const setError = (errorKey: string, add: boolean = true) => {
-    if (add) {
-      if (errorInput.length === 0) {
-        setErrorInput([errorKey]);
-      } else if (errorInput.indexOf(errorKey) === -1) {
-        setErrorInput([...errorInput, errorKey]);
-      }
-    } else if (errorInput.indexOf(errorKey) > -1) {
-      setErrorInput(errorInput.filter(err => err !== errorKey));
-    }
-  };
 
   const isShowDatePeriodEditor = useMemo(() => {
     let showDatePeriodEditor = false;
@@ -111,7 +100,7 @@ const EditEntryTagDialog = (props: Props) => {
   }
 
   function onConfirm() {
-    if (errorInput.length === 0) {
+    if (!haveError()) {
       props.editTagForEntry(props.currentEntryPath, props.selectedTag, title);
       props.onClose();
     }
@@ -130,13 +119,10 @@ const EditEntryTagDialog = (props: Props) => {
         className={props.classes.root}
         style={{ overflow: AppConfig.isFirefox ? 'auto' : 'overlay' }}
       >
-        <FormControl
-          fullWidth={true}
-          error={errorInput.some(err => err === 'tag')}
-        >
+        <FormControl fullWidth={true} error={haveError('tag')}>
           <TextField
             fullWidth={true}
-            error={errorInput.some(err => err === 'tag')}
+            error={haveError('tag')}
             margin="dense"
             name="title"
             autoFocus
@@ -148,7 +134,7 @@ const EditEntryTagDialog = (props: Props) => {
             value={title}
             data-tid="editTagEntryDialog_input"
           />
-          {errorInput.some(err => err === 'tag') && (
+          {haveError('tag') && (
             <FormHelperText>{i18n.t('core:tagTitleHelper')}</FormHelperText>
           )}
         </FormControl>
@@ -158,7 +144,7 @@ const EditEntryTagDialog = (props: Props) => {
             onChange={setTitle}
             zoom={title === defaultTagLocation ? 2 : undefined}
             showAdvancedMode={showAdvancedMode}
-            errorInput={errorInput}
+            haveError={haveError}
             setError={setError}
           />
         )}
@@ -196,7 +182,7 @@ const EditEntryTagDialog = (props: Props) => {
             {i18n.t('core:cancel')}
           </Button>
           <Button
-            disabled={errorInput.length > 0}
+            disabled={haveError()}
             onClick={onConfirm}
             data-tid="confirmEditTagEntryDialog"
             color="primary"
