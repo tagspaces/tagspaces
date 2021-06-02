@@ -457,7 +457,10 @@ const TagLibrary = (props: Props) => {
         )}
         <List style={{ paddingTop: 0 }}>
           <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="droppable">
+            <Droppable
+              droppableId="TagGroupDroppable"
+              type="tagLibraryTagGroupList"
+            >
               {provided => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
                   {tagGroups.map((tagGroup, index) => (
