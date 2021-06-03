@@ -188,6 +188,7 @@ interface Props {
   isReadOnlyMode: boolean;
   currentDirectoryPath: string | null;
   tagDelimiter: string;
+  tileServer: TS.openStreetTileServer;
 }
 
 const EntryProperties = (props: Props) => {
@@ -197,8 +198,8 @@ const EntryProperties = (props: Props) => {
   const objectStorageLinkRef = useRef<HTMLInputElement>(null);
   const fileDescriptionRef = useRef<HTMLInputElement>(null);
 
-  const MB_ATTR =
-    '<b>Leaflet</b> | Map data &copy; <b>https://openstreetmap.org/copyright</b> contributors, <b>CC-BY-SA</b>, Imagery © <b>Mapbox</b>';
+  /* const MB_ATTR =
+    '<b>Leaflet</b> | Map data &copy; <b>https://openstreetmap.org/copyright</b> contributors, <b>CC-BY-SA</b>, Imagery © <b>Mapbox</b>'; */
 
   const parentDirectoryPath = extractContainingDirectoryPath(
     props.openedEntry.path,
@@ -760,8 +761,8 @@ const EntryProperties = (props: Props) => {
               attributionControl={false}
             >
               <TileLayer
-                attribution={MB_ATTR}
-                url="https://{s}.tile.osm.org/{z}/{x}/{y}.png"
+                attribution={props.tileServer.serverInfo}
+                url={props.tileServer.serverURL}
               />
               <LayerGroup>
                 <Marker

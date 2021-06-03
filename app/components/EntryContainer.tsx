@@ -58,7 +58,8 @@ import { buffer } from '-/utils/misc';
 import {
   actions as SettingsActions,
   isDesktopMode,
-  getKeyBindingObject
+  getKeyBindingObject,
+  getMapTileServer
 } from '-/reducers/settings';
 import TaggingActions from '-/reducers/tagging-actions';
 import {
@@ -209,6 +210,7 @@ interface Props {
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   currentDirectoryPath: string | null;
   isDesktopMode: boolean;
+  tileServer: TS.openStreetTileServer;
 }
 
 const EntryContainer = (props: Props) => {
@@ -1249,6 +1251,7 @@ const EntryContainer = (props: Props) => {
                   showNotification={props.showNotification}
                   isReadOnlyMode={props.isReadOnlyMode}
                   currentDirectoryPath={props.currentDirectoryPath}
+                  tileServer={props.tileServer}
                 />
               )}
             </div>
@@ -1284,7 +1287,8 @@ function mapStateToProps(state) {
     settings: state.settings,
     isReadOnlyMode: isReadOnlyMode(state),
     keyBindings: getKeyBindingObject(state),
-    isDesktopMode: isDesktopMode(state)
+    isDesktopMode: isDesktopMode(state),
+    tileServer: getMapTileServer(state)
   };
 }
 

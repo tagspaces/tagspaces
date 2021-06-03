@@ -24,6 +24,7 @@ import PlatformIO from '../services/platform-io';
 import AppConfig from '../config';
 import versionMeta from '../version.json';
 import { actions as AppActions } from './app';
+import { TS } from '-/tagspaces.namespace';
 
 export const types = {
   UPGRADE_SETTINGS: 'SETTINGS/UPGRADE_SETTINGS',
@@ -66,7 +67,8 @@ export const types = {
   SET_MAIN_VSPLIT_SIZE: 'SETTINGS/SET_MAIN_VSPLIT_SIZE',
   SET_LEFT_VSPLIT_SIZE: 'SETTINGS/SET_LEFT_VSPLIT_SIZE',
   SET_FIRST_RUN: 'SETTINGS/SET_FIRST_RUN',
-  TOGGLE_TAGGROUP: 'TOGGLE_TAGGROUP'
+  TOGGLE_TAGGROUP: 'TOGGLE_TAGGROUP',
+  SET_OPENSTREET_SERVER: 'SET_OPENSTREET_SERVER'
 };
 
 export default (state: any = defaultSettings, action: any) => {
@@ -304,6 +306,18 @@ export default (state: any = defaultSettings, action: any) => {
         tagGroupCollapsed
       };
     }
+    case types.SET_OPENSTREET_SERVER: {
+      let tileServers;
+      if (action.isDefault) {
+        tileServers = [action.tileServer, ...state.tileServers];
+      } else {
+        tileServers = [...state.tileServers, action.tileServer];
+      }
+      return {
+        ...state,
+        tileServers
+      };
+    }
     default: {
       return state;
     }
@@ -311,6 +325,14 @@ export default (state: any = defaultSettings, action: any) => {
 };
 
 export const actions = {
+  setTileServers: (
+    tileServer: TS.openStreetTileServer,
+    isDefault: boolean = false
+  ) => ({
+    type: types.SET_OPENSTREET_SERVER,
+    tileServer,
+    isDefault
+  }),
   toggleTagGroup: (tagGroupUUID: string) => ({
     type: types.TOGGLE_TAGGROUP,
     uuid: tagGroupUUID
@@ -493,6 +515,8 @@ export function getLastVersionPromise(): Promise<string> {
 }
 
 // Selectors
+export const getMapTileServer = (state: any): TS.openStreetTileServer =>
+  state.settings.tileServers[0];
 export const getSettings = (state: any) => state.settings;
 export const getDesktopMode = (state: any) => {
   if (typeof window.ExtDisplayMode === 'undefined') {
