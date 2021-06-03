@@ -30,6 +30,11 @@ export function findAvailableExtensions() {
   // Search in the installation folder
   const extensionsFound = [
     {
+      extensionId: '@tagspaces/xlsx-viewer',
+      extensionName: 'Sheet Editor',
+      extensionType: 'viewer'
+    },
+    {
       extensionId: '@tagspaces/archive-viewer',
       extensionName: 'Archive Viewer',
       extensionType: 'viewer'
@@ -740,11 +745,21 @@ export default {
       type: 'docx',
       viewer: '@tagspaces/document-viewer',
       color: '#2196f3'
-    }
-    /* {
+    },
+    {
       type: 'xlsx',
-      viewer: '@tagspaces/document-viewer',
+      viewer: '@tagspaces/xlsx-viewer',
       color: '#b2f30e'
-    } */
+    },
+    {
+      type: 'xls',
+      viewer: '@tagspaces/xlsx-viewer',
+      color: '#b2f30e'
+    },
+    {
+      type: 'csv',
+      viewer: '@tagspaces/xlsx-viewer',
+      color: '#b2f30e'
+    }
   ]
 };
