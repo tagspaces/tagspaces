@@ -16,9 +16,9 @@ const extensionBranch = 'master';
 
 const extensionList = [
   {
-    package: '@tagspaces/xlsx-viewer',
-    path: 'viewerSheet',
-    url: 'https://github.com/tagspaces/viewerSheet'
+    package: '@tagspaces/spreadsheet-viewer',
+    path: 'viewerSpreadSheet',
+    url: 'https://github.com/tagspaces/viewerSpreadSheet'
   },
   {
     package: '@tagspaces/document-viewer',

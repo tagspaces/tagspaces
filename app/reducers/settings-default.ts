@@ -30,11 +30,6 @@ export function findAvailableExtensions() {
   // Search in the installation folder
   const extensionsFound = [
     {
-      extensionId: '@tagspaces/xlsx-viewer',
-      extensionName: 'Sheet Editor',
-      extensionType: 'viewer'
-    },
-    {
       extensionId: '@tagspaces/archive-viewer',
       extensionName: 'Archive Viewer',
       extensionType: 'viewer'
@@ -85,14 +80,19 @@ export function findAvailableExtensions() {
       extensionName: 'PDF Viewer',
       extensionType: 'viewer'
     },
-    {
-      extensionId: '@tagspaces/plain-viewer',
-      extensionName: 'Experimental Viewer - insecure!!!',
-      extensionType: 'viewer'
-    },
+    // {
+    //   extensionId: '@tagspaces/plain-viewer',
+    //   extensionName: 'Experimental Viewer (insecure)',
+    //   extensionType: 'viewer'
+    // },
     {
       extensionId: '@tagspaces/rtf-viewer',
       extensionName: 'RTF Viewer',
+      extensionType: 'viewer'
+    },
+    {
+      extensionId: '@tagspaces/spreadsheet-viewer',
+      extensionName: 'Spreadsheet Viewer',
       extensionType: 'viewer'
     },
     {
@@ -748,17 +748,22 @@ export default {
     },
     {
       type: 'xlsx',
-      viewer: '@tagspaces/xlsx-viewer',
+      viewer: '@tagspaces/spreadsheet-viewer',
       color: '#b2f30e'
     },
     {
       type: 'xls',
-      viewer: '@tagspaces/xlsx-viewer',
+      viewer: '@tagspaces/spreadsheet-viewer',
       color: '#b2f30e'
     },
     {
       type: 'csv',
-      viewer: '@tagspaces/xlsx-viewer',
+      viewer: '@tagspaces/spreadsheet-viewer',
+      color: '#b2f30e'
+    },
+    {
+      type: 'ods',
+      viewer: '@tagspaces/spreadsheet-viewer',
       color: '#b2f30e'
     }
   ]
