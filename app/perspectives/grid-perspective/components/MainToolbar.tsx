@@ -120,7 +120,7 @@ const MainToolbar = (props: Props) => {
       )}
       {!isReadOnlyMode && (
         <Tooltip title={i18n.t('core:tagSelectedEntries')}>
-          <>
+          <span>
             <IconButton
               aria-label={i18n.t('core:tagSelectedEntries')}
               data-tid="gridPerspectiveAddRemoveTags"
@@ -129,12 +129,12 @@ const MainToolbar = (props: Props) => {
             >
               <TagIcon />
             </IconButton>
-          </>
+          </span>
         </Tooltip>
       )}
       {!isReadOnlyMode && (
         <Tooltip title={i18n.t('core:copyMoveSelectedEntries')}>
-          <>
+          <span>
             <IconButton
               aria-label={i18n.t('core:copyMoveSelectedEntries')}
               data-tid="gridPerspectiveCopySelectedFiles"
@@ -143,12 +143,12 @@ const MainToolbar = (props: Props) => {
             >
               <CopyIcon />
             </IconButton>
-          </>
+          </span>
         </Tooltip>
       )}
       {!isReadOnlyMode && (
         <Tooltip title={i18n.t('core:deleteSelectedEntries')}>
-          <>
+          <span>
             <IconButton
               aria-label={i18n.t('core:deleteSelectedEntries')}
               data-tid="gridPerspectiveDeleteMultipleFiles"
@@ -157,7 +157,7 @@ const MainToolbar = (props: Props) => {
             >
               <DeleteIcon />
             </IconButton>
-          </>
+          </span>
         </Tooltip>
       )}
       <Tooltip title={i18n.t('core:sort')}>
