@@ -120,38 +120,44 @@ const MainToolbar = (props: Props) => {
       )}
       {!isReadOnlyMode && (
         <Tooltip title={i18n.t('core:tagSelectedEntries')}>
-          <IconButton
-            aria-label={i18n.t('core:tagSelectedEntries')}
-            data-tid="gridPerspectiveAddRemoveTags"
-            disabled={selectedEntries.length < 1}
-            onClick={openAddRemoveTagsDialog}
-          >
-            <TagIcon />
-          </IconButton>
+          <span>
+            <IconButton
+              aria-label={i18n.t('core:tagSelectedEntries')}
+              data-tid="gridPerspectiveAddRemoveTags"
+              disabled={selectedEntries.length < 1}
+              onClick={openAddRemoveTagsDialog}
+            >
+              <TagIcon />
+            </IconButton>
+          </span>
         </Tooltip>
       )}
       {!isReadOnlyMode && (
         <Tooltip title={i18n.t('core:copyMoveSelectedEntries')}>
-          <IconButton
-            aria-label={i18n.t('core:copyMoveSelectedEntries')}
-            data-tid="gridPerspectiveCopySelectedFiles"
-            disabled={!fileOperationsEnabled}
-            onClick={openMoveCopyFilesDialog}
-          >
-            <CopyIcon />
-          </IconButton>
+          <span>
+            <IconButton
+              aria-label={i18n.t('core:copyMoveSelectedEntries')}
+              data-tid="gridPerspectiveCopySelectedFiles"
+              disabled={!fileOperationsEnabled}
+              onClick={openMoveCopyFilesDialog}
+            >
+              <CopyIcon />
+            </IconButton>
+          </span>
         </Tooltip>
       )}
       {!isReadOnlyMode && (
         <Tooltip title={i18n.t('core:deleteSelectedEntries')}>
-          <IconButton
-            aria-label={i18n.t('core:deleteSelectedEntries')}
-            data-tid="gridPerspectiveDeleteMultipleFiles"
-            disabled={!fileOperationsEnabled}
-            onClick={openDeleteFileDialog}
-          >
-            <DeleteIcon />
-          </IconButton>
+          <span>
+            <IconButton
+              aria-label={i18n.t('core:deleteSelectedEntries')}
+              data-tid="gridPerspectiveDeleteMultipleFiles"
+              disabled={!fileOperationsEnabled}
+              onClick={openDeleteFileDialog}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </span>
         </Tooltip>
       )}
       <Tooltip title={i18n.t('core:sort')}>
