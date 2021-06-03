@@ -34,6 +34,9 @@ import InfoIcon from '@material-ui/icons/InfoOutlined';
 import CheckIcon from '@material-ui/icons/Check';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import EditIcon from '@material-ui/icons/Edit';
+import IconButton from '@material-ui/core/IconButton';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import i18n from '-/services/i18n';
 import {
   actions as SettingsActions,
@@ -43,6 +46,7 @@ import {
 import ColorPickerDialog from '../ColorPickerDialog';
 import TransparentBackground from '../../TransparentBackground';
 import AppConfig from '-/config';
+import { TS } from '-/tagspaces.namespace';
 
 const styles: any = {
   root: {
@@ -79,10 +83,12 @@ interface Props {
   setMaxSearchResult: (maxResult: string) => void;
   setDesktopMode: (desktopMode: boolean) => void;
   showResetSettings: (showDialog: boolean) => void;
+  tileServers: Array<TS.openStreetTileServer>;
 }
 
 const SettingsGeneral = (props: Props) => {
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
+  const [tileServerDialog, setTileServerDialog] = useState<string>(undefined);
   const [displayTextColorPicker, setDisplayTextColorPicker] = useState<boolean>(
     false
   );
@@ -105,6 +111,12 @@ const SettingsGeneral = (props: Props) => {
 
   const handleMaxSearchResult = event => {
     props.setMaxSearchResult(event.target.value);
+  };
+
+  const handleEditTileServerClick = (event: any, uuid: string) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setTileServerDialog(uuid);
   };
 
   const { classes, persistTagsInSidecarFile } = props;
@@ -352,6 +364,40 @@ const SettingsGeneral = (props: Props) => {
           onChange={handleMaxSearchResult}
         />
       </ListItem>
+      <ListItem className={classes.listItem}>
+        <Button
+          data-tid="settingsAddMapTileServerTID"
+          className={classes.colorChooserButton}
+          size="small"
+          style={{ backgroundColor: props.settings.tagTextColor }}
+          onClick={toggleDefaultTagTextColorPicker}
+        >
+          &nbsp;
+        </Button>
+      </ListItem>
+      {props.tileServers.map((tileServer, index) => (
+        <ListItem key={tileServer.uuid} className={classes.listItem}>
+          {index === 0 && (
+            <Tooltip title={i18n.t('core:thisIsStartupLocation')}>
+              <CheckIcon data-tid="startupIndication" />
+            </Tooltip>
+          )}
+          <Tooltip title={tileServer.serverURL}>
+            <ListItemText primary={tileServer.name} />
+          </Tooltip>
+          <ListItemSecondaryAction>
+            <IconButton
+              aria-label={i18n.t('core:options')}
+              aria-haspopup="true"
+              edge="end"
+              data-tid={'locationMoreButton_' + tileServer.name}
+              onClick={event => handleEditTileServerClick(event,tileServer.uuid)}
+            >
+              <EditIcon />
+            </IconButton>
+          </ListItemSecondaryAction>
+        </ListItem>
+      ))}
       {/* <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:coloredFileExtensionsEnabled')} />
           <Switch
@@ -423,7 +469,8 @@ const SettingsGeneral = (props: Props) => {
 function mapStateToProps(state) {
   return {
     settings: getSettings(state),
-    persistTagsInSidecarFile: getPersistTagsInSidecarFile(state)
+    persistTagsInSidecarFile: getPersistTagsInSidecarFile(state),
+    tileServers: state.settings.tileServers
   };
 }
 
