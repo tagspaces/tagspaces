@@ -149,7 +149,7 @@ const SettingsDialog = (props: Props) => {
 
     setIsValidationInProgress(true);
 
-    const isValid = validateSelectedFileTypes();
+    const isValid = validateSelectedFileTypes(newItems);
 
     if (!isValid) {
       return false;
@@ -158,10 +158,10 @@ const SettingsDialog = (props: Props) => {
     setSupportedFileTypes(newItems);
   };
 
-  const validateSelectedFileTypes = () => {
+  const validateSelectedFileTypes = newItems => {
     let isValid = true;
 
-    items.map(item => {
+    newItems.map(item => {
       const hasDuplicates =
         items.filter(targetItem => targetItem.type === item.type).length > 1;
 

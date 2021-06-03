@@ -26,6 +26,7 @@ import { TS } from '-/tagspaces.namespace';
 
 export const types = {
   ADD_LOCATION: 'APP/ADD_LOCATION',
+  MOVE_LOCATION: 'APP/MOVE_LOCATION',
   MOVE_UP_LOCATION: 'APP/MOVE_UP_LOCATION',
   MOVE_DOWN_LOCATION: 'APP/MOVE_DOWN_LOCATION',
   EDIT_LOCATION: 'APP/EDIT_LOCATION',
@@ -76,6 +77,21 @@ export default (state: Array<TS.Location> = initialState, action: any) => {
           },
           ...state.slice(indexForEditing + 1)
         ];
+      }
+      return state;
+    }
+    case types.MOVE_LOCATION: {
+      let indexForUpdating = -1;
+      state.forEach((location, index) => {
+        if (location.uuid === action.uuid) {
+          indexForUpdating = index;
+        }
+      });
+      if (indexForUpdating > -1) {
+        const locations = Array.from(state);
+        const [removed] = locations.splice(indexForUpdating, 1);
+        locations.splice(action.position, 0, removed);
+        return locations;
       }
       return state;
     }
@@ -180,6 +196,11 @@ export const actions = {
   createLocation: (location: TS.Location) => ({
     type: types.ADD_LOCATION,
     location
+  }),
+  moveLocation: (uuid: string, position: number) => ({
+    type: types.MOVE_LOCATION,
+    uuid,
+    position
   }),
   moveLocationUp: (uuid: string) => ({ type: types.MOVE_UP_LOCATION, uuid }),
   moveLocationDown: (uuid: string) => ({

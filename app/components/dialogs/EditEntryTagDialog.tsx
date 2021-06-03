@@ -32,11 +32,12 @@ import Dialog from '@material-ui/core/Dialog';
 import i18n from '-/services/i18n';
 import { isPlusCode } from '-/utils/misc';
 import { Pro } from '-/pro';
-import { getSelectedTag } from '-/reducers/app';
+import { getSelectedEntries, getSelectedTag } from '-/reducers/app';
 import TaggingActions, { defaultTagLocation } from '-/reducers/tagging-actions';
 import { isDateTimeTag } from '-/utils/dates';
 import { AppConfig } from '-/config';
 import { TS } from '-/tagspaces.namespace';
+import useValidation from '-/utils/useValidation';
 import {getMapTileServer} from "-/reducers/settings";
 
 const styles = () => ({
@@ -53,7 +54,8 @@ interface Props {
   fullScreen: boolean;
   onClose: () => void;
   editTagForEntry: (path: string, tag: TS.Tag, title: string) => void;
-  currentEntryPath: string;
+  // currentEntryPath: string;
+  selectedEntries: Array<TS.FileSystemEntry>;
   selectedTag: TS.Tag;
   tileServer: TS.openStreetTileServer;
 }
@@ -63,27 +65,15 @@ const DateTagEditor = Pro && Pro.UI ? Pro.UI.DateTagEditor : React.Fragment;
 
 const EditEntryTagDialog = (props: Props) => {
   const [showAdvancedMode, setShowAdvancedMode] = useState<boolean>(false);
-  const [errorInput, setErrorInput] = useState<Array<string>>([]);
   const [title, setTitle] = useState(
     props.selectedTag && props.selectedTag.title
   );
+  const { setError, haveError } = useValidation();
   const { onClose, open, fullScreen } = props;
 
   useEffect(() => {
     handleValidation();
   }, [title]);
-
-  const setError = (errorKey: string, add: boolean = true) => {
-    if (add) {
-      if (errorInput.length === 0) {
-        setErrorInput([errorKey]);
-      } else if (errorInput.indexOf(errorKey) === -1) {
-        setErrorInput([...errorInput, errorKey]);
-      }
-    } else if (errorInput.indexOf(errorKey) > -1) {
-      setErrorInput(errorInput.filter(err => err !== errorKey));
-    }
-  };
 
   const isShowDatePeriodEditor = useMemo(() => {
     let showDatePeriodEditor = false;
@@ -113,8 +103,14 @@ const EditEntryTagDialog = (props: Props) => {
   }
 
   function onConfirm() {
-    if (errorInput.length === 0) {
-      props.editTagForEntry(props.currentEntryPath, props.selectedTag, title);
+    if (!haveError()) {
+      if (props.selectedEntries.length > 0) {
+        props.selectedEntries.forEach(entry =>
+          props.editTagForEntry(entry.path, props.selectedTag, title)
+        );
+      } else {
+        props.editTagForEntry(props.selectedTag.path, props.selectedTag, title);
+      }
       props.onClose();
     }
   }
@@ -132,13 +128,10 @@ const EditEntryTagDialog = (props: Props) => {
         className={props.classes.root}
         style={{ overflow: AppConfig.isFirefox ? 'auto' : 'overlay' }}
       >
-        <FormControl
-          fullWidth={true}
-          error={errorInput.some(err => err === 'tag')}
-        >
+        <FormControl fullWidth={true} error={haveError('tag')}>
           <TextField
             fullWidth={true}
-            error={errorInput.some(err => err === 'tag')}
+            error={haveError('tag')}
             margin="dense"
             name="title"
             autoFocus
@@ -150,7 +143,7 @@ const EditEntryTagDialog = (props: Props) => {
             value={title}
             data-tid="editTagEntryDialog_input"
           />
-          {errorInput.some(err => err === 'tag') && (
+          {haveError('tag') && (
             <FormHelperText>{i18n.t('core:tagTitleHelper')}</FormHelperText>
           )}
         </FormControl>
@@ -160,7 +153,7 @@ const EditEntryTagDialog = (props: Props) => {
             onChange={setTitle}
             zoom={title === defaultTagLocation ? 2 : undefined}
             showAdvancedMode={showAdvancedMode}
-            errorInput={errorInput}
+            haveError={haveError}
             setError={setError}
             tileServer={props.tileServer}
           />
@@ -199,7 +192,7 @@ const EditEntryTagDialog = (props: Props) => {
             {i18n.t('core:cancel')}
           </Button>
           <Button
-            disabled={errorInput.length > 0}
+            disabled={haveError()}
             onClick={onConfirm}
             data-tid="confirmEditTagEntryDialog"
             color="primary"
@@ -236,9 +229,10 @@ const EditEntryTagDialog = (props: Props) => {
 function mapStateToProps(state) {
   return {
     selectedTag: getSelectedTag(state),
-    currentEntryPath: getSelectedTag(state)
+    /* currentEntryPath: getSelectedTag(state)
       ? getSelectedTag(state).path
-      : undefined,
+      : undefined, */
+    selectedEntries: getSelectedEntries(state),
     tileServer: getMapTileServer(state)
   };
 }

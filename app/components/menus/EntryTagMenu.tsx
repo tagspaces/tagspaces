@@ -33,6 +33,7 @@ import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { getMaxSearchResults } from '-/reducers/settings';
 import { actions as AppActions } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
+import OpenFolderIcon from '@material-ui/icons/SubdirectoryArrowLeft';
 
 interface Props {
   open: boolean;
@@ -90,42 +91,63 @@ const EntryTagMenu = (props: Props) => {
     handleCloseDialogs();
   }
 
+  const menuItems = [
+    <MenuItem
+      key="showFilesWithThisTag"
+      data-tid="showFilesWithThisTag"
+      onClick={showFilesWithThisTag}
+    >
+      <ListItemIcon>
+        <ShowEntriesWithTagIcon />
+      </ListItemIcon>
+      <ListItemText primary={i18n.t('core:showFilesWithThisTag')} />
+    </MenuItem>
+  ];
+  if (!props.isReadOnlyMode) {
+    if (props.setIsAddTagDialogOpened) {
+      menuItems.push(
+        <MenuItem
+          key="addTagMenu"
+          data-tid="addTagMenuTID"
+          onClick={showAddTagDialog}
+        >
+          <ListItemIcon>
+            <AddIcon />
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:addTagToTagGroup')} />
+        </MenuItem>
+      );
+    }
+    menuItems.push(
+      <MenuItem
+        key="editTagDialogMenu"
+        data-tid="editTagDialogMenu"
+        onClick={showEditTagDialog}
+      >
+        <ListItemIcon>
+          <EditIcon />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:editTagTitle')} />
+      </MenuItem>
+    );
+    menuItems.push(
+      <MenuItem
+        key="deleteTagMenu"
+        data-tid="deleteTagMenu"
+        onClick={showDeleteTagDialog}
+      >
+        <ListItemIcon>
+          <DeleteIcon />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:removeTag')} />
+      </MenuItem>
+    );
+  }
+
   return (
     <div style={{ overflowY: 'hidden' }}>
       <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
-        <MenuItem
-          data-tid="showFilesWithThisTag"
-          onClick={showFilesWithThisTag}
-        >
-          <ListItemIcon>
-            <ShowEntriesWithTagIcon />
-          </ListItemIcon>
-          <ListItemText primary={i18n.t('core:showFilesWithThisTag')} />
-        </MenuItem>
-        {!props.isReadOnlyMode && (
-          <>
-            {props.setIsAddTagDialogOpened && (
-              <MenuItem data-tid="addTagMenuTID" onClick={showAddTagDialog}>
-                <ListItemIcon>
-                  <AddIcon />
-                </ListItemIcon>
-                <ListItemText primary={i18n.t('core:addTagToTagGroup')} />
-              </MenuItem>
-            )}
-            <MenuItem data-tid="editTagDialogMenu" onClick={showEditTagDialog}>
-              <ListItemIcon>
-                <EditIcon />
-              </ListItemIcon>
-              <ListItemText primary={i18n.t('core:editTagTitle')} />
-            </MenuItem>
-            <MenuItem data-tid="deleteTagMenu" onClick={showDeleteTagDialog}>
-              <ListItemIcon>
-                <DeleteIcon />
-              </ListItemIcon>
-              <ListItemText primary={i18n.t('core:removeTag')} />
-            </MenuItem>
-          </>
-        )}
+        {menuItems}
       </Menu>
       <ConfirmDialog
         open={isDeleteTagDialogOpened}

@@ -102,14 +102,19 @@ export function findAvailableExtensions() {
       extensionName: 'PDF Viewer',
       extensionType: 'viewer'
     },
-    {
-      extensionId: '@tagspaces/plain-viewer',
-      extensionName: 'Experimental Viewer - insecure!!!',
-      extensionType: 'viewer'
-    },
+    // {
+    //   extensionId: '@tagspaces/plain-viewer',
+    //   extensionName: 'Experimental Viewer (insecure)',
+    //   extensionType: 'viewer'
+    // },
     {
       extensionId: '@tagspaces/rtf-viewer',
       extensionName: 'RTF Viewer',
+      extensionType: 'viewer'
+    },
+    {
+      extensionId: '@tagspaces/spreadsheet-viewer',
+      extensionName: 'Spreadsheet Viewer',
       extensionType: 'viewer'
     },
     {
@@ -763,11 +768,26 @@ export default {
       type: 'docx',
       viewer: '@tagspaces/document-viewer',
       color: '#2196f3'
-    }
-    /* {
+    },
+    {
       type: 'xlsx',
-      viewer: '@tagspaces/document-viewer',
+      viewer: '@tagspaces/spreadsheet-viewer',
       color: '#b2f30e'
-    } */
+    },
+    {
+      type: 'xls',
+      viewer: '@tagspaces/spreadsheet-viewer',
+      color: '#b2f30e'
+    },
+    {
+      type: 'csv',
+      viewer: '@tagspaces/spreadsheet-viewer',
+      color: '#b2f30e'
+    },
+    {
+      type: 'ods',
+      viewer: '@tagspaces/spreadsheet-viewer',
+      color: '#b2f30e'
+    }
   ]
 };

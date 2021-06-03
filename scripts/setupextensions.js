@@ -16,6 +16,11 @@ const extensionBranch = 'master';
 
 const extensionList = [
   {
+    package: '@tagspaces/spreadsheet-viewer',
+    path: 'viewerSpreadSheet',
+    url: 'https://github.com/tagspaces/viewerSpreadSheet'
+  },
+  {
     package: '@tagspaces/document-viewer',
     path: 'viewerDocument',
     url: 'https://github.com/tagspaces/viewerDocument'
