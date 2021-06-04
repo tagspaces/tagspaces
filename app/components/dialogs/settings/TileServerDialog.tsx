@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useRef } from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -27,22 +27,44 @@ import CloseIcon from '@material-ui/icons/Close';
 import TextField from '@material-ui/core/TextField';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
+import Switch from '@material-ui/core/Switch';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import i18n from '-/services/i18n';
 import useValidation from '-/utils/useValidation';
+import { TS } from '-/tagspaces.namespace';
+import { actions as SettingsActions } from '-/reducers/settings';
 
 interface Props {
   open: boolean;
-  fullScreen?: boolean;
-  classes?: any;
   onClose: () => void;
-  uuid: string;
+  tileServer: TS.openStreetTileServer;
+  isDefault: boolean;
+  editTileServers: (
+    tileServer: TS.openStreetTileServer,
+    isDefault: boolean
+  ) => void;
+  addTileServers: (
+    tileServer: TS.openStreetTileServer,
+    isDefault: boolean
+  ) => void;
+  deleteTileServer: (uuid: string) => void;
 }
 
 const TileServerDialog = (props: Props) => {
+  const name = useRef<string>(props.tileServer.name);
+  const serverURL = useRef<string>(props.tileServer.serverURL);
+  const serverInfo = useRef<string>(props.tileServer.serverInfo);
+  const isDefault = useRef<boolean>(props.isDefault);
+
   const { setError, haveError } = useValidation();
   const renderTitle = () => (
     <DialogTitle>
-      {i18n.t('core:tileServerDialog')}{' '}
+      {i18n.t(
+        props.tileServer.uuid
+          ? 'core:tileServerDialogEdit'
+          : 'core:tileServerDialogAdd'
+      )}{' '}
       <IconButton
         aria-label="close"
         style={{
@@ -57,24 +79,101 @@ const TileServerDialog = (props: Props) => {
     </DialogTitle>
   );
 
+  const validateForm = () => {
+    if (!name.current) {
+      setError('name');
+      return false;
+    }
+    setError('name', false);
+    return true;
+  };
+
+  const saveTileServer = () => {
+    if (validateForm()) {
+      if (props.tileServer.uuid) {
+        props.editTileServers(
+          {
+            uuid: props.tileServer.uuid,
+            name: name.current,
+            serverInfo: serverInfo.current,
+            serverURL: serverURL.current
+          },
+          isDefault.current
+        );
+      } else {
+        props.addTileServers(
+          {
+            uuid: props.tileServer.uuid,
+            name: name.current,
+            serverInfo: serverInfo.current,
+            serverURL: serverURL.current
+          },
+          isDefault.current
+        );
+      }
+      props.onClose();
+    }
+  };
+
   const renderContent = () => (
-    <DialogContent className={props.classes.mainContent}>
-      <FormControl fullWidth={true} error={haveError('url')}>
+    <DialogContent>
+      <FormControl fullWidth={true} error={haveError('name')}>
         <TextField
           fullWidth
-          error={haveError('url')}
+          error={haveError('name')}
           margin="dense"
           autoFocus
           name="name"
-          label={i18n.t('core:createNewDirectoryTitleName')}
+          label={i18n.t('core:tileServerNameTitle')}
           onChange={event => {
             const { target } = event;
-            // setName(target.value);
+            name.current = target.value;
+            validateForm();
           }}
-          data-tid="directoryName"
-          id="directoryName"
+          defaultValue={name.current}
+          data-tid="tileServerNameTID"
         />
-        <FormHelperText>{i18n.t('core:directoryNameHelp')}</FormHelperText>
+        <FormHelperText>{i18n.t('core:tileServerNameHelp')}</FormHelperText>
+      </FormControl>
+      <FormControl fullWidth={true}>
+        <TextField
+          fullWidth
+          margin="dense"
+          name="serverURL"
+          label={i18n.t('core:tileServerUrlTitle')}
+          onChange={event => {
+            const { target } = event;
+            serverURL.current = target.value;
+          }}
+          defaultValue={serverURL.current}
+          data-tid="tileServerUrlTID"
+        />
+        <FormHelperText>{i18n.t('core:tileServerUrlHelp')}</FormHelperText>
+      </FormControl>
+      <FormControl fullWidth={true}>
+        <TextField
+          fullWidth
+          margin="dense"
+          name="serverInfo"
+          label={i18n.t('core:tileServerInfoTitle')}
+          onChange={event => {
+            const { target } = event;
+            serverInfo.current = target.value;
+          }}
+          defaultValue={serverInfo.current}
+          data-tid="tileserverInfoTID"
+        />
+        <FormHelperText>{i18n.t('core:serverInfoHelp')}</FormHelperText>
+      </FormControl>
+      <FormControl fullWidth={true}>
+        <Switch
+          data-tid="serverIsDefaultTID"
+          onClick={() => {
+            isDefault.current = !isDefault.current;
+          }}
+          defaultChecked={isDefault.current}
+        />
+        <FormHelperText>{i18n.t('core:serverIsDefaultHelp')}</FormHelperText>
       </FormControl>
     </DialogContent>
   );
@@ -85,35 +184,39 @@ const TileServerDialog = (props: Props) => {
         justifyContent: 'flex-end'
       }}
     >
-      {props.uuid && (
+      {props.tileServer.uuid && (
         <Button
           data-tid="deleteTileServerTID"
-          /* onClick={() => onDelete(props.uuid)} */
+          onClick={() => {
+            props.deleteTileServer(props.tileServer.uuid);
+            props.onClose();
+          }}
           color="secondary"
         >
-          {i18n.t('core:deleteTileServer')}
+          {i18n.t('core:delete')}
         </Button>
       )}
 
-      <Button
-        data-tid="closeSettingsDialog"
+      {/* <Button
+        data-tid="closeTileServerDialogTID"
         onClick={props.onClose}
         color="primary"
       >
         {i18n.t('core:closeButton')}
+      </Button> */}
+      <Button
+        data-tid="saveTileServerDialogTID"
+        onClick={saveTileServer}
+        color="primary"
+      >
+        {i18n.t('core:confirmSaveButton')}
       </Button>
     </DialogActions>
   );
 
-  const { fullScreen, open, onClose } = props;
+  const { open, onClose } = props;
   return (
-    <Dialog
-      fullScreen={fullScreen}
-      open={open}
-      keepMounted
-      scroll="paper"
-      onClose={onClose}
-    >
+    <Dialog open={open} keepMounted scroll="paper" onClose={onClose}>
       {renderTitle()}
       {renderContent()}
       {renderActions()}
@@ -121,4 +224,15 @@ const TileServerDialog = (props: Props) => {
   );
 };
 
-export default TileServerDialog;
+function mapActionCreatorsToProps(dispatch) {
+  return bindActionCreators(
+    {
+      editTileServers: SettingsActions.editTileServers,
+      addTileServers: SettingsActions.addTileServers,
+      deleteTileServer: SettingsActions.deleteTileServer
+    },
+    dispatch
+  );
+}
+
+export default connect(undefined, mapActionCreatorsToProps)(TileServerDialog);

@@ -38,7 +38,7 @@ import { isDateTimeTag } from '-/utils/dates';
 import { AppConfig } from '-/config';
 import { TS } from '-/tagspaces.namespace';
 import useValidation from '-/utils/useValidation';
-import {getMapTileServer} from "-/reducers/settings";
+import { getMapTileServer } from '-/reducers/settings';
 
 const styles = () => ({
   root: {

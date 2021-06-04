@@ -557,5 +557,16 @@
   "lat": "Latitude",
   "lng": "Longitude",
   "coordinatesTitleHelper": "Invalid coordinate (please use 40.123, -74.123 or 40° 7.38’, -74° 7.38’)",
+  "tileServerTitle": "OpenStreetMap Tile Servers",
+  "thisIsDefaultTileServer": "Default Tile Server (in use)",
+  "tileServerDialogEdit": "Edit OpenStreetMap Tile Server",
+  "tileServerDialogAdd": "Add OpenStreetMap Tile Server",
+  "tileServerNameTitle": "Short Name",
+  "tileServerNameHelp": "Identifier for the OpenStreetMap Tile Server",
+  "tileServerUrlTitle": "Server Url",
+  "tileServerUrlHelp": "like: https://{s}.tile.osm.org/{z}/{x}/{y}.png",
+  "tileServerInfoTitle": "Server Info",
+  "serverInfoHelp": "Copyrights information",
+  "serverIsDefaultHelp": "Is this Server in use",
   "-": "-"
 }

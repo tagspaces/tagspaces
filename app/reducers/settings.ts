@@ -17,6 +17,7 @@
  */
 
 import semver from 'semver';
+import uuidv1 from 'uuid';
 import i18n from '../services/i18n';
 // import AppConfig from '../config';
 import defaultSettings from './settings-default';
@@ -68,7 +69,9 @@ export const types = {
   SET_LEFT_VSPLIT_SIZE: 'SETTINGS/SET_LEFT_VSPLIT_SIZE',
   SET_FIRST_RUN: 'SETTINGS/SET_FIRST_RUN',
   TOGGLE_TAGGROUP: 'TOGGLE_TAGGROUP',
-  SET_OPENSTREET_SERVER: 'SET_OPENSTREET_SERVER'
+  ADD_OPENSTREET_SERVER: 'SET_OPENSTREET_SERVER',
+  EDIT_OPENSTREET_SERVER: 'EDIT_OPENSTREET_SERVER',
+  DELETE_OPENSTREET_SERVER: 'DELETE_OPENSTREET_SERVER'
 };
 
 export default (state: any = defaultSettings, action: any) => {
@@ -306,13 +309,51 @@ export default (state: any = defaultSettings, action: any) => {
         tagGroupCollapsed
       };
     }
-    case types.SET_OPENSTREET_SERVER: {
+    case types.ADD_OPENSTREET_SERVER: {
       let tileServers;
       if (action.isDefault) {
-        tileServers = [action.tileServer, ...state.tileServers];
+        tileServers = [
+          { ...action.tileServer, uuid: uuidv1() },
+          ...state.tileServers
+        ];
       } else {
-        tileServers = [...state.tileServers, action.tileServer];
+        tileServers = [
+          ...state.tileServers,
+          { ...action.tileServer, uuid: uuidv1() }
+        ];
       }
+      return {
+        ...state,
+        tileServers
+      };
+    }
+    case types.EDIT_OPENSTREET_SERVER: {
+      let tileServers;
+      if (action.isDefault) {
+        tileServers = [
+          action.tileServer,
+          ...state.tileServers.filter(
+            tileServer => tileServer.uuid !== action.tileServer.uuid
+          )
+        ];
+      } else {
+        tileServers = [
+          ...state.tileServers.filter(
+            tileServer => tileServer.uuid !== action.tileServer.uuid
+          ),
+          action.tileServer
+        ];
+      }
+
+      return {
+        ...state,
+        tileServers
+      };
+    }
+    case types.DELETE_OPENSTREET_SERVER: {
+      const tileServers = state.tileServers.filter(
+        tileServer => tileServer.uuid !== action.uuid
+      );
       return {
         ...state,
         tileServers
@@ -325,13 +366,25 @@ export default (state: any = defaultSettings, action: any) => {
 };
 
 export const actions = {
-  setTileServers: (
+  addTileServers: (
     tileServer: TS.openStreetTileServer,
     isDefault: boolean = false
   ) => ({
-    type: types.SET_OPENSTREET_SERVER,
+    type: types.ADD_OPENSTREET_SERVER,
     tileServer,
     isDefault
+  }),
+  editTileServers: (
+    tileServer: TS.openStreetTileServer,
+    isDefault: boolean = false
+  ) => ({
+    type: types.EDIT_OPENSTREET_SERVER,
+    tileServer,
+    isDefault
+  }),
+  deleteTileServer: (uuid: string) => ({
+    type: types.DELETE_OPENSTREET_SERVER,
+    uuid
   }),
   toggleTagGroup: (tagGroupUUID: string) => ({
     type: types.TOGGLE_TAGGROUP,
