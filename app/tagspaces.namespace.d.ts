@@ -127,7 +127,7 @@ export namespace TS {
     dirs?: Array<FileSystemEntry>;
   }
 
-  interface openStreetTileServer {
+  interface MapTileServer {
     uuid: string;
     name: string;
     serverURL: string;

@@ -48,7 +48,7 @@ import ColorPickerDialog from '../ColorPickerDialog';
 import TransparentBackground from '../../TransparentBackground';
 import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
-import TileServerDialog from '-/components/dialogs/settings/TileServerDialog';
+import MapTileServerDialog from '-/components/dialogs/settings/MapTileServerDialog';
 
 const styles: any = {
   root: {
@@ -85,7 +85,7 @@ interface Props {
   setMaxSearchResult: (maxResult: string) => void;
   setDesktopMode: (desktopMode: boolean) => void;
   showResetSettings: (showDialog: boolean) => void;
-  tileServers: Array<TS.openStreetTileServer>;
+  tileServers: Array<TS.MapTileServer>;
 }
 
 const SettingsGeneral = (props: Props) => {
@@ -388,15 +388,19 @@ const SettingsGeneral = (props: Props) => {
         </ListItem>
         {props.tileServers.map((tileServer, index) => (
           <ListItem key={tileServer.uuid} className={classes.listItem}>
-            {index === 0 && (
-              <Tooltip title={i18n.t('core:thisIsDefaultTileServer')}>
-                <CheckIcon data-tid="startupIndication" />
-              </Tooltip>
-            )}
-            <Tooltip title={tileServer.serverURL}>
-              <ListItemText primary={tileServer.name} />
-            </Tooltip>
+            <ListItemText
+              primary={tileServer.name}
+              secondary={tileServer.serverURL}
+            />
             <ListItemSecondaryAction>
+              {index === 0 && (
+                <Tooltip title={i18n.t('core:serverIsDefaultHelp')}>
+                  <CheckIcon
+                    data-tid="startupIndication"
+                    style={{ marginLeft: 10 }}
+                  />
+                </Tooltip>
+              )}
               <IconButton
                 aria-label={i18n.t('core:options')}
                 aria-haspopup="true"
@@ -456,7 +460,7 @@ const SettingsGeneral = (props: Props) => {
         </ListItem>
       </List>
       {tileServerDialog && (
-        <TileServerDialog
+        <MapTileServerDialog
           open={tileServerDialog !== undefined}
           onClose={() => setTileServerDialog(undefined)}
           tileServer={tileServerDialog}
@@ -466,27 +470,6 @@ const SettingsGeneral = (props: Props) => {
     </>
   );
 };
-
-/*
-        <ListItem className={classes.listItem}>
-          <span className={this.props.classes.pro}>pro</span>
-          <ListItemText primary={i18n.t('core:calculateTag')} />
-          <Switch
-            data-tid="settingsSetCalculateTags"
-            onClick={() =>
-              this.props.setCalculateTags(!this.props.settings.calculateTags)
-            }
-            checked={this.props.settings.calculateTags}
-          />
-        </ListItem>
-        <ListItem>
-          <ListItemText primary={i18n.t('core:useTextExtraction')} />
-          <Switch
-            onClick={() => this.props.setUseTextExtraction(!this.props.settings.useTextExtraction)}
-            checked={this.props.settings.useTextExtraction}
-          />
-        </ListItem>
-*/
 
 function mapStateToProps(state) {
   return {

@@ -69,9 +69,9 @@ export const types = {
   SET_LEFT_VSPLIT_SIZE: 'SETTINGS/SET_LEFT_VSPLIT_SIZE',
   SET_FIRST_RUN: 'SETTINGS/SET_FIRST_RUN',
   TOGGLE_TAGGROUP: 'TOGGLE_TAGGROUP',
-  ADD_OPENSTREET_SERVER: 'SET_OPENSTREET_SERVER',
-  EDIT_OPENSTREET_SERVER: 'EDIT_OPENSTREET_SERVER',
-  DELETE_OPENSTREET_SERVER: 'DELETE_OPENSTREET_SERVER'
+  ADD_MAPTILE_SERVER: 'SET_MAPTILE_SERVER',
+  EDIT_MAPTILE_SERVER: 'EDIT_MAPTILE_SERVER',
+  DELETE_MAPTILE_SERVER: 'DELETE_MAPTILE_SERVER'
 };
 
 export default (state: any = defaultSettings, action: any) => {
@@ -309,7 +309,7 @@ export default (state: any = defaultSettings, action: any) => {
         tagGroupCollapsed
       };
     }
-    case types.ADD_OPENSTREET_SERVER: {
+    case types.ADD_MAPTILE_SERVER: {
       let tileServers;
       if (action.isDefault) {
         tileServers = [
@@ -327,7 +327,7 @@ export default (state: any = defaultSettings, action: any) => {
         tileServers
       };
     }
-    case types.EDIT_OPENSTREET_SERVER: {
+    case types.EDIT_MAPTILE_SERVER: {
       let tileServers;
       if (action.isDefault) {
         tileServers = [
@@ -350,7 +350,7 @@ export default (state: any = defaultSettings, action: any) => {
         tileServers
       };
     }
-    case types.DELETE_OPENSTREET_SERVER: {
+    case types.DELETE_MAPTILE_SERVER: {
       const tileServers = state.tileServers.filter(
         tileServer => tileServer.uuid !== action.uuid
       );
@@ -367,23 +367,23 @@ export default (state: any = defaultSettings, action: any) => {
 
 export const actions = {
   addTileServers: (
-    tileServer: TS.openStreetTileServer,
+    tileServer: TS.MapTileServer,
     isDefault: boolean = false
   ) => ({
-    type: types.ADD_OPENSTREET_SERVER,
+    type: types.ADD_MAPTILE_SERVER,
     tileServer,
     isDefault
   }),
   editTileServers: (
-    tileServer: TS.openStreetTileServer,
+    tileServer: TS.MapTileServer,
     isDefault: boolean = false
   ) => ({
-    type: types.EDIT_OPENSTREET_SERVER,
+    type: types.EDIT_MAPTILE_SERVER,
     tileServer,
     isDefault
   }),
   deleteTileServer: (uuid: string) => ({
-    type: types.DELETE_OPENSTREET_SERVER,
+    type: types.DELETE_MAPTILE_SERVER,
     uuid
   }),
   toggleTagGroup: (tagGroupUUID: string) => ({
@@ -568,7 +568,7 @@ export function getLastVersionPromise(): Promise<string> {
 }
 
 // Selectors
-export const getMapTileServer = (state: any): TS.openStreetTileServer =>
+export const getMapTileServer = (state: any): TS.MapTileServer =>
   state.settings.tileServers[0];
 export const getSettings = (state: any) => state.settings;
 export const getDesktopMode = (state: any) => {

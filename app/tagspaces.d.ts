@@ -27,7 +27,7 @@ declare module '*.xml';
 
 declare interface Window {
   // interface TSCustomWindow extends Window {
-  ExtTileServers?: Array<TS.openStreetTileServer>;
+  ExtTileServers?: Array<TS.MapTileServer>;
   walkCanceled?: boolean;
   ExtLogoURL?: string;
   ExtDefaultVerticalPanel?: string;

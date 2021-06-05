@@ -38,20 +38,14 @@ import { actions as SettingsActions } from '-/reducers/settings';
 interface Props {
   open: boolean;
   onClose: () => void;
-  tileServer: TS.openStreetTileServer;
+  tileServer: TS.MapTileServer;
   isDefault: boolean;
-  editTileServers: (
-    tileServer: TS.openStreetTileServer,
-    isDefault: boolean
-  ) => void;
-  addTileServers: (
-    tileServer: TS.openStreetTileServer,
-    isDefault: boolean
-  ) => void;
+  editTileServers: (tileServer: TS.MapTileServer, isDefault: boolean) => void;
+  addTileServers: (tileServer: TS.MapTileServer, isDefault: boolean) => void;
   deleteTileServer: (uuid: string) => void;
 }
 
-const TileServerDialog = (props: Props) => {
+const MapTileServerDialog = (props: Props) => {
   const name = useRef<string>(props.tileServer.name);
   const serverURL = useRef<string>(props.tileServer.serverURL);
   const serverInfo = useRef<string>(props.tileServer.serverInfo);
@@ -133,7 +127,6 @@ const TileServerDialog = (props: Props) => {
           defaultValue={name.current}
           data-tid="tileServerNameTID"
         />
-        <FormHelperText>{i18n.t('core:tileServerNameHelp')}</FormHelperText>
       </FormControl>
       <FormControl fullWidth={true}>
         <TextField
@@ -163,7 +156,6 @@ const TileServerDialog = (props: Props) => {
           defaultValue={serverInfo.current}
           data-tid="tileserverInfoTID"
         />
-        <FormHelperText>{i18n.t('core:serverInfoHelp')}</FormHelperText>
       </FormControl>
       <FormControl fullWidth={true}>
         <Switch
@@ -196,14 +188,13 @@ const TileServerDialog = (props: Props) => {
           {i18n.t('core:delete')}
         </Button>
       )}
-
-      {/* <Button
+      <Button
         data-tid="closeTileServerDialogTID"
         onClick={props.onClose}
         color="primary"
       >
         {i18n.t('core:closeButton')}
-      </Button> */}
+      </Button>
       <Button
         data-tid="saveTileServerDialogTID"
         onClick={saveTileServer}
@@ -235,4 +226,7 @@ function mapActionCreatorsToProps(dispatch) {
   );
 }
 
-export default connect(undefined, mapActionCreatorsToProps)(TileServerDialog);
+export default connect(
+  undefined,
+  mapActionCreatorsToProps
+)(MapTileServerDialog);

@@ -448,17 +448,6 @@ const Search = React.memo((props: Props) => {
     }
   };
 
-  const openPlace = () => {
-    if (tagPlaceLat && tagPlaceLong) {
-      PlatformIO.openUrl(
-        'https://www.openstreetmap.org/#map=16/' +
-          tagPlaceLat +
-          '/' +
-          tagPlaceLong
-      );
-    }
-  };
-
   const startSearch = event => {
     if (event.key === 'Enter' || event.keyCode === 13) {
       if (props.hideDrawer) {

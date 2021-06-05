@@ -57,7 +57,7 @@ interface Props {
   // currentEntryPath: string;
   selectedEntries: Array<TS.FileSystemEntry>;
   selectedTag: TS.Tag;
-  tileServer: TS.openStreetTileServer;
+  tileServer: TS.MapTileServer;
 }
 
 const GeoTagEditor = Pro && Pro.UI ? Pro.UI.GeoTagEditor : React.Fragment;

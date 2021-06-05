@@ -210,7 +210,7 @@ interface Props {
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   currentDirectoryPath: string | null;
   isDesktopMode: boolean;
-  tileServer: TS.openStreetTileServer;
+  tileServer: TS.MapTileServer;
 }
 
 const EntryContainer = (props: Props) => {

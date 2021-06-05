@@ -32,17 +32,17 @@ if (window.ExtTileServers) {
   tileServers = [
     {
       uuid: '1',
-      name: 'default',
+      name: 'Standard',
       serverURL: 'https://{s}.tile.osm.org/{z}/{x}/{y}.png',
       serverInfo:
         '<b>Leaflet</b> | Map data &copy; <b>https://openstreetmap.org/copyright</b> contributors, <b>CC-BY-SA</b>, Imagery © <b>Mapbox</b>'
     },
     {
       uuid: '2',
-      name: 'topo',
+      name: 'Topographic',
       serverURL: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
       serverInfo:
-        'Map data: &copy; <b>https://www.openstreetmap.org/copyright</b> - OpenStreetMap contributors, <b>http://viewfinderpanoramas.org</b> - SRTM | Map style: &copy; <b>https://opentopomap.org</b> - OpenTopoMap (<b>https://creativecommons.org/licenses/by-sa/3.0/</b> - CC-BY-SA'
+        '<b>Leaflet</b> | Map data: &copy; <b>https://openstreetmap.org/copyright</b> contributors, <b>http://viewfinderpanoramas.org</b> - SRTM | Map style: &copy; <b>https://opentopomap.org</b> - OpenTopoMap (<b>https://creativecommons.org/licenses/by-sa/3.0/</b> - CC-BY-SA'
     }
   ];
 }
