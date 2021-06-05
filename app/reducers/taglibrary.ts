@@ -609,18 +609,16 @@ export const getAllTags = (state: any) => {
   );
 };
 
-export const getTagColors = (state: any, tagTitle: string) => {
+export const getTagColors = (allTags: Array<TS.Tag>, tagTitle: string) => {
   const tagColors = {
-    textcolor: state.settings.tagTextColor,
-    color: state.settings.tagBackgroundColor
+    textcolor: '',
+    color: ''
   };
-  state.taglibrary.forEach(tagGroup => {
-    tagGroup.children.forEach((tag: TS.Tag) => {
-      if (tag.title === tagTitle) {
-        tagColors.textcolor = tag.textcolor;
-        tagColors.color = tag.color;
-      }
-    });
+  allTags.forEach((tag: TS.Tag) => {
+    if (tag.title === tagTitle) {
+      tagColors.textcolor = tag.textcolor;
+      tagColors.color = tag.color;
+    }
   });
   return tagColors;
 };
