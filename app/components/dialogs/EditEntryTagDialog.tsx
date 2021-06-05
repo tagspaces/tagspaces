@@ -38,6 +38,7 @@ import { isDateTimeTag } from '-/utils/dates';
 import { AppConfig } from '-/config';
 import { TS } from '-/tagspaces.namespace';
 import useValidation from '-/utils/useValidation';
+import { getMapTileServer } from '-/reducers/settings';
 
 const styles = () => ({
   root: {
@@ -56,6 +57,7 @@ interface Props {
   // currentEntryPath: string;
   selectedEntries: Array<TS.FileSystemEntry>;
   selectedTag: TS.Tag;
+  tileServer: TS.MapTileServer;
 }
 
 const GeoTagEditor = Pro && Pro.UI ? Pro.UI.GeoTagEditor : React.Fragment;
@@ -153,6 +155,7 @@ const EditEntryTagDialog = (props: Props) => {
             showAdvancedMode={showAdvancedMode}
             haveError={haveError}
             setError={setError}
+            tileServer={props.tileServer}
           />
         )}
         {isShowDatePeriodEditor && (
@@ -229,7 +232,8 @@ function mapStateToProps(state) {
     /* currentEntryPath: getSelectedTag(state)
       ? getSelectedTag(state).path
       : undefined, */
-    selectedEntries: getSelectedEntries(state)
+    selectedEntries: getSelectedEntries(state),
+    tileServer: getMapTileServer(state)
   };
 }
 

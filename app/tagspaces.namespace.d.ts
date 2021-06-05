@@ -126,4 +126,11 @@ export namespace TS {
     files?: Array<FileSystemEntry>;
     dirs?: Array<FileSystemEntry>;
   }
+
+  interface MapTileServer {
+    uuid: string;
+    name: string;
+    serverURL: string;
+    serverInfo: string;
+  }
 }

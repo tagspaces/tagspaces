@@ -17,6 +17,7 @@
  */
 
 import semver from 'semver';
+import uuidv1 from 'uuid';
 import i18n from '../services/i18n';
 // import AppConfig from '../config';
 import defaultSettings from './settings-default';
@@ -24,6 +25,7 @@ import PlatformIO from '../services/platform-io';
 import AppConfig from '../config';
 import versionMeta from '../version.json';
 import { actions as AppActions } from './app';
+import { TS } from '-/tagspaces.namespace';
 
 export const types = {
   UPGRADE_SETTINGS: 'SETTINGS/UPGRADE_SETTINGS',
@@ -66,7 +68,10 @@ export const types = {
   SET_MAIN_VSPLIT_SIZE: 'SETTINGS/SET_MAIN_VSPLIT_SIZE',
   SET_LEFT_VSPLIT_SIZE: 'SETTINGS/SET_LEFT_VSPLIT_SIZE',
   SET_FIRST_RUN: 'SETTINGS/SET_FIRST_RUN',
-  TOGGLE_TAGGROUP: 'TOGGLE_TAGGROUP'
+  TOGGLE_TAGGROUP: 'TOGGLE_TAGGROUP',
+  ADD_MAPTILE_SERVER: 'SET_MAPTILE_SERVER',
+  EDIT_MAPTILE_SERVER: 'EDIT_MAPTILE_SERVER',
+  DELETE_MAPTILE_SERVER: 'DELETE_MAPTILE_SERVER'
 };
 
 export default (state: any = defaultSettings, action: any) => {
@@ -304,6 +309,56 @@ export default (state: any = defaultSettings, action: any) => {
         tagGroupCollapsed
       };
     }
+    case types.ADD_MAPTILE_SERVER: {
+      let tileServers;
+      if (action.isDefault) {
+        tileServers = [
+          { ...action.tileServer, uuid: uuidv1() },
+          ...state.tileServers
+        ];
+      } else {
+        tileServers = [
+          ...state.tileServers,
+          { ...action.tileServer, uuid: uuidv1() }
+        ];
+      }
+      return {
+        ...state,
+        tileServers
+      };
+    }
+    case types.EDIT_MAPTILE_SERVER: {
+      let tileServers;
+      if (action.isDefault) {
+        tileServers = [
+          action.tileServer,
+          ...state.tileServers.filter(
+            tileServer => tileServer.uuid !== action.tileServer.uuid
+          )
+        ];
+      } else {
+        tileServers = [
+          ...state.tileServers.filter(
+            tileServer => tileServer.uuid !== action.tileServer.uuid
+          ),
+          action.tileServer
+        ];
+      }
+
+      return {
+        ...state,
+        tileServers
+      };
+    }
+    case types.DELETE_MAPTILE_SERVER: {
+      const tileServers = state.tileServers.filter(
+        tileServer => tileServer.uuid !== action.uuid
+      );
+      return {
+        ...state,
+        tileServers
+      };
+    }
     default: {
       return state;
     }
@@ -311,6 +366,26 @@ export default (state: any = defaultSettings, action: any) => {
 };
 
 export const actions = {
+  addTileServers: (
+    tileServer: TS.MapTileServer,
+    isDefault: boolean = false
+  ) => ({
+    type: types.ADD_MAPTILE_SERVER,
+    tileServer,
+    isDefault
+  }),
+  editTileServers: (
+    tileServer: TS.MapTileServer,
+    isDefault: boolean = false
+  ) => ({
+    type: types.EDIT_MAPTILE_SERVER,
+    tileServer,
+    isDefault
+  }),
+  deleteTileServer: (uuid: string) => ({
+    type: types.DELETE_MAPTILE_SERVER,
+    uuid
+  }),
   toggleTagGroup: (tagGroupUUID: string) => ({
     type: types.TOGGLE_TAGGROUP,
     uuid: tagGroupUUID
@@ -493,6 +568,8 @@ export function getLastVersionPromise(): Promise<string> {
 }
 
 // Selectors
+export const getMapTileServer = (state: any): TS.MapTileServer =>
+  state.settings.tileServers[0];
 export const getSettings = (state: any) => state.settings;
 export const getDesktopMode = (state: any) => {
   if (typeof window.ExtDisplayMode === 'undefined') {

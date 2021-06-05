@@ -556,6 +556,14 @@
   "exportCsv": "Export current files and folders as CSV file",
   "lat": "Latitude",
   "lng": "Longitude",
-  "coordinatesTitleHelper": "Invalid coordinate (please use 40.123, -74.123 or 40° 7.38’, -74° 7.38’)",
+  "coordinatesTitleHelper": "Invalid coordinate (supported 40.123 or 40° 7.38’)",
+  "tileServerTitle": "Map Tile Servers",
+  "tileServerDialogEdit": "Edit Map Tile Server",
+  "tileServerDialogAdd": "Add Map Tile Server",
+  "tileServerNameTitle": "Server Name",
+  "tileServerUrlTitle": "Server URL",
+  "tileServerUrlHelp": "Example: https://{s}.tile.osm.org/{z}/{x}/{y}.png",
+  "tileServerInfoTitle": "Copyright Information",
+  "serverIsDefaultHelp": "Default Map Tile Server",
   "-": "-"
 }
