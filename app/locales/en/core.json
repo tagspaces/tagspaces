@@ -565,5 +565,8 @@
   "tileServerUrlHelp": "Example: https://{s}.tile.osm.org/{z}/{x}/{y}.png",
   "tileServerInfoTitle": "Copyright Information",
   "serverIsDefaultHelp": "Default Map Tile Server",
+  "noTileServersTitle": "No tile server!",
+  "addTileServersHelp": "To add tile servers: https://wiki.openstreetmap.org/wiki/Tile_servers",
+  "addTileServersSettings": "Please add Tile server from settings",
   "-": "-"
 }
