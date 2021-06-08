@@ -42,7 +42,8 @@ import i18n from '-/services/i18n';
 import {
   actions as SettingsActions,
   getPersistTagsInSidecarFile,
-  getSettings
+  getSettings,
+  getMapTileServers
 } from '-/reducers/settings';
 import ColorPickerDialog from '../ColorPickerDialog';
 import TransparentBackground from '../../TransparentBackground';
@@ -484,7 +485,7 @@ function mapStateToProps(state) {
   return {
     settings: getSettings(state),
     persistTagsInSidecarFile: getPersistTagsInSidecarFile(state),
-    tileServers: state.settings.tileServers
+    tileServers: getMapTileServers(state)
   };
 }
 
