@@ -173,35 +173,39 @@ const MapTileServerDialog = (props: Props) => {
   const renderActions = () => (
     <DialogActions
       style={{
-        justifyContent: 'flex-end'
+        justifyContent: props.tileServer.uuid ? 'space-between' : 'flex-end'
       }}
     >
       {props.tileServer.uuid && (
         <Button
+          style={{
+            marginLeft: 10
+          }}
           data-tid="deleteTileServerTID"
           onClick={() => {
             props.deleteTileServer(props.tileServer.uuid);
             props.onClose();
           }}
-          color="secondary"
         >
           {i18n.t('core:delete')}
         </Button>
       )}
-      <Button
-        data-tid="closeTileServerDialogTID"
-        onClick={props.onClose}
-        color="primary"
-      >
-        {i18n.t('core:closeButton')}
-      </Button>
-      <Button
-        data-tid="saveTileServerDialogTID"
-        onClick={saveTileServer}
-        color="primary"
-      >
-        {i18n.t('core:confirmSaveButton')}
-      </Button>
+      <div>
+        <Button
+          data-tid="closeTileServerDialogTID"
+          onClick={props.onClose}
+          color="primary"
+        >
+          {i18n.t('core:closeButton')}
+        </Button>
+        <Button
+          data-tid="saveTileServerDialogTID"
+          onClick={saveTileServer}
+          color="primary"
+        >
+          {i18n.t('core:confirmSaveButton')}
+        </Button>
+      </div>
     </DialogActions>
   );
 

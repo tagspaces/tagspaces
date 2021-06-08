@@ -42,7 +42,8 @@ import i18n from '-/services/i18n';
 import {
   actions as SettingsActions,
   getPersistTagsInSidecarFile,
-  getSettings
+  getSettings,
+  getMapTileServers
 } from '-/reducers/settings';
 import ColorPickerDialog from '../ColorPickerDialog';
 import TransparentBackground from '../../TransparentBackground';
@@ -386,35 +387,44 @@ const SettingsGeneral = (props: Props) => {
             </IconButton>
           </ListItemSecondaryAction>
         </ListItem>
-        {props.tileServers.map((tileServer, index) => (
-          <ListItem key={tileServer.uuid} className={classes.listItem}>
+        {props.tileServers.length > 0 ? (
+          props.tileServers.map((tileServer, index) => (
+            <ListItem key={tileServer.uuid} className={classes.listItem}>
+              <ListItemText
+                primary={tileServer.name}
+                secondary={tileServer.serverURL}
+              />
+              <ListItemSecondaryAction>
+                {index === 0 && (
+                  <Tooltip title={i18n.t('core:serverIsDefaultHelp')}>
+                    <CheckIcon
+                      data-tid="tileServerDefaultIndication"
+                      style={{ marginLeft: 10 }}
+                    />
+                  </Tooltip>
+                )}
+                <IconButton
+                  aria-label={i18n.t('core:options')}
+                  aria-haspopup="true"
+                  edge="end"
+                  data-tid={'tileServerEdit_' + tileServer.name}
+                  onClick={event =>
+                    handleEditTileServerClick(event, tileServer, index === 0)
+                  }
+                >
+                  <EditIcon />
+                </IconButton>
+              </ListItemSecondaryAction>
+            </ListItem>
+          ))
+        ) : (
+          <ListItem key="noTileServers" className={classes.listItem}>
             <ListItemText
-              primary={tileServer.name}
-              secondary={tileServer.serverURL}
+              primary={i18n.t('core:noTileServersTitle')}
+              secondary={i18n.t('core:addTileServersHelp')}
             />
-            <ListItemSecondaryAction>
-              {index === 0 && (
-                <Tooltip title={i18n.t('core:serverIsDefaultHelp')}>
-                  <CheckIcon
-                    data-tid="startupIndication"
-                    style={{ marginLeft: 10 }}
-                  />
-                </Tooltip>
-              )}
-              <IconButton
-                aria-label={i18n.t('core:options')}
-                aria-haspopup="true"
-                edge="end"
-                data-tid={'locationMoreButton_' + tileServer.name}
-                onClick={event =>
-                  handleEditTileServerClick(event, tileServer, index === 0)
-                }
-              >
-                <EditIcon />
-              </IconButton>
-            </ListItemSecondaryAction>
           </ListItem>
-        ))}
+        )}
         {/* <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:coloredFileExtensionsEnabled')} />
           <Switch
@@ -475,7 +485,7 @@ function mapStateToProps(state) {
   return {
     settings: getSettings(state),
     persistTagsInSidecarFile: getPersistTagsInSidecarFile(state),
-    tileServers: state.settings.tileServers
+    tileServers: getMapTileServers(state)
   };
 }
 

@@ -86,6 +86,7 @@ import Marker2xIcon from '-/assets/icons/marker-icon-2x.png';
 import MarkerShadowIcon from '-/assets/icons/marker-shadow.png';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { TS } from '-/tagspaces.namespace';
+import NoTileServer from '-/components/NoTileServer';
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
@@ -757,10 +758,14 @@ const EntryProperties = (props: Props) => {
               zoomControl={true}
               attributionControl={false}
             >
-              <TileLayer
-                attribution={props.tileServer.serverInfo}
-                url={props.tileServer.serverURL}
-              />
+              {props.tileServer ? (
+                <TileLayer
+                  attribution={props.tileServer.serverInfo}
+                  url={props.tileServer.serverURL}
+                />
+              ) : (
+                <NoTileServer />
+              )}
               <LayerGroup>
                 <Marker
                   icon={iconFileMarker}
