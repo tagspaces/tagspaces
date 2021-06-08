@@ -55,14 +55,13 @@ import {
   TileLayer,
   withLeaflet
 } from 'react-leaflet';
-import OpenLocationCode from 'open-location-code-typescript';
 import { IconButton } from '@material-ui/core';
 import TagDropContainer from './TagDropContainer';
 import ColorPickerDialog from './dialogs/ColorPickerDialog';
 import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
 import i18n from '../services/i18n';
 import { enhanceOpenedEntry } from '-/services/utils-io';
-import { formatFileSize, isPlusCode } from '-/utils/misc';
+import { formatFileSize, parseGeoLocation } from '-/utils/misc';
 import {
   extractContainingDirectoryPath,
   getThumbFileLocationForFile,
@@ -590,11 +589,9 @@ const EntryProperties = (props: Props) => {
     }
     if (tags) {
       for (let i = 0; i < tags.length; i += 1) {
-        if (isPlusCode(tags[i].title)) {
-          const coord = OpenLocationCode.decode(tags[i].title);
-          const lat = Number(coord.latitudeCenter.toFixed(7));
-          const lng = Number(coord.longitudeCenter.toFixed(7));
-          return { lat, lng };
+        const location = parseGeoLocation(tags[i].title);
+        if (location !== undefined) {
+          return location;
         }
       }
     }
