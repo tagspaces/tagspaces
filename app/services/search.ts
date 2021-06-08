@@ -288,7 +288,11 @@ export default class Search {
     new Promise(resolve => {
       console.time('searchtime');
       const jmespathQuery = constructjmespathQuery(searchQuery);
-      let results = prepareIndex(locationContent);
+      let results = prepareIndex(
+        !searchQuery.showUnixHiddenEntries
+          ? locationContent.filter(entry => !entry.name.startsWith('.'))
+          : locationContent
+      );
       let searched = false;
 
       // Limiting the search to current folder only (with sub-folders)
