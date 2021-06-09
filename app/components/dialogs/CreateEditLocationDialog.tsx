@@ -34,6 +34,10 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import { Tooltip, Typography } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
 import Input from '@material-ui/core/Input';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import CheckIcon from '@material-ui/icons/Check';
+import InfoIcon from '@material-ui/icons/InfoOutlined';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import ObjectStoreForm from './ObjectStoreForm';
@@ -64,6 +68,7 @@ interface Props {
   fullScreen: boolean;
   addLocation?: (location: TS.Location) => void;
   editLocation?: (location: TS.Location) => void;
+  isPersistTagsInSidecar: boolean;
 }
 
 const CreateEditLocationDialog = (props: Props) => {
@@ -126,14 +131,23 @@ const CreateEditLocationDialog = (props: Props) => {
   const [bucketName, setBucketName] = useState<string>(
     location ? location.bucketName : ''
   );
-  const [region, setRegion] = useState<string>(location ? location.region : '');
-  const [type, setType] = useState<string>(
-    location
-      ? location.type
-      : AppConfig.isWeb
-      ? locationType.TYPE_CLOUD
-      : locationType.TYPE_LOCAL
+  const [persistTagsInSidecarFile, setPersistTagsInSidecarFile] = useState<
+    boolean
+  >(
+    location && location.persistTagsInSidecarFile
+      ? location.persistTagsInSidecarFile
+      : props.isPersistTagsInSidecar
   );
+  const [region, setRegion] = useState<string>(location ? location.region : '');
+  let defaultType;
+  if (location) {
+    defaultType = location.type;
+  } else if (AppConfig.isWeb) {
+    defaultType = locationType.TYPE_CLOUD;
+  } else {
+    defaultType = locationType.TYPE_LOCAL;
+  }
+  const [type, setType] = useState<string>(defaultType);
   const [newuuid, setNewUuid] = useState<string>(
     location ? location.uuid : uuidv1()
   );
@@ -265,6 +279,9 @@ const CreateEditLocationDialog = (props: Props) => {
           watchForChanges: false,
           maxIndexAge
         };
+      }
+      if (props.isPersistTagsInSidecar !== persistTagsInSidecarFile) {
+        loc = { ...loc, persistTagsInSidecarFile };
       }
 
       if (props.addLocation) {
@@ -476,29 +493,89 @@ const CreateEditLocationDialog = (props: Props) => {
               }
             />
           )}
-          {showAdvancedMode && (
-            <FormControlLabel
-              control={
-                <Tooltip title={i18n.t('core:maxIndexAgeHelp')}>
-                  <Input
-                    name="maxIndexAge"
-                    style={{
-                      maxWidth: 70,
-                      marginLeft: 15,
-                      marginRight: 15
-                    }}
-                    type="number"
-                    data-tid="maxIndexAgeTID"
-                    inputProps={{ min: 0 }}
-                    value={maxIndexAge / (1000 * 60)}
-                    onChange={event => changeMaxIndexAge(event.target.value)}
-                  />
-                </Tooltip>
-              }
-              label={i18n.t('core:maxIndexAge')}
-            />
-          )}
         </FormGroup>
+        {showAdvancedMode && (
+          <FormControlLabel
+            control={
+              <Tooltip title={i18n.t('core:maxIndexAgeHelp')}>
+                <Input
+                  name="maxIndexAge"
+                  style={{
+                    maxWidth: 70,
+                    marginLeft: 15,
+                    marginRight: 15,
+                    marginBottom: 15
+                  }}
+                  type="number"
+                  data-tid="maxIndexAgeTID"
+                  inputProps={{ min: 0 }}
+                  value={maxIndexAge / (1000 * 60)}
+                  onChange={event => changeMaxIndexAge(event.target.value)}
+                />
+              </Tooltip>
+            }
+            label={i18n.t('core:maxIndexAge')}
+          />
+        )}
+        {showAdvancedMode &&
+          (AppConfig.useSidecarsForFileTaggingDisableSetting ? (
+            <Button size="small" variant="outlined" disabled>
+              {persistTagsInSidecarFile ? 'Use Sidecar Files' : 'Rename Files'}
+            </Button>
+          ) : (
+            <ToggleButtonGroup
+              value={persistTagsInSidecarFile}
+              size="small"
+              exclusive
+            >
+              <ToggleButton
+                value={false}
+                data-tid="settingsSetPersistTagsInFileName"
+                onClick={() => setPersistTagsInSidecarFile(false)}
+              >
+                <Tooltip
+                  arrow
+                  title={
+                    <Typography color="inherit">
+                      Use the name of file for saving the tags - Tagging the
+                      file <b>image.jpg</b> with a tag <b>sunset</b> will rename
+                      it to <b>image[sunset].jpg</b>
+                    </Typography>
+                  }
+                >
+                  <div style={{ display: 'flex' }}>
+                    {!persistTagsInSidecarFile && <CheckIcon />}
+                    &nbsp;Rename Files&nbsp;&nbsp;
+                    <InfoIcon />
+                  </div>
+                </Tooltip>
+              </ToggleButton>
+              <ToggleButton
+                value={true}
+                data-tid="settingsSetPersistTagsInSidecarFile"
+                onClick={() => setPersistTagsInSidecarFile(true)}
+              >
+                <Tooltip
+                  arrow
+                  title={
+                    <Typography color="inherit">
+                      Use sidecar file for saving the tags - Tagging the file{' '}
+                      <b>image.jpg</b> with a tag <b>sunset</b> will save this
+                      tag in an additional sidecar file called{' '}
+                      <b>image.jpg.json</b> located in a sub folder with the
+                      name <b>.ts</b>
+                    </Typography>
+                  }
+                >
+                  <div style={{ display: 'flex' }}>
+                    {persistTagsInSidecarFile && <CheckIcon />}
+                    &nbsp;Use Sidecar Files&nbsp;&nbsp;
+                    <InfoIcon />
+                  </div>
+                </Tooltip>
+              </ToggleButton>
+            </ToggleButtonGroup>
+          ))}
       </DialogContent>
       <DialogActions style={{ justifyContent: 'space-between' }}>
         <Button
