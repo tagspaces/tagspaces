@@ -474,9 +474,17 @@ export function walkDirectory(
         if (window.walkCanceled || entries === undefined) {
           return false;
         }
+
         return Promise.all(
           entries.map(entry => {
             if (window.walkCanceled) {
+              return false;
+            }
+
+            if (
+              ignorePatterns.length > 0 &&
+              micromatch.isMatch(entry.path, ignorePatterns, { basename: true })
+            ) {
               return false;
             }
 
