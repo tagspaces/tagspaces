@@ -32,7 +32,11 @@ import {
   getLocations
 } from '../reducers/locations';
 import { actions as AppActions } from '../reducers/app';
-import { getPerspectives, isDesktopMode } from '-/reducers/settings';
+import {
+  getPersistTagsInSidecarFile,
+  getPerspectives,
+  isDesktopMode
+} from '-/reducers/settings';
 import i18n from '../services/i18n';
 import AppConfig from '../config';
 import LoadingLazy from '-/components/LoadingLazy';
@@ -66,6 +70,7 @@ interface Props {
   removeLocation: (location: TS.Location) => void;
   moveLocation: (uuid: string, position: number) => void;
   isDesktop: boolean;
+  isPersistTagsInSidecar: boolean;
 }
 
 type SubFolder = {
@@ -185,6 +190,7 @@ const LocationManager = (props: Props) => {
             open={isCreateLocationDialogOpened}
             onClose={() => setCreateLocationDialogOpened(false)}
             addLocation={props.addLocation}
+            isPersistTagsInSidecar={props.isPersistTagsInSidecar}
           />
         )}
         {isEditLocationDialogOpened && (
@@ -193,6 +199,7 @@ const LocationManager = (props: Props) => {
             onClose={() => setEditLocationDialogOpened(false)}
             location={selectedLocation}
             editLocation={props.editLocation}
+            isPersistTagsInSidecar={props.isPersistTagsInSidecar}
           />
         )}
         {isDeleteLocationDialogOpened && (
@@ -305,7 +312,8 @@ function mapStateToProps(state) {
   return {
     locations: getLocations(state),
     perspectives: getPerspectives(state),
-    isDesktop: isDesktopMode(state)
+    isDesktop: isDesktopMode(state),
+    isPersistTagsInSidecar: getPersistTagsInSidecarFile(state)
   };
 }
 
