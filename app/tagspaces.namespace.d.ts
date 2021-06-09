@@ -41,6 +41,7 @@ export namespace TS {
     fullTextIndex?: boolean;
     maxIndexAge?: number;
     persistTagsInSidecarFile?: boolean;
+    ignorePatternPaths?: Array<string>;
   }
 
   interface SearchQuery {

@@ -18,6 +18,7 @@
 
 import uuidv1 from 'uuid';
 import { saveAs } from 'file-saver';
+import micromatch from 'micromatch';
 import PlatformIO from './platform-io';
 import AppConfig from '../config';
 import {
@@ -377,12 +378,17 @@ export function getPrevFile(
 
 export function createDirectoryIndex(
   directoryPath: string,
-  extractText: boolean = false
+  extractText: boolean = false,
+  ignorePatterns: Array<string>
 ): Promise<Array<TS.FileSystemEntry>> {
   const dirPath = cleanTrailingDirSeparator(directoryPath);
   if (PlatformIO.isWorkerAvailable() && !PlatformIO.haveObjectStoreSupport()) {
     // Start indexing in worker if not in the object store mode
-    return PlatformIO.createDirectoryIndexInWorker(dirPath, extractText);
+    return PlatformIO.createDirectoryIndexInWorker(
+      dirPath,
+      extractText,
+      ignorePatterns
+    );
   }
 
   const SearchIndex = [];
@@ -413,7 +419,8 @@ export function createDirectoryIndex(
             counter += 1;
             SearchIndex.push(enhanceEntry(directoryEntry));
           }
-        }
+        },
+        ignorePatterns
       )
         .then(() => {
           // entries - can be used for further processing
@@ -442,8 +449,15 @@ export function walkDirectory(
   path: string,
   options: Object = {},
   fileCallback: any,
-  dirCallback: any
+  dirCallback: any,
+  ignorePatterns: Array<string> = []
 ) {
+  if (
+    ignorePatterns.length > 0 &&
+    micromatch.isMatch(path, ignorePatterns, { basename: true })
+  ) {
+    return;
+  }
   const mergedOptions = {
     recursive: false,
     skipMetaFolder: true,
@@ -504,7 +518,8 @@ export function walkDirectory(
                 entry.path,
                 mergedOptions,
                 fileCallback,
-                dirCallback
+                dirCallback,
+                ignorePatterns
               );
             }
             return entry;

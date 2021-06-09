@@ -222,7 +222,8 @@ export default class ElectronIO {
 
   createDirectoryIndexInWorker = (
     directoryPath: string,
-    extractText: boolean
+    extractText: boolean,
+    ignorePatterns: Array<string>
   ): Promise<any> =>
     new Promise((resolve, reject) => {
       if (this.isWorkerAvailable()) {
@@ -231,7 +232,8 @@ export default class ElectronIO {
           id: timestamp,
           action: 'createDirectoryIndex',
           path: directoryPath,
-          extractText
+          extractText,
+          ignorePatterns
         });
         this.ipcRenderer.once(timestamp, (event, data) => {
           // console.log('Answer from worker recieved ' + data.result);

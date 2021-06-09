@@ -132,9 +132,14 @@ export default class PlatformIO {
 
   static createDirectoryIndexInWorker = (
     directoryPath: string,
-    extractText: boolean
+    extractText: boolean,
+    ignorePatterns: Array<string>
   ): Promise<any> =>
-    nativeAPI.createDirectoryIndexInWorker(directoryPath, extractText);
+    nativeAPI.createDirectoryIndexInWorker(
+      directoryPath,
+      extractText,
+      ignorePatterns
+    );
 
   static createThumbnailsInWorker = (
     tmbGenerationList: Array<string>
