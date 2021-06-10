@@ -553,7 +553,7 @@
   "emptyTitle": "Title cannot be empty!",
   "duplicateTitle": "Search name already exist!",
   "savedSearchesTitle": "Saved Searches",
-  "exportCsv": "Export current files and folders as CSV file",
+  "exportCsv": "Export current file and folder list as CSV file",
   "lat": "Latitude",
   "lng": "Longitude",
   "coordinatesTitleHelper": "Invalid coordinate (supported 40.123 or 40° 7.38’)",
@@ -566,7 +566,7 @@
   "tileServerInfoTitle": "Copyright Information",
   "serverIsDefaultHelp": "Set as Default Map Tile Server",
   "noTileServersTitle": "No map tile server!",
-  "addTileServersHelp": "Further map tile servers can be found here: https://wiki.openstreetmap.org/wiki/Tile_servers",
+  "addTileServersHelp": "Further map tile servers can be found in the OpenStreetMap wiki",
   "addTileServersSettings": "In order to see the map, add at least one map tile server in the settings of the app",
   "-": "-"
 }
