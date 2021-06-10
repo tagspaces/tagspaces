@@ -34,22 +34,15 @@ import InfoIcon from '@material-ui/icons/InfoOutlined';
 import CheckIcon from '@material-ui/icons/Check';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import EditIcon from '@material-ui/icons/Edit';
-import IconButton from '@material-ui/core/IconButton';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import AddIcon from '@material-ui/icons/Add';
 import i18n from '-/services/i18n';
 import {
   actions as SettingsActions,
   getPersistTagsInSidecarFile,
-  getSettings,
-  getMapTileServers
+  getSettings
 } from '-/reducers/settings';
 import ColorPickerDialog from '../ColorPickerDialog';
 import TransparentBackground from '../../TransparentBackground';
 import AppConfig from '-/config';
-import { TS } from '-/tagspaces.namespace';
-import MapTileServerDialog from '-/components/dialogs/settings/MapTileServerDialog';
 
 const styles: any = {
   root: {
@@ -84,14 +77,10 @@ interface Props {
   setUseGenerateThumbnails: (useGenerateThumbnails: boolean) => void;
   setTagDelimiter: (tagDelimiter: string) => void;
   setMaxSearchResult: (maxResult: string) => void;
-  setDesktopMode: (desktopMode: boolean) => void;
-  showResetSettings: (showDialog: boolean) => void;
-  tileServers: Array<TS.MapTileServer>;
 }
 
 const SettingsGeneral = (props: Props) => {
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
-  const [tileServerDialog, setTileServerDialog] = useState<any>(undefined);
   const [displayTextColorPicker, setDisplayTextColorPicker] = useState<boolean>(
     false
   );
@@ -114,16 +103,6 @@ const SettingsGeneral = (props: Props) => {
 
   const handleMaxSearchResult = event => {
     props.setMaxSearchResult(event.target.value);
-  };
-
-  const handleEditTileServerClick = (
-    event: any,
-    tileServer: any,
-    isDefault: boolean
-  ) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setTileServerDialog({ ...tileServer, isDefault });
   };
 
   const { classes, persistTagsInSidecarFile } = props;
@@ -337,15 +316,6 @@ const SettingsGeneral = (props: Props) => {
             checked={props.settings.showUnixHiddenEntries}
           />
         </ListItem>
-        <ListItem className={classes.listItem}>
-          <ListItemText primary="Enable mobile (small screen) mode" />
-          <Switch
-            data-tid="settingsSetDesktopMode"
-            disabled={!(typeof window.ExtDisplayMode === 'undefined')}
-            onClick={() => props.setDesktopMode(!props.settings.desktopMode)}
-            checked={!props.settings.desktopMode}
-          />
-        </ListItem>
         {/* <ListItem className={classes.listItem}>
           <ListItemText style={{ maxWidth: '300px' }} primary={i18n.t('core:tagDelimiterChoose')} />
           <Select
@@ -373,110 +343,7 @@ const SettingsGeneral = (props: Props) => {
             onChange={handleMaxSearchResult}
           />
         </ListItem>
-        <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:tileServerTitle')} />
-          <ListItemSecondaryAction>
-            <IconButton
-              aria-label={i18n.t('core:add')}
-              aria-haspopup="true"
-              edge="end"
-              data-tid="addTileServerTID"
-              onClick={event => handleEditTileServerClick(event, {}, true)}
-            >
-              <AddIcon />
-            </IconButton>
-          </ListItemSecondaryAction>
-        </ListItem>
-        {props.tileServers.length > 0 ? (
-          props.tileServers.map((tileServer, index) => (
-            <ListItem key={tileServer.uuid} className={classes.listItem}>
-              <ListItemText
-                primary={tileServer.name}
-                secondary={tileServer.serverURL}
-              />
-              <ListItemSecondaryAction>
-                {index === 0 && (
-                  <Tooltip title={i18n.t('core:serverIsDefaultHelp')}>
-                    <CheckIcon
-                      data-tid="tileServerDefaultIndication"
-                      style={{ marginLeft: 10 }}
-                    />
-                  </Tooltip>
-                )}
-                <IconButton
-                  aria-label={i18n.t('core:options')}
-                  aria-haspopup="true"
-                  edge="end"
-                  data-tid={'tileServerEdit_' + tileServer.name}
-                  onClick={event =>
-                    handleEditTileServerClick(event, tileServer, index === 0)
-                  }
-                >
-                  <EditIcon />
-                </IconButton>
-              </ListItemSecondaryAction>
-            </ListItem>
-          ))
-        ) : (
-          <ListItem key="noTileServers" className={classes.listItem}>
-            <ListItemText
-              primary={i18n.t('core:noTileServersTitle')}
-              secondary={i18n.t('core:addTileServersHelp')}
-            />
-          </ListItem>
-        )}
-        {/* <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:coloredFileExtensionsEnabled')} />
-          <Switch
-            data-tid="settingsSetColoredFileExtension"
-            onClick={() =>
-              this.props.setColoredFileExtension(
-                !this.props.settings.coloredFileExtension
-              )
-            }
-            checked={this.props.settings.coloredFileExtension}
-          />
-        </ListItem> */}
-        {/* <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:loadLocationMetaData')} />
-          <Switch
-            data-tid="settingsSetLoadsLocationMetaData"
-            onClick={() =>
-              this.props.setLoadsLocationMetaData(
-                !this.props.settings.loadsLocationMetaData
-              )
-            }
-            checked={this.props.settings.loadsLocationMetaData}
-          />
-        </ListItem> */}
-        <ListItem className={classes.listItem}>
-          <Button
-            data-tid="resetSettingsTID"
-            onClick={() => props.showResetSettings(true)}
-            color="secondary"
-            style={{ marginLeft: -7 }}
-          >
-            {i18n.t('core:resetSettings')}
-          </Button>
-          <Button
-            data-tid="reloadAppTID"
-            onClick={() => {
-              window.location.reload();
-            }}
-            color="secondary"
-          >
-            {i18n.t('core:reloadApplication')}
-          </Button>
-        </ListItem>
       </List>
-      {tileServerDialog && (
-        <MapTileServerDialog
-          open={tileServerDialog !== undefined}
-          onClose={() => setTileServerDialog(undefined)}
-          tileServer={tileServerDialog}
-          isDefault={tileServerDialog.isDefault}
-        />
-      )}
     </>
   );
 };
@@ -484,8 +351,7 @@ const SettingsGeneral = (props: Props) => {
 function mapStateToProps(state) {
   return {
     settings: getSettings(state),
-    persistTagsInSidecarFile: getPersistTagsInSidecarFile(state),
-    tileServers: getMapTileServers(state)
+    persistTagsInSidecarFile: getPersistTagsInSidecarFile(state)
   };
 }
 

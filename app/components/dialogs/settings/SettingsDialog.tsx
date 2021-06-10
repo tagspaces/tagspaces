@@ -40,6 +40,7 @@ import i18n from '-/services/i18n';
 import { actions, getSupportedFileTypes } from '-/reducers/settings';
 import { extend } from '-/utils/misc';
 import AppConfig from '-/config';
+import SettingsAdvanced from '-/components/dialogs/settings/SettingsAdvanced';
 
 const styles: any = () => ({
   mainContent: {
@@ -206,7 +207,7 @@ const SettingsDialog = (props: Props) => {
           value={currentTab}
           onChange={handleTabClick}
           indicatorColor="primary"
-          variant="fullWidth"
+          variant="scrollable"
         >
           <Tab
             data-tid="generalSettingsDialog"
@@ -219,6 +220,10 @@ const SettingsDialog = (props: Props) => {
           <Tab
             data-tid="keyBindingsSettingsDialog"
             label={i18n.t('core:keyBindingsTab')}
+          />
+          <Tab
+            data-tid="advancedSettingsDialogTID"
+            label={i18n.t('core:advancedSettingsTab')}
           />
         </Tabs>
       </AppBar>
@@ -277,9 +282,7 @@ const SettingsDialog = (props: Props) => {
         className={props.classes.mainContent}
         ref={settingsFileTypeRef}
       >
-        {currentTab === 0 && (
-          <SettingsGeneral showResetSettings={setIsResetSettingsDialogOpened} />
-        )}
+        {currentTab === 0 && <SettingsGeneral />}
         {currentTab === 1 && (
           <SettingsFileTypes
             items={items}
@@ -294,6 +297,11 @@ const SettingsDialog = (props: Props) => {
           />
         )}
         {currentTab === 2 && <SettingsKeyBindings />}
+        {currentTab === 3 && (
+          <SettingsAdvanced
+            showResetSettings={setIsResetSettingsDialogOpened}
+          />
+        )}
       </div>
     </DialogContent>
   );
