@@ -374,7 +374,7 @@ const CreateEditLocationDialog = (props: Props) => {
         const locationPath = getLocationPath(location);
         if (selectedPaths[0].startsWith(locationPath)) {
           setSelectedDirectoryPath(
-            selectedPaths[0].replace(locationPath, '**')
+            selectedPaths[0].replace(locationPath, '**') + '/**'
           );
           setError('pathNotInCurrentLocation', false);
         } else {

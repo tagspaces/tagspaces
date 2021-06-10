@@ -150,16 +150,23 @@ export default class PlatformIO {
    * @param path
    * @param lite
    * @param extractText
+   * @param ignorePatterns
    */
   static listDirectoryPromise = (
     path: string,
     lite: boolean = true,
-    extractText: boolean = true
+    extractText: boolean = true,
+    ignorePatterns: Array<string> = []
   ): Promise<Array<any>> => {
     if (objectStoreAPI) {
       return objectStoreAPI.listDirectoryPromise(path, lite);
     }
-    return nativeAPI.listDirectoryPromise(path, lite, extractText);
+    return nativeAPI.listDirectoryPromise(
+      path,
+      lite,
+      extractText,
+      ignorePatterns
+    );
   };
 
   static getPropertiesPromise = (path: string): Promise<any> => {

@@ -152,6 +152,7 @@ const CellContent = (props: Props) => {
             height: 150 // fsEntry.isFile ? 150 : 70
           }}
         >
+          {fsEntry.isIgnored && (<span>Ignored</span>)}
           {fsEntry.thumbPath ? (
             <img
               alt="thumbnail"

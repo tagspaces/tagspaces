@@ -129,7 +129,8 @@ export function enhanceEntry(entry: any): TS.FileSystemEntry {
     tags: [...sidecarTags, ...fileNameTags],
     size: entry.size,
     lmdt: entry.lmdt,
-    path: entry.path
+    path: entry.path,
+    isIgnored: entry.isIgnored
   };
   if (sidecarDescription) {
     enhancedEntry.description = sidecarDescription;
@@ -454,7 +455,7 @@ export function walkDirectory(
 ) {
   if (
     ignorePatterns.length > 0 &&
-    micromatch.isMatch(path, ignorePatterns, { basename: true })
+    micromatch.isMatch(path, ignorePatterns)
   ) {
     return;
   }
@@ -483,7 +484,7 @@ export function walkDirectory(
 
             if (
               ignorePatterns.length > 0 &&
-              micromatch.isMatch(entry.path, ignorePatterns, { basename: true })
+              micromatch.isMatch(entry.path, ignorePatterns)
             ) {
               return false;
             }
