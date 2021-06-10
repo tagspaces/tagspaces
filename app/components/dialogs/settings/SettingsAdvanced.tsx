@@ -20,6 +20,7 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withStyles } from '@material-ui/core/styles';
+import Paper from '@material-ui/core/Paper';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -81,8 +82,28 @@ const SettingsAdvanced = (props: Props) => {
   const { classes } = props;
 
   return (
-    <>
+    <div style={{ width: '100%' }}>
       <List className={classes.root}>
+        <ListItem className={classes.listItem}>
+          <Button
+            data-tid="resetSettingsTID"
+            onClick={() => props.showResetSettings(true)}
+            color="secondary"
+            style={{ marginLeft: -7 }}
+          >
+            {i18n.t('core:resetSettings')}
+          </Button>
+          <Button
+            data-tid="reloadAppTID"
+            onClick={() => {
+              window.location.reload();
+            }}
+            color="secondary"
+          >
+            {i18n.t('core:reloadApplication')}
+          </Button>
+        </ListItem>
+
         <ListItem className={classes.listItem}>
           <ListItemText primary="Enable mobile (small screen) mode" />
           <Switch
@@ -106,44 +127,46 @@ const SettingsAdvanced = (props: Props) => {
             </IconButton>
           </ListItemSecondaryAction>
         </ListItem>
-        {props.tileServers.length > 0 ? (
-          props.tileServers.map((tileServer, index) => (
-            <ListItem key={tileServer.uuid} className={classes.listItem}>
+        <Paper elevation={2} style={{ margin: 2, padding: 5 }}>
+          {props.tileServers.length > 0 ? (
+            props.tileServers.map((tileServer, index) => (
+              <ListItem key={tileServer.uuid} className={classes.listItem}>
+                <ListItemText
+                  primary={tileServer.name}
+                  secondary={tileServer.serverURL}
+                />
+                <ListItemSecondaryAction>
+                  {index === 0 && (
+                    <Tooltip title={i18n.t('core:serverIsDefaultHelp')}>
+                      <CheckIcon
+                        data-tid="tileServerDefaultIndication"
+                        style={{ marginLeft: 10 }}
+                      />
+                    </Tooltip>
+                  )}
+                  <IconButton
+                    aria-label={i18n.t('core:options')}
+                    aria-haspopup="true"
+                    edge="end"
+                    data-tid={'tileServerEdit_' + tileServer.name}
+                    onClick={event =>
+                      handleEditTileServerClick(event, tileServer, index === 0)
+                    }
+                  >
+                    <EditIcon />
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+            ))
+          ) : (
+            <ListItem key="noTileServers" className={classes.listItem}>
               <ListItemText
-                primary={tileServer.name}
-                secondary={tileServer.serverURL}
+                primary={i18n.t('core:noTileServersTitle')}
+                secondary={i18n.t('core:addTileServersHelp')}
               />
-              <ListItemSecondaryAction>
-                {index === 0 && (
-                  <Tooltip title={i18n.t('core:serverIsDefaultHelp')}>
-                    <CheckIcon
-                      data-tid="tileServerDefaultIndication"
-                      style={{ marginLeft: 10 }}
-                    />
-                  </Tooltip>
-                )}
-                <IconButton
-                  aria-label={i18n.t('core:options')}
-                  aria-haspopup="true"
-                  edge="end"
-                  data-tid={'tileServerEdit_' + tileServer.name}
-                  onClick={event =>
-                    handleEditTileServerClick(event, tileServer, index === 0)
-                  }
-                >
-                  <EditIcon />
-                </IconButton>
-              </ListItemSecondaryAction>
             </ListItem>
-          ))
-        ) : (
-          <ListItem key="noTileServers" className={classes.listItem}>
-            <ListItemText
-              primary={i18n.t('core:noTileServersTitle')}
-              secondary={i18n.t('core:addTileServersHelp')}
-            />
-          </ListItem>
-        )}
+          )}
+        </Paper>
         {/* <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:coloredFileExtensionsEnabled')} />
           <Switch
@@ -168,25 +191,6 @@ const SettingsAdvanced = (props: Props) => {
             checked={this.props.settings.loadsLocationMetaData}
           />
         </ListItem> */}
-        <ListItem className={classes.listItem}>
-          <Button
-            data-tid="resetSettingsTID"
-            onClick={() => props.showResetSettings(true)}
-            color="secondary"
-            style={{ marginLeft: -7 }}
-          >
-            {i18n.t('core:resetSettings')}
-          </Button>
-          <Button
-            data-tid="reloadAppTID"
-            onClick={() => {
-              window.location.reload();
-            }}
-            color="secondary"
-          >
-            {i18n.t('core:reloadApplication')}
-          </Button>
-        </ListItem>
       </List>
       {tileServerDialog && (
         <MapTileServerDialog
@@ -196,7 +200,7 @@ const SettingsAdvanced = (props: Props) => {
           isDefault={tileServerDialog.isDefault}
         />
       )}
-    </>
+    </div>
   );
 };
 

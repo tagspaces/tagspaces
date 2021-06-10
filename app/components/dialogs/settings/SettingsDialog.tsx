@@ -207,7 +207,7 @@ const SettingsDialog = (props: Props) => {
           value={currentTab}
           onChange={handleTabClick}
           indicatorColor="primary"
-          variant="scrollable"
+          // variant="scrollable"
         >
           <Tab
             data-tid="generalSettingsDialog"
