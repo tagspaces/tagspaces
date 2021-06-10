@@ -72,6 +72,7 @@
   "generalTab": "General",
   "fileTypeTab": "File Types",
   "keyBindingsTab": "Key Bindings",
+  "advancedSettingsTab": "Advanced",
   "fileViewer": "File Viewer",
   "reloadDocument": "Reload Document",
   "selectAllFiles": "Select all files",
