@@ -495,6 +495,16 @@ export default {
       color: '#9fd5ba'
     },
     {
+      type: 'jif',
+      viewer: '@tagspaces/image-viewer',
+      color: '#9fd5ba'
+    },
+    {
+      type: 'jfif',
+      viewer: '@tagspaces/image-viewer',
+      color: '#9fd5ba'
+    },
+    {
       type: 'js',
       viewer: '@tagspaces/text-editor',
       editor: '@tagspaces/text-editor',
