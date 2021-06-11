@@ -218,8 +218,9 @@ function prepareIndex(index: Array<Object>) {
     let lon = null;
     let fromTime = null;
     let toTime = null;
+    let enhancedTags: Array<TS.Tag> = [];
     if (tags && tags.length) {
-      tags.map(tag => {
+      enhancedTags = tags.map(tag => {
         const enhancedTag: TS.Tag = {
           ...tag
         };
@@ -248,7 +249,7 @@ function prepareIndex(index: Array<Object>) {
     }
     const enhancedEntry = {
       ...entry,
-      tags
+      tags: enhancedTags
     };
     if (lat) {
       enhancedEntry.lat = lat;
