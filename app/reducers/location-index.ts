@@ -460,30 +460,27 @@ export const actions = {
             );
           }
           return Search.searchLocationIndex(directoryIndex, searchQuery)
-            .then(searchResults => {
+            .then((searchResults: Array<TS.FileSystemEntry>) => {
               let enhancedSearchResult = searchResults;
               if (isCloudLocation) {
-                enhancedSearchResult = searchResults.filter(
-                  (entry: TS.FileSystemEntry) => {
-                    // Excluding s3 folders from global search
-                    if (entry && entry.isFile) {
-                      const cleanedPath = entry.path.startsWith('/')
-                        ? entry.path.substr(1)
-                        : entry.path;
-                      entry.url = PlatformIO.getURLforPath(cleanedPath);
-                      if (
-                        entry.thumbPath &&
-                        entry.thumbPath.length > 1 &&
-                        !entry.thumbPath.startsWith('http')
-                      ) {
-                        entry.thumbPath = PlatformIO.getURLforPath(
-                          entry.thumbPath
-                        );
-                      }
-                      return entry;
+                enhancedSearchResult = searchResults
+                  // Excluding s3 folders from global search
+                  .filter(entry => entry && entry.isFile)
+                  .map((entry: TS.FileSystemEntry) => {
+                    const cleanedPath = entry.path.startsWith('/')
+                      ? entry.path.substr(1)
+                      : entry.path;
+                    const url = PlatformIO.getURLforPath(cleanedPath);
+                    let thumbPath;
+                    if (
+                      entry.thumbPath &&
+                      entry.thumbPath.length > 1 &&
+                      !entry.thumbPath.startsWith('http')
+                    ) {
+                      thumbPath = PlatformIO.getURLforPath(entry.thumbPath);
                     }
-                  }
-                );
+                    return { ...entry, url, thumbPath };
+                  });
               }
 
               searchResultCount += enhancedSearchResult.length;
