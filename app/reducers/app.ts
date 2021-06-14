@@ -270,9 +270,10 @@ export default (state: any = initialState, action: any) => {
         currentDirectoryColor: action.directoryMeta
           ? action.directoryMeta.color || ''
           : '',
-        currentDirectoryPerspective: action.directoryMeta
-          ? action.directoryMeta.perspective
-          : undefined,
+        currentDirectoryPerspective:
+          action.directoryMeta && action.directoryMeta.perspective
+            ? action.directoryMeta.perspective
+            : state.currentDirectoryPerspective,
         currentDirectoryPath: directoryPath,
         isLoading: action.showIsLoading || false
       };
