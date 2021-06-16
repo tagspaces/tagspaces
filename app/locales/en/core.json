@@ -569,5 +569,6 @@
   "noTileServersTitle": "No map tile server!",
   "addTileServersHelp": "Further map tile servers can be found in the OpenStreetMap wiki",
   "addTileServersSettings": "In order to see the map, add at least one map tile server in the settings of the app",
+  "showFolderMapControl": "Show Folder Map Control",
   "-": "-"
 }
