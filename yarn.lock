@@ -3164,6 +3164,12 @@
     dir-compare "^2.4.0"
     fs-extra "^9.0.1"
 
+"@elife/pm2@https://github.com/sytolk/pm2":
+  version "3.5.1"
+  resolved "https://github.com/sytolk/pm2#6bc014281b8d5090ac4b4919021f456aec90a31d"
+  dependencies:
+    strip-ansi "^6.0.0"
+
 "@emotion/hash@^0.8.0":
   version "0.8.0"
   resolved "https://registry.yarnpkg.com/@emotion/hash/-/hash-0.8.0.tgz#bbbff68978fefdbe68ccb533bc8cbe1d1afb5413"
