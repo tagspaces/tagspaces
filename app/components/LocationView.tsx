@@ -84,7 +84,7 @@ interface Props {
   changeLocation: (loc: TS.Location) => void;
 }
 
-const LocationView = React.memo((props: Props) => {
+const LocationView = (props: Props) => {
   const directoryTreeRef = useRef<DirectoryTreeViewRef>(null);
   const [
     locationDirectoryContextMenuAnchorEl,
@@ -323,7 +323,7 @@ const LocationView = React.memo((props: Props) => {
       />
     </>
   );
-});
+};
 
 function mapStateToProps(state) {
   return {
@@ -356,4 +356,4 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
   // @ts-ignore
-)(withStyles(styles)(LocationView));
+)(withStyles(styles)(React.memo(LocationView)));

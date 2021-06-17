@@ -644,23 +644,17 @@ function mapActionCreatorsToProps(dispatch) {
   );
 }
 
-const areEqual = (prevProp, nextProp) => {
-  if (
-    nextProp.currentDirectoryPath === prevProp.currentDirectoryPath &&
-    nextProp.currentDirectoryPerspective ===
-      prevProp.currentDirectoryPerspective &&
-    nextProp.currentLocationPath === prevProp.currentLocationPath &&
-    JSON.stringify(nextProp.directoryContent) ===
-      JSON.stringify(prevProp.directoryContent) &&
-    JSON.stringify(nextProp.openedFiles) ===
-      JSON.stringify(prevProp.openedFiles) &&
-    nextProp.windowWidth === prevProp.windowWidth &&
-    nextProp.windowHeight === prevProp.windowHeight
-  ) {
-    return true;
-  }
-  return false;
-};
+const areEqual = (prevProp, nextProp) =>
+  nextProp.currentDirectoryPath === prevProp.currentDirectoryPath &&
+  nextProp.currentDirectoryPerspective ===
+    prevProp.currentDirectoryPerspective &&
+  nextProp.currentLocationPath === prevProp.currentLocationPath &&
+  JSON.stringify(nextProp.directoryContent) ===
+    JSON.stringify(prevProp.directoryContent) &&
+  JSON.stringify(nextProp.openedFiles) ===
+    JSON.stringify(prevProp.openedFiles) &&
+  nextProp.windowWidth === prevProp.windowWidth &&
+  nextProp.windowHeight === prevProp.windowHeight;
 
 export default connect(
   mapStateToProps,
