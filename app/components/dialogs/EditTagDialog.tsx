@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import format from 'date-fns/format';
@@ -52,9 +52,6 @@ const EditTagDialog = (props: Props) => {
   const [textcolor, setTextcolor] = useState<string>(
     props.selectedTag.textcolor
   );
-  const [modifiedDate, setModifiedDate] = useState<string>(
-    props.selectedTag.modified_date
-  );
 
   useEffect(() => {
     handleValidation();
@@ -78,7 +75,7 @@ const EditTagDialog = (props: Props) => {
     }
   };
 
-  const disableConfirmButton = () => inputError;
+  // const disableConfirmButton = () => inputError;
 
   const onConfirm = () => {
     if (
@@ -157,7 +154,7 @@ const EditTagDialog = (props: Props) => {
           error={inputError}
           style={{ overflow: 'visible' }}
         >
-          {modifiedDate && (
+          {props.selectedTag.modified_date && (
             <div
               className="tag-date"
               style={{
@@ -170,7 +167,12 @@ const EditTagDialog = (props: Props) => {
               <span className="text" style={{ fontWeight: 600 }}>
                 {`${i18n.t('core:modifiedDate')}: `}
               </span>
-              <time>{format(new Date(modifiedDate), 'yyyy-mm-dd')}</time>
+              <time>
+                {format(
+                  new Date(props.selectedTag.modified_date),
+                  'yyyy-mm-dd'
+                )}
+              </time>
             </div>
           )}
           <TextField

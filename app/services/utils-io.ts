@@ -709,6 +709,39 @@ export function generateFileName(
   return newFileName;
 }
 
+export function parseNewTags(tagsInput: string, tagGroup: TS.TagGroup) {
+  if (tagGroup) {
+    let tags = tagsInput
+      .split(' ')
+      .join(',')
+      .split(','); // handle spaces around commas
+    tags = [...new Set(tags)]; // remove duplicates
+    tags = tags.filter(tag => tag && tag.length > 0); // zero length tags
+
+    const taggroupTags = tagGroup.children;
+    taggroupTags.forEach(tag => {
+      // filter out duplicated tags
+      tags = tags.filter(e => e !== tag.title);
+    });
+    return taggroupTags.concat(
+      tags.map(tagTitle => {
+        const tag: TS.Tag = {
+          type: taggroupTags.length > 0 ? taggroupTags[0].type : 'sidecar',
+          title: tagTitle.trim(),
+          functionality: '',
+          description: '',
+          icon: '',
+          color: tagGroup.color,
+          textcolor: tagGroup.textcolor,
+          style: taggroupTags.length > 0 ? taggroupTags[0].style : '',
+          modified_date: new Date().getTime()
+        };
+        return tag;
+      })
+    );
+  }
+}
+
 export async function loadMetaDataPromise(
   path: string
 ): Promise<TS.FileSystemEntryMeta> {
@@ -729,6 +762,7 @@ export async function loadMetaDataPromise(
       metaData = {};
     }
     metaDataObject = {
+      ...metaData,
       description: metaData.description || '',
       color: metaData.color || '',
       tags: metaData.tags || [],
@@ -751,6 +785,7 @@ export async function loadMetaDataPromise(
       metaData = {};
     }
     metaDataObject = {
+      ...metaData,
       id: metaData.id || uuidv1(),
       description: metaData.description || '',
       color: metaData.color || '',
@@ -787,6 +822,9 @@ export function cleanMetaData(
   }
   if (metaData.dirs && metaData.dirs.length > 0) {
     cleanedMeta.dirs = metaData.dirs;
+  }
+  if (metaData.tagGroups && metaData.tagGroups.length > 0) {
+    cleanedMeta.tagGroups = metaData.tagGroups;
   }
   if (metaData.tags && metaData.tags.length > 0) {
     cleanedMeta.tags = [];

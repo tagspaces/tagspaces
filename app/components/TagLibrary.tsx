@@ -64,6 +64,7 @@ import SmartTags from '../reducers/smart-tags';
 import { AppConfig } from '-/config';
 import EditTagDialog from '-/components/dialogs/EditTagDialog';
 import { TS } from '-/tagspaces.namespace';
+import { getLocations } from '-/reducers/locations';
 
 interface Props {
   classes: any;
@@ -96,6 +97,7 @@ interface Props {
   ) => void;
   selectedEntries: Array<TS.FileSystemEntry>;
   tagGroupCollapsed: Array<string>;
+  locations: Array<TS.Location>;
 }
 
 const TagLibrary = (props: Props) => {
@@ -207,6 +209,16 @@ const TagLibrary = (props: Props) => {
     setTagGroupMenuAnchorEl(null);
   };
 
+  function getLocationName(locationId: string) {
+    const location: TS.Location = props.locations.find(
+      l => l.uuid === locationId
+    );
+    if (location) {
+      return location.name;
+    }
+    return '';
+  }
+
   const renderTagGroup = tagGroup => {
     // eslint-disable-next-line no-param-reassign
     tagGroup.expanded = !(
@@ -236,7 +248,7 @@ const TagLibrary = (props: Props) => {
             data-tid="locationTitleElement"
             noWrap
           >
-            {tagGroup.title + ' '}
+            {tagGroup.title + ' ' + getLocationName(tagGroup.locationId)}
             {!tagGroup.expanded && (
               <span className={props.classes.badge}>
                 {tagGroup.children.length}
@@ -459,7 +471,8 @@ function mapStateToProps(state) {
     selectedEntries: getSelectedEntries(state),
     allTags: getAllTags(state),
     isReadOnlyMode: isReadOnlyMode(state),
-    tagGroupCollapsed: state.settings.tagGroupCollapsed
+    tagGroupCollapsed: state.settings.tagGroupCollapsed,
+    locations: getLocations(state)
   };
 }
 

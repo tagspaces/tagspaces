@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useReducer, useRef, useState } from 'react';
+import React, { ChangeEvent, useReducer, useRef, useState } from 'react';
 import uuidv1 from 'uuid';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -26,10 +26,15 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+import { connect } from 'react-redux';
 import ColorPickerDialog from './ColorPickerDialog';
 import i18n from '-/services/i18n';
 import TransparentBackground from '../TransparentBackground';
 import { TS } from '-/tagspaces.namespace';
+import { getLocations } from '-/reducers/locations';
+import { getCurrentLocationId } from '-/reducers/app';
 
 interface Props {
   open: boolean;
@@ -38,6 +43,9 @@ interface Props {
   fullScreen?: boolean;
   color: string;
   textcolor: string;
+  currentLocationId: string | null;
+  locations: Array<TS.Location>;
+  saveTagInLocation: boolean;
 }
 
 const CreateTagGroupDialog = (props: Props) => {
@@ -51,6 +59,7 @@ const CreateTagGroupDialog = (props: Props) => {
   const disableConfirmButton = useRef<boolean>(true);
   const color = useRef<string>(props.color);
   const textcolor = useRef<string>(props.textcolor);
+  const locationId = useRef<string>(props.currentLocationId);
   // eslint-disable-next-line no-unused-vars
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
@@ -93,6 +102,7 @@ const CreateTagGroupDialog = (props: Props) => {
         title: title.current,
         color: color.current,
         textcolor: textcolor.current,
+        locationId: locationId.current,
         children: []
       });
       props.onClose();
@@ -168,6 +178,27 @@ const CreateTagGroupDialog = (props: Props) => {
     >
       <DialogTitle>{i18n.t('core:createTagGroupTitle')}</DialogTitle>
       <DialogContent>
+        {props.saveTagInLocation && (
+          <FormControl fullWidth={true} error={inputError}>
+            <Select
+              defaultValue={locationId.current}
+              onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                locationId.current = event.target.value;
+                // rerender
+                forceUpdate();
+              }}
+            >
+              {props.locations.map(location => (
+                <MenuItem key={location.uuid} value={location.uuid}>
+                  {location.name}
+                </MenuItem>
+              ))}
+            </Select>
+            <FormHelperText>
+              {i18n.t('core:tagGroupLocationHelper')}
+            </FormHelperText>
+          </FormControl>
+        )}
         <FormControl fullWidth={true} error={inputError}>
           <TextField
             fullWidth={true}
@@ -253,4 +284,12 @@ const CreateTagGroupDialog = (props: Props) => {
   );
 };
 
-export default CreateTagGroupDialog;
+function mapStateToProps(state) {
+  return {
+    locations: getLocations(state),
+    currentLocationId: getCurrentLocationId(state),
+    saveTagInLocation: state.settings.saveTagInLocation
+  };
+}
+
+export default connect(mapStateToProps)(CreateTagGroupDialog);

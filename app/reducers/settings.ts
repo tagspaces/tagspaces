@@ -31,6 +31,7 @@ export const types = {
   SET_LANGUAGE: 'SETTINGS/SET_LANGUAGE',
   TOGGLE_SHOWUNIXHIDDENENTRIES: 'SETTINGS/TOGGLE_SHOWUNIXHIDDENENTRIES',
   SET_DESKTOPMODE: 'SETTINGS/SET_DESKTOPMODE',
+  SET_SAVE_TAGS_IN_LOCATION: 'SETTINGS/SET_SAVE_TAGS_IN_LOCATION',
   SET_TAG_DELIMITER: 'SETTINGS/SET_TAG_DELIMITER',
   SET_MAX_SEARCH_RESULT: 'SETTINGS/SET_MAX_SEARCH_RESULT',
   SET_CHECKFORUPDATES: 'SETTINGS/SET_CHECKFORUPDATES',
@@ -121,6 +122,9 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_DESKTOPMODE: {
       return { ...state, desktopMode: action.desktopMode };
+    }
+    case types.SET_SAVE_TAGS_IN_LOCATION: {
+      return { ...state, saveTagInLocation: action.saveTagInLocation };
     }
     case types.SET_CHECKFORUPDATES: {
       return { ...state, checkForUpdates: action.checkForUpdates };
@@ -400,6 +404,10 @@ export const actions = {
   setDesktopMode: (desktopMode: boolean) => ({
     type: types.SET_DESKTOPMODE,
     desktopMode
+  }),
+  setSaveTagInLocation: (saveTagInLocation: boolean) => ({
+    type: types.SET_SAVE_TAGS_IN_LOCATION,
+    saveTagInLocation
   }),
   toggleShowUnixHiddenEntries: () => ({
     type: types.TOGGLE_SHOWUNIXHIDDENENTRIES
