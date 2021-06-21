@@ -1,5 +1,49 @@
 # Changelog
 
+## Version 3.10.4 / 2021.06.15
+
+### 🎉 New features
+
+- added new viewer for opening spreadsheet files like CSV, ODT or XLSX
+- make OpenStreetMap tile server configurable in the settings
+- allow changing the order of locations with drag and drop
+- geo tagging and custom date tagging many selected files does not work
+- use the thumb of a folder as thumb for the parent folder
+- extend the tag menu with add to tag group entry, enable dnd of tag from the default perspective to tag library
+- added strict(case sensitive) and semi strict search
+- adding support for JIF and JFIF files #1442
+- added maximum age of the search index per location locations
+- **[PRO]** added support for saved searches
+- **[PRO]** added support for sharable links with validation duration in object storage locations
+- **[PRO]** add input fields for entering lat and long directly in the geo tagging dialog
+- **[PRO]** export current folder content or search results entries as CSV file
+- **[PRO]** added support for multi factor auth (MFA) for TagSpaces Enterprise
+- **[PRO]** added new smart icon as pin for files and folder, redesigning pin popup
+- **[PRO]** implement coloring map icons according to the color of the first tag
+- **[PRO]** extend the tag menu with add to tag group
+
+### 🌟 Enhancements
+
+- create tab for advanced settings
+- improve dark mode for the entry properties
+- update Norwegian, Hungarian and Japanese translation
+- improvements in the search and thumbnail generation snackbar
+- parse text query for containing tags and optimize search reset (#1422)
+- **[PRO]** improving thumbnail generation for text files
+
+### 🐛 Bug fixes
+
+- reducing the usage of openFileNatively, fixing #1420
+- removing the location limitation of the search string in the fussy search
+- making index preparation more robust
+- clear folder background color
+- default sorting per name is now alphabetic
+- search tags by camel case #1426
+- **[PRO]** fix deleting folder in object storage containing others folders
+- **[PRO]** hide mobile side-menu during the amplify login process
+- **[PRO]** improve folder creation in object stores
+- **[PRO]** fix show thumbnails in object stores
+
 ## Version 3.9.5 / 2021.03.27
 
 ### 🎉 New features

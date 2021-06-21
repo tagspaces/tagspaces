@@ -59,7 +59,7 @@ interface Props {
   classes: any;
   style: any;
   locations: Array<TS.Location>;
-  perspectives: Array<Object>;
+  // perspectives: Array<Object>;
   hideDrawer: () => void;
   openURLExternally: (path: string) => void;
   toggleOpenLinkDialog: () => void;

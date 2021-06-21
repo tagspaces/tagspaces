@@ -122,6 +122,7 @@ export const AppConfig = {
       ? window.ExtShowWelcomePanel
       : true,
   locationsReadOnly: window.ExtLocations !== undefined,
+  mapTileServers: window.ExtMapTileServers || false,
   sidebarColor: window.ExtSidebarColor || '#2C001E', // '#00D1A1' // #008023
   sidebarSelectionColor: window.ExtSidebarSelectionColor || '#880E4F',
   lightThemeLightColor: window.ExtLightThemeLightColor || '#dcf3ec',

@@ -32,6 +32,8 @@ export const FileTypeGroups = {
   images: [
     'jpg',
     'jpeg',
+    'jif',
+    'jiff',
     'png',
     'gif',
     'bmp',
@@ -207,17 +209,28 @@ function constructjmespathQuery(searchQuery: TS.SearchQuery): string {
   return jmespathQuery;
 }
 
-function prepareIndex(index: Array<Object>) {
+function prepareIndex(
+  index: Array<TS.FileSystemEntry>,
+  showUnixHiddenEntries: boolean
+) {
   console.time('PreparingIndex');
-  let resultIndex = [];
-  resultIndex = index.map((entry: any) => {
+  let filteredIndex = [];
+  if (showUnixHiddenEntries) {
+    filteredIndex = index;
+  } else {
+    filteredIndex = index.filter(
+      (entry: TS.FileSystemEntry) => !entry.name.startsWith('.')
+    );
+  }
+  const enhancedIndex = filteredIndex.map((entry: any) => {
     const tags = [...entry.tags];
     let lat = null;
     let lon = null;
     let fromTime = null;
     let toTime = null;
+    let enhancedTags: Array<TS.Tag> = [];
     if (tags && tags.length) {
-      tags.map(tag => {
+      enhancedTags = tags.map(tag => {
         const enhancedTag: TS.Tag = {
           ...tag
         };
@@ -246,7 +259,7 @@ function prepareIndex(index: Array<Object>) {
     }
     const enhancedEntry = {
       ...entry,
-      tags
+      tags: enhancedTags
     };
     if (lat) {
       enhancedEntry.lat = lat;
@@ -263,7 +276,7 @@ function prepareIndex(index: Array<Object>) {
     return enhancedEntry;
   });
   console.timeEnd('PreparingIndex');
-  return resultIndex;
+  return enhancedIndex;
 }
 
 function setOriginTitle(results: Array<Object>) {
@@ -288,7 +301,10 @@ export default class Search {
     new Promise(resolve => {
       console.time('searchtime');
       const jmespathQuery = constructjmespathQuery(searchQuery);
-      let results = prepareIndex(locationContent);
+      let results = prepareIndex(
+        locationContent,
+        searchQuery.showUnixHiddenEntries
+      );
       let searched = false;
 
       // Limiting the search to current folder only (with sub-folders)
