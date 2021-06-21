@@ -209,13 +209,20 @@ function constructjmespathQuery(searchQuery: TS.SearchQuery): string {
   return jmespathQuery;
 }
 
-function prepareIndex(index: Array<Object>, showUnixHiddenEntries: boolean) {
+function prepareIndex(
+  index: Array<TS.FileSystemEntry>,
+  showUnixHiddenEntries: boolean
+) {
   console.time('PreparingIndex');
-  let resultIndex = [];
-  resultIndex = index.flatMap((entry: any) => {
-    if (!showUnixHiddenEntries && entry.name.startsWith('.')) {
-      return [];
-    }
+  let filteredIndex = [];
+  if (showUnixHiddenEntries) {
+    filteredIndex = index;
+  } else {
+    filteredIndex = index.filter(
+      (entry: TS.FileSystemEntry) => !entry.name.startsWith('.')
+    );
+  }
+  const enhancedIndex = filteredIndex.map((entry: any) => {
     const tags = [...entry.tags];
     let lat = null;
     let lon = null;
@@ -266,10 +273,10 @@ function prepareIndex(index: Array<Object>, showUnixHiddenEntries: boolean) {
     if (toTime) {
       enhancedEntry.toTime = toTime;
     }
-    return [enhancedEntry];
+    return enhancedEntry;
   });
   console.timeEnd('PreparingIndex');
-  return resultIndex;
+  return enhancedIndex;
 }
 
 function setOriginTitle(results: Array<Object>) {
