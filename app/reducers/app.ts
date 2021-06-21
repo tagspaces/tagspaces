@@ -923,7 +923,10 @@ export const actions = {
     fsEntryMeta?: TS.FileSystemEntryMeta
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
     const { settings } = getState();
-    dispatch(actions.loadDirectorySuccessInt(directoryPath, [], true)); // this is to reset directoryContent (it will reset color too)
+    /* const { currentDirectoryPath } = getState().app;
+    if (currentDirectoryPath !== directoryPath) {
+      dispatch(actions.loadDirectorySuccessInt(directoryPath, [], true)); // this is to reset directoryContent (it will reset color too)
+    } */
     // dispatch(actions.setCurrentDirectoryColor('')); // this is to reset color only
     dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
     PlatformIO.listDirectoryPromise(directoryPath, false)
@@ -1527,16 +1530,17 @@ export const actions = {
           if (entryProps) {
             const { supportedFileTypes } = getState().settings;
 
-            let entryForOpening: OpenedEntry = openedFiles.find(
-              obj => obj.path === entryPath
-            );
+            let entryForOpening: OpenedEntry;
+            const entryExist = openedFiles.find(obj => obj.path === entryPath);
 
-            if (!entryForOpening) {
+            if (!entryExist) {
               entryForOpening = findExtensionsForEntry(
                 supportedFileTypes,
                 entryPath,
                 entryProps.isFile
               );
+            } else {
+              entryForOpening = { ...entryExist };
             }
 
             if (fsEntryMeta.changed !== undefined) {

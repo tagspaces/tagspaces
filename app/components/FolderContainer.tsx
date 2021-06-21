@@ -37,11 +37,7 @@ import MapiquePerspectiveIcon from '@material-ui/icons/Map';
 import LocationMenu from './menus/LocationMenu';
 import DirectoryMenu from './menus/DirectoryMenu';
 import i18n from '../services/i18n';
-import {
-  getPerspectives,
-  getMaxSearchResults,
-  getDesktopMode
-} from '-/reducers/settings';
+import { getMaxSearchResults, getDesktopMode } from '-/reducers/settings';
 import { getLocations } from '-/reducers/locations';
 import {
   actions as AppActions,
@@ -614,7 +610,7 @@ function mapStateToProps(state) {
   return {
     settings: state.settings,
     lastSelectedEntry: getLastSelectedEntry(state),
-    perspectives: getPerspectives(state),
+    // perspectives: getPerspectives(state),
     directoryContent: getDirectoryContent(state),
     currentDirectoryPerspective: getCurrentDirectoryPerspective(state),
     searchResultCount: getSearchResultCount(state),
@@ -652,8 +648,20 @@ function mapActionCreatorsToProps(dispatch) {
   );
 }
 
+const areEqual = (prevProp, nextProp) =>
+  nextProp.currentDirectoryPath === prevProp.currentDirectoryPath &&
+  nextProp.currentDirectoryPerspective ===
+    prevProp.currentDirectoryPerspective &&
+  nextProp.currentLocationPath === prevProp.currentLocationPath &&
+  JSON.stringify(nextProp.directoryContent) ===
+    JSON.stringify(prevProp.directoryContent) &&
+  JSON.stringify(nextProp.openedFiles) ===
+    JSON.stringify(prevProp.openedFiles) &&
+  nextProp.windowWidth === prevProp.windowWidth &&
+  nextProp.windowHeight === prevProp.windowHeight;
+
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
   // @ts-ignore
-)(withStyles(styles)(withTheme(FolderContainer)));
+)(withStyles(styles)(withTheme(React.memo(FolderContainer, areEqual))));

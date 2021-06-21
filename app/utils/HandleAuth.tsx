@@ -18,7 +18,7 @@ interface Props {
   addLocations: (locations: Array<TS.Location>, override: boolean) => void;
   importTagGroups: (tagGroups: Array<TS.TagGroup>, replace: boolean) => void;
 }
-const HandleAuth = React.memo((props: Props) => {
+const HandleAuth = (props: Props) => {
   const username = useRef(undefined);
 
   React.useEffect(() => {
@@ -116,7 +116,7 @@ const HandleAuth = React.memo((props: Props) => {
       });
 
   return null;
-});
+};
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
@@ -130,4 +130,4 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
-export default connect(undefined, mapDispatchToProps)(HandleAuth);
+export default connect(undefined, mapDispatchToProps)(React.memo(HandleAuth));

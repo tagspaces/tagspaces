@@ -102,7 +102,7 @@ interface Props {
   showUnixHiddenEntries: boolean;
 }
 
-const Search = React.memo((props: Props) => {
+const Search = (props: Props) => {
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   const textQuery = useRef<string>(props.searchQuery.textQuery);
   // const tagsAND = useRef<Array<TS.Tag>>(props.searchQuery.tagsAND);
@@ -1210,7 +1210,7 @@ const Search = React.memo((props: Props) => {
       </div>
     </div>
   );
-});
+};
 
 function mapStateToProps(state) {
   return {
@@ -1240,7 +1240,13 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
+const areEqual = (prevProp, nextProp) =>
+  nextProp.indexing === prevProp.indexing &&
+  nextProp.searchQuery === prevProp.searchQuery &&
+  nextProp.currentDirectory === prevProp.currentDirectory &&
+  JSON.stringify(nextProp.searches) === JSON.stringify(prevProp.searches);
+
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles, { withTheme: true })(Search));
+)(withStyles(styles, { withTheme: true })(React.memo(Search, areEqual)));
