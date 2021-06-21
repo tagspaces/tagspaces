@@ -291,9 +291,10 @@ const FolderContainer = (props: Props) => {
       normalizedCurrentPath.startsWith(normalizedCurrentLocationPath)
     ) {
       pathParts.push(
-        normalizedCurrentPath.substring(
-          PlatformIO.haveObjectStoreSupport() ? 2 : 1
-        )
+        normalizedCurrentPath
+          .substring(PlatformIO.haveObjectStoreSupport() ? 2 : 1)
+          .split('/')
+          .join(PlatformIO.getDirSeparator())
       );
       normalizedCurrentPath = normalizedCurrentPath.substring(
         0,
@@ -483,7 +484,10 @@ const FolderContainer = (props: Props) => {
                       backgroundColor: theme.palette.background.default
                     }}
                   >
-                    {extractShortDirectoryName(pathPart, '/')}
+                    {extractShortDirectoryName(
+                      pathPart,
+                      PlatformIO.getDirSeparator()
+                    )}
                     <FolderSeparatorIcon />
                   </Button>
                 ))}
