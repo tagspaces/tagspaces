@@ -209,10 +209,13 @@ function constructjmespathQuery(searchQuery: TS.SearchQuery): string {
   return jmespathQuery;
 }
 
-function prepareIndex(index: Array<Object>) {
+function prepareIndex(index: Array<Object>, showUnixHiddenEntries: boolean) {
   console.time('PreparingIndex');
   let resultIndex = [];
-  resultIndex = index.map((entry: any) => {
+  resultIndex = index.flatMap((entry: any) => {
+    if (!showUnixHiddenEntries && entry.name.startsWith('.')) {
+      return [];
+    }
     const tags = [...entry.tags];
     let lat = null;
     let lon = null;
@@ -263,7 +266,7 @@ function prepareIndex(index: Array<Object>) {
     if (toTime) {
       enhancedEntry.toTime = toTime;
     }
-    return enhancedEntry;
+    return [enhancedEntry];
   });
   console.timeEnd('PreparingIndex');
   return resultIndex;
@@ -292,9 +295,8 @@ export default class Search {
       console.time('searchtime');
       const jmespathQuery = constructjmespathQuery(searchQuery);
       let results = prepareIndex(
-        !searchQuery.showUnixHiddenEntries
-          ? locationContent.filter(entry => !entry.name.startsWith('.'))
-          : locationContent
+        locationContent,
+        searchQuery.showUnixHiddenEntries
       );
       let searched = false;
 
