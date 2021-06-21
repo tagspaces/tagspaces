@@ -295,7 +295,7 @@ const FolderContainer = (props: Props) => {
           .substring(PlatformIO.haveObjectStoreSupport() ? 2 : 1)
           .split('/')
           .join(PlatformIO.getDirSeparator())
-      );
+      ); // TODO: optimization needed
       normalizedCurrentPath = normalizedCurrentPath.substring(
         0,
         normalizedCurrentPath.lastIndexOf('/')
