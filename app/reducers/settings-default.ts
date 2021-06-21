@@ -160,12 +160,12 @@ export default {
   entryPropertiesSplitSize: 103,
   leftVerticalSplitSize: 350,
   mainVerticalSplitSize: '50%',
-  supportedPerspectives: [
+  /* supportedPerspectives: [
     {
       id: 'perspectiveList',
       name: 'List'
     }
-  ],
+  ], */
   supportedThemes: ['light', 'dark'],
   supportedLanguages: [
     {
