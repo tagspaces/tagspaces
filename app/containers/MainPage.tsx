@@ -97,7 +97,7 @@ import ProgressDialog from '-/components/dialogs/ProgressDialog';
 import useEventListener from '-/utils/useEventListener';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { TS } from '-/tagspaces.namespace';
-import useTraceUpdate from "-/utils/useTraceUpdate";
+import useTraceUpdate from '-/utils/useTraceUpdate';
 
 const initialSplitSize = 44;
 const drawerWidth = 300;
@@ -944,42 +944,42 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
-const areEqual = (prevProp, nextProp) => nextProp.directoryPath === prevProp.directoryPath &&
-      nextProp.isAboutDialogOpened === prevProp.isAboutDialogOpened &&
-      nextProp.isCreateDirectoryOpened === prevProp.isCreateDirectoryOpened &&
-      nextProp.isCreateFileDialogOpened === prevProp.isCreateFileDialogOpened &&
-      nextProp.isDeleteMultipleEntriesDialogOpened ===
-      prevProp.isDeleteMultipleEntriesDialogOpened &&
-      nextProp.isDesktopMode === prevProp.isDesktopMode &&
-      nextProp.isEditTagDialogOpened === prevProp.isEditTagDialogOpened &&
-      nextProp.isEntryInFullWidth === prevProp.isEntryInFullWidth &&
-      nextProp.isHelpFeedbackPanelOpened === prevProp.isHelpFeedbackPanelOpened &&
-      nextProp.isIndexing === prevProp.isIndexing &&
-      nextProp.isKeysDialogOpened === prevProp.isKeysDialogOpened &&
-      nextProp.isLicenseDialogOpened === prevProp.isLicenseDialogOpened &&
-      nextProp.isLocationManagerPanelOpened ===
-      prevProp.isLocationManagerPanelOpened &&
-      nextProp.isOnboardingDialogOpened === prevProp.isOnboardingDialogOpened &&
-      nextProp.isOpenLinkDialogOpened === prevProp.isOpenLinkDialogOpened &&
-      nextProp.isPerspectivesPanelOpened === prevProp.isPerspectivesPanelOpened &&
-      nextProp.isProgressDialogOpened === prevProp.isProgressDialogOpened &&
-      nextProp.isReadOnlyMode === prevProp.isReadOnlyMode &&
-      nextProp.isSearchPanelOpened === prevProp.isSearchPanelOpened &&
-      nextProp.isSettingsDialogOpened === prevProp.isSettingsDialogOpened &&
-      nextProp.isTagLibraryPanelOpened === prevProp.isTagLibraryPanelOpened &&
-      nextProp.isThirdPartyLibsDialogOpened ===
-      prevProp.isThirdPartyLibsDialogOpened &&
-      nextProp.isUpdateAvailable === prevProp.isUpdateAvailable &&
-      nextProp.isUploadProgressDialogOpened ===
-      prevProp.isUploadProgressDialogOpened &&
-      nextProp.leftSplitSize === prevProp.leftSplitSize &&
-      nextProp.mainSplitSize === prevProp.mainSplitSize &&
-      JSON.stringify(nextProp.notificationStatus) ===
-      JSON.stringify(prevProp.notificationStatus) &&
-      JSON.stringify(nextProp.selectedEntries) ===
-      JSON.stringify(prevProp.selectedEntries) &&
-      JSON.stringify(nextProp.openedFiles) ===
-      JSON.stringify(prevProp.openedFiles);
+const areEqual = (prevProp, nextProp) =>
+  nextProp.directoryPath === prevProp.directoryPath &&
+  nextProp.isAboutDialogOpened === prevProp.isAboutDialogOpened &&
+  nextProp.isCreateDirectoryOpened === prevProp.isCreateDirectoryOpened &&
+  nextProp.isCreateFileDialogOpened === prevProp.isCreateFileDialogOpened &&
+  nextProp.isDeleteMultipleEntriesDialogOpened ===
+    prevProp.isDeleteMultipleEntriesDialogOpened &&
+  nextProp.isDesktopMode === prevProp.isDesktopMode &&
+  nextProp.isEditTagDialogOpened === prevProp.isEditTagDialogOpened &&
+  nextProp.isEntryInFullWidth === prevProp.isEntryInFullWidth &&
+  nextProp.isHelpFeedbackPanelOpened === prevProp.isHelpFeedbackPanelOpened &&
+  nextProp.isIndexing === prevProp.isIndexing &&
+  nextProp.isKeysDialogOpened === prevProp.isKeysDialogOpened &&
+  nextProp.isLicenseDialogOpened === prevProp.isLicenseDialogOpened &&
+  nextProp.isLocationManagerPanelOpened ===
+    prevProp.isLocationManagerPanelOpened &&
+  nextProp.isOnboardingDialogOpened === prevProp.isOnboardingDialogOpened &&
+  nextProp.isOpenLinkDialogOpened === prevProp.isOpenLinkDialogOpened &&
+  nextProp.isPerspectivesPanelOpened === prevProp.isPerspectivesPanelOpened &&
+  nextProp.isProgressDialogOpened === prevProp.isProgressDialogOpened &&
+  nextProp.isReadOnlyMode === prevProp.isReadOnlyMode &&
+  nextProp.isSearchPanelOpened === prevProp.isSearchPanelOpened &&
+  nextProp.isSettingsDialogOpened === prevProp.isSettingsDialogOpened &&
+  nextProp.isTagLibraryPanelOpened === prevProp.isTagLibraryPanelOpened &&
+  nextProp.isThirdPartyLibsDialogOpened ===
+    prevProp.isThirdPartyLibsDialogOpened &&
+  nextProp.isUpdateAvailable === prevProp.isUpdateAvailable &&
+  nextProp.isUploadProgressDialogOpened ===
+    prevProp.isUploadProgressDialogOpened &&
+  nextProp.leftSplitSize === prevProp.leftSplitSize &&
+  nextProp.mainSplitSize === prevProp.mainSplitSize &&
+  JSON.stringify(nextProp.notificationStatus) ===
+    JSON.stringify(prevProp.notificationStatus) &&
+  JSON.stringify(nextProp.selectedEntries) ===
+    JSON.stringify(prevProp.selectedEntries) &&
+  JSON.stringify(nextProp.openedFiles) === JSON.stringify(prevProp.openedFiles);
 
 export default withDnDContext(
   connect(
