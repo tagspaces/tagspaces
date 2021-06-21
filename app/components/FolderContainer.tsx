@@ -220,7 +220,6 @@ interface Props {
   loadDirectoryContent: (path: string) => void;
   loadParentDirectoryContent: () => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
-  // setLastSelectedEntry: (entryPath: string | null) => void;
   isReadOnlyMode: boolean;
   isDesktopMode: boolean;
   showNotification: (content: string) => void;
@@ -378,7 +377,6 @@ const FolderContainer = (props: Props) => {
           openDirectory={props.openDirectory}
           showInFileManager={props.showInFileManager}
           currentDirectoryPath={props.currentDirectoryPath}
-          // setLastSelectedEntry={props.setLastSelectedEntry}
           addTags={props.addTags}
           editTagForEntry={props.editTagForEntry}
           removeTags={props.removeTags}
@@ -399,7 +397,6 @@ const FolderContainer = (props: Props) => {
         openDirectory={props.openDirectory}
         showInFileManager={props.showInFileManager}
         currentDirectoryPath={props.currentDirectoryPath}
-        // setLastSelectedEntry={props.setLastSelectedEntry}
         addTags={props.addTags}
         editTagForEntry={props.editTagForEntry}
         removeTags={props.removeTags}
@@ -610,7 +607,6 @@ function mapStateToProps(state) {
   return {
     settings: state.settings,
     lastSelectedEntry: getLastSelectedEntry(state),
-    // perspectives: getPerspectives(state),
     directoryContent: getDirectoryContent(state),
     currentDirectoryPerspective: getCurrentDirectoryPerspective(state),
     searchResultCount: getSearchResultCount(state),
@@ -642,26 +638,26 @@ function mapActionCreatorsToProps(dispatch) {
       setCurrentDirectoryPerspective: AppActions.setCurrentDirectoryPerspective,
       updateCurrentDirEntry: AppActions.updateCurrentDirEntry,
       setCurrentDirectoryColor: AppActions.setCurrentDirectoryColor
-      // changeLocation: AppActions.changeLocation
     },
     dispatch
   );
 }
 
-const areEqual = (prevProp, nextProp) =>
-  nextProp.currentDirectoryPath === prevProp.currentDirectoryPath &&
-  nextProp.currentDirectoryPerspective ===
-    prevProp.currentDirectoryPerspective &&
-  nextProp.currentLocationPath === prevProp.currentLocationPath &&
-  JSON.stringify(nextProp.directoryContent) ===
-    JSON.stringify(prevProp.directoryContent) &&
-  JSON.stringify(nextProp.openedFiles) ===
-    JSON.stringify(prevProp.openedFiles) &&
-  nextProp.windowWidth === prevProp.windowWidth &&
-  nextProp.windowHeight === prevProp.windowHeight;
+// const areEqual = (prevProp, nextProp) =>
+//   nextProp.currentDirectoryPath === prevProp.currentDirectoryPath &&
+//   nextProp.currentDirectoryPerspective ===
+//     prevProp.currentDirectoryPerspective &&
+//   nextProp.currentLocationPath === prevProp.currentLocationPath &&
+//   JSON.stringify(nextProp.directoryContent) ===
+//     JSON.stringify(prevProp.directoryContent) &&
+//   JSON.stringify(nextProp.openedFiles) ===
+//     JSON.stringify(prevProp.openedFiles) &&
+//   nextProp.windowWidth === prevProp.windowWidth &&
+//   nextProp.windowHeight === prevProp.windowHeight;
 
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
+  // )(withStyles(styles)(withTheme(React.memo(FolderContainer, areEqual))));
   // @ts-ignore
-)(withStyles(styles)(withTheme(React.memo(FolderContainer, areEqual))));
+)(withStyles(styles)(withTheme(FolderContainer)));
