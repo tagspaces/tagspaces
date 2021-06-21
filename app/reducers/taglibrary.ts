@@ -36,7 +36,7 @@ export const types = {
   ADD_TAGS: 'ADD_TAGS',
   ADD_TAG: 'ADD_TAG',
   // REMOVE_TAG: 'REMOVE_TAG',
-  UPDATE_TAG: 'UPDATE_TAG',
+  // UPDATE_TAG: 'UPDATE_TAG',
   SORT_TAG_GROUP_UP: 'SORT_TAG_GROUP_UP',
   MOVE_TAG_GROUP_UP: 'MOVE_TAG_GROUP_UP',
   MOVE_TAG_GROUP_DOWN: 'MOVE_TAG_GROUP_DOWN',
@@ -50,11 +50,7 @@ export default (state: Array<TS.TagGroup> = defaultTagLibrary, action: any) => {
       return [
         ...state,
         {
-          uuid: uuidv1(),
-          title: action.entry.title,
-          color: action.entry.color,
-          textcolor: action.entry.textcolor,
-          children: [],
+          ...action.entry,
           created_date: new Date(),
           modified_date: new Date()
         }
@@ -200,7 +196,7 @@ export default (state: Array<TS.TagGroup> = defaultTagLibrary, action: any) => {
       }
       return state;
     }
-    case types.UPDATE_TAG: {
+    /* case types.UPDATE_TAG: {
       let tagIndexForUpdating = -1;
       let tagGroupIndexForUpdating = -1;
       state.forEach((tagGroup, index) => {
@@ -236,7 +232,7 @@ export default (state: Array<TS.TagGroup> = defaultTagLibrary, action: any) => {
         ];
       }
       return state;
-    }
+    } */
     /* case types.REMOVE_TAG: {
       let tagIndexForRemoving = -1;
       let tagGroupIndexForEditing = -1;
@@ -365,8 +361,8 @@ export default (state: Array<TS.TagGroup> = defaultTagLibrary, action: any) => {
     case types.IMPORT_TAGGROUP: {
       const arr = action.replace ? [] : [...state];
       console.log(arr);
-      if (action.entry[0].key) {
-        action.entry.forEach((tagGroup, index) => {
+      if (action.entries[0] && action.entries[0].key) {
+        action.entries.forEach((tagGroup, index) => {
           // migration of old tag groups 2.9 or less in the new version 3.0-present
           // @ts-ignore
           if (tagGroup.key === state.uuid || tagGroup.key !== state.uuid) {
@@ -384,7 +380,7 @@ export default (state: Array<TS.TagGroup> = defaultTagLibrary, action: any) => {
           }
         });
       } else {
-        action.entry.forEach(tagGroup => {
+        action.entries.forEach(tagGroup => {
           const index = arr.findIndex(obj => obj.uuid === tagGroup.uuid);
           if (index > -1) {
             tagGroup.children.forEach(tag => {
@@ -499,6 +495,10 @@ export const actions = {
 
     let newTags: Array<TS.Tag>;
     if (typeof tag === 'object' && tag !== null) {
+      if (!tagGroup.children.some(t => t.title === tag.title)) {
+        // tag exist
+        return;
+      }
       const tagObject: TS.Tag = {
         ...tag,
         textcolor: tag.textcolor || tagTextColor,
@@ -535,12 +535,43 @@ export const actions = {
     tag,
     uuid: parentTagGroupUuid
   }),
-  editTag: (tag: TS.Tag, parentTagGroupUuid: TS.Uuid, origTitle: string) => ({
+  editTag: (tag: TS.Tag, parentTagGroupUuid: TS.Uuid, origTitle: string) => (
+    dispatch: (actions: Object) => void,
+    getState: () => any
+  ) => {
+    const { taglibrary } = getState();
+    const tagGroup: TS.TagGroup = taglibrary.find(
+      t => t.uuid === parentTagGroupUuid
+    );
+    const newTagGroup = {
+      ...tagGroup,
+      children: tagGroup.children.map(t => {
+        if (t.title === origTitle) {
+          return tag;
+        }
+        return t;
+      })
+    };
+
+    if (Pro && tagGroup && tagGroup.locationId) {
+      const { locations } = getState();
+      const location: TS.Location = locations.find(
+        l => l.uuid === tagGroup.locationId
+      );
+      Pro.MetaOperations.editTagGroup(location.path, newTagGroup, true);
+    }
+    dispatch(actions.editTagGroupInt(newTagGroup));
+  },
+  /* editTagInt: (
+    tag: TS.Tag,
+    parentTagGroupUuid: TS.Uuid,
+    origTitle: string
+  ) => ({
     type: types.UPDATE_TAG,
     tag,
     uuid: parentTagGroupUuid,
     origTitle
-  }),
+  }), */
   deleteTag: (tagTitle: string, parentTagGroupUuid: TS.Uuid) => (
     dispatch: (actions: Object) => void,
     getState: () => any
@@ -600,9 +631,9 @@ export const actions = {
     fromTagGroupId: fromTagGroupUuid,
     toTagGroupId: toTagGroupUuid
   }),
-  importTagGroups: (entry, replace: boolean = false) => ({
+  importTagGroups: (entries: Array<TS.TagGroup>, replace: boolean = false) => ({
     type: types.IMPORT_TAGGROUP,
-    entry,
+    entries,
     replace
   }),
   /**

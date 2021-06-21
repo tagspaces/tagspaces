@@ -27,6 +27,7 @@ import AddIcon from '@material-ui/icons/Add';
 import ImportExportTagGroupsDialog from '../dialogs/ImportExportTagGroupsDialog';
 import i18n from '-/services/i18n';
 import AppConfig from '-/config';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   classes?: any;
@@ -35,7 +36,7 @@ interface Props {
   openURLExternally: (path: string, skipConfirmation?: boolean) => void;
   open: boolean;
   onClose: () => void;
-  importTagGroups: () => void;
+  importTagGroups: (entries: Array<TS.TagGroup>, replace?: boolean) => void;
   exportTagGroups: () => void;
   showCreateTagGroupDialog: () => void;
   showNotification: (

@@ -94,6 +94,8 @@ export namespace TS {
     color?: string;
     textcolor?: string;
     children?: Array<Tag>;
+    created_date?: number;
+    modified_date?: number;
   }
 
   interface FileSystemEntry {

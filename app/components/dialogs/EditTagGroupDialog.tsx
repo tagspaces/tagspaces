@@ -101,10 +101,12 @@ const EditTagGroupDialog = (props: Props) => {
         const location: TS.Location = props.locations.find(
           l => l.uuid === selectedTagGroupEntry.locationId
         );
-        Pro.MetaOperations.removeTagGroup(
-          location.path,
-          selectedTagGroupEntry.uuid
-        );
+        if (location) {
+          Pro.MetaOperations.removeTagGroup(
+            location.path,
+            selectedTagGroupEntry.uuid
+          );
+        }
       }
       props.editTagGroup({
         ...selectedTagGroupEntry,
