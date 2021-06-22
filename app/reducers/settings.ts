@@ -18,12 +18,11 @@
 
 import semver from 'semver';
 import uuidv1 from 'uuid';
-import i18n from '../services/i18n';
-// import AppConfig from '../config';
+import i18n from '-/services/i18n';
 import defaultSettings from './settings-default';
-import PlatformIO from '../services/platform-io';
-import AppConfig from '../config';
-import versionMeta from '../version.json';
+import PlatformIO from '-/services/platform-io';
+import AppConfig from '-/config';
+import versionMeta from '-/version.json';
 import { actions as AppActions } from './app';
 import { TS } from '-/tagspaces.namespace';
 
@@ -310,35 +309,35 @@ export default (state: any = defaultSettings, action: any) => {
       };
     }
     case types.ADD_MAPTILE_SERVER: {
-      let tileServers;
+      let mapTileServers;
       if (action.isDefault) {
-        tileServers = [
+        mapTileServers = [
           { ...action.tileServer, uuid: uuidv1() },
-          ...state.tileServers
+          ...state.mapTileServers
         ];
       } else {
-        tileServers = [
-          ...state.tileServers,
+        mapTileServers = [
+          ...state.mapTileServers,
           { ...action.tileServer, uuid: uuidv1() }
         ];
       }
       return {
         ...state,
-        tileServers
+        mapTileServers
       };
     }
     case types.EDIT_MAPTILE_SERVER: {
-      let tileServers;
+      let mapTileServers;
       if (action.isDefault) {
-        tileServers = [
+        mapTileServers = [
           action.tileServer,
-          ...state.tileServers.filter(
+          ...state.mapTileServers.filter(
             tileServer => tileServer.uuid !== action.tileServer.uuid
           )
         ];
       } else {
-        tileServers = [
-          ...state.tileServers.filter(
+        mapTileServers = [
+          ...state.mapTileServers.filter(
             tileServer => tileServer.uuid !== action.tileServer.uuid
           ),
           action.tileServer
@@ -347,16 +346,16 @@ export default (state: any = defaultSettings, action: any) => {
 
       return {
         ...state,
-        tileServers
+        mapTileServers
       };
     }
     case types.DELETE_MAPTILE_SERVER: {
-      const tileServers = state.tileServers.filter(
+      const mapTileServers = state.mapTileServers.filter(
         tileServer => tileServer.uuid !== action.uuid
       );
       return {
         ...state,
-        tileServers
+        mapTileServers
       };
     }
     default: {
@@ -569,7 +568,11 @@ export function getLastVersionPromise(): Promise<string> {
 
 // Selectors
 export const getMapTileServer = (state: any): TS.MapTileServer =>
-  state.settings.tileServers[0];
+  AppConfig.mapTileServers
+    ? AppConfig.mapTileServers[0]
+    : state.settings.mapTileServers[0];
+export const getMapTileServers = (state: any): Array<TS.MapTileServer> =>
+  AppConfig.mapTileServers || state.settings.mapTileServers;
 export const getSettings = (state: any) => state.settings;
 export const getDesktopMode = (state: any) => {
   if (typeof window.ExtDisplayMode === 'undefined') {
@@ -614,8 +617,8 @@ export const getKeyBindingObject = (state: any) =>
   generateKeyBindingObject(state.settings.keyBindings);
 export const getSupportedFileTypes = (state: any) =>
   state.settings.supportedFileTypes;
-export const getPerspectives = (state: any) =>
-  state.settings.supportedPerspectives;
+/* export const getPerspectives = (state: any) =>
+  state.settings.supportedPerspectives; */
 export const getTagColor = (state: any) => state.settings.tagBackgroundColor;
 export const getTagTextColor = (state: any) => state.settings.tagTextColor;
 export const getCurrentTheme = (state: any) => state.settings.currentTheme;

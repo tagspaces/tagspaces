@@ -52,7 +52,7 @@ interface Props {
   selectedEntries?: Array<TS.FileSystemEntry>;
 }
 
-const TagContainer = React.memo((props: Props) => {
+const TagContainer = (props: Props) => {
   const {
     tag,
     deleteIcon,
@@ -232,7 +232,7 @@ const TagContainer = React.memo((props: Props) => {
       </Button>
     </div>
   );
-});
+};
 
 function mapStateToProps(state) {
   return {
@@ -243,4 +243,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(TagContainer);
+export default connect(mapStateToProps)(React.memo(TagContainer));

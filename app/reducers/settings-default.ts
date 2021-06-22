@@ -25,28 +25,6 @@ if (window.ExtDisplayMode && window.ExtDisplayMode === 'mobile') {
   desktopMode = true;
 }
 
-let tileServers;
-if (window.ExtTileServers) {
-  tileServers = window.ExtTileServers;
-} else {
-  tileServers = [
-    {
-      uuid: '1',
-      name: 'Standard',
-      serverURL: 'https://{s}.tile.osm.org/{z}/{x}/{y}.png',
-      serverInfo:
-        '<b>Leaflet</b> | Map data &copy; <b>https://openstreetmap.org/copyright</b> contributors, <b>CC-BY-SA</b>, Imagery © <b>Mapbox</b>'
-    },
-    {
-      uuid: '2',
-      name: 'Topographic',
-      serverURL: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-      serverInfo:
-        '<b>Leaflet</b> | Map data: &copy; <b>https://openstreetmap.org/copyright</b> contributors, <b>http://viewfinderpanoramas.org</b> - SRTM | Map style: &copy; <b>https://opentopomap.org</b> - OpenTopoMap (<b>https://creativecommons.org/licenses/by-sa/3.0/</b> - CC-BY-SA'
-    }
-  ];
-}
-
 export function findAvailableExtensions() {
   // TODO Search in users tagspaces folder
   // Search in the installation folder
@@ -137,7 +115,6 @@ export function findAvailableExtensions() {
 }
 
 export default {
-  tileServers,
   settingsVersion: 3,
   isLoading: false,
   error: null,
@@ -183,12 +160,12 @@ export default {
   entryPropertiesSplitSize: 103,
   leftVerticalSplitSize: 350,
   mainVerticalSplitSize: '50%',
-  supportedPerspectives: [
+  /* supportedPerspectives: [
     {
       id: 'perspectiveList',
       name: 'List'
     }
-  ],
+  ], */
   supportedThemes: ['light', 'dark'],
   supportedLanguages: [
     {
@@ -518,6 +495,16 @@ export default {
       color: '#9fd5ba'
     },
     {
+      type: 'jif',
+      viewer: '@tagspaces/image-viewer',
+      color: '#9fd5ba'
+    },
+    {
+      type: 'jfif',
+      viewer: '@tagspaces/image-viewer',
+      color: '#9fd5ba'
+    },
+    {
       type: 'js',
       viewer: '@tagspaces/text-editor',
       editor: '@tagspaces/text-editor',
@@ -788,6 +775,22 @@ export default {
       type: 'ods',
       viewer: '@tagspaces/spreadsheet-viewer',
       color: '#b2f30e'
+    }
+  ],
+  mapTileServers: [
+    {
+      uuid: '1b25af5e-dd15-4415-83cb-7eb53d15e336',
+      name: 'Standard',
+      serverURL: 'https://{s}.tile.osm.org/{z}/{x}/{y}.png',
+      serverInfo:
+        '<b>Leaflet</b> | Map data: &copy; <b>https://openstreetmap.org/copyright</b> contributors, <b>CC-BY-SA</b>, Imagery © <b>Mapbox</b>'
+    },
+    {
+      uuid: '5b4be90f-3c7b-4157-8ee3-2c7a3e7cf827',
+      name: 'Topographic',
+      serverURL: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+      serverInfo:
+        '<b>Leaflet</b> | Map data: &copy; <b>https://openstreetmap.org/copyright</b> contributors, SRTM | Map style: &copy; <b>https://opentopomap.org</b> - OpenTopoMap (<b>https://creativecommons.org/licenses/by-sa/3.0/</b> - CC-BY-SA'
     }
   ]
 };
