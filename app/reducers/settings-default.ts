@@ -160,12 +160,12 @@ export default {
   entryPropertiesSplitSize: 103,
   leftVerticalSplitSize: 350,
   mainVerticalSplitSize: '50%',
-  supportedPerspectives: [
+  /* supportedPerspectives: [
     {
       id: 'perspectiveList',
       name: 'List'
     }
-  ],
+  ], */
   supportedThemes: ['light', 'dark'],
   supportedLanguages: [
     {
@@ -491,6 +491,16 @@ export default {
     },
     {
       type: 'jpg',
+      viewer: '@tagspaces/image-viewer',
+      color: '#9fd5ba'
+    },
+    {
+      type: 'jif',
+      viewer: '@tagspaces/image-viewer',
+      color: '#9fd5ba'
+    },
+    {
+      type: 'jfif',
       viewer: '@tagspaces/image-viewer',
       color: '#9fd5ba'
     },

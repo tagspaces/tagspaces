@@ -270,9 +270,10 @@ export default (state: any = initialState, action: any) => {
         currentDirectoryColor: action.directoryMeta
           ? action.directoryMeta.color || ''
           : '',
-        currentDirectoryPerspective: action.directoryMeta
-          ? action.directoryMeta.perspective
-          : undefined,
+        currentDirectoryPerspective:
+          action.directoryMeta && action.directoryMeta.perspective
+            ? action.directoryMeta.perspective
+            : state.currentDirectoryPerspective,
         currentDirectoryPath: directoryPath,
         isLoading: action.showIsLoading || false
       };
@@ -922,7 +923,10 @@ export const actions = {
     fsEntryMeta?: TS.FileSystemEntryMeta
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
     const { settings } = getState();
-    dispatch(actions.loadDirectorySuccessInt(directoryPath, [], true)); // this is to reset directoryContent (it will reset color too)
+    /* const { currentDirectoryPath } = getState().app;
+    if (currentDirectoryPath !== directoryPath) {
+      dispatch(actions.loadDirectorySuccessInt(directoryPath, [], true)); // this is to reset directoryContent (it will reset color too)
+    } */
     // dispatch(actions.setCurrentDirectoryColor('')); // this is to reset color only
     dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
     const currentLocation: TS.Location = getLocation(
@@ -1535,16 +1539,17 @@ export const actions = {
           if (entryProps) {
             const { supportedFileTypes } = getState().settings;
 
-            let entryForOpening: OpenedEntry = openedFiles.find(
-              obj => obj.path === entryPath
-            );
+            let entryForOpening: OpenedEntry;
+            const entryExist = openedFiles.find(obj => obj.path === entryPath);
 
-            if (!entryForOpening) {
+            if (!entryExist) {
               entryForOpening = findExtensionsForEntry(
                 supportedFileTypes,
                 entryPath,
                 entryProps.isFile
               );
+            } else {
+              entryForOpening = { ...entryExist };
             }
 
             if (fsEntryMeta.changed !== undefined) {

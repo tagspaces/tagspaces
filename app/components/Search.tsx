@@ -63,7 +63,10 @@ import {
   isIndexing,
   getSearchQuery
 } from '../reducers/location-index';
-import { getMaxSearchResults } from '-/reducers/settings';
+import {
+  getMaxSearchResults,
+  getShowUnixHiddenEntries
+} from '-/reducers/settings';
 import styles from './SidePanels.css';
 import i18n from '../services/i18n';
 import { FileTypeGroups } from '-/services/search';
@@ -71,7 +74,6 @@ import { Pro } from '../pro';
 import SearchMenu from './menus/SearchMenu';
 import { formatDateTime, extractTimePeriod } from '-/utils/dates';
 import { isPlusCode, parseLatLon } from '-/utils/misc';
-import PlatformIO from '../services/platform-io';
 import { AppConfig } from '-/config';
 import { actions as SearchActions, getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
@@ -97,9 +99,10 @@ interface Props {
   indexing: boolean;
   searches: Array<TS.SearchQuery>;
   addSearches: (searches: Array<TS.SearchQuery>) => void;
+  showUnixHiddenEntries: boolean;
 }
 
-const Search = React.memo((props: Props) => {
+const Search = (props: Props) => {
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   const textQuery = useRef<string>(props.searchQuery.textQuery);
   // const tagsAND = useRef<Array<TS.Tag>>(props.searchQuery.tagsAND);
@@ -193,7 +196,8 @@ const Search = React.memo((props: Props) => {
       if (searchBoxing.current !== 'global') {
         props.searchLocationIndex({
           ...props.searchQuery,
-          fileTypes: types
+          fileTypes: types,
+          showUnixHiddenEntries: props.showUnixHiddenEntries
         });
       }
     }
@@ -208,7 +212,8 @@ const Search = React.memo((props: Props) => {
       if (searchBoxing.current !== 'global') {
         props.searchLocationIndex({
           ...props.searchQuery,
-          fileSize: value
+          fileSize: value,
+          showUnixHiddenEntries: props.showUnixHiddenEntries
         });
       }
     }
@@ -225,7 +230,8 @@ const Search = React.memo((props: Props) => {
       if (searchBoxing.current !== 'global') {
         props.searchLocationIndex({
           ...props.searchQuery,
-          lastModified: value
+          lastModified: value,
+          showUnixHiddenEntries: props.showUnixHiddenEntries
         });
       }
     }
@@ -263,9 +269,15 @@ const Search = React.memo((props: Props) => {
     }
 
     if (savedSearch.searchBoxing === 'global') {
-      props.searchAllLocations(savedSearch);
+      props.searchAllLocations({
+        ...savedSearch,
+        showUnixHiddenEntries: props.showUnixHiddenEntries
+      });
     } else {
-      props.searchLocationIndex(savedSearch);
+      props.searchLocationIndex({
+        ...savedSearch,
+        showUnixHiddenEntries: props.showUnixHiddenEntries
+      });
     }
   };
 
@@ -308,7 +320,10 @@ const Search = React.memo((props: Props) => {
         searchQuery = { ...props.searchQuery, tagsOR: value };
       }
     }
-    props.searchLocationIndex(searchQuery);
+    props.searchLocationIndex({
+      ...searchQuery,
+      showUnixHiddenEntries: props.showUnixHiddenEntries
+    });
     // if (searchBoxing !== 'global') { // TODO disable automatic search in global mode
     //
     // }
@@ -557,7 +572,8 @@ const Search = React.memo((props: Props) => {
       // tagPlaceRadius,
       maxSearchResults: props.maxSearchResults,
       currentDirectory: props.currentDirectory,
-      forceIndexing: forceIndexing.current
+      forceIndexing: forceIndexing.current,
+      showUnixHiddenEntries: props.showUnixHiddenEntries
     };
     console.log('Search object: ' + JSON.stringify(searchQuery));
     if (searchBoxing.current === 'global') {
@@ -1150,9 +1166,15 @@ const Search = React.memo((props: Props) => {
                   setSaveSearchDialogOpened(undefined);
                   if (searchQuery) {
                     if (searchQuery.searchBoxing === 'global') {
-                      props.searchAllLocations(searchQuery);
+                      props.searchAllLocations({
+                        ...searchQuery,
+                        showUnixHiddenEntries: props.showUnixHiddenEntries
+                      });
                     } else {
-                      props.searchLocationIndex(searchQuery);
+                      props.searchLocationIndex({
+                        ...searchQuery,
+                        showUnixHiddenEntries: props.showUnixHiddenEntries
+                      });
                     }
                   }
                 }}
@@ -1188,7 +1210,7 @@ const Search = React.memo((props: Props) => {
       </div>
     </div>
   );
-});
+};
 
 function mapStateToProps(state) {
   return {
@@ -1197,7 +1219,8 @@ function mapStateToProps(state) {
     currentDirectory: getDirectoryPath(state),
     indexedEntriesCount: getIndexedEntriesCount(state),
     maxSearchResults: getMaxSearchResults(state),
-    searches: getSearches(state)
+    searches: getSearches(state),
+    showUnixHiddenEntries: getShowUnixHiddenEntries(state)
   };
 }
 
@@ -1217,7 +1240,13 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
+const areEqual = (prevProp, nextProp) =>
+  nextProp.indexing === prevProp.indexing &&
+  nextProp.searchQuery === prevProp.searchQuery &&
+  nextProp.currentDirectory === prevProp.currentDirectory &&
+  JSON.stringify(nextProp.searches) === JSON.stringify(prevProp.searches);
+
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles, { withTheme: true })(Search));
+)(withStyles(styles, { withTheme: true })(React.memo(Search, areEqual)));

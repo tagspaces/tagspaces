@@ -3881,9 +3881,9 @@
   integrity sha512-Wk7nG1JSaMfMpoMJDKUsWYugliB2Vy55pdjLpmLixeyMi7HizW2I/9QoxsPCkXl3dO+ZOVqPumKaDUv5zJu2uQ==
 
 "@types/node@^12.0.12":
-  version "12.20.10"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.20.10.tgz#4dcb8a85a8f1211acafb88d72fafc7e3d2685583"
-  integrity sha512-TxCmnSSppKBBOzYzPR2BR25YlX5Oay8z2XGwFBInuA/Co0V9xJhLlW4kjbxKtgeNo3NOMbQP1A5Rc03y+XecPw==
+  version "12.20.15"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.20.15.tgz#10ee6a6a3f971966fddfa3f6e89ef7a73ec622df"
+  integrity sha512-F6S4Chv4JicJmyrwlDkxUdGNSplsQdGwp1A0AJloEVDirWdZOAiRHhovDlsFkKUrquUXhz1imJhXHsf59auyAg==
 
 "@types/node@^12.12.7":
   version "12.12.56"
@@ -7940,10 +7940,10 @@ electron-window-state@^5.0.3:
     jsonfile "^4.0.0"
     mkdirp "^0.5.1"
 
-electron@11.4.6:
-  version "11.4.6"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-11.4.6.tgz#0a5e3aebca0bf576633a5adb8fb4295eb7221afc"
-  integrity sha512-WN7zUwaAmcB1lXyyaMxPsNWAFCpRMDltQb4zCjvoD5TBBoePcjd6UwyVUD93pSKJXjmWoae8PbZWrbZlXowcSg==
+electron@11.4.8:
+  version "11.4.8"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-11.4.8.tgz#6f89be903bd917bda52afacf7cd3bdf2154b5c79"
+  integrity sha512-NrxlDZN1sWiDCWWOm5aX+tPGtiLgsCUwNqNFP3eJfY+RPdYLsxYRJDFa1vc4GcuCZEp9kZusINjmpPWsvJdspQ==
   dependencies:
     "@electron/get" "^1.0.1"
     "@types/node" "^12.0.12"

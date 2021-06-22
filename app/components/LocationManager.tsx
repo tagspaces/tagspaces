@@ -34,7 +34,6 @@ import {
 import { actions as AppActions } from '../reducers/app';
 import {
   getPersistTagsInSidecarFile,
-  getPerspectives,
   isDesktopMode
 } from '-/reducers/settings';
 import i18n from '../services/i18n';
@@ -59,7 +58,7 @@ interface Props {
   classes: any;
   style: any;
   locations: Array<TS.Location>;
-  perspectives: Array<Object>;
+  // perspectives: Array<Object>;
   hideDrawer: () => void;
   openURLExternally: (path: string) => void;
   toggleOpenLinkDialog: () => void;
@@ -311,7 +310,7 @@ const LocationManager = (props: Props) => {
 function mapStateToProps(state) {
   return {
     locations: getLocations(state),
-    perspectives: getPerspectives(state),
+    // perspectives: getPerspectives(state),
     isDesktop: isDesktopMode(state),
     isPersistTagsInSidecar: getPersistTagsInSidecarFile(state)
   };

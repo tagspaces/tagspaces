@@ -32,7 +32,17 @@ import { Pro } from '../pro';
 const maxSize = AppConfig.maxThumbSize;
 const bgColor = AppConfig.thumbBgColor;
 
-const supportedImgs = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'bmp'];
+const supportedImgs = [
+  'jpg',
+  'jpeg',
+  'jif',
+  'jfif',
+  'png',
+  'gif',
+  'svg',
+  'webp',
+  'bmp'
+];
 const supportedContainers = [
   // 'zip', // disable ZIP tmb generation due to potential performance issues on large files
   'epub',
