@@ -28,14 +28,17 @@ import Switch from '@material-ui/core/Switch';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
+import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
-import { Tooltip, Typography } from '@material-ui/core';
+import Tooltip from '@material-ui/core/Tooltip';
 import Dialog from '@material-ui/core/Dialog';
 import Input from '@material-ui/core/Input';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 import CheckIcon from '@material-ui/icons/Check';
 import InfoIcon from '@material-ui/icons/InfoOutlined';
 import i18n from '-/services/i18n';
@@ -48,16 +51,8 @@ import { TS } from '-/tagspaces.namespace';
 import { locationType } from '-/utils/misc';
 
 const styles: any = theme => ({
-  root: {
-    display: 'flex'
-  },
   formControl: {
-    margin: theme.spacing(3)
-  },
-  group: {
-    margin: theme.spacing(1, 0),
-    display: 'flex',
-    flexDirection: 'row'
+    marginLeft: theme.spacing(0)
   }
 });
 
@@ -65,6 +60,7 @@ interface Props {
   location?: TS.Location;
   open: boolean;
   onClose: () => void;
+  classes: any;
   fullScreen: boolean;
   addLocation?: (location: TS.Location) => void;
   editLocation?: (location: TS.Location) => void;
@@ -240,7 +236,7 @@ const CreateEditLocationDialog = (props: Props) => {
     );
   };
 
-  const { fullScreen, open, onClose } = props;
+  const { fullScreen, open, onClose, classes } = props;
 
   const onConfirm = () => {
     if (!disableConfirmButton()) {
@@ -354,6 +350,9 @@ const CreateEditLocationDialog = (props: Props) => {
       ? location.persistTagsInSidecarFile
       : props.isPersistTagsInSidecar;
 
+  const disableLocationTypeSwitch: boolean =
+    !Pro || AppConfig.isWeb || props.location !== undefined;
+
   return (
     <Dialog
       open={open}
@@ -374,7 +373,18 @@ const CreateEditLocationDialog = (props: Props) => {
       <DialogTitle>
         {props.location
           ? i18n.t('core:editLocationTitle')
-          : i18n.t('core:createLocationTitle')}
+          : i18n.t('core:createLocationTitle')}{' '}
+        <IconButton
+          aria-label="close"
+          style={{
+            position: 'absolute',
+            right: 5,
+            top: 5
+          }}
+          onClick={onClose}
+        >
+          <CloseIcon />
+        </IconButton>
       </DialogTitle>
       <DialogContent>
         <Grid container spacing={2}>
@@ -382,7 +392,7 @@ const CreateEditLocationDialog = (props: Props) => {
             <Typography>{i18n.t('core:locationType')}</Typography>
           </Grid>
           <Grid item xs={10}>
-            <FormControl disabled={!Pro || AppConfig.isWeb}>
+            <FormControl disabled={disableLocationTypeSwitch}>
               <RadioGroup
                 title={
                   Pro ? '' : i18n.t('core:thisFunctionalityIsAvailableInPro')
@@ -413,8 +423,9 @@ const CreateEditLocationDialog = (props: Props) => {
           </Grid>
         </Grid>
         {content}
-        <FormGroup>
+        <FormGroup style={{ marginTop: 10 }}>
           <FormControlLabel
+            className={classes.formControl}
             labelPlacement="start"
             style={{ justifyContent: 'space-between' }}
             control={
@@ -430,6 +441,7 @@ const CreateEditLocationDialog = (props: Props) => {
             label={i18n.t('core:startupLocation')}
           />
           <FormControlLabel
+            className={classes.formControl}
             labelPlacement="start"
             style={{ justifyContent: 'space-between' }}
             control={
@@ -449,6 +461,7 @@ const CreateEditLocationDialog = (props: Props) => {
             }
           />
           <FormControlLabel
+            className={classes.formControl}
             labelPlacement="start"
             style={{ justifyContent: 'space-between' }}
             control={
@@ -469,6 +482,7 @@ const CreateEditLocationDialog = (props: Props) => {
           />
           {showAdvancedMode && (
             <FormControlLabel
+              className={classes.formControl}
               labelPlacement="start"
               style={{ justifyContent: 'space-between' }}
               control={
@@ -490,6 +504,7 @@ const CreateEditLocationDialog = (props: Props) => {
           )}
           {showAdvancedMode && (
             <FormControlLabel
+              className={classes.formControl}
               labelPlacement="start"
               style={{ justifyContent: 'space-between' }}
               control={
@@ -511,6 +526,7 @@ const CreateEditLocationDialog = (props: Props) => {
           )}
           {showAdvancedMode && (
             <FormControlLabel
+              className={classes.formControl}
               labelPlacement="start"
               style={{ justifyContent: 'space-between' }}
               control={
@@ -537,6 +553,7 @@ const CreateEditLocationDialog = (props: Props) => {
           {showAdvancedMode &&
             (AppConfig.useSidecarsForFileTaggingDisableSetting ? (
               <FormControlLabel
+                className={classes.formControl}
                 labelPlacement="start"
                 style={{ justifyContent: 'space-between' }}
                 control={
@@ -544,11 +561,16 @@ const CreateEditLocationDialog = (props: Props) => {
                     {currentTagsSetting ? 'Use Sidecar Files' : 'Rename Files'}
                   </Button>
                 }
-                label={i18n.t('core:fileTaggingSetting')}
+                label={
+                  <Typography variant="caption" display="block" gutterBottom>
+                    {i18n.t('core:fileTaggingSetting')}
+                  </Typography>
+                }
               />
             ) : (
               <FormControlLabel
                 labelPlacement="top"
+                className={classes.formControl}
                 style={{ alignItems: 'start' }}
                 control={
                   <ToggleButtonGroup
@@ -565,7 +587,7 @@ const CreateEditLocationDialog = (props: Props) => {
                         arrow
                         title={
                           <Typography color="inherit">
-                            Use the default settings for saving the tags -
+                            Use the default settings for saving the tags:{' '}
                             <b>
                               {currentTagsSetting
                                 ? 'Use Sidecar Files'
@@ -631,7 +653,11 @@ const CreateEditLocationDialog = (props: Props) => {
                     </ToggleButton>
                   </ToggleButtonGroup>
                 }
-                label={i18n.t('core:fileTaggingSetting')}
+                label={
+                  <Typography variant="caption" display="block" gutterBottom>
+                    {i18n.t('core:fileTaggingSetting')}
+                  </Typography>
+                }
               />
             ))}
         </FormGroup>
@@ -640,6 +666,7 @@ const CreateEditLocationDialog = (props: Props) => {
         <Button
           data-tid="switchAdvancedModeTID"
           onClick={() => setShowAdvancedMode(!showAdvancedMode)}
+          style={{ marginLeft: 10 }}
         >
           {showAdvancedMode
             ? i18n.t('core:switchSimpleMode')

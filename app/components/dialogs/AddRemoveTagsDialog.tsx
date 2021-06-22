@@ -22,8 +22,8 @@ import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-// import IconButton from '@material-ui/core/IconButton';
-// import CloseIcon from '@material-ui/icons/Close';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -61,6 +61,10 @@ const AddRemoveTagsDialog = (props: Props) => {
     }
   };
 
+  const onClose = (event: React.MouseEvent<HTMLElement>) => {
+    onCloseDialog();
+  };
+
   const onCloseDialog = (clearSelection?: boolean) => {
     setNewlyAddedTags([]);
     props.onClose(clearSelection);
@@ -95,7 +99,7 @@ const AddRemoveTagsDialog = (props: Props) => {
     onCloseDialog(true);
   };
 
-  const { open, selectedEntries = [], fullScreen, onClose } = props;
+  const { open, selectedEntries = [], fullScreen } = props;
   const disabledButtons =
     !newlyAddedTags || newlyAddedTags.length < 1 || selectedEntries.length < 1;
 
@@ -109,17 +113,17 @@ const AddRemoveTagsDialog = (props: Props) => {
     >
       <DialogTitle>
         {i18n.t('core:tagOperationTitle')}
-        {/* <IconButton
+        <IconButton
           aria-label="close"
           style={{
             position: 'absolute',
             right: 5,
             top: 5
           }}
-          onClick={onCloseDialog}
+          onClick={onClose}
         >
           <CloseIcon />
-        </IconButton> */}
+        </IconButton>
       </DialogTitle>
       <DialogContent style={{ minHeight: 330 }}>
         <TagsSelect
