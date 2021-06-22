@@ -39,12 +39,8 @@ import ToggleButton from '@material-ui/lab/ToggleButton';
 import CheckIcon from '@material-ui/icons/Check';
 import AddIcon from '@material-ui/icons/Add';
 import InfoIcon from '@material-ui/icons/InfoOutlined';
-import InputLabel from '@material-ui/core/InputLabel';
-import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
-import FolderIcon from '@material-ui/icons/FolderOpen';
 import RemoveIcon from '@material-ui/icons/RemoveCircle';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import ObjectStoreForm from './ObjectStoreForm';
@@ -53,9 +49,8 @@ import useFirstRender from '-/utils/useFirstRender';
 import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
 import { locationType } from '-/utils/misc';
-import PlatformIO from '-/services/platform-io';
 import { getLocationPath } from '-/utils/paths';
-import useValidation from '-/utils/useValidation';
+import IgnorePatternDialog from '-/components/dialogs/IgnorePatternDialog';
 
 const styles: any = theme => ({
   root: {
@@ -169,15 +164,15 @@ const CreateEditLocationDialog = (props: Props) => {
     boolean
   >(false);
 
-  const [selectedDirectoryPath, setSelectedDirectoryPath] = useState<string>(
-    ''
-  );
   const [ignorePatternPaths, setIgnorePatternPaths] = useState<Array<string>>(
     location ? location.ignorePatternPaths : undefined
   );
 
+  const [isIgnorePatternDialogOpen, setIgnorePatternDialogOpen] = useState<
+    boolean
+  >(false);
+
   const firstRender = useFirstRender();
-  const { setError, haveError } = useValidation();
 
   function changeMaxIndexAge(ageInMinutes) {
     if (ageInMinutes) {
@@ -367,33 +362,6 @@ const CreateEditLocationDialog = (props: Props) => {
       />
     );
   }
-
-  const openFolderChooser = () => {
-    PlatformIO.selectDirectoryDialog()
-      .then(selectedPaths => {
-        const locationPath = getLocationPath(location);
-        if (selectedPaths[0].startsWith(locationPath)) {
-          setSelectedDirectoryPath(
-            selectedPaths[0].replace(locationPath, '**') + '/**'
-          );
-          setError('pathNotInCurrentLocation', false);
-        } else {
-          setError('pathNotInCurrentLocation');
-        }
-        return true;
-      })
-      .catch(err => {
-        console.log('selectDirectoryDialog failed with: ' + err);
-      });
-  };
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { target } = event;
-    const { value } = target;
-
-    setSelectedDirectoryPath(value);
-    setError('pathNotInCurrentLocation', false);
-  };
 
   return (
     <Dialog
@@ -624,64 +592,19 @@ const CreateEditLocationDialog = (props: Props) => {
             </ToggleButtonGroup>
           ))}
         {showAdvancedMode && (
-          <FormControl
-            fullWidth={true}
-            error={haveError('pathNotInCurrentLocation')}
-          >
-            <InputLabel htmlFor="ignorePatternPath">
-              {i18n.t('core:ignorePatternPath')}
-            </InputLabel>
-            <Input
-              error={haveError('pathNotInCurrentLocation')}
-              margin="dense"
-              name="ignorePatternPath"
-              placeholder={i18n.t('core:ignorePatternPlaceholder')}
-              fullWidth={true}
-              data-tid="ignorePatternPathTID"
-              onChange={handleFileChange}
-              value={selectedDirectoryPath}
-              endAdornment={
-                PlatformIO.haveObjectStoreSupport() ? (
-                  undefined
-                ) : (
-                  <InputAdornment position="end" style={{ height: 32 }}>
-                    <IconButton onClick={openFolderChooser}>
-                      <FolderIcon />
-                    </IconButton>
-                    <IconButton
-                      onClick={() => {
-                        if (selectedDirectoryPath) {
-                          if (
-                            !ignorePatternPaths ||
-                            ignorePatternPaths.length === 0
-                          ) {
-                            setIgnorePatternPaths([selectedDirectoryPath]);
-                          } else if (
-                            ignorePatternPaths.indexOf(
-                              selectedDirectoryPath
-                            ) === -1
-                          ) {
-                            setIgnorePatternPaths([
-                              ...ignorePatternPaths,
-                              selectedDirectoryPath
-                            ]);
-                          }
-                        }
-                      }}
-                    >
-                      <AddIcon />
-                    </IconButton>
-                  </InputAdornment>
-                )
+          <div>
+            <FormControlLabel
+              control={
+                <IconButton
+                  onClick={() => {
+                    setIgnorePatternDialogOpen(true);
+                  }}
+                >
+                  <AddIcon />
+                </IconButton>
               }
+              label={i18n.t('core:ignorePatterns')}
             />
-            <FormHelperText>
-              {i18n.t(
-                haveError('pathNotInCurrentLocation')
-                  ? 'core:pathNotInCurrentLocation'
-                  : 'core:ignorePatternPathHelp'
-              )}
-            </FormHelperText>
             {ignorePatternPaths &&
               ignorePatternPaths.map(ignorePatternPath => (
                 <div>
@@ -700,7 +623,16 @@ const CreateEditLocationDialog = (props: Props) => {
                   </IconButton>
                 </div>
               ))}
-          </FormControl>
+            {isIgnorePatternDialogOpen && (
+              <IgnorePatternDialog
+                open={isIgnorePatternDialogOpen}
+                onClose={() => setIgnorePatternDialogOpen(false)}
+                ignorePatternPaths={ignorePatternPaths}
+                setIgnorePatternPaths={setIgnorePatternPaths}
+                locationPath={getLocationPath(location)}
+              />
+            )}
+          </div>
         )}
       </DialogContent>
       <DialogActions style={{ justifyContent: 'space-between' }}>
