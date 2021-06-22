@@ -23,6 +23,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Dialog from '@material-ui/core/Dialog';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import AppConfig from '-/config';
@@ -66,7 +68,20 @@ const LicenseDialog = (props: Props) => {
       fullScreen={fullScreen}
       scroll="paper"
     >
-      <DialogTitle>{i18n.t('core:license')}</DialogTitle>
+      <DialogTitle>
+        {i18n.t('core:license')}
+        <IconButton
+          aria-label="close"
+          style={{
+            position: 'absolute',
+            right: 5,
+            top: 5
+          }}
+          onClick={onClose}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
       <DialogContent
         // inputRef={ref => {
         //   licenseElement = ref;

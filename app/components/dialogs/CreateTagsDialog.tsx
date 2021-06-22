@@ -25,6 +25,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 import i18n from '-/services/i18n';
 import useFirstRender from '-/utils/useFirstRender';
 import { TS } from '-/tagspaces.namespace';
@@ -96,7 +98,20 @@ const CreateTagsDialog = (props: Props) => {
         }
       }}
     >
-      <DialogTitle>{i18n.t('core:addTagsToGroupTitle')}</DialogTitle>
+      <DialogTitle>
+        {i18n.t('core:addTagsToGroupTitle')}
+        <IconButton
+          aria-label="close"
+          style={{
+            position: 'absolute',
+            right: 5,
+            top: 5
+          }}
+          onClick={onClose}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
       <DialogContent style={{ minWidth: 400 }}>
         <FormControl fullWidth={true} error={inputError}>
           <TextField

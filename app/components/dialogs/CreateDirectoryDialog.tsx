@@ -27,6 +27,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 import i18n from '-/services/i18n';
 import { actions as AppActions } from '-/reducers/app';
 import PlatformIO from '-/services/platform-io';
@@ -99,7 +101,20 @@ const CreateDirectoryDialog = (props: Props) => {
         }
       }}
     >
-      <DialogTitle>{i18n.t('core:createNewDirectoryTitle')}</DialogTitle>
+      <DialogTitle>
+        {i18n.t('core:createNewDirectoryTitle')}
+        <IconButton
+          aria-label="close"
+          style={{
+            position: 'absolute',
+            right: 5,
+            top: 5
+          }}
+          onClick={onClose}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
       <DialogContent>
         <FormControl fullWidth={true} error={inputError}>
           <TextField
