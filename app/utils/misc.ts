@@ -386,7 +386,7 @@ export function convertStringToDate(dateString: string) {
   return false;
 }
 
-export function sortAlphaNum(a: any, b: any) {
+export function sortAlphaNum(a: TS.FileSystemEntry, b: TS.FileSystemEntry) {
   // Regular expression to separate the digit string from the non-digit strings.
   const reParts = /\d+|\D+/g;
 
@@ -394,13 +394,13 @@ export function sortAlphaNum(a: any, b: any) {
   const reDigit = /\d/;
 
   // Get rid of casing issues.
-  a = cleanFileName(a.name.toLowerCase());
-  b = cleanFileName(b.name.toLowerCase());
+  const cleanedA = cleanFileName(a.name.toLowerCase());
+  const cleanedB = cleanFileName(b.name.toLowerCase());
 
   // Separates the strings into substrings that have only digits and those
   // that have no digits.
-  const aParts = a.match(reParts);
-  const bParts = b.match(reParts);
+  const aParts = cleanedA.match(reParts);
+  const bParts = cleanedB.match(reParts);
 
   // Used to determine if aPart and bPart are digits.
   let isDigitPart;
@@ -414,8 +414,8 @@ export function sortAlphaNum(a: any, b: any) {
     // Loop through each substring part to compare the overall strings.
     const len = Math.min(aParts.length, bParts.length);
     for (let i = 0; i < len; i += 1) {
-      let aPart = aParts[i];
-      let bPart = bParts[i];
+      let aPart: any = aParts[i];
+      let bPart: any = bParts[i];
 
       // If comparing digits, convert them to numbers (assuming base 10).
       if (isDigitPart) {
@@ -439,24 +439,27 @@ export function sortAlphaNum(a: any, b: any) {
 }
 
 // Sorting functionality
-export function sortByName(a: any, b: any) {
+export function sortByName(a: TS.FileSystemEntry, b: TS.FileSystemEntry) {
   // @ts-ignore
   return !b.isFile - !a.isFile || sortAlphaNum(a, b);
 }
 
-export function sortBySize(a: any, b: any) {
+export function sortBySize(a: TS.FileSystemEntry, b: TS.FileSystemEntry) {
   return a.size - b.size;
 }
 
-export function sortByDateModified(a: any, b: any) {
+export function sortByDateModified(
+  a: TS.FileSystemEntry,
+  b: TS.FileSystemEntry
+) {
   return a.lmdt - b.lmdt;
 }
 
-export function sortByExtension(a: any, b: any) {
+export function sortByExtension(a: TS.FileSystemEntry, b: TS.FileSystemEntry) {
   return a.extension.toString().localeCompare(b.extension);
 }
 
-export function sortByFirstTag(a: any, b: any) {
+export function sortByFirstTag(a: TS.FileSystemEntry, b: TS.FileSystemEntry) {
   if ((!a.tags && !b.tags) || (a.tags.length < 1 && b.tags.length < 1)) {
     return 0;
   }
