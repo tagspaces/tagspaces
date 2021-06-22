@@ -2112,6 +2112,20 @@ export const getCurrentLocationPath = (state: any) => {
   }
   return undefined;
 };
+export const getLocationPersistTagsInSidecarFile = (state: any) => {
+  if (state.locations) {
+    for (let i = 0; i < state.locations.length; i += 1) {
+      const location = state.locations[i];
+      if (
+        state.app.currentLocationId &&
+        location.uuid === state.app.currentLocationId
+      ) {
+        return location.persistTagsInSidecarFile;
+      }
+    }
+  }
+  return undefined;
+};
 export const isUpdateAvailable = (state: any) => state.app.isUpdateAvailable;
 export const isUpdateInProgress = (state: any) => state.app.isUpdateInProgress;
 export const isOnline = (state: any) => state.app.isOnline;
