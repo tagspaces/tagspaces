@@ -1244,6 +1244,7 @@ const areEqual = (prevProp, nextProp) =>
   nextProp.indexing === prevProp.indexing &&
   nextProp.searchQuery === prevProp.searchQuery &&
   nextProp.currentDirectory === prevProp.currentDirectory &&
+  nextProp.indexedEntriesCount === prevProp.indexedEntriesCount &&
   JSON.stringify(nextProp.searches) === JSON.stringify(prevProp.searches);
 
 export default connect(
