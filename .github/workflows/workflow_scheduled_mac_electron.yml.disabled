@@ -20,7 +20,7 @@ jobs:
           path: tests/testdata
       - uses: actions/setup-node@v2-beta
         with:
-          node-version: '12.x'
+          node-version: '14.x'
       - name: Running yarn install, prettier and type checks
         run: |
           yarn install --check-files --cache-folder .ycache
