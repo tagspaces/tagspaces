@@ -26,6 +26,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 import ColorPickerDialog from './ColorPickerDialog';
 import i18n from '-/services/i18n';
 import TransparentBackground from '../TransparentBackground';
@@ -166,7 +168,20 @@ const CreateTagGroupDialog = (props: Props) => {
         }
       }}
     >
-      <DialogTitle>{i18n.t('core:createTagGroupTitle')}</DialogTitle>
+      <DialogTitle>
+        {i18n.t('core:createTagGroupTitle')}
+        <IconButton
+          aria-label="close"
+          style={{
+            position: 'absolute',
+            right: 5,
+            top: 5
+          }}
+          onClick={onClose}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
       <DialogContent>
         <FormControl fullWidth={true} error={inputError}>
           <TextField

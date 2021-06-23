@@ -28,18 +28,20 @@ import Switch from '@material-ui/core/Switch';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
+import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
-import { Tooltip, Typography } from '@material-ui/core';
+import Tooltip from '@material-ui/core/Tooltip';
 import Dialog from '@material-ui/core/Dialog';
 import Input from '@material-ui/core/Input';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
-import CheckIcon from '@material-ui/icons/Check';
-import AddIcon from '@material-ui/icons/Add';
-import InfoIcon from '@material-ui/icons/InfoOutlined';
 import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import CheckIcon from '@material-ui/icons/Check';
+import InfoIcon from '@material-ui/icons/InfoOutlined';
+import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/RemoveCircle';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
@@ -53,16 +55,8 @@ import { getLocationPath } from '-/utils/paths';
 import IgnorePatternDialog from '-/components/dialogs/IgnorePatternDialog';
 
 const styles: any = theme => ({
-  root: {
-    display: 'flex'
-  },
   formControl: {
-    margin: theme.spacing(3)
-  },
-  group: {
-    margin: theme.spacing(1, 0),
-    display: 'flex',
-    flexDirection: 'row'
+    marginLeft: theme.spacing(0)
   }
 });
 
@@ -70,6 +64,7 @@ interface Props {
   location?: TS.Location;
   open: boolean;
   onClose: () => void;
+  classes: any;
   fullScreen: boolean;
   addLocation?: (location: TS.Location) => void;
   editLocation?: (location: TS.Location) => void;
@@ -137,11 +132,11 @@ const CreateEditLocationDialog = (props: Props) => {
     location ? location.bucketName : ''
   );
   const [persistTagsInSidecarFile, setPersistTagsInSidecarFile] = useState<
-    boolean
+    boolean | null
   >(
-    location && location.persistTagsInSidecarFile
+    location && location.persistTagsInSidecarFile !== undefined
       ? location.persistTagsInSidecarFile
-      : props.isPersistTagsInSidecar
+      : null // props.isPersistTagsInSidecar
   );
   const [region, setRegion] = useState<string>(location ? location.region : '');
   let defaultType;
@@ -253,7 +248,7 @@ const CreateEditLocationDialog = (props: Props) => {
     );
   };
 
-  const { fullScreen, open, onClose } = props;
+  const { fullScreen, open, onClose, classes } = props;
 
   const onConfirm = () => {
     if (!disableConfirmButton()) {
@@ -295,7 +290,8 @@ const CreateEditLocationDialog = (props: Props) => {
           ignorePatternPaths
         };
       }
-      if (props.isPersistTagsInSidecar !== persistTagsInSidecarFile) {
+      if (persistTagsInSidecarFile !== null) {
+        // props.isPersistTagsInSidecar !== persistTagsInSidecarFile) {
         loc = { ...loc, persistTagsInSidecarFile };
       }
 
@@ -363,6 +359,14 @@ const CreateEditLocationDialog = (props: Props) => {
     );
   }
 
+  const currentTagsSetting =
+    props.location && props.location.persistTagsInSidecarFile !== null
+      ? location.persistTagsInSidecarFile
+      : props.isPersistTagsInSidecar;
+
+  const disableLocationTypeSwitch: boolean =
+    !Pro || AppConfig.isWeb || props.location !== undefined;
+
   return (
     <Dialog
       open={open}
@@ -383,7 +387,18 @@ const CreateEditLocationDialog = (props: Props) => {
       <DialogTitle>
         {props.location
           ? i18n.t('core:editLocationTitle')
-          : i18n.t('core:createLocationTitle')}
+          : i18n.t('core:createLocationTitle')}{' '}
+        <IconButton
+          aria-label="close"
+          style={{
+            position: 'absolute',
+            right: 5,
+            top: 5
+          }}
+          onClick={onClose}
+        >
+          <CloseIcon />
+        </IconButton>
       </DialogTitle>
       <DialogContent>
         <Grid container spacing={2}>
@@ -391,7 +406,7 @@ const CreateEditLocationDialog = (props: Props) => {
             <Typography>{i18n.t('core:locationType')}</Typography>
           </Grid>
           <Grid item xs={10}>
-            <FormControl disabled={!Pro || AppConfig.isWeb}>
+            <FormControl disabled={disableLocationTypeSwitch}>
               <RadioGroup
                 title={
                   Pro ? '' : i18n.t('core:thisFunctionalityIsAvailableInPro')
@@ -422,8 +437,11 @@ const CreateEditLocationDialog = (props: Props) => {
           </Grid>
         </Grid>
         {content}
-        <FormGroup>
+        <FormGroup style={{ marginTop: 10 }}>
           <FormControlLabel
+            className={classes.formControl}
+            labelPlacement="start"
+            style={{ justifyContent: 'space-between' }}
             control={
               <Switch
                 data-tid="locationIsDefault"
@@ -437,6 +455,9 @@ const CreateEditLocationDialog = (props: Props) => {
             label={i18n.t('core:startupLocation')}
           />
           <FormControlLabel
+            className={classes.formControl}
+            labelPlacement="start"
+            style={{ justifyContent: 'space-between' }}
             control={
               <Switch
                 disabled={!Pro}
@@ -454,6 +475,9 @@ const CreateEditLocationDialog = (props: Props) => {
             }
           />
           <FormControlLabel
+            className={classes.formControl}
+            labelPlacement="start"
+            style={{ justifyContent: 'space-between' }}
             control={
               <Switch
                 disabled={!Pro || type === locationType.TYPE_CLOUD}
@@ -472,6 +496,9 @@ const CreateEditLocationDialog = (props: Props) => {
           />
           {showAdvancedMode && (
             <FormControlLabel
+              className={classes.formControl}
+              labelPlacement="start"
+              style={{ justifyContent: 'space-between' }}
               control={
                 <Switch
                   disabled={!Pro}
@@ -491,6 +518,9 @@ const CreateEditLocationDialog = (props: Props) => {
           )}
           {showAdvancedMode && (
             <FormControlLabel
+              className={classes.formControl}
+              labelPlacement="start"
+              style={{ justifyContent: 'space-between' }}
               control={
                 <Switch
                   disabled={!Pro}
@@ -511,6 +541,9 @@ const CreateEditLocationDialog = (props: Props) => {
         </FormGroup>
         {showAdvancedMode && (
           <FormControlLabel
+            className={classes.formControl}
+            labelPlacement="start"
+            style={{ justifyContent: 'space-between' }}
             control={
               <Tooltip title={i18n.t('core:maxIndexAgeHelp')}>
                 <Input
@@ -529,9 +562,118 @@ const CreateEditLocationDialog = (props: Props) => {
                 />
               </Tooltip>
             }
-            label={i18n.t('core:maxIndexAge')}
+            label={i18n.t('core:maxIndexAge')}/>
+          )}
+          {showAdvancedMode &&
+            (AppConfig.useSidecarsForFileTaggingDisableSetting ? (
+              <FormControlLabel
+                className={classes.formControl}
+                labelPlacement="start"
+                style={{ justifyContent: 'space-between' }}
+                control={
+                  <Button size="small" variant="outlined" disabled>
+                    {currentTagsSetting ? 'Use Sidecar Files' : 'Rename Files'}
+                  </Button>
+                }
+                label={
+                  <Typography variant="caption" display="block" gutterBottom>
+                    {i18n.t('core:fileTaggingSetting')}
+                  </Typography>
+                }
+              />
+            ) : (
+              <FormControlLabel
+                labelPlacement="top"
+                className={classes.formControl}
+                style={{ alignItems: 'start' }}
+                control={
+                  <ToggleButtonGroup
+                    value={persistTagsInSidecarFile}
+                    size="small"
+                    exclusive
+                  >
+                    <ToggleButton
+                      value={null}
+                      data-tid="settingsSetPersistTagsDefault"
+                      onClick={() => setPersistTagsInSidecarFile(null)}
+                    >
+                      <Tooltip
+                        arrow
+                        title={
+                          <Typography color="inherit">
+                            Use the default settings for saving the tags:{' '}
+                            <b>
+                              {currentTagsSetting
+                                ? 'Use Sidecar Files'
+                                : 'Rename Files'}
+                            </b>
+                          </Typography>
+                        }
+                      >
+                        <div style={{ display: 'flex' }}>
+                          {persistTagsInSidecarFile === null && <CheckIcon />}
+                          &nbsp;{i18n.t('core:default')}&nbsp;&nbsp;
+                          <InfoIcon />
+                        </div>
+                      </Tooltip>
+                    </ToggleButton>
+                    <ToggleButton
+                      value={false}
+                      data-tid="settingsSetPersistTagsInFileName"
+                      onClick={() => setPersistTagsInSidecarFile(false)}
+                    >
+                      <Tooltip
+                        arrow
+                        title={
+                          <Typography color="inherit">
+                            Use the name of file for saving the tags - Tagging
+                            the file <b>image.jpg</b> with a tag <b>sunset</b>{' '}
+                            will rename it to <b>image[sunset].jpg</b>
+                          </Typography>
+                        }
+                      >
+                        <div style={{ display: 'flex' }}>
+                          {persistTagsInSidecarFile !== null &&
+                            !persistTagsInSidecarFile && <CheckIcon />}
+                          &nbsp;Rename Files&nbsp;&nbsp;
+                          <InfoIcon />
+                        </div>
+                      </Tooltip>
+                    </ToggleButton>
+                    <ToggleButton
+                      value={true}
+                      data-tid="settingsSetPersistTagsInSidecarFile"
+                      onClick={() => setPersistTagsInSidecarFile(true)}
+                    >
+                      <Tooltip
+                        arrow
+                        title={
+                          <Typography color="inherit">
+                            Use sidecar file for saving the tags - Tagging the
+                            file <b>image.jpg</b> with a tag <b>sunset</b> will
+                            save this tag in an additional sidecar file called{' '}
+                            <b>image.jpg.json</b> located in a sub folder with
+                            the name <b>.ts</b>
+                          </Typography>
+                        }
+                      >
+                        <div style={{ display: 'flex' }}>
+                          {persistTagsInSidecarFile !== null &&
+                            persistTagsInSidecarFile && <CheckIcon />}
+                          &nbsp;Use Sidecar Files&nbsp;&nbsp;
+                          <InfoIcon />
+                        </div>
+                      </Tooltip>
+                    </ToggleButton>
+                  </ToggleButtonGroup>
+                }
+                label={
+                  <Typography variant="caption" display="block" gutterBottom>
+                    {i18n.t('core:fileTaggingSetting')}
+                  </Typography>
+                }
           />
-        )}
+        ))}
         {showAdvancedMode &&
           (AppConfig.useSidecarsForFileTaggingDisableSetting ? (
             <Button size="small" variant="outlined" disabled>
@@ -639,6 +781,7 @@ const CreateEditLocationDialog = (props: Props) => {
         <Button
           data-tid="switchAdvancedModeTID"
           onClick={() => setShowAdvancedMode(!showAdvancedMode)}
+          style={{ marginLeft: 10 }}
         >
           {showAdvancedMode
             ? i18n.t('core:switchSimpleMode')

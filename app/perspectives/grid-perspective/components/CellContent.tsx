@@ -278,8 +278,8 @@ const CellContent = (props: Props) => {
             }}
             style={{
               backgroundColor: fsEntry.isFile
-                ? fsEntryColor
-                : fsEntryBackgroundColor || fsEntryColor
+                ? 'transparent'
+                : fsEntryBackgroundColor
             }}
           >
             {fsEntry.isFile ? fsEntry.extension : <FolderIcon />}

@@ -156,7 +156,7 @@ const SettingsGeneral = (props: Props) => {
               : ''
           }
         >
-          <ListItemText primary="File tagging method" />
+          <ListItemText primary={i18n.t('core:fileTaggingSetting')} />
           {AppConfig.useSidecarsForFileTaggingDisableSetting ? (
             <Button size="small" variant="outlined" disabled>
               {persistTagsInSidecarFile ? 'Use Sidecar Files' : 'Rename Files'}

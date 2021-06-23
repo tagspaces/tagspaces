@@ -643,21 +643,21 @@ function mapActionCreatorsToProps(dispatch) {
   );
 }
 
-// const areEqual = (prevProp, nextProp) =>
-//   nextProp.currentDirectoryPath === prevProp.currentDirectoryPath &&
-//   nextProp.currentDirectoryPerspective ===
-//     prevProp.currentDirectoryPerspective &&
-//   nextProp.currentLocationPath === prevProp.currentLocationPath &&
-//   JSON.stringify(nextProp.directoryContent) ===
-//     JSON.stringify(prevProp.directoryContent) &&
-//   JSON.stringify(nextProp.openedFiles) ===
-//     JSON.stringify(prevProp.openedFiles) &&
-//   nextProp.windowWidth === prevProp.windowWidth &&
-//   nextProp.windowHeight === prevProp.windowHeight;
+const areEqual = (prevProp, nextProp) =>
+  nextProp.currentDirectoryPath === prevProp.currentDirectoryPath &&
+  nextProp.currentDirectoryPerspective ===
+    prevProp.currentDirectoryPerspective &&
+  nextProp.currentLocationPath === prevProp.currentLocationPath &&
+  JSON.stringify(nextProp.directoryContent) ===
+    JSON.stringify(prevProp.directoryContent) &&
+  JSON.stringify(nextProp.openedFiles) ===
+    JSON.stringify(prevProp.openedFiles) &&
+  JSON.stringify(nextProp.theme) === JSON.stringify(prevProp.theme) &&
+  nextProp.windowWidth === prevProp.windowWidth &&
+  nextProp.windowHeight === prevProp.windowHeight;
 
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
-  // )(withStyles(styles)(withTheme(React.memo(FolderContainer, areEqual))));
   // @ts-ignore
-)(withStyles(styles)(withTheme(FolderContainer)));
+)(withStyles(styles)(withTheme(React.memo(FolderContainer, areEqual))));

@@ -58,7 +58,6 @@ interface Props {
   classes: any;
   style: any;
   locations: Array<TS.Location>;
-  // perspectives: Array<Object>;
   hideDrawer: () => void;
   openURLExternally: (path: string) => void;
   toggleOpenLinkDialog: () => void;
@@ -310,7 +309,6 @@ const LocationManager = (props: Props) => {
 function mapStateToProps(state) {
   return {
     locations: getLocations(state),
-    // perspectives: getPerspectives(state),
     isDesktop: isDesktopMode(state),
     isPersistTagsInSidecar: getPersistTagsInSidecarFile(state)
   };
