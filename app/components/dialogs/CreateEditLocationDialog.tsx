@@ -674,65 +674,6 @@ const CreateEditLocationDialog = (props: Props) => {
                 }
           />
         ))}
-        {showAdvancedMode &&
-          (AppConfig.useSidecarsForFileTaggingDisableSetting ? (
-            <Button size="small" variant="outlined" disabled>
-              {persistTagsInSidecarFile ? 'Use Sidecar Files' : 'Rename Files'}
-            </Button>
-          ) : (
-            <ToggleButtonGroup
-              value={persistTagsInSidecarFile}
-              size="small"
-              exclusive
-            >
-              <ToggleButton
-                value={false}
-                data-tid="settingsSetPersistTagsInFileName"
-                onClick={() => setPersistTagsInSidecarFile(false)}
-              >
-                <Tooltip
-                  arrow
-                  title={
-                    <Typography color="inherit">
-                      Use the name of file for saving the tags - Tagging the
-                      file <b>image.jpg</b> with a tag <b>sunset</b> will rename
-                      it to <b>image[sunset].jpg</b>
-                    </Typography>
-                  }
-                >
-                  <div style={{ display: 'flex' }}>
-                    {!persistTagsInSidecarFile && <CheckIcon />}
-                    &nbsp;Rename Files&nbsp;&nbsp;
-                    <InfoIcon />
-                  </div>
-                </Tooltip>
-              </ToggleButton>
-              <ToggleButton
-                value={true}
-                data-tid="settingsSetPersistTagsInSidecarFile"
-                onClick={() => setPersistTagsInSidecarFile(true)}
-              >
-                <Tooltip
-                  arrow
-                  title={
-                    <Typography color="inherit">
-                      Use sidecar file for saving the tags - Tagging the file{' '}
-                      <b>image.jpg</b> with a tag <b>sunset</b> will save this
-                      tag in an additional sidecar file called{' '}
-                      <b>image.jpg.json</b> located in a sub folder with the
-                      name <b>.ts</b>
-                    </Typography>
-                  }
-                >
-                  <div style={{ display: 'flex' }}>
-                    {persistTagsInSidecarFile && <CheckIcon />}
-                    &nbsp;Use Sidecar Files&nbsp;&nbsp;
-                    <InfoIcon />
-                  </div>
-                </Tooltip>
-              </ToggleButton>
-            </ToggleButtonGroup>
-          ))}
         {showAdvancedMode && (
           <div>
             <FormControlLabel
