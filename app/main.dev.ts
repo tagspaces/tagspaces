@@ -146,6 +146,15 @@ app.on('ready', async () => {
     );
   }
 
+  const pm2 = require('@elife/pm2');
+
+  pm2.start({
+    script: 'generatethumbs.js', // Script to be run
+    cwd: '/Users/sytolk/IdeaProjects/tagspaces-utils', // './process1', cwd: '/path/to/npm/module/',
+    args: ['-p false', '/Users/sytolk/Pictures'],
+    log: '/Users/sytolk/IdeaProjects/tagspaces-utils/process1.log' // path.join(process.cwd(), 'process1.log'),
+  });
+
   createSplashWorker();
 
   let startupParameter = '';
