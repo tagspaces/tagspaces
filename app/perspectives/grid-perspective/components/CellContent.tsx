@@ -147,7 +147,7 @@ const CellContent = (props: Props) => {
       >
         <div
           className={classes.gridCellThumb}
-          title={fsEntry.isIgnored && 'Ignored folder'}
+          title={fsEntry.isIgnored && i18n.t('core:ignoredFolder')}
           style={{
             position: 'relative',
             height: 150
@@ -245,7 +245,7 @@ const CellContent = (props: Props) => {
         container
         wrap="nowrap"
         className={classes.rowHover}
-        title={fsEntry.isIgnored && 'Ignored folder'}
+        title={fsEntry.isIgnored && i18n.t('core:ignoredFolder')}
         style={{
           opacity: fsEntry.isIgnored ? 0.3 : 1,
           backgroundColor: selected

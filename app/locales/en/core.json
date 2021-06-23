@@ -573,6 +573,7 @@
   "noSubFoldersFound": "No sub folders in the current folder",
   "fileTaggingSetting": "File tagging method",
   "default": "Default",
+  "ignoredFolder": "ignorer folder",
   "ignorePatterns": "Ignore patterns",
   "ignorePatternPath": "Path to ignore pattern folder",
   "ignorePatternPlaceholder": "Ignore pattern",
