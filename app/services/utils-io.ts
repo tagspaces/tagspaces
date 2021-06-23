@@ -453,10 +453,7 @@ export function walkDirectory(
   dirCallback: any,
   ignorePatterns: Array<string> = []
 ) {
-  if (
-    ignorePatterns.length > 0 &&
-    micromatch.isMatch(path, ignorePatterns)
-  ) {
+  if (ignorePatterns.length > 0 && micromatch.isMatch(path, ignorePatterns)) {
     return;
   }
   const mergedOptions = {

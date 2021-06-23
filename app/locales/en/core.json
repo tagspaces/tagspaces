@@ -576,8 +576,8 @@
   "ignorePatterns": "Ignore patterns",
   "ignorePatternPath": "Path to ignore pattern folder",
   "ignorePatternPlaceholder": "Ignore pattern",
-  "ignorePatternPathHelp": "Wildcards (**, *.js)\nNegation ('!a/*.js', '*!(b).js'])\nextglobs (+(x|y), !(a|b))\nPOSIX character classes ([[:alpha:][:digit:]])\nbrace expansion (foo/{1..5}.md, bar/{a,b,c}.js)\nregex character classes (foo-[1-5].js)\nregex logical \"or\" (foo/(abc|xyz).js)\nYou can mix and match these features to create whatever patterns you need!",
-  "ignorePatternDialogTitle": "Add new ignore pattern",
+  "ignorePatternDialogTitle": "Add Ignore Pattern",
+  "ignorePatternRemove": "Remove ignore pattern",
   "pathNotInCurrentLocation": "Ignore pattern path is not in the current location",
   "-": "-"
 }

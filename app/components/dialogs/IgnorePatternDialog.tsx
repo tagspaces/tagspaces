@@ -160,7 +160,9 @@ const CreateEditLocationDialog = (props: Props) => {
             </FormHelperText>
           )}
           <FormHelperText>
-            {i18n.t('core:ignorePatternPathHelp')}
+            {
+              "Wildcards (**, *.js)\nNegation ('!a/*.js', '*!(b).js'])\nextglobs (+(x|y), !(a|b))\nPOSIX character classes ([[:alpha:][:digit:]])\nbrace expansion (foo/{1..5}.md, bar/{a,b,c}.js)\nregex character classes (foo-[1-5].js)\nregex logical \"or\" (foo/(abc|xyz).js)\nYou can mix and match these features to create whatever patterns you need!"
+            }
           </FormHelperText>
         </FormControl>
       </DialogContent>
