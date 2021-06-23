@@ -24,9 +24,10 @@ jobs:
         with:
           repository: tagspaces/testdata
           path: tests/testdata
-      - uses: actions/setup-node@v2-beta
+      - uses: actions/setup-node@v2
         with:
-          node-version: '14.x'
+          node-version: '14'
+          check-latest: true
       - name: Running yarn install, prettier and type checks
         run: |
           yarn install --check-files --cache-folder .ycache
