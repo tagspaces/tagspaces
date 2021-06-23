@@ -17,7 +17,10 @@
  */
 import OpenLocationCode from 'open-location-code-typescript';
 import i18n from '../services/i18n';
-import { actions as AppActions } from './app';
+import {
+  actions as AppActions,
+  getLocationPersistTagsInSidecarFile
+} from './app';
 import { actions as TagLibraryActions } from './taglibrary';
 import {
   extractFileExtension,
@@ -39,6 +42,16 @@ import { getPersistTagsInSidecarFile } from './settings';
 import { TS } from '-/tagspaces.namespace';
 
 export const defaultTagLocation = OpenLocationCode.encode(51.48, 0, undefined); // default tag coordinate Greenwich
+
+const persistTagsInSidecarFile = state => {
+  const locationPersistTagsInSidecarFile = getLocationPersistTagsInSidecarFile(
+    state
+  );
+  if (locationPersistTagsInSidecarFile !== undefined) {
+    return locationPersistTagsInSidecarFile;
+  }
+  return getPersistTagsInSidecarFile(state);
+};
 
 const actions = {
   addTags: (
@@ -150,7 +163,7 @@ const actions = {
       console.log('No sidecar found ' + error);
     }
 
-    if (!entryProperties.isFile || getPersistTagsInSidecarFile(getState())) {
+    if (!entryProperties.isFile || persistTagsInSidecarFile(getState())) {
       // Handling adding tags in sidecar
       if (fsEntryMeta) {
         const uniqueTags = getNonExistingTags(
@@ -322,7 +335,7 @@ const actions = {
       // Work around solution
       delete tag.functionality;
       const entryProperties = await PlatformIO.getPropertiesPromise(path);
-      if (entryProperties.isFile && !getPersistTagsInSidecarFile(getState())) {
+      if (entryProperties.isFile && !persistTagsInSidecarFile(getState())) {
         tag.type = 'plain';
       }
     }

@@ -29,6 +29,8 @@ import { withStyles } from '@material-ui/core/styles';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 import i18n from '-/services/i18n';
 import { isPlusCode } from '-/utils/misc';
 import { Pro } from '-/pro';
@@ -116,7 +118,22 @@ const EditEntryTagDialog = (props: Props) => {
   }
 
   function renderTitle() {
-    return <DialogTitle>{i18n.t('core:tagProperties')}</DialogTitle>;
+    return (
+      <DialogTitle>
+        {i18n.t('core:tagProperties')}{' '}
+        <IconButton
+          aria-label="close"
+          style={{
+            position: 'absolute',
+            right: 5,
+            top: 5
+          }}
+          onClick={onClose}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+    );
   }
 
   function renderContent() {

@@ -73,7 +73,8 @@ export default (state: Array<TS.Location> = initialState, action: any) => {
             uuid:
               action.location.newuuid !== undefined
                 ? action.location.newuuid
-                : action.location.uuid
+                : action.location.uuid,
+            persistTagsInSidecarFile: action.location.persistTagsInSidecarFile
           },
           ...state.slice(indexForEditing + 1)
         ];

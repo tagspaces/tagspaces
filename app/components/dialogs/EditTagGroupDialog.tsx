@@ -26,6 +26,8 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Switch from '@material-ui/core/Switch';
 import Dialog from '@material-ui/core/Dialog';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { connect } from 'react-redux';
@@ -52,7 +54,6 @@ const EditTagGroupDialog = (props: Props) => {
     false
   );
   const [inputError, setInputError] = useState<boolean>(false);
-  // const [disableConfirmButton, setDisableConfirmButton] = useState<boolean>(true);
   const [applyChanges, setApplyChanges] = useState<boolean>(false);
   const [locationId, setLocationId] = useState<string>(
     props.selectedTagGroupEntry.locationId
@@ -62,7 +63,6 @@ const EditTagGroupDialog = (props: Props) => {
   const [textcolor, setTextcolor] = useState<string>(
     props.selectedTagGroupEntry.textcolor
   );
-  // const [modifiedDate, setModifiedDate] = useState<string>('');
 
   useEffect(() => {
     handleValidation();
@@ -76,7 +76,6 @@ const EditTagGroupDialog = (props: Props) => {
 
     if (name === 'title') {
       setTitle(value);
-      // this.setState({ title: value }, this.handleValidation);
     }
   };
 
@@ -121,8 +120,6 @@ const EditTagGroupDialog = (props: Props) => {
           style: tag.style
         }))
       });
-      // setInputError(false);
-      // this.setState({ inputError: false, disableConfirmButton: true });
       props.onClose();
     }
   };
@@ -131,6 +128,17 @@ const EditTagGroupDialog = (props: Props) => {
     <DialogTitle style={{ overflow: 'visible' }}>
       {i18n.t('core:editTagGroupTitle')}
       {` '${title}'`}
+      <IconButton
+        aria-label="close"
+        style={{
+          position: 'absolute',
+          right: 5,
+          top: 5
+        }}
+        onClick={props.onClose}
+      >
+        <CloseIcon />
+      </IconButton>
     </DialogTitle>
   );
 
@@ -188,22 +196,6 @@ const EditTagGroupDialog = (props: Props) => {
           error={inputError}
           style={{ overflow: 'visible' }}
         >
-          {/* {modifiedDate && (
-            <div
-              className="tag-date"
-              style={{
-                fontSize: 12,
-                position: 'relative',
-                bottom: 20,
-                color: '#808080'
-              }}
-            >
-              <span className="text" style={{ fontWeight: 600 }}>
-                {`${i18n.t('core:modifiedDate')}: `}
-              </span>
-              <time>{format(new Date(modifiedDate), 'yyyy-mm-dd')}</time>
-            </div>
-          )} */}
           <TextField
             error={inputError}
             margin="dense"

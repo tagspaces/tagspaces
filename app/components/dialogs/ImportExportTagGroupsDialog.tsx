@@ -28,6 +28,8 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Dialog from '@material-ui/core/Dialog';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 import TagGroupContainer from '../TagGroupContainer';
 import TagContainer from '../TagContainer';
 import i18n from '-/services/i18n';
@@ -135,9 +137,39 @@ const ImportExportTagGroupsDialog = (props: Props) => {
 
   const renderTitle = () => {
     if (props.dialogModeImport) {
-      return <DialogTitle>{i18n.t('core:importGroupTagsTitle')}</DialogTitle>;
+      return (
+        <DialogTitle>
+          {i18n.t('core:importGroupTagsTitle')}
+          <IconButton
+            aria-label="close"
+            style={{
+              position: 'absolute',
+              right: 5,
+              top: 5
+            }}
+            onClick={onClose}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+      );
     }
-    return <DialogTitle>{i18n.t('core:exportGroupTagsTitle')}</DialogTitle>;
+    return (
+      <DialogTitle>
+        {i18n.t('core:exportGroupTagsTitle')}{' '}
+        <IconButton
+          aria-label="close"
+          style={{
+            position: 'absolute',
+            right: 5,
+            top: 5
+          }}
+          onClick={onClose}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+    );
   };
 
   const renderContent = () => (

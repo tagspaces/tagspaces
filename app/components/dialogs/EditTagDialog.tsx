@@ -26,6 +26,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 import ColorPickerDialog from './ColorPickerDialog';
 import TransparentBackground from '../TransparentBackground';
 import i18n from '-/services/i18n';
@@ -46,7 +48,6 @@ const EditTagDialog = (props: Props) => {
     false
   );
   const [inputError, setInputError] = useState<boolean>(false);
-  // const [disableConfirmButton, setDisableConfirmButton] = useState<boolean>(!props.selectedTag.title);
   const [title, setTitle] = useState<string>(props.selectedTag.title);
   const [color, setColor] = useState<string>(props.selectedTag.color);
   const [textcolor, setTextcolor] = useState<string>(
@@ -74,8 +75,6 @@ const EditTagDialog = (props: Props) => {
       setInputError(true);
     }
   };
-
-  // const disableConfirmButton = () => inputError;
 
   const onConfirm = () => {
     if (
@@ -147,6 +146,17 @@ const EditTagDialog = (props: Props) => {
       <DialogTitle style={{ overflow: 'visible' }}>
         {i18n.t('core:editTagTitle')}
         {` '${title}'`}
+        <IconButton
+          aria-label="close"
+          style={{
+            position: 'absolute',
+            right: 5,
+            top: 5
+          }}
+          onClick={onClose}
+        >
+          <CloseIcon />
+        </IconButton>
       </DialogTitle>
       <DialogContent style={{ overflow: 'visible' }}>
         <FormControl
