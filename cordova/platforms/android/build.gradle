@@ -19,13 +19,11 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.3.50'
-    repositories {
-        google()
-        jcenter()
-    }
+    ext.kotlin_version = '1.4.32'
+    apply from: 'repositories.gradle'
+    repositories repos
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.0'
+        classpath 'com.android.tools.build:gradle:4.1.3'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -33,17 +31,16 @@ buildscript {
 }
 
 allprojects {
-    repositories {
-        google()
-        jcenter()
-    }
+    apply from: 'repositories.gradle'
+    repositories repos
 
     //This replaces project.properties w.r.t. build settings
     project.ext {
-      defaultBuildToolsVersion="29.0.2" //String
+      defaultBuildToolsVersion="30.0.3" //String
       defaultMinSdkVersion=22 //Integer - Minimum requirement is Android 5.1
-      defaultTargetSdkVersion=29 //Integer - We ALWAYS target the latest by default
-      defaultCompileSdkVersion=29 //Integer - We ALWAYS compile with the latest by default
+      defaultTargetSdkVersion=30 //Integer - We ALWAYS target the latest by default
+      defaultCompileSdkVersion=30 //Integer - We ALWAYS compile with the latest by default
+      defaultAndroidXAppCompatVersion="1.2.0" //String - We ALWAYS compile with the latest stable by default
     }
 }
 

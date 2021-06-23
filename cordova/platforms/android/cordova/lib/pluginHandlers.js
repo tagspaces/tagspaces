@@ -16,6 +16,7 @@
 
 var fs = require('fs-extra');
 var path = require('path');
+var isPathInside = require('is-path-inside');
 var events = require('cordova-common').events;
 var CordovaError = require('cordova-common').CordovaError;
 
@@ -209,12 +210,12 @@ function copyFile (plugin_dir, src, project_dir, dest, link) {
     // check that src path is inside plugin directory
     var real_path = fs.realpathSync(src);
     var real_plugin_path = fs.realpathSync(plugin_dir);
-    if (real_path.indexOf(real_plugin_path) !== 0) { throw new CordovaError('File "' + src + '" is located outside the plugin directory "' + plugin_dir + '"'); }
+    if (!isPathInside(real_path, real_plugin_path)) { throw new CordovaError('File "' + src + '" is located outside the plugin directory "' + plugin_dir + '"'); }
 
     dest = path.resolve(project_dir, dest);
 
     // check that dest path is located in project directory
-    if (dest.indexOf(project_dir) !== 0) { throw new CordovaError('Destination "' + dest + '" for source file "' + src + '" is located outside the project'); }
+    if (!isPathInside(dest, project_dir)) { throw new CordovaError('Destination "' + dest + '" for source file "' + src + '" is located outside the project'); }
 
     fs.ensureDirSync(path.dirname(dest));
     if (link) {

@@ -1,14 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="org.tagspaces.mobileapp" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <feature name="IntentShim">
-        <param name="android-package" value="com.darryncampbell.cordova.plugin.intent.IntentShim" />
+    <feature name="Whitelist">
+        <param name="android-package" value="org.apache.cordova.whitelist.WhitelistPlugin" />
         <param name="onload" value="true" />
-    </feature>
-    <feature name="Filebrowser">
-        <param name="android-package" value="com.ourcodeworld.plugins.filebrowser.Filebrowser" />
-    </feature>
-    <feature name="Downloader">
-        <param name="android-package" value="com.whebcraft.android.plugin.Downloader" />
     </feature>
     <feature name="Device">
         <param name="android-package" value="org.apache.cordova.device.Device" />
@@ -19,27 +13,27 @@
     <feature name="BackgroundModeExt">
         <param name="android-package" value="de.appplant.cordova.plugin.background.BackgroundModeExt" />
     </feature>
+    <feature name="FileOpener2">
+        <param name="android-package" value="io.github.pwlin.cordova.plugins.fileopener2.FileOpener2" />
+    </feature>
+    <feature name="Downloader">
+        <param name="android-package" value="com.whebcraft.android.plugin.Downloader" />
+    </feature>
+    <feature name="SocialSharing">
+        <param name="android-package" value="nl.xservices.plugins.SocialSharing" />
+    </feature>
     <feature name="Camera">
         <param name="android-package" value="org.apache.cordova.camera.CameraLauncher" />
+    </feature>
+    <feature name="IntentShim">
+        <param name="android-package" value="com.darryncampbell.cordova.plugin.intent.IntentShim" />
+        <param name="onload" value="true" />
     </feature>
     <feature name="File">
         <param name="android-package" value="org.apache.cordova.file.FileUtils" />
         <param name="onload" value="true" />
     </feature>
     <allow-navigation href="cdvfile:*" />
-    <feature name="FileOpener2">
-        <param name="android-package" value="io.github.pwlin.cordova.plugins.fileopener2.FileOpener2" />
-    </feature>
-    <feature name="Whitelist">
-        <param name="android-package" value="org.apache.cordova.whitelist.WhitelistPlugin" />
-        <param name="onload" value="true" />
-    </feature>
-    <feature name="SocialSharing">
-        <param name="android-package" value="nl.xservices.plugins.SocialSharing" />
-    </feature>
-    <feature name="Chooser">
-        <param name="android-package" value="com.cyph.cordova.Chooser" />
-    </feature>
     <name>TagSpaces</name>
     <description>
 		Offline file organizer and browser with tagging support.
@@ -86,6 +80,9 @@
             <data android:host="*" android:mimeType="*/*" android:pathPattern="..ogv" android:scheme="file" />
         </intent-filter>
     </config-file>
+    <config-file parent="/*" target="AndroidManifest.xml">
+        <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    </config-file>
     <config-file parent="/manifest/application" target="AndroidManifest.xml">
         <provider android:authorities="${applicationId}.provider" android:exported="false" android:grantUriPermissions="true" android:name="androidx.core.content.FileProvider">
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/mnk_file_path" />
@@ -98,6 +95,6 @@
     <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root" />
     <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,cache,cache-external,assets,root" />
     <preference name="android-minSdkVersion" value="22" />
-    <preference name="android-targetSdkVersion" value="29" />
+    <preference name="android-targetSdkVersion" value="30" />
     <preference name="AndroidXEnabled" value="true" />
 </widget>

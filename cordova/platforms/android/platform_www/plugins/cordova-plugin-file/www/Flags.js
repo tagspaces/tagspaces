@@ -29,7 +29,7 @@ cordova.define("cordova-plugin-file.Flags", function(require, exports, module) {
  *            {boolean} used with create; if true the command will fail if
  *            target path exists
  */
-function Flags (create, exclusive) {
+function Flags(create, exclusive) {
     this.create = create || false;
     this.exclusive = exclusive || false;
 }

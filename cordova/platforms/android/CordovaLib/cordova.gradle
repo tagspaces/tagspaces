@@ -131,30 +131,6 @@ def doExtractStringFromManifest(name) {
     return matcher.group(1)
 }
 
-def doPromptForPassword(msg) {
-    if (System.console() == null) {
-        def ret = null
-        new SwingBuilder().edt {
-            dialog(modal: true, title: 'Enter password', alwaysOnTop: true, resizable: false, locationRelativeTo: null, pack: true, show: true) {
-                vbox {
-                    label(text: msg)
-                    def input = passwordField()
-                    button(defaultButton: true, text: 'OK', actionPerformed: {
-                        ret = input.password;
-                        dispose();
-                    })
-                }
-            }
-        }
-        if (!ret) {
-            throw new GradleException('User canceled build')
-        }
-        return new String(ret)
-    } else {
-        return System.console().readPassword('\n' + msg);
-    }
-}
-
 def doGetConfigXml() {
     def xml = file("src/main/res/xml/config.xml").getText()
     // Disable namespace awareness since Cordova doesn't use them properly
@@ -183,7 +159,6 @@ ext {
     privateHelpers.findLatestInstalledBuildTools = { doFindLatestInstalledBuildTools('19.1.0') }
     privateHelpers.extractIntFromManifest = { name -> doExtractIntFromManifest(name) }
     privateHelpers.extractStringFromManifest = { name -> doExtractStringFromManifest(name) }
-    privateHelpers.promptForPassword = { msg -> doPromptForPassword(msg) }
     privateHelpers.ensureValueExists = { filePath, props, key -> doEnsureValueExists(filePath, props, key) }
 
     // These helpers can be used by plugins / projects and will not change.

@@ -1,30 +1,6 @@
 cordova.define('cordova/plugin_list', function(require, exports, module) {
   module.exports = [
     {
-      "id": "com-darryncampbell-cordova-plugin-intent.IntentShim",
-      "file": "plugins/com-darryncampbell-cordova-plugin-intent/www/IntentShim.js",
-      "pluginId": "com-darryncampbell-cordova-plugin-intent",
-      "clobbers": [
-        "intentShim"
-      ]
-    },
-    {
-      "id": "com.ourcodeworld.plugins.Filebrowser.Filebrowser",
-      "file": "plugins/com.ourcodeworld.plugins.Filebrowser/www/filebrowser.js",
-      "pluginId": "com.ourcodeworld.plugins.Filebrowser",
-      "clobbers": [
-        "window.OurCodeWorld.Filebrowser"
-      ]
-    },
-    {
-      "id": "com.whebcraft.cordova.plugin.downloader.Downloader",
-      "file": "plugins/com.whebcraft.cordova.plugin.downloader/www/Downloader.js",
-      "pluginId": "com.whebcraft.cordova.plugin.downloader",
-      "clobbers": [
-        "plugins.Downloader"
-      ]
-    },
-    {
       "id": "cordova-plugin-device.device",
       "file": "plugins/cordova-plugin-device/www/device.js",
       "pluginId": "cordova-plugin-device",
@@ -39,6 +15,36 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       "clobbers": [
         "cordova.plugins.backgroundMode",
         "plugin.backgroundMode"
+      ]
+    },
+    {
+      "id": "cordova-plugin-file-opener2.FileOpener2",
+      "file": "plugins/cordova-plugin-file-opener2/www/plugins.FileOpener2.js",
+      "pluginId": "cordova-plugin-file-opener2",
+      "clobbers": [
+        "cordova.plugins.fileOpener2"
+      ]
+    },
+    {
+      "id": "com.whebcraft.cordova.plugin.downloader.Downloader",
+      "file": "plugins/com.whebcraft.cordova.plugin.downloader/www/Downloader.js",
+      "pluginId": "com.whebcraft.cordova.plugin.downloader",
+      "clobbers": [
+        "plugins.Downloader"
+      ]
+    },
+    {
+      "id": "es6-promise-plugin.Promise",
+      "file": "plugins/es6-promise-plugin/www/promise.js",
+      "pluginId": "es6-promise-plugin",
+      "runs": true
+    },
+    {
+      "id": "cordova-plugin-x-socialsharing.SocialSharing",
+      "file": "plugins/cordova-plugin-x-socialsharing/www/SocialSharing.js",
+      "pluginId": "cordova-plugin-x-socialsharing",
+      "clobbers": [
+        "window.plugins.socialsharing"
       ]
     },
     {
@@ -74,11 +80,11 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       ]
     },
     {
-      "id": "cordova-plugin-chooser.Chooser",
-      "file": "plugins/cordova-plugin-chooser/www/chooser.js",
-      "pluginId": "cordova-plugin-chooser",
+      "id": "com-darryncampbell-cordova-plugin-intent.IntentShim",
+      "file": "plugins/com-darryncampbell-cordova-plugin-intent/www/IntentShim.js",
+      "pluginId": "com-darryncampbell-cordova-plugin-intent",
       "clobbers": [
-        "chooser"
+        "intentShim"
       ]
     },
     {
@@ -253,44 +259,20 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
         "cordova"
       ],
       "runs": true
-    },
-    {
-      "id": "cordova-plugin-file-opener2.FileOpener2",
-      "file": "plugins/cordova-plugin-file-opener2/www/plugins.FileOpener2.js",
-      "pluginId": "cordova-plugin-file-opener2",
-      "clobbers": [
-        "cordova.plugins.fileOpener2"
-      ]
-    },
-    {
-      "id": "es6-promise-plugin.Promise",
-      "file": "plugins/es6-promise-plugin/www/promise.js",
-      "pluginId": "es6-promise-plugin",
-      "runs": true
-    },
-    {
-      "id": "cordova-plugin-x-socialsharing.SocialSharing",
-      "file": "plugins/cordova-plugin-x-socialsharing/www/SocialSharing.js",
-      "pluginId": "cordova-plugin-x-socialsharing",
-      "clobbers": [
-        "window.plugins.socialsharing"
-      ]
     }
   ];
   module.exports.metadata = {
-    "com-darryncampbell-cordova-plugin-intent": "2.0.0",
-    "com.ourcodeworld.plugins.Filebrowser": "1.0.0",
-    "com.whebcraft.cordova.plugin.downloader": "0.1.0",
-    "cordova-plugin-add-swift-support": "2.0.2",
-    "cordova-plugin-androidx-adapter": "1.1.3",
+    "cordova-plugin-whitelist": "1.3.4",
     "cordova-plugin-device": "2.0.3",
     "cordova-plugin-background-mode": "0.7.3",
-    "cordova-plugin-camera": "4.1.0",
-    "cordova-plugin-chooser": "1.3.1",
-    "cordova-plugin-file": "7.0.0-dev",
-    "cordova-plugin-file-opener2": "3.0.4",
-    "cordova-plugin-whitelist": "1.3.4",
+    "cordova-plugin-file-opener2": "3.0.5",
+    "com.whebcraft.cordova.plugin.downloader": "0.1.0",
     "es6-promise-plugin": "4.2.2",
-    "cordova-plugin-x-socialsharing": "5.6.8"
+    "cordova-plugin-x-socialsharing": "6.0.3",
+    "cordova-plugin-camera": "5.0.1",
+    "cordova-plugin-androidx-adapter": "1.1.3",
+    "cordova-plugin-add-swift-support": "2.0.2",
+    "com-darryncampbell-cordova-plugin-intent": "2.0.0",
+    "cordova-plugin-file": "4.3.3"
   };
 });

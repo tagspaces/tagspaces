@@ -37,8 +37,8 @@ class GradlePropertiesParser {
             'org.gradle.jvmargs': '-Xmx2048m',
 
             // Android X
-            'android.useAndroidX': 'false',
-            'android.enableJetifier': 'false'
+            'android.useAndroidX': 'true',
+            'android.enableJetifier': 'true'
 
             // Shaves another 100ms, but produces a "try at own risk" warning. Not worth it (yet):
             // 'org.gradle.parallel': 'true'

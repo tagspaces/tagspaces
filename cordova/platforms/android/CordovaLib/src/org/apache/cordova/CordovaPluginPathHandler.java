@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /*
        Licensed to the Apache Software Foundation (ASF) under one
        or more contributor license agreements.  See the NOTICE file
@@ -19,21 +17,22 @@
        under the License.
 */
 
-const { resolve, install } = require('./target');
+package org.apache.cordova;
 
-var args = process.argv;
-const targetSpec = { type: 'device' };
+import androidx.webkit.WebViewAssetLoader;
 
-if (args.length > 2) {
-    if (args[2].substring(0, 9) === '--target=') {
-        targetSpec.id = args[2].substring(9, args[2].length);
-    } else {
-        console.error('ERROR : argument \'' + args[2] + '\' not recognized.');
-        process.exit(2);
+/**
+ * Wrapper class for path and handler
+ */
+public class CordovaPluginPathHandler {
+
+    private final WebViewAssetLoader.PathHandler handler;
+
+    public  CordovaPluginPathHandler(WebViewAssetLoader.PathHandler handler) {
+        this.handler = handler;
+    }
+
+    public WebViewAssetLoader.PathHandler getPathHandler() {
+        return handler;
     }
 }
-
-resolve(targetSpec).then(install).catch(err => {
-    console.error('ERROR: ' + err);
-    process.exit(2);
-});

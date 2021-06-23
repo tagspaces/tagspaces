@@ -20,13 +20,13 @@ cordova.define("cordova-plugin-file.DirectoryReader", function(require, exports,
  *
 */
 
-var exec = require('cordova/exec');
-var FileError = require('./FileError');
+var exec = require('cordova/exec'),
+    FileError = require('./FileError') ;
 
 /**
  * An interface that lists the files and directories in a directory.
  */
-function DirectoryReader (localURL) {
+function DirectoryReader(localURL) {
     this.localURL = localURL || null;
     this.hasReadEntries = false;
 }
@@ -37,20 +37,21 @@ function DirectoryReader (localURL) {
  * @param {Function} successCallback is called with a list of entries
  * @param {Function} errorCallback is called with a FileError
  */
-DirectoryReader.prototype.readEntries = function (successCallback, errorCallback) {
+DirectoryReader.prototype.readEntries = function(successCallback, errorCallback) {
     // If we've already read and passed on this directory's entries, return an empty list.
     if (this.hasReadEntries) {
         successCallback([]);
         return;
     }
     var reader = this;
-    var win = typeof successCallback !== 'function' ? null : function (result) {
+    var win = typeof successCallback !== 'function' ? null : function(result) {
         var retVal = [];
-        for (var i = 0; i < result.length; i++) {
+        for (var i=0; i<result.length; i++) {
             var entry = null;
             if (result[i].isDirectory) {
                 entry = new (require('./DirectoryEntry'))();
-            } else if (result[i].isFile) {
+            }
+            else if (result[i].isFile) {
                 entry = new (require('./FileEntry'))();
             }
             entry.isDirectory = result[i].isDirectory;
@@ -64,10 +65,10 @@ DirectoryReader.prototype.readEntries = function (successCallback, errorCallback
         reader.hasReadEntries = true;
         successCallback(retVal);
     };
-    var fail = typeof errorCallback !== 'function' ? null : function (code) {
+    var fail = typeof errorCallback !== 'function' ? null : function(code) {
         errorCallback(new FileError(code));
     };
-    exec(win, fail, 'File', 'readEntries', [this.localURL]);
+    exec(win, fail, "File", "readEntries", [this.localURL]);
 };
 
 module.exports = DirectoryReader;

@@ -24,7 +24,6 @@ import java.util.Locale;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
@@ -32,7 +31,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.media.AudioManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,6 +40,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * This class is the main Android activity that represents the Cordova
@@ -74,7 +74,7 @@ import android.widget.FrameLayout;
  * deprecated in favor of the config.xml file.
  *
  */
-public class CordovaActivity extends Activity {
+public class CordovaActivity extends AppCompatActivity {
     public static String TAG = "CordovaActivity";
 
     // The webview for our app
@@ -125,6 +125,9 @@ public class CordovaActivity extends Activity {
             // (as was the case in previous cordova versions)
             if (!preferences.getBoolean("FullscreenNotImmersive", false)) {
                 immersiveMode = true;
+                // The splashscreen plugin needs the flags set before we're focused to prevent
+                // the nav and title bars from flashing in.
+                setImmersiveUiVisibility();
             } else {
                 getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                         WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -321,20 +324,24 @@ public class CordovaActivity extends Activity {
     /**
      * Called when view focus is changed
      */
-    @SuppressLint("InlinedApi")
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus && immersiveMode) {
-            final int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-
-            getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+            setImmersiveUiVisibility();
         }
+    }
+
+    @SuppressLint("InlinedApi")
+    protected void setImmersiveUiVisibility() {
+        final int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+
+        getWindow().getDecorView().setSystemUiVisibility(uiOptions);
     }
 
     @SuppressLint("NewApi")
