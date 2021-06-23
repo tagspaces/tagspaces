@@ -15,6 +15,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
+import mgrs from 'mgrs';
+import OpenLocationCode from 'open-location-code-typescript';
 import { cleanFileName, getLocationPath } from '-/utils/paths';
 import { TS } from '-/tagspaces.namespace';
 
@@ -23,6 +25,24 @@ export const locationType = {
   TYPE_CLOUD: '1',
   TYPE_AMPLIFY: '2'
 };
+
+export function parseGeoLocation(code: string): any {
+  if (isPlusCode(code)) {
+    const coord = OpenLocationCode.decode(code);
+    const lat = Number(coord.latitudeLo.toFixed(7)); // latitudeCenter.toFixed(7));
+    const lng = Number(coord.longitudeLo.toFixed(7));
+    return { lat, lng };
+  }
+  if (isMgrsString(code)) {
+    const [lng, lat] = mgrs.toPoint(code);
+    return { lat, lng };
+  }
+  return undefined;
+}
+
+export function isGeoTag(code: string): boolean {
+  return isPlusCode(code) || isMgrsString(code);
+}
 
 /** Returns true is a string is plus code e.g. 8FWH4HVG+3V 8FWH4HVG+ 8FWH4H+ */
 export function isPlusCode(plusCode: string): boolean {
@@ -35,6 +55,20 @@ export function isPlusCode(plusCode: string): boolean {
   );
 }
 
+/** Returns true is a string is MGRS code e.g. 18SUJ7082315291 18SUJ70821529 18SUJ708152 */
+export function isMgrsString(c) {
+  if (!c) {
+    return false;
+  }
+  const coord = c.replace(/\s+/g, '');
+  const MGRS = /^(\d{1,2})([C-HJ-NP-X])\s*([A-HJ-NP-Z])([A-HJ-NP-V])\s*(\d{1,5}\s*\d{1,5})$/i;
+  return MGRS.test(coord);
+}
+
+/**
+ * @deprecated use coordinate-parser lib instead
+ * @param latLongInput
+ */
 export function parseLatLon(
   latLongInput: string
 ): { lat: number; lon: number } | false {

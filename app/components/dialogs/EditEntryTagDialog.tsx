@@ -32,7 +32,7 @@ import Dialog from '@material-ui/core/Dialog';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import i18n from '-/services/i18n';
-import { isPlusCode } from '-/utils/misc';
+import { isGeoTag } from '-/utils/misc';
 import { Pro } from '-/pro';
 import { getSelectedEntries, getSelectedTag } from '-/reducers/app';
 import TaggingActions, { defaultTagLocation } from '-/reducers/tagging-actions';
@@ -137,7 +137,7 @@ const EditEntryTagDialog = (props: Props) => {
   }
 
   function renderContent() {
-    const showGeoEditor = GeoTagEditor && isPlusCode(title);
+    const showGeoEditor = GeoTagEditor && isGeoTag(title);
 
     return (
       <DialogContent
@@ -188,7 +188,7 @@ const EditEntryTagDialog = (props: Props) => {
   function renderActions() {
     return (
       <DialogActions style={{ justifyContent: 'space-between' }}>
-        {GeoTagEditor && isPlusCode(title) ? (
+        {GeoTagEditor && isGeoTag(title) ? (
           <Button
             data-tid="switchAdvancedModeTID"
             onClick={() => setShowAdvancedMode(!showAdvancedMode)}
