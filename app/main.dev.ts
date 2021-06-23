@@ -137,7 +137,8 @@ app.on('ready', async () => {
       frame: false,
       webPreferences: {
         nodeIntegration: true,
-        enableRemoteModule: true
+        enableRemoteModule: true,
+        contextIsolation: false
       }
     });
 
@@ -170,7 +171,8 @@ app.on('ready', async () => {
       spellcheck: true,
       nodeIntegration: true,
       webviewTag: true,
-      enableRemoteModule: true
+      enableRemoteModule: true,
+      contextIsolation: false
     }
   });
 
