@@ -41,6 +41,7 @@ export namespace TS {
     fullTextIndex?: boolean;
     maxIndexAge?: number;
     persistTagsInSidecarFile?: boolean;
+    ignorePatternPaths?: Array<string>;
   }
 
   interface SearchQuery {
@@ -114,6 +115,7 @@ export namespace TS {
     path: string;
     url?: string;
     meta?: FileSystemEntryMeta;
+    isIgnored?: boolean;
   }
 
   interface FileSystemEntryMeta {

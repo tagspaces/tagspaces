@@ -190,7 +190,7 @@ app.on('ready', async () => {
       throw new Error('"mainWindow" is not defined');
     }
     // mainWindow.show();
-    (global as any).splashWorkerWindow.hide(); // Comment for easy debugging of the worker
+    (global as any).splashWorkerWindow.hide(); // Comment for easy debugging of the worker (global as any).splashWorkerWindow.show();
     if (portableMode) {
       mainWindow.setTitle(mainWindow.title + ' Portable 🔌');
     }

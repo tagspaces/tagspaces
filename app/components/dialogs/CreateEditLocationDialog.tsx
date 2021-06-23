@@ -34,6 +34,10 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import Tooltip from '@material-ui/core/Tooltip';
 import Dialog from '@material-ui/core/Dialog';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 import Input from '@material-ui/core/Input';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
@@ -41,6 +45,8 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import CheckIcon from '@material-ui/icons/Check';
 import InfoIcon from '@material-ui/icons/InfoOutlined';
+import AddIcon from '@material-ui/icons/AddCircleOutline';
+import RemoveIcon from '@material-ui/icons/RemoveCircleOutline';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import ObjectStoreForm from './ObjectStoreForm';
@@ -49,10 +55,13 @@ import useFirstRender from '-/utils/useFirstRender';
 import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
 import { locationType } from '-/utils/misc';
+import { getLocationPath } from '-/utils/paths';
+import IgnorePatternDialog from '-/components/dialogs/IgnorePatternDialog';
 
 const styles: any = theme => ({
   formControl: {
-    marginLeft: theme.spacing(0)
+    marginLeft: theme.spacing(0),
+    width: '100%'
   }
 });
 
@@ -155,6 +164,14 @@ const CreateEditLocationDialog = (props: Props) => {
     boolean
   >(false);
 
+  const [ignorePatternPaths, setIgnorePatternPaths] = useState<Array<string>>(
+    location ? location.ignorePatternPaths : undefined
+  );
+
+  const [isIgnorePatternDialogOpen, setIgnorePatternDialogOpen] = useState<
+    boolean
+  >(false);
+
   const firstRender = useFirstRender();
 
   function changeMaxIndexAge(ageInMinutes) {
@@ -253,7 +270,8 @@ const CreateEditLocationDialog = (props: Props) => {
           persistIndex,
           fullTextIndex,
           watchForChanges,
-          maxIndexAge
+          maxIndexAge,
+          ignorePatternPaths
         };
       } else if (type === locationType.TYPE_CLOUD) {
         loc = {
@@ -273,7 +291,8 @@ const CreateEditLocationDialog = (props: Props) => {
           persistIndex,
           fullTextIndex,
           watchForChanges: false,
-          maxIndexAge
+          maxIndexAge,
+          ignorePatternPaths
         };
       }
       if (persistTagsInSidecarFile !== null) {
@@ -365,9 +384,10 @@ const CreateEditLocationDialog = (props: Props) => {
           event.preventDefault();
           event.stopPropagation();
           onConfirm();
-        } else if (event.key === 'Escape') {
-          onClose();
         }
+        // } else if (event.key === 'Escape') {
+        //   onClose();
+        // }
       }}
     >
       <DialogTitle>
@@ -524,143 +544,197 @@ const CreateEditLocationDialog = (props: Props) => {
               }
             />
           )}
-          {showAdvancedMode && (
+        </FormGroup>
+        {showAdvancedMode && (
+          <FormControlLabel
+            className={classes.formControl}
+            labelPlacement="start"
+            style={{ justifyContent: 'space-between' }}
+            control={
+              <Input
+                name="maxIndexAge"
+                style={{
+                  maxWidth: 70,
+                  marginLeft: 15,
+                  marginBottom: 15
+                }}
+                type="number"
+                data-tid="maxIndexAgeTID"
+                inputProps={{ min: 0 }}
+                value={maxIndexAge / (1000 * 60)}
+                onChange={event => changeMaxIndexAge(event.target.value)}
+              />
+            }
+            label={
+              <Tooltip arrow title={i18n.t('core:maxIndexAgeHelp')}>
+                <Typography>{i18n.t('core:maxIndexAge')}</Typography>
+              </Tooltip>
+            }
+          />
+        )}
+        {showAdvancedMode &&
+          (AppConfig.useSidecarsForFileTaggingDisableSetting ? (
             <FormControlLabel
               className={classes.formControl}
               labelPlacement="start"
               style={{ justifyContent: 'space-between' }}
               control={
-                <Tooltip title={i18n.t('core:maxIndexAgeHelp')}>
-                  <Input
-                    name="maxIndexAge"
-                    style={{
-                      maxWidth: 70,
-                      marginLeft: 15,
-                      marginRight: 15,
-                      marginBottom: 15
-                    }}
-                    type="number"
-                    data-tid="maxIndexAgeTID"
-                    inputProps={{ min: 0 }}
-                    value={maxIndexAge / (1000 * 60)}
-                    onChange={event => changeMaxIndexAge(event.target.value)}
-                  />
-                </Tooltip>
+                <Button size="small" variant="outlined" disabled>
+                  {currentTagsSetting ? 'Use Sidecar Files' : 'Rename Files'}
+                </Button>
               }
-              label={i18n.t('core:maxIndexAge')}
+              label={
+                <Typography variant="caption" display="block" gutterBottom>
+                  {i18n.t('core:fileTaggingSetting')}
+                </Typography>
+              }
             />
-          )}
-          {showAdvancedMode &&
-            (AppConfig.useSidecarsForFileTaggingDisableSetting ? (
-              <FormControlLabel
-                className={classes.formControl}
-                labelPlacement="start"
-                style={{ justifyContent: 'space-between' }}
-                control={
-                  <Button size="small" variant="outlined" disabled>
-                    {currentTagsSetting ? 'Use Sidecar Files' : 'Rename Files'}
-                  </Button>
-                }
-                label={
-                  <Typography variant="caption" display="block" gutterBottom>
-                    {i18n.t('core:fileTaggingSetting')}
-                  </Typography>
-                }
-              />
-            ) : (
-              <FormControlLabel
-                labelPlacement="top"
-                className={classes.formControl}
-                style={{ alignItems: 'start' }}
-                control={
-                  <ToggleButtonGroup
-                    value={persistTagsInSidecarFile}
-                    size="small"
-                    exclusive
+          ) : (
+            <FormControlLabel
+              labelPlacement="top"
+              className={classes.formControl}
+              style={{ alignItems: 'start' }}
+              control={
+                <ToggleButtonGroup
+                  value={persistTagsInSidecarFile}
+                  size="small"
+                  exclusive
+                >
+                  <ToggleButton
+                    value={null}
+                    data-tid="settingsSetPersistTagsDefault"
+                    onClick={() => setPersistTagsInSidecarFile(null)}
                   >
-                    <ToggleButton
-                      value={null}
-                      data-tid="settingsSetPersistTagsDefault"
-                      onClick={() => setPersistTagsInSidecarFile(null)}
+                    <Tooltip
+                      arrow
+                      title={
+                        <Typography color="inherit">
+                          Use the default settings for saving the tags:{' '}
+                          <b>
+                            {currentTagsSetting
+                              ? 'Use Sidecar Files'
+                              : 'Rename Files'}
+                          </b>
+                        </Typography>
+                      }
                     >
-                      <Tooltip
-                        arrow
-                        title={
-                          <Typography color="inherit">
-                            Use the default settings for saving the tags:{' '}
-                            <b>
-                              {currentTagsSetting
-                                ? 'Use Sidecar Files'
-                                : 'Rename Files'}
-                            </b>
-                          </Typography>
-                        }
-                      >
-                        <div style={{ display: 'flex' }}>
-                          {persistTagsInSidecarFile === null && <CheckIcon />}
-                          &nbsp;{i18n.t('core:default')}&nbsp;&nbsp;
-                          <InfoIcon />
-                        </div>
-                      </Tooltip>
-                    </ToggleButton>
-                    <ToggleButton
-                      value={false}
-                      data-tid="settingsSetPersistTagsInFileName"
-                      onClick={() => setPersistTagsInSidecarFile(false)}
+                      <div style={{ display: 'flex' }}>
+                        {persistTagsInSidecarFile === null && <CheckIcon />}
+                        &nbsp;{i18n.t('core:default')}&nbsp;&nbsp;
+                        <InfoIcon />
+                      </div>
+                    </Tooltip>
+                  </ToggleButton>
+                  <ToggleButton
+                    value={false}
+                    data-tid="settingsSetPersistTagsInFileName"
+                    onClick={() => setPersistTagsInSidecarFile(false)}
+                  >
+                    <Tooltip
+                      arrow
+                      title={
+                        <Typography color="inherit">
+                          Use the name of file for saving the tags - Tagging the
+                          file <b>image.jpg</b> with a tag <b>sunset</b> will
+                          rename it to <b>image[sunset].jpg</b>
+                        </Typography>
+                      }
                     >
-                      <Tooltip
-                        arrow
-                        title={
-                          <Typography color="inherit">
-                            Use the name of file for saving the tags - Tagging
-                            the file <b>image.jpg</b> with a tag <b>sunset</b>{' '}
-                            will rename it to <b>image[sunset].jpg</b>
-                          </Typography>
-                        }
-                      >
-                        <div style={{ display: 'flex' }}>
-                          {persistTagsInSidecarFile !== null &&
-                            !persistTagsInSidecarFile && <CheckIcon />}
-                          &nbsp;Rename Files&nbsp;&nbsp;
-                          <InfoIcon />
-                        </div>
-                      </Tooltip>
-                    </ToggleButton>
-                    <ToggleButton
-                      value={true}
-                      data-tid="settingsSetPersistTagsInSidecarFile"
-                      onClick={() => setPersistTagsInSidecarFile(true)}
+                      <div style={{ display: 'flex' }}>
+                        {persistTagsInSidecarFile !== null &&
+                          !persistTagsInSidecarFile && <CheckIcon />}
+                        &nbsp;Rename Files&nbsp;&nbsp;
+                        <InfoIcon />
+                      </div>
+                    </Tooltip>
+                  </ToggleButton>
+                  <ToggleButton
+                    value={true}
+                    data-tid="settingsSetPersistTagsInSidecarFile"
+                    onClick={() => setPersistTagsInSidecarFile(true)}
+                  >
+                    <Tooltip
+                      arrow
+                      title={
+                        <Typography color="inherit">
+                          Use sidecar file for saving the tags - Tagging the
+                          file <b>image.jpg</b> with a tag <b>sunset</b> will
+                          save this tag in an additional sidecar file called{' '}
+                          <b>image.jpg.json</b> located in a sub folder with the
+                          name <b>.ts</b>
+                        </Typography>
+                      }
                     >
-                      <Tooltip
-                        arrow
-                        title={
-                          <Typography color="inherit">
-                            Use sidecar file for saving the tags - Tagging the
-                            file <b>image.jpg</b> with a tag <b>sunset</b> will
-                            save this tag in an additional sidecar file called{' '}
-                            <b>image.jpg.json</b> located in a sub folder with
-                            the name <b>.ts</b>
-                          </Typography>
+                      <div style={{ display: 'flex' }}>
+                        {persistTagsInSidecarFile !== null &&
+                          persistTagsInSidecarFile && <CheckIcon />}
+                        &nbsp;Use Sidecar Files&nbsp;&nbsp;
+                        <InfoIcon />
+                      </div>
+                    </Tooltip>
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              }
+              label={
+                <Typography variant="caption" display="block" gutterBottom>
+                  {i18n.t('core:fileTaggingSetting')}
+                </Typography>
+              }
+            />
+          ))}
+        {showAdvancedMode && (
+          <>
+            <Typography
+              variant="caption"
+              display="block"
+              gutterBottom
+              style={{ marginTop: 10 }}
+            >
+              {i18n.t('core:ignorePatterns')}
+            </Typography>
+            <List style={{ padding: 0 }} dense>
+              {ignorePatternPaths &&
+                ignorePatternPaths.map(ignorePatternPath => (
+                  <ListItem style={{ padding: 0 }}>
+                    <ListItemText primary={ignorePatternPath} />
+                    <ListItemIcon
+                      style={{ minWidth: 0 }}
+                      title={i18n.t('core:ignorePatternRemove')}
+                      onClick={() => {
+                        const array = [...ignorePatternPaths];
+                        const index = array.indexOf(ignorePatternPath);
+                        if (index !== -1) {
+                          array.splice(index, 1);
+                          setIgnorePatternPaths(array);
                         }
-                      >
-                        <div style={{ display: 'flex' }}>
-                          {persistTagsInSidecarFile !== null &&
-                            persistTagsInSidecarFile && <CheckIcon />}
-                          &nbsp;Use Sidecar Files&nbsp;&nbsp;
-                          <InfoIcon />
-                        </div>
-                      </Tooltip>
-                    </ToggleButton>
-                  </ToggleButtonGroup>
-                }
-                label={
-                  <Typography variant="caption" display="block" gutterBottom>
-                    {i18n.t('core:fileTaggingSetting')}
-                  </Typography>
-                }
+                      }}
+                    >
+                      <RemoveIcon />
+                    </ListItemIcon>
+                  </ListItem>
+                ))}
+            </List>
+            <Button
+              endIcon={<AddIcon />}
+              color="primary"
+              size="small"
+              onClick={() => {
+                setIgnorePatternDialogOpen(true);
+              }}
+            >
+              {i18n.t('ignorePatternDialogTitle')}
+            </Button>
+            {isIgnorePatternDialogOpen && (
+              <IgnorePatternDialog
+                open={isIgnorePatternDialogOpen}
+                onClose={() => setIgnorePatternDialogOpen(false)}
+                ignorePatternPaths={ignorePatternPaths}
+                setIgnorePatternPaths={setIgnorePatternPaths}
+                locationPath={getLocationPath(location)}
               />
-            ))}
-        </FormGroup>
+            )}
+          </>
+        )}
       </DialogContent>
       <DialogActions style={{ justifyContent: 'space-between' }}>
         <Button
