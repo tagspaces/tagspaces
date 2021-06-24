@@ -137,7 +137,8 @@ app.on('ready', async () => {
       frame: false,
       webPreferences: {
         nodeIntegration: true,
-        enableRemoteModule: true
+        enableRemoteModule: true,
+        contextIsolation: false
       }
     });
 
@@ -153,7 +154,7 @@ app.on('ready', async () => {
     if (startupFilePath.startsWith('./') || startupFilePath.startsWith('.\\')) {
       startupParameter =
         '?cmdopen=' + encodeURIComponent(path.join(__dirname, startupFilePath));
-    } else {
+    } else if (startupFilePath !== 'data:,') {
       startupParameter = '?cmdopen=' + encodeURIComponent(startupFilePath);
     }
   }
@@ -170,7 +171,8 @@ app.on('ready', async () => {
       spellcheck: true,
       nodeIntegration: true,
       webviewTag: true,
-      enableRemoteModule: true
+      enableRemoteModule: true,
+      contextIsolation: false
     }
   });
 
