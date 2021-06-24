@@ -40,6 +40,7 @@ import {
 } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import MapTileServerDialog from '-/components/dialogs/settings/MapTileServerDialog';
+import { Pro } from '-/pro';
 
 const styles: any = {
   root: {
@@ -62,6 +63,7 @@ interface Props {
   classes: any;
   settings: any;
   setDesktopMode: (desktopMode: boolean) => void;
+  setSaveTagInLocation: (saveTagInLocation: boolean) => void;
   showResetSettings: (showDialog: boolean) => void;
   tileServers: Array<TS.MapTileServer>;
 }
@@ -111,6 +113,17 @@ const SettingsAdvanced = (props: Props) => {
             disabled={!(typeof window.ExtDisplayMode === 'undefined')}
             onClick={() => props.setDesktopMode(!props.settings.desktopMode)}
             checked={!props.settings.desktopMode}
+          />
+        </ListItem>
+        <ListItem className={classes.listItem}>
+          <ListItemText primary="Enable Location TagGroups" />
+          <Switch
+            data-tid="saveTagInLocationTID"
+            disabled={!Pro}
+            onClick={() =>
+              props.setSaveTagInLocation(!props.settings.saveTagInLocation)
+            }
+            checked={props.settings.saveTagInLocation}
           />
         </ListItem>
         <ListItem className={classes.listItem}>
@@ -213,7 +226,10 @@ function mapStateToProps(state) {
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
-    { setDesktopMode: SettingsActions.setDesktopMode },
+    {
+      setDesktopMode: SettingsActions.setDesktopMode,
+      setSaveTagInLocation: SettingsActions.setSaveTagInLocation
+    },
     dispatch
   );
 }

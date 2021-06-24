@@ -27,6 +27,7 @@ export const AppConfig = {
   tagspacesAppPath: '/tagspaces/',
   metaFolder: '.ts',
   metaFolderFile: 'tsm.json',
+  folderLocationsFile: 'tsl.json',
   folderIndexFile: 'tsi.json',
   folderThumbFile: 'tst.jpg',
   metaFileExt: '.json',

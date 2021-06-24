@@ -141,8 +141,8 @@ const actions = {
             color: settings.tagBackgroundColor,
             textcolor: settings.tagTextColor,
             children: uniqueTags,
-            created_date: new Date(),
-            modified_date: new Date()
+            created_date: new Date().getTime(),
+            modified_date: new Date().getTime()
           };
           dispatch(TagLibraryActions.mergeTagGroup(tagGroup));
         }
@@ -489,8 +489,8 @@ const actions = {
           color: settings.tagBackgroundColor,
           textcolor: settings.tagTextColor,
           children: uniqueTags,
-          created_date: new Date(),
-          modified_date: new Date()
+          created_date: new Date().getTime(),
+          modified_date: new Date().getTime()
         };
         dispatch(TagLibraryActions.mergeTagGroup(tagGroup));
       }
@@ -773,7 +773,7 @@ const actions = {
       const changedTagGroup = {
         ...tagGroup,
         children: uniqueTags,
-        modified_date: new Date()
+        modified_date: new Date().getTime()
       };
       dispatch(TagLibraryActions.mergeTagGroup(changedTagGroup));
     }

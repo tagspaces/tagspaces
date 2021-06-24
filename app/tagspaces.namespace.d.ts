@@ -78,7 +78,7 @@ export namespace TS {
     description?: string;
     style?: string;
     path?: string; // needed for geo tagging should be removed
-    modified_date?: string;
+    modified_date?: number;
     functionality?: string;
     keyBinding?: string;
     color?: string;
@@ -89,6 +89,7 @@ export namespace TS {
   interface TagGroup {
     uuid: Uuid;
     title: string;
+    locationId?: Uuid;
     expanded?: boolean;
     description?: string;
     categoryId?: string;
@@ -96,6 +97,8 @@ export namespace TS {
     color?: string;
     textcolor?: string;
     children?: Array<Tag>;
+    created_date?: number;
+    modified_date?: number;
   }
 
   interface FileSystemEntry {
@@ -122,6 +125,7 @@ export namespace TS {
     id?: string;
     description?: string;
     tags?: Array<TS.Tag>;
+    tagGroups?: Array<TS.TagGroup>;
     color?: string;
     perspective?: string;
     appName: string;
