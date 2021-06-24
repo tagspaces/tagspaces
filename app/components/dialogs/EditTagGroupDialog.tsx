@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -28,10 +28,15 @@ import Switch from '@material-ui/core/Switch';
 import Dialog from '@material-ui/core/Dialog';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import { connect } from 'react-redux';
 import ColorPickerDialog from './ColorPickerDialog';
 import i18n from '-/services/i18n';
 import TransparentBackground from '../TransparentBackground';
 import { TS } from '-/tagspaces.namespace';
+import { getLocations } from '-/reducers/locations';
+import { Pro } from '-/pro';
 
 interface Props {
   open: boolean;
@@ -39,6 +44,8 @@ interface Props {
   editTagGroup: (tagGroup: TS.TagGroup) => void;
   selectedTagGroupEntry: TS.TagGroup;
   onClose: () => void;
+  locations: Array<TS.Location>;
+  saveTagInLocation: boolean;
 }
 
 const EditTagGroupDialog = (props: Props) => {
@@ -48,6 +55,9 @@ const EditTagGroupDialog = (props: Props) => {
   );
   const [inputError, setInputError] = useState<boolean>(false);
   const [applyChanges, setApplyChanges] = useState<boolean>(false);
+  const [locationId, setLocationId] = useState<string>(
+    props.selectedTagGroupEntry.locationId
+  );
   const [title, setTitle] = useState<string>(props.selectedTagGroupEntry.title);
   const [color, setColor] = useState<string>(props.selectedTagGroupEntry.color);
   const [textcolor, setTextcolor] = useState<string>(
@@ -86,11 +96,23 @@ const EditTagGroupDialog = (props: Props) => {
     }
 
     if (selectedTagGroupEntry && selectedTagGroupEntry.children) {
+      if (Pro && locationId !== selectedTagGroupEntry.locationId) {
+        const location: TS.Location = props.locations.find(
+          l => l.uuid === selectedTagGroupEntry.locationId
+        );
+        if (location) {
+          Pro.MetaOperations.removeTagGroup(
+            location.path,
+            selectedTagGroupEntry.uuid
+          );
+        }
+      }
       props.editTagGroup({
         ...selectedTagGroupEntry,
         title,
         color,
         textcolor,
+        locationId,
         children: selectedTagGroupEntry.children.map(tag => ({
           ...tag,
           color: applyChanges ? color : tag.color,
@@ -150,6 +172,25 @@ const EditTagGroupDialog = (props: Props) => {
 
     return (
       <DialogContent style={{ overflow: 'visible' }}>
+        {props.saveTagInLocation && (
+          <FormControl fullWidth={true} error={inputError}>
+            <Select
+              defaultValue={locationId}
+              onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                setLocationId(event.target.value);
+              }}
+            >
+              {props.locations.map(location => (
+                <MenuItem key={location.uuid} value={location.uuid}>
+                  {location.name}
+                </MenuItem>
+              ))}
+            </Select>
+            <FormHelperText>
+              {i18n.t('core:tagGroupLocationHelper')}
+            </FormHelperText>
+          </FormControl>
+        )}
         <FormControl
           fullWidth={true}
           error={inputError}
@@ -270,4 +311,11 @@ const EditTagGroupDialog = (props: Props) => {
   );
 };
 
-export default EditTagGroupDialog;
+function mapStateToProps(state) {
+  return {
+    locations: getLocations(state),
+    saveTagInLocation: state.settings.saveTagInLocation
+  };
+}
+
+export default connect(mapStateToProps)(EditTagGroupDialog);

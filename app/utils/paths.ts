@@ -143,10 +143,11 @@ export function getThumbFileLocationForDirectory(
 
 export function getMetaFileLocationForDir(
   entryPath: string,
-  dirSeparator: string // = AppConfig.dirSeparator
+  dirSeparator: string, // = AppConfig.dirSeparator
+  metaFile: string = AppConfig.metaFolderFile
 ) {
   const metaFolder = getMetaDirectoryPath(entryPath, dirSeparator);
-  return metaFolder + dirSeparator + AppConfig.metaFolderFile;
+  return metaFolder + dirSeparator + metaFile;
 }
 
 export function extractFileName(

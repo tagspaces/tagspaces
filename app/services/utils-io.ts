@@ -730,6 +730,60 @@ export function generateFileName(
   return newFileName;
 }
 
+export function parseNewTags(tagsInput: string, tagGroup: TS.TagGroup) {
+  if (tagGroup) {
+    let tags = tagsInput
+      .split(' ')
+      .join(',')
+      .split(','); // handle spaces around commas
+    tags = [...new Set(tags)]; // remove duplicates
+    tags = tags.filter(tag => tag && tag.length > 0); // zero length tags
+
+    const taggroupTags = tagGroup.children;
+    taggroupTags.forEach(tag => {
+      // filter out duplicated tags
+      tags = tags.filter(t => t !== tag.title);
+    });
+    return taggroupTags.concat(
+      tags.map(tagTitle => {
+        const tag: TS.Tag = {
+          type: taggroupTags.length > 0 ? taggroupTags[0].type : 'sidecar',
+          title: tagTitle.trim(),
+          functionality: '',
+          description: '',
+          icon: '',
+          color: tagGroup.color,
+          textcolor: tagGroup.textcolor,
+          style: taggroupTags.length > 0 ? taggroupTags[0].style : '',
+          modified_date: new Date().getTime()
+        };
+        return tag;
+      })
+    );
+  }
+}
+
+export async function loadLocationDataPromise(
+  path: string
+): Promise<TS.FileSystemEntryMeta> {
+  const entryProperties = await PlatformIO.getPropertiesPromise(path);
+  if (!entryProperties.isFile) {
+    const metaFilePath = getMetaFileLocationForDir(
+      path,
+      PlatformIO.getDirSeparator(),
+      AppConfig.folderLocationsFile
+    );
+    let metaData;
+    try {
+      metaData = await loadJSONFile(metaFilePath);
+    } catch (e) {
+      console.debug('cannot load json:' + metaFilePath, e);
+    }
+    return metaData;
+  }
+  return undefined;
+}
+
 export async function loadMetaDataPromise(
   path: string
 ): Promise<TS.FileSystemEntryMeta> {
@@ -750,6 +804,7 @@ export async function loadMetaDataPromise(
       metaData = {};
     }
     metaDataObject = {
+      ...metaData,
       description: metaData.description || '',
       color: metaData.color || '',
       tags: metaData.tags || [],
@@ -772,6 +827,7 @@ export async function loadMetaDataPromise(
       metaData = {};
     }
     metaDataObject = {
+      ...metaData,
       id: metaData.id || uuidv1(),
       description: metaData.description || '',
       color: metaData.color || '',
@@ -809,6 +865,9 @@ export function cleanMetaData(
   if (metaData.dirs && metaData.dirs.length > 0) {
     cleanedMeta.dirs = metaData.dirs;
   }
+  if (metaData.tagGroups && metaData.tagGroups.length > 0) {
+    cleanedMeta.tagGroups = metaData.tagGroups;
+  }
   if (metaData.tags && metaData.tags.length > 0) {
     cleanedMeta.tags = [];
     metaData.tags.forEach(tag => {
@@ -831,6 +890,44 @@ export function cleanMetaData(
     });
   }
   return cleanedMeta;
+}
+
+export async function saveLocationDataPromise(
+  path: string,
+  metaData: any
+): Promise<any> {
+  const entryProperties = await PlatformIO.getPropertiesPromise(path);
+  if (entryProperties) {
+    let metaFilePath;
+    if (!entryProperties.isFile) {
+      // check and create meta folder if not exist
+      // todo not need to check if folder exist first createDirectoryPromise() recursively will skip creation of existing folders https://nodejs.org/api/fs.html#fs_fs_mkdir_path_options_callback
+      const metaDirectoryPath = getMetaDirectoryPath(
+        path,
+        PlatformIO.getDirSeparator()
+      );
+      const metaDirectoryProperties = await PlatformIO.getPropertiesPromise(
+        metaDirectoryPath
+      );
+      if (!metaDirectoryProperties) {
+        await PlatformIO.createDirectoryPromise(metaDirectoryPath);
+      }
+
+      metaFilePath = getMetaFileLocationForDir(
+        path,
+        PlatformIO.getDirSeparator(),
+        AppConfig.folderLocationsFile
+      );
+    }
+    const content = JSON.stringify({
+      ...metaData,
+      appName: versionMeta.name,
+      appVersion: versionMeta.version,
+      lastUpdated: new Date().toJSON()
+    });
+    return PlatformIO.saveTextFilePromise(metaFilePath, content, true);
+  }
+  return Promise.reject(new Error('file not found' + path));
 }
 
 export async function saveMetaDataPromise(
