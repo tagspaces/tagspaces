@@ -580,5 +580,6 @@
   "ignorePatternDialogTitle": "Add Ignore Pattern",
   "ignorePatternRemove": "Remove ignore pattern",
   "pathNotInCurrentLocation": "Ignore pattern path is not in the current location",
+  "applyTag": "Apply Tag",
   "-": "-"
 }
