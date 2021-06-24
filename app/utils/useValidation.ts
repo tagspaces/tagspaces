@@ -20,11 +20,10 @@ export default function useValidation() {
   };
 
   /**
-   *
    * @param errorKey - if have error for the specified key
    * if not set errorKey return if its have errors at general
    */
-  const haveError = (errorKey?: string) => {
+  const haveError = (errorKey?: string): boolean => {
     if (errorKey) {
       return errorInput.some(err => err === errorKey);
     }

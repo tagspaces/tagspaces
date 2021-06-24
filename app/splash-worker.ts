@@ -52,7 +52,8 @@ function init() {
               counter += 1;
               directoryIndex.push(enhanceEntry(directoryEntry));
             }
-          }
+          },
+          arg.ignorePatterns
         )
           .then(() => {
             // entries - can be used for further processing

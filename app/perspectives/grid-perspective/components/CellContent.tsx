@@ -141,15 +141,16 @@ const CellContent = (props: Props) => {
     return (
       <div
         style={{
-          backgroundColor: fsEntryBackgroundColor
+          backgroundColor: fsEntryBackgroundColor,
+          opacity: fsEntry.isIgnored ? 0.3 : 1
         }}
       >
         <div
           className={classes.gridCellThumb}
+          title={fsEntry.isIgnored && i18n.t('core:ignoredFolder')}
           style={{
             position: 'relative',
-            // zIndex: 1,
-            height: 150 // fsEntry.isFile ? 150 : 70
+            height: 150
           }}
         >
           {fsEntry.thumbPath ? (
@@ -244,7 +245,9 @@ const CellContent = (props: Props) => {
         container
         wrap="nowrap"
         className={classes.rowHover}
+        title={fsEntry.isIgnored && i18n.t('core:ignoredFolder')}
         style={{
+          opacity: fsEntry.isIgnored ? 0.3 : 1,
           backgroundColor: selected
             ? theme.palette.primary.light
             : theme.palette.background.default
@@ -276,9 +279,7 @@ const CellContent = (props: Props) => {
               }
             }}
             style={{
-              backgroundColor: fsEntry.isFile
-                ? 'transparent'
-                : fsEntryBackgroundColor
+              backgroundColor: fsEntryColor
             }}
           >
             {fsEntry.isFile ? fsEntry.extension : <FolderIcon />}

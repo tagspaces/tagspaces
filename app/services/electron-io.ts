@@ -18,6 +18,7 @@
 import fsextra from 'fs-extra';
 import pathLib from 'path';
 import winattr from 'winattr';
+import micromatch from 'micromatch';
 import {
   extractFileExtension,
   extractFileName,
@@ -222,7 +223,8 @@ export default class ElectronIO {
 
   createDirectoryIndexInWorker = (
     directoryPath: string,
-    extractText: boolean
+    extractText: boolean,
+    ignorePatterns: Array<string>
   ): Promise<any> =>
     new Promise((resolve, reject) => {
       if (this.isWorkerAvailable()) {
@@ -231,7 +233,8 @@ export default class ElectronIO {
           id: timestamp,
           action: 'createDirectoryIndex',
           path: directoryPath,
-          extractText
+          extractText,
+          ignorePatterns
         });
         this.ipcRenderer.once(timestamp, (event, data) => {
           // console.log('Answer from worker recieved ' + data.result);
@@ -265,7 +268,9 @@ export default class ElectronIO {
   listDirectoryPromise = (
     path: string,
     lite: boolean = true,
-    extractTextContent: boolean = false
+    extractTextContent: boolean = false,
+    ignorePatterns: Array<string> = [],
+    showIgnored: boolean = true
   ): Promise<Array<Object>> =>
     new Promise(resolve => {
       const enhancedEntries = [];
@@ -292,6 +297,16 @@ export default class ElectronIO {
         }
 
         if (entries) {
+          if (!showIgnored && ignorePatterns.length > 0) {
+            // eslint-disable-next-line no-param-reassign
+            entries = entries.filter(
+              entry =>
+                !micromatch.isMatch(
+                  path + AppConfig.dirSeparator + entry,
+                  ignorePatterns
+                )
+            );
+          }
           entries.forEach(entry => {
             entryPath = path + AppConfig.dirSeparator + entry;
             eentry = {};
@@ -300,6 +315,12 @@ export default class ElectronIO {
             eentry.tags = [];
             eentry.thumbPath = '';
             eentry.meta = {};
+            if (
+              ignorePatterns.length > 0 &&
+              micromatch.isMatch(entryPath, ignorePatterns) // { basename: true })
+            ) {
+              eentry.isIgnored = true;
+            }
 
             try {
               stats = this.fs.statSync(entryPath);

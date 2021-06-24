@@ -18,6 +18,7 @@
 
 import uuidv1 from 'uuid';
 import { saveAs } from 'file-saver';
+import micromatch from 'micromatch';
 import PlatformIO from './platform-io';
 import AppConfig from '../config';
 import {
@@ -128,7 +129,8 @@ export function enhanceEntry(entry: any): TS.FileSystemEntry {
     tags: [...sidecarTags, ...fileNameTags],
     size: entry.size,
     lmdt: entry.lmdt,
-    path: entry.path
+    path: entry.path,
+    isIgnored: entry.isIgnored
   };
   if (sidecarDescription) {
     enhancedEntry.description = sidecarDescription;
@@ -377,12 +379,17 @@ export function getPrevFile(
 
 export function createDirectoryIndex(
   directoryPath: string,
-  extractText: boolean = false
+  extractText: boolean = false,
+  ignorePatterns: Array<string>
 ): Promise<Array<TS.FileSystemEntry>> {
   const dirPath = cleanTrailingDirSeparator(directoryPath);
   if (PlatformIO.isWorkerAvailable() && !PlatformIO.haveObjectStoreSupport()) {
     // Start indexing in worker if not in the object store mode
-    return PlatformIO.createDirectoryIndexInWorker(dirPath, extractText);
+    return PlatformIO.createDirectoryIndexInWorker(
+      dirPath,
+      extractText,
+      ignorePatterns
+    );
   }
 
   const SearchIndex = [];
@@ -413,7 +420,8 @@ export function createDirectoryIndex(
             counter += 1;
             SearchIndex.push(enhanceEntry(directoryEntry));
           }
-        }
+        },
+        ignorePatterns
       )
         .then(() => {
           // entries - can be used for further processing
@@ -442,8 +450,12 @@ export function walkDirectory(
   path: string,
   options: Object = {},
   fileCallback: any,
-  dirCallback: any
+  dirCallback: any,
+  ignorePatterns: Array<string> = []
 ) {
+  if (ignorePatterns.length > 0 && micromatch.isMatch(path, ignorePatterns)) {
+    return;
+  }
   const mergedOptions = {
     recursive: false,
     skipMetaFolder: true,
@@ -460,9 +472,17 @@ export function walkDirectory(
         if (window.walkCanceled || entries === undefined) {
           return false;
         }
+
         return Promise.all(
           entries.map(entry => {
             if (window.walkCanceled) {
+              return false;
+            }
+
+            if (
+              ignorePatterns.length > 0 &&
+              micromatch.isMatch(entry.path, ignorePatterns)
+            ) {
               return false;
             }
 
@@ -504,7 +524,8 @@ export function walkDirectory(
                 entry.path,
                 mergedOptions,
                 fileCallback,
-                dirCallback
+                dirCallback,
+                ignorePatterns
               );
             }
             return entry;

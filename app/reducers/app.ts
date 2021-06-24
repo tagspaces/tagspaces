@@ -929,7 +929,16 @@ export const actions = {
     } */
     // dispatch(actions.setCurrentDirectoryColor('')); // this is to reset color only
     dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
-    PlatformIO.listDirectoryPromise(directoryPath, false)
+    const currentLocation: TS.Location = getLocation(
+      getState(),
+      getState().app.currentLocationId
+    );
+    PlatformIO.listDirectoryPromise(
+      directoryPath,
+      false,
+      true,
+      currentLocation ? currentLocation.ignorePatternPaths : []
+    )
       .then(results => {
         if (results !== undefined) {
           prepareDirectoryContent(
