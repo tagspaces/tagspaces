@@ -391,6 +391,9 @@ export default (state: Array<TS.TagGroup> = defaultTagLibrary, action: any) => {
                 arr[index].children.push(tag);
               }
             });
+            if (tagGroup.locationId) {
+              arr[index].locationId = tagGroup.locationId;
+            }
           } else {
             arr.push(tagGroup);
           }
@@ -415,7 +418,9 @@ export const actions = {
       const location: TS.Location = locations.find(
         l => l.uuid === entry.locationId
       );
-      Pro.MetaOperations.createTagGroup(location.path, entry);
+      if (location) {
+        Pro.MetaOperations.createTagGroup(location.path, entry);
+      }
     }
     dispatch(actions.createTagGroupInt(entry));
   },
@@ -432,7 +437,9 @@ export const actions = {
       const location: TS.Location = locations.find(
         l => l.uuid === entry.locationId
       );
-      Pro.MetaOperations.editTagGroup(location.path, entry);
+      if (location) {
+        Pro.MetaOperations.editTagGroup(location.path, entry);
+      }
     }
     dispatch(actions.editTagGroupInt(entry));
   },
@@ -453,7 +460,9 @@ export const actions = {
       const location: TS.Location = locations.find(
         l => l.uuid === tagGroup.locationId
       );
-      Pro.MetaOperations.removeTagGroup(location.path, parentTagGroupUuid);
+      if (location) {
+        Pro.MetaOperations.removeTagGroup(location.path, parentTagGroupUuid);
+      }
     }
     dispatch(actions.removeTagGroupInt(parentTagGroupUuid));
   },
@@ -474,7 +483,9 @@ export const actions = {
       const location: TS.Location = locations.find(
         l => l.uuid === entry.locationId
       );
-      Pro.MetaOperations.mergeTagGroup(location.path, entry);
+      if (location) {
+        Pro.MetaOperations.mergeTagGroup(location.path, entry);
+      }
     }
     dispatch(actions.mergeTagGroupInt(entry));
   },
@@ -521,8 +532,10 @@ export const actions = {
       const location: TS.Location = locations.find(
         l => l.uuid === tagGroup.locationId
       );
-      tagGroup.children = newTags;
-      Pro.MetaOperations.editTagGroup(location.path, tagGroup);
+      if (location) {
+        tagGroup.children = newTags;
+        Pro.MetaOperations.editTagGroup(location.path, tagGroup);
+      }
     }
   },
   addTags: (tags: Array<TS.Tag>, tagGroup: TS.TagGroup) => ({
@@ -558,7 +571,9 @@ export const actions = {
       const location: TS.Location = locations.find(
         l => l.uuid === tagGroup.locationId
       );
-      Pro.MetaOperations.editTagGroup(location.path, newTagGroup, true);
+      if (location) {
+        Pro.MetaOperations.editTagGroup(location.path, newTagGroup, true);
+      }
     }
     dispatch(actions.editTagGroupInt(newTagGroup));
   },
@@ -599,7 +614,9 @@ export const actions = {
         const location: TS.Location = locations.find(
           l => l.uuid === tagGroup.locationId
         );
-        Pro.MetaOperations.editTagGroup(location.path, editedTagGroup, true);
+        if (location) {
+          Pro.MetaOperations.editTagGroup(location.path, editedTagGroup, true);
+        }
       }
       dispatch(actions.editTagGroupInt(editedTagGroup));
     }

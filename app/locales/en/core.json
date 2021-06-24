@@ -573,5 +573,6 @@
   "noSubFoldersFound": "No sub folders in the current folder",
   "fileTaggingSetting": "File tagging method",
   "default": "Default",
+  "refreshTagGroups": "Refresh from Locations",
   "-": "-"
 }

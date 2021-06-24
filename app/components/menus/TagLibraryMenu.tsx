@@ -44,6 +44,8 @@ interface Props {
     notificationType?: string, // NotificationTypes
     autohide?: boolean
   ) => void;
+  saveTagInLocation: boolean;
+  refreshTagsFromLocation: () => void;
 }
 
 const TagLibraryMenu = (props: Props) => {
@@ -126,6 +128,20 @@ const TagLibraryMenu = (props: Props) => {
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:createTagGroupTitle')} />
         </MenuItem>
+        {props.saveTagInLocation && (
+          <MenuItem
+            data-tid="refreshTagGroups"
+            onClick={() => {
+              props.refreshTagsFromLocation();
+              props.onClose();
+            }}
+          >
+            <ListItemIcon>
+              <ImportExportIcon />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:refreshTagGroups')} />
+          </MenuItem>
+        )}
         <MenuItem data-tid="importTagGroup" onClick={handleImportTagGroup}>
           <ListItemIcon>
             <ImportExportIcon />

@@ -142,24 +142,28 @@ const TagLibrary = (props: Props) => {
 
   useEffect(() => {
     if (props.saveTagInLocation) {
-      props.locations.map(location =>
-        Pro.MetaOperations.getTagGroups(location.path)
-          .then((tagGroups: Array<TS.TagGroup>) => {
-            if (tagGroups && tagGroups.length > 0) {
-              const newGroups = tagGroups.map(group => ({
-                ...group,
-                locationId: location.uuid
-              }));
-              props.importTagGroups(newGroups, false);
-            }
-            return true;
-          })
-          .catch(err => {
-            console.error(err);
-          })
-      );
+      refreshTagsFromLocation();
     }
   }, []);
+
+  const refreshTagsFromLocation = () => {
+    props.locations.map(location =>
+      Pro.MetaOperations.getTagGroups(location.path)
+        .then((tagGroups: Array<TS.TagGroup>) => {
+          if (tagGroups && tagGroups.length > 0) {
+            const newGroups = tagGroups.map(group => ({
+              ...group,
+              locationId: location.uuid
+            }));
+            props.importTagGroups(newGroups, false);
+          }
+          return true;
+        })
+        .catch(err => {
+          console.error(err);
+        })
+    );
+  };
 
   const isTagLibraryReadOnly =
     window.ExtTagLibrary && window.ExtTagLibrary.length > 0;
@@ -438,6 +442,8 @@ const TagLibrary = (props: Props) => {
         showCreateTagGroupDialog={showCreateTagGroupDialog}
         showNotification={showNotification}
         openURLExternally={props.openURLExternally}
+        saveTagInLocation={props.saveTagInLocation}
+        refreshTagsFromLocation={refreshTagsFromLocation}
       />
       {Boolean(tagMenuAnchorEl) && (
         <TagMenu
