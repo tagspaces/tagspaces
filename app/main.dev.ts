@@ -20,6 +20,8 @@ import { app, BrowserWindow, ipcMain, globalShortcut, dialog } from 'electron';
 import windowStateKeeper from 'electron-window-state';
 import path from 'path';
 
+require('@electron/remote/main').initialize();
+
 let mainWindow = null;
 (global as any).splashWorkerWindow = null;
 

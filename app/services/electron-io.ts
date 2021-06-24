@@ -63,7 +63,7 @@ export default class ElectronIO {
       this.electron = window.require('electron');
       this.ipcRenderer = this.electron.ipcRenderer;
       this.webFrame = this.electron.webFrame;
-      this.remote = this.electron.remote;
+      this.remote = window.require('@electron/remote'); // this.electron.remote;
       this.workerWindow = this.remote.getGlobal('splashWorkerWindow');
       this.win = this.remote.getCurrentWindow();
       this.app = this.remote.app;
