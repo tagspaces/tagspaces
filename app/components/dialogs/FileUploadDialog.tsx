@@ -22,7 +22,6 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
-import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -34,6 +33,7 @@ import PlatformIO from '-/services/platform-io';
 import { actions as AppActions, getProgress } from '-/reducers/app';
 import { extractFileName } from '-/utils/paths';
 import i18n from '-/services/i18n';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {
   open: boolean;
@@ -86,17 +86,7 @@ const FileUploadDialog = (props: Props) => {
     >
       <DialogTitle data-tid="importDialogTitle">
         {i18n.t('core:importDialogTitle')}
-        <IconButton
-          aria-label="close"
-          style={{
-            position: 'absolute',
-            right: 5,
-            top: 5
-          }}
-          onClick={onClose}
-        >
-          <CloseIcon />
-        </IconButton>
+        <DialogCloseButton onClose={onClose} />
       </DialogTitle>
       <DialogContent
         style={{

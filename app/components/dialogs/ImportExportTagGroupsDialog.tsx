@@ -36,6 +36,7 @@ import i18n from '-/services/i18n';
 import { isFunc } from '-/utils/misc';
 import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 const styles: any = {
   root: {
@@ -135,42 +136,14 @@ const ImportExportTagGroupsDialog = (props: Props) => {
     </div>
   );
 
-  const renderTitle = () => {
-    if (props.dialogModeImport) {
-      return (
-        <DialogTitle>
-          {i18n.t('core:importGroupTagsTitle')}
-          <IconButton
-            aria-label="close"
-            style={{
-              position: 'absolute',
-              right: 5,
-              top: 5
-            }}
-            onClick={onClose}
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-      );
-    }
-    return (
-      <DialogTitle>
-        {i18n.t('core:exportGroupTagsTitle')}{' '}
-        <IconButton
-          aria-label="close"
-          style={{
-            position: 'absolute',
-            right: 5,
-            top: 5
-          }}
-          onClick={onClose}
-        >
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
-    );
-  };
+  const renderTitle = () => (
+    <DialogTitle>
+      {props.dialogModeImport
+        ? i18n.t('core:importGroupTagsTitle')
+        : i18n.t('core:exportGroupTagsTitle')}
+      <DialogCloseButton onClose={onClose} />
+    </DialogTitle>
+  );
 
   const renderContent = () => (
     <DialogContent className={props.classes.root}>
@@ -185,9 +158,7 @@ const ImportExportTagGroupsDialog = (props: Props) => {
 
   const renderActions = () => (
     <DialogActions>
-      <Button onClick={props.onClose} color="primary">
-        {i18n.t('core:cancel')}
-      </Button>
+      <Button onClick={props.onClose}>{i18n.t('core:cancel')}</Button>
       <Button
         disabled={!isSelected()}
         onClick={onConfirm}

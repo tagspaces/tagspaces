@@ -659,7 +659,6 @@ const EntryProperties = (props: Props) => {
                             <div>
                               <Button
                                 data-tid="cancelRenameEntryTID"
-                                color="primary"
                                 onClick={deactivateEditNameField}
                               >
                                 {i18n.t('core:cancel')}
@@ -805,7 +804,6 @@ const EntryProperties = (props: Props) => {
                 >
                   {editDescription !== undefined && (
                     <Button
-                      color="primary"
                       className={classes.button}
                       onClick={() => setEditDescription(undefined)}
                     >

@@ -25,11 +25,10 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import i18n from '-/services/i18n';
 import useFirstRender from '-/utils/useFirstRender';
 import { TS } from '-/tagspaces.namespace';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {
   open: boolean;
@@ -100,17 +99,7 @@ const CreateTagsDialog = (props: Props) => {
     >
       <DialogTitle>
         {i18n.t('core:addTagsToGroupTitle')}
-        <IconButton
-          aria-label="close"
-          style={{
-            position: 'absolute',
-            right: 5,
-            top: 5
-          }}
-          onClick={onClose}
-        >
-          <CloseIcon />
-        </IconButton>
+        <DialogCloseButton onClose={onClose} />
       </DialogTitle>
       <DialogContent style={{ minWidth: 400 }}>
         <FormControl fullWidth={true} error={inputError}>
@@ -130,9 +119,7 @@ const CreateTagsDialog = (props: Props) => {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="primary">
-          {i18n.t('core:cancel')}
-        </Button>
+        <Button onClick={onClose}>{i18n.t('core:cancel')}</Button>
         <Button
           disabled={inputError}
           onClick={onConfirm}

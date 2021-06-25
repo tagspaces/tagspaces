@@ -21,12 +21,11 @@ import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import { withStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import { SketchPicker } from 'react-color';
 import i18n from '-/services/i18n';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 const presetColors = [
   '#ffffff',
@@ -109,17 +108,7 @@ const ColorPickerDialog = (props: Props) => {
     >
       <DialogTitle data-tid="colorPickerDialogTitle">
         {i18n.t('core:colorPickerDialogTitle')}
-        <IconButton
-          aria-label="close"
-          style={{
-            position: 'absolute',
-            right: 5,
-            top: 5
-          }}
-          onClick={onClose}
-        >
-          <CloseIcon />
-        </IconButton>
+        <DialogCloseButton onClose={onClose} />
       </DialogTitle>
       <DialogContent
         data-tid="colorPickerDialogContent"
@@ -137,11 +126,7 @@ const ColorPickerDialog = (props: Props) => {
         />
       </DialogContent>
       <DialogActions>
-        <Button
-          data-tid="colorPickerCloseDialog"
-          onClick={props.onClose}
-          color="primary"
-        >
+        <Button data-tid="colorPickerCloseDialog" onClick={props.onClose}>
           {i18n.t('core:cancel')}
         </Button>
         <Button

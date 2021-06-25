@@ -42,32 +42,6 @@ export function onEnterKeyHandler(event: any, confirmFunction: () => void) {
 }
 
 const GenericDialog = (props: Props) => {
-  // function renderTitle() {
-  //   return (
-  //     <DialogTitle>Dialog</DialogTitle>
-  //   );
-  // }
-
-  // function renderContent() {
-  //   return (
-  //     <DialogContent>
-  //       <DialogContentText>
-  //         Some content
-  //       </DialogContentText>
-  //     </DialogContent>
-  //   );
-  // }
-
-  // function renderActions() {
-  //   return (
-  //     <DialogActions>
-  //       <Button onClick={props.onClose} color="primary">
-  //         {i18n.t('core:cancel')}
-  //       </Button>
-  //     </DialogActions>
-  //   );
-  // }
-
   const { fullScreen, open, onEnterKey, onClose, onBackdropClick } = props;
   return (
     <Dialog

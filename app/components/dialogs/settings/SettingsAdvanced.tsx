@@ -20,7 +20,6 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -128,19 +127,24 @@ const SettingsAdvanced = (props: Props) => {
         </ListItem>
         <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:tileServerTitle')} />
-          <ListItemSecondaryAction>
-            <IconButton
-              aria-label={i18n.t('core:add')}
-              aria-haspopup="true"
-              edge="end"
-              data-tid="addTileServerTID"
+          <ListItemSecondaryAction style={{ right: 0 }}>
+            <Button
+              color="primary"
               onClick={event => handleEditTileServerClick(event, {}, true)}
             >
-              <AddIcon />
-            </IconButton>
+              {i18n.t('tileServerDialogAdd')}
+            </Button>
           </ListItemSecondaryAction>
         </ListItem>
-        <Paper elevation={2} style={{ margin: 2, padding: 5 }}>
+        <List
+          style={{
+            padding: 5,
+            paddingLeft: 10,
+            backgroundColor: '#d3d3d34a',
+            borderRadius: 10
+          }}
+          dense
+        >
           {props.tileServers.length > 0 ? (
             props.tileServers.map((tileServer, index) => (
               <ListItem key={tileServer.uuid} className={classes.listItem}>
@@ -179,7 +183,7 @@ const SettingsAdvanced = (props: Props) => {
               />
             </ListItem>
           )}
-        </Paper>
+        </List>
         {/* <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:coloredFileExtensionsEnabled')} />
           <Switch

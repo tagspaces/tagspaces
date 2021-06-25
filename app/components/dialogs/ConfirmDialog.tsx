@@ -22,8 +22,6 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContentText from '@material-ui/core/DialogContentText';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import BulletIcon from '@material-ui/icons/Remove';
@@ -31,6 +29,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Dialog from '@material-ui/core/Dialog';
 import i18n from '-/services/i18n';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {
   open: boolean;
@@ -45,28 +44,18 @@ interface Props {
 }
 
 const ConfirmDialog = (props: Props) => {
-  const { open, onClose } = props;
+  const { open, onClose, confirmCallback } = props;
 
   function onConfirm(result) {
-    props.confirmCallback(result);
-    props.onClose();
+    confirmCallback(result);
+    onClose();
   }
 
   return (
     <Dialog open={open} onClose={onClose} keepMounted scroll="paper">
       <DialogTitle>
         {props.title}
-        <IconButton
-          aria-label="close"
-          style={{
-            position: 'absolute',
-            right: 5,
-            top: 5
-          }}
-          onClick={onClose}
-        >
-          <CloseIcon />
-        </IconButton>
+        <DialogCloseButton onClose={onClose} />
       </DialogTitle>
       <DialogContent>
         <DialogContentText
