@@ -210,11 +210,10 @@ const actions = {
         reader.onload = async (event: any) => {
           await readerLoaded(event, inx, filePath);
         };
-        if (AppConfig.isCordova) {
+        /* if (AppConfig.isCordova) {
           reader.readAsDataURL(file);
-        } else {
-          reader.readAsArrayBuffer(file);
-        }
+        } else { */
+        reader.readAsArrayBuffer(file);
       }
 
       async function readerLoaded(event, index, fileTargetPath) {
