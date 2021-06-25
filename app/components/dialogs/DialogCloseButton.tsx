@@ -17,32 +17,30 @@
  */
 
 import React from 'react';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Dialog from '@material-ui/core/Dialog';
-import { CircularProgress } from '@material-ui/core';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import i18n from '-/services/i18n';
 
 interface Props {
-  open: boolean;
   onClose: () => void;
 }
 
-const ProgressDialog = (props: Props) => (
-  <Dialog open={props.open} onClose={props.onClose}>
-    <DialogTitle data-tid="progressDialogTitle">
-      <DialogCloseButton onClose={props.onClose} />
-    </DialogTitle>
-    <DialogContent
+const DialogCloseButton = (props: Props) => {
+  const { onClose } = props;
+  return (
+    <IconButton
+      title={i18n.t('closeButton')}
+      aria-label="close"
       style={{
-        marginLeft: 'auto',
-        marginRight: 'auto',
-        flexGrow: 1
+        position: 'absolute',
+        right: 5,
+        top: 5
       }}
+      onClick={onClose}
     >
-      <CircularProgress size={24} />
-    </DialogContent>
-  </Dialog>
-);
+      <CloseIcon />
+    </IconButton>
+  );
+};
 
-export default ProgressDialog;
+export default DialogCloseButton;

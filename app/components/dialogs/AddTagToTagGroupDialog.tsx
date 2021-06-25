@@ -115,9 +115,7 @@ const AddTagToTagGroupDialog = (props: Props) => {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="primary">
-          {i18n.t('core:cancel')}
-        </Button>
+        <Button onClick={onClose}>{i18n.t('core:cancel')}</Button>
         <Button
           disabled={tagGroup === undefined}
           onClick={onConfirm}

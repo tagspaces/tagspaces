@@ -26,10 +26,7 @@ import DeleteTagGroupIcon from '@material-ui/icons/DeleteForever';
 import SortTagGroupIcon from '@material-ui/icons/SortByAlpha';
 import ShowEntriesWithTagIcon from '@material-ui/icons/SearchOutlined';
 import TagIcon from '@material-ui/icons/LocalOffer';
-import InfoIcon from '@material-ui/icons/InfoOutlined';
-import Tooltip from '@material-ui/core/Tooltip';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import IconButton from '@material-ui/core/IconButton';
 import CollectTagsIcon from '@material-ui/icons/Voicemail';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -41,6 +38,7 @@ import { getMaxSearchResults } from '-/reducers/settings';
 import { actions as AppActions } from '-/reducers/app';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { TS } from '-/tagspaces.namespace';
+import InfoIcon from '-/components/InfoIcon';
 
 interface Props {
   classes?: any;
@@ -149,11 +147,7 @@ const TagGroupMenu = (props: Props) => {
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:showFilesWithTags')} />
           <ListItemSecondaryAction>
-            <Tooltip arrow title={i18n.t('core:showFilesWithTagsTooltip')}>
-              <IconButton edge="end" aria-label="delete">
-                <InfoIcon />
-              </IconButton>
-            </Tooltip>
+            <InfoIcon tooltip={i18n.t('core:showFilesWithTagsTooltip')} />
           </ListItemSecondaryAction>
         </MenuItem>
         <MenuItem
