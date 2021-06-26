@@ -543,6 +543,7 @@
   "importSavedSearch": "Import Saved Searches",
   "exportSearchesTitle": "Export Searches",
   "selectAllSearches": "Select All Searches",
+  "noSavedSearches": "No saved searches found",
   "notImportedSearches": "Searches will not be imported",
   "searchExist": "Search already exist, it will be replaced with this one",
   "searchSaveBtn": "Save Search",

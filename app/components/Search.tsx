@@ -244,6 +244,9 @@ const Search = (props: Props) => {
     const { value } = target;
 
     const savedSearch = props.searches.find(search => search.uuid === value);
+    if (!savedSearch) {
+      return true;
+    }
     textQuery.current = savedSearch.textQuery;
     fileTypes.current = savedSearch.fileTypes;
     lastModified.current = savedSearch.lastModified;
@@ -1101,6 +1104,9 @@ const Search = (props: Props) => {
                 value={props.searchQuery.uuid ? props.searchQuery.uuid : -1}
               >
                 <MenuItem value={-1} style={{ display: 'none' }} />
+                {props.searches.length < 1 && (
+                  <MenuItem>{i18n.t('noSearchesFound')}</MenuItem>
+                )}
                 {props.searches.map(search => (
                   <MenuItem key={search.uuid} value={search.uuid}>
                     <span style={{ width: '100%' }}>{search.title}</span>
