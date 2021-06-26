@@ -30,7 +30,7 @@ import SelectAllIcon from '@material-ui/icons/CheckBox';
 import DeSelectAllIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CopyIcon from '@material-ui/icons/FileCopy';
 import DeleteIcon from '@material-ui/icons/Delete';
-import ExportIcon from '@material-ui/icons/SaveAlt';
+import ExportIcon from '@material-ui/icons/AssignmentReturn';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 
@@ -177,6 +177,7 @@ const MainToolbar = (props: Props) => {
           <IconButton
             data-tid="gridPerspectiveExportCsvMenuTID"
             onClick={props.handleExportCsvMenu}
+            style={{ transform: 'scale(-1, 1)' }}
           >
             <ExportIcon />
           </IconButton>
