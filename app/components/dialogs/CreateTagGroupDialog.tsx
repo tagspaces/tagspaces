@@ -29,14 +29,13 @@ import Dialog from '@material-ui/core/Dialog';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import { connect } from 'react-redux';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import ColorPickerDialog from './ColorPickerDialog';
 import i18n from '-/services/i18n';
 import TransparentBackground from '../TransparentBackground';
 import { TS } from '-/tagspaces.namespace';
 import { getLocations } from '-/reducers/locations';
 import { getCurrentLocationId } from '-/reducers/app';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {
   open: boolean;
@@ -180,17 +179,7 @@ const CreateTagGroupDialog = (props: Props) => {
     >
       <DialogTitle>
         {i18n.t('core:createTagGroupTitle')}
-        <IconButton
-          aria-label="close"
-          style={{
-            position: 'absolute',
-            right: 5,
-            top: 5
-          }}
-          onClick={onClose}
-        >
-          <CloseIcon />
-        </IconButton>
+        <DialogCloseButton onClose={onClose} />
       </DialogTitle>
       <DialogContent>
         {props.saveTagInLocation && (
@@ -279,11 +268,7 @@ const CreateTagGroupDialog = (props: Props) => {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button
-          data-tid="createTagGroupCancelButton"
-          onClick={props.onClose}
-          color="primary"
-        >
+        <Button data-tid="createTagGroupCancelButton" onClick={props.onClose}>
           {i18n.t('core:cancel')}
         </Button>
         <Button

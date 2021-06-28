@@ -28,8 +28,6 @@ import AddFileIcon from '@material-ui/icons/NoteAddOutlined';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
@@ -42,6 +40,7 @@ import AppConfig from '-/config';
 import { formatDateTime4Tag } from '-/utils/misc';
 import IOActions from '-/reducers/io-actions';
 import { TS } from '-/tagspaces.namespace';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 const styles: any = () => ({
   root: {
@@ -273,17 +272,7 @@ const CreateDialog = (props: Props) => {
     >
       <DialogTitle style={{ alignSelf: 'center' }}>
         {i18n.t('createNewContent')}
-        <IconButton
-          aria-label="close"
-          style={{
-            position: 'absolute',
-            right: 5,
-            top: 5
-          }}
-          onClick={onClose}
-        >
-          <CloseIcon />
-        </IconButton>
+        <DialogCloseButton onClose={onClose} />
       </DialogTitle>
       <DialogContent
         onKeyPress={handleKeyPress}

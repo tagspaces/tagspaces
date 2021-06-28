@@ -29,8 +29,6 @@ import { withStyles } from '@material-ui/core/styles';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import i18n from '-/services/i18n';
 import { isPlusCode } from '-/utils/misc';
 import { Pro } from '-/pro';
@@ -41,6 +39,7 @@ import { AppConfig } from '-/config';
 import { TS } from '-/tagspaces.namespace';
 import useValidation from '-/utils/useValidation';
 import { getMapTileServer } from '-/reducers/settings';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 const styles = () => ({
   root: {
@@ -56,7 +55,6 @@ interface Props {
   fullScreen: boolean;
   onClose: () => void;
   editTagForEntry: (path: string, tag: TS.Tag, title: string) => void;
-  // currentEntryPath: string;
   selectedEntries: Array<TS.FileSystemEntry>;
   selectedTag: TS.Tag;
   tileServer: TS.MapTileServer;
@@ -120,18 +118,7 @@ const EditEntryTagDialog = (props: Props) => {
   function renderTitle() {
     return (
       <DialogTitle>
-        {i18n.t('core:tagProperties')}{' '}
-        <IconButton
-          aria-label="close"
-          style={{
-            position: 'absolute',
-            right: 5,
-            top: 5
-          }}
-          onClick={onClose}
-        >
-          <CloseIcon />
-        </IconButton>
+        {i18n.t('core:tagProperties')} <DialogCloseButton onClose={onClose} />
       </DialogTitle>
     );
   }
@@ -201,11 +188,7 @@ const EditEntryTagDialog = (props: Props) => {
           <div />
         )}
         <div>
-          <Button
-            data-tid="closeEditTagEntryDialog"
-            onClick={props.onClose}
-            color="primary"
-          >
+          <Button data-tid="closeEditTagEntryDialog" onClick={props.onClose}>
             {i18n.t('core:cancel')}
           </Button>
           <Button

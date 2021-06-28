@@ -31,7 +31,6 @@ import Button from '@material-ui/core/Button';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import ShareIcon from '@material-ui/icons/Link';
 import Tooltip from '@material-ui/core/Tooltip';
-import InfoIcon from '@material-ui/icons/ContactSupport';
 import LocationIcon from '@material-ui/icons/WorkOutline';
 import CloudLocationIcon from '@material-ui/icons/CloudQueue';
 import DOMPurify from 'dompurify';
@@ -87,6 +86,7 @@ import MarkerShadowIcon from '-/assets/icons/marker-shadow.png';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { TS } from '-/tagspaces.namespace';
 import NoTileServer from '-/components/NoTileServer';
+import InfoIcon from '-/components/InfoIcon';
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
@@ -659,7 +659,6 @@ const EntryProperties = (props: Props) => {
                             <div>
                               <Button
                                 data-tid="cancelRenameEntryTID"
-                                color="primary"
                                 onClick={deactivateEditNameField}
                               >
                                 {i18n.t('core:cancel')}
@@ -805,7 +804,6 @@ const EntryProperties = (props: Props) => {
                 >
                   {editDescription !== undefined && (
                     <Button
-                      color="primary"
                       className={classes.button}
                       onClick={() => setEditDescription(undefined)}
                     >
@@ -1082,7 +1080,12 @@ const EntryProperties = (props: Props) => {
             style={{ display: 'block', paddingLeft: 5 }}
           >
             {i18n.t('core:sharingLink')}
-            <Tooltip arrow title={i18n.t('Explanation')}>
+            <InfoIcon
+              tooltip={i18n.t(
+                'Link for sharing to other TagSpaces installation using the same location IDs'
+              )}
+            />
+            {/* <Tooltip arrow title={i18n.t('Explanation')}>
               <InfoIcon
                 style={{
                   color: theme.palette.text.secondary,
@@ -1090,7 +1093,7 @@ const EntryProperties = (props: Props) => {
                   verticalAlign: 'bottom'
                 }}
               />
-            </Tooltip>
+            </Tooltip> */}
           </Typography>
           <FormControl fullWidth={true} className={classes.formControl}>
             <TextField
@@ -1140,15 +1143,11 @@ const EntryProperties = (props: Props) => {
               style={{ display: 'block', paddingLeft: 5 }}
             >
               {i18n.t('Link for downloading')}
-              <Tooltip arrow title={i18n.t('Explanation')}>
-                <InfoIcon
-                  style={{
-                    color: theme.palette.text.secondary,
-                    paddingLeft: 5,
-                    verticalAlign: 'bottom'
-                  }}
-                />
-              </Tooltip>
+              <InfoIcon
+                tooltip={i18n.t(
+                  'Link for time limited sharing on the Internet'
+                )}
+              />
             </Typography>
             <FormControl fullWidth={true} className={classes.formControl}>
               <TextField

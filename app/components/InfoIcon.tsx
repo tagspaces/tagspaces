@@ -17,32 +17,23 @@
  */
 
 import React from 'react';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Dialog from '@material-ui/core/Dialog';
-import { CircularProgress } from '@material-ui/core';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import IconButton from '@material-ui/core/IconButton';
+import HelpIcon from '@material-ui/icons/InfoOutlined';
+import Tooltip from '@material-ui/core/Tooltip';
 
 interface Props {
-  open: boolean;
-  onClose: () => void;
+  tooltip?: string;
 }
 
-const ProgressDialog = (props: Props) => (
-  <Dialog open={props.open} onClose={props.onClose}>
-    <DialogTitle data-tid="progressDialogTitle">
-      <DialogCloseButton onClose={props.onClose} />
-    </DialogTitle>
-    <DialogContent
-      style={{
-        marginLeft: 'auto',
-        marginRight: 'auto',
-        flexGrow: 1
-      }}
-    >
-      <CircularProgress size={24} />
-    </DialogContent>
-  </Dialog>
-);
+const InfoIcon = (props: Props) => {
+  const { tooltip } = props;
+  return (
+    <Tooltip arrow title={tooltip}>
+      <IconButton edge="end" aria-label="delete">
+        <HelpIcon />
+      </IconButton>
+    </Tooltip>
+  );
+};
 
-export default ProgressDialog;
+export default InfoIcon;

@@ -22,8 +22,6 @@ import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import MobileStepper from '@material-ui/core/MobileStepper';
@@ -37,6 +35,7 @@ import AnnotateImage from '-/assets/images/annotate-undraw.svg';
 import EnterpriseImage from '-/assets/images/world-undraw.svg';
 import i18n from '-/services/i18n';
 import AppConfig from '-/config';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {
   open: boolean;
@@ -77,17 +76,7 @@ const ProTeaserDialog = (props: Props) => {
       scroll="paper"
     >
       <DialogTitle style={{ justifyContent: 'center', textAlign: 'center' }}>
-        <IconButton
-          aria-label="close"
-          style={{
-            position: 'absolute',
-            right: 5,
-            top: 5
-          }}
-          onClick={onClose}
-        >
-          <CloseIcon />
-        </IconButton>
+        <DialogCloseButton onClose={onClose} />
       </DialogTitle>
       <DialogContent style={{ paddingBottom: 0 }}>
         <SwipeableViews

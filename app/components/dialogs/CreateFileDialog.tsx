@@ -291,11 +291,7 @@ const CreateFileDialog = (props: Props) => {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button
-          data-tid="closeCreateFileDialog"
-          onClick={props.onClose}
-          color="primary"
-        >
+        <Button data-tid="closeCreateFileDialog" onClick={props.onClose}>
           {i18n.t('core:cancel')}
         </Button>
         <Button

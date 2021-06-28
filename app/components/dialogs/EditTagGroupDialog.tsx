@@ -26,8 +26,6 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Switch from '@material-ui/core/Switch';
 import Dialog from '@material-ui/core/Dialog';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { connect } from 'react-redux';
@@ -37,6 +35,7 @@ import TransparentBackground from '../TransparentBackground';
 import { TS } from '-/tagspaces.namespace';
 import { getLocations } from '-/reducers/locations';
 import { Pro } from '-/pro';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {
   open: boolean;
@@ -63,6 +62,7 @@ const EditTagGroupDialog = (props: Props) => {
   const [textcolor, setTextcolor] = useState<string>(
     props.selectedTagGroupEntry.textcolor
   );
+  const { selectedTagGroupEntry, onClose } = props;
 
   useEffect(() => {
     handleValidation();
@@ -90,7 +90,6 @@ const EditTagGroupDialog = (props: Props) => {
   const disableConfirmButton = () => inputError;
 
   const onConfirm = () => {
-    const { selectedTagGroupEntry } = props;
     if (disableConfirmButton()) {
       return;
     }
@@ -120,7 +119,7 @@ const EditTagGroupDialog = (props: Props) => {
           style: tag.style
         }))
       });
-      props.onClose();
+      onClose();
     }
   };
 
@@ -128,17 +127,7 @@ const EditTagGroupDialog = (props: Props) => {
     <DialogTitle style={{ overflow: 'visible' }}>
       {i18n.t('core:editTagGroupTitle')}
       {` '${title}'`}
-      <IconButton
-        aria-label="close"
-        style={{
-          position: 'absolute',
-          right: 5,
-          top: 5
-        }}
-        onClick={props.onClose}
-      >
-        <CloseIcon />
-      </IconButton>
+      <DialogCloseButton onClose={onClose} />
     </DialogTitle>
   );
 
@@ -274,9 +263,7 @@ const EditTagGroupDialog = (props: Props) => {
 
   const renderActions = () => (
     <DialogActions>
-      <Button onClick={props.onClose} color="primary">
-        {i18n.t('core:cancel')}
-      </Button>
+      <Button onClick={props.onClose}>{i18n.t('core:cancel')}</Button>
       <Button
         disabled={disableConfirmButton()}
         onClick={onConfirm}

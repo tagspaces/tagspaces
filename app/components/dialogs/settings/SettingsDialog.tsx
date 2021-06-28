@@ -27,8 +27,6 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import uuidv1 from 'uuid';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
@@ -41,6 +39,7 @@ import { actions, getSupportedFileTypes } from '-/reducers/settings';
 import { extend } from '-/utils/misc';
 import AppConfig from '-/config';
 import SettingsAdvanced from '-/components/dialogs/settings/SettingsAdvanced';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 const styles: any = () => ({
   mainContent: {
@@ -189,18 +188,8 @@ const SettingsDialog = (props: Props) => {
   const renderTitle = () => (
     <>
       <DialogTitle>
-        {i18n.t('core:settings')}{' '}
-        <IconButton
-          aria-label="close"
-          style={{
-            position: 'absolute',
-            right: 5,
-            top: 5
-          }}
-          onClick={onClose}
-        >
-          <CloseIcon />
-        </IconButton>
+        {i18n.t('core:settings')}
+        <DialogCloseButton onClose={onClose} />
       </DialogTitle>
       <AppBar position="static" color="default">
         <Tabs

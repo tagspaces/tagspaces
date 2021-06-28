@@ -41,11 +41,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Input from '@material-ui/core/Input';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import CheckIcon from '@material-ui/icons/Check';
-import InfoIcon from '@material-ui/icons/InfoOutlined';
-import AddIcon from '@material-ui/icons/AddCircleOutline';
+import HelpIcon from '@material-ui/icons/InfoOutlined';
 import RemoveIcon from '@material-ui/icons/RemoveCircleOutline';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
@@ -57,6 +54,8 @@ import { TS } from '-/tagspaces.namespace';
 import { locationType } from '-/utils/misc';
 import { getLocationPath } from '-/utils/paths';
 import IgnorePatternDialog from '-/components/dialogs/IgnorePatternDialog';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import InfoIcon from '-/components/InfoIcon';
 
 const styles: any = theme => ({
   formControl: {
@@ -393,20 +392,12 @@ const CreateEditLocationDialog = (props: Props) => {
       <DialogTitle>
         {props.location
           ? i18n.t('core:editLocationTitle')
-          : i18n.t('core:createLocationTitle')}{' '}
-        <IconButton
-          aria-label="close"
-          style={{
-            position: 'absolute',
-            right: 5,
-            top: 5
-          }}
-          onClick={onClose}
-        >
-          <CloseIcon />
-        </IconButton>
+          : i18n.t('core:createLocationTitle')}
+        <DialogCloseButton onClose={onClose} />
       </DialogTitle>
-      <DialogContent>
+      <DialogContent
+        style={{ overflow: AppConfig.isFirefox ? 'auto' : 'overlay' }}
+      >
         <Grid container spacing={2}>
           <Grid item xs={2} style={{ marginTop: 13, textAlign: 'left' }}>
             <Typography>{i18n.t('core:locationType')}</Typography>
@@ -566,9 +557,10 @@ const CreateEditLocationDialog = (props: Props) => {
               />
             }
             label={
-              <Tooltip arrow title={i18n.t('core:maxIndexAgeHelp')}>
-                <Typography>{i18n.t('core:maxIndexAge')}</Typography>
-              </Tooltip>
+              <Typography>
+                {i18n.t('core:maxIndexAge')}
+                <InfoIcon tooltip={i18n.t('core:maxIndexAgeHelp')} />
+              </Typography>
             }
           />
         )}
@@ -593,7 +585,7 @@ const CreateEditLocationDialog = (props: Props) => {
             <FormControlLabel
               labelPlacement="top"
               className={classes.formControl}
-              style={{ alignItems: 'start' }}
+              style={{ alignItems: 'start', marginBottom: 10 }}
               control={
                 <ToggleButtonGroup
                   value={persistTagsInSidecarFile}
@@ -621,7 +613,7 @@ const CreateEditLocationDialog = (props: Props) => {
                       <div style={{ display: 'flex' }}>
                         {persistTagsInSidecarFile === null && <CheckIcon />}
                         &nbsp;{i18n.t('core:default')}&nbsp;&nbsp;
-                        <InfoIcon />
+                        {/* <HelpIcon /> */}
                       </div>
                     </Tooltip>
                   </ToggleButton>
@@ -644,7 +636,7 @@ const CreateEditLocationDialog = (props: Props) => {
                         {persistTagsInSidecarFile !== null &&
                           !persistTagsInSidecarFile && <CheckIcon />}
                         &nbsp;Rename Files&nbsp;&nbsp;
-                        <InfoIcon />
+                        {/* <HelpIcon /> */}
                       </div>
                     </Tooltip>
                   </ToggleButton>
@@ -669,14 +661,14 @@ const CreateEditLocationDialog = (props: Props) => {
                         {persistTagsInSidecarFile !== null &&
                           persistTagsInSidecarFile && <CheckIcon />}
                         &nbsp;Use Sidecar Files&nbsp;&nbsp;
-                        <InfoIcon />
+                        {/* <HelpIcon /> */}
                       </div>
                     </Tooltip>
                   </ToggleButton>
                 </ToggleButtonGroup>
               }
               label={
-                <Typography variant="caption" display="block" gutterBottom>
+                <Typography gutterBottom>
                   {i18n.t('core:fileTaggingSetting')}
                 </Typography>
               }
@@ -684,15 +676,35 @@ const CreateEditLocationDialog = (props: Props) => {
           ))}
         {showAdvancedMode && (
           <>
-            <Typography
-              variant="caption"
-              display="block"
-              gutterBottom
-              style={{ marginTop: 10 }}
+            <FormControlLabel
+              className={classes.formControl}
+              labelPlacement="start"
+              style={{ justifyContent: 'space-between' }}
+              control={
+                <Button
+                  color="primary"
+                  onClick={() => {
+                    setIgnorePatternDialogOpen(true);
+                  }}
+                >
+                  {i18n.t('ignorePatternDialogTitle')}
+                </Button>
+              }
+              label={
+                <Typography>
+                  {i18n.t('core:ignorePatterns')}
+                  <InfoIcon tooltip={i18n.t('core:ignorePatternsHelp')} />
+                </Typography>
+              }
+            />
+            <List
+              style={{
+                padding: 5,
+                backgroundColor: '#d3d3d34a',
+                borderRadius: 10
+              }}
+              dense
             >
-              {i18n.t('core:ignorePatterns')}
-            </Typography>
-            <List style={{ padding: 0 }} dense>
               {ignorePatternPaths &&
                 ignorePatternPaths.map(ignorePatternPath => (
                   <ListItem style={{ padding: 0 }}>
@@ -714,16 +726,6 @@ const CreateEditLocationDialog = (props: Props) => {
                   </ListItem>
                 ))}
             </List>
-            <Button
-              endIcon={<AddIcon />}
-              color="primary"
-              size="small"
-              onClick={() => {
-                setIgnorePatternDialogOpen(true);
-              }}
-            >
-              {i18n.t('ignorePatternDialogTitle')}
-            </Button>
             {isIgnorePatternDialogOpen && (
               <IgnorePatternDialog
                 open={isIgnorePatternDialogOpen}
@@ -747,9 +749,7 @@ const CreateEditLocationDialog = (props: Props) => {
             : i18n.t('core:switchAdvancedMode')}
         </Button>
         <div>
-          <Button onClick={() => onClose()} color="primary">
-            {i18n.t('core:cancel')}
-          </Button>
+          <Button onClick={() => onClose()}>{i18n.t('core:cancel')}</Button>
           <Button
             disabled={disableConfirmButton()}
             onClick={onConfirm}

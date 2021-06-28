@@ -36,12 +36,12 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Typography from '@material-ui/core/Typography';
 import Dialog from '@material-ui/core/Dialog';
 import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-io';
 import AppConfig from '-/config';
 import IOActions from '-/reducers/io-actions';
 import { extractFileName } from '-/utils/paths';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {
   open: boolean;
@@ -103,7 +103,7 @@ const MoveCopyFilesDialog = (props: Props) => {
       });
   }
 
-  function onCloseDialog(event: React.MouseEvent<HTMLElement>) {
+  function onCloseDialog() {
     onClose();
   }
 
@@ -117,17 +117,7 @@ const MoveCopyFilesDialog = (props: Props) => {
     >
       <DialogTitle>
         {i18n.t('core:copyMoveFilesTitle')}
-        <IconButton
-          aria-label="close"
-          style={{
-            position: 'absolute',
-            right: 5,
-            top: 5
-          }}
-          onClick={onCloseDialog}
-        >
-          <CloseIcon />
-        </IconButton>
+        <DialogCloseButton onClose={onCloseDialog} />
       </DialogTitle>
       <DialogContent>
         <List dense style={{ width: 550 }}>
