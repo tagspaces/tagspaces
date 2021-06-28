@@ -18,6 +18,7 @@
 
 import AppConfig from '../config';
 import { TS } from '-/tagspaces.namespace';
+import PlatformIO from '-/services/platform-io';
 
 export function baseName(
   dirPath: string,
@@ -428,4 +429,18 @@ export function extractLocation(
     }
   }
   return currentLocation;
+}
+
+export function joinPaths(...paths) {
+  let result = '';
+  for (let i = 0; i < paths.length; i += 1) {
+    result =
+      result +
+      (result.endsWith(PlatformIO.getDirSeparator()) ||
+      paths[i].startsWith(PlatformIO.getDirSeparator())
+        ? ''
+        : PlatformIO.getDirSeparator()) +
+      paths[i];
+  }
+  return result;
 }

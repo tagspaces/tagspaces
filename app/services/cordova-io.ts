@@ -227,7 +227,10 @@ export default class CordovaIO {
     return new Promise((resolve, reject) => {
       window.resolveLocalFileSystemURL(localPath, resolve, error => {
         console.error(
-          'Error getting FileSystem: ' + this.cordovaFileError[error.code]
+          'Error getting FileSystem' +
+            localPath +
+            ': ' +
+            this.cordovaFileError[error.code]
         ); //JSON.stringify(error));
         reject(error);
       });
@@ -741,15 +744,20 @@ export default class CordovaIO {
           }
         },
         err => {
-          console.log(
-            'getPropertiesPromise: Error getting file ' + entryPath,
-            err
-          );
-          resolve(false);
+          console.log("getPropertiesPromise: It's not file " + entryPath, err);
+          this.getFileSystemPromise(entryPath).then(dirEntry => {
+            if (!dirEntry) {
+              resolve(false);
+            }
+            resolve({
+              path: dirEntry.fullPath,
+              isFile: dirEntry.isFile,
+              name: dirEntry.name
+            });
+          });
         }
       );
     });
-  // });
 
   /**
    * Load the content of a text file
@@ -961,25 +969,31 @@ export default class CordovaIO {
   createDirectoryPromise = (dirPath: string): Promise<any> => {
     console.log('Creating directory: ' + dirPath);
     return new Promise((resolve, reject) => {
-      dirPath = this.normalizePath(dirPath);
-      this.fsRoot.getDirectory(
-        dirPath,
-        {
-          create: true,
-          exclusive: false
-        },
-        dirEntry => {
-          resolve(dirPath);
-        },
-        error => {
-          reject(
-            'Creating directory failed: ' +
-              dirPath +
-              ' failed with error code: ' +
-              error.code
-          );
+      this.checkDirExist(dirPath).then(exist => {
+        if (exist) {
+          reject('error createDirectory: ' + dirPath + ' exist!');
+          return;
         }
-      );
+        dirPath = this.normalizePath(dirPath);
+        this.fsRoot.getDirectory(
+          dirPath,
+          {
+            create: true,
+            exclusive: false
+          },
+          dirEntry => {
+            resolve(dirPath);
+          },
+          error => {
+            reject(
+              'Creating directory failed: ' +
+                dirPath +
+                ' failed with error code: ' +
+                error.code
+            );
+          }
+        );
+      });
     });
   };
 
@@ -988,60 +1002,65 @@ export default class CordovaIO {
    */
   copyFilePromise = (filePath: string, newFilePath: string): Promise<any> =>
     new Promise((resolve, reject) => {
-      // eslint-disable-next-line no-param-reassign
-      filePath = this.normalizePath(filePath);
-      const newFileName = newFilePath.substring(
-        newFilePath.lastIndexOf('/') + 1
-      );
-      const newFileParentPath = this.normalizePath(
-        newFilePath.substring(0, newFilePath.lastIndexOf('/'))
-      );
-      // TODO check if the newFilePath exist or causes issues by copying
-      this.fsRoot.getDirectory(
-        newFileParentPath,
-        {
-          create: false,
-          exclusive: false
-        },
-        parentDirEntry => {
-          this.fsRoot.getFile(
-            filePath,
-            {
-              create: false,
-              exclusive: false
-            },
-            entry => {
-              entry.copyTo(
-                parentDirEntry,
-                newFileName,
-                () => {
-                  console.log(
-                    'File copy: target: ' +
-                      newFilePath +
-                      ' source: ' +
-                      entry.fullPath
-                  );
-                  resolve(newFilePath);
-                },
-                () => {
-                  reject('error copying: ' + filePath);
-                }
-              );
-            },
-            () => {
-              reject('Error getting file: ' + filePath);
-            }
-          );
-        },
-        error => {
-          reject(
-            'Getting dir: ' +
-              newFileParentPath +
-              ' failed with error code: ' +
-              error.code
-          );
+      this.checkFileExist(newFilePath).then(exist => {
+        if (exist) {
+          reject('error copyFile: ' + newFilePath + ' exist!');
+          return;
         }
-      );
+        // eslint-disable-next-line no-param-reassign
+        filePath = this.normalizePath(filePath);
+        const newFileName = newFilePath.substring(
+          newFilePath.lastIndexOf('/') + 1
+        );
+        const newFileParentPath = this.normalizePath(
+          newFilePath.substring(0, newFilePath.lastIndexOf('/'))
+        );
+        this.fsRoot.getDirectory(
+          newFileParentPath,
+          {
+            create: false,
+            exclusive: false
+          },
+          parentDirEntry => {
+            this.fsRoot.getFile(
+              filePath,
+              {
+                create: false,
+                exclusive: false
+              },
+              entry => {
+                entry.copyTo(
+                  parentDirEntry,
+                  newFileName,
+                  () => {
+                    console.log(
+                      'File copy: target: ' +
+                        newFilePath +
+                        ' source: ' +
+                        entry.fullPath
+                    );
+                    resolve(newFilePath);
+                  },
+                  () => {
+                    reject('error copying: ' + filePath);
+                  }
+                );
+              },
+              () => {
+                reject('Error getting file: ' + filePath);
+              }
+            );
+          },
+          error => {
+            reject(
+              'Getting dir: ' +
+                newFileParentPath +
+                ' failed with error code: ' +
+                error.code
+            );
+          }
+        );
+      });
     });
 
   /**
@@ -1049,62 +1068,97 @@ export default class CordovaIO {
    */
   renameFilePromise = (filePath: string, newFilePath: string): Promise<any> =>
     new Promise((resolve, reject) => {
-      // eslint-disable-next-line no-param-reassign
-      filePath = this.normalizePath(filePath);
-      const newFileName = newFilePath.substring(
-        newFilePath.lastIndexOf('/') + 1
-      );
-      const newFileParentPath = this.normalizePath(
-        newFilePath.substring(0, newFilePath.lastIndexOf('/') + 1)
-      );
-      console.log(
-        'renameFile: ' + newFileName + ' newFilePath: ' + newFilePath
-      );
-      // TODO check if the newFilePath exist or causes issues by renaming
-      this.fsRoot.getDirectory(
-        newFileParentPath,
+      this.checkFileExist(newFilePath).then(exist => {
+        if (exist) {
+          reject('error renaming: ' + newFilePath + ' exist!');
+          return;
+        }
+        // eslint-disable-next-line no-param-reassign
+        filePath = this.normalizePath(filePath);
+        const newFileName = newFilePath.substring(
+          newFilePath.lastIndexOf('/') + 1
+        );
+        const newFileParentPath = this.normalizePath(
+          newFilePath.substring(0, newFilePath.lastIndexOf('/') + 1)
+        );
+        console.log(
+          'renameFile: ' + newFileName + ' newFilePath: ' + newFilePath
+        );
+        this.fsRoot.getDirectory(
+          newFileParentPath,
+          {
+            create: false,
+            exclusive: false
+          },
+          parentDirEntry => {
+            this.fsRoot.getFile(
+              filePath,
+              {
+                create: false,
+                exclusive: false
+              },
+              entry => {
+                entry.moveTo(
+                  parentDirEntry,
+                  newFileName,
+                  () => {
+                    console.log(
+                      'File renamed to: ' +
+                        newFilePath +
+                        ' Old name: ' +
+                        entry.fullPath
+                    );
+                    resolve([filePath, newFilePath]);
+                  },
+                  err => {
+                    reject('error renaming: ' + filePath + ' ' + err);
+                  }
+                );
+              },
+              error => {
+                reject('Error getting file: ' + filePath + ' ' + error);
+              }
+            );
+          },
+          error => {
+            console.error(
+              'Getting dir: ' +
+                newFileParentPath +
+                ' failed with error code: ' +
+                error.code
+            );
+            reject(error);
+          }
+        );
+      });
+    });
+
+  checkFileExist = filePath =>
+    new Promise(resolve => {
+      this.fsRoot.getFile(
+        filePath,
         {
           create: false,
           exclusive: false
         },
-        parentDirEntry => {
-          this.fsRoot.getFile(
-            filePath,
-            {
-              create: false,
-              exclusive: false
-            },
-            entry => {
-              entry.moveTo(
-                parentDirEntry,
-                newFileName,
-                () => {
-                  console.log(
-                    'File renamed to: ' +
-                      newFilePath +
-                      ' Old name: ' +
-                      entry.fullPath
-                  );
-                  resolve([filePath, newFilePath]);
-                },
-                err => {
-                  reject('error renaming: ' + filePath + ' ' + err);
-                }
-              );
-            },
-            error => {
-              reject('Error getting file: ' + filePath + ' ' + error);
-            }
-          );
+        () => {
+          resolve(true);
         },
-        error => {
-          console.error(
-            'Getting dir: ' +
-              newFileParentPath +
-              ' failed with error code: ' +
-              error.code
-          );
-          reject(error);
+        () => {
+          resolve(false);
+        }
+      );
+    });
+
+  checkDirExist = dirPath =>
+    new Promise(resolve => {
+      window.resolveLocalFileSystemURL(
+        (dirPath.startsWith('/') ? 'file://' : 'file:///') + dirPath,
+        () => {
+          resolve(true);
+        },
+        () => {
+          resolve(false);
         }
       );
     });
@@ -1127,54 +1181,63 @@ export default class CordovaIO {
         newDirPath.substring(0, newDirPath.lastIndexOf('/'))
       );
       newDirPath = this.normalizePath(newDirPath);
-      console.log('renameDirectoryPromise: ' + dirPath + ' to: ' + newDirPath);
-      // TODO check if the newFilePath exist or cause issues by renaming
-      this.fsRoot.getDirectory(
-        newDirParentPath,
-        {
-          create: false,
-          exclusive: false
-        },
-        parentDirEntry => {
-          this.fsRoot.getDirectory(
-            dirPath,
-            {
-              create: false,
-              exclusive: false
-            },
-            entry => {
-              entry.moveTo(
-                parentDirEntry,
-                newDirName,
-                () => {
-                  console.log(
-                    'Directory renamed to: ' +
-                      newDirPath +
-                      ' from: ' +
-                      entry.fullPath
-                  );
-                  resolve('/' + newDirPath);
-                },
-                err => {
-                  reject('error renaming directory: ' + dirPath + ' ' + err);
-                }
-              );
-            },
-            error => {
-              reject('Error getting directory: ' + dirPath + ' ' + error);
-            }
-          );
-        },
-        error => {
-          console.error(
-            'Getting dir: ' +
-              newDirParentPath +
-              ' failed with error code: ' +
-              error.code
-          );
-          reject(error);
+
+      this.checkDirExist(newDirPath).then(exist => {
+        if (exist) {
+          reject('error renaming: ' + newDirName + ' exist!');
+          return;
         }
-      );
+
+        console.log(
+          'renameDirectoryPromise: ' + dirPath + ' to: ' + newDirPath
+        );
+        this.fsRoot.getDirectory(
+          newDirParentPath,
+          {
+            create: false,
+            exclusive: false
+          },
+          parentDirEntry => {
+            this.fsRoot.getDirectory(
+              dirPath,
+              {
+                create: false,
+                exclusive: false
+              },
+              entry => {
+                entry.moveTo(
+                  parentDirEntry,
+                  newDirName,
+                  () => {
+                    console.log(
+                      'Directory renamed to: ' +
+                        newDirPath +
+                        ' from: ' +
+                        entry.fullPath
+                    );
+                    resolve('/' + newDirPath);
+                  },
+                  err => {
+                    reject('error renaming directory: ' + dirPath + ' ' + err);
+                  }
+                );
+              },
+              error => {
+                reject('Error getting directory: ' + dirPath + ' ' + error);
+              }
+            );
+          },
+          error => {
+            console.error(
+              'Getting dir: ' +
+                newDirParentPath +
+                ' failed with error code: ' +
+                error.code
+            );
+            reject(error);
+          }
+        );
+      });
     });
 
   /**

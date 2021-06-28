@@ -31,7 +31,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import i18n from '-/services/i18n';
 import { actions as AppActions } from '-/reducers/app';
-import PlatformIO from '-/services/platform-io';
+import { joinPaths } from '-/utils/paths';
 
 interface Props {
   open: boolean;
@@ -65,8 +65,7 @@ const CreateDirectoryDialog = (props: Props) => {
 
   function onConfirm() {
     if (!disableConfirmButton && name) {
-      const dirPath =
-        props.selectedDirectoryPath + PlatformIO.getDirSeparator() + name;
+      const dirPath = joinPaths(props.selectedDirectoryPath, name);
       props.createDirectory(dirPath);
       resetState();
       props.onClose();
