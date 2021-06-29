@@ -31,6 +31,7 @@ import i18n from '-/services/i18n';
 import { actions as AppActions } from '-/reducers/app';
 import { joinPaths } from '-/utils/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import PlatformIO from '-/services/platform-io';
 
 interface Props {
   open: boolean;
@@ -64,7 +65,11 @@ const CreateDirectoryDialog = (props: Props) => {
 
   function onConfirm() {
     if (!disableConfirmButton && name) {
-      const dirPath = joinPaths(props.selectedDirectoryPath, name);
+      const dirPath = joinPaths(
+        PlatformIO.getDirSeparator(),
+        props.selectedDirectoryPath,
+        name
+      );
       props.createDirectory(dirPath);
       resetState();
       props.onClose();

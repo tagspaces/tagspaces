@@ -69,7 +69,7 @@
     "run-web-aws": "yarn prepare-web && node scripts/webserver.js",
     "run-web-dev": "yarn build-web-dev && yarn prepare-web && node scripts/webserver.js",
     "run-android": "yarn prepare-cordova && yarn build-cordova && cd cordova && cordova run android && cd ..",
-    "run-android-dev": "yarn build-cordova-dev && cd cordova && cordova run android && cd ..",
+    "run-android-dev": "yarn prepare-cordova && yarn build-cordova-dev && cd cordova && cordova run android && cd ..",
     "run-ios-dev": "yarn prepare-cordova && yarn build-cordova-dev && cd cordova && cordova run ios && cd ..",
     "cordova-list-emulators": "cd cordova && cordova run --list --emulator && cd ..",
     "cordova-add-android": "cd cordova && cordova platform add android && cd ..",

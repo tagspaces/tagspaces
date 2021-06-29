@@ -18,7 +18,6 @@
 
 import AppConfig from '../config';
 import { TS } from '-/tagspaces.namespace';
-import PlatformIO from '-/services/platform-io';
 
 export function baseName(
   dirPath: string,
@@ -431,16 +430,21 @@ export function extractLocation(
   return currentLocation;
 }
 
+/**
+ * @param paths -the first is DirSeparator
+ */
 export function joinPaths(...paths) {
   let result = '';
-  for (let i = 0; i < paths.length; i += 1) {
-    result =
-      result +
-      (result.endsWith(PlatformIO.getDirSeparator()) ||
-      paths[i].startsWith(PlatformIO.getDirSeparator())
-        ? ''
-        : PlatformIO.getDirSeparator()) +
-      paths[i];
+  const dirSeparator = paths[0];
+  if (dirSeparator) {
+    for (let i = 1; i < paths.length; i += 1) {
+      result =
+        result +
+        (result.endsWith(dirSeparator) || paths[i].startsWith(dirSeparator)
+          ? ''
+          : dirSeparator) +
+        paths[i];
+    }
   }
   return result;
 }
