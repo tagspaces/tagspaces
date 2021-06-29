@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -88,6 +88,11 @@ interface Props {
   createTagGroup: () => void;
   addTag: () => void;
   moveTag: () => void;
+  changeTagOrder: (
+    tagGroupUuid: TS.Uuid,
+    fromIndex: number,
+    toIndex: number
+  ) => void;
   editTagGroup: () => void;
   editTag: () => void;
   deleteTag: (tagTitle: string, parentTagGroupUuid: TS.Uuid) => void;
@@ -103,6 +108,7 @@ interface Props {
 }
 
 const TagLibrary = (props: Props) => {
+  const tagContainerRef = useRef<HTMLSpanElement>(null);
   const [
     tagGroupMenuAnchorEl,
     setTagGroupMenuAnchorEl
@@ -309,7 +315,7 @@ const TagLibrary = (props: Props) => {
             data-tid={'tagGroupContainer_' + tagGroup.title}
           >
             {tagGroup.children &&
-              tagGroup.children.map((tag: TS.Tag) => {
+              tagGroup.children.map((tag: TS.Tag, index) => {
                 if (props.isReadOnlyMode) {
                   return (
                     <TagContainer
@@ -326,11 +332,14 @@ const TagLibrary = (props: Props) => {
                 return (
                   <TagContainerDnd
                     key={tagGroup.uuid + tag.title}
+                    tagContainerRef={tagContainerRef}
+                    index={index}
                     tag={tag}
                     tagGroup={tagGroup}
                     handleTagMenu={handleTagMenuCallback}
                     addTags={props.addTags}
                     moveTag={props.moveTag}
+                    changeTagOrder={props.changeTagOrder}
                     selectedEntries={props.selectedEntries}
                   />
                 );
@@ -521,6 +530,7 @@ function mapDispatchToProps(dispatch) {
       createTagGroup: TagLibraryActions.createTagGroup,
       editTag: TagLibraryActions.editTag,
       moveTag: TagLibraryActions.moveTag,
+      changeTagOrder: TagLibraryActions.changeTagOrder,
       editTagGroup: TagLibraryActions.editTagGroup,
       deleteTag: TagLibraryActions.deleteTag,
       addTag: TagLibraryActions.addTag,

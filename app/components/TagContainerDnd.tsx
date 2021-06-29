@@ -17,7 +17,13 @@
  */
 
 import React from 'react';
-import { DragSource, ConnectDragPreview, ConnectDragSource } from 'react-dnd';
+import {
+  DragSource,
+  DropTarget,
+  ConnectDragPreview,
+  ConnectDragSource,
+  ConnectDropTarget
+} from 'react-dnd';
 
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import DragItemTypes from './DragItemTypes';
@@ -25,9 +31,11 @@ import TagContainer from './TagContainer';
 import { TS } from '-/tagspaces.namespace';
 
 const boxSource = {
+  // Expected the drag source specification to only have some of the following keys: canDrag, beginDrag, isDragging, endDrag
   beginDrag(props) {
     // console.log('beginDrag', props);
     return {
+      index: props.index,
       tagTitle: props.tag.title,
       tag: props.tag,
       sourceTagGroupId: props.tagGroup ? props.tagGroup.uuid : undefined
@@ -71,8 +79,60 @@ const boxSource = {
   }
 };
 
+const boxTarget = {
+  hover(props, monitor) {
+    const dragItem = monitor.getItem();
+    if (props.tagGroup && dragItem.sourceTagGroupId === props.tagGroup.uuid) {
+      // sort only tagGroups
+      const dragIndex = dragItem.index;
+      const hoverIndex = props.index;
+      // Don't replace items with themselves
+      if (dragIndex === hoverIndex) {
+        return;
+      }
+      // Determine rectangle on screen
+      const hoverBoundingRect =
+        props.tagContainerRef && props.tagContainerRef.current
+          ? props.tagContainerRef.current.getBoundingClientRect()
+          : undefined; // findDOMNode(component).getBoundingClientRect(); // tagContainerRef.current.getBoundingClientRect();
+
+      // Get vertical middle (bottom = right; top = left)
+      const hoverMiddleY =
+        (hoverBoundingRect.right - hoverBoundingRect.left) / 2;
+
+      // Determine mouse position
+      const clientOffset = monitor.getClientOffset();
+
+      // Get pixels to the top
+      const hoverClientY = clientOffset.x - hoverBoundingRect.left;
+
+      // Only perform the move when the mouse has crossed half of the items height
+      // When dragging downwards, only move when the cursor is below 50%
+      // When dragging upwards, only move when the cursor is above 50%
+
+      // Dragging downwards
+      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+        return;
+      }
+
+      // Dragging upwards
+      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+        return;
+      }
+      // Time to actually perform the action
+      props.changeTagOrder(props.tagGroup.uuid, dragIndex, hoverIndex);
+      // Note: we're mutating the monitor item here!
+      // Generally it's better to avoid mutations,
+      // but it's good here for the sake of performance
+      // to avoid expensive index searches.
+      dragItem.index = hoverIndex;
+    }
+  }
+};
+
 interface Props {
   tag: TS.Tag;
+  index: number;
   tagGroup?: TS.TagGroup;
   handleTagMenu: (event: Object, tag: TS.Tag, param: any) => void;
   handleRemoveTag?: (event: Object, tag: TS.Tag) => void;
@@ -82,10 +142,17 @@ interface Props {
   addTags?: (paths: Array<string>, tags: Array<TS.Tag>) => void;
   addTag?: (tag: TS.Tag, parentTagGroupUuid: TS.Uuid) => void;
   moveTag?: () => void;
+  changeTagOrder?: (
+    tagGroupUuid: TS.Uuid,
+    fromIndex: number,
+    toIndex: number
+  ) => void;
   connectDragSource?: ConnectDragSource;
+  connectDropTarget: ConnectDropTarget;
   connectDragPreview?: ConnectDragPreview;
   deleteIcon?: Object;
   selectedEntries: Array<TS.FileSystemEntry>;
+  tagContainerRef?: string;
 }
 
 const TagContainerDnd = (props: Props) => {
@@ -98,8 +165,10 @@ const TagContainerDnd = (props: Props) => {
     selectedEntries,
     isDragging,
     connectDragSource,
+    connectDropTarget,
     addTags,
-    tagMode
+    tagMode,
+    tagContainerRef
   } = props;
 
   // Use empty image as a drag preview so browsers don't draw it
@@ -110,27 +179,29 @@ const TagContainerDnd = (props: Props) => {
     captureDraggingState: true
   });
 
-  return connectDragSource(
-    <span>
-      <TagContainer
-        tag={tag}
-        tagGroup={tagGroup}
-        handleTagMenu={handleTagMenu}
-        deleteIcon={deleteIcon}
-        addTags={addTags}
-        tagMode={tagMode}
-        entryPath={entryPath}
-        isDragging={isDragging}
-        selectedEntries={selectedEntries}
-      />
-    </span>
+  return connectDropTarget(
+    connectDragSource(
+      <span ref={tagContainerRef}>
+        <TagContainer
+          tag={tag}
+          tagGroup={tagGroup}
+          handleTagMenu={handleTagMenu}
+          deleteIcon={deleteIcon}
+          addTags={addTags}
+          tagMode={tagMode}
+          entryPath={entryPath}
+          isDragging={isDragging}
+          selectedEntries={selectedEntries}
+        />
+      </span>
+    )
   );
 };
 
 /**
  * Specifies which props to inject into your component.
  */
-const collect = (connect, monitor) => ({
+const collectSource = (connect, monitor) => ({
   // Call this function inside render()
   // to let React DnD handle the drag events:
   connectDragSource: connect.dragSource(),
@@ -140,8 +211,14 @@ const collect = (connect, monitor) => ({
   isDragging: monitor.isDragging()
 });
 
+const collectTarget = (connect, monitor) => ({
+  connectDropTarget: connect.dropTarget(),
+  isOver: monitor.isOver(),
+  canDrop: monitor.canDrop()
+});
+
 export default DragSource(
   DragItemTypes.TAG,
   boxSource,
-  collect
-)(TagContainerDnd);
+  collectSource
+)(DropTarget(DragItemTypes.TAG, boxTarget, collectTarget)(TagContainerDnd));
