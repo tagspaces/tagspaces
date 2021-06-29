@@ -148,12 +148,14 @@ const TagLibraryMenu = (props: Props) => {
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:importTags')} />
         </MenuItem>
-        <MenuItem data-tid="exportTagGroup" onClick={handleExportTagGroup}>
-          <ListItemIcon>
-            <ImportExportIcon />
-          </ListItemIcon>
-          <ListItemText primary={i18n.t('core:exportTagGroupsButton')} />
-        </MenuItem>
+        {!AppConfig.isCordovaAndroid && (
+          <MenuItem data-tid="exportTagGroup" onClick={handleExportTagGroup}>
+            <ListItemIcon>
+              <ImportExportIcon />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:exportTagGroupsButton')} />
+          </MenuItem>
+        )}
         <MenuItem
           data-tid="taglibraryHelp"
           onClick={() => {

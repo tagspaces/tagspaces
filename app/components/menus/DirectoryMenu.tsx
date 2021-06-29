@@ -525,8 +525,7 @@ Do you want to continue?`)
     );
   }
 
-
-  if (AppConfig.isCordovaiOS) {
+  if (!AppConfig.isCordovaAndroid) {
     menuItems.push(
       <MenuItem
         key="takePicture"
