@@ -691,47 +691,6 @@ const actions = {
       }
     }
   },
-  changeTagOrder: (
-    path: string,
-    tag: TS.Tag,
-    direction: 'prev' | 'next' | 'first'
-  ) => () =>
-    // dispatch: (actions: Object) => void
-    {
-      /*
-    console.log('Moves the location of tag in the file name: ' + filePath);
-    var fileName = extractFileName(filePath, PlatformIO.getDirSeparator());
-    var containingDirectoryPath = extractContainingDirectoryPath(filePath, PlatformIO.getDirSeparator());
-    var extractedTags = extractTags(filePath, settings.tagDelimiter, PlatformIO.getDirSeparator());
-    if (extractedTags.indexOf(tagName) < 0) {
-      showAlertDialog("The tag you are trying to move is not part of the file name and that's why it cannot be moved.", $.i18n.t("ns.common:warning"));
-      return;
-    }
-    var tmpTag;
-    for (var i = 0; i < extractedTags.length; i++) {
-      // check if tag is already in the tag array
-      if (extractedTags[i] === tagName) {
-        if (direction === 'prev' && i > 0) {
-          tmpTag = extractedTags[i - 1];
-          extractedTags[i - 1] = extractedTags[i];
-          extractedTags[i] = tmpTag;
-          break;
-        } else if (direction === 'next' && i < extractedTags.length - 1) {
-          tmpTag = extractedTags[i];
-          extractedTags[i] = extractedTags[i + 1];
-          extractedTags[i + 1] = tmpTag;
-          break;
-        } else if (direction === 'first' && i > 0) {
-          tmpTag = extractedTags[i];
-          extractedTags[i] = extractedTags[0];
-          extractedTags[0] = tmpTag;
-          break;
-        }
-      }
-    }
-    var newFileName = generateFileName(fileName, extractedTags);
-    renameFile(filePath, containingDirectoryPath + PlatformIO.getDirSeparator(), + newFileName); */
-    },
   // smart tagging -> PRO
   addDateTag: (paths: Array<string>) => () =>
     // dispatch: (actions: Object) => void
