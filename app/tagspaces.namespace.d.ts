@@ -84,6 +84,7 @@ export namespace TS {
     color?: string;
     textcolor?: string;
     originTitle?: string;
+    position?: number;
   }
 
   interface TagGroup {

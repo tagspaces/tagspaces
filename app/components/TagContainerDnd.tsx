@@ -36,9 +36,9 @@ const boxSource = {
     // console.log('beginDrag', props);
     return {
       index: props.index,
-      tagTitle: props.tag.title,
+      // tagTitle: props.tag.title,
       tag: props.tag,
-      sourceTagGroupId: props.tagGroup ? props.tagGroup.uuid : undefined
+      ...(props.tagGroup ? { sourceTagGroupId: props.tagGroup.uuid } : {})
     };
   },
 
@@ -56,7 +56,7 @@ const boxSource = {
       if (props.moveTag) {
         // console.log(`Dropped ${item.tagId} from ${item.sourceTagGroupId} into ${dropResult.tagGroupId}!`);
         props.moveTag(
-          item.tagTitle,
+          item.tag.title,
           item.sourceTagGroupId,
           dropResult.tagGroupId
         );
@@ -80,10 +80,15 @@ const boxSource = {
 };
 
 const boxTarget = {
+  // Expected the drop target specification to only have some of the following keys: canDrop, hover, drop
+  /* canDrop(props, monitor) {
+    const dragItem = monitor.getItem();
+    return dragItem.tag.type === props.tag.type;
+  }, */
   hover(props, monitor) {
     const dragItem = monitor.getItem();
     if (props.tagGroup && dragItem.sourceTagGroupId === props.tagGroup.uuid) {
-      // sort only tagGroups
+      // sort tagGroups tags
       const dragIndex = dragItem.index;
       const hoverIndex = props.index;
       // Don't replace items with themselves
@@ -126,6 +131,22 @@ const boxTarget = {
       // but it's good here for the sake of performance
       // to avoid expensive index searches.
       dragItem.index = hoverIndex;
+    } else if (props.entryPath) {
+      // sort fileSystemEntries tags
+      const dragIndex = dragItem.index;
+      const hoverIndex = props.index;
+      // Don't replace items with themselves
+      if (dragIndex === hoverIndex) {
+        return;
+      }
+      // Cannot drop into different tag type
+      if (dragItem.tag.type !== props.tag.type) {
+        return;
+      }
+      dragItem.tag.position = hoverIndex;
+      props.editTagForEntry(props.entryPath, dragItem.tag);
+
+      dragItem.index = hoverIndex;
     }
   }
 };
@@ -147,6 +168,7 @@ interface Props {
     fromIndex: number,
     toIndex: number
   ) => void;
+  editTagForEntry?: (path: string, tag: TS.Tag) => void;
   connectDragSource?: ConnectDragSource;
   connectDropTarget: ConnectDropTarget;
   connectDragPreview?: ConnectDragPreview;

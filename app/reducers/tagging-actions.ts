@@ -323,11 +323,15 @@ const actions = {
    * @param newTagTitle
    * @returns {Function}
    */
-  editTagForEntry: (path: string, tag: TS.Tag, newTagTitle: string) => async (
+  editTagForEntry: (path: string, tag: TS.Tag, newTagTitle?: string) => async (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
     const { settings, taglibrary } = getState();
+    if (newTagTitle === undefined) {
+      // eslint-disable-next-line no-param-reassign
+      newTagTitle = tag.title;
+    }
     if (
       tag.functionality === 'geoTagging' ||
       tag.functionality === 'dateTagging'
@@ -355,17 +359,22 @@ const actions = {
         settings.tagDelimiter,
         PlatformIO.getDirSeparator()
       );
-      let tagFound = false;
+      let tagFoundPosition = -1;
       for (let i = 0; i < extractedTags.length; i += 1) {
         // check if tag is already in the tag array
         if (extractedTags[i] === tag.title) {
           extractedTags[i] = newTagTitle.trim();
-          tagFound = true;
+          tagFoundPosition = i;
         }
       }
-      if (!tagFound) {
+      if (tagFoundPosition === -1) {
         // needed for the current implementation of geo tagging
         extractedTags.push(newTagTitle); // tag.title);
+      } else if (tag.position !== undefined) {
+        // move tag
+        const element = extractedTags[tagFoundPosition];
+        extractedTags.splice(tagFoundPosition, 1);
+        extractedTags.splice(tag.position, 0, element);
       }
       const newFileName = generateFileName(
         fileName,
@@ -384,14 +393,22 @@ const actions = {
       loadMetaDataPromise(path)
         .then(fsEntryMeta => {
           let addMode = true;
-          fsEntryMeta.tags.map(sidecarTag => {
+          let tagFoundPosition = -1;
+          fsEntryMeta.tags.map((sidecarTag, index) => {
             if (sidecarTag.title === tag.title) {
               // eslint-disable-next-line no-param-reassign
               sidecarTag.title = newTagTitle;
               addMode = false;
+              tagFoundPosition = index;
             }
             return true;
           });
+          if (tag.position !== undefined) {
+            // move tag
+            const element = fsEntryMeta.tags[tagFoundPosition];
+            fsEntryMeta.tags.splice(tagFoundPosition, 1);
+            fsEntryMeta.tags.splice(tag.position, 0, element);
+          }
           if (addMode) {
             // eslint-disable-next-line no-param-reassign
             tag.title = newTagTitle;
