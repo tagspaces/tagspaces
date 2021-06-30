@@ -41,7 +41,8 @@ export const types = {
   MOVE_TAG_GROUP_UP: 'MOVE_TAG_GROUP_UP',
   MOVE_TAG_GROUP_DOWN: 'MOVE_TAG_GROUP_DOWN',
   EDIT_TAG_COLOR: 'EDIT_TAG_COLOR',
-  MOVE_TAG: 'MOVE_TAG'
+  MOVE_TAG: 'MOVE_TAG',
+  CHANGE_TAG_ORDER: 'CHANGE_TAG_ORDER'
 };
 
 export default (state: Array<TS.TagGroup> = defaultTagLibrary, action: any) => {
@@ -358,6 +359,29 @@ export default (state: Array<TS.TagGroup> = defaultTagLibrary, action: any) => {
       }
       return state;
     }
+    case types.CHANGE_TAG_ORDER: {
+      let indexFromGroup = -1;
+      state.forEach((tagGroup, index) => {
+        if (tagGroup.uuid === action.tagGroupUuid) {
+          indexFromGroup = index;
+        }
+      });
+
+      if (indexFromGroup >= 0) {
+        const newTagLibrary = [...state];
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment#swapping_variables
+        [
+          newTagLibrary[indexFromGroup].children[action.fromIndex],
+          newTagLibrary[indexFromGroup].children[action.toIndex]
+        ] = [
+          newTagLibrary[indexFromGroup].children[action.toIndex],
+          newTagLibrary[indexFromGroup].children[action.fromIndex]
+        ];
+
+        return newTagLibrary;
+      }
+      return state;
+    }
     case types.IMPORT_TAGGROUP: {
       const arr = action.replace ? [] : [...state];
       console.log(arr);
@@ -647,6 +671,16 @@ export const actions = {
     tagTitle,
     fromTagGroupId: fromTagGroupUuid,
     toTagGroupId: toTagGroupUuid
+  }),
+  changeTagOrder: (
+    tagGroupUuid: TS.Uuid,
+    fromIndex: number,
+    toIndex: number
+  ) => ({
+    type: types.CHANGE_TAG_ORDER,
+    tagGroupUuid,
+    fromIndex,
+    toIndex
   }),
   importTagGroups: (entries: Array<TS.TagGroup>, replace: boolean = false) => ({
     type: types.IMPORT_TAGGROUP,
