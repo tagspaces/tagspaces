@@ -33,6 +33,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import ExportIcon from '@material-ui/icons/AssignmentReturn';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
+import AppConfig from '-/config';
 
 interface Props {
   classes: any;
@@ -172,17 +173,18 @@ const MainToolbar = (props: Props) => {
           <SwapVertIcon />
         </IconButton>
       </Tooltip>
-      {Pro && (
-        <Tooltip title={i18n.t('core:exportCsv')}>
-          <IconButton
-            data-tid="gridPerspectiveExportCsvMenuTID"
-            onClick={props.handleExportCsvMenu}
-            style={{ transform: 'scale(-1, 1)' }}
-          >
-            <ExportIcon />
-          </IconButton>
-        </Tooltip>
-      )}
+      {Pro &&
+      !AppConfig.isCordovaAndroid && ( // https://trello.com/c/z6ESlqxz/697-exports-to-json-or-csv-do-not-work-on-android
+          <Tooltip title={i18n.t('core:exportCsv')}>
+            <IconButton
+              data-tid="gridPerspectiveExportCsvMenuTID"
+              onClick={props.handleExportCsvMenu}
+              style={{ transform: 'scale(-1, 1)' }}
+            >
+              <ExportIcon />
+            </IconButton>
+          </Tooltip>
+        )}
       <Tooltip title={i18n.t('core:options')}>
         <IconButton
           data-tid="gridPerspectiveOptionsMenu"

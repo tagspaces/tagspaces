@@ -59,7 +59,7 @@ public class Downloader extends CordovaPlugin {
         return false;
 
 
-    }    
+    }
 
     private boolean download(JSONArray args, CallbackContext callbackContext)
     {
@@ -72,19 +72,19 @@ public class Downloader extends CordovaPlugin {
             String title = arg_object.getString("title");
             String folder = arg_object.getString("folder");
             String description = arg_object.getString("description");
-			
+
 
 			File direct = new File(Environment.getExternalStorageDirectory()+ "/"+folder);
 
 			if (!direct.exists()) {
 			    direct.mkdirs();
 			}
-			
+
 			File delExisingFile = new File(Environment.getExternalStorageDirectory()+ "/"+folder+"/"+path);
 			delExisingFile.delete();
-			
+
 			Boolean visible = Boolean.valueOf(arg_object.getString("visible"));
-		
+
             Uri uri = Uri.parse(arg_object.getString("url"));
             Download mDownload = new Download(path, folder, callbackContext);
 
@@ -97,7 +97,7 @@ public class Downloader extends CordovaPlugin {
             request.setTitle(title);
             // Set a description of this download, to be displayed in notifications (if enabled)
             request.setDescription(description);
-            // This download doesn't show in the UI or in the notifications. 
+            // This download doesn't show in the UI or in the notifications.
 			if(!visible){
 			request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN);
 			} else {
@@ -105,7 +105,9 @@ public class Downloader extends CordovaPlugin {
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 			}
             // Set the destination for the downloaded as defined by the user within the device files directory
-            request.setDestinationInExternalPublicDir("/"+folder, path);
+            // https://stackoverflow.com/a/60598059/2285631
+            // request.setDestinationInExternalPublicDir("/"+folder, path);
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, path);
 
             // save the download
             downloadMap.put(downloadManager.enqueue(request), mDownload);
@@ -122,7 +124,7 @@ public class Downloader extends CordovaPlugin {
     }
 
     private BroadcastReceiver downloadReceiver = new BroadcastReceiver() {
-  
+
         @Override
         public void onReceive(Context context, Intent intent) {
 
@@ -141,7 +143,7 @@ public class Downloader extends CordovaPlugin {
                 int status = cursor.getInt(columnIndex);
                 int columnReason = cursor.getColumnIndex(DownloadManager.COLUMN_REASON);
                 int reason = cursor.getInt(columnReason);
-                
+
                 switch (status) {
                     case DownloadManager.STATUS_SUCCESSFUL:
                         try {

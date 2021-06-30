@@ -429,3 +429,22 @@ export function extractLocation(
   }
   return currentLocation;
 }
+
+/**
+ * @param paths -the first is DirSeparator
+ */
+export function joinPaths(...paths) {
+  let result = '';
+  const dirSeparator = paths[0];
+  if (dirSeparator) {
+    for (let i = 1; i < paths.length; i += 1) {
+      result =
+        result +
+        (result.endsWith(dirSeparator) || paths[i].startsWith(dirSeparator)
+          ? ''
+          : dirSeparator) +
+        paths[i];
+    }
+  }
+  return result;
+}
