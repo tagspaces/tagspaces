@@ -50,16 +50,7 @@ public class FileHelper {
      */
     @SuppressWarnings("deprecation")
     public static String getRealPath(Uri uri, CordovaInterface cordova) {
-        String realPath = null;
-
-        if (Build.VERSION.SDK_INT < 11)
-            realPath = FileHelper.getRealPathFromURI_BelowAPI11(cordova.getActivity(), uri);
-
-        // SDK >= 11
-        else
-            realPath = FileHelper.getRealPathFromURI_API11_And_Above(cordova.getActivity(), uri);
-
-        return realPath;
+        return FileHelper.getRealPathFromURI(cordova.getActivity(), uri);
     }
 
     /**
@@ -75,11 +66,9 @@ public class FileHelper {
     }
 
     @SuppressLint("NewApi")
-    public static String getRealPathFromURI_API11_And_Above(final Context context, final Uri uri) {
-
-        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+    public static String getRealPathFromURI(final Context context, final Uri uri) {
         // DocumentProvider
-        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+        if (DocumentsContract.isDocumentUri(context, uri)) {
 
             // ExternalStorageProvider
             if (isExternalStorageDocument(uri)) {

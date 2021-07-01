@@ -37,9 +37,6 @@
     <feature name="SocialSharing">
         <param name="android-package" value="nl.xservices.plugins.SocialSharing" />
     </feature>
-    <feature name="Chooser">
-        <param name="android-package" value="com.cyph.cordova.Chooser" />
-    </feature>
     <name>TagSpaces</name>
     <description>
 		Offline file organizer and browser with tagging support.

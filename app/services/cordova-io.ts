@@ -203,36 +203,36 @@ export default class CordovaIO {
     } */
   };
 
-  getFileSystemPromise = (localPath: string): Promise<any> => {
-    console.log('getFileSystemPromise: ' + localPath);
+  getDirSystemPromise = (dirPath: string): Promise<any> => {
+    console.log('getDirSystemPromise: ' + dirPath);
     if (
-      localPath &&
-      (localPath.indexOf(cordova.file.applicationDirectory) === 0 ||
-        localPath.startsWith('file:///'))
+      dirPath &&
+      (dirPath.indexOf(cordova.file.applicationDirectory) === 0 ||
+        dirPath.startsWith('file:///'))
     ) {
-    } else {
-      localPath = AppConfig.isCordovaiOS
-        ? (cordova.file.documentsDirectory + '/' + localPath).replace(
-            ':/',
-            ':///'
-          )
-        : 'file:///' + localPath;
+    } else if (AppConfig.isCordovaiOS) {
+      dirPath = (cordova.file.documentsDirectory + '/' + dirPath).replace(
+        ':/',
+        ':///'
+      );
       /*localPath = AppConfig.isCordovaiOS
         ? path
             .join(cordova.file.documentsDirectory, localPath)
             .replace(':/', ':///')
         : 'file:///' + localPath;*/
+    } else {
+      dirPath = (dirPath.startsWith('/') ? 'file://' : 'file:///') + dirPath;
     }
-    localPath = encodeURI(localPath);
+    dirPath = encodeURI(dirPath) + (dirPath.endsWith('/') ? '' : '/');
     return new Promise((resolve, reject) => {
-      window.resolveLocalFileSystemURL(localPath, resolve, error => {
+      window.resolveLocalFileSystemURL(dirPath, resolve, error => {
         console.error(
           'Error getting FileSystem' +
-            localPath +
+            dirPath +
             ': ' +
             this.cordovaFileError[error.code]
         ); //JSON.stringify(error));
-        reject(error);
+        resolve(false); // reject(error);
       });
     });
   };
@@ -252,10 +252,9 @@ export default class CordovaIO {
   };
 
   getAppStorageFileSystem = (fileName: string, fileCallback, fail) => {
-    const dataFolderPath =
-      AppConfig.isCordovaiOS === true
-        ? cordova.file.dataDirectory
-        : cordova.file.externalApplicationStorageDirectory;
+    const dataFolderPath = AppConfig.isCordovaiOS
+      ? cordova.file.dataDirectory
+      : cordova.file.externalApplicationStorageDirectory;
 
     window.resolveLocalFileSystemURL(
       dataFolderPath,
@@ -270,10 +269,9 @@ export default class CordovaIO {
 
   getFileSystem = () => {
     // on android cordova.file.externalRootDirectory points to sdcard0
-    const fsURL =
-      AppConfig.isCordovaiOS === true
-        ? cordova.file.documentsDirectory
-        : 'file:///';
+    const fsURL = AppConfig.isCordovaiOS
+      ? cordova.file.documentsDirectory
+      : 'file:///';
     window.resolveLocalFileSystemURL(
       fsURL,
       fileSystem => {
@@ -472,7 +470,7 @@ export default class CordovaIO {
         AppConfig.metaFolder +
         AppConfig.dirSeparator;
 
-      this.getFileSystemPromise(metaDirPath)
+      this.getDirSystemPromise(metaDirPath)
         .then(fileSystem => {
           const reader = fileSystem.createReader();
           reader.readEntries(entr => {
@@ -513,7 +511,7 @@ export default class CordovaIO {
 
       const enhancedEntries = [];
       const metaPromises = [];
-      this.getFileSystemPromise(path)
+      this.getDirSystemPromise(path)
         .then(
           fileSystem => {
             const reader = fileSystem.createReader();
@@ -744,11 +742,15 @@ export default class CordovaIO {
           }
         },
         err => {
-          console.log("getPropertiesPromise: It's not file " + entryPath, err);
-          this.getFileSystemPromise(entryPath).then(dirEntry => {
+          this.getDirSystemPromise(entryPath).then(dirEntry => {
             if (!dirEntry) {
               resolve(false);
+              return false;
             }
+            console.log(
+              "getPropertiesPromise: It's not file " + entryPath,
+              err
+            );
             resolve({
               path: dirEntry.fullPath,
               isFile: dirEntry.isFile,
@@ -798,7 +800,7 @@ export default class CordovaIO {
 
       return new Promise((resolve, reject) => {
         if (resolvePath) {
-          this.getFileSystemPromise(resolvePath)
+          this.getDirSystemPromise(resolvePath)
             .then(resfs => {
               resfs.getFile(
                 filePath,
@@ -1153,7 +1155,9 @@ export default class CordovaIO {
   checkDirExist = dirPath =>
     new Promise(resolve => {
       window.resolveLocalFileSystemURL(
-        (dirPath.startsWith('/') ? 'file://' : 'file:///') + dirPath,
+        (dirPath.startsWith('/') ? 'file://' : 'file:///') +
+          dirPath +
+          (dirPath.endsWith('/') ? '' : '/'),
         () => {
           resolve(true);
         },

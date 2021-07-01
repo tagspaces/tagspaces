@@ -72,7 +72,7 @@
     "run-android-dev": "yarn prepare-cordova && yarn build-cordova-dev && cd cordova && cordova run android && cd ..",
     "run-ios-dev": "yarn prepare-cordova && yarn build-cordova-dev && cd cordova && cordova run ios && cd ..",
     "cordova-list-emulators": "cd cordova && cordova run --list --emulator && cd ..",
-    "cordova-add-android": "cd cordova && cordova platform add android && cd ..",
+    "cordova-add-android": "cd cordova && cordova platform add android@9.1.0 && cd ..",
     "cordova-remove-android": "cd cordova && cordova platform remove android && cd ..",
     "cordova-add-ios": "cd cordova && cordova platform add ios && cd ..",
     "cordova-remove-ios": "cd cordova && cordova platform remove ios && cd ..",
