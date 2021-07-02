@@ -408,13 +408,12 @@ const MainPage = (props: Props) => {
   };
 
   const showDrawer = () => {
-    if (
-      !props.isLocationManagerPanelOpened &&
+    /* if (
+      !props.isLocationManagerPanelOpened && // TODO this is true in Cordova on closed Locations && LocationManagerPanel
       !props.isSearchPanelOpened &&
       !props.isTagLibraryPanelOpened
-    ) {
-      props.openLocationManagerPanel();
-    }
+    ) { */
+    props.openLocationManagerPanel();
     // setDrawerOpened(true);
   };
 

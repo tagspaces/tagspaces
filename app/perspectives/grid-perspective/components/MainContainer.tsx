@@ -439,31 +439,36 @@ const GridPerspective = (props: Props) => {
     );
     if (fsEntry.isFile) {
       if (!desktopMode) {
-        if (selectedEntries && isEntryExist) {
+        if (!isEntryExist) {
+          if (selectedEntries.length > 0) {
+            props.setSelectedEntries([...selectedEntries, fsEntry]);
+          } else {
+            props.setSelectedEntries([fsEntry]);
+          }
+        } /* else { // deselect selected entry
           props.setSelectedEntries(
             selectedEntries.filter(entry => entry.uuid !== fsEntry.uuid)
-          ); // deselect selected entry
-        } else {
+          );
+        } */
+      } else if (
+        props.selectedEntries.length === 0 ||
+        !fileOperationsEnabled()
+      ) {
+        props.setSelectedEntries([fsEntry]);
+      } else if (event.ctrlKey) {
+        if (!isEntryExist) {
           props.setSelectedEntries([...selectedEntries, fsEntry]);
         }
+      } else if (isEntryExist) {
+        // update selected entry
+        props.setSelectedEntries([
+          ...selectedEntries.filter(entry => entry.uuid !== fsEntry.uuid),
+          fsEntry
+        ]);
       } else {
-        if (props.selectedEntries.length === 0 || !fileOperationsEnabled()) {
-          props.setSelectedEntries([fsEntry]);
-        } else if (event.ctrlKey) {
-          if (!isEntryExist) {
-            props.setSelectedEntries([...selectedEntries, fsEntry]);
-          }
-        } else if (isEntryExist) {
-          // update selected entry
-          props.setSelectedEntries([
-            ...selectedEntries.filter(entry => entry.uuid !== fsEntry.uuid),
-            fsEntry
-          ]);
-        } else {
-          props.setSelectedEntries([fsEntry]);
-        }
-        setFileContextMenuAnchorEl(event.currentTarget);
+        props.setSelectedEntries([fsEntry]);
       }
+      setFileContextMenuAnchorEl(event.currentTarget);
     } else {
       if (props.selectedEntries.length === 0 || !folderOperationsEnabled()) {
         props.setSelectedEntries([fsEntry]);
