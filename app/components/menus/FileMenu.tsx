@@ -39,9 +39,13 @@ import {
   setFolderThumbnailPromise
 } from '-/services/utils-io';
 import { Pro } from '-/pro';
-import { extractParentDirectoryPath } from '-/utils/paths';
+import {
+  extractContainingDirectoryPath,
+  extractFileName,
+  extractParentDirectoryPath
+} from '-/utils/paths';
 import { TS } from '-/tagspaces.namespace';
-import AddIcon from '@material-ui/icons/Add';
+// import AddIcon from '@material-ui/icons/Add';
 
 interface Props {
   anchorEl: Element;
@@ -123,6 +127,42 @@ const FileMenu = (props: Props) => {
     props.onClose();
     if (props.selectedFilePath) {
       props.showInFileManager(props.selectedFilePath);
+    }
+  }
+
+  function duplicateFile() {
+    props.onClose();
+    if (props.selectedFilePath) {
+      const dirPath = extractContainingDirectoryPath(
+        props.selectedFilePath,
+        PlatformIO.getDirSeparator()
+      );
+      const fileName = extractFileName(
+        props.selectedFilePath,
+        PlatformIO.getDirSeparator()
+      );
+      const lastIndexDot = fileName.lastIndexOf('.');
+      if (lastIndexDot !== -1) {
+        const newFileName =
+          dirPath +
+          PlatformIO.getDirSeparator() +
+          fileName.substring(0, lastIndexDot) +
+          '-copy' +
+          fileName.substr(lastIndexDot);
+        PlatformIO.copyFilePromise(props.selectedFilePath, newFileName)
+          .then(() => {
+            props.loadDirectoryContent(dirPath);
+            /* props.showNotification(
+              'Creating duplicate successfully: ' + newFileName
+            ); */
+            return true;
+          })
+          .catch(error => {
+            props.showNotification(
+              'Error creating duplicate: ' + error.message
+            );
+          });
+      }
     }
   }
 
@@ -220,6 +260,19 @@ const FileMenu = (props: Props) => {
     );
     menuItems.push(<Divider key="fmDivider" />);
   }
+
+  menuItems.push(
+    <MenuItem
+      key="fileMenuDuplicateFile"
+      data-tid="fileMenuDuplicateFileTID"
+      onClick={duplicateFile}
+    >
+      <ListItemIcon>
+        <OpenFolderInternally />
+      </ListItemIcon>
+      <ListItemText primary={i18n.t('core:duplicateFile')} />
+    </MenuItem>
+  );
 
   if (!props.isReadOnlyMode) {
     menuItems.push(
