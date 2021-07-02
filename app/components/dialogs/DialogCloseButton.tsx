@@ -29,7 +29,7 @@ const DialogCloseButton = (props: Props) => {
   const { onClose } = props;
   return (
     <IconButton
-      title={i18n.t('closeButton')}
+      title={i18n.t('closeButtonDialog')}
       aria-label="close"
       style={{
         position: 'absolute',
