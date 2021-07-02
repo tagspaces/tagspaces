@@ -23,7 +23,8 @@ import {
   extractParentDirectoryPath,
   cleanTrailingDirSeparator,
   extractFileName,
-  extractFileExtension
+  extractFileExtension,
+  getMetaFileLocationForDir
 } from '-/utils/paths';
 import { TS } from '-/tagspaces.namespace';
 
@@ -541,12 +542,17 @@ export default class CordovaIO {
                   if (!lite) {
                     if (entry.isDirectory) {
                       // Read tsm.json from subfolders
-                      const metaDirAvailable: any = metaContent.find(
-                        (obj: any) => obj.name === AppConfig.metaFolder
-                      );
-                      if (metaDirAvailable && metaDirAvailable.path) {
+                      if (
+                        !eentry.path.includes(
+                          AppConfig.dirSeparator + AppConfig.metaFolder
+                        )
+                      ) {
+                        const folderMetaPath = getMetaFileLocationForDir(
+                          eentry.path,
+                          AppConfig.dirSeparator
+                        );
                         metaPromises.push(
-                          this.getEntryMeta(eentry, metaDirAvailable.path)
+                          this.getEntryMeta(eentry, folderMetaPath)
                         );
                       }
                     } else {
