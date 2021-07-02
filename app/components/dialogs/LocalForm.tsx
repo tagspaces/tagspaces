@@ -24,10 +24,12 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import IconButton from '@material-ui/core/IconButton';
 import FolderIcon from '@material-ui/icons/Folder';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import Grid from '@material-ui/core/Grid';
 import i18n from '-/services/i18n';
 import { extractDirectoryName } from '-/utils/paths';
 import PlatformIO from '-/services/platform-io';
+import AppConfig from '-/config';
 
 interface Props {
   showAdvancedMode: boolean;
@@ -101,6 +103,12 @@ const LocalForm = (props: Props) => {
               </InputAdornment>
             }
           />
+          {AppConfig.isCordovaAndroid && (
+            <FormHelperText>
+              Examples: sdcard/DCIM, sdcard/Downloads or /storage/899D-1617 for
+              ext. sd-card
+            </FormHelperText>
+          )}
         </FormControl>
       </Grid>
       <Grid item xs={12}>

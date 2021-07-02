@@ -1343,8 +1343,8 @@ export default class CordovaIO {
             // ["file:///storage/emulated/0/360/security", "file:///storage/emulated/0/360/security"]
             // fix https://trello.com/c/vV7D0kGf/500-tsn500-fix-folder-selector-in-create-edit-location-on-android-or-use-native-dialog
             data[0] = data[0].replace(
-              'content://org.tagspaces.mobileapp.provider/root/storage/emulated/0', //'file:///storage/emulated/0',
-              'file:///sdcard'
+              'file:///storage/emulated/0', // 'content://org.tagspaces.mobileapp.provider/root/storage/emulated/0', 'file:///storage/emulated/0',
+              'sdcard'
             );
             resolve(data);
           },
