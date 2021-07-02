@@ -525,7 +525,8 @@ Do you want to continue?`)
     );
   }
 
-  if (!AppConfig.isCordovaAndroid) {
+  if (AppConfig.isCordova) {
+    // .isCordovaAndroid) {
     menuItems.push(
       <MenuItem
         key="takePicture"

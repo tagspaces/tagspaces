@@ -20,25 +20,17 @@
 const execa = require('execa');
 const fs = require('fs-extra');
 var android_versions = require('android-versions');
-var retry = require('./retry');
-var build = require('./build');
 var path = require('path');
 var Adb = require('./Adb');
-var AndroidManifest = require('./AndroidManifest');
 var events = require('cordova-common').events;
 var CordovaError = require('cordova-common').CordovaError;
 var android_sdk = require('./android_sdk');
 var check_reqs = require('./check_reqs');
 var which = require('which');
-var os = require('os');
 
 // constants
 const ONE_SECOND = 1000; // in milliseconds
-const ONE_MINUTE = 60 * ONE_SECOND; // in milliseconds
-const INSTALL_COMMAND_TIMEOUT = 5 * ONE_MINUTE; // in milliseconds
-const NUM_INSTALL_RETRIES = 3;
 const CHECK_BOOTED_INTERVAL = 3 * ONE_SECOND; // in milliseconds
-const EXEC_KILL_SIGNAL = 'SIGKILL';
 
 function forgivingWhichSync (cmd) {
     const whichResult = which.sync(cmd, { nothrow: true });
@@ -215,24 +207,9 @@ module.exports.best_image = function () {
     });
 };
 
-// Returns a promise.
-module.exports.list_started = function () {
-    return Adb.devices({ emulators: true });
-};
-
-// Returns a promise.
-// TODO: we should remove this, there's a more robust method under android_sdk.js
-module.exports.list_targets = function () {
-    return execa('android', ['list', 'targets'], { cwd: os.tmpdir() }).then(({ stdout: output }) => {
-        var target_out = output.split('\n');
-        var targets = [];
-        for (var i = target_out.length; i >= 0; i--) {
-            if (target_out[i].match(/id:/)) {
-                targets.push(targets[i].split(' ')[1]);
-            }
-        }
-        return targets;
-    });
+exports.list_started = async () => {
+    return (await Adb.devices())
+        .filter(id => id.startsWith('emulator-'));
 };
 
 /*
@@ -369,149 +346,5 @@ module.exports.wait_for_boot = function (emulator_id, time_remaining) {
                 }, delay);
             });
         }
-    });
-};
-
-/*
- * Create avd
- * TODO : Enter the stdin input required to complete the creation of an avd.
- * Returns a promise.
- */
-module.exports.create_image = function (name, target) {
-    console.log('Creating new avd named ' + name);
-    if (target) {
-        return execa('android', ['create', 'avd', '--name', name, '--target', target]).then(null, function (error) {
-            console.error('ERROR : Failed to create emulator image : ');
-            console.error(' Do you have the latest android targets including ' + target + '?');
-            console.error(error.message);
-        });
-    } else {
-        console.log('WARNING : Project target not found, creating avd with a different target but the project may fail to install.');
-        // TODO: there's a more robust method for finding targets in android_sdk.js
-        return execa('android', ['create', 'avd', '--name', name, '--target', this.list_targets()[0]]).then(function () {
-            // TODO: This seems like another error case, even though it always happens.
-            console.error('ERROR : Unable to create an avd emulator, no targets found.');
-            console.error('Ensure you have targets available by running the "android" command');
-            return Promise.reject(new CordovaError());
-        }, function (error) {
-            console.error('ERROR : Failed to create emulator image : ');
-            console.error(error.message);
-        });
-    }
-};
-
-module.exports.resolveTarget = function (target) {
-    return this.list_started().then(function (emulator_list) {
-        if (emulator_list.length < 1) {
-            return Promise.reject(new CordovaError('No running Android emulators found, please start an emulator before deploying your project.'));
-        }
-
-        // default emulator
-        target = target || emulator_list[0];
-        if (emulator_list.indexOf(target) < 0) {
-            return Promise.reject(new CordovaError('Unable to find target \'' + target + '\'. Failed to deploy to emulator.'));
-        }
-
-        return build.detectArchitecture(target).then(function (arch) {
-            return { target: target, arch: arch, isEmulator: true };
-        });
-    });
-};
-
-/*
- * Installs a previously built application on the emulator and launches it.
- * If no target is specified, then it picks one.
- * If no started emulators are found, error out.
- * Returns a promise.
- */
-module.exports.install = function (givenTarget, buildResults) {
-    var target;
-    // We need to find the proper path to the Android Manifest
-    const manifestPath = path.join(__dirname, '..', '..', 'app', 'src', 'main', 'AndroidManifest.xml');
-    const manifest = new AndroidManifest(manifestPath);
-    const pkgName = manifest.getPackageId();
-
-    // resolve the target emulator
-    return Promise.resolve().then(function () {
-        if (givenTarget && typeof givenTarget === 'object') {
-            return givenTarget;
-        } else {
-            return module.exports.resolveTarget(givenTarget);
-        }
-
-    // set the resolved target
-    }).then(function (resolvedTarget) {
-        target = resolvedTarget;
-
-    // install the app
-    }).then(function () {
-        // This promise is always resolved, even if 'adb uninstall' fails to uninstall app
-        // or the app doesn't installed at all, so no error catching needed.
-        return Promise.resolve().then(function () {
-            var apk_path = build.findBestApkForArchitecture(buildResults, target.arch);
-            var execOptions = {
-                cwd: os.tmpdir(),
-                timeout: INSTALL_COMMAND_TIMEOUT, // in milliseconds
-                killSignal: EXEC_KILL_SIGNAL
-            };
-
-            events.emit('log', 'Using apk: ' + apk_path);
-            events.emit('log', 'Package name: ' + pkgName);
-            events.emit('verbose', 'Installing app on emulator...');
-
-            // A special function to call adb install in specific environment w/ specific options.
-            // Introduced as a part of fix for http://issues.apache.org/jira/browse/CB-9119
-            // to workaround sporadic emulator hangs
-            function adbInstallWithOptions (target, apk, opts) {
-                events.emit('verbose', 'Installing apk ' + apk + ' on ' + target + '...');
-
-                const args = ['-s', target, 'install', '-r', apk];
-                return execa('adb', args, opts).then(({ stdout }) => {
-                    // adb does not return an error code even if installation fails. Instead it puts a specific
-                    // message to stdout, so we have to use RegExp matching to detect installation failure.
-                    if (/Failure/.test(stdout)) {
-                        if (stdout.match(/INSTALL_PARSE_FAILED_NO_CERTIFICATES/)) {
-                            stdout += 'Sign the build using \'-- --keystore\' or \'--buildConfig\'' +
-                                ' or sign and deploy the unsigned apk manually using Android tools.';
-                        } else if (stdout.match(/INSTALL_FAILED_VERSION_DOWNGRADE/)) {
-                            stdout += 'You\'re trying to install apk with a lower versionCode that is already installed.' +
-                                '\nEither uninstall an app or increment the versionCode.';
-                        }
-
-                        throw new CordovaError('Failed to install apk to emulator: ' + stdout);
-                    }
-                });
-            }
-
-            function installPromise () {
-                return adbInstallWithOptions(target.target, apk_path, execOptions).catch(function (error) {
-                    // CB-9557 CB-10157 only uninstall and reinstall app if the one that
-                    // is already installed on device was signed w/different certificate
-                    if (!/INSTALL_PARSE_FAILED_INCONSISTENT_CERTIFICATES/.test(error.toString())) { throw error; }
-
-                    events.emit('warn', 'Uninstalling app from device and reinstalling it because the ' +
-                        'currently installed app was signed with different key');
-
-                    // This promise is always resolved, even if 'adb uninstall' fails to uninstall app
-                    // or the app doesn't installed at all, so no error catching needed.
-                    return Adb.uninstall(target.target, pkgName).then(function () {
-                        return adbInstallWithOptions(target.target, apk_path, execOptions);
-                    });
-                });
-            }
-
-            return retry.retryPromise(NUM_INSTALL_RETRIES, installPromise).then(function (output) {
-                events.emit('log', 'INSTALL SUCCESS');
-            });
-        });
-    // unlock screen
-    }).then(function () {
-        events.emit('verbose', 'Unlocking screen...');
-        return Adb.shell(target.target, 'input keyevent 82');
-    }).then(function () {
-        Adb.start(target.target, pkgName + '/.' + manifest.getActivity().getName());
-    // report success or failure
-    }).then(function (output) {
-        events.emit('log', 'LAUNCH SUCCESS');
     });
 };

@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /*
        Licensed to the Apache Software Foundation (ASF) under one
        or more contributor license agreements.  See the NOTICE file
@@ -18,22 +16,28 @@
        specific language governing permissions and limitations
        under the License.
 */
+package org.apache.cordova.camera;
 
-const { resolve, install } = require('./target');
+public class GalleryPathVO {
+    private final String galleryPath;
+    private String picturesDirectory;
+    private String galleryFileName;
 
-var args = process.argv;
-const targetSpec = { type: 'device' };
+    public GalleryPathVO(String picturesDirectory, String galleryFileName) {
+        this.picturesDirectory = picturesDirectory;
+        this.galleryFileName = galleryFileName;
+        this.galleryPath = this.picturesDirectory + "/" + this.galleryFileName;
+    }
 
-if (args.length > 2) {
-    if (args[2].substring(0, 9) === '--target=') {
-        targetSpec.id = args[2].substring(9, args[2].length);
-    } else {
-        console.error('ERROR : argument \'' + args[2] + '\' not recognized.');
-        process.exit(2);
+    public String getGalleryPath() {
+        return galleryPath;
+    }
+
+    public String getPicturesDirectory() {
+        return picturesDirectory;
+    }
+
+    public String getGalleryFileName() {
+        return galleryFileName;
     }
 }
-
-resolve(targetSpec).then(install).catch(err => {
-    console.error('ERROR: ' + err);
-    process.exit(2);
-});

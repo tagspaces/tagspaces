@@ -44,11 +44,8 @@ buildscript {
         ext.kotlin_version = gradlePluginKotlinVersion
     }
 
-    repositories {
-        mavenCentral()
-        google()
-        jcenter()
-    }
+    apply from: 'repositories.gradle'
+    repositories repos
 
     dependencies {
         apply from: '../CordovaLib/cordova.gradle'
@@ -82,10 +79,8 @@ buildscript {
 
 // Allow plugins to declare Maven dependencies via build-extras.gradle.
 allprojects {
-    repositories {
-        mavenCentral()
-        jcenter()
-    }
+    apply from: 'repositories.gradle'
+    repositories repos
 }
 
 task wrapper(type: Wrapper) {

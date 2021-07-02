@@ -20,13 +20,17 @@ ext {
     apply from: 'cordova.gradle'
     cdvCompileSdkVersion = privateHelpers.getProjectTarget()
     cdvBuildToolsVersion = privateHelpers.findLatestInstalledBuildTools()
+    if (project.hasProperty('cdvMinSdkVersion') && cdvMinSdkVersion.isInteger()) {
+        cdvMinSdkVersion = cdvMinSdkVersion as int
+        println '[Cordova] cdvMinSdkVersion is overridden, try it at your own risk.'
+    } else {
+        cdvMinSdkVersion = 22; // current Cordova's default
+    }
 }
 
 buildscript {
-    repositories {
-        google()
-        jcenter()
-    }
+    apply from: 'repositories.gradle'
+    repositories repos
 
     dependencies {
         // The gradle plugin and the maven plugin have to be updated after each version of Android
@@ -38,10 +42,8 @@ buildscript {
 }
 
 allprojects {
-    repositories {
-        google()
-        jcenter()
-    }
+    apply from: 'repositories.gradle'
+    repositories repos
 }
 
 apply plugin: 'com.android.library'
@@ -49,7 +51,7 @@ apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
 group = 'org.apache.cordova'
-version = '9.0.0'
+version = '9.1.0'
 
 android {
     compileSdkVersion cdvCompileSdkVersion
@@ -60,9 +62,9 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    // For the Android Cordova Lib, we will hardcode the minSdkVersion and not allow changes.
+    // For the Android Cordova Lib, we allow changing the minSdkVersion, but it is at the users own risk
     defaultConfig {
-        minSdkVersion 22
+        minSdkVersion cdvMinSdkVersion
     }
 
     sourceSets {
@@ -140,9 +142,9 @@ bintray {
         licenses = ['Apache-2.0']
         labels = ['android', 'cordova', 'phonegap']
         version {
-            name = '9.0.0'
-            released  = new Date()
-            vcsTag = '9.0.0'
+            name = '9.1.0'
+            released = new Date()
+            vcsTag = '9.1.0'
         }
     }
 }
