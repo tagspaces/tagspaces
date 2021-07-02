@@ -28,6 +28,7 @@ import OpenParentFolder from '@material-ui/icons/FolderOpen';
 import OpenFolderInternally from '@material-ui/icons/Folder';
 import AddRemoveTags from '@material-ui/icons/Loyalty';
 import MoveCopy from '@material-ui/icons/FileCopy';
+import DuplicateFile from '@material-ui/icons/PostAdd';
 import ImageIcon from '@material-ui/icons/Image';
 import RenameFile from '@material-ui/icons/FormatTextdirectionLToR';
 import DeleteForever from '@material-ui/icons/DeleteForever';
@@ -261,19 +262,6 @@ const FileMenu = (props: Props) => {
     menuItems.push(<Divider key="fmDivider" />);
   }
 
-  menuItems.push(
-    <MenuItem
-      key="fileMenuDuplicateFile"
-      data-tid="fileMenuDuplicateFileTID"
-      onClick={duplicateFile}
-    >
-      <ListItemIcon>
-        <OpenFolderInternally />
-      </ListItemIcon>
-      <ListItemText primary={i18n.t('core:duplicateFile')} />
-    </MenuItem>
-  );
-
   if (!props.isReadOnlyMode) {
     menuItems.push(
       <MenuItem
@@ -297,6 +285,18 @@ const FileMenu = (props: Props) => {
           <RenameFile />
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:renameFile')} />
+      </MenuItem>
+    );
+    menuItems.push(
+      <MenuItem
+        key="fileMenuDuplicateFile"
+        data-tid="fileMenuDuplicateFileTID"
+        onClick={duplicateFile}
+      >
+        <ListItemIcon>
+          <DuplicateFile />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:duplicateFile')} />
       </MenuItem>
     );
     menuItems.push(
