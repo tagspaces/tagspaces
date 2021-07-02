@@ -24,7 +24,8 @@ import {
   cleanTrailingDirSeparator,
   extractFileName,
   extractFileExtension,
-  getMetaFileLocationForDir
+  getMetaFileLocationForDir,
+  getThumbFileLocationForDirectory
 } from '-/utils/paths';
 import { TS } from '-/tagspaces.namespace';
 
@@ -228,7 +229,7 @@ export default class CordovaIO {
     return new Promise((resolve, reject) => {
       window.resolveLocalFileSystemURL(dirPath, resolve, error => {
         console.error(
-          'Error getting FileSystem' +
+          'Error getting FileSystem ' +
             dirPath +
             ': ' +
             this.cordovaFileError[error.code]
@@ -525,11 +526,10 @@ export default class CordovaIO {
                   eentry.tags = [];
                   eentry.thumbPath = entry.isFile
                     ? ''
-                    : eentry.path +
-                      '/' +
-                      AppConfig.metaFolder +
-                      '/' +
-                      AppConfig.folderThumbFile;
+                    : getThumbFileLocationForDirectory(
+                        eentry.path,
+                        AppConfig.dirSeparator
+                      );
                   // eentry.meta = {};
                   eentry.isFile = entry.isFile;
                   if (entry.isFile) {
@@ -1008,67 +1008,72 @@ export default class CordovaIO {
   /**
    * Copies a given file to a specified location
    */
-  copyFilePromise = (filePath: string, newFilePath: string): Promise<any> =>
-    new Promise((resolve, reject) => {
-      this.checkFileExist(newFilePath).then(exist => {
+  copyFilePromise = (
+    filePath: string,
+    newFilePath: string,
+    override: boolean = true
+  ): Promise<any> =>
+    new Promise(async (resolve, reject) => {
+      if (!override) {
+        const exist = await this.checkFileExist(newFilePath);
         if (exist) {
           reject('error copyFile: ' + newFilePath + ' exist!');
           return;
         }
-        // eslint-disable-next-line no-param-reassign
-        filePath = this.normalizePath(filePath);
-        const newFileName = newFilePath.substring(
-          newFilePath.lastIndexOf('/') + 1
-        );
-        const newFileParentPath = this.normalizePath(
-          newFilePath.substring(0, newFilePath.lastIndexOf('/'))
-        );
-        this.fsRoot.getDirectory(
-          newFileParentPath,
-          {
-            create: false,
-            exclusive: false
-          },
-          parentDirEntry => {
-            this.fsRoot.getFile(
-              filePath,
-              {
-                create: false,
-                exclusive: false
-              },
-              entry => {
-                entry.copyTo(
-                  parentDirEntry,
-                  newFileName,
-                  () => {
-                    console.log(
-                      'File copy: target: ' +
-                        newFilePath +
-                        ' source: ' +
-                        entry.fullPath
-                    );
-                    resolve(newFilePath);
-                  },
-                  () => {
-                    reject('error copying: ' + filePath);
-                  }
-                );
-              },
-              () => {
-                reject('Error getting file: ' + filePath);
-              }
-            );
-          },
-          error => {
-            reject(
-              'Getting dir: ' +
-                newFileParentPath +
-                ' failed with error code: ' +
-                error.code
-            );
-          }
-        );
-      });
+      }
+      // eslint-disable-next-line no-param-reassign
+      filePath = this.normalizePath(filePath);
+      const newFileName = newFilePath.substring(
+        newFilePath.lastIndexOf('/') + 1
+      );
+      const newFileParentPath = this.normalizePath(
+        newFilePath.substring(0, newFilePath.lastIndexOf('/'))
+      );
+      this.fsRoot.getDirectory(
+        newFileParentPath,
+        {
+          create: false,
+          exclusive: false
+        },
+        parentDirEntry => {
+          this.fsRoot.getFile(
+            filePath,
+            {
+              create: false,
+              exclusive: false
+            },
+            entry => {
+              entry.copyTo(
+                parentDirEntry,
+                newFileName,
+                () => {
+                  console.log(
+                    'File copy: target: ' +
+                      newFilePath +
+                      ' source: ' +
+                      entry.fullPath
+                  );
+                  resolve(newFilePath);
+                },
+                () => {
+                  reject('error copying: ' + filePath);
+                }
+              );
+            },
+            () => {
+              reject('Error getting file: ' + filePath);
+            }
+          );
+        },
+        error => {
+          reject(
+            'Getting dir: ' +
+              newFileParentPath +
+              ' failed with error code: ' +
+              error.code
+          );
+        }
+      );
     });
 
   /**

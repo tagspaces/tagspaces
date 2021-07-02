@@ -23,7 +23,8 @@ import {
   extractFileExtension,
   extractFileName,
   extractParentDirectoryPath,
-  getMetaDirectoryPath
+  getMetaDirectoryPath,
+  getThumbFileLocationForDirectory
 } from '-/utils/paths';
 import { arrayBufferToBuffer } from '-/utils/misc';
 import AppConfig from '../config';
@@ -98,8 +99,14 @@ export default class ElectronIO {
       nImage = nativeImage.createFromDataURL(TrayIcon2x);
     } else if (process.platform === 'darwin') {
       nImage = nativeImage.createFromDataURL(TrayIcon);
-      nImage.addRepresentation({ scaleFactor: 2.0, dataURL: TrayIcon2x });
-      nImage.addRepresentation({ scaleFactor: 3.0, dataURL: TrayIcon3x });
+      nImage.addRepresentation({
+        scaleFactor: 2.0,
+        dataURL: TrayIcon2x
+      });
+      nImage.addRepresentation({
+        scaleFactor: 3.0,
+        dataURL: TrayIcon3x
+      });
     } else {
       nImage = nativeImage.createFromDataURL(TrayIcon2x);
     }
@@ -348,8 +355,7 @@ export default class ElectronIO {
                     : '') +
                   AppConfig.metaFolderFile;
                 try {
-                  const folderMeta = this.fs.readJsonSync(folderMetaPath);
-                  eentry.meta = folderMeta;
+                  eentry.meta = this.fs.readJsonSync(folderMetaPath);
                   // console.log('Success reading meta folder file ' + folderMetaPath);
                 } catch (err) {
                   // console.log('Failed reading meta folder file ' + folderMetaPath);
@@ -358,12 +364,10 @@ export default class ElectronIO {
                 // Loading thumbs for folders
                 if (!eentry.path.includes('/' + AppConfig.metaFolder)) {
                   // skipping meta folder
-                  const folderTmbPath =
-                    eentry.path +
-                    AppConfig.dirSeparator +
-                    AppConfig.metaFolder +
-                    AppConfig.dirSeparator +
-                    AppConfig.folderThumbFile;
+                  const folderTmbPath = getThumbFileLocationForDirectory(
+                    eentry.path,
+                    AppConfig.dirSeparator
+                  );
                   const tmbStats = this.fs.statSync(folderTmbPath);
                   if (tmbStats.isFile()) {
                     eentry.thumbPath = folderTmbPath;
