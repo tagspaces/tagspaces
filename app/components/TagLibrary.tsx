@@ -147,7 +147,7 @@ const TagLibrary = (props: Props) => {
   >(false);
 
   useEffect(() => {
-    if (props.saveTagInLocation) {
+    if (Pro && props.saveTagInLocation) {
       refreshTagsFromLocation();
     }
   }, []);
