@@ -95,23 +95,23 @@ export const FileTypeGroups = {
 
 const fuseOptions = {
   shouldSort: true,
-  threshold: 0.4,
+  threshold: 0.3,
   ignoreLocation: true,
-  distance: 100,
+  distance: 1000,
   tokenize: true,
-  minMatchCharLength: 1,
+  minMatchCharLength: 2,
   keys: [
     {
       name: 'name',
-      weight: 0.25
+      weight: 0.3
     },
     {
       name: 'description',
-      weight: 0.25
+      weight: 0.2
     },
     {
       name: 'textContent',
-      weight: 0.25
+      weight: 0.2
     },
     {
       name: 'tags',
@@ -119,7 +119,7 @@ const fuseOptions = {
     },
     {
       name: 'path', // TODO ignore .ts folder, should not be in the index
-      weight: 0.05
+      weight: 0.1
     }
   ]
 };
