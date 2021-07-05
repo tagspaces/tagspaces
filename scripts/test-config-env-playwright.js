@@ -1,1 +1,1 @@
-process.env.NODE_JEST = 'test_playwright';
+process.env.PLAYWRIGHT = 'test_playwright';

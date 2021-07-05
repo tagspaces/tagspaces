@@ -62,57 +62,66 @@ export async function startSpectronApp() {
   }
 
   if (global.isWeb) {
-    //require('scripts/wdio.conf');
-    const webdriverio = require('webdriverio');
-    // https://webdriver.io/docs/configurationfile.html
+    if (global.isPlaywright) {
+      const { webkit } = require('playwright');
+      global.app = await webkit.launch({ headless: false, slowMo: 50 }); //browser
+      global.client = await global.app.newPage(); //page
+      await global.client.goto('http://localhost:8000');
+      // await global.client.screenshot({ path: `example.png` });
+      // await global.client.close();
+    } else {
+      //require('scripts/wdio.conf');
+      const webdriverio = require('webdriverio');
+      // https://webdriver.io/docs/configurationfile.html
 
-    const options = {
-      host: 'localhost', // Use localhost as chrome driver server
-      port: 9515, // "9515" is the port opened by chrome driver.
-      capabilities: {
-        browserName: 'chrome',
-        'goog:chromeOptions': {
-          w3c: true,
-          args: chromeDriverArgs
-        }
-        // pageLoadStrategy: 'normal'
-      },
-      // Warns when a deprecated command is used
-      deprecationWarnings: true,
-      // If you only want to run your tests until a specific amount of tests have failed use
-      // bail (default is 0 - don't bail, run all tests).
-      bail: 0,
-      reporters: ['spec'],
-      /* afterTest: [async function(
-        test,
-        context,
-        { error, result, duration, passed, retries }
-      ) => {
-        await takeScreenshot();
-        await clearLocalStorage();
-      }], */
-      waitforTimeout: 5000,
-      maxInstances: 1,
-      // logLevel: 'debug'
-      logLevel: 'silent',
-      coloredLogs: true
-    };
-    // global.client = browser
-    global.client = await webdriverio.remote(options);
-    // global.client.setTimeout({ 'script': 60000 });
-    /*client = await client
-      .init()
-      .setViewportSize({ width: 1024, height: 768 }, false)
-      .timeouts('script', 6000)
-      /!*
-                 Cannot set 'implicit' timeout because of a bug in webdriverio [1].
-                 [1] https://github.com/webdriverio/webdriverio/issues/974
-                 *!/
-      // .timeouts('implicit', 5000)
-      .timeouts('pageLoad', 30000);*/
-    setWdioImageComparisonService(global.client);
+      const options = {
+        host: 'localhost', // Use localhost as chrome driver server
+        port: 9515, // "9515" is the port opened by chrome driver.
+        capabilities: {
+          browserName: 'chrome',
+          'goog:chromeOptions': {
+            w3c: true,
+            args: chromeDriverArgs
+          }
+          // pageLoadStrategy: 'normal'
+        },
+        // Warns when a deprecated command is used
+        deprecationWarnings: true,
+        // If you only want to run your tests until a specific amount of tests have failed use
+        // bail (default is 0 - don't bail, run all tests).
+        bail: 0,
+        reporters: ['spec'],
+        /* afterTest: [async function(
+          test,
+          context,
+          { error, result, duration, passed, retries }
+        ) => {
+          await takeScreenshot();
+          await clearLocalStorage();
+        }], */
+        waitforTimeout: 5000,
+        maxInstances: 1,
+        // logLevel: 'debug'
+        logLevel: 'silent',
+        coloredLogs: true
+      };
+      // global.client = browser
+      global.client = await webdriverio.remote(options);
+      // global.client.setTimeout({ 'script': 60000 });
+      /*client = await client
+        .init()
+        .setViewportSize({ width: 1024, height: 768 }, false)
+        .timeouts('script', 6000)
+        /!*
+                   Cannot set 'implicit' timeout because of a bug in webdriverio [1].
+                   [1] https://github.com/webdriverio/webdriverio/issues/974
+                   *!/
+        // .timeouts('implicit', 5000)
+        .timeouts('pageLoad', 30000);*/
+      setWdioImageComparisonService(global.client);
 
-    await global.client.url('http://localhost:8000');
+      await global.client.url('http://localhost:8000');
+    }
   } else if (global.isPlaywright) {
     const { _electron: electron } = require('playwright');
     // Launch Electron app.
@@ -181,11 +190,11 @@ function setWdioImageComparisonService(browser) {
 }
 
 export async function stopSpectronApp() {
-  if (global.isWeb) {
+  if (global.isPlaywright) {
+    await global.app.close();
+  } else if (global.isWeb) {
     await global.client.closeWindow();
     // await global.client.end();
-  } else if (global.isPlaywright) {
-    await global.app.close();
   } else if (global.app && global.app.isRunning()) {
     // await clearLocalStorage();
     return global.app.stop();
