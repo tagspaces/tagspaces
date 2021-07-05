@@ -559,7 +559,7 @@ const GridPerspective = (props: Props) => {
     }
   };
 
-  const renderCell = (fsEntry: TS.FileSystemEntry) => {
+  const renderCell = (fsEntry: TS.FileSystemEntry, isLast?: boolean) => {
     const {
       classes,
       theme,
@@ -595,6 +595,7 @@ const GridPerspective = (props: Props) => {
           fsEntry={fsEntry}
           entrySize={entrySize}
           classes={classes}
+          isLast={isLast}
           theme={theme}
           supportedFileTypes={supportedFileTypes}
           thumbnailMode={thumbnailMode}
@@ -718,10 +719,7 @@ const GridPerspective = (props: Props) => {
   return (
     <div
       style={{
-        height:
-          'calc(100% - ' +
-          (AppConfig.isCordova ? '320' : '51') + // todo handle cordova screen sizes
-          'px)'
+        height: 'calc(100% - 51px)'
       }}
     >
       <MainToolbar
@@ -755,6 +753,7 @@ const GridPerspective = (props: Props) => {
             layoutType === 'grid' ? classes.gridContainer : classes.rowContainer
           }
           style={{
+            height: '100%',
             marginTop: 53,
             gridTemplateColumns:
               layoutType === 'grid'
@@ -806,7 +805,6 @@ const GridPerspective = (props: Props) => {
           selectedFiles={selectedFilePaths}
         />
       )}
-
       {Boolean(fileContextMenuAnchorEl) && (
         <FileMenu
           anchorEl={fileContextMenuAnchorEl}

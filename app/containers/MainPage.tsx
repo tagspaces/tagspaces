@@ -310,9 +310,17 @@ const MainPage = (props: Props) => {
   >(window.ExtDefaultVerticalPanel !== 'none' && !props.isEntryInFullWidth); */
   // const [mainSplitSize, setMainSplitSize] = useState<any>('100%');
   // const [isDrawerOpened, setDrawerOpened] = useState<boolean>(true);
+  const width =
+    window.innerWidth ||
+    document.documentElement.clientWidth ||
+    body.clientWidth;
+  const height =
+    window.innerHeight ||
+    document.documentElement.clientHeight ||
+    body.clientHeight;
   const [dimensions, setDimensions] = useState<any>({
-    width: 1000,
-    height: 1000
+    width,
+    height
   });
 
   useEffect(() => {
