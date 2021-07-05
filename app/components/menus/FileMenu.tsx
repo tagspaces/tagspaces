@@ -36,6 +36,7 @@ import i18n from '-/services/i18n';
 import AppConfig from '-/config';
 import PlatformIO from '-/services/platform-io';
 import {
+  generateFileName,
   getAllPropertiesPromise,
   setFolderThumbnailPromise
 } from '-/services/utils-io';
@@ -43,9 +44,11 @@ import { Pro } from '-/pro';
 import {
   extractContainingDirectoryPath,
   extractFileName,
-  extractParentDirectoryPath
+  extractParentDirectoryPath,
+  extractTags
 } from '-/utils/paths';
 import { TS } from '-/tagspaces.namespace';
+import { formatDateTime4Tag } from '-/utils/misc';
 // import AddIcon from '@material-ui/icons/Add';
 
 interface Props {
@@ -138,32 +141,32 @@ const FileMenu = (props: Props) => {
         props.selectedFilePath,
         PlatformIO.getDirSeparator()
       );
+
       const fileName = extractFileName(
         props.selectedFilePath,
         PlatformIO.getDirSeparator()
       );
-      const lastIndexDot = fileName.lastIndexOf('.');
-      if (lastIndexDot !== -1) {
-        const newFileName =
-          dirPath +
-          PlatformIO.getDirSeparator() +
-          fileName.substring(0, lastIndexDot) +
-          '-copy' +
-          fileName.substr(lastIndexDot);
-        PlatformIO.copyFilePromise(props.selectedFilePath, newFileName)
-          .then(() => {
-            props.loadDirectoryContent(dirPath);
-            /* props.showNotification(
-              'Creating duplicate successfully: ' + newFileName
-            ); */
-            return true;
-          })
-          .catch(error => {
-            props.showNotification(
-              'Error creating duplicate: ' + error.message
-            );
-          });
-      }
+
+      const extractedTags = extractTags(
+        props.selectedFilePath,
+        AppConfig.tagDelimiter,
+        PlatformIO.getDirSeparator()
+      );
+      extractedTags.push('copy');
+      extractedTags.push(formatDateTime4Tag(new Date(), true));
+
+      const newFilePath =
+        (dirPath ? dirPath + PlatformIO.getDirSeparator() : '') +
+        generateFileName(fileName, extractedTags, AppConfig.tagDelimiter);
+
+      PlatformIO.copyFilePromise(props.selectedFilePath, newFilePath)
+        .then(() => {
+          props.loadDirectoryContent(dirPath);
+          return true;
+        })
+        .catch(error => {
+          props.showNotification('Error creating duplicate: ' + error.message);
+        });
     }
   }
 
