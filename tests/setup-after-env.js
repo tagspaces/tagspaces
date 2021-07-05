@@ -13,6 +13,7 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 300000;
 // global.isWin = /^win/.test(process.platform);
 // global.isMac = /^darwin/.test(process.platform);
 global.isWeb = process.env.NODE_JEST === 'test_web';
+global.isPlaywright = process.env.NODE_JEST === 'test_playwright';
 global.isHeadlessMode = process.env.HEADLESS_MODE === 'true';
 global.isMinio = global.isWeb || process.env.NODE_JEST === 'test_minio';
 global.isElectron = process.env.NODE_JEST === 'test_electron';
@@ -53,19 +54,22 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
-  if (jasmine.currentTest && jasmine.currentTest.status !== 'disabled') {
-    // console.log('specDone Done' + JSON.stringify(result));
-    if (jasmine.previousTest && jasmine.previousTest.status === 'failed') {
-      await takeScreenshot(jasmine.previousTest.description);
+  if (global.isPlaywright) {
+    //TODO
+  } else {
+    if (jasmine.currentTest && jasmine.currentTest.status !== 'disabled') {
+      // console.log('specDone Done' + JSON.stringify(result));
+      if (jasmine.previousTest && jasmine.previousTest.status === 'failed') {
+        await takeScreenshot(jasmine.previousTest.description);
+      }
+      await clearLocalStorage(); //todo https://trello.com/c/hMCSKXWU/554-fix-takescreenshots-in-tests
     }
-    await clearLocalStorage(); //todo https://trello.com/c/hMCSKXWU/554-fix-takescreenshots-in-tests
-  }
 
-  if (global.isWeb) {
-    await global.client.pause(500);
+    if (global.isWeb) {
+      await global.client.pause(500);
+    }
+    await closeWelcome();
   }
-
-  await closeWelcome();
 });
 
 // afterEach(async () => {

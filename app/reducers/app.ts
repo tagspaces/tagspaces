@@ -770,13 +770,14 @@ export const actions = {
         dispatch(actions.openLink(window.location.href));
       }, 1000);
     } else if (cmdOpen) {
-      setTimeout(() => {
+      // && cmdOpen !== 'main.prod.js') { //TODO fix playwright
+      /* setTimeout(() => {
         dispatch(
           actions.openLink(
             window.location.href.split('?')[0] + '?cmdopen=' + cmdOpen
           )
         );
-      }, 1000);
+      }, 1000); */
     }
   },
   goOnline: () => ({ type: types.DEVICE_ONLINE }),

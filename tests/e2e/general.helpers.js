@@ -16,22 +16,26 @@ const testFolder = 'testFolder';
 const testLocationName = '' + new Date().getTime();
 
 export async function clickOn(selector, options = {}) {
-  const element = await global.client.$(selector);
-  await element.waitUntil(
-    async function() {
-      const displayed = await this.isDisplayed();
-      // const clickable = await this.isClickable();
-      // const displayed = await this.isDisplayedInViewport();
-      return displayed; // && clickable;
-    },
-    {
-      timeout: 5000,
-      timeoutMsg: 'clickOn selector ' + selector + ' to exist after 5s'
-    }
-  );
-  //await element.scrollIntoView();
-  //await element.moveTo(selector);
-  await element.click(options);
+  if (global.isPlaywright) {
+    await global.client.click(selector);
+  } else {
+    const element = await global.client.$(selector);
+    await element.waitUntil(
+      async function() {
+        const displayed = await this.isDisplayed();
+        // const clickable = await this.isClickable();
+        // const displayed = await this.isDisplayedInViewport();
+        return displayed; // && clickable;
+      },
+      {
+        timeout: 5000,
+        timeoutMsg: 'clickOn selector ' + selector + ' to exist after 5s'
+      }
+    );
+    //await element.scrollIntoView();
+    //await element.moveTo(selector);
+    await element.click(options);
+  }
 }
 
 /*export async function waitUntilOpen(element) {

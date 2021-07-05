@@ -1,10 +1,10 @@
 import {
   closeFileProperties,
   createLocation,
-  createMinioLocation,
+  createMinioLocation, createPlaywrightLocation,
   defaultLocationName,
   defaultLocationPath
-} from './location.helpers';
+} from "./location.helpers";
 import {
   clickOn,
   createTxtFile,
@@ -16,6 +16,8 @@ import {
   setSettings,
   waitForNotification
 } from './general.helpers';
+import { expect } from '@playwright/test';
+import { matchers } from 'expect-playwright';
 import {
   AddRemovePropertiesTags,
   getPropertiesFileName
@@ -24,9 +26,12 @@ import { searchEngine } from './search.helpers';
 import { openContextEntryMenu } from './test-utils';
 
 describe('TST08 - File folder properties', () => {
-  beforeEach(async () => {
+  /*beforeEach(async () => {
+    expect.extend(matchers);
     if (global.isMinio) {
       await createMinioLocation('', defaultLocationName, true);
+    } else if(global.isPlaywright){
+      // await createPlaywrightLocation(defaultLocationPath, defaultLocationName, true);
     } else {
       await createLocation(defaultLocationPath, defaultLocationName, true);
     }
@@ -34,7 +39,7 @@ describe('TST08 - File folder properties', () => {
     await clickOn('[data-tid=location_' + defaultLocationName + ']');
     // If its have opened file
     await closeFileProperties();
-  });
+  });*/
 
   it('TST0801 - Arrow keys select next prev file (keybindings) [web,minio,electron]', async () => {
     // open fileProperties
@@ -98,6 +103,16 @@ describe('TST08 - File folder properties', () => {
     await clickOn('[data-tid=openInFullWidthTID]'); // dummy click -first click in openInFullWidthTID dont work
     await clickOn('[data-tid=openInFullWidthTID]');
     await expectElementExist('[data-tid=folderContainerTID]', false);
+  });
+
+  it('TST0804-2 - Open file in full width playwright [electron]', async () => {
+    expect.extend(matchers);
+    await clickOn('[data-tid=location_supported-filestypes]');
+    // open fileProperties
+    await clickOn(selectorFile);
+    //await clickOn('[data-tid=openInFullWidthTID]'); // dummy click -first click in openInFullWidthTID dont work
+    await clickOn('[data-tid=openInFullWidthTID]');
+    expect(global.client).toHaveSelector('[data-tid=folderContainerTID]');
   });
 
   it('TST0805 - Rename opened file [web,minio,electron]', async () => {

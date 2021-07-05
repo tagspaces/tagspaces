@@ -113,6 +113,37 @@ export async function startSpectronApp() {
     setWdioImageComparisonService(global.client);
 
     await global.client.url('http://localhost:8000');
+  } else if (global.isPlaywright) {
+    const { _electron: electron } = require('playwright');
+    // Launch Electron app.
+    global.app = await electron.launch({
+      args: [pathLib.join(__dirname, '..', '..', 'app', 'main.prod.js')]
+    });
+
+    // Get the first window that the app opens, wait if necessary.
+    global.client = await global.app.firstWindow();
+
+    // Evaluation expression in the Electron context.
+    /*const appPath = await global.app.evaluate(async ({ app }) => {
+      // This runs in the main Electron process, parameter here is always
+      // the result of the require('electron') in the main app script.
+      return app.getAppPath();
+    });
+    console.log(appPath);*/
+
+    // Print the title.
+    // console.log(await global.client.title());
+
+    // Direct Electron console to Node terminal.
+    // window.on('console', console.log);
+    // Click button.
+    /*await global.client.click('[data-tid=location_supported-filestypes]');
+    // Capture a screenshot.
+    await global.client.screenshot({
+      path: pathLib.join(__dirname, 'intro.png')
+    });*/
+    // Exit app.
+    // await global.app.close();
   } else {
     global.app = new Application({
       path: electronPath,
@@ -150,13 +181,14 @@ function setWdioImageComparisonService(browser) {
 }
 
 export async function stopSpectronApp() {
-  if (global.app && global.app.isRunning()) {
-    // await clearLocalStorage();
-    return global.app.stop();
-  }
   if (global.isWeb) {
     await global.client.closeWindow();
     // await global.client.end();
+  } else if (global.isPlaywright) {
+    await global.app.close();
+  } else if (global.app && global.app.isRunning()) {
+    // await clearLocalStorage();
+    return global.app.stop();
   }
 }
 
