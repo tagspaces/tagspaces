@@ -68,8 +68,8 @@ import { getLocations } from '-/reducers/locations';
 import { Pro } from '-/pro';
 
 interface Props {
-  classes: any;
-  style: any;
+  classes?: any;
+  style?: any;
   isReadOnlyMode: boolean;
   tagTextColor: string;
   tagBackgroundColor: string;
