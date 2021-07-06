@@ -753,14 +753,13 @@ const GridPerspective = (props: Props) => {
             layoutType === 'grid' ? classes.gridContainer : classes.rowContainer
           }
           style={{
-            height: '100%',
             marginTop: 53,
             gridTemplateColumns:
               layoutType === 'grid'
                 ? 'repeat(auto-fit,minmax(' + entryWidth + 'px,1fr))'
-                : 'none',
-            gridTemplateRows:
-              layoutType === 'grid' ? 'repeat(auto-fit, 230px)' : 'auto'
+                : 'none'
+            // gridTemplateRows:
+            //  layoutType === 'grid' ? 'repeat(auto-fit, 230px)' : 'auto'
           }}
           theme={theme}
           // gridRef={this.mainGrid}
