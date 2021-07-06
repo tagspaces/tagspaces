@@ -51,34 +51,65 @@ export async function createLocation(
   }
 }
 
-export async function createPlaywrightLocation( //TODO Impl
+export async function createPwMinioLocation(
   locationPath,
   locationName,
   isDefault = false
 ) {
+  const lastLocationTID = await getPwLocationTid(-1);
+  // Check if location not exist (from extconfig.js)
+  if (locationName !== lastLocationTID) {
     await clickOn('[data-tid=createNewLocation]');
-    await clickOn('[data-tid=locationPath]');
-    await setInputKeys('locationPath', locationPath || defaultLocationPath);
-    /*const locationPathInput = await global.client.$(
-      '[data-tid=locationPath] input'
-    );
-    await locationPathInput.keys(locationPath || defaultLocationPath);*/
-    // keys is workarround for not working setValue await global.client.$('[data-tid=locationPath] input').setValue(locationPath || defaultLocationPath);
-    await setInputKeys(
-      'locationName',
+    if (global.isMinio) {
+      // await clickOn('[data-tid=objectStorageLocation]');
+    }
+    await clickOn('[data-tid=switchAdvancedModeTID]');
+
+    // SET LOCATION NAME
+    await global.client.fill(
+      '[data-tid=locationName] input',
       locationName || 'Test Location' + new Date().getTime()
     );
-    /* await clickOn('[data-tid=locationName]');
-    const locationNameInput = await global.client.$(
-      '[data-tid=locationName] input'
+    await global.client.fill('[data-tid=locationPath] input', locationPath);
+    await global.client.fill('[data-tid=accessKeyId] input', minioAccessKey);
+    await global.client.fill(
+      '[data-tid=secretAccessKey] input',
+      minioSecretAccessKey
     );
-    locationNameInput.keys(
-      locationName || 'Test Location' + new Date().getTime()
-    );*/
+    await global.client.fill('[data-tid=bucketName] input', locationName);
+    await global.client.fill('[data-tid=endpointURL] input', minioEndpointURL);
+
     if (isDefault) {
       await clickOn('[data-tid=locationIsDefault]');
     }
     await clickOn('[data-tid=confirmLocationCreation]');
+  }
+}
+
+export async function createPwLocation(
+  locationPath,
+  locationName,
+  isDefault = false
+) {
+  const lastLocationTID = await getPwLocationTid(-1);
+  // Check if location not exist (from extconfig.js)
+  if (locationName !== lastLocationTID) {
+    await global.client.click('[data-tid=createNewLocation]');
+    await global.client.click('[data-tid=locationPath]');
+    await global.client.fill(
+      '[data-tid=locationPath]',
+      locationPath || defaultLocationPath
+    );
+    await global.client.fill(
+      '[data-tid=locationName]',
+      locationName || 'Test Location' + new Date().getTime()
+    );
+
+    if (isDefault) {
+      await global.client.click('[data-tid=locationIsDefault]');
+    }
+    await global.client.click('[data-tid=confirmLocationCreation]');
+  }
 }
 
 export async function createMinioLocation(
@@ -156,12 +187,11 @@ export async function closeFileProperties() {
   const fileContainerCloseOpenedFile = await global.client.$(
     '[data-tid=fileContainerCloseOpenedFile]'
   );
-  if(global.isPlaywright){
-    if(fileContainerCloseOpenedFile){
+  if (global.isPlaywright) {
+    if (fileContainerCloseOpenedFile) {
       await global.client.click(fileContainerCloseOpenedFile);
     }
-  }
-  else if (await fileContainerCloseOpenedFile.isDisplayed()) {
+  } else if (await fileContainerCloseOpenedFile.isDisplayed()) {
     //.isClickable()) {
     await fileContainerCloseOpenedFile.click();
   }
@@ -292,6 +322,30 @@ export async function getLocationTid(locationIndex) {
   // return location.getAttribute('data-tid');
   if (location !== undefined) {
     return await location.getText();
+  }
+  return undefined;
+}
+
+export async function getPwLocationTid(locationIndex) {
+  /*const locationList = await global.client.$$(
+    '//!*[@data-tid="locationList"]/div'
+  );*/
+  await global.client.waitForSelector('[data-tid=locationTitleElement]', {
+    // state: 'attached',
+    timeout: 20000
+  });
+  const locationList = await global.client.$$(
+    '[data-tid=locationTitleElement]'
+  );
+  const location =
+    locationIndex < 0
+      ? locationList[locationList.length + locationIndex]
+      : locationList[locationIndex];
+  // location = await location.$('li');
+  // location = await location.$('div');
+  // return location.getAttribute('data-tid');
+  if (location !== undefined) {
+    return await location.innerText();
   }
   return undefined;
 }

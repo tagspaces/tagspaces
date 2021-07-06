@@ -17,6 +17,7 @@ const testLocationName = '' + new Date().getTime();
 
 export async function clickOn(selector, options = {}) {
   if (global.isPlaywright) {
+    await global.client.waitForSelector(selector);
     await global.client.click(selector);
   } else {
     const element = await global.client.$(selector);

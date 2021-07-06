@@ -5,7 +5,7 @@ import {
   takeScreenshot,
   testDataRefresh
 } from './e2e/hook';
-import { closeWelcome } from './e2e/welcome.helpers';
+import { closeWelcome, closeWelcomePlaywright } from './e2e/welcome.helpers';
 
 // the default timeout before starting every test
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 300000;
@@ -55,7 +55,9 @@ afterAll(async () => {
 
 beforeEach(async () => {
   if (global.isPlaywright) {
-    //TODO
+    if (global.isMinio) {
+      await closeWelcomePlaywright();
+    }
   } else {
     if (jasmine.currentTest && jasmine.currentTest.status !== 'disabled') {
       // console.log('specDone Done' + JSON.stringify(result));

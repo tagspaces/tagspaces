@@ -1,7 +1,7 @@
 import {
   closeFileProperties,
-  createLocation,
-  createMinioLocation,
+  createPwMinioLocation,
+  createPwLocation,
   defaultLocationName,
   defaultLocationPath
 } from './location.helpers';
@@ -16,6 +16,8 @@ import {
   setSettings,
   waitForNotification
 } from './general.helpers';
+import { expect } from '@playwright/test';
+import { matchers } from 'expect-playwright';
 import {
   AddRemovePropertiesTags,
   getPropertiesFileName
@@ -25,12 +27,12 @@ import { openContextEntryMenu } from './test-utils';
 
 describe('TST08 - File folder properties', () => {
   beforeEach(async () => {
+    expect.extend(matchers);
     if (global.isMinio) {
-      await createMinioLocation('', defaultLocationName, true);
+      await createPwMinioLocation('', defaultLocationName, true);
     } else {
-      await createLocation(defaultLocationPath, defaultLocationName, true);
+      await createPwLocation(defaultLocationPath, defaultLocationName, true);
     }
-    // openLocation
     await clickOn('[data-tid=location_' + defaultLocationName + ']');
     // If its have opened file
     await closeFileProperties();
@@ -90,14 +92,18 @@ describe('TST08 - File folder properties', () => {
     expect(lastFileName).toBe(propsNextFileName);
   });
 
-  // TODO the last button full width is not visible (maybe its need to add scroll)
-  it.skip('TST0804 - Open file in full width [electron]', async () => {
+  it('TST0804 - Open file in full width playwright [web,minio,electron]', async () => {
+    //expect.extend(matchers);
+    //await clickOn('[data-tid=location_supported-filestypes]');
     // open fileProperties
     await clickOn(selectorFile);
-    await global.client.pause(500);
-    await clickOn('[data-tid=openInFullWidthTID]'); // dummy click -first click in openInFullWidthTID dont work
+    //await clickOn('[data-tid=openInFullWidthTID]'); // dummy click -first click in openInFullWidthTID dont work
     await clickOn('[data-tid=openInFullWidthTID]');
-    await expectElementExist('[data-tid=folderContainerTID]', false);
+    const folderSelector = await global.client.$(
+      '[data-tid=folderContainerTID]'
+    ); //.isHidden();
+    expect(await folderSelector.isHidden()).toBe(true);
+    // expect(global.client).toHaveSelector('[data-tid=folderContainerTID]');
   });
 
   it('TST0805 - Rename opened file [web,minio,electron]', async () => {

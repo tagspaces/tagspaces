@@ -63,8 +63,8 @@ export async function startSpectronApp() {
 
   if (global.isWeb) {
     if (global.isPlaywright) {
-      const { webkit } = require('playwright');
-      global.app = await webkit.launch({ headless: false, slowMo: 50 }); //browser
+      const { webkit, chromium } = require('playwright');
+      global.app = await chromium.launch({ headless: false, slowMo: 50 }); //browser
       global.client = await global.app.newPage(); //page
       await global.client.goto('http://localhost:8000');
       // await global.client.screenshot({ path: `example.png` });
@@ -131,7 +131,8 @@ export async function startSpectronApp() {
 
     // Get the first window that the app opens, wait if necessary.
     global.client = await global.app.firstWindow();
-
+    await global.client.waitForLoadState('networkidle'); //'domcontentloaded');
+    await global.client.bringToFront();
     // Evaluation expression in the Electron context.
     /*const appPath = await global.app.evaluate(async ({ app }) => {
       // This runs in the main Electron process, parameter here is always
@@ -144,7 +145,7 @@ export async function startSpectronApp() {
     // console.log(await global.client.title());
 
     // Direct Electron console to Node terminal.
-    // window.on('console', console.log);
+    global.client.on('console', console.log);
     // Click button.
     /*await global.client.click('[data-tid=location_supported-filestypes]');
     // Capture a screenshot.

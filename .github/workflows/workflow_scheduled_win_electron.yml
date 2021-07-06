@@ -35,6 +35,12 @@ jobs:
           yarn build-main
           yarn build-e2e
           yarn test-e2e-electron
+      - uses: IgnusG/jest-report-action@v2.3.3
+        if: always() # Run regardless of whether other steps failed
+        with:
+          access-token: ${{ secrets.GITHUB_TOKEN }}
+          check-name: Jest Report Electron
+          working-directory: tests
       - uses: actions/upload-artifact@v2
         if: always()
         with:
