@@ -1079,7 +1079,7 @@ const EntryContainer = (props: Props) => {
         resizerStyle={{
           backgroundColor: props.theme.palette.divider
         }}
-        style={{ zIndex: 2000 }}
+        style={{ zIndex: 1300 }}
         // size={this.state.entryPropertiesSplitSize}
         // minSize={defaultSplitSize}
         // maxSize={fullSplitSize}
