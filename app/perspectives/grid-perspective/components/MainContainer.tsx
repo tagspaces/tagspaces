@@ -758,7 +758,9 @@ const GridPerspective = (props: Props) => {
             gridTemplateColumns:
               layoutType === 'grid'
                 ? 'repeat(auto-fit,minmax(' + entryWidth + 'px,1fr))'
-                : 'none'
+                : 'none',
+            gridTemplateRows:
+              layoutType === 'grid' ? 'repeat(auto-fit, 230px)' : 'auto'
           }}
           theme={theme}
           // gridRef={this.mainGrid}
