@@ -27,20 +27,23 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 import { connect } from 'react-redux';
-import { getTagGroups, Tag, TagGroup } from '-/reducers/taglibrary';
+import { getTagGroups } from '-/reducers/taglibrary';
 import i18n from '-/services/i18n';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   open: boolean;
   onClose: () => void;
-  addTag: (tag: Tag, uuid: string) => void;
+  addTag: (tag: TS.Tag, uuid: string) => void;
   fullScreen?: boolean;
-  selectedTag: Tag;
+  selectedTag: TS.Tag;
   defaultBackgroundColor?: string;
   defaultTextColor?: string;
-  tagGroups: Array<TagGroup>;
+  tagGroups: Array<TS.TagGroup>;
 }
 
 const AddTagToTagGroupDialog = (props: Props) => {
@@ -83,6 +86,17 @@ const AddTagToTagGroupDialog = (props: Props) => {
     >
       <DialogTitle>
         {i18n.t('core:addTagToTagGroup') + ': ' + props.selectedTag.title}
+        <IconButton
+          aria-label="close"
+          style={{
+            position: 'absolute',
+            right: 5,
+            top: 5
+          }}
+          onClick={onClose}
+        >
+          <CloseIcon />
+        </IconButton>
       </DialogTitle>
       <DialogContent style={{ minWidth: 400 }}>
         <FormControl fullWidth={true}>
@@ -101,9 +115,7 @@ const AddTagToTagGroupDialog = (props: Props) => {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="primary">
-          {i18n.t('core:cancel')}
-        </Button>
+        <Button onClick={onClose}>{i18n.t('core:cancel')}</Button>
         <Button
           disabled={tagGroup === undefined}
           onClick={onConfirm}

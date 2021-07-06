@@ -27,8 +27,6 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import uuidv1 from 'uuid';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
@@ -40,6 +38,8 @@ import i18n from '-/services/i18n';
 import { actions, getSupportedFileTypes } from '-/reducers/settings';
 import { extend } from '-/utils/misc';
 import AppConfig from '-/config';
+import SettingsAdvanced from '-/components/dialogs/settings/SettingsAdvanced';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 const styles: any = () => ({
   mainContent: {
@@ -149,7 +149,7 @@ const SettingsDialog = (props: Props) => {
 
     setIsValidationInProgress(true);
 
-    const isValid = validateSelectedFileTypes();
+    const isValid = validateSelectedFileTypes(newItems);
 
     if (!isValid) {
       return false;
@@ -158,10 +158,10 @@ const SettingsDialog = (props: Props) => {
     setSupportedFileTypes(newItems);
   };
 
-  const validateSelectedFileTypes = () => {
+  const validateSelectedFileTypes = newItems => {
     let isValid = true;
 
-    items.map(item => {
+    newItems.map(item => {
       const hasDuplicates =
         items.filter(targetItem => targetItem.type === item.type).length > 1;
 
@@ -188,25 +188,15 @@ const SettingsDialog = (props: Props) => {
   const renderTitle = () => (
     <>
       <DialogTitle>
-        {i18n.t('core:settings')}{' '}
-        <IconButton
-          aria-label="close"
-          style={{
-            position: 'absolute',
-            right: 5,
-            top: 5
-          }}
-          onClick={onClose}
-        >
-          <CloseIcon />
-        </IconButton>
+        {i18n.t('core:settings')}
+        <DialogCloseButton onClose={onClose} />
       </DialogTitle>
       <AppBar position="static" color="default">
         <Tabs
           value={currentTab}
           onChange={handleTabClick}
           indicatorColor="primary"
-          variant="fullWidth"
+          // variant="scrollable"
         >
           <Tab
             data-tid="generalSettingsDialog"
@@ -219,6 +209,10 @@ const SettingsDialog = (props: Props) => {
           <Tab
             data-tid="keyBindingsSettingsDialog"
             label={i18n.t('core:keyBindingsTab')}
+          />
+          <Tab
+            data-tid="advancedSettingsDialogTID"
+            label={i18n.t('core:advancedSettingsTab')}
           />
         </Tabs>
       </AppBar>
@@ -277,9 +271,7 @@ const SettingsDialog = (props: Props) => {
         className={props.classes.mainContent}
         ref={settingsFileTypeRef}
       >
-        {currentTab === 0 && (
-          <SettingsGeneral showResetSettings={setIsResetSettingsDialogOpened} />
-        )}
+        {currentTab === 0 && <SettingsGeneral />}
         {currentTab === 1 && (
           <SettingsFileTypes
             items={items}
@@ -294,6 +286,11 @@ const SettingsDialog = (props: Props) => {
           />
         )}
         {currentTab === 2 && <SettingsKeyBindings />}
+        {currentTab === 3 && (
+          <SettingsAdvanced
+            showResetSettings={setIsResetSettingsDialogOpened}
+          />
+        )}
       </div>
     </DialogContent>
   );

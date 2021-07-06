@@ -126,7 +126,7 @@ export function getDaysInMonth(year: number, month: number): number {
 
 export const msInDay = 1000 * 60 * 60 * 24;
 
-/** Extract the time period from string e.g. 201902 -> fromDate: 2019-01-01 00:00:00, toDate; 2019-01-31 23:59:59 */
+/** Extract the time period from string e.g. 201901 -> fromDate: 2019-01-01 00:00:00, toDate; 2019-01-31 23:59:59 */
 export function extractTimePeriod(
   value: string
 ): { fromDateTime: Date | null; toDateTime: Date | null } {
@@ -174,12 +174,6 @@ export function extractTimePeriod(
           getDaysInMonth(parseInt(toYear, 10), parseInt(toMonth, 10)) +
           ' 23:59:59.999'
       );
-    } else if (isYearMonthDay(value)) {
-      const year = value.substring(0, 4);
-      const month = value.substring(4, 6);
-      const day = value.substring(6, 8);
-      fromDateTime = new Date(year + '-' + month + '-' + day);
-      toDateTime = new Date(year + '-' + month + '-' + day + ' 23:59:59.999');
     } else if (isYearMonthDayPeriod(value)) {
       const fromYear = value.substring(0, 4);
       const fromMonth = value.substring(4, 6);
@@ -191,6 +185,12 @@ export function extractTimePeriod(
       toDateTime = new Date(
         toYear + '-' + toMonth + '-' + toDay + ' 23:59:59.999'
       );
+    } else if (isYearMonthDay(value)) {
+      const year = value.substring(0, 4);
+      const month = value.substring(4, 6);
+      const day = value.substring(6, 8);
+      fromDateTime = new Date(year + '-' + month + '-' + day);
+      toDateTime = new Date(year + '-' + month + '-' + day + ' 23:59:59.999');
     } else if (isYearMonthDayHour(value)) {
       const year = value.substring(0, 4);
       const month = value.substring(4, 6);

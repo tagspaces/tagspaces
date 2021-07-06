@@ -7,17 +7,18 @@ import {
 import { API, Auth } from 'aws-amplify';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { actions as LocationActions, Location } from '-/reducers/locations';
-import { actions as TagGroupActions, TagGroup } from '-/reducers/taglibrary';
+import { actions as LocationActions } from '-/reducers/locations';
+import { actions as TagGroupActions } from '-/reducers/taglibrary';
 import { actions as AppActions } from '-/reducers/app';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   loggedIn: (user: CognitoUserInterface) => void;
   initApp: () => void;
-  addLocations: (locations: Array<Location>, override: boolean) => void;
-  importTagGroups: (tagGroups: Array<TagGroup>, replace: boolean) => void;
+  addLocations: (locations: Array<TS.Location>, override: boolean) => void;
+  importTagGroups: (tagGroups: Array<TS.TagGroup>, replace: boolean) => void;
 }
-const HandleAuth = React.memo((props: Props) => {
+const HandleAuth = (props: Props) => {
   const username = useRef(undefined);
 
   React.useEffect(() => {
@@ -115,7 +116,7 @@ const HandleAuth = React.memo((props: Props) => {
       });
 
   return null;
-});
+};
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
@@ -129,4 +130,4 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
-export default connect(undefined, mapDispatchToProps)(HandleAuth);
+export default connect(undefined, mapDispatchToProps)(React.memo(HandleAuth));

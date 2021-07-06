@@ -20,15 +20,16 @@ import React from 'react';
 
 import InputAdornment from '@material-ui/core/InputAdornment';
 import FormControl from '@material-ui/core/FormControl';
-// import FormHelperText from '@material-ui/core/FormHelperText';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import IconButton from '@material-ui/core/IconButton';
 import FolderIcon from '@material-ui/icons/Folder';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import Grid from '@material-ui/core/Grid';
 import i18n from '-/services/i18n';
 import { extractDirectoryName } from '-/utils/paths';
 import PlatformIO from '-/services/platform-io';
+import AppConfig from '-/config';
 
 interface Props {
   showAdvancedMode: boolean;
@@ -102,9 +103,12 @@ const LocalForm = (props: Props) => {
               </InputAdornment>
             }
           />
-          {/* {state.errorTextPath && (
-            <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>
-          )} */}
+          {AppConfig.isCordovaAndroid && (
+            <FormHelperText>
+              Examples: sdcard/DCIM, sdcard/Downloads or /storage/899D-1617 for
+              ext. sd-card
+            </FormHelperText>
+          )}
         </FormControl>
       </Grid>
       <Grid item xs={12}>
@@ -122,9 +126,6 @@ const LocalForm = (props: Props) => {
             data-tid="locationName"
             fullWidth={true}
           />
-          {/* {state.errorTextName && (
-          <FormHelperText>{i18n.t('core:invalidName')}</FormHelperText>
-        )} */}
         </FormControl>
       </Grid>
       {showAdvancedMode && (
@@ -143,9 +144,6 @@ const LocalForm = (props: Props) => {
               onChange={event => setNewUuid(event.target.value)}
               value={newuuid}
             />
-            {/* {state.errorTextId && (
-            <FormHelperText>{i18n.t('core:invalidId')}</FormHelperText>
-          )} */}
           </FormControl>
         </Grid>
       )}

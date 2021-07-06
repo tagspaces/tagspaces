@@ -22,7 +22,7 @@ import { Pro } from '../pro';
 import NativePlatformIO from './_PLATFORMIO_';
 import ObjectStoreIO from './objectstore-io';
 import AppConfig from '-/config';
-import { FileSystemEntry } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
 
 const nativeAPI: any = new NativePlatformIO();
 let objectStoreAPI;
@@ -132,9 +132,14 @@ export default class PlatformIO {
 
   static createDirectoryIndexInWorker = (
     directoryPath: string,
-    extractText: boolean
+    extractText: boolean,
+    ignorePatterns: Array<string>
   ): Promise<any> =>
-    nativeAPI.createDirectoryIndexInWorker(directoryPath, extractText);
+    nativeAPI.createDirectoryIndexInWorker(
+      directoryPath,
+      extractText,
+      ignorePatterns
+    );
 
   static createThumbnailsInWorker = (
     tmbGenerationList: Array<string>
@@ -145,16 +150,23 @@ export default class PlatformIO {
    * @param path
    * @param lite
    * @param extractText
+   * @param ignorePatterns
    */
   static listDirectoryPromise = (
     path: string,
     lite: boolean = true,
-    extractText: boolean = true
+    extractText: boolean = true,
+    ignorePatterns: Array<string> = []
   ): Promise<Array<any>> => {
     if (objectStoreAPI) {
       return objectStoreAPI.listDirectoryPromise(path, lite);
     }
-    return nativeAPI.listDirectoryPromise(path, lite, extractText);
+    return nativeAPI.listDirectoryPromise(
+      path,
+      lite,
+      extractText,
+      ignorePatterns
+    );
   };
 
   static getPropertiesPromise = (path: string): Promise<any> => {
@@ -336,7 +348,7 @@ export default class PlatformIO {
       progress: any, // ManagedUpload.Progress,
       response: any // AWS.Response<AWS.S3.PutObjectOutput, AWS.AWSError>
     ) => void
-  ): Promise<FileSystemEntry> => {
+  ): Promise<TS.FileSystemEntry> => {
     if (objectStoreAPI) {
       return objectStoreAPI.saveBinaryFilePromise(
         filePath,
@@ -394,7 +406,17 @@ export default class PlatformIO {
   static showInFileManager = (dirPath: string): void =>
     nativeAPI.showInFileManager(dirPath);
 
-  static openFile = (filePath: string): void => nativeAPI.openFile(filePath);
+  static openFile = (filePath: string): void => {
+    if (
+      confirm(
+        'Do you really want to open "' +
+          filePath +
+          '"? Execution of some files can be potentially dangerous!'
+      )
+    ) {
+      nativeAPI.openFile(filePath);
+    }
+  };
 
   static resolveFilePath = (filePath: string): string =>
     objectStoreAPI ? filePath : nativeAPI.resolveFilePath(filePath);

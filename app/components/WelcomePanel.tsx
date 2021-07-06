@@ -20,12 +20,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withStyles } from '@material-ui/core/styles';
-// import { getLocations, type Location } from '../reducers/locations';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Divider from '@material-ui/core/Divider';
 import DocumentationIcon from '@material-ui/icons/Help';
+import LocationIcon from '@material-ui/icons/WorkOutline';
 import ChangeLogIcon from '@material-ui/icons/ImportContacts';
 import WebClipperIcon from '@material-ui/icons/Transform';
 import EmailIcon from '@material-ui/icons/Email';
@@ -34,7 +34,6 @@ import TranslationIcon from '@material-ui/icons/Translate';
 import NewFeatureIcon from '@material-ui/icons/Gesture';
 import SocialIcon from '@material-ui/icons/ThumbUp';
 import Social2Icon from '@material-ui/icons/Mood';
-// import LogoutIcon from '@material-ui/icons/MeetingRoom';
 import KeyShortcutsIcon from '@material-ui/icons/Keyboard';
 import WelcomeBackground from '../assets/images/background.png';
 import WelcomeLogo from '../assets/images/welcome-logo.png';
@@ -79,31 +78,26 @@ interface Props {
   classes: any;
   toggleKeysDialog: () => void;
   openURLExternally: (url: string, skipConfirmation?: boolean) => void;
-  openFileNatively: (url: string) => void;
   toggleAboutDialog: () => void;
   isDesktopMode: boolean;
 }
 
 const WelcomePanel = (props: Props) => {
-  const {
-    classes,
-    openURLExternally,
-    openFileNatively,
-    toggleKeysDialog,
-    isDesktopMode
-  } = props;
+  const { classes, openURLExternally, toggleKeysDialog, isDesktopMode } = props;
   return (
     <div className={classes.mainPanel}>
-      {/* <div className={classes.slogan}>
-
-      </div> */}
       <List
         dense={false}
         component="nav"
         aria-label="main help area"
         className={classes.links}
       >
-        <div role="button" tabIndex={0} onClick={props.toggleAboutDialog}>
+        <div
+          role="button"
+          aria-hidden="true"
+          tabIndex={0}
+          onClick={props.toggleAboutDialog}
+        >
           <img src={WelcomeLogo} alt="Organize your files" />
         </div>
         <ListItem
@@ -115,7 +109,7 @@ const WelcomePanel = (props: Props) => {
             button.click();
           }}
         >
-          <Button startIcon={<DocumentationIcon />}>
+          <Button startIcon={<LocationIcon />}>
             {i18n.t('core:chooseLocation')}
           </Button>
         </ListItem>
@@ -154,7 +148,9 @@ const WelcomePanel = (props: Props) => {
         <Divider />
         <ListItem
           button
-          onClick={() => openURLExternally(AppConfig.links.suggestFeature)}
+          onClick={() =>
+            openURLExternally(AppConfig.links.suggestFeature, true)
+          }
         >
           <Button startIcon={<NewFeatureIcon />}>
             {i18n.t('core:suggestNewFeatures')}
@@ -162,7 +158,7 @@ const WelcomePanel = (props: Props) => {
         </ListItem>
         <ListItem
           button
-          onClick={() => openURLExternally(AppConfig.links.reportIssue)}
+          onClick={() => openURLExternally(AppConfig.links.reportIssue, true)}
         >
           <Button startIcon={<IssueIcon />}>
             {i18n.t('core:reportIssues')}
@@ -187,7 +183,7 @@ const WelcomePanel = (props: Props) => {
         </ListItem>
         <ListItem
           button
-          onClick={() => openFileNatively(AppConfig.links.twitter)}
+          onClick={() => openURLExternally(AppConfig.links.twitter)}
         >
           <Button startIcon={<Social2Icon />}>
             {i18n.t('core:followOnTwitter')}
@@ -238,7 +234,6 @@ function mapActionCreatorsToProps(dispatch) {
     {
       setFirstRun: SettingsActions.setFirstRun,
       openURLExternally: AppActions.openURLExternally,
-      openFileNatively: AppActions.openFileNatively,
       toggleKeysDialog: AppActions.toggleKeysDialog,
       toggleAboutDialog: AppActions.toggleAboutDialog
     },

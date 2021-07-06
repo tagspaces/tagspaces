@@ -22,9 +22,8 @@ import jmespath from 'jmespath';
 import OpenLocationCode from 'open-location-code-typescript';
 import { isPlusCode } from '-/utils/misc';
 import { extractTimePeriod } from '-/utils/dates';
-import { Tag } from '-/reducers/taglibrary';
 import { Pro } from '../pro';
-import { FileSystemEntry } from './utils-io';
+import { TS } from '-/tagspaces.namespace';
 
 // export type FileTypeGroups = 'images' | 'notes' | 'documents' | 'audio' | 'video' | 'archives';
 
@@ -33,6 +32,8 @@ export const FileTypeGroups = {
   images: [
     'jpg',
     'jpeg',
+    'jif',
+    'jiff',
     'png',
     'gif',
     'bmp',
@@ -52,26 +53,6 @@ export const FileTypeGroups = {
   folders: ['folders'],
   files: ['files'],
   untagged: ['untagged']
-};
-
-export type SearchQuery = {
-  textQuery?: string;
-  fileTypes?: Array<string>;
-  tagsAND?: Array<Tag>;
-  tagsOR?: Array<Tag>;
-  tagsNOT?: Array<Tag>;
-  lastModified?: string;
-  fileSize?: string;
-  searchBoxing?: 'location' | 'folder';
-  searchType?: 'fussy' | 'semistrict' | 'strict';
-  forceIndexing?: boolean;
-  currentDirectory?: string;
-  tagTimePeriodFrom?: number | null;
-  tagTimePeriodTo?: number | null;
-  tagPlaceLat?: number | null;
-  tagPlaceLong?: number | null;
-  tagPlaceRadius?: number | null;
-  maxSearchResults?: number;
 };
 
 // id, name, isFile, tags, extension, size, lmdt, path
@@ -114,23 +95,23 @@ export type SearchQuery = {
 
 const fuseOptions = {
   shouldSort: true,
-  threshold: 0.4,
+  threshold: 0.3,
   ignoreLocation: true,
-  distance: 100,
+  distance: 1000,
   tokenize: true,
-  minMatchCharLength: 1,
+  minMatchCharLength: 2,
   keys: [
     {
       name: 'name',
-      weight: 0.25
+      weight: 0.3
     },
     {
       name: 'description',
-      weight: 0.25
+      weight: 0.2
     },
     {
       name: 'textContent',
-      weight: 0.25
+      weight: 0.2
     },
     {
       name: 'tags',
@@ -138,7 +119,7 @@ const fuseOptions = {
     },
     {
       name: 'path', // TODO ignore .ts folder, should not be in the index
-      weight: 0.05
+      weight: 0.1
     }
   ]
 };
@@ -147,7 +128,7 @@ const fuseOptions = {
 // filters for all AND and NOT tags. The Pro version can pipe the result into an additional filter for extension instead of tags.title.
 // The final string for the tag search should look like this:
 // index[? tags[? title=='ORTag1' || title=='ORTag2']] | [? tags[? title=='ANDTag1']] | [? tags[? title=='ANDTag2']] | [?!(tags[? title=='NOTTag1'])] | [?!(tags[? title=='NOTTag2'])] | extensionFilter
-function constructjmespathQuery(searchQuery: SearchQuery): string {
+function constructjmespathQuery(searchQuery: TS.SearchQuery): string {
   let jmespathQuery = '';
   const ANDtagsExist = searchQuery.tagsAND && searchQuery.tagsAND.length >= 1;
   const ORtagsExist = searchQuery.tagsOR && searchQuery.tagsOR.length >= 1;
@@ -228,18 +209,29 @@ function constructjmespathQuery(searchQuery: SearchQuery): string {
   return jmespathQuery;
 }
 
-function prepareIndex(index: Array<Object>) {
+function prepareIndex(
+  index: Array<TS.FileSystemEntry>,
+  showUnixHiddenEntries: boolean
+) {
   console.time('PreparingIndex');
-  let resultIndex = [];
-  resultIndex = index.map((entry: any) => {
+  let filteredIndex = [];
+  if (showUnixHiddenEntries) {
+    filteredIndex = index;
+  } else {
+    filteredIndex = index.filter(
+      (entry: TS.FileSystemEntry) => !entry.name.startsWith('.')
+    );
+  }
+  const enhancedIndex = filteredIndex.map((entry: any) => {
     const tags = [...entry.tags];
     let lat = null;
     let lon = null;
     let fromTime = null;
     let toTime = null;
+    let enhancedTags: Array<TS.Tag> = [];
     if (tags && tags.length) {
-      tags.map(tag => {
-        const enhancedTag: Tag = {
+      enhancedTags = tags.map(tag => {
+        const enhancedTag: TS.Tag = {
           ...tag
         };
         try {
@@ -267,7 +259,7 @@ function prepareIndex(index: Array<Object>) {
     }
     const enhancedEntry = {
       ...entry,
-      tags
+      tags: enhancedTags
     };
     if (lat) {
       enhancedEntry.lat = lat;
@@ -284,7 +276,7 @@ function prepareIndex(index: Array<Object>) {
     return enhancedEntry;
   });
   console.timeEnd('PreparingIndex');
-  return resultIndex;
+  return enhancedIndex;
 }
 
 function setOriginTitle(results: Array<Object>) {
@@ -303,13 +295,16 @@ function setOriginTitle(results: Array<Object>) {
 
 export default class Search {
   static searchLocationIndex = (
-    locationContent: Array<FileSystemEntry>,
-    searchQuery: SearchQuery
-  ): Promise<Array<FileSystemEntry> | []> =>
+    locationContent: Array<TS.FileSystemEntry>,
+    searchQuery: TS.SearchQuery
+  ): Promise<Array<TS.FileSystemEntry> | []> =>
     new Promise(resolve => {
       console.time('searchtime');
       const jmespathQuery = constructjmespathQuery(searchQuery);
-      let results = prepareIndex(locationContent);
+      let results = prepareIndex(
+        locationContent,
+        searchQuery.showUnixHiddenEntries
+      );
       let searched = false;
 
       // Limiting the search to current folder only (with sub-folders)

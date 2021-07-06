@@ -31,12 +31,15 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
 import i18n from '-/services/i18n';
 import { isPlusCode } from '-/utils/misc';
-import { Tag } from '-/reducers/taglibrary';
 import { Pro } from '-/pro';
-import { getSelectedTag } from '-/reducers/app';
+import { getSelectedEntries, getSelectedTag } from '-/reducers/app';
 import TaggingActions, { defaultTagLocation } from '-/reducers/tagging-actions';
 import { isDateTimeTag } from '-/utils/dates';
 import { AppConfig } from '-/config';
+import { TS } from '-/tagspaces.namespace';
+import useValidation from '-/utils/useValidation';
+import { getMapTileServer } from '-/reducers/settings';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 const styles = () => ({
   root: {
@@ -51,20 +54,21 @@ interface Props {
   open: boolean;
   fullScreen: boolean;
   onClose: () => void;
-  editTagForEntry: (path: string, tag: Tag, title: string) => void;
-  currentEntryPath: string;
-  selectedTag: Tag;
+  editTagForEntry: (path: string, tag: TS.Tag, title: string) => void;
+  selectedEntries: Array<TS.FileSystemEntry>;
+  selectedTag: TS.Tag;
+  tileServer: TS.MapTileServer;
 }
 
 const GeoTagEditor = Pro && Pro.UI ? Pro.UI.GeoTagEditor : React.Fragment;
 const DateTagEditor = Pro && Pro.UI ? Pro.UI.DateTagEditor : React.Fragment;
 
 const EditEntryTagDialog = (props: Props) => {
-  const [disableConfirmButton, setDisableConfirmButton] = useState(true);
-  const [errorTag, setErrorTag] = useState(false);
+  const [showAdvancedMode, setShowAdvancedMode] = useState<boolean>(false);
   const [title, setTitle] = useState(
     props.selectedTag && props.selectedTag.title
   );
+  const { setError, haveError } = useValidation();
   const { onClose, open, fullScreen } = props;
 
   useEffect(() => {
@@ -90,27 +94,33 @@ const EditEntryTagDialog = (props: Props) => {
   }, []);
 
   function handleValidation() {
-    const tagCheck = RegExp(/^[^\#\/\\ \[\]]{1,}$/);
+    const tagCheck = RegExp(/^[^#/\\ [\]]{1,}$/);
     if (title && tagCheck.test(title)) {
-      setErrorTag(false);
-      setDisableConfirmButton(false);
+      setError('tag', false);
     } else {
-      setErrorTag(true);
-      setDisableConfirmButton(true);
+      setError('tag');
     }
   }
 
   function onConfirm() {
-    if (!disableConfirmButton) {
-      props.editTagForEntry(props.currentEntryPath, props.selectedTag, title);
-      setErrorTag(false);
-      setDisableConfirmButton(true);
+    if (!haveError()) {
+      if (props.selectedEntries.length > 0) {
+        props.selectedEntries.forEach(entry =>
+          props.editTagForEntry(entry.path, props.selectedTag, title)
+        );
+      } else {
+        props.editTagForEntry(props.selectedTag.path, props.selectedTag, title);
+      }
       props.onClose();
     }
   }
 
   function renderTitle() {
-    return <DialogTitle>{i18n.t('core:tagProperties')}</DialogTitle>;
+    return (
+      <DialogTitle>
+        {i18n.t('core:tagProperties')} <DialogCloseButton onClose={onClose} />
+      </DialogTitle>
+    );
   }
 
   function renderContent() {
@@ -122,10 +132,10 @@ const EditEntryTagDialog = (props: Props) => {
         className={props.classes.root}
         style={{ overflow: AppConfig.isFirefox ? 'auto' : 'overlay' }}
       >
-        <FormControl fullWidth={true} error={errorTag}>
+        <FormControl fullWidth={true} error={haveError('tag')}>
           <TextField
             fullWidth={true}
-            error={errorTag}
+            error={haveError('tag')}
             margin="dense"
             name="title"
             autoFocus
@@ -137,16 +147,19 @@ const EditEntryTagDialog = (props: Props) => {
             value={title}
             data-tid="editTagEntryDialog_input"
           />
-          {errorTag && (
+          {haveError('tag') && (
             <FormHelperText>{i18n.t('core:tagTitleHelper')}</FormHelperText>
           )}
         </FormControl>
         {showGeoEditor && (
           <GeoTagEditor
-            key={title}
             geoTag={title}
             onChange={setTitle}
             zoom={title === defaultTagLocation ? 2 : undefined}
+            showAdvancedMode={showAdvancedMode}
+            haveError={haveError}
+            setError={setError}
+            tileServer={props.tileServer}
           />
         )}
         {isShowDatePeriodEditor && (
@@ -161,22 +174,32 @@ const EditEntryTagDialog = (props: Props) => {
 
   function renderActions() {
     return (
-      <DialogActions>
-        <Button
-          data-tid="closeEditTagEntryDialog"
-          onClick={props.onClose}
-          color="primary"
-        >
-          {i18n.t('core:cancel')}
-        </Button>
-        <Button
-          disabled={disableConfirmButton}
-          onClick={onConfirm}
-          data-tid="confirmEditTagEntryDialog"
-          color="primary"
-        >
-          {i18n.t('core:ok')}
-        </Button>
+      <DialogActions style={{ justifyContent: 'space-between' }}>
+        {GeoTagEditor && isPlusCode(title) ? (
+          <Button
+            data-tid="switchAdvancedModeTID"
+            onClick={() => setShowAdvancedMode(!showAdvancedMode)}
+          >
+            {showAdvancedMode
+              ? i18n.t('core:switchSimpleMode')
+              : i18n.t('core:switchAdvancedMode')}
+          </Button>
+        ) : (
+          <div />
+        )}
+        <div>
+          <Button data-tid="closeEditTagEntryDialog" onClick={props.onClose}>
+            {i18n.t('core:cancel')}
+          </Button>
+          <Button
+            disabled={haveError()}
+            onClick={onConfirm}
+            data-tid="confirmEditTagEntryDialog"
+            color="primary"
+          >
+            {i18n.t('core:ok')}
+          </Button>
+        </div>
       </DialogActions>
     );
   }
@@ -206,9 +229,11 @@ const EditEntryTagDialog = (props: Props) => {
 function mapStateToProps(state) {
   return {
     selectedTag: getSelectedTag(state),
-    currentEntryPath: getSelectedTag(state)
+    /* currentEntryPath: getSelectedTag(state)
       ? getSelectedTag(state).path
-      : undefined
+      : undefined, */
+    selectedEntries: getSelectedEntries(state),
+    tileServer: getMapTileServer(state)
   };
 }
 

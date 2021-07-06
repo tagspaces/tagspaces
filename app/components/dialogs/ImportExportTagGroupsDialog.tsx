@@ -28,12 +28,15 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Dialog from '@material-ui/core/Dialog';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 import TagGroupContainer from '../TagGroupContainer';
 import TagContainer from '../TagContainer';
 import i18n from '-/services/i18n';
 import { isFunc } from '-/utils/misc';
 import AppConfig from '-/config';
-import { Tag } from '-/reducers/taglibrary';
+import { TS } from '-/tagspaces.namespace';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 const styles: any = {
   root: {
@@ -126,19 +129,21 @@ const ImportExportTagGroupsDialog = (props: Props) => {
       </FormControl>
       <TagGroupContainer taggroup={tagGroup}>
         {tagGroup.children &&
-          tagGroup.children.map((tag: Tag) => (
+          tagGroup.children.map((tag: TS.Tag) => (
             <TagContainer tag={tag} tagMode="display" />
           ))}
       </TagGroupContainer>
     </div>
   );
 
-  const renderTitle = () => {
-    if (props.dialogModeImport) {
-      return <DialogTitle>{i18n.t('core:importGroupTagsTitle')}</DialogTitle>;
-    }
-    return <DialogTitle>{i18n.t('core:exportGroupTagsTitle')}</DialogTitle>;
-  };
+  const renderTitle = () => (
+    <DialogTitle>
+      {props.dialogModeImport
+        ? i18n.t('core:importGroupTagsTitle')
+        : i18n.t('core:exportGroupTagsTitle')}
+      <DialogCloseButton onClose={onClose} />
+    </DialogTitle>
+  );
 
   const renderContent = () => (
     <DialogContent className={props.classes.root}>
@@ -153,9 +158,7 @@ const ImportExportTagGroupsDialog = (props: Props) => {
 
   const renderActions = () => (
     <DialogActions>
-      <Button onClick={props.onClose} color="primary">
-        {i18n.t('core:cancel')}
-      </Button>
+      <Button onClick={props.onClose}>{i18n.t('core:cancel')}</Button>
       <Button
         disabled={!isSelected()}
         onClick={onConfirm}

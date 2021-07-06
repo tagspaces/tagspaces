@@ -31,7 +31,6 @@ import Button from '@material-ui/core/Button';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import ShareIcon from '@material-ui/icons/Link';
 import Tooltip from '@material-ui/core/Tooltip';
-import InfoIcon from '@material-ui/icons/ContactSupport';
 import LocationIcon from '@material-ui/icons/WorkOutline';
 import CloudLocationIcon from '@material-ui/icons/CloudQueue';
 import DOMPurify from 'dompurify';
@@ -61,7 +60,7 @@ import TagDropContainer from './TagDropContainer';
 import ColorPickerDialog from './dialogs/ColorPickerDialog';
 import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
 import i18n from '../services/i18n';
-import { enhanceOpenedEntry, FileSystemEntryMeta } from '-/services/utils-io';
+import { enhanceOpenedEntry } from '-/services/utils-io';
 import { formatFileSize, isPlusCode } from '-/utils/misc';
 import {
   extractContainingDirectoryPath,
@@ -79,13 +78,15 @@ import {
   replaceThumbnailURLPromise,
   getThumbnailURLPromise
 } from '-/services/thumbsgenerator';
-import { Tag } from '-/reducers/taglibrary';
 import { OpenedEntry, perspectives } from '-/reducers/app';
 import { savePerspective } from '-/utils/metaoperations';
 import MarkerIcon from '-/assets/icons/marker-icon.png';
 import Marker2xIcon from '-/assets/icons/marker-icon-2x.png';
 import MarkerShadowIcon from '-/assets/icons/marker-shadow.png';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import { TS } from '-/tagspaces.namespace';
+import NoTileServer from '-/components/NoTileServer';
+import InfoIcon from '-/components/InfoIcon';
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
@@ -182,12 +183,13 @@ interface Props {
   showNotification: (message: string) => void;
   updateOpenedFile: (entryPath: string, fsEntryMeta: any) => void;
   updateThumbnailUrl: (path: string, thumbUrl: string) => void;
-  addTags: (paths: Array<string>, tags: Array<Tag>) => void;
-  removeTags: (paths: Array<string>, tags: Array<Tag>) => void;
+  addTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
+  removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
   removeAllTags: (paths: Array<string>) => void;
   isReadOnlyMode: boolean;
   currentDirectoryPath: string | null;
   tagDelimiter: string;
+  tileServer: TS.MapTileServer;
 }
 
 const EntryProperties = (props: Props) => {
@@ -196,9 +198,6 @@ const EntryProperties = (props: Props) => {
   const sharingLinkRef = useRef<HTMLInputElement>(null);
   const objectStorageLinkRef = useRef<HTMLInputElement>(null);
   const fileDescriptionRef = useRef<HTMLInputElement>(null);
-
-  const MB_ATTR =
-    '<b>Leaflet</b> | Map data &copy; <b>https://openstreetmap.org/copyright</b> contributors, <b>CC-BY-SA</b>, Imagery © <b>Mapbox</b>';
 
   const parentDirectoryPath = extractContainingDirectoryPath(
     props.openedEntry.path,
@@ -466,7 +465,7 @@ const EntryProperties = (props: Props) => {
     }
   };
 
-  const handleChange = (name: string, value: Array<Tag>, action: string) => {
+  const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
     if (action === 'remove-value') {
       if (!value) {
         // no tags left in the select element
@@ -528,7 +527,7 @@ const EntryProperties = (props: Props) => {
   const changePerspective = (event: any) => {
     const perspective = event.target.value;
     savePerspective(currentEntry.path, perspective)
-      .then((entryMeta: FileSystemEntryMeta) => {
+      .then((entryMeta: TS.FileSystemEntryMeta) => {
         props.updateOpenedFile(currentEntry.path, {
           ...entryMeta,
           changed: true
@@ -586,7 +585,7 @@ const EntryProperties = (props: Props) => {
     shadowAnchor: [5, 55]
   });
 
-  function getGeoLocation(tags: Array<Tag>) {
+  function getGeoLocation(tags: Array<TS.Tag>) {
     if (!Pro) {
       return;
     }
@@ -660,7 +659,6 @@ const EntryProperties = (props: Props) => {
                             <div>
                               <Button
                                 data-tid="cancelRenameEntryTID"
-                                color="primary"
                                 onClick={deactivateEditNameField}
                               >
                                 {i18n.t('core:cancel')}
@@ -759,10 +757,14 @@ const EntryProperties = (props: Props) => {
               zoomControl={true}
               attributionControl={false}
             >
-              <TileLayer
-                attribution={MB_ATTR}
-                url="https://{s}.tile.osm.org/{z}/{x}/{y}.png"
-              />
+              {props.tileServer ? (
+                <TileLayer
+                  attribution={props.tileServer.serverInfo}
+                  url={props.tileServer.serverURL}
+                />
+              ) : (
+                <NoTileServer />
+              )}
               <LayerGroup>
                 <Marker
                   icon={iconFileMarker}
@@ -802,7 +804,6 @@ const EntryProperties = (props: Props) => {
                 >
                   {editDescription !== undefined && (
                     <Button
-                      color="primary"
                       className={classes.button}
                       onClick={() => setEditDescription(undefined)}
                     >
@@ -830,7 +831,7 @@ const EntryProperties = (props: Props) => {
                   style={{
                     padding: 10,
                     borderRadius: 5,
-                    backgroundColor: 'rgba(255, 216, 115, 0.53)'
+                    backgroundColor: 'rgba(255, 216, 115, 0.20)'
                   }}
                   id="textarea"
                   placeholder=""
@@ -840,7 +841,12 @@ const EntryProperties = (props: Props) => {
                   fullWidth={true}
                   onChange={handleDescriptionChange}
                 />
-                <Typography variant="caption">
+                <Typography
+                  variant="caption"
+                  style={{
+                    color: theme.palette.text.primary
+                  }}
+                >
                   Formatting: <i className={classes.mdHelpers}>_italic_</i>{' '}
                   <b className={classes.mdHelpers}>**bold**</b>{' '}
                   <span className={classes.mdHelpers}>* list item</span>{' '}
@@ -855,12 +861,12 @@ const EntryProperties = (props: Props) => {
                   display: 'block',
                   padding: 10,
                   borderRadius: 5,
-                  backgroundColor: 'rgba(255, 216, 115, 0.53)',
+                  backgroundColor: 'rgba(255, 216, 115, 0.20)',
                   marginBottom: 5,
 
                   color: currentEntry.description
-                    ? props.theme.palette.text.primary
-                    : props.theme.palette.text.disabled
+                    ? theme.palette.text.primary
+                    : theme.palette.text.disabled
                 }}
                 role="button"
                 id="descriptionArea"
@@ -1074,7 +1080,12 @@ const EntryProperties = (props: Props) => {
             style={{ display: 'block', paddingLeft: 5 }}
           >
             {i18n.t('core:sharingLink')}
-            <Tooltip arrow title={i18n.t('Explanation')}>
+            <InfoIcon
+              tooltip={i18n.t(
+                'Link for sharing to other TagSpaces installation using the same location IDs'
+              )}
+            />
+            {/* <Tooltip arrow title={i18n.t('Explanation')}>
               <InfoIcon
                 style={{
                   color: theme.palette.text.secondary,
@@ -1082,7 +1093,7 @@ const EntryProperties = (props: Props) => {
                   verticalAlign: 'bottom'
                 }}
               />
-            </Tooltip>
+            </Tooltip> */}
           </Typography>
           <FormControl fullWidth={true} className={classes.formControl}>
             <TextField
@@ -1132,15 +1143,11 @@ const EntryProperties = (props: Props) => {
               style={{ display: 'block', paddingLeft: 5 }}
             >
               {i18n.t('Link for downloading')}
-              <Tooltip arrow title={i18n.t('Explanation')}>
-                <InfoIcon
-                  style={{
-                    color: theme.palette.text.secondary,
-                    paddingLeft: 5,
-                    verticalAlign: 'bottom'
-                  }}
-                />
-              </Tooltip>
+              <InfoIcon
+                tooltip={i18n.t(
+                  'Link for time limited sharing on the Internet'
+                )}
+              />
             </Typography>
             <FormControl fullWidth={true} className={classes.formControl}>
               <TextField

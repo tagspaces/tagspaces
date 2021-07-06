@@ -20,6 +20,8 @@ import { app, BrowserWindow, ipcMain, globalShortcut, dialog } from 'electron';
 import windowStateKeeper from 'electron-window-state';
 import path from 'path';
 
+require('@electron/remote/main').initialize();
+
 let mainWindow = null;
 (global as any).splashWorkerWindow = null;
 
@@ -190,7 +192,7 @@ app.on('ready', async () => {
       throw new Error('"mainWindow" is not defined');
     }
     // mainWindow.show();
-    (global as any).splashWorkerWindow.hide(); // Comment for easy debugging of the worker
+    (global as any).splashWorkerWindow.hide(); // Comment for easy debugging of the worker (global as any).splashWorkerWindow.show();
     if (portableMode) {
       mainWindow.setTitle(mainWindow.title + ' Portable 🔌');
     }

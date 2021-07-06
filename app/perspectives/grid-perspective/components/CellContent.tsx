@@ -29,38 +29,40 @@ import UnSelectedIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import TagIcon from '@material-ui/icons/LocalOfferOutlined';
 import { formatFileSize, formatDateTime } from '-/utils/misc';
 import { extractTagsAsObjects, extractTitle } from '-/utils/paths';
-import { FileSystemEntry, findColorForFileEntry } from '-/services/utils-io';
+import { findColorForFileEntry } from '-/services/utils-io';
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagContainer from '-/components/TagContainer';
 import i18n from '-/services/i18n';
-import { Tag, Uuid } from '-/reducers/taglibrary';
 import PlatformIO from '-/services/platform-io';
 import { AppConfig } from '-/config';
 import EntryIcon from '-/components/EntryIcon';
+import { TS } from '-/tagspaces.namespace';
 
 const maxDescriptionPreviewLength = 100;
 
 interface Props {
   selected: boolean;
-  fsEntry: FileSystemEntry;
+  isLast?: boolean;
+  fsEntry: TS.FileSystemEntry;
   entrySize: string;
   classes: any;
+  style?: any;
   theme: any;
   supportedFileTypes: Array<Object>;
   thumbnailMode: any;
   addTags: () => void;
-  addTag: (tag: Tag, parentTagGroupUuid: Uuid) => void;
-  openFsEntry: (fsEntry: FileSystemEntry) => void;
-  selectedEntries: Array<FileSystemEntry>;
-  selectEntry: (fsEntry: FileSystemEntry) => void;
-  deselectEntry: (fsEntry: FileSystemEntry) => void;
+  addTag: (tag: TS.Tag, parentTagGroupUuid: TS.Uuid) => void;
+  openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
+  selectedEntries: Array<TS.FileSystemEntry>;
+  selectEntry: (fsEntry: TS.FileSystemEntry) => void;
+  deselectEntry: (fsEntry: TS.FileSystemEntry) => void;
   isReadOnlyMode: boolean;
   showTags: boolean;
-  handleTagMenu: (event: Object, tag: Tag, entryPath: string) => void;
+  handleTagMenu: (event: Object, tag: TS.Tag, entryPath: string) => void;
   layoutType: string;
-  handleGridContextMenu: (event: Object, fsEntry: FileSystemEntry) => void;
-  handleGridCellDblClick: (event: Object, fsEntry: FileSystemEntry) => void;
-  handleGridCellClick: (event: Object, fsEntry: FileSystemEntry) => void;
+  handleGridContextMenu: (event: Object, fsEntry: TS.FileSystemEntry) => void;
+  handleGridCellDblClick: (event: Object, fsEntry: TS.FileSystemEntry) => void;
+  handleGridCellClick: (event: Object, fsEntry: TS.FileSystemEntry) => void;
 }
 
 const CellContent = (props: Props) => {
@@ -84,7 +86,8 @@ const CellContent = (props: Props) => {
     showTags,
     openFsEntry,
     selectEntry,
-    deselectEntry
+    deselectEntry,
+    isLast
   } = props;
   const fsEntryBackgroundColor = fsEntry.color; //  ? fsEntry.color : 'transparent';
   const entryTitle = extractTitle(
@@ -141,15 +144,16 @@ const CellContent = (props: Props) => {
     return (
       <div
         style={{
-          backgroundColor: fsEntryBackgroundColor
+          backgroundColor: fsEntryBackgroundColor,
+          opacity: fsEntry.isIgnored ? 0.3 : 1
         }}
       >
         <div
           className={classes.gridCellThumb}
+          title={fsEntry.isIgnored && i18n.t('core:ignoredFolder')}
           style={{
             position: 'relative',
-            // zIndex: 1,
-            height: 150 // fsEntry.isFile ? 150 : 70
+            height: 150
           }}
         >
           {fsEntry.thumbPath ? (
@@ -244,7 +248,9 @@ const CellContent = (props: Props) => {
         container
         wrap="nowrap"
         className={classes.rowHover}
+        title={fsEntry.isIgnored && i18n.t('core:ignoredFolder')}
         style={{
+          opacity: fsEntry.isIgnored ? 0.3 : 1,
           backgroundColor: selected
             ? theme.palette.primary.light
             : theme.palette.background.default
@@ -276,9 +282,7 @@ const CellContent = (props: Props) => {
               }
             }}
             style={{
-              backgroundColor: fsEntry.isFile
-                ? fsEntryColor
-                : fsEntryBackgroundColor || fsEntryColor
+              backgroundColor: fsEntryColor
             }}
           >
             {fsEntry.isFile ? fsEntry.extension : <FolderIcon />}
@@ -361,7 +365,7 @@ const CellContent = (props: Props) => {
     );
   }
 
-  function renderTag(tag: Tag) {
+  function renderTag(tag: TS.Tag) {
     return isReadOnlyMode ? (
       <TagContainer
         tag={tag}
@@ -412,6 +416,7 @@ const CellContent = (props: Props) => {
       )}
       style={{
         minHeight: layoutType === 'row' ? entryHeight : 'auto',
+        marginBottom: isLast ? 40 : 'auto',
         backgroundColor: theme.palette.background.default
       }}
       onContextMenu={event => handleGridContextMenu(event, fsEntry)}

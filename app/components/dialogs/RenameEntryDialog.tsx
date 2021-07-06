@@ -36,6 +36,7 @@ import {
 import { actions as AppActions, getLastSelectedEntry } from '-/reducers/app';
 import PlatformIO from '-/services/platform-io';
 import AppConfig from '-/config';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {
   open: boolean;
@@ -177,6 +178,7 @@ const RenameEntryDialog = (props: Props) => {
     >
       <DialogTitle>
         {i18n.t('core:' + (isFile ? 'renameFileTitle' : 'renameDirectory'))}
+        <DialogCloseButton onClose={onClose} />
       </DialogTitle>
       <DialogContent>
         <FormControl fullWidth={true} error={inputError}>
@@ -202,11 +204,7 @@ const RenameEntryDialog = (props: Props) => {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button
-          data-tid="closeRenameEntryDialog"
-          onClick={props.onClose}
-          color="primary"
-        >
+        <Button data-tid="closeRenameEntryDialog" onClick={props.onClose}>
           {i18n.t('core:cancel')}
         </Button>
         <Button

@@ -29,15 +29,16 @@ import Dialog from '@material-ui/core/Dialog';
 import ColorPickerDialog from './ColorPickerDialog';
 import TransparentBackground from '../TransparentBackground';
 import i18n from '-/services/i18n';
-import { Tag, TagGroup } from '-/reducers/taglibrary';
+import { TS } from '-/tagspaces.namespace';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {
   open: boolean;
   fullScreen?: boolean;
   onClose: () => void;
-  editTag: (tag: Tag, tagGroupId: string, origTitle: string) => void;
-  selectedTag: Tag;
-  selectedTagGroupEntry: TagGroup;
+  editTag: (tag: TS.Tag, tagGroupId: string, origTitle: string) => void;
+  selectedTag: TS.Tag;
+  selectedTagGroupEntry: TS.TagGroup;
 }
 
 const EditTagDialog = (props: Props) => {
@@ -46,14 +47,10 @@ const EditTagDialog = (props: Props) => {
     false
   );
   const [inputError, setInputError] = useState<boolean>(false);
-  // const [disableConfirmButton, setDisableConfirmButton] = useState<boolean>(!props.selectedTag.title);
   const [title, setTitle] = useState<string>(props.selectedTag.title);
   const [color, setColor] = useState<string>(props.selectedTag.color);
   const [textcolor, setTextcolor] = useState<string>(
     props.selectedTag.textcolor
-  );
-  const [modifiedDate, setModifiedDate] = useState<string>(
-    props.selectedTag.modified_date
   );
 
   useEffect(() => {
@@ -78,8 +75,6 @@ const EditTagDialog = (props: Props) => {
     }
   };
 
-  const disableConfirmButton = () => inputError;
-
   const onConfirm = () => {
     if (
       !inputError &&
@@ -97,7 +92,6 @@ const EditTagDialog = (props: Props) => {
         props.selectedTagGroupEntry.uuid,
         props.selectedTag.title
       );
-      // setInputError(false);
       props.onClose();
     }
   };
@@ -150,6 +144,7 @@ const EditTagDialog = (props: Props) => {
       <DialogTitle style={{ overflow: 'visible' }}>
         {i18n.t('core:editTagTitle')}
         {` '${title}'`}
+        <DialogCloseButton onClose={onClose} />
       </DialogTitle>
       <DialogContent style={{ overflow: 'visible' }}>
         <FormControl
@@ -157,7 +152,7 @@ const EditTagDialog = (props: Props) => {
           error={inputError}
           style={{ overflow: 'visible' }}
         >
-          {modifiedDate && (
+          {props.selectedTag.modified_date && (
             <div
               className="tag-date"
               style={{
@@ -170,7 +165,12 @@ const EditTagDialog = (props: Props) => {
               <span className="text" style={{ fontWeight: 600 }}>
                 {`${i18n.t('core:modifiedDate')}: `}
               </span>
-              <time>{format(new Date(modifiedDate), 'yyyy-mm-dd')}</time>
+              <time>
+                {format(
+                  new Date(props.selectedTag.modified_date),
+                  'yyyy-mm-dd'
+                )}
+              </time>
             </div>
           )}
           <TextField
@@ -238,11 +238,7 @@ const EditTagDialog = (props: Props) => {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button
-          onClick={props.onClose}
-          data-tid="closeEditTagDialog"
-          color="primary"
-        >
+        <Button onClick={props.onClose} data-tid="closeEditTagDialog">
           {i18n.t('core:cancel')}
         </Button>
         <Button

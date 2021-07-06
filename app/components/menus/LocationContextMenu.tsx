@@ -30,17 +30,15 @@ import OpenFolderNativelyIcon from '@material-ui/icons/Launch';
 import CloseIcon from '@material-ui/icons/Close';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import {
-  actions as LocationActions,
-  Location,
-  locationType
-} from '-/reducers/locations';
+import { actions as LocationActions } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-io';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import i18n from '-/services/i18n';
 import { actions as AppActions } from '-/reducers/app';
 import { getLocationPath } from '-/utils/paths';
 import AppConfig from '-/config';
+import { TS } from '-/tagspaces.namespace';
+import { locationType } from '-/utils/misc';
 
 interface Props {
   setEditLocationDialogOpened: (open: boolean) => void;
@@ -50,7 +48,7 @@ interface Props {
     fullTextIndex: boolean,
     isCurrentLocation: boolean
   ) => void;
-  selectedLocation: Location;
+  selectedLocation: TS.Location;
   isCurrentLocation: (uuid: string) => boolean;
   moveLocationUp: (locationId: string) => void;
   moveLocationDown: (locationId: string) => void;
@@ -134,65 +132,105 @@ const LocationContextMenu = (props: Props) => {
     }
   };
 
+  const menuItems = [];
+  if (!AppConfig.locationsReadOnly && !selectedLocation.isNotEditable) {
+    menuItems.push(
+      <MenuItem
+        key="editLocation"
+        data-tid="editLocation"
+        onClick={showEditLocationDialog}
+      >
+        <ListItemIcon>
+          <EditIcon />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:editLocationTitle')} />
+      </MenuItem>
+    );
+  }
+  menuItems.push(
+    <MenuItem
+      key="indexLocation"
+      data-tid="indexLocation"
+      onClick={indexLocation}
+    >
+      <ListItemIcon>
+        <RefreshIcon />
+      </ListItemIcon>
+      <ListItemText primary={i18n.t('core:indexLocation')} />
+    </MenuItem>
+  );
+  if (!AppConfig.locationsReadOnly) {
+    menuItems.push(
+      <MenuItem
+        key="moveLocationUp"
+        data-tid="moveLocationUp"
+        onClick={moveLocationUp}
+      >
+        <ListItemIcon>
+          <ArrowUpwardIcon />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:moveUp')} />
+      </MenuItem>
+    );
+    menuItems.push(
+      <MenuItem
+        key="moveLocationDown"
+        data-tid="moveLocationDown"
+        onClick={moveLocationDown}
+      >
+        <ListItemIcon>
+          <ArrowDownwardIcon />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:moveDown')} />
+      </MenuItem>
+    );
+    menuItems.push(
+      <MenuItem
+        key="removeLocation"
+        data-tid="removeLocation"
+        onClick={showDeleteLocationDialog}
+      >
+        <ListItemIcon>
+          <DeleteIcon />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:removeLocation')} />
+      </MenuItem>
+    );
+  }
+  if (selectedLocation.type === locationType.TYPE_LOCAL) {
+    menuItems.push(
+      <MenuItem
+        key="showInFileManager"
+        data-tid="showInFileManager"
+        onClick={showInFileManager}
+      >
+        <ListItemIcon>
+          <OpenFolderNativelyIcon />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:showInFileManager')} />
+      </MenuItem>
+    );
+  }
+  menuItems.push(
+    <MenuItem
+      key="closeLocationTID"
+      data-tid="closeLocationTID"
+      onClick={closeLocation}
+    >
+      <ListItemIcon>
+        <CloseIcon />
+      </ListItemIcon>
+      <ListItemText primary={i18n.t('core:closeLocation')} />
+    </MenuItem>
+  );
+
   return (
     <Menu
       anchorEl={props.locationDirectoryContextMenuAnchorEl}
       open={Boolean(props.locationDirectoryContextMenuAnchorEl)}
       onClose={() => props.setLocationDirectoryContextMenuAnchorEl(null)}
     >
-      {!AppConfig.locationsReadOnly && !selectedLocation.isNotEditable && (
-        <MenuItem data-tid="editLocation" onClick={showEditLocationDialog}>
-          <ListItemIcon>
-            <EditIcon />
-          </ListItemIcon>
-          <ListItemText primary={i18n.t('core:editLocationTitle')} />
-        </MenuItem>
-      )}
-      <MenuItem data-tid="indexLocation" onClick={indexLocation}>
-        <ListItemIcon>
-          <RefreshIcon />
-        </ListItemIcon>
-        <ListItemText primary={i18n.t('core:indexLocation')} />
-      </MenuItem>
-      {!AppConfig.locationsReadOnly && (
-        <>
-          <MenuItem data-tid="moveLocationUp" onClick={moveLocationUp}>
-            <ListItemIcon>
-              <ArrowUpwardIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:moveUp')} />
-          </MenuItem>
-          <MenuItem data-tid="moveLocationDown" onClick={moveLocationDown}>
-            <ListItemIcon>
-              <ArrowDownwardIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:moveDown')} />
-          </MenuItem>
-          <MenuItem
-            data-tid="removeLocation"
-            onClick={showDeleteLocationDialog}
-          >
-            <ListItemIcon>
-              <DeleteIcon />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('core:removeLocation')} />
-          </MenuItem>
-        </>
-      )}
-      {selectedLocation.type === locationType.TYPE_LOCAL && (
-        <MenuItem data-tid="showInFileManager" onClick={showInFileManager}>
-          <ListItemIcon>
-            <OpenFolderNativelyIcon />
-          </ListItemIcon>
-          <ListItemText primary={i18n.t('core:showInFileManager')} />
-        </MenuItem>
-      )}
-      <MenuItem data-tid="closeLocationTID" onClick={closeLocation}>
-        <ListItemIcon>
-          <CloseIcon />
-        </ListItemIcon>
-        <ListItemText primary={i18n.t('core:closeLocation')} />
-      </MenuItem>
+      {menuItems}
     </Menu>
   );
 };

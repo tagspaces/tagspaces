@@ -22,8 +22,6 @@ import Typography from '@material-ui/core/Typography';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import Tooltip from '@material-ui/core/Tooltip';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Dialog from '@material-ui/core/Dialog';
@@ -34,6 +32,7 @@ import versionMeta from '-/version.json';
 import { Pro } from '-/pro';
 import { getLastVersionPromise } from '-/reducers/settings';
 import AppConfig from '-/config';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {
   open: boolean;
@@ -102,18 +101,8 @@ const AboutDialog = (props: Props) => {
       scroll="paper"
     >
       <DialogTitle>
-        {productName}{' '}
-        <IconButton
-          aria-label="close"
-          style={{
-            position: 'absolute',
-            right: 5,
-            top: 5
-          }}
-          onClick={onClose}
-        >
-          <CloseIcon />
-        </IconButton>
+        {productName}
+        <DialogCloseButton onClose={onClose} />
       </DialogTitle>
       <DialogContent>
         <img

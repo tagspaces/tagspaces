@@ -137,7 +137,6 @@ const CreateFileDialog = (props: Props) => {
 
     if (name === 'fileName') {
       setFileName(value);
-      setFileName(value);
     } else if (name === 'fileContent') {
       fileContent.current = value;
     } else if (name === 'selectedDirectoryPath') {
@@ -272,7 +271,7 @@ const CreateFileDialog = (props: Props) => {
             name="selectedDirectoryPath"
             fullWidth={true}
             data-tid="createFileDialog_filePath"
-            value={selectedDirectoryPath}
+            value={selectedDirectoryPath.current}
             onChange={handleFileChange}
             endAdornment={
               PlatformIO.haveObjectStoreSupport() ? (
@@ -292,11 +291,7 @@ const CreateFileDialog = (props: Props) => {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button
-          data-tid="closeCreateFileDialog"
-          onClick={props.onClose}
-          color="primary"
-        >
+        <Button data-tid="closeCreateFileDialog" onClick={props.onClose}>
           {i18n.t('core:cancel')}
         </Button>
         <Button

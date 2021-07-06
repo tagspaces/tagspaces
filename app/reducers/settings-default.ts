@@ -80,14 +80,19 @@ export function findAvailableExtensions() {
       extensionName: 'PDF Viewer',
       extensionType: 'viewer'
     },
-    {
-      extensionId: '@tagspaces/plain-viewer',
-      extensionName: 'Experimental Viewer - insecure!!!',
-      extensionType: 'viewer'
-    },
+    // {
+    //   extensionId: '@tagspaces/plain-viewer',
+    //   extensionName: 'Experimental Viewer (insecure)',
+    //   extensionType: 'viewer'
+    // },
     {
       extensionId: '@tagspaces/rtf-viewer',
       extensionName: 'RTF Viewer',
+      extensionType: 'viewer'
+    },
+    {
+      extensionId: '@tagspaces/spreadsheet-viewer',
+      extensionName: 'Spreadsheet Viewer',
       extensionType: 'viewer'
     },
     {
@@ -123,6 +128,7 @@ export default {
   tagDelimiter: ' ',
   maxSearchResult: 1000,
   desktopMode,
+  saveTagInLocation: false,
   newHTMLFileContent:
     '<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><style type="text/css">body{overflow:auto;width:100%;height:100%;font:13.34px Ubuntu,arial,clean,sans-serif;color:#000;line-height:1.4em;background-color:#fff;padding:15px}p{margin:1em 0;line-height:1.5em}table{font:100%;margin:1em}table th{border-bottom:1px solid #bbb;padding:.2em 1em}table td{border-bottom:1px solid #ddd;padding:.2em 1em}input[type=image],input[type=password],input[type=text],textarea{font:99% helvetica,arial,freesans,sans-serif}option,select{padding:0 .25em}optgroup{margin-top:.5em}code,pre{font:12px Monaco, Courier ,monospace}pre{margin:1em 0;font-size:12px;background-color:#eee;border:1px solid #ddd;padding:5px;line-height:1.5em;color:#444;overflow:auto;-webkit-box-shadow:rgba(0,0,0,.07) 0 1px 2px inset;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px}pre code{padding:0;font-size:12px;background-color:#eee;border:none}code{font-size:12px;background-color:#f8f8ff;color:#444;padding:0 .2em;border:1px solid #dedede}img{border:0;max-width:100%}abbr{border-bottom:none}a{color:#4183c4;text-decoration:none}a:hover{text-decoration:underline}a code,a:link code,a:visited code{color:#4183c4}h2,h3{margin:1em 0}h1,h2,h3,h4,h5,h6{border:0}h1{font-size:170%;border-top:4px solid #aaa;padding-top:.5em;margin-top:1.5em}h1:first-child{margin-top:0;padding-top:.25em;border-top:none}h2{font-size:150%;margin-top:1.5em;border-top:4px solid #e0e0e0;padding-top:.5em}h3{font-size:130%;margin-top:1em}h4{font-size:120%;margin-top:1em}h5{font-size:115%;margin-top:1em}h6{font-size:110%;margin-top:1em}hr{border:1px solid #ddd}ol,ul{margin:1em 0 1em 2em}ol li,ul li{margin-top:.5em;margin-bottom:.5em}ol ol,ol ul,ul ol,ul ul{margin-top:0;margin-bottom:0}blockquote{margin:1em 0;border-left:5px solid #ddd;padding-left:.6em;color:#555}dt{font-weight:700;margin-left:1em}dd{margin-left:2em;margin-bottom:1em}</style></head><body></body></html>',
   showUnixHiddenEntries: false,
@@ -155,12 +161,12 @@ export default {
   entryPropertiesSplitSize: 103,
   leftVerticalSplitSize: 350,
   mainVerticalSplitSize: '50%',
-  supportedPerspectives: [
+  /* supportedPerspectives: [
     {
       id: 'perspectiveList',
       name: 'List'
     }
-  ],
+  ], */
   supportedThemes: ['light', 'dark'],
   supportedLanguages: [
     {
@@ -490,6 +496,16 @@ export default {
       color: '#9fd5ba'
     },
     {
+      type: 'jif',
+      viewer: '@tagspaces/image-viewer',
+      color: '#9fd5ba'
+    },
+    {
+      type: 'jfif',
+      viewer: '@tagspaces/image-viewer',
+      color: '#9fd5ba'
+    },
+    {
       type: 'js',
       viewer: '@tagspaces/text-editor',
       editor: '@tagspaces/text-editor',
@@ -740,11 +756,42 @@ export default {
       type: 'docx',
       viewer: '@tagspaces/document-viewer',
       color: '#2196f3'
-    }
-    /* {
+    },
+    {
       type: 'xlsx',
-      viewer: '@tagspaces/document-viewer',
+      viewer: '@tagspaces/spreadsheet-viewer',
       color: '#b2f30e'
-    } */
+    },
+    {
+      type: 'xls',
+      viewer: '@tagspaces/spreadsheet-viewer',
+      color: '#b2f30e'
+    },
+    {
+      type: 'csv',
+      viewer: '@tagspaces/spreadsheet-viewer',
+      color: '#b2f30e'
+    },
+    {
+      type: 'ods',
+      viewer: '@tagspaces/spreadsheet-viewer',
+      color: '#b2f30e'
+    }
+  ],
+  mapTileServers: [
+    {
+      uuid: '1b25af5e-dd15-4415-83cb-7eb53d15e336',
+      name: 'Standard',
+      serverURL: 'https://{s}.tile.osm.org/{z}/{x}/{y}.png',
+      serverInfo:
+        '<b>Leaflet</b> | Map data: &copy; <b>https://openstreetmap.org/copyright</b> contributors, <b>CC-BY-SA</b>, Imagery © <b>Mapbox</b>'
+    },
+    {
+      uuid: '5b4be90f-3c7b-4157-8ee3-2c7a3e7cf827',
+      name: 'Topographic',
+      serverURL: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+      serverInfo:
+        '<b>Leaflet</b> | Map data: &copy; <b>https://openstreetmap.org/copyright</b> contributors, SRTM | Map style: &copy; <b>https://opentopomap.org</b> - OpenTopoMap (<b>https://creativecommons.org/licenses/by-sa/3.0/</b> - CC-BY-SA'
+    }
   ]
 };

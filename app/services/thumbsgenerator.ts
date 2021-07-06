@@ -32,7 +32,17 @@ import { Pro } from '../pro';
 const maxSize = AppConfig.maxThumbSize;
 const bgColor = AppConfig.thumbBgColor;
 
-const supportedImgs = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'bmp'];
+const supportedImgs = [
+  'jpg',
+  'jpeg',
+  'jif',
+  'jfif',
+  'png',
+  'gif',
+  'svg',
+  'webp',
+  'bmp'
+];
 const supportedContainers = [
   // 'zip', // disable ZIP tmb generation due to potential performance issues on large files
   'epub',
@@ -210,7 +220,7 @@ export function createThumbnailPromise(
       resolve(); // prevent creating thumbs in meta/.ts folder
       return true;
     }
-    const stats = await PlatformIO.getPropertiesPromise(metaDirectory);
+    const stats = await PlatformIO.getPropertiesPromise(metaDirectory); // TODO In cordova this check is too expensive for dirs like /.ts (replace it with checkDirExist)
     if (!stats || stats.isFile) {
       await PlatformIO.createDirectoryPromise(metaDirectory);
     }

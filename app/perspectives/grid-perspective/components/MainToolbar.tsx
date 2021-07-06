@@ -30,7 +30,10 @@ import SelectAllIcon from '@material-ui/icons/CheckBox';
 import DeSelectAllIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CopyIcon from '@material-ui/icons/FileCopy';
 import DeleteIcon from '@material-ui/icons/Delete';
+import ExportIcon from '@material-ui/icons/AssignmentReturn';
 import i18n from '-/services/i18n';
+import { Pro } from '-/pro';
+import AppConfig from '-/config';
 
 interface Props {
   classes: any;
@@ -46,6 +49,7 @@ interface Props {
   openDeleteFileDialog: () => void;
   handleSortingMenu: (event: Object) => void;
   handleOptionsMenu: (event: Object) => void;
+  handleExportCsvMenu: () => void;
   layoutType: string;
   isDesktopMode: boolean;
 }
@@ -73,7 +77,6 @@ const MainToolbar = (props: Props) => {
     <Toolbar className={classes.topToolbar} data-tid="perspectiveGridToolbar">
       <Tooltip title={i18n.t('core:toggleSelectAllFiles')}>
         <IconButton
-          // title={i18n.t('core:toggleSelectAllFiles')}
           data-tid="gridPerspectiveSelectAllFiles"
           onClick={toggleSelectAllFiles}
         >
@@ -83,7 +86,6 @@ const MainToolbar = (props: Props) => {
       {isDesktopMode && (
         <Tooltip title={i18n.t('core:navigateToParentDirectory')}>
           <IconButton
-            // title={i18n.t('core:navigateToParentDirectory')}
             aria-label={i18n.t('core:navigateToParentDirectory')}
             data-tid="gridPerspectiveOnBackButton"
             onClick={loadParentDirectoryContent}
@@ -95,7 +97,6 @@ const MainToolbar = (props: Props) => {
       {layoutType === 'row' ? (
         <Tooltip title={i18n.t('core:switchToGridView')}>
           <IconButton
-            // title={i18n.t('core:switchToGridView')}
             aria-label={i18n.t('core:switchToGridView')}
             data-tid="gridPerspectiveSwitchLayoutToGrid"
             onClick={() => {
@@ -108,7 +109,6 @@ const MainToolbar = (props: Props) => {
       ) : (
         <Tooltip title={i18n.t('core:switchToListView')}>
           <IconButton
-            // title={i18n.t('core:switchToListView')}
             aria-label={i18n.t('core:switchToListView')}
             data-tid="gridPerspectiveSwitchLayoutToRow"
             onClick={() => {
@@ -121,41 +121,44 @@ const MainToolbar = (props: Props) => {
       )}
       {!isReadOnlyMode && (
         <Tooltip title={i18n.t('core:tagSelectedEntries')}>
-          <IconButton
-            // title={i18n.t('core:tagSelectedEntries')}
-            aria-label={i18n.t('core:tagSelectedEntries')}
-            data-tid="gridPerspectiveAddRemoveTags"
-            disabled={selectedEntries.length < 1}
-            onClick={openAddRemoveTagsDialog}
-          >
-            <TagIcon />
-          </IconButton>
+          <span>
+            <IconButton
+              aria-label={i18n.t('core:tagSelectedEntries')}
+              data-tid="gridPerspectiveAddRemoveTags"
+              disabled={selectedEntries.length < 1}
+              onClick={openAddRemoveTagsDialog}
+            >
+              <TagIcon />
+            </IconButton>
+          </span>
         </Tooltip>
       )}
       {!isReadOnlyMode && (
         <Tooltip title={i18n.t('core:copyMoveSelectedEntries')}>
-          <IconButton
-            // title={i18n.t('core:copyMoveSelectedEntries')}
-            aria-label={i18n.t('core:copyMoveSelectedEntries')}
-            data-tid="gridPerspectiveCopySelectedFiles"
-            disabled={!fileOperationsEnabled}
-            onClick={openMoveCopyFilesDialog}
-          >
-            <CopyIcon />
-          </IconButton>
+          <span>
+            <IconButton
+              aria-label={i18n.t('core:copyMoveSelectedEntries')}
+              data-tid="gridPerspectiveCopySelectedFiles"
+              disabled={!fileOperationsEnabled}
+              onClick={openMoveCopyFilesDialog}
+            >
+              <CopyIcon />
+            </IconButton>
+          </span>
         </Tooltip>
       )}
       {!isReadOnlyMode && (
         <Tooltip title={i18n.t('core:deleteSelectedEntries')}>
-          <IconButton
-            // title={i18n.t('core:deleteSelectedEntries')}
-            aria-label={i18n.t('core:deleteSelectedEntries')}
-            data-tid="gridPerspectiveDeleteMultipleFiles"
-            disabled={!fileOperationsEnabled}
-            onClick={openDeleteFileDialog}
-          >
-            <DeleteIcon />
-          </IconButton>
+          <span>
+            <IconButton
+              aria-label={i18n.t('core:deleteSelectedEntries')}
+              data-tid="gridPerspectiveDeleteMultipleFiles"
+              disabled={!fileOperationsEnabled}
+              onClick={openDeleteFileDialog}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </span>
         </Tooltip>
       )}
       <Tooltip title={i18n.t('core:sort')}>
@@ -170,9 +173,20 @@ const MainToolbar = (props: Props) => {
           <SwapVertIcon />
         </IconButton>
       </Tooltip>
+      {Pro &&
+      !AppConfig.isCordovaAndroid && ( // https://trello.com/c/z6ESlqxz/697-exports-to-json-or-csv-do-not-work-on-android
+          <Tooltip title={i18n.t('core:exportCsv')}>
+            <IconButton
+              data-tid="gridPerspectiveExportCsvMenuTID"
+              onClick={props.handleExportCsvMenu}
+              style={{ transform: 'scale(-1, 1)' }}
+            >
+              <ExportIcon />
+            </IconButton>
+          </Tooltip>
+        )}
       <Tooltip title={i18n.t('core:options')}>
         <IconButton
-          // title={i18n.t('core:options')}
           data-tid="gridPerspectiveOptionsMenu"
           onClick={e => {
             handleOptionsMenu(e);

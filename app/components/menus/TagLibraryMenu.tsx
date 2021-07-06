@@ -27,6 +27,7 @@ import AddIcon from '@material-ui/icons/Add';
 import ImportExportTagGroupsDialog from '../dialogs/ImportExportTagGroupsDialog';
 import i18n from '-/services/i18n';
 import AppConfig from '-/config';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   classes?: any;
@@ -35,7 +36,7 @@ interface Props {
   openURLExternally: (path: string, skipConfirmation?: boolean) => void;
   open: boolean;
   onClose: () => void;
-  importTagGroups: () => void;
+  importTagGroups: (entries: Array<TS.TagGroup>, replace?: boolean) => void;
   exportTagGroups: () => void;
   showCreateTagGroupDialog: () => void;
   showNotification: (
@@ -43,6 +44,8 @@ interface Props {
     notificationType?: string, // NotificationTypes
     autohide?: boolean
   ) => void;
+  saveTagInLocation: boolean;
+  refreshTagsFromLocation: () => void;
 }
 
 const TagLibraryMenu = (props: Props) => {
@@ -125,18 +128,34 @@ const TagLibraryMenu = (props: Props) => {
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:createTagGroupTitle')} />
         </MenuItem>
+        {props.saveTagInLocation && (
+          <MenuItem
+            data-tid="refreshTagGroups"
+            onClick={() => {
+              props.refreshTagsFromLocation();
+              props.onClose();
+            }}
+          >
+            <ListItemIcon>
+              <ImportExportIcon />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:refreshTagGroups')} />
+          </MenuItem>
+        )}
         <MenuItem data-tid="importTagGroup" onClick={handleImportTagGroup}>
           <ListItemIcon>
             <ImportExportIcon />
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:importTags')} />
         </MenuItem>
-        <MenuItem data-tid="exportTagGroup" onClick={handleExportTagGroup}>
-          <ListItemIcon>
-            <ImportExportIcon />
-          </ListItemIcon>
-          <ListItemText primary={i18n.t('core:exportTagGroupsButton')} />
-        </MenuItem>
+        {!AppConfig.isCordovaAndroid && (
+          <MenuItem data-tid="exportTagGroup" onClick={handleExportTagGroup}>
+            <ListItemIcon>
+              <ImportExportIcon />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:exportTagGroupsButton')} />
+          </MenuItem>
+        )}
         <MenuItem
           data-tid="taglibraryHelp"
           onClick={() => {

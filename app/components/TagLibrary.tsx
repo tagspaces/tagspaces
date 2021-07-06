@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -44,12 +44,9 @@ import CustomLogo from './CustomLogo';
 import TagLibraryMenu from './menus/TagLibraryMenu';
 import TagGroupMenu from './menus/TagGroupMenu';
 import {
-  TagGroup,
-  Tag,
   actions as TagLibraryActions,
   getAllTags,
-  getTagGroups,
-  Uuid
+  getTagGroups
 } from '../reducers/taglibrary';
 import TaggingActions from '../reducers/tagging-actions';
 import i18n from '../services/i18n';
@@ -64,44 +61,54 @@ import {
   isReadOnlyMode
 } from '../reducers/app';
 import SmartTags from '../reducers/smart-tags';
-import { FileSystemEntry } from '-/services/utils-io';
 import { AppConfig } from '-/config';
 import EditTagDialog from '-/components/dialogs/EditTagDialog';
+import { TS } from '-/tagspaces.namespace';
+import { getLocations } from '-/reducers/locations';
+import { Pro } from '-/pro';
 
 interface Props {
-  classes: any;
-  style: any;
+  classes?: any;
+  style?: any;
   isReadOnlyMode: boolean;
   tagTextColor: string;
   tagBackgroundColor: string;
-  tagGroups: Array<TagGroup>;
-  allTags: Array<Tag>;
+  tagGroups: Array<TS.TagGroup>;
+  allTags: Array<TS.Tag>;
   openURLExternally: (path: string) => void;
   toggleTagGroup: (uuid: string) => void;
   removeTagGroup: (uuid: string) => void;
   moveTagGroupUp: (uuid: string) => void;
   moveTagGroupDown: (uuid: string) => void;
   sortTagGroup: (uuid: string) => void;
-  collectTagsFromLocation: (tagGroup: TagGroup) => void;
+  collectTagsFromLocation: (tagGroup: TS.TagGroup) => void;
   addTags: () => void;
-  importTagGroups: () => void;
+  importTagGroups: (entries: Array<TS.TagGroup>, replace?: boolean) => void;
   exportTagGroups: () => void;
   createTagGroup: () => void;
   addTag: () => void;
   moveTag: () => void;
+  changeTagOrder: (
+    tagGroupUuid: TS.Uuid,
+    fromIndex: number,
+    toIndex: number
+  ) => void;
   editTagGroup: () => void;
   editTag: () => void;
-  deleteTag: (tagTitle: string, parentTagGroupUuid: Uuid) => void;
+  deleteTag: (tagTitle: string, parentTagGroupUuid: TS.Uuid) => void;
   showNotification: (
     text: string,
     notificationType?: string, // NotificationTypes
     autohide?: boolean
   ) => void;
-  selectedEntries: Array<FileSystemEntry>;
+  selectedEntries: Array<TS.FileSystemEntry>;
   tagGroupCollapsed: Array<string>;
+  locations: Array<TS.Location>;
+  saveTagInLocation: boolean;
 }
 
 const TagLibrary = (props: Props) => {
+  const tagContainerRef = useRef<HTMLSpanElement>(null);
   const [
     tagGroupMenuAnchorEl,
     setTagGroupMenuAnchorEl
@@ -113,11 +120,11 @@ const TagLibrary = (props: Props) => {
     tagLibraryMenuAnchorEl,
     setTagLibraryMenuAnchorEl
   ] = useState<null | HTMLElement>(null);
-  const [selectedTagGroupEntry, setSelectedTagGroupEntry] = useState<TagGroup>(
-    null
-  );
+  const [selectedTagGroupEntry, setSelectedTagGroupEntry] = useState<
+    TS.TagGroup
+  >(null);
   // const [selectedTagEntry, setSelectedTagEntry] = useState<TagGroup>(null);
-  const [selectedTag, setSelectedTag] = useState<Tag>(null);
+  const [selectedTag, setSelectedTag] = useState<TS.Tag>(null);
   const [
     isCreateTagGroupDialogOpened,
     setIsCreateTagGroupDialogOpened
@@ -138,6 +145,31 @@ const TagLibrary = (props: Props) => {
   const [isDeleteTagDialogOpened, setIsDeleteTagDialogOpened] = useState<
     boolean
   >(false);
+
+  useEffect(() => {
+    if (Pro && props.saveTagInLocation) {
+      refreshTagsFromLocation();
+    }
+  }, []);
+
+  const refreshTagsFromLocation = () => {
+    props.locations.map(location =>
+      Pro.MetaOperations.getTagGroups(location.path)
+        .then((tagGroups: Array<TS.TagGroup>) => {
+          if (tagGroups && tagGroups.length > 0) {
+            const newGroups = tagGroups.map(group => ({
+              ...group,
+              locationId: location.uuid
+            }));
+            props.importTagGroups(newGroups, false);
+          }
+          return true;
+        })
+        .catch(err => {
+          console.error(err);
+        })
+    );
+  };
 
   const isTagLibraryReadOnly =
     window.ExtTagLibrary && window.ExtTagLibrary.length > 0;
@@ -160,7 +192,11 @@ const TagLibrary = (props: Props) => {
   };
 
   const handleTagMenuCallback = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>, tag, tagGroup: TagGroup) => {
+    (
+      event: React.ChangeEvent<HTMLInputElement>,
+      tag,
+      tagGroup: TS.TagGroup
+    ) => {
       handleTagMenu(event, tag, tagGroup);
     },
     []
@@ -169,7 +205,7 @@ const TagLibrary = (props: Props) => {
   const handleTagMenu = (
     event: React.ChangeEvent<HTMLInputElement>,
     tag,
-    tagGroup: TagGroup
+    tagGroup: TS.TagGroup
   ) => {
     if (!tagGroup.readOnly) {
       setTagMenuAnchorEl(event.currentTarget);
@@ -206,6 +242,18 @@ const TagLibrary = (props: Props) => {
     setTagGroupMenuAnchorEl(null);
   };
 
+  function getLocationName(locationId: string) {
+    if (locationId) {
+      const location: TS.Location = props.locations.find(
+        l => l.uuid === locationId
+      );
+      if (location) {
+        return ' (' + location.name + ')';
+      }
+    }
+    return '';
+  }
+
   const renderTagGroup = tagGroup => {
     // eslint-disable-next-line no-param-reassign
     tagGroup.expanded = !(
@@ -235,7 +283,7 @@ const TagLibrary = (props: Props) => {
             data-tid="locationTitleElement"
             noWrap
           >
-            {tagGroup.title + ' '}
+            {tagGroup.title + getLocationName(tagGroup.locationId)}
             {!tagGroup.expanded && (
               <span className={props.classes.badge}>
                 {tagGroup.children.length}
@@ -267,7 +315,7 @@ const TagLibrary = (props: Props) => {
             data-tid={'tagGroupContainer_' + tagGroup.title}
           >
             {tagGroup.children &&
-              tagGroup.children.map((tag: Tag) => {
+              tagGroup.children.map((tag: TS.Tag, index) => {
                 if (props.isReadOnlyMode) {
                   return (
                     <TagContainer
@@ -284,11 +332,14 @@ const TagLibrary = (props: Props) => {
                 return (
                   <TagContainerDnd
                     key={tagGroup.uuid + tag.title}
+                    tagContainerRef={tagContainerRef}
+                    index={index}
                     tag={tag}
                     tagGroup={tagGroup}
                     handleTagMenu={handleTagMenuCallback}
                     addTags={props.addTags}
                     moveTag={props.moveTag}
+                    changeTagOrder={props.changeTagOrder}
                     selectedEntries={props.selectedEntries}
                   />
                 );
@@ -400,6 +451,8 @@ const TagLibrary = (props: Props) => {
         showCreateTagGroupDialog={showCreateTagGroupDialog}
         showNotification={showNotification}
         openURLExternally={props.openURLExternally}
+        saveTagInLocation={props.saveTagInLocation}
+        refreshTagsFromLocation={refreshTagsFromLocation}
       />
       {Boolean(tagMenuAnchorEl) && (
         <TagMenu
@@ -458,7 +511,9 @@ function mapStateToProps(state) {
     selectedEntries: getSelectedEntries(state),
     allTags: getAllTags(state),
     isReadOnlyMode: isReadOnlyMode(state),
-    tagGroupCollapsed: state.settings.tagGroupCollapsed
+    tagGroupCollapsed: state.settings.tagGroupCollapsed,
+    locations: getLocations(state),
+    saveTagInLocation: state.settings.saveTagInLocation
   };
 }
 
@@ -475,6 +530,7 @@ function mapDispatchToProps(dispatch) {
       createTagGroup: TagLibraryActions.createTagGroup,
       editTag: TagLibraryActions.editTag,
       moveTag: TagLibraryActions.moveTag,
+      changeTagOrder: TagLibraryActions.changeTagOrder,
       editTagGroup: TagLibraryActions.editTagGroup,
       deleteTag: TagLibraryActions.deleteTag,
       addTag: TagLibraryActions.addTag,

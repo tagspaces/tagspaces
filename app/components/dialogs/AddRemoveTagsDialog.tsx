@@ -22,8 +22,6 @@ import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-// import IconButton from '@material-ui/core/IconButton';
-// import CloseIcon from '@material-ui/icons/Close';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -31,26 +29,27 @@ import FolderIcon from '@material-ui/icons/FolderOpen';
 import FileIcon from '@material-ui/icons/InsertDriveFileOutlined';
 import Typography from '@material-ui/core/Typography';
 import Dialog from '@material-ui/core/Dialog';
-import { Tag } from '-/reducers/taglibrary';
 import TagsSelect from '../TagsSelect';
 import i18n from '-/services/i18n';
 import { extractFileName, extractDirectoryName } from '-/utils/paths';
 import PlatformIO from '-/services/platform-io';
+import { TS } from '-/tagspaces.namespace';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {
   open: boolean;
   fullScreen: boolean;
   selectedEntries: Array<any>;
   onClose: (clearSelection?: boolean) => void;
-  addTags: (paths: Array<string>, tags: Array<Tag>) => void;
-  removeTags: (paths: Array<string>, tags: Array<Tag>) => void;
+  addTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
+  removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
   removeAllTags: (paths: Array<string>) => void;
 }
 
 const AddRemoveTagsDialog = (props: Props) => {
-  const [newlyAddedTags, setNewlyAddedTags] = useState<Array<Tag>>([]);
+  const [newlyAddedTags, setNewlyAddedTags] = useState<Array<TS.Tag>>([]);
 
-  const handleChange = (name: string, value: Array<Tag>, action: string) => {
+  const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
     if (action === 'remove-value') {
       const tagsToRemove: Array<string> = value.map(tag => tag.title);
       setNewlyAddedTags(
@@ -59,6 +58,10 @@ const AddRemoveTagsDialog = (props: Props) => {
     } else {
       setNewlyAddedTags(value);
     }
+  };
+
+  const onClose = () => {
+    onCloseDialog();
   };
 
   const onCloseDialog = (clearSelection?: boolean) => {
@@ -95,7 +98,7 @@ const AddRemoveTagsDialog = (props: Props) => {
     onCloseDialog(true);
   };
 
-  const { open, selectedEntries = [], fullScreen, onClose } = props;
+  const { open, selectedEntries = [], fullScreen } = props;
   const disabledButtons =
     !newlyAddedTags || newlyAddedTags.length < 1 || selectedEntries.length < 1;
 
@@ -109,17 +112,7 @@ const AddRemoveTagsDialog = (props: Props) => {
     >
       <DialogTitle>
         {i18n.t('core:tagOperationTitle')}
-        {/* <IconButton
-          aria-label="close"
-          style={{
-            position: 'absolute',
-            right: 5,
-            top: 5
-          }}
-          onClick={onCloseDialog}
-        >
-          <CloseIcon />
-        </IconButton> */}
+        <DialogCloseButton onClose={onClose} />
       </DialogTitle>
       <DialogContent style={{ minHeight: 330 }}>
         <TagsSelect
@@ -156,7 +149,6 @@ const AddRemoveTagsDialog = (props: Props) => {
         <Button
           data-tid="cancelTagsMultipleEntries"
           onClick={() => onCloseDialog()}
-          color="primary"
         >
           {i18n.t('core:cancel')}
         </Button>

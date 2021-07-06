@@ -16,8 +16,8 @@
  *
  */
 
-import { Location, getLocation, getLocations, locationType } from './locations';
-import { createDirectoryIndex, FileSystemEntry } from '-/services/utils-io';
+import { getLocation, getLocations } from './locations';
+import { createDirectoryIndex } from '-/services/utils-io';
 import { Pro } from '../pro';
 import {
   extractFileExtension,
@@ -25,13 +25,14 @@ import {
   extractTagsAsObjects,
   getLocationPath
 } from '-/utils/paths';
-import Search, { SearchQuery } from '../services/search';
+import Search from '../services/search';
 import { actions as AppActions } from './app';
 import i18n from '../services/i18n';
 import PlatformIO from '../services/platform-io';
-import { Tag } from './taglibrary';
 import GlobalSearch from '../services/search-index';
 import AppConfig from '-/config';
+import { TS } from '-/tagspaces.namespace';
+import { locationType } from '-/utils/misc';
 
 export const types = {
   SET_SEARCH_QUERY: 'SET_SEARCH_QUERY',
@@ -176,7 +177,7 @@ export default (state: any = initialState, action: any) => {
 };
 
 export const actions = {
-  setSearchQuery: (searchQuery: SearchQuery) => ({
+  setSearchQuery: (searchQuery: TS.SearchQuery) => ({
     type: types.SET_SEARCH_QUERY,
     searchQuery
   }),
@@ -185,10 +186,11 @@ export const actions = {
   createDirectoryIndex: (
     directoryPath: string,
     extractText: boolean,
-    isCurrentLocation: boolean = true
+    isCurrentLocation: boolean = true,
+    ignorePatterns: Array<string> = []
   ) => (dispatch: (actions: Object) => void) => {
     dispatch(actions.startDirectoryIndexing());
-    createDirectoryIndex(directoryPath, extractText)
+    createDirectoryIndex(directoryPath, extractText, ignorePatterns)
       .then(directoryIndex => {
         if (isCurrentLocation) {
           // Load index only if current location
@@ -215,32 +217,30 @@ export const actions = {
     const state = getState();
     dispatch(actions.startDirectoryIndexing());
     const allLocations = getLocations(state);
-    const locationPaths = [];
-    allLocations.forEach(location => {
-      locationPaths.push(getLocationPath(location));
-    });
-    const result = locationPaths.reduce(
-      (accumulatorPromise, nextPath) =>
-        accumulatorPromise.then(() =>
-          createDirectoryIndex(nextPath, extractText)
-            .then(directoryIndex => {
-              if (Pro && Pro.Indexer) {
-                Pro.Indexer.persistIndex(
-                  nextPath,
-                  directoryIndex,
-                  PlatformIO.getDirSeparator()
-                );
-              }
-              return true;
-            })
-            .catch(err => {
-              dispatch(actions.indexDirectoryFailure(err));
-            })
-        ),
-      Promise.resolve()
-    );
 
-    result
+    const promises = allLocations.map(location => {
+      const nextPath = getLocationPath(location);
+      return createDirectoryIndex(
+        nextPath,
+        extractText,
+        location.ignorePatternPaths
+      )
+        .then(directoryIndex => {
+          if (Pro && Pro.Indexer) {
+            Pro.Indexer.persistIndex(
+              nextPath,
+              directoryIndex,
+              PlatformIO.getDirSeparator()
+            );
+          }
+          return true;
+        })
+        .catch(err => {
+          dispatch(actions.indexDirectoryFailure(err));
+        });
+    });
+
+    Promise.all(promises)
       .then(e => {
         dispatch(actions.indexDirectorySuccess());
         console.log('Resolution is complete!', e);
@@ -283,12 +283,12 @@ export const actions = {
   clearDirectoryIndex: () => ({
     type: types.INDEX_DIRECTORY_CLEAR
   }),
-  searchLocationIndex: (searchQuery: SearchQuery) => (
+  searchLocationIndex: (searchQuery: TS.SearchQuery) => (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
     const state = getState();
-    const currentLocation: Location = getLocation(
+    const currentLocation: TS.Location = getLocation(
       state,
       state.app.currentLocationId
     );
@@ -337,7 +337,8 @@ export const actions = {
         } else {
           GlobalSearch.index = await createDirectoryIndex(
             currentPath,
-            currentLocation.fullTextIndex
+            currentLocation.fullTextIndex,
+            currentLocation.ignorePatternPaths
           );
           if (Pro && Pro.Indexer && Pro.Indexer.persistIndex) {
             Pro.Indexer.persistIndex(
@@ -354,7 +355,7 @@ export const actions = {
       Search.searchLocationIndex(GlobalSearch.index, searchQuery)
         .then(searchResults => {
           if (isCloudLocation) {
-            searchResults.forEach((entry: FileSystemEntry) => {
+            searchResults.forEach((entry: TS.FileSystemEntry) => {
               if (
                 entry.thumbPath &&
                 entry.thumbPath.length > 1 &&
@@ -381,12 +382,12 @@ export const actions = {
         });
     }, 50);
   },
-  searchAllLocations: (searchQuery: SearchQuery) => (
+  searchAllLocations: (searchQuery: TS.SearchQuery) => (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
     const state = getState();
-    const currentLocation: Location = getLocation(
+    const currentLocation: TS.Location = getLocation(
       state,
       state.app.currentLocationId
     );
@@ -442,7 +443,8 @@ export const actions = {
             console.log('Creating index for : ' + nextPath);
             directoryIndex = await createDirectoryIndex(
               nextPath,
-              location.fullTextIndex
+              location.fullTextIndex,
+              location.ignorePatternPaths
             );
             if (Pro && Pro.Indexer && Pro.Indexer.persistIndex) {
               Pro.Indexer.persistIndex(
@@ -459,30 +461,27 @@ export const actions = {
             );
           }
           return Search.searchLocationIndex(directoryIndex, searchQuery)
-            .then(searchResults => {
+            .then((searchResults: Array<TS.FileSystemEntry>) => {
               let enhancedSearchResult = searchResults;
               if (isCloudLocation) {
-                enhancedSearchResult = searchResults.filter(
-                  (entry: FileSystemEntry) => {
-                    // Excluding s3 folders from global search
-                    if (entry && entry.isFile) {
-                      const cleanedPath = entry.path.startsWith('/')
-                        ? entry.path.substr(1)
-                        : entry.path;
-                      entry.url = PlatformIO.getURLforPath(cleanedPath);
-                      if (
-                        entry.thumbPath &&
-                        entry.thumbPath.length > 1 &&
-                        !entry.thumbPath.startsWith('http')
-                      ) {
-                        entry.thumbPath = PlatformIO.getURLforPath(
-                          entry.thumbPath
-                        );
-                      }
-                      return entry;
+                enhancedSearchResult = searchResults
+                  // Excluding s3 folders from global search
+                  .filter(entry => entry && entry.isFile)
+                  .map((entry: TS.FileSystemEntry) => {
+                    const cleanedPath = entry.path.startsWith('/')
+                      ? entry.path.substr(1)
+                      : entry.path;
+                    const url = PlatformIO.getURLforPath(cleanedPath);
+                    let thumbPath;
+                    if (
+                      entry.thumbPath &&
+                      entry.thumbPath.length > 1 &&
+                      !entry.thumbPath.startsWith('http')
+                    ) {
+                      thumbPath = PlatformIO.getURLforPath(entry.thumbPath);
                     }
-                  }
-                );
+                    return { ...entry, url, thumbPath };
+                  });
               }
 
               searchResultCount += enhancedSearchResult.length;
@@ -574,7 +573,7 @@ export const actions = {
     path,
     newPath
   }),
-  reflectUpdateSidecarTags: (path: string, tags: Array<Tag>) => ({
+  reflectUpdateSidecarTags: (path: string, tags: Array<TS.Tag>) => ({
     type: types.REFLECT_UPDATE_SIDECARTAGS,
     path,
     tags

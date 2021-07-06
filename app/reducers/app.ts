@@ -18,20 +18,13 @@
 
 import uuidv1 from 'uuid';
 import pathLib from 'path';
-import {
-  Location,
-  getLocation,
-  locationType,
-  getDefaultLocationId
-} from './locations';
+import { getLocation, getDefaultLocationId } from './locations';
 import PlatformIO from '../services/platform-io';
 import AppConfig from '../config';
 import {
   deleteFilesPromise,
   loadMetaDataPromise,
   renameFilesPromise,
-  FileSystemEntryMeta,
-  FileSystemEntry,
   getAllPropertiesPromise,
   prepareDirectoryContent,
   findExtensionsForEntry,
@@ -55,18 +48,19 @@ import {
   getURLParameter,
   clearURLParam,
   updateHistory,
-  clearAllURLParams
+  clearAllURLParams,
+  locationType
 } from '-/utils/misc';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import { actions as LocationIndexActions } from './location-index';
-import { Tag } from './taglibrary';
 import {
   actions as SettingsActions,
   getCheckForUpdateOnStartup,
   isFirstRun,
   isGlobalKeyBindingEnabled
 } from '-/reducers/settings';
+import { TS } from '-/tagspaces.namespace';
 
 export const types = {
   DEVICE_ONLINE: 'APP/DEVICE_ONLINE',
@@ -161,7 +155,7 @@ export type OpenedEntry = {
    */
   shouldReload?: boolean;
   focused?: boolean; // TODO make it mandatory once support for multiple files is added
-  tags?: Array<Tag>;
+  tags?: Array<TS.Tag>;
 };
 
 let showLocations = true;
@@ -276,9 +270,10 @@ export default (state: any = initialState, action: any) => {
         currentDirectoryColor: action.directoryMeta
           ? action.directoryMeta.color || ''
           : '',
-        currentDirectoryPerspective: action.directoryMeta
-          ? action.directoryMeta.perspective
-          : undefined,
+        currentDirectoryPerspective:
+          action.directoryMeta && action.directoryMeta.perspective
+            ? action.directoryMeta.perspective
+            : state.currentDirectoryPerspective,
         currentDirectoryPath: directoryPath,
         isLoading: action.showIsLoading || false
       };
@@ -525,6 +520,12 @@ export default (state: any = initialState, action: any) => {
       return state;
     }
     case types.REFLECT_RENAME_ENTRY: {
+      const extractedTags = extractTagsAsObjects(
+        action.newPath,
+        AppConfig.tagDelimiter,
+        PlatformIO.getDirSeparator()
+      );
+
       return {
         ...state,
         currentDirectoryEntries: state.currentDirectoryEntries.map(entry => {
@@ -542,11 +543,7 @@ export default (state: any = initialState, action: any) => {
             ),
             tags: [
               ...entry.tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
-              ...extractTagsAsObjects(
-                action.newPath,
-                AppConfig.tagDelimiter,
-                PlatformIO.getDirSeparator()
-              )
+              ...extractedTags
             ]
           };
         }),
@@ -556,7 +553,11 @@ export default (state: any = initialState, action: any) => {
           }
           return {
             ...entry,
-            path: action.newPath // TODO handle change extension case
+            path: action.newPath, // TODO handle change extension case
+            tags: [
+              ...entry.tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
+              ...extractedTags
+            ]
             // shouldReload: true
           };
         })
@@ -835,7 +836,7 @@ export const actions = {
       dispatch(actions.toggleCreateFileDialog());
     }
   },
-  toggleEditTagDialog: (tag: Tag) => ({
+  toggleEditTagDialog: (tag: TS.Tag) => ({
     type: types.TOGGLE_EDIT_TAG_DIALOG,
     tag
   }),
@@ -919,13 +920,25 @@ export const actions = {
   },
   loadDirectoryContentInt: (
     directoryPath: string,
-    fsEntryMeta?: FileSystemEntryMeta
+    fsEntryMeta?: TS.FileSystemEntryMeta
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
     const { settings } = getState();
-    dispatch(actions.loadDirectorySuccessInt(directoryPath, [], true)); // this is to reset directoryContent (it will reset color too)
+    /* const { currentDirectoryPath } = getState().app;
+    if (currentDirectoryPath !== directoryPath) {
+      dispatch(actions.loadDirectorySuccessInt(directoryPath, [], true)); // this is to reset directoryContent (it will reset color too)
+    } */
     // dispatch(actions.setCurrentDirectoryColor('')); // this is to reset color only
     dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
-    PlatformIO.listDirectoryPromise(directoryPath, false)
+    const currentLocation: TS.Location = getLocation(
+      getState(),
+      getState().app.currentLocationId
+    );
+    PlatformIO.listDirectoryPromise(
+      directoryPath,
+      false,
+      true,
+      currentLocation ? currentLocation.ignorePatternPaths : []
+    )
       .then(results => {
         if (results !== undefined) {
           prepareDirectoryContent(
@@ -978,7 +991,7 @@ export const actions = {
   loadDirectorySuccess: (
     directoryPath: string,
     directoryContent: Array<Object>,
-    directoryMeta?: FileSystemEntryMeta
+    directoryMeta?: TS.FileSystemEntryMeta
   ) => (dispatch: (actions: Object) => void) => {
     // const currentLocation: Location = getLocation(
     //  getState(),
@@ -1015,7 +1028,7 @@ export const actions = {
     directoryPath: string,
     directoryContent: Array<Object>,
     showIsLoading?: boolean,
-    directoryMeta?: FileSystemEntryMeta
+    directoryMeta?: TS.FileSystemEntryMeta
   ) => ({
     type: types.LOAD_DIRECTORY_SUCCESS,
     directoryPath: directoryPath || PlatformIO.getDirSeparator(),
@@ -1268,7 +1281,7 @@ export const actions = {
             )
           );
           getAllPropertiesPromise(filePath)
-            .then((fsEntry: FileSystemEntry) => {
+            .then((fsEntry: TS.FileSystemEntry) => {
               dispatch(actions.openFsEntry(fsEntry)); // TODO return fsEntry from saveFilePromise and simplify
               // dispatch(actions.setSelectedEntries([fsEntry])); -> moved in reflectCreateEntry
               return true;
@@ -1323,7 +1336,7 @@ export const actions = {
         newHTMLFileContent.split('<body></body>')[1];
     }
     PlatformIO.saveFilePromise(filePath, fileContent, true)
-      .then((fsEntry: FileSystemEntry) => {
+      .then((fsEntry: TS.FileSystemEntry) => {
         dispatch(actions.reflectCreateEntry(filePath, true));
         dispatch(actions.openFsEntry(fsEntry)); // TODO return fsEntry from saveFilePromise and simplify
 
@@ -1360,7 +1373,7 @@ export const actions = {
     type: types.SET_CURRENLOCATIONID,
     locationId
   }),
-  changeLocation: (location: Location) => (
+  changeLocation: (location: TS.Location) => (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
@@ -1382,7 +1395,7 @@ export const actions = {
       return true;
     });
   },
-  openLocation: (location: Location) => (
+  openLocation: (location: TS.Location) => (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
@@ -1526,16 +1539,17 @@ export const actions = {
           if (entryProps) {
             const { supportedFileTypes } = getState().settings;
 
-            let entryForOpening: OpenedEntry = openedFiles.find(
-              obj => obj.path === entryPath
-            );
+            let entryForOpening: OpenedEntry;
+            const entryExist = openedFiles.find(obj => obj.path === entryPath);
 
-            if (!entryForOpening) {
+            if (!entryExist) {
               entryForOpening = findExtensionsForEntry(
                 supportedFileTypes,
                 entryPath,
                 entryProps.isFile
               );
+            } else {
+              entryForOpening = { ...entryExist };
             }
 
             if (fsEntryMeta.changed !== undefined) {
@@ -1572,7 +1586,7 @@ export const actions = {
         });
     }
   },
-  openFsEntry: (fsEntry?: FileSystemEntry) => (
+  openFsEntry: (fsEntry?: TS.FileSystemEntry) => (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
@@ -1637,7 +1651,7 @@ export const actions = {
     if (fsEntry.isNewFile) {
       entryForOpening.editMode = true;
     }
-    const currentLocation: Location = getLocation(
+    const currentLocation: TS.Location = getLocation(
       getState(),
       getState().app.currentLocationId
     );
@@ -1701,7 +1715,7 @@ export const actions = {
     type: types.REFLECT_CREATE_ENTRY,
     newEntry
   }),
-  reflectCreateEntries: (fsEntries: Array<FileSystemEntry>) => (
+  reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => (
     dispatch: (actions: Object) => void
   ) => {
     fsEntries.map(entry => dispatch(actions.reflectCreateEntryInt(entry))); // TODO remove map and set state once
@@ -1767,7 +1781,7 @@ export const actions = {
   }), */
   reflectUpdateSidecarTags: (
     path: string,
-    tags: Array<Tag>,
+    tags: Array<TS.Tag>,
     updateIndex: boolean = true
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
     const { openedFiles } = getState().app;
@@ -1919,7 +1933,7 @@ export const actions = {
     if (cmdOpen && cmdOpen.length > 0) {
       const entryPath = decodeURIComponent(cmdOpen);
       getAllPropertiesPromise(entryPath)
-        .then((fsEntry: FileSystemEntry) => {
+        .then((fsEntry: TS.FileSystemEntry) => {
           if (fsEntry.isFile) {
             dispatch(actions.openFsEntry(fsEntry));
           } else {
@@ -1941,7 +1955,7 @@ export const actions = {
       const directoryPath = dPath && decodeURIComponent(dPath);
       const entryPath = ePath && decodeURIComponent(ePath);
       // Check for relative paths
-      const targetLocation: Location = getLocation(getState(), locationId);
+      const targetLocation: TS.Location = getLocation(getState(), locationId);
       if (targetLocation) {
         let openLocationTimer = 1000;
         const isCloudLocation = targetLocation.type === locationType.TYPE_CLOUD;
@@ -1960,7 +1974,7 @@ export const actions = {
 
             if (entryPath) {
               getAllPropertiesPromise(entryPath)
-                .then((fsEntry: FileSystemEntry) => {
+                .then((fsEntry: TS.FileSystemEntry) => {
                   if (fsEntry) {
                     dispatch(actions.openFsEntry(fsEntry));
                   }
@@ -2012,7 +2026,7 @@ export const actions = {
               const entryFullPath =
                 locationPath + PlatformIO.getDirSeparator() + entryPath;
               getAllPropertiesPromise(entryFullPath)
-                .then((fsEntry: FileSystemEntry) => {
+                .then((fsEntry: TS.FileSystemEntry) => {
                   if (fsEntry) {
                     dispatch(actions.openFsEntry(fsEntry));
                   }
@@ -2102,6 +2116,20 @@ export const getCurrentLocationPath = (state: any) => {
           return pathLib.resolve(locationPath);
         }
         return locationPath;
+      }
+    }
+  }
+  return undefined;
+};
+export const getLocationPersistTagsInSidecarFile = (state: any) => {
+  if (state.locations) {
+    for (let i = 0; i < state.locations.length; i += 1) {
+      const location = state.locations[i];
+      if (
+        state.app.currentLocationId &&
+        location.uuid === state.app.currentLocationId
+      ) {
+        return location.persistTagsInSidecarFile;
       }
     }
   }

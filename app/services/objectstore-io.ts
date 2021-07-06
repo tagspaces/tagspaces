@@ -27,9 +27,10 @@ import {
   getThumbFileLocationForFile,
   getMetaFileLocationForFile,
   extractFileExtension,
-  getMetaFileLocationForDir
+  getMetaFileLocationForDir,
+  getThumbFileLocationForDirectory
 } from '-/utils/paths';
-import { FileSystemEntry } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
 
 export default class ObjectStoreIO {
   objectStore = undefined;
@@ -312,7 +313,7 @@ export default class ObjectStoreIO {
       });
     });
 
-  getEntryMeta = async (eentry: FileSystemEntry): Promise<Object> => {
+  getEntryMeta = async (eentry: TS.FileSystemEntry): Promise<Object> => {
     const promise = new Promise(async resolve => {
       if (eentry.isFile) {
         const metaFilePath = getMetaFileLocationForFile(eentry.path, '/');
@@ -326,11 +327,10 @@ export default class ObjectStoreIO {
           !eentry.path.includes(AppConfig.metaFolder + '/')
         ) {
           // skipping meta folder
-          const folderTmbPath =
-            eentry.path +
-            AppConfig.metaFolder +
-            '/' +
-            AppConfig.folderThumbFile;
+          const folderTmbPath = getThumbFileLocationForDirectory(
+            eentry.path,
+            AppConfig.dirSeparator
+          );
           const folderThumbProps = await this.getPropertiesPromise(
             folderTmbPath
           );
@@ -601,7 +601,7 @@ export default class ObjectStoreIO {
       request: () => any
     ) => void,
     onAbort?: () => void
-  ): Promise<FileSystemEntry> {
+  ): Promise<TS.FileSystemEntry> {
     return new Promise((resolve, reject) => {
       let isNewFile = false;
       // eslint-disable-next-line no-param-reassign

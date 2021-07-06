@@ -37,12 +37,8 @@ import MapiquePerspectiveIcon from '@material-ui/icons/Map';
 import LocationMenu from './menus/LocationMenu';
 import DirectoryMenu from './menus/DirectoryMenu';
 import i18n from '../services/i18n';
-import {
-  getPerspectives,
-  getMaxSearchResults,
-  getDesktopMode
-} from '-/reducers/settings';
-import { getLocations, Location } from '-/reducers/locations';
+import { getMaxSearchResults, getDesktopMode } from '-/reducers/settings';
+import { getLocations } from '-/reducers/locations';
 import {
   actions as AppActions,
   getDirectoryContent,
@@ -59,9 +55,10 @@ import { normalizePath, extractShortDirectoryName } from '-/utils/paths';
 import PlatformIO from '../services/platform-io';
 import LoadingLazy from '../components/LoadingLazy';
 import { Pro } from '../pro';
-import { enhanceOpenedEntry, FileSystemEntry } from '-/services/utils-io';
+import { enhanceOpenedEntry } from '-/services/utils-io';
 import AppConfig from '-/config';
 import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
+import { TS } from '-/tagspaces.namespace';
 
 const GridPerspective = React.lazy(() =>
   import(
@@ -215,16 +212,14 @@ interface Props {
   removeTags: () => void;
   removeAllTags: () => void;
   editTagForEntry: () => void;
-  openFileNatively: (path: string) => void;
   renameFile: () => void;
   openDirectory: () => void;
   showInFileManager: () => void;
-  openFsEntry: (fsEntry: FileSystemEntry) => void;
+  openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   reflectCreateEntry: (path: string, isFile: boolean) => void;
   loadDirectoryContent: (path: string) => void;
   loadParentDirectoryContent: () => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
-  // setLastSelectedEntry: (entryPath: string | null) => void;
   isReadOnlyMode: boolean;
   isDesktopMode: boolean;
   showNotification: (content: string) => void;
@@ -291,10 +286,11 @@ const FolderContainer = (props: Props) => {
       normalizedCurrentPath.startsWith(normalizedCurrentLocationPath)
     ) {
       pathParts.push(
-        normalizedCurrentPath.substring(
-          PlatformIO.haveObjectStoreSupport() ? 2 : 1
-        )
-      );
+        normalizedCurrentPath
+          .substring(PlatformIO.haveObjectStoreSupport() ? 2 : 1)
+          .split('/')
+          .join(PlatformIO.getDirSeparator())
+      ); // TODO: optimization needed
       normalizedCurrentPath = normalizedCurrentPath.substring(
         0,
         normalizedCurrentPath.lastIndexOf('/')
@@ -381,7 +377,6 @@ const FolderContainer = (props: Props) => {
           openDirectory={props.openDirectory}
           showInFileManager={props.showInFileManager}
           currentDirectoryPath={props.currentDirectoryPath}
-          // setLastSelectedEntry={props.setLastSelectedEntry}
           addTags={props.addTags}
           editTagForEntry={props.editTagForEntry}
           removeTags={props.removeTags}
@@ -402,7 +397,6 @@ const FolderContainer = (props: Props) => {
         openDirectory={props.openDirectory}
         showInFileManager={props.showInFileManager}
         currentDirectoryPath={props.currentDirectoryPath}
-        // setLastSelectedEntry={props.setLastSelectedEntry}
         addTags={props.addTags}
         editTagForEntry={props.editTagForEntry}
         removeTags={props.removeTags}
@@ -483,7 +477,10 @@ const FolderContainer = (props: Props) => {
                       backgroundColor: theme.palette.background.default
                     }}
                   >
-                    {extractShortDirectoryName(pathPart, '/')}
+                    {extractShortDirectoryName(
+                      pathPart,
+                      PlatformIO.getDirSeparator()
+                    )}
                     <FolderSeparatorIcon />
                   </Button>
                 ))}
@@ -610,7 +607,6 @@ function mapStateToProps(state) {
   return {
     settings: state.settings,
     lastSelectedEntry: getLastSelectedEntry(state),
-    perspectives: getPerspectives(state),
     directoryContent: getDirectoryContent(state),
     currentDirectoryPerspective: getCurrentDirectoryPerspective(state),
     searchResultCount: getSearchResultCount(state),
@@ -629,7 +625,6 @@ function mapActionCreatorsToProps(dispatch) {
       removeTags: TaggingActions.removeTags,
       removeAllTags: TaggingActions.removeAllTags,
       editTagForEntry: TaggingActions.editTagForEntry,
-      openFileNatively: AppActions.openFileNatively,
       renameFile: AppActions.renameFile,
       openDirectory: AppActions.openDirectory,
       showInFileManager: AppActions.showInFileManager,
@@ -643,14 +638,26 @@ function mapActionCreatorsToProps(dispatch) {
       setCurrentDirectoryPerspective: AppActions.setCurrentDirectoryPerspective,
       updateCurrentDirEntry: AppActions.updateCurrentDirEntry,
       setCurrentDirectoryColor: AppActions.setCurrentDirectoryColor
-      // changeLocation: AppActions.changeLocation
     },
     dispatch
   );
 }
 
+const areEqual = (prevProp, nextProp) =>
+  nextProp.currentDirectoryPath === prevProp.currentDirectoryPath &&
+  nextProp.currentDirectoryPerspective ===
+    prevProp.currentDirectoryPerspective &&
+  nextProp.currentLocationPath === prevProp.currentLocationPath &&
+  JSON.stringify(nextProp.directoryContent) ===
+    JSON.stringify(prevProp.directoryContent) &&
+  JSON.stringify(nextProp.openedFiles) ===
+    JSON.stringify(prevProp.openedFiles) &&
+  JSON.stringify(nextProp.theme) === JSON.stringify(prevProp.theme) &&
+  nextProp.windowWidth === prevProp.windowWidth &&
+  nextProp.windowHeight === prevProp.windowHeight;
+
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
   // @ts-ignore
-)(withStyles(styles)(withTheme(FolderContainer)));
+)(withStyles(styles)(withTheme(React.memo(FolderContainer, areEqual))));

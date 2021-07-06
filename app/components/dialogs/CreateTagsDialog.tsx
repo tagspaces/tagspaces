@@ -26,15 +26,16 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
 import i18n from '-/services/i18n';
-import { TagGroup } from '-/reducers/taglibrary';
 import useFirstRender from '-/utils/useFirstRender';
+import { TS } from '-/tagspaces.namespace';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {
   open: boolean;
   onClose: () => void;
   addTag: (tags: string, uuid: string) => void;
   fullScreen?: boolean;
-  selectedTagGroupEntry: TagGroup;
+  selectedTagGroupEntry: TS.TagGroup;
 }
 
 const CreateTagsDialog = (props: Props) => {
@@ -96,7 +97,10 @@ const CreateTagsDialog = (props: Props) => {
         }
       }}
     >
-      <DialogTitle>{i18n.t('core:addTagsToGroupTitle')}</DialogTitle>
+      <DialogTitle>
+        {i18n.t('core:addTagsToGroupTitle')}
+        <DialogCloseButton onClose={onClose} />
+      </DialogTitle>
       <DialogContent style={{ minWidth: 400 }}>
         <FormControl fullWidth={true} error={inputError}>
           <TextField
@@ -115,9 +119,7 @@ const CreateTagsDialog = (props: Props) => {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="primary">
-          {i18n.t('core:cancel')}
-        </Button>
+        <Button onClick={onClose}>{i18n.t('core:cancel')}</Button>
         <Button
           disabled={inputError}
           onClick={onConfirm}

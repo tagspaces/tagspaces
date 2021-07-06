@@ -1,7 +1,7 @@
 {
   "name": "tagspaces",
   "productName": "TagSpaces",
-  "version": "3.10.2",
+  "version": "3.11.2",
   "description": "Offline file organizer and browser with tagging support.",
   "homepage": "https://www.tagspaces.org",
   "main": "./main.prod.js",
@@ -25,6 +25,7 @@
     "@tagspaces/pdf-viewer": "https://github.com/tagspaces/viewerPDF#master",
     "@tagspaces/plain-viewer": "https://github.com/tagspaces/viewerBrowser#master",
     "@tagspaces/rtf-viewer": "https://github.com/tagspaces/viewerRTF#master",
+    "@tagspaces/spreadsheet-viewer": "https://github.com/tagspaces/viewerSpreadSheet#master",
     "@tagspaces/text-editor": "https://github.com/tagspaces/editorText#master",
     "@tagspaces/text-viewer": "https://github.com/tagspaces/viewerText#master",
     "@tagspaces/url-viewer": "https://github.com/tagspaces/viewerURL#master"

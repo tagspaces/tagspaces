@@ -17,19 +17,21 @@
  */
 
 import semver from 'semver';
-import i18n from '../services/i18n';
-// import AppConfig from '../config';
+import uuidv1 from 'uuid';
+import i18n from '-/services/i18n';
 import defaultSettings from './settings-default';
-import PlatformIO from '../services/platform-io';
-import AppConfig from '../config';
-import versionMeta from '../version.json';
+import PlatformIO from '-/services/platform-io';
+import AppConfig from '-/config';
+import versionMeta from '-/version.json';
 import { actions as AppActions } from './app';
+import { TS } from '-/tagspaces.namespace';
 
 export const types = {
   UPGRADE_SETTINGS: 'SETTINGS/UPGRADE_SETTINGS',
   SET_LANGUAGE: 'SETTINGS/SET_LANGUAGE',
   TOGGLE_SHOWUNIXHIDDENENTRIES: 'SETTINGS/TOGGLE_SHOWUNIXHIDDENENTRIES',
   SET_DESKTOPMODE: 'SETTINGS/SET_DESKTOPMODE',
+  SET_SAVE_TAGS_IN_LOCATION: 'SETTINGS/SET_SAVE_TAGS_IN_LOCATION',
   SET_TAG_DELIMITER: 'SETTINGS/SET_TAG_DELIMITER',
   SET_MAX_SEARCH_RESULT: 'SETTINGS/SET_MAX_SEARCH_RESULT',
   SET_CHECKFORUPDATES: 'SETTINGS/SET_CHECKFORUPDATES',
@@ -66,7 +68,10 @@ export const types = {
   SET_MAIN_VSPLIT_SIZE: 'SETTINGS/SET_MAIN_VSPLIT_SIZE',
   SET_LEFT_VSPLIT_SIZE: 'SETTINGS/SET_LEFT_VSPLIT_SIZE',
   SET_FIRST_RUN: 'SETTINGS/SET_FIRST_RUN',
-  TOGGLE_TAGGROUP: 'TOGGLE_TAGGROUP'
+  TOGGLE_TAGGROUP: 'TOGGLE_TAGGROUP',
+  ADD_MAPTILE_SERVER: 'SET_MAPTILE_SERVER',
+  EDIT_MAPTILE_SERVER: 'EDIT_MAPTILE_SERVER',
+  DELETE_MAPTILE_SERVER: 'DELETE_MAPTILE_SERVER'
 };
 
 export default (state: any = defaultSettings, action: any) => {
@@ -117,6 +122,9 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_DESKTOPMODE: {
       return { ...state, desktopMode: action.desktopMode };
+    }
+    case types.SET_SAVE_TAGS_IN_LOCATION: {
+      return { ...state, saveTagInLocation: action.saveTagInLocation };
     }
     case types.SET_CHECKFORUPDATES: {
       return { ...state, checkForUpdates: action.checkForUpdates };
@@ -304,6 +312,56 @@ export default (state: any = defaultSettings, action: any) => {
         tagGroupCollapsed
       };
     }
+    case types.ADD_MAPTILE_SERVER: {
+      let mapTileServers;
+      if (action.isDefault) {
+        mapTileServers = [
+          { ...action.tileServer, uuid: uuidv1() },
+          ...state.mapTileServers
+        ];
+      } else {
+        mapTileServers = [
+          ...state.mapTileServers,
+          { ...action.tileServer, uuid: uuidv1() }
+        ];
+      }
+      return {
+        ...state,
+        mapTileServers
+      };
+    }
+    case types.EDIT_MAPTILE_SERVER: {
+      let mapTileServers;
+      if (action.isDefault) {
+        mapTileServers = [
+          action.tileServer,
+          ...state.mapTileServers.filter(
+            tileServer => tileServer.uuid !== action.tileServer.uuid
+          )
+        ];
+      } else {
+        mapTileServers = [
+          ...state.mapTileServers.filter(
+            tileServer => tileServer.uuid !== action.tileServer.uuid
+          ),
+          action.tileServer
+        ];
+      }
+
+      return {
+        ...state,
+        mapTileServers
+      };
+    }
+    case types.DELETE_MAPTILE_SERVER: {
+      const mapTileServers = state.mapTileServers.filter(
+        tileServer => tileServer.uuid !== action.uuid
+      );
+      return {
+        ...state,
+        mapTileServers
+      };
+    }
     default: {
       return state;
     }
@@ -311,6 +369,26 @@ export default (state: any = defaultSettings, action: any) => {
 };
 
 export const actions = {
+  addTileServers: (
+    tileServer: TS.MapTileServer,
+    isDefault: boolean = false
+  ) => ({
+    type: types.ADD_MAPTILE_SERVER,
+    tileServer,
+    isDefault
+  }),
+  editTileServers: (
+    tileServer: TS.MapTileServer,
+    isDefault: boolean = false
+  ) => ({
+    type: types.EDIT_MAPTILE_SERVER,
+    tileServer,
+    isDefault
+  }),
+  deleteTileServer: (uuid: string) => ({
+    type: types.DELETE_MAPTILE_SERVER,
+    uuid
+  }),
   toggleTagGroup: (tagGroupUUID: string) => ({
     type: types.TOGGLE_TAGGROUP,
     uuid: tagGroupUUID
@@ -326,6 +404,10 @@ export const actions = {
   setDesktopMode: (desktopMode: boolean) => ({
     type: types.SET_DESKTOPMODE,
     desktopMode
+  }),
+  setSaveTagInLocation: (saveTagInLocation: boolean) => ({
+    type: types.SET_SAVE_TAGS_IN_LOCATION,
+    saveTagInLocation
   }),
   toggleShowUnixHiddenEntries: () => ({
     type: types.TOGGLE_SHOWUNIXHIDDENENTRIES
@@ -493,6 +575,12 @@ export function getLastVersionPromise(): Promise<string> {
 }
 
 // Selectors
+export const getMapTileServer = (state: any): TS.MapTileServer =>
+  AppConfig.mapTileServers
+    ? AppConfig.mapTileServers[0]
+    : state.settings.mapTileServers[0];
+export const getMapTileServers = (state: any): Array<TS.MapTileServer> =>
+  AppConfig.mapTileServers || state.settings.mapTileServers;
 export const getSettings = (state: any) => state.settings;
 export const getDesktopMode = (state: any) => {
   if (typeof window.ExtDisplayMode === 'undefined') {
@@ -537,8 +625,8 @@ export const getKeyBindingObject = (state: any) =>
   generateKeyBindingObject(state.settings.keyBindings);
 export const getSupportedFileTypes = (state: any) =>
   state.settings.supportedFileTypes;
-export const getPerspectives = (state: any) =>
-  state.settings.supportedPerspectives;
+/* export const getPerspectives = (state: any) =>
+  state.settings.supportedPerspectives; */
 export const getTagColor = (state: any) => state.settings.tagBackgroundColor;
 export const getTagTextColor = (state: any) => state.settings.tagTextColor;
 export const getCurrentTheme = (state: any) => state.settings.currentTheme;

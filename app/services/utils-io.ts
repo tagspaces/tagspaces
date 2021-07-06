@@ -18,6 +18,7 @@
 
 import uuidv1 from 'uuid';
 import { saveAs } from 'file-saver';
+import micromatch from 'micromatch';
 import PlatformIO from './platform-io';
 import AppConfig from '../config';
 import {
@@ -34,42 +35,11 @@ import {
 } from '-/utils/paths';
 import i18n from '../services/i18n';
 import versionMeta from '../version.json';
-import { Tag } from '-/reducers/taglibrary';
 import { getThumbnailURLPromise } from '-/services/thumbsgenerator';
 import { OpenedEntry, actions as AppActions } from '-/reducers/app';
-import { Location, locationType, getLocation } from '-/reducers/locations';
-
-export interface FileSystemEntry {
-  uuid?: string;
-  name: string;
-  isFile: boolean;
-  isNewFile?: boolean;
-  extension: string;
-  thumbPath?: string;
-  color?: string;
-  perspective?: string;
-  textContent?: string;
-  description?: string;
-  tags: Array<Tag>;
-  size: number;
-  lmdt: number;
-  path: string;
-  url?: string;
-  meta?: FileSystemEntryMeta;
-}
-
-export interface FileSystemEntryMeta {
-  id?: string;
-  description?: string;
-  tags?: Array<Tag>;
-  color?: string;
-  perspective?: string;
-  appName: string;
-  appVersion: string;
-  lastUpdated: string;
-  files?: Array<FileSystemEntry>;
-  dirs?: Array<FileSystemEntry>;
-}
+import { getLocation } from '-/reducers/locations';
+import { TS } from '-/tagspaces.namespace';
+import { locationType } from '-/utils/misc';
 
 export function enhanceDirectoryContent(
   dirEntries,
@@ -123,7 +93,7 @@ export function enhanceDirectoryContent(
   };
 }
 
-export function enhanceEntry(entry: any): FileSystemEntry {
+export function enhanceEntry(entry: any): TS.FileSystemEntry {
   let fileNameTags = [];
   if (entry.isFile) {
     fileNameTags = extractTagsAsObjects(
@@ -149,7 +119,7 @@ export function enhanceEntry(entry: any): FileSystemEntry {
       return true;
     });
   }
-  const enhancedEntry: FileSystemEntry = {
+  const enhancedEntry: TS.FileSystemEntry = {
     uuid: uuidv1(),
     name: entry.name,
     isFile: entry.isFile,
@@ -159,7 +129,8 @@ export function enhanceEntry(entry: any): FileSystemEntry {
     tags: [...sidecarTags, ...fileNameTags],
     size: entry.size,
     lmdt: entry.lmdt,
-    path: entry.path
+    path: entry.path,
+    isIgnored: entry.isIgnored
   };
   if (sidecarDescription) {
     enhancedEntry.description = sidecarDescription;
@@ -215,7 +186,7 @@ export function prepareDirectoryContent(
   getState,
   dirEntryMeta
 ) {
-  const currentLocation: Location = getLocation(
+  const currentLocation: TS.Location = getLocation(
     getState(),
     getState().app.currentLocationId
   );
@@ -336,8 +307,8 @@ export function findExtensionsForEntry(
 export function getNextFile(
   pivotFilePath?: string,
   lastSelectedEntry?: string,
-  currentDirectoryEntries?: Array<FileSystemEntry>
-): FileSystemEntry {
+  currentDirectoryEntries?: Array<TS.FileSystemEntry>
+): TS.FileSystemEntry {
   const currentEntries = currentDirectoryEntries
     ? currentDirectoryEntries.filter(entry => entry.isFile)
     : [];
@@ -373,8 +344,8 @@ export function getNextFile(
 export function getPrevFile(
   pivotFilePath?: string,
   lastSelectedEntry?: string,
-  currentDirectoryEntries?: Array<FileSystemEntry>
-): FileSystemEntry {
+  currentDirectoryEntries?: Array<TS.FileSystemEntry>
+): TS.FileSystemEntry {
   const currentEntries = currentDirectoryEntries
     ? currentDirectoryEntries.filter(entry => entry.isFile)
     : [];
@@ -408,12 +379,17 @@ export function getPrevFile(
 
 export function createDirectoryIndex(
   directoryPath: string,
-  extractText: boolean = false
-): Promise<Array<FileSystemEntry>> {
+  extractText: boolean = false,
+  ignorePatterns: Array<string>
+): Promise<Array<TS.FileSystemEntry>> {
   const dirPath = cleanTrailingDirSeparator(directoryPath);
   if (PlatformIO.isWorkerAvailable() && !PlatformIO.haveObjectStoreSupport()) {
     // Start indexing in worker if not in the object store mode
-    return PlatformIO.createDirectoryIndexInWorker(dirPath, extractText);
+    return PlatformIO.createDirectoryIndexInWorker(
+      dirPath,
+      extractText,
+      ignorePatterns
+    );
   }
 
   const SearchIndex = [];
@@ -444,7 +420,8 @@ export function createDirectoryIndex(
             counter += 1;
             SearchIndex.push(enhanceEntry(directoryEntry));
           }
-        }
+        },
+        ignorePatterns
       )
         .then(() => {
           // entries - can be used for further processing
@@ -473,8 +450,12 @@ export function walkDirectory(
   path: string,
   options: Object = {},
   fileCallback: any,
-  dirCallback: any
+  dirCallback: any,
+  ignorePatterns: Array<string> = []
 ) {
+  if (ignorePatterns.length > 0 && micromatch.isMatch(path, ignorePatterns)) {
+    return;
+  }
   const mergedOptions = {
     recursive: false,
     skipMetaFolder: true,
@@ -491,9 +472,17 @@ export function walkDirectory(
         if (window.walkCanceled || entries === undefined) {
           return false;
         }
+
         return Promise.all(
           entries.map(entry => {
             if (window.walkCanceled) {
+              return false;
+            }
+
+            if (
+              ignorePatterns.length > 0 &&
+              micromatch.isMatch(entry.path, ignorePatterns)
+            ) {
               return false;
             }
 
@@ -535,7 +524,8 @@ export function walkDirectory(
                 entry.path,
                 mergedOptions,
                 fileCallback,
-                dirCallback
+                dirCallback,
+                ignorePatterns
               );
             }
             return entry;
@@ -551,7 +541,7 @@ export function walkDirectory(
 
 export async function getAllPropertiesPromise(
   entryPath: string
-): Promise<FileSystemEntry> {
+): Promise<TS.FileSystemEntry> {
   const entryProps = await PlatformIO.getPropertiesPromise(entryPath);
   let metaFilePath;
   const dirSep = PlatformIO.getDirSeparator();
@@ -740,9 +730,63 @@ export function generateFileName(
   return newFileName;
 }
 
+export function parseNewTags(tagsInput: string, tagGroup: TS.TagGroup) {
+  if (tagGroup) {
+    let tags = tagsInput
+      .split(' ')
+      .join(',')
+      .split(','); // handle spaces around commas
+    tags = [...new Set(tags)]; // remove duplicates
+    tags = tags.filter(tag => tag && tag.length > 0); // zero length tags
+
+    const taggroupTags = tagGroup.children;
+    taggroupTags.forEach(tag => {
+      // filter out duplicated tags
+      tags = tags.filter(t => t !== tag.title);
+    });
+    return taggroupTags.concat(
+      tags.map(tagTitle => {
+        const tag: TS.Tag = {
+          type: taggroupTags.length > 0 ? taggroupTags[0].type : 'sidecar',
+          title: tagTitle.trim(),
+          functionality: '',
+          description: '',
+          icon: '',
+          color: tagGroup.color,
+          textcolor: tagGroup.textcolor,
+          style: taggroupTags.length > 0 ? taggroupTags[0].style : '',
+          modified_date: new Date().getTime()
+        };
+        return tag;
+      })
+    );
+  }
+}
+
+export async function loadLocationDataPromise(
+  path: string
+): Promise<TS.FileSystemEntryMeta> {
+  const entryProperties = await PlatformIO.getPropertiesPromise(path);
+  if (!entryProperties.isFile) {
+    const metaFilePath = getMetaFileLocationForDir(
+      path,
+      PlatformIO.getDirSeparator(),
+      AppConfig.folderLocationsFile
+    );
+    let metaData;
+    try {
+      metaData = await loadJSONFile(metaFilePath);
+    } catch (e) {
+      console.debug('cannot load json:' + metaFilePath, e);
+    }
+    return metaData;
+  }
+  return undefined;
+}
+
 export async function loadMetaDataPromise(
   path: string
-): Promise<FileSystemEntryMeta> {
+): Promise<TS.FileSystemEntryMeta> {
   const entryProperties = await PlatformIO.getPropertiesPromise(path);
   let metaDataObject;
   if (entryProperties.isFile) {
@@ -760,6 +804,7 @@ export async function loadMetaDataPromise(
       metaData = {};
     }
     metaDataObject = {
+      ...metaData,
       description: metaData.description || '',
       color: metaData.color || '',
       tags: metaData.tags || [],
@@ -782,6 +827,7 @@ export async function loadMetaDataPromise(
       metaData = {};
     }
     metaDataObject = {
+      ...metaData,
       id: metaData.id || uuidv1(),
       description: metaData.description || '',
       color: metaData.color || '',
@@ -798,8 +844,8 @@ export async function loadMetaDataPromise(
 }
 
 export function cleanMetaData(
-  metaData: FileSystemEntryMeta
-): FileSystemEntryMeta {
+  metaData: TS.FileSystemEntryMeta
+): TS.FileSystemEntryMeta {
   const cleanedMeta: any = {};
   if (metaData.id) {
     cleanedMeta.id = metaData.id;
@@ -819,10 +865,13 @@ export function cleanMetaData(
   if (metaData.dirs && metaData.dirs.length > 0) {
     cleanedMeta.dirs = metaData.dirs;
   }
+  if (metaData.tagGroups && metaData.tagGroups.length > 0) {
+    cleanedMeta.tagGroups = metaData.tagGroups;
+  }
   if (metaData.tags && metaData.tags.length > 0) {
     cleanedMeta.tags = [];
     metaData.tags.forEach(tag => {
-      const cleanedTag: Tag = {};
+      const cleanedTag: TS.Tag = {};
       if (tag.title) {
         cleanedTag.title = tag.title;
       }
@@ -841,6 +890,44 @@ export function cleanMetaData(
     });
   }
   return cleanedMeta;
+}
+
+export async function saveLocationDataPromise(
+  path: string,
+  metaData: any
+): Promise<any> {
+  const entryProperties = await PlatformIO.getPropertiesPromise(path);
+  if (entryProperties) {
+    let metaFilePath;
+    if (!entryProperties.isFile) {
+      // check and create meta folder if not exist
+      // todo not need to check if folder exist first createDirectoryPromise() recursively will skip creation of existing folders https://nodejs.org/api/fs.html#fs_fs_mkdir_path_options_callback
+      const metaDirectoryPath = getMetaDirectoryPath(
+        path,
+        PlatformIO.getDirSeparator()
+      );
+      const metaDirectoryProperties = await PlatformIO.getPropertiesPromise(
+        metaDirectoryPath
+      );
+      if (!metaDirectoryProperties) {
+        await PlatformIO.createDirectoryPromise(metaDirectoryPath);
+      }
+
+      metaFilePath = getMetaFileLocationForDir(
+        path,
+        PlatformIO.getDirSeparator(),
+        AppConfig.folderLocationsFile
+      );
+    }
+    const content = JSON.stringify({
+      ...metaData,
+      appName: versionMeta.name,
+      appVersion: versionMeta.version,
+      lastUpdated: new Date().toJSON()
+    });
+    return PlatformIO.saveTextFilePromise(metaFilePath, content, true);
+  }
+  return Promise.reject(new Error('file not found' + path));
 }
 
 export async function saveMetaDataPromise(

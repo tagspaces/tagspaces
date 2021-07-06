@@ -23,9 +23,11 @@ import {
   extractParentDirectoryPath,
   cleanTrailingDirSeparator,
   extractFileName,
-  extractFileExtension
+  extractFileExtension,
+  getMetaFileLocationForDir,
+  getThumbFileLocationForDirectory
 } from '-/utils/paths';
-import { FileSystemEntry } from './utils-io';
+import { TS } from '-/tagspaces.namespace';
 
 const appSettingFile = 'settings.json';
 const appSettingTagsFile = 'settingsTags.json';
@@ -203,33 +205,36 @@ export default class CordovaIO {
     } */
   };
 
-  getFileSystemPromise = (localPath: string): Promise<any> => {
-    console.log('getFileSystemPromise: ' + localPath);
+  getDirSystemPromise = (dirPath: string): Promise<any> => {
+    console.log('getDirSystemPromise: ' + dirPath);
     if (
-      localPath &&
-      (localPath.indexOf(cordova.file.applicationDirectory) === 0 ||
-        localPath.startsWith('file:///'))
+      dirPath &&
+      (dirPath.indexOf(cordova.file.applicationDirectory) === 0 ||
+        dirPath.startsWith('file:///'))
     ) {
-    } else {
-      localPath = AppConfig.isCordovaiOS
-        ? (cordova.file.documentsDirectory + '/' + localPath).replace(
-            ':/',
-            ':///'
-          )
-        : 'file:///' + localPath;
+    } else if (AppConfig.isCordovaiOS) {
+      dirPath = (cordova.file.documentsDirectory + '/' + dirPath).replace(
+        ':/',
+        ':///'
+      );
       /*localPath = AppConfig.isCordovaiOS
         ? path
             .join(cordova.file.documentsDirectory, localPath)
             .replace(':/', ':///')
         : 'file:///' + localPath;*/
+    } else {
+      dirPath = (dirPath.startsWith('/') ? 'file://' : 'file:///') + dirPath;
     }
-    localPath = encodeURI(localPath);
+    dirPath = encodeURI(dirPath) + (dirPath.endsWith('/') ? '' : '/');
     return new Promise((resolve, reject) => {
-      window.resolveLocalFileSystemURL(localPath, resolve, error => {
+      window.resolveLocalFileSystemURL(dirPath, resolve, error => {
         console.error(
-          'Error getting FileSystem: ' + this.cordovaFileError[error.code]
+          'Error getting FileSystem ' +
+            dirPath +
+            ': ' +
+            this.cordovaFileError[error.code]
         ); //JSON.stringify(error));
-        reject(error);
+        resolve(false); // reject(error);
       });
     });
   };
@@ -249,10 +254,9 @@ export default class CordovaIO {
   };
 
   getAppStorageFileSystem = (fileName: string, fileCallback, fail) => {
-    const dataFolderPath =
-      AppConfig.isCordovaiOS === true
-        ? cordova.file.dataDirectory
-        : cordova.file.externalApplicationStorageDirectory;
+    const dataFolderPath = AppConfig.isCordovaiOS
+      ? cordova.file.dataDirectory
+      : cordova.file.externalApplicationStorageDirectory;
 
     window.resolveLocalFileSystemURL(
       dataFolderPath,
@@ -267,10 +271,9 @@ export default class CordovaIO {
 
   getFileSystem = () => {
     // on android cordova.file.externalRootDirectory points to sdcard0
-    const fsURL =
-      AppConfig.isCordovaiOS === true
-        ? cordova.file.documentsDirectory
-        : 'file:///';
+    const fsURL = AppConfig.isCordovaiOS
+      ? cordova.file.documentsDirectory
+      : 'file:///';
     window.resolveLocalFileSystemURL(
       fsURL,
       fileSystem => {
@@ -469,7 +472,7 @@ export default class CordovaIO {
         AppConfig.metaFolder +
         AppConfig.dirSeparator;
 
-      this.getFileSystemPromise(metaDirPath)
+      this.getDirSystemPromise(metaDirPath)
         .then(fileSystem => {
           const reader = fileSystem.createReader();
           reader.readEntries(entr => {
@@ -510,7 +513,7 @@ export default class CordovaIO {
 
       const enhancedEntries = [];
       const metaPromises = [];
-      this.getFileSystemPromise(path)
+      this.getDirSystemPromise(path)
         .then(
           fileSystem => {
             const reader = fileSystem.createReader();
@@ -523,11 +526,10 @@ export default class CordovaIO {
                   eentry.tags = [];
                   eentry.thumbPath = entry.isFile
                     ? ''
-                    : eentry.path +
-                      '/' +
-                      AppConfig.metaFolder +
-                      '/' +
-                      AppConfig.folderThumbFile;
+                    : getThumbFileLocationForDirectory(
+                        eentry.path,
+                        AppConfig.dirSeparator
+                      );
                   // eentry.meta = {};
                   eentry.isFile = entry.isFile;
                   if (entry.isFile) {
@@ -540,12 +542,17 @@ export default class CordovaIO {
                   if (!lite) {
                     if (entry.isDirectory) {
                       // Read tsm.json from subfolders
-                      const metaDirAvailable: any = metaContent.find(
-                        (obj: any) => obj.name === AppConfig.metaFolder
-                      );
-                      if (metaDirAvailable && metaDirAvailable.path) {
+                      if (
+                        !eentry.path.includes(
+                          AppConfig.dirSeparator + AppConfig.metaFolder
+                        )
+                      ) {
+                        const folderMetaPath = getMetaFileLocationForDir(
+                          eentry.path,
+                          AppConfig.dirSeparator
+                        );
                         metaPromises.push(
-                          this.getEntryMeta(eentry, metaDirAvailable.path)
+                          this.getEntryMeta(eentry, folderMetaPath)
                         );
                       }
                     } else {
@@ -670,7 +677,10 @@ export default class CordovaIO {
         });
     });
 
-  getEntryMeta = (eentry: FileSystemEntry, metaPath: string): Promise<any> => {
+  getEntryMeta = (
+    eentry: TS.FileSystemEntry,
+    metaPath: string
+  ): Promise<any> => {
     if (eentry.isFile) {
       // const metaFilePath = getMetaFileLocationForFile(eentry.path);
       return this.loadTextFilePromise(metaPath).then(result => {
@@ -738,15 +748,24 @@ export default class CordovaIO {
           }
         },
         err => {
-          console.log(
-            'getPropertiesPromise: Error getting file ' + entryPath,
-            err
-          );
-          resolve(false);
+          this.getDirSystemPromise(entryPath).then(dirEntry => {
+            if (!dirEntry) {
+              resolve(false);
+              return false;
+            }
+            console.log(
+              "getPropertiesPromise: It's not file " + entryPath,
+              err
+            );
+            resolve({
+              path: dirEntry.fullPath,
+              isFile: dirEntry.isFile,
+              name: dirEntry.name
+            });
+          });
         }
       );
     });
-  // });
 
   /**
    * Load the content of a text file
@@ -787,7 +806,7 @@ export default class CordovaIO {
 
       return new Promise((resolve, reject) => {
         if (resolvePath) {
-          this.getFileSystemPromise(resolvePath)
+          this.getDirSystemPromise(resolvePath)
             .then(resfs => {
               resfs.getFile(
                 filePath,
@@ -837,7 +856,7 @@ export default class CordovaIO {
     content,
     overWrite: boolean,
     isRaw?: boolean
-  ): Promise<FileSystemEntry> => {
+  ): Promise<TS.FileSystemEntry> => {
     // eslint-disable-next-line no-param-reassign
     filePath = this.normalizePath(filePath);
     console.log('Saving file: ' + filePath);
@@ -945,7 +964,7 @@ export default class CordovaIO {
     filePath: string,
     content: any,
     overWrite: boolean
-  ): Promise<FileSystemEntry> => {
+  ): Promise<TS.FileSystemEntry> => {
     console.log('Saving binary file: ' + filePath);
     // var dataView = new Int8Array(content);
     const dataView = content;
@@ -958,33 +977,50 @@ export default class CordovaIO {
   createDirectoryPromise = (dirPath: string): Promise<any> => {
     console.log('Creating directory: ' + dirPath);
     return new Promise((resolve, reject) => {
-      dirPath = this.normalizePath(dirPath);
-      this.fsRoot.getDirectory(
-        dirPath,
-        {
-          create: true,
-          exclusive: false
-        },
-        dirEntry => {
-          resolve(dirPath);
-        },
-        error => {
-          reject(
-            'Creating directory failed: ' +
-              dirPath +
-              ' failed with error code: ' +
-              error.code
-          );
+      this.checkDirExist(dirPath).then(exist => {
+        if (exist) {
+          reject('error createDirectory: ' + dirPath + ' exist!');
+          return;
         }
-      );
+        dirPath = this.normalizePath(dirPath);
+        this.fsRoot.getDirectory(
+          dirPath,
+          {
+            create: true,
+            exclusive: false
+          },
+          dirEntry => {
+            resolve(dirPath);
+          },
+          error => {
+            reject(
+              'Creating directory failed: ' +
+                dirPath +
+                ' failed with error code: ' +
+                error.code
+            );
+          }
+        );
+      });
     });
   };
 
   /**
    * Copies a given file to a specified location
    */
-  copyFilePromise = (filePath: string, newFilePath: string): Promise<any> =>
-    new Promise((resolve, reject) => {
+  copyFilePromise = (
+    filePath: string,
+    newFilePath: string,
+    override: boolean = true
+  ): Promise<any> =>
+    new Promise(async (resolve, reject) => {
+      if (!override) {
+        const exist = await this.checkFileExist(newFilePath);
+        if (exist) {
+          reject('error copyFile: ' + newFilePath + ' exist!');
+          return;
+        }
+      }
       // eslint-disable-next-line no-param-reassign
       filePath = this.normalizePath(filePath);
       const newFileName = newFilePath.substring(
@@ -993,7 +1029,6 @@ export default class CordovaIO {
       const newFileParentPath = this.normalizePath(
         newFilePath.substring(0, newFilePath.lastIndexOf('/'))
       );
-      // TODO check if the newFilePath exist or causes issues by copying
       this.fsRoot.getDirectory(
         newFileParentPath,
         {
@@ -1046,62 +1081,99 @@ export default class CordovaIO {
    */
   renameFilePromise = (filePath: string, newFilePath: string): Promise<any> =>
     new Promise((resolve, reject) => {
-      // eslint-disable-next-line no-param-reassign
-      filePath = this.normalizePath(filePath);
-      const newFileName = newFilePath.substring(
-        newFilePath.lastIndexOf('/') + 1
-      );
-      const newFileParentPath = this.normalizePath(
-        newFilePath.substring(0, newFilePath.lastIndexOf('/') + 1)
-      );
-      console.log(
-        'renameFile: ' + newFileName + ' newFilePath: ' + newFilePath
-      );
-      // TODO check if the newFilePath exist or causes issues by renaming
-      this.fsRoot.getDirectory(
-        newFileParentPath,
+      this.checkFileExist(newFilePath).then(exist => {
+        if (exist) {
+          reject('error renaming: ' + newFilePath + ' exist!');
+          return;
+        }
+        // eslint-disable-next-line no-param-reassign
+        filePath = this.normalizePath(filePath);
+        const newFileName = newFilePath.substring(
+          newFilePath.lastIndexOf('/') + 1
+        );
+        const newFileParentPath = this.normalizePath(
+          newFilePath.substring(0, newFilePath.lastIndexOf('/') + 1)
+        );
+        console.log(
+          'renameFile: ' + newFileName + ' newFilePath: ' + newFilePath
+        );
+        this.fsRoot.getDirectory(
+          newFileParentPath,
+          {
+            create: false,
+            exclusive: false
+          },
+          parentDirEntry => {
+            this.fsRoot.getFile(
+              filePath,
+              {
+                create: false,
+                exclusive: false
+              },
+              entry => {
+                entry.moveTo(
+                  parentDirEntry,
+                  newFileName,
+                  () => {
+                    console.log(
+                      'File renamed to: ' +
+                        newFilePath +
+                        ' Old name: ' +
+                        entry.fullPath
+                    );
+                    resolve([filePath, newFilePath]);
+                  },
+                  err => {
+                    reject('error renaming: ' + filePath + ' ' + err);
+                  }
+                );
+              },
+              error => {
+                reject('Error getting file: ' + filePath + ' ' + error);
+              }
+            );
+          },
+          error => {
+            console.error(
+              'Getting dir: ' +
+                newFileParentPath +
+                ' failed with error code: ' +
+                error.code
+            );
+            reject(error);
+          }
+        );
+      });
+    });
+
+  checkFileExist = filePath =>
+    new Promise(resolve => {
+      this.fsRoot.getFile(
+        filePath,
         {
           create: false,
           exclusive: false
         },
-        parentDirEntry => {
-          this.fsRoot.getFile(
-            filePath,
-            {
-              create: false,
-              exclusive: false
-            },
-            entry => {
-              entry.moveTo(
-                parentDirEntry,
-                newFileName,
-                () => {
-                  console.log(
-                    'File renamed to: ' +
-                      newFilePath +
-                      ' Old name: ' +
-                      entry.fullPath
-                  );
-                  resolve([filePath, newFilePath]);
-                },
-                err => {
-                  reject('error renaming: ' + filePath + ' ' + err);
-                }
-              );
-            },
-            error => {
-              reject('Error getting file: ' + filePath + ' ' + error);
-            }
-          );
+        () => {
+          resolve(true);
         },
-        error => {
-          console.error(
-            'Getting dir: ' +
-              newFileParentPath +
-              ' failed with error code: ' +
-              error.code
-          );
-          reject(error);
+        () => {
+          resolve(false);
+        }
+      );
+    });
+
+  checkDirExist = dirPath =>
+    new Promise(resolve => {
+      window.resolveLocalFileSystemURL(
+        (dirPath.startsWith('/') ? 'file://' : 'file:///') +
+          dirPath +
+          (dirPath.endsWith('/') ? '' : '/'),
+        () => {
+          resolve(true);
+        },
+        () => {
+          resolve(false);
         }
       );
     });
@@ -1124,54 +1196,63 @@ export default class CordovaIO {
         newDirPath.substring(0, newDirPath.lastIndexOf('/'))
       );
       newDirPath = this.normalizePath(newDirPath);
-      console.log('renameDirectoryPromise: ' + dirPath + ' to: ' + newDirPath);
-      // TODO check if the newFilePath exist or cause issues by renaming
-      this.fsRoot.getDirectory(
-        newDirParentPath,
-        {
-          create: false,
-          exclusive: false
-        },
-        parentDirEntry => {
-          this.fsRoot.getDirectory(
-            dirPath,
-            {
-              create: false,
-              exclusive: false
-            },
-            entry => {
-              entry.moveTo(
-                parentDirEntry,
-                newDirName,
-                () => {
-                  console.log(
-                    'Directory renamed to: ' +
-                      newDirPath +
-                      ' from: ' +
-                      entry.fullPath
-                  );
-                  resolve('/' + newDirPath);
-                },
-                err => {
-                  reject('error renaming directory: ' + dirPath + ' ' + err);
-                }
-              );
-            },
-            error => {
-              reject('Error getting directory: ' + dirPath + ' ' + error);
-            }
-          );
-        },
-        error => {
-          console.error(
-            'Getting dir: ' +
-              newDirParentPath +
-              ' failed with error code: ' +
-              error.code
-          );
-          reject(error);
+
+      this.checkDirExist(newDirPath).then(exist => {
+        if (exist) {
+          reject('error renaming: ' + newDirName + ' exist!');
+          return;
         }
-      );
+
+        console.log(
+          'renameDirectoryPromise: ' + dirPath + ' to: ' + newDirPath
+        );
+        this.fsRoot.getDirectory(
+          newDirParentPath,
+          {
+            create: false,
+            exclusive: false
+          },
+          parentDirEntry => {
+            this.fsRoot.getDirectory(
+              dirPath,
+              {
+                create: false,
+                exclusive: false
+              },
+              entry => {
+                entry.moveTo(
+                  parentDirEntry,
+                  newDirName,
+                  () => {
+                    console.log(
+                      'Directory renamed to: ' +
+                        newDirPath +
+                        ' from: ' +
+                        entry.fullPath
+                    );
+                    resolve('/' + newDirPath);
+                  },
+                  err => {
+                    reject('error renaming directory: ' + dirPath + ' ' + err);
+                  }
+                );
+              },
+              error => {
+                reject('Error getting directory: ' + dirPath + ' ' + error);
+              }
+            );
+          },
+          error => {
+            console.error(
+              'Getting dir: ' +
+                newDirParentPath +
+                ' failed with error code: ' +
+                error.code
+            );
+            reject(error);
+          }
+        );
+      });
     });
 
   /**
@@ -1267,8 +1348,8 @@ export default class CordovaIO {
             // ["file:///storage/emulated/0/360/security", "file:///storage/emulated/0/360/security"]
             // fix https://trello.com/c/vV7D0kGf/500-tsn500-fix-folder-selector-in-create-edit-location-on-android-or-use-native-dialog
             data[0] = data[0].replace(
-              'content://org.tagspaces.mobileapp.provider/root/storage/emulated/0', //'file:///storage/emulated/0',
-              'file:///sdcard'
+              'file:///storage/emulated/0', // 'content://org.tagspaces.mobileapp.provider/root/storage/emulated/0', 'file:///storage/emulated/0',
+              'sdcard'
             );
             resolve(data);
           },

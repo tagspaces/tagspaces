@@ -27,6 +27,7 @@ export const AppConfig = {
   tagspacesAppPath: '/tagspaces/',
   metaFolder: '.ts',
   metaFolderFile: 'tsm.json',
+  folderLocationsFile: 'tsl.json',
   folderIndexFile: 'tsi.json',
   folderThumbFile: 'tst.jpg',
   metaFileExt: '.json',
@@ -41,6 +42,7 @@ export const AppConfig = {
   maxThumbSize: 400,
   thumbBgColor: '#FFFFFF',
   indexerLimit: 200000,
+  mainToolbarHeight: 105,
   maxIndexAge: 10 * 60 * 1000, // 10 minutes
   // maxSearchResult: 1000,
   defaultFileColor: '#808080',
@@ -122,6 +124,7 @@ export const AppConfig = {
       ? window.ExtShowWelcomePanel
       : true,
   locationsReadOnly: window.ExtLocations !== undefined,
+  mapTileServers: window.ExtMapTileServers || false,
   sidebarColor: window.ExtSidebarColor || '#2C001E', // '#00D1A1' // #008023
   sidebarSelectionColor: window.ExtSidebarSelectionColor || '#880E4F',
   lightThemeLightColor: window.ExtLightThemeLightColor || '#dcf3ec',

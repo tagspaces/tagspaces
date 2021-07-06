@@ -20,43 +20,20 @@
 const execa = require('execa');
 var path = require('path');
 var fs = require('fs-extra');
-var os = require('os');
-var which = require('which');
+const { forgivingWhichSync, isWindows, isDarwin } = require('./utils');
+const java = require('./env/java');
 var REPO_ROOT = path.join(__dirname, '..', '..', '..', '..');
 var PROJECT_ROOT = path.join(__dirname, '..', '..');
 const { CordovaError, ConfigParser, events } = require('cordova-common');
 var android_sdk = require('./android_sdk');
 const { createEditor } = require('properties-parser');
+const semver = require('semver');
 
-function forgivingWhichSync (cmd) {
-    const whichResult = which.sync(cmd, { nothrow: true });
+const EXPECTED_JAVA_VERSION = '1.8.x';
 
-    // On null, returns empty string to maintain backwards compatibility
-    // realpathSync follows symlinks
-    return whichResult === null ? '' : fs.realpathSync(whichResult);
-}
-
-function getJDKDirectory (directory) {
-    const p = path.resolve(directory, 'java');
-    if (fs.existsSync(p)) {
-        const directories = fs.readdirSync(p);
-        for (let i = 0; i < directories.length; i++) {
-            const dir = directories[i];
-            if (/^(jdk)+./.test(dir)) {
-                return path.resolve(directory, 'java', dir);
-            }
-        }
-    }
-    return null;
-}
-
-module.exports.isWindows = function () {
-    return (os.platform() === 'win32');
-};
-
-module.exports.isDarwin = function () {
-    return (os.platform() === 'darwin');
-};
+// Re-exporting these for backwards compatibility and for unit testing.
+// TODO: Remove uses and use the ./utils module directly.
+Object.assign(module.exports, { isWindows, isDarwin });
 
 /**
  * @description Get valid target from framework/project.properties if run from this repo
@@ -96,18 +73,6 @@ module.exports.get_target = function () {
     }
 
     return target;
-};
-
-// Returns a promise. Called only by build and clean commands.
-module.exports.check_ant = function () {
-    return execa('ant', ['-version']).then(({ stdout: output }) => {
-        // Parse Ant version from command output
-        return /version ((?:\d+\.)+(?:\d+))/i.exec(output)[1];
-    }).catch(function (err) {
-        if (err) {
-            throw new CordovaError('Failed to run `ant -version`. Make sure you have `ant` on your $PATH.');
-        }
-    });
 };
 
 module.exports.get_gradle_wrapper = function () {
@@ -168,75 +133,22 @@ module.exports.check_gradle = function () {
                             'in your path, or install Android Studio'));
 };
 
-// Returns a promise.
-module.exports.check_java = function () {
-    var javacPath = forgivingWhichSync('javac');
-    var hasJavaHome = !!process.env.JAVA_HOME;
-    return Promise.resolve().then(function () {
-        if (hasJavaHome) {
-            // Windows java installer doesn't add javac to PATH, nor set JAVA_HOME (ugh).
-            if (!javacPath) {
-                process.env.PATH += path.delimiter + path.join(process.env.JAVA_HOME, 'bin');
-            }
-        } else {
-            if (javacPath) {
-                // OS X has a command for finding JAVA_HOME.
-                var find_java = '/usr/libexec/java_home';
-                var default_java_error_msg = 'Failed to find \'JAVA_HOME\' environment variable. Try setting it manually.';
-                if (fs.existsSync(find_java)) {
-                    return execa(find_java).then(({ stdout }) => {
-                        process.env.JAVA_HOME = stdout;
-                    }).catch(function (err) {
-                        if (err) {
-                            throw new CordovaError(default_java_error_msg);
-                        }
-                    });
-                } else {
-                    // See if we can derive it from javac's location.
-                    var maybeJavaHome = path.dirname(path.dirname(javacPath));
-                    if (fs.existsSync(path.join(maybeJavaHome, 'lib', 'tools.jar'))) {
-                        process.env.JAVA_HOME = maybeJavaHome;
-                    } else {
-                        throw new CordovaError(default_java_error_msg);
-                    }
-                }
-            } else if (module.exports.isWindows()) {
-                const programFilesEnv = path.resolve(process.env.ProgramFiles);
-                const programFiles = 'C:\\Program Files\\';
-                const programFilesx86 = 'C:\\Program Files (x86)\\';
+/**
+ * Checks for the java installation and correct version
+ *
+ * Despite the name, it should return the Java version value, it's used by the Cordova CLI.
+ */
+module.exports.check_java = async function () {
+    const javaVersion = await java.getVersion();
 
-                let firstJdkDir =
-                    getJDKDirectory(programFilesEnv) ||
-                    getJDKDirectory(programFiles) ||
-                    getJDKDirectory(programFilesx86);
+    if (!semver.satisfies(javaVersion.version, EXPECTED_JAVA_VERSION)) {
+        throw new CordovaError(
+            `Requirements check failed for JDK ${EXPECTED_JAVA_VERSION}! Detected version: ${javaVersion.version}\n` +
+            'Check your ANDROID_SDK_ROOT / JAVA_HOME / PATH environment variables.'
+        );
+    }
 
-                if (firstJdkDir) {
-                    firstJdkDir = firstJdkDir.replace(/\//g, path.sep);
-                    if (!javacPath) {
-                        process.env.PATH += path.delimiter + path.join(firstJdkDir, 'bin');
-                    }
-                    process.env.JAVA_HOME = firstJdkDir;
-                }
-            }
-        }
-    }).then(function () {
-        return execa('javac', ['-version'], { all: true })
-            .then(({ all: output }) => {
-                // Java <= 8 writes version info to stderr, Java >= 9 to stdout
-                const match = /javac\s+([\d.]+)/i.exec(output);
-                return match && match[1];
-            }, () => {
-                var msg =
-                'Failed to run "javac -version", make sure that you have a JDK version 8 installed.\n' +
-                'You can get it from the following location:\n' +
-                'https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html';
-                if (process.env.JAVA_HOME) {
-                    msg += '\n\n';
-                    msg += 'Your JAVA_HOME is invalid: ' + process.env.JAVA_HOME;
-                }
-                throw new CordovaError(msg);
-            });
-    });
+    return javaVersion;
 };
 
 // Returns a promise.
@@ -411,13 +323,6 @@ module.exports.run = function () {
 
     return Promise.all([this.check_java(), this.check_android()]).then(function (values) {
         console.log('Using Android SDK: ' + process.env.ANDROID_SDK_ROOT);
-
-        if (!String(values[0]).startsWith('1.8.')) {
-            throw new CordovaError(
-                'Requirements check failed for JDK 8 (\'1.8.*\')! Detected version: ' + values[0] + '\n' +
-                'Check your ANDROID_SDK_ROOT / JAVA_HOME / PATH environment variables.'
-            );
-        }
 
         if (!values[1]) {
             throw new CordovaError('Requirements check failed for Android SDK! Android SDK was not detected.');

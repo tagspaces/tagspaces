@@ -15,11 +15,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 import OpenLocationCode from 'open-location-code-typescript';
 import i18n from '../services/i18n';
-import { actions as AppActions } from './app';
-import { actions as TagLibraryActions, Tag, TagGroup } from './taglibrary';
+import {
+  actions as AppActions,
+  getLocationPersistTagsInSidecarFile
+} from './app';
+import { actions as TagLibraryActions } from './taglibrary';
 import {
   extractFileExtension,
   extractFileName,
@@ -37,13 +39,24 @@ import PlatformIO from '../services/platform-io';
 import { Pro } from '../pro';
 import GlobalSearch from '../services/search-index';
 import { getPersistTagsInSidecarFile } from './settings';
+import { TS } from '-/tagspaces.namespace';
 
 export const defaultTagLocation = OpenLocationCode.encode(51.48, 0, undefined); // default tag coordinate Greenwich
+
+const persistTagsInSidecarFile = state => {
+  const locationPersistTagsInSidecarFile = getLocationPersistTagsInSidecarFile(
+    state
+  );
+  if (locationPersistTagsInSidecarFile !== undefined) {
+    return locationPersistTagsInSidecarFile;
+  }
+  return getPersistTagsInSidecarFile(state);
+};
 
 const actions = {
   addTags: (
     paths: Array<string>,
-    tags: Array<Tag>,
+    tags: Array<TS.Tag>,
     updateIndex: boolean = true
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
     const { settings, taglibrary } = getState();
@@ -128,8 +141,8 @@ const actions = {
             color: settings.tagBackgroundColor,
             textcolor: settings.tagTextColor,
             children: uniqueTags,
-            created_date: new Date(),
-            modified_date: new Date()
+            created_date: new Date().getTime(),
+            modified_date: new Date().getTime()
           };
           dispatch(TagLibraryActions.mergeTagGroup(tagGroup));
         }
@@ -138,7 +151,7 @@ const actions = {
   },
   addTagsToEntry: (
     path: string,
-    tags: Array<Tag>,
+    tags: Array<TS.Tag>,
     updateIndex: boolean = true
   ) => async (dispatch: (actions: Object) => void, getState: () => any) => {
     const { settings } = getState();
@@ -150,7 +163,7 @@ const actions = {
       console.log('No sidecar found ' + error);
     }
 
-    if (!entryProperties.isFile || getPersistTagsInSidecarFile(getState())) {
+    if (!entryProperties.isFile || persistTagsInSidecarFile(getState())) {
       // Handling adding tags in sidecar
       if (fsEntryMeta) {
         const uniqueTags = getNonExistingTags(
@@ -282,9 +295,9 @@ const actions = {
     }
 
     function getNonExistingTags(
-      newTagsArray: Array<Tag>,
+      newTagsArray: Array<TS.Tag>,
       fileTagsArray: Array<string>,
-      sideCarTagsArray: Array<Tag>
+      sideCarTagsArray: Array<TS.Tag>
     ) {
       const newTags = [];
       for (let i = 0; i < newTagsArray.length; i += 1) {
@@ -310,7 +323,7 @@ const actions = {
    * @param newTagTitle
    * @returns {Function}
    */
-  editTagForEntry: (path: string, tag: Tag, newTagTitle: string) => async (
+  editTagForEntry: (path: string, tag: TS.Tag, newTagTitle: string) => async (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
@@ -322,7 +335,7 @@ const actions = {
       // Work around solution
       delete tag.functionality;
       const entryProperties = await PlatformIO.getPropertiesPromise(path);
-      if (entryProperties.isFile && !getPersistTagsInSidecarFile(getState())) {
+      if (entryProperties.isFile && !persistTagsInSidecarFile(getState())) {
         tag.type = 'plain';
       }
     }
@@ -476,14 +489,14 @@ const actions = {
           color: settings.tagBackgroundColor,
           textcolor: settings.tagTextColor,
           children: uniqueTags,
-          created_date: new Date(),
-          modified_date: new Date()
+          created_date: new Date().getTime(),
+          modified_date: new Date().getTime()
         };
         dispatch(TagLibraryActions.mergeTagGroup(tagGroup));
       }
     }
   },
-  removeTags: (paths: Array<string>, tags: Array<Tag>) => (
+  removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => (
     dispatch: (actions: Object) => void
   ) => {
     paths.map(path => {
@@ -491,7 +504,7 @@ const actions = {
       return true;
     });
   },
-  removeTagsFromEntry: (path: string, tags: Array<Tag>) => (
+  removeTagsFromEntry: (path: string, tags: Array<TS.Tag>) => (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
@@ -663,7 +676,7 @@ const actions = {
   },
   changeTagOrder: (
     path: string,
-    tag: Tag,
+    tag: TS.Tag,
     direction: 'prev' | 'next' | 'first'
   ) => () =>
     // dispatch: (actions: Object) => void
@@ -723,7 +736,7 @@ const actions = {
     {
       // dispatch(actions.createLocation(location));
     },
-  collectTagsFromLocation: (tagGroup: TagGroup) => (
+  collectTagsFromLocation: (tagGroup: TS.TagGroup) => (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
@@ -760,7 +773,7 @@ const actions = {
       const changedTagGroup = {
         ...tagGroup,
         children: uniqueTags,
-        modified_date: new Date()
+        modified_date: new Date().getTime()
       };
       dispatch(TagLibraryActions.mergeTagGroup(changedTagGroup));
     }

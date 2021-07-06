@@ -32,7 +32,6 @@ import CloudLocationIcon from '@material-ui/icons/CloudQueue';
 import DefaultLocationIcon from '@material-ui/icons/Highlight';
 import { Progress } from 'aws-sdk/clients/s3';
 import styles from './SidePanels.css';
-import { locationType, Location } from '-/reducers/locations';
 import {
   actions as AppActions,
   getCurrentLocationId,
@@ -47,16 +46,17 @@ import IOActions from '../reducers/io-actions';
 import DirectoryTreeView, {
   DirectoryTreeViewRef
 } from '-/components/DirectoryTreeView';
-import { FileSystemEntry } from '-/services/utils-io';
 import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import LocationContextMenu from '-/components/menus/LocationContextMenu';
 import { getLocationPath } from '-/utils/paths';
+import { TS } from '-/tagspaces.namespace';
+import { locationType } from '-/utils/misc';
 
 interface Props {
   classes: any;
-  location: Location;
+  location: TS.Location;
   currentLocationId: string;
-  openLocation: (location: Location) => void;
+  openLocation: (location: TS.Location) => void;
   loadDirectoryContent: (path: string) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   hideDrawer: () => void;
@@ -71,20 +71,20 @@ interface Props {
     files: Array<string>,
     destination: string,
     onUploadProgress?: (progress: Progress, response: any) => void
-  ) => Promise<Array<FileSystemEntry>>;
+  ) => Promise<Array<TS.FileSystemEntry>>;
   onUploadProgress: (progress: Progress, response: any) => void;
-  reflectCreateEntries: (fsEntries: Array<FileSystemEntry>) => void;
+  reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => void;
   toggleUploadDialog: () => void;
   moveFiles: (files: Array<string>, destination: string) => void;
   showUnixHiddenEntries: boolean;
   setEditLocationDialogOpened: (open: boolean) => void;
   setDeleteLocationDialogOpened: (open: boolean) => void;
-  selectedLocation: Location;
-  setSelectedLocation: (loc: Location) => void;
-  changeLocation: (loc: Location) => void;
+  selectedLocation: TS.Location;
+  setSelectedLocation: (loc: TS.Location) => void;
+  changeLocation: (loc: TS.Location) => void;
 }
 
-const LocationView = React.memo((props: Props) => {
+const LocationView = (props: Props) => {
   const directoryTreeRef = useRef<DirectoryTreeViewRef>(null);
   const [
     locationDirectoryContextMenuAnchorEl,
@@ -180,7 +180,7 @@ const LocationView = React.memo((props: Props) => {
               props.resetProgress();
               props
                 .uploadFiles(arrPath, targetPath, props.onUploadProgress)
-                .then((fsEntries: Array<FileSystemEntry>) => {
+                .then((fsEntries: Array<TS.FileSystemEntry>) => {
                   props.reflectCreateEntries(fsEntries);
                   return true;
                 })
@@ -323,7 +323,7 @@ const LocationView = React.memo((props: Props) => {
       />
     </>
   );
-});
+};
 
 function mapStateToProps(state) {
   return {
@@ -356,4 +356,4 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
   // @ts-ignore
-)(withStyles(styles)(LocationView));
+)(withStyles(styles)(React.memo(LocationView)));

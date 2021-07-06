@@ -27,6 +27,7 @@ declare module '*.xml';
 
 declare interface Window {
   // interface TSCustomWindow extends Window {
+  ExtMapTileServers?: Array<TS.MapTileServer>;
   walkCanceled?: boolean;
   ExtLogoURL?: string;
   ExtDefaultVerticalPanel?: string;
@@ -34,6 +35,7 @@ declare interface Window {
   ExtDefaultPerspective?: string;
   ExtTagLibrary?: Array<any>;
   ExtLocations?: Array<any>;
+  ExtSearches?: Array<any>;
   ExtTheme?: string;
   ExtIsFirstRun?: boolean;
   ExtIsAmplify?: boolean;

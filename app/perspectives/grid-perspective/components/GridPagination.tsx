@@ -20,7 +20,6 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import Pagination from '@material-ui/lab/Pagination';
-import { FileSystemEntry } from '-/services/utils-io';
 import i18n from '-/services/i18n';
 import {
   getCurrentDirectoryColor,
@@ -28,16 +27,17 @@ import {
   isLoading
 } from '-/reducers/app';
 import AppConfig from '-/config';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   className: string;
   style: Object;
   theme: any;
   // gridRef: Object;
-  directories: Array<FileSystemEntry>;
+  directories: Array<TS.FileSystemEntry>;
   showDirectories: boolean;
-  files: Array<FileSystemEntry>;
-  renderCell: (FileSystemEntry) => void;
+  files: Array<TS.FileSystemEntry>;
+  renderCell: (entry: TS.FileSystemEntry, isLast?: boolean) => void;
   currentDirectoryColor: string;
   isAppLoading: boolean;
   currentPage: number;
@@ -89,74 +89,71 @@ const GridPagination = (props: Props) => {
 
   return (
     <div
+      onContextMenu={(e: React.MouseEvent<HTMLDivElement>) =>
+        props.onContextMenu(e)
+      }
       style={{
         height: '100%',
-        backgroundColor: theme.palette.background.default
+        // @ts-ignore
+        overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
+        backgroundColor: currentDirectoryColor || 'transparent'
       }}
     >
       <div
-        onContextMenu={(e: React.MouseEvent<HTMLDivElement>) =>
-          props.onContextMenu(e)
-        }
-        style={{
-          height: '100%',
-          // @ts-ignore
-          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
-          backgroundColor: currentDirectoryColor || 'transparent'
-        }}
-      >
-        <div
-          className={className}
-          style={style}
-          /* ref={ref => {
+        className={className}
+        style={style}
+        /* ref={ref => {
             gridRef = ref;
           }} */
-          data-tid="perspectiveGridFileTable"
-        >
-          {page === 1 && directories.map(entry => renderCell(entry))}
-          {files.map(entry => renderCell(entry))}
-          {isAppLoading && (
-            <Typography
-              style={{ padding: 15, color: theme.palette.text.primary }}
-            >
-              {i18n.t('core:loading')}
-            </Typography>
-          )}
-          {!isAppLoading && files.length < 1 && directories.length < 1 && (
-            <Typography
-              style={{ padding: 15, color: theme.palette.text.primary }}
-            >
-              {i18n.t('core:noFileFolderFound')}
-            </Typography>
-          )}
-          {!isAppLoading &&
-            files.length < 1 &&
-            directories.length >= 1 &&
-            !showDirectories && (
-              <Typography
-                style={{ padding: 15, color: theme.palette.text.primary }}
-              >
-                {i18n.t('core:noFileButFoldersFound')}
-              </Typography>
-            )}
-        </div>
-        {showPagination && (
-          <p
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginBottom: 2
-            }}
-          >
-            <Pagination
-              count={paginationCount}
-              page={page}
-              onChange={handleChange}
-            />
-          </p>
+        data-tid="perspectiveGridFileTable"
+      >
+        {page === 1 && directories.map(entry => renderCell(entry))}
+        {files.map((entry, index, dArray) =>
+          renderCell(entry, index === dArray.length - 1)
         )}
+        {isAppLoading && (
+          <Typography
+            style={{ padding: 15, color: theme.palette.text.primary }}
+          >
+            {i18n.t('core:loading')}
+          </Typography>
+        )}
+        {!isAppLoading && files.length < 1 && directories.length < 1 && (
+          <Typography
+            style={{ padding: 15, color: theme.palette.text.primary }}
+          >
+            {i18n.t('core:noFileFolderFound')}
+          </Typography>
+        )}
+        {!isAppLoading &&
+          files.length < 1 &&
+          directories.length >= 1 &&
+          !showDirectories && (
+            <Typography
+              style={{ padding: 15, color: theme.palette.text.primary }}
+            >
+              {i18n.t('core:noFileButFoldersFound')}
+            </Typography>
+          )}
       </div>
+      {showPagination && (
+        <Pagination
+          style={{
+            left: 30,
+            bottom: 30,
+            zIndex: 1100,
+            position: 'absolute',
+            backgroundColor: theme.palette.background.default,
+            opacity: 0.97,
+            border: '1px solid lightgray',
+            borderRadius: 5,
+            padding: 3
+          }}
+          count={paginationCount}
+          page={page}
+          onChange={handleChange}
+        />
+      )}
     </div>
   );
 };

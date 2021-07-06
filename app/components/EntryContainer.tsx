@@ -45,7 +45,6 @@ import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import AppConfig from '-/config';
 import PlatformIO from '-/services/platform-io';
 import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
-import { FileSystemEntry } from '-/services/utils-io';
 import i18n from '-/services/i18n';
 import {
   extractContainingDirectoryPath,
@@ -59,7 +58,8 @@ import { buffer } from '-/utils/misc';
 import {
   actions as SettingsActions,
   isDesktopMode,
-  getKeyBindingObject
+  getKeyBindingObject,
+  getMapTileServer
 } from '-/reducers/settings';
 import TaggingActions from '-/reducers/tagging-actions';
 import {
@@ -69,6 +69,7 @@ import {
   actions as AppActions
 } from '-/reducers/app';
 import useEventListener from '-/utils/useEventListener';
+import { TS } from '-/tagspaces.namespace';
 
 const defaultSplitSize = 103;
 const openedSplitSize = AppConfig.isElectron ? 560 : 360;
@@ -183,7 +184,7 @@ interface Props {
   addTags: () => void;
   removeTags: () => void;
   // editTagForEntry: () => void;
-  openFsEntry: (fsEntry: FileSystemEntry) => void;
+  openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   openPrevFile: (path: string) => void;
   openNextFile: (path: string) => void;
   openFileNatively: (path: string) => void;
@@ -209,6 +210,7 @@ interface Props {
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   currentDirectoryPath: string | null;
   isDesktopMode: boolean;
+  tileServer: TS.MapTileServer;
 }
 
 const EntryContainer = (props: Props) => {
@@ -333,10 +335,6 @@ const EntryContainer = (props: Props) => {
       case 'openLinkExternally':
         // console.log('Open link externally: ' + data.link);
         props.openLink(data.link);
-        break;
-      case 'openFileNatively':
-        console.log('Open file natively: ' + data.link);
-        props.openFileNatively(data.link);
         break;
       case 'loadDefaultTextContent':
         if (!openedFile || !openedFile.path) {
@@ -1081,6 +1079,7 @@ const EntryContainer = (props: Props) => {
         resizerStyle={{
           backgroundColor: props.theme.palette.divider
         }}
+        style={{ zIndex: 1300 }}
         // size={this.state.entryPropertiesSplitSize}
         // minSize={defaultSplitSize}
         // maxSize={fullSplitSize}
@@ -1253,6 +1252,7 @@ const EntryContainer = (props: Props) => {
                   showNotification={props.showNotification}
                   isReadOnlyMode={props.isReadOnlyMode}
                   currentDirectoryPath={props.currentDirectoryPath}
+                  tileServer={props.tileServer}
                 />
               )}
             </div>
@@ -1288,7 +1288,8 @@ function mapStateToProps(state) {
     settings: state.settings,
     isReadOnlyMode: isReadOnlyMode(state),
     keyBindings: getKeyBindingObject(state),
-    isDesktopMode: isDesktopMode(state)
+    isDesktopMode: isDesktopMode(state),
+    tileServer: getMapTileServer(state)
   };
 }
 

@@ -24,35 +24,35 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import PlaceIcon from '@material-ui/icons/Place';
 import DateIcon from '@material-ui/icons/DateRange';
 import RemoveTagIcon from '@material-ui/icons/Close';
-import { getAllTags, Tag, TagGroup } from '-/reducers/taglibrary';
+import { getAllTags } from '-/reducers/taglibrary';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import { isPlusCode } from '-/utils/misc';
 import { isDateTimeTag } from '-/utils/dates';
-import { FileSystemEntry } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
-  tag: Tag;
+  tag: TS.Tag;
   isReadOnlyMode?: boolean;
-  allTags?: Array<Tag>;
+  allTags?: Array<TS.Tag>;
   defaultTextColor?: string;
   defaultBackgroundColor?: string;
-  tagGroup?: TagGroup;
+  tagGroup?: TS.TagGroup;
   handleTagMenu?: (
     event: Object,
-    tag: Tag,
-    tagGroup: TagGroup | string
+    tag: TS.Tag,
+    tagGroup: TS.TagGroup | string
   ) => void; // TODO refactor
-  handleRemoveTag?: (event: Object, tags: Array<Tag>) => void;
+  handleRemoveTag?: (event: Object, tags: Array<TS.Tag>) => void;
   isDragging?: boolean;
   tagMode?: 'default' | 'display' | 'remove';
   entryPath?: string;
   deleteIcon?: Object;
-  addTags?: (paths: Array<string>, tags: Array<Tag>) => void;
+  addTags?: (paths: Array<string>, tags: Array<TS.Tag>) => void;
   moveTag?: () => void;
-  selectedEntries?: Array<FileSystemEntry>;
+  selectedEntries?: Array<TS.FileSystemEntry>;
 }
 
-const TagContainer = React.memo((props: Props) => {
+const TagContainer = (props: Props) => {
   const {
     tag,
     deleteIcon,
@@ -85,7 +85,7 @@ const TagContainer = React.memo((props: Props) => {
     title = title.substr(0, 8) + '...';
   }
 
-  allTags.some((currentTag: Tag) => {
+  allTags.some((currentTag: TS.Tag) => {
     if (currentTag.title === title) {
       textColor = currentTag.textcolor;
       backgroundColor = currentTag.color;
@@ -232,7 +232,7 @@ const TagContainer = React.memo((props: Props) => {
       </Button>
     </div>
   );
-});
+};
 
 function mapStateToProps(state) {
   return {
@@ -243,4 +243,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(TagContainer);
+export default connect(mapStateToProps)(React.memo(TagContainer));
