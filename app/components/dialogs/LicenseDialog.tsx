@@ -67,10 +67,7 @@ const LicenseDialog = (props: Props) => {
       fullScreen={fullScreen}
       scroll="paper"
     >
-      <DialogTitle>
-        {i18n.t('core:license')}
-        <DialogCloseButton onClose={onClose} />
-      </DialogTitle>
+      <DialogTitle>{i18n.t('core:license')}</DialogTitle>
       <DialogContent
         // inputRef={ref => {
         //   licenseElement = ref;

@@ -42,6 +42,7 @@ export const AppConfig = {
   maxThumbSize: 400,
   thumbBgColor: '#FFFFFF',
   indexerLimit: 200000,
+  mainToolbarHeight: 105,
   maxIndexAge: 10 * 60 * 1000, // 10 minutes
   // maxSearchResult: 1000,
   defaultFileColor: '#808080',

@@ -42,9 +42,11 @@ const maxDescriptionPreviewLength = 100;
 
 interface Props {
   selected: boolean;
+  isLast?: boolean;
   fsEntry: TS.FileSystemEntry;
   entrySize: string;
   classes: any;
+  style?: any;
   theme: any;
   supportedFileTypes: Array<Object>;
   thumbnailMode: any;
@@ -84,7 +86,8 @@ const CellContent = (props: Props) => {
     showTags,
     openFsEntry,
     selectEntry,
-    deselectEntry
+    deselectEntry,
+    isLast
   } = props;
   const fsEntryBackgroundColor = fsEntry.color; //  ? fsEntry.color : 'transparent';
   const entryTitle = extractTitle(
@@ -413,6 +416,7 @@ const CellContent = (props: Props) => {
       )}
       style={{
         minHeight: layoutType === 'row' ? entryHeight : 'auto',
+        marginBottom: isLast ? 40 : 'auto',
         backgroundColor: theme.palette.background.default
       }}
       onContextMenu={event => handleGridContextMenu(event, fsEntry)}

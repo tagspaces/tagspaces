@@ -55,8 +55,8 @@ const CreateEditLocationDialogAsync = props => (
 );
 
 interface Props {
-  classes: any;
-  style: any;
+  classes?: any;
+  style?: any;
   locations: Array<TS.Location>;
   hideDrawer: () => void;
   openURLExternally: (path: string) => void;

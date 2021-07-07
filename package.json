@@ -297,7 +297,7 @@
     "react-hot-loader": "^4.8.2",
     "react-hotkeys": "^2.0.0",
     "react-i18next": "^4.6.1",
-    "react-image-gallery": "^1.0.8",
+    "react-image-gallery": "^1.1.0",
     "react-leaflet": "^2.8.0",
     "react-redux": "^5.0.7",
     "react-router": "^4.3.1",

@@ -7,7 +7,7 @@ import DragItemTypes from '-/components/DragItemTypes';
 const layerStyles: React.CSSProperties = {
   position: 'fixed',
   pointerEvents: 'none',
-  zIndex: 100,
+  zIndex: 2000,
   left: 0,
   top: 0,
   width: '100%',
