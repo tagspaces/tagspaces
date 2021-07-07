@@ -1,5 +1,4 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
-import { Application } from 'spectron';
 import electronPath from 'electron';
 import pathLib from 'path';
 
@@ -65,7 +64,13 @@ export async function startSpectronApp() {
     if (global.isPlaywright) {
       const { webkit, chromium } = require('playwright');
       global.app = await chromium.launch({ headless: false, slowMo: 50 }); //browser
-      global.client = await global.app.newPage(); //page
+
+      global.context = await global.app.newContext();
+
+      // Start tracing before creating / navigating a page.
+      await global.context.tracing.start({ screenshots: true, snapshots: true });
+
+      global.client = await global.context.newPage(); //page
       await global.client.goto('http://localhost:8000');
       // await global.client.screenshot({ path: `example.png` });
       // await global.client.close();
@@ -155,6 +160,7 @@ export async function startSpectronApp() {
     // Exit app.
     // await global.app.close();
   } else {
+    const { Application } = require('spectron');
     global.app = new Application({
       path: electronPath,
       args: [pathLib.join(__dirname, '..', '..', 'app')],
@@ -192,6 +198,11 @@ function setWdioImageComparisonService(browser) {
 
 export async function stopSpectronApp() {
   if (global.isPlaywright) {
+    if (global.context) {
+      await global.context.tracing.stop({
+        path: pathLib.join(__dirname, '../trace.zip')
+      });
+    }
     await global.app.close();
   } else if (global.isWeb) {
     await global.client.closeWindow();

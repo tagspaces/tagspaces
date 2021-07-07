@@ -330,10 +330,15 @@ export async function getPwLocationTid(locationIndex) {
   /*const locationList = await global.client.$$(
     '//!*[@data-tid="locationList"]/div'
   );*/
-  await global.client.waitForSelector('[data-tid=locationTitleElement]', {
-    // state: 'attached',
-    timeout: 20000
-  });
+  try {
+    await global.client.waitForSelector('[data-tid=locationTitleElement]', {
+      // state: 'attached',
+      timeout: 30000
+    });
+  } catch (error) {
+    console.log("The element didn't appear.");
+    return undefined;
+  }
   const locationList = await global.client.$$(
     '[data-tid=locationTitleElement]'
   );
