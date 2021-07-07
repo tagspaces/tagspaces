@@ -573,6 +573,20 @@ export async function setSettings(selector) {
   await clickOn('[data-tid=closeSettingsDialog]');
 }
 
+export async function dragDrop(originSelector, destinationSelector) {
+  const originElement = await global.client.waitForSelector(originSelector);
+  const destinationElement = await global.client.waitForSelector(
+    destinationSelector
+  );
+
+  await originElement.hover();
+  await global.client.mouse.down();
+  const box = await destinationElement.boundingBox();
+  await global.client.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await destinationElement.hover();
+  await global.client.mouse.up();
+}
+
 export async function reloadDirectory() {
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
   /*const openDirMenu = await global.client.$(

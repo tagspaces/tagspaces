@@ -3,11 +3,13 @@ import {
   createPwMinioLocation,
   createPwLocation,
   defaultLocationName,
-  defaultLocationPath
+  defaultLocationPath,
+  getPropertiesTags
 } from './location.helpers';
 import {
   clickOn,
   createTxtFile,
+  dragDrop,
   expectElementExist,
   getGridFileName,
   selectorFile,
@@ -175,7 +177,12 @@ describe('TST08 - File folder properties', () => {
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
   });
 
-  it.skip('TST0810 - Tag file drag&drop in file opener [manual]', async () => {});
+  it('TST0810 - Tag file drag&drop in file opener [web]', async () => {
+    await clickOn('[data-tid=tagLibrary]');
+    await dragDrop('button[title=article]', selectorFile);
+
+    // expect(propsNewTags.includes(tagName)).toBe(true); //TODO expect
+  });
 
   it('TST3002 - Add and remove tag to a folder [web,minio,electron]', async () => {
     await openContextEntryMenu(selectorFolder, 'showProperties');

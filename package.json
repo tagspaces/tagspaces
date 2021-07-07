@@ -91,7 +91,7 @@
     "test-all": "yarn build && yarn test-unit && yarn build-e2e && yarn test-e2e",
     "test-one": "cross-env HEADLESS_MODE=true jest --detectOpenHandles --config=jest.config.web.js -t 'TST5016' --runInBand --verbose ./tests/e2e/",
     "test-playwright": "cross-env DEBUG=pw:api jest --config=jest.config.playwright.js -t 'TST0804' --verbose ./tests/e2e/",
-    "test-playwright-web": "cross-env PLAYWRIGHT=test_playwright jest --config=jest.config.web.js -t 'TST0804' --verbose ./tests/e2e/",
+    "test-playwright-web": "rimraf tests/testdata-tmp/file-structure/.minio.sys && cross-env PLAYWRIGHT=test_playwright jest --config=jest.config.web.js -t 'TST0804' --verbose ./tests/e2e/",
     "playwright-show-trace": "npx playwright show-trace tests/trace.zip",
     "test-one-suite-headless": "cross-env HEADLESS_MODE=true jest --config=jest.config.web.js --verbose ./tests/e2e/fileopener.e2e.js",
     "test-one-suite": "cross-env  jest --config=jest.config.web.js --verbose ./tests/e2e/perspective-grid-right-button.e2e.js",

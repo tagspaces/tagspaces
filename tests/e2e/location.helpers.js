@@ -333,7 +333,7 @@ export async function getPwLocationTid(locationIndex) {
   try {
     await global.client.waitForSelector('[data-tid=locationTitleElement]', {
       // state: 'attached',
-      timeout: 30000
+      timeout: 1000
     });
   } catch (error) {
     console.log("The element didn't appear.");

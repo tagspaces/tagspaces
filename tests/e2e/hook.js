@@ -68,7 +68,10 @@ export async function startSpectronApp() {
       global.context = await global.app.newContext();
 
       // Start tracing before creating / navigating a page.
-      await global.context.tracing.start({ screenshots: true, snapshots: true });
+      await global.context.tracing.start({
+        screenshots: true,
+        snapshots: true
+      });
 
       global.client = await global.context.newPage(); //page
       await global.client.goto('http://localhost:8000');
@@ -136,8 +139,8 @@ export async function startSpectronApp() {
 
     // Get the first window that the app opens, wait if necessary.
     global.client = await global.app.firstWindow();
-    await global.client.waitForLoadState('networkidle'); //'domcontentloaded');
-    await global.client.bringToFront();
+    await global.client.waitForLoadState('load'); //'domcontentloaded'); //'networkidle');
+    // await global.client.bringToFront();
     // Evaluation expression in the Electron context.
     /*const appPath = await global.app.evaluate(async ({ app }) => {
       // This runs in the main Electron process, parameter here is always

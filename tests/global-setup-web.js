@@ -1,7 +1,7 @@
 import pathLib from 'path';
 import {
   globalSetup,
-  startChromeDriver,
+  // startChromeDriver,
   startMinio,
   startWebServer
 } from './setup-functions';
@@ -13,6 +13,6 @@ module.exports = async function() {
   fse.removeSync(pathLib.join(__dirname, '..', 'app', 'extconfig.js'));
 
   global.webserver = await startWebServer();
-  global.chromeDriver = await startChromeDriver();
+  // global.chromeDriver = await startChromeDriver();
   global.minio = await startMinio();
 };

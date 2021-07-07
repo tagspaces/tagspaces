@@ -55,9 +55,9 @@ afterAll(async () => {
 
 beforeEach(async () => {
   if (global.isPlaywright) {
-    if (global.isMinio) {
-      await closeWelcomePlaywright();
-    }
+    // if (global.isMinio) {
+    await closeWelcomePlaywright();
+    // }
   } else {
     if (jasmine.currentTest && jasmine.currentTest.status !== 'disabled') {
       // console.log('specDone Done' + JSON.stringify(result));
