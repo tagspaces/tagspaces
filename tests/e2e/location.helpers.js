@@ -184,16 +184,27 @@ export async function openLocation(locationName) {
 }
 
 export async function closeFileProperties() {
-  const fileContainerCloseOpenedFile = await global.client.$(
-    '[data-tid=fileContainerCloseOpenedFile]'
-  );
+  let fileContainerCloseOpenedFile;
   if (global.isPlaywright) {
-    if (fileContainerCloseOpenedFile) {
+    try {
+      fileContainerCloseOpenedFile = await global.client.waitForSelector(
+        '[data-tid=fileContainerCloseOpenedFile]',
+        {
+          timeout: 200
+        }
+      );
       await global.client.click(fileContainerCloseOpenedFile);
+    } catch (error) {
+      console.log('The FileProperties not open.');
     }
-  } else if (await fileContainerCloseOpenedFile.isDisplayed()) {
-    //.isClickable()) {
-    await fileContainerCloseOpenedFile.click();
+  } else {
+    fileContainerCloseOpenedFile = await global.client.$(
+      '[data-tid=fileContainerCloseOpenedFile]'
+    );
+    if (await fileContainerCloseOpenedFile.isDisplayed()) {
+      //.isClickable()) {
+      await fileContainerCloseOpenedFile.click();
+    }
   }
 }
 

@@ -20,7 +20,10 @@ import { app, BrowserWindow, ipcMain, globalShortcut, dialog } from 'electron';
 import windowStateKeeper from 'electron-window-state';
 import path from 'path';
 
-require('@electron/remote/main').initialize();
+// require('@electron/remote/main').initialize();
+
+delete process.env.ELECTRON_ENABLE_SECURITY_WARNINGS;
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
 
 let mainWindow = null;
 (global as any).splashWorkerWindow = null;
@@ -43,7 +46,13 @@ const devMode =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
 process.argv.forEach((arg, count) => {
-  if (arg.toLowerCase() === '-d' || arg.toLowerCase() === '--debug') {
+  console.log('Opening file: ' + arg);
+  if (
+    arg.toLowerCase() === '-d' ||
+    arg.toLowerCase() === '--debug' ||
+    arg.startsWith('--remote-debugging-port=') ||
+    arg.startsWith('--inspect=')
+  ) {
     // debugMode = true;
   } else if (arg.toLowerCase() === '-p' || arg.toLowerCase() === '--portable') {
     app.setPath('userData', process.cwd() + '/tsprofile'); // making the app portable
@@ -51,7 +60,12 @@ process.argv.forEach((arg, count) => {
   } else if (testMode || devMode) {
     // ignoring the spectron testing
     arg = '';
-  } else if (arg === './app/main.dev.babel.js' || arg === '.' || count === 0) {
+  } else if (
+    arg.endsWith('main.prod.js') ||
+    arg === './app/main.dev.babel.js' ||
+    arg === '.' ||
+    count === 0
+  ) {
     // ignoring the first argument
     // Ignore these argument
   } else if (arg.length > 2) {
@@ -139,13 +153,16 @@ app.on('ready', async () => {
       frame: false,
       webPreferences: {
         nodeIntegration: true,
-        enableRemoteModule: true
+        enableRemoteModule: true,
+        contextIsolation: false
       }
     });
 
-    (global as any).splashWorkerWindow.loadURL(
-      `file://${__dirname}/splash.html`
-    );
+    if (!process.env.DISABLE_WORKER) {
+      (global as any).splashWorkerWindow.loadURL(
+        `file://${__dirname}/splash.html`
+      );
+    }
   }
 
   createSplashWorker();
@@ -155,7 +172,7 @@ app.on('ready', async () => {
     if (startupFilePath.startsWith('./') || startupFilePath.startsWith('.\\')) {
       startupParameter =
         '?cmdopen=' + encodeURIComponent(path.join(__dirname, startupFilePath));
-    } else {
+    } else if (startupFilePath !== 'data:,') {
       startupParameter = '?cmdopen=' + encodeURIComponent(startupFilePath);
     }
   }
@@ -172,7 +189,8 @@ app.on('ready', async () => {
       spellcheck: true,
       nodeIntegration: true,
       webviewTag: true,
-      enableRemoteModule: true
+      enableRemoteModule: true,
+      contextIsolation: false
     }
   });
 

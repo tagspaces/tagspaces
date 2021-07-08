@@ -63,7 +63,7 @@ export async function startSpectronApp() {
   if (global.isWeb) {
     if (global.isPlaywright) {
       const { webkit, chromium } = require('playwright');
-      global.app = await chromium.launch({ headless: false, slowMo: 50 }); //browser
+      global.app = await chromium.launch(); //{ headless: false, slowMo: 50 }); //browser
 
       global.context = await global.app.newContext();
 
