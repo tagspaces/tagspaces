@@ -530,7 +530,7 @@ export const actions = {
 
     let newTags: Array<TS.Tag>;
     if (typeof tag === 'object' && tag !== null) {
-      if (!tagGroup.children.some(t => t.title === tag.title)) {
+      if (tagGroup.children.some(t => t.title === tag.title)) {
         // tag exist
         return;
       }
