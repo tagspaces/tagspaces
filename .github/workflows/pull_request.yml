@@ -56,7 +56,7 @@ jobs:
         run: |
           yarn install-ext
           yarn build-e2e
-          yarn test-e2e-electron
+          yarn test-playwright
       - uses: IgnusG/jest-report-action@v2.3.3
         if: always() # Run regardless of whether other steps failed
         with:
@@ -109,7 +109,7 @@ jobs:
         run: |
           yarn install-ext
           yarn build-e2e
-          yarn test-e2e-web
+          yarn test-playwright-web
       - uses: IgnusG/jest-report-action@v2.3.3
         if: always() # Run regardless of whether other steps failed
         with:
