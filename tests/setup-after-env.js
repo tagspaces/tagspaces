@@ -6,6 +6,7 @@ import {
   testDataRefresh
 } from './e2e/hook';
 import { closeWelcome, closeWelcomePlaywright } from './e2e/welcome.helpers';
+import { clearStorage } from './e2e/clearstorage.helpers';
 
 // the default timeout before starting every test
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 300000;
@@ -74,8 +75,8 @@ beforeEach(async () => {
   }
 });
 
-// afterEach(async () => {
-//   // takeScreenshot();
-//   // await clearLocalStorage();
-//   await clearStorage();
-// });
+afterEach(async () => {
+  //   // takeScreenshot();
+  //   // await clearLocalStorage();
+  await clearStorage();
+});

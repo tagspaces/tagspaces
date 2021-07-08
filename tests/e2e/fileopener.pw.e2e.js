@@ -15,6 +15,7 @@ import {
   selectorFile,
   selectorFolder,
   setInputKeys,
+  setInputValue,
   setSettings,
   waitForNotification
 } from './general.helpers';
@@ -50,12 +51,12 @@ describe('TST08 - File folder properties', () => {
     const firstFileName = await getGridFileName(0);
     expect(firstFileName).toBe(propsFileName);
 
-    await global.client.keys('ArrowDown');
+    await global.client.keyboard.press('ArrowDown');
     const propsNextFileName = await getPropertiesFileName();
     const secondFileName = await getGridFileName(1);
     expect(secondFileName).toBe(propsNextFileName);
 
-    await global.client.keys('ArrowUp');
+    await global.client.keyboard.press('ArrowUp');
     const propsPrevFileName = await getPropertiesFileName();
     expect(propsPrevFileName).toBe(firstFileName);
   });
@@ -118,7 +119,8 @@ describe('TST08 - File folder properties', () => {
 
     const propsFileName = await getPropertiesFileName();
     await clickOn('[data-tid=startRenameEntryTID]');
-    await setInputKeys('fileNameProperties', newTile);
+    // await setInputKeys('fileNameProperties', newTile);
+    await setInputValue('[data-tid=fileNameProperties] input', newTile);
     await clickOn('[data-tid=confirmRenameEntryTID]');
     await waitForNotification();
     const propsNewFileName = await getPropertiesFileName();
@@ -126,7 +128,8 @@ describe('TST08 - File folder properties', () => {
 
     //turn fileName back
     await clickOn('[data-tid=startRenameEntryTID]');
-    await setInputKeys('fileNameProperties', propsFileName);
+    // await setInputKeys('fileNameProperties', propsFileName);
+    await setInputValue('[data-tid=fileNameProperties] input', propsFileName);
     await clickOn('[data-tid=confirmRenameEntryTID]');
     await waitForNotification();
     const propsOldFileName = await getPropertiesFileName();
@@ -142,7 +145,7 @@ describe('TST08 - File folder properties', () => {
 
     const propsFolderName = await getPropertiesFileName();
     await clickOn('[data-tid=startRenameEntryTID]');
-    await setInputKeys('fileNameProperties', newTile);
+    await setInputValue('[data-tid=fileNameProperties] input', newTile);
     await clickOn('[data-tid=confirmRenameEntryTID]');
     await waitForNotification();
     const propsNewFolderName = await getPropertiesFileName();
@@ -150,7 +153,7 @@ describe('TST08 - File folder properties', () => {
 
     //turn folderName back
     await clickOn('[data-tid=startRenameEntryTID]');
-    await setInputKeys('fileNameProperties', propsFolderName);
+    await setInputValue('[data-tid=fileNameProperties] input', propsFolderName);
     await clickOn('[data-tid=confirmRenameEntryTID]');
     await waitForNotification();
     const propsOldFileName = await getPropertiesFileName();
@@ -178,10 +181,14 @@ describe('TST08 - File folder properties', () => {
   });
 
   it('TST0810 - Tag file drag&drop in file opener [web]', async () => {
+    const tagName = 'article';
     await clickOn('[data-tid=tagLibrary]');
-    await dragDrop('button[title=article]', selectorFile);
+    await dragDrop('button[title=' + tagName + ']', selectorFile);
 
-    // expect(propsNewTags.includes(tagName)).toBe(true); //TODO expect
+    await clickOn(selectorFile);
+    await clickOn('[data-tid=fileContainerToggleProperties]');
+    const propsTags = await getPropertiesTags();
+    expect(propsTags.includes(tagName)).toBe(true);
   });
 
   it('TST3002 - Add and remove tag to a folder [web,minio,electron]', async () => {
@@ -217,9 +224,6 @@ describe('TST08 - File folder properties', () => {
 
     const propsFileName = await getPropertiesFileName();
     await clickOn('[data-tid=deleteEntryTID]');
-    /*if (global.isWeb) {
-      await global.client.pause(500);
-    }*/
     await clickOn('[data-tid=confirmSaveBeforeCloseDialog]');
     await waitForNotification();
     const firstFileName = await getGridFileName(0);

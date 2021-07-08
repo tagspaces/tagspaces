@@ -27,15 +27,21 @@ export async function clearLocalStorage() {
     global.app.webContents.reload();
   }*/
   if (global.isWeb) {
-    //clearAllURLParams && clears everything in localStorage
-    await global.client.execute(
-      "window.history.pushState('', document.title, window.location.pathname);localStorage.clear();"
-    );
-    // global.client.executeScript('window.localStorage.clear()');
-    // global.client.clearLocalStorage();
-    // window.localStorage.clear();
-    //await global.client.reloadSession();
-    await global.client.refresh();
+    if (isPlaywright) {
+      const windowHandle = await global.client.evaluateHandle(() => window);
+      const title = await global.client.evaluateHandle(() => document.title);
+      windowHandle.history.pushState('', title, windowHandle.location.pathname);
+    } else {
+      //clearAllURLParams && clears everything in localStorage
+      await global.client.execute(
+        "window.history.pushState('', document.title, window.location.pathname);localStorage.clear();"
+      );
+      // global.client.executeScript('window.localStorage.clear()');
+      // global.client.clearLocalStorage();
+      // window.localStorage.clear();
+      //await global.client.reloadSession();
+      await global.client.refresh();
+    }
   } else {
     await global.app.webContents.executeJavaScript(
       "window.history.pushState('', document.title, window.location.pathname);localStorage.clear()"
@@ -63,7 +69,7 @@ export async function startSpectronApp() {
   if (global.isWeb) {
     if (global.isPlaywright) {
       const { webkit, chromium } = require('playwright');
-      global.app = await chromium.launch(); //{ headless: false, slowMo: 50 }); //browser
+      global.app = await chromium.launch({ headless: false, slowMo: 50 }); //browser
 
       global.context = await global.app.newContext();
 

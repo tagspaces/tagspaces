@@ -1,6 +1,7 @@
 import {
   clickOn,
   expectElementExist,
+  isDisplayed,
   setInputValue,
   waitForNotification
 } from './general.helpers';
@@ -24,8 +25,7 @@ export const firstTagButton = '/tbody/tr[1]/td[3]/button[1]';
  * @returns {Promise<void>}
  */
 export async function searchEngine(filename, options = {}) {
-  const textQuery = await global.client.$('#textQuery');
-  if (!(await textQuery.isDisplayed())) {
+  if (!(await isDisplayed('#textQuery'))) {
     await clickOn('[data-tid=search]');
   }
   await expectElementExist('#textQuery', true);
@@ -50,9 +50,6 @@ export async function searchEngine(filename, options = {}) {
     await clickOn('#searchButton');
   }
   await waitForNotification('TIDSearching');
-  if (!global.isElectron) {
-    await global.client.pause(1500); //todo: for minio search is slow
-  }
 }
 
 /*describe('TST06 - Test Search in file structure:', () => {

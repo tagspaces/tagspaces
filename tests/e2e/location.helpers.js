@@ -3,6 +3,8 @@ import { delay } from './hook';
 import { firstFile, openContextEntryMenu } from './test-utils';
 import {
   clickOn,
+  getElementText,
+  isDisplayed,
   selectorFile,
   setInputKeys,
   waitForNotification
@@ -184,27 +186,8 @@ export async function openLocation(locationName) {
 }
 
 export async function closeFileProperties() {
-  let fileContainerCloseOpenedFile;
-  if (global.isPlaywright) {
-    try {
-      fileContainerCloseOpenedFile = await global.client.waitForSelector(
-        '[data-tid=fileContainerCloseOpenedFile]',
-        {
-          timeout: 200
-        }
-      );
-      await global.client.click(fileContainerCloseOpenedFile);
-    } catch (error) {
-      console.log('The FileProperties not open.');
-    }
-  } else {
-    fileContainerCloseOpenedFile = await global.client.$(
-      '[data-tid=fileContainerCloseOpenedFile]'
-    );
-    if (await fileContainerCloseOpenedFile.isDisplayed()) {
-      //.isClickable()) {
-      await fileContainerCloseOpenedFile.click();
-    }
+  if (await isDisplayed('[data-tid=fileContainerCloseOpenedFile]')) {
+    await clickOn('[data-tid=fileContainerCloseOpenedFile]');
   }
 }
 
@@ -268,7 +251,7 @@ export async function getPropertiesTags() {
     const dataTid = await tags[i].getAttribute('data-tid');
     if (dataTid && dataTid.startsWith('tagContainer_')) {
       const label = await tags[i].$('button span span');
-      arrTags.push(await label.getText());
+      arrTags.push(await getElementText(label));
     }
   }
   return arrTags;
