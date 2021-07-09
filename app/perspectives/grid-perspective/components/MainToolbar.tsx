@@ -52,6 +52,7 @@ interface Props {
   handleExportCsvMenu: () => void;
   layoutType: string;
   isDesktopMode: boolean;
+  openSettings: () => void;
 }
 
 const MainToolbar = (props: Props) => {
@@ -70,7 +71,8 @@ const MainToolbar = (props: Props) => {
     fileOperationsEnabled,
     handleSortingMenu,
     handleOptionsMenu,
-    isDesktopMode
+    isDesktopMode,
+    openSettings
   } = props;
 
   return (
@@ -188,9 +190,7 @@ const MainToolbar = (props: Props) => {
       <Tooltip title={i18n.t('core:options')}>
         <IconButton
           data-tid="gridPerspectiveOptionsMenu"
-          onClick={e => {
-            handleOptionsMenu(e);
-          }}
+          onClick={openSettings}
         >
           <SettingsIcon />
         </IconButton>

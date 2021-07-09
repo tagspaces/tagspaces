@@ -113,6 +113,7 @@ const GridSettingsDialog = (props: Props) => {
     if (name === 'limit') {
       newGridPageLimit = roughScale(value);
     }
+    props.setGridPageLimit(newGridPageLimit);
   };
 
   function roughScale(x) {
@@ -126,209 +127,189 @@ const GridSettingsDialog = (props: Props) => {
   const { classes } = props;
 
   return (
-    <List className={classes.root}>
-      <ListItem className={classes.listItem}>
-        <ListItemText primary={i18n.t('core:showHideDirectories')} />
-        <Switch
-          checked={showDirectories}
-          onClick={() => props.toggleShowDirectories}
-          name="checkedB"
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullScreen={fullScreen}
+      keepMounted
+      scroll="paper"
+    >
+      <DialogTitle>{i18n.t('core:perspectiveSettingsTitle')}</DialogTitle>
+      <DialogContent>
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={showDirectories}
+                onChange={toggleShowDirectories}
+                name="checkedB"
+                color="primary"
+              />
+            }
+            label={i18n.t('core:showHideDirectories')}
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                checked={showTags}
+                onChange={toggleShowTags}
+                name="checkedB"
+                color="primary"
+              />
+            }
+            label={i18n.t('core:showTags')}
+          />
+        </FormGroup>
+        <Divider />
+        <MenuItem
+          data-tid="gridPerspectiveToggleThumbnailsMode"
+          title={i18n.t('core:toggleThumbnailModeTitle')}
+          aria-label={i18n.t('core:toggleThumbnailMode')}
+          onClick={toggleThumbnailsMode}
+        >
+          <ListItemIcon>
+            {thumbnailMode === 'cover' ? (
+              <ThumbnailCoverIcon />
+            ) : (
+              <ThumbnailContainIcon />
+            )}
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:toggleThumbnailMode')} />
+        </MenuItem>
+        <Divider />
+        <MenuItem
+          data-tid="gridPerspectiveEntrySizeSmall"
+          title={i18n.t('core:entrySizeSmall')}
+          aria-label={i18n.t('core:entrySizeSmall')}
+          onClick={() => changeEntrySize('small')}
+        >
+          <ListItemIcon>
+            {entrySize === 'small' ? (
+              <RadioCheckedIcon />
+            ) : (
+              <RadioUncheckedIcon />
+            )}
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:entrySizeSmall')} />
+        </MenuItem>
+        <MenuItem
+          data-tid="gridPerspectiveEntrySizeNormal"
+          title={i18n.t('core:entrySizeNormal')}
+          aria-label={i18n.t('core:entrySizeNormal')}
+          onClick={() => changeEntrySize('normal')}
+        >
+          <ListItemIcon>
+            {entrySize === 'normal' ? (
+              <RadioCheckedIcon />
+            ) : (
+              <RadioUncheckedIcon />
+            )}
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:entrySizeNormal')} />
+        </MenuItem>
+        <MenuItem
+          data-tid="gridPerspectiveEntrySizeBig"
+          title={i18n.t('core:entrySizeBig')}
+          aria-label={i18n.t('core:entrySizeBig')}
+          onClick={() => changeEntrySize('big')}
+        >
+          <ListItemIcon>
+            {entrySize === 'big' ? (
+              <RadioCheckedIcon />
+            ) : (
+              <RadioUncheckedIcon />
+            )}
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:entrySizeBig')} />
+        </MenuItem>
+        <Divider />
+        <MenuItem
+          data-tid="gridPerspectiveSingleClickOpenInternally"
+          title={i18n.t('core:singleClickOpenInternally')}
+          aria-label={i18n.t('core:singleClickOpenInternally')}
+          onClick={() => changeSingleClickAction('openInternal')}
+        >
+          <ListItemIcon>
+            {singleClickAction === 'openInternal' ? (
+              <RadioCheckedIcon />
+            ) : (
+              <RadioUncheckedIcon />
+            )}
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:singleClickOpenInternally')} />
+        </MenuItem>
+        <MenuItem
+          data-tid="gridPerspectiveSingleClickOpenExternally"
+          title={i18n.t('core:singleClickOpenExternally')}
+          aria-label={i18n.t('core:singleClickOpenExternally')}
+          onClick={() => changeSingleClickAction('openExternal')}
+        >
+          <ListItemIcon>
+            {singleClickAction === 'openExternal' ? (
+              <RadioCheckedIcon />
+            ) : (
+              <RadioUncheckedIcon />
+            )}
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:singleClickOpenExternally')} />
+        </MenuItem>
+        <MenuItem
+          data-tid="gridPerspectiveSingleClickSelects"
+          title={i18n.t('core:singleClickSelects')}
+          aria-label={i18n.t('core:singleClickSelects')}
+          onClick={() => changeSingleClickAction('selects')}
+        >
+          <ListItemIcon>
+            {singleClickAction === 'selects' ? (
+              <RadioCheckedIcon />
+            ) : (
+              <RadioUncheckedIcon />
+            )}
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:singleClickSelects')} />
+        </MenuItem>
+        <Divider />
+        <FormControl
+          fullWidth={true}
+          /* error={this.state.inputError} */
+          style={{ overflow: 'visible' }}
+        >
+          <InputLabel shrink htmlFor="pageLimit">
+            {i18n.t('core:pageLimit')}
+          </InputLabel>
+          <Select
+            name="limit"
+            defaultValue={gridPageLimit}
+            onChange={handleGridPaginationLimit}
+          >
+            <MenuItem value={20}>20</MenuItem>
+            <MenuItem value={50}>50</MenuItem>
+            <MenuItem value={100}>100</MenuItem>
+            <MenuItem value={500}>500</MenuItem>
+            <MenuItem value={undefined}>{i18n.t('core:unlimited')}</MenuItem>
+          </Select>
+          <FormHelperText>{i18n.t('core:pageLimitHelp')}</FormHelperText>
+        </FormControl>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          data-tid="gridPerspectiveHelp"
+          title={i18n.t('core:help')}
+          onClick={openHelpWebPage}
           color="primary"
-        />
-      </ListItem>
-    </List>
-    // <Dialog
-    //   open={open}
-    //   onClose={onClose}
-    //   fullScreen={fullScreen}
-    //   keepMounted
-    //   scroll="paper"
-    // >
-    //   <DialogTitle>{i18n.t('core:perspectiveSettingsTitle')}</DialogTitle>
-    //   <DialogContent>
-    //     <FormGroup>
-    //       <FormControlLabel
-    //         control={
-    //           <Switch
-    //             checked={showDirectories}
-    //             onChange={toggleShowDirectories}
-    //             name="checkedB"
-    //             color="primary"
-    //           />
-    //         }
-    //         label={i18n.t('core:showHideDirectories')}
-    //       />
-    //       <FormControlLabel
-    //         control={
-    //           <Switch
-    //             checked={showTags}
-    //             onChange={toggleShowTags}
-    //             name="checkedB"
-    //             color="primary"
-    //           />
-    //         }
-    //         label={i18n.t('core:showTags')}
-    //       />
-    //     </FormGroup>
-    //     <Divider />
-    //     <MenuItem
-    //       data-tid="gridPerspectiveToggleThumbnailsMode"
-    //       title={i18n.t('core:toggleThumbnailModeTitle')}
-    //       aria-label={i18n.t('core:toggleThumbnailMode')}
-    //       onClick={toggleThumbnailsMode}
-    //     >
-    //       <ListItemIcon>
-    //         {thumbnailMode === 'cover' ? (
-    //           <ThumbnailCoverIcon />
-    //         ) : (
-    //           <ThumbnailContainIcon />
-    //         )}
-    //       </ListItemIcon>
-    //       <ListItemText primary={i18n.t('core:toggleThumbnailMode')} />
-    //     </MenuItem>
-    //     <Divider />
-    //     <MenuItem
-    //       data-tid="gridPerspectiveEntrySizeSmall"
-    //       title={i18n.t('core:entrySizeSmall')}
-    //       aria-label={i18n.t('core:entrySizeSmall')}
-    //       onClick={() => changeEntrySize('small')}
-    //     >
-    //       <ListItemIcon>
-    //         {entrySize === 'small' ? (
-    //           <RadioCheckedIcon />
-    //         ) : (
-    //           <RadioUncheckedIcon />
-    //         )}
-    //       </ListItemIcon>
-    //       <ListItemText primary={i18n.t('core:entrySizeSmall')} />
-    //     </MenuItem>
-    //     <MenuItem
-    //       data-tid="gridPerspectiveEntrySizeNormal"
-    //       title={i18n.t('core:entrySizeNormal')}
-    //       aria-label={i18n.t('core:entrySizeNormal')}
-    //       onClick={() => changeEntrySize('normal')}
-    //     >
-    //       <ListItemIcon>
-    //         {entrySize === 'normal' ? (
-    //           <RadioCheckedIcon />
-    //         ) : (
-    //           <RadioUncheckedIcon />
-    //         )}
-    //       </ListItemIcon>
-    //       <ListItemText primary={i18n.t('core:entrySizeNormal')} />
-    //     </MenuItem>
-    //     <MenuItem
-    //       data-tid="gridPerspectiveEntrySizeBig"
-    //       title={i18n.t('core:entrySizeBig')}
-    //       aria-label={i18n.t('core:entrySizeBig')}
-    //       onClick={() => changeEntrySize('big')}
-    //     >
-    //       <ListItemIcon>
-    //         {entrySize === 'big' ? (
-    //           <RadioCheckedIcon />
-    //         ) : (
-    //           <RadioUncheckedIcon />
-    //         )}
-    //       </ListItemIcon>
-    //       <ListItemText primary={i18n.t('core:entrySizeBig')} />
-    //     </MenuItem>
-    //     <Divider />
-    //     <MenuItem
-    //       data-tid="gridPerspectiveSingleClickOpenInternally"
-    //       title={i18n.t('core:singleClickOpenInternally')}
-    //       aria-label={i18n.t('core:singleClickOpenInternally')}
-    //       onClick={() => changeSingleClickAction('openInternal')}
-    //     >
-    //       <ListItemIcon>
-    //         {singleClickAction === 'openInternal' ? (
-    //           <RadioCheckedIcon />
-    //         ) : (
-    //           <RadioUncheckedIcon />
-    //         )}
-    //       </ListItemIcon>
-    //       <ListItemText primary={i18n.t('core:singleClickOpenInternally')} />
-    //     </MenuItem>
-    //     <MenuItem
-    //       data-tid="gridPerspectiveSingleClickOpenExternally"
-    //       title={i18n.t('core:singleClickOpenExternally')}
-    //       aria-label={i18n.t('core:singleClickOpenExternally')}
-    //       onClick={() => changeSingleClickAction('openExternal')}
-    //     >
-    //       <ListItemIcon>
-    //         {singleClickAction === 'openExternal' ? (
-    //           <RadioCheckedIcon />
-    //         ) : (
-    //           <RadioUncheckedIcon />
-    //         )}
-    //       </ListItemIcon>
-    //       <ListItemText primary={i18n.t('core:singleClickOpenExternally')} />
-    //     </MenuItem>
-    //     <MenuItem
-    //       data-tid="gridPerspectiveSingleClickSelects"
-    //       title={i18n.t('core:singleClickSelects')}
-    //       aria-label={i18n.t('core:singleClickSelects')}
-    //       onClick={() => changeSingleClickAction('selects')}
-    //     >
-    //       <ListItemIcon>
-    //         {singleClickAction === 'selects' ? (
-    //           <RadioCheckedIcon />
-    //         ) : (
-    //           <RadioUncheckedIcon />
-    //         )}
-    //       </ListItemIcon>
-    //       <ListItemText primary={i18n.t('core:singleClickSelects')} />
-    //     </MenuItem>
-    //     <Divider />
-    //     <FormControl
-    //       fullWidth={true}
-    //       /* error={this.state.inputError} */
-    //       style={{ overflow: 'visible' }}
-    //     >
-    //       <InputLabel shrink htmlFor="pageLimit">
-    //         {i18n.t('core:pageLimit')}
-    //       </InputLabel>
-    //       <Select
-    //         name="limit"
-    //         defaultValue={gridPageLimit}
-    //         onChange={handleGridPaginationLimit}
-    //       >
-    //         <MenuItem value={20}>20</MenuItem>
-    //         <MenuItem value={50}>50</MenuItem>
-    //         <MenuItem value={100}>100</MenuItem>
-    //         <MenuItem value={500}>500</MenuItem>
-    //         <MenuItem value={undefined}>{i18n.t('core:unlimited')}</MenuItem>
-    //       </Select>
-    //       <FormHelperText>{i18n.t('core:pageLimitHelp')}</FormHelperText>
-    //     </FormControl>
-    //   </DialogContent>
-    //   <DialogActions>
-    //     <Button
-    //       data-tid="gridPerspectiveHelp"
-    //       title={i18n.t('core:help')}
-    //       onClick={openHelpWebPage}
-    //       color="primary"
-    //     >
-    //       {i18n.t('core:help')}
-    //     </Button>
-    //     <Button
-    //       data-tid="cancelDialog"
-    //       title={i18n.t('core:cancel')}
-    //       onClick={onClose}
-    //       color="primary"
-    //     >
-    //       {i18n.t('core:cancel')}
-    //     </Button>
-
-    //     <Button
-    //       data-tid="closeGridSettingsDialog"
-    //       title={i18n.t('core:Ok')}
-    //       onClick={() => props.setGridPageLimit(newGridPageLimit)}
-    //       color="primary"
-    //     >
-    //       {i18n.t('core:ok')}
-    //     </Button>
-    //   </DialogActions>
-    // </Dialog>
+        >
+          {i18n.t('core:help')}
+        </Button>
+        <Button
+          data-tid="cancelDialog"
+          title={i18n.t('core:closeButton')}
+          onClick={onClose}
+          color="primary"
+        >
+          {i18n.t('core:closeButton')}
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 

@@ -741,6 +741,7 @@ const GridPerspective = (props: Props) => {
         handleOptionsMenu={handleOptionsMenu}
         handleExportCsvMenu={handleExportCsvMenu}
         isDesktopMode={props.isDesktopMode}
+        openSettings={openSettings}
       />
       <GlobalHotKeys
         keyMap={keyMap}
