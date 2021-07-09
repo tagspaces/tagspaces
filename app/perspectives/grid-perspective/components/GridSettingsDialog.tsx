@@ -22,7 +22,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  withMobileDialog,
   FormControl,
   FormControlLabel,
   FormGroup,
@@ -40,9 +39,8 @@ import ThumbnailCoverIcon from '@material-ui/icons/PhotoSizeSelectActual';
 import ThumbnailContainIcon from '@material-ui/icons/PhotoSizeSelectLarge';
 import RadioCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 import RadioUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
 import { withStyles } from '@material-ui/core/styles';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import i18n from '-/services/i18n';
 
 const styles: any = {
@@ -64,7 +62,6 @@ const styles: any = {
 
 interface Props {
   open: boolean;
-  fullScreen: boolean;
   gridPageLimit: number;
   onClose: () => void;
   setGridPageLimit: (number) => void;
@@ -87,7 +84,6 @@ const GridSettingsDialog = (props: Props) => {
   const {
     open,
     onClose,
-    fullScreen,
     gridPageLimit,
     toggleShowDirectories,
     showDirectories,
@@ -124,17 +120,12 @@ const GridSettingsDialog = (props: Props) => {
     return parsed;
   }
 
-  const { classes } = props;
-
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      fullScreen={fullScreen}
-      keepMounted
-      scroll="paper"
-    >
-      <DialogTitle>{i18n.t('core:perspectiveSettingsTitle')}</DialogTitle>
+    <Dialog open={open} onClose={onClose} keepMounted scroll="paper">
+      <DialogTitle>
+        {i18n.t('core:perspectiveSettingsTitle')}
+        <DialogCloseButton onClose={onClose} />
+      </DialogTitle>
       <DialogContent>
         <FormGroup>
           <FormControlLabel
@@ -271,8 +262,7 @@ const GridSettingsDialog = (props: Props) => {
         <Divider />
         <FormControl
           fullWidth={true}
-          /* error={this.state.inputError} */
-          style={{ overflow: 'visible' }}
+          style={{ overflow: 'visible', marginTop: 20 }}
         >
           <InputLabel shrink htmlFor="pageLimit">
             {i18n.t('core:pageLimit')}
@@ -291,12 +281,11 @@ const GridSettingsDialog = (props: Props) => {
           <FormHelperText>{i18n.t('core:pageLimitHelp')}</FormHelperText>
         </FormControl>
       </DialogContent>
-      <DialogActions>
+      <DialogActions style={{ justifyContent: 'space-between' }}>
         <Button
           data-tid="gridPerspectiveHelp"
           title={i18n.t('core:help')}
           onClick={openHelpWebPage}
-          color="primary"
         >
           {i18n.t('core:help')}
         </Button>
@@ -313,6 +302,4 @@ const GridSettingsDialog = (props: Props) => {
   );
 };
 
-export default withMobileDialog()(
-  withStyles(styles, { withTheme: true })(GridSettingsDialog)
-);
+export default withStyles(styles, { withTheme: true })(GridSettingsDialog);

@@ -267,11 +267,6 @@ const GridPerspective = (props: Props) => {
     setSortingContextMenuAnchorEl(anchor);
   };
 
-  const handleOptionsMenu = event => {
-    const anchor = event ? event.currentTarget : null;
-    setOptionsContextMenuAnchorEl(anchor);
-  };
-
   const handleExportCsvMenu = () => {
     if (Pro) {
       Pro.exportAsCsv.ExportAsCsv(props.directoryContent);
@@ -738,7 +733,6 @@ const GridPerspective = (props: Props) => {
         openMoveCopyFilesDialog={openMoveCopyFilesDialog}
         openDeleteFileDialog={openDeleteFileDialog}
         handleSortingMenu={handleSortingMenu}
-        handleOptionsMenu={handleOptionsMenu}
         handleExportCsvMenu={handleExportCsvMenu}
         isDesktopMode={props.isDesktopMode}
         openSettings={openSettings}

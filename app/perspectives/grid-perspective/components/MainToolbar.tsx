@@ -48,7 +48,6 @@ interface Props {
   openMoveCopyFilesDialog: () => void;
   openDeleteFileDialog: () => void;
   handleSortingMenu: (event: Object) => void;
-  handleOptionsMenu: (event: Object) => void;
   handleExportCsvMenu: () => void;
   layoutType: string;
   isDesktopMode: boolean;
@@ -70,7 +69,6 @@ const MainToolbar = (props: Props) => {
     openDeleteFileDialog,
     fileOperationsEnabled,
     handleSortingMenu,
-    handleOptionsMenu,
     isDesktopMode,
     openSettings
   } = props;
