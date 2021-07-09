@@ -741,6 +741,7 @@ const GridPerspective = (props: Props) => {
         handleOptionsMenu={handleOptionsMenu}
         handleExportCsvMenu={handleExportCsvMenu}
         isDesktopMode={props.isDesktopMode}
+        openSettings={openSettings}
       />
       <GlobalHotKeys
         keyMap={keyMap}
@@ -797,6 +798,17 @@ const GridPerspective = (props: Props) => {
           onClose={() => setIsGridSettingsDialogOpened(false)}
           setGridPageLimit={handleGridPageLimit}
           gridPageLimit={gridPageLimit}
+          toggleShowDirectories={toggleShowDirectories}
+          toggleShowTags={toggleShowTags}
+          showDirectories={showDirectories}
+          showTags={showTags}
+          toggleThumbnailsMode={toggleThumbnailsMode}
+          thumbnailMode={thumbnailMode}
+          changeEntrySize={changeEntrySize}
+          entrySize={entrySize}
+          changeSingleClickAction={changeSingleClickAction}
+          singleClickAction={singleClickAction}
+          openHelpWebPage={openHelpWebPage}
         />
       )}
       {isMoveCopyFilesDialogOpened && (
