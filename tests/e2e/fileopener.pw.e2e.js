@@ -95,7 +95,7 @@ describe('TST08 - File folder properties', () => {
     expect(lastFileName).toBe(propsNextFileName);
   });
 
-  it('TST0804 - Open file in full width playwright [web,minio,electron]', async () => {
+  it('TST0804 - Open file in full width [web,minio,electron]', async () => {
     //expect.extend(matchers);
     //await clickOn('[data-tid=location_supported-filestypes]');
     // open fileProperties
@@ -110,8 +110,8 @@ describe('TST08 - File folder properties', () => {
   });
 
   it('TST0805 - Rename opened file [web,minio,electron]', async () => {
-    const newTile = 'fileRenamed.txt';
-    await searchEngine('txt');
+    const newTile = 'renamed.txt';
+    // await searchEngine('txt');
     // open fileProperties
     await clickOn(selectorFile);
     //Toggle Properties
@@ -214,7 +214,8 @@ describe('TST08 - File folder properties', () => {
   it('TST0813 - Delete file [web,minio,electron]', async () => {
     await createTxtFile();
     await searchEngine('note');
-
+    await waitForNotification();
+    await global.client.waitForTimeout(1500); // To do wait for search results
     await expectElementExist(selectorFile, true);
 
     // open fileProperties
@@ -226,8 +227,9 @@ describe('TST08 - File folder properties', () => {
     await clickOn('[data-tid=deleteEntryTID]');
     await clickOn('[data-tid=confirmSaveBeforeCloseDialog]');
     await waitForNotification();
-    const firstFileName = await getGridFileName(0);
-    expect(propsFileName).not.toBe(firstFileName);
+    await expectElementExist(selectorFile, false, 2000);
+    //const firstFileName = await getGridFileName(0);
+    //expect(propsFileName).not.toBe(firstFileName);
   });
 
   it('TST0814 - Open file fullscreen and exit with close button [web,minio,electron]', async () => {

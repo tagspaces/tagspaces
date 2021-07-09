@@ -7,6 +7,7 @@ import {
 } from './e2e/hook';
 import { closeWelcome, closeWelcomePlaywright } from './e2e/welcome.helpers';
 import { clearStorage } from './e2e/clearstorage.helpers';
+import pathLib from 'path';
 
 // the default timeout before starting every test
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 300000;
@@ -56,6 +57,16 @@ afterAll(async () => {
 
 beforeEach(async () => {
   if (global.isPlaywright) {
+    if (global.context) {
+      if (jasmine.currentTest && jasmine.currentTest.status !== 'disabled') {
+        // Start tracing before creating / navigating a page.
+        await global.context.tracing.start({
+          screenshots: true,
+          snapshots: true
+        });
+      }
+    }
+
     // if (global.isMinio) {
     await closeWelcomePlaywright();
     // }
@@ -78,5 +89,19 @@ beforeEach(async () => {
 afterEach(async () => {
   //   // takeScreenshot();
   //   // await clearLocalStorage();
+  // testDataRefresh();
+  if (global.context) {
+    if (jasmine.currentTest && jasmine.currentTest.status !== 'disabled') {
+      // console.log('specDone Done' + JSON.stringify(result));
+      // if (jasmine.previousTest && jasmine.previousTest.status === 'failed') {
+      await global.context.tracing.stop({
+        path: pathLib.join(
+          __dirname,
+          'test-reports/' + jasmine.currentTest.description + '.zip'
+        )
+      });
+      //}
+    }
+  }
   await clearStorage();
 });

@@ -28,7 +28,7 @@ export async function searchEngine(filename, options = {}) {
   if (!(await isDisplayed('#textQuery'))) {
     await clickOn('[data-tid=search]');
   }
-  await expectElementExist('#textQuery', true);
+  // await expectElementExist('#textQuery', true);
   await setInputValue('#textQuery', filename);
 
   if (options.tagName) {

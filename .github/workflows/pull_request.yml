@@ -146,4 +146,4 @@ jobs:
   #        yarn install-ext
   #        yarn build-main
   #        yarn build-e2e
-  #        yarn test-e2e-electron
+  #        yarn test-playwright

@@ -22,8 +22,8 @@ import path from 'path';
 
 // require('@electron/remote/main').initialize();
 
-delete process.env.ELECTRON_ENABLE_SECURITY_WARNINGS;
-process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
+// delete process.env.ELECTRON_ENABLE_SECURITY_WARNINGS;
+// process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
 
 let mainWindow = null;
 (global as any).splashWorkerWindow = null;

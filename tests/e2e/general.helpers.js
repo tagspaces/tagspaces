@@ -248,11 +248,12 @@ export async function getElementText(el) {
   return await el.getText();
 }
 
-export async function isDisplayed(selector, timeout = 200) {
+export async function isDisplayed(selector, displayed = true, timeout = 200) {
   if (global.isPlaywright) {
     try {
       const el = await global.client.waitForSelector(selector, {
-        timeout
+        timeout,
+        state: displayed ? 'visible' : 'detached'
       });
       return el !== undefined;
     } catch (error) {
@@ -294,7 +295,8 @@ export async function expectElementExist(
   exist = true,
   timeout = 200
 ) {
-  expect(await isDisplayed(selector, timeout)).toBe(exist);
+  const displayed = await isDisplayed(selector, exist, timeout);
+  expect(displayed).toBe(true);
   // return element;
 }
 
@@ -568,17 +570,21 @@ export async function expectTagsExist(gridElement, arrTagNames, exist = true) {
   }
 }
 
-export async function waitForNotification(tid = 'notificationTID') {
+export async function waitForNotification(
+  tid = 'notificationTID',
+  forceClose = true
+) {
   // await global.client.pause(500);
   // await expectElementExist('[data-tid=' + tid + ']', true, 8000);
-  const notificationTID = await global.client.$('[data-tid=' + tid + ']');
-  if (await isDisplayed(notificationTID)) {
-    const closeButton = await global.client.$('[data-tid=close' + tid + ']');
-    if (await isDisplayed(closeButton)) {
-      await clickOn(closeButton);
+  // const notificationTID = await global.client.$('[data-tid=' + tid + ']');
+  if (await isDisplayed('[data-tid=' + tid + ']')) {
+    //const closeButton = await global.client.$('[data-tid=close' + tid + ']');
+    if (forceClose && (await isDisplayed('[data-tid=close' + tid + ']'))) {
+      await clickOn('[data-tid=close' + tid + ']');
     } else {
       // autohide Notification
-      await expectElementExist('[data-tid=' + tid + ']', false, 1000);
+      await isDisplayed('[data-tid=' + tid + ']', false, 2000);
+      // await expectElementExist('[data-tid=' + tid + ']', false, 1000);
     }
   }
 }

@@ -69,14 +69,13 @@ export async function startSpectronApp() {
   if (global.isWeb) {
     if (global.isPlaywright) {
       const { webkit, chromium } = require('playwright');
-      global.app = await chromium.launch({ headless: global.isHeadlessMode, slowMo: 50 }); //browser
+      global.app = await chromium.launch({
+        headless: global.isHeadlessMode,
+        slowMo: 50
+      }); //browser
 
-      global.context = await global.app.newContext();
-
-      // Start tracing before creating / navigating a page.
-      await global.context.tracing.start({
-        screenshots: true,
-        snapshots: true
+      global.context = await global.app.newContext({
+        viewport: { width: 1920, height: 1080 }
       });
 
       global.client = await global.context.newPage(); //page
@@ -207,11 +206,6 @@ function setWdioImageComparisonService(browser) {
 
 export async function stopSpectronApp() {
   if (global.isPlaywright) {
-    if (global.context) {
-      await global.context.tracing.stop({
-        path: pathLib.join(__dirname, '../trace.zip')
-      });
-    }
     await global.app.close();
   } else if (global.isWeb) {
     await global.client.closeWindow();

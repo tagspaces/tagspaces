@@ -835,7 +835,7 @@ export default class ElectronIO {
     new Promise((resolve, reject) => {
       let result = true;
       files.forEach(fullPath => {
-        result = this.electron.shell.moveItemToTrash(fullPath);
+        result = this.electron.shell.trashItem(fullPath);
       });
       if (result) {
         resolve(true);

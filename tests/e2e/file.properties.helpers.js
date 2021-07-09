@@ -32,6 +32,7 @@ export async function AddRemovePropertiesTags(
       await global.client.keyboard.press('Enter');
       const tagDisplayed = await isDisplayed(
         '[data-tid=PropertiesTagsSelectTID] button[title=' + tagName + ']',
+        true,
         2000
       );
       expect(tagDisplayed).toBe(true);
@@ -44,9 +45,15 @@ export async function AddRemovePropertiesTags(
     for (let i = 0; i < tagNames.length; i++) {
       const tagName = tagNames[i];
       await removeTagFromTagMenu(tagName);
-      await global.client.waitForLoadState('networkidle'); //'domcontentloaded'); // load
+      // await global.client.waitForLoadState('networkidle'); //'networkidle'); //'domcontentloaded'); // load
+      await isDisplayed(
+        '[data-tid=PropertiesTagsSelectTID] button[title=' + tagName + ']',
+        false,
+        2000
+      );
+      // await global.client.waitForTimeout(1500);
       const propsNewTags = await getPropertiesTags();
-      console.log(JSON.stringify(propsNewTags));
+      // console.log(JSON.stringify(propsNewTags));
       expect(propsNewTags.includes(tagName)).toBe(false);
     }
   }

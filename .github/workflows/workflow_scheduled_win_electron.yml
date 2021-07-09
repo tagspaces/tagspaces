@@ -34,7 +34,7 @@ jobs:
           yarn install-ext
           yarn build-main
           yarn build-e2e
-          yarn test-e2e-electron
+          yarn test-playwright
       - uses: IgnusG/jest-report-action@v2.3.3
         if: always() # Run regardless of whether other steps failed
         with:
@@ -42,10 +42,13 @@ jobs:
           check-name: Jest Report Electron
           working-directory: tests
       - uses: actions/upload-artifact@v2
-        if: always()
+        if: failure()
         with:
-          name: test-pages
-          path: tests/test-pages/
+          name: test-artifacts
+          path: |
+            tests/test-pages/
+            tests/test-reports/
+
 #  e2eTestsElectronUbuntu:
 #    name: E2E Ubuntu Electron
 #    runs-on: ubuntu-latest
@@ -75,7 +78,7 @@ jobs:
 #          yarn install-ext
 #          yarn build-main
 #          yarn build-e2e
-#          yarn test-e2e-electron
+#          yarn test-playwright
 #      - uses: actions/upload-artifact@v2
 #        if: always()
 #        with:
