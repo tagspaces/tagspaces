@@ -434,10 +434,16 @@ const Search = (props: Props) => {
 
   const parseTextQuery = (identifier: string) => {
     const extractedTags = [];
-    const txt = textQuery.current
-      .trim()
-      .replace(new RegExp(escapeRegExp(identifier) + '\\s+', 'g'), identifier);
-    const textQueryParts = txt.split(' ');
+    let query = textQuery.current;
+    if (query && query.length > 0) {
+      query = query
+        .trim()
+        .replace(
+          new RegExp(escapeRegExp(identifier) + '\\s+', 'g'),
+          identifier
+        );
+    }
+    const textQueryParts = query.split(' ');
     let newTextQuery = '';
     if (textQueryParts) {
       // && textQueryParts.length > 1) {
