@@ -61,12 +61,16 @@ export async function AddRemovePropertiesTags(
 
 export async function getPropertiesFileName() {
   let fileName;
-  const propsFileNameInput = await global.client.$(
-    '[data-tid=fileNameProperties] input'
-  );
+
   if (global.isPlaywright) {
-    fileName = await propsFileNameInput.getAttribute('value'); // .inputValue(); https://github.com/microsoft/playwright/issues/3265
+    fileName = await global.client.getAttribute(
+      '[data-tid=fileNameProperties] input',
+      'value'
+    ); // .inputValue(); https://github.com/microsoft/playwright/issues/3265
   } else {
+    const propsFileNameInput = await global.client.$(
+      '[data-tid=fileNameProperties] input'
+    );
     await propsFileNameInput.waitForDisplayed({ timeout: 5000 });
     fileName = await propsFileNameInput.getValue();
   }
