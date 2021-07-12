@@ -96,7 +96,10 @@ describe('TST08 - File folder properties', () => {
     expect(lastFileName).toBe(propsNextFileName);
   });
 
-  it('TST0804 - Open file in full width [web,minio,electron]', async () => {
+  /**
+   * full width button not visible on electron (github app size specific)
+   */
+  it('TST0804 - Open file in full width [web,minio]', async () => {
     //expect.extend(matchers);
     //await clickOn('[data-tid=location_supported-filestypes]');
     // open fileProperties
@@ -205,7 +208,10 @@ describe('TST08 - File folder properties', () => {
 
   it.skip('TST3005 - Description for folders [Pro]', async () => {});
 
-  it('TST0812 - Reload file [web,minio,electron]', async () => {
+  /**
+   * reload file button not visible on electron (github app size specific)
+   */
+  it('TST0812 - Reload file [web,minio]', async () => {
     // open fileProperties
     await clickOn(selectorFile);
     //Toggle Properties
