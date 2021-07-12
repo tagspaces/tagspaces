@@ -5,7 +5,9 @@ import {
   takeScreenshot,
   testDataRefresh
 } from './e2e/hook';
-import { closeWelcome } from './e2e/welcome.helpers';
+import { closeWelcome, closeWelcomePlaywright } from './e2e/welcome.helpers';
+import { clearStorage } from './e2e/clearstorage.helpers';
+import pathLib from 'path';
 
 // the default timeout before starting every test
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 300000;
@@ -13,6 +15,7 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 300000;
 // global.isWin = /^win/.test(process.platform);
 // global.isMac = /^darwin/.test(process.platform);
 global.isWeb = process.env.NODE_JEST === 'test_web';
+global.isPlaywright = process.env.PLAYWRIGHT === 'test_playwright';
 global.isHeadlessMode = process.env.HEADLESS_MODE === 'true';
 global.isMinio = global.isWeb || process.env.NODE_JEST === 'test_minio';
 global.isElectron = process.env.NODE_JEST === 'test_electron';
@@ -53,23 +56,52 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
-  if (jasmine.currentTest && jasmine.currentTest.status !== 'disabled') {
-    // console.log('specDone Done' + JSON.stringify(result));
-    if (jasmine.previousTest && jasmine.previousTest.status === 'failed') {
-      await takeScreenshot(jasmine.previousTest.description);
+  if (global.isPlaywright) {
+    if (global.context) {
+      if (jasmine.currentTest && jasmine.currentTest.status !== 'disabled') {
+        // Start tracing before creating / navigating a page.
+        await global.context.tracing.start({
+          screenshots: true,
+          snapshots: true
+        });
+      }
     }
-    await clearLocalStorage(); //todo https://trello.com/c/hMCSKXWU/554-fix-takescreenshots-in-tests
-  }
 
-  if (global.isWeb) {
-    await global.client.pause(500);
-  }
+    // if (global.isMinio) {
+    await closeWelcomePlaywright();
+    // }
+  } else {
+    if (jasmine.currentTest && jasmine.currentTest.status !== 'disabled') {
+      // console.log('specDone Done' + JSON.stringify(result));
+      if (jasmine.previousTest && jasmine.previousTest.status === 'failed') {
+        await takeScreenshot(jasmine.previousTest.description);
+      }
+      await clearLocalStorage(); //todo https://trello.com/c/hMCSKXWU/554-fix-takescreenshots-in-tests
+    }
 
-  await closeWelcome();
+    if (global.isWeb) {
+      await global.client.pause(500);
+    }
+    await closeWelcome();
+  }
 });
 
-// afterEach(async () => {
-//   // takeScreenshot();
-//   // await clearLocalStorage();
-//   await clearStorage();
-// });
+afterEach(async () => {
+  //   // takeScreenshot();
+  //   // await clearLocalStorage();
+  // testDataRefresh();
+  if (global.context) {
+    if (jasmine.currentTest && jasmine.currentTest.status !== 'disabled') {
+      // console.log('specDone Done' + JSON.stringify(result));
+      // if (jasmine.previousTest && jasmine.previousTest.status === 'failed') {
+      await global.context.tracing.stop({
+        path: pathLib.join(
+          __dirname,
+          'test-reports/' + jasmine.currentTest.description + '.zip'
+        )
+      });
+      //}
+    }
+  }
+  await clearStorage();
+});

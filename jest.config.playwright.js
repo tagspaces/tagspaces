@@ -12,7 +12,8 @@ if (isWin) {
 } else if (isLinux) {
   os = '_linux';
 }
-const web = process.env.NODE_JEST === 'test_web' ? '_web' : '';
+const isPlaywright =
+  process.env.NODE_JEST === 'test_playwright' ? '_playwright' : '';
 const minio = process.env.NODE_JEST === 'test_minio' ? '_minio' : '';
 
 module.exports = async () => {
@@ -39,25 +40,25 @@ module.exports = async () => {
      * setupFiles: ran once per test file before all tests
      * https://jestjs.io/docs/en/configuration#setupfiles-array
      */
-    setupFiles: ['../scripts/test-config-env-web.js'],
+    setupFiles: ['../scripts/test-config-env-playwright.js'],
     /**
      * setupFilesAfterEnv: ran before each test
      *
      * https://jestjs.io/docs/en/configuration#setupfilesafterenv-array
      */
-    setupFilesAfterEnv: ['./setup-after-env.js'],
+    setupFilesAfterEnv: ['./setup-after-env.js', 'expect-playwright'],
     /**
      * globalSetup: ran once before all tests
      *
      * https://jestjs.io/docs/en/configuration#globalsetup-string
      */
-    globalSetup: './global-setup-web.js',
+    globalSetup: './global-setup.js',
     /**
      * globalTeardown: ran once after all tests
      *
      * https://jestjs.io/docs/en/configuration#globalteardown-string
      */
-    globalTeardown: './global-teardown-web.js',
+    globalTeardown: './global-teardown.js',
     moduleNameMapper: {
       '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
         '<rootDir>/internals/mocks/fileMock.js',
@@ -76,7 +77,12 @@ module.exports = async () => {
         {
           pageTitle: BRANCH_NAME + ' Test Report',
           outputPath:
-            './test-reports/' + BRANCH_NAME + os + web + minio + '.html'
+            './test-reports/' +
+            BRANCH_NAME +
+            os +
+            isPlaywright +
+            minio +
+            '.html'
         }
       ],
       'jest-junit'

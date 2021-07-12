@@ -16,22 +16,26 @@ const testFolder = 'testFolder';
 const testLocationName = '' + new Date().getTime();
 
 export async function clickOn(selector, options = {}) {
-  const element = await global.client.$(selector);
-  await element.waitUntil(
-    async function() {
-      const displayed = await this.isDisplayed();
-      // const clickable = await this.isClickable();
-      // const displayed = await this.isDisplayedInViewport();
-      return displayed; // && clickable;
-    },
-    {
-      timeout: 5000,
-      timeoutMsg: 'clickOn selector ' + selector + ' to exist after 5s'
-    }
-  );
-  //await element.scrollIntoView();
-  //await element.moveTo(selector);
-  await element.click(options);
+  if (global.isPlaywright) {
+    await global.client.click(selector, options);
+  } else {
+    const element = await global.client.$(selector);
+    await element.waitUntil(
+      async function() {
+        const displayed = await this.isDisplayed();
+        // const clickable = await this.isClickable();
+        // const displayed = await this.isDisplayedInViewport();
+        return displayed; // && clickable;
+      },
+      {
+        timeout: 5000,
+        timeoutMsg: 'clickOn selector ' + selector + ' to exist after 5s'
+      }
+    );
+    //await element.scrollIntoView();
+    //await element.moveTo(selector);
+    await element.click(options);
+  }
 }
 
 /*export async function waitUntilOpen(element) {
@@ -81,19 +85,23 @@ export async function doubleClickOn(selector) {
 }
 
 export async function setInputValue(selector, value) {
-  const element = await global.client.$(selector);
-  await element.waitUntil(
-    async function() {
-      // const displayed = await this.isDisplayed();
-      const displayed = await this.isDisplayedInViewport();
-      return displayed === true;
-    },
-    {
-      timeout: 5000,
-      timeoutMsg: 'setInputValue selector ' + selector + ' to exist after 5s'
-    }
-  );
-  await element.setValue(value);
+  if (isPlaywright) {
+    global.client.fill(selector, value);
+  } else {
+    const element = await global.client.$(selector);
+    await element.waitUntil(
+      async function() {
+        // const displayed = await this.isDisplayed();
+        const displayed = await this.isDisplayedInViewport();
+        return displayed === true;
+      },
+      {
+        timeout: 5000,
+        timeoutMsg: 'setInputValue selector ' + selector + ' to exist after 5s'
+      }
+    );
+    await element.setValue(value);
+  }
 }
 
 export async function addInputKeys(tid, value) {
@@ -128,8 +136,21 @@ export async function addInputKeys(tid, value) {
   await elemInput.keys(value);
 }
 
+/**
+ * TODO not work in Playwright
+ * @param tid
+ * @param value
+ * @returns {Promise<*>}
+ */
 export async function setInputKeys(tid, value) {
-  return await setSelectorKeys('[data-tid=' + tid + ']', value);
+  if (isPlaywright) {
+    // global.client.keyboard.type('[data-tid=' + tid + '] input', value, { delay: 100 });
+    await global.client.type('[data-tid=' + tid + '] input', value, {
+      delay: 100
+    });
+  } else {
+    return await setSelectorKeys('[data-tid=' + tid + ']', value);
+  }
 }
 
 export async function setSelectorKeys(selector, value) {
@@ -203,11 +224,11 @@ export async function getGridFileName(fileIndex) {
       file = await file.$('div');
       file = await file.$('div');
       const fileNameElem = await file.$('p');
-      const fileName = await fileNameElem.getText();
+      const fileName = await getElementText(fileNameElem);
       const divs = await file.$$('div');
       const lastDiv = await divs[divs.length - 1];
       const fileExtElem = await lastDiv.$('span');
-      const fileExt = await fileExtElem.getText();
+      const fileExt = await getElementText(fileExtElem);
       return fileName + '.' + fileExt.toLowerCase();
     } else {
       console.log(
@@ -218,6 +239,35 @@ export async function getGridFileName(fileIndex) {
     console.log("Can't find getGridFileName:" + fileIndex, e);
   }
   return undefined;
+}
+
+export async function getElementText(el) {
+  if (global.isPlaywright) {
+    return await el.innerText();
+  }
+  return await el.getText();
+}
+
+export async function isDisplayed(selector, displayed = true, timeout = 500) {
+  if (global.isPlaywright) {
+    try {
+      const el = await global.client.waitForSelector(selector, {
+        timeout,
+        state: displayed ? 'visible' : 'detached'
+      });
+      if (!displayed) {
+        if (el === null) {
+          return true;
+        }
+      }
+      return el !== null;
+    } catch (error) {
+      console.log('The FileProperties not open.');
+    }
+    return false;
+  }
+  const el = await global.client.$(selector);
+  return await el.isDisabled();
 }
 
 export async function getGridElement(fileIndex = 0) {
@@ -248,34 +298,19 @@ export async function getGridCellClass(fileIndex = 0) {
 export async function expectElementExist(
   selector,
   exist = true,
-  timeout = 5000
+  timeout = 1000
 ) {
-  const element = await global.client.$(selector);
-  await expectExist(element, exist, timeout);
-  return element;
+  const displayed = await isDisplayed(selector, exist, timeout);
+  expect(displayed).toBe(true);
+  // return element;
 }
 
-export async function expectExist(element, exist = true, timeout = 5000) {
-  await element.waitForDisplayed({
-    timeout: timeout,
-    reverse: !exist,
-    timeoutMsg:
-      'expectElementExist selector:' +
-      element.selector +
-      ' to exist=' +
-      exist +
-      ' after ' +
-      timeout / 1000 +
-      's'
-  });
-  /*await element.waitUntil(
-    async function() {
-      const displayed = await this.isDisplayed();
-      // const displayed = await this.isDisplayedInViewport();
-      return displayed === exist;
-    },
-    {
+/*export async function expectExist(element, exist = true, timeout = 5000) {
+  if(!isPlaywright) {
+
+    await element.waitForDisplayed({
       timeout: timeout,
+      reverse: !exist,
       timeoutMsg:
         'expectElementExist selector:' +
         element.selector +
@@ -284,11 +319,11 @@ export async function expectExist(element, exist = true, timeout = 5000) {
         ' after ' +
         timeout / 1000 +
         's'
-    }
-  );*/
+    });
+  }
   expect(await element.isDisplayed()).toBe(exist);
   return element;
-}
+}*/
 
 export async function createLocation(
   locationPath,
@@ -333,9 +368,7 @@ export async function createLocation(
 
 export async function createTxtFile() {
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
-  await global.client.pause(500);
   await clickOn('[data-tid=createNewFile]');
-  //await global.client.pause(1500);
   await clickOn('[data-tid=createTextFileButton]');
   await waitForNotification();
 }
@@ -464,18 +497,14 @@ export async function extractTags(selectorElement) {
 
 export async function removeTagFromTagMenu(tagName) {
   await clickOn('[data-tid=tagMoreButton_' + tagName + ']');
-  await global.client.pause(500);
   await clickOn('[data-tid=deleteTagMenu]');
-  await global.client.pause(500);
   await clickOn('[data-tid=confirmRemoveTagFromFile]');
 }
 
 export async function showFilesWithTag(tagName) {
   await clickOn('[data-tid=tagMoreButton_' + tagName + ']');
-  await global.client.pause(500);
   await clickOn('[data-tid=showFilesWithThisTag]');
   await waitForNotification();
-  await global.client.pause(1500); // web && minio search is slow
 }
 
 export function getGridFileSelector(fileName) {
@@ -546,26 +575,43 @@ export async function expectTagsExist(gridElement, arrTagNames, exist = true) {
   }
 }
 
-export async function waitForNotification(tid = 'notificationTID') {
-  await global.client.pause(500);
+export async function waitForNotification(
+  tid = 'notificationTID',
+  forceClose = true
+) {
+  // await global.client.pause(500);
   // await expectElementExist('[data-tid=' + tid + ']', true, 8000);
-  const notificationTID = await global.client.$('[data-tid=' + tid + ']');
-  if (await notificationTID.isDisplayed()) {
-    const closeButton = await global.client.$('[data-tid=close' + tid + ']');
-    if (await closeButton.isDisplayed()) {
-      await closeButton.click();
+  // const notificationTID = await global.client.$('[data-tid=' + tid + ']');
+  if (await isDisplayed('[data-tid=' + tid + ']')) {
+    //const closeButton = await global.client.$('[data-tid=close' + tid + ']');
+    if (forceClose && (await isDisplayed('[data-tid=close' + tid + ']'))) {
+      await clickOn('[data-tid=close' + tid + ']');
     } else {
       // autohide Notification
-      await expectElementExist('[data-tid=' + tid + ']', false, 10000);
+      await isDisplayed('[data-tid=' + tid + ']', false, 2000);
+      // await expectElementExist('[data-tid=' + tid + ']', false, 1000);
     }
   }
 }
 
 export async function setSettings(selector) {
   await clickOn('[data-tid=settings]');
-  await global.client.pause(500);
   await clickOn(selector);
   await clickOn('[data-tid=closeSettingsDialog]');
+}
+
+export async function dragDrop(originSelector, destinationSelector) {
+  const originElement = await global.client.waitForSelector(originSelector);
+  const destinationElement = await global.client.waitForSelector(
+    destinationSelector
+  );
+
+  await originElement.hover();
+  await global.client.mouse.down();
+  const box = await destinationElement.boundingBox();
+  await global.client.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await destinationElement.hover();
+  await global.client.mouse.up();
 }
 
 export async function reloadDirectory() {

@@ -1,6 +1,13 @@
 /* Copyright (c) 2020-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 
-import { addInputKeys, removeTagFromTagMenu } from './general.helpers';
+import {
+  addInputKeys,
+  clickOn,
+  isDisplayed,
+  removeTagFromTagMenu,
+  setInputKeys,
+  setInputValue
+} from './general.helpers';
 import { getPropertiesTags } from './location.helpers';
 
 /**
@@ -19,9 +26,16 @@ export async function AddRemovePropertiesTags(
       const tagName = tagNames[i];
       const propsTags = await getPropertiesTags();
       expect(propsTags.includes(tagName)).toBe(false);
-      await addInputKeys('PropertiesTagsSelectTID', tagName);
-      await global.client.keys('Enter');
-      await global.client.pause(500);
+      await setInputKeys('PropertiesTagsSelectTID', tagName);
+      //await setInputValue('[data-tid=PropertiesTagsSelectTID] input', tagName);
+      // await clickOn('[data-tid=PropertiesTagsSelectTID]');
+      await global.client.keyboard.press('Enter');
+      const tagDisplayed = await isDisplayed(
+        '[data-tid=PropertiesTagsSelectTID] button[title=' + tagName + ']',
+        true,
+        2000
+      );
+      expect(tagDisplayed).toBe(true);
       const propsNewTags = await getPropertiesTags();
       expect(propsNewTags.includes(tagName)).toBe(true);
     }
@@ -31,22 +45,34 @@ export async function AddRemovePropertiesTags(
     for (let i = 0; i < tagNames.length; i++) {
       const tagName = tagNames[i];
       await removeTagFromTagMenu(tagName);
-      await global.client.pause(800); // todo replace with wait not exist
+      // await global.client.waitForLoadState('networkidle'); //'networkidle'); //'domcontentloaded'); // load
+      await isDisplayed(
+        '[data-tid=PropertiesTagsSelectTID] button[title=' + tagName + ']',
+        false,
+        2000
+      );
+      // await global.client.waitForTimeout(1500);
       const propsNewTags = await getPropertiesTags();
+      // console.log(JSON.stringify(propsNewTags));
       expect(propsNewTags.includes(tagName)).toBe(false);
     }
   }
 }
 
 export async function getPropertiesFileName() {
-  /* const fileNameProperties = await global.client.$('#descriptionArea');
-  await fileNameProperties.waitForDisplayed({ timeout: 5000 });
-  await fileNameProperties.click(); */
+  let fileName;
 
-  const propsFileNameInput = await global.client.$(
-    '[data-tid=fileNameProperties] input'
-  );
-  await propsFileNameInput.waitForDisplayed({ timeout: 5000 });
-  const fileName = await propsFileNameInput.getValue();
-  return fileName.replace(/ *\[[^\]]*]/, '');
+  if (global.isPlaywright) {
+    fileName = await global.client.getAttribute(
+      '[data-tid=fileNameProperties] input',
+      'value'
+    ); // .inputValue(); https://github.com/microsoft/playwright/issues/3265
+  } else {
+    const propsFileNameInput = await global.client.$(
+      '[data-tid=fileNameProperties] input'
+    );
+    await propsFileNameInput.waitForDisplayed({ timeout: 5000 });
+    fileName = await propsFileNameInput.getValue();
+  }
+  return fileName ? fileName.replace(/ *\[[^\]]*]/, '') : undefined;
 }
