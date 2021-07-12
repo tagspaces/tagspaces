@@ -66,6 +66,7 @@ import EditTagDialog from '-/components/dialogs/EditTagDialog';
 import { TS } from '-/tagspaces.namespace';
 import { getLocations } from '-/reducers/locations';
 import { Pro } from '-/pro';
+import TagGroupTitleDnD from '-/components/TagGroupTitleDnD';
 
 interface Props {
   classes?: any;
@@ -105,6 +106,7 @@ interface Props {
   tagGroupCollapsed: Array<string>;
   locations: Array<TS.Location>;
   saveTagInLocation: boolean;
+  moveTagGroup: (tagGroupUuid: TS.Uuid, position: number) => void;
 }
 
 const TagLibrary = (props: Props) => {
@@ -254,7 +256,7 @@ const TagLibrary = (props: Props) => {
     return '';
   }
 
-  const renderTagGroup = tagGroup => {
+  const renderTagGroup = (tagGroup, index) => {
     // eslint-disable-next-line no-param-reassign
     tagGroup.expanded = !(
       props.tagGroupCollapsed && props.tagGroupCollapsed.includes(tagGroup.uuid)
@@ -262,53 +264,17 @@ const TagLibrary = (props: Props) => {
     const isReadOnly = tagGroup.readOnly || isTagLibraryReadOnly;
     return (
       <div key={tagGroup.uuid}>
-        <ListItem
-          data-tid={'tagLibraryTagGroupTitle_' + tagGroup.title}
-          button
-          style={{ maxWidth: 250 }}
-          className={props.classes.listItem}
-          onClick={(event: any) => handleTagGroupTitleClick(event, tagGroup)}
-          onContextMenu={(event: any) => handleTagGroupMenu(event, tagGroup)}
-          title={
-            'Number of tags in this tag group: ' + tagGroup.children.length
-          }
-        >
-          <ListItemIcon style={{ minWidth: 'auto' }}>
-            {tagGroup.expanded ? <ArrowDownIcon /> : <ArrowRightIcon />}
-          </ListItemIcon>
-          <Typography
-            variant="inherit"
-            className={props.classes.header}
-            style={{ paddingLeft: 0 }}
-            data-tid="locationTitleElement"
-            noWrap
-          >
-            {tagGroup.title + getLocationName(tagGroup.locationId)}
-            {!tagGroup.expanded && (
-              <span className={props.classes.badge}>
-                {tagGroup.children.length}
-              </span>
-            )}
-          </Typography>
-          {!isReadOnly && (
-            <ListItemSecondaryAction>
-              <IconButton
-                aria-label={i18n.t('core:options')}
-                aria-haspopup="true"
-                edge="end"
-                data-tid={
-                  'tagLibraryMoreButton_' + tagGroup.title.replace(/ /g, '_')
-                }
-                onClick={(event: any) => handleTagGroupMenu(event, tagGroup)}
-                onContextMenu={(event: any) =>
-                  handleTagGroupMenu(event, tagGroup)
-                }
-              >
-                <MoreVertIcon />
-              </IconButton>
-            </ListItemSecondaryAction>
-          )}
-        </ListItem>
+        <TagGroupTitleDnD
+          index={index}
+          classes={classes}
+          tagGroup={tagGroup}
+          moveTagGroup={props.moveTagGroup}
+          handleTagGroupMenu={handleTagGroupMenu}
+          toggleTagGroup={props.toggleTagGroup}
+          locations={props.locations}
+          tagGroupCollapsed={props.tagGroupCollapsed}
+          isReadOnly={isReadOnly}
+        />
         <Collapse in={tagGroup.expanded} unmountOnExit>
           <TagGroupContainer
             taggroup={tagGroup}
@@ -493,11 +459,11 @@ const TagLibrary = (props: Props) => {
       )}
       <div className={classes.taggroupsArea} data-tid="tagLibraryTagGroupList">
         {AppConfig.showSmartTags && (
-          <List style={{ paddingTop: 0, paddingBottom: 0 }}>
+          <div style={{ paddingTop: 0, paddingBottom: 0 }}>
             {SmartTags(i18n).map(renderTagGroup)}
-          </List>
+          </div>
         )}
-        <List style={{ paddingTop: 0 }}>{tagGroups.map(renderTagGroup)}</List>
+        <div style={{ paddingTop: 0 }}>{tagGroups.map(renderTagGroup)}</div>
       </div>
     </div>
   );
@@ -523,6 +489,7 @@ function mapDispatchToProps(dispatch) {
       toggleTagGroup: SettingsActions.toggleTagGroup,
       removeTagGroup: TagLibraryActions.removeTagGroup,
       moveTagGroupUp: TagLibraryActions.moveTagGroupUp,
+      moveTagGroup: TagLibraryActions.moveTagGroup,
       moveTagGroupDown: TagLibraryActions.moveTagGroupDown,
       sortTagGroup: TagLibraryActions.sortTagGroup,
       importTagGroups: TagLibraryActions.importTagGroups,

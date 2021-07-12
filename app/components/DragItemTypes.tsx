@@ -18,5 +18,6 @@
 
 export default {
   TAG: 'tag',
+  TAG_GROUP: 'tag_group',
   FILE: 'file_move'
 };
