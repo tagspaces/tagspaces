@@ -248,7 +248,7 @@ export async function getElementText(el) {
   return await el.getText();
 }
 
-export async function isDisplayed(selector, displayed = true, timeout = 200) {
+export async function isDisplayed(selector, displayed = true, timeout = 500) {
   if (global.isPlaywright) {
     try {
       const el = await global.client.waitForSelector(selector, {
@@ -298,7 +298,7 @@ export async function getGridCellClass(fileIndex = 0) {
 export async function expectElementExist(
   selector,
   exist = true,
-  timeout = 200
+  timeout = 1000
 ) {
   const displayed = await isDisplayed(selector, exist, timeout);
   expect(displayed).toBe(true);
