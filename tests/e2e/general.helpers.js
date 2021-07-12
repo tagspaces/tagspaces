@@ -255,7 +255,12 @@ export async function isDisplayed(selector, displayed = true, timeout = 200) {
         timeout,
         state: displayed ? 'visible' : 'detached'
       });
-      return el !== undefined;
+      if (!displayed) {
+        if (el === null) {
+          return true;
+        }
+      }
+      return el !== null;
     } catch (error) {
       console.log('The FileProperties not open.');
     }

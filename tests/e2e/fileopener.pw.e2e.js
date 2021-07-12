@@ -12,6 +12,7 @@ import {
   dragDrop,
   expectElementExist,
   getGridFileName,
+  isDisplayed,
   selectorFile,
   selectorFolder,
   setInputKeys,
@@ -123,6 +124,7 @@ describe('TST08 - File folder properties', () => {
     await setInputValue('[data-tid=fileNameProperties] input', newTile);
     await clickOn('[data-tid=confirmRenameEntryTID]');
     await waitForNotification();
+    await isDisplayed('[data-tid=confirmRenameEntryTID]', false);
     const propsNewFileName = await getPropertiesFileName();
     expect(propsFileName).not.toBe(propsNewFileName);
 
@@ -132,6 +134,7 @@ describe('TST08 - File folder properties', () => {
     await setInputValue('[data-tid=fileNameProperties] input', propsFileName);
     await clickOn('[data-tid=confirmRenameEntryTID]');
     await waitForNotification();
+    await isDisplayed('[data-tid=confirmRenameEntryTID]', false);
     const propsOldFileName = await getPropertiesFileName();
     expect(propsOldFileName).toBe(propsFileName);
   });
@@ -212,10 +215,12 @@ describe('TST08 - File folder properties', () => {
   });
 
   it('TST0813 - Delete file [web,minio,electron]', async () => {
+    await global.client.dblclick(selectorFolder);
+
     await createTxtFile();
-    await searchEngine('note');
-    await waitForNotification();
-    await global.client.waitForTimeout(1500); // To do wait for search results
+    // await searchEngine('note');
+    // await waitForNotification();
+    // await global.client.waitForTimeout(1500); // To do wait for search results
     await expectElementExist(selectorFile, true);
 
     // open fileProperties
@@ -223,7 +228,7 @@ describe('TST08 - File folder properties', () => {
     //Toggle Properties
     await clickOn('[data-tid=fileContainerToggleProperties]');
 
-    const propsFileName = await getPropertiesFileName();
+    // const propsFileName = await getPropertiesFileName();
     await clickOn('[data-tid=deleteEntryTID]');
     await clickOn('[data-tid=confirmSaveBeforeCloseDialog]');
     await waitForNotification();
