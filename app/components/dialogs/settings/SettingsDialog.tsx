@@ -36,7 +36,7 @@ import SettingsKeyBindings from '../settings/SettingsKeyBindings';
 import SettingsFileTypes from '../settings/SettingsFileTypes';
 import i18n from '-/services/i18n';
 import { actions, getSupportedFileTypes } from '-/reducers/settings';
-import { extend } from '-/utils/misc';
+import { clearAllURLParams, extend } from '-/utils/misc';
 import AppConfig from '-/config';
 import SettingsAdvanced from '-/components/dialogs/settings/SettingsAdvanced';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
@@ -250,6 +250,7 @@ const SettingsDialog = (props: Props) => {
           content={i18n.t('core:confirmResetSettings')}
           confirmCallback={result => {
             if (result) {
+              clearAllURLParams();
               localStorage.clear();
               // eslint-disable-next-line no-restricted-globals
               location.reload();

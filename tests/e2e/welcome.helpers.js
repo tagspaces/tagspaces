@@ -13,3 +13,12 @@ export async function closeWelcome() {
     await clickOn('[data-tid=agreeLicenseDialog]');
   }
 }
+
+export async function closeWelcomePlaywright() {
+  await global.client.click('[data-tid=nextStepOnboarding]');
+  await global.client.click('[data-tid=nextStepOnboarding]');
+  await global.client.click('[data-tid=nextStepOnboarding]');
+  await global.client.click('[data-tid=nextStepOnboarding]');
+  await global.client.click('[data-tid=startTagSpacesAfterOnboarding]');
+  await global.client.click('[data-tid=agreeLicenseDialog]');
+}
