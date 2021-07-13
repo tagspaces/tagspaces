@@ -231,7 +231,7 @@ export async function testDataRefresh() {
   fse.emptyDirSync(newPath);
   fse.copySync(src, newPath, { overwrite: true });
   if (global.isElectron && global.client) {
-    await global.client.waitForTimeout(500);
+    await global.client.waitForTimeout(1000);
   }
 }
 
