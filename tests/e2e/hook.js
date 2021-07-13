@@ -205,7 +205,7 @@ function setWdioImageComparisonService(browser) {
 }
 
 export async function stopSpectronApp() {
-  if (global.isPlaywright) {
+  if (global.isPlaywright && global.app) {
     await global.app.close();
   } else if (global.isWeb) {
     await global.client.closeWindow();
@@ -216,7 +216,7 @@ export async function stopSpectronApp() {
   }
 }
 
-export function testDataRefresh() {
+export async function testDataRefresh() {
   const fse = require('fs-extra');
   const src = pathLib.join(
     __dirname,
@@ -230,6 +230,9 @@ export function testDataRefresh() {
   let newPath = pathLib.join(dst, pathLib.basename(src));
   fse.emptyDirSync(newPath);
   fse.copySync(src, newPath, { overwrite: true });
+  if (global.isElectron && global.client) {
+    await global.client.waitForTimeout(1000);
+  }
 }
 
 export async function takeScreenshot(name = expect.getState().currentTestName) {
