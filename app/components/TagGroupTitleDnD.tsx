@@ -79,8 +79,14 @@ const TagGroupTitleDnD = (props: Props) => {
       className={props.classes.listItem}
       title={'Number of tags in this tag group: ' + tagGroup.children.length}
     >
-      <Grid container direction="row" justify="center" alignItems="center">
-        <Grid item xs={2}>
+      <Grid
+        container
+        direction="row"
+        alignItems="stretch"
+        alignContent="center"
+        style={{ flexWrap: 'nowrap' }}
+      >
+        <Grid item xs={2} style={{ maxWidth: 40 }}>
           <IconButton
             style={{ minWidth: 'auto', padding: 7 }}
             onClick={(event: any) => handleTagGroupTitleClick(event, tagGroup)}
@@ -88,7 +94,7 @@ const TagGroupTitleDnD = (props: Props) => {
             {tagGroup.expanded ? <ArrowDownIcon /> : <ArrowRightIcon />}
           </IconButton>
         </Grid>
-        <Grid item xs={8}>
+        <Grid item xs={8} style={{ alignSelf: 'center' }}>
           <Typography
             variant="inherit"
             className={props.classes.header}
@@ -99,13 +105,29 @@ const TagGroupTitleDnD = (props: Props) => {
           >
             {tagGroup.title + getLocationName(tagGroup.locationId)}
             {!tagGroup.expanded && (
-              <span className={props.classes.badge}>
+              <span
+                style={{
+                  display: 'inline-block',
+                  minWidth: 10,
+                  padding: '3px 7px',
+                  fontSize: 10,
+                  fontWeight: 'normal',
+                  marginLeft: 4,
+                  color: '#ffffff',
+                  lineHeight: 1,
+                  verticalAlign: 'middle',
+                  whiteSpace: 'nowrap',
+                  textAlign: 'center',
+                  backgroundColor: '#bbbbbb',
+                  borderRadius: 10
+                }}
+              >
                 {tagGroup.children.length}
               </span>
             )}
           </Typography>
         </Grid>
-        <Grid item xs={2}>
+        <Grid item xs={2} style={{ textAlign: 'end' }}>
           {!props.isReadOnly && (
             <IconButton
               style={{ minWidth: 'auto', padding: 7 }}

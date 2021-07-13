@@ -115,19 +115,5 @@ export default (theme: any) =>
     },
     leftIcon: {
       marginRight: theme.spacing(1)
-    },
-    badge: {
-      display: 'inline-block',
-      minWidth: 10,
-      padding: '3px 7px',
-      fontSize: 10,
-      fontWeight: 'normal',
-      color: '#ffffff',
-      lineHeight: 1,
-      verticalAlign: 'middle',
-      whiteSpace: 'nowrap',
-      textAlign: 'center',
-      backgroundColor: '#bbbbbb',
-      borderRadius: 10
     }
   } as any);
