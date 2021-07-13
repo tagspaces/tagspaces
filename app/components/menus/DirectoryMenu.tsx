@@ -51,7 +51,6 @@ import {
   extractContainingDirectoryPath,
   extractDirectoryName,
   getThumbFileLocationForDirectory,
-  getThumbFileLocationForFile,
   normalizePath
 } from '-/utils/paths';
 import PlatformIO from '-/services/platform-io';
@@ -63,14 +62,12 @@ import {
 } from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
 import TaggingActions from '-/reducers/tagging-actions';
-import {
-  getAllPropertiesPromise,
-  setFolderThumbnailPromise
-} from '-/services/utils-io';
+import { getAllPropertiesPromise } from '-/services/utils-io';
 import FileUploadContainer, {
   FileUploadContainerRef
 } from '-/components/FileUploadContainer';
 import { TS } from '-/tagspaces.namespace';
+import { ProLabel, BetaLabel } from '-/components/HelperComponents';
 
 interface Props {
   open: boolean;
@@ -253,7 +250,11 @@ Do you want to continue?`)
           props.toggleProgressDialog();
         });
     } else {
-      props.showNotification(i18n.t('core:proFeature'), 'default', true);
+      props.showNotification(
+        i18n.t('core:thisFunctionalityIsAvailableInPro'),
+        'default',
+        true
+      );
       return true;
     }
   }
@@ -520,7 +521,14 @@ Do you want to continue?`)
         <ListItemIcon>
           <ImportTagsIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:importMacTags')} />
+        <ListItemText
+          primary={
+            <>
+              {i18n.t('core:importMacTags')}
+              {Pro ? <BetaLabel /> : <ProLabel />}
+            </>
+          }
+        />
       </MenuItem>
     );
   }
