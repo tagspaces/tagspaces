@@ -5,7 +5,7 @@ on:
 
 jobs:
   e2eTestsElectronWin:
-    name: E2E Windows Electron
+    name: Test Desktop App Windows
     runs-on: windows-latest
 
     steps:
@@ -39,7 +39,7 @@ jobs:
         if: always() # Run regardless of whether other steps failed
         with:
           access-token: ${{ secrets.GITHUB_TOKEN }}
-          check-name: Jest Report Electron
+          check-name: Report Desktop App Windows
           working-directory: tests
       - uses: actions/upload-artifact@v2
         if: failure()
