@@ -43,9 +43,6 @@ describe('TST08 - File folder properties', () => {
   });
 
   it('TST0801 - Arrow keys select next prev file (keybindings) [web,minio,electron]', async () => {
-    if (global.isElectron) {
-      await global.client.waitForTimeout(500);
-    }
     // open fileProperties
     await clickOn(selectorFile);
     //Toggle Properties

@@ -47,7 +47,7 @@ jasmine.getEnv().addReporter({
 });*/
 
 beforeAll(async () => {
-  testDataRefresh();
+  await testDataRefresh();
   await startSpectronApp();
 });
 
