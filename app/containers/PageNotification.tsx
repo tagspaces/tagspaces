@@ -33,9 +33,9 @@ import {
   actions as LocationIndexActions,
   isIndexing
 } from '../reducers/location-index';
-import AppConfig from '../config';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
+import Links from '-/links';
 
 interface Props {
   notificationStatus: any;
@@ -59,7 +59,7 @@ const PageNotification = (props: Props) => {
   };
 
   const openChangelogPage = () => {
-    props.openURLExternally(AppConfig.links.changelogURL, true);
+    props.openURLExternally(Links.links.changelogURL, true);
   };
 
   const getLatestVersion = () => {
@@ -70,7 +70,7 @@ const PageNotification = (props: Props) => {
         false
       );
     } else {
-      props.openURLExternally(AppConfig.links.downloadURL, true);
+      props.openURLExternally(Links.links.downloadURL, true);
     }
     props.setUpdateAvailable(false);
   };

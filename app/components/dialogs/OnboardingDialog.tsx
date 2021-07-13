@@ -49,6 +49,7 @@ import {
 import { actions as AppActions } from '-/reducers/app';
 import AppConfig from '-/config';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import Links from '-/links';
 
 interface Props {
   classes: any;
@@ -240,7 +241,7 @@ const OnboardingDialog = (props: Props) => {
             <Button
               style={{ marginTop: 20 }}
               onClick={() => {
-                props.openURLExternally(AppConfig.links.webClipper, true);
+                props.openURLExternally(Links.links.webClipper, true);
               }}
               variant="contained"
               color="primary"

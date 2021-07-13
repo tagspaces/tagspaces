@@ -28,6 +28,7 @@ import ImportExportTagGroupsDialog from '../dialogs/ImportExportTagGroupsDialog'
 import i18n from '-/services/i18n';
 import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
+import Links from '-/links';
 
 interface Props {
   classes?: any;
@@ -160,10 +161,7 @@ const TagLibraryMenu = (props: Props) => {
           data-tid="taglibraryHelp"
           onClick={() => {
             props.onClose();
-            props.openURLExternally(
-              AppConfig.documentationLinks.taglibrary,
-              true
-            );
+            props.openURLExternally(Links.documentationLinks.taglibrary, true);
           }}
         >
           <ListItemIcon>

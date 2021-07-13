@@ -16,52 +16,14 @@
  *
  */
 
+import { app, Menu } from 'electron';
 import i18n from './i18n';
-import PlatformIO from './platform-io';
-import AppConfig from '../config';
-
-let ipcRenderer;
-
-if (AppConfig.isElectron && window.require) {
-  const electron = window.require('electron');
-  ({ ipcRenderer } = electron);
-}
+import Links from '-/links';
 
 export default function buildDesktopMenu(mainPageProps: any) {
-  if (!AppConfig.isElectron) {
-    return;
+  function quitApp() {
+    app.quit();
   }
-
-  ipcRenderer.on('file', (event, arg) => {
-    // console.log('Global events: ' + arg);
-    switch (arg) {
-      case 'new-text-file':
-        mainPageProps.toggleCreateFileDialog();
-        break;
-      case 'open-search':
-        mainPageProps.openSearchPanel();
-        break;
-      case 'audio':
-        // console.log('showAudioRecordingDialog');
-        break;
-      case 'next-file': {
-        mainPageProps.openNextFile();
-        break;
-      }
-      case 'previous-file': {
-        mainPageProps.openPrevFile();
-        break;
-      }
-      default:
-        return false;
-    }
-  });
-
-  ipcRenderer.on('play-pause', (event, arg) => {
-    // Create the event.
-    const audioEvent = new CustomEvent('toggle-resume', { detail: '' });
-    window.dispatchEvent(audioEvent);
-  });
 
   const templateDefault = [
     {
@@ -111,7 +73,7 @@ export default function buildDesktopMenu(mainPageProps: any) {
         {
           label: i18n.t('core:exitApp'),
           accelerator: 'CmdOrCtrl+Q',
-          click: PlatformIO.quitApp
+          click: quitApp // PlatformIO.quitApp
         }
       ]
     },
@@ -263,7 +225,7 @@ export default function buildDesktopMenu(mainPageProps: any) {
         {
           label: '&' + i18n.t('core:whatsNew'),
           click: () => {
-            mainPageProps.openURLExternally(AppConfig.links.changelogURL, true);
+            mainPageProps.openURLExternally(Links.links.changelogURL, true);
           }
         },
         {
@@ -272,13 +234,13 @@ export default function buildDesktopMenu(mainPageProps: any) {
         {
           label: '&' + i18n.t('core:likeUsOnFacebook'),
           click: () => {
-            mainPageProps.openURLExternally(AppConfig.links.facebook);
+            mainPageProps.openURLExternally(Links.links.facebook);
           }
         },
         {
           label: '&' + i18n.t('core:followOnTwitter'),
           click: () => {
-            mainPageProps.openURLExternally(AppConfig.links.twitter);
+            mainPageProps.openURLExternally(Links.links.twitter);
           }
         },
         {
@@ -287,13 +249,13 @@ export default function buildDesktopMenu(mainPageProps: any) {
         {
           label: '&' + i18n.t('core:suggestNewFeatures'),
           click: () => {
-            mainPageProps.openURLExternally(AppConfig.links.suggestFeature);
+            mainPageProps.openURLExternally(Links.links.suggestFeature);
           }
         },
         {
           label: '&' + i18n.t('core:reportIssues'),
           click: () => {
-            mainPageProps.openURLExternally(AppConfig.links.reportIssue);
+            mainPageProps.openURLExternally(Links.links.reportIssue);
           }
         },
         {
@@ -302,17 +264,14 @@ export default function buildDesktopMenu(mainPageProps: any) {
         {
           label: i18n.t('core:webClipperChrome'),
           click: () => {
-            mainPageProps.openURLExternally(
-              AppConfig.links.webClipperChrome,
-              true
-            );
+            mainPageProps.openURLExternally(Links.links.webClipperChrome, true);
           }
         },
         {
           label: i18n.t('core:webClipperFirefox'),
           click: () => {
             mainPageProps.openURLExternally(
-              AppConfig.links.webClipperFirefox,
+              Links.links.webClipperFirefox,
               true
             );
           }
@@ -335,5 +294,9 @@ export default function buildDesktopMenu(mainPageProps: any) {
       ]
     }
   ];
-  PlatformIO.initMainMenu(templateDefault);
+  // PlatformIO.initMainMenu(templateDefault);
+
+  // @ts-ignore
+  const defaultMenu = Menu.buildFromTemplate(templateDefault); // menuConfig);
+  Menu.setApplicationMenu(defaultMenu);
 }

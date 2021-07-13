@@ -73,13 +73,13 @@ export default class ElectronIO {
     }
   }
 
-  initMainMenu = (menuConfig: Array<Object>) => {
+  /* initMainMenu = (menuConfig: Array<Object>) => {
     const { Menu } = this.remote;
     const defaultMenu = Menu.buildFromTemplate(menuConfig);
     Menu.setApplicationMenu(defaultMenu);
-  };
+  }; */
 
-  initTrayMenu = (menuConfig: Array<Object>) => {
+  /* initTrayMenu = (menuConfig: Array<Object>) => {
     const mainWindow = this.win;
     const { Menu } = this.remote;
     const { Tray } = this.remote;
@@ -124,7 +124,7 @@ export default class ElectronIO {
     const trayMenu = Menu.buildFromTemplate(menuConfig);
     this.tsTray.setToolTip('TagSpaces');
     this.tsTray.setContextMenu(trayMenu);
-  };
+  }; */
 
   isWorkerAvailable = (): boolean => {
     let workerAvailable = false;

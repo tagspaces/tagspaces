@@ -22,6 +22,7 @@ import i18n from '-/services/i18n';
 import defaultSettings from './settings-default';
 import PlatformIO from '-/services/platform-io';
 import AppConfig from '-/config';
+import Links from '-/links';
 import versionMeta from '-/version.json';
 import { actions as AppActions } from './app';
 import { TS } from '-/tagspaces.namespace';
@@ -556,7 +557,7 @@ export function getLastVersionPromise(): Promise<string> {
     console.log('Checking for new version...');
     const xhr = new XMLHttpRequest();
     const updateUrl =
-      AppConfig.links.checkNewVersionURL + '?cv=' + versionMeta.version;
+      Links.links.checkNewVersionURL + '?cv=' + versionMeta.version;
     xhr.open('GET', updateUrl, true);
     xhr.responseType = 'json';
     xhr.onerror = reject;

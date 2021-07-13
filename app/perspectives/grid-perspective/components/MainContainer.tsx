@@ -62,6 +62,7 @@ import GridSettingsDialog from '-/perspectives/grid-perspective/components/GridS
 import AddTagToTagGroupDialog from '-/components/dialogs/AddTagToTagGroupDialog';
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
+import Links from '-/links';
 
 interface Props {
   classes: any;
@@ -388,7 +389,7 @@ const GridPerspective = (props: Props) => {
 
   const openHelpWebPage = () => {
     closeOptionsMenu();
-    props.openURLExternally(AppConfig.documentationLinks.defaultPerspective);
+    props.openURLExternally(Links.documentationLinks.defaultPerspective);
   };
 
   const openSettings = () => {

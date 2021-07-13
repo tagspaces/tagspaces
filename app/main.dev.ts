@@ -19,6 +19,8 @@
 import { app, BrowserWindow, ipcMain, globalShortcut, dialog } from 'electron';
 import windowStateKeeper from 'electron-window-state';
 import path from 'path';
+import buildTrayIconMenu from '-/services/electron-tray-menu';
+import buildDesktopMenu from '-/services/electron-menus';
 
 // require('@electron/remote/main').initialize();
 
@@ -26,6 +28,7 @@ import path from 'path';
 // process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
 
 let mainWindow = null;
+let tray = null;
 (global as any).splashWorkerWindow = null;
 
 if (process.env.NODE_ENV === 'production') {
@@ -372,4 +375,125 @@ app.on('ready', async () => {
       mainWindow.loadURL(mainHTML);
     }
   }
+
+  tray = buildTrayIconMenu({
+    showTagSpaces,
+    openSearchPanel: showSearch,
+    toggleCreateFileDialog: newTextFile,
+    openNextFile: getNextFile,
+    openPrevFile: getPreviousFile,
+    quitApp: reloadApp
+  });
+
+  buildDesktopMenu({
+    showTagSpaces,
+    openSearchPanel: showSearch,
+    toggleCreateFileDialog: newTextFile,
+    openNextFile: getNextFile,
+    openPrevFile: getPreviousFile,
+    quitApp: reloadApp,
+    // defaultSettings.keyBindings
+    keyBindings: [
+      {
+        name: 'selectAll',
+        command: 'ctrl+a'
+      },
+      {
+        name: 'closeViewer',
+        command: 'ctrl+w'
+      },
+      {
+        name: 'saveDocument',
+        command: 'ctrl+s'
+      },
+      {
+        name: 'reloadDocument',
+        command: 'ctrl+r'
+      },
+      {
+        name: 'editDocument',
+        command: 'ctrl+e'
+      },
+      {
+        name: 'deleteDocument',
+        command: 'del'
+      },
+      {
+        name: 'showLocationManager',
+        command: 'ctrl+1'
+      },
+      {
+        name: 'showTagLibrary',
+        command: 'ctrl+2'
+      },
+      {
+        name: 'showSearch',
+        command: 'ctrl+3'
+      },
+      {
+        name: 'toggleShowHiddenEntries',
+        command: 'ctrl+h'
+      },
+      {
+        name: 'addRemoveTags',
+        command: 'ctrl+t'
+      },
+      /* {
+          name: 'propertiesDocument',
+          command: 'alt+enter',
+        }, */
+      {
+        name: 'nextDocument',
+        command: 'down'
+      },
+      {
+        name: 'prevDocument',
+        command: 'up'
+      },
+      {
+        name: 'showHelp',
+        command: 'f1'
+      },
+      {
+        name: 'reloadApplication',
+        command: 'r a'
+      },
+      {
+        name: 'toggleFullScreen',
+        command: 'f11'
+      },
+      {
+        name: 'openDevTools',
+        command: 'f10'
+      },
+      {
+        name: 'openSearch',
+        command: 'ctrl+f'
+      },
+      {
+        name: 'renameFile',
+        command: 'f2'
+      },
+      {
+        name: 'openEntry',
+        command: 'enter'
+      },
+      {
+        name: 'openParentDirectory',
+        command: 'backspace'
+      },
+      {
+        name: 'openFileExternally',
+        command: 'ctrl+enter'
+      },
+      {
+        name: 'zoomIn',
+        command: 'ctrl+'
+      },
+      {
+        name: 'zoomOut',
+        command: 'ctrl-'
+      }
+    ]
+  });
 });

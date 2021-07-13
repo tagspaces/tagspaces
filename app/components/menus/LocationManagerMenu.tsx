@@ -36,7 +36,7 @@ import AppConfig from '-/config';
 import i18n from '-/services/i18n';
 import { Pro } from '../../pro';
 import { actions as AppActions } from '-/reducers/app';
-import OpenParentFolder from '@material-ui/icons/FolderOpen';
+import Links from '-/links';
 
 interface Props {
   classes: any;
@@ -146,7 +146,7 @@ const LocationManagerMenu = (props: Props) => {
       data-tid="locationManagerMenuHelp"
       onClick={() => {
         setLocationManagerMenuAnchorEl(null);
-        props.openURLExternally(AppConfig.documentationLinks.locations, true);
+        props.openURLExternally(Links.documentationLinks.locations, true);
       }}
     >
       <ListItemIcon>

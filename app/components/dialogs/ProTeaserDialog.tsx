@@ -34,8 +34,8 @@ import MapImage from '-/assets/images/map-undraw.svg';
 import AnnotateImage from '-/assets/images/annotate-undraw.svg';
 import EnterpriseImage from '-/assets/images/world-undraw.svg';
 import i18n from '-/services/i18n';
-import AppConfig from '-/config';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import Links from '-/links';
 
 interface Props {
   open: boolean;
@@ -126,10 +126,7 @@ const ProTeaserDialog = (props: Props) => {
               <br />
               <Button
                 onClick={() => {
-                  props.openURLExternally(
-                    AppConfig.links.productsOverview,
-                    true
-                  );
+                  props.openURLExternally(Links.links.productsOverview, true);
                 }}
                 variant="contained"
                 color="primary"
@@ -178,7 +175,7 @@ const ProTeaserDialog = (props: Props) => {
               <Button
                 onClick={() =>
                   props.openURLExternally(
-                    AppConfig.links.productProAdvancedSearch,
+                    Links.links.productProAdvancedSearch,
                     true
                   )
                 }
@@ -219,7 +216,7 @@ const ProTeaserDialog = (props: Props) => {
               <Button
                 onClick={() =>
                   props.openURLExternally(
-                    AppConfig.links.productProObjectStore,
+                    Links.links.productProObjectStore,
                     true
                   )
                 }
@@ -267,7 +264,7 @@ const ProTeaserDialog = (props: Props) => {
               <Button
                 onClick={() =>
                   props.openURLExternally(
-                    AppConfig.links.productProFileFolderMeta,
+                    Links.links.productProFileFolderMeta,
                     true
                   )
                 }
@@ -314,7 +311,7 @@ const ProTeaserDialog = (props: Props) => {
               <Button
                 onClick={() =>
                   props.openURLExternally(
-                    AppConfig.links.productProGeoTagging,
+                    Links.links.productProGeoTagging,
                     true
                   )
                 }
@@ -349,7 +346,7 @@ const ProTeaserDialog = (props: Props) => {
               <Button
                 onClick={() =>
                   props.openURLExternally(
-                    AppConfig.links.productProThumbnailsGeneration,
+                    Links.links.productProThumbnailsGeneration,
                     true
                   )
                 }
@@ -399,10 +396,7 @@ const ProTeaserDialog = (props: Props) => {
               <br />
               <Button
                 onClick={() =>
-                  props.openURLExternally(
-                    AppConfig.links.productsOverview,
-                    true
-                  )
+                  props.openURLExternally(Links.links.productsOverview, true)
                 }
                 variant="outlined"
                 color="primary"
@@ -412,7 +406,7 @@ const ProTeaserDialog = (props: Props) => {
               &nbsp;
               <Button
                 onClick={() =>
-                  props.openURLExternally(AppConfig.links.emailContact, true)
+                  props.openURLExternally(Links.links.emailContact, true)
                 }
                 variant="outlined"
                 color="primary"

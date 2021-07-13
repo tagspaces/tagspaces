@@ -16,17 +16,19 @@
  *
  */
 
-// import { webFrame, ipcRenderer } from 'electron';
-import PlatformIO from './platform-io';
+import { app, Menu, Tray } from 'electron';
+import pathLib from 'path';
 import i18n from './i18n';
-import AppConfig from '../config';
+import TrayIcon2x from '-/assets/icons/trayIcon@2x.png';
+import TrayIcon from '-/assets/icons/trayIcon.png';
+import TrayIcon3x from '-/assets/icons/trayIcon@3x.png';
 
 export default function buildTrayIconMenu(mainPageProps: any) {
-  if (!AppConfig.isElectron) {
+  /* if (!AppConfig.isElectron) {
     return;
-  }
+  } */
 
-  const cKey = AppConfig.isMacLike ? '  -  Cmd' : ' - Ctrl';
+  const cKey = ' - Ctrl'; // AppConfig.isMacLike ? ' -  Cmd' : ' - Ctrl'; TODO
 
   function openNextFile() {
     mainPageProps.openNextFile();
@@ -41,10 +43,19 @@ export default function buildTrayIconMenu(mainPageProps: any) {
     window.dispatchEvent(audioEvent);
   }
 
+  function quitApp() {
+    // this.ipcRenderer.send('quit-application', 'Bye, bye...')
+    app.quit();
+    /* const quitEvent = new CustomEvent('quit-application', {
+      detail: 'Bye, bye...'
+    });
+    window.dispatchEvent(quitEvent); */
+  }
+
   const trayMenuTemplate = [
     {
       label: i18n.t('core:showTagSpaces') + cKey + '+Shift+W',
-      click: PlatformIO.showMainWindow
+      click: mainPageProps.showTagSpaces // PlatformIO.showMainWindow
     },
     {
       label: i18n.t('core:showSearch') + cKey + '+Shift+F',
@@ -80,8 +91,42 @@ export default function buildTrayIconMenu(mainPageProps: any) {
     },
     {
       label: i18n.t('core:quitTagSpaces') + cKey + '+Q',
-      click: PlatformIO.quitApp
+      click: quitApp
     }
   ];
-  PlatformIO.initTrayMenu(trayMenuTemplate);
+
+  /* let nImage;
+
+  if (process.platform === 'win32') {
+    nImage = nativeImage.createFromDataURL(TrayIcon2x);
+  } else if (process.platform === 'darwin') {
+    nImage = nativeImage.createFromDataURL(TrayIcon);
+    nImage.addRepresentation({
+      scaleFactor: 2.0,
+      dataURL: TrayIcon2x
+    });
+    nImage.addRepresentation({
+      scaleFactor: 3.0,
+      dataURL: TrayIcon3x
+    });
+  } else {
+    nImage = nativeImage.createFromDataURL(TrayIcon2x);
+  } */
+
+  // const tray = new Tray(nImage);
+  const tray = new Tray(
+    pathLib.resolve(__dirname, '..', 'assets', 'icons', 'trayIcon@2x.png')
+  );
+  tray.on('click', () => {
+    mainPageProps.showTagSpaces();
+    /* if (mainWindow) {
+      mainWindow.show();
+    } */
+  });
+
+  // @ts-ignore
+  const contextMenu = Menu.buildFromTemplate(trayMenuTemplate);
+  tray.setToolTip('TagSpaces');
+  tray.setContextMenu(contextMenu);
+  return tray;
 }
