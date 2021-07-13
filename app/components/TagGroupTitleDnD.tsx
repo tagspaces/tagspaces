@@ -73,60 +73,58 @@ const TagGroupTitleDnD = (props: Props) => {
     connectDragSource
   } = props;
 
-  return connectDropTarget(
-    connectDragSource(
-      <div
-        data-tid={'tagLibraryTagGroupTitle_' + tagGroup.title}
-        className={props.classes.listItem}
-        title={'Number of tags in this tag group: ' + tagGroup.children.length}
-      >
-        <Grid container direction="row" justify="center" alignItems="center">
-          <Grid item xs={2}>
+  const tagGroupTitle = (
+    <div
+      data-tid={'tagLibraryTagGroupTitle_' + tagGroup.title}
+      className={props.classes.listItem}
+      title={'Number of tags in this tag group: ' + tagGroup.children.length}
+    >
+      <Grid container direction="row" justify="center" alignItems="center">
+        <Grid item xs={2}>
+          <IconButton
+            style={{ minWidth: 'auto', padding: 7 }}
+            onClick={(event: any) => handleTagGroupTitleClick(event, tagGroup)}
+          >
+            {tagGroup.expanded ? <ArrowDownIcon /> : <ArrowRightIcon />}
+          </IconButton>
+        </Grid>
+        <Grid item xs={8}>
+          <Typography
+            variant="inherit"
+            className={props.classes.header}
+            style={{ paddingLeft: 0 }}
+            data-tid="locationTitleElement"
+            noWrap
+            onClick={(event: any) => handleTagGroupTitleClick(event, tagGroup)}
+          >
+            {tagGroup.title + getLocationName(tagGroup.locationId)}
+            {!tagGroup.expanded && (
+              <span className={props.classes.badge}>
+                {tagGroup.children.length}
+              </span>
+            )}
+          </Typography>
+        </Grid>
+        <Grid item xs={2}>
+          {!props.isReadOnly && (
             <IconButton
               style={{ minWidth: 'auto', padding: 7 }}
-              onClick={(event: any) =>
-                handleTagGroupTitleClick(event, tagGroup)
+              data-tid={
+                'tagLibraryMoreButton_' + tagGroup.title.replace(/ /g, '_')
               }
+              onClick={(event: any) => handleTagGroupMenu(event, tagGroup)}
             >
-              {tagGroup.expanded ? <ArrowDownIcon /> : <ArrowRightIcon />}
+              <MoreVertIcon />
             </IconButton>
-          </Grid>
-          <Grid item xs={8}>
-            <Typography
-              variant="inherit"
-              className={props.classes.header}
-              style={{ paddingLeft: 0 }}
-              data-tid="locationTitleElement"
-              noWrap
-              onClick={(event: any) =>
-                handleTagGroupTitleClick(event, tagGroup)
-              }
-            >
-              {tagGroup.title + getLocationName(tagGroup.locationId)}
-              {!tagGroup.expanded && (
-                <span className={props.classes.badge}>
-                  {tagGroup.children.length}
-                </span>
-              )}
-            </Typography>
-          </Grid>
-          <Grid item xs={2}>
-            {!props.isReadOnly && (
-              <IconButton
-                style={{ minWidth: 'auto', padding: 7 }}
-                data-tid={
-                  'tagLibraryMoreButton_' + tagGroup.title.replace(/ /g, '_')
-                }
-                onClick={(event: any) => handleTagGroupMenu(event, tagGroup)}
-              >
-                <MoreVertIcon />
-              </IconButton>
-            )}
-          </Grid>
+          )}
         </Grid>
-      </div>
-    )
+      </Grid>
+    </div>
   );
+  if (tagGroup.readOnly) {
+    return tagGroupTitle;
+  }
+  return connectDropTarget(connectDragSource(tagGroupTitle));
 };
 
 const boxSource = {

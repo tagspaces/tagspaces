@@ -22,15 +22,9 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import IconButton from '@material-ui/core/IconButton';
 import Collapse from '@material-ui/core/Collapse';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import ArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import ArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import TagContainerDnd from './TagContainerDnd';
 import TagContainer from './TagContainer';
 import ConfirmDialog from './dialogs/ConfirmDialog';
@@ -176,10 +170,6 @@ const TagLibrary = (props: Props) => {
   const isTagLibraryReadOnly =
     window.ExtTagLibrary && window.ExtTagLibrary.length > 0;
 
-  const handleTagGroupTitleClick = (event: Object, tagGroup) => {
-    props.toggleTagGroup(tagGroup.uuid);
-  };
-
   const handleTagGroupMenu = (
     event: React.ChangeEvent<HTMLInputElement>,
     tagGroup
@@ -244,18 +234,6 @@ const TagLibrary = (props: Props) => {
     setTagGroupMenuAnchorEl(null);
   };
 
-  function getLocationName(locationId: string) {
-    if (locationId) {
-      const location: TS.Location = props.locations.find(
-        l => l.uuid === locationId
-      );
-      if (location) {
-        return ' (' + location.name + ')';
-      }
-    }
-    return '';
-  }
-
   const renderTagGroup = (tagGroup, index) => {
     // eslint-disable-next-line no-param-reassign
     tagGroup.expanded = !(
@@ -281,7 +259,7 @@ const TagLibrary = (props: Props) => {
             data-tid={'tagGroupContainer_' + tagGroup.title}
           >
             {tagGroup.children &&
-              tagGroup.children.map((tag: TS.Tag, index) => {
+              tagGroup.children.map((tag: TS.Tag, idx) => {
                 if (props.isReadOnlyMode) {
                   return (
                     <TagContainer
@@ -299,7 +277,7 @@ const TagLibrary = (props: Props) => {
                   <TagContainerDnd
                     key={tagGroup.uuid + tag.title}
                     tagContainerRef={tagContainerRef}
-                    index={index}
+                    index={idx}
                     tag={tag}
                     tagGroup={tagGroup}
                     handleTagMenu={handleTagMenuCallback}
