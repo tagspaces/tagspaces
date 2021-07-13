@@ -365,7 +365,7 @@ const EntryProperties = (props: Props) => {
 
   const toggleThumbFilesDialog = () => {
     if (!Pro) {
-      props.showNotification(i18n.t('core:needProVersion'));
+      props.showNotification(i18n.t('core:thisFunctionalityIsAvailableInPro'));
       return true;
     }
     if (

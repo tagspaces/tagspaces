@@ -77,6 +77,7 @@ import { isPlusCode, parseLatLon } from '-/utils/misc';
 import { AppConfig } from '-/config';
 import { actions as SearchActions, getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
+import { ProLabel, BetaLabel } from '-/components/HelperComponents';
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
 
@@ -705,7 +706,7 @@ const Search = (props: Props) => {
               >
                 <div>{i18n.t('globalSearch')}</div>
               </Tooltip>
-              <sub>{Pro ? ' BETA' : ' PRO'}</sub>
+              {Pro ? <BetaLabel /> : <ProLabel />}
             </ToggleButton>
           </ToggleButtonGroup>
         </FormControl>
@@ -846,16 +847,18 @@ const Search = (props: Props) => {
             <FormControl
               className={classes.formControl}
               disabled={indexing || !Pro}
-              title={
-                !Pro
-                  ? i18n.t('core:thisFunctionalityIsAvailableInPro')
-                  : undefined
-              }
             >
               <InputLabel htmlFor="file-type">
-                {i18n.t('core:fileType')}
+                <Tooltip
+                  arrow
+                  placement="top"
+                  title={Pro ? '' : i18n.t('thisFunctionalityIsAvailableInPro')}
+                >
+                  {i18n.t('core:fileType')}
+                </Tooltip>
               </InputLabel>
               <Select
+                style={{ width: '100%' }}
                 value={JSON.stringify(fileTypes.current)}
                 onChange={handleFileTypeChange}
                 input={<Input name="fileTypes" id="file-type" />}

@@ -39,7 +39,7 @@ import { actions as AppActions } from '-/reducers/app';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { TS } from '-/tagspaces.namespace';
 import InfoIcon from '-/components/InfoIcon';
-
+import { ProLabel } from '-/components/HelperComponents';
 interface Props {
   classes?: any;
   anchorEl: Element;
@@ -162,14 +162,17 @@ const TagGroupMenu = (props: Props) => {
         <MenuItem
           data-tid="collectTags"
           onClick={handleCollectTags}
-          title={Pro ? '' : i18n.t('core:needProVersion')}
+          title={i18n.t('collectTagsFromLocationTitle')}
         >
           <ListItemIcon>
             <CollectTagsIcon />
           </ListItemIcon>
           <ListItemText
             primary={
-              i18n.t('core:collectTagsFromLocation') + (Pro ? '' : ' PRO')
+              <>
+                {i18n.t('core:collectTagsFromLocation')}
+                <ProLabel />
+              </>
             }
           />
         </MenuItem>
