@@ -87,6 +87,7 @@ import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { TS } from '-/tagspaces.namespace';
 import NoTileServer from '-/components/NoTileServer';
 import InfoIcon from '-/components/InfoIcon';
+import { ProTooltip } from '-/components/HelperComponents';
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
@@ -810,15 +811,18 @@ const EntryProperties = (props: Props) => {
                       {i18n.t('core:cancel')}
                     </Button>
                   )}
-                  <Button
-                    color="primary"
-                    className={classes.button}
-                    onClick={toggleEditDescriptionField}
-                  >
-                    {editDescription !== undefined
-                      ? i18n.t('core:confirmSaveButton')
-                      : i18n.t('core:edit')}
-                  </Button>
+                  <ProTooltip>
+                    <Button
+                      color="primary"
+                      className={classes.button}
+                      disabled={!Pro}
+                      onClick={toggleEditDescriptionField}
+                    >
+                      {editDescription !== undefined
+                        ? i18n.t('core:confirmSaveButton')
+                        : i18n.t('core:edit')}
+                    </Button>
+                  </ProTooltip>
                 </div>
               )}
           </div>
@@ -874,9 +878,7 @@ const EntryProperties = (props: Props) => {
                   // eslint-disable-next-line no-nested-ternary
                   __html: currentEntry.description
                     ? marked(DOMPurify.sanitize(currentEntry.description))
-                    : Pro
-                    ? i18n.t('core:addMarkdownDescription')
-                    : i18n.t('core:addDescription')
+                    : i18n.t('core:addMarkdownDescription')
                 }}
                 onDoubleClick={() => {
                   if (!currentEntry.editMode && editName === undefined) {
@@ -1256,14 +1258,17 @@ const EntryProperties = (props: Props) => {
               !currentEntry.editMode &&
               editName === undefined &&
               editDescription === undefined && (
-                <Button
-                  color="primary"
-                  className={classes.button}
-                  style={{ whiteSpace: 'nowrap' }}
-                  onClick={toggleThumbFilesDialog}
-                >
-                  {i18n.t('core:changeThumbnail')}
-                </Button>
+                <ProTooltip>
+                  <Button
+                    disabled={!Pro}
+                    color="primary"
+                    className={classes.button}
+                    style={{ whiteSpace: 'nowrap' }}
+                    onClick={toggleThumbFilesDialog}
+                  >
+                    {i18n.t('core:changeThumbnail')}
+                  </Button>
+                </ProTooltip>
               )}
           </div>
           <div className={classes.fluidGrid}>

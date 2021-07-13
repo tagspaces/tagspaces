@@ -308,7 +308,6 @@
   "confirmSelectedTagsDeletion": "Are you sure you want to delete the selected tags?",
   "confirmAllTagsDeletion": "Are you sure you want to remove all tags?",
   "existingTags": "Existing tags",
-  "addDescription": "Adding description with markdown support available in TagSpaces PRO",
   "addMarkdownDescription": "Double click to add description",
   "addEntryTags": "Add",
   "modifiedDate": "Last modified",
