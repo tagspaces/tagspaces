@@ -23,7 +23,7 @@ import i18n from '../services/i18n';
 import { Pro } from '-/pro';
 
 export const BetaLabel = () => (
-  <Tooltip arrow placement="top" title="This features is in BETA status">
+  <Tooltip arrow placement="top" title={i18n.t('featureInBetaStatus')}>
     <Typography style={{ display: 'initial' }}>
       <sup style={{ marginLeft: 5 }}>BETA</sup>
     </Typography>
