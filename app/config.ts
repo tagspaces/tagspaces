@@ -51,7 +51,7 @@ export const AppConfig = {
     checkNewVersionURL: 'https://www.tagspaces.org/releases/tagspaces.json',
     productsOverview: 'https://www.tagspaces.org/products/',
     productProObjectStore:
-      'https://www.tagspaces.org/products/pro/#connectingObjectStores',
+      'https://www.tagspaces.org/products/pro/#connectingObjectStorage',
     productProAdvancedSearch:
       'https://www.tagspaces.org/products/pro/#advancedSearch',
     productProFileFolderMeta:
@@ -79,6 +79,7 @@ export const AppConfig = {
   },
   documentationLinks: {
     general: 'https://docs.tagspaces.org/',
+    perspectives: 'https://docs.tagspaces.org/browsing-files/',
     defaultPerspective: 'https://docs.tagspaces.org/perspectives/grid/',
     mapiquePerspective: 'https://docs.tagspaces.org/perspectives/mapique/',
     treevizPerspective: 'https://docs.tagspaces.org/perspectives/treeviz/',
