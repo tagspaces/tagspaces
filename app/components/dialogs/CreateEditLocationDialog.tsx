@@ -42,7 +42,6 @@ import Input from '@material-ui/core/Input';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import CheckIcon from '@material-ui/icons/Check';
-import HelpIcon from '@material-ui/icons/InfoOutlined';
 import RemoveIcon from '@material-ui/icons/RemoveCircleOutline';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
@@ -53,9 +52,9 @@ import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
 import { locationType } from '-/utils/misc';
 import { getLocationPath } from '-/utils/paths';
-import IgnorePatternDialog from '-/components/dialogs/IgnorePatternDialog';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import InfoIcon from '-/components/InfoIcon';
+import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
 
 const styles: any = theme => ({
   formControl: {
@@ -76,6 +75,8 @@ interface Props {
 }
 
 const CreateEditLocationDialog = (props: Props) => {
+  const IgnorePatternDialog =
+    Pro && Pro.UI ? Pro.UI.IgnorePatternDialog : false;
   const { location } = props;
   const [showAdvancedMode, setShowAdvancedMode] = useState<boolean>(false);
   const [showSecretAccessKey, setShowSecretAccessKey] = useState<boolean>(
@@ -396,18 +397,18 @@ const CreateEditLocationDialog = (props: Props) => {
         <DialogCloseButton onClose={onClose} />
       </DialogTitle>
       <DialogContent
-        style={{ overflow: AppConfig.isFirefox ? 'auto' : 'overlay' }}
+        style={{
+          overflow: AppConfig.isFirefox ? 'auto' : 'overlay',
+          minWidth: 500
+        }}
       >
         <Grid container spacing={2}>
-          <Grid item xs={2} style={{ marginTop: 13, textAlign: 'left' }}>
+          <Grid item xs={2} style={{ marginTop: 10, textAlign: 'left' }}>
             <Typography>{i18n.t('core:locationType')}</Typography>
           </Grid>
           <Grid item xs={10}>
             <FormControl disabled={disableLocationTypeSwitch}>
               <RadioGroup
-                title={
-                  Pro ? '' : i18n.t('core:thisFunctionalityIsAvailableInPro')
-                }
                 aria-label={i18n.t('core:locationType')}
                 name="type"
                 value={type}
@@ -427,7 +428,12 @@ const CreateEditLocationDialog = (props: Props) => {
                   value={locationType.TYPE_CLOUD}
                   control={<Radio />}
                   title={i18n.t('core:objectStorageTitle')}
-                  label={i18n.t('core:objectStorage')}
+                  label={
+                    <>
+                      {i18n.t('core:objectStorage')}
+                      <ProLabel />
+                    </>
+                  }
                 />
               </RadioGroup>
             </FormControl>
@@ -467,8 +473,10 @@ const CreateEditLocationDialog = (props: Props) => {
               />
             }
             label={
-              i18n.t('core:createFullTextIndex') +
-              (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
+              <>
+                {i18n.t('core:createFullTextIndex')}
+                {Pro ? <BetaLabel /> : <ProLabel />}
+              </>
             }
           />
           <FormControlLabel
@@ -487,8 +495,10 @@ const CreateEditLocationDialog = (props: Props) => {
               />
             }
             label={
-              i18n.t('core:watchForChangesInLocation') +
-              (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
+              <>
+                {i18n.t('core:watchForChangesInLocation')}
+                <ProLabel />
+              </>
             }
           />
           {showAdvancedMode && (
@@ -508,8 +518,10 @@ const CreateEditLocationDialog = (props: Props) => {
                 />
               }
               label={
-                i18n.t('core:readonlyModeSwitch') +
-                (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
+                <>
+                  {i18n.t('core:readonlyModeSwitch')}
+                  <ProLabel />
+                </>
               }
             />
           )}
@@ -530,8 +542,10 @@ const CreateEditLocationDialog = (props: Props) => {
                 />
               }
               label={
-                i18n.t('core:persistIndexSwitch') +
-                (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
+                <>
+                  {i18n.t('core:persistIndexSwitch')}
+                  <ProLabel />
+                </>
               }
             />
           )}
@@ -613,7 +627,6 @@ const CreateEditLocationDialog = (props: Props) => {
                       <div style={{ display: 'flex' }}>
                         {persistTagsInSidecarFile === null && <CheckIcon />}
                         &nbsp;{i18n.t('core:default')}&nbsp;&nbsp;
-                        {/* <HelpIcon /> */}
                       </div>
                     </Tooltip>
                   </ToggleButton>
@@ -636,7 +649,6 @@ const CreateEditLocationDialog = (props: Props) => {
                         {persistTagsInSidecarFile !== null &&
                           !persistTagsInSidecarFile && <CheckIcon />}
                         &nbsp;Rename Files&nbsp;&nbsp;
-                        {/* <HelpIcon /> */}
                       </div>
                     </Tooltip>
                   </ToggleButton>
@@ -661,7 +673,6 @@ const CreateEditLocationDialog = (props: Props) => {
                         {persistTagsInSidecarFile !== null &&
                           persistTagsInSidecarFile && <CheckIcon />}
                         &nbsp;Use Sidecar Files&nbsp;&nbsp;
-                        {/* <HelpIcon /> */}
                       </div>
                     </Tooltip>
                   </ToggleButton>
@@ -678,22 +689,27 @@ const CreateEditLocationDialog = (props: Props) => {
           <>
             <FormControlLabel
               className={classes.formControl}
+              disabled={!Pro}
               labelPlacement="start"
               style={{ justifyContent: 'space-between' }}
               control={
-                <Button
-                  color="primary"
-                  onClick={() => {
-                    setIgnorePatternDialogOpen(true);
-                  }}
-                >
-                  {i18n.t('ignorePatternDialogTitle')}
-                </Button>
+                <ProTooltip title={i18n.t('ignorePatternDialogTitle')}>
+                  <Button
+                    color="primary"
+                    disabled={!Pro}
+                    onClick={() => {
+                      setIgnorePatternDialogOpen(true);
+                    }}
+                  >
+                    {i18n.t('addEntryTags')}
+                  </Button>
+                </ProTooltip>
               }
               label={
                 <Typography>
                   {i18n.t('core:ignorePatterns')}
                   <InfoIcon tooltip={i18n.t('core:ignorePatternsHelp')} />
+                  <ProLabel />
                 </Typography>
               }
             />
@@ -726,7 +742,7 @@ const CreateEditLocationDialog = (props: Props) => {
                   </ListItem>
                 ))}
             </List>
-            {isIgnorePatternDialogOpen && (
+            {IgnorePatternDialog && isIgnorePatternDialogOpen && (
               <IgnorePatternDialog
                 open={isIgnorePatternDialogOpen}
                 onClose={() => setIgnorePatternDialogOpen(false)}

@@ -38,6 +38,7 @@ export const types = {
   // REMOVE_TAG: 'REMOVE_TAG',
   // UPDATE_TAG: 'UPDATE_TAG',
   SORT_TAG_GROUP_UP: 'SORT_TAG_GROUP_UP',
+  MOVE_TAG_GROUP: 'MOVE_TAG_GROUP',
   MOVE_TAG_GROUP_UP: 'MOVE_TAG_GROUP_UP',
   MOVE_TAG_GROUP_DOWN: 'MOVE_TAG_GROUP_DOWN',
   EDIT_TAG_COLOR: 'EDIT_TAG_COLOR',
@@ -277,6 +278,21 @@ export default (state: Array<TS.TagGroup> = defaultTagLibrary, action: any) => {
       if (indexForUpdating >= 0 && indexForUpdating < state.length - 1) {
         const secondIndex = indexForUpdating + 1;
         return immutablySwapItems(state, indexForUpdating, secondIndex);
+      }
+      return state;
+    }
+    case types.MOVE_TAG_GROUP: {
+      let indexForUpdating = -1;
+      state.forEach((tagGroup, index) => {
+        if (tagGroup.uuid === action.uuid) {
+          indexForUpdating = index;
+        }
+      });
+      if (indexForUpdating > -1 && indexForUpdating !== action.position) {
+        const tagGroups = Array.from(state);
+        const [removed] = tagGroups.splice(indexForUpdating, 1);
+        tagGroups.splice(action.position, 0, removed);
+        return tagGroups;
       }
       return state;
     }
@@ -650,6 +666,11 @@ export const actions = {
     tagTitle,
     uuid: parentTagGroupUuid
   }), */
+  moveTagGroup: (tagGroupUuid: TS.Uuid, position: number) => ({
+    type: types.MOVE_TAG_GROUP,
+    uuid: tagGroupUuid,
+    position
+  }),
   moveTagGroupUp: (parentTagGroupUuid: TS.Uuid) => ({
     type: types.MOVE_TAG_GROUP_UP,
     uuid: parentTagGroupUuid

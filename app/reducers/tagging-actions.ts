@@ -81,7 +81,9 @@ const actions = {
             dispatch(AppActions.toggleEditTagDialog(tag));
           } else {
             dispatch(
-              AppActions.showNotification(i18n.t('core:needProVersion'))
+              AppActions.showNotification(
+                i18n.t('core:thisFunctionalityIsAvailableInPro')
+              )
             );
           }
         } else if (tag.functionality === 'dateTagging') {
@@ -92,7 +94,9 @@ const actions = {
             dispatch(AppActions.toggleEditTagDialog(tag));
           } else {
             dispatch(
-              AppActions.showNotification(i18n.t('core:needProVersion'))
+              AppActions.showNotification(
+                i18n.t('core:thisFunctionalityIsAvailableInPro')
+              )
             );
           }
         } else {
@@ -721,7 +725,7 @@ const actions = {
     if (!Pro || !Pro.Indexer || !Pro.Indexer.collectTagsFromIndex) {
       dispatch(
         AppActions.showNotification(
-          i18n.t('core:needProVersion'),
+          i18n.t('core:thisFunctionalityIsAvailableInPro'),
           'error',
           true
         )

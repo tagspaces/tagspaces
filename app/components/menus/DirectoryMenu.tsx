@@ -21,10 +21,10 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import Tooltip from '@material-ui/core/Tooltip';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Divider from '@material-ui/core/Divider';
-// import ContentExtractionIcon from '@material-ui/icons/TrackChanges';
 import OpenFolderIcon from '@material-ui/icons/SubdirectoryArrowLeft';
 import AddExistingFileIcon from '@material-ui/icons/ExitToApp';
 import ImportTagsIcon from '@material-ui/icons/FindInPage';
@@ -33,7 +33,6 @@ import AutoRenew from '@material-ui/icons/Autorenew';
 import DefaultPerspectiveIcon from '@material-ui/icons/GridOn';
 import GalleryPerspectiveIcon from '@material-ui/icons/Camera';
 import MapiquePerspectiveIcon from '@material-ui/icons/Map';
-// import TreeVizPerspectiveIcon from '@material-ui/icons/AccountTree';
 import KanBanPerspectiveIcon from '@material-ui/icons/Dashboard';
 import NewFileIcon from '@material-ui/icons/InsertDriveFile';
 import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
@@ -51,7 +50,6 @@ import {
   extractContainingDirectoryPath,
   extractDirectoryName,
   getThumbFileLocationForDirectory,
-  getThumbFileLocationForFile,
   normalizePath
 } from '-/utils/paths';
 import PlatformIO from '-/services/platform-io';
@@ -63,14 +61,13 @@ import {
 } from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
 import TaggingActions from '-/reducers/tagging-actions';
-import {
-  getAllPropertiesPromise,
-  setFolderThumbnailPromise
-} from '-/services/utils-io';
+import { getAllPropertiesPromise } from '-/services/utils-io';
 import FileUploadContainer, {
   FileUploadContainerRef
 } from '-/components/FileUploadContainer';
 import { TS } from '-/tagspaces.namespace';
+import { ProLabel, BetaLabel } from '-/components/HelperComponents';
+import Links from '-/links';
 
 interface Props {
   open: boolean;
@@ -83,7 +80,6 @@ interface Props {
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   reflectCreateEntry?: (path: string, isFile: boolean) => void;
   toggleCreateFileDialog?: () => void;
-  // extractContent: (config: Object) => void,
   uploadFilesAPI: (
     files: Array<File>,
     destination: string,
@@ -114,20 +110,16 @@ interface Props {
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   mouseX?: number;
   mouseY?: number;
+  openURLExternally?: (url: string, skipConfirmation: boolean) => void;
 }
 
 const DirectoryMenu = (props: Props) => {
-  // let fileInput; // Object | null;
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
 
   const [
     isCreateDirectoryDialogOpened,
     setIsCreateDirectoryDialogOpened
   ] = useState(false);
-  /* const [
-    isRenameDirectoryDialogOpened,
-    setIsRenameDirectoryDialogOpened
-  ] = useState(false); */
 
   function reloadDirectory() {
     props.onClose();
@@ -156,11 +148,6 @@ const DirectoryMenu = (props: Props) => {
       );
   }
 
-  // function initContentExtraction() {
-  //   props.onClose();
-  //   props.extractContent({ EXIFGeo: true });
-  // }
-
   function switchPerspective(perspectiveId) {
     props.onClose();
     if (Pro) {
@@ -169,12 +156,36 @@ const DirectoryMenu = (props: Props) => {
       } else {
         props.setCurrentDirectoryPerspective(perspectiveId);
       }
-    } else {
-      props.showNotification(
-        'Perspectives are part of TagSpaces PRO',
-        'default',
-        true
+    } else if (perspectiveId === perspectives.GALLERY) {
+      const openPersDocs = window.confirm(
+        'Gallery is part of the PRO version. Do you want to learn more about this perspective?'
       );
+      if (openPersDocs) {
+        props.openURLExternally(
+          Links.documentationLinks.galleryPerspective,
+          true
+        );
+      }
+    } else if (perspectiveId === perspectives.MAPIQUE) {
+      const openPersDocs = window.confirm(
+        'Mapique is part of the PRO version. Do you want to learn more about this perspective?'
+      );
+      if (openPersDocs) {
+        props.openURLExternally(
+          Links.documentationLinks.mapiquePerspective,
+          true
+        );
+      }
+    } else if (perspectiveId === perspectives.KANBAN) {
+      const openPersDocs = window.confirm(
+        'Kanban is part of the PRO version. Do you want to learn more about this perspective?'
+      );
+      if (openPersDocs) {
+        props.openURLExternally(
+          Links.documentationLinks.kanbanPerspective,
+          true
+        );
+      }
     }
   }
 
@@ -189,7 +200,6 @@ const DirectoryMenu = (props: Props) => {
   function showRenameDirectoryDialog() {
     props.onClose();
     props.openRenameDirectoryDialog();
-    // setIsRenameDirectoryDialogOpened(true);
   }
 
   function showCreateDirectoryDialog() {
@@ -253,7 +263,11 @@ Do you want to continue?`)
           props.toggleProgressDialog();
         });
     } else {
-      props.showNotification(i18n.t('core:proFeature'), 'default', true);
+      props.showNotification(
+        i18n.t('core:thisFunctionalityIsAvailableInPro'),
+        'default',
+        true
+      );
       return true;
     }
   }
@@ -328,13 +342,6 @@ Do you want to continue?`)
       mediaType: Camera.MediaType.PICTURE // ALLMEDIA
     });
   }
-
-  /* function getDirPath(dirPath: string) {
-    const fileName = extractFileName(dirPath, PlatformIO.getDirSeparator());
-    return props.directoryPath && fileName
-      ? fileName
-      : cleanTrailingDirSeparator(props.directoryPath);
-  } */
 
   function setFolderThumbnail() {
     props.onClose();
@@ -520,7 +527,14 @@ Do you want to continue?`)
         <ListItemIcon>
           <ImportTagsIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:importMacTags')} />
+        <ListItemText
+          primary={
+            <>
+              {i18n.t('core:importMacTags')}
+              {Pro ? <BetaLabel /> : <ProLabel />}
+            </>
+          }
+        />
       </MenuItem>
     );
   }
@@ -556,55 +570,70 @@ Do you want to continue?`)
       </MenuItem>
     );
     menuItems.push(
-      <MenuItem
-        key="openGalleryPerspective"
-        data-tid="openGalleryPerspective"
-        onClick={() => switchPerspective(perspectives.GALLERY)}
-        title="Switch to gallery perspective"
-      >
-        <ListItemIcon>
-          <GalleryPerspectiveIcon />
-        </ListItemIcon>
-        <ListItemText primary="Gallery Perspective" />
-      </MenuItem>
+      <Tooltip title="Switch to Gallery perspective">
+        <MenuItem
+          key="openGalleryPerspective"
+          data-tid="openGalleryPerspective"
+          onClick={() => switchPerspective(perspectives.GALLERY)}
+        >
+          <ListItemIcon>
+            <GalleryPerspectiveIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary={
+              <>
+                Gallery Perspective
+                <ProLabel />
+              </>
+            }
+          />
+        </MenuItem>
+      </Tooltip>
     );
     menuItems.push(
-      <MenuItem
-        key="openMapiquePerspective"
-        data-tid="openMapiquePerspective"
-        onClick={() => switchPerspective(perspectives.MAPIQUE)}
-        title="Switch to mapique perspective"
-      >
-        <ListItemIcon>
-          <MapiquePerspectiveIcon />
-        </ListItemIcon>
-        <ListItemText primary="Mapique Perspective" />
-      </MenuItem>
+      <Tooltip title="Switch to Mapique perspective">
+        <MenuItem
+          key="openMapiquePerspective"
+          data-tid="openMapiquePerspective"
+          onClick={() => switchPerspective(perspectives.MAPIQUE)}
+        >
+          <ListItemIcon>
+            <MapiquePerspectiveIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary={
+              <>
+                Mapique Perspective
+                <ProLabel />
+              </>
+            }
+          />
+        </MenuItem>
+      </Tooltip>
     );
     menuItems.push(
-      <MenuItem
-        key="openKanBanPerspective"
-        data-tid="openKanBanPerspectiveTID"
-        onClick={() => switchPerspective(perspectives.KANBAN)}
-        title="Switch to kanban perspective"
-      >
-        <ListItemIcon>
-          <KanBanPerspectiveIcon />
-        </ListItemIcon>
-        <ListItemText primary="KanBan Perspective" />
-      </MenuItem>
+      <Tooltip title="Switch to Kanban perspective">
+        <MenuItem
+          key="openKanBanPerspective"
+          data-tid="openKanBanPerspectiveTID"
+          onClick={() => switchPerspective(perspectives.KANBAN)}
+        >
+          <ListItemIcon>
+            <KanBanPerspectiveIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary={
+              <>
+                Kanban Perspective
+                {Pro ? <BetaLabel /> : <ProLabel />}
+              </>
+            }
+          />
+        </MenuItem>
+      </Tooltip>
     );
   }
-  /* if (!props.isReadOnlyMode) {
-    menuItems.push(
-      <MenuItem data-tid="extractContent" onClick={initContentExtraction}>
-        <ListItemIcon>
-          <ContentExtractionIcon />
-        </ListItemIcon>
-        <ListItemText primary={i18n.t('core:startContentExtraction')} />
-      </MenuItem>
-    );
-  } */
+
   if (props.selectedEntries.length < 2) {
     menuItems.push(<Divider key="divider3" />);
     menuItems.push(
@@ -623,14 +652,6 @@ Do you want to continue?`)
 
   return (
     <div style={{ overflowY: 'hidden' }}>
-      {/* {isRenameDirectoryDialogOpened && (
-        <RenameDirectoryDialog
-          key={'renameDir' + props.directoryPath}
-          open={isRenameDirectoryDialogOpened}
-          onClose={() => setIsRenameDirectoryDialogOpened(false)}
-          selectedDirectoryPath={props.directoryPath}
-        />
-      )} */}
       {isCreateDirectoryDialogOpened && ( // TODO move dialogs in MainContainer and don't include the Menu HTML always
         <CreateDirectoryDialog
           key={'createDir' + props.directoryPath}
@@ -690,7 +711,8 @@ function mapDispatchToProps(dispatch) {
       addTags: TaggingActions.addTags,
       toggleDeleteMultipleEntriesDialog:
         AppActions.toggleDeleteMultipleEntriesDialog,
-      setSelectedEntries: AppActions.setSelectedEntries
+      setSelectedEntries: AppActions.setSelectedEntries,
+      openURLExternally: AppActions.openURLExternally
     },
     dispatch
   );

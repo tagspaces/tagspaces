@@ -48,7 +48,11 @@ const actions = {
   ) => (dispatch: (actions: any) => void, getState: () => any) => {
     const { currentDirectoryEntries } = getState().app;
     if (!Pro || !Pro.ContentExtractor) {
-      dispatch(AppActions.showNotification(i18n.t('core:needProVersion')));
+      dispatch(
+        AppActions.showNotification(
+          i18n.t('core:thisFunctionalityIsAvailableInPro')
+        )
+      );
       return false;
     }
     Pro.ContentExtractor.extractContent(
