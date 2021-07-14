@@ -158,7 +158,7 @@ app.on('ready', async () => {
       frame: false,
       webPreferences: {
         nodeIntegration: true,
-        enableRemoteModule: true,
+        enableRemoteModule: false,
         contextIsolation: false
       }
     });
@@ -194,7 +194,7 @@ app.on('ready', async () => {
       spellcheck: true,
       nodeIntegration: true,
       webviewTag: true,
-      enableRemoteModule: true,
+      enableRemoteModule: false,
       contextIsolation: false
     }
   });
@@ -270,12 +270,82 @@ app.on('ready', async () => {
     createSplashWorker();
   });
 
+  // electron-io actions
+  ipcMain.on('is-worker-available', event => {
+    let workerAvailable = false;
+    try {
+      if (
+        (global as any).splashWorkerWindow &&
+        (global as any).splashWorkerWindow.webContents
+      ) {
+        workerAvailable = true;
+      }
+    } catch (err) {
+      console.info('Error by finding if worker is available.');
+    }
+    event.returnValue = workerAvailable;
+  });
+
+  ipcMain.on('show-main-window', (event, arg) => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) {
+        mainWindow.restore();
+      }
+      mainWindow.show();
+    }
+  });
+
+  ipcMain.on('focus-window', (event, arg) => {
+    if (mainWindow) {
+      mainWindow.focus();
+    }
+  });
+
+  ipcMain.on('get-device-paths', event => {
+    const paths = {
+      desktopFolder: app.getPath('desktop'),
+      documentsFolder: app.getPath('documents'),
+      downloadsFolder: app.getPath('downloads'),
+      musicFolder: app.getPath('music'),
+      picturesFolder: app.getPath('pictures'),
+      videosFolder: app.getPath('videos')
+    };
+    event.returnValue = paths;
+  });
+
+  ipcMain.on('get-user-home-path', event => {
+    event.returnValue = app.getPath('home');
+  });
+
   ipcMain.on('worker', (event, arg) => {
+    // console.log('worker event in main.' + arg.result.length);
+    if ((global as any).splashWorkerWindow) {
+      (global as any).splashWorkerWindow.webContents.send('worker', arg);
+    }
+  });
+
+  ipcMain.handle('select-directory-dialog', async (event, ...args) => {
+    const options = {
+      properties: ['openDirectory', 'createDirectory']
+    };
+    // @ts-ignore
+    const resultObject = await dialog.showOpenDialog(options);
+
+    if (resultObject.filePaths && resultObject.filePaths.length) {
+      // alert(JSON.stringify(resultObject.filePaths));
+      return resultObject.filePaths;
+    }
+    return false;
+  });
+
+  ///// end electron-io
+
+  /*ipcMain.on('worker', (event, arg) => { TODO Why?
     // console.log('worker event in main.' + arg.result.length);
     if (mainWindow) {
       mainWindow.webContents.send(arg.id, arg);
     }
-  });
+  });*/
 
   ipcMain.on('setSplashVisibility', (event, arg) => {
     // worker window needed to be visible for the PDF tmb generation
