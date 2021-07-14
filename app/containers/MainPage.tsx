@@ -86,7 +86,7 @@ import useEventListener from '-/utils/useEventListener';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { TS } from '-/tagspaces.namespace';
 import PageNotification from '-/containers/PageNotification';
-import { ipcMain } from 'electron';
+import listen from '-/containers/RendererListener';
 
 const initialSplitSize = 44;
 const drawerWidth = 300;
@@ -324,13 +324,6 @@ const MainPage = (props: Props) => {
     height
   });
 
-  let ipcRenderer;
-
-  if (AppConfig.isElectron && window.require) {
-    const electron = window.require('electron');
-    ({ ipcRenderer } = electron);
-  }
-
   useEffect(() => {
     if (!AppConfig.isCordova) {
       updateDimensions();
@@ -339,36 +332,7 @@ const MainPage = (props: Props) => {
     // buildDesktopMenu(props);
     // buildTrayIconMenu(props);
 
-    ipcRenderer.on('file', (event, arg) => {
-      // console.log('Global events: ' + arg);
-      switch (arg) {
-        case 'new-text-file':
-          props.toggleCreateFileDialog();
-          break;
-        case 'open-search':
-          props.openSearchPanel();
-          break;
-        case 'audio':
-          // console.log('showAudioRecordingDialog');
-          break;
-        case 'next-file': {
-          props.openNextFile();
-          break;
-        }
-        case 'previous-file': {
-          props.openPrevFile();
-          break;
-        }
-        default:
-          return false;
-      }
-    });
-
-    ipcRenderer.on('play-pause', (event, arg) => {
-      // Create the event.
-      const audioEvent = new CustomEvent('toggle-resume', { detail: '' });
-      window.dispatchEvent(audioEvent);
-    });
+    listen(props);
   }, []);
 
   useEffect(() => {

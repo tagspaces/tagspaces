@@ -18,12 +18,11 @@
 
 import { app, Menu, Tray } from 'electron';
 import pathLib from 'path';
-import i18n from './i18n';
 import TrayIcon2x from '-/assets/icons/trayIcon@2x.png';
 import TrayIcon from '-/assets/icons/trayIcon.png';
 import TrayIcon3x from '-/assets/icons/trayIcon@3x.png';
 
-export default function buildTrayIconMenu(mainPageProps: any) {
+export default function buildTrayIconMenu(mainPageProps: any, i18n) {
   /* if (!AppConfig.isElectron) {
     return;
   } */

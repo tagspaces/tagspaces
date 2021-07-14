@@ -17,10 +17,9 @@
  */
 
 import { app, Menu } from 'electron';
-import i18n from './i18n';
 import Links from '-/links';
 
-export default function buildDesktopMenu(mainPageProps: any) {
+export default function buildDesktopMenu(props: any, i18n) {
   function quitApp() {
     app.quit();
   }
@@ -42,12 +41,12 @@ export default function buildDesktopMenu(mainPageProps: any) {
         {
           label: i18n.t('core:newFileNote'),
           // accelerator: 'CommandOrControl+Alt+N',
-          click: mainPageProps.toggleCreateFileDialog
+          click: props.toggleCreateFileDialog
         },
         {
           label: i18n.t('core:createDirectory'),
           accelerator: '',
-          click: mainPageProps.showCreateDirectoryDialog
+          click: props.showCreateDirectoryDialog
         },
         {
           type: 'separator'
@@ -55,7 +54,7 @@ export default function buildDesktopMenu(mainPageProps: any) {
         {
           label: i18n.t('core:openLink'),
           accelerator: 'Ctrl+o',
-          click: mainPageProps.toggleOpenLinkDialog
+          click: props.toggleOpenLinkDialog
         },
         {
           type: 'separator'
@@ -120,29 +119,29 @@ export default function buildDesktopMenu(mainPageProps: any) {
       submenu: [
         {
           label: i18n.t('core:showLocationManager'),
-          accelerator: mainPageProps.keyBindings.showLocationManager,
-          click: mainPageProps.openLocationManagerPanel
+          accelerator: props.keyBindings.showLocationManager,
+          click: props.openLocationManagerPanel
         },
         {
           label: i18n.t('core:showTagLibrary'),
-          accelerator: mainPageProps.keyBindings.showTagLibrary,
-          click: mainPageProps.openTagLibraryPanel
+          accelerator: props.keyBindings.showTagLibrary,
+          click: props.openTagLibraryPanel
         },
         {
           label: i18n.t('core:showSearch'),
-          accelerator: mainPageProps.keyBindings.showSearch,
-          click: mainPageProps.openSearchPanel
+          accelerator: props.keyBindings.showSearch,
+          click: props.openSearchPanel
         },
         {
           label: i18n.t('core:showDevTools'),
-          accelerator: mainPageProps.keyBindings.openDevTools,
+          accelerator: props.keyBindings.openDevTools,
           click: (item, focusedWindow) => {
             focusedWindow.toggleDevTools();
           }
         },
         {
           label: i18n.t('core:reloadApplication'),
-          accelerator: mainPageProps.keyBindings.reloadApplication,
+          accelerator: props.keyBindings.reloadApplication,
           click: (item, focusedWindow) => {
             // ipcRenderer.send('relaunch-app', 'relaunch');
             focusedWindow.webContents.reload();
@@ -154,18 +153,12 @@ export default function buildDesktopMenu(mainPageProps: any) {
         {
           label: i18n.t('core:goback'),
           accelerator: 'Alt+Left',
-          click: () => {
-            window.history.back();
-            console.log('navigate to: ' + window.location.href);
-          }
+          click: props.goBack
         },
         {
           label: i18n.t('core:goforward'),
           accelerator: 'Alt+Right',
-          click: () => {
-            window.history.forward();
-            console.log('navigate to: ' + window.location.href);
-          }
+          click: props.goForward
         },
         {
           type: 'separator'
@@ -173,24 +166,25 @@ export default function buildDesktopMenu(mainPageProps: any) {
         {
           label: i18n.t('core:zoomReset'),
           accelerator: 'CmdOrCtrl+0',
-          click: mainPageProps.setZoomResetApp
+          click: props.setZoomResetApp
         },
         {
           label: i18n.t('core:zoomIn'),
           accelerator: 'CmdOrCtrl+Plus',
-          click: mainPageProps.setZoomInApp
+          click: props.setZoomInApp
         },
         {
           label: i18n.t('core:zoomOut'),
           accelerator: 'CmdOrCtrl+-',
-          click: mainPageProps.setZoomOutApp
+          click: props.setZoomOutApp
         },
         {
           label: i18n.t('core:toggleFullScreen'),
-          accelerator: mainPageProps.keyBindings.toggleFullScreen,
+          accelerator: props.keyBindings.toggleFullScreen,
           click: (item, focusedWindow) => {
+            // props.toggleFullScreen
             if (focusedWindow.isFullScreen()) {
-              document.exitFullscreen();
+              props.exitFullscreen();
               focusedWindow.setFullScreen(false);
             } else {
               focusedWindow.setFullScreen(true);
@@ -202,7 +196,7 @@ export default function buildDesktopMenu(mainPageProps: any) {
         },
         {
           label: i18n.t('core:settings'),
-          click: mainPageProps.toggleSettingsDialog
+          click: props.toggleSettingsDialog
         }
       ]
     },
@@ -211,21 +205,24 @@ export default function buildDesktopMenu(mainPageProps: any) {
       submenu: [
         {
           label: '&' + i18n.t('core:documentation'),
-          accelerator: mainPageProps.keyBindings.showHelp,
-          click: mainPageProps.openHelpFeedbackPanel
+          accelerator: props.keyBindings.showHelp,
+          click: props.openHelpFeedbackPanel
         },
         {
           label: '&' + i18n.t('core:shortcutKeys'),
-          click: mainPageProps.toggleKeysDialog
+          click: props.toggleKeysDialog
         },
         {
           label: 'Welcome Wizzard',
-          click: mainPageProps.toggleOnboardingDialog
+          click: props.toggleOnboardingDialog
         },
         {
           label: '&' + i18n.t('core:whatsNew'),
           click: () => {
-            mainPageProps.openURLExternally(Links.links.changelogURL, true);
+            props.openURLExternally({
+              url: Links.links.changelogURL,
+              skipConfirm: true
+            });
           }
         },
         {
@@ -234,13 +231,17 @@ export default function buildDesktopMenu(mainPageProps: any) {
         {
           label: '&' + i18n.t('core:likeUsOnFacebook'),
           click: () => {
-            mainPageProps.openURLExternally(Links.links.facebook);
+            props.openURLExternally({
+              url: Links.links.facebook
+            });
           }
         },
         {
           label: '&' + i18n.t('core:followOnTwitter'),
           click: () => {
-            mainPageProps.openURLExternally(Links.links.twitter);
+            props.openURLExternally({
+              url: Links.links.twitter
+            });
           }
         },
         {
@@ -249,13 +250,17 @@ export default function buildDesktopMenu(mainPageProps: any) {
         {
           label: '&' + i18n.t('core:suggestNewFeatures'),
           click: () => {
-            mainPageProps.openURLExternally(Links.links.suggestFeature);
+            props.openURLExternally({
+              url: Links.links.suggestFeature
+            });
           }
         },
         {
           label: '&' + i18n.t('core:reportIssues'),
           click: () => {
-            mainPageProps.openURLExternally(Links.links.reportIssue);
+            props.openURLExternally({
+              url: Links.links.reportIssue
+            });
           }
         },
         {
@@ -264,16 +269,19 @@ export default function buildDesktopMenu(mainPageProps: any) {
         {
           label: i18n.t('core:webClipperChrome'),
           click: () => {
-            mainPageProps.openURLExternally(Links.links.webClipperChrome, true);
+            props.openURLExternally({
+              url: Links.links.webClipperChrome,
+              skipConfirm: true
+            });
           }
         },
         {
           label: i18n.t('core:webClipperFirefox'),
           click: () => {
-            mainPageProps.openURLExternally(
-              Links.links.webClipperFirefox,
-              true
-            );
+            props.openURLExternally({
+              url: Links.links.webClipperFirefox,
+              skipConfirm: true
+            });
           }
         },
         {
@@ -281,15 +289,15 @@ export default function buildDesktopMenu(mainPageProps: any) {
         },
         {
           label: '&' + i18n.t('core:license'),
-          click: mainPageProps.toggleLicenseDialog
+          click: props.toggleLicenseDialog
         },
         {
           label: '&' + i18n.t('core:thirdPartyLibs'),
-          click: mainPageProps.toggleThirdPartyLibsDialog
+          click: props.toggleThirdPartyLibsDialog
         },
         {
           label: '&' + i18n.t('core:aboutTagSpaces'),
-          click: mainPageProps.toggleAboutDialog
+          click: props.toggleAboutDialog
         }
       ]
     }

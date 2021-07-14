@@ -19,8 +19,10 @@
 import { app, BrowserWindow, ipcMain, globalShortcut, dialog } from 'electron';
 import windowStateKeeper from 'electron-window-state';
 import path from 'path';
+import i18n from '-/services/i18n';
 import buildTrayIconMenu from '-/services/electron-tray-menu';
 import buildDesktopMenu from '-/services/electron-menus';
+// import menuFactoryService from '-/services/menuFactory';
 
 // require('@electron/remote/main').initialize();
 
@@ -338,6 +340,102 @@ app.on('ready', async () => {
     }
   }
 
+  function openLocationManagerPanel() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('file', 'open-location-manager-panel');
+    }
+  }
+  function openTagLibraryPanel() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('file', 'open-tag-library-panel');
+    }
+  }
+  function goBack() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('file', 'go-back');
+    }
+  }
+  function goForward() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('file', 'go-forward');
+    }
+  }
+  function setZoomResetApp() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('file', 'set-zoom-reset-app');
+    }
+  }
+  function setZoomInApp() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('file', 'set-zoom-in-app');
+    }
+  }
+  function setZoomOutApp() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('file', 'set-zoom-out-app');
+    }
+  }
+  function exitFullscreen() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('file', 'exit-fullscreen');
+    }
+  }
+  function toggleSettingsDialog() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('file', 'toggle-settings-dialog');
+    }
+  }
+  function openHelpFeedbackPanel() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('file', 'open-help-feedback-panel');
+    }
+  }
+  function toggleKeysDialog() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('file', 'toggle-keys-dialog');
+    }
+  }
+  function toggleOnboardingDialog() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('file', 'toggle-onboarding-dialog');
+    }
+  }
+  function openURLExternally(data) {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('open-url-externally', data);
+    }
+  }
+  function toggleLicenseDialog() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('file', 'toggle-license-dialog');
+    }
+  }
+  function toggleThirdPartyLibsDialog() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('file', 'toggle-third-party-libs-dialog');
+    }
+  }
+  function toggleAboutDialog() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('file', 'toggle-about-dialog');
+    }
+  }
   function showSearch() {
     if (mainWindow) {
       showTagSpaces();
@@ -364,6 +462,18 @@ app.on('ready', async () => {
     }
   }
 
+  function showCreateDirectoryDialog() {
+    if (mainWindow) {
+      mainWindow.webContents.send('file', 'show-create-directory-dialog');
+    }
+  }
+
+  function toggleOpenLinkDialog() {
+    if (mainWindow) {
+      mainWindow.webContents.send('file', 'toggle-open-link-dialog');
+    }
+  }
+
   function resumePlayback() {
     if (mainWindow) {
       mainWindow.webContents.send('play-pause', true);
@@ -376,124 +486,152 @@ app.on('ready', async () => {
     }
   }
 
-  tray = buildTrayIconMenu({
-    showTagSpaces,
-    openSearchPanel: showSearch,
-    toggleCreateFileDialog: newTextFile,
-    openNextFile: getNextFile,
-    openPrevFile: getPreviousFile,
-    quitApp: reloadApp
+  i18n.on('loaded', loaded => {
+    buildDesktopMenu(
+      {
+        showTagSpaces,
+        openSearchPanel: showSearch,
+        toggleCreateFileDialog: newTextFile,
+        openNextFile: getNextFile,
+        openPrevFile: getPreviousFile,
+        quitApp: reloadApp,
+        showCreateDirectoryDialog: showCreateDirectoryDialog,
+        toggleOpenLinkDialog: toggleOpenLinkDialog,
+        openLocationManagerPanel: openLocationManagerPanel,
+        openTagLibraryPanel: openTagLibraryPanel,
+        goBack: goBack,
+        goForward: goForward,
+        setZoomResetApp: setZoomResetApp,
+        setZoomInApp: setZoomInApp,
+        setZoomOutApp: setZoomOutApp,
+        exitFullscreen: exitFullscreen,
+        toggleSettingsDialog: toggleSettingsDialog,
+        openHelpFeedbackPanel: openHelpFeedbackPanel,
+        toggleKeysDialog: toggleKeysDialog,
+        toggleOnboardingDialog: toggleOnboardingDialog,
+        openURLExternally: openURLExternally,
+        toggleLicenseDialog: toggleLicenseDialog,
+        toggleThirdPartyLibsDialog: toggleThirdPartyLibsDialog,
+        toggleAboutDialog: toggleAboutDialog,
+        // defaultSettings.keyBindings
+        keyBindings: [
+          {
+            name: 'selectAll',
+            command: 'ctrl+a'
+          },
+          {
+            name: 'closeViewer',
+            command: 'ctrl+w'
+          },
+          {
+            name: 'saveDocument',
+            command: 'ctrl+s'
+          },
+          {
+            name: 'reloadDocument',
+            command: 'ctrl+r'
+          },
+          {
+            name: 'editDocument',
+            command: 'ctrl+e'
+          },
+          {
+            name: 'deleteDocument',
+            command: 'del'
+          },
+          {
+            name: 'showLocationManager',
+            command: 'ctrl+1'
+          },
+          {
+            name: 'showTagLibrary',
+            command: 'ctrl+2'
+          },
+          {
+            name: 'showSearch',
+            command: 'ctrl+3'
+          },
+          {
+            name: 'toggleShowHiddenEntries',
+            command: 'ctrl+h'
+          },
+          {
+            name: 'addRemoveTags',
+            command: 'ctrl+t'
+          },
+          /* {
+            name: 'propertiesDocument',
+            command: 'alt+enter',
+          }, */
+          {
+            name: 'nextDocument',
+            command: 'down'
+          },
+          {
+            name: 'prevDocument',
+            command: 'up'
+          },
+          {
+            name: 'showHelp',
+            command: 'f1'
+          },
+          {
+            name: 'reloadApplication',
+            command: 'r a'
+          },
+          {
+            name: 'toggleFullScreen',
+            command: 'f11'
+          },
+          {
+            name: 'openDevTools',
+            command: 'f10'
+          },
+          {
+            name: 'openSearch',
+            command: 'ctrl+f'
+          },
+          {
+            name: 'renameFile',
+            command: 'f2'
+          },
+          {
+            name: 'openEntry',
+            command: 'enter'
+          },
+          {
+            name: 'openParentDirectory',
+            command: 'backspace'
+          },
+          {
+            name: 'openFileExternally',
+            command: 'ctrl+enter'
+          },
+          {
+            name: 'zoomIn',
+            command: 'ctrl+'
+          },
+          {
+            name: 'zoomOut',
+            command: 'ctrl-'
+          }
+        ]
+      },
+      i18n
+    );
+    //i18n.changeLanguage('en');
+    i18n.off('loaded');
   });
-
-  buildDesktopMenu({
-    showTagSpaces,
-    openSearchPanel: showSearch,
-    toggleCreateFileDialog: newTextFile,
-    openNextFile: getNextFile,
-    openPrevFile: getPreviousFile,
-    quitApp: reloadApp,
-    // defaultSettings.keyBindings
-    keyBindings: [
-      {
-        name: 'selectAll',
-        command: 'ctrl+a'
-      },
-      {
-        name: 'closeViewer',
-        command: 'ctrl+w'
-      },
-      {
-        name: 'saveDocument',
-        command: 'ctrl+s'
-      },
-      {
-        name: 'reloadDocument',
-        command: 'ctrl+r'
-      },
-      {
-        name: 'editDocument',
-        command: 'ctrl+e'
-      },
-      {
-        name: 'deleteDocument',
-        command: 'del'
-      },
-      {
-        name: 'showLocationManager',
-        command: 'ctrl+1'
-      },
-      {
-        name: 'showTagLibrary',
-        command: 'ctrl+2'
-      },
-      {
-        name: 'showSearch',
-        command: 'ctrl+3'
-      },
-      {
-        name: 'toggleShowHiddenEntries',
-        command: 'ctrl+h'
-      },
-      {
-        name: 'addRemoveTags',
-        command: 'ctrl+t'
-      },
-      /* {
-          name: 'propertiesDocument',
-          command: 'alt+enter',
-        }, */
-      {
-        name: 'nextDocument',
-        command: 'down'
-      },
-      {
-        name: 'prevDocument',
-        command: 'up'
-      },
-      {
-        name: 'showHelp',
-        command: 'f1'
-      },
-      {
-        name: 'reloadApplication',
-        command: 'r a'
-      },
-      {
-        name: 'toggleFullScreen',
-        command: 'f11'
-      },
-      {
-        name: 'openDevTools',
-        command: 'f10'
-      },
-      {
-        name: 'openSearch',
-        command: 'ctrl+f'
-      },
-      {
-        name: 'renameFile',
-        command: 'f2'
-      },
-      {
-        name: 'openEntry',
-        command: 'enter'
-      },
-      {
-        name: 'openParentDirectory',
-        command: 'backspace'
-      },
-      {
-        name: 'openFileExternally',
-        command: 'ctrl+enter'
-      },
-      {
-        name: 'zoomIn',
-        command: 'ctrl+'
-      },
-      {
-        name: 'zoomOut',
-        command: 'ctrl-'
-      }
-    ]
-  });
+  //TODO Tray not showing on i18n loaded - not localized yet
+  tray = buildTrayIconMenu(
+    {
+      showTagSpaces,
+      openSearchPanel: showSearch,
+      toggleCreateFileDialog: newTextFile,
+      openNextFile: getNextFile,
+      openPrevFile: getPreviousFile,
+      quitApp: reloadApp
+    },
+    i18n
+  );
 });
