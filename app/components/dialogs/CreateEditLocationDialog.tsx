@@ -52,10 +52,9 @@ import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
 import { locationType } from '-/utils/misc';
 import { getLocationPath } from '-/utils/paths';
-import IgnorePatternDialog from '-/components/dialogs/IgnorePatternDialog';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import InfoIcon from '-/components/InfoIcon';
-import { ProLabel, BetaLabel } from '-/components/HelperComponents';
+import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
 
 const styles: any = theme => ({
   formControl: {
@@ -76,6 +75,8 @@ interface Props {
 }
 
 const CreateEditLocationDialog = (props: Props) => {
+  const IgnorePatternDialog =
+    Pro && Pro.UI ? Pro.UI.IgnorePatternDialog : false;
   const { location } = props;
   const [showAdvancedMode, setShowAdvancedMode] = useState<boolean>(false);
   const [showSecretAccessKey, setShowSecretAccessKey] = useState<boolean>(
@@ -688,22 +689,27 @@ const CreateEditLocationDialog = (props: Props) => {
           <>
             <FormControlLabel
               className={classes.formControl}
+              disabled={!Pro}
               labelPlacement="start"
               style={{ justifyContent: 'space-between' }}
               control={
-                <Button
-                  color="primary"
-                  onClick={() => {
-                    setIgnorePatternDialogOpen(true);
-                  }}
-                >
-                  {i18n.t('ignorePatternDialogTitle')}
-                </Button>
+                <ProTooltip title={i18n.t('ignorePatternDialogTitle')}>
+                  <Button
+                    color="primary"
+                    disabled={!Pro}
+                    onClick={() => {
+                      setIgnorePatternDialogOpen(true);
+                    }}
+                  >
+                    {i18n.t('addEntryTags')}
+                  </Button>
+                </ProTooltip>
               }
               label={
                 <Typography>
                   {i18n.t('core:ignorePatterns')}
                   <InfoIcon tooltip={i18n.t('core:ignorePatternsHelp')} />
+                  <ProLabel />
                 </Typography>
               }
             />
@@ -736,7 +742,7 @@ const CreateEditLocationDialog = (props: Props) => {
                   </ListItem>
                 ))}
             </List>
-            {isIgnorePatternDialogOpen && (
+            {IgnorePatternDialog && isIgnorePatternDialogOpen && (
               <IgnorePatternDialog
                 open={isIgnorePatternDialogOpen}
                 onClose={() => setIgnorePatternDialogOpen(false)}
