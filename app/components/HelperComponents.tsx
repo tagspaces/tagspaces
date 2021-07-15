@@ -44,13 +44,13 @@ export const ProLabel = () =>
   );
 
 export const ProTooltip = props => {
-  const { title } = props;
+  const { tooltip } = props;
+  const proTooltip = tooltip && tooltip;
+  const noProTooltip = tooltip
+    ? tooltip + ' - ' + i18n.t('thisFunctionalityIsAvailableInPro')
+    : i18n.t('thisFunctionalityIsAvailableInPro');
   return (
-    <Tooltip
-      arrow
-      placement="top"
-      title={Pro ? title : i18n.t('thisFunctionalityIsAvailableInPro')}
-    >
+    <Tooltip arrow placement="top" title={Pro ? proTooltip : noProTooltip}>
       <span {...props} />
     </Tooltip>
   );

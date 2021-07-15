@@ -693,7 +693,7 @@ const CreateEditLocationDialog = (props: Props) => {
               labelPlacement="start"
               style={{ justifyContent: 'space-between' }}
               control={
-                <ProTooltip title={i18n.t('ignorePatternDialogTitle')}>
+                <ProTooltip tooltip={i18n.t('ignorePatternDialogTitle')}>
                   <Button
                     color="primary"
                     disabled={!Pro}

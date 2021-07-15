@@ -97,7 +97,7 @@ const styles: any = (theme: any) => ({
     overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
     overflowX: 'hidden',
     flexGrow: 1,
-    padding: '0 7px',
+    padding: 7,
     height: '100%'
   },
   tags: {
@@ -639,7 +639,9 @@ const EntryProperties = (props: Props) => {
                 className={classes.header}
                 style={{ display: 'block' }}
               >
-                {i18n.t('core:editTagMasterName')}
+                {currentEntry.isFile
+                  ? i18n.t('core:fileName')
+                  : i18n.t('core:folderName')}
               </Typography>
             </div>
           </div>
@@ -811,7 +813,7 @@ const EntryProperties = (props: Props) => {
                       {i18n.t('core:cancel')}
                     </Button>
                   )}
-                  <ProTooltip>
+                  <ProTooltip tooltip={i18n.t('editDescription')}>
                     <Button
                       color="primary"
                       className={classes.button}
@@ -949,8 +951,9 @@ const EntryProperties = (props: Props) => {
                 <Grid item xs={2}>
                   {currentEntry.color && (
                     <>
-                      <Tooltip title="Clears the background color of this folder">
+                      <ProTooltip tooltip={i18n.t('clearFolderColor')}>
                         <IconButton
+                          disabled={!Pro}
                           aria-label="clear"
                           size="small"
                           style={{ marginTop: 5 }}
@@ -958,7 +961,7 @@ const EntryProperties = (props: Props) => {
                         >
                           <ClearColorIcon />
                         </IconButton>
-                      </Tooltip>
+                      </ProTooltip>
                       {isConfirmResetColorDialogOpened && (
                         <ConfirmDialog
                           open={isConfirmResetColorDialogOpened}
@@ -1087,17 +1090,12 @@ const EntryProperties = (props: Props) => {
                 'Link for sharing to other TagSpaces installation using the same location IDs'
               )}
             />
-            {/* <Tooltip arrow title={i18n.t('Explanation')}>
-              <InfoIcon
-                style={{
-                  color: theme.palette.text.secondary,
-                  paddingLeft: 5,
-                  verticalAlign: 'bottom'
-                }}
-              />
-            </Tooltip> */}
           </Typography>
-          <FormControl fullWidth={true} className={classes.formControl}>
+          <FormControl
+            style={{ marginTop: -10 }}
+            fullWidth={true}
+            className={classes.formControl}
+          >
             <TextField
               margin="dense"
               name="path"
@@ -1151,7 +1149,11 @@ const EntryProperties = (props: Props) => {
                 )}
               />
             </Typography>
-            <FormControl fullWidth={true} className={classes.formControl}>
+            <FormControl
+              style={{ marginTop: -10 }}
+              fullWidth={true}
+              className={classes.formControl}
+            >
               <TextField
                 margin="dense"
                 name="path"
@@ -1258,7 +1260,7 @@ const EntryProperties = (props: Props) => {
               !currentEntry.editMode &&
               editName === undefined &&
               editDescription === undefined && (
-                <ProTooltip>
+                <ProTooltip tooltip={i18n.t('changeThumbnail')}>
                   <Button
                     disabled={!Pro}
                     color="primary"
@@ -1293,17 +1295,6 @@ const EntryProperties = (props: Props) => {
           </div>
         </Grid>
       </Grid>
-
-      {/* {tagMenuOpened && (
-        <EntryTagMenu
-          anchorEl={tagMenuAnchorEl}
-          open={tagMenuOpened}
-          onClose={handleCloseTagMenu}
-          selectedTag={selectedTag}
-          currentEntryPath={currentEntry.path}
-          removeTags={removeTags}
-        />
-      )} */}
       {isMoveCopyFilesDialogOpened && (
         <MoveCopyFilesDialog
           key={uuidv1()}
@@ -1314,7 +1305,6 @@ const EntryProperties = (props: Props) => {
       )}
       {ThumbnailChooserDialog && isFileThumbChooseDialogOpened && (
         <ThumbnailChooserDialog
-          // key={uuidv1()}
           open={isFileThumbChooseDialogOpened}
           onClose={toggleThumbFilesDialog}
           selectedFile={thumbPath}

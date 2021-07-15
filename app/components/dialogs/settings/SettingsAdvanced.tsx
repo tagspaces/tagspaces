@@ -29,7 +29,6 @@ import CheckIcon from '@material-ui/icons/Check';
 import EditIcon from '@material-ui/icons/Edit';
 import IconButton from '@material-ui/core/IconButton';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import AddIcon from '@material-ui/icons/Add';
 import Switch from '@material-ui/core/Switch';
 import i18n from '-/services/i18n';
 import {
@@ -40,6 +39,8 @@ import {
 import { TS } from '-/tagspaces.namespace';
 import MapTileServerDialog from '-/components/dialogs/settings/MapTileServerDialog';
 import { Pro } from '-/pro';
+import { ProLabel } from '-/components/HelperComponents';
+import InfoIcon from '-/components/InfoIcon';
 
 const styles: any = {
   root: {
@@ -106,7 +107,7 @@ const SettingsAdvanced = (props: Props) => {
         </ListItem>
 
         <ListItem className={classes.listItem}>
-          <ListItemText primary="Enable mobile (small screen) mode" />
+          <ListItemText primary={i18n.t('enableMobileMode')} />
           <Switch
             data-tid="settingsSetDesktopMode"
             disabled={!(typeof window.ExtDisplayMode === 'undefined')}
@@ -115,7 +116,15 @@ const SettingsAdvanced = (props: Props) => {
           />
         </ListItem>
         <ListItem className={classes.listItem}>
-          <ListItemText primary="Enable Location TagGroups" />
+          <ListItemText
+            primary={
+              <>
+                {i18n.t('enableTagsFromLocation')}
+                <InfoIcon tooltip={i18n.t('core:enableTagsFromLocationHelp')} />
+                <ProLabel />
+              </>
+            }
+          />
           <Switch
             data-tid="saveTagInLocationTID"
             disabled={!Pro}
@@ -184,30 +193,6 @@ const SettingsAdvanced = (props: Props) => {
             </ListItem>
           )}
         </List>
-        {/* <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:coloredFileExtensionsEnabled')} />
-          <Switch
-            data-tid="settingsSetColoredFileExtension"
-            onClick={() =>
-              this.props.setColoredFileExtension(
-                !this.props.settings.coloredFileExtension
-              )
-            }
-            checked={this.props.settings.coloredFileExtension}
-          />
-        </ListItem> */}
-        {/* <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:loadLocationMetaData')} />
-          <Switch
-            data-tid="settingsSetLoadsLocationMetaData"
-            onClick={() =>
-              this.props.setLoadsLocationMetaData(
-                !this.props.settings.loadsLocationMetaData
-              )
-            }
-            checked={this.props.settings.loadsLocationMetaData}
-          />
-        </ListItem> */}
       </List>
       {tileServerDialog && (
         <MapTileServerDialog

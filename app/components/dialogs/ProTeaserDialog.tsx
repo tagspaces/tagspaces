@@ -51,7 +51,7 @@ interface SlideProps {
   description?: '';
   ctaURL?: string;
   ctaTitle?: string;
-  bullets?: Array<string>;
+  items?: Array<string>;
   pictureURL?: string;
   pictureHeight?: number;
 }
@@ -59,15 +59,32 @@ interface SlideProps {
 const slidesEN = [];
 slidesEN['general'] = {
   title: 'TagSpaces Pro - Key Features',
-  bullets: [
-    'Connect cloud storage as locations (e.g. AWS S3 Buckets, MinIO folders hosted on your NAS)',
-    'Advanced search with full text support for some files and persisted queries',
-    'Global search in all locations (cloud & local ones)',
-    'Custom perspectives for custom use-cases with your files',
-    'Add description and custom thumbnails to your files and folder',
-    'Set custom background color for folders',
-    'Advanced tagging with geo-location support',
-    'Generating persistent thumbnails'
+  items: [
+    <>
+      Connect cloud <b>object storage</b> as locations (e.g. AWS S3 Buckets,
+      MinIO folders hosted on your NAS)
+    </>,
+    <>
+      Advanced search with <b>full text</b> support for some files and{' '}
+      <b>persisted queries</b>
+    </>,
+    <>
+      <b>Global search</b> in all locations (cloud &amp; local ones)
+    </>,
+    <>
+      Additional <b>perspectives</b> for custom use-cases with your files
+    </>,
+    <>
+      Add <b>description</b> and <b>custom thumbnails</b> to your files and
+      folder
+    </>,
+    <>
+      Set custom background <b>color for folders</b>
+    </>,
+    <>
+      Advanced tagging with <b>geo-location</b> support
+    </>,
+    <>Generating persistent thumbnails</>
   ],
   ctaURL: AppConfig.links.productsOverview,
   ctaTitle: 'Open Product Comparison',
@@ -76,7 +93,7 @@ slidesEN['general'] = {
 };
 slidesEN['search'] = {
   title: 'Advanced Search & Persisted Search Queries',
-  bullets: [
+  items: [
     <>
       <b>Global search</b> - in all locations at once, regardless if they are
       local or in the Cloud
@@ -111,7 +128,7 @@ slidesEN['objectstorage'] = {
       back in order to preview, edit or annotate it.
     </>
   ),
-  bullets: [
+  items: [
     <>Connect self-hosted (e.g. on your NAS) MinIO folders as locations</>,
     <>Browse object storage buckets in TagSpaces</>,
     <>Direct streaming of the supported audio and video formats</>,
@@ -132,7 +149,7 @@ slidesEN['perspectives'] = {
       of tasks you want to perform with your files.
     </>
   ),
-  bullets: [
+  items: [
     <>
       <b>Default</b> - present your files as list or in grid, suitable for
       tagging and file management
@@ -164,7 +181,7 @@ slidesEN['annotation'] = {
       build-in search or just visually:
     </>
   ),
-  bullets: [
+  items: [
     <>
       Add <b>custom description</b> to every document, photo or folder
     </>,
@@ -185,7 +202,7 @@ slidesEN['annotation'] = {
 };
 slidesEN['geotagging'] = {
   title: 'Tag with geo coordinates',
-  bullets: [
+  items: [
     <>
       This feature can be used to add geo coordinates to every file or folder.
     </>,
@@ -215,7 +232,7 @@ slidesEN['persistentThumbs'] = {
 };
 slidesEN['enterprise'] = {
   title: 'TagSpaces Enterprise',
-  bullets: [
+  items: [
     <>
       <b>On-prem web</b> version of TagSpaces Pro for <b>self-hosting</b>
     </>,
@@ -253,7 +270,7 @@ const SlideComponent = (props: SlideProps) => {
     description,
     ctaURL,
     ctaTitle,
-    bullets,
+    items,
     pictureURL,
     pictureHeight,
     openURLExternally
@@ -269,8 +286,8 @@ const SlideComponent = (props: SlideProps) => {
       {description && (
         <Typography variant="subtitle1">{description}</Typography>
       )}
-      {bullets &&
-        bullets.map(item => (
+      {items &&
+        items.map(item => (
           <Typography variant="subtitle1">&#x2605;&nbsp;{item}</Typography>
         ))}
       <Typography variant="subtitle1">&nbsp;</Typography>

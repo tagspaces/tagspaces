@@ -584,5 +584,11 @@
   "pathNotInCurrentLocation": "Ignore pattern path is not in the current location",
   "applyTag": "Apply Tag",
   "refreshTagGroups": "Reload Location Tags",
+  "enableTagsFromLocation": "Enable Location Tags",
+  "enableTagsFromLocationHelp": "These are tags witch are saved in the location's folder, making them visible for other users of this folder",
+  "enableMobileMode": "Enable mobile (small screen) mode",
+  "folderName": "Folder Name",
+  "editDescription": "Edit Description",
+  "clearFolderColor": "Clears the color of this folder",
   "-": "-"
 }
