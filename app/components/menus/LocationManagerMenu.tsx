@@ -36,6 +36,7 @@ import AppConfig from '-/config';
 import i18n from '-/services/i18n';
 import { Pro } from '../../pro';
 import { actions as AppActions } from '-/reducers/app';
+import Links from '-/links';
 import { ProLabel } from '-/components/HelperComponents';
 
 interface Props {
@@ -161,7 +162,7 @@ const LocationManagerMenu = (props: Props) => {
       data-tid="locationManagerMenuHelp"
       onClick={() => {
         setLocationManagerMenuAnchorEl(null);
-        props.openURLExternally(AppConfig.documentationLinks.locations, true);
+        props.openURLExternally(Links.documentationLinks.locations, true);
       }}
     >
       <ListItemIcon>

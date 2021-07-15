@@ -43,6 +43,7 @@ import { Progress } from 'aws-sdk/clients/s3';
 import ImageIcon from '@material-ui/icons/Image';
 import { Pro } from '../../pro';
 import CreateDirectoryDialog from '../dialogs/CreateDirectoryDialog';
+// import RenameDirectoryDialog from '../dialogs/RenameDirectoryDialog';
 import AppConfig from '-/config';
 import i18n from '-/services/i18n';
 import {
@@ -66,6 +67,7 @@ import FileUploadContainer, {
 } from '-/components/FileUploadContainer';
 import { TS } from '-/tagspaces.namespace';
 import { ProLabel, BetaLabel } from '-/components/HelperComponents';
+import Links from '-/links';
 
 interface Props {
   open: boolean;
@@ -160,7 +162,7 @@ const DirectoryMenu = (props: Props) => {
       );
       if (openPersDocs) {
         props.openURLExternally(
-          AppConfig.documentationLinks.galleryPerspective,
+          Links.documentationLinks.galleryPerspective,
           true
         );
       }
@@ -170,7 +172,7 @@ const DirectoryMenu = (props: Props) => {
       );
       if (openPersDocs) {
         props.openURLExternally(
-          AppConfig.documentationLinks.mapiquePerspective,
+          Links.documentationLinks.mapiquePerspective,
           true
         );
       }
@@ -180,7 +182,7 @@ const DirectoryMenu = (props: Props) => {
       );
       if (openPersDocs) {
         props.openURLExternally(
-          AppConfig.documentationLinks.kanbanPerspective,
+          Links.documentationLinks.kanbanPerspective,
           true
         );
       }

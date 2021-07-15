@@ -73,8 +73,6 @@ import {
 import { buffer } from '-/utils/misc';
 import TargetFileBox from '../components/TargetFileBox';
 import AppConfig from '../config';
-import buildDesktopMenu from '../services/electron-menus';
-import buildTrayIconMenu from '../services/electron-tray-menu';
 import i18n from '../services/i18n';
 import LoadingLazy from '../components/LoadingLazy';
 import withDnDContext from '-/containers/withDnDContext';
@@ -86,6 +84,7 @@ import useEventListener from '-/utils/useEventListener';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { TS } from '-/tagspaces.namespace';
 import PageNotification from '-/containers/PageNotification';
+import listen from '-/containers/RendererListener';
 
 const initialSplitSize = 44;
 const drawerWidth = 300;
@@ -327,18 +326,13 @@ const MainPage = (props: Props) => {
     if (!AppConfig.isCordova) {
       updateDimensions();
     }
-    // this.setupDesktopMenu();
-    buildDesktopMenu(props);
-    buildTrayIconMenu(props);
+    listen(props);
   }, []);
 
   useEffect(() => {
     if (props.isEntryInFullWidth) {
       props.closeAllVerticalPanels();
-      // setMainSplitSize('0%');
     } else {
-      // setMainSplitSize(props.mainSplitSize);
-      // setManagementPanelVisible(true);
       showDrawer();
     }
   }, [props.isEntryInFullWidth]);
@@ -638,12 +632,6 @@ const MainPage = (props: Props) => {
           <CustomDragLayer />
           <SplitPane
             split="vertical"
-            // style={{
-            //   borderTop:
-            //     AppConfig.isElectron && !AppConfig.isMacLike
-            //       ? '1px solid lightgray'
-            //       : 'none'
-            // }}
             minSize={200}
             maxSize={450}
             resizerStyle={{ backgroundColor: theme.palette.divider }}
@@ -654,7 +642,6 @@ const MainPage = (props: Props) => {
                 : initialSplitSize
             }
             onChange={size => {
-              // setManagementPanelVisible(size > initialSplitSize);
               bufferedLeftSplitResize(() =>
                 props.setLeftVerticalSplitSize(size)
               );
@@ -691,7 +678,6 @@ const MainPage = (props: Props) => {
             onOpen={showDrawer}
             hysteresis={0.1}
             disableBackdropTransition={!AppConfig.isIOS}
-            // disableDiscovery={AppConfig.isIOS}
           >
             <MobileNavigation
               hideDrawer={() => props.closeAllVerticalPanels()}
@@ -740,7 +726,6 @@ function mapStateToProps(state) {
     isProgressDialogOpened: isProgressOpened(state),
     isReadOnlyMode: isReadOnlyMode(state),
     isGeneratingThumbs: isGeneratingThumbs(state),
-    // isFileOpened: isFileOpened(state),
     openedFiles: getOpenedFiles(state),
     isEntryInFullWidth: isEntryInFullWidth(state),
     isDesktopMode: getDesktopMode(state),
@@ -784,7 +769,6 @@ function mapDispatchToProps(dispatch) {
       toggleAboutDialog: AppActions.toggleAboutDialog,
       toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
       toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
-      // setLastSelectedEntry: AppActions.setLastSelectedEntry,
       setSelectedEntries: AppActions.setSelectedEntries,
       setGeneratingThumbnails: AppActions.setGeneratingThumbnails,
       openFsEntry: AppActions.openFsEntry,

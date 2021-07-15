@@ -16,16 +16,20 @@
  *
  */
 
-import { app, BrowserWindow, ipcMain, globalShortcut, dialog } from 'electron';
+import { app, BrowserWindow, dialog, globalShortcut, ipcMain } from 'electron';
 import windowStateKeeper from 'electron-window-state';
 import path from 'path';
-
-// require('@electron/remote/main').initialize();
+import i18n from '-/i18nBackend';
+import buildTrayIconMenu from '-/electron-tray-menu';
+import buildDesktopMenu from '-/services/electron-menus';
+import keyBindings from '-/utils/keyBindings';
 
 // delete process.env.ELECTRON_ENABLE_SECURITY_WARNINGS;
 // process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
 
+const isMac = process.platform === 'darwin';
 let mainWindow = null;
+let tray = null;
 (global as any).splashWorkerWindow = null;
 
 if (process.env.NODE_ENV === 'production') {
@@ -80,12 +84,17 @@ process.argv.forEach((arg, count) => {
   }
 });
 
+let mainHTML = `file://${__dirname}/app.html`;
+let workerDevMode = false;
+
 if (devMode) {
   // eslint-disable-next-line
   require('electron-debug')({ showDevTools: false, devToolsMode: 'right' });
   const p = path.join(__dirname, '..', 'app', 'node_modules');
   // eslint-disable-next-line
   require('module').globalPaths.push(p);
+  // workerDevMode = true; // hide worker window in dev mode
+  mainHTML = `file://${__dirname}/appd.html`;
 }
 
 // if (process.platform === 'linux') {
@@ -114,59 +123,56 @@ const installExtensions = async () => {
   ).catch(console.log);
 };
 
-app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required'); // Fix broken autoplay functionality in the av player
-
-app.on('window-all-closed', () => {
-  globalShortcut.unregisterAll();
-  app.quit();
-});
-
-app.on('ready', async () => {
-  let workerDevMode = false;
-  let mainHTML = `file://${__dirname}/app.html`;
-
-  if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.DEBUG_PROD === 'true'
-  ) {
-    await installExtensions();
-  }
-
-  if (process.env.NODE_ENV === 'development') {
-    // workerDevMode = true; // hide worker window in dev mode
-    mainHTML = `file://${__dirname}/appd.html`;
-  }
-
-  const mainWindowState = windowStateKeeper({
-    defaultWidth: 1280,
-    defaultHeight: 800
+function createSplashWorker() {
+  // console.log('Dev ' + process.env.NODE_ENV + ' worker ' + showWorkerWindow);
+  (global as any).splashWorkerWindow = new BrowserWindow({
+    show: workerDevMode,
+    x: 0,
+    y: 0,
+    width: workerDevMode ? 800 : 1,
+    height: workerDevMode ? 600 : 1,
+    frame: false,
+    webPreferences: {
+      nodeIntegration: true,
+      enableRemoteModule: false,
+      contextIsolation: false
+    }
   });
 
-  function createSplashWorker() {
-    // console.log('Dev ' + process.env.NODE_ENV + ' worker ' + showWorkerWindow);
-    (global as any).splashWorkerWindow = new BrowserWindow({
-      show: workerDevMode,
-      x: 0,
-      y: 0,
-      width: workerDevMode ? 800 : 1,
-      height: workerDevMode ? 600 : 1,
-      frame: false,
-      webPreferences: {
-        nodeIntegration: true,
-        enableRemoteModule: true,
-        contextIsolation: false
-      }
-    });
-
-    if (!process.env.DISABLE_WORKER) {
-      (global as any).splashWorkerWindow.loadURL(
-        `file://${__dirname}/splash.html`
-      );
-    }
+  if (!process.env.DISABLE_WORKER) {
+    (global as any).splashWorkerWindow.loadURL(
+      `file://${__dirname}/splash.html`
+    );
   }
 
-  createSplashWorker();
+  (global as any).splashWorkerWindow.webContents.on('crashed', () => {
+    try {
+      (global as any).splashWorkerWindow.close();
+      (global as any).splashWorkerWindow = null;
+    } catch (err) {
+      console.warn('Error closing the splash window. ' + err);
+    }
+    createSplashWorker();
+  });
 
+  // electron-io actions
+  ipcMain.on('is-worker-available', event => {
+    let workerAvailable = false;
+    try {
+      if (
+        (global as any).splashWorkerWindow &&
+        (global as any).splashWorkerWindow.webContents
+      ) {
+        workerAvailable = true;
+      }
+    } catch (err) {
+      console.info('Error by finding if worker is available.');
+    }
+    event.returnValue = workerAvailable;
+  });
+}
+
+async function createAppWindow() {
   let startupParameter = '';
   if (startupFilePath) {
     if (startupFilePath.startsWith('./') || startupFilePath.startsWith('.\\')) {
@@ -177,7 +183,11 @@ app.on('ready', async () => {
     }
   }
 
-  // TODO remote module is deprecated https://stackoverflow.com/questions/37884130/electron-remote-is-undefined
+  const mainWindowState = windowStateKeeper({
+    defaultWidth: 1280,
+    defaultHeight: 800
+  });
+
   mainWindow = new BrowserWindow({
     show: true,
     x: mainWindowState.x,
@@ -189,7 +199,7 @@ app.on('ready', async () => {
       spellcheck: true,
       nodeIntegration: true,
       webviewTag: true,
-      enableRemoteModule: true,
+      enableRemoteModule: false,
       contextIsolation: false
     }
   });
@@ -198,12 +208,13 @@ app.on('ready', async () => {
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36';
   const testWinOnUnix = false; // set to true to simulate windows os, useful for testing s3 handling
 
-  mainWindow.loadURL(
+  await mainWindow.loadURL(
     mainHTML + startupParameter,
     testWinOnUnix ? { userAgent: winUserAgent } : {}
   );
   mainWindow.setMenuBarVisibility(false);
   mainWindow.setAutoHideMenuBar(true);
+  mainWindowState.manage(mainWindow);
 
   mainWindow.webContents.on('did-finish-load', () => {
     if (!mainWindow) {
@@ -247,30 +258,92 @@ app.on('ready', async () => {
     dialog.showMessageBox(mainWindow, options).then(dialogResponse => {
       mainWindow.hide();
       if (dialogResponse.response === 0) {
-        reloadApp();
+        mainWindow.loadURL(mainHTML); //reloadApp();
       } else {
         mainWindow.close();
         globalShortcut.unregisterAll();
       }
     });
   });
+}
 
-  (global as any).splashWorkerWindow.webContents.on('crashed', () => {
-    try {
-      (global as any).splashWorkerWindow.close();
-      (global as any).splashWorkerWindow = null;
-    } catch (err) {
-      console.warn('Error closing the splash window. ' + err);
+app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required'); // Fix broken autoplay functionality in the av player
+
+app.on('window-all-closed', () => {
+  globalShortcut.unregisterAll();
+  app.quit();
+});
+
+app.on('ready', async () => {
+  if (
+    process.env.NODE_ENV === 'development' ||
+    process.env.DEBUG_PROD === 'true'
+  ) {
+    await installExtensions();
+  }
+
+  createSplashWorker();
+  await createAppWindow();
+
+  ipcMain.on('show-main-window', () => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) {
+        mainWindow.restore();
+      }
+      mainWindow.show();
     }
-    createSplashWorker();
+  });
+
+  ipcMain.on('focus-window', () => {
+    if (mainWindow) {
+      mainWindow.focus();
+    }
+  });
+
+  ipcMain.on('get-device-paths', event => {
+    event.returnValue = {
+      desktopFolder: app.getPath('desktop'),
+      documentsFolder: app.getPath('documents'),
+      downloadsFolder: app.getPath('downloads'),
+      musicFolder: app.getPath('music'),
+      picturesFolder: app.getPath('pictures'),
+      videosFolder: app.getPath('videos')
+    };
+  });
+
+  ipcMain.on('get-user-home-path', event => {
+    event.returnValue = app.getPath('home');
   });
 
   ipcMain.on('worker', (event, arg) => {
     // console.log('worker event in main.' + arg.result.length);
+    if ((global as any).splashWorkerWindow) {
+      (global as any).splashWorkerWindow.webContents.send('worker', arg);
+    }
+  });
+
+  ipcMain.handle('select-directory-dialog', async () => {
+    const options = {
+      properties: ['openDirectory', 'createDirectory']
+    };
+    // @ts-ignore
+    const resultObject = await dialog.showOpenDialog(options);
+
+    if (resultObject.filePaths && resultObject.filePaths.length) {
+      // alert(JSON.stringify(resultObject.filePaths));
+      return resultObject.filePaths;
+    }
+    return false;
+  });
+
+  ///// end electron-io
+
+  /*ipcMain.on('worker', (event, arg) => { TODO Why?
+    // console.log('worker event in main.' + arg.result.length);
     if (mainWindow) {
       mainWindow.webContents.send(arg.id, arg);
     }
-  });
+  });*/
 
   ipcMain.on('setSplashVisibility', (event, arg) => {
     // worker window needed to be visible for the PDF tmb generation
@@ -324,8 +397,6 @@ app.on('ready', async () => {
     reloadApp();
   });
 
-  mainWindowState.manage(mainWindow);
-
   function showTagSpaces() {
     if (mainWindow) {
       if (mainWindow.isMinimized()) {
@@ -335,29 +406,137 @@ app.on('ready', async () => {
     }
   }
 
+  function openLocationManagerPanel() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('cmd', 'open-location-manager-panel');
+    }
+  }
+  function openTagLibraryPanel() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('cmd', 'open-tag-library-panel');
+    }
+  }
+  function goBack() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('cmd', 'go-back');
+    }
+  }
+  function goForward() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('cmd', 'go-forward');
+    }
+  }
+  function setZoomResetApp() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('cmd', 'set-zoom-reset-app');
+    }
+  }
+  function setZoomInApp() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('cmd', 'set-zoom-in-app');
+    }
+  }
+  function setZoomOutApp() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('cmd', 'set-zoom-out-app');
+    }
+  }
+  function exitFullscreen() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('cmd', 'exit-fullscreen');
+    }
+  }
+  function toggleSettingsDialog() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('cmd', 'toggle-settings-dialog');
+    }
+  }
+  function openHelpFeedbackPanel() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('cmd', 'open-help-feedback-panel');
+    }
+  }
+  function toggleKeysDialog() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('cmd', 'toggle-keys-dialog');
+    }
+  }
+  function toggleOnboardingDialog() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('cmd', 'toggle-onboarding-dialog');
+    }
+  }
+  function openURLExternally(data) {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('open-url-externally', data);
+    }
+  }
+  function toggleLicenseDialog() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('cmd', 'toggle-license-dialog');
+    }
+  }
+  function toggleThirdPartyLibsDialog() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('cmd', 'toggle-third-party-libs-dialog');
+    }
+  }
+  function toggleAboutDialog() {
+    if (mainWindow) {
+      showTagSpaces();
+      mainWindow.webContents.send('cmd', 'toggle-about-dialog');
+    }
+  }
   function showSearch() {
     if (mainWindow) {
       showTagSpaces();
-      mainWindow.webContents.send('file', 'open-search');
+      mainWindow.webContents.send('cmd', 'open-search');
     }
   }
 
   function newTextFile() {
     if (mainWindow) {
       showTagSpaces();
-      mainWindow.webContents.send('file', 'new-text-file');
+      mainWindow.webContents.send('cmd', 'new-text-file');
     }
   }
 
   function getNextFile() {
     if (mainWindow) {
-      mainWindow.webContents.send('file', 'next-file');
+      mainWindow.webContents.send('cmd', 'next-file');
     }
   }
 
   function getPreviousFile() {
     if (mainWindow) {
-      mainWindow.webContents.send('file', 'previous-file');
+      mainWindow.webContents.send('cmd', 'previous-file');
+    }
+  }
+
+  function showCreateDirectoryDialog() {
+    if (mainWindow) {
+      mainWindow.webContents.send('cmd', 'show-create-directory-dialog');
+    }
+  }
+
+  function toggleOpenLinkDialog() {
+    if (mainWindow) {
+      mainWindow.webContents.send('cmd', 'toggle-open-link-dialog');
     }
   }
 
@@ -372,4 +551,54 @@ app.on('ready', async () => {
       mainWindow.loadURL(mainHTML);
     }
   }
+
+  tray = buildTrayIconMenu(
+    {
+      showTagSpaces,
+      resumePlayback,
+      openSearchPanel: showSearch,
+      toggleCreateFileDialog: newTextFile,
+      openNextFile: getNextFile,
+      openPrevFile: getPreviousFile,
+      quitApp: reloadApp
+    },
+    i18n,
+    isMac
+  );
+  buildDesktopMenu(
+    {
+      showTagSpaces,
+      openSearchPanel: showSearch,
+      toggleCreateFileDialog: newTextFile,
+      openNextFile: getNextFile,
+      openPrevFile: getPreviousFile,
+      quitApp: reloadApp,
+      showCreateDirectoryDialog: showCreateDirectoryDialog,
+      toggleOpenLinkDialog: toggleOpenLinkDialog,
+      openLocationManagerPanel: openLocationManagerPanel,
+      openTagLibraryPanel: openTagLibraryPanel,
+      goBack: goBack,
+      goForward: goForward,
+      setZoomResetApp: setZoomResetApp,
+      setZoomInApp: setZoomInApp,
+      setZoomOutApp: setZoomOutApp,
+      exitFullscreen: exitFullscreen,
+      toggleSettingsDialog: toggleSettingsDialog,
+      openHelpFeedbackPanel: openHelpFeedbackPanel,
+      toggleKeysDialog: toggleKeysDialog,
+      toggleOnboardingDialog: toggleOnboardingDialog,
+      openURLExternally: openURLExternally,
+      toggleLicenseDialog: toggleLicenseDialog,
+      toggleThirdPartyLibsDialog: toggleThirdPartyLibsDialog,
+      toggleAboutDialog: toggleAboutDialog,
+      keyBindings: keyBindings(isMac)
+    },
+    i18n
+  );
 });
+
+// i18n.on('languageChanged', lng => {
+// 'loaded', loaded => {
+//  i18n.changeLanguage('en');
+//  i18n.off('loaded');
+// });

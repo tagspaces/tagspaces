@@ -25,8 +25,8 @@ import HelpIcon from '@material-ui/icons/Help';
 import UpdateIndexIcon from '@material-ui/icons/Update';
 import ExportImportIcon from '@material-ui/icons/SwapHoriz';
 import i18n from '-/services/i18n';
-import AppConfig from '-/config';
 import { Pro } from '../../pro';
+import Links from '-/links';
 
 interface Props {
   classes?: any;
@@ -93,7 +93,7 @@ const SearchMenu = (props: Props) => {
         data-tid="searchMenuHelp"
         onClick={() => {
           props.onClose();
-          props.openURLExternally(AppConfig.documentationLinks.search, true);
+          props.openURLExternally(Links.documentationLinks.search, true);
         }}
       >
         <ListItemIcon>

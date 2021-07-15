@@ -31,8 +31,8 @@ import i18n from '-/services/i18n';
 import versionMeta from '-/version.json';
 import { Pro } from '-/pro';
 import { getLastVersionPromise } from '-/reducers/settings';
-import AppConfig from '-/config';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import Links from '-/links';
 
 interface Props {
   open: boolean;
@@ -58,7 +58,7 @@ const AboutDialog = (props: Props) => {
 
   function checkForUpdates() {
     if (updateAvailable) {
-      props.openURLExternally(AppConfig.links.downloadURL, true);
+      props.openURLExternally(Links.links.downloadURL, true);
     } else {
       getLastVersionPromise()
         .then(lastVersion => {
@@ -163,7 +163,7 @@ const AboutDialog = (props: Props) => {
             size="small"
             color="primary"
             onClick={() => {
-              props.openURLExternally(AppConfig.links.imprintURL, true);
+              props.openURLExternally(Links.links.imprintURL, true);
             }}
           >
             Imprint
@@ -172,7 +172,7 @@ const AboutDialog = (props: Props) => {
             size="small"
             color="primary"
             onClick={() => {
-              props.openURLExternally(AppConfig.links.privacyURL, true);
+              props.openURLExternally(Links.links.privacyURL, true);
             }}
           >
             Privacy Policy
@@ -181,7 +181,7 @@ const AboutDialog = (props: Props) => {
             size="small"
             color="primary"
             onClick={() => {
-              props.openURLExternally(AppConfig.links.changelogURL, true);
+              props.openURLExternally(Links.links.changelogURL, true);
             }}
           >
             Changelog
@@ -202,7 +202,7 @@ const AboutDialog = (props: Props) => {
             data-tid="checkForUpdates"
             title={i18n.t('core:checkForNewVersion')}
             onClick={() => {
-              props.openURLExternally(AppConfig.links.productsOverview, true);
+              props.openURLExternally(Links.links.productsOverview, true);
             }}
             color="primary"
           >

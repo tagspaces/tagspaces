@@ -16,59 +16,20 @@
  *
  */
 
-import i18n from './i18n';
-import PlatformIO from './platform-io';
-import AppConfig from '../config';
+import { app, Menu } from 'electron';
+import Links from '-/links';
 
-let ipcRenderer;
-
-if (AppConfig.isElectron && window.require) {
-  const electron = window.require('electron');
-  ({ ipcRenderer } = electron);
-}
-
-export default function buildDesktopMenu(mainPageProps: any) {
-  if (!AppConfig.isElectron) {
-    return;
+export default function buildDesktopMenu(props: any, i18n) {
+  function quitApp() {
+    app.quit();
   }
-
-  ipcRenderer.on('file', (event, arg) => {
-    // console.log('Global events: ' + arg);
-    switch (arg) {
-      case 'new-text-file':
-        mainPageProps.toggleCreateFileDialog();
-        break;
-      case 'open-search':
-        mainPageProps.openSearchPanel();
-        break;
-      case 'audio':
-        // console.log('showAudioRecordingDialog');
-        break;
-      case 'next-file': {
-        mainPageProps.openNextFile();
-        break;
-      }
-      case 'previous-file': {
-        mainPageProps.openPrevFile();
-        break;
-      }
-      default:
-        return false;
-    }
-  });
-
-  ipcRenderer.on('play-pause', (event, arg) => {
-    // Create the event.
-    const audioEvent = new CustomEvent('toggle-resume', { detail: '' });
-    window.dispatchEvent(audioEvent);
-  });
 
   const templateDefault = [
     {
-      label: i18n.t('core:file'),
+      label: i18n.t('file'),
       submenu: [
         /* {
-          label: i18n.t('core:openNewInstance'),
+          label: i18n.t('openNewInstance'),
           accelerator: '',
           click: () => {
             // ipcRenderer.send('new-win', 'newWin');
@@ -78,28 +39,28 @@ export default function buildDesktopMenu(mainPageProps: any) {
           type: 'separator'
         }, */
         {
-          label: i18n.t('core:newFileNote'),
+          label: i18n.t('newFileNote'),
           // accelerator: 'CommandOrControl+Alt+N',
-          click: mainPageProps.toggleCreateFileDialog
+          click: props.toggleCreateFileDialog
         },
         {
-          label: i18n.t('core:createDirectory'),
+          label: i18n.t('createDirectory'),
           accelerator: '',
-          click: mainPageProps.showCreateDirectoryDialog
+          click: props.showCreateDirectoryDialog
         },
         {
           type: 'separator'
         },
         {
-          label: i18n.t('core:openLink'),
+          label: i18n.t('openLink'),
           accelerator: 'Ctrl+o',
-          click: mainPageProps.toggleOpenLinkDialog
+          click: props.toggleOpenLinkDialog
         },
         {
           type: 'separator'
         },
         /* {
-          label: i18n.t('core:saveFile'),
+          label: i18n.t('saveFile'),
           accelerator: mainPageProps.keyBindings.saveDocument,
           click: () => {
             mainPageProps.saveFile();
@@ -109,22 +70,22 @@ export default function buildDesktopMenu(mainPageProps: any) {
           type: 'separator'
         },
         {
-          label: i18n.t('core:exitApp'),
+          label: i18n.t('exitApp'),
           accelerator: 'CmdOrCtrl+Q',
-          click: PlatformIO.quitApp
+          click: quitApp // PlatformIO.quitApp
         }
       ]
     },
     {
-      label: i18n.t('core:edit'),
+      label: i18n.t('edit'),
       submenu: [
         {
-          label: i18n.t('core:undo'),
+          label: i18n.t('undo'),
           accelerator: 'CmdOrCtrl+Z',
           role: 'undo'
         },
         {
-          label: i18n.t('core:redo'),
+          label: i18n.t('redo'),
           accelerator: 'Shift+CmdOrCtrl+Z',
           role: 'redo'
         },
@@ -132,55 +93,55 @@ export default function buildDesktopMenu(mainPageProps: any) {
           type: 'separator'
         },
         {
-          label: i18n.t('core:cut'),
+          label: i18n.t('cut'),
           accelerator: 'CmdOrCtrl+X',
           role: 'cut'
         },
         {
-          label: i18n.t('core:copy'),
+          label: i18n.t('copy'),
           accelerator: 'CmdOrCtrl+C',
           role: 'copy'
         },
         {
-          label: i18n.t('core:paste'),
+          label: i18n.t('paste'),
           accelerator: 'CmdOrCtrl+V',
           role: 'paste'
         },
         {
-          label: i18n.t('core:selectAll'),
+          label: i18n.t('selectAll'),
           accelerator: 'CmdOrCtrl+A',
           role: 'selectall'
         }
       ]
     },
     {
-      label: i18n.t('core:view'),
+      label: i18n.t('view'),
       submenu: [
         {
-          label: i18n.t('core:showLocationManager'),
-          accelerator: mainPageProps.keyBindings.showLocationManager,
-          click: mainPageProps.openLocationManagerPanel
+          label: i18n.t('showLocationManager'),
+          accelerator: props.keyBindings.showLocationManager,
+          click: props.openLocationManagerPanel
         },
         {
-          label: i18n.t('core:showTagLibrary'),
-          accelerator: mainPageProps.keyBindings.showTagLibrary,
-          click: mainPageProps.openTagLibraryPanel
+          label: i18n.t('showTagLibrary'),
+          accelerator: props.keyBindings.showTagLibrary,
+          click: props.openTagLibraryPanel
         },
         {
-          label: i18n.t('core:showSearch'),
-          accelerator: mainPageProps.keyBindings.showSearch,
-          click: mainPageProps.openSearchPanel
+          label: i18n.t('showSearch'),
+          accelerator: props.keyBindings.showSearch,
+          click: props.openSearchPanel
         },
         {
-          label: i18n.t('core:showDevTools'),
-          accelerator: mainPageProps.keyBindings.openDevTools,
+          label: i18n.t('showDevTools'),
+          accelerator: props.keyBindings.openDevTools,
           click: (item, focusedWindow) => {
             focusedWindow.toggleDevTools();
           }
         },
         {
-          label: i18n.t('core:reloadApplication'),
-          accelerator: mainPageProps.keyBindings.reloadApplication,
+          label: i18n.t('reloadApplication'),
+          accelerator: props.keyBindings.reloadApplication,
           click: (item, focusedWindow) => {
             // ipcRenderer.send('relaunch-app', 'relaunch');
             focusedWindow.webContents.reload();
@@ -190,45 +151,40 @@ export default function buildDesktopMenu(mainPageProps: any) {
           type: 'separator'
         },
         {
-          label: i18n.t('core:goback'),
+          label: i18n.t('goback'),
           accelerator: 'Alt+Left',
-          click: () => {
-            window.history.back();
-            console.log('navigate to: ' + window.location.href);
-          }
+          click: props.goBack
         },
         {
-          label: i18n.t('core:goforward'),
+          label: i18n.t('goforward'),
           accelerator: 'Alt+Right',
-          click: () => {
-            window.history.forward();
-            console.log('navigate to: ' + window.location.href);
-          }
+          click: props.goForward
         },
         {
           type: 'separator'
         },
         {
-          label: i18n.t('core:zoomReset'),
+          label: i18n.t('zoomReset'),
           accelerator: 'CmdOrCtrl+0',
-          click: mainPageProps.setZoomResetApp
+          click: props.setZoomResetApp
         },
         {
-          label: i18n.t('core:zoomIn'),
+          label: i18n.t('zoomIn'),
           accelerator: 'CmdOrCtrl+Plus',
-          click: mainPageProps.setZoomInApp
+          click: props.setZoomInApp
         },
         {
-          label: i18n.t('core:zoomOut'),
+          label: i18n.t('zoomOut'),
           accelerator: 'CmdOrCtrl+-',
-          click: mainPageProps.setZoomOutApp
+          click: props.setZoomOutApp
         },
         {
-          label: i18n.t('core:toggleFullScreen'),
-          accelerator: mainPageProps.keyBindings.toggleFullScreen,
+          label: i18n.t('toggleFullScreen'),
+          accelerator: props.keyBindings.toggleFullScreen,
           click: (item, focusedWindow) => {
+            // props.toggleFullScreen
             if (focusedWindow.isFullScreen()) {
-              document.exitFullscreen();
+              props.exitFullscreen();
               focusedWindow.setFullScreen(false);
             } else {
               focusedWindow.setFullScreen(true);
@@ -239,101 +195,116 @@ export default function buildDesktopMenu(mainPageProps: any) {
           type: 'separator'
         },
         {
-          label: i18n.t('core:settings'),
-          click: mainPageProps.toggleSettingsDialog
+          label: i18n.t('settings'),
+          click: props.toggleSettingsDialog
         }
       ]
     },
     {
-      label: '&' + i18n.t('core:help'),
+      label: '&' + i18n.t('help'),
       submenu: [
         {
-          label: '&' + i18n.t('core:documentation'),
-          accelerator: mainPageProps.keyBindings.showHelp,
-          click: mainPageProps.openHelpFeedbackPanel
+          label: '&' + i18n.t('documentation'),
+          accelerator: props.keyBindings.showHelp,
+          click: props.openHelpFeedbackPanel
         },
         {
-          label: '&' + i18n.t('core:shortcutKeys'),
-          click: mainPageProps.toggleKeysDialog
+          label: '&' + i18n.t('shortcutKeys'),
+          click: props.toggleKeysDialog
         },
         {
           label: 'Welcome Wizzard',
-          click: mainPageProps.toggleOnboardingDialog
+          click: props.toggleOnboardingDialog
         },
         {
-          label: '&' + i18n.t('core:whatsNew'),
+          label: '&' + i18n.t('whatsNew'),
           click: () => {
-            mainPageProps.openURLExternally(AppConfig.links.changelogURL, true);
+            props.openURLExternally({
+              url: Links.links.changelogURL,
+              skipConfirm: true
+            });
           }
         },
         {
           type: 'separator'
         },
         {
-          label: '&' + i18n.t('core:likeUsOnFacebook'),
+          label: '&' + i18n.t('likeUsOnFacebook'),
           click: () => {
-            mainPageProps.openURLExternally(AppConfig.links.facebook);
+            props.openURLExternally({
+              url: Links.links.facebook
+            });
           }
         },
         {
-          label: '&' + i18n.t('core:followOnTwitter'),
+          label: '&' + i18n.t('followOnTwitter'),
           click: () => {
-            mainPageProps.openURLExternally(AppConfig.links.twitter);
-          }
-        },
-        {
-          type: 'separator'
-        },
-        {
-          label: '&' + i18n.t('core:suggestNewFeatures'),
-          click: () => {
-            mainPageProps.openURLExternally(AppConfig.links.suggestFeature);
-          }
-        },
-        {
-          label: '&' + i18n.t('core:reportIssues'),
-          click: () => {
-            mainPageProps.openURLExternally(AppConfig.links.reportIssue);
+            props.openURLExternally({
+              url: Links.links.twitter
+            });
           }
         },
         {
           type: 'separator'
         },
         {
-          label: i18n.t('core:webClipperChrome'),
+          label: '&' + i18n.t('suggestNewFeatures'),
           click: () => {
-            mainPageProps.openURLExternally(
-              AppConfig.links.webClipperChrome,
-              true
-            );
+            props.openURLExternally({
+              url: Links.links.suggestFeature
+            });
           }
         },
         {
-          label: i18n.t('core:webClipperFirefox'),
+          label: '&' + i18n.t('reportIssues'),
           click: () => {
-            mainPageProps.openURLExternally(
-              AppConfig.links.webClipperFirefox,
-              true
-            );
+            props.openURLExternally({
+              url: Links.links.reportIssue
+            });
           }
         },
         {
           type: 'separator'
         },
         {
-          label: '&' + i18n.t('core:license'),
-          click: mainPageProps.toggleLicenseDialog
+          label: i18n.t('webClipperChrome'),
+          click: () => {
+            props.openURLExternally({
+              url: Links.links.webClipperChrome,
+              skipConfirm: true
+            });
+          }
         },
         {
-          label: '&' + i18n.t('core:thirdPartyLibs'),
-          click: mainPageProps.toggleThirdPartyLibsDialog
+          label: i18n.t('webClipperFirefox'),
+          click: () => {
+            props.openURLExternally({
+              url: Links.links.webClipperFirefox,
+              skipConfirm: true
+            });
+          }
         },
         {
-          label: '&' + i18n.t('core:aboutTagSpaces'),
-          click: mainPageProps.toggleAboutDialog
+          type: 'separator'
+        },
+        {
+          label: '&' + i18n.t('license'),
+          click: props.toggleLicenseDialog
+        },
+        {
+          label: '&' + i18n.t('thirdPartyLibs'),
+          click: props.toggleThirdPartyLibsDialog
+        },
+        {
+          label: '&' + i18n.t('aboutTagSpaces'),
+          click: props.toggleAboutDialog
         }
       ]
     }
   ];
-  PlatformIO.initMainMenu(templateDefault);
+  // PlatformIO.initMainMenu(templateDefault);
+
+  // @ts-ignore
+  const defaultMenu = Menu.buildFromTemplate(templateDefault); // menuConfig);
+  Menu.setApplicationMenu(defaultMenu);
 }

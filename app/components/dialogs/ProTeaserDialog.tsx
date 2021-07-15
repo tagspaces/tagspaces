@@ -35,8 +35,8 @@ import MapImage from '-/assets/images/map-undraw.svg';
 import AnnotateImage from '-/assets/images/annotate-undraw.svg';
 import EnterpriseImage from '-/assets/images/world-undraw.svg';
 import i18n from '-/services/i18n';
-import AppConfig from '-/config';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import Links from '-/links';
 
 interface Props {
   open: boolean;
@@ -86,7 +86,7 @@ slidesEN['general'] = {
     </>,
     <>Generating persistent thumbnails</>
   ],
-  ctaURL: AppConfig.links.productsOverview,
+  ctaURL: Links.links.productsOverview,
   ctaTitle: 'Open Product Comparison',
   pictureURL: DecideImage,
   pictureHeight: 150
@@ -111,7 +111,7 @@ slidesEN['search'] = {
     'Filter for files, folders or untagged files',
     'Filter by size, date and gps-coordinates'
   ],
-  ctaURL: AppConfig.links.productProAdvancedSearch,
+  ctaURL: Links.links.productProAdvancedSearch,
   ctaTitle: 'Learn more',
   pictureURL: SearchImage,
   pictureHeight: 150
@@ -134,7 +134,7 @@ slidesEN['objectstorage'] = {
     <>Direct streaming of the supported audio and video formats</>,
     <>Upload files with simple drag and drop actions</>
   ],
-  ctaURL: AppConfig.links.productProObjectStore,
+  ctaURL: Links.links.productProObjectStore,
   ctaTitle: 'Learn more',
   pictureURL: CloudImage,
   pictureHeight: 120
@@ -168,7 +168,7 @@ slidesEN['perspectives'] = {
       can be your tasks.
     </>
   ],
-  ctaURL: AppConfig.documentationLinks.perspectives,
+  ctaURL: Links.documentationLinks.perspectives,
   ctaTitle: 'Learn more',
   pictureURL: PerspectivesImage,
   pictureHeight: 120
@@ -195,7 +195,7 @@ slidesEN['annotation'] = {
       Set a <b>custom background color</b> to folders
     </>
   ],
-  ctaURL: AppConfig.links.productProFileFolderMeta,
+  ctaURL: Links.links.productProFileFolderMeta,
   ctaTitle: 'Learn more',
   pictureURL: AnnotateImage,
   pictureHeight: 200
@@ -211,7 +211,7 @@ slidesEN['geotagging'] = {
     <>Useful for planing or documenting trips and vacations.</>,
     <>Useful for adding annotations for places on a map.</>
   ],
-  ctaURL: AppConfig.links.productProGeoTagging,
+  ctaURL: Links.links.productProGeoTagging,
   ctaTitle: 'Learn more',
   pictureURL: MapImage,
   pictureHeight: 200
@@ -225,7 +225,7 @@ slidesEN['persistentThumbs'] = {
       archives and PDFs.
     </>
   ),
-  ctaURL: AppConfig.links.productProThumbnailsGeneration,
+  ctaURL: Links.links.productProThumbnailsGeneration,
   ctaTitle: 'Learn more',
   pictureURL: ThumbsImage,
   pictureHeight: 200
@@ -253,7 +253,7 @@ slidesEN['enterprise'] = {
     </>,
     <>Premium technical support and signed installers</>
   ],
-  ctaURL: AppConfig.links.emailContact,
+  ctaURL: Links.links.emailContact,
   ctaTitle: 'Contact Us',
   pictureURL: EnterpriseImage,
   pictureHeight: 200

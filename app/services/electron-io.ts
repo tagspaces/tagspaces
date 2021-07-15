@@ -29,25 +29,17 @@ import {
 import { arrayBufferToBuffer } from '-/utils/misc';
 import AppConfig from '../config';
 import PlatformIO from './platform-io';
-import TrayIcon from '../assets/icons/trayIcon.png';
+// import TrayIcon from '../assets/icons/trayIcon.png';
 // import TrayIconWin from '../assets/icons/trayIcon.ico';
-import TrayIcon2x from '../assets/icons/trayIcon@2x.png';
-import TrayIcon3x from '../assets/icons/trayIcon@3x.png';
+// import TrayIcon2x from '../assets/icons/trayIcon@2x.png';
+// import TrayIcon3x from '../assets/icons/trayIcon@3x.png';
 import { Pro } from '../pro';
 import { TS } from '-/tagspaces.namespace';
 
 export default class ElectronIO {
   electron: any;
 
-  win: any;
-
-  app: any;
-
   ipcRenderer: any;
-
-  remote: any;
-
-  workerWindow: any;
 
   pathUtils: any;
 
@@ -64,22 +56,12 @@ export default class ElectronIO {
       this.electron = window.require('electron');
       this.ipcRenderer = this.electron.ipcRenderer;
       this.webFrame = this.electron.webFrame;
-      this.remote = this.electron.remote; // window.require('@electron/remote'); // this.electron.remote;
-      this.workerWindow = this.remote.getGlobal('splashWorkerWindow');
-      this.win = this.remote.getCurrentWindow();
-      this.app = this.remote.app;
-      this.fs = fsextra; // window.require('fs-extra');
+      this.fs = fsextra;
       this.pathUtils = window.require('path');
     }
   }
 
-  initMainMenu = (menuConfig: Array<Object>) => {
-    const { Menu } = this.remote;
-    const defaultMenu = Menu.buildFromTemplate(menuConfig);
-    Menu.setApplicationMenu(defaultMenu);
-  };
-
-  initTrayMenu = (menuConfig: Array<Object>) => {
+  /* initTrayMenu = (menuConfig: Array<Object>) => {
     const mainWindow = this.win;
     const { Menu } = this.remote;
     const { Tray } = this.remote;
@@ -124,10 +106,10 @@ export default class ElectronIO {
     const trayMenu = Menu.buildFromTemplate(menuConfig);
     this.tsTray.setToolTip('TagSpaces');
     this.tsTray.setContextMenu(trayMenu);
-  };
+  }; */
 
-  isWorkerAvailable = (): boolean => {
-    let workerAvailable = false;
+  isWorkerAvailable = (): boolean =>
+    /* let workerAvailable = false;
     try {
       if (this.workerWindow && this.workerWindow.webContents) {
         workerAvailable = true;
@@ -135,14 +117,16 @@ export default class ElectronIO {
     } catch (err) {
       console.info('Error by finding if worker is available.');
     }
-    return workerAvailable;
-  };
+    return workerAvailable; */
+
+    this.ipcRenderer.sendSync('is-worker-available', 'notNeededArgument');
 
   showMainWindow = (): void => {
-    if (this.win.isMinimized()) {
+    this.ipcRenderer.send('show-main-window', 'notNeededArgument');
+    /* if (this.win.isMinimized()) {
       this.win.restore();
     }
-    this.win.show();
+    this.win.show(); */
   };
 
   quitApp = (): void => {
@@ -162,22 +146,15 @@ export default class ElectronIO {
 
   // Sets the current window on top of the windows
   focusWindow = (): void => {
-    this.win.focus();
+    this.ipcRenderer.send('focus-window', 'notNeededArgument');
+    // this.win.focus();
   };
 
-  getDevicePaths = (): Object => {
-    const paths = {
-      desktopFolder: this.app.getPath('desktop'),
-      documentsFolder: this.app.getPath('documents'),
-      downloadsFolder: this.app.getPath('downloads'),
-      musicFolder: this.app.getPath('music'),
-      picturesFolder: this.app.getPath('pictures'),
-      videosFolder: this.app.getPath('videos')
-    };
-    return paths;
-  };
+  getDevicePaths = (): Object =>
+    this.ipcRenderer.sendSync('get-device-paths', 'notNeededArgument');
 
-  getUserHomePath = (): string => this.app.getPath('home');
+  getUserHomePath = (): string =>
+    this.ipcRenderer.sendSync('get-user-home-path', 'notNeededArgument');
 
   getAppDataPath = (): string =>
     this.ipcRenderer.sendSync('app-data-path-request', 'notNeededArgument');
@@ -236,7 +213,7 @@ export default class ElectronIO {
     new Promise((resolve, reject) => {
       if (this.isWorkerAvailable()) {
         const timestamp = new Date().getTime().toString();
-        this.workerWindow.webContents.send('worker', {
+        this.ipcRenderer.send('worker', {
           id: timestamp,
           action: 'createDirectoryIndex',
           path: directoryPath,
@@ -257,7 +234,7 @@ export default class ElectronIO {
       const tmbGenChannel = 'TMB_GEN_CHANNEL';
       this.ipcRenderer.removeAllListeners(tmbGenChannel);
       if (this.isWorkerAvailable()) {
-        this.workerWindow.webContents.send('worker', {
+        this.ipcRenderer.send('worker', {
           id: tmbGenChannel,
           action: 'createThumbnails',
           tmbGenerationList
@@ -877,14 +854,17 @@ export default class ElectronIO {
 
   resolveFilePath = (filePath: string): string => pathLib.resolve(filePath);
 
-  selectFileDialog = (): Promise<any> => {
+  /**
+   * not used
+   */
+  /* selectFileDialog = (): Promise<any> => {
     const options = {
-      /* filters: [
-        {
-          name: 'Images',
-          extensions: ['jpg', 'png', 'gif']
-        }
-      ] */
+      //  filters: [
+      //   {
+      //     name: 'Images',
+      //     extensions: ['jpg', 'png', 'gif']
+      //   }
+      // ]
     };
     return new Promise((resolve, reject) => {
       this.remote.dialog
@@ -902,13 +882,12 @@ export default class ElectronIO {
           reject('Error opening file ' + e);
         });
     });
-  };
+  }; */
 
-  selectDirectoryDialog = (): Promise<any> => {
-    const options = {
-      properties: ['openDirectory', 'createDirectory']
-    };
-    return new Promise((resolve, reject) => {
+  selectDirectoryDialog = (): Promise<any> =>
+    this.ipcRenderer.invoke('select-directory-dialog', 'noArg');
+
+  /* return new Promise((resolve, reject) => {
       this.remote.dialog
         .showOpenDialog(options)
         .then(resultObject => {
@@ -923,8 +902,7 @@ export default class ElectronIO {
         .catch(e => {
           reject('Error opening directory ' + e);
         });
-    });
-  };
+    }); */
 
   shareFiles = (files: Array<string>) => {
     console.log('shareFiles is not implemented in electron.');
