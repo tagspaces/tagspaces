@@ -23,9 +23,6 @@ import i18n from '-/i18nBackend';
 import buildTrayIconMenu from '-/electron-tray-menu';
 import buildDesktopMenu from '-/services/electron-menus';
 import keyBindings from '-/utils/keyBindings';
-// import menuFactoryService from '-/services/menuFactory';
-
-// require('@electron/remote/main').initialize();
 
 // delete process.env.ELECTRON_ENABLE_SECURITY_WARNINGS;
 // process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
