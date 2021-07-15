@@ -73,8 +73,6 @@ import {
 import { buffer } from '-/utils/misc';
 import TargetFileBox from '../components/TargetFileBox';
 import AppConfig from '../config';
-import buildDesktopMenu from '../services/electron-menus';
-import buildTrayIconMenu from '../services/electron-tray-menu';
 import i18n from '../services/i18n';
 import LoadingLazy from '../components/LoadingLazy';
 import withDnDContext from '-/containers/withDnDContext';

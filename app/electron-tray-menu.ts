@@ -23,7 +23,6 @@ import pathLib from 'path';
 // import TrayIcon3x from '-/assets/icons/trayIcon@3x.png';
 
 export default function buildTrayIconMenu(mainPageProps: any, i18n, isMacLike) {
-
   const cKey = isMacLike ? ' -  Cmd' : ' - Ctrl';
 
   function openNextFile() {
@@ -50,43 +49,43 @@ export default function buildTrayIconMenu(mainPageProps: any, i18n, isMacLike) {
 
   const trayMenuTemplate = [
     {
-      label: i18n.t('core:showTagSpaces') + cKey + '+Shift+W',
+      label: i18n.t('showTagSpaces') + cKey + '+Shift+W',
       click: mainPageProps.showTagSpaces // PlatformIO.showMainWindow
     },
     {
-      label: i18n.t('core:showSearch') + cKey + '+Shift+F',
+      label: i18n.t('showSearch') + cKey + '+Shift+F',
       click: mainPageProps.openSearchPanel
     },
     {
       type: 'separator'
     },
     {
-      label: i18n.t('core:newFileNote') + cKey + '+Shift+N',
+      label: i18n.t('newFileNote') + cKey + '+Shift+N',
       click: mainPageProps.toggleCreateFileDialog
     },
     {
       type: 'separator'
     },
     {
-      label: i18n.t('core:openNextFileTooltip') + cKey + '+Shift+D',
+      label: i18n.t('openNextFileTooltip') + cKey + '+Shift+D',
       click: openNextFile
     },
     {
-      label: i18n.t('core:openPrevFileTooltip') + cKey + '+Shift+A',
+      label: i18n.t('openPrevFileTooltip') + cKey + '+Shift+A',
       click: openPrevFile
     },
     {
       type: 'separator'
     },
     {
-      label: i18n.t('core:pauseResumePlayback') + cKey + '+Shift+P',
+      label: i18n.t('pauseResumePlayback') + cKey + '+Shift+P',
       click: playResumePlayback
     },
     {
       type: 'separator'
     },
     {
-      label: i18n.t('core:quitTagSpaces') + cKey + '+Q',
+      label: i18n.t('quitTagSpaces') + cKey + '+Q',
       click: quitApp
     }
   ];
@@ -111,7 +110,7 @@ export default function buildTrayIconMenu(mainPageProps: any, i18n, isMacLike) {
 
   // const tray = new Tray(nImage);
   const tray = new Tray(
-    pathLib.resolve(__dirname, '..', 'assets', 'icons', 'trayIcon@2x.png')
+    pathLib.resolve(__dirname, 'assets', 'icons', 'trayIcon@2x.png')
   );
   tray.on('click', () => {
     mainPageProps.showTagSpaces();

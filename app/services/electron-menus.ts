@@ -26,10 +26,10 @@ export default function buildDesktopMenu(props: any, i18n) {
 
   const templateDefault = [
     {
-      label: i18n.t('core:file'),
+      label: i18n.t('file'),
       submenu: [
         /* {
-          label: i18n.t('core:openNewInstance'),
+          label: i18n.t('openNewInstance'),
           accelerator: '',
           click: () => {
             // ipcRenderer.send('new-win', 'newWin');
@@ -39,12 +39,12 @@ export default function buildDesktopMenu(props: any, i18n) {
           type: 'separator'
         }, */
         {
-          label: i18n.t('core:newFileNote'),
+          label: i18n.t('newFileNote'),
           // accelerator: 'CommandOrControl+Alt+N',
           click: props.toggleCreateFileDialog
         },
         {
-          label: i18n.t('core:createDirectory'),
+          label: i18n.t('createDirectory'),
           accelerator: '',
           click: props.showCreateDirectoryDialog
         },
@@ -52,7 +52,7 @@ export default function buildDesktopMenu(props: any, i18n) {
           type: 'separator'
         },
         {
-          label: i18n.t('core:openLink'),
+          label: i18n.t('openLink'),
           accelerator: 'Ctrl+o',
           click: props.toggleOpenLinkDialog
         },
@@ -60,7 +60,7 @@ export default function buildDesktopMenu(props: any, i18n) {
           type: 'separator'
         },
         /* {
-          label: i18n.t('core:saveFile'),
+          label: i18n.t('saveFile'),
           accelerator: mainPageProps.keyBindings.saveDocument,
           click: () => {
             mainPageProps.saveFile();
@@ -70,22 +70,22 @@ export default function buildDesktopMenu(props: any, i18n) {
           type: 'separator'
         },
         {
-          label: i18n.t('core:exitApp'),
+          label: i18n.t('exitApp'),
           accelerator: 'CmdOrCtrl+Q',
           click: quitApp // PlatformIO.quitApp
         }
       ]
     },
     {
-      label: i18n.t('core:edit'),
+      label: i18n.t('edit'),
       submenu: [
         {
-          label: i18n.t('core:undo'),
+          label: i18n.t('undo'),
           accelerator: 'CmdOrCtrl+Z',
           role: 'undo'
         },
         {
-          label: i18n.t('core:redo'),
+          label: i18n.t('redo'),
           accelerator: 'Shift+CmdOrCtrl+Z',
           role: 'redo'
         },
@@ -93,54 +93,54 @@ export default function buildDesktopMenu(props: any, i18n) {
           type: 'separator'
         },
         {
-          label: i18n.t('core:cut'),
+          label: i18n.t('cut'),
           accelerator: 'CmdOrCtrl+X',
           role: 'cut'
         },
         {
-          label: i18n.t('core:copy'),
+          label: i18n.t('copy'),
           accelerator: 'CmdOrCtrl+C',
           role: 'copy'
         },
         {
-          label: i18n.t('core:paste'),
+          label: i18n.t('paste'),
           accelerator: 'CmdOrCtrl+V',
           role: 'paste'
         },
         {
-          label: i18n.t('core:selectAll'),
+          label: i18n.t('selectAll'),
           accelerator: 'CmdOrCtrl+A',
           role: 'selectall'
         }
       ]
     },
     {
-      label: i18n.t('core:view'),
+      label: i18n.t('view'),
       submenu: [
         {
-          label: i18n.t('core:showLocationManager'),
+          label: i18n.t('showLocationManager'),
           accelerator: props.keyBindings.showLocationManager,
           click: props.openLocationManagerPanel
         },
         {
-          label: i18n.t('core:showTagLibrary'),
+          label: i18n.t('showTagLibrary'),
           accelerator: props.keyBindings.showTagLibrary,
           click: props.openTagLibraryPanel
         },
         {
-          label: i18n.t('core:showSearch'),
+          label: i18n.t('showSearch'),
           accelerator: props.keyBindings.showSearch,
           click: props.openSearchPanel
         },
         {
-          label: i18n.t('core:showDevTools'),
+          label: i18n.t('showDevTools'),
           accelerator: props.keyBindings.openDevTools,
           click: (item, focusedWindow) => {
             focusedWindow.toggleDevTools();
           }
         },
         {
-          label: i18n.t('core:reloadApplication'),
+          label: i18n.t('reloadApplication'),
           accelerator: props.keyBindings.reloadApplication,
           click: (item, focusedWindow) => {
             // ipcRenderer.send('relaunch-app', 'relaunch');
@@ -151,12 +151,12 @@ export default function buildDesktopMenu(props: any, i18n) {
           type: 'separator'
         },
         {
-          label: i18n.t('core:goback'),
+          label: i18n.t('goback'),
           accelerator: 'Alt+Left',
           click: props.goBack
         },
         {
-          label: i18n.t('core:goforward'),
+          label: i18n.t('goforward'),
           accelerator: 'Alt+Right',
           click: props.goForward
         },
@@ -164,22 +164,22 @@ export default function buildDesktopMenu(props: any, i18n) {
           type: 'separator'
         },
         {
-          label: i18n.t('core:zoomReset'),
+          label: i18n.t('zoomReset'),
           accelerator: 'CmdOrCtrl+0',
           click: props.setZoomResetApp
         },
         {
-          label: i18n.t('core:zoomIn'),
+          label: i18n.t('zoomIn'),
           accelerator: 'CmdOrCtrl+Plus',
           click: props.setZoomInApp
         },
         {
-          label: i18n.t('core:zoomOut'),
+          label: i18n.t('zoomOut'),
           accelerator: 'CmdOrCtrl+-',
           click: props.setZoomOutApp
         },
         {
-          label: i18n.t('core:toggleFullScreen'),
+          label: i18n.t('toggleFullScreen'),
           accelerator: props.keyBindings.toggleFullScreen,
           click: (item, focusedWindow) => {
             // props.toggleFullScreen
@@ -195,21 +195,21 @@ export default function buildDesktopMenu(props: any, i18n) {
           type: 'separator'
         },
         {
-          label: i18n.t('core:settings'),
+          label: i18n.t('settings'),
           click: props.toggleSettingsDialog
         }
       ]
     },
     {
-      label: '&' + i18n.t('core:help'),
+      label: '&' + i18n.t('help'),
       submenu: [
         {
-          label: '&' + i18n.t('core:documentation'),
+          label: '&' + i18n.t('documentation'),
           accelerator: props.keyBindings.showHelp,
           click: props.openHelpFeedbackPanel
         },
         {
-          label: '&' + i18n.t('core:shortcutKeys'),
+          label: '&' + i18n.t('shortcutKeys'),
           click: props.toggleKeysDialog
         },
         {
@@ -217,7 +217,7 @@ export default function buildDesktopMenu(props: any, i18n) {
           click: props.toggleOnboardingDialog
         },
         {
-          label: '&' + i18n.t('core:whatsNew'),
+          label: '&' + i18n.t('whatsNew'),
           click: () => {
             props.openURLExternally({
               url: Links.links.changelogURL,
@@ -229,7 +229,7 @@ export default function buildDesktopMenu(props: any, i18n) {
           type: 'separator'
         },
         {
-          label: '&' + i18n.t('core:likeUsOnFacebook'),
+          label: '&' + i18n.t('likeUsOnFacebook'),
           click: () => {
             props.openURLExternally({
               url: Links.links.facebook
@@ -237,7 +237,7 @@ export default function buildDesktopMenu(props: any, i18n) {
           }
         },
         {
-          label: '&' + i18n.t('core:followOnTwitter'),
+          label: '&' + i18n.t('followOnTwitter'),
           click: () => {
             props.openURLExternally({
               url: Links.links.twitter
@@ -248,7 +248,7 @@ export default function buildDesktopMenu(props: any, i18n) {
           type: 'separator'
         },
         {
-          label: '&' + i18n.t('core:suggestNewFeatures'),
+          label: '&' + i18n.t('suggestNewFeatures'),
           click: () => {
             props.openURLExternally({
               url: Links.links.suggestFeature
@@ -256,7 +256,7 @@ export default function buildDesktopMenu(props: any, i18n) {
           }
         },
         {
-          label: '&' + i18n.t('core:reportIssues'),
+          label: '&' + i18n.t('reportIssues'),
           click: () => {
             props.openURLExternally({
               url: Links.links.reportIssue
@@ -267,7 +267,7 @@ export default function buildDesktopMenu(props: any, i18n) {
           type: 'separator'
         },
         {
-          label: i18n.t('core:webClipperChrome'),
+          label: i18n.t('webClipperChrome'),
           click: () => {
             props.openURLExternally({
               url: Links.links.webClipperChrome,
@@ -276,7 +276,7 @@ export default function buildDesktopMenu(props: any, i18n) {
           }
         },
         {
-          label: i18n.t('core:webClipperFirefox'),
+          label: i18n.t('webClipperFirefox'),
           click: () => {
             props.openURLExternally({
               url: Links.links.webClipperFirefox,
@@ -288,15 +288,15 @@ export default function buildDesktopMenu(props: any, i18n) {
           type: 'separator'
         },
         {
-          label: '&' + i18n.t('core:license'),
+          label: '&' + i18n.t('license'),
           click: props.toggleLicenseDialog
         },
         {
-          label: '&' + i18n.t('core:thirdPartyLibs'),
+          label: '&' + i18n.t('thirdPartyLibs'),
           click: props.toggleThirdPartyLibsDialog
         },
         {
-          label: '&' + i18n.t('core:aboutTagSpaces'),
+          label: '&' + i18n.t('aboutTagSpaces'),
           click: props.toggleAboutDialog
         }
       ]

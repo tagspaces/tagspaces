@@ -19,8 +19,8 @@
 import { app, BrowserWindow, dialog, globalShortcut, ipcMain } from 'electron';
 import windowStateKeeper from 'electron-window-state';
 import path from 'path';
-import i18n from '-/services/i18n';
-import buildTrayIconMenu from '-/services/electron-tray-menu';
+import i18n from '-/i18nBackend';
+import buildTrayIconMenu from '-/electron-tray-menu';
 import buildDesktopMenu from '-/services/electron-menus';
 import keyBindings from '-/utils/keyBindings';
 // import menuFactoryService from '-/services/menuFactory';
@@ -555,13 +555,6 @@ app.on('ready', async () => {
     }
   }
 
-  /*i18n.on('loaded', loaded => {
-
-    //i18n.changeLanguage('en');
-    i18n.off('loaded');
-  });*/
-
-  //TODO Tray not showing on i18n loaded - not localized yet
   tray = buildTrayIconMenu(
     {
       showTagSpaces,
@@ -605,3 +598,9 @@ app.on('ready', async () => {
     i18n
   );
 });
+
+// i18n.on('languageChanged', lng => {
+// 'loaded', loaded => {
+//  i18n.changeLanguage('en');
+//  i18n.off('loaded');
+// });
