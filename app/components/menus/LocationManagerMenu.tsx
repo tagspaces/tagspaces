@@ -37,6 +37,7 @@ import i18n from '-/services/i18n';
 import { Pro } from '../../pro';
 import { actions as AppActions } from '-/reducers/app';
 import Links from '-/links';
+import { ProLabel } from '-/components/HelperComponents';
 
 interface Props {
   classes: any;
@@ -88,41 +89,56 @@ const LocationManagerMenu = (props: Props) => {
       <ListItemText primary={i18n.t('core:openLink')} />
     </MenuItem>
   );
-  if (Pro) {
-    if (!AppConfig.isCordovaAndroid) {
-      // https://trello.com/c/z6ESlqxz/697-exports-to-json-or-csv-do-not-work-on-android
-      menuItems.push(
-        <MenuItem
-          key="locationManagerMenuExportLocationsTID"
-          data-tid="locationManagerMenuExportLocationsTID"
-          onClick={() => {
-            setLocationManagerMenuAnchorEl(null);
-            props.exportLocations();
-          }}
-        >
-          <ListItemIcon>
-            <ExportImportIcon />
-          </ListItemIcon>
-          <ListItemText primary={i18n.t('core:exportLocationTitle')} />
-        </MenuItem>
-      );
-    }
+
+  if (!AppConfig.isCordovaAndroid) {
+    // https://trello.com/c/z6ESlqxz/697-exports-to-json-or-csv-do-not-work-on-android
     menuItems.push(
       <MenuItem
-        key="locationManagerMenuImportLocations"
-        data-tid="locationManagerMenuImportLocationsTID"
+        disabled={!Pro}
+        key="locationManagerMenuExportLocationsTID"
+        data-tid="locationManagerMenuExportLocationsTID"
         onClick={() => {
           setLocationManagerMenuAnchorEl(null);
-          props.importLocations();
+          props.exportLocations();
         }}
       >
         <ListItemIcon>
           <ExportImportIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:importLocationTitle')} />
+        <ListItemText
+          primary={
+            <>
+              {i18n.t('core:exportLocationTitle')}
+              <ProLabel />
+            </>
+          }
+        />
       </MenuItem>
     );
   }
+  menuItems.push(
+    <MenuItem
+      disabled={!Pro}
+      key="locationManagerMenuImportLocations"
+      data-tid="locationManagerMenuImportLocationsTID"
+      onClick={() => {
+        setLocationManagerMenuAnchorEl(null);
+        props.importLocations();
+      }}
+    >
+      <ListItemIcon>
+        <ExportImportIcon />
+      </ListItemIcon>
+      <ListItemText
+        primary={
+          <>
+            {i18n.t('core:importLocationTitle')}
+            <ProLabel />
+          </>
+        }
+      />
+    </MenuItem>
+  );
 
   menuItems.push(
     <MenuItem

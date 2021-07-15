@@ -24,11 +24,14 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ImportExportIcon from '@material-ui/icons/ImportExport';
 import HelpIcon from '@material-ui/icons/Help';
 import AddIcon from '@material-ui/icons/Add';
+import ReloadIcon from '@material-ui/icons/Sync';
 import ImportExportTagGroupsDialog from '../dialogs/ImportExportTagGroupsDialog';
 import i18n from '-/services/i18n';
 import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
 import Links from '-/links';
+import { ProLabel, ProTooltip } from '-/components/HelperComponents';
+import { Pro } from '-/pro';
 
 interface Props {
   classes?: any;
@@ -129,8 +132,9 @@ const TagLibraryMenu = (props: Props) => {
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:createTagGroupTitle')} />
         </MenuItem>
-        {props.saveTagInLocation && (
+        <ProTooltip tooltip={i18n.t('core:enableTagsFromLocationHelp')}>
           <MenuItem
+            disabled={!Pro || !props.saveTagInLocation}
             data-tid="refreshTagGroups"
             onClick={() => {
               props.refreshTagsFromLocation();
@@ -138,11 +142,18 @@ const TagLibraryMenu = (props: Props) => {
             }}
           >
             <ListItemIcon>
-              <ImportExportIcon />
+              <ReloadIcon />
             </ListItemIcon>
-            <ListItemText primary={i18n.t('core:refreshTagGroups')} />
+            <ListItemText
+              primary={
+                <>
+                  {i18n.t('core:refreshTagGroups')}
+                  <ProLabel />
+                </>
+              }
+            />
           </MenuItem>
-        )}
+        </ProTooltip>
         <MenuItem data-tid="importTagGroup" onClick={handleImportTagGroup}>
           <ListItemIcon>
             <ImportExportIcon />
