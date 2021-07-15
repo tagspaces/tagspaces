@@ -6,7 +6,7 @@ export default function listen(props) {
     const electron = window.require('electron');
     ({ ipcRenderer } = electron);
 
-    ipcRenderer.on('file', (event, arg) => {
+    ipcRenderer.on('cmd', (event, arg) => {
       // console.log('Global events: ' + arg);
       switch (arg) {
         case 'new-text-file':

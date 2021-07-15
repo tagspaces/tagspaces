@@ -34,23 +34,17 @@ export default function buildTrayIconMenu(mainPageProps: any, i18n, isMacLike) {
   }
 
   function playResumePlayback() {
-    const audioEvent = new CustomEvent('toggle-resume', { detail: '' });
-    window.dispatchEvent(audioEvent);
+    mainPageProps.resumePlayback();
   }
 
   function quitApp() {
-    // this.ipcRenderer.send('quit-application', 'Bye, bye...')
     app.quit();
-    /* const quitEvent = new CustomEvent('quit-application', {
-      detail: 'Bye, bye...'
-    });
-    window.dispatchEvent(quitEvent); */
   }
 
   const trayMenuTemplate = [
     {
       label: i18n.t('showTagSpaces') + cKey + '+Shift+W',
-      click: mainPageProps.showTagSpaces // PlatformIO.showMainWindow
+      click: mainPageProps.showTagSpaces
     },
     {
       label: i18n.t('showSearch') + cKey + '+Shift+F',
@@ -114,9 +108,6 @@ export default function buildTrayIconMenu(mainPageProps: any, i18n, isMacLike) {
   );
   tray.on('click', () => {
     mainPageProps.showTagSpaces();
-    /* if (mainWindow) {
-      mainWindow.show();
-    } */
   });
 
   // @ts-ignore

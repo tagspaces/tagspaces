@@ -29,25 +29,17 @@ import {
 import { arrayBufferToBuffer } from '-/utils/misc';
 import AppConfig from '../config';
 import PlatformIO from './platform-io';
-import TrayIcon from '../assets/icons/trayIcon.png';
+// import TrayIcon from '../assets/icons/trayIcon.png';
 // import TrayIconWin from '../assets/icons/trayIcon.ico';
-import TrayIcon2x from '../assets/icons/trayIcon@2x.png';
-import TrayIcon3x from '../assets/icons/trayIcon@3x.png';
+// import TrayIcon2x from '../assets/icons/trayIcon@2x.png';
+// import TrayIcon3x from '../assets/icons/trayIcon@3x.png';
 import { Pro } from '../pro';
 import { TS } from '-/tagspaces.namespace';
 
 export default class ElectronIO {
   electron: any;
 
-  // win: any;
-
-  // app: any;
-
   ipcRenderer: any;
-
-  // remote: any;
-
-  // workerWindow: any;
 
   pathUtils: any;
 
@@ -64,20 +56,10 @@ export default class ElectronIO {
       this.electron = window.require('electron');
       this.ipcRenderer = this.electron.ipcRenderer;
       this.webFrame = this.electron.webFrame;
-      // this.remote = this.electron.remote; // window.require('@electron/remote'); // this.electron.remote;
-      // this.workerWindow = this.remote.getGlobal('splashWorkerWindow');
-      // this.win = this.remote.getCurrentWindow();
-      // this.app = this.remote.app;
-      this.fs = fsextra; // window.require('fs-extra');
+      this.fs = fsextra;
       this.pathUtils = window.require('path');
     }
   }
-
-  /* initMainMenu = (menuConfig: Array<Object>) => {
-    const { Menu } = this.remote;
-    const defaultMenu = Menu.buildFromTemplate(menuConfig);
-    Menu.setApplicationMenu(defaultMenu);
-  }; */
 
   /* initTrayMenu = (menuConfig: Array<Object>) => {
     const mainWindow = this.win;
@@ -170,15 +152,6 @@ export default class ElectronIO {
 
   getDevicePaths = (): Object =>
     this.ipcRenderer.sendSync('get-device-paths', 'notNeededArgument');
-  /* const paths = {
-      desktopFolder: this.app.getPath('desktop'),
-      documentsFolder: this.app.getPath('documents'),
-      downloadsFolder: this.app.getPath('downloads'),
-      musicFolder: this.app.getPath('music'),
-      picturesFolder: this.app.getPath('pictures'),
-      videosFolder: this.app.getPath('videos')
-    };
-    return paths; */
 
   getUserHomePath = (): string =>
     this.ipcRenderer.sendSync('get-user-home-path', 'notNeededArgument');
