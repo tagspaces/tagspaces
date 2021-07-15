@@ -127,7 +127,7 @@
   ],
   "husky": {
     "hooks": {
-      "pre-commit": "yarn prettier-check"
+      "pre-commit": "yarn prettier-check && yarn type-check"
     }
   },
   "devDependencies": {
