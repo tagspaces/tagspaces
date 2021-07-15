@@ -16,12 +16,13 @@
  *
  */
 
-import { app, BrowserWindow, ipcMain, globalShortcut, dialog } from 'electron';
+import { app, BrowserWindow, dialog, globalShortcut, ipcMain } from 'electron';
 import windowStateKeeper from 'electron-window-state';
 import path from 'path';
 import i18n from '-/services/i18n';
 import buildTrayIconMenu from '-/services/electron-tray-menu';
 import buildDesktopMenu from '-/services/electron-menus';
+import keyBindings from '-/utils/keyBindings';
 // import menuFactoryService from '-/services/menuFactory';
 
 // require('@electron/remote/main').initialize();
@@ -29,6 +30,7 @@ import buildDesktopMenu from '-/services/electron-menus';
 // delete process.env.ELECTRON_ENABLE_SECURITY_WARNINGS;
 // process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
 
+const isMac = process.platform === 'darwin';
 let mainWindow = null;
 let tray = null;
 (global as any).splashWorkerWindow = null;
@@ -85,12 +87,17 @@ process.argv.forEach((arg, count) => {
   }
 });
 
+let mainHTML = `file://${__dirname}/app.html`;
+let workerDevMode = false;
+
 if (devMode) {
   // eslint-disable-next-line
   require('electron-debug')({ showDevTools: false, devToolsMode: 'right' });
   const p = path.join(__dirname, '..', 'app', 'node_modules');
   // eslint-disable-next-line
   require('module').globalPaths.push(p);
+  // workerDevMode = true; // hide worker window in dev mode
+  mainHTML = `file://${__dirname}/appd.html`;
 }
 
 // if (process.platform === 'linux') {
@@ -119,59 +126,56 @@ const installExtensions = async () => {
   ).catch(console.log);
 };
 
-app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required'); // Fix broken autoplay functionality in the av player
-
-app.on('window-all-closed', () => {
-  globalShortcut.unregisterAll();
-  app.quit();
-});
-
-app.on('ready', async () => {
-  let workerDevMode = false;
-  let mainHTML = `file://${__dirname}/app.html`;
-
-  if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.DEBUG_PROD === 'true'
-  ) {
-    await installExtensions();
-  }
-
-  if (process.env.NODE_ENV === 'development') {
-    // workerDevMode = true; // hide worker window in dev mode
-    mainHTML = `file://${__dirname}/appd.html`;
-  }
-
-  const mainWindowState = windowStateKeeper({
-    defaultWidth: 1280,
-    defaultHeight: 800
+function createSplashWorker() {
+  // console.log('Dev ' + process.env.NODE_ENV + ' worker ' + showWorkerWindow);
+  (global as any).splashWorkerWindow = new BrowserWindow({
+    show: workerDevMode,
+    x: 0,
+    y: 0,
+    width: workerDevMode ? 800 : 1,
+    height: workerDevMode ? 600 : 1,
+    frame: false,
+    webPreferences: {
+      nodeIntegration: true,
+      enableRemoteModule: false,
+      contextIsolation: false
+    }
   });
 
-  function createSplashWorker() {
-    // console.log('Dev ' + process.env.NODE_ENV + ' worker ' + showWorkerWindow);
-    (global as any).splashWorkerWindow = new BrowserWindow({
-      show: workerDevMode,
-      x: 0,
-      y: 0,
-      width: workerDevMode ? 800 : 1,
-      height: workerDevMode ? 600 : 1,
-      frame: false,
-      webPreferences: {
-        nodeIntegration: true,
-        enableRemoteModule: false,
-        contextIsolation: false
-      }
-    });
-
-    if (!process.env.DISABLE_WORKER) {
-      (global as any).splashWorkerWindow.loadURL(
-        `file://${__dirname}/splash.html`
-      );
-    }
+  if (!process.env.DISABLE_WORKER) {
+    (global as any).splashWorkerWindow.loadURL(
+      `file://${__dirname}/splash.html`
+    );
   }
 
-  createSplashWorker();
+  (global as any).splashWorkerWindow.webContents.on('crashed', () => {
+    try {
+      (global as any).splashWorkerWindow.close();
+      (global as any).splashWorkerWindow = null;
+    } catch (err) {
+      console.warn('Error closing the splash window. ' + err);
+    }
+    createSplashWorker();
+  });
 
+  // electron-io actions
+  ipcMain.on('is-worker-available', event => {
+    let workerAvailable = false;
+    try {
+      if (
+        (global as any).splashWorkerWindow &&
+        (global as any).splashWorkerWindow.webContents
+      ) {
+        workerAvailable = true;
+      }
+    } catch (err) {
+      console.info('Error by finding if worker is available.');
+    }
+    event.returnValue = workerAvailable;
+  });
+}
+
+async function createAppWindow() {
   let startupParameter = '';
   if (startupFilePath) {
     if (startupFilePath.startsWith('./') || startupFilePath.startsWith('.\\')) {
@@ -182,7 +186,11 @@ app.on('ready', async () => {
     }
   }
 
-  // TODO remote module is deprecated https://stackoverflow.com/questions/37884130/electron-remote-is-undefined
+  const mainWindowState = windowStateKeeper({
+    defaultWidth: 1280,
+    defaultHeight: 800
+  });
+
   mainWindow = new BrowserWindow({
     show: true,
     x: mainWindowState.x,
@@ -203,12 +211,13 @@ app.on('ready', async () => {
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36';
   const testWinOnUnix = false; // set to true to simulate windows os, useful for testing s3 handling
 
-  mainWindow.loadURL(
+  await mainWindow.loadURL(
     mainHTML + startupParameter,
     testWinOnUnix ? { userAgent: winUserAgent } : {}
   );
   mainWindow.setMenuBarVisibility(false);
   mainWindow.setAutoHideMenuBar(true);
+  mainWindowState.manage(mainWindow);
 
   mainWindow.webContents.on('did-finish-load', () => {
     if (!mainWindow) {
@@ -252,41 +261,34 @@ app.on('ready', async () => {
     dialog.showMessageBox(mainWindow, options).then(dialogResponse => {
       mainWindow.hide();
       if (dialogResponse.response === 0) {
-        reloadApp();
+        mainWindow.loadURL(mainHTML); //reloadApp();
       } else {
         mainWindow.close();
         globalShortcut.unregisterAll();
       }
     });
   });
+}
 
-  (global as any).splashWorkerWindow.webContents.on('crashed', () => {
-    try {
-      (global as any).splashWorkerWindow.close();
-      (global as any).splashWorkerWindow = null;
-    } catch (err) {
-      console.warn('Error closing the splash window. ' + err);
-    }
-    createSplashWorker();
-  });
+app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required'); // Fix broken autoplay functionality in the av player
 
-  // electron-io actions
-  ipcMain.on('is-worker-available', event => {
-    let workerAvailable = false;
-    try {
-      if (
-        (global as any).splashWorkerWindow &&
-        (global as any).splashWorkerWindow.webContents
-      ) {
-        workerAvailable = true;
-      }
-    } catch (err) {
-      console.info('Error by finding if worker is available.');
-    }
-    event.returnValue = workerAvailable;
-  });
+app.on('window-all-closed', () => {
+  globalShortcut.unregisterAll();
+  app.quit();
+});
 
-  ipcMain.on('show-main-window', (event, arg) => {
+app.on('ready', async () => {
+  if (
+    process.env.NODE_ENV === 'development' ||
+    process.env.DEBUG_PROD === 'true'
+  ) {
+    await installExtensions();
+  }
+
+  createSplashWorker();
+  await createAppWindow();
+
+  ipcMain.on('show-main-window', () => {
     if (mainWindow) {
       if (mainWindow.isMinimized()) {
         mainWindow.restore();
@@ -295,14 +297,14 @@ app.on('ready', async () => {
     }
   });
 
-  ipcMain.on('focus-window', (event, arg) => {
+  ipcMain.on('focus-window', () => {
     if (mainWindow) {
       mainWindow.focus();
     }
   });
 
   ipcMain.on('get-device-paths', event => {
-    const paths = {
+    event.returnValue = {
       desktopFolder: app.getPath('desktop'),
       documentsFolder: app.getPath('documents'),
       downloadsFolder: app.getPath('downloads'),
@@ -310,7 +312,6 @@ app.on('ready', async () => {
       picturesFolder: app.getPath('pictures'),
       videosFolder: app.getPath('videos')
     };
-    event.returnValue = paths;
   });
 
   ipcMain.on('get-user-home-path', event => {
@@ -324,7 +325,7 @@ app.on('ready', async () => {
     }
   });
 
-  ipcMain.handle('select-directory-dialog', async (event, ...args) => {
+  ipcMain.handle('select-directory-dialog', async () => {
     const options = {
       properties: ['openDirectory', 'createDirectory']
     };
@@ -398,8 +399,6 @@ app.on('ready', async () => {
     }
     reloadApp();
   });
-
-  mainWindowState.manage(mainWindow);
 
   function showTagSpaces() {
     if (mainWindow) {
@@ -556,142 +555,12 @@ app.on('ready', async () => {
     }
   }
 
-  i18n.on('loaded', loaded => {
-    buildDesktopMenu(
-      {
-        showTagSpaces,
-        openSearchPanel: showSearch,
-        toggleCreateFileDialog: newTextFile,
-        openNextFile: getNextFile,
-        openPrevFile: getPreviousFile,
-        quitApp: reloadApp,
-        showCreateDirectoryDialog: showCreateDirectoryDialog,
-        toggleOpenLinkDialog: toggleOpenLinkDialog,
-        openLocationManagerPanel: openLocationManagerPanel,
-        openTagLibraryPanel: openTagLibraryPanel,
-        goBack: goBack,
-        goForward: goForward,
-        setZoomResetApp: setZoomResetApp,
-        setZoomInApp: setZoomInApp,
-        setZoomOutApp: setZoomOutApp,
-        exitFullscreen: exitFullscreen,
-        toggleSettingsDialog: toggleSettingsDialog,
-        openHelpFeedbackPanel: openHelpFeedbackPanel,
-        toggleKeysDialog: toggleKeysDialog,
-        toggleOnboardingDialog: toggleOnboardingDialog,
-        openURLExternally: openURLExternally,
-        toggleLicenseDialog: toggleLicenseDialog,
-        toggleThirdPartyLibsDialog: toggleThirdPartyLibsDialog,
-        toggleAboutDialog: toggleAboutDialog,
-        // defaultSettings.keyBindings
-        keyBindings: [
-          {
-            name: 'selectAll',
-            command: 'ctrl+a'
-          },
-          {
-            name: 'closeViewer',
-            command: 'ctrl+w'
-          },
-          {
-            name: 'saveDocument',
-            command: 'ctrl+s'
-          },
-          {
-            name: 'reloadDocument',
-            command: 'ctrl+r'
-          },
-          {
-            name: 'editDocument',
-            command: 'ctrl+e'
-          },
-          {
-            name: 'deleteDocument',
-            command: 'del'
-          },
-          {
-            name: 'showLocationManager',
-            command: 'ctrl+1'
-          },
-          {
-            name: 'showTagLibrary',
-            command: 'ctrl+2'
-          },
-          {
-            name: 'showSearch',
-            command: 'ctrl+3'
-          },
-          {
-            name: 'toggleShowHiddenEntries',
-            command: 'ctrl+h'
-          },
-          {
-            name: 'addRemoveTags',
-            command: 'ctrl+t'
-          },
-          /* {
-            name: 'propertiesDocument',
-            command: 'alt+enter',
-          }, */
-          {
-            name: 'nextDocument',
-            command: 'down'
-          },
-          {
-            name: 'prevDocument',
-            command: 'up'
-          },
-          {
-            name: 'showHelp',
-            command: 'f1'
-          },
-          {
-            name: 'reloadApplication',
-            command: 'r a'
-          },
-          {
-            name: 'toggleFullScreen',
-            command: 'f11'
-          },
-          {
-            name: 'openDevTools',
-            command: 'f10'
-          },
-          {
-            name: 'openSearch',
-            command: 'ctrl+f'
-          },
-          {
-            name: 'renameFile',
-            command: 'f2'
-          },
-          {
-            name: 'openEntry',
-            command: 'enter'
-          },
-          {
-            name: 'openParentDirectory',
-            command: 'backspace'
-          },
-          {
-            name: 'openFileExternally',
-            command: 'ctrl+enter'
-          },
-          {
-            name: 'zoomIn',
-            command: 'ctrl+'
-          },
-          {
-            name: 'zoomOut',
-            command: 'ctrl-'
-          }
-        ]
-      },
-      i18n
-    );
+  /*i18n.on('loaded', loaded => {
+
     //i18n.changeLanguage('en');
     i18n.off('loaded');
-  });
+  });*/
+
   //TODO Tray not showing on i18n loaded - not localized yet
   tray = buildTrayIconMenu(
     {
@@ -701,6 +570,37 @@ app.on('ready', async () => {
       openNextFile: getNextFile,
       openPrevFile: getPreviousFile,
       quitApp: reloadApp
+    },
+    i18n,
+    isMac
+  );
+  buildDesktopMenu(
+    {
+      showTagSpaces,
+      openSearchPanel: showSearch,
+      toggleCreateFileDialog: newTextFile,
+      openNextFile: getNextFile,
+      openPrevFile: getPreviousFile,
+      quitApp: reloadApp,
+      showCreateDirectoryDialog: showCreateDirectoryDialog,
+      toggleOpenLinkDialog: toggleOpenLinkDialog,
+      openLocationManagerPanel: openLocationManagerPanel,
+      openTagLibraryPanel: openTagLibraryPanel,
+      goBack: goBack,
+      goForward: goForward,
+      setZoomResetApp: setZoomResetApp,
+      setZoomInApp: setZoomInApp,
+      setZoomOutApp: setZoomOutApp,
+      exitFullscreen: exitFullscreen,
+      toggleSettingsDialog: toggleSettingsDialog,
+      openHelpFeedbackPanel: openHelpFeedbackPanel,
+      toggleKeysDialog: toggleKeysDialog,
+      toggleOnboardingDialog: toggleOnboardingDialog,
+      openURLExternally: openURLExternally,
+      toggleLicenseDialog: toggleLicenseDialog,
+      toggleThirdPartyLibsDialog: toggleThirdPartyLibsDialog,
+      toggleAboutDialog: toggleAboutDialog,
+      keyBindings: keyBindings(isMac)
     },
     i18n
   );

@@ -18,16 +18,13 @@
 
 import { app, Menu, Tray } from 'electron';
 import pathLib from 'path';
-import TrayIcon2x from '-/assets/icons/trayIcon@2x.png';
-import TrayIcon from '-/assets/icons/trayIcon.png';
-import TrayIcon3x from '-/assets/icons/trayIcon@3x.png';
+// import TrayIcon2x from '-/assets/icons/trayIcon@2x.png';
+// import TrayIcon from '-/assets/icons/trayIcon.png';
+// import TrayIcon3x from '-/assets/icons/trayIcon@3x.png';
 
-export default function buildTrayIconMenu(mainPageProps: any, i18n) {
-  /* if (!AppConfig.isElectron) {
-    return;
-  } */
+export default function buildTrayIconMenu(mainPageProps: any, i18n, isMacLike) {
 
-  const cKey = ' - Ctrl'; // AppConfig.isMacLike ? ' -  Cmd' : ' - Ctrl'; TODO
+  const cKey = isMacLike ? ' -  Cmd' : ' - Ctrl';
 
   function openNextFile() {
     mainPageProps.openNextFile();
