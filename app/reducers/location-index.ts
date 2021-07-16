@@ -586,6 +586,7 @@ export const actions = {
 };
 
 // Selectors
-export const getIndexedEntriesCount = (state: any) => GlobalSearch.index.length;
+export const getIndexedEntriesCount = (state: any) =>
+  GlobalSearch.index ? GlobalSearch.index.length : 0;
 export const isIndexing = (state: any) => state.locationIndex.isIndexing;
 export const getSearchQuery = (state: any) => state.locationIndex.searchQuery;
