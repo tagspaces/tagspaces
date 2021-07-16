@@ -322,6 +322,13 @@ app.on('ready', async () => {
     }
   });
 
+  ipcMain.on('worker-response', (event, arg) => {
+    // console.log('worker event in main.' + arg.result.length);
+    if (mainWindow) {
+      mainWindow.webContents.send(arg.id, arg);
+    }
+  });
+
   ipcMain.handle('select-directory-dialog', async () => {
     const options = {
       properties: ['openDirectory', 'createDirectory']
@@ -337,13 +344,6 @@ app.on('ready', async () => {
   });
 
   ///// end electron-io
-
-  /*ipcMain.on('worker', (event, arg) => { TODO Why?
-    // console.log('worker event in main.' + arg.result.length);
-    if (mainWindow) {
-      mainWindow.webContents.send(arg.id, arg);
-    }
-  });*/
 
   ipcMain.on('setSplashVisibility', (event, arg) => {
     // worker window needed to be visible for the PDF tmb generation
