@@ -87,7 +87,7 @@ process.argv.forEach((arg, count) => {
 let mainHTML = `file://${__dirname}/app.html`;
 let workerDevMode = false;
 
-if (devMode) {
+if (devMode || testMode) {
   // eslint-disable-next-line
   require('electron-debug')({ showDevTools: false, devToolsMode: 'right' });
   const p = path.join(__dirname, '..', 'app', 'node_modules');
@@ -203,12 +203,13 @@ async function createAppWindow() {
       contextIsolation: false
     }
   });
+  mainWindow.toggleDevTools(); // debugging
 
   const winUserAgent =
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36';
   const testWinOnUnix = false; // set to true to simulate windows os, useful for testing s3 handling
 
-  await mainWindow.loadURL(
+  mainWindow.loadURL(
     mainHTML + startupParameter,
     testWinOnUnix ? { userAgent: winUserAgent } : {}
   );
@@ -282,7 +283,9 @@ app.on('ready', async () => {
     await installExtensions();
   }
 
+  // if (!process.env.DISABLE_WORKER) {
   createSplashWorker();
+  //}
   await createAppWindow();
 
   ipcMain.on('show-main-window', () => {

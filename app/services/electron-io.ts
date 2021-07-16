@@ -281,6 +281,9 @@ export default class ElectronIO {
         }
 
         if (entries) {
+          console.debug(
+            'Listing directory ' + path + ' entries:' + entries.length
+          );
           if (!showIgnored && ignorePatterns.length > 0) {
             // eslint-disable-next-line no-param-reassign
             entries = entries.filter(
@@ -335,7 +338,9 @@ export default class ElectronIO {
                   eentry.meta = this.fs.readJsonSync(folderMetaPath);
                   // console.log('Success reading meta folder file ' + folderMetaPath);
                 } catch (err) {
-                  // console.log('Failed reading meta folder file ' + folderMetaPath);
+                  console.log(
+                    'Failed reading meta folder file ' + folderMetaPath
+                  );
                 }
 
                 // Loading thumbs for folders
