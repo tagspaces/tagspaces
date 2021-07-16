@@ -1245,7 +1245,8 @@ const areEqual = (prevProp, nextProp) =>
   nextProp.searchQuery === prevProp.searchQuery &&
   nextProp.currentDirectory === prevProp.currentDirectory &&
   nextProp.indexedEntriesCount === prevProp.indexedEntriesCount &&
-  JSON.stringify(nextProp.searches) === JSON.stringify(prevProp.searches);
+  JSON.stringify(nextProp.searches) === JSON.stringify(prevProp.searches) &&
+  JSON.stringify(nextProp.classes) === JSON.stringify(prevProp.classes);
 
 export default connect(
   mapStateToProps,
