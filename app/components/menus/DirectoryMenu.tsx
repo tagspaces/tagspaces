@@ -75,7 +75,7 @@ interface Props {
   onClose: (param?: any) => void;
   anchorEl: Element;
   directoryPath: string;
-  loadDirectoryContent: (path: string) => void;
+  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
   openDirectory: (path: string) => void;
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   reflectCreateEntry?: (path: string, isFile: boolean) => void;
@@ -123,12 +123,12 @@ const DirectoryMenu = (props: Props) => {
 
   function reloadDirectory() {
     props.onClose();
-    props.loadDirectoryContent(props.directoryPath);
+    props.loadDirectoryContent(props.directoryPath, false);
   }
 
   function openDirectory() {
     props.onClose();
-    props.loadDirectoryContent(props.directoryPath);
+    props.loadDirectoryContent(props.directoryPath, false);
   }
 
   function showProperties() {

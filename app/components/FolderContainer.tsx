@@ -217,7 +217,7 @@ interface Props {
   showInFileManager: () => void;
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   reflectCreateEntry: (path: string, isFile: boolean) => void;
-  loadDirectoryContent: (path: string) => void;
+  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
   loadParentDirectoryContent: () => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   isReadOnlyMode: boolean;
@@ -466,7 +466,7 @@ const FolderContainer = (props: Props) => {
                 pathParts.map(pathPart => (
                   <Button
                     key={pathPart}
-                    onClick={() => loadDirectoryContent(pathPart)}
+                    onClick={() => loadDirectoryContent(pathPart, false)}
                     title={'Navigate to: ' + pathPart}
                     style={{
                       paddingLeft: 3,

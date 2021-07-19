@@ -57,7 +57,7 @@ interface Props {
   location: TS.Location;
   currentLocationId: string;
   openLocation: (location: TS.Location) => void;
-  loadDirectoryContent: (path: string) => void;
+  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   hideDrawer: () => void;
   isReadOnlyMode: boolean;
@@ -98,7 +98,7 @@ const LocationView = (props: Props) => {
     directoryTreeRef.current.changeLocation(location);
     if (location.uuid === props.currentLocationId) {
       // the same location click
-      props.loadDirectoryContent(getLocationPath(location));
+      props.loadDirectoryContent(getLocationPath(location), false);
     } else {
       // this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
       props.setSelectedEntries([]);
