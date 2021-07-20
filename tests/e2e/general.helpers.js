@@ -631,9 +631,7 @@ export async function reloadDirectory() {
 
 export async function createNewDirectory(dirName = testFolder) {
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
-  await global.client.pause(500); // TODO the Menu is always in HTML
   await clickOn('[data-tid=newSubDirectory]');
-  await global.client.pause(500);
   // set new dir name
   await setInputKeys('directoryName', dirName);
   /*const directoryName = await global.client.$('[data-tid=directoryName] input');
@@ -689,7 +687,6 @@ export async function closeOpenedFile() {
 }
 
 export async function deleteDirectory() {
-  await global.client.pause(500);
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
   await clickOn('[data-tid=deleteDirectory]');
   /*const deleteDirectory = await global.client.$('[data-tid=deleteDirectory]');
