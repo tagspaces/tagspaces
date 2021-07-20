@@ -58,7 +58,7 @@ interface Props {
   classes?: any;
   style?: any;
   locations: Array<TS.Location>;
-  hideDrawer: () => void;
+  hideDrawer?: () => void;
   openURLExternally: (path: string) => void;
   toggleOpenLinkDialog: () => void;
   setDefaultLocations: () => void;

@@ -45,7 +45,6 @@ import {
   isLocationManagerPanelOpened,
   isTagLibraryPanelOpened,
   isSearchPanelOpened,
-  isPerspectivesPanelOpened,
   isHelpFeedbackPanelOpened,
   isReadOnlyMode,
   getDirectoryPath
@@ -90,8 +89,6 @@ interface Props {
   openTagLibraryPanel: () => void;
   isSearchPanelOpened: boolean;
   openSearchPanel: () => void;
-  isPerspectivesPanelOpened: boolean;
-  // openPerspectivesPanel: () => void,
   isHelpFeedbackPanelOpened: boolean;
   openHelpFeedbackPanel: () => void;
   closeAllVerticalPanels: () => void;
@@ -143,7 +140,6 @@ const MobileNavigation = (props: Props) => {
         )}
         {props.isTagLibraryPanelOpened && <TagLibrary />}
         {props.isSearchPanelOpened && <Search hideDrawer={hideDrawer} />}
-        {/* {isPerspectivesPanelOpened && <PerspectiveManager />} */}
         {props.isHelpFeedbackPanelOpened && (
           <HelpFeedbackPanel
             openURLExternally={openURLExternally}
@@ -265,7 +261,6 @@ function mapStateToProps(state) {
     isLocationManagerPanelOpened: isLocationManagerPanelOpened(state),
     isTagLibraryPanelOpened: isTagLibraryPanelOpened(state),
     isSearchPanelOpened: isSearchPanelOpened(state),
-    isPerspectivesPanelOpened: isPerspectivesPanelOpened(state),
     isHelpFeedbackPanelOpened: isHelpFeedbackPanelOpened(state),
     isReadOnlyMode: isReadOnlyMode(state),
     directoryPath: getDirectoryPath(state),
@@ -284,7 +279,6 @@ function mapActionCreatorsToProps(dispatch) {
       openLocationManagerPanel: AppActions.openLocationManagerPanel,
       openTagLibraryPanel: AppActions.openTagLibraryPanel,
       openSearchPanel: AppActions.openSearchPanel,
-      openPerspectivesPanel: AppActions.openPerspectivesPanel,
       openHelpFeedbackPanel: AppActions.openHelpFeedbackPanel,
       openURLExternally: AppActions.openURLExternally,
       showNotification: AppActions.showNotification,

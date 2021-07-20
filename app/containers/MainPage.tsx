@@ -54,7 +54,6 @@ import {
   isLocationManagerPanelOpened,
   isTagLibraryPanelOpened,
   isSearchPanelOpened,
-  isPerspectivesPanelOpened,
   isHelpFeedbackPanelOpened,
   isEditTagDialogOpened,
   isCreateDirectoryOpened,
@@ -178,7 +177,6 @@ interface Props {
   openLocationManagerPanel: () => void;
   openTagLibraryPanel: () => void;
   openSearchPanel: () => void;
-  openPerspectivesPanel: () => void;
   openHelpFeedbackPanel: () => void;
   closeAllVerticalPanels: () => void;
   leftSplitSize: number;
@@ -190,7 +188,6 @@ interface Props {
   isOpenLinkDialogOpened: boolean;
   isTagLibraryPanelOpened: boolean;
   isSearchPanelOpened: boolean;
-  isPerspectivesPanelOpened: boolean;
   isHelpFeedbackPanelOpened: boolean;
   directoryPath: string;
   showNotification: (
@@ -290,10 +287,10 @@ const OpenLinkDialogAsync = props => (
   </React.Suspense>
 );
 
-/* let showVerticalPanel = true;
-if (window.ExtDefaultVerticalPanel === 'none') {
-  showVerticalPanel = false;
-} */
+// let showVerticalPanel = true;
+// if (window.ExtDefaultVerticalPanel === 'none') {
+//   showVerticalPanel = false;
+// }
 
 const MainPage = (props: Props) => {
   // useTraceUpdate(props);
@@ -304,9 +301,9 @@ const MainPage = (props: Props) => {
   const setSelectedDirectoryPath = (path: string) => {
     selectedDirectoryPath.current = path;
   };
-  /* const [isManagementPanelVisible, setManagementPanelVisible] = useState<
-    boolean
-  >(window.ExtDefaultVerticalPanel !== 'none' && !props.isEntryInFullWidth); */
+  // const [isManagementPanelVisible, setManagementPanelVisible] = useState<
+  //   boolean
+  // >(showVerticalPanel || !props.isEntryInFullWidth);
   // const [mainSplitSize, setMainSplitSize] = useState<any>('100%');
   // const [isDrawerOpened, setDrawerOpened] = useState<boolean>(true);
   const width =
@@ -364,7 +361,6 @@ const MainPage = (props: Props) => {
     props.isLocationManagerPanelOpened ||
     props.isTagLibraryPanelOpened ||
     props.isSearchPanelOpened ||
-    props.isPerspectivesPanelOpened ||
     props.isHelpFeedbackPanelOpened;
 
   useEventListener('resize', () => {
@@ -501,9 +497,6 @@ const MainPage = (props: Props) => {
   } = props;
   const { FILE } = NativeTypes;
 
-  /* if (this.state.width < 400) {
-      this.setManagementPanelVisibility(false);
-    } */
   return (
     <HotKeys handlers={keyBindingHandlers} keyMap={keyMap}>
       {props.isAboutDialogOpened && (
@@ -735,7 +728,6 @@ function mapStateToProps(state) {
     isLocationManagerPanelOpened: isLocationManagerPanelOpened(state),
     isTagLibraryPanelOpened: isTagLibraryPanelOpened(state),
     isSearchPanelOpened: isSearchPanelOpened(state),
-    isPerspectivesPanelOpened: isPerspectivesPanelOpened(state),
     isHelpFeedbackPanelOpened: isHelpFeedbackPanelOpened(state),
     directoryPath: getDirectoryPath(state),
     isDeleteMultipleEntriesDialogOpened: isDeleteMultipleEntriesDialogOpened(
@@ -784,7 +776,6 @@ function mapDispatchToProps(dispatch) {
       openLocationManagerPanel: AppActions.openLocationManagerPanel,
       openTagLibraryPanel: AppActions.openTagLibraryPanel,
       openSearchPanel: AppActions.openSearchPanel,
-      openPerspectivesPanel: AppActions.openPerspectivesPanel,
       openHelpFeedbackPanel: AppActions.openHelpFeedbackPanel,
       closeAllVerticalPanels: AppActions.closeAllVerticalPanels,
       toggleDeleteMultipleEntriesDialog:
@@ -815,7 +806,6 @@ const areEqual = (prevProp, nextProp) =>
     prevProp.isLocationManagerPanelOpened &&
   nextProp.isOnboardingDialogOpened === prevProp.isOnboardingDialogOpened &&
   nextProp.isOpenLinkDialogOpened === prevProp.isOpenLinkDialogOpened &&
-  nextProp.isPerspectivesPanelOpened === prevProp.isPerspectivesPanelOpened &&
   nextProp.isProgressDialogOpened === prevProp.isProgressDialogOpened &&
   nextProp.isReadOnlyMode === prevProp.isReadOnlyMode &&
   nextProp.isSearchPanelOpened === prevProp.isSearchPanelOpened &&
