@@ -224,7 +224,7 @@ interface Props {
   isDesktopMode: boolean;
   showNotification: (content: string) => void;
   openSearchPanel: () => void;
-  showDrawer: () => void;
+  showDrawer?: () => void;
   setCurrentDirectoryPerspective: (perspective: string) => void;
   maxSearchResults: number;
   currentDirectoryPerspective: string;
