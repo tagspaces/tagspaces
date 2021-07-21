@@ -98,6 +98,7 @@ export namespace TS {
     color?: string;
     textcolor?: string;
     children?: Array<Tag>;
+    selected?: boolean;
     created_date?: number;
     modified_date?: number;
   }

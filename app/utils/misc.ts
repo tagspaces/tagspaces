@@ -24,6 +24,57 @@ export const locationType = {
   TYPE_AMPLIFY: '2'
 };
 
+export function prepareTagGroupForExport(tagGroup: TS.TagGroup): TS.TagGroup {
+  const preparedTagGroup: TS.TagGroup = {
+    title: tagGroup.title,
+    uuid: tagGroup.uuid,
+    children: []
+  };
+  if (tagGroup.created_date) {
+    preparedTagGroup.created_date = tagGroup.created_date;
+  }
+  if (tagGroup.color) {
+    preparedTagGroup.color = tagGroup.color;
+  }
+  if (tagGroup.textcolor) {
+    preparedTagGroup.textcolor = tagGroup.textcolor;
+  }
+  if (tagGroup.modified_date) {
+    preparedTagGroup.modified_date = tagGroup.modified_date;
+  }
+  if (tagGroup.expanded) {
+    preparedTagGroup.expanded = tagGroup.expanded;
+  }
+  if (tagGroup.children && tagGroup.children.length > 0) {
+    tagGroup.children.forEach(tag => {
+      const cleanedTag = prepareTagForExport(tag);
+      if (cleanedTag.title) {
+        preparedTagGroup.children.push(prepareTagForExport(cleanedTag));
+      }
+    });
+  }
+  return preparedTagGroup;
+}
+
+export function prepareTagForExport(tag: TS.Tag): TS.Tag {
+  const preparedTag: TS.Tag = {
+    title: tag.title
+  };
+  if (tag.color) {
+    preparedTag.color = tag.color;
+  }
+  if (tag.textcolor) {
+    preparedTag.textcolor = tag.textcolor;
+  }
+  if (tag.type) {
+    preparedTag.type = tag.type;
+  }
+  if (tag.description) {
+    preparedTag.description = tag.description;
+  }
+  return preparedTag;
+}
+
 /** Returns true is a string is plus code e.g. 8FWH4HVG+3V 8FWH4HVG+ 8FWH4H+ */
 export function isPlusCode(plusCode: string): boolean {
   if (!plusCode) {
