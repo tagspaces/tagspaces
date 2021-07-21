@@ -848,7 +848,7 @@ const Search = (props: Props) => {
               className={classes.formControl}
               disabled={indexing || !Pro}
             >
-              <ProTooltip>
+              <ProTooltip tooltip="Filter the search result by their type">
                 <InputLabel htmlFor="file-type">
                   {i18n.t('core:fileType')}
                 </InputLabel>
@@ -959,7 +959,7 @@ const Search = (props: Props) => {
               className={classes.formControl}
               disabled={indexing || !Pro}
             >
-              <ProTooltip>
+              <ProTooltip tooltip="Filter the search results by their file size">
                 <InputLabel shrink htmlFor="file-size">
                   {i18n.t('core:sizeSearchTitle')}
                 </InputLabel>
@@ -1005,7 +1005,7 @@ const Search = (props: Props) => {
               className={classes.formControl}
               disabled={indexing || !Pro}
             >
-              <ProTooltip>
+              <ProTooltip tooltip="Filter the search result by last modified date">
                 <InputLabel shrink htmlFor="modification-date">
                   {i18n.t('core:lastModifiedSearchTitle')}
                 </InputLabel>
@@ -1040,7 +1040,7 @@ const Search = (props: Props) => {
               </ProTooltip>
             </FormControl>
             <FormControl className={classes.formControl}>
-              <ProTooltip>
+              <ProTooltip tooltip="Filter the search results for a given time period">
                 <TextField
                   id="tagTimePeriod"
                   label={i18n.t('Enter time period')}
@@ -1092,7 +1092,7 @@ const Search = (props: Props) => {
               className={classes.formControl}
               disabled={indexing || !Pro}
             >
-              <ProTooltip>
+              <ProTooltip tooltip="Saved search queries for later use">
                 <InputLabel shrink htmlFor="saved-searches">
                   {i18n.t('core:savedSearchesTitle')}
                 </InputLabel>
