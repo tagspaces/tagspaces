@@ -585,7 +585,7 @@
   "applyTag": "應用標籤",
   "refreshTagGroups": "重新加載位置標籤",
   "enableTagsFromLocation": "啟用位置標籤",
-  "enableTagsFromLocationHelp": "These are tags witch are saved in the location's folder, making them visible for other users of this folder",
+  "enableTagsFromLocationHelp": "這些是儲存在該位置文件夾中的標籤，對該文件夾的其他使用者是可見的",
   "enableMobileMode": "啟用手機（小螢幕）模式",
   "folderName": "文件夾名稱",
   "editDescription": "編輯描述",
