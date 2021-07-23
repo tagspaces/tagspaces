@@ -11,7 +11,6 @@
   "deleteLocationContentAlert": "Do you want to delete the location '{{locationName}}'?",
   "deleteLocationTitleAlert": "Delete Location",
   "newFileType": "Type",
-  "renameFileTitle": "Rename File",
   "renameNewFileName": "New Filename",
   "selectDialogTitle": "Select Directory",
   "selectDialogCurrentPath": "Current Path",
@@ -39,7 +38,6 @@
   "createNote": "Create Note",
   "createNoteTitle": "Press 'N' to create a note (rich text formatting)",
   "createNewDirectoryTitleName": "New Directory Name",
-  "renameDirectoryTitle": "Rename Directory",
   "deleteDirectoryTitleConfirm": "Confirm Delete Directory",
   "deleteDirectoryContentConfirm": "Do you want to delete the directory '{{dirPath}}' ?",
   "errorDeletingDirectoryAlert": "Deleting '{{dirPath}}' failed. Directory probably not empty.",
@@ -595,5 +593,7 @@
   "useDefaultTaggingType": "Use the default tagging type from the settings",
   "tagsInFilenameExplanation": "Use the name of file for saving the tags - Tagging 'photo437.jpg' with a tag 'sunset' will rename it to 'image[sunset].jpg'",
   "tagsInSidecarFileExplanation": "Use sidecar file for saving the tags - Tagging 'photo437.jpg' with a tag 'sunset' will save this tag in an additional sidecar file called 'image.jpg.json' located in a sub-folder called '.ts'",
+  "moveFile": "Move",
+  "welcomeToTagSpaces": "Welcome to TagSpaces",
   "-": "-"
 }

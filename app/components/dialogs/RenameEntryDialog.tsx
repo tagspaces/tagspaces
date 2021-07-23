@@ -177,7 +177,7 @@ const RenameEntryDialog = (props: Props) => {
       }}
     >
       <DialogTitle>
-        {i18n.t('core:' + (isFile ? 'renameFileTitle' : 'renameDirectory'))}
+        {i18n.t('core:' + (isFile ? 'renameFile' : 'renameDirectory'))}
         <DialogCloseButton onClose={onClose} />
       </DialogTitle>
       <DialogContent>

@@ -95,8 +95,7 @@ const OnboardingDialog = (props: Props) => {
       scroll="paper"
     >
       <DialogTitle style={{ justifyContent: 'center', textAlign: 'center' }}>
-        Welcome to TagSpaces
-        <DialogCloseButton onClose={onClose} />
+        <DialogCloseButton onClose={onClose} testId="closeOnboardingDialog" />
       </DialogTitle>
       <DialogContent
         style={{
@@ -116,7 +115,9 @@ const OnboardingDialog = (props: Props) => {
               overflowX: 'hidden'
             }}
           >
-            <Typography variant="h6">&nbsp;</Typography>
+            <Typography variant="h5">
+              {i18n.t('core:welcomeToTagSpaces')}
+            </Typography>
             <img
               style={{ maxHeight: 300, marginTop: 15 }}
               src={NewLook}
