@@ -283,7 +283,7 @@ const OnboardingDialog = (props: Props) => {
                 style={{ marginLeft: 5 }}
                 data-tid="startTagSpacesAfterOnboarding"
               >
-                Start using TagSpaces
+                {i18n.t('core:startUsingTagSpaces')}
               </Button>
             ) : (
               <Button

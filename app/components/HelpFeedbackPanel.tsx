@@ -254,7 +254,7 @@ const HelpFeedbackPanel = (props: Props) => {
               <DocumentationIcon />
             </ListItemIcon>
             <Typography style={{ color: theme.palette.text.primary }}>
-              {i18n.t('Open Documentation')}
+              {i18n.t('core:documentation')}
             </Typography>
           </ListItem>
           <ListItem button onClick={toggleKeysDialog}>

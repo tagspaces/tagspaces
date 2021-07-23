@@ -119,7 +119,9 @@ const WelcomePanel = (props: Props) => {
             openURLExternally(Links.documentationLinks.general, true)
           }
         >
-          <Button startIcon={<DocumentationIcon />}>Open Documentation</Button>
+          <Button startIcon={<DocumentationIcon />}>
+            {i18n.t('documentation')}
+          </Button>
         </ListItem>
         <ListItem button onClick={() => toggleKeysDialog()}>
           <Button startIcon={<KeyShortcutsIcon />}>

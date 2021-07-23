@@ -595,5 +595,6 @@
   "tagsInSidecarFileExplanation": "Use sidecar file for saving the tags - Tagging 'photo437.jpg' with a tag 'sunset' will save this tag in an additional sidecar file called 'image.jpg.json' located in a sub-folder called '.ts'",
   "moveFile": "Move",
   "welcomeToTagSpaces": "Welcome to TagSpaces",
+  "startUsingTagSpaces": "Start using TagSpaces",
   "-": "-"
 }
