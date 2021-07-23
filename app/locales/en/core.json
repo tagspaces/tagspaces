@@ -590,5 +590,10 @@
   "folderName": "Folder Name",
   "editDescription": "Edit Description",
   "clearFolderColor": "Clears the color of this folder",
+  "settingExternallyConfigured": "This setting is configured externally",
+  "useSidecarFile": "Use Sidecar File",
+  "useDefaultTaggingType": "Use the default tagging type from the settings",
+  "tagsInFilenameExplanation": "Use the name of file for saving the tags - Tagging 'photo437.jpg' with a tag 'sunset' will rename it to 'image[sunset].jpg'",
+  "tagsInSidecarFileExplanation": "Use sidecar file for saving the tags - Tagging 'photo437.jpg' with a tag 'sunset' will save this tag in an additional sidecar file called 'image.jpg.json' located in a sub-folder called '.ts'",
   "-": "-"
 }
