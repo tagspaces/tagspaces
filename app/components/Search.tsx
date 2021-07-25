@@ -700,10 +700,7 @@ const Search = (props: Props) => {
               </Tooltip>
             </ToggleButton>
             <ToggleButton disabled={!Pro} value="global">
-              <Tooltip
-                arrow
-                title="Search globally in all locations. Feature is in BETA status."
-              >
+              <Tooltip arrow title={i18n.t('searchInAllLocationTooltip')}>
                 <div>{i18n.t('globalSearch')}</div>
               </Tooltip>
               {Pro ? <BetaLabel /> : <ProLabel />}

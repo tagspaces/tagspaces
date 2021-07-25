@@ -431,6 +431,7 @@
   "collectTagsFromLocation": "Collect Tags From Current Location",
   "collectTagsFromLocationTitle": "Collects all tags found on files or folders in the current location",
   "searchCurrentFolderWithSubFolders": "Search in the current folder including sub folders",
+  "searchInAllLocationTooltip": "Search globally in all locations",
   "searchInAllLocations": "Search in all locations",
   "dndDisabledReadOnlyMode": "Importing files is disabled because the location is in read-only mode.",
   "lastModifiedSearchTitle": "Last modified date",
