@@ -25,7 +25,9 @@ import { Pro } from '-/pro';
 export const BetaLabel = () => (
   <Tooltip arrow placement="top" title={i18n.t('featureInBetaStatus')}>
     <Typography style={{ display: 'initial' }}>
-      <sup style={{ marginLeft: 5 }}>BETA</sup>
+      <sup style={{ marginLeft: 5, textTransform: 'uppercase' }}>
+        {i18n.t('betaStatus')}
+      </sup>
     </Typography>
   </Tooltip>
 );

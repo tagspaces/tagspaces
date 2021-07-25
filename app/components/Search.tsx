@@ -719,28 +719,18 @@ const Search = (props: Props) => {
             value={searchType.current}
           >
             <ToggleButton value="fussy" data-tid="fussySearchTID">
-              <Tooltip
-                arrow
-                title={i18n.t(
-                  'Delivering broader search results, tolerating typos'
-                )}
-              >
-                <div>{i18n.t('fussy')}</div>
+              <Tooltip arrow title={i18n.t('searchTypeFussyTooltip')}>
+                <div>{i18n.t('searchTypeFussy')}</div>
               </Tooltip>
             </ToggleButton>
             <ToggleButton value="semistrict" data-tid="semiStrictSearchTID">
-              <Tooltip
-                arrow
-                title={i18n.t(
-                  'Exact search in file path, description and text content (by enabled full-text search)'
-                )}
-              >
-                <div>{i18n.t('semistrict')}</div>
+              <Tooltip arrow title={i18n.t('searchTypeSemiStrictTooltip')}>
+                <div>{i18n.t('searchTypeSemiStrict')}</div>
               </Tooltip>
             </ToggleButton>
             <ToggleButton value="strict" data-tid="strictSearchTID">
-              <Tooltip arrow title="Same as semistrict but case sensitive">
-                <div>{i18n.t('strict')}</div>
+              <Tooltip arrow title={i18n.t('searchTypeStrictTooltip')}>
+                <div>{i18n.t('searchTypeStrict')}</div>
               </Tooltip>
             </ToggleButton>
           </ToggleButtonGroup>
@@ -757,21 +747,13 @@ const Search = (props: Props) => {
             value={forceIndexing.current}
           >
             <ToggleButton value={false}>
-              <Tooltip
-                arrow
-                title={i18n.t(
-                  'Will the use the already create index, if it is not expired'
-                )}
-              >
-                <div>{i18n.t('default index')}</div>
+              <Tooltip arrow title={i18n.t('useCurrentIndexTooltip')}>
+                <div>{i18n.t('useCurrentIndex')}</div>
               </Tooltip>
             </ToggleButton>
             <ToggleButton value={true} data-tid="forceIndexingTID">
-              <Tooltip
-                arrow
-                title={i18n.t('Will force the recreation of the index')}
-              >
-                <div>{i18n.t('force re-indexing')}</div>
+              <Tooltip arrow title={i18n.t('forceReindexTooltip')}>
+                <div>{i18n.t('forceReindex')}</div>
               </Tooltip>
             </ToggleButton>
           </ToggleButtonGroup>
@@ -848,7 +830,7 @@ const Search = (props: Props) => {
               className={classes.formControl}
               disabled={indexing || !Pro}
             >
-              <ProTooltip tooltip="Filter the search result by their type">
+              <ProTooltip tooltip={i18n.t('filterByTypTooltip')}>
                 <InputLabel htmlFor="file-type">
                   {i18n.t('core:fileType')}
                 </InputLabel>
@@ -959,7 +941,7 @@ const Search = (props: Props) => {
               className={classes.formControl}
               disabled={indexing || !Pro}
             >
-              <ProTooltip tooltip="Filter the search results by their file size">
+              <ProTooltip tooltip={i18n.t('filterBySizeTooltip')}>
                 <InputLabel shrink htmlFor="file-size">
                   {i18n.t('core:sizeSearchTitle')}
                 </InputLabel>
@@ -1005,7 +987,7 @@ const Search = (props: Props) => {
               className={classes.formControl}
               disabled={indexing || !Pro}
             >
-              <ProTooltip tooltip="Filter the search result by last modified date">
+              <ProTooltip tooltip={i18n.t('filterByLastModifiedDateTooltip')}>
                 <InputLabel shrink htmlFor="modification-date">
                   {i18n.t('core:lastModifiedSearchTitle')}
                 </InputLabel>
@@ -1040,10 +1022,10 @@ const Search = (props: Props) => {
               </ProTooltip>
             </FormControl>
             <FormControl className={classes.formControl}>
-              <ProTooltip tooltip="Filter the search results for a given time period">
+              <ProTooltip tooltip={i18n.t('enterTimePeriodTooltip')}>
                 <TextField
                   id="tagTimePeriod"
-                  label={i18n.t('Enter time period')}
+                  label={i18n.t('enterTimePeriod')}
                   value={tagTimePeriod.current}
                   disabled={indexing || !Pro}
                   onChange={handleTimePeriodChange}
@@ -1092,7 +1074,7 @@ const Search = (props: Props) => {
               className={classes.formControl}
               disabled={indexing || !Pro}
             >
-              <ProTooltip tooltip="Saved search queries for later use">
+              <ProTooltip tooltip={i18n.t('storedSearchQueriesTooltip')}>
                 <InputLabel shrink htmlFor="saved-searches">
                   {i18n.t('core:savedSearchesTitle')}
                 </InputLabel>
@@ -1105,7 +1087,7 @@ const Search = (props: Props) => {
                 >
                   <MenuItem value={-1} style={{ display: 'none' }} />
                   {props.searches.length < 1 && (
-                    <MenuItem>{i18n.t('noSearchesFound')}</MenuItem>
+                    <MenuItem>{i18n.t('noStoredSearchQueriesFound')}</MenuItem>
                   )}
                   {props.searches.map(search => (
                     <MenuItem key={search.uuid} value={search.uuid}>
