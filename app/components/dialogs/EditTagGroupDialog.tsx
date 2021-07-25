@@ -17,6 +17,7 @@
  */
 
 import React, { ChangeEvent, useEffect, useState } from 'react';
+import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -37,6 +38,8 @@ import { getLocations } from '-/reducers/locations';
 import { Pro } from '-/pro';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
+const defaultTagGroupLocation = 'TAG_LIBRARY';
+
 interface Props {
   open: boolean;
   fullScreen?: boolean;
@@ -55,7 +58,7 @@ const EditTagGroupDialog = (props: Props) => {
   const [inputError, setInputError] = useState<boolean>(false);
   const [applyChanges, setApplyChanges] = useState<boolean>(false);
   const [locationId, setLocationId] = useState<string>(
-    props.selectedTagGroupEntry.locationId
+    props.selectedTagGroupEntry.locationId ?? defaultTagGroupLocation
   );
   const [title, setTitle] = useState<string>(props.selectedTagGroupEntry.title);
   const [color, setColor] = useState<string>(props.selectedTagGroupEntry.color);
@@ -126,7 +129,6 @@ const EditTagGroupDialog = (props: Props) => {
   const renderTitle = () => (
     <DialogTitle style={{ overflow: 'visible' }}>
       {i18n.t('core:editTagGroupTitle')}
-      {` '${title}'`}
       <DialogCloseButton onClose={onClose} />
     </DialogTitle>
   );
@@ -154,6 +156,7 @@ const EditTagGroupDialog = (props: Props) => {
         background: textcolor
       },
       helpText: {
+        marginTop: '15px',
         marginBottom: '5px',
         fontSize: '1rem'
       }
@@ -161,36 +164,18 @@ const EditTagGroupDialog = (props: Props) => {
 
     return (
       <DialogContent style={{ overflow: 'visible' }}>
-        {props.saveTagInLocation && (
-          <FormControl fullWidth={true} error={inputError}>
-            <Select
-              defaultValue={locationId}
-              onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                setLocationId(event.target.value);
-              }}
-            >
-              {props.locations.map(location => (
-                <MenuItem key={location.uuid} value={location.uuid}>
-                  {location.name}
-                </MenuItem>
-              ))}
-            </Select>
-            <FormHelperText>
-              {i18n.t('core:tagGroupLocationHelper')}
-            </FormHelperText>
-          </FormControl>
-        )}
         <FormControl
           fullWidth={true}
           error={inputError}
           style={{ overflow: 'visible' }}
         >
+          <FormHelperText>{i18n.t('core:editTagGroupNewName')}</FormHelperText>
           <TextField
             error={inputError}
             margin="dense"
             name="title"
             autoFocus
-            label={i18n.t('core:editTagGroupNewName')}
+            // label={i18n.t('core:editTagGroupNewName')}
             onChange={handleTagGroupTitleChange}
             value={title}
             data-tid="editTagGroupInput"
@@ -202,6 +187,31 @@ const EditTagGroupDialog = (props: Props) => {
             </FormHelperText>
           )}
         </FormControl>
+        {props.saveTagInLocation && (
+          <FormControl fullWidth={true} error={inputError}>
+            <FormHelperText style={styles.helpText}>
+              {i18n.t('core:tagGroupLocation')}
+            </FormHelperText>
+            <Select
+              defaultValue={locationId}
+              onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                setLocationId(event.target.value);
+              }}
+            >
+              <MenuItem
+                key={defaultTagGroupLocation}
+                value={defaultTagGroupLocation}
+              >
+                {i18n.t('core:tagLibrary')}
+              </MenuItem>
+              {props.locations.map(location => (
+                <MenuItem key={location.uuid} value={location.uuid}>
+                  {i18n.t('core:location') + ': ' + location.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
         <FormControl fullWidth={true}>
           <FormHelperText style={styles.helpText}>
             {i18n.t('core:tagBackgroundColor')}
@@ -305,4 +315,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(EditTagGroupDialog);
+export default connect(mapStateToProps)(withMobileDialog()(EditTagGroupDialog));
