@@ -17,16 +17,17 @@
  */
 
 import i18n from 'i18next';
-import XHR from 'i18next-xhr-backend';
+import HttpApi from 'i18next-http-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import en from '../locales/en/core.json';
 
-function loadLocales(url, options, callback, data) {
+function loadLocales(options, url, payload, callback) {
+  // (url, options, callback, data) {
   switch (url) {
     case 'ar': {
       import('../locales/ar/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -37,7 +38,7 @@ function loadLocales(url, options, callback, data) {
     case 'bg': {
       import('../locales/bg/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -48,7 +49,7 @@ function loadLocales(url, options, callback, data) {
     case 'ca': {
       import('../locales/ca/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -59,7 +60,7 @@ function loadLocales(url, options, callback, data) {
     case 'cs': {
       import('../locales/cs/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -70,7 +71,7 @@ function loadLocales(url, options, callback, data) {
     case 'da_DK': {
       import('../locales/da_DK/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -81,7 +82,7 @@ function loadLocales(url, options, callback, data) {
     case 'de_DE': {
       import('../locales/de_DE/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -92,7 +93,7 @@ function loadLocales(url, options, callback, data) {
     case 'el': {
       import('../locales/el/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -103,7 +104,7 @@ function loadLocales(url, options, callback, data) {
     case 'eo': {
       import('../locales/eo/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -114,7 +115,7 @@ function loadLocales(url, options, callback, data) {
     case 'es': {
       import('../locales/es/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -125,7 +126,7 @@ function loadLocales(url, options, callback, data) {
     case 'fa': {
       import('../locales/fa/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -136,7 +137,7 @@ function loadLocales(url, options, callback, data) {
     case 'fr': {
       import('../locales/fr/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -147,7 +148,7 @@ function loadLocales(url, options, callback, data) {
     case 'hu': {
       import('../locales/hu/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -158,7 +159,7 @@ function loadLocales(url, options, callback, data) {
     case 'hy': {
       import('../locales/hy/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -169,7 +170,7 @@ function loadLocales(url, options, callback, data) {
     case 'id_ID': {
       import('../locales/id_ID/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -180,7 +181,7 @@ function loadLocales(url, options, callback, data) {
     case 'it': {
       import('../locales/it/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -191,7 +192,7 @@ function loadLocales(url, options, callback, data) {
     case 'ja': {
       import('../locales/ja/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -202,7 +203,7 @@ function loadLocales(url, options, callback, data) {
     case 'ko': {
       import('../locales/ko/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -213,7 +214,7 @@ function loadLocales(url, options, callback, data) {
     case 'mt': {
       import('../locales/mt/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -224,7 +225,7 @@ function loadLocales(url, options, callback, data) {
     case 'nl_NL': {
       import('../locales/nl_NL/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -235,7 +236,7 @@ function loadLocales(url, options, callback, data) {
     case 'pl': {
       import('../locales/pl/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -246,7 +247,7 @@ function loadLocales(url, options, callback, data) {
     case 'pt_BR': {
       import('../locales/pt_BR/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -257,7 +258,7 @@ function loadLocales(url, options, callback, data) {
     case 'pt_PT': {
       import('../locales/pt_PT/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -268,7 +269,7 @@ function loadLocales(url, options, callback, data) {
     case 'ru': {
       import('../locales/ru/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -279,7 +280,7 @@ function loadLocales(url, options, callback, data) {
     case 'sk_SK': {
       import('../locales/sk_SK/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -290,7 +291,7 @@ function loadLocales(url, options, callback, data) {
     case 'sv': {
       import('../locales/sv/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -301,7 +302,7 @@ function loadLocales(url, options, callback, data) {
     case 'tr': {
       import('../locales/tr/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -312,7 +313,7 @@ function loadLocales(url, options, callback, data) {
     case 'uk': {
       import('../locales/uk/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -323,7 +324,7 @@ function loadLocales(url, options, callback, data) {
     case 'vi': {
       import('../locales/vi/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -334,7 +335,7 @@ function loadLocales(url, options, callback, data) {
     case 'zh_CN': {
       import('../locales/zh_CN/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -345,7 +346,7 @@ function loadLocales(url, options, callback, data) {
     case 'zh_TW': {
       import('../locales/zh_TW/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -356,7 +357,7 @@ function loadLocales(url, options, callback, data) {
     case 'nb': {
       import('../locales/nb/core.json')
         .then(locale => {
-          callback(locale, { status: '200' });
+          callback(undefined, { status: '200', data: locale });
           return true;
         })
         .catch(() => {
@@ -365,7 +366,7 @@ function loadLocales(url, options, callback, data) {
       break;
     }
     default: {
-      callback(en, { status: '200' });
+      callback(undefined, { status: '200', data: en });
       break;
     }
   }
@@ -380,7 +381,7 @@ const options = {
   backend: {
     loadPath: '{{lng}}',
     parse: data => data, // comment to have working i18n switch
-    ajax: loadLocales // comment to have working i18n switch
+    request: loadLocales // comment to have working i18n switch
   }
   // getAsync: true,
   // debug: true,
@@ -394,14 +395,14 @@ const options = {
   } */
 };
 
-i18n
-  .use(XHR)
-  .use(LanguageDetector)
-  .init(options, (err, t) => {
+i18n.use(HttpApi).use(LanguageDetector);
+if (!i18n.isInitialized) {
+  i18n.init(options, (err, t) => {
     // i18n.use(XHR).init(options, (err, t) => {
     if (err) {
       return console.log('something went wrong loading', err);
     }
   });
+}
 
 export default i18n;

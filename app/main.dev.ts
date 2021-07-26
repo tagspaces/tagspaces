@@ -19,7 +19,7 @@
 import { app, BrowserWindow, dialog, globalShortcut, ipcMain } from 'electron';
 import windowStateKeeper from 'electron-window-state';
 import path from 'path';
-import i18n from '-/i18nBackend';
+import i18n from '-/services/i18n'; // '-/i18nBackend';
 import buildTrayIconMenu from '-/electron-tray-menu';
 import buildDesktopMenu from '-/services/electron-menus';
 import keyBindings from '-/utils/keyBindings';
@@ -122,6 +122,161 @@ const installExtensions = async () => {
     extensions.map(name => installExtension(name.id, extOptions))
   ).catch(console.log);
 };
+
+function showTagSpaces() {
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) {
+      mainWindow.restore();
+    }
+    mainWindow.show();
+  }
+}
+
+function openLocationManagerPanel() {
+  if (mainWindow) {
+    showTagSpaces();
+    mainWindow.webContents.send('cmd', 'open-location-manager-panel');
+  }
+}
+function openTagLibraryPanel() {
+  if (mainWindow) {
+    showTagSpaces();
+    mainWindow.webContents.send('cmd', 'open-tag-library-panel');
+  }
+}
+function goBack() {
+  if (mainWindow) {
+    showTagSpaces();
+    mainWindow.webContents.send('cmd', 'go-back');
+  }
+}
+function goForward() {
+  if (mainWindow) {
+    showTagSpaces();
+    mainWindow.webContents.send('cmd', 'go-forward');
+  }
+}
+function setZoomResetApp() {
+  if (mainWindow) {
+    showTagSpaces();
+    mainWindow.webContents.send('cmd', 'set-zoom-reset-app');
+  }
+}
+function setZoomInApp() {
+  if (mainWindow) {
+    showTagSpaces();
+    mainWindow.webContents.send('cmd', 'set-zoom-in-app');
+  }
+}
+function setZoomOutApp() {
+  if (mainWindow) {
+    showTagSpaces();
+    mainWindow.webContents.send('cmd', 'set-zoom-out-app');
+  }
+}
+function exitFullscreen() {
+  if (mainWindow) {
+    showTagSpaces();
+    mainWindow.webContents.send('cmd', 'exit-fullscreen');
+  }
+}
+function toggleSettingsDialog() {
+  if (mainWindow) {
+    showTagSpaces();
+    mainWindow.webContents.send('cmd', 'toggle-settings-dialog');
+  }
+}
+function openHelpFeedbackPanel() {
+  if (mainWindow) {
+    showTagSpaces();
+    mainWindow.webContents.send('cmd', 'open-help-feedback-panel');
+  }
+}
+function toggleKeysDialog() {
+  if (mainWindow) {
+    showTagSpaces();
+    mainWindow.webContents.send('cmd', 'toggle-keys-dialog');
+  }
+}
+function toggleOnboardingDialog() {
+  if (mainWindow) {
+    showTagSpaces();
+    mainWindow.webContents.send('cmd', 'toggle-onboarding-dialog');
+  }
+}
+function openURLExternally(data) {
+  if (mainWindow) {
+    showTagSpaces();
+    mainWindow.webContents.send('open-url-externally', data);
+  }
+}
+function toggleLicenseDialog() {
+  if (mainWindow) {
+    showTagSpaces();
+    mainWindow.webContents.send('cmd', 'toggle-license-dialog');
+  }
+}
+function toggleThirdPartyLibsDialog() {
+  if (mainWindow) {
+    showTagSpaces();
+    mainWindow.webContents.send('cmd', 'toggle-third-party-libs-dialog');
+  }
+}
+function toggleAboutDialog() {
+  if (mainWindow) {
+    showTagSpaces();
+    mainWindow.webContents.send('cmd', 'toggle-about-dialog');
+  }
+}
+function showSearch() {
+  if (mainWindow) {
+    showTagSpaces();
+    mainWindow.webContents.send('cmd', 'open-search');
+  }
+}
+
+function newTextFile() {
+  if (mainWindow) {
+    showTagSpaces();
+    mainWindow.webContents.send('cmd', 'new-text-file');
+  }
+}
+
+function getNextFile() {
+  if (mainWindow) {
+    mainWindow.webContents.send('cmd', 'next-file');
+  }
+}
+
+function getPreviousFile() {
+  if (mainWindow) {
+    mainWindow.webContents.send('cmd', 'previous-file');
+  }
+}
+
+function showCreateDirectoryDialog() {
+  if (mainWindow) {
+    mainWindow.webContents.send('cmd', 'show-create-directory-dialog');
+  }
+}
+
+function toggleOpenLinkDialog() {
+  if (mainWindow) {
+    mainWindow.webContents.send('cmd', 'toggle-open-link-dialog');
+  }
+}
+
+function resumePlayback() {
+  if (mainWindow) {
+    mainWindow.webContents.send('play-pause', true);
+  }
+}
+
+function reloadApp() {
+  if (mainWindow) {
+    mainWindow.loadURL(mainHTML);
+  }
+}
 
 function createSplashWorker() {
   // console.log('Dev ' + process.env.NODE_ENV + ' worker ' + showWorkerWindow);
@@ -283,7 +438,52 @@ app.on('ready', async () => {
   }
 
   createSplashWorker();
+  // create menu
+  buildDesktopMenu(
+    {
+      showTagSpaces,
+      openSearchPanel: showSearch,
+      toggleCreateFileDialog: newTextFile,
+      openNextFile: getNextFile,
+      openPrevFile: getPreviousFile,
+      quitApp: reloadApp,
+      showCreateDirectoryDialog: showCreateDirectoryDialog,
+      toggleOpenLinkDialog: toggleOpenLinkDialog,
+      openLocationManagerPanel: openLocationManagerPanel,
+      openTagLibraryPanel: openTagLibraryPanel,
+      goBack: goBack,
+      goForward: goForward,
+      setZoomResetApp: setZoomResetApp,
+      setZoomInApp: setZoomInApp,
+      setZoomOutApp: setZoomOutApp,
+      exitFullscreen: exitFullscreen,
+      toggleSettingsDialog: toggleSettingsDialog,
+      openHelpFeedbackPanel: openHelpFeedbackPanel,
+      toggleKeysDialog: toggleKeysDialog,
+      toggleOnboardingDialog: toggleOnboardingDialog,
+      openURLExternally: openURLExternally,
+      toggleLicenseDialog: toggleLicenseDialog,
+      toggleThirdPartyLibsDialog: toggleThirdPartyLibsDialog,
+      toggleAboutDialog: toggleAboutDialog,
+      keyBindings: keyBindings(isMac)
+    },
+    i18n
+  );
   await createAppWindow();
+
+  tray = buildTrayIconMenu(
+    {
+      showTagSpaces,
+      resumePlayback,
+      openSearchPanel: showSearch,
+      toggleCreateFileDialog: newTextFile,
+      openNextFile: getNextFile,
+      openPrevFile: getPreviousFile,
+      quitApp: reloadApp
+    },
+    i18n,
+    isMac
+  );
 
   ipcMain.on('show-main-window', () => {
     if (mainWindow) {
@@ -397,204 +597,10 @@ app.on('ready', async () => {
     reloadApp();
   });
 
-  function showTagSpaces() {
-    if (mainWindow) {
-      if (mainWindow.isMinimized()) {
-        mainWindow.restore();
-      }
-      mainWindow.show();
-    }
-  }
+  // i18n.on('loaded', loaded => {
+  // setTimeout(() => {
 
-  function openLocationManagerPanel() {
-    if (mainWindow) {
-      showTagSpaces();
-      mainWindow.webContents.send('cmd', 'open-location-manager-panel');
-    }
-  }
-  function openTagLibraryPanel() {
-    if (mainWindow) {
-      showTagSpaces();
-      mainWindow.webContents.send('cmd', 'open-tag-library-panel');
-    }
-  }
-  function goBack() {
-    if (mainWindow) {
-      showTagSpaces();
-      mainWindow.webContents.send('cmd', 'go-back');
-    }
-  }
-  function goForward() {
-    if (mainWindow) {
-      showTagSpaces();
-      mainWindow.webContents.send('cmd', 'go-forward');
-    }
-  }
-  function setZoomResetApp() {
-    if (mainWindow) {
-      showTagSpaces();
-      mainWindow.webContents.send('cmd', 'set-zoom-reset-app');
-    }
-  }
-  function setZoomInApp() {
-    if (mainWindow) {
-      showTagSpaces();
-      mainWindow.webContents.send('cmd', 'set-zoom-in-app');
-    }
-  }
-  function setZoomOutApp() {
-    if (mainWindow) {
-      showTagSpaces();
-      mainWindow.webContents.send('cmd', 'set-zoom-out-app');
-    }
-  }
-  function exitFullscreen() {
-    if (mainWindow) {
-      showTagSpaces();
-      mainWindow.webContents.send('cmd', 'exit-fullscreen');
-    }
-  }
-  function toggleSettingsDialog() {
-    if (mainWindow) {
-      showTagSpaces();
-      mainWindow.webContents.send('cmd', 'toggle-settings-dialog');
-    }
-  }
-  function openHelpFeedbackPanel() {
-    if (mainWindow) {
-      showTagSpaces();
-      mainWindow.webContents.send('cmd', 'open-help-feedback-panel');
-    }
-  }
-  function toggleKeysDialog() {
-    if (mainWindow) {
-      showTagSpaces();
-      mainWindow.webContents.send('cmd', 'toggle-keys-dialog');
-    }
-  }
-  function toggleOnboardingDialog() {
-    if (mainWindow) {
-      showTagSpaces();
-      mainWindow.webContents.send('cmd', 'toggle-onboarding-dialog');
-    }
-  }
-  function openURLExternally(data) {
-    if (mainWindow) {
-      showTagSpaces();
-      mainWindow.webContents.send('open-url-externally', data);
-    }
-  }
-  function toggleLicenseDialog() {
-    if (mainWindow) {
-      showTagSpaces();
-      mainWindow.webContents.send('cmd', 'toggle-license-dialog');
-    }
-  }
-  function toggleThirdPartyLibsDialog() {
-    if (mainWindow) {
-      showTagSpaces();
-      mainWindow.webContents.send('cmd', 'toggle-third-party-libs-dialog');
-    }
-  }
-  function toggleAboutDialog() {
-    if (mainWindow) {
-      showTagSpaces();
-      mainWindow.webContents.send('cmd', 'toggle-about-dialog');
-    }
-  }
-  function showSearch() {
-    if (mainWindow) {
-      showTagSpaces();
-      mainWindow.webContents.send('cmd', 'open-search');
-    }
-  }
-
-  function newTextFile() {
-    if (mainWindow) {
-      showTagSpaces();
-      mainWindow.webContents.send('cmd', 'new-text-file');
-    }
-  }
-
-  function getNextFile() {
-    if (mainWindow) {
-      mainWindow.webContents.send('cmd', 'next-file');
-    }
-  }
-
-  function getPreviousFile() {
-    if (mainWindow) {
-      mainWindow.webContents.send('cmd', 'previous-file');
-    }
-  }
-
-  function showCreateDirectoryDialog() {
-    if (mainWindow) {
-      mainWindow.webContents.send('cmd', 'show-create-directory-dialog');
-    }
-  }
-
-  function toggleOpenLinkDialog() {
-    if (mainWindow) {
-      mainWindow.webContents.send('cmd', 'toggle-open-link-dialog');
-    }
-  }
-
-  function resumePlayback() {
-    if (mainWindow) {
-      mainWindow.webContents.send('play-pause', true);
-    }
-  }
-
-  function reloadApp() {
-    if (mainWindow) {
-      mainWindow.loadURL(mainHTML);
-    }
-  }
-
-  tray = buildTrayIconMenu(
-    {
-      showTagSpaces,
-      resumePlayback,
-      openSearchPanel: showSearch,
-      toggleCreateFileDialog: newTextFile,
-      openNextFile: getNextFile,
-      openPrevFile: getPreviousFile,
-      quitApp: reloadApp
-    },
-    i18n,
-    isMac
-  );
-  buildDesktopMenu(
-    {
-      showTagSpaces,
-      openSearchPanel: showSearch,
-      toggleCreateFileDialog: newTextFile,
-      openNextFile: getNextFile,
-      openPrevFile: getPreviousFile,
-      quitApp: reloadApp,
-      showCreateDirectoryDialog: showCreateDirectoryDialog,
-      toggleOpenLinkDialog: toggleOpenLinkDialog,
-      openLocationManagerPanel: openLocationManagerPanel,
-      openTagLibraryPanel: openTagLibraryPanel,
-      goBack: goBack,
-      goForward: goForward,
-      setZoomResetApp: setZoomResetApp,
-      setZoomInApp: setZoomInApp,
-      setZoomOutApp: setZoomOutApp,
-      exitFullscreen: exitFullscreen,
-      toggleSettingsDialog: toggleSettingsDialog,
-      openHelpFeedbackPanel: openHelpFeedbackPanel,
-      toggleKeysDialog: toggleKeysDialog,
-      toggleOnboardingDialog: toggleOnboardingDialog,
-      openURLExternally: openURLExternally,
-      toggleLicenseDialog: toggleLicenseDialog,
-      toggleThirdPartyLibsDialog: toggleThirdPartyLibsDialog,
-      toggleAboutDialog: toggleAboutDialog,
-      keyBindings: keyBindings(isMac)
-    },
-    i18n
-  );
+  // }, 5000);
 });
 
 // i18n.on('languageChanged', lng => {

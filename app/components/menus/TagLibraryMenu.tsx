@@ -92,12 +92,16 @@ const TagLibraryMenu = (props: Props) => {
           setIsImportExportTagGroupDialogOpened(true);
         } else {
           props.showNotification(
-            i18n.t('core:invalidImportFile', 'warning', true)
+            i18n.t('core:invalidImportFile'),
+            'warning',
+            true
           );
         }
       } catch (e) {
         props.showNotification(
-          i18n.t('core:invalidImportFile', 'warning', true)
+          i18n.t('core:invalidImportFile'),
+          'warning',
+          true
         );
       }
     };
