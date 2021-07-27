@@ -21,6 +21,7 @@ import { persistStore } from 'redux-persist';
 import thunk from 'redux-thunk';
 import rootReducer from '../reducers';
 import onlineListener from '../services/onlineListener';
+import PlatformIO from '-/services/platform-io';
 
 const enhancer = compose(
   applyMiddleware(thunk) // , router)
@@ -30,11 +31,13 @@ const enhancer = compose(
 function configureStore(initialState) {
   const store = createStore(rootReducer, initialState, enhancer);
   onlineListener(store.dispatch);
-  const persistor = persistStore(
-    store
-  ); /* , null, () => {
-    document.dispatchEvent(new Event('storeLoaded'));
-  }); */
+  const persistor = persistStore(store, null, () => {
+    // document.dispatchEvent(new Event('storeLoaded'));
+    // console.log('Store rehydrated.');
+    setTimeout(() => {
+      PlatformIO.setLanguage(store.getState().settings.interfaceLanguage);
+    }, 500);
+  });
   return { store, persistor };
 }
 

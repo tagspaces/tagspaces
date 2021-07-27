@@ -43,6 +43,7 @@ import {
 import ColorPickerDialog from '../ColorPickerDialog';
 import TransparentBackground from '../../TransparentBackground';
 import AppConfig from '-/config';
+import PlatformIO from '-/services/platform-io';
 
 const styles: any = {
   root: {
@@ -117,6 +118,8 @@ const SettingsGeneral = (props: Props) => {
             value={props.settings.interfaceLanguage}
             onChange={(event: any) => {
               props.setLanguage(event.target.value);
+              PlatformIO.setLanguage(event.target.value);
+              // TODO remove
               const { currentTheme } = props.settings;
               const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
               props.setCurrentTheme(newTheme);

@@ -69,7 +69,7 @@ export default class PlatformIO {
   static getDirSeparator = (): string => // TODO rethink usage for S3 on Win
     PlatformIO.haveObjectStoreSupport() ? '/' : AppConfig.dirSeparator;
 
-  static initMainMenu = (menuConfig: Array<Object>): void => {
+  /* static initMainMenu = (menuConfig: Array<Object>): void => {
     if (nativeAPI.initMainMenu) {
       nativeAPI.initMainMenu(menuConfig);
     } else {
@@ -82,6 +82,14 @@ export default class PlatformIO {
       nativeAPI.initTrayMenu(menuConfig);
     } else {
       console.log('initTrayMenu not supported');
+    }
+  }; */
+
+  static setLanguage = (language: string): void => {
+    if (nativeAPI.setLanguage) {
+      nativeAPI.setLanguage(language);
+    } else {
+      console.log('setLangauge not supported');
     }
   };
 
