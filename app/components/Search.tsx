@@ -1084,7 +1084,7 @@ const Search = (props: Props) => {
                 >
                   <MenuItem value={-1} style={{ display: 'none' }} />
                   {props.searches.length < 1 && (
-                    <MenuItem>{i18n.t('noStoredSearchQueriesFound')}</MenuItem>
+                    <MenuItem>{i18n.t('noSavedSearches')}</MenuItem>
                   )}
                   {props.searches.map(search => (
                     <MenuItem key={search.uuid} value={search.uuid}>
