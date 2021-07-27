@@ -29,7 +29,6 @@ import keyBindings from '-/utils/keyBindings';
 
 const isMac = process.platform === 'darwin';
 let mainWindow = null;
-let tray = null;
 (global as any).splashWorkerWindow = null;
 
 if (process.env.NODE_ENV === 'production') {
@@ -244,38 +243,93 @@ function newTextFile() {
 
 function getNextFile() {
   if (mainWindow) {
+    showTagSpaces();
     mainWindow.webContents.send('cmd', 'next-file');
   }
 }
 
 function getPreviousFile() {
   if (mainWindow) {
+    showTagSpaces();
     mainWindow.webContents.send('cmd', 'previous-file');
   }
 }
 
 function showCreateDirectoryDialog() {
   if (mainWindow) {
+    showTagSpaces();
     mainWindow.webContents.send('cmd', 'show-create-directory-dialog');
   }
 }
 
 function toggleOpenLinkDialog() {
   if (mainWindow) {
+    showTagSpaces();
     mainWindow.webContents.send('cmd', 'toggle-open-link-dialog');
   }
 }
 
 function resumePlayback() {
   if (mainWindow) {
+    showTagSpaces();
     mainWindow.webContents.send('play-pause', true);
   }
 }
 
 function reloadApp() {
   if (mainWindow) {
+    showTagSpaces();
     mainWindow.loadURL(mainHTML);
   }
+}
+
+function buildTrayMenu() {
+  buildTrayIconMenu(
+    {
+      showTagSpaces,
+      resumePlayback,
+      openSearchPanel: showSearch,
+      toggleCreateFileDialog: newTextFile,
+      openNextFile: getNextFile,
+      openPrevFile: getPreviousFile,
+      quitApp: reloadApp
+    },
+    i18n,
+    isMac
+  );
+}
+
+function buildAppMenu() {
+  buildDesktopMenu(
+    {
+      showTagSpaces,
+      openSearchPanel: showSearch,
+      toggleCreateFileDialog: newTextFile,
+      openNextFile: getNextFile,
+      openPrevFile: getPreviousFile,
+      quitApp: reloadApp,
+      showCreateDirectoryDialog: showCreateDirectoryDialog,
+      toggleOpenLinkDialog: toggleOpenLinkDialog,
+      openLocationManagerPanel: openLocationManagerPanel,
+      openTagLibraryPanel: openTagLibraryPanel,
+      goBack: goBack,
+      goForward: goForward,
+      setZoomResetApp: setZoomResetApp,
+      setZoomInApp: setZoomInApp,
+      setZoomOutApp: setZoomOutApp,
+      exitFullscreen: exitFullscreen,
+      toggleSettingsDialog: toggleSettingsDialog,
+      openHelpFeedbackPanel: openHelpFeedbackPanel,
+      toggleKeysDialog: toggleKeysDialog,
+      toggleOnboardingDialog: toggleOnboardingDialog,
+      openURLExternally: openURLExternally,
+      toggleLicenseDialog: toggleLicenseDialog,
+      toggleThirdPartyLibsDialog: toggleThirdPartyLibsDialog,
+      toggleAboutDialog: toggleAboutDialog,
+      keyBindings: keyBindings(isMac)
+    },
+    i18n
+  );
 }
 
 function createSplashWorker() {
@@ -438,52 +492,15 @@ app.on('ready', async () => {
   }
 
   createSplashWorker();
-  // create menu
-  buildDesktopMenu(
-    {
-      showTagSpaces,
-      openSearchPanel: showSearch,
-      toggleCreateFileDialog: newTextFile,
-      openNextFile: getNextFile,
-      openPrevFile: getPreviousFile,
-      quitApp: reloadApp,
-      showCreateDirectoryDialog: showCreateDirectoryDialog,
-      toggleOpenLinkDialog: toggleOpenLinkDialog,
-      openLocationManagerPanel: openLocationManagerPanel,
-      openTagLibraryPanel: openTagLibraryPanel,
-      goBack: goBack,
-      goForward: goForward,
-      setZoomResetApp: setZoomResetApp,
-      setZoomInApp: setZoomInApp,
-      setZoomOutApp: setZoomOutApp,
-      exitFullscreen: exitFullscreen,
-      toggleSettingsDialog: toggleSettingsDialog,
-      openHelpFeedbackPanel: openHelpFeedbackPanel,
-      toggleKeysDialog: toggleKeysDialog,
-      toggleOnboardingDialog: toggleOnboardingDialog,
-      openURLExternally: openURLExternally,
-      toggleLicenseDialog: toggleLicenseDialog,
-      toggleThirdPartyLibsDialog: toggleThirdPartyLibsDialog,
-      toggleAboutDialog: toggleAboutDialog,
-      keyBindings: keyBindings(isMac)
-    },
-    i18n
-  );
+  buildAppMenu();
   await createAppWindow();
+  buildTrayMenu();
 
-  tray = buildTrayIconMenu(
-    {
-      showTagSpaces,
-      resumePlayback,
-      openSearchPanel: showSearch,
-      toggleCreateFileDialog: newTextFile,
-      openNextFile: getNextFile,
-      openPrevFile: getPreviousFile,
-      quitApp: reloadApp
-    },
-    i18n,
-    isMac
-  );
+  i18n.on('languageChanged', lng => {
+    console.log('languageChanged:' + lng);
+    buildAppMenu();
+    buildTrayMenu();
+  });
 
   ipcMain.on('show-main-window', () => {
     if (mainWindow) {
@@ -564,6 +581,10 @@ app.on('ready', async () => {
 
   ipcMain.on('app-dir-path-request', event => {
     event.returnValue = path.join(__dirname, ''); // eslint-disable-line
+  });
+
+  ipcMain.on('set-language', (e, language) => {
+    i18n.changeLanguage(language);
   });
 
   ipcMain.on('global-shortcuts-enabled', (e, globalShortcutsEnabled) => {
