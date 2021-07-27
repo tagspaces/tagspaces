@@ -218,6 +218,9 @@ export async function stopSpectronApp() {
 
 export async function testDataRefresh() {
   const fse = require('fs-extra');
+  //const gracefulFs = require('graceful-fs')
+  //gracefulFs.gracefulify(fse);
+
   const src = pathLib.join(
     __dirname,
     '..',
