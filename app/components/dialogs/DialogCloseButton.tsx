@@ -23,10 +23,11 @@ import i18n from '-/services/i18n';
 
 interface Props {
   onClose: () => void;
+  testId?: string; // id used for user interface test automation
 }
 
 const DialogCloseButton = (props: Props) => {
-  const { onClose } = props;
+  const { onClose, testId } = props;
   return (
     <IconButton
       title={i18n.t('closeButtonDialog')}
@@ -36,6 +37,7 @@ const DialogCloseButton = (props: Props) => {
         right: 5,
         top: 5
       }}
+      data-tid={testId && testId}
       onClick={onClose}
     >
       <CloseIcon />

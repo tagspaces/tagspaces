@@ -27,6 +27,7 @@ import ExportImportIcon from '@material-ui/icons/SwapHoriz';
 import i18n from '-/services/i18n';
 import { Pro } from '../../pro';
 import Links from '-/links';
+import { ProLabel } from '-/components/HelperComponents';
 
 interface Props {
   classes?: any;
@@ -69,7 +70,14 @@ const SearchMenu = (props: Props) => {
         <ListItemIcon>
           <ExportImportIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:exportSavedSearch')} />
+        <ListItemText
+          primary={
+            <>
+              {i18n.t('core:exportSavedSearch')}
+              <ProLabel />
+            </>
+          }
+        />
       </MenuItem>
     );
     menuItems.push(
@@ -84,7 +92,14 @@ const SearchMenu = (props: Props) => {
         <ListItemIcon>
           <ExportImportIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:importSavedSearch')} />
+        <ListItemText
+          primary={
+            <>
+              {i18n.t('core:importSavedSearch')}
+              <ProLabel />
+            </>
+          }
+        />
       </MenuItem>
     );
     menuItems.push(

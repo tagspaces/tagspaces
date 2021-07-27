@@ -16,7 +16,12 @@
  *
  */
 import uuidv1 from 'uuid';
-import { immutablySwapItems, formatDateTime4Tag, extend } from '-/utils/misc';
+import {
+  immutablySwapItems,
+  formatDateTime4Tag,
+  extend,
+  prepareTagGroupForExport
+} from '-/utils/misc';
 import { parseNewTags, saveAsTextFile } from '-/services/utils-io';
 import versionMeta from '../version.json';
 import defaultTagLibrary from './taglibrary-default';
@@ -724,7 +729,7 @@ export const actions = {
       dispatch(actions.importTagGroups(tagGroups, true));
     }
   }, */
-  exportTagGroups: (entry: Array<Object>) => (
+  exportTagGroups: (entry: Array<TS.TagGroup>) => (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
@@ -738,12 +743,15 @@ export const actions = {
       '", "settingsVersion": ' +
       settings.settingsVersion +
       ', "tagGroups": ';
-    const getAllTags = [];
+    const allTagGroups = [];
     tagLibrary.forEach(value => {
-      getAllTags.push(value);
+      const preparedTagGroup = prepareTagGroupForExport(value);
+      if (preparedTagGroup.title && preparedTagGroup.uuid) {
+        allTagGroups.push(preparedTagGroup);
+      }
     });
 
-    const blob = new Blob([jsonFormat + JSON.stringify(getAllTags) + '}'], {
+    const blob = new Blob([jsonFormat + JSON.stringify(allTagGroups) + '}'], {
       type: 'application/json'
     });
     const dateTimeTag = formatDateTime4Tag(new Date(), true);

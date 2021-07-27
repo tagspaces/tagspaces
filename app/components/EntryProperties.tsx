@@ -680,7 +680,7 @@ const EntryProperties = (props: Props) => {
                               color="primary"
                               onClick={activateEditNameField}
                             >
-                              {i18n.t('core:rename')}
+                              {i18n.t('core:renameFile')}
                             </Button>
                           )}
                         </div>

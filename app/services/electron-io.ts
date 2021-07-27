@@ -129,6 +129,10 @@ export default class ElectronIO {
     this.win.show(); */
   };
 
+  setLanguage = (language: string): void => {
+    this.ipcRenderer.send('set-language', language);
+  };
+
   quitApp = (): void => {
     // this.win.destroy();
     this.ipcRenderer.send('quit-application', 'Bye, bye...');

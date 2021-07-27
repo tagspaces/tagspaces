@@ -60,9 +60,11 @@ export default (theme: any) =>
     searchArea: {
       paddingTop: 0,
       paddingLeft: 5,
+      paddingRight: 5,
       marginTop: 0,
       height: 'calc(100% - 110px)',
       maxHeight: 'calc(100% - 110px)',
+      overflowX: 'hidden',
       overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
     },
     topShadow: {

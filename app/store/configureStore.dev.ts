@@ -23,6 +23,7 @@ import thunk from 'redux-thunk';
 import { createLogger } from 'redux-logger';
 import rootReducer from '../reducers';
 import onlineListener from '../services/onlineListener';
+import PlatformIO from '-/services/platform-io';
 
 const configureStore = initialState => {
   // Redux Configuration
@@ -63,13 +64,15 @@ const configureStore = initialState => {
 
   onlineListener(store.dispatch);
 
-  const persistor = persistStore(
-    store
-  ); /* , null, () => {
-    document.dispatchEvent(new Event('storeLoaded'));
+  const persistor = persistStore(store, null, () => {
+    // languageChanged event is not handled in main process on store loaded (App is not ready)
+    setTimeout(() => {
+      PlatformIO.setLanguage(store.getState().settings.interfaceLanguage);
+    }, 500);
+    // document.dispatchEvent(new Event('storeLoaded'));
     // store.dispatch(push('/main'));
-    console.log('Store rehydrated.');
-  }); */
+    // console.log('Store rehydrated.');
+  });
 
   if (module.hot) {
     module.hot.accept(

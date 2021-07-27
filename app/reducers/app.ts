@@ -110,7 +110,6 @@ export const types = {
   OPEN_LOCATIONMANAGER_PANEL: 'APP/OPEN_LOCATIONMANAGER_PANEL',
   OPEN_TAGLIBRARY_PANEL: 'APP/OPEN_TAGLIBRARY_PANEL',
   OPEN_SEARCH_PANEL: 'APP/OPEN_SEARCH_PANEL',
-  OPEN_PERSPECTIVES_PANEL: 'APP/OPEN_PERSPECTIVES_PANEL',
   OPEN_HELPFEEDBACK_PANEL: 'APP/OPEN_HELPFEEDBACK_PANEL',
   CLOSE_ALLVERTICAL_PANELS: 'APP/CLOSE_ALLVERTICAL_PANELS',
   REFLECT_DELETE_ENTRY: 'APP/REFLECT_DELETE_ENTRY',
@@ -218,7 +217,6 @@ export const initialState = {
   locationManagerPanelOpened: showLocations,
   tagLibraryPanelOpened: showTagLibrary,
   searchPanelOpened: showSearch,
-  perspectivesPanelOpened: false,
   helpFeedbackPanelOpened: false
 };
 
@@ -659,7 +657,6 @@ export default (state: any = initialState, action: any) => {
         locationManagerPanelOpened: true,
         tagLibraryPanelOpened: false,
         searchPanelOpened: false,
-        perspectivesPanelOpened: false,
         helpFeedbackPanelOpened: false
       };
     }
@@ -669,7 +666,6 @@ export default (state: any = initialState, action: any) => {
         locationManagerPanelOpened: false,
         tagLibraryPanelOpened: true,
         searchPanelOpened: false,
-        perspectivesPanelOpened: false,
         helpFeedbackPanelOpened: false
       };
     }
@@ -679,17 +675,6 @@ export default (state: any = initialState, action: any) => {
         locationManagerPanelOpened: false,
         tagLibraryPanelOpened: false,
         searchPanelOpened: true,
-        perspectivesPanelOpened: false,
-        helpFeedbackPanelOpened: false
-      };
-    }
-    case types.OPEN_PERSPECTIVES_PANEL: {
-      return {
-        ...state,
-        locationManagerPanelOpened: false,
-        tagLibraryPanelOpened: false,
-        searchPanelOpened: false,
-        perspectivesPanelOpened: true,
         helpFeedbackPanelOpened: false
       };
     }
@@ -699,7 +684,6 @@ export default (state: any = initialState, action: any) => {
         locationManagerPanelOpened: false,
         tagLibraryPanelOpened: false,
         searchPanelOpened: false,
-        perspectivesPanelOpened: false,
         helpFeedbackPanelOpened: true
       };
     }
@@ -709,7 +693,6 @@ export default (state: any = initialState, action: any) => {
         locationManagerPanelOpened: false,
         tagLibraryPanelOpened: false,
         searchPanelOpened: false,
-        perspectivesPanelOpened: false,
         helpFeedbackPanelOpened: false
       };
     }
@@ -880,7 +863,6 @@ export const actions = {
   openLocationManagerPanel: () => ({ type: types.OPEN_LOCATIONMANAGER_PANEL }),
   openTagLibraryPanel: () => ({ type: types.OPEN_TAGLIBRARY_PANEL }),
   openSearchPanel: () => ({ type: types.OPEN_SEARCH_PANEL }),
-  openPerspectivesPanel: () => ({ type: types.OPEN_PERSPECTIVES_PANEL }),
   openHelpFeedbackPanel: () => ({ type: types.OPEN_HELPFEEDBACK_PANEL }),
   closeAllVerticalPanels: () => ({ type: types.CLOSE_ALLVERTICAL_PANELS }),
   loadParentDirectoryContent: () => (
@@ -2186,7 +2168,5 @@ export const isLocationManagerPanelOpened = (state: any) =>
 export const isTagLibraryPanelOpened = (state: any) =>
   state.app.tagLibraryPanelOpened;
 export const isSearchPanelOpened = (state: any) => state.app.searchPanelOpened;
-export const isPerspectivesPanelOpened = (state: any) =>
-  state.app.perspectivesPanelOpened;
 export const isHelpFeedbackPanelOpened = (state: any) =>
   state.app.helpFeedbackPanelOpened;

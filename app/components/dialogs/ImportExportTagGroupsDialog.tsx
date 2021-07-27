@@ -28,8 +28,6 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Dialog from '@material-ui/core/Dialog';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import TagGroupContainer from '../TagGroupContainer';
 import TagContainer from '../TagContainer';
 import i18n from '-/services/i18n';
@@ -72,11 +70,6 @@ const ImportExportTagGroupsDialog = (props: Props) => {
       tagGroupList.map(entry => ({ ...entry, selected: selectedAll.current }))
     );
   };
-
-  /* const handleChange = name => (event: any, checked: boolean) => {
-    // @ts-ignore
-    this.setState({ [name]: !checked });
-  }; */
 
   const isSelected = () => tagGroupList.some(n => n.selected === true);
 

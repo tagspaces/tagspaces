@@ -18,6 +18,7 @@
 
 import React, { ChangeEvent, useReducer, useRef, useState } from 'react';
 import uuidv1 from 'uuid';
+import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -48,6 +49,8 @@ interface Props {
   locations: Array<TS.Location>;
   saveTagInLocation: boolean;
 }
+
+const defaultTagGroupLocation = 'TAG_LIBRARY';
 
 const CreateTagGroupDialog = (props: Props) => {
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
@@ -103,7 +106,10 @@ const CreateTagGroupDialog = (props: Props) => {
         title: title.current,
         color: color.current,
         textcolor: textcolor.current,
-        locationId: locationId.current,
+        locationId:
+          locationId.current === defaultTagGroupLocation
+            ? undefined
+            : locationId.current,
         children: []
       });
       props.onClose();
@@ -155,6 +161,7 @@ const CreateTagGroupDialog = (props: Props) => {
       cursor: 'pointer'
     },
     helpText: {
+      marginTop: '15px',
       marginBottom: '5px',
       fontSize: '1rem'
     }
@@ -182,27 +189,6 @@ const CreateTagGroupDialog = (props: Props) => {
         <DialogCloseButton onClose={onClose} />
       </DialogTitle>
       <DialogContent>
-        {props.saveTagInLocation && (
-          <FormControl fullWidth={true} error={inputError}>
-            <Select
-              defaultValue={locationId.current}
-              onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                locationId.current = event.target.value;
-                // rerender
-                forceUpdate();
-              }}
-            >
-              {props.locations.map(location => (
-                <MenuItem key={location.uuid} value={location.uuid}>
-                  {location.name}
-                </MenuItem>
-              ))}
-            </Select>
-            <FormHelperText>
-              {i18n.t('core:tagGroupLocationHelper')}
-            </FormHelperText>
-          </FormControl>
-        )}
         <FormControl fullWidth={true} error={inputError}>
           <TextField
             fullWidth={true}
@@ -220,6 +206,33 @@ const CreateTagGroupDialog = (props: Props) => {
             </FormHelperText>
           )}
         </FormControl>
+        {props.saveTagInLocation && (
+          <FormControl fullWidth={true} error={inputError}>
+            <FormHelperText style={styles.helpText}>
+              {i18n.t('core:tagGroupLocation')}
+            </FormHelperText>
+            <Select
+              defaultValue={defaultTagGroupLocation}
+              onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                locationId.current = event.target.value;
+                // rerender
+                forceUpdate();
+              }}
+            >
+              <MenuItem
+                key={defaultTagGroupLocation}
+                value={defaultTagGroupLocation}
+              >
+                {i18n.t('tagLibrary')}
+              </MenuItem>
+              {props.locations.map(location => (
+                <MenuItem key={location.uuid} value={location.uuid}>
+                  {i18n.t('core:location') + ': ' + location.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
         <FormControl fullWidth={true}>
           <FormHelperText style={styles.helpText}>
             {i18n.t('core:tagBackgroundColor')}
@@ -292,4 +305,6 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(CreateTagGroupDialog);
+export default connect(mapStateToProps)(
+  withMobileDialog()(CreateTagGroupDialog)
+);

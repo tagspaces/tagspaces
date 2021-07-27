@@ -22,6 +22,8 @@ import pathLib from 'path';
 // import TrayIcon from '-/assets/icons/trayIcon.png';
 // import TrayIcon3x from '-/assets/icons/trayIcon@3x.png';
 
+let tray = null;
+
 export default function buildTrayIconMenu(mainPageProps: any, i18n, isMacLike) {
   const cKey = isMacLike ? ' -  Cmd' : ' - Ctrl';
 
@@ -103,16 +105,18 @@ export default function buildTrayIconMenu(mainPageProps: any, i18n, isMacLike) {
   } */
 
   // const tray = new Tray(nImage);
-  const tray = new Tray(
-    pathLib.resolve(__dirname, 'assets', 'icons', 'trayIcon@2x.png')
-  );
-  tray.on('click', () => {
+  if (!tray) {
+    tray = new Tray(
+      pathLib.resolve(__dirname, 'assets', 'icons', 'trayIcon@2x.png')
+    );
+  }
+  /* tray.on('click', () => {
     mainPageProps.showTagSpaces();
-  });
+  }); */
 
   // @ts-ignore
   const contextMenu = Menu.buildFromTemplate(trayMenuTemplate);
   tray.setToolTip('TagSpaces');
   tray.setContextMenu(contextMenu);
-  return tray;
+  // return tray;
 }

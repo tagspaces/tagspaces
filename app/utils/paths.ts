@@ -446,5 +446,9 @@ export function joinPaths(...paths) {
         paths[i];
     }
   }
+  if (AppConfig.isWin && result.startsWith(dirSeparator)) {
+    // trim dirSeparator in windows paths like \C:\
+    return result.substr(dirSeparator.length);
+  }
   return result;
 }

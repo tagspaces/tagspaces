@@ -39,7 +39,7 @@ import { getThumbnailURLPromise } from '-/services/thumbsgenerator';
 import { OpenedEntry, actions as AppActions } from '-/reducers/app';
 import { getLocation } from '-/reducers/locations';
 import { TS } from '-/tagspaces.namespace';
-import { locationType } from '-/utils/misc';
+import { locationType, prepareTagForExport } from '-/utils/misc';
 
 export function enhanceDirectoryContent(
   dirEntries,
@@ -871,19 +871,7 @@ export function cleanMetaData(
   if (metaData.tags && metaData.tags.length > 0) {
     cleanedMeta.tags = [];
     metaData.tags.forEach(tag => {
-      const cleanedTag: TS.Tag = {};
-      if (tag.title) {
-        cleanedTag.title = tag.title;
-      }
-      if (tag.type) {
-        cleanedTag.type = tag.type;
-      }
-      if (tag.color) {
-        cleanedTag.color = tag.color;
-      }
-      if (tag.textcolor) {
-        cleanedTag.textcolor = tag.textcolor;
-      }
+      const cleanedTag = prepareTagForExport(tag);
       if (cleanedTag.title) {
         cleanedMeta.tags.push(cleanedTag);
       }

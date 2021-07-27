@@ -586,7 +586,9 @@ const CreateEditLocationDialog = (props: Props) => {
               style={{ justifyContent: 'space-between' }}
               control={
                 <Button size="small" variant="outlined" disabled>
-                  {currentTagsSetting ? 'Use Sidecar Files' : 'Rename Files'}
+                  {currentTagsSetting
+                    ? i18n.t('core:useSidecarFile')
+                    : i18n.t('core:renameFile')}
                 </Button>
               }
               label={
@@ -615,11 +617,11 @@ const CreateEditLocationDialog = (props: Props) => {
                       arrow
                       title={
                         <Typography color="inherit">
-                          Use the default settings for saving the tags:{' '}
+                          {i18n.t('core:useDefaultTaggingType')}:{' '}
                           <b>
                             {currentTagsSetting
-                              ? 'Use Sidecar Files'
-                              : 'Rename Files'}
+                              ? i18n.t('core:useSidecarFile')
+                              : i18n.t('core:renameFile')}
                           </b>
                         </Typography>
                       }
@@ -639,16 +641,14 @@ const CreateEditLocationDialog = (props: Props) => {
                       arrow
                       title={
                         <Typography color="inherit">
-                          Use the name of file for saving the tags - Tagging the
-                          file <b>image.jpg</b> with a tag <b>sunset</b> will
-                          rename it to <b>image[sunset].jpg</b>
+                          {i18n.t('core:tagsInFilenameExplanation')}
                         </Typography>
                       }
                     >
                       <div style={{ display: 'flex' }}>
                         {persistTagsInSidecarFile !== null &&
                           !persistTagsInSidecarFile && <CheckIcon />}
-                        &nbsp;Rename Files&nbsp;&nbsp;
+                        &nbsp;{i18n.t('core:renameFile')}&nbsp;&nbsp;
                       </div>
                     </Tooltip>
                   </ToggleButton>
@@ -661,18 +661,14 @@ const CreateEditLocationDialog = (props: Props) => {
                       arrow
                       title={
                         <Typography color="inherit">
-                          Use sidecar file for saving the tags - Tagging the
-                          file <b>image.jpg</b> with a tag <b>sunset</b> will
-                          save this tag in an additional sidecar file called{' '}
-                          <b>image.jpg.json</b> located in a sub folder with the
-                          name <b>.ts</b>
+                          {i18n.t('core:tagsInSidecarFileExplanation')}
                         </Typography>
                       }
                     >
                       <div style={{ display: 'flex' }}>
                         {persistTagsInSidecarFile !== null &&
                           persistTagsInSidecarFile && <CheckIcon />}
-                        &nbsp;Use Sidecar Files&nbsp;&nbsp;
+                        &nbsp;{i18n.t('core:useSidecarFile')}&nbsp;&nbsp;
                       </div>
                     </Tooltip>
                   </ToggleButton>

@@ -95,8 +95,7 @@ const OnboardingDialog = (props: Props) => {
       scroll="paper"
     >
       <DialogTitle style={{ justifyContent: 'center', textAlign: 'center' }}>
-        Welcome to TagSpaces
-        <DialogCloseButton onClose={onClose} />
+        <DialogCloseButton onClose={onClose} testId="closeOnboardingDialog" />
       </DialogTitle>
       <DialogContent
         style={{
@@ -116,7 +115,9 @@ const OnboardingDialog = (props: Props) => {
               overflowX: 'hidden'
             }}
           >
-            <Typography variant="h6">&nbsp;</Typography>
+            <Typography variant="h5">
+              {i18n.t('core:welcomeToTagSpaces')}
+            </Typography>
             <img
               style={{ maxHeight: 300, marginTop: 15 }}
               src={NewLook}
@@ -159,7 +160,7 @@ const OnboardingDialog = (props: Props) => {
             <Typography variant="h5">&nbsp;</Typography>
             <Typography variant="body1">
               Core functionality of the application the ability to add tags to
-              files and folders. Here you can choose how tags will applied on
+              files and folders. Here you can choose how tags will attached to
               files.
             </Typography>
             <FormControl
@@ -167,7 +168,7 @@ const OnboardingDialog = (props: Props) => {
               component="fieldset"
             >
               <RadioGroup
-                aria-label="Gender"
+                aria-label="fileTaggingType"
                 name="isPersistTagsInSidecar"
                 onChange={toggleTaggingType}
               >
@@ -225,7 +226,7 @@ const OnboardingDialog = (props: Props) => {
             }}
           >
             <Typography variant="h5">
-              Collect web content in Chrome and Firefox
+              Collect web content in Chrome, Edge and Firefox
             </Typography>
             <img
               style={{ maxHeight: 300, marginTop: 15 }}
@@ -236,7 +237,8 @@ const OnboardingDialog = (props: Props) => {
               We have a web clipper extension for your browser.
             </Typography>
             <Typography variant="h6">
-              It is open source and available for free on the official stores.
+              It is open source and available for free in the official browser
+              stores.
             </Typography>
             <Button
               style={{ marginTop: 20 }}
@@ -282,7 +284,7 @@ const OnboardingDialog = (props: Props) => {
                 style={{ marginLeft: 5 }}
                 data-tid="startTagSpacesAfterOnboarding"
               >
-                Start using TagSpaces
+                {i18n.t('core:startUsingTagSpaces')}
               </Button>
             ) : (
               <Button

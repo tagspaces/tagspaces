@@ -16,30 +16,33 @@
  *
  */
 
-import i18n from 'i18next';
+/* import i18n from 'i18next';
 import Backend from 'i18next-fs-backend';
 // import LanguageDetector from 'i18next-browser-languagedetector';
 
 const { join } = require('path');
 const { readdirSync, lstatSync } = require('fs');
 
-i18n
-  .use(Backend)
-  // .use(LanguageDetector)
-  .init({
+i18n.use(Backend);
+if (!i18n.isInitialized) {
+  i18n.init({
     debug: false,
     initImmediate: false,
     fallbackLng: 'en',
     lng: 'en',
-    preload: readdirSync(join(__dirname, 'locales')).filter(fileName => {
-      const joinedPath = join(join(__dirname, 'locales'), fileName);
+    preload: readdirSync(join(__dirname, '../locales')).filter(fileName => {
+      const joinedPath = join(join(__dirname, '../locales'), fileName);
       return lstatSync(joinedPath).isDirectory();
     }),
     ns: 'backend-app',
     defaultNS: 'backend-app',
     backend: {
-      loadPath: join(__dirname, 'locales/{{lng}}/core.json')
+      loadPath: join(__dirname, '../locales/{{lng}}/core.json')
+    },
+    react: {
+      wait: false
     }
   });
+}
 
-export default i18n;
+export default i18n; */
