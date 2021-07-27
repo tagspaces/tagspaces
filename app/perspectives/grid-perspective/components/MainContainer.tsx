@@ -420,7 +420,7 @@ const GridPerspective = (props: Props) => {
       props.openFsEntry(fsEntry);
     } else {
       console.log('Handle Grid cell db click, selected path : ', fsEntry.path);
-      props.loadDirectoryContent(fsEntry.path, false);
+      props.loadDirectoryContent(fsEntry.path, true);
     }
   };
 

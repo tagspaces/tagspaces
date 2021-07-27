@@ -128,7 +128,7 @@ const DirectoryMenu = (props: Props) => {
 
   function openDirectory() {
     props.onClose();
-    props.loadDirectoryContent(props.directoryPath, false);
+    props.loadDirectoryContent(props.directoryPath, true);
   }
 
   function showProperties() {

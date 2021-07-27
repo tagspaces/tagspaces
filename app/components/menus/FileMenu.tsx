@@ -161,7 +161,7 @@ const FileMenu = (props: Props) => {
 
       PlatformIO.copyFilePromise(props.selectedFilePath, newFilePath)
         .then(() => {
-          props.loadDirectoryContent(dirPath, false);
+          props.loadDirectoryContent(dirPath, true);
           return true;
         })
         .catch(error => {
