@@ -779,9 +779,12 @@ export default class ElectronIO {
   ): Promise<any> => {
     if (useTrash) {
       return new Promise((resolve, reject) => {
-        this.moveToTrash([path])
-          .then(() => resolve(path))
-          .catch(err => reject(err));
+        if (this.moveToTrash([path])) {
+          resolve(path);
+        } else {
+          // console.error('deleteDirectoryPromise '+path+' failed');
+          reject(new Error('deleteDirectoryPromise ' + path + ' failed'));
+        }
       });
     }
 
@@ -801,9 +804,12 @@ export default class ElectronIO {
   ): Promise<any> => {
     if (useTrash) {
       return new Promise((resolve, reject) => {
-        this.moveToTrash([path])
-          .then(() => resolve(path))
-          .catch(err => reject(err));
+        if (this.moveToTrash([path])) {
+          resolve(path);
+        } else {
+          // console.error('deleteDirectoryPromise '+path+' failed');
+          reject(new Error('deleteDirectoryPromise ' + path + ' failed'));
+        }
       });
     }
 
@@ -817,18 +823,23 @@ export default class ElectronIO {
     });
   };
 
-  moveToTrash = (files: Array<string>): Promise<any> =>
-    new Promise((resolve, reject) => {
-      let result = true;
+  moveToTrash = (files: Array<string>): boolean => {
+    // Promise<any> => {
+
+    const result = this.ipcRenderer.sendSync('move-to-trash', files);
+    return result && result.length > 0;
+    /* const result = [];
       files.forEach(fullPath => {
-        result = this.electron.shell.trashItem(fullPath);
+        result.push(this.electron.shell.trashItem(fullPath));
       });
-      if (result) {
+      return Promise.all(result); */
+
+    /* if (result) {
         resolve(true);
       } else {
         reject('Moving of at least one file to trash failed.');
-      }
-    });
+      } */
+  };
 
   openDirectory = (dirPath: string): void => {
     if (AppConfig.isWin) {

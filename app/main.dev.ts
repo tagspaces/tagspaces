@@ -16,7 +16,14 @@
  *
  */
 
-import { app, BrowserWindow, dialog, globalShortcut, ipcMain } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  dialog,
+  globalShortcut,
+  ipcMain,
+  shell
+} from 'electron';
 import windowStateKeeper from 'electron-window-state';
 import path from 'path';
 import i18n from '-/services/i18n'; // '-/i18nBackend';
@@ -413,9 +420,9 @@ async function createAppWindow() {
     }
   });
 
-  setTimeout(() => {
+  /* setTimeout(() => {
     mainWindow.toggleDevTools(); // debugging
-  }, 5000);
+  }, 5000); */
 
   const winUserAgent =
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36';
@@ -587,6 +594,19 @@ app.on('ready', async () => {
 
   ipcMain.on('app-dir-path-request', event => {
     event.returnValue = path.join(__dirname, ''); // eslint-disable-line
+  });
+
+  ipcMain.on('move-to-trash', async (event, files) => {
+    const result = [];
+    files.forEach(fullPath => {
+      result.push(shell.trashItem(fullPath));
+    });
+    try {
+      event.returnValue = await Promise.all(result);
+    } catch (err) {
+      console.error('moveToTrash error:', err);
+      event.returnValue = undefined;
+    }
   });
 
   ipcMain.on('set-language', (e, language) => {

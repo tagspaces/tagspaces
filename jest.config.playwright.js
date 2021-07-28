@@ -40,13 +40,16 @@ module.exports = async () => {
      * setupFiles: ran once per test file before all tests
      * https://jestjs.io/docs/en/configuration#setupfiles-array
      */
-    setupFiles: ['../scripts/test-config-env-playwright.js'],
+    setupFiles: [
+      '../scripts/test-config-env-playwright.js',
+      '../scripts/test-config-env.js'
+    ],
     /**
      * setupFilesAfterEnv: ran before each test
      *
      * https://jestjs.io/docs/en/configuration#setupfilesafterenv-array
      */
-    setupFilesAfterEnv: ['./setup-after-env.js', 'expect-playwright'],
+    setupFilesAfterEnv: ['./setup-after-env.js'],
     /**
      * globalSetup: ran once before all tests
      *

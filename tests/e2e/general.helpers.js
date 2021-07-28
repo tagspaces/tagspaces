@@ -262,7 +262,7 @@ export async function isDisplayed(selector, displayed = true, timeout = 500) {
       }
       return el !== null;
     } catch (error) {
-      console.log('The FileProperties not open.');
+      console.log('The FileProperties not open:' + selector);
     }
     return false;
   }
