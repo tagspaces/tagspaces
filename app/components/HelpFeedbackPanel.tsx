@@ -236,6 +236,7 @@ const HelpFeedbackPanel = (props: Props) => {
             button
             onClick={toggleAboutDialog}
             title="Opens the about dialog"
+            data-tid="aboutDialog"
           >
             <ListItemIcon>
               <AboutIcon />
