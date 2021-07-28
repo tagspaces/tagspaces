@@ -29,6 +29,12 @@ describe('TST13 - Settings Key Bindings [electron]', () => {
     // await closeFileProperties();
   });
 
+  it('TST1311 - Test show search [electron]', async () => {
+    await clickOn(selectorFile);
+    await global.client.keyboard.press('Control+KeyF');
+    await expectElementExist('[data-tid=searchMenu]', true);
+  });
+
   it('TST1312 - Test rename file [electron]', async () => {
     const newTitle = 'renamed.txt';
     await clickOn(selectorFile);
@@ -42,4 +48,39 @@ describe('TST13 - Settings Key Bindings [electron]', () => {
     await global.client.keyboard.press('Enter');
     await expectElementExist('[data-tid=fileContainerToggleProperties]', true);
   });
+
+  it('TST1315 - Test delete file [electron]', async () => {
+    await clickOn(selectorFile);
+    await global.client.keyboard.press('Delete');
+    await clickOn('[data-tid=confirmDeleteFileDialog]');
+    // await expectElementExist('[data-tid=confirmDeleteFileDialog]', true);
+  });
+
+  it('TST1316 - Show help and feedback panel in the left [electron]', async () => {
+    await clickOn(selectorFile);
+    await global.client.keyboard.press('F1');
+    await expectElementExist('[data-tid=aboutDialog]', true);
+  });
+
+  it.skip('TST1301 - Change a key binding [electron]', async () => {});
+
+  it.skip('TST1302 - Test select all [electron]', async () => {});
+
+  it.skip('TST1303 - Test reload of document [electron]', async () => {});
+
+  it.skip('TST1304 - Test close document [electron]', async () => {});
+
+  it.skip('TST1305 - Test document properties [electron]', async () => {});
+
+  it.skip('TST1306 - Test save document [electron]', async () => {});
+
+  it.skip('TST1307 - Test show next document [electron]', async () => {});
+
+  it.skip('TST1308 - Test show previous document [electron]', async () => {});
+
+  it.skip('TST1309 - Test edit document [electron]', async () => {});
+
+  it.skip('TST1310 - Test add / remove tags [electron]', async () => {});
+
+  it.skip('TST1314 - Test open file externally [electron]', async () => {});
 });
