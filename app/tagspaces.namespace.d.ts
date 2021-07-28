@@ -56,7 +56,7 @@ export namespace TS {
     lastModified?: string;
     fileSize?: string;
     searchBoxing?: 'location' | 'folder' | 'global';
-    searchType?: 'fussy' | 'semistrict' | 'strict';
+    searchType?: 'fuzzy' | 'semistrict' | 'strict';
     forceIndexing?: boolean;
     currentDirectory?: string;
     tagTimePeriodFrom?: number | null;

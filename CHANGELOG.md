@@ -34,7 +34,7 @@
 ### 🐛 Bug fixes
 
 - reducing the usage of openFileNatively, fixing #1420
-- removing the location limitation of the search string in the fussy search
+- removing the location limitation of the search string in the fuzzy search
 - making index preparation more robust
 - clear folder background color
 - default sorting per name is now alphabetic

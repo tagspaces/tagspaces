@@ -24,7 +24,7 @@ A full list of the changes is available in the [changelog](CHANGELOG.md)
 
 - **File and folder management** - TagSpaces provides a convenient user interface for browsing, viewing and man files and folders.
 - **File tagging** - The application supports two ways for tagging files. The default one embeds the tags directly in the name of the file, the other one uses a so called sidecar files for persisting the tags.
-- **Searching** - The search functionality supports fussy functionality and can filter your locations for files and folders containing one or more tags
+- **Searching** - The search functionality supports fuzzy functionality and can filter your locations for files and folders containing one or more tags
 - **Browser for local content** - TagSpaces can be used just as browser for your local photos or navigation thought your local ebook library
 - **Media player** - It supports playing for common audio and video files types and has integrated basic media player functionalities.
 - **No-Cloud:** TagSpaces is running completely offline and serverless on your laptop, desktop or tablet and does not require an internet connection and any kind of online registration or service provider.
