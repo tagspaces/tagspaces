@@ -57,7 +57,7 @@ afterAll(async () => {
 
 beforeEach(async () => {
   if (global.isPlaywright) {
-    if (global.context) {
+    /*if (global.context) {
       if (jasmine.currentTest && jasmine.currentTest.status !== 'disabled') {
         // Start tracing before creating / navigating a page.
         await global.context.tracing.start({
@@ -65,7 +65,7 @@ beforeEach(async () => {
           snapshots: true
         });
       }
-    }
+    }*/
 
     // if (global.isMinio) {
     await closeWelcomePlaywright();
@@ -90,7 +90,7 @@ afterEach(async () => {
   //   // takeScreenshot();
   //   // await clearLocalStorage();
   // testDataRefresh();
-  if (global.context) {
+  /*if (global.context) {
     if (jasmine.currentTest && jasmine.currentTest.status !== 'disabled') {
       // console.log('specDone Done' + JSON.stringify(result));
       // if (jasmine.previousTest && jasmine.previousTest.status === 'failed') {
@@ -102,6 +102,6 @@ afterEach(async () => {
       });
       //}
     }
-  }
+  }*/
   await clearStorage();
 });

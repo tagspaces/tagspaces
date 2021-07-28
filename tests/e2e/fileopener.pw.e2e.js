@@ -177,7 +177,7 @@ describe('TST08 - File folder properties', () => {
   });
 
   it('TST0809 - Add and remove tag to a file (sidecar files) [web,minio,electron]', async () => {
-    await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]');
+    await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
     // await searchEngine('bmp');
     // open fileProperties
     await clickOn(selectorFile);

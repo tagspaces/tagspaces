@@ -585,7 +585,7 @@ export async function waitForNotification(
   if (await isDisplayed('[data-tid=' + tid + ']')) {
     //const closeButton = await global.client.$('[data-tid=close' + tid + ']');
     if (forceClose && (await isDisplayed('[data-tid=close' + tid + ']'))) {
-      await clickOn('[data-tid=close' + tid + ']');
+      await clickOn('[data-tid=close' + tid + ']', { force: true });
     } else {
       // autohide Notification
       await isDisplayed('[data-tid=' + tid + ']', false, 2000);
@@ -594,9 +594,15 @@ export async function waitForNotification(
   }
 }
 
-export async function setSettings(selector) {
+export async function setSettings(selector, click = false) {
   await clickOn('[data-tid=settings]');
-  await clickOn(selector);
+  if (click) {
+    await clickOn(selector);
+  } else {
+    // check
+    await global.client.check(selector + ' input');
+    expect(await global.client.isChecked(selector + ' input')).toBeTruthy();
+  }
   await clickOn('[data-tid=closeSettingsDialog]');
 }
 
@@ -694,7 +700,9 @@ export async function deleteDirectory() {
   await delay(500);
   await deleteDirectory.click();*/
   await clickOn('[data-tid=confirmDeleteFileDialog]');
-  await waitForNotification();
+  if (global.isElectron) {
+    await waitForNotification();
+  }
   /*const confirmDeleteDirectory = await global.client.$(
     '[data-tid=confirmDeleteDirectoryDialog]'
   );
