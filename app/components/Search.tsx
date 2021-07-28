@@ -88,7 +88,7 @@ interface Props {
   searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
   createLocationsIndexes: () => void;
   searchAllLocations: (searchQuery: TS.SearchQuery) => void;
-  loadDirectoryContent: (path: string) => void;
+  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
   openURLExternally: (url: string) => void;
   hideDrawer?: () => void;
   searchQuery: TS.SearchQuery; // () => any;
@@ -484,7 +484,7 @@ const Search = (props: Props) => {
 
   function openCurrentDirectory() {
     if (props.currentDirectory) {
-      props.loadDirectoryContent(props.currentDirectory);
+      props.loadDirectoryContent(props.currentDirectory, false);
     } else {
       props.setSearchResults([]);
     }

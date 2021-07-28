@@ -851,7 +851,7 @@ export const actions = {
       // && currentLocation.type === locationType.TYPE_AMPLIFY) {
       const { currentDirectoryPath } = getState().app;
       dispatch(actions.clearUploadDialogInt());
-      dispatch(actions.loadDirectoryContent(currentDirectoryPath));
+      dispatch(actions.loadDirectoryContent(currentDirectoryPath, false));
     }
   },
   clearUploadDialogInt: () => ({
@@ -880,7 +880,7 @@ export const actions = {
       );
       // console.log('parentDirectory: ' + parentDirectory  + ' - currentLocationPath: ' + currentLocationPath);
       if (parentDirectory.includes(currentLocationPath)) {
-        dispatch(actions.loadDirectoryContent(parentDirectory));
+        dispatch(actions.loadDirectoryContent(parentDirectory, false));
       } else {
         dispatch(
           actions.showNotification(
@@ -902,6 +902,7 @@ export const actions = {
   },
   loadDirectoryContentInt: (
     directoryPath: string,
+    generateThumbnails: boolean,
     fsEntryMeta?: TS.FileSystemEntryMeta
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
     const { settings } = getState();
@@ -929,7 +930,8 @@ export const actions = {
             settings,
             dispatch,
             getState,
-            fsEntryMeta
+            fsEntryMeta,
+            generateThumbnails
           );
         }
         return true;
@@ -939,10 +941,10 @@ export const actions = {
         dispatch(actions.loadDirectoryFailure(error)); // Currently this is never called, due the promise always resolve
       });
   },
-  loadDirectoryContent: (directoryPath: string) => (
-    dispatch: (actions: Object) => void,
-    getState: () => any
-  ) => {
+  loadDirectoryContent: (
+    directoryPath: string,
+    generateThumbnails: boolean
+  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
     console.time('listDirectoryPromise');
     window.walkCanceled = false;
 
@@ -955,7 +957,13 @@ export const actions = {
       normalizePath(directoryPath) + PlatformIO.getDirSeparator()
     )
       .then(fsEntryMeta => {
-        dispatch(actions.loadDirectoryContentInt(directoryPath, fsEntryMeta));
+        dispatch(
+          actions.loadDirectoryContentInt(
+            directoryPath,
+            generateThumbnails,
+            fsEntryMeta
+          )
+        );
         /* if (fsEntryMeta.color) { // TODO rethink this states changes are expensive
           dispatch(actions.setCurrentDirectoryColor(fsEntryMeta.color));
         }
@@ -967,7 +975,9 @@ export const actions = {
       })
       .catch(err => {
         console.log('Error loading meta of the current folder' + err);
-        dispatch(actions.loadDirectoryContentInt(directoryPath));
+        dispatch(
+          actions.loadDirectoryContentInt(directoryPath, generateThumbnails)
+        );
       });
   },
   loadDirectorySuccess: (
@@ -1159,7 +1169,7 @@ export const actions = {
       .then(newDirPath => {
         const { currentDirectoryPath, openedFiles } = getState().app;
         if (currentDirectoryPath === directoryPath) {
-          dispatch(actions.loadDirectoryContent(newDirPath));
+          dispatch(actions.loadDirectoryContent(newDirPath, false));
           if (openedFiles && openedFiles.length > 0) {
             if (openedFiles[0].path === directoryPath) {
               const openedFile = openedFiles[0];
@@ -1396,7 +1406,9 @@ export const actions = {
           );
           dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
           dispatch(actions.changeLocation(location));
-          dispatch(actions.loadDirectoryContent(getLocationPath(location)));
+          dispatch(
+            actions.loadDirectoryContent(getLocationPath(location), false)
+          );
           return true;
         })
         .catch(() => {
@@ -1413,7 +1425,7 @@ export const actions = {
       PlatformIO.disableObjectStoreSupport();
       dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
       dispatch(actions.changeLocation(location));
-      dispatch(actions.loadDirectoryContent(getLocationPath(location)));
+      dispatch(actions.loadDirectoryContent(getLocationPath(location), false));
       if (Pro && Pro.Watcher && location.watchForChanges) {
         const perspective = getCurrentDirectoryPerspective(getState());
         const depth = perspective === perspectives.KANBAN ? 3 : 1;
@@ -1579,7 +1591,7 @@ export const actions = {
         return;
       }
       if (!fsEntry.isFile) {
-        dispatch(actions.loadDirectoryContent(fsEntry.path));
+        dispatch(actions.loadDirectoryContent(fsEntry.path, false));
         return;
       }
     }
@@ -1919,7 +1931,7 @@ export const actions = {
           if (fsEntry.isFile) {
             dispatch(actions.openFsEntry(fsEntry));
           } else {
-            dispatch(actions.loadDirectoryContent(fsEntry.path));
+            dispatch(actions.loadDirectoryContent(fsEntry.path, false));
           }
           return true;
         })
@@ -1951,7 +1963,7 @@ export const actions = {
           if (isCloudLocation) {
             if (directoryPath && directoryPath.length > 0) {
               const dirFullPath = directoryPath;
-              dispatch(actions.loadDirectoryContent(dirFullPath));
+              dispatch(actions.loadDirectoryContent(dirFullPath, false));
             }
 
             if (entryPath) {
@@ -1991,7 +2003,7 @@ export const actions = {
               }
               const dirFullPath =
                 locationPath + PlatformIO.getDirSeparator() + directoryPath;
-              dispatch(actions.loadDirectoryContent(dirFullPath));
+              dispatch(actions.loadDirectoryContent(dirFullPath, false));
             }
 
             if (entryPath && entryPath.length > 0) {
