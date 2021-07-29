@@ -62,7 +62,7 @@ interface Props {
   openMoveCopyFilesDialog: () => void;
   openAddRemoveTagsDialog: () => void;
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
-  loadDirectoryContent: (path: string) => void;
+  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
   openFileNatively: (path: string) => void;
   showInFileManager: (path: string) => void;
   showNotification: (
@@ -161,7 +161,7 @@ const FileMenu = (props: Props) => {
 
       PlatformIO.copyFilePromise(props.selectedFilePath, newFilePath)
         .then(() => {
-          props.loadDirectoryContent(dirPath);
+          props.loadDirectoryContent(dirPath, true);
           return true;
         })
         .catch(error => {
@@ -184,7 +184,7 @@ const FileMenu = (props: Props) => {
         props.selectedFilePath,
         PlatformIO.getDirSeparator()
       );
-      props.loadDirectoryContent(parentFolder);
+      props.loadDirectoryContent(parentFolder, false);
     }
   }
 

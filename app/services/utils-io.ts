@@ -184,7 +184,8 @@ export function prepareDirectoryContent(
   settings,
   dispatch,
   getState,
-  dirEntryMeta
+  dirEntryMeta,
+  generateThumbnails
 ) {
   const currentLocation: TS.Location = getLocation(
     getState(),
@@ -233,18 +234,20 @@ export function prepareDirectoryContent(
     );
   }
 
-  dispatch(AppActions.setGeneratingThumbnails(false));
-  if (tmbGenerationList.length > 0) {
-    dispatch(AppActions.setGeneratingThumbnails(true));
-    PlatformIO.createThumbnailsInWorker(tmbGenerationList)
-      .then(handleTmbGenerationResults)
-      .catch(handleTmbGenerationFailed);
-  }
-  if (tmbGenerationPromises.length > 0) {
-    dispatch(AppActions.setGeneratingThumbnails(true));
-    Promise.all(tmbGenerationPromises)
-      .then(handleTmbGenerationResults)
-      .catch(handleTmbGenerationFailed);
+  if (generateThumbnails) {
+    dispatch(AppActions.setGeneratingThumbnails(false));
+    if (tmbGenerationList.length > 0) {
+      dispatch(AppActions.setGeneratingThumbnails(true));
+      PlatformIO.createThumbnailsInWorker(tmbGenerationList)
+        .then(handleTmbGenerationResults)
+        .catch(handleTmbGenerationFailed);
+    }
+    if (tmbGenerationPromises.length > 0) {
+      dispatch(AppActions.setGeneratingThumbnails(true));
+      Promise.all(tmbGenerationPromises)
+        .then(handleTmbGenerationResults)
+        .catch(handleTmbGenerationFailed);
+    }
   }
 
   console.log('Dir ' + directoryPath + ' contains ' + directoryContent.length);

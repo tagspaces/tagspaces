@@ -88,7 +88,7 @@ interface Props {
   searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
   createLocationsIndexes: () => void;
   searchAllLocations: (searchQuery: TS.SearchQuery) => void;
-  loadDirectoryContent: (path: string) => void;
+  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
   openURLExternally: (url: string) => void;
   hideDrawer?: () => void;
   searchQuery: TS.SearchQuery; // () => any;
@@ -116,8 +116,8 @@ const Search = (props: Props) => {
   const searchBoxing = useRef<'location' | 'folder' | 'global'>(
     props.searchQuery.searchBoxing ? props.searchQuery.searchBoxing : 'location'
   );
-  const searchType = useRef<'fussy' | 'semistrict' | 'strict'>(
-    props.searchQuery.searchType ? props.searchQuery.searchType : 'fussy'
+  const searchType = useRef<'fuzzy' | 'semistrict' | 'strict'>(
+    props.searchQuery.searchType ? props.searchQuery.searchType : 'fuzzy'
   );
   const lastModified = useRef<string>(
     props.searchQuery.lastModified ? props.searchQuery.lastModified : ''
@@ -484,7 +484,7 @@ const Search = (props: Props) => {
 
   function openCurrentDirectory() {
     if (props.currentDirectory) {
-      props.loadDirectoryContent(props.currentDirectory);
+      props.loadDirectoryContent(props.currentDirectory, false);
     } else {
       props.setSearchResults([]);
     }
@@ -493,7 +493,7 @@ const Search = (props: Props) => {
   const clearSearch = () => {
     textQuery.current = '';
     searchBoxing.current = 'location';
-    searchType.current = 'fussy';
+    searchType.current = 'fuzzy';
     fileTypes.current = FileTypeGroups.any;
     lastModified.current = '';
     tagTimePeriod.current = '';
@@ -551,7 +551,7 @@ const Search = (props: Props) => {
 
   const switchSearchType = (
     event: React.MouseEvent<HTMLElement>,
-    type: 'fussy' | 'semistrict' | 'strict'
+    type: 'fuzzy' | 'semistrict' | 'strict'
   ) => {
     if (type !== null) {
       searchType.current = type;
@@ -715,9 +715,9 @@ const Search = (props: Props) => {
             style={{ marginBottom: 10, alignSelf: 'center' }}
             value={searchType.current}
           >
-            <ToggleButton value="fussy" data-tid="fussySearchTID">
-              <Tooltip arrow title={i18n.t('searchTypeFussyTooltip')}>
-                <div>{i18n.t('searchTypeFussy')}</div>
+            <ToggleButton value="fuzzy" data-tid="fuzzySearchTID">
+              <Tooltip arrow title={i18n.t('searchTypeFuzzyTooltip')}>
+                <div>{i18n.t('searchTypeFuzzy')}</div>
               </Tooltip>
             </ToggleButton>
             <ToggleButton value="semistrict" data-tid="semiStrictSearchTID">

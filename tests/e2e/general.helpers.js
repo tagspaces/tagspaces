@@ -38,6 +38,10 @@ export async function clickOn(selector, options = {}) {
   }
 }
 
+export async function rightClickOn(selector) {
+  const options = { button: 'right' };
+  return clickOn(selector, options);
+}
 /*export async function waitUntilOpen(element) {
   // const element = await global.client.$(selector);
   await element.waitUntil(async () => await this.isOpen());
@@ -640,20 +644,8 @@ export async function createNewDirectory(dirName = testFolder) {
   await clickOn('[data-tid=newSubDirectory]');
   // set new dir name
   await setInputKeys('directoryName', dirName);
-  /*const directoryName = await global.client.$('[data-tid=directoryName] input');
-  await delay(500);
-  await directoryName.keys(testFolder);
-  await directoryName.click();
-  await delay(1500);*/
   await clickOn('[data-tid=confirmCreateNewDirectory]');
-  /*const confirmCreateNewDirectory = await global.client.$(
-    '[data-tid=confirmCreateNewDirectory]'
-  );
-  await delay(1500);
-  await confirmCreateNewDirectory.waitForDisplayed();
-  await confirmCreateNewDirectory.click();*/
   await waitForNotification();
-  // await global.client.pause(500); // minio
   return dirName;
 }
 
@@ -695,21 +687,10 @@ export async function closeOpenedFile() {
 export async function deleteDirectory() {
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
   await clickOn('[data-tid=deleteDirectory]');
-  /*const deleteDirectory = await global.client.$('[data-tid=deleteDirectory]');
-  await deleteDirectory.waitForDisplayed();
-  await delay(500);
-  await deleteDirectory.click();*/
   await clickOn('[data-tid=confirmDeleteFileDialog]');
   if (global.isElectron) {
     await waitForNotification();
   }
-  /*const confirmDeleteDirectory = await global.client.$(
-    '[data-tid=confirmDeleteDirectoryDialog]'
-  );
-  await confirmDeleteDirectory.waitForDisplayed();
-  await delay(500);
-  await confirmDeleteDirectory.click();
-  await delay(500);*/
 }
 
 export async function toHaveText() {
