@@ -30,8 +30,13 @@ describe('TST13 - Settings Key Bindings [electron]', () => {
   });
 
   it('TST1311 - Test show search [electron]', async () => {
+    const isMac = /^darwin/.test(process.platform);
     await clickOn(selectorFile);
-    await global.client.keyboard.press('Control+KeyF');
+    if (isMac) {
+      await global.client.keyboard.press('Meta+KeyF');
+    } else {
+      await global.client.keyboard.press('Control+KeyF');
+    }
     await expectElementExist('[data-tid=searchMenu]', true);
   });
 
