@@ -17,7 +17,6 @@
  */
 
 import uuidv1 from 'uuid';
-import pathLib from 'path';
 import { getLocation, getDefaultLocationId } from './locations';
 import PlatformIO from '../services/platform-io';
 import AppConfig from '../config';
@@ -924,6 +923,7 @@ export const actions = {
     )
       .then(results => {
         if (results !== undefined) {
+          // console.debug('app listDirectoryPromise resolved:' + results.length);
           prepareDirectoryContent(
             results,
             directoryPath,
@@ -937,15 +937,15 @@ export const actions = {
         return true;
       })
       .catch(error => {
-        console.timeEnd('listDirectoryPromise');
-        dispatch(actions.loadDirectoryFailure(error)); // Currently this is never called, due the promise always resolve
+        // console.timeEnd('listDirectoryPromise');
+        dispatch(actions.loadDirectoryFailure(directoryPath, error)); // Currently this is never called, due the promise always resolve
       });
   },
   loadDirectoryContent: (
     directoryPath: string,
     generateThumbnails: boolean
-  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
-    console.time('listDirectoryPromise');
+  ) => async (dispatch: (actions: Object) => void, getState: () => any) => {
+    // console.debug('loadDirectoryContent:' + directoryPath);
     window.walkCanceled = false;
 
     const state = getState();
@@ -953,32 +953,32 @@ export const actions = {
     if (selectedEntries.length > 0) {
       dispatch(actions.setSelectedEntries([]));
     }
-    loadMetaDataPromise(
-      normalizePath(directoryPath) + PlatformIO.getDirSeparator()
-    )
-      .then(fsEntryMeta => {
-        dispatch(
-          actions.loadDirectoryContentInt(
-            directoryPath,
-            generateThumbnails,
-            fsEntryMeta
-          )
-        );
-        /* if (fsEntryMeta.color) { // TODO rethink this states changes are expensive
+    try {
+      const fsEntryMeta = await loadMetaDataPromise(
+        normalizePath(directoryPath) + PlatformIO.getDirSeparator()
+      );
+      // console.debug('Loading meta succeeded for:' + directoryPath);
+      dispatch(
+        actions.loadDirectoryContentInt(
+          directoryPath,
+          generateThumbnails,
+          fsEntryMeta
+        )
+      );
+      /* if (fsEntryMeta.color) { // TODO rethink this states changes are expensive
           dispatch(actions.setCurrentDirectoryColor(fsEntryMeta.color));
         }
         if (fsEntryMeta.perspective) {
           dispatch(actions.setCurrentDirPerspective(fsEntryMeta.perspective));
         } */
 
-        return true;
-      })
-      .catch(err => {
-        console.log('Error loading meta of the current folder' + err);
-        dispatch(
-          actions.loadDirectoryContentInt(directoryPath, generateThumbnails)
-        );
-      });
+      // return true;
+    } catch (err) {
+      console.debug('Error loading meta of:' + directoryPath + ' ' + err);
+      dispatch(
+        actions.loadDirectoryContentInt(directoryPath, generateThumbnails)
+      );
+    }
   },
   loadDirectorySuccess: (
     directoryPath: string,
@@ -2099,17 +2099,7 @@ export const getCurrentLocationPath = (state: any) => {
         state.app.currentLocationId &&
         location.uuid === state.app.currentLocationId
       ) {
-        const locationPath = getLocationPath(location);
-        if (
-          AppConfig.isElectron &&
-          locationPath &&
-          locationPath.startsWith('./')
-        ) {
-          // TODO test relative path (Directory Back) with other platforms
-          // relative paths
-          return pathLib.resolve(locationPath);
-        }
-        return locationPath;
+        return getLocationPath(location);
       }
     }
   }

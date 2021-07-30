@@ -21,7 +21,6 @@ import {
   waitForNotification
 } from './general.helpers';
 import { expect } from '@playwright/test';
-import { matchers } from 'expect-playwright';
 import {
   AddRemovePropertiesTags,
   getPropertiesFileName
@@ -31,7 +30,6 @@ import { openContextEntryMenu } from './test-utils';
 
 describe('TST08 - File folder properties', () => {
   beforeEach(async () => {
-    expect.extend(matchers);
     if (global.isMinio) {
       await createPwMinioLocation('', defaultLocationName, true);
     } else {
@@ -39,7 +37,7 @@ describe('TST08 - File folder properties', () => {
     }
     await clickOn('[data-tid=location_' + defaultLocationName + ']');
     // If its have opened file
-    await closeFileProperties();
+    // await closeFileProperties();
   });
 
   it('TST0801 - Arrow keys select next prev file (keybindings) [web,minio,electron]', async () => {
@@ -177,6 +175,7 @@ describe('TST08 - File folder properties', () => {
   });
 
   it('TST0809 - Add and remove tag to a file (sidecar files) [web,minio,electron]', async () => {
+    // global.client.setDefaultTimeout(300000);
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
     // await searchEngine('bmp');
     // open fileProperties

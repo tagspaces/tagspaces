@@ -49,7 +49,7 @@ module.exports = async () => {
      *
      * https://jestjs.io/docs/en/configuration#setupfilesafterenv-array
      */
-    setupFilesAfterEnv: ['./setup-after-env.js'],
+    setupFilesAfterEnv: ['./test-data-refresh.js', './setup-after-env.js'],
     /**
      * globalSetup: ran once before all tests
      *

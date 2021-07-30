@@ -216,7 +216,7 @@ export async function stopSpectronApp() {
   }
 }
 
-export async function testDataRefresh() {
+/* export async function testDataRefresh() {
   const fse = require('fs-extra');
   //const gracefulFs = require('graceful-fs')
   //gracefulFs.gracefulify(fse);
@@ -236,7 +236,7 @@ export async function testDataRefresh() {
   if (global.isElectron && global.client) {
     await global.client.waitForTimeout(1000);
   }
-}
+} */
 
 export async function takeScreenshot(name = expect.getState().currentTestName) {
   // if (jasmine.currentTest.failedExpectations.length > 0) {

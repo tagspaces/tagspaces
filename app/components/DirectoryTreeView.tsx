@@ -255,6 +255,7 @@ const DirectoryTreeView = forwardRef(
         // @ts-ignore
         .then(dirEntries => {
           if (dirEntries !== undefined) {
+            // console.debug('listDirectoryPromise resolved:' + dirEntries.length);
             const directoryContent = [];
             dirEntries.map(entry => {
               if (
@@ -303,7 +304,7 @@ const DirectoryTreeView = forwardRef(
           return subFolder;
         })
         .catch(error => {
-          console.log('getDirectoriesTree', error);
+          console.debug('getDirectoriesTree', error);
         });
 
     /**

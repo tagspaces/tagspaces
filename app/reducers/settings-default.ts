@@ -152,7 +152,10 @@ export default {
   useTrashCan: true,
   useOCR: false,
   useTextExtraction: false,
-  useGenerateThumbnails: true,
+  useGenerateThumbnails:
+    window.ExtUseGenerateThumbnails !== undefined
+      ? window.ExtUseGenerateThumbnails
+      : true,
   tagTextColor: 'white',
   tagBackgroundColor: '#61DD61',
   currentTheme: 'light',

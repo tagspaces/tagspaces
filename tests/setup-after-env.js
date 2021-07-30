@@ -2,8 +2,7 @@ import {
   clearLocalStorage,
   startSpectronApp,
   stopSpectronApp,
-  takeScreenshot,
-  testDataRefresh
+  takeScreenshot
 } from './e2e/hook';
 import { closeWelcome, closeWelcomePlaywright } from './e2e/welcome.helpers';
 import { clearStorage } from './e2e/clearstorage.helpers';
@@ -47,7 +46,7 @@ jasmine.getEnv().addReporter({
 });*/
 
 beforeAll(async () => {
-  await testDataRefresh();
+  // await testDataRefresh();
   await startSpectronApp();
 });
 
