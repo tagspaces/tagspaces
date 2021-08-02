@@ -11,7 +11,7 @@ import {
 } from './general.helpers';
 
 export const defaultLocationPath =
-  './testdata-tmp/file-structure/supported-filestypes';
+  './tests/testdata-tmp/file-structure/supported-filestypes';
 export const defaultLocationName = 'supported-filestypes';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const newLocationName = 'Location Name Changed';
@@ -97,18 +97,16 @@ export async function createPwLocation(
   // Check if location not exist (from extconfig.js)
   if (locationName !== lastLocationTID) {
     await global.client.click('[data-tid=createNewLocation]');
-    await global.client.click('[data-tid=locationPath]');
-    await global.client.fill(
-      '[data-tid=locationPath]',
-      locationPath || defaultLocationPath
-    );
-    await global.client.fill(
-      '[data-tid=locationName]',
-      locationName || 'Test Location' + new Date().getTime()
+    //   await global.client.click('[data-tid=locationPath]');
+    await setInputKeys('locationPath', locationPath || defaultLocationPath, 20);
+    await setInputKeys(
+      'locationName',
+      locationName || 'Test Location' + new Date().getTime(),
+      20
     );
 
     if (isDefault) {
-      await global.client.click('[data-tid=locationIsDefault]');
+      await global.client.check('[data-tid=locationIsDefault] input');
     }
     await global.client.click('[data-tid=confirmLocationCreation]');
   }

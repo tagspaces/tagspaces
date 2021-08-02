@@ -1,23 +1,24 @@
 /*
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
-import {
-  createLocation,
-  defaultLocationPath,
-  defaultLocationName,
-  closeFileProperties,
-  createMinioLocation,
-  createPwMinioLocation,
-  createPwLocation
-} from './location.helpers';
+import { defaultLocationName } from './location.helpers';
 import {
   clickOn,
   expectElementExist,
   selectorFile,
   setInputValue
 } from './general.helpers';
+import { startSpectronApp, stopSpectronApp, testDataRefresh } from './hook';
 
 describe('TST13 - Settings Key Bindings [electron]', () => {
+  beforeAll(async () => {
+    await startSpectronApp('extconfig-with-welcome.js');
+  });
+
+  afterAll(async () => {
+    await stopSpectronApp();
+    await testDataRefresh();
+  });
   beforeEach(async () => {
     // if (global.isMinio) {
     //   await createPwMinioLocation('', defaultLocationName, true);

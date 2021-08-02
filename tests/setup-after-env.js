@@ -45,14 +45,14 @@ jasmine.getEnv().addReporter({
   }
 });*/
 
-beforeAll(async () => {
+/*beforeAll(async () => {
   await startSpectronApp();
 });
 
 afterAll(async () => {
   await stopSpectronApp();
   await testDataRefresh();
-});
+});*/
 
 beforeEach(async () => {
   if (global.isPlaywright) {

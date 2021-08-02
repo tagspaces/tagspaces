@@ -2,11 +2,8 @@
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
 import {
-  createLocation,
   defaultLocationPath,
   defaultLocationName,
-  closeFileProperties,
-  createMinioLocation,
   createPwMinioLocation,
   createPwLocation
 } from './location.helpers';
@@ -25,6 +22,7 @@ import {
   setSettings
 } from './general.helpers';
 import { searchEngine } from './search.helpers';
+import { startSpectronApp, stopSpectronApp, testDataRefresh } from './hook';
 
 export const firstFile = '/span';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
@@ -35,6 +33,14 @@ const subFolderThumbnailsPath = defaultLocationPath + '/thumbnails';
 const testFolder = 'testFolder';
 
 describe('TST51 - Perspective Grid', () => {
+  beforeAll(async () => {
+    await startSpectronApp('extconfig-with-welcome.js');
+  });
+
+  afterAll(async () => {
+    await stopSpectronApp();
+    await testDataRefresh();
+  });
   beforeEach(async () => {
     if (global.isMinio) {
       await createPwMinioLocation('', defaultLocationName, true);

@@ -7,6 +7,7 @@ import {
   setInputKeys,
   setInputValue
 } from './general.helpers';
+import { startSpectronApp, stopSpectronApp, testDataRefresh } from './hook';
 
 const testTagName = 'testTag';
 const newTagName = 'newTagName';
@@ -39,6 +40,14 @@ export async function tagMenu(tagName, menuOperation) {
 }
 
 describe('TST04 - Testing the tag library:', () => {
+  beforeAll(async () => {
+    await startSpectronApp();
+  });
+
+  afterAll(async () => {
+    await stopSpectronApp();
+    await testDataRefresh();
+  });
   beforeEach(async () => {
     await clickOn('[data-tid=tagLibrary]');
   });

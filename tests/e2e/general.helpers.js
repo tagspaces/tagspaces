@@ -144,13 +144,14 @@ export async function addInputKeys(tid, value) {
  * TODO not work in Playwright
  * @param tid
  * @param value
+ * @param delay
  * @returns {Promise<*>}
  */
-export async function setInputKeys(tid, value) {
+export async function setInputKeys(tid, value, delay = 50) {
   if (isPlaywright) {
     // global.client.keyboard.type('[data-tid=' + tid + '] input', value, { delay: 100 });
     await global.client.type('[data-tid=' + tid + '] input', value, {
-      delay: 100
+      delay
     });
   } else {
     return await setSelectorKeys('[data-tid=' + tid + ']', value);

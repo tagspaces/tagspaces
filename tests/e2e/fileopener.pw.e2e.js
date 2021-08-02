@@ -27,8 +27,18 @@ import {
 } from './file.properties.helpers';
 import { searchEngine } from './search.helpers';
 import { openContextEntryMenu } from './test-utils';
+import { startSpectronApp, stopSpectronApp, testDataRefresh } from './hook';
 
 describe('TST08 - File folder properties', () => {
+  beforeAll(async () => {
+    await startSpectronApp('extconfig-with-welcome.js');
+  });
+
+  afterAll(async () => {
+    await stopSpectronApp();
+    await testDataRefresh();
+  });
+
   beforeEach(async () => {
     if (global.isMinio) {
       await createPwMinioLocation('', defaultLocationName, true);

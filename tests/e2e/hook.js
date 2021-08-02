@@ -1,6 +1,7 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 import electronPath from 'electron';
 import pathLib from 'path';
+import fse from 'fs-extra';
 
 // Spectron API https://github.com/electron/spectron
 // Webdriver.io http://webdriver.io/api.html
@@ -53,7 +54,20 @@ export async function clearLocalStorage() {
   // global.app.client.reload(false);
 }
 
-export async function startSpectronApp() {
+export async function copyExtConfig(extconfig = 'extconfig-with-welcome.js') {
+  const srcDir = pathLib.join(__dirname, '..', '..', 'scripts', extconfig);
+  const destDir = pathLib.join(__dirname, '..', '..', 'app', 'extconfig.js');
+  await fse.copy(srcDir, destDir);
+}
+
+export async function removeExtConfig() {
+  await fse.remove(pathLib.join(__dirname, '..', 'app', 'extconfig.js'));
+}
+
+export async function startSpectronApp(extconfig) {
+  if (extconfig) {
+    await copyExtConfig(extconfig);
+  }
   const chromeDriverArgs = [
     // '--disable-gpu',
     '--disable-infobars',

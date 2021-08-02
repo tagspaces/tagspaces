@@ -1,11 +1,8 @@
-import pathLib from 'path';
-import { globalSetup, startMinio } from './setup-functions';
+import { startMinio } from './setup-functions';
+import { removeExtConfig } from './e2e/hook';
 
 module.exports = async function() {
-  await globalSetup();
-
-  const fse = require('fs-extra');
-  fse.removeSync(pathLib.join(__dirname, '..', 'app', 'extconfig.js'));
+  await removeExtConfig();
 
   global.minio = await startMinio();
 };
