@@ -146,13 +146,6 @@ export async function startSpectronApp() {
     global.client = await global.app.firstWindow();
     await global.client.waitForLoadState('load'); //'domcontentloaded'); //'networkidle');
     // await global.client.bringToFront();
-    // Evaluation expression in the Electron context.
-    /*const appPath = await global.app.evaluate(async ({ app }) => {
-      // This runs in the main Electron process, parameter here is always
-      // the result of the require('electron') in the main app script.
-      return app.getAppPath();
-    });
-    console.log(appPath);*/
 
     // Print the title.
     // console.log(await global.client.title());
@@ -216,7 +209,7 @@ export async function stopSpectronApp() {
   }
 }
 
-/* export async function testDataRefresh() {
+export async function testDataRefresh() {
   const fse = require('fs-extra');
   //const gracefulFs = require('graceful-fs')
   //gracefulFs.gracefulify(fse);
@@ -233,10 +226,10 @@ export async function stopSpectronApp() {
   let newPath = pathLib.join(dst, pathLib.basename(src));
   fse.emptyDirSync(newPath);
   fse.copySync(src, newPath, { overwrite: true });
-  if (global.isElectron && global.client) {
+  /*if (global.isElectron && global.client) {
     await global.client.waitForTimeout(1000);
-  }
-} */
+  }*/
+}
 
 export async function takeScreenshot(name = expect.getState().currentTestName) {
   // if (jasmine.currentTest.failedExpectations.length > 0) {

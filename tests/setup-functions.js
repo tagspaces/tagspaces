@@ -2,10 +2,8 @@ import pathLib from 'path';
 import sh from 'shelljs';
 
 export async function globalSetup() {
-  global.isWin = /^win/.test(process.platform);
-  global.isMac = /^darwin/.test(process.platform);
-  // global.isWeb = process.env.NODE_JEST === 'test_web';
-  // global.isMinio = global.isWeb || process.env.NODE_JEST === 'test_minio';
+  // global.isWin = /^win/.test(process.platform);
+  // global.isMac = /^darwin/.test(process.platform);
 
   const extensionDir = pathLib.resolve(__dirname); //,'../tests');
   if (!sh.test('-d', extensionDir)) {

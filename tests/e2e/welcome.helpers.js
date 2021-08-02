@@ -1,4 +1,4 @@
-import { clickOn } from './general.helpers';
+import { clickOn, isDisplayed } from './general.helpers';
 
 export async function closeWelcome() {
   const nextButton = await global.client.$('[data-tid=nextStepOnboarding]');
@@ -15,10 +15,12 @@ export async function closeWelcome() {
 }
 
 export async function closeWelcomePlaywright() {
-  await global.client.click('[data-tid=nextStepOnboarding]');
-  await global.client.click('[data-tid=nextStepOnboarding]');
-  await global.client.click('[data-tid=nextStepOnboarding]');
-  await global.client.click('[data-tid=nextStepOnboarding]');
-  await global.client.click('[data-tid=startTagSpacesAfterOnboarding]');
-  await global.client.click('[data-tid=agreeLicenseDialog]');
+  if (await isDisplayed('[data-tid=nextStepOnboarding]', true, 3000)) {
+    await global.client.click('[data-tid=nextStepOnboarding]');
+    await global.client.click('[data-tid=nextStepOnboarding]');
+    await global.client.click('[data-tid=nextStepOnboarding]');
+    await global.client.click('[data-tid=nextStepOnboarding]');
+    await global.client.click('[data-tid=startTagSpacesAfterOnboarding]');
+    await global.client.click('[data-tid=agreeLicenseDialog]');
+  }
 }

@@ -2,11 +2,11 @@ import {
   clearLocalStorage,
   startSpectronApp,
   stopSpectronApp,
-  takeScreenshot
+  takeScreenshot,
+  testDataRefresh
 } from './e2e/hook';
 import { closeWelcome, closeWelcomePlaywright } from './e2e/welcome.helpers';
 import { clearStorage } from './e2e/clearstorage.helpers';
-import pathLib from 'path';
 
 // the default timeout before starting every test
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 300000;
@@ -46,12 +46,12 @@ jasmine.getEnv().addReporter({
 });*/
 
 beforeAll(async () => {
-  // await testDataRefresh();
   await startSpectronApp();
 });
 
 afterAll(async () => {
   await stopSpectronApp();
+  await testDataRefresh();
 });
 
 beforeEach(async () => {
@@ -66,9 +66,9 @@ beforeEach(async () => {
       }
     }*/
 
-    // if (global.isMinio) {
     await closeWelcomePlaywright();
-    // }
+    await clearStorage();
+    await closeWelcomePlaywright();
   } else {
     if (jasmine.currentTest && jasmine.currentTest.status !== 'disabled') {
       // console.log('specDone Done' + JSON.stringify(result));
@@ -102,5 +102,5 @@ afterEach(async () => {
       //}
     }
   }*/
-  await clearStorage();
+  // await clearStorage();
 });
