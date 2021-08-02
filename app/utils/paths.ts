@@ -156,9 +156,10 @@ export function extractFileName(
   dirSeparator: string // = AppConfig.dirSeparator
 ): string {
   if (filePath) {
-    let path = filePath;
+    const path = filePath;
     if (filePath.endsWith(dirSeparator)) {
-      path = filePath.substring(0, filePath.length - dirSeparator.length);
+      return '';
+      // path = filePath.substring(0, filePath.length - dirSeparator.length);
     }
     return path.substring(path.lastIndexOf(dirSeparator) + 1, path.length);
   }
