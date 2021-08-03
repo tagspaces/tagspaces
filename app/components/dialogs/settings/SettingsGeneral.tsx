@@ -238,13 +238,18 @@ const SettingsGeneral = (props: Props) => {
         <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:useGenerateThumbnails')} />
           <Switch
+            disabled={AppConfig.useGenerateThumbnails !== undefined}
             data-tid="settingsUseGenerateThumbnails"
             onClick={() =>
               props.setUseGenerateThumbnails(
                 !props.settings.useGenerateThumbnails
               )
             }
-            checked={props.settings.useGenerateThumbnails}
+            checked={
+              AppConfig.useGenerateThumbnails !== undefined
+                ? AppConfig.useGenerateThumbnails
+                : props.settings.useGenerateThumbnails
+            }
           />
         </ListItem>
         <ListItem className={classes.listItem}>

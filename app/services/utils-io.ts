@@ -193,6 +193,13 @@ export function prepareDirectoryContent(
   );
   const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
 
+  function useGenerateThumbnails() {
+    if (AppConfig.useGenerateThumbnails !== undefined) {
+      return AppConfig.useGenerateThumbnails;
+    }
+    return settings.useGenerateThumbnails;
+  }
+
   const {
     directoryContent,
     tmbGenerationPromises,
@@ -201,7 +208,7 @@ export function prepareDirectoryContent(
     dirEntries,
     isCloudLocation,
     settings.showUnixHiddenEntries,
-    generateThumbnails && settings.useGenerateThumbnails
+    generateThumbnails && useGenerateThumbnails()
   );
 
   function handleTmbGenerationResults(results) {
