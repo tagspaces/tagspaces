@@ -20,7 +20,7 @@ export async function startMinio() {
   const command = global.isWin ? winMinio : unixMinio;
   const minioProcess = await require('child_process').spawn(command, [
     'server',
-    pathLib.resolve('./testdata-tmp/file-structure')
+    pathLib.resolve(__dirname, './testdata-tmp/file-structure')
   ]);
 
   minioProcess.on('exit', function(code) {
