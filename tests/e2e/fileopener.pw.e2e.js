@@ -27,11 +27,11 @@ import {
 } from './file.properties.helpers';
 import { searchEngine } from './search.helpers';
 import { openContextEntryMenu } from './test-utils';
-import { startSpectronApp, stopSpectronApp, testDataRefresh } from './hook';
+import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
 
 describe('TST08 - File folder properties', () => {
   beforeAll(async () => {
-    await startSpectronApp('extconfig-with-welcome.js');
+    await startTestingApp('extconfig-with-welcome.js');
   });
 
   afterAll(async () => {

@@ -8,7 +8,7 @@ import {
   createPwLocation
 } from './location.helpers';
 import { clickOn, expectElementExist, setInputKeys } from './general.helpers';
-import { startSpectronApp, stopSpectronApp, testDataRefresh } from './hook';
+import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
 
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const newLocationName = 'Location_Name_Changed';
@@ -17,7 +17,7 @@ let testLocationName;
 
 describe('TST03 - Testing locations:', () => {
   beforeAll(async () => {
-    await startSpectronApp('extconfig-without-locations.js');
+    await startTestingApp('extconfig-without-locations.js');
   });
 
   afterAll(async () => {

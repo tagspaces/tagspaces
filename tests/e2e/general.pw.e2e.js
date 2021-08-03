@@ -22,7 +22,7 @@ import {
   setSettings
 } from './general.helpers';
 import { searchEngine } from './search.helpers';
-import { startSpectronApp, stopSpectronApp, testDataRefresh } from './hook';
+import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
 
 export const firstFile = '/span';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
@@ -34,7 +34,7 @@ const testFolder = 'testFolder';
 
 describe('TST51 - Perspective Grid', () => {
   beforeAll(async () => {
-    await startSpectronApp('extconfig-with-welcome.js');
+    await startTestingApp('extconfig-with-welcome.js');
   });
 
   afterAll(async () => {

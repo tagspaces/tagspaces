@@ -1,10 +1,4 @@
-import {
-  clearLocalStorage,
-  startSpectronApp,
-  stopSpectronApp,
-  takeScreenshot,
-  testDataRefresh
-} from './e2e/hook';
+import { clearLocalStorage, takeScreenshot } from './e2e/hook';
 import { closeWelcome, closeWelcomePlaywright } from './e2e/welcome.helpers';
 import { clearStorage } from './e2e/clearstorage.helpers';
 

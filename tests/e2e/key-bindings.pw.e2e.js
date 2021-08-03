@@ -8,11 +8,11 @@ import {
   selectorFile,
   setInputValue
 } from './general.helpers';
-import { startSpectronApp, stopSpectronApp, testDataRefresh } from './hook';
+import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
 
 describe('TST13 - Settings Key Bindings [electron]', () => {
   beforeAll(async () => {
-    await startSpectronApp('extconfig-with-welcome.js');
+    await startTestingApp('extconfig-with-welcome.js');
   });
 
   afterAll(async () => {

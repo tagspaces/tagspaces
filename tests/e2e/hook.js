@@ -64,7 +64,7 @@ export async function removeExtConfig() {
   await fse.remove(pathLib.join(__dirname, '..', 'app', 'extconfig.js'));
 }
 
-export async function startSpectronApp(extconfig) {
+export async function startTestingApp(extconfig) {
   if (extconfig) {
     await copyExtConfig(extconfig);
   }
