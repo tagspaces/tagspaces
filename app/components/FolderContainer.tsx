@@ -42,13 +42,13 @@ import { getLocations } from '-/reducers/locations';
 import {
   actions as AppActions,
   getDirectoryContent,
-  getLastSelectedEntry,
   getSearchResultCount,
   isReadOnlyMode,
   getCurrentLocationPath,
   getCurrentDirectoryPerspective,
   OpenedEntry,
-  perspectives
+  perspectives,
+  getSelectedEntries
 } from '../reducers/app';
 import TaggingActions from '../reducers/tagging-actions';
 import { normalizePath, extractShortDirectoryName } from '-/utils/paths';
@@ -233,6 +233,7 @@ interface Props {
   openedFiles: Array<OpenedEntry>;
   updateCurrentDirEntry: (path: string, entry: Object) => void;
   setCurrentDirectoryColor: (color: string) => void;
+  selectedEntries: Array<TS.FileSystemEntry>;
 }
 
 const FolderContainer = (props: Props) => {
@@ -246,21 +247,23 @@ const FolderContainer = (props: Props) => {
   >(false);
 
   useEffect(() => {
-    if (props.openedFiles.length > 0) {
-      const openedFile = props.openedFiles[0];
-      if (openedFile.path === props.currentDirectoryPath) {
-        if (openedFile.color) {
-          props.setCurrentDirectoryColor(openedFile.color);
+    if (props.selectedEntries.length < 2) {
+      if (props.openedFiles.length > 0) {
+        const openedFile = props.openedFiles[0];
+        if (openedFile.path === props.currentDirectoryPath) {
+          if (openedFile.color) {
+            props.setCurrentDirectoryColor(openedFile.color);
+          }
+          if (openedFile.perspective) {
+            props.setCurrentDirectoryPerspective(openedFile.perspective);
+          }
+        } else if (openedFile.changed) {
+          const currentEntry = enhanceOpenedEntry(
+            openedFile,
+            props.settings.tagDelimiter
+          );
+          props.updateCurrentDirEntry(openedFile.path, currentEntry);
         }
-        if (openedFile.perspective) {
-          props.setCurrentDirectoryPerspective(openedFile.perspective);
-        }
-      } else if (openedFile.changed) {
-        const currentEntry = enhanceOpenedEntry(
-          openedFile,
-          props.settings.tagDelimiter
-        );
-        props.updateCurrentDirEntry(openedFile.path, currentEntry);
       }
     }
   }, [props.openedFiles]);
@@ -606,7 +609,7 @@ const FolderContainer = (props: Props) => {
 function mapStateToProps(state) {
   return {
     settings: state.settings,
-    lastSelectedEntry: getLastSelectedEntry(state),
+    selectedEntries: getSelectedEntries(state),
     directoryContent: getDirectoryContent(state),
     currentDirectoryPerspective: getCurrentDirectoryPerspective(state),
     searchResultCount: getSearchResultCount(state),

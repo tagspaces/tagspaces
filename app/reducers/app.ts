@@ -1778,11 +1778,11 @@ export const actions = {
     tags: Array<TS.Tag>,
     updateIndex: boolean = true
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
-    const { openedFiles } = getState().app;
+    const { openedFiles, selectedEntries } = getState().app;
     /**
      * if its have openedFiles updateCurrentDirEntry is called from FolderContainer (useEffect -> ... if (openedFile.changed)
      */
-    if (openedFiles.length === 0) {
+    if (openedFiles.length === 0 || selectedEntries.length > 1) {
       dispatch(actions.updateCurrentDirEntry(path, { tags }));
     }
     if (updateIndex) {
