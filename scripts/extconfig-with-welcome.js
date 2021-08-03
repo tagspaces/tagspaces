@@ -7,12 +7,13 @@ window.ExtLightThemeMainColor = '#3bc8ff';
 window.ExtDarkThemeLightColor = '#a6def4';
 window.ExtDarkThemeMainColor = '#3bc8ff';
 window.ExtIsFirstRun = true;
+window.ExtUseGenerateThumbnails = false;
 window.ExtLocations = [
   {
     uuid: '30565f09-c7fd-2333-fc67-a75db27rt5ba', // an unique id of the location
     type: '0', // 1 defines the locations a cloud based
     name: 'supported-filestypes', // the name of the location
-    path: './testdata-tmp/file-structure/supported-filestypes', // the path to sub folder in the location
+    path: './tests/testdata-tmp/file-structure/supported-filestypes', // the path to sub folder in the location
     // accessKeyId: 'your_access_key', // the access key of the user
     // secretAccessKey: 'your_secret_key', // the secret case of the user
     // bucketName: 'demo-bucket', // the name of the S3 bucket

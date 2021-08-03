@@ -1,15 +1,14 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 import {
-  createLocation,
   defaultLocationPath,
   openLocationMenu,
-  createMinioLocation,
-  closeFileProperties,
   startupLocation,
-  getLocationTid
+  getPwLocationTid,
+  createPwMinioLocation,
+  createPwLocation
 } from './location.helpers';
 import { clickOn, expectElementExist, setInputKeys } from './general.helpers';
-import { startTestingApp, stopSpectronApp } from './hook';
+import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
 
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const newLocationName = 'Location_Name_Changed';
@@ -18,48 +17,25 @@ let testLocationName;
 
 describe('TST03 - Testing locations:', () => {
   beforeAll(async () => {
-    const fse = require('fs-extra');
-    const path = require('path');
-
-    const srcDir = path.join(
-      __dirname,
-      '..',
-      '..',
-      'scripts',
-      'extconfig-without-locations.js'
-    );
-    const destDir = path.join(__dirname, '..', '..', 'app', 'extconfig.js');
-
-    fse.copySync(srcDir, destDir);
-
-    await stopSpectronApp();
-    await startTestingApp();
+    await startTestingApp('extconfig-without-locations.js');
   });
 
   afterAll(async () => {
-    const fse = require('fs-extra');
-    const path = require('path');
-
-    const srcDir = path.join(__dirname, '..', '..', 'scripts', 'extconfig.js');
-    const destDir = path.join(__dirname, '..', '..', 'app', 'extconfig.js');
-
-    fse.copySync(srcDir, destDir);
-
     await stopSpectronApp();
-    await startTestingApp();
+    await testDataRefresh();
   });
 
   beforeEach(async () => {
     testLocationName = '' + new Date().getTime();
 
     if (global.isMinio) {
-      await createMinioLocation('', testLocationName, true);
+      await createPwMinioLocation('', testLocationName, true);
     } else {
-      await createLocation(defaultLocationPath, testLocationName, true);
+      await createPwLocation(defaultLocationPath, testLocationName, true);
     }
     await clickOn('[data-tid=location_' + testLocationName + ']');
     // await delay(500);
-    await closeFileProperties();
+    // await closeFileProperties();
   });
 
   it('TST0301 - Should create a location [web,electron]', async () => {
@@ -79,9 +55,7 @@ describe('TST03 - Testing locations:', () => {
     // const lastLocation = allLocations[allLocations.length - 1];
     // await global.client.elementIdClick(lastLocation.ELEMENT);
     await openLocationMenu(testLocationName);
-    await global.client.pause(200);
     await clickOn('[data-tid=removeLocation]');
-    await global.client.pause(200);
     await clickOn('[data-tid=confirmDeleteLocationDialog]');
     //const locationList = await global.client.$('[data-tid=locationList]');
     //await locationList.waitForDisplayed();
@@ -104,7 +78,11 @@ describe('TST03 - Testing locations:', () => {
     //await delay(500);
     //expect(allLocationsList.indexOf(newLocationName) >= 0).toBe(true);
 
-    await expectElementExist('[data-tid=location_' + newLocationName + ']');
+    await expectElementExist(
+      '[data-tid=location_' + newLocationName + testLocationName + ']',
+      true,
+      1000
+    );
   });
 
   it('TST0305 - Set as startup location [web,electron]', async () => {
@@ -129,19 +107,18 @@ describe('TST03 - Testing locations:', () => {
   it('TST0307 - Move location Up and Down [web,electron]', async () => {
     if (global.isWeb) {
       // in web there is no other locations
-      await createMinioLocation('', 'dummyLocation', false);
+      await createPwMinioLocation('', 'dummyLocation', false);
     }
     await openLocationMenu(testLocationName);
     await clickOn('[data-tid=moveLocationUp]');
 
-    const prevLocation = await getLocationTid(-2);
+    const prevLocation = await getPwLocationTid(-2);
     expect(prevLocation).toBe(testLocationName);
 
-    await global.client.pause(500);
     await openLocationMenu(testLocationName);
     await clickOn('[data-tid=moveLocationDown]');
 
-    const lastLocation = await getLocationTid(-1);
+    const lastLocation = await getPwLocationTid(-1);
     expect(lastLocation).toBe(testLocationName);
   });
 });

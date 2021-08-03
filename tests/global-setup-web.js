@@ -1,16 +1,8 @@
-import pathLib from 'path';
-import {
-  globalSetup,
-  // startChromeDriver,
-  startMinio,
-  startWebServer
-} from './setup-functions';
+import { startMinio, startWebServer } from './setup-functions';
+import { removeExtConfig } from './e2e/hook';
 
 module.exports = async function() {
-  await globalSetup();
-
-  const fse = require('fs-extra');
-  fse.removeSync(pathLib.join(__dirname, '..', 'app', 'extconfig.js'));
+  await removeExtConfig();
 
   global.webserver = await startWebServer();
   // global.chromeDriver = await startChromeDriver();

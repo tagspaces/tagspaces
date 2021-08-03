@@ -1,6 +1,7 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 import electronPath from 'electron';
 import pathLib from 'path';
+import fse from 'fs-extra';
 
 // Spectron API https://github.com/electron/spectron
 // Webdriver.io http://webdriver.io/api.html
@@ -53,7 +54,20 @@ export async function clearLocalStorage() {
   // global.app.client.reload(false);
 }
 
-export async function startSpectronApp() {
+export async function copyExtConfig(extconfig = 'extconfig-with-welcome.js') {
+  const srcDir = pathLib.join(__dirname, '..', '..', 'scripts', extconfig);
+  const destDir = pathLib.join(__dirname, '..', '..', 'app', 'extconfig.js');
+  await fse.copy(srcDir, destDir);
+}
+
+export async function removeExtConfig() {
+  await fse.remove(pathLib.join(__dirname, '..', 'app', 'extconfig.js'));
+}
+
+export async function startTestingApp(extconfig) {
+  if (extconfig) {
+    await copyExtConfig(extconfig);
+  }
   const chromeDriverArgs = [
     // '--disable-gpu',
     '--disable-infobars',
@@ -146,13 +160,6 @@ export async function startSpectronApp() {
     global.client = await global.app.firstWindow();
     await global.client.waitForLoadState('load'); //'domcontentloaded'); //'networkidle');
     // await global.client.bringToFront();
-    // Evaluation expression in the Electron context.
-    /*const appPath = await global.app.evaluate(async ({ app }) => {
-      // This runs in the main Electron process, parameter here is always
-      // the result of the require('electron') in the main app script.
-      return app.getAppPath();
-    });
-    console.log(appPath);*/
 
     // Print the title.
     // console.log(await global.client.title());
@@ -218,6 +225,9 @@ export async function stopSpectronApp() {
 
 export async function testDataRefresh() {
   const fse = require('fs-extra');
+  //const gracefulFs = require('graceful-fs')
+  //gracefulFs.gracefulify(fse);
+
   const src = pathLib.join(
     __dirname,
     '..',
@@ -230,9 +240,9 @@ export async function testDataRefresh() {
   let newPath = pathLib.join(dst, pathLib.basename(src));
   fse.emptyDirSync(newPath);
   fse.copySync(src, newPath, { overwrite: true });
-  if (global.isElectron && global.client) {
+  /*if (global.isElectron && global.client) {
     await global.client.waitForTimeout(1000);
-  }
+  }*/
 }
 
 export async function takeScreenshot(name = expect.getState().currentTestName) {

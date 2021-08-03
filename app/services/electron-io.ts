@@ -268,10 +268,10 @@ export default class ElectronIO {
       let eentry;
       let containsMetaFolder = false;
       // const metaMetaFolder = AppConfig.metaFolder + AppConfig.dirSeparator + AppConfig.metaFolder;
-      if (path.startsWith('./')) {
+      /* if (path.startsWith('./')) {
         // relative paths
         path = pathLib.resolve(path);
-      }
+      } */
       this.fs.readdir(path, (error, entries) => {
         if (error) {
           console.warn('Error listing directory ' + path);
@@ -285,6 +285,9 @@ export default class ElectronIO {
         }
 
         if (entries) {
+          console.debug(
+            'Listing directory ' + path + ' entries:' + entries.length
+          );
           if (!showIgnored && ignorePatterns.length > 0) {
             // eslint-disable-next-line no-param-reassign
             entries = entries.filter(
@@ -339,7 +342,9 @@ export default class ElectronIO {
                   eentry.meta = this.fs.readJsonSync(folderMetaPath);
                   // console.log('Success reading meta folder file ' + folderMetaPath);
                 } catch (err) {
-                  // console.log('Failed reading meta folder file ' + folderMetaPath);
+                  console.log(
+                    'Failed reading meta folder file ' + folderMetaPath
+                  );
                 }
 
                 // Loading thumbs for folders
@@ -465,8 +470,24 @@ export default class ElectronIO {
       });
     });
 
-  getPropertiesPromise = (path: string): Promise<any> =>
-    new Promise(resolve => {
+  // Create a promise that rejects in <ms> milliseconds
+  timeout = (ms: number): Promise<any> =>
+    new Promise((resolve, reject) => {
+      const id = setTimeout(() => {
+        clearTimeout(id);
+        reject(new Error('Timed out in ' + ms + 'ms.'));
+      }, ms);
+    });
+
+  /**
+   * TODO lstat sometimes hangs on Electron e2e tests
+   * @param path
+   * return on success: resolve Promise<TS.FileSystemEntry>
+   *        on error:   resolve Promise<false> (file not exist) TODO rethink this to reject error too
+   *        on timeout: reject error
+   */
+  getPropertiesPromise = (path: string): Promise<any> => {
+    const promise = new Promise(resolve => {
       /* stats for file:
        * "dev":41, "mode":33204, "nlink":1, "uid":1000, "gid":1000,  "rdev":0,
        * "blksize":4096, "ino":2634172, "size":230, "blocks":24,  "atime":"2015-11-24T09:56:41.932Z",
@@ -492,13 +513,18 @@ export default class ElectronIO {
         }
       });
     });
+    // Returns a race between our timeout and the passed in promise
+    return Promise.race([promise, this.timeout(2000)]);
+  };
 
   createDirectoryPromise = (dirPath: string): Promise<any> => {
     console.log('Creating directory: ' + dirPath);
     return new Promise((resolve, reject) => {
       this.fs.mkdirp(dirPath, error => {
         if (error) {
-          reject('Error creating folder: ' + dirPath + ' with ' + error);
+          reject(
+            new Error('Error creating folder: ' + dirPath + ' with ' + error)
+          );
           return;
         }
         // Make newly created .ts folders hidden under Windows
@@ -693,6 +719,12 @@ export default class ElectronIO {
       xhr.send();
     });
 
+  /**
+   * TODO rethink return Promise<TS.FileSystemEntry> and optimize and remove getPropertiesPromise before save file
+   * @param filePath
+   * @param content
+   * @param overwrite
+   */
   saveFilePromise = (
     filePath: string,
     content: any,
@@ -712,10 +744,27 @@ export default class ElectronIO {
 
       this.getPropertiesPromise(filePath)
         .then((entry: TS.FileSystemEntry) => {
-          if (entry && entry.isFile && overwrite) {
-            saveFile({ ...entry, isNewFile: false, tags: [] }, content);
+          if (entry) {
+            if (entry.isFile && overwrite) {
+              saveFile({ ...entry, isNewFile: false, tags: [] }, content);
+            }
           } else {
-            saveFile({ ...entry, isNewFile: true, tags: [] }, content);
+            saveFile(
+              {
+                name: extractFileName(filePath, AppConfig.dirSeparator),
+                isFile: true,
+                path: filePath,
+                extension: extractFileExtension(
+                  filePath,
+                  AppConfig.dirSeparator
+                ),
+                size: 0,
+                lmdt: new Date().getTime(),
+                isNewFile: true,
+                tags: []
+              },
+              content
+            );
           }
           return true;
         })
@@ -774,9 +823,12 @@ export default class ElectronIO {
   ): Promise<any> => {
     if (useTrash) {
       return new Promise((resolve, reject) => {
-        this.moveToTrash([path])
-          .then(() => resolve(path))
-          .catch(err => reject(err));
+        if (this.moveToTrash([path])) {
+          resolve(path);
+        } else {
+          // console.error('deleteDirectoryPromise '+path+' failed');
+          reject(new Error('deleteDirectoryPromise ' + path + ' failed'));
+        }
       });
     }
 
@@ -796,9 +848,12 @@ export default class ElectronIO {
   ): Promise<any> => {
     if (useTrash) {
       return new Promise((resolve, reject) => {
-        this.moveToTrash([path])
-          .then(() => resolve(path))
-          .catch(err => reject(err));
+        if (this.moveToTrash([path])) {
+          resolve(path);
+        } else {
+          // console.error('deleteDirectoryPromise '+path+' failed');
+          reject(new Error('deleteDirectoryPromise ' + path + ' failed'));
+        }
       });
     }
 
@@ -812,18 +867,23 @@ export default class ElectronIO {
     });
   };
 
-  moveToTrash = (files: Array<string>): Promise<any> =>
-    new Promise((resolve, reject) => {
-      let result = true;
+  moveToTrash = (files: Array<string>): boolean => {
+    // Promise<any> => {
+
+    const result = this.ipcRenderer.sendSync('move-to-trash', files);
+    return result && result.length > 0;
+    /* const result = [];
       files.forEach(fullPath => {
-        result = this.electron.shell.trashItem(fullPath);
+        result.push(this.electron.shell.trashItem(fullPath));
       });
-      if (result) {
+      return Promise.all(result); */
+
+    /* if (result) {
         resolve(true);
       } else {
         reject('Moving of at least one file to trash failed.');
-      }
-    });
+      } */
+  };
 
   openDirectory = (dirPath: string): void => {
     if (AppConfig.isWin) {

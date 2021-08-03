@@ -16,6 +16,7 @@
  *
  */
 
+import pathLib from 'path';
 import AppConfig from '../config';
 import { TS } from '-/tagspaces.namespace';
 
@@ -154,12 +155,15 @@ export function extractFileName(
   filePath: string,
   dirSeparator: string // = AppConfig.dirSeparator
 ): string {
-  return filePath
-    ? filePath.substring(
-        filePath.lastIndexOf(dirSeparator) + 1,
-        filePath.length
-      )
-    : filePath;
+  if (filePath) {
+    const path = filePath;
+    if (filePath.endsWith(dirSeparator)) {
+      return '';
+      // path = filePath.substring(0, filePath.length - dirSeparator.length);
+    }
+    return path.substring(path.lastIndexOf(dirSeparator) + 1, path.length);
+  }
+  return filePath;
 }
 
 export function cleanTrailingDirSeparator(dirPath: string): string {
@@ -393,15 +397,24 @@ export function extractTags(
 }
 
 export function getLocationPath(location: TS.Location) {
+  let locationPath = '';
   if (location) {
     if (location.path) {
-      return location.path;
+      locationPath = location.path;
     }
     if (location.paths && location.paths[0]) {
-      return location.paths[0];
+      // eslint-disable-next-line prefer-destructuring
+      locationPath = location.paths[0];
+    }
+
+    if (AppConfig.isElectron && locationPath && locationPath.startsWith('./')) {
+      // TODO test relative path (Directory Back) with other platforms
+      // relative paths
+      return pathLib.resolve(locationPath);
     }
   }
-  return '';
+
+  return locationPath;
 }
 
 /**

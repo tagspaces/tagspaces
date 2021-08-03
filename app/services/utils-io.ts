@@ -193,6 +193,13 @@ export function prepareDirectoryContent(
   );
   const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
 
+  function useGenerateThumbnails() {
+    if (AppConfig.useGenerateThumbnails !== undefined) {
+      return AppConfig.useGenerateThumbnails;
+    }
+    return settings.useGenerateThumbnails;
+  }
+
   const {
     directoryContent,
     tmbGenerationPromises,
@@ -201,7 +208,7 @@ export function prepareDirectoryContent(
     dirEntries,
     isCloudLocation,
     settings.showUnixHiddenEntries,
-    settings.useGenerateThumbnails
+    generateThumbnails && useGenerateThumbnails()
   );
 
   function handleTmbGenerationResults(results) {
@@ -563,6 +570,7 @@ export async function getAllPropertiesPromise(
 }
 
 export async function loadJSONFile(filePath: string) {
+  // console.debug('loadJSONFile:' + filePath);
   const jsonContent = await PlatformIO.loadTextFilePromise(filePath);
   return loadJSONString(jsonContent);
   /* const UTF8_BOM = '\ufeff';
@@ -787,63 +795,46 @@ export async function loadLocationDataPromise(
   return undefined;
 }
 
-export async function loadMetaDataPromise(
+export function loadMetaDataPromise(
   path: string
 ): Promise<TS.FileSystemEntryMeta> {
-  const entryProperties = await PlatformIO.getPropertiesPromise(path);
-  let metaDataObject;
-  if (entryProperties.isFile) {
-    const metaFilePath = getMetaFileLocationForFile(
-      path,
-      PlatformIO.getDirSeparator()
-    );
-    let metaData;
-    try {
-      metaData = await loadJSONFile(metaFilePath);
-    } catch (e) {
-      console.debug('cannot load json:' + metaFilePath, e);
+  return PlatformIO.getPropertiesPromise(path).then(entryProperties => {
+    if (entryProperties) {
+      if (entryProperties.isFile) {
+        const metaFilePath = getMetaFileLocationForFile(
+          path,
+          PlatformIO.getDirSeparator()
+        );
+        return loadJSONFile(metaFilePath).then(metaData => ({
+          ...metaData,
+          description: metaData.description || '',
+          color: metaData.color || '',
+          tags: metaData.tags || [],
+          appName: metaData.appName || '',
+          appVersion: metaData.appVersion || '',
+          lastUpdated: metaData.lastUpdated || ''
+        }));
+      }
+      const metaFilePath = getMetaFileLocationForDir(
+        path,
+        PlatformIO.getDirSeparator()
+      );
+      return loadJSONFile(metaFilePath).then(metaData => ({
+        ...metaData,
+        id: metaData.id || uuidv1(),
+        description: metaData.description || '',
+        color: metaData.color || '',
+        perspective: metaData.perspective || '',
+        tags: metaData.tags || [],
+        appName: metaData.appName || '',
+        appVersion: metaData.appVersion || '',
+        lastUpdated: metaData.lastUpdated || '',
+        files: metaData.files || [],
+        dirs: metaData.dirs || []
+      }));
     }
-    if (!metaData) {
-      metaData = {};
-    }
-    metaDataObject = {
-      ...metaData,
-      description: metaData.description || '',
-      color: metaData.color || '',
-      tags: metaData.tags || [],
-      appName: metaData.appName || '',
-      appVersion: metaData.appVersion || '',
-      lastUpdated: metaData.lastUpdated || ''
-    };
-  } else {
-    const metaFilePath = getMetaFileLocationForDir(
-      path,
-      PlatformIO.getDirSeparator()
-    );
-    let metaData;
-    try {
-      metaData = await loadJSONFile(metaFilePath);
-    } catch (e) {
-      console.debug('cannot load json:' + metaFilePath, e);
-    }
-    if (!metaData) {
-      metaData = {};
-    }
-    metaDataObject = {
-      ...metaData,
-      id: metaData.id || uuidv1(),
-      description: metaData.description || '',
-      color: metaData.color || '',
-      perspective: metaData.perspective || '',
-      tags: metaData.tags || [],
-      appName: metaData.appName || '',
-      appVersion: metaData.appVersion || '',
-      lastUpdated: metaData.lastUpdated || '',
-      files: metaData.files || [],
-      dirs: metaData.dirs || []
-    };
-  }
-  return metaDataObject;
+    throw new Error('loadMetaDataPromise not exist' + path);
+  });
 }
 
 export function cleanMetaData(
@@ -935,12 +926,14 @@ export async function saveMetaDataPromise(
         PlatformIO.getDirSeparator()
       );
       // check and create meta folder if not exist
-      /* await PlatformIO.createDirectoryPromise(
-        extractContainingDirectoryPath(
-          metaFilePath,
-          PlatformIO.getDirSeparator()
-        )
-      ); */
+      const metaFolder = getMetaDirectoryPath(
+        extractContainingDirectoryPath(path, PlatformIO.getDirSeparator()),
+        PlatformIO.getDirSeparator()
+      );
+      const metaExist = await PlatformIO.getPropertiesPromise(metaFolder);
+      if (!metaExist) {
+        await PlatformIO.createDirectoryPromise(metaFolder);
+      }
     } else {
       // check and create meta folder if not exist
       // todo not need to check if folder exist first createDirectoryPromise() recursively will skip creation of existing folders https://nodejs.org/api/fs.html#fs_fs_mkdir_path_options_callback

@@ -144,13 +144,14 @@ export async function addInputKeys(tid, value) {
  * TODO not work in Playwright
  * @param tid
  * @param value
+ * @param delay
  * @returns {Promise<*>}
  */
-export async function setInputKeys(tid, value) {
+export async function setInputKeys(tid, value, delay = 50) {
   if (isPlaywright) {
     // global.client.keyboard.type('[data-tid=' + tid + '] input', value, { delay: 100 });
     await global.client.type('[data-tid=' + tid + '] input', value, {
-      delay: 100
+      delay
     });
   } else {
     return await setSelectorKeys('[data-tid=' + tid + ']', value);
@@ -266,7 +267,7 @@ export async function isDisplayed(selector, displayed = true, timeout = 500) {
       }
       return el !== null;
     } catch (error) {
-      console.log('The FileProperties not open.');
+      console.log('The FileProperties not open:' + selector);
     }
     return false;
   }
@@ -589,7 +590,7 @@ export async function waitForNotification(
   if (await isDisplayed('[data-tid=' + tid + ']')) {
     //const closeButton = await global.client.$('[data-tid=close' + tid + ']');
     if (forceClose && (await isDisplayed('[data-tid=close' + tid + ']'))) {
-      await clickOn('[data-tid=close' + tid + ']');
+      await clickOn('[data-tid=close' + tid + ']', { force: true });
     } else {
       // autohide Notification
       await isDisplayed('[data-tid=' + tid + ']', false, 2000);
@@ -598,9 +599,15 @@ export async function waitForNotification(
   }
 }
 
-export async function setSettings(selector) {
+export async function setSettings(selector, click = false) {
   await clickOn('[data-tid=settings]');
-  await clickOn(selector);
+  if (click) {
+    await clickOn(selector);
+  } else {
+    // check
+    await global.client.check(selector + ' input');
+    expect(await global.client.isChecked(selector + ' input')).toBeTruthy();
+  }
   await clickOn('[data-tid=closeSettingsDialog]');
 }
 
@@ -682,7 +689,9 @@ export async function deleteDirectory() {
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
   await clickOn('[data-tid=deleteDirectory]');
   await clickOn('[data-tid=confirmDeleteFileDialog]');
-  await waitForNotification();
+  if (global.isElectron) {
+    await waitForNotification();
+  }
 }
 
 export async function toHaveText() {

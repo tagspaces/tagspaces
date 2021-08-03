@@ -7,7 +7,7 @@ import {
   setInputKeys,
   setInputValue
 } from './general.helpers';
-import { matchers } from 'expect-playwright';
+import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
 
 const testTagName = 'testTag';
 const newTagName = 'newTagName';
@@ -40,8 +40,15 @@ export async function tagMenu(tagName, menuOperation) {
 }
 
 describe('TST04 - Testing the tag library:', () => {
+  beforeAll(async () => {
+    await startTestingApp();
+  });
+
+  afterAll(async () => {
+    await stopSpectronApp();
+    await testDataRefresh();
+  });
   beforeEach(async () => {
-    expect.extend(matchers);
     await clickOn('[data-tid=tagLibrary]');
   });
 

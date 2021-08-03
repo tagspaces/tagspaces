@@ -1,23 +1,24 @@
 /*
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
-import {
-  createLocation,
-  defaultLocationPath,
-  defaultLocationName,
-  closeFileProperties,
-  createMinioLocation,
-  createPwMinioLocation,
-  createPwLocation
-} from './location.helpers';
+import { defaultLocationName } from './location.helpers';
 import {
   clickOn,
   expectElementExist,
   selectorFile,
   setInputValue
 } from './general.helpers';
+import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
 
 describe('TST13 - Settings Key Bindings [electron]', () => {
+  beforeAll(async () => {
+    await startTestingApp('extconfig-with-welcome.js');
+  });
+
+  afterAll(async () => {
+    await stopSpectronApp();
+    await testDataRefresh();
+  });
   beforeEach(async () => {
     // if (global.isMinio) {
     //   await createPwMinioLocation('', defaultLocationName, true);
@@ -30,8 +31,13 @@ describe('TST13 - Settings Key Bindings [electron]', () => {
   });
 
   it('TST1311 - Test show search [electron]', async () => {
+    const isMac = /^darwin/.test(process.platform);
     await clickOn(selectorFile);
-    await global.client.keyboard.press('Control+KeyF');
+    if (isMac) {
+      await global.client.keyboard.press('Meta+KeyF');
+    } else {
+      await global.client.keyboard.press('Control+KeyF');
+    }
     await expectElementExist('[data-tid=searchMenu]', true);
   });
 

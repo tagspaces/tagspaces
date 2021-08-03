@@ -71,6 +71,7 @@ export const AppConfig = {
       : false,
   useSidecarsForFileTaggingDisableSetting:
     window.ExtUseSidecarsForFileTagging !== undefined,
+  useGenerateThumbnails: window.ExtUseGenerateThumbnails,
   customLogo: window.ExtLogoURL || false,
   showAdvancedSearch:
     window.ExtShowAdvancedSearch !== undefined

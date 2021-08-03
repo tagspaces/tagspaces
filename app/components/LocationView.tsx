@@ -95,7 +95,9 @@ const LocationView = (props: Props) => {
   const isCloudLocation = location.type === locationType.TYPE_CLOUD;
 
   const handleLocationClick = () => {
-    directoryTreeRef.current.changeLocation(location);
+    if (directoryTreeRef.current) {
+      directoryTreeRef.current.changeLocation(location);
+    }
     if (location.uuid === props.currentLocationId) {
       // the same location click
       props.loadDirectoryContent(getLocationPath(location), false);

@@ -16,7 +16,14 @@
  *
  */
 
-import { app, BrowserWindow, dialog, globalShortcut, ipcMain } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  dialog,
+  globalShortcut,
+  ipcMain,
+  shell
+} from 'electron';
 import windowStateKeeper from 'electron-window-state';
 import path from 'path';
 import i18n from '-/services/i18n'; // '-/i18nBackend';
@@ -86,7 +93,7 @@ process.argv.forEach((arg, count) => {
 let mainHTML = `file://${__dirname}/app.html`;
 let workerDevMode = false;
 
-if (devMode) {
+if (devMode || testMode) {
   // eslint-disable-next-line
   require('electron-debug')({ showDevTools: false, devToolsMode: 'right' });
   const p = path.join(__dirname, '..', 'app', 'node_modules');
@@ -413,6 +420,10 @@ async function createAppWindow() {
     }
   });
 
+  /*setTimeout(() => {
+    mainWindow.toggleDevTools(); // debugging
+  }, 2000);*/
+
   const winUserAgent =
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36';
   const testWinOnUnix = false; // set to true to simulate windows os, useful for testing s3 handling
@@ -491,7 +502,9 @@ app.on('ready', async () => {
     await installExtensions();
   }
 
+  // if (!process.env.DISABLE_WORKER) {
   createSplashWorker();
+  //}
   buildAppMenu();
   await createAppWindow();
   buildTrayMenu();
@@ -581,6 +594,19 @@ app.on('ready', async () => {
 
   ipcMain.on('app-dir-path-request', event => {
     event.returnValue = path.join(__dirname, ''); // eslint-disable-line
+  });
+
+  ipcMain.on('move-to-trash', async (event, files) => {
+    const result = [];
+    files.forEach(fullPath => {
+      result.push(shell.trashItem(fullPath));
+    });
+    try {
+      event.returnValue = await Promise.all(result);
+    } catch (err) {
+      console.error('moveToTrash error:', err);
+      event.returnValue = undefined;
+    }
   });
 
   ipcMain.on('set-language', (e, language) => {

@@ -1,13 +1,6 @@
-import {
-  clearLocalStorage,
-  startSpectronApp,
-  stopSpectronApp,
-  takeScreenshot,
-  testDataRefresh
-} from './e2e/hook';
+import { clearLocalStorage, takeScreenshot } from './e2e/hook';
 import { closeWelcome, closeWelcomePlaywright } from './e2e/welcome.helpers';
 import { clearStorage } from './e2e/clearstorage.helpers';
-import pathLib from 'path';
 
 // the default timeout before starting every test
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 300000;
@@ -46,18 +39,18 @@ jasmine.getEnv().addReporter({
   }
 });*/
 
-beforeAll(async () => {
-  await testDataRefresh();
+/*beforeAll(async () => {
   await startSpectronApp();
 });
 
 afterAll(async () => {
   await stopSpectronApp();
-});
+  await testDataRefresh();
+});*/
 
 beforeEach(async () => {
   if (global.isPlaywright) {
-    if (global.context) {
+    /*if (global.context) {
       if (jasmine.currentTest && jasmine.currentTest.status !== 'disabled') {
         // Start tracing before creating / navigating a page.
         await global.context.tracing.start({
@@ -65,11 +58,11 @@ beforeEach(async () => {
           snapshots: true
         });
       }
-    }
+    }*/
 
-    // if (global.isMinio) {
     await closeWelcomePlaywright();
-    // }
+    await clearStorage();
+    await closeWelcomePlaywright();
   } else {
     if (jasmine.currentTest && jasmine.currentTest.status !== 'disabled') {
       // console.log('specDone Done' + JSON.stringify(result));
@@ -90,7 +83,7 @@ afterEach(async () => {
   //   // takeScreenshot();
   //   // await clearLocalStorage();
   // testDataRefresh();
-  if (global.context) {
+  /*if (global.context) {
     if (jasmine.currentTest && jasmine.currentTest.status !== 'disabled') {
       // console.log('specDone Done' + JSON.stringify(result));
       // if (jasmine.previousTest && jasmine.previousTest.status === 'failed') {
@@ -102,6 +95,6 @@ afterEach(async () => {
       });
       //}
     }
-  }
-  await clearStorage();
+  }*/
+  // await clearStorage();
 });
