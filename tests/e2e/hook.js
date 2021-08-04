@@ -164,8 +164,10 @@ export async function startTestingApp(extconfig) {
     // Print the title.
     // console.log(await global.client.title());
 
-    // Direct Electron console to Node terminal.
-    global.client.on('console', console.log);
+    if (process.env.SHOW_CONSOLE) {
+      // Direct Electron console to Node terminal.
+      global.client.on('console', console.debug);
+    }
     // Click button.
     /*await global.client.click('[data-tid=location_supported-filestypes]');
     // Capture a screenshot.

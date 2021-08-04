@@ -202,15 +202,16 @@ export async function checkForIdExist(tid) {
   // expect(dataTid.selector).toBe('[data-tid=' + tid + ']');
 }
 
+/**
+ * @param newFileName
+ * @param selector
+ * @returns {Promise<oldFileName: string>}
+ */
 export async function renameFileFromMenu(newFileName, selector = selectorFile) {
-  let fileName;
   await openContextEntryMenu(selector, 'fileMenuRenameFile');
-  // await global.client.pause(500);
-  const renameFileDialogInput = await global.client.$(
+  const fileName = await global.client.inputValue(
     '[data-tid=renameEntryDialogInput] input'
   );
-  await renameFileDialogInput.waitForDisplayed({ timeout: 5000 });
-  fileName = await renameFileDialogInput.getValue();
 
   await setInputKeys('renameEntryDialogInput', newFileName);
   await clickOn('[data-tid=confirmRenameEntry]');
