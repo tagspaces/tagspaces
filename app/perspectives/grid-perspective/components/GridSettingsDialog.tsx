@@ -131,6 +131,7 @@ const GridSettingsDialog = (props: Props) => {
           <FormControlLabel
             control={
               <Switch
+                data-tid="gridPerspectiveToggleShowDirectories"
                 checked={showDirectories}
                 onChange={toggleShowDirectories}
                 name="checkedB"
@@ -142,6 +143,7 @@ const GridSettingsDialog = (props: Props) => {
           <FormControlLabel
             control={
               <Switch
+                data-tid="gridPerspectiveToggleShowTags"
                 checked={showTags}
                 onChange={toggleShowTags}
                 name="checkedB"
