@@ -90,7 +90,7 @@
     "test-unit": "cross-env NODE_JEST=unit_test BABEL_DISABLE_CACHE=1 jest --config=jest.config.unit.js --verbose ./tests/unit/",
     "test-all": "yarn build && yarn test-unit && yarn build-e2e && yarn test-e2e",
     "test-one": "cross-env HEADLESS_MODE=true jest --detectOpenHandles --config=jest.config.web.js -t 'TST5016' --runInBand --verbose ./tests/e2e/",
-    "test-playwright": "yarn test-refresh-data && cross-env DISABLE_WORKER=true NODE_ENV=test jest --config=jest.config.playwright.js -t 'electron' --verbose ./tests/e2e/",
+    "test-playwright": "yarn test-refresh-data && cross-env JEST_JUNIT_OUTPUT_DIR=./tests DISABLE_WORKER=true NODE_ENV=test jest --config=jest.config.playwright.js -t 'electron' --verbose ./tests/e2e/",
     "test-refresh-data": "rimraf tests/testdata-tmp && shx mkdir -p tests/testdata-tmp/file-structure && shx cp -rL tests/testdata/file-structure tests/testdata-tmp",
     "test-playwright-web": "yarn test-refresh-data && cross-env DEBUG=pw:api PLAYWRIGHT=test_playwright jest --config=jest.config.web.js -t 'web' --verbose ./tests/e2e/",
     "test-playwright-web-headless": "yarn test-refresh-data && cross-env JEST_JUNIT_OUTPUT_DIR=./tests PLAYWRIGHT=test_playwright HEADLESS_MODE=true jest --config=jest.config.web.js -t 'web' --verbose ./tests/e2e/",
