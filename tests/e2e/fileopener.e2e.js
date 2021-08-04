@@ -220,6 +220,7 @@ describe('TST08 - File folder properties', () => {
     await expectElementExist('[data-tid=fullscreenTID]', true);
     await clickOn('[data-tid=fullscreenTID]');
     await expectElementExist('[data-tid=fullscreenTID]', false);
+    await global.client.waitForTimeout(500);
   });
 
   it.skip('TST0815 - Test opening file, while TS is in fullscreen(F11) [manual]', async () => {});

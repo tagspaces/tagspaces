@@ -155,9 +155,13 @@ export async function addInputKeys(tid, value) {
 export async function setInputKeys(tid, value, delay = 50) {
   if (isPlaywright) {
     // global.client.keyboard.type('[data-tid=' + tid + '] input', value, { delay: 100 });
+    const oldValue = await global.client.inputValue(
+      '[data-tid=' + tid + '] input'
+    );
     await global.client.type('[data-tid=' + tid + '] input', value, {
       delay
     });
+    return oldValue;
   } else {
     return await setSelectorKeys('[data-tid=' + tid + ']', value);
   }
@@ -571,6 +575,7 @@ export async function removeTagFromTagMenu(tagName) {
   await clickOn('[data-tid=tagMoreButton_' + tagName + ']');
   await clickOn('[data-tid=deleteTagMenu]');
   await clickOn('[data-tid=confirmRemoveTagFromFile]');
+  await isDisplayed('[data-tid=tagMoreButton_' + tagName + ']', false);
 }
 
 export async function showFilesWithTag(tagName) {

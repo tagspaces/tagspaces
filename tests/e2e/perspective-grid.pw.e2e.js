@@ -9,11 +9,9 @@ import {
   createPwLocation
 } from './location.helpers';
 import { searchEngine } from './search.helpers';
-import { perspectiveGridTable, firstFile, firstFolder } from './test-utils';
 import {
   clickOn,
   createTxtFile,
-  doubleClickOn,
   expectElementExist,
   expectTagsExistBySelector,
   extractTags,
