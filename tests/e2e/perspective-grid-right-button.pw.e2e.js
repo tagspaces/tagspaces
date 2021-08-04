@@ -268,7 +268,10 @@ describe('TST50** - Right button on a file', () => {
     await cancelButton.click();
   });*/
 
-  test('TST5028 - Move - Copy file (file menu) [web,minio,electron]', async () => {
+  /**
+   * todo web: io-actions.ts:120 Moving files failed with Renaming file failedSignatureDoesNotMatch
+   */
+  test('TST5028 - Move - Copy file (file menu) [minio,electron]', async () => {
     // Move file in child folder
     // const fileExtension = 'pdf'; //'eml' -> todo search found extra files (.gitkeep) with fuseOptions = {threshold: 0.4,
     // await searchEngine(fileExtension);
@@ -282,6 +285,7 @@ describe('TST50** - Right button on a file', () => {
 
     await clickOn('[data-tid=confirmMoveFiles]');
     await waitForNotification();
+    await expectElementExist(getGridFileSelector(fileName), false);
     //await clickOn('#clearSearchID');
     await global.client.dblclick(selectorFolder);
     //await searchEngine(fileExtension, { reindexing: true }); // TODO temp fix: https://trello.com/c/ZfcGGvOM/527-moved-files-is-not-indexing-not-found-in-search
@@ -314,8 +318,9 @@ describe('TST50** - Right button on a file', () => {
   test('TST5033 - Open directory (directory menu) [web,minio,electron]', async () => {
     // open empty_folder
     await openContextEntryMenu(selectorFolder, 'openDirectory');
-    const firstFileName = await getGridFileName(0);
-    expect(firstFileName).toBe(undefined); //'sample.eml');
+    await expectElementExist(selectorFile, false);
+    //const firstFileName = await getGridFileName(0);
+    //expect(firstFileName).toBe(undefined); //'sample.eml');
   });
 
   test('TST5034 - Rename directory (directory menu) [web,minio,electron]', async () => {

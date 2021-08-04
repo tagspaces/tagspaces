@@ -216,14 +216,20 @@ describe('TST50 - Perspective Grid', () => {
     await clickOn('[data-tid=gridPerspectiveAddRemoveTags]');
     await clickOn('[data-tid=cleanTagsMultipleEntries]');
 
-    for (let i = 0; i < selectedIds.length; i++) {
+    for (let i = 0; i < tags.length; i++) {
+      await expectElementExist(
+        '[data-tid=tagMoreButton_' + tags[i] + ']',
+        false
+      );
+    }
+    /*for (let i = 0; i < selectedIds.length; i++) {
       const gridElement = await global.client.$(
         '[data-entry-id="' + selectedIds[i] + '"]'
       );
       await isElementDisplayed(gridElement);
       const tags = await extractTags(gridElement);
       expect(tags.length).toBe(0);
-    }
+    }*/
   });
 
   test('TST5008 - Copy file [web,minio,electron]', async () => {
@@ -243,8 +249,9 @@ describe('TST50 - Perspective Grid', () => {
     await waitForNotification();
 
     await global.client.dblclick(selectorFolder);
-    const firstFileName = await getGridFileName(0);
-    expect(firstFileName).toBe(sampleFileName);
+    await expectElementExist(selectorFile, true);
+    // const firstFileName = await getGridFileName(0);
+    // expect(firstFileName).toBe(sampleFileName);
     // cleanup
     await deleteFileFromMenu();
     await expectElementExist(selectorFile, false);
