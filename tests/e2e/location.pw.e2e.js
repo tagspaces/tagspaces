@@ -68,6 +68,7 @@ describe('TST03 - Testing locations:', () => {
   it('TST0303 - Rename location [web,electron]', async () => {
     await openLocationMenu(testLocationName);
     await clickOn('[data-tid=editLocation]');
+    await global.client.dblclick('[data-tid=locationName] input');
     await setInputKeys('locationName', newLocationName);
     await clickOn('[data-tid=confirmLocationCreation]');
     /*await delay(500);
@@ -79,7 +80,7 @@ describe('TST03 - Testing locations:', () => {
     //expect(allLocationsList.indexOf(newLocationName) >= 0).toBe(true);
 
     await expectElementExist(
-      '[data-tid=location_' + newLocationName + testLocationName + ']',
+      '[data-tid=location_' + newLocationName + ']',
       true,
       1000
     );
