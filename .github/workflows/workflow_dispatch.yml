@@ -3,9 +3,9 @@ on:
   workflow_dispatch:
     inputs:
       command:
-        description: 'Command to execute e2e tests default: yarn test-e2e-electron-minio'
+        description: 'Command to execute e2e tests default: yarn test-playwright-web-headless'
         required: true
-        default: 'test-e2e-electron-minio'
+        default: 'test-playwright-web-headless'
 
 jobs:
   e2eTests:
