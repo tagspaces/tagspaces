@@ -67,7 +67,7 @@ describe('TST50** - Right button on a file', () => {
     );
     // Check if the file is opened
     // await delay(1500);
-    await expectElementExist('#FileViewer');
+    await expectElementExist('#FileViewer', true, 2000);
     const webViewer = await global.client.$('#FileViewer');
     // await webViewer.waitForDisplayed();
     //await delay(5000);
@@ -77,9 +77,12 @@ describe('TST50** - Right button on a file', () => {
     const iframeBody = await iframe.$('body');
     await isElementDisplayed(iframeBody);
     const bodyTxt = await iframeBody.innerText();
-
+    const containTID = toContainTID(bodyTxt);
+    if (!containTID) {
+      console.debug(bodyTxt);
+    }
     //await global.client.switchToParentFrame();
-    expect(toContainTID(bodyTxt)).toBe(true);
+    expect(containTID).toBe(true);
   });
 
   test('TST5017 - Rename file [web,minio,electron]', async () => {

@@ -713,6 +713,7 @@ export async function reloadDirectory() {
 }
 
 export async function createNewDirectory(dirName = testFolder) {
+  await isDisplayed('[data-tid=folderContainerOpenDirMenu]');
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
   await clickOn('[data-tid=newSubDirectory]');
   // set new dir name
