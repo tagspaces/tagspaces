@@ -93,7 +93,7 @@ export default class PlatformIO {
     }
   };
 
-  static isWorkerAvailable = (): boolean => nativeAPI.isWorkerAvailable();
+  // static isWorkerAvailable = (): boolean => nativeAPI.isWorkerAvailable();
 
   static setZoomFactorElectron = zoomLevel => {
     if (nativeAPI.setZoomFactorElectron) {

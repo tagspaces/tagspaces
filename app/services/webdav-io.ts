@@ -90,7 +90,7 @@ export default class WebDAVIO {
     );
   }
 
-  isWorkerAvailable = (): boolean => false;
+  // isWorkerAvailable = (): boolean => false;
 
   getDevicePaths = (): Object => {
     const paths = {

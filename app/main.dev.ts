@@ -36,7 +36,7 @@ import keyBindings from '-/utils/keyBindings';
 
 const isMac = process.platform === 'darwin';
 let mainWindow = null;
-(global as any).splashWorkerWindow = null;
+// (global as any).splashWorkerWindow = null;
 
 if (process.env.NODE_ENV === 'production') {
   // eslint-disable-next-line
@@ -91,7 +91,7 @@ process.argv.forEach((arg, count) => {
 });
 
 let mainHTML = `file://${__dirname}/app.html`;
-let workerDevMode = false;
+const workerDevMode = false;
 
 if (devMode || testMode) {
   // eslint-disable-next-line
@@ -315,31 +315,31 @@ function buildAppMenu() {
       openNextFile: getNextFile,
       openPrevFile: getPreviousFile,
       quitApp: reloadApp,
-      showCreateDirectoryDialog: showCreateDirectoryDialog,
-      toggleOpenLinkDialog: toggleOpenLinkDialog,
-      openLocationManagerPanel: openLocationManagerPanel,
-      openTagLibraryPanel: openTagLibraryPanel,
-      goBack: goBack,
-      goForward: goForward,
-      setZoomResetApp: setZoomResetApp,
-      setZoomInApp: setZoomInApp,
-      setZoomOutApp: setZoomOutApp,
-      exitFullscreen: exitFullscreen,
-      toggleSettingsDialog: toggleSettingsDialog,
-      openHelpFeedbackPanel: openHelpFeedbackPanel,
-      toggleKeysDialog: toggleKeysDialog,
-      toggleOnboardingDialog: toggleOnboardingDialog,
-      openURLExternally: openURLExternally,
-      toggleLicenseDialog: toggleLicenseDialog,
-      toggleThirdPartyLibsDialog: toggleThirdPartyLibsDialog,
-      toggleAboutDialog: toggleAboutDialog,
+      showCreateDirectoryDialog,
+      toggleOpenLinkDialog,
+      openLocationManagerPanel,
+      openTagLibraryPanel,
+      goBack,
+      goForward,
+      setZoomResetApp,
+      setZoomInApp,
+      setZoomOutApp,
+      exitFullscreen,
+      toggleSettingsDialog,
+      openHelpFeedbackPanel,
+      toggleKeysDialog,
+      toggleOnboardingDialog,
+      openURLExternally,
+      toggleLicenseDialog,
+      toggleThirdPartyLibsDialog,
+      toggleAboutDialog,
       keyBindings: keyBindings(isMac)
     },
     i18n
   );
 }
 
-function createSplashWorker() {
+/* function createSplashWorker() {
   // console.log('Dev ' + process.env.NODE_ENV + ' worker ' + showWorkerWindow);
   (global as any).splashWorkerWindow = new BrowserWindow({
     show: workerDevMode,
@@ -368,7 +368,7 @@ function createSplashWorker() {
     } catch (err) {
       console.warn('Error closing the splash window. ' + err);
     }
-    createSplashWorker();
+    // createSplashWorker();
   });
 
   // electron-io actions
@@ -386,7 +386,7 @@ function createSplashWorker() {
     }
     event.returnValue = workerAvailable;
   });
-}
+} */
 
 async function createAppWindow() {
   let startupParameter = '';
@@ -420,9 +420,9 @@ async function createAppWindow() {
     }
   });
 
-  /*setTimeout(() => {
+  /* setTimeout(() => {
     mainWindow.toggleDevTools(); // debugging
-  }, 2000);*/
+  }, 2000); */
 
   const winUserAgent =
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36';
@@ -441,7 +441,7 @@ async function createAppWindow() {
       throw new Error('"mainWindow" is not defined');
     }
     // mainWindow.show();
-    (global as any).splashWorkerWindow.hide(); // Comment for easy debugging of the worker (global as any).splashWorkerWindow.show();
+    // (global as any).splashWorkerWindow.hide(); // Comment for easy debugging of the worker (global as any).splashWorkerWindow.show();
     if (portableMode) {
       mainWindow.setTitle(mainWindow.title + ' Portable 🔌');
     }
@@ -454,12 +454,12 @@ async function createAppWindow() {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null;
-    try {
+    /* try {
       (global as any).splashWorkerWindow.close();
       (global as any).splashWorkerWindow = null;
     } catch (err) {
       // console.warn('Error closing the splash window. ' + err);
-    }
+    } */
   });
 
   mainWindow.webContents.on('crashed', () => {
@@ -478,7 +478,7 @@ async function createAppWindow() {
     dialog.showMessageBox(mainWindow, options).then(dialogResponse => {
       mainWindow.hide();
       if (dialogResponse.response === 0) {
-        mainWindow.loadURL(mainHTML); //reloadApp();
+        mainWindow.loadURL(mainHTML); // reloadApp();
       } else {
         mainWindow.close();
         globalShortcut.unregisterAll();
@@ -503,8 +503,8 @@ app.on('ready', async () => {
   }
 
   // if (!process.env.DISABLE_WORKER) {
-  createSplashWorker();
-  //}
+  // createSplashWorker();
+  // }
   buildAppMenu();
   await createAppWindow();
   buildTrayMenu();
@@ -545,12 +545,12 @@ app.on('ready', async () => {
     event.returnValue = app.getPath('home');
   });
 
-  ipcMain.on('worker', (event, arg) => {
+  /* ipcMain.on('worker', (event, arg) => {
     // console.log('worker event in main.' + arg.result.length);
     if ((global as any).splashWorkerWindow) {
       (global as any).splashWorkerWindow.webContents.send('worker', arg);
     }
-  });
+  }); */
 
   ipcMain.on('worker-response', (event, arg) => {
     // console.log('worker event in main.' + arg.result.length);
@@ -573,16 +573,16 @@ app.on('ready', async () => {
     return false;
   });
 
-  ///// end electron-io
+  // /// end electron-io
 
-  ipcMain.on('setSplashVisibility', (event, arg) => {
+  /* ipcMain.on('setSplashVisibility', (event, arg) => {
     // worker window needed to be visible for the PDF tmb generation
     // console.log('worker event in main: ' + arg.visibility);
     if ((global as any).splashWorkerWindow && arg.visibility) {
       (global as any).splashWorkerWindow.show();
       // arg.visibility ? global.splashWorkerWindow.show() : global.splashWorkerWindow.hide();
     }
-  });
+  }); */
 
   ipcMain.on('app-data-path-request', event => {
     event.returnValue = app.getPath('appData'); // eslint-disable-line

@@ -19,6 +19,7 @@
 import uuidv1 from 'uuid';
 import { saveAs } from 'file-saver';
 import micromatch from 'micromatch';
+import pm2 from '@elife/pm2';
 import PlatformIO from './platform-io';
 import AppConfig from '../config';
 import {
@@ -35,7 +36,7 @@ import {
 } from '-/utils/paths';
 import i18n from '../services/i18n';
 import versionMeta from '../version.json';
-import { getThumbnailURLPromise } from '-/services/thumbsgenerator';
+// import { getThumbnailURLPromise } from '-/services/thumbsgenerator';
 import { OpenedEntry, actions as AppActions } from '-/reducers/app';
 import { getLocation } from '-/reducers/locations';
 import { TS } from '-/tagspaces.namespace';
@@ -52,7 +53,7 @@ export function enhanceDirectoryContent(
   const directoryContent = [];
   const tmbGenerationPromises = [];
   const tmbGenerationList = [];
-  const isWorkerAvailable = PlatformIO.isWorkerAvailable();
+  // const isWorkerAvailable = PlatformIO.isWorkerAvailable();
 
   dirEntries.map(entry => {
     if (!showUnixHiddenEntries && entry.name.startsWith('.')) {
@@ -76,12 +77,12 @@ export function enhanceDirectoryContent(
       enhancedEntry.isFile && // only for files
       useGenerateThumbnails // enabled in the settings
     ) {
-      const isPDF = enhancedEntry.path.endsWith('.pdf');
-      if (isWorkerAvailable && !isPDF) {
-        tmbGenerationList.push(enhancedEntry.path);
-      } else {
+      // const isPDF = enhancedEntry.path.endsWith('.pdf');
+      // if (isWorkerAvailable && !isPDF) {
+      tmbGenerationList.push(enhancedEntry.path);
+      /* } else {
         tmbGenerationPromises.push(getThumbnailURLPromise(enhancedEntry.path));
-      }
+      } */
     }
     return true;
   });
@@ -245,9 +246,18 @@ export function prepareDirectoryContent(
     dispatch(AppActions.setGeneratingThumbnails(false));
     if (tmbGenerationList.length > 0) {
       dispatch(AppActions.setGeneratingThumbnails(true));
-      PlatformIO.createThumbnailsInWorker(tmbGenerationList)
+
+      pm2.start({
+        script: 'generatethumbs.js', // Script to be run
+        cwd: 'node_modules/@tagspaces/tagspaces-utils', // './process1', cwd: '/path/to/npm/module/',
+        // cwd: '/Users/sytolk/IdeaProjects/tagspaces-utils', // './process1', cwd: '/path/to/npm/module/',
+        args: ['-p false', ...tmbGenerationList], // '/Users/sytolk/Pictures'],
+        log: 'C:\\Users\\smari\\IdeaProjects\\tagspaces-utils\\process1.log' // path.join(process.cwd(), 'process1.log'),
+        // log: '/Users/sytolk/IdeaProjects/tagspaces-utils/process1.log' // path.join(process.cwd(), 'process1.log'),
+      });
+      /* PlatformIO.createThumbnailsInWorker(tmbGenerationList)
         .then(handleTmbGenerationResults)
-        .catch(handleTmbGenerationFailed);
+        .catch(handleTmbGenerationFailed); */
     }
     if (tmbGenerationPromises.length > 0) {
       dispatch(AppActions.setGeneratingThumbnails(true));
@@ -393,6 +403,7 @@ export function createDirectoryIndex(
   ignorePatterns: Array<string>
 ): Promise<Array<TS.FileSystemEntry>> {
   const dirPath = cleanTrailingDirSeparator(directoryPath);
+  /* TODO create index in pm2
   if (PlatformIO.isWorkerAvailable() && !PlatformIO.haveObjectStoreSupport()) {
     // Start indexing in worker if not in the object store mode
     return PlatformIO.createDirectoryIndexInWorker(
@@ -400,7 +411,7 @@ export function createDirectoryIndex(
       extractText,
       ignorePatterns
     );
-  }
+  } */
 
   const SearchIndex = [];
 

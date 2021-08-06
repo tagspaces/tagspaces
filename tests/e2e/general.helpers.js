@@ -262,8 +262,17 @@ export async function getElementText(el) {
   return await el.getText();
 }
 
+/**
+ * Wait for the selector relative to the element TODO
+ * @param element
+ * @param selector
+ * @param displayed
+ * @param timeout
+ * @returns {Promise<boolean>}
+ */
 export async function isElementDisplayed(
   element,
+  selector,
   displayed = true,
   timeout = 500
 ) {

@@ -108,18 +108,8 @@ export default class ElectronIO {
     this.tsTray.setContextMenu(trayMenu);
   }; */
 
-  isWorkerAvailable = (): boolean =>
-    /* let workerAvailable = false;
-    try {
-      if (this.workerWindow && this.workerWindow.webContents) {
-        workerAvailable = true;
-      }
-    } catch (err) {
-      console.info('Error by finding if worker is available.');
-    }
-    return workerAvailable; */
-
-    this.ipcRenderer.sendSync('is-worker-available', 'notNeededArgument');
+  /* isWorkerAvailable = (): boolean =>
+    this.ipcRenderer.sendSync('is-worker-available', 'notNeededArgument'); */
 
   showMainWindow = (): void => {
     this.ipcRenderer.send('show-main-window', 'notNeededArgument');
@@ -209,7 +199,7 @@ export default class ElectronIO {
     return generateDirectoryTree(directoryPath);
   };
 
-  createDirectoryIndexInWorker = (
+  /* createDirectoryIndexInWorker = (
     directoryPath: string,
     extractText: boolean,
     ignorePatterns: Array<string>
@@ -231,9 +221,9 @@ export default class ElectronIO {
       } else {
         reject('Worker window not available!');
       }
-    });
+    }); */
 
-  createThumbnailsInWorker = (tmbGenerationList: Array<string>): Promise<any> =>
+  /* createThumbnailsInWorker = (tmbGenerationList: Array<string>): Promise<any> =>
     new Promise((resolve, reject) => {
       const tmbGenChannel = 'TMB_GEN_CHANNEL';
       this.ipcRenderer.removeAllListeners(tmbGenChannel);
@@ -251,7 +241,7 @@ export default class ElectronIO {
       } else {
         reject('Worker window not available!');
       }
-    });
+    }); */
 
   listDirectoryPromise = (
     path: string,
