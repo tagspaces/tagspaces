@@ -19,7 +19,6 @@
 import uuidv1 from 'uuid';
 import { saveAs } from 'file-saver';
 import micromatch from 'micromatch';
-import pm2 from '@elife/pm2';
 import PlatformIO from './platform-io';
 import AppConfig from '../config';
 import {
@@ -246,18 +245,9 @@ export function prepareDirectoryContent(
     dispatch(AppActions.setGeneratingThumbnails(false));
     if (tmbGenerationList.length > 0) {
       dispatch(AppActions.setGeneratingThumbnails(true));
-
-      pm2.start({
-        script: 'generatethumbs.js', // Script to be run
-        cwd: 'node_modules/@tagspaces/tagspaces-utils', // './process1', cwd: '/path/to/npm/module/',
-        // cwd: '/Users/sytolk/IdeaProjects/tagspaces-utils', // './process1', cwd: '/path/to/npm/module/',
-        args: ['-p false', ...tmbGenerationList], // '/Users/sytolk/Pictures'],
-        log: 'C:\\Users\\smari\\IdeaProjects\\tagspaces-utils\\process1.log' // path.join(process.cwd(), 'process1.log'),
-        // log: '/Users/sytolk/IdeaProjects/tagspaces-utils/process1.log' // path.join(process.cwd(), 'process1.log'),
-      });
-      /* PlatformIO.createThumbnailsInWorker(tmbGenerationList)
+      PlatformIO.createThumbnailsInWorker(tmbGenerationList)
         .then(handleTmbGenerationResults)
-        .catch(handleTmbGenerationFailed); */
+        .catch(handleTmbGenerationFailed);
     }
     if (tmbGenerationPromises.length > 0) {
       dispatch(AppActions.setGeneratingThumbnails(true));

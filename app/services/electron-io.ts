@@ -16,6 +16,7 @@
  *
  */
 import fsextra from 'fs-extra';
+import pm2 from '@elife/pm2';
 import pathLib from 'path';
 import winattr from 'winattr';
 import micromatch from 'micromatch';
@@ -35,6 +36,7 @@ import PlatformIO from './platform-io';
 // import TrayIcon3x from '../assets/icons/trayIcon@3x.png';
 import { Pro } from '../pro';
 import { TS } from '-/tagspaces.namespace';
+import * as path from 'path';
 
 export default class ElectronIO {
   electron: any;
@@ -223,9 +225,28 @@ export default class ElectronIO {
       }
     }); */
 
-  /* createThumbnailsInWorker = (tmbGenerationList: Array<string>): Promise<any> =>
+  createThumbnailsInWorker = (tmbGenerationList: Array<string>): Promise<any> =>
     new Promise((resolve, reject) => {
-      const tmbGenChannel = 'TMB_GEN_CHANNEL';
+      pm2.start(
+        {
+          script: 'generatethumbs.js', // Script to be run
+          cwd: 'app/node_modules/tagspaces-workers', // './process1', cwd: '/path/to/npm/module/',
+          args: ['-p false', ...tmbGenerationList], // '/Users/sytolk/Pictures'],
+          restartAt: []
+          // log: pathLib.join(process.cwd(), 'thumbGen.log') //  'C:\\Users\\smari\\IdeaProjects\\tagspaces-utils\\process1.log'
+          // log: '/Users/sytolk/IdeaProjects/tagspaces-utils/process1.log' // path.join(process.cwd(), 'process1.log'),
+        },
+        (err, pid) => {
+          if (err) {
+            reject(new Error('createThumbnailsInWorker crashed pid=' + pid));
+          }
+        }
+      );
+      pm2.onstopping(() => {
+        console.debug('PM2 stopping');
+        resolve([]);
+      });
+      /* const tmbGenChannel = 'TMB_GEN_CHANNEL';
       this.ipcRenderer.removeAllListeners(tmbGenChannel);
       if (this.isWorkerAvailable()) {
         this.ipcRenderer.send('worker', {
@@ -240,8 +261,8 @@ export default class ElectronIO {
         });
       } else {
         reject('Worker window not available!');
-      }
-    }); */
+      } */
+    });
 
   listDirectoryPromise = (
     path: string,
