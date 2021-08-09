@@ -241,8 +241,10 @@ describe('TST50** - Right button on a file', () => {
   test('TST5026 - Open file natively [electron]', async () => {
     if (!global.isMinio) {
       // Open file natively option is missing for Minio Location
-      await searchEngine('txt');
-      await openContextEntryMenu(selectorFile, 'fileMenuOpenFileNatively');
+      await openContextEntryMenu(
+        '[data-tid="fsEntryName_sample.txt"]',
+        'fileMenuOpenFileNatively'
+      );
     }
     // check parent directory
   });
@@ -250,8 +252,10 @@ describe('TST50** - Right button on a file', () => {
   test('TST5027 - Open containing folder [web,minio,electron]', async () => {
     if (!global.isMinio) {
       // Show in File Manager option is missing for Minio Location
-      await searchEngine('txt');
-      await openContextEntryMenu(selectorFile, 'fileMenuOpenContainingFolder');
+      await openContextEntryMenu(
+        '[data-tid="fsEntryName_sample.txt"]',
+        'fileMenuOpenContainingFolder'
+      );
     }
     // check parent directory
   });
