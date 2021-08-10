@@ -106,36 +106,39 @@ describe('TST65 - HTML viewer [electron]', () => {
   });
 
   it('TST5307 - Open PNG [electron]', async () => {
-    await delay(500);
-    await searchEngine('png');
-    await delay(500);
-    const file = await global.client.$(perspectiveGridTable + firstFile);
-    await file.waitForDisplayed();
-    await file.doubleClick();
-    await delay(500);
-    await closeOpenedFile();
+    if (!global.isMinio) {
+      // Show in File Manager option is missing for Minio Location
+      // await searchEngine('html');
+      await openContextEntryMenu(
+        '[data-tid="fsEntryName_sample.png"]',
+        'fileMenuOpenFile'
+      );
+    }
+    await expectElementExist('#FileViewer', true, 2000);
   });
 
   it('TST5308 - Open PSD [electron]', async () => {
-    await delay(500);
-    await searchEngine('psd');
-    await delay(500);
-    const file = await global.client.$(perspectiveGridTable + firstFile);
-    await file.waitForDisplayed();
-    await file.doubleClick();
-    await delay(500);
-    await closeOpenedFile();
+    if (!global.isMinio) {
+      // Show in File Manager option is missing for Minio Location
+      // await searchEngine('html');
+      await openContextEntryMenu(
+        '[data-tid="fsEntryName_sample.psd"]',
+        'fileMenuOpenFile'
+      );
+    }
+    await expectElementExist('#FileViewer', true, 2000);
   });
 
   it('TST5309 - Open TIFF [electron]', async () => {
-    await delay(500);
-    await searchEngine('tiff');
-    await delay(500);
-    const file = await global.client.$(perspectiveGridTable + firstFile);
-    await file.waitForDisplayed();
-    await file.doubleClick();
-    await delay(500);
-    await closeOpenedFile();
+    if (!global.isMinio) {
+      // Show in File Manager option is missing for Minio Location
+      // await searchEngine('html');
+      await openContextEntryMenu(
+        '[data-tid="fsEntryName_sample.tiff"]',
+        'fileMenuOpenFile'
+      );
+    }
+    await expectElementExist('#FileViewer', true, 2000);
   });
 
   it.skip('TST5310 - Rotate Image Left, Right, Zoom In, Out, Reset [manual]', async () => {});
