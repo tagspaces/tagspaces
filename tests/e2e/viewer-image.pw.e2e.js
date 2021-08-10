@@ -56,14 +56,15 @@ describe('TST65 - HTML viewer [electron]', () => {
   });
 
   it('TST5302 - Open BMP [electron]', async () => {
-    await delay(500);
-    await searchEngine('bmp');
-    await delay(500);
-    const file = await global.client.$(perspectiveGridTable + firstFile);
-    await file.waitForDisplayed();
-    await file.doubleClick();
-    await delay(500);
-    await closeOpenedFile();
+    if (!global.isMinio) {
+      // Show in File Manager option is missing for Minio Location
+      // await searchEngine('html');
+      await openContextEntryMenu(
+        '[data-tid="fsEntryName_sample.bmp"]',
+        'fileMenuOpenFile'
+      );
+    }
+    await expectElementExist('#FileViewer', true, 2000);
   });
 
   it('TST5303 - Open GIF [electron]', async () => {
