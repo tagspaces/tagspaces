@@ -68,38 +68,41 @@ describe('TST65 - HTML viewer [electron]', () => {
   });
 
   it('TST5303 - Open GIF [electron]', async () => {
-    await delay(500);
-    await searchEngine('gif');
-    await delay(500);
-    const file = await global.client.$(perspectiveGridTable + firstFile);
-    await file.waitForDisplayed();
-    await file.doubleClick();
-    await delay(500);
-    await closeOpenedFile();
+    if (!global.isMinio) {
+      // Show in File Manager option is missing for Minio Location
+      // await searchEngine('html');
+      await openContextEntryMenu(
+        '[data-tid="fsEntryName_sample.gif"]',
+        'fileMenuOpenFile'
+      );
+    }
+    await expectElementExist('#FileViewer', true, 2000);
   });
 
   it.skip('TST5304 - Open Animated GIF, check if plays [manual]', async () => {});
 
   it('TST5305 - Open W-E-B-P [electron]', async () => {
-    await delay(500);
-    await searchEngine('webp');
-    await delay(500);
-    const file = await global.client.$(perspectiveGridTable + firstFile);
-    await file.waitForDisplayed();
-    await file.doubleClick();
-    await delay(500);
-    await closeOpenedFile();
+    if (!global.isMinio) {
+      // Show in File Manager option is missing for Minio Location
+      // await searchEngine('html');
+      await openContextEntryMenu(
+        '[data-tid="fsEntryName_sample.webp"]',
+        'fileMenuOpenFile'
+      );
+    }
+    await expectElementExist('#FileViewer', true, 2000);
   });
 
   it('TST5306 - Open SVG [electron]', async () => {
-    await delay(500);
-    await searchEngine('svg');
-    await delay(500);
-    const file = await global.client.$(perspectiveGridTable + firstFile);
-    await file.waitForDisplayed();
-    await file.doubleClick();
-    await delay(500);
-    await closeOpenedFile();
+    if (!global.isMinio) {
+      // Show in File Manager option is missing for Minio Location
+      // await searchEngine('html');
+      await openContextEntryMenu(
+        '[data-tid="fsEntryName_sample.svg"]',
+        'fileMenuOpenFile'
+      );
+    }
+    await expectElementExist('#FileViewer', true, 2000);
   });
 
   it('TST5307 - Open PNG [electron]', async () => {
