@@ -31,12 +31,17 @@ export function findAvailableExtensions() {
   // Search in the installation folder
   const extensionsFound = [
     {
-      extensionId: '@tagspaces/archive-viewer',
+      extensionId: '@tagspaces/extensions/archive-viewer',
       extensionName: 'Archive Viewer',
       extensionType: 'viewer'
     },
     {
-      extensionId: '@tagspaces/document-viewer',
+      extensionId: '@tagspaces/extensions/3d-viewer',
+      extensionName: '3D Viewer',
+      extensionType: 'viewer'
+    },
+    {
+      extensionId: '@tagspaces/extensions/document-viewer',
       extensionName: 'Documents Viewer',
       extensionType: 'viewer'
     },
@@ -649,12 +654,12 @@ export default {
     },
     {
       type: 'zip',
-      viewer: '@tagspaces/archive-viewer',
+      viewer: '@tagspaces/extensions/archive-viewer',
       color: '#ffe766'
     },
     {
       type: 'docx',
-      viewer: '@tagspaces/document-viewer',
+      viewer: '@tagspaces/extensions/document-viewer',
       color: '#2196f3'
     },
     {
