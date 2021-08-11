@@ -16,11 +16,11 @@
  *
  */
 import fsextra from 'fs-extra';
-import pm2 from '@elife/pm2';
 import pathLib from 'path';
 import winattr from 'winattr';
 import micromatch from 'micromatch';
 import http from 'http';
+import fetch from 'sync-fetch';
 import {
   extractFileExtension,
   extractFileName,
@@ -110,8 +110,13 @@ export default class ElectronIO {
     this.tsTray.setContextMenu(trayMenu);
   }; */
 
-  /* isWorkerAvailable = (): boolean =>
-    this.ipcRenderer.sendSync('is-worker-available', 'notNeededArgument'); */
+  isWorkerAvailable = (): boolean => {
+    const res = fetch('http://127.0.0.1:8888', {
+      method: 'HEAD'
+    });
+    return res.status === 200;
+  };
+  // this.ipcRenderer.sendSync('is-worker-available', 'notNeededArgument');
 
   showMainWindow = (): void => {
     this.ipcRenderer.send('show-main-window', 'notNeededArgument');
@@ -201,12 +206,57 @@ export default class ElectronIO {
     return generateDirectoryTree(directoryPath);
   };
 
-  /* createDirectoryIndexInWorker = (
+  postRequest = (payload: string, endpoint: string): Promise<any> =>
+    new Promise((resolve, reject) => {
+      const headers = {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(payload, 'utf8')
+      };
+      const option = {
+        hostname: '127.0.0.1',
+        port: 8888, // TODO configurable port in settings
+        method: 'POST',
+        path: endpoint,
+        headers
+      };
+      const reqPost = http
+        .request(option, resp => {
+          // .get('http://127.0.0.1:8888/thumb-gen?' + search.toString(), resp => {
+          let data = '';
+
+          // A chunk of data has been received.
+          resp.on('data', chunk => {
+            data += chunk;
+          });
+
+          // The whole response has been received. Print out the result.
+          resp.on('end', () => {
+            // console.log(JSON.parse(data).explanation);
+            resolve(JSON.parse(data));
+          });
+        })
+        .on('error', err => {
+          console.log('Error: ' + err.message);
+          reject(err);
+        });
+      reqPost.write(payload);
+      reqPost.end();
+    });
+
+  createDirectoryIndexInWorker = (
     directoryPath: string,
     extractText: boolean,
     ignorePatterns: Array<string>
-  ): Promise<any> =>
-    new Promise((resolve, reject) => {
+  ): Promise<any> => {
+    const payload = JSON.stringify({
+      directoryPath,
+      extractText,
+      ignorePatterns
+    });
+    return this.postRequest(payload, '/indexer');
+  };
+
+  /* new Promise((resolve, reject) => {
       if (this.isWorkerAvailable()) {
         const timestamp = new Date().getTime().toString();
         this.ipcRenderer.send('worker', {
@@ -225,44 +275,15 @@ export default class ElectronIO {
       }
     }); */
 
-  createThumbnailsInWorker = (tmbGenerationList: Array<string>): Promise<any> =>
-    new Promise((resolve, reject) => {
-      // const search = new URLSearchParams(tmbGenerationList.map(s => ['p', s]));
-      const payload = JSON.stringify(tmbGenerationList);
-      const headers = {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(payload, 'utf8')
-      };
-      const option = {
-        hostname: '127.0.0.1',
-        port: 8888,
-        method: 'POST',
-        path: '/thumb-gen',
-        headers
-      };
-      const reqPost = http
-        .request(option, resp => {
-          // .get('http://127.0.0.1:8888/thumb-gen?' + search.toString(), resp => {
-          let data = '';
+  createThumbnailsInWorker = (
+    tmbGenerationList: Array<string>
+  ): Promise<any> => {
+    // const search = new URLSearchParams(tmbGenerationList.map(s => ['p', s]));
+    const payload = JSON.stringify(tmbGenerationList);
+    return this.postRequest(payload, '/thumb-gen');
+  };
 
-          // A chunk of data has been received.
-          resp.on('data', chunk => {
-            data += chunk;
-          });
-
-          // The whole response has been received. Print out the result.
-          resp.on('end', () => {
-            // console.log(JSON.parse(data).explanation);
-            resolve(JSON.parse(data));
-          });
-        }) 
-        .on('error', err => {
-          console.log('Error: ' + err.message);
-          reject(err);
-        });
-      reqPost.write(payload);
-      reqPost.end();
-      /* pm2.start(
+  /* pm2.start(
         {
           script: 'generatethumbs.js', // Script to be run
           cwd: 'app/node_modules/tagspaces-workers', // './process1', cwd: '/path/to/npm/module/',
@@ -281,7 +302,7 @@ export default class ElectronIO {
         console.debug('PM2 stopping');
         resolve([]);
       }); */
-      /* const tmbGenChannel = 'TMB_GEN_CHANNEL';
+  /* const tmbGenChannel = 'TMB_GEN_CHANNEL';
       this.ipcRenderer.removeAllListeners(tmbGenChannel);
       if (this.isWorkerAvailable()) {
         this.ipcRenderer.send('worker', {
@@ -297,7 +318,6 @@ export default class ElectronIO {
       } else {
         reject('Worker window not available!');
       } */
-    });
 
   listDirectoryPromise = (
     path: string,

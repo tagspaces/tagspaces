@@ -26,6 +26,7 @@ import { TS } from '-/tagspaces.namespace';
 
 const nativeAPI: any = new NativePlatformIO();
 let objectStoreAPI;
+let workerAvailable: boolean;
 
 export default class PlatformIO {
   static enableObjectStoreSupport = (
@@ -93,7 +94,13 @@ export default class PlatformIO {
     }
   };
 
-  // static isWorkerAvailable = (): boolean => nativeAPI.isWorkerAvailable();
+  static isWorkerAvailable = (): boolean => {
+    if (workerAvailable !== undefined) {
+      return workerAvailable;
+    }
+    workerAvailable = nativeAPI.isWorkerAvailable();
+    return workerAvailable;
+  };
 
   static setZoomFactorElectron = zoomLevel => {
     if (nativeAPI.setZoomFactorElectron) {

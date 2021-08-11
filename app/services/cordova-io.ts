@@ -152,7 +152,7 @@ export default class CordovaIO {
     // send event to main app
   };
 
-  // isWorkerAvailable = (): boolean => false;
+  isWorkerAvailable = (): boolean => false;
 
   // Register ios file open handler
   handleOpenURL = (url: string) => {

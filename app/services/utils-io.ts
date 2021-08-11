@@ -40,6 +40,8 @@ import { OpenedEntry, actions as AppActions } from '-/reducers/app';
 import { getLocation } from '-/reducers/locations';
 import { TS } from '-/tagspaces.namespace';
 import { locationType, prepareTagForExport } from '-/utils/misc';
+import { getThumbnailURLPromise } from '-/services/thumbsgenerator';
+import { FileTypeGroups } from '-/services/search';
 
 export function enhanceDirectoryContent(
   dirEntries,
@@ -52,7 +54,7 @@ export function enhanceDirectoryContent(
   const directoryContent = [];
   const tmbGenerationPromises = [];
   const tmbGenerationList = [];
-  // const isWorkerAvailable = PlatformIO.isWorkerAvailable();
+  const isWorkerAvailable = PlatformIO.isWorkerAvailable();
 
   dirEntries.map(entry => {
     if (!showUnixHiddenEntries && entry.name.startsWith('.')) {
@@ -77,11 +79,15 @@ export function enhanceDirectoryContent(
       useGenerateThumbnails // enabled in the settings
     ) {
       // const isPDF = enhancedEntry.path.endsWith('.pdf');
-      // if (isWorkerAvailable && !isPDF) {
-      tmbGenerationList.push(enhancedEntry.path);
-      /* } else {
+      if (
+        isWorkerAvailable &&
+        FileTypeGroups.images.includes(enhancedEntry.extension)
+      ) {
+        // !isPDF) {
+        tmbGenerationList.push(enhancedEntry.path);
+      } else {
         tmbGenerationPromises.push(getThumbnailURLPromise(enhancedEntry.path));
-      } */
+      }
     }
     return true;
   });
@@ -393,7 +399,6 @@ export function createDirectoryIndex(
   ignorePatterns: Array<string>
 ): Promise<Array<TS.FileSystemEntry>> {
   const dirPath = cleanTrailingDirSeparator(directoryPath);
-  /* TODO create index in pm2
   if (PlatformIO.isWorkerAvailable() && !PlatformIO.haveObjectStoreSupport()) {
     // Start indexing in worker if not in the object store mode
     return PlatformIO.createDirectoryIndexInWorker(
@@ -401,7 +406,7 @@ export function createDirectoryIndex(
       extractText,
       ignorePatterns
     );
-  } */
+  }
 
   const SearchIndex = [];
 
