@@ -20,6 +20,7 @@ import pm2 from '@elife/pm2';
 import pathLib from 'path';
 import winattr from 'winattr';
 import micromatch from 'micromatch';
+import http from 'http';
 import {
   extractFileExtension,
   extractFileName,
@@ -36,7 +37,6 @@ import PlatformIO from './platform-io';
 // import TrayIcon3x from '../assets/icons/trayIcon@3x.png';
 import { Pro } from '../pro';
 import { TS } from '-/tagspaces.namespace';
-import * as path from 'path';
 
 export default class ElectronIO {
   electron: any;
@@ -227,7 +227,42 @@ export default class ElectronIO {
 
   createThumbnailsInWorker = (tmbGenerationList: Array<string>): Promise<any> =>
     new Promise((resolve, reject) => {
-      pm2.start(
+      // const search = new URLSearchParams(tmbGenerationList.map(s => ['p', s]));
+      const payload = JSON.stringify(tmbGenerationList);
+      const headers = {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(payload, 'utf8')
+      };
+      const option = {
+        hostname: '127.0.0.1',
+        port: 8888,
+        method: 'POST',
+        path: '/thumb-gen',
+        headers
+      };
+      const reqPost = http
+        .request(option, resp => {
+          // .get('http://127.0.0.1:8888/thumb-gen?' + search.toString(), resp => {
+          let data = '';
+
+          // A chunk of data has been received.
+          resp.on('data', chunk => {
+            data += chunk;
+          });
+
+          // The whole response has been received. Print out the result.
+          resp.on('end', () => {
+            // console.log(JSON.parse(data).explanation);
+            resolve(JSON.parse(data));
+          });
+        }) 
+        .on('error', err => {
+          console.log('Error: ' + err.message);
+          reject(err);
+        });
+      reqPost.write(payload);
+      reqPost.end();
+      /* pm2.start(
         {
           script: 'generatethumbs.js', // Script to be run
           cwd: 'app/node_modules/tagspaces-workers', // './process1', cwd: '/path/to/npm/module/',
@@ -245,7 +280,7 @@ export default class ElectronIO {
       pm2.onstopping(() => {
         console.debug('PM2 stopping');
         resolve([]);
-      });
+      }); */
       /* const tmbGenChannel = 'TMB_GEN_CHANNEL';
       this.ipcRenderer.removeAllListeners(tmbGenChannel);
       if (this.isWorkerAvailable()) {

@@ -26,6 +26,7 @@ import {
 } from 'electron';
 import windowStateKeeper from 'electron-window-state';
 import path from 'path';
+import pm2 from '@elife/pm2';
 import i18n from '-/services/i18n'; // '-/i18nBackend';
 import buildTrayIconMenu from '-/electron-tray-menu';
 import buildDesktopMenu from '-/services/electron-menus';
@@ -508,6 +509,16 @@ app.on('ready', async () => {
   buildAppMenu();
   await createAppWindow();
   buildTrayMenu();
+
+  pm2.start({
+    name: 'Tagspaces WS',
+    script: 'index.js', // Script to be run
+    cwd: 'app/node_modules/tagspaces-ws', // './process1', cwd: '/path/to/npm/module/',
+    args: ['-p 8888'], // '/Users/sytolk/Pictures'],
+    restartAt: []
+    // log: pathLib.join(process.cwd(), 'thumbGen.log') //  'C:\\Users\\smari\\IdeaProjects\\tagspaces-utils\\process1.log'
+    // log: '/Users/sytolk/IdeaProjects/tagspaces-utils/process1.log' // path.join(process.cwd(), 'process1.log'),
+  });
 
   i18n.on('languageChanged', lng => {
     console.log('languageChanged:' + lng);
