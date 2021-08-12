@@ -63,7 +63,8 @@ export const supportedContainers = [
   'odp',
   'odg',
   'ods',
-  'odt'
+  'odt',
+  'pdf'
 ];
 export const supportedText = [
   'txt',
