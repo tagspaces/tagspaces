@@ -43,7 +43,7 @@ const supportedImgs = [
   'webp',
   'bmp'
 ];
-const supportedContainers = [
+export const supportedContainers = [
   // 'zip', // disable ZIP tmb generation due to potential performance issues on large files
   'epub',
   'docx',
@@ -65,7 +65,7 @@ const supportedContainers = [
   'ods',
   'odt'
 ];
-const supportedText = [
+export const supportedText = [
   'txt',
   'md',
   'coffee',
@@ -90,7 +90,7 @@ const supportedText = [
   'sql',
   'mhtml'
 ];
-const supportedVideos = ['ogv', 'mp4', 'webm', 'm4v', 'mkv', 'lrv'];
+export const supportedVideos = ['ogv', 'mp4', 'webm', 'm4v', 'mkv', 'lrv'];
 const maxFileSize = 30 * 1024 * 1024;
 
 function saveThumbnailPromise(filePath, dataURL) {

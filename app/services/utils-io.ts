@@ -40,8 +40,28 @@ import { OpenedEntry, actions as AppActions } from '-/reducers/app';
 import { getLocation } from '-/reducers/locations';
 import { TS } from '-/tagspaces.namespace';
 import { locationType, prepareTagForExport } from '-/utils/misc';
-import { getThumbnailURLPromise } from '-/services/thumbsgenerator';
-import { FileTypeGroups } from '-/services/search';
+import {
+  getThumbnailURLPromise,
+  supportedContainers,
+  supportedText,
+  supportedVideos
+} from '-/services/thumbsgenerator';
+
+const supportedImgsWS = [
+  'jpg',
+  'jpeg',
+  'jif',
+  'jfif',
+  'png',
+  'gif',
+  'svg',
+  'tif',
+  'tiff',
+  'ico',
+  'webp',
+  'psd'
+  // 'bmp' currently electron main processed: https://github.com/lovell/sharp/issues/806
+];
 
 export function enhanceDirectoryContent(
   dirEntries,
@@ -81,12 +101,20 @@ export function enhanceDirectoryContent(
       // const isPDF = enhancedEntry.path.endsWith('.pdf');
       if (
         isWorkerAvailable &&
-        FileTypeGroups.images.includes(enhancedEntry.extension)
+        supportedImgsWS.includes(enhancedEntry.extension)
       ) {
         // !isPDF) {
         tmbGenerationList.push(enhancedEntry.path);
-      } else {
+      } else if (
+        supportedContainers.includes(enhancedEntry.extension) ||
+        supportedText.includes(enhancedEntry.extension) ||
+        supportedVideos.includes(enhancedEntry.extension)
+      ) {
         tmbGenerationPromises.push(getThumbnailURLPromise(enhancedEntry.path));
+      } else {
+        console.debug(
+          'Unsupported thumbgeneration ext:' + enhancedEntry.extension
+        );
       }
     }
     return true;
