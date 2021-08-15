@@ -111,10 +111,15 @@ export default class ElectronIO {
   }; */
 
   isWorkerAvailable = (): boolean => {
-    const res = fetch('http://127.0.0.1:8888', {
-      method: 'HEAD'
-    });
-    return res.status === 200;
+    try {
+      const res = fetch('http://127.0.0.1:8888', {
+        method: 'HEAD'
+      });
+      return res.status === 200;
+    } catch (e) {
+      console.debug('isWorkerAvailable:', e);
+    }
+    return false;
   };
   // this.ipcRenderer.sendSync('is-worker-available', 'notNeededArgument');
 
