@@ -4,7 +4,6 @@
   "version": "3.11.4",
   "description": "Offline file organizer and browser with tagging support.",
   "homepage": "https://www.tagspaces.org",
-  "main": "./main.prod.js",
   "author": {
     "name": "TagSpaces UG (haftungsbeschraenkt)",
     "email": "info@tagspaces.org",
@@ -28,7 +27,6 @@
     "@tagspaces/spreadsheet-viewer": "https://github.com/tagspaces/viewerSpreadSheet#master",
     "@tagspaces/text-editor": "https://github.com/tagspaces/editorText#master",
     "@tagspaces/text-viewer": "https://github.com/tagspaces/viewerText#master",
-    "@tagspaces/url-viewer": "https://github.com/tagspaces/viewerURL#master",
-    "tagspaces-ws": "^1.0.8"
+    "@tagspaces/url-viewer": "https://github.com/tagspaces/viewerURL#master"
   }
 }

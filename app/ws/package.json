@@ -1,0 +1,25 @@
+{
+  "name": "tagspaces",
+  "productName": "TagSpaces",
+  "version": "3.11.4",
+  "description": "Offline file organizer and browser with tagging support.",
+  "homepage": "https://www.tagspaces.org",
+  "main": "./node_modules/tagspaces-ws/index.js",
+  "author": {
+    "name": "TagSpaces UG (haftungsbeschraenkt)",
+    "email": "info@tagspaces.org",
+    "url": "https://www.tagspaces.org"
+  },
+  "license": "AGPL-3.0",
+  "scripts": {
+    "dev": "parcel ./node_modules/tagspaces-w s/index.js",
+    "build": "parcel build ./node_modules/tagspaces-ws/index.js --target node --bundle-node-modules --no-cache --no-minify --no-hmr",
+    "start": "parcel watch ./node_modules/tagspaces-ws/index.js"
+  },
+  "dependencies": {
+    "tagspaces-ws": "^1.0.8"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.5"
+  }
+}
