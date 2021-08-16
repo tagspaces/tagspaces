@@ -38,6 +38,7 @@ import PlatformIO from './platform-io';
 import { Pro } from '../pro';
 import { TS } from '-/tagspaces.namespace';
 import Settings from '-/settings';
+import Config from '-/config/config.json';
 
 export default class ElectronIO {
   electron: any;
@@ -214,16 +215,16 @@ export default class ElectronIO {
 
   postRequest = (payload: string, endpoint: string): Promise<any> =>
     new Promise((resolve, reject) => {
-      const headers = {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(payload, 'utf8')
-      };
       const option = {
         hostname: '127.0.0.1',
         port: Settings.wsPort,
         method: 'POST',
         path: endpoint,
-        headers
+        headers: {
+          Authorization: 'Bearer ' + Config.jwt,
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(payload, 'utf8')
+        }
       };
       const reqPost = http
         .request(option, resp => {

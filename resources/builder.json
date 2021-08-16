@@ -3,6 +3,7 @@
   "asar": true,
   "files": [
     "dist/",
+    "config/",
     "node_modules/",
     "app.html",
     "main.prod.js",
