@@ -494,6 +494,7 @@ async function createAppWindow() {
 app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required'); // Fix broken autoplay functionality in the av player
 
 app.on('window-all-closed', () => {
+  pm2.stopAll();
   globalShortcut.unregisterAll();
   app.quit();
 });
@@ -523,16 +524,30 @@ app.on('ready', async () => {
     script = 'app.asar/node_modules/tagspaces-ws/index.js';
     // script = 'app.asar.unpacked/node_modules/tagspaces-ws/index.js';
   }
-  pm2.start({
-    name: 'Tagspaces WS',
-    script, // Script to be run
-    cwd: filepath, // './node_modules/tagspaces-ws', // './process1', cwd: '/path/to/npm/module/',
-    args: ['-p', Settings.wsPort], // '/Users/sytolk/Pictures'],
-    restartAt: []
-    // log: path.join(process.cwd(), 'thumbGen.log') //  'C:\\Users\\smari\\IdeaProjects\\tagspaces-utils\\process1.log'
-    // log: '/Users/sytolk/IdeaProjects/tagspaces/process1.log' // path.join(process.cwd(), 'process1.log'),
-    // log: 'process1.log' // path.join(process.cwd(), 'process1.log'),
-  });
+  pm2.start(
+    {
+      name: 'Tagspaces WS',
+      script, // Script to be run
+      cwd: filepath, // './node_modules/tagspaces-ws', // './process1', cwd: '/path/to/npm/module/',
+      args: ['-p', Settings.wsPort], // '/Users/sytolk/Pictures'],
+      restartAt: []
+      // log: path.join(process.cwd(), 'thumbGen.log') //  'C:\\Users\\smari\\IdeaProjects\\tagspaces-utils\\process1.log'
+      // log: '/Users/sytolk/IdeaProjects/tagspaces/process1.log' // path.join(process.cwd(), 'process1.log'),
+      // log: 'process1.log' // path.join(process.cwd(), 'process1.log'),
+    },
+    (err, pid) => {
+      if (err && pid) {
+        if (pid && pid.name) console.error(pid.name, err, pid);
+        else console.error(err, pid);
+      } else if (err) {
+        console.error('createThumbnailsInWorker crashed', err);
+      } else {
+        console.log(
+          `Starting ${pid.name} on ${pid.cwd} - pid (${pid.child.pid})`
+        );
+      }
+    }
+  );
 
   i18n.on('languageChanged', lng => {
     console.log('languageChanged:' + lng);
