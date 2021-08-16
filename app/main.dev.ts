@@ -31,6 +31,7 @@ import i18n from '-/services/i18n'; // '-/i18nBackend';
 import buildTrayIconMenu from '-/electron-tray-menu';
 import buildDesktopMenu from '-/services/electron-menus';
 import keyBindings from '-/utils/keyBindings';
+import Settings from '-/settings';
 
 // delete process.env.ELECTRON_ENABLE_SECURITY_WARNINGS;
 // process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
@@ -103,6 +104,8 @@ if (devMode || testMode) {
   // workerDevMode = true; // hide worker window in dev mode
   mainHTML = `file://${__dirname}/appd.html`;
 }
+// const log = require('electron-log');
+// console.log = log.log;
 
 // if (process.platform === 'linux') {
 //   app.commandLine.appendSwitch('disable-gpu'); // Fix the freezing the app with a black box on dnd https://github.com/electron/electron/issues/12820
@@ -508,16 +511,27 @@ app.on('ready', async () => {
   // }
   buildAppMenu();
   await createAppWindow();
-  buildTrayMenu();
+  // buildTrayMenu(); TODO fix icon path in asar
 
+  let filepath;
+  let script;
+  if (devMode) {
+    filepath = path.join(__dirname, 'node_modules/tagspaces-ws');
+    script = 'index.js';
+  } else {
+    filepath = process.resourcesPath;
+    script = 'app.asar/node_modules/tagspaces-ws/index.js';
+    // script = 'app.asar.unpacked/node_modules/tagspaces-ws/index.js';
+  }
   pm2.start({
     name: 'Tagspaces WS',
-    script: 'index.js', // Script to be run
-    cwd: 'app/node_modules/tagspaces-ws', // './process1', cwd: '/path/to/npm/module/',
-    args: ['-p 8888'], // '/Users/sytolk/Pictures'],
+    script, // Script to be run
+    cwd: filepath, // './node_modules/tagspaces-ws', // './process1', cwd: '/path/to/npm/module/',
+    args: ['-p', Settings.wsPort], // '/Users/sytolk/Pictures'],
     restartAt: []
-    // log: pathLib.join(process.cwd(), 'thumbGen.log') //  'C:\\Users\\smari\\IdeaProjects\\tagspaces-utils\\process1.log'
-    // log: '/Users/sytolk/IdeaProjects/tagspaces-utils/process1.log' // path.join(process.cwd(), 'process1.log'),
+    // log: path.join(process.cwd(), 'thumbGen.log') //  'C:\\Users\\smari\\IdeaProjects\\tagspaces-utils\\process1.log'
+    // log: '/Users/sytolk/IdeaProjects/tagspaces/process1.log' // path.join(process.cwd(), 'process1.log'),
+    // log: 'process1.log' // path.join(process.cwd(), 'process1.log'),
   });
 
   i18n.on('languageChanged', lng => {

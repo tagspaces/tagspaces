@@ -37,6 +37,7 @@ import PlatformIO from './platform-io';
 // import TrayIcon3x from '../assets/icons/trayIcon@3x.png';
 import { Pro } from '../pro';
 import { TS } from '-/tagspaces.namespace';
+import Settings from '-/settings';
 
 export default class ElectronIO {
   electron: any;
@@ -112,7 +113,7 @@ export default class ElectronIO {
 
   isWorkerAvailable = (): boolean => {
     try {
-      const res = fetch('http://127.0.0.1:8888', {
+      const res = fetch('http://127.0.0.1:' + Settings.wsPort, {
         method: 'HEAD'
       });
       return res.status === 200;
@@ -219,7 +220,7 @@ export default class ElectronIO {
       };
       const option = {
         hostname: '127.0.0.1',
-        port: 8888, // TODO configurable port in settings
+        port: Settings.wsPort,
         method: 'POST',
         path: endpoint,
         headers

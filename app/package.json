@@ -29,6 +29,6 @@
     "@tagspaces/text-editor": "https://github.com/tagspaces/editorText#master",
     "@tagspaces/text-viewer": "https://github.com/tagspaces/viewerText#master",
     "@tagspaces/url-viewer": "https://github.com/tagspaces/viewerURL#master",
-    "tagspaces-ws": "^1.0.7"
+    "tagspaces-ws": "^1.0.8"
   }
 }

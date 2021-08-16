@@ -5,7 +5,6 @@
     "dist/",
     "node_modules/",
     "app.html",
-    "splash.html",
     "main.prod.js",
     "main.prod.js.map",
     "third-party.txt",
