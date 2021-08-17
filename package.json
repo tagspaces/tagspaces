@@ -313,6 +313,7 @@
     "semver": "^5.5.0",
     "source-map-support": "^0.5.11",
     "sync-fetch": "^0.3.0",
+    "tagspaces-common-node": "^1.0.7",
     "tiff.js": "^1.0.0",
     "use-state-with-callback": "^2.0.3",
     "winattr": "^3.0.0"

@@ -17,6 +17,7 @@
  */
 
 import uuidv1 from 'uuid';
+import { loadIndex, persistIndex } from 'tagspaces-common-node/indexer';
 import { saveAs } from 'file-saver';
 import micromatch from 'micromatch';
 import PlatformIO from './platform-io';
@@ -424,16 +425,26 @@ export function getPrevFile(
 export function createDirectoryIndex(
   directoryPath: string,
   extractText: boolean = false,
-  ignorePatterns: Array<string>
+  ignorePatterns: Array<string>,
+  persist = true
 ): Promise<Array<TS.FileSystemEntry>> {
   const dirPath = cleanTrailingDirSeparator(directoryPath);
-  if (PlatformIO.isWorkerAvailable() && !PlatformIO.haveObjectStoreSupport()) {
+  if (
+    persist &&
+    PlatformIO.isWorkerAvailable() &&
+    !PlatformIO.haveObjectStoreSupport()
+  ) {
     // Start indexing in worker if not in the object store mode
     return PlatformIO.createDirectoryIndexInWorker(
       dirPath,
       extractText,
       ignorePatterns
-    );
+    ).then(succeeded => {
+      if (succeeded) {
+        return loadIndex(dirPath);
+      }
+      return undefined;
+    });
   }
 
   const SearchIndex = [];
@@ -477,6 +488,9 @@ export function createDirectoryIndex(
               SearchIndex.length
           );
           console.timeEnd('createDirectoryIndex');
+          if (persist) {
+            persistIndex(dirPath, SearchIndex);
+          }
           resolve(SearchIndex);
           return true;
         })
