@@ -4,6 +4,7 @@
   "files": [
     "dist/",
     "config/",
+    ".env",
     "node_modules/",
     "app.html",
     "main.prod.js",

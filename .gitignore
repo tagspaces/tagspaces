@@ -80,6 +80,7 @@ web/LICENSE.txt
 web/third-party.txt
 web/sw-config.js
 
+.env
 app/config
 app/extconfig*
 web/extconfig*

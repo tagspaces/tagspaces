@@ -27,6 +27,7 @@ import {
 import windowStateKeeper from 'electron-window-state';
 import path from 'path';
 import pm2 from '@elife/pm2';
+import propertiesReader from 'properties-reader';
 import i18n from '-/services/i18n'; // '-/i18nBackend';
 import buildTrayIconMenu from '-/electron-tray-menu';
 import buildDesktopMenu from '-/services/electron-menus';
@@ -467,19 +468,21 @@ async function createAppWindow() {
   });
 
   mainWindow.webContents.on('crashed', () => {
-    const options = {
+    /* const options = {
       type: 'info',
       title: 'Renderer Process Crashed',
       message: 'This process has crashed.',
       buttons: ['Reload', 'Close']
-    };
+    }; */
 
-    if (!mainWindow) {
-      globalShortcut.unregisterAll();
-      return;
-    }
+    // if (!mainWindow) {
+    pm2.stopAll();
+    globalShortcut.unregisterAll();
+    app.quit();
 
-    dialog.showMessageBox(mainWindow, options).then(dialogResponse => {
+    // }
+
+    /* dialog.showMessageBox(mainWindow, options).then(dialogResponse => {
       mainWindow.hide();
       if (dialogResponse.response === 0) {
         mainWindow.loadURL(mainHTML); // reloadApp();
@@ -487,7 +490,7 @@ async function createAppWindow() {
         mainWindow.close();
         globalShortcut.unregisterAll();
       }
-    });
+    }); */
   });
 }
 
@@ -516,20 +519,24 @@ app.on('ready', async () => {
 
   let filepath;
   let script;
+  let envPath;
   if (devMode) {
     filepath = path.join(__dirname, 'node_modules/tagspaces-ws');
     script = 'index.js';
+    envPath = path.join(__dirname, '.env');
   } else {
     filepath = process.resourcesPath;
     script = 'app.asar/node_modules/tagspaces-ws/index.js';
-    // script = 'app.asar.unpacked/node_modules/tagspaces-ws/index.js';
+    envPath = path.join(process.resourcesPath, 'app.asar/.env');
   }
+  const properties = propertiesReader(envPath);
+
   pm2.start(
     {
       name: 'Tagspaces WS',
       script, // Script to be run
       cwd: filepath, // './node_modules/tagspaces-ws', // './process1', cwd: '/path/to/npm/module/',
-      args: ['-p', Settings.wsPort], // '/Users/sytolk/Pictures'],
+      args: ['-p', Settings.wsPort, '-k', properties.get('KEY')], // '/Users/sytolk/Pictures'],
       restartAt: []
       // log: path.join(process.cwd(), 'thumbGen.log') //  'C:\\Users\\smari\\IdeaProjects\\tagspaces-utils\\process1.log'
       // log: '/Users/sytolk/IdeaProjects/tagspaces/process1.log' // path.join(process.cwd(), 'process1.log'),
