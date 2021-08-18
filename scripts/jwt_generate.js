@@ -16,7 +16,11 @@ const token = jwt.sign(payload, properties.get('KEY'));
 
 const content = '{"jwt":"' + token + '"}';
 
-fs.writeFile(
+fs.outputFileSync(
+  pathLib.join(__dirname, '../app/config/config.json'),
+  content
+);
+/* fs.writeFile(
   pathLib.join(__dirname, '../app/config/config.json'),
   content,
   err => {
@@ -25,4 +29,4 @@ fs.writeFile(
     }
     // file written successfully
   }
-);
+); */
