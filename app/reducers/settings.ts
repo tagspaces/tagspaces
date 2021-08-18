@@ -32,6 +32,7 @@ export const types = {
   SET_LANGUAGE: 'SETTINGS/SET_LANGUAGE',
   TOGGLE_SHOWUNIXHIDDENENTRIES: 'SETTINGS/TOGGLE_SHOWUNIXHIDDENENTRIES',
   SET_DESKTOPMODE: 'SETTINGS/SET_DESKTOPMODE',
+  WARNING_OPENING_FILES_EXTERNALLY: 'SETTINGS/WARNING_OPENING_FILES_EXTERNALLY',
   SET_SAVE_TAGS_IN_LOCATION: 'SETTINGS/SET_SAVE_TAGS_IN_LOCATION',
   SET_TAG_DELIMITER: 'SETTINGS/SET_TAG_DELIMITER',
   SET_MAX_SEARCH_RESULT: 'SETTINGS/SET_MAX_SEARCH_RESULT',
@@ -123,6 +124,12 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_DESKTOPMODE: {
       return { ...state, desktopMode: action.desktopMode };
+    }
+    case types.WARNING_OPENING_FILES_EXTERNALLY: {
+      return {
+        ...state,
+        warningOpeningFilesExternally: action.warningOpeningFilesExternally
+      };
     }
     case types.SET_SAVE_TAGS_IN_LOCATION: {
       return { ...state, saveTagInLocation: action.saveTagInLocation };
@@ -406,6 +413,12 @@ export const actions = {
     type: types.SET_DESKTOPMODE,
     desktopMode
   }),
+  setWarningOpeningFilesExternally: (
+    warningOpeningFilesExternally: boolean
+  ) => ({
+    type: types.WARNING_OPENING_FILES_EXTERNALLY,
+    warningOpeningFilesExternally
+  }),
   setSaveTagInLocation: (saveTagInLocation: boolean) => ({
     type: types.SET_SAVE_TAGS_IN_LOCATION,
     saveTagInLocation
@@ -589,6 +602,8 @@ export const getDesktopMode = (state: any) => {
   }
   return window.ExtDisplayMode !== 'mobile';
 };
+export const getWarningOpeningFilesExternally = (state: any) =>
+  state.settings.warningOpeningFilesExternally;
 export const getCheckForUpdateOnStartup = (state: any) =>
   state.settings.checkForUpdates;
 export const getLastPublishedVersion = (state: any) =>

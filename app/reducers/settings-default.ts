@@ -126,6 +126,7 @@ export default {
   contentHash: '',
   isUpdateInProgress: false,
   isUpdateAvailable: false,
+  warningOpeningFilesExternally: true,
   tagDelimiter: ' ',
   maxSearchResult: 1000,
   desktopMode,
