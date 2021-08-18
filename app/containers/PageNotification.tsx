@@ -27,6 +27,7 @@ import { getLastPublishedVersion } from '-/reducers/settings';
 import {
   actions as AppActions,
   getNotificationStatus,
+  isGeneratingThumbs,
   isUpdateAvailable
 } from '../reducers/app';
 import {
@@ -40,6 +41,7 @@ import Links from '-/links';
 interface Props {
   notificationStatus: any;
   isIndexing: boolean;
+  isGeneratingThumbs: boolean;
   showNotification: (
     text: string,
     notificationType?: string,
@@ -50,6 +52,7 @@ interface Props {
   isUpdateAvailable: boolean;
   lastPublishedVersion: string;
   setUpdateAvailable: (isUpdateAvailable: boolean) => void;
+  setGeneratingThumbnails: (isGenerating: boolean) => void;
   openURLExternally: (url: string, skipConfirm: boolean) => void;
 }
 
@@ -96,22 +99,24 @@ const PageNotification = (props: Props) => {
           </IconButton>
         ]}
       />
-      {/* <Snackbar
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        open={props.isGeneratingThumbs}
-        autoHideDuration={undefined}
-        message={i18n.t('core:loadingOrGeneratingThumbnails')}
-        action={[
-          <IconButton
-            key="closeButton"
-            aria-label={i18n.t('core:closeButton')}
-            color="inherit"
-            onClick={() => props.setGeneratingThumbnails(false)}
-          >
-            <CloseIcon />
-          </IconButton>
-        ]}
-      /> */}
+      {props.isGeneratingThumbs && (
+        <Snackbar
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          open={props.isGeneratingThumbs}
+          autoHideDuration={undefined}
+          message={i18n.t('core:loadingOrGeneratingThumbnails')}
+          action={[
+            <IconButton
+              key="closeButton"
+              aria-label={i18n.t('core:closeButton')}
+              color="inherit"
+              onClick={() => props.setGeneratingThumbnails(false)}
+            >
+              <CloseIcon />
+            </IconButton>
+          ]}
+        />
+      )}
       <Snackbar
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         open={props.isIndexing}
@@ -170,7 +175,8 @@ function mapStateToProps(state) {
     notificationStatus: getNotificationStatus(state),
     isIndexing: isIndexing(state),
     isUpdateAvailable: isUpdateAvailable(state),
-    lastPublishedVersion: getLastPublishedVersion(state)
+    lastPublishedVersion: getLastPublishedVersion(state),
+    isGeneratingThumbs: isGeneratingThumbs(state)
   };
 }
 
@@ -181,6 +187,7 @@ function mapDispatchToProps(dispatch) {
       hideNotifications: AppActions.hideNotifications,
       cancelDirectoryIndexing: LocationIndexActions.cancelDirectoryIndexing,
       setUpdateAvailable: AppActions.setUpdateAvailable,
+      setGeneratingThumbnails: AppActions.setGeneratingThumbnails,
       openURLExternally: AppActions.openURLExternally
     },
     dispatch
@@ -191,6 +198,7 @@ const areEqual = (prevProp, nextProp) =>
   JSON.stringify(nextProp.notificationStatus) ===
     JSON.stringify(prevProp.notificationStatus) &&
   nextProp.isIndexing === prevProp.isIndexing &&
+  nextProp.isGeneratingThumbs === prevProp.isGeneratingThumbs &&
   nextProp.isUpdateAvailable === prevProp.isUpdateAvailable;
 
 export default connect(

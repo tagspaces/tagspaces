@@ -561,7 +561,7 @@ app.on('ready', async () => {
         if (pid && pid.name) console.error(pid.name, err, pid);
         else console.error(err, pid);
       } else if (err) {
-        console.error('createThumbnailsInWorker crashed', err);
+        console.error('start WS crashed', err);
       } else {
         console.log(
           `Starting ${pid.name} on ${pid.cwd} - pid (${pid.child.pid})`

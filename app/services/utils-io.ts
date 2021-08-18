@@ -276,16 +276,17 @@ export function prepareDirectoryContent(
     );
   }
 
-  if (generateThumbnails) {
-    dispatch(AppActions.setGeneratingThumbnails(false));
+  if (
+    generateThumbnails &&
+    (tmbGenerationList.length > 0 || tmbGenerationPromises.length > 0)
+  ) {
+    dispatch(AppActions.setGeneratingThumbnails(true));
     if (tmbGenerationList.length > 0) {
-      dispatch(AppActions.setGeneratingThumbnails(true));
       PlatformIO.createThumbnailsInWorker(tmbGenerationList)
         .then(handleTmbGenerationResults)
         .catch(handleTmbGenerationFailed);
     }
     if (tmbGenerationPromises.length > 0) {
-      dispatch(AppActions.setGeneratingThumbnails(true));
       Promise.all(tmbGenerationPromises)
         .then(handleTmbGenerationResults)
         .catch(handleTmbGenerationFailed);
