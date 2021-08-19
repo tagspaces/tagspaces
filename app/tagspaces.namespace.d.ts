@@ -37,7 +37,7 @@ export namespace TS {
     isReadOnly?: boolean;
     isNotEditable?: boolean;
     watchForChanges?: boolean;
-    persistIndex?: boolean;
+    disableIndexing?: boolean;
     fullTextIndex?: boolean;
     maxIndexAge?: number;
     persistTagsInSidecarFile?: boolean;

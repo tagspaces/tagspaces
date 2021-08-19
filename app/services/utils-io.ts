@@ -430,15 +430,11 @@ export function getPrevFile(
 export function createDirectoryIndex(
   directoryPath: string,
   extractText: boolean = false,
-  ignorePatterns: Array<string> = [],
-  persist = true
+  ignorePatterns: Array<string> = []
+  // disableIndexing = true
 ): Promise<Array<TS.FileSystemEntry>> {
   const dirPath = cleanTrailingDirSeparator(directoryPath);
-  if (
-    persist &&
-    PlatformIO.isWorkerAvailable() &&
-    !PlatformIO.haveObjectStoreSupport()
-  ) {
+  if (PlatformIO.isWorkerAvailable() && !PlatformIO.haveObjectStoreSupport()) {
     // Start indexing in worker if not in the object store mode
     return PlatformIO.createDirectoryIndexInWorker(
       dirPath,

@@ -16,9 +16,9 @@
  *
  */
 
+import { loadIndex, hasIndex } from 'tagspaces-common-node/indexer';
 import { getLocation, getLocations } from './locations';
 import { createDirectoryIndex } from '-/services/utils-io';
-import { Pro } from '../pro';
 import {
   extractFileExtension,
   extractFileName,
@@ -321,10 +321,11 @@ export const actions = {
         ? currentLocation.maxIndexAge
         : AppConfig.maxIndexAge;
       if (
-        !GlobalSearch.index ||
-        GlobalSearch.index.length < 1 ||
-        searchQuery.forceIndexing ||
-        indexAge > maxIndexAge
+        !currentLocation.disableIndexing &&
+        (!GlobalSearch.index ||
+          GlobalSearch.index.length < 1 ||
+          searchQuery.forceIndexing ||
+          indexAge > maxIndexAge)
       ) {
         const currentPath = getLocationPath(currentLocation);
         console.log('Start creating index for : ' + currentPath);
@@ -337,13 +338,18 @@ export const actions = {
         GlobalSearch.index = await createDirectoryIndex(
           currentPath,
           currentLocation.fullTextIndex,
-          currentLocation.ignorePatternPaths,
-          currentLocation.persistIndex
+          currentLocation.ignorePatternPaths
         );
 
         if (GlobalSearch.index && GlobalSearch.index.length > 0) {
           GlobalSearch.indexLoadedOn = new Date().getTime();
         }
+      } else if (
+        isCloudLocation ||
+        !GlobalSearch.index ||
+        GlobalSearch.index.length === 0
+      ) {
+        GlobalSearch.index = await loadIndex(getLocationPath(currentLocation));
       }
       Search.searchLocationIndex(GlobalSearch.index, searchQuery)
         .then(searchResults => {
@@ -362,12 +368,13 @@ export const actions = {
           dispatch(AppActions.hideNotifications());
           return true;
         })
-        .catch(() => {
+        .catch(err => {
           dispatch(AppActions.setSearchResults([]));
-          dispatch(AppActions.hideNotifications());
+          // dispatch(AppActions.hideNotifications());
+          console.error('Searching Index failed: ', err);
           dispatch(
             AppActions.showNotification(
-              i18n.t('core:searchingFailed'),
+              i18n.t('core:searchingFailed') + ' ' + err.message,
               'warning',
               true
             )
@@ -415,7 +422,7 @@ export const actions = {
           }
           const nextPath = getLocationPath(location);
           let directoryIndex = [];
-          let hasIndex = false;
+          let indexExist = false;
           const isCloudLocation = location.type === locationType.TYPE_CLOUD;
           console.log('Searching in: ' + nextPath);
           dispatch(
@@ -429,10 +436,10 @@ export const actions = {
           if (isCloudLocation) {
             await PlatformIO.enableObjectStoreSupport(location);
           }
-          if (Pro && Pro.Indexer && Pro.Indexer.hasIndex) {
-            hasIndex = await Pro.Indexer.hasIndex(nextPath);
-          }
-          if (searchQuery.forceIndexing || !hasIndex) {
+          // if (Pro && Pro.Indexer && Pro.Indexer.hasIndex) {
+          indexExist = await hasIndex(nextPath, PlatformIO.getDirSeparator());
+
+          if (searchQuery.forceIndexing || !indexExist) {
             console.log('Creating index for : ' + nextPath);
             directoryIndex = await createDirectoryIndex(
               nextPath,
@@ -446,9 +453,10 @@ export const actions = {
                 PlatformIO.getDirSeparator()
               );
             } */
-          } else if (Pro && Pro.Indexer && Pro.Indexer.loadIndex) {
+          } else {
+            // if (Pro && Pro.Indexer && Pro.Indexer.loadIndex) {
             console.log('Loading index for : ' + nextPath);
-            directoryIndex = await Pro.Indexer.loadIndex(
+            directoryIndex = await loadIndex(
               nextPath,
               PlatformIO.getDirSeparator()
             );
@@ -489,12 +497,12 @@ export const actions = {
               if (isCloudLocation) {
                 PlatformIO.disableObjectStoreSupport();
               }
-              console.log('Searching Index failed: ' + e);
+              console.error('Searching Index failed: ', e);
               dispatch(AppActions.setSearchResults([]));
-              dispatch(AppActions.hideNotifications());
+              // dispatch(AppActions.hideNotifications());
               dispatch(
                 AppActions.showNotification(
-                  i18n.t('core:searchingFailed'),
+                  i18n.t('core:searchingFailed') + ' ' + e.message,
                   'warning',
                   true
                 )

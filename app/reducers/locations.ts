@@ -158,7 +158,7 @@ export const actions = {
             path: devicePaths[key],
             isDefault: AppConfig.isWeb && devicePaths[key] === '/files/', // Used for the web ts demo
             isReadOnly: false,
-            persistIndex: false
+            disableIndexing: false
           },
           false
         )
