@@ -17,7 +17,11 @@
  */
 
 import uuidv1 from 'uuid';
-import { loadIndex, persistIndex } from 'tagspaces-common-node/indexer';
+import {
+  loadIndex,
+  persistIndex,
+  createIndex
+} from 'tagspaces-common-node/indexer';
 import { saveAs } from 'file-saver';
 import micromatch from 'micromatch';
 import PlatformIO from './platform-io';
@@ -426,7 +430,7 @@ export function getPrevFile(
 export function createDirectoryIndex(
   directoryPath: string,
   extractText: boolean = false,
-  ignorePatterns: Array<string>,
+  ignorePatterns: Array<string> = [],
   persist = true
 ): Promise<Array<TS.FileSystemEntry>> {
   const dirPath = cleanTrailingDirSeparator(directoryPath);
@@ -448,7 +452,21 @@ export function createDirectoryIndex(
     });
   }
 
-  const SearchIndex = [];
+  return createIndex(directoryPath, extractText, ignorePatterns)
+    .then(directoryIndex =>
+      persistIndex(directoryPath, directoryIndex).then(success => {
+        if (success) {
+          console.log('Index generated in folder: ' + directoryPath);
+          return directoryIndex;
+        }
+        return undefined;
+      })
+    )
+    .catch(err => {
+      console.error('Error creating index: ', err);
+    });
+
+  /* const SearchIndex = [];
 
   // eslint-disable-next-line compat/compat
   return new Promise((resolve, reject) => {
@@ -502,7 +520,7 @@ export function createDirectoryIndex(
           reject(err);
         });
     }, 2000);
-  });
+  }); */
 }
 
 export function walkDirectory(

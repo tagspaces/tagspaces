@@ -17577,19 +17577,21 @@ table@^5.0.0, table@^5.2.3:
     slice-ansi "^2.1.0"
     string-width "^3.0.0"
 
-tagspaces-common-node@^1.0.7:
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/tagspaces-common-node/-/tagspaces-common-node-1.0.7.tgz#ab293a2d0c761aeab952846ebce1ec4098ec1720"
-  integrity sha512-/tu4qtjXMYBAwR3vc1dN0DHoKMk2yZcZN0+FGlhgN3ij2P6zsJnOViNsfX0HufBHDpoDrCA3r+agyeX+J5Pg0w==
+tagspaces-common-node@^1.0.15:
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/tagspaces-common-node/-/tagspaces-common-node-1.0.15.tgz#ff8494f7d8012af8e6b701bfcafaf53bfd5d93ad"
+  integrity sha512-CgxMW2JrT1JZjXX2ge7S4jzju+VWgL2f8z3Eyj+8AUViV0gWXF49HK6G250LcsIqkiVPknqTJlWV/ipYL2Ic5A==
   dependencies:
     fs-extra "^10.0.0"
     path "^0.12.7"
-    tagspaces-common "^1.1.29"
+    tagspaces-common "^1.1.31"
 
-tagspaces-common@^1.1.29:
-  version "1.1.29"
-  resolved "https://registry.yarnpkg.com/tagspaces-common/-/tagspaces-common-1.1.29.tgz#5e6656b04240856c20762faa0fbd59aa637fd607"
-  integrity sha512-P+Am9S4iL0hbQgn+DSyQ3JNtckss0qhiW8wS2TpxQEM3QgROiHHdgMoQ3tYlzW/KFhWOkXRbNQ37Q5hCBofGCA==
+tagspaces-common@^1.1.31:
+  version "1.1.31"
+  resolved "https://registry.yarnpkg.com/tagspaces-common/-/tagspaces-common-1.1.31.tgz#9ce968ffbeb7c6f5308813179dfac113ba60e45e"
+  integrity sha512-xm/IptrvgbFY+fdESDagUYYNUKO2fHtJ8nUiyYt+H0I8bAaQVzuNAeWfJ8Sv24su17VGJpBPiptaGnoopwdcxw==
+  dependencies:
+    micromatch "^4.0.4"
 
 tapable@^0.1.8:
   version "0.1.10"

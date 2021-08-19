@@ -281,7 +281,6 @@
     "jszip": "^3.1.5",
     "leaflet": "^1.7.1",
     "marked": "^2.0.1",
-    "micromatch": "^4.0.4",
     "open-location-code": "^1.0.3",
     "open-location-code-typescript": "^1.5.0",
     "path": "^0.12.7",
@@ -313,7 +312,7 @@
     "semver": "^5.5.0",
     "source-map-support": "^0.5.11",
     "sync-fetch": "^0.3.0",
-    "tagspaces-common-node": "^1.0.7",
+    "tagspaces-common-node": "^1.0.15",
     "tiff.js": "^1.0.0",
     "use-state-with-callback": "^2.0.3",
     "winattr": "^3.0.0"
