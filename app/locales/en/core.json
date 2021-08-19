@@ -614,5 +614,6 @@
   "searchTypeSemiStrictTooltip": "Exact search in file path, description and text content (by enabled full-text search)",
   "searchTypeStrict": "Strict",
   "searchTypeStrictTooltip": "Same as semi-strict but case sensitive",
+  "warningOpeningFilesExternally": "Show warning on opening files externally",
   "-": "-"
 }

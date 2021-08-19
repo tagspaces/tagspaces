@@ -63,6 +63,9 @@ interface Props {
   classes: any;
   settings: any;
   setDesktopMode: (desktopMode: boolean) => void;
+  setWarningOpeningFilesExternally: (
+    warningOpeningFilesExternally: boolean
+  ) => void;
   setSaveTagInLocation: (saveTagInLocation: boolean) => void;
   showResetSettings: (showDialog: boolean) => void;
   tileServers: Array<TS.MapTileServer>;
@@ -113,6 +116,18 @@ const SettingsAdvanced = (props: Props) => {
             disabled={!(typeof window.ExtDisplayMode === 'undefined')}
             onClick={() => props.setDesktopMode(!props.settings.desktopMode)}
             checked={!props.settings.desktopMode}
+          />
+        </ListItem>
+        <ListItem className={classes.listItem}>
+          <ListItemText primary={i18n.t('warningOpeningFilesExternally')} />
+          <Switch
+            data-tid="warningOpeningFilesExternally"
+            onClick={() =>
+              props.setWarningOpeningFilesExternally(
+                !props.settings.warningOpeningFilesExternally
+              )
+            }
+            checked={props.settings.warningOpeningFilesExternally}
           />
         </ListItem>
         <ListItem className={classes.listItem}>
@@ -216,6 +231,8 @@ function mapStateToProps(state) {
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
+      setWarningOpeningFilesExternally:
+        SettingsActions.setWarningOpeningFilesExternally,
       setDesktopMode: SettingsActions.setDesktopMode,
       setSaveTagInLocation: SettingsActions.setSaveTagInLocation
     },
