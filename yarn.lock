@@ -17577,10 +17577,10 @@ table@^5.0.0, table@^5.2.3:
     slice-ansi "^2.1.0"
     string-width "^3.0.0"
 
-tagspaces-common-node@^1.0.17:
-  version "1.0.17"
-  resolved "https://registry.yarnpkg.com/tagspaces-common-node/-/tagspaces-common-node-1.0.17.tgz#77813247f218427b73c438b9e16345d605ff9c98"
-  integrity sha512-Tvr+cPUpNAmMwVKuHrydiNg+xUkoaHnNgkPxuwUPjIbDw8Vn4FYcLeRxLJFc/9b5Wq/Izj/mPd7lwADPXMBejA==
+tagspaces-common-node@^1.0.20:
+  version "1.0.20"
+  resolved "https://registry.yarnpkg.com/tagspaces-common-node/-/tagspaces-common-node-1.0.20.tgz#9f6455c85156865dd5828f278c30bd077b0ea6fc"
+  integrity sha512-Q3bi4llsmul7Rke249Op+6v+T79vBXzzcACkORRaUbuC7LpVwxWlPcMohLcJbPrkJF1aM1nJAh65cFhjAtzJmA==
   dependencies:
     fs-extra "^10.0.0"
     path "^0.12.7"

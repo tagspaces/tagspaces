@@ -321,11 +321,11 @@ export const actions = {
         ? currentLocation.maxIndexAge
         : AppConfig.maxIndexAge;
       if (
-        !currentLocation.disableIndexing &&
-        (!GlobalSearch.index ||
-          GlobalSearch.index.length < 1 ||
-          searchQuery.forceIndexing ||
-          indexAge > maxIndexAge)
+        searchQuery.forceIndexing ||
+        (!currentLocation.disableIndexing &&
+          (!GlobalSearch.index ||
+            GlobalSearch.index.length < 1 ||
+            indexAge > maxIndexAge))
       ) {
         const currentPath = getLocationPath(currentLocation);
         console.log('Start creating index for : ' + currentPath);
@@ -437,9 +437,12 @@ export const actions = {
             await PlatformIO.enableObjectStoreSupport(location);
           }
           // if (Pro && Pro.Indexer && Pro.Indexer.hasIndex) {
-          indexExist = await hasIndex(nextPath, PlatformIO.getDirSeparator());
+          indexExist = await hasIndex(nextPath); // , PlatformIO.getDirSeparator());
 
-          if (searchQuery.forceIndexing || !indexExist) {
+          if (
+            searchQuery.forceIndexing ||
+            (!location.disableIndexing && !indexExist)
+          ) {
             console.log('Creating index for : ' + nextPath);
             directoryIndex = await createDirectoryIndex(
               nextPath,
