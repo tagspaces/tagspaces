@@ -625,9 +625,9 @@ export const getKeyBindings = (state: any) => state.settings.keyBindings;
 export const getKeyBindingObject = (state: any) =>
   generateKeyBindingObject(state.settings.keyBindings);
 export const getSupportedFileTypes = (state: any) =>
-  state.settings.supportedFileTypes;
-/* export const getPerspectives = (state: any) =>
-  state.settings.supportedPerspectives; */
+  state.settings.supportedFileTypes.sort((a, b) => {
+    return a.type > b.type ? 1 : a.type < b.type ? -1 : 0;
+  });
 export const getTagColor = (state: any) => state.settings.tagBackgroundColor;
 export const getTagTextColor = (state: any) => state.settings.tagTextColor;
 export const getCurrentTheme = (state: any) => state.settings.currentTheme;
