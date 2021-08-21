@@ -282,7 +282,7 @@ export function findExtensionsForEntry(
     PlatformIO.getDirSeparator()
   ).toLowerCase();
   const viewingExtensionPath = isFile
-    ? findExtensionPathForId('@tagspaces/text-viewer')
+    ? findExtensionPathForId('@tagspaces/extensions/text-viewer')
     : 'about:blank';
   const fileForOpening: OpenedEntry = {
     path: entryPath,

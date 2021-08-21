@@ -45,74 +45,73 @@ export function findAvailableExtensions() {
       extensionName: 'Documents Viewer',
       extensionType: 'viewer'
     },
-    // { extensionId: '@tagspaces/ebook-viewer', extensionName: 'EPUB Viewer', extensionType: 'viewer' },
     {
-      extensionId: '@tagspaces/html-editor',
+      extensionId: '@tagspaces/extensions/html-editor',
       extensionName: 'HTML Editor',
       extensionType: 'editor'
     },
     {
-      extensionId: '@tagspaces/html-viewer',
+      extensionId: '@tagspaces/extensions/html-viewer',
       extensionName: 'HTML Viewer',
       extensionType: 'viewer'
     },
     {
-      extensionId: '@tagspaces/image-viewer',
+      extensionId: '@tagspaces/extensions/image-viewer',
       extensionName: 'Image Viewer',
       extensionType: 'viewer'
     },
     {
-      extensionId: '@tagspaces/json-editor',
+      extensionId: '@tagspaces/extensions/json-editor',
       extensionName: 'JSON Viewer',
       extensionType: 'editor'
     },
     {
-      extensionId: '@tagspaces/md-viewer',
+      extensionId: '@tagspaces/extensions/md-viewer',
       extensionName: 'MarkDown Viewer',
       extensionType: 'viewer'
     },
     {
-      extensionId: '@tagspaces/media-player',
+      extensionId: '@tagspaces/extensions/md-editor/build',
+      extensionName: 'MarkDown Editor',
+      extensionType: 'editor'
+    },
+    {
+      extensionId: '@tagspaces/extensions/media-player',
       extensionName: 'Media Player',
       extensionType: 'viewer'
     },
     {
-      extensionId: '@tagspaces/mhtml-viewer',
+      extensionId: '@tagspaces/extensions/mhtml-viewer',
       extensionName: 'MHTML Viewer',
       extensionType: 'viewer'
     },
     {
-      extensionId: '@tagspaces/pdf-viewer',
+      extensionId: '@tagspaces/extensions/pdf-viewer',
       extensionName: 'PDF Viewer',
       extensionType: 'viewer'
     },
-    // {
-    //   extensionId: '@tagspaces/plain-viewer',
-    //   extensionName: 'Experimental Viewer (insecure)',
-    //   extensionType: 'viewer'
-    // },
     {
-      extensionId: '@tagspaces/rtf-viewer',
+      extensionId: '@tagspaces/extensions/rtf-viewer',
       extensionName: 'RTF Viewer',
       extensionType: 'viewer'
     },
     {
-      extensionId: '@tagspaces/spreadsheet-viewer',
+      extensionId: '@tagspaces/extensions/spreadsheet-viewer',
       extensionName: 'Spreadsheet Viewer',
       extensionType: 'viewer'
     },
     {
-      extensionId: '@tagspaces/text-editor',
+      extensionId: '@tagspaces/extensions/text-editor',
       extensionName: 'Text Editor',
       extensionType: 'editor'
     },
     {
-      extensionId: '@tagspaces/text-viewer',
+      extensionId: '@tagspaces/extensions/text-viewer',
       extensionName: 'Text Viewer',
       extensionType: 'viewer'
     },
     {
-      extensionId: '@tagspaces/url-viewer',
+      extensionId: '@tagspaces/extensions/url-viewer',
       extensionName: 'URL Viewer',
       extensionType: 'viewer'
     }
@@ -167,12 +166,6 @@ export default {
   entryPropertiesSplitSize: 103,
   leftVerticalSplitSize: 350,
   mainVerticalSplitSize: '50%',
-  /* supportedPerspectives: [
-    {
-      id: 'perspectiveList',
-      name: 'List'
-    }
-  ], */
   supportedThemes: ['light', 'dark'],
   supportedLanguages: [
     {
@@ -280,376 +273,371 @@ export default {
   supportedFileTypes: [
     {
       type: 'bmp',
-      viewer: '@tagspaces/image-viewer',
+      viewer: '@tagspaces/extensions/image-viewer',
       color: '#9fd5ba'
     },
     {
       type: 'c',
-      viewer: '@tagspaces/text-editor',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/text-editor',
+      editor: '@tagspaces/extensions/text-editor',
       color: ''
     },
     {
       type: 'clj',
-      viewer: '@tagspaces/text-editor',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/text-editor',
+      editor: '@tagspaces/extensions/text-editor',
       color: ''
     },
     {
       type: 'coffee',
-      viewer: '@tagspaces/text-editor',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/text-editor',
+      editor: '@tagspaces/extensions/text-editor',
       color: ''
     },
     {
       type: 'cpp',
-      viewer: '@tagspaces/text-editor',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/text-editor',
+      editor: '@tagspaces/extensions/text-editor',
       color: ''
     },
     {
       type: 'cs',
-      viewer: '@tagspaces/text-editor',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/text-editor',
+      editor: '@tagspaces/extensions/text-editor',
       color: ''
     },
     {
       type: 'css',
-      viewer: '@tagspaces/text-editor',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/text-editor',
+      editor: '@tagspaces/extensions/text-editor',
       color: ''
     },
     {
       type: 'desktop',
-      viewer: '@tagspaces/url-viewer',
+      viewer: '@tagspaces/extensions/url-viewer',
       color: ''
     },
     {
       type: 'eml',
-      viewer: '@tagspaces/mhtml-viewer',
+      viewer: '@tagspaces/extensions/mhtml-viewer',
       color: ''
     },
-    // {
-    //   type: 'epub',
-    //   viewer: '@tagspaces/ebook-viewer',
-    //   color: ''
-    // },
     {
       type: 'flac',
-      viewer: '@tagspaces/media-player',
+      viewer: '@tagspaces/extensions/media-player',
       color: ''
     },
     {
       type: 'acc',
-      viewer: '@tagspaces/media-player',
+      viewer: '@tagspaces/extensions/media-player',
       color: ''
     },
     {
       type: 'gif',
-      viewer: '@tagspaces/image-viewer',
+      viewer: '@tagspaces/extensions/image-viewer',
       color: '#9fd5ba'
     },
     {
       type: 'groovy',
-      viewer: '@tagspaces/text-editor',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/text-editor',
+      editor: '@tagspaces/extensions/text-editor',
       color: ''
     },
     {
       type: 'h',
-      viewer: '@tagspaces/text-editor',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/text-editor',
+      editor: '@tagspaces/extensions/text-editor',
       color: ''
     },
     {
       type: 'haxe',
-      viewer: '@tagspaces/text-editor',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/text-editor',
+      editor: '@tagspaces/extensions/text-editor',
       color: ''
     },
     {
       type: 'htm',
-      viewer: '@tagspaces/html-viewer',
-      editor: '@tagspaces/html-editor',
+      viewer: '@tagspaces/extensions/html-viewer',
+      editor: '@tagspaces/extensions/html-editor',
       color: '#beefed'
     },
     {
       type: 'html',
-      viewer: '@tagspaces/html-viewer',
-      editor: '@tagspaces/html-editor',
+      viewer: '@tagspaces/extensions/html-viewer',
+      editor: '@tagspaces/extensions/html-editor',
       color: ''
     },
     {
       type: 'ico',
-      viewer: '@tagspaces/image-viewer',
+      viewer: '@tagspaces/extensions/image-viewer',
       color: '#9fd5ba'
     },
     {
       type: 'java',
-      viewer: '@tagspaces/text-editor',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/text-editor',
+      editor: '@tagspaces/extensions/text-editor',
       color: ''
     },
     {
       type: 'jpeg',
-      viewer: '@tagspaces/image-viewer',
+      viewer: '@tagspaces/extensions/image-viewer',
       color: '#9fd5ba'
     },
     {
       type: 'jpg',
-      viewer: '@tagspaces/image-viewer',
+      viewer: '@tagspaces/extensions/image-viewer',
       color: '#9fd5ba'
     },
     {
       type: 'jif',
-      viewer: '@tagspaces/image-viewer',
+      viewer: '@tagspaces/extensions/image-viewer',
       color: '#9fd5ba'
     },
     {
       type: 'jfif',
-      viewer: '@tagspaces/image-viewer',
+      viewer: '@tagspaces/extensions/image-viewer',
       color: '#9fd5ba'
     },
     {
       type: 'js',
-      viewer: '@tagspaces/text-editor',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/text-editor',
+      editor: '@tagspaces/extensions/text-editor',
       color: '#d7ff78'
     },
     {
       type: 'jsm',
-      viewer: '@tagspaces/text-editor',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/text-editor',
+      editor: '@tagspaces/extensions/text-editor',
       color: ''
     },
     {
       type: 'json',
-      viewer: '@tagspaces/json-editor',
-      editor: '@tagspaces/json-editor',
+      viewer: '@tagspaces/extensions/json-editor',
+      editor: '@tagspaces/extensions/json-editor',
       color: ''
     },
     {
       type: 'less',
-      viewer: '@tagspaces/text-editor',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/text-editor',
+      editor: '@tagspaces/extensions/text-editor',
       color: ''
     },
     {
       type: 'lua',
-      viewer: '@tagspaces/text-editor',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/text-editor',
+      editor: '@tagspaces/extensions/text-editor',
       color: ''
     },
     {
       type: 'mkv',
-      viewer: '@tagspaces/media-player',
+      viewer: '@tagspaces/extensions/media-player',
       color: '#c5e4f9'
     },
     {
       type: 'md',
-      viewer: '@tagspaces/md-viewer',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/md-viewer',
+      editor: '@tagspaces/extensions/text-editor',
       color: '#beefed'
     },
     {
       type: 'mdown',
-      viewer: '@tagspaces/md-viewer',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/md-viewer',
+      editor: '@tagspaces/extensions/text-editor',
       color: '#beefed'
     },
     {
       type: 'mdx',
-      viewer: '@tagspaces/md-viewer',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/md-viewer',
+      editor: '@tagspaces/extensions/text-editor',
       color: '#beefed'
     },
     {
       type: 'mht',
-      viewer: '@tagspaces/mhtml-viewer',
+      viewer: '@tagspaces/extensions/mhtml-viewer',
       color: ''
     },
     {
       type: 'mhtml',
-      viewer: '@tagspaces/mhtml-viewer',
+      viewer: '@tagspaces/extensions/mhtml-viewer',
       color: ''
     },
     {
       type: 'mkd',
-      viewer: '@tagspaces/md-viewer',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/md-viewer',
+      editor: '@tagspaces/extensions/text-editor',
       color: ''
     },
     {
       type: 'ml',
-      viewer: '@tagspaces/text-editor',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/text-editor',
+      editor: '@tagspaces/extensions/text-editor',
       color: ''
     },
     {
       type: 'mli',
-      viewer: '@tagspaces/text-editor',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/text-editor',
+      editor: '@tagspaces/extensions/text-editor',
       color: ''
     },
     {
       type: 'mp3',
-      viewer: '@tagspaces/media-player',
+      viewer: '@tagspaces/extensions/media-player',
       color: '#c5e4f9'
     },
     {
       type: 'lrv',
-      viewer: '@tagspaces/media-player',
+      viewer: '@tagspaces/extensions/media-player',
       color: '#c5e4f9'
     },
     {
       type: 'mp4',
-      viewer: '@tagspaces/media-player',
+      viewer: '@tagspaces/extensions/media-player',
       color: '#c5e4f9'
     },
     {
       type: 'oga',
-      viewer: '@tagspaces/media-player',
+      viewer: '@tagspaces/extensions/media-player',
       color: '#c5e4f9'
     },
     {
       type: 'ogg',
-      viewer: '@tagspaces/media-player',
+      viewer: '@tagspaces/extensions/media-player',
       color: '#c5e4f9'
     },
     {
       type: 'ogv',
-      viewer: '@tagspaces/media-player',
+      viewer: '@tagspaces/extensions/media-player',
       color: '#c5e4f9'
     },
     {
       type: 'ogx',
-      viewer: '@tagspaces/media-player',
+      viewer: '@tagspaces/extensions/media-player',
       color: '#c5e4f9'
     },
     {
       type: 'opus',
-      viewer: '@tagspaces/media-player',
+      viewer: '@tagspaces/extensions/media-player',
       color: '#c5e4f9'
     },
     {
       type: 'pdf',
-      viewer: '@tagspaces/pdf-viewer',
+      viewer: '@tagspaces/extensions/pdf-viewer',
       color: '#f5897f'
     },
     {
       type: 'php',
-      viewer: '@tagspaces/text-editor',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/text-editor',
+      editor: '@tagspaces/extensions/text-editor',
       color: ''
     },
     {
       type: 'pl',
-      viewer: '@tagspaces/text-editor',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/text-editor',
+      editor: '@tagspaces/extensions/text-editor',
       color: ''
     },
     {
       type: 'png',
-      viewer: '@tagspaces/image-viewer',
+      viewer: '@tagspaces/extensions/image-viewer',
       color: '#9fd5ba'
     },
     {
       type: 'psd',
-      viewer: '@tagspaces/image-viewer'
+      viewer: '@tagspaces/extensions/image-viewer'
     },
     {
       type: 'py',
-      viewer: '@tagspaces/text-editor',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/text-editor',
+      editor: '@tagspaces/extensions/text-editor',
       color: ''
     },
     {
       type: 'rb',
-      viewer: '@tagspaces/text-editor',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/text-editor',
+      editor: '@tagspaces/extensions/text-editor',
       color: ''
     },
     {
       type: 'rtf',
-      viewer: '@tagspaces/rtf-viewer',
+      viewer: '@tagspaces/extensions/rtf-viewer',
       color: ''
     },
     {
       type: 'sh',
-      viewer: '@tagspaces/text-editor',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/text-editor',
+      editor: '@tagspaces/extensions/text-editor',
       color: ''
     },
     {
       type: 'spx',
-      viewer: '@tagspaces/media-player',
+      viewer: '@tagspaces/extensions/media-player',
       color: '#c5e4f9'
     },
     {
       type: 'sql',
-      viewer: '@tagspaces/text-editor',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/text-editor',
+      editor: '@tagspaces/extensions/text-editor',
       color: ''
     },
     {
       type: 'svg',
-      viewer: '@tagspaces/image-viewer',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/image-viewer',
+      editor: '@tagspaces/extensions/text-editor',
       color: '#9fd5ba'
     },
     {
       type: 'tif',
-      viewer: '@tagspaces/image-viewer'
+      viewer: '@tagspaces/extensions/image-viewer'
     },
     {
       type: 'tiff',
-      viewer: '@tagspaces/image-viewer'
+      viewer: '@tagspaces/extensions/image-viewer'
     },
     {
       type: 'txt',
-      viewer: '@tagspaces/text-editor',
-      editor: '@tagspaces/text-editor'
+      viewer: '@tagspaces/extensions/text-editor',
+      editor: '@tagspaces/extensions/text-editor'
     },
     {
       type: 'url',
-      viewer: '@tagspaces/url-viewer',
+      viewer: '@tagspaces/extensions/url-viewer',
       color: ''
     },
     {
       type: 'wav',
-      viewer: '@tagspaces/media-player',
+      viewer: '@tagspaces/extensions/media-player',
       color: '#c5e4f9'
     },
     {
       type: 'wave',
-      viewer: '@tagspaces/media-player',
+      viewer: '@tagspaces/extensions/media-player',
       color: '#c5e4f9'
     },
     {
       type: 'webm',
-      viewer: '@tagspaces/media-player',
+      viewer: '@tagspaces/extensions/media-player',
       color: '#c5e4f9'
     },
     {
       type: 'webp',
-      viewer: '@tagspaces/image-viewer',
+      viewer: '@tagspaces/extensions/image-viewer',
       color: '#9fd5ba'
     },
     {
       type: 'website',
-      viewer: '@tagspaces/url-viewer',
+      viewer: '@tagspaces/extensions/url-viewer',
       color: ''
     },
     {
       type: 'xhtml',
-      viewer: '@tagspaces/html-viewer',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/html-viewer',
+      editor: '@tagspaces/extensions/text-editor',
       color: ''
     },
     {
       type: 'xml',
-      viewer: '@tagspaces/text-editor',
-      editor: '@tagspaces/text-editor',
+      viewer: '@tagspaces/extensions/text-editor',
+      editor: '@tagspaces/extensions/text-editor',
       color: ''
     },
     {
@@ -664,22 +652,22 @@ export default {
     },
     {
       type: 'xlsx',
-      viewer: '@tagspaces/spreadsheet-viewer',
+      viewer: '@tagspaces/extensions/spreadsheet-viewer',
       color: '#b2f30e'
     },
     {
       type: 'xls',
-      viewer: '@tagspaces/spreadsheet-viewer',
+      viewer: '@tagspaces/extensions/spreadsheet-viewer',
       color: '#b2f30e'
     },
     {
       type: 'csv',
-      viewer: '@tagspaces/spreadsheet-viewer',
+      viewer: '@tagspaces/extensions/spreadsheet-viewer',
       color: '#b2f30e'
     },
     {
       type: 'ods',
-      viewer: '@tagspaces/spreadsheet-viewer',
+      viewer: '@tagspaces/extensions/spreadsheet-viewer',
       color: '#b2f30e'
     }
   ],
