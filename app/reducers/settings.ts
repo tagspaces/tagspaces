@@ -78,24 +78,41 @@ export const types = {
 export default (state: any = defaultSettings, action: any) => {
   switch (action.type) {
     case types.UPGRADE_SETTINGS: {
+      // const currentVersion = semver.coerce(versionMeta.version);
+      // console.log('---->' + currentVersion);
+
       const mergedKeyBindings = defaultSettings.keyBindings.map(x =>
         Object.assign(
           x,
           state.keyBindings.find(y => y.name === x.name)
         )
       );
-      const mergedFileTypes = defaultSettings.supportedFileTypes.map(x =>
-        Object.assign(
-          x,
-          state.supportedFileTypes.find(y => y.type === x.type)
-        )
+      // Bidirectional filetype merge
+      // const mergedFileTypes = defaultSettings.supportedFileTypes.map(x =>
+      //   Object.assign(
+      //     x,
+      //     state.supportedFileTypes.find(y => y.type === x.type)
+      //   )
+      // );
+      // const combinedFileTypes = state.supportedFileTypes.map(x =>
+      //   Object.assign(
+      //     x,
+      //     mergedFileTypes.find(y => y.type === x.type)
+      //   )
+      // );
+      const extensionMigrated = state.supportedFileTypes.find(y =>
+        y.viewer.startsWith('@tagspaces/extensions/')
       );
-      const combinedFileTypes = state.supportedFileTypes.map(x =>
-        Object.assign(
-          x,
-          mergedFileTypes.find(y => y.type === x.type)
-        )
-      );
+      let migratedFileTypes = [];
+      if (!extensionMigrated) {
+        migratedFileTypes = state.supportedFileTypes.map(x =>
+          Object.assign(
+            x,
+            defaultSettings.supportedFileTypes.find(y => y.type === x.type)
+          )
+        );
+        console.log('Performing filetype migration');
+      }
       return {
         ...defaultSettings,
         ...state,
@@ -106,10 +123,10 @@ export default (state: any = defaultSettings, action: any) => {
           // ...defaultSettings.keyBindings, // use to reset to the default key bindings
           ...mergedKeyBindings
         ],
-        supportedFileTypes: [
-          // ...defaultSettings.supportedFileTypes, // use to reset to the default file types
-          ...combinedFileTypes
-        ]
+        supportedFileTypes:
+          migratedFileTypes.length > 0
+            ? [...migratedFileTypes]
+            : state.supportedFileTypes
       };
     }
     case types.TOGGLE_SHOWUNIXHIDDENENTRIES: {
