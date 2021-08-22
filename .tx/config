@@ -7,27 +7,27 @@ source_lang = en
 type = KEYVALUEJSON
 
 [tagspaces.nsviewerimagejson]
-file_filter = extensions/extensions/viewerImage/locales/<lang>/ns.viewerImage.json
+file_filter = extensions/extensions/image-viewer/locales/<lang>/ns.viewerImage.json
 source_lang = en
 type = KEYVALUEJSON
 
 [tagspaces.nsviewermdjson]
-file_filter = extensions/extensions/viewerMD/locales/<lang>/ns.viewerMD.json
+file_filter = extensions/extensions/md-viewer/locales/<lang>/ns.viewerMD.json
 source_lang = en
 type = KEYVALUEJSON
 
 [tagspaces.nsviewerhtmljson]
-file_filter = extensions/extensions/viewerHTML/locales/<lang>/ns.viewerHTML.json
+file_filter = extensions/extensions/html-viewer/locales/<lang>/ns.viewerHTML.json
 source_lang = en
 type = KEYVALUEJSON
 
 [tagspaces.nsviewermhtmljson]
-file_filter = extensions/extensions/viewerMHTML/locales/<lang>/ns.viewerMHTML.json
+file_filter = extensions/extensions/mhtml-viewer/locales/<lang>/ns.viewerMHTML.json
 source_lang = en
 type = KEYVALUEJSON
 
 [tagspaces.nseditortextjson]
-file_filter = extensions/extensions/editorText/locales/<lang>/ns.editorText.json
+file_filter = extensions/extensions/text-editor/locales/<lang>/ns.editorText.json
 source_lang = en
 type = KEYVALUEJSON
 
