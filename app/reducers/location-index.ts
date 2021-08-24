@@ -16,7 +16,7 @@
  *
  */
 
-import { loadIndex, hasIndex } from 'tagspaces-common-node/indexer';
+import { loadIndex, hasIndex } from 'tagspaces-common-index/indexer';
 import { getLocation, getLocations } from './locations';
 import { createDirectoryIndex } from '-/services/utils-io';
 import {

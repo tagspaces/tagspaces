@@ -21,7 +21,7 @@ import {
   loadIndex,
   persistIndex,
   createIndex
-} from 'tagspaces-common-node/indexer';
+} from 'tagspaces-common-index/indexer';
 import { saveAs } from 'file-saver';
 import micromatch from 'micromatch';
 import PlatformIO from './platform-io';
