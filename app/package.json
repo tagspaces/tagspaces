@@ -12,6 +12,6 @@
   },
   "license": "AGPL-3.0",
   "dependencies": {
-    "@tagspaces/tagspaces-extensions": "https://github.com/tagspaces/tagspaces-extensions#master"
+    "@tagspaces/tagspaces-extensions": "https://github.com/tagspaces/tagspaces-extensions#main"
   }
 }
