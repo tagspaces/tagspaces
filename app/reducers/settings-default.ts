@@ -284,18 +284,6 @@ export default {
       color: ''
     },
     {
-      type: 'clj',
-      viewer: '@tagspaces/extensions/text-editor',
-      editor: '@tagspaces/extensions/text-editor',
-      color: ''
-    },
-    {
-      type: 'coffee',
-      viewer: '@tagspaces/extensions/text-editor',
-      editor: '@tagspaces/extensions/text-editor',
-      color: ''
-    },
-    {
       type: 'cpp',
       viewer: '@tagspaces/extensions/text-editor',
       editor: '@tagspaces/extensions/text-editor',
@@ -339,28 +327,10 @@ export default {
       color: '#9fd5ba'
     },
     {
-      type: 'groovy',
-      viewer: '@tagspaces/extensions/text-editor',
-      editor: '@tagspaces/extensions/text-editor',
-      color: ''
-    },
-    {
       type: 'h',
       viewer: '@tagspaces/extensions/text-editor',
       editor: '@tagspaces/extensions/text-editor',
       color: ''
-    },
-    {
-      type: 'haxe',
-      viewer: '@tagspaces/extensions/text-editor',
-      editor: '@tagspaces/extensions/text-editor',
-      color: ''
-    },
-    {
-      type: 'htm',
-      viewer: '@tagspaces/extensions/html-viewer',
-      editor: '@tagspaces/extensions/html-editor',
-      color: '#beefed'
     },
     {
       type: 'html',
@@ -424,24 +394,12 @@ export default {
       color: ''
     },
     {
-      type: 'lua',
-      viewer: '@tagspaces/extensions/text-editor',
-      editor: '@tagspaces/extensions/text-editor',
-      color: ''
-    },
-    {
       type: 'mkv',
       viewer: '@tagspaces/extensions/media-player',
       color: '#c5e4f9'
     },
     {
       type: 'md',
-      viewer: '@tagspaces/extensions/md-viewer',
-      editor: '@tagspaces/extensions/text-editor',
-      color: '#beefed'
-    },
-    {
-      type: 'mdown',
       viewer: '@tagspaces/extensions/md-viewer',
       editor: '@tagspaces/extensions/text-editor',
       color: '#beefed'
@@ -463,19 +421,7 @@ export default {
       color: ''
     },
     {
-      type: 'mkd',
-      viewer: '@tagspaces/extensions/md-viewer',
-      editor: '@tagspaces/extensions/text-editor',
-      color: ''
-    },
-    {
       type: 'ml',
-      viewer: '@tagspaces/extensions/text-editor',
-      editor: '@tagspaces/extensions/text-editor',
-      color: ''
-    },
-    {
-      type: 'mli',
       viewer: '@tagspaces/extensions/text-editor',
       editor: '@tagspaces/extensions/text-editor',
       color: ''
