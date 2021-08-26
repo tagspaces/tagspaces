@@ -33,7 +33,6 @@ import buildTrayIconMenu from '-/electron-tray-menu';
 import buildDesktopMenu from '-/services/electron-menus';
 import keyBindings from '-/utils/keyBindings';
 import Settings from '-/settings';
-import pathLib from 'path';
 
 // delete process.env.ELECTRON_ENABLE_SECURITY_WARNINGS;
 // process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
@@ -299,9 +298,9 @@ function reloadApp() {
 function buildTrayMenu() {
   let iconPath;
   if (devMode) {
-    iconPath = pathLib.resolve(__dirname, 'assets', 'icons', 'trayIcon@2x.png');
+    iconPath = path.resolve(__dirname, 'assets', 'icons', 'trayIcon@2x.png');
   } else {
-    iconPath = pathLib.resolve(
+    iconPath = path.resolve(
       process.resourcesPath,
       'app.asar',
       'assets',
