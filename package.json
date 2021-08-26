@@ -189,7 +189,7 @@
     "detect-port": "^1.3.0",
     "devtron": "^1.4.0",
     "electron": "13.2.2",
-    "electron-builder": "^22.10.5",
+    "electron-builder": "^22.13.0",
     "electron-devtools-installer": "^3.2.0",
     "enzyme": "^2.8.2",
     "enzyme-to-json": "^1.5.1",
@@ -320,7 +320,7 @@
     "semver": "^5.5.0",
     "source-map-support": "^0.5.11",
     "sync-fetch": "^0.3.0",
-    "tagspaces-common-index": "^1.0.7",
+    "tagspaces-common-index": "^1.0.8",
     "tiff.js": "^1.0.0",
     "use-state-with-callback": "^2.0.3",
     "winattr": "^3.0.0"

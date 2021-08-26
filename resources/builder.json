@@ -1,12 +1,13 @@
 {
   "appId": "org.tagspaces.desktopapp",
   "asar": true,
+  "includeSubNodeModules": true,
   "files": [
     "dist/",
     "config/",
     ".env",
     "assets/icons/trayIcon@2x.png",
-    "node_modules/",
+    "node_modules/**",
     "app.html",
     "main.prod.js",
     "main.prod.js.map",
