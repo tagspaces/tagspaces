@@ -17,14 +17,18 @@
  */
 
 import { app, Menu, Tray } from 'electron';
-import pathLib from 'path';
 // import TrayIcon2x from '-/assets/icons/trayIcon@2x.png';
 // import TrayIcon from '-/assets/icons/trayIcon.png';
 // import TrayIcon3x from '-/assets/icons/trayIcon@3x.png';
 
 let tray = null;
 
-export default function buildTrayIconMenu(mainPageProps: any, i18n, isMacLike) {
+export default function buildTrayIconMenu(
+  mainPageProps: any,
+  i18n,
+  isMacLike,
+  iconPath
+) {
   const cKey = isMacLike ? ' -  Cmd' : ' - Ctrl';
 
   function openNextFile() {
@@ -106,9 +110,7 @@ export default function buildTrayIconMenu(mainPageProps: any, i18n, isMacLike) {
 
   // const tray = new Tray(nImage);
   if (!tray) {
-    tray = new Tray(
-      pathLib.resolve(__dirname, 'assets', 'icons', 'trayIcon@2x.png')
-    );
+    tray = new Tray(iconPath);
   }
   /* tray.on('click', () => {
     mainPageProps.showTagSpaces();
