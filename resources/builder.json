@@ -4,9 +4,9 @@
   "includeSubNodeModules": true,
   "files": [
     "dist/",
+    "node_modules/",
     "config/",
     ".env",
-    "assets/icons/trayIcon@2x.png",
     "node_modules/**",
     "app.html",
     "main.prod.js",

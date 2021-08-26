@@ -296,7 +296,7 @@ function reloadApp() {
 }
 
 function buildTrayMenu() {
-  let iconPath;
+  /* let iconPath;
   if (devMode) {
     iconPath = path.resolve(__dirname, 'assets', 'icons', 'trayIcon@2x.png');
   } else {
@@ -307,7 +307,8 @@ function buildTrayMenu() {
       'icons',
       'trayIcon@2x.png'
     );
-  }
+  } */
+
   buildTrayIconMenu(
     {
       showTagSpaces,
@@ -319,8 +320,7 @@ function buildTrayMenu() {
       quitApp: reloadApp
     },
     i18n,
-    isMac,
-    iconPath
+    isMac
   );
 }
 
