@@ -1,9 +1,13 @@
 const fs = require('fs-extra');
+const pathLib = require('path');
 const npm = require('npm');
 
 function isInstalled(npmPackage) {
   try {
     const path = require.resolve('tagspaces-common-index');
+    if (!fs.existsSync(pathLib.join(path, '..', 'node_modules'))) {
+      return false;
+    }
     const data = fs.readFileSync(path, 'utf8');
     return data.indexOf(npmPackage) !== -1; // fs.existsSync(path)
     // process.moduleLoadList.indexOf("NativeModule " + npmPackage) >= 0 ||
