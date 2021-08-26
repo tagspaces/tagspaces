@@ -23,6 +23,7 @@ import NativePlatformIO from './_PLATFORMIO_';
 import ObjectStoreIO from './objectstore-io';
 import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
+import settings from '-/reducers/settings';
 
 const nativeAPI: any = new NativePlatformIO();
 let objectStoreAPI;
@@ -421,8 +422,12 @@ export default class PlatformIO {
   static showInFileManager = (dirPath: string): void =>
     nativeAPI.showInFileManager(dirPath);
 
-  static openFile = (filePath: string): void => {
+  static openFile = (
+    filePath: string,
+    warningOpeningFilesExternally: boolean
+  ): void => {
     if (
+      !warningOpeningFilesExternally ||
       confirm(
         'Do you really want to open "' +
           filePath +

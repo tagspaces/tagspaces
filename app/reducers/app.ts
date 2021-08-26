@@ -1907,12 +1907,14 @@ export const actions = {
         return;
       }
       if (fsEntry.isFile) {
-        PlatformIO.openFile(fsEntry.path);
+        const { warningOpeningFilesExternally } = getState().settings;
+        PlatformIO.openFile(fsEntry.path, warningOpeningFilesExternally);
       } else {
         PlatformIO.openDirectory(fsEntry.path);
       }
     } else {
-      PlatformIO.openFile(selectedFile);
+      const { warningOpeningFilesExternally } = getState().settings;
+      PlatformIO.openFile(selectedFile, warningOpeningFilesExternally);
     }
   },
   openLink: (url: string) => (

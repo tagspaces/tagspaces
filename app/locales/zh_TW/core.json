@@ -608,7 +608,7 @@
   "useCurrentIndexTooltip": "若未過期，將使用已經建立的搜尋索引",
   "forceReindex": "強制重新索引",
   "forceReindexTooltip": "將強制重新建立搜尋索引",
-  "searchTypeFuzzy": "Fuzzy",
+  "searchTypeFuzzy": "模糊",
   "searchTypeFuzzyTooltip": "提供更廣泛的搜尋結果，容忍搜尋條件中的錯字",
   "searchTypeSemiStrict": "半嚴格",
   "searchTypeSemiStrictTooltip": "在文件路徑，描述和文本內容中進行精確搜尋 (通過啟用全文搜尋)",

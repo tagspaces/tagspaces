@@ -79,9 +79,8 @@ describe('TST50** - Right button on a file', () => {
     const bodyTxt = await iframeBody.innerText();
     const containTID = toContainTID(bodyTxt);
     if (!containTID) {
-      console.debug(bodyTxt);
+      console.debug('no containTID in:' + bodyTxt);
     }
-    //await global.client.switchToParentFrame();
     expect(containTID).toBe(true);
   });
 
