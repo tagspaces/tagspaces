@@ -396,7 +396,7 @@ describe('TST50** - Right button on a file', () => {
   });
 
   test('TST5039 - Changing the Perspective View [web,minio,electron]', async () => {
-    await isDisplayed('[data-tid=perspectiveGridFileTable]');
+    await isDisplayed('[data-tid=perspectiveGridFileTable]', true, 1500);
     const grid = await global.client.$('[data-tid=perspectiveGridFileTable]');
     let gridStyle = await grid.getAttribute('style');
 

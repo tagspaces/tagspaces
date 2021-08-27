@@ -128,11 +128,11 @@ export default class PlatformIO {
 
   static focusWindow = (): void => nativeAPI.focusWindow();
 
-  static getDevicePaths = (): Object => nativeAPI.getDevicePaths();
+  static getDevicePaths = (): Promise<Object> => nativeAPI.getDevicePaths();
 
-  static getAppDataPath = (): string => nativeAPI.getAppDataPath();
+  /* static getAppDataPath = (): string => nativeAPI.getAppDataPath();
 
-  static getUserHomePath = (): string => nativeAPI.getUserHomePath();
+  static getUserHomePath = (): string => nativeAPI.getUserHomePath(); */
 
   static getURLforPath = (
     path: string,

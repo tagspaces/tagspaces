@@ -590,16 +590,14 @@ app.on('ready', async () => {
     }
   });
 
-  ipcMain.on('get-device-paths', event => {
-    event.returnValue = {
-      desktopFolder: app.getPath('desktop'),
-      documentsFolder: app.getPath('documents'),
-      downloadsFolder: app.getPath('downloads'),
-      musicFolder: app.getPath('music'),
-      picturesFolder: app.getPath('pictures'),
-      videosFolder: app.getPath('videos')
-    };
-  });
+  ipcMain.handle('get-device-paths', () => ({
+    desktopFolder: app.getPath('desktop'),
+    documentsFolder: app.getPath('documents'),
+    downloadsFolder: app.getPath('downloads'),
+    musicFolder: app.getPath('music'),
+    picturesFolder: app.getPath('pictures'),
+    videosFolder: app.getPath('videos')
+  }));
 
   ipcMain.on('get-user-home-path', event => {
     event.returnValue = app.getPath('home');
@@ -652,13 +650,32 @@ app.on('ready', async () => {
     event.returnValue = app.getVersion(); // eslint-disable-line
   });
 
+  /*
   ipcMain.on('app-dir-path-request', event => {
     event.returnValue = path.join(__dirname, ''); // eslint-disable-line
   });
+  */
 
-  ipcMain.on('move-to-trash', async (event, files) => {
+  ipcMain.handle('move-to-trash', async (event, files) => {
     const result = [];
     files.forEach(fullPath => {
+      // console.debug('Trash:' + fullPath);
+      result.push(shell.trashItem(fullPath));
+    });
+
+    let ret;
+    try {
+      ret = await Promise.all(result);
+    } catch (err) {
+      console.error('moveToTrash error:', err);
+    }
+    return ret;
+  });
+
+  /* ipcMain.on('move-to-trash', async (event, files) => {
+    const result = [];
+    files.forEach(fullPath => {
+      console.debug('Trash:' + fullPath);
       result.push(shell.trashItem(fullPath));
     });
     try {
@@ -667,7 +684,7 @@ app.on('ready', async () => {
       console.error('moveToTrash error:', err);
       event.returnValue = undefined;
     }
-  });
+  }); */
 
   ipcMain.on('set-language', (e, language) => {
     i18n.changeLanguage(language);

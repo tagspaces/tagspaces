@@ -158,14 +158,14 @@ export default class ElectronIO {
     // this.win.focus();
   };
 
-  getDevicePaths = (): Object =>
-    this.ipcRenderer.sendSync('get-device-paths', 'notNeededArgument');
+  getDevicePaths = (): Promise<Object> =>
+    this.ipcRenderer.invoke('get-device-paths');
 
-  getUserHomePath = (): string =>
+  /* getUserHomePath = (): string =>
     this.ipcRenderer.sendSync('get-user-home-path', 'notNeededArgument');
 
   getAppDataPath = (): string =>
-    this.ipcRenderer.sendSync('app-data-path-request', 'notNeededArgument');
+    this.ipcRenderer.sendSync('app-data-path-request', 'notNeededArgument'); */
 
   setZoomFactorElectron = (zoomLevel: number) =>
     this.webFrame.setZoomFactor(zoomLevel);
@@ -174,8 +174,8 @@ export default class ElectronIO {
     this.ipcRenderer.send('global-shortcuts-enabled', globalShortcutsEnabled);
   };
 
-  getAppPath = (): string =>
-    this.ipcRenderer.sendSync('app-dir-path-request', 'notNeededArgument');
+  /* getAppPath = (): string =>
+    this.ipcRenderer.sendSync('app-dir-path-request', 'notNeededArgument'); */
 
   createDirectoryTree = (directoryPath: string): Object => {
     console.log('Creating directory index for: ' + directoryPath);
@@ -940,23 +940,21 @@ export default class ElectronIO {
     });
   };
 
-  moveToTrash = (files: Array<string>): boolean => {
-    // Promise<any> => {
-
-    const result = this.ipcRenderer.sendSync('move-to-trash', files);
-    return result && result.length > 0;
-    /* const result = [];
+  moveToTrash = (files: Array<string>): Promise<boolean> =>
+    this.ipcRenderer
+      .invoke('move-to-trash', files)
+      .then(result => result && result.length > 0);
+  /* const result = [];
       files.forEach(fullPath => {
         result.push(this.electron.shell.trashItem(fullPath));
       });
       return Promise.all(result); */
 
-    /* if (result) {
+  /* if (result) {
         resolve(true);
       } else {
         reject('Moving of at least one file to trash failed.');
       } */
-  };
 
   openDirectory = (dirPath: string): void => {
     if (AppConfig.isWin) {

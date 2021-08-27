@@ -437,12 +437,12 @@ export default class CordovaIO {
     return paths;
   };
 
-  getUserHomePath = (): string => '/';
+  /* getUserHomePath = (): string => '/';
 
   getAppDataPath = () => {
     // const appDataPath = ipcRenderer.sendSync('app-data-path-request', 'notNeededArgument');
     // return appDataPath;
-  };
+  }; */
 
   handleStartParameters = () => {
     if (this.urlFromIntent !== undefined && this.urlFromIntent.length > 0) {

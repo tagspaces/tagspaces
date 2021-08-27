@@ -233,6 +233,14 @@ export function prepareDirectoryContent(
   const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
 
   function useGenerateThumbnails() {
+    if (
+      directoryPath.endsWith(AppConfig.dirSeparator + AppConfig.metaFolder) ||
+      directoryPath.endsWith(
+        AppConfig.dirSeparator + AppConfig.metaFolder + AppConfig.dirSeparator
+      )
+    ) {
+      return false; // dont generate thumbnails in meta folder
+    }
     if (AppConfig.useGenerateThumbnails !== undefined) {
       return AppConfig.useGenerateThumbnails;
     }

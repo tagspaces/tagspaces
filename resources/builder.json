@@ -7,7 +7,6 @@
     "node_modules/",
     "config/",
     ".env",
-    "node_modules/**",
     "app.html",
     "main.prod.js",
     "main.prod.js.map",
