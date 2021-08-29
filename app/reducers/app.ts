@@ -733,7 +733,9 @@ export const actions = {
       dispatch(actions.toggleOnboardingDialog());
       dispatch(actions.toggleLicenseDialog());
     }
-    PlatformIO.setGlobalShortcuts(isGlobalKeyBindingEnabled(state));
+    setTimeout(() => {
+      PlatformIO.setGlobalShortcuts(isGlobalKeyBindingEnabled(state));
+    }, 1000);
     const langURLParam = getURLParameter('locale');
     if (
       langURLParam &&

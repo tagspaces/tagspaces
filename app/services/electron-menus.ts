@@ -40,7 +40,7 @@ export default function buildDesktopMenu(props: any, i18n) {
         }, */
         {
           label: i18n.t('newFileNote'),
-          // accelerator: 'CommandOrControl+Alt+N',
+          accelerator: 'CommandOrControl+Shift+n',
           click: props.toggleCreateFileDialog
         },
         {
@@ -53,25 +53,18 @@ export default function buildDesktopMenu(props: any, i18n) {
         },
         {
           label: i18n.t('openLink'),
-          accelerator: 'Ctrl+o',
+          accelerator: 'CmdOrCtrl+o',
           click: props.toggleOpenLinkDialog
         },
         {
           type: 'separator'
         },
-        /* {
-          label: i18n.t('saveFile'),
-          accelerator: mainPageProps.keyBindings.saveDocument,
-          click: () => {
-            mainPageProps.saveFile();
-          }
-        }, */
         {
           type: 'separator'
         },
         {
           label: i18n.t('exitApp'),
-          accelerator: 'CmdOrCtrl+Q',
+          accelerator: 'CmdOrCtrl+q',
           click: quitApp // PlatformIO.quitApp
         }
       ]
@@ -81,12 +74,12 @@ export default function buildDesktopMenu(props: any, i18n) {
       submenu: [
         {
           label: i18n.t('undo'),
-          accelerator: 'CmdOrCtrl+Z',
+          accelerator: 'CmdOrCtrl+z',
           role: 'undo'
         },
         {
           label: i18n.t('redo'),
-          accelerator: 'Shift+CmdOrCtrl+Z',
+          accelerator: 'Shift+CmdOrCtrl+z',
           role: 'redo'
         },
         {
@@ -94,22 +87,22 @@ export default function buildDesktopMenu(props: any, i18n) {
         },
         {
           label: i18n.t('cut'),
-          accelerator: 'CmdOrCtrl+X',
+          accelerator: 'CmdOrCtrl+x',
           role: 'cut'
         },
         {
           label: i18n.t('copy'),
-          accelerator: 'CmdOrCtrl+C',
+          accelerator: 'CmdOrCtrl+c',
           role: 'copy'
         },
         {
           label: i18n.t('paste'),
-          accelerator: 'CmdOrCtrl+V',
+          accelerator: 'CmdOrCtrl+v',
           role: 'paste'
         },
         {
           label: i18n.t('selectAll'),
-          accelerator: 'CmdOrCtrl+A',
+          accelerator: 'CmdOrCtrl+a',
           role: 'selectall'
         }
       ]
@@ -119,31 +112,26 @@ export default function buildDesktopMenu(props: any, i18n) {
       submenu: [
         {
           label: i18n.t('showLocationManager'),
-          accelerator: props.keyBindings.showLocationManager,
           click: props.openLocationManagerPanel
         },
         {
           label: i18n.t('showTagLibrary'),
-          accelerator: props.keyBindings.showTagLibrary,
           click: props.openTagLibraryPanel
         },
         {
           label: i18n.t('showSearch'),
-          accelerator: props.keyBindings.showSearch,
           click: props.openSearchPanel
         },
         {
           label: i18n.t('showDevTools'),
-          accelerator: props.keyBindings.openDevTools,
           click: (item, focusedWindow) => {
             focusedWindow.toggleDevTools();
           }
         },
         {
           label: i18n.t('reloadApplication'),
-          accelerator: props.keyBindings.reloadApplication,
+          accelerator: 'CmdOrCtrl+Shift+R',
           click: (item, focusedWindow) => {
-            // ipcRenderer.send('relaunch-app', 'relaunch');
             focusedWindow.webContents.reload();
           }
         },
@@ -180,7 +168,7 @@ export default function buildDesktopMenu(props: any, i18n) {
         },
         {
           label: i18n.t('toggleFullScreen'),
-          accelerator: props.keyBindings.toggleFullScreen,
+          accelerator: 'F11',
           click: (item, focusedWindow) => {
             // props.toggleFullScreen
             if (focusedWindow.isFullScreen()) {
@@ -205,7 +193,7 @@ export default function buildDesktopMenu(props: any, i18n) {
       submenu: [
         {
           label: '&' + i18n.t('documentation'),
-          accelerator: props.keyBindings.showHelp,
+          accelerator: 'F1',
           click: props.openHelpFeedbackPanel
         },
         {

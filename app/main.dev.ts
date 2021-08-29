@@ -29,7 +29,6 @@ import path from 'path';
 import i18n from '-/services/i18n'; // '-/i18nBackend';
 import buildTrayIconMenu from '-/electron-tray-menu';
 import buildDesktopMenu from '-/services/electron-menus';
-import keyBindings from '-/utils/keyBindings';
 
 // delete process.env.ELECTRON_ENABLE_SECURITY_WARNINGS;
 // process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
@@ -345,8 +344,7 @@ function buildAppMenu() {
       openURLExternally: openURLExternally,
       toggleLicenseDialog: toggleLicenseDialog,
       toggleThirdPartyLibsDialog: toggleThirdPartyLibsDialog,
-      toggleAboutDialog: toggleAboutDialog,
-      keyBindings: keyBindings(isMac)
+      toggleAboutDialog: toggleAboutDialog
     },
     i18n
   );

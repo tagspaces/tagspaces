@@ -539,12 +539,13 @@ const EntryContainer = (props: Props) => {
     //   }
     // });
 
-    if (isFullscreen && document.webkitExitFullscreen) {
+    // https://developer.mozilla.org/en-US/docs/Web/API/Element/requestFullScreen#examples
+    if (document.fullscreenElement && document.webkitExitFullscreen) {
       document.webkitExitFullscreen();
       setFullscreen(false);
       return;
     }
-    if (isFullscreen && document.exitFullscreen) {
+    if (document.fullscreenElement && document.exitFullscreen) {
       // TODO exit fullscreen firefox does not work
       document
         .exitFullscreen()
@@ -562,7 +563,7 @@ const EntryContainer = (props: Props) => {
       this.setState({ isFullscreen: false });
       return;
     } */
-    if (!isFullscreen && fileViewerContainer) {
+    if (!document.fullscreenElement && fileViewerContainer) {
       if (
         fileViewerContainer &&
         // @ts-ignore
@@ -944,14 +945,16 @@ const EntryContainer = (props: Props) => {
         saveDocument: startSavingFile,
         editDocument: editFile,
         nextDocument: openNextFile,
-        prevDocument: openPrevFile
+        prevDocument: openPrevFile,
+        toggleFullScreen
       }}
       keyMap={{
         nextDocument: keyBindings.nextDocument,
         prevDocument: keyBindings.prevDocument,
         closeViewer: keyBindings.closeViewer,
         saveDocument: keyBindings.saveDocument,
-        editDocument: keyBindings.editDocument
+        editDocument: keyBindings.editDocument,
+        toggleFullScreen: keyBindings.toggleFullScreen
       }}
     >
       {isSaveBeforeCloseConfirmDialogOpened && (

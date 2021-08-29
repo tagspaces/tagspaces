@@ -93,7 +93,6 @@ const CellContent = (props: Props) => {
     deselectEntry,
     isLast
   } = props;
-  const fsEntryBackgroundColor = fsEntry.color; //  ? fsEntry.color : 'transparent';
   const entryTitle = extractTitle(
     fsEntry.name,
     !fsEntry.isFile,
@@ -148,7 +147,6 @@ const CellContent = (props: Props) => {
     return (
       <div
         style={{
-          backgroundColor: fsEntryBackgroundColor,
           opacity: fsEntry.isIgnored ? 0.3 : 1
         }}
       >
