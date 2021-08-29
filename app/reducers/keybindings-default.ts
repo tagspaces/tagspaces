@@ -60,18 +60,18 @@ export default function keyBindings(isMacLike) {
       name: 'showHelp',
       command: 'f1'
     },
-    {
-      name: 'reloadApplication',
-      command: 'r a'
-    },
+    // {
+    //   name: 'reloadApplication',
+    //   command: 'r a'
+    // },
     {
       name: 'toggleFullScreen',
       command: 'f11'
     },
-    {
-      name: 'openDevTools',
-      command: 'f10'
-    },
+    // {
+    //   name: 'openDevTools',
+    //   command: 'f10'
+    // },
     {
       name: 'openSearch',
       command: (isMacLike ? 'command' : 'ctrl') + '+f'
