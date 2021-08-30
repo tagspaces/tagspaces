@@ -90,13 +90,13 @@ export default class WebDAVIO {
     );
   }
 
-  // isWorkerAvailable = (): boolean => false;
+  isWorkerAvailable = (): boolean => false;
 
-  getDevicePaths = (): Object => {
+  getDevicePaths = (): Promise<Object> => {
     const paths = {
       // Home: '/files/'
     };
-    return paths;
+    return Promise.resolve(paths);
   };
 
   /* getAppDataPath = (): string =>

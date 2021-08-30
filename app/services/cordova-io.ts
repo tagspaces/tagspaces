@@ -417,7 +417,7 @@ export default class CordovaIO {
 
   // Platform API
 
-  getDevicePaths = (): Object => {
+  getDevicePaths = (): Promise<Object> => {
     let paths;
     if (AppConfig.isCordovaiOS) {
       paths = {
@@ -434,7 +434,7 @@ export default class CordovaIO {
         SDCard: 'sdcard/' // cordova.file.externalRootDirectory
       };
     }
-    return paths;
+    return Promise.resolve(paths);
   };
 
   /* getUserHomePath = (): string => '/';
