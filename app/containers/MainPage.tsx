@@ -456,6 +456,7 @@ const MainPage = (props: Props) => {
     showTagLibrary: props.openTagLibraryPanel,
     openSearch: props.openSearchPanel,
     showHelp: props.openHelpFeedbackPanel
+    // openDevTools: props.openDevTools TODO Impl
   };
 
   const keyMap = {
@@ -465,6 +466,7 @@ const MainPage = (props: Props) => {
     showTagLibrary: props.keyBindings.showTagLibrary,
     openSearch: props.keyBindings.openSearch,
     showHelp: props.keyBindings.showHelp
+    // openDevTools: props.keyBindings.openDevTools
   };
 
   const handleSplitSizeChange = size => {

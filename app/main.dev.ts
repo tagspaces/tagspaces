@@ -32,7 +32,6 @@ import propertiesReader from 'properties-reader';
 import i18n from '-/services/i18n'; // '-/i18nBackend';
 import buildTrayIconMenu from '-/electron-tray-menu';
 import buildDesktopMenu from '-/services/electron-menus';
-import keyBindings from '-/utils/keyBindings';
 import Settings from '-/settings';
 
 // delete process.env.ELECTRON_ENABLE_SECURITY_WARNINGS;
@@ -370,8 +369,7 @@ function buildAppMenu() {
       openURLExternally,
       toggleLicenseDialog,
       toggleThirdPartyLibsDialog,
-      toggleAboutDialog,
-      keyBindings: keyBindings(isMac)
+      toggleAboutDialog
     },
     i18n
   );

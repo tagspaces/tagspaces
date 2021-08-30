@@ -17,7 +17,7 @@
  */
 
 import AppConfig from '../config';
-import keyBindings from '-/utils/keyBindings';
+import keyBindings from '-/reducers/keybindings-default';
 
 let desktopMode = !AppConfig.isMobile;
 if (window.ExtDisplayMode && window.ExtDisplayMode === 'mobile') {
