@@ -26,6 +26,7 @@ import {
 } from 'electron';
 import windowStateKeeper from 'electron-window-state';
 import path from 'path';
+import fs from 'fs-extra';
 import pm2 from '@elife/pm2';
 import propertiesReader from 'properties-reader';
 import i18n from '-/services/i18n'; // '-/i18nBackend';
@@ -41,6 +42,8 @@ const isMac = process.platform === 'darwin';
 let mainWindow = null;
 // (global as any).splashWorkerWindow = null;
 
+const testMode = process.env.NODE_ENV === 'test';
+
 if (process.env.NODE_ENV === 'production') {
   // eslint-disable-next-line
   const sourceMapSupport = require('source-map-support');
@@ -48,13 +51,30 @@ if (process.env.NODE_ENV === 'production') {
   console.log = () => {};
   console.time = () => {};
   console.timeEnd = () => {};
+} else if (testMode) {
+  const dir = path.join(__dirname, '..', 'tests', 'test-reports');
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  const logFile = fs.createWriteStream(path.join(dir, 'log.txt'), {
+    flags: 'w'
+  });
+  console.error = function(d, ex) {
+    logFile.write(d + '\n');
+    if (ex) {
+      logFile.write(ex.stack + '\n');
+    }
+  };
+  console.log = console.error;
+  console.debug = console.error;
+  console.log('Environment testMode:' + testMode); // + ' process.env.NODE_ENV:'+process.env.NODE_ENV);
+  // console.log('Env:' + JSON.stringify(process.env));
 }
 
 // let debugMode;
 let startupFilePath;
 let portableMode;
 
-const testMode = process.env.NODE_ENV === 'test';
 const devMode =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
@@ -526,53 +546,65 @@ app.on('ready', async () => {
   // if (!process.env.DISABLE_WORKER) {
   // createSplashWorker();
   // }
-  buildAppMenu();
-  await createAppWindow();
-  buildTrayMenu(); // TODO fix icon path in asar
-
-  let filepath;
-  let script;
-  let envPath;
-  if (devMode) {
-    filepath = path.join(__dirname, 'node_modules/tagspaces-ws');
-    script = 'index.js';
-    envPath = path.join(__dirname, '.env');
-  } else {
-    filepath = process.resourcesPath;
-    script = 'app.asar/node_modules/tagspaces-ws/index.js';
-    envPath = path.join(process.resourcesPath, 'app.asar/.env');
+  try {
+    buildAppMenu();
+    await createAppWindow();
+    buildTrayMenu();
+  } catch (ex) {
+    console.log('buildMenus', ex);
   }
-  const properties = propertiesReader(envPath);
 
-  pm2.start(
-    {
-      name: 'Tagspaces WS',
-      script, // Script to be run
-      cwd: filepath, // './node_modules/tagspaces-ws', // './process1', cwd: '/path/to/npm/module/',
-      args: ['-p', Settings.wsPort, '-k', properties.get('KEY')], // '/Users/sytolk/Pictures'],
-      restartAt: []
-      // log: path.join(process.cwd(), 'thumbGen.log') //  'C:\\Users\\smari\\IdeaProjects\\tagspaces-utils\\process1.log'
-      // log: '/Users/sytolk/IdeaProjects/tagspaces/process1.log' // path.join(process.cwd(), 'process1.log'),
-      // log: 'process1.log' // path.join(process.cwd(), 'process1.log'),
-    },
-    (err, pid) => {
-      if (err && pid) {
-        if (pid && pid.name) console.error(pid.name, err, pid);
-        else console.error(err, pid);
-      } else if (err) {
-        console.error('start WS crashed', err);
-      } else {
-        console.log(
-          `Starting ${pid.name} on ${pid.cwd} - pid (${pid.child.pid})`
-        );
-      }
+  try {
+    let filepath;
+    let script;
+    let envPath;
+    if (devMode || testMode) {
+      filepath = path.join(__dirname, 'node_modules/tagspaces-ws');
+      script = 'index.js';
+      envPath = path.join(__dirname, '.env');
+    } else {
+      filepath = process.resourcesPath;
+      script = 'app.asar/node_modules/tagspaces-ws/index.js';
+      envPath = path.join(process.resourcesPath, 'app.asar/.env');
     }
-  );
+    const properties = propertiesReader(envPath);
+
+    pm2.start(
+      {
+        name: 'Tagspaces WS',
+        script, // Script to be run
+        cwd: filepath, // './node_modules/tagspaces-ws', // './process1', cwd: '/path/to/npm/module/',
+        args: ['-p', Settings.wsPort, '-k', properties.get('KEY')], // '/Users/sytolk/Pictures'],
+        restartAt: []
+        // log: path.join(process.cwd(), 'thumbGen.log') //  'C:\\Users\\smari\\IdeaProjects\\tagspaces-utils\\process1.log'
+        // log: '/Users/sytolk/IdeaProjects/tagspaces/process1.log' // path.join(process.cwd(), 'process1.log'),
+        // log: 'process1.log' // path.join(process.cwd(), 'process1.log'),
+      },
+      (err, pid) => {
+        if (err && pid) {
+          if (pid && pid.name) console.error(pid.name, err, pid);
+          else console.error(err, pid);
+        } else if (err) {
+          console.error('start WS crashed', err);
+        } else {
+          console.log(
+            `Starting ${pid.name} on ${pid.cwd} - pid (${pid.child.pid})`
+          );
+        }
+      }
+    );
+  } catch (ex) {
+    console.error('pm2.start Exception:', ex);
+  }
 
   i18n.on('languageChanged', lng => {
-    console.log('languageChanged:' + lng);
-    buildAppMenu();
-    buildTrayMenu();
+    try {
+      console.log('languageChanged:' + lng);
+      buildAppMenu();
+      buildTrayMenu();
+    } catch (ex) {
+      console.log('languageChanged', ex);
+    }
   });
 
   ipcMain.on('show-main-window', () => {

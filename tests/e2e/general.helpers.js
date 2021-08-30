@@ -307,7 +307,15 @@ export async function isDisplayed(selector, displayed = true, timeout = 500) {
       }
       return el !== null;
     } catch (error) {
-      console.log('The isDisplayed:' + selector);
+      console.debug(
+        'Timeout ' +
+          timeout +
+          'ms exceeded. isDisplayed:' +
+          selector +
+          ' displayed:' +
+          displayed
+        // error
+      );
     }
     return false;
   }
@@ -646,9 +654,10 @@ export function generateFileName(fileName, fileExt, tags, tagDelimiter = ' ') {
 export async function expectTagsExistBySelector(
   selector,
   arrTagNames,
-  exist = true
+  exist = true,
+  timeout = 500
 ) {
-  const gridElement = await global.client.$(selector);
+  const gridElement = await global.client.waitForSelector(selector);
   await expectTagsExist(gridElement, arrTagNames, exist);
 }
 
@@ -665,19 +674,27 @@ export async function waitForNotification(
   tid = 'notificationTID',
   forceClose = true
 ) {
-  // await global.client.pause(500);
   // await expectElementExist('[data-tid=' + tid + ']', true, 8000);
   // const notificationTID = await global.client.$('[data-tid=' + tid + ']');
-  if (await isDisplayed('[data-tid=' + tid + ']')) {
+  /*if (await isDisplayed('[data-tid=' + tid + ']')) {
     //const closeButton = await global.client.$('[data-tid=close' + tid + ']');
-    if (forceClose && (await isDisplayed('[data-tid=close' + tid + ']'))) {
-      await clickOn('[data-tid=close' + tid + ']', { force: true });
+    let el;
+    try {
+      el = await global.client.waitForSelector('[data-tid=close' + tid + ']', {
+        timeout: 500
+      });
+    } catch (ex) {
+      console.error('waitForSelector [data-tid=' + tid + ']', ex);
+    }
+    if (forceClose && el && el instanceof Object) {
+      // TODO elementHandle.click: : expected object, got string
+      await el.click('[data-tid=close' + tid + ']'); //, { force: true });
     } else {
       // autohide Notification
       await isDisplayed('[data-tid=' + tid + ']', false, 2000);
       // await expectElementExist('[data-tid=' + tid + ']', false, 1000);
     }
-  }
+  }*/
 }
 
 export async function setSettings(selector, click = false) {
