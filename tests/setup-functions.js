@@ -2,10 +2,8 @@ import pathLib from 'path';
 import sh from 'shelljs';
 
 export async function globalSetup() {
-  global.isWin = /^win/.test(process.platform);
-  global.isMac = /^darwin/.test(process.platform);
-  // global.isWeb = process.env.NODE_JEST === 'test_web';
-  // global.isMinio = global.isWeb || process.env.NODE_JEST === 'test_minio';
+  // global.isWin = /^win/.test(process.platform);
+  // global.isMac = /^darwin/.test(process.platform);
 
   const extensionDir = pathLib.resolve(__dirname); //,'../tests');
   if (!sh.test('-d', extensionDir)) {
@@ -22,7 +20,7 @@ export async function startMinio() {
   const command = global.isWin ? winMinio : unixMinio;
   const minioProcess = await require('child_process').spawn(command, [
     'server',
-    pathLib.resolve('./testdata-tmp/file-structure')
+    pathLib.resolve(__dirname, './testdata-tmp/file-structure')
   ]);
 
   minioProcess.on('exit', function(code) {

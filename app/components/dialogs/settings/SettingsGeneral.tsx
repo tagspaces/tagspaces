@@ -43,6 +43,7 @@ import {
 import ColorPickerDialog from '../ColorPickerDialog';
 import TransparentBackground from '../../TransparentBackground';
 import AppConfig from '-/config';
+import PlatformIO from '-/services/platform-io';
 
 const styles: any = {
   root: {
@@ -117,6 +118,8 @@ const SettingsGeneral = (props: Props) => {
             value={props.settings.interfaceLanguage}
             onChange={(event: any) => {
               props.setLanguage(event.target.value);
+              PlatformIO.setLanguage(event.target.value);
+              // TODO remove
               const { currentTheme } = props.settings;
               const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
               props.setCurrentTheme(newTheme);
@@ -152,14 +155,16 @@ const SettingsGeneral = (props: Props) => {
           className={classes.listItem}
           title={
             AppConfig.useSidecarsForFileTaggingDisableSetting
-              ? 'This setting is managed with an external configuration'
+              ? i18n.t('core:settingExternallyConfigured')
               : ''
           }
         >
-          <ListItemText primary="File tagging method" />
+          <ListItemText primary={i18n.t('core:fileTaggingSetting')} />
           {AppConfig.useSidecarsForFileTaggingDisableSetting ? (
             <Button size="small" variant="outlined" disabled>
-              {persistTagsInSidecarFile ? 'Use Sidecar Files' : 'Rename Files'}
+              {persistTagsInSidecarFile
+                ? i18n.t('core:useSidecarFile')
+                : i18n.t('core:renameFile')}
             </Button>
           ) : (
             <ToggleButtonGroup
@@ -176,15 +181,13 @@ const SettingsGeneral = (props: Props) => {
                   arrow
                   title={
                     <Typography color="inherit">
-                      Use the name of file for saving the tags - Tagging the
-                      file <b>image.jpg</b> with a tag <b>sunset</b> will rename
-                      it to <b>image[sunset].jpg</b>
+                      {i18n.t('core:tagsInFilenameExplanation')}
                     </Typography>
                   }
                 >
                   <div style={{ display: 'flex' }}>
                     {!persistTagsInSidecarFile && <CheckIcon />}
-                    &nbsp;Rename Files&nbsp;&nbsp;
+                    &nbsp;{i18n.t('core:renameFile')}&nbsp;&nbsp;
                     <InfoIcon />
                   </div>
                 </Tooltip>
@@ -198,17 +201,13 @@ const SettingsGeneral = (props: Props) => {
                   arrow
                   title={
                     <Typography color="inherit">
-                      Use sidecar file for saving the tags - Tagging the file{' '}
-                      <b>image.jpg</b> with a tag <b>sunset</b> will save this
-                      tag in an additional sidecar file called{' '}
-                      <b>image.jpg.json</b> located in a sub folder with the
-                      name <b>.ts</b>
+                      {i18n.t('core:tagsInSidecarFileExplanation')}
                     </Typography>
                   }
                 >
                   <div style={{ display: 'flex' }}>
                     {persistTagsInSidecarFile && <CheckIcon />}
-                    &nbsp;Use Sidecar Files&nbsp;&nbsp;
+                    &nbsp;{i18n.t('core:useSidecarFile')}&nbsp;&nbsp;
                     <InfoIcon />
                   </div>
                 </Tooltip>
@@ -239,13 +238,18 @@ const SettingsGeneral = (props: Props) => {
         <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:useGenerateThumbnails')} />
           <Switch
+            disabled={AppConfig.useGenerateThumbnails !== undefined}
             data-tid="settingsUseGenerateThumbnails"
             onClick={() =>
               props.setUseGenerateThumbnails(
                 !props.settings.useGenerateThumbnails
               )
             }
-            checked={props.settings.useGenerateThumbnails}
+            checked={
+              AppConfig.useGenerateThumbnails !== undefined
+                ? AppConfig.useGenerateThumbnails
+                : props.settings.useGenerateThumbnails
+            }
           />
         </ListItem>
         <ListItem className={classes.listItem}>

@@ -42,13 +42,13 @@ import { getLocations } from '-/reducers/locations';
 import {
   actions as AppActions,
   getDirectoryContent,
-  getLastSelectedEntry,
   getSearchResultCount,
   isReadOnlyMode,
   getCurrentLocationPath,
   getCurrentDirectoryPerspective,
   OpenedEntry,
-  perspectives
+  perspectives,
+  getSelectedEntries
 } from '../reducers/app';
 import TaggingActions from '../reducers/tagging-actions';
 import { normalizePath, extractShortDirectoryName } from '-/utils/paths';
@@ -217,14 +217,14 @@ interface Props {
   showInFileManager: () => void;
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   reflectCreateEntry: (path: string, isFile: boolean) => void;
-  loadDirectoryContent: (path: string) => void;
+  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
   loadParentDirectoryContent: () => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   isReadOnlyMode: boolean;
   isDesktopMode: boolean;
   showNotification: (content: string) => void;
   openSearchPanel: () => void;
-  showDrawer: () => void;
+  showDrawer?: () => void;
   setCurrentDirectoryPerspective: (perspective: string) => void;
   maxSearchResults: number;
   currentDirectoryPerspective: string;
@@ -233,6 +233,7 @@ interface Props {
   openedFiles: Array<OpenedEntry>;
   updateCurrentDirEntry: (path: string, entry: Object) => void;
   setCurrentDirectoryColor: (color: string) => void;
+  selectedEntries: Array<TS.FileSystemEntry>;
 }
 
 const FolderContainer = (props: Props) => {
@@ -246,21 +247,23 @@ const FolderContainer = (props: Props) => {
   >(false);
 
   useEffect(() => {
-    if (props.openedFiles.length > 0) {
-      const openedFile = props.openedFiles[0];
-      if (openedFile.path === props.currentDirectoryPath) {
-        if (openedFile.color) {
-          props.setCurrentDirectoryColor(openedFile.color);
+    if (props.selectedEntries.length < 2) {
+      if (props.openedFiles.length > 0) {
+        const openedFile = props.openedFiles[0];
+        if (openedFile.path === props.currentDirectoryPath) {
+          if (openedFile.color) {
+            props.setCurrentDirectoryColor(openedFile.color);
+          }
+          if (openedFile.perspective) {
+            props.setCurrentDirectoryPerspective(openedFile.perspective);
+          }
+        } else if (openedFile.changed) {
+          const currentEntry = enhanceOpenedEntry(
+            openedFile,
+            props.settings.tagDelimiter
+          );
+          props.updateCurrentDirEntry(openedFile.path, currentEntry);
         }
-        if (openedFile.perspective) {
-          props.setCurrentDirectoryPerspective(openedFile.perspective);
-        }
-      } else if (openedFile.changed) {
-        const currentEntry = enhanceOpenedEntry(
-          openedFile,
-          props.settings.tagDelimiter
-        );
-        props.updateCurrentDirEntry(openedFile.path, currentEntry);
       }
     }
   }, [props.openedFiles]);
@@ -466,7 +469,7 @@ const FolderContainer = (props: Props) => {
                 pathParts.map(pathPart => (
                   <Button
                     key={pathPart}
-                    onClick={() => loadDirectoryContent(pathPart)}
+                    onClick={() => loadDirectoryContent(pathPart, false)}
                     title={'Navigate to: ' + pathPart}
                     style={{
                       paddingLeft: 3,
@@ -606,7 +609,7 @@ const FolderContainer = (props: Props) => {
 function mapStateToProps(state) {
   return {
     settings: state.settings,
-    lastSelectedEntry: getLastSelectedEntry(state),
+    selectedEntries: getSelectedEntries(state),
     directoryContent: getDirectoryContent(state),
     currentDirectoryPerspective: getCurrentDirectoryPerspective(state),
     searchResultCount: getSearchResultCount(state),
@@ -643,21 +646,21 @@ function mapActionCreatorsToProps(dispatch) {
   );
 }
 
-// const areEqual = (prevProp, nextProp) =>
-//   nextProp.currentDirectoryPath === prevProp.currentDirectoryPath &&
-//   nextProp.currentDirectoryPerspective ===
-//     prevProp.currentDirectoryPerspective &&
-//   nextProp.currentLocationPath === prevProp.currentLocationPath &&
-//   JSON.stringify(nextProp.directoryContent) ===
-//     JSON.stringify(prevProp.directoryContent) &&
-//   JSON.stringify(nextProp.openedFiles) ===
-//     JSON.stringify(prevProp.openedFiles) &&
-//   nextProp.windowWidth === prevProp.windowWidth &&
-//   nextProp.windowHeight === prevProp.windowHeight;
+const areEqual = (prevProp, nextProp) =>
+  nextProp.currentDirectoryPath === prevProp.currentDirectoryPath &&
+  nextProp.currentDirectoryPerspective ===
+    prevProp.currentDirectoryPerspective &&
+  nextProp.currentLocationPath === prevProp.currentLocationPath &&
+  JSON.stringify(nextProp.directoryContent) ===
+    JSON.stringify(prevProp.directoryContent) &&
+  JSON.stringify(nextProp.openedFiles) ===
+    JSON.stringify(prevProp.openedFiles) &&
+  JSON.stringify(nextProp.theme) === JSON.stringify(prevProp.theme) &&
+  nextProp.windowWidth === prevProp.windowWidth &&
+  nextProp.windowHeight === prevProp.windowHeight;
 
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
-  // )(withStyles(styles)(withTheme(React.memo(FolderContainer, areEqual))));
   // @ts-ignore
-)(withStyles(styles)(withTheme(FolderContainer)));
+)(withStyles(styles)(withTheme(React.memo(FolderContainer, areEqual))));

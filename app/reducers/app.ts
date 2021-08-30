@@ -17,7 +17,6 @@
  */
 
 import uuidv1 from 'uuid';
-import pathLib from 'path';
 import { getLocation, getDefaultLocationId } from './locations';
 import PlatformIO from '../services/platform-io';
 import AppConfig from '../config';
@@ -110,7 +109,6 @@ export const types = {
   OPEN_LOCATIONMANAGER_PANEL: 'APP/OPEN_LOCATIONMANAGER_PANEL',
   OPEN_TAGLIBRARY_PANEL: 'APP/OPEN_TAGLIBRARY_PANEL',
   OPEN_SEARCH_PANEL: 'APP/OPEN_SEARCH_PANEL',
-  OPEN_PERSPECTIVES_PANEL: 'APP/OPEN_PERSPECTIVES_PANEL',
   OPEN_HELPFEEDBACK_PANEL: 'APP/OPEN_HELPFEEDBACK_PANEL',
   CLOSE_ALLVERTICAL_PANELS: 'APP/CLOSE_ALLVERTICAL_PANELS',
   REFLECT_DELETE_ENTRY: 'APP/REFLECT_DELETE_ENTRY',
@@ -218,7 +216,6 @@ export const initialState = {
   locationManagerPanelOpened: showLocations,
   tagLibraryPanelOpened: showTagLibrary,
   searchPanelOpened: showSearch,
-  perspectivesPanelOpened: false,
   helpFeedbackPanelOpened: false
 };
 
@@ -659,7 +656,6 @@ export default (state: any = initialState, action: any) => {
         locationManagerPanelOpened: true,
         tagLibraryPanelOpened: false,
         searchPanelOpened: false,
-        perspectivesPanelOpened: false,
         helpFeedbackPanelOpened: false
       };
     }
@@ -669,7 +665,6 @@ export default (state: any = initialState, action: any) => {
         locationManagerPanelOpened: false,
         tagLibraryPanelOpened: true,
         searchPanelOpened: false,
-        perspectivesPanelOpened: false,
         helpFeedbackPanelOpened: false
       };
     }
@@ -679,17 +674,6 @@ export default (state: any = initialState, action: any) => {
         locationManagerPanelOpened: false,
         tagLibraryPanelOpened: false,
         searchPanelOpened: true,
-        perspectivesPanelOpened: false,
-        helpFeedbackPanelOpened: false
-      };
-    }
-    case types.OPEN_PERSPECTIVES_PANEL: {
-      return {
-        ...state,
-        locationManagerPanelOpened: false,
-        tagLibraryPanelOpened: false,
-        searchPanelOpened: false,
-        perspectivesPanelOpened: true,
         helpFeedbackPanelOpened: false
       };
     }
@@ -699,7 +683,6 @@ export default (state: any = initialState, action: any) => {
         locationManagerPanelOpened: false,
         tagLibraryPanelOpened: false,
         searchPanelOpened: false,
-        perspectivesPanelOpened: false,
         helpFeedbackPanelOpened: true
       };
     }
@@ -709,7 +692,6 @@ export default (state: any = initialState, action: any) => {
         locationManagerPanelOpened: false,
         tagLibraryPanelOpened: false,
         searchPanelOpened: false,
-        perspectivesPanelOpened: false,
         helpFeedbackPanelOpened: false
       };
     }
@@ -751,7 +733,9 @@ export const actions = {
       dispatch(actions.toggleOnboardingDialog());
       dispatch(actions.toggleLicenseDialog());
     }
-    PlatformIO.setGlobalShortcuts(isGlobalKeyBindingEnabled(state));
+    setTimeout(() => {
+      PlatformIO.setGlobalShortcuts(isGlobalKeyBindingEnabled(state));
+    }, 1000);
     const langURLParam = getURLParameter('locale');
     if (
       langURLParam &&
@@ -868,7 +852,7 @@ export const actions = {
       // && currentLocation.type === locationType.TYPE_AMPLIFY) {
       const { currentDirectoryPath } = getState().app;
       dispatch(actions.clearUploadDialogInt());
-      dispatch(actions.loadDirectoryContent(currentDirectoryPath));
+      dispatch(actions.loadDirectoryContent(currentDirectoryPath, false));
     }
   },
   clearUploadDialogInt: () => ({
@@ -880,7 +864,6 @@ export const actions = {
   openLocationManagerPanel: () => ({ type: types.OPEN_LOCATIONMANAGER_PANEL }),
   openTagLibraryPanel: () => ({ type: types.OPEN_TAGLIBRARY_PANEL }),
   openSearchPanel: () => ({ type: types.OPEN_SEARCH_PANEL }),
-  openPerspectivesPanel: () => ({ type: types.OPEN_PERSPECTIVES_PANEL }),
   openHelpFeedbackPanel: () => ({ type: types.OPEN_HELPFEEDBACK_PANEL }),
   closeAllVerticalPanels: () => ({ type: types.CLOSE_ALLVERTICAL_PANELS }),
   loadParentDirectoryContent: () => (
@@ -898,7 +881,7 @@ export const actions = {
       );
       // console.log('parentDirectory: ' + parentDirectory  + ' - currentLocationPath: ' + currentLocationPath);
       if (parentDirectory.includes(currentLocationPath)) {
-        dispatch(actions.loadDirectoryContent(parentDirectory));
+        dispatch(actions.loadDirectoryContent(parentDirectory, false));
       } else {
         dispatch(
           actions.showNotification(
@@ -920,6 +903,7 @@ export const actions = {
   },
   loadDirectoryContentInt: (
     directoryPath: string,
+    generateThumbnails: boolean,
     fsEntryMeta?: TS.FileSystemEntryMeta
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
     const { settings } = getState();
@@ -929,30 +913,41 @@ export const actions = {
     } */
     // dispatch(actions.setCurrentDirectoryColor('')); // this is to reset color only
     dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
-    PlatformIO.listDirectoryPromise(directoryPath, false)
+    const currentLocation: TS.Location = getLocation(
+      getState(),
+      getState().app.currentLocationId
+    );
+    PlatformIO.listDirectoryPromise(
+      directoryPath,
+      false,
+      true,
+      currentLocation ? currentLocation.ignorePatternPaths : []
+    )
       .then(results => {
         if (results !== undefined) {
+          // console.debug('app listDirectoryPromise resolved:' + results.length);
           prepareDirectoryContent(
             results,
             directoryPath,
             settings,
             dispatch,
             getState,
-            fsEntryMeta
+            fsEntryMeta,
+            generateThumbnails
           );
         }
         return true;
       })
       .catch(error => {
-        console.timeEnd('listDirectoryPromise');
-        dispatch(actions.loadDirectoryFailure(error)); // Currently this is never called, due the promise always resolve
+        // console.timeEnd('listDirectoryPromise');
+        dispatch(actions.loadDirectoryFailure(directoryPath, error)); // Currently this is never called, due the promise always resolve
       });
   },
-  loadDirectoryContent: (directoryPath: string) => (
-    dispatch: (actions: Object) => void,
-    getState: () => any
-  ) => {
-    console.time('listDirectoryPromise');
+  loadDirectoryContent: (
+    directoryPath: string,
+    generateThumbnails: boolean
+  ) => async (dispatch: (actions: Object) => void, getState: () => any) => {
+    // console.debug('loadDirectoryContent:' + directoryPath);
     window.walkCanceled = false;
 
     const state = getState();
@@ -960,24 +955,32 @@ export const actions = {
     if (selectedEntries.length > 0) {
       dispatch(actions.setSelectedEntries([]));
     }
-    loadMetaDataPromise(
-      normalizePath(directoryPath) + PlatformIO.getDirSeparator()
-    )
-      .then(fsEntryMeta => {
-        dispatch(actions.loadDirectoryContentInt(directoryPath, fsEntryMeta));
-        /* if (fsEntryMeta.color) { // TODO rethink this states changes are expensive
+    try {
+      const fsEntryMeta = await loadMetaDataPromise(
+        normalizePath(directoryPath) + PlatformIO.getDirSeparator()
+      );
+      // console.debug('Loading meta succeeded for:' + directoryPath);
+      dispatch(
+        actions.loadDirectoryContentInt(
+          directoryPath,
+          generateThumbnails,
+          fsEntryMeta
+        )
+      );
+      /* if (fsEntryMeta.color) { // TODO rethink this states changes are expensive
           dispatch(actions.setCurrentDirectoryColor(fsEntryMeta.color));
         }
         if (fsEntryMeta.perspective) {
           dispatch(actions.setCurrentDirPerspective(fsEntryMeta.perspective));
         } */
 
-        return true;
-      })
-      .catch(err => {
-        console.log('Error loading meta of the current folder' + err);
-        dispatch(actions.loadDirectoryContentInt(directoryPath));
-      });
+      // return true;
+    } catch (err) {
+      console.debug('Error loading meta of:' + directoryPath + ' ' + err);
+      dispatch(
+        actions.loadDirectoryContentInt(directoryPath, generateThumbnails)
+      );
+    }
   },
   loadDirectorySuccess: (
     directoryPath: string,
@@ -1168,7 +1171,7 @@ export const actions = {
       .then(newDirPath => {
         const { currentDirectoryPath, openedFiles } = getState().app;
         if (currentDirectoryPath === directoryPath) {
-          dispatch(actions.loadDirectoryContent(newDirPath));
+          dispatch(actions.loadDirectoryContent(newDirPath, false));
           if (openedFiles && openedFiles.length > 0) {
             if (openedFiles[0].path === directoryPath) {
               const openedFile = openedFiles[0];
@@ -1405,7 +1408,9 @@ export const actions = {
           );
           dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
           dispatch(actions.changeLocation(location));
-          dispatch(actions.loadDirectoryContent(getLocationPath(location)));
+          dispatch(
+            actions.loadDirectoryContent(getLocationPath(location), false)
+          );
           return true;
         })
         .catch(() => {
@@ -1422,7 +1427,7 @@ export const actions = {
       PlatformIO.disableObjectStoreSupport();
       dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
       dispatch(actions.changeLocation(location));
-      dispatch(actions.loadDirectoryContent(getLocationPath(location)));
+      dispatch(actions.loadDirectoryContent(getLocationPath(location), false));
       if (Pro && Pro.Watcher && location.watchForChanges) {
         const perspective = getCurrentDirectoryPerspective(getState());
         const depth = perspective === perspectives.KANBAN ? 3 : 1;
@@ -1588,7 +1593,7 @@ export const actions = {
         return;
       }
       if (!fsEntry.isFile) {
-        dispatch(actions.loadDirectoryContent(fsEntry.path));
+        dispatch(actions.loadDirectoryContent(fsEntry.path, false));
         return;
       }
     }
@@ -1775,11 +1780,11 @@ export const actions = {
     tags: Array<TS.Tag>,
     updateIndex: boolean = true
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
-    const { openedFiles } = getState().app;
+    const { openedFiles, selectedEntries } = getState().app;
     /**
      * if its have openedFiles updateCurrentDirEntry is called from FolderContainer (useEffect -> ... if (openedFile.changed)
      */
-    if (openedFiles.length === 0) {
+    if (openedFiles.length === 0 || selectedEntries.length > 1) {
       dispatch(actions.updateCurrentDirEntry(path, { tags }));
     }
     if (updateIndex) {
@@ -1904,12 +1909,14 @@ export const actions = {
         return;
       }
       if (fsEntry.isFile) {
-        PlatformIO.openFile(fsEntry.path);
+        const { warningOpeningFilesExternally } = getState().settings;
+        PlatformIO.openFile(fsEntry.path, warningOpeningFilesExternally);
       } else {
         PlatformIO.openDirectory(fsEntry.path);
       }
     } else {
-      PlatformIO.openFile(selectedFile);
+      const { warningOpeningFilesExternally } = getState().settings;
+      PlatformIO.openFile(selectedFile, warningOpeningFilesExternally);
     }
   },
   openLink: (url: string) => (
@@ -1928,7 +1935,7 @@ export const actions = {
           if (fsEntry.isFile) {
             dispatch(actions.openFsEntry(fsEntry));
           } else {
-            dispatch(actions.loadDirectoryContent(fsEntry.path));
+            dispatch(actions.loadDirectoryContent(fsEntry.path, false));
           }
           return true;
         })
@@ -1960,7 +1967,7 @@ export const actions = {
           if (isCloudLocation) {
             if (directoryPath && directoryPath.length > 0) {
               const dirFullPath = directoryPath;
-              dispatch(actions.loadDirectoryContent(dirFullPath));
+              dispatch(actions.loadDirectoryContent(dirFullPath, false));
             }
 
             if (entryPath) {
@@ -2000,7 +2007,7 @@ export const actions = {
               }
               const dirFullPath =
                 locationPath + PlatformIO.getDirSeparator() + directoryPath;
-              dispatch(actions.loadDirectoryContent(dirFullPath));
+              dispatch(actions.loadDirectoryContent(dirFullPath, false));
             }
 
             if (entryPath && entryPath.length > 0) {
@@ -2096,17 +2103,21 @@ export const getCurrentLocationPath = (state: any) => {
         state.app.currentLocationId &&
         location.uuid === state.app.currentLocationId
       ) {
-        const locationPath = getLocationPath(location);
-        if (
-          AppConfig.isElectron &&
-          locationPath &&
-          locationPath.startsWith('./')
-        ) {
-          // TODO test relative path (Directory Back) with other platforms
-          // relative paths
-          return pathLib.resolve(locationPath);
-        }
-        return locationPath;
+        return getLocationPath(location);
+      }
+    }
+  }
+  return undefined;
+};
+export const getLocationPersistTagsInSidecarFile = (state: any) => {
+  if (state.locations) {
+    for (let i = 0; i < state.locations.length; i += 1) {
+      const location = state.locations[i];
+      if (
+        state.app.currentLocationId &&
+        location.uuid === state.app.currentLocationId
+      ) {
+        return location.persistTagsInSidecarFile;
       }
     }
   }
@@ -2163,7 +2174,5 @@ export const isLocationManagerPanelOpened = (state: any) =>
 export const isTagLibraryPanelOpened = (state: any) =>
   state.app.tagLibraryPanelOpened;
 export const isSearchPanelOpened = (state: any) => state.app.searchPanelOpened;
-export const isPerspectivesPanelOpened = (state: any) =>
-  state.app.perspectivesPanelOpened;
 export const isHelpFeedbackPanelOpened = (state: any) =>
   state.app.helpFeedbackPanelOpened;

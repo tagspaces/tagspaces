@@ -20,7 +20,6 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -30,7 +29,6 @@ import CheckIcon from '@material-ui/icons/Check';
 import EditIcon from '@material-ui/icons/Edit';
 import IconButton from '@material-ui/core/IconButton';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import AddIcon from '@material-ui/icons/Add';
 import Switch from '@material-ui/core/Switch';
 import i18n from '-/services/i18n';
 import {
@@ -40,6 +38,9 @@ import {
 } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import MapTileServerDialog from '-/components/dialogs/settings/MapTileServerDialog';
+import { Pro } from '-/pro';
+import { ProLabel } from '-/components/HelperComponents';
+import InfoIcon from '-/components/InfoIcon';
 
 const styles: any = {
   root: {
@@ -62,6 +63,10 @@ interface Props {
   classes: any;
   settings: any;
   setDesktopMode: (desktopMode: boolean) => void;
+  setWarningOpeningFilesExternally: (
+    warningOpeningFilesExternally: boolean
+  ) => void;
+  setSaveTagInLocation: (saveTagInLocation: boolean) => void;
   showResetSettings: (showDialog: boolean) => void;
   tileServers: Array<TS.MapTileServer>;
 }
@@ -105,7 +110,7 @@ const SettingsAdvanced = (props: Props) => {
         </ListItem>
 
         <ListItem className={classes.listItem}>
-          <ListItemText primary="Enable mobile (small screen) mode" />
+          <ListItemText primary={i18n.t('enableMobileMode')} />
           <Switch
             data-tid="settingsSetDesktopMode"
             disabled={!(typeof window.ExtDisplayMode === 'undefined')}
@@ -114,20 +119,56 @@ const SettingsAdvanced = (props: Props) => {
           />
         </ListItem>
         <ListItem className={classes.listItem}>
+          <ListItemText primary={i18n.t('warningOpeningFilesExternally')} />
+          <Switch
+            data-tid="warningOpeningFilesExternally"
+            onClick={() =>
+              props.setWarningOpeningFilesExternally(
+                !props.settings.warningOpeningFilesExternally
+              )
+            }
+            checked={props.settings.warningOpeningFilesExternally}
+          />
+        </ListItem>
+        <ListItem className={classes.listItem}>
+          <ListItemText
+            primary={
+              <>
+                {i18n.t('enableTagsFromLocation')}
+                <InfoIcon tooltip={i18n.t('core:enableTagsFromLocationHelp')} />
+                <ProLabel />
+              </>
+            }
+          />
+          <Switch
+            data-tid="saveTagInLocationTID"
+            disabled={!Pro}
+            onClick={() =>
+              props.setSaveTagInLocation(!props.settings.saveTagInLocation)
+            }
+            checked={props.settings.saveTagInLocation}
+          />
+        </ListItem>
+        <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:tileServerTitle')} />
-          <ListItemSecondaryAction>
-            <IconButton
-              aria-label={i18n.t('core:add')}
-              aria-haspopup="true"
-              edge="end"
-              data-tid="addTileServerTID"
+          <ListItemSecondaryAction style={{ right: 0 }}>
+            <Button
+              color="primary"
               onClick={event => handleEditTileServerClick(event, {}, true)}
             >
-              <AddIcon />
-            </IconButton>
+              {i18n.t('tileServerDialogAdd')}
+            </Button>
           </ListItemSecondaryAction>
         </ListItem>
-        <Paper elevation={2} style={{ margin: 2, padding: 5 }}>
+        <List
+          style={{
+            padding: 5,
+            paddingLeft: 10,
+            backgroundColor: '#d3d3d34a',
+            borderRadius: 10
+          }}
+          dense
+        >
           {props.tileServers.length > 0 ? (
             props.tileServers.map((tileServer, index) => (
               <ListItem key={tileServer.uuid} className={classes.listItem}>
@@ -166,31 +207,7 @@ const SettingsAdvanced = (props: Props) => {
               />
             </ListItem>
           )}
-        </Paper>
-        {/* <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:coloredFileExtensionsEnabled')} />
-          <Switch
-            data-tid="settingsSetColoredFileExtension"
-            onClick={() =>
-              this.props.setColoredFileExtension(
-                !this.props.settings.coloredFileExtension
-              )
-            }
-            checked={this.props.settings.coloredFileExtension}
-          />
-        </ListItem> */}
-        {/* <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:loadLocationMetaData')} />
-          <Switch
-            data-tid="settingsSetLoadsLocationMetaData"
-            onClick={() =>
-              this.props.setLoadsLocationMetaData(
-                !this.props.settings.loadsLocationMetaData
-              )
-            }
-            checked={this.props.settings.loadsLocationMetaData}
-          />
-        </ListItem> */}
+        </List>
       </List>
       {tileServerDialog && (
         <MapTileServerDialog
@@ -213,7 +230,12 @@ function mapStateToProps(state) {
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
-    { setDesktopMode: SettingsActions.setDesktopMode },
+    {
+      setWarningOpeningFilesExternally:
+        SettingsActions.setWarningOpeningFilesExternally,
+      setDesktopMode: SettingsActions.setDesktopMode,
+      setSaveTagInLocation: SettingsActions.setSaveTagInLocation
+    },
     dispatch
   );
 }

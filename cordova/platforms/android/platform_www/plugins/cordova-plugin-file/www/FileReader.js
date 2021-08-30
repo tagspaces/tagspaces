@@ -76,24 +76,12 @@ function defineEvent (eventName) {
         this._realReader[eventName] = value;
     });
 }
-
-// When the read starts.
-defineEvent('onloadstart');
-
-// While reading (and decoding) file or fileBlob data, and reporting partial file data (progress.loaded/progress.total)
-defineEvent('onprogress');
-
-// When the read has successfully completed.
-defineEvent('onload');
-
-// When the read has failed (see errors).
-defineEvent('onerror');
-
-// When the request has completed (either in success or failure).
-defineEvent('onloadend');
-
-// When the read has been aborted. For instance, by invoking the abort() method.
-defineEvent('onabort');
+defineEvent('onloadstart');    // When the read starts.
+defineEvent('onprogress');     // While reading (and decoding) file or fileBlob data, and reporting partial file data (progress.loaded/progress.total)
+defineEvent('onload');         // When the read has successfully completed.
+defineEvent('onerror');        // When the read has failed (see errors).
+defineEvent('onloadend');      // When the request has completed (either in success or failure).
+defineEvent('onabort');        // When the read has been aborted. For instance, by invoking the abort() method.
 
 function initRead (reader, file) {
     // Already loading something
@@ -114,7 +102,7 @@ function initRead (reader, file) {
     }
 
     if (reader.onloadstart) {
-        reader.onloadstart(new ProgressEvent('loadstart', { target: reader }));
+        reader.onloadstart(new ProgressEvent('loadstart', {target: reader}));
     }
 }
 
@@ -138,12 +126,10 @@ function readSuccessCallback (readType, encoding, offset, totalSize, accumulate,
     if (readType === 'readAsDataURL') {
         // Windows proxy does not support reading file slices as Data URLs
         // so read the whole file at once.
-        CHUNK_SIZE = cordova.platformId === 'windows' ? totalSize // eslint-disable-line no-undef
-            : (
-                // Calculate new chunk size for data URLs to be multiply of 3
-                // Otherwise concatenated base64 chunks won't be valid base64 data
-                FileReader.READ_CHUNK_SIZE - (FileReader.READ_CHUNK_SIZE % 3) + 3
-            );
+        CHUNK_SIZE = cordova.platformId === 'windows' ? totalSize : // eslint-disable-line no-undef
+            // Calculate new chunk size for data URLs to be multiply of 3
+            // Otherwise concatenated base64 chunks won't be valid base64 data
+            FileReader.READ_CHUNK_SIZE - (FileReader.READ_CHUNK_SIZE % 3) + 3;
     }
 
     if (typeof r !== 'undefined') {
@@ -151,7 +137,7 @@ function readSuccessCallback (readType, encoding, offset, totalSize, accumulate,
         this._progress = Math.min(this._progress + CHUNK_SIZE, totalSize);
 
         if (typeof this.onprogress === 'function') {
-            this.onprogress(new ProgressEvent('progress', { loaded: this._progress, total: totalSize }));
+            this.onprogress(new ProgressEvent('progress', {loaded: this._progress, total: totalSize}));
         }
     }
 
@@ -171,11 +157,11 @@ function readSuccessCallback (readType, encoding, offset, totalSize, accumulate,
         this._readyState = FileReader.DONE;
 
         if (typeof this.onload === 'function') {
-            this.onload(new ProgressEvent('load', { target: this }));
+            this.onload(new ProgressEvent('load', {target: this}));
         }
 
         if (typeof this.onloadend === 'function') {
-            this.onloadend(new ProgressEvent('loadend', { target: this }));
+            this.onloadend(new ProgressEvent('loadend', {target: this}));
         }
     }
 }
@@ -194,11 +180,11 @@ function readFailureCallback (e) {
     this._error = new FileError(e);
 
     if (typeof this.onerror === 'function') {
-        this.onerror(new ProgressEvent('error', { target: this }));
+        this.onerror(new ProgressEvent('error', {target: this}));
     }
 
     if (typeof this.onloadend === 'function') {
-        this.onloadend(new ProgressEvent('loadend', { target: this }));
+        this.onloadend(new ProgressEvent('loadend', {target: this}));
     }
 }
 
@@ -219,11 +205,11 @@ FileReader.prototype.abort = function () {
 
     // If abort callback
     if (typeof this.onabort === 'function') {
-        this.onabort(new ProgressEvent('abort', { target: this }));
+        this.onabort(new ProgressEvent('abort', {target: this}));
     }
     // If load end callback
     if (typeof this.onloadend === 'function') {
-        this.onloadend(new ProgressEvent('loadend', { target: this }));
+        this.onloadend(new ProgressEvent('loadend', {target: this}));
     }
 };
 

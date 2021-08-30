@@ -29,6 +29,8 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
 import i18n from '-/services/i18n';
 import { actions as AppActions } from '-/reducers/app';
+import { joinPaths } from '-/utils/paths';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import PlatformIO from '-/services/platform-io';
 
 interface Props {
@@ -63,8 +65,11 @@ const CreateDirectoryDialog = (props: Props) => {
 
   function onConfirm() {
     if (!disableConfirmButton && name) {
-      const dirPath =
-        props.selectedDirectoryPath + PlatformIO.getDirSeparator() + name;
+      const dirPath = joinPaths(
+        PlatformIO.getDirSeparator(),
+        props.selectedDirectoryPath,
+        name
+      );
       props.createDirectory(dirPath);
       resetState();
       props.onClose();
@@ -73,7 +78,7 @@ const CreateDirectoryDialog = (props: Props) => {
 
   function onCancel() {
     resetState();
-    props.onClose();
+    onClose();
   }
 
   function resetState() {
@@ -99,7 +104,10 @@ const CreateDirectoryDialog = (props: Props) => {
         }
       }}
     >
-      <DialogTitle>{i18n.t('core:createNewDirectoryTitle')}</DialogTitle>
+      <DialogTitle>
+        {i18n.t('core:createNewDirectoryTitle')}
+        <DialogCloseButton onClose={onClose} />
+      </DialogTitle>
       <DialogContent>
         <FormControl fullWidth={true} error={inputError}>
           <TextField
@@ -121,11 +129,7 @@ const CreateDirectoryDialog = (props: Props) => {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button
-          data-tid="closeCreateNewDirectory"
-          onClick={onCancel}
-          color="primary"
-        >
+        <Button data-tid="closeCreateNewDirectory" onClick={onCancel}>
           {i18n.t('core:cancel')}
         </Button>
         <Button

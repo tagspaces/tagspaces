@@ -22,8 +22,6 @@ import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-// import IconButton from '@material-ui/core/IconButton';
-// import CloseIcon from '@material-ui/icons/Close';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -36,6 +34,7 @@ import i18n from '-/services/i18n';
 import { extractFileName, extractDirectoryName } from '-/utils/paths';
 import PlatformIO from '-/services/platform-io';
 import { TS } from '-/tagspaces.namespace';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {
   open: boolean;
@@ -59,6 +58,10 @@ const AddRemoveTagsDialog = (props: Props) => {
     } else {
       setNewlyAddedTags(value);
     }
+  };
+
+  const onClose = () => {
+    onCloseDialog();
   };
 
   const onCloseDialog = (clearSelection?: boolean) => {
@@ -95,7 +98,7 @@ const AddRemoveTagsDialog = (props: Props) => {
     onCloseDialog(true);
   };
 
-  const { open, selectedEntries = [], fullScreen, onClose } = props;
+  const { open, selectedEntries = [], fullScreen } = props;
   const disabledButtons =
     !newlyAddedTags || newlyAddedTags.length < 1 || selectedEntries.length < 1;
 
@@ -109,17 +112,7 @@ const AddRemoveTagsDialog = (props: Props) => {
     >
       <DialogTitle>
         {i18n.t('core:tagOperationTitle')}
-        {/* <IconButton
-          aria-label="close"
-          style={{
-            position: 'absolute',
-            right: 5,
-            top: 5
-          }}
-          onClick={onCloseDialog}
-        >
-          <CloseIcon />
-        </IconButton> */}
+        <DialogCloseButton onClose={onClose} />
       </DialogTitle>
       <DialogContent style={{ minHeight: 330 }}>
         <TagsSelect
@@ -156,7 +149,6 @@ const AddRemoveTagsDialog = (props: Props) => {
         <Button
           data-tid="cancelTagsMultipleEntries"
           onClick={() => onCloseDialog()}
-          color="primary"
         >
           {i18n.t('core:cancel')}
         </Button>

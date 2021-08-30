@@ -22,8 +22,6 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import TextField from '@material-ui/core/TextField';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
@@ -34,6 +32,7 @@ import i18n from '-/services/i18n';
 import useValidation from '-/utils/useValidation';
 import { TS } from '-/tagspaces.namespace';
 import { actions as SettingsActions } from '-/reducers/settings';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {
   open: boolean;
@@ -58,18 +57,8 @@ const MapTileServerDialog = (props: Props) => {
         props.tileServer.uuid
           ? 'core:tileServerDialogEdit'
           : 'core:tileServerDialogAdd'
-      )}{' '}
-      <IconButton
-        aria-label="close"
-        style={{
-          position: 'absolute',
-          right: 5,
-          top: 5
-        }}
-        onClick={props.onClose}
-      >
-        <CloseIcon />
-      </IconButton>
+      )}
+      <DialogCloseButton onClose={onClose} />
     </DialogTitle>
   );
 

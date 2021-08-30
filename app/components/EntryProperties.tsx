@@ -31,7 +31,6 @@ import Button from '@material-ui/core/Button';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import ShareIcon from '@material-ui/icons/Link';
 import Tooltip from '@material-ui/core/Tooltip';
-import InfoIcon from '@material-ui/icons/ContactSupport';
 import LocationIcon from '@material-ui/icons/WorkOutline';
 import CloudLocationIcon from '@material-ui/icons/CloudQueue';
 import DOMPurify from 'dompurify';
@@ -86,6 +85,8 @@ import MarkerShadowIcon from '-/assets/icons/marker-shadow.png';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { TS } from '-/tagspaces.namespace';
 import NoTileServer from '-/components/NoTileServer';
+import InfoIcon from '-/components/InfoIcon';
+import { ProTooltip } from '-/components/HelperComponents';
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
@@ -95,7 +96,7 @@ const styles: any = (theme: any) => ({
     overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
     overflowX: 'hidden',
     flexGrow: 1,
-    padding: '0 7px',
+    padding: 7,
     height: '100%'
   },
   tags: {
@@ -364,7 +365,7 @@ const EntryProperties = (props: Props) => {
 
   const toggleThumbFilesDialog = () => {
     if (!Pro) {
-      props.showNotification(i18n.t('core:needProVersion'));
+      props.showNotification(i18n.t('core:thisFunctionalityIsAvailableInPro'));
       return true;
     }
     if (
@@ -635,7 +636,9 @@ const EntryProperties = (props: Props) => {
                 className={classes.header}
                 style={{ display: 'block' }}
               >
-                {i18n.t('core:editTagMasterName')}
+                {currentEntry.isFile
+                  ? i18n.t('core:fileName')
+                  : i18n.t('core:folderName')}
               </Typography>
             </div>
           </div>
@@ -656,7 +659,6 @@ const EntryProperties = (props: Props) => {
                             <div>
                               <Button
                                 data-tid="cancelRenameEntryTID"
-                                color="primary"
                                 onClick={deactivateEditNameField}
                               >
                                 {i18n.t('core:cancel')}
@@ -675,7 +677,7 @@ const EntryProperties = (props: Props) => {
                               color="primary"
                               onClick={activateEditNameField}
                             >
-                              {i18n.t('core:rename')}
+                              {i18n.t('core:renameFile')}
                             </Button>
                           )}
                         </div>
@@ -802,22 +804,24 @@ const EntryProperties = (props: Props) => {
                 >
                   {editDescription !== undefined && (
                     <Button
-                      color="primary"
                       className={classes.button}
                       onClick={() => setEditDescription(undefined)}
                     >
                       {i18n.t('core:cancel')}
                     </Button>
                   )}
-                  <Button
-                    color="primary"
-                    className={classes.button}
-                    onClick={toggleEditDescriptionField}
-                  >
-                    {editDescription !== undefined
-                      ? i18n.t('core:confirmSaveButton')
-                      : i18n.t('core:edit')}
-                  </Button>
+                  <ProTooltip tooltip={i18n.t('editDescription')}>
+                    <Button
+                      color="primary"
+                      className={classes.button}
+                      disabled={!Pro}
+                      onClick={toggleEditDescriptionField}
+                    >
+                      {editDescription !== undefined
+                        ? i18n.t('core:confirmSaveButton')
+                        : i18n.t('core:edit')}
+                    </Button>
+                  </ProTooltip>
                 </div>
               )}
           </div>
@@ -873,9 +877,7 @@ const EntryProperties = (props: Props) => {
                   // eslint-disable-next-line no-nested-ternary
                   __html: currentEntry.description
                     ? marked(DOMPurify.sanitize(currentEntry.description))
-                    : Pro
-                    ? i18n.t('core:addMarkdownDescription')
-                    : i18n.t('core:addDescription')
+                    : i18n.t('core:addMarkdownDescription')
                 }}
                 onDoubleClick={() => {
                   if (!currentEntry.editMode && editName === undefined) {
@@ -946,8 +948,9 @@ const EntryProperties = (props: Props) => {
                 <Grid item xs={2}>
                   {currentEntry.color && (
                     <>
-                      <Tooltip title="Clears the background color of this folder">
+                      <ProTooltip tooltip={i18n.t('clearFolderColor')}>
                         <IconButton
+                          disabled={!Pro}
                           aria-label="clear"
                           size="small"
                           style={{ marginTop: 5 }}
@@ -955,7 +958,7 @@ const EntryProperties = (props: Props) => {
                         >
                           <ClearColorIcon />
                         </IconButton>
-                      </Tooltip>
+                      </ProTooltip>
                       {isConfirmResetColorDialogOpened && (
                         <ConfirmDialog
                           open={isConfirmResetColorDialogOpened}
@@ -1079,17 +1082,17 @@ const EntryProperties = (props: Props) => {
             style={{ display: 'block', paddingLeft: 5 }}
           >
             {i18n.t('core:sharingLink')}
-            <Tooltip arrow title={i18n.t('Explanation')}>
-              <InfoIcon
-                style={{
-                  color: theme.palette.text.secondary,
-                  paddingLeft: 5,
-                  verticalAlign: 'bottom'
-                }}
-              />
-            </Tooltip>
+            <InfoIcon
+              tooltip={i18n.t(
+                'Link for sharing to other TagSpaces installation using the same location IDs'
+              )}
+            />
           </Typography>
-          <FormControl fullWidth={true} className={classes.formControl}>
+          <FormControl
+            style={{ marginTop: -10 }}
+            fullWidth={true}
+            className={classes.formControl}
+          >
             <TextField
               margin="dense"
               name="path"
@@ -1137,17 +1140,17 @@ const EntryProperties = (props: Props) => {
               style={{ display: 'block', paddingLeft: 5 }}
             >
               {i18n.t('Link for downloading')}
-              <Tooltip arrow title={i18n.t('Explanation')}>
-                <InfoIcon
-                  style={{
-                    color: theme.palette.text.secondary,
-                    paddingLeft: 5,
-                    verticalAlign: 'bottom'
-                  }}
-                />
-              </Tooltip>
+              <InfoIcon
+                tooltip={i18n.t(
+                  'Link for time limited sharing on the Internet'
+                )}
+              />
             </Typography>
-            <FormControl fullWidth={true} className={classes.formControl}>
+            <FormControl
+              style={{ marginTop: -10 }}
+              fullWidth={true}
+              className={classes.formControl}
+            >
               <TextField
                 margin="dense"
                 name="path"
@@ -1254,14 +1257,17 @@ const EntryProperties = (props: Props) => {
               !currentEntry.editMode &&
               editName === undefined &&
               editDescription === undefined && (
-                <Button
-                  color="primary"
-                  className={classes.button}
-                  style={{ whiteSpace: 'nowrap' }}
-                  onClick={toggleThumbFilesDialog}
-                >
-                  {i18n.t('core:changeThumbnail')}
-                </Button>
+                <ProTooltip tooltip={i18n.t('changeThumbnail')}>
+                  <Button
+                    disabled={!Pro}
+                    color="primary"
+                    className={classes.button}
+                    style={{ whiteSpace: 'nowrap' }}
+                    onClick={toggleThumbFilesDialog}
+                  >
+                    {i18n.t('core:changeThumbnail')}
+                  </Button>
+                </ProTooltip>
               )}
           </div>
           <div className={classes.fluidGrid}>
@@ -1286,17 +1292,6 @@ const EntryProperties = (props: Props) => {
           </div>
         </Grid>
       </Grid>
-
-      {/* {tagMenuOpened && (
-        <EntryTagMenu
-          anchorEl={tagMenuAnchorEl}
-          open={tagMenuOpened}
-          onClose={handleCloseTagMenu}
-          selectedTag={selectedTag}
-          currentEntryPath={currentEntry.path}
-          removeTags={removeTags}
-        />
-      )} */}
       {isMoveCopyFilesDialogOpened && (
         <MoveCopyFilesDialog
           key={uuidv1()}
@@ -1307,7 +1302,6 @@ const EntryProperties = (props: Props) => {
       )}
       {ThumbnailChooserDialog && isFileThumbChooseDialogOpened && (
         <ThumbnailChooserDialog
-          // key={uuidv1()}
           open={isFileThumbChooseDialogOpened}
           onClose={toggleThumbFilesDialog}
           selectedFile={thumbPath}

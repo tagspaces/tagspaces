@@ -16,8 +16,9 @@
  *
  */
 
-import React, { useReducer, useRef, useState } from 'react';
+import React, { ChangeEvent, useReducer, useRef, useState } from 'react';
 import uuidv1 from 'uuid';
+import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -26,10 +27,16 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+import { connect } from 'react-redux';
 import ColorPickerDialog from './ColorPickerDialog';
 import i18n from '-/services/i18n';
 import TransparentBackground from '../TransparentBackground';
 import { TS } from '-/tagspaces.namespace';
+import { getLocations } from '-/reducers/locations';
+import { getCurrentLocationId } from '-/reducers/app';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {
   open: boolean;
@@ -38,7 +45,12 @@ interface Props {
   fullScreen?: boolean;
   color: string;
   textcolor: string;
+  currentLocationId: string | null;
+  locations: Array<TS.Location>;
+  saveTagInLocation: boolean;
 }
+
+const defaultTagGroupLocation = 'TAG_LIBRARY';
 
 const CreateTagGroupDialog = (props: Props) => {
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
@@ -51,6 +63,7 @@ const CreateTagGroupDialog = (props: Props) => {
   const disableConfirmButton = useRef<boolean>(true);
   const color = useRef<string>(props.color);
   const textcolor = useRef<string>(props.textcolor);
+  const locationId = useRef<string>(props.currentLocationId);
   // eslint-disable-next-line no-unused-vars
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
@@ -93,6 +106,10 @@ const CreateTagGroupDialog = (props: Props) => {
         title: title.current,
         color: color.current,
         textcolor: textcolor.current,
+        locationId:
+          locationId.current === defaultTagGroupLocation
+            ? undefined
+            : locationId.current,
         children: []
       });
       props.onClose();
@@ -144,6 +161,7 @@ const CreateTagGroupDialog = (props: Props) => {
       cursor: 'pointer'
     },
     helpText: {
+      marginTop: '15px',
       marginBottom: '5px',
       fontSize: '1rem'
     }
@@ -166,7 +184,10 @@ const CreateTagGroupDialog = (props: Props) => {
         }
       }}
     >
-      <DialogTitle>{i18n.t('core:createTagGroupTitle')}</DialogTitle>
+      <DialogTitle>
+        {i18n.t('core:createTagGroupTitle')}
+        <DialogCloseButton onClose={onClose} />
+      </DialogTitle>
       <DialogContent>
         <FormControl fullWidth={true} error={inputError}>
           <TextField
@@ -185,6 +206,33 @@ const CreateTagGroupDialog = (props: Props) => {
             </FormHelperText>
           )}
         </FormControl>
+        {props.saveTagInLocation && (
+          <FormControl fullWidth={true} error={inputError}>
+            <FormHelperText style={styles.helpText}>
+              {i18n.t('core:tagGroupLocation')}
+            </FormHelperText>
+            <Select
+              defaultValue={defaultTagGroupLocation}
+              onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                locationId.current = event.target.value;
+                // rerender
+                forceUpdate();
+              }}
+            >
+              <MenuItem
+                key={defaultTagGroupLocation}
+                value={defaultTagGroupLocation}
+              >
+                {i18n.t('tagLibrary')}
+              </MenuItem>
+              {props.locations.map(location => (
+                <MenuItem key={location.uuid} value={location.uuid}>
+                  {i18n.t('core:location') + ': ' + location.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
         <FormControl fullWidth={true}>
           <FormHelperText style={styles.helpText}>
             {i18n.t('core:tagBackgroundColor')}
@@ -233,11 +281,7 @@ const CreateTagGroupDialog = (props: Props) => {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button
-          data-tid="createTagGroupCancelButton"
-          onClick={props.onClose}
-          color="primary"
-        >
+        <Button data-tid="createTagGroupCancelButton" onClick={props.onClose}>
           {i18n.t('core:cancel')}
         </Button>
         <Button
@@ -253,4 +297,14 @@ const CreateTagGroupDialog = (props: Props) => {
   );
 };
 
-export default CreateTagGroupDialog;
+function mapStateToProps(state) {
+  return {
+    locations: getLocations(state),
+    currentLocationId: getCurrentLocationId(state),
+    saveTagInLocation: state.settings.saveTagInLocation
+  };
+}
+
+export default connect(mapStateToProps)(
+  withMobileDialog()(CreateTagGroupDialog)
+);

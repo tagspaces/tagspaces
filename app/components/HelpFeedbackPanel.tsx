@@ -53,11 +53,11 @@ import { bindActionCreators } from 'redux';
 import CustomLogo from './CustomLogo';
 import ProTeaser from '../assets/images/spacerocket_undraw.svg';
 import styles from './SidePanels.css';
-import AppConfig from '../config';
 import i18n from '../services/i18n';
 import { clearAllURLParams } from '-/utils/misc';
 import { Pro } from '-/pro';
 import { actions as AppActions } from '-/reducers/app';
+import Links from '-/links';
 
 interface Props {
   classes?: any;
@@ -236,6 +236,7 @@ const HelpFeedbackPanel = (props: Props) => {
             button
             onClick={toggleAboutDialog}
             title="Opens the about dialog"
+            data-tid="aboutDialog"
           >
             <ListItemIcon>
               <AboutIcon />
@@ -247,14 +248,14 @@ const HelpFeedbackPanel = (props: Props) => {
           <ListItem
             button
             onClick={() =>
-              openURLExternally(AppConfig.documentationLinks.general, true)
+              openURLExternally(Links.documentationLinks.general, true)
             }
           >
             <ListItemIcon>
               <DocumentationIcon />
             </ListItemIcon>
             <Typography style={{ color: theme.palette.text.primary }}>
-              {i18n.t('Open Documentation')}
+              {i18n.t('core:documentation')}
             </Typography>
           </ListItem>
           <ListItem button onClick={toggleKeysDialog}>
@@ -267,9 +268,7 @@ const HelpFeedbackPanel = (props: Props) => {
           </ListItem>
           <ListItem
             button
-            onClick={() =>
-              openURLExternally(AppConfig.links.changelogURL, true)
-            }
+            onClick={() => openURLExternally(Links.links.changelogURL, true)}
             title="Opens the changelog of the app"
           >
             <ListItemIcon>
@@ -289,7 +288,7 @@ const HelpFeedbackPanel = (props: Props) => {
           </ListItem>
           <ListItem
             button
-            onClick={() => openURLExternally(AppConfig.links.webClipper, true)}
+            onClick={() => openURLExternally(Links.links.webClipper, true)}
           >
             <ListItemIcon>
               <WebClipperIcon />
@@ -301,9 +300,7 @@ const HelpFeedbackPanel = (props: Props) => {
           <Divider />
           <ListItem
             button
-            onClick={() =>
-              openURLExternally(AppConfig.links.suggestFeature, true)
-            }
+            onClick={() => openURLExternally(Links.links.suggestFeature, true)}
           >
             <ListItemIcon>
               <NewFeatureIcon />
@@ -314,7 +311,7 @@ const HelpFeedbackPanel = (props: Props) => {
           </ListItem>
           <ListItem
             button
-            onClick={() => openURLExternally(AppConfig.links.reportIssue, true)}
+            onClick={() => openURLExternally(Links.links.reportIssue, true)}
           >
             <ListItemIcon>
               <IssueIcon />
@@ -325,9 +322,7 @@ const HelpFeedbackPanel = (props: Props) => {
           </ListItem>
           <ListItem
             button
-            onClick={() =>
-              openURLExternally(AppConfig.links.helpTranslating, true)
-            }
+            onClick={() => openURLExternally(Links.links.helpTranslating, true)}
           >
             <ListItemIcon>
               <TranslationIcon />
@@ -339,9 +334,7 @@ const HelpFeedbackPanel = (props: Props) => {
           <Divider />
           <ListItem
             button
-            onClick={() =>
-              openURLExternally(AppConfig.links.emailContact, true)
-            }
+            onClick={() => openURLExternally(Links.links.emailContact, true)}
           >
             <ListItemIcon>
               <EmailIcon />
@@ -352,7 +345,7 @@ const HelpFeedbackPanel = (props: Props) => {
           </ListItem>
           <ListItem
             button
-            onClick={() => openURLExternally(AppConfig.links.twitter)}
+            onClick={() => openURLExternally(Links.links.twitter)}
           >
             <ListItemIcon>
               <Social2Icon />
@@ -363,7 +356,7 @@ const HelpFeedbackPanel = (props: Props) => {
           </ListItem>
           <ListItem
             button
-            onClick={() => openURLExternally(AppConfig.links.facebook)}
+            onClick={() => openURLExternally(Links.links.facebook)}
           >
             <ListItemIcon>
               <SocialIcon />
@@ -433,7 +426,7 @@ const HelpFeedbackPanel = (props: Props) => {
                   onClick={(event: any) => {
                     event.preventDefault();
                     event.stopPropagation();
-                    openURLExternally(AppConfig.links.productsOverview, true);
+                    openURLExternally(Links.links.productsOverview, true);
                   }}
                 >
                   Get It

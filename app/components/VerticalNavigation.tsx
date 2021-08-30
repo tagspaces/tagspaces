@@ -25,7 +25,6 @@ import NewFileIcon from '@material-ui/icons/Add';
 import LocationsIcon from '@material-ui/icons/WorkOutline';
 import TagLibraryIcon from '@material-ui/icons/LocalOfferOutlined';
 import SearchIcon from '@material-ui/icons/SearchOutlined';
-// import PerspectivesIcon from '@material-ui/icons/MapOutlined';
 import SettingsIcon from '@material-ui/icons/Settings';
 import ThemingIcon from '@material-ui/icons/InvertColors';
 import UpgradeIcon from '@material-ui/icons/FlightTakeoff';
@@ -50,7 +49,6 @@ import {
   isLocationManagerPanelOpened,
   isTagLibraryPanelOpened as isTagLibraryOpened,
   isSearchPanelOpened as isSearchOpened,
-  isPerspectivesPanelOpened as isPerspectivesOpened,
   isHelpFeedbackPanelOpened as isHelpFeedbackOpened,
   isReadOnlyMode,
   getProgress,
@@ -118,14 +116,12 @@ interface Props {
   toggleSettingsDialog: () => void;
   toggleUploadDialog: () => void;
   isSettingsDialogOpened: () => void;
-  isLocationManagerPanelOpened: boolean;
+  isLocationMngrPanelOpened: boolean;
   openLocationManagerPanel: () => void;
   isTagLibraryPanelOpened: boolean;
   openTagLibraryPanel: () => void;
   isSearchPanelOpened: boolean;
   openSearchPanel: () => void;
-  isPerspectivesPanelOpened: boolean;
-  // openPerspectivesPanel: () => void,
   isHelpFeedbackPanelOpened: boolean;
   openHelpFeedbackPanel: () => void;
   closeAllVerticalPanels: () => void;
@@ -156,6 +152,7 @@ const VerticalNavigation = (props: Props) => {
 
   const {
     classes,
+    isLocationMngrPanelOpened,
     isTagLibraryPanelOpened,
     isSearchPanelOpened,
     isHelpFeedbackPanelOpened,
@@ -239,14 +236,14 @@ const VerticalNavigation = (props: Props) => {
           <IconButton
             id="verticalNavButton"
             onClick={() => {
-              if (props.isLocationManagerPanelOpened) {
+              if (props.isLocationMngrPanelOpened) {
                 closeAllVerticalPanels();
               } else {
                 openLocationManagerPanel();
               }
             }}
             className={
-              props.isLocationManagerPanelOpened
+              props.isLocationMngrPanelOpened
                 ? [classes.button, classes.selectedButton].join(' ')
                 : classes.button
             }
@@ -293,25 +290,6 @@ const VerticalNavigation = (props: Props) => {
           >
             <SearchIcon className={classes.buttonIcon} />
           </IconButton>
-          {/* <IconButton
-              title={i18n.t('core:perspectiveManager')}
-              data-tid="perspectiveManager"
-              onClick={() => {
-                if (isPerspectivePanelOpened) {
-                  closeAllVerticalPanels();
-                } else {
-                  openPerspectivesPanel();
-                }
-              }}
-              disabled={false}
-              style={
-                isPerspectivePanelOpened
-                  ? { ...classes.button, ...classes.selectedButton }
-                  : classes.button
-              }
-            >
-              <PerspectivesIcon style={classes.buttonIcon} />
-            </IconButton> */}
           <IconButton
             id="verticalNavButton"
             title={i18n.t('core:helpFeedback')}
@@ -388,7 +366,7 @@ const VerticalNavigation = (props: Props) => {
           </IconButton>
         </div>
         <div className={classes.panel}>
-          {props.isLocationManagerPanelOpened && <LocationManager />}
+          {isLocationMngrPanelOpened && <LocationManager />}
           {isTagLibraryPanelOpened && <TagLibrary />}
           {isSearchPanelOpened && <Search />}
           {isHelpFeedbackPanelOpened && (
@@ -436,10 +414,9 @@ function mapStateToProps(state) {
   return {
     isFirstRun: isFirstRun(state),
     isSettingsDialogOpened: isSettingsDialogOpened(state),
-    isLocationManagerPanelOpened: isLocationManagerPanelOpened(state),
+    isLocationMngrPanelOpened: isLocationManagerPanelOpened(state),
     isTagLibraryPanelOpened: isTagLibraryOpened(state),
     isSearchPanelOpened: isSearchOpened(state),
-    isPerspectivesPanelOpened: isPerspectivesOpened(state),
     isHelpFeedbackPanelOpened: isHelpFeedbackOpened(state),
     isReadOnlyMode: isReadOnlyMode(state),
     directoryPath: getDirectoryPath(state),
@@ -460,7 +437,6 @@ function mapActionCreatorsToProps(dispatch) {
       openLocationManagerPanel: AppActions.openLocationManagerPanel,
       openTagLibraryPanel: AppActions.openTagLibraryPanel,
       openSearchPanel: AppActions.openSearchPanel,
-      openPerspectivesPanel: AppActions.openPerspectivesPanel,
       openHelpFeedbackPanel: AppActions.openHelpFeedbackPanel,
       openURLExternally: AppActions.openURLExternally,
       closeAllVerticalPanels: AppActions.closeAllVerticalPanels,

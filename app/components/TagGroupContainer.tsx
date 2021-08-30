@@ -52,7 +52,6 @@ const TagGroupContainer = (props: Props) => {
       style={{
         margin: 0,
         padding: 0,
-        paddingTop: 3,
         borderRadius: 5,
         minHeight: 20,
         border,

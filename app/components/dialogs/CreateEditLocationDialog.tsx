@@ -28,12 +28,21 @@ import Switch from '@material-ui/core/Switch';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
+import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
-import { Tooltip, Typography } from '@material-ui/core';
+import Tooltip from '@material-ui/core/Tooltip';
 import Dialog from '@material-ui/core/Dialog';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 import Input from '@material-ui/core/Input';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import CheckIcon from '@material-ui/icons/Check';
+import RemoveIcon from '@material-ui/icons/RemoveCircleOutline';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import ObjectStoreForm from './ObjectStoreForm';
@@ -42,18 +51,15 @@ import useFirstRender from '-/utils/useFirstRender';
 import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
 import { locationType } from '-/utils/misc';
+import { getLocationPath } from '-/utils/paths';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import InfoIcon from '-/components/InfoIcon';
+import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
 
 const styles: any = theme => ({
-  root: {
-    display: 'flex'
-  },
   formControl: {
-    margin: theme.spacing(3)
-  },
-  group: {
-    margin: theme.spacing(1, 0),
-    display: 'flex',
-    flexDirection: 'row'
+    marginLeft: theme.spacing(0),
+    width: '100%'
   }
 });
 
@@ -61,12 +67,16 @@ interface Props {
   location?: TS.Location;
   open: boolean;
   onClose: () => void;
+  classes: any;
   fullScreen: boolean;
   addLocation?: (location: TS.Location) => void;
   editLocation?: (location: TS.Location) => void;
+  isPersistTagsInSidecar: boolean;
 }
 
 const CreateEditLocationDialog = (props: Props) => {
+  const IgnorePatternDialog =
+    Pro && Pro.UI ? Pro.UI.IgnorePatternDialog : false;
   const { location } = props;
   const [showAdvancedMode, setShowAdvancedMode] = useState<boolean>(false);
   const [showSecretAccessKey, setShowSecretAccessKey] = useState<boolean>(
@@ -126,14 +136,23 @@ const CreateEditLocationDialog = (props: Props) => {
   const [bucketName, setBucketName] = useState<string>(
     location ? location.bucketName : ''
   );
-  const [region, setRegion] = useState<string>(location ? location.region : '');
-  const [type, setType] = useState<string>(
-    location
-      ? location.type
-      : AppConfig.isWeb
-      ? locationType.TYPE_CLOUD
-      : locationType.TYPE_LOCAL
+  const [persistTagsInSidecarFile, setPersistTagsInSidecarFile] = useState<
+    boolean | null
+  >(
+    location && location.persistTagsInSidecarFile !== undefined
+      ? location.persistTagsInSidecarFile
+      : null // props.isPersistTagsInSidecar
   );
+  const [region, setRegion] = useState<string>(location ? location.region : '');
+  let defaultType;
+  if (location) {
+    defaultType = location.type;
+  } else if (AppConfig.isWeb) {
+    defaultType = locationType.TYPE_CLOUD;
+  } else {
+    defaultType = locationType.TYPE_LOCAL;
+  }
+  const [type, setType] = useState<string>(defaultType);
   const [newuuid, setNewUuid] = useState<string>(
     location ? location.uuid : uuidv1()
   );
@@ -142,6 +161,14 @@ const CreateEditLocationDialog = (props: Props) => {
     false
   );
   const [cloudErrorSecretAccessKey, setCloudErrorSecretAccessKey] = useState<
+    boolean
+  >(false);
+
+  const [ignorePatternPaths, setIgnorePatternPaths] = useState<Array<string>>(
+    location ? location.ignorePatternPaths : undefined
+  );
+
+  const [isIgnorePatternDialogOpen, setIgnorePatternDialogOpen] = useState<
     boolean
   >(false);
 
@@ -226,7 +253,7 @@ const CreateEditLocationDialog = (props: Props) => {
     );
   };
 
-  const { fullScreen, open, onClose } = props;
+  const { fullScreen, open, onClose, classes } = props;
 
   const onConfirm = () => {
     if (!disableConfirmButton()) {
@@ -243,7 +270,8 @@ const CreateEditLocationDialog = (props: Props) => {
           persistIndex,
           fullTextIndex,
           watchForChanges,
-          maxIndexAge
+          maxIndexAge,
+          ignorePatternPaths
         };
       } else if (type === locationType.TYPE_CLOUD) {
         loc = {
@@ -263,8 +291,13 @@ const CreateEditLocationDialog = (props: Props) => {
           persistIndex,
           fullTextIndex,
           watchForChanges: false,
-          maxIndexAge
+          maxIndexAge,
+          ignorePatternPaths
         };
+      }
+      if (persistTagsInSidecarFile !== null) {
+        // props.isPersistTagsInSidecar !== persistTagsInSidecarFile) {
+        loc = { ...loc, persistTagsInSidecarFile };
       }
 
       if (props.addLocation) {
@@ -331,6 +364,14 @@ const CreateEditLocationDialog = (props: Props) => {
     );
   }
 
+  const currentTagsSetting =
+    props.location && props.location.persistTagsInSidecarFile !== null
+      ? location.persistTagsInSidecarFile
+      : props.isPersistTagsInSidecar;
+
+  const disableLocationTypeSwitch: boolean =
+    !Pro || AppConfig.isWeb || props.location !== undefined;
+
   return (
     <Dialog
       open={open}
@@ -343,27 +384,31 @@ const CreateEditLocationDialog = (props: Props) => {
           event.preventDefault();
           event.stopPropagation();
           onConfirm();
-        } else if (event.key === 'Escape') {
-          onClose();
         }
+        // } else if (event.key === 'Escape') {
+        //   onClose();
+        // }
       }}
     >
       <DialogTitle>
         {props.location
           ? i18n.t('core:editLocationTitle')
           : i18n.t('core:createLocationTitle')}
+        <DialogCloseButton onClose={onClose} />
       </DialogTitle>
-      <DialogContent>
+      <DialogContent
+        style={{
+          overflow: AppConfig.isFirefox ? 'auto' : 'overlay',
+          minWidth: 500
+        }}
+      >
         <Grid container spacing={2}>
-          <Grid item xs={2} style={{ marginTop: 13, textAlign: 'left' }}>
+          <Grid item xs={2} style={{ marginTop: 10, textAlign: 'left' }}>
             <Typography>{i18n.t('core:locationType')}</Typography>
           </Grid>
           <Grid item xs={10}>
-            <FormControl disabled={!Pro || AppConfig.isWeb}>
+            <FormControl disabled={disableLocationTypeSwitch}>
               <RadioGroup
-                title={
-                  Pro ? '' : i18n.t('core:thisFunctionalityIsAvailableInPro')
-                }
                 aria-label={i18n.t('core:locationType')}
                 name="type"
                 value={type}
@@ -383,15 +428,23 @@ const CreateEditLocationDialog = (props: Props) => {
                   value={locationType.TYPE_CLOUD}
                   control={<Radio />}
                   title={i18n.t('core:objectStorageTitle')}
-                  label={i18n.t('core:objectStorage')}
+                  label={
+                    <>
+                      {i18n.t('core:objectStorage')}
+                      <ProLabel />
+                    </>
+                  }
                 />
               </RadioGroup>
             </FormControl>
           </Grid>
         </Grid>
         {content}
-        <FormGroup>
+        <FormGroup style={{ marginTop: 10 }}>
           <FormControlLabel
+            className={classes.formControl}
+            labelPlacement="start"
+            style={{ justifyContent: 'space-between' }}
             control={
               <Switch
                 data-tid="locationIsDefault"
@@ -405,6 +458,9 @@ const CreateEditLocationDialog = (props: Props) => {
             label={i18n.t('core:startupLocation')}
           />
           <FormControlLabel
+            className={classes.formControl}
+            labelPlacement="start"
+            style={{ justifyContent: 'space-between' }}
             control={
               <Switch
                 disabled={!Pro}
@@ -417,11 +473,16 @@ const CreateEditLocationDialog = (props: Props) => {
               />
             }
             label={
-              i18n.t('core:createFullTextIndex') +
-              (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
+              <>
+                {i18n.t('core:createFullTextIndex')}
+                {Pro ? <BetaLabel /> : <ProLabel />}
+              </>
             }
           />
           <FormControlLabel
+            className={classes.formControl}
+            labelPlacement="start"
+            style={{ justifyContent: 'space-between' }}
             control={
               <Switch
                 disabled={!Pro || type === locationType.TYPE_CLOUD}
@@ -434,12 +495,17 @@ const CreateEditLocationDialog = (props: Props) => {
               />
             }
             label={
-              i18n.t('core:watchForChangesInLocation') +
-              (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
+              <>
+                {i18n.t('core:watchForChangesInLocation')}
+                <ProLabel />
+              </>
             }
           />
           {showAdvancedMode && (
             <FormControlLabel
+              className={classes.formControl}
+              labelPlacement="start"
+              style={{ justifyContent: 'space-between' }}
               control={
                 <Switch
                   disabled={!Pro}
@@ -452,13 +518,18 @@ const CreateEditLocationDialog = (props: Props) => {
                 />
               }
               label={
-                i18n.t('core:readonlyModeSwitch') +
-                (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
+                <>
+                  {i18n.t('core:readonlyModeSwitch')}
+                  <ProLabel />
+                </>
               }
             />
           )}
           {showAdvancedMode && (
             <FormControlLabel
+              className={classes.formControl}
+              labelPlacement="start"
+              style={{ justifyContent: 'space-between' }}
               control={
                 <Switch
                   disabled={!Pro}
@@ -471,48 +542,226 @@ const CreateEditLocationDialog = (props: Props) => {
                 />
               }
               label={
-                i18n.t('core:persistIndexSwitch') +
-                (Pro ? '' : ' - ' + i18n.t('core:proFeature'))
+                <>
+                  {i18n.t('core:persistIndexSwitch')}
+                  <ProLabel />
+                </>
               }
-            />
-          )}
-          {showAdvancedMode && (
-            <FormControlLabel
-              control={
-                <Tooltip title={i18n.t('core:maxIndexAgeHelp')}>
-                  <Input
-                    name="maxIndexAge"
-                    style={{
-                      maxWidth: 70,
-                      marginLeft: 15,
-                      marginRight: 15
-                    }}
-                    type="number"
-                    data-tid="maxIndexAgeTID"
-                    inputProps={{ min: 0 }}
-                    value={maxIndexAge / (1000 * 60)}
-                    onChange={event => changeMaxIndexAge(event.target.value)}
-                  />
-                </Tooltip>
-              }
-              label={i18n.t('core:maxIndexAge')}
             />
           )}
         </FormGroup>
+        {showAdvancedMode && (
+          <FormControlLabel
+            className={classes.formControl}
+            labelPlacement="start"
+            style={{ justifyContent: 'space-between' }}
+            control={
+              <Input
+                name="maxIndexAge"
+                style={{
+                  maxWidth: 70,
+                  marginLeft: 15,
+                  marginBottom: 15
+                }}
+                type="number"
+                data-tid="maxIndexAgeTID"
+                inputProps={{ min: 0 }}
+                value={maxIndexAge / (1000 * 60)}
+                onChange={event => changeMaxIndexAge(event.target.value)}
+              />
+            }
+            label={
+              <Typography>
+                {i18n.t('core:maxIndexAge')}
+                <InfoIcon tooltip={i18n.t('core:maxIndexAgeHelp')} />
+              </Typography>
+            }
+          />
+        )}
+        {showAdvancedMode &&
+          (AppConfig.useSidecarsForFileTaggingDisableSetting ? (
+            <FormControlLabel
+              className={classes.formControl}
+              labelPlacement="start"
+              style={{ justifyContent: 'space-between' }}
+              control={
+                <Button size="small" variant="outlined" disabled>
+                  {currentTagsSetting
+                    ? i18n.t('core:useSidecarFile')
+                    : i18n.t('core:renameFile')}
+                </Button>
+              }
+              label={
+                <Typography variant="caption" display="block" gutterBottom>
+                  {i18n.t('core:fileTaggingSetting')}
+                </Typography>
+              }
+            />
+          ) : (
+            <FormControlLabel
+              labelPlacement="top"
+              className={classes.formControl}
+              style={{ alignItems: 'start', marginBottom: 10 }}
+              control={
+                <ToggleButtonGroup
+                  value={persistTagsInSidecarFile}
+                  size="small"
+                  exclusive
+                >
+                  <ToggleButton
+                    value={null}
+                    data-tid="settingsSetPersistTagsDefault"
+                    onClick={() => setPersistTagsInSidecarFile(null)}
+                  >
+                    <Tooltip
+                      arrow
+                      title={
+                        <Typography color="inherit">
+                          {i18n.t('core:useDefaultTaggingType')}:{' '}
+                          <b>
+                            {currentTagsSetting
+                              ? i18n.t('core:useSidecarFile')
+                              : i18n.t('core:renameFile')}
+                          </b>
+                        </Typography>
+                      }
+                    >
+                      <div style={{ display: 'flex' }}>
+                        {persistTagsInSidecarFile === null && <CheckIcon />}
+                        &nbsp;{i18n.t('core:default')}&nbsp;&nbsp;
+                      </div>
+                    </Tooltip>
+                  </ToggleButton>
+                  <ToggleButton
+                    value={false}
+                    data-tid="settingsSetPersistTagsInFileName"
+                    onClick={() => setPersistTagsInSidecarFile(false)}
+                  >
+                    <Tooltip
+                      arrow
+                      title={
+                        <Typography color="inherit">
+                          {i18n.t('core:tagsInFilenameExplanation')}
+                        </Typography>
+                      }
+                    >
+                      <div style={{ display: 'flex' }}>
+                        {persistTagsInSidecarFile !== null &&
+                          !persistTagsInSidecarFile && <CheckIcon />}
+                        &nbsp;{i18n.t('core:renameFile')}&nbsp;&nbsp;
+                      </div>
+                    </Tooltip>
+                  </ToggleButton>
+                  <ToggleButton
+                    value={true}
+                    data-tid="settingsSetPersistTagsInSidecarFile"
+                    onClick={() => setPersistTagsInSidecarFile(true)}
+                  >
+                    <Tooltip
+                      arrow
+                      title={
+                        <Typography color="inherit">
+                          {i18n.t('core:tagsInSidecarFileExplanation')}
+                        </Typography>
+                      }
+                    >
+                      <div style={{ display: 'flex' }}>
+                        {persistTagsInSidecarFile !== null &&
+                          persistTagsInSidecarFile && <CheckIcon />}
+                        &nbsp;{i18n.t('core:useSidecarFile')}&nbsp;&nbsp;
+                      </div>
+                    </Tooltip>
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              }
+              label={
+                <Typography gutterBottom>
+                  {i18n.t('core:fileTaggingSetting')}
+                </Typography>
+              }
+            />
+          ))}
+        {showAdvancedMode && (
+          <>
+            <FormControlLabel
+              className={classes.formControl}
+              disabled={!Pro}
+              labelPlacement="start"
+              style={{ justifyContent: 'space-between' }}
+              control={
+                <ProTooltip tooltip={i18n.t('ignorePatternDialogTitle')}>
+                  <Button
+                    color="primary"
+                    disabled={!Pro}
+                    onClick={() => {
+                      setIgnorePatternDialogOpen(true);
+                    }}
+                  >
+                    {i18n.t('addEntryTags')}
+                  </Button>
+                </ProTooltip>
+              }
+              label={
+                <Typography>
+                  {i18n.t('core:ignorePatterns')}
+                  <InfoIcon tooltip={i18n.t('core:ignorePatternsHelp')} />
+                  <ProLabel />
+                </Typography>
+              }
+            />
+            <List
+              style={{
+                padding: 5,
+                backgroundColor: '#d3d3d34a',
+                borderRadius: 10
+              }}
+              dense
+            >
+              {ignorePatternPaths &&
+                ignorePatternPaths.map(ignorePatternPath => (
+                  <ListItem style={{ padding: 0 }}>
+                    <ListItemText primary={ignorePatternPath} />
+                    <ListItemIcon
+                      style={{ minWidth: 0 }}
+                      title={i18n.t('core:ignorePatternRemove')}
+                      onClick={() => {
+                        const array = [...ignorePatternPaths];
+                        const index = array.indexOf(ignorePatternPath);
+                        if (index !== -1) {
+                          array.splice(index, 1);
+                          setIgnorePatternPaths(array);
+                        }
+                      }}
+                    >
+                      <RemoveIcon />
+                    </ListItemIcon>
+                  </ListItem>
+                ))}
+            </List>
+            {IgnorePatternDialog && isIgnorePatternDialogOpen && (
+              <IgnorePatternDialog
+                open={isIgnorePatternDialogOpen}
+                onClose={() => setIgnorePatternDialogOpen(false)}
+                ignorePatternPaths={ignorePatternPaths}
+                setIgnorePatternPaths={setIgnorePatternPaths}
+                locationPath={getLocationPath(location)}
+              />
+            )}
+          </>
+        )}
       </DialogContent>
       <DialogActions style={{ justifyContent: 'space-between' }}>
         <Button
           data-tid="switchAdvancedModeTID"
           onClick={() => setShowAdvancedMode(!showAdvancedMode)}
+          style={{ marginLeft: 10 }}
         >
           {showAdvancedMode
             ? i18n.t('core:switchSimpleMode')
             : i18n.t('core:switchAdvancedMode')}
         </Button>
         <div>
-          <Button onClick={() => onClose()} color="primary">
-            {i18n.t('core:cancel')}
-          </Button>
+          <Button onClick={() => onClose()}>{i18n.t('core:cancel')}</Button>
           <Button
             disabled={disableConfirmButton()}
             onClick={onConfirm}

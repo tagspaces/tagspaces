@@ -24,8 +24,6 @@ import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
@@ -50,6 +48,8 @@ import {
 } from '-/reducers/settings';
 import { actions as AppActions } from '-/reducers/app';
 import AppConfig from '-/config';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import Links from '-/links';
 
 interface Props {
   classes: any;
@@ -95,18 +95,7 @@ const OnboardingDialog = (props: Props) => {
       scroll="paper"
     >
       <DialogTitle style={{ justifyContent: 'center', textAlign: 'center' }}>
-        Welcome to TagSpaces
-        <IconButton
-          aria-label="close"
-          style={{
-            position: 'absolute',
-            right: 5,
-            top: 5
-          }}
-          onClick={onClose}
-        >
-          <CloseIcon />
-        </IconButton>
+        <DialogCloseButton onClose={onClose} testId="closeOnboardingDialog" />
       </DialogTitle>
       <DialogContent
         style={{
@@ -126,8 +115,9 @@ const OnboardingDialog = (props: Props) => {
               overflowX: 'hidden'
             }}
           >
-            <Typography variant="h5">Welcome to TagSpaces</Typography>
-            <Typography variant="h6">&nbsp;</Typography>
+            <Typography variant="h5">
+              {i18n.t('core:welcomeToTagSpaces')}
+            </Typography>
             <img
               style={{ maxHeight: 300, marginTop: 15 }}
               src={NewLook}
@@ -170,7 +160,7 @@ const OnboardingDialog = (props: Props) => {
             <Typography variant="h5">&nbsp;</Typography>
             <Typography variant="body1">
               Core functionality of the application the ability to add tags to
-              files and folders. Here you can choose how tags will applied on
+              files and folders. Here you can choose how tags will attached to
               files.
             </Typography>
             <FormControl
@@ -178,7 +168,7 @@ const OnboardingDialog = (props: Props) => {
               component="fieldset"
             >
               <RadioGroup
-                aria-label="Gender"
+                aria-label="fileTaggingType"
                 name="isPersistTagsInSidecar"
                 onChange={toggleTaggingType}
               >
@@ -236,7 +226,7 @@ const OnboardingDialog = (props: Props) => {
             }}
           >
             <Typography variant="h5">
-              Collect web content in Chrome and Firefox
+              Collect web content in Chrome, Edge and Firefox
             </Typography>
             <img
               style={{ maxHeight: 300, marginTop: 15 }}
@@ -247,12 +237,13 @@ const OnboardingDialog = (props: Props) => {
               We have a web clipper extension for your browser.
             </Typography>
             <Typography variant="h6">
-              It is open source and available for free on the official stores.
+              It is open source and available for free in the official browser
+              stores.
             </Typography>
             <Button
               style={{ marginTop: 20 }}
               onClick={() => {
-                props.openURLExternally(AppConfig.links.webClipper, true);
+                props.openURLExternally(Links.links.webClipper, true);
               }}
               variant="contained"
               color="primary"
@@ -293,7 +284,7 @@ const OnboardingDialog = (props: Props) => {
                 style={{ marginLeft: 5 }}
                 data-tid="startTagSpacesAfterOnboarding"
               >
-                Start using TagSpaces
+                {i18n.t('core:startUsingTagSpaces')}
               </Button>
             ) : (
               <Button

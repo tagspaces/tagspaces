@@ -186,10 +186,11 @@ export const actions = {
   createDirectoryIndex: (
     directoryPath: string,
     extractText: boolean,
-    isCurrentLocation: boolean = true
+    isCurrentLocation: boolean = true,
+    ignorePatterns: Array<string> = []
   ) => (dispatch: (actions: Object) => void) => {
     dispatch(actions.startDirectoryIndexing());
-    createDirectoryIndex(directoryPath, extractText)
+    createDirectoryIndex(directoryPath, extractText, ignorePatterns)
       .then(directoryIndex => {
         if (isCurrentLocation) {
           // Load index only if current location
@@ -216,32 +217,30 @@ export const actions = {
     const state = getState();
     dispatch(actions.startDirectoryIndexing());
     const allLocations = getLocations(state);
-    const locationPaths = [];
-    allLocations.forEach(location => {
-      locationPaths.push(getLocationPath(location));
-    });
-    const result = locationPaths.reduce(
-      (accumulatorPromise, nextPath) =>
-        accumulatorPromise.then(() =>
-          createDirectoryIndex(nextPath, extractText)
-            .then(directoryIndex => {
-              if (Pro && Pro.Indexer) {
-                Pro.Indexer.persistIndex(
-                  nextPath,
-                  directoryIndex,
-                  PlatformIO.getDirSeparator()
-                );
-              }
-              return true;
-            })
-            .catch(err => {
-              dispatch(actions.indexDirectoryFailure(err));
-            })
-        ),
-      Promise.resolve()
-    );
 
-    result
+    const promises = allLocations.map(location => {
+      const nextPath = getLocationPath(location);
+      return createDirectoryIndex(
+        nextPath,
+        extractText,
+        location.ignorePatternPaths
+      )
+        .then(directoryIndex => {
+          if (Pro && Pro.Indexer) {
+            Pro.Indexer.persistIndex(
+              nextPath,
+              directoryIndex,
+              PlatformIO.getDirSeparator()
+            );
+          }
+          return true;
+        })
+        .catch(err => {
+          dispatch(actions.indexDirectoryFailure(err));
+        });
+    });
+
+    Promise.all(promises)
       .then(e => {
         dispatch(actions.indexDirectorySuccess());
         console.log('Resolution is complete!', e);
@@ -338,7 +337,8 @@ export const actions = {
         } else {
           GlobalSearch.index = await createDirectoryIndex(
             currentPath,
-            currentLocation.fullTextIndex
+            currentLocation.fullTextIndex,
+            currentLocation.ignorePatternPaths
           );
           if (Pro && Pro.Indexer && Pro.Indexer.persistIndex) {
             Pro.Indexer.persistIndex(
@@ -443,7 +443,8 @@ export const actions = {
             console.log('Creating index for : ' + nextPath);
             directoryIndex = await createDirectoryIndex(
               nextPath,
-              location.fullTextIndex
+              location.fullTextIndex,
+              location.ignorePatternPaths
             );
             if (Pro && Pro.Indexer && Pro.Indexer.persistIndex) {
               Pro.Indexer.persistIndex(
@@ -585,6 +586,7 @@ export const actions = {
 };
 
 // Selectors
-export const getIndexedEntriesCount = (state: any) => GlobalSearch.index.length;
+export const getIndexedEntriesCount = (state: any) =>
+  GlobalSearch.index ? GlobalSearch.index.length : 0;
 export const isIndexing = (state: any) => state.locationIndex.isIndexing;
 export const getSearchQuery = (state: any) => state.locationIndex.searchQuery;

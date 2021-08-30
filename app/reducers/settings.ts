@@ -22,6 +22,7 @@ import i18n from '-/services/i18n';
 import defaultSettings from './settings-default';
 import PlatformIO from '-/services/platform-io';
 import AppConfig from '-/config';
+import Links from '-/links';
 import versionMeta from '-/version.json';
 import { actions as AppActions } from './app';
 import { TS } from '-/tagspaces.namespace';
@@ -31,6 +32,8 @@ export const types = {
   SET_LANGUAGE: 'SETTINGS/SET_LANGUAGE',
   TOGGLE_SHOWUNIXHIDDENENTRIES: 'SETTINGS/TOGGLE_SHOWUNIXHIDDENENTRIES',
   SET_DESKTOPMODE: 'SETTINGS/SET_DESKTOPMODE',
+  WARNING_OPENING_FILES_EXTERNALLY: 'SETTINGS/WARNING_OPENING_FILES_EXTERNALLY',
+  SET_SAVE_TAGS_IN_LOCATION: 'SETTINGS/SET_SAVE_TAGS_IN_LOCATION',
   SET_TAG_DELIMITER: 'SETTINGS/SET_TAG_DELIMITER',
   SET_MAX_SEARCH_RESULT: 'SETTINGS/SET_MAX_SEARCH_RESULT',
   SET_CHECKFORUPDATES: 'SETTINGS/SET_CHECKFORUPDATES',
@@ -76,24 +79,41 @@ export const types = {
 export default (state: any = defaultSettings, action: any) => {
   switch (action.type) {
     case types.UPGRADE_SETTINGS: {
+      // const currentVersion = semver.coerce(versionMeta.version);
+      // console.log('---->' + currentVersion);
+
       const mergedKeyBindings = defaultSettings.keyBindings.map(x =>
         Object.assign(
           x,
           state.keyBindings.find(y => y.name === x.name)
         )
       );
-      const mergedFileTypes = defaultSettings.supportedFileTypes.map(x =>
-        Object.assign(
-          x,
-          state.supportedFileTypes.find(y => y.type === x.type)
-        )
+      // Bidirectional filetype merge
+      // const mergedFileTypes = defaultSettings.supportedFileTypes.map(x =>
+      //   Object.assign(
+      //     x,
+      //     state.supportedFileTypes.find(y => y.type === x.type)
+      //   )
+      // );
+      // const combinedFileTypes = state.supportedFileTypes.map(x =>
+      //   Object.assign(
+      //     x,
+      //     mergedFileTypes.find(y => y.type === x.type)
+      //   )
+      // );
+      const extensionMigrated = state.supportedFileTypes.find(y =>
+        y.viewer.startsWith('@tagspaces/extensions/')
       );
-      const combinedFileTypes = state.supportedFileTypes.map(x =>
-        Object.assign(
-          x,
-          mergedFileTypes.find(y => y.type === x.type)
-        )
-      );
+      let migratedFileTypes = [];
+      if (!extensionMigrated) {
+        migratedFileTypes = state.supportedFileTypes.map(x =>
+          Object.assign(
+            x,
+            defaultSettings.supportedFileTypes.find(y => y.type === x.type)
+          )
+        );
+        console.log('Performing filetype migration');
+      }
       return {
         ...defaultSettings,
         ...state,
@@ -104,10 +124,10 @@ export default (state: any = defaultSettings, action: any) => {
           // ...defaultSettings.keyBindings, // use to reset to the default key bindings
           ...mergedKeyBindings
         ],
-        supportedFileTypes: [
-          // ...defaultSettings.supportedFileTypes, // use to reset to the default file types
-          ...combinedFileTypes
-        ]
+        supportedFileTypes:
+          migratedFileTypes.length > 0
+            ? [...migratedFileTypes]
+            : state.supportedFileTypes
       };
     }
     case types.TOGGLE_SHOWUNIXHIDDENENTRIES: {
@@ -121,6 +141,15 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_DESKTOPMODE: {
       return { ...state, desktopMode: action.desktopMode };
+    }
+    case types.WARNING_OPENING_FILES_EXTERNALLY: {
+      return {
+        ...state,
+        warningOpeningFilesExternally: action.warningOpeningFilesExternally
+      };
+    }
+    case types.SET_SAVE_TAGS_IN_LOCATION: {
+      return { ...state, saveTagInLocation: action.saveTagInLocation };
     }
     case types.SET_CHECKFORUPDATES: {
       return { ...state, checkForUpdates: action.checkForUpdates };
@@ -401,6 +430,16 @@ export const actions = {
     type: types.SET_DESKTOPMODE,
     desktopMode
   }),
+  setWarningOpeningFilesExternally: (
+    warningOpeningFilesExternally: boolean
+  ) => ({
+    type: types.WARNING_OPENING_FILES_EXTERNALLY,
+    warningOpeningFilesExternally
+  }),
+  setSaveTagInLocation: (saveTagInLocation: boolean) => ({
+    type: types.SET_SAVE_TAGS_IN_LOCATION,
+    saveTagInLocation
+  }),
   toggleShowUnixHiddenEntries: () => ({
     type: types.TOGGLE_SHOWUNIXHIDDENENTRIES
   }),
@@ -548,7 +587,7 @@ export function getLastVersionPromise(): Promise<string> {
     console.log('Checking for new version...');
     const xhr = new XMLHttpRequest();
     const updateUrl =
-      AppConfig.links.checkNewVersionURL + '?cv=' + versionMeta.version;
+      Links.links.checkNewVersionURL + '?cv=' + versionMeta.version;
     xhr.open('GET', updateUrl, true);
     xhr.responseType = 'json';
     xhr.onerror = reject;
@@ -580,6 +619,8 @@ export const getDesktopMode = (state: any) => {
   }
   return window.ExtDisplayMode !== 'mobile';
 };
+export const getWarningOpeningFilesExternally = (state: any) =>
+  state.settings.warningOpeningFilesExternally;
 export const getCheckForUpdateOnStartup = (state: any) =>
   state.settings.checkForUpdates;
 export const getLastPublishedVersion = (state: any) =>
@@ -616,9 +657,9 @@ export const getKeyBindings = (state: any) => state.settings.keyBindings;
 export const getKeyBindingObject = (state: any) =>
   generateKeyBindingObject(state.settings.keyBindings);
 export const getSupportedFileTypes = (state: any) =>
-  state.settings.supportedFileTypes;
-/* export const getPerspectives = (state: any) =>
-  state.settings.supportedPerspectives; */
+  state.settings.supportedFileTypes.sort((a, b) => {
+    return a.type > b.type ? 1 : a.type < b.type ? -1 : 0;
+  });
 export const getTagColor = (state: any) => state.settings.tagBackgroundColor;
 export const getTagTextColor = (state: any) => state.settings.tagTextColor;
 export const getCurrentTheme = (state: any) => state.settings.currentTheme;

@@ -21,6 +21,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import { CircularProgress } from '@material-ui/core';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {
   open: boolean;
@@ -30,7 +31,7 @@ interface Props {
 const ProgressDialog = (props: Props) => (
   <Dialog open={props.open} onClose={props.onClose}>
     <DialogTitle data-tid="progressDialogTitle">
-      {/* {i18n.t('core:importDialogTitle')} */}
+      <DialogCloseButton onClose={props.onClose} />
     </DialogTitle>
     <DialogContent
       style={{

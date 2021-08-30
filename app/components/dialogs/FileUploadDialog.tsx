@@ -22,17 +22,18 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
+import CloseIcon from '@material-ui/icons/Close';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import { LinearProgress, Grid, Tooltip } from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
 import WarningIcon from '@material-ui/icons/Warning';
 import PlatformIO from '-/services/platform-io';
 import { actions as AppActions, getProgress } from '-/reducers/app';
 import { extractFileName } from '-/utils/paths';
 import i18n from '-/services/i18n';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {
   open: boolean;
@@ -42,7 +43,6 @@ interface Props {
 }
 
 const FileUploadDialog = (props: Props) => {
-  // const [color, setColor] = useState(undefined);
   const { open = false, onClose } = props;
 
   function LinearProgressWithLabel(prop) {
@@ -83,16 +83,10 @@ const FileUploadDialog = (props: Props) => {
       fullWidth={true}
       maxWidth="sm"
       BackdropProps={{ style: { backgroundColor: 'transparent' } }}
-      /* onKeyDown={event => {
-        if (event.key === 'Enter' || event.keyCode === 13) {
-          onConfirm();
-        } else if (event.key === 'Escape') {
-          onClose();
-        }
-      }} */
     >
       <DialogTitle data-tid="importDialogTitle">
         {i18n.t('core:importDialogTitle')}
+        <DialogCloseButton onClose={onClose} />
       </DialogTitle>
       <DialogContent
         style={{

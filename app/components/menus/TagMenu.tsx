@@ -29,8 +29,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import i18n from '-/services/i18n';
 import { getMaxSearchResults } from '-/reducers/settings';
-import { actions as AppActions } from '-/reducers/app';
+import { actions as AppActions, getSelectedEntries } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
+import TaggingActions from '-/reducers/tagging-actions';
 
 const isTagLibraryReadOnly =
   window.ExtTagLibrary && window.ExtTagLibrary.length > 0;
@@ -45,6 +46,12 @@ interface Props {
   showEditTagDialog: () => void;
   showDeleteTagDialog: () => void;
   maxSearchResults: number;
+  selectedEntries: Array<any>;
+  addTags: (
+    paths: Array<string>,
+    tags: Array<TS.Tag>,
+    updateIndex?: boolean
+  ) => void;
 }
 
 const TagMenu = (props: Props) => {
@@ -69,6 +76,12 @@ const TagMenu = (props: Props) => {
     props.showDeleteTagDialog();
   }
 
+  function applyTag() {
+    const selectedEntryPaths = props.selectedEntries.map(entry => entry.path);
+    props.addTags(selectedEntryPaths, [props.selectedTag]);
+    props.onClose();
+  }
+
   return (
     <div style={{ overflowY: 'hidden' }}>
       <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
@@ -81,6 +94,14 @@ const TagMenu = (props: Props) => {
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:showFilesWithThisTag')} />
         </MenuItem>
+        {props.selectedEntries && props.selectedEntries.length > 0 && (
+          <MenuItem data-tid="applyTagTID" onClick={applyTag}>
+            <ListItemIcon>
+              <ShowEntriesWithTagIcon />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:applyTag')} />
+          </MenuItem>
+        )}
         {!isTagLibraryReadOnly && (
           <MenuItem data-tid="editTagDialog" onClick={showEditTagDialog}>
             <ListItemIcon>
@@ -104,7 +125,8 @@ const TagMenu = (props: Props) => {
 
 function mapStateToProps(state) {
   return {
-    maxSearchResults: getMaxSearchResults(state)
+    maxSearchResults: getMaxSearchResults(state),
+    selectedEntries: getSelectedEntries(state)
   };
 }
 
@@ -112,7 +134,8 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
       openSearchPanel: AppActions.openSearchPanel,
-      searchLocationIndex: LocationIndexActions.searchLocationIndex
+      searchLocationIndex: LocationIndexActions.searchLocationIndex,
+      addTags: TaggingActions.addTags
     },
     dispatch
   );

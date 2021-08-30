@@ -100,6 +100,7 @@ tests/*
 !tests/global-teardown-web.js
 !tests/setup-after-env.js
 !tests/setup-functions.js
+!tests/test-data-refresh.js
 
 builds/*
 web/sw-con

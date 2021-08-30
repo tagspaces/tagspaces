@@ -50,6 +50,7 @@ declare interface Window {
   ExtShowWelcomePanel?: string;
   ExtShowSmartTags?: string;
   ExtShowAdvancedSearch?: string;
+  ExtUseGenerateThumbnails?: boolean;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: any;
   plugins?: any; // needed for Cordova
   resolveLocalFileSystemURL?: any; // needed for Cordova

@@ -29,7 +29,7 @@ import { locationType } from '-/utils/misc';
 
 interface Props {
   classes: any;
-  loadDirectoryContent: (path: string) => void;
+  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
   location: TS.Location;
   data?: any;
   isReadOnlyMode?: boolean;
@@ -64,7 +64,7 @@ const DirectoryTreeView = forwardRef(
             PlatformIO.enableObjectStoreSupport(location)
               .then(() => {
                 loadSubDirectories(location, 1);
-                props.loadDirectoryContent(getLocationPath(location));
+                props.loadDirectoryContent(getLocationPath(location), true);
               })
               .catch(error => {
                 console.log('enableObjectStoreSupport', error);
@@ -72,7 +72,7 @@ const DirectoryTreeView = forwardRef(
           } else if (location.type === locationType.TYPE_LOCAL) {
             PlatformIO.disableObjectStoreSupport();
             loadSubDirectories(location, 1);
-            props.loadDirectoryContent(getLocationPath(location));
+            props.loadDirectoryContent(getLocationPath(location), true);
           }
         }
       },
@@ -166,7 +166,7 @@ const DirectoryTreeView = forwardRef(
           .then(() => {
             loadSubDirectories(subDir, 1);
             props.changeLocation(subDir);
-            props.loadDirectoryContent(subDir.path);
+            props.loadDirectoryContent(subDir.path, true);
           })
           .catch(error => {
             console.log('enableObjectStoreSupport', error);
@@ -175,7 +175,7 @@ const DirectoryTreeView = forwardRef(
         PlatformIO.disableObjectStoreSupport();
         loadSubDirectories(subDir, 1);
         props.changeLocation(subDir);
-        props.loadDirectoryContent(subDir.path);
+        props.loadDirectoryContent(subDir.path, true);
       }
     };
 
@@ -255,6 +255,7 @@ const DirectoryTreeView = forwardRef(
         // @ts-ignore
         .then(dirEntries => {
           if (dirEntries !== undefined) {
+            // console.debug('listDirectoryPromise resolved:' + dirEntries.length);
             const directoryContent = [];
             dirEntries.map(entry => {
               if (
@@ -303,7 +304,7 @@ const DirectoryTreeView = forwardRef(
           return subFolder;
         })
         .catch(error => {
-          console.log('getDirectoriesTree', error);
+          console.debug('getDirectoriesTree', error);
         });
 
     /**

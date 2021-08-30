@@ -26,7 +26,6 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import IconButton from '@material-ui/core/IconButton';
 import FolderIcon from '@material-ui/icons/Folder';
 import FileIcon from '@material-ui/icons/InsertDriveFileOutlined';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -36,11 +35,13 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Typography from '@material-ui/core/Typography';
 import Dialog from '@material-ui/core/Dialog';
+import IconButton from '@material-ui/core/IconButton';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-io';
 import AppConfig from '-/config';
 import IOActions from '-/reducers/io-actions';
 import { extractFileName } from '-/utils/paths';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {
   open: boolean;
@@ -102,6 +103,10 @@ const MoveCopyFilesDialog = (props: Props) => {
       });
   }
 
+  function onCloseDialog() {
+    onClose();
+  }
+
   return (
     <Dialog
       open={open}
@@ -109,9 +114,11 @@ const MoveCopyFilesDialog = (props: Props) => {
       keepMounted
       scroll="paper"
       fullScreen={fullScreen}
-      // onEnterKey={(event) => onEnterKeyHandler(event, this.addTags)}
     >
-      <DialogTitle>{i18n.t('core:copyMoveFilesTitle')}</DialogTitle>
+      <DialogTitle>
+        {i18n.t('core:copyMoveFilesTitle')}
+        <DialogCloseButton onClose={onCloseDialog} />
+      </DialogTitle>
       <DialogContent>
         <List dense style={{ width: 550 }}>
           {props.selectedFiles &&

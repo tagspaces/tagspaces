@@ -23,6 +23,7 @@ import NativePlatformIO from './_PLATFORMIO_';
 import ObjectStoreIO from './objectstore-io';
 import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
+import settings from '-/reducers/settings';
 
 const nativeAPI: any = new NativePlatformIO();
 let objectStoreAPI;
@@ -69,7 +70,7 @@ export default class PlatformIO {
   static getDirSeparator = (): string => // TODO rethink usage for S3 on Win
     PlatformIO.haveObjectStoreSupport() ? '/' : AppConfig.dirSeparator;
 
-  static initMainMenu = (menuConfig: Array<Object>): void => {
+  /* static initMainMenu = (menuConfig: Array<Object>): void => {
     if (nativeAPI.initMainMenu) {
       nativeAPI.initMainMenu(menuConfig);
     } else {
@@ -82,6 +83,14 @@ export default class PlatformIO {
       nativeAPI.initTrayMenu(menuConfig);
     } else {
       console.log('initTrayMenu not supported');
+    }
+  }; */
+
+  static setLanguage = (language: string): void => {
+    if (nativeAPI.setLanguage) {
+      nativeAPI.setLanguage(language);
+    } else {
+      console.log('setLangauge not supported');
     }
   };
 
@@ -132,9 +141,14 @@ export default class PlatformIO {
 
   static createDirectoryIndexInWorker = (
     directoryPath: string,
-    extractText: boolean
+    extractText: boolean,
+    ignorePatterns: Array<string>
   ): Promise<any> =>
-    nativeAPI.createDirectoryIndexInWorker(directoryPath, extractText);
+    nativeAPI.createDirectoryIndexInWorker(
+      directoryPath,
+      extractText,
+      ignorePatterns
+    );
 
   static createThumbnailsInWorker = (
     tmbGenerationList: Array<string>
@@ -145,16 +159,23 @@ export default class PlatformIO {
    * @param path
    * @param lite
    * @param extractText
+   * @param ignorePatterns
    */
   static listDirectoryPromise = (
     path: string,
     lite: boolean = true,
-    extractText: boolean = true
+    extractText: boolean = true,
+    ignorePatterns: Array<string> = []
   ): Promise<Array<any>> => {
     if (objectStoreAPI) {
       return objectStoreAPI.listDirectoryPromise(path, lite);
     }
-    return nativeAPI.listDirectoryPromise(path, lite, extractText);
+    return nativeAPI.listDirectoryPromise(
+      path,
+      lite,
+      extractText,
+      ignorePatterns
+    );
   };
 
   static getPropertiesPromise = (path: string): Promise<any> => {
@@ -394,8 +415,12 @@ export default class PlatformIO {
   static showInFileManager = (dirPath: string): void =>
     nativeAPI.showInFileManager(dirPath);
 
-  static openFile = (filePath: string): void => {
+  static openFile = (
+    filePath: string,
+    warningOpeningFilesExternally: boolean
+  ): void => {
     if (
+      !warningOpeningFilesExternally ||
       confirm(
         'Do you really want to open "' +
           filePath +

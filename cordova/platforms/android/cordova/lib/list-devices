@@ -19,14 +19,16 @@
        under the License.
 */
 
-var devices = require('./device');
+const { list } = require('./target');
 
 // Usage support for when args are given
 require('./check_reqs').check_android().then(function () {
-    devices.list().then(function (device_list) {
-        device_list && device_list.forEach(function (dev) {
-            console.log(dev);
-        });
+    list().then(targets => {
+        const deviceIds = targets
+            .filter(({ type }) => type === 'device')
+            .map(({ id }) => id);
+
+        console.log(deviceIds.join('\n'));
     }, function (err) {
         console.error('ERROR: ' + err);
         process.exit(2);

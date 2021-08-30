@@ -20,12 +20,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withStyles } from '@material-ui/core/styles';
-// import { getLocations, type Location } from '../reducers/locations';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Divider from '@material-ui/core/Divider';
 import DocumentationIcon from '@material-ui/icons/Help';
+import LocationIcon from '@material-ui/icons/WorkOutline';
 import ChangeLogIcon from '@material-ui/icons/ImportContacts';
 import WebClipperIcon from '@material-ui/icons/Transform';
 import EmailIcon from '@material-ui/icons/Email';
@@ -34,7 +34,6 @@ import TranslationIcon from '@material-ui/icons/Translate';
 import NewFeatureIcon from '@material-ui/icons/Gesture';
 import SocialIcon from '@material-ui/icons/ThumbUp';
 import Social2Icon from '@material-ui/icons/Mood';
-// import LogoutIcon from '@material-ui/icons/MeetingRoom';
 import KeyShortcutsIcon from '@material-ui/icons/Keyboard';
 import WelcomeBackground from '../assets/images/background.png';
 import WelcomeLogo from '../assets/images/welcome-logo.png';
@@ -45,7 +44,7 @@ import {
   getDesktopMode,
   actions as SettingsActions
 } from '../reducers/settings';
-import AppConfig from '../config';
+import Links from '../links';
 
 const styles: any = (theme: any) => ({
   mainPanel: {
@@ -87,16 +86,18 @@ const WelcomePanel = (props: Props) => {
   const { classes, openURLExternally, toggleKeysDialog, isDesktopMode } = props;
   return (
     <div className={classes.mainPanel}>
-      {/* <div className={classes.slogan}>
-
-      </div> */}
       <List
         dense={false}
         component="nav"
         aria-label="main help area"
         className={classes.links}
       >
-        <div role="button" tabIndex={0} onClick={props.toggleAboutDialog}>
+        <div
+          role="button"
+          aria-hidden="true"
+          tabIndex={0}
+          onClick={props.toggleAboutDialog}
+        >
           <img src={WelcomeLogo} alt="Organize your files" />
         </div>
         <ListItem
@@ -108,17 +109,19 @@ const WelcomePanel = (props: Props) => {
             button.click();
           }}
         >
-          <Button startIcon={<DocumentationIcon />}>
+          <Button startIcon={<LocationIcon />}>
             {i18n.t('core:chooseLocation')}
           </Button>
         </ListItem>
         <ListItem
           button
           onClick={() =>
-            openURLExternally(AppConfig.documentationLinks.general, true)
+            openURLExternally(Links.documentationLinks.general, true)
           }
         >
-          <Button startIcon={<DocumentationIcon />}>Open Documentation</Button>
+          <Button startIcon={<DocumentationIcon />}>
+            {i18n.t('documentation')}
+          </Button>
         </ListItem>
         <ListItem button onClick={() => toggleKeysDialog()}>
           <Button startIcon={<KeyShortcutsIcon />}>
@@ -127,7 +130,7 @@ const WelcomePanel = (props: Props) => {
         </ListItem>
         <ListItem
           button
-          onClick={() => openURLExternally(AppConfig.links.changelogURL, true)}
+          onClick={() => openURLExternally(Links.links.changelogURL, true)}
         >
           <Button
             startIcon={<ChangeLogIcon />}
@@ -138,7 +141,7 @@ const WelcomePanel = (props: Props) => {
         </ListItem>
         <ListItem
           button
-          onClick={() => openURLExternally(AppConfig.links.webClipper, true)}
+          onClick={() => openURLExternally(Links.links.webClipper, true)}
         >
           <Button startIcon={<WebClipperIcon />}>
             {i18n.t('core:webClipper')}
@@ -147,9 +150,7 @@ const WelcomePanel = (props: Props) => {
         <Divider />
         <ListItem
           button
-          onClick={() =>
-            openURLExternally(AppConfig.links.suggestFeature, true)
-          }
+          onClick={() => openURLExternally(Links.links.suggestFeature, true)}
         >
           <Button startIcon={<NewFeatureIcon />}>
             {i18n.t('core:suggestNewFeatures')}
@@ -157,7 +158,7 @@ const WelcomePanel = (props: Props) => {
         </ListItem>
         <ListItem
           button
-          onClick={() => openURLExternally(AppConfig.links.reportIssue, true)}
+          onClick={() => openURLExternally(Links.links.reportIssue, true)}
         >
           <Button startIcon={<IssueIcon />}>
             {i18n.t('core:reportIssues')}
@@ -165,7 +166,7 @@ const WelcomePanel = (props: Props) => {
         </ListItem>
         <ListItem
           button
-          onClick={() => openURLExternally(AppConfig.links.helpTranslating)}
+          onClick={() => openURLExternally(Links.links.helpTranslating)}
         >
           <Button startIcon={<TranslationIcon />}>
             {i18n.t('core:helpWithTranslation')}
@@ -174,23 +175,20 @@ const WelcomePanel = (props: Props) => {
         <Divider />
         <ListItem
           button
-          onClick={() => openURLExternally(AppConfig.links.emailContact, true)}
+          onClick={() => openURLExternally(Links.links.emailContact, true)}
         >
           <Button startIcon={<EmailIcon />}>
             {i18n.t('core:emailContact')}
           </Button>
         </ListItem>
-        <ListItem
-          button
-          onClick={() => openURLExternally(AppConfig.links.twitter)}
-        >
+        <ListItem button onClick={() => openURLExternally(Links.links.twitter)}>
           <Button startIcon={<Social2Icon />}>
             {i18n.t('core:followOnTwitter')}
           </Button>
         </ListItem>
         <ListItem
           button
-          onClick={() => openURLExternally(AppConfig.links.facebook)}
+          onClick={() => openURLExternally(Links.links.facebook)}
         >
           <Button startIcon={<SocialIcon />}>
             {i18n.t('core:likeUsOnFacebook')}

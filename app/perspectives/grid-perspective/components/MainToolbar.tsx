@@ -30,9 +30,10 @@ import SelectAllIcon from '@material-ui/icons/CheckBox';
 import DeSelectAllIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CopyIcon from '@material-ui/icons/FileCopy';
 import DeleteIcon from '@material-ui/icons/Delete';
-import ExportIcon from '@material-ui/icons/SaveAlt';
+import ExportIcon from '@material-ui/icons/AssignmentReturn';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
+import AppConfig from '-/config';
 
 interface Props {
   classes: any;
@@ -47,10 +48,10 @@ interface Props {
   openMoveCopyFilesDialog: () => void;
   openDeleteFileDialog: () => void;
   handleSortingMenu: (event: Object) => void;
-  handleOptionsMenu: (event: Object) => void;
   handleExportCsvMenu: () => void;
   layoutType: string;
   isDesktopMode: boolean;
+  openSettings: () => void;
 }
 
 const MainToolbar = (props: Props) => {
@@ -68,8 +69,8 @@ const MainToolbar = (props: Props) => {
     openDeleteFileDialog,
     fileOperationsEnabled,
     handleSortingMenu,
-    handleOptionsMenu,
-    isDesktopMode
+    isDesktopMode,
+    openSettings
   } = props;
 
   return (
@@ -172,22 +173,22 @@ const MainToolbar = (props: Props) => {
           <SwapVertIcon />
         </IconButton>
       </Tooltip>
-      {Pro && (
-        <Tooltip title={i18n.t('core:exportCsv')}>
-          <IconButton
-            data-tid="gridPerspectiveExportCsvMenuTID"
-            onClick={props.handleExportCsvMenu}
-          >
-            <ExportIcon />
-          </IconButton>
-        </Tooltip>
-      )}
+      {Pro &&
+      !AppConfig.isCordovaAndroid && ( // https://trello.com/c/z6ESlqxz/697-exports-to-json-or-csv-do-not-work-on-android
+          <Tooltip title={i18n.t('core:exportCsv')}>
+            <IconButton
+              data-tid="gridPerspectiveExportCsvMenuTID"
+              onClick={props.handleExportCsvMenu}
+              style={{ transform: 'scale(-1, 1)' }}
+            >
+              <ExportIcon />
+            </IconButton>
+          </Tooltip>
+        )}
       <Tooltip title={i18n.t('core:options')}>
         <IconButton
           data-tid="gridPerspectiveOptionsMenu"
-          onClick={e => {
-            handleOptionsMenu(e);
-          }}
+          onClick={openSettings}
         >
           <SettingsIcon />
         </IconButton>

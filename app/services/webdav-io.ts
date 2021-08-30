@@ -36,7 +36,7 @@ export default class WebDAVIO {
   _headers: any;
 
   constructor() {
-    console.log('Loading web.js..' + nl);
+    console.log('Loading web platform...');
     // exact copy of getAjax with timeout added
     // @ts-ignore
     nl.sara.webdav.Client.prototype.getAjax = (
@@ -77,7 +77,6 @@ export default class WebDAVIO {
       return ajax;
     };
 
-    console.log('Connecting webdav...');
     let useHTTPS = false;
     if (location.href.indexOf('https') === 0) {
       useHTTPS = true;

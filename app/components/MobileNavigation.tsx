@@ -45,7 +45,6 @@ import {
   isLocationManagerPanelOpened,
   isTagLibraryPanelOpened,
   isSearchPanelOpened,
-  isPerspectivesPanelOpened,
   isHelpFeedbackPanelOpened,
   isReadOnlyMode,
   getDirectoryPath
@@ -60,10 +59,6 @@ const styles: any = (theme: any) => ({
     textAlign: 'center',
     backgroundColor: theme.palette.background.default
   },
-  buttonIcon: {
-    color: '#d6d6d6' // theme.palette.text.primary
-  },
-  button: {},
   selectedButton: {
     backgroundColor: '#880E4F'
   }
@@ -94,8 +89,6 @@ interface Props {
   openTagLibraryPanel: () => void;
   isSearchPanelOpened: boolean;
   openSearchPanel: () => void;
-  isPerspectivesPanelOpened: boolean;
-  // openPerspectivesPanel: () => void,
   isHelpFeedbackPanelOpened: boolean;
   openHelpFeedbackPanel: () => void;
   closeAllVerticalPanels: () => void;
@@ -147,7 +140,6 @@ const MobileNavigation = (props: Props) => {
         )}
         {props.isTagLibraryPanelOpened && <TagLibrary />}
         {props.isSearchPanelOpened && <Search hideDrawer={hideDrawer} />}
-        {/* {isPerspectivesPanelOpened && <PerspectiveManager />} */}
         {props.isHelpFeedbackPanelOpened && (
           <HelpFeedbackPanel
             openURLExternally={openURLExternally}
@@ -169,7 +161,7 @@ const MobileNavigation = (props: Props) => {
             }}
             style={{ marginTop: -15, marginRight: 2 }}
           >
-            <SettingsIcon className={classes.buttonIcon} />
+            <SettingsIcon />
           </IconButton>
         </Tooltip>
         <ToggleButtonGroup exclusive>
@@ -184,7 +176,7 @@ const MobileNavigation = (props: Props) => {
               }
               data-tid="locationManager"
             >
-              <LocationsIcon className={classes.buttonIcon} />
+              <LocationsIcon />
             </ToggleButton>
           </Tooltip>
           <Tooltip title={i18n.t('core:tagLibrary')}>
@@ -198,7 +190,7 @@ const MobileNavigation = (props: Props) => {
                   : classes.button
               }
             >
-              <TagLibraryIcon className={classes.buttonIcon} />
+              <TagLibraryIcon />
             </ToggleButton>
           </Tooltip>
           <Tooltip title={i18n.t('core:searchTitle')}>
@@ -212,7 +204,7 @@ const MobileNavigation = (props: Props) => {
                   : classes.button
               }
             >
-              <SearchIcon className={classes.buttonIcon} />
+              <SearchIcon />
             </ToggleButton>
           </Tooltip>
           <Tooltip title={i18n.t('core:helpFeedback')}>
@@ -226,11 +218,7 @@ const MobileNavigation = (props: Props) => {
                   : classes.button
               }
             >
-              {user ? (
-                <AccountCircleIcon className={classes.buttonIcon} />
-              ) : (
-                <HelpIcon className={classes.buttonIcon} />
-              )}
+              {user ? <AccountCircleIcon /> : <HelpIcon />}
             </ToggleButton>
           </Tooltip>
         </ToggleButtonGroup>
@@ -250,7 +238,7 @@ const MobileNavigation = (props: Props) => {
             style={{ marginTop: -15, marginLeft: 2 }}
             data-tid="locationManager"
           >
-            <NewFileIcon color="primary" />
+            <NewFileIcon />
           </IconButton>
         </Tooltip>
         {isProTeaserVisible && (
@@ -273,7 +261,6 @@ function mapStateToProps(state) {
     isLocationManagerPanelOpened: isLocationManagerPanelOpened(state),
     isTagLibraryPanelOpened: isTagLibraryPanelOpened(state),
     isSearchPanelOpened: isSearchPanelOpened(state),
-    isPerspectivesPanelOpened: isPerspectivesPanelOpened(state),
     isHelpFeedbackPanelOpened: isHelpFeedbackPanelOpened(state),
     isReadOnlyMode: isReadOnlyMode(state),
     directoryPath: getDirectoryPath(state),
@@ -292,7 +279,6 @@ function mapActionCreatorsToProps(dispatch) {
       openLocationManagerPanel: AppActions.openLocationManagerPanel,
       openTagLibraryPanel: AppActions.openTagLibraryPanel,
       openSearchPanel: AppActions.openSearchPanel,
-      openPerspectivesPanel: AppActions.openPerspectivesPanel,
       openHelpFeedbackPanel: AppActions.openHelpFeedbackPanel,
       openURLExternally: AppActions.openURLExternally,
       showNotification: AppActions.showNotification,

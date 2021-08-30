@@ -220,7 +220,7 @@ export function createThumbnailPromise(
       resolve(); // prevent creating thumbs in meta/.ts folder
       return true;
     }
-    const stats = await PlatformIO.getPropertiesPromise(metaDirectory);
+    const stats = await PlatformIO.getPropertiesPromise(metaDirectory); // TODO In cordova this check is too expensive for dirs like /.ts (replace it with checkDirExist)
     if (!stats || stats.isFile) {
       await PlatformIO.createDirectoryPromise(metaDirectory);
     }

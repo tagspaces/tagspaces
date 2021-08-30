@@ -18,6 +18,7 @@
 
 import uuidv1 from 'uuid';
 import { saveAs } from 'file-saver';
+import micromatch from 'micromatch';
 import PlatformIO from './platform-io';
 import AppConfig from '../config';
 import {
@@ -38,7 +39,7 @@ import { getThumbnailURLPromise } from '-/services/thumbsgenerator';
 import { OpenedEntry, actions as AppActions } from '-/reducers/app';
 import { getLocation } from '-/reducers/locations';
 import { TS } from '-/tagspaces.namespace';
-import { locationType } from '-/utils/misc';
+import { locationType, prepareTagForExport } from '-/utils/misc';
 
 export function enhanceDirectoryContent(
   dirEntries,
@@ -128,7 +129,8 @@ export function enhanceEntry(entry: any): TS.FileSystemEntry {
     tags: [...sidecarTags, ...fileNameTags],
     size: entry.size,
     lmdt: entry.lmdt,
-    path: entry.path
+    path: entry.path,
+    isIgnored: entry.isIgnored
   };
   if (sidecarDescription) {
     enhancedEntry.description = sidecarDescription;
@@ -182,13 +184,21 @@ export function prepareDirectoryContent(
   settings,
   dispatch,
   getState,
-  dirEntryMeta
+  dirEntryMeta,
+  generateThumbnails
 ) {
   const currentLocation: TS.Location = getLocation(
     getState(),
     getState().app.currentLocationId
   );
   const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
+
+  function useGenerateThumbnails() {
+    if (AppConfig.useGenerateThumbnails !== undefined) {
+      return AppConfig.useGenerateThumbnails;
+    }
+    return settings.useGenerateThumbnails;
+  }
 
   const {
     directoryContent,
@@ -198,7 +208,7 @@ export function prepareDirectoryContent(
     dirEntries,
     isCloudLocation,
     settings.showUnixHiddenEntries,
-    settings.useGenerateThumbnails
+    generateThumbnails && useGenerateThumbnails()
   );
 
   function handleTmbGenerationResults(results) {
@@ -231,18 +241,20 @@ export function prepareDirectoryContent(
     );
   }
 
-  dispatch(AppActions.setGeneratingThumbnails(false));
-  if (tmbGenerationList.length > 0) {
-    dispatch(AppActions.setGeneratingThumbnails(true));
-    PlatformIO.createThumbnailsInWorker(tmbGenerationList)
-      .then(handleTmbGenerationResults)
-      .catch(handleTmbGenerationFailed);
-  }
-  if (tmbGenerationPromises.length > 0) {
-    dispatch(AppActions.setGeneratingThumbnails(true));
-    Promise.all(tmbGenerationPromises)
-      .then(handleTmbGenerationResults)
-      .catch(handleTmbGenerationFailed);
+  if (generateThumbnails) {
+    dispatch(AppActions.setGeneratingThumbnails(false));
+    if (tmbGenerationList.length > 0) {
+      dispatch(AppActions.setGeneratingThumbnails(true));
+      PlatformIO.createThumbnailsInWorker(tmbGenerationList)
+        .then(handleTmbGenerationResults)
+        .catch(handleTmbGenerationFailed);
+    }
+    if (tmbGenerationPromises.length > 0) {
+      dispatch(AppActions.setGeneratingThumbnails(true));
+      Promise.all(tmbGenerationPromises)
+        .then(handleTmbGenerationResults)
+        .catch(handleTmbGenerationFailed);
+    }
   }
 
   console.log('Dir ' + directoryPath + ' contains ' + directoryContent.length);
@@ -270,7 +282,7 @@ export function findExtensionsForEntry(
     PlatformIO.getDirSeparator()
   ).toLowerCase();
   const viewingExtensionPath = isFile
-    ? findExtensionPathForId('@tagspaces/text-viewer')
+    ? findExtensionPathForId('@tagspaces/extensions/text-viewer')
     : 'about:blank';
   const fileForOpening: OpenedEntry = {
     path: entryPath,
@@ -377,12 +389,17 @@ export function getPrevFile(
 
 export function createDirectoryIndex(
   directoryPath: string,
-  extractText: boolean = false
+  extractText: boolean = false,
+  ignorePatterns: Array<string>
 ): Promise<Array<TS.FileSystemEntry>> {
   const dirPath = cleanTrailingDirSeparator(directoryPath);
   if (PlatformIO.isWorkerAvailable() && !PlatformIO.haveObjectStoreSupport()) {
     // Start indexing in worker if not in the object store mode
-    return PlatformIO.createDirectoryIndexInWorker(dirPath, extractText);
+    return PlatformIO.createDirectoryIndexInWorker(
+      dirPath,
+      extractText,
+      ignorePatterns
+    );
   }
 
   const SearchIndex = [];
@@ -413,7 +430,8 @@ export function createDirectoryIndex(
             counter += 1;
             SearchIndex.push(enhanceEntry(directoryEntry));
           }
-        }
+        },
+        ignorePatterns
       )
         .then(() => {
           // entries - can be used for further processing
@@ -442,8 +460,12 @@ export function walkDirectory(
   path: string,
   options: Object = {},
   fileCallback: any,
-  dirCallback: any
+  dirCallback: any,
+  ignorePatterns: Array<string> = []
 ) {
+  if (ignorePatterns.length > 0 && micromatch.isMatch(path, ignorePatterns)) {
+    return;
+  }
   const mergedOptions = {
     recursive: false,
     skipMetaFolder: true,
@@ -460,9 +482,17 @@ export function walkDirectory(
         if (window.walkCanceled || entries === undefined) {
           return false;
         }
+
         return Promise.all(
           entries.map(entry => {
             if (window.walkCanceled) {
+              return false;
+            }
+
+            if (
+              ignorePatterns.length > 0 &&
+              micromatch.isMatch(entry.path, ignorePatterns)
+            ) {
               return false;
             }
 
@@ -504,7 +534,8 @@ export function walkDirectory(
                 entry.path,
                 mergedOptions,
                 fileCallback,
-                dirCallback
+                dirCallback,
+                ignorePatterns
               );
             }
             return entry;
@@ -539,6 +570,7 @@ export async function getAllPropertiesPromise(
 }
 
 export async function loadJSONFile(filePath: string) {
+  // console.debug('loadJSONFile:' + filePath);
   const jsonContent = await PlatformIO.loadTextFilePromise(filePath);
   return loadJSONString(jsonContent);
   /* const UTF8_BOM = '\ufeff';
@@ -709,37 +741,48 @@ export function generateFileName(
   return newFileName;
 }
 
-export async function loadMetaDataPromise(
+export function parseNewTags(tagsInput: string, tagGroup: TS.TagGroup) {
+  if (tagGroup) {
+    let tags = tagsInput
+      .split(' ')
+      .join(',')
+      .split(','); // handle spaces around commas
+    tags = [...new Set(tags)]; // remove duplicates
+    tags = tags.filter(tag => tag && tag.length > 0); // zero length tags
+
+    const taggroupTags = tagGroup.children;
+    taggroupTags.forEach(tag => {
+      // filter out duplicated tags
+      tags = tags.filter(t => t !== tag.title);
+    });
+    return taggroupTags.concat(
+      tags.map(tagTitle => {
+        const tag: TS.Tag = {
+          type: taggroupTags.length > 0 ? taggroupTags[0].type : 'sidecar',
+          title: tagTitle.trim(),
+          functionality: '',
+          description: '',
+          icon: '',
+          color: tagGroup.color,
+          textcolor: tagGroup.textcolor,
+          style: taggroupTags.length > 0 ? taggroupTags[0].style : '',
+          modified_date: new Date().getTime()
+        };
+        return tag;
+      })
+    );
+  }
+}
+
+export async function loadLocationDataPromise(
   path: string
 ): Promise<TS.FileSystemEntryMeta> {
   const entryProperties = await PlatformIO.getPropertiesPromise(path);
-  let metaDataObject;
-  if (entryProperties.isFile) {
-    const metaFilePath = getMetaFileLocationForFile(
-      path,
-      PlatformIO.getDirSeparator()
-    );
-    let metaData;
-    try {
-      metaData = await loadJSONFile(metaFilePath);
-    } catch (e) {
-      console.debug('cannot load json:' + metaFilePath, e);
-    }
-    if (!metaData) {
-      metaData = {};
-    }
-    metaDataObject = {
-      description: metaData.description || '',
-      color: metaData.color || '',
-      tags: metaData.tags || [],
-      appName: metaData.appName || '',
-      appVersion: metaData.appVersion || '',
-      lastUpdated: metaData.lastUpdated || ''
-    };
-  } else {
+  if (!entryProperties.isFile) {
     const metaFilePath = getMetaFileLocationForDir(
       path,
-      PlatformIO.getDirSeparator()
+      PlatformIO.getDirSeparator(),
+      AppConfig.folderLocationsFile
     );
     let metaData;
     try {
@@ -747,23 +790,51 @@ export async function loadMetaDataPromise(
     } catch (e) {
       console.debug('cannot load json:' + metaFilePath, e);
     }
-    if (!metaData) {
-      metaData = {};
-    }
-    metaDataObject = {
-      id: metaData.id || uuidv1(),
-      description: metaData.description || '',
-      color: metaData.color || '',
-      perspective: metaData.perspective || '',
-      tags: metaData.tags || [],
-      appName: metaData.appName || '',
-      appVersion: metaData.appVersion || '',
-      lastUpdated: metaData.lastUpdated || '',
-      files: metaData.files || [],
-      dirs: metaData.dirs || []
-    };
+    return metaData;
   }
-  return metaDataObject;
+  return undefined;
+}
+
+export function loadMetaDataPromise(
+  path: string
+): Promise<TS.FileSystemEntryMeta> {
+  return PlatformIO.getPropertiesPromise(path).then(entryProperties => {
+    if (entryProperties) {
+      if (entryProperties.isFile) {
+        const metaFilePath = getMetaFileLocationForFile(
+          path,
+          PlatformIO.getDirSeparator()
+        );
+        return loadJSONFile(metaFilePath).then(metaData => ({
+          ...metaData,
+          description: metaData.description || '',
+          color: metaData.color || '',
+          tags: metaData.tags || [],
+          appName: metaData.appName || '',
+          appVersion: metaData.appVersion || '',
+          lastUpdated: metaData.lastUpdated || ''
+        }));
+      }
+      const metaFilePath = getMetaFileLocationForDir(
+        path,
+        PlatformIO.getDirSeparator()
+      );
+      return loadJSONFile(metaFilePath).then(metaData => ({
+        ...metaData,
+        id: metaData.id || uuidv1(),
+        description: metaData.description || '',
+        color: metaData.color || '',
+        perspective: metaData.perspective || '',
+        tags: metaData.tags || [],
+        appName: metaData.appName || '',
+        appVersion: metaData.appVersion || '',
+        lastUpdated: metaData.lastUpdated || '',
+        files: metaData.files || [],
+        dirs: metaData.dirs || []
+      }));
+    }
+    throw new Error('loadMetaDataPromise not exist' + path);
+  });
 }
 
 export function cleanMetaData(
@@ -788,28 +859,57 @@ export function cleanMetaData(
   if (metaData.dirs && metaData.dirs.length > 0) {
     cleanedMeta.dirs = metaData.dirs;
   }
+  if (metaData.tagGroups && metaData.tagGroups.length > 0) {
+    cleanedMeta.tagGroups = metaData.tagGroups;
+  }
   if (metaData.tags && metaData.tags.length > 0) {
     cleanedMeta.tags = [];
     metaData.tags.forEach(tag => {
-      const cleanedTag: TS.Tag = {};
-      if (tag.title) {
-        cleanedTag.title = tag.title;
-      }
-      if (tag.type) {
-        cleanedTag.type = tag.type;
-      }
-      if (tag.color) {
-        cleanedTag.color = tag.color;
-      }
-      if (tag.textcolor) {
-        cleanedTag.textcolor = tag.textcolor;
-      }
+      const cleanedTag = prepareTagForExport(tag);
       if (cleanedTag.title) {
         cleanedMeta.tags.push(cleanedTag);
       }
     });
   }
   return cleanedMeta;
+}
+
+export async function saveLocationDataPromise(
+  path: string,
+  metaData: any
+): Promise<any> {
+  const entryProperties = await PlatformIO.getPropertiesPromise(path);
+  if (entryProperties) {
+    let metaFilePath;
+    if (!entryProperties.isFile) {
+      // check and create meta folder if not exist
+      // todo not need to check if folder exist first createDirectoryPromise() recursively will skip creation of existing folders https://nodejs.org/api/fs.html#fs_fs_mkdir_path_options_callback
+      const metaDirectoryPath = getMetaDirectoryPath(
+        path,
+        PlatformIO.getDirSeparator()
+      );
+      const metaDirectoryProperties = await PlatformIO.getPropertiesPromise(
+        metaDirectoryPath
+      );
+      if (!metaDirectoryProperties) {
+        await PlatformIO.createDirectoryPromise(metaDirectoryPath);
+      }
+
+      metaFilePath = getMetaFileLocationForDir(
+        path,
+        PlatformIO.getDirSeparator(),
+        AppConfig.folderLocationsFile
+      );
+    }
+    const content = JSON.stringify({
+      ...metaData,
+      appName: versionMeta.name,
+      appVersion: versionMeta.version,
+      lastUpdated: new Date().toJSON()
+    });
+    return PlatformIO.saveTextFilePromise(metaFilePath, content, true);
+  }
+  return Promise.reject(new Error('file not found' + path));
 }
 
 export async function saveMetaDataPromise(
@@ -826,12 +926,14 @@ export async function saveMetaDataPromise(
         PlatformIO.getDirSeparator()
       );
       // check and create meta folder if not exist
-      /* await PlatformIO.createDirectoryPromise(
-        extractContainingDirectoryPath(
-          metaFilePath,
-          PlatformIO.getDirSeparator()
-        )
-      ); */
+      const metaFolder = getMetaDirectoryPath(
+        extractContainingDirectoryPath(path, PlatformIO.getDirSeparator()),
+        PlatformIO.getDirSeparator()
+      );
+      const metaExist = await PlatformIO.getPropertiesPromise(metaFolder);
+      if (!metaExist) {
+        await PlatformIO.createDirectoryPromise(metaFolder);
+      }
     } else {
       // check and create meta folder if not exist
       // todo not need to check if folder exist first createDirectoryPromise() recursively will skip creation of existing folders https://nodejs.org/api/fs.html#fs_fs_mkdir_path_options_callback

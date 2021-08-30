@@ -5,7 +5,7 @@ on:
 
 jobs:
   e2eTestsElectronWin:
-    name: E2E Windows Electron
+    name: Test Desktop App Windows
     runs-on: windows-latest
 
     steps:
@@ -19,7 +19,7 @@ jobs:
         with:
           repository: tagspaces/testdata
           path: tests/testdata
-      - uses: actions/setup-node@v2-beta
+      - uses: actions/setup-node@v2
         with:
           node-version: '12.x'
       - name: Running yarn install, prettier and type checks
@@ -34,12 +34,21 @@ jobs:
           yarn install-ext
           yarn build-main
           yarn build-e2e
-          yarn test-e2e-electron
-      - uses: actions/upload-artifact@v2
-        if: always()
+          yarn test-playwright
+      - uses: IgnusG/jest-report-action@v2.3.3
+        if: always() # Run regardless of whether other steps failed
         with:
-          name: test-pages
-          path: tests/test-pages/
+          access-token: ${{ secrets.GITHUB_TOKEN }}
+          check-name: Report Desktop App Windows
+          working-directory: tests
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: test-artifacts
+          path: |
+            tests/test-pages/
+            tests/test-reports/
+
 #  e2eTestsElectronUbuntu:
 #    name: E2E Ubuntu Electron
 #    runs-on: ubuntu-latest
@@ -54,7 +63,7 @@ jobs:
 #        with:
 #          repository: tagspaces/testdata
 #          path: tests/testdata
-#      - uses: actions/setup-node@v2-beta
+#      - uses: actions/setup-node@v2
 #        with:
 #          node-version: '12.x'
 #      - name: Running yarn install, prettier and type checks
@@ -69,7 +78,7 @@ jobs:
 #          yarn install-ext
 #          yarn build-main
 #          yarn build-e2e
-#          yarn test-e2e-electron
+#          yarn test-playwright
 #      - uses: actions/upload-artifact@v2
 #        if: always()
 #        with:
@@ -96,7 +105,7 @@ jobs:
 #        with:
 #          repository: tagspaces/testdata
 #          path: tests/testdata
-#      - uses: actions/setup-node@v2-beta
+#      - uses: actions/setup-node@v2
 #        with:
 #          node-version: '12.x'
 #      - name: Running yarn install, prettier and type checks
@@ -146,7 +155,7 @@ jobs:
 #        with:
 #          repository: tagspaces/testdata
 #          path: tests/testdata
-#      - uses: actions/setup-node@v2-beta
+#      - uses: actions/setup-node@v2
 #        with:
 #          node-version: '12.x'
 #      - name: Running yarn install, prettier and type checks

@@ -27,6 +27,8 @@ import FolderIcon from '@material-ui/icons/Folder';
 import SelectedIcon from '@material-ui/icons/CheckBox';
 import UnSelectedIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import TagIcon from '@material-ui/icons/LocalOfferOutlined';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import { formatFileSize, formatDateTime } from '-/utils/misc';
 import { extractTagsAsObjects, extractTitle } from '-/utils/paths';
 import { findColorForFileEntry } from '-/services/utils-io';
@@ -37,14 +39,17 @@ import PlatformIO from '-/services/platform-io';
 import { AppConfig } from '-/config';
 import EntryIcon from '-/components/EntryIcon';
 import { TS } from '-/tagspaces.namespace';
+import TaggingActions from '-/reducers/tagging-actions';
 
 const maxDescriptionPreviewLength = 100;
 
 interface Props {
   selected: boolean;
+  isLast?: boolean;
   fsEntry: TS.FileSystemEntry;
   entrySize: string;
   classes: any;
+  style?: any;
   theme: any;
   supportedFileTypes: Array<Object>;
   thumbnailMode: any;
@@ -61,6 +66,7 @@ interface Props {
   handleGridContextMenu: (event: Object, fsEntry: TS.FileSystemEntry) => void;
   handleGridCellDblClick: (event: Object, fsEntry: TS.FileSystemEntry) => void;
   handleGridCellClick: (event: Object, fsEntry: TS.FileSystemEntry) => void;
+  editTagForEntry?: (path: string, tag: TS.Tag) => void;
 }
 
 const CellContent = (props: Props) => {
@@ -84,9 +90,9 @@ const CellContent = (props: Props) => {
     showTags,
     openFsEntry,
     selectEntry,
-    deselectEntry
+    deselectEntry,
+    isLast
   } = props;
-  const fsEntryBackgroundColor = fsEntry.color; //  ? fsEntry.color : 'transparent';
   const entryTitle = extractTitle(
     fsEntry.name,
     !fsEntry.isFile,
@@ -141,15 +147,15 @@ const CellContent = (props: Props) => {
     return (
       <div
         style={{
-          backgroundColor: fsEntryBackgroundColor
+          opacity: fsEntry.isIgnored ? 0.3 : 1
         }}
       >
         <div
           className={classes.gridCellThumb}
+          title={fsEntry.isIgnored && i18n.t('core:ignoredFolder')}
           style={{
             position: 'relative',
-            // zIndex: 1,
-            height: 150 // fsEntry.isFile ? 150 : 70
+            height: 150
           }}
         >
           {fsEntry.thumbPath ? (
@@ -172,9 +178,7 @@ const CellContent = (props: Props) => {
             <EntryIcon isFile={fsEntry.isFile} />
           )}
           <div id="gridCellTags" className={classes.gridCellTags}>
-            {showTags && entryTags
-              ? entryTags.map(tag => renderTag(tag))
-              : tagPlaceholder}
+            {showTags && entryTags ? renderTags(entryTags) : tagPlaceholder}
           </div>
           {description.length > 0 && (
             <Typography
@@ -244,7 +248,9 @@ const CellContent = (props: Props) => {
         container
         wrap="nowrap"
         className={classes.rowHover}
+        title={fsEntry.isIgnored && i18n.t('core:ignoredFolder')}
         style={{
+          opacity: fsEntry.isIgnored ? 0.3 : 1,
           backgroundColor: selected
             ? theme.palette.primary.light
             : theme.palette.background.default
@@ -276,9 +282,7 @@ const CellContent = (props: Props) => {
               }
             }}
             style={{
-              backgroundColor: fsEntry.isFile
-                ? fsEntryColor
-                : fsEntryBackgroundColor || fsEntryColor
+              backgroundColor: fsEntryColor
             }}
           >
             {fsEntry.isFile ? fsEntry.extension : <FolderIcon />}
@@ -302,9 +306,7 @@ const CellContent = (props: Props) => {
             <Typography style={{ wordBreak: 'break-all', alignSelf: 'center' }}>
               {entryTitle}
               &nbsp;
-              {showTags && entryTags
-                ? entryTags.map(tag => renderTag(tag))
-                : tagPlaceholder}
+              {showTags && entryTags ? renderTags(entryTags) : tagPlaceholder}
             </Typography>
           </Grid>
         ) : (
@@ -312,9 +314,7 @@ const CellContent = (props: Props) => {
             <Typography style={{ wordBreak: 'break-all' }}>
               {entryTitle}
             </Typography>
-            {showTags && entryTags
-              ? entryTags.map(tag => renderTag(tag))
-              : tagPlaceholder}
+            {showTags && entryTags ? renderTags(entryTags) : tagPlaceholder}
             <Typography
               style={{
                 color: 'gray'
@@ -361,27 +361,37 @@ const CellContent = (props: Props) => {
     );
   }
 
-  function renderTag(tag: TS.Tag) {
-    return isReadOnlyMode ? (
-      <TagContainer
-        tag={tag}
-        key={fsEntry.path + tag.title}
-        entryPath={fsEntry.path}
-        addTags={addTags}
-        handleTagMenu={handleTagMenu}
-        selectedEntries={selectedEntries}
-      />
-    ) : (
-      <TagContainerDnd
-        tag={tag}
-        key={fsEntry.path + tag.title}
-        entryPath={fsEntry.path}
-        addTags={addTags}
-        addTag={addTag}
-        handleTagMenu={handleTagMenu}
-        selectedEntries={selectedEntries}
-      />
-    );
+  function renderTags(tags: Array<TS.Tag>) {
+    let sideCarLength = 0;
+    return tags.map((tag: TS.Tag, index) => {
+      const tagContainer = isReadOnlyMode ? (
+        <TagContainer
+          tag={tag}
+          key={fsEntry.path + tag.title}
+          entryPath={fsEntry.path}
+          addTags={addTags}
+          handleTagMenu={handleTagMenu}
+          selectedEntries={selectedEntries}
+        />
+      ) : (
+        <TagContainerDnd
+          tag={tag}
+          index={tag.type === 'sidecar' ? index : index - sideCarLength}
+          key={fsEntry.path + tag.title}
+          entryPath={fsEntry.path}
+          addTags={addTags}
+          addTag={addTag}
+          handleTagMenu={handleTagMenu}
+          selectedEntries={selectedEntries}
+          editTagForEntry={props.editTagForEntry}
+        />
+      );
+
+      if (tag.type === 'sidecar') {
+        sideCarLength = index + 1;
+      }
+      return tagContainer;
+    });
   }
 
   let entryHeight = 130;
@@ -412,6 +422,7 @@ const CellContent = (props: Props) => {
       )}
       style={{
         minHeight: layoutType === 'row' ? entryHeight : 'auto',
+        marginBottom: isLast ? 40 : 'auto',
         backgroundColor: theme.palette.background.default
       }}
       onContextMenu={event => handleGridContextMenu(event, fsEntry)}
@@ -427,4 +438,13 @@ const CellContent = (props: Props) => {
   );
 };
 
-export default CellContent;
+function mapActionCreatorsToProps(dispatch) {
+  return bindActionCreators(
+    {
+      editTagForEntry: TaggingActions.editTagForEntry
+    },
+    dispatch
+  );
+}
+
+export default connect(undefined, mapActionCreatorsToProps)(CellContent);

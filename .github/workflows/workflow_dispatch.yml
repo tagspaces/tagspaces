@@ -3,9 +3,9 @@ on:
   workflow_dispatch:
     inputs:
       command:
-        description: 'Command to execute e2e tests default: yarn test-e2e-electron-minio'
+        description: 'Command to execute e2e tests default: yarn test-playwright-web-headless'
         required: true
-        default: 'test-e2e-electron-minio'
+        default: 'test-playwright-web-headless'
 
 jobs:
   e2eTests:
@@ -26,7 +26,7 @@ jobs:
           repository: tagspaces/tagspacespro
           token: ${{ secrets.CHECKOUT_TSPRO  }}
           path: extensions/tagspacespro
-      - uses: actions/setup-node@v2-beta
+      - uses: actions/setup-node@v2
         with:
           node-version: '12.x'
       - name: Running yarn install, prettier and type checks

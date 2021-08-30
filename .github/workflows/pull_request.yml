@@ -11,7 +11,7 @@ jobs:
   #        uses: actions/checkout@v2
   #        with:
   #          submodules: true
-  #      - uses: actions/setup-node@v2-beta
+  #      - uses: actions/setup-node@v2
   #        with:
   #          node-version: '10.x'
   #      - name: Install display server dependencies
@@ -29,7 +29,7 @@ jobs:
   #        run: yarn test-unit
 
   e2eTestsWin:
-    name: Validating Windows
+    name: Test Desktop App Windows
     runs-on: windows-latest
 
     steps:
@@ -42,7 +42,7 @@ jobs:
         with:
           repository: tagspaces/testdata
           path: tests/testdata
-      - uses: actions/setup-node@v2-beta
+      - uses: actions/setup-node@v2
         with:
           node-version: '12.x'
       - name: Running yarn install, prettier and type checks
@@ -56,12 +56,12 @@ jobs:
         run: |
           yarn install-ext
           yarn build-e2e
-          yarn test-e2e-electron
+          yarn test-playwright
       - uses: IgnusG/jest-report-action@v2.3.3
         if: always() # Run regardless of whether other steps failed
         with:
           access-token: ${{ secrets.GITHUB_TOKEN }}
-          check-name: Jest Report Electron
+          check-name: Report Desktop App Windows
           working-directory: tests
       - uses: actions/upload-artifact@v2
         if: failure()
@@ -71,7 +71,7 @@ jobs:
             tests/test-pages/
             tests/test-reports/
   e2eTestsWebWin:
-    name: E2E Windows Web
+    name: Test Web App Windows
     runs-on: windows-latest
     steps:
       - name: Checking out default branch
@@ -89,7 +89,7 @@ jobs:
         with:
           repository: tagspaces/testdata
           path: tests/testdata
-      - uses: actions/setup-node@v2-beta
+      - uses: actions/setup-node@v2
         with:
           node-version: '12.x'
       - name: Running yarn install, prettier and type checks
@@ -109,12 +109,12 @@ jobs:
         run: |
           yarn install-ext
           yarn build-e2e
-          yarn test-e2e-web
+          yarn test-playwright-web-headless
       - uses: IgnusG/jest-report-action@v2.3.3
         if: always() # Run regardless of whether other steps failed
         with:
           access-token: ${{ secrets.GITHUB_TOKEN }}
-          check-name: Jest Report Web
+          check-name: Report Web App Windows
           working-directory: tests
       - uses: actions/upload-artifact@v2
         if: failure()
@@ -131,7 +131,7 @@ jobs:
   #      uses: actions/checkout@v2
   #      with:
   #        submodules: true
-  #    - uses: actions/setup-node@v2-beta
+  #    - uses: actions/setup-node@v2
   #      with:
   #        node-version: '10.x'
   #    - name: Running yarn install, prettier and type checks
@@ -146,4 +146,4 @@ jobs:
   #        yarn install-ext
   #        yarn build-main
   #        yarn build-e2e
-  #        yarn test-e2e-electron
+  #        yarn test-playwright

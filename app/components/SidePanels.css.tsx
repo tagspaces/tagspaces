@@ -60,9 +60,11 @@ export default (theme: any) =>
     searchArea: {
       paddingTop: 0,
       paddingLeft: 5,
+      paddingRight: 5,
       marginTop: 0,
       height: 'calc(100% - 110px)',
       maxHeight: 'calc(100% - 110px)',
+      overflowX: 'hidden',
       overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
     },
     topShadow: {
@@ -115,19 +117,5 @@ export default (theme: any) =>
     },
     leftIcon: {
       marginRight: theme.spacing(1)
-    },
-    badge: {
-      display: 'inline-block',
-      minWidth: 10,
-      padding: '3px 7px',
-      fontSize: 10,
-      fontWeight: 'normal',
-      color: '#ffffff',
-      lineHeight: 1,
-      verticalAlign: 'middle',
-      whiteSpace: 'nowrap',
-      textAlign: 'center',
-      backgroundColor: '#bbbbbb',
-      borderRadius: 10
     }
   } as any);

@@ -16,7 +16,8 @@
  *
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
+import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -26,10 +27,18 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Switch from '@material-ui/core/Switch';
 import Dialog from '@material-ui/core/Dialog';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import { connect } from 'react-redux';
 import ColorPickerDialog from './ColorPickerDialog';
 import i18n from '-/services/i18n';
 import TransparentBackground from '../TransparentBackground';
 import { TS } from '-/tagspaces.namespace';
+import { getLocations } from '-/reducers/locations';
+import { Pro } from '-/pro';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+
+const defaultTagGroupLocation = 'TAG_LIBRARY';
 
 interface Props {
   open: boolean;
@@ -37,6 +46,8 @@ interface Props {
   editTagGroup: (tagGroup: TS.TagGroup) => void;
   selectedTagGroupEntry: TS.TagGroup;
   onClose: () => void;
+  locations: Array<TS.Location>;
+  saveTagInLocation: boolean;
 }
 
 const EditTagGroupDialog = (props: Props) => {
@@ -45,14 +56,16 @@ const EditTagGroupDialog = (props: Props) => {
     false
   );
   const [inputError, setInputError] = useState<boolean>(false);
-  // const [disableConfirmButton, setDisableConfirmButton] = useState<boolean>(true);
   const [applyChanges, setApplyChanges] = useState<boolean>(false);
+  const [locationId, setLocationId] = useState<string>(
+    props.selectedTagGroupEntry.locationId ?? defaultTagGroupLocation
+  );
   const [title, setTitle] = useState<string>(props.selectedTagGroupEntry.title);
   const [color, setColor] = useState<string>(props.selectedTagGroupEntry.color);
   const [textcolor, setTextcolor] = useState<string>(
     props.selectedTagGroupEntry.textcolor
   );
-  // const [modifiedDate, setModifiedDate] = useState<string>('');
+  const { selectedTagGroupEntry, onClose } = props;
 
   useEffect(() => {
     handleValidation();
@@ -66,7 +79,6 @@ const EditTagGroupDialog = (props: Props) => {
 
     if (name === 'title') {
       setTitle(value);
-      // this.setState({ title: value }, this.handleValidation);
     }
   };
 
@@ -81,17 +93,28 @@ const EditTagGroupDialog = (props: Props) => {
   const disableConfirmButton = () => inputError;
 
   const onConfirm = () => {
-    const { selectedTagGroupEntry } = props;
     if (disableConfirmButton()) {
       return;
     }
 
     if (selectedTagGroupEntry && selectedTagGroupEntry.children) {
+      if (Pro && locationId !== selectedTagGroupEntry.locationId) {
+        const location: TS.Location = props.locations.find(
+          l => l.uuid === selectedTagGroupEntry.locationId
+        );
+        if (location) {
+          Pro.MetaOperations.removeTagGroup(
+            location.path,
+            selectedTagGroupEntry.uuid
+          );
+        }
+      }
       props.editTagGroup({
         ...selectedTagGroupEntry,
         title,
         color,
         textcolor,
+        locationId,
         children: selectedTagGroupEntry.children.map(tag => ({
           ...tag,
           color: applyChanges ? color : tag.color,
@@ -99,16 +122,14 @@ const EditTagGroupDialog = (props: Props) => {
           style: tag.style
         }))
       });
-      // setInputError(false);
-      // this.setState({ inputError: false, disableConfirmButton: true });
-      props.onClose();
+      onClose();
     }
   };
 
   const renderTitle = () => (
     <DialogTitle style={{ overflow: 'visible' }}>
       {i18n.t('core:editTagGroupTitle')}
-      {` '${title}'`}
+      <DialogCloseButton onClose={onClose} />
     </DialogTitle>
   );
 
@@ -135,6 +156,7 @@ const EditTagGroupDialog = (props: Props) => {
         background: textcolor
       },
       helpText: {
+        marginTop: '15px',
         marginBottom: '5px',
         fontSize: '1rem'
       }
@@ -147,28 +169,13 @@ const EditTagGroupDialog = (props: Props) => {
           error={inputError}
           style={{ overflow: 'visible' }}
         >
-          {/* {modifiedDate && (
-            <div
-              className="tag-date"
-              style={{
-                fontSize: 12,
-                position: 'relative',
-                bottom: 20,
-                color: '#808080'
-              }}
-            >
-              <span className="text" style={{ fontWeight: 600 }}>
-                {`${i18n.t('core:modifiedDate')}: `}
-              </span>
-              <time>{format(new Date(modifiedDate), 'yyyy-mm-dd')}</time>
-            </div>
-          )} */}
+          <FormHelperText>{i18n.t('core:editTagGroupNewName')}</FormHelperText>
           <TextField
             error={inputError}
             margin="dense"
             name="title"
             autoFocus
-            label={i18n.t('core:editTagGroupNewName')}
+            // label={i18n.t('core:editTagGroupNewName')}
             onChange={handleTagGroupTitleChange}
             value={title}
             data-tid="editTagGroupInput"
@@ -180,6 +187,31 @@ const EditTagGroupDialog = (props: Props) => {
             </FormHelperText>
           )}
         </FormControl>
+        {props.saveTagInLocation && (
+          <FormControl fullWidth={true} error={inputError}>
+            <FormHelperText style={styles.helpText}>
+              {i18n.t('core:tagGroupLocation')}
+            </FormHelperText>
+            <Select
+              defaultValue={locationId}
+              onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                setLocationId(event.target.value);
+              }}
+            >
+              <MenuItem
+                key={defaultTagGroupLocation}
+                value={defaultTagGroupLocation}
+              >
+                {i18n.t('core:tagLibrary')}
+              </MenuItem>
+              {props.locations.map(location => (
+                <MenuItem key={location.uuid} value={location.uuid}>
+                  {i18n.t('core:location') + ': ' + location.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
         <FormControl fullWidth={true}>
           <FormHelperText style={styles.helpText}>
             {i18n.t('core:tagBackgroundColor')}
@@ -241,9 +273,7 @@ const EditTagGroupDialog = (props: Props) => {
 
   const renderActions = () => (
     <DialogActions>
-      <Button onClick={props.onClose} color="primary">
-        {i18n.t('core:cancel')}
-      </Button>
+      <Button onClick={props.onClose}>{i18n.t('core:cancel')}</Button>
       <Button
         disabled={disableConfirmButton()}
         onClick={onConfirm}
@@ -278,4 +308,11 @@ const EditTagGroupDialog = (props: Props) => {
   );
 };
 
-export default EditTagGroupDialog;
+function mapStateToProps(state) {
+  return {
+    locations: getLocations(state),
+    saveTagInLocation: state.settings.saveTagInLocation
+  };
+}
+
+export default connect(mapStateToProps)(withMobileDialog()(EditTagGroupDialog));

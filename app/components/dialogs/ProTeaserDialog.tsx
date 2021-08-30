@@ -22,21 +22,21 @@ import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import MobileStepper from '@material-ui/core/MobileStepper';
 import Dialog from '@material-ui/core/Dialog';
 import DecideImage from '-/assets/images/decide-undraw.svg';
 import ThumbsImage from '-/assets/images/thumbnails-undraw.svg';
+import PerspectivesImage from '-/assets/images/perspectives-undraw.svg';
 import CloudImage from '-/assets/images/cloud-undraw.svg';
 import SearchImage from '-/assets/images/search-undraw.svg';
 import MapImage from '-/assets/images/map-undraw.svg';
 import AnnotateImage from '-/assets/images/annotate-undraw.svg';
 import EnterpriseImage from '-/assets/images/world-undraw.svg';
 import i18n from '-/services/i18n';
-import AppConfig from '-/config';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import Links from '-/links';
 
 interface Props {
   open: boolean;
@@ -44,6 +44,281 @@ interface Props {
   openURLExternally: (url: string, skipConfirmation: boolean) => void;
   onClose: () => void;
 }
+
+interface SlideProps {
+  title: string;
+  openURLExternally?: (url: string, skipConfirmation: boolean) => void;
+  description?: '';
+  ctaURL?: string;
+  ctaTitle?: string;
+  items?: Array<string>;
+  pictureURL?: string;
+  pictureHeight?: number;
+}
+
+const slidesEN = [];
+slidesEN['general'] = {
+  title: 'TagSpaces Pro - Key Features',
+  items: [
+    <>
+      Connect cloud <b>object storage</b> as locations (e.g. AWS S3 Buckets,
+      MinIO folders hosted on your NAS)
+    </>,
+    <>
+      Advanced search with <b>full text</b> support for some files and{' '}
+      <b>persisted queries</b>
+    </>,
+    <>
+      <b>Global search</b> in all locations (cloud &amp; local ones)
+    </>,
+    <>
+      Additional <b>perspectives</b> for custom use-cases with your files
+    </>,
+    <>
+      Add <b>description</b> and <b>custom thumbnails</b> to your files and
+      folder
+    </>,
+    <>
+      Set custom background <b>color for folders</b>
+    </>,
+    <>
+      Advanced tagging with <b>geo-location</b> support
+    </>,
+    <>Generating persistent thumbnails</>
+  ],
+  ctaURL: Links.links.productsOverview,
+  ctaTitle: 'Open Product Comparison',
+  pictureURL: DecideImage,
+  pictureHeight: 150
+};
+slidesEN['search'] = {
+  title: 'Advanced Search & Persisted Search Queries',
+  items: [
+    <>
+      <b>Global search</b> - in all locations at once, regardless if they are
+      local or in the Cloud
+    </>,
+    <>
+      <b>Save search queries</b> - for easy finding common files
+    </>,
+    <>
+      <b>Full text search</b> - find keywords in text, markdown and html files
+    </>,
+    <>
+      <b>Filter by file type</b> - Documents, Notes, Audio files, Video files,
+      Archives, Bookmarks, eBooks
+    </>,
+    'Filter for files, folders or untagged files',
+    'Filter by size, date and gps-coordinates'
+  ],
+  ctaURL: Links.links.productProAdvancedSearch,
+  ctaTitle: 'Learn more',
+  pictureURL: SearchImage,
+  pictureHeight: 150
+};
+slidesEN['objectstorage'] = {
+  title: 'Connect AWS S3 or MinIO object storage',
+  description: (
+    <>
+      With this feature, TagSpaces Pro supports AWS S3 compatible buckets as
+      file storage. Such buckets are offered by e.g. Amazon AWS, DigitalOcean or
+      MinIO. By doing so, you are getting a full-fledged <b>file organizer</b>,
+      browser and navigator for files in the Cloud, directly in TagSpaces. You
+      do not have to download every file separately and eventually upload it
+      back in order to preview, edit or annotate it.
+    </>
+  ),
+  items: [
+    <>Connect self-hosted (e.g. on your NAS) MinIO folders as locations</>,
+    <>Browse object storage buckets in TagSpaces</>,
+    <>Direct streaming of the supported audio and video formats</>,
+    <>Upload files with simple drag and drop actions</>
+  ],
+  ctaURL: Links.links.productProObjectStore,
+  ctaTitle: 'Learn more',
+  pictureURL: CloudImage,
+  pictureHeight: 120
+};
+slidesEN['perspectives'] = {
+  title: 'See your files from different perspectives',
+  description: (
+    <>
+      Folder usually hosts files grouped by different purpose (e.g. photos from
+      an event or managing a project). For such cases we offer the so called{' '}
+      <b>perspectives</b>, allowing you to set a custom view for different kind
+      of tasks you want to perform with your files.
+    </>
+  ),
+  items: [
+    <>
+      <b>Default</b> - present your files as list or in grid, suitable for
+      tagging and file management
+    </>,
+    <>
+      <b>Gallery</b> - optimized for browsing and viewing images and photos,
+      having a build-in presentation mode
+    </>,
+    <>
+      <b>Mapique</b> - simply place files and folders on a map, allowing you to
+      annotate geographic areas or plan and document trips
+    </>,
+    <>
+      <b>Kanban</b> <sup>BETA</sup> - here subfolder of the current folder are
+      represented as columns from Kanban board, the files from the sub-folders
+      can be your tasks.
+    </>
+  ],
+  ctaURL: Links.documentationLinks.perspectives,
+  ctaTitle: 'Learn more',
+  pictureURL: PerspectivesImage,
+  pictureHeight: 120
+};
+slidesEN['annotation'] = {
+  title: 'Annotate your files and folders visually',
+  description: (
+    <>
+      These features will enable you to find with ease your documents via the
+      build-in search or just visually:
+    </>
+  ),
+  items: [
+    <>
+      Add <b>custom description</b> to every document, photo or folder
+    </>,
+    <>
+      The description can be in <b>markdown</b> allowing images and links
+    </>,
+    <>
+      Set a <b>custom thumbnail</b> for every file or folder
+    </>,
+    <>
+      Set a <b>custom background color</b> to folders
+    </>
+  ],
+  ctaURL: Links.links.productProFileFolderMeta,
+  ctaTitle: 'Learn more',
+  pictureURL: AnnotateImage,
+  pictureHeight: 200
+};
+slidesEN['geotagging'] = {
+  title: 'Tag with geo coordinates',
+  items: [
+    <>
+      This feature can be used to add geo coordinates to every file or folder.
+    </>,
+    <>Dedicated perspective for showing geo-tags on a build-in map</>,
+    <>Extract geo location data from EXIF in JPGs files.</>,
+    <>Useful for planing or documenting trips and vacations.</>,
+    <>Useful for adding annotations for places on a map.</>
+  ],
+  ctaURL: Links.links.productProGeoTagging,
+  ctaTitle: 'Learn more',
+  pictureURL: MapImage,
+  pictureHeight: 200
+};
+slidesEN['persistentThumbs'] = {
+  title: 'Generating persistent thumbnails',
+  description: (
+    <>
+      TagSpaces Pro generates persistent thumbnails for many file type such as:
+      images, videos, notes, source code, office documents, bookmarks, ebooks,
+      archives and PDFs.
+    </>
+  ),
+  ctaURL: Links.links.productProThumbnailsGeneration,
+  ctaTitle: 'Learn more',
+  pictureURL: ThumbsImage,
+  pictureHeight: 200
+};
+slidesEN['enterprise'] = {
+  title: 'TagSpaces Enterprise',
+  items: [
+    <>
+      <b>On-prem web</b> version of TagSpaces Pro for <b>self-hosting</b>
+    </>,
+    <>
+      <b>PWA</b> version of TagSpaces Pro optimized for use om{' '}
+      <b>mobile devices</b>
+    </>,
+    <>
+      <b>White label</b> packages, with custom colors and logo
+    </>,
+    <>
+      Development of <b>custom viewers</b> for file (e.g. 3D-assets, medical
+      data ...)
+    </>,
+    <>
+      Development of <b>custom perspectives</b> for folders (e.g. graphs, maps,
+      trees)
+    </>,
+    <>Premium technical support and signed installers</>
+  ],
+  ctaURL: Links.links.emailContact,
+  ctaTitle: 'Contact Us',
+  pictureURL: EnterpriseImage,
+  pictureHeight: 200
+};
+
+const slideStyles: any = {
+  padding: 5,
+  textAlign: 'left'
+};
+
+const SlideComponent = (props: SlideProps) => {
+  const {
+    title,
+    description,
+    ctaURL,
+    ctaTitle,
+    items,
+    pictureURL,
+    pictureHeight,
+    openURLExternally
+  } = props;
+  return (
+    <div style={slideStyles}>
+      <Typography
+        variant="h5"
+        style={{ textAlign: 'center', paddingBottom: 10 }}
+      >
+        {title}
+      </Typography>
+      {description && (
+        <Typography variant="subtitle1">{description}</Typography>
+      )}
+      {items &&
+        items.map(item => (
+          <Typography variant="subtitle1">&#x2605;&nbsp;{item}</Typography>
+        ))}
+      <Typography variant="subtitle1">&nbsp;</Typography>
+      <div style={{ textAlign: 'center' }}>
+        {pictureURL && (
+          <img
+            style={{
+              maxHeight: pictureHeight,
+              marginTop: 15,
+              marginBottom: 15
+            }}
+            src={pictureURL}
+            alt=""
+          />
+        )}
+        <br />
+        {ctaTitle && openURLExternally && (
+          <Button
+            onClick={() => {
+              openURLExternally(ctaURL, true);
+            }}
+            variant="contained"
+            color="primary"
+          >
+            {ctaTitle}
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+};
 
 const ProTeaserDialog = (props: Props) => {
   const [activeStep, setActiveStep] = useState<number>(0);
@@ -62,11 +337,7 @@ const ProTeaserDialog = (props: Props) => {
     setActiveStep(step);
   };
 
-  const slideStyles: any = {
-    padding: 5,
-    textAlign: 'left'
-  };
-  const { fullScreen, open, onClose } = props;
+  const { fullScreen, open, onClose, openURLExternally } = props;
 
   return (
     <Dialog
@@ -77,17 +348,7 @@ const ProTeaserDialog = (props: Props) => {
       scroll="paper"
     >
       <DialogTitle style={{ justifyContent: 'center', textAlign: 'center' }}>
-        <IconButton
-          aria-label="close"
-          style={{
-            position: 'absolute',
-            right: 5,
-            top: 5
-          }}
-          onClick={onClose}
-        >
-          <CloseIcon />
-        </IconButton>
+        <DialogCloseButton onClose={onClose} />
       </DialogTitle>
       <DialogContent style={{ paddingBottom: 0 }}>
         <SwipeableViews
@@ -95,343 +356,38 @@ const ProTeaserDialog = (props: Props) => {
           onChangeIndex={handleStepChange}
           enableMouseEvents
         >
-          <div style={slideStyles}>
-            <Typography variant="h5" style={{ textAlign: 'center' }}>
-              TagSpaces Pro - Key Features
-            </Typography>
-            <br />
-            <Typography variant="subtitle1">
-              &#x2605; Connect cloud object storages as locations (e.g. AWS S3
-              Buckets, Minio, DigitalOcean Spaces)
-            </Typography>
-            <Typography variant="subtitle1">
-              &#x2605; Global search in all locations (cloud &amp; local ones)
-            </Typography>
-            <Typography variant="subtitle1">
-              &#x2605; Advanced search with full text support for some file
-              types
-            </Typography>
-            <Typography variant="subtitle1">
-              &#x2605; Description and custom thumbnails for files and folder
-            </Typography>
-            <Typography variant="subtitle1">
-              &#x2605; Custom background color for folders
-            </Typography>
-            <Typography variant="subtitle1">
-              &#x2605; Advanced tagging with geo location support
-            </Typography>
-            <Typography variant="subtitle1">
-              &#x2605; Generating persistent thumbnails
-            </Typography>
-            <Typography variant="subtitle1">&nbsp;</Typography>
-            <div style={{ textAlign: 'center' }}>
-              <img
-                style={{
-                  maxHeight: 150,
-                  marginTop: 15,
-                  marginBottom: 15
-                }}
-                src={DecideImage}
-                alt=""
-              />
-              <br />
-              <Button
-                onClick={() => {
-                  props.openURLExternally(
-                    AppConfig.links.productsOverview,
-                    true
-                  );
-                }}
-                variant="contained"
-                color="primary"
-              >
-                Open Product Comparison
-              </Button>
-            </div>
-          </div>
-          <div style={slideStyles}>
-            <Typography variant="h5" style={{ textAlign: 'center' }}>
-              Advanced Search
-            </Typography>
-            <br />
-            <Typography variant="h6">Global search</Typography>
-            <Typography variant="subtitle1">
-              &#x2605; Search in all locations at once, regardless if they are
-              local or in the Cloud
-            </Typography>
-            <Typography variant="h6">Full text search</Typography>
-            <Typography variant="subtitle1">
-              &#x2605; Keywords from text files (TXT, HTML, Markdown) will be
-              included in the index
-            </Typography>
-            <Typography variant="h6">Filter by file type</Typography>
-            <Typography variant="subtitle1">
-              &#x2605; Documents, Notes, Audio files, Video files, Archives,
-              Bookmarks, eBooks
-            </Typography>
-            <Typography variant="subtitle1">
-              &#x2605; Filter for files, folders and untagged files
-            </Typography>
-            <Typography variant="h6">
-              Filter by size, date and gps-coordinates
-            </Typography>
-            <div style={{ textAlign: 'center' }}>
-              <img
-                style={{
-                  maxHeight: 150,
-                  marginTop: 15,
-                  marginBottom: 15
-                }}
-                src={SearchImage}
-                alt=""
-              />
-              <br />
-              <Button
-                onClick={() =>
-                  props.openURLExternally(
-                    AppConfig.links.productProAdvancedSearch,
-                    true
-                  )
-                }
-                variant="contained"
-                color="primary"
-              >
-                Learn more
-              </Button>
-            </div>
-          </div>
-          <div style={slideStyles}>
-            <Typography variant="h5" style={{ textAlign: 'center' }}>
-              Connect S3 object storages as locations
-            </Typography>
-            <br />
-            <Typography variant="subtitle1">
-              With this feature, TagSpaces Pro supports AWS S3 compatible
-              buckets as file storage. Such buckets are offered by e.g. Amazon
-              AWS, DigitalOcean or Minio. By doing this, you get a full-fledged{' '}
-              <strong>
-                file organizer, browser and navigator for files in the Cloud
-              </strong>
-              , directly in TagSpaces. You do not have to download every file
-              separately and eventually upload it back in order to preview, edit
-              or annotate it.
-            </Typography>
-            <div style={{ textAlign: 'center' }}>
-              <img
-                style={{
-                  maxHeight: 120,
-                  marginTop: 15,
-                  marginBottom: 15
-                }}
-                src={CloudImage}
-                alt=""
-              />
-              <br />
-              <Button
-                onClick={() =>
-                  props.openURLExternally(
-                    AppConfig.links.productProObjectStore,
-                    true
-                  )
-                }
-                variant="contained"
-                color="primary"
-              >
-                Learn more
-              </Button>
-            </div>
-          </div>
-          <div style={slideStyles}>
-            <Typography variant="h5" style={{ textAlign: 'center' }}>
-              Annotate your files and folders visually
-            </Typography>
-            <br />
-            <Typography variant="subtitle1">
-              &#x2605; Add <b>custom description</b> to every document, photo or
-              folder
-            </Typography>
-            <Typography variant="subtitle1">
-              &#x2605; The description can be in markdown allowing images and
-              links
-            </Typography>
-            <Typography variant="subtitle1">
-              &#x2605; Set a <b>custom thumbnail</b> for every file or folder
-            </Typography>
-            <Typography variant="subtitle1">
-              &#x2605; Set a <b>custom background color</b> to folders
-            </Typography>
-            <Typography variant="subtitle1">
-              These features will enable you to find with ease your documents
-              via the build-in search or just visually.
-            </Typography>
-            <div style={{ textAlign: 'center' }}>
-              <img
-                style={{
-                  maxHeight: 200,
-                  marginTop: 15,
-                  marginBottom: 15
-                }}
-                src={AnnotateImage}
-                alt=""
-              />
-              <br />
-              <Button
-                onClick={() =>
-                  props.openURLExternally(
-                    AppConfig.links.productProFileFolderMeta,
-                    true
-                  )
-                }
-                variant="contained"
-                color="primary"
-              >
-                Learn more
-              </Button>
-            </div>
-          </div>
-          <div style={slideStyles}>
-            <Typography variant="h5" style={{ textAlign: 'center' }}>
-              Tag with geo coordinates
-            </Typography>
-            <br />
-            <Typography variant="subtitle1">
-              &#x2605; This feature can be used to add geo coordinates to every
-              file or folder.{' '}
-            </Typography>
-            <Typography variant="subtitle1">
-              &#x2605; Dedicated perspective for showing geo-tags on a build-in
-              map
-            </Typography>
-            <Typography variant="subtitle1">
-              &#x2605; Extract geo location data from EXIF in JPGs files.
-            </Typography>
-            <Typography variant="subtitle1">
-              &#x2605; Useful for planing or documenting trips and vacations.
-            </Typography>
-            <Typography variant="subtitle1">
-              &#x2605; Useful for adding annotations for places on a map.
-            </Typography>
-            <div style={{ textAlign: 'center' }}>
-              <img
-                style={{
-                  maxHeight: 200,
-                  marginTop: 15,
-                  marginBottom: 15
-                }}
-                src={MapImage}
-                alt=""
-              />
-              <br />
-              <Button
-                onClick={() =>
-                  props.openURLExternally(
-                    AppConfig.links.productProGeoTagging,
-                    true
-                  )
-                }
-                variant="contained"
-                color="primary"
-              >
-                Learn more
-              </Button>
-            </div>
-          </div>
-          <div style={slideStyles}>
-            <Typography variant="h5" style={{ textAlign: 'center' }}>
-              Generating persistent thumbnails
-            </Typography>
-            <br />
-            <Typography variant="subtitle1">
-              TagSpaces Pro generates persistent thumbnails for many file type
-              such as: images, videos, notes, source code, office documents,
-              bookmarks, ebooks, archives and PDFs.
-            </Typography>
-            <div style={{ textAlign: 'center' }}>
-              <img
-                style={{
-                  maxHeight: 200,
-                  marginTop: 15,
-                  marginBottom: 15
-                }}
-                src={ThumbsImage}
-                alt=""
-              />
-              <br />
-              <Button
-                onClick={() =>
-                  props.openURLExternally(
-                    AppConfig.links.productProThumbnailsGeneration,
-                    true
-                  )
-                }
-                variant="contained"
-                color="primary"
-              >
-                Learn more
-              </Button>
-            </div>
-          </div>
-          <div style={slideStyles}>
-            <Typography variant="h5" style={{ textAlign: 'center' }}>
-              TagSpaces Enterprise
-            </Typography>
-            <br />
-            <Typography variant="subtitle1">
-              &#x2605; On-prem web based version of TagSpaces Pro
-            </Typography>
-            <Typography variant="subtitle1">
-              &#x2605; PWA version of TagSpaces Pro optimized for use om mobile
-              devices
-            </Typography>
-            <Typography variant="subtitle1">
-              &#x2605; White label packages, with custom colors and logo
-            </Typography>
-            <Typography variant="subtitle1">
-              &#x2605; Development of custom viewers for file (e.g. 3D-assets,
-              medical data ...)
-            </Typography>
-            <Typography variant="subtitle1">
-              &#x2605; Development of custom perspectives for folders (e.g.
-              graphs, maps, trees)
-            </Typography>
-            <Typography variant="subtitle1">
-              &#x2605; Premium technical support and signed installers
-            </Typography>
-            <div style={{ textAlign: 'center' }}>
-              <img
-                style={{
-                  maxHeight: 200,
-                  marginTop: 15,
-                  marginBottom: 15
-                }}
-                src={EnterpriseImage}
-                alt=""
-              />
-              <br />
-              <Button
-                onClick={() =>
-                  props.openURLExternally(
-                    AppConfig.links.productsOverview,
-                    true
-                  )
-                }
-                variant="outlined"
-                color="primary"
-              >
-                Product Landscape
-              </Button>
-              &nbsp;
-              <Button
-                onClick={() =>
-                  props.openURLExternally(AppConfig.links.emailContact, true)
-                }
-                variant="outlined"
-                color="primary"
-              >
-                {i18n.t('core:emailContact')}
-              </Button>
-            </div>
-          </div>
+          <SlideComponent
+            {...slidesEN['general']}
+            openURLExternally={openURLExternally}
+          />
+          <SlideComponent
+            {...slidesEN['search']}
+            openURLExternally={openURLExternally}
+          />
+          <SlideComponent
+            {...slidesEN['objectstorage']}
+            openURLExternally={openURLExternally}
+          />
+          <SlideComponent
+            {...slidesEN['perspectives']}
+            openURLExternally={openURLExternally}
+          />
+          <SlideComponent
+            {...slidesEN['annotation']}
+            openURLExternally={openURLExternally}
+          />
+          <SlideComponent
+            {...slidesEN['geotagging']}
+            openURLExternally={openURLExternally}
+          />
+          {/* <SlideComponent
+            {...slidesEN['persistentThumbs']}
+            openURLExternally={openURLExternally}
+          /> */}
+          <SlideComponent
+            {...slidesEN['enterprise']}
+            openURLExternally={openURLExternally}
+          />
         </SwipeableViews>
       </DialogContent>
       <DialogActions style={{ justifyContent: 'center' }}>

@@ -22,26 +22,82 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  withMobileDialog,
   FormControl,
+  FormControlLabel,
+  FormGroup,
+  Switch,
+  Divider,
   InputLabel,
   Select,
   MenuItem,
   Button,
   FormHelperText
 } from '@material-ui/core';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import ThumbnailCoverIcon from '@material-ui/icons/PhotoSizeSelectActual';
+import ThumbnailContainIcon from '@material-ui/icons/PhotoSizeSelectLarge';
+import RadioCheckedIcon from '@material-ui/icons/RadioButtonChecked';
+import RadioUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
+import { withStyles } from '@material-ui/core/styles';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import i18n from '-/services/i18n';
+
+const styles: any = {
+  root: {
+    overflowX: 'hidden'
+  },
+  listItem: {
+    paddingLeft: 0,
+    paddingRight: 0
+  },
+  pro: {
+    backgroundColor: '#1DD19F'
+  },
+  colorChooserButton: {
+    minHeight: 30,
+    border: '1px solid lightgray'
+  }
+};
 
 interface Props {
   open: boolean;
-  fullScreen: boolean;
   gridPageLimit: number;
   onClose: () => void;
   setGridPageLimit: (number) => void;
+  toggleShowDirectories: () => void;
+  toggleShowTags: () => void;
+  showDirectories: boolean;
+  showTags: boolean;
+  toggleThumbnailsMode: () => void;
+  thumbnailMode: string;
+  changeEntrySize: (entrySize: string) => void;
+  entrySize: string;
+  changeSingleClickAction: (actionType: string) => void;
+  singleClickAction: string;
+  openHelpWebPage: () => void;
+  classes: any;
+  // setShowDirectories: (check: boolean) => void;
 }
 
 const GridSettingsDialog = (props: Props) => {
-  const { open, onClose, fullScreen, gridPageLimit } = props;
+  const {
+    open,
+    onClose,
+    gridPageLimit,
+    toggleShowDirectories,
+    showDirectories,
+    toggleShowTags,
+    showTags,
+    toggleThumbnailsMode,
+    thumbnailMode,
+    changeEntrySize,
+    entrySize,
+    changeSingleClickAction,
+    singleClickAction,
+    openHelpWebPage
+  } = props;
+
   let newGridPageLimit = gridPageLimit;
 
   const handleGridPaginationLimit = (
@@ -53,6 +109,7 @@ const GridSettingsDialog = (props: Props) => {
     if (name === 'limit') {
       newGridPageLimit = roughScale(value);
     }
+    props.setGridPageLimit(newGridPageLimit);
   };
 
   function roughScale(x) {
@@ -64,19 +121,150 @@ const GridSettingsDialog = (props: Props) => {
   }
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      fullScreen={fullScreen}
-      keepMounted
-      scroll="paper"
-    >
-      <DialogTitle>{i18n.t('core:perspectiveSettingsTitle')}</DialogTitle>
+    <Dialog open={open} onClose={onClose} keepMounted scroll="paper">
+      <DialogTitle>
+        {i18n.t('core:perspectiveSettingsTitle')}
+        <DialogCloseButton onClose={onClose} />
+      </DialogTitle>
       <DialogContent>
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Switch
+                data-tid="gridPerspectiveToggleShowDirectories"
+                checked={showDirectories}
+                onChange={toggleShowDirectories}
+                name="checkedB"
+                color="primary"
+              />
+            }
+            label={i18n.t('core:showHideDirectories')}
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                data-tid="gridPerspectiveToggleShowTags"
+                checked={showTags}
+                onChange={toggleShowTags}
+                name="checkedB"
+                color="primary"
+              />
+            }
+            label={i18n.t('core:showTags')}
+          />
+        </FormGroup>
+        <Divider />
+        <MenuItem
+          data-tid="gridPerspectiveToggleThumbnailsMode"
+          title={i18n.t('core:toggleThumbnailModeTitle')}
+          aria-label={i18n.t('core:toggleThumbnailMode')}
+          onClick={toggleThumbnailsMode}
+        >
+          <ListItemIcon>
+            {thumbnailMode === 'cover' ? (
+              <ThumbnailCoverIcon />
+            ) : (
+              <ThumbnailContainIcon />
+            )}
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:toggleThumbnailMode')} />
+        </MenuItem>
+        <Divider />
+        <MenuItem
+          data-tid="gridPerspectiveEntrySizeSmall"
+          title={i18n.t('core:entrySizeSmall')}
+          aria-label={i18n.t('core:entrySizeSmall')}
+          onClick={() => changeEntrySize('small')}
+        >
+          <ListItemIcon>
+            {entrySize === 'small' ? (
+              <RadioCheckedIcon />
+            ) : (
+              <RadioUncheckedIcon />
+            )}
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:entrySizeSmall')} />
+        </MenuItem>
+        <MenuItem
+          data-tid="gridPerspectiveEntrySizeNormal"
+          title={i18n.t('core:entrySizeNormal')}
+          aria-label={i18n.t('core:entrySizeNormal')}
+          onClick={() => changeEntrySize('normal')}
+        >
+          <ListItemIcon>
+            {entrySize === 'normal' ? (
+              <RadioCheckedIcon />
+            ) : (
+              <RadioUncheckedIcon />
+            )}
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:entrySizeNormal')} />
+        </MenuItem>
+        <MenuItem
+          data-tid="gridPerspectiveEntrySizeBig"
+          title={i18n.t('core:entrySizeBig')}
+          aria-label={i18n.t('core:entrySizeBig')}
+          onClick={() => changeEntrySize('big')}
+        >
+          <ListItemIcon>
+            {entrySize === 'big' ? (
+              <RadioCheckedIcon />
+            ) : (
+              <RadioUncheckedIcon />
+            )}
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:entrySizeBig')} />
+        </MenuItem>
+        <Divider />
+        <MenuItem
+          data-tid="gridPerspectiveSingleClickOpenInternally"
+          title={i18n.t('core:singleClickOpenInternally')}
+          aria-label={i18n.t('core:singleClickOpenInternally')}
+          onClick={() => changeSingleClickAction('openInternal')}
+        >
+          <ListItemIcon>
+            {singleClickAction === 'openInternal' ? (
+              <RadioCheckedIcon />
+            ) : (
+              <RadioUncheckedIcon />
+            )}
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:singleClickOpenInternally')} />
+        </MenuItem>
+        <MenuItem
+          data-tid="gridPerspectiveSingleClickOpenExternally"
+          title={i18n.t('core:singleClickOpenExternally')}
+          aria-label={i18n.t('core:singleClickOpenExternally')}
+          onClick={() => changeSingleClickAction('openExternal')}
+        >
+          <ListItemIcon>
+            {singleClickAction === 'openExternal' ? (
+              <RadioCheckedIcon />
+            ) : (
+              <RadioUncheckedIcon />
+            )}
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:singleClickOpenExternally')} />
+        </MenuItem>
+        <MenuItem
+          data-tid="gridPerspectiveSingleClickSelects"
+          title={i18n.t('core:singleClickSelects')}
+          aria-label={i18n.t('core:singleClickSelects')}
+          onClick={() => changeSingleClickAction('selects')}
+        >
+          <ListItemIcon>
+            {singleClickAction === 'selects' ? (
+              <RadioCheckedIcon />
+            ) : (
+              <RadioUncheckedIcon />
+            )}
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:singleClickSelects')} />
+        </MenuItem>
+        <Divider />
         <FormControl
           fullWidth={true}
-          /* error={this.state.inputError} */
-          style={{ overflow: 'visible' }}
+          style={{ overflow: 'visible', marginTop: 20 }}
         >
           <InputLabel shrink htmlFor="pageLimit">
             {i18n.t('core:pageLimit')}
@@ -95,26 +283,25 @@ const GridSettingsDialog = (props: Props) => {
           <FormHelperText>{i18n.t('core:pageLimitHelp')}</FormHelperText>
         </FormControl>
       </DialogContent>
-      <DialogActions>
+      <DialogActions style={{ justifyContent: 'space-between' }}>
+        <Button
+          data-tid="gridPerspectiveHelp"
+          title={i18n.t('core:help')}
+          onClick={openHelpWebPage}
+        >
+          {i18n.t('core:help')}
+        </Button>
         <Button
           data-tid="cancelDialog"
-          title={i18n.t('core:cancel')}
+          title={i18n.t('core:closeButton')}
           onClick={onClose}
           color="primary"
         >
-          {i18n.t('core:cancel')}
-        </Button>
-
-        <Button
-          data-tid="closeGridSettingsDialog"
-          onClick={() => props.setGridPageLimit(newGridPageLimit)}
-          color="primary"
-        >
-          {i18n.t('core:ok')}
+          {i18n.t('core:closeButton')}
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default withMobileDialog()(GridSettingsDialog);
+export default withStyles(styles, { withTheme: true })(GridSettingsDialog);

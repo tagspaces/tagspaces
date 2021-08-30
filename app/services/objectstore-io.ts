@@ -27,7 +27,8 @@ import {
   getThumbFileLocationForFile,
   getMetaFileLocationForFile,
   extractFileExtension,
-  getMetaFileLocationForDir
+  getMetaFileLocationForDir,
+  getThumbFileLocationForDirectory
 } from '-/utils/paths';
 import { TS } from '-/tagspaces.namespace';
 
@@ -326,11 +327,10 @@ export default class ObjectStoreIO {
           !eentry.path.includes(AppConfig.metaFolder + '/')
         ) {
           // skipping meta folder
-          const folderTmbPath =
-            eentry.path +
-            AppConfig.metaFolder +
-            '/' +
-            AppConfig.folderThumbFile;
+          const folderTmbPath = getThumbFileLocationForDirectory(
+            eentry.path,
+            AppConfig.dirSeparator
+          );
           const folderThumbProps = await this.getPropertiesPromise(
             folderTmbPath
           );

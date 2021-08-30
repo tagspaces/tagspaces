@@ -25,8 +25,9 @@ import HelpIcon from '@material-ui/icons/Help';
 import UpdateIndexIcon from '@material-ui/icons/Update';
 import ExportImportIcon from '@material-ui/icons/SwapHoriz';
 import i18n from '-/services/i18n';
-import AppConfig from '-/config';
 import { Pro } from '../../pro';
+import Links from '-/links';
+import { ProLabel } from '-/components/HelperComponents';
 
 interface Props {
   classes?: any;
@@ -56,53 +57,67 @@ const SearchMenu = (props: Props) => {
       <ListItemText primary={i18n.t('core:updateAllLocationIndexes')} />
     </MenuItem>
   );
-  if (Pro) {
-    menuItems.push(
-      <MenuItem
-        key="exportSavedSearchTID"
-        data-tid="exportSavedSearchTID"
-        onClick={() => {
-          props.onClose();
-          props.exportSearches();
-        }}
-      >
-        <ListItemIcon>
-          <ExportImportIcon />
-        </ListItemIcon>
-        <ListItemText primary={i18n.t('core:exportSavedSearch')} />
-      </MenuItem>
-    );
-    menuItems.push(
-      <MenuItem
-        key="importSavedSearchTID"
-        data-tid="importSavedSearchTID"
-        onClick={() => {
-          props.onClose();
-          props.importSearches();
-        }}
-      >
-        <ListItemIcon>
-          <ExportImportIcon />
-        </ListItemIcon>
-        <ListItemText primary={i18n.t('core:importSavedSearch')} />
-      </MenuItem>
-    );
-    menuItems.push(
-      <MenuItem
-        key="searchMenuHelp"
-        data-tid="searchMenuHelp"
-        onClick={() => {
-          props.onClose();
-          props.openURLExternally(AppConfig.documentationLinks.search, true);
-        }}
-      >
-        <ListItemIcon>
-          <HelpIcon />
-        </ListItemIcon>
-        <ListItemText primary={i18n.t('core:help')} />
-      </MenuItem>
-    );
-  }
+  menuItems.push(
+    <MenuItem
+      disabled={!Pro}
+      key="exportSavedSearchTID"
+      data-tid="exportSavedSearchTID"
+      onClick={() => {
+        props.onClose();
+        props.exportSearches();
+      }}
+    >
+      <ListItemIcon>
+        <ExportImportIcon />
+      </ListItemIcon>
+      <ListItemText
+        primary={
+          <>
+            {i18n.t('core:exportSavedSearch')}
+            <ProLabel />
+          </>
+        }
+      />
+    </MenuItem>
+  );
+  menuItems.push(
+    <MenuItem
+      disabled={!Pro}
+      key="importSavedSearchTID"
+      data-tid="importSavedSearchTID"
+      onClick={() => {
+        props.onClose();
+        props.importSearches();
+      }}
+    >
+      <ListItemIcon>
+        <ExportImportIcon />
+      </ListItemIcon>
+      <ListItemText
+        primary={
+          <>
+            {i18n.t('core:importSavedSearch')}
+            <ProLabel />
+          </>
+        }
+      />
+    </MenuItem>
+  );
+  menuItems.push(
+    <MenuItem
+      key="searchMenuHelp"
+      data-tid="searchMenuHelp"
+      onClick={() => {
+        props.onClose();
+        props.openURLExternally(Links.documentationLinks.search, true);
+      }}
+    >
+      <ListItemIcon>
+        <HelpIcon />
+      </ListItemIcon>
+      <ListItemText primary={i18n.t('core:help')} />
+    </MenuItem>
+  );
 
   return (
     <div style={{ overflowY: 'hidden' }}>

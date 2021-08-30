@@ -48,7 +48,11 @@ const actions = {
   ) => (dispatch: (actions: any) => void, getState: () => any) => {
     const { currentDirectoryEntries } = getState().app;
     if (!Pro || !Pro.ContentExtractor) {
-      dispatch(AppActions.showNotification(i18n.t('core:needProVersion')));
+      dispatch(
+        AppActions.showNotification(
+          i18n.t('core:thisFunctionalityIsAvailableInPro')
+        )
+      );
       return false;
     }
     Pro.ContentExtractor.extractContent(
@@ -210,9 +214,11 @@ const actions = {
         reader.onload = async (event: any) => {
           await readerLoaded(event, inx, filePath);
         };
-        if (AppConfig.isCordova) {
+        if (AppConfig.isWeb) {
+          reader.readAsBinaryString(file);
+        } /* else if (AppConfig.isCordova) {
           reader.readAsDataURL(file);
-        } else {
+        } */ else {
           reader.readAsArrayBuffer(file);
         }
       }

@@ -28,6 +28,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Dialog from '@material-ui/core/Dialog';
 import i18n from '-/services/i18n';
 import { actions as AppActions } from '-/reducers/app';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {
   open: boolean;
@@ -97,7 +98,10 @@ const OpenLinkDialog = (props: Props) => {
         }
       }}
     >
-      <DialogTitle>{i18n.t('core:openLink')}</DialogTitle>
+      <DialogTitle>
+        {i18n.t('core:openLink')}
+        <DialogCloseButton onClose={onClose} />
+      </DialogTitle>
       <DialogContent style={{ minWidth: 400 }}>
         <FormControl fullWidth={true} error={inputError}>
           <TextField
@@ -116,11 +120,7 @@ const OpenLinkDialog = (props: Props) => {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button
-          data-tid="closeOpenLinkDialog"
-          onClick={onCancel}
-          color="primary"
-        >
+        <Button data-tid="closeOpenLinkDialog" onClick={onCancel}>
           {i18n.t('core:cancel')}
         </Button>
         <Button

@@ -28,6 +28,7 @@ import { Pro } from '-/pro';
 import AppConfig from '-/config';
 import LicenseContent from '-/LICENSE.txt';
 import PlatformIO from '-/services/platform-io';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {
   open: boolean;

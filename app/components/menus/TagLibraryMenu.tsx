@@ -24,9 +24,14 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ImportExportIcon from '@material-ui/icons/ImportExport';
 import HelpIcon from '@material-ui/icons/Help';
 import AddIcon from '@material-ui/icons/Add';
+import ReloadIcon from '@material-ui/icons/Sync';
 import ImportExportTagGroupsDialog from '../dialogs/ImportExportTagGroupsDialog';
 import i18n from '-/services/i18n';
 import AppConfig from '-/config';
+import { TS } from '-/tagspaces.namespace';
+import Links from '-/links';
+import { ProLabel, ProTooltip } from '-/components/HelperComponents';
+import { Pro } from '-/pro';
 
 interface Props {
   classes?: any;
@@ -35,7 +40,7 @@ interface Props {
   openURLExternally: (path: string, skipConfirmation?: boolean) => void;
   open: boolean;
   onClose: () => void;
-  importTagGroups: () => void;
+  importTagGroups: (entries: Array<TS.TagGroup>, replace?: boolean) => void;
   exportTagGroups: () => void;
   showCreateTagGroupDialog: () => void;
   showNotification: (
@@ -43,6 +48,8 @@ interface Props {
     notificationType?: string, // NotificationTypes
     autohide?: boolean
   ) => void;
+  saveTagInLocation: boolean;
+  refreshTagsFromLocation: () => void;
 }
 
 const TagLibraryMenu = (props: Props) => {
@@ -85,12 +92,16 @@ const TagLibraryMenu = (props: Props) => {
           setIsImportExportTagGroupDialogOpened(true);
         } else {
           props.showNotification(
-            i18n.t('core:invalidImportFile', 'warning', true)
+            i18n.t('core:invalidImportFile'),
+            'warning',
+            true
           );
         }
       } catch (e) {
         props.showNotification(
-          i18n.t('core:invalidImportFile', 'warning', true)
+          i18n.t('core:invalidImportFile'),
+          'warning',
+          true
         );
       }
     };
@@ -125,26 +136,47 @@ const TagLibraryMenu = (props: Props) => {
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:createTagGroupTitle')} />
         </MenuItem>
+        <ProTooltip tooltip={i18n.t('core:enableTagsFromLocationHelp')}>
+          <MenuItem
+            disabled={!Pro || !props.saveTagInLocation}
+            data-tid="refreshTagGroups"
+            onClick={() => {
+              props.refreshTagsFromLocation();
+              props.onClose();
+            }}
+          >
+            <ListItemIcon>
+              <ReloadIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary={
+                <>
+                  {i18n.t('core:refreshTagGroups')}
+                  <ProLabel />
+                </>
+              }
+            />
+          </MenuItem>
+        </ProTooltip>
         <MenuItem data-tid="importTagGroup" onClick={handleImportTagGroup}>
           <ListItemIcon>
             <ImportExportIcon />
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:importTags')} />
         </MenuItem>
-        <MenuItem data-tid="exportTagGroup" onClick={handleExportTagGroup}>
-          <ListItemIcon>
-            <ImportExportIcon />
-          </ListItemIcon>
-          <ListItemText primary={i18n.t('core:exportTagGroupsButton')} />
-        </MenuItem>
+        {!AppConfig.isCordovaAndroid && (
+          <MenuItem data-tid="exportTagGroup" onClick={handleExportTagGroup}>
+            <ListItemIcon>
+              <ImportExportIcon />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:exportTagGroupsButton')} />
+          </MenuItem>
+        )}
         <MenuItem
           data-tid="taglibraryHelp"
           onClick={() => {
             props.onClose();
-            props.openURLExternally(
-              AppConfig.documentationLinks.taglibrary,
-              true
-            );
+            props.openURLExternally(Links.documentationLinks.taglibrary, true);
           }}
         >
           <ListItemIcon>

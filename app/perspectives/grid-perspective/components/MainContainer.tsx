@@ -62,6 +62,7 @@ import GridSettingsDialog from '-/perspectives/grid-perspective/components/GridS
 import AddTagToTagGroupDialog from '-/components/dialogs/AddTagToTagGroupDialog';
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
+import Links from '-/links';
 
 interface Props {
   classes: any;
@@ -76,7 +77,7 @@ interface Props {
   openNextFile: () => any;
   openPrevFile: () => any;
   openRenameEntryDialog: () => void;
-  loadDirectoryContent: (path: string) => void;
+  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
   openDirectory: (path: string) => void;
   showInFileManager: (path: string) => void;
   openFileNatively: (path?: string) => void;
@@ -267,11 +268,6 @@ const GridPerspective = (props: Props) => {
     setSortingContextMenuAnchorEl(anchor);
   };
 
-  const handleOptionsMenu = event => {
-    const anchor = event ? event.currentTarget : null;
-    setOptionsContextMenuAnchorEl(anchor);
-  };
-
   const handleExportCsvMenu = () => {
     if (Pro) {
       Pro.exportAsCsv.ExportAsCsv(props.directoryContent);
@@ -393,7 +389,7 @@ const GridPerspective = (props: Props) => {
 
   const openHelpWebPage = () => {
     closeOptionsMenu();
-    props.openURLExternally(AppConfig.documentationLinks.defaultPerspective);
+    props.openURLExternally(Links.documentationLinks.defaultPerspective);
   };
 
   const openSettings = () => {
@@ -424,7 +420,7 @@ const GridPerspective = (props: Props) => {
       props.openFsEntry(fsEntry);
     } else {
       console.log('Handle Grid cell db click, selected path : ', fsEntry.path);
-      props.loadDirectoryContent(fsEntry.path);
+      props.loadDirectoryContent(fsEntry.path, true);
     }
   };
 
@@ -439,31 +435,36 @@ const GridPerspective = (props: Props) => {
     );
     if (fsEntry.isFile) {
       if (!desktopMode) {
-        if (selectedEntries && isEntryExist) {
+        if (!isEntryExist) {
+          if (selectedEntries.length > 0) {
+            props.setSelectedEntries([...selectedEntries, fsEntry]);
+          } else {
+            props.setSelectedEntries([fsEntry]);
+          }
+        } /* else { // deselect selected entry
           props.setSelectedEntries(
             selectedEntries.filter(entry => entry.uuid !== fsEntry.uuid)
-          ); // deselect selected entry
-        } else {
+          );
+        } */
+      } else if (
+        props.selectedEntries.length === 0 ||
+        !fileOperationsEnabled()
+      ) {
+        props.setSelectedEntries([fsEntry]);
+      } else if (event.ctrlKey) {
+        if (!isEntryExist) {
           props.setSelectedEntries([...selectedEntries, fsEntry]);
         }
+      } else if (isEntryExist) {
+        // update selected entry
+        props.setSelectedEntries([
+          ...selectedEntries.filter(entry => entry.uuid !== fsEntry.uuid),
+          fsEntry
+        ]);
       } else {
-        if (props.selectedEntries.length === 0 || !fileOperationsEnabled()) {
-          props.setSelectedEntries([fsEntry]);
-        } else if (event.ctrlKey) {
-          if (!isEntryExist) {
-            props.setSelectedEntries([...selectedEntries, fsEntry]);
-          }
-        } else if (isEntryExist) {
-          // update selected entry
-          props.setSelectedEntries([
-            ...selectedEntries.filter(entry => entry.uuid !== fsEntry.uuid),
-            fsEntry
-          ]);
-        } else {
-          props.setSelectedEntries([fsEntry]);
-        }
-        setFileContextMenuAnchorEl(event.currentTarget);
+        props.setSelectedEntries([fsEntry]);
       }
+      setFileContextMenuAnchorEl(event.currentTarget);
     } else {
       if (props.selectedEntries.length === 0 || !folderOperationsEnabled()) {
         props.setSelectedEntries([fsEntry]);
@@ -554,7 +555,7 @@ const GridPerspective = (props: Props) => {
     }
   };
 
-  const renderCell = (fsEntry: TS.FileSystemEntry) => {
+  const renderCell = (fsEntry: TS.FileSystemEntry, isLast?: boolean) => {
     const {
       classes,
       theme,
@@ -590,6 +591,7 @@ const GridPerspective = (props: Props) => {
           fsEntry={fsEntry}
           entrySize={entrySize}
           classes={classes}
+          isLast={isLast}
           theme={theme}
           supportedFileTypes={supportedFileTypes}
           thumbnailMode={thumbnailMode}
@@ -713,10 +715,7 @@ const GridPerspective = (props: Props) => {
   return (
     <div
       style={{
-        height:
-          'calc(100% - ' +
-          (AppConfig.isCordova ? '320' : '51') + // todo handle cordova screen sizes
-          'px)'
+        height: 'calc(100% - 51px)'
       }}
     >
       <MainToolbar
@@ -735,9 +734,9 @@ const GridPerspective = (props: Props) => {
         openMoveCopyFilesDialog={openMoveCopyFilesDialog}
         openDeleteFileDialog={openDeleteFileDialog}
         handleSortingMenu={handleSortingMenu}
-        handleOptionsMenu={handleOptionsMenu}
         handleExportCsvMenu={handleExportCsvMenu}
         isDesktopMode={props.isDesktopMode}
+        openSettings={openSettings}
       />
       <GlobalHotKeys
         keyMap={keyMap}
@@ -755,6 +754,8 @@ const GridPerspective = (props: Props) => {
               layoutType === 'grid'
                 ? 'repeat(auto-fit,minmax(' + entryWidth + 'px,1fr))'
                 : 'none'
+            // gridTemplateRows:
+            //  layoutType === 'grid' ? 'repeat(auto-fit, 230px)' : 'auto'
           }}
           theme={theme}
           // gridRef={this.mainGrid}
@@ -792,6 +793,17 @@ const GridPerspective = (props: Props) => {
           onClose={() => setIsGridSettingsDialogOpened(false)}
           setGridPageLimit={handleGridPageLimit}
           gridPageLimit={gridPageLimit}
+          toggleShowDirectories={toggleShowDirectories}
+          toggleShowTags={toggleShowTags}
+          showDirectories={showDirectories}
+          showTags={showTags}
+          toggleThumbnailsMode={toggleThumbnailsMode}
+          thumbnailMode={thumbnailMode}
+          changeEntrySize={changeEntrySize}
+          entrySize={entrySize}
+          changeSingleClickAction={changeSingleClickAction}
+          singleClickAction={singleClickAction}
+          openHelpWebPage={openHelpWebPage}
         />
       )}
       {isMoveCopyFilesDialogOpened && (
@@ -801,7 +813,6 @@ const GridPerspective = (props: Props) => {
           selectedFiles={selectedFilePaths}
         />
       )}
-
       {Boolean(fileContextMenuAnchorEl) && (
         <FileMenu
           anchorEl={fileContextMenuAnchorEl}

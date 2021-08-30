@@ -66,7 +66,7 @@ module.exports = async () => {
     moduleFileExtensions: ['js', 'ts', 'tsx'],
     moduleDirectories: ['node_modules', 'app/node_modules'],
     testMatch: [
-      '**/{unit,e2e,app,test,integration}/**/*.{test,e2e}.{js,tsx,ts,tsx}'
+      '**/{unit,e2e,app,test,integration}/**/*.{test,pw.e2e}.{js,tsx,ts,tsx}'
     ],
     testPathIgnorePatterns: ['<rootDir>/extensions'],
     reporters: [

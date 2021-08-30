@@ -23,8 +23,6 @@ import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
@@ -34,6 +32,7 @@ import Dialog from '@material-ui/core/Dialog';
 import i18n from '-/services/i18n';
 import AppConfig from '-/config';
 import { getKeyBindingObject } from '-/reducers/settings';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 const styles = theme => ({
   root: {
@@ -68,17 +67,7 @@ const KeyboardDialog = (props: Props) => {
     >
       <DialogTitle>
         {i18n.t('core:shortcutKeys')}
-        <IconButton
-          aria-label="close"
-          style={{
-            position: 'absolute',
-            right: 5,
-            top: 5
-          }}
-          onClick={onClose}
-        >
-          <CloseIcon />
-        </IconButton>
+        <DialogCloseButton onClose={onClose} />
       </DialogTitle>
       <DialogContent
         className={props.classes.root}

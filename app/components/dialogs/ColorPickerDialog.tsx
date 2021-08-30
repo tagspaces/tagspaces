@@ -25,6 +25,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import { SketchPicker } from 'react-color';
 import i18n from '-/services/i18n';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 const presetColors = [
   '#ffffff',
@@ -107,6 +108,7 @@ const ColorPickerDialog = (props: Props) => {
     >
       <DialogTitle data-tid="colorPickerDialogTitle">
         {i18n.t('core:colorPickerDialogTitle')}
+        <DialogCloseButton onClose={onClose} />
       </DialogTitle>
       <DialogContent
         data-tid="colorPickerDialogContent"
@@ -124,11 +126,7 @@ const ColorPickerDialog = (props: Props) => {
         />
       </DialogContent>
       <DialogActions>
-        <Button
-          data-tid="colorPickerCloseDialog"
-          onClick={props.onClose}
-          color="primary"
-        >
+        <Button data-tid="colorPickerCloseDialog" onClick={props.onClose}>
           {i18n.t('core:cancel')}
         </Button>
         <Button

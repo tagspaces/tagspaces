@@ -23,10 +23,6 @@ import { withStyles } from '@material-ui/core/styles';
 import { translate } from 'react-i18next';
 import SplitPane from 'react-split-pane';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
-import Snackbar from '@material-ui/core/Snackbar';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import { HotKeys } from 'react-hotkeys';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { Progress } from 'aws-sdk/clients/s3';
@@ -43,12 +39,10 @@ import {
   getKeyBindingObject,
   getLeftVerticalSplitSize,
   getMainVerticalSplitSize,
-  getLastPublishedVersion,
   actions as SettingsActions
 } from '../reducers/settings';
 import {
   actions as AppActions,
-  getNotificationStatus,
   isGeneratingThumbs,
   isAboutDialogOpened,
   isOnboardingDialogOpened,
@@ -56,12 +50,10 @@ import {
   isLicenseDialogOpened,
   isThirdPartyLibsDialogOpened,
   isEntryInFullWidth,
-  isUpdateAvailable,
   getDirectoryPath,
   isLocationManagerPanelOpened,
   isTagLibraryPanelOpened,
   isSearchPanelOpened,
-  isPerspectivesPanelOpened,
   isHelpFeedbackPanelOpened,
   isEditTagDialogOpened,
   isCreateDirectoryOpened,
@@ -77,17 +69,10 @@ import {
   getSelectedEntries,
   currentUser
 } from '../reducers/app';
-import {
-  actions as LocationIndexActions,
-  isIndexing
-} from '../reducers/location-index';
 import { buffer } from '-/utils/misc';
 import TargetFileBox from '../components/TargetFileBox';
 import AppConfig from '../config';
-import buildDesktopMenu from '../services/electron-menus';
-import buildTrayIconMenu from '../services/electron-tray-menu';
 import i18n from '../services/i18n';
-import { Pro } from '../pro';
 import LoadingLazy from '../components/LoadingLazy';
 import withDnDContext from '-/containers/withDnDContext';
 import { CustomDragLayer } from '-/components/CustomDragLayer';
@@ -97,7 +82,8 @@ import ProgressDialog from '-/components/dialogs/ProgressDialog';
 import useEventListener from '-/utils/useEventListener';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { TS } from '-/tagspaces.namespace';
-import useTraceUpdate from '-/utils/useTraceUpdate';
+import PageNotification from '-/containers/PageNotification';
+import listen from '-/containers/RendererListener';
 
 const initialSplitSize = 44;
 const drawerWidth = 300;
@@ -144,15 +130,11 @@ interface Props {
   setFirstRun: (isFirstRun: boolean) => void;
   isDesktopMode: boolean;
   openedFiles: Array<OpenedEntry>;
-  isIndexing: boolean;
   isGeneratingThumbs: boolean;
   setGeneratingThumbnails: (isGenerating: boolean) => void;
   isEntryInFullWidth: boolean;
   classes: any;
   theme: any;
-  notificationStatus: any;
-  lastPublishedVersion: string;
-  isUpdateAvailable: boolean;
   isReadOnlyMode: boolean;
   isSettingsDialogOpened: boolean;
   isCreateFileDialogOpened: boolean;
@@ -173,10 +155,7 @@ interface Props {
   keyBindings: any;
   toggleEditTagDialog: () => void;
   setEntryFullWidth: (isFullWidth: boolean) => void;
-  hideNotifications: () => void;
-  cancelDirectoryIndexing: () => void;
   loadParentDirectoryContent: () => void;
-  setUpdateAvailable: (isUpdateAvailable: boolean) => void;
   saveFile: () => void; // needed by electron-menus
   setZoomResetApp: () => void; // needed by electron-menus
   setZoomInApp: () => void; // needed by electron-menus
@@ -198,7 +177,6 @@ interface Props {
   openLocationManagerPanel: () => void;
   openTagLibraryPanel: () => void;
   openSearchPanel: () => void;
-  openPerspectivesPanel: () => void;
   openHelpFeedbackPanel: () => void;
   closeAllVerticalPanels: () => void;
   leftSplitSize: number;
@@ -210,7 +188,6 @@ interface Props {
   isOpenLinkDialogOpened: boolean;
   isTagLibraryPanelOpened: boolean;
   isSearchPanelOpened: boolean;
-  isPerspectivesPanelOpened: boolean;
   isHelpFeedbackPanelOpened: boolean;
   directoryPath: string;
   showNotification: (
@@ -310,10 +287,10 @@ const OpenLinkDialogAsync = props => (
   </React.Suspense>
 );
 
-/* let showVerticalPanel = true;
-if (window.ExtDefaultVerticalPanel === 'none') {
-  showVerticalPanel = false;
-} */
+// let showVerticalPanel = true;
+// if (window.ExtDefaultVerticalPanel === 'none') {
+//   showVerticalPanel = false;
+// }
 
 const MainPage = (props: Props) => {
   // useTraceUpdate(props);
@@ -324,32 +301,35 @@ const MainPage = (props: Props) => {
   const setSelectedDirectoryPath = (path: string) => {
     selectedDirectoryPath.current = path;
   };
-  /* const [isManagementPanelVisible, setManagementPanelVisible] = useState<
-    boolean
-  >(window.ExtDefaultVerticalPanel !== 'none' && !props.isEntryInFullWidth); */
+  // const [isManagementPanelVisible, setManagementPanelVisible] = useState<
+  //   boolean
+  // >(showVerticalPanel || !props.isEntryInFullWidth);
   // const [mainSplitSize, setMainSplitSize] = useState<any>('100%');
   // const [isDrawerOpened, setDrawerOpened] = useState<boolean>(true);
+  const width =
+    window.innerWidth ||
+    document.documentElement.clientWidth ||
+    body.clientWidth;
+  const height =
+    window.innerHeight ||
+    document.documentElement.clientHeight ||
+    body.clientHeight;
   const [dimensions, setDimensions] = useState<any>({
-    width: 1000,
-    height: 1000
+    width,
+    height
   });
 
   useEffect(() => {
     if (!AppConfig.isCordova) {
       updateDimensions();
     }
-    // this.setupDesktopMenu();
-    buildDesktopMenu(props);
-    buildTrayIconMenu(props);
+    listen(props);
   }, []);
 
   useEffect(() => {
     if (props.isEntryInFullWidth) {
       props.closeAllVerticalPanels();
-      // setMainSplitSize('0%');
     } else {
-      // setMainSplitSize(props.mainSplitSize);
-      // setManagementPanelVisible(true);
       showDrawer();
     }
   }, [props.isEntryInFullWidth]);
@@ -377,19 +357,11 @@ const MainPage = (props: Props) => {
     return props.mainSplitSize;
   };
 
-  const isManagementPanelVisible = () => {
-    if (
-      props.isLocationManagerPanelOpened ||
-      props.isTagLibraryPanelOpened ||
-      props.isSearchPanelOpened ||
-      props.isPerspectivesPanelOpened ||
-      props.isHelpFeedbackPanelOpened
-    ) {
-      return true;
-    }
-    return false;
-    // return window.ExtDefaultVerticalPanel !== 'none' && !props.isEntryInFullWidth;
-  };
+  const isManagementPanelVisible = () =>
+    props.isLocationManagerPanelOpened ||
+    props.isTagLibraryPanelOpened ||
+    props.isSearchPanelOpened ||
+    props.isHelpFeedbackPanelOpened;
 
   useEventListener('resize', () => {
     if (!AppConfig.isCordova) {
@@ -434,35 +406,13 @@ const MainPage = (props: Props) => {
   };
 
   const showDrawer = () => {
-    if (
-      !props.isLocationManagerPanelOpened &&
+    /* if (
+      !props.isLocationManagerPanelOpened && // TODO this is true in Cordova on closed Locations && LocationManagerPanel
       !props.isSearchPanelOpened &&
       !props.isTagLibraryPanelOpened
-    ) {
-      props.openLocationManagerPanel();
-    }
+    ) { */
+    props.openLocationManagerPanel();
     // setDrawerOpened(true);
-  };
-
-  const skipRelease = () => {
-    props.setUpdateAvailable(false);
-  };
-
-  const getLatestVersion = () => {
-    if (Pro) {
-      props.showNotification(
-        i18n.t('core:getLatestVersionPro'),
-        'default',
-        false
-      );
-    } else {
-      props.openURLExternally(AppConfig.links.downloadURL, true);
-    }
-    props.setUpdateAvailable(false);
-  };
-
-  const openChangelogPage = () => {
-    props.openURLExternally(AppConfig.links.changelogURL, true);
   };
 
   const handleFileDrop = (item, monitor) => {
@@ -506,6 +456,7 @@ const MainPage = (props: Props) => {
     showTagLibrary: props.openTagLibraryPanel,
     openSearch: props.openSearchPanel,
     showHelp: props.openHelpFeedbackPanel
+    // openDevTools: props.openDevTools TODO Impl
   };
 
   const keyMap = {
@@ -515,6 +466,7 @@ const MainPage = (props: Props) => {
     showTagLibrary: props.keyBindings.showTagLibrary,
     openSearch: props.keyBindings.openSearch,
     showHelp: props.keyBindings.showHelp
+    // openDevTools: props.keyBindings.openDevTools
   };
 
   const handleSplitSizeChange = size => {
@@ -547,9 +499,6 @@ const MainPage = (props: Props) => {
   } = props;
   const { FILE } = NativeTypes;
 
-  /* if (this.state.width < 400) {
-      this.setManagementPanelVisibility(false);
-    } */
   return (
     <HotKeys handlers={keyBindingHandlers} keyMap={keyMap}>
       {props.isAboutDialogOpened && (
@@ -668,90 +617,7 @@ const MainPage = (props: Props) => {
           confirmDialogContentTID="confirmDeleteDialogContent"
         />
       )}
-      <Snackbar
-        data-tid={props.notificationStatus.tid}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        open={props.notificationStatus.visible}
-        onClose={props.hideNotifications}
-        autoHideDuration={props.notificationStatus.autohide ? 3000 : undefined}
-        message={props.notificationStatus.text}
-        action={[
-          <IconButton
-            data-tid={'close' + props.notificationStatus.tid}
-            key="close"
-            aria-label={i18n.t('core:closeButton')}
-            color="inherit"
-            onClick={props.hideNotifications}
-          >
-            <CloseIcon />
-          </IconButton>
-        ]}
-      />
-      {/* <Snackbar
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        open={props.isGeneratingThumbs}
-        autoHideDuration={undefined}
-        message={i18n.t('core:loadingOrGeneratingThumbnails')}
-        action={[
-          <IconButton
-            key="closeButton"
-            aria-label={i18n.t('core:closeButton')}
-            color="inherit"
-            onClick={() => props.setGeneratingThumbnails(false)}
-          >
-            <CloseIcon />
-          </IconButton>
-        ]}
-      /> */}
-      <Snackbar
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        open={props.isIndexing}
-        autoHideDuration={undefined}
-        message="Indexing"
-        action={[
-          <Button
-            key="cancelIndexButton"
-            color="secondary"
-            size="small"
-            onClick={props.cancelDirectoryIndexing}
-            data-tid="cancelDirectoryIndexing"
-          >
-            {i18n.t('core:cancelIndexing')}
-          </Button>
-        ]}
-      />
-      <Snackbar
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        open={props.isUpdateAvailable}
-        autoHideDuration={undefined}
-        message={'Version ' + props.lastPublishedVersion + ' available.'}
-        action={[
-          <Button
-            key="laterButton"
-            color="secondary"
-            size="small"
-            onClick={skipRelease}
-          >
-            {i18n.t('core:later')}
-          </Button>,
-          <Button
-            key="changelogButton"
-            color="secondary"
-            size="small"
-            onClick={openChangelogPage}
-          >
-            {i18n.t('core:releaseNotes')}
-          </Button>,
-          <Button
-            key="latestVersionButton"
-            color="primary"
-            size="small"
-            onClick={getLatestVersion}
-          >
-            {i18n.t('core:getItNow')}
-          </Button>
-        ]}
-      />
+      <PageNotification />
       {props.isDesktopMode || (AppConfig.isAmplify && !props.user) ? (
         <TargetFileBox
           // @ts-ignore
@@ -761,12 +627,6 @@ const MainPage = (props: Props) => {
           <CustomDragLayer />
           <SplitPane
             split="vertical"
-            // style={{
-            //   borderTop:
-            //     AppConfig.isElectron && !AppConfig.isMacLike
-            //       ? '1px solid lightgray'
-            //       : 'none'
-            // }}
             minSize={200}
             maxSize={450}
             resizerStyle={{ backgroundColor: theme.palette.divider }}
@@ -777,7 +637,6 @@ const MainPage = (props: Props) => {
                 : initialSplitSize
             }
             onChange={size => {
-              // setManagementPanelVisible(size > initialSplitSize);
               bufferedLeftSplitResize(() =>
                 props.setLeftVerticalSplitSize(size)
               );
@@ -814,7 +673,6 @@ const MainPage = (props: Props) => {
             onOpen={showDrawer}
             hysteresis={0.1}
             disableBackdropTransition={!AppConfig.isIOS}
-            // disableDiscovery={AppConfig.isIOS}
           >
             <MobileNavigation
               hideDrawer={() => props.closeAllVerticalPanels()}
@@ -861,23 +719,17 @@ function mapStateToProps(state) {
     isUploadProgressDialogOpened: isUploadDialogOpened(state),
     isOpenLinkDialogOpened: isOpenLinkDialogOpened(state),
     isProgressDialogOpened: isProgressOpened(state),
-    isIndexing: isIndexing(state),
     isReadOnlyMode: isReadOnlyMode(state),
     isGeneratingThumbs: isGeneratingThumbs(state),
-    // isFileOpened: isFileOpened(state),
     openedFiles: getOpenedFiles(state),
     isEntryInFullWidth: isEntryInFullWidth(state),
     isDesktopMode: getDesktopMode(state),
     keyBindings: getKeyBindingObject(state),
     leftSplitSize: getLeftVerticalSplitSize(state),
     mainSplitSize: getMainVerticalSplitSize(state),
-    isUpdateAvailable: isUpdateAvailable(state),
-    lastPublishedVersion: getLastPublishedVersion(state),
-    notificationStatus: getNotificationStatus(state),
     isLocationManagerPanelOpened: isLocationManagerPanelOpened(state),
     isTagLibraryPanelOpened: isTagLibraryPanelOpened(state),
     isSearchPanelOpened: isSearchPanelOpened(state),
-    isPerspectivesPanelOpened: isPerspectivesPanelOpened(state),
     isHelpFeedbackPanelOpened: isHelpFeedbackPanelOpened(state),
     directoryPath: getDirectoryPath(state),
     isDeleteMultipleEntriesDialogOpened: isDeleteMultipleEntriesDialogOpened(
@@ -897,9 +749,7 @@ function mapDispatchToProps(dispatch) {
       toggleProgressDialog: AppActions.toggleProgressDialog,
       resetProgress: AppActions.resetProgress,
       toggleEditTagDialog: AppActions.toggleEditTagDialog,
-      hideNotifications: AppActions.hideNotifications,
       onUploadProgress: AppActions.onUploadProgress,
-      cancelDirectoryIndexing: LocationIndexActions.cancelDirectoryIndexing,
       saveFile: AppActions.saveFile,
       setZoomResetApp: SettingsActions.setZoomResetApp,
       setZoomInApp: SettingsActions.setZoomInApp,
@@ -913,13 +763,11 @@ function mapDispatchToProps(dispatch) {
       toggleAboutDialog: AppActions.toggleAboutDialog,
       toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
       toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
-      // setLastSelectedEntry: AppActions.setLastSelectedEntry,
       setSelectedEntries: AppActions.setSelectedEntries,
       setGeneratingThumbnails: AppActions.setGeneratingThumbnails,
       openFsEntry: AppActions.openFsEntry,
       openURLExternally: AppActions.openURLExternally,
       setEntryFullWidth: AppActions.setEntryFullWidth,
-      setUpdateAvailable: AppActions.setUpdateAvailable,
       openNextFile: AppActions.openNextFile,
       openPrevFile: AppActions.openPrevFile,
       toggleShowUnixHiddenEntries: SettingsActions.toggleShowUnixHiddenEntries,
@@ -930,7 +778,6 @@ function mapDispatchToProps(dispatch) {
       openLocationManagerPanel: AppActions.openLocationManagerPanel,
       openTagLibraryPanel: AppActions.openTagLibraryPanel,
       openSearchPanel: AppActions.openSearchPanel,
-      openPerspectivesPanel: AppActions.openPerspectivesPanel,
       openHelpFeedbackPanel: AppActions.openHelpFeedbackPanel,
       closeAllVerticalPanels: AppActions.closeAllVerticalPanels,
       toggleDeleteMultipleEntriesDialog:
@@ -955,14 +802,12 @@ const areEqual = (prevProp, nextProp) =>
   nextProp.isEditTagDialogOpened === prevProp.isEditTagDialogOpened &&
   nextProp.isEntryInFullWidth === prevProp.isEntryInFullWidth &&
   nextProp.isHelpFeedbackPanelOpened === prevProp.isHelpFeedbackPanelOpened &&
-  nextProp.isIndexing === prevProp.isIndexing &&
   nextProp.isKeysDialogOpened === prevProp.isKeysDialogOpened &&
   nextProp.isLicenseDialogOpened === prevProp.isLicenseDialogOpened &&
   nextProp.isLocationManagerPanelOpened ===
     prevProp.isLocationManagerPanelOpened &&
   nextProp.isOnboardingDialogOpened === prevProp.isOnboardingDialogOpened &&
   nextProp.isOpenLinkDialogOpened === prevProp.isOpenLinkDialogOpened &&
-  nextProp.isPerspectivesPanelOpened === prevProp.isPerspectivesPanelOpened &&
   nextProp.isProgressDialogOpened === prevProp.isProgressDialogOpened &&
   nextProp.isReadOnlyMode === prevProp.isReadOnlyMode &&
   nextProp.isSearchPanelOpened === prevProp.isSearchPanelOpened &&
@@ -970,13 +815,10 @@ const areEqual = (prevProp, nextProp) =>
   nextProp.isTagLibraryPanelOpened === prevProp.isTagLibraryPanelOpened &&
   nextProp.isThirdPartyLibsDialogOpened ===
     prevProp.isThirdPartyLibsDialogOpened &&
-  nextProp.isUpdateAvailable === prevProp.isUpdateAvailable &&
   nextProp.isUploadProgressDialogOpened ===
     prevProp.isUploadProgressDialogOpened &&
   nextProp.leftSplitSize === prevProp.leftSplitSize &&
   nextProp.mainSplitSize === prevProp.mainSplitSize &&
-  JSON.stringify(nextProp.notificationStatus) ===
-    JSON.stringify(prevProp.notificationStatus) &&
   JSON.stringify(nextProp.selectedEntries) ===
     JSON.stringify(prevProp.selectedEntries) &&
   JSON.stringify(nextProp.openedFiles) === JSON.stringify(prevProp.openedFiles);

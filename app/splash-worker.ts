@@ -52,7 +52,8 @@ function init() {
               counter += 1;
               directoryIndex.push(enhanceEntry(directoryEntry));
             }
-          }
+          },
+          arg.ignorePatterns
         )
           .then(() => {
             // entries - can be used for further processing
@@ -64,7 +65,7 @@ function init() {
                 directoryIndex.length
             );
             console.timeEnd('createDirectoryIndex');
-            ipcRenderer.send('worker', {
+            ipcRenderer.send('worker-response', {
               id: arg.id,
               action: arg.action,
               result: directoryIndex,
@@ -76,7 +77,7 @@ function init() {
             window.walkCanceled = false;
             console.timeEnd('createDirectoryIndex');
             console.warn('Error creating index: ' + err);
-            ipcRenderer.send('worker', {
+            ipcRenderer.send('worker-response', {
               id: arg.id,
               action: arg.action,
               result: [], // directoryIndex,
@@ -88,7 +89,7 @@ function init() {
       case 'createThumbnails': {
         console.log('createThumbnails started in worker window');
         if (!arg.tmbGenerationList || arg.tmbGenerationList.length < 1) {
-          ipcRenderer.send('worker', {
+          ipcRenderer.send('worker-response', {
             id: arg.id,
             action: arg.action,
             result: [],
@@ -104,7 +105,7 @@ function init() {
         Promise.all(tmbGenerationPromises) // TODO check allSettled
           .then(tmbResult => {
             console.log('tmb results' + JSON.stringify(tmbResult));
-            ipcRenderer.send('worker', {
+            ipcRenderer.send('worker-response', {
               id: arg.id,
               action: arg.action,
               result: tmbResult,
@@ -114,7 +115,7 @@ function init() {
           })
           .catch(error => {
             console.warn('Tmb generation failed: ' + error);
-            ipcRenderer.send('worker', {
+            ipcRenderer.send('worker-response', {
               id: arg.id,
               action: arg.action,
               result: [],

@@ -28,6 +28,7 @@ import OpenParentFolder from '@material-ui/icons/FolderOpen';
 import OpenFolderInternally from '@material-ui/icons/Folder';
 import AddRemoveTags from '@material-ui/icons/Loyalty';
 import MoveCopy from '@material-ui/icons/FileCopy';
+import DuplicateFile from '@material-ui/icons/PostAdd';
 import ImageIcon from '@material-ui/icons/Image';
 import RenameFile from '@material-ui/icons/FormatTextdirectionLToR';
 import DeleteForever from '@material-ui/icons/DeleteForever';
@@ -35,13 +36,20 @@ import i18n from '-/services/i18n';
 import AppConfig from '-/config';
 import PlatformIO from '-/services/platform-io';
 import {
+  generateFileName,
   getAllPropertiesPromise,
   setFolderThumbnailPromise
 } from '-/services/utils-io';
 import { Pro } from '-/pro';
-import { extractParentDirectoryPath } from '-/utils/paths';
+import {
+  extractContainingDirectoryPath,
+  extractFileName,
+  extractParentDirectoryPath,
+  extractTags
+} from '-/utils/paths';
 import { TS } from '-/tagspaces.namespace';
-import AddIcon from '@material-ui/icons/Add';
+import { formatDateTime4Tag } from '-/utils/misc';
+// import AddIcon from '@material-ui/icons/Add';
 
 interface Props {
   anchorEl: Element;
@@ -54,7 +62,7 @@ interface Props {
   openMoveCopyFilesDialog: () => void;
   openAddRemoveTagsDialog: () => void;
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
-  loadDirectoryContent: (path: string) => void;
+  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
   openFileNatively: (path: string) => void;
   showInFileManager: (path: string) => void;
   showNotification: (
@@ -126,6 +134,42 @@ const FileMenu = (props: Props) => {
     }
   }
 
+  function duplicateFile() {
+    props.onClose();
+    if (props.selectedFilePath) {
+      const dirPath = extractContainingDirectoryPath(
+        props.selectedFilePath,
+        PlatformIO.getDirSeparator()
+      );
+
+      const fileName = extractFileName(
+        props.selectedFilePath,
+        PlatformIO.getDirSeparator()
+      );
+
+      const extractedTags = extractTags(
+        props.selectedFilePath,
+        AppConfig.tagDelimiter,
+        PlatformIO.getDirSeparator()
+      );
+      extractedTags.push('copy');
+      extractedTags.push(formatDateTime4Tag(new Date(), true));
+
+      const newFilePath =
+        (dirPath ? dirPath + PlatformIO.getDirSeparator() : '') +
+        generateFileName(fileName, extractedTags, AppConfig.tagDelimiter);
+
+      PlatformIO.copyFilePromise(props.selectedFilePath, newFilePath)
+        .then(() => {
+          props.loadDirectoryContent(dirPath, true);
+          return true;
+        })
+        .catch(error => {
+          props.showNotification('Error creating duplicate: ' + error.message);
+        });
+    }
+  }
+
   function openFileNatively() {
     props.onClose();
     if (props.selectedFilePath) {
@@ -140,7 +184,7 @@ const FileMenu = (props: Props) => {
         props.selectedFilePath,
         PlatformIO.getDirSeparator()
       );
-      props.loadDirectoryContent(parentFolder);
+      props.loadDirectoryContent(parentFolder, false);
     }
   }
 
@@ -244,6 +288,18 @@ const FileMenu = (props: Props) => {
           <RenameFile />
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:renameFile')} />
+      </MenuItem>
+    );
+    menuItems.push(
+      <MenuItem
+        key="fileMenuDuplicateFile"
+        data-tid="fileMenuDuplicateFileTID"
+        onClick={duplicateFile}
+      >
+        <ListItemIcon>
+          <DuplicateFile />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:duplicateFile')} />
       </MenuItem>
     );
     menuItems.push(
