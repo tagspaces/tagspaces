@@ -1,4 +1,9 @@
-const sh = require('shelljs');
+const fs = require('fs-extra');
+const pathLib = require('path');
+
+fs.outputFileSync(pathLib.join(__dirname, '../app/.env'), 'KEY=e2eTestKey');
+
+/* const sh = require('shelljs');
 const path = require('path');
 // const fs = require('fs-extra');
 
@@ -17,7 +22,7 @@ if (!sh.test('-d', extensionDir)) {
   sh.mkdir(extensionDir);
 }
 
-sh.cd(extensionDir);
+sh.cd(extensionDir); */
 
 /**
  * @Deprecated use github action script for setup instead
