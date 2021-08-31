@@ -56,7 +56,7 @@ if (process.env.NODE_ENV === 'production') {
     fs.mkdirSync(dir, { recursive: true });
   }
   const logFile = fs.createWriteStream(path.join(dir, 'log.txt'), {
-    flags: 'w'
+    flags: 'a' // 'w'
   });
   console.error = function(d, ex) {
     logFile.write(d + '\n');

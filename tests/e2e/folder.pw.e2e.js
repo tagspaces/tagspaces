@@ -12,7 +12,8 @@ import {
   createNewDirectory,
   deleteDirectory,
   clickOn,
-  expectElementExist
+  expectElementExist,
+  takeScreenshot
 } from './general.helpers';
 import { renameFolder } from './test-utils';
 import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
@@ -46,10 +47,12 @@ describe('TST01 - Folder management', () => {
     await expectElementExist('[data-tid=fsEntryName_' + testFolder + ']');
     await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
     await deleteDirectory();
+    await takeScreenshot('TST0101 after deleteDirectory');
+    await reloadDirectory();
+    await takeScreenshot('TST0101 after reloadDirectory');
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
-      false,
-      2000
+      false
     );
   });
 

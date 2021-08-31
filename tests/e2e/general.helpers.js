@@ -1,6 +1,7 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 import { delay, clearLocalStorage } from './hook';
 import { firstFile } from './test-utils';
+import path from 'path';
 
 export const defaultLocationPath =
   './testdata-tmp/file-structure/supported-filestypes';
@@ -14,6 +15,11 @@ export const selectorFolder = '//*[@data-tid="perspectiveGridFileTable"]/div';
 // const newHTMLFileName = 'newHTMLFile.html';
 const testFolder = 'testFolder';
 const testLocationName = '' + new Date().getTime();
+
+export async function takeScreenshot(name) {
+  const sPath = path.join(__dirname, '..', 'test-reports', name + '.png');
+  await global.client.screenshot({ path: sPath });
+}
 
 export async function clickOn(selector, options = {}) {
   if (global.isPlaywright) {
