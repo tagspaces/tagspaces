@@ -48,7 +48,8 @@ describe('TST01 - Folder management', () => {
     await deleteDirectory();
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
-      false
+      false,
+      2000
     );
   });
 

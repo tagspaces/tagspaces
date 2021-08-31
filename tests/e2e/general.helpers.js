@@ -788,9 +788,9 @@ export async function deleteDirectory() {
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
   await clickOn('[data-tid=deleteDirectory]');
   await clickOn('[data-tid=confirmDeleteFileDialog]');
-  if (global.isElectron) {
+  /*if (global.isElectron) {
     await waitForNotification();
-  }
+  }*/
 }
 
 export async function toHaveText() {
