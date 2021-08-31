@@ -30,6 +30,9 @@ import EditIcon from '@material-ui/icons/Edit';
 import IconButton from '@material-ui/core/IconButton';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Switch from '@material-ui/core/Switch';
+import Select from '@material-ui/core/Select';
+import Input from '@material-ui/core/Input';
+import MenuItem from '@material-ui/core/MenuItem';
 import i18n from '-/services/i18n';
 import {
   actions as SettingsActions,
@@ -69,6 +72,7 @@ interface Props {
   setSaveTagInLocation: (saveTagInLocation: boolean) => void;
   showResetSettings: (showDialog: boolean) => void;
   tileServers: Array<TS.MapTileServer>;
+  setGeoTaggingFormat: (geoTaggingFormat: string) => void;
 }
 
 const SettingsAdvanced = (props: Props) => {
@@ -148,6 +152,23 @@ const SettingsAdvanced = (props: Props) => {
             }
             checked={props.settings.saveTagInLocation}
           />
+        </ListItem>
+        <ListItem className={classes.listItem}>
+          <ListItemText primary={i18n.t('core:geoTaggingFormat')} />
+          <Select
+            data-tid="geoTaggingFormatTID"
+            value={props.settings.geoTaggingFormat}
+            onChange={(event: any) =>
+              props.setGeoTaggingFormat(event.target.value)
+            }
+            input={<Input id="geoTaggingFormatSelector" />}
+          >
+            {props.settings.supportedGeoTagging.map(geoTagging => (
+              <MenuItem key={geoTagging} value={geoTagging}>
+                {geoTagging}
+              </MenuItem>
+            ))}
+          </Select>
         </ListItem>
         <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:tileServerTitle')} />
@@ -234,7 +255,8 @@ function mapActionCreatorsToProps(dispatch) {
       setWarningOpeningFilesExternally:
         SettingsActions.setWarningOpeningFilesExternally,
       setDesktopMode: SettingsActions.setDesktopMode,
-      setSaveTagInLocation: SettingsActions.setSaveTagInLocation
+      setSaveTagInLocation: SettingsActions.setSaveTagInLocation,
+      setGeoTaggingFormat: SettingsActions.setGeoTaggingFormat
     },
     dispatch
   );

@@ -16,6 +16,7 @@
  *
  */
 import OpenLocationCode from 'open-location-code-typescript';
+import mgrs from 'mgrs';
 import i18n from '../services/i18n';
 import {
   actions as AppActions,
@@ -41,7 +42,7 @@ import GlobalSearch from '../services/search-index';
 import { getPersistTagsInSidecarFile } from './settings';
 import { TS } from '-/tagspaces.namespace';
 
-export const defaultTagLocation = OpenLocationCode.encode(51.48, 0, undefined); // default tag coordinate Greenwich
+// export const defaultTagLocation = OpenLocationCode.encode(51.48, 0, undefined); // default tag coordinate Greenwich
 
 const persistTagsInSidecarFile = state => {
   const locationPersistTagsInSidecarFile = getLocationPersistTagsInSidecarFile(
@@ -60,6 +61,12 @@ const actions = {
     updateIndex: boolean = true
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
     const { settings, taglibrary } = getState();
+    let defaultTagLocation;
+    if (settings.geoTaggingFormat === 'MGRS') {
+      defaultTagLocation = mgrs.forward([0, 51.48]);
+    } else {
+      defaultTagLocation = OpenLocationCode.encode(51.48, 0, undefined);
+    }
 
     const processedTags = [];
     tags.map(pTag => {
