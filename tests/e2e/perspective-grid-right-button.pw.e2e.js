@@ -173,7 +173,7 @@ describe('TST50** - Right button on a file', () => {
     );
   });
 
-  test.only('TST5023 - Remove tag from file (tag menu) [web,minio,electron]', async () => {
+  test('TST5023 - Remove tag from file (tag menu) [web,minio,electron]', async () => {
     // await searchEngine('desktop');
     // select file
     await clickOn(selectorFile);

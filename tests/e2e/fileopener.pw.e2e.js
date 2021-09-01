@@ -18,6 +18,7 @@ import {
   setInputKeys,
   setInputValue,
   setSettings,
+  takeScreenshot,
   waitForNotification
 } from './general.helpers';
 import { expect } from '@playwright/test';
@@ -134,8 +135,11 @@ describe('TST08 - File folder properties', () => {
     // await setInputKeys('fileNameProperties', newTile);
     await setInputValue('[data-tid=fileNameProperties] input', newTile);
     await clickOn('[data-tid=confirmRenameEntryTID]');
-    await waitForNotification();
-    await isDisplayed('[data-tid=confirmRenameEntryTID]', false);
+    // await waitForNotification();
+    // await isDisplayed('[data-tid=confirmRenameEntryTID]', false);
+    await global.client.waitForSelector(
+      '[data-tid=fileNameProperties] input[value="' + newTile + '"]'
+    );
     const propsNewFileName = await getPropertiesFileName();
     expect(propsFileName).not.toBe(propsNewFileName);
 
@@ -144,8 +148,11 @@ describe('TST08 - File folder properties', () => {
     // await setInputKeys('fileNameProperties', propsFileName);
     await setInputValue('[data-tid=fileNameProperties] input', propsFileName);
     await clickOn('[data-tid=confirmRenameEntryTID]');
-    await waitForNotification();
-    await isDisplayed('[data-tid=confirmRenameEntryTID]', false);
+    // await waitForNotification();
+    // await isDisplayed('[data-tid=confirmRenameEntryTID]', false);
+    await global.client.waitForSelector(
+      '[data-tid=fileNameProperties] input[value="' + propsFileName + '"]'
+    );
     const propsOldFileName = await getPropertiesFileName();
     expect(propsOldFileName).toBe(propsFileName);
   });
@@ -161,7 +168,10 @@ describe('TST08 - File folder properties', () => {
     await clickOn('[data-tid=startRenameEntryTID]');
     await setInputValue('[data-tid=fileNameProperties] input', newTile);
     await clickOn('[data-tid=confirmRenameEntryTID]');
-    await waitForNotification();
+    // await waitForNotification();
+    await global.client.waitForSelector(
+      '[data-tid=fileNameProperties] input[value="' + newTile + '"]'
+    );
     const propsNewFolderName = await getPropertiesFileName();
     expect(propsFolderName).not.toBe(propsNewFolderName);
 
@@ -169,7 +179,10 @@ describe('TST08 - File folder properties', () => {
     await clickOn('[data-tid=startRenameEntryTID]');
     await setInputValue('[data-tid=fileNameProperties] input', propsFolderName);
     await clickOn('[data-tid=confirmRenameEntryTID]');
-    await waitForNotification();
+    // await waitForNotification();
+    await global.client.waitForSelector(
+      '[data-tid=fileNameProperties] input[value="' + propsFolderName + '"]'
+    );
     const propsOldFileName = await getPropertiesFileName();
     expect(propsOldFileName).toBe(propsFolderName);
   });
@@ -257,8 +270,10 @@ describe('TST08 - File folder properties', () => {
     await clickOn(selectorFile);
     await clickOn('[data-tid=fileContainerSwitchToFullScreen]');
     await expectElementExist('[data-tid=fullscreenTID]', true);
+    await takeScreenshot('TST0814 fullscreenTID exist true');
     await clickOn('[data-tid=fullscreenTID]');
     await expectElementExist('[data-tid=fullscreenTID]', false);
+    await takeScreenshot('TST0814 fullscreenTID exist false');
   });
 
   it.skip('TST0815 - Test opening file, while TS is in fullscreen(F11) [manual]', async () => {});
