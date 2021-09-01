@@ -1,5 +1,56 @@
 # Changelog
 
+## Version 3.11.6 / 2021.08.31
+
+### 🎉 New features
+
+- set tagging method per location
+- move tag groups with drag and drop
+- allow to change the order of the tags on a tagged file or folder with drag and drop
+- added file duplicate feature - the newly created files get automatically two new tags: _copy_ and the current date and time (old_file_name [tag1].txt -> old_file_name [tag1 copy 20210702~183456].txt)
+- add "Apply tag" feature to the tag's menu in the tag library, allowing you to add a tag to selected files without drag and drop
+- new optional WYSIWYG markdown editor added as editor and viewer extension
+- sorting file extension list in the settings alphabetically
+- added an option for disabling the warning by opening external files (#1495)
+
+### 🌟 Enhancements
+
+- migration to a new extension structure, adjusting the list of the supported file types
+- improve handling location tag groups
+- user interface improvements in the search area
+- migrate away from using remoteModule in Electron due to potential security issues
+- do not show hidden files in search results if setting is do not show files with dot(.)
+- added close button to all dialogs
+- adding help links to perspectives
+- adjusting fuzzy search parameters
+- added a flag for generating thumbnails on loading directory content
+- improving on-boarding dialog
+- improving pagination of search result and default perspective, fixing Cordova issues
+- updating to electron 13.2.2
+
+### 🐛 Bug fixes
+
+- fix refresh issue after adding tags #1371
+- fixed issue for creating sub directories in location with a relative path
+- fix Opening parent folder from the button in perspective does not work always on windows network drive
+- fix issue with empty search query
+- fix hamburger menu in the mobile mode
+- fix android paths on locations
+- upload in web to Minio server broken
+- fix Cordova android upload files
+- fix downloader plugin
+- remove takePicture for Android DirectoryMenu.tsx
+- remove export and saveAs functionalities for Android
+
+## PRO
+
+- Add folder ignore patterns for navigation, indexing and watching (#1440)
+- Stored search queries for later use
+- Location tags allowing you
+- Many improvement in the Mapigue perspective
+- Add show folders in the Mapique perspective, allowing navigation in sub directories
+- Optimizing the CSV export of the search results, redefining the exported columns
+
 ## Version 3.10.4 / 2021.06.15
 
 ### 🎉 New features
