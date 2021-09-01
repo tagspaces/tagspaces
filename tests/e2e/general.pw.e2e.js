@@ -58,7 +58,7 @@ describe('TST51 - Perspective Grid', () => {
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       true,
-      5000
+      2000
     );
     await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
     // create new file
@@ -66,17 +66,16 @@ describe('TST51 - Perspective Grid', () => {
     await closeOpenedFile();
     // await reloadDirectory();
     await expectElementExist(selectorFile, true);
-    /**/
-    // delete directory
 
-    // await deleteFirstFile();
+    // delete directory
     await deleteDirectory(testFolder);
-    await takeScreenshot('TST0501 after deleteDirectory');
+
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       false,
       2000
     );
+    await takeScreenshot('TST0501 after deleteDirectory');
   });
 
   it('TST0502 - Create MD file [electron,web]', async () => {

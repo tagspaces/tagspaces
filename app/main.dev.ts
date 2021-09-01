@@ -697,7 +697,7 @@ app.on('ready', async () => {
     try {
       ret = await Promise.all(result);
     } catch (err) {
-      console.error('moveToTrash error:', err);
+      console.error('moveToTrash ' + JSON.stringify(files) + 'error:', err);
     }
     return ret;
   });
