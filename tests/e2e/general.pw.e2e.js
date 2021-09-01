@@ -83,7 +83,7 @@ describe('TST51 - Perspective Grid', () => {
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       true,
-      5000
+      2000
     );
     await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
 
@@ -98,8 +98,9 @@ describe('TST51 - Perspective Grid', () => {
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       false,
-      5000
+      2000
     );
+    await takeScreenshot('TST0502 after deleteDirectory');
   });
 
   it('TST0503 - Create TEXT file [electron,web]', async () => {
@@ -107,7 +108,7 @@ describe('TST51 - Perspective Grid', () => {
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       true,
-      5000
+      2000
     );
     await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
 
@@ -122,8 +123,9 @@ describe('TST51 - Perspective Grid', () => {
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       false,
-      5000
+      2000
     );
+    await takeScreenshot('TST0503 after deleteDirectory');
   });
 
   it('TST0510 - Generate thumbnail from Images', async () => {

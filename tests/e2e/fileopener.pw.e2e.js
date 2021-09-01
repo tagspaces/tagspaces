@@ -270,7 +270,7 @@ describe('TST08 - File folder properties', () => {
     await clickOn(selectorFile);
     await clickOn('[data-tid=fileContainerSwitchToFullScreen]');
     await expectElementExist('[data-tid=fullscreenTID]', true);
-    await takeScreenshot('TST0814 fullscreenTID exist true');
+    // await takeScreenshot('TST0814 fullscreenTID exist true');
     await clickOn('[data-tid=fullscreenTID]');
     await expectElementExist('[data-tid=fullscreenTID]', false);
     await takeScreenshot('TST0814 fullscreenTID exist false');
