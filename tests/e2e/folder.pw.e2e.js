@@ -47,9 +47,9 @@ describe('TST01 - Folder management', () => {
     await expectElementExist('[data-tid=fsEntryName_' + testFolder + ']');
     await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
     await deleteDirectory();
-    await takeScreenshot('TST0101 after deleteDirectory');
+    // await takeScreenshot('TST0101 after deleteDirectory');
     await reloadDirectory();
-    await takeScreenshot('TST0101 after reloadDirectory');
+    // await takeScreenshot('TST0101 after reloadDirectory');
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       false
