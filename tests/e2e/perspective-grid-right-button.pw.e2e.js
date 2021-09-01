@@ -173,15 +173,23 @@ describe('TST50** - Right button on a file', () => {
     );
   });
 
-  test('TST5023 - Remove tag from file (tag menu) [web,minio,electron]', async () => {
+  test.only('TST5023 - Remove tag from file (tag menu) [web,minio,electron]', async () => {
     // await searchEngine('desktop');
     // select file
     await clickOn(selectorFile);
     await AddRemoveTagsToSelectedFiles([testTagName], true);
+    await expectElementExist(
+      selectorFile + '[1]//div[@id="gridCellTags"]//button[1]',
+      true
+    );
     await expectTagsExistBySelector(selectorFile, [testTagName], true);
 
     await removeTagFromTagMenu(testTagName);
 
+    await expectElementExist(
+      selectorFile + '[1]//div[@id="gridCellTags"]//button[1]',
+      false
+    );
     await expectTagsExistBySelector(selectorFile, [testTagName], false);
   });
 
