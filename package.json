@@ -69,6 +69,7 @@
     "clean-pro": "yarn clean-maps",
     "clean-maps": "rimraf app/dist/**/*.map && rimraf web/dist/**/*.map",
     "install-ext": "cd app && cross-env PD_PLATFORM=node yarn install --force --prod --no-lockfile && cd ..",
+    "install-ext-aws": "cd app && cross-env PD_PLATFORM=web yarn install --force --prod --no-lockfile && cd ..",
     "install-ext-node": "cd app && cross-env PD_PLATFORM=node yarn add tagspaces-ws --force --prod --no-lockfile && cd ..",
     "install-ext-web": "cd app && cross-env PD_PLATFORM=web yarn add tagspaces-ws --force --prod --no-lockfile && cd ..",
     "setup-ext": "node scripts/setupextensions.js",
