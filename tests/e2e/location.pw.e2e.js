@@ -117,6 +117,9 @@ describe('TST03 - Testing locations:', () => {
 
   it('TST0307 - Move location Up and Down [web,electron]', async () => {
     if (global.isWeb) {
+      await takeScreenshot(
+        'TST0307 Move location Up and Down before create dummyLocation'
+      );
       // in web there is no other locations
       await createPwMinioLocation('', 'dummyLocation', false);
     }

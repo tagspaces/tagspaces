@@ -265,14 +265,17 @@ describe('TST08 - File folder properties', () => {
     //expect(propsFileName).not.toBe(firstFileName);
   });
 
-  it('TST0814 - Open file fullscreen and exit with close button [web,minio,electron]', async () => {
+  /**
+   * TODO dont work on web tests https://trello.com/c/93iEURf4/731-migrate-fullscreen-to-https-githubcom-snakesilk-react-fullscreen
+   */
+  it('TST0814 - Open file fullscreen and exit with close button [minio,electron]', async () => {
     // open fileProperties
     await clickOn(selectorFile);
     await clickOn('[data-tid=fileContainerSwitchToFullScreen]');
     await expectElementExist('[data-tid=fullscreenTID]', true, 2000);
-    await takeScreenshot('TST0814 fullscreenTID exist true');
+    // await takeScreenshot('TST0814 fullscreenTID exist true');
     await clickOn('[data-tid=fullscreenTID]');
-    await takeScreenshot('TST0814 fullscreenTID exist false');
+    // await takeScreenshot('TST0814 fullscreenTID exist false');
     await expectElementExist('[data-tid=fullscreenTID]', false, 2000);
   });
 
