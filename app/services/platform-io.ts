@@ -23,7 +23,7 @@ import NativePlatformIO from './_PLATFORMIO_';
 import ObjectStoreIO from './objectstore-io';
 import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
-import settings from '-/reducers/settings';
+// import settings from '-/reducers/settings';
 
 const nativeAPI: any = new NativePlatformIO();
 let objectStoreAPI;
@@ -67,6 +67,8 @@ export default class PlatformIO {
   };
 
   static haveObjectStoreSupport = (): boolean => objectStoreAPI !== undefined;
+
+  static isMinio = (): boolean => objectStoreAPI !== undefined && objectStoreAPI.config.endpointURL;
 
   static getDirSeparator = (): string => // TODO rethink usage for S3 on Win
     PlatformIO.haveObjectStoreSupport() ? '/' : AppConfig.dirSeparator;
