@@ -59,7 +59,8 @@ import {
   actions as SettingsActions,
   isDesktopMode,
   getKeyBindingObject,
-  getMapTileServer
+  getMapTileServer,
+  getCurrentLanguage
 } from '-/reducers/settings';
 import TaggingActions from '-/reducers/tagging-actions';
 import {
@@ -1262,7 +1263,8 @@ function mapStateToProps(state) {
     isReadOnlyMode: isReadOnlyMode(state),
     keyBindings: getKeyBindingObject(state),
     isDesktopMode: isDesktopMode(state),
-    tileServer: getMapTileServer(state)
+    tileServer: getMapTileServer(state),
+    language: getCurrentLanguage(state)
   };
 }
 

@@ -37,7 +37,11 @@ import MapiquePerspectiveIcon from '@material-ui/icons/Map';
 import LocationMenu from './menus/LocationMenu';
 import DirectoryMenu from './menus/DirectoryMenu';
 import i18n from '../services/i18n';
-import { getMaxSearchResults, getDesktopMode } from '-/reducers/settings';
+import {
+  getMaxSearchResults,
+  getDesktopMode,
+  getCurrentLanguage
+} from '-/reducers/settings';
 import { getLocations } from '-/reducers/locations';
 import {
   actions as AppActions,
@@ -617,7 +621,8 @@ function mapStateToProps(state) {
     locations: getLocations(state),
     maxSearchResults: getMaxSearchResults(state),
     isDesktopMode: getDesktopMode(state),
-    isReadOnlyMode: isReadOnlyMode(state)
+    isReadOnlyMode: isReadOnlyMode(state),
+    language: getCurrentLanguage(state)
   };
 }
 
@@ -657,7 +662,8 @@ const areEqual = (prevProp, nextProp) =>
     JSON.stringify(prevProp.openedFiles) &&
   JSON.stringify(nextProp.theme) === JSON.stringify(prevProp.theme) &&
   nextProp.windowWidth === prevProp.windowWidth &&
-  nextProp.windowHeight === prevProp.windowHeight;
+  nextProp.windowHeight === prevProp.windowHeight &&
+  nextProp.language === prevProp.language;
 
 export default connect(
   mapStateToProps,
