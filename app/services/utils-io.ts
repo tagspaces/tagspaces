@@ -436,11 +436,17 @@ export function getPrevFile(
 }
 
 export function createDirectoryIndex(
-  directoryPath: string,
+  param: string | any,
   extractText: boolean = false,
   ignorePatterns: Array<string> = []
   // disableIndexing = true
 ): Promise<Array<TS.FileSystemEntry>> {
+  let directoryPath;
+  if (typeof param === 'object' && param !== null) {
+    directoryPath = param.path;
+  } else {
+    directoryPath = param;
+  }
   const dirPath = cleanTrailingDirSeparator(directoryPath);
   if (PlatformIO.isWorkerAvailable() && !PlatformIO.haveObjectStoreSupport()) {
     // Start indexing in worker if not in the object store mode
@@ -456,9 +462,9 @@ export function createDirectoryIndex(
     });
   }
 
-  return createIndex(directoryPath, extractText, ignorePatterns)
+  return createIndex(param, extractText, ignorePatterns)
     .then(directoryIndex =>
-      persistIndex(directoryPath, directoryIndex).then(success => {
+      persistIndex(param, directoryIndex).then(success => {
         if (success) {
           console.log('Index generated in folder: ' + directoryPath);
           return directoryIndex;

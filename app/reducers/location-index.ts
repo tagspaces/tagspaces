@@ -336,7 +336,10 @@ export const actions = {
           );
         } else { */
         GlobalSearch.index = await createDirectoryIndex(
-          currentPath,
+          {
+            path: currentPath,
+            ...(isCloudLocation && { bucketName: currentLocation.bucketName })
+          },
           currentLocation.fullTextIndex,
           currentLocation.ignorePatternPaths
         );
@@ -445,7 +448,10 @@ export const actions = {
           ) {
             console.log('Creating index for : ' + nextPath);
             directoryIndex = await createDirectoryIndex(
-              nextPath,
+              {
+                path: nextPath,
+                ...(isCloudLocation && { bucketName: location.bucketName })
+              },
               location.fullTextIndex,
               location.ignorePatternPaths
             );

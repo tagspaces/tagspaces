@@ -3,6 +3,7 @@ const pathLib = require('path');
 const npm = require('npm');
 
 function isInstalled(npmPackage) {
+  // TODO check installed version
   try {
     const path = require.resolve('tagspaces-common-index');
     if (!fs.existsSync(pathLib.join(path, '..', 'node_modules'))) {
