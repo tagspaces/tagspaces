@@ -225,7 +225,7 @@
     "lint-staged": "^8.1.0",
     "mini-css-extract-plugin": "^0.5.0",
     "node-sass": "^6.0.1",
-    "npm": "^7.21.0",
+    "npm": "^6.14.15",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "playwright": "^1.14.1",
     "prettier": "1.19.1",
@@ -323,7 +323,7 @@
     "semver": "^5.5.0",
     "source-map-support": "^0.5.11",
     "sync-fetch": "^0.3.0",
-    "tagspaces-common-index": "^1.0.8",
+    "tagspaces-common-index": "^1.0.15",
     "tiff.js": "^1.0.0",
     "use-state-with-callback": "^2.0.3",
     "winattr": "^3.0.0"
