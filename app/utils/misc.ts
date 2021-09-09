@@ -85,8 +85,12 @@ export function parseGeoLocation(code: string): any {
     return { lat, lng };
   }
   if (isMgrsString(code)) {
-    const [lng, lat] = mgrs.toPoint(code);
-    return { lat, lng };
+    try {
+      const [lng, lat] = mgrs.toPoint(code);
+      return { lat, lng };
+    } catch (e) {
+      console.error('parseGeoLocation', e);
+    }
   }
   return undefined;
 }
