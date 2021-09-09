@@ -5,7 +5,7 @@ const npm = require('npm');
 function isInstalled(npmPackage) {
   // TODO check installed version
   try {
-    const path = require.resolve('tagspaces-common-index');
+    const path = require.resolve('tagspaces-platforms');
     if (!fs.existsSync(pathLib.join(path, '..', 'node_modules'))) {
       return false;
     }

@@ -16607,10 +16607,10 @@ table@^5.0.0, table@^5.2.3:
     slice-ansi "^2.1.0"
     string-width "^3.0.0"
 
-tagspaces-common-index@^1.0.26:
-  version "1.0.26"
-  resolved "https://registry.yarnpkg.com/tagspaces-common-index/-/tagspaces-common-index-1.0.26.tgz#f127b00a414f9081f7955eb4bf50cd81ad7a04c3"
-  integrity sha512-lnVRypRaE5A9w9WhCAU7M0uN20TiLn7RF0h6aSWAYRkum8PgItHte5BkjEnHXsyrmBlOi4VBuv9BF8tbuLvdzA==
+tagspaces-platforms@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/tagspaces-platforms/-/tagspaces-platforms-1.0.1.tgz#00e2d6806c0a4c97e2490c9c2e0fefbadcdce830"
+  integrity sha512-jPUcqcWmtPv8rzZmTRnWhP1kuFyWMpRVIxm2FU2GbXftfkR4sFuv2wTQeXygpItSIqwDRI5t/LZX5ypCsH4wgA==
 
 tapable@^0.1.8:
   version "0.1.10"
