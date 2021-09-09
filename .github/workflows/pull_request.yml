@@ -31,7 +31,8 @@ jobs:
   e2eTestsWin:
     name: Test Desktop App Windows
     runs-on: windows-latest
-
+    env:
+      PD_PLATFORM: node
     steps:
       - name: Checking out default branch
         uses: actions/checkout@v2
@@ -73,6 +74,8 @@ jobs:
   e2eTestsWebWin:
     name: Test Web App Windows
     runs-on: windows-latest
+    env:
+      PD_PLATFORM: web
     steps:
       - name: Checking out default branch
         uses: actions/checkout@v2
