@@ -91,6 +91,8 @@ const SettingsAdvanced = (props: Props) => {
 
   const { classes } = props;
 
+  const geoTaggingFormatDisabled = AppConfig.geoTaggingFormat !== undefined;
+
   return (
     <div style={{ width: '100%' }}>
       <List className={classes.root}>
@@ -157,10 +159,15 @@ const SettingsAdvanced = (props: Props) => {
         <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:geoTaggingFormat')} />
           <Select
-            disabled={AppConfig.geoTaggingFormat !== undefined}
+            disabled={geoTaggingFormatDisabled}
             data-tid="geoTaggingFormatTID"
+            title={
+              geoTaggingFormatDisabled
+                ? i18n.t('core:settingExternallyConfigured')
+                : ''
+            }
             value={
-              AppConfig.geoTaggingFormat !== undefined
+              geoTaggingFormatDisabled
                 ? AppConfig.geoTaggingFormat
                 : props.settings.geoTaggingFormat
             }
@@ -171,7 +178,7 @@ const SettingsAdvanced = (props: Props) => {
           >
             {props.settings.supportedGeoTagging.map(geoTagging => (
               <MenuItem key={geoTagging} value={geoTagging}>
-                {geoTagging}
+                {geoTagging.toUpperCase()}
               </MenuItem>
             ))}
           </Select>
