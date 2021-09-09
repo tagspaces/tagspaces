@@ -615,5 +615,6 @@
   "searchTypeStrict": "Strict",
   "searchTypeStrictTooltip": "Same as semi-strict but case sensitive",
   "warningOpeningFilesExternally": "Show warning on opening files externally",
+  "geoTaggingFormat": "Geo Tagging Format",
   "-": "-"
 }

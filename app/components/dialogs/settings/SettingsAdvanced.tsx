@@ -30,6 +30,9 @@ import EditIcon from '@material-ui/icons/Edit';
 import IconButton from '@material-ui/core/IconButton';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Switch from '@material-ui/core/Switch';
+import Select from '@material-ui/core/Select';
+import Input from '@material-ui/core/Input';
+import MenuItem from '@material-ui/core/MenuItem';
 import i18n from '-/services/i18n';
 import {
   actions as SettingsActions,
@@ -41,6 +44,7 @@ import MapTileServerDialog from '-/components/dialogs/settings/MapTileServerDial
 import { Pro } from '-/pro';
 import { ProLabel } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
+import AppConfig from '-/config';
 
 const styles: any = {
   root: {
@@ -69,6 +73,7 @@ interface Props {
   setSaveTagInLocation: (saveTagInLocation: boolean) => void;
   showResetSettings: (showDialog: boolean) => void;
   tileServers: Array<TS.MapTileServer>;
+  setGeoTaggingFormat: (geoTaggingFormat: string) => void;
 }
 
 const SettingsAdvanced = (props: Props) => {
@@ -85,6 +90,8 @@ const SettingsAdvanced = (props: Props) => {
   };
 
   const { classes } = props;
+
+  const geoTaggingFormatDisabled = AppConfig.geoTaggingFormat !== undefined;
 
   return (
     <div style={{ width: '100%' }}>
@@ -148,6 +155,33 @@ const SettingsAdvanced = (props: Props) => {
             }
             checked={props.settings.saveTagInLocation}
           />
+        </ListItem>
+        <ListItem className={classes.listItem}>
+          <ListItemText primary={i18n.t('core:geoTaggingFormat')} />
+          <Select
+            disabled={geoTaggingFormatDisabled}
+            data-tid="geoTaggingFormatTID"
+            title={
+              geoTaggingFormatDisabled
+                ? i18n.t('core:settingExternallyConfigured')
+                : ''
+            }
+            value={
+              geoTaggingFormatDisabled
+                ? AppConfig.geoTaggingFormat
+                : props.settings.geoTaggingFormat
+            }
+            onChange={(event: any) =>
+              props.setGeoTaggingFormat(event.target.value)
+            }
+            input={<Input id="geoTaggingFormatSelector" />}
+          >
+            {props.settings.supportedGeoTagging.map(geoTagging => (
+              <MenuItem key={geoTagging} value={geoTagging}>
+                {geoTagging.toUpperCase()}
+              </MenuItem>
+            ))}
+          </Select>
         </ListItem>
         <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:tileServerTitle')} />
@@ -234,7 +268,8 @@ function mapActionCreatorsToProps(dispatch) {
       setWarningOpeningFilesExternally:
         SettingsActions.setWarningOpeningFilesExternally,
       setDesktopMode: SettingsActions.setDesktopMode,
-      setSaveTagInLocation: SettingsActions.setSaveTagInLocation
+      setSaveTagInLocation: SettingsActions.setSaveTagInLocation,
+      setGeoTaggingFormat: SettingsActions.setGeoTaggingFormat
     },
     dispatch
   );

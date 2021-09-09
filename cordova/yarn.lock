@@ -127,7 +127,7 @@ concat-map@0.0.1:
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
   integrity sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=
 
-cordova-android@^9.0.0:
+cordova-android@^9.1.0:
   version "9.1.0"
   resolved "https://registry.yarnpkg.com/cordova-android/-/cordova-android-9.1.0.tgz#d60335a2df1e95f83988145e1378a3a1936343ba"
   integrity sha512-bzOX9E4eQsOSpa06oZZ7XAGq3DwB73juhhj0oPqHH/khWk0mkCD4aiVYMFoc0fmIaSQvzbY1ww7L6UBW5pyGfg==

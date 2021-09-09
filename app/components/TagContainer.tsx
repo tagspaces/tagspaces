@@ -26,7 +26,7 @@ import DateIcon from '@material-ui/icons/DateRange';
 import RemoveTagIcon from '@material-ui/icons/Close';
 import { getAllTags } from '-/reducers/taglibrary';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
-import { isPlusCode } from '-/utils/misc';
+import { isGeoTag } from '-/utils/misc';
 import { isDateTimeTag } from '-/utils/dates';
 import { TS } from '-/tagspaces.namespace';
 
@@ -73,13 +73,13 @@ const TagContainer = (props: Props) => {
   let { title } = tag;
 
   // Check if tag is plus code
-  let isGeoTag = false;
+  let isTagGeo = false;
   let isTagDate = false;
   let isDateSmartTag = false;
   let isGeoSmartTag = false;
   if (!tagGroup) {
-    isGeoTag = isPlusCode(title); // || isLatLong
-    isTagDate = !isGeoTag && isDateTimeTag(title);
+    isTagGeo = isGeoTag(title); // || isLatLong
+    isTagDate = !isTagGeo && isDateTimeTag(title);
   }
   if (isTagDate && title.length > 8) {
     title = title.substr(0, 8) + '...';
@@ -207,7 +207,7 @@ const TagContainer = (props: Props) => {
         }}
       >
         <span style={{ flexGrow: 1 }}>
-          {(isGeoTag || isGeoSmartTag) && (
+          {(isTagGeo || isGeoSmartTag) && (
             <PlaceIcon
               style={{
                 color: tag.textcolor,
@@ -226,7 +226,7 @@ const TagContainer = (props: Props) => {
               }}
             />
           )}
-          {!isGeoTag && title}
+          {!isTagGeo && title}
         </span>
         {getActionMenu()}
       </Button>

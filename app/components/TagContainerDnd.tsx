@@ -143,6 +143,10 @@ const boxTarget = {
       if (dragItem.tag.type !== props.tag.type) {
         return;
       }
+      // Skip smart tags drop into another tag
+      if (dragItem.tag.functionality !== undefined) {
+        return;
+      }
       dragItem.tag.position = hoverIndex;
       props.editTagForEntry(props.entryPath, dragItem.tag);
 

@@ -57,6 +57,7 @@ export const types = {
   SET_TAGCOLOR: 'SETTINGS/SET_TAGCOLOR',
   SET_TAGTEXTCOLOR: 'SETTINGS/SET_TAGTEXTCOLOR',
   SET_CURRENTTHEME: 'SETTINGS/SET_CURRENTTHEME',
+  SET_GEO_TAGGING_FORMAT: 'SETTINGS/SET_GEO_TAGGING_FORMAT',
   SWITCH_THEME: 'SETTINGS/SWITCH_THEME',
   SET_KEYBINDING: 'SETTINGS/SET_KEYBINDING',
   SET_GLOBAL_KEYBINDING: 'SETTINGS/SET_GLOBAL_KEYBINDING',
@@ -227,6 +228,9 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_CURRENTTHEME: {
       return { ...state, currentTheme: action.currentTheme };
+    }
+    case types.SET_GEO_TAGGING_FORMAT: {
+      return { ...state, geoTaggingFormat: action.geoTaggingFormat };
     }
     case types.SWITCH_THEME: {
       let currentTheme = 'dark';
@@ -514,6 +518,10 @@ export const actions = {
   setCurrentTheme: (currentTheme: string) => ({
     type: types.SET_CURRENTTHEME,
     currentTheme
+  }),
+  setGeoTaggingFormat: (geoTaggingFormat: string) => ({
+    type: types.SET_GEO_TAGGING_FORMAT,
+    geoTaggingFormat
   }),
   switchTheme: () => ({ type: types.SWITCH_THEME }),
   setKeyBinding: (keyBindingName: string, keyBindingCommand: string) => ({
