@@ -62,7 +62,7 @@ const actions = {
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
     const { settings, taglibrary } = getState();
     let defaultTagLocation;
-    if (settings.geoTaggingFormat === 'MGRS') {
+    if (settings.geoTaggingFormat.toLowerCase() === 'mgrs') {
       defaultTagLocation = mgrs.forward([0, 51.48]);
     } else {
       defaultTagLocation = OpenLocationCode.encode(51.48, 0, undefined);
