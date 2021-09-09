@@ -117,7 +117,8 @@
     "start-chrome-driver": "./node_modules/.bin/chromedriver --url-base=/ --port=9515 --no-sandbox --disable-dev-shm-usage",
     "setup-tests": "node scripts/setup-tests.js",
     "sort-package-json": "npx sort-package-json",
-    "browserslist:update": "npx browserslist@latest --update-db"
+    "browserslist:update": "npx browserslist@latest --update-db",
+    "skip:husky:pre-commit": "node -e \"require('fs').rename('./.git/hooks/pre-commit', './.git/hooks/pre-commit.disabled', function(err) { if (err) console.log(err); console.log('File successfully renamed!') })\""
   },
   "repository": {
     "type": "git",
