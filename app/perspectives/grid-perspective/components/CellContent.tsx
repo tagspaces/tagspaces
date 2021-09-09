@@ -36,7 +36,7 @@ import TagContainerDnd from '-/components/TagContainerDnd';
 import TagContainer from '-/components/TagContainer';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-io';
-import { AppConfig } from '-/config';
+import AppConfig from '-/config';
 import EntryIcon from '-/components/EntryIcon';
 import { TS } from '-/tagspaces.namespace';
 import TaggingActions from '-/reducers/tagging-actions';

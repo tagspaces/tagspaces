@@ -146,24 +146,29 @@ export default (state: Array<TS.Location> = initialState, action: any) => {
 
 export const actions = {
   setDefaultLocations: () => (dispatch: (actions: Object) => void) => {
-    const devicePaths = PlatformIO.getDevicePaths();
-
-    Object.keys(devicePaths).forEach(key => {
-      dispatch(
-        actions.addLocation(
-          {
-            uuid: uuidv1(),
-            type: locationType.TYPE_LOCAL,
-            name: i18n.t(key),
-            path: devicePaths[key],
-            isDefault: AppConfig.isWeb && devicePaths[key] === '/files/', // Used for the web ts demo
-            isReadOnly: false,
-            persistIndex: false
-          },
-          false
-        )
-      );
-    });
+    PlatformIO.getDevicePaths()
+      .then(devicePaths => {
+        if (devicePaths) {
+          Object.keys(devicePaths).forEach(key => {
+            dispatch(
+              actions.addLocation(
+                {
+                  uuid: uuidv1(),
+                  type: locationType.TYPE_LOCAL,
+                  name: i18n.t(key),
+                  path: devicePaths[key],
+                  isDefault: AppConfig.isWeb && devicePaths[key] === '/files/', // Used for the web ts demo
+                  isReadOnly: false,
+                  disableIndexing: false
+                },
+                false
+              )
+            );
+          });
+        }
+        return true;
+      })
+      .catch(ex => console.error(ex));
   },
   addLocation: (location: TS.Location, openAfterCreate: boolean = true) => (
     dispatch: (actions: Object) => void

@@ -24,6 +24,7 @@ import { isPlusCode } from '-/utils/misc';
 import { extractTimePeriod } from '-/utils/dates';
 import { Pro } from '../pro';
 import { TS } from '-/tagspaces.namespace';
+import i18n from 'i18next';
 
 // export type FileTypeGroups = 'images' | 'notes' | 'documents' | 'audio' | 'video' | 'archives';
 
@@ -298,8 +299,11 @@ export default class Search {
     locationContent: Array<TS.FileSystemEntry>,
     searchQuery: TS.SearchQuery
   ): Promise<Array<TS.FileSystemEntry> | []> =>
-    new Promise(resolve => {
+    new Promise((resolve, reject) => {
       console.time('searchtime');
+      if (!locationContent || locationContent.length === 0) {
+        reject(new Error(i18n.t('core:noIndex')));
+      }
       const jmespathQuery = constructjmespathQuery(searchQuery);
       let results = prepareIndex(
         locationContent,

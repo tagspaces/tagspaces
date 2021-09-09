@@ -35,7 +35,7 @@ import { Pro } from '-/pro';
 import { getSelectedEntries, getSelectedTag } from '-/reducers/app';
 import TaggingActions, { defaultTagLocation } from '-/reducers/tagging-actions';
 import { isDateTimeTag } from '-/utils/dates';
-import { AppConfig } from '-/config';
+import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
 import useValidation from '-/utils/useValidation';
 import { getMapTileServer } from '-/reducers/settings';

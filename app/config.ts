@@ -23,7 +23,7 @@ const iOSMatcher = navigator.userAgent.match(/(iPad|iPhone|iPod)/i);
 const isIOS = iOSMatcher && iOSMatcher.length > 0;
 const isAndroid = navigator.userAgent.toLowerCase().includes('android');
 
-export const AppConfig = {
+const AppConfig = {
   tagspacesAppPath: '/tagspaces/',
   metaFolder: '.ts',
   metaFolderFile: 'tsm.json',

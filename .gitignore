@@ -79,7 +79,10 @@ web/node_modules
 web/LICENSE.txt
 web/third-party.txt
 web/sw-config.js
+web/EULA.txt
 
+.env
+app/config
 app/extconfig*
 web/extconfig*
 cordova/www/extconfig.js

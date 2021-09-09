@@ -14,9 +14,9 @@ import chalk from 'chalk';
 import merge from 'webpack-merge';
 import { spawn, execSync } from 'child_process';
 import baseConfig from './webpack.config.base';
-import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
+// import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 
-CheckNodeEnv('development');
+// CheckNodeEnv('development');
 
 const targetPlatform = 'electron-io'; // electron-io | webdav-io | cordova-io | process.env.APP_TARGET ||
 

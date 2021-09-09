@@ -74,7 +74,7 @@ import { Pro } from '../pro';
 import SearchMenu from './menus/SearchMenu';
 import { formatDateTime, extractTimePeriod } from '-/utils/dates';
 import { isPlusCode, parseLatLon } from '-/utils/misc';
-import { AppConfig } from '-/config';
+import AppConfig from '-/config';
 import { actions as SearchActions, getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';

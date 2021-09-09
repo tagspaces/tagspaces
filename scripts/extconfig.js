@@ -7,6 +7,7 @@ window.ExtLightThemeMainColor = '#3bc8ff';
 window.ExtDarkThemeLightColor = '#a6def4';
 window.ExtDarkThemeMainColor = '#3bc8ff';
 window.ExtIsFirstRun = false;
+window.ExtUseGenerateThumbnails = true;
 window.ExtLocations = [
   {
     uuid: '30565f09-c7fd-2333-fc67-a75db27rt5ba', // an unique id of the location
@@ -19,7 +20,7 @@ window.ExtLocations = [
     // region: 'eu-central-1', // the AWS region
     isDefault: false, // if true this location will be loaded by the application start
     isReadOnly: false, // if true the user interface of the application turns to read-only mode
-    persistIndex: false, // if true the search index will be persisted and loaded by default on location opening
+    disableIndexing: false, // if true the search index will be persisted and loaded by default on location opening
     fullTextIndex: false, // activated the full-text search for TXT, MD and HTML files
     watchForChanges: false // activates the watching for changed files in the current location
   }

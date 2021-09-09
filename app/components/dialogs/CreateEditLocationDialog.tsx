@@ -118,8 +118,8 @@ const CreateEditLocationDialog = (props: Props) => {
   const [watchForChanges, setWatchForChanges] = useState<boolean>(
     location ? location.watchForChanges : false
   );
-  const [persistIndex, setPersistIndex] = useState<boolean>(
-    location ? location.persistIndex : false
+  const [disableIndexing, setIndexDisable] = useState<boolean>(
+    location ? location.disableIndexing : false
   );
   const [fullTextIndex, setFullTextIndex] = useState<boolean>(
     location ? location.fullTextIndex : false
@@ -267,7 +267,7 @@ const CreateEditLocationDialog = (props: Props) => {
           paths: [path],
           isDefault,
           isReadOnly,
-          persistIndex,
+          disableIndexing,
           fullTextIndex,
           watchForChanges,
           maxIndexAge,
@@ -288,7 +288,7 @@ const CreateEditLocationDialog = (props: Props) => {
           region,
           isDefault,
           isReadOnly,
-          persistIndex,
+          disableIndexing,
           fullTextIndex,
           watchForChanges: false,
           maxIndexAge,
@@ -533,17 +533,17 @@ const CreateEditLocationDialog = (props: Props) => {
               control={
                 <Switch
                   disabled={!Pro}
-                  data-tid="changePersistIndex"
-                  name="persistIndex"
-                  checked={persistIndex}
+                  data-tid="disableIndexingTID"
+                  name="disableIndexing"
+                  checked={disableIndexing}
                   onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                    setPersistIndex(event.target.checked)
+                    setIndexDisable(event.target.checked)
                   }
                 />
               }
               label={
                 <>
-                  {i18n.t('core:persistIndexSwitch')}
+                  {i18n.t('core:disableIndexing')}
                   <ProLabel />
                 </>
               }

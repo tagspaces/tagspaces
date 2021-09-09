@@ -153,7 +153,21 @@ export async function startTestingApp(extconfig) {
     const { _electron: electron } = require('playwright');
     // Launch Electron app.
     global.app = await electron.launch({
-      args: [pathLib.join(__dirname, '..', '..', 'app', 'main.prod.js')]
+      args: [
+        pathLib.join(__dirname, '..', '..', 'app', 'main.prod.js'),
+        // `--user-data-dir=${tempDir.path}`,
+        '--no-sandbox',
+        '--whitelisted-ips',
+        // '--enable-logging', // after enabling cmd windows appears in Windows
+        '--ignore-certificate-errors',
+        '--ignore-ssl-errors',
+        '--disable-dev-shm-usage'
+      ],
+      env: {
+        ELECTRON_ENABLE_LOGGING: true,
+        ELECTRON_ENABLE_STACK_DUMPING: true,
+        NODE_ENV: 'test'
+      }
     });
 
     // Get the first window that the app opens, wait if necessary.

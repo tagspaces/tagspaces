@@ -26,16 +26,22 @@ import {
 } from 'electron';
 import windowStateKeeper from 'electron-window-state';
 import path from 'path';
+import fs from 'fs-extra';
+import pm2 from '@elife/pm2';
+import propertiesReader from 'properties-reader';
 import i18n from '-/services/i18n'; // '-/i18nBackend';
 import buildTrayIconMenu from '-/electron-tray-menu';
 import buildDesktopMenu from '-/services/electron-menus';
+import Settings from '-/settings';
 
 // delete process.env.ELECTRON_ENABLE_SECURITY_WARNINGS;
 // process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
 
 const isMac = process.platform === 'darwin';
 let mainWindow = null;
-(global as any).splashWorkerWindow = null;
+// (global as any).splashWorkerWindow = null;
+
+const testMode = process.env.NODE_ENV === 'test';
 
 if (process.env.NODE_ENV === 'production') {
   // eslint-disable-next-line
@@ -44,13 +50,30 @@ if (process.env.NODE_ENV === 'production') {
   console.log = () => {};
   console.time = () => {};
   console.timeEnd = () => {};
+} else if (testMode) {
+  const dir = path.join(__dirname, '..', 'tests', 'test-reports');
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  const logFile = fs.createWriteStream(path.join(dir, 'log.txt'), {
+    flags: 'a' // 'w'
+  });
+  console.error = function(d, ex) {
+    logFile.write(d + '\n');
+    if (ex) {
+      logFile.write(ex.stack + '\n');
+    }
+  };
+  console.log = console.error;
+  console.debug = console.error;
+  console.log('Environment testMode:' + testMode); // + ' process.env.NODE_ENV:'+process.env.NODE_ENV);
+  // console.log('Env:' + JSON.stringify(process.env));
 }
 
 // let debugMode;
 let startupFilePath;
 let portableMode;
 
-const testMode = process.env.NODE_ENV === 'test';
 const devMode =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
@@ -90,7 +113,7 @@ process.argv.forEach((arg, count) => {
 });
 
 let mainHTML = `file://${__dirname}/app.html`;
-let workerDevMode = false;
+const workerDevMode = false;
 
 if (devMode || testMode) {
   // eslint-disable-next-line
@@ -101,6 +124,8 @@ if (devMode || testMode) {
   // workerDevMode = true; // hide worker window in dev mode
   mainHTML = `file://${__dirname}/appd.html`;
 }
+// const log = require('electron-log');
+// console.log = log.log;
 
 // if (process.platform === 'linux') {
 //   app.commandLine.appendSwitch('disable-gpu'); // Fix the freezing the app with a black box on dnd https://github.com/electron/electron/issues/12820
@@ -327,30 +352,30 @@ function buildAppMenu() {
       openNextFile: getNextFile,
       openPrevFile: getPreviousFile,
       quitApp: reloadApp,
-      showCreateDirectoryDialog: showCreateDirectoryDialog,
-      toggleOpenLinkDialog: toggleOpenLinkDialog,
-      openLocationManagerPanel: openLocationManagerPanel,
-      openTagLibraryPanel: openTagLibraryPanel,
-      goBack: goBack,
-      goForward: goForward,
-      setZoomResetApp: setZoomResetApp,
-      setZoomInApp: setZoomInApp,
-      setZoomOutApp: setZoomOutApp,
-      exitFullscreen: exitFullscreen,
-      toggleSettingsDialog: toggleSettingsDialog,
-      openHelpFeedbackPanel: openHelpFeedbackPanel,
-      toggleKeysDialog: toggleKeysDialog,
-      toggleOnboardingDialog: toggleOnboardingDialog,
-      openURLExternally: openURLExternally,
-      toggleLicenseDialog: toggleLicenseDialog,
-      toggleThirdPartyLibsDialog: toggleThirdPartyLibsDialog,
-      toggleAboutDialog: toggleAboutDialog
+      showCreateDirectoryDialog,
+      toggleOpenLinkDialog,
+      openLocationManagerPanel,
+      openTagLibraryPanel,
+      goBack,
+      goForward,
+      setZoomResetApp,
+      setZoomInApp,
+      setZoomOutApp,
+      exitFullscreen,
+      toggleSettingsDialog,
+      openHelpFeedbackPanel,
+      toggleKeysDialog,
+      toggleOnboardingDialog,
+      openURLExternally,
+      toggleLicenseDialog,
+      toggleThirdPartyLibsDialog,
+      toggleAboutDialog
     },
     i18n
   );
 }
 
-function createSplashWorker() {
+/* function createSplashWorker() {
   // console.log('Dev ' + process.env.NODE_ENV + ' worker ' + showWorkerWindow);
   (global as any).splashWorkerWindow = new BrowserWindow({
     show: workerDevMode,
@@ -379,7 +404,7 @@ function createSplashWorker() {
     } catch (err) {
       console.warn('Error closing the splash window. ' + err);
     }
-    createSplashWorker();
+    // createSplashWorker();
   });
 
   // electron-io actions
@@ -397,7 +422,7 @@ function createSplashWorker() {
     }
     event.returnValue = workerAvailable;
   });
-}
+} */
 
 async function createAppWindow() {
   let startupParameter = '';
@@ -431,9 +456,9 @@ async function createAppWindow() {
     }
   });
 
-  /*setTimeout(() => {
+  /* setTimeout(() => {
     mainWindow.toggleDevTools(); // debugging
-  }, 2000);*/
+  }, 2000); */
 
   const winUserAgent =
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36';
@@ -452,7 +477,7 @@ async function createAppWindow() {
       throw new Error('"mainWindow" is not defined');
     }
     // mainWindow.show();
-    (global as any).splashWorkerWindow.hide(); // Comment for easy debugging of the worker (global as any).splashWorkerWindow.show();
+    // (global as any).splashWorkerWindow.hide(); // Comment for easy debugging of the worker (global as any).splashWorkerWindow.show();
     if (portableMode) {
       mainWindow.setTitle(mainWindow.title + ' Portable 🔌');
     }
@@ -465,42 +490,45 @@ async function createAppWindow() {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null;
-    try {
+    /* try {
       (global as any).splashWorkerWindow.close();
       (global as any).splashWorkerWindow = null;
     } catch (err) {
       // console.warn('Error closing the splash window. ' + err);
-    }
+    } */
   });
 
   mainWindow.webContents.on('crashed', () => {
-    const options = {
+    /* const options = {
       type: 'info',
       title: 'Renderer Process Crashed',
       message: 'This process has crashed.',
       buttons: ['Reload', 'Close']
-    };
+    }; */
 
-    if (!mainWindow) {
-      globalShortcut.unregisterAll();
-      return;
-    }
+    // if (!mainWindow) {
+    pm2.stopAll();
+    globalShortcut.unregisterAll();
+    app.quit();
 
-    dialog.showMessageBox(mainWindow, options).then(dialogResponse => {
+    // }
+
+    /* dialog.showMessageBox(mainWindow, options).then(dialogResponse => {
       mainWindow.hide();
       if (dialogResponse.response === 0) {
-        mainWindow.loadURL(mainHTML); //reloadApp();
+        mainWindow.loadURL(mainHTML); // reloadApp();
       } else {
         mainWindow.close();
         globalShortcut.unregisterAll();
       }
-    });
+    }); */
   });
 }
 
 app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required'); // Fix broken autoplay functionality in the av player
 
 app.on('window-all-closed', () => {
+  pm2.stopAll();
   globalShortcut.unregisterAll();
   app.quit();
 });
@@ -514,16 +542,67 @@ app.on('ready', async () => {
   }
 
   // if (!process.env.DISABLE_WORKER) {
-  createSplashWorker();
-  //}
-  buildAppMenu();
-  await createAppWindow();
-  buildTrayMenu();
+  // createSplashWorker();
+  // }
+  try {
+    buildAppMenu();
+    await createAppWindow();
+    buildTrayMenu();
+  } catch (ex) {
+    console.log('buildMenus', ex);
+  }
+
+  try {
+    let filepath;
+    let script;
+    let envPath;
+    if (devMode || testMode) {
+      filepath = path.join(__dirname, 'node_modules/tagspaces-ws');
+      script = 'index.js';
+      envPath = path.join(__dirname, '.env');
+    } else {
+      filepath = process.resourcesPath;
+      script = 'app.asar/node_modules/tagspaces-ws/index.js';
+      envPath = path.join(process.resourcesPath, 'app.asar/.env');
+    }
+    const properties = propertiesReader(envPath);
+
+    pm2.start(
+      {
+        name: 'Tagspaces WS',
+        script, // Script to be run
+        cwd: filepath, // './node_modules/tagspaces-ws', // './process1', cwd: '/path/to/npm/module/',
+        args: ['-p', Settings.wsPort, '-k', properties.get('KEY')], // '/Users/sytolk/Pictures'],
+        restartAt: []
+        // log: path.join(process.cwd(), 'thumbGen.log') //  'C:\\Users\\smari\\IdeaProjects\\tagspaces-utils\\process1.log'
+        // log: '/Users/sytolk/IdeaProjects/tagspaces/process1.log' // path.join(process.cwd(), 'process1.log'),
+        // log: 'process1.log' // path.join(process.cwd(), 'process1.log'),
+      },
+      (err, pid) => {
+        if (err && pid) {
+          if (pid && pid.name) console.error(pid.name, err, pid);
+          else console.error(err, pid);
+        } else if (err) {
+          console.error('start WS crashed', err);
+        } else {
+          console.log(
+            `Starting ${pid.name} on ${pid.cwd} - pid (${pid.child.pid})`
+          );
+        }
+      }
+    );
+  } catch (ex) {
+    console.error('pm2.start Exception:', ex);
+  }
 
   i18n.on('languageChanged', lng => {
-    console.log('languageChanged:' + lng);
-    buildAppMenu();
-    buildTrayMenu();
+    try {
+      console.log('languageChanged:' + lng);
+      buildAppMenu();
+      buildTrayMenu();
+    } catch (ex) {
+      console.log('languageChanged', ex);
+    }
   });
 
   ipcMain.on('show-main-window', () => {
@@ -541,27 +620,25 @@ app.on('ready', async () => {
     }
   });
 
-  ipcMain.on('get-device-paths', event => {
-    event.returnValue = {
-      desktopFolder: app.getPath('desktop'),
-      documentsFolder: app.getPath('documents'),
-      downloadsFolder: app.getPath('downloads'),
-      musicFolder: app.getPath('music'),
-      picturesFolder: app.getPath('pictures'),
-      videosFolder: app.getPath('videos')
-    };
-  });
+  ipcMain.handle('get-device-paths', () => ({
+    desktopFolder: app.getPath('desktop'),
+    documentsFolder: app.getPath('documents'),
+    downloadsFolder: app.getPath('downloads'),
+    musicFolder: app.getPath('music'),
+    picturesFolder: app.getPath('pictures'),
+    videosFolder: app.getPath('videos')
+  }));
 
   ipcMain.on('get-user-home-path', event => {
     event.returnValue = app.getPath('home');
   });
 
-  ipcMain.on('worker', (event, arg) => {
+  /* ipcMain.on('worker', (event, arg) => {
     // console.log('worker event in main.' + arg.result.length);
     if ((global as any).splashWorkerWindow) {
       (global as any).splashWorkerWindow.webContents.send('worker', arg);
     }
-  });
+  }); */
 
   ipcMain.on('worker-response', (event, arg) => {
     // console.log('worker event in main.' + arg.result.length);
@@ -584,16 +661,16 @@ app.on('ready', async () => {
     return false;
   });
 
-  ///// end electron-io
+  // /// end electron-io
 
-  ipcMain.on('setSplashVisibility', (event, arg) => {
+  /* ipcMain.on('setSplashVisibility', (event, arg) => {
     // worker window needed to be visible for the PDF tmb generation
     // console.log('worker event in main: ' + arg.visibility);
     if ((global as any).splashWorkerWindow && arg.visibility) {
       (global as any).splashWorkerWindow.show();
       // arg.visibility ? global.splashWorkerWindow.show() : global.splashWorkerWindow.hide();
     }
-  });
+  }); */
 
   ipcMain.on('app-data-path-request', event => {
     event.returnValue = app.getPath('appData'); // eslint-disable-line
@@ -603,13 +680,32 @@ app.on('ready', async () => {
     event.returnValue = app.getVersion(); // eslint-disable-line
   });
 
+  /*
   ipcMain.on('app-dir-path-request', event => {
     event.returnValue = path.join(__dirname, ''); // eslint-disable-line
   });
+  */
 
-  ipcMain.on('move-to-trash', async (event, files) => {
+  ipcMain.handle('move-to-trash', async (event, files) => {
     const result = [];
     files.forEach(fullPath => {
+      // console.debug('Trash:' + fullPath);
+      result.push(shell.trashItem(fullPath));
+    });
+
+    let ret;
+    try {
+      ret = await Promise.all(result);
+    } catch (err) {
+      console.error('moveToTrash ' + JSON.stringify(files) + 'error:', err);
+    }
+    return ret;
+  });
+
+  /* ipcMain.on('move-to-trash', async (event, files) => {
+    const result = [];
+    files.forEach(fullPath => {
+      console.debug('Trash:' + fullPath);
       result.push(shell.trashItem(fullPath));
     });
     try {
@@ -618,7 +714,7 @@ app.on('ready', async () => {
       console.error('moveToTrash error:', err);
       event.returnValue = undefined;
     }
-  });
+  }); */
 
   ipcMain.on('set-language', (e, language) => {
     i18n.changeLanguage(language);

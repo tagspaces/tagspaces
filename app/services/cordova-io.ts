@@ -417,7 +417,7 @@ export default class CordovaIO {
 
   // Platform API
 
-  getDevicePaths = (): Object => {
+  getDevicePaths = (): Promise<Object> => {
     let paths;
     if (AppConfig.isCordovaiOS) {
       paths = {
@@ -434,15 +434,15 @@ export default class CordovaIO {
         SDCard: 'sdcard/' // cordova.file.externalRootDirectory
       };
     }
-    return paths;
+    return Promise.resolve(paths);
   };
 
-  getUserHomePath = (): string => '/';
+  /* getUserHomePath = (): string => '/';
 
   getAppDataPath = () => {
     // const appDataPath = ipcRenderer.sendSync('app-data-path-request', 'notNeededArgument');
     // return appDataPath;
-  };
+  }; */
 
   handleStartParameters = () => {
     if (this.urlFromIntent !== undefined && this.urlFromIntent.length > 0) {

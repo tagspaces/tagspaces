@@ -23,6 +23,7 @@ import {
   getGridFileSelector,
   isDisplayed,
   isElementDisplayed,
+  reloadDirectory,
   removeTagFromTagMenu,
   selectorFile,
   selectorFolder,
@@ -68,14 +69,14 @@ describe('TST50** - Right button on a file', () => {
     // Check if the file is opened
     // await delay(1500);
     await expectElementExist('#FileViewer', true, 2000);
-    const webViewer = await global.client.$('#FileViewer');
+    const webViewer = await global.client.waitForSelector('#FileViewer');
     // await webViewer.waitForDisplayed();
     //await delay(5000);
     // expect(await webViewer.isDisplayed()).toBe(true);
     const iframe = await webViewer.contentFrame();
     // await global.client.switchToFrame(webViewer);
-    const iframeBody = await iframe.$('body');
-    await isElementDisplayed(iframeBody);
+    // await isElementDisplayed(iframeBody,'body');
+    const iframeBody = await iframe.waitForSelector('body');
     const bodyTxt = await iframeBody.innerText();
     const containTID = toContainTID(bodyTxt);
     if (!containTID) {
@@ -128,6 +129,10 @@ describe('TST50** - Right button on a file', () => {
     // Select file
     await clickOn(selectorFile);
     await AddRemoveTagsToSelectedFiles([testTagName], true);
+    await expectElementExist(
+      selectorFile + '[1]//div[@id="gridCellTags"]//button[1]',
+      true
+    );
     await expectTagsExistBySelector(selectorFile, [testTagName], true);
 
     /*await AddRemoveTagsToFile(perspectiveGridTable + firstFile, [testTagName], {
@@ -138,7 +143,12 @@ describe('TST50** - Right button on a file', () => {
     await global.client.dblclick('[data-tid=editTagEntryDialog_input] input');
     await setInputKeys('editTagEntryDialog_input', testTagName + 'Edited');
     await clickOn('[data-tid=confirmEditTagEntryDialog]');
-    await waitForNotification();
+    // await waitForNotification();
+
+    await expectElementExist(
+      selectorFile + '[1]//div[@id="gridCellTags"]//button[1]',
+      true
+    );
 
     await expectTagsExistBySelector(
       selectorFile,
@@ -149,6 +159,13 @@ describe('TST50** - Right button on a file', () => {
     //cleanup
     await clickOn(selectorFile);
     await AddRemoveTagsToSelectedFiles([testTagName + 'Edited'], false);
+
+    await expectElementExist(
+      selectorFile + '[1]//div[@id="gridCellTags"]//button',
+      false,
+      1500
+    );
+
     await expectTagsExistBySelector(
       selectorFile,
       [testTagName + 'Edited'],
@@ -161,10 +178,18 @@ describe('TST50** - Right button on a file', () => {
     // select file
     await clickOn(selectorFile);
     await AddRemoveTagsToSelectedFiles([testTagName], true);
+    await expectElementExist(
+      selectorFile + '[1]//div[@id="gridCellTags"]//button[1]',
+      true
+    );
     await expectTagsExistBySelector(selectorFile, [testTagName], true);
 
     await removeTagFromTagMenu(testTagName);
 
+    await expectElementExist(
+      selectorFile + '[1]//div[@id="gridCellTags"]//button[1]',
+      false
+    );
     await expectTagsExistBySelector(selectorFile, [testTagName], false);
   });
 
@@ -219,7 +244,7 @@ describe('TST50** - Right button on a file', () => {
     await clickOn(getGridFileSelector(fileName + '.' + fileExt));
     await AddRemoveTagsToSelectedFiles(tags, true);
 
-    let gridElement = await global.client.$(
+    let gridElement = await global.client.waitForSelector(
       getGridFileSelector(generateFileName(fileName, fileExt, tags, ' '))
     );
     gridElement = await gridElement.$('..');
@@ -230,7 +255,7 @@ describe('TST50** - Right button on a file', () => {
     await gridElement.click();
     await AddRemoveTagsToSelectedFiles(tags, false);
 
-    gridElement = await global.client.$(
+    gridElement = await global.client.waitForSelector(
       getGridFileSelector(fileName + '.' + fileExt)
     );
     gridElement = await gridElement.$('..');
@@ -313,6 +338,8 @@ describe('TST50** - Right button on a file', () => {
     await expectElementExist(selectorFile, true);
     await deleteFileFromMenu();
     await expectElementExist(selectorFile, false);
+    await reloadDirectory();
+    await expectElementExist(selectorFile, false);
   });
 
   it.skip('TST5029 - Add file from file manager with dnd [manual]', async () => {});
@@ -320,6 +347,7 @@ describe('TST50** - Right button on a file', () => {
   test('TST5033 - Open directory (directory menu) [web,minio,electron]', async () => {
     // open empty_folder
     await openContextEntryMenu(selectorFolder, 'openDirectory');
+    // await global.client.screenshot({ path: 'screenshotTST5033.png' });
     await expectElementExist(selectorFile, false);
     //const firstFileName = await getGridFileName(0);
     //expect(firstFileName).toBe(undefined); //'sample.eml');
@@ -389,15 +417,18 @@ describe('TST50** - Right button on a file', () => {
 
     //Open folder
     await global.client.dblclick(selectorFolder);
-
+    // await global.client.screenshot({ path: 'screenshotTST5038.png' });
     await expectElementExist(selectorFolder, false);
     await clickOn('[data-tid=gridPerspectiveOnBackButton]');
     await expectElementExist(selectorFolder);
   });
 
   test('TST5039 - Changing the Perspective View [web,minio,electron]', async () => {
-    await isDisplayed('[data-tid=perspectiveGridFileTable]');
-    const grid = await global.client.$('[data-tid=perspectiveGridFileTable]');
+    // await isDisplayed('[data-tid=perspectiveGridFileTable]', true);
+    // await global.client.screenshot({ path: 'screenshotTST5039.png' });
+    const grid = await global.client.waitForSelector(
+      '[data-tid=perspectiveGridFileTable]'
+    );
     let gridStyle = await grid.getAttribute('style');
 
     expect(gridStyle).toContain(

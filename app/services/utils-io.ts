@@ -17,6 +17,11 @@
  */
 
 import uuidv1 from 'uuid';
+import {
+  loadIndex,
+  persistIndex,
+  createIndex
+} from 'tagspaces-platforms/indexer';
 import { saveAs } from 'file-saver';
 import micromatch from 'micromatch';
 import PlatformIO from './platform-io';
@@ -35,11 +40,33 @@ import {
 } from '-/utils/paths';
 import i18n from '../services/i18n';
 import versionMeta from '../version.json';
-import { getThumbnailURLPromise } from '-/services/thumbsgenerator';
+// import { getThumbnailURLPromise } from '-/services/thumbsgenerator';
 import { OpenedEntry, actions as AppActions } from '-/reducers/app';
 import { getLocation } from '-/reducers/locations';
 import { TS } from '-/tagspaces.namespace';
 import { locationType, prepareTagForExport } from '-/utils/misc';
+import {
+  getThumbnailURLPromise,
+  supportedContainers,
+  supportedText,
+  supportedVideos
+} from '-/services/thumbsgenerator';
+
+const supportedImgsWS = [
+  'jpg',
+  'jpeg',
+  'jif',
+  'jfif',
+  'png',
+  'gif',
+  'svg',
+  'tif',
+  'tiff',
+  'ico',
+  'webp',
+  'psd'
+  // 'bmp' currently electron main processed: https://github.com/lovell/sharp/issues/806
+];
 
 export function enhanceDirectoryContent(
   dirEntries,
@@ -76,11 +103,23 @@ export function enhanceDirectoryContent(
       enhancedEntry.isFile && // only for files
       useGenerateThumbnails // enabled in the settings
     ) {
-      const isPDF = enhancedEntry.path.endsWith('.pdf');
-      if (isWorkerAvailable && !isPDF) {
+      // const isPDF = enhancedEntry.path.endsWith('.pdf');
+      if (
+        isWorkerAvailable &&
+        supportedImgsWS.includes(enhancedEntry.extension)
+      ) {
+        // !isPDF) {
         tmbGenerationList.push(enhancedEntry.path);
-      } else {
+      } else if (
+        supportedContainers.includes(enhancedEntry.extension) ||
+        supportedText.includes(enhancedEntry.extension) ||
+        supportedVideos.includes(enhancedEntry.extension)
+      ) {
         tmbGenerationPromises.push(getThumbnailURLPromise(enhancedEntry.path));
+      } else {
+        console.debug(
+          'Unsupported thumbgeneration ext:' + enhancedEntry.extension
+        );
       }
     }
     return true;
@@ -194,6 +233,14 @@ export function prepareDirectoryContent(
   const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
 
   function useGenerateThumbnails() {
+    if (
+      directoryPath.endsWith(AppConfig.dirSeparator + AppConfig.metaFolder) ||
+      directoryPath.endsWith(
+        AppConfig.dirSeparator + AppConfig.metaFolder + AppConfig.dirSeparator
+      )
+    ) {
+      return false; // dont generate thumbnails in meta folder
+    }
     if (AppConfig.useGenerateThumbnails !== undefined) {
       return AppConfig.useGenerateThumbnails;
     }
@@ -241,16 +288,17 @@ export function prepareDirectoryContent(
     );
   }
 
-  if (generateThumbnails) {
-    dispatch(AppActions.setGeneratingThumbnails(false));
+  if (
+    generateThumbnails &&
+    (tmbGenerationList.length > 0 || tmbGenerationPromises.length > 0)
+  ) {
+    dispatch(AppActions.setGeneratingThumbnails(true));
     if (tmbGenerationList.length > 0) {
-      dispatch(AppActions.setGeneratingThumbnails(true));
       PlatformIO.createThumbnailsInWorker(tmbGenerationList)
         .then(handleTmbGenerationResults)
         .catch(handleTmbGenerationFailed);
     }
     if (tmbGenerationPromises.length > 0) {
-      dispatch(AppActions.setGeneratingThumbnails(true));
       Promise.all(tmbGenerationPromises)
         .then(handleTmbGenerationResults)
         .catch(handleTmbGenerationFailed);
@@ -388,10 +436,17 @@ export function getPrevFile(
 }
 
 export function createDirectoryIndex(
-  directoryPath: string,
+  param: string | any,
   extractText: boolean = false,
-  ignorePatterns: Array<string>
+  ignorePatterns: Array<string> = []
+  // disableIndexing = true
 ): Promise<Array<TS.FileSystemEntry>> {
+  let directoryPath;
+  if (typeof param === 'object' && param !== null) {
+    directoryPath = param.path;
+  } else {
+    directoryPath = param;
+  }
   const dirPath = cleanTrailingDirSeparator(directoryPath);
   if (PlatformIO.isWorkerAvailable() && !PlatformIO.haveObjectStoreSupport()) {
     // Start indexing in worker if not in the object store mode
@@ -399,10 +454,29 @@ export function createDirectoryIndex(
       dirPath,
       extractText,
       ignorePatterns
-    );
+    ).then(succeeded => {
+      if (succeeded) {
+        return loadIndex(dirPath);
+      }
+      return undefined;
+    });
   }
 
-  const SearchIndex = [];
+  return createIndex(param, extractText, ignorePatterns)
+    .then(directoryIndex =>
+      persistIndex(param, directoryIndex).then(success => {
+        if (success) {
+          console.log('Index generated in folder: ' + directoryPath);
+          return directoryIndex;
+        }
+        return undefined;
+      })
+    )
+    .catch(err => {
+      console.error('Error creating index: ', err);
+    });
+
+  /* const SearchIndex = [];
 
   // eslint-disable-next-line compat/compat
   return new Promise((resolve, reject) => {
@@ -443,6 +517,9 @@ export function createDirectoryIndex(
               SearchIndex.length
           );
           console.timeEnd('createDirectoryIndex');
+          if (persist) {
+            persistIndex(dirPath, SearchIndex);
+          }
           resolve(SearchIndex);
           return true;
         })
@@ -453,7 +530,7 @@ export function createDirectoryIndex(
           reject(err);
         });
     }, 2000);
-  });
+  }); */
 }
 
 export function walkDirectory(

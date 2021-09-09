@@ -1053,11 +1053,11 @@ export const actions = {
     type: types.UPDATE_THUMB_URLS,
     tmbURLs
   }),
-  // setGeneratingThumbnails: (isGeneratingThumbs: boolean) => ({
-  //   type: types.SET_GENERATING_THUMBNAILS,
-  //   isGeneratingThumbs
-  // }),
-  setGeneratingThumbnails: (isGeneratingThumbs: boolean) => (
+  setGeneratingThumbnails: (isGeneratingThumbs: boolean) => ({
+    type: types.SET_GENERATING_THUMBNAILS,
+    isGeneratingThumbs
+  }),
+  /* setGeneratingThumbnails: (isGeneratingThumbs: boolean) => (
     dispatch: (actions: Object) => void
   ) => {
     dispatch(actions.hideNotifications());
@@ -1079,7 +1079,7 @@ export const actions = {
       //   )
       // );
     }
-  },
+  }, */
   /* setLastSelectedEntry: (entryPath: string | null) => ({
     type: types.SET_LAST_SELECTED_ENTRY,
     entryPath
