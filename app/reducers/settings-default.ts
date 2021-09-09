@@ -161,12 +161,14 @@ export default {
   tagTextColor: 'white',
   tagBackgroundColor: '#61DD61',
   currentTheme: 'light',
+  geoTaggingFormat: 'pluscodes',
   enableGlobalKeyboardShortcuts: true,
   zoomFactor: 1,
   lastPublishedVersion: '',
   entryPropertiesSplitSize: 103,
   leftVerticalSplitSize: 350,
   mainVerticalSplitSize: '50%',
+  supportedGeoTagging: ['pluscodes', 'mgrs'],
   supportedThemes: ['light', 'dark'],
   supportedLanguages: [
     {

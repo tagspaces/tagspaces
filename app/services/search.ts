@@ -20,7 +20,7 @@
 import Fuse from 'fuse.js';
 import jmespath from 'jmespath';
 import OpenLocationCode from 'open-location-code-typescript';
-import { isPlusCode } from '-/utils/misc';
+import { isGeoTag, parseGeoLocation } from '-/utils/misc';
 import { extractTimePeriod } from '-/utils/dates';
 import { Pro } from '../pro';
 import { TS } from '-/tagspaces.namespace';
@@ -236,10 +236,9 @@ function prepareIndex(
           ...tag
         };
         try {
-          if (isPlusCode(tag.title)) {
-            const coord = OpenLocationCode.decode(tag.title);
-            lat = Number(coord.latitudeCenter.toFixed(7));
-            lon = Number(coord.longitudeCenter.toFixed(7));
+          const location = parseGeoLocation(tag.title);
+          if (location !== undefined) {
+            ({ lat, lon } = location);
           }
           const { fromDateTime, toDateTime } = extractTimePeriod(tag.title);
           if (fromDateTime && toDateTime) {

@@ -52,7 +52,6 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import OpenLocationCode from 'open-location-code-typescript';
 // import { FormControlLabel, Switch } from '@material-ui/core';
 import TagsSelect from './TagsSelect';
 import CustomLogo from './CustomLogo';
@@ -73,7 +72,7 @@ import { FileTypeGroups } from '-/services/search';
 import { Pro } from '../pro';
 import SearchMenu from './menus/SearchMenu';
 import { formatDateTime, extractTimePeriod } from '-/utils/dates';
-import { isPlusCode, parseLatLon } from '-/utils/misc';
+import { parseGeoLocation, parseLatLon } from '-/utils/misc';
 import AppConfig from '-/config';
 import { actions as SearchActions, getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
@@ -377,28 +376,28 @@ const Search = (props: Props) => {
     const { target } = event;
     const { value } = target;
     let lat = null;
-    let lon = null;
+    let lng = null;
     let tagPHelper;
 
-    if (isPlusCode(value)) {
-      const coord = OpenLocationCode.decode(value);
-      lat = Number(coord.latitudeCenter.toFixed(7));
-      lon = Number(coord.longitudeCenter.toFixed(7));
+    const location = parseGeoLocation(value);
+    if (location !== undefined) {
+      ({ lat, lng } = location);
     } else {
       const latLon = parseLatLon(value);
       if (latLon) {
-        ({ lat, lon } = latLon);
+        ({ lat } = latLon);
+        lng = latLon.lon;
       }
     }
 
-    if (lat && lon) {
-      tagPHelper = 'Place at lat: ' + lat + ' long: ' + lon;
+    if (lat && lng) {
+      tagPHelper = 'Place at lat: ' + lat + ' long: ' + lng;
     } else {
       tagPHelper = '';
     }
     setTagPlace(value);
     setTagPlaceLat(lat);
-    setTagPlaceLong(lon);
+    setTagPlaceLong(lng);
     setTagPlaceHelper(tagPHelper);
   };
 

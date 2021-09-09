@@ -292,6 +292,7 @@
     "jszip": "^3.1.5",
     "leaflet": "^1.7.1",
     "marked": "^2.0.1",
+    "mgrs": "^1.0.0",
     "open-location-code": "^1.0.3",
     "open-location-code-typescript": "^1.5.0",
     "path": "^0.12.7",

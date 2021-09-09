@@ -30,10 +30,10 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
 import i18n from '-/services/i18n';
-import { isPlusCode } from '-/utils/misc';
+import { isGeoTag } from '-/utils/misc';
 import { Pro } from '-/pro';
 import { getSelectedEntries, getSelectedTag } from '-/reducers/app';
-import TaggingActions, { defaultTagLocation } from '-/reducers/tagging-actions';
+import TaggingActions from '-/reducers/tagging-actions';
 import { isDateTimeTag } from '-/utils/dates';
 import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
@@ -58,6 +58,7 @@ interface Props {
   selectedEntries: Array<TS.FileSystemEntry>;
   selectedTag: TS.Tag;
   tileServer: TS.MapTileServer;
+  geoTaggingFormat: string;
 }
 
 const GeoTagEditor = Pro && Pro.UI ? Pro.UI.GeoTagEditor : React.Fragment;
@@ -124,7 +125,7 @@ const EditEntryTagDialog = (props: Props) => {
   }
 
   function renderContent() {
-    const showGeoEditor = GeoTagEditor && isPlusCode(title);
+    const showGeoEditor = GeoTagEditor && isGeoTag(title);
 
     return (
       <DialogContent
@@ -155,8 +156,9 @@ const EditEntryTagDialog = (props: Props) => {
           <GeoTagEditor
             geoTag={title}
             onChange={setTitle}
-            zoom={title === defaultTagLocation ? 2 : undefined}
+            // zoom={title === defaultTagLocation ? 2 : undefined} TODO defaultTagLocation can be in MGRS format
             showAdvancedMode={showAdvancedMode}
+            geoTaggingFormat={props.geoTaggingFormat}
             haveError={haveError}
             setError={setError}
             tileServer={props.tileServer}
@@ -175,7 +177,7 @@ const EditEntryTagDialog = (props: Props) => {
   function renderActions() {
     return (
       <DialogActions style={{ justifyContent: 'space-between' }}>
-        {GeoTagEditor && isPlusCode(title) ? (
+        {GeoTagEditor && isGeoTag(title) ? (
           <Button
             data-tid="switchAdvancedModeTID"
             onClick={() => setShowAdvancedMode(!showAdvancedMode)}
@@ -233,7 +235,8 @@ function mapStateToProps(state) {
       ? getSelectedTag(state).path
       : undefined, */
     selectedEntries: getSelectedEntries(state),
-    tileServer: getMapTileServer(state)
+    tileServer: getMapTileServer(state),
+    geoTaggingFormat: state.settings.geoTaggingFormat
   };
 }
 

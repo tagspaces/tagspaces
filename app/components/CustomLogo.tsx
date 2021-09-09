@@ -32,7 +32,7 @@ import AppConfig from '-/config';
 const AppVersionBadge = withStyles(theme => ({
   badge: {
     top: '25%',
-    right: -15,
+    right: -25,
     color:
       theme.palette.type === 'light'
         ? theme.palette.grey[900]

@@ -72,6 +72,9 @@ const AppConfig = {
   useSidecarsForFileTaggingDisableSetting:
     window.ExtUseSidecarsForFileTagging !== undefined,
   useGenerateThumbnails: window.ExtUseGenerateThumbnails,
+  geoTaggingFormat:
+    window.ExtGeoTaggingFormat &&
+    window.ExtGeoTaggingFormat.toLocaleLowerCase(),
   customLogo: window.ExtLogoURL || false,
   showAdvancedSearch:
     window.ExtShowAdvancedSearch !== undefined
