@@ -44,6 +44,7 @@ import MapTileServerDialog from '-/components/dialogs/settings/MapTileServerDial
 import { Pro } from '-/pro';
 import { ProLabel } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
+import AppConfig from '-/config';
 
 const styles: any = {
   root: {
@@ -156,8 +157,13 @@ const SettingsAdvanced = (props: Props) => {
         <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:geoTaggingFormat')} />
           <Select
+            disabled={AppConfig.geoTaggingFormat !== undefined}
             data-tid="geoTaggingFormatTID"
-            value={props.settings.geoTaggingFormat}
+            value={
+              AppConfig.geoTaggingFormat !== undefined
+                ? AppConfig.geoTaggingFormat
+                : props.settings.geoTaggingFormat
+            }
             onChange={(event: any) =>
               props.setGeoTaggingFormat(event.target.value)
             }
