@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import Pagination from '@material-ui/lab/Pagination';
@@ -62,10 +62,14 @@ const GridPagination = (props: Props) => {
     currentPage
   } = props;
   let { files } = props;
+  const containerEl = useRef(null);
   const [page, setPage] = useState(currentPage);
 
   useEffect(() => {
     setPage(props.currentPage);
+    if (containerEl && containerEl.current) {
+      containerEl.current.scrollTop = 0;
+    }
   }, [
     props.currentLocationPath,
     props.currentDirectoryPath,
@@ -89,6 +93,7 @@ const GridPagination = (props: Props) => {
 
   return (
     <div
+      ref={containerEl}
       onContextMenu={(e: React.MouseEvent<HTMLDivElement>) =>
         props.onContextMenu(e)
       }
@@ -102,9 +107,6 @@ const GridPagination = (props: Props) => {
       <div
         className={className}
         style={style}
-        /* ref={ref => {
-            gridRef = ref;
-          }} */
         data-tid="perspectiveGridFileTable"
       >
         {page === 1 && directories.map(entry => renderCell(entry))}
