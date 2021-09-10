@@ -77,8 +77,10 @@ const GridPagination = (props: Props) => {
   ]);
 
   const handleChange = (event, value) => {
-    // props.currentPage = value;
     setPage(value);
+    if (containerEl && containerEl.current) {
+      containerEl.current.scrollTop = 0;
+    }
   };
 
   let paginationCount = 10;
