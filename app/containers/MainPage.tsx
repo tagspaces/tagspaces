@@ -21,7 +21,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import { translate } from 'react-i18next';
-import SplitPane from 'react-split-pane';
+import Split from 'react-split';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import { HotKeys } from 'react-hotkeys';
 import { NativeTypes } from 'react-dnd-html5-backend';
@@ -625,11 +625,17 @@ const MainPage = (props: Props) => {
           onDrop={handleFileDrop}
         >
           <CustomDragLayer />
-          <SplitPane
-            split="vertical"
-            minSize={200}
-            maxSize={450}
-            resizerStyle={{ backgroundColor: theme.palette.divider }}
+          <Split
+            direction="horizontal"
+            sizes={[10, 90]}
+            gutterSize={1}
+            style={{
+              display: 'flex',
+              flexDirection: 'row'
+            }}
+            /* minSize={200}
+            maxSize={450} */
+            /* resizerStyle={{ backgroundColor: theme.palette.divider }}
             defaultSize={props.leftSplitSize}
             size={
               isManagementPanelVisible()
@@ -640,15 +646,19 @@ const MainPage = (props: Props) => {
               bufferedLeftSplitResize(() =>
                 props.setLeftVerticalSplitSize(size)
               );
-            }}
+            }} */
           >
             <VerticalNavigation />
-            <SplitPane
-              split="vertical"
-              minSize="200"
-              resizerStyle={{ backgroundColor: theme.palette.divider }}
+            <Split
+              direction="horizontal"
+              /* minSize={200} */
+              style={{
+                display: 'flex',
+                flexDirection: 'row'
+              }}
+              /* resizerStyle={{ backgroundColor: theme.palette.divider }}
               size={getMainSplitSize()}
-              onChange={handleSplitSizeChange}
+              onChange={handleSplitSizeChange} */
             >
               <FolderContainer
                 windowHeight={dimensions.height}
@@ -662,11 +672,11 @@ const MainPage = (props: Props) => {
                   currentDirectoryPath={props.directoryPath}
                 />
               )}
-            </SplitPane>
-          </SplitPane>
+            </Split>
+          </Split>
         </TargetFileBox>
       ) : (
-        <React.Fragment>
+        <>
           <SwipeableDrawer
             open={isManagementPanelVisible()}
             onClose={() => props.closeAllVerticalPanels()}
@@ -678,12 +688,19 @@ const MainPage = (props: Props) => {
               hideDrawer={() => props.closeAllVerticalPanels()}
             />
           </SwipeableDrawer>
-          <SplitPane
-            split="vertical"
-            minSize="200"
-            resizerStyle={{ backgroundColor: theme.palette.divider }}
+          <Split
+            sizes={[100, 0]}
+            direction="horizontal"
+            gutterSize={10}
+            gutterAlign="end"
+            /*minSize={200}*/
+            style={{
+              display: 'flex',
+              flexDirection: 'row'
+            }}
+            /* resizerStyle={{ backgroundColor: theme.palette.divider }}
             size={getMainSplitSize()}
-            onChange={handleSplitSizeChange}
+            onChange={handleSplitSizeChange} */
           >
             <FolderContainer
               windowHeight={dimensions.height}
@@ -698,8 +715,9 @@ const MainPage = (props: Props) => {
                 currentDirectoryPath={props.directoryPath}
               />
             )}
-          </SplitPane>
-        </React.Fragment>
+            {props.openedFiles.length === 0 && <div />}
+          </Split>
+        </>
       )}
     </HotKeys>
   );
