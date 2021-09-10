@@ -34,7 +34,7 @@ import ArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import FileDownloadIcon from '@material-ui/icons/AssignmentReturned';
 import DetailsIcon from '@material-ui/icons/Info';
 import ExpandIcon from '@material-ui/icons/SettingsEthernet';
-import SplitPane from 'react-split-pane';
+import Split from 'react-split-it';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ShareIcon from '@material-ui/icons/Share';
 import { withStyles } from '@material-ui/core/styles';
@@ -1051,9 +1051,10 @@ const EntryContainer = (props: Props) => {
       <a href="#" id="downloadFile">
         &nbsp;
       </a>
-      <SplitPane
-        split="horizontal"
-        resizerStyle={{
+      <Split
+        direction="vertical"
+        sizes={[0.5, 0.5]}
+        /* resizerStyle={{
           backgroundColor: props.theme.palette.divider
         }}
         style={{ zIndex: 1300 }}
@@ -1069,7 +1070,7 @@ const EntryContainer = (props: Props) => {
             setPropertiesPanelVisible(propertiesPanelVisible);
           }
           bufferedSplitResize(() => props.setEntryPropertiesSplitSize(size));
-        }}
+        }} */
       >
         {openedFile.path ? (
           <Box className={classes.panel}>
@@ -1251,7 +1252,7 @@ const EntryContainer = (props: Props) => {
           )}
           {renderFileView(fileOpenerURL)}
         </div>
-      </SplitPane>
+      </Split>
     </GlobalHotKeys>
   );
 };
