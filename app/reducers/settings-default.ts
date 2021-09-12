@@ -402,13 +402,13 @@ export default {
     },
     {
       type: 'md',
-      viewer: '@tagspaces/extensions/md-editor',
-      editor: '@tagspaces/extensions/md-editor',
+      viewer: '@tagspaces/extensions/md-editor/build',
+      editor: '@tagspaces/extensions/md-editor/build',
       color: '#beefed'
     },
     {
       type: 'mdx',
-      viewer: '@tagspaces/extensions/md-editor',
+      viewer: '@tagspaces/extensions/md-editor/build',
       editor: '@tagspaces/extensions/text-editor',
       color: '#beefed'
     },
