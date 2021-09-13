@@ -617,6 +617,12 @@ const EntryContainer = (props: Props) => {
   const openNatively = () => {
     if (openedFile.path) {
       if (openedFile.isFile) {
+        // window.open(
+        //   fileOpenerURL,
+        //   'TagSpaces - ' + openedFile.path,
+        //   'resizable=yes,height=768,width=1024',
+        //   false
+        // );
         props.openFileNatively(openedFile.path);
       } else {
         props.openDirectory(openedFile.path);

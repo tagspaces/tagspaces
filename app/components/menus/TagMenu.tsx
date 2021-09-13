@@ -20,6 +20,7 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import ShowEntriesWithTagIcon from '@material-ui/icons/SearchOutlined';
+import ApplyTagIcon from '@material-ui/icons/LocalOfferOutlined';
 import Edit from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/DeleteForever';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -97,7 +98,7 @@ const TagMenu = (props: Props) => {
         {props.selectedEntries && props.selectedEntries.length > 0 && (
           <MenuItem data-tid="applyTagTID" onClick={applyTag}>
             <ListItemIcon>
-              <ShowEntriesWithTagIcon />
+              <ApplyTagIcon />
             </ListItemIcon>
             <ListItemText primary={i18n.t('core:applyTag')} />
           </MenuItem>
