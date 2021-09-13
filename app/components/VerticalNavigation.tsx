@@ -31,7 +31,7 @@ import UpgradeIcon from '@material-ui/icons/FlightTakeoff';
 import HelpIcon from '@material-ui/icons/HelpOutline';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { withStyles } from '@material-ui/core/styles';
-import SplitPane from 'react-split-pane';
+import { Split } from '@geoffcox/react-splitter';
 import { CircularProgress, Typography } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
@@ -191,14 +191,11 @@ const VerticalNavigation = (props: Props) => {
           key={uuidv1()}
         />
       )}
-      <SplitPane
-        split="vertical"
-        minSize={44}
-        maxSize={44}
-        defaultSize={44}
-        resizerStyle={{ backgroundColor: theme.palette.divider }}
+      <Split
+      /* defaultSize={44}
+        resizerStyle={{ backgroundColor: theme.palette.divider }} */
       >
-        <div className={classes.panel}>
+        <div style={{ width: 44 }} className={classes.panel}>
           <IconButton
             onClick={toggleAboutDialog}
             className={classes.button}
@@ -379,7 +376,7 @@ const VerticalNavigation = (props: Props) => {
             />
           )}
         </div>
-      </SplitPane>
+      </Split>
     </div>
   );
 };

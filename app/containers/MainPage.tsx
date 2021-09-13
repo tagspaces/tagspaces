@@ -21,7 +21,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import { translate } from 'react-i18next';
-import SplitPane from 'react-split-pane';
+import { Split } from '@geoffcox/react-splitter';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import { HotKeys } from 'react-hotkeys';
 import { NativeTypes } from 'react-dnd-html5-backend';
@@ -182,7 +182,7 @@ interface Props {
   leftSplitSize: number;
   mainSplitSize: any;
   toggleShowUnixHiddenEntries: () => void;
-  setLeftVerticalSplitSize: (splitSize: number) => void;
+  // setLeftVerticalSplitSize: (splitSize: number) => void;
   setMainVerticalSplitSize: (splitSize: string) => void;
   isLocationManagerPanelOpened: boolean;
   isOpenLinkDialogOpened: boolean;
@@ -298,6 +298,7 @@ const MainPage = (props: Props) => {
     ''
   ); */
   const selectedDirectoryPath = useRef<string>('');
+  // const mainSplitSize = useRef<string>(props.mainSplitSize);
   const setSelectedDirectoryPath = (path: string) => {
     selectedDirectoryPath.current = path;
   };
@@ -334,7 +335,13 @@ const MainPage = (props: Props) => {
     }
   }, [props.isEntryInFullWidth]);
 
-  const getMainSplitSize = () => {
+  /* useEffect(() => {
+    if (props.mainSplitSize !== mainSplitSize.current) {
+      props.setMainVerticalSplitSize(mainSplitSize.current);
+    }
+  }, [props.openedFiles]); */
+
+  /* const getMainSplitSize = () => {
     if (props.openedFiles.length === 0) {
       return '100%';
     }
@@ -355,7 +362,7 @@ const MainPage = (props: Props) => {
     }
 
     return props.mainSplitSize;
-  };
+  }; */
 
   const isManagementPanelVisible = () =>
     props.isLocationManagerPanelOpened ||
@@ -469,14 +476,16 @@ const MainPage = (props: Props) => {
     // openDevTools: props.keyBindings.openDevTools
   };
 
-  const handleSplitSizeChange = size => {
-    if (size > 0 && dimensions.width) {
+  const handleSplitSizeChange = (primarySize: string) => {
+    /* if (size > 0 && dimensions.width) {
       const sizeInPercent =
         // @ts-ignore
         parseInt((size * 100) / dimensions.width, 10) + '%';
       // setMainSplitSize(sizeInPercent);
       props.setMainVerticalSplitSize(sizeInPercent);
-    }
+    } */
+    props.setMainVerticalSplitSize(primarySize);
+    // mainSplitSize.current = primarySize;
   };
 
   const {
@@ -498,6 +507,43 @@ const MainPage = (props: Props) => {
     directoryPath
   } = props;
   const { FILE } = NativeTypes;
+
+  const renderContainers = () => {
+    const folderContainer = (
+      <FolderContainer
+        windowHeight={dimensions.height}
+        windowWidth={dimensions.width}
+        showDrawer={showDrawer}
+        openedFiles={props.openedFiles}
+        currentDirectoryPath={props.directoryPath}
+      />
+    );
+
+    if (props.openedFiles.length > 0) {
+      const entryContainer = (
+        <EntryContainer
+          openedFiles={props.openedFiles}
+          currentDirectoryPath={props.directoryPath}
+        />
+      );
+      if (props.isEntryInFullWidth) {
+        return entryContainer;
+      }
+      return (
+        <Split
+          initialPrimarySize={props.mainSplitSize}
+          onSplitChanged={handleSplitSizeChange}
+          /* resizerStyle={{ backgroundColor: theme.palette.divider }}
+    size={getMainSplitSize()}
+    onChange={handleSplitSizeChange} */
+        >
+          {folderContainer}
+          {entryContainer}
+        </Split>
+      );
+    }
+    return folderContainer;
+  };
 
   return (
     <HotKeys handlers={keyBindingHandlers} keyMap={keyMap}>
@@ -625,11 +671,10 @@ const MainPage = (props: Props) => {
           onDrop={handleFileDrop}
         >
           <CustomDragLayer />
-          <SplitPane
-            split="vertical"
-            minSize={200}
-            maxSize={450}
-            resizerStyle={{ backgroundColor: theme.palette.divider }}
+          <div
+          /* minSize={200}
+            maxSize={450} */
+          /* resizerStyle={{ backgroundColor: theme.palette.divider }}
             defaultSize={props.leftSplitSize}
             size={
               isManagementPanelVisible()
@@ -640,33 +685,14 @@ const MainPage = (props: Props) => {
               bufferedLeftSplitResize(() =>
                 props.setLeftVerticalSplitSize(size)
               );
-            }}
+            }} */
           >
             <VerticalNavigation />
-            <SplitPane
-              split="vertical"
-              minSize="200"
-              resizerStyle={{ backgroundColor: theme.palette.divider }}
-              size={getMainSplitSize()}
-              onChange={handleSplitSizeChange}
-            >
-              <FolderContainer
-                windowHeight={dimensions.height}
-                windowWidth={dimensions.width}
-                openedFiles={props.openedFiles}
-                currentDirectoryPath={props.directoryPath}
-              />
-              {props.openedFiles.length > 0 && (
-                <EntryContainer
-                  openedFiles={props.openedFiles}
-                  currentDirectoryPath={props.directoryPath}
-                />
-              )}
-            </SplitPane>
-          </SplitPane>
+            {renderContainers()}
+          </div>
         </TargetFileBox>
       ) : (
-        <React.Fragment>
+        <>
           <SwipeableDrawer
             open={isManagementPanelVisible()}
             onClose={() => props.closeAllVerticalPanels()}
@@ -678,28 +704,8 @@ const MainPage = (props: Props) => {
               hideDrawer={() => props.closeAllVerticalPanels()}
             />
           </SwipeableDrawer>
-          <SplitPane
-            split="vertical"
-            minSize="200"
-            resizerStyle={{ backgroundColor: theme.palette.divider }}
-            size={getMainSplitSize()}
-            onChange={handleSplitSizeChange}
-          >
-            <FolderContainer
-              windowHeight={dimensions.height}
-              windowWidth={dimensions.width}
-              showDrawer={showDrawer}
-              openedFiles={props.openedFiles}
-              currentDirectoryPath={props.directoryPath}
-            />
-            {props.openedFiles.length > 0 && (
-              <EntryContainer
-                openedFiles={props.openedFiles}
-                currentDirectoryPath={props.directoryPath}
-              />
-            )}
-          </SplitPane>
-        </React.Fragment>
+          {renderContainers()}
+        </>
       )}
     </HotKeys>
   );
@@ -771,7 +777,7 @@ function mapDispatchToProps(dispatch) {
       openNextFile: AppActions.openNextFile,
       openPrevFile: AppActions.openPrevFile,
       toggleShowUnixHiddenEntries: SettingsActions.toggleShowUnixHiddenEntries,
-      setLeftVerticalSplitSize: SettingsActions.setLeftVerticalSplitSize,
+      // setLeftVerticalSplitSize: SettingsActions.setLeftVerticalSplitSize,
       setMainVerticalSplitSize: SettingsActions.setMainVerticalSplitSize,
       showNotification: AppActions.showNotification,
       reflectCreateEntries: AppActions.reflectCreateEntries,
@@ -817,8 +823,8 @@ const areEqual = (prevProp, nextProp) =>
     prevProp.isThirdPartyLibsDialogOpened &&
   nextProp.isUploadProgressDialogOpened ===
     prevProp.isUploadProgressDialogOpened &&
-  nextProp.leftSplitSize === prevProp.leftSplitSize &&
-  nextProp.mainSplitSize === prevProp.mainSplitSize &&
+  // nextProp.leftSplitSize === prevProp.leftSplitSize &&
+  // nextProp.mainSplitSize === prevProp.mainSplitSize &&
   JSON.stringify(nextProp.selectedEntries) ===
     JSON.stringify(prevProp.selectedEntries) &&
   JSON.stringify(nextProp.openedFiles) === JSON.stringify(prevProp.openedFiles);

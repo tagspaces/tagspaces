@@ -34,7 +34,7 @@ import ArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import FileDownloadIcon from '@material-ui/icons/AssignmentReturned';
 import DetailsIcon from '@material-ui/icons/Info';
 import ExpandIcon from '@material-ui/icons/SettingsEthernet';
-import SplitPane from 'react-split-pane';
+import { Split } from '@geoffcox/react-splitter';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ShareIcon from '@material-ui/icons/Share';
 import { withStyles } from '@material-ui/core/styles';
@@ -83,6 +83,7 @@ const bufferedSplitResize = buffer({
 const styles: any = (theme: any) => ({
   panel: {
     width: '100%',
+    height: '100%',
     flexDirection: 'column',
     flex: '1 1 100%',
     display: 'flex',
@@ -100,7 +101,7 @@ const styles: any = (theme: any) => ({
     backgroundColor: theme.palette.background.default,
     zIndex: 1,
     padding: '0 0 60px 0',
-    height: '50%'
+    height: '100%'
   },
   fileOpener: {
     width: '100%',
@@ -938,140 +939,10 @@ const EntryContainer = (props: Props) => {
     return defaultSplitSize;
   }
 
-  return (
-    <GlobalHotKeys
-      handlers={{
-        closeViewer: startClosingFile,
-        saveDocument: startSavingFile,
-        editDocument: editFile,
-        nextDocument: openNextFile,
-        prevDocument: openPrevFile,
-        toggleFullScreen
-      }}
-      keyMap={{
-        nextDocument: keyBindings.nextDocument,
-        prevDocument: keyBindings.prevDocument,
-        closeViewer: keyBindings.closeViewer,
-        saveDocument: keyBindings.saveDocument,
-        editDocument: keyBindings.editDocument,
-        toggleFullScreen: keyBindings.toggleFullScreen
-      }}
-    >
-      {isSaveBeforeCloseConfirmDialogOpened && (
-        <ConfirmDialog
-          open={isSaveBeforeCloseConfirmDialogOpened}
-          onClose={() => {
-            setSaveBeforeCloseConfirmDialogOpened(false);
-          }}
-          title={i18n.t('core:confirm')}
-          content={i18n.t('core:saveFileBeforeClosingFile')}
-          confirmCallback={result => {
-            if (result) {
-              startSavingFile();
-            } else {
-              closeFile();
-              setSaveBeforeCloseConfirmDialogOpened(false);
-            }
-          }}
-          cancelDialogTID="cancelSaveBeforeCloseDialog"
-          confirmDialogTID="confirmSaveBeforeCloseDialog"
-          confirmDialogContentTID="confirmDialogContent"
-        />
-      )}
-      {isSaveBeforeReloadConfirmDialogOpened && (
-        <ConfirmDialog
-          open={isSaveBeforeReloadConfirmDialogOpened}
-          onClose={() => {
-            setSaveBeforeReloadConfirmDialogOpened(false);
-          }}
-          title={i18n.t('core:confirm')}
-          content="File was modified, do you want to save the changes?"
-          confirmCallback={result => {
-            if (result) {
-              setSaveBeforeReloadConfirmDialogOpened(false);
-              startSavingFile();
-            } else {
-              setSaveBeforeReloadConfirmDialogOpened(false);
-              props.updateOpenedFile(openedFile.path, {
-                ...openedFile,
-                editMode: false,
-                changed: false,
-                shouldReload: true
-              });
-            }
-          }}
-          cancelDialogTID="cancelSaveBeforeCloseDialog"
-          confirmDialogTID="confirmSaveBeforeCloseDialog"
-          confirmDialogContentTID="confirmDialogContent"
-        />
-      )}
-      {isDeleteEntryModalOpened && (
-        <ConfirmDialog
-          open={isDeleteEntryModalOpened}
-          onClose={() => {
-            setDeleteEntryModalOpened(false);
-          }}
-          title={
-            openedFile.isFile
-              ? i18n.t('core:deleteConfirmationTitle')
-              : i18n.t('core:deleteDirectory')
-          }
-          content={
-            openedFile.isFile
-              ? i18n.t('core:doYouWantToDeleteFile')
-              : i18n.t('core:deleteDirectoryContentConfirm', {
-                  dirPath: openedFile.path
-                    ? extractDirectoryName(
-                        decodeURIComponent(openedFile.path),
-                        PlatformIO.getDirSeparator()
-                      )
-                    : ''
-                })
-          }
-          confirmCallback={result => {
-            if (result) {
-              props.deleteFile(openedFile.path);
-            }
-          }}
-          cancelDialogTID="cancelSaveBeforeCloseDialog"
-          confirmDialogTID="confirmSaveBeforeCloseDialog"
-          confirmDialogContentTID="confirmDialogContent"
-        />
-      )}
-      {isEditTagsModalOpened && (
-        <AddRemoveTagsDialog
-          open={isEditTagsModalOpened}
-          onClose={() => setEditTagsModalOpened(false)}
-          addTags={props.addTags}
-          removeTags={props.removeTags}
-          removeAllTags={props.removeAllTags}
-          selectedEntries={openedFile ? [openedFile] : []}
-        />
-      )}
-      <a href="#" id="downloadFile">
-        &nbsp;
-      </a>
-      <SplitPane
-        split="horizontal"
-        resizerStyle={{
-          backgroundColor: props.theme.palette.divider
-        }}
-        style={{ zIndex: 1300 }}
-        size={getSplitPanelSize()}
-        minSize={openedFile.isFile ? defaultSplitSize : '100%'}
-        maxSize={openedFile.isFile ? fullSplitSize : '100%'}
-        defaultSize={
-          openedFile.isFile ? props.settings.entryPropertiesSplitSize : '100%'
-        }
-        onChange={size => {
-          const propertiesPanelVisible = size > defaultSplitSize;
-          if (isPropPanelVisible !== propertiesPanelVisible) {
-            setPropertiesPanelVisible(propertiesPanelVisible);
-          }
-          bufferedSplitResize(() => props.setEntryPropertiesSplitSize(size));
-        }}
-      >
-        {openedFile.path ? (
+  const renderPanels = () => {
+    const toolbarButtons = () => {
+      if (openedFile.path) {
+        return (
           <Box className={classes.panel}>
             <Box className={classes.toolbar}>
               <Box className={classes.flexLeft}>
@@ -1197,61 +1068,218 @@ const EntryContainer = (props: Props) => {
                 </div>
               )}
             </Box>
-            <div className={classes.entryProperties}>
-              {openedFile.isFile
-                ? renderFileToolbar(classes)
-                : renderFolderToolbar()}
-              {isPropPanelVisible && (
-                <EntryProperties
-                  key={openedFile.path}
-                  // resetState={this.resetState}
-                  // setPropertiesEditMode={this.setPropertiesEditMode}
-                  // entryPath={openedFile.path}
-                  // perspective={openedFile.perspective}
-                  openedEntry={openedFile}
-                  tagDelimiter={props.settings.tagDelimiter}
-                  // entryURL={currentEntry.url}
-                  // shouldReload={reload}
-                  renameFile={props.renameFile}
-                  renameDirectory={props.renameDirectory}
-                  // editTagForEntry={props.editTagForEntry}
-                  // shouldCopyFile={shouldCopyFile}
-                  // normalizeShouldCopyFile={() => setShouldCopyFile(false)}
-                  addTags={props.addTags}
-                  removeTags={props.removeTags}
-                  removeAllTags={props.removeAllTags}
-                  updateOpenedFile={props.updateOpenedFile}
-                  updateThumbnailUrl={props.updateThumbnailUrl}
-                  showNotification={props.showNotification}
-                  isReadOnlyMode={props.isReadOnlyMode}
-                  currentDirectoryPath={props.currentDirectoryPath}
-                  tileServer={props.tileServer}
-                />
-              )}
-            </div>
+            {entryProperties}
           </Box>
-        ) : (
-          <div>{i18n.t('core:noEntrySelected')}</div>
+        );
+      }
+      return <div>{i18n.t('core:noEntrySelected')}</div>;
+    };
+
+    const fileContent = (
+      <div ref={fileViewerContainer} className={classes.fileContent}>
+        {isFullscreen && (
+          <Fab
+            data-tid="fullscreenTID"
+            color="primary"
+            style={{
+              position: 'absolute',
+              top: 20,
+              right: 20,
+              zIndex: 10000
+            }}
+            onClick={toggleFullScreen}
+          >
+            <CloseIcon />
+          </Fab>
         )}
-        <div ref={fileViewerContainer} className={classes.fileContent}>
-          {isFullscreen && (
-            <Fab
-              data-tid="fullscreenTID"
-              color="primary"
-              style={{
-                position: 'absolute',
-                top: 20,
-                right: 20,
-                zIndex: 10000
-              }}
-              onClick={toggleFullScreen}
-            >
-              <CloseIcon />
-            </Fab>
-          )}
-          {renderFileView(fileOpenerURL)}
-        </div>
-      </SplitPane>
+        {renderFileView(fileOpenerURL)}
+      </div>
+    );
+    const entryProperties = (
+      <div className={classes.entryProperties}>
+        {openedFile.isFile ? renderFileToolbar(classes) : renderFolderToolbar()}
+        {isPropPanelVisible && (
+          <EntryProperties
+            key={openedFile.path}
+            // resetState={this.resetState}
+            // setPropertiesEditMode={this.setPropertiesEditMode}
+            // entryPath={openedFile.path}
+            // perspective={openedFile.perspective}
+            openedEntry={openedFile}
+            tagDelimiter={props.settings.tagDelimiter}
+            // entryURL={currentEntry.url}
+            // shouldReload={reload}
+            renameFile={props.renameFile}
+            renameDirectory={props.renameDirectory}
+            // editTagForEntry={props.editTagForEntry}
+            // shouldCopyFile={shouldCopyFile}
+            // normalizeShouldCopyFile={() => setShouldCopyFile(false)}
+            addTags={props.addTags}
+            removeTags={props.removeTags}
+            removeAllTags={props.removeAllTags}
+            updateOpenedFile={props.updateOpenedFile}
+            updateThumbnailUrl={props.updateThumbnailUrl}
+            showNotification={props.showNotification}
+            isReadOnlyMode={props.isReadOnlyMode}
+            currentDirectoryPath={props.currentDirectoryPath}
+            tileServer={props.tileServer}
+          />
+        )}
+      </div>
+    );
+
+    if (isPropPanelVisible) {
+      return (
+        <Split
+          horizontal
+          onSplitChanged={primarySize => {
+            // TODO save primarySize
+            /* const propertiesPanelVisible = primarySize > defaultSplitSize;
+            if (isPropPanelVisible !== propertiesPanelVisible) {
+              setPropertiesPanelVisible(propertiesPanelVisible);
+            }
+            bufferedSplitResize(() => props.setEntryPropertiesSplitSize(primarySize)); */
+          }}
+          /* resizerStyle={{
+          backgroundColor: props.theme.palette.divider
+        }}
+        style={{ zIndex: 1300 }}
+        size={getSplitPanelSize()}
+        minSize={openedFile.isFile ? defaultSplitSize : '100%'}
+        maxSize={openedFile.isFile ? fullSplitSize : '100%'}
+        defaultSize={
+          openedFile.isFile ? props.settings.entryPropertiesSplitSize : '100%'
+        } */
+        >
+          <>
+            {toolbarButtons()}
+            {entryProperties}
+          </>
+          {fileContent}
+        </Split>
+      );
+    }
+    return (
+      <>
+        {toolbarButtons()}
+        {fileContent}
+      </>
+    );
+  };
+
+  return (
+    <GlobalHotKeys
+      handlers={{
+        closeViewer: startClosingFile,
+        saveDocument: startSavingFile,
+        editDocument: editFile,
+        nextDocument: openNextFile,
+        prevDocument: openPrevFile,
+        toggleFullScreen
+      }}
+      keyMap={{
+        nextDocument: keyBindings.nextDocument,
+        prevDocument: keyBindings.prevDocument,
+        closeViewer: keyBindings.closeViewer,
+        saveDocument: keyBindings.saveDocument,
+        editDocument: keyBindings.editDocument,
+        toggleFullScreen: keyBindings.toggleFullScreen
+      }}
+    >
+      {isSaveBeforeCloseConfirmDialogOpened && (
+        <ConfirmDialog
+          open={isSaveBeforeCloseConfirmDialogOpened}
+          onClose={() => {
+            setSaveBeforeCloseConfirmDialogOpened(false);
+          }}
+          title={i18n.t('core:confirm')}
+          content={i18n.t('core:saveFileBeforeClosingFile')}
+          confirmCallback={result => {
+            if (result) {
+              startSavingFile();
+            } else {
+              closeFile();
+              setSaveBeforeCloseConfirmDialogOpened(false);
+            }
+          }}
+          cancelDialogTID="cancelSaveBeforeCloseDialog"
+          confirmDialogTID="confirmSaveBeforeCloseDialog"
+          confirmDialogContentTID="confirmDialogContent"
+        />
+      )}
+      {isSaveBeforeReloadConfirmDialogOpened && (
+        <ConfirmDialog
+          open={isSaveBeforeReloadConfirmDialogOpened}
+          onClose={() => {
+            setSaveBeforeReloadConfirmDialogOpened(false);
+          }}
+          title={i18n.t('core:confirm')}
+          content="File was modified, do you want to save the changes?"
+          confirmCallback={result => {
+            if (result) {
+              setSaveBeforeReloadConfirmDialogOpened(false);
+              startSavingFile();
+            } else {
+              setSaveBeforeReloadConfirmDialogOpened(false);
+              props.updateOpenedFile(openedFile.path, {
+                ...openedFile,
+                editMode: false,
+                changed: false,
+                shouldReload: true
+              });
+            }
+          }}
+          cancelDialogTID="cancelSaveBeforeCloseDialog"
+          confirmDialogTID="confirmSaveBeforeCloseDialog"
+          confirmDialogContentTID="confirmDialogContent"
+        />
+      )}
+      {isDeleteEntryModalOpened && (
+        <ConfirmDialog
+          open={isDeleteEntryModalOpened}
+          onClose={() => {
+            setDeleteEntryModalOpened(false);
+          }}
+          title={
+            openedFile.isFile
+              ? i18n.t('core:deleteConfirmationTitle')
+              : i18n.t('core:deleteDirectory')
+          }
+          content={
+            openedFile.isFile
+              ? i18n.t('core:doYouWantToDeleteFile')
+              : i18n.t('core:deleteDirectoryContentConfirm', {
+                  dirPath: openedFile.path
+                    ? extractDirectoryName(
+                        decodeURIComponent(openedFile.path),
+                        PlatformIO.getDirSeparator()
+                      )
+                    : ''
+                })
+          }
+          confirmCallback={result => {
+            if (result) {
+              props.deleteFile(openedFile.path);
+            }
+          }}
+          cancelDialogTID="cancelSaveBeforeCloseDialog"
+          confirmDialogTID="confirmSaveBeforeCloseDialog"
+          confirmDialogContentTID="confirmDialogContent"
+        />
+      )}
+      {isEditTagsModalOpened && (
+        <AddRemoveTagsDialog
+          open={isEditTagsModalOpened}
+          onClose={() => setEditTagsModalOpened(false)}
+          addTags={props.addTags}
+          removeTags={props.removeTags}
+          removeAllTags={props.removeAllTags}
+          selectedEntries={openedFile ? [openedFile] : []}
+        />
+      )}
+      {/* eslint-disable-next-line jsx-a11y/anchor-has-content,jsx-a11y/anchor-is-valid */}
+      <a href="#" id="downloadFile" />
+      {renderPanels()}
     </GlobalHotKeys>
   );
 };
