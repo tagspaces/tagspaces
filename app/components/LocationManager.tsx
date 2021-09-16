@@ -118,20 +118,6 @@ const LocationManager = (props: Props) => {
     target.value = null;
   }
 
-  /* const getItemStyle = (isDragging, draggableStyle) => ({
-    // some basic styles to make the items look a bit nicer
-    userSelect: 'none',
-    // change background colour if dragging
-    background: isDragging ? 'lightgreen' : 'transparent',
-
-    // styles we need to apply on draggables
-    ...draggableStyle
-  });
-
-  const getListStyle = isDraggingOver => ({
-    background: isDraggingOver ? 'lightblue' : 'transparent',
-  }); */
-
   const onDragEnd = result => {
     // dropped outside the list
     if (!result.destination) {

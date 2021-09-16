@@ -60,7 +60,7 @@ const styles: any = (theme: any) => ({
     backgroundColor: theme.palette.background.default
   },
   selectedButton: {
-    backgroundColor: '#880E4F'
+    backgroundColor: theme.palette.primary.light
   }
 });
 
@@ -129,13 +129,6 @@ const MobileNavigation = (props: Props) => {
   } = props;
   return (
     <div style={{ height: '100%' }}>
-      <style>
-        {`
-            #verticalNavButton:hover {
-              background-color: #880E4F;
-            }
-          `}
-      </style>
       <div
         style={{
           width: width || 320,
@@ -163,7 +156,6 @@ const MobileNavigation = (props: Props) => {
             data-tid="settings"
             onClick={() => {
               toggleSettingsDialog();
-              hideDrawer();
             }}
             style={{ marginTop: -15, marginRight: 2 }}
           >

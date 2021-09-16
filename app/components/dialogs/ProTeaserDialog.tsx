@@ -37,6 +37,7 @@ import EnterpriseImage from '-/assets/images/world-undraw.svg';
 import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Links from '-/links';
+import AppConfig from '-/config';
 
 interface Props {
   open: boolean;
@@ -350,7 +351,13 @@ const ProTeaserDialog = (props: Props) => {
       <DialogTitle style={{ justifyContent: 'center', textAlign: 'center' }}>
         <DialogCloseButton onClose={onClose} />
       </DialogTitle>
-      <DialogContent style={{ paddingBottom: 0 }}>
+      <DialogContent
+        style={{
+          paddingBottom: 0,
+          // @ts-ignore
+          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+        }}
+      >
         <SwipeableViews
           index={activeStep}
           onChangeIndex={handleStepChange}

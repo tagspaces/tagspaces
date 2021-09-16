@@ -238,19 +238,10 @@ const EntryContainer = (props: Props) => {
   const [isDeleteEntryModalOpened, setDeleteEntryModalOpened] = useState<
     boolean
   >(false);
-  // const [selectedItem, setSelectedItem] = useState<any>({});
-  // const [shouldCopyFile, setShouldCopyFile] = useState<boolean>(false);
-  // const entryPropertiesKey: string = uuidv1();
-
   const fileViewer = useRef<HTMLIFrameElement>(null);
   const fileViewerContainer = useRef<HTMLDivElement>(null);
 
   useEventListener('toggle-resume', () => {
-    // if (AppConfig.isElectron && this.fileViewer) {
-    //   this.fileViewer.executeJavaScript(
-    //     'window.dispatchEvent(new Event("resume"));'
-    //   );
-    // } else
     if (
       fileViewer &&
       fileViewer.current &&
@@ -280,11 +271,6 @@ const EntryContainer = (props: Props) => {
 
   useEffect(() => {
     if (props.openedFiles.length > 0) {
-      // / setPropertiesPanelVisible
-      /* if (!openedFile.isFile && !isPropertiesPanelVisible) {
-        // always open for dirs
-        setPropertiesPanelVisible(true);
-      } */
       if (
         openedFile.editMode &&
         openedFile.changed &&
@@ -367,18 +353,6 @@ const EntryContainer = (props: Props) => {
                 '/' +
                 fileDirectory;
             }
-            // if (AppConfig.isElectron && this.fileViewer) {
-            //   this.fileViewer.executeJavaScript(
-            //     'setContent(' +
-            //       JSON.stringify(content) +
-            //       ',' +
-            //       JSON.stringify(fileDirectory) +
-            //       ',' +
-            //       !this.state.currentEntry.editMode +
-            //       ')',
-            //     false
-            //   );
-            // } else
             if (
               fileViewer &&
               fileViewer.current &&
@@ -433,20 +407,6 @@ const EntryContainer = (props: Props) => {
     }
   };
 
-  /* const cancelEditing = () => {
-    if (currentEntry && isChanged) {
-      props.showNotification(
-        i18n.t('core:currentlyFileChangedSaveOrClose')
-      );
-      return true;
-    }
-    shouldReload = true;
-    setCurrentEntry({
-      ...currentEntry,
-      editMode: false
-    });
-  }; */
-
   const startClosingFile = event => {
     if (event) {
       event.preventDefault(); // Let's stop this event.
@@ -465,17 +425,6 @@ const EntryContainer = (props: Props) => {
   };
 
   const startSavingFile = () => {
-    // if (AppConfig.isElectron) {
-    //   if (this.fileViewer) {
-    //     this.fileViewer.executeJavaScript(
-    //       'getContent()',
-    //       false,
-    //       textContent => {
-    //         this.saveFile(textContent);
-    //       }
-    //     );
-    //   }
-    // } else
     if (
       fileViewer &&
       fileViewer.current &&
@@ -861,19 +810,6 @@ const EntryContainer = (props: Props) => {
     />
   );
 
-  /* const setPropertiesEditMode = (editMode: boolean) => {
-    this.isPropertiesEditMode = editMode;
-  }; */
-
-  /* TODO rethink this
-  const resetState = key => {
-    // this.isPropertiesEditMode = false;
-    // @ts-ignore
-    this.setState({
-      [key]: uuidv1()
-    });
-  }; */
-
   const { classes, keyBindings } = props;
   let fileOpenerURL: string;
   let fileTitle: string = '';
@@ -911,33 +847,18 @@ const EntryContainer = (props: Props) => {
         theme +
         (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
     }
-    // this.shouldReload = false;
-
-    // if (!currentEntry.isFile) {
-    //   fileOpenerURL = currentEntry.path + '/index.html';
-    // }
-
-    // // Idea for using mhtml native browser in chrome
-    // if (
-    //   !AppConfig.isFirefox && (
-    //     currentEntry.path.endsWith('mht') ||
-    //     currentEntry.path.endsWith('mhtml')
-    //   )
-    // ) {
-    //   fileOpenerURL = currentEntry.path;
-    // }
   } else {
     fileOpenerURL = 'about:blank';
   }
 
-  function getSplitPanelSize() {
-    if (isPropPanelVisible) {
-      return openedFile.isFile
-        ? props.settings.entryPropertiesSplitSize
-        : '100%';
-    }
-    return defaultSplitSize;
-  }
+  // function getSplitPanelSize() {
+  //   if (isPropPanelVisible) {
+  //     return openedFile.isFile
+  //       ? props.settings.entryPropertiesSplitSize
+  //       : '100%';
+  //   }
+  //   return defaultSplitSize;
+  // }
 
   const renderPanels = () => {
     const toolbarButtons = () => {
@@ -1101,19 +1022,10 @@ const EntryContainer = (props: Props) => {
         {isPropPanelVisible && (
           <EntryProperties
             key={openedFile.path}
-            // resetState={this.resetState}
-            // setPropertiesEditMode={this.setPropertiesEditMode}
-            // entryPath={openedFile.path}
-            // perspective={openedFile.perspective}
             openedEntry={openedFile}
             tagDelimiter={props.settings.tagDelimiter}
-            // entryURL={currentEntry.url}
-            // shouldReload={reload}
             renameFile={props.renameFile}
             renameDirectory={props.renameDirectory}
-            // editTagForEntry={props.editTagForEntry}
-            // shouldCopyFile={shouldCopyFile}
-            // normalizeShouldCopyFile={() => setShouldCopyFile(false)}
             addTags={props.addTags}
             removeTags={props.removeTags}
             removeAllTags={props.removeAllTags}
@@ -1149,8 +1061,6 @@ const EntryContainer = (props: Props) => {
           /* resizerStyle={{
           backgroundColor: props.theme.palette.divider
         }}
-        style={{ zIndex: 1300 }}
-        size={getSplitPanelSize()}
          */
         >
           <div>
