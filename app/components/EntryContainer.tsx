@@ -83,7 +83,6 @@ const bufferedSplitResize = buffer({
 const styles: any = (theme: any) => ({
   panel: {
     width: '100%',
-    height: '100%',
     flexDirection: 'column',
     flex: '1 1 100%',
     display: 'flex',
@@ -91,6 +90,7 @@ const styles: any = (theme: any) => ({
   },
   fileContent: {
     width: '100%',
+    height: '100%',
     flex: '1 1 100%',
     display: 'flex',
     backgroundColor: theme.palette.background.default
@@ -100,7 +100,7 @@ const styles: any = (theme: any) => ({
     flex: '1 1 100%',
     backgroundColor: theme.palette.background.default,
     zIndex: 1,
-    padding: '0 0 60px 0',
+    padding: '0',
     height: '100%'
   },
   fileOpener: {
@@ -169,7 +169,7 @@ const styles: any = (theme: any) => ({
     top: 55,
     right: 0,
     backgroundColor: theme.palette.background.default,
-    boxShadow: '-15px 0px 24px 3px ' + theme.palette.background.default
+    boxShadow: '-15px -5px 20px 3px ' + theme.palette.background.default
   }
 });
 
@@ -1132,6 +1132,12 @@ const EntryContainer = (props: Props) => {
       return (
         <Split
           horizontal
+          minPrimarySize="100px"
+          initialPrimarySize={
+            openedFile.isFile
+              ? props.settings.entryPropertiesSplitSize + 'px'
+              : '100%'
+          }
           onSplitChanged={primarySize => {
             // TODO save primarySize
             /* const propertiesPanelVisible = primarySize > defaultSplitSize;
@@ -1145,25 +1151,21 @@ const EntryContainer = (props: Props) => {
         }}
         style={{ zIndex: 1300 }}
         size={getSplitPanelSize()}
-        minSize={openedFile.isFile ? defaultSplitSize : '100%'}
-        maxSize={openedFile.isFile ? fullSplitSize : '100%'}
-        defaultSize={
-          openedFile.isFile ? props.settings.entryPropertiesSplitSize : '100%'
-        } */
+         */
         >
-          <>
+          <div>
             {toolbarButtons()}
             {entryProperties}
-          </>
+          </div>
           {fileContent}
         </Split>
       );
     }
     return (
-      <>
+      <div style={{ height: '100%' }}>
         {toolbarButtons()}
         {fileContent}
-      </>
+      </div>
     );
   };
 

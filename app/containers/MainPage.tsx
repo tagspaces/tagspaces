@@ -17,17 +17,18 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
+import clsx from 'clsx';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import { translate } from 'react-i18next';
 import { Split } from '@geoffcox/react-splitter';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+import Drawer from '@material-ui/core/Drawer';
 import { HotKeys } from 'react-hotkeys';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { Progress } from 'aws-sdk/clients/s3';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
-import VerticalNavigation from '../components/VerticalNavigation';
 import MobileNavigation from '../components/MobileNavigation';
 import FolderContainer from '../components/FolderContainer';
 import EntryContainer from '../components/EntryContainer';
@@ -85,43 +86,53 @@ import { TS } from '-/tagspaces.namespace';
 import PageNotification from '-/containers/PageNotification';
 import listen from '-/containers/RendererListener';
 
-const initialSplitSize = 44;
-const drawerWidth = 300;
+const drawerWidth = 320;
 const body = document.getElementsByTagName('body')[0];
-// const showOneColumnThreshold = 600;
-// const bufferedMainSplitResize = buffer({ timeout: 50, id: 'buffered-mainsplit-resize' });
 const bufferedLeftSplitResize = buffer({
   timeout: 300,
   id: 'buffered-leftsplit-resize'
 });
 
 const styles: any = (theme: any) => ({
+  // content: {
+  //   width: '100%',
+  //   marginLeft: drawerWidth,
+  //   flexGrow: 1,
+  //   backgroundColor: theme.palette.background.default,
+  //   transition: theme.transitions.create('margin', {
+  //     easing: theme.transitions.easing.sharp,
+  //     duration: theme.transitions.duration.leavingScreen
+  //   }),
+  //   [theme.breakpoints.up('sm')]: {
+  //     content: {
+  //       height: 'calc(100% - 64px)',
+  //       marginTop: 64
+  //     }
+  //   }
+  // },
+  // contentShift: {
+  //   marginLeft: 0,
+  //   transition: theme.transitions.create('margin', {
+  //     easing: theme.transitions.easing.easeOut,
+  //     duration: theme.transitions.duration.enteringScreen
+  //   })
+  // }
   content: {
-    width: '100%',
-    marginLeft: drawerWidth,
     flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
+    padding: 0,
+    paddingLeft: drawerWidth,
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
-    }),
-    [theme.breakpoints.up('sm')]: {
-      content: {
-        height: 'calc(100% - 64px)',
-        marginTop: 64
-      }
-    }
+    })
   },
   contentShift: {
-    marginLeft: 0,
+    padding: 0,
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen
-    })
-  },
-  drawerPaper: {
-    height: '100%',
-    width: drawerWidth
+    }),
+    marginLeft: 0
   }
 });
 
@@ -287,26 +298,12 @@ const OpenLinkDialogAsync = props => (
   </React.Suspense>
 );
 
-// let showVerticalPanel = true;
-// if (window.ExtDefaultVerticalPanel === 'none') {
-//   showVerticalPanel = false;
-// }
-
 const MainPage = (props: Props) => {
-  // useTraceUpdate(props);
-  /* const [selectedDirectoryPath, setSelectedDirectoryPath] = useState<string>(
-    ''
-  ); */
   const selectedDirectoryPath = useRef<string>('');
-  // const mainSplitSize = useRef<string>(props.mainSplitSize);
   const setSelectedDirectoryPath = (path: string) => {
     selectedDirectoryPath.current = path;
   };
-  // const [isManagementPanelVisible, setManagementPanelVisible] = useState<
-  //   boolean
-  // >(showVerticalPanel || !props.isEntryInFullWidth);
-  // const [mainSplitSize, setMainSplitSize] = useState<any>('100%');
-  // const [isDrawerOpened, setDrawerOpened] = useState<boolean>(true);
+
   const width =
     window.innerWidth ||
     document.documentElement.clientWidth ||
@@ -320,6 +317,9 @@ const MainPage = (props: Props) => {
     height
   });
 
+  const [open, setOpen] = useState<boolean>(true);
+  const [rightPanelWidth, setRightPanelWidth] = useState<number>(0);
+
   useEffect(() => {
     if (!AppConfig.isCordova) {
       updateDimensions();
@@ -328,47 +328,8 @@ const MainPage = (props: Props) => {
   }, []);
 
   useEffect(() => {
-    if (props.isEntryInFullWidth) {
-      props.closeAllVerticalPanels();
-    } else {
-      showDrawer();
-    }
+    setOpen(!props.isEntryInFullWidth);
   }, [props.isEntryInFullWidth]);
-
-  /* useEffect(() => {
-    if (props.mainSplitSize !== mainSplitSize.current) {
-      props.setMainVerticalSplitSize(mainSplitSize.current);
-    }
-  }, [props.openedFiles]); */
-
-  /* const getMainSplitSize = () => {
-    if (props.openedFiles.length === 0) {
-      return '100%';
-    }
-
-    if (props.isEntryInFullWidth) {
-      return '0%';
-    }
-    const width =
-      window.innerWidth ||
-      document.documentElement.clientWidth ||
-      body.clientWidth;
-    const height =
-      window.innerHeight ||
-      document.documentElement.clientHeight ||
-      body.clientHeight;
-    if (height > width) {
-      return '0%';
-    }
-
-    return props.mainSplitSize;
-  }; */
-
-  const isManagementPanelVisible = () =>
-    props.isLocationManagerPanelOpened ||
-    props.isTagLibraryPanelOpened ||
-    props.isSearchPanelOpened ||
-    props.isHelpFeedbackPanelOpened;
 
   useEventListener('resize', () => {
     if (!AppConfig.isCordova) {
@@ -395,31 +356,10 @@ const MainPage = (props: Props) => {
         props.setEntryFullWidth(isFillWidth);
       }
     }
-
-    // Hide folder container on windows resize or on mobile
-    // Disable due a bug with the full width functionality
-    /* if (this.props.isFileOpened) {
-      if (width > showOneColumnThreshold) {
-        // TODO hide management panel
-        this.setState({
-          mainSplitSize: this.props.mainSplitSize
-        });
-      } else {
-        this.setState({
-          mainSplitSize: '0%'
-        });
-      }
-    } */
   };
 
-  const showDrawer = () => {
-    /* if (
-      !props.isLocationManagerPanelOpened && // TODO this is true in Cordova on closed Locations && LocationManagerPanel
-      !props.isSearchPanelOpened &&
-      !props.isTagLibraryPanelOpened
-    ) { */
-    props.openLocationManagerPanel();
-    // setDrawerOpened(true);
+  const toggleDrawer = () => {
+    setOpen(prevOpen => !prevOpen);
   };
 
   const handleFileDrop = (item, monitor) => {
@@ -463,7 +403,6 @@ const MainPage = (props: Props) => {
     showTagLibrary: props.openTagLibraryPanel,
     openSearch: props.openSearchPanel,
     showHelp: props.openHelpFeedbackPanel
-    // openDevTools: props.openDevTools TODO Impl
   };
 
   const keyMap = {
@@ -473,7 +412,6 @@ const MainPage = (props: Props) => {
     showTagLibrary: props.keyBindings.showTagLibrary,
     openSearch: props.keyBindings.openSearch,
     showHelp: props.keyBindings.showHelp
-    // openDevTools: props.keyBindings.openDevTools
   };
 
   const handleSplitSizeChange = (primarySize: string) => {
@@ -504,26 +442,31 @@ const MainPage = (props: Props) => {
     toggleOpenLinkDialog,
     setFirstRun,
     openURLExternally,
-    directoryPath
+    directoryPath,
+    mainSplitSize,
+    openedFiles,
+    classes
   } = props;
   const { FILE } = NativeTypes;
 
+  const isFileOpened = openedFiles.length > 0;
   const renderContainers = () => {
     const folderContainer = (
       <FolderContainer
         windowHeight={dimensions.height}
         windowWidth={dimensions.width}
-        showDrawer={showDrawer}
-        openedFiles={props.openedFiles}
-        currentDirectoryPath={props.directoryPath}
+        rightPanelWidth={isFileOpened ? rightPanelWidth : 0}
+        toggleDrawer={toggleDrawer}
+        openedFiles={openedFiles}
+        currentDirectoryPath={directoryPath}
       />
     );
 
-    if (props.openedFiles.length > 0) {
+    if (isFileOpened) {
       const entryContainer = (
         <EntryContainer
-          openedFiles={props.openedFiles}
-          currentDirectoryPath={props.directoryPath}
+          openedFiles={openedFiles}
+          currentDirectoryPath={directoryPath}
         />
       );
       if (props.isEntryInFullWidth) {
@@ -531,11 +474,16 @@ const MainPage = (props: Props) => {
       }
       return (
         <Split
-          initialPrimarySize={props.mainSplitSize}
-          onSplitChanged={handleSplitSizeChange}
-          /* resizerStyle={{ backgroundColor: theme.palette.divider }}
-    size={getMainSplitSize()}
-    onChange={handleSplitSizeChange} */
+          initialPrimarySize={mainSplitSize}
+          minPrimarySize="250px"
+          minSecondarySize="250px"
+          onSplitChanged={size => {
+            bufferedLeftSplitResize(() => handleSplitSizeChange(size));
+          }}
+          onMeasuredSizesChanged={sizes => {
+            setRightPanelWidth(Math.floor(sizes.secondary));
+            console.log(`The secondary pane is: ${sizes.secondary}px`);
+          }}
         >
           {folderContainer}
           {entryContainer}
@@ -664,49 +612,53 @@ const MainPage = (props: Props) => {
         />
       )}
       <PageNotification />
-      {props.isDesktopMode || (AppConfig.isAmplify && !props.user) ? (
-        <TargetFileBox
-          // @ts-ignore
-          accepts={[FILE]}
-          onDrop={handleFileDrop}
-        >
-          <CustomDragLayer />
-          <div
-          /* minSize={200}
-            maxSize={450} */
-          /* resizerStyle={{ backgroundColor: theme.palette.divider }}
-            defaultSize={props.leftSplitSize}
-            size={
-              isManagementPanelVisible()
-                ? props.leftSplitSize
-                : initialSplitSize
-            }
-            onChange={size => {
-              bufferedLeftSplitResize(() =>
-                props.setLeftVerticalSplitSize(size)
-              );
-            }} */
+      <div style={{ backgroundColor: theme.palette.background.default }}>
+        {/* --default-splitter-line-hover-color: green !important; */}
+        <style>
+          {`
+              .default-splitter {
+                --default-splitter-line-margin: 4px !important;
+                --default-splitter-line-size: 1px !important;
+                --default-splitter-line-color: ${theme.palette.divider} !important;
+              }
+          `}
+        </style>
+        {props.isDesktopMode || (AppConfig.isAmplify && !props.user) ? (
+          <TargetFileBox
+            // @ts-ignore
+            accepts={[FILE]}
+            onDrop={handleFileDrop}
           >
-            <VerticalNavigation />
+            <CustomDragLayer />
+            <Drawer variant="persistent" anchor="left" open={open}>
+              <MobileNavigation width={drawerWidth} />
+            </Drawer>
+            <main
+              className={clsx(classes.content, {
+                [classes.contentShift]: !open
+              })}
+            >
+              {renderContainers()}
+            </main>
+          </TargetFileBox>
+        ) : (
+          <>
+            <SwipeableDrawer
+              open={open}
+              onClose={() => setOpen(false)}
+              onOpen={() => setOpen(true)}
+              hysteresis={0.1}
+              disableBackdropTransition={!AppConfig.isIOS}
+            >
+              <MobileNavigation
+                width={drawerWidth}
+                hideDrawer={() => props.closeAllVerticalPanels()}
+              />
+            </SwipeableDrawer>
             {renderContainers()}
-          </div>
-        </TargetFileBox>
-      ) : (
-        <>
-          <SwipeableDrawer
-            open={isManagementPanelVisible()}
-            onClose={() => props.closeAllVerticalPanels()}
-            onOpen={showDrawer}
-            hysteresis={0.1}
-            disableBackdropTransition={!AppConfig.isIOS}
-          >
-            <MobileNavigation
-              hideDrawer={() => props.closeAllVerticalPanels()}
-            />
-          </SwipeableDrawer>
-          {renderContainers()}
-        </>
-      )}
+          </>
+        )}
+      </div>
     </HotKeys>
   );
 };

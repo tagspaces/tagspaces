@@ -94,11 +94,12 @@ interface Props {
   closeAllVerticalPanels: () => void;
   openURLExternally: (url: string) => void;
   switchTheme: () => void;
-  hideDrawer: () => void;
+  hideDrawer?: () => void;
   isReadOnlyMode: boolean;
   showNotification: (message: string) => void;
   directoryPath: string;
   user: CognitoUserInterface;
+  width?: number;
 }
 
 const MobileNavigation = (props: Props) => {
@@ -123,6 +124,7 @@ const MobileNavigation = (props: Props) => {
     hideDrawer,
     openURLExternally,
     directoryPath,
+    width,
     user
   } = props;
   return (
@@ -134,12 +136,16 @@ const MobileNavigation = (props: Props) => {
             }
           `}
       </style>
-      <div style={{ width: 300, maxWidth: 300, height: 'calc(100% - 60px)' }}>
-        {props.isLocationManagerPanelOpened && (
-          <LocationManager hideDrawer={hideDrawer} />
-        )}
+      <div
+        style={{
+          width: width || 320,
+          maxWidth: width || 320,
+          height: 'calc(100% - 60px)'
+        }}
+      >
+        {props.isLocationManagerPanelOpened && <LocationManager />}
         {props.isTagLibraryPanelOpened && <TagLibrary />}
-        {props.isSearchPanelOpened && <Search hideDrawer={hideDrawer} />}
+        {props.isSearchPanelOpened && <Search />}
         {props.isHelpFeedbackPanelOpened && (
           <HelpFeedbackPanel
             openURLExternally={openURLExternally}

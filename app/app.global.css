@@ -20,3 +20,7 @@ html,
 body {
   overscroll-behavior-x: none;
 }
+
+.react-split > .split-container.vertical > .splitter {
+  z-index: 1;
+}

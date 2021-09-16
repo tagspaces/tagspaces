@@ -224,7 +224,7 @@ interface Props {
   isDesktopMode: boolean;
   showNotification: (content: string) => void;
   openSearchPanel: () => void;
-  showDrawer?: () => void;
+  toggleDrawer?: () => void;
   setCurrentDirectoryPerspective: (perspective: string) => void;
   maxSearchResults: number;
   currentDirectoryPerspective: string;
@@ -234,6 +234,7 @@ interface Props {
   updateCurrentDirEntry: (path: string, entry: Object) => void;
   setCurrentDirectoryColor: (color: string) => void;
   selectedEntries: Array<TS.FileSystemEntry>;
+  rightPanelWidth: number;
 }
 
 const FolderContainer = (props: Props) => {
@@ -416,11 +417,12 @@ const FolderContainer = (props: Props) => {
     classes,
     maxSearchResults,
     openSearchPanel,
-    showDrawer,
+    toggleDrawer,
     isDesktopMode,
     theme,
     loadParentDirectoryContent,
-    currentDirectoryPerspective
+    currentDirectoryPerspective,
+    rightPanelWidth
   } = props;
   const normalizedCurrentDirPath = normalizePath(
     currentDirectoryPath.split('\\').join('/')
@@ -441,18 +443,14 @@ const FolderContainer = (props: Props) => {
       <div className={classes.mainPanel}>
         <div className={classes.topPanel}>
           <div className={classes.toolbar}>
-            {isDesktopMode ? (
-              <LocationMenu />
-            ) : (
-              <Button
-                id="mobileMenuButton"
-                style={{ marginLeft: -8 }}
-                onClick={showDrawer}
-              >
-                <MenuIcon />
-              </Button>
-            )}
-            <CounterBadge
+            <Button
+              id="mobileMenuButton"
+              style={{ marginLeft: -8 }}
+              onClick={toggleDrawer}
+            >
+              <MenuIcon />
+            </Button>
+            {/* <CounterBadge
               showZero={true}
               title={searchResultCounterText}
               badgeContent={searchResultCount}
@@ -461,7 +459,7 @@ const FolderContainer = (props: Props) => {
               onClick={() => {
                 openSearchPanel();
               }}
-            />
+            /> */}
             <div className={classes.flexMiddle} />
             <React.Fragment>
               {isDesktopMode &&
@@ -563,6 +561,9 @@ const FolderContainer = (props: Props) => {
           aria-label="change perspective"
           exclusive
           className={classes.perspecitveSwitch}
+          style={{
+            right: rightPanelWidth + 30
+          }}
         >
           <ToggleButton
             value={perspectives.DEFAULT}
@@ -646,7 +647,8 @@ function mapActionCreatorsToProps(dispatch) {
   );
 }
 
-const areEqual = (prevProp, nextProp) =>
+const areEqual = (prevProp: Props, nextProp: Props) =>
+  nextProp.rightPanelWidth === prevProp.rightPanelWidth &&
   nextProp.currentDirectoryPath === prevProp.currentDirectoryPath &&
   nextProp.currentDirectoryPerspective ===
     prevProp.currentDirectoryPerspective &&

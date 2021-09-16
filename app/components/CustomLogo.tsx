@@ -25,7 +25,9 @@ import Badge from '@material-ui/core/Badge';
 import { Pro } from '../pro';
 import TextLogoIcon from '../assets/images/text-logo.svg';
 import WebLogoIcon from '../assets/images/text-logo-web.svg';
+import LogoIcon from '../assets/images/icon100x100.svg';
 import { actions as AppActions } from '../reducers/app';
+import i18n from '../services/i18n';
 import versionMeta from '../version.json';
 import AppConfig from '-/config';
 
@@ -62,6 +64,21 @@ const CustomLogo = (props: Props) => (
     badgeContent={'v' + versionMeta.version}
     color="primary"
   >
+    <IconButton
+      onClick={props.toggleAboutDialog}
+      style={{ padding: 0, marginTop: -10 }}
+      title={i18n.t('core:aboutTitle')}
+      data-tid="aboutTagSpaces"
+    >
+      <img
+        style={{
+          width: 40
+          // color: props.theme.palette.text.primary
+        }}
+        src={LogoIcon}
+        alt="TagSpaces Logo"
+      />
+    </IconButton>
     <IconButton
       style={{ height: 50, padding: 0, marginBottom: 15 }}
       data-tid="aboutTagSpaces"
