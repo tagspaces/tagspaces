@@ -34,7 +34,6 @@ import CreateTagsDialog from './dialogs/CreateTagsDialog';
 import EditTagGroupDialog from './dialogs/EditTagGroupDialog';
 import TagGroupContainer from './TagGroupContainer';
 import TagMenu from './menus/TagMenu';
-import CustomLogo from './CustomLogo';
 import TagLibraryMenu from './menus/TagLibraryMenu';
 import TagGroupMenu from './menus/TagGroupMenu';
 import {
@@ -101,6 +100,7 @@ interface Props {
   locations: Array<TS.Location>;
   saveTagInLocation: boolean;
   moveTagGroup: (tagGroupUuid: TS.Uuid, position: number) => void;
+  reduceHeightBy: number;
 }
 
 const TagLibrary = (props: Props) => {
@@ -300,11 +300,22 @@ const TagLibrary = (props: Props) => {
     }
   }
 
-  const { tagGroups, classes, allTags, showNotification } = props;
+  const {
+    tagGroups,
+    classes,
+    allTags,
+    showNotification,
+    reduceHeightBy
+  } = props;
 
   return (
-    <div className={classes.panel} style={props.style}>
-      <CustomLogo />
+    <div
+      className={classes.panel}
+      style={{
+        display: 'flex',
+        flexDirection: 'column'
+      }}
+    >
       <div className={classes.toolbar}>
         <Typography
           className={classNames(classes.panelTitle, classes.header)}
@@ -344,7 +355,6 @@ const TagLibrary = (props: Props) => {
       )}
       {isCreateTagGroupDialogOpened && (
         <CreateTagGroupDialog
-          // key={uuidv1()}
           open={isCreateTagGroupDialogOpened}
           onClose={() => setIsCreateTagGroupDialogOpened(false)}
           createTagGroup={props.createTagGroup}
@@ -354,7 +364,6 @@ const TagLibrary = (props: Props) => {
       )}
       {isCreateTagDialogOpened && (
         <CreateTagsDialog
-          // key={uuidv1()}
           open={isCreateTagDialogOpened}
           onClose={() => setIsCreateTagDialogOpened(false)}
           addTag={props.addTag}
@@ -435,7 +444,16 @@ const TagLibrary = (props: Props) => {
           confirmDialogTID="confirmDeleteTagDialogTagMenu"
         />
       )}
-      <div className={classes.taggroupsArea} data-tid="tagLibraryTagGroupList">
+      <div
+        style={{
+          paddingTop: 0,
+          marginTop: 0,
+          height: 'calc(100% - ' + reduceHeightBy + 'px)',
+          // @ts-ignore
+          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+        }}
+        data-tid="tagLibraryTagGroupList"
+      >
         {AppConfig.showSmartTags && (
           <div style={{ paddingTop: 0, paddingBottom: 0 }}>
             {SmartTags(i18n).map(renderTagGroup)}

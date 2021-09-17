@@ -24,7 +24,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import BackButtonIcon from '@material-ui/icons/ArrowBack';
 import IconButton from '@material-ui/core/IconButton';
 import FolderSeparatorIcon from '@material-ui/icons/ChevronRight';
-import MenuIcon from '@material-ui/icons/Menu';
+import MenuIcon from '@material-ui/icons/MenuOpen';
 import Badge from '@material-ui/core/Badge';
 import { Tooltip } from '@material-ui/core';
 import { withStyles, withTheme } from '@material-ui/core/styles';
@@ -462,6 +462,7 @@ const FolderContainer = (props: Props) => {
             /> */}
             <div className={classes.flexMiddle} />
             <React.Fragment>
+              <LocationMenu />
               {isDesktopMode &&
                 pathParts.length > 0 &&
                 pathParts.map(pathPart => (

@@ -66,7 +66,7 @@ const CustomLogo = (props: Props) => (
   >
     <IconButton
       onClick={props.toggleAboutDialog}
-      style={{ padding: 0, marginTop: -10 }}
+      style={{ padding: 0, paddingLeft: 5, height: 50 }}
       title={i18n.t('core:aboutTitle')}
       data-tid="aboutTagSpaces"
     >

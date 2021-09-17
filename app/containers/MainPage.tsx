@@ -621,6 +621,10 @@ const MainPage = (props: Props) => {
                 --default-splitter-line-size: 1px !important;
                 --default-splitter-line-color: ${theme.palette.divider} !important;
               }
+
+              .react-split > .split-container.vertical > .splitter {
+                background-color: ${theme.palette.background.default}
+              }
           `}
         </style>
         {props.isDesktopMode || (AppConfig.isAmplify && !props.user) ? (

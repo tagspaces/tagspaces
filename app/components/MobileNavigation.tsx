@@ -23,17 +23,26 @@ import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import Tooltip from '@material-ui/core/Tooltip';
 import ToggleButton from '@material-ui/lab/ToggleButton';
+import Button from '@material-ui/core/Button';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import IconButton from '@material-ui/core/IconButton';
-import NewFileIcon from '@material-ui/icons/AddCircle';
+import Typography from '@material-ui/core/Typography';
+import ThemingIcon from '@material-ui/icons/InvertColors';
 import LocationsIcon from '@material-ui/icons/WorkOutline';
+import CreateIcon from '@material-ui/icons/Add';
 import TagLibraryIcon from '@material-ui/icons/LocalOfferOutlined';
 import SearchIcon from '@material-ui/icons/SearchOutlined';
 import HelpIcon from '@material-ui/icons/HelpOutline';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { withStyles } from '@material-ui/core/styles';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
+import ProTeaser from '../assets/images/spacerocket_undraw.svg';
+import { Pro } from '-/pro';
+import CustomLogo from './CustomLogo';
 import TagLibrary from '../components/TagLibrary';
 import Search from '../components/Search';
 import LocationManager from '../components/LocationManager';
@@ -51,14 +60,9 @@ import {
 } from '../reducers/app';
 import LoadingLazy from './LoadingLazy';
 import { actions as SettingsActions, isFirstRun } from '../reducers/settings';
+import Links from '-/links';
 
 const styles: any = (theme: any) => ({
-  bottomToolbar: {
-    paddingTop: 9,
-    paddingBottom: 3,
-    textAlign: 'center',
-    backgroundColor: theme.palette.background.default
-  },
   selectedButton: {
     backgroundColor: theme.palette.primary.light
   }
@@ -92,7 +96,7 @@ interface Props {
   isHelpFeedbackPanelOpened: boolean;
   openHelpFeedbackPanel: () => void;
   closeAllVerticalPanels: () => void;
-  openURLExternally: (url: string) => void;
+  openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   switchTheme: () => void;
   hideDrawer?: () => void;
   isReadOnlyMode: boolean;
@@ -100,6 +104,7 @@ interface Props {
   directoryPath: string;
   user: CognitoUserInterface;
   width?: number;
+  theme: any;
 }
 
 const MobileNavigation = (props: Props) => {
@@ -108,6 +113,8 @@ const MobileNavigation = (props: Props) => {
   const toggleProTeaser = () => {
     setIsProTeaserVisible(!isProTeaserVisible);
   };
+
+  const showProTeaser = !Pro;
 
   const {
     classes,
@@ -125,22 +132,83 @@ const MobileNavigation = (props: Props) => {
     openURLExternally,
     directoryPath,
     width,
+    theme,
+    switchTheme,
     user
   } = props;
   return (
-    <div style={{ height: '100%' }}>
+    <div
+      className={classes.root}
+      style={{
+        backgroundColor: theme.palette.background.paper,
+        height: '100%',
+        overflow: 'hidden',
+        width: width || 320,
+        maxWidth: width || 320
+      }}
+    >
       <div
         style={{
-          width: width || 320,
-          maxWidth: width || 320,
-          height: 'calc(100% - 60px)'
+          overflow: 'hidden',
+          height: showProTeaser ? 'calc(100% - 275px)' : 'calc(100% - 60px)'
         }}
       >
-        {props.isLocationManagerPanelOpened && <LocationManager />}
-        {props.isTagLibraryPanelOpened && <TagLibrary />}
+        <CustomLogo />
+        <ButtonGroup
+          // variant="text"
+          color="primary"
+          aria-label="text primary button group"
+          style={{
+            textAlign: 'center',
+            display: 'block',
+            whiteSpace: 'nowrap',
+            marginBottom: 20
+          }}
+        >
+          <Tooltip title={i18n.t('core:createFileTitle')}>
+            <Button
+              data-tid="createNewLocation"
+              onClick={() => {
+                if (props.isReadOnlyMode || !directoryPath) {
+                  showNotification(
+                    'You are in read-only mode or there is no opened location'
+                  );
+                } else {
+                  toggleCreateFileDialog();
+                  hideDrawer();
+                }
+              }}
+              size="small"
+              color="primary"
+            >
+              <CreateIcon />
+              &nbsp;
+              {i18n.t('core:create...')}
+            </Button>
+          </Tooltip>
+          <Tooltip title={i18n.t('core:createLocationTitle')}>
+            <Button
+              data-tid="createNewLocation"
+              onClick={toggleCreateFileDialog}
+              size="small"
+              color="primary"
+            >
+              <LocationsIcon />
+              &nbsp;
+              {i18n.t('core:connect...')}
+            </Button>
+          </Tooltip>
+        </ButtonGroup>
+        {props.isLocationManagerPanelOpened && (
+          <LocationManager reduceHeightBy={showProTeaser ? 175 : 30} />
+        )}
+        {props.isTagLibraryPanelOpened && (
+          <TagLibrary reduceHeightBy={showProTeaser ? 175 : 30} />
+        )}
         {props.isSearchPanelOpened && <Search />}
         {props.isHelpFeedbackPanelOpened && (
           <HelpFeedbackPanel
+            reduceHeightBy={showProTeaser ? 175 : 30}
             openURLExternally={openURLExternally}
             toggleAboutDialog={toggleAboutDialog}
             toggleKeysDialog={toggleKeysDialog}
@@ -149,7 +217,61 @@ const MobileNavigation = (props: Props) => {
           />
         )}
       </div>
-      <div className={classes.bottomToolbar}>
+      <div
+        style={{
+          paddingTop: 5,
+          paddingBottom: 3,
+          textAlign: 'center'
+        }}
+      >
+        {showProTeaser && (
+          <>
+            <CardContent
+              onClick={toggleProTeaser}
+              style={{
+                paddingBottom: 0,
+                // backgroundColor: 'rgba(29, 209, 159, 0.08)',
+                textAlign: 'center'
+              }}
+            >
+              <Typography color="textSecondary" gutterBottom>
+                Achieve more with
+              </Typography>
+              <Typography variant="h6" component="h2" color="textPrimary">
+                TagSpaces Pro
+              </Typography>
+              <img
+                style={{ maxHeight: 80, marginTop: 10 }}
+                src={ProTeaser}
+                alt=""
+              />
+            </CardContent>
+            <CardActions
+              style={{ flexDirection: 'row', justifyContent: 'center' }}
+            >
+              <Button
+                size="small"
+                onClick={(event: any) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  toggleProTeaser();
+                }}
+              >
+                Learn More
+              </Button>
+              <Button
+                size="small"
+                onClick={(event: any) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  openURLExternally(Links.links.productsOverview, true);
+                }}
+              >
+                Get It
+              </Button>
+            </CardActions>
+          </>
+        )}
         <Tooltip title={i18n.t('core:settings')}>
           <IconButton
             id="verticalNavButton"
@@ -165,7 +287,6 @@ const MobileNavigation = (props: Props) => {
         <ToggleButtonGroup exclusive>
           <Tooltip title={i18n.t('core:locationManager')}>
             <ToggleButton
-              id="verticalNavButton"
               onClick={openLocationManagerPanel}
               className={
                 props.isLocationManagerPanelOpened
@@ -179,7 +300,6 @@ const MobileNavigation = (props: Props) => {
           </Tooltip>
           <Tooltip title={i18n.t('core:tagLibrary')}>
             <ToggleButton
-              id="verticalNavButton"
               data-tid="tagLibrary"
               onClick={openTagLibraryPanel}
               className={
@@ -193,7 +313,6 @@ const MobileNavigation = (props: Props) => {
           </Tooltip>
           <Tooltip title={i18n.t('core:searchTitle')}>
             <ToggleButton
-              id="verticalNavButton"
               data-tid="search"
               onClick={openSearchPanel}
               className={
@@ -207,7 +326,6 @@ const MobileNavigation = (props: Props) => {
           </Tooltip>
           <Tooltip title={i18n.t('core:helpFeedback')}>
             <ToggleButton
-              id="verticalNavButton"
               data-tid="helpFeedback"
               onClick={openHelpFeedbackPanel}
               className={
@@ -220,23 +338,14 @@ const MobileNavigation = (props: Props) => {
             </ToggleButton>
           </Tooltip>
         </ToggleButtonGroup>
-        <Tooltip title={i18n.t('core:createFileTitle')}>
+        <Tooltip title={i18n.t('core:switchTheme')}>
           <IconButton
-            id="verticalNavButton"
-            onClick={() => {
-              if (props.isReadOnlyMode || !directoryPath) {
-                showNotification(
-                  'You are in read-only mode or there is no opened location'
-                );
-              } else {
-                toggleCreateFileDialog();
-                hideDrawer();
-              }
-            }}
-            style={{ marginTop: -15, marginLeft: 2 }}
-            data-tid="locationManager"
+            title={i18n.t('core:switchTheme')}
+            data-tid="switchTheme"
+            onClick={switchTheme}
+            style={{ marginTop: -15, marginRight: 2 }}
           >
-            <NewFileIcon />
+            <ThemingIcon className={classes.buttonIcon} />
           </IconButton>
         </Tooltip>
         {isProTeaserVisible && (
@@ -291,4 +400,4 @@ function mapActionCreatorsToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
-)(withStyles(styles)(MobileNavigation));
+)(withStyles(styles, { withTheme: true })(MobileNavigation));
