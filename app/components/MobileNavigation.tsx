@@ -183,7 +183,7 @@ const MobileNavigation = (props: Props) => {
             >
               <CreateIcon />
               &nbsp;
-              {i18n.t('core:create...')}
+              {i18n.t('core:new')}
             </Button>
           </Tooltip>
           <Tooltip title={i18n.t('core:createLocationTitle')}>
@@ -195,7 +195,7 @@ const MobileNavigation = (props: Props) => {
             >
               <LocationsIcon />
               &nbsp;
-              {i18n.t('core:connect...')}
+              {i18n.t('core:createLocationTitle')}
             </Button>
           </Tooltip>
         </ButtonGroup>

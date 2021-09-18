@@ -90,7 +90,7 @@ const styles: any = (theme: any) => ({
   },
   fileContent: {
     width: '100%',
-    height: '100%',
+    height: 'calc(100% - 150px)',
     flex: '1 1 100%',
     display: 'flex',
     backgroundColor: theme.palette.background.default
@@ -1063,19 +1063,16 @@ const EntryContainer = (props: Props) => {
         }}
          */
         >
-          <div>
-            {toolbarButtons()}
-            {entryProperties}
-          </div>
+          {toolbarButtons()}
           {fileContent}
         </Split>
       );
     }
     return (
-      <div style={{ height: '100%' }}>
+      <>
         {toolbarButtons()}
         {fileContent}
-      </div>
+      </>
     );
   };
 

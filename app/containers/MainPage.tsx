@@ -754,6 +754,7 @@ function mapDispatchToProps(dispatch) {
 }
 
 const areEqual = (prevProp, nextProp) =>
+  nextProp.theme === prevProp.theme &&
   nextProp.directoryPath === prevProp.directoryPath &&
   nextProp.isAboutDialogOpened === prevProp.isAboutDialogOpened &&
   nextProp.isCreateDirectoryOpened === prevProp.isCreateDirectoryOpened &&
