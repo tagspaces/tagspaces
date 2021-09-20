@@ -94,30 +94,8 @@ const bufferedLeftSplitResize = buffer({
 });
 
 const styles: any = (theme: any) => ({
-  // content: {
-  //   width: '100%',
-  //   marginLeft: drawerWidth,
-  //   flexGrow: 1,
-  //   backgroundColor: theme.palette.background.default,
-  //   transition: theme.transitions.create('margin', {
-  //     easing: theme.transitions.easing.sharp,
-  //     duration: theme.transitions.duration.leavingScreen
-  //   }),
-  //   [theme.breakpoints.up('sm')]: {
-  //     content: {
-  //       height: 'calc(100% - 64px)',
-  //       marginTop: 64
-  //     }
-  //   }
-  // },
-  // contentShift: {
-  //   marginLeft: 0,
-  //   transition: theme.transitions.create('margin', {
-  //     easing: theme.transitions.easing.easeOut,
-  //     duration: theme.transitions.duration.enteringScreen
-  //   })
-  // }
   content: {
+    height: '100%',
     flexGrow: 1,
     padding: 0,
     paddingLeft: drawerWidth,
@@ -127,6 +105,7 @@ const styles: any = (theme: any) => ({
     })
   },
   contentShift: {
+    height: '100%',
     padding: 0,
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.easeOut,
@@ -470,7 +449,7 @@ const MainPage = (props: Props) => {
         />
       );
       if (props.isEntryInFullWidth) {
-        return entryContainer;
+        return <div style={{ height: '100%' }}>{entryContainer}</div>;
       }
       return (
         <Split
@@ -494,7 +473,11 @@ const MainPage = (props: Props) => {
   };
 
   return (
-    <HotKeys handlers={keyBindingHandlers} keyMap={keyMap}>
+    <HotKeys
+      handlers={keyBindingHandlers}
+      keyMap={keyMap}
+      style={{ height: '100%' }}
+    >
       {props.isAboutDialogOpened && (
         <AboutDialogAsync
           open={props.isAboutDialogOpened}
@@ -612,7 +595,12 @@ const MainPage = (props: Props) => {
         />
       )}
       <PageNotification />
-      <div style={{ backgroundColor: theme.palette.background.default }}>
+      <div
+        style={{
+          backgroundColor: theme.palette.background.default,
+          height: '100%'
+        }}
+      >
         {/* --default-splitter-line-hover-color: green !important; */}
         <style>
           {`
