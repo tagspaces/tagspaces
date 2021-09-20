@@ -155,7 +155,7 @@ const boxTarget = {
         return;
       }
       // Skip reorder on DnD Tag from an other file
-      if(dragItem.tag.type === 'plain') {
+      if (dragItem.tag.type === 'plain') {
         const extractedTags = extractTags(
           props.entryPath,
           AppConfig.tagDelimiter,
