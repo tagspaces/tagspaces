@@ -414,7 +414,7 @@ const actions = {
             }
             return true;
           });
-          if (tag.position !== undefined) {
+          if (tag.position !== undefined && tagFoundPosition > -1) {
             // move tag
             const element = fsEntryMeta.tags[tagFoundPosition];
             fsEntryMeta.tags.splice(tagFoundPosition, 1);
