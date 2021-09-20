@@ -154,14 +154,21 @@ const boxTarget = {
       if (dragItem.sourceTagGroupId !== undefined) {
         return;
       }
-      const extractedTags = extractTags(
-        props.entryPath,
-        AppConfig.tagDelimiter,
-        PlatformIO.getDirSeparator()
-      );
       // Skip reorder on DnD Tag from an other file
-      if (!extractedTags.includes(dragItem.tag.title)) {
-        return;
+      if(dragItem.tag.type === 'plain') {
+        const extractedTags = extractTags(
+          props.entryPath,
+          AppConfig.tagDelimiter,
+          PlatformIO.getDirSeparator()
+        );
+        if (
+          extractedTags.length > 0 &&
+          !extractedTags.includes(dragItem.tag.title)
+        ) {
+          return;
+        }
+      } else {
+        //TODO check if sidecar tag exist in file (reorder only if exist)
       }
 
       dragItem.tag.position = hoverIndex;
