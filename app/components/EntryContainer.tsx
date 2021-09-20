@@ -385,7 +385,7 @@ const EntryContainer = (props: Props) => {
               // @ts-ignore
               fileViewer.current.contentWindow.setContent
             ) {
-              // @ts-ignore
+              // @ts-ignore call setContent from iframe
               fileViewer.current.contentWindow.setContent(
                 content,
                 fileDirectory,

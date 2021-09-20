@@ -147,6 +147,10 @@ const boxTarget = {
       if (dragItem.tag.functionality !== undefined) {
         return;
       }
+      // Skip reorder from TagGroup source
+      if (dragItem.sourceTagGroupId !== undefined) {
+        return;
+      }
       dragItem.tag.position = hoverIndex;
       props.editTagForEntry(props.entryPath, dragItem.tag);
 
