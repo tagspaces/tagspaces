@@ -29,6 +29,9 @@ import { getEmptyImage } from 'react-dnd-html5-backend';
 import DragItemTypes from './DragItemTypes';
 import TagContainer from './TagContainer';
 import { TS } from '-/tagspaces.namespace';
+import { extractTags } from '-/utils/paths';
+import PlatformIO from '-/services/platform-io';
+import AppConfig from '-/config';
 
 const boxSource = {
   // Expected the drag source specification to only have some of the following keys: canDrag, beginDrag, isDragging, endDrag
@@ -151,6 +154,16 @@ const boxTarget = {
       if (dragItem.sourceTagGroupId !== undefined) {
         return;
       }
+      const extractedTags = extractTags(
+        props.entryPath,
+        AppConfig.tagDelimiter,
+        PlatformIO.getDirSeparator()
+      );
+      // Skip reorder on DnD Tag from an other file
+      if (!extractedTags.includes(dragItem.tag.title)) {
+        return;
+      }
+
       dragItem.tag.position = hoverIndex;
       props.editTagForEntry(props.entryPath, dragItem.tag);
 
