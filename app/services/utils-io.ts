@@ -289,7 +289,7 @@ export function findExtensionsForEntry(
     viewingExtensionPath,
     viewingExtensionId: '',
     isFile,
-    changed: false,
+    // changed: false,
     lmdt: 0,
     size: 0
   };

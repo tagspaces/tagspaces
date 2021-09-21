@@ -16,12 +16,11 @@
  *
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { MutableRefObject, useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { GlobalHotKeys } from 'react-hotkeys';
 import Button from '@material-ui/core/Button';
-import Fab from '@material-ui/core/Fab';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import SaveIcon from '@material-ui/icons/Save';
@@ -54,7 +53,7 @@ import {
   extractFileName,
   extractDirectoryName
 } from '-/utils/paths';
-import { buffer } from '-/utils/misc';
+// import { buffer } from '-/utils/misc';
 import {
   actions as SettingsActions,
   isDesktopMode,
@@ -70,15 +69,16 @@ import {
 } from '-/reducers/app';
 import useEventListener from '-/utils/useEventListener';
 import { TS } from '-/tagspaces.namespace';
+import FileView from '-/components/FileView';
 
 const defaultSplitSize = 103;
 const openedSplitSize = AppConfig.isElectron ? 560 : 360;
-const fullSplitSize = 750;
+/* const fullSplitSize = 750;
 // const maxCharactersTitleLength = 50;
 const bufferedSplitResize = buffer({
   timeout: 300,
   id: 'buffered-split-resize'
-});
+}); */
 
 const styles: any = (theme: any) => ({
   panel: {
@@ -216,6 +216,9 @@ interface Props {
 }
 
 const EntryContainer = (props: Props) => {
+  if (!props.openedFiles || props.openedFiles.length === 0) {
+    return null;
+  }
   const openedFile = props.openedFiles[0];
   // const [currentEntry, setCurrentEntry] = useState<OpenedEntry>(openedFile);
 
@@ -238,21 +241,14 @@ const EntryContainer = (props: Props) => {
   const [isDeleteEntryModalOpened, setDeleteEntryModalOpened] = useState<
     boolean
   >(false);
-  const fileViewer = useRef<HTMLIFrameElement>(null);
-  const fileViewerContainer = useRef<HTMLDivElement>(null);
+  const fileViewer: MutableRefObject<HTMLIFrameElement> = useRef<
+    HTMLIFrameElement
+  >(null);
+  const fileViewerContainer: MutableRefObject<HTMLDivElement> = useRef<
+    HTMLDivElement
+  >(null);
 
-  useEventListener('toggle-resume', () => {
-    if (
-      fileViewer &&
-      fileViewer.current &&
-      fileViewer.current.contentWindow &&
-      // @ts-ignore
-      fileViewer.current.contentWindow.togglePlay
-    ) {
-      // @ts-ignore
-      fileViewer.current.contentWindow.togglePlay();
-    }
-  });
+  const fileChanged = useRef<Boolean>(false);
 
   useEventListener('message', e => {
     if (typeof e.data === 'string') {
@@ -272,9 +268,10 @@ const EntryContainer = (props: Props) => {
   useEffect(() => {
     if (props.openedFiles.length > 0) {
       if (
-        openedFile.editMode &&
-        openedFile.changed &&
-        openedFile.shouldReload === false
+        // openedFile.editMode &&
+        // openedFile.changed &&
+        fileChanged.current
+        // openedFile.shouldReload === false
       ) {
         setSaveBeforeReloadConfirmDialogOpened(true);
       }
@@ -374,15 +371,22 @@ const EntryContainer = (props: Props) => {
           });
         break;
       case 'contentChangedInEditor': {
-        if (openedFile.editMode && !openedFile.changed) {
-          // dummy state change to render DOT before file name (only first time)
-          props.updateOpenedFile(openedFile.path, {
+        if (!fileChanged.current) {
+          fileChanged.current = true;
+          // TODO Rerender Dot
+        }
+        // if (openedFile.editMode) { // && !openedFile.changed) {
+        // dummy state change to render DOT before file name (only first time)
+        // TODO Rerender
+        /* props.updateOpenedFile(openedFile.path, {
             ...openedFile,
             changed: true,
             editMode: true,
             shouldReload: undefined
-          });
-        }
+          }); */
+        /* } else if (openedFile.shouldReload === undefined) {
+          fileChanged.current = true;
+        } */
         break;
       }
       default:
@@ -395,7 +399,8 @@ const EntryContainer = (props: Props) => {
 
   const reloadDocument = () => {
     if (openedFile) {
-      if (openedFile.editMode && openedFile.changed) {
+      if (openedFile.editMode && fileChanged.current) {
+        // openedFile.changed) {
         setSaveBeforeReloadConfirmDialogOpened(true);
       } else {
         props.updateOpenedFile(openedFile.path, {
@@ -412,7 +417,8 @@ const EntryContainer = (props: Props) => {
       event.preventDefault(); // Let's stop this event.
       event.stopPropagation();
     }
-    if (openedFile && openedFile.changed && openedFile.editMode) {
+    if (openedFile && fileChanged.current && openedFile.editMode) {
+      // openedFile.changed
       setSaveBeforeCloseConfirmDialogOpened(true);
     } else {
       closeFile();
@@ -449,9 +455,10 @@ const EntryContainer = (props: Props) => {
         props.updateOpenedFile(openedFile.path, {
           ...openedFile,
           editMode: false,
-          changed: false,
+          // changed: false,
           shouldReload: undefined
         });
+        fileChanged.current = false;
         props.showNotification(
           i18n.t('core:fileSavedSuccessfully'),
           NotificationTypes.default
@@ -473,6 +480,7 @@ const EntryContainer = (props: Props) => {
       editMode: true,
       shouldReload: undefined
     });
+    // setFileView(renderFileView());
   };
 
   const shareFile = (filePath: string) => {
@@ -798,8 +806,51 @@ const EntryContainer = (props: Props) => {
     </div>
   );
 
-  const renderFileView = fileOpenerURL => (
-    <iframe
+  const { classes, keyBindings } = props;
+  const fileTitle: string = openedFile.path
+    ? extractTitle(
+        openedFile.path,
+        !openedFile.isFile,
+        PlatformIO.getDirSeparator()
+      )
+    : '';
+
+  /* const renderFileView = () => {
+    let fileOpenerURL: string;
+
+    if (openedFile.path) {
+
+      // if (fileTitle.length > maxCharactersTitleLength) {
+      //   fileTitle = fileTitle.substr(0, maxCharactersTitleLength) + '...';
+      // }
+
+      const locale = '&locale=' + i18n.language;
+      const theme = '&theme=' + props.settings.currentTheme;
+
+      if (openedFile.editMode && openedFile.editingExtensionPath) {
+        fileOpenerURL =
+          openedFile.editingExtensionPath +
+          '/index.html?file=' +
+          encodeURIComponent(openedFile.url ? openedFile.url : openedFile.path) +
+          locale +
+          theme +
+          '&edit=true' +
+          (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
+        // } else if (!currentEntry.isFile) { // TODO needed for loading folder's default html
+        //   fileOpenerURL = 'node_modules/@tagspaces/html-viewer/index.html?locale=' + i18n.language;
+      } else {
+        fileOpenerURL =
+          openedFile.viewingExtensionPath +
+          '/index.html?file=' +
+          encodeURIComponent(openedFile.url ? openedFile.url : openedFile.path) +
+          locale +
+          theme +
+          (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
+      }
+    } else {
+      fileOpenerURL = 'about:blank';
+    }
+    return <iframe
       ref={fileViewer}
       className={props.classes.fileOpener}
       src={fileOpenerURL}
@@ -808,48 +859,9 @@ const EntryContainer = (props: Props) => {
       title={i18n.t('core:fileViewer')}
       id="FileViewer"
     />
-  );
-
-  const { classes, keyBindings } = props;
-  let fileOpenerURL: string;
-  let fileTitle: string = '';
-
-  if (openedFile.path) {
-    fileTitle = extractTitle(
-      openedFile.path,
-      !openedFile.isFile,
-      PlatformIO.getDirSeparator()
-    );
-    // if (fileTitle.length > maxCharactersTitleLength) {
-    //   fileTitle = fileTitle.substr(0, maxCharactersTitleLength) + '...';
-    // }
-
-    const locale = '&locale=' + i18n.language;
-    const theme = '&theme=' + props.settings.currentTheme;
-
-    if (openedFile.editMode && openedFile.editingExtensionPath) {
-      fileOpenerURL =
-        openedFile.editingExtensionPath +
-        '/index.html?file=' +
-        encodeURIComponent(openedFile.url ? openedFile.url : openedFile.path) +
-        locale +
-        theme +
-        '&edit=true' +
-        (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
-      // } else if (!currentEntry.isFile) { // TODO needed for loading folder's default html
-      //   fileOpenerURL = 'node_modules/@tagspaces/html-viewer/index.html?locale=' + i18n.language;
-    } else {
-      fileOpenerURL =
-        openedFile.viewingExtensionPath +
-        '/index.html?file=' +
-        encodeURIComponent(openedFile.url ? openedFile.url : openedFile.path) +
-        locale +
-        theme +
-        (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
-    }
-  } else {
-    fileOpenerURL = 'about:blank';
-  }
+  };
+  // renderFileView is only called once
+  const [fileView, setFileView] = useState(renderFileView); */
 
   // function getSplitPanelSize() {
   //   if (isPropPanelVisible) {
@@ -864,7 +876,7 @@ const EntryContainer = (props: Props) => {
     const toolbarButtons = () => {
       if (openedFile.path) {
         return (
-          <Box className={classes.panel}>
+          <Box key="toolbarButtonsID" className={classes.panel}>
             <Box className={classes.toolbar}>
               <Box className={classes.flexLeft}>
                 {openedFile.isFile ? (
@@ -879,7 +891,7 @@ const EntryContainer = (props: Props) => {
                         color: props.theme.palette.text.primary
                       }}
                     >
-                      {openedFile.editMode && openedFile.changed
+                      {fileChanged.current // openedFile.editMode && openedFile.changed
                         ? String.fromCharCode(0x25cf) + ' '
                         : ''}
                       {fileTitle}
@@ -996,7 +1008,7 @@ const EntryContainer = (props: Props) => {
       return <div>{i18n.t('core:noEntrySelected')}</div>;
     };
 
-    const fileContent = (
+    /* const fileContent = (
       <div ref={fileViewerContainer} className={classes.fileContent}>
         {isFullscreen && (
           <Fab
@@ -1013,9 +1025,9 @@ const EntryContainer = (props: Props) => {
             <CloseIcon />
           </Fab>
         )}
-        {renderFileView(fileOpenerURL)}
+        {fileView}
       </div>
-    );
+    ); */
     const entryProperties = (
       <div className={classes.entryProperties}>
         {openedFile.isFile ? renderFileToolbar(classes) : renderFolderToolbar()}
@@ -1040,40 +1052,56 @@ const EntryContainer = (props: Props) => {
       </div>
     );
 
+    const fileViewerComponent = (
+      <FileView
+        key="FileViewID"
+        fileContentClass={classes.fileContent}
+        openedFile={props.openedFiles[0]}
+        isFullscreen={isFullscreen}
+        fileViewer={fileViewer}
+        fileViewerContainer={fileViewerContainer}
+        toggleFullScreen={toggleFullScreen}
+      />
+    );
+
+    // if (isPropPanelVisible) {
+    let initSize;
     if (isPropPanelVisible) {
-      return (
-        <Split
-          horizontal
-          minPrimarySize="100px"
-          initialPrimarySize={
-            openedFile.isFile
-              ? props.settings.entryPropertiesSplitSize + 'px'
-              : '100%'
-          }
-          onSplitChanged={primarySize => {
+      initSize = openedFile.isFile
+        ? props.settings.entryPropertiesSplitSize + 'px'
+        : '100%';
+    } else {
+      initSize = '0%';
+    }
+    return (
+      <Split
+        horizontal
+        minPrimarySize={isPropPanelVisible ? '0%' : '100px'}
+        initialPrimarySize={initSize}
+        /* onSplitChanged={primarySize => {
             // TODO save primarySize
-            /* const propertiesPanelVisible = primarySize > defaultSplitSize;
+            /!* const propertiesPanelVisible = primarySize > defaultSplitSize;
             if (isPropPanelVisible !== propertiesPanelVisible) {
               setPropertiesPanelVisible(propertiesPanelVisible);
             }
-            bufferedSplitResize(() => props.setEntryPropertiesSplitSize(primarySize)); */
-          }}
-          /* resizerStyle={{
+            bufferedSplitResize(() => props.setEntryPropertiesSplitSize(primarySize)); *!/
+          }} */
+        /* resizerStyle={{
           backgroundColor: props.theme.palette.divider
         }}
          */
-        >
-          {toolbarButtons()}
-          {fileContent}
-        </Split>
-      );
-    }
-    return (
+      >
+        {toolbarButtons()}
+        {fileViewerComponent}
+      </Split>
+    );
+    // }
+    /* return (
       <>
         {toolbarButtons()}
-        {fileContent}
+        {fileViewerComponent}
       </>
-    );
+    ); */
   };
 
   return (
@@ -1133,9 +1161,10 @@ const EntryContainer = (props: Props) => {
               props.updateOpenedFile(openedFile.path, {
                 ...openedFile,
                 editMode: false,
-                changed: false,
+                // changed: false,
                 shouldReload: true
               });
+              fileChanged.current = false;
             }
           }}
           cancelDialogTID="cancelSaveBeforeCloseDialog"
@@ -1229,9 +1258,18 @@ function mapActionCreatorsToProps(dispatch) {
     dispatch
   );
 }
+const areEqual = (prevProp, nextProp) =>
+  nextProp.theme === prevProp.theme &&
+  // JSON.stringify(nextProp.openedFiles) === JSON.stringify(prevProp.openedFiles);
+  nextProp.openedFiles[0].path === prevProp.openedFiles[0].path &&
+  nextProp.openedFiles[0].shouldReload ===
+    prevProp.openedFiles[0].shouldReload &&
+  nextProp.openedFiles[0].editMode === prevProp.openedFiles[0].editMode;
 
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
+)(
   // @ts-ignore
-)(withStyles(styles, { withTheme: true })(EntryContainer));
+  withStyles(styles, { withTheme: true })(React.memo(EntryContainer, areEqual))
+);

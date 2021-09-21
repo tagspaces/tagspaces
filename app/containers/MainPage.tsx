@@ -306,9 +306,9 @@ const MainPage = (props: Props) => {
     listen(props);
   }, []);
 
-  useEffect(() => {
+  /* useEffect(() => {
     setOpen(!props.isEntryInFullWidth);
-  }, [props.isEntryInFullWidth]);
+  }, [props.isEntryInFullWidth]); */
 
   useEventListener('resize', () => {
     if (!AppConfig.isCordova) {
@@ -429,6 +429,22 @@ const MainPage = (props: Props) => {
   const { FILE } = NativeTypes;
 
   const isFileOpened = openedFiles.length > 0;
+  /* const openedFilesPath = isFileOpened ? openedFiles[0].path : undefined;
+  const openedFilesReload = isFileOpened
+    ? openedFiles[0].shouldReload
+    : undefined;
+  const openedFilesEdit = isFileOpened ? openedFiles[0].editMode : undefined;
+  const entryContainer = useMemo(
+    () => (
+      <EntryContainer
+        key="EntryContainerID"
+        openedFiles={openedFiles}
+        currentDirectoryPath={directoryPath}
+      />
+    ),
+    [openedFilesPath, openedFilesReload, openedFilesEdit]
+  ); */
+
   const renderContainers = () => {
     const folderContainer = (
       <FolderContainer
@@ -442,19 +458,25 @@ const MainPage = (props: Props) => {
     );
 
     if (isFileOpened) {
-      const entryContainer = (
+      /* const entryContainer = (
         <EntryContainer
+          key="EntryContainerID"
           openedFiles={openedFiles}
           currentDirectoryPath={directoryPath}
         />
-      );
-      if (props.isEntryInFullWidth) {
-        return <div style={{ height: '100%' }}>{entryContainer}</div>;
-      }
+      ); */
+      /* if (props.isEntryInFullWidth) {
+        return (
+          <div style={{ height: '100%' }}>
+            {/!* <KeepMounted isMounted={!props.isEntryInFullWidth} render={() => entryContainer}/> *!/}
+            <KeepChildrenMounted>{entryContainer}</KeepChildrenMounted>
+          </div>
+        );
+      } */
       return (
         <Split
-          initialPrimarySize={mainSplitSize}
-          minPrimarySize="250px"
+          initialPrimarySize={props.isEntryInFullWidth ? '0px' : mainSplitSize}
+          minPrimarySize={props.isEntryInFullWidth ? '0px' : '250px'}
           minSecondarySize="250px"
           onSplitChanged={size => {
             bufferedLeftSplitResize(() => handleSplitSizeChange(size));
@@ -465,7 +487,11 @@ const MainPage = (props: Props) => {
           }}
         >
           {folderContainer}
-          {entryContainer}
+          <EntryContainer
+            key="EntryContainerID"
+            openedFiles={openedFiles}
+            currentDirectoryPath={directoryPath}
+          />
         </Split>
       );
     }
@@ -607,11 +633,14 @@ const MainPage = (props: Props) => {
               .default-splitter {
                 --default-splitter-line-margin: 4px !important;
                 --default-splitter-line-size: 1px !important;
-                --default-splitter-line-color: ${theme.palette.divider} !important;
+                --default-splitter-line-color: ${
+                  theme.palette.divider
+                } !important;
               }
 
-              .react-split > .split-container.vertical > .splitter {
-                background-color: ${theme.palette.background.default}
+              .react-split .split-container.vertical .splitter {
+                background-color: ${theme.palette.background.default};
+                display: ${props.isEntryInFullWidth ? 'none' : null};
               }
           `}
         </style>
@@ -622,7 +651,7 @@ const MainPage = (props: Props) => {
             onDrop={handleFileDrop}
           >
             <CustomDragLayer />
-            <Drawer variant="persistent" anchor="left" open={open}>
+            <Drawer variant="persistent" anchor="left" open={open && !props.isEntryInFullWidth}>
               <MobileNavigation width={drawerWidth} />
             </Drawer>
             <main
@@ -636,7 +665,7 @@ const MainPage = (props: Props) => {
         ) : (
           <>
             <SwipeableDrawer
-              open={open}
+              open={open && !props.isEntryInFullWidth}
               onClose={() => setOpen(false)}
               onOpen={() => setOpen(true)}
               hysteresis={0.1}
@@ -742,7 +771,8 @@ function mapDispatchToProps(dispatch) {
 }
 
 const areEqual = (prevProp, nextProp) =>
-  nextProp.theme === prevProp.theme &&
+  /* JSON.stringify(nextProp.theme.palette) ===
+    JSON.stringify(prevProp.theme.palette) && */
   nextProp.directoryPath === prevProp.directoryPath &&
   nextProp.isAboutDialogOpened === prevProp.isAboutDialogOpened &&
   nextProp.isCreateDirectoryOpened === prevProp.isCreateDirectoryOpened &&

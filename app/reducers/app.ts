@@ -145,7 +145,7 @@ export type OpenedEntry = {
   description?: string;
   perspective?: string;
   editMode?: boolean;
-  changed?: boolean;
+  // changed?: boolean;
   /**
    * if its true iframe will be reloaded
    * if its false && editMode==true and changed==true => show reload dialog
@@ -1548,11 +1548,9 @@ export const actions = {
               entryForOpening = { ...entryExist };
             }
 
-            if (fsEntryMeta.changed !== undefined) {
+            /* if (fsEntryMeta.changed !== undefined) {
               entryForOpening.changed = fsEntryMeta.changed;
-            } /* else {
-            entryForOpening.changed = true;
-          } */
+            } */
             if (fsEntryMeta.editMode !== undefined) {
               entryForOpening.editMode = fsEntryMeta.editMode;
             }
