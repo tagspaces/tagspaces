@@ -22,7 +22,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import { translate } from 'react-i18next';
-import { Split } from '@geoffcox/react-splitter';
+import Split from 'react-split-it';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import Drawer from '@material-ui/core/Drawer';
 import { HotKeys } from 'react-hotkeys';
@@ -475,18 +475,11 @@ const MainPage = (props: Props) => {
       } */
       return (
         <Split
-          initialPrimarySize={props.isEntryInFullWidth ? '0px' : mainSplitSize}
-          minPrimarySize={props.isEntryInFullWidth ? '0px' : '250px'}
-          minSecondarySize="250px"
-          onSplitChanged={size => {
-            bufferedLeftSplitResize(() => handleSplitSizeChange(size));
-          }}
-          onMeasuredSizesChanged={sizes => {
-            setRightPanelWidth(Math.floor(sizes.secondary));
-            console.log(`The secondary pane is: ${sizes.secondary}px`);
-          }}
+          direction="horizontal"
+          sizes={!props.isEntryInFullWidth ? [0.5, 0.5] : [1]}
+          // computeNewSizesFn={handleSplitSizeChange}
         >
-          {folderContainer}
+          {!props.isEntryInFullWidth && folderContainer}
           <EntryContainer
             key="EntryContainerID"
             openedFiles={openedFiles}
@@ -651,7 +644,11 @@ const MainPage = (props: Props) => {
             onDrop={handleFileDrop}
           >
             <CustomDragLayer />
-            <Drawer variant="persistent" anchor="left" open={open && !props.isEntryInFullWidth}>
+            <Drawer
+              variant="persistent"
+              anchor="left"
+              open={open && !props.isEntryInFullWidth}
+            >
               <MobileNavigation width={drawerWidth} />
             </Drawer>
             <main
@@ -810,7 +807,7 @@ export default withDnDContext(
     mapDispatchToProps
   )(
     translate(['core'], { wait: true })(
-      withStyles(styles, { withTheme: true })(React.memo(MainPage, areEqual))
+      React.memo(withStyles(styles, { withTheme: true })(MainPage), areEqual)
     )
   )
 );

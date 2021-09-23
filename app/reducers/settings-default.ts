@@ -165,7 +165,7 @@ export default {
   enableGlobalKeyboardShortcuts: true,
   zoomFactor: 1,
   lastPublishedVersion: '',
-  entryPropertiesSplitSize: 103,
+  entryPropertiesSplitSize: 0.5,
   leftVerticalSplitSize: 350,
   mainVerticalSplitSize: '50%',
   supportedGeoTagging: ['pluscodes', 'mgrs'],

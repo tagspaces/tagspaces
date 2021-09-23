@@ -33,7 +33,7 @@ import ArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import FileDownloadIcon from '@material-ui/icons/AssignmentReturned';
 import DetailsIcon from '@material-ui/icons/Info';
 import ExpandIcon from '@material-ui/icons/SettingsEthernet';
-import { Split } from '@geoffcox/react-splitter';
+import Split from 'react-split-it';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ShareIcon from '@material-ui/icons/Share';
 import { withStyles } from '@material-ui/core/styles';
@@ -1031,24 +1031,22 @@ const EntryContainer = (props: Props) => {
     const entryProperties = (
       <div className={classes.entryProperties}>
         {openedFile.isFile ? renderFileToolbar(classes) : renderFolderToolbar()}
-        {isPropPanelVisible && (
-          <EntryProperties
-            key={openedFile.path}
-            openedEntry={openedFile}
-            tagDelimiter={props.settings.tagDelimiter}
-            renameFile={props.renameFile}
-            renameDirectory={props.renameDirectory}
-            addTags={props.addTags}
-            removeTags={props.removeTags}
-            removeAllTags={props.removeAllTags}
-            updateOpenedFile={props.updateOpenedFile}
-            updateThumbnailUrl={props.updateThumbnailUrl}
-            showNotification={props.showNotification}
-            isReadOnlyMode={props.isReadOnlyMode}
-            currentDirectoryPath={props.currentDirectoryPath}
-            tileServer={props.tileServer}
-          />
-        )}
+        <EntryProperties
+          key={openedFile.path}
+          openedEntry={openedFile}
+          tagDelimiter={props.settings.tagDelimiter}
+          renameFile={props.renameFile}
+          renameDirectory={props.renameDirectory}
+          addTags={props.addTags}
+          removeTags={props.removeTags}
+          removeAllTags={props.removeAllTags}
+          updateOpenedFile={props.updateOpenedFile}
+          updateThumbnailUrl={props.updateThumbnailUrl}
+          showNotification={props.showNotification}
+          isReadOnlyMode={props.isReadOnlyMode}
+          currentDirectoryPath={props.currentDirectoryPath}
+          tileServer={props.tileServer}
+        />
       </div>
     );
 
@@ -1068,16 +1066,18 @@ const EntryContainer = (props: Props) => {
     let initSize;
     if (isPropPanelVisible) {
       initSize = openedFile.isFile
-        ? props.settings.entryPropertiesSplitSize + 'px'
-        : '100%';
+        ? [
+            props.settings.entryPropertiesSplitSize,
+            1 - props.settings.entryPropertiesSplitSize
+          ]
+        : [1, 0];
     } else {
-      initSize = '0%';
+      initSize = [0.1, 0.9];
     }
     return (
       <Split
-        horizontal
-        minPrimarySize={isPropPanelVisible ? '0%' : '100px'}
-        initialPrimarySize={initSize}
+        direction="vertical"
+        sizes={initSize}
         /* onSplitChanged={primarySize => {
             // TODO save primarySize
             /!* const propertiesPanelVisible = primarySize > defaultSplitSize;
@@ -1259,7 +1259,7 @@ function mapActionCreatorsToProps(dispatch) {
   );
 }
 const areEqual = (prevProp, nextProp) =>
-  nextProp.theme === prevProp.theme &&
+  // nextProp.theme === prevProp.theme &&
   // JSON.stringify(nextProp.openedFiles) === JSON.stringify(prevProp.openedFiles);
   nextProp.openedFiles[0].path === prevProp.openedFiles[0].path &&
   nextProp.openedFiles[0].shouldReload ===
@@ -1271,5 +1271,5 @@ export default connect(
   mapActionCreatorsToProps
 )(
   // @ts-ignore
-  withStyles(styles, { withTheme: true })(React.memo(EntryContainer, areEqual))
+  React.memo(withStyles(styles, { withTheme: true })(EntryContainer), areEqual)
 );

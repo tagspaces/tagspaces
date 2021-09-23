@@ -1,4 +1,5 @@
-/**
+/*
+/!**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
  *
@@ -14,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- */
+ *!/
 
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
@@ -31,7 +32,7 @@ import UpgradeIcon from '@material-ui/icons/FlightTakeoff';
 import HelpIcon from '@material-ui/icons/HelpOutline';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { withStyles } from '@material-ui/core/styles';
-import { Split } from '@geoffcox/react-splitter';
+// import { Split } from '@geoffcox/react-splitter';
 import { CircularProgress, Typography } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
@@ -59,7 +60,7 @@ import LoadingLazy from './LoadingLazy';
 import AppConfig from '-/config';
 
 const ProTeaserDialog = React.lazy(() =>
-  import(/* webpackChunkName: "ProTeaserDialog" */ './dialogs/ProTeaserDialog')
+  import(/!* webpackChunkName: "ProTeaserDialog" *!/ './dialogs/ProTeaserDialog')
 );
 const ProTeaserDialogAsync = props => (
   <React.Suspense fallback={<LoadingLazy />}>
@@ -444,3 +445,4 @@ export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
 )(withStyles(styles, { withTheme: true })(VerticalNavigation));
+*/
