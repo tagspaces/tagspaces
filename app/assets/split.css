@@ -1,0 +1,103 @@
+/* The top-level element of the splitter*/
+.react-split {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  outline: none;
+  overflow: hidden;
+  --react-split-min-primary: 0;
+  --react-split-min-secondary: 0;
+  --react-split-primary: 50%;
+  --react-split-splitter: 7px;
+}
+
+/* The container for the primary pane, splitter, and secondary pane.*/
+.react-split > .split-container {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  outline: none;
+  overflow: hidden;
+  display: grid;
+}
+
+/* When the container is splitting horizontally */
+.react-split > .split-container.horizontal {
+  grid-template-columns: 1fr;
+  grid-template-rows: minmax(var(--react-split-min-primary),var(--react-split-primary)) var(--react-split-splitter) minmax(var(--react-split-min-secondary), 1fr);
+  grid-template-areas: "primary" "split" "secondary";
+}
+
+/* When the container is splitting vertical */
+.react-split > .split-container.vertical {
+  grid-template-columns: minmax(var(--react-split-min-primary),var(--react-split-primary)) var(--react-split-splitter) minmax(var(--react-split-min-secondary), 1fr);
+  grid-template-rows: 1fr;
+  grid-template-areas: "primary split secondary";
+}
+
+/* The primary pane. This is either the left or top depending on the split type */
+.react-split > .split-container > .primary {
+  grid-area: primary;
+  box-sizing: border-box;
+  outline: none;
+  overflow: hidden;
+}
+
+.react-split > .split-container.horizontal > .primary {
+  height: auto;
+  width: 100%;
+}
+
+.react-split > .split-container.vertical > .primary {
+  height: 100%;
+  width: auto;
+}
+
+/* The splitter between panes. */
+.react-split > .split-container > .splitter {
+  grid-area: split;
+  background: transparent;
+  user-select: none;
+  box-sizing: border-box;
+  outline: none;
+  overflow: hidden;
+}
+
+.react-split > .split-container.horizontal > .splitter {
+  height: auto;
+  width: 100%;
+  cursor: row-resize;
+}
+
+.react-split > .split-container.vertical > .splitter {
+  height: 100%;
+  width: auto;
+  cursor: col-resize;
+}
+
+/* The secondary pane. This is either the right or bottom depending on the split type */
+.react-split > .split-container >.secondary {
+  grid-area: secondary;
+  box-sizing: border-box;
+  outline: none;
+  overflow: hidden;
+}
+
+.react-split > .split-container.horizontal > .secondary {
+  height: auto;
+  width: 100%;
+}
+
+.react-split > .split-container.vertical > .secondary {
+  height: 100%;
+  width: auto;
+}
+
+/* The content within the primary pane, splitter, or secondary pane.*/
+.react-split .full-content {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  outline: none;
+  overflow: hidden;
+}

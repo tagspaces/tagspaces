@@ -3530,13 +3530,6 @@
   resolved "https://registry.yarnpkg.com/@emotion/hash/-/hash-0.8.0.tgz#bbbff68978fefdbe68ccb533bc8cbe1d1afb5413"
   integrity sha512-kBJtf7PH6aWwZ6fka3zQ0p6SBYzx4fl1LoZXE2RrnYST9Xljm7WfKJrU4g/Xr3Beg72MLrp1AWNUmuYJTL7Cow==
 
-"@geoffcox/react-splitter@^2.1.1":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@geoffcox/react-splitter/-/react-splitter-2.1.1.tgz#3ed6809b92d732c0d89770f204f8ae20c1067863"
-  integrity sha512-X0oAaG70BtWcIAmneu3xSj2nWP/7mXPQswLoCu6hIvVwELRst3m3kRGMQi5ypvZ+VaYuhcRc4GGJPCY4QEM69A==
-  dependencies:
-    react-measure "^2.5.2"
-
 "@gorillastack/jmespath@^1.3.0":
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/@gorillastack/jmespath/-/jmespath-1.3.0.tgz#813824aa89d6684a20b5a8d157f8ddb289749d18"

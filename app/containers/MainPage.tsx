@@ -22,13 +22,13 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import { translate } from 'react-i18next';
-import { Split } from '@geoffcox/react-splitter';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import Drawer from '@material-ui/core/Drawer';
 import { HotKeys } from 'react-hotkeys';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { Progress } from 'aws-sdk/clients/s3';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
+import { Split } from '-/components/spliter';
 import MobileNavigation from '../components/MobileNavigation';
 import FolderContainer from '../components/FolderContainer';
 import EntryContainer from '../components/EntryContainer';
@@ -278,6 +278,7 @@ const OpenLinkDialogAsync = props => (
 );
 
 const MainPage = (props: Props) => {
+  const [percent, setPercent] = React.useState<number | undefined>(undefined);
   const selectedDirectoryPath = useRef<string>('');
   const setSelectedDirectoryPath = (path: string) => {
     selectedDirectoryPath.current = path;
@@ -306,9 +307,10 @@ const MainPage = (props: Props) => {
     listen(props);
   }, []);
 
-  /* useEffect(() => {
-    setOpen(!props.isEntryInFullWidth);
-  }, [props.isEntryInFullWidth]); */
+  useEffect(() => {
+    setPercent(undefined);
+    // setOpen(!props.isEntryInFullWidth);
+  }, [props.isEntryInFullWidth]);
 
   useEventListener('resize', () => {
     if (!AppConfig.isCordova) {
@@ -401,7 +403,9 @@ const MainPage = (props: Props) => {
       // setMainSplitSize(sizeInPercent);
       props.setMainVerticalSplitSize(sizeInPercent);
     } */
-    props.setMainVerticalSplitSize(primarySize);
+    if(primarySize !== '0px') {
+      props.setMainVerticalSplitSize(primarySize);
+    }
     // mainSplitSize.current = primarySize;
   };
 
@@ -485,6 +489,8 @@ const MainPage = (props: Props) => {
             setRightPanelWidth(Math.floor(sizes.secondary));
             console.log(`The secondary pane is: ${sizes.secondary}px`);
           }}
+          percent={percent}
+          setPercent={setPercent}
         >
           {folderContainer}
           <EntryContainer
@@ -631,8 +637,6 @@ const MainPage = (props: Props) => {
         <style>
           {`
               .default-splitter {
-                --default-splitter-line-margin: 4px !important;
-                --default-splitter-line-size: 1px !important;
                 --default-splitter-line-color: ${
                   theme.palette.divider
                 } !important;

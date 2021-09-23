@@ -33,12 +33,12 @@ import ArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import FileDownloadIcon from '@material-ui/icons/AssignmentReturned';
 import DetailsIcon from '@material-ui/icons/Info';
 import ExpandIcon from '@material-ui/icons/SettingsEthernet';
-import { Split } from '@geoffcox/react-splitter';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ShareIcon from '@material-ui/icons/Share';
 import { withStyles } from '@material-ui/core/styles';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import Box from '@material-ui/core/Box';
+import { Split } from './spliter';
 import EntryProperties from '-/components/EntryProperties';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import AppConfig from '-/config';
@@ -216,9 +216,7 @@ interface Props {
 }
 
 const EntryContainer = (props: Props) => {
-  if (!props.openedFiles || props.openedFiles.length === 0) {
-    return null;
-  }
+  const [percent, setPercent] = React.useState<number | undefined>(undefined);
   const openedFile = props.openedFiles[0];
   // const [currentEntry, setCurrentEntry] = useState<OpenedEntry>(openedFile);
 
@@ -559,6 +557,7 @@ const EntryContainer = (props: Props) => {
   const togglePanel = () => {
     if (isPropPanelVisible) {
       closePanel();
+      setPercent(undefined);
     } else {
       openPanel();
     }
@@ -1037,24 +1036,22 @@ const EntryContainer = (props: Props) => {
     const entryProperties = (
       <div className={classes.entryProperties}>
         {openedFile.isFile ? renderFileToolbar(classes) : renderFolderToolbar()}
-        {isPropPanelVisible && (
-          <EntryProperties
-            key={openedFile.path}
-            openedEntry={openedFile}
-            tagDelimiter={props.settings.tagDelimiter}
-            renameFile={props.renameFile}
-            renameDirectory={props.renameDirectory}
-            addTags={props.addTags}
-            removeTags={props.removeTags}
-            removeAllTags={props.removeAllTags}
-            updateOpenedFile={props.updateOpenedFile}
-            updateThumbnailUrl={props.updateThumbnailUrl}
-            showNotification={props.showNotification}
-            isReadOnlyMode={props.isReadOnlyMode}
-            currentDirectoryPath={props.currentDirectoryPath}
-            tileServer={props.tileServer}
-          />
-        )}
+        <EntryProperties
+          key={openedFile.path}
+          openedEntry={openedFile}
+          tagDelimiter={props.settings.tagDelimiter}
+          renameFile={props.renameFile}
+          renameDirectory={props.renameDirectory}
+          addTags={props.addTags}
+          removeTags={props.removeTags}
+          removeAllTags={props.removeAllTags}
+          updateOpenedFile={props.updateOpenedFile}
+          updateThumbnailUrl={props.updateThumbnailUrl}
+          showNotification={props.showNotification}
+          isReadOnlyMode={props.isReadOnlyMode}
+          currentDirectoryPath={props.currentDirectoryPath}
+          tileServer={props.tileServer}
+        />
       </div>
     );
 
@@ -1096,6 +1093,8 @@ const EntryContainer = (props: Props) => {
           backgroundColor: props.theme.palette.divider
         }}
          */
+        percent={percent}
+        setPercent={setPercent}
       >
         {toolbarButtons()}
         {fileViewerComponent}

@@ -245,7 +245,6 @@
   "dependencies": {
     "@aws-amplify/ui-react": "^1.0.7",
     "@date-io/date-fns": "^1.3.9",
-    "@geoffcox/react-splitter": "^2.1.1",
     "@gorillastack/jmespath": "^1.3.0",
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
@@ -298,6 +297,7 @@
     "react-i18next": "^4.6.1",
     "react-image-gallery": "^1.2.7",
     "react-leaflet": "^2.8.0",
+    "react-measure": "^2.5.2",
     "react-redux": "^5.0.7",
     "react-swipeable-views": "0.13.3",
     "redux": "^3.7.2",

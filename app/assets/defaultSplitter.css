@@ -1,0 +1,44 @@
+/* The default splitter within a react-split */
+.react-split > .split-container > .splitter .default-splitter {
+  box-sizing: border-box;
+  height: 100%;
+  outline: none;
+  overflow: hidden;
+  user-select: none;
+  width: 100%;
+  --default-splitter-line-color: '#ddd';
+  --default-splitter-line-hover-color: black;
+  --default-splitter-line-margin: 4px;
+  --default-splitter-line-size: 1px;
+}
+
+.react-split > .split-container.horizontal > .splitter .default-splitter {
+  cursor: row-resize;
+}
+
+.react-split > .split-container.vertical > .splitter .default-splitter {
+  cursor: col-resize;
+}
+
+/* The thin line within a default splitter hit area */
+.react-split > .split-container > .splitter .default-splitter > .line {
+  background: var(--default-splitter-line-color);
+}
+
+.react-split > .split-container > .splitter .default-splitter:hover > .line {
+  background: var(--default-splitter-line-hover-color);
+}
+
+.react-split > .split-container.horizontal > .splitter .default-splitter > .line {
+  height: var(--default-splitter-line-size);
+  width: 100%;
+  margin-top: var(--default-splitter-line-margin);
+  margin-left: 0;
+}
+
+.react-split > .split-container.vertical > .splitter .default-splitter > .line {
+  height: 100%;
+  width: var(--default-splitter-line-size);
+  margin-top: 0;
+  margin-left: var(--default-splitter-line-margin);
+}
