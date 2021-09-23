@@ -29,6 +29,9 @@ import { getEmptyImage } from 'react-dnd-html5-backend';
 import DragItemTypes from './DragItemTypes';
 import TagContainer from './TagContainer';
 import { TS } from '-/tagspaces.namespace';
+import { extractTags } from '-/utils/paths';
+import PlatformIO from '-/services/platform-io';
+import AppConfig from '-/config';
 
 const boxSource = {
   // Expected the drag source specification to only have some of the following keys: canDrag, beginDrag, isDragging, endDrag
@@ -147,6 +150,27 @@ const boxTarget = {
       if (dragItem.tag.functionality !== undefined) {
         return;
       }
+      // Skip reorder from TagGroup source
+      if (dragItem.sourceTagGroupId !== undefined) {
+        return;
+      }
+      // Skip reorder on DnD Tag from an other file
+      if (dragItem.tag.type === 'plain') {
+        const extractedTags = extractTags(
+          props.entryPath,
+          AppConfig.tagDelimiter,
+          PlatformIO.getDirSeparator()
+        );
+        if (
+          extractedTags.length > 0 &&
+          !extractedTags.includes(dragItem.tag.title)
+        ) {
+          return;
+        }
+      } else {
+        //TODO check if sidecar tag exist in file (reorder only if exist)
+      }
+
       dragItem.tag.position = hoverIndex;
       props.editTagForEntry(props.entryPath, dragItem.tag);
 
