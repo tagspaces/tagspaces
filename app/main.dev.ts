@@ -542,7 +542,7 @@ app.on('ready', async () => {
   });
 
   ipcMain.on('get-device-paths', event => {
-    event.returnValue = {
+    const paths: any = {
       desktopFolder: app.getPath('desktop'),
       documentsFolder: app.getPath('documents'),
       downloadsFolder: app.getPath('downloads'),
@@ -551,9 +551,10 @@ app.on('ready', async () => {
       videosFolder: app.getPath('videos')
     };
     if (isMac) {
-      event.returnValue.iCloudFolder =
+      paths.iCloudFolder =
         app.getPath('home') + '/Library/Mobile Documents/com~apple~CloudDocs';
     }
+    event.returnValue = paths;
   });
 
   ipcMain.on('get-user-home-path', event => {
