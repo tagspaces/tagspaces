@@ -519,6 +519,7 @@
   "musicFolder": "Music",
   "picturesFolder": "Pictures",
   "videosFolder": "Videos",
+  "icloudFolder": "iCloud",
   "startImportButton": "Import",
   "startExportButton": "Export",
   "extractGeoCoordinates": "Extract geo-coordinates from files as tags",

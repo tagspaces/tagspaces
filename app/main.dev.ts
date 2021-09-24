@@ -550,6 +550,10 @@ app.on('ready', async () => {
       picturesFolder: app.getPath('pictures'),
       videosFolder: app.getPath('videos')
     };
+    if (isMac) {
+      event.returnValue.iCloudFolder =
+        app.getPath('home') + '/Library/Mobile Documents/com~apple~CloudDocs';
+    }
   });
 
   ipcMain.on('get-user-home-path', event => {
