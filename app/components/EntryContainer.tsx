@@ -16,7 +16,13 @@
  *
  */
 
-import React, { MutableRefObject, useEffect, useRef, useState } from 'react';
+import React, {
+  MutableRefObject,
+  useEffect,
+  useReducer,
+  useRef,
+  useState
+} from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { GlobalHotKeys } from 'react-hotkeys';
@@ -38,7 +44,7 @@ import ShareIcon from '@material-ui/icons/Share';
 import { withStyles } from '@material-ui/core/styles';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import Box from '@material-ui/core/Box';
-import { Split } from './spliter';
+import { Split } from 'ts-react-splitter';
 import EntryProperties from '-/components/EntryProperties';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import AppConfig from '-/config';
@@ -70,15 +76,17 @@ import {
 import useEventListener from '-/utils/useEventListener';
 import { TS } from '-/tagspaces.namespace';
 import FileView from '-/components/FileView';
+import { buffer } from '-/utils/misc';
 
-const defaultSplitSize = 103;
-const openedSplitSize = AppConfig.isElectron ? 560 : 360;
+const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
+// const openedSplitSize = AppConfig.isElectron ? 560 : 360;
 /* const fullSplitSize = 750;
 // const maxCharactersTitleLength = 50;
+*/
 const bufferedSplitResize = buffer({
   timeout: 300,
   id: 'buffered-split-resize'
-}); */
+});
 
 const styles: any = (theme: any) => ({
   panel: {
@@ -200,8 +208,7 @@ interface Props {
   deleteFile: (path: string) => void;
   toggleEntryFullWidth: () => void;
   isReadOnlyMode: boolean;
-  setEntryPropertiesSplitSize: (size: number) => void;
-  entryPropertiesSplitSize?: number;
+  setEntryPropertiesSplitSize: (size: string) => void;
   updateOpenedFile: (
     entryPath: string,
     fsEntryMeta: any // FileSystemEntryMeta
@@ -216,7 +223,8 @@ interface Props {
 }
 
 const EntryContainer = (props: Props) => {
-  const [percent, setPercent] = React.useState<number | undefined>(undefined);
+  // const [percent, setPercent] = React.useState<number | undefined>(undefined);
+  const percent = useRef<number | undefined>(undefined);
   const openedFile = props.openedFiles[0];
   // const [currentEntry, setCurrentEntry] = useState<OpenedEntry>(openedFile);
 
@@ -245,6 +253,7 @@ const EntryContainer = (props: Props) => {
   const fileViewerContainer: MutableRefObject<HTMLDivElement> = useRef<
     HTMLDivElement
   >(null);
+  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
   const fileChanged = useRef<Boolean>(false);
 
@@ -274,7 +283,7 @@ const EntryContainer = (props: Props) => {
         setSaveBeforeReloadConfirmDialogOpened(true);
       }
     }
-  }, [props.openedFiles, props.isReadOnlyMode, props.settings]);
+  }, [props.openedFiles, props.isReadOnlyMode]); // , props.settings]);
 
   /**
    *  always open for dirs
@@ -282,13 +291,6 @@ const EntryContainer = (props: Props) => {
   const isPropPanelVisible = openedFile.isFile
     ? isPropertiesPanelVisible
     : true;
-
-  useEffect(() => {
-    //  TODO rethink this
-    if (props.settings.entryPropertiesSplitSize === defaultSplitSize) {
-      props.setEntryPropertiesSplitSize(openedSplitSize);
-    }
-  }, [isPropertiesPanelVisible]);
 
   const editingSupported: boolean =
     !props.isReadOnlyMode &&
@@ -546,18 +548,42 @@ const EntryContainer = (props: Props) => {
     }
   };
 
+  const setPercent = (p: number | undefined) => {
+    percent.current = p;
+    if (p !== undefined) {
+      bufferedSplitResize(() => {
+        // Threshold >10% for automatically close Properties panel
+        if (p <= 10) {
+          // parseInt(defaultSplitSize, 10)) {
+          closePanel();
+        } else {
+          if (props.settings.entrySplitSize !== p + '%') {
+            props.setEntryPropertiesSplitSize(p + '%');
+          }
+          openPanel();
+        }
+      });
+    }
+    forceUpdate();
+  };
+
   const openPanel = () => {
-    setPropertiesPanelVisible(true);
+    if (!isPropertiesPanelVisible) {
+      percent.current = parseFloat(props.settings.entrySplitSize);
+      setPropertiesPanelVisible(true);
+    }
   };
 
   const closePanel = () => {
-    setPropertiesPanelVisible(false);
+    if (isPropertiesPanelVisible) {
+      percent.current = undefined;
+      setPropertiesPanelVisible(false);
+    }
   };
 
   const togglePanel = () => {
     if (isPropPanelVisible) {
       closePanel();
-      setPercent(undefined);
     } else {
       openPanel();
     }
@@ -746,7 +772,10 @@ const EntryContainer = (props: Props) => {
             <IconButton
               data-tid="openInFullWidthTID"
               aria-label={i18n.t('core:openInFullWidth')}
-              onClick={props.toggleEntryFullWidth}
+              onClick={() => {
+                props.toggleEntryFullWidth();
+                closePanel();
+              }}
             >
               <ExpandIcon />
             </IconButton>
@@ -819,63 +848,6 @@ const EntryContainer = (props: Props) => {
         PlatformIO.getDirSeparator()
       )
     : '';
-
-  /* const renderFileView = () => {
-    let fileOpenerURL: string;
-
-    if (openedFile.path) {
-
-      // if (fileTitle.length > maxCharactersTitleLength) {
-      //   fileTitle = fileTitle.substr(0, maxCharactersTitleLength) + '...';
-      // }
-
-      const locale = '&locale=' + i18n.language;
-      const theme = '&theme=' + props.settings.currentTheme;
-
-      if (openedFile.editMode && openedFile.editingExtensionPath) {
-        fileOpenerURL =
-          openedFile.editingExtensionPath +
-          '/index.html?file=' +
-          encodeURIComponent(openedFile.url ? openedFile.url : openedFile.path) +
-          locale +
-          theme +
-          '&edit=true' +
-          (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
-        // } else if (!currentEntry.isFile) { // TODO needed for loading folder's default html
-        //   fileOpenerURL = 'node_modules/@tagspaces/html-viewer/index.html?locale=' + i18n.language;
-      } else {
-        fileOpenerURL =
-          openedFile.viewingExtensionPath +
-          '/index.html?file=' +
-          encodeURIComponent(openedFile.url ? openedFile.url : openedFile.path) +
-          locale +
-          theme +
-          (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
-      }
-    } else {
-      fileOpenerURL = 'about:blank';
-    }
-    return <iframe
-      ref={fileViewer}
-      className={props.classes.fileOpener}
-      src={fileOpenerURL}
-      allowFullScreen
-      sandbox="allow-same-origin allow-scripts allow-modals"
-      title={i18n.t('core:fileViewer')}
-      id="FileViewer"
-    />
-  };
-  // renderFileView is only called once
-  const [fileView, setFileView] = useState(renderFileView); */
-
-  // function getSplitPanelSize() {
-  //   if (isPropPanelVisible) {
-  //     return openedFile.isFile
-  //       ? props.settings.entryPropertiesSplitSize
-  //       : '100%';
-  //   }
-  //   return defaultSplitSize;
-  // }
 
   const renderPanels = () => {
     const toolbarButtons = () => {
@@ -1067,33 +1039,19 @@ const EntryContainer = (props: Props) => {
       />
     );
 
-    // if (isPropPanelVisible) {
     let initSize;
     if (isPropPanelVisible) {
-      initSize = openedFile.isFile
-        ? props.settings.entryPropertiesSplitSize + 'px'
-        : '100%';
+      initSize = openedFile.isFile ? props.settings.entrySplitSize : '100%';
     } else {
-      initSize = '0%';
+      initSize = defaultSplitSize; // '0%';
     }
+
     return (
       <Split
         horizontal
-        minPrimarySize={isPropPanelVisible ? '0%' : '100px'}
+        minPrimarySize="103px"
         initialPrimarySize={initSize}
-        /* onSplitChanged={primarySize => {
-            // TODO save primarySize
-            /!* const propertiesPanelVisible = primarySize > defaultSplitSize;
-            if (isPropPanelVisible !== propertiesPanelVisible) {
-              setPropertiesPanelVisible(propertiesPanelVisible);
-            }
-            bufferedSplitResize(() => props.setEntryPropertiesSplitSize(primarySize)); *!/
-          }} */
-        /* resizerStyle={{
-          backgroundColor: props.theme.palette.divider
-        }}
-         */
-        percent={percent}
+        percent={percent.current}
         setPercent={setPercent}
       >
         {toolbarButtons()}
@@ -1265,6 +1223,7 @@ function mapActionCreatorsToProps(dispatch) {
 }
 const areEqual = (prevProp, nextProp) =>
   nextProp.theme === prevProp.theme &&
+  nextProp.settings.entrySplitSize === prevProp.settings.entrySplitSize &&
   // JSON.stringify(nextProp.openedFiles) === JSON.stringify(prevProp.openedFiles);
   nextProp.openedFiles[0].path === prevProp.openedFiles[0].path &&
   nextProp.openedFiles[0].shouldReload ===

@@ -258,7 +258,8 @@ const FolderContainer = (props: Props) => {
           if (openedFile.perspective) {
             props.setCurrentDirectoryPerspective(openedFile.perspective);
           }
-        } else if (openedFile.editMode) { // changed) {
+        } else if (openedFile.editMode) {
+          // changed) {
           const currentEntry = enhanceOpenedEntry(
             openedFile,
             props.settings.tagDelimiter

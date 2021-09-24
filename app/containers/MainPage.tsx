@@ -28,7 +28,7 @@ import { HotKeys } from 'react-hotkeys';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { Progress } from 'aws-sdk/clients/s3';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
-import { Split } from '-/components/spliter';
+import { Split } from 'ts-react-splitter';
 import MobileNavigation from '../components/MobileNavigation';
 import FolderContainer from '../components/FolderContainer';
 import EntryContainer from '../components/EntryContainer';
@@ -38,7 +38,6 @@ import CreateFileDialog from '../components/dialogs/CreateDialog';
 import {
   getDesktopMode,
   getKeyBindingObject,
-  getLeftVerticalSplitSize,
   getMainVerticalSplitSize,
   actions as SettingsActions
 } from '../reducers/settings';
@@ -172,7 +171,6 @@ interface Props {
   leftSplitSize: number;
   mainSplitSize: any;
   toggleShowUnixHiddenEntries: () => void;
-  // setLeftVerticalSplitSize: (splitSize: number) => void;
   setMainVerticalSplitSize: (splitSize: string) => void;
   isLocationManagerPanelOpened: boolean;
   isOpenLinkDialogOpened: boolean;
@@ -487,7 +485,7 @@ const MainPage = (props: Props) => {
           }}
           onMeasuredSizesChanged={sizes => {
             setRightPanelWidth(Math.floor(sizes.secondary));
-            console.log(`The secondary pane is: ${sizes.secondary}px`);
+            // console.log(`The secondary pane is: ${sizes.secondary}px`);
           }}
           percent={percent}
           setPercent={setPercent}
@@ -708,7 +706,6 @@ function mapStateToProps(state) {
     isEntryInFullWidth: isEntryInFullWidth(state),
     isDesktopMode: getDesktopMode(state),
     keyBindings: getKeyBindingObject(state),
-    leftSplitSize: getLeftVerticalSplitSize(state),
     mainSplitSize: getMainVerticalSplitSize(state),
     isLocationManagerPanelOpened: isLocationManagerPanelOpened(state),
     isTagLibraryPanelOpened: isTagLibraryPanelOpened(state),
@@ -754,7 +751,6 @@ function mapDispatchToProps(dispatch) {
       openNextFile: AppActions.openNextFile,
       openPrevFile: AppActions.openPrevFile,
       toggleShowUnixHiddenEntries: SettingsActions.toggleShowUnixHiddenEntries,
-      // setLeftVerticalSplitSize: SettingsActions.setLeftVerticalSplitSize,
       setMainVerticalSplitSize: SettingsActions.setMainVerticalSplitSize,
       showNotification: AppActions.showNotification,
       reflectCreateEntries: AppActions.reflectCreateEntries,

@@ -36,7 +36,6 @@ interface Props {
 }
 
 const FileView = (props: Props) => {
-
   const { openedFile } = props; // .openedFiles[0];
 
   useEventListener('toggle-resume', () => {

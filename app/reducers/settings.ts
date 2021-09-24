@@ -69,7 +69,6 @@ export const types = {
   SET_LAST_PUBLISHED_VERSION: 'SETTINGS/SET_LAST_PUBLISHED_VERSION',
   SET_ENTRY_PROPERTIES_SPLIT_SIZE: 'SETTINGS/SET_ENTRY_PROPERTIES_SPLIT_SIZE',
   SET_MAIN_VSPLIT_SIZE: 'SETTINGS/SET_MAIN_VSPLIT_SIZE',
-  SET_LEFT_VSPLIT_SIZE: 'SETTINGS/SET_LEFT_VSPLIT_SIZE',
   SET_FIRST_RUN: 'SETTINGS/SET_FIRST_RUN',
   TOGGLE_TAGGROUP: 'TOGGLE_TAGGROUP',
   ADD_MAPTILE_SERVER: 'SET_MAPTILE_SERVER',
@@ -302,19 +301,13 @@ export default (state: any = defaultSettings, action: any) => {
     case types.SET_ENTRY_PROPERTIES_SPLIT_SIZE: {
       return {
         ...state,
-        entryPropertiesSplitSize: action.entryPropertiesSplitSize
+        entrySplitSize: action.entrySplitSize
       };
     }
     case types.SET_MAIN_VSPLIT_SIZE: {
       return {
         ...state,
         mainVerticalSplitSize: action.mainVerticalSplitSize
-      };
-    }
-    case types.SET_LEFT_VSPLIT_SIZE: {
-      return {
-        ...state,
-        leftVerticalSplitSize: action.leftVerticalSplitSize
       };
     }
     case types.SET_LAST_PUBLISHED_VERSION: {
@@ -537,17 +530,13 @@ export const actions = {
     type: types.SET_SUPPORTED_FILE_TYPES,
     supportedFileTypes
   }),
-  setEntryPropertiesSplitSize: (entryPropertiesSplitSize: number) => ({
+  setEntryPropertiesSplitSize: (entrySplitSize: string) => ({
     type: types.SET_ENTRY_PROPERTIES_SPLIT_SIZE,
-    entryPropertiesSplitSize
+    entrySplitSize
   }),
   setMainVerticalSplitSize: (mainVerticalSplitSize: any) => ({
     type: types.SET_MAIN_VSPLIT_SIZE,
     mainVerticalSplitSize
-  }),
-  setLeftVerticalSplitSize: (leftVerticalSplitSize: number) => ({
-    type: types.SET_LEFT_VSPLIT_SIZE,
-    leftVerticalSplitSize
   }),
   setFirstRun: (firstRun: boolean) => ({
     type: types.SET_FIRST_RUN,
@@ -673,8 +662,6 @@ export const getTagTextColor = (state: any) => state.settings.tagTextColor;
 export const getCurrentTheme = (state: any) => state.settings.currentTheme;
 export const isGlobalKeyBindingEnabled = (state: any) =>
   state.settings.enableGlobalKeyboardShortcuts;
-export const getLeftVerticalSplitSize = (state: any) =>
-  state.settings.leftVerticalSplitSize;
 export const getMainVerticalSplitSize = (state: any) =>
   state.settings.mainVerticalSplitSize;
 export const getTagDelimiter = (state: any) => state.settings.tagDelimiter;
