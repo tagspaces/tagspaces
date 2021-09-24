@@ -373,20 +373,9 @@ const EntryContainer = (props: Props) => {
       case 'contentChangedInEditor': {
         if (!fileChanged.current) {
           fileChanged.current = true;
-          // TODO Rerender Dot
+          // to render DOT before file name (only first time)
+          forceUpdate();
         }
-        // if (openedFile.editMode) { // && !openedFile.changed) {
-        // dummy state change to render DOT before file name (only first time)
-        // TODO Rerender
-        /* props.updateOpenedFile(openedFile.path, {
-            ...openedFile,
-            changed: true,
-            editMode: true,
-            shouldReload: undefined
-          }); */
-        /* } else if (openedFile.shouldReload === undefined) {
-          fileChanged.current = true;
-        } */
         break;
       }
       default:
@@ -1027,18 +1016,6 @@ const EntryContainer = (props: Props) => {
       </div>
     );
 
-    const fileViewerComponent = (
-      <FileView
-        key="FileViewID"
-        fileContentClass={classes.fileContent}
-        openedFile={props.openedFiles[0]}
-        isFullscreen={isFullscreen}
-        fileViewer={fileViewer}
-        fileViewerContainer={fileViewerContainer}
-        toggleFullScreen={toggleFullScreen}
-      />
-    );
-
     let initSize;
     if (isPropPanelVisible) {
       initSize = openedFile.isFile ? props.settings.entrySplitSize : '100%';
@@ -1055,16 +1032,17 @@ const EntryContainer = (props: Props) => {
         setPercent={setPercent}
       >
         {toolbarButtons()}
-        {fileViewerComponent}
+        <FileView
+          key="FileViewID"
+          fileContentClass={classes.fileContent}
+          openedFile={props.openedFiles[0]}
+          isFullscreen={isFullscreen}
+          fileViewer={fileViewer}
+          fileViewerContainer={fileViewerContainer}
+          toggleFullScreen={toggleFullScreen}
+        />
       </Split>
     );
-    // }
-    /* return (
-      <>
-        {toolbarButtons()}
-        {fileViewerComponent}
-      </>
-    ); */
   };
 
   return (
@@ -1222,7 +1200,7 @@ function mapActionCreatorsToProps(dispatch) {
   );
 }
 const areEqual = (prevProp, nextProp) =>
-  nextProp.theme === prevProp.theme &&
+  JSON.stringify(nextProp.theme) === JSON.stringify(prevProp.theme) &&
   nextProp.settings.entrySplitSize === prevProp.settings.entrySplitSize &&
   // JSON.stringify(nextProp.openedFiles) === JSON.stringify(prevProp.openedFiles);
   nextProp.openedFiles[0].path === prevProp.openedFiles[0].path &&
@@ -1235,5 +1213,5 @@ export default connect(
   mapActionCreatorsToProps
 )(
   // @ts-ignore
-  withStyles(styles, { withTheme: true })(React.memo(EntryContainer, areEqual))
+  React.memo(withStyles(styles, { withTheme: true })(EntryContainer), areEqual)
 );

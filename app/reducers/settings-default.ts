@@ -166,7 +166,7 @@ export default {
   zoomFactor: 1,
   lastPublishedVersion: '',
   entrySplitSize: '45%', // AppConfig.isElectron ? '560px' : '360px',
-  mainVerticalSplitSize: '50%',
+  mainVSplitSize: '50%',
   supportedGeoTagging: ['pluscodes', 'mgrs'],
   supportedThemes: ['light', 'dark'],
   supportedLanguages: [

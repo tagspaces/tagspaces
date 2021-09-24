@@ -307,7 +307,7 @@ export default (state: any = defaultSettings, action: any) => {
     case types.SET_MAIN_VSPLIT_SIZE: {
       return {
         ...state,
-        mainVerticalSplitSize: action.mainVerticalSplitSize
+        mainVSplitSize: action.mainVSplitSize
       };
     }
     case types.SET_LAST_PUBLISHED_VERSION: {
@@ -534,9 +534,9 @@ export const actions = {
     type: types.SET_ENTRY_PROPERTIES_SPLIT_SIZE,
     entrySplitSize
   }),
-  setMainVerticalSplitSize: (mainVerticalSplitSize: any) => ({
+  setMainVerticalSplitSize: (mainVSplitSize: string) => ({
     type: types.SET_MAIN_VSPLIT_SIZE,
-    mainVerticalSplitSize
+    mainVSplitSize
   }),
   setFirstRun: (firstRun: boolean) => ({
     type: types.SET_FIRST_RUN,

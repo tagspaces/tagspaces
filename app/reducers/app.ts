@@ -1092,7 +1092,17 @@ export const actions = {
     type: types.SET_CURRENDIRECTORYPERSPECTIVE,
     perspective
   }),
-  setSelectedEntries: (selectedEntries: Array<Object>) => ({
+  setSelectedEntries: (selectedEntries: Array<Object>) => (
+    dispatch: (actions: Object) => void,
+    getState: () => any
+  ) => {
+    const { openedFiles } = getState().app;
+    // skip select other file if its have openedFiles in editMode
+    if (openedFiles.length === 0 || !openedFiles[0].editMode) {
+      dispatch(actions.setSelectedEntriesInt(selectedEntries));
+    }
+  },
+  setSelectedEntriesInt: (selectedEntries: Array<Object>) => ({
     type: types.SET_SELECTED_ENTRIES,
     selectedEntries
   }),
@@ -1602,7 +1612,8 @@ export const actions = {
      */
     if (openedFiles.length > 0) {
       const openFile = openedFiles[0];
-      if (openFile.editMode && openFile.changed) {
+      if (openFile.editMode) {
+        // && openFile.changed) {
         entryForOpening = { ...openFile, shouldReload: false };
         dispatch(actions.addToEntryContainer(entryForOpening));
         return false;

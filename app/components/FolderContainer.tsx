@@ -234,7 +234,7 @@ interface Props {
   updateCurrentDirEntry: (path: string, entry: Object) => void;
   setCurrentDirectoryColor: (color: string) => void;
   selectedEntries: Array<TS.FileSystemEntry>;
-  rightPanelWidth: number;
+  // rightPanelWidth: number;
 }
 
 const FolderContainer = (props: Props) => {
@@ -260,11 +260,11 @@ const FolderContainer = (props: Props) => {
           }
         } else if (openedFile.editMode) {
           // changed) {
-          const currentEntry = enhanceOpenedEntry(
+          /* const currentEntry = enhanceOpenedEntry(
             openedFile,
             props.settings.tagDelimiter
           );
-          props.updateCurrentDirEntry(openedFile.path, currentEntry);
+          props.updateCurrentDirEntry(openedFile.path, currentEntry); */
         }
       }
     }
@@ -422,8 +422,8 @@ const FolderContainer = (props: Props) => {
     isDesktopMode,
     theme,
     loadParentDirectoryContent,
-    currentDirectoryPerspective,
-    rightPanelWidth
+    currentDirectoryPerspective
+    // rightPanelWidth
   } = props;
   const normalizedCurrentDirPath = normalizePath(
     currentDirectoryPath.split('\\').join('/')
@@ -563,9 +563,9 @@ const FolderContainer = (props: Props) => {
           aria-label="change perspective"
           exclusive
           className={classes.perspecitveSwitch}
-          style={{
+          /* style={{
             right: rightPanelWidth + 30
-          }}
+          }} */
         >
           <ToggleButton
             value={perspectives.DEFAULT}
@@ -650,7 +650,7 @@ function mapActionCreatorsToProps(dispatch) {
 }
 
 const areEqual = (prevProp: Props, nextProp: Props) =>
-  nextProp.rightPanelWidth === prevProp.rightPanelWidth &&
+  // nextProp.rightPanelWidth === prevProp.rightPanelWidth &&
   nextProp.currentDirectoryPath === prevProp.currentDirectoryPath &&
   nextProp.currentDirectoryPerspective ===
     prevProp.currentDirectoryPerspective &&

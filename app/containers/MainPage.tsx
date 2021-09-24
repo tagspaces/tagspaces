@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useReducer, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -276,11 +276,13 @@ const OpenLinkDialogAsync = props => (
 );
 
 const MainPage = (props: Props) => {
-  const [percent, setPercent] = React.useState<number | undefined>(undefined);
+  // const [percent, setPercent] = React.useState<number | undefined>(undefined);
+  const percent = useRef<number | undefined>(undefined);
   const selectedDirectoryPath = useRef<string>('');
   const setSelectedDirectoryPath = (path: string) => {
     selectedDirectoryPath.current = path;
   };
+  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
   const width =
     window.innerWidth ||
@@ -296,7 +298,7 @@ const MainPage = (props: Props) => {
   });
 
   const [open, setOpen] = useState<boolean>(true);
-  const [rightPanelWidth, setRightPanelWidth] = useState<number>(0);
+  // const [rightPanelWidth, setRightPanelWidth] = useState<number>(0);
 
   useEffect(() => {
     if (!AppConfig.isCordova) {
@@ -306,8 +308,8 @@ const MainPage = (props: Props) => {
   }, []);
 
   useEffect(() => {
-    setPercent(undefined);
-    // setOpen(!props.isEntryInFullWidth);
+    // setPercent(undefined);
+    setOpen(!props.isEntryInFullWidth);
   }, [props.isEntryInFullWidth]);
 
   useEventListener('resize', () => {
@@ -393,20 +395,6 @@ const MainPage = (props: Props) => {
     showHelp: props.keyBindings.showHelp
   };
 
-  const handleSplitSizeChange = (primarySize: string) => {
-    /* if (size > 0 && dimensions.width) {
-      const sizeInPercent =
-        // @ts-ignore
-        parseInt((size * 100) / dimensions.width, 10) + '%';
-      // setMainSplitSize(sizeInPercent);
-      props.setMainVerticalSplitSize(sizeInPercent);
-    } */
-    if(primarySize !== '0px') {
-      props.setMainVerticalSplitSize(primarySize);
-    }
-    // mainSplitSize.current = primarySize;
-  };
-
   const {
     theme,
     toggleOnboardingDialog,
@@ -431,28 +419,24 @@ const MainPage = (props: Props) => {
   const { FILE } = NativeTypes;
 
   const isFileOpened = openedFiles.length > 0;
-  /* const openedFilesPath = isFileOpened ? openedFiles[0].path : undefined;
-  const openedFilesReload = isFileOpened
-    ? openedFiles[0].shouldReload
-    : undefined;
-  const openedFilesEdit = isFileOpened ? openedFiles[0].editMode : undefined;
-  const entryContainer = useMemo(
-    () => (
-      <EntryContainer
-        key="EntryContainerID"
-        openedFiles={openedFiles}
-        currentDirectoryPath={directoryPath}
-      />
-    ),
-    [openedFilesPath, openedFilesReload, openedFilesEdit]
-  ); */
+
+  const setPercent = (p: number | undefined) => {
+    percent.current = p;
+    if (p !== undefined) {
+      bufferedLeftSplitResize(() => {
+        if (props.mainSplitSize !== p + '%') {
+          props.setMainVerticalSplitSize(p + '%');
+        }
+      });
+    }
+    forceUpdate();
+  };
 
   const renderContainers = () => {
     const folderContainer = (
       <FolderContainer
         windowHeight={dimensions.height}
         windowWidth={dimensions.width}
-        rightPanelWidth={isFileOpened ? rightPanelWidth : 0}
         toggleDrawer={toggleDrawer}
         openedFiles={openedFiles}
         currentDirectoryPath={directoryPath}
@@ -460,34 +444,19 @@ const MainPage = (props: Props) => {
     );
 
     if (isFileOpened) {
-      /* const entryContainer = (
-        <EntryContainer
-          key="EntryContainerID"
-          openedFiles={openedFiles}
-          currentDirectoryPath={directoryPath}
-        />
-      ); */
-      /* if (props.isEntryInFullWidth) {
-        return (
-          <div style={{ height: '100%' }}>
-            {/!* <KeepMounted isMounted={!props.isEntryInFullWidth} render={() => entryContainer}/> *!/}
-            <KeepChildrenMounted>{entryContainer}</KeepChildrenMounted>
-          </div>
-        );
-      } */
+      let initialPrimarySize = mainSplitSize;
+      let minPrimarySize = '250px';
+      if (props.isEntryInFullWidth) {
+        percent.current = undefined;
+        initialPrimarySize = '0%';
+        minPrimarySize = '0%';
+      }
       return (
         <Split
-          initialPrimarySize={props.isEntryInFullWidth ? '0px' : mainSplitSize}
-          minPrimarySize={props.isEntryInFullWidth ? '0px' : '250px'}
+          initialPrimarySize={initialPrimarySize}
+          minPrimarySize={minPrimarySize}
           minSecondarySize="250px"
-          onSplitChanged={size => {
-            bufferedLeftSplitResize(() => handleSplitSizeChange(size));
-          }}
-          onMeasuredSizesChanged={sizes => {
-            setRightPanelWidth(Math.floor(sizes.secondary));
-            // console.log(`The secondary pane is: ${sizes.secondary}px`);
-          }}
-          percent={percent}
+          percent={percent.current}
           setPercent={setPercent}
         >
           {folderContainer}
@@ -635,6 +604,8 @@ const MainPage = (props: Props) => {
         <style>
           {`
               .default-splitter {
+                --default-splitter-line-margin: 4px !important;
+                --default-splitter-line-size: 1px !important;
                 --default-splitter-line-color: ${
                   theme.palette.divider
                 } !important;
@@ -653,7 +624,7 @@ const MainPage = (props: Props) => {
             onDrop={handleFileDrop}
           >
             <CustomDragLayer />
-            <Drawer variant="persistent" anchor="left" open={open && !props.isEntryInFullWidth}>
+            <Drawer variant="persistent" anchor="left" open={open}>
               <MobileNavigation width={drawerWidth} />
             </Drawer>
             <main
@@ -667,7 +638,7 @@ const MainPage = (props: Props) => {
         ) : (
           <>
             <SwipeableDrawer
-              open={open && !props.isEntryInFullWidth}
+              open={open}
               onClose={() => setOpen(false)}
               onOpen={() => setOpen(true)}
               hysteresis={0.1}
@@ -798,8 +769,6 @@ const areEqual = (prevProp, nextProp) =>
     prevProp.isThirdPartyLibsDialogOpened &&
   nextProp.isUploadProgressDialogOpened ===
     prevProp.isUploadProgressDialogOpened &&
-  // nextProp.leftSplitSize === prevProp.leftSplitSize &&
-  // nextProp.mainSplitSize === prevProp.mainSplitSize &&
   JSON.stringify(nextProp.selectedEntries) ===
     JSON.stringify(prevProp.selectedEntries) &&
   JSON.stringify(nextProp.openedFiles) === JSON.stringify(prevProp.openedFiles);
@@ -810,7 +779,7 @@ export default withDnDContext(
     mapDispatchToProps
   )(
     translate(['core'], { wait: true })(
-      withStyles(styles, { withTheme: true })(React.memo(MainPage, areEqual))
+      React.memo(withStyles(styles, { withTheme: true })(MainPage), areEqual)
     )
   )
 );
