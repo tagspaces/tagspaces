@@ -297,7 +297,7 @@ const MainPage = (props: Props) => {
     height
   });
 
-  const [open, setOpen] = useState<boolean>(true);
+  const [drawerOpened, setDrawerOpened] = useState<boolean>(true);
   // const [rightPanelWidth, setRightPanelWidth] = useState<number>(0);
 
   useEffect(() => {
@@ -309,7 +309,7 @@ const MainPage = (props: Props) => {
 
   useEffect(() => {
     // setPercent(undefined);
-    setOpen(!props.isEntryInFullWidth);
+    setDrawerOpened(!props.isEntryInFullWidth);
   }, [props.isEntryInFullWidth]);
 
   useEventListener('resize', () => {
@@ -340,7 +340,7 @@ const MainPage = (props: Props) => {
   };
 
   const toggleDrawer = () => {
-    setOpen(prevOpen => !prevOpen);
+    setDrawerOpened(prevOpen => !prevOpen);
   };
 
   const handleFileDrop = (item, monitor) => {
@@ -438,6 +438,7 @@ const MainPage = (props: Props) => {
         windowHeight={dimensions.height}
         windowWidth={dimensions.width}
         toggleDrawer={toggleDrawer}
+        drawerOpened={drawerOpened}
         openedFiles={openedFiles}
         currentDirectoryPath={directoryPath}
       />
@@ -624,12 +625,12 @@ const MainPage = (props: Props) => {
             onDrop={handleFileDrop}
           >
             <CustomDragLayer />
-            <Drawer variant="persistent" anchor="left" open={open}>
+            <Drawer variant="persistent" anchor="left" open={drawerOpened}>
               <MobileNavigation width={drawerWidth} />
             </Drawer>
             <main
               className={clsx(classes.content, {
-                [classes.contentShift]: !open
+                [classes.contentShift]: !drawerOpened
               })}
             >
               {renderContainers()}
@@ -638,9 +639,9 @@ const MainPage = (props: Props) => {
         ) : (
           <>
             <SwipeableDrawer
-              open={open}
-              onClose={() => setOpen(false)}
-              onOpen={() => setOpen(true)}
+              open={drawerOpened}
+              onClose={() => setDrawerOpened(false)}
+              onOpen={() => setDrawerOpened(true)}
               hysteresis={0.1}
               disableBackdropTransition={!AppConfig.isIOS}
             >

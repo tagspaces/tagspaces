@@ -20,10 +20,7 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Button from '@material-ui/core/Button';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import BackButtonIcon from '@material-ui/icons/ArrowBack';
-import IconButton from '@material-ui/core/IconButton';
-import FolderSeparatorIcon from '@material-ui/icons/ChevronRight';
+import SearchIcon from '@material-ui/icons/Search';
 import MenuIcon from '@material-ui/icons/MenuOpen';
 import Badge from '@material-ui/core/Badge';
 import { Tooltip } from '@material-ui/core';
@@ -35,7 +32,6 @@ import GalleryPerspectiveIcon from '@material-ui/icons/Camera';
 import MapiquePerspectiveIcon from '@material-ui/icons/Map';
 // import KanBanPerspectiveIcon from '@material-ui/icons/Dashboard';
 import LocationMenu from './menus/LocationMenu';
-import DirectoryMenu from './menus/DirectoryMenu';
 import i18n from '../services/i18n';
 import { getMaxSearchResults, getDesktopMode } from '-/reducers/settings';
 import { getLocations } from '-/reducers/locations';
@@ -51,14 +47,12 @@ import {
   getSelectedEntries
 } from '../reducers/app';
 import TaggingActions from '../reducers/tagging-actions';
-import { normalizePath, extractShortDirectoryName } from '-/utils/paths';
-import PlatformIO from '../services/platform-io';
 import LoadingLazy from '../components/LoadingLazy';
 import { Pro } from '../pro';
-import { enhanceOpenedEntry } from '-/services/utils-io';
 import AppConfig from '-/config';
 import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
 import { TS } from '-/tagspaces.namespace';
+import PathBreadcrumbs from './PathBreadcrumbs';
 
 const GridPerspective = React.lazy(() =>
   import(
@@ -225,6 +219,7 @@ interface Props {
   showNotification: (content: string) => void;
   openSearchPanel: () => void;
   toggleDrawer?: () => void;
+  drawerOpened: boolean;
   setCurrentDirectoryPerspective: (perspective: string) => void;
   maxSearchResults: number;
   currentDirectoryPerspective: string;
@@ -238,15 +233,6 @@ interface Props {
 }
 
 const FolderContainer = (props: Props) => {
-  const [
-    directoryContextMenuAnchorEl,
-    setDirectoryContextMenuAnchorEl
-  ] = useState<null | HTMLElement>(null);
-
-  const [isRenameEntryDialogOpened, setIsRenameEntryDialogOpened] = useState<
-    boolean
-  >(false);
-
   useEffect(() => {
     if (props.selectedEntries.length < 2) {
       if (props.openedFiles.length > 0) {
@@ -270,56 +256,9 @@ const FolderContainer = (props: Props) => {
     }
   }, [props.openedFiles]);
 
-  let pathParts: Array<string> = [];
-
-  if (props.currentDirectoryPath) {
-    // Make the path unix like ending always with /
-    const addSlash = PlatformIO.haveObjectStoreSupport() ? '//' : '/';
-    let normalizedCurrentPath =
-      addSlash +
-      normalizePath(props.currentDirectoryPath.split('\\').join('/'));
-
-    let normalizedCurrentLocationPath = '';
-    if (props.currentLocationPath) {
-      normalizedCurrentLocationPath =
-        addSlash +
-        normalizePath(props.currentLocationPath.split('\\').join('/'));
-    }
-
-    while (
-      normalizedCurrentPath.lastIndexOf('/') > 0 &&
-      normalizedCurrentPath.startsWith(normalizedCurrentLocationPath)
-    ) {
-      pathParts.push(
-        normalizedCurrentPath
-          .substring(PlatformIO.haveObjectStoreSupport() ? 2 : 1)
-          .split('/')
-          .join(PlatformIO.getDirSeparator())
-      ); // TODO: optimization needed
-      normalizedCurrentPath = normalizedCurrentPath.substring(
-        0,
-        normalizedCurrentPath.lastIndexOf('/')
-      );
-    }
-
-    // console.log('Path parts : ' + JSON.stringify(pathParts));
-    if (pathParts.length >= 1) {
-      pathParts = pathParts.slice(1, pathParts.length); // remove current directory
-    }
-    pathParts = pathParts.reverse();
-    if (pathParts.length > 2) {
-      pathParts = pathParts.slice(pathParts.length - 2, pathParts.length); // leave only the last 2 dirs in the path
-    }
-  }
-
-  const openDirectoryMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
-    props.setSelectedEntries([]);
-    setDirectoryContextMenuAnchorEl(event.currentTarget);
-  };
-
-  const closeDirectoryMenu = () => {
-    setDirectoryContextMenuAnchorEl(null);
-  };
+  const [isRenameEntryDialogOpened, setIsRenameEntryDialogOpened] = useState<
+    boolean
+  >(false);
 
   const switchPerspective = (perspectiveId: string) => {
     props.setCurrentDirectoryPerspective(perspectiveId);
@@ -419,15 +358,19 @@ const FolderContainer = (props: Props) => {
     maxSearchResults,
     openSearchPanel,
     toggleDrawer,
+    drawerOpened,
     isDesktopMode,
     theme,
     loadParentDirectoryContent,
-    currentDirectoryPerspective
+    currentDirectoryPerspective,
+    currentLocationPath,
+    setSelectedEntries,
+    openDirectory,
+    reflectCreateEntry,
+    openFsEntry
     // rightPanelWidth
   } = props;
-  const normalizedCurrentDirPath = normalizePath(
-    currentDirectoryPath.split('\\').join('/')
-  );
+
   let searchResultCounterText = searchResultCount + ' ' + i18n.t('entries');
   if (searchResultCount >= maxSearchResults) {
     searchResultCounterText =
@@ -446,7 +389,11 @@ const FolderContainer = (props: Props) => {
           <div className={classes.toolbar}>
             <Button
               id="mobileMenuButton"
-              style={{ marginLeft: -8 }}
+              style={{
+                marginLeft: -8,
+                transform: drawerOpened ? 'rotate(0deg)' : 'rotate(180deg)',
+                maxHeight: 40
+              }}
               onClick={toggleDrawer}
             >
               <MenuIcon />
@@ -461,85 +408,32 @@ const FolderContainer = (props: Props) => {
                 openSearchPanel();
               }}
             /> */}
+            <Button
+              id="toggleSearch"
+              style={{
+                marginLeft: -8,
+                maxHeight: 40
+              }}
+              onClick={toggleDrawer}
+            >
+              <SearchIcon />
+            </Button>
             <div className={classes.flexMiddle} />
-            <React.Fragment>
-              <LocationMenu />
-              {isDesktopMode &&
-                pathParts.length > 0 &&
-                pathParts.map(pathPart => (
-                  <Button
-                    key={pathPart}
-                    onClick={() => loadDirectoryContent(pathPart, false)}
-                    title={'Navigate to: ' + pathPart}
-                    style={{
-                      paddingLeft: 3,
-                      paddingRight: 0,
-                      minWidth: 10,
-                      lineHeight: '17px',
-                      overflow: 'hidden',
-                      backgroundColor: theme.palette.background.default
-                    }}
-                  >
-                    {extractShortDirectoryName(
-                      pathPart,
-                      PlatformIO.getDirSeparator()
-                    )}
-                    <FolderSeparatorIcon />
-                  </Button>
-                ))}
-              {!isDesktopMode && pathParts.length >= 0 && (
-                <React.Fragment>
-                  <IconButton
-                    onClick={loadParentDirectoryContent}
-                    data-tid="openParentDirectory"
-                    size="small"
-                    style={{
-                      overflow: 'hidden',
-                      backgroundColor: theme.palette.background.default
-                    }}
-                    title={i18n.t('core:navigateToParentDirectory')}
-                  >
-                    <BackButtonIcon />
-                  </IconButton>
-                </React.Fragment>
-              )}
-              {props.currentDirectoryPath && (
-                <React.Fragment>
-                  <Button
-                    data-tid="folderContainerOpenDirMenu"
-                    title={
-                      i18n.t('core:openDirectoryMenu') +
-                      ' - ' +
-                      (currentDirectoryPath || '')
-                    }
-                    className={classes.folderButton}
-                    onClick={openDirectoryMenu}
-                    onContextMenu={openDirectoryMenu}
-                  >
-                    {extractShortDirectoryName(
-                      normalizePath(normalizedCurrentDirPath),
-                      '/'
-                    )}
-                    <MoreVertIcon />
-                  </Button>
-                  <DirectoryMenu
-                    open={Boolean(directoryContextMenuAnchorEl)}
-                    onClose={closeDirectoryMenu}
-                    anchorEl={directoryContextMenuAnchorEl}
-                    directoryPath={currentDirectoryPath}
-                    loadDirectoryContent={props.loadDirectoryContent}
-                    openRenameDirectoryDialog={() =>
-                      setIsRenameEntryDialogOpened(true)
-                    }
-                    openDirectory={props.openDirectory}
-                    reflectCreateEntry={props.reflectCreateEntry}
-                    openFsEntry={props.openFsEntry}
-                    switchPerspective={switchPerspective}
-                    isReadOnlyMode={props.isReadOnlyMode}
-                  />
-                </React.Fragment>
-              )}
-            </React.Fragment>
+            <LocationMenu />
+            <PathBreadcrumbs
+              currentDirectoryPath={currentDirectoryPath}
+              currentLocationPath={currentLocationPath}
+              loadDirectoryContent={loadDirectoryContent}
+              switchPerspective={switchPerspective}
+              setSelectedEntries={setSelectedEntries}
+              openDirectory={openDirectory}
+              reflectCreateEntry={reflectCreateEntry}
+              openFsEntry={openFsEntry}
+              isReadOnlyMode={props.isReadOnlyMode}
+              openRenameDirectoryDialog={() =>
+                setIsRenameEntryDialogOpened(true)
+              }
+            />
           </div>
         </div>
         <div
@@ -651,6 +545,7 @@ function mapActionCreatorsToProps(dispatch) {
 
 const areEqual = (prevProp: Props, nextProp: Props) =>
   // nextProp.rightPanelWidth === prevProp.rightPanelWidth &&
+  nextProp.drawerOpened === prevProp.drawerOpened &&
   nextProp.currentDirectoryPath === prevProp.currentDirectoryPath &&
   nextProp.currentDirectoryPerspective ===
     prevProp.currentDirectoryPerspective &&
