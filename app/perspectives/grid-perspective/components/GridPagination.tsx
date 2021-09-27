@@ -66,7 +66,7 @@ const GridPagination = (props: Props) => {
   const [page, setPage] = useState(currentPage);
 
   useEffect(() => {
-    if(page !== currentPage) {
+    if (page !== currentPage) {
       setPage(props.currentPage);
     }
     if (containerEl && containerEl.current) {

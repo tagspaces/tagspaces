@@ -40,6 +40,7 @@ import { withStyles } from '@material-ui/core/styles';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
+import CloseIcon from '@material-ui/icons/Close';
 import ProTeaser from '../assets/images/spacerocket_undraw.svg';
 import { Pro } from '-/pro';
 import CustomLogo from './CustomLogo';
@@ -109,12 +110,13 @@ interface Props {
 
 const MobileNavigation = (props: Props) => {
   const [isProTeaserVisible, setIsProTeaserVisible] = useState<boolean>(false);
+  const [showAds, setShowAds] = useState<boolean>(true);
 
   const toggleProTeaser = () => {
     setIsProTeaserVisible(!isProTeaserVisible);
   };
 
-  const showProTeaser = !Pro;
+  const showProTeaser = !Pro && showAds;
 
   const {
     classes,
@@ -224,7 +226,7 @@ const MobileNavigation = (props: Props) => {
           textAlign: 'center'
         }}
       >
-        {showProTeaser && (
+        {showProTeaser && showAds && (
           <>
             <CardContent
               onClick={toggleProTeaser}
@@ -236,6 +238,18 @@ const MobileNavigation = (props: Props) => {
             >
               <Typography color="textSecondary" gutterBottom>
                 Achieve more with
+                <IconButton
+                  style={{ marginLeft: 30, marginTop: -30, marginRight: -60 }}
+                  size="small"
+                  aria-label="close"
+                  onClick={event => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    setShowAds(false);
+                  }}
+                >
+                  <CloseIcon fontSize="small" />
+                </IconButton>
               </Typography>
               <Typography variant="h6" component="h2" color="textPrimary">
                 TagSpaces Pro
