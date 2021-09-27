@@ -185,7 +185,7 @@ const styles: any = (theme: any) => ({
     alignItems: 'center'
   },
   perspecitveSwitch: {
-    bottom: 30,
+    bottom: 80,
     right: 30,
     zIndex: 1000,
     opacity: 0.9,
@@ -384,7 +384,7 @@ const FolderContainer = (props: Props) => {
     currentDirectoryPerspective || perspectives.DEFAULT;
 
   return (
-    <div data-tid="folderContainerTID">
+    <div data-tid="folderContainerTID" style={{ position: 'relative' }}>
       <div className={classes.mainPanel}>
         <div className={classes.topPanel}>
           <div className={classes.toolbar}>
@@ -563,5 +563,7 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
+)(
   // @ts-ignore
-)(withStyles(styles)(withTheme(React.memo(FolderContainer, areEqual))));
+  React.memo(withStyles(styles, { withTheme: true })(FolderContainer), areEqual)
+);

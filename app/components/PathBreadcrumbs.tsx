@@ -153,6 +153,7 @@ export default function PathBreadcrumbs(props: Props) {
       {pathParts.length > 0 &&
         pathParts.map(pathPart => (
           <StyledBreadcrumb
+            key={pathPart}
             component="a"
             href="#"
             label={extractShortDirectoryName(
