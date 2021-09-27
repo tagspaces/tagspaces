@@ -32,7 +32,7 @@ import ThemingIcon from '@material-ui/icons/InvertColors';
 import LocationsIcon from '@material-ui/icons/WorkOutline';
 import CreateIcon from '@material-ui/icons/Add';
 import TagLibraryIcon from '@material-ui/icons/LocalOfferOutlined';
-import SearchIcon from '@material-ui/icons/SearchOutlined';
+import RecentThingsIcon from '@material-ui/icons/History';
 import HelpIcon from '@material-ui/icons/HelpOutline';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -321,7 +321,7 @@ const MobileNavigation = (props: Props) => {
                   : classes.button
               }
             >
-              <SearchIcon />
+              <RecentThingsIcon />
             </ToggleButton>
           </Tooltip>
           <Tooltip title={i18n.t('core:helpFeedback')}>

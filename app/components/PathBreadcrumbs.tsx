@@ -27,6 +27,7 @@ import { normalizePath, extractShortDirectoryName } from '-/utils/paths';
 import i18n from '../services/i18n';
 import DirectoryMenu from './menus/DirectoryMenu';
 import { TS } from '-/tagspaces.namespace';
+import { isDesktopMode } from '-/reducers/settings';
 
 const StyledBreadcrumb = withStyles((theme: Theme) => ({
   root: {
@@ -55,6 +56,7 @@ interface Props {
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   isReadOnlyMode: boolean;
   openRenameDirectoryDialog: () => void;
+  isDesktopMode: boolean;
 }
 
 function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
@@ -80,12 +82,14 @@ export default function PathBreadcrumbs(props: Props) {
     reflectCreateEntry,
     openFsEntry,
     isReadOnlyMode,
-    openRenameDirectoryDialog
+    openRenameDirectoryDialog,
+    isDesktopMode
   } = props;
 
   const openDirectoryMenu = (event: React.MouseEvent<Element, MouseEvent>) => {
     event.preventDefault();
-    props.setSelectedEntries([]);
+    setSelectedEntries([]);
+    // @ts-ignore
     setDirectoryContextMenuAnchorEl(event.currentTarget);
   };
 
@@ -139,7 +143,7 @@ export default function PathBreadcrumbs(props: Props) {
 
   return (
     <Breadcrumbs
-      maxItems={3}
+      maxItems={isDesktopMode ? 3 : 1}
       itemsAfterCollapse={2}
       aria-label="breadcrumb"
       style={{ marginTop: 5 }}

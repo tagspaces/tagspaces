@@ -152,7 +152,8 @@ const styles: any = (theme: any) => ({
     paddingRight: 5,
     paddingTop: 5,
     display: 'flex',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    overflowX: AppConfig.isFirefox ? 'auto' : 'overlay'
   },
   topPanel: {
     height: 50,
@@ -430,6 +431,7 @@ const FolderContainer = (props: Props) => {
               reflectCreateEntry={reflectCreateEntry}
               openFsEntry={openFsEntry}
               isReadOnlyMode={props.isReadOnlyMode}
+              isDesktopMode={isDesktopMode}
               openRenameDirectoryDialog={() =>
                 setIsRenameEntryDialogOpened(true)
               }
