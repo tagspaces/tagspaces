@@ -97,6 +97,7 @@ interface Props {
   isHelpFeedbackPanelOpened: boolean;
   openHelpFeedbackPanel: () => void;
   closeAllVerticalPanels: () => void;
+  toggleLocationDialog: () => void;
   openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   switchTheme: () => void;
   hideDrawer?: () => void;
@@ -191,7 +192,7 @@ const MobileNavigation = (props: Props) => {
           <Tooltip title={i18n.t('core:createLocationTitle')}>
             <Button
               data-tid="createNewLocation"
-              onClick={toggleCreateFileDialog}
+              onClick={props.toggleLocationDialog}
               size="small"
               color="primary"
             >
@@ -400,6 +401,7 @@ function mapActionCreatorsToProps(dispatch) {
       openLocationManagerPanel: AppActions.openLocationManagerPanel,
       openTagLibraryPanel: AppActions.openTagLibraryPanel,
       openSearchPanel: AppActions.openSearchPanel,
+      toggleLocationDialog: AppActions.toggleLocationDialog,
       openHelpFeedbackPanel: AppActions.openHelpFeedbackPanel,
       openURLExternally: AppActions.openURLExternally,
       showNotification: AppActions.showNotification,

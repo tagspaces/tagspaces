@@ -60,7 +60,6 @@ interface Props {
   openURLExternally: (path: string) => void;
   toggleOpenLinkDialog: () => void;
   setDefaultLocations: () => void;
-  addLocation: (location: TS.Location, openAfterCreate?: boolean) => void;
   addLocations: (locations: Array<TS.Location>) => void;
   editLocation: () => void;
   removeLocation: (location: TS.Location) => void;
@@ -68,6 +67,7 @@ interface Props {
   isDesktop: boolean;
   isPersistTagsInSidecar: boolean;
   reduceHeightBy: number;
+  toggleLocationDialog: () => void;
 }
 
 type SubFolder = {
@@ -80,10 +80,6 @@ type SubFolder = {
 const LocationManager = (props: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedLocation, setSelectedLocation] = useState<TS.Location>(null);
-  const [
-    isCreateLocationDialogOpened,
-    setCreateLocationDialogOpened
-  ] = useState<boolean>(false);
   const [isEditLocationDialogOpened, setEditLocationDialogOpened] = useState<
     boolean
   >(false);
@@ -143,9 +139,7 @@ const LocationManager = (props: Props) => {
         exportLocations={() => setExportLocationsDialogOpened(true)}
         classes={classes}
         openURLExternally={props.openURLExternally}
-        showCreateLocationDialog={() => {
-          setCreateLocationDialogOpened(true);
-        }}
+        showCreateLocationDialog={props.toggleLocationDialog}
         toggleOpenLinkDialog={props.toggleOpenLinkDialog}
       />
       <List
@@ -153,7 +147,7 @@ const LocationManager = (props: Props) => {
         data-tid="locationList"
         style={{
           height: 'calc(100% - ' + reduceHeightBy + 'px)',
-          //@ts-ignore
+          // @ts-ignore
           overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
         }}
       >
@@ -212,14 +206,6 @@ const LocationManager = (props: Props) => {
         type="file"
         onChange={handleFileInputChange}
       />
-      {isCreateLocationDialogOpened && (
-        <CreateEditLocationDialogAsync
-          open={isCreateLocationDialogOpened}
-          onClose={() => setCreateLocationDialogOpened(false)}
-          addLocation={props.addLocation}
-          isPersistTagsInSidecar={props.isPersistTagsInSidecar}
-        />
-      )}
       {isEditLocationDialogOpened && (
         <CreateEditLocationDialogAsync
           open={isEditLocationDialogOpened}
@@ -280,13 +266,13 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
       setDefaultLocations: LocationActions.setDefaultLocations,
-      addLocation: LocationActions.addLocation,
       addLocations: LocationActions.addLocations,
       editLocation: LocationActions.editLocation,
       removeLocation: LocationActions.removeLocation,
       moveLocation: LocationActions.moveLocation,
       toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
-      openURLExternally: AppActions.openURLExternally
+      openURLExternally: AppActions.openURLExternally,
+      toggleLocationDialog: AppActions.toggleLocationDialog
     },
     dispatch
   );

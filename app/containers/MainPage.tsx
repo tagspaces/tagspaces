@@ -67,7 +67,8 @@ import {
   OpenedEntry,
   isDeleteMultipleEntriesDialogOpened,
   getSelectedEntries,
-  currentUser
+  currentUser,
+  isLocationDialogOpened
 } from '../reducers/app';
 import { buffer } from '-/utils/misc';
 import TargetFileBox from '../components/TargetFileBox';
@@ -130,6 +131,7 @@ interface Props {
   isCreateDirectoryOpened: boolean;
   toggleCreateDirectoryDialog: () => void;
   isAboutDialogOpened: boolean;
+  isLocationDialogOpened: boolean;
   isKeysDialogOpened: boolean;
   isLicenseDialogOpened: boolean;
   isThirdPartyLibsDialogOpened: boolean;
@@ -156,6 +158,7 @@ interface Props {
   toggleLicenseDialog: () => void; // needed by electron-menus
   toggleThirdPartyLibsDialog: () => void; // neede by electron-menus
   toggleAboutDialog: () => void; // needed by electron-menus
+  toggleLocationDialog: () => void; // needed by electron-menus
   toggleOnboardingDialog: () => void; // needed by electron-menus
   // setLastSelectedEntry: (path: string) => void; // needed by electron-menus
   setSelectedEntries: (selectedEntries: Array<Object>) => void; // needed by electron-menus
@@ -197,6 +200,17 @@ interface Props {
   deleteDirectory: (path: string) => void;
   user: CognitoUserInterface;
 }
+
+const CreateEditLocationDialog = React.lazy(() =>
+  import(
+    /* webpackChunkName: "CreateEditLocationDialog" */ '../components/dialogs/CreateEditLocationDialog'
+  )
+);
+const CreateEditLocationDialogAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <CreateEditLocationDialog {...props} />
+  </React.Suspense>
+);
 
 const AboutDialog = React.lazy(() =>
   import(
@@ -319,20 +333,20 @@ const MainPage = (props: Props) => {
   });
 
   const updateDimensions = () => {
-    const width =
+    const w =
       window.innerWidth ||
       document.documentElement.clientWidth ||
       body.clientWidth;
-    const height =
+    const h =
       window.innerHeight ||
       document.documentElement.clientHeight ||
       body.clientHeight;
 
     // console.log('Width: ' + width + ' Height: ' + height);
-    setDimensions({ width, height });
+    setDimensions({ width: w, height: h });
 
     if (props.openedFiles.length > 0) {
-      const isFillWidth = height > width;
+      const isFillWidth = h > w;
       if (isFillWidth !== props.isEntryInFullWidth) {
         props.setEntryFullWidth(isFillWidth);
       }
@@ -403,6 +417,7 @@ const MainPage = (props: Props) => {
     toggleLicenseDialog,
     toggleThirdPartyLibsDialog,
     toggleAboutDialog,
+    toggleLocationDialog,
     toggleCreateDirectoryDialog,
     toggleCreateFileDialog,
     toggleUploadDialog,
@@ -484,6 +499,12 @@ const MainPage = (props: Props) => {
       keyMap={keyMap}
       style={{ height: '100%' }}
     >
+      {props.isLocationDialogOpened && (
+        <CreateEditLocationDialogAsync
+          open={props.isLocationDialogOpened}
+          onClose={toggleLocationDialog}
+        />
+      )}
       {props.isAboutDialogOpened && (
         <AboutDialogAsync
           open={props.isAboutDialogOpened}
@@ -668,6 +689,7 @@ function mapStateToProps(state) {
     isCreateFileDialogOpened: isCreateFileDialogOpened(state),
     isSettingsDialogOpened: isSettingsDialogOpened(state),
     isAboutDialogOpened: isAboutDialogOpened(state),
+    isLocationDialogOpened: isLocationDialogOpened(state),
     isKeysDialogOpened: isKeysDialogOpened(state),
     isOnboardingDialogOpened: isOnboardingDialogOpened(state),
     isLicenseDialogOpened: isLicenseDialogOpened(state),
@@ -716,6 +738,7 @@ function mapDispatchToProps(dispatch) {
       toggleLicenseDialog: AppActions.toggleLicenseDialog,
       toggleThirdPartyLibsDialog: AppActions.toggleThirdPartyLibsDialog,
       toggleAboutDialog: AppActions.toggleAboutDialog,
+      toggleLocationDialog: AppActions.toggleLocationDialog,
       toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
       toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
       setSelectedEntries: AppActions.setSelectedEntries,
@@ -760,6 +783,7 @@ const areEqual = (prevProp, nextProp) =>
   nextProp.isHelpFeedbackPanelOpened === prevProp.isHelpFeedbackPanelOpened &&
   nextProp.isKeysDialogOpened === prevProp.isKeysDialogOpened &&
   nextProp.isLicenseDialogOpened === prevProp.isLicenseDialogOpened &&
+  nextProp.isLocationDialogOpened === prevProp.isLocationDialogOpened &&
   nextProp.isLocationManagerPanelOpened ===
     prevProp.isLocationManagerPanelOpened &&
   nextProp.isOnboardingDialogOpened === prevProp.isOnboardingDialogOpened &&

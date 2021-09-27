@@ -43,6 +43,8 @@ import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import CheckIcon from '@material-ui/icons/Check';
 import RemoveIcon from '@material-ui/icons/RemoveCircleOutline';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import ObjectStoreForm from './ObjectStoreForm';
@@ -55,6 +57,8 @@ import { getLocationPath } from '-/utils/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import InfoIcon from '-/components/InfoIcon';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
+import { actions as LocationActions } from '-/reducers/locations';
+import { getPersistTagsInSidecarFile } from '-/reducers/settings';
 
 const styles: any = theme => ({
   formControl: {
@@ -69,7 +73,7 @@ interface Props {
   onClose: () => void;
   classes: any;
   fullScreen: boolean;
-  addLocation?: (location: TS.Location) => void;
+  addLocation: (location: TS.Location, openAfterCreate?: boolean) => void;
   editLocation?: (location: TS.Location) => void;
   isPersistTagsInSidecar: boolean;
 }
@@ -300,7 +304,7 @@ const CreateEditLocationDialog = (props: Props) => {
         loc = { ...loc, persistTagsInSidecarFile };
       }
 
-      if (props.addLocation) {
+      if (!props.location && props.addLocation) {
         props.addLocation(loc);
       } else if (props.editLocation) {
         loc.newuuid = newuuid;
@@ -776,4 +780,22 @@ const CreateEditLocationDialog = (props: Props) => {
   );
 };
 
-export default withMobileDialog()(withStyles(styles)(CreateEditLocationDialog));
+function mapStateToProps(state) {
+  return {
+    isPersistTagsInSidecar: getPersistTagsInSidecarFile(state)
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(
+    {
+      addLocation: LocationActions.addLocation
+    },
+    dispatch
+  );
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withMobileDialog()(withStyles(styles)(CreateEditLocationDialog)));
