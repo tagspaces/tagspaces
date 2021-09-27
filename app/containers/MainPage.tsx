@@ -433,43 +433,49 @@ const MainPage = (props: Props) => {
   };
 
   const renderContainers = () => {
-    const folderContainer = (
-      <FolderContainer
-        windowHeight={dimensions.height}
-        windowWidth={dimensions.width}
-        toggleDrawer={toggleDrawer}
-        drawerOpened={drawerOpened}
-        openedFiles={openedFiles}
-        currentDirectoryPath={directoryPath}
-      />
-    );
+    let initialPrimarySize = mainSplitSize;
+    let minPrimarySize = '250px';
+    let minSecondarySize = '250px';
+    let renderSplitter;
 
-    if (isFileOpened) {
-      let initialPrimarySize = mainSplitSize;
-      let minPrimarySize = '250px';
-      if (props.isEntryInFullWidth) {
-        percent.current = undefined;
-        initialPrimarySize = '0%';
-        minPrimarySize = '0%';
-      }
-      return (
-        <Split
-          initialPrimarySize={initialPrimarySize}
-          minPrimarySize={minPrimarySize}
-          minSecondarySize="250px"
-          percent={percent.current}
-          setPercent={setPercent}
-        >
-          {folderContainer}
+    if (!isFileOpened) {
+      percent.current = undefined;
+      initialPrimarySize = '100%';
+      minSecondarySize = '0%';
+      renderSplitter = () => null;
+    }
+    if (props.isEntryInFullWidth) {
+      percent.current = undefined;
+      initialPrimarySize = '0%';
+      minPrimarySize = '0%';
+      renderSplitter = () => null;
+    }
+    return (
+      <Split
+        initialPrimarySize={initialPrimarySize}
+        minPrimarySize={minPrimarySize}
+        minSecondarySize={minSecondarySize}
+        renderSplitter={renderSplitter}
+        percent={percent.current}
+        setPercent={setPercent}
+      >
+        <FolderContainer
+          windowHeight={dimensions.height}
+          windowWidth={dimensions.width}
+          toggleDrawer={toggleDrawer}
+          drawerOpened={drawerOpened}
+          openedFiles={openedFiles}
+          currentDirectoryPath={directoryPath}
+        />
+        {isFileOpened && (
           <EntryContainer
             key="EntryContainerID"
             openedFiles={openedFiles}
             currentDirectoryPath={directoryPath}
           />
-        </Split>
-      );
-    }
-    return folderContainer;
+        )}
+      </Split>
+    );
   };
 
   return (
@@ -607,14 +613,11 @@ const MainPage = (props: Props) => {
               .default-splitter {
                 --default-splitter-line-margin: 4px !important;
                 --default-splitter-line-size: 1px !important;
-                --default-splitter-line-color: ${
-                  theme.palette.divider
-                } !important;
+                --default-splitter-line-color: ${theme.palette.divider} !important;
               }
 
               .react-split .split-container.vertical .splitter {
                 background-color: ${theme.palette.background.default};
-                display: ${props.isEntryInFullWidth ? 'none' : null};
               }
           `}
         </style>

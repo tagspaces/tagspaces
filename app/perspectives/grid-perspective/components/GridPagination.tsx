@@ -66,7 +66,9 @@ const GridPagination = (props: Props) => {
   const [page, setPage] = useState(currentPage);
 
   useEffect(() => {
-    setPage(props.currentPage);
+    if(page !== currentPage) {
+      setPage(props.currentPage);
+    }
     if (containerEl && containerEl.current) {
       containerEl.current.scrollTop = 0;
     }
@@ -144,7 +146,7 @@ const GridPagination = (props: Props) => {
         <Pagination
           style={{
             left: 30,
-            bottom: 30,
+            bottom: 80,
             zIndex: 1100,
             position: 'absolute',
             backgroundColor: theme.palette.background.default,
