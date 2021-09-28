@@ -44,6 +44,15 @@ const StyledBreadcrumb = withStyles((theme: Theme) => ({
   }
 }))(Chip) as typeof Chip;
 
+const NoWrapBreadcrumb = withStyles({
+  root: {
+    marginTop: 5
+  },
+  ol: {
+    flexWrap: 'nowrap'
+  }
+})(Breadcrumbs);
+
 interface Props {
   currentDirectoryPath: string;
   currentLocationPath: string;
@@ -142,12 +151,21 @@ export default function PathBreadcrumbs(props: Props) {
 
   return (
     <>
-      <Breadcrumbs
+      <NoWrapBreadcrumb
         maxItems={isDesktopMode ? 3 : 1}
-        itemsAfterCollapse={2}
+        itemsAfterCollapse={isDesktopMode ? 2 : 1}
+        itemsBeforeCollapse={isDesktopMode ? 1 : 0}
         aria-label="breadcrumb"
-        style={{ marginTop: 5 }}
-        separator={<span style={{ marginLeft: -4, marginRight: -4 }}>/</span>}
+        separator={
+          <span
+            style={{
+              marginLeft: -4,
+              marginRight: -4
+            }}
+          >
+            /
+          </span>
+        }
       >
         {/* <LocationMenu /> */}
         {pathParts.length > 0 &&
@@ -183,7 +201,7 @@ export default function PathBreadcrumbs(props: Props) {
             onContextMenu={openDirectoryMenu}
           />
         )}
-      </Breadcrumbs>
+      </NoWrapBreadcrumb>
       <DirectoryMenu
         open={Boolean(directoryContextMenuAnchorEl)}
         onClose={closeDirectoryMenu}

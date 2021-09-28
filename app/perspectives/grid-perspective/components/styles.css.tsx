@@ -65,7 +65,8 @@ export default (theme: any): any => ({
   },
   gridCellThumb: {
     backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center'
+    backgroundPosition: 'center',
+    borderRadius: 5
   },
   gridCellTitle: {
     padding: 5,

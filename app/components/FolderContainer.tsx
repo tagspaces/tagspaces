@@ -152,7 +152,6 @@ const styles: any = (theme: any) => ({
     paddingRight: 5,
     paddingTop: 5,
     display: 'flex',
-    justifyContent: 'center',
     overflowX: AppConfig.isFirefox ? 'auto' : 'overlay'
   },
   topPanel: {
@@ -548,6 +547,7 @@ function mapActionCreatorsToProps(dispatch) {
 const areEqual = (prevProp: Props, nextProp: Props) =>
   // nextProp.rightPanelWidth === prevProp.rightPanelWidth &&
   nextProp.drawerOpened === prevProp.drawerOpened &&
+  nextProp.isDesktopMode === prevProp.isDesktopMode &&
   nextProp.currentDirectoryPath === prevProp.currentDirectoryPath &&
   nextProp.currentDirectoryPerspective ===
     prevProp.currentDirectoryPerspective &&
