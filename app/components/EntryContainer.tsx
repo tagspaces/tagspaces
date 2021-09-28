@@ -107,13 +107,13 @@ const styles: any = (theme: any) => ({
     display: 'inline',
     flex: '1 1 100%',
     backgroundColor: theme.palette.background.default,
-    zIndex: 1,
+    // zIndex: 1,
     padding: '0',
     height: '100%'
   },
   fileOpener: {
     width: '100%',
-    zIndex: 3,
+    // zIndex: 3,
     border: 0
   },
   toolbar: {
@@ -539,6 +539,7 @@ const EntryContainer = (props: Props) => {
 
   const setPercent = (p: number | undefined) => {
     percent.current = p;
+    // console.log('Percent ' + percent.current);
     if (p !== undefined) {
       bufferedSplitResize(() => {
         // Threshold >10% for automatically close Properties panel
@@ -838,11 +839,21 @@ const EntryContainer = (props: Props) => {
       )
     : '';
 
+  const filePropsHeight =
+    Math.floor((percent.current * window.innerHeight) / 100) - 125;
+  // console.log('filePropsHeight: ' + filePropsHeight);
+
   const renderPanels = () => {
     const toolbarButtons = () => {
       if (openedFile.path) {
         return (
-          <Box key="toolbarButtonsID" className={classes.panel}>
+          <Box
+            key="toolbarButtonsID"
+            className={classes.panel}
+            style={{
+              height: filePropsHeight || 'initial'
+            }}
+          >
             <Box className={classes.toolbar}>
               <Box className={classes.flexLeft}>
                 {openedFile.isFile ? (
