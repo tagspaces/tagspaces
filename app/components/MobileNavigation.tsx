@@ -111,13 +111,13 @@ interface Props {
 
 const MobileNavigation = (props: Props) => {
   const [isProTeaserVisible, setIsProTeaserVisible] = useState<boolean>(false);
-  const [showAds, setShowAds] = useState<boolean>(true);
+  const [showTeaserBanner, setShowTeaserBanner] = useState<boolean>(true);
 
   const toggleProTeaser = () => {
     setIsProTeaserVisible(!isProTeaserVisible);
   };
 
-  const showProTeaser = !Pro && showAds;
+  const showProTeaser = Pro && showTeaserBanner;
 
   const {
     classes,
@@ -153,7 +153,7 @@ const MobileNavigation = (props: Props) => {
       <div
         style={{
           overflow: 'hidden',
-          height: showProTeaser ? 'calc(100% - 275px)' : 'calc(100% - 60px)'
+          height: showProTeaser ? 'calc(100% - 220px)' : 'calc(100% - 50px)'
         }}
       >
         <CustomLogo />
@@ -203,15 +203,13 @@ const MobileNavigation = (props: Props) => {
           </Tooltip>
         </ButtonGroup>
         {props.isLocationManagerPanelOpened && (
-          <LocationManager reduceHeightBy={showProTeaser ? 175 : 30} />
+          <LocationManager reduceHeightBy={180} />
         )}
-        {props.isTagLibraryPanelOpened && (
-          <TagLibrary reduceHeightBy={showProTeaser ? 175 : 30} />
-        )}
+        {props.isTagLibraryPanelOpened && <TagLibrary reduceHeightBy={180} />}
         {props.isSearchPanelOpened && <Search />}
         {props.isHelpFeedbackPanelOpened && (
           <HelpFeedbackPanel
-            reduceHeightBy={showProTeaser ? 175 : 30}
+            reduceHeightBy={180}
             openURLExternally={openURLExternally}
             toggleAboutDialog={toggleAboutDialog}
             toggleKeysDialog={toggleKeysDialog}
@@ -222,31 +220,30 @@ const MobileNavigation = (props: Props) => {
       </div>
       <div
         style={{
-          paddingTop: 5,
           paddingBottom: 3,
           textAlign: 'center'
         }}
       >
-        {showProTeaser && showAds && (
+        {showProTeaser && (
           <>
             <CardContent
               onClick={toggleProTeaser}
               style={{
+                padding: 5,
                 paddingBottom: 0,
-                // backgroundColor: 'rgba(29, 209, 159, 0.08)',
                 textAlign: 'center'
               }}
             >
-              <Typography color="textSecondary" gutterBottom>
-                Achieve more with
+              <Typography color="textSecondary" variant="caption">
+                achieve more with
                 <IconButton
-                  style={{ marginLeft: 30, marginTop: -30, marginRight: -60 }}
+                  style={{ right: 5, marginTop: -10, position: 'absolute' }}
                   size="small"
                   aria-label="close"
                   onClick={event => {
                     event.preventDefault();
                     event.stopPropagation();
-                    setShowAds(false);
+                    setShowTeaserBanner(false);
                   }}
                 >
                   <CloseIcon fontSize="small" />
@@ -255,11 +252,7 @@ const MobileNavigation = (props: Props) => {
               <Typography variant="h6" component="h2" color="textPrimary">
                 TagSpaces Pro
               </Typography>
-              <img
-                style={{ maxHeight: 80, marginTop: 10 }}
-                src={ProTeaser}
-                alt=""
-              />
+              <img style={{ maxHeight: 60 }} src={ProTeaser} alt="" />
             </CardContent>
             <CardActions
               style={{ flexDirection: 'row', justifyContent: 'center' }}
