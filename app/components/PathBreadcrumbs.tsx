@@ -27,21 +27,20 @@ import { normalizePath, extractShortDirectoryName } from '-/utils/paths';
 import i18n from '../services/i18n';
 import DirectoryMenu from './menus/DirectoryMenu';
 import { TS } from '-/tagspaces.namespace';
-import { isDesktopMode } from '-/reducers/settings';
 
 const StyledBreadcrumb = withStyles((theme: Theme) => ({
   root: {
-    backgroundColor: theme.palette.grey[100],
+    backgroundColor: emphasize(theme.palette.background.default, 0.06),
     height: theme.spacing(3),
-    color: theme.palette.grey[800],
+    color: theme.palette.text.primary,
     fontWeight: theme.typography.fontWeightRegular,
     '&:hover, &:focus': {
-      backgroundColor: theme.palette.grey[300]
-    },
-    '&:active': {
-      boxShadow: theme.shadows[1],
-      backgroundColor: emphasize(theme.palette.grey[300], 0.12)
+      backgroundColor: emphasize(theme.palette.background.default, 0.22)
     }
+    // '&:active': {
+    //   boxShadow: theme.shadows[1],
+    //   backgroundColor: emphasize(theme.palette.grey[300], 0.12)
+    // }
   }
 }))(Chip) as typeof Chip;
 
@@ -142,30 +141,30 @@ export default function PathBreadcrumbs(props: Props) {
   }
 
   return (
-    <Breadcrumbs
-      maxItems={isDesktopMode ? 3 : 1}
-      itemsAfterCollapse={2}
-      aria-label="breadcrumb"
-      style={{ marginTop: 5 }}
-      separator={<span style={{ marginLeft: -4, marginRight: -4 }}>/</span>}
-    >
-      {/* <LocationMenu /> */}
-      {pathParts.length > 0 &&
-        pathParts.map(pathPart => (
-          <StyledBreadcrumb
-            key={pathPart}
-            component="a"
-            href="#"
-            label={extractShortDirectoryName(
-              pathPart,
-              PlatformIO.getDirSeparator()
-            )}
-            onClick={() => loadDirectoryContent(pathPart, false)}
-            title={'Navigate to: ' + pathPart}
-          />
-        ))}
-      {props.currentDirectoryPath && (
-        <>
+    <>
+      <Breadcrumbs
+        maxItems={isDesktopMode ? 3 : 1}
+        itemsAfterCollapse={2}
+        aria-label="breadcrumb"
+        style={{ marginTop: 5 }}
+        separator={<span style={{ marginLeft: -4, marginRight: -4 }}>/</span>}
+      >
+        {/* <LocationMenu /> */}
+        {pathParts.length > 0 &&
+          pathParts.map(pathPart => (
+            <StyledBreadcrumb
+              key={pathPart}
+              component="a"
+              href="#"
+              label={extractShortDirectoryName(
+                pathPart,
+                PlatformIO.getDirSeparator()
+              )}
+              onClick={() => loadDirectoryContent(pathPart, false)}
+              title={'Navigate to: ' + pathPart}
+            />
+          ))}
+        {props.currentDirectoryPath && (
           <StyledBreadcrumb
             data-tid="folderContainerOpenDirMenu"
             title={
@@ -183,21 +182,21 @@ export default function PathBreadcrumbs(props: Props) {
             onClick={openDirectoryMenu}
             onContextMenu={openDirectoryMenu}
           />
-          <DirectoryMenu
-            open={Boolean(directoryContextMenuAnchorEl)}
-            onClose={closeDirectoryMenu}
-            anchorEl={directoryContextMenuAnchorEl}
-            directoryPath={currentDirectoryPath}
-            loadDirectoryContent={loadDirectoryContent}
-            openRenameDirectoryDialog={openRenameDirectoryDialog}
-            openDirectory={openDirectory}
-            reflectCreateEntry={reflectCreateEntry}
-            openFsEntry={openFsEntry}
-            switchPerspective={switchPerspective}
-            isReadOnlyMode={isReadOnlyMode}
-          />
-        </>
-      )}
-    </Breadcrumbs>
+        )}
+      </Breadcrumbs>
+      <DirectoryMenu
+        open={Boolean(directoryContextMenuAnchorEl)}
+        onClose={closeDirectoryMenu}
+        anchorEl={directoryContextMenuAnchorEl}
+        directoryPath={currentDirectoryPath}
+        loadDirectoryContent={loadDirectoryContent}
+        openRenameDirectoryDialog={openRenameDirectoryDialog}
+        openDirectory={openDirectory}
+        reflectCreateEntry={reflectCreateEntry}
+        openFsEntry={openFsEntry}
+        switchPerspective={switchPerspective}
+        isReadOnlyMode={isReadOnlyMode}
+      />
+    </>
   );
 }

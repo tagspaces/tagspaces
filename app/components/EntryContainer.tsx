@@ -98,7 +98,7 @@ const styles: any = (theme: any) => ({
   },
   fileContent: {
     width: '100%',
-    height: 'calc(100% - 150px)',
+    height: '100%',
     flex: '1 1 100%',
     display: 'flex',
     backgroundColor: theme.palette.background.default

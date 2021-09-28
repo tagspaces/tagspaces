@@ -117,7 +117,7 @@ const MobileNavigation = (props: Props) => {
     setIsProTeaserVisible(!isProTeaserVisible);
   };
 
-  const showProTeaser = Pro && showTeaserBanner;
+  const showProTeaser = !Pro && showTeaserBanner;
 
   const {
     classes,
@@ -153,7 +153,7 @@ const MobileNavigation = (props: Props) => {
       <div
         style={{
           overflow: 'hidden',
-          height: showProTeaser ? 'calc(100% - 220px)' : 'calc(100% - 50px)'
+          height: showProTeaser ? 'calc(100% - 220px)' : 'calc(100% - 55px)'
         }}
       >
         <CustomLogo />
@@ -220,7 +220,6 @@ const MobileNavigation = (props: Props) => {
       </div>
       <div
         style={{
-          paddingBottom: 3,
           textAlign: 'center'
         }}
       >
@@ -348,7 +347,6 @@ const MobileNavigation = (props: Props) => {
         </ToggleButtonGroup>
         <Tooltip title={i18n.t('core:switchTheme')}>
           <IconButton
-            title={i18n.t('core:switchTheme')}
             data-tid="switchTheme"
             onClick={switchTheme}
             style={{ marginTop: -15, marginRight: 2 }}

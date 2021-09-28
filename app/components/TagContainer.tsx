@@ -129,6 +129,7 @@ const TagContainer = (props: Props) => {
           color: tag.textcolor,
           marginLeft: -5,
           marginRight: -5,
+          height: 20,
           top: 0
         }}
       />
@@ -211,7 +212,7 @@ const TagContainer = (props: Props) => {
             <PlaceIcon
               style={{
                 color: tag.textcolor,
-                fontSize: 18,
+                height: 20,
                 marginBottom: -5
               }}
             />
@@ -220,7 +221,7 @@ const TagContainer = (props: Props) => {
             <DateIcon
               style={{
                 color: tag.textcolor,
-                fontSize: 18,
+                height: 20,
                 marginBottom: -5,
                 marginRight: 4
               }}
