@@ -17,7 +17,7 @@
  */
 
 import React, { MutableRefObject } from 'react';
-
+import { withStyles } from '@material-ui/core/styles';
 import Fab from '@material-ui/core/Fab';
 import CloseIcon from '@material-ui/icons/Close';
 import i18n from '-/services/i18n';
@@ -26,26 +26,33 @@ import useEventListener from '-/utils/useEventListener';
 
 interface Props {
   openedFile: OpenedEntry;
-  fileContentClass: string;
   isFullscreen: boolean;
   fileViewer: MutableRefObject<HTMLIFrameElement>;
   fileViewerContainer: MutableRefObject<HTMLDivElement>;
   toggleFullScreen: () => void;
+  theme: any;
 }
 
 const FileView = (props: Props) => {
-  const { openedFile } = props; // .openedFiles[0];
+  const {
+    openedFile,
+    theme,
+    fileViewer,
+    isFullscreen,
+    fileViewerContainer,
+    toggleFullScreen
+  } = props; // .openedFiles[0];
 
   useEventListener('toggle-resume', () => {
     if (
-      props.fileViewer &&
-      props.fileViewer.current &&
-      props.fileViewer.current.contentWindow &&
+      fileViewer &&
+      fileViewer.current &&
+      fileViewer.current.contentWindow &&
       // @ts-ignore
-      props.fileViewer.current.contentWindow.togglePlay
+      fileViewer.current.contentWindow.togglePlay
     ) {
       // @ts-ignore
-      props.fileViewer.current.contentWindow.togglePlay();
+      fileViewer.current.contentWindow.togglePlay();
     }
   });
 
@@ -80,8 +87,17 @@ const FileView = (props: Props) => {
     fileOpenerURL = 'about:blank';
   }
   return (
-    <div ref={props.fileViewerContainer} className={props.fileContentClass}>
-      {props.isFullscreen && (
+    <div
+      ref={fileViewerContainer}
+      style={{
+        width: '100%',
+        height: '100%',
+        flex: '1 1 100%',
+        display: 'flex',
+        backgroundColor: theme.palette.background.default
+      }}
+    >
+      {isFullscreen && (
         <Fab
           data-tid="fullscreenTID"
           color="primary"
@@ -91,13 +107,13 @@ const FileView = (props: Props) => {
             right: 20,
             zIndex: 10000
           }}
-          onClick={props.toggleFullScreen}
+          onClick={toggleFullScreen}
         >
           <CloseIcon />
         </Fab>
       )}
       <iframe
-        ref={props.fileViewer}
+        ref={fileViewer}
         style={{
           width: '100%',
           zIndex: 3,
@@ -120,4 +136,7 @@ const areEqual = (prevProp, nextProp) =>
     prevProp.openedFile.editMode === true) ||
     nextProp.openedFile.editMode === prevProp.openedFile.editMode); */
 
-export default React.memo(FileView, areEqual);
+export default React.memo(
+  withStyles(undefined, { withTheme: true })(FileView),
+  areEqual
+);

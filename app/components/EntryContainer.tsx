@@ -96,13 +96,6 @@ const styles: any = (theme: any) => ({
     display: 'flex',
     backgroundColor: theme.palette.background.default
   },
-  fileContent: {
-    width: '100%',
-    height: '100%',
-    flex: '1 1 100%',
-    display: 'flex',
-    backgroundColor: theme.palette.background.default
-  },
   entryProperties: {
     display: 'inline',
     flex: '1 1 100%',
@@ -1016,26 +1009,6 @@ const EntryContainer = (props: Props) => {
       return <div>{i18n.t('core:noEntrySelected')}</div>;
     };
 
-    /* const fileContent = (
-      <div ref={fileViewerContainer} className={classes.fileContent}>
-        {isFullscreen && (
-          <Fab
-            data-tid="fullscreenTID"
-            color="primary"
-            style={{
-              position: 'absolute',
-              top: 20,
-              right: 20,
-              zIndex: 10000
-            }}
-            onClick={toggleFullScreen}
-          >
-            <CloseIcon />
-          </Fab>
-        )}
-        {fileView}
-      </div>
-    ); */
     const entryProperties = (
       <div className={classes.entryProperties}>
         {openedFile.isFile ? renderFileToolbar(classes) : renderFolderToolbar()}
@@ -1076,7 +1049,6 @@ const EntryContainer = (props: Props) => {
         {toolbarButtons()}
         <FileView
           key="FileViewID"
-          fileContentClass={classes.fileContent}
           openedFile={props.openedFiles[0]}
           isFullscreen={isFullscreen}
           fileViewer={fileViewer}

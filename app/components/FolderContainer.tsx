@@ -24,7 +24,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import MenuIcon from '@material-ui/icons/MenuOpen';
 import Badge from '@material-ui/core/Badge';
 import { Tooltip } from '@material-ui/core';
-import { withStyles, withTheme } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import DefaultPerspectiveIcon from '@material-ui/icons/GridOn';
