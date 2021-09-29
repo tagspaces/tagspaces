@@ -273,6 +273,19 @@ const EntryContainer = (props: Props) => {
   });
 
   useEffect(() => {
+    if (
+      fileViewer &&
+      fileViewer.current &&
+      fileViewer.current.contentWindow &&
+      // @ts-ignore
+      fileViewer.current.contentWindow.setTheme
+    ) {
+      // @ts-ignore call setContent from iframe
+      fileViewer.current.contentWindow.setTheme(props.settings.currentTheme);
+    }
+  }, [props.settings.currentTheme]);
+
+  useEffect(() => {
     if (props.openedFiles.length > 0) {
       if (
         // openedFile.editMode &&
@@ -327,6 +340,19 @@ const EntryContainer = (props: Props) => {
           break;
         }
         textFilePath = openedFile.path;
+
+        if (
+          fileViewer &&
+          fileViewer.current &&
+          fileViewer.current.contentWindow &&
+          // @ts-ignore
+          fileViewer.current.contentWindow.setTheme
+        ) {
+          // @ts-ignore call setContent from iframe
+          fileViewer.current.contentWindow.setTheme(
+            props.settings.currentTheme
+          );
+        }
         // TODO make loading index.html for folders configurable
         // if (!this.state.currentEntry.isFile) {
         //   textFilePath += '/index.html';
@@ -1211,7 +1237,8 @@ function mapActionCreatorsToProps(dispatch) {
   );
 }
 const areEqual = (prevProp, nextProp) =>
-  JSON.stringify(nextProp.theme) === JSON.stringify(prevProp.theme) &&
+  // JSON.stringify(nextProp.theme) === JSON.stringify(prevProp.theme) &&
+  nextProp.settings.currentTheme === prevProp.settings.currentTheme &&
   nextProp.settings.entrySplitSize === prevProp.settings.entrySplitSize &&
   // JSON.stringify(nextProp.openedFiles) === JSON.stringify(prevProp.openedFiles);
   nextProp.openedFiles[0].path === prevProp.openedFiles[0].path &&

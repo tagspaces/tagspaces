@@ -17,7 +17,6 @@
  */
 
 import React, { MutableRefObject } from 'react';
-import { connect } from 'react-redux';
 
 import Fab from '@material-ui/core/Fab';
 import CloseIcon from '@material-ui/icons/Close';
@@ -28,7 +27,6 @@ import useEventListener from '-/utils/useEventListener';
 interface Props {
   openedFile: OpenedEntry;
   fileContentClass: string;
-  theme: string;
   isFullscreen: boolean;
   fileViewer: MutableRefObject<HTMLIFrameElement>;
   fileViewerContainer: MutableRefObject<HTMLDivElement>;
@@ -59,7 +57,6 @@ const FileView = (props: Props) => {
     // }
 
     const locale = '&locale=' + i18n.language;
-    // const theme = '&theme=' + props.theme;
 
     if (openedFile.editMode && openedFile.editingExtensionPath) {
       fileOpenerURL =
@@ -67,7 +64,6 @@ const FileView = (props: Props) => {
         '/index.html?file=' +
         encodeURIComponent(openedFile.url ? openedFile.url : openedFile.path) +
         locale +
-        // theme +
         '&edit=true' +
         (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
       // } else if (!currentEntry.isFile) { // TODO needed for loading folder's default html
@@ -78,7 +74,6 @@ const FileView = (props: Props) => {
         '/index.html?file=' +
         encodeURIComponent(openedFile.url ? openedFile.url : openedFile.path) +
         locale +
-        // theme;
         (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
     }
   } else {
@@ -118,17 +113,11 @@ const FileView = (props: Props) => {
   );
 };
 
-function mapStateToProps(state) {
-  return {
-    theme: state.settings.currentTheme
-  };
-}
 const areEqual = (prevProp, nextProp) =>
-  nextProp.theme === prevProp.theme &&
   nextProp.openedFile.path === prevProp.openedFile.path &&
   nextProp.openedFile.editMode === prevProp.openedFile.editMode;
 /* ((nextProp.openedFile.editMode === undefined &&
     prevProp.openedFile.editMode === true) ||
     nextProp.openedFile.editMode === prevProp.openedFile.editMode); */
 
-export default connect(mapStateToProps)(React.memo(FileView, areEqual));
+export default React.memo(FileView, areEqual);
