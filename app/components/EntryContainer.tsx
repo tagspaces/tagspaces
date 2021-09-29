@@ -362,6 +362,11 @@ const EntryContainer = (props: Props) => {
           data.preview ? data.preview : false
         )
           .then(content => {
+            const UTF8_BOM = '\ufeff';
+            if (content.indexOf(UTF8_BOM) === 0) {
+              // eslint-disable-next-line no-param-reassign
+              content = content.substr(1);
+            }
             let fileDirectory = extractContainingDirectoryPath(
               textFilePath,
               PlatformIO.getDirSeparator()
