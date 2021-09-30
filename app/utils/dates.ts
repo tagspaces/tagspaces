@@ -79,42 +79,42 @@ export function isYearMonthDayPeriod(tagDate: string): boolean {
 
 /** Returns true if string is this format: 20151223~01 */
 export function isYearMonthDayHour(tagDate: string): boolean {
-  return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789]~[0123456][0123456789])(\s|$)/.test(
+  return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789][~T][0123456][0123456789])(\s|$)/.test(
     tagDate
   );
 }
 
 /** Returns true if string is this format: 20190712~17-20190712~17 */
 export function isYearMonthDayHourPeriod(tagDate: string): boolean {
-  return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789]~[0123456][0123456789]-[0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789]~[0123456][0123456789])(\s|$)/.test(
+  return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789][~T][0123456][0123456789]-[0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789][~T][0123456][0123456789])(\s|$)/.test(
     tagDate
   );
 }
 
-/** Returns true if string is this format: 20151223~0112 */
+/** Returns true if string is this format: 20151223~0112 or 20151223T0112 */
 export function isYearMonthDayHourMin(tagDate: string): boolean {
-  return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789]~[0123456][0123456789][0123456][0123456789])(\s|$)/.test(
+  return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789][~T][0123456][0123456789][0123456][0123456789])(\s|$)/.test(
     tagDate
   );
 }
 
 /** Returns true if string is this format: 20190712~1740-20190712~1740 */
 export function isYearMonthDayHourMinPeriod(tagDate: string): boolean {
-  return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789]~[0123456][0123456789][0123456][0123456789]-[0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789]~[0123456][0123456789][0123456][0123456789])(\s|$)/.test(
+  return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789][~T][0123456][0123456789][0123456][0123456789]-[0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789][~T][0123456][0123456789][0123456][0123456789])(\s|$)/.test(
     tagDate
   );
 }
 
 /** Returns true if string is this format: 20151223~011358 */
 export function isYearMonthDayHourMinSec(tagDate: string): boolean {
-  return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789]~[0123456][0123456789][0123456][0123456789][0123456][0123456789])(\s|$)/.test(
+  return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789][~T][0123456][0123456789][0123456][0123456789][0123456][0123456789])(\s|$)/.test(
     tagDate
   );
 }
 
 /** Returns true if string is this format: 20190712~174031-20190712~174031 */
 export function isYearMonthDayHourMinSecPeriod(tagDate: string): boolean {
-  return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789]~[0123456][0123456789][0123456][0123456789][0123456][0123456789]-[0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789]~[0123456][0123456789][0123456][0123456789][0123456][0123456789])(\s|$)/.test(
+  return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789][~T][0123456][0123456789][0123456][0123456789][0123456][0123456789]-[0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789][~T][0123456][0123456789][0123456][0123456789][0123456][0123456789])(\s|$)/.test(
     tagDate
   );
 }
@@ -491,20 +491,21 @@ export function convertToDate(date: string) {
 export function convertToDateTime(dateTime: string) {
   const dateTimeRegExp = /^\d\d\d\d-(00|[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9])$/g;
   const dateTimeWinRegExp = /^(([0-1]?[0-9])|([2][0-3]))!([0-5]?[0-9])(!([0-5]?[0-9]))?$/g;
-  const dateTimeWin1RegExp = /^(([0-1]?[0-9])|([2][0-3]))~([0-5]?[0-9])(!([0-5]?[0-9]))?$/g;
+  const dateTimeWin1RegExp = /^(([0-1]?[0-9])|([2][0-3]))[~T]([0-5]?[0-9])(!([0-5]?[0-9]))?$/g;
   if (
     dateTime.match(dateTimeRegExp) ||
     dateTime.match(dateTimeWinRegExp) ||
     dateTime.match(dateTimeWin1RegExp) ||
     dateTime.search('!') ||
     dateTime.search(':') ||
-    dateTime.search('~')
+    dateTime.search('~') ||
+    dateTime.search('T')
   ) {
     let time;
     let firstTime;
     let secondTime;
 
-    if (dateTime.indexOf('!')) {
+    if (dateTime.includes('!')) {
       time = dateTime.split('!');
       if (parseInt(time[0], 10) && parseInt(time[1], 10)) {
         firstTime = time[0];
@@ -517,13 +518,27 @@ export function convertToDateTime(dateTime: string) {
         return time;
       }
     }
-    if (dateTime.indexOf(':')) {
+    if (dateTime.includes(':')) {
       time = dateTime.split(':');
       if (parseInt(time[0], 10) && parseInt(time[1], 10)) {
         return time;
       }
     }
-    if (dateTime.indexOf('~')) {
+    if (dateTime.includes('T')) {
+      time = dateTime.split('T');
+      if (parseInt(time[0], 10) && parseInt(time[1], 10)) {
+        firstTime = time[0];
+        secondTime = time[1];
+        if (firstTime.length === 2 && secondTime.length === 2) {
+          time = firstTime + ':' + secondTime;
+        } else if (firstTime.length > 2 && firstTime.length <= 8) {
+          time = convertToDate(firstTime) + ' ' + toHHMMSS(secondTime);
+        }
+        return time;
+      }
+    }
+    if (dateTime.includes('~')) {
+      // for compatibility
       time = dateTime.split('~');
       if (parseInt(time[0], 10) && parseInt(time[1], 10)) {
         firstTime = time[0];
