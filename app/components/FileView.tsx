@@ -131,7 +131,8 @@ const FileView = (props: Props) => {
 
 const areEqual = (prevProp, nextProp) =>
   nextProp.openedFile.path === prevProp.openedFile.path &&
-  nextProp.openedFile.editMode === prevProp.openedFile.editMode;
+  nextProp.openedFile.editMode === prevProp.openedFile.editMode &&
+  nextProp.isFullscreen === prevProp.isFullscreen;
 /* ((nextProp.openedFile.editMode === undefined &&
     prevProp.openedFile.editMode === true) ||
     nextProp.openedFile.editMode === prevProp.openedFile.editMode); */
