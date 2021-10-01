@@ -23,7 +23,13 @@ import Button from '@material-ui/core/Button';
 import SearchIcon from '@material-ui/icons/Search';
 import MenuIcon from '@material-ui/icons/MenuOpen';
 import Badge from '@material-ui/core/Badge';
-import { Tooltip } from '@material-ui/core';
+import {
+  Box,
+  CircularProgress,
+  IconButton,
+  Tooltip,
+  Typography
+} from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
@@ -44,7 +50,8 @@ import {
   getCurrentDirectoryPerspective,
   OpenedEntry,
   perspectives,
-  getSelectedEntries
+  getSelectedEntries,
+  getProgress
 } from '../reducers/app';
 import TaggingActions from '../reducers/tagging-actions';
 import LoadingLazy from '../components/LoadingLazy';
@@ -229,7 +236,8 @@ interface Props {
   updateCurrentDirEntry: (path: string, entry: Object) => void;
   setCurrentDirectoryColor: (color: string) => void;
   selectedEntries: Array<TS.FileSystemEntry>;
-  // rightPanelWidth: number;
+  toggleUploadDialog: () => void;
+  progress?: Array<any>;
 }
 
 const FolderContainer = (props: Props) => {
@@ -382,6 +390,42 @@ const FolderContainer = (props: Props) => {
   const currentPerspective =
     currentDirectoryPerspective || perspectives.DEFAULT;
 
+  function CircularProgressWithLabel(prop) {
+    return (
+      <Box position="relative" display="inline-flex">
+        <CircularProgress variant="static" {...prop} />
+        <Box
+          top={0}
+          left={0}
+          bottom={0}
+          right={0}
+          position="absolute"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Typography
+            variant="caption"
+            component="div"
+            style={{ color: 'white' }}
+          >
+            {`${prop.value}%`}
+          </Typography>
+        </Box>
+      </Box>
+    );
+  }
+
+  const getProgressValue = () => {
+    const objProgress = props.progress.find(
+      fileProgress => fileProgress.progress < 100 && fileProgress.progress > -1
+    );
+    if (objProgress !== undefined) {
+      return objProgress.progress;
+    }
+    return 100;
+  };
+
   return (
     <div data-tid="folderContainerTID" style={{ position: 'relative' }}>
       <div className={classes.mainPanel}>
@@ -419,6 +463,18 @@ const FolderContainer = (props: Props) => {
               <SearchIcon />
             </Button>
             <div className={classes.flexMiddle} />
+            {props.progress && props.progress.length > 0 && (
+              <IconButton
+                id="progressButton"
+                title={i18n.t('core:progress')}
+                data-tid="uploadProgress"
+                onClick={() => props.toggleUploadDialog()}
+                // @ts-ignore
+                className={[classes.button, classes.upgradeButton].join(' ')}
+              >
+                <CircularProgressWithLabel value={getProgressValue()} />
+              </IconButton>
+            )}
             <LocationMenu />
             <PathBreadcrumbs
               currentDirectoryPath={currentDirectoryPath}
@@ -515,13 +571,15 @@ function mapStateToProps(state) {
     locations: getLocations(state),
     maxSearchResults: getMaxSearchResults(state),
     isDesktopMode: getDesktopMode(state),
-    isReadOnlyMode: isReadOnlyMode(state)
+    isReadOnlyMode: isReadOnlyMode(state),
+    progress: getProgress(state)
   };
 }
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
+      toggleUploadDialog: AppActions.toggleUploadDialog,
       addTags: TaggingActions.addTags,
       removeTags: TaggingActions.removeTags,
       removeAllTags: TaggingActions.removeAllTags,
