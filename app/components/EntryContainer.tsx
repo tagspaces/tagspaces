@@ -319,7 +319,9 @@ const EntryContainer = (props: Props) => {
         startSavingFile();
         break;
       case 'editDocument':
-        editFile();
+        if (editingSupported) {
+          editFile();
+        }
         break;
       case 'playbackEnded':
         props.openNextFile(openedFile.path);
@@ -1254,11 +1256,11 @@ const areEqual = (prevProp, nextProp) =>
   // JSON.stringify(nextProp.theme) === JSON.stringify(prevProp.theme) &&
   nextProp.settings.currentTheme === prevProp.settings.currentTheme &&
   nextProp.settings.entrySplitSize === prevProp.settings.entrySplitSize &&
-  // JSON.stringify(nextProp.openedFiles) === JSON.stringify(prevProp.openedFiles);
-  nextProp.openedFiles[0].path === prevProp.openedFiles[0].path &&
+  JSON.stringify(nextProp.openedFiles) === JSON.stringify(prevProp.openedFiles);
+/* nextProp.openedFiles[0].path === prevProp.openedFiles[0].path &&
   nextProp.openedFiles[0].shouldReload ===
     prevProp.openedFiles[0].shouldReload &&
-  nextProp.openedFiles[0].editMode === prevProp.openedFiles[0].editMode;
+  nextProp.openedFiles[0].editMode === prevProp.openedFiles[0].editMode; */
 
 export default connect(
   mapStateToProps,
