@@ -992,26 +992,32 @@ export function setFolderThumbnailPromise(filePath: string): Promise<string> {
   ).then(() => directoryPath);
 }
 
-export function findColorForFileEntry(
-  fileExtension: string,
-  isFile: boolean,
+export function findBackgroundColorForFolder(fsEntry: TS.FileSystemEntry) {
+  if (!fsEntry.isFile) {
+    if (fsEntry.color) {
+      return fsEntry.color;
+    }
+  }
+  return 'transparent';
+}
+
+export function findColorForEntry(
+  fsEntry: TS.FileSystemEntry,
   supportedFileTypes: Array<any>
 ): string {
-  if (!isFile) {
+  if (!fsEntry.isFile) {
     return AppConfig.defaultFolderColor;
   }
-  let color = AppConfig.defaultFileColor;
-  if (fileExtension !== undefined) {
-    supportedFileTypes.map(fileType => {
-      if (fileType.type.toLowerCase() === fileExtension.toLowerCase()) {
-        if (fileType.color) {
-          color = fileType.color;
-        }
-      }
-      return true;
-    });
+  if (fsEntry.extension !== undefined) {
+    const fileType = supportedFileTypes.find(
+      type => type.type.toLowerCase() === fsEntry.extension.toLowerCase()
+    );
+
+    if (fileType && fileType.color) {
+      return fileType.color;
+    }
   }
-  return color;
+  return AppConfig.defaultFileColor;
 }
 
 export function loadFileContentPromise(

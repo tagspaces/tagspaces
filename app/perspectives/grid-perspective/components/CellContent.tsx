@@ -31,7 +31,10 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { formatFileSize, formatDateTime } from '-/utils/misc';
 import { extractTagsAsObjects, extractTitle } from '-/utils/paths';
-import { findColorForFileEntry } from '-/services/utils-io';
+import {
+  findBackgroundColorForFolder,
+  findColorForEntry
+} from '-/services/utils-io';
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagContainer from '-/components/TagContainer';
 import i18n from '-/services/i18n';
@@ -109,11 +112,8 @@ const CellContent = (props: Props) => {
     description = ' | ' + description;
   }
 
-  const fsEntryColor = findColorForFileEntry(
-    fsEntry.extension,
-    fsEntry.isFile,
-    supportedFileTypes
-  );
+  const fsEntryColor = findColorForEntry(fsEntry, supportedFileTypes);
+  const fsEntryBgColor = findBackgroundColorForFolder(fsEntry);
 
   const fileNameTags = extractTagsAsObjects(
     fsEntry.name,
@@ -147,6 +147,7 @@ const CellContent = (props: Props) => {
     return (
       <div
         style={{
+          backgroundColor: fsEntryBgColor,
           opacity: fsEntry.isIgnored ? 0.3 : 1
         }}
       >
