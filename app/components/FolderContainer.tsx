@@ -60,6 +60,7 @@ import AppConfig from '-/config';
 import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
 import { TS } from '-/tagspaces.namespace';
 import PathBreadcrumbs from './PathBreadcrumbs';
+import { enhanceOpenedEntry } from '-/services/utils-io';
 
 const GridPerspective = React.lazy(() =>
   import(
@@ -252,13 +253,12 @@ const FolderContainer = (props: Props) => {
           if (openedFile.perspective) {
             props.setCurrentDirectoryPerspective(openedFile.perspective);
           }
-        } else if (openedFile.editMode) {
-          // changed) {
-          /* const currentEntry = enhanceOpenedEntry(
+        } else { // if (openedFile.editMode) {// changed) {
+          const currentEntry = enhanceOpenedEntry(
             openedFile,
             props.settings.tagDelimiter
           );
-          props.updateCurrentDirEntry(openedFile.path, currentEntry); */
+          props.updateCurrentDirEntry(openedFile.path, currentEntry);
         }
       }
     }
