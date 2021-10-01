@@ -249,6 +249,8 @@ const FolderContainer = (props: Props) => {
         if (openedFile.path === props.currentDirectoryPath) {
           if (openedFile.color) {
             props.setCurrentDirectoryColor(openedFile.color);
+          } else if(openedFile.color === undefined){
+            props.setCurrentDirectoryColor(undefined);
           }
           if (openedFile.perspective) {
             props.setCurrentDirectoryPerspective(openedFile.perspective);
