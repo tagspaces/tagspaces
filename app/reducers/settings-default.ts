@@ -165,9 +165,8 @@ export default {
   enableGlobalKeyboardShortcuts: true,
   zoomFactor: 1,
   lastPublishedVersion: '',
-  entryPropertiesSplitSize: 103,
-  leftVerticalSplitSize: 350,
-  mainVerticalSplitSize: '50%',
+  entrySplitSize: '45%', // AppConfig.isElectron ? '560px' : '360px',
+  mainVSplitSize: '50%',
   supportedGeoTagging: ['pluscodes', 'mgrs'],
   supportedThemes: ['light', 'dark'],
   supportedLanguages: [

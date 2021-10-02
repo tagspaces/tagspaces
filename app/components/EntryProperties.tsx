@@ -341,10 +341,7 @@ const EntryProperties = (props: Props) => {
       Pro.MetaOperations.saveDescription(currentEntry.path, editDescription)
         .then(entryMeta => {
           setEditDescription(undefined);
-          props.updateOpenedFile(currentEntry.path, {
-            ...entryMeta,
-            changed: true
-          });
+          props.updateOpenedFile(currentEntry.path, entryMeta);
           return true;
         })
         .catch(error => {
@@ -432,10 +429,7 @@ const EntryProperties = (props: Props) => {
     Pro.MetaOperations.saveColor(currentEntry.path, color)
       .then(entryMeta => {
         // if (props.entryPath === props.currentDirectoryPath) {
-        props.updateOpenedFile(currentEntry.path, {
-          ...entryMeta,
-          changed: true
-        });
+        props.updateOpenedFile(currentEntry.path, entryMeta);
         /* } else {
           setCurrentEntry({ ...currentEntry, color });
         } */
@@ -470,7 +464,7 @@ const EntryProperties = (props: Props) => {
       if (!value) {
         // no tags left in the select element
         props.removeAllTags([currentEntry.path]); // TODO return promise
-        props.updateOpenedFile(currentEntry.path, { tags: [], changed: true });
+        props.updateOpenedFile(currentEntry.path, { tags: [] });
       } else {
         props.removeTags([currentEntry.path], value);
       }
@@ -528,10 +522,7 @@ const EntryProperties = (props: Props) => {
     const perspective = event.target.value;
     savePerspective(currentEntry.path, perspective)
       .then((entryMeta: TS.FileSystemEntryMeta) => {
-        props.updateOpenedFile(currentEntry.path, {
-          ...entryMeta,
-          changed: true
-        });
+        props.updateOpenedFile(currentEntry.path, entryMeta);
         return true;
       })
       .catch(error => {

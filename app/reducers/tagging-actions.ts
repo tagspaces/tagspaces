@@ -202,8 +202,7 @@ const actions = {
               if (openedFiles.find(obj => obj.path === path)) {
                 dispatch(
                   AppActions.updateOpenedFile(path, {
-                    tags: newTags,
-                    changed: true
+                    tags: newTags
                   })
                 );
               }
@@ -433,8 +432,7 @@ const actions = {
             .then(() => {
               dispatch(
                 AppActions.updateOpenedFile(path, {
-                  tags: fsEntryMeta.tags,
-                  changed: true
+                  tags: fsEntryMeta.tags
                 })
               );
               // TODO rethink this updateCurrentDirEntry and not need for KanBan
@@ -468,8 +466,7 @@ const actions = {
             .then(() => {
               dispatch(
                 AppActions.updateOpenedFile(path, {
-                  tags: fsEntryMeta.tags,
-                  changed: true
+                  tags: fsEntryMeta.tags
                 })
               );
               // TODO rethink this updateCurrentDirEntry and not need for KanBan
@@ -559,8 +556,7 @@ const actions = {
             if (openedFiles.find(obj => obj.path === path)) {
               dispatch(
                 AppActions.updateOpenedFile(path, {
-                  tags: newTags,
-                  changed: true
+                  tags: newTags
                 })
               );
             }
@@ -645,7 +641,7 @@ const actions = {
             // TODO rethink this updateCurrentDirEntry and not need for KanBan
             dispatch(AppActions.reflectUpdateSidecarTags(path, []));
             dispatch(
-              AppActions.updateOpenedFile(path, { tags: [], changed: true })
+              AppActions.updateOpenedFile(path, { tags: [] })
             );
             removeAllTagsFromFilename();
             return true;

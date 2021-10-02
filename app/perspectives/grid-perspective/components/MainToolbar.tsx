@@ -83,17 +83,15 @@ const MainToolbar = (props: Props) => {
           {allFilesSelected ? <SelectAllIcon /> : <DeSelectAllIcon />}
         </IconButton>
       </Tooltip>
-      {isDesktopMode && (
-        <Tooltip title={i18n.t('core:navigateToParentDirectory')}>
-          <IconButton
-            aria-label={i18n.t('core:navigateToParentDirectory')}
-            data-tid="gridPerspectiveOnBackButton"
-            onClick={loadParentDirectoryContent}
-          >
-            <ParentDirIcon />
-          </IconButton>
-        </Tooltip>
-      )}
+      <Tooltip title={i18n.t('core:navigateToParentDirectory')}>
+        <IconButton
+          aria-label={i18n.t('core:navigateToParentDirectory')}
+          data-tid="gridPerspectiveOnBackButton"
+          onClick={loadParentDirectoryContent}
+        >
+          <ParentDirIcon />
+        </IconButton>
+      </Tooltip>
       {layoutType === 'row' ? (
         <Tooltip title={i18n.t('core:switchToGridView')}>
           <IconButton

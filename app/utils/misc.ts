@@ -407,10 +407,12 @@ export function formatDateTime(date: string | number, includeTime: boolean) {
   if (includeTime) {
     time = ' - ' + cHour + ':' + cMinute + ':' + cSecond;
   }
-  return cYear + '.' + cMonth + '.' + cDate + time;
+  return cYear + '-' + cMonth + '-' + cDate + time;
 }
 
-/** Convert a date in the following format 20191204 or 20191204~124532 */
+/** Convert a date in the following format 20191204 or 20191204T124532
+ * https://en.wikipedia.org/wiki/ISO_8601
+ */
 export function formatDateTime4Tag(
   date: string | Date,
   includeTime: boolean,
@@ -449,12 +451,12 @@ export function formatDateTime4Tag(
     if (cSecond.length === 1) {
       cSecond = '0' + cSecond;
     }
-    time = '~' + cHour + '' + cMinute + '' + cSecond; // TODO fix Chrome transforms ~ to _
+    time = 'T' + cHour + '' + cMinute + '' + cSecond;
   }
 
   let milliseconds = '';
   if (includeMS) {
-    milliseconds = '~' + d.getMilliseconds();
+    milliseconds = '.' + d.getMilliseconds();
   }
   return cYear + '' + cMonth + '' + cDate + time + milliseconds;
 }

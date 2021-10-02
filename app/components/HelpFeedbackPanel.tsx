@@ -20,8 +20,6 @@ import React, { useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import Typography from '@material-ui/core/Typography';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import Avatar from '@material-ui/core/Avatar';
@@ -35,7 +33,6 @@ import AboutIcon from '@material-ui/icons/BlurOn';
 import ChangeLogIcon from '@material-ui/icons/ImportContacts';
 import OnboardingIcon from '@material-ui/icons/Explore';
 import WebClipperIcon from '@material-ui/icons/Transform';
-// import AccountIcon from '@material-ui/icons/AccountCircle';
 import EmailIcon from '@material-ui/icons/Email';
 import IssueIcon from '@material-ui/icons/BugReport';
 import TranslationIcon from '@material-ui/icons/Translate';
@@ -44,20 +41,18 @@ import SocialIcon from '@material-ui/icons/ThumbUp';
 import Social2Icon from '@material-ui/icons/Mood';
 import KeyShortcutsIcon from '@material-ui/icons/Keyboard';
 import ProTeaserIcon from '@material-ui/icons/FlightTakeoff';
-// import { AmplifySignOut } from '@aws-amplify/ui-react';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { connect } from 'react-redux';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
 import Auth from '@aws-amplify/auth';
 import { bindActionCreators } from 'redux';
-import CustomLogo from './CustomLogo';
-import ProTeaser from '../assets/images/spacerocket_undraw.svg';
 import styles from './SidePanels.css';
 import i18n from '../services/i18n';
 import { clearAllURLParams } from '-/utils/misc';
 import { Pro } from '-/pro';
 import { actions as AppActions } from '-/reducers/app';
 import Links from '-/links';
+import { AppConfig } from '-/config';
 
 interface Props {
   classes?: any;
@@ -70,6 +65,7 @@ interface Props {
   user: CognitoUserInterface;
   style?: any;
   closeAllVerticalPanels: () => void;
+  reduceHeightBy?: number;
 }
 
 const HelpFeedbackPanel = (props: Props) => {
@@ -84,7 +80,8 @@ const HelpFeedbackPanel = (props: Props) => {
     toggleKeysDialog,
     toggleOnboardingDialog,
     toggleProTeaser,
-    theme
+    theme,
+    reduceHeightBy
   } = props;
 
   const signOut = () => {
@@ -107,8 +104,13 @@ const HelpFeedbackPanel = (props: Props) => {
   }
 
   return (
-    <div className={classes.panel} style={props.style}>
-      <CustomLogo />
+    <div
+      className={classes.panel}
+      style={{
+        display: 'flex',
+        flexDirection: 'column'
+      }}
+    >
       {props.user && (
         <>
           <Typography
@@ -224,219 +226,168 @@ const HelpFeedbackPanel = (props: Props) => {
           </Box>
         </>
       )}
-      <Typography
-        className={classNames(classes.panelTitle, classes.header)}
-        variant="subtitle1"
-      >
-        Help & Feedback
-      </Typography>
-      <div className={classes.helpFeedbackArea}>
-        <List dense={false} component="nav" aria-label="main help area">
-          <ListItem
-            button
-            onClick={toggleAboutDialog}
-            title="Opens the about dialog"
-            data-tid="aboutDialog"
-          >
-            <ListItemIcon>
-              <AboutIcon />
-            </ListItemIcon>
-            <Typography style={{ color: theme.palette.text.primary }}>
-              {i18n.t('core:aboutTitle')}
-            </Typography>
-          </ListItem>
-          <ListItem
-            button
-            onClick={() =>
-              openURLExternally(Links.documentationLinks.general, true)
-            }
-          >
-            <ListItemIcon>
-              <DocumentationIcon />
-            </ListItemIcon>
-            <Typography style={{ color: theme.palette.text.primary }}>
-              {i18n.t('core:documentation')}
-            </Typography>
-          </ListItem>
-          <ListItem button onClick={toggleKeysDialog}>
-            <ListItemIcon>
-              <KeyShortcutsIcon />
-            </ListItemIcon>
-            <Typography style={{ color: theme.palette.text.primary }}>
-              {i18n.t('core:shortcutKeys')}
-            </Typography>
-          </ListItem>
-          <ListItem
-            button
-            onClick={() => openURLExternally(Links.links.changelogURL, true)}
-            title="Opens the changelog of the app"
-          >
-            <ListItemIcon>
-              <ChangeLogIcon />
-            </ListItemIcon>
-            <Typography style={{ color: theme.palette.text.primary }}>
-              {i18n.t('core:whatsNew')}
-            </Typography>
-          </ListItem>
-          <ListItem button onClick={toggleOnboardingDialog}>
-            <ListItemIcon>
-              <OnboardingIcon />
-            </ListItemIcon>
-            <Typography style={{ color: theme.palette.text.primary }}>
-              {i18n.t('core:onboardingWizard')}
-            </Typography>
-          </ListItem>
-          <ListItem
-            button
-            onClick={() => openURLExternally(Links.links.webClipper, true)}
-          >
-            <ListItemIcon>
-              <WebClipperIcon />
-            </ListItemIcon>
-            <Typography style={{ color: theme.palette.text.primary }}>
-              {i18n.t('core:webClipper')}
-            </Typography>
-          </ListItem>
-          <Divider />
-          <ListItem
-            button
-            onClick={() => openURLExternally(Links.links.suggestFeature, true)}
-          >
-            <ListItemIcon>
-              <NewFeatureIcon />
-            </ListItemIcon>
-            <Typography style={{ color: theme.palette.text.primary }}>
-              {i18n.t('core:suggestNewFeatures')}
-            </Typography>
-          </ListItem>
-          <ListItem
-            button
-            onClick={() => openURLExternally(Links.links.reportIssue, true)}
-          >
-            <ListItemIcon>
-              <IssueIcon />
-            </ListItemIcon>
-            <Typography style={{ color: theme.palette.text.primary }}>
-              {i18n.t('core:reportIssues')}
-            </Typography>
-          </ListItem>
-          <ListItem
-            button
-            onClick={() => openURLExternally(Links.links.helpTranslating, true)}
-          >
-            <ListItemIcon>
-              <TranslationIcon />
-            </ListItemIcon>
-            <Typography style={{ color: theme.palette.text.primary }}>
-              {i18n.t('core:helpWithTranslation')}
-            </Typography>
-          </ListItem>
-          <Divider />
-          <ListItem
-            button
-            onClick={() => openURLExternally(Links.links.emailContact, true)}
-          >
-            <ListItemIcon>
-              <EmailIcon />
-            </ListItemIcon>
-            <Typography style={{ color: theme.palette.text.primary }}>
-              {i18n.t('core:emailContact')}
-            </Typography>
-          </ListItem>
-          <ListItem
-            button
-            onClick={() => openURLExternally(Links.links.twitter)}
-          >
-            <ListItemIcon>
-              <Social2Icon />
-            </ListItemIcon>
-            <Typography style={{ color: theme.palette.text.primary }}>
-              {i18n.t('core:followOnTwitter')}
-            </Typography>
-          </ListItem>
-          <ListItem
-            button
-            onClick={() => openURLExternally(Links.links.facebook)}
-          >
-            <ListItemIcon>
-              <SocialIcon />
-            </ListItemIcon>
-            <Typography style={{ color: theme.palette.text.primary }}>
-              {i18n.t('core:likeUsOnFacebook')}
-            </Typography>
-          </ListItem>
-          {Pro && (
-            <React.Fragment>
-              <Divider />
-              <ListItem button onClick={toggleProTeaser}>
-                <ListItemIcon>
-                  <ProTeaserIcon />
-                </ListItemIcon>
-                <Typography style={{ color: theme.palette.text.primary }}>
-                  {i18n.t('TagSpaces Pro Overview')}
-                </Typography>
-              </ListItem>
-            </React.Fragment>
-          )}
-        </List>
-        {!Pro && (
-          <React.Fragment>
-            {/* <Divider /> */}
-            <div
-              onClick={toggleProTeaser}
-              role="button"
-              tabIndex={0}
-              style={{
-                backgroundColor: 'rgba(29, 209, 159, 0.08)',
-                textAlign: 'center'
-              }}
-            >
-              <CardContent
-                style={{
-                  paddingBottom: 0
-                }}
-              >
-                <Typography color="textSecondary" gutterBottom>
-                  Achieve more with
-                </Typography>
-                <Typography variant="h6" component="h2" color="textPrimary">
-                  TagSpaces Pro
-                </Typography>
-                <img
-                  style={{ maxHeight: 80, marginTop: 10 }}
-                  src={ProTeaser}
-                  alt=""
-                />
-              </CardContent>
-              <CardActions
-                style={{ flexDirection: 'row', justifyContent: 'center' }}
-              >
-                <Button
-                  size="small"
-                  onClick={(event: any) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    toggleProTeaser();
-                  }}
-                >
-                  Learn More
-                </Button>
-                <Button
-                  size="small"
-                  onClick={(event: any) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    openURLExternally(Links.links.productsOverview, true);
-                  }}
-                >
-                  Get It
-                </Button>
-              </CardActions>
-            </div>
-            {/* <Divider /> */}
-          </React.Fragment>
-        )}
+      <div className={classes.toolbar}>
+        <Typography
+          className={classNames(classes.panelTitle, classes.header)}
+          variant="subtitle1"
+        >
+          {i18n.t('core:helpFeedback')}
+        </Typography>
       </div>
+      <List
+        dense={false}
+        component="nav"
+        aria-label="main help area"
+        style={{
+          height: 'calc(100% - ' + reduceHeightBy + 'px)',
+          //@ts-ignore
+          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+        }}
+      >
+        <ListItem
+          button
+          onClick={toggleAboutDialog}
+          title="Opens the about dialog"
+          data-tid="aboutDialog"
+        >
+          <ListItemIcon>
+            <AboutIcon />
+          </ListItemIcon>
+          <Typography style={{ color: theme.palette.text.primary }}>
+            {i18n.t('core:aboutTitle')}
+          </Typography>
+        </ListItem>
+        <ListItem
+          button
+          onClick={() =>
+            openURLExternally(Links.documentationLinks.general, true)
+          }
+        >
+          <ListItemIcon>
+            <DocumentationIcon />
+          </ListItemIcon>
+          <Typography style={{ color: theme.palette.text.primary }}>
+            {i18n.t('core:documentation')}
+          </Typography>
+        </ListItem>
+        <ListItem button onClick={toggleKeysDialog}>
+          <ListItemIcon>
+            <KeyShortcutsIcon />
+          </ListItemIcon>
+          <Typography style={{ color: theme.palette.text.primary }}>
+            {i18n.t('core:shortcutKeys')}
+          </Typography>
+        </ListItem>
+        <ListItem
+          button
+          onClick={() => openURLExternally(Links.links.changelogURL, true)}
+          title="Opens the changelog of the app"
+        >
+          <ListItemIcon>
+            <ChangeLogIcon />
+          </ListItemIcon>
+          <Typography style={{ color: theme.palette.text.primary }}>
+            {i18n.t('core:whatsNew')}
+          </Typography>
+        </ListItem>
+        <ListItem button onClick={toggleOnboardingDialog}>
+          <ListItemIcon>
+            <OnboardingIcon />
+          </ListItemIcon>
+          <Typography style={{ color: theme.palette.text.primary }}>
+            {i18n.t('core:onboardingWizard')}
+          </Typography>
+        </ListItem>
+        <ListItem
+          button
+          onClick={() => openURLExternally(Links.links.webClipper, true)}
+        >
+          <ListItemIcon>
+            <WebClipperIcon />
+          </ListItemIcon>
+          <Typography style={{ color: theme.palette.text.primary }}>
+            {i18n.t('core:webClipper')}
+          </Typography>
+        </ListItem>
+        <Divider />
+        <ListItem
+          button
+          onClick={() => openURLExternally(Links.links.suggestFeature, true)}
+        >
+          <ListItemIcon>
+            <NewFeatureIcon />
+          </ListItemIcon>
+          <Typography style={{ color: theme.palette.text.primary }}>
+            {i18n.t('core:suggestNewFeatures')}
+          </Typography>
+        </ListItem>
+        <ListItem
+          button
+          onClick={() => openURLExternally(Links.links.reportIssue, true)}
+        >
+          <ListItemIcon>
+            <IssueIcon />
+          </ListItemIcon>
+          <Typography style={{ color: theme.palette.text.primary }}>
+            {i18n.t('core:reportIssues')}
+          </Typography>
+        </ListItem>
+        <ListItem
+          button
+          onClick={() => openURLExternally(Links.links.helpTranslating, true)}
+        >
+          <ListItemIcon>
+            <TranslationIcon />
+          </ListItemIcon>
+          <Typography style={{ color: theme.palette.text.primary }}>
+            {i18n.t('core:helpWithTranslation')}
+          </Typography>
+        </ListItem>
+        <Divider />
+        <ListItem
+          button
+          onClick={() => openURLExternally(Links.links.emailContact, true)}
+        >
+          <ListItemIcon>
+            <EmailIcon />
+          </ListItemIcon>
+          <Typography style={{ color: theme.palette.text.primary }}>
+            {i18n.t('core:emailContact')}
+          </Typography>
+        </ListItem>
+        <ListItem button onClick={() => openURLExternally(Links.links.twitter)}>
+          <ListItemIcon>
+            <Social2Icon />
+          </ListItemIcon>
+          <Typography style={{ color: theme.palette.text.primary }}>
+            {i18n.t('core:followOnTwitter')}
+          </Typography>
+        </ListItem>
+        <ListItem
+          button
+          onClick={() => openURLExternally(Links.links.facebook)}
+        >
+          <ListItemIcon>
+            <SocialIcon />
+          </ListItemIcon>
+          <Typography style={{ color: theme.palette.text.primary }}>
+            {i18n.t('core:likeUsOnFacebook')}
+          </Typography>
+        </ListItem>
+        {Pro && (
+          <>
+            <Divider />
+            <ListItem button onClick={toggleProTeaser}>
+              <ListItemIcon>
+                <ProTeaserIcon />
+              </ListItemIcon>
+              <Typography style={{ color: theme.palette.text.primary }}>
+                {i18n.t('TagSpaces Pro Overview')}
+              </Typography>
+            </ListItem>
+          </>
+        )}
+      </List>
     </div>
   );
 };
