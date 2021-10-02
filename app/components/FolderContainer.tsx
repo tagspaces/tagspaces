@@ -249,13 +249,14 @@ const FolderContainer = (props: Props) => {
         if (openedFile.path === props.currentDirectoryPath) {
           if (openedFile.color) {
             props.setCurrentDirectoryColor(openedFile.color);
-          } else if(openedFile.color === undefined){
+          } else if (openedFile.color === undefined) {
             props.setCurrentDirectoryColor(undefined);
           }
           if (openedFile.perspective) {
             props.setCurrentDirectoryPerspective(openedFile.perspective);
           }
-        } else { // if (openedFile.editMode) {// changed) {
+        } else {
+          // if (openedFile.editMode) {// changed) {
           const currentEntry = enhanceOpenedEntry(
             openedFile,
             props.settings.tagDelimiter

@@ -640,9 +640,7 @@ const actions = {
           .then(() => {
             // TODO rethink this updateCurrentDirEntry and not need for KanBan
             dispatch(AppActions.reflectUpdateSidecarTags(path, []));
-            dispatch(
-              AppActions.updateOpenedFile(path, { tags: [] })
-            );
+            dispatch(AppActions.updateOpenedFile(path, { tags: [] }));
             removeAllTagsFromFilename();
             return true;
           })
