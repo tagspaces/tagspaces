@@ -21,8 +21,8 @@
   "include": [
     "app/**/*.ts",
     "app/**/*.tsx",
-    "app/node_modules/@tagspaces/pro/**/*.ts",
-    "app/node_modules/@tagspaces/pro/**/*.tsx"
+    "extensions/tagspacespro/**/*.ts",
+    "extensions/tagspacespro/**/*.tsx"
   ]
   // "exclude": [
   //  "node_modules",
