@@ -326,6 +326,10 @@ const MainPage = (props: Props) => {
     setDrawerOpened(!props.isEntryInFullWidth);
   }, [props.isEntryInFullWidth]);
 
+  useEffect(() => {
+    updateDimensions();
+  }, [props.openedFiles]);
+
   useEventListener('resize', () => {
     if (!AppConfig.isCordova) {
       updateDimensions();
