@@ -114,4 +114,4 @@ cordova/platforms/ios/www/package.json
 junit.xml
 test-reports/*
 
-/app/**mainprod.js**
+/app/**main.prod.js**
