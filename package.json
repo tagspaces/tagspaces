@@ -1,7 +1,7 @@
 {
   "name": "tagspaces",
   "version": "0.0.0",
-  "description": "TagSpaces core repository",
+  "description": "TagSpaces Core Repository",
   "homepage": "https://www.tagspaces.org",
   "scripts": {
     "bump-version": "yarn third-party && cd app && yarn version && cd .. && yarn version-meta",
