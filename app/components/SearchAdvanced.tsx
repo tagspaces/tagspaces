@@ -105,7 +105,7 @@ interface Props {
 
 const useStyles = makeStyles<Theme, StyleProps>(styles);
 
-const SearchInline = (props: Props) => {
+const SearchAdvanced = (props: Props) => {
   const classes: PropsClasses = useStyles({} as StyleProps);
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   const textQuery = useRef<string>(props.searchQuery.textQuery);
@@ -168,20 +168,33 @@ const SearchInline = (props: Props) => {
   const ImportSearchesDialog =
     Pro && Pro.UI ? Pro.UI.ImportSearchesDialog : false;
 
-  const mainSearchField = useRef<HTMLInputElement>(null);
-
   useEffect(() => {
-    // https://github.com/mui-org/material-ui/issues/1594
-    const timeout = setTimeout(() => {
-      if (mainSearchField && mainSearchField.current) {
-        mainSearchField.current.focus();
-      }
-    }, 100);
-
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, []);
+    textQuery.current = props.searchQuery.textQuery;
+    /*if (props.searchQuery.fileTypes) {
+      fileTypes.current = props.searchQuery.fileTypes;
+    }
+    if (props.searchQuery.searchBoxing) {
+      searchBoxing.current = props.searchQuery.searchBoxing;
+    }
+    if (props.searchQuery.searchType) {
+      searchType.current = props.searchQuery.searchType;
+    }
+    if (props.searchQuery.lastModified) {
+      lastModified.current = props.searchQuery.lastModified;
+    }
+    if (props.searchQuery.tagTimePeriodFrom) {
+      tagTimePeriodFrom.current = props.searchQuery.tagTimePeriodFrom;
+    }
+    if (props.searchQuery.tagTimePeriodTo) {
+      tagTimePeriodTo.current = props.searchQuery.tagTimePeriodTo;
+    }
+    if (props.searchQuery.forceIndexing) {
+      forceIndexing.current = props.searchQuery.forceIndexing;
+    }
+    if (props.searchQuery.fileSize) {
+      fileSize.current = props.searchQuery.fileSize;
+    }*/
+  }, [props.searchQuery]);
 
   function handleFileInputChange(selection: any) {
     const target = selection.currentTarget;
@@ -1165,4 +1178,4 @@ const areEqual = (prevProp, nextProp) =>
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(React.memo(SearchInline, areEqual));
+)(React.memo(SearchAdvanced, areEqual));

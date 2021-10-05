@@ -17,29 +17,27 @@
  */
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
 
-
 export interface StyleProps {
-  panel: BaseCSSProperties,
-  fontIcon: BaseCSSProperties,
-  header: BaseCSSProperties,
-  icon: BaseCSSProperties,
-  locationListArea: BaseCSSProperties,
-  searchArea: BaseCSSProperties,
-  topShadow: BaseCSSProperties,
-  listItem: BaseCSSProperties,
-  listItemSelected: BaseCSSProperties,
-  panelTitle: BaseCSSProperties,
-  nested: BaseCSSProperties,
-  listItemTitleText: BaseCSSProperties,
-  hiddenFileInput: BaseCSSProperties,
-  toolbar: BaseCSSProperties,
-  formControl: BaseCSSProperties,
-  mainActionButton: BaseCSSProperties,
-  leftIcon: BaseCSSProperties,
+  panel: BaseCSSProperties;
+  fontIcon: BaseCSSProperties;
+  header: BaseCSSProperties;
+  icon: BaseCSSProperties;
+  locationListArea: BaseCSSProperties;
+  searchArea: BaseCSSProperties;
+  topShadow: BaseCSSProperties;
+  listItem: BaseCSSProperties;
+  listItemSelected: BaseCSSProperties;
+  panelTitle: BaseCSSProperties;
+  nested: BaseCSSProperties;
+  listItemTitleText: BaseCSSProperties;
+  hiddenFileInput: BaseCSSProperties;
+  toolbar: BaseCSSProperties;
+  formControl: BaseCSSProperties;
+  mainActionButton: BaseCSSProperties;
+  leftIcon: BaseCSSProperties;
 }
 
 export const styles = (theme: any) => {
-
   const baseStyle: StyleProps = {
     panel: {
       height: '100%',
@@ -57,7 +55,7 @@ export const styles = (theme: any) => {
     },
     locationListArea: {
       paddingTop: 0,
-      marginTop: 0,
+      marginTop: 0
       // @ts-ignore
       // overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
     },
@@ -68,7 +66,7 @@ export const styles = (theme: any) => {
       marginTop: 0,
       height: 'calc(100% - 110px)',
       maxHeight: 'calc(100% - 110px)',
-      overflowX: 'hidden',
+      overflowX: 'hidden'
       // overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
     },
     topShadow: {
@@ -113,8 +111,8 @@ export const styles = (theme: any) => {
     formControl: {
       minWidth: 250,
       marginRight: theme.spacing(1),
-      [theme.breakpoints.down("xs")]: {
-        minWidth: "100%",
+      [theme.breakpoints.down('xs')]: {
+        minWidth: '100%',
         marginRight: theme.spacing(0),
         marginBottom: theme.spacing(1)
       }
@@ -128,5 +126,5 @@ export const styles = (theme: any) => {
       marginRight: theme.spacing(1)
     }
   };
-  return ( baseStyle as any)
+  return baseStyle as any;
 };

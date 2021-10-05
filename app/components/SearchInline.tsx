@@ -65,7 +65,7 @@ import {
   getMaxSearchResults,
   getShowUnixHiddenEntries
 } from '-/reducers/settings';
-import {styles, StyleProps} from './SearchInline.css';
+import { styles, StyleProps } from './SearchInline.css';
 import i18n from '../services/i18n';
 import { FileTypeGroups } from '-/services/search';
 import { Pro } from '../pro';
@@ -82,7 +82,7 @@ import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
 type PropsClasses = Record<keyof StyleProps, string>;
 
 interface Props {
-  classes?: PropsClasses,
+  classes?: PropsClasses;
   style?: any;
   theme?: any;
   searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
@@ -182,6 +182,10 @@ const SearchInline = (props: Props) => {
       clearTimeout(timeout);
     };
   }, []);
+
+  useEffect(() => {
+    textQuery.current = props.searchQuery.textQuery;
+  }, [props.searchQuery]);
 
   function handleFileInputChange(selection: any) {
     const target = selection.currentTarget;
@@ -610,7 +614,7 @@ const SearchInline = (props: Props) => {
     ? indexedEntriesCount + ' indexed entries'
     : '';
   return (
-    <div className={classes.panel} style={{...props.style, width: '100%'}}>
+    <div className={classes.panel} style={{ ...props.style, width: '100%' }}>
       {/*<div className={classes.toolbar}>
         <Typography
           className={classNames(classes.panelTitle, classes.header)}
@@ -648,7 +652,7 @@ const SearchInline = (props: Props) => {
       />*/}
       <div className={classes.searchArea}>
         <FormControl
-          style={{width: '50%'}}
+          style={{ width: '50%' }}
           className={classes.formControl}
           disabled={indexing}
         >
@@ -680,7 +684,7 @@ const SearchInline = (props: Props) => {
             }
           />
         </FormControl>
-        <FormControl className={classes.formControl} style={{width: '20%'}}>
+        <FormControl className={classes.formControl} style={{ width: '20%' }}>
           <ButtonGroup style={{ justifyContent: 'center' }}>
             <Button
               disabled={indexing}

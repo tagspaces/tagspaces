@@ -64,6 +64,7 @@ import PathBreadcrumbs from './PathBreadcrumbs';
 import { enhanceOpenedEntry } from '-/services/utils-io';
 import SearchInline from '-/components/SearchInline';
 import SearchAdvanced from '-/components/SearchAdvanced';
+import { getSearchQuery } from '-/reducers/location-index';
 
 const GridPerspective = React.lazy(() =>
   import(
@@ -242,6 +243,7 @@ interface Props {
   selectedEntries: Array<TS.FileSystemEntry>;
   toggleUploadDialog: () => void;
   progress?: Array<any>;
+  searchQuery: TS.SearchQuery;
 }
 
 const FolderContainer = (props: Props) => {
@@ -269,6 +271,14 @@ const FolderContainer = (props: Props) => {
       }
     }
   }, [props.openedFiles]);
+
+  useEffect(() => {
+    if (!props.searchQuery || Object.keys(props.searchQuery).length === 0) {
+      setSearchVisible(false);
+    } else {
+      setSearchVisible(true);
+    }
+  }, [props.searchQuery]);
 
   const [isRenameEntryDialogOpened, setIsRenameEntryDialogOpened] = useState<
     boolean
@@ -527,7 +537,14 @@ const FolderContainer = (props: Props) => {
               </>
             )}
           </div>
-          {advancedSearch && <SearchAdvanced style={{ maxHeight: 200, overflowY: AppConfig.isFirefox ? 'auto' : 'overlay' }} />}
+          {isSearchVisible && advancedSearch && (
+            <SearchAdvanced
+              style={{
+                maxHeight: 200,
+                overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+              }}
+            />
+          )}
         </div>
         <div
           className={classes.centerPanel}
@@ -608,7 +625,8 @@ function mapStateToProps(state) {
     maxSearchResults: getMaxSearchResults(state),
     isDesktopMode: getDesktopMode(state),
     isReadOnlyMode: isReadOnlyMode(state),
-    progress: getProgress(state)
+    progress: getProgress(state),
+    searchQuery: getSearchQuery(state)
   };
 }
 
@@ -652,7 +670,8 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
     JSON.stringify(prevProp.openedFiles) &&
   JSON.stringify(nextProp.theme) === JSON.stringify(prevProp.theme) &&
   nextProp.windowWidth === prevProp.windowWidth &&
-  nextProp.windowHeight === prevProp.windowHeight;
+  nextProp.windowHeight === prevProp.windowHeight &&
+  nextProp.searchQuery === prevProp.searchQuery;
 
 export default connect(
   mapStateToProps,
