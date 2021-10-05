@@ -76,6 +76,12 @@ import { AppConfig } from '-/config';
 import { actions as SearchActions, getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import ListItem from '@material-ui/core/ListItem';
+import List from '@material-ui/core/List';
+import ListItemText from '@material-ui/core/ListItemText';
+import Switch from '@material-ui/core/Switch';
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
 
@@ -101,6 +107,7 @@ interface Props {
   searches: Array<TS.SearchQuery>;
   addSearches: (searches: Array<TS.SearchQuery>) => void;
   showUnixHiddenEntries: boolean;
+  openSearchPanel: () => void;
 }
 
 const useStyles = makeStyles<Theme, StyleProps>(styles);
@@ -451,6 +458,9 @@ const SearchAdvanced = (props: Props) => {
 
   const parseTextQuery = (identifier: string) => {
     const extractedTags = [];
+    if (!textQuery.current) {
+      return extractedTags;
+    }
     let query = textQuery.current;
     if (query && query.length > 0) {
       query = query
@@ -625,515 +635,415 @@ const SearchAdvanced = (props: Props) => {
   return (
     <div className={classes.panel} style={props.style}>
       <div className={classes.searchArea}>
-        <FormControl className={classes.formControl} disabled={indexing}>
-          <ToggleButtonGroup
-            onChange={switchSearchBoxing}
-            size="small"
-            exclusive
-            style={{ marginBottom: 10, alignSelf: 'center' }}
-            value={searchBoxing.current}
-          >
-            <ToggleButton value="location">
-              <Tooltip arrow title={i18n.t('searchPlaceholder')}>
-                <div>{i18n.t('location')}</div>
-              </Tooltip>
-            </ToggleButton>
-            <ToggleButton value="folder">
-              <Tooltip
-                arrow
-                title={i18n.t('searchCurrentFolderWithSubFolders')}
-              >
-                <div>{i18n.t('folder')}</div>
-              </Tooltip>
-            </ToggleButton>
-            <ToggleButton disabled={!Pro} value="global">
-              <Tooltip arrow title={i18n.t('searchInAllLocationTooltip')}>
-                <div>{i18n.t('globalSearch')}</div>
-              </Tooltip>
-              {Pro ? <BetaLabel /> : <ProLabel />}
-            </ToggleButton>
-          </ToggleButtonGroup>
-        </FormControl>
-        <FormControl className={classes.formControl} disabled={indexing}>
-          <ToggleButtonGroup
-            onChange={switchSearchType}
-            size="small"
-            exclusive
-            style={{ marginBottom: 10, alignSelf: 'center' }}
-            value={searchType.current}
-          >
-            <ToggleButton value="fuzzy" data-tid="fuzzySearchTID">
-              <Tooltip arrow title={i18n.t('searchTypeFuzzyTooltip')}>
-                <div>{i18n.t('searchTypeFuzzy')}</div>
-              </Tooltip>
-            </ToggleButton>
-            <ToggleButton value="semistrict" data-tid="semiStrictSearchTID">
-              <Tooltip arrow title={i18n.t('searchTypeSemiStrictTooltip')}>
-                <div>{i18n.t('searchTypeSemiStrict')}</div>
-              </Tooltip>
-            </ToggleButton>
-            <ToggleButton value="strict" data-tid="strictSearchTID">
-              <Tooltip arrow title={i18n.t('searchTypeStrictTooltip')}>
-                <div>{i18n.t('searchTypeStrict')}</div>
-              </Tooltip>
-            </ToggleButton>
-          </ToggleButtonGroup>
-        </FormControl>
-        <FormControl className={classes.formControl} disabled={indexing}>
-          <ToggleButtonGroup
-            onChange={() => {
-              forceIndexing.current = !forceIndexing.current;
-              forceUpdate();
-            }}
-            size="small"
-            exclusive
-            style={{ marginBottom: 10, alignSelf: 'center' }}
-            value={forceIndexing.current}
-          >
-            <ToggleButton value={false}>
-              <Tooltip arrow title={i18n.t('useCurrentIndexTooltip')}>
-                <div>{i18n.t('useCurrentIndex')}</div>
-              </Tooltip>
-            </ToggleButton>
-            <ToggleButton value={true} data-tid="forceIndexingTID">
-              <Tooltip arrow title={i18n.t('forceReindexTooltip')}>
-                <div>{i18n.t('forceReindex')}</div>
-              </Tooltip>
-            </ToggleButton>
-          </ToggleButtonGroup>
-        </FormControl>
-        <br />
-        {/* <FormControlLabel
-          title={i18n.t('core:enableIndexingBySearch')}
-          control={
-            <Switch
-              data-tid="forceIndexingTID"
-              checked={forceIndexing}
-              onChange={() => setForceIndexing(!forceIndexing)}
-              name="forceIndexing"
+        <List>
+          <ListItem disabled={indexing}>
+            <ListItemText primary={i18n.t('core:whereToSearch')} />
+            <ToggleButtonGroup
+              onChange={switchSearchBoxing}
+              size="small"
+              exclusive
+              value={searchBoxing.current}
+            >
+              <ToggleButton value="location">
+                <Tooltip arrow title={i18n.t('searchPlaceholder')}>
+                  <div>{i18n.t('location')}</div>
+                </Tooltip>
+              </ToggleButton>
+              <ToggleButton value="folder">
+                <Tooltip
+                  arrow
+                  title={i18n.t('searchCurrentFolderWithSubFolders')}
+                >
+                  <div>{i18n.t('folder')}</div>
+                </Tooltip>
+              </ToggleButton>
+              <ToggleButton disabled={!Pro} value="global">
+                <Tooltip arrow title={i18n.t('searchInAllLocationTooltip')}>
+                  <div>{i18n.t('globalSearch')}</div>
+                </Tooltip>
+                {Pro ? <BetaLabel /> : <ProLabel />}
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </ListItem>
+          <ListItem disabled={indexing}>
+            <ListItemText primary={i18n.t('core:searchType')} />
+            <ToggleButtonGroup
+              onChange={switchSearchType}
+              size="small"
+              exclusive
+              value={searchType.current}
+            >
+              <ToggleButton value="fuzzy" data-tid="fuzzySearchTID">
+                <Tooltip arrow title={i18n.t('searchTypeFuzzyTooltip')}>
+                  <div>{i18n.t('searchTypeFuzzy')}</div>
+                </Tooltip>
+              </ToggleButton>
+              <ToggleButton value="semistrict" data-tid="semiStrictSearchTID">
+                <Tooltip arrow title={i18n.t('searchTypeSemiStrictTooltip')}>
+                  <div>{i18n.t('searchTypeSemiStrict')}</div>
+                </Tooltip>
+              </ToggleButton>
+              <ToggleButton value="strict" data-tid="strictSearchTID">
+                <Tooltip arrow title={i18n.t('searchTypeStrictTooltip')}>
+                  <div>{i18n.t('searchTypeStrict')}</div>
+                </Tooltip>
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </ListItem>
+          <ListItem disabled={indexing}>
+            <ListItemText primary={i18n.t('core:mustContainTheseTags')} />
+            <TagsSelect
+              placeholderText={i18n.t('core:selectTags')}
+              label={i18n.t('core:mustContainTheseTags')}
+              tags={props.searchQuery.tagsAND}
+              handleChange={handleTagFieldChange}
+              tagSearchType="tagsAND"
+              tagMode="remove"
             />
-          }
-          label={
-            <Typography
-              style={{ padding: 15, color: props.theme.palette.text.primary }}
-            >
-              {i18n.t('forceReindexing')}
-            </Typography>
-          }
-        /> */}
-        {/*<FormControl className={classes.formControl}>
-          <ButtonGroup style={{ justifyContent: 'center' }}>
-            <Button
-              disabled={indexing}
-              id="searchButton"
-              // variant="outlined"
-              color="primary"
-              onClick={clickSearchButton}
-              style={{ width: '98%' }}
-              size="medium"
-            >
-              {indexing
-                ? 'Search disabled while indexing'
-                : i18n.t('searchTitle')}
-            </Button>
-          </ButtonGroup>
-        </FormControl>*/}
-        <FormControl className={classes.formControl} disabled={indexing}>
-          <TagsSelect
-            placeholderText={i18n.t('core:selectTags')}
-            label={i18n.t('core:mustContainTheseTags')}
-            tags={props.searchQuery.tagsAND}
-            handleChange={handleTagFieldChange}
-            tagSearchType="tagsAND"
-            tagMode="remove"
-          />
-        </FormControl>
-        <FormControl className={classes.formControl} disabled={indexing}>
-          <TagsSelect
-            placeholderText={i18n.t('core:selectTags')}
-            tags={props.searchQuery.tagsOR}
-            label={i18n.t('core:atLeastOneOfTheseTags')}
-            handleChange={handleTagFieldChange}
-            tagSearchType="tagsOR"
-            tagMode="remove"
-          />
-        </FormControl>
-        <FormControl className={classes.formControl} disabled={indexing}>
-          <TagsSelect
-            placeholderText={i18n.t('core:selectTags')}
-            tags={props.searchQuery.tagsNOT}
-            label={i18n.t('core:noneOfTheseTags')}
-            handleChange={handleTagFieldChange}
-            tagSearchType="tagsNOT"
-            tagMode="remove"
-          />
-        </FormControl>
-        {AppConfig.showAdvancedSearch && (
-          <>
-            <FormControl
-              className={classes.formControl}
-              disabled={indexing || !Pro}
-            >
-              <ProTooltip tooltip={i18n.t('filterByTypTooltip')}>
-                <InputLabel htmlFor="file-type">
-                  {i18n.t('core:fileType')}
-                </InputLabel>
-                <Select
-                  style={{ width: '100%' }}
-                  value={JSON.stringify(fileTypes.current)}
-                  onChange={handleFileTypeChange}
-                  input={<Input name="fileTypes" id="file-type" />}
+          </ListItem>
+          <ListItem disabled={indexing}>
+            <TagsSelect
+              placeholderText={i18n.t('core:selectTags')}
+              tags={props.searchQuery.tagsOR}
+              label={i18n.t('core:atLeastOneOfTheseTags')}
+              handleChange={handleTagFieldChange}
+              tagSearchType="tagsOR"
+              tagMode="remove"
+            />
+          </ListItem>
+          <ListItem disabled={indexing}>
+            <TagsSelect
+              placeholderText={i18n.t('core:selectTags')}
+              tags={props.searchQuery.tagsNOT}
+              label={i18n.t('core:noneOfTheseTags')}
+              handleChange={handleTagFieldChange}
+              tagSearchType="tagsNOT"
+              tagMode="remove"
+            />
+          </ListItem>
+          {/* {AppConfig.showAdvancedSearch && (*/}
+          <ListItem disabled={indexing}>
+            <ListItemText primary={i18n.t('core:fileType')} />
+            <ProTooltip tooltip={i18n.t('filterByTypTooltip')}>
+              <Select
+                style={{ width: '100%' }}
+                value={JSON.stringify(fileTypes.current)}
+                onChange={handleFileTypeChange}
+                input={<Input name="fileTypes" id="file-type" />}
+              >
+                <MenuItem value={JSON.stringify(FileTypeGroups.any)}>
+                  {i18n.t('core:anyType')}
+                </MenuItem>
+                <MenuItem value={JSON.stringify(FileTypeGroups.folders)}>
+                  <IconButton>
+                    <FolderIcon />
+                  </IconButton>
+                  {i18n.t('core:searchFolders')}
+                </MenuItem>
+                <MenuItem value={JSON.stringify(FileTypeGroups.files)}>
+                  <IconButton>
+                    <FileIcon />
+                  </IconButton>
+                  {i18n.t('core:searchFiles')}
+                </MenuItem>
+                <MenuItem value={JSON.stringify(FileTypeGroups.untagged)}>
+                  <IconButton>
+                    <UntaggedIcon />
+                  </IconButton>
+                  {i18n.t('core:searchUntaggedEntries')}
+                </MenuItem>
+                <MenuItem
+                  value={JSON.stringify(FileTypeGroups.images)}
+                  title={FileTypeGroups.images.toString()}
                 >
-                  <MenuItem value={JSON.stringify(FileTypeGroups.any)}>
-                    {i18n.t('core:anyType')}
-                  </MenuItem>
-                  <MenuItem value={JSON.stringify(FileTypeGroups.folders)}>
-                    <IconButton>
-                      <FolderIcon />
-                    </IconButton>
-                    {i18n.t('core:searchFolders')}
-                  </MenuItem>
-                  <MenuItem value={JSON.stringify(FileTypeGroups.files)}>
-                    <IconButton>
-                      <FileIcon />
-                    </IconButton>
-                    {i18n.t('core:searchFiles')}
-                  </MenuItem>
-                  <MenuItem value={JSON.stringify(FileTypeGroups.untagged)}>
-                    <IconButton>
-                      <UntaggedIcon />
-                    </IconButton>
-                    {i18n.t('core:searchUntaggedEntries')}
-                  </MenuItem>
-                  <MenuItem
-                    value={JSON.stringify(FileTypeGroups.images)}
-                    title={FileTypeGroups.images.toString()}
-                  >
-                    <IconButton>
-                      <PictureIcon />
-                    </IconButton>
-                    {i18n.t('core:searchPictures')}
-                  </MenuItem>
-                  <MenuItem
-                    value={JSON.stringify(FileTypeGroups.documents)}
-                    title={FileTypeGroups.documents.toString()}
-                  >
-                    <IconButton>
-                      <DocumentIcon />
-                    </IconButton>
-                    {i18n.t('core:searchDocuments')}
-                  </MenuItem>
-                  <MenuItem
-                    value={JSON.stringify(FileTypeGroups.notes)}
-                    title={FileTypeGroups.notes.toString()}
-                  >
-                    <IconButton>
-                      <NoteIcon />
-                    </IconButton>
-                    {i18n.t('core:searchNotes')}
-                  </MenuItem>
-                  <MenuItem
-                    value={JSON.stringify(FileTypeGroups.audio)}
-                    title={FileTypeGroups.audio.toString()}
-                  >
-                    <IconButton>
-                      <AudioIcon />
-                    </IconButton>
-                    {i18n.t('core:searchAudio')}
-                  </MenuItem>
-                  <MenuItem
-                    value={JSON.stringify(FileTypeGroups.video)}
-                    title={FileTypeGroups.video.toString()}
-                  >
-                    <IconButton>
-                      <VideoIcon />
-                    </IconButton>
-                    {i18n.t('core:searchVideoFiles')}
-                  </MenuItem>
-                  <MenuItem
-                    value={JSON.stringify(FileTypeGroups.archives)}
-                    title={FileTypeGroups.archives.toString()}
-                  >
-                    <IconButton>
-                      <ArchiveIcon />
-                    </IconButton>
-                    {i18n.t('core:searchArchives')}
-                  </MenuItem>
-                  <MenuItem
-                    value={JSON.stringify(FileTypeGroups.bookmarks)}
-                    title={FileTypeGroups.bookmarks.toString()}
-                  >
-                    <IconButton>
-                      <BookmarkIcon />
-                    </IconButton>
-                    {i18n.t('core:searchBookmarks')}
-                  </MenuItem>
-                  <MenuItem
-                    value={JSON.stringify(FileTypeGroups.ebooks)}
-                    title={FileTypeGroups.ebooks.toString()}
-                  >
-                    <IconButton>
-                      <BookIcon />
-                    </IconButton>
-                    {i18n.t('core:searchEbooks')}
-                  </MenuItem>
-                </Select>
-                {/* <FormHelperText>{i18n.t('core:searchFileTypes')}</FormHelperText> */}
-              </ProTooltip>
-            </FormControl>
-            <FormControl
-              className={classes.formControl}
-              disabled={indexing || !Pro}
-            >
-              <ProTooltip tooltip={i18n.t('filterBySizeTooltip')}>
-                <InputLabel shrink htmlFor="file-size">
-                  {i18n.t('core:sizeSearchTitle')}
-                </InputLabel>
-                <Select
-                  style={{ width: '100%' }}
-                  value={fileSize.current}
-                  onChange={handleFileSizeChange}
-                  input={<Input name="fileSize" id="file-size" />}
-                  displayEmpty
+                  <IconButton>
+                    <PictureIcon />
+                  </IconButton>
+                  {i18n.t('core:searchPictures')}
+                </MenuItem>
+                <MenuItem
+                  value={JSON.stringify(FileTypeGroups.documents)}
+                  title={FileTypeGroups.documents.toString()}
                 >
-                  <MenuItem value="">{i18n.t('core:sizeAny')}</MenuItem>
-                  <MenuItem value="sizeEmpty">
-                    {i18n.t('core:sizeEmpty')}
-                  </MenuItem>
-                  <MenuItem value="sizeTiny">
-                    {i18n.t('core:sizeTiny')}
-                    &nbsp;(&lt;&nbsp;10KB)
-                  </MenuItem>
-                  <MenuItem value="sizeVerySmall">
-                    {i18n.t('core:sizeVerySmall')}
-                    &nbsp;(&lt;&nbsp;100KB)
-                  </MenuItem>
-                  <MenuItem value="sizeSmall">
-                    {i18n.t('core:sizeSmall')}
-                    &nbsp;(&lt;&nbsp;1MB)
-                  </MenuItem>
-                  <MenuItem value="sizeMedium">
-                    {i18n.t('core:sizeMedium')}
-                    &nbsp;(&lt;&nbsp;50MB)
-                  </MenuItem>
-                  <MenuItem value="sizeLarge">
-                    {i18n.t('core:sizeLarge')}
-                    &nbsp;(&lt;&nbsp;1GB)
-                  </MenuItem>
-                  <MenuItem value="sizeHuge">
-                    {i18n.t('core:sizeHuge')}
-                    &nbsp;(&gt;&nbsp;1GB)
-                  </MenuItem>
-                </Select>
-              </ProTooltip>
-            </FormControl>
-            <FormControl
-              className={classes.formControl}
-              disabled={indexing || !Pro}
-            >
-              <ProTooltip tooltip={i18n.t('filterByLastModifiedDateTooltip')}>
-                <InputLabel shrink htmlFor="modification-date">
-                  {i18n.t('core:lastModifiedSearchTitle')}
-                </InputLabel>
-                <Select
-                  value={lastModified.current}
-                  style={{ width: '100%' }}
-                  onChange={handleLastModifiedChange}
-                  input={<Input name="lastModified" id="modification-date" />}
-                  displayEmpty
+                  <IconButton>
+                    <DocumentIcon />
+                  </IconButton>
+                  {i18n.t('core:searchDocuments')}
+                </MenuItem>
+                <MenuItem
+                  value={JSON.stringify(FileTypeGroups.notes)}
+                  title={FileTypeGroups.notes.toString()}
                 >
-                  <MenuItem value="">{i18n.t('core:anyTime')}</MenuItem>
-                  <MenuItem value="today">{i18n.t('core:today')}</MenuItem>
-                  <MenuItem value="yesterday">
-                    {i18n.t('core:yesterday')}
-                  </MenuItem>
-                  <MenuItem value="past7Days">
-                    {i18n.t('core:past7Days')}
-                  </MenuItem>
-                  <MenuItem value="past30Days">
-                    {i18n.t('core:past30Days')}
-                  </MenuItem>
-                  <MenuItem value="past6Months">
-                    {i18n.t('core:past6Months')}
-                  </MenuItem>
-                  <MenuItem value="pastYear">
-                    {i18n.t('core:pastYear')}
-                  </MenuItem>
-                  <MenuItem value="moreThanYear">
-                    {i18n.t('core:moreThanYear')}
-                  </MenuItem>
-                </Select>
-              </ProTooltip>
-            </FormControl>
-            <FormControl className={classes.formControl}>
-              <ProTooltip tooltip={i18n.t('enterTimePeriodTooltip')}>
-                <TextField
-                  id="tagTimePeriod"
-                  label={i18n.t('enterTimePeriod')}
-                  value={tagTimePeriod.current}
-                  disabled={indexing || !Pro}
-                  onChange={handleTimePeriodChange}
-                  onKeyDown={startSearch}
-                  helperText={tagTimePeriodHelper.current}
-                  error={tagTimePeriodHelper.current.length < 1}
-                  style={{ width: '100%' }}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment
-                        position="end"
-                        title="201905 for May 2019 / 20190412 for 12th of April 2019 / 20190501~124523 for specific time"
-                      >
-                        <IconButton>
-                          <DateIcon />
-                        </IconButton>
-                      </InputAdornment>
-                    )
-                  }}
-                />
-              </ProTooltip>
-              {/* <TextField
-                id="tagPlace"
-                label={i18n.t('GPS coordinates or plus code')}
-                value={tagPlace}
+                  <IconButton>
+                    <NoteIcon />
+                  </IconButton>
+                  {i18n.t('core:searchNotes')}
+                </MenuItem>
+                <MenuItem
+                  value={JSON.stringify(FileTypeGroups.audio)}
+                  title={FileTypeGroups.audio.toString()}
+                >
+                  <IconButton>
+                    <AudioIcon />
+                  </IconButton>
+                  {i18n.t('core:searchAudio')}
+                </MenuItem>
+                <MenuItem
+                  value={JSON.stringify(FileTypeGroups.video)}
+                  title={FileTypeGroups.video.toString()}
+                >
+                  <IconButton>
+                    <VideoIcon />
+                  </IconButton>
+                  {i18n.t('core:searchVideoFiles')}
+                </MenuItem>
+                <MenuItem
+                  value={JSON.stringify(FileTypeGroups.archives)}
+                  title={FileTypeGroups.archives.toString()}
+                >
+                  <IconButton>
+                    <ArchiveIcon />
+                  </IconButton>
+                  {i18n.t('core:searchArchives')}
+                </MenuItem>
+                <MenuItem
+                  value={JSON.stringify(FileTypeGroups.bookmarks)}
+                  title={FileTypeGroups.bookmarks.toString()}
+                >
+                  <IconButton>
+                    <BookmarkIcon />
+                  </IconButton>
+                  {i18n.t('core:searchBookmarks')}
+                </MenuItem>
+                <MenuItem
+                  value={JSON.stringify(FileTypeGroups.ebooks)}
+                  title={FileTypeGroups.ebooks.toString()}
+                >
+                  <IconButton>
+                    <BookIcon />
+                  </IconButton>
+                  {i18n.t('core:searchEbooks')}
+                </MenuItem>
+              </Select>
+              {/* <FormHelperText>{i18n.t('core:searchFileTypes')}</FormHelperText> */}
+            </ProTooltip>
+          </ListItem>
+          <ListItem disabled={indexing || !Pro}>
+            <ListItemText primary={i18n.t('core:sizeSearchTitle')} />
+            <ProTooltip tooltip={i18n.t('filterBySizeTooltip')}>
+              <Select
+                style={{ width: '100%' }}
+                value={fileSize.current}
+                onChange={handleFileSizeChange}
+                input={<Input name="fileSize" id="file-size" />}
+                displayEmpty
+              >
+                <MenuItem value="">{i18n.t('core:sizeAny')}</MenuItem>
+                <MenuItem value="sizeEmpty">
+                  {i18n.t('core:sizeEmpty')}
+                </MenuItem>
+                <MenuItem value="sizeTiny">
+                  {i18n.t('core:sizeTiny')}
+                  &nbsp;(&lt;&nbsp;10KB)
+                </MenuItem>
+                <MenuItem value="sizeVerySmall">
+                  {i18n.t('core:sizeVerySmall')}
+                  &nbsp;(&lt;&nbsp;100KB)
+                </MenuItem>
+                <MenuItem value="sizeSmall">
+                  {i18n.t('core:sizeSmall')}
+                  &nbsp;(&lt;&nbsp;1MB)
+                </MenuItem>
+                <MenuItem value="sizeMedium">
+                  {i18n.t('core:sizeMedium')}
+                  &nbsp;(&lt;&nbsp;50MB)
+                </MenuItem>
+                <MenuItem value="sizeLarge">
+                  {i18n.t('core:sizeLarge')}
+                  &nbsp;(&lt;&nbsp;1GB)
+                </MenuItem>
+                <MenuItem value="sizeHuge">
+                  {i18n.t('core:sizeHuge')}
+                  &nbsp;(&gt;&nbsp;1GB)
+                </MenuItem>
+              </Select>
+            </ProTooltip>
+          </ListItem>
+          <ListItem disabled={indexing || !Pro}>
+            <ListItemText primary={i18n.t('core:lastModifiedSearchTitle')} />
+            <ProTooltip tooltip={i18n.t('filterByLastModifiedDateTooltip')}>
+              <Select
+                value={lastModified.current}
+                style={{ width: '100%' }}
+                onChange={handleLastModifiedChange}
+                input={<Input name="lastModified" id="modification-date" />}
+                displayEmpty
+              >
+                <MenuItem value="">{i18n.t('core:anyTime')}</MenuItem>
+                <MenuItem value="today">{i18n.t('core:today')}</MenuItem>
+                <MenuItem value="yesterday">
+                  {i18n.t('core:yesterday')}
+                </MenuItem>
+                <MenuItem value="past7Days">
+                  {i18n.t('core:past7Days')}
+                </MenuItem>
+                <MenuItem value="past30Days">
+                  {i18n.t('core:past30Days')}
+                </MenuItem>
+                <MenuItem value="past6Months">
+                  {i18n.t('core:past6Months')}
+                </MenuItem>
+                <MenuItem value="pastYear">{i18n.t('core:pastYear')}</MenuItem>
+                <MenuItem value="moreThanYear">
+                  {i18n.t('core:moreThanYear')}
+                </MenuItem>
+              </Select>
+            </ProTooltip>
+          </ListItem>
+          <ListItem>
+            <ProTooltip tooltip={i18n.t('enterTimePeriodTooltip')}>
+              <TextField
+                id="tagTimePeriod"
+                label={i18n.t('enterTimePeriod')}
+                value={tagTimePeriod.current}
                 disabled={indexing || !Pro}
-                onChange={handlePlaceChange}
+                onChange={handleTimePeriodChange}
                 onKeyDown={startSearch}
-                helperText={tagPlaceHelper}
-                error={tagPlaceHelper.length < 1}
+                helperText={tagTimePeriodHelper.current}
+                error={tagTimePeriodHelper.current.length < 1}
+                style={{ width: '100%' }}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment
                       position="end"
-                      title="GPS: 49.23276,12.43123 PlusCode: 8FRG8Q87+6X"
+                      title="201905 for May 2019 / 20190412 for 12th of April 2019 / 20190501~124523 for specific time"
                     >
-                      <IconButton onClick={openPlace}>
-                        <PlaceIcon />
+                      <IconButton>
+                        <DateIcon />
                       </IconButton>
                     </InputAdornment>
                   )
                 }}
-              /> */}
-            </FormControl>
-            <br />
-            <FormControl
-              className={classes.formControl}
-              disabled={indexing || !Pro}
-            >
-              <ProTooltip tooltip={i18n.t('storedSearchQueriesTooltip')}>
-                <InputLabel shrink htmlFor="saved-searches">
-                  {i18n.t('core:savedSearchesTitle')}
-                </InputLabel>
-                <Select
-                  style={{ width: '100%' }}
-                  onChange={handleSavedSearchChange}
-                  input={<Input name="savedSearch" id="saved-searches" />}
-                  displayEmpty
-                  value={props.searchQuery.uuid ? props.searchQuery.uuid : -1}
-                >
-                  <MenuItem value={-1} style={{ display: 'none' }} />
-                  {props.searches.length < 1 && (
-                    <MenuItem>{i18n.t('noSavedSearches')}</MenuItem>
-                  )}
-                  {props.searches.map(search => (
-                    <MenuItem key={search.uuid} value={search.uuid}>
-                      <span style={{ width: '100%' }}>{search.title}</span>
-                    </MenuItem>
-                  ))}
-                </Select>
-              </ProTooltip>
-            </FormControl>
-            {Pro && (
-              <FormControl className={classes.formControl}>
-                <ButtonGroup style={{ justifyContent: 'center' }}>
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    size="medium"
-                    style={
-                      props.searchQuery.uuid
-                        ? { width: '48%' }
-                        : { width: '100%' }
-                    }
-                    onClick={() => saveSearch()}
-                  >
-                    {i18n.t('searchSaveBtn')}
-                  </Button>
-                  {props.searchQuery.uuid && (
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      size="medium"
-                      style={{ width: '48%' }}
-                      onClick={() => saveSearch(false)}
-                    >
-                      {i18n.t('searchEditBtn')}
-                    </Button>
-                  )}
-                </ButtonGroup>
-              </FormControl>
-            )}
-            {/*<FormControl className={classes.formControl}>
+              />
+            </ProTooltip>
+          </ListItem>
+          <ListItem disabled={indexing || !Pro}>
+            <ProTooltip tooltip={i18n.t('storedSearchQueriesTooltip')}>
+              <InputLabel shrink htmlFor="saved-searches">
+                {i18n.t('core:savedSearchesTitle')}
+              </InputLabel>
+              <Select
+                style={{ width: '100%' }}
+                onChange={handleSavedSearchChange}
+                input={<Input name="savedSearch" id="saved-searches" />}
+                displayEmpty
+                value={props.searchQuery.uuid ? props.searchQuery.uuid : -1}
+              >
+                <MenuItem value={-1} style={{ display: 'none' }} />
+                {props.searches.length < 1 && (
+                  <MenuItem>{i18n.t('noSavedSearches')}</MenuItem>
+                )}
+                {props.searches.map(search => (
+                  <MenuItem key={search.uuid} value={search.uuid}>
+                    <span style={{ width: '100%' }}>{search.title}</span>
+                  </MenuItem>
+                ))}
+              </Select>
+            </ProTooltip>
+          </ListItem>
+          <ListItem disabled={indexing}>
+            <ListItemText primary={i18n.t('core:forceReindex')} />
+            <Switch
+              data-tid="forceReindexTID"
+              onClick={() => {
+                forceIndexing.current = !forceIndexing.current;
+                forceUpdate();
+              }}
+              checked={forceIndexing.current}
+            />
+          </ListItem>
+          {Pro && (
+            <ListItem>
               <ButtonGroup style={{ justifyContent: 'center' }}>
                 <Button
                   variant="outlined"
                   color="secondary"
                   size="medium"
-                  style={{ width: '100%' }}
-                  onClick={clearSearch}
-                  id="resetSearchButton"
+                  onClick={() => saveSearch()}
                 >
-                  {i18n.t('resetBtn')}
+                  {i18n.t('searchSaveBtn')}
+                </Button>
+                {props.searchQuery.uuid && (
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    size="medium"
+                    onClick={() => saveSearch(false)}
+                  >
+                    {i18n.t('searchEditBtn')}
+                  </Button>
+                )}
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  size="medium"
+                  onClick={() => {}}
+                >
+                  {i18n.t('helpBtn')}
                 </Button>
               </ButtonGroup>
-            </FormControl>*/}
-            {SaveSearchDialog && saveSearchDialogOpened !== undefined && (
-              <SaveSearchDialog
-                open={saveSearchDialogOpened !== undefined}
-                onClose={(searchQuery: TS.SearchQuery) => {
-                  setSaveSearchDialogOpened(undefined);
-                  if (searchQuery) {
-                    if (searchQuery.searchBoxing === 'global') {
-                      props.searchAllLocations({
-                        ...searchQuery,
-                        showUnixHiddenEntries: props.showUnixHiddenEntries
-                      });
-                    } else {
-                      props.searchLocationIndex({
-                        ...searchQuery,
-                        showUnixHiddenEntries: props.showUnixHiddenEntries
-                      });
-                    }
+            </ListItem>
+          )}
+          {SaveSearchDialog && saveSearchDialogOpened !== undefined && (
+            <SaveSearchDialog
+              open={saveSearchDialogOpened !== undefined}
+              onClose={(searchQuery: TS.SearchQuery) => {
+                setSaveSearchDialogOpened(undefined);
+                props.openSearchPanel();
+                if (searchQuery) {
+                  if (searchQuery.searchBoxing === 'global') {
+                    props.searchAllLocations({
+                      ...searchQuery,
+                      showUnixHiddenEntries: props.showUnixHiddenEntries
+                    });
+                  } else {
+                    props.searchLocationIndex({
+                      ...searchQuery,
+                      showUnixHiddenEntries: props.showUnixHiddenEntries
+                    });
                   }
-                }}
-                onClearSearch={() => clearSearch()}
-                searchQuery={saveSearchDialogOpened}
-              />
-            )}
-            <input
-              style={{ display: 'none' }}
-              ref={fileInputRef}
-              accept="*"
-              type="file"
-              onChange={handleFileInputChange}
+                }
+              }}
+              onClearSearch={() => clearSearch()}
+              searchQuery={saveSearchDialogOpened}
             />
-            {ExportSearchesDialog && isExportSearchesDialogOpened && (
-              <ExportSearchesDialog
-                open={isExportSearchesDialogOpened}
-                onClose={() => setExportSearchesDialogOpened(false)}
-                searches={props.searches}
-              />
-            )}
-            {ImportSearchesDialog && importFile && (
-              <ImportSearchesDialog
-                open={Boolean(importFile)}
-                onClose={() => setImportFile(undefined)}
-                importFile={importFile}
-                addSearches={props.addSearches}
-                searches={props.searches}
-              />
-            )}
-          </>
-        )}
+          )}
+          <input
+            style={{ display: 'none' }}
+            ref={fileInputRef}
+            accept="*"
+            type="file"
+            onChange={handleFileInputChange}
+          />
+          {ExportSearchesDialog && isExportSearchesDialogOpened && (
+            <ExportSearchesDialog
+              open={isExportSearchesDialogOpened}
+              onClose={() => setExportSearchesDialogOpened(false)}
+              searches={props.searches}
+            />
+          )}
+          {ImportSearchesDialog && importFile && (
+            <ImportSearchesDialog
+              open={Boolean(importFile)}
+              onClose={() => setImportFile(undefined)}
+              importFile={importFile}
+              addSearches={props.addSearches}
+              searches={props.searches}
+            />
+          )}
+          {/* </>
+           )}*/}
+        </List>
       </div>
     </div>
   );
@@ -1161,7 +1071,8 @@ function mapDispatchToProps(dispatch) {
       loadDirectoryContent: AppActions.loadDirectoryContent,
       openURLExternally: AppActions.openURLExternally,
       setSearchResults: AppActions.setSearchResults,
-      addSearches: SearchActions.addSearches
+      addSearches: SearchActions.addSearches,
+      openSearchPanel: AppActions.openSearchPanel
     },
     dispatch
   );

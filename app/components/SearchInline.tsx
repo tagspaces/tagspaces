@@ -19,41 +19,8 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { makeStyles, Theme, withStyles } from '@material-ui/core/styles';
-import classNames from 'classnames';
-import format from 'date-fns/format';
-import Typography from '@material-ui/core/Typography';
-import MenuItem from '@material-ui/core/MenuItem';
-import Tooltip from '@material-ui/core/Tooltip';
-import PictureIcon from '@material-ui/icons/Panorama';
-import DocumentIcon from '@material-ui/icons/PictureAsPdf';
-import NoteIcon from '@material-ui/icons/Note';
-import AudioIcon from '@material-ui/icons/MusicVideo';
-import VideoIcon from '@material-ui/icons/OndemandVideo';
-import ArchiveIcon from '@material-ui/icons/Archive';
-import FolderIcon from '@material-ui/icons/FolderOpen';
-import UntaggedIcon from '@material-ui/icons/LabelOffOutlined';
-import FileIcon from '@material-ui/icons/InsertDriveFileOutlined';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import ClearSearchIcon from '@material-ui/icons/Clear';
-import BookmarkIcon from '@material-ui/icons/BookmarkBorder';
-import BookIcon from '@material-ui/icons/LocalLibraryOutlined';
-// import PlaceIcon from '@material-ui/icons/Place';
-import DateIcon from '@material-ui/icons/DateRange';
-import Button from '@material-ui/core/Button';
-import Input from '@material-ui/core/Input';
-import OutlinedInput from '@material-ui/core/OutlinedInput';
-import TextField from '@material-ui/core/TextField';
-import InputLabel from '@material-ui/core/InputLabel';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import IconButton from '@material-ui/core/IconButton';
-import Select from '@material-ui/core/Select';
-import FormControl from '@material-ui/core/FormControl';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-import ToggleButton from '@material-ui/lab/ToggleButton';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-// import { FormControlLabel, Switch } from '@material-ui/core';
-import TagsSelect from './TagsSelect';
 import { actions as AppActions, getDirectoryPath } from '../reducers/app';
 import {
   actions as LocationIndexActions,
@@ -68,29 +35,25 @@ import {
 import { styles, StyleProps } from './SearchInline.css';
 import i18n from '../services/i18n';
 import { FileTypeGroups } from '-/services/search';
-import { Pro } from '../pro';
-import SearchMenu from './menus/SearchMenu';
-import { formatDateTime, extractTimePeriod } from '-/utils/dates';
-import { parseGeoLocation, parseLatLon } from '-/utils/misc';
-import { AppConfig } from '-/config';
-import { actions as SearchActions, getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
-import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
-
-// const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
+import {
+  FormControl,
+  IconButton,
+  InputAdornment,
+  OutlinedInput,
+  ButtonGroup,
+  Button
+} from '@material-ui/core';
 
 type PropsClasses = Record<keyof StyleProps, string>;
 
 interface Props {
-  classes?: PropsClasses;
   style?: any;
-  theme?: any;
   searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
   createLocationsIndexes: () => void;
   searchAllLocations: (searchQuery: TS.SearchQuery) => void;
   loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
   openURLExternally: (url: string) => void;
-  hideDrawer?: () => void;
   searchQuery: TS.SearchQuery; // () => any;
   setSearchResults: (entries: Array<any>) => void;
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
@@ -98,8 +61,6 @@ interface Props {
   indexedEntriesCount: number;
   maxSearchResults: number;
   indexing: boolean;
-  searches: Array<TS.SearchQuery>;
-  addSearches: (searches: Array<TS.SearchQuery>) => void;
   showUnixHiddenEntries: boolean;
 }
 
@@ -109,7 +70,6 @@ const SearchInline = (props: Props) => {
   const classes: PropsClasses = useStyles({} as StyleProps);
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   const textQuery = useRef<string>(props.searchQuery.textQuery);
-  // const tagsAND = useRef<Array<TS.Tag>>(props.searchQuery.tagsAND);
   const fileTypes = useRef<Array<string>>(
     props.searchQuery.fileTypes
       ? props.searchQuery.fileTypes
@@ -125,13 +85,8 @@ const SearchInline = (props: Props) => {
   const lastModified = useRef<string>(
     props.searchQuery.lastModified ? props.searchQuery.lastModified : ''
   );
-  const [saveSearchDialogOpened, setSaveSearchDialogOpened] = useState<
-    TS.SearchQuery
-  >(undefined);
   const tagTimePeriod = useRef<string>('');
   const tagTimePeriodHelper = useRef<string>(' ');
-  const [tagPlace, setTagPlace] = useState<string>(' ');
-  const [tagPlaceHelper, setTagPlaceHelper] = useState<string>(' ');
   const tagTimePeriodFrom = useRef<number | null>(
     props.searchQuery.tagTimePeriodFrom
       ? props.searchQuery.tagTimePeriodFrom
@@ -149,24 +104,6 @@ const SearchInline = (props: Props) => {
   const fileSize = useRef<string>(
     props.searchQuery.fileSize ? props.searchQuery.fileSize : ''
   );
-  const [
-    searchMenuAnchorEl,
-    setSearchMenuAnchorEl
-  ] = useState<null | HTMLElement>(null);
-
-  const [
-    isExportSearchesDialogOpened,
-    setExportSearchesDialogOpened
-  ] = useState<boolean>(false);
-
-  const ExportSearchesDialog =
-    Pro && Pro.UI ? Pro.UI.ExportSearchesDialog : false;
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [importFile, setImportFile] = useState<File>(undefined);
-
-  const ImportSearchesDialog =
-    Pro && Pro.UI ? Pro.UI.ImportSearchesDialog : false;
 
   const mainSearchField = useRef<HTMLInputElement>(null);
 
@@ -186,228 +123,6 @@ const SearchInline = (props: Props) => {
   useEffect(() => {
     textQuery.current = props.searchQuery.textQuery;
   }, [props.searchQuery]);
-
-  function handleFileInputChange(selection: any) {
-    const target = selection.currentTarget;
-    const file = target.files[0];
-    setImportFile(file);
-    target.value = null;
-  }
-
-  const handleFileTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { target } = event;
-    const { value, name } = target;
-
-    if (name === 'fileTypes') {
-      const types = JSON.parse(value);
-      fileTypes.current = types;
-      if (searchBoxing.current !== 'global') {
-        props.searchLocationIndex({
-          ...props.searchQuery,
-          fileTypes: types,
-          showUnixHiddenEntries: props.showUnixHiddenEntries
-        });
-      }
-    }
-  };
-
-  const handleFileSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { target } = event;
-    const { value, name } = target;
-
-    if (name === 'fileSize') {
-      fileSize.current = value;
-      if (searchBoxing.current !== 'global') {
-        props.searchLocationIndex({
-          ...props.searchQuery,
-          fileSize: value,
-          showUnixHiddenEntries: props.showUnixHiddenEntries
-        });
-      }
-    }
-  };
-
-  const handleLastModifiedChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const { target } = event;
-    const { value, name } = target;
-
-    if (name === 'lastModified') {
-      lastModified.current = value;
-      if (searchBoxing.current !== 'global') {
-        props.searchLocationIndex({
-          ...props.searchQuery,
-          lastModified: value,
-          showUnixHiddenEntries: props.showUnixHiddenEntries
-        });
-      }
-    }
-  };
-
-  const handleSavedSearchChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const { target } = event;
-    const { value } = target;
-
-    const savedSearch = props.searches.find(search => search.uuid === value);
-    if (!savedSearch) {
-      return true;
-    }
-    textQuery.current = savedSearch.textQuery;
-    fileTypes.current = savedSearch.fileTypes;
-    lastModified.current = savedSearch.lastModified;
-    fileSize.current = savedSearch.fileSize;
-    searchType.current = savedSearch.searchType;
-    searchBoxing.current = savedSearch.searchBoxing;
-    forceIndexing.current = savedSearch.forceIndexing;
-
-    let ttPeriod;
-    tagTimePeriodFrom.current = savedSearch.tagTimePeriodFrom;
-    if (savedSearch.tagTimePeriodFrom) {
-      ttPeriod = format(new Date(savedSearch.tagTimePeriodFrom), 'yyyyMMdd');
-    }
-
-    tagTimePeriodTo.current = savedSearch.tagTimePeriodTo;
-    if (savedSearch.tagTimePeriodTo) {
-      ttPeriod +=
-        '-' + format(new Date(savedSearch.tagTimePeriodTo), 'yyyyMMdd');
-    }
-
-    if (ttPeriod) {
-      tagTimePeriod.current = ttPeriod;
-    }
-
-    if (savedSearch.searchBoxing === 'global') {
-      props.searchAllLocations({
-        ...savedSearch,
-        showUnixHiddenEntries: props.showUnixHiddenEntries
-      });
-    } else {
-      props.searchLocationIndex({
-        ...savedSearch,
-        showUnixHiddenEntries: props.showUnixHiddenEntries
-      });
-    }
-  };
-
-  function removeTags(tagsArray, removeTagsArray) {
-    // eslint-disable-next-line react/no-access-state-in-setstate
-    return tagsArray.filter(tag =>
-      removeTagsArray.some(valueTag => valueTag.title !== tag.title)
-    );
-  }
-
-  const handleTagFieldChange = (name, value, reason) => {
-    let searchQuery;
-    if (reason === 'remove-value') {
-      if (name === 'tagsAND') {
-        searchQuery = {
-          ...props.searchQuery,
-          tagsAND: removeTags(props.searchQuery.tagsAND, value)
-        };
-      } else if (name === 'tagsNOT') {
-        searchQuery = {
-          ...props.searchQuery,
-          tagsNOT: removeTags(props.searchQuery.tagsNOT, value)
-        };
-      } else if (name === 'tagsOR') {
-        searchQuery = {
-          ...props.searchQuery,
-          tagsOR: removeTags(props.searchQuery.tagsOR, value)
-        };
-      }
-      if (!haveSearchFilters(searchQuery)) {
-        clearSearch();
-      }
-    } else {
-      // eslint-disable-next-line no-lonely-if
-      if (name === 'tagsAND') {
-        searchQuery = { ...props.searchQuery, tagsAND: value };
-      } else if (name === 'tagsNOT') {
-        searchQuery = { ...props.searchQuery, tagsNOT: value };
-      } else if (name === 'tagsOR') {
-        searchQuery = { ...props.searchQuery, tagsOR: value };
-      }
-    }
-    props.searchLocationIndex({
-      ...searchQuery,
-      showUnixHiddenEntries: props.showUnixHiddenEntries
-    });
-    // if (searchBoxing !== 'global') { // TODO disable automatic search in global mode
-    //
-    // }
-  };
-
-  function haveSearchFilters(searchQuery) {
-    return (
-      searchQuery.textQuery ||
-      (searchQuery.tagsAND !== undefined && searchQuery.tagsAND.length > 0) ||
-      (searchQuery.tagsNOT !== undefined && searchQuery.tagsNOT.length > 0) ||
-      (searchQuery.tagsOR !== undefined && searchQuery.tagsOR.length > 0) ||
-      (searchQuery.fileTypes !== undefined &&
-        searchQuery.fileTypes !== FileTypeGroups.any) ||
-      searchQuery.lastModified ||
-      searchQuery.tagTimePeriodFrom ||
-      searchQuery.tagTimePeriodTo ||
-      searchQuery.tagPlaceLat ||
-      searchQuery.tagPlaceLong ||
-      searchQuery.fileSize
-    );
-  }
-
-  const handleTimePeriodChange = event => {
-    const { target } = event;
-    const { value } = target;
-    const { fromDateTime, toDateTime } = extractTimePeriod(value);
-
-    if (toDateTime && fromDateTime) {
-      const tagTPeriodHelper =
-        'From: ' +
-        formatDateTime(fromDateTime) +
-        ' To: ' +
-        formatDateTime(toDateTime);
-      tagTimePeriodFrom.current = fromDateTime.getTime();
-      tagTimePeriodTo.current = toDateTime.getTime();
-      tagTimePeriodHelper.current = tagTPeriodHelper;
-    } else {
-      tagTimePeriodFrom.current = null;
-      tagTimePeriodTo.current = null;
-      tagTimePeriodHelper.current = ' ';
-    }
-    tagTimePeriod.current = value;
-    forceUpdate();
-  };
-
-  const handlePlaceChange = event => {
-    const { target } = event;
-    const { value } = target;
-    let lat = null;
-    let lng = null;
-    let tagPHelper;
-
-    const location = parseGeoLocation(value);
-    if (location !== undefined) {
-      ({ lat, lng } = location);
-    } else {
-      const latLon = parseLatLon(value);
-      if (latLon) {
-        ({ lat } = latLon);
-        lng = latLon.lon;
-      }
-    }
-
-    if (lat && lng) {
-      tagPHelper = 'Place at lat: ' + lat + ' long: ' + lng;
-    } else {
-      tagPHelper = '';
-    }
-    setTagPlace(value);
-    setTagPlaceLat(lat);
-    setTagPlaceLong(lng);
-    setTagPlaceHelper(tagPHelper);
-  };
 
   const mergeWithExtractedTags = (tags: Array<TS.Tag>, identifier: string) => {
     const extractedTags = parseTextQuery(identifier);
@@ -475,16 +190,10 @@ const SearchInline = (props: Props) => {
 
   const clickSearchButton = () => {
     executeSearch();
-    if (props.hideDrawer) {
-      props.hideDrawer();
-    }
   };
 
   const startSearch = event => {
     if (event.key === 'Enter' || event.keyCode === 13) {
-      if (props.hideDrawer) {
-        props.hideDrawer();
-      }
       executeSearch();
     }
   };
@@ -505,8 +214,6 @@ const SearchInline = (props: Props) => {
     lastModified.current = '';
     tagTimePeriod.current = '';
     tagTimePeriodHelper.current = ' ';
-    setTagPlace(' ');
-    setTagPlaceHelper(' ');
     tagTimePeriodFrom.current = null;
     tagTimePeriodTo.current = null;
     setTagPlaceLat(null);
@@ -516,54 +223,6 @@ const SearchInline = (props: Props) => {
     fileSize.current = '';
     props.setSearchQuery({});
     openCurrentDirectory();
-  };
-
-  const saveSearch = (isNew: boolean = true) => {
-    const tagsAND = mergeWithExtractedTags(props.searchQuery.tagsAND, '+');
-    const tagsOR = mergeWithExtractedTags(props.searchQuery.tagsOR, '?');
-    const tagsNOT = mergeWithExtractedTags(props.searchQuery.tagsNOT, '-');
-    setSaveSearchDialogOpened({
-      uuid: isNew ? undefined : props.searchQuery.uuid,
-      title: props.searchQuery.title,
-      textQuery: textQuery.current,
-      tagsAND,
-      tagsOR,
-      tagsNOT,
-      // @ts-ignore
-      searchBoxing: searchBoxing.current,
-      searchType: searchType.current,
-      fileTypes: fileTypes.current,
-      lastModified: lastModified.current,
-      fileSize: fileSize.current,
-      tagTimePeriodFrom: tagTimePeriodFrom.current,
-      tagTimePeriodTo: tagTimePeriodTo.current,
-      tagPlaceLat,
-      tagPlaceLong,
-      // tagPlaceRadius,
-      maxSearchResults: props.maxSearchResults,
-      currentDirectory: props.currentDirectory,
-      forceIndexing: forceIndexing.current
-    });
-  };
-
-  const switchSearchBoxing = (
-    event: React.MouseEvent<HTMLElement>,
-    boxing: 'location' | 'folder' | 'global'
-  ) => {
-    if (boxing !== null) {
-      searchBoxing.current = boxing;
-      forceUpdate();
-    }
-  };
-
-  const switchSearchType = (
-    event: React.MouseEvent<HTMLElement>,
-    type: 'fuzzy' | 'semistrict' | 'strict'
-  ) => {
-    if (type !== null) {
-      searchType.current = type;
-      forceUpdate();
-    }
   };
 
   const executeSearch = () => {
@@ -600,56 +259,10 @@ const SearchInline = (props: Props) => {
     }
   };
 
-  const handleSearchMenu = (event: any) => {
-    setSearchMenuAnchorEl(event.currentTarget);
-  };
+  const { indexing } = props;
 
-  const handleCloseSearchMenu = () => {
-    setSearchMenuAnchorEl(null);
-  };
-
-  const { indexing, indexedEntriesCount } = props;
-
-  const indexStatus = indexedEntriesCount
-    ? indexedEntriesCount + ' indexed entries'
-    : '';
   return (
     <div className={classes.panel} style={{ ...props.style, width: '100%' }}>
-      {/*<div className={classes.toolbar}>
-        <Typography
-          className={classNames(classes.panelTitle, classes.header)}
-          style={{ flex: 0 }}
-        >
-          {i18n.t('searchTitle')}
-        </Typography>
-        <Typography
-          variant="caption"
-          className={classes.header}
-          style={{ alignSelf: 'center', paddingLeft: 5, display: 'block' }}
-        >
-          {indexStatus}
-        </Typography>
-        <IconButton
-          style={{ marginLeft: 'auto' }}
-          data-tid="searchMenu"
-          onClick={handleSearchMenu}
-        >
-          <MoreVertIcon />
-        </IconButton>
-      </div>
-      <SearchMenu
-        anchorEl={searchMenuAnchorEl}
-        open={Boolean(searchMenuAnchorEl)}
-        onClose={handleCloseSearchMenu}
-        createLocationsIndexes={props.createLocationsIndexes}
-        openURLExternally={props.openURLExternally}
-        exportSearches={() => {
-          setExportSearchesDialogOpened(true);
-        }}
-        importSearches={() => {
-          fileInputRef.current.click();
-        }}
-      />*/}
       <div className={classes.searchArea}>
         <FormControl
           style={{ width: '50%' }}
@@ -713,7 +326,6 @@ function mapStateToProps(state) {
     currentDirectory: getDirectoryPath(state),
     indexedEntriesCount: getIndexedEntriesCount(state),
     maxSearchResults: getMaxSearchResults(state),
-    searches: getSearches(state),
     showUnixHiddenEntries: getShowUnixHiddenEntries(state)
   };
 }
@@ -727,8 +339,7 @@ function mapDispatchToProps(dispatch) {
       createLocationsIndexes: LocationIndexActions.createLocationsIndexes,
       loadDirectoryContent: AppActions.loadDirectoryContent,
       openURLExternally: AppActions.openURLExternally,
-      setSearchResults: AppActions.setSearchResults,
-      addSearches: SearchActions.addSearches
+      setSearchResults: AppActions.setSearchResults
     },
     dispatch
   );
@@ -738,9 +349,7 @@ const areEqual = (prevProp, nextProp) =>
   nextProp.indexing === prevProp.indexing &&
   nextProp.searchQuery === prevProp.searchQuery &&
   nextProp.currentDirectory === prevProp.currentDirectory &&
-  nextProp.indexedEntriesCount === prevProp.indexedEntriesCount &&
-  JSON.stringify(nextProp.searches) === JSON.stringify(prevProp.searches) &&
-  JSON.stringify(nextProp.classes) === JSON.stringify(prevProp.classes);
+  nextProp.indexedEntriesCount === prevProp.indexedEntriesCount;
 
 export default connect(
   mapStateToProps,
