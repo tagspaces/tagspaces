@@ -1,4 +1,5 @@
-/**
+/*
+/!**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
  *
@@ -14,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- */
+ *!/
 
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
@@ -177,7 +178,7 @@ const SearchAdvanced = (props: Props) => {
 
   useEffect(() => {
     textQuery.current = props.searchQuery.textQuery;
-    /*if (props.searchQuery.fileTypes) {
+    /!*if (props.searchQuery.fileTypes) {
       fileTypes.current = props.searchQuery.fileTypes;
     }
     if (props.searchQuery.searchBoxing) {
@@ -200,7 +201,7 @@ const SearchAdvanced = (props: Props) => {
     }
     if (props.searchQuery.fileSize) {
       fileSize.current = props.searchQuery.fileSize;
-    }*/
+    }*!/
   }, [props.searchQuery]);
 
   function handleFileInputChange(selection: any) {
@@ -479,11 +480,11 @@ const SearchAdvanced = (props: Props) => {
         if (trimmedPart.startsWith(identifier)) {
           const tagTitle = trimmedPart.substr(1).trim();
           extractedTags.push({ title: tagTitle });
-        } /* else if (trimmedPart.startsWith('-')) {
+        } /!* else if (trimmedPart.startsWith('-')) {
           // add to searchQuery.tagsNOT
         } else if (trimmedPart.startsWith('?')) {
           // add to searchQuery.tagsOR
-        */ else {
+        *!/ else {
           newTextQuery += trimmedPart + ' ';
         }
       });
@@ -721,7 +722,7 @@ const SearchAdvanced = (props: Props) => {
               tagMode="remove"
             />
           </ListItem>
-          {/* {AppConfig.showAdvancedSearch && (*/}
+          {/!* {AppConfig.showAdvancedSearch && (*!/}
           <ListItem disabled={indexing}>
             <ListItemText primary={i18n.t('core:fileType')} />
             <ProTooltip tooltip={i18n.t('filterByTypTooltip')}>
@@ -825,7 +826,7 @@ const SearchAdvanced = (props: Props) => {
                   {i18n.t('core:searchEbooks')}
                 </MenuItem>
               </Select>
-              {/* <FormHelperText>{i18n.t('core:searchFileTypes')}</FormHelperText> */}
+              {/!* <FormHelperText>{i18n.t('core:searchFileTypes')}</FormHelperText> *!/}
             </ProTooltip>
           </ListItem>
           <ListItem disabled={indexing || !Pro}>
@@ -1041,8 +1042,8 @@ const SearchAdvanced = (props: Props) => {
               searches={props.searches}
             />
           )}
-          {/* </>
-           )}*/}
+          {/!* </>
+           )}*!/}
         </List>
       </div>
     </div>
@@ -1090,3 +1091,4 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(React.memo(SearchAdvanced, areEqual));
+*/

@@ -60,13 +60,10 @@ export const styles = (theme: any) => {
       // overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
     },
     searchArea: {
-      width: '50%',
       paddingTop: 0,
       paddingLeft: 5,
       paddingRight: 5,
       marginTop: 0,
-      marginLeft: 'auto',
-      marginRight: 'auto',
       height: 'calc(100% - 110px)',
       maxHeight: 'calc(100% - 110px)',
       overflowX: 'hidden'
@@ -112,13 +109,8 @@ export const styles = (theme: any) => {
       display: 'flex'
     },
     formControl: {
-      minWidth: 250,
-      marginRight: theme.spacing(1)
-      /*[theme.breakpoints.down('xs')]: {
-        minWidth: '100%',
-        marginRight: theme.spacing(0),
-        marginBottom: theme.spacing(1)
-      }*/
+      width: '100%',
+      marginBottom: 10
     },
     mainActionButton: {
       marginTop: 10,

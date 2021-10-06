@@ -42,7 +42,8 @@ import {
   InputAdornment,
   OutlinedInput,
   ButtonGroup,
-  Button
+  Button,
+  Grid
 } from '@material-ui/core';
 
 type PropsClasses = Record<keyof StyleProps, string>;
@@ -263,13 +264,12 @@ const SearchInline = (props: Props) => {
 
   return (
     <div className={classes.panel} style={{ ...props.style, width: '100%' }}>
-      <div className={classes.searchArea}>
-        <FormControl
-          style={{ width: '50%' }}
-          className={classes.formControl}
-          disabled={indexing}
-        >
+      <Grid container spacing={2}>
+        <Grid item xs={10}>
           <OutlinedInput
+            style={{
+              width: '100%'
+            }}
             id="textQuery"
             name="textQuery"
             value={textQuery.current}
@@ -296,25 +296,27 @@ const SearchInline = (props: Props) => {
               </InputAdornment>
             }
           />
-        </FormControl>
-        <FormControl className={classes.formControl} style={{ width: '20%' }}>
-          <ButtonGroup style={{ justifyContent: 'center' }}>
-            <Button
-              disabled={indexing}
-              id="searchButton"
-              // variant="outlined"
-              color="primary"
-              onClick={clickSearchButton}
-              style={{ width: '98%' }}
-              size="medium"
-            >
-              {indexing
-                ? 'Search disabled while indexing'
-                : i18n.t('searchTitle')}
-            </Button>
-          </ButtonGroup>
-        </FormControl>
-      </div>
+        </Grid>
+        <Grid item xs={2}>
+          <Button
+            id="searchButton"
+            variant="outlined"
+            style={{
+              width: '100%',
+              height: '100%'
+            }}
+            disabled={indexing}
+            // variant="outlined"
+            color="primary"
+            onClick={clickSearchButton}
+            size="medium"
+          >
+            {indexing
+              ? 'Search disabled while indexing'
+              : i18n.t('searchTitle')}
+          </Button>
+        </Grid>
+      </Grid>
     </div>
   );
 };

@@ -28,6 +28,7 @@ import {
   Box,
   CircularProgress,
   IconButton,
+  Popover,
   Tooltip,
   Typography
 } from '@material-ui/core';
@@ -37,7 +38,6 @@ import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import DefaultPerspectiveIcon from '@material-ui/icons/GridOn';
 import GalleryPerspectiveIcon from '@material-ui/icons/Camera';
 import MapiquePerspectiveIcon from '@material-ui/icons/Map';
-// import KanBanPerspectiveIcon from '@material-ui/icons/Dashboard';
 import LocationMenu from './menus/LocationMenu';
 import i18n from '../services/i18n';
 import { getMaxSearchResults, getDesktopMode } from '-/reducers/settings';
@@ -63,7 +63,7 @@ import { TS } from '-/tagspaces.namespace';
 import PathBreadcrumbs from './PathBreadcrumbs';
 import { enhanceOpenedEntry } from '-/services/utils-io';
 import SearchInline from '-/components/SearchInline';
-import SearchAdvanced from '-/components/SearchAdvanced';
+import SearchPopover from '-/components/SearchPopover';
 import { getSearchQuery } from '-/reducers/location-index';
 
 const GridPerspective = React.lazy(() =>
@@ -284,11 +284,11 @@ const FolderContainer = (props: Props) => {
     boolean
   >(false);
   const [isSearchVisible, setSearchVisible] = useState<boolean>(false);
-  const [advancedSearch, setAdvancedSearch] = useState<boolean>(false);
+  // const [advancedSearch, setAdvancedSearch] = useState<boolean>(false);
+  const [anchorSearch, setAnchorSearch] = useState<HTMLButtonElement | null>(
+    null
+  );
 
-  const toggleSearch = () => {
-    setSearchVisible(!isSearchVisible);
-  };
   const switchPerspective = (perspectiveId: string) => {
     props.setCurrentDirectoryPerspective(perspectiveId);
   };
@@ -483,7 +483,7 @@ const FolderContainer = (props: Props) => {
                 marginLeft: -8,
                 maxHeight: 40
               }}
-              onClick={toggleSearch}
+              onClick={() => setSearchVisible(!isSearchVisible)}
             >
               <SearchIcon />
             </Button>
@@ -494,12 +494,29 @@ const FolderContainer = (props: Props) => {
                   id="advancedButton"
                   title={i18n.t('core:advancedSearch')}
                   data-tid="advancedSearch"
-                  onClick={() => setAdvancedSearch(!advancedSearch)}
+                  onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
+                    setAnchorSearch(event.currentTarget)
+                  }
                   // @ts-ignore
                   className={[classes.button, classes.upgradeButton].join(' ')}
                 >
                   <ArticleIcon />
                 </IconButton>
+                <Popover
+                  open={Boolean(anchorSearch)}
+                  anchorEl={anchorSearch}
+                  onClose={() => setAnchorSearch(null)}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right'
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right'
+                  }}
+                >
+                  <SearchPopover onClose={() => setAnchorSearch(null)} />
+                </Popover>
               </>
             ) : (
               <>
@@ -537,14 +554,6 @@ const FolderContainer = (props: Props) => {
               </>
             )}
           </div>
-          {isSearchVisible && advancedSearch && (
-            <SearchAdvanced
-              style={{
-                maxHeight: 200,
-                overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
-              }}
-            />
-          )}
         </div>
         <div
           className={classes.centerPanel}
