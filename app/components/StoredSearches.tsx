@@ -16,68 +16,23 @@
  *
  */
 
-import React, { useEffect, useReducer, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Box from '@material-ui/core/Box';
-import { makeStyles, Theme, withStyles } from '@material-ui/core/styles';
-import classNames from 'classnames';
-import format from 'date-fns/format';
-import Typography from '@material-ui/core/Typography';
-import MenuItem from '@material-ui/core/MenuItem';
-import Tooltip from '@material-ui/core/Tooltip';
-import PictureIcon from '@material-ui/icons/Panorama';
-import DocumentIcon from '@material-ui/icons/PictureAsPdf';
-import NoteIcon from '@material-ui/icons/Note';
-import AudioIcon from '@material-ui/icons/MusicVideo';
-import VideoIcon from '@material-ui/icons/OndemandVideo';
-import ArchiveIcon from '@material-ui/icons/Archive';
-import FolderIcon from '@material-ui/icons/FolderOpen';
-import UntaggedIcon from '@material-ui/icons/LabelOffOutlined';
-import FileIcon from '@material-ui/icons/InsertDriveFileOutlined';
-import ClearSearchIcon from '@material-ui/icons/Clear';
-import BookmarkIcon from '@material-ui/icons/BookmarkBorder';
-import BookIcon from '@material-ui/icons/LocalLibraryOutlined';
-// import PlaceIcon from '@material-ui/icons/Place';
-import DateIcon from '@material-ui/icons/DateRange';
-import Button from '@material-ui/core/Button';
-import Input from '@material-ui/core/Input';
-import OutlinedInput from '@material-ui/core/OutlinedInput';
-import TextField from '@material-ui/core/TextField';
-import InputLabel from '@material-ui/core/InputLabel';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import IconButton from '@material-ui/core/IconButton';
-import Select from '@material-ui/core/Select';
-import FormControl from '@material-ui/core/FormControl';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-import ToggleButton from '@material-ui/lab/ToggleButton';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-// import { FormControlLabel, Switch } from '@material-ui/core';
-import { Link } from '@material-ui/core';
-import TagsSelect from './TagsSelect';
-import { actions as AppActions, getDirectoryPath } from '../reducers/app';
+import { Link, IconButton, Collapse, Grid, styled } from '@material-ui/core';
+import EditIcon from '@material-ui/icons/Edit';
+import SearchIcon from '@material-ui/icons/Search';
 import {
   actions as LocationIndexActions,
-  getIndexedEntriesCount,
-  isIndexing,
   getSearchQuery
 } from '../reducers/location-index';
-import {
-  getMaxSearchResults,
-  getShowUnixHiddenEntries
-} from '-/reducers/settings';
-import { styles, StyleProps } from './SearchInline.css';
+import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import i18n from '../services/i18n';
-import { FileTypeGroups } from '-/services/search';
 import { Pro } from '../pro';
-import SearchMenu from './menus/SearchMenu';
-import { formatDateTime, extractTimePeriod } from '-/utils/dates';
-import { parseGeoLocation, parseLatLon } from '-/utils/misc';
-import { AppConfig } from '-/config';
 import { actions as SearchActions, getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
-import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
+import ArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import ArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 
 interface Props {
   style?: any;
@@ -94,6 +49,9 @@ const StoredSearches = (props: Props) => {
   const [saveSearchDialogOpened, setSaveSearchDialogOpened] = useState<
     TS.SearchQuery
   >(undefined);
+  const [storedSearchesVisible, setStoredSearchesVisible] = useState<boolean>(
+    true
+  );
 
   const editSearch = (uuid: string) => {
     const savedSearch = props.searches.find(search => search.uuid === uuid);
@@ -125,57 +83,57 @@ const StoredSearches = (props: Props) => {
   const preventDefault = (event: React.SyntheticEvent) =>
     event.preventDefault();
 
+  const LinkStyled = styled(Link)(({ theme }) => ({
+    ...theme.typography.subtitle1,
+    padding: theme.spacing(1),
+    textAlign: 'left',
+    alignSelf: 'center'
+    // color: theme.palette.text.secondary
+  }));
+
   return (
     <div style={{ ...props.style, width: '100%' }}>
-      <div>{i18n.t('core:savedSearchesTitle')}</div>
+      <Link
+        underline="none"
+        style={{ marginLeft: 10, display: 'flex' }}
+        onClick={() => setStoredSearchesVisible(!storedSearchesVisible)}
+      >
+        <span>{i18n.t('core:savedSearchesTitle')} </span>
+        {storedSearchesVisible ? <ArrowDownIcon /> : <ArrowUpIcon />}
+      </Link>
       {props.searches.length < 1 && <div>{i18n.t('noSavedSearches')}</div>}
-      <Box onClick={preventDefault}>
-        {props.searches.map(search => (
-          <div key={search.uuid}>
-            <Link
-              variant="body2"
-              onClick={() => handleSavedSearchClick(search.uuid)}
-            >
-              {search.title}
-            </Link>
-            <Button
-              variant="outlined"
-              color="secondary"
-              size="medium"
-              onClick={() => editSearch(search.uuid)}
-            >
-              {i18n.t('searchEditBtn')}
-            </Button>
-          </div>
-        ))}
-      </Box>
-
-      {/* {Pro && (
-        <ButtonGroup style={{ justifyContent: 'center' }}>
-          <Button
-            variant="outlined"
-            color="secondary"
-            size="medium"
-            style={
-              props.searchQuery.uuid ? { width: '48%' } : { width: '100%' }
-            }
-            onClick={() => saveSearch()}
-          >
-            {i18n.t('searchSaveBtn')}
-          </Button>
-          {props.searchQuery.uuid && (
-            <Button
-              variant="outlined"
-              color="secondary"
-              size="medium"
-              style={{ width: '48%' }}
-              onClick={() => saveSearch(false)}
-            >
-              {i18n.t('searchEditBtn')}
-            </Button>
-          )}
-        </ButtonGroup>
-      )} */}
+      <Collapse in={storedSearchesVisible} timeout="auto" unmountOnExit>
+        <Grid container onClick={preventDefault}>
+          {props.searches.map(search => (
+            <React.Fragment key={search.uuid}>
+              <Grid
+                item
+                xs={10}
+                style={{
+                  display: 'flex'
+                }}
+              >
+                <SearchIcon style={{ alignSelf: 'center' }} />
+                <LinkStyled
+                  variant="body2"
+                  onClick={() => handleSavedSearchClick(search.uuid)}
+                >
+                  {search.title}
+                </LinkStyled>
+              </Grid>
+              <Grid item xs={2}>
+                <IconButton
+                  aria-label={i18n.t('core:searchEditBtn')}
+                  onClick={() => editSearch(search.uuid)}
+                  data-tid="editSearchTID"
+                >
+                  <EditIcon />
+                </IconButton>
+              </Grid>
+            </React.Fragment>
+          ))}
+        </Grid>
+      </Collapse>
       {SaveSearchDialog && saveSearchDialogOpened !== undefined && (
         <SaveSearchDialog
           open={saveSearchDialogOpened !== undefined}
@@ -195,7 +153,7 @@ const StoredSearches = (props: Props) => {
               }
             }
           }}
-          // onClearSearch={() => clearSearch()}
+          onClearSearch={() => console.log('search deleted')}
           searchQuery={saveSearchDialogOpened}
         />
       )}
