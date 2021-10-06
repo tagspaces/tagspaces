@@ -40,6 +40,7 @@ import {
   FormControl,
   IconButton,
   InputAdornment,
+  TextField,
   OutlinedInput,
   ButtonGroup,
   Button,
@@ -263,53 +264,51 @@ const SearchInline = (props: Props) => {
   const { indexing } = props;
 
   return (
-    <div className={classes.panel} style={{ ...props.style, width: '100%' }}>
+    <div style={{ width: '100%' }}>
       <Grid container spacing={2}>
         <Grid item xs={10}>
-          <OutlinedInput
-            style={{
-              width: '100%'
-            }}
+          <TextField
+            fullWidth
             id="textQuery"
             name="textQuery"
             value={textQuery.current}
+            // variant="filled"
             onChange={event => {
               textQuery.current = event.target.value;
               // rerender
               forceUpdate();
             }}
+            style={{ marginTop: 0 }}
             inputRef={mainSearchField}
             margin="dense"
             autoFocus
             onKeyDown={startSearch}
             title={i18n.t('core:searchWordsWithInterval')}
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  id="clearSearchID"
-                  onClick={clearSearch}
-                  size="small"
-                  edge="end"
-                >
-                  <ClearSearchIcon />
-                </IconButton>
-              </InputAdornment>
-            }
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    id="clearSearchID"
+                    onClick={clearSearch}
+                    size="small"
+                    edge="end"
+                  >
+                    <ClearSearchIcon />
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
           />
         </Grid>
         <Grid item xs={2}>
           <Button
             id="searchButton"
             variant="outlined"
-            style={{
-              width: '100%',
-              height: '100%'
-            }}
+            size="small"
             disabled={indexing}
             // variant="outlined"
             color="primary"
             onClick={clickSearchButton}
-            size="medium"
           >
             {indexing
               ? 'Search disabled while indexing'

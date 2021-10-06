@@ -21,7 +21,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Button from '@material-ui/core/Button';
 import SearchIcon from '@material-ui/icons/Search';
-import ArticleIcon from '@material-ui/icons/ArtTrack';
+import AdvancedSearchIcon from '@material-ui/icons/Tune';
 import MenuIcon from '@material-ui/icons/MenuOpen';
 import Badge from '@material-ui/core/Badge';
 import {
@@ -163,8 +163,8 @@ const styles: any = (theme: any) => ({
     paddingLeft: 5,
     paddingRight: 5,
     paddingTop: 5,
-    display: 'flex',
-    overflowX: AppConfig.isFirefox ? 'auto' : 'overlay'
+    display: 'flex'
+    // overflowX: AppConfig.isFirefox ? 'auto' : 'overlay'
   },
   topPanel: {
     // height: 50,
@@ -483,6 +483,7 @@ const FolderContainer = (props: Props) => {
                 marginLeft: -8,
                 maxHeight: 40
               }}
+              size="small"
               onClick={() => setSearchVisible(!isSearchVisible)}
             >
               <SearchIcon />
@@ -490,7 +491,7 @@ const FolderContainer = (props: Props) => {
             {isSearchVisible ? (
               <>
                 <SearchInline />
-                <IconButton
+                <Button
                   id="advancedButton"
                   title={i18n.t('core:advancedSearch')}
                   data-tid="advancedSearch"
@@ -500,8 +501,8 @@ const FolderContainer = (props: Props) => {
                   // @ts-ignore
                   className={[classes.button, classes.upgradeButton].join(' ')}
                 >
-                  <ArticleIcon />
-                </IconButton>
+                  <AdvancedSearchIcon />
+                </Button>
                 <Popover
                   open={Boolean(anchorSearch)}
                   anchorEl={anchorSearch}
@@ -509,6 +510,9 @@ const FolderContainer = (props: Props) => {
                   anchorOrigin={{
                     vertical: 'bottom',
                     horizontal: 'right'
+                  }}
+                  style={{
+                    marginLeft: -8
                   }}
                   transformOrigin={{
                     vertical: 'top',
