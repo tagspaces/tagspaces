@@ -45,7 +45,6 @@ import ProTeaser from '../assets/images/spacerocket_undraw.svg';
 import { Pro } from '-/pro';
 import CustomLogo from './CustomLogo';
 import TagLibrary from '../components/TagLibrary';
-import Search from '../components/Search';
 import LocationManager from '../components/LocationManager';
 import HelpFeedbackPanel from '../components/HelpFeedbackPanel';
 import i18n from '../services/i18n';
@@ -62,6 +61,7 @@ import {
 import LoadingLazy from './LoadingLazy';
 import { actions as SettingsActions, isFirstRun } from '../reducers/settings';
 import Links from '-/links';
+import StoredSearches from '-/components/StoredSearches';
 
 const styles: any = (theme: any) => ({
   selectedButton: {
@@ -206,7 +206,7 @@ const MobileNavigation = (props: Props) => {
           <LocationManager reduceHeightBy={180} />
         )}
         {props.isTagLibraryPanelOpened && <TagLibrary reduceHeightBy={180} />}
-        {props.isSearchPanelOpened && <Search />}
+        {props.isSearchPanelOpened && <StoredSearches />}
         {props.isHelpFeedbackPanelOpened && (
           <HelpFeedbackPanel
             reduceHeightBy={180}
