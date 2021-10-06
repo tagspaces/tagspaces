@@ -54,7 +54,6 @@ import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 // import { FormControlLabel, Switch } from '@material-ui/core';
 import TagsSelect from './TagsSelect';
-import CustomLogo from './CustomLogo';
 import { actions as AppActions, getDirectoryPath } from '../reducers/app';
 import {
   actions as LocationIndexActions,
@@ -607,7 +606,6 @@ const Search = (props: Props) => {
     : '';
   return (
     <div className={classes.panel} style={props.style}>
-      <CustomLogo />
       <div className={classes.toolbar}>
         <Typography
           className={classNames(classes.panelTitle, classes.header)}

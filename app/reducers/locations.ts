@@ -157,7 +157,7 @@ export const actions = {
                   type: locationType.TYPE_LOCAL,
                   name: i18n.t(key),
                   path: devicePaths[key],
-                  isDefault: AppConfig.isWeb && devicePaths[key] === '/files/', // Used for the web ts demo
+                  isDefault: false, // AppConfig.isWeb && devicePaths[key] === '/files/', // Used for the web ts demo
                   isReadOnly: false,
                   disableIndexing: false
                 },

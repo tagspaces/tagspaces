@@ -620,14 +620,21 @@ app.on('ready', async () => {
     }
   });
 
-  ipcMain.handle('get-device-paths', () => ({
-    desktopFolder: app.getPath('desktop'),
-    documentsFolder: app.getPath('documents'),
-    downloadsFolder: app.getPath('downloads'),
-    musicFolder: app.getPath('music'),
-    picturesFolder: app.getPath('pictures'),
-    videosFolder: app.getPath('videos')
-  }));
+  ipcMain.handle('get-device-paths', () => {
+    const paths: any = {
+      desktopFolder: app.getPath('desktop'),
+      documentsFolder: app.getPath('documents'),
+      downloadsFolder: app.getPath('downloads'),
+      musicFolder: app.getPath('music'),
+      picturesFolder: app.getPath('pictures'),
+      videosFolder: app.getPath('videos')
+    };
+    if (isMac) {
+      paths.iCloudFolder =
+        app.getPath('home') + '/Library/Mobile Documents/com~apple~CloudDocs';
+    }
+    return paths;
+  });
 
   ipcMain.on('get-user-home-path', event => {
     event.returnValue = app.getPath('home');
@@ -661,7 +668,7 @@ app.on('ready', async () => {
     return false;
   });
 
-  // /// end electron-io
+  ///// end electron-io
 
   /* ipcMain.on('setSplashVisibility', (event, arg) => {
     // worker window needed to be visible for the PDF tmb generation

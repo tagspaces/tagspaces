@@ -70,7 +70,7 @@ const TargetFileBox = (props: Props) => {
       undefined
     );
   return connectDropTarget(
-    <div>
+    <div style={{ height: '100%' }}>
       {dragContent}
       {children}
     </div>

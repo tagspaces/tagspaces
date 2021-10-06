@@ -62,7 +62,7 @@ const actions = {
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
     const { settings, taglibrary } = getState();
     let defaultTagLocation;
-    if (settings.geoTaggingFormat === 'MGRS') {
+    if (settings.geoTaggingFormat.toLowerCase() === 'mgrs') {
       defaultTagLocation = mgrs.forward([0, 51.48]);
     } else {
       defaultTagLocation = OpenLocationCode.encode(51.48, 0, undefined);
@@ -202,8 +202,7 @@ const actions = {
               if (openedFiles.find(obj => obj.path === path)) {
                 dispatch(
                   AppActions.updateOpenedFile(path, {
-                    tags: newTags,
-                    changed: true
+                    tags: newTags
                   })
                 );
               }
@@ -414,7 +413,7 @@ const actions = {
             }
             return true;
           });
-          if (tag.position !== undefined) {
+          if (tag.position !== undefined && tagFoundPosition > -1) {
             // move tag
             const element = fsEntryMeta.tags[tagFoundPosition];
             fsEntryMeta.tags.splice(tagFoundPosition, 1);
@@ -433,8 +432,7 @@ const actions = {
             .then(() => {
               dispatch(
                 AppActions.updateOpenedFile(path, {
-                  tags: fsEntryMeta.tags,
-                  changed: true
+                  tags: fsEntryMeta.tags
                 })
               );
               // TODO rethink this updateCurrentDirEntry and not need for KanBan
@@ -468,8 +466,7 @@ const actions = {
             .then(() => {
               dispatch(
                 AppActions.updateOpenedFile(path, {
-                  tags: fsEntryMeta.tags,
-                  changed: true
+                  tags: fsEntryMeta.tags
                 })
               );
               // TODO rethink this updateCurrentDirEntry and not need for KanBan
@@ -559,8 +556,7 @@ const actions = {
             if (openedFiles.find(obj => obj.path === path)) {
               dispatch(
                 AppActions.updateOpenedFile(path, {
-                  tags: newTags,
-                  changed: true
+                  tags: newTags
                 })
               );
             }
@@ -644,9 +640,7 @@ const actions = {
           .then(() => {
             // TODO rethink this updateCurrentDirEntry and not need for KanBan
             dispatch(AppActions.reflectUpdateSidecarTags(path, []));
-            dispatch(
-              AppActions.updateOpenedFile(path, { tags: [], changed: true })
-            );
+            dispatch(AppActions.updateOpenedFile(path, { tags: [] }));
             removeAllTagsFromFilename();
             return true;
           })

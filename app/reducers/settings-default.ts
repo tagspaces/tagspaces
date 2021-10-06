@@ -165,9 +165,8 @@ export default {
   enableGlobalKeyboardShortcuts: true,
   zoomFactor: 1,
   lastPublishedVersion: '',
-  entryPropertiesSplitSize: 103,
-  leftVerticalSplitSize: 350,
-  mainVerticalSplitSize: '50%',
+  entrySplitSize: '45%', // AppConfig.isElectron ? '560px' : '360px',
+  mainVSplitSize: '50%',
   supportedGeoTagging: ['pluscodes', 'mgrs'],
   supportedThemes: ['light', 'dark'],
   supportedLanguages: [
@@ -402,13 +401,13 @@ export default {
     },
     {
       type: 'md',
-      viewer: '@tagspaces/extensions/md-viewer',
-      editor: '@tagspaces/extensions/text-editor',
+      viewer: '@tagspaces/extensions/md-editor/build',
+      editor: '@tagspaces/extensions/md-editor/build',
       color: '#beefed'
     },
     {
       type: 'mdx',
-      viewer: '@tagspaces/extensions/md-viewer',
+      viewer: '@tagspaces/extensions/md-editor/build',
       editor: '@tagspaces/extensions/text-editor',
       color: '#beefed'
     },

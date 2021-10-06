@@ -28,7 +28,12 @@ import {
   getKeyBindingObject,
   isDesktopMode
 } from '-/reducers/settings';
-import { locationType, sortByCriteria } from '-/utils/misc';
+import {
+  isObj,
+  isVisibleOnScreen,
+  locationType,
+  sortByCriteria
+} from '-/utils/misc';
 import styles from './styles.css';
 import FileMenu from '-/components/menus/FileMenu';
 import DirectoryMenu from '-/components/menus/DirectoryMenu';
@@ -182,6 +187,10 @@ const GridPerspective = (props: Props) => {
   );
 
   useEffect(() => {
+    makeFirstSelectedEntryVisible();
+  }, [props.selectedEntries]);
+
+  useEffect(() => {
     const settingsObj = {
       showDirectories,
       showTags,
@@ -229,7 +238,7 @@ const GridPerspective = (props: Props) => {
     [props.directoryContent, sortBy, orderBy]
   );
 
-  /* const makeFirstSelectedEntryVisible = () => {
+  const makeFirstSelectedEntryVisible = () => {
     const { selectedEntries } = props;
     if (selectedEntries && selectedEntries.length > 0) {
       const firstSelectedElement = document.querySelector(
@@ -243,7 +252,7 @@ const GridPerspective = (props: Props) => {
         firstSelectedElement.scrollIntoView(false);
       }
     }
-  }; */
+  };
 
   const handleLayoutSwitch = (type: string) => {
     setLayoutType(type);

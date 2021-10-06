@@ -100,7 +100,7 @@ const WelcomePanel = (props: Props) => {
         >
           <img src={WelcomeLogo} alt="Organize your files" />
         </div>
-        <ListItem
+        {/* <ListItem
           button
           onClick={() => {
             const button = document.getElementById(
@@ -112,7 +112,7 @@ const WelcomePanel = (props: Props) => {
           <Button startIcon={<LocationIcon />}>
             {i18n.t('core:chooseLocation')}
           </Button>
-        </ListItem>
+        </ListItem> */}
         <ListItem
           button
           onClick={() =>
