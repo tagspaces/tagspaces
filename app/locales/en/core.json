@@ -224,7 +224,7 @@
   "next": "Next",
   "prev": "Back",
   "done": "Done",
-  "searchWordsWithInterval": "Search words separated by space",
+  "searchWordsWithInterval": "Your search query",
   "tagsWithInterval": "Tags separated by spaces",
   "searchTags": "Tags",
   "searchFileTypes": "File Type (e.g. documents, pictures, ...)",

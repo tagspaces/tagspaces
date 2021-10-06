@@ -14,7 +14,7 @@
     "build-e2e": "node scripts/setup-tests.js && cross-env E2E_BUILD=true NODE_ENV=test yarn build",
     "build-e2e-web": "node scripts/setup-tests.js && cross-env E2E_BUILD=true NODE_ENV=test && yarn prepare-web-pro && yarn build-web",
     "build-e2e-dev": "rimraf app/dist && yarn version-meta && yarn prepare-node && cross-env E2E_BUILD=true concurrently \"yarn build-main\" \"yarn build-renderer\" \"yarn build-web-dev\"",
-    "build-main2": "webpack --config ./configs/webpack.config.main.prod.babel.js --colors",
+    "build-main": "webpack --config ./configs/webpack.config.main.prod.babel.js --colors",
     "build-renderer": "webpack --config ./configs/webpack.config.renderer.prod.babel.js --colors",
     "build-worker": "webpack --config ./configs/webpack.config.worker.prod.babel.js --colors",
     "build-worker-dev": "webpack --config ./configs/webpack.config.worker.dev.js --colors",

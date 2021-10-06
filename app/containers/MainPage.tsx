@@ -85,6 +85,7 @@ import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { TS } from '-/tagspaces.namespace';
 import PageNotification from '-/containers/PageNotification';
 import listen from '-/containers/RendererListener';
+import { actions as LocationIndexActions } from '-/reducers/location-index';
 
 const drawerWidth = 320;
 const body = document.getElementsByTagName('body')[0];
@@ -199,6 +200,7 @@ interface Props {
   deleteFile: (path: string) => void;
   deleteDirectory: (path: string) => void;
   user: CognitoUserInterface;
+  setSearchQuery: (searchQuery: TS.SearchQuery) => void;
 }
 
 const CreateEditLocationDialog = React.lazy(() =>
@@ -400,7 +402,7 @@ const MainPage = (props: Props) => {
     toggleShowHiddenEntries: props.toggleShowUnixHiddenEntries,
     showFolderNavigator: props.openLocationManagerPanel,
     showTagLibrary: props.openTagLibraryPanel,
-    openSearch: props.openSearchPanel,
+    openSearch: () => props.setSearchQuery({ textQuery: '' }), // props.openSearchPanel,
     showHelp: props.openHelpFeedbackPanel
   };
 
@@ -766,7 +768,8 @@ function mapDispatchToProps(dispatch) {
       setFirstRun: SettingsActions.setFirstRun,
       uploadFilesAPI: IOActions.uploadFilesAPI,
       deleteDirectory: AppActions.deleteDirectory,
-      deleteFile: AppActions.deleteFile
+      deleteFile: AppActions.deleteFile,
+      setSearchQuery: LocationIndexActions.setSearchQuery
     },
     dispatch
   );

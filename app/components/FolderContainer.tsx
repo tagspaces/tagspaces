@@ -21,12 +21,14 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Button from '@material-ui/core/Button';
 import SearchIcon from '@material-ui/icons/Search';
+import AdvancedSearchIcon from '@material-ui/icons/Tune';
 import MenuIcon from '@material-ui/icons/MenuOpen';
 import Badge from '@material-ui/core/Badge';
 import {
   Box,
   CircularProgress,
   IconButton,
+  Popover,
   Tooltip,
   Typography
 } from '@material-ui/core';
@@ -36,7 +38,6 @@ import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import DefaultPerspectiveIcon from '@material-ui/icons/GridOn';
 import GalleryPerspectiveIcon from '@material-ui/icons/Camera';
 import MapiquePerspectiveIcon from '@material-ui/icons/Map';
-// import KanBanPerspectiveIcon from '@material-ui/icons/Dashboard';
 import LocationMenu from './menus/LocationMenu';
 import i18n from '../services/i18n';
 import { getMaxSearchResults, getDesktopMode } from '-/reducers/settings';
@@ -61,6 +62,9 @@ import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
 import { TS } from '-/tagspaces.namespace';
 import PathBreadcrumbs from './PathBreadcrumbs';
 import { enhanceOpenedEntry } from '-/services/utils-io';
+import SearchInline from '-/components/SearchInline';
+import SearchPopover from '-/components/SearchPopover';
+import { getSearchQuery } from '-/reducers/location-index';
 
 const GridPerspective = React.lazy(() =>
   import(
@@ -159,11 +163,11 @@ const styles: any = (theme: any) => ({
     paddingLeft: 5,
     paddingRight: 5,
     paddingTop: 5,
-    display: 'flex',
-    overflowX: AppConfig.isFirefox ? 'auto' : 'overlay'
+    display: 'flex'
+    // overflowX: AppConfig.isFirefox ? 'auto' : 'overlay'
   },
   topPanel: {
-    height: 50,
+    // height: 50,
     width: '100%',
     backgroundColor: theme.palette.background.default
   },
@@ -239,6 +243,7 @@ interface Props {
   selectedEntries: Array<TS.FileSystemEntry>;
   toggleUploadDialog: () => void;
   progress?: Array<any>;
+  searchQuery: TS.SearchQuery;
 }
 
 const FolderContainer = (props: Props) => {
@@ -267,9 +272,22 @@ const FolderContainer = (props: Props) => {
     }
   }, [props.openedFiles]);
 
+  useEffect(() => {
+    if (!props.searchQuery || Object.keys(props.searchQuery).length === 0) {
+      setSearchVisible(false);
+    } else {
+      setSearchVisible(true);
+    }
+  }, [props.searchQuery]);
+
   const [isRenameEntryDialogOpened, setIsRenameEntryDialogOpened] = useState<
     boolean
   >(false);
+  const [isSearchVisible, setSearchVisible] = useState<boolean>(false);
+  // const [advancedSearch, setAdvancedSearch] = useState<boolean>(false);
+  const [anchorSearch, setAnchorSearch] = useState<HTMLButtonElement | null>(
+    null
+  );
 
   const switchPerspective = (perspectiveId: string) => {
     props.setCurrentDirectoryPerspective(perspectiveId);
@@ -465,39 +483,80 @@ const FolderContainer = (props: Props) => {
                 marginLeft: -8,
                 maxHeight: 40
               }}
-              onClick={toggleDrawer}
+              size="small"
+              onClick={() => setSearchVisible(!isSearchVisible)}
             >
               <SearchIcon />
             </Button>
-            <div className={classes.flexMiddle} />
-            {props.progress && props.progress.length > 0 && (
-              <IconButton
-                id="progressButton"
-                title={i18n.t('core:progress')}
-                data-tid="uploadProgress"
-                onClick={() => props.toggleUploadDialog()}
-                // @ts-ignore
-                className={[classes.button, classes.upgradeButton].join(' ')}
-              >
-                <CircularProgressWithLabel value={getProgressValue()} />
-              </IconButton>
+            {isSearchVisible ? (
+              <>
+                <SearchInline />
+                <Button
+                  id="advancedButton"
+                  title={i18n.t('core:advancedSearch')}
+                  data-tid="advancedSearch"
+                  onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
+                    setAnchorSearch(event.currentTarget)
+                  }
+                  // @ts-ignore
+                  className={[classes.button, classes.upgradeButton].join(' ')}
+                >
+                  <AdvancedSearchIcon />
+                </Button>
+                <Popover
+                  open={Boolean(anchorSearch)}
+                  anchorEl={anchorSearch}
+                  onClose={() => setAnchorSearch(null)}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right'
+                  }}
+                  style={{
+                    marginLeft: -8
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right'
+                  }}
+                >
+                  <SearchPopover onClose={() => setAnchorSearch(null)} />
+                </Popover>
+              </>
+            ) : (
+              <>
+                <div className={classes.flexMiddle} />
+                {props.progress && props.progress.length > 0 && (
+                  <IconButton
+                    id="progressButton"
+                    title={i18n.t('core:progress')}
+                    data-tid="uploadProgress"
+                    onClick={() => props.toggleUploadDialog()}
+                    // @ts-ignore
+                    className={[classes.button, classes.upgradeButton].join(
+                      ' '
+                    )}
+                  >
+                    <CircularProgressWithLabel value={getProgressValue()} />
+                  </IconButton>
+                )}
+                <LocationMenu />
+                <PathBreadcrumbs
+                  currentDirectoryPath={currentDirectoryPath}
+                  currentLocationPath={currentLocationPath}
+                  loadDirectoryContent={loadDirectoryContent}
+                  switchPerspective={switchPerspective}
+                  setSelectedEntries={setSelectedEntries}
+                  openDirectory={openDirectory}
+                  reflectCreateEntry={reflectCreateEntry}
+                  openFsEntry={openFsEntry}
+                  isReadOnlyMode={props.isReadOnlyMode}
+                  isDesktopMode={isDesktopMode}
+                  openRenameDirectoryDialog={() =>
+                    setIsRenameEntryDialogOpened(true)
+                  }
+                />
+              </>
             )}
-            <LocationMenu />
-            <PathBreadcrumbs
-              currentDirectoryPath={currentDirectoryPath}
-              currentLocationPath={currentLocationPath}
-              loadDirectoryContent={loadDirectoryContent}
-              switchPerspective={switchPerspective}
-              setSelectedEntries={setSelectedEntries}
-              openDirectory={openDirectory}
-              reflectCreateEntry={reflectCreateEntry}
-              openFsEntry={openFsEntry}
-              isReadOnlyMode={props.isReadOnlyMode}
-              isDesktopMode={isDesktopMode}
-              openRenameDirectoryDialog={() =>
-                setIsRenameEntryDialogOpened(true)
-              }
-            />
           </div>
         </div>
         <div
@@ -579,7 +638,8 @@ function mapStateToProps(state) {
     maxSearchResults: getMaxSearchResults(state),
     isDesktopMode: getDesktopMode(state),
     isReadOnlyMode: isReadOnlyMode(state),
-    progress: getProgress(state)
+    progress: getProgress(state),
+    searchQuery: getSearchQuery(state)
   };
 }
 
@@ -623,7 +683,8 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
     JSON.stringify(prevProp.openedFiles) &&
   JSON.stringify(nextProp.theme) === JSON.stringify(prevProp.theme) &&
   nextProp.windowWidth === prevProp.windowWidth &&
-  nextProp.windowHeight === prevProp.windowHeight;
+  nextProp.windowHeight === prevProp.windowHeight &&
+  nextProp.searchQuery === prevProp.searchQuery;
 
 export default connect(
   mapStateToProps,

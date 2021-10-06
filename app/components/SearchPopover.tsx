@@ -1,5 +1,4 @@
-/*
-/!**
+/**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
  *
@@ -15,12 +14,12 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- *!/
+ */
 
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import format from 'date-fns/format';
 import Typography from '@material-ui/core/Typography';
@@ -35,14 +34,11 @@ import ArchiveIcon from '@material-ui/icons/Archive';
 import FolderIcon from '@material-ui/icons/FolderOpen';
 import UntaggedIcon from '@material-ui/icons/LabelOffOutlined';
 import FileIcon from '@material-ui/icons/InsertDriveFileOutlined';
-import ClearSearchIcon from '@material-ui/icons/Clear';
 import BookmarkIcon from '@material-ui/icons/BookmarkBorder';
 import BookIcon from '@material-ui/icons/LocalLibraryOutlined';
-// import PlaceIcon from '@material-ui/icons/Place';
 import DateIcon from '@material-ui/icons/DateRange';
 import Button from '@material-ui/core/Button';
 import Input from '@material-ui/core/Input';
-import OutlinedInput from '@material-ui/core/OutlinedInput';
 import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -53,7 +49,6 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-// import { FormControlLabel, Switch } from '@material-ui/core';
 import TagsSelect from './TagsSelect';
 import { actions as AppActions, getDirectoryPath } from '../reducers/app';
 import {
@@ -66,7 +61,7 @@ import {
   getMaxSearchResults,
   getShowUnixHiddenEntries
 } from '-/reducers/settings';
-import styles from './SidePanels.css';
+import { styles, StyleProps } from './SearchInline.css';
 import i18n from '../services/i18n';
 import { FileTypeGroups } from '-/services/search';
 import { Pro } from '../pro';
@@ -80,8 +75,9 @@ import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
 
+type PropsClasses = Record<keyof StyleProps, string>;
+
 interface Props {
-  classes: any;
   style?: any;
   theme?: any;
   searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
@@ -100,9 +96,14 @@ interface Props {
   searches: Array<TS.SearchQuery>;
   addSearches: (searches: Array<TS.SearchQuery>) => void;
   showUnixHiddenEntries: boolean;
+  openSearchPanel: () => void;
+  onClose: () => void;
 }
 
-const Search = (props: Props) => {
+const useStyles = makeStyles<Theme, StyleProps>(styles);
+
+const SearchPopover = (props: Props) => {
+  const classes: PropsClasses = useStyles({} as StyleProps);
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   const textQuery = useRef<string>(props.searchQuery.textQuery);
   // const tagsAND = useRef<Array<TS.Tag>>(props.searchQuery.tagsAND);
@@ -164,20 +165,33 @@ const Search = (props: Props) => {
   const ImportSearchesDialog =
     Pro && Pro.UI ? Pro.UI.ImportSearchesDialog : false;
 
-  const mainSearchField = useRef<HTMLInputElement>(null);
-
   useEffect(() => {
-    // https://github.com/mui-org/material-ui/issues/1594
-    const timeout = setTimeout(() => {
-      if (mainSearchField && mainSearchField.current) {
-        mainSearchField.current.focus();
-      }
-    }, 100);
-
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, []);
+    textQuery.current = props.searchQuery.textQuery;
+    /*if (props.searchQuery.fileTypes) {
+      fileTypes.current = props.searchQuery.fileTypes;
+    }
+    if (props.searchQuery.searchBoxing) {
+      searchBoxing.current = props.searchQuery.searchBoxing;
+    }
+    if (props.searchQuery.searchType) {
+      searchType.current = props.searchQuery.searchType;
+    }
+    if (props.searchQuery.lastModified) {
+      lastModified.current = props.searchQuery.lastModified;
+    }
+    if (props.searchQuery.tagTimePeriodFrom) {
+      tagTimePeriodFrom.current = props.searchQuery.tagTimePeriodFrom;
+    }
+    if (props.searchQuery.tagTimePeriodTo) {
+      tagTimePeriodTo.current = props.searchQuery.tagTimePeriodTo;
+    }
+    if (props.searchQuery.forceIndexing) {
+      forceIndexing.current = props.searchQuery.forceIndexing;
+    }
+    if (props.searchQuery.fileSize) {
+      fileSize.current = props.searchQuery.fileSize;
+    }*/
+  }, [props.searchQuery]);
 
   function handleFileInputChange(selection: any) {
     const target = selection.currentTarget;
@@ -434,6 +448,9 @@ const Search = (props: Props) => {
 
   const parseTextQuery = (identifier: string) => {
     const extractedTags = [];
+    if (!textQuery.current) {
+      return extractedTags;
+    }
     let query = textQuery.current;
     if (query && query.length > 0) {
       query = query
@@ -452,24 +469,17 @@ const Search = (props: Props) => {
         if (trimmedPart.startsWith(identifier)) {
           const tagTitle = trimmedPart.substr(1).trim();
           extractedTags.push({ title: tagTitle });
-        } /!* else if (trimmedPart.startsWith('-')) {
+        } /* else if (trimmedPart.startsWith('-')) {
           // add to searchQuery.tagsNOT
         } else if (trimmedPart.startsWith('?')) {
           // add to searchQuery.tagsOR
-        *!/ else {
+        */ else {
           newTextQuery += trimmedPart + ' ';
         }
       });
     }
     textQuery.current = newTextQuery.trim();
     return extractedTags;
-  };
-
-  const clickSearchButton = () => {
-    executeSearch();
-    if (props.hideDrawer) {
-      props.hideDrawer();
-    }
   };
 
   const startSearch = event => {
@@ -508,6 +518,7 @@ const Search = (props: Props) => {
     fileSize.current = '';
     props.setSearchQuery({});
     openCurrentDirectory();
+    props.onClose();
   };
 
   const saveSearch = (isNew: boolean = true) => {
@@ -600,13 +611,13 @@ const Search = (props: Props) => {
     setSearchMenuAnchorEl(null);
   };
 
-  const { classes, indexing, indexedEntriesCount } = props;
+  const { indexing, indexedEntriesCount } = props;
 
   const indexStatus = indexedEntriesCount
     ? indexedEntriesCount + ' indexed entries'
     : '';
   return (
-    <div className={classes.panel} style={props.style}>
+    <div style={{ maxWidth: 400 }}>
       <div className={classes.toolbar}>
         <Typography
           className={classNames(classes.panelTitle, classes.header)}
@@ -643,39 +654,6 @@ const Search = (props: Props) => {
         }}
       />
       <div className={classes.searchArea}>
-        <FormControl
-          className={classes.formControl}
-          style={{ marginTop: 10, width: '98%' }}
-          disabled={indexing}
-        >
-          <OutlinedInput
-            id="textQuery"
-            name="textQuery"
-            value={textQuery.current}
-            onChange={event => {
-              textQuery.current = event.target.value;
-              // rerender
-              forceUpdate();
-            }}
-            inputRef={mainSearchField}
-            margin="dense"
-            autoFocus
-            onKeyDown={startSearch}
-            title={i18n.t('core:searchWordsWithInterval')}
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  id="clearSearchID"
-                  onClick={clearSearch}
-                  size="small"
-                  edge="end"
-                >
-                  <ClearSearchIcon />
-                </IconButton>
-              </InputAdornment>
-            }
-          />
-        </FormControl>
         <FormControl className={classes.formControl} disabled={indexing}>
           <ToggleButtonGroup
             onChange={switchSearchBoxing}
@@ -752,42 +730,6 @@ const Search = (props: Props) => {
               </Tooltip>
             </ToggleButton>
           </ToggleButtonGroup>
-        </FormControl>
-        {/!* <FormControlLabel
-          title={i18n.t('core:enableIndexingBySearch')}
-          control={
-            <Switch
-              data-tid="forceIndexingTID"
-              checked={forceIndexing}
-              onChange={() => setForceIndexing(!forceIndexing)}
-              name="forceIndexing"
-            />
-          }
-          label={
-            <Typography
-              style={{ padding: 15, color: props.theme.palette.text.primary }}
-            >
-              {i18n.t('forceReindexing')}
-            </Typography>
-          }
-        /> *!/}
-        <br />
-        <FormControl className={classes.formControl}>
-          <ButtonGroup style={{ justifyContent: 'center' }}>
-            <Button
-              disabled={indexing}
-              id="searchButton"
-              // variant="outlined"
-              color="primary"
-              onClick={clickSearchButton}
-              style={{ width: '98%' }}
-              size="medium"
-            >
-              {indexing
-                ? 'Search disabled while indexing'
-                : i18n.t('searchTitle')}
-            </Button>
-          </ButtonGroup>
         </FormControl>
         <FormControl className={classes.formControl} disabled={indexing}>
           <TagsSelect
@@ -929,7 +871,7 @@ const Search = (props: Props) => {
                     {i18n.t('core:searchEbooks')}
                   </MenuItem>
                 </Select>
-                {/!* <FormHelperText>{i18n.t('core:searchFileTypes')}</FormHelperText> *!/}
+                {/* <FormHelperText>{i18n.t('core:searchFileTypes')}</FormHelperText> */}
               </ProTooltip>
             </FormControl>
             <FormControl
@@ -1042,7 +984,7 @@ const Search = (props: Props) => {
                   }}
                 />
               </ProTooltip>
-              {/!* <TextField
+              {/* <TextField
                 id="tagPlace"
                 label={i18n.t('GPS coordinates or plus code')}
                 value={tagPlace}
@@ -1063,7 +1005,7 @@ const Search = (props: Props) => {
                     </InputAdornment>
                   )
                 }}
-              /> *!/}
+              /> */}
             </FormControl>
             <FormControl
               className={classes.formControl}
@@ -1092,43 +1034,37 @@ const Search = (props: Props) => {
                 </Select>
               </ProTooltip>
             </FormControl>
-            {Pro && (
-              <FormControl className={classes.formControl}>
-                <ButtonGroup style={{ justifyContent: 'center' }}>
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    size="medium"
-                    style={
-                      props.searchQuery.uuid
-                        ? { width: '48%' }
-                        : { width: '100%' }
-                    }
-                    onClick={() => saveSearch()}
-                  >
-                    {i18n.t('searchSaveBtn')}
-                  </Button>
-                  {props.searchQuery.uuid && (
+            <FormControl className={classes.formControl}>
+              <ButtonGroup fullWidth style={{ justifyContent: 'center' }}>
+                {Pro && (
+                  <>
                     <Button
                       variant="outlined"
                       color="secondary"
                       size="medium"
-                      style={{ width: '48%' }}
-                      onClick={() => saveSearch(false)}
+                      style={{ flex: 1 }}
+                      onClick={() => saveSearch()}
                     >
-                      {i18n.t('searchEditBtn')}
+                      {i18n.t('searchSaveBtn')}
                     </Button>
-                  )}
-                </ButtonGroup>
-              </FormControl>
-            )}
-            <FormControl className={classes.formControl}>
-              <ButtonGroup style={{ justifyContent: 'center' }}>
+                    {props.searchQuery.uuid && (
+                      <Button
+                        variant="outlined"
+                        color="secondary"
+                        size="medium"
+                        style={{ flex: 1 }}
+                        onClick={() => saveSearch(false)}
+                      >
+                        {i18n.t('searchEditBtn')}
+                      </Button>
+                    )}
+                  </>
+                )}
                 <Button
                   variant="outlined"
                   color="secondary"
                   size="medium"
-                  style={{ width: '100%' }}
+                  style={{ flex: 1 }}
                   onClick={clearSearch}
                   id="resetSearchButton"
                 >
@@ -1136,6 +1072,7 @@ const Search = (props: Props) => {
                 </Button>
               </ButtonGroup>
             </FormControl>
+
             {SaveSearchDialog && saveSearchDialogOpened !== undefined && (
               <SaveSearchDialog
                 open={saveSearchDialogOpened !== undefined}
@@ -1211,7 +1148,8 @@ function mapDispatchToProps(dispatch) {
       loadDirectoryContent: AppActions.loadDirectoryContent,
       openURLExternally: AppActions.openURLExternally,
       setSearchResults: AppActions.setSearchResults,
-      addSearches: SearchActions.addSearches
+      addSearches: SearchActions.addSearches,
+      openSearchPanel: AppActions.openSearchPanel
     },
     dispatch
   );
@@ -1228,5 +1166,4 @@ const areEqual = (prevProp, nextProp) =>
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles, { withTheme: true })(React.memo(Search, areEqual)));
-*/
+)(React.memo(SearchPopover, areEqual));
