@@ -1035,18 +1035,14 @@ const SearchPopover = (props: Props) => {
               </ProTooltip>
             </FormControl>
             <FormControl className={classes.formControl}>
-              <ButtonGroup style={{ justifyContent: 'center' }}>
+              <ButtonGroup fullWidth style={{ justifyContent: 'center' }}>
                 {Pro && (
                   <>
                     <Button
                       variant="outlined"
                       color="secondary"
                       size="medium"
-                      style={
-                        props.searchQuery.uuid
-                          ? { width: '48%' }
-                          : { width: '100%' }
-                      }
+                      style={{ flex: 1 }}
                       onClick={() => saveSearch()}
                     >
                       {i18n.t('searchSaveBtn')}
@@ -1056,7 +1052,7 @@ const SearchPopover = (props: Props) => {
                         variant="outlined"
                         color="secondary"
                         size="medium"
-                        style={{ width: '48%' }}
+                        style={{ flex: 1 }}
                         onClick={() => saveSearch(false)}
                       >
                         {i18n.t('searchEditBtn')}
@@ -1068,7 +1064,7 @@ const SearchPopover = (props: Props) => {
                   variant="outlined"
                   color="secondary"
                   size="medium"
-                  style={{ width: '100%' }}
+                  style={{ flex: 1 }}
                   onClick={clearSearch}
                   id="resetSearchButton"
                 >
