@@ -617,7 +617,7 @@ const SearchPopover = (props: Props) => {
     ? indexedEntriesCount + ' indexed entries'
     : '';
   return (
-    <div>
+    <div style={{ maxWidth: 400 }}>
       <div className={classes.toolbar}>
         <Typography
           className={classNames(classes.panelTitle, classes.header)}

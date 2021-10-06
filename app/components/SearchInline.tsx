@@ -264,58 +264,50 @@ const SearchInline = (props: Props) => {
   const { indexing } = props;
 
   return (
-    <div style={{ width: '100%' }}>
-      <Grid container spacing={2}>
-        <Grid item xs={10}>
-          <TextField
-            fullWidth
-            id="textQuery"
-            name="textQuery"
-            value={textQuery.current}
-            // variant="filled"
-            onChange={event => {
-              textQuery.current = event.target.value;
-              // rerender
-              forceUpdate();
-            }}
-            style={{ marginTop: 0 }}
-            inputRef={mainSearchField}
-            margin="dense"
-            autoFocus
-            onKeyDown={startSearch}
-            title={i18n.t('core:searchWordsWithInterval')}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    id="clearSearchID"
-                    onClick={clearSearch}
-                    size="small"
-                    edge="end"
-                  >
-                    <ClearSearchIcon />
-                  </IconButton>
-                </InputAdornment>
-              )
-            }}
-          />
-        </Grid>
-        <Grid item xs={2}>
-          <Button
-            id="searchButton"
-            variant="outlined"
-            size="small"
-            disabled={indexing}
-            // variant="outlined"
-            color="primary"
-            onClick={clickSearchButton}
-          >
-            {indexing
-              ? 'Search disabled while indexing'
-              : i18n.t('searchTitle')}
-          </Button>
-        </Grid>
-      </Grid>
+    <div style={{ width: '100%', whiteSpace: 'nowrap' }}>
+      <TextField
+        fullWidth
+        id="textQuery"
+        name="textQuery"
+        value={textQuery.current}
+        // variant="filled"
+        onChange={event => {
+          textQuery.current = event.target.value;
+          // rerender
+          forceUpdate();
+        }}
+        style={{ marginTop: 0, width: 'calc(100% - 80px)', marginRight: 10 }}
+        inputRef={mainSearchField}
+        margin="dense"
+        autoFocus
+        onKeyDown={startSearch}
+        title={i18n.t('core:searchWordsWithInterval')}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                id="clearSearchID"
+                onClick={clearSearch}
+                size="small"
+                edge="end"
+              >
+                <ClearSearchIcon />
+              </IconButton>
+            </InputAdornment>
+          )
+        }}
+      />
+      <Button
+        id="searchButton"
+        variant="outlined"
+        size="small"
+        disabled={indexing}
+        // variant="outlined"
+        color="primary"
+        onClick={clickSearchButton}
+      >
+        {indexing ? 'Search disabled while indexing' : i18n.t('searchTitle')}
+      </Button>
     </div>
   );
 };
