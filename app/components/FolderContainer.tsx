@@ -592,7 +592,7 @@ const FolderContainer = (props: Props) => {
             <Tooltip arrow title="Switch to default perspective">
               <div style={{ display: 'flex' }}>
                 <DefaultPerspectiveIcon />
-                {perspectives.DEFAULT}
+                {/* {perspectives.DEFAULT} */}
               </div>
             </Tooltip>
           </ToggleButton>
@@ -604,7 +604,7 @@ const FolderContainer = (props: Props) => {
             <Tooltip arrow title="Switch to Gallery perspective">
               <div style={{ display: 'flex' }}>
                 <GalleryPerspectiveIcon />
-                {perspectives.GALLERY}
+                {/* {perspectives.GALLERY} */}
               </div>
             </Tooltip>
           </ToggleButton>
@@ -616,7 +616,7 @@ const FolderContainer = (props: Props) => {
             <Tooltip arrow title="Switch to Mapique perspective">
               <div style={{ display: 'flex' }}>
                 <MapiquePerspectiveIcon />
-                {perspectives.MAPIQUE}
+                {/* {perspectives.MAPIQUE} */}
               </div>
             </Tooltip>
           </ToggleButton>
