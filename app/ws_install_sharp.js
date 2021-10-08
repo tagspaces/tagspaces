@@ -91,6 +91,26 @@ if (dependenciesObj && Object.keys(dependenciesObj).length) {
         if (err) {
           console.log('err:', err);
         }
+        fs.removeSync(
+          path.join(
+            __dirname,
+            'node_modules',
+            '@tagspaces',
+            'extensions',
+            'md-editor',
+            'node_modules'
+          )
+        );
+        fs.removeSync(
+          path.join(
+            __dirname,
+            'node_modules',
+            '@tagspaces',
+            'extensions',
+            'md-editor',
+            'src'
+          )
+        );
         /* npm.commands.dedupe([], (er) => {
           if (er) {
             console.log("err:", er);
