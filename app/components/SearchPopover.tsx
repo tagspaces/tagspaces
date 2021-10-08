@@ -96,7 +96,7 @@ interface Props {
   searches: Array<TS.SearchQuery>;
   addSearches: (searches: Array<TS.SearchQuery>) => void;
   showUnixHiddenEntries: boolean;
-  openSearchPanel: () => void;
+  // openSearchPanel: () => void;
   onClose: () => void;
 }
 
@@ -1148,8 +1148,8 @@ function mapDispatchToProps(dispatch) {
       loadDirectoryContent: AppActions.loadDirectoryContent,
       openURLExternally: AppActions.openURLExternally,
       setSearchResults: AppActions.setSearchResults,
-      addSearches: SearchActions.addSearches,
-      openSearchPanel: AppActions.openSearchPanel
+      addSearches: SearchActions.addSearches
+      // openSearchPanel: AppActions.openSearchPanel
     },
     dispatch
   );

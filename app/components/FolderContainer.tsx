@@ -64,7 +64,10 @@ import PathBreadcrumbs from './PathBreadcrumbs';
 import { enhanceOpenedEntry } from '-/services/utils-io';
 import SearchInline from '-/components/SearchInline';
 import SearchPopover from '-/components/SearchPopover';
-import { getSearchQuery } from '-/reducers/location-index';
+import {
+  actions as LocationIndexActions,
+  getSearchQuery
+} from '-/reducers/location-index';
 
 const GridPerspective = React.lazy(() =>
   import(
@@ -229,7 +232,7 @@ interface Props {
   isReadOnlyMode: boolean;
   isDesktopMode: boolean;
   showNotification: (content: string) => void;
-  openSearchPanel: () => void;
+  // openSearchPanel: () => void;
   toggleDrawer?: () => void;
   drawerOpened: boolean;
   setCurrentDirectoryPerspective: (perspective: string) => void;
@@ -244,6 +247,8 @@ interface Props {
   toggleUploadDialog: () => void;
   progress?: Array<any>;
   searchQuery: TS.SearchQuery;
+  setSearchQuery: (searchQuery: TS.SearchQuery) => void;
+  openCurrentDirectory: () => void;
 }
 
 const FolderContainer = (props: Props) => {
@@ -382,15 +387,13 @@ const FolderContainer = (props: Props) => {
   const {
     currentDirectoryPath = '',
     loadDirectoryContent,
-    searchResultCount,
+    // searchResultCount,
     classes,
-    maxSearchResults,
-    openSearchPanel,
+    // maxSearchResults,
     toggleDrawer,
     drawerOpened,
     isDesktopMode,
     theme,
-    loadParentDirectoryContent,
     currentDirectoryPerspective,
     currentLocationPath,
     setSelectedEntries,
@@ -400,13 +403,13 @@ const FolderContainer = (props: Props) => {
     // rightPanelWidth
   } = props;
 
-  let searchResultCounterText = searchResultCount + ' ' + i18n.t('entries');
+  /* let searchResultCounterText = searchResultCount + ' ' + i18n.t('entries');
   if (searchResultCount >= maxSearchResults) {
     searchResultCounterText =
       'Max. search count reached, showing only the first ' +
       searchResultCount +
       ' entries.';
-  }
+  } */
 
   const currentPerspective =
     currentDirectoryPerspective || perspectives.DEFAULT;
@@ -484,7 +487,15 @@ const FolderContainer = (props: Props) => {
                 maxHeight: 40
               }}
               size="small"
-              onClick={() => setSearchVisible(!isSearchVisible)}
+              onClick={() => {
+                if (isSearchVisible) {
+                  props.setSearchQuery({});
+                  props.openCurrentDirectory();
+                } else {
+                  setSearchVisible(!isSearchVisible);
+                }
+                return true;
+              }}
             >
               <SearchIcon />
             </Button>
@@ -660,10 +671,12 @@ function mapActionCreatorsToProps(dispatch) {
       loadParentDirectoryContent: AppActions.loadParentDirectoryContent,
       setSelectedEntries: AppActions.setSelectedEntries,
       showNotification: AppActions.showNotification,
-      openSearchPanel: AppActions.openSearchPanel,
+      // openSearchPanel: AppActions.openSearchPanel,
       setCurrentDirectoryPerspective: AppActions.setCurrentDirectoryPerspective,
       updateCurrentDirEntry: AppActions.updateCurrentDirEntry,
-      setCurrentDirectoryColor: AppActions.setCurrentDirectoryColor
+      setCurrentDirectoryColor: AppActions.setCurrentDirectoryColor,
+      setSearchQuery: LocationIndexActions.setSearchQuery,
+      openCurrentDirectory: AppActions.openCurrentDirectory
     },
     dispatch
   );
