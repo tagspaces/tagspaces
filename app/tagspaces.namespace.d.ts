@@ -39,6 +39,7 @@ export namespace TS {
     watchForChanges?: boolean;
     disableIndexing?: boolean;
     fullTextIndex?: boolean;
+    persistIndex?: boolean;
     maxIndexAge?: number;
     persistTagsInSidecarFile?: boolean;
     ignorePatternPaths?: Array<string>;
