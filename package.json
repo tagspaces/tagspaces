@@ -9,7 +9,7 @@
     "version-meta": "node scripts/versionmeta.js",
     "third-party": "yarn licenses generate-disclaimer --silent > app/third-party.txt",
     "prebuild": "rimraf app/dist && yarn version-meta && yarn prepare-node && yarn generate-jwt",
-    "build": "yarn prebuild && concurrently \"yarn build-renderer\"",
+    "build": "yarn prebuild && concurrently \"yarn build-main\" \"yarn build-renderer\"",
     "build-dll": "webpack --config ./configs/webpack.config.renderer.dev.dll.babel.js --colors",
     "build-e2e": "node scripts/setup-tests.js && cross-env E2E_BUILD=true NODE_ENV=test yarn build",
     "build-e2e-web": "node scripts/setup-tests.js && cross-env E2E_BUILD=true NODE_ENV=test && yarn prepare-web-pro && yarn build-web",
