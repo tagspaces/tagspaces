@@ -19,14 +19,12 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-// import { makeStyles, Theme } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import ClearSearchIcon from '@material-ui/icons/Clear';
-import {
-  IconButton,
-  InputAdornment,
-  TextField,
-  Button
-} from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import TextField from '@material-ui/core/TextField';
 import { actions as AppActions, getDirectoryPath } from '../reducers/app';
 import {
   actions as LocationIndexActions,
@@ -38,7 +36,6 @@ import {
   getMaxSearchResults,
   getShowUnixHiddenEntries
 } from '-/reducers/settings';
-// import { styles, StyleProps } from './SearchInline.css';
 import i18n from '../services/i18n';
 import { FileTypeGroups } from '-/services/search';
 import { TS } from '-/tagspaces.namespace';
@@ -62,10 +59,7 @@ interface Props {
   showUnixHiddenEntries: boolean;
 }
 
-// const useStyles = makeStyles<Theme, StyleProps>(styles);
-
 const SearchInline = (props: Props) => {
-  // const classes: PropsClasses = useStyles({} as StyleProps);
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   const textQuery = useRef<string>(props.searchQuery.textQuery);
   const fileTypes = useRef<Array<string>>(
@@ -269,22 +263,40 @@ const SearchInline = (props: Props) => {
     }
   };
 
+  const MeainSearchField = withStyles({
+    root: {
+      '& input': {
+        padding: 7
+      },
+      overflow: 'hidden',
+      borderRadius: 7,
+      // backgroundColor: '#fcfcfb',
+      '&:hover': {
+        backgroundColor: '#fff'
+      }
+    }
+  })(TextField);
+
   const { indexing } = props;
 
   return (
     <div style={{ width: '100%', whiteSpace: 'nowrap' }}>
-      <TextField
+      <MeainSearchField
         fullWidth
         id="textQuery"
         name="textQuery"
         value={textQuery.current}
-        // variant="filled"
+        variant="outlined"
         onChange={event => {
           textQuery.current = event.target.value;
           // rerender
           forceUpdate();
         }}
-        style={{ marginTop: 0, width: 'calc(100% - 80px)', marginRight: 10 }}
+        size="small"
+        style={{
+          marginTop: 9,
+          width: 'calc(100% - 80px)'
+        }}
         inputRef={mainSearchField}
         margin="dense"
         autoFocus
@@ -310,6 +322,7 @@ const SearchInline = (props: Props) => {
         variant="outlined"
         size="small"
         disabled={indexing}
+        style={{ marginRight: 10, marginLeft: 10, marginTop: 10 }}
         // variant="outlined"
         color="primary"
         onClick={clickSearchButton}

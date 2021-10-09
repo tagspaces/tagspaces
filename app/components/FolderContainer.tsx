@@ -162,13 +162,6 @@ const styles: any = (theme: any) => ({
     display: 'flex',
     flexDirection: 'column'
   },
-  toolbar: {
-    paddingLeft: 5,
-    paddingRight: 5,
-    paddingTop: 5,
-    display: 'flex'
-    // overflowX: AppConfig.isFirefox ? 'auto' : 'overlay'
-  },
   topPanel: {
     // height: 50,
     width: '100%',
@@ -458,18 +451,16 @@ const FolderContainer = (props: Props) => {
     <div data-tid="folderContainerTID" style={{ position: 'relative' }}>
       <div className={classes.mainPanel}>
         <div className={classes.topPanel}>
-          <div className={classes.toolbar}>
-            <Button
+          <div style={{ paddingLeft: 5, display: 'flex' }}>
+            <IconButton
               id="mobileMenuButton"
               style={{
-                marginLeft: -8,
-                transform: drawerOpened ? 'rotate(0deg)' : 'rotate(180deg)',
-                maxHeight: 40
+                transform: drawerOpened ? 'rotate(0deg)' : 'rotate(180deg)'
               }}
               onClick={toggleDrawer}
             >
               <MenuIcon />
-            </Button>
+            </IconButton>
             {/* <CounterBadge
               showZero={true}
               title={searchResultCounterText}
@@ -480,13 +471,8 @@ const FolderContainer = (props: Props) => {
                 openSearchPanel();
               }}
             /> */}
-            <Button
-              id="toggleSearch"
-              style={{
-                marginLeft: -8,
-                maxHeight: 40
-              }}
-              size="small"
+            <IconButton
+              data-tid="toggleSearch"
               onClick={() => {
                 if (isSearchVisible) {
                   props.setSearchQuery({});
@@ -498,22 +484,20 @@ const FolderContainer = (props: Props) => {
               }}
             >
               <SearchIcon />
-            </Button>
+            </IconButton>
             {isSearchVisible ? (
               <>
                 <SearchInline />
-                <Button
+                <IconButton
                   id="advancedButton"
                   title={i18n.t('core:advancedSearch')}
                   data-tid="advancedSearch"
                   onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
                     setAnchorSearch(event.currentTarget)
                   }
-                  // @ts-ignore
-                  className={[classes.button, classes.upgradeButton].join(' ')}
                 >
                   <AdvancedSearchIcon />
-                </Button>
+                </IconButton>
                 <Popover
                   open={Boolean(anchorSearch)}
                   anchorEl={anchorSearch}
