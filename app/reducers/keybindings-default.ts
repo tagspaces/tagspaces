@@ -57,6 +57,10 @@ export default function keyBindings(isMacLike) {
       command: 'up'
     },
     {
+      name: 'Escape',
+      command: 'Escape'
+    },
+    {
       name: 'showHelp',
       command: 'f1'
     },

@@ -169,7 +169,7 @@ interface Props {
   openPrevFile: (path?: string) => void; // needed by electron-menus
   openLocationManagerPanel: () => void;
   openTagLibraryPanel: () => void;
-  openSearchPanel: () => void;
+  // openSearchPanel: () => void;
   openHelpFeedbackPanel: () => void;
   closeAllVerticalPanels: () => void;
   leftSplitSize: number;
@@ -403,6 +403,7 @@ const MainPage = (props: Props) => {
     showFolderNavigator: props.openLocationManagerPanel,
     showTagLibrary: props.openTagLibraryPanel,
     openSearch: () => props.setSearchQuery({ textQuery: '' }), // props.openSearchPanel,
+    closeSearch: () => props.setSearchQuery({}),
     showHelp: props.openHelpFeedbackPanel
   };
 
@@ -412,6 +413,7 @@ const MainPage = (props: Props) => {
     showFolderNavigator: props.keyBindings.showFolderNavigator,
     showTagLibrary: props.keyBindings.showTagLibrary,
     openSearch: props.keyBindings.openSearch,
+    closeSearch: props.keyBindings.Escape,
     showHelp: props.keyBindings.showHelp
   };
 
@@ -760,7 +762,7 @@ function mapDispatchToProps(dispatch) {
       reflectCreateEntries: AppActions.reflectCreateEntries,
       openLocationManagerPanel: AppActions.openLocationManagerPanel,
       openTagLibraryPanel: AppActions.openTagLibraryPanel,
-      openSearchPanel: AppActions.openSearchPanel,
+      // openSearchPanel: AppActions.openSearchPanel,
       openHelpFeedbackPanel: AppActions.openHelpFeedbackPanel,
       closeAllVerticalPanels: AppActions.closeAllVerticalPanels,
       toggleDeleteMultipleEntriesDialog:

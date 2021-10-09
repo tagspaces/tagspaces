@@ -55,7 +55,7 @@ interface Props {
   collectTagsFromLocation: (tagGroup: TS.TagGroup) => void;
   handleCloseTagGroupMenu: () => void;
   searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
-  openSearchPanel: () => void;
+  // openSearchPanel: () => void;
   maxSearchResults: number;
 }
 
@@ -92,7 +92,7 @@ const TagGroupMenu = (props: Props) => {
 
   function showFilesWithTags() {
     if (props.selectedTagGroupEntry) {
-      props.openSearchPanel();
+      // props.openSearchPanel();
       props.searchLocationIndex({
         tagsOR: props.selectedTagGroupEntry.children,
         maxSearchResults: props.maxSearchResults
@@ -190,7 +190,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      openSearchPanel: AppActions.openSearchPanel,
+      // openSearchPanel: AppActions.openSearchPanel,
       searchLocationIndex: LocationIndexActions.searchLocationIndex
     },
     dispatch

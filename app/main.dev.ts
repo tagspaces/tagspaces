@@ -332,7 +332,7 @@ function buildTrayMenu() {
     {
       showTagSpaces,
       resumePlayback,
-      openSearchPanel: showSearch,
+      openSearch: showSearch,
       toggleCreateFileDialog: newTextFile,
       openNextFile: getNextFile,
       openPrevFile: getPreviousFile,
@@ -347,7 +347,7 @@ function buildAppMenu() {
   buildDesktopMenu(
     {
       showTagSpaces,
-      openSearchPanel: showSearch,
+      openSearch: showSearch,
       toggleCreateFileDialog: newTextFile,
       openNextFile: getNextFile,
       openPrevFile: getPreviousFile,
