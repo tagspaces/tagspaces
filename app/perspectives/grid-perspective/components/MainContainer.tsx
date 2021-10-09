@@ -724,7 +724,7 @@ const GridPerspective = (props: Props) => {
   return (
     <div
       style={{
-        height: 'calc(100% - 51px)'
+        height: 'calc(100% - 48px)'
       }}
     >
       <MainToolbar

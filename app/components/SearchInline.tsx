@@ -19,8 +19,12 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import ClearSearchIcon from '@material-ui/icons/Clear';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import TextField from '@material-ui/core/TextField';
 import { actions as AppActions, getDirectoryPath } from '../reducers/app';
 import {
   actions as LocationIndexActions,
@@ -32,22 +36,11 @@ import {
   getMaxSearchResults,
   getShowUnixHiddenEntries
 } from '-/reducers/settings';
-import { styles, StyleProps } from './SearchInline.css';
 import i18n from '../services/i18n';
 import { FileTypeGroups } from '-/services/search';
 import { TS } from '-/tagspaces.namespace';
-import {
-  FormControl,
-  IconButton,
-  InputAdornment,
-  TextField,
-  OutlinedInput,
-  ButtonGroup,
-  Button,
-  Grid
-} from '@material-ui/core';
 
-type PropsClasses = Record<keyof StyleProps, string>;
+// type PropsClasses = Record<keyof StyleProps, string>;
 
 interface Props {
   style?: any;
@@ -57,7 +50,7 @@ interface Props {
   loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
   openURLExternally: (url: string) => void;
   searchQuery: TS.SearchQuery; // () => any;
-  setSearchResults: (entries: Array<any>) => void;
+  openCurrentDirectory: () => void;
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   currentDirectory: string;
   indexedEntriesCount: number;
@@ -66,10 +59,7 @@ interface Props {
   showUnixHiddenEntries: boolean;
 }
 
-const useStyles = makeStyles<Theme, StyleProps>(styles);
-
 const SearchInline = (props: Props) => {
-  const classes: PropsClasses = useStyles({} as StyleProps);
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   const textQuery = useRef<string>(props.searchQuery.textQuery);
   const fileTypes = useRef<Array<string>>(
@@ -126,7 +116,7 @@ const SearchInline = (props: Props) => {
     textQuery.current = props.searchQuery.textQuery;
   }, [props.searchQuery]);
 
-  const mergeWithExtractedTags = (tags: Array<TS.Tag>, identifier: string) => {
+  /* const mergeWithExtractedTags = (tags: Array<TS.Tag>, identifier: string) => {
     const extractedTags = parseTextQuery(identifier);
     if (tags) {
       if (extractedTags.length > 0) {
@@ -138,7 +128,7 @@ const SearchInline = (props: Props) => {
       return extractedTags;
     }
     return undefined;
-  };
+  }; */
 
   function getUniqueTags(tags1: Array<TS.Tag>, tags2: Array<TS.Tag>) {
     const mergedArray = [...tags1, ...tags2];
@@ -169,7 +159,6 @@ const SearchInline = (props: Props) => {
         );
     }
     const textQueryParts = query.split(' ');
-    let newTextQuery = '';
     if (textQueryParts) {
       // && textQueryParts.length > 1) {
       textQueryParts.forEach(part => {
@@ -177,16 +166,9 @@ const SearchInline = (props: Props) => {
         if (trimmedPart.startsWith(identifier)) {
           const tagTitle = trimmedPart.substr(1).trim();
           extractedTags.push({ title: tagTitle });
-        } /* else if (trimmedPart.startsWith('-')) {
-          // add to searchQuery.tagsNOT
-        } else if (trimmedPart.startsWith('?')) {
-          // add to searchQuery.tagsOR
-        */ else {
-          newTextQuery += trimmedPart + ' ';
         }
       });
     }
-    textQuery.current = newTextQuery.trim();
     return extractedTags;
   };
 
@@ -197,16 +179,10 @@ const SearchInline = (props: Props) => {
   const startSearch = event => {
     if (event.key === 'Enter' || event.keyCode === 13) {
       executeSearch();
+    } else if (event.key === 'Escape' || event.keyCode === 27) {
+      clearSearch();
     }
   };
-
-  function openCurrentDirectory() {
-    if (props.currentDirectory) {
-      props.loadDirectoryContent(props.currentDirectory, false);
-    } else {
-      props.setSearchResults([]);
-    }
-  }
 
   const clearSearch = () => {
     textQuery.current = '';
@@ -224,16 +200,42 @@ const SearchInline = (props: Props) => {
     forceIndexing.current = false;
     fileSize.current = '';
     props.setSearchQuery({});
-    openCurrentDirectory();
+    props.openCurrentDirectory();
+  };
+
+  const removeTagsFromQuery = (
+    tags: Array<TS.Tag>,
+    query: string,
+    identifier: string
+  ) => {
+    if (tags) {
+      let newQuery = query
+        .trim()
+        .replace(
+          new RegExp(escapeRegExp(identifier) + '\\s+', 'g'),
+          identifier
+        );
+      tags.forEach(tag => {
+        newQuery = newQuery.replace(identifier + tag.title, '');
+      });
+
+      return newQuery.trim();
+    }
+
+    return query;
   };
 
   const executeSearch = () => {
     const { searchAllLocations, searchLocationIndex } = props;
-    const tagsAND = mergeWithExtractedTags(props.searchQuery.tagsAND, '+');
-    const tagsOR = mergeWithExtractedTags(props.searchQuery.tagsOR, '?');
-    const tagsNOT = mergeWithExtractedTags(props.searchQuery.tagsNOT, '-');
+    let query = textQuery.current;
+    const tagsAND = parseTextQuery('+'); // mergeWithExtractedTags(props.searchQuery.tagsAND, '+');
+    query = removeTagsFromQuery(tagsAND, query, '+');
+    const tagsOR = parseTextQuery('?'); // mergeWithExtractedTags(props.searchQuery.tagsOR, '?');
+    query = removeTagsFromQuery(tagsOR, query, '?');
+    const tagsNOT = parseTextQuery('-'); // mergeWithExtractedTags(props.searchQuery.tagsNOT, '-');
+    query = removeTagsFromQuery(tagsNOT, query, '-');
     const searchQuery: TS.SearchQuery = {
-      textQuery: textQuery.current,
+      textQuery: query,
       tagsAND,
       tagsOR,
       tagsNOT,
@@ -261,22 +263,40 @@ const SearchInline = (props: Props) => {
     }
   };
 
+  const MeainSearchField = withStyles({
+    root: {
+      '& input': {
+        padding: 7
+      },
+      overflow: 'hidden',
+      borderRadius: 7,
+      // backgroundColor: '#fcfcfb',
+      '&:hover': {
+        backgroundColor: '#fff'
+      }
+    }
+  })(TextField);
+
   const { indexing } = props;
 
   return (
     <div style={{ width: '100%', whiteSpace: 'nowrap' }}>
-      <TextField
+      <MeainSearchField
         fullWidth
         id="textQuery"
         name="textQuery"
         value={textQuery.current}
-        // variant="filled"
+        variant="outlined"
         onChange={event => {
           textQuery.current = event.target.value;
           // rerender
           forceUpdate();
         }}
-        style={{ marginTop: 0, width: 'calc(100% - 80px)', marginRight: 10 }}
+        size="small"
+        style={{
+          marginTop: 9,
+          width: 'calc(100% - 80px)'
+        }}
         inputRef={mainSearchField}
         margin="dense"
         autoFocus
@@ -302,6 +322,7 @@ const SearchInline = (props: Props) => {
         variant="outlined"
         size="small"
         disabled={indexing}
+        style={{ marginRight: 10, marginLeft: 10, marginTop: 10 }}
         // variant="outlined"
         color="primary"
         onClick={clickSearchButton}
@@ -332,7 +353,7 @@ function mapDispatchToProps(dispatch) {
       createLocationsIndexes: LocationIndexActions.createLocationsIndexes,
       loadDirectoryContent: AppActions.loadDirectoryContent,
       openURLExternally: AppActions.openURLExternally,
-      setSearchResults: AppActions.setSearchResults
+      openCurrentDirectory: AppActions.openCurrentDirectory
     },
     dispatch
   );

@@ -44,7 +44,7 @@ interface Props {
   removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
   searchLocationIndex?: (searchQuery: TS.SearchQuery) => void;
   maxSearchResults?: number;
-  openSearchPanel?: () => void;
+  // openSearchPanel?: () => void;
   setIsAddTagDialogOpened?: (tag: TS.Tag) => void;
   toggleEditTagDialog?: (tag: TS.Tag) => void;
   isReadOnlyMode?: boolean;
@@ -73,7 +73,7 @@ const EntryTagMenu = (props: Props) => {
 
   function showFilesWithThisTag() {
     if (props.selectedTag) {
-      props.openSearchPanel();
+      // props.openSearchPanel();
       props.searchLocationIndex({
         tagsAND: [props.selectedTag],
         maxSearchResults: props.maxSearchResults
@@ -177,7 +177,7 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
       searchLocationIndex: LocationIndexActions.searchLocationIndex,
-      openSearchPanel: AppActions.openSearchPanel,
+      // openSearchPanel: AppActions.openSearchPanel,
       toggleEditTagDialog: AppActions.toggleEditTagDialog
     },
     dispatch

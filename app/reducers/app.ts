@@ -2097,6 +2097,17 @@ export const actions = {
   ) => {
     const { currentLocationId } = getState().app;
     return currentLocationId === uuid;
+  },
+  openCurrentDirectory: () => (
+    dispatch: (actions: Object) => void,
+    getState: () => any
+  ) => {
+    const { currentDirectoryPath } = getState().app;
+    if (currentDirectoryPath) {
+      dispatch(actions.loadDirectoryContent(currentDirectoryPath, false));
+    } else {
+      dispatch(actions.setSearchResults([]));
+    }
   }
 };
 

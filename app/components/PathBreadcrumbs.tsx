@@ -46,7 +46,7 @@ const StyledBreadcrumb = withStyles((theme: Theme) => ({
 
 const NoWrapBreadcrumb = withStyles({
   root: {
-    marginTop: 5
+    marginTop: 10
   },
   ol: {
     flexWrap: 'nowrap'

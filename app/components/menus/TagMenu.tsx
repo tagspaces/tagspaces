@@ -43,7 +43,7 @@ interface Props {
   onClose: () => void;
   selectedTag?: TS.Tag;
   searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
-  openSearchPanel: () => void;
+  // openSearchPanel: () => void;
   showEditTagDialog: () => void;
   showDeleteTagDialog: () => void;
   maxSearchResults: number;
@@ -58,7 +58,7 @@ interface Props {
 const TagMenu = (props: Props) => {
   function showFilesWithThisTag() {
     if (props.selectedTag) {
-      props.openSearchPanel();
+      // props.openSearchPanel();
       props.searchLocationIndex({
         tagsAND: [props.selectedTag],
         maxSearchResults: props.maxSearchResults
@@ -134,7 +134,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      openSearchPanel: AppActions.openSearchPanel,
+      // openSearchPanel: AppActions.openSearchPanel,
       searchLocationIndex: LocationIndexActions.searchLocationIndex,
       addTags: TaggingActions.addTags
     },

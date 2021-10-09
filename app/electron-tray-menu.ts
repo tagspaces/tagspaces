@@ -52,7 +52,7 @@ export default function buildTrayIconMenu(mainPageProps: any, i18n, isMacLike) {
     },
     {
       label: i18n.t('showSearch') + cKey + '+Shift+F',
-      click: mainPageProps.openSearchPanel
+      click: mainPageProps.openSearch
     },
     {
       type: 'separator'
