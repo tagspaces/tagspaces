@@ -268,9 +268,10 @@ const SearchInline = (props: Props) => {
       '& input': {
         padding: 7
       },
+      '& .MuiInputBase-root': {
+        borderRadius: 7
+      },
       overflow: 'hidden',
-      borderRadius: 7,
-      // backgroundColor: '#fcfcfb',
       '&:hover': {
         backgroundColor: '#fff'
       }
