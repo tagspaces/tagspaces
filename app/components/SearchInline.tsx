@@ -19,7 +19,7 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
 import ClearSearchIcon from '@material-ui/icons/Clear';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
@@ -58,6 +58,27 @@ interface Props {
   indexing: boolean;
   showUnixHiddenEntries: boolean;
 }
+
+const MeainSearchField = withStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      '& input': {
+        padding: 7
+      },
+      '& .MuiInputBase-root': {
+        borderRadius: 7
+      },
+      overflow: 'hidden',
+      '&:hover': {
+        backgroundColor: theme.palette.background.paper
+        // boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`
+      }
+      // '&:active': {
+      //   backgroundColor: theme.palette.background.paper
+      // }
+    }
+  })
+)(TextField);
 
 const SearchInline = (props: Props) => {
   const [, forceUpdate] = useReducer(x => x + 1, 0);
@@ -262,21 +283,6 @@ const SearchInline = (props: Props) => {
       searchLocationIndex(searchQuery);
     }
   };
-
-  const MeainSearchField = withStyles({
-    root: {
-      '& input': {
-        padding: 7
-      },
-      '& .MuiInputBase-root': {
-        borderRadius: 7
-      },
-      overflow: 'hidden',
-      '&:hover': {
-        backgroundColor: '#fff'
-      }
-    }
-  })(TextField);
 
   const { indexing } = props;
 
