@@ -43,6 +43,7 @@ import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -619,25 +620,27 @@ const SearchPopover = (props: Props) => {
   return (
     <div style={{ maxWidth: 400 }}>
       <div className={classes.toolbar}>
-        <Typography
-          className={classNames(classes.panelTitle, classes.header)}
-          style={{ flex: 0 }}
+        <Button
+          size="medium"
+          data-tid="searchMenu"
+          startIcon={<MoreVertIcon />}
+          onClick={handleSearchMenu}
         >
           {i18n.t('searchTitle')}
-        </Typography>
+        </Button>
         <Typography
           variant="caption"
           className={classes.header}
-          style={{ alignSelf: 'center', paddingLeft: 5, display: 'block' }}
+          style={{ flex: 1 }}
         >
           {indexStatus}
         </Typography>
         <IconButton
           style={{ marginLeft: 'auto' }}
           data-tid="searchMenu"
-          onClick={handleSearchMenu}
+          onClick={clearSearch}
         >
-          <MoreVertIcon />
+          <CloseIcon />
         </IconButton>
       </div>
       <SearchMenu
