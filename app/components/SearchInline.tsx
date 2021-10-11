@@ -99,7 +99,7 @@ const SearchInline = (props: Props) => {
 
   const mainSearchField = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
+  /* useEffect(() => {
     // https://github.com/mui-org/material-ui/issues/1594
     const timeout = setTimeout(() => {
       if (mainSearchField && mainSearchField.current) {
@@ -110,10 +110,30 @@ const SearchInline = (props: Props) => {
     return () => {
       clearTimeout(timeout);
     };
-  }, []);
+  }, []); */
 
   useEffect(() => {
-    textQuery.current = props.searchQuery.textQuery;
+    let txtQuery = props.searchQuery.textQuery || '';
+
+    if (props.searchQuery.tagsAND && props.searchQuery.tagsAND.length > 0) {
+      props.searchQuery.tagsAND.forEach(tag => {
+        txtQuery += ' +' + tag.title;
+      });
+    }
+    if (props.searchQuery.tagsOR && props.searchQuery.tagsOR.length > 0) {
+      props.searchQuery.tagsOR.forEach(tag => {
+        txtQuery += ' ?' + tag.title;
+      });
+    }
+    if (props.searchQuery.tagsNOT && props.searchQuery.tagsNOT.length > 0) {
+      props.searchQuery.tagsNOT.forEach(tag => {
+        txtQuery += ' -' + tag.title;
+      });
+    }
+    if (txtQuery !== textQuery.current) {
+      textQuery.current = txtQuery;
+      forceUpdate();
+    }
   }, [props.searchQuery]);
 
   /* const mergeWithExtractedTags = (tags: Array<TS.Tag>, identifier: string) => {
@@ -130,7 +150,7 @@ const SearchInline = (props: Props) => {
     return undefined;
   }; */
 
-  function getUniqueTags(tags1: Array<TS.Tag>, tags2: Array<TS.Tag>) {
+  /* function getUniqueTags(tags1: Array<TS.Tag>, tags2: Array<TS.Tag>) {
     const mergedArray = [...tags1, ...tags2];
     // mergedArray have duplicates, lets remove the duplicates using Set
     const set = new Set();
@@ -141,7 +161,7 @@ const SearchInline = (props: Props) => {
       }
       return false;
     }, set);
-  }
+  } */
 
   function escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
@@ -165,7 +185,9 @@ const SearchInline = (props: Props) => {
         const trimmedPart = part.trim();
         if (trimmedPart.startsWith(identifier)) {
           const tagTitle = trimmedPart.substr(1).trim();
-          extractedTags.push({ title: tagTitle });
+          extractedTags.push({
+            title: tagTitle
+          });
         }
       });
     }
@@ -281,17 +303,22 @@ const SearchInline = (props: Props) => {
   const { indexing } = props;
 
   return (
-    <div style={{ width: '100%', whiteSpace: 'nowrap' }}>
+    <div
+      style={{
+        width: '100%',
+        whiteSpace: 'nowrap'
+      }}
+    >
       <MeainSearchField
         fullWidth
         id="textQuery"
         name="textQuery"
-        value={textQuery.current}
+        defaultValue={textQuery.current}
         variant="outlined"
         onChange={event => {
           textQuery.current = event.target.value;
           // rerender
-          forceUpdate();
+          // forceUpdate();
         }}
         size="small"
         style={{
@@ -323,7 +350,11 @@ const SearchInline = (props: Props) => {
         variant="outlined"
         size="small"
         disabled={indexing}
-        style={{ marginRight: 10, marginLeft: 10, marginTop: 10 }}
+        style={{
+          marginRight: 10,
+          marginLeft: 10,
+          marginTop: 10
+        }}
         // variant="outlined"
         color="primary"
         onClick={clickSearchButton}
