@@ -147,13 +147,10 @@ const TagsSelect = (props: Props) => {
 
   const tags = props.tags ? props.tags : [];
 
-  const handleTagMenu = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>, tag) => {
-      setTagMenuAnchorEl(event.currentTarget);
-      setSelectedTag(tag);
-    },
-    [tags]
-  );
+  const handleTagMenu = (event: React.ChangeEvent<HTMLInputElement>, tag) => {
+    setTagMenuAnchorEl(event.currentTarget);
+    setSelectedTag(tag);
+  };
 
   const handleRemoveTag = (event, cTag: Array<TS.Tag>) => {
     /* const reducedTags = [...tags];
