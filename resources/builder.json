@@ -1,6 +1,7 @@
 {
   "appId": "org.tagspaces.desktopapp",
   "asar": true,
+  "includeSubNodeModules": true,
   "files": [
     "dist/",
     "node_modules/",
