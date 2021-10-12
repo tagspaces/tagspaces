@@ -31,16 +31,17 @@ if (process.env.PD_PLATFORM) {
     return false;
   }
 }
+*/
 
 if (process.env.TARGET_PLATFORM && process.env.TARGET_ARCH) {
   process.argv.push('--platform=' + process.env.TARGET_PLATFORM);
   process.argv.push('--arch=' + process.env.TARGET_ARCH);
-  if (
+  /* if (
     !checkSharpPlatform(process.env.TARGET_PLATFORM, process.env.TARGET_ARCH)
   ) {
-    // fs.removeSync(path.join(__dirname, '..', 'node_modules'));
-  }
-} */
+     fs.removeSync(path.join(__dirname, '..', 'node_modules'));
+  } */
+}
 
 const dependencies = platform + 'Dependencies';
 const dependenciesObj = pkg[dependencies];

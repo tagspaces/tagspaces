@@ -451,7 +451,6 @@ async function createAppWindow() {
       spellcheck: true,
       nodeIntegration: true,
       webviewTag: true,
-      enableRemoteModule: false,
       contextIsolation: false
     }
   });
@@ -668,7 +667,7 @@ app.on('ready', async () => {
     return false;
   });
 
-  ///// end electron-io
+  // end electron-io
 
   /* ipcMain.on('setSplashVisibility', (event, arg) => {
     // worker window needed to be visible for the PDF tmb generation
