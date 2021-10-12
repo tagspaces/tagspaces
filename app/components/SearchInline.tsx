@@ -152,8 +152,9 @@ const SearchInline = (props: Props) => {
       });
     }
     if (txtQuery !== textQuery.current) {
-      textQuery.current = txtQuery;
-      forceUpdate();
+      textQuery.current = txtQuery.trim();
+      mainSearchField.current.value = textQuery.current;
+      // forceUpdate();
     }
   }, [props.searchQuery]);
 

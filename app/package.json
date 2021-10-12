@@ -13,10 +13,10 @@
   "license": "AGPL-3.0",
   "scripts": {},
   "webDependencies": {
-    "@tagspaces/extensions": "https://github.com/tagspaces/tagspaces-extensions#main"
+    "@tagspaces/extensions": "1.0.0"
   },
   "nodeDependencies": {
-    "@tagspaces/extensions": "https://github.com/tagspaces/tagspaces-extensions#main",
+    "@tagspaces/extensions": "1.0.0",
     "sharp": "^0.29.1",
     "tagspaces-ws": "^1.0.43"
   }
