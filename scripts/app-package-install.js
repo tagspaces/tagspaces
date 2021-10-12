@@ -3,7 +3,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const npm = require('npm');
-const pkg = require('./package.json');
+const pkg = require('../app/package.json');
 
 let platform = 'node';
 
@@ -54,7 +54,13 @@ if (dependenciesObj && Object.keys(dependenciesObj).length) {
     // eslint-disable-next-line no-prototype-builtins
     if (dependenciesObj.hasOwnProperty(dep)) {
       npmArgs.push(dep.concat('@').concat(dependenciesObj[dep]));
-      const packagePath = path.join(__dirname, 'node_modules', dep);
+      const packagePath = path.join(
+        __dirname,
+        '..',
+        'app',
+        'node_modules',
+        dep
+      );
       if (!fs.existsSync(packagePath)) {
         npmInstall = true;
       } else {
@@ -74,7 +80,7 @@ if (dependenciesObj && Object.keys(dependenciesObj).length) {
   }
   if (platform === 'web') {
     npmInstall = true;
-    fs.removeSync(path.join(__dirname, 'node_modules'));
+    fs.removeSync(path.join(__dirname, '..', 'app', 'node_modules'));
   }
   // npmArgs.push('--no-save --force');
   if (npmInstall && npmArgs.length > 0) {
@@ -94,6 +100,8 @@ if (dependenciesObj && Object.keys(dependenciesObj).length) {
         fs.removeSync(
           path.join(
             __dirname,
+            '..',
+            'app',
             'node_modules',
             '@tagspaces',
             'extensions',
@@ -104,6 +112,8 @@ if (dependenciesObj && Object.keys(dependenciesObj).length) {
         fs.removeSync(
           path.join(
             __dirname,
+            '..',
+            'app',
             'node_modules',
             '@tagspaces',
             'extensions',
