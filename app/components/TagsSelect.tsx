@@ -147,28 +147,22 @@ const TagsSelect = (props: Props) => {
 
   const tags = props.tags ? props.tags : [];
 
-  const handleTagMenu = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>, tag) => {
-      setTagMenuAnchorEl(event.currentTarget);
-      setSelectedTag(tag);
-    },
-    [tags]
-  );
+  const handleTagMenu = (event: React.ChangeEvent<HTMLInputElement>, tag) => {
+    setTagMenuAnchorEl(event.currentTarget);
+    setSelectedTag(tag);
+  };
 
-  const handleRemoveTag = useCallback(
-    (event, cTag: Array<TS.Tag>) => {
-      /* const reducedTags = [...tags];
+  const handleRemoveTag = (event, cTag: Array<TS.Tag>) => {
+    /* const reducedTags = [...tags];
       for (let i = 0; i < reducedTags.length; i += 1) {
         if (reducedTags[i].title === cTag.title) {
           reducedTags.splice(i, 1);
         }
       } */
-      if (cTag.length > 0) {
-        handleTagChange(event, cTag, 'remove-value');
-      }
-    },
-    [tags]
-  );
+    if (cTag.length > 0) {
+      handleTagChange(event, cTag, 'remove-value');
+    }
+  };
 
   const handleCloseTagMenu = () => {
     setTagMenuAnchorEl(null);

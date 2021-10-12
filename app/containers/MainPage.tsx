@@ -351,7 +351,7 @@ const MainPage = (props: Props) => {
     // console.log('Width: ' + width + ' Height: ' + height);
     setDimensions({ width: w, height: h });
 
-    if (props.openedFiles.length > 0) {
+    if (props.openedFiles.length > 0 && !props.isEntryInFullWidth) {
       const isFillWidth = h > w;
       if (isFillWidth !== props.isEntryInFullWidth) {
         props.setEntryFullWidth(isFillWidth);

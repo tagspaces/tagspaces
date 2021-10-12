@@ -82,6 +82,7 @@ const TagContainer = (props: Props) => {
     isTagDate = !isTagGeo && isDateTimeTag(title);
   }
 
+  // TODO move this in reducer
   allTags.some((currentTag: TS.Tag) => {
     if (currentTag.title === title) {
       textColor = currentTag.textcolor;
@@ -254,5 +255,4 @@ function mapStateToProps(state) {
     // selectedEntries: getSelectedEntries(state)
   };
 }
-
-export default connect(mapStateToProps)(React.memo(TagContainer));
+export default connect(mapStateToProps)(TagContainer);

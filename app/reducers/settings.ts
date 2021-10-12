@@ -663,7 +663,7 @@ export const getCurrentTheme = (state: any) => state.settings.currentTheme;
 export const isGlobalKeyBindingEnabled = (state: any) =>
   state.settings.enableGlobalKeyboardShortcuts;
 export const getMainVerticalSplitSize = (state: any) =>
-  state.settings.mainVerticalSplitSize;
+  state.settings.mainVSplitSize;
 export const getTagDelimiter = (state: any) => state.settings.tagDelimiter;
 export const getMaxSearchResults = (state: any) =>
   state.settings.maxSearchResult;
