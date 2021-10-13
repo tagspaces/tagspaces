@@ -11,10 +11,10 @@ if (process.env.PD_PLATFORM) {
   platform = process.env.PD_PLATFORM;
 }
 
-if (process.env.TARGET_PLATFORM && process.env.TARGET_ARCH) {
+/* if (process.env.TARGET_PLATFORM && process.env.TARGET_ARCH) {
   process.argv.push('--platform=' + process.env.TARGET_PLATFORM);
   process.argv.push('--arch=' + process.env.TARGET_ARCH);
-}
+} */
 
 const dep = platform + 'Dependencies';
 
