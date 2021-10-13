@@ -361,7 +361,6 @@ function createSplashWorker() {
     frame: false,
     webPreferences: {
       nodeIntegration: true,
-      enableRemoteModule: false,
       contextIsolation: false
     }
   });
@@ -426,7 +425,6 @@ async function createAppWindow() {
       spellcheck: true,
       nodeIntegration: true,
       webviewTag: true,
-      enableRemoteModule: false,
       contextIsolation: false
     }
   });

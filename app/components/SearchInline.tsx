@@ -20,8 +20,9 @@ import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
-import ClearSearchIcon from '@material-ui/icons/Clear';
+import ClearSearchIcon from '@material-ui/icons/CancelOutlined';
 import Button from '@material-ui/core/Button';
+import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import TextField from '@material-ui/core/TextField';
@@ -155,6 +156,30 @@ const SearchInline = (props: Props) => {
       textQuery.current = txtQuery.trim();
       mainSearchField.current.value = textQuery.current;
       // forceUpdate();
+    }
+    if (props.searchQuery.searchBoxing) {
+      searchBoxing.current = props.searchQuery.searchBoxing;
+    }
+    if (props.searchQuery.fileTypes) {
+      fileTypes.current = props.searchQuery.fileTypes;
+    }
+    if (props.searchQuery.searchType) {
+      searchType.current = props.searchQuery.searchType;
+    }
+    if (props.searchQuery.lastModified) {
+      lastModified.current = props.searchQuery.lastModified;
+    }
+    if (props.searchQuery.tagTimePeriodFrom) {
+      tagTimePeriodFrom.current = props.searchQuery.tagTimePeriodFrom;
+    }
+    if (props.searchQuery.tagTimePeriodTo) {
+      tagTimePeriodTo.current = props.searchQuery.tagTimePeriodTo;
+    }
+    if (props.searchQuery.forceIndexing) {
+      forceIndexing.current = props.searchQuery.forceIndexing;
+    }
+    if (props.searchQuery.fileSize) {
+      fileSize.current = props.searchQuery.fileSize;
     }
   }, [props.searchQuery]);
 
@@ -340,14 +365,16 @@ const SearchInline = (props: Props) => {
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
-              <IconButton
-                id="clearSearchID"
-                onClick={clearSearch}
-                size="small"
-                edge="end"
-              >
-                <ClearSearchIcon />
-              </IconButton>
+              <Tooltip title={i18n.t('clearSearch')}>
+                <IconButton
+                  id="clearSearchID"
+                  onClick={clearSearch}
+                  size="small"
+                  edge="end"
+                >
+                  <ClearSearchIcon />
+                </IconButton>
+              </Tooltip>
             </InputAdornment>
           )
         }}
