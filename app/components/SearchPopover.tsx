@@ -44,6 +44,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import CancelSearchIcon from '@material-ui/icons/CancelOutlined';
 import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -616,6 +617,7 @@ const SearchPopover = (props: Props) => {
     } else {
       searchLocationIndex(searchQuery);
     }
+    props.onClose();
   };
 
   const handleSearchMenu = (event: any) => {
@@ -757,22 +759,23 @@ const SearchPopover = (props: Props) => {
               color="primary"
               onClick={executeSearch}
               style={{ flex: 1 }}
-              size="medium"
+              size="small"
             >
               {indexing
                 ? 'Search disabled while indexing'
                 : i18n.t('searchTitle')}
             </Button>
-            <Button
-              variant="outlined"
-              color="secondary"
-              size="medium"
-              style={{ flex: 1 }}
-              onClick={clearSearch}
-              id="resetSearchButton"
-            >
-              {i18n.t('resetBtn')}
-            </Button>
+            <Tooltip title={i18n.t('clearSearch')}>
+              <Button
+                variant="outlined"
+                color="secondary"
+                size="small"
+                onClick={clearSearch}
+                id="resetSearchButton"
+              >
+                <CancelSearchIcon />
+              </Button>
+            </Tooltip>
           </ButtonGroup>
         </FormControl>
         <FormControl className={classes.formControl} disabled={indexing}>
@@ -1085,7 +1088,7 @@ const SearchPopover = (props: Props) => {
                     <Button
                       variant="outlined"
                       color="secondary"
-                      size="medium"
+                      size="small"
                       style={{ flex: 1 }}
                       onClick={() => saveSearch()}
                     >
@@ -1095,7 +1098,7 @@ const SearchPopover = (props: Props) => {
                       <Button
                         variant="outlined"
                         color="secondary"
-                        size="medium"
+                        size="small"
                         style={{ flex: 1 }}
                         onClick={() => saveSearch(false)}
                       >
