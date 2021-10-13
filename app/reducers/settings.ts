@@ -26,6 +26,7 @@ import Links from '-/links';
 import versionMeta from '-/version.json';
 import { actions as AppActions } from './app';
 import { TS } from '-/tagspaces.namespace';
+import { Pro } from '../pro';
 
 export const types = {
   UPGRADE_SETTINGS: 'SETTINGS/UPGRADE_SETTINGS',
@@ -583,8 +584,24 @@ export function getLastVersionPromise(): Promise<string> {
   return new Promise((resolve, reject) => {
     console.log('Checking for new version...');
     const xhr = new XMLHttpRequest();
+    let versionFile = 'tagspaces.json';
+    const proText = Pro ? 'pro-' : '';
+    if (AppConfig.isWeb) {
+      versionFile = 'tagspaces-pro-web.json';
+    } else if (AppConfig.isWin) {
+      versionFile = 'tagspaces-' + proText + 'win-x64.json';
+    } else if (AppConfig.isMacLike) {
+      versionFile = 'tagspaces-' + proText + 'mac.json';
+    } else if (AppConfig.isLinux) {
+      versionFile = 'tagspaces-' + proText + 'linux-x64.json';
+    } else if (AppConfig.isAndroid) {
+      versionFile = 'tagspaces-' + proText + 'android.json';
+    }
     const updateUrl =
-      Links.links.checkNewVersionURL + '?cv=' + versionMeta.version;
+      Links.links.checkNewVersionURL +
+      versionFile +
+      '?cv=' +
+      versionMeta.version;
     xhr.open('GET', updateUrl, true);
     xhr.responseType = 'json';
     xhr.onerror = reject;

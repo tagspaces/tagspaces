@@ -17,7 +17,7 @@
  */
 export const Links = {
   links: {
-    checkNewVersionURL: 'https://www.tagspaces.org/releases/tagspaces.json',
+    checkNewVersionURL: 'https://updates.tagspaces.org/releases/',
     productsOverview: 'https://www.tagspaces.org/products/',
     productProObjectStore:
       'https://www.tagspaces.org/products/pro/#connectingObjectStorage',
