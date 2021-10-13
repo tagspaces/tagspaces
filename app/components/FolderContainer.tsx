@@ -41,7 +41,7 @@ import MapiquePerspectiveIcon from '@material-ui/icons/Map';
 import LocationMenu from './menus/LocationMenu';
 import i18n from '../services/i18n';
 import { getMaxSearchResults, getDesktopMode } from '-/reducers/settings';
-import { getLocations } from '-/reducers/locations';
+// import { getLocations } from '-/reducers/locations';
 import {
   actions as AppActions,
   getDirectoryContent,
@@ -232,7 +232,7 @@ interface Props {
   maxSearchResults: number;
   currentDirectoryPerspective: string;
   currentLocationPath: string;
-  locations: Array<Location>;
+  // locations: Array<Location>;
   openedFiles: Array<OpenedEntry>;
   updateCurrentDirEntry: (path: string, entry: Object) => void;
   setCurrentDirectoryColor: (color: string) => void;
@@ -629,7 +629,7 @@ function mapStateToProps(state) {
     currentDirectoryPerspective: getCurrentDirectoryPerspective(state),
     searchResultCount: getSearchResultCount(state),
     currentLocationPath: getCurrentLocationPath(state),
-    locations: getLocations(state),
+    // locations: getLocations(state),
     maxSearchResults: getMaxSearchResults(state),
     isDesktopMode: getDesktopMode(state),
     isReadOnlyMode: isReadOnlyMode(state),
