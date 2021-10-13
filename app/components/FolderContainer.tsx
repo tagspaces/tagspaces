@@ -503,7 +503,7 @@ const FolderContainer = (props: Props) => {
                   anchorEl={anchorSearch}
                   onClose={() => setAnchorSearch(null)}
                   anchorOrigin={{
-                    vertical: 'bottom',
+                    vertical: 'top',
                     horizontal: 'right'
                   }}
                   style={{

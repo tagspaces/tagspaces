@@ -156,6 +156,30 @@ const SearchInline = (props: Props) => {
       mainSearchField.current.value = textQuery.current;
       // forceUpdate();
     }
+    if (props.searchQuery.searchBoxing) {
+      searchBoxing.current = props.searchQuery.searchBoxing;
+    }
+    if (props.searchQuery.fileTypes) {
+      fileTypes.current = props.searchQuery.fileTypes;
+    }
+    if (props.searchQuery.searchType) {
+      searchType.current = props.searchQuery.searchType;
+    }
+    if (props.searchQuery.lastModified) {
+      lastModified.current = props.searchQuery.lastModified;
+    }
+    if (props.searchQuery.tagTimePeriodFrom) {
+      tagTimePeriodFrom.current = props.searchQuery.tagTimePeriodFrom;
+    }
+    if (props.searchQuery.tagTimePeriodTo) {
+      tagTimePeriodTo.current = props.searchQuery.tagTimePeriodTo;
+    }
+    if (props.searchQuery.forceIndexing) {
+      forceIndexing.current = props.searchQuery.forceIndexing;
+    }
+    if (props.searchQuery.fileSize) {
+      fileSize.current = props.searchQuery.fileSize;
+    }
   }, [props.searchQuery]);
 
   /* const mergeWithExtractedTags = (tags: Array<TS.Tag>, identifier: string) => {
