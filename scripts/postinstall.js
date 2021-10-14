@@ -5,7 +5,7 @@ const npm = require('npm');
 function isInstalled(npmPackage) {
   // TODO check installed version
   try {
-    const path = require.resolve('tagspaces-platforms');
+    const path = require.resolve('@tagspaces/tagspaces-platforms');
     if (
       !fs.existsSync(path) ||
       !fs.existsSync(pathLib.join(path, '..', 'node_modules'))
@@ -20,7 +20,7 @@ function isInstalled(npmPackage) {
   }
 }
 if (process.env.PD_PLATFORM === 'node') {
-  if (!isInstalled('tagspaces-common-node')) {
+  if (!isInstalled('@tagspaces/tagspaces-common-node')) {
     npm.load(er => {
       if (er) {
         console.log('err:', er);
@@ -37,7 +37,7 @@ if (process.env.PD_PLATFORM === 'node') {
     });
   }
 } else if (process.env.PD_PLATFORM === 'web') {
-  if (!isInstalled('tagspaces-common-aws')) {
+  if (!isInstalled('@tagspaces/tagspaces-common-aws')) {
     npm.load(er => {
       if (er) {
         console.log('err:', er);

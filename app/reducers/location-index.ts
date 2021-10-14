@@ -16,7 +16,7 @@
  *
  */
 
-import { loadIndex, hasIndex } from 'tagspaces-platforms/indexer';
+import { loadIndex, hasIndex } from '@tagspaces/tagspaces-platforms/indexer';
 import { getLocation, getLocationByPath, getLocations } from './locations';
 import { createDirectoryIndex } from '-/services/utils-io';
 import {

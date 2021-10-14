@@ -555,12 +555,15 @@ app.on('ready', async () => {
     let script;
     let envPath;
     if (devMode || testMode) {
-      filepath = path.join(__dirname, 'node_modules/tagspaces-ws/build');
+      filepath = path.join(
+        __dirname,
+        'node_modules/@tagspaces/tagspaces-ws/build'
+      );
       script = 'index.js';
       envPath = path.join(__dirname, '.env');
     } else {
       filepath = process.resourcesPath;
-      script = 'app.asar/node_modules/tagspaces-ws/build/index.js';
+      script = 'app.asar/node_modules/@tagspaces/tagspaces-ws/build/index.js';
       envPath = path.join(process.resourcesPath, 'app.asar/.env');
     }
     const properties = propertiesReader(envPath);

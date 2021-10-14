@@ -19,9 +19,10 @@
 import uuidv1 from 'uuid';
 import {
   loadIndex,
+  enhanceDirectoryIndex,
   persistIndex,
   createIndex
-} from 'tagspaces-platforms/indexer';
+} from '@tagspaces/tagspaces-platforms/indexer';
 import { saveAs } from 'file-saver';
 import micromatch from 'micromatch';
 import PlatformIO from './platform-io';
@@ -467,7 +468,7 @@ export function createDirectoryIndex(
       persistIndex(param, directoryIndex).then(success => {
         if (success) {
           console.log('Index generated in folder: ' + directoryPath);
-          return directoryIndex;
+          return enhanceDirectoryIndex(dirPath, directoryIndex);
         }
         return undefined;
       })

@@ -48,7 +48,7 @@ export default class PlatformIO {
         ) {
           resolve();
         } else {
-          import('tagspaces-platforms/index')
+          import('@tagspaces/tagspaces-platforms/index')
             .then(IO => {
               // { default: IO }) => {
               objectStoreAPI = IO;
