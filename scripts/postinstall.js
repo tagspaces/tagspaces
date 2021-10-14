@@ -6,7 +6,10 @@ function isInstalled(npmPackage) {
   // TODO check installed version
   try {
     const path = require.resolve('tagspaces-platforms');
-    if (!fs.existsSync(pathLib.join(path, '..', 'node_modules'))) {
+    if (
+      !fs.existsSync(path) ||
+      !fs.existsSync(pathLib.join(path, '..', 'node_modules'))
+    ) {
       return false;
     }
     const data = fs.readFileSync(path, 'utf8');
