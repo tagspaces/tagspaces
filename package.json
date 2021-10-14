@@ -69,7 +69,7 @@
     "install-ext-node-mac": "rimraf app/node_modules && cd app && cross-env PD_PLATFORM=node node ../scripts/app-package-gen.js && npm install --platform=darwin --arch=x64 && cd ..",
     "install-ext-node-mac-arm64": "rimraf app/node_modules && cd app && cross-env PD_PLATFORM=node node ../scripts/app-package-gen.js && npm install --platform=darwin --arch=arm64 && cd ..",
     "install-ext-node-win": "rimraf app/node_modules && cd app && cross-env PD_PLATFORM=node node ../scripts/app-package-gen.js && npm install --platform=win32 --arch=x64 && cd ..",
-    "install-ext-node-linux": "rimraf app/node_modules && cd app && cross-env PD_PLATFORM=node node ../scripts/app-package-gen.js && npm install --platform=linux --arch=x64 && cd ..",
+    "install-ext-node-linux": "rimraf app/node_modules && cd app && cross-env PD_PLATFORM=node node ../scripts/app-package-gen.js && npm install SHARP_IGNORE_GLOBAL_LIBVIPS=1 --platform=linux --arch=x64 && cd ..",
     "install-ext-node": "rimraf app/node_modules && cd app && cross-env PD_PLATFORM=node node ../scripts/app-package-gen.js && npm install && cd ..",
     "install-ext-web": "rimraf app/node_modules && cd app && cross-env PD_PLATFORM=web node ../scripts/app-package-gen.js && npm install && cd ..",
     "setup-ext": "node scripts/setupextensions.js",
