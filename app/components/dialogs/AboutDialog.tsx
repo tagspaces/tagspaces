@@ -117,7 +117,7 @@ const AboutDialog = (props: Props) => {
             'Build on: ' +
             versionMeta.buildTime +
             '\nPlatform: ' +
-            navigator.appVersion
+            navigator.userAgent
           }
         >
           <Typography variant="subtitle1">

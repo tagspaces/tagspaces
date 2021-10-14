@@ -17,7 +17,7 @@
  */
 
 import { loadIndex, hasIndex } from 'tagspaces-platforms/indexer';
-import { getLocation, getLocations } from './locations';
+import { getLocation, getLocationByPath, getLocations } from './locations';
 import { createDirectoryIndex } from '-/services/utils-io';
 import {
   extractFileExtension,
@@ -286,11 +286,19 @@ export const actions = {
     getState: () => any
   ) => {
     const state = getState();
-    const currentLocation: TS.Location = getLocation(
+    let currentLocation: TS.Location = getLocation(
       state,
       state.app.currentLocationId
     );
     window.walkCanceled = false;
+    if (!currentLocation) {
+      if (searchQuery.currentDirectory) {
+        currentLocation = getLocationByPath(
+          state,
+          searchQuery.currentDirectory
+        );
+      }
+    }
     if (!currentLocation) {
       dispatch(
         AppActions.showNotification(
@@ -301,6 +309,7 @@ export const actions = {
       );
       return;
     }
+
     const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
     dispatch(
       AppActions.showNotification(

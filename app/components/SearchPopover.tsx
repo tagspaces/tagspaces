@@ -44,6 +44,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import CancelSearchIcon from '@material-ui/icons/CancelOutlined';
 import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -208,13 +209,17 @@ const SearchPopover = (props: Props) => {
     if (name === 'fileTypes') {
       const types = JSON.parse(value);
       fileTypes.current = types;
-      if (searchBoxing.current !== 'global') {
-        props.searchLocationIndex({
-          ...props.searchQuery,
-          fileTypes: types,
-          showUnixHiddenEntries: props.showUnixHiddenEntries
-        });
-      }
+      const searchQuery = {
+        ...props.searchQuery,
+        searchBoxing: searchBoxing.current,
+        fileTypes: types,
+        showUnixHiddenEntries: props.showUnixHiddenEntries
+      };
+      /*if (searchBoxing.current !== 'global') {
+        props.searchLocationIndex(searchQuery);
+      } else {*/
+      props.setSearchQuery(searchQuery);
+      //}
     }
   };
 
@@ -224,13 +229,18 @@ const SearchPopover = (props: Props) => {
 
     if (name === 'fileSize') {
       fileSize.current = value;
-      if (searchBoxing.current !== 'global') {
-        props.searchLocationIndex({
-          ...props.searchQuery,
-          fileSize: value,
-          showUnixHiddenEntries: props.showUnixHiddenEntries
-        });
-      }
+      const searchQuery = {
+        ...props.searchQuery,
+        searchBoxing: searchBoxing.current,
+        fileSize: value,
+        showUnixHiddenEntries: props.showUnixHiddenEntries
+      };
+
+      /*if (searchBoxing.current !== 'global') {
+        props.searchLocationIndex(searchQuery);
+      } else {*/
+      props.setSearchQuery(searchQuery);
+      //}
     }
   };
 
@@ -242,13 +252,17 @@ const SearchPopover = (props: Props) => {
 
     if (name === 'lastModified') {
       lastModified.current = value;
-      if (searchBoxing.current !== 'global') {
-        props.searchLocationIndex({
-          ...props.searchQuery,
-          lastModified: value,
-          showUnixHiddenEntries: props.showUnixHiddenEntries
-        });
-      }
+      const searchQuery = {
+        ...props.searchQuery,
+        searchBoxing: searchBoxing.current,
+        lastModified: value,
+        showUnixHiddenEntries: props.showUnixHiddenEntries
+      };
+      /*if (searchBoxing.current !== 'global') {
+        props.searchLocationIndex(searchQuery);
+      } else {*/
+      props.setSearchQuery(searchQuery);
+      // }
     }
   };
 
@@ -338,13 +352,14 @@ const SearchPopover = (props: Props) => {
         searchQuery = { ...props.searchQuery, tagsOR: value };
       }
     }
-    props.searchLocationIndex({
+    props.setSearchQuery({
       ...searchQuery,
       showUnixHiddenEntries: props.showUnixHiddenEntries
     });
-    // if (searchBoxing !== 'global') { // TODO disable automatic search in global mode
-    //
-    // }
+    /*props.searchLocationIndex({
+      ...searchQuery,
+      showUnixHiddenEntries: props.showUnixHiddenEntries
+    });*/
   };
 
   function haveSearchFilters(searchQuery) {
@@ -602,6 +617,7 @@ const SearchPopover = (props: Props) => {
     } else {
       searchLocationIndex(searchQuery);
     }
+    props.onClose();
   };
 
   const handleSearchMenu = (event: any) => {
@@ -631,14 +647,14 @@ const SearchPopover = (props: Props) => {
         <Typography
           variant="caption"
           className={classes.header}
-          style={{ flex: 1 }}
+          style={{ flex: 1, margin: 'auto' }}
         >
           {indexStatus}
         </Typography>
         <IconButton
           style={{ marginLeft: 'auto' }}
-          data-tid="searchMenu"
-          onClick={clearSearch}
+          data-tid="closeSearchTID"
+          onClick={props.onClose}
         >
           <CloseIcon />
         </IconButton>
@@ -733,6 +749,34 @@ const SearchPopover = (props: Props) => {
               </Tooltip>
             </ToggleButton>
           </ToggleButtonGroup>
+        </FormControl>
+        <FormControl className={classes.formControl} disabled={indexing}>
+          <ButtonGroup style={{ justifyContent: 'center' }}>
+            <Button
+              disabled={indexing}
+              id="searchButton"
+              // variant="outlined"
+              color="primary"
+              onClick={executeSearch}
+              style={{ flex: 1 }}
+              size="small"
+            >
+              {indexing
+                ? 'Search disabled while indexing'
+                : i18n.t('searchTitle')}
+            </Button>
+            <Tooltip title={i18n.t('clearSearch')}>
+              <Button
+                variant="outlined"
+                color="secondary"
+                size="small"
+                onClick={clearSearch}
+                id="resetSearchButton"
+              >
+                <CancelSearchIcon />
+              </Button>
+            </Tooltip>
+          </ButtonGroup>
         </FormControl>
         <FormControl className={classes.formControl} disabled={indexing}>
           <TagsSelect
@@ -1044,7 +1088,7 @@ const SearchPopover = (props: Props) => {
                     <Button
                       variant="outlined"
                       color="secondary"
-                      size="medium"
+                      size="small"
                       style={{ flex: 1 }}
                       onClick={() => saveSearch()}
                     >
@@ -1054,7 +1098,7 @@ const SearchPopover = (props: Props) => {
                       <Button
                         variant="outlined"
                         color="secondary"
-                        size="medium"
+                        size="small"
                         style={{ flex: 1 }}
                         onClick={() => saveSearch(false)}
                       >
@@ -1063,16 +1107,6 @@ const SearchPopover = (props: Props) => {
                     )}
                   </>
                 )}
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  size="medium"
-                  style={{ flex: 1 }}
-                  onClick={clearSearch}
-                  id="resetSearchButton"
-                >
-                  {i18n.t('resetBtn')}
-                </Button>
               </ButtonGroup>
             </FormControl>
 

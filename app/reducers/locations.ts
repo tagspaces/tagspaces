@@ -261,6 +261,11 @@ export const getLocation = (
   locationId: string
 ): TS.Location | null =>
   state.locations.find(location => location.uuid === locationId);
+export const getLocationByPath = (
+  state: any,
+  path: string
+): TS.Location | null =>
+  state.locations.find(location => location.path === path);
 export const getDefaultLocationId = (state: any): string | undefined => {
   let defaultLocationID;
   state.locations.map(location => {

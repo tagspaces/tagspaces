@@ -386,7 +386,6 @@ function buildAppMenu() {
     frame: false,
     webPreferences: {
       nodeIntegration: true,
-      enableRemoteModule: false,
       contextIsolation: false
     }
   });
