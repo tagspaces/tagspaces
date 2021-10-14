@@ -69,10 +69,7 @@ if (dependenciesObj && Object.keys(dependenciesObj).length) {
         const cleanVersion = dependenciesObj[dep].startsWith('^')
           ? dependenciesObj[dep].substr(1)
           : dependenciesObj[dep];
-        if (
-          packageJson.version !== cleanVersion &&
-          !cleanVersion.endsWith('#main')
-        ) {
+        if (packageJson.version !== cleanVersion) {
           // TODO Temp fix tagspaces-extension is not npm package with version
           npmInstall = true;
         }
