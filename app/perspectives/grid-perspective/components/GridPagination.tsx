@@ -145,8 +145,8 @@ const GridPagination = (props: Props) => {
       {showPagination && (
         <Pagination
           style={{
-            left: 30,
-            bottom: 80,
+            left: 15,
+            bottom: 60,
             zIndex: 1100,
             position: 'absolute',
             backgroundColor: theme.palette.background.default,
