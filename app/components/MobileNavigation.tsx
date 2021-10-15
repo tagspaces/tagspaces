@@ -198,7 +198,15 @@ const MobileNavigation = (props: Props) => {
             >
               <LocationsIcon />
               &nbsp;
-              {i18n.t('core:createLocationTitle')}
+              <span
+                style={{
+                  maxWidth: 150,
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden'
+                }}
+              >
+                {i18n.t('core:createLocationTitle')}
+              </span>
             </Button>
           </Tooltip>
         </ButtonGroup>
