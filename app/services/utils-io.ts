@@ -443,8 +443,10 @@ export function createDirectoryIndex(
   // disableIndexing = true
 ): Promise<Array<TS.FileSystemEntry>> {
   let directoryPath;
+  let locationID;
   if (typeof param === 'object' && param !== null) {
     directoryPath = param.path;
+    ({locationID} = param);
   } else {
     directoryPath = param;
   }
@@ -457,7 +459,7 @@ export function createDirectoryIndex(
       ignorePatterns
     ).then(succeeded => {
       if (succeeded) {
-        return loadIndex(dirPath);
+        return loadIndex({ path: dirPath, locationID });
       }
       return undefined;
     });
@@ -468,7 +470,7 @@ export function createDirectoryIndex(
       persistIndex(param, directoryIndex).then(success => {
         if (success) {
           console.log('Index generated in folder: ' + directoryPath);
-          return enhanceDirectoryIndex(dirPath, directoryIndex);
+          return enhanceDirectoryIndex(dirPath, directoryIndex, locationID);
         }
         return undefined;
       })

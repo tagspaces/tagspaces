@@ -187,10 +187,15 @@ export const actions = {
     directoryPath: string,
     extractText: boolean,
     isCurrentLocation: boolean = true,
+    locationID: string = undefined,
     ignorePatterns: Array<string> = []
   ) => (dispatch: (actions: Object) => void) => {
     dispatch(actions.startDirectoryIndexing());
-    createDirectoryIndex(directoryPath, extractText, ignorePatterns)
+    createDirectoryIndex(
+      { path: directoryPath, locationID },
+      extractText,
+      ignorePatterns
+    )
       .then(directoryIndex => {
         if (isCurrentLocation) {
           // Load index only if current location
@@ -218,10 +223,14 @@ export const actions = {
     dispatch(actions.startDirectoryIndexing());
     const allLocations = getLocations(state);
 
-    const promises = allLocations.map(location => {
+    const promises = allLocations.map((location: TS.Location) => {
       const nextPath = getLocationPath(location);
       return (
-        createDirectoryIndex(nextPath, extractText, location.ignorePatternPaths)
+        createDirectoryIndex(
+          { path: nextPath, location: location.uuid },
+          extractText,
+          location.ignorePatternPaths
+        )
           /* .then(directoryIndex => {
           if (Pro && Pro.Indexer) {
             Pro.Indexer.persistIndex(
@@ -347,6 +356,7 @@ export const actions = {
         GlobalSearch.index = await createDirectoryIndex(
           {
             path: currentPath,
+            locationID: currentLocation.uuid,
             ...(isCloudLocation && { bucketName: currentLocation.bucketName })
           },
           currentLocation.fullTextIndex,
@@ -361,7 +371,10 @@ export const actions = {
         !GlobalSearch.index ||
         GlobalSearch.index.length === 0
       ) {
-        GlobalSearch.index = await loadIndex(getLocationPath(currentLocation));
+        GlobalSearch.index = await loadIndex({
+          path: getLocationPath(currentLocation),
+          locationID: currentLocation.uuid
+        });
       }
       Search.searchLocationIndex(GlobalSearch.index, searchQuery)
         .then(searchResults => {
@@ -459,6 +472,7 @@ export const actions = {
             directoryIndex = await createDirectoryIndex(
               {
                 path: nextPath,
+                locationID: location.uuid,
                 ...(isCloudLocation && { bucketName: location.bucketName })
               },
               location.fullTextIndex,
@@ -475,7 +489,7 @@ export const actions = {
             // if (Pro && Pro.Indexer && Pro.Indexer.loadIndex) {
             console.log('Loading index for : ' + nextPath);
             directoryIndex = await loadIndex(
-              nextPath,
+              { path: nextPath, locationID: location.uuid },
               PlatformIO.getDirSeparator()
             );
           }
