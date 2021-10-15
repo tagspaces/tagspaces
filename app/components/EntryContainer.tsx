@@ -89,52 +89,22 @@ const bufferedSplitResize = buffer({
 });
 
 const styles: any = (theme: any) => ({
-  panel: {
-    width: '100%',
-    flexDirection: 'column',
-    flex: '1 1 100%',
-    display: 'flex',
-    backgroundColor: theme.palette.background.default
-  },
-  entryProperties: {
-    display: 'inline',
-    flex: '1 1 100%',
-    backgroundColor: theme.palette.background.default,
-    // zIndex: 1,
-    padding: '0',
-    height: '100%'
-  },
-  fileOpener: {
-    width: '100%',
-    // zIndex: 3,
-    border: 0
-  },
-  toolbar: {
-    paddingLeft: 5,
-    paddingRight: 5,
-    paddingTop: 0,
-    minHeight: 50,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-start'
-  },
   toolbar2: {
     width: '100%',
     paddingLeft: 5,
     paddingRight: 5,
-    paddingTop: 5,
+    paddingTop: 0,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-start',
     zIndex: 2,
-    borderBottom: '1px solid ' + theme.palette.divider,
-    overflowX: AppConfig.isFirefox ? 'auto' : 'overlay'
+    borderBottom: '1px solid ' + theme.palette.divider
   },
   flexLeft: {
     flexDirection: 'row',
     flex: '1 1',
     display: 'flex',
-    overflowX: 'auto'
+    overflowX: AppConfig.isFirefox ? 'auto' : 'overlay'
     // marginRight: 100
   },
   fileBadge: {
@@ -160,17 +130,10 @@ const styles: any = (theme: any) => ({
   },
   entryCloseSection: {
     position: 'absolute',
-    top: 0,
+    top: -2,
     right: 0,
     backgroundColor: theme.palette.background.default,
-    boxShadow: '-15px 0px 24px 3px ' + theme.palette.background.default
-  },
-  entryNavigationSection: {
-    position: 'absolute',
-    top: 55,
-    right: 0,
-    backgroundColor: theme.palette.background.default,
-    boxShadow: '-15px -5px 20px 3px ' + theme.palette.background.default
+    boxShadow: '-15px -2px 24px 3px ' + theme.palette.background.default
   }
 });
 
@@ -327,7 +290,6 @@ const EntryContainer = (props: Props) => {
         props.openNextFile(openedFile.path);
         break;
       case 'openLinkExternally':
-        // console.log('Open link externally: ' + data.link);
         props.openLink(data.link);
         break;
       case 'loadDefaultTextContent':
@@ -653,12 +615,6 @@ const EntryContainer = (props: Props) => {
   const openNatively = () => {
     if (openedFile.path) {
       if (openedFile.isFile) {
-        // window.open(
-        //   fileOpenerURL,
-        //   'TagSpaces - ' + openedFile.path,
-        //   'resizable=yes,height=768,width=1024',
-        //   false
-        // );
         props.openFileNatively(openedFile.path);
       } else {
         props.openDirectory(openedFile.path);
@@ -835,7 +791,15 @@ const EntryContainer = (props: Props) => {
           </Tooltip>
         )}
       </div>
-      <div className={classes.entryNavigationSection}>
+      <div
+        style={{
+          position: 'absolute',
+          top: 43,
+          right: 0,
+          backgroundColor: theme.palette.background.default,
+          boxShadow: '-15px -5px 20px 3px ' + theme.palette.background.default
+        }}
+      >
         <Tooltip title={i18n.t('core:openPrevFileTooltip')}>
           <IconButton
             aria-label={i18n.t('core:openPrevFileTooltip')}
@@ -893,7 +857,7 @@ const EntryContainer = (props: Props) => {
     </div>
   );
 
-  const { classes, keyBindings } = props;
+  const { classes, keyBindings, theme } = props;
   const fileTitle: string = openedFile.path
     ? extractTitle(
         openedFile.path,
@@ -912,12 +876,26 @@ const EntryContainer = (props: Props) => {
         return (
           <Box
             key="toolbarButtonsID"
-            className={classes.panel}
             style={{
+              width: '100%',
+              flexDirection: 'column',
+              flex: '1 1 100%',
+              display: 'flex',
+              backgroundColor: theme.palette.background.default,
               height: filePropsHeight || 'initial'
             }}
           >
-            <Box className={classes.toolbar}>
+            <Box
+              style={{
+                paddingLeft: 5,
+                paddingRight: 50,
+                paddingTop: 0,
+                minHeight: 40,
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'flex-start'
+              }}
+            >
               <Box className={classes.flexLeft}>
                 {openedFile.isFile ? (
                   <Button
@@ -1049,7 +1027,15 @@ const EntryContainer = (props: Props) => {
     };
 
     const entryProperties = (
-      <div className={classes.entryProperties}>
+      <div
+        style={{
+          display: 'inline',
+          flex: '1 1 100%',
+          backgroundColor: theme.palette.background.default,
+          padding: '0',
+          height: '100%'
+        }}
+      >
         {openedFile.isFile ? renderFileToolbar(classes) : renderFolderToolbar()}
         <EntryProperties
           key={openedFile.path}
@@ -1080,7 +1066,7 @@ const EntryContainer = (props: Props) => {
     return (
       <Split
         horizontal
-        minPrimarySize="103px"
+        minPrimarySize="90px"
         initialPrimarySize={initSize}
         percent={percent.current}
         setPercent={setPercent}

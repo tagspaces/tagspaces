@@ -41,7 +41,6 @@ import MapiquePerspectiveIcon from '@material-ui/icons/Map';
 import LocationMenu from './menus/LocationMenu';
 import i18n from '../services/i18n';
 import { getMaxSearchResults, getDesktopMode } from '-/reducers/settings';
-// import { getLocations } from '-/reducers/locations';
 import {
   actions as AppActions,
   getDirectoryContent,
@@ -151,56 +150,6 @@ const CounterBadge: any = withStyles(theme => ({
   }
 }))(Badge);
 
-const styles: any = (theme: any) => ({
-  mainPanel: {
-    flex: '1 1 100%',
-    width: '100%',
-    height: '100%',
-    maxHeight: '100%',
-    overflow: 'hidden',
-    backgroundColor: theme.palette.background.default,
-    display: 'flex',
-    flexDirection: 'column'
-  },
-  topPanel: {
-    // height: 50,
-    width: '100%',
-    backgroundColor: theme.palette.background.default
-  },
-  centerPanel: {
-    flex: '1 1 auto',
-    width: '100%',
-    backgroundColor: theme.palette.background.default
-  },
-  flexMiddle: {
-    flex: '1 1 10%',
-    display: 'flex',
-    flexDirection: 'column'
-  },
-  folderButton: {
-    minWidth: 30,
-    paddingLeft: 3,
-    paddingRight: 3,
-    lineHeight: '17px',
-    margin: '0 auto',
-    backgroundColor: theme.palette.background.default
-  },
-  locationSelectorButton: {
-    whiteSpace: 'nowrap',
-    paddingLeft: 10,
-    paddingRight: 10,
-    alignItems: 'center'
-  },
-  perspecitveSwitch: {
-    bottom: 65,
-    right: 15,
-    zIndex: 1000,
-    opacity: 0.9,
-    position: 'absolute',
-    backgroundColor: theme.palette.background.default
-  }
-});
-
 interface Props {
   classes: any;
   settings: any;
@@ -225,14 +174,12 @@ interface Props {
   isReadOnlyMode: boolean;
   isDesktopMode: boolean;
   showNotification: (content: string) => void;
-  // openSearchPanel: () => void;
   toggleDrawer?: () => void;
   drawerOpened: boolean;
   setCurrentDirectoryPerspective: (perspective: string) => void;
   maxSearchResults: number;
   currentDirectoryPerspective: string;
   currentLocationPath: string;
-  // locations: Array<Location>;
   openedFiles: Array<OpenedEntry>;
   updateCurrentDirEntry: (path: string, entry: Object) => void;
   setCurrentDirectoryColor: (color: string) => void;
@@ -259,7 +206,6 @@ const FolderContainer = (props: Props) => {
             props.setCurrentDirectoryPerspective(openedFile.perspective);
           }
         } else {
-          // if (openedFile.editMode) {// changed) {
           const currentEntry = enhanceOpenedEntry(
             openedFile,
             props.settings.tagDelimiter
@@ -393,7 +339,6 @@ const FolderContainer = (props: Props) => {
     openDirectory,
     reflectCreateEntry,
     openFsEntry
-    // rightPanelWidth
   } = props;
 
   /* let searchResultCounterText = searchResultCount + ' ' + i18n.t('entries');
@@ -449,19 +394,29 @@ const FolderContainer = (props: Props) => {
 
   return (
     <div data-tid="folderContainerTID" style={{ position: 'relative' }}>
-      <div className={classes.mainPanel}>
-        <div className={classes.topPanel}>
-          <div style={{ paddingLeft: 5, display: 'flex' }}>
-            <IconButton
-              id="mobileMenuButton"
-              style={{
-                transform: drawerOpened ? 'rotate(0deg)' : 'rotate(180deg)'
-              }}
-              onClick={toggleDrawer}
-            >
-              <MenuIcon />
-            </IconButton>
-            {/* <CounterBadge
+      <div
+        style={{
+          flex: '1 1 100%',
+          width: '100%',
+          height: '100%',
+          maxHeight: '100%',
+          overflow: 'hidden',
+          backgroundColor: theme.palette.background.default,
+          display: 'flex',
+          flexDirection: 'column'
+        }}
+      >
+        <div style={{ paddingLeft: 5, display: 'flex' }}>
+          <IconButton
+            id="mobileMenuButton"
+            style={{
+              transform: drawerOpened ? 'rotate(0deg)' : 'rotate(180deg)'
+            }}
+            onClick={toggleDrawer}
+          >
+            <MenuIcon />
+          </IconButton>
+          {/* <CounterBadge
               showZero={true}
               title={searchResultCounterText}
               badgeContent={searchResultCount}
@@ -471,92 +426,99 @@ const FolderContainer = (props: Props) => {
                 openSearchPanel();
               }}
             /> */}
-            <IconButton
-              data-tid="toggleSearch"
-              onClick={() => {
-                if (isSearchVisible) {
-                  props.setSearchQuery({});
-                  props.openCurrentDirectory();
-                } else {
-                  setSearchVisible(!isSearchVisible);
+          <IconButton
+            data-tid="toggleSearch"
+            onClick={() => {
+              if (isSearchVisible) {
+                props.setSearchQuery({});
+                props.openCurrentDirectory();
+              } else {
+                setSearchVisible(!isSearchVisible);
+              }
+              return true;
+            }}
+          >
+            <SearchIcon />
+          </IconButton>
+          {isSearchVisible ? (
+            <>
+              <SearchInline />
+              <IconButton
+                id="advancedButton"
+                title={i18n.t('core:advancedSearch')}
+                data-tid="advancedSearch"
+                onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
+                  setAnchorSearch(event.currentTarget)
                 }
-                return true;
-              }}
-            >
-              <SearchIcon />
-            </IconButton>
-            {isSearchVisible ? (
-              <>
-                <SearchInline />
+              >
+                <AdvancedSearchIcon />
+              </IconButton>
+              <Popover
+                open={Boolean(anchorSearch)}
+                anchorEl={anchorSearch}
+                onClose={() => setAnchorSearch(null)}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right'
+                }}
+                style={{
+                  marginLeft: -8
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right'
+                }}
+              >
+                <SearchPopover onClose={() => setAnchorSearch(null)} />
+              </Popover>
+            </>
+          ) : (
+            <>
+              <div
+                style={{
+                  flex: '1 1 10%',
+                  display: 'flex',
+                  flexDirection: 'column'
+                }}
+              />
+              {props.progress && props.progress.length > 0 && (
                 <IconButton
-                  id="advancedButton"
-                  title={i18n.t('core:advancedSearch')}
-                  data-tid="advancedSearch"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
-                    setAnchorSearch(event.currentTarget)
-                  }
+                  id="progressButton"
+                  title={i18n.t('core:progress')}
+                  data-tid="uploadProgress"
+                  onClick={() => props.toggleUploadDialog()}
+                  // @ts-ignore
+                  className={[classes.button, classes.upgradeButton].join(' ')}
                 >
-                  <AdvancedSearchIcon />
+                  <CircularProgressWithLabel value={getProgressValue()} />
                 </IconButton>
-                <Popover
-                  open={Boolean(anchorSearch)}
-                  anchorEl={anchorSearch}
-                  onClose={() => setAnchorSearch(null)}
-                  anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right'
-                  }}
-                  style={{
-                    marginLeft: -8
-                  }}
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right'
-                  }}
-                >
-                  <SearchPopover onClose={() => setAnchorSearch(null)} />
-                </Popover>
-              </>
-            ) : (
-              <>
-                <div className={classes.flexMiddle} />
-                {props.progress && props.progress.length > 0 && (
-                  <IconButton
-                    id="progressButton"
-                    title={i18n.t('core:progress')}
-                    data-tid="uploadProgress"
-                    onClick={() => props.toggleUploadDialog()}
-                    // @ts-ignore
-                    className={[classes.button, classes.upgradeButton].join(
-                      ' '
-                    )}
-                  >
-                    <CircularProgressWithLabel value={getProgressValue()} />
-                  </IconButton>
-                )}
-                <LocationMenu />
-                <PathBreadcrumbs
-                  currentDirectoryPath={currentDirectoryPath}
-                  currentLocationPath={currentLocationPath}
-                  loadDirectoryContent={loadDirectoryContent}
-                  switchPerspective={switchPerspective}
-                  setSelectedEntries={setSelectedEntries}
-                  openDirectory={openDirectory}
-                  reflectCreateEntry={reflectCreateEntry}
-                  openFsEntry={openFsEntry}
-                  isReadOnlyMode={props.isReadOnlyMode}
-                  isDesktopMode={isDesktopMode}
-                  openRenameDirectoryDialog={() =>
-                    setIsRenameEntryDialogOpened(true)
-                  }
-                />
-              </>
-            )}
-          </div>
+              )}
+              <LocationMenu />
+              <PathBreadcrumbs
+                currentDirectoryPath={currentDirectoryPath}
+                currentLocationPath={currentLocationPath}
+                loadDirectoryContent={loadDirectoryContent}
+                switchPerspective={switchPerspective}
+                setSelectedEntries={setSelectedEntries}
+                openDirectory={openDirectory}
+                reflectCreateEntry={reflectCreateEntry}
+                openFsEntry={openFsEntry}
+                isReadOnlyMode={props.isReadOnlyMode}
+                isDesktopMode={isDesktopMode}
+                openRenameDirectoryDialog={() =>
+                  setIsRenameEntryDialogOpened(true)
+                }
+              />
+            </>
+          )}
         </div>
         <div
-          className={classes.centerPanel}
-          style={{ height: props.windowHeight }}
+          style={{
+            height: props.windowHeight,
+            marginTop: -5,
+            flex: '1 1 auto',
+            width: '100%'
+          }}
         >
           {renderPerspective()}
           {isRenameEntryDialogOpened && (
@@ -574,10 +536,14 @@ const FolderContainer = (props: Props) => {
           size="small"
           aria-label="change perspective"
           exclusive
-          className={classes.perspecitveSwitch}
-          /* style={{
-            right: rightPanelWidth + 30
-          }} */
+          style={{
+            bottom: 65,
+            right: 15,
+            zIndex: 1000,
+            opacity: 0.9,
+            position: 'absolute',
+            backgroundColor: theme.palette.background.default
+          }}
         >
           <ToggleButton
             value={perspectives.DEFAULT}
@@ -587,7 +553,6 @@ const FolderContainer = (props: Props) => {
             <Tooltip arrow title="Switch to default perspective">
               <div style={{ display: 'flex' }}>
                 <DefaultPerspectiveIcon />
-                {/* {perspectives.DEFAULT} */}
               </div>
             </Tooltip>
           </ToggleButton>
@@ -599,7 +564,6 @@ const FolderContainer = (props: Props) => {
             <Tooltip arrow title="Switch to Gallery perspective">
               <div style={{ display: 'flex' }}>
                 <GalleryPerspectiveIcon />
-                {/* {perspectives.GALLERY} */}
               </div>
             </Tooltip>
           </ToggleButton>
@@ -611,7 +575,6 @@ const FolderContainer = (props: Props) => {
             <Tooltip arrow title="Switch to Mapique perspective">
               <div style={{ display: 'flex' }}>
                 <MapiquePerspectiveIcon />
-                {/* {perspectives.MAPIQUE} */}
               </div>
             </Tooltip>
           </ToggleButton>
@@ -629,7 +592,6 @@ function mapStateToProps(state) {
     currentDirectoryPerspective: getCurrentDirectoryPerspective(state),
     searchResultCount: getSearchResultCount(state),
     currentLocationPath: getCurrentLocationPath(state),
-    // locations: getLocations(state),
     maxSearchResults: getMaxSearchResults(state),
     isDesktopMode: getDesktopMode(state),
     isReadOnlyMode: isReadOnlyMode(state),
@@ -655,7 +617,6 @@ function mapActionCreatorsToProps(dispatch) {
       loadParentDirectoryContent: AppActions.loadParentDirectoryContent,
       setSelectedEntries: AppActions.setSelectedEntries,
       showNotification: AppActions.showNotification,
-      // openSearchPanel: AppActions.openSearchPanel,
       setCurrentDirectoryPerspective: AppActions.setCurrentDirectoryPerspective,
       updateCurrentDirEntry: AppActions.updateCurrentDirEntry,
       setCurrentDirectoryColor: AppActions.setCurrentDirectoryColor,
@@ -688,5 +649,8 @@ export default connect(
   mapActionCreatorsToProps
 )(
   // @ts-ignore
-  React.memo(withStyles(styles, { withTheme: true })(FolderContainer), areEqual)
+  React.memo(
+    withStyles(undefined, { withTheme: true })(FolderContainer),
+    areEqual
+  )
 );
