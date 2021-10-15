@@ -60,11 +60,11 @@ interface Props {
   showUnixHiddenEntries: boolean;
 }
 
-const MeainSearchField = withStyles((theme: Theme) =>
+const MainSearchField = withStyles((theme: Theme) =>
   createStyles({
     root: {
       '& input': {
-        padding: 7
+        padding: 6
       },
       '& .MuiInputBase-root': {
         borderRadius: 7
@@ -341,7 +341,7 @@ const SearchInline = (props: Props) => {
         whiteSpace: 'nowrap'
       }}
     >
-      <MeainSearchField
+      <MainSearchField
         fullWidth
         id="textQuery"
         name="textQuery"
@@ -354,7 +354,7 @@ const SearchInline = (props: Props) => {
         }}
         size="small"
         style={{
-          marginTop: 9,
+          marginTop: 10,
           width: 'calc(100% - 80px)'
         }}
         inputRef={mainSearchField}
