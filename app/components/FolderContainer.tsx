@@ -192,7 +192,7 @@ const styles: any = (theme: any) => ({
     alignItems: 'center'
   },
   perspecitveSwitch: {
-    bottom: 60,
+    bottom: 65,
     right: 15,
     zIndex: 1000,
     opacity: 0.9,
