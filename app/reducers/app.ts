@@ -1429,7 +1429,8 @@ export const actions = {
           );
           return true;
         })
-        .catch(() => {
+        .catch(e => {
+          console.log('connectedtoObjectStoreFailed', e);
           dispatch(
             actions.showNotification(
               i18n.t('core:connectedtoObjectStoreFailed'),

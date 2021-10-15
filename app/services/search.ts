@@ -18,13 +18,13 @@
  */
 
 import Fuse from 'fuse.js';
-import jmespath from 'jmespath';
+import jmespath from '@gorillastack/jmespath';
 import OpenLocationCode from 'open-location-code-typescript';
+import i18n from 'i18next';
 import { isGeoTag, parseGeoLocation } from '-/utils/misc';
 import { extractTimePeriod } from '-/utils/dates';
 import { Pro } from '../pro';
 import { TS } from '-/tagspaces.namespace';
-import i18n from 'i18next';
 
 // export type FileTypeGroups = 'images' | 'notes' | 'documents' | 'audio' | 'video' | 'archives';
 

@@ -48,10 +48,10 @@ export default class PlatformIO {
         ) {
           resolve();
         } else {
-          import('@tagspaces/tagspaces-platforms/index')
-            .then(IO => {
+          import('@tagspaces/tagspaces-platforms/aws')
+            .then(AWS => {
               // { default: IO }) => {
-              objectStoreAPI = IO;
+              objectStoreAPI = AWS;
               objectStoreAPI.configure(objectStoreConfig);
               resolve();
               return true;
