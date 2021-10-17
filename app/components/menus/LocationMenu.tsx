@@ -80,7 +80,13 @@ const LocationMenu = (props: Props) => {
         id="locationMenuButton"
         onClick={event => setLocationChooserMenuAnchorEl(event.currentTarget)}
         title={currentLocation && currentLocation.name}
-        style={{ marginTop: 5, paddingRight: 5, paddingLeft: 5 }}
+        style={{
+          marginTop: 5,
+          paddingRight: 0,
+          paddingLeft: 0,
+          marginRight: 5,
+          borderRadius: 15
+        }}
       >
         {currentLocation
           ? locationIcon // this.state.currentLocation.name

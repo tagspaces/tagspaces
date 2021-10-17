@@ -63,13 +63,32 @@ interface Props {
 const MainSearchField = withStyles((theme: Theme) =>
   createStyles({
     root: {
+      overflow: 'hidden',
       '& input': {
         padding: 6
       },
       '& .MuiInputBase-root': {
-        borderRadius: 7
+        borderRadius: 7,
+        paddingRight: 5
       },
-      overflow: 'hidden',
+      '& .Mui-focused': {
+        color:
+          theme.palette.type === 'light'
+            ? theme.palette.grey[900]
+            : theme.palette.grey[200],
+        backgroundColor:
+          theme.palette.type === 'light'
+            ? theme.palette.grey[200]
+            : theme.palette.grey[900]
+        // backgroundColor: 'gray',
+        // outline: '2px solid red',
+        // border: 'none',
+        // boxShadow: 'none'
+      },
+      // '&$focused': {
+      //   outline: 'none',
+      //   boxShadow: '0 0 0 4px rgba(21, 156, 228, 0.4)'
+      // },
       '&:hover': {
         backgroundColor: theme.palette.background.paper
         // boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`
