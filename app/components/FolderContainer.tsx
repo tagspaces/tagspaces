@@ -19,19 +19,16 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import Box from '@material-ui/core/Box';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Popover from '@material-ui/core/Popover';
+import Tooltip from '@material-ui/core/Tooltip';
+import Typography from '@material-ui/core/Typography';
 import SearchIcon from '@material-ui/icons/Search';
 import AdvancedSearchIcon from '@material-ui/icons/Tune';
 import MenuIcon from '@material-ui/icons/MenuOpen';
 import Badge from '@material-ui/core/Badge';
-import {
-  Box,
-  CircularProgress,
-  IconButton,
-  Popover,
-  Tooltip,
-  Typography
-} from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
@@ -149,6 +146,14 @@ const CounterBadge: any = withStyles(theme => ({
         : theme.palette.grey[900]
   }
 }))(Badge);
+
+const CustomButton: any = withStyles(theme => ({
+  root: {
+    // borderRadius: 15,
+    // minWidth: 45,
+    // height: 40
+  }
+}))(IconButton);
 
 interface Props {
   classes: any;
@@ -406,8 +411,16 @@ const FolderContainer = (props: Props) => {
           flexDirection: 'column'
         }}
       >
-        <div style={{ paddingLeft: 5, display: 'flex' }}>
-          <IconButton
+        <div
+          style={{
+            paddingLeft: 5,
+            display: 'flex',
+            overflowY: 'hidden',
+            // @ts-ignore
+            overflowX: AppConfig.isFirefox ? 'auto' : 'overlay'
+          }}
+        >
+          <CustomButton
             id="mobileMenuButton"
             style={{
               transform: drawerOpened ? 'rotate(0deg)' : 'rotate(180deg)'
@@ -415,7 +428,7 @@ const FolderContainer = (props: Props) => {
             onClick={toggleDrawer}
           >
             <MenuIcon />
-          </IconButton>
+          </CustomButton>
           {/* <CounterBadge
               showZero={true}
               title={searchResultCounterText}
@@ -426,7 +439,7 @@ const FolderContainer = (props: Props) => {
                 openSearchPanel();
               }}
             /> */}
-          <IconButton
+          <CustomButton
             data-tid="toggleSearch"
             onClick={() => {
               if (isSearchVisible) {
@@ -439,11 +452,11 @@ const FolderContainer = (props: Props) => {
             }}
           >
             <SearchIcon />
-          </IconButton>
+          </CustomButton>
           {isSearchVisible ? (
             <>
               <SearchInline />
-              <IconButton
+              <CustomButton
                 id="advancedButton"
                 title={i18n.t('core:advancedSearch')}
                 data-tid="advancedSearch"
@@ -452,7 +465,7 @@ const FolderContainer = (props: Props) => {
                 }
               >
                 <AdvancedSearchIcon />
-              </IconButton>
+              </CustomButton>
               <Popover
                 open={Boolean(anchorSearch)}
                 anchorEl={anchorSearch}
@@ -482,7 +495,7 @@ const FolderContainer = (props: Props) => {
                 }}
               />
               {props.progress && props.progress.length > 0 && (
-                <IconButton
+                <CustomButton
                   id="progressButton"
                   title={i18n.t('core:progress')}
                   data-tid="uploadProgress"
@@ -491,7 +504,7 @@ const FolderContainer = (props: Props) => {
                   className={[classes.button, classes.upgradeButton].join(' ')}
                 >
                   <CircularProgressWithLabel value={getProgressValue()} />
-                </IconButton>
+                </CustomButton>
               )}
               <LocationMenu />
               <PathBreadcrumbs
@@ -515,7 +528,6 @@ const FolderContainer = (props: Props) => {
         <div
           style={{
             height: props.windowHeight,
-            marginTop: -5,
             flex: '1 1 auto',
             width: '100%'
           }}

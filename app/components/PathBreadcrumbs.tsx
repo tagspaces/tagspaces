@@ -22,7 +22,6 @@ import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Chip from '@material-ui/core/Chip';
 import ExpandMoreIcon from '@material-ui/icons/MoreVert';
 import PlatformIO from '../services/platform-io';
-import LocationMenu from './menus/LocationMenu';
 import { normalizePath, extractShortDirectoryName } from '-/utils/paths';
 import i18n from '../services/i18n';
 import DirectoryMenu from './menus/DirectoryMenu';

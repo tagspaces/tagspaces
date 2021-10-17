@@ -99,6 +99,7 @@ const FileView = (props: Props) => {
     >
       {isFullscreen && (
         <Fab
+          size="small"
           data-tid="fullscreenTID"
           color="primary"
           style={{

@@ -91,21 +91,21 @@ const bufferedSplitResize = buffer({
 const styles: any = (theme: any) => ({
   toolbar2: {
     width: '100%',
-    paddingLeft: 5,
+    paddingLeft: 0,
     paddingRight: 5,
     paddingTop: 0,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    zIndex: 2,
-    borderBottom: '1px solid ' + theme.palette.divider
+    zIndex: 2
+    // borderBottom: '1px solid ' + theme.palette.divider
   },
   flexLeft: {
     flexDirection: 'row',
     flex: '1 1',
     display: 'flex',
-    overflowX: AppConfig.isFirefox ? 'auto' : 'overlay'
-    // marginRight: 100
+    overflowX: AppConfig.isFirefox ? 'auto' : 'overlay',
+    paddingRight: 100
   },
   fileBadge: {
     color: 'white',
@@ -130,7 +130,6 @@ const styles: any = (theme: any) => ({
   },
   entryCloseSection: {
     position: 'absolute',
-    top: -2,
     right: 0,
     backgroundColor: theme.palette.background.default,
     boxShadow: '-15px -2px 24px 3px ' + theme.palette.background.default
@@ -794,10 +793,10 @@ const EntryContainer = (props: Props) => {
       <div
         style={{
           position: 'absolute',
-          top: 43,
+          top: 50,
           right: 0,
           backgroundColor: theme.palette.background.default,
-          boxShadow: '-15px -5px 20px 3px ' + theme.palette.background.default
+          boxShadow: '-11px -2px 20px 3px ' + theme.palette.background.default
         }}
       >
         <Tooltip title={i18n.t('core:openPrevFileTooltip')}>
@@ -887,16 +886,16 @@ const EntryContainer = (props: Props) => {
           >
             <Box
               style={{
-                paddingLeft: 5,
+                paddingLeft: 0,
                 paddingRight: 50,
                 paddingTop: 0,
-                minHeight: 40,
+                minHeight: 50,
                 display: 'flex',
                 flexDirection: 'row',
                 justifyContent: 'flex-start'
               }}
             >
-              <Box className={classes.flexLeft}>
+              <Box className={classes.flexLeft} style={{ paddingRight: 20 }}>
                 {openedFile.isFile ? (
                   <Button
                     disabled
@@ -1066,7 +1065,7 @@ const EntryContainer = (props: Props) => {
     return (
       <Split
         horizontal
-        minPrimarySize="90px"
+        minPrimarySize="100px"
         initialPrimarySize={initSize}
         percent={percent.current}
         setPercent={setPercent}
