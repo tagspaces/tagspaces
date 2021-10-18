@@ -53,4 +53,21 @@ if (process.env.PD_PLATFORM === 'node') {
       });
     });
   }
+} else if (process.env.PD_PLATFORM === 'cordova') {
+  if (!isInstalled('@tagspaces-common-cordova')) {
+    npm.load(er => {
+      if (er) {
+        console.log('err:', er);
+        return;
+      }
+      npm.commands.run(['postinstall-cordova'], err => {
+        if (err) {
+          console.log('err:', err);
+        }
+      });
+      npm.on('log', message => {
+        console.log('npm:' + message);
+      });
+    });
+  }
 }

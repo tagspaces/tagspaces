@@ -32,7 +32,7 @@ import { Pro } from '../pro';
 const maxSize = AppConfig.maxThumbSize;
 const bgColor = AppConfig.thumbBgColor;
 
-const supportedImgs = [
+export const supportedImgs = [
   'jpg',
   'jpeg',
   'jif',

@@ -49,6 +49,7 @@ import { locationType, prepareTagForExport } from '-/utils/misc';
 import {
   getThumbnailURLPromise,
   supportedContainers,
+  supportedImgs,
   supportedText,
   supportedVideos
 } from '-/services/thumbsgenerator';
@@ -112,6 +113,7 @@ export function enhanceDirectoryContent(
         // !isPDF) {
         tmbGenerationList.push(enhancedEntry.path);
       } else if (
+        supportedImgs.includes(enhancedEntry.extension) ||
         supportedContainers.includes(enhancedEntry.extension) ||
         supportedText.includes(enhancedEntry.extension) ||
         supportedVideos.includes(enhancedEntry.extension)
@@ -446,7 +448,7 @@ export function createDirectoryIndex(
   let locationID;
   if (typeof param === 'object' && param !== null) {
     directoryPath = param.path;
-    ({locationID} = param);
+    ({ locationID } = param);
   } else {
     directoryPath = param;
   }
