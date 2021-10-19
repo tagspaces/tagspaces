@@ -89,6 +89,7 @@
     "postinstall-web-check": "cross-env PD_PLATFORM=web node scripts/postinstall.js",
     "precommit": "lint-staged",
     "prepare-cordova": "yarn install-ext-web && yarn postinstall-cordova-check && rimraf cordova/www/dist && rimraf cordova/www/node_modules && shx cp -rL app/node_modules cordova/www && shx cp LICENSE.txt cordova/www",
+    "prepare-cordova-pro": "rimraf cordova/www/dist && rimraf cordova/www/node_modules && shx cp -rL app/node_modules cordova/www && shx cp extensions/tagspacespro/EULA.txt cordova/www",
     "prepare-node": "yarn install-ext-node && yarn postinstall-node-check",
     "prepare-web-pro": "yarn version-meta && yarn install-ext-web && yarn postinstall-web-check && rimraf web/node_modules && shx cp -rL app/node_modules/ web && shx cp extensions/tagspacespro/EULA.txt web && yarn clean-maps && yarn build-web && node scripts/genswconf.js",
     "prettier-check": "prettier --check **/*.{js,json,ts,tsx,yml}",
