@@ -359,12 +359,8 @@ const FolderContainer = (props: Props) => {
 
   function CircularProgressWithLabel(prop) {
     return (
-      <Box
-        position="relative"
-        display="inline-flex"
-        style={{ marginTop: -4, marginRight: -10 }}
-      >
-        <CircularProgress size={22} variant="static" {...prop} />
+      <Box position="relative" display="inline-flex">
+        <CircularProgress size={24} variant="static" {...prop} />
         <Box
           top={0}
           left={0}
