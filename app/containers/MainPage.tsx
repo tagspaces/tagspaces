@@ -325,7 +325,9 @@ const MainPage = (props: Props) => {
 
   useEffect(() => {
     // setPercent(undefined);
-    setDrawerOpened(!props.isEntryInFullWidth);
+    if (props.isEntryInFullWidth) {
+      setDrawerOpened(false); // !props.isEntryInFullWidth);
+    }
   }, [props.isEntryInFullWidth]);
 
   useEffect(() => {

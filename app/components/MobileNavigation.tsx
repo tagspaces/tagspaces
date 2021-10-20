@@ -96,7 +96,7 @@ interface Props {
   openSearchPanel: () => void;
   isHelpFeedbackPanelOpened: boolean;
   openHelpFeedbackPanel: () => void;
-  closeAllVerticalPanels: () => void;
+  // closeAllVerticalPanels: () => void;
   toggleLocationDialog: () => void;
   openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   switchTheme: () => void;
@@ -404,7 +404,7 @@ function mapActionCreatorsToProps(dispatch) {
       openHelpFeedbackPanel: AppActions.openHelpFeedbackPanel,
       openURLExternally: AppActions.openURLExternally,
       showNotification: AppActions.showNotification,
-      closeAllVerticalPanels: AppActions.closeAllVerticalPanels,
+      // closeAllVerticalPanels: AppActions.closeAllVerticalPanels,
       switchTheme: SettingsActions.switchTheme,
       setFirstRun: SettingsActions.setFirstRun
     },
