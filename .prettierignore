@@ -18,4 +18,5 @@ tests/file-structure
 tests/bin
 .ycache
 app/aws-exports.js
+app/config/config.json
 app/*.main.prod.js

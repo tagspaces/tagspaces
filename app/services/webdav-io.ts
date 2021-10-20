@@ -92,18 +92,18 @@ export default class WebDAVIO {
 
   isWorkerAvailable = (): boolean => false;
 
-  getDevicePaths = (): Object => {
+  getDevicePaths = (): Promise<Object> => {
     const paths = {
       // Home: '/files/'
     };
-    return paths;
+    return Promise.resolve(paths);
   };
 
-  getAppDataPath = (): string =>
+  /* getAppDataPath = (): string =>
     // TODO
     'SOMEPATH_FIX_ME';
 
-  getUserHomePath = (): string => '/';
+  getUserHomePath = (): string => '/'; */
 
   getNameForPath = (entrypath: string, separator = '/') => {
     let path = entrypath;
@@ -734,6 +734,7 @@ export default class WebDAVIO {
   };
 
   resolveFilePath = (filePath: string): string => filePath;
+
   /**
    * Places the application window on top of the other windows
    */

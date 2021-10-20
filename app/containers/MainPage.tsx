@@ -122,7 +122,7 @@ interface Props {
   isDesktopMode: boolean;
   openedFiles: Array<OpenedEntry>;
   isGeneratingThumbs: boolean;
-  setGeneratingThumbnails: (isGenerating: boolean) => void;
+  // setGeneratingThumbnails: (isGenerating: boolean) => void;
   isEntryInFullWidth: boolean;
   classes: any;
   theme: any;
@@ -325,7 +325,9 @@ const MainPage = (props: Props) => {
 
   useEffect(() => {
     // setPercent(undefined);
-    setDrawerOpened(!props.isEntryInFullWidth);
+    if (props.isEntryInFullWidth) {
+      setDrawerOpened(false); // !props.isEntryInFullWidth);
+    }
   }, [props.isEntryInFullWidth]);
 
   useEffect(() => {
@@ -750,7 +752,7 @@ function mapDispatchToProps(dispatch) {
       toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
       toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
       setSelectedEntries: AppActions.setSelectedEntries,
-      setGeneratingThumbnails: AppActions.setGeneratingThumbnails,
+      // setGeneratingThumbnails: AppActions.setGeneratingThumbnails,
       openFsEntry: AppActions.openFsEntry,
       openURLExternally: AppActions.openURLExternally,
       setEntryFullWidth: AppActions.setEntryFullWidth,

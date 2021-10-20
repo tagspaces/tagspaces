@@ -1,4 +1,5 @@
-/**
+/*
+/!**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
  *
@@ -14,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- */
+ *!/
 
 import { ipcRenderer } from 'electron';
 import { walkDirectory, enhanceEntry } from './services/utils-io';
@@ -131,3 +132,4 @@ function init() {
 }
 
 init();
+*/

@@ -31,7 +31,8 @@ jobs:
   e2eTestsWin:
     name: Test Desktop App Windows
     runs-on: windows-latest
-
+    env:
+      PD_PLATFORM: node
     steps:
       - name: Checking out default branch
         uses: actions/checkout@v2
@@ -44,7 +45,7 @@ jobs:
           path: tests/testdata
       - uses: actions/setup-node@v2
         with:
-          node-version: '12.x'
+          node-version: '14.x'
       - name: Running yarn install, prettier and type checks
         run: |
           yarn install --check-files --cache-folder .ycache
@@ -73,6 +74,8 @@ jobs:
   e2eTestsWebWin:
     name: Test Web App Windows
     runs-on: windows-latest
+    env:
+      PD_PLATFORM: web
     steps:
       - name: Checking out default branch
         uses: actions/checkout@v2
@@ -81,6 +84,7 @@ jobs:
       - name: Checkout TagspacesPro
         uses: actions/checkout@v2
         with:
+          ref: devnext
           repository: tagspaces/tagspacespro
           token: ${{ secrets.CHECKOUT_TSPRO  }}
           path: extensions/tagspacespro
@@ -91,7 +95,7 @@ jobs:
           path: tests/testdata
       - uses: actions/setup-node@v2
         with:
-          node-version: '12.x'
+          node-version: '14.x'
       - name: Running yarn install, prettier and type checks
         run: |
           yarn install --check-files --cache-folder .ycache
@@ -108,7 +112,7 @@ jobs:
       - name: Run Electron tests
         run: |
           yarn install-ext
-          yarn build-e2e
+          yarn build-e2e-web
           yarn test-playwright-web-headless
       - uses: IgnusG/jest-report-action@v2.3.3
         if: always() # Run regardless of whether other steps failed

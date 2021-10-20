@@ -54,7 +54,7 @@ import {
   isReadOnlyMode
 } from '../reducers/app';
 import SmartTags from '../reducers/smart-tags';
-import { AppConfig } from '-/config';
+import AppConfig from '-/config';
 import EditTagDialog from '-/components/dialogs/EditTagDialog';
 import { TS } from '-/tagspaces.namespace';
 import { getLocations } from '-/reducers/locations';

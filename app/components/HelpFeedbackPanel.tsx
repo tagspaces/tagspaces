@@ -52,7 +52,7 @@ import { clearAllURLParams } from '-/utils/misc';
 import { Pro } from '-/pro';
 import { actions as AppActions } from '-/reducers/app';
 import Links from '-/links';
-import { AppConfig } from '-/config';
+import AppConfig from '-/config';
 
 interface Props {
   classes?: any;

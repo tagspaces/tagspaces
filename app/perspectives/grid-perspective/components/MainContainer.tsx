@@ -156,7 +156,7 @@ const GridPerspective = (props: Props) => {
       : 'openInternal' // openExternal
   );
   const [entrySize, setEntrySize] = useState<string>(
-    settings && settings.entrySize ? settings.entrySize : 'normal' // small, big
+    settings && settings.entrySize ? settings.entrySize : 'small' // small, normal, big
   );
   const [thumbnailMode, setThumbnailMode] = useState<string>(
     settings && settings.thumbnailMode ? settings.thumbnailMode : 'contain' // cover contain

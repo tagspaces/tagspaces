@@ -46,7 +46,8 @@ interface Props {
   createDirectoryIndex: (
     path: string,
     fullTextIndex: boolean,
-    isCurrentLocation: boolean
+    isCurrentLocation: boolean,
+    locationID: string
   ) => void;
   selectedLocation: TS.Location;
   isCurrentLocation: (uuid: string) => boolean;
@@ -75,7 +76,8 @@ const LocationContextMenu = (props: Props) => {
           createDirectoryIndex(
             getLocationPath(selectedLocation),
             selectedLocation.fullTextIndex,
-            isCurrentLocation
+            isCurrentLocation,
+            selectedLocation.uuid
           );
           return true;
         })
@@ -87,7 +89,8 @@ const LocationContextMenu = (props: Props) => {
       createDirectoryIndex(
         getLocationPath(selectedLocation),
         selectedLocation.fullTextIndex,
-        isCurrentLocation
+        isCurrentLocation,
+        selectedLocation.uuid
       );
     }
   };
