@@ -19,7 +19,9 @@
 import React, { useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Link, IconButton, Grid, styled } from '@material-ui/core';
+import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
 import EditIcon from '@material-ui/icons/Edit';
 import SearchIcon from '@material-ui/icons/Search';
 import ArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
@@ -84,48 +86,49 @@ const StoredSearches = (props: Props) => {
   const preventDefault = (event: React.SyntheticEvent) =>
     event.preventDefault();
 
-  const LinkStyled = styled(Link)(({ theme }) => ({
-    ...theme.typography.subtitle1,
-    padding: theme.spacing(1),
-    textAlign: 'left',
-    alignSelf: 'center',
-    color: theme.palette.text.secondary
-  }));
+  const noSearchesFound = props.searches.length < 1;
 
   return (
     <Grid container direction="row">
-      <Grid item xs={2}>
+      <Grid item xs={12} style={{ alignSelf: 'center' }}>
         <IconButton
           style={{ minWidth: 'auto', padding: 7 }}
           onClick={() => setStoredSearchesVisible(!storedSearchesVisible)}
         >
           {storedSearchesVisible ? <ArrowDownIcon /> : <ArrowRightIcon />}
         </IconButton>
-      </Grid>
-      <Grid item xs={10} style={{ alignSelf: 'center' }}>
         <Typography
           variant="inherit"
           // className={props.classes.header}
-          style={{ paddingLeft: 0 }}
+          style={{ textTransform: 'uppercase' }}
           noWrap
           onClick={() => setStoredSearchesVisible(!storedSearchesVisible)}
         >
-          {props.searches.length < 1
-            ? i18n.t('noSavedSearches')
-            : i18n.t('core:savedSearchesTitle')}
+          {i18n.t('core:savedSearchesTitle')}
         </Typography>
       </Grid>
+      {storedSearchesVisible && noSearchesFound && (
+        <Grid item xs={12} style={{ display: 'flex', padding: 10 }}>
+          {i18n.t('noSavedSearches')}
+        </Grid>
+      )}
       {storedSearchesVisible &&
         props.searches.map(search => (
           <React.Fragment key={search.uuid}>
             <Grid item xs={10} style={{ display: 'flex' }}>
-              <SearchIcon style={{ alignSelf: 'center' }} />
-              <LinkStyled
-                variant="body2"
+              <Button
+                style={{
+                  textTransform: 'capitalize',
+                  marginLeft: 5,
+                  width: '100%',
+                  justifyContent: 'start'
+                }}
                 onClick={() => handleSavedSearchClick(search.uuid)}
               >
+                <SearchIcon />
+                &nbsp;
                 {search.title}
-              </LinkStyled>
+              </Button>
             </Grid>
             <Grid item xs={2} style={{ display: 'flex' }}>
               <IconButton
