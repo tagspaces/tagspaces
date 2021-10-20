@@ -402,8 +402,7 @@ const CreateEditLocationDialog = (props: Props) => {
       </DialogTitle>
       <DialogContent
         style={{
-          overflow: AppConfig.isFirefox ? 'auto' : 'overlay',
-          minWidth: 500
+          overflow: AppConfig.isFirefox ? 'auto' : 'overlay'
         }}
       >
         <Grid container spacing={2}>
