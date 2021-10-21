@@ -1350,7 +1350,7 @@ export const actions = {
         dispatch(actions.reflectCreateEntry(filePath, true));
         dispatch(actions.openFsEntry(fsEntry)); // TODO return fsEntry from saveFilePromise and simplify
 
-        dispatch(actions.setSelectedEntries([fsEntry]));
+        // dispatch(actions.setSelectedEntries([fsEntry]));
         dispatch(
           actions.showNotification(
             `File '${fileNameAndExt}' created.`,
