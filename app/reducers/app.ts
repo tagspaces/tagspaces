@@ -1621,7 +1621,7 @@ export const actions = {
       const openFile = openedFiles[0];
       if (openFile.editMode) {
         // && openFile.changed) {
-        entryForOpening = { ...openFile, shouldReload: false };
+        entryForOpening = { ...openFile, shouldReload: !openFile.shouldReload }; // false };
         dispatch(actions.addToEntryContainer(entryForOpening));
         return false;
       }

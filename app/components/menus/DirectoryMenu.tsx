@@ -123,7 +123,7 @@ const DirectoryMenu = (props: Props) => {
 
   function reloadDirectory() {
     props.onClose();
-    props.loadDirectoryContent(props.directoryPath, false);
+    props.loadDirectoryContent(props.directoryPath, true);
   }
 
   function openDirectory() {

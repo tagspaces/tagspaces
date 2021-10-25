@@ -198,7 +198,7 @@ export default class PlatformIO {
         path,
         bucketName: objectStoreAPI.config().bucketName
       };
-      return objectStoreAPI.listDirectoryPromise(param, lite);
+      return PlatformIO.listObjectStoreDir(param, lite, extractText, ignorePatterns);
     }
     return nativeAPI.listDirectoryPromise(
       path,
@@ -207,6 +207,13 @@ export default class PlatformIO {
       ignorePatterns
     );
   };
+
+  static listObjectStoreDir = (
+    param: Object,
+    lite: boolean = true,
+    extractText: boolean = true,
+    ignorePatterns: Array<string> = []
+  ): Promise<Array<any>> => objectStoreAPI.listDirectoryPromise(param, lite, extractText, ignorePatterns);
 
   static getPropertiesPromise = (path: string): Promise<any> => {
     if (objectStoreAPI) {

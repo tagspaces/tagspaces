@@ -101,7 +101,7 @@ const MainSearchField = withStyles((theme: Theme) =>
 )(TextField);
 
 const SearchInline = (props: Props) => {
-  const [, forceUpdate] = useReducer(x => x + 1, 0);
+  // const [, forceUpdate] = useReducer(x => x + 1, 0);
   const textQuery = useRef<string>(props.searchQuery.textQuery);
   const fileTypes = useRef<Array<string>>(
     props.searchQuery.fileTypes
@@ -152,6 +152,10 @@ const SearchInline = (props: Props) => {
       clearTimeout(timeout);
     };
   }, []); */
+
+  useEffect(() => {
+    mainSearchField.current.value = '';
+  }, [props.currentDirectory]);
 
   useEffect(() => {
     let txtQuery = props.searchQuery.textQuery || '';
