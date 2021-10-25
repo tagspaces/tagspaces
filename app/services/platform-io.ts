@@ -67,6 +67,9 @@ export default class PlatformIO {
 
   static haveObjectStoreSupport = (): boolean => objectStoreAPI !== undefined;
 
+  static isMinio = (): boolean =>
+    objectStoreAPI !== undefined && objectStoreAPI.config.endpointURL;
+
   static getDirSeparator = (): string => // TODO rethink usage for S3 on Win
     PlatformIO.haveObjectStoreSupport() ? '/' : AppConfig.dirSeparator;
 

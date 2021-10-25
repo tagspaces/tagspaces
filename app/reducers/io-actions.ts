@@ -214,7 +214,7 @@ const actions = {
         reader.onload = async (event: any) => {
           await readerLoaded(event, inx, filePath);
         };
-        if (AppConfig.isWeb) {
+        if (AppConfig.isWeb && PlatformIO.isMinio()) {
           reader.readAsBinaryString(file);
         } /* else if (AppConfig.isCordova) {
           reader.readAsDataURL(file);
