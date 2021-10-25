@@ -224,7 +224,9 @@ const TagContainer = (props: Props) => {
               style={{
                 color: tag.textcolor,
                 height: 20,
-                marginBottom: -5
+                marginBottom: -5,
+                marginLeft: -5,
+                marginRight: 0
               }}
             />
           )}
@@ -234,7 +236,8 @@ const TagContainer = (props: Props) => {
                 color: tag.textcolor,
                 height: 20,
                 marginBottom: -5,
-                marginRight: 4
+                marginLeft: -5,
+                marginRight: 0
               }}
             />
           )}

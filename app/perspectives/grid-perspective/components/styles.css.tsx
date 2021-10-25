@@ -91,7 +91,7 @@ export default (theme: any): any => ({
   },
   gridFileExtension: {
     padding: 5,
-    paddingTop: 3,
+    paddingTop: 1,
     paddingBottom: 7,
     fontSize: 13,
     marginRight: 5,
