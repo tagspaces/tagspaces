@@ -467,7 +467,17 @@ export function createDirectoryIndex(
     });
   }
 
-  return createIndex(param, extractText, ignorePatterns)
+  let listDirectoryPromise;
+  if (PlatformIO.haveObjectStoreSupport()) {
+    listDirectoryPromise = PlatformIO.listObjectStoreDir;
+  }
+
+  return createIndex(
+    param,
+    extractText,
+    ignorePatterns,
+    listDirectoryPromise
+  )
     .then(directoryIndex =>
       persistIndex(param, directoryIndex).then(success => {
         if (success) {
