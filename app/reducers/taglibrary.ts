@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-import uuidv1 from 'uuid';
+import { v1 as uuidv1 } from 'uuid';
 import {
   immutablySwapItems,
   formatDateTime4Tag,

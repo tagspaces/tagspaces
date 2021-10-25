@@ -17,7 +17,7 @@
  */
 
 import React, { useState } from 'react';
-import uuidv1 from 'uuid';
+import { v1 as uuidv1 } from 'uuid';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';

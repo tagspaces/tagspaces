@@ -17,7 +17,7 @@
  */
 
 import semver from 'semver';
-import uuidv1 from 'uuid';
+import { v1 as uuidv1 } from 'uuid';
 import i18n from '-/services/i18n';
 import defaultSettings from './settings-default';
 import PlatformIO from '-/services/platform-io';

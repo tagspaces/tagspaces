@@ -17,7 +17,7 @@
  */
 
 import React, { ChangeEvent, useReducer, useRef, useState } from 'react';
-import uuidv1 from 'uuid';
+import { v1 as uuidv1 } from 'uuid';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';

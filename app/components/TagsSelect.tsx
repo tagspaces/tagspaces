@@ -16,8 +16,8 @@
  *
  */
 
-import React, { useCallback, useState } from 'react';
-import uuidv1 from 'uuid';
+import React, { useState } from 'react';
+import { v1 as uuidv1 } from 'uuid';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
