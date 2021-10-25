@@ -51,7 +51,7 @@
     "dev": "yarn postinstall-node-check && yarn generate-jwt && yarn check-extensions && cross-env START_HOT=1 node -r @babel/register ./internals/scripts/CheckPortInUse.js && cross-env START_HOT=1 yarn start-renderer-dev",
     "generate-jwt": "node scripts/jwt_generate.js",
     "install-ext-node": "rimraf app/node_modules && cd app && cross-env PD_PLATFORM=node node ../scripts/app-package-gen.js && npm install && cd ..",
-    "install-ext-node-linux": "rimraf app/node_modules && cd app && cross-env PD_PLATFORM=node node ../scripts/app-package-gen.js && cross-env SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install --platform=linux --arch=x64 && cd ..",
+    "install-ext-node-linux": "rimraf app/node_modules && cd app && cross-env PD_PLATFORM=node node ../scripts/app-package-gen.js && npm install --platform=linux --arch=x64 && cd ..",
     "install-ext-node-mac": "rimraf app/node_modules && cd app && cross-env PD_PLATFORM=node node ../scripts/app-package-gen.js && npm install --platform=darwin --arch=x64 && cd ..",
     "install-ext-node-mac-arm64": "rimraf app/node_modules && cd app && cross-env PD_PLATFORM=node node ../scripts/app-package-gen.js && npm install --platform=darwin --arch=arm64 && cd ..",
     "install-ext-node-win": "rimraf app/node_modules && cd app && cross-env PD_PLATFORM=node node ../scripts/app-package-gen.js && npm install --platform=win32 --arch=x64 && cd ..",
@@ -152,7 +152,7 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@material-ui/pickers": "^3.2.10",
-    "@tagspaces/tagspaces-platforms": "^1.0.43",
+    "@tagspaces/tagspaces-platforms": "^1.0.44",
     "aws-amplify": "^3.3.27",
     "aws-sdk": "^2.984.0",
     "babel-polyfill": "^6.26.0",
@@ -212,6 +212,7 @@
     "tiff.js": "^1.0.0",
     "ts-react-splitter": "^2.1.1",
     "use-state-with-callback": "^2.0.3",
+    "uuid": "^8.3.2",
     "winattr": "^3.0.0"
   },
   "devDependencies": {

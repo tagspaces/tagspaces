@@ -16,7 +16,7 @@
  *
  */
 
-import uuidv1 from 'uuid';
+import { v1 as uuidv1 } from 'uuid';
 import { getLocation, getDefaultLocationId } from './locations';
 import PlatformIO from '../services/platform-io';
 import AppConfig from '../config';

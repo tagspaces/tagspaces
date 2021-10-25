@@ -18,7 +18,7 @@
 
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import Button from '@material-ui/core/Button';
-import uuidv1 from 'uuid';
+import { v1 as uuidv1 } from 'uuid';
 import { withStyles } from '@material-ui/core/styles';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import DialogActions from '@material-ui/core/DialogActions';

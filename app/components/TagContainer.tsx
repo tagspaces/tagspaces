@@ -17,7 +17,6 @@
  */
 
 import React from 'react';
-// import uuidv1 from 'uuid';
 import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import MoreVertIcon from '@material-ui/icons/MoreVert';

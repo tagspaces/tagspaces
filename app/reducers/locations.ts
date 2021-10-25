@@ -16,12 +16,11 @@
  *
  */
 
-import uuidv1 from 'uuid';
+import { v1 as uuidv1 } from 'uuid';
 import { immutablySwapItems, locationType } from '-/utils/misc';
 import { actions as AppActions } from '-/reducers/app';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-io';
-import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
 
 export const types = {

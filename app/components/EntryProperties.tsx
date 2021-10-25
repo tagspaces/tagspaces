@@ -18,7 +18,7 @@
 
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
-import uuidv1 from 'uuid';
+import { v1 as uuidv1 } from 'uuid';
 import marked from 'marked';
 import L from 'leaflet';
 import classNames from 'classnames';
