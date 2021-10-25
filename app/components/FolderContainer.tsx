@@ -198,6 +198,10 @@ interface Props {
 
 const FolderContainer = (props: Props) => {
   useEffect(() => {
+    setSearchVisible(false);
+  }, [props.currentDirectoryPath]);
+
+  useEffect(() => {
     if (props.selectedEntries.length < 2) {
       if (props.openedFiles.length > 0) {
         const openedFile = props.openedFiles[0];
