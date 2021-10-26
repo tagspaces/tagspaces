@@ -20,8 +20,8 @@ import { v1 as uuidv1 } from 'uuid';
 import {
   loadIndex,
   enhanceDirectoryIndex,
-  persistIndex,
-  createIndex
+  createIndex,
+  getMetaIndexFilePath
 } from '@tagspaces/tagspaces-platforms/indexer';
 import { saveAs } from 'file-saver';
 import micromatch from 'micromatch';
@@ -438,6 +438,35 @@ export function getPrevFile(
   return prevFile;
 }
 
+/**
+ * persistIndex based on location - S3 or Native
+ * @param param
+ * @param directoryIndex
+ */
+function persistIndex(param: string | any, directoryIndex: any) {
+  let directoryPath;
+  if (typeof param === 'object' && param !== null) {
+    directoryPath = param.path;
+  } else {
+    directoryPath = param;
+  }
+  const folderIndexPath = getMetaIndexFilePath(directoryPath);
+  return PlatformIO.saveTextFilePlatform(
+    { ...param, path: folderIndexPath },
+    JSON.stringify(directoryIndex), // relativeIndex),
+    true
+  )
+    .then(() => {
+      console.log(
+        'Index persisted for: ' + directoryPath + ' to ' + folderIndexPath
+      );
+      return true;
+    })
+    .catch(err => {
+      console.error('Error saving the index for ' + folderIndexPath, err);
+    });
+}
+
 export function createDirectoryIndex(
   param: string | any,
   extractText: boolean = false,
@@ -472,12 +501,7 @@ export function createDirectoryIndex(
     listDirectoryPromise = PlatformIO.listObjectStoreDir;
   }
 
-  return createIndex(
-    param,
-    extractText,
-    ignorePatterns,
-    listDirectoryPromise
-  )
+  return createIndex(param, extractText, ignorePatterns, listDirectoryPromise)
     .then(directoryIndex =>
       persistIndex(param, directoryIndex).then(success => {
         if (success) {
@@ -490,62 +514,6 @@ export function createDirectoryIndex(
     .catch(err => {
       console.error('Error creating index: ', err);
     });
-
-  /* const SearchIndex = [];
-
-  // eslint-disable-next-line compat/compat
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      let counter = 0;
-      console.time('createDirectoryIndex');
-      walkDirectory(
-        dirPath,
-        {
-          recursive: true,
-          skipMetaFolder: true,
-          skipDotHiddenFolder: true,
-          extractText
-        },
-        fileEntry => {
-          counter += 1;
-          if (counter > AppConfig.indexerLimit) {
-            console.warn('Walk canceled by ' + AppConfig.indexerLimit);
-            window.walkCanceled = true;
-          }
-          SearchIndex.push(enhanceEntry(fileEntry));
-        },
-        directoryEntry => {
-          if (directoryEntry.name !== AppConfig.metaFolder) {
-            counter += 1;
-            SearchIndex.push(enhanceEntry(directoryEntry));
-          }
-        },
-        ignorePatterns
-      )
-        .then(() => {
-          // entries - can be used for further processing
-          window.walkCanceled = false;
-          console.log(
-            'Directory index created ' +
-              dirPath +
-              ' containing ' +
-              SearchIndex.length
-          );
-          console.timeEnd('createDirectoryIndex');
-          if (persist) {
-            persistIndex(dirPath, SearchIndex);
-          }
-          resolve(SearchIndex);
-          return true;
-        })
-        .catch(err => {
-          window.walkCanceled = false;
-          console.timeEnd('createDirectoryIndex');
-          console.warn('Error creating index: ' + err);
-          reject(err);
-        });
-    }, 2000);
-  }); */
 }
 
 export function walkDirectory(

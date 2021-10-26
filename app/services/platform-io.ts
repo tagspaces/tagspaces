@@ -198,7 +198,12 @@ export default class PlatformIO {
         path,
         bucketName: objectStoreAPI.config().bucketName
       };
-      return PlatformIO.listObjectStoreDir(param, lite, extractText, ignorePatterns);
+      return PlatformIO.listObjectStoreDir(
+        param,
+        lite,
+        extractText,
+        ignorePatterns
+      );
     }
     return nativeAPI.listDirectoryPromise(
       path,
@@ -213,7 +218,13 @@ export default class PlatformIO {
     lite: boolean = true,
     extractText: boolean = true,
     ignorePatterns: Array<string> = []
-  ): Promise<Array<any>> => objectStoreAPI.listDirectoryPromise(param, lite, extractText, ignorePatterns);
+  ): Promise<Array<any>> =>
+    objectStoreAPI.listDirectoryPromise(
+      param,
+      lite,
+      extractText,
+      ignorePatterns
+    );
 
   static getPropertiesPromise = (path: string): Promise<any> => {
     if (objectStoreAPI) {
@@ -395,6 +406,25 @@ export default class PlatformIO {
       .saveFilePromise(filePath, content, overwrite)
       .then(result => {
         PlatformIO.deignoreByWatcher(filePath);
+        return result;
+      });
+  };
+
+  static saveTextFilePlatform = (
+    param: any,
+    content: string,
+    overwrite: boolean
+  ): Promise<any> => {
+    if (objectStoreAPI) {
+      return objectStoreAPI.saveTextFilePromise(param, content, overwrite);
+    }
+
+    PlatformIO.ignoreByWatcher(param.path);
+
+    return nativeAPI
+      .saveTextFilePromise(param.path, content, overwrite)
+      .then(result => {
+        PlatformIO.deignoreByWatcher(param.path);
         return result;
       });
   };
