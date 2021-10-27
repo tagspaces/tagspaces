@@ -154,7 +154,10 @@ const SearchInline = (props: Props) => {
   }, []); */
 
   useEffect(() => {
-    mainSearchField.current.value = '';
+    // mainSearchField.current.value = '';
+    if (Object.keys(props.searchQuery).length > 0) {
+      props.setSearchQuery({});
+    }
   }, [props.currentDirectory]);
 
   useEffect(() => {

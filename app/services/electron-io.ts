@@ -434,7 +434,7 @@ export default class ElectronIO {
                 }
               }
 
-              const fileName = eentry.name.toLowerCase();
+              /* const fileName = eentry.name.toLowerCase();
               if (
                 extractTextContent &&
                 eentry.isFile &&
@@ -450,7 +450,7 @@ export default class ElectronIO {
                   fileName,
                   fileContent
                 );
-              }
+              } */
 
               if (window.walkCanceled) {
                 resolve(enhancedEntries);

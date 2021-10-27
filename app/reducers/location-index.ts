@@ -371,10 +371,15 @@ export const actions = {
         !GlobalSearch.index ||
         GlobalSearch.index.length === 0
       ) {
-        GlobalSearch.index = await loadIndex({
-          path: getLocationPath(currentLocation),
-          locationID: currentLocation.uuid
-        });
+        GlobalSearch.index = await loadIndex(
+          {
+            path: getLocationPath(currentLocation),
+            locationID: currentLocation.uuid,
+            ...(isCloudLocation && { bucketName: currentLocation.bucketName })
+          },
+          PlatformIO.getDirSeparator(),
+          PlatformIO.loadTextFilePromise
+        );
       }
       Search.searchLocationIndex(GlobalSearch.index, searchQuery)
         .then(searchResults => {
@@ -462,7 +467,10 @@ export const actions = {
             await PlatformIO.enableObjectStoreSupport(location);
           }
           // if (Pro && Pro.Indexer && Pro.Indexer.hasIndex) {
-          indexExist = await hasIndex(nextPath); // , PlatformIO.getDirSeparator());
+          indexExist = await hasIndex(
+            nextPath,
+            PlatformIO.getPropertiesPromise
+          ); // , PlatformIO.getDirSeparator());
 
           if (
             searchQuery.forceIndexing ||
@@ -489,8 +497,15 @@ export const actions = {
             // if (Pro && Pro.Indexer && Pro.Indexer.loadIndex) {
             console.log('Loading index for : ' + nextPath);
             directoryIndex = await loadIndex(
-              { path: nextPath, locationID: location.uuid },
-              PlatformIO.getDirSeparator()
+              {
+                path: nextPath,
+                locationID: location.uuid,
+                ...(isCloudLocation && {
+                  bucketName: currentLocation.bucketName
+                })
+              },
+              PlatformIO.getDirSeparator(),
+              PlatformIO.loadTextFilePromise
             );
           }
           return Search.searchLocationIndex(directoryIndex, searchQuery)
