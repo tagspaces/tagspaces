@@ -497,16 +497,19 @@ export function createDirectoryIndex(
   }
 
   let listDirectoryPromise;
+  let loadTextFilePromise;
   if (PlatformIO.haveObjectStoreSupport()) {
     listDirectoryPromise = PlatformIO.listObjectStoreDir;
+    // eslint-disable-next-line prefer-destructuring
+    loadTextFilePromise = PlatformIO.loadTextFilePromise;
   }
 
-  return createIndex(param, extractText, ignorePatterns, listDirectoryPromise)
+  return createIndex(param, extractText, ignorePatterns, listDirectoryPromise, loadTextFilePromise)
     .then(directoryIndex =>
       persistIndex(param, directoryIndex).then(success => {
         if (success) {
           console.log('Index generated in folder: ' + directoryPath);
-          return enhanceDirectoryIndex(dirPath, directoryIndex, locationID);
+          return enhanceDirectoryIndex(param, directoryIndex, locationID);
         }
         return undefined;
       })
