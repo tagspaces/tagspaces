@@ -504,7 +504,13 @@ export function createDirectoryIndex(
     loadTextFilePromise = PlatformIO.loadTextFilePromise;
   }
 
-  return createIndex(param, extractText, ignorePatterns, listDirectoryPromise, loadTextFilePromise)
+  return createIndex(
+    param,
+    extractText,
+    ignorePatterns,
+    listDirectoryPromise,
+    loadTextFilePromise
+  )
     .then(directoryIndex =>
       persistIndex(param, directoryIndex).then(success => {
         if (success) {

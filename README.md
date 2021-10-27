@@ -165,4 +165,4 @@ If you are having troubles using TagSpaces or have found a bug please [open a ti
 
 ## License
 
-TagSpaces' source code is licensed under the AGPL (GNU Affero General Public License) Version 3. The license text is available in the [LICENSE](LICENSE.txt) file.
+This project is dual-licensed under the [AGPL](LICENSE.txt) (GNU Affero General Public License) Version 3 for FOSS projects and under a commercial license for independent software vendors and resellers. If you want to modify this application under different conditions, feel free to contact us.
