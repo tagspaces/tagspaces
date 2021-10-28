@@ -506,7 +506,7 @@ export function createDirectoryIndex(
 
   return createIndex(
     param,
-    extractText,
+    ['extractThumbPath'],
     ignorePatterns,
     listDirectoryPromise,
     loadTextFilePromise
@@ -541,11 +541,10 @@ export function walkDirectory(
     skipDotHiddenFolder: false,
     skipDotHiddenFiles: false,
     loadMetaDate: true,
-    extractText: false,
     ...options
   };
   return (
-    PlatformIO.listDirectoryPromise(path, false, mergedOptions.extractText)
+    PlatformIO.listDirectoryPromise(path, [])
       // @ts-ignore
       .then(entries => {
         if (window.walkCanceled || entries === undefined) {
@@ -705,7 +704,7 @@ export async function loadSubFolders(
   path: string,
   loadHidden: boolean = false
 ) {
-  const folderContent = await PlatformIO.listDirectoryPromise(path, true);
+  const folderContent = await PlatformIO.listDirectoryPromise(path, []); // 'extractThumbPath']);
   const subfolders = [];
   let i = 0;
   let isHidden = false;

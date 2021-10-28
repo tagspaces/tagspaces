@@ -925,8 +925,7 @@ export const actions = {
     );
     PlatformIO.listDirectoryPromise(
       directoryPath,
-      false,
-      true,
+      ['extractThumbPath', 'extractThumbURL'],
       currentLocation ? currentLocation.ignorePatternPaths : []
     )
       .then(results => {

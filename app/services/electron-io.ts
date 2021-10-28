@@ -326,10 +326,15 @@ export default class ElectronIO {
         reject('Worker window not available!');
       } */
 
+  /**
+   * @param path
+   * @param mode = ['extractTextContent', 'extractThumbPath']
+   * @param ignorePatterns
+   * @param showIgnored
+   */
   listDirectoryPromise = (
     path: string,
-    lite: boolean = true,
-    extractTextContent: boolean = false,
+    mode = ['extractThumbPath'],
     ignorePatterns: Array<string> = [],
     showIgnored: boolean = true
   ): Promise<Array<Object>> =>
@@ -403,7 +408,7 @@ export default class ElectronIO {
               }
 
               // Read tsm.json from sub folders
-              if (!eentry.isFile && !lite) {
+              if (!eentry.isFile && mode.includes('extractThumbPath')) {
                 const folderMetaPath =
                   eentry.path +
                   AppConfig.dirSeparator +
@@ -465,7 +470,7 @@ export default class ElectronIO {
           });
 
           // Read the .ts meta content
-          if (!lite && containsMetaFolder) {
+          if (containsMetaFolder && mode.includes('extractThumbPath')) {
             metaFolderPath = getMetaDirectoryPath(path, AppConfig.dirSeparator);
             this.fs.readdir(metaFolderPath, (err, metaEntries) => {
               if (err) {

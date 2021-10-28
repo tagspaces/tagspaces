@@ -183,14 +183,12 @@ export default class PlatformIO {
   /**
    * Promise === undefined on error
    * @param path
-   * @param lite
-   * @param extractText
+   * @param mode = ['extractTextContent', 'extractThumbPath']
    * @param ignorePatterns
    */
   static listDirectoryPromise = (
     path: string,
-    lite: boolean = true,
-    extractText: boolean = true,
+    mode = ['extractThumbPath'],
     ignorePatterns: Array<string> = []
   ): Promise<Array<any>> => {
     if (objectStoreAPI) {
@@ -198,33 +196,17 @@ export default class PlatformIO {
         path,
         bucketName: objectStoreAPI.config().bucketName
       };
-      return PlatformIO.listObjectStoreDir(
-        param,
-        lite,
-        extractText,
-        ignorePatterns
-      );
+      return PlatformIO.listObjectStoreDir(param, mode, ignorePatterns);
     }
-    return nativeAPI.listDirectoryPromise(
-      path,
-      lite,
-      extractText,
-      ignorePatterns
-    );
+    return nativeAPI.listDirectoryPromise(path, mode, ignorePatterns);
   };
 
   static listObjectStoreDir = (
     param: Object,
-    lite: boolean = true,
-    extractText: boolean = true,
+    mode = ['extractThumbPath'],
     ignorePatterns: Array<string> = []
   ): Promise<Array<any>> =>
-    objectStoreAPI.listDirectoryPromise(
-      param,
-      lite,
-      extractText,
-      ignorePatterns
-    );
+    objectStoreAPI.listDirectoryPromise(param, mode, ignorePatterns);
 
   static getPropertiesPromise = (path: string): Promise<any> => {
     if (objectStoreAPI) {
