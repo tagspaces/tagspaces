@@ -504,10 +504,13 @@ export default class CordovaIO {
   /**
    * Creates a list with containing the files and the sub directories of a given directory
    */
-  listDirectoryPromise = (path: string, lite: boolean): Promise<any> =>
+  listDirectoryPromise = (
+    path: string,
+    mode = ['extractThumbPath']
+  ): Promise<any> =>
     new Promise(async (resolve, reject) => {
       console.time('listDirectoryPromise');
-      const metaContent = !lite
+      const metaContent = mode.includes('extractThumbPath')
         ? await this.listMetaDirectoryPromise(path)
         : [];
 
@@ -539,7 +542,7 @@ export default class CordovaIO {
                     });
                   }
 
-                  if (!lite) {
+                  if (mode.includes('extractThumbPath')) {
                     if (entry.isDirectory) {
                       // Read tsm.json from subfolders
                       if (
