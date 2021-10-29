@@ -59,6 +59,8 @@ import InfoIcon from '-/components/InfoIcon';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
 import { actions as LocationActions } from '-/reducers/locations';
 import { getPersistTagsInSidecarFile } from '-/reducers/settings';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import { actions as LocationIndexActions } from '-/reducers/location-index';
 
 const styles: any = theme => ({
   formControl: {
@@ -76,6 +78,7 @@ interface Props {
   addLocation: (location: TS.Location, openAfterCreate?: boolean) => void;
   editLocation?: (location: TS.Location) => void;
   isPersistTagsInSidecar: boolean;
+  createLocationIndex: (location: TS.Location) => void;
 }
 
 const CreateEditLocationDialog = (props: Props) => {
@@ -175,6 +178,11 @@ const CreateEditLocationDialog = (props: Props) => {
   const [isIgnorePatternDialogOpen, setIgnorePatternDialogOpen] = useState<
     boolean
   >(false);
+
+  const [
+    isFullTextIndexConfirmDialogOpened,
+    setFullTextIndexConfirmDialogOpened
+  ] = useState<boolean>(false);
 
   const firstRender = useFirstRender();
 
@@ -470,9 +478,12 @@ const CreateEditLocationDialog = (props: Props) => {
                 data-tid="changeFullTextIndex"
                 name="fullTextIndex"
                 checked={fullTextIndex}
-                onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                  setFullTextIndex(event.target.checked)
-                }
+                onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                  setFullTextIndex(event.target.checked);
+                  if (event.target.checked) {
+                    setFullTextIndexConfirmDialogOpened(true);
+                  }
+                }}
               />
             }
             label={
@@ -482,6 +493,26 @@ const CreateEditLocationDialog = (props: Props) => {
               </>
             }
           />
+          {isFullTextIndexConfirmDialogOpened && location && (
+            <ConfirmDialog
+              open={isFullTextIndexConfirmDialogOpened}
+              onClose={() => {
+                setFullTextIndexConfirmDialogOpened(false);
+              }}
+              title={i18n.t('core:confirm')}
+              content={i18n.t('core:fullTextIndexRegenerate')}
+              confirmCallback={result => {
+                if (result) {
+                  props.createLocationIndex(location);
+                } else {
+                  setFullTextIndexConfirmDialogOpened(false);
+                }
+              }}
+              cancelDialogTID="cancelSaveBeforeCloseDialog"
+              confirmDialogTID="confirmSaveBeforeCloseDialog"
+              confirmDialogContentTID="confirmDialogContent"
+            />
+          )}
           <FormControlLabel
             className={classes.formControl}
             labelPlacement="start"
@@ -788,7 +819,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      addLocation: LocationActions.addLocation
+      addLocation: LocationActions.addLocation,
+      createLocationIndex: LocationIndexActions.createLocationIndex
     },
     dispatch
   );

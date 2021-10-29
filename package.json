@@ -152,7 +152,7 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@material-ui/pickers": "^3.2.10",
-    "@tagspaces/tagspaces-platforms": "^1.0.54",
+    "@tagspaces/tagspaces-platforms": "^1.0.55",
     "aws-amplify": "^3.3.27",
     "aws-sdk": "^2.984.0",
     "babel-polyfill": "^6.26.0",
