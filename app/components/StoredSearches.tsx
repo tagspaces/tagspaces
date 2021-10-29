@@ -23,6 +23,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import EditIcon from '@material-ui/icons/Edit';
+import MenuIcon from '@material-ui/icons/MoreVert';
 import SearchIcon from '@material-ui/icons/Search';
 import ArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import ArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
@@ -89,58 +90,70 @@ const StoredSearches = (props: Props) => {
   const noSearchesFound = props.searches.length < 1;
 
   return (
-    <Grid container direction="row">
-      <Grid item xs={12} style={{ alignSelf: 'center' }}>
-        <IconButton
-          style={{ minWidth: 'auto', padding: 7 }}
-          onClick={() => setStoredSearchesVisible(!storedSearchesVisible)}
-        >
-          {storedSearchesVisible ? <ArrowDownIcon /> : <ArrowRightIcon />}
-        </IconButton>
-        <Typography
-          variant="inherit"
-          // className={props.classes.header}
-          style={{ textTransform: 'uppercase' }}
-          noWrap
-          onClick={() => setStoredSearchesVisible(!storedSearchesVisible)}
-        >
-          {i18n.t('core:savedSearchesTitle')}
-        </Typography>
-      </Grid>
-      {storedSearchesVisible && noSearchesFound && (
-        <Grid item xs={12} style={{ display: 'flex', padding: 10 }}>
-          {i18n.t('noSavedSearches')}
+    <>
+      <Grid container direction="row">
+        <Grid item xs={10} style={{ alignSelf: 'center' }}>
+          <IconButton
+            style={{ minWidth: 'auto', padding: 7 }}
+            onClick={() => setStoredSearchesVisible(!storedSearchesVisible)}
+          >
+            {storedSearchesVisible ? <ArrowDownIcon /> : <ArrowRightIcon />}
+          </IconButton>
+          <Typography
+            variant="inherit"
+            // className={props.classes.header}
+            style={{ textTransform: 'uppercase' }}
+            noWrap
+            onClick={() => setStoredSearchesVisible(!storedSearchesVisible)}
+          >
+            {i18n.t('core:savedSearchesTitle')}
+          </Typography>
         </Grid>
-      )}
-      {storedSearchesVisible &&
-        props.searches.map(search => (
-          <React.Fragment key={search.uuid}>
-            <Grid item xs={10} style={{ display: 'flex' }}>
-              <Button
-                style={{
-                  textTransform: 'capitalize',
-                  marginLeft: 5,
-                  width: '100%',
-                  justifyContent: 'start'
-                }}
-                onClick={() => handleSavedSearchClick(search.uuid)}
-              >
-                <SearchIcon />
-                &nbsp;
-                {search.title}
-              </Button>
-            </Grid>
-            <Grid item xs={2} style={{ display: 'flex' }}>
-              <IconButton
-                aria-label={i18n.t('core:searchEditBtn')}
-                onClick={() => editSearch(search.uuid)}
-                data-tid="editSearchTID"
-              >
-                <EditIcon />
-              </IconButton>
-            </Grid>
-          </React.Fragment>
-        ))}
+        <Grid item xs={2} style={{ alignSelf: 'center' }}>
+          <IconButton style={{ minWidth: 'auto', padding: 7 }}>
+            <MenuIcon />
+          </IconButton>
+        </Grid>
+      </Grid>
+      <Grid container direction="row">
+        {storedSearchesVisible && noSearchesFound && (
+          <Grid item xs={12} style={{ display: 'flex', padding: 10 }}>
+            {i18n.t('noSavedSearches')}
+          </Grid>
+        )}
+      </Grid>
+      <Grid container direction="row">
+        {storedSearchesVisible &&
+          props.searches.map(search => (
+            <React.Fragment key={search.uuid}>
+              <Grid item xs={10} style={{ display: 'flex' }}>
+                <Button
+                  style={{
+                    textTransform: 'capitalize',
+                    fontWeight: 'normal',
+                    marginLeft: 5,
+                    width: '100%',
+                    justifyContent: 'start'
+                  }}
+                  onClick={() => handleSavedSearchClick(search.uuid)}
+                >
+                  <SearchIcon />
+                  &nbsp;
+                  {search.title}
+                </Button>
+              </Grid>
+              <Grid item xs={2} style={{ display: 'flex' }}>
+                <IconButton
+                  aria-label={i18n.t('core:searchEditBtn')}
+                  onClick={() => editSearch(search.uuid)}
+                  data-tid="editSearchTID"
+                >
+                  <EditIcon />
+                </IconButton>
+              </Grid>
+            </React.Fragment>
+          ))}
+      </Grid>
       {SaveSearchDialog && saveSearchDialogOpened !== undefined && (
         <SaveSearchDialog
           open={saveSearchDialogOpened !== undefined}
@@ -164,7 +177,7 @@ const StoredSearches = (props: Props) => {
           searchQuery={saveSearchDialogOpened}
         />
       )}
-    </Grid>
+    </>
   );
 };
 
