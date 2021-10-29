@@ -3362,10 +3362,10 @@
   dependencies:
     defer-to-connect "^1.0.1"
 
-"@tagspaces/tagspaces-platforms@^1.0.55":
-  version "1.0.55"
-  resolved "https://registry.yarnpkg.com/@tagspaces/tagspaces-platforms/-/tagspaces-platforms-1.0.55.tgz#d9344de6339634822a921b2a4d943b4ddaff15a4"
-  integrity sha512-obeFYCjhlT2MpgBM/FoKU1O2j2BY2kyhEtjaXvhfouTNvfXgmTVU2TpUkv6rlTb7VddZyRGKjY4DCwSZmSuqyQ==
+"@tagspaces/tagspaces-platforms@^1.0.54":
+  version "1.0.54"
+  resolved "https://registry.yarnpkg.com/@tagspaces/tagspaces-platforms/-/tagspaces-platforms-1.0.54.tgz#cfb67def5e341ead659086618452f9599b724a6f"
+  integrity sha512-6/AhsTTg0SCfz+HjpMos1WbWQ/3nXXf/z1q2eq6h4UR/vGqdH6Y8FtcnzpaD8a0n0oQ6vi1DZqDxq36ukmv5ww==
 
 "@testim/chrome-version@^1.0.7":
   version "1.0.7"
@@ -7828,10 +7828,10 @@ dompurify@2.3.1:
   resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-2.3.1.tgz#a47059ca21fd1212d3c8f71fdea6943b8bfbdf6a"
   integrity sha512-xGWt+NHAQS+4tpgbOAI08yxW0Pr256Gu/FNE2frZVTbgrBUn8M7tz7/ktS/LZ2MHeGqz6topj0/xY+y8R5FBFw==
 
-dompurify@^2.2.7:
-  version "2.2.7"
-  resolved "https://registry.npmjs.org/dompurify/-/dompurify-2.2.7.tgz"
-  integrity sha512-jdtDffdGNY+C76jvodNTu9jt5yYj59vuTUyx+wXdzcSwAGTYZDAQkQ7Iwx9zcGrA4ixC1syU4H3RZROqRxokxg==
+dompurify@^2.3.3:
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-2.3.3.tgz#c1af3eb88be47324432964d8abc75cf4b98d634c"
+  integrity sha512-dqnqRkPMAjOZE0FogZ+ceJNM2dZ3V/yNOuFB7+39qpO93hHhfRpHw3heYQC7DPK9FqbQTfBKUJhiSfz4MvXYwg==
 
 domutils@1.5.1, domutils@^1.5.1:
   version "1.5.1"
@@ -13003,10 +13003,10 @@ markdown-table@^2.0.0:
   dependencies:
     repeat-string "^1.0.0"
 
-marked@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.npmjs.org/marked/-/marked-2.0.1.tgz"
-  integrity sha512-5+/fKgMv2hARmMW7DOpykr2iLhl0NgjyELk5yn92iE7z8Se1IS9n3UsFm86hFXIkvMBmVxki8+ckcpjBeyo/hw==
+marked@^3.0.8:
+  version "3.0.8"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-3.0.8.tgz#2785f0dc79cbdc6034be4bb4f0f0a396bd3f8aeb"
+  integrity sha512-0gVrAjo5m0VZSJb4rpL59K1unJAMb/hm8HRXqasD8VeC8m91ytDPMritgFSlKonfdt+rRYYpP/JfLxgIX8yoSw==
 
 matcher@^1.0.0:
   version "1.1.1"
@@ -16691,11 +16691,6 @@ remark@^13.0.0:
     remark-parse "^9.0.0"
     remark-stringify "^9.0.0"
     unified "^9.1.0"
-
-remove-markdown@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.npmjs.org/remove-markdown/-/remove-markdown-0.3.0.tgz"
-  integrity sha1-XktmdJOpNXlyjz1S7MHbnKUF3Jg=
 
 remove-trailing-separator@^1.0.1:
   version "1.1.0"
