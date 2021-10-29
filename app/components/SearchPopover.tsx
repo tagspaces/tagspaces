@@ -74,6 +74,8 @@ import AppConfig from '-/config';
 import { actions as SearchActions, getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
+import HelpIcon from '@material-ui/icons/Help';
+import Links from '-/links';
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
 
@@ -83,10 +85,10 @@ interface Props {
   style?: any;
   theme?: any;
   searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
-  createLocationsIndexes: () => void;
+  // createLocationsIndexes: () => void;
   searchAllLocations: (searchQuery: TS.SearchQuery) => void;
   loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
-  openURLExternally: (url: string) => void;
+  openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   hideDrawer?: () => void;
   searchQuery: TS.SearchQuery; // () => any;
   setSearchResults: (entries: Array<any>) => void;
@@ -96,7 +98,6 @@ interface Props {
   maxSearchResults: number;
   indexing: boolean;
   searches: Array<TS.SearchQuery>;
-  addSearches: (searches: Array<TS.SearchQuery>) => void;
   showUnixHiddenEntries: boolean;
   // openSearchPanel: () => void;
   onClose: () => void;
@@ -148,24 +149,6 @@ const SearchPopover = (props: Props) => {
   const fileSize = useRef<string>(
     props.searchQuery.fileSize ? props.searchQuery.fileSize : ''
   );
-  const [
-    searchMenuAnchorEl,
-    setSearchMenuAnchorEl
-  ] = useState<null | HTMLElement>(null);
-
-  const [
-    isExportSearchesDialogOpened,
-    setExportSearchesDialogOpened
-  ] = useState<boolean>(false);
-
-  const ExportSearchesDialog =
-    Pro && Pro.UI ? Pro.UI.ExportSearchesDialog : false;
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [importFile, setImportFile] = useState<File>(undefined);
-
-  const ImportSearchesDialog =
-    Pro && Pro.UI ? Pro.UI.ImportSearchesDialog : false;
 
   useEffect(() => {
     textQuery.current = props.searchQuery.textQuery;
@@ -194,13 +177,6 @@ const SearchPopover = (props: Props) => {
       fileSize.current = props.searchQuery.fileSize;
     }*/
   }, [props.searchQuery]);
-
-  function handleFileInputChange(selection: any) {
-    const target = selection.currentTarget;
-    const file = target.files[0];
-    setImportFile(file);
-    target.value = null;
-  }
 
   const handleFileTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
@@ -620,14 +596,6 @@ const SearchPopover = (props: Props) => {
     props.onClose();
   };
 
-  const handleSearchMenu = (event: any) => {
-    setSearchMenuAnchorEl(event.currentTarget);
-  };
-
-  const handleCloseSearchMenu = () => {
-    setSearchMenuAnchorEl(null);
-  };
-
   const { indexing, indexedEntriesCount } = props;
 
   const indexStatus = indexedEntriesCount
@@ -638,11 +606,13 @@ const SearchPopover = (props: Props) => {
       <div className={classes.toolbar}>
         <Button
           size="medium"
-          data-tid="searchMenu"
-          startIcon={<MoreVertIcon />}
-          onClick={handleSearchMenu}
+          data-tid="helpSearchTID"
+          startIcon={<HelpIcon />}
+          onClick={() =>
+            props.openURLExternally(Links.documentationLinks.search, true)
+          }
         >
-          {i18n.t('searchTitle')}
+          {i18n.t('core:help')}
         </Button>
         <Typography
           variant="caption"
@@ -659,19 +629,6 @@ const SearchPopover = (props: Props) => {
           <CloseIcon />
         </IconButton>
       </div>
-      <SearchMenu
-        anchorEl={searchMenuAnchorEl}
-        open={Boolean(searchMenuAnchorEl)}
-        onClose={handleCloseSearchMenu}
-        createLocationsIndexes={props.createLocationsIndexes}
-        openURLExternally={props.openURLExternally}
-        exportSearches={() => {
-          setExportSearchesDialogOpened(true);
-        }}
-        importSearches={() => {
-          fileInputRef.current.click();
-        }}
-      />
       <div className={classes.searchArea}>
         <FormControl className={classes.formControl} disabled={indexing}>
           <ToggleButtonGroup
@@ -1133,29 +1090,6 @@ const SearchPopover = (props: Props) => {
                 searchQuery={saveSearchDialogOpened}
               />
             )}
-            <input
-              style={{ display: 'none' }}
-              ref={fileInputRef}
-              accept="*"
-              type="file"
-              onChange={handleFileInputChange}
-            />
-            {ExportSearchesDialog && isExportSearchesDialogOpened && (
-              <ExportSearchesDialog
-                open={isExportSearchesDialogOpened}
-                onClose={() => setExportSearchesDialogOpened(false)}
-                searches={props.searches}
-              />
-            )}
-            {ImportSearchesDialog && importFile && (
-              <ImportSearchesDialog
-                open={Boolean(importFile)}
-                onClose={() => setImportFile(undefined)}
-                importFile={importFile}
-                addSearches={props.addSearches}
-                searches={props.searches}
-              />
-            )}
           </>
         )}
       </div>
@@ -1184,9 +1118,7 @@ function mapDispatchToProps(dispatch) {
       createLocationsIndexes: LocationIndexActions.createLocationsIndexes,
       loadDirectoryContent: AppActions.loadDirectoryContent,
       openURLExternally: AppActions.openURLExternally,
-      setSearchResults: AppActions.setSearchResults,
-      addSearches: SearchActions.addSearches
-      // openSearchPanel: AppActions.openSearchPanel
+      setSearchResults: AppActions.setSearchResults
     },
     dispatch
   );

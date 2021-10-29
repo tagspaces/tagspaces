@@ -744,7 +744,6 @@ const GridPerspective = (props: Props) => {
         openDeleteFileDialog={openDeleteFileDialog}
         handleSortingMenu={handleSortingMenu}
         handleExportCsvMenu={handleExportCsvMenu}
-        isDesktopMode={props.isDesktopMode}
         openSettings={openSettings}
       />
       <GlobalHotKeys

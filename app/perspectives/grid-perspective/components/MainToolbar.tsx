@@ -31,9 +31,17 @@ import DeSelectAllIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CopyIcon from '@material-ui/icons/FileCopy';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ExportIcon from '@material-ui/icons/AssignmentReturn';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import AppConfig from '-/config';
+import {
+  actions as LocationIndexActions,
+  getSearchQuery
+} from '-/reducers/location-index';
+import { TS } from '-/tagspaces.namespace';
+import { actions as AppActions } from '-/reducers/app';
 
 interface Props {
   classes: any;
@@ -50,8 +58,10 @@ interface Props {
   handleSortingMenu: (event: Object) => void;
   handleExportCsvMenu: () => void;
   layoutType: string;
-  isDesktopMode: boolean;
   openSettings: () => void;
+  searchQuery: TS.SearchQuery;
+  setSearchQuery: (searchQuery: TS.SearchQuery) => void;
+  openCurrentDirectory: () => void;
 }
 
 const MainToolbar = (props: Props) => {
@@ -69,7 +79,6 @@ const MainToolbar = (props: Props) => {
     openDeleteFileDialog,
     fileOperationsEnabled,
     handleSortingMenu,
-    isDesktopMode,
     openSettings
   } = props;
 
@@ -87,7 +96,17 @@ const MainToolbar = (props: Props) => {
         <IconButton
           aria-label={i18n.t('core:navigateToParentDirectory')}
           data-tid="gridPerspectiveOnBackButton"
-          onClick={loadParentDirectoryContent}
+          onClick={() => {
+            if (
+              props.searchQuery &&
+              Object.keys(props.searchQuery).length > 0
+            ) {
+              props.setSearchQuery({});
+              props.openCurrentDirectory();
+            } else {
+              loadParentDirectoryContent();
+            }
+          }}
         >
           <ParentDirIcon />
         </IconButton>
@@ -195,4 +214,19 @@ const MainToolbar = (props: Props) => {
   );
 };
 
-export default MainToolbar;
+function mapStateToProps(state) {
+  return {
+    searchQuery: getSearchQuery(state)
+  };
+}
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(
+    {
+      setSearchQuery: LocationIndexActions.setSearchQuery,
+      openCurrentDirectory: AppActions.openCurrentDirectory
+    },
+    dispatch
+  );
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MainToolbar);
