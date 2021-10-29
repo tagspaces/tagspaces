@@ -503,10 +503,13 @@ export function createDirectoryIndex(
     // eslint-disable-next-line prefer-destructuring
     loadTextFilePromise = PlatformIO.loadTextFilePromise;
   }
-
+  const mode = ['extractThumbPath'];
+  if (extractText) {
+    mode.push('extractTextContent');
+  }
   return createIndex(
     param,
-    ['extractThumbPath'],
+    mode,
     ignorePatterns,
     listDirectoryPromise,
     loadTextFilePromise

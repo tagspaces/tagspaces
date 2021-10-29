@@ -33,8 +33,8 @@
   "editTagGroupNewName": "Tag Group Name",
   "createTagGroupTitle": "Create Tag Group",
   "createTagGroupName": "Tag Group Name",
+  "fullTextIndexRegenerate": "Index for this location must be regenerated before you can perform fullText search. Do you want to regenerate index now?",
   "createNewDirectoryTitle": "Create New Directory",
-
   "createNewDirectoryTitleName": "New Directory Name",
   "deleteDirectoryTitleConfirm": "Confirm Delete Directory",
   "deleteDirectoryContentConfirm": "Do you want to delete the directory '{{dirPath}}' ?",

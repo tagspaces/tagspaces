@@ -215,6 +215,42 @@ export const actions = {
         dispatch(actions.indexDirectoryFailure(err));
       });
   },
+  createLocationIndex: (location: TS.Location) => (
+    dispatch: (actions: Object) => void,
+    getState: () => any
+  ) => {
+    if (location) {
+      const { currentLocationId } = getState().app;
+      const isCurrentLocation = currentLocationId === location.uuid;
+      if (location.type === locationType.TYPE_CLOUD) {
+        PlatformIO.enableObjectStoreSupport(location)
+          .then(() => {
+            dispatch(
+              actions.createDirectoryIndex(
+                getLocationPath(location),
+                location.fullTextIndex,
+                isCurrentLocation,
+                location.uuid
+              )
+            );
+            return true;
+          })
+          .catch(() => {
+            PlatformIO.disableObjectStoreSupport();
+          });
+      } else if (location.type === locationType.TYPE_LOCAL) {
+        PlatformIO.disableObjectStoreSupport();
+        dispatch(
+          actions.createDirectoryIndex(
+            getLocationPath(location),
+            location.fullTextIndex,
+            isCurrentLocation,
+            location.uuid
+          )
+        );
+      }
+    }
+  },
   createLocationsIndexes: (extractText: boolean = true) => (
     dispatch: (actions: Object) => void,
     getState: () => any
