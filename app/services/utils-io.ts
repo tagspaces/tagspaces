@@ -17,6 +17,8 @@
  */
 
 import { v1 as uuidv1 } from 'uuid';
+import marked from 'marked';
+import DOMPurify from 'dompurify';
 import {
   loadIndex,
   enhanceDirectoryIndex,
@@ -1107,4 +1109,13 @@ export function loadFileContentPromise(
     };
     xhr.send();
   });
+}
+
+export function removeMarkDown(mdContent) {
+  if (!mdContent) return '';
+  let result = marked(DOMPurify.sanitize(mdContent));
+  const span = document.createElement('span');
+  span.innerHTML = result;
+  result = span.textContent || span.innerText;
+  return result;
 }

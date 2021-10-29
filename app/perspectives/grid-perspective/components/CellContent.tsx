@@ -17,7 +17,6 @@
  */
 
 import React from 'react';
-import removeMd from 'remove-markdown';
 import classNames from 'classnames';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -33,7 +32,8 @@ import { formatFileSize, formatDateTime } from '-/utils/misc';
 import { extractTagsAsObjects, extractTitle } from '-/utils/paths';
 import {
   findBackgroundColorForFolder,
-  findColorForEntry
+  findColorForEntry,
+  removeMarkDown
 } from '-/services/utils-io';
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagContainer from '-/components/TagContainer';
@@ -102,11 +102,12 @@ const CellContent = (props: Props) => {
     PlatformIO.getDirSeparator()
   );
 
-  let description = removeMd(fsEntry.description);
-
-  if (description.length > maxDescriptionPreviewLength) {
+  let { description } = fsEntry;
+  if (description && description.length > maxDescriptionPreviewLength) {
     description = description.substr(0, maxDescriptionPreviewLength) + '...';
   }
+
+  description = removeMarkDown(description);
 
   if (description && layoutType === 'row' && fsEntry.isFile) {
     description = ' | ' + description;
@@ -181,7 +182,7 @@ const CellContent = (props: Props) => {
           <div id="gridCellTags" className={classes.gridCellTags}>
             {showTags && entryTags ? renderTags(entryTags) : tagPlaceholder}
           </div>
-          {description.length > 0 && (
+          {description && (
             <Typography
               id="gridCellDescription"
               className={classes.gridCellDescription}
