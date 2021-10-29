@@ -33,7 +33,7 @@
   "editTagGroupNewName": "Tag Group Name",
   "createTagGroupTitle": "Create Tag Group",
   "createTagGroupName": "Tag Group Name",
-  "fullTextIndexRegenerate": "Index for this location must be regenerated before you can perform fullText search. Do you want to regenerate index now?",
+  "fullTextIndexRegenerate": "The search index for this location should be regenerated before performing full text searches. Do you want to start indexing?",
   "createNewDirectoryTitle": "Create New Directory",
   "createNewDirectoryTitleName": "New Directory Name",
   "deleteDirectoryTitleConfirm": "Confirm Delete Directory",

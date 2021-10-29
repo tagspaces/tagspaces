@@ -59,22 +59,6 @@ const LocationManagerMenu = (props: Props) => {
   ] = useState<null | HTMLElement>(null);
 
   const menuItems = [];
-  menuItems.push(
-    <MenuItem
-      key="updateAllLocationIndexes"
-      data-tid="updateAllLocationIndexes"
-      onClick={() => {
-        setLocationManagerMenuAnchorEl(null);
-        props.createLocationsIndexes();
-      }}
-    >
-      <ListItemIcon>
-        <UpdateIndexIcon />
-      </ListItemIcon>
-      <ListItemText primary={i18n.t('core:updateAllLocationIndexes')} />
-    </MenuItem>
-  );
-
   if (!AppConfig.locationsReadOnly) {
     menuItems.push(
       <MenuItem
@@ -172,6 +156,22 @@ const LocationManagerMenu = (props: Props) => {
         <CloseIcon />
       </ListItemIcon>
       <ListItemText primary={i18n.t('core:closeAllLocations')} />
+    </MenuItem>
+  );
+
+  menuItems.push(
+    <MenuItem
+      key="updateAllLocationIndexes"
+      data-tid="updateAllLocationIndexes"
+      onClick={() => {
+        setLocationManagerMenuAnchorEl(null);
+        props.createLocationsIndexes();
+      }}
+    >
+      <ListItemIcon>
+        <UpdateIndexIcon />
+      </ListItemIcon>
+      <ListItemText primary={i18n.t('core:updateAllLocationIndexes')} />
     </MenuItem>
   );
 
