@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import IconButton from '@material-ui/core/IconButton';
@@ -37,6 +37,8 @@ import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import { actions as SearchActions, getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
+import SearchMenu from '-/components/menus/SearchMenu';
+import { actions as AppActions } from '-/reducers/app';
 
 interface Props {
   style?: any;
@@ -45,6 +47,8 @@ interface Props {
   searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
   searchAllLocations: (searchQuery: TS.SearchQuery) => void;
   showUnixHiddenEntries: boolean;
+  addSearches: (searches: Array<TS.SearchQuery>) => void;
+  openURLExternally: (url: string) => void;
 }
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
@@ -56,6 +60,31 @@ const StoredSearches = (props: Props) => {
   const [storedSearchesVisible, setStoredSearchesVisible] = useState<boolean>(
     true
   );
+  const [
+    searchMenuAnchorEl,
+    setSearchMenuAnchorEl
+  ] = useState<null | HTMLElement>(null);
+
+  const [
+    isExportSearchesDialogOpened,
+    setExportSearchesDialogOpened
+  ] = useState<boolean>(false);
+
+  const [importFile, setImportFile] = useState<File>(undefined);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const ExportSearchesDialog =
+    Pro && Pro.UI ? Pro.UI.ExportSearchesDialog : false;
+  const ImportSearchesDialog =
+    Pro && Pro.UI ? Pro.UI.ImportSearchesDialog : false;
+
+  const handleSearchMenu = (event: any) => {
+    setSearchMenuAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseSearchMenu = () => {
+    setSearchMenuAnchorEl(null);
+  };
 
   const editSearch = (uuid: string) => {
     const savedSearch = props.searches.find(search => search.uuid === uuid);
@@ -84,6 +113,13 @@ const StoredSearches = (props: Props) => {
     }
   };
 
+  function handleFileInputChange(selection: any) {
+    const target = selection.currentTarget;
+    const file = target.files[0];
+    setImportFile(file);
+    target.value = null;
+  }
+
   const preventDefault = (event: React.SyntheticEvent) =>
     event.preventDefault();
 
@@ -110,7 +146,22 @@ const StoredSearches = (props: Props) => {
           </Typography>
         </Grid>
         <Grid item xs={2} style={{ alignSelf: 'center' }}>
-          <IconButton style={{ minWidth: 'auto', padding: 7 }}>
+          <SearchMenu
+            anchorEl={searchMenuAnchorEl}
+            open={Boolean(searchMenuAnchorEl)}
+            onClose={handleCloseSearchMenu}
+            openURLExternally={props.openURLExternally}
+            exportSearches={() => {
+              setExportSearchesDialogOpened(true);
+            }}
+            importSearches={() => {
+              fileInputRef.current.click();
+            }}
+          />
+          <IconButton
+            style={{ minWidth: 'auto', padding: 7 }}
+            onClick={handleSearchMenu}
+          >
             <MenuIcon />
           </IconButton>
         </Grid>
@@ -177,6 +228,29 @@ const StoredSearches = (props: Props) => {
           searchQuery={saveSearchDialogOpened}
         />
       )}
+      <input
+        style={{ display: 'none' }}
+        ref={fileInputRef}
+        accept="*"
+        type="file"
+        onChange={handleFileInputChange}
+      />
+      {ExportSearchesDialog && isExportSearchesDialogOpened && (
+        <ExportSearchesDialog
+          open={isExportSearchesDialogOpened}
+          onClose={() => setExportSearchesDialogOpened(false)}
+          searches={props.searches}
+        />
+      )}
+      {ImportSearchesDialog && importFile && (
+        <ImportSearchesDialog
+          open={Boolean(importFile)}
+          onClose={() => setImportFile(undefined)}
+          importFile={importFile}
+          addSearches={props.addSearches}
+          searches={props.searches}
+        />
+      )}
     </>
   );
 };
@@ -194,7 +268,8 @@ function mapDispatchToProps(dispatch) {
     {
       addSearches: SearchActions.addSearches,
       searchAllLocations: LocationIndexActions.searchAllLocations,
-      searchLocationIndex: LocationIndexActions.searchLocationIndex
+      searchLocationIndex: LocationIndexActions.searchLocationIndex,
+      openURLExternally: AppActions.openURLExternally
     },
     dispatch
   );
