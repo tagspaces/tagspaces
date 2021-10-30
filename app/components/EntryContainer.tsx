@@ -34,8 +34,8 @@ import CloseIcon from '@material-ui/icons/Close';
 import BackIcon from '@material-ui/icons/RemoveRedEye';
 import FullScreenIcon from '@material-ui/icons/ZoomOutMap';
 import OpenNativelyIcon from '@material-ui/icons/Launch';
-import ArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
-import ArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
+import PrevDocumentIcon from '@material-ui/icons/KeyboardArrowUp';
+import NextDocumentIcon from '@material-ui/icons/KeyboardArrowDown';
 import FileDownloadIcon from '@material-ui/icons/AssignmentReturned';
 import DetailsIcon from '@material-ui/icons/Info';
 import ExpandIcon from '@material-ui/icons/SettingsEthernet';
@@ -805,7 +805,7 @@ const EntryContainer = (props: Props) => {
             data-tid="fileContainerPrevFile"
             onClick={openPrevFile}
           >
-            <ArrowLeftIcon />
+            <PrevDocumentIcon />
           </IconButton>
         </Tooltip>
         <Tooltip title={i18n.t('core:openNextFileTooltip')}>
@@ -814,7 +814,7 @@ const EntryContainer = (props: Props) => {
             data-tid="fileContainerNextFile"
             onClick={openNextFile}
           >
-            <ArrowRightIcon />
+            <NextDocumentIcon />
           </IconButton>
         </Tooltip>
       </div>
