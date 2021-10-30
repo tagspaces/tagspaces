@@ -32,6 +32,7 @@ import { Pro } from '../pro';
 const maxSize = AppConfig.maxThumbSize;
 const bgColor = AppConfig.thumbBgColor;
 
+export const supportedMisc = ['url', 'html'];
 export const supportedImgs = [
   'jpg',
   'jpeg',
