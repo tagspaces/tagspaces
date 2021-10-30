@@ -53,7 +53,8 @@ import {
   supportedContainers,
   supportedImgs,
   supportedText,
-  supportedVideos
+  supportedVideos,
+  supportedMisc
 } from '-/services/thumbsgenerator';
 
 const supportedImgsWS = [
@@ -118,11 +119,12 @@ export function enhanceDirectoryContent(
         supportedImgs.includes(enhancedEntry.extension) ||
         supportedContainers.includes(enhancedEntry.extension) ||
         supportedText.includes(enhancedEntry.extension) ||
+        supportedMisc.includes(enhancedEntry.extension) ||
         supportedVideos.includes(enhancedEntry.extension)
       ) {
         tmbGenerationPromises.push(getThumbnailURLPromise(enhancedEntry.path));
       } else {
-        console.debug(
+        console.log(
           'Unsupported thumbgeneration ext:' + enhancedEntry.extension
         );
       }
@@ -1116,7 +1118,8 @@ export function loadFileContentPromise(
 
 export function removeMarkDown(mdContent) {
   if (!mdContent) return '';
-  let result = marked(DOMPurify.sanitize(mdContent));
+  let result = marked(mdContent); // marked(DOMPurify.sanitize(mdContent));
+  console.log(result);
   const span = document.createElement('span');
   span.innerHTML = result;
   result = span.textContent || span.innerText;
