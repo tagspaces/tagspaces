@@ -621,5 +621,8 @@
   "warningOpeningFilesExternally": "Show warning on opening files externally",
   "geoTaggingFormat": "Geo Tagging Format",
   "searchDisabledWhileIndexing": "Search disabled while indexing",
+  "copySharingLink": "Copy Sharing Link",
+  "sharingLinkCopied": "Link for sharing copied to the clipboard",
+  "sharingLinkFailed": "Copying the link to clipboard failed",
   "-": "-"
 }

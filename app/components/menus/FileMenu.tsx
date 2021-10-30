@@ -30,6 +30,7 @@ import AddRemoveTags from '@material-ui/icons/Loyalty';
 import MoveCopy from '@material-ui/icons/FileCopy';
 import DuplicateFile from '@material-ui/icons/PostAdd';
 import ImageIcon from '@material-ui/icons/Image';
+import ShareIcon from '@material-ui/icons/Link';
 import RenameFile from '@material-ui/icons/FormatTextdirectionLToR';
 import DeleteForever from '@material-ui/icons/DeleteForever';
 import i18n from '-/services/i18n';
@@ -45,7 +46,8 @@ import {
   extractContainingDirectoryPath,
   extractFileName,
   extractParentDirectoryPath,
-  extractTags
+  extractTags,
+  generateSharingLink
 } from '-/utils/paths';
 import { TS } from '-/tagspaces.namespace';
 import { formatDateTime4Tag } from '-/utils/misc';
@@ -73,47 +75,76 @@ interface Props {
   selectedFilePath?: string;
   isReadOnlyMode: boolean;
   selectedEntries: Array<any>;
+  currentLocation: TS.Location;
+  locations: Array<TS.Location>;
 }
 
 const FileMenu = (props: Props) => {
+  const {
+    selectedEntries,
+    isReadOnlyMode,
+    currentLocation,
+    onClose,
+    selectedFilePath,
+    showNotification,
+    locations
+  } = props;
+
+  function copySharingLink() {
+    onClose();
+    if (selectedEntries.length === 1) {
+      const entryFromIndex = selectedEntries[0].locationID;
+      const locationID = entryFromIndex
+        ? selectedEntries[0].locationID
+        : currentLocation.uuid;
+      let relativePath = selectedEntries[0].path;
+      const tmpLoc = locations.find(location => location.uuid === locationID);
+      const locationPath = tmpLoc.path;
+      if (
+        locationPath &&
+        relativePath &&
+        relativePath.startsWith(locationPath)
+      ) {
+        // remove location path from entry path if possible
+        relativePath = relativePath.substr(locationPath.length);
+      }
+      const sharingLink = generateSharingLink(locationID, relativePath);
+      navigator.clipboard
+        .writeText(sharingLink)
+        .then(() => {
+          showNotification(i18n.t('core:sharingLinkCopied'));
+          return true;
+        })
+        .catch(() => {
+          showNotification(i18n.t('core:sharingLinkFailed'));
+        });
+    }
+  }
+
   function showDeleteFileDialog() {
-    props.onClose();
+    onClose();
     props.openDeleteFileDialog();
   }
 
   function showRenameFileDialog() {
-    props.onClose();
+    onClose();
     props.openRenameFileDialog();
   }
 
   function showMoveCopyFilesDialog() {
-    props.onClose();
+    onClose();
     props.openMoveCopyFilesDialog();
   }
 
   function setFolderThumbnail() {
-    props.onClose();
+    onClose();
     setFolderThumbnailPromise(props.selectedFilePath)
-      .then(
-        (directoryPath: string) => {
-          props.showNotification('Thumbnail created for: ' + directoryPath);
-          return true;
-        }
-
-        // getAllPropertiesPromise(directoryPath)
-        //   .then((fsEntry: FileSystemEntry) => {
-        //     props.openFsEntry(fsEntry);
-        //     return true;
-        //   })
-        //   .catch(error =>
-        //     console.warn(
-        //       'Error getAllPropertiesPromise for: ' + directoryPath,
-        //       error
-        //     )
-        //   )
-      )
+      .then((directoryPath: string) => {
+        showNotification('Thumbnail created for: ' + directoryPath);
+        return true;
+      })
       .catch(error => {
-        props.showNotification('Thumbnail creation failed.');
+        showNotification('Thumbnail creation failed.');
         console.warn(
           'Error setting Thumb for entry: ' + props.selectedFilePath,
           error
@@ -123,32 +154,32 @@ const FileMenu = (props: Props) => {
   }
 
   function showAddRemoveTagsDialog() {
-    props.onClose();
+    onClose();
     props.openAddRemoveTagsDialog();
   }
 
   function showInFileManager() {
-    props.onClose();
+    onClose();
     if (props.selectedFilePath) {
       props.showInFileManager(props.selectedFilePath);
     }
   }
 
   function duplicateFile() {
-    props.onClose();
-    if (props.selectedFilePath) {
+    onClose();
+    if (selectedFilePath) {
       const dirPath = extractContainingDirectoryPath(
-        props.selectedFilePath,
+        selectedFilePath,
         PlatformIO.getDirSeparator()
       );
 
       const fileName = extractFileName(
-        props.selectedFilePath,
+        selectedFilePath,
         PlatformIO.getDirSeparator()
       );
 
       const extractedTags = extractTags(
-        props.selectedFilePath,
+        selectedFilePath,
         AppConfig.tagDelimiter,
         PlatformIO.getDirSeparator()
       );
@@ -159,29 +190,29 @@ const FileMenu = (props: Props) => {
         (dirPath ? dirPath + PlatformIO.getDirSeparator() : '') +
         generateFileName(fileName, extractedTags, AppConfig.tagDelimiter);
 
-      PlatformIO.copyFilePromise(props.selectedFilePath, newFilePath)
+      PlatformIO.copyFilePromise(selectedFilePath, newFilePath)
         .then(() => {
           props.loadDirectoryContent(dirPath, true);
           return true;
         })
         .catch(error => {
-          props.showNotification('Error creating duplicate: ' + error.message);
+          showNotification('Error creating duplicate: ' + error.message);
         });
     }
   }
 
   function openFileNatively() {
-    props.onClose();
+    onClose();
     if (props.selectedFilePath) {
       props.openFileNatively(props.selectedFilePath);
     }
   }
 
   function openParentFolderInternally() {
-    props.onClose();
-    if (props.selectedFilePath) {
+    onClose();
+    if (selectedFilePath) {
       const parentFolder = extractParentDirectoryPath(
-        props.selectedFilePath,
+        selectedFilePath,
         PlatformIO.getDirSeparator()
       );
       props.loadDirectoryContent(parentFolder, false);
@@ -189,9 +220,9 @@ const FileMenu = (props: Props) => {
   }
 
   function openFile() {
-    props.onClose();
-    if (props.selectedFilePath) {
-      getAllPropertiesPromise(props.selectedFilePath)
+    onClose();
+    if (selectedFilePath) {
+      getAllPropertiesPromise(selectedFilePath)
         .then((fsEntry: TS.FileSystemEntry) => {
           props.openFsEntry(fsEntry);
           return true;
@@ -208,7 +239,7 @@ const FileMenu = (props: Props) => {
   }
   const menuItems = [];
 
-  if (props.selectedEntries.length < 2) {
+  if (selectedEntries.length < 2) {
     menuItems.push(
       <MenuItem
         key="fileMenuOpenFile"
@@ -236,7 +267,7 @@ const FileMenu = (props: Props) => {
   }
   if (
     !(PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb) &&
-    props.selectedEntries.length < 2
+    selectedEntries.length < 2
   ) {
     menuItems.push(
       <MenuItem
@@ -265,7 +296,7 @@ const FileMenu = (props: Props) => {
     menuItems.push(<Divider key="fmDivider" />);
   }
 
-  if (!props.isReadOnlyMode) {
+  if (!isReadOnlyMode) {
     menuItems.push(
       <MenuItem
         key="fileMenuAddRemoveTags"
@@ -314,7 +345,7 @@ const FileMenu = (props: Props) => {
         <ListItemText primary={i18n.t('core:moveCopyFile')} />
       </MenuItem>
     );
-    if (Pro && props.selectedEntries.length < 2) {
+    if (Pro && selectedEntries.length < 2) {
       menuItems.push(
         <MenuItem
           key="setAsThumbTID"
@@ -325,6 +356,20 @@ const FileMenu = (props: Props) => {
             <ImageIcon />
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:setAsThumbnail')} />
+        </MenuItem>
+      );
+    }
+    if (selectedEntries.length === 1) {
+      menuItems.push(
+        <MenuItem
+          key="copySharingLink"
+          data-tid="copyFileSharingLink"
+          onClick={copySharingLink}
+        >
+          <ListItemIcon>
+            <ShareIcon />
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:copySharingLink')} />
         </MenuItem>
       );
     }

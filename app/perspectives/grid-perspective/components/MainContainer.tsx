@@ -59,7 +59,7 @@ import CellContent from './CellContent';
 import MainToolbar from './MainToolbar';
 import SortingMenu from './SortingMenu';
 import GridOptionsMenu from './GridOptionsMenu';
-import { getLocation } from '-/reducers/locations';
+import { getLocation, getLocations } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-io';
 import { getLocationPath } from '-/utils/paths';
 import GridPagination from '-/perspectives/grid-perspective/components/GridPagination';
@@ -103,6 +103,7 @@ interface Props {
     autohide: boolean
   ) => void;
   currentLocation: TS.Location;
+  locations: Array<TS.Location>;
   isDesktopMode: boolean;
   toggleDeleteMultipleEntriesDialog: () => void;
 }
@@ -840,6 +841,8 @@ const GridPerspective = (props: Props) => {
           isReadOnlyMode={props.isReadOnlyMode}
           selectedFilePath={getSelEntryPath()}
           selectedEntries={props.selectedEntries}
+          currentLocation={props.currentLocation}
+          locations={props.locations}
         />
       )}
       {/* {Boolean(dirContextMenuAnchorEl) && ( // todo move dialogs from DirectoryMenu */}
@@ -856,6 +859,8 @@ const GridPerspective = (props: Props) => {
         openFsEntry={props.openFsEntry}
         isReadOnlyMode={props.isReadOnlyMode}
         perspectiveMode={getSelEntryPath() !== props.currentDirectoryPath}
+        currentLocation={props.currentLocation}
+        locations={props.locations}
       />
       {/* {Boolean(tagContextMenuAnchorEl) && ( // TODO EntryTagMenu is used in TagSelect we cannot move confirm dialog from menu */}
       <EntryTagMenu
@@ -929,6 +934,7 @@ function mapStateToProps(state) {
     selectedEntries: getSelectedEntries(state),
     keyBindings: getKeyBindingObject(state),
     currentLocation: getLocation(state, state.app.currentLocationId),
+    locations: getLocations(state),
     isDesktopMode: isDesktopMode(state),
     isDeleteMultipleEntriesDialogOpened: isDeleteMultipleEntriesDialogOpened(
       state

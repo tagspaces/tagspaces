@@ -36,6 +36,7 @@ import MapiquePerspectiveIcon from '@material-ui/icons/Map';
 import KanBanPerspectiveIcon from '@material-ui/icons/Dashboard';
 import NewFileIcon from '@material-ui/icons/InsertDriveFile';
 import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
+import ShareIcon from '@material-ui/icons/Link';
 import RenameFolderIcon from '@material-ui/icons/FormatTextdirectionLToR';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -50,7 +51,8 @@ import {
   extractContainingDirectoryPath,
   extractDirectoryName,
   getThumbFileLocationForDirectory,
-  normalizePath
+  normalizePath,
+  generateSharingLink
 } from '-/utils/paths';
 import PlatformIO from '-/services/platform-io';
 import { formatDateTime4Tag } from '-/utils/misc';
@@ -92,8 +94,8 @@ interface Props {
   perspectiveMode?: boolean;
   showNotification?: (
     text: string,
-    notificationType: string,
-    autohide: boolean
+    notificationType?: string,
+    autohide?: boolean
   ) => void;
   isReadOnlyMode?: boolean;
   toggleUploadDialog: () => void;
@@ -111,10 +113,56 @@ interface Props {
   mouseX?: number;
   mouseY?: number;
   openURLExternally?: (url: string, skipConfirmation: boolean) => void;
+  currentLocation?: TS.Location;
+  locations?: Array<TS.Location>;
 }
 
 const DirectoryMenu = (props: Props) => {
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
+
+  const {
+    selectedEntries,
+    isReadOnlyMode,
+    currentLocation,
+    locations,
+    showNotification,
+    onClose
+  } = props;
+
+  function copySharingLink() {
+    onClose();
+    if (selectedEntries.length === 1) {
+      const entryFromIndex = selectedEntries[0].locationID;
+      const locationID = entryFromIndex
+        ? selectedEntries[0].locationID
+        : currentLocation.uuid;
+      let relativePath = selectedEntries[0].path;
+      const tmpLoc = locations.find(location => location.uuid === locationID);
+      const locationPath = tmpLoc.path;
+      if (
+        locationPath &&
+        relativePath &&
+        relativePath.startsWith(locationPath)
+      ) {
+        // remove location path from entry path if possible
+        relativePath = relativePath.substr(locationPath.length);
+      }
+      const sharingLink = generateSharingLink(
+        locationID,
+        undefined,
+        relativePath
+      );
+      navigator.clipboard
+        .writeText(sharingLink)
+        .then(() => {
+          showNotification(i18n.t('core:sharingLinkCopied'));
+          return true;
+        })
+        .catch(() => {
+          showNotification(i18n.t('core:sharingLinkFailed'));
+        });
+    }
+  }
 
   const [
     isCreateDirectoryDialogOpened,
@@ -122,17 +170,17 @@ const DirectoryMenu = (props: Props) => {
   ] = useState(false);
 
   function reloadDirectory() {
-    props.onClose();
+    onClose();
     props.loadDirectoryContent(props.directoryPath, true);
   }
 
   function openDirectory() {
-    props.onClose();
+    onClose();
     props.loadDirectoryContent(props.directoryPath, true);
   }
 
   function showProperties() {
-    props.onClose();
+    onClose();
     getAllPropertiesPromise(props.directoryPath)
       .then((fsEntry: TS.FileSystemEntry) => {
         props.openFsEntry(fsEntry);
@@ -149,7 +197,7 @@ const DirectoryMenu = (props: Props) => {
   }
 
   function switchPerspective(perspectiveId) {
-    props.onClose();
+    onClose();
     if (Pro) {
       if (props.switchPerspective) {
         props.switchPerspective(perspectiveId);
@@ -190,7 +238,7 @@ const DirectoryMenu = (props: Props) => {
   }
 
   function showDeleteDirectoryDialog() {
-    props.onClose();
+    onClose();
     props.setSelectedEntries([
       { isFile: false, name: props.directoryPath, path: props.directoryPath }
     ]);
@@ -198,32 +246,32 @@ const DirectoryMenu = (props: Props) => {
   }
 
   function showRenameDirectoryDialog() {
-    props.onClose();
+    onClose();
     props.openRenameDirectoryDialog();
   }
 
   function showCreateDirectoryDialog() {
-    props.onClose();
+    onClose();
     setIsCreateDirectoryDialogOpened(true);
   }
 
   function createNewFile() {
-    props.onClose();
+    onClose();
     props.toggleCreateFileDialog();
   }
 
   function showInFileManager() {
-    props.onClose();
+    onClose();
     props.openDirectory(props.directoryPath);
   }
 
   function addExistingFile() {
-    props.onClose();
+    onClose();
     fileUploadContainerRef.current.onFileUpload();
   }
 
   function importMacTags() {
-    props.onClose();
+    onClose();
     if (Pro && Pro.MacTagsImport && Pro.MacTagsImport.importTags) {
       if (
         !confirm(`Experimental feature\n
@@ -331,7 +379,7 @@ Do you want to continue?`)
   // }
 
   function cameraTakePicture() {
-    props.onClose();
+    onClose();
     // @ts-ignore
     navigator.camera.getPicture(onCameraSuccess, onFail, {
       // quality: 50,
@@ -344,7 +392,7 @@ Do you want to continue?`)
   }
 
   function setFolderThumbnail() {
-    props.onClose();
+    onClose();
     const parentDirectoryPath = extractContainingDirectoryPath(
       props.directoryPath,
       PlatformIO.getDirSeparator()
@@ -385,7 +433,7 @@ Do you want to continue?`)
 
   const menuItems = [];
 
-  if (props.selectedEntries.length < 2) {
+  if (selectedEntries.length < 2) {
     if (props.perspectiveMode) {
       menuItems.push(
         <MenuItem
@@ -413,7 +461,7 @@ Do you want to continue?`)
         </MenuItem>
       );
     }
-    if (!props.isReadOnlyMode) {
+    if (!isReadOnlyMode) {
       menuItems.push(
         <MenuItem
           key="renameDirectory"
@@ -429,7 +477,7 @@ Do you want to continue?`)
     }
   }
 
-  if (!props.isReadOnlyMode) {
+  if (!isReadOnlyMode) {
     menuItems.push(
       <MenuItem
         key="deleteDirectory"
@@ -445,7 +493,7 @@ Do you want to continue?`)
   }
 
   if (
-    props.selectedEntries.length < 2 &&
+    selectedEntries.length < 2 &&
     !(PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb)
   ) {
     menuItems.push(
@@ -464,7 +512,7 @@ Do you want to continue?`)
   if (!props.perspectiveMode) {
     menuItems.push(<Divider key="divider1" />);
   }
-  if (!props.isReadOnlyMode && !props.perspectiveMode) {
+  if (!isReadOnlyMode && !props.perspectiveMode) {
     menuItems.push(
       <MenuItem
         key="newSubDirectory"
@@ -502,7 +550,7 @@ Do you want to continue?`)
       </MenuItem>
     );
   }
-  if (Pro && props.perspectiveMode && props.selectedEntries.length < 2) {
+  if (Pro && props.perspectiveMode && selectedEntries.length < 2) {
     menuItems.push(
       <MenuItem
         key="setAsThumb"
@@ -516,8 +564,22 @@ Do you want to continue?`)
       </MenuItem>
     );
   }
+  if (selectedEntries.length === 1) {
+    menuItems.push(
+      <MenuItem
+        key="copySharingLink"
+        data-tid="copyDirectorySharingLink"
+        onClick={copySharingLink}
+      >
+        <ListItemIcon>
+          <ShareIcon />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:copySharingLink')} />
+      </MenuItem>
+    );
+  }
 
-  if (props.selectedEntries.length < 2 && process.platform === 'darwin') {
+  if (selectedEntries.length < 2 && process.platform === 'darwin') {
     menuItems.push(
       <MenuItem
         key="importMacTags"
@@ -634,7 +696,7 @@ Do you want to continue?`)
     );
   }
 
-  if (props.selectedEntries.length < 2) {
+  if (selectedEntries.length < 2) {
     menuItems.push(<Divider key="divider3" />);
     menuItems.push(
       <MenuItem
