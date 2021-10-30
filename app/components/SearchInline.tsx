@@ -405,22 +405,23 @@ const SearchInline = (props: Props) => {
           )
         }}
       />
-      <Button
-        id="searchButton"
-        variant="outlined"
-        size="small"
-        disabled={indexing}
-        style={{
-          marginRight: 10,
-          marginLeft: 10,
-          marginTop: 10
-        }}
-        // variant="outlined"
-        color="primary"
-        onClick={clickSearchButton}
-      >
-        {indexing ? 'Search disabled while indexing' : i18n.t('searchTitle')}
-      </Button>
+      <Tooltip title={indexing ? i18n.t('searchDisabledWhileIndexing') : ''}>
+        <Button
+          id="searchButton"
+          variant="outlined"
+          size="small"
+          disabled={indexing}
+          style={{
+            marginRight: 10,
+            marginLeft: 10,
+            marginTop: 10
+          }}
+          color="primary"
+          onClick={clickSearchButton}
+        >
+          {i18n.t('searchTitle')}
+        </Button>
+      </Tooltip>
     </div>
   );
 };
