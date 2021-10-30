@@ -1118,8 +1118,7 @@ export function loadFileContentPromise(
 
 export function removeMarkDown(mdContent) {
   if (!mdContent) return '';
-  let result = marked(mdContent); // marked(DOMPurify.sanitize(mdContent));
-  console.log(result);
+  let result = marked(DOMPurify.sanitize(mdContent));
   const span = document.createElement('span');
   span.innerHTML = result;
   result = span.textContent || span.innerText;
