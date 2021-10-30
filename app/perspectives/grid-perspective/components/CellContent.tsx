@@ -103,11 +103,11 @@ const CellContent = (props: Props) => {
   );
 
   let { description } = fsEntry;
+
+  description = removeMarkDown(description);
   if (description && description.length > maxDescriptionPreviewLength) {
     description = description.substr(0, maxDescriptionPreviewLength) + '...';
   }
-
-  description = removeMarkDown(description);
 
   if (description && layoutType === 'row' && fsEntry.isFile) {
     description = ' | ' + description;
