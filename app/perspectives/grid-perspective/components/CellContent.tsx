@@ -116,11 +116,14 @@ const CellContent = (props: Props) => {
   const fsEntryColor = findColorForEntry(fsEntry, supportedFileTypes);
   const fsEntryBgColor = findBackgroundColorForFolder(fsEntry);
 
-  const fileNameTags = extractTagsAsObjects(
-    fsEntry.name,
-    AppConfig.tagDelimiter,
-    PlatformIO.getDirSeparator()
-  );
+  let fileNameTags = [];
+  if (fsEntry.isFile) {
+    fileNameTags = extractTagsAsObjects(
+      fsEntry.name,
+      AppConfig.tagDelimiter,
+      PlatformIO.getDirSeparator()
+    );
+  }
 
   const fsEntryTags = fsEntry.tags ? fsEntry.tags : [];
   const sideCarTagsTitles = fsEntryTags.map(tag => tag.title);
