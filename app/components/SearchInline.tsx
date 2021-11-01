@@ -40,6 +40,11 @@ import {
 import i18n from '../services/i18n';
 import { FileTypeGroups } from '-/services/search';
 import { TS } from '-/tagspaces.namespace';
+import {
+  escapeRegExp,
+  parseTextQuery,
+  removeAllTagsFromQuery
+} from '-/utils/misc';
 
 // type PropsClasses = Record<keyof StyleProps, string>;
 
@@ -103,6 +108,7 @@ const MainSearchField = withStyles((theme: Theme) =>
 const SearchInline = (props: Props) => {
   // const [, forceUpdate] = useReducer(x => x + 1, 0);
   const textQuery = useRef<string>(props.searchQuery.textQuery);
+  const textQueryMask = useRef<string>('');
   const fileTypes = useRef<Array<string>>(
     props.searchQuery.fileTypes
       ? props.searchQuery.fileTypes
@@ -161,111 +167,80 @@ const SearchInline = (props: Props) => {
   }, [props.currentDirectory]);
 
   useEffect(() => {
-    let txtQuery = props.searchQuery.textQuery || '';
+    if (Object.keys(props.searchQuery).length > 0) {
+      textQueryMask.current = '';
 
-    if (props.searchQuery.tagsAND && props.searchQuery.tagsAND.length > 0) {
-      props.searchQuery.tagsAND.forEach(tag => {
-        txtQuery += ' +' + tag.title;
-      });
-    }
-    if (props.searchQuery.tagsOR && props.searchQuery.tagsOR.length > 0) {
-      props.searchQuery.tagsOR.forEach(tag => {
-        txtQuery += ' ?' + tag.title;
-      });
-    }
-    if (props.searchQuery.tagsNOT && props.searchQuery.tagsNOT.length > 0) {
-      props.searchQuery.tagsNOT.forEach(tag => {
-        txtQuery += ' -' + tag.title;
-      });
-    }
-    if (txtQuery !== textQuery.current) {
-      textQuery.current = txtQuery.trim();
-      mainSearchField.current.value = textQuery.current;
-      // forceUpdate();
-    }
-    if (props.searchQuery.searchBoxing) {
-      searchBoxing.current = props.searchQuery.searchBoxing;
-    }
-    if (props.searchQuery.fileTypes) {
-      fileTypes.current = props.searchQuery.fileTypes;
-    }
-    if (props.searchQuery.searchType) {
-      searchType.current = props.searchQuery.searchType;
-    }
-    if (props.searchQuery.lastModified) {
-      lastModified.current = props.searchQuery.lastModified;
-    }
-    if (props.searchQuery.tagTimePeriodFrom) {
-      tagTimePeriodFrom.current = props.searchQuery.tagTimePeriodFrom;
-    }
-    if (props.searchQuery.tagTimePeriodTo) {
-      tagTimePeriodTo.current = props.searchQuery.tagTimePeriodTo;
-    }
-    if (props.searchQuery.forceIndexing) {
-      forceIndexing.current = props.searchQuery.forceIndexing;
-    }
-    if (props.searchQuery.fileSize) {
-      fileSize.current = props.searchQuery.fileSize;
+      if (props.searchQuery.tagsAND && props.searchQuery.tagsAND.length > 0) {
+        props.searchQuery.tagsAND.forEach(tag => {
+          textQueryMask.current += ' +' + tag.title;
+        });
+      }
+      if (props.searchQuery.tagsOR && props.searchQuery.tagsOR.length > 0) {
+        props.searchQuery.tagsOR.forEach(tag => {
+          textQueryMask.current += ' ?' + tag.title;
+        });
+      }
+      if (props.searchQuery.tagsNOT && props.searchQuery.tagsNOT.length > 0) {
+        props.searchQuery.tagsNOT.forEach(tag => {
+          textQueryMask.current += ' -' + tag.title;
+        });
+      }
+      const txtQuery = removeAllTagsFromQuery(textQuery.current);
+      /* if (textQueryMask.current) {
+        txtQuery = textQuery.current.replace(textQueryMask.current, '').trim();
+      } else if (textQuery.current) {
+        txtQuery = textQuery.current; // props.searchQuery.textQuery;
+      } else {
+        txtQuery = '';
+      } */
+      const searchQuery = {
+        ...props.searchQuery,
+        textQuery: txtQuery
+      };
+      /* if (textQuery.current) {
+        txtQuery = textQuery.current.replace(tagsMask, '');
+      } else {
+        txtQuery = props.searchQuery.textQuery || '';
+      }
+
+      const withMask = txtQuery + ' ' + tagsMask.trim();
+      if (withMask !== textQuery.current) {
+        textQuery.current = withMask; */
+      mainSearchField.current.value =
+        txtQuery +
+        (textQueryMask.current ? ' ' + textQueryMask.current.trim() : '');
+      // }
+      if (props.searchQuery.searchBoxing) {
+        searchBoxing.current = props.searchQuery.searchBoxing;
+      }
+      if (props.searchQuery.fileTypes) {
+        fileTypes.current = props.searchQuery.fileTypes;
+      }
+      if (props.searchQuery.searchType) {
+        searchType.current = props.searchQuery.searchType;
+      }
+      if (props.searchQuery.lastModified) {
+        lastModified.current = props.searchQuery.lastModified;
+      }
+      if (props.searchQuery.tagTimePeriodFrom) {
+        tagTimePeriodFrom.current = props.searchQuery.tagTimePeriodFrom;
+      }
+      if (props.searchQuery.tagTimePeriodTo) {
+        tagTimePeriodTo.current = props.searchQuery.tagTimePeriodTo;
+      }
+      if (props.searchQuery.forceIndexing) {
+        forceIndexing.current = props.searchQuery.forceIndexing;
+      }
+      if (props.searchQuery.fileSize) {
+        fileSize.current = props.searchQuery.fileSize;
+      }
+      if (searchBoxing.current === 'global') {
+        props.searchAllLocations(searchQuery);
+      } else {
+        props.searchLocationIndex(searchQuery);
+      }
     }
   }, [props.searchQuery]);
-
-  /* const mergeWithExtractedTags = (tags: Array<TS.Tag>, identifier: string) => {
-    const extractedTags = parseTextQuery(identifier);
-    if (tags) {
-      if (extractedTags.length > 0) {
-        return getUniqueTags(tags, extractedTags);
-      }
-      return tags;
-    }
-    if (extractedTags.length > 0) {
-      return extractedTags;
-    }
-    return undefined;
-  }; */
-
-  /* function getUniqueTags(tags1: Array<TS.Tag>, tags2: Array<TS.Tag>) {
-    const mergedArray = [...tags1, ...tags2];
-    // mergedArray have duplicates, lets remove the duplicates using Set
-    const set = new Set();
-    return mergedArray.filter(tag => {
-      if (!set.has(tag.title)) {
-        set.add(tag.title);
-        return true;
-      }
-      return false;
-    }, set);
-  } */
-
-  function escapeRegExp(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
-  }
-
-  const parseTextQuery = (identifier: string) => {
-    const extractedTags = [];
-    let query = textQuery.current;
-    if (query && query.length > 0) {
-      query = query
-        .trim()
-        .replace(
-          new RegExp(escapeRegExp(identifier) + '\\s+', 'g'),
-          identifier
-        );
-    }
-    const textQueryParts = query.split(' ');
-    if (textQueryParts) {
-      // && textQueryParts.length > 1) {
-      textQueryParts.forEach(part => {
-        const trimmedPart = part.trim();
-        if (trimmedPart.startsWith(identifier)) {
-          const tagTitle = trimmedPart.substr(1).trim();
-          extractedTags.push({
-            title: tagTitle
-          });
-        }
-      });
-    }
-    return extractedTags;
-  };
 
   const clickSearchButton = () => {
     executeSearch();
@@ -321,13 +296,12 @@ const SearchInline = (props: Props) => {
   };
 
   const executeSearch = () => {
-    const { searchAllLocations, searchLocationIndex } = props;
     let query = textQuery.current;
-    const tagsAND = parseTextQuery('+'); // mergeWithExtractedTags(props.searchQuery.tagsAND, '+');
+    const tagsAND = parseTextQuery(textQuery.current, '+');
     query = removeTagsFromQuery(tagsAND, query, '+');
-    const tagsOR = parseTextQuery('?'); // mergeWithExtractedTags(props.searchQuery.tagsOR, '?');
+    const tagsOR = parseTextQuery(textQuery.current, '?');
     query = removeTagsFromQuery(tagsOR, query, '?');
-    const tagsNOT = parseTextQuery('-'); // mergeWithExtractedTags(props.searchQuery.tagsNOT, '-');
+    const tagsNOT = parseTextQuery(textQuery.current, '-');
     query = removeTagsFromQuery(tagsNOT, query, '-');
     const searchQuery: TS.SearchQuery = {
       textQuery: query,
@@ -351,11 +325,7 @@ const SearchInline = (props: Props) => {
       showUnixHiddenEntries: props.showUnixHiddenEntries
     };
     console.log('Search object: ' + JSON.stringify(searchQuery));
-    if (searchBoxing.current === 'global') {
-      searchAllLocations(searchQuery);
-    } else {
-      searchLocationIndex(searchQuery);
-    }
+    props.setSearchQuery(searchQuery);
   };
 
   const { indexing } = props;

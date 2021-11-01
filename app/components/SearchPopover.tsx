@@ -20,7 +20,6 @@ import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import classNames from 'classnames';
 import format from 'date-fns/format';
 import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -47,7 +46,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import CancelSearchIcon from '@material-ui/icons/CancelOutlined';
 import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
@@ -67,11 +65,14 @@ import { styles, StyleProps } from './SearchInline.css';
 import i18n from '../services/i18n';
 import { FileTypeGroups } from '-/services/search';
 import { Pro } from '../pro';
-import SearchMenu from './menus/SearchMenu';
 import { formatDateTime, extractTimePeriod } from '-/utils/dates';
-import { parseGeoLocation, parseLatLon } from '-/utils/misc';
+import {
+  mergeWithExtractedTags,
+  parseGeoLocation,
+  parseLatLon
+} from '-/utils/misc';
 import AppConfig from '-/config';
-import { actions as SearchActions, getSearches } from '-/reducers/searches';
+import { getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
 import HelpIcon from '@material-ui/icons/Help';
@@ -84,9 +85,6 @@ type PropsClasses = Record<keyof StyleProps, string>;
 interface Props {
   style?: any;
   theme?: any;
-  searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
-  // createLocationsIndexes: () => void;
-  searchAllLocations: (searchQuery: TS.SearchQuery) => void;
   loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
   openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   hideDrawer?: () => void;
@@ -191,11 +189,7 @@ const SearchPopover = (props: Props) => {
         fileTypes: types,
         showUnixHiddenEntries: props.showUnixHiddenEntries
       };
-      /*if (searchBoxing.current !== 'global') {
-        props.searchLocationIndex(searchQuery);
-      } else {*/
       props.setSearchQuery(searchQuery);
-      //}
     }
   };
 
@@ -212,11 +206,7 @@ const SearchPopover = (props: Props) => {
         showUnixHiddenEntries: props.showUnixHiddenEntries
       };
 
-      /*if (searchBoxing.current !== 'global') {
-        props.searchLocationIndex(searchQuery);
-      } else {*/
       props.setSearchQuery(searchQuery);
-      //}
     }
   };
 
@@ -234,11 +224,7 @@ const SearchPopover = (props: Props) => {
         lastModified: value,
         showUnixHiddenEntries: props.showUnixHiddenEntries
       };
-      /*if (searchBoxing.current !== 'global') {
-        props.searchLocationIndex(searchQuery);
-      } else {*/
       props.setSearchQuery(searchQuery);
-      // }
     }
   };
 
@@ -276,17 +262,10 @@ const SearchPopover = (props: Props) => {
       tagTimePeriod.current = ttPeriod;
     }
 
-    if (savedSearch.searchBoxing === 'global') {
-      props.searchAllLocations({
-        ...savedSearch,
-        showUnixHiddenEntries: props.showUnixHiddenEntries
-      });
-    } else {
-      props.searchLocationIndex({
-        ...savedSearch,
-        showUnixHiddenEntries: props.showUnixHiddenEntries
-      });
-    }
+    props.setSearchQuery({
+      ...savedSearch,
+      showUnixHiddenEntries: props.showUnixHiddenEntries
+    });
   };
 
   function removeTags(tagsArray, removeTagsArray) {
@@ -332,10 +311,6 @@ const SearchPopover = (props: Props) => {
       ...searchQuery,
       showUnixHiddenEntries: props.showUnixHiddenEntries
     });
-    /*props.searchLocationIndex({
-      ...searchQuery,
-      showUnixHiddenEntries: props.showUnixHiddenEntries
-    });*/
   };
 
   function haveSearchFilters(searchQuery) {
@@ -407,73 +382,6 @@ const SearchPopover = (props: Props) => {
     setTagPlaceHelper(tagPHelper);
   };
 
-  const mergeWithExtractedTags = (tags: Array<TS.Tag>, identifier: string) => {
-    const extractedTags = parseTextQuery(identifier);
-    if (tags) {
-      if (extractedTags.length > 0) {
-        return getUniqueTags(tags, extractedTags);
-      }
-      return tags;
-    }
-    if (extractedTags.length > 0) {
-      return extractedTags;
-    }
-    return undefined;
-  };
-
-  function getUniqueTags(tags1: Array<TS.Tag>, tags2: Array<TS.Tag>) {
-    const mergedArray = [...tags1, ...tags2];
-    // mergedArray have duplicates, lets remove the duplicates using Set
-    const set = new Set();
-    return mergedArray.filter(tag => {
-      if (!set.has(tag.title)) {
-        set.add(tag.title);
-        return true;
-      }
-      return false;
-    }, set);
-  }
-
-  function escapeRegExp(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
-  }
-
-  const parseTextQuery = (identifier: string) => {
-    const extractedTags = [];
-    if (!textQuery.current) {
-      return extractedTags;
-    }
-    let query = textQuery.current;
-    if (query && query.length > 0) {
-      query = query
-        .trim()
-        .replace(
-          new RegExp(escapeRegExp(identifier) + '\\s+', 'g'),
-          identifier
-        );
-    }
-    const textQueryParts = query.split(' ');
-    let newTextQuery = '';
-    if (textQueryParts) {
-      // && textQueryParts.length > 1) {
-      textQueryParts.forEach(part => {
-        const trimmedPart = part.trim();
-        if (trimmedPart.startsWith(identifier)) {
-          const tagTitle = trimmedPart.substr(1).trim();
-          extractedTags.push({ title: tagTitle });
-        } /* else if (trimmedPart.startsWith('-')) {
-          // add to searchQuery.tagsNOT
-        } else if (trimmedPart.startsWith('?')) {
-          // add to searchQuery.tagsOR
-        */ else {
-          newTextQuery += trimmedPart + ' ';
-        }
-      });
-    }
-    textQuery.current = newTextQuery.trim();
-    return extractedTags;
-  };
-
   const startSearch = event => {
     if (event.key === 'Enter' || event.keyCode === 13) {
       if (props.hideDrawer) {
@@ -514,9 +422,21 @@ const SearchPopover = (props: Props) => {
   };
 
   const saveSearch = (isNew: boolean = true) => {
-    const tagsAND = mergeWithExtractedTags(props.searchQuery.tagsAND, '+');
-    const tagsOR = mergeWithExtractedTags(props.searchQuery.tagsOR, '?');
-    const tagsNOT = mergeWithExtractedTags(props.searchQuery.tagsNOT, '-');
+    const tagsAND = mergeWithExtractedTags(
+      textQuery.current,
+      props.searchQuery.tagsAND,
+      '+'
+    );
+    const tagsOR = mergeWithExtractedTags(
+      textQuery.current,
+      props.searchQuery.tagsOR,
+      '?'
+    );
+    const tagsNOT = mergeWithExtractedTags(
+      textQuery.current,
+      props.searchQuery.tagsNOT,
+      '-'
+    );
     setSaveSearchDialogOpened({
       uuid: isNew ? undefined : props.searchQuery.uuid,
       title: props.searchQuery.title,
@@ -562,10 +482,21 @@ const SearchPopover = (props: Props) => {
   };
 
   const executeSearch = () => {
-    const { searchAllLocations, searchLocationIndex } = props;
-    const tagsAND = mergeWithExtractedTags(props.searchQuery.tagsAND, '+');
-    const tagsOR = mergeWithExtractedTags(props.searchQuery.tagsOR, '?');
-    const tagsNOT = mergeWithExtractedTags(props.searchQuery.tagsNOT, '-');
+    const tagsAND = mergeWithExtractedTags(
+      textQuery.current,
+      props.searchQuery.tagsAND,
+      '+'
+    );
+    const tagsOR = mergeWithExtractedTags(
+      textQuery.current,
+      props.searchQuery.tagsOR,
+      '?'
+    );
+    const tagsNOT = mergeWithExtractedTags(
+      textQuery.current,
+      props.searchQuery.tagsNOT,
+      '-'
+    );
     const searchQuery: TS.SearchQuery = {
       textQuery: textQuery.current,
       tagsAND,
@@ -588,11 +519,7 @@ const SearchPopover = (props: Props) => {
       showUnixHiddenEntries: props.showUnixHiddenEntries
     };
     console.log('Search object: ' + JSON.stringify(searchQuery));
-    if (searchBoxing.current === 'global') {
-      searchAllLocations(searchQuery);
-    } else {
-      searchLocationIndex(searchQuery);
-    }
+    props.setSearchQuery(searchQuery);
     props.onClose();
   };
 
@@ -602,18 +529,26 @@ const SearchPopover = (props: Props) => {
     ? indexedEntriesCount + ' indexed entries'
     : '';
   return (
-    <div style={{ maxWidth: 400 }}>
+    <div
+      style={{
+        maxWidth: 400,
+        height: '100%'
+      }}
+    >
       <div className={classes.toolbar}>
-        <Button
+        <Typography variant="button" style={{ margin: '12px 0 10px 10px' }}>
+          {i18n.t('core:searchTitle')}
+        </Typography>
+        <IconButton
           size="medium"
           data-tid="helpSearchTID"
-          startIcon={<HelpIcon />}
+          title={i18n.t('core:help')}
           onClick={() =>
             props.openURLExternally(Links.documentationLinks.search, true)
           }
         >
-          {i18n.t('core:help')}
-        </Button>
+          <HelpIcon />
+        </IconButton>
         <Typography
           variant="caption"
           className={classes.header}
@@ -1073,17 +1008,10 @@ const SearchPopover = (props: Props) => {
                 onClose={(searchQuery: TS.SearchQuery) => {
                   setSaveSearchDialogOpened(undefined);
                   if (searchQuery) {
-                    if (searchQuery.searchBoxing === 'global') {
-                      props.searchAllLocations({
-                        ...searchQuery,
-                        showUnixHiddenEntries: props.showUnixHiddenEntries
-                      });
-                    } else {
-                      props.searchLocationIndex({
-                        ...searchQuery,
-                        showUnixHiddenEntries: props.showUnixHiddenEntries
-                      });
-                    }
+                    props.setSearchQuery({
+                      ...searchQuery,
+                      showUnixHiddenEntries: props.showUnixHiddenEntries
+                    });
                   }
                 }}
                 onClearSearch={() => clearSearch()}
@@ -1112,9 +1040,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      searchAllLocations: LocationIndexActions.searchAllLocations,
       setSearchQuery: LocationIndexActions.setSearchQuery,
-      searchLocationIndex: LocationIndexActions.searchLocationIndex,
       createLocationsIndexes: LocationIndexActions.createLocationsIndexes,
       loadDirectoryContent: AppActions.loadDirectoryContent,
       openURLExternally: AppActions.openURLExternally,

@@ -364,7 +364,6 @@ export const actions = {
         'TIDSearching'
       )
     );
-    dispatch(actions.setSearchQuery(searchQuery));
     setTimeout(async () => {
       // Workaround used to show the start search notification
       const currentTime = new Date().getTime();
