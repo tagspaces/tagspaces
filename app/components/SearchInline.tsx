@@ -103,6 +103,7 @@ const MainSearchField = withStyles((theme: Theme) =>
 const SearchInline = (props: Props) => {
   // const [, forceUpdate] = useReducer(x => x + 1, 0);
   const textQuery = useRef<string>(props.searchQuery.textQuery);
+  const textQueryMask = useRef<string>('');
   const fileTypes = useRef<Array<string>>(
     props.searchQuery.fileTypes
       ? props.searchQuery.fileTypes
@@ -161,51 +162,78 @@ const SearchInline = (props: Props) => {
   }, [props.currentDirectory]);
 
   useEffect(() => {
-    let txtQuery = props.searchQuery.textQuery || '';
+    if (Object.keys(props.searchQuery).length > 0) {
+      textQueryMask.current = '';
 
-    if (props.searchQuery.tagsAND && props.searchQuery.tagsAND.length > 0) {
-      props.searchQuery.tagsAND.forEach(tag => {
-        txtQuery += ' +' + tag.title;
-      });
-    }
-    if (props.searchQuery.tagsOR && props.searchQuery.tagsOR.length > 0) {
-      props.searchQuery.tagsOR.forEach(tag => {
-        txtQuery += ' ?' + tag.title;
-      });
-    }
-    if (props.searchQuery.tagsNOT && props.searchQuery.tagsNOT.length > 0) {
-      props.searchQuery.tagsNOT.forEach(tag => {
-        txtQuery += ' -' + tag.title;
-      });
-    }
-    if (txtQuery !== textQuery.current) {
-      textQuery.current = txtQuery.trim();
-      mainSearchField.current.value = textQuery.current;
-      // forceUpdate();
-    }
-    if (props.searchQuery.searchBoxing) {
-      searchBoxing.current = props.searchQuery.searchBoxing;
-    }
-    if (props.searchQuery.fileTypes) {
-      fileTypes.current = props.searchQuery.fileTypes;
-    }
-    if (props.searchQuery.searchType) {
-      searchType.current = props.searchQuery.searchType;
-    }
-    if (props.searchQuery.lastModified) {
-      lastModified.current = props.searchQuery.lastModified;
-    }
-    if (props.searchQuery.tagTimePeriodFrom) {
-      tagTimePeriodFrom.current = props.searchQuery.tagTimePeriodFrom;
-    }
-    if (props.searchQuery.tagTimePeriodTo) {
-      tagTimePeriodTo.current = props.searchQuery.tagTimePeriodTo;
-    }
-    if (props.searchQuery.forceIndexing) {
-      forceIndexing.current = props.searchQuery.forceIndexing;
-    }
-    if (props.searchQuery.fileSize) {
-      fileSize.current = props.searchQuery.fileSize;
+      if (props.searchQuery.tagsAND && props.searchQuery.tagsAND.length > 0) {
+        props.searchQuery.tagsAND.forEach(tag => {
+          textQueryMask.current += ' +' + tag.title;
+        });
+      }
+      if (props.searchQuery.tagsOR && props.searchQuery.tagsOR.length > 0) {
+        props.searchQuery.tagsOR.forEach(tag => {
+          textQueryMask.current += ' ?' + tag.title;
+        });
+      }
+      if (props.searchQuery.tagsNOT && props.searchQuery.tagsNOT.length > 0) {
+        props.searchQuery.tagsNOT.forEach(tag => {
+          textQueryMask.current += ' -' + tag.title;
+        });
+      }
+      let txtQuery;
+      if (textQueryMask.current) {
+        txtQuery = textQuery.current.replace(textQueryMask.current, '').trim();
+      } else if (textQuery.current) {
+        txtQuery = textQuery.current; // props.searchQuery.textQuery;
+      } else {
+        txtQuery = '';
+      }
+      const searchQuery = {
+        ...props.searchQuery,
+        textQuery: txtQuery
+      };
+      /* if (textQuery.current) {
+        txtQuery = textQuery.current.replace(tagsMask, '');
+      } else {
+        txtQuery = props.searchQuery.textQuery || '';
+      }
+
+      const withMask = txtQuery + ' ' + tagsMask.trim();
+      if (withMask !== textQuery.current) {
+        textQuery.current = withMask; */
+      mainSearchField.current.value =
+        txtQuery +
+        (textQueryMask.current ? ' ' + textQueryMask.current.trim() : '');
+      // }
+      if (props.searchQuery.searchBoxing) {
+        searchBoxing.current = props.searchQuery.searchBoxing;
+      }
+      if (props.searchQuery.fileTypes) {
+        fileTypes.current = props.searchQuery.fileTypes;
+      }
+      if (props.searchQuery.searchType) {
+        searchType.current = props.searchQuery.searchType;
+      }
+      if (props.searchQuery.lastModified) {
+        lastModified.current = props.searchQuery.lastModified;
+      }
+      if (props.searchQuery.tagTimePeriodFrom) {
+        tagTimePeriodFrom.current = props.searchQuery.tagTimePeriodFrom;
+      }
+      if (props.searchQuery.tagTimePeriodTo) {
+        tagTimePeriodTo.current = props.searchQuery.tagTimePeriodTo;
+      }
+      if (props.searchQuery.forceIndexing) {
+        forceIndexing.current = props.searchQuery.forceIndexing;
+      }
+      if (props.searchQuery.fileSize) {
+        fileSize.current = props.searchQuery.fileSize;
+      }
+      if (searchBoxing.current === 'global') {
+        props.searchAllLocations(searchQuery);
+      } else {
+        props.searchLocationIndex(searchQuery);
+      }
     }
   }, [props.searchQuery]);
 
@@ -242,7 +270,10 @@ const SearchInline = (props: Props) => {
 
   const parseTextQuery = (identifier: string) => {
     const extractedTags = [];
-    let query = textQuery.current;
+    let query =
+      textQuery.current.indexOf(identifier) > 0
+        ? textQuery.current
+        : textQueryMask.current;
     if (query && query.length > 0) {
       query = query
         .trim()
@@ -250,19 +281,19 @@ const SearchInline = (props: Props) => {
           new RegExp(escapeRegExp(identifier) + '\\s+', 'g'),
           identifier
         );
-    }
-    const textQueryParts = query.split(' ');
-    if (textQueryParts) {
-      // && textQueryParts.length > 1) {
-      textQueryParts.forEach(part => {
-        const trimmedPart = part.trim();
-        if (trimmedPart.startsWith(identifier)) {
-          const tagTitle = trimmedPart.substr(1).trim();
-          extractedTags.push({
-            title: tagTitle
-          });
-        }
-      });
+      const textQueryParts = query.split(' ');
+      if (textQueryParts) {
+        // && textQueryParts.length > 1) {
+        textQueryParts.forEach(part => {
+          const trimmedPart = part.trim();
+          if (trimmedPart.startsWith(identifier)) {
+            const tagTitle = trimmedPart.substr(1).trim();
+            extractedTags.push({
+              title: tagTitle
+            });
+          }
+        });
+      }
     }
     return extractedTags;
   };
@@ -321,7 +352,6 @@ const SearchInline = (props: Props) => {
   };
 
   const executeSearch = () => {
-    const { searchAllLocations, searchLocationIndex } = props;
     let query = textQuery.current;
     const tagsAND = parseTextQuery('+'); // mergeWithExtractedTags(props.searchQuery.tagsAND, '+');
     query = removeTagsFromQuery(tagsAND, query, '+');
@@ -351,11 +381,7 @@ const SearchInline = (props: Props) => {
       showUnixHiddenEntries: props.showUnixHiddenEntries
     };
     console.log('Search object: ' + JSON.stringify(searchQuery));
-    if (searchBoxing.current === 'global') {
-      searchAllLocations(searchQuery);
-    } else {
-      searchLocationIndex(searchQuery);
-    }
+    props.setSearchQuery(searchQuery);
   };
 
   const { indexing } = props;

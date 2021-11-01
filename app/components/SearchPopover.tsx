@@ -84,9 +84,6 @@ type PropsClasses = Record<keyof StyleProps, string>;
 interface Props {
   style?: any;
   theme?: any;
-  searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
-  // createLocationsIndexes: () => void;
-  searchAllLocations: (searchQuery: TS.SearchQuery) => void;
   loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
   openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   hideDrawer?: () => void;
@@ -191,11 +188,7 @@ const SearchPopover = (props: Props) => {
         fileTypes: types,
         showUnixHiddenEntries: props.showUnixHiddenEntries
       };
-      /*if (searchBoxing.current !== 'global') {
-        props.searchLocationIndex(searchQuery);
-      } else {*/
       props.setSearchQuery(searchQuery);
-      //}
     }
   };
 
@@ -212,11 +205,7 @@ const SearchPopover = (props: Props) => {
         showUnixHiddenEntries: props.showUnixHiddenEntries
       };
 
-      /*if (searchBoxing.current !== 'global') {
-        props.searchLocationIndex(searchQuery);
-      } else {*/
       props.setSearchQuery(searchQuery);
-      //}
     }
   };
 
@@ -234,11 +223,7 @@ const SearchPopover = (props: Props) => {
         lastModified: value,
         showUnixHiddenEntries: props.showUnixHiddenEntries
       };
-      /*if (searchBoxing.current !== 'global') {
-        props.searchLocationIndex(searchQuery);
-      } else {*/
       props.setSearchQuery(searchQuery);
-      // }
     }
   };
 
@@ -276,17 +261,10 @@ const SearchPopover = (props: Props) => {
       tagTimePeriod.current = ttPeriod;
     }
 
-    if (savedSearch.searchBoxing === 'global') {
-      props.searchAllLocations({
-        ...savedSearch,
-        showUnixHiddenEntries: props.showUnixHiddenEntries
-      });
-    } else {
-      props.searchLocationIndex({
-        ...savedSearch,
-        showUnixHiddenEntries: props.showUnixHiddenEntries
-      });
-    }
+    props.setSearchQuery({
+      ...savedSearch,
+      showUnixHiddenEntries: props.showUnixHiddenEntries
+    });
   };
 
   function removeTags(tagsArray, removeTagsArray) {
@@ -332,10 +310,6 @@ const SearchPopover = (props: Props) => {
       ...searchQuery,
       showUnixHiddenEntries: props.showUnixHiddenEntries
     });
-    /*props.searchLocationIndex({
-      ...searchQuery,
-      showUnixHiddenEntries: props.showUnixHiddenEntries
-    });*/
   };
 
   function haveSearchFilters(searchQuery) {
@@ -562,7 +536,6 @@ const SearchPopover = (props: Props) => {
   };
 
   const executeSearch = () => {
-    const { searchAllLocations, searchLocationIndex } = props;
     const tagsAND = mergeWithExtractedTags(props.searchQuery.tagsAND, '+');
     const tagsOR = mergeWithExtractedTags(props.searchQuery.tagsOR, '?');
     const tagsNOT = mergeWithExtractedTags(props.searchQuery.tagsNOT, '-');
@@ -588,11 +561,7 @@ const SearchPopover = (props: Props) => {
       showUnixHiddenEntries: props.showUnixHiddenEntries
     };
     console.log('Search object: ' + JSON.stringify(searchQuery));
-    if (searchBoxing.current === 'global') {
-      searchAllLocations(searchQuery);
-    } else {
-      searchLocationIndex(searchQuery);
-    }
+    props.setSearchQuery(searchQuery);
     props.onClose();
   };
 
@@ -1073,17 +1042,10 @@ const SearchPopover = (props: Props) => {
                 onClose={(searchQuery: TS.SearchQuery) => {
                   setSaveSearchDialogOpened(undefined);
                   if (searchQuery) {
-                    if (searchQuery.searchBoxing === 'global') {
-                      props.searchAllLocations({
-                        ...searchQuery,
-                        showUnixHiddenEntries: props.showUnixHiddenEntries
-                      });
-                    } else {
-                      props.searchLocationIndex({
-                        ...searchQuery,
-                        showUnixHiddenEntries: props.showUnixHiddenEntries
-                      });
-                    }
+                    props.setSearchQuery({
+                      ...searchQuery,
+                      showUnixHiddenEntries: props.showUnixHiddenEntries
+                    });
                   }
                 }}
                 onClearSearch={() => clearSearch()}
@@ -1112,9 +1074,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      searchAllLocations: LocationIndexActions.searchAllLocations,
       setSearchQuery: LocationIndexActions.setSearchQuery,
-      searchLocationIndex: LocationIndexActions.searchLocationIndex,
       createLocationsIndexes: LocationIndexActions.createLocationsIndexes,
       loadDirectoryContent: AppActions.loadDirectoryContent,
       openURLExternally: AppActions.openURLExternally,
