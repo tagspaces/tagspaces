@@ -126,6 +126,7 @@ export namespace TS {
   interface FileSystemEntryMeta {
     id?: string;
     description?: string;
+    isFile?: boolean;
     tags?: Array<TS.Tag>;
     tagGroups?: Array<TS.TagGroup>;
     color?: string;

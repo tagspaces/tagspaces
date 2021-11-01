@@ -201,25 +201,27 @@ export function enhanceOpenedEntry(
   entry: OpenedEntry,
   tagDelimiter
 ): OpenedEntry {
-  const fineNameTags = extractTagsAsObjects(
-    entry.path,
-    tagDelimiter,
-    PlatformIO.getDirSeparator()
-  );
-  if (fineNameTags.length > 0) {
-    if (entry.tags && entry.tags.length > 0) {
-      const uniqueTags = entry.tags.filter(
-        tag => fineNameTags.findIndex(obj => obj.title === tag.title) === -1
-      );
+  if (entry.isFile) {
+    const fineNameTags = extractTagsAsObjects(
+      entry.path,
+      tagDelimiter,
+      PlatformIO.getDirSeparator()
+    );
+    if (fineNameTags.length > 0) {
+      if (entry.tags && entry.tags.length > 0) {
+        const uniqueTags = entry.tags.filter(
+          tag => fineNameTags.findIndex(obj => obj.title === tag.title) === -1
+        );
+        return {
+          ...entry,
+          tags: [...uniqueTags, ...fineNameTags]
+        };
+      }
       return {
         ...entry,
-        tags: [...uniqueTags, ...fineNameTags]
+        tags: fineNameTags
       };
     }
-    return {
-      ...entry,
-      tags: fineNameTags
-    };
   }
   return entry;
 }
@@ -882,6 +884,7 @@ export function loadMetaDataPromise(
         );
         return loadJSONFile(metaFilePath).then(metaData => ({
           ...metaData,
+          isFile: true,
           description: metaData.description || '',
           color: metaData.color || '',
           tags: metaData.tags || [],
@@ -897,6 +900,7 @@ export function loadMetaDataPromise(
       return loadJSONFile(metaFilePath).then(metaData => ({
         ...metaData,
         id: metaData.id || uuidv1(),
+        isFile: false,
         description: metaData.description || '',
         color: metaData.color || '',
         perspective: metaData.perspective || '',

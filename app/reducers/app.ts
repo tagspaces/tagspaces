@@ -534,6 +534,7 @@ export default (state: any = initialState, action: any) => {
           if (entry.path !== action.path) {
             return entry;
           }
+          const fileNameTags = entry.isFile ? extractedTags : []; // dirs dont have tags in filename
           return {
             ...entry,
             path: action.newPath,
@@ -545,7 +546,7 @@ export default (state: any = initialState, action: any) => {
             ),
             tags: [
               ...entry.tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
-              ...extractedTags
+              ...fileNameTags
             ]
           };
         }),
@@ -553,12 +554,13 @@ export default (state: any = initialState, action: any) => {
           if (entry.path !== action.path) {
             return entry;
           }
+          const fileNameTags = entry.isFile ? extractedTags : []; // dirs dont have tags in filename
           return {
             ...entry,
             path: action.newPath, // TODO handle change extension case
             tags: [
               ...entry.tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
-              ...extractedTags
+              ...fileNameTags
             ]
             // shouldReload: true
           };
