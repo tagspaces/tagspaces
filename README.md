@@ -2,7 +2,7 @@
 
 [![Join the chat at https://gitter.im/tagspaces/tagspaces](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/tagspaces/tagspaces?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Github All Releases](https://img.shields.io/github/downloads/tagspaces/tagspaces/total.svg)]()
 
-**TagSpaces** is a free, non-locking, open source application for organizing and managing your local files with the help of tags. It features note taking and some to-do app capabilities. The application is available for Windows, Linux, Mac OS and Android. We provide a web clipper extension for Firefox and Chrome for easy collecting of online content as local files.
+**TagSpaces** is a free, no vendor lock-in, open source application for organizing, annotating and managing local files with the help of tags. It features advanced note taking functionalities and some capabilities of to-do apps. The application is available for Windows, Linux, Mac OS and Android. We provide a web clipper extension for Firefox, Edge and Chrome for easy collecting of online content in the form of local files.
 
 ![TagSpaces Start Screen](https://raw.githubusercontent.com/tagspaces/documentation/master/static/media/v3/tagspaces-v3-themes.jpg)
 
@@ -50,6 +50,7 @@ The native Windows, Linux and Mac OS versions of TagSpaces are built with [Elect
     ./node_modules....... after yarn install, you will find here the external dependencies of the application
     ./resources.......... contains images and other files needed for the application building
     ./scripts............ contains js script needed for the yarn/npm tasks
+    ./test............... contains unit and e2e tests of the app
     ./web................ contains assets needed for the web version of the app
 
 ## How to run TagSpaces from the source code?
@@ -156,7 +157,6 @@ If you are having troubles using TagSpaces or have found a bug please [open a ti
 ## Known issues
 
 - TagSpaces is not suitable for searching in locations containing more than 100000 files.
-- TagSpaces has performance issue displaying folders directly containing more than 1000 files. There is no such problem if the files are distributed in sub folders.
 
 ## Feeds
 
