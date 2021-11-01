@@ -884,6 +884,7 @@ export function loadMetaDataPromise(
         );
         return loadJSONFile(metaFilePath).then(metaData => ({
           ...metaData,
+          isFile: true,
           description: metaData.description || '',
           color: metaData.color || '',
           tags: metaData.tags || [],
@@ -899,6 +900,7 @@ export function loadMetaDataPromise(
       return loadJSONFile(metaFilePath).then(metaData => ({
         ...metaData,
         id: metaData.id || uuidv1(),
+        isFile: false,
         description: metaData.description || '',
         color: metaData.color || '',
         perspective: metaData.perspective || '',

@@ -536,7 +536,7 @@ const actions = {
     const { settings } = getState();
     const tagTitlesForRemoving = tags.map(tag => tag.title);
     loadMetaDataPromise(path)
-      .then(fsEntryMeta => {
+      .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
         const newTags = [];
         fsEntryMeta.tags.map(sidecarTag => {
           if (!tagTitlesForRemoving.includes(sidecarTag.title)) {
@@ -560,7 +560,9 @@ const actions = {
                 })
               );
             }
-            removeTagsFromFilename();
+            if (fsEntryMeta.isFile) {
+              removeTagsFromFilename();
+            }
             return true;
           })
           .catch(err => {
@@ -574,7 +576,9 @@ const actions = {
                 true
               )
             );
-            removeTagsFromFilename();
+            if (fsEntryMeta.isFile) {
+              removeTagsFromFilename();
+            }
           });
         return true;
       })
