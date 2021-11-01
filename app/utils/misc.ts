@@ -77,6 +77,69 @@ export function prepareTagForExport(tag: TS.Tag): TS.Tag {
   return preparedTag;
 }
 
+export function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+
+export function parseTextQuery(textQuery: string, identifier: string) {
+  const extractedTags = [];
+  let query = textQuery;
+  if (query && query.length > 0) {
+    query = query
+      .trim()
+      .replace(new RegExp(escapeRegExp(identifier) + '\\s+', 'g'), identifier);
+    const textQueryParts = query.split(' ');
+    if (textQueryParts) {
+      // && textQueryParts.length > 1) {
+      textQueryParts.forEach(part => {
+        const trimmedPart = part.trim();
+        if (trimmedPart.startsWith(identifier)) {
+          const tagTitle = trimmedPart.substr(1).trim();
+          extractedTags.push({
+            title: tagTitle
+          });
+        }
+      });
+    }
+  }
+  return extractedTags;
+}
+
+export function removeAllTagsFromQuery(query: string) {
+  return query.replace(/([+-?]\S+)/g, '').trim();
+}
+
+export function mergeWithExtractedTags(
+  textQuery: string,
+  tags: Array<TS.Tag>,
+  identifier: string
+) {
+  const extractedTags = parseTextQuery(textQuery, identifier);
+  if (tags) {
+    if (extractedTags.length > 0) {
+      return getUniqueTags(tags, extractedTags);
+    }
+    return tags;
+  }
+  if (extractedTags.length > 0) {
+    return extractedTags;
+  }
+  return undefined;
+}
+
+function getUniqueTags(tags1: Array<TS.Tag>, tags2: Array<TS.Tag>) {
+  const mergedArray = [...tags1, ...tags2];
+  // mergedArray have duplicates, lets remove the duplicates using Set
+  const set = new Set();
+  return mergedArray.filter(tag => {
+    if (!set.has(tag.title)) {
+      set.add(tag.title);
+      return true;
+    }
+    return false;
+  }, set);
+}
+
 export function parseGeoLocation(code: string): any {
   if (isPlusCode(code)) {
     const coord = OpenLocationCode.decode(code);

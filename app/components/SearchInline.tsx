@@ -40,6 +40,11 @@ import {
 import i18n from '../services/i18n';
 import { FileTypeGroups } from '-/services/search';
 import { TS } from '-/tagspaces.namespace';
+import {
+  escapeRegExp,
+  parseTextQuery,
+  removeAllTagsFromQuery
+} from '-/utils/misc';
 
 // type PropsClasses = Record<keyof StyleProps, string>;
 
@@ -180,14 +185,14 @@ const SearchInline = (props: Props) => {
           textQueryMask.current += ' -' + tag.title;
         });
       }
-      let txtQuery;
-      if (textQueryMask.current) {
+      const txtQuery = removeAllTagsFromQuery(textQuery.current);
+      /* if (textQueryMask.current) {
         txtQuery = textQuery.current.replace(textQueryMask.current, '').trim();
       } else if (textQuery.current) {
         txtQuery = textQuery.current; // props.searchQuery.textQuery;
       } else {
         txtQuery = '';
-      }
+      } */
       const searchQuery = {
         ...props.searchQuery,
         textQuery: txtQuery
@@ -236,67 +241,6 @@ const SearchInline = (props: Props) => {
       }
     }
   }, [props.searchQuery]);
-
-  /* const mergeWithExtractedTags = (tags: Array<TS.Tag>, identifier: string) => {
-    const extractedTags = parseTextQuery(identifier);
-    if (tags) {
-      if (extractedTags.length > 0) {
-        return getUniqueTags(tags, extractedTags);
-      }
-      return tags;
-    }
-    if (extractedTags.length > 0) {
-      return extractedTags;
-    }
-    return undefined;
-  }; */
-
-  /* function getUniqueTags(tags1: Array<TS.Tag>, tags2: Array<TS.Tag>) {
-    const mergedArray = [...tags1, ...tags2];
-    // mergedArray have duplicates, lets remove the duplicates using Set
-    const set = new Set();
-    return mergedArray.filter(tag => {
-      if (!set.has(tag.title)) {
-        set.add(tag.title);
-        return true;
-      }
-      return false;
-    }, set);
-  } */
-
-  function escapeRegExp(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
-  }
-
-  const parseTextQuery = (identifier: string) => {
-    const extractedTags = [];
-    let query =
-      textQuery.current.indexOf(identifier) > 0
-        ? textQuery.current
-        : textQueryMask.current;
-    if (query && query.length > 0) {
-      query = query
-        .trim()
-        .replace(
-          new RegExp(escapeRegExp(identifier) + '\\s+', 'g'),
-          identifier
-        );
-      const textQueryParts = query.split(' ');
-      if (textQueryParts) {
-        // && textQueryParts.length > 1) {
-        textQueryParts.forEach(part => {
-          const trimmedPart = part.trim();
-          if (trimmedPart.startsWith(identifier)) {
-            const tagTitle = trimmedPart.substr(1).trim();
-            extractedTags.push({
-              title: tagTitle
-            });
-          }
-        });
-      }
-    }
-    return extractedTags;
-  };
 
   const clickSearchButton = () => {
     executeSearch();
@@ -353,11 +297,11 @@ const SearchInline = (props: Props) => {
 
   const executeSearch = () => {
     let query = textQuery.current;
-    const tagsAND = parseTextQuery('+'); // mergeWithExtractedTags(props.searchQuery.tagsAND, '+');
+    const tagsAND = parseTextQuery(textQuery.current, '+');
     query = removeTagsFromQuery(tagsAND, query, '+');
-    const tagsOR = parseTextQuery('?'); // mergeWithExtractedTags(props.searchQuery.tagsOR, '?');
+    const tagsOR = parseTextQuery(textQuery.current, '?');
     query = removeTagsFromQuery(tagsOR, query, '?');
-    const tagsNOT = parseTextQuery('-'); // mergeWithExtractedTags(props.searchQuery.tagsNOT, '-');
+    const tagsNOT = parseTextQuery(textQuery.current, '-');
     query = removeTagsFromQuery(tagsNOT, query, '-');
     const searchQuery: TS.SearchQuery = {
       textQuery: query,
