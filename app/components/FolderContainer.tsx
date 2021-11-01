@@ -477,6 +477,12 @@ const FolderContainer = (props: Props) => {
                 style={{
                   marginLeft: -8
                 }}
+                PaperProps={{
+                  style: {
+                    overflow: 'hidden',
+                    height: 800
+                  }
+                }}
                 transformOrigin={{
                   vertical: 'top',
                   horizontal: 'right'

@@ -16,6 +16,7 @@
  *
  */
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+import AppConfig from '-/config';
 
 export interface StyleProps {
   panel: BaseCSSProperties;
@@ -64,10 +65,11 @@ export const styles = (theme: any) => {
       paddingLeft: 5,
       paddingRight: 5,
       marginTop: 0,
-      height: 'calc(100% - 110px)',
-      maxHeight: 'calc(100% - 110px)',
-      overflowX: 'hidden'
-      // overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+      height: 'calc(100% - 50px)',
+      maxHeight: 'calc(100% - 50px)',
+      overflowX: 'hidden',
+      // @ts-ignore
+      overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
     },
     topShadow: {
       borderTop: '1px solid lightgray',

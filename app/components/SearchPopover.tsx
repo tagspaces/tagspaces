@@ -529,18 +529,26 @@ const SearchPopover = (props: Props) => {
     ? indexedEntriesCount + ' indexed entries'
     : '';
   return (
-    <div style={{ maxWidth: 400 }}>
+    <div
+      style={{
+        maxWidth: 400,
+        height: '100%'
+      }}
+    >
       <div className={classes.toolbar}>
-        <Button
+        <Typography variant="button" style={{ margin: '12px 0 10px 10px' }}>
+          {i18n.t('core:searchTitle')}
+        </Typography>
+        <IconButton
           size="medium"
           data-tid="helpSearchTID"
-          startIcon={<HelpIcon />}
+          title={i18n.t('core:help')}
           onClick={() =>
             props.openURLExternally(Links.documentationLinks.search, true)
           }
         >
-          {i18n.t('core:help')}
-        </Button>
+          <HelpIcon />
+        </IconButton>
         <Typography
           variant="caption"
           className={classes.header}
