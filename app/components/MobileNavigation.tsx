@@ -214,7 +214,7 @@ const MobileNavigation = (props: Props) => {
           <LocationManager reduceHeightBy={180} />
         )}
         {props.isTagLibraryPanelOpened && <TagLibrary reduceHeightBy={180} />}
-        {props.isSearchPanelOpened && <StoredSearches />}
+        {props.isSearchPanelOpened && <StoredSearches reduceHeightBy={120} />}
         {props.isHelpFeedbackPanelOpened && (
           <HelpFeedbackPanel
             reduceHeightBy={180}

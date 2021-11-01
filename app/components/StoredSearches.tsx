@@ -39,6 +39,7 @@ import { actions as SearchActions, getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
 import SearchMenu from '-/components/menus/SearchMenu';
 import { actions as AppActions } from '-/reducers/app';
+import AppConfig from '-/config';
 
 interface Props {
   style?: any;
@@ -49,6 +50,7 @@ interface Props {
   showUnixHiddenEntries: boolean;
   addSearches: (searches: Array<TS.SearchQuery>) => void;
   openURLExternally: (url: string) => void;
+  reduceHeightBy: number;
 }
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
@@ -125,8 +127,19 @@ const StoredSearches = (props: Props) => {
 
   const noSearchesFound = props.searches.length < 1;
 
+  const { reduceHeightBy } = props;
+
   return (
-    <>
+    // @ts-ignore
+    <div
+      style={{
+        paddingTop: 0,
+        marginTop: 0,
+        height: 'calc(100% - ' + reduceHeightBy + 'px)',
+        // @ts-ignore
+        overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+      }}
+    >
       <Grid container direction="row">
         <Grid item xs={10} style={{ alignSelf: 'center' }}>
           <IconButton
@@ -251,7 +264,7 @@ const StoredSearches = (props: Props) => {
           searches={props.searches}
         />
       )}
-    </>
+    </div>
   );
 };
 
