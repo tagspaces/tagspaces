@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, ChangeEvent } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
@@ -29,6 +29,7 @@ import { withStyles } from '@material-ui/core/styles';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
+import EditIcon from '@material-ui/icons/Edit';
 import i18n from '-/services/i18n';
 import { isGeoTag } from '-/utils/misc';
 import { Pro } from '-/pro';
@@ -66,19 +67,21 @@ const DateTagEditor = Pro && Pro.UI ? Pro.UI.DateTagEditor : React.Fragment;
 
 const EditEntryTagDialog = (props: Props) => {
   const [showAdvancedMode, setShowAdvancedMode] = useState<boolean>(false);
+  const [editDisabled, setEditDisabled] = useState<boolean>(true);
   const [title, setTitle] = useState(
     props.selectedTag && props.selectedTag.title
   );
   const { setError, haveError } = useValidation();
   const { onClose, open, fullScreen } = props;
-
+  /*
   useEffect(() => {
     handleValidation();
   }, [title]);
+  */
 
   const isShowDatePeriodEditor = useMemo(() => {
     let showDatePeriodEditor = false;
-    if (title.indexOf('-') > -1) {
+    if (title && title.indexOf('-') > -1) {
       const a = title.split('-');
       if (a.length === 2) {
         for (let i = 0; i < a.length; i += 1) {
@@ -104,6 +107,7 @@ const EditEntryTagDialog = (props: Props) => {
   }
 
   function onConfirm() {
+    handleValidation();
     if (!haveError()) {
       if (props.selectedEntries.length > 0) {
         props.selectedEntries.forEach(entry =>
@@ -131,28 +135,36 @@ const EditEntryTagDialog = (props: Props) => {
       <DialogContent
         data-tid="editEntryTagDialog"
         className={props.classes.root}
-        style={{ overflow: AppConfig.isFirefox ? 'auto' : 'overlay' }}
+        style={{
+          overflow: AppConfig.isFirefox ? 'auto' : 'overlay'
+        }}
       >
         <FormControl fullWidth={true} error={haveError('tag')}>
           <TextField
             fullWidth={true}
             error={haveError('tag')}
+            disabled={editDisabled}
             margin="dense"
             name="title"
             autoFocus
             label={i18n.t('core:editTag')}
-            onChange={event => {
+            onChange={(event: ChangeEvent<HTMLInputElement>) => {
               const { target } = event;
               setTitle(target.value);
             }}
-            value={title}
+            defaultValue={title}
             data-tid="editTagEntryDialog_input"
+            InputProps={{
+              endAdornment: (
+                <EditIcon onClick={() => setEditDisabled(!editDisabled)} />
+              )
+            }}
           />
           {haveError('tag') && (
             <FormHelperText>{i18n.t('core:tagTitleHelper')}</FormHelperText>
           )}
         </FormControl>
-        {showGeoEditor && (
+        {editDisabled && showGeoEditor && (
           <GeoTagEditor
             geoTag={title}
             onChange={setTitle}
@@ -164,7 +176,7 @@ const EditEntryTagDialog = (props: Props) => {
             tileServer={props.tileServer}
           />
         )}
-        {isShowDatePeriodEditor && (
+        {editDisabled && isShowDatePeriodEditor && (
           <DateTagEditor
             datePeriodTag={props.selectedTag && props.selectedTag.title}
             onChange={setTitle}
@@ -176,7 +188,11 @@ const EditEntryTagDialog = (props: Props) => {
 
   function renderActions() {
     return (
-      <DialogActions style={{ justifyContent: 'space-between' }}>
+      <DialogActions
+        style={{
+          justifyContent: 'space-between'
+        }}
+      >
         {GeoTagEditor && isGeoTag(title) ? (
           <Button
             data-tid="switchAdvancedModeTID"
@@ -249,7 +265,15 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
+const areEqual = (prevProp, nextProp) =>
+  JSON.stringify(nextProp.selectedTag) === JSON.stringify(prevProp.selectedTag);
+
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withMobileDialog()(withStyles(styles)(EditEntryTagDialog)));
+)(
+  React.memo(
+    withMobileDialog()(withStyles(styles)(EditEntryTagDialog)),
+    areEqual
+  )
+);
