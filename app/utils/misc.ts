@@ -106,7 +106,10 @@ export function parseTextQuery(textQuery: string, identifier: string) {
 }
 
 export function removeAllTagsFromQuery(query: string) {
-  return query.replace(/([+-?]\S+)/g, '').trim();
+  if (query) {
+    return query.replace(/([+-?]\S+)/g, '').trim();
+  }
+  return '';
 }
 
 export function mergeWithExtractedTags(
