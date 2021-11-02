@@ -356,6 +356,8 @@ const CellContent = (props: Props) => {
               loading="lazy"
               style={{
                 objectFit: thumbnailMode,
+                paddingRight: 4,
+                paddingTop: 4,
                 height: tmbSize,
                 width: tmbSize
               }}
