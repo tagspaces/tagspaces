@@ -133,8 +133,8 @@
     "test-watch": "yarn test --watch",
     "third-party": "yarn licenses generate-disclaimer --silent > app/third-party.txt",
     "type-check": "tsc --noEmit",
-    "update-changelog": "git log v3.10.4..HEAD --no-merges --format=%B > CHANGELOG.TXT",
-    "update-changelog-pro": "cd extensions/pro && git log v3.10.4..HEAD --no-merges --format=%B > ../../CHANGELOG-PRO.TXT",
+    "update-changelog": "git log v3.11.6..HEAD --no-merges --format=%B > CHANGELOG.TXT",
+    "update-changelog-pro": "cd extensions/tagspacespro && git log v3.11.6..HEAD --no-merges --format=%B > ../../CHANGELOG-PRO.TXT",
     "update-i18n": "tx pull -a -d",
     "version-meta": "node scripts/versionmeta.js"
   },
