@@ -28,7 +28,10 @@ import SearchIcon from '@material-ui/icons/Search';
 import ArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import ArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import Typography from '@material-ui/core/Typography';
-import { actions as LocationIndexActions, getSearchQuery } from '-/reducers/location-index';
+import {
+  actions as LocationIndexActions,
+  getSearchQuery
+} from '-/reducers/location-index';
 import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
