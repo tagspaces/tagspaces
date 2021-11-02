@@ -94,7 +94,9 @@ const EditEntryTagDialog = (props: Props) => {
     } else showDatePeriodEditor = isDateTimeTag(title);
     return DateTagEditor && showDatePeriodEditor;
   }, []);
-  const [editDisabled, setEditDisabled] = useState<boolean>(isShowDatePeriodEditor);
+  const [editDisabled, setEditDisabled] = useState<boolean>(
+    isShowDatePeriodEditor
+  );
   const { setError, haveError } = useValidation();
   const { onClose, open, fullScreen } = props;
 

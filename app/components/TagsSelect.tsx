@@ -99,21 +99,31 @@ const TagsSelect = (props: Props) => {
     if (reason === 'select-option') {
       props.handleChange(props.tagSearchType, selectedTags, reason);
     } else if (reason === 'create-option') {
-      if (
-        selectedTags &&
-        selectedTags.length &&
-        isValidNewOption(selectedTags[selectedTags.length - 1], selectedTags)
-      ) {
-        const newTag: TS.Tag = {
-          id: uuidv1(),
-          title: '' + selectedTags[selectedTags.length - 1],
-          color: defaultBackgroundColor,
-          textcolor: defaultTextColor
-        };
-        props.allTags.push(newTag);
+      if (selectedTags && selectedTags.length) {
+        const tagsInput = '' + selectedTags[selectedTags.length - 1];
+        let tags = tagsInput
+          .split(' ')
+          .join(',')
+          .split(','); // handle spaces around commas
+        tags = [...new Set(tags)]; // remove duplicates
+        tags = tags.filter(tag => tag && tag.length > 0); // zero length tags
+
+        const newTags = [];
+        tags.map(tag => {
+          const newTag: TS.Tag = {
+            id: uuidv1(),
+            title: '' + tag,
+            color: defaultBackgroundColor,
+            textcolor: defaultTextColor
+          };
+          if (isValidNewOption(newTag.title, selectedTags)) {
+            newTags.push(newTag);
+            props.allTags.push(newTag);
+          }
+        });
         selectedTags.pop();
-        const newTags = [...selectedTags, newTag];
-        props.handleChange(props.tagSearchType, newTags, reason);
+        const allNewTags = [...selectedTags, ...newTags];
+        props.handleChange(props.tagSearchType, allNewTags, reason);
       }
     } else if (reason === 'remove-value') {
       props.handleChange(props.tagSearchType, selectedTags, reason);
