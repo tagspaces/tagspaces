@@ -33,7 +33,6 @@ import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { getMaxSearchResults } from '-/reducers/settings';
 import { actions as AppActions } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
-import OpenFolderIcon from '@material-ui/icons/SubdirectoryArrowLeft';
 
 interface Props {
   open: boolean;
@@ -42,9 +41,8 @@ interface Props {
   selectedTag: TS.Tag | null;
   currentEntryPath: string;
   removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
-  searchLocationIndex?: (searchQuery: TS.SearchQuery) => void;
+  setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   maxSearchResults?: number;
-  // openSearchPanel?: () => void;
   setIsAddTagDialogOpened?: (tag: TS.Tag) => void;
   toggleEditTagDialog?: (tag: TS.Tag) => void;
   isReadOnlyMode?: boolean;
@@ -73,8 +71,7 @@ const EntryTagMenu = (props: Props) => {
 
   function showFilesWithThisTag() {
     if (props.selectedTag) {
-      // props.openSearchPanel();
-      props.searchLocationIndex({
+      props.setSearchQuery({
         tagsAND: [props.selectedTag],
         maxSearchResults: props.maxSearchResults
       });
@@ -176,8 +173,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      searchLocationIndex: LocationIndexActions.searchLocationIndex,
-      // openSearchPanel: AppActions.openSearchPanel,
+      setSearchQuery: LocationIndexActions.setSearchQuery,
       toggleEditTagDialog: AppActions.toggleEditTagDialog
     },
     dispatch
