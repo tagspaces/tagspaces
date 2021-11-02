@@ -484,7 +484,7 @@ export function formatDateTime4Tag(
   includeTime: boolean,
   includeMS?: boolean
 ): string {
-  if (date === undefined || date === '') {
+  if (date === undefined || date === '' || date.toString() === 'Invalid Date') {
     return '';
   }
   const d = new Date(date);
