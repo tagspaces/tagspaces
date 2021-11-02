@@ -16,7 +16,13 @@
  *
  */
 
-import React, { useState, useEffect, useMemo, ChangeEvent } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  ChangeEvent,
+  useRef
+} from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
@@ -67,18 +73,10 @@ const DateTagEditor = Pro && Pro.UI ? Pro.UI.DateTagEditor : React.Fragment;
 
 const EditEntryTagDialog = (props: Props) => {
   const [showAdvancedMode, setShowAdvancedMode] = useState<boolean>(false);
-  const [editDisabled, setEditDisabled] = useState<boolean>(true);
   const [title, setTitle] = useState(
     props.selectedTag && props.selectedTag.title
   );
-  const { setError, haveError } = useValidation();
-  const { onClose, open, fullScreen } = props;
-  /*
-  useEffect(() => {
-    handleValidation();
-  }, [title]);
-  */
-
+  const titleRef = useRef<HTMLInputElement>(null);
   const isShowDatePeriodEditor = useMemo(() => {
     let showDatePeriodEditor = false;
     if (title && title.indexOf('-') > -1) {
@@ -96,6 +94,16 @@ const EditEntryTagDialog = (props: Props) => {
     } else showDatePeriodEditor = isDateTimeTag(title);
     return DateTagEditor && showDatePeriodEditor;
   }, []);
+  const [editDisabled, setEditDisabled] = useState<boolean>(isShowDatePeriodEditor);
+  const { setError, haveError } = useValidation();
+  const { onClose, open, fullScreen } = props;
+
+  useEffect(() => {
+    if (titleRef && titleRef.current) {
+      titleRef.current.value = title;
+    }
+    // handleValidation();
+  }, [title]);
 
   function handleValidation() {
     const tagCheck = RegExp(/^[^#/\\ [\]]{1,}$/);
@@ -144,6 +152,7 @@ const EditEntryTagDialog = (props: Props) => {
             fullWidth={true}
             error={haveError('tag')}
             disabled={editDisabled}
+            inputRef={titleRef}
             margin="dense"
             name="title"
             autoFocus
