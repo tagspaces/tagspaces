@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useEffect, useReducer, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
@@ -45,6 +45,7 @@ import {
   parseTextQuery,
   removeAllTagsFromQuery
 } from '-/utils/misc';
+import useFirstRender from '-/utils/useFirstRender';
 
 // type PropsClasses = Record<keyof StyleProps, string>;
 
@@ -146,6 +147,8 @@ const SearchInline = (props: Props) => {
 
   const mainSearchField = useRef<HTMLInputElement>(null);
 
+  const firstRender = useFirstRender();
+
   /* useEffect(() => {
     // https://github.com/mui-org/material-ui/issues/1594
     const timeout = setTimeout(() => {
@@ -160,32 +163,41 @@ const SearchInline = (props: Props) => {
   }, []); */
 
   useEffect(() => {
-    // mainSearchField.current.value = '';
-    if (Object.keys(props.searchQuery).length > 0) {
-      props.setSearchQuery({});
+    if (!firstRender) {
+      // mainSearchField.current.value = '';
+      if (Object.keys(props.searchQuery).length > 0) {
+        props.setSearchQuery({});
+      }
     }
   }, [props.currentDirectory]);
 
   useEffect(() => {
     if (Object.keys(props.searchQuery).length > 0) {
+      let emptySearch: boolean = true;
       textQueryMask.current = '';
 
       if (props.searchQuery.tagsAND && props.searchQuery.tagsAND.length > 0) {
         props.searchQuery.tagsAND.forEach(tag => {
           textQueryMask.current += ' +' + tag.title;
         });
+        emptySearch = false;
       }
       if (props.searchQuery.tagsOR && props.searchQuery.tagsOR.length > 0) {
         props.searchQuery.tagsOR.forEach(tag => {
           textQueryMask.current += ' ?' + tag.title;
         });
+        emptySearch = false;
       }
       if (props.searchQuery.tagsNOT && props.searchQuery.tagsNOT.length > 0) {
         props.searchQuery.tagsNOT.forEach(tag => {
           textQueryMask.current += ' -' + tag.title;
         });
+        emptySearch = false;
       }
       const txtQuery = removeAllTagsFromQuery(textQuery.current);
+      if (txtQuery) {
+        emptySearch = false;
+      }
       /* if (textQueryMask.current) {
         txtQuery = textQuery.current.replace(textQueryMask.current, '').trim();
       } else if (textQuery.current) {
@@ -212,32 +224,41 @@ const SearchInline = (props: Props) => {
       // }
       if (props.searchQuery.searchBoxing) {
         searchBoxing.current = props.searchQuery.searchBoxing;
+        emptySearch = false;
       }
       if (props.searchQuery.fileTypes) {
         fileTypes.current = props.searchQuery.fileTypes;
+        emptySearch = false;
       }
       if (props.searchQuery.searchType) {
         searchType.current = props.searchQuery.searchType;
+        emptySearch = false;
       }
       if (props.searchQuery.lastModified) {
         lastModified.current = props.searchQuery.lastModified;
+        emptySearch = false;
       }
       if (props.searchQuery.tagTimePeriodFrom) {
         tagTimePeriodFrom.current = props.searchQuery.tagTimePeriodFrom;
+        emptySearch = false;
       }
       if (props.searchQuery.tagTimePeriodTo) {
         tagTimePeriodTo.current = props.searchQuery.tagTimePeriodTo;
+        emptySearch = false;
       }
       if (props.searchQuery.forceIndexing) {
         forceIndexing.current = props.searchQuery.forceIndexing;
       }
       if (props.searchQuery.fileSize) {
         fileSize.current = props.searchQuery.fileSize;
+        emptySearch = false;
       }
-      if (searchBoxing.current === 'global') {
-        props.searchAllLocations(searchQuery);
-      } else {
-        props.searchLocationIndex(searchQuery);
+      if (!emptySearch) {
+        if (searchBoxing.current === 'global') {
+          props.searchAllLocations(searchQuery);
+        } else {
+          props.searchLocationIndex(searchQuery);
+        }
       }
     }
   }, [props.searchQuery]);

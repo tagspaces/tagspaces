@@ -28,10 +28,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import ArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import ArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import Typography from '@material-ui/core/Typography';
-import {
-  actions as LocationIndexActions,
-  getSearchQuery
-} from '../reducers/location-index';
+import { actions as LocationIndexActions, getSearchQuery } from '-/reducers/location-index';
 import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
@@ -44,9 +41,10 @@ import AppConfig from '-/config';
 interface Props {
   style?: any;
   searchQuery: TS.SearchQuery;
+  setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   searches: Array<TS.SearchQuery>;
-  searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
-  searchAllLocations: (searchQuery: TS.SearchQuery) => void;
+  // searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
+  // searchAllLocations: (searchQuery: TS.SearchQuery) => void;
   showUnixHiddenEntries: boolean;
   addSearches: (searches: Array<TS.SearchQuery>) => void;
   openURLExternally: (url: string) => void;
@@ -102,7 +100,12 @@ const StoredSearches = (props: Props) => {
       return true;
     }
 
-    if (savedSearch.searchBoxing === 'global') {
+    props.setSearchQuery({
+      ...savedSearch,
+      showUnixHiddenEntries: props.showUnixHiddenEntries
+    });
+
+    /* if (savedSearch.searchBoxing === 'global') {
       props.searchAllLocations({
         ...savedSearch,
         showUnixHiddenEntries: props.showUnixHiddenEntries
@@ -112,7 +115,7 @@ const StoredSearches = (props: Props) => {
         ...savedSearch,
         showUnixHiddenEntries: props.showUnixHiddenEntries
       });
-    }
+    } */
   };
 
   function handleFileInputChange(selection: any) {
@@ -224,7 +227,12 @@ const StoredSearches = (props: Props) => {
           onClose={(searchQuery: TS.SearchQuery) => {
             setSaveSearchDialogOpened(undefined);
             if (searchQuery) {
-              if (searchQuery.searchBoxing === 'global') {
+              props.setSearchQuery({
+                ...searchQuery,
+                showUnixHiddenEntries: props.showUnixHiddenEntries
+              });
+
+              /* if (searchQuery.searchBoxing === 'global') {
                 props.searchAllLocations({
                   ...searchQuery,
                   showUnixHiddenEntries: props.showUnixHiddenEntries
@@ -234,7 +242,7 @@ const StoredSearches = (props: Props) => {
                   ...searchQuery,
                   showUnixHiddenEntries: props.showUnixHiddenEntries
                 });
-              }
+              } */
             }
           }}
           onClearSearch={() => console.log('search deleted')}
@@ -280,8 +288,9 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
       addSearches: SearchActions.addSearches,
-      searchAllLocations: LocationIndexActions.searchAllLocations,
-      searchLocationIndex: LocationIndexActions.searchLocationIndex,
+      setSearchQuery: LocationIndexActions.setSearchQuery,
+      // searchAllLocations: LocationIndexActions.searchAllLocations,
+      // searchLocationIndex: LocationIndexActions.searchLocationIndex,
       openURLExternally: AppActions.openURLExternally
     },
     dispatch
