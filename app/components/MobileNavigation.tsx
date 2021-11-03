@@ -170,7 +170,7 @@ const MobileNavigation = (props: Props) => {
         >
           <Tooltip title={i18n.t('core:createFileTitle')}>
             <Button
-              data-tid="createNewLocation"
+              data-tid="createNewFileTID"
               onClick={() => {
                 if (props.isReadOnlyMode || !directoryPath) {
                   showNotification(

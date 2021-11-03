@@ -26,13 +26,14 @@ export const firstTagButton = '/tbody/tr[1]/td[3]/button[1]';
  */
 export async function searchEngine(filename, options = {}) {
   if (!(await isDisplayed('#textQuery'))) {
-    await clickOn('[data-tid=search]');
+    await clickOn('[data-tid=toggleSearch]');
   }
-  // await expectElementExist('#textQuery', true);
   await setInputValue('#textQuery', filename);
-
+  if (!(await isDisplayed('[data-tid=searchAdvancedTID]'))) {
+    await clickOn('[data-tid=advancedSearch]');
+  }
   if (options.tagName) {
-    await setInputValue('#searchTags', filename);
+    await setInputValue('[data-tid=searchTagsAndTID] input', filename);
   }
 
   if (options.reindexing) {
@@ -47,7 +48,7 @@ export async function searchEngine(filename, options = {}) {
   if (options.resetSearchButton) {
     await clickOn('#resetSearchButton');
   } else {
-    await clickOn('#searchButton');
+    await clickOn('#searchButtonAdvTID');
   }
   await waitForNotification('TIDSearching');
 }

@@ -432,7 +432,7 @@ describe('TST50** - Right button on a file', () => {
     let gridStyle = await grid.getAttribute('style');
 
     expect(gridStyle).toContain(
-      'grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));'
+      'margin-top: 53px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));'
     );
 
     await clickOn('[data-tid=gridPerspectiveSwitchLayoutToRow]');
