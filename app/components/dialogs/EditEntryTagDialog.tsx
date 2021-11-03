@@ -108,24 +108,24 @@ const EditEntryTagDialog = (props: Props) => {
   }, [title]);
 
   function handleValidation() {
+    // Tags should be at least 1 character long and should not contain: spaces, \, / #
     const tagCheck = RegExp(/^[^#/\\ [\]]{1,}$/);
     if (title && tagCheck.test(title)) {
       setError('tag', false);
-    } else {
-      setError('tag');
+      return true;
     }
+    setError('tag');
+    return false;
   }
 
   function onConfirm() {
-    handleValidation();
-    if (!haveError()) {
-      if (props.selectedEntries.length > 0) {
+    if (handleValidation() && !haveError()) {
+      /* if (props.selectedEntries.length > 0) {
         props.selectedEntries.forEach(entry =>
           props.editTagForEntry(entry.path, props.selectedTag, title)
         );
-      } else {
-        props.editTagForEntry(props.selectedTag.path, props.selectedTag, title);
-      }
+      } else { */
+      props.editTagForEntry(props.selectedTag.path, props.selectedTag, title);
       props.onClose();
     }
   }
