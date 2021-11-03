@@ -72,6 +72,7 @@ interface Props {
   setCurrentTheme: (theme: string) => void;
   setLanguage: (language: string) => void;
   setCheckForUpdates: (check: boolean) => void;
+  reorderTags: (check: boolean) => void;
   setUseTrashCan: (useTrashCan: boolean) => void;
   setPersistTagsInSidecarFile: (tagInSidecar: boolean) => void;
   setAddTagsToLibrary: (addTagsToLibrary: boolean) => void;
@@ -223,6 +224,16 @@ const SettingsGeneral = (props: Props) => {
               props.setCheckForUpdates(!props.settings.checkForUpdates)
             }
             checked={props.settings.checkForUpdates}
+          />
+        </ListItem>
+        <ListItem className={classes.listItem}>
+          <ListItemText primary={i18n.t('core:reorderTags')} />
+          <Switch
+            data-tid="reorderTagsTID"
+            onClick={() =>
+              props.reorderTags(!props.settings.reorderTags)
+            }
+            checked={props.settings.reorderTags}
           />
         </ListItem>
         <ListItem className={classes.listItem}>
