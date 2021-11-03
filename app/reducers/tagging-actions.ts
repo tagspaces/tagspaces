@@ -402,42 +402,48 @@ const actions = {
     } else if (tag.type === 'sidecar') {
       loadMetaDataPromise(path)
         .then(fsEntryMeta => {
-          let addMode = true;
           let tagFoundPosition = -1;
-          fsEntryMeta.tags.map((sidecarTag, index) => {
+          let newTagsArray = fsEntryMeta.tags.map((sidecarTag, index) => {
             if (sidecarTag.title === tag.title) {
-              // eslint-disable-next-line no-param-reassign
-              sidecarTag.title = newTagTitle;
-              addMode = false;
               tagFoundPosition = index;
+              return {
+                ...sidecarTag,
+                title: newTagTitle
+              };
             }
-            return true;
+            return sidecarTag;
           });
           if (tag.position !== undefined && tagFoundPosition > -1) {
-            // move tag
-            const element = fsEntryMeta.tags[tagFoundPosition];
-            fsEntryMeta.tags.splice(tagFoundPosition, 1);
-            fsEntryMeta.tags.splice(tag.position, 0, element);
+            // move tag (reorder)
+            const element = newTagsArray[tagFoundPosition];
+            newTagsArray.splice(tagFoundPosition, 1);
+            newTagsArray.splice(tag.position, 0, element);
           }
-          if (addMode) {
-            // eslint-disable-next-line no-param-reassign
-            tag.title = newTagTitle;
-            fsEntryMeta.tags.push(tag);
+          if (tagFoundPosition === -1) {
+            // Add mode
+            newTagsArray.push({ ...tag, title: newTagTitle });
           }
-          const updatedFsEntryMeta = {
+          // clear duplicates
+          newTagsArray = newTagsArray.filter(
+            (item, pos, array) =>
+              array.findIndex(el => el.title === item.title) === pos
+          );
+          saveMetaDataPromise(path, {
             ...fsEntryMeta,
-            tags: [...fsEntryMeta.tags]
-          };
-          saveMetaDataPromise(path, updatedFsEntryMeta)
+            tags: newTagsArray
+          })
             .then(() => {
-              dispatch(
-                AppActions.updateOpenedFile(path, {
-                  tags: fsEntryMeta.tags
-                })
-              );
+              const { openedFiles } = getState().app;
+              if (openedFiles.find(obj => obj.path === path)) {
+                dispatch(
+                  AppActions.updateOpenedFile(path, {
+                    tags: newTagsArray
+                  })
+                );
+              }
               // TODO rethink this updateCurrentDirEntry and not need for KanBan
               dispatch(
-                AppActions.reflectUpdateSidecarTags(path, fsEntryMeta.tags)
+                AppActions.reflectUpdateSidecarTags(path, newTagsArray, true)
               );
               return true;
             })
@@ -464,11 +470,14 @@ const actions = {
           const fsEntryMeta = { tags: [tag] };
           saveMetaDataPromise(path, fsEntryMeta)
             .then(() => {
-              dispatch(
-                AppActions.updateOpenedFile(path, {
-                  tags: fsEntryMeta.tags
-                })
-              );
+              const { openedFiles } = getState().app;
+              if (openedFiles.find(obj => obj.path === path)) {
+                dispatch(
+                  AppActions.updateOpenedFile(path, {
+                    tags: fsEntryMeta.tags
+                  })
+                );
+              }
               // TODO rethink this updateCurrentDirEntry and not need for KanBan
               dispatch(
                 AppActions.reflectUpdateSidecarTags(path, fsEntryMeta.tags)
@@ -644,7 +653,10 @@ const actions = {
           .then(() => {
             // TODO rethink this updateCurrentDirEntry and not need for KanBan
             dispatch(AppActions.reflectUpdateSidecarTags(path, []));
-            dispatch(AppActions.updateOpenedFile(path, { tags: [] }));
+            const { openedFiles } = getState().app;
+            if (openedFiles.find(obj => obj.path === path)) {
+              dispatch(AppActions.updateOpenedFile(path, { tags: [] }));
+            }
             removeAllTagsFromFilename();
             return true;
           })

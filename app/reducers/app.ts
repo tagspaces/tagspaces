@@ -1772,26 +1772,10 @@ export const actions = {
     entry
   }),
   /**
-   * @deprecated use updateCurrentDirEntry instead
    * @param path
-   * @param entryMeta
+   * @param tags
+   * @param updateIndex
    */
-  /* reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => (
-    dispatch: (actions: Object) => void
-  ) => {
-    dispatch(actions.reflectUpdateSidecarMetaInt(path, entryMeta));
-    dispatch(LocationIndexActions.reflectUpdateSidecarMeta(path, entryMeta));
-  }, */
-  /**
-   * @deprecated use updateCurrentDirEntry instead
-   * @param path
-   * @param entryMeta
-   */
-  /* reflectUpdateSidecarMetaInt: (path: string, entryMeta: Object) => ({
-    type: types.REFLECT_UPDATE_SIDECARMETA,
-    path,
-    entryMeta
-  }), */
   reflectUpdateSidecarTags: (
     path: string,
     tags: Array<TS.Tag>,
@@ -1801,7 +1785,11 @@ export const actions = {
     /**
      * if its have openedFiles updateCurrentDirEntry is called from FolderContainer (useEffect -> ... if (openedFile.changed)
      */
-    if (openedFiles.length === 0 || selectedEntries.length > 1) {
+    if (
+      openedFiles.length === 0 ||
+      !openedFiles.some(obj => obj.path === path) ||
+      selectedEntries.length > 1
+    ) {
       dispatch(actions.updateCurrentDirEntry(path, { tags }));
     }
     if (updateIndex) {

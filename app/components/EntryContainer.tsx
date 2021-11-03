@@ -383,7 +383,7 @@ const EntryContainer = (props: Props) => {
         props.updateOpenedFile(openedFile.path, {
           ...openedFile,
           editMode: false,
-          shouldReload: true
+          shouldReload: !openedFile.shouldReload
         });
       }
     }
