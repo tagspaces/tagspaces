@@ -40,8 +40,9 @@ import {
   getPersistTagsInSidecarFile,
   getSettings
 } from '-/reducers/settings';
-import ColorPickerDialog from '../ColorPickerDialog';
-import TransparentBackground from '../../TransparentBackground';
+import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
+import TransparentBackground from '-/components/TransparentBackground';
+import { BetaLabel } from '-/components/HelperComponents';
 import AppConfig from '-/config';
 import PlatformIO from '-/services/platform-io';
 
@@ -72,6 +73,7 @@ interface Props {
   setCurrentTheme: (theme: string) => void;
   setLanguage: (language: string) => void;
   setCheckForUpdates: (check: boolean) => void;
+  reorderTags: (check: boolean) => void;
   setUseTrashCan: (useTrashCan: boolean) => void;
   setPersistTagsInSidecarFile: (tagInSidecar: boolean) => void;
   setAddTagsToLibrary: (addTagsToLibrary: boolean) => void;
@@ -223,6 +225,21 @@ const SettingsGeneral = (props: Props) => {
               props.setCheckForUpdates(!props.settings.checkForUpdates)
             }
             checked={props.settings.checkForUpdates}
+          />
+        </ListItem>
+        <ListItem className={classes.listItem}>
+          <ListItemText
+            primary={
+              <>
+                {i18n.t('core:reorderTags')}
+                <BetaLabel />
+              </>
+            }
+          />
+          <Switch
+            data-tid="reorderTagsTID"
+            onClick={() => props.reorderTags(!props.settings.reorderTags)}
+            checked={props.settings.reorderTags}
           />
         </ListItem>
         <ListItem className={classes.listItem}>

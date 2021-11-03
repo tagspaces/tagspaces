@@ -49,6 +49,7 @@ interface Props {
   addTags?: (paths: Array<string>, tags: Array<TS.Tag>) => void;
   moveTag?: () => void;
   selectedEntries?: Array<TS.FileSystemEntry>;
+  reorderTags?: boolean;
 }
 
 const TagContainer = (props: Props) => {

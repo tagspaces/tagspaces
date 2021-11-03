@@ -38,6 +38,7 @@ export const types = {
   SET_TAG_DELIMITER: 'SETTINGS/SET_TAG_DELIMITER',
   SET_MAX_SEARCH_RESULT: 'SETTINGS/SET_MAX_SEARCH_RESULT',
   SET_CHECKFORUPDATES: 'SETTINGS/SET_CHECKFORUPDATES',
+  SET_REORDER_TAGS: 'SETTINGS/SET_REORDER_TAGS',
   SET_USEDEFAULTLOCATION: 'SETTINGS/SET_USEDEFAULTLOCATION',
   SET_COLOREDFILEEXTENSION: 'SETTINGS/SET_COLOREDFILEEXTENSION',
   SET_SHOWTAGAREAONSTARTUP: 'SETTINGS/SET_SHOWTAGAREAONSTARTUP',
@@ -154,6 +155,9 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_CHECKFORUPDATES: {
       return { ...state, checkForUpdates: action.checkForUpdates };
+    }
+    case types.SET_REORDER_TAGS: {
+      return { ...state, reorderTags: action.reorderTags };
     }
     case types.SET_USEDEFAULTLOCATION: {
       return { ...state, useDefaultLocation: action.useDefaultLocation };
@@ -444,6 +448,10 @@ export const actions = {
   setCheckForUpdates: (checkForUpdates: boolean) => ({
     type: types.SET_CHECKFORUPDATES,
     checkForUpdates
+  }),
+  reorderTags: (reorderTags: boolean) => ({
+    type: types.SET_REORDER_TAGS,
+    reorderTags
   }),
   setLanguage: (language: string) => ({ type: types.SET_LANGUAGE, language }),
   setUseDefaultLocation: (useDefaultLocation: boolean) => ({

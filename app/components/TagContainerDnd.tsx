@@ -134,7 +134,7 @@ const boxTarget = {
       // but it's good here for the sake of performance
       // to avoid expensive index searches.
       dragItem.index = hoverIndex;
-    } else if (props.entryPath) {
+    } else if (props.reorderTags && props.entryPath) {
       // sort fileSystemEntries tags
       const dragIndex = dragItem.index;
       const hoverIndex = props.index;
@@ -168,7 +168,7 @@ const boxTarget = {
           return;
         }
       } else {
-        //TODO check if sidecar tag exist in file (reorder only if exist)
+        // TODO check if sidecar tag exist in file (reorder only if exist)
       }
 
       dragItem.tag.position = hoverIndex;
@@ -203,6 +203,7 @@ interface Props {
   deleteIcon?: Object;
   selectedEntries: Array<TS.FileSystemEntry>;
   tagContainerRef?: string;
+  reorderTags?: boolean;
 }
 
 const TagContainerDnd = (props: Props) => {
@@ -218,7 +219,8 @@ const TagContainerDnd = (props: Props) => {
     connectDropTarget,
     addTags,
     tagMode,
-    tagContainerRef
+    tagContainerRef,
+    reorderTags
   } = props;
 
   // Use empty image as a drag preview so browsers don't draw it
@@ -242,6 +244,7 @@ const TagContainerDnd = (props: Props) => {
           entryPath={entryPath}
           isDragging={isDragging}
           selectedEntries={selectedEntries}
+          reorderTags={reorderTags}
         />
       </span>
     )
