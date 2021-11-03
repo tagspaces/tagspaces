@@ -70,6 +70,7 @@ interface Props {
   handleGridCellDblClick: (event: Object, fsEntry: TS.FileSystemEntry) => void;
   handleGridCellClick: (event: Object, fsEntry: TS.FileSystemEntry) => void;
   editTagForEntry?: (path: string, tag: TS.Tag) => void;
+  reorderTags: boolean;
 }
 
 const CellContent = (props: Props) => {
@@ -391,6 +392,7 @@ const CellContent = (props: Props) => {
           handleTagMenu={handleTagMenu}
           selectedEntries={selectedEntries}
           editTagForEntry={props.editTagForEntry}
+          reorderTags={props.reorderTags}
         />
       );
 
@@ -445,6 +447,12 @@ const CellContent = (props: Props) => {
   );
 };
 
+function mapStateToProps(state) {
+  return {
+    reorderTags: state.settings.reorderTags
+  };
+}
+
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
@@ -454,4 +462,4 @@ function mapActionCreatorsToProps(dispatch) {
   );
 }
 
-export default connect(undefined, mapActionCreatorsToProps)(CellContent);
+export default connect(mapStateToProps, mapActionCreatorsToProps)(CellContent);

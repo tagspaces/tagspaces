@@ -93,6 +93,7 @@
   "openFileExternally": "Open File Externally",
   "showUnixHiddenFiles": "Show files/directories with a dot(.) in front of the name (e.g. Unix, Linux, OS X hidden files)",
   "checkForNewVersionOnStartup": "Check for new version on startup",
+  "reorderTags": "Enable changing the tag order with drag and drop",
   "calculateTag": "Extracts the tags used in the current folder",
   "tagDelimiter": "Tag delimiter (e.g. Filename[TAG1_TAG2], _ is the delimiter)",
   "prefixTagContainer": "Prefix for the tag container (e.g. in 'Filename_[TAG1].txt', '_' is the prefix)",
