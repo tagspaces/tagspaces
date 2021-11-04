@@ -13,14 +13,13 @@ import {
   createNewDirectory,
   newHTMLFile,
   newMDFile,
-  newTEXTFile,
   closeOpenedFile,
   deleteDirectory,
   clickOn,
   expectElementExist,
   selectorFile,
   setSettings,
-  takeScreenshot
+  takeScreenshot, createTxtFile
 } from './general.helpers';
 import { searchEngine } from './search.helpers';
 import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
@@ -113,7 +112,7 @@ describe('TST51 - Perspective Grid', () => {
     await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
 
     // create new file
-    await newTEXTFile();
+    await createTxtFile();
     await closeOpenedFile();
     // await reloadDirectory();
     await expectElementExist(selectorFile, true);

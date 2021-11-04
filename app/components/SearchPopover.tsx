@@ -564,7 +564,7 @@ const SearchPopover = (props: Props) => {
           <CloseIcon />
         </IconButton>
       </div>
-      <div className={classes.searchArea}>
+      <div className={classes.searchArea} data-tid="searchAdvancedTID">
         <FormControl className={classes.formControl} disabled={indexing}>
           <ToggleButtonGroup
             onChange={switchSearchBoxing}
@@ -646,7 +646,7 @@ const SearchPopover = (props: Props) => {
           <ButtonGroup style={{ justifyContent: 'center' }}>
             <Button
               disabled={indexing}
-              id="searchButton"
+              id="searchButtonAdvTID"
               // variant="outlined"
               color="primary"
               onClick={executeSearch}
@@ -672,6 +672,7 @@ const SearchPopover = (props: Props) => {
         </FormControl>
         <FormControl className={classes.formControl} disabled={indexing}>
           <TagsSelect
+            dataTid="searchTagsAndTID"
             placeholderText={i18n.t('core:selectTags')}
             label={i18n.t('core:mustContainTheseTags')}
             tags={props.searchQuery.tagsAND}
@@ -682,6 +683,7 @@ const SearchPopover = (props: Props) => {
         </FormControl>
         <FormControl className={classes.formControl} disabled={indexing}>
           <TagsSelect
+            dataTid="searchTagsOrTID"
             placeholderText={i18n.t('core:selectTags')}
             tags={props.searchQuery.tagsOR}
             label={i18n.t('core:atLeastOneOfTheseTags')}
@@ -692,6 +694,7 @@ const SearchPopover = (props: Props) => {
         </FormControl>
         <FormControl className={classes.formControl} disabled={indexing}>
           <TagsSelect
+            dataTid="searchTagsNotTID"
             placeholderText={i18n.t('core:selectTags')}
             tags={props.searchQuery.tagsNOT}
             label={i18n.t('core:noneOfTheseTags')}
