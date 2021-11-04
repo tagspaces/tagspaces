@@ -19,7 +19,8 @@ import {
   expectElementExist,
   selectorFile,
   setSettings,
-  takeScreenshot, createTxtFile
+  takeScreenshot,
+  createTxtFile
 } from './general.helpers';
 import { searchEngine } from './search.helpers';
 import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
