@@ -425,7 +425,16 @@ export const actions = {
                 entry.thumbPath.length > 1 &&
                 !entry.thumbPath.startsWith('http')
               ) {
-                entry.thumbPath = PlatformIO.getURLforPath(entry.thumbPath);
+                let pathInLocation = '';
+                if (currentLocation.path) {
+                  pathInLocation = currentLocation.path;
+                  if (!pathInLocation.endsWith('/')) {
+                    pathInLocation += '/';
+                  }
+                }
+                entry.thumbPath = PlatformIO.getURLforPath(
+                  pathInLocation + entry.thumbPath
+                );
               }
             });
           }
