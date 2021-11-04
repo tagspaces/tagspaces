@@ -201,7 +201,8 @@ describe('TST50 - Perspective Grid', () => {
     for (let i = 0; i < selectedIds.length; i++) {
       await expectElementExist(
         selectorFile + '[' + (i + 1) + ']//div[@id="gridCellTags"]//button[1]',
-        false
+        false,
+        1500
       );
       await expectTagsExistBySelector(
         '[data-entry-id="' + selectedIds[i] + '"]',
