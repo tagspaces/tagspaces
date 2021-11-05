@@ -44,7 +44,7 @@ jobs:
         run: chmod +x ./tests/bin/minio
       - name: Run Electron tests
         run: |
-          yarn install-ext
+          yarn install-ext-web
           yarn build-e2e-web
           yarn test-playwright-web-headless
       - uses: IgnusG/jest-report-action@v2.3.3
