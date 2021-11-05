@@ -44,7 +44,7 @@ jobs:
           target: tests/bin/
       - name: Run Electron tests
         run: |
-          yarn install-ext
+          yarn install-ext-node
           yarn build-e2e
           yarn ${{ github.event.inputs.command }}
       - uses: actions/upload-artifact@v2
