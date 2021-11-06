@@ -1,5 +1,7 @@
 import Search from '../../app/services/search';
-import { entry1, entry2, entry3 } from './testEntries';
+import { FileTypeGroups } from '../../app/services/search';
+
+const testEntries = require('./tsi.json');
 
 // const mockedSearchIndex = { data: {} };
 // const SearchMock = jest.fn();
@@ -51,24 +53,20 @@ const tag3 = { title: 'tagTitle3' };
 //   ).resolves.toStrictEqual([]);
 // });
 
-test('calls Search.searchLocationIndex for tags', () => {
-  const locationContent = [entry1, entry2];
-
+test.skip('calls Search.searchLocationIndex for tags', async () => {
   const searchQuery = {
-    tagsAND: [tag1],
-    maxSearchResults: 2
+    tagsAND: [{ title: '5star' }]
   };
 
-  expect(
-    Search.searchLocationIndex(locationContent, searchQuery)
-  ).resolves.toStrictEqual([entry1]);
+  const searchResults = await Search.searchLocationIndex(
+    testEntries,
+    searchQuery
+  );
 
-  // expect(
-  //   Search.searchLocationIndex(locationContent, searchQuery)
-  // ).resolves.not.toStrictEqual([entry2]);
+  expect(searchResults[0].tags).toEqual(expect.arrayContaining([{ tags }]));
 });
 
-test('calls Search.searchLocationIndex for tags with not to equal', () => {
+test.skip('calls Search.searchLocationIndex for tags with not to equal', () => {
   const locationContent = [entry1, entry2];
 
   const searchQuery = {
@@ -81,7 +79,7 @@ test('calls Search.searchLocationIndex for tags with not to equal', () => {
   ).resolves.not.toStrictEqual([entry2]);
 });
 
-test('calls Search.searchLocationIndex for not exist tags', () => {
+test.skip('calls Search.searchLocationIndex for not exist tags', () => {
   const locationContent = [entry1, entry2];
 
   const searchQueryNotExist = {
@@ -94,7 +92,7 @@ test('calls Search.searchLocationIndex for not exist tags', () => {
   ).resolves.toStrictEqual([]);
 });
 
-test('calls Search.searchLocationIndex for OR tags', () => {
+test.skip('calls Search.searchLocationIndex for OR tags', () => {
   const locationContent = [entry1, entry2, entry3]; //enhanceEntry(entry)];
 
   const searchQuery = {
@@ -121,17 +119,17 @@ test('calls Search.searchLocationIndex for OR tags', () => {
 });
 
 test('calls Search.searchLocationIndex for textQuery', async () => {
-  const locationContent = [entry1, entry2];
-
   const searchQuery = {
-    textQuery: 'description'
+    searchType: 'strict',
+    textQuery: 'IMG_20191001_163655.jpg'
   };
 
   const searchResults = await Search.searchLocationIndex(
-    locationContent,
+    testEntries,
     searchQuery
   );
-  expect(searchResults[0].name).toStrictEqual('entryTitle1');
+
+  expect(searchResults[0].name).toStrictEqual('IMG_20191001_163655.jpg');
 });
 
 //jest.mock('../../app/pro', () => require('../../extensions/pro'));
@@ -154,17 +152,15 @@ test('calls Search.searchLocationIndex for Pro', () => {
 */
 
 test.skip('calls Search.searchLocationIndex for extension', async () => {
-  const locationContent = [entry2, entry3];
-
   const searchQuery = {
-    fileTypes: 'jpg'
+    FileTypeGroups: images
   };
 
   const searchResults = await Search.searchLocationIndex(
-    locationContent,
+    testEntries,
     searchQuery
   );
-  expect(searchResults).resolves.toStrictEqual('jpg');
+  expect(searchResults[3].extension).toEqual('jpg');
 });
 
 test.skip('calls Search.searchLocationIndex for fileSize', async () => {
@@ -181,7 +177,7 @@ test.skip('calls Search.searchLocationIndex for fileSize', async () => {
   expect(searchResults[9].fileSize).resolves.toStrictEqual('sizeTiny');
 });
 
-test('calls Search.searchLocationIndex for folder', async () => {
+test.skip('calls Search.searchLocationIndex for folder', async () => {
   const locationContent = [entry1, entry2, entry3];
 
   const searchQuery = {
