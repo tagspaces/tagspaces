@@ -26,6 +26,7 @@ import React, {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { GlobalHotKeys } from 'react-hotkeys';
+import fscreen from 'fscreen';
 import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
@@ -464,26 +465,31 @@ const EntryContainer = (props: Props) => {
     PlatformIO.shareFiles([filePath]);
   };
 
-  document.addEventListener('fullscreenchange', exitFullScreenHandler);
+  fscreen.addEventListener('fullscreenchange', exitFullScreenHandler); // , options);
+  /* document.addEventListener('fullscreenchange', exitFullScreenHandler);
   document.addEventListener('webkitfullscreenchange', exitFullScreenHandler);
   document.addEventListener('mozfullscreenchange', exitFullScreenHandler);
-  document.addEventListener('MSFullscreenChange', exitFullScreenHandler);
+  document.addEventListener('MSFullscreenChange', exitFullScreenHandler); */
 
   function exitFullScreenHandler() {
     if (
-      !document.fullscreenElement &&
+      fscreen.fullscreenElement === null
+      /*! document.fullscreenElement &&
       // @ts-ignore
       !document.webkitIsFullScreen &&
       // @ts-ignore
       !document.mozFullScreen &&
       // @ts-ignore
-      !document.msFullscreenElement
+      !document.msFullscreenElement */
     ) {
       forceUpdate();
     }
   }
 
   const toggleFullScreen = () => {
+    if (!fscreen.fullscreenEnabled) {
+      return;
+    }
     // this.fileViewerContainer.addEventListener('onfullscreenchange', () => {
     //   alert('Fullscreen change');
     //   if (this.state.isFullscreen) {
@@ -495,9 +501,8 @@ const EntryContainer = (props: Props) => {
 
     // https://developer.mozilla.org/en-US/docs/Web/API/Element/requestFullScreen#examples
 
-    if (document.fullscreenElement && document.exitFullscreen) {
-      // TODO exit fullscreen firefox does not work
-      document
+    if (fscreen.fullscreenElement !== null) {
+      fscreen
         .exitFullscreen()
         .then(() => {
           console.log('Fullscreen exit successful');
@@ -508,20 +513,29 @@ const EntryContainer = (props: Props) => {
         .catch(e => {
           console.log('Error exiting fullscreen', e);
         });
-      return;
+    } else {
+      fscreen
+        .requestFullscreen(fileViewerContainer.current)
+        .then(() => {
+          forceUpdate();
+          return true;
+        })
+        .catch(ex => {
+          console.error('requestFullscreen:', ex);
+        });
     }
-    if (document.fullscreenElement && document.webkitExitFullscreen) {
+    /* if (document.fullscreenElement && document.webkitExitFullscreen) {
       document.webkitExitFullscreen();
       // setFullscreen(false);
       forceUpdate();
       return;
-    }
+    } */
     /* else if (this.state.isFullscreen && document.mozExitFullscreen) {
       document.mozExitFullscreen();
       this.setState({ isFullscreen: false });
       return;
     } */
-    if (!document.fullscreenElement && fileViewerContainer) {
+    /* if (!document.fullscreenElement && fileViewerContainer) {
       if (
         fileViewerContainer &&
         fileViewerContainer.current.requestFullscreen
@@ -558,7 +572,7 @@ const EntryContainer = (props: Props) => {
         fileViewerContainer.current.mozRequestFullScreen();
         forceUpdate();
       }
-    }
+    } */
   };
 
   const setPercent = (p: number | undefined) => {
@@ -1062,6 +1076,7 @@ const EntryContainer = (props: Props) => {
       initSize = defaultSplitSize; // '0%';
     }
 
+    const isFullscreen = () => fscreen.fullscreenElement !== null;
     return (
       <Split
         horizontal
@@ -1074,7 +1089,7 @@ const EntryContainer = (props: Props) => {
         <FileView
           key="FileViewID"
           openedFile={props.openedFiles[0]}
-          isFullscreen={document.fullscreenElement !== null}
+          isFullscreen={isFullscreen()}
           fileViewer={fileViewer}
           fileViewerContainer={fileViewerContainer}
           toggleFullScreen={toggleFullScreen}

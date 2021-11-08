@@ -171,6 +171,7 @@
     "exif-js": "^2.3.0",
     "file-saver": "^2.0.5",
     "fs-extra": "^10.0.0",
+    "fscreen": "^1.2.0",
     "fuse.js": "^6.4.6",
     "geolocation-utils": "^1.2.3",
     "html2canvas": "^1.0.0-alpha.12",
