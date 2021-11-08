@@ -106,10 +106,13 @@ export function parseTextQuery(textQuery: string, identifier: string) {
 }
 
 export function removeAllTagsFromQuery(query: string) {
-  if (query) {
+  if (!query) {
+    return '';
+  }
+  if (query && query.indexOf('[') > -1) {
     return query.replace(/([+-?]\S+)/g, '').trim();
   }
-  return '';
+  return query;
 }
 
 export function mergeWithExtractedTags(
