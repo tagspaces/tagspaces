@@ -23,7 +23,7 @@ const iOSMatcher = navigator.userAgent.match(/(iPad|iPhone|iPod)/i);
 const isIOS = iOSMatcher && iOSMatcher.length > 0;
 const isAndroid = navigator.userAgent.toLowerCase().includes('android');
 
-export const AppConfig = {
+const AppConfig = {
   tagspacesAppPath: '/tagspaces/',
   metaFolder: '.ts',
   metaFolderFile: 'tsm.json',
@@ -47,9 +47,10 @@ export const AppConfig = {
   // maxSearchResult: 1000,
   defaultFileColor: '#808080',
   defaultFolderColor: '#582727', // 555 transparent #FDEEBD #ff791b #2c001e #880e4f
-  isElectron: navigator.userAgent.toLowerCase().indexOf(' electron/') > -1,
+  isElectron: navigator.userAgent.toLowerCase().includes(' electron/'),
   isFirefox: navigator.userAgent.toLowerCase().includes('firefox'), // typeof InstallTrigger !== 'undefined';
-  isWin: navigator.appVersion.includes('Win'),
+  isWin: navigator.userAgent.toLowerCase().includes('win'),
+  isLinux: navigator.userAgent.toLowerCase().includes('linux'),
   isMacLike: navigator.userAgent.match(/(Mac|iPhone|iPod|iPad)/i),
   isIOS,
   isAndroid,

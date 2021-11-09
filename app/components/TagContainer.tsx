@@ -17,7 +17,6 @@
  */
 
 import React from 'react';
-// import uuidv1 from 'uuid';
 import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -26,8 +25,8 @@ import DateIcon from '@material-ui/icons/DateRange';
 import RemoveTagIcon from '@material-ui/icons/Close';
 import { getAllTags } from '-/reducers/taglibrary';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
-import { isGeoTag } from '-/utils/misc';
-import { isDateTimeTag } from '-/utils/dates';
+import { isGeoTag, formatDateTime } from '-/utils/misc';
+import { isDateTimeTag, convertToDateTime, convertToDate } from '-/utils/dates';
 import { TS } from '-/tagspaces.namespace';
 
 interface Props {
@@ -50,6 +49,7 @@ interface Props {
   addTags?: (paths: Array<string>, tags: Array<TS.Tag>) => void;
   moveTag?: () => void;
   selectedEntries?: Array<TS.FileSystemEntry>;
+  reorderTags?: boolean;
 }
 
 const TagContainer = (props: Props) => {
@@ -81,10 +81,8 @@ const TagContainer = (props: Props) => {
     isTagGeo = isGeoTag(title); // || isLatLong
     isTagDate = !isTagGeo && isDateTimeTag(title);
   }
-  if (isTagDate && title.length > 8) {
-    title = title.substr(0, 8) + '...';
-  }
 
+  // TODO move this in reducer
   allTags.some((currentTag: TS.Tag) => {
     if (currentTag.title === title) {
       textColor = currentTag.textcolor;
@@ -93,11 +91,6 @@ const TagContainer = (props: Props) => {
     }
     return false;
   });
-
-  let description = tag.title;
-  if (tag.description) {
-    description = tag.title + ' - ' + tag.description;
-  }
 
   let tid = 'tagContainer_';
   if (title && title.length > 0) {
@@ -129,6 +122,7 @@ const TagContainer = (props: Props) => {
           color: tag.textcolor,
           marginLeft: -5,
           marginRight: -5,
+          height: 20,
           top: 0
         }}
       />
@@ -150,6 +144,25 @@ const TagContainer = (props: Props) => {
     } else if (tagFunc === 'geoTagging') {
       isGeoSmartTag = true;
     }
+  }
+
+  let tagTitle = tag.title;
+  if (isTagDate) {
+    let date;
+    if (tag.title.length > 8) {
+      date = new Date(convertToDateTime(tag.title)).getTime();
+    } else {
+      date = new Date(convertToDate(tag.title)).getTime();
+    }
+    tagTitle = formatDateTime(date, true);
+  }
+
+  if (tag.description) {
+    tagTitle = tagTitle + ' - ' + tag.description;
+  }
+
+  if (isTagDate && title.length > 8) {
+    title = title.substr(0, 8) + '...';
   }
 
   return (
@@ -188,7 +201,7 @@ const TagContainer = (props: Props) => {
       }}
     >
       <Button
-        title={description}
+        title={tagTitle}
         size="small"
         style={{
           opacity: isDragging ? 0.5 : 1,
@@ -211,8 +224,10 @@ const TagContainer = (props: Props) => {
             <PlaceIcon
               style={{
                 color: tag.textcolor,
-                fontSize: 18,
-                marginBottom: -5
+                height: 20,
+                marginBottom: -5,
+                marginLeft: -5,
+                marginRight: 0
               }}
             />
           )}
@@ -220,9 +235,10 @@ const TagContainer = (props: Props) => {
             <DateIcon
               style={{
                 color: tag.textcolor,
-                fontSize: 18,
+                height: 20,
                 marginBottom: -5,
-                marginRight: 4
+                marginLeft: -5,
+                marginRight: 0
               }}
             />
           )}
@@ -242,5 +258,4 @@ function mapStateToProps(state) {
     // selectedEntries: getSelectedEntries(state)
   };
 }
-
-export default connect(mapStateToProps)(React.memo(TagContainer));
+export default connect(mapStateToProps)(TagContainer);

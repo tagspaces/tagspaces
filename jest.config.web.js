@@ -76,7 +76,7 @@ module.exports = async () => {
         {
           pageTitle: BRANCH_NAME + ' Test Report',
           outputPath:
-            './test-reports/' + BRANCH_NAME + os + web + minio + '.html'
+            './tests/test-reports/' + BRANCH_NAME + os + web + minio + '.html'
         }
       ],
       'jest-junit'

@@ -37,7 +37,7 @@ export namespace TS {
     isReadOnly?: boolean;
     isNotEditable?: boolean;
     watchForChanges?: boolean;
-    persistIndex?: boolean;
+    disableIndexing?: boolean;
     fullTextIndex?: boolean;
     maxIndexAge?: number;
     persistTagsInSidecarFile?: boolean;
@@ -126,6 +126,7 @@ export namespace TS {
   interface FileSystemEntryMeta {
     id?: string;
     description?: string;
+    isFile?: boolean;
     tags?: Array<TS.Tag>;
     tagGroups?: Array<TS.TagGroup>;
     color?: string;

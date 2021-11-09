@@ -16,12 +16,11 @@
  *
  */
 
-import uuidv1 from 'uuid';
+import { v1 as uuidv1 } from 'uuid';
 import { immutablySwapItems, locationType } from '-/utils/misc';
 import { actions as AppActions } from '-/reducers/app';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-io';
-import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
 
 export const types = {
@@ -146,24 +145,29 @@ export default (state: Array<TS.Location> = initialState, action: any) => {
 
 export const actions = {
   setDefaultLocations: () => (dispatch: (actions: Object) => void) => {
-    const devicePaths = PlatformIO.getDevicePaths();
-
-    Object.keys(devicePaths).forEach(key => {
-      dispatch(
-        actions.addLocation(
-          {
-            uuid: uuidv1(),
-            type: locationType.TYPE_LOCAL,
-            name: i18n.t(key),
-            path: devicePaths[key],
-            isDefault: false, // AppConfig.isWeb && devicePaths[key] === '/files/', // Used for the web ts demo
-            isReadOnly: false,
-            persistIndex: false
-          },
-          false
-        )
-      );
-    });
+    PlatformIO.getDevicePaths()
+      .then(devicePaths => {
+        if (devicePaths) {
+          Object.keys(devicePaths).forEach(key => {
+            dispatch(
+              actions.addLocation(
+                {
+                  uuid: uuidv1(),
+                  type: locationType.TYPE_LOCAL,
+                  name: i18n.t(key),
+                  path: devicePaths[key],
+                  isDefault: false, // AppConfig.isWeb && devicePaths[key] === '/files/', // Used for the web ts demo
+                  isReadOnly: false,
+                  disableIndexing: false
+                },
+                false
+              )
+            );
+          });
+        }
+        return true;
+      })
+      .catch(ex => console.error(ex));
   },
   addLocation: (location: TS.Location, openAfterCreate: boolean = true) => (
     dispatch: (actions: Object) => void
@@ -256,6 +260,11 @@ export const getLocation = (
   locationId: string
 ): TS.Location | null =>
   state.locations.find(location => location.uuid === locationId);
+export const getLocationByPath = (
+  state: any,
+  path: string
+): TS.Location | null =>
+  state.locations.find(location => location.path === path);
 export const getDefaultLocationId = (state: any): string | undefined => {
   let defaultLocationID;
   state.locations.map(location => {

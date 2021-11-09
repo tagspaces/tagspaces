@@ -18,7 +18,7 @@
 
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import Button from '@material-ui/core/Button';
-import uuidv1 from 'uuid';
+import { v1 as uuidv1 } from 'uuid';
 import { withStyles } from '@material-ui/core/styles';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -43,6 +43,8 @@ import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import CheckIcon from '@material-ui/icons/Check';
 import RemoveIcon from '@material-ui/icons/RemoveCircleOutline';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import ObjectStoreForm from './ObjectStoreForm';
@@ -55,6 +57,10 @@ import { getLocationPath } from '-/utils/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import InfoIcon from '-/components/InfoIcon';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
+import { actions as LocationActions } from '-/reducers/locations';
+import { getPersistTagsInSidecarFile } from '-/reducers/settings';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import { actions as LocationIndexActions } from '-/reducers/location-index';
 
 const styles: any = theme => ({
   formControl: {
@@ -69,9 +75,10 @@ interface Props {
   onClose: () => void;
   classes: any;
   fullScreen: boolean;
-  addLocation?: (location: TS.Location) => void;
+  addLocation: (location: TS.Location, openAfterCreate?: boolean) => void;
   editLocation?: (location: TS.Location) => void;
   isPersistTagsInSidecar: boolean;
+  createLocationIndex: (location: TS.Location) => void;
 }
 
 const CreateEditLocationDialog = (props: Props) => {
@@ -118,8 +125,8 @@ const CreateEditLocationDialog = (props: Props) => {
   const [watchForChanges, setWatchForChanges] = useState<boolean>(
     location ? location.watchForChanges : false
   );
-  const [persistIndex, setPersistIndex] = useState<boolean>(
-    location ? location.persistIndex : false
+  const [disableIndexing, setIndexDisable] = useState<boolean>(
+    location ? location.disableIndexing : false
   );
   const [fullTextIndex, setFullTextIndex] = useState<boolean>(
     location ? location.fullTextIndex : false
@@ -171,6 +178,11 @@ const CreateEditLocationDialog = (props: Props) => {
   const [isIgnorePatternDialogOpen, setIgnorePatternDialogOpen] = useState<
     boolean
   >(false);
+
+  const [
+    isFullTextIndexConfirmDialogOpened,
+    setFullTextIndexConfirmDialogOpened
+  ] = useState<boolean>(false);
 
   const firstRender = useFirstRender();
 
@@ -267,7 +279,7 @@ const CreateEditLocationDialog = (props: Props) => {
           paths: [path],
           isDefault,
           isReadOnly,
-          persistIndex,
+          disableIndexing,
           fullTextIndex,
           watchForChanges,
           maxIndexAge,
@@ -288,7 +300,7 @@ const CreateEditLocationDialog = (props: Props) => {
           region,
           isDefault,
           isReadOnly,
-          persistIndex,
+          disableIndexing,
           fullTextIndex,
           watchForChanges: false,
           maxIndexAge,
@@ -300,7 +312,7 @@ const CreateEditLocationDialog = (props: Props) => {
         loc = { ...loc, persistTagsInSidecarFile };
       }
 
-      if (props.addLocation) {
+      if (!props.location && props.addLocation) {
         props.addLocation(loc);
       } else if (props.editLocation) {
         loc.newuuid = newuuid;
@@ -398,8 +410,7 @@ const CreateEditLocationDialog = (props: Props) => {
       </DialogTitle>
       <DialogContent
         style={{
-          overflow: AppConfig.isFirefox ? 'auto' : 'overlay',
-          minWidth: 500
+          overflow: AppConfig.isFirefox ? 'auto' : 'overlay'
         }}
       >
         <Grid container spacing={2}>
@@ -467,9 +478,12 @@ const CreateEditLocationDialog = (props: Props) => {
                 data-tid="changeFullTextIndex"
                 name="fullTextIndex"
                 checked={fullTextIndex}
-                onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                  setFullTextIndex(event.target.checked)
-                }
+                onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                  setFullTextIndex(event.target.checked);
+                  if (event.target.checked) {
+                    setFullTextIndexConfirmDialogOpened(true);
+                  }
+                }}
               />
             }
             label={
@@ -479,6 +493,26 @@ const CreateEditLocationDialog = (props: Props) => {
               </>
             }
           />
+          {isFullTextIndexConfirmDialogOpened && location && (
+            <ConfirmDialog
+              open={isFullTextIndexConfirmDialogOpened}
+              onClose={() => {
+                setFullTextIndexConfirmDialogOpened(false);
+              }}
+              title={i18n.t('core:confirm')}
+              content={i18n.t('core:fullTextIndexRegenerate')}
+              confirmCallback={result => {
+                if (result) {
+                  props.createLocationIndex(location);
+                } else {
+                  setFullTextIndexConfirmDialogOpened(false);
+                }
+              }}
+              cancelDialogTID="cancelSaveBeforeCloseDialog"
+              confirmDialogTID="confirmSaveBeforeCloseDialog"
+              confirmDialogContentTID="confirmDialogContent"
+            />
+          )}
           <FormControlLabel
             className={classes.formControl}
             labelPlacement="start"
@@ -533,17 +567,17 @@ const CreateEditLocationDialog = (props: Props) => {
               control={
                 <Switch
                   disabled={!Pro}
-                  data-tid="changePersistIndex"
-                  name="persistIndex"
-                  checked={persistIndex}
+                  data-tid="disableIndexingTID"
+                  name="disableIndexing"
+                  checked={disableIndexing}
                   onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                    setPersistIndex(event.target.checked)
+                    setIndexDisable(event.target.checked)
                   }
                 />
               }
               label={
                 <>
-                  {i18n.t('core:persistIndexSwitch')}
+                  {i18n.t('core:disableIndexing')}
                   <ProLabel />
                 </>
               }
@@ -776,4 +810,23 @@ const CreateEditLocationDialog = (props: Props) => {
   );
 };
 
-export default withMobileDialog()(withStyles(styles)(CreateEditLocationDialog));
+function mapStateToProps(state) {
+  return {
+    isPersistTagsInSidecar: getPersistTagsInSidecarFile(state)
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(
+    {
+      addLocation: LocationActions.addLocation,
+      createLocationIndex: LocationIndexActions.createLocationIndex
+    },
+    dispatch
+  );
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withMobileDialog()(withStyles(styles)(CreateEditLocationDialog)));

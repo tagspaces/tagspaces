@@ -17,7 +17,7 @@
  */
 
 import semver from 'semver';
-import uuidv1 from 'uuid';
+import { v1 as uuidv1 } from 'uuid';
 import i18n from '-/services/i18n';
 import defaultSettings from './settings-default';
 import PlatformIO from '-/services/platform-io';
@@ -26,6 +26,7 @@ import Links from '-/links';
 import versionMeta from '-/version.json';
 import { actions as AppActions } from './app';
 import { TS } from '-/tagspaces.namespace';
+import { Pro } from '../pro';
 
 export const types = {
   UPGRADE_SETTINGS: 'SETTINGS/UPGRADE_SETTINGS',
@@ -37,6 +38,7 @@ export const types = {
   SET_TAG_DELIMITER: 'SETTINGS/SET_TAG_DELIMITER',
   SET_MAX_SEARCH_RESULT: 'SETTINGS/SET_MAX_SEARCH_RESULT',
   SET_CHECKFORUPDATES: 'SETTINGS/SET_CHECKFORUPDATES',
+  SET_REORDER_TAGS: 'SETTINGS/SET_REORDER_TAGS',
   SET_USEDEFAULTLOCATION: 'SETTINGS/SET_USEDEFAULTLOCATION',
   SET_COLOREDFILEEXTENSION: 'SETTINGS/SET_COLOREDFILEEXTENSION',
   SET_SHOWTAGAREAONSTARTUP: 'SETTINGS/SET_SHOWTAGAREAONSTARTUP',
@@ -69,7 +71,6 @@ export const types = {
   SET_LAST_PUBLISHED_VERSION: 'SETTINGS/SET_LAST_PUBLISHED_VERSION',
   SET_ENTRY_PROPERTIES_SPLIT_SIZE: 'SETTINGS/SET_ENTRY_PROPERTIES_SPLIT_SIZE',
   SET_MAIN_VSPLIT_SIZE: 'SETTINGS/SET_MAIN_VSPLIT_SIZE',
-  SET_LEFT_VSPLIT_SIZE: 'SETTINGS/SET_LEFT_VSPLIT_SIZE',
   SET_FIRST_RUN: 'SETTINGS/SET_FIRST_RUN',
   TOGGLE_TAGGROUP: 'TOGGLE_TAGGROUP',
   ADD_MAPTILE_SERVER: 'SET_MAPTILE_SERVER',
@@ -154,6 +155,9 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_CHECKFORUPDATES: {
       return { ...state, checkForUpdates: action.checkForUpdates };
+    }
+    case types.SET_REORDER_TAGS: {
+      return { ...state, reorderTags: action.reorderTags };
     }
     case types.SET_USEDEFAULTLOCATION: {
       return { ...state, useDefaultLocation: action.useDefaultLocation };
@@ -302,19 +306,13 @@ export default (state: any = defaultSettings, action: any) => {
     case types.SET_ENTRY_PROPERTIES_SPLIT_SIZE: {
       return {
         ...state,
-        entryPropertiesSplitSize: action.entryPropertiesSplitSize
+        entrySplitSize: action.entrySplitSize
       };
     }
     case types.SET_MAIN_VSPLIT_SIZE: {
       return {
         ...state,
-        mainVerticalSplitSize: action.mainVerticalSplitSize
-      };
-    }
-    case types.SET_LEFT_VSPLIT_SIZE: {
-      return {
-        ...state,
-        leftVerticalSplitSize: action.leftVerticalSplitSize
+        mainVSplitSize: action.mainVSplitSize
       };
     }
     case types.SET_LAST_PUBLISHED_VERSION: {
@@ -451,6 +449,10 @@ export const actions = {
     type: types.SET_CHECKFORUPDATES,
     checkForUpdates
   }),
+  reorderTags: (reorderTags: boolean) => ({
+    type: types.SET_REORDER_TAGS,
+    reorderTags
+  }),
   setLanguage: (language: string) => ({ type: types.SET_LANGUAGE, language }),
   setUseDefaultLocation: (useDefaultLocation: boolean) => ({
     type: types.SET_USEDEFAULTLOCATION,
@@ -537,17 +539,13 @@ export const actions = {
     type: types.SET_SUPPORTED_FILE_TYPES,
     supportedFileTypes
   }),
-  setEntryPropertiesSplitSize: (entryPropertiesSplitSize: number) => ({
+  setEntryPropertiesSplitSize: (entrySplitSize: string) => ({
     type: types.SET_ENTRY_PROPERTIES_SPLIT_SIZE,
-    entryPropertiesSplitSize
+    entrySplitSize
   }),
-  setMainVerticalSplitSize: (mainVerticalSplitSize: any) => ({
+  setMainVerticalSplitSize: (mainVSplitSize: string) => ({
     type: types.SET_MAIN_VSPLIT_SIZE,
-    mainVerticalSplitSize
-  }),
-  setLeftVerticalSplitSize: (leftVerticalSplitSize: number) => ({
-    type: types.SET_LEFT_VSPLIT_SIZE,
-    leftVerticalSplitSize
+    mainVSplitSize
   }),
   setFirstRun: (firstRun: boolean) => ({
     type: types.SET_FIRST_RUN,
@@ -594,8 +592,24 @@ export function getLastVersionPromise(): Promise<string> {
   return new Promise((resolve, reject) => {
     console.log('Checking for new version...');
     const xhr = new XMLHttpRequest();
+    let versionFile = 'tagspaces.json';
+    const proText = Pro ? 'pro-' : '';
+    if (AppConfig.isWeb) {
+      versionFile = 'tagspaces-pro-web.json';
+    } else if (AppConfig.isWin) {
+      versionFile = 'tagspaces-' + proText + 'win-x64.json';
+    } else if (AppConfig.isMacLike) {
+      versionFile = 'tagspaces-' + proText + 'mac.json';
+    } else if (AppConfig.isLinux) {
+      versionFile = 'tagspaces-' + proText + 'linux-x64.json';
+    } else if (AppConfig.isAndroid) {
+      versionFile = 'tagspaces-' + proText + 'android.json';
+    }
     const updateUrl =
-      Links.links.checkNewVersionURL + '?cv=' + versionMeta.version;
+      Links.links.checkNewVersionURL +
+      versionFile +
+      '?cv=' +
+      versionMeta.version;
     xhr.open('GET', updateUrl, true);
     xhr.responseType = 'json';
     xhr.onerror = reject;
@@ -673,10 +687,8 @@ export const getTagTextColor = (state: any) => state.settings.tagTextColor;
 export const getCurrentTheme = (state: any) => state.settings.currentTheme;
 export const isGlobalKeyBindingEnabled = (state: any) =>
   state.settings.enableGlobalKeyboardShortcuts;
-export const getLeftVerticalSplitSize = (state: any) =>
-  state.settings.leftVerticalSplitSize;
 export const getMainVerticalSplitSize = (state: any) =>
-  state.settings.mainVerticalSplitSize;
+  state.settings.mainVSplitSize;
 export const getTagDelimiter = (state: any) => state.settings.tagDelimiter;
 export const getMaxSearchResults = (state: any) =>
   state.settings.maxSearchResult;

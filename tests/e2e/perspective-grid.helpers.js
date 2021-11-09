@@ -1,4 +1,4 @@
-import { clickOn, setInputKeys, waitForNotification } from './general.helpers';
+import { clickOn, isDisplayed, setInputKeys } from './general.helpers';
 
 /**
  *
@@ -24,7 +24,8 @@ export async function AddRemoveTagsToSelectedFiles(
   } else {
     await clickOn('[data-tid=removeTagsMultipleEntries]');
   }
-  await waitForNotification();
+  // await waitForNotification();
+  await isDisplayed('[data-tid=notificationTID]', false, 2500);
 
   /*const filesList = await global.client.$$(perspectiveGridTable + firstFile); // Selected file can be only one this check all files
   for (let i = 0; i < filesList.length; i++) {

@@ -16,7 +16,13 @@
  *
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  ChangeEvent,
+  useRef
+} from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
@@ -29,13 +35,14 @@ import { withStyles } from '@material-ui/core/styles';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
+import EditIcon from '@material-ui/icons/Edit';
 import i18n from '-/services/i18n';
 import { isGeoTag } from '-/utils/misc';
 import { Pro } from '-/pro';
 import { getSelectedEntries, getSelectedTag } from '-/reducers/app';
 import TaggingActions from '-/reducers/tagging-actions';
 import { isDateTimeTag } from '-/utils/dates';
-import { AppConfig } from '-/config';
+import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
 import useValidation from '-/utils/useValidation';
 import { getMapTileServer } from '-/reducers/settings';
@@ -69,16 +76,10 @@ const EditEntryTagDialog = (props: Props) => {
   const [title, setTitle] = useState(
     props.selectedTag && props.selectedTag.title
   );
-  const { setError, haveError } = useValidation();
-  const { onClose, open, fullScreen } = props;
-
-  useEffect(() => {
-    handleValidation();
-  }, [title]);
-
+  const titleRef = useRef<HTMLInputElement>(null);
   const isShowDatePeriodEditor = useMemo(() => {
     let showDatePeriodEditor = false;
-    if (title.indexOf('-') > -1) {
+    if (title && title.indexOf('-') > -1) {
       const a = title.split('-');
       if (a.length === 2) {
         for (let i = 0; i < a.length; i += 1) {
@@ -93,25 +94,38 @@ const EditEntryTagDialog = (props: Props) => {
     } else showDatePeriodEditor = isDateTimeTag(title);
     return DateTagEditor && showDatePeriodEditor;
   }, []);
+  const [editDisabled, setEditDisabled] = useState<boolean>(
+    isShowDatePeriodEditor
+  );
+  const { setError, haveError } = useValidation();
+  const { onClose, open, fullScreen } = props;
+
+  useEffect(() => {
+    if (titleRef && titleRef.current) {
+      titleRef.current.value = title;
+    }
+    // handleValidation();
+  }, [title]);
 
   function handleValidation() {
+    // Tags should be at least 1 character long and should not contain: spaces, \, / #
     const tagCheck = RegExp(/^[^#/\\ [\]]{1,}$/);
     if (title && tagCheck.test(title)) {
       setError('tag', false);
-    } else {
-      setError('tag');
+      return true;
     }
+    setError('tag');
+    return false;
   }
 
   function onConfirm() {
-    if (!haveError()) {
-      if (props.selectedEntries.length > 0) {
+    if (handleValidation() && !haveError()) {
+      /* if (props.selectedEntries.length > 0) {
         props.selectedEntries.forEach(entry =>
           props.editTagForEntry(entry.path, props.selectedTag, title)
         );
-      } else {
-        props.editTagForEntry(props.selectedTag.path, props.selectedTag, title);
-      }
+      } else { */
+      props.editTagForEntry(props.selectedTag.path, props.selectedTag, title);
       props.onClose();
     }
   }
@@ -131,22 +145,31 @@ const EditEntryTagDialog = (props: Props) => {
       <DialogContent
         data-tid="editEntryTagDialog"
         className={props.classes.root}
-        style={{ overflow: AppConfig.isFirefox ? 'auto' : 'overlay' }}
+        style={{
+          overflow: AppConfig.isFirefox ? 'auto' : 'overlay'
+        }}
       >
         <FormControl fullWidth={true} error={haveError('tag')}>
           <TextField
             fullWidth={true}
             error={haveError('tag')}
+            disabled={editDisabled}
+            inputRef={titleRef}
             margin="dense"
             name="title"
             autoFocus
             label={i18n.t('core:editTag')}
-            onChange={event => {
+            onChange={(event: ChangeEvent<HTMLInputElement>) => {
               const { target } = event;
               setTitle(target.value);
             }}
-            value={title}
+            defaultValue={title}
             data-tid="editTagEntryDialog_input"
+            InputProps={{
+              endAdornment: (
+                <EditIcon onClick={() => setEditDisabled(!editDisabled)} />
+              )
+            }}
           />
           {haveError('tag') && (
             <FormHelperText>{i18n.t('core:tagTitleHelper')}</FormHelperText>
@@ -164,7 +187,7 @@ const EditEntryTagDialog = (props: Props) => {
             tileServer={props.tileServer}
           />
         )}
-        {isShowDatePeriodEditor && (
+        {editDisabled && isShowDatePeriodEditor && (
           <DateTagEditor
             datePeriodTag={props.selectedTag && props.selectedTag.title}
             onChange={setTitle}
@@ -176,7 +199,11 @@ const EditEntryTagDialog = (props: Props) => {
 
   function renderActions() {
     return (
-      <DialogActions style={{ justifyContent: 'space-between' }}>
+      <DialogActions
+        style={{
+          justifyContent: 'space-between'
+        }}
+      >
         {GeoTagEditor && isGeoTag(title) ? (
           <Button
             data-tid="switchAdvancedModeTID"
@@ -249,7 +276,15 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
+const areEqual = (prevProp, nextProp) =>
+  JSON.stringify(nextProp.selectedTag) === JSON.stringify(prevProp.selectedTag);
+
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withMobileDialog()(withStyles(styles)(EditEntryTagDialog)));
+)(
+  React.memo(
+    withMobileDialog()(withStyles(styles)(EditEntryTagDialog)),
+    areEqual
+  )
+);

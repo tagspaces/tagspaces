@@ -17,16 +17,18 @@
  */
 
 // import { ManagedUpload } from 'aws-sdk/clients/s3';
+// import { configure } from 'tagspaces-common-index/index'
 import { Pro } from '../pro';
 // @ts-ignore
 import NativePlatformIO from './_PLATFORMIO_';
-import ObjectStoreIO from './objectstore-io';
+// import ObjectStoreIO from './objectstore-io';
 import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
-import settings from '-/reducers/settings';
+// import settings from '-/reducers/settings';
 
 const nativeAPI: any = new NativePlatformIO();
 let objectStoreAPI;
+let workerAvailable: boolean;
 
 export default class PlatformIO {
   static enableObjectStoreSupport = (
@@ -36,28 +38,39 @@ export default class PlatformIO {
       if (Pro) {
         if (
           objectStoreAPI !== undefined &&
-          objectStoreAPI.config.bucketName === objectStoreConfig.bucketName &&
-          objectStoreAPI.config.secretAccessKey ===
+          objectStoreAPI.config().bucketName === objectStoreConfig.bucketName &&
+          objectStoreAPI.config().secretAccessKey ===
             objectStoreConfig.secretAccessKey &&
-          objectStoreAPI.config.region === objectStoreConfig.region &&
-          objectStoreAPI.config.endpointURL === objectStoreConfig.endpointURL &&
-          objectStoreAPI.config.accessKeyId === objectStoreConfig.accessKeyId
+          objectStoreAPI.config().region === objectStoreConfig.region &&
+          objectStoreAPI.config().endpointURL ===
+            objectStoreConfig.endpointURL &&
+          objectStoreAPI.config().accessKeyId === objectStoreConfig.accessKeyId
         ) {
           resolve();
         } else {
-          objectStoreAPI = new ObjectStoreIO();
-          objectStoreAPI
-            .configure(objectStoreConfig)
-            .then(() => {
+          import('@tagspaces/tagspaces-platforms/aws')
+            .then(AWS => {
+              // { default: IO }) => {
+              objectStoreAPI = AWS;
+              objectStoreAPI.configure(objectStoreConfig);
               resolve();
               return true;
             })
             .catch(e => {
               reject(e);
             });
+          // objectStoreAPI = new ObjectStoreIO();
+
+          /* .then(() => {
+              resolve();
+              return true;
+            })
+            .catch(e => {
+              reject(e);
+            }); */
         }
       } else {
-        reject('ObjectStore support available in the PRO version');
+        reject(new Error('ObjectStore support available in the PRO version'));
       }
     });
 
@@ -68,7 +81,7 @@ export default class PlatformIO {
   static haveObjectStoreSupport = (): boolean => objectStoreAPI !== undefined;
 
   static isMinio = (): boolean =>
-    objectStoreAPI !== undefined && objectStoreAPI.config.endpointURL;
+    objectStoreAPI !== undefined && objectStoreAPI.config().endpointURL;
 
   static getDirSeparator = (): string => // TODO rethink usage for S3 on Win
     PlatformIO.haveObjectStoreSupport() ? '/' : AppConfig.dirSeparator;
@@ -97,7 +110,13 @@ export default class PlatformIO {
     }
   };
 
-  static isWorkerAvailable = (): boolean => nativeAPI.isWorkerAvailable();
+  static isWorkerAvailable = (): boolean => {
+    if (workerAvailable !== undefined) {
+      return workerAvailable;
+    }
+    workerAvailable = nativeAPI.isWorkerAvailable();
+    return workerAvailable;
+  };
 
   static setZoomFactorElectron = zoomLevel => {
     if (nativeAPI.setZoomFactorElectron) {
@@ -124,18 +143,22 @@ export default class PlatformIO {
 
   static focusWindow = (): void => nativeAPI.focusWindow();
 
-  static getDevicePaths = (): Object => nativeAPI.getDevicePaths();
+  static getDevicePaths = (): Promise<Object> => nativeAPI.getDevicePaths();
 
-  static getAppDataPath = (): string => nativeAPI.getAppDataPath();
+  /* static getAppDataPath = (): string => nativeAPI.getAppDataPath();
 
-  static getUserHomePath = (): string => nativeAPI.getUserHomePath();
+  static getUserHomePath = (): string => nativeAPI.getUserHomePath(); */
 
   static getURLforPath = (
     path: string,
     expirationInSeconds?: number
   ): string => {
     if (objectStoreAPI) {
-      return objectStoreAPI.getURLforPath(path, expirationInSeconds);
+      const param = {
+        path,
+        bucketName: objectStoreAPI.config().bucketName
+      };
+      return objectStoreAPI.getURLforPath(param, expirationInSeconds);
     }
   };
 
@@ -160,30 +183,38 @@ export default class PlatformIO {
   /**
    * Promise === undefined on error
    * @param path
-   * @param lite
-   * @param extractText
+   * @param mode = ['extractTextContent', 'extractThumbPath']
    * @param ignorePatterns
    */
   static listDirectoryPromise = (
     path: string,
-    lite: boolean = true,
-    extractText: boolean = true,
+    mode = ['extractThumbPath'],
     ignorePatterns: Array<string> = []
   ): Promise<Array<any>> => {
     if (objectStoreAPI) {
-      return objectStoreAPI.listDirectoryPromise(path, lite);
+      const param = {
+        path,
+        bucketName: objectStoreAPI.config().bucketName
+      };
+      return PlatformIO.listObjectStoreDir(param, mode, ignorePatterns);
     }
-    return nativeAPI.listDirectoryPromise(
-      path,
-      lite,
-      extractText,
-      ignorePatterns
-    );
+    return nativeAPI.listDirectoryPromise(path, mode, ignorePatterns);
   };
+
+  static listObjectStoreDir = (
+    param: Object,
+    mode = ['extractThumbPath'],
+    ignorePatterns: Array<string> = []
+  ): Promise<Array<any>> =>
+    objectStoreAPI.listDirectoryPromise(param, mode, ignorePatterns);
 
   static getPropertiesPromise = (path: string): Promise<any> => {
     if (objectStoreAPI) {
-      return objectStoreAPI.getPropertiesPromise(path);
+      const param = {
+        path,
+        bucketName: objectStoreAPI.config().bucketName
+      };
+      return objectStoreAPI.getPropertiesPromise(param);
     }
     return nativeAPI.getPropertiesPromise(path);
   };
@@ -206,7 +237,11 @@ export default class PlatformIO {
 
   static createDirectoryPromise = (dirPath: string): Promise<any> => {
     if (objectStoreAPI) {
-      return objectStoreAPI.createDirectoryPromise(dirPath);
+      const param = {
+        path: dirPath,
+        bucketName: objectStoreAPI.config().bucketName
+      };
+      return objectStoreAPI.createDirectoryPromise(param);
     }
     PlatformIO.ignoreByWatcher(dirPath);
 
@@ -250,7 +285,11 @@ export default class PlatformIO {
     targetFilePath: string
   ): Promise<any> => {
     if (objectStoreAPI) {
-      return objectStoreAPI.copyFilePromise(sourceFilePath, targetFilePath);
+      const param = {
+        path: sourceFilePath,
+        bucketName: objectStoreAPI.config().bucketName
+      };
+      return objectStoreAPI.copyFilePromise(param, targetFilePath);
     }
     PlatformIO.ignoreByWatcher(targetFilePath);
 
@@ -267,7 +306,11 @@ export default class PlatformIO {
     newFilePath: string
   ): Promise<any> => {
     if (objectStoreAPI) {
-      return objectStoreAPI.renameFilePromise(filePath, newFilePath);
+      const param = {
+        path: filePath,
+        bucketName: objectStoreAPI.config().bucketName
+      };
+      return objectStoreAPI.renameFilePromise(param, newFilePath);
       // .then(result => result);
     }
     PlatformIO.ignoreByWatcher(filePath, newFilePath);
@@ -283,7 +326,11 @@ export default class PlatformIO {
     newDirName: string
   ): Promise<any> => {
     if (objectStoreAPI) {
-      return objectStoreAPI.renameDirectoryPromise(dirPath, newDirName);
+      const param = {
+        path: dirPath,
+        bucketName: objectStoreAPI.config().bucketName
+      };
+      return objectStoreAPI.renameDirectoryPromise(param, newDirName);
     }
     PlatformIO.ignoreByWatcher(dirPath, newDirName);
 
@@ -300,7 +347,11 @@ export default class PlatformIO {
     isPreview?: boolean
   ): Promise<any> => {
     if (objectStoreAPI) {
-      return objectStoreAPI.loadTextFilePromise(filePath, isPreview);
+      const param = {
+        path: filePath,
+        bucketName: objectStoreAPI.config().bucketName
+      };
+      return objectStoreAPI.loadTextFilePromise(param, isPreview);
     }
     return nativeAPI.loadTextFilePromise(filePath, isPreview);
   };
@@ -310,7 +361,11 @@ export default class PlatformIO {
     type?: string
   ): Promise<Object> => {
     if (objectStoreAPI) {
-      return objectStoreAPI.getFileContentPromise(filePath, type);
+      const param = {
+        path: filePath,
+        bucketName: objectStoreAPI.config().bucketName
+      };
+      return objectStoreAPI.getFileContentPromise(param, type);
     }
     return nativeAPI.getFileContentPromise(filePath, type);
   };
@@ -321,7 +376,11 @@ export default class PlatformIO {
     overwrite: boolean
   ): Promise<any> => {
     if (objectStoreAPI) {
-      return objectStoreAPI.saveFilePromise(filePath, content, overwrite);
+      const param = {
+        path: filePath,
+        bucketName: objectStoreAPI.config().bucketName
+      };
+      return objectStoreAPI.saveFilePromise(param, content, overwrite);
     }
     PlatformIO.ignoreByWatcher(filePath);
 
@@ -333,13 +392,36 @@ export default class PlatformIO {
       });
   };
 
+  static saveTextFilePlatform = (
+    param: any,
+    content: string,
+    overwrite: boolean
+  ): Promise<any> => {
+    if (objectStoreAPI) {
+      return objectStoreAPI.saveTextFilePromise(param, content, overwrite);
+    }
+
+    PlatformIO.ignoreByWatcher(param.path);
+
+    return nativeAPI
+      .saveTextFilePromise(param.path, content, overwrite)
+      .then(result => {
+        PlatformIO.deignoreByWatcher(param.path);
+        return result;
+      });
+  };
+
   static saveTextFilePromise = (
     filePath: string,
     content: string,
     overwrite: boolean
   ): Promise<any> => {
     if (objectStoreAPI) {
-      return objectStoreAPI.saveTextFilePromise(filePath, content, overwrite);
+      const param = {
+        path: filePath,
+        bucketName: objectStoreAPI.config().bucketName
+      };
+      return objectStoreAPI.saveTextFilePromise(param, content, overwrite);
     }
 
     PlatformIO.ignoreByWatcher(filePath);
@@ -362,8 +444,12 @@ export default class PlatformIO {
     ) => void
   ): Promise<TS.FileSystemEntry> => {
     if (objectStoreAPI) {
+      const param = {
+        path: filePath,
+        bucketName: objectStoreAPI.config().bucketName
+      };
       return objectStoreAPI.saveBinaryFilePromise(
-        filePath,
+        param,
         content,
         overwrite,
         onUploadProgress
@@ -387,7 +473,11 @@ export default class PlatformIO {
     useTrash?: boolean
   ): Promise<any> => {
     if (objectStoreAPI) {
-      return objectStoreAPI.deleteFilePromise(path, useTrash);
+      const param = {
+        path,
+        bucketName: objectStoreAPI.config().bucketName
+      };
+      return objectStoreAPI.deleteFilePromise(param, useTrash);
     }
     PlatformIO.ignoreByWatcher(path);
 
@@ -402,7 +492,11 @@ export default class PlatformIO {
     useTrash?: boolean
   ): Promise<any> => {
     if (objectStoreAPI) {
-      return objectStoreAPI.deleteDirectoryPromise(path, useTrash);
+      const param = {
+        path,
+        bucketName: objectStoreAPI.config().bucketName
+      };
+      return objectStoreAPI.deleteDirectoryPromise(param, useTrash);
     }
     PlatformIO.ignoreByWatcher(path);
 

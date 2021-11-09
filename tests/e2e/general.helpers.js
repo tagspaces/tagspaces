@@ -1,6 +1,7 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 import { delay, clearLocalStorage } from './hook';
 import { firstFile } from './test-utils';
+import path from 'path';
 
 export const defaultLocationPath =
   './testdata-tmp/file-structure/supported-filestypes';
@@ -14,6 +15,11 @@ export const selectorFolder = '//*[@data-tid="perspectiveGridFileTable"]/div';
 // const newHTMLFileName = 'newHTMLFile.html';
 const testFolder = 'testFolder';
 const testLocationName = '' + new Date().getTime();
+
+export async function takeScreenshot(name) {
+  const sPath = path.join(__dirname, '..', 'test-reports', name + '.png');
+  await global.client.screenshot({ path: sPath });
+}
 
 export async function clickOn(selector, options = {}) {
   if (global.isPlaywright) {
@@ -262,8 +268,17 @@ export async function getElementText(el) {
   return await el.getText();
 }
 
+/**
+ * Wait for the selector relative to the element TODO
+ * @param element
+ * @param selector
+ * @param displayed
+ * @param timeout
+ * @returns {Promise<boolean>}
+ */
 export async function isElementDisplayed(
   element,
+  selector,
   displayed = true,
   timeout = 500
 ) {
@@ -298,7 +313,15 @@ export async function isDisplayed(selector, displayed = true, timeout = 500) {
       }
       return el !== null;
     } catch (error) {
-      console.log('The isDisplayed:' + selector);
+      console.debug(
+        'Timeout ' +
+          timeout +
+          'ms exceeded. isDisplayed:' +
+          selector +
+          ' displayed:' +
+          displayed
+        // error
+      );
     }
     return false;
   }
@@ -402,13 +425,6 @@ export async function createLocation(
   );
   await confirmLocationCreation.waitForDisplayed();
   await confirmLocationCreation.click();
-}
-
-export async function createTxtFile() {
-  await clickOn('[data-tid=folderContainerOpenDirMenu]');
-  await clickOn('[data-tid=createNewFile]');
-  await clickOn('[data-tid=createTextFileButton]');
-  await waitForNotification();
 }
 
 export async function showDirectories(show = true) {
@@ -637,9 +653,10 @@ export function generateFileName(fileName, fileExt, tags, tagDelimiter = ' ') {
 export async function expectTagsExistBySelector(
   selector,
   arrTagNames,
-  exist = true
+  exist = true,
+  timeout = 500
 ) {
-  const gridElement = await global.client.$(selector);
+  const gridElement = await global.client.waitForSelector(selector);
   await expectTagsExist(gridElement, arrTagNames, exist);
 }
 
@@ -656,19 +673,27 @@ export async function waitForNotification(
   tid = 'notificationTID',
   forceClose = true
 ) {
-  // await global.client.pause(500);
   // await expectElementExist('[data-tid=' + tid + ']', true, 8000);
   // const notificationTID = await global.client.$('[data-tid=' + tid + ']');
-  if (await isDisplayed('[data-tid=' + tid + ']')) {
+  /*if (await isDisplayed('[data-tid=' + tid + ']')) {
     //const closeButton = await global.client.$('[data-tid=close' + tid + ']');
-    if (forceClose && (await isDisplayed('[data-tid=close' + tid + ']'))) {
-      await clickOn('[data-tid=close' + tid + ']', { force: true });
+    let el;
+    try {
+      el = await global.client.waitForSelector('[data-tid=close' + tid + ']', {
+        timeout: 500
+      });
+    } catch (ex) {
+      console.error('waitForSelector [data-tid=' + tid + ']', ex);
+    }
+    if (forceClose && el && el instanceof Object) {
+      // TODO elementHandle.click: : expected object, got string
+      await el.click('[data-tid=close' + tid + ']'); //, { force: true });
     } else {
       // autohide Notification
       await isDisplayed('[data-tid=' + tid + ']', false, 2000);
       // await expectElementExist('[data-tid=' + tid + ']', false, 1000);
     }
-  }
+  }*/
 }
 
 export async function setSettings(selector, click = false) {
@@ -724,28 +749,24 @@ export async function createNewDirectory(dirName = testFolder) {
 }
 
 export async function newHTMLFile() {
-  await clickOn('[data-tid=locationManager]');
-  /*const newFile = await global.client.$('[data-tid=locationManager]');
-  await newFile.waitForDisplayed();
-  await newFile.click();
-  await delay(500);*/
+  await clickOn('[data-tid=folderContainerOpenDirMenu]');
+  await clickOn('[data-tid=createNewFile]');
   await clickOn('[data-tid=createRichTextFileButton]');
-  /*const newNoteFile = await global.client.$(
-    '[data-tid=createRichTextFileButton]'
-  );
-  await newNoteFile.waitForDisplayed();
-  await newNoteFile.click();
-  await delay(500);*/
+  await waitForNotification();
 }
 
 export async function newMDFile() {
-  await clickOn('[data-tid=locationManager]');
+  await clickOn('[data-tid=folderContainerOpenDirMenu]');
+  await clickOn('[data-tid=createNewFile]');
   await clickOn('[data-tid=createMarkdownButton]');
+  await waitForNotification();
 }
 
-export async function newTEXTFile() {
-  await clickOn('[data-tid=locationManager]');
+export async function createTxtFile() {
+  await clickOn('[data-tid=folderContainerOpenDirMenu]');
+  await clickOn('[data-tid=createNewFile]');
   await clickOn('[data-tid=createTextFileButton]');
+  await waitForNotification();
 }
 
 export async function closeOpenedFile() {
@@ -762,9 +783,9 @@ export async function deleteDirectory() {
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
   await clickOn('[data-tid=deleteDirectory]');
   await clickOn('[data-tid=confirmDeleteFileDialog]');
-  if (global.isElectron) {
+  /*if (global.isElectron) {
     await waitForNotification();
-  }
+  }*/
 }
 
 export async function toHaveText() {

@@ -1,11 +1,13 @@
 {
   "appId": "org.tagspaces.desktopapp",
   "asar": true,
+  "includeSubNodeModules": true,
   "files": [
     "dist/",
     "node_modules/",
+    "config/",
+    ".env",
     "app.html",
-    "splash.html",
     "main.prod.js",
     "main.prod.js.map",
     "third-party.txt",

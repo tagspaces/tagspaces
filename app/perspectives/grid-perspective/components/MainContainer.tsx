@@ -28,7 +28,12 @@ import {
   getKeyBindingObject,
   isDesktopMode
 } from '-/reducers/settings';
-import { locationType, sortByCriteria } from '-/utils/misc';
+import {
+  isObj,
+  isVisibleOnScreen,
+  locationType,
+  sortByCriteria
+} from '-/utils/misc';
 import styles from './styles.css';
 import FileMenu from '-/components/menus/FileMenu';
 import DirectoryMenu from '-/components/menus/DirectoryMenu';
@@ -54,7 +59,7 @@ import CellContent from './CellContent';
 import MainToolbar from './MainToolbar';
 import SortingMenu from './SortingMenu';
 import GridOptionsMenu from './GridOptionsMenu';
-import { getLocation } from '-/reducers/locations';
+import { getLocation, getLocations } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-io';
 import { getLocationPath } from '-/utils/paths';
 import GridPagination from '-/perspectives/grid-perspective/components/GridPagination';
@@ -98,6 +103,7 @@ interface Props {
     autohide: boolean
   ) => void;
   currentLocation: TS.Location;
+  locations: Array<TS.Location>;
   isDesktopMode: boolean;
   toggleDeleteMultipleEntriesDialog: () => void;
 }
@@ -151,7 +157,7 @@ const GridPerspective = (props: Props) => {
       : 'openInternal' // openExternal
   );
   const [entrySize, setEntrySize] = useState<string>(
-    settings && settings.entrySize ? settings.entrySize : 'normal' // small, big
+    settings && settings.entrySize ? settings.entrySize : 'small' // small, normal, big
   );
   const [thumbnailMode, setThumbnailMode] = useState<string>(
     settings && settings.thumbnailMode ? settings.thumbnailMode : 'contain' // cover contain
@@ -180,6 +186,10 @@ const GridPerspective = (props: Props) => {
   const [gridPageLimit, setGridPageLimit] = useState<number>(
     settings && settings.gridPageLimit ? settings.gridPageLimit : 100
   );
+
+  useEffect(() => {
+    makeFirstSelectedEntryVisible();
+  }, [props.selectedEntries]);
 
   useEffect(() => {
     const settingsObj = {
@@ -229,7 +239,7 @@ const GridPerspective = (props: Props) => {
     [props.directoryContent, sortBy, orderBy]
   );
 
-  /* const makeFirstSelectedEntryVisible = () => {
+  const makeFirstSelectedEntryVisible = () => {
     const { selectedEntries } = props;
     if (selectedEntries && selectedEntries.length > 0) {
       const firstSelectedElement = document.querySelector(
@@ -243,7 +253,7 @@ const GridPerspective = (props: Props) => {
         firstSelectedElement.scrollIntoView(false);
       }
     }
-  }; */
+  };
 
   const handleLayoutSwitch = (type: string) => {
     setLayoutType(type);
@@ -715,7 +725,7 @@ const GridPerspective = (props: Props) => {
   return (
     <div
       style={{
-        height: 'calc(100% - 51px)'
+        height: 'calc(100% - 48px)'
       }}
     >
       <MainToolbar
@@ -735,7 +745,6 @@ const GridPerspective = (props: Props) => {
         openDeleteFileDialog={openDeleteFileDialog}
         handleSortingMenu={handleSortingMenu}
         handleExportCsvMenu={handleExportCsvMenu}
-        isDesktopMode={props.isDesktopMode}
         openSettings={openSettings}
       />
       <GlobalHotKeys
@@ -832,6 +841,8 @@ const GridPerspective = (props: Props) => {
           isReadOnlyMode={props.isReadOnlyMode}
           selectedFilePath={getSelEntryPath()}
           selectedEntries={props.selectedEntries}
+          currentLocation={props.currentLocation}
+          locations={props.locations}
         />
       )}
       {/* {Boolean(dirContextMenuAnchorEl) && ( // todo move dialogs from DirectoryMenu */}
@@ -848,6 +859,8 @@ const GridPerspective = (props: Props) => {
         openFsEntry={props.openFsEntry}
         isReadOnlyMode={props.isReadOnlyMode}
         perspectiveMode={getSelEntryPath() !== props.currentDirectoryPath}
+        currentLocation={props.currentLocation}
+        locations={props.locations}
       />
       {/* {Boolean(tagContextMenuAnchorEl) && ( // TODO EntryTagMenu is used in TagSelect we cannot move confirm dialog from menu */}
       <EntryTagMenu
@@ -921,6 +934,7 @@ function mapStateToProps(state) {
     selectedEntries: getSelectedEntries(state),
     keyBindings: getKeyBindingObject(state),
     currentLocation: getLocation(state, state.app.currentLocationId),
+    locations: getLocations(state),
     isDesktopMode: isDesktopMode(state),
     isDeleteMultipleEntriesDialogOpened: isDeleteMultipleEntriesDialogOpened(
       state

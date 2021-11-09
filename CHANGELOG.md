@@ -1,5 +1,7 @@
 # Changelog
 
+> Starting from version 4 of the TagSpaces the changelog was moved to the [what's new page](https://www.tagspaces.org/whatsnew/) of the official project website.
+
 ## Version 3.11.6 / 2021.08.31
 
 ### 🎉 New features

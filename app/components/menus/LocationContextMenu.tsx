@@ -31,7 +31,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { actions as LocationActions } from '-/reducers/locations';
-import PlatformIO from '-/services/platform-io';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import i18n from '-/services/i18n';
 import { actions as AppActions } from '-/reducers/app';
@@ -43,13 +42,8 @@ import { locationType } from '-/utils/misc';
 interface Props {
   setEditLocationDialogOpened: (open: boolean) => void;
   setDeleteLocationDialogOpened: (open: boolean) => void;
-  createDirectoryIndex: (
-    path: string,
-    fullTextIndex: boolean,
-    isCurrentLocation: boolean
-  ) => void;
+  createLocationIndex: (location: TS.Location) => void;
   selectedLocation: TS.Location;
-  isCurrentLocation: (uuid: string) => boolean;
   moveLocationUp: (locationId: string) => void;
   moveLocationDown: (locationId: string) => void;
   showInFileManager: (path: string) => void;
@@ -62,34 +56,7 @@ interface Props {
 const LocationContextMenu = (props: Props) => {
   const indexLocation = () => {
     props.setLocationDirectoryContextMenuAnchorEl(null);
-    const { createDirectoryIndex, selectedLocation } = props;
-    /* const isCurrentLocation =
-          selectedLocation &&
-          selectedLocation.uuid &&
-          selectedLocation.uuid === currentLocationId; */
-    const isCurrentLocation =
-      selectedLocation && props.isCurrentLocation(selectedLocation.uuid);
-    if (selectedLocation.type === locationType.TYPE_CLOUD) {
-      PlatformIO.enableObjectStoreSupport(selectedLocation)
-        .then(() => {
-          createDirectoryIndex(
-            getLocationPath(selectedLocation),
-            selectedLocation.fullTextIndex,
-            isCurrentLocation
-          );
-          return true;
-        })
-        .catch(() => {
-          PlatformIO.disableObjectStoreSupport();
-        });
-    } else if (selectedLocation.type === locationType.TYPE_LOCAL) {
-      PlatformIO.disableObjectStoreSupport();
-      createDirectoryIndex(
-        getLocationPath(selectedLocation),
-        selectedLocation.fullTextIndex,
-        isCurrentLocation
-      );
-    }
+    props.createLocationIndex(props.selectedLocation);
   };
 
   const { selectedLocation } = props;
@@ -238,8 +205,7 @@ const LocationContextMenu = (props: Props) => {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      createDirectoryIndex: LocationIndexActions.createDirectoryIndex,
-      isCurrentLocation: AppActions.isCurrentLocation,
+      createLocationIndex: LocationIndexActions.createLocationIndex,
       moveLocationUp: LocationActions.moveLocationUp,
       moveLocationDown: LocationActions.moveLocationDown,
       showInFileManager: AppActions.showInFileManager,

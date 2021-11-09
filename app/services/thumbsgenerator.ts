@@ -32,7 +32,8 @@ import { Pro } from '../pro';
 const maxSize = AppConfig.maxThumbSize;
 const bgColor = AppConfig.thumbBgColor;
 
-const supportedImgs = [
+export const supportedMisc = ['url', 'html'];
+export const supportedImgs = [
   'jpg',
   'jpeg',
   'jif',
@@ -43,8 +44,8 @@ const supportedImgs = [
   'webp',
   'bmp'
 ];
-const supportedContainers = [
-  // 'zip', // disable ZIP tmb generation due to potential performance issues on large files
+export const supportedContainers = [
+  'zip',
   'epub',
   'docx',
   'pptx',
@@ -63,9 +64,10 @@ const supportedContainers = [
   'odp',
   'odg',
   'ods',
-  'odt'
+  'odt',
+  'pdf'
 ];
-const supportedText = [
+export const supportedText = [
   'txt',
   'md',
   'coffee',
@@ -90,7 +92,7 @@ const supportedText = [
   'sql',
   'mhtml'
 ];
-const supportedVideos = ['ogv', 'mp4', 'webm', 'm4v', 'mkv', 'lrv'];
+export const supportedVideos = ['ogv', 'mp4', 'webm', 'm4v', 'mkv', 'lrv'];
 const maxFileSize = 30 * 1024 * 1024;
 
 function saveThumbnailPromise(filePath, dataURL) {

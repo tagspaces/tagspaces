@@ -465,3 +465,29 @@ export function joinPaths(...paths) {
   }
   return result;
 }
+
+// Generates sharing links
+// for files ts:?tslid=53ea7417-6267-4f7c-9c25-dc44aa41f6c8&tsepath=%2FSelect-Dion%5B20210901%5D.jpeg
+// for folders ts:?tslid=53ea7417-6267-4f7c-9c25-dc44aa41f6c8&tsepath=%2FMath
+export function generateSharingLink(
+  locationID: string,
+  entryPath?: string,
+  directoryPath?: string,
+  entryID?: string
+) {
+  const escapedEntryPath = entryPath && encodeURIComponent(entryPath);
+  const escapedDirPath = directoryPath && encodeURIComponent(directoryPath);
+  let tsepath = '';
+  if (escapedEntryPath) {
+    tsepath = '&tsepath=' + escapedEntryPath;
+  }
+  let tsdpath = '';
+  if (escapedDirPath) {
+    tsdpath = '&tsdpath=' + escapedDirPath;
+  }
+  let tseid = '';
+  if (entryID) {
+    tseid = '&tseid=' + entryID;
+  }
+  return 'ts:?tslid=' + locationID + tsepath + tsdpath + tseid;
+}

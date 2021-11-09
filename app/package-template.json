@@ -1,0 +1,10 @@
+{
+  "webDependencies": {
+    "@tagspaces/extensions": "1.0.8"
+  },
+  "nodeDependencies": {
+    "@tagspaces/extensions": "1.0.8",
+    "sharp": "^0.29.2",
+    "@tagspaces/tagspaces-ws": "^1.0.26"
+  }
+}

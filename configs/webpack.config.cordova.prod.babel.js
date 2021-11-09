@@ -10,11 +10,11 @@ import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import merge from 'webpack-merge';
 import TerserPlugin from 'terser-webpack-plugin';
 import baseConfig from './webpack.config.base';
-import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
+// import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 
 const targetPlatform = 'cordova-io'; // electron-io | webdav-io | cordova-io | process.env.APP_TARGET ||
 
-CheckNodeEnv('production');
+// CheckNodeEnv('production');
 export default merge(baseConfig, {
   devtool: 'source-map', // 'inline-source-map',
 

@@ -19,6 +19,8 @@ import fsextra from 'fs-extra';
 import pathLib from 'path';
 import winattr from 'winattr';
 import micromatch from 'micromatch';
+import http from 'http';
+import fetch from 'sync-fetch';
 import {
   extractFileExtension,
   extractFileName,
@@ -35,6 +37,8 @@ import PlatformIO from './platform-io';
 // import TrayIcon3x from '../assets/icons/trayIcon@3x.png';
 import { Pro } from '../pro';
 import { TS } from '-/tagspaces.namespace';
+import Settings from '-/settings';
+import Config from '-/config/config.json';
 
 export default class ElectronIO {
   electron: any;
@@ -108,18 +112,18 @@ export default class ElectronIO {
     this.tsTray.setContextMenu(trayMenu);
   }; */
 
-  isWorkerAvailable = (): boolean =>
-    /* let workerAvailable = false;
+  isWorkerAvailable = (): boolean => {
     try {
-      if (this.workerWindow && this.workerWindow.webContents) {
-        workerAvailable = true;
-      }
-    } catch (err) {
-      console.info('Error by finding if worker is available.');
+      const res = fetch('http://127.0.0.1:' + Settings.wsPort, {
+        method: 'HEAD'
+      });
+      return res.status === 200;
+    } catch (e) {
+      console.debug('isWorkerAvailable:', e);
     }
-    return workerAvailable; */
-
-    this.ipcRenderer.sendSync('is-worker-available', 'notNeededArgument');
+    return false;
+  };
+  // this.ipcRenderer.sendSync('is-worker-available', 'notNeededArgument');
 
   showMainWindow = (): void => {
     this.ipcRenderer.send('show-main-window', 'notNeededArgument');
@@ -154,14 +158,14 @@ export default class ElectronIO {
     // this.win.focus();
   };
 
-  getDevicePaths = (): Object =>
-    this.ipcRenderer.sendSync('get-device-paths', 'notNeededArgument');
+  getDevicePaths = (): Promise<Object> =>
+    this.ipcRenderer.invoke('get-device-paths');
 
-  getUserHomePath = (): string =>
+  /* getUserHomePath = (): string =>
     this.ipcRenderer.sendSync('get-user-home-path', 'notNeededArgument');
 
   getAppDataPath = (): string =>
-    this.ipcRenderer.sendSync('app-data-path-request', 'notNeededArgument');
+    this.ipcRenderer.sendSync('app-data-path-request', 'notNeededArgument'); */
 
   setZoomFactorElectron = (zoomLevel: number) =>
     this.webFrame.setZoomFactor(zoomLevel);
@@ -170,8 +174,8 @@ export default class ElectronIO {
     this.ipcRenderer.send('global-shortcuts-enabled', globalShortcutsEnabled);
   };
 
-  getAppPath = (): string =>
-    this.ipcRenderer.sendSync('app-dir-path-request', 'notNeededArgument');
+  /* getAppPath = (): string =>
+    this.ipcRenderer.sendSync('app-dir-path-request', 'notNeededArgument'); */
 
   createDirectoryTree = (directoryPath: string): Object => {
     console.log('Creating directory index for: ' + directoryPath);
@@ -209,12 +213,57 @@ export default class ElectronIO {
     return generateDirectoryTree(directoryPath);
   };
 
+  postRequest = (payload: string, endpoint: string): Promise<any> =>
+    new Promise((resolve, reject) => {
+      const option = {
+        hostname: '127.0.0.1',
+        port: Settings.wsPort,
+        method: 'POST',
+        path: endpoint,
+        headers: {
+          Authorization: 'Bearer ' + Config.jwt,
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(payload, 'utf8')
+        }
+      };
+      const reqPost = http
+        .request(option, resp => {
+          // .get('http://127.0.0.1:8888/thumb-gen?' + search.toString(), resp => {
+          let data = '';
+
+          // A chunk of data has been received.
+          resp.on('data', chunk => {
+            data += chunk;
+          });
+
+          // The whole response has been received. Print out the result.
+          resp.on('end', () => {
+            // console.log(JSON.parse(data).explanation);
+            resolve(JSON.parse(data));
+          });
+        })
+        .on('error', err => {
+          console.log('Error: ' + err.message);
+          reject(err);
+        });
+      reqPost.write(payload);
+      reqPost.end();
+    });
+
   createDirectoryIndexInWorker = (
     directoryPath: string,
     extractText: boolean,
     ignorePatterns: Array<string>
-  ): Promise<any> =>
-    new Promise((resolve, reject) => {
+  ): Promise<any> => {
+    const payload = JSON.stringify({
+      directoryPath,
+      extractText,
+      ignorePatterns
+    });
+    return this.postRequest(payload, '/indexer');
+  };
+
+  /* new Promise((resolve, reject) => {
       if (this.isWorkerAvailable()) {
         const timestamp = new Date().getTime().toString();
         this.ipcRenderer.send('worker', {
@@ -231,11 +280,36 @@ export default class ElectronIO {
       } else {
         reject('Worker window not available!');
       }
-    });
+    }); */
 
-  createThumbnailsInWorker = (tmbGenerationList: Array<string>): Promise<any> =>
-    new Promise((resolve, reject) => {
-      const tmbGenChannel = 'TMB_GEN_CHANNEL';
+  createThumbnailsInWorker = (
+    tmbGenerationList: Array<string>
+  ): Promise<any> => {
+    // const search = new URLSearchParams(tmbGenerationList.map(s => ['p', s]));
+    const payload = JSON.stringify(tmbGenerationList);
+    return this.postRequest(payload, '/thumb-gen');
+  };
+
+  /* pm2.start(
+        {
+          script: 'generatethumbs.js', // Script to be run
+          cwd: 'app/node_modules/tagspaces-workers', // './process1', cwd: '/path/to/npm/module/',
+          args: ['-p false', ...tmbGenerationList], // '/Users/sytolk/Pictures'],
+          restartAt: []
+          // log: pathLib.join(process.cwd(), 'thumbGen.log') //  'C:\\Users\\smari\\IdeaProjects\\tagspaces-utils\\process1.log'
+          // log: '/Users/sytolk/IdeaProjects/tagspaces-utils/process1.log' // path.join(process.cwd(), 'process1.log'),
+        },
+        (err, pid) => {
+          if (err) {
+            reject(new Error('createThumbnailsInWorker crashed pid=' + pid));
+          }
+        }
+      );
+      pm2.onstopping(() => {
+        console.debug('PM2 stopping');
+        resolve([]);
+      }); */
+  /* const tmbGenChannel = 'TMB_GEN_CHANNEL';
       this.ipcRenderer.removeAllListeners(tmbGenChannel);
       if (this.isWorkerAvailable()) {
         this.ipcRenderer.send('worker', {
@@ -250,13 +324,17 @@ export default class ElectronIO {
         });
       } else {
         reject('Worker window not available!');
-      }
-    });
+      } */
 
+  /**
+   * @param path
+   * @param mode = ['extractTextContent', 'extractThumbPath']
+   * @param ignorePatterns
+   * @param showIgnored
+   */
   listDirectoryPromise = (
     path: string,
-    lite: boolean = true,
-    extractTextContent: boolean = false,
+    mode = ['extractThumbPath'],
     ignorePatterns: Array<string> = [],
     showIgnored: boolean = true
   ): Promise<Array<Object>> =>
@@ -330,7 +408,7 @@ export default class ElectronIO {
               }
 
               // Read tsm.json from sub folders
-              if (!eentry.isFile && !lite) {
+              if (!eentry.isFile && mode.includes('extractThumbPath')) {
                 const folderMetaPath =
                   eentry.path +
                   AppConfig.dirSeparator +
@@ -361,7 +439,7 @@ export default class ElectronIO {
                 }
               }
 
-              const fileName = eentry.name.toLowerCase();
+              /* const fileName = eentry.name.toLowerCase();
               if (
                 extractTextContent &&
                 eentry.isFile &&
@@ -377,7 +455,7 @@ export default class ElectronIO {
                   fileName,
                   fileContent
                 );
-              }
+              } */
 
               if (window.walkCanceled) {
                 resolve(enhancedEntries);
@@ -392,7 +470,7 @@ export default class ElectronIO {
           });
 
           // Read the .ts meta content
-          if (!lite && containsMetaFolder) {
+          if (containsMetaFolder && mode.includes('extractThumbPath')) {
             metaFolderPath = getMetaDirectoryPath(path, AppConfig.dirSeparator);
             this.fs.readdir(metaFolderPath, (err, metaEntries) => {
               if (err) {
@@ -867,32 +945,30 @@ export default class ElectronIO {
     });
   };
 
-  moveToTrash = (files: Array<string>): boolean => {
-    // Promise<any> => {
-
-    const result = this.ipcRenderer.sendSync('move-to-trash', files);
-    return result && result.length > 0;
-    /* const result = [];
+  moveToTrash = (files: Array<string>): Promise<boolean> =>
+    this.ipcRenderer
+      .invoke('move-to-trash', files)
+      .then(result => result && result.length > 0);
+  /* const result = [];
       files.forEach(fullPath => {
         result.push(this.electron.shell.trashItem(fullPath));
       });
       return Promise.all(result); */
 
-    /* if (result) {
+  /* if (result) {
         resolve(true);
       } else {
         reject('Moving of at least one file to trash failed.');
       } */
-  };
 
   openDirectory = (dirPath: string): void => {
-    if (AppConfig.isWin) {
-      this.electron.shell.showItemInFolder(dirPath);
-    } else {
-      this.electron.shell.showItemInFolder(
-        dirPath + AppConfig.dirSeparator + '.'
-      );
-    }
+    // if (AppConfig.isWin) {
+    this.electron.shell.showItemInFolder(dirPath);
+    // } else {
+    //   this.electron.shell.showItemInFolder(
+    //     dirPath + AppConfig.dirSeparator + '.'
+    //   );
+    // }
   };
 
   showInFileManager = (filePath: string): void => {

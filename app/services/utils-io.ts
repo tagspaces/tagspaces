@@ -16,7 +16,15 @@
  *
  */
 
-import uuidv1 from 'uuid';
+import { v1 as uuidv1 } from 'uuid';
+import marked from 'marked';
+import DOMPurify from 'dompurify';
+import {
+  loadIndex,
+  enhanceDirectoryIndex,
+  createIndex,
+  getMetaIndexFilePath
+} from '@tagspaces/tagspaces-platforms/indexer';
 import { saveAs } from 'file-saver';
 import micromatch from 'micromatch';
 import PlatformIO from './platform-io';
@@ -35,11 +43,35 @@ import {
 } from '-/utils/paths';
 import i18n from '../services/i18n';
 import versionMeta from '../version.json';
-import { getThumbnailURLPromise } from '-/services/thumbsgenerator';
+// import { getThumbnailURLPromise } from '-/services/thumbsgenerator';
 import { OpenedEntry, actions as AppActions } from '-/reducers/app';
 import { getLocation } from '-/reducers/locations';
 import { TS } from '-/tagspaces.namespace';
 import { locationType, prepareTagForExport } from '-/utils/misc';
+import {
+  getThumbnailURLPromise,
+  supportedContainers,
+  supportedImgs,
+  supportedText,
+  supportedVideos,
+  supportedMisc
+} from '-/services/thumbsgenerator';
+
+const supportedImgsWS = [
+  'jpg',
+  'jpeg',
+  'jif',
+  'jfif',
+  'png',
+  'gif',
+  'svg',
+  'tif',
+  'tiff',
+  'ico',
+  'webp',
+  'psd'
+  // 'bmp' currently electron main processed: https://github.com/lovell/sharp/issues/806
+];
 
 export function enhanceDirectoryContent(
   dirEntries,
@@ -76,11 +108,25 @@ export function enhanceDirectoryContent(
       enhancedEntry.isFile && // only for files
       useGenerateThumbnails // enabled in the settings
     ) {
-      const isPDF = enhancedEntry.path.endsWith('.pdf');
-      if (isWorkerAvailable && !isPDF) {
+      // const isPDF = enhancedEntry.path.endsWith('.pdf');
+      if (
+        isWorkerAvailable &&
+        supportedImgsWS.includes(enhancedEntry.extension)
+      ) {
+        // !isPDF) {
         tmbGenerationList.push(enhancedEntry.path);
-      } else {
+      } else if (
+        supportedImgs.includes(enhancedEntry.extension) ||
+        supportedContainers.includes(enhancedEntry.extension) ||
+        supportedText.includes(enhancedEntry.extension) ||
+        supportedMisc.includes(enhancedEntry.extension) ||
+        supportedVideos.includes(enhancedEntry.extension)
+      ) {
         tmbGenerationPromises.push(getThumbnailURLPromise(enhancedEntry.path));
+      } else {
+        console.log(
+          'Unsupported thumbgeneration ext:' + enhancedEntry.extension
+        );
       }
     }
     return true;
@@ -155,25 +201,27 @@ export function enhanceOpenedEntry(
   entry: OpenedEntry,
   tagDelimiter
 ): OpenedEntry {
-  const fineNameTags = extractTagsAsObjects(
-    entry.path,
-    tagDelimiter,
-    PlatformIO.getDirSeparator()
-  );
-  if (fineNameTags.length > 0) {
-    if (entry.tags && entry.tags.length > 0) {
-      const uniqueTags = entry.tags.filter(
-        tag => fineNameTags.findIndex(obj => obj.title === tag.title) === -1
-      );
+  if (entry.isFile) {
+    const fineNameTags = extractTagsAsObjects(
+      entry.path,
+      tagDelimiter,
+      PlatformIO.getDirSeparator()
+    );
+    if (fineNameTags.length > 0) {
+      if (entry.tags && entry.tags.length > 0) {
+        const uniqueTags = entry.tags.filter(
+          tag => fineNameTags.findIndex(obj => obj.title === tag.title) === -1
+        );
+        return {
+          ...entry,
+          tags: [...uniqueTags, ...fineNameTags]
+        };
+      }
       return {
         ...entry,
-        tags: [...uniqueTags, ...fineNameTags]
+        tags: fineNameTags
       };
     }
-    return {
-      ...entry,
-      tags: fineNameTags
-    };
   }
   return entry;
 }
@@ -194,6 +242,14 @@ export function prepareDirectoryContent(
   const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
 
   function useGenerateThumbnails() {
+    if (
+      directoryPath.endsWith(AppConfig.dirSeparator + AppConfig.metaFolder) ||
+      directoryPath.endsWith(
+        AppConfig.dirSeparator + AppConfig.metaFolder + AppConfig.dirSeparator
+      )
+    ) {
+      return false; // dont generate thumbnails in meta folder
+    }
     if (AppConfig.useGenerateThumbnails !== undefined) {
       return AppConfig.useGenerateThumbnails;
     }
@@ -241,16 +297,17 @@ export function prepareDirectoryContent(
     );
   }
 
-  if (generateThumbnails) {
-    dispatch(AppActions.setGeneratingThumbnails(false));
+  if (
+    generateThumbnails &&
+    (tmbGenerationList.length > 0 || tmbGenerationPromises.length > 0)
+  ) {
+    dispatch(AppActions.setGeneratingThumbnails(true));
     if (tmbGenerationList.length > 0) {
-      dispatch(AppActions.setGeneratingThumbnails(true));
       PlatformIO.createThumbnailsInWorker(tmbGenerationList)
         .then(handleTmbGenerationResults)
         .catch(handleTmbGenerationFailed);
     }
     if (tmbGenerationPromises.length > 0) {
-      dispatch(AppActions.setGeneratingThumbnails(true));
       Promise.all(tmbGenerationPromises)
         .then(handleTmbGenerationResults)
         .catch(handleTmbGenerationFailed);
@@ -289,7 +346,7 @@ export function findExtensionsForEntry(
     viewingExtensionPath,
     viewingExtensionId: '',
     isFile,
-    changed: false,
+    // changed: false,
     lmdt: 0,
     size: 0
   };
@@ -387,11 +444,49 @@ export function getPrevFile(
   return prevFile;
 }
 
+/**
+ * persistIndex based on location - S3 or Native
+ * @param param
+ * @param directoryIndex
+ */
+function persistIndex(param: string | any, directoryIndex: any) {
+  let directoryPath;
+  if (typeof param === 'object' && param !== null) {
+    directoryPath = param.path;
+  } else {
+    directoryPath = param;
+  }
+  const folderIndexPath = getMetaIndexFilePath(directoryPath);
+  return PlatformIO.saveTextFilePlatform(
+    { ...param, path: folderIndexPath },
+    JSON.stringify(directoryIndex), // relativeIndex),
+    true
+  )
+    .then(() => {
+      console.log(
+        'Index persisted for: ' + directoryPath + ' to ' + folderIndexPath
+      );
+      return true;
+    })
+    .catch(err => {
+      console.error('Error saving the index for ' + folderIndexPath, err);
+    });
+}
+
 export function createDirectoryIndex(
-  directoryPath: string,
+  param: string | any,
   extractText: boolean = false,
-  ignorePatterns: Array<string>
+  ignorePatterns: Array<string> = []
+  // disableIndexing = true
 ): Promise<Array<TS.FileSystemEntry>> {
+  let directoryPath;
+  let locationID;
+  if (typeof param === 'object' && param !== null) {
+    directoryPath = param.path;
+    ({ locationID } = param);
+  } else {
+    directoryPath = param;
+  }
   const dirPath = cleanTrailingDirSeparator(directoryPath);
   if (PlatformIO.isWorkerAvailable() && !PlatformIO.haveObjectStoreSupport()) {
     // Start indexing in worker if not in the object store mode
@@ -399,61 +494,44 @@ export function createDirectoryIndex(
       dirPath,
       extractText,
       ignorePatterns
-    );
+    ).then(succeeded => {
+      if (succeeded) {
+        return loadIndex({ path: dirPath, locationID });
+      }
+      return undefined;
+    });
   }
 
-  const SearchIndex = [];
-
-  // eslint-disable-next-line compat/compat
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      let counter = 0;
-      console.time('createDirectoryIndex');
-      walkDirectory(
-        dirPath,
-        {
-          recursive: true,
-          skipMetaFolder: true,
-          skipDotHiddenFolder: true,
-          extractText
-        },
-        fileEntry => {
-          counter += 1;
-          if (counter > AppConfig.indexerLimit) {
-            console.warn('Walk canceled by ' + AppConfig.indexerLimit);
-            window.walkCanceled = true;
-          }
-          SearchIndex.push(enhanceEntry(fileEntry));
-        },
-        directoryEntry => {
-          if (directoryEntry.name !== AppConfig.metaFolder) {
-            counter += 1;
-            SearchIndex.push(enhanceEntry(directoryEntry));
-          }
-        },
-        ignorePatterns
-      )
-        .then(() => {
-          // entries - can be used for further processing
-          window.walkCanceled = false;
-          console.log(
-            'Directory index created ' +
-              dirPath +
-              ' containing ' +
-              SearchIndex.length
-          );
-          console.timeEnd('createDirectoryIndex');
-          resolve(SearchIndex);
-          return true;
-        })
-        .catch(err => {
-          window.walkCanceled = false;
-          console.timeEnd('createDirectoryIndex');
-          console.warn('Error creating index: ' + err);
-          reject(err);
-        });
-    }, 2000);
-  });
+  let listDirectoryPromise;
+  let loadTextFilePromise;
+  if (PlatformIO.haveObjectStoreSupport()) {
+    listDirectoryPromise = PlatformIO.listObjectStoreDir;
+    // eslint-disable-next-line prefer-destructuring
+    loadTextFilePromise = PlatformIO.loadTextFilePromise;
+  }
+  const mode = ['extractThumbPath'];
+  if (extractText) {
+    mode.push('extractTextContent');
+  }
+  return createIndex(
+    param,
+    mode,
+    ignorePatterns,
+    listDirectoryPromise,
+    loadTextFilePromise
+  )
+    .then(directoryIndex =>
+      persistIndex(param, directoryIndex).then(success => {
+        if (success) {
+          console.log('Index generated in folder: ' + directoryPath);
+          return enhanceDirectoryIndex(param, directoryIndex, locationID);
+        }
+        return undefined;
+      })
+    )
+    .catch(err => {
+      console.error('Error creating index: ', err);
+    });
 }
 
 export function walkDirectory(
@@ -472,11 +550,10 @@ export function walkDirectory(
     skipDotHiddenFolder: false,
     skipDotHiddenFiles: false,
     loadMetaDate: true,
-    extractText: false,
     ...options
   };
   return (
-    PlatformIO.listDirectoryPromise(path, false, mergedOptions.extractText)
+    PlatformIO.listDirectoryPromise(path, [])
       // @ts-ignore
       .then(entries => {
         if (window.walkCanceled || entries === undefined) {
@@ -636,7 +713,7 @@ export async function loadSubFolders(
   path: string,
   loadHidden: boolean = false
 ) {
-  const folderContent = await PlatformIO.listDirectoryPromise(path, true);
+  const folderContent = await PlatformIO.listDirectoryPromise(path, []); // 'extractThumbPath']);
   const subfolders = [];
   let i = 0;
   let isHidden = false;
@@ -807,6 +884,7 @@ export function loadMetaDataPromise(
         );
         return loadJSONFile(metaFilePath).then(metaData => ({
           ...metaData,
+          isFile: true,
           description: metaData.description || '',
           color: metaData.color || '',
           tags: metaData.tags || [],
@@ -822,6 +900,7 @@ export function loadMetaDataPromise(
       return loadJSONFile(metaFilePath).then(metaData => ({
         ...metaData,
         id: metaData.id || uuidv1(),
+        isFile: false,
         description: metaData.description || '',
         color: metaData.color || '',
         perspective: metaData.perspective || '',
@@ -992,26 +1071,32 @@ export function setFolderThumbnailPromise(filePath: string): Promise<string> {
   ).then(() => directoryPath);
 }
 
-export function findColorForFileEntry(
-  fileExtension: string,
-  isFile: boolean,
+export function findBackgroundColorForFolder(fsEntry: TS.FileSystemEntry) {
+  if (!fsEntry.isFile) {
+    if (fsEntry.color) {
+      return fsEntry.color;
+    }
+  }
+  return 'transparent';
+}
+
+export function findColorForEntry(
+  fsEntry: TS.FileSystemEntry,
   supportedFileTypes: Array<any>
 ): string {
-  if (!isFile) {
+  if (!fsEntry.isFile) {
     return AppConfig.defaultFolderColor;
   }
-  let color = AppConfig.defaultFileColor;
-  if (fileExtension !== undefined) {
-    supportedFileTypes.map(fileType => {
-      if (fileType.type.toLowerCase() === fileExtension.toLowerCase()) {
-        if (fileType.color) {
-          color = fileType.color;
-        }
-      }
-      return true;
-    });
+  if (fsEntry.extension !== undefined) {
+    const fileType = supportedFileTypes.find(
+      type => type.type.toLowerCase() === fsEntry.extension.toLowerCase()
+    );
+
+    if (fileType && fileType.color) {
+      return fileType.color;
+    }
   }
-  return color;
+  return AppConfig.defaultFileColor;
 }
 
 export function loadFileContentPromise(
@@ -1033,4 +1118,13 @@ export function loadFileContentPromise(
     };
     xhr.send();
   });
+}
+
+export function removeMarkDown(mdContent) {
+  if (!mdContent) return '';
+  let result = marked(DOMPurify.sanitize(mdContent));
+  const span = document.createElement('span');
+  span.innerHTML = result;
+  result = span.textContent || span.innerText;
+  return result;
 }

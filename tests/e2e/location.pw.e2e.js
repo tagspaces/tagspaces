@@ -7,7 +7,12 @@ import {
   createPwMinioLocation,
   createPwLocation
 } from './location.helpers';
-import { clickOn, expectElementExist, setInputKeys } from './general.helpers';
+import {
+  clickOn,
+  expectElementExist,
+  setInputKeys,
+  takeScreenshot
+} from './general.helpers';
 import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
 
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
@@ -44,7 +49,12 @@ describe('TST03 - Testing locations:', () => {
     // const lastLocation = allLocations[allLocations.length - 1];
     // const lastLocationNameInDom = (await global.client.elementIdText(lastLocation.ELEMENT)).value;
     // const addedLocation = await global.client.getText('//button[contains(., "' + testTagName + '")]');
-    await expectElementExist('[data-tid=location_' + testLocationName + ']');
+    await takeScreenshot('TST0301 Should create a location');
+    await expectElementExist(
+      '[data-tid=location_' + testLocationName + ']',
+      true,
+      1500
+    );
   });
 
   it('TST0302 - Should remove a location [web,electron]', async () => {
@@ -107,6 +117,9 @@ describe('TST03 - Testing locations:', () => {
 
   it('TST0307 - Move location Up and Down [web,electron]', async () => {
     if (global.isWeb) {
+      await takeScreenshot(
+        'TST0307 Move location Up and Down before create dummyLocation'
+      );
       // in web there is no other locations
       await createPwMinioLocation('', 'dummyLocation', false);
     }

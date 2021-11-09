@@ -63,10 +63,13 @@ export async function getPropertiesFileName() {
   let fileName;
 
   if (global.isPlaywright) {
-    fileName = await global.client.getAttribute(
+    fileName = await global.client.inputValue(
+      '[data-tid=fileNameProperties] input'
+    ); // https://github.com/microsoft/playwright/issues/3265
+    /*.getAttribute(
       '[data-tid=fileNameProperties] input',
       'value'
-    ); // .inputValue(); https://github.com/microsoft/playwright/issues/3265
+    ); */
   } else {
     const propsFileNameInput = await global.client.$(
       '[data-tid=fileNameProperties] input'

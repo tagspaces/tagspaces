@@ -216,11 +216,12 @@ const actions = {
         };
         if (AppConfig.isWeb && PlatformIO.isMinio()) {
           reader.readAsBinaryString(file);
-        } /* else if (AppConfig.isCordova) {
-          reader.readAsDataURL(file);
-        } */ else {
+        } else {
           reader.readAsArrayBuffer(file);
         }
+        /* else if (AppConfig.isCordova) {
+          reader.readAsDataURL(file);
+        } */
       }
 
       async function readerLoaded(event, index, fileTargetPath) {

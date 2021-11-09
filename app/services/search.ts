@@ -18,8 +18,9 @@
  */
 
 import Fuse from 'fuse.js';
-import jmespath from 'jmespath';
+import jmespath from '@gorillastack/jmespath';
 import OpenLocationCode from 'open-location-code-typescript';
+import i18n from 'i18next';
 import { isGeoTag, parseGeoLocation } from '-/utils/misc';
 import { extractTimePeriod } from '-/utils/dates';
 import { Pro } from '../pro';
@@ -297,8 +298,11 @@ export default class Search {
     locationContent: Array<TS.FileSystemEntry>,
     searchQuery: TS.SearchQuery
   ): Promise<Array<TS.FileSystemEntry> | []> =>
-    new Promise(resolve => {
+    new Promise((resolve, reject) => {
       console.time('searchtime');
+      if (!locationContent || locationContent.length === 0) {
+        reject(new Error(i18n.t('core:noIndex')));
+      }
       const jmespathQuery = constructjmespathQuery(searchQuery);
       let results = prepareIndex(
         locationContent,

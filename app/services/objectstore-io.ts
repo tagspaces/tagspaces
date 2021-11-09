@@ -15,6 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
+/*
 
 import uuidv1 from 'uuid';
 import { ManagedUpload } from 'aws-sdk/clients/s3';
@@ -41,7 +42,7 @@ export default class ObjectStoreIO {
     new Promise((resolve, reject) => {
       this.config = objectStoreConfig; // s3Config switch
 
-      import(/* webpackChunkName: "AWS" */ 'aws-sdk')
+      import(/!* webpackChunkName: "AWS" *!/ 'aws-sdk')
         .then(({ default: AWS }) => {
           const advancedMode =
             this.config.endpointURL && this.config.endpointURL.length > 7;
@@ -195,7 +196,7 @@ export default class ObjectStoreIO {
       };
       this.objectStore.listObjectsV2(params, (error, data) => {
         // console.warn(data);
-        /* data = {
+        /!* data = {
         Contents: [
            {
           ETag: "\"70ee1738b6b21\"",
@@ -211,7 +212,7 @@ export default class ObjectStoreIO {
         ],
         NextMarker: "eyJNYXJrZXIiOiBudWxsLCAiYm90b190cnVuY2F0ZV9hbW91bnQiOiAyfQ=="
        }
-       */
+       *!/
         if (error) {
           console.warn('Error listing directory ' + path);
           resolve(enhancedEntries); // returning results even if any promise fails
@@ -405,7 +406,7 @@ export default class ObjectStoreIO {
             );
             return;
           }
-          /*
+          /!*
         data = {
           "AcceptRanges":"bytes",
           "LastModified":"2018-10-22T12:57:16.000Z",
@@ -415,7 +416,7 @@ export default class ObjectStoreIO {
           "ServerSideEncryption":"AES256",
           "Metadata":{}
         }
-        */
+        *!/
           // console.log('Properties: ' + path + ' - ' + JSON.stringify(data));
           const isFile = !normalizedPath.endsWith('/');
           resolve({
@@ -445,13 +446,13 @@ export default class ObjectStoreIO {
     isPreview?: boolean
   ): Promise<string> => this.getFileContentPromise(filePath, 'text', isPreview);
 
-  /**
+  /!**
    * Use only for files (will not work for dirs)
    * @param filePath
    * @param type
    * @param isPreview
    * @returns {Promise<any>}
-   */
+   *!/
   getFileContentPromise = async (
     filePath: string,
     type: string,
@@ -498,9 +499,9 @@ export default class ObjectStoreIO {
     return result;
   };
 
-  /**
+  /!**
    * Persists a given content(binary supported) to a specified filepath (tested)
-   */
+   *!/
   saveFilePromise = (
     filePath: string,
     content: string,
@@ -565,9 +566,9 @@ export default class ObjectStoreIO {
         .catch(err => reject(err));
     });
 
-  /**
+  /!**
    * Persists a given text content to a specified filepath (tested)
-   */
+   *!/
   saveTextFilePromise(
     filePath: string,
     content: string,
@@ -580,18 +581,18 @@ export default class ObjectStoreIO {
 
   normalizeRootPath(filePath: string) {
     filePath = filePath.replace(new RegExp('//+', 'g'), '/');
-    /* if(filePath.indexOf(AppConfig.dirSeparator) === 0){
+    /!* if(filePath.indexOf(AppConfig.dirSeparator) === 0){
       filePath = filePath.substr(AppConfig.dirSeparator.length);
-    } */
+    } *!/
     if (filePath.indexOf('/') === 0) {
       filePath = filePath.substr(1);
     }
     return decodeURIComponent(filePath);
   }
 
-  /**
+  /!**
    * Persists a given binary content to a specified filepath (tested)
-   */
+   *!/
   saveBinaryFilePromise(
     filePath: string,
     content: string,
@@ -663,10 +664,10 @@ export default class ObjectStoreIO {
     });
   }
 
-  /**
+  /!**
    * Creates a directory. S3 does not have folders or files; it has buckets and objects. Buckets are used to store objects (tested)
    * dirPath = newDirectory/
-   */
+   *!/
   createDirectoryPromise = (dirPath: string): Promise<Object> => {
     // eslint-disable-next-line no-param-reassign
     dirPath = normalizePath(this.normalizeRootPath(dirPath)) + '/';
@@ -693,9 +694,9 @@ export default class ObjectStoreIO {
       });
   };
 
-  /**
+  /!**
    * Copies a given file to a specified location (tested)
-   */
+   *!/
   copyFilePromise = (
     filePath: string,
     newFilePath: string
@@ -717,10 +718,10 @@ export default class ObjectStoreIO {
       .promise();
   };
 
-  /**
+  /!**
    * Renames a given file (tested)
    * TODO for web minio copyObject -> The request signature we calculated does not match the signature you provided. Check your key and signing method.
-   */
+   *!/
   renameFilePromise = (
     filePath: string,
     newFilePath: string
@@ -761,9 +762,9 @@ export default class ObjectStoreIO {
     });
   };
 
-  /**
+  /!**
    * Rename a directory
-   */
+   *!/
   renameDirectoryPromise = async (
     dirPath: string,
     newDirectoryPath: string
@@ -821,9 +822,9 @@ export default class ObjectStoreIO {
     return Promise.reject('No directory exist:' + dirPath);
   };
 
-  /**
+  /!**
    * Delete a specified file
-   */
+   *!/
   deleteFilePromise = (path: string): Promise<Object> =>
     this.objectStore
       .deleteObject({
@@ -832,9 +833,9 @@ export default class ObjectStoreIO {
       })
       .promise();
 
-  /**
+  /!**
    * Delete a specified directory
-   */
+   *!/
   deleteDirectoryPromise = async (path: string): Promise<Object> => {
     const prefixes = await this.getDirectoryPrefixes(path);
 
@@ -854,10 +855,10 @@ export default class ObjectStoreIO {
       .promise();
   };
 
-  /**
+  /!**
    * get recursively all aws directory prefixes
    * @param path
-   */
+   *!/
   getDirectoryPrefixes = async (path: string): Promise<any[]> => {
     const prefixes = [];
     const promises = [];
@@ -893,42 +894,43 @@ export default class ObjectStoreIO {
     return prefixes;
   };
 
-  /**
+  /!**
    * Choosing directory
-   */
+   *!/
   selectDirectoryDialog = () => {
     console.log('Selecting directory is not implemented in the s3 version');
   };
 
-  /**
+  /!**
    * Choosing file
-   */
+   *!/
   selectFileDialog = () => {
     console.log('Selecting file not relevant for the s3 version');
   };
 
-  /**
+  /!**
    * Opens directory in new tab / window
-   */
+   *!/
   openDirectory = (dirPath: string) => {
     console.log(
       'Opening directory ' + dirPath + ' not possible for the s3 version.'
     );
   };
 
-  /**
+  /!**
    * Open the file url in a new tab / window
-   */
+   *!/
   openFile = (filePath: string): void => {
     console.log('Open file in new tab not supported yet');
     // const url = this.getURLforPath(filePath);
     // window.open(url, '_blank');
   };
 
-  /**
+  /!**
    * Places the application window on top of the other windows
-   */
+   *!/
   focusWindow = (): void => {
     window.focus();
   };
 }
+*/

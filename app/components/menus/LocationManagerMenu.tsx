@@ -26,6 +26,7 @@ import ExportImportIcon from '@material-ui/icons/SwapHoriz';
 import OpenLinkIcon from '@material-ui/icons/Link';
 import HelpIcon from '@material-ui/icons/Help';
 import CloseIcon from '@material-ui/icons/Close';
+import UpdateIndexIcon from '@material-ui/icons/Update';
 import classNames from 'classnames';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
@@ -38,6 +39,7 @@ import { Pro } from '../../pro';
 import { actions as AppActions } from '-/reducers/app';
 import Links from '-/links';
 import { ProLabel } from '-/components/HelperComponents';
+import { actions as LocationIndexActions } from '-/reducers/location-index';
 
 interface Props {
   classes: any;
@@ -47,6 +49,7 @@ interface Props {
   toggleOpenLinkDialog: () => void;
   closeAllLocations: () => void;
   openURLExternally: (url: string, skipConfirmation?: boolean) => void;
+  createLocationsIndexes: () => void;
 }
 
 const LocationManagerMenu = (props: Props) => {
@@ -158,6 +161,22 @@ const LocationManagerMenu = (props: Props) => {
 
   menuItems.push(
     <MenuItem
+      key="updateAllLocationIndexes"
+      data-tid="updateAllLocationIndexes"
+      onClick={() => {
+        setLocationManagerMenuAnchorEl(null);
+        props.createLocationsIndexes();
+      }}
+    >
+      <ListItemIcon>
+        <UpdateIndexIcon />
+      </ListItemIcon>
+      <ListItemText primary={i18n.t('core:updateAllLocationIndexes')} />
+    </MenuItem>
+  );
+
+  menuItems.push(
+    <MenuItem
       key="locationManagerMenuHelp"
       data-tid="locationManagerMenuHelp"
       onClick={() => {
@@ -204,7 +223,8 @@ const LocationManagerMenu = (props: Props) => {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      closeAllLocations: AppActions.closeAllLocations
+      closeAllLocations: AppActions.closeAllLocations,
+      createLocationsIndexes: LocationIndexActions.createLocationsIndexes
     },
     dispatch
   );

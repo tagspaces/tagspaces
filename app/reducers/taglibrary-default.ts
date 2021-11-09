@@ -16,8 +16,7 @@
  *
  */
 
-// import AppConfig from '../config';
-import uuidv1 from 'uuid';
+import { v1 as uuidv1 } from 'uuid';
 
 export default [
   {

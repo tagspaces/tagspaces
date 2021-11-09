@@ -417,7 +417,7 @@ export default class CordovaIO {
 
   // Platform API
 
-  getDevicePaths = (): Object => {
+  getDevicePaths = (): Promise<Object> => {
     let paths;
     if (AppConfig.isCordovaiOS) {
       paths = {
@@ -434,15 +434,15 @@ export default class CordovaIO {
         SDCard: 'sdcard/' // cordova.file.externalRootDirectory
       };
     }
-    return paths;
+    return Promise.resolve(paths);
   };
 
-  getUserHomePath = (): string => '/';
+  /* getUserHomePath = (): string => '/';
 
   getAppDataPath = () => {
     // const appDataPath = ipcRenderer.sendSync('app-data-path-request', 'notNeededArgument');
     // return appDataPath;
-  };
+  }; */
 
   handleStartParameters = () => {
     if (this.urlFromIntent !== undefined && this.urlFromIntent.length > 0) {
@@ -504,10 +504,13 @@ export default class CordovaIO {
   /**
    * Creates a list with containing the files and the sub directories of a given directory
    */
-  listDirectoryPromise = (path: string, lite: boolean): Promise<any> =>
+  listDirectoryPromise = (
+    path: string,
+    mode = ['extractThumbPath']
+  ): Promise<any> =>
     new Promise(async (resolve, reject) => {
       console.time('listDirectoryPromise');
-      const metaContent = !lite
+      const metaContent = mode.includes('extractThumbPath')
         ? await this.listMetaDirectoryPromise(path)
         : [];
 
@@ -539,7 +542,7 @@ export default class CordovaIO {
                     });
                   }
 
-                  if (!lite) {
+                  if (mode.includes('extractThumbPath')) {
                     if (entry.isDirectory) {
                       // Read tsm.json from subfolders
                       if (

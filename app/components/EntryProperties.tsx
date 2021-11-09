@@ -18,7 +18,7 @@
 
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
-import uuidv1 from 'uuid';
+import { v1 as uuidv1 } from 'uuid';
 import marked from 'marked';
 import L from 'leaflet';
 import classNames from 'classnames';
@@ -66,7 +66,8 @@ import {
   getThumbFileLocationForFile,
   getThumbFileLocationForDirectory,
   extractFileName,
-  extractDirectoryName
+  extractDirectoryName,
+  generateSharingLink
 } from '-/utils/paths';
 import AppConfig from '../config';
 import { Pro } from '../pro';
@@ -144,11 +145,7 @@ const styles: any = (theme: any) => ({
   button: {
     position: 'relative',
     padding: '8px 12px 6px 8px',
-    margin: '0 10px 0 0',
-    cursor: 'pointer'
-  },
-  buttonIcon: {
-    cursor: 'pointer'
+    margin: '0'
   },
   fluidGrid: {
     width: '100%',
@@ -341,10 +338,7 @@ const EntryProperties = (props: Props) => {
       Pro.MetaOperations.saveDescription(currentEntry.path, editDescription)
         .then(entryMeta => {
           setEditDescription(undefined);
-          props.updateOpenedFile(currentEntry.path, {
-            ...entryMeta,
-            changed: true
-          });
+          props.updateOpenedFile(currentEntry.path, entryMeta);
           return true;
         })
         .catch(error => {
@@ -432,10 +426,7 @@ const EntryProperties = (props: Props) => {
     Pro.MetaOperations.saveColor(currentEntry.path, color)
       .then(entryMeta => {
         // if (props.entryPath === props.currentDirectoryPath) {
-        props.updateOpenedFile(currentEntry.path, {
-          ...entryMeta,
-          changed: true
-        });
+        props.updateOpenedFile(currentEntry.path, entryMeta);
         /* } else {
           setCurrentEntry({ ...currentEntry, color });
         } */
@@ -470,7 +461,7 @@ const EntryProperties = (props: Props) => {
       if (!value) {
         // no tags left in the select element
         props.removeAllTags([currentEntry.path]); // TODO return promise
-        props.updateOpenedFile(currentEntry.path, { tags: [], changed: true });
+        props.updateOpenedFile(currentEntry.path, { tags: [] });
       } else {
         props.removeTags([currentEntry.path], value);
       }
@@ -528,10 +519,7 @@ const EntryProperties = (props: Props) => {
     const perspective = event.target.value;
     savePerspective(currentEntry.path, perspective)
       .then((entryMeta: TS.FileSystemEntryMeta) => {
-        props.updateOpenedFile(currentEntry.path, {
-          ...entryMeta,
-          changed: true
-        });
+        props.updateOpenedFile(currentEntry.path, entryMeta);
         return true;
       })
       .catch(error => {
@@ -601,12 +589,20 @@ const EntryProperties = (props: Props) => {
 
   const geoLocation: any = getGeoLocation(currentEntry.tags);
 
-  let sharingLink = window.location.href;
-  if (sharingLink.indexOf('?') > 0) {
-    const sharingURL = new URL(sharingLink);
+  let sharingLink = '';
+  if (window.location.href.indexOf('?') > 0) {
+    const sharingURL = new URL(window.location.href);
     const params = new URLSearchParams(sharingURL.search);
-    params.delete('tsdpath');
-    sharingLink = 'ts:?' + params;
+    if (params.has('tslid')) {
+      const locationId = params.get('tslid');
+      if (currentEntry.isFile && params.has('tsepath')) {
+        const entryPath = params.get('tsepath');
+        sharingLink = generateSharingLink(locationId, entryPath);
+      } else if (currentEntry.isFile && params.has('tsepath')) {
+        const dirPath = params.get('tsdpath');
+        sharingLink = generateSharingLink(locationId, undefined, dirPath);
+      }
+    }
   }
 
   const isCloudLocation = currentEntry.url && currentEntry.url.length > 5;

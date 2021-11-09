@@ -77,6 +77,72 @@ export function prepareTagForExport(tag: TS.Tag): TS.Tag {
   return preparedTag;
 }
 
+export function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+
+export function parseTextQuery(textQuery: string, identifier: string) {
+  const extractedTags = [];
+  let query = textQuery;
+  if (query && query.length > 0) {
+    query = query
+      .trim()
+      .replace(new RegExp(escapeRegExp(identifier) + '\\s+', 'g'), identifier);
+    const textQueryParts = query.split(' ');
+    if (textQueryParts) {
+      // && textQueryParts.length > 1) {
+      textQueryParts.forEach(part => {
+        const trimmedPart = part.trim();
+        if (trimmedPart.startsWith(identifier)) {
+          const tagTitle = trimmedPart.substr(1).trim();
+          extractedTags.push({
+            title: tagTitle
+          });
+        }
+      });
+    }
+  }
+  return extractedTags;
+}
+
+export function removeAllTagsFromQuery(query: string) {
+  if (query) {
+    return query.replace(/([+-?]\S+)/g, '').trim();
+  }
+  return '';
+}
+
+export function mergeWithExtractedTags(
+  textQuery: string,
+  tags: Array<TS.Tag>,
+  identifier: string
+) {
+  const extractedTags = parseTextQuery(textQuery, identifier);
+  if (tags) {
+    if (extractedTags.length > 0) {
+      return getUniqueTags(tags, extractedTags);
+    }
+    return tags;
+  }
+  if (extractedTags.length > 0) {
+    return extractedTags;
+  }
+  return undefined;
+}
+
+function getUniqueTags(tags1: Array<TS.Tag>, tags2: Array<TS.Tag>) {
+  const mergedArray = [...tags1, ...tags2];
+  // mergedArray have duplicates, lets remove the duplicates using Set
+  const set = new Set();
+  return mergedArray.filter(tag => {
+    if (!set.has(tag.title)) {
+      set.add(tag.title);
+      return true;
+    }
+    return false;
+  }, set);
+}
+
 export function parseGeoLocation(code: string): any {
   if (isPlusCode(code)) {
     const coord = OpenLocationCode.decode(code);
@@ -407,16 +473,18 @@ export function formatDateTime(date: string | number, includeTime: boolean) {
   if (includeTime) {
     time = ' - ' + cHour + ':' + cMinute + ':' + cSecond;
   }
-  return cYear + '.' + cMonth + '.' + cDate + time;
+  return cYear + '-' + cMonth + '-' + cDate + time;
 }
 
-/** Convert a date in the following format 20191204 or 20191204~124532 */
+/** Convert a date in the following format 20191204 or 20191204T124532
+ * https://en.wikipedia.org/wiki/ISO_8601
+ */
 export function formatDateTime4Tag(
   date: string | Date,
   includeTime: boolean,
   includeMS?: boolean
 ): string {
-  if (date === undefined || date === '') {
+  if (date === undefined || date === '' || date.toString() === 'Invalid Date') {
     return '';
   }
   const d = new Date(date);
@@ -449,12 +517,12 @@ export function formatDateTime4Tag(
     if (cSecond.length === 1) {
       cSecond = '0' + cSecond;
     }
-    time = '~' + cHour + '' + cMinute + '' + cSecond; // TODO fix Chrome transforms ~ to _
+    time = 'T' + cHour + '' + cMinute + '' + cSecond;
   }
 
   let milliseconds = '';
   if (includeMS) {
-    milliseconds = '~' + d.getMilliseconds();
+    milliseconds = '.' + d.getMilliseconds();
   }
   return cYear + '' + cMonth + '' + cDate + time + milliseconds;
 }

@@ -17,7 +17,6 @@
  */
 
 import React from 'react';
-import removeMd from 'remove-markdown';
 import classNames from 'classnames';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -31,12 +30,16 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { formatFileSize, formatDateTime } from '-/utils/misc';
 import { extractTagsAsObjects, extractTitle } from '-/utils/paths';
-import { findColorForFileEntry } from '-/services/utils-io';
+import {
+  findBackgroundColorForFolder,
+  findColorForEntry,
+  removeMarkDown
+} from '-/services/utils-io';
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagContainer from '-/components/TagContainer';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-io';
-import { AppConfig } from '-/config';
+import AppConfig from '-/config';
 import EntryIcon from '-/components/EntryIcon';
 import { TS } from '-/tagspaces.namespace';
 import TaggingActions from '-/reducers/tagging-actions';
@@ -67,6 +70,7 @@ interface Props {
   handleGridCellDblClick: (event: Object, fsEntry: TS.FileSystemEntry) => void;
   handleGridCellClick: (event: Object, fsEntry: TS.FileSystemEntry) => void;
   editTagForEntry?: (path: string, tag: TS.Tag) => void;
+  reorderTags: boolean;
 }
 
 const CellContent = (props: Props) => {
@@ -99,9 +103,10 @@ const CellContent = (props: Props) => {
     PlatformIO.getDirSeparator()
   );
 
-  let description = removeMd(fsEntry.description);
+  let { description } = fsEntry;
 
-  if (description.length > maxDescriptionPreviewLength) {
+  description = removeMarkDown(description);
+  if (description && description.length > maxDescriptionPreviewLength) {
     description = description.substr(0, maxDescriptionPreviewLength) + '...';
   }
 
@@ -109,17 +114,17 @@ const CellContent = (props: Props) => {
     description = ' | ' + description;
   }
 
-  const fsEntryColor = findColorForFileEntry(
-    fsEntry.extension,
-    fsEntry.isFile,
-    supportedFileTypes
-  );
+  const fsEntryColor = findColorForEntry(fsEntry, supportedFileTypes);
+  const fsEntryBgColor = findBackgroundColorForFolder(fsEntry);
 
-  const fileNameTags = extractTagsAsObjects(
-    fsEntry.name,
-    AppConfig.tagDelimiter,
-    PlatformIO.getDirSeparator()
-  );
+  let fileNameTags = [];
+  if (fsEntry.isFile) {
+    fileNameTags = extractTagsAsObjects(
+      fsEntry.name,
+      AppConfig.tagDelimiter,
+      PlatformIO.getDirSeparator()
+    );
+  }
 
   const fsEntryTags = fsEntry.tags ? fsEntry.tags : [];
   const sideCarTagsTitles = fsEntryTags.map(tag => tag.title);
@@ -147,6 +152,7 @@ const CellContent = (props: Props) => {
     return (
       <div
         style={{
+          backgroundColor: fsEntryBgColor,
           opacity: fsEntry.isIgnored ? 0.3 : 1
         }}
       >
@@ -180,7 +186,7 @@ const CellContent = (props: Props) => {
           <div id="gridCellTags" className={classes.gridCellTags}>
             {showTags && entryTags ? renderTags(entryTags) : tagPlaceholder}
           </div>
-          {description.length > 0 && (
+          {description && (
             <Typography
               id="gridCellDescription"
               className={classes.gridCellDescription}
@@ -351,6 +357,8 @@ const CellContent = (props: Props) => {
               loading="lazy"
               style={{
                 objectFit: thumbnailMode,
+                paddingRight: 4,
+                paddingTop: 4,
                 height: tmbSize,
                 width: tmbSize
               }}
@@ -384,6 +392,7 @@ const CellContent = (props: Props) => {
           handleTagMenu={handleTagMenu}
           selectedEntries={selectedEntries}
           editTagForEntry={props.editTagForEntry}
+          reorderTags={props.reorderTags}
         />
       );
 
@@ -438,6 +447,12 @@ const CellContent = (props: Props) => {
   );
 };
 
+function mapStateToProps(state) {
+  return {
+    reorderTags: state.settings.reorderTags
+  };
+}
+
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
@@ -447,4 +462,4 @@ function mapActionCreatorsToProps(dispatch) {
   );
 }
 
-export default connect(undefined, mapActionCreatorsToProps)(CellContent);
+export default connect(mapStateToProps, mapActionCreatorsToProps)(CellContent);

@@ -28,7 +28,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
-import uuidv1 from 'uuid';
+import { v1 as uuidv1 } from 'uuid';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
 import ConfirmDialog from '../ConfirmDialog';
 import SettingsGeneral from '../settings/SettingsGeneral';

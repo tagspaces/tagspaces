@@ -30,7 +30,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import i18n from '-/services/i18n';
 import { getMaxSearchResults } from '-/reducers/settings';
-import { actions as AppActions, getSelectedEntries } from '-/reducers/app';
+import { getSelectedEntries } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import TaggingActions from '-/reducers/tagging-actions';
 
@@ -42,8 +42,7 @@ interface Props {
   open?: boolean;
   onClose: () => void;
   selectedTag?: TS.Tag;
-  searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
-  openSearchPanel: () => void;
+  setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   showEditTagDialog: () => void;
   showDeleteTagDialog: () => void;
   maxSearchResults: number;
@@ -58,8 +57,8 @@ interface Props {
 const TagMenu = (props: Props) => {
   function showFilesWithThisTag() {
     if (props.selectedTag) {
-      props.openSearchPanel();
-      props.searchLocationIndex({
+      // props.openSearchPanel();
+      props.setSearchQuery({
         tagsAND: [props.selectedTag],
         maxSearchResults: props.maxSearchResults
       });
@@ -134,8 +133,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      openSearchPanel: AppActions.openSearchPanel,
-      searchLocationIndex: LocationIndexActions.searchLocationIndex,
+      setSearchQuery: LocationIndexActions.setSearchQuery,
       addTags: TaggingActions.addTags
     },
     dispatch
