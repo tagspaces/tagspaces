@@ -3389,7 +3389,7 @@
   dependencies:
     defer-to-connect "^1.0.1"
 
-"@tagspaces/tagspaces-platforms@^1.0.56":
+"@tagspaces/tagspaces-platforms@1.0.56":
   version "1.0.56"
   resolved "https://registry.yarnpkg.com/@tagspaces/tagspaces-platforms/-/tagspaces-platforms-1.0.56.tgz#f78b4610120a196429de7a959986bd390a687079"
   integrity sha512-Xk1zZSOcAAHHuKW6PC8uCLvCHYM3yn//ybMP9J+nXAlBGXrnbfVTDv2lYJXyNKfsnxIKXCKucAE8YDFS02JO/Q==
