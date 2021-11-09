@@ -421,29 +421,18 @@ export const actions = {
         .then(searchResults => {
           if (isCloudLocation) {
             searchResults.forEach((entry: TS.FileSystemEntry) => {
-              if (
+              /* if (
                 entry.thumbPath &&
-                entry.thumbPath.length > 1 // &&
-                // !entry.thumbPath.startsWith('http')
-              ) {
-                /* let pathInLocation = '';
-                if (currentLocation.path) {
-                  /!* const pathLocationArr = currentLocation.path
-                    .split('/')
-                    .filter(el => el); *!/
-                  const pathArr = entry.path
-                    .split('/')
-                    .filter(el => el);
-                  pathInLocation = pathArr.join('/');
-                    // pathLocationArr.join('/') + '/' + pathArr.join('/');
-                } else {
-                  pathInLocation = entry.thumbPath;
-                } */
-                // eslint-disable-next-line no-param-reassign
-                entry.thumbPath = PlatformIO.getURLforPath(
-                  getThumbFileLocationForFile(entry.path, '/')
-                );
-              }
+                entry.thumbPath.length > 1 &&
+                !entry.thumbPath.startsWith('http')
+              ) { */
+              const thumbPath = entry.path.startsWith('/')
+                ? entry.path.substring(1)
+                : entry.path;
+              // eslint-disable-next-line no-param-reassign
+              entry.thumbPath = PlatformIO.getURLforPath(
+                getThumbFileLocationForFile(thumbPath, '/')
+              );
             });
           }
           dispatch(AppActions.setSearchResults(searchResults));
