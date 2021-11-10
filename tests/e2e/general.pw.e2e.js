@@ -19,7 +19,8 @@ import {
   expectElementExist,
   selectorFile,
   setSettings,
-  takeScreenshot, createTxtFile
+  takeScreenshot,
+  createTxtFile
 } from './general.helpers';
 import { searchEngine } from './search.helpers';
 import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
@@ -72,7 +73,7 @@ describe('TST51 - Perspective Grid', () => {
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       false,
-      2000
+      3000
     );
     await takeScreenshot('TST0501 after deleteDirectory');
   });

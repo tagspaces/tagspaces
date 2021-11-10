@@ -1,6 +1,10 @@
 const fs = require('fs-extra');
 const pathLib = require('path');
 const npm = require('npm');
+const packageJson = require('../package.json');
+
+process.env.ts_platform_version =
+  packageJson.dependencies['@tagspaces/tagspaces-platforms'];
 
 function isInstalled(npmPackage) {
   // TODO check installed version

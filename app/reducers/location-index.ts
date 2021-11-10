@@ -23,7 +23,8 @@ import {
   extractFileExtension,
   extractFileName,
   extractTagsAsObjects,
-  getLocationPath
+  getLocationPath,
+  getThumbFileLocationForFile
 } from '-/utils/paths';
 import Search from '../services/search';
 import { actions as AppActions } from './app';
@@ -422,18 +423,15 @@ export const actions = {
             searchResults.forEach((entry: TS.FileSystemEntry) => {
               if (
                 entry.thumbPath &&
-                entry.thumbPath.length > 1 &&
-                !entry.thumbPath.startsWith('http')
+                entry.thumbPath.length > 1
+                // !entry.thumbPath.startsWith('http')
               ) {
-                let pathInLocation = '';
-                if (currentLocation.path) {
-                  pathInLocation = currentLocation.path;
-                  if (!pathInLocation.endsWith('/')) {
-                    pathInLocation += '/';
-                  }
-                }
+                const thumbPath = entry.path.startsWith('/')
+                  ? entry.path.substring(1)
+                  : entry.path;
+                // eslint-disable-next-line no-param-reassign
                 entry.thumbPath = PlatformIO.getURLforPath(
-                  pathInLocation + entry.thumbPath
+                  getThumbFileLocationForFile(thumbPath, '/')
                 );
               }
             });

@@ -175,7 +175,7 @@ const EditEntryTagDialog = (props: Props) => {
             <FormHelperText>{i18n.t('core:tagTitleHelper')}</FormHelperText>
           )}
         </FormControl>
-        {editDisabled && showGeoEditor && (
+        {showGeoEditor && (
           <GeoTagEditor
             geoTag={title}
             onChange={setTitle}

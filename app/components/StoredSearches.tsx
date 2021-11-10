@@ -199,7 +199,7 @@ const StoredSearches = (props: Props) => {
               <Grid item xs={10} style={{ display: 'flex' }}>
                 <Button
                   style={{
-                    textTransform: 'capitalize',
+                    textTransform: 'none',
                     fontWeight: 'normal',
                     marginLeft: 5,
                     width: '100%',

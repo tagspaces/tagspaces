@@ -555,6 +555,7 @@ export default (state: any = initialState, action: any) => {
             return entry;
           }
           const fileNameTags = entry.isFile ? extractedTags : []; // dirs dont have tags in filename
+          // const { url, ...rest } = entry;
           return {
             ...entry,
             path: action.newPath, // TODO handle change extension case
@@ -1635,13 +1636,13 @@ export const actions = {
       fsEntry.path,
       fsEntry.isFile
     );
-    if (fsEntry.url) {
-      entryForOpening.url = fsEntry.url;
-    } else if (PlatformIO.haveObjectStoreSupport()) {
+    if (PlatformIO.haveObjectStoreSupport()) {
       const cleanedPath = fsEntry.path.startsWith('/')
         ? fsEntry.path.substr(1)
         : fsEntry.path;
       entryForOpening.url = PlatformIO.getURLforPath(cleanedPath);
+    } else if (fsEntry.url) {
+      entryForOpening.url = fsEntry.url;
     }
     if (fsEntry.perspective) {
       entryForOpening.perspective = fsEntry.perspective;

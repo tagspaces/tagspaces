@@ -3389,7 +3389,7 @@
   dependencies:
     defer-to-connect "^1.0.1"
 
-"@tagspaces/tagspaces-platforms@^1.2.5":
+"@tagspaces/tagspaces-platforms@1.2.5":
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/@tagspaces/tagspaces-platforms/-/tagspaces-platforms-1.2.5.tgz#8a1d9cc5f2d20f868a489de20765e6e7cacbb782"
   integrity sha512-xiKfKTv5v6RH+GxZTGcBAcXucUDu2F/k1bw3YK3vzMpFZJkoJ+jcbI/2TR/QobOs/nQX8n/OtH3s5aiToNW2lw==
@@ -9448,6 +9448,11 @@ fs.realpath@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz"
   integrity sha1-FQStJSMVjKpA20onh8sBQRmU6k8=
+
+fscreen@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/fscreen/-/fscreen-1.2.0.tgz#1a8c88e06bc16a07b473ad96196fb06d6657f59e"
+  integrity sha512-hlq4+BU0hlPmwsFjwGGzZ+OZ9N/wq9Ljg/sq3pX+2CD7hrJsX9tJgWWK/wiNTFM212CLHWhicOoqwXyZGGetJg==
 
 fsevents@^1.2.7:
   version "1.2.13"

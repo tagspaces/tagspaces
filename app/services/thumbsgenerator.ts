@@ -45,7 +45,7 @@ export const supportedImgs = [
   'bmp'
 ];
 export const supportedContainers = [
-  // 'zip', // disable ZIP tmb generation due to potential performance issues on large files
+  'zip',
   'epub',
   'docx',
   'pptx',
