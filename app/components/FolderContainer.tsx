@@ -480,7 +480,7 @@ const FolderContainer = (props: Props) => {
                 PaperProps={{
                   style: {
                     overflow: 'hidden',
-                    height: 800
+                    height: 820
                   }
                 }}
                 transformOrigin={{
