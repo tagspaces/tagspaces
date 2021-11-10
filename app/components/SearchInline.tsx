@@ -184,7 +184,7 @@ const SearchInline = (props: Props) => {
       }
       if (props.searchQuery.tagsOR && props.searchQuery.tagsOR.length > 0) {
         props.searchQuery.tagsOR.forEach(tag => {
-          textQueryMask.current += ' ?' + tag.title;
+          textQueryMask.current += ' |' + tag.title;
         });
         emptySearch = false;
       }
@@ -320,8 +320,8 @@ const SearchInline = (props: Props) => {
     let query = textQuery.current;
     const tagsAND = parseTextQuery(textQuery.current, '+');
     query = removeTagsFromQuery(tagsAND, query, '+');
-    const tagsOR = parseTextQuery(textQuery.current, '?');
-    query = removeTagsFromQuery(tagsOR, query, '?');
+    const tagsOR = parseTextQuery(textQuery.current, '|');
+    query = removeTagsFromQuery(tagsOR, query, '|');
     const tagsNOT = parseTextQuery(textQuery.current, '-');
     query = removeTagsFromQuery(tagsNOT, query, '-');
     const searchQuery: TS.SearchQuery = {

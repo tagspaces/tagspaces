@@ -430,7 +430,7 @@ const SearchPopover = (props: Props) => {
     const tagsOR = mergeWithExtractedTags(
       textQuery.current,
       props.searchQuery.tagsOR,
-      '?'
+      '|'
     );
     const tagsNOT = mergeWithExtractedTags(
       textQuery.current,
@@ -490,7 +490,7 @@ const SearchPopover = (props: Props) => {
     const tagsOR = mergeWithExtractedTags(
       textQuery.current,
       props.searchQuery.tagsOR,
-      '?'
+      '|'
     );
     const tagsNOT = mergeWithExtractedTags(
       textQuery.current,
