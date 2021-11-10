@@ -18,7 +18,7 @@
 
 import { v1 as uuidv1 } from 'uuid';
 import { getLocation, getDefaultLocationId } from './locations';
-import PlatformIO from '../services/platform-io';
+import PlatformIO from '../services/platform-facade';
 import AppConfig from '../config';
 import {
   deleteFilesPromise,

@@ -28,7 +28,7 @@ import {
 import Search from '../services/search';
 import { actions as AppActions } from './app';
 import i18n from '../services/i18n';
-import PlatformIO from '../services/platform-io';
+import PlatformIO from '../services/platform-facade';
 import GlobalSearch from '../services/search-index';
 import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';

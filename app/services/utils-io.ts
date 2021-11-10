@@ -27,7 +27,7 @@ import {
 } from '@tagspaces/tagspaces-platforms/indexer';
 import { saveAs } from 'file-saver';
 import micromatch from 'micromatch';
-import PlatformIO from './platform-io';
+import PlatformIO from './platform-facade';
 import AppConfig from '../config';
 import {
   extractTagsAsObjects,

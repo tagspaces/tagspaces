@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
+ /*
 // import { ManagedUpload } from 'aws-sdk/clients/s3';
 // import { configure } from 'tagspaces-common-index/index'
 import { Pro } from '../pro';
@@ -61,13 +61,13 @@ export default class PlatformIO {
             });
           // objectStoreAPI = new ObjectStoreIO();
 
-          /* .then(() => {
+          /!* .then(() => {
               resolve();
               return true;
             })
             .catch(e => {
               reject(e);
-            }); */
+            }); *!/
         }
       } else {
         reject(new Error('ObjectStore support available in the PRO version'));
@@ -86,7 +86,7 @@ export default class PlatformIO {
   static getDirSeparator = (): string => // TODO rethink usage for S3 on Win
     PlatformIO.haveObjectStoreSupport() ? '/' : AppConfig.dirSeparator;
 
-  /* static initMainMenu = (menuConfig: Array<Object>): void => {
+  /!* static initMainMenu = (menuConfig: Array<Object>): void => {
     if (nativeAPI.initMainMenu) {
       nativeAPI.initMainMenu(menuConfig);
     } else {
@@ -100,7 +100,7 @@ export default class PlatformIO {
     } else {
       console.log('initTrayMenu not supported');
     }
-  }; */
+  }; *!/
 
   static setLanguage = (language: string): void => {
     if (nativeAPI.setLanguage) {
@@ -145,9 +145,9 @@ export default class PlatformIO {
 
   static getDevicePaths = (): Promise<Object> => nativeAPI.getDevicePaths();
 
-  /* static getAppDataPath = (): string => nativeAPI.getAppDataPath();
+  /!* static getAppDataPath = (): string => nativeAPI.getAppDataPath();
 
-  static getUserHomePath = (): string => nativeAPI.getUserHomePath(); */
+  static getUserHomePath = (): string => nativeAPI.getUserHomePath(); *!/
 
   static getURLforPath = (
     path: string,
@@ -180,12 +180,12 @@ export default class PlatformIO {
     tmbGenerationList: Array<string>
   ): Promise<any> => nativeAPI.createThumbnailsInWorker(tmbGenerationList);
 
-  /**
+  /!**
    * Promise === undefined on error
    * @param path
    * @param mode = ['extractTextContent', 'extractThumbPath']
    * @param ignorePatterns
-   */
+   *!/
   static listDirectoryPromise = (
     path: string,
     mode = ['extractThumbPath'],
@@ -276,10 +276,10 @@ export default class PlatformIO {
     return PlatformIO.copyFilePromiseOverwrite(sourceFilePath, targetFilePath);
   };
 
-  /**
+  /!**
    * @param sourceFilePath
    * @param targetFilePath - if exist overwrite it
-   */
+   *!/
   static copyFilePromiseOverwrite = (
     sourceFilePath: string,
     targetFilePath: string
@@ -545,4 +545,4 @@ export default class PlatformIO {
       console.log('shareFiles is implemented in Cordova only.');
     }
   };
-}
+} */

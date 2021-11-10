@@ -39,7 +39,7 @@ import {
 } from '../reducers/app';
 import i18n from '../services/i18n';
 import AppConfig from '../config';
-import PlatformIO from '../services/platform-io';
+import PlatformIO from '../services/platform-facade';
 import TargetMoveFileBox from './TargetMoveFileBox';
 import DragItemTypes from './DragItemTypes';
 import IOActions from '../reducers/io-actions';

@@ -31,7 +31,7 @@ import i18n from '-/services/i18n';
 import { actions as AppActions } from '-/reducers/app';
 import { joinPaths } from '-/utils/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 
 interface Props {
   open: boolean;

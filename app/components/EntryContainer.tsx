@@ -48,7 +48,7 @@ import { Split } from 'ts-react-splitter';
 import EntryProperties from '-/components/EntryProperties';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import AppConfig from '-/config';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
 import i18n from '-/services/i18n';
 import {

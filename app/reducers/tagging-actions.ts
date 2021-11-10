@@ -36,7 +36,7 @@ import {
   generateFileName
 } from '-/services/utils-io';
 import { formatDateTime4Tag, isGeoTag } from '-/utils/misc';
-import PlatformIO from '../services/platform-io';
+import PlatformIO from '../services/platform-facade';
 import { Pro } from '../pro';
 import GlobalSearch from '../services/search-index';
 import { getPersistTagsInSidecarFile } from './settings';

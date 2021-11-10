@@ -16,17 +16,17 @@
  *
  */
 
-import EXIF from 'exif-js';
+// import EXIF from 'exif-js';
 import {
   extractFileExtension,
   extractContainingDirectoryPath,
   extractFileName,
   normalizePath,
   getMetaDirectoryPath
-} from '../utils/paths';
-import { base64ToArrayBuffer } from '../utils/misc';
+} from '-/utils/paths';
+import { base64ToArrayBuffer } from '-/utils/misc';
 import AppConfig from '../config';
-import PlatformIO from '../services/platform-io';
+import PlatformIO from '../services/platform-facade';
 import { Pro } from '../pro';
 
 const maxSize = AppConfig.maxThumbSize;

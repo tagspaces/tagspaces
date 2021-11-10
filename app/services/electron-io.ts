@@ -17,7 +17,6 @@
  */
 import fsextra from 'fs-extra';
 import pathLib from 'path';
-import winattr from 'winattr';
 import micromatch from 'micromatch';
 import http from 'http';
 import fetch from 'sync-fetch';
@@ -30,18 +29,13 @@ import {
 } from '-/utils/paths';
 import { arrayBufferToBuffer } from '-/utils/misc';
 import AppConfig from '../config';
-import PlatformIO from './platform-io';
-// import TrayIcon from '../assets/icons/trayIcon.png';
-// import TrayIconWin from '../assets/icons/trayIcon.ico';
-// import TrayIcon2x from '../assets/icons/trayIcon@2x.png';
-// import TrayIcon3x from '../assets/icons/trayIcon@3x.png';
-import { Pro } from '../pro';
+// import PlatformIO from './platform-io';
 import { TS } from '-/tagspaces.namespace';
 import Settings from '-/settings';
 import Config from '-/config/config.json';
 
 export default class ElectronIO {
-  electron: any;
+  /* electron: any;
 
   ipcRenderer: any;
 
@@ -63,7 +57,7 @@ export default class ElectronIO {
       this.fs = fsextra;
       this.pathUtils = window.require('path');
     }
-  }
+  } */
 
   /* initTrayMenu = (menuConfig: Array<Object>) => {
     const mainWindow = this.win;
@@ -112,7 +106,7 @@ export default class ElectronIO {
     this.tsTray.setContextMenu(trayMenu);
   }; */
 
-  isWorkerAvailable = (): boolean => {
+  /* isWorkerAvailable = (): boolean => {
     try {
       const res = fetch('http://127.0.0.1:' + Settings.wsPort, {
         method: 'HEAD'
@@ -122,27 +116,27 @@ export default class ElectronIO {
       console.debug('isWorkerAvailable:', e);
     }
     return false;
-  };
+  }; */
   // this.ipcRenderer.sendSync('is-worker-available', 'notNeededArgument');
 
-  showMainWindow = (): void => {
+  /* showMainWindow = (): void => {
     this.ipcRenderer.send('show-main-window', 'notNeededArgument');
-    /* if (this.win.isMinimized()) {
+    /!* if (this.win.isMinimized()) {
       this.win.restore();
     }
-    this.win.show(); */
-  };
+    this.win.show(); *!/
+  }; */
 
-  setLanguage = (language: string): void => {
+  /* setLanguage = (language: string): void => {
     this.ipcRenderer.send('set-language', language);
-  };
+  }; */
 
-  quitApp = (): void => {
+  /* quitApp = (): void => {
     // this.win.destroy();
     this.ipcRenderer.send('quit-application', 'Bye, bye...');
-  };
+  }; */
 
-  // Experimental functionality
+  /* // Experimental functionality
   watchDirectory = (dirPath: string, listener: Object): void => {
     // stopWatchingDirectories();
     this.fsWatcher = this.fs.watch(
@@ -150,16 +144,16 @@ export default class ElectronIO {
       { persistent: true, recursive: false },
       listener
     );
-  };
+  }; */
 
   // Sets the current window on top of the windows
-  focusWindow = (): void => {
+  /* focusWindow = (): void => {
     this.ipcRenderer.send('focus-window', 'notNeededArgument');
     // this.win.focus();
-  };
+  }; */
 
-  getDevicePaths = (): Promise<Object> =>
-    this.ipcRenderer.invoke('get-device-paths');
+  /* getDevicePaths = (): Promise<Object> =>
+    this.ipcRenderer.invoke('get-device-paths'); */
 
   /* getUserHomePath = (): string =>
     this.ipcRenderer.sendSync('get-user-home-path', 'notNeededArgument');
@@ -167,17 +161,17 @@ export default class ElectronIO {
   getAppDataPath = (): string =>
     this.ipcRenderer.sendSync('app-data-path-request', 'notNeededArgument'); */
 
-  setZoomFactorElectron = (zoomLevel: number) =>
-    this.webFrame.setZoomFactor(zoomLevel);
+  /* setZoomFactorElectron = (zoomLevel: number) =>
+    this.webFrame.setZoomFactor(zoomLevel); */
 
-  setGlobalShortcuts = (globalShortcutsEnabled: boolean) => {
+  /* setGlobalShortcuts = (globalShortcutsEnabled: boolean) => {
     this.ipcRenderer.send('global-shortcuts-enabled', globalShortcutsEnabled);
-  };
+  }; */
 
   /* getAppPath = (): string =>
     this.ipcRenderer.sendSync('app-dir-path-request', 'notNeededArgument'); */
 
-  createDirectoryTree = (directoryPath: string): Object => {
+  /* createDirectoryTree = (directoryPath: string): Object => {
     console.log('Creating directory index for: ' + directoryPath);
     const generateDirectoryTree = (dirPath: string) => {
       try {
@@ -211,9 +205,9 @@ export default class ElectronIO {
     };
     // console.log(JSON.stringify(directoryTree));
     return generateDirectoryTree(directoryPath);
-  };
+  }; */
 
-  postRequest = (payload: string, endpoint: string): Promise<any> =>
+  /* postRequest = (payload: string, endpoint: string): Promise<any> =>
     new Promise((resolve, reject) => {
       const option = {
         hostname: '127.0.0.1',
@@ -261,7 +255,7 @@ export default class ElectronIO {
       ignorePatterns
     });
     return this.postRequest(payload, '/indexer');
-  };
+  }; */
 
   /* new Promise((resolve, reject) => {
       if (this.isWorkerAvailable()) {
@@ -282,13 +276,13 @@ export default class ElectronIO {
       }
     }); */
 
-  createThumbnailsInWorker = (
+  /* createThumbnailsInWorker = (
     tmbGenerationList: Array<string>
   ): Promise<any> => {
     // const search = new URLSearchParams(tmbGenerationList.map(s => ['p', s]));
     const payload = JSON.stringify(tmbGenerationList);
     return this.postRequest(payload, '/thumb-gen');
-  };
+  }; */
 
   /* pm2.start(
         {
@@ -332,7 +326,7 @@ export default class ElectronIO {
    * @param ignorePatterns
    * @param showIgnored
    */
-  listDirectoryPromise = (
+  /*  listDirectoryPromise = (
     path: string,
     mode = ['extractThumbPath'],
     ignorePatterns: Array<string> = [],
@@ -346,10 +340,10 @@ export default class ElectronIO {
       let eentry;
       let containsMetaFolder = false;
       // const metaMetaFolder = AppConfig.metaFolder + AppConfig.dirSeparator + AppConfig.metaFolder;
-      /* if (path.startsWith('./')) {
+      /!* if (path.startsWith('./')) {
         // relative paths
         path = pathLib.resolve(path);
-      } */
+      } *!/
       this.fs.readdir(path, (error, entries) => {
         if (error) {
           console.warn('Error listing directory ' + path);
@@ -439,7 +433,7 @@ export default class ElectronIO {
                 }
               }
 
-              /* const fileName = eentry.name.toLowerCase();
+              /!* const fileName = eentry.name.toLowerCase();
               if (
                 extractTextContent &&
                 eentry.isFile &&
@@ -455,7 +449,7 @@ export default class ElectronIO {
                   fileName,
                   fileContent
                 );
-              } */
+              } *!/
 
               if (window.walkCanceled) {
                 resolve(enhancedEntries);
@@ -488,9 +482,9 @@ export default class ElectronIO {
 
               if (metaEntries) {
                 metaEntries.forEach(metaEntryName => {
-                  /* if (metaEntryName === AppConfig.metaFolderFile) {
+                  /!* if (metaEntryName === AppConfig.metaFolderFile) {
                   // Read meta folder path
-                } */
+                } *!/
 
                   // Reading meta json files with tags and description
                   if (metaEntryName.endsWith(AppConfig.metaFileExt)) {
@@ -546,16 +540,16 @@ export default class ElectronIO {
           }
         }
       });
-    });
+    }); */
 
   // Create a promise that rejects in <ms> milliseconds
-  timeout = (ms: number): Promise<any> =>
+  /*  timeout = (ms: number): Promise<any> =>
     new Promise((resolve, reject) => {
       const id = setTimeout(() => {
         clearTimeout(id);
         reject(new Error('Timed out in ' + ms + 'ms.'));
       }, ms);
-    });
+    }); */
 
   /**
    * TODO lstat sometimes hangs on Electron e2e tests
@@ -564,13 +558,13 @@ export default class ElectronIO {
    *        on error:   resolve Promise<false> (file not exist) TODO rethink this to reject error too
    *        on timeout: reject error
    */
-  getPropertiesPromise = (path: string): Promise<any> => {
+  /* getPropertiesPromise = (path: string): Promise<any> => {
     const promise = new Promise(resolve => {
-      /* stats for file:
+      /!* stats for file:
        * "dev":41, "mode":33204, "nlink":1, "uid":1000, "gid":1000,  "rdev":0,
        * "blksize":4096, "ino":2634172, "size":230, "blocks":24,  "atime":"2015-11-24T09:56:41.932Z",
        * "mtime":"2015-11-23T14:29:29.689Z", "ctime":"2015-11-23T14:29:29.689Z",  "birthtime":"2015-11-23T14:29:29.689Z",
-       * "isFile":true, "path":"/home/somefile.txt" */
+       * "isFile":true, "path":"/home/somefile.txt" *!/
       this.fs.lstat(path, (err, stats) => {
         if (err) {
           resolve(false);
@@ -593,9 +587,9 @@ export default class ElectronIO {
     });
     // Returns a race between our timeout and the passed in promise
     return Promise.race([promise, this.timeout(2000)]);
-  };
+  }; */
 
-  createDirectoryPromise = (dirPath: string): Promise<any> => {
+  /* createDirectoryPromise = (dirPath: string): Promise<any> => {
     console.log('Creating directory: ' + dirPath);
     return new Promise((resolve, reject) => {
       this.fs.mkdirp(dirPath, error => {
@@ -624,9 +618,9 @@ export default class ElectronIO {
         }
       });
     });
-  };
+  }; */
 
-  copyFilePromise = (
+  /* copyFilePromise = (
     sourceFilePath: string,
     targetFilePath: string
   ): Promise<any> => {
@@ -640,8 +634,8 @@ export default class ElectronIO {
         );
       } else if (this.fs.lstatSync(sourceFilePath).isDirectory()) {
         reject('Trying to copy a file: ' + sourceFilePath + '. Copying failed');
-        /* } else if (this.fs.existsSync(targetFilePath)) {
-        reject('File "' + targetFilePath + '" exists. Copying failed.'); */
+        /!* } else if (this.fs.existsSync(targetFilePath)) {
+        reject('File "' + targetFilePath + '" exists. Copying failed.'); *!/
       } else {
         this.fs.copy(sourceFilePath, targetFilePath, error => {
           if (error) {
@@ -652,9 +646,9 @@ export default class ElectronIO {
         });
       }
     });
-  };
+  }; */
 
-  renameFilePromise = (filePath: string, newFilePath: string): Promise<any> => {
+  /* renameFilePromise = (filePath: string, newFilePath: string): Promise<any> => {
     console.log('Renaming file: ' + filePath + ' to ' + newFilePath);
     // stopWatchingDirectories();
     return new Promise((resolve, reject) => {
@@ -696,9 +690,9 @@ export default class ElectronIO {
         resolve([filePath, newFilePath]);
       });
     });
-  };
+  }; */
 
-  renameDirectoryPromise = (
+  /* renameDirectoryPromise = (
     dirPath: string,
     newDirName: string
   ): Promise<any> => {
@@ -736,9 +730,9 @@ export default class ElectronIO {
         reject('Path is not a directory. Renaming of ' + dirPath + ' failed.');
       }
     });
-  };
+  }; */
 
-  loadTextFilePromise = (
+  /* loadTextFilePromise = (
     filePath: string,
     isPreview: boolean = false
   ): Promise<string> =>
@@ -773,9 +767,9 @@ export default class ElectronIO {
           }
         });
       }
-    });
+    }); */
 
-  getFileContentPromise = (fullPath: string, type: string): Promise<any> =>
+  /* getFileContentPromise = (fullPath: string, type: string): Promise<any> =>
     new Promise((resolve, reject) => {
       let fileURL = fullPath;
       if (fileURL.indexOf('file://') === -1) {
@@ -795,7 +789,7 @@ export default class ElectronIO {
         }
       };
       xhr.send();
-    });
+    }); */
 
   /**
    * TODO rethink return Promise<TS.FileSystemEntry> and optimize and remove getPropertiesPromise before save file
@@ -803,7 +797,7 @@ export default class ElectronIO {
    * @param content
    * @param overwrite
    */
-  saveFilePromise = (
+  /* saveFilePromise = (
     filePath: string,
     content: any,
     overwrite: boolean = true
@@ -863,9 +857,9 @@ export default class ElectronIO {
           };
           saveFile(fsEntry, content);
         });
-    });
+    }); */
 
-  saveTextFilePromise = (
+  /* saveTextFilePromise = (
     filePath: string,
     content: string,
     overwrite: boolean
@@ -883,9 +877,9 @@ export default class ElectronIO {
     }
 
     return this.saveFilePromise(filePath, textContent, overwrite);
-  };
+  }; */
 
-  saveBinaryFilePromise = (
+  /* saveBinaryFilePromise = (
     filePath: string,
     content: any,
     overwrite: boolean
@@ -893,9 +887,9 @@ export default class ElectronIO {
     console.log('Saving binary file: ' + filePath);
     const buff = arrayBufferToBuffer(content);
     return this.saveFilePromise(filePath, buff, overwrite);
-  };
+  }; */
 
-  deleteFilePromise = (
+  /* deleteFilePromise = (
     path: string,
     useTrash: boolean = true
   ): Promise<any> => {
@@ -918,9 +912,9 @@ export default class ElectronIO {
         return resolve(path);
       });
     });
-  };
+  }; */
 
-  deleteDirectoryPromise = (
+  /* deleteDirectoryPromise = (
     path: string,
     useTrash: boolean = true
   ): Promise<any> => {
@@ -943,12 +937,12 @@ export default class ElectronIO {
         return resolve(path);
       });
     });
-  };
+  }; */
 
-  moveToTrash = (files: Array<string>): Promise<boolean> =>
+  /* moveToTrash = (files: Array<string>): Promise<boolean> =>
     this.ipcRenderer
       .invoke('move-to-trash', files)
-      .then(result => result && result.length > 0);
+      .then(result => result && result.length > 0); */
   /* const result = [];
       files.forEach(fullPath => {
         result.push(this.electron.shell.trashItem(fullPath));
@@ -961,7 +955,7 @@ export default class ElectronIO {
         reject('Moving of at least one file to trash failed.');
       } */
 
-  openDirectory = (dirPath: string): void => {
+  /* openDirectory = (dirPath: string): void => {
     // if (AppConfig.isWin) {
     this.electron.shell.showItemInFolder(dirPath);
     // } else {
@@ -985,14 +979,14 @@ export default class ElectronIO {
       .catch(e => {
         console.log('Opening path ' + filePath + ' failed with ' + e);
       });
-  };
+  }; */
 
-  openUrl = (url: string): void => {
+  /* openUrl = (url: string): void => {
     console.log(url);
     this.electron.shell.openExternal(url);
-  };
+  }; */
 
-  resolveFilePath = (filePath: string): string => pathLib.resolve(filePath);
+  // resolveFilePath = (filePath: string): string => pathLib.resolve(filePath);
 
   /**
    * not used
@@ -1024,8 +1018,8 @@ export default class ElectronIO {
     });
   }; */
 
-  selectDirectoryDialog = (): Promise<any> =>
-    this.ipcRenderer.invoke('select-directory-dialog', 'noArg');
+  /* selectDirectoryDialog = (): Promise<any> =>
+    this.ipcRenderer.invoke('select-directory-dialog', 'noArg'); */
 
   /* return new Promise((resolve, reject) => {
       this.remote.dialog
@@ -1044,7 +1038,7 @@ export default class ElectronIO {
         });
     }); */
 
-  shareFiles = (files: Array<string>) => {
+  /* shareFiles = (files: Array<string>) => {
     console.log('shareFiles is not implemented in electron.');
-  };
+  }; */
 }

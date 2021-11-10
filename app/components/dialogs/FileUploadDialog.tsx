@@ -29,7 +29,7 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import { LinearProgress, Grid, Tooltip } from '@material-ui/core';
 import WarningIcon from '@material-ui/icons/Warning';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 import { actions as AppActions, getProgress } from '-/reducers/app';
 import { extractFileName } from '-/utils/paths';
 import i18n from '-/services/i18n';

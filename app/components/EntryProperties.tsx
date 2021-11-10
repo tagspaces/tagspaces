@@ -71,7 +71,7 @@ import {
 } from '-/utils/paths';
 import AppConfig from '../config';
 import { Pro } from '../pro';
-import PlatformIO from '../services/platform-io';
+import PlatformIO from '../services/platform-facade';
 import TagsSelect from './TagsSelect';
 import TransparentBackground from './TransparentBackground';
 import {

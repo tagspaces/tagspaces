@@ -32,7 +32,7 @@ import Dialog from '@material-ui/core/Dialog';
 import TagsSelect from '../TagsSelect';
 import i18n from '-/services/i18n';
 import { extractFileName, extractDirectoryName } from '-/utils/paths';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 

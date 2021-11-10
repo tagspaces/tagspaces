@@ -37,7 +37,7 @@ import Typography from '@material-ui/core/Typography';
 import Dialog from '@material-ui/core/Dialog';
 import IconButton from '@material-ui/core/IconButton';
 import i18n from '-/services/i18n';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/config';
 import IOActions from '-/reducers/io-actions';
 import { extractFileName } from '-/utils/paths';

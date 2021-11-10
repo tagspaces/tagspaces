@@ -209,7 +209,7 @@ export default merge(baseConfig, {
       NODE_ENV: 'production'
     }),
 
-    new webpack.NormalModuleReplacementPlugin(
+    /* new webpack.NormalModuleReplacementPlugin(
       /(.*)_PLATFORMIO_(\.*)/,
       resource => {
         resource.request = resource.request.replace(
@@ -217,7 +217,7 @@ export default merge(baseConfig, {
           `${targetPlatform}`
         );
       }
-    ),
+    ), */
 
     new webpack.NormalModuleReplacementPlugin(
       /(.*)_PDFDISTLIB_(\.*)/,

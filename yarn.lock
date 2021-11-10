@@ -3389,10 +3389,10 @@
   dependencies:
     defer-to-connect "^1.0.1"
 
-"@tagspaces/tagspaces-platforms@^1.0.56":
-  version "1.0.56"
-  resolved "https://registry.yarnpkg.com/@tagspaces/tagspaces-platforms/-/tagspaces-platforms-1.0.56.tgz#f78b4610120a196429de7a959986bd390a687079"
-  integrity sha512-Xk1zZSOcAAHHuKW6PC8uCLvCHYM3yn//ybMP9J+nXAlBGXrnbfVTDv2lYJXyNKfsnxIKXCKucAE8YDFS02JO/Q==
+"@tagspaces/tagspaces-platforms@^1.2.5":
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/@tagspaces/tagspaces-platforms/-/tagspaces-platforms-1.2.5.tgz#8a1d9cc5f2d20f868a489de20765e6e7cacbb782"
+  integrity sha512-xiKfKTv5v6RH+GxZTGcBAcXucUDu2F/k1bw3YK3vzMpFZJkoJ+jcbI/2TR/QobOs/nQX8n/OtH3s5aiToNW2lw==
 
 "@testim/chrome-version@^1.0.7":
   version "1.0.7"
@@ -9461,11 +9461,6 @@ fsevents@^2.1.2, fsevents@~2.3.1, fsevents@~2.3.2:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.3.2.tgz#8a526f78b8fdf4623b709e0b975c52c24c02fd1a"
   integrity sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==
-
-fswin@^3.18.918:
-  version "3.19.908"
-  resolved "https://registry.npmjs.org/fswin/-/fswin-3.19.908.tgz"
-  integrity sha512-xwq6wBg+KNuSjzQ3gZUOXt/FUhN9Wd+qQxz3yGM1xyTWu00ty82X+9Tc09z9XtMONYAhA8cCE3nolWoU7Rlz6g==
 
 function-bind@^1.1.1:
   version "1.1.1"
@@ -20011,13 +20006,6 @@ wildcard@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/wildcard/-/wildcard-2.0.0.tgz"
   integrity sha512-JcKqAHLPxcdb9KM49dufGXn2x3ssnfjbcaQdLlfZsL9rH9wgDQjUtDxbo8NE0F6SFvydeu1VhZe7hZuHsB2/pw==
-
-winattr@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.npmjs.org/winattr/-/winattr-3.0.0.tgz"
-  integrity sha512-dt33rYsTYcGbB+I1ubB6ZLODibRSCW//TgY/SuajLllR9kHnHnbUMqnXIe0osYsXUdRLGs770zb3t9z/ScGUpw==
-  dependencies:
-    fswin "^3.18.918"
 
 word-wrap@~1.2.3:
   version "1.2.3"

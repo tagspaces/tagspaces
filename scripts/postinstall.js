@@ -19,7 +19,24 @@ function isInstalled(npmPackage) {
     return false;
   }
 }
-if (process.env.PD_PLATFORM === 'node') {
+if (process.env.PD_PLATFORM === 'electron') {
+  if (!isInstalled('@tagspaces/tagspaces-common-electron')) {
+    npm.load(er => {
+      if (er) {
+        console.log('err:', er);
+        return;
+      }
+      npm.commands.run(['postinstall-electron'], err => {
+        if (err) {
+          console.log('err:', err);
+        }
+      });
+      npm.on('log', message => {
+        console.log('npm:' + message);
+      });
+    });
+  }
+} else if (process.env.PD_PLATFORM === 'node') {
   if (!isInstalled('@tagspaces/tagspaces-common-node')) {
     npm.load(er => {
       if (er) {
