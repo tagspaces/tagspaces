@@ -18,6 +18,7 @@
 
 import React, {
   MutableRefObject,
+  useCallback,
   useEffect,
   useReducer,
   useRef,
@@ -187,7 +188,7 @@ const EntryContainer = (props: Props) => {
   const [isPropertiesPanelVisible, setPropertiesPanelVisible] = useState<
     boolean
   >(false);
-  // const [isFullscreen, setFullscreen] = useState<boolean>(false);
+  const [isFullscreen, setFullscreen] = useState<boolean>(false);
   // eslint-disable-next-line no-unused-vars
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
   // const [editingSupported, setEditingSupported] = useState<boolean>(true);
@@ -226,6 +227,45 @@ const EntryContainer = (props: Props) => {
           ex
         );
       }
+    }
+  });
+
+  const handleFullscreenChange = useCallback(e => {
+    let change = '';
+    if (fscreen.fullscreenElement !== null) {
+      change = 'Entered fullscreen mode';
+      setFullscreen(true);
+    } else {
+      change = 'Exited fullscreen mode';
+      setFullscreen(false);
+    }
+    console.log(change, e);
+  }, []);
+
+  const handleFullscreenError = useCallback(e => {
+    console.log('Fullscreen Error', e);
+  }, []);
+
+  const toggleFullScreen = useCallback(() => {
+    if (isFullscreen) {
+      fscreen.exitFullscreen();
+    } else {
+      fscreen.requestFullscreen(fileViewerContainer.current);
+    }
+  }, [isFullscreen]);
+
+  useEffect(() => {
+    if (fscreen.fullscreenEnabled) {
+      fscreen.addEventListener(
+        'fullscreenchange',
+        handleFullscreenChange,
+        false
+      );
+      fscreen.addEventListener('fullscreenerror', handleFullscreenError, false);
+      return () => {
+        fscreen.removeEventListener('fullscreenchange', handleFullscreenChange);
+        fscreen.removeEventListener('fullscreenerror', handleFullscreenError);
+      };
     }
   });
 
@@ -463,116 +503,6 @@ const EntryContainer = (props: Props) => {
 
   const shareFile = (filePath: string) => {
     PlatformIO.shareFiles([filePath]);
-  };
-
-  fscreen.addEventListener('fullscreenchange', exitFullScreenHandler); // , options);
-  /* document.addEventListener('fullscreenchange', exitFullScreenHandler);
-  document.addEventListener('webkitfullscreenchange', exitFullScreenHandler);
-  document.addEventListener('mozfullscreenchange', exitFullScreenHandler);
-  document.addEventListener('MSFullscreenChange', exitFullScreenHandler); */
-
-  function exitFullScreenHandler() {
-    if (
-      fscreen.fullscreenElement === null
-      /*! document.fullscreenElement &&
-      // @ts-ignore
-      !document.webkitIsFullScreen &&
-      // @ts-ignore
-      !document.mozFullScreen &&
-      // @ts-ignore
-      !document.msFullscreenElement */
-    ) {
-      forceUpdate();
-    }
-  }
-
-  const toggleFullScreen = () => {
-    if (!fscreen.fullscreenEnabled) {
-      return;
-    }
-    // this.fileViewerContainer.addEventListener('onfullscreenchange', () => {
-    //   alert('Fullscreen change');
-    //   if (this.state.isFullscreen) {
-    //     this.setState({ isFullscreen: false });
-    //   } else {
-    //     this.fileViewerContainer.removeEventListener('onfullscreenchange');
-    //   }
-    // });
-
-    // https://developer.mozilla.org/en-US/docs/Web/API/Element/requestFullScreen#examples
-
-    if (fscreen.fullscreenElement !== null) {
-      fscreen
-        .exitFullscreen()
-        .then(() => {
-          console.log('Fullscreen exit successful');
-          // setFullscreen(false);
-          forceUpdate();
-          return true;
-        })
-        .catch(e => {
-          console.log('Error exiting fullscreen', e);
-        });
-    } else {
-      fscreen
-        .requestFullscreen(fileViewerContainer.current)
-        .then(() => {
-          forceUpdate();
-          return true;
-        })
-        .catch(ex => {
-          console.error('requestFullscreen:', ex);
-        });
-    }
-    /* if (document.fullscreenElement && document.webkitExitFullscreen) {
-      document.webkitExitFullscreen();
-      // setFullscreen(false);
-      forceUpdate();
-      return;
-    } */
-    /* else if (this.state.isFullscreen && document.mozExitFullscreen) {
-      document.mozExitFullscreen();
-      this.setState({ isFullscreen: false });
-      return;
-    } */
-    /* if (!document.fullscreenElement && fileViewerContainer) {
-      if (
-        fileViewerContainer &&
-        fileViewerContainer.current.requestFullscreen
-      ) {
-        fileViewerContainer.current
-          .requestFullscreen()
-          .then(() => {
-            forceUpdate();
-            return true;
-          })
-          .catch(ex => {
-            console.error('webkitRequestFullscreen:', ex);
-          });
-        // setFullscreen(true);
-      } else if (
-        fileViewerContainer &&
-        // @ts-ignore
-        fileViewerContainer.current.webkitRequestFullscreen
-      ) {
-        try {
-          // @ts-ignore
-          fileViewerContainer.current.webkitRequestFullscreen();
-        } catch (ex) {
-          console.error('webkitRequestFullscreen:', ex);
-        }
-        forceUpdate();
-        // setFullscreen(true);
-      } else if (
-        fileViewerContainer &&
-        // @ts-ignore
-        fileViewerContainer.current.mozRequestFullScreen
-      ) {
-        // @ts-ignore
-        fileViewerContainer.current.mozRequestFullScreen();
-        forceUpdate();
-      }
-    } */
   };
 
   const setPercent = (p: number | undefined) => {
@@ -1076,7 +1006,6 @@ const EntryContainer = (props: Props) => {
       initSize = defaultSplitSize; // '0%';
     }
 
-    const isFullscreen = () => fscreen.fullscreenElement !== null;
     return (
       <Split
         horizontal
@@ -1089,7 +1018,7 @@ const EntryContainer = (props: Props) => {
         <FileView
           key="FileViewID"
           openedFile={props.openedFiles[0]}
-          isFullscreen={isFullscreen()}
+          isFullscreen={isFullscreen}
           fileViewer={fileViewer}
           fileViewerContainer={fileViewerContainer}
           toggleFullScreen={toggleFullScreen}

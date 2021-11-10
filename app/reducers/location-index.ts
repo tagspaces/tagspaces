@@ -423,25 +423,15 @@ export const actions = {
             searchResults.forEach((entry: TS.FileSystemEntry) => {
               if (
                 entry.thumbPath &&
-                entry.thumbPath.length > 1 // &&
+                entry.thumbPath.length > 1
                 // !entry.thumbPath.startsWith('http')
               ) {
-                /* let pathInLocation = '';
-                if (currentLocation.path) {
-                  /!* const pathLocationArr = currentLocation.path
-                    .split('/')
-                    .filter(el => el); *!/
-                  const pathArr = entry.path
-                    .split('/')
-                    .filter(el => el);
-                  pathInLocation = pathArr.join('/');
-                    // pathLocationArr.join('/') + '/' + pathArr.join('/');
-                } else {
-                  pathInLocation = entry.thumbPath;
-                } */
+                const thumbPath = entry.path.startsWith('/')
+                  ? entry.path.substring(1)
+                  : entry.path;
                 // eslint-disable-next-line no-param-reassign
                 entry.thumbPath = PlatformIO.getURLforPath(
-                  getThumbFileLocationForFile(entry.path, '/')
+                  getThumbFileLocationForFile(thumbPath, '/')
                 );
               }
             });
