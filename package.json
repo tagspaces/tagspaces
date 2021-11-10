@@ -22,6 +22,9 @@
     "email": "info@tagspaces.org",
     "url": "https://www.tagspaces.org"
   },
+  "config": {
+    "platform": "1.0.59"
+  },
   "scripts": {
     "browserslist:update": "npx browserslist@latest --update-db",
     "bs": "yarn build && yarn start",
@@ -81,11 +84,11 @@
     "paste-android-linux": "adb shell input text '$(xclip -selection c -o)'",
     "paste-android-macos": "adb shell input text \"'$(pbpaste)'\"",
     "playwright-show-trace": "npx playwright show-trace \"tests/test-reports/TST0813 - Delete file [web,minio,electron].zip\"",
-    "postinstall-cordova": "cross-env PD_PLATFORM=cordova yarn add @tagspaces/tagspaces-platforms",
+    "postinstall-cordova": "cross-env PD_PLATFORM=cordova yarn upgrade @tagspaces/tagspaces-platforms@$npm_package_config_platform",
     "postinstall-cordova-check": "cross-env PD_PLATFORM=cordova node scripts/postinstall.js",
-    "postinstall-node": "cross-env PD_PLATFORM=node yarn add @tagspaces/tagspaces-platforms",
+    "postinstall-node": "cross-env PD_PLATFORM=node yarn upgrade @tagspaces/tagspaces-platforms@$npm_package_config_platform",
     "postinstall-node-check": "cross-env PD_PLATFORM=node node scripts/postinstall.js",
-    "postinstall-web": "cross-env PD_PLATFORM=web yarn add @tagspaces/tagspaces-platforms",
+    "postinstall-web": "cross-env PD_PLATFORM=web yarn upgrade @tagspaces/tagspaces-platforms@$npm_package_config_platform",
     "postinstall-web-check": "cross-env PD_PLATFORM=web node scripts/postinstall.js",
     "precommit": "lint-staged",
     "prepare-cordova": "yarn install-ext-web && yarn postinstall-cordova-check && rimraf cordova/www/dist && rimraf cordova/www/node_modules && shx cp -rL app/node_modules cordova/www && shx cp LICENSE.txt cordova/www",
@@ -152,7 +155,7 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@material-ui/pickers": "^3.2.10",
-    "@tagspaces/tagspaces-platforms": "1.0.58",
+    "@tagspaces/tagspaces-platforms": "1.0.59",
     "aws-amplify": "^3.3.27",
     "aws-sdk": "^2.984.0",
     "babel-polyfill": "^6.26.0",
