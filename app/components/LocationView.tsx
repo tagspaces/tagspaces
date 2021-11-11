@@ -94,7 +94,7 @@ const LocationView = (props: Props) => {
   const { location } = props;
   const isCloudLocation = location.type === locationType.TYPE_CLOUD;
 
-  const handleLocationIconClick = (event) => {
+  const handleLocationIconClick = event => {
     event.preventDefault();
     event.stopPropagation();
     if (directoryTreeRef.current) {
