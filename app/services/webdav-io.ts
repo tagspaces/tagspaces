@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-import nl from '../utils/js-webdav-client';
+/* import nl from '../utils/js-webdav-client';
 import {
   extractParentDirectoryPath,
   normalizePath,
@@ -99,11 +99,11 @@ export default class WebDAVIO {
     return Promise.resolve(paths);
   };
 
-  /* getAppDataPath = (): string =>
+  /!* getAppDataPath = (): string =>
     // TODO
     'SOMEPATH_FIX_ME';
 
-  getUserHomePath = (): string => '/'; */
+  getUserHomePath = (): string => '/'; *!/
 
   getNameForPath = (entrypath: string, separator = '/') => {
     let path = entrypath;
@@ -133,10 +133,10 @@ export default class WebDAVIO {
     window.close();
   };
 
-  /**
+  /!**
    * Creates recursively a tree structure for a given directory path
    * @param {string} dirPath - the full path of the directory for which the tree will be generated
-   */
+   *!/
   createDirectoryTree = (dirPath: string) => {
     console.log('Creating directory index for: ' + dirPath);
     const directoyTree = [];
@@ -181,9 +181,9 @@ export default class WebDAVIO {
     return result;
   };
 
-  /**
+  /!**
    * Creates a list with containing the files and the sub directories of a given directory
-   */
+   *!/
   listDirectoryPromise = (
     directoryPath: string,
     lite: boolean = false
@@ -287,7 +287,7 @@ export default class WebDAVIO {
 
         Promise.all(metaPromises)
           .then(entriesMeta => {
-            /* entriesMeta.forEach((entryMeta) => {
+            /!* entriesMeta.forEach((entryMeta) => {
           enhancedEntries.some((enhancedEntry) => {
             if (enhancedEntry.path === entryMeta.path) {
               // eslint-disable-next-line no-param-reassign
@@ -296,7 +296,7 @@ export default class WebDAVIO {
             }
             return false;
           });
-        }); */
+        }); *!/
             resolve(enhancedEntries);
             return true;
           })
@@ -368,9 +368,9 @@ export default class WebDAVIO {
       resolve(eentry);
     });
 
-  /**
+  /!**
    * Finds out the properties of a file or directory such last modification date or file size
-   */
+   *!/
   getPropertiesPromise = (filePath: string): Promise<Object> =>
     new Promise((resolve, reject) => {
       this.davClient.propfind(
@@ -412,15 +412,15 @@ export default class WebDAVIO {
       );
     });
 
-  /**
+  /!**
    * Load the content of a text file
-   */
+   *!/
   loadTextFilePromise = (filePath: string): Promise<string> =>
     this.getFileContentPromise(filePath, 'text');
 
-  /**
+  /!**
    * Gets the content of file, useful for binary files
-   */
+   *!/
   getFileContentPromise = (filePath: string, type): Promise<any> => {
     console.log('getFileContent file: ' + filePath);
     return new Promise((resolve, reject) => {
@@ -441,9 +441,9 @@ export default class WebDAVIO {
     });
   };
 
-  /**
+  /!**
    * Persists a given content(binary supported) to a specified filepath
-   */
+   *!/
   saveFilePromise = (
     filePath: string,
     content: string,
@@ -502,9 +502,9 @@ export default class WebDAVIO {
       );
     });
 
-  /**
+  /!**
    * Persists a given text content to a specified filepath
-   */
+   *!/
   saveTextFilePromise(
     filePath: string,
     content: string,
@@ -514,9 +514,9 @@ export default class WebDAVIO {
     return this.saveFilePromise(filePath, content, overWrite, 'text');
   }
 
-  /**
+  /!**
    * Persists a given binary content to a specified filepath
-   */
+   *!/
   saveBinaryFilePromise(
     filePath: string,
     content: string,
@@ -526,9 +526,9 @@ export default class WebDAVIO {
     return this.saveFilePromise(filePath, content, overWrite);
   }
 
-  /**
+  /!**
    * Creates a directory
-   */
+   *!/
   createDirectoryPromise = (dirPath: string): Promise<Object> => {
     console.log('Creating directory: ' + dirPath);
     return new Promise((resolve, reject) => {
@@ -550,9 +550,9 @@ export default class WebDAVIO {
     });
   };
 
-  /**
+  /!**
    * Copies a given file to a specified location
-   */
+   *!/
   copyFilePromise = (
     filePath: string,
     newFilePath: string
@@ -588,9 +588,9 @@ export default class WebDAVIO {
     );
   };
 
-  /**
+  /!**
    * Renames a given file
-   */
+   *!/
   renameFilePromise = (
     filePath: string,
     newFilePath: string
@@ -624,9 +624,9 @@ export default class WebDAVIO {
     });
   };
 
-  /**
+  /!**
    * Rename a directory
-   */
+   *!/
   renameDirectoryPromise = (
     dirPath: string,
     newDirectoryPath: string
@@ -662,15 +662,15 @@ export default class WebDAVIO {
     });
   };
 
-  /**
+  /!**
    * Delete a specified file
-   */
+   *!/
   deleteFilePromise = (path: string): Promise<Object> =>
     this.deleteDirectoryPromise(path);
 
-  /**
+  /!**
    * Delete a specified directory, the directory should be empty, if the trash can functionality is not enabled
-   */
+   *!/
   deleteDirectoryPromise = (path: string): Promise<Object> =>
     new Promise((resolve, reject) => {
       this.davClient.remove(encodeURI(path), (status, data, headers) => {
@@ -690,41 +690,41 @@ export default class WebDAVIO {
       });
     });
 
-  /**
+  /!**
    * Choosing directory
-   */
+   *!/
   selectDirectoryDialog = () => {
     console.log('Selecting directory is not implemented in the web version');
   };
 
-  /**
+  /!**
    * Choosing file
-   */
+   *!/
   selectFileDialog = () => {
     console.log('Selecting file not relevant for the web version');
   };
 
-  /**
+  /!**
    * Opens directory in new tab / window
-   */
+   *!/
   openDirectory = (dirPath: string) => {
     console.log(
       'Opening directory ' + dirPath + ' not possible for the web version.'
     );
   };
 
-  /**
+  /!**
    * Opens directory in new tab / window, selecting the file
-   */
+   *!/
   showInFileManager = (filePath: string) => {
     console.log(
       'Showing item ' + filePath + ' not possible for the web version.'
     );
   };
 
-  /**
+  /!**
    * Open the file url in a new tab / window
-   */
+   *!/
   openFile = (filePath: string): void => {
     window.open(filePath, '_blank');
   };
@@ -735,10 +735,10 @@ export default class WebDAVIO {
 
   resolveFilePath = (filePath: string): string => filePath;
 
-  /**
+  /!**
    * Places the application window on top of the other windows
-   */
+   *!/
   focusWindow = (): void => {
     window.focus();
   };
-}
+} */
