@@ -94,10 +94,15 @@ const LocationView = (props: Props) => {
   const { location } = props;
   const isCloudLocation = location.type === locationType.TYPE_CLOUD;
 
-  const handleLocationClick = () => {
+  const handleLocationIconClick = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
     if (directoryTreeRef.current) {
       directoryTreeRef.current.changeLocation(location);
     }
+  };
+
+  const handleLocationClick = () => {
     if (location.uuid === props.currentLocationId) {
       // the same location click
       props.loadDirectoryContent(getLocationPath(location), false);
@@ -230,7 +235,7 @@ const LocationView = (props: Props) => {
         }
         title={getLocationPath(location)}
         button
-        onClick={() => handleLocationClick()}
+        onClick={handleLocationClick}
         onContextMenu={event => handleLocationContextMenuClick(event)}
       >
         <ListItemIcon
@@ -241,6 +246,7 @@ const LocationView = (props: Props) => {
           style={{
             minWidth: 'auto'
           }}
+          onClick={handleLocationIconClick}
         >
           {isCloudLocation ? (
             <CloudLocationIcon className={props.classes.icon} />

@@ -64,7 +64,7 @@ const DirectoryTreeView = forwardRef(
             PlatformIO.enableObjectStoreSupport(location)
               .then(() => {
                 loadSubDirectories(location, 1);
-                props.loadDirectoryContent(getLocationPath(location), true);
+                // props.loadDirectoryContent(getLocationPath(location), true);
               })
               .catch(error => {
                 console.log('enableObjectStoreSupport', error);
@@ -72,7 +72,7 @@ const DirectoryTreeView = forwardRef(
           } else if (location.type === locationType.TYPE_LOCAL) {
             PlatformIO.disableObjectStoreSupport();
             loadSubDirectories(location, 1);
-            props.loadDirectoryContent(getLocationPath(location), true);
+            // props.loadDirectoryContent(getLocationPath(location), true);
           }
         }
       },
