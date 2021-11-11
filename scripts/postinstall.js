@@ -1,10 +1,7 @@
 const fs = require('fs-extra');
 const pathLib = require('path');
-const npm = require('npm');
+const shell = require('shelljs');
 const packageJson = require('../package.json');
-
-process.env.ts_platform_version =
-  packageJson.dependencies['@tagspaces/tagspaces-platforms'];
 
 function isInstalled(npmPackage) {
   // TODO check installed version
@@ -23,7 +20,41 @@ function isInstalled(npmPackage) {
     return false;
   }
 }
+
+let install = false;
 if (process.env.PD_PLATFORM === 'electron') {
+  if (!isInstalled('@tagspaces/tagspaces-common-electron')) {
+    install = true;
+  }
+} else if (process.env.PD_PLATFORM === 'node') {
+  if (
+    !isInstalled('@tagspaces/tagspaces-common-node') ||
+    isInstalled('@tagspaces/tagspaces-common-electron')
+  ) {
+    install = true;
+  }
+} else if (process.env.PD_PLATFORM === 'web') {
+  if (!isInstalled('@tagspaces/tagspaces-common-aws')) {
+    install = true;
+  }
+} else if (process.env.PD_PLATFORM === 'cordova') {
+  if (!isInstalled('@tagspaces-common-cordova')) {
+    install = true;
+  }
+}
+
+if (
+  install &&
+  shell.exec(
+    'yarn upgrade @tagspaces/tagspaces-platforms@' +
+      packageJson.dependencies['@tagspaces/tagspaces-platforms']
+  ).code !== 0
+) {
+  shell.echo('Error: Install electron platform failed');
+  shell.exit(1);
+}
+
+/* if (process.env.PD_PLATFORM === 'electron') {
   if (!isInstalled('@tagspaces/tagspaces-common-electron')) {
     npm.load(er => {
       if (er) {
@@ -41,7 +72,7 @@ if (process.env.PD_PLATFORM === 'electron') {
     });
   }
 } else if (process.env.PD_PLATFORM === 'node') {
-  if (!isInstalled('@tagspaces/tagspaces-common-node')) {
+  if (!isInstalled('@tagspaces/tagspaces-common-node') || isInstalled('@tagspaces/tagspaces-common-electron')) {
     npm.load(er => {
       if (er) {
         console.log('err:', er);
@@ -91,4 +122,4 @@ if (process.env.PD_PLATFORM === 'electron') {
       });
     });
   }
-}
+} */
