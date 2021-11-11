@@ -3389,10 +3389,10 @@
   dependencies:
     defer-to-connect "^1.0.1"
 
-"@tagspaces/tagspaces-platforms@1.2.5":
-  version "1.2.5"
-  resolved "https://registry.yarnpkg.com/@tagspaces/tagspaces-platforms/-/tagspaces-platforms-1.2.5.tgz#8a1d9cc5f2d20f868a489de20765e6e7cacbb782"
-  integrity sha512-xiKfKTv5v6RH+GxZTGcBAcXucUDu2F/k1bw3YK3vzMpFZJkoJ+jcbI/2TR/QobOs/nQX8n/OtH3s5aiToNW2lw==
+"@tagspaces/tagspaces-platforms@1.2.6":
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/@tagspaces/tagspaces-platforms/-/tagspaces-platforms-1.2.6.tgz#c1bf8a92bc7bdf9695cba50cb4cb2397fe20c024"
+  integrity sha512-ffNQY6XYgYuUvNZmGK1jt2jr8EbiOjKs631syk8Bd+RfPudZVPVWUsGBBpZs0nfn4SVsNei/EWYaSKyaibOiHA==
 
 "@testim/chrome-version@^1.0.7":
   version "1.0.7"
