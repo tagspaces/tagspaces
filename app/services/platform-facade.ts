@@ -110,19 +110,22 @@ export default class PlatformFacade {
     platformCreateDirectoryTree(directoryPath);
 
   static createDirectoryIndexInWorker = (
+    token: string,
     directoryPath: string,
     extractText: boolean,
     ignorePatterns: Array<string>
   ): Promise<any> =>
     platformCreateDirectoryIndexInWorker(
+      token,
       directoryPath,
       extractText,
       ignorePatterns
     );
 
   static createThumbnailsInWorker = (
+    token: string,
     tmbGenerationList: Array<string>
-  ): Promise<any> => platformCreateThumbnailsInWorker(tmbGenerationList);
+  ): Promise<any> => platformCreateThumbnailsInWorker(token, tmbGenerationList);
 
   /**
    * Promise === undefined on error

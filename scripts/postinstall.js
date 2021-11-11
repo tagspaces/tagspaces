@@ -50,7 +50,7 @@ if (
       packageJson.dependencies['@tagspaces/tagspaces-platforms']
   ).code !== 0
 ) {
-  shell.echo('Error: Install electron platform failed');
+  shell.echo('Error: Install ' + process.env.PD_PLATFORM + ' platform failed');
   shell.exit(1);
 }
 
