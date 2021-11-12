@@ -56,7 +56,6 @@ import {
   supportedVideos,
   supportedMisc
 } from '-/services/thumbsgenerator';
-import Config from '-/config/config.json';
 
 const supportedImgsWS = [
   'jpg',
@@ -304,7 +303,7 @@ export function prepareDirectoryContent(
   ) {
     dispatch(AppActions.setGeneratingThumbnails(true));
     if (tmbGenerationList.length > 0) {
-      PlatformIO.createThumbnailsInWorker(Config.jwt, tmbGenerationList)
+      PlatformIO.createThumbnailsInWorker(tmbGenerationList)
         .then(handleTmbGenerationResults)
         .catch(handleTmbGenerationFailed);
     }
@@ -489,10 +488,9 @@ export function createDirectoryIndex(
     directoryPath = param;
   }
   const dirPath = cleanTrailingDirSeparator(directoryPath);
-  if (PlatformIO.isWorkerAvailable() && !PlatformIO.haveObjectStoreSupport()) {
+  if (!PlatformIO.haveObjectStoreSupport() && PlatformIO.isWorkerAvailable()) {
     // Start indexing in worker if not in the object store mode
     return PlatformIO.createDirectoryIndexInWorker(
-      Config.jwt,
       dirPath,
       extractText,
       ignorePatterns

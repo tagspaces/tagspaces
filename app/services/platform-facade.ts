@@ -60,6 +60,8 @@ import {
 import { Pro } from '../pro';
 import { TS } from '-/tagspaces.namespace';
 
+let token: string;
+
 export default class PlatformFacade {
   static enableObjectStoreSupport = (objectStoreConfig: any): Promise<any> =>
     platformEnableObjectStoreSupport(objectStoreConfig);
@@ -77,8 +79,6 @@ export default class PlatformFacade {
   static setLanguage = (language: string): void => {
     platformSetLanguage(language);
   };
-
-  static isWorkerAvailable = (): boolean => platformIsWorkerAvailable();
 
   static setZoomFactorElectron = zoomLevel => {
     platformSetZoomFactorElectron(zoomLevel);
@@ -109,23 +109,49 @@ export default class PlatformFacade {
   static createDirectoryTree = (directoryPath: string): Object =>
     platformCreateDirectoryTree(directoryPath);
 
+  static isWorkerAvailable = (): boolean => {
+    if (token !== undefined) {
+      return token !== 'not';
+    }
+    try {
+      // eslint-disable-next-line global-require
+      const config = require('-/config/config.json');
+      if (platformIsWorkerAvailable()) {
+        token = config.jwt;
+      }
+    } catch (e) {
+      if (e && e.code && e.code === 'MODULE_NOT_FOUND') {
+        console.debug('jwt token not available');
+        token = 'not';
+      }
+    }
+    return false;
+  };
+
   static createDirectoryIndexInWorker = (
-    token: string,
     directoryPath: string,
     extractText: boolean,
     ignorePatterns: Array<string>
-  ): Promise<any> =>
-    platformCreateDirectoryIndexInWorker(
+  ): Promise<any> => {
+    if (!PlatformFacade.isWorkerAvailable()) {
+      return Promise.reject(new Error('no Worker Available!'));
+    }
+    return platformCreateDirectoryIndexInWorker(
       token,
       directoryPath,
       extractText,
       ignorePatterns
     );
+  };
 
   static createThumbnailsInWorker = (
-    token: string,
     tmbGenerationList: Array<string>
-  ): Promise<any> => platformCreateThumbnailsInWorker(token, tmbGenerationList);
+  ): Promise<any> => {
+    if (!PlatformFacade.isWorkerAvailable()) {
+      return Promise.reject(new Error('no Worker Available!'));
+    }
+    return platformCreateThumbnailsInWorker(token, tmbGenerationList);
+  };
 
   /**
    * Promise === undefined on error
