@@ -244,14 +244,25 @@ const LocationView = (props: Props) => {
           //   this.loadSubDirectories(location, 1);
           // }}
           style={{
-            minWidth: 'auto'
+            minWidth: 'auto',
+            cursor: 'pointer'
           }}
           onClick={handleLocationIconClick}
         >
           {isCloudLocation ? (
-            <CloudLocationIcon className={props.classes.icon} />
+            <CloudLocationIcon
+              style={{
+                cursor: 'pointer'
+              }}
+              className={props.classes.icon}
+            />
           ) : (
-            <LocationIcon className={props.classes.icon} />
+            <LocationIcon
+              style={{
+                cursor: 'pointer'
+              }}
+              className={props.classes.icon}
+            />
           )}
         </ListItemIcon>
 

@@ -126,9 +126,14 @@ const DirectoryTreeView = forwardRef(
 
     const renderNameColumnAction = field => {
       const children = (
-        <span style={{ fontSize: 15, marginLeft: 5 }} title={field}>
+        <span style={{ fontSize: 15 }} title={field}>
           <FolderIcon
-            style={{ marginTop: 0, marginBottom: -8 }}
+            style={{
+              marginTop: 0,
+              marginLeft: 3,
+              marginRight: 6,
+              marginBottom: -8
+            }}
             className={props.classes.icon}
           />
           {field && field.length > 25 ? field.substr(0, 25) + '...' : field}
