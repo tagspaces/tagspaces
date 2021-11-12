@@ -527,7 +527,7 @@ export default class ElectronIO {
                         const thumbFilePath =
                           metaFolderPath +
                           AppConfig.dirSeparator +
-                          metaEntryName;
+                          encodeURIComponent(metaEntryName);
                         enhancedEntry.thumbPath = thumbFilePath;
                       }
                       return true;
