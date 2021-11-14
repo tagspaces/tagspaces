@@ -423,6 +423,58 @@ function buildAppMenu() {
   });
 } */
 
+async function startWS() {
+  try {
+    let filepath;
+    let script;
+    let envPath;
+    if (devMode || testMode) {
+      filepath = path.join(
+        __dirname,
+        'node_modules/@tagspaces/tagspaces-ws/build'
+      );
+      script = 'index.js';
+      envPath = path.join(__dirname, '.env');
+    } else {
+      filepath = process.resourcesPath;
+      script = 'app.asar/node_modules/@tagspaces/tagspaces-ws/build/index.js';
+      envPath = path.join(process.resourcesPath, 'app.asar/.env');
+    }
+    const properties = propertiesReader(envPath);
+
+    const results = await new Promise((resolve, reject) => {
+      pm2.start(
+        {
+          name: 'Tagspaces WS',
+          script, // Script to be run
+          cwd: filepath, // './node_modules/tagspaces-ws', // './process1', cwd: '/path/to/npm/module/',
+          args: ['-p', Settings.wsPort, '-k', properties.get('KEY')], // '/Users/sytolk/Pictures'],
+          restartAt: []
+          // log: path.join(process.cwd(), 'thumbGen.log') //  'C:\\Users\\smari\\IdeaProjects\\tagspaces-utils\\process1.log'
+          // log: '/Users/sytolk/IdeaProjects/tagspaces/process1.log' // path.join(process.cwd(), 'process1.log'),
+          // log: 'process1.log' // path.join(process.cwd(), 'process1.log'),
+        },
+        (err, pid) => {
+          if (err && pid) {
+            if (pid && pid.name) console.error(pid.name, err, pid);
+            else console.error(err, pid);
+            reject(err);
+          } else if (err) {
+            reject(err);
+          } else {
+            resolve(
+              `Starting ${pid.name} on ${pid.cwd} - pid (${pid.child.pid})`
+            );
+          }
+        }
+      );
+    });
+    console.debug(results);
+  } catch (ex) {
+    console.error('pm2.start Exception:', ex);
+  }
+}
+
 async function createAppWindow() {
   let startupParameter = '';
   if (startupFilePath) {
@@ -532,6 +584,7 @@ app.on('window-all-closed', () => {
 });
 
 app.on('ready', async () => {
+  await startWS();
   if (
     process.env.NODE_ENV === 'development' ||
     process.env.DEBUG_PROD === 'true'
@@ -548,52 +601,6 @@ app.on('ready', async () => {
     buildTrayMenu();
   } catch (ex) {
     console.log('buildMenus', ex);
-  }
-
-  try {
-    let filepath;
-    let script;
-    let envPath;
-    if (devMode || testMode) {
-      filepath = path.join(
-        __dirname,
-        'node_modules/@tagspaces/tagspaces-ws/build'
-      );
-      script = 'index.js';
-      envPath = path.join(__dirname, '.env');
-    } else {
-      filepath = process.resourcesPath;
-      script = 'app.asar/node_modules/@tagspaces/tagspaces-ws/build/index.js';
-      envPath = path.join(process.resourcesPath, 'app.asar/.env');
-    }
-    const properties = propertiesReader(envPath);
-
-    pm2.start(
-      {
-        name: 'Tagspaces WS',
-        script, // Script to be run
-        cwd: filepath, // './node_modules/tagspaces-ws', // './process1', cwd: '/path/to/npm/module/',
-        args: ['-p', Settings.wsPort, '-k', properties.get('KEY')], // '/Users/sytolk/Pictures'],
-        restartAt: []
-        // log: path.join(process.cwd(), 'thumbGen.log') //  'C:\\Users\\smari\\IdeaProjects\\tagspaces-utils\\process1.log'
-        // log: '/Users/sytolk/IdeaProjects/tagspaces/process1.log' // path.join(process.cwd(), 'process1.log'),
-        // log: 'process1.log' // path.join(process.cwd(), 'process1.log'),
-      },
-      (err, pid) => {
-        if (err && pid) {
-          if (pid && pid.name) console.error(pid.name, err, pid);
-          else console.error(err, pid);
-        } else if (err) {
-          console.error('start WS crashed', err);
-        } else {
-          console.log(
-            `Starting ${pid.name} on ${pid.cwd} - pid (${pid.child.pid})`
-          );
-        }
-      }
-    );
-  } catch (ex) {
-    console.error('pm2.start Exception:', ex);
   }
 
   i18n.on('languageChanged', lng => {
