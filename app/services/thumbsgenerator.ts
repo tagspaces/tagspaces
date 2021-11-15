@@ -22,8 +22,8 @@ import {
   extractContainingDirectoryPath,
   extractFileName,
   normalizePath,
-  getMetaDirectoryPath
-} from '../utils/paths';
+  getMetaDirectoryPath, encodeFileName
+} from "../utils/paths";
 import { base64ToArrayBuffer } from '../utils/misc';
 import AppConfig from '../config';
 import PlatformIO from '../services/platform-io';
@@ -255,37 +255,39 @@ export function generateThumbnailPromise(fileURL: string, fileSize: number) {
     PlatformIO.getDirSeparator()
   ).toLowerCase();
 
+  const fileURLEscaped = encodeFileName(fileURL, PlatformIO.getDirSeparator());
+
   if (supportedImgs.indexOf(ext) >= 0) {
     if (fileSize && fileSize < maxFileSize) {
-      return generateImageThumbnail(fileURL);
+      return generateImageThumbnail(fileURLEscaped);
     }
   } else if (Pro && ext === 'pdf') {
-    return Pro.ThumbsGenerator.generatePDFThumbnail(fileURL, maxSize);
+    return Pro.ThumbsGenerator.generatePDFThumbnail(fileURLEscaped, maxSize);
   } else if (Pro && ext === 'html') {
-    return Pro.ThumbsGenerator.generateHtmlThumbnail(fileURL, maxSize);
+    return Pro.ThumbsGenerator.generateHtmlThumbnail(fileURLEscaped, maxSize);
   } else if (Pro && ext === 'url') {
-    return Pro.ThumbsGenerator.generateUrlThumbnail(fileURL, maxSize);
+    return Pro.ThumbsGenerator.generateUrlThumbnail(fileURLEscaped, maxSize);
   } else if (Pro && ext === 'tiff') {
-    return Pro.ThumbsGenerator.generateTiffThumbnail(fileURL, maxSize);
+    return Pro.ThumbsGenerator.generateTiffThumbnail(fileURLEscaped, maxSize);
   } else if (Pro && ext === 'mp3') {
     if (fileSize && fileSize < maxFileSize) {
       // return Pro.ThumbsGenerator.generateMp3Thumbnail(fileURL, maxSize);
     }
   } else if (Pro && supportedText.indexOf(ext) >= 0) {
-    return Pro.ThumbsGenerator.generateTextThumbnail(fileURL, maxSize);
+    return Pro.ThumbsGenerator.generateTextThumbnail(fileURLEscaped, maxSize);
   } else if (Pro && supportedContainers.indexOf(ext) >= 0) {
     if (fileSize && fileSize < maxFileSize) {
       return Pro.ThumbsGenerator.generateZipContainerImageThumbnail(
-        fileURL,
+        fileURLEscaped,
         maxSize,
         supportedImgs
       );
     }
   } else if (supportedVideos.indexOf(ext) >= 0) {
     if (Pro) {
-      return Pro.ThumbsGenerator.generateVideoThumbnail(fileURL, maxSize);
+      return Pro.ThumbsGenerator.generateVideoThumbnail(fileURLEscaped, maxSize);
     }
-    return generateVideoThumbnail(fileURL);
+    return generateVideoThumbnail(fileURLEscaped);
   }
   return generateDefaultThumbnail();
 }

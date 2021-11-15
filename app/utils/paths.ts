@@ -170,6 +170,24 @@ export function extractFileName(
   return filePath;
 }
 
+export function encodeFileName(
+  filePath: string,
+  dirSeparator: string // = AppConfig.dirSeparator
+): string {
+  if (filePath) {
+    const path = filePath;
+    if (filePath.endsWith(dirSeparator)) {
+      return '';
+    }
+    const lastDirSeparator = path.lastIndexOf(dirSeparator) + 1;
+    return (
+      path.substring(0, lastDirSeparator) +
+      encodeURIComponent(path.substring(lastDirSeparator, path.length))
+    );
+  }
+  return filePath;
+}
+
 export function cleanTrailingDirSeparator(dirPath: string): string {
   if (dirPath) {
     if (dirPath.lastIndexOf('\\') === dirPath.length - 1) {
