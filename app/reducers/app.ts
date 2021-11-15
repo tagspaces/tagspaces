@@ -1632,7 +1632,7 @@ export const actions = {
         dispatch(actions.addToEntryContainer(entryForOpening));
         dispatch(
           actions.showNotification(
-            `You have opened file ${openFile.path} in edit mode. Please save it before open another!`,
+            `You can't open another file, because '${openFile.path}' is opened for editing`,
             'default',
             true
           )
