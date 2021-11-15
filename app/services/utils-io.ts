@@ -69,7 +69,7 @@ const supportedImgsWS = [
   'tiff',
   'ico',
   'webp',
-  'psd'
+  'avif'
   // 'bmp' currently electron main processed: https://github.com/lovell/sharp/issues/806
 ];
 
