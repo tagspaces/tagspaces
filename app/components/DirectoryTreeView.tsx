@@ -64,7 +64,7 @@ const DirectoryTreeView = forwardRef(
             PlatformIO.enableObjectStoreSupport(location)
               .then(() => {
                 loadSubDirectories(location, 1);
-                props.loadDirectoryContent(getLocationPath(location), true);
+                // props.loadDirectoryContent(getLocationPath(location), true);
               })
               .catch(error => {
                 console.log('enableObjectStoreSupport', error);
@@ -72,7 +72,7 @@ const DirectoryTreeView = forwardRef(
           } else if (location.type === locationType.TYPE_LOCAL) {
             PlatformIO.disableObjectStoreSupport();
             loadSubDirectories(location, 1);
-            props.loadDirectoryContent(getLocationPath(location), true);
+            // props.loadDirectoryContent(getLocationPath(location), true);
           }
         }
       },
@@ -126,9 +126,14 @@ const DirectoryTreeView = forwardRef(
 
     const renderNameColumnAction = field => {
       const children = (
-        <span style={{ fontSize: 15, marginLeft: 5 }} title={field}>
+        <span style={{ fontSize: 15 }} title={field}>
           <FolderIcon
-            style={{ marginTop: 0, marginBottom: -8 }}
+            style={{
+              marginTop: 0,
+              marginLeft: 3,
+              marginRight: 6,
+              marginBottom: -8
+            }}
             className={props.classes.icon}
           />
           {field && field.length > 25 ? field.substr(0, 25) + '...' : field}

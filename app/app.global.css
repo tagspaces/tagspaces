@@ -34,6 +34,14 @@ body {
   z-index: 1;
 }
 
+.rc-table-row-expand-icon {
+  width: 13px !important;
+  height: 13px !important;
+  line-height: 13px !important;
+  margin: 5px;
+  cursor: pointer;
+}
+
 #root {
   height: 100%;
 }

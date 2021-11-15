@@ -1104,11 +1104,11 @@ export const actions = {
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
-    const { openedFiles } = getState().app;
+    // const { openedFiles } = getState().app;
     // skip select other file if its have openedFiles in editMode
-    if (openedFiles.length === 0 || !openedFiles[0].editMode) {
-      dispatch(actions.setSelectedEntriesInt(selectedEntries));
-    }
+    // if (openedFiles.length === 0 || !openedFiles[0].editMode) {
+    dispatch(actions.setSelectedEntriesInt(selectedEntries));
+    // }
   },
   setSelectedEntriesInt: (selectedEntries: Array<Object>) => ({
     type: types.SET_SELECTED_ENTRIES,
@@ -1622,9 +1622,21 @@ export const actions = {
     if (openedFiles.length > 0) {
       const openFile = openedFiles[0];
       if (openFile.editMode) {
-        // && openFile.changed) {
-        entryForOpening = { ...openFile, shouldReload: !openFile.shouldReload }; // false };
+        entryForOpening = {
+          ...openFile,
+          shouldReload:
+            openFile.shouldReload !== undefined
+              ? !openFile.shouldReload
+              : undefined
+        }; // false };
         dispatch(actions.addToEntryContainer(entryForOpening));
+        dispatch(
+          actions.showNotification(
+            `You can't open another file, because '${openFile.path}' is opened for editing`,
+            'default',
+            true
+          )
+        );
         return false;
       }
     }

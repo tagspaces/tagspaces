@@ -94,13 +94,18 @@ const LocationView = (props: Props) => {
   const { location } = props;
   const isCloudLocation = location.type === locationType.TYPE_CLOUD;
 
-  const handleLocationClick = () => {
+  const handleLocationIconClick = event => {
+    event.preventDefault();
+    event.stopPropagation();
     if (directoryTreeRef.current) {
       directoryTreeRef.current.changeLocation(location);
     }
+  };
+
+  const handleLocationClick = () => {
     if (location.uuid === props.currentLocationId) {
       // the same location click
-      props.loadDirectoryContent(getLocationPath(location), false);
+      props.loadDirectoryContent(getLocationPath(location), true); // false);
     } else {
       // this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
       props.setSelectedEntries([]);
@@ -230,7 +235,7 @@ const LocationView = (props: Props) => {
         }
         title={getLocationPath(location)}
         button
-        onClick={() => handleLocationClick()}
+        onClick={handleLocationClick}
         onContextMenu={event => handleLocationContextMenuClick(event)}
       >
         <ListItemIcon
@@ -239,13 +244,25 @@ const LocationView = (props: Props) => {
           //   this.loadSubDirectories(location, 1);
           // }}
           style={{
-            minWidth: 'auto'
+            minWidth: 'auto',
+            cursor: 'pointer'
           }}
+          onClick={handleLocationIconClick}
         >
           {isCloudLocation ? (
-            <CloudLocationIcon className={props.classes.icon} />
+            <CloudLocationIcon
+              style={{
+                cursor: 'pointer'
+              }}
+              className={props.classes.icon}
+            />
           ) : (
-            <LocationIcon className={props.classes.icon} />
+            <LocationIcon
+              style={{
+                cursor: 'pointer'
+              }}
+              className={props.classes.icon}
+            />
           )}
         </ListItemIcon>
 
