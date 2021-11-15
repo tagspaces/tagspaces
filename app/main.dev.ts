@@ -583,8 +583,10 @@ app.on('window-all-closed', () => {
   app.quit();
 });
 
+startWS();
+
 app.on('ready', async () => {
-  await startWS();
+  // await startWS();
   if (
     process.env.NODE_ENV === 'development' ||
     process.env.DEBUG_PROD === 'true'
