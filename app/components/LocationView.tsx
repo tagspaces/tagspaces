@@ -105,7 +105,7 @@ const LocationView = (props: Props) => {
   const handleLocationClick = () => {
     if (location.uuid === props.currentLocationId) {
       // the same location click
-      props.loadDirectoryContent(getLocationPath(location), false);
+      props.loadDirectoryContent(getLocationPath(location), true); // false);
     } else {
       // this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
       props.setSelectedEntries([]);
