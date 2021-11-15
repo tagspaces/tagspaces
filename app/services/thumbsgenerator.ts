@@ -16,15 +16,16 @@
  *
  */
 
-import EXIF from 'exif-js';
+// import EXIF from 'exif-js';
 import {
   extractFileExtension,
   extractContainingDirectoryPath,
   extractFileName,
   normalizePath,
-  getMetaDirectoryPath, encodeFileName
-} from "../utils/paths";
-import { base64ToArrayBuffer } from '../utils/misc';
+  getMetaDirectoryPath,
+  encodeFileName
+} from '-/utils/paths';
+import { base64ToArrayBuffer } from '-/utils/misc';
 import AppConfig from '../config';
 import PlatformIO from '../services/platform-io';
 import { Pro } from '../pro';
@@ -285,7 +286,10 @@ export function generateThumbnailPromise(fileURL: string, fileSize: number) {
     }
   } else if (supportedVideos.indexOf(ext) >= 0) {
     if (Pro) {
-      return Pro.ThumbsGenerator.generateVideoThumbnail(fileURLEscaped, maxSize);
+      return Pro.ThumbsGenerator.generateVideoThumbnail(
+        fileURLEscaped,
+        maxSize
+      );
     }
     return generateVideoThumbnail(fileURLEscaped);
   }
