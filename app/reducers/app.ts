@@ -1446,7 +1446,7 @@ export const actions = {
       PlatformIO.disableObjectStoreSupport();
       dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
       dispatch(actions.changeLocation(location));
-      dispatch(actions.loadDirectoryContent(getLocationPath(location), false));
+      dispatch(actions.loadDirectoryContent(getLocationPath(location), true));
       if (Pro && Pro.Watcher && location.watchForChanges) {
         const perspective = getCurrentDirectoryPerspective(getState());
         const depth = perspective === perspectives.KANBAN ? 3 : 1;
