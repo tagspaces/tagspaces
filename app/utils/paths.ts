@@ -124,11 +124,12 @@ export function getThumbFileLocationForFile(
     entryPath,
     dirSeparator
   );
+  const fileName = extractFileName(entryPath, dirSeparator);
   const metaFolder = getMetaDirectoryPath(containingFolder, dirSeparator);
   return (
     metaFolder +
     dirSeparator +
-    encodeURIComponent(extractFileName(entryPath, dirSeparator)) +
+    encodeURIComponent(fileName).replace(/%5B/g, "[").replace(/%5D/g, "]") +
     AppConfig.thumbFileExt
   );
 }
