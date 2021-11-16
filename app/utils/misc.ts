@@ -105,14 +105,12 @@ export function parseTextQuery(textQuery: string, identifier: string) {
   return extractedTags;
 }
 
-export function removeAllTagsFromQuery(query: string) {
+export function removeAllTagsFromSearchQuery(query: string) {
   if (!query) {
     return '';
   }
-  if (query && query.indexOf('[') > -1) {
-    return query.replace(/([+-?]\S+)/g, '').trim();
-  }
-  return query;
+  // if (query && query.indexOf('[') > -1) {
+  return query.replace(/([+-?]\S+)/g, '').trim();
 }
 
 export function mergeWithExtractedTags(
