@@ -43,7 +43,7 @@ import { TS } from '-/tagspaces.namespace';
 import {
   escapeRegExp,
   parseTextQuery,
-  removeAllTagsFromQuery
+  removeAllTagsFromSearchQuery
 } from '-/utils/misc';
 import useFirstRender from '-/utils/useFirstRender';
 
@@ -194,7 +194,7 @@ const SearchInline = (props: Props) => {
         });
         emptySearch = false;
       }
-      const txtQuery = removeAllTagsFromQuery(textQuery.current);
+      const txtQuery = removeAllTagsFromSearchQuery(textQuery.current);
       if (txtQuery) {
         emptySearch = false;
       }
