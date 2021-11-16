@@ -114,7 +114,8 @@ export function getFileLocationFromMetaFile(
 
 export function getThumbFileLocationForFile(
   entryPath: string,
-  dirSeparator: string // = AppConfig.dirSeparator
+  dirSeparator: string, // = AppConfig.dirSeparator
+  encode: boolean = true
 ) {
   if (entryPath.indexOf(dirSeparator + AppConfig.metaFolder) > -1) {
     // entryPath is in .ts folder - no thumb file location exist
@@ -124,11 +125,16 @@ export function getThumbFileLocationForFile(
     entryPath,
     dirSeparator
   );
+  const fileName = extractFileName(entryPath, dirSeparator);
   const metaFolder = getMetaDirectoryPath(containingFolder, dirSeparator);
   return (
     metaFolder +
     dirSeparator +
-    encodeURIComponent(extractFileName(entryPath, dirSeparator)) +
+    (encode
+      ? encodeURIComponent(fileName)
+          .replace(/%5B/g, '[')
+          .replace(/%5D/g, ']')
+      : fileName) +
     AppConfig.thumbFileExt
   );
 }
