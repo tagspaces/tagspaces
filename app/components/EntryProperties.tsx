@@ -491,7 +491,8 @@ const EntryProperties = (props: Props) => {
   if (currentEntry.isFile) {
     thumbPath = getThumbFileLocationForFile(
       currentEntry.path,
-      PlatformIO.getDirSeparator()
+      PlatformIO.getDirSeparator(),
+      false
     );
   } else {
     thumbPath = getThumbFileLocationForDirectory(

@@ -43,7 +43,7 @@ import { TS } from '-/tagspaces.namespace';
 import {
   escapeRegExp,
   parseTextQuery,
-  removeAllTagsFromQuery
+  removeAllTagsFromSearchQuery
 } from '-/utils/misc';
 import useFirstRender from '-/utils/useFirstRender';
 
@@ -194,7 +194,7 @@ const SearchInline = (props: Props) => {
         });
         emptySearch = false;
       }
-      const txtQuery = removeAllTagsFromQuery(textQuery.current);
+      const txtQuery = removeAllTagsFromSearchQuery(textQuery.current);
       if (txtQuery) {
         emptySearch = false;
       }
@@ -214,10 +214,8 @@ const SearchInline = (props: Props) => {
       } else {
         txtQuery = props.searchQuery.textQuery || '';
       }
-
-      const withMask = txtQuery + ' ' + tagsMask.trim();
-      if (withMask !== textQuery.current) {
-        textQuery.current = withMask; */
+      */
+      textQuery.current = txtQuery + ' ' + textQueryMask.current.trim();
       mainSearchField.current.value =
         txtQuery +
         (textQueryMask.current ? ' ' + textQueryMask.current.trim() : '');
