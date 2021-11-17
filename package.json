@@ -51,7 +51,7 @@
     "dev": "yarn postinstall-node-check && yarn generate-jwt && yarn check-extensions && cross-env START_HOT=1 node -r @babel/register ./internals/scripts/CheckPortInUse.js && cross-env START_HOT=1 yarn start-renderer-dev",
     "generate-jwt": "node scripts/jwt_generate.js",
     "install-ext-node": "rimraf app/node_modules && cd app && cross-env PD_PLATFORM=node node ../scripts/app-package-gen.js && npm install && cd ..",
-    "install-ext-node-linux": "rimraf app/node_modules && cd app && cross-env PD_PLATFORM=node node ../scripts/app-package-gen.js && npm install --platform=linux --arch=x64 && cd ..",
+    "install-ext-node-linux": "rimraf app/node_modules && cd app && cross-env PD_PLATFORM=node node ../scripts/app-package-gen.js && npm install --ignore-scripts=false --verbose --platform=linux --arch=x64 && cd ..",
     "install-ext-node-mac": "rimraf app/node_modules && cd app && cross-env PD_PLATFORM=node node ../scripts/app-package-gen.js && npm install --platform=darwin --arch=x64 && cd ..",
     "install-ext-node-mac-arm64": "rimraf app/node_modules && cd app && cross-env PD_PLATFORM=node node ../scripts/app-package-gen.js && npm install --platform=darwin --arch=arm64 && cd ..",
     "install-ext-node-win": "rimraf app/node_modules && cd app && cross-env PD_PLATFORM=node node ../scripts/app-package-gen.js && npm install --platform=win32 --arch=x64 && cd ..",
