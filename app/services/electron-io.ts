@@ -408,11 +408,11 @@ export default class ElectronIO {
               }
 
               // Read tsm.json from sub folders
-              if (!eentry.isFile && mode.includes('extractThumbPath')) {
+              if (!eentry.isFile && mode.includes('extractThumbPath') && !eentry.path.includes(AppConfig.dirSeparator + AppConfig.metaFolder)) {
                 const folderMetaPath =
                   eentry.path +
                   AppConfig.dirSeparator +
-                  (!eentry.path.includes('/' + AppConfig.metaFolder)
+                  (!eentry.path.includes(AppConfig.dirSeparator + AppConfig.metaFolder) // TODO this will set parent folder description to /.ts folder too
                     ? AppConfig.metaFolder + AppConfig.dirSeparator
                     : '') +
                   AppConfig.metaFolderFile;
@@ -527,7 +527,7 @@ export default class ElectronIO {
                         const thumbFilePath =
                           metaFolderPath +
                           AppConfig.dirSeparator +
-                          metaEntryName;
+                          encodeURIComponent(metaEntryName);
                         enhancedEntry.thumbPath = thumbFilePath;
                       }
                       return true;

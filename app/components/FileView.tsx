@@ -84,7 +84,7 @@ const FileView = (props: Props) => {
         (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
     }
   } else {
-    fileOpenerURL = 'about:blank';
+    fileOpenerURL = '';
   }
   return (
     <div
@@ -132,6 +132,7 @@ const FileView = (props: Props) => {
 
 const areEqual = (prevProp, nextProp) =>
   nextProp.openedFile.path === prevProp.openedFile.path &&
+  nextProp.openedFile.url === prevProp.openedFile.url &&
   nextProp.openedFile.editMode === prevProp.openedFile.editMode &&
   nextProp.openedFile.shouldReload === prevProp.openedFile.shouldReload &&
   nextProp.isFullscreen === prevProp.isFullscreen;

@@ -43,7 +43,7 @@ import { TS } from '-/tagspaces.namespace';
 import {
   escapeRegExp,
   parseTextQuery,
-  removeAllTagsFromQuery
+  removeAllTagsFromSearchQuery
 } from '-/utils/misc';
 import useFirstRender from '-/utils/useFirstRender';
 
@@ -184,7 +184,7 @@ const SearchInline = (props: Props) => {
       }
       if (props.searchQuery.tagsOR && props.searchQuery.tagsOR.length > 0) {
         props.searchQuery.tagsOR.forEach(tag => {
-          textQueryMask.current += ' ?' + tag.title;
+          textQueryMask.current += ' |' + tag.title;
         });
         emptySearch = false;
       }
@@ -194,7 +194,7 @@ const SearchInline = (props: Props) => {
         });
         emptySearch = false;
       }
-      const txtQuery = removeAllTagsFromQuery(textQuery.current);
+      const txtQuery = removeAllTagsFromSearchQuery(textQuery.current);
       if (txtQuery) {
         emptySearch = false;
       }
@@ -214,10 +214,8 @@ const SearchInline = (props: Props) => {
       } else {
         txtQuery = props.searchQuery.textQuery || '';
       }
-
-      const withMask = txtQuery + ' ' + tagsMask.trim();
-      if (withMask !== textQuery.current) {
-        textQuery.current = withMask; */
+      */
+      textQuery.current = txtQuery + ' ' + textQueryMask.current.trim();
       mainSearchField.current.value =
         txtQuery +
         (textQueryMask.current ? ' ' + textQueryMask.current.trim() : '');
@@ -320,8 +318,8 @@ const SearchInline = (props: Props) => {
     let query = textQuery.current;
     const tagsAND = parseTextQuery(textQuery.current, '+');
     query = removeTagsFromQuery(tagsAND, query, '+');
-    const tagsOR = parseTextQuery(textQuery.current, '?');
-    query = removeTagsFromQuery(tagsOR, query, '?');
+    const tagsOR = parseTextQuery(textQuery.current, '|');
+    query = removeTagsFromQuery(tagsOR, query, '|');
     const tagsNOT = parseTextQuery(textQuery.current, '-');
     query = removeTagsFromQuery(tagsNOT, query, '-');
     const searchQuery: TS.SearchQuery = {

@@ -69,7 +69,7 @@ const supportedImgsWS = [
   'tiff',
   'ico',
   'webp',
-  'psd'
+  'avif'
   // 'bmp' currently electron main processed: https://github.com/lovell/sharp/issues/806
 ];
 
@@ -340,7 +340,7 @@ export function findExtensionsForEntry(
   ).toLowerCase();
   const viewingExtensionPath = isFile
     ? findExtensionPathForId('@tagspaces/extensions/text-viewer')
-    : 'about:blank';
+    : '';
   const fileForOpening: OpenedEntry = {
     path: entryPath,
     viewingExtensionPath,

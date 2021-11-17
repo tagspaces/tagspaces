@@ -105,11 +105,12 @@ export function parseTextQuery(textQuery: string, identifier: string) {
   return extractedTags;
 }
 
-export function removeAllTagsFromQuery(query: string) {
-  if (query) {
-    return query.replace(/([+-?]\S+)/g, '').trim();
+export function removeAllTagsFromSearchQuery(query: string) {
+  if (!query) {
+    return '';
   }
-  return '';
+  // if (query && query.indexOf('[') > -1) {
+  return query.replace(/([+-?]\S+)/g, '').trim();
 }
 
 export function mergeWithExtractedTags(
@@ -550,9 +551,13 @@ export function sortAlphaNum(a: TS.FileSystemEntry, b: TS.FileSystemEntry) {
   // Regular expression to test if the string has a digit.
   const reDigit = /\d/;
 
-  // Get rid of casing issues.
-  const cleanedA = cleanFileName(a.name.toLowerCase());
-  const cleanedB = cleanFileName(b.name.toLowerCase());
+  // Get rid of casing issues && remove tags for files only (folders dont have tags in name)
+  const cleanedA = a.isFile
+    ? cleanFileName(a.name.toLowerCase())
+    : a.name.toLowerCase();
+  const cleanedB = b.isFile
+    ? cleanFileName(b.name.toLowerCase())
+    : b.name.toLowerCase();
 
   // Separates the strings into substrings that have only digits and those
   // that have no digits.

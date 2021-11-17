@@ -305,18 +305,20 @@ export default class PlatformIO {
     filePath: string,
     newFilePath: string
   ): Promise<any> => {
+    const path = decodeURIComponent(filePath);
+    const newPath = decodeURIComponent(newFilePath);
     if (objectStoreAPI) {
       const param = {
-        path: filePath,
+        path,
         bucketName: objectStoreAPI.config().bucketName
       };
-      return objectStoreAPI.renameFilePromise(param, newFilePath);
+      return objectStoreAPI.renameFilePromise(param, newPath);
       // .then(result => result);
     }
-    PlatformIO.ignoreByWatcher(filePath, newFilePath);
+    PlatformIO.ignoreByWatcher(path, newPath);
 
-    return nativeAPI.renameFilePromise(filePath, newFilePath).then(result => {
-      PlatformIO.deignoreByWatcher(filePath, newFilePath);
+    return nativeAPI.renameFilePromise(path, newPath).then(result => {
+      PlatformIO.deignoreByWatcher(path, newPath);
       return result;
     });
   };

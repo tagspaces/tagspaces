@@ -17,8 +17,10 @@
  */
 
 import React, { useState } from 'react';
+import Draggable from 'react-draggable';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Button from '@material-ui/core/Button';
+import Paper, { PaperProps } from '@material-ui/core/Paper';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -44,6 +46,17 @@ interface Props {
   addTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
   removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
   removeAllTags: (paths: Array<string>) => void;
+}
+
+function PaperComponent(props: PaperProps) {
+  return (
+    <Draggable
+      handle="#draggable-dialog-title"
+      cancel={'[class*="MuiDialogContent-root"]'}
+    >
+      <Paper {...props} />
+    </Draggable>
+  );
 }
 
 const AddRemoveTagsDialog = (props: Props) => {
@@ -109,8 +122,9 @@ const AddRemoveTagsDialog = (props: Props) => {
       onClose={onClose}
       keepMounted
       scroll="paper"
+      PaperComponent={fullScreen ? Paper : PaperComponent}
     >
-      <DialogTitle>
+      <DialogTitle id="draggable-dialog-title">
         {i18n.t('core:tagOperationTitle')}
         <DialogCloseButton onClose={onClose} />
       </DialogTitle>

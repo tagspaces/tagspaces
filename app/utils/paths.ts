@@ -114,17 +114,27 @@ export function getFileLocationFromMetaFile(
 
 export function getThumbFileLocationForFile(
   entryPath: string,
-  dirSeparator: string // = AppConfig.dirSeparator
+  dirSeparator: string, // = AppConfig.dirSeparator
+  encode: boolean = true
 ) {
+  if (entryPath.indexOf(dirSeparator + AppConfig.metaFolder) > -1) {
+    // entryPath is in .ts folder - no thumb file location exist
+    return undefined;
+  }
   const containingFolder = extractContainingDirectoryPath(
     entryPath,
     dirSeparator
   );
+  const fileName = extractFileName(entryPath, dirSeparator);
   const metaFolder = getMetaDirectoryPath(containingFolder, dirSeparator);
   return (
     metaFolder +
     dirSeparator +
-    extractFileName(entryPath, dirSeparator) +
+    (encode
+      ? encodeURIComponent(fileName)
+          .replace(/%5B/g, '[')
+          .replace(/%5D/g, ']')
+      : fileName) +
     AppConfig.thumbFileExt
   );
 }
@@ -162,6 +172,24 @@ export function extractFileName(
       // path = filePath.substring(0, filePath.length - dirSeparator.length);
     }
     return path.substring(path.lastIndexOf(dirSeparator) + 1, path.length);
+  }
+  return filePath;
+}
+
+export function encodeFileName(
+  filePath: string,
+  dirSeparator: string // = AppConfig.dirSeparator
+): string {
+  if (filePath) {
+    const path = filePath;
+    if (filePath.endsWith(dirSeparator)) {
+      return '';
+    }
+    const lastDirSeparator = path.lastIndexOf(dirSeparator) + 1;
+    return (
+      path.substring(0, lastDirSeparator) +
+      encodeURIComponent(path.substring(lastDirSeparator, path.length))
+    );
   }
   return filePath;
 }

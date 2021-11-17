@@ -491,7 +491,8 @@ const EntryProperties = (props: Props) => {
   if (currentEntry.isFile) {
     thumbPath = getThumbFileLocationForFile(
       currentEntry.path,
-      PlatformIO.getDirSeparator()
+      PlatformIO.getDirSeparator(),
+      false
     );
   } else {
     thumbPath = getThumbFileLocationForDirectory(
@@ -1275,11 +1276,13 @@ const EntryProperties = (props: Props) => {
                 role="button"
                 tabIndex={0}
                 style={{
-                  backgroundSize: 'cover',
+                  backgroundSize: 'contain',
+                  backgroundRepeat: 'no-repeat',
                   backgroundImage: thumbPathUrl,
                   backgroundPosition: 'center',
-                  height: 100,
-                  width: 100,
+                  minHeight: AppConfig.maxThumbSize,
+                  maxHeight: AppConfig.maxThumbSize,
+                  maxWidth: AppConfig.maxThumbSize,
                   display: 'block',
                   marginBottom: 5
                 }}

@@ -430,7 +430,7 @@ const SearchPopover = (props: Props) => {
     const tagsOR = mergeWithExtractedTags(
       textQuery.current,
       props.searchQuery.tagsOR,
-      '?'
+      '|'
     );
     const tagsNOT = mergeWithExtractedTags(
       textQuery.current,
@@ -490,7 +490,7 @@ const SearchPopover = (props: Props) => {
     const tagsOR = mergeWithExtractedTags(
       textQuery.current,
       props.searchQuery.tagsOR,
-      '?'
+      '|'
     );
     const tagsNOT = mergeWithExtractedTags(
       textQuery.current,
@@ -976,34 +976,32 @@ const SearchPopover = (props: Props) => {
                 </Select>
               </ProTooltip>
             </FormControl>
-            <FormControl className={classes.formControl}>
-              <ButtonGroup fullWidth style={{ justifyContent: 'center' }}>
-                {Pro && (
-                  <>
+            {Pro && (
+              <FormControl className={classes.formControl}>
+                <ButtonGroup fullWidth style={{ justifyContent: 'center' }}>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    size="small"
+                    style={{ flex: 1 }}
+                    onClick={() => saveSearch()}
+                  >
+                    {i18n.t('searchSaveBtn')}
+                  </Button>
+                  {props.searchQuery.uuid && (
                     <Button
                       variant="outlined"
                       color="secondary"
                       size="small"
                       style={{ flex: 1 }}
-                      onClick={() => saveSearch()}
+                      onClick={() => saveSearch(false)}
                     >
-                      {i18n.t('searchSaveBtn')}
+                      {i18n.t('searchEditBtn')}
                     </Button>
-                    {props.searchQuery.uuid && (
-                      <Button
-                        variant="outlined"
-                        color="secondary"
-                        size="small"
-                        style={{ flex: 1 }}
-                        onClick={() => saveSearch(false)}
-                      >
-                        {i18n.t('searchEditBtn')}
-                      </Button>
-                    )}
-                  </>
-                )}
-              </ButtonGroup>
-            </FormControl>
+                  )}
+                </ButtonGroup>
+              </FormControl>
+            )}
 
             {SaveSearchDialog && saveSearchDialogOpened !== undefined && (
               <SaveSearchDialog

@@ -555,6 +555,7 @@ export default (state: any = initialState, action: any) => {
             return entry;
           }
           const fileNameTags = entry.isFile ? extractedTags : []; // dirs dont have tags in filename
+          // const { url, ...rest } = entry;
           return {
             ...entry,
             path: action.newPath, // TODO handle change extension case
@@ -1103,11 +1104,11 @@ export const actions = {
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
-    const { openedFiles } = getState().app;
+    // const { openedFiles } = getState().app;
     // skip select other file if its have openedFiles in editMode
-    if (openedFiles.length === 0 || !openedFiles[0].editMode) {
-      dispatch(actions.setSelectedEntriesInt(selectedEntries));
-    }
+    // if (openedFiles.length === 0 || !openedFiles[0].editMode) {
+    dispatch(actions.setSelectedEntriesInt(selectedEntries));
+    // }
   },
   setSelectedEntriesInt: (selectedEntries: Array<Object>) => ({
     type: types.SET_SELECTED_ENTRIES,
@@ -1445,7 +1446,7 @@ export const actions = {
       PlatformIO.disableObjectStoreSupport();
       dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
       dispatch(actions.changeLocation(location));
-      dispatch(actions.loadDirectoryContent(getLocationPath(location), false));
+      dispatch(actions.loadDirectoryContent(getLocationPath(location), true));
       if (Pro && Pro.Watcher && location.watchForChanges) {
         const perspective = getCurrentDirectoryPerspective(getState());
         const depth = perspective === perspectives.KANBAN ? 3 : 1;
@@ -1621,9 +1622,21 @@ export const actions = {
     if (openedFiles.length > 0) {
       const openFile = openedFiles[0];
       if (openFile.editMode) {
-        // && openFile.changed) {
-        entryForOpening = { ...openFile, shouldReload: !openFile.shouldReload }; // false };
+        entryForOpening = {
+          ...openFile,
+          shouldReload:
+            openFile.shouldReload !== undefined
+              ? !openFile.shouldReload
+              : undefined
+        }; // false };
         dispatch(actions.addToEntryContainer(entryForOpening));
+        dispatch(
+          actions.showNotification(
+            `You can't open another file, because '${openFile.path}' is opened for editing`,
+            'default',
+            true
+          )
+        );
         return false;
       }
     }
@@ -1635,13 +1648,13 @@ export const actions = {
       fsEntry.path,
       fsEntry.isFile
     );
-    if (fsEntry.url) {
-      entryForOpening.url = fsEntry.url;
-    } else if (PlatformIO.haveObjectStoreSupport()) {
+    if (PlatformIO.haveObjectStoreSupport()) {
       const cleanedPath = fsEntry.path.startsWith('/')
         ? fsEntry.path.substr(1)
         : fsEntry.path;
       entryForOpening.url = PlatformIO.getURLforPath(cleanedPath);
+    } else if (fsEntry.url) {
+      entryForOpening.url = fsEntry.url;
     }
     if (fsEntry.perspective) {
       entryForOpening.perspective = fsEntry.perspective;
