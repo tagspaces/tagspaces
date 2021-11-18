@@ -228,19 +228,32 @@ export default class ElectronIO {
       };
       const reqPost = http
         .request(option, resp => {
-          // .get('http://127.0.0.1:8888/thumb-gen?' + search.toString(), resp => {
-          let data = '';
+          if (resp.statusCode >= 400) {
+            const chunks = [];
+            resp
+              .on('data', c => chunks.push(c))
+              .on('end', () => {
+                const err = new Error(
+                  'error http code:' + resp.statusCode + ' ' + endpoint
+                );
+                console.log(Buffer.concat(chunks).toString(), err);
+                reject(err);
+              });
+          } else {
+            // .get('http://127.0.0.1:8888/thumb-gen?' + search.toString(), resp => {
+            let data = '';
 
-          // A chunk of data has been received.
-          resp.on('data', chunk => {
-            data += chunk;
-          });
+            // A chunk of data has been received.
+            resp.on('data', chunk => {
+              data += chunk;
+            });
 
-          // The whole response has been received. Print out the result.
-          resp.on('end', () => {
-            // console.log(JSON.parse(data).explanation);
-            resolve(JSON.parse(data));
-          });
+            // The whole response has been received. Print out the result.
+            resp.on('end', () => {
+              // console.log(JSON.parse(data).explanation);
+              resolve(JSON.parse(data));
+            });
+          }
         })
         .on('error', err => {
           console.log('Error: ' + err.message);
@@ -408,11 +421,19 @@ export default class ElectronIO {
               }
 
               // Read tsm.json from sub folders
-              if (!eentry.isFile && mode.includes('extractThumbPath') && !eentry.path.includes(PlatformIO.getDirSeparator() + AppConfig.metaFolder)) {
+              if (
+                !eentry.isFile &&
+                mode.includes('extractThumbPath') &&
+                !eentry.path.includes(
+                  PlatformIO.getDirSeparator() + AppConfig.metaFolder
+                )
+              ) {
                 const folderMetaPath =
                   eentry.path +
                   AppConfig.dirSeparator +
-                  (!eentry.path.includes(PlatformIO.getDirSeparator() + AppConfig.metaFolder) // TODO this will set parent folder description to /.ts folder too
+                  (!eentry.path.includes(
+                    PlatformIO.getDirSeparator() + AppConfig.metaFolder
+                  ) // TODO this will set parent folder description to /.ts folder too
                     ? AppConfig.metaFolder + AppConfig.dirSeparator
                     : '') +
                   AppConfig.metaFolderFile;

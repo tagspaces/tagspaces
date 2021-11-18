@@ -43,7 +43,6 @@ import {
 } from '-/utils/paths';
 import i18n from '../services/i18n';
 import versionMeta from '../version.json';
-// import { getThumbnailURLPromise } from '-/services/thumbsgenerator';
 import { OpenedEntry, actions as AppActions } from '-/reducers/app';
 import { getLocation } from '-/reducers/locations';
 import { TS } from '-/tagspaces.namespace';
@@ -305,7 +304,14 @@ export function prepareDirectoryContent(
     if (tmbGenerationList.length > 0) {
       PlatformIO.createThumbnailsInWorker(tmbGenerationList)
         .then(handleTmbGenerationResults)
-        .catch(handleTmbGenerationFailed);
+        .catch(() => {
+          // WS error handle
+          Promise.all(
+            tmbGenerationList.map(tmbPath => getThumbnailURLPromise(tmbPath))
+          )
+            .then(handleTmbGenerationResults)
+            .catch(handleTmbGenerationFailed);
+        });
     }
     if (tmbGenerationPromises.length > 0) {
       Promise.all(tmbGenerationPromises)
