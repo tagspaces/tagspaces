@@ -37,7 +37,8 @@ import i18n from '-/services/i18n';
 import {
   actions as SettingsActions,
   getSettings,
-  getMapTileServers
+  getMapTileServers,
+  getEnableWS
 } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import MapTileServerDialog from '-/components/dialogs/settings/MapTileServerDialog';
@@ -67,6 +68,7 @@ interface Props {
   classes: any;
   settings: any;
   setDesktopMode: (desktopMode: boolean) => void;
+  setEnableWS: (enableWS: boolean) => void;
   setWarningOpeningFilesExternally: (
     warningOpeningFilesExternally: boolean
   ) => void;
@@ -123,6 +125,14 @@ const SettingsAdvanced = (props: Props) => {
             disabled={!(typeof window.ExtDisplayMode === 'undefined')}
             onClick={() => props.setDesktopMode(!props.settings.desktopMode)}
             checked={!props.settings.desktopMode}
+          />
+        </ListItem>
+        <ListItem className={classes.listItem}>
+          <ListItemText primary={i18n.t('enableWS')} />
+          <Switch
+            data-tid="settingsEnableWS"
+            onClick={() => props.setEnableWS(!props.settings.enableWS)}
+            checked={props.settings.enableWS}
           />
         </ListItem>
         <ListItem className={classes.listItem}>
@@ -258,7 +268,8 @@ const SettingsAdvanced = (props: Props) => {
 function mapStateToProps(state) {
   return {
     settings: getSettings(state),
-    tileServers: getMapTileServers(state)
+    tileServers: getMapTileServers(state),
+    enableWS: getEnableWS(state)
   };
 }
 
@@ -268,6 +279,7 @@ function mapActionCreatorsToProps(dispatch) {
       setWarningOpeningFilesExternally:
         SettingsActions.setWarningOpeningFilesExternally,
       setDesktopMode: SettingsActions.setDesktopMode,
+      setEnableWS: SettingsActions.setEnableWS,
       setSaveTagInLocation: SettingsActions.setSaveTagInLocation,
       setGeoTaggingFormat: SettingsActions.setGeoTaggingFormat
     },
