@@ -130,6 +130,7 @@ export default {
   contentHash: '',
   isUpdateInProgress: false,
   isUpdateAvailable: false,
+  enableWS: true,
   warningOpeningFilesExternally: true,
   tagDelimiter: ' ',
   maxSearchResult: 1000,
