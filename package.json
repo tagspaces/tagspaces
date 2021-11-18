@@ -134,7 +134,7 @@
     "update-changelog-pro": "cd extensions/tagspacespro && git log v3.11.6..HEAD --no-merges --format=%B > ../../CHANGELOG-PRO.TXT",
     "update-i18n": "tx pull -a -d",
     "version-meta": "node scripts/versionmeta.js",
-    "ts-extension-symlink": "ln -s /Users/sytolk/IdeaProjects/tagspaces-extensions /Users/sytolk/IdeaProjects/tagspaces/app/node_modules/@tagspaces/extensions"
+    "ts-extension-symlink": "rimraf app/node_modules/@tagspaces/extensions && cd app/node_modules/@tagspaces && ln -s ../../../extensions extensions && cd .. && cd .. && cd .."
   },
   "husky": {
     "hooks": {
