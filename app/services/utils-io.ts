@@ -79,12 +79,13 @@ export function enhanceDirectoryContent(
   showUnixHiddenEntries,
   useGenerateThumbnails,
   showDirs = true,
-  limit = undefined
+  limit = undefined,
+  enableWS = true
 ) {
   const directoryContent = [];
   const tmbGenerationPromises = [];
   const tmbGenerationList = [];
-  const isWorkerAvailable = PlatformIO.isWorkerAvailable();
+  const isWorkerAvailable = enableWS && PlatformIO.isWorkerAvailable();
 
   dirEntries.map(entry => {
     if (!showUnixHiddenEntries && entry.name.startsWith('.')) {
@@ -264,7 +265,10 @@ export function prepareDirectoryContent(
     dirEntries,
     isCloudLocation,
     settings.showUnixHiddenEntries,
-    generateThumbnails && useGenerateThumbnails()
+    generateThumbnails && useGenerateThumbnails(),
+    true,
+    undefined,
+    settings.enableWS
   );
 
   function handleTmbGenerationResults(results) {
@@ -476,8 +480,9 @@ function persistIndex(param: string | any, directoryIndex: any) {
 export function createDirectoryIndex(
   param: string | any,
   extractText: boolean = false,
-  ignorePatterns: Array<string> = []
-  // disableIndexing = true
+  ignorePatterns: Array<string> = [],
+  enableWS = true
+  // disableIndexing = true,
 ): Promise<Array<TS.FileSystemEntry>> {
   let directoryPath;
   let locationID;
@@ -488,7 +493,11 @@ export function createDirectoryIndex(
     directoryPath = param;
   }
   const dirPath = cleanTrailingDirSeparator(directoryPath);
-  if (PlatformIO.isWorkerAvailable() && !PlatformIO.haveObjectStoreSupport()) {
+  if (
+    enableWS &&
+    PlatformIO.isWorkerAvailable() &&
+    !PlatformIO.haveObjectStoreSupport()
+  ) {
     // Start indexing in worker if not in the object store mode
     return PlatformIO.createDirectoryIndexInWorker(
       dirPath,
