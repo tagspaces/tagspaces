@@ -37,19 +37,70 @@ import Settings from '-/settings';
 // delete process.env.ELECTRON_ENABLE_SECURITY_WARNINGS;
 // process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
 
+// let debugMode;
+const devMode =
+  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
+const testMode = process.env.NODE_ENV === 'test';
+let verboseMode = false;
+let startupFilePath;
+let portableMode;
+
+process.argv.forEach((arg, count) => {
+  if (arg.toLowerCase() === '--verbose') {
+    verboseMode = true;
+  } else if (
+    arg.toLowerCase() === '-d' ||
+    arg.toLowerCase() === '--debug' ||
+    arg.startsWith('--remote-debugging-port=') ||
+    arg.startsWith('--inspect=')
+  ) {
+    // debugMode = true;
+  } else if (arg.toLowerCase() === '-p' || arg.toLowerCase() === '--portable') {
+    app.setPath('userData', process.cwd() + '/tsprofile'); // making the app portable
+    portableMode = true;
+  } else if (testMode || devMode) {
+    // ignoring the spectron testing
+    // arg = '';
+  } else if (
+    arg.endsWith('main.prod.js') ||
+    arg === './app/main.dev.babel.js' ||
+    arg === '.' ||
+    count === 0
+  ) {
+    // ignoring the first argument
+    // Ignore these argument
+  } else if (arg.length > 2) {
+    // console.warn('Opening file: ' + arg);
+    if (arg !== './app/main.dev.js' && arg !== './app/') {
+      console.log('Opening file: ' + arg);
+      startupFilePath = arg;
+    }
+  }
+
+  if (portableMode) {
+    startupFilePath = undefined;
+  }
+});
+
 const isMac = process.platform === 'darwin';
 let mainWindow = null;
 // (global as any).splashWorkerWindow = null;
-
-const testMode = process.env.NODE_ENV === 'test';
 
 if (process.env.NODE_ENV === 'production') {
   // eslint-disable-next-line
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
-  console.log = () => {};
-  console.time = () => {};
-  console.timeEnd = () => {};
+  if (!verboseMode) {
+    console.log = () => {};
+    console.time = () => {};
+    console.timeEnd = () => {};
+  } else {
+    // TODO temp
+    // eslint-disable-next-line global-require
+    const platform = require('sharp/lib/platform')();
+
+    console.debug('platformAndArch:' + platform);
+  }
 } else if (testMode) {
   const dir = path.join(__dirname, '..', 'tests', 'test-reports');
   if (!fs.existsSync(dir)) {
@@ -69,48 +120,6 @@ if (process.env.NODE_ENV === 'production') {
   console.log('Environment testMode:' + testMode); // + ' process.env.NODE_ENV:'+process.env.NODE_ENV);
   // console.log('Env:' + JSON.stringify(process.env));
 }
-
-// let debugMode;
-let startupFilePath;
-let portableMode;
-
-const devMode =
-  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
-
-process.argv.forEach((arg, count) => {
-  console.log('Opening file: ' + arg);
-  if (
-    arg.toLowerCase() === '-d' ||
-    arg.toLowerCase() === '--debug' ||
-    arg.startsWith('--remote-debugging-port=') ||
-    arg.startsWith('--inspect=')
-  ) {
-    // debugMode = true;
-  } else if (arg.toLowerCase() === '-p' || arg.toLowerCase() === '--portable') {
-    app.setPath('userData', process.cwd() + '/tsprofile'); // making the app portable
-    portableMode = true;
-  } else if (testMode || devMode) {
-    // ignoring the spectron testing
-    arg = '';
-  } else if (
-    arg.endsWith('main.prod.js') ||
-    arg === './app/main.dev.babel.js' ||
-    arg === '.' ||
-    count === 0
-  ) {
-    // ignoring the first argument
-    // Ignore these argument
-  } else if (arg.length > 2) {
-    // console.warn('Opening file: ' + arg);
-    if (arg !== './app/main.dev.js' && arg !== './app/') {
-      startupFilePath = arg;
-    }
-  }
-
-  if (portableMode) {
-    startupFilePath = undefined;
-  }
-});
 
 let mainHTML = `file://${__dirname}/app.html`;
 const workerDevMode = false;
