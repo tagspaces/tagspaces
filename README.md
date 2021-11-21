@@ -79,13 +79,9 @@ and install the project dependencies:
 
     $ yarn install
 
-**Note:** If you experience any errors with the above command, please try this command first before filing a bug report:
-
-    $ yarn install
-
 The last command will automatically build the application with webpack. Now it is time to install all the TagSpaces extensions:
 
-    $ yarn install-ext
+    $ yarn install-ext-node
 
 Now you are ready and can build/start (bs) the application with:
 
@@ -107,9 +103,11 @@ $ yarn package-win
 $ yarn package-linux
 
 $ yarn package-mac
+
+$ yarn package-mac-arm64
 ```
 
-For creating the packages for Windows, Linux and Mac OS respectively.
+The commands will create packages for Windows, Linux, Mac OS and Mac OS with the M1 processor respectively. Do not forget to run the `yarn build` script before packaging.
 
 ## Start the web version locally
 
