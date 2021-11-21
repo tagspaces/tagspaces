@@ -1,6 +1,7 @@
 {
   "appId": "org.tagspaces.desktopapp",
   "asar": true,
+  "asarUnpack": "**/node_modules/sharp/**/*",
   "includeSubNodeModules": true,
   "files": [
     "dist/",
