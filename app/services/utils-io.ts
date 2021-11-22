@@ -43,7 +43,6 @@ import {
 } from '-/utils/paths';
 import i18n from '../services/i18n';
 import versionMeta from '../version.json';
-// import { getThumbnailURLPromise } from '-/services/thumbsgenerator';
 import { OpenedEntry, actions as AppActions } from '-/reducers/app';
 import { getLocation } from '-/reducers/locations';
 import { TS } from '-/tagspaces.namespace';
@@ -79,12 +78,13 @@ export function enhanceDirectoryContent(
   showUnixHiddenEntries,
   useGenerateThumbnails,
   showDirs = true,
-  limit = undefined
+  limit = undefined,
+  enableWS = true
 ) {
   const directoryContent = [];
   const tmbGenerationPromises = [];
   const tmbGenerationList = [];
-  const isWorkerAvailable = PlatformIO.isWorkerAvailable();
+  const isWorkerAvailable = enableWS && PlatformIO.isWorkerAvailable();
 
   dirEntries.map(entry => {
     if (!showUnixHiddenEntries && entry.name.startsWith('.')) {
@@ -264,7 +264,10 @@ export function prepareDirectoryContent(
     dirEntries,
     isCloudLocation,
     settings.showUnixHiddenEntries,
-    generateThumbnails && genThumbnails()
+    generateThumbnails && genThumbnails(),
+    true,
+    undefined,
+    settings.enableWS
   );
 
   function handleTmbGenerationResults(results) {
@@ -305,7 +308,14 @@ export function prepareDirectoryContent(
     if (tmbGenerationList.length > 0) {
       PlatformIO.createThumbnailsInWorker(tmbGenerationList)
         .then(handleTmbGenerationResults)
-        .catch(handleTmbGenerationFailed);
+        .catch(() => {
+          // WS error handle
+          Promise.all(
+            tmbGenerationList.map(tmbPath => getThumbnailURLPromise(tmbPath))
+          )
+            .then(handleTmbGenerationResults)
+            .catch(handleTmbGenerationFailed);
+        });
     }
     if (tmbGenerationPromises.length > 0) {
       Promise.all(tmbGenerationPromises)
@@ -340,7 +350,7 @@ export function findExtensionsForEntry(
   ).toLowerCase();
   const viewingExtensionPath = isFile
     ? findExtensionPathForId('@tagspaces/extensions/text-viewer')
-    : '';
+    : 'about:blank';
   const fileForOpening: OpenedEntry = {
     path: entryPath,
     viewingExtensionPath,
@@ -476,8 +486,9 @@ function persistIndex(param: string | any, directoryIndex: any) {
 export function createDirectoryIndex(
   param: string | any,
   extractText: boolean = false,
-  ignorePatterns: Array<string> = []
-  // disableIndexing = true
+  ignorePatterns: Array<string> = [],
+  enableWS = true
+  // disableIndexing = true,
 ): Promise<Array<TS.FileSystemEntry>> {
   let directoryPath;
   let locationID;
@@ -488,7 +499,11 @@ export function createDirectoryIndex(
     directoryPath = param;
   }
   const dirPath = cleanTrailingDirSeparator(directoryPath);
-  if (!PlatformIO.haveObjectStoreSupport() && PlatformIO.isWorkerAvailable()) {
+  if (
+    enableWS &&
+    !PlatformIO.haveObjectStoreSupport() &&
+    PlatformIO.isWorkerAvailable()
+  ) {
     // Start indexing in worker if not in the object store mode
     return PlatformIO.createDirectoryIndexInWorker(
       dirPath,

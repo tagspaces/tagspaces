@@ -33,6 +33,7 @@ export const types = {
   SET_LANGUAGE: 'SETTINGS/SET_LANGUAGE',
   TOGGLE_SHOWUNIXHIDDENENTRIES: 'SETTINGS/TOGGLE_SHOWUNIXHIDDENENTRIES',
   SET_DESKTOPMODE: 'SETTINGS/SET_DESKTOPMODE',
+  SET_ENABLE_WS: 'SETTINGS/SET_ENABLE_WS',
   WARNING_OPENING_FILES_EXTERNALLY: 'SETTINGS/WARNING_OPENING_FILES_EXTERNALLY',
   SET_SAVE_TAGS_IN_LOCATION: 'SETTINGS/SET_SAVE_TAGS_IN_LOCATION',
   SET_TAG_DELIMITER: 'SETTINGS/SET_TAG_DELIMITER',
@@ -143,6 +144,9 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_DESKTOPMODE: {
       return { ...state, desktopMode: action.desktopMode };
+    }
+    case types.SET_ENABLE_WS: {
+      return { ...state, enableWS: action.enableWS };
     }
     case types.WARNING_OPENING_FILES_EXTERNALLY: {
       return {
@@ -432,6 +436,10 @@ export const actions = {
     type: types.SET_DESKTOPMODE,
     desktopMode
   }),
+  setEnableWS: (enableWS: boolean) => ({
+    type: types.SET_ENABLE_WS,
+    enableWS
+  }),
   setWarningOpeningFilesExternally: (
     warningOpeningFilesExternally: boolean
   ) => ({
@@ -635,6 +643,7 @@ export const getMapTileServer = (state: any): TS.MapTileServer =>
 export const getMapTileServers = (state: any): Array<TS.MapTileServer> =>
   AppConfig.mapTileServers || state.settings.mapTileServers;
 export const getSettings = (state: any) => state.settings;
+export const getEnableWS = (state: any) => state.settings.enableWS;
 export const getDesktopMode = (state: any) => {
   if (typeof window.ExtDisplayMode === 'undefined') {
     return state.settings.desktopMode;

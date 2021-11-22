@@ -84,7 +84,7 @@ const FileView = (props: Props) => {
         (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
     }
   } else {
-    fileOpenerURL = '';
+    fileOpenerURL = 'about:blank';
   }
   return (
     <div

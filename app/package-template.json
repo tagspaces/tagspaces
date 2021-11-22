@@ -3,8 +3,8 @@
     "@tagspaces/extensions": "1.0.10"
   },
   "nodeDependencies": {
-    "@tagspaces/extensions": "1.0.10",
-    "sharp": "^0.29.2",
-    "@tagspaces/tagspaces-ws": "1.2.0"
+    "@tagspaces/tagspaces-ws": "1.2.0",
+    "@tagspaces/extensions": "1.0.11",
+    "sharp": "^0.29.3"
   }
 }

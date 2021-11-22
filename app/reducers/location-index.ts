@@ -190,12 +190,14 @@ export const actions = {
     isCurrentLocation: boolean = true,
     locationID: string = undefined,
     ignorePatterns: Array<string> = []
-  ) => (dispatch: (actions: Object) => void) => {
+  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
+    const { settings } = getState();
     dispatch(actions.startDirectoryIndexing());
     createDirectoryIndex(
       { path: directoryPath, locationID },
       extractText,
-      ignorePatterns
+      ignorePatterns,
+      settings.enableWS
     )
       .then(directoryIndex => {
         if (isCurrentLocation) {
@@ -266,7 +268,8 @@ export const actions = {
         createDirectoryIndex(
           { path: nextPath, location: location.uuid },
           extractText,
-          location.ignorePatternPaths
+          location.ignorePatternPaths,
+          state.settings.enableWS
         )
           /* .then(directoryIndex => {
           if (Pro && Pro.Indexer) {
@@ -396,7 +399,8 @@ export const actions = {
             ...(isCloudLocation && { bucketName: currentLocation.bucketName })
           },
           currentLocation.fullTextIndex,
-          currentLocation.ignorePatternPaths
+          currentLocation.ignorePatternPaths,
+          state.settings.enableWS
         );
 
         if (GlobalSearch.index && GlobalSearch.index.length > 0) {
@@ -489,8 +493,7 @@ export const actions = {
           // cancel search if max search result count reached
           if (searchResultCount >= searchQuery.maxSearchResults) {
             maxSearchResultReached = true;
-            Promise.resolve();
-            return true;
+            return Promise.resolve();
           }
           const nextPath = getLocationPath(location);
           let directoryIndex = [];
@@ -526,7 +529,8 @@ export const actions = {
                 ...(isCloudLocation && { bucketName: location.bucketName })
               },
               location.fullTextIndex,
-              location.ignorePatternPaths
+              location.ignorePatternPaths,
+              state.settings.enableWS
             );
             /* if (Pro && Pro.Indexer && Pro.Indexer.persistIndex) {
               Pro.Indexer.persistIndex(
