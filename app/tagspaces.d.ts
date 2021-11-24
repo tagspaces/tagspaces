@@ -52,6 +52,7 @@ declare interface Window {
   ExtShowAdvancedSearch?: string;
   ExtUseGenerateThumbnails?: boolean;
   ExtGeoTaggingFormat?: string;
+  ExtDemoUser?: any;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: any;
   plugins?: any; // needed for Cordova
   resolveLocalFileSystemURL?: any; // needed for Cordova

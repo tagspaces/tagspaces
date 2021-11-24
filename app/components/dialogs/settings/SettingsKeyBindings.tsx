@@ -24,7 +24,7 @@ import TextField from '@material-ui/core/TextField';
 import Switch from '@material-ui/core/Switch';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 import i18n from '-/services/i18n';
 import {
   actions as SettingsActions,

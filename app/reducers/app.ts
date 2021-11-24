@@ -18,7 +18,7 @@
 
 import { v1 as uuidv1 } from 'uuid';
 import { getLocation, getDefaultLocationId } from './locations';
-import PlatformIO from '../services/platform-io';
+import PlatformIO from '../services/platform-facade';
 import AppConfig from '../config';
 import {
   deleteFilesPromise,
@@ -218,7 +218,14 @@ export const initialState = {
   locationManagerPanelOpened: showLocations,
   tagLibraryPanelOpened: showTagLibrary,
   searchPanelOpened: showSearch,
-  helpFeedbackPanelOpened: false
+  helpFeedbackPanelOpened: false,
+  user: window.ExtDemoUser
+    ? {
+        attributes: window.ExtDemoUser,
+        associateSoftwareToken: () => {},
+        verifySoftwareToken: () => {}
+      }
+    : undefined
 };
 
 // The state described here will not be persisted

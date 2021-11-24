@@ -62,6 +62,8 @@ import LoadingLazy from './LoadingLazy';
 import { actions as SettingsActions, isFirstRun } from '../reducers/settings';
 import Links from '-/links';
 import StoredSearches from '-/components/StoredSearches';
+import Popover from '@material-ui/core/Popover';
+import UserDetailsPopover from '-/components/UserDetailsPopover';
 
 const styles: any = (theme: any) => ({
   selectedButton: {
@@ -112,6 +114,7 @@ interface Props {
 const MobileNavigation = (props: Props) => {
   const [isProTeaserVisible, setIsProTeaserVisible] = useState<boolean>(false);
   const [showTeaserBanner, setShowTeaserBanner] = useState<boolean>(true);
+  const [anchorUser, setAnchorUser] = useState<HTMLButtonElement | null>(null);
 
   const toggleProTeaser = () => {
     setIsProTeaserVisible(!isProTeaserVisible);
@@ -349,19 +352,50 @@ const MobileNavigation = (props: Props) => {
                   : classes.button
               }
             >
-              {user ? <AccountCircleIcon /> : <HelpIcon />}
+              <HelpIcon />
             </ToggleButton>
           </Tooltip>
         </ToggleButtonGroup>
-        <Tooltip title={i18n.t('core:switchTheme')}>
-          <IconButton
-            data-tid="switchTheme"
-            onClick={switchTheme}
-            style={{ marginTop: -15, marginRight: 2 }}
-          >
-            <ThemingIcon className={classes.buttonIcon} />
-          </IconButton>
-        </Tooltip>
+        {user ? (
+          <>
+            <Tooltip title={i18n.t('core:userAccount')}>
+              <IconButton
+                data-tid="accountCircleIconTID"
+                onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
+                  setAnchorUser(event.currentTarget)
+                }
+                style={{ marginTop: -15, marginRight: 2 }}
+              >
+                <AccountCircleIcon className={classes.buttonIcon} />
+              </IconButton>
+            </Tooltip>
+            <Popover
+              open={Boolean(anchorUser)}
+              anchorEl={anchorUser}
+              onClose={() => setAnchorUser(null)}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'center'
+              }}
+              transformOrigin={{
+                vertical: 'bottom',
+                horizontal: 'center'
+              }}
+            >
+              <UserDetailsPopover onClose={() => setAnchorUser(null)} />
+            </Popover>
+          </>
+        ) : (
+          <Tooltip title={i18n.t('core:switchTheme')}>
+            <IconButton
+              data-tid="switchTheme"
+              onClick={switchTheme}
+              style={{ marginTop: -15, marginRight: 2 }}
+            >
+              <ThemingIcon className={classes.buttonIcon} />
+            </IconButton>
+          </Tooltip>
+        )}
         {isProTeaserVisible && (
           <ProTeaserDialogAsync
             open={isProTeaserVisible}

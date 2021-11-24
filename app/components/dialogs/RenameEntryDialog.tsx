@@ -34,7 +34,7 @@ import {
   extractFileName
 } from '-/utils/paths';
 import { actions as AppActions, getLastSelectedEntry } from '-/reducers/app';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/config';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 

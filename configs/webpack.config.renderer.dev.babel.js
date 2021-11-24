@@ -206,7 +206,7 @@ export default merge(baseConfig, {
       multiStep: true
     }),
 
-    new webpack.NormalModuleReplacementPlugin(
+    /* new webpack.NormalModuleReplacementPlugin(
       /(.*)_PLATFORMIO_(\.*)/,
       resource => {
         resource.request = resource.request.replace(
@@ -214,7 +214,7 @@ export default merge(baseConfig, {
           `${targetPlatform}`
         );
       }
-    ),
+    ), */
 
     new webpack.NormalModuleReplacementPlugin(
       /(.*)_PDFDISTLIB_(\.*)/,

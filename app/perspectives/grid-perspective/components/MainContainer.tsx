@@ -60,7 +60,7 @@ import MainToolbar from './MainToolbar';
 import SortingMenu from './SortingMenu';
 import GridOptionsMenu from './GridOptionsMenu';
 import { getLocation, getLocations } from '-/reducers/locations';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 import { getLocationPath } from '-/utils/paths';
 import GridPagination from '-/perspectives/grid-perspective/components/GridPagination';
 import GridSettingsDialog from '-/perspectives/grid-perspective/components/GridSettingsDialog';

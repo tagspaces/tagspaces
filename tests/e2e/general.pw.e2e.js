@@ -54,6 +54,7 @@ describe('TST51 - Perspective Grid', () => {
   });
 
   it('TST0501 - Create HTML file [electron,web]', async () => {
+    await global.client.waitForLoadState('networkidle');
     await createNewDirectory();
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
@@ -73,7 +74,7 @@ describe('TST51 - Perspective Grid', () => {
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       false,
-      3000
+      2000
     );
     await takeScreenshot('TST0501 after deleteDirectory');
   });

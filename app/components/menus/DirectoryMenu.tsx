@@ -54,7 +54,7 @@ import {
   normalizePath,
   generateSharingLink
 } from '-/utils/paths';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 import { formatDateTime4Tag } from '-/utils/misc';
 import {
   actions as AppActions,

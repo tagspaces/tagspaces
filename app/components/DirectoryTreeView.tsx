@@ -21,7 +21,7 @@ import Table from 'rc-table';
 import FolderIcon from '@material-ui/icons/FolderOpen';
 import DragItemTypes from '-/components/DragItemTypes';
 import AppConfig from '-/config';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 import TargetTableMoveFileBox from '-/components/TargetTableMoveFileBox';
 import { getLocationPath } from '-/utils/paths';
 import { TS } from '-/tagspaces.namespace';

@@ -35,7 +35,7 @@ import RenameFile from '@material-ui/icons/FormatTextdirectionLToR';
 import DeleteForever from '@material-ui/icons/DeleteForever';
 import i18n from '-/services/i18n';
 import AppConfig from '-/config';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 import {
   generateFileName,
   getAllPropertiesPromise,

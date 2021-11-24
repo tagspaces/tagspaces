@@ -27,7 +27,7 @@ import {
 } from '@tagspaces/tagspaces-platforms/indexer';
 import { saveAs } from 'file-saver';
 import micromatch from 'micromatch';
-import PlatformIO from './platform-io';
+import PlatformIO from './platform-facade';
 import AppConfig from '../config';
 import {
   extractTagsAsObjects,
@@ -241,7 +241,7 @@ export function prepareDirectoryContent(
   );
   const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
 
-  function useGenerateThumbnails() {
+  function genThumbnails() {
     if (
       directoryPath.endsWith(AppConfig.dirSeparator + AppConfig.metaFolder) ||
       directoryPath.endsWith(
@@ -264,7 +264,7 @@ export function prepareDirectoryContent(
     dirEntries,
     isCloudLocation,
     settings.showUnixHiddenEntries,
-    generateThumbnails && useGenerateThumbnails(),
+    generateThumbnails && genThumbnails(),
     true,
     undefined,
     settings.enableWS
@@ -501,8 +501,8 @@ export function createDirectoryIndex(
   const dirPath = cleanTrailingDirSeparator(directoryPath);
   if (
     enableWS &&
-    PlatformIO.isWorkerAvailable() &&
-    !PlatformIO.haveObjectStoreSupport()
+    !PlatformIO.haveObjectStoreSupport() &&
+    PlatformIO.isWorkerAvailable()
   ) {
     // Start indexing in worker if not in the object store mode
     return PlatformIO.createDirectoryIndexInWorker(

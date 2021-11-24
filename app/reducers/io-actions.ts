@@ -33,7 +33,7 @@ import {
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import TaggingActions from './tagging-actions';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
 

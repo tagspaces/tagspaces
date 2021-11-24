@@ -23,7 +23,7 @@ import thunk from 'redux-thunk';
 import { createLogger } from 'redux-logger';
 import rootReducer from '../reducers';
 import onlineListener from '../services/onlineListener';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 
 const configureStore = initialState => {
   // Redux Configuration

@@ -30,7 +30,7 @@ import DragItemTypes from './DragItemTypes';
 import TagContainer from './TagContainer';
 import { TS } from '-/tagspaces.namespace';
 import { extractTags } from '-/utils/paths';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/config';
 
 const boxSource = {
