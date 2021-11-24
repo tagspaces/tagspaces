@@ -4014,10 +4014,10 @@
   dependencies:
     defer-to-connect "^1.0.1"
 
-"@tagspaces/tagspaces-platforms@1.2.13":
-  version "1.2.13"
-  resolved "https://registry.yarnpkg.com/@tagspaces/tagspaces-platforms/-/tagspaces-platforms-1.2.13.tgz#391e5ddd878b79c74f3fe9a57c5f9605c7526997"
-  integrity sha512-VYBYZEoQ1ZCR5KvCMsRLCEmlChrPOH/Cth2CEAv868KgXI/QBVYVQ0FOpsykg+d48KxkrXQ4D9G+544uJJQZHg==
+"@tagspaces/tagspaces-platforms@1.2.15":
+  version "1.2.15"
+  resolved "https://registry.yarnpkg.com/@tagspaces/tagspaces-platforms/-/tagspaces-platforms-1.2.15.tgz#5cd1c3eaf34e8a4d1575598e6410234088f86ced"
+  integrity sha512-NxSBwrZGvVHvEMbUkSPVC+f7RhdEM22D+LgzPclXCGTS1f8mCQoH5XJHKLDR1Nlyg4n4PnpfMs3UQ4AbUJ2muw==
 
 "@testim/chrome-version@^1.0.7":
   version "1.0.7"

@@ -40,6 +40,7 @@ import {
   platformSaveFilePromise,
   platformGetPropertiesPromise,
   platformLoadTextFilePromise,
+  platformGetFileContentPromise,
   platformSaveTextFilePromise,
   platformSaveBinaryFilePromise,
   platformCreateDirectoryPromise,
@@ -291,19 +292,10 @@ export default class PlatformFacade {
     isPreview?: boolean
   ): Promise<any> => platformLoadTextFilePromise(filePath, isPreview);
 
-  /* static getFileContentPromise = (
+  static getFileContentPromise = (
     filePath: string,
     type?: string
-  ): Promise<Object> => {
-    if (objectStoreAPI) {
-      const param = {
-        path: filePath,
-        bucketName: objectStoreAPI.config().bucketName
-      };
-      return objectStoreAPI.getFileContentPromise(param, type);
-    }
-    return platformGetFileContentPromise(filePath, type);
-  }; */
+  ): Promise<any> => platformGetFileContentPromise(filePath, type);
 
   static saveFilePromise = (
     filePath: string,
