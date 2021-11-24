@@ -79,15 +79,17 @@ and install the project dependencies:
 
     $ yarn install
 
-**Note:** If you experience any errors with the above command, please try this command first before filing a bug report:
-
-    $ yarn install
-
 The last command will automatically build the application with webpack. Now it is time to install all the TagSpaces extensions:
 
-    $ yarn install-ext
+    $ yarn install-ext-node
 
-Now you are ready and can build/start (bs) the application with:
+Starting from v4 of the application, there is a WS running locally in a separate process, which is responsible for the search index creation and the generation of the thumbnails for the most of images format. In order the main application to communicate with the WS a key is needed. It should be defined in the `.env` file located in `app` folder. This is an example for an .env file.
+
+    key=a_custom_key
+
+Having a custom key, ensures that another instance of TagSpaces will not communicate with the WS of the initial instance, since it is always running on the same port.
+
+Now you are ready and can build and start (bs) the application with:
 
     $ yarn bs
 
@@ -107,9 +109,11 @@ $ yarn package-win
 $ yarn package-linux
 
 $ yarn package-mac
+
+$ yarn package-mac-arm64
 ```
 
-For creating the packages for Windows, Linux and Mac OS respectively.
+The commands will create packages for Windows, Linux, Mac OS and Mac OS with the M1 processor respectively. Do not forget to run the `yarn build` script before packaging.
 
 ## Start the web version locally
 

@@ -68,7 +68,7 @@ const OnboardingDialog = (props: Props) => {
   const [activeStep, setActiveStep] = useState(0);
   const { fullScreen, open, onClose } = props;
 
-  const maxSteps = 5;
+  const maxSteps = 4;
 
   function handleNext() {
     setActiveStep(step => step + 1);
@@ -137,7 +137,7 @@ const OnboardingDialog = (props: Props) => {
               <ToggleButton value="dark">Dark</ToggleButton>
             </ToggleButtonGroup>
           </div>
-          <div
+          {/* <div
             style={{
               textAlign: 'center'
             }}
@@ -148,7 +148,7 @@ const OnboardingDialog = (props: Props) => {
               src={NavigationV3}
               alt=""
             />
-          </div>
+          </div> */}
           <div
             style={{
               textAlign: 'center'
