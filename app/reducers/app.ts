@@ -218,7 +218,14 @@ export const initialState = {
   locationManagerPanelOpened: showLocations,
   tagLibraryPanelOpened: showTagLibrary,
   searchPanelOpened: showSearch,
-  helpFeedbackPanelOpened: false
+  helpFeedbackPanelOpened: false,
+  user: window.ExtDemoUser
+    ? {
+        attributes: window.ExtDemoUser,
+        associateSoftwareToken: () => {},
+        verifySoftwareToken: () => {}
+      }
+    : undefined
 };
 
 // The state described here will not be persisted
