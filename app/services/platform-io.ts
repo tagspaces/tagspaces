@@ -355,7 +355,7 @@ export default class PlatformIO {
       };
       return objectStoreAPI.loadTextFilePromise(param, isPreview);
     }
-    return nativeAPI.loadTextFilePromise(filePath, isPreview);
+    return nativeAPI.loadTextFilePromise(decodeURIComponent(filePath), isPreview);
   };
 
   static getFileContentPromise = (
