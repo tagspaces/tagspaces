@@ -274,21 +274,21 @@ function newTextFile() {
 
 function getNextFile() {
   if (mainWindow) {
-    showTagSpaces();
+    // showTagSpaces();
     mainWindow.webContents.send('cmd', 'next-file');
   }
 }
 
 function getPreviousFile() {
   if (mainWindow) {
-    showTagSpaces();
+    // showTagSpaces();
     mainWindow.webContents.send('cmd', 'previous-file');
   }
 }
 
 function showCreateDirectoryDialog() {
   if (mainWindow) {
-    showTagSpaces();
+    // showTagSpaces();
     mainWindow.webContents.send('cmd', 'show-create-directory-dialog');
   }
 }
