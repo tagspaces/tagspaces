@@ -1835,7 +1835,7 @@ export const actions = {
         // Delete sidecar file and thumb
         deleteFilesPromise([
           getMetaFileLocationForFile(filePath, PlatformIO.getDirSeparator()),
-          getThumbFileLocationForFile(filePath, PlatformIO.getDirSeparator())
+          getThumbFileLocationForFile(filePath, PlatformIO.getDirSeparator(), false)
         ])
           .then(() => {
             console.log(
