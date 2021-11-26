@@ -83,11 +83,11 @@ The last command will automatically build the application with webpack. Now it i
 
     $ yarn install-ext-node
 
-Starting from v4 of the application, a webserver is running locally as a separate process. The webserver is responsible for the search index creation and the generation of the thumbnails for most of the images formats. A key is required in order for the main application to communicate with the web server. It should be defined in the `.env` file located in `app` folder. This is an example for an .env file.
+Starting from v4 of the application, a web service is running locally as a separate process. The web service is responsible for the search index creation and the generation of the thumbnails for most of the images formats. A key is required in order for the main application to communicate with the web server. It should be defined in the `.env` file located in `app` folder. This is an example for an .env file.
 
-    key=a_custom_key
+    KEY=a_custom_key
 
-Having a custom key, ensures that another instance of TagSpaces will not communicate with the webserver of the initial instance, since it is always running on the same port.
+Having a custom key, ensures that another instance of TagSpaces will not communicate with the web service of the initial instance, since it is always running on the same port.
 
 Now you are ready and can build and start (bs) the application with:
 

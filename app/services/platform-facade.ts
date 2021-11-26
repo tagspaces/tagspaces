@@ -290,7 +290,8 @@ export default class PlatformFacade {
   static loadTextFilePromise = (
     filePath: string,
     isPreview?: boolean
-  ): Promise<any> => platformLoadTextFilePromise(decodeURIComponent(filePath), isPreview);
+  ): Promise<any> =>
+    platformLoadTextFilePromise(decodeURIComponent(filePath), isPreview);
 
   static getFileContentPromise = (
     filePath: string,
