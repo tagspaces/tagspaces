@@ -65,7 +65,7 @@ Get the TagSpaces source code by cloning its repository:
 
     $ git clone https://github.com/tagspaces/tagspaces.git
 
-Go to the folder where the code was cloned to and select the branch you want to test. Use the the **master** branch for the last officially released version or the branch **develop** for a kind of a nightly build, containing the changes we are preparing for the next release of the application.
+Go to the folder where the code was cloned to and select the branch you want to test. Use the **master** branch for the last officially released version or the branch **develop** for a kind of a nightly build, containing the changes we are preparing for the next release of the application.
 
 Switch to the folder where you have cloned the repository:
 
