@@ -85,7 +85,7 @@ The last command will automatically build the application with webpack. Now it i
 
 Starting from v4 of the application, there is a WS running locally in a separate process, which is responsible for the search index creation and the generation of the thumbnails for the most of images format. In order the main application to communicate with the WS a key is needed. It should be defined in the `.env` file located in `app` folder. This is an example for an .env file.
 
-    key=a_custom_key
+    KEY=a_custom_key
 
 Having a custom key, ensures that another instance of TagSpaces will not communicate with the WS of the initial instance, since it is always running on the same port.
 
