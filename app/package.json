@@ -13,8 +13,8 @@
   "license": "AGPL-3.0",
   "scripts": {},
   "dependencies": {
+    "@tagspaces/tagspaces-ws": "1.2.1",
     "@tagspaces/extensions": "1.0.13",
-    "@tagspaces/tagspaces-ws": "1.2.0",
     "sharp": "^0.29.3"
   }
 }
