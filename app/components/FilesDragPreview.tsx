@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Chip from '@material-ui/core/Chip';
 
@@ -7,7 +7,7 @@ export interface Props {
   path: string;
 }
 
-export const FilesDragPreview = memo((props: Props) => {
+export const FilesDragPreview = (props: Props) => {
   const { entries, path } = props;
   return (
     <Chip
@@ -17,4 +17,6 @@ export const FilesDragPreview = memo((props: Props) => {
       color="primary"
     />
   );
-});
+};
+const areEqual = (prevProp, nextProp) => nextProp.path === prevProp.path;
+export default React.memo(FilesDragPreview, areEqual);
