@@ -76,7 +76,7 @@ import AppConfig from '../config';
 import i18n from '../services/i18n';
 import LoadingLazy from '../components/LoadingLazy';
 import withDnDContext from '-/containers/withDnDContext';
-import { CustomDragLayer } from '-/components/CustomDragLayer';
+import CustomDragLayer from '-/components/CustomDragLayer';
 import IOActions from '-/reducers/io-actions';
 import FileUploadDialog from '-/components/dialogs/FileUploadDialog';
 import ProgressDialog from '-/components/dialogs/ProgressDialog';
