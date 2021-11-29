@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { MutableRefObject } from 'react';
 import {
   DragSource,
   DropTarget,
@@ -202,7 +202,7 @@ interface Props {
   connectDragPreview?: ConnectDragPreview;
   deleteIcon?: Object;
   selectedEntries: Array<TS.FileSystemEntry>;
-  tagContainerRef?: string;
+  tagContainerRef?: MutableRefObject<HTMLSpanElement>;
   reorderTags?: boolean;
 }
 
