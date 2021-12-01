@@ -4328,10 +4328,10 @@
   dependencies:
     defer-to-connect "^1.0.1"
 
-"@tagspaces/tagspaces-platforms@1.2.18":
-  version "1.2.18"
-  resolved "https://registry.yarnpkg.com/@tagspaces/tagspaces-platforms/-/tagspaces-platforms-1.2.18.tgz#3ed6be5209027ac0620ad1194d68fe00c9fd0893"
-  integrity sha512-Yzl0lwBkfXkJap8pOesipW4fQ9dThJZmO7RGrwJMnzQXU0sMxxXm1gd6p9F7ZyCBlgfYVPicWuKw0pCkJ6f34Q==
+"@tagspaces/tagspaces-platforms@1.2.20":
+  version "1.2.20"
+  resolved "https://registry.yarnpkg.com/@tagspaces/tagspaces-platforms/-/tagspaces-platforms-1.2.20.tgz#4e481b80a3fbaefcef242a27ce7c3541bd5a7053"
+  integrity sha512-puOlY3oYdw5ylBSx6qqovTZs7aIGMPT3lEuCfQZ4715+jILU/Ng+kAqgc7QvJ9L10c8LewF4dw5WV6QcqizuTA==
 
 "@testim/chrome-version@^1.0.7":
   version "1.0.7"
