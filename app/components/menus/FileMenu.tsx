@@ -359,20 +359,6 @@ const FileMenu = (props: Props) => {
         </MenuItem>
       );
     }
-    if (selectedEntries.length === 1) {
-      menuItems.push(
-        <MenuItem
-          key="copySharingLink"
-          data-tid="copyFileSharingLink"
-          onClick={copySharingLink}
-        >
-          <ListItemIcon>
-            <ShareIcon />
-          </ListItemIcon>
-          <ListItemText primary={i18n.t('core:copySharingLink')} />
-        </MenuItem>
-      );
-    }
     menuItems.push(
       <MenuItem
         key="fileMenuDeleteFile"
@@ -383,6 +369,21 @@ const FileMenu = (props: Props) => {
           <DeleteForever />
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:deleteEntry')} />
+      </MenuItem>
+    );
+  }
+
+  if (selectedEntries.length === 1) {
+    menuItems.push(
+      <MenuItem
+        key="copySharingLink"
+        data-tid="copyFileSharingLink"
+        onClick={copySharingLink}
+      >
+        <ListItemIcon>
+          <ShareIcon />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:copySharingLink')} />
       </MenuItem>
     );
   }
