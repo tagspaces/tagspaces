@@ -21,7 +21,7 @@ export namespace TS {
     uuid: string;
     newuuid?: string;
     name: string;
-    type: string;
+    type: string; // 0 - local; 1 - S3; 2 - amplify; 3 - webdav
     accessKeyId?: string;
     secretAccessKey?: string;
     sessionToken?: string;

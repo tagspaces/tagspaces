@@ -37,6 +37,10 @@ if (process.env.PD_PLATFORM === 'electron') {
   if (!isInstalled('@tagspaces/tagspaces-common-aws')) {
     install = true;
   }
+} else if (process.env.PD_PLATFORM === 'webdav') {
+  if (!isInstalled('@tagspaces/tagspaces-common-webdav')) {
+    install = true;
+  }
 } else if (process.env.PD_PLATFORM === 'cordova') {
   if (!isInstalled('@tagspaces-common-cordova')) {
     install = true;
