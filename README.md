@@ -99,7 +99,7 @@ If you want to try the development mode, you can start it by:
 
 This will start a development server in background, which watches for changes in background and refreshes the application automatically once you have done some changes in the source code.
 
-## Package the app for Windows, Linux and Mac OS
+## Package for Windows, Linux and macOS
 
 Building of the packages can be accomplished with the integrated yarn scripts:
 
@@ -114,6 +114,18 @@ $ yarn package-mac-arm64
 ```
 
 The commands will create packages for Windows, Linux, Mac OS and Mac OS with the M1 processor respectively. Do not forget to run the `yarn build` script before packaging.
+
+## Package the  Android
+
+Building of the packages for Android can be accomplished with the integrated yarn scripts:
+
+```bash
+$ yarn version-meta
+
+$ yarn prepare-cordova
+
+$ yarn package-android
+```
 
 ## Start the web version locally
 

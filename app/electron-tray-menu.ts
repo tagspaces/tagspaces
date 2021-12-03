@@ -120,13 +120,14 @@ export default function buildTrayIconMenu(mainPageProps: any, i18n, isMacLike) {
     }
     tray = new Tray(icon);
   }
-  /* tray.on('click', () => {
-    mainPageProps.showTagSpaces();
-  }); */
 
   // @ts-ignore
   const contextMenu = Menu.buildFromTemplate(trayMenuTemplate);
   tray.setToolTip('TagSpaces');
   tray.setContextMenu(contextMenu);
+
+  // tray.on('click', () => {
+  //   tray.popUpContextMenu(contextMenu);
+  // })
   // return tray;
 }
