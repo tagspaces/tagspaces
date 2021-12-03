@@ -499,7 +499,8 @@ export default (state: any = initialState, action: any) => {
         return {
           ...state,
           currentDirectoryEntries: newDirectoryEntries,
-          openedFiles: newOpenedFiles
+          openedFiles: newOpenedFiles,
+          isEntryInFullWidth: false
         };
       }
       return state;
@@ -2212,7 +2213,9 @@ export const getOpenedFiles = (state: any) => state.app.openedFiles;
 export const getNotificationStatus = (state: any) =>
   state.app.notificationStatus;
 export const getSearchResultCount = (state: any) =>
-  state.app.currentDirectoryEntries.length;
+  Object.keys(state.locationIndex.searchQuery).length === 0
+    ? 0
+    : state.app.currentDirectoryEntries.length;
 export const getCurrentLocationId = (state: any) => state.app.currentLocationId;
 export const isEntryInFullWidth = (state: any) => state.app.isEntryInFullWidth;
 export const isLoading = (state: any) => state.app.isLoading;
