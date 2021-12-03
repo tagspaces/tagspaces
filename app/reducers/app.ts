@@ -499,7 +499,8 @@ export default (state: any = initialState, action: any) => {
         return {
           ...state,
           currentDirectoryEntries: newDirectoryEntries,
-          openedFiles: newOpenedFiles
+          openedFiles: newOpenedFiles,
+          isEntryInFullWidth: false
         };
       }
       return state;
