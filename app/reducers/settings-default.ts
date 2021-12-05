@@ -336,6 +336,12 @@ export default {
       color: ''
     },
     {
+      type: 'htm',
+      viewer: '@tagspaces/extensions/html-viewer',
+      editor: '@tagspaces/extensions/html-editor',
+      color: ''
+    },
+    {
       type: 'html',
       viewer: '@tagspaces/extensions/html-viewer',
       editor: '@tagspaces/extensions/html-editor',
