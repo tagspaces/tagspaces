@@ -45,7 +45,8 @@ interface Props {
   currentLocationPath: string;
   currentDirectoryPath: string;
   searchResultCount: number;
-  onContextMenu: (e: React.MouseEvent<HTMLDivElement>) => void;
+  onContextMenu: (event: React.MouseEvent<HTMLDivElement>) => void;
+  onClick: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 const GridPagination = (props: Props) => {
@@ -98,8 +99,11 @@ const GridPagination = (props: Props) => {
   return (
     <div
       ref={containerEl}
-      onContextMenu={(e: React.MouseEvent<HTMLDivElement>) =>
-        props.onContextMenu(e)
+      onContextMenu={(event: React.MouseEvent<HTMLDivElement>) =>
+        props.onContextMenu(event)
+      }
+      onClick={(event: React.MouseEvent<HTMLDivElement>) =>
+        props.onClick(event)
       }
       style={{
         height: '100%',

@@ -361,9 +361,9 @@ const GridPerspective = (props: Props) => {
     } else {
       const selectedEntries = [];
       props.directoryContent.map(entry => {
-        if (entry.isFile) {
-          selectedEntries.push(entry);
-        }
+        // if (entry.isFile) {
+        selectedEntries.push(entry);
+        // }
         return true;
       });
       props.setSelectedEntries(selectedEntries);
@@ -668,6 +668,13 @@ const GridPerspective = (props: Props) => {
     setDirContextMenuAnchorEl(event.currentTarget);
   };
 
+  const onClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    if (props.selectedEntries.length > 0) {
+      props.setSelectedEntries([]);
+    }
+  };
+
   const getSelEntryPath = () => {
     if (props.lastSelectedEntry) {
       return props.lastSelectedEntry.path;
@@ -775,6 +782,7 @@ const GridPerspective = (props: Props) => {
           currentPage={1}
           currentLocationPath={locationPath}
           currentDirectoryPath={props.currentDirectoryPath}
+          onClick={onClick}
           onContextMenu={onContextMenu}
         />
       </GlobalHotKeys>

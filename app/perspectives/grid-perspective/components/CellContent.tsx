@@ -143,7 +143,13 @@ const CellContent = (props: Props) => {
   tagTitles = tagTitles.substring(0, tagTitles.length - 2);
   const tagPlaceholder =
     tagTitles.length > 0 ? (
-      <IconButton title={tagTitles} onClick={() => openFsEntry(fsEntry)}>
+      <IconButton
+        title={tagTitles}
+        onClick={e => {
+          e.stopPropagation();
+          openFsEntry(fsEntry);
+        }}
+      >
         <TagIcon />
       </IconButton>
     ) : null;
@@ -436,11 +442,12 @@ const CellContent = (props: Props) => {
       }}
       onContextMenu={event => handleGridContextMenu(event, fsEntry)}
       onDoubleClick={event => handleGridCellDblClick(event, fsEntry)}
-      onClick={event =>
+      onClick={event => {
+        event.stopPropagation();
         AppConfig.isCordovaiOS // TODO DoubleClick not fired in Cordova IOS
           ? handleGridCellDblClick(event, fsEntry)
-          : handleGridCellClick(event, fsEntry)
-      }
+          : handleGridCellClick(event, fsEntry);
+      }}
     >
       {gridCell}
     </Paper>
