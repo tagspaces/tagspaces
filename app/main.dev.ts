@@ -448,11 +448,9 @@ async function startWS() {
           name: 'Tagspaces WS',
           script, // Script to be run
           cwd: filepath, // './node_modules/tagspaces-ws', // './process1', cwd: '/path/to/npm/module/',
-          args: ['-p', Settings.wsPort, '-k', properties.get('KEY')], // '/Users/sytolk/Pictures'],
+          args: ['-p', Settings.wsPort, '-k', properties.get('KEY')],
           restartAt: []
-          // log: path.join(process.cwd(), 'thumbGen.log') //  'C:\\Users\\smari\\IdeaProjects\\tagspaces-utils\\process1.log'
-          // log: '/Users/sytolk/IdeaProjects/tagspaces/process1.log' // path.join(process.cwd(), 'process1.log'),
-          // log: 'process1.log' // path.join(process.cwd(), 'process1.log'),
+          // log: path.join(process.cwd(), 'thumbGen.log')
         },
         (err, pid) => {
           if (err && pid) {

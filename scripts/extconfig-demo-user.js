@@ -8,4 +8,4 @@ window.ExtDarkThemeLightColor = '#a6def4';
 window.ExtDarkThemeMainColor = '#3bc8ff';
 window.ExtIsFirstRun = false;
 window.ExtUseGenerateThumbnails = true;
-window.ExtDemoUser = { email: 'sytolk@gmail.com' };
+window.ExtDemoUser = { email: 'user@example.com' };
