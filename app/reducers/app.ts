@@ -934,6 +934,11 @@ export const actions = {
       getState(),
       getState().app.currentLocationId
     );
+    /* PlatformIO.enableWebdavSupport({   TODO use this to enable webdav support for location the same like objectstore
+      username: 'webdav',
+      password: '1234',
+      port: 8080
+    }); */
     PlatformIO.listDirectoryPromise(
       directoryPath,
       ['extractThumbPath', 'extractThumbURL'],

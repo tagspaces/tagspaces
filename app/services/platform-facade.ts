@@ -22,6 +22,8 @@ import {
   platformGetDirSeparator,
   platformEnableObjectStoreSupport,
   platformDisableObjectStoreSupport,
+  platformEnableWebdavSupport,
+  platformDisableWebdavSupport,
   platformWatchDirectory,
   platformSetLanguage,
   platformIsWorkerAvailable,
@@ -69,6 +71,11 @@ export default class PlatformFacade {
 
   static disableObjectStoreSupport = (): void =>
     platformDisableObjectStoreSupport();
+
+  static enableWebdavSupport = (webDavConfig: any): void =>
+    platformEnableWebdavSupport(webDavConfig);
+
+  static disableWebdavSupport = (): void => platformDisableWebdavSupport();
 
   static haveObjectStoreSupport = (): boolean =>
     platformHaveObjectStoreSupport();
