@@ -254,7 +254,7 @@ export default {
     },
     {
       iso: 'zh_TW',
-      title: '台灣 (Chinese Taiwan BIG5)'
+      title: '台灣 (Chinese Taiwan)'
     },
     {
       iso: 'hu',
@@ -271,6 +271,10 @@ export default {
     {
       iso: 'nb',
       title: 'Bokmål (Norwegian)'
+    },
+    {
+      iso: 'fr_CA',
+      title: 'français canadien (Canadian French)'
     }
   ],
   keyBindings: keyBindings(AppConfig.isMacLike),
