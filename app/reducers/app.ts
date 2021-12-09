@@ -1428,6 +1428,16 @@ export const actions = {
       Pro.Watcher.stopWatching();
     }
     if (location.type === locationType.TYPE_CLOUD) {
+      if (!Pro) {
+        dispatch(
+          actions.showNotification(
+            i18n.t('core:thisFunctionalityIsAvailableInPro'),
+            'warning',
+            true
+          )
+        );
+        return;
+      }
       PlatformIO.enableObjectStoreSupport(location)
         .then(() => {
           dispatch(
