@@ -54,6 +54,7 @@ interface SlideProps {
   ctaTitle?: string;
   items?: Array<string>;
   pictureURL?: string;
+  videoURL?: string;
   pictureHeight?: number;
 }
 
@@ -61,10 +62,6 @@ const slidesEN = [];
 slidesEN['general'] = {
   title: 'TagSpaces Pro - Key Features',
   items: [
-    <>
-      Connect cloud <b>object storage</b> as locations (e.g. AWS S3 Buckets,
-      MinIO folders hosted on your NAS)
-    </>,
     <>
       Advanced search with <b>full text</b> support for some files and{' '}
       <b>persisted queries</b>
@@ -85,7 +82,11 @@ slidesEN['general'] = {
     <>
       Advanced tagging with <b>geo-location</b> support
     </>,
-    <>Generating persistent thumbnails</>
+    <>Generating thumbnails for further file types like: PDF, DOCX or ODF</>,
+    <>
+      Connect cloud <b>object storage</b> as locations (e.g. AWS S3 Buckets,
+      MinIO folders hosted on your NAS)
+    </>
   ],
   ctaURL: Links.links.productsOverview,
   ctaTitle: 'Open Product Comparison',
@@ -171,7 +172,8 @@ slidesEN['perspectives'] = {
   ],
   ctaURL: Links.documentationLinks.perspectives,
   ctaTitle: 'Learn more',
-  pictureURL: PerspectivesImage,
+  // pictureURL: PerspectivesImage,
+  videoURL: 'https://www.tagspaces.org/content/v3-10/perpspective-switch.mp4',
   pictureHeight: 120
 };
 slidesEN['annotation'] = {
@@ -273,6 +275,7 @@ const SlideComponent = (props: SlideProps) => {
     ctaTitle,
     items,
     pictureURL,
+    videoURL,
     pictureHeight,
     openURLExternally
   } = props;
@@ -303,6 +306,17 @@ const SlideComponent = (props: SlideProps) => {
             src={pictureURL}
             alt=""
           />
+        )}
+        {videoURL && (
+          <video
+            src={videoURL}
+            // poster={posterUrl}
+            autoPlay={true}
+            loop
+            controls
+            className="img-responsive center-block img-shadow img-rounded"
+            style={{ width: '100%' }}
+          ></video>
         )}
         <br />
         {ctaTitle && openURLExternally && (
