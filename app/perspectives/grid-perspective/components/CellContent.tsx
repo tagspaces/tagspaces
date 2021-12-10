@@ -255,6 +255,10 @@ const CellContent = (props: Props) => {
     } else if (entrySize === 'big') {
       tmbSize = 100;
     }
+    const backgroundColor = selected
+      ? theme.palette.primary.light
+      : fsEntryBgColor;
+
     return (
       <Grid
         container
@@ -263,9 +267,8 @@ const CellContent = (props: Props) => {
         title={fsEntry.isIgnored && i18n.t('core:ignoredFolder')}
         style={{
           opacity: fsEntry.isIgnored ? 0.3 : 1,
-          backgroundColor: selected
-            ? theme.palette.primary.light
-            : theme.palette.background.default
+          backgroundColor: backgroundColor,
+          borderRadius: 5
         }}
       >
         <Grid
@@ -294,7 +297,8 @@ const CellContent = (props: Props) => {
               }
             }}
             style={{
-              backgroundColor: fsEntryColor
+              backgroundColor: fsEntryColor,
+              alignSelf: entrySize === 'small' ? 'center' : 'auto'
             }}
           >
             {fsEntry.isFile ? fsEntry.extension : <FolderIcon />}

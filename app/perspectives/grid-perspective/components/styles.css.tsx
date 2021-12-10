@@ -60,7 +60,6 @@ export default (theme: any): any => ({
     backgroundColor: theme.palette.primary.light + ' !important'
   },
   selectedRowCell: {
-    borderRadius: 0,
     border: '1px solid' + theme.palette.primary.main + ' !important'
   },
   gridCellThumb: {
