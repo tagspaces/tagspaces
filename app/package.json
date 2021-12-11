@@ -13,6 +13,6 @@
   "license": "AGPL-3.0",
   "scripts": {},
   "dependencies": {
-    "@tagspaces/extensions": "1.0.14"
+    "@tagspaces/extensions": "1.0.15"
   }
 }
