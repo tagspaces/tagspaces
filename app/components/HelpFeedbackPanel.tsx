@@ -223,19 +223,15 @@ const HelpFeedbackPanel = (props: Props) => {
             {i18n.t('core:likeUsOnFacebook')}
           </Typography>
         </ListItem>
-        {Pro && (
-          <>
-            <Divider />
-            <ListItem button onClick={toggleProTeaser}>
-              <ListItemIcon>
-                <ProTeaserIcon />
-              </ListItemIcon>
-              <Typography style={{ color: theme.palette.text.primary }}>
-                {i18n.t('TagSpaces Pro Overview')}
-              </Typography>
-            </ListItem>
-          </>
-        )}
+        <Divider />
+        <ListItem button onClick={toggleProTeaser}>
+          <ListItemIcon>
+            <ProTeaserIcon />
+          </ListItemIcon>
+          <Typography style={{ color: theme.palette.text.primary }}>
+            {i18n.t('Learn about TagSpaces Pro')}
+          </Typography>
+        </ListItem>
       </List>
     </div>
   );
