@@ -27,6 +27,8 @@ const Links = {
       'https://www.tagspaces.org/products/pro/#fileFolderMeta',
     productProThumbnailsGeneration:
       'https://www.tagspaces.org/products/pro/#thumbnailsGeneration',
+    productProFolderColor:
+      'https://docs.tagspaces.org/annotations/#custom-folder-colors',
     productProGeoTagging: 'https://www.tagspaces.org/usecases/geotagging/',
     productPro: 'https://www.tagspaces.org/products/pro/',
     productEnterprise: 'https://www.tagspaces.org/products/enterprise/',
