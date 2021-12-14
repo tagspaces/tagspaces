@@ -77,13 +77,58 @@ slidesEN['general'] = {
       On top of that you will get a lot of useful features, extended search
       functionalities, alternative perspectives for your files, geo tagging and
       ability to connect AWS S3 compatible object storage. Some of these
-      features are briefly presented on the next page.
+      features are briefly presented on the next pages.
     </>
   ),
   ctaURL: Links.links.productsOverview,
   ctaTitle: 'Compare TagSpaces Lite vs. Pro',
   pictureURL: ProTeaserImage,
   pictureHeight: 150
+};
+slidesEN['gallery'] = {
+  title: 'Gallery Perspectives',
+  description: (
+    <>
+      This perspective is optimized for displaying folders containing photos and
+      other images. It has an integrated presentation mode, so by just clicking
+      the play button, the images start to change automatically one after
+      another. With the expand button you can the presentation in full screen,
+      so you can enjoy your photos in a distraction-free way.
+    </>
+  ),
+  ctaURL: Links.documentationLinks.galleryPerspective,
+  ctaTitle: i18n.t('showMeMore'),
+  pictureURL: GalleryImage,
+  pictureShadow: true,
+  // videoURL: 'https://www.tagspaces.org/content/v3-10/perpspective-switch.mp4_',
+  // videoPosterURL: PerspectivesImage,
+  pictureHeight: 300
+};
+slidesEN['mapique'] = {
+  title: 'Mapique Perspective & Geo tagging',
+  description: (
+    <>
+      The Mapique perspective displays files and folders tagged with geo-tags on
+      a digital map. The perspective integrates an ability to extract geo
+      coordinates from EXIF/IPTC data embedded in JPEG files. By default
+      TagSpaces uses OpenStreetMap for the map, but other compatible map tile
+      servers can be used instead.
+    </>
+  ),
+  // items: [
+  //   <>
+  //     This feature can be used to add geo coordinates to every file or folder.
+  //   </>,
+  //   <>Dedicated perspective for showing geo-tags on a build-in map</>,
+  //   <>Extract geo location data from EXIF in JPGs files.</>,
+  //   <>Useful for planing or documenting trips and vacations.</>,
+  //   <>Useful for adding annotations for places on a map.</>
+  // ],
+  ctaURL: Links.documentationLinks.mapiquePerspective,
+  ctaTitle: i18n.t('showMeMore'),
+  pictureURL: MapImage,
+  pictureShadow: true,
+  pictureHeight: 300
 };
 slidesEN['search'] = {
   title: 'Extended Search',
@@ -99,7 +144,7 @@ slidesEN['search'] = {
     <>Filter by size and date</>
   ],
   ctaURL: Links.links.productProAdvancedSearch,
-  ctaTitle: 'Learn more',
+  ctaTitle: i18n.t('showMeMore'),
   pictureURL: SearchImage,
   pictureHeight: 150
 };
@@ -129,52 +174,8 @@ slidesEN['objectstorage'] = {
   //   <>Upload files with simple drag and drop actions</>
   // ],
   ctaURL: Links.links.productProObjectStore,
-  ctaTitle: 'Learn more',
+  ctaTitle: i18n.t('showMeMore'),
   pictureURL: CloudImage,
-  pictureHeight: 300
-};
-slidesEN['gallery'] = {
-  title: 'Gallery Perspectives',
-  description: (
-    <>
-      This perspective is optimized for displaying folders containing photos and
-      other images. It has an integrated presentation mode, so by just clicking
-      the play button the images start to change automatically one after
-      another. With the expand button you can the presentation in full screen,
-      so you can enjoy your photos in a distraction-free way.
-    </>
-  ),
-  ctaURL: Links.documentationLinks.galleryPerspective,
-  ctaTitle: 'Learn more',
-  pictureURL: GalleryImage,
-  pictureShadow: true,
-  // videoURL: 'https://www.tagspaces.org/content/v3-10/perpspective-switch.mp4_',
-  // videoPosterURL: PerspectivesImage,
-  pictureHeight: 300
-};
-slidesEN['mapique'] = {
-  title: 'Mapique Perspective & Geo tagging',
-  description: (
-    <>
-      The Mapique perspective displays files and folders tagged with geo-tags on
-      a digital map. The perspective integrates an ability to extract geo
-      coordinates from EXIF/IPTC data embedded in JPEG files. By default
-      TagSpaces uses OpenStreetMap for the map, but other compatible map tile
-      servers can be used instead.
-    </>
-  ),
-  // items: [
-  //   <>
-  //     This feature can be used to add geo coordinates to every file or folder.
-  //   </>,
-  //   <>Dedicated perspective for showing geo-tags on a build-in map</>,
-  //   <>Extract geo location data from EXIF in JPGs files.</>,
-  //   <>Useful for planing or documenting trips and vacations.</>,
-  //   <>Useful for adding annotations for places on a map.</>
-  // ],
-  ctaURL: Links.documentationLinks.mapiquePerspective,
-  ctaTitle: 'Learn more',
-  pictureURL: MapImage,
   pictureShadow: true,
   pictureHeight: 300
 };
@@ -202,7 +203,7 @@ slidesEN['annotation'] = {
   //   </>
   // ],
   ctaURL: Links.links.productProFileFolderMeta,
-  ctaTitle: 'Learn more',
+  ctaTitle: i18n.t('showMeMore'),
   pictureURL: EntryDescription,
   pictureShadow: true,
   pictureHeight: 300
@@ -218,7 +219,7 @@ slidesEN['folderColor'] = {
     </>
   ),
   ctaURL: Links.links.productProFolderColor,
-  ctaTitle: 'Learn more',
+  ctaTitle: i18n.t('showMeMore'),
   pictureURL: CustomFolderColor,
   pictureShadow: true,
   pictureHeight: 300
@@ -255,7 +256,7 @@ slidesEN['enterprise'] = {
     <>Premium technical support</>
   ],
   ctaURL: Links.links.emailContact,
-  ctaTitle: 'Contact Us',
+  ctaTitle: i18n.t('contactUs'),
   pictureURL: EnterpriseImage,
   pictureHeight: 200
 };

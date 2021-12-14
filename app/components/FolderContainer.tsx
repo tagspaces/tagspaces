@@ -64,6 +64,7 @@ import {
   actions as LocationIndexActions,
   getSearchQuery
 } from '-/reducers/location-index';
+import Links from '-/links';
 
 const GridPerspective = React.lazy(() =>
   import(
@@ -194,6 +195,7 @@ interface Props {
   searchQuery: TS.SearchQuery;
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   openCurrentDirectory: () => void;
+  openURLExternally?: (url: string, skipConfirmation: boolean) => void;
 }
 
 const FolderContainer = (props: Props) => {
@@ -243,7 +245,41 @@ const FolderContainer = (props: Props) => {
   );
 
   const switchPerspective = (perspectiveId: string) => {
-    props.setCurrentDirectoryPerspective(perspectiveId);
+    if (Pro) {
+      props.setCurrentDirectoryPerspective(perspectiveId);
+      return;
+    }
+    if (perspectiveId === perspectives.GALLERY) {
+      const openPersDocs = window.confirm(
+        'Gallery is part of TagSpaces Pro. Do you want to learn more about this perspective?'
+      );
+      if (openPersDocs) {
+        props.openURLExternally(
+          Links.documentationLinks.galleryPerspective,
+          true
+        );
+      }
+    } else if (perspectiveId === perspectives.MAPIQUE) {
+      const openPersDocs = window.confirm(
+        'Mapique is part of TagSpaces Pro. Do you want to learn more about this perspective?'
+      );
+      if (openPersDocs) {
+        props.openURLExternally(
+          Links.documentationLinks.mapiquePerspective,
+          true
+        );
+      }
+    } else if (perspectiveId === perspectives.KANBAN) {
+      const openPersDocs = window.confirm(
+        'Kanban is part of TagSpaces Pro. Do you want to learn more about this perspective?'
+      );
+      if (openPersDocs) {
+        props.openURLExternally(
+          Links.documentationLinks.kanbanPerspective,
+          true
+        );
+      }
+    }
   };
 
   const showWelcomePanel =
@@ -548,7 +584,7 @@ const FolderContainer = (props: Props) => {
           )}
         </div>
       </div>
-      {Pro && props.isDesktopMode && !showWelcomePanel && (
+      {props.isDesktopMode && !showWelcomePanel && (
         <ToggleButtonGroup
           value={currentPerspective}
           size="small"
@@ -639,7 +675,8 @@ function mapActionCreatorsToProps(dispatch) {
       updateCurrentDirEntry: AppActions.updateCurrentDirEntry,
       setCurrentDirectoryColor: AppActions.setCurrentDirectoryColor,
       setSearchQuery: LocationIndexActions.setSearchQuery,
-      openCurrentDirectory: AppActions.openCurrentDirectory
+      openCurrentDirectory: AppActions.openCurrentDirectory,
+      openURLExternally: AppActions.openURLExternally
     },
     dispatch
   );

@@ -34,7 +34,7 @@ import IssueIcon from '@material-ui/icons/BugReport';
 import TranslationIcon from '@material-ui/icons/Translate';
 import NewFeatureIcon from '@material-ui/icons/Gesture';
 import SocialIcon from '@material-ui/icons/ThumbUp';
-import Social2Icon from '@material-ui/icons/Mood';
+import TwitterIcon from '@material-ui/icons/Twitter';
 import KeyShortcutsIcon from '@material-ui/icons/Keyboard';
 import ProTeaserIcon from '@material-ui/icons/FlightTakeoff';
 import styles from './SidePanels.css';
@@ -206,13 +206,13 @@ const HelpFeedbackPanel = (props: Props) => {
         </ListItem>
         <ListItem button onClick={() => openURLExternally(Links.links.twitter)}>
           <ListItemIcon>
-            <Social2Icon />
+            <TwitterIcon />
           </ListItemIcon>
           <Typography style={{ color: theme.palette.text.primary }}>
             {i18n.t('core:followOnTwitter')}
           </Typography>
         </ListItem>
-        <ListItem
+        {/* <ListItem
           button
           onClick={() => openURLExternally(Links.links.facebook)}
         >
@@ -222,14 +222,14 @@ const HelpFeedbackPanel = (props: Props) => {
           <Typography style={{ color: theme.palette.text.primary }}>
             {i18n.t('core:likeUsOnFacebook')}
           </Typography>
-        </ListItem>
+        </ListItem> */}
         <Divider />
         <ListItem button onClick={toggleProTeaser}>
           <ListItemIcon>
             <ProTeaserIcon />
           </ListItemIcon>
           <Typography style={{ color: theme.palette.text.primary }}>
-            {i18n.t('Learn about TagSpaces Pro')}
+            {i18n.t('achieveMore') + ' TagSpaces Pro'}
           </Typography>
         </ListItem>
       </List>

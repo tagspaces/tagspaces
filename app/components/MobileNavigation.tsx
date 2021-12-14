@@ -42,6 +42,8 @@ import CardContent from '@material-ui/core/CardContent';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
 import CloseIcon from '@material-ui/icons/Close';
 import ProTeaser from '../assets/images/spacerocket_undraw.svg';
+import ProTeaserImage from '-/assets/images/pro-teaser.svg';
+import ProTextLogo from '../assets/images/text-logo-pro.svg';
 import { Pro } from '-/pro';
 import CustomLogo from './CustomLogo';
 import TagLibrary from '../components/TagLibrary';
@@ -259,13 +261,17 @@ const MobileNavigation = (props: Props) => {
                   <CloseIcon fontSize="small" />
                 </IconButton>
               </Typography>
-              <Typography variant="h6" component="h2" color="textPrimary">
-                TagSpaces Pro
-              </Typography>
-              <img style={{ maxHeight: 60 }} src={ProTeaser} alt="" />
+              <br />
+              <img style={{ height: 35 }} src={ProTextLogo} alt="" />
+              <br />
+              <img style={{ maxHeight: 60 }} src={ProTeaserImage} alt="" />
             </CardContent>
             <CardActions
-              style={{ flexDirection: 'row', justifyContent: 'center' }}
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                marginTop: -10
+              }}
             >
               <Button
                 size="small"
@@ -275,7 +281,7 @@ const MobileNavigation = (props: Props) => {
                   toggleProTeaser();
                 }}
               >
-                Learn More
+                {i18n.t('showMeMore')}
               </Button>
               <Button
                 size="small"
@@ -285,7 +291,7 @@ const MobileNavigation = (props: Props) => {
                   openURLExternally(Links.links.productsOverview, true);
                 }}
               >
-                Get It
+                {i18n.t('getItNow')}
               </Button>
             </CardActions>
           </>

@@ -206,7 +206,7 @@ const DirectoryMenu = (props: Props) => {
       }
     } else if (perspectiveId === perspectives.GALLERY) {
       const openPersDocs = window.confirm(
-        'Gallery is part of the PRO version. Do you want to learn more about this perspective?'
+        'Gallery is part of TagSpaces Pro. Do you want to learn more about this perspective?'
       );
       if (openPersDocs) {
         props.openURLExternally(
@@ -216,7 +216,7 @@ const DirectoryMenu = (props: Props) => {
       }
     } else if (perspectiveId === perspectives.MAPIQUE) {
       const openPersDocs = window.confirm(
-        'Mapique is part of the PRO version. Do you want to learn more about this perspective?'
+        'Mapique is part of TagSpaces Pro. Do you want to learn more about this perspective?'
       );
       if (openPersDocs) {
         props.openURLExternally(
@@ -226,7 +226,7 @@ const DirectoryMenu = (props: Props) => {
       }
     } else if (perspectiveId === perspectives.KANBAN) {
       const openPersDocs = window.confirm(
-        'Kanban is part of the PRO version. Do you want to learn more about this perspective?'
+        'Kanban is part of TagSpaces Pro. Do you want to learn more about this perspective?'
       );
       if (openPersDocs) {
         props.openURLExternally(
