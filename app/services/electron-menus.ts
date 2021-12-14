@@ -214,17 +214,6 @@ export default function buildDesktopMenu(props: any, i18n) {
           }
         },
         {
-          type: 'separator'
-        },
-        {
-          label: '&' + i18n.t('likeUsOnFacebook'),
-          click: () => {
-            props.openURLExternally({
-              url: Links.links.facebook
-            });
-          }
-        },
-        {
           label: '&' + i18n.t('followOnTwitter'),
           click: () => {
             props.openURLExternally({
