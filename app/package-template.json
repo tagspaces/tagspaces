@@ -1,6 +1,6 @@
 {
   "webDependencies": {
-    "@tagspaces/extensions": "1.0.14"
+    "@tagspaces/extensions": "1.0.15"
   },
   "nodeDependencies": {
     "@tagspaces/tagspaces-ws": "1.2.1",
