@@ -142,10 +142,11 @@ slidesEN['annotation'] = {
       This will allow so you have basic text formatting such as <b>bold</b> or{' '}
       <i>italic</i>.
     </>,
-    <>You can easily create plain or numbered lists.</>,
     <>
-      <b>Creating links</b> to other documents, folder, locations or web pages
-      is also supported.
+      You can easily create plain or numbered (<b>to-do</b>) lists.
+    </>,
+    <>
+      <b>Create links</b> to other documents, folder, locations or web pages
     </>,
     <>
       You can also set a <b>custom thumbnail</b> for every file or folder,
@@ -210,14 +211,15 @@ slidesEN['objectstorage'] = {
   // ),
   items: [
     <>
-      TagSpaces Pro supports connecting of <b>cloud object storage</b> as
-      locations. Such storage is offered by cloud provider such as Amazon AWS.
-      You can also host an object storage <b>privately</b> (e.g. on your NAS)
-      with the help of open source projects like MinIO.
+      TagSpaces Pro supports connecting{' '}
+      <b>Amazon S3 compliant storage providers</b> as locations. Such storage is
+      offered by Amazon AWS, Wasabi and many others. You can also host an object
+      storage <b>privately</b> (e.g. on your NAS) with the help of open source
+      projects like MinIO.
     </>,
     <>
       This allows you to <b>work collaboratively</b> on the same files with
-      family member or co-workers.
+      family members or co-workers.
     </>,
     <>
       By doing so, you are getting a Cloud based{' '}
@@ -348,7 +350,7 @@ const Slide = (props: SlideProps) => {
                 boxShadow: pictureShadow
                   ? '2px 2px 13px 0 rgb(0 0 0 / 75%'
                   : 'none',
-                width: '95%'
+                maxWidth: '95%'
               }}
               src={pictureURL}
               alt=""

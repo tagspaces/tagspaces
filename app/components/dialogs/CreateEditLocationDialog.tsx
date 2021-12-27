@@ -441,7 +441,8 @@ const CreateEditLocationDialog = (props: Props) => {
                   title={i18n.t('core:objectStorageTitle')}
                   label={
                     <>
-                      {i18n.t('core:objectStorage')}
+                      {i18n.t('core:objectStorage') +
+                        ' (AWS, MinIO, Wasabi ...)'}
                       <ProLabel />
                     </>
                   }
