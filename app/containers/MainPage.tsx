@@ -402,11 +402,20 @@ const MainPage = (props: Props) => {
   const keyBindingHandlers = {
     openParentDirectory: props.loadParentDirectoryContent,
     toggleShowHiddenEntries: props.toggleShowUnixHiddenEntries,
-    showFolderNavigator: props.openLocationManagerPanel,
-    showTagLibrary: props.openTagLibraryPanel,
+    showFolderNavigator: () => {
+      props.openLocationManagerPanel();
+      setDrawerOpened(true);
+    },
+    showTagLibrary: () => {
+      props.openTagLibraryPanel();
+      setDrawerOpened(true);
+    },
     openSearch: () => props.setSearchQuery({ textQuery: '' }), // props.openSearchPanel,
     closeSearch: () => props.setSearchQuery({}),
-    showHelp: props.openHelpFeedbackPanel
+    showHelp: () => {
+      props.openHelpFeedbackPanel();
+      setDrawerOpened(true);
+    }
   };
 
   const keyMap = {
