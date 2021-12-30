@@ -26,6 +26,7 @@ import {
   getSearchResultCount,
   isLoading
 } from '-/reducers/app';
+import EntryIcon from '-/components/EntryIcon';
 import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
 
@@ -129,21 +130,33 @@ const GridPagination = (props: Props) => {
           </Typography>
         )}
         {!isAppLoading && files.length < 1 && directories.length < 1 && (
-          <Typography
-            style={{ padding: 15, color: theme.palette.text.primary }}
-          >
-            {i18n.t('core:noFileFolderFound')}
-          </Typography>
+          <div style={{ textAlign: 'center' }}>
+            <EntryIcon isFile={false} />
+            <Typography
+              style={{ padding: 15, color: theme.palette.text.secondary }}
+            >
+              {i18n.t('core:noFileFolderFound')}
+            </Typography>
+            <Typography style={{ color: theme.palette.text.secondary }}>
+              {i18n.t('core:dragAndDropToImport')}
+            </Typography>
+          </div>
         )}
         {!isAppLoading &&
           files.length < 1 &&
           directories.length >= 1 &&
           !showDirectories && (
-            <Typography
-              style={{ padding: 15, color: theme.palette.text.primary }}
-            >
-              {i18n.t('core:noFileButFoldersFound')}
-            </Typography>
+            <div style={{ textAlign: 'center' }}>
+              <EntryIcon isFile={false} />
+              <Typography
+                style={{ padding: 15, color: theme.palette.text.secondary }}
+              >
+                {i18n.t('core:noFileButFoldersFound')}
+              </Typography>
+              <Typography style={{ color: theme.palette.text.secondary }}>
+                {i18n.t('core:dragAndDropToImport')}
+              </Typography>
+            </div>
           )}
       </div>
       {showPagination && (

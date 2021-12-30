@@ -486,6 +486,7 @@
   "cancelIndexing": "Cancel Indexing",
   "getLatestVersionPro": "Please download the latest version from the link in the purchase confirmation email.",
   "noFileButFoldersFound": "Some folders found! Turn on the folder visibility from the perspective's toolbar to view them.",
+  "dragAndDropToImport": "Drag and drop files here to copy or upload them.",
   "selectTags": "Select tags",
   "location": "Location",
   "locationId": "Location ID",
