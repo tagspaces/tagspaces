@@ -19,6 +19,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
+import Tooltip from '@material-ui/core/Tooltip';
 import Pagination from '@material-ui/lab/Pagination';
 import i18n from '-/services/i18n';
 import {
@@ -64,6 +65,7 @@ const GridPagination = (props: Props) => {
     currentPage
   } = props;
   let { files } = props;
+  const allFilesCount = files.length;
   const containerEl = useRef(null);
   const [page, setPage] = useState(currentPage);
 
@@ -159,23 +161,46 @@ const GridPagination = (props: Props) => {
             </div>
           )}
       </div>
-      {showPagination && (
-        <Pagination
-          style={{
-            left: 15,
-            bottom: 65,
-            zIndex: 1100,
-            position: 'absolute',
-            backgroundColor: theme.palette.background.default,
-            opacity: 0.97,
-            border: '1px solid lightgray',
-            borderRadius: 5,
-            padding: 3
-          }}
-          count={paginationCount}
-          page={page}
-          onChange={handleChange}
-        />
+      {showPagination ? (
+        <Tooltip
+          title={
+            directories.length +
+            ' folder(s) and ' +
+            allFilesCount +
+            ' file(s) found'
+          }
+        >
+          <Pagination
+            style={{
+              left: 15,
+              bottom: 65,
+              zIndex: 1100,
+              position: 'absolute',
+              backgroundColor: theme.palette.background.default,
+              opacity: 0.97,
+              border: '1px solid lightgray',
+              borderRadius: 5,
+              padding: 3
+            }}
+            count={paginationCount}
+            page={page}
+            onChange={handleChange}
+          />
+        </Tooltip>
+      ) : (
+        <div style={{ padding: 15, bottom: 10 }}>
+          <Typography
+            style={{
+              fontSize: '0.9rem',
+              color: theme.palette.text.secondary
+            }}
+          >
+            {directories.length +
+              ' folder(s) and ' +
+              allFilesCount +
+              ' file(s) found'}
+          </Typography>
+        </div>
       )}
     </div>
   );
