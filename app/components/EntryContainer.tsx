@@ -1022,6 +1022,7 @@ const EntryContainer = (props: Props) => {
           fileViewer={fileViewer}
           fileViewerContainer={fileViewerContainer}
           toggleFullScreen={toggleFullScreen}
+          currentTheme={props.settings.currentTheme}
         />
       </Split>
     );

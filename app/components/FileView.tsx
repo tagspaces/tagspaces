@@ -31,6 +31,7 @@ interface Props {
   fileViewerContainer: MutableRefObject<HTMLDivElement>;
   toggleFullScreen: () => void;
   theme: any;
+  currentTheme: string;
 }
 
 const FileView = (props: Props) => {
@@ -40,7 +41,8 @@ const FileView = (props: Props) => {
     fileViewer,
     isFullscreen,
     fileViewerContainer,
-    toggleFullScreen
+    toggleFullScreen,
+    currentTheme
   } = props; // .openedFiles[0];
 
   useEventListener('toggle-resume', () => {
@@ -64,6 +66,7 @@ const FileView = (props: Props) => {
     // }
 
     const locale = '&locale=' + i18n.language;
+    const theme = '&theme=' + currentTheme;
 
     if (openedFile.editMode && openedFile.editingExtensionPath) {
       fileOpenerURL =
@@ -71,6 +74,7 @@ const FileView = (props: Props) => {
         '/index.html?file=' +
         encodeURIComponent(openedFile.url ? openedFile.url : openedFile.path) +
         locale +
+        theme +
         '&edit=true' +
         (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
       // } else if (!currentEntry.isFile) { // TODO needed for loading folder's default html
@@ -81,6 +85,7 @@ const FileView = (props: Props) => {
         '/index.html?file=' +
         encodeURIComponent(openedFile.url ? openedFile.url : openedFile.path) +
         locale +
+        theme +
         (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
     }
   } else {
@@ -136,6 +141,7 @@ const areEqual = (prevProp, nextProp) =>
   nextProp.openedFile.editMode === prevProp.openedFile.editMode &&
   nextProp.openedFile.shouldReload === prevProp.openedFile.shouldReload &&
   nextProp.isFullscreen === prevProp.isFullscreen;
+// nextProp.currentTheme === prevProp.currentTheme; // Commented due to reloading of the editors with changed content
 /* ((nextProp.openedFile.editMode === undefined &&
     prevProp.openedFile.editMode === true) ||
     nextProp.openedFile.editMode === prevProp.openedFile.editMode); */
