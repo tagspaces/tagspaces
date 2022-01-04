@@ -492,6 +492,7 @@
   "locationId": "Location ID",
   "folder": "Folder",
   "globalSearch": "Global",
+  "localLocation": "Local - pointing to a local folder",
   "objectStorage": "Object Storage",
   "objectStorageTitle": "Amazon S3 compliant object storage",
   "endpointURL": "Endpoint URL",
