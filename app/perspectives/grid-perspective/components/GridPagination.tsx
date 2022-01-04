@@ -161,7 +161,7 @@ const GridPagination = (props: Props) => {
             </div>
           )}
       </div>
-      {showPagination ? (
+      {showPagination && (
         <Tooltip
           title={
             directories.length +
@@ -187,7 +187,8 @@ const GridPagination = (props: Props) => {
             onChange={handleChange}
           />
         </Tooltip>
-      ) : (
+      )}
+      {!showPagination && (directories.length > 0 || files.length > 0) && (
         <div style={{ padding: 15, bottom: 10 }}>
           <Typography
             style={{
