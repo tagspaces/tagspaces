@@ -259,6 +259,11 @@ const CellContent = (props: Props) => {
       ? theme.palette.primary.light
       : fsEntryBgColor;
 
+    const entrySizeFormatted =
+      fsEntry.isFile && formatFileSize(fsEntry.size) + ' - ';
+    const entryLMDTFormatted =
+      fsEntry.isFile && fsEntry.lmdt && formatDateTime(fsEntry.lmdt, true);
+
     return (
       <Grid
         container
@@ -318,6 +323,9 @@ const CellContent = (props: Props) => {
             style={{
               display: 'flex'
             }}
+            title={
+              fsEntry.isFile ? entrySizeFormatted + entryLMDTFormatted : ''
+            }
           >
             <Typography style={{ wordBreak: 'break-all', alignSelf: 'center' }}>
               {entryTitle}
@@ -338,7 +346,7 @@ const CellContent = (props: Props) => {
               variant="body2"
             >
               <span title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
-                {fsEntry.isFile && formatFileSize(fsEntry.size) + ' - '}
+                {entrySizeFormatted}
               </span>
               <span
                 title={
@@ -347,9 +355,7 @@ const CellContent = (props: Props) => {
                   formatDateTime(fsEntry.lmdt, true)
                 }
               >
-                {fsEntry.isFile &&
-                  fsEntry.lmdt &&
-                  formatDateTime(fsEntry.lmdt, false)}
+                {entryLMDTFormatted}
               </span>
               <span title={i18n.t('core:entryDescription')}>{description}</span>
             </Typography>
