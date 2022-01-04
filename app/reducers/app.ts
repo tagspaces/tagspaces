@@ -1904,10 +1904,15 @@ export const actions = {
             )
           ],
           [
-            getThumbFileLocationForFile(filePath, PlatformIO.getDirSeparator()),
+            getThumbFileLocationForFile(
+              filePath,
+              PlatformIO.getDirSeparator(),
+              false
+            ),
             getThumbFileLocationForFile(
               newFilePath,
-              PlatformIO.getDirSeparator()
+              PlatformIO.getDirSeparator(),
+              false
             )
           ]
         ])
