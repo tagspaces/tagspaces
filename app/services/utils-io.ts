@@ -1077,7 +1077,7 @@ export function setFolderThumbnailPromise(filePath: string): Promise<string> {
     PlatformIO.getDirSeparator()
   );
   return PlatformIO.copyFilePromise(
-    getThumbFileLocationForFile(filePath, PlatformIO.getDirSeparator()),
+    getThumbFileLocationForFile(filePath, PlatformIO.getDirSeparator(), false),
     getThumbFileLocationForDirectory(
       directoryPath,
       PlatformIO.getDirSeparator()
