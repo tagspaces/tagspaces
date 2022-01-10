@@ -117,7 +117,8 @@ export const types = {
   REFLECT_CREATE_ENTRY: 'APP/REFLECT_CREATE_ENTRY',
   // REFLECT_UPDATE_SIDECARTAGS: 'APP/REFLECT_UPDATE_SIDECARTAGS',
   // REFLECT_UPDATE_SIDECARMETA: 'APP/REFLECT_UPDATE_SIDECARMETA',
-  UPDATE_CURRENTDIR_ENTRY: 'APP/UPDATE_CURRENTDIR_ENTRY'
+  UPDATE_CURRENTDIR_ENTRY: 'APP/UPDATE_CURRENTDIR_ENTRY',
+  SET_ISLOADING: 'APP/SET_ISLOADING'
 };
 export const perspectives = {
   DEFAULT: 'default',
@@ -434,6 +435,12 @@ export default (state: any = initialState, action: any) => {
           notificationType: action.notificationType,
           autohide: action.autohide
         }
+      };
+    }
+    case types.SET_ISLOADING: {
+      return {
+        ...state,
+        isLoading: action.isLoading
       };
     }
     case types.SET_GENERATING_THUMBNAILS: {
@@ -883,6 +890,10 @@ export const actions = {
   openSearchPanel: () => ({ type: types.OPEN_SEARCH_PANEL }),
   openHelpFeedbackPanel: () => ({ type: types.OPEN_HELPFEEDBACK_PANEL }),
   closeAllVerticalPanels: () => ({ type: types.CLOSE_ALLVERTICAL_PANELS }),
+  setIsLoading: (isLoading: boolean) => ({
+    type: types.SET_ISLOADING,
+    isLoading
+  }),
   loadParentDirectoryContent: () => (
     dispatch: (actions: Object) => void,
     getState: () => any
@@ -890,6 +901,8 @@ export const actions = {
     const state = getState();
     const { currentDirectoryPath } = state.app;
     const currentLocationPath = normalizePath(getCurrentLocationPath(state));
+
+    dispatch(actions.setIsLoading(true));
 
     if (currentDirectoryPath) {
       const parentDirectory = extractParentDirectoryPath(
@@ -970,6 +983,8 @@ export const actions = {
   ) => async (dispatch: (actions: Object) => void, getState: () => any) => {
     // console.debug('loadDirectoryContent:' + directoryPath);
     window.walkCanceled = false;
+
+    dispatch(actions.setIsLoading(true));
 
     const state = getState();
     const { selectedEntries } = state.app;
