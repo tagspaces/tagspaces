@@ -217,6 +217,7 @@ const CellContent = (props: Props) => {
             className={classes.gridFileExtension}
             style={{
               backgroundColor: fsEntryColor,
+              textShadow: '1px 1px #8f8f8f',
               maxWidth: fsEntry.isFile ? 50 : 100
             }}
             noWrap={true}

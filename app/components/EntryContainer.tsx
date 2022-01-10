@@ -113,6 +113,7 @@ const styles: any = (theme: any) => ({
     color: 'white',
     backgroundColor: AppConfig.defaultFileColor,
     padding: '2px 5px 0px 5px',
+    textShadow: '1px 1px #8f8f8f',
     minHeight: 18,
     fontSize: 13,
     marginLeft: 3,
