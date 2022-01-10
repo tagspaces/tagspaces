@@ -49,7 +49,7 @@ interface Props {
   selectedEntries: Array<Object>;
   loadParentDirectoryContent: () => void;
   toggleSelectAllFiles: (event: any) => void;
-  allFilesSelected: boolean;
+  someFileSelected: boolean;
   handleLayoutSwitch: (event: Object) => void;
   openAddRemoveTagsDialog: () => void;
   fileOperationsEnabled: boolean;
@@ -69,7 +69,7 @@ const MainToolbar = (props: Props) => {
     classes,
     selectedEntries,
     toggleSelectAllFiles,
-    allFilesSelected,
+    someFileSelected,
     loadParentDirectoryContent,
     layoutType,
     handleLayoutSwitch,
@@ -89,7 +89,7 @@ const MainToolbar = (props: Props) => {
           data-tid="gridPerspectiveSelectAllFiles"
           onClick={toggleSelectAllFiles}
         >
-          {allFilesSelected ? <SelectAllIcon /> : <DeSelectAllIcon />}
+          {someFileSelected ? <SelectAllIcon /> : <DeSelectAllIcon />}
         </IconButton>
       </Tooltip>
       <Tooltip title={i18n.t('core:navigateToParentDirectory')}>

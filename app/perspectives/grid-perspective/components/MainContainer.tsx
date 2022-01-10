@@ -113,7 +113,6 @@ const GridPerspective = (props: Props) => {
 
   const [mouseX, setMouseX] = useState<number>(undefined);
   const [mouseY, setMouseY] = useState<number>(undefined);
-  const allFilesSelected = useRef<boolean>(false);
   // const selectedEntry = useRef<FileSystemEntry>(undefined);
   const selectedEntryPath = useRef<string>(undefined);
   const selectedTag = useRef<TS.Tag | null>(null);
@@ -348,7 +347,6 @@ const GridPerspective = (props: Props) => {
 
   const clearSelection = () => {
     props.setSelectedEntries([]);
-    allFilesSelected.current = false;
     // props.setLastSelectedEntry(null);
     // selectedEntry.current = undefined;
     selectedEntryPath.current = undefined;
@@ -356,7 +354,6 @@ const GridPerspective = (props: Props) => {
 
   const toggleSelectAllFiles = () => {
     if (selectedEntries.length > 0) {
-      // && allFilesSelected.current) {
       clearSelection();
     } else {
       const selectedEntries = [];
@@ -367,7 +364,6 @@ const GridPerspective = (props: Props) => {
         return true;
       });
       props.setSelectedEntries(selectedEntries);
-      allFilesSelected.current = true;
     }
   };
 
@@ -742,9 +738,7 @@ const GridPerspective = (props: Props) => {
         selectedEntries={selectedEntries}
         loadParentDirectoryContent={loadParentDirectoryContent}
         toggleSelectAllFiles={toggleSelectAllFiles}
-        allFilesSelected={
-          allFilesSelected.current && selectedEntries.length > 0
-        }
+        someFileSelected={selectedEntries.length > 0}
         handleLayoutSwitch={handleLayoutSwitch}
         openAddRemoveTagsDialog={openAddRemoveTagsDialog}
         fileOperationsEnabled={fileOperationsEnabled()}
