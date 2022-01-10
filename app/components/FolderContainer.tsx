@@ -43,6 +43,7 @@ import {
   getDirectoryContent,
   getSearchResultCount,
   isReadOnlyMode,
+  isLoading,
   getCurrentLocationPath,
   getCurrentDirectoryPerspective,
   OpenedEntry,
@@ -65,6 +66,7 @@ import {
   getSearchQuery
 } from '-/reducers/location-index';
 import Links from '-/links';
+import PlatformIO from '-/services/platform-facade';
 
 const GridPerspective = React.lazy(() =>
   import(
@@ -178,6 +180,7 @@ interface Props {
   loadParentDirectoryContent: () => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   isReadOnlyMode: boolean;
+  isLoading: boolean;
   isDesktopMode: boolean;
   showNotification: (content: string) => void;
   toggleDrawer?: () => void;
@@ -383,7 +386,8 @@ const FolderContainer = (props: Props) => {
     setSelectedEntries,
     openDirectory,
     reflectCreateEntry,
-    openFsEntry
+    openFsEntry,
+    isLoading
   } = props;
 
   /* let searchResultCounterText = searchResultCount + ' ' + i18n.t('entries');
@@ -574,6 +578,18 @@ const FolderContainer = (props: Props) => {
             width: '100%'
           }}
         >
+          {isLoading && PlatformIO.haveObjectStoreSupport() && (
+            <div
+              style={{
+                position: 'absolute',
+                zIndex: 1000,
+                height: '100%',
+                width: '100%',
+                backdropFilter: 'blur(2px)',
+                backgroundColor: '#fafafaAA' // red: '#eb585882' '#d9d9d980'
+              }}
+            ></div>
+          )}
           {renderPerspective()}
           {isRenameEntryDialogOpened && (
             <RenameEntryDialog
@@ -650,7 +666,8 @@ function mapStateToProps(state) {
     isDesktopMode: getDesktopMode(state),
     isReadOnlyMode: isReadOnlyMode(state),
     progress: getProgress(state),
-    searchQuery: getSearchQuery(state)
+    searchQuery: getSearchQuery(state),
+    isLoading: isLoading(state)
   };
 }
 
@@ -684,6 +701,7 @@ function mapActionCreatorsToProps(dispatch) {
 
 const areEqual = (prevProp: Props, nextProp: Props) =>
   // nextProp.rightPanelWidth === prevProp.rightPanelWidth &&
+  nextProp.isLoading === prevProp.isLoading &&
   nextProp.settings.currentTheme === prevProp.settings.currentTheme &&
   nextProp.drawerOpened === prevProp.drawerOpened &&
   nextProp.isDesktopMode === prevProp.isDesktopMode &&
