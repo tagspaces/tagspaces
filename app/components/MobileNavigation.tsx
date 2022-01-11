@@ -215,9 +215,10 @@ const MobileNavigation = (props: Props) => {
             </Button>
           </Tooltip>
         </ButtonGroup>
-        {props.isLocationManagerPanelOpened && (
-          <LocationManager reduceHeightBy={180} />
-        )}
+        <LocationManager
+          reduceHeightBy={180}
+          show={props.isLocationManagerPanelOpened}
+        />
         {props.isTagLibraryPanelOpened && <TagLibrary reduceHeightBy={180} />}
         {props.isSearchPanelOpened && <StoredSearches reduceHeightBy={120} />}
         {props.isHelpFeedbackPanelOpened && (
