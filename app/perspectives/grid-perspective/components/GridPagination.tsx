@@ -124,13 +124,6 @@ const GridPagination = (props: Props) => {
         {files.map((entry, index, dArray) =>
           renderCell(entry, index === dArray.length - 1)
         )}
-        {isAppLoading && (
-          <Typography
-            style={{ padding: 15, color: theme.palette.text.primary }}
-          >
-            {i18n.t('core:loading')}
-          </Typography>
-        )}
         {!isAppLoading && files.length < 1 && directories.length < 1 && (
           <div style={{ textAlign: 'center' }}>
             <EntryIcon isFile={false} />

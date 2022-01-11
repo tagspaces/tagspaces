@@ -138,14 +138,14 @@ const LocationManager = (props: Props) => {
           style={{
             position: 'absolute',
             zIndex: 1000,
-            height: '100%',
-            width: '100%',
-            backdropFilter: 'blur(2px)',
-            backgroundColor: '#fafafaAA' // red: '#eb585882' '#d9d9d980'
+            height: 'calc(100% - 180px)',
+            width: 310,
+            backdropFilter: 'grayscale(1)'
+            // backgroundColor: 'red'
+            // backdropFilter: 'blur(2px)',
+            // backgroundColor: '#fafafaAA' // red: '#eb585882' '#d9d9d980'
           }}
-        >
-          Loading...
-        </div>
+        ></div>
       )}
       <LocationManagerMenu
         importLocations={() => {
