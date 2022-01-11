@@ -63,16 +63,14 @@ const DirectoryTreeView = forwardRef(
           if (location.type === locationType.TYPE_CLOUD) {
             PlatformIO.enableObjectStoreSupport(location)
               .then(() => {
-                loadSubDirectories(location, 1);
-                // props.loadDirectoryContent(getLocationPath(location), true);
+                loadSubDirectories(location);
               })
               .catch(error => {
                 console.log('enableObjectStoreSupport', error);
               });
           } else if (location.type === locationType.TYPE_LOCAL) {
             PlatformIO.disableObjectStoreSupport();
-            loadSubDirectories(location, 1);
-            // props.loadDirectoryContent(getLocationPath(location), true);
+            loadSubDirectories(location);
           }
         }
       },
@@ -161,7 +159,7 @@ const DirectoryTreeView = forwardRef(
       // console.log('onExpand', expanded + JSON.stringify(record));
       if (expanded) {
         // this.onRowClick(record);
-        loadSubDirectories(record, 1);
+        loadSubDirectories(record);
       }
     };
 
@@ -169,7 +167,7 @@ const DirectoryTreeView = forwardRef(
       if (subDir.type === locationType.TYPE_CLOUD) {
         PlatformIO.enableObjectStoreSupport(subDir)
           .then(() => {
-            loadSubDirectories(subDir, 1);
+            loadSubDirectories(subDir);
             props.changeLocation(subDir);
             props.loadDirectoryContent(subDir.path, true);
           })
@@ -178,7 +176,7 @@ const DirectoryTreeView = forwardRef(
           });
       } else if (subDir.type === locationType.TYPE_LOCAL) {
         PlatformIO.disableObjectStoreSupport();
-        loadSubDirectories(subDir, 1);
+        loadSubDirectories(subDir);
         props.changeLocation(subDir);
         props.loadDirectoryContent(subDir.path, true);
       }
@@ -195,7 +193,7 @@ const DirectoryTreeView = forwardRef(
       }
     ];
 
-    const loadSubDirectories = (location: TS.Location, deepLevel: number) => {
+    const loadSubDirectories = (location: TS.Location) => {
       const subFolder = {
         ...(location.accessKeyId && { accessKeyId: location.accessKeyId }),
         ...(location.bucketName && { bucketName: location.bucketName }),
@@ -209,7 +207,7 @@ const DirectoryTreeView = forwardRef(
         type: location.type,
         path: getLocationPath(location)
       };
-      getDirectoriesTree(subFolder, deepLevel)
+      getDirectoriesTree(subFolder)
         .then(children => {
           if (children instanceof Array) {
             if (location.uuid) {
@@ -254,63 +252,57 @@ const DirectoryTreeView = forwardRef(
       children?: Array<SubFolder>;
     };
 
-    const getDirectoriesTree = (subFolder: SubFolder, deepLevel: number) =>
+    const getDirectoriesTree = (subFolder: SubFolder) => {
       // const { settings } = getState();
-      PlatformIO.listDirectoryPromise(subFolder.path, [])
-        // @ts-ignore
-        .then(dirEntries => {
-          if (dirEntries !== undefined) {
-            // console.debug('listDirectoryPromise resolved:' + dirEntries.length);
-            const directoryContent = [];
-            dirEntries.map(entry => {
-              if (
-                entry.name === AppConfig.metaFolder ||
-                entry.name.endsWith('/' + AppConfig.metaFolder) ||
-                (!props.showUnixHiddenEntries && entry.name.startsWith('.'))
-              ) {
+      return new Promise((resolve, reject) => {
+        PlatformIO.listDirectoryPromise(subFolder.path, [])
+          // @ts-ignore
+          .then(dirEntries => {
+            if (dirEntries !== undefined) {
+              // console.debug('listDirectoryPromise resolved:' + dirEntries.length);
+              const directoryContent = [];
+              dirEntries.map(entry => {
+                if (
+                  entry.name === AppConfig.metaFolder ||
+                  entry.name.endsWith('/' + AppConfig.metaFolder) ||
+                  (!props.showUnixHiddenEntries && entry.name.startsWith('.'))
+                ) {
+                  return true;
+                }
+                // const enhancedEntry = enhanceEntry(entry);
+                if (!entry.isFile) {
+                  // eslint-disable-next-line no-param-reassign
+                  if (subFolder.accessKeyId) {
+                    entry.accessKeyId = subFolder.accessKeyId;
+                  }
+                  if (subFolder.bucketName) {
+                    entry.bucketName = subFolder.bucketName;
+                  }
+                  if (subFolder.region) {
+                    entry.region = subFolder.region;
+                  }
+                  if (subFolder.endpointURL) {
+                    entry.endpointURL = subFolder.endpointURL;
+                  }
+                  if (subFolder.secretAccessKey) {
+                    entry.secretAccessKey = subFolder.secretAccessKey;
+                  }
+                  entry.uuid = subFolder.uuid;
+                  entry.type = subFolder.type;
+                  entry.children = []; // assuming there are sub folders
+                  directoryContent.push(entry);
+                }
                 return true;
-              }
-              // const enhancedEntry = enhanceEntry(entry);
-              if (!entry.isFile) {
-                // eslint-disable-next-line no-param-reassign
-                if (subFolder.accessKeyId) {
-                  entry.accessKeyId = subFolder.accessKeyId;
-                }
-                if (subFolder.bucketName) {
-                  entry.bucketName = subFolder.bucketName;
-                }
-                if (subFolder.region) {
-                  entry.region = subFolder.region;
-                }
-                if (subFolder.endpointURL) {
-                  entry.endpointURL = subFolder.endpointURL;
-                }
-                if (subFolder.secretAccessKey) {
-                  entry.secretAccessKey = subFolder.secretAccessKey;
-                }
-                entry.uuid = subFolder.uuid;
-                entry.type = subFolder.type;
-                directoryContent.push(entry);
-              }
-              return true;
-            });
-            if (directoryContent.length > 0) {
-              // eslint-disable-next-line no-param-reassign
-              subFolder.children = directoryContent;
-              if (deepLevel > 0) {
-                const promisesArr = [];
-                directoryContent.map(directory =>
-                  promisesArr.push(getDirectoriesTree(directory, deepLevel - 1))
-                );
-                return Promise.all(promisesArr);
-              }
+              });
+              resolve(directoryContent);
             }
-          }
-          return subFolder;
-        })
-        .catch(error => {
-          console.debug('getDirectoriesTree', error);
-        });
+          })
+          .catch(error => {
+            console.debug('getDirectoriesTree', error);
+            reject();
+          });
+      });
+    };
 
     /**
      * https://codereview.stackexchange.com/questions/47932/recursion-vs-iteration-of-tree-structure
