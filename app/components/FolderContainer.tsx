@@ -585,10 +585,30 @@ const FolderContainer = (props: Props) => {
                 zIndex: 1000,
                 height: '100%',
                 width: '100%',
-                backdropFilter: 'blur(2px)',
-                backgroundColor: '#fafafaAA' // red: '#eb585882' '#d9d9d980'
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRadius: 10,
+                backdropFilter: 'grayscale(1)'
+                // backdropFilter: 'blur(2px)',
+                // backgroundColor: '#fafafa33' // red: '#eb585882' '#d9d9d980'
               }}
-            ></div>
+            >
+              <div className="lds-ellipsis">
+                <div
+                  style={{ backgroundColor: theme.palette.primary.main }}
+                ></div>
+                <div
+                  style={{ backgroundColor: theme.palette.primary.main }}
+                ></div>
+                <div
+                  style={{ backgroundColor: theme.palette.primary.main }}
+                ></div>
+                <div
+                  style={{ backgroundColor: theme.palette.primary.main }}
+                ></div>
+              </div>
+            </div>
           )}
           {renderPerspective()}
           {isRenameEntryDialogOpened && (
