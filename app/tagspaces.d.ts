@@ -42,8 +42,6 @@ declare interface Window {
   ExtIsAmplify?: boolean;
   ExtUseSidecarsForFileTagging?: boolean;
   ExtSaveLocationsInBrowser?: boolean;
-  ExtSidebarColor?: string;
-  ExtSidebarSelectionColor?: string;
   ExtLightThemeLightColor?: string;
   ExtLightThemeMainColor?: string;
   ExtDarkThemeLightColor?: string;
