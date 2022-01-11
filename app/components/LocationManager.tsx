@@ -70,6 +70,7 @@ interface Props {
   reduceHeightBy: number;
   toggleLocationDialog: () => void;
   isLoading: boolean;
+  show: boolean;
 }
 
 type SubFolder = {
@@ -124,12 +125,12 @@ const LocationManager = (props: Props) => {
     props.moveLocation(result.draggableId, result.destination.index);
   };
 
-  const { classes, reduceHeightBy, isLoading } = props;
+  const { classes, reduceHeightBy, isLoading, show } = props;
   return (
     <div
       className={classes.panel}
       style={{
-        display: 'flex',
+        display: show ? 'flex' : 'none',
         flexDirection: 'column'
       }}
     >
