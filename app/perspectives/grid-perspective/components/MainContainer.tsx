@@ -352,8 +352,12 @@ const GridPerspective = (props: Props) => {
     selectedEntryPath.current = undefined;
   };
 
+  const { classes, selectedEntries, loadParentDirectoryContent, theme } = props;
+
+  const someFileSelected = selectedEntries.length > 1;
+
   const toggleSelectAllFiles = () => {
-    if (selectedEntries.length > 0) {
+    if (someFileSelected) {
       clearSelection();
     } else {
       const selectedEntries = [];
@@ -704,7 +708,6 @@ const GridPerspective = (props: Props) => {
     }
   };
 
-  const { classes, selectedEntries, loadParentDirectoryContent, theme } = props;
   const selectedFilePaths = selectedEntries
     ? selectedEntries
         .filter(fsEntry => fsEntry.isFile)
@@ -725,6 +728,7 @@ const GridPerspective = (props: Props) => {
   } else if (entrySize === 'big') {
     entryWidth = 300;
   }
+
   return (
     <div
       style={{
@@ -738,7 +742,7 @@ const GridPerspective = (props: Props) => {
         selectedEntries={selectedEntries}
         loadParentDirectoryContent={loadParentDirectoryContent}
         toggleSelectAllFiles={toggleSelectAllFiles}
-        someFileSelected={selectedEntries.length > 0}
+        someFileSelected={someFileSelected}
         handleLayoutSwitch={handleLayoutSwitch}
         openAddRemoveTagsDialog={openAddRemoveTagsDialog}
         fileOperationsEnabled={fileOperationsEnabled()}
