@@ -680,6 +680,9 @@ export async function loadJSONFile(filePath: string) {
 export function loadJSONString(jsonContent: string) {
   let jsonObject;
   let json;
+  if (!jsonContent) {
+    return;
+  }
   const UTF8_BOM = '\ufeff';
   if (jsonContent.indexOf(UTF8_BOM) === 0) {
     json = jsonContent.substring(1, jsonContent.length);
@@ -689,7 +692,7 @@ export function loadJSONString(jsonContent: string) {
   try {
     jsonObject = JSON.parse(json);
   } catch (err) {
-    console.error('Error parsing meta json file: ' + json, err);
+    console.log('Error parsing meta json file: ' + json, err);
   }
   return jsonObject;
 }
