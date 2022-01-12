@@ -455,6 +455,11 @@ export default {
       color: '#c5e4f9'
     },
     {
+      type: 'm4a',
+      viewer: '@tagspaces/extensions/media-player',
+      color: '#c5e4f9'
+    },
+    {
       type: 'oga',
       viewer: '@tagspaces/extensions/media-player',
       color: '#c5e4f9'
