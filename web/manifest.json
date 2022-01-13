@@ -34,7 +34,7 @@
     }
   ],
   "start_url": "/index.html",
-  "display": "minimal-ui",
+  "display": "standalone",
   "background_color": "#1DD19F",
   "theme_color": "#1DD19F"
 }
