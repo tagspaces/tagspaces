@@ -920,6 +920,7 @@ export const actions = {
             true
           )
         );
+        dispatch(actions.setIsLoading(false));
       }
     } else {
       dispatch(
@@ -929,6 +930,7 @@ export const actions = {
           true
         )
       );
+      dispatch(actions.setIsLoading(false));
     }
   },
   loadDirectoryContentInt: (
