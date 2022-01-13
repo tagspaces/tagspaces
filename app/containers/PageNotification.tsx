@@ -19,6 +19,7 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
@@ -56,6 +57,16 @@ interface Props {
   openURLExternally: (url: string, skipConfirm: boolean) => void;
 }
 
+const TSNotification = withStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      '& .MuiSnackbarContent-root': {
+        borderRadius: 10
+      }
+    }
+  })
+)(Snackbar);
+
 const PageNotification = (props: Props) => {
   const skipRelease = () => {
     props.setUpdateAvailable(false);
@@ -80,7 +91,7 @@ const PageNotification = (props: Props) => {
 
   return (
     <>
-      <Snackbar
+      <TSNotification
         data-tid={props.notificationStatus.tid}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         open={props.notificationStatus.visible}
@@ -100,7 +111,7 @@ const PageNotification = (props: Props) => {
         ]}
       />
       {props.isGeneratingThumbs && (
-        <Snackbar
+        <TSNotification
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           open={props.isGeneratingThumbs}
           autoHideDuration={undefined}
@@ -117,7 +128,7 @@ const PageNotification = (props: Props) => {
           ]}
         />
       )}
-      <Snackbar
+      <TSNotification
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         open={props.isIndexing}
         autoHideDuration={undefined}
@@ -134,7 +145,7 @@ const PageNotification = (props: Props) => {
           </Button>
         ]}
       />
-      <Snackbar
+      <TSNotification
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         open={props.isUpdateAvailable}
         autoHideDuration={undefined}
