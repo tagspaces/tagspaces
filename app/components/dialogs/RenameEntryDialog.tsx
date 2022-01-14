@@ -120,7 +120,7 @@ const RenameEntryDialog = (props: Props) => {
   const handleValidation = () => {
     const initValid = disableConfirmButton.current;
     if (name.current.length > 0) {
-      const rg1 = /^[^#\\/:*?"<>|]+$/; // forbidden characters # \ / : * ? " < > |
+      const rg1 = /^[^#\\/*?"<>|]+$/; // forbidden characters # \ / * ? " < > |
       if (isFile) {
         // https://stackoverflow.com/a/11101624/2285631
         const rg2 = /^\./; // cannot start with dot (.)
