@@ -103,20 +103,22 @@ const FileView = (props: Props) => {
       }}
     >
       {isFullscreen && (
-        <Fab
-          size="small"
+        <div
           data-tid="fullscreenTID"
-          color="primary"
           style={{
             position: 'absolute',
+            textAlign: 'center',
             top: 20,
             right: 20,
-            zIndex: 10000
+            zIndex: 10000,
+            color: theme.palette.primary.main
           }}
           onClick={toggleFullScreen}
         >
           <CloseIcon />
-        </Fab>
+          <br />
+          <span>ESC</span>
+        </div>
       )}
       <iframe
         ref={fileViewer}
