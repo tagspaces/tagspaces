@@ -176,7 +176,7 @@
     "i18next-http-backend": "^1.2.8",
     "jszip": "^3.7.1",
     "leaflet": "^1.7.1",
-    "marked": "^3.0.8",
+    "marked": "^4.0.10",
     "material-design-icons": "^3.0.1",
     "mgrs": "^1.0.0",
     "open-location-code": "^1.0.3",
