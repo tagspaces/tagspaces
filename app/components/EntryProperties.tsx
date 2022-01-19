@@ -599,8 +599,10 @@ const EntryProperties = (props: Props) => {
       if (currentEntry.isFile && params.has('tsepath')) {
         const entryPath = params.get('tsepath');
         sharingLink = generateSharingLink(locationId, entryPath);
-      } else if (currentEntry.isFile && params.has('tsepath')) {
-        const dirPath = params.get('tsdpath');
+      } else if (!currentEntry.isFile) {
+        const dirPath = params.has('tsepath')
+          ? params.get('tsepath')
+          : currentEntry.path;
         sharingLink = generateSharingLink(locationId, undefined, dirPath);
       }
     }
