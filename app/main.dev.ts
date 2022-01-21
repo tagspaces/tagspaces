@@ -302,7 +302,7 @@ function toggleOpenLinkDialog() {
 
 function resumePlayback() {
   if (mainWindow) {
-    showTagSpaces();
+    // showTagSpaces();
     mainWindow.webContents.send('play-pause', true);
   }
 }
