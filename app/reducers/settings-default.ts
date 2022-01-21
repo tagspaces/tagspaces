@@ -46,6 +46,11 @@ export function findAvailableExtensions() {
       extensionType: 'viewer'
     },
     {
+      extensionId: '@tagspaces/extensions/ebook-viewer',
+      extensionName: 'eBook Viewer',
+      extensionType: 'viewer'
+    },
+    {
       extensionId: '@tagspaces/extensions/html-editor',
       extensionName: 'HTML Editor',
       extensionType: 'editor'
@@ -316,6 +321,11 @@ export default {
     {
       type: 'eml',
       viewer: '@tagspaces/extensions/mhtml-viewer',
+      color: ''
+    },
+    {
+      type: 'epub',
+      viewer: '@tagspaces/extensions/ebook-viewer',
       color: ''
     },
     {
