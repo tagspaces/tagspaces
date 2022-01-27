@@ -630,5 +630,7 @@
   "showMeMore": "Show me more",
   "achieveMore": "Achieve more with",
   "contactUs": "Contact us",
+  "sessionToken": "Session Token",
+  "s3serviceURL": "URL of the S3 service",
   "-": "-"
 }
