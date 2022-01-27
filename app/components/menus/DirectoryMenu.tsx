@@ -39,7 +39,7 @@ import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import ShareIcon from '@material-ui/icons/Link';
 import RenameFolderIcon from '@material-ui/icons/FormatTextdirectionLToR';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
-import SettingsIcon from '@material-ui/icons/Settings';
+import PropertiesIcon from '@material-ui/icons/Info';
 import { Progress } from 'aws-sdk/clients/s3';
 import ImageIcon from '@material-ui/icons/Image';
 import { Pro } from '../../pro';
@@ -705,7 +705,7 @@ Do you want to continue?`)
         onClick={showProperties}
       >
         <ListItemIcon>
-          <SettingsIcon />
+          <PropertiesIcon />
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:directoryPropertiesTitle')} />
       </MenuItem>
