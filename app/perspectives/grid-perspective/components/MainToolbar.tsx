@@ -30,6 +30,7 @@ import SelectAllIcon from '@material-ui/icons/CheckBox';
 import DeSelectAllIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CopyIcon from '@material-ui/icons/FileCopy';
 import DeleteIcon from '@material-ui/icons/Delete';
+import PropertiesIcon from '@material-ui/icons/Info';
 import ExportIcon from '@material-ui/icons/AssignmentReturn';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -40,6 +41,7 @@ import {
   actions as LocationIndexActions,
   getSearchQuery
 } from '-/reducers/location-index';
+import { getAllPropertiesPromise } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { actions as AppActions } from '-/reducers/app';
 
@@ -51,6 +53,7 @@ interface Props {
   toggleSelectAllFiles: (event: any) => void;
   someFileSelected: boolean;
   handleLayoutSwitch: (event: Object) => void;
+  openFsEntry: (fsEntry?: TS.FileSystemEntry) => void;
   openAddRemoveTagsDialog: () => void;
   fileOperationsEnabled: boolean;
   openMoveCopyFilesDialog: () => void;
@@ -62,6 +65,7 @@ interface Props {
   searchQuery: TS.SearchQuery;
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   openCurrentDirectory: () => void;
+  directoryPath: string;
 }
 
 const MainToolbar = (props: Props) => {
@@ -81,6 +85,22 @@ const MainToolbar = (props: Props) => {
     handleSortingMenu,
     openSettings
   } = props;
+
+  function showProperties() {
+    getAllPropertiesPromise(props.directoryPath)
+      .then((fsEntry: TS.FileSystemEntry) => {
+        props.openFsEntry(fsEntry);
+        return true;
+      })
+      .catch(error =>
+        console.warn(
+          'Error getting properties for entry: ' +
+            props.directoryPath +
+            ' - ' +
+            error
+        )
+      );
+  }
 
   return (
     <Toolbar className={classes.topToolbar} data-tid="perspectiveGridToolbar">
@@ -109,6 +129,15 @@ const MainToolbar = (props: Props) => {
           }}
         >
           <ParentDirIcon />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title={i18n.t('core:directoryPropertiesTitle')}>
+        <IconButton
+          aria-label={i18n.t('core:directoryPropertiesTitle')}
+          data-tid="openFolderProperties"
+          onClick={showProperties}
+        >
+          <PropertiesIcon />
         </IconButton>
       </Tooltip>
       {layoutType === 'row' ? (

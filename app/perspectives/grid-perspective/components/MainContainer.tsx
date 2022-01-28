@@ -352,7 +352,13 @@ const GridPerspective = (props: Props) => {
     selectedEntryPath.current = undefined;
   };
 
-  const { classes, selectedEntries, loadParentDirectoryContent, theme } = props;
+  const {
+    classes,
+    selectedEntries,
+    loadParentDirectoryContent,
+    theme,
+    currentDirectoryPath
+  } = props;
 
   const someFileSelected = selectedEntries.length > 1;
 
@@ -679,7 +685,7 @@ const GridPerspective = (props: Props) => {
     if (props.lastSelectedEntry) {
       return props.lastSelectedEntry.path;
     }
-    return props.currentDirectoryPath;
+    return currentDirectoryPath;
   };
 
   const keyBindingHandlers = {
@@ -748,9 +754,11 @@ const GridPerspective = (props: Props) => {
         fileOperationsEnabled={fileOperationsEnabled()}
         openMoveCopyFilesDialog={openMoveCopyFilesDialog}
         openDeleteFileDialog={openDeleteFileDialog}
+        openFsEntry={props.openFsEntry}
         handleSortingMenu={handleSortingMenu}
         handleExportCsvMenu={handleExportCsvMenu}
         openSettings={openSettings}
+        directoryPath={currentDirectoryPath}
       />
       <GlobalHotKeys
         keyMap={keyMap}
