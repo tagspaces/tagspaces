@@ -787,6 +787,20 @@ const EntryContainer = (props: Props) => {
             <RefreshIcon />
           </IconButton>
         </Tooltip>
+        {props.isDesktopMode && (
+          <Tooltip title={i18n.t('core:openInFullWidth')}>
+            <IconButton
+              data-tid="openInFullWidthTID"
+              aria-label={i18n.t('core:openInFullWidth')}
+              onClick={() => {
+                props.toggleEntryFullWidth();
+                closePanel();
+              }}
+            >
+              <ExpandIcon />
+            </IconButton>
+          </Tooltip>
+        )}
         {!props.isReadOnlyMode && (
           <Tooltip title={i18n.t('core:deleteDirectory')}>
             <IconButton
