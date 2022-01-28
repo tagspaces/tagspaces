@@ -833,6 +833,8 @@ const EntryProperties = (props: Props) => {
                   style={{
                     padding: 10,
                     borderRadius: 5,
+                    maxHeight: 400,
+                    overflow: 'auto',
                     backgroundColor: 'rgba(255, 216, 115, 0.20)'
                   }}
                   id="textarea"
@@ -865,7 +867,8 @@ const EntryProperties = (props: Props) => {
                   borderRadius: 5,
                   backgroundColor: 'rgba(255, 216, 115, 0.20)',
                   marginBottom: 5,
-
+                  maxHeight: 400,
+                  overflow: 'auto',
                   color: currentEntry.description
                     ? theme.palette.text.primary
                     : theme.palette.text.disabled
