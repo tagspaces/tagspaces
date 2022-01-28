@@ -35,7 +35,7 @@ const Links = {
     downloadURL: 'https://www.tagspaces.org/downloads/',
     changelogURL: 'https://www.tagspaces.org/whatsnew/',
     imprintURL: 'https://www.tagspaces.org/about/imprint/',
-    privacyURL: 'https://www.tagspaces.org/about/privacy/',
+    privacyURL: 'https://www.tagspaces.org/legal/privacy-app/',
     suggestFeature: 'https://trello.com/b/TGeG5bi9',
     reportIssue: 'https://github.com/tagspaces/tagspaces/issues/',
     helpTranslating: 'https://www.transifex.com/tagspaces/tagspaces/',
