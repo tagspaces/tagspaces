@@ -166,12 +166,7 @@ const TagGroupMenu = (props: Props) => {
             <CollectTagsIcon />
           </ListItemIcon>
           <ListItemText
-            primary={
-              <>
-                {i18n.t('core:collectTagsFromLocation')}
-                <ProLabel />
-              </>
-            }
+            primary={<>{i18n.t('core:collectTagsFromLocation')}</>}
           />
         </MenuItem>
       </Menu>
