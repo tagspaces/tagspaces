@@ -2001,6 +2001,7 @@ export const actions = {
         .then((fsEntry: TS.FileSystemEntry) => {
           if (fsEntry.isFile) {
             dispatch(actions.openFsEntry(fsEntry));
+            dispatch(actions.setEntryFullWidth(true));
           } else {
             dispatch(actions.loadDirectoryContent(fsEntry.path, false));
           }
@@ -2042,6 +2043,7 @@ export const actions = {
                 .then((fsEntry: TS.FileSystemEntry) => {
                   if (fsEntry) {
                     dispatch(actions.openFsEntry(fsEntry));
+                    dispatch(actions.setEntryFullWidth(true));
                   }
                   return true;
                 })
@@ -2094,6 +2096,7 @@ export const actions = {
                 .then((fsEntry: TS.FileSystemEntry) => {
                   if (fsEntry) {
                     dispatch(actions.openFsEntry(fsEntry));
+                    dispatch(actions.setEntryFullWidth(true));
                   }
                   return true;
                 })
