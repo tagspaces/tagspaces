@@ -196,10 +196,12 @@ const EntryProperties = (props: Props) => {
   const objectStorageLinkRef = useRef<HTMLInputElement>(null);
   const fileDescriptionRef = useRef<HTMLInputElement>(null);
 
-  const parentDirectoryPath = extractContainingDirectoryPath(
-    props.openedEntry.path,
-    PlatformIO.getDirSeparator()
-  );
+  const directoryPath = props.openedEntry.isFile
+    ? extractContainingDirectoryPath(
+        props.openedEntry.path,
+        PlatformIO.getDirSeparator()
+      )
+    : props.openedEntry.path;
 
   const customRenderer = new marked.Renderer();
   customRenderer.link = (href, title, text) => `
@@ -211,12 +213,20 @@ const EntryProperties = (props: Props) => {
 
   customRenderer.image = (href, title, text) => {
     let sourceUrl = href;
-    if (!sourceUrl.startsWith('http')) {
-      sourceUrl =
-        parentDirectoryPath + PlatformIO.getDirSeparator() + sourceUrl;
+    const dirSep = PlatformIO.getDirSeparator();
+    if (
+      !sourceUrl.startsWith('http') &&
+      directoryPath &&
+      directoryPath !== dirSep
+    ) {
+      sourceUrl = directoryPath.endsWith(dirSep)
+        ? directoryPath + sourceUrl
+        : directoryPath + dirSep + sourceUrl;
     }
-    return `<img src="${sourceUrl}"
-    >
+    if (PlatformIO.haveObjectStoreSupport()) {
+      sourceUrl = PlatformIO.getURLforPath(sourceUrl);
+    }
+    return `<img src="${sourceUrl}" style="max-width: 100%">
         ${text}
     </img>`;
   };
