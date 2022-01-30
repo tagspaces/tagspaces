@@ -158,7 +158,7 @@ export default function buildDesktopMenu(props: any, i18n) {
         },
         {
           label: i18n.t('zoomIn'),
-          accelerator: 'CmdOrCtrl+Plus',
+          accelerator: 'CmdOrCtrl+Shift+Plus',
           click: props.setZoomInApp
         },
         {
