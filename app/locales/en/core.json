@@ -632,5 +632,6 @@
   "contactUs": "Contact us",
   "sessionToken": "Session Token",
   "s3serviceURL": "URL of the S3 service",
+  "print": "Print",
   "-": "-"
 }

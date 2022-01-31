@@ -203,6 +203,21 @@ const EntryProperties = (props: Props) => {
       )
     : props.openedEntry.path;
 
+  const printHTML = html => {
+    const printWin = window.open('', 'PRINT', 'height=400,width=600');
+    printWin.document.write(
+      '<html><head><title>' + entryName + ' description</title>'
+    );
+    printWin.document.write('</head><body >');
+    printWin.document.write(sanitizedDescription);
+    printWin.document.write('</body></html>');
+    printWin.document.close(); // necessary for IE >= 10
+    printWin.focus(); // necessary for IE >= 10*/
+    printWin.print();
+    // printWin.close();
+    return true;
+  };
+
   const customRenderer = new marked.Renderer();
   customRenderer.link = (href, title, text) => `
       <a href="#"
@@ -633,6 +648,10 @@ const EntryProperties = (props: Props) => {
     );
   }
 
+  const sanitizedDescription = currentEntry.description
+    ? marked(DOMPurify.sanitize(currentEntry.description))
+    : i18n.t('core:addMarkdownDescription');
+
   // @ts-ignore
   return (
     <div className={classes.entryProperties}>
@@ -819,6 +838,14 @@ const EntryProperties = (props: Props) => {
                       {i18n.t('core:cancel')}
                     </Button>
                   )}
+                  {editDescription === undefined && (
+                    <Button
+                      className={classes.button}
+                      onClick={() => printHTML(sanitizedDescription)}
+                    >
+                      {i18n.t('core:print')}
+                    </Button>
+                  )}
                   <ProTooltip tooltip={i18n.t('editDescription')}>
                     <Button
                       color="primary"
@@ -887,9 +914,7 @@ const EntryProperties = (props: Props) => {
                 id="descriptionArea"
                 dangerouslySetInnerHTML={{
                   // eslint-disable-next-line no-nested-ternary
-                  __html: currentEntry.description
-                    ? marked(DOMPurify.sanitize(currentEntry.description))
-                    : i18n.t('core:addMarkdownDescription')
+                  __html: sanitizedDescription
                 }}
                 onDoubleClick={() => {
                   if (!currentEntry.editMode && editName === undefined) {

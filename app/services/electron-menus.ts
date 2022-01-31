@@ -60,6 +60,15 @@ export default function buildDesktopMenu(props: any, i18n) {
           type: 'separator'
         },
         {
+          label: i18n.t('print'),
+          accelerator: 'CmdOrCtrl+p',
+          click: (item, focusedWindow) => {
+            if (focusedWindow.webContents && focusedWindow.webContents.print) {
+              focusedWindow.webContents.print();
+            }
+          }
+        },
+        {
           type: 'separator'
         },
         {
