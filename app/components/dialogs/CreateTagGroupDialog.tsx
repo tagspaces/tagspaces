@@ -47,7 +47,7 @@ interface Props {
   textcolor: string;
   currentLocationId: string | null;
   locations: Array<TS.Location>;
-  saveTagInLocation: boolean;
+  saveTagsInLocation: boolean;
 }
 
 const defaultTagGroupLocation = 'TAG_LIBRARY';
@@ -66,6 +66,14 @@ const CreateTagGroupDialog = (props: Props) => {
   const locationId = useRef<string>(props.currentLocationId);
   // eslint-disable-next-line no-unused-vars
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+
+  const {
+    fullScreen,
+    open,
+    saveTagsInLocation,
+    onClose,
+    createTagGroup
+  } = props;
 
   const handleTagGroupTitleChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -100,19 +108,21 @@ const CreateTagGroupDialog = (props: Props) => {
   };
 
   const onConfirm = () => {
+    let lId;
+    if (saveTagsInLocation && locationId.current !== defaultTagGroupLocation) {
+      lId = locationId.current;
+    }
+
     if (!disableConfirmButton.current) {
-      props.createTagGroup({
+      createTagGroup({
         uuid: uuidv1(),
         title: title.current,
         color: color.current,
         textcolor: textcolor.current,
-        locationId:
-          locationId.current === defaultTagGroupLocation
-            ? undefined
-            : locationId.current,
+        locationId: lId,
         children: []
       });
-      props.onClose();
+      onClose();
     }
   };
 
@@ -131,8 +141,6 @@ const CreateTagGroupDialog = (props: Props) => {
   const handleChangeTextColor = (value: string) => {
     textcolor.current = value;
   };
-
-  const { fullScreen, open, onClose } = props;
 
   const styles = {
     color: {
@@ -206,7 +214,7 @@ const CreateTagGroupDialog = (props: Props) => {
             </FormHelperText>
           )}
         </FormControl>
-        {props.saveTagInLocation && (
+        {props.saveTagsInLocation && (
           <FormControl fullWidth={true} error={inputError}>
             <FormHelperText style={styles.helpText}>
               {i18n.t('core:tagGroupLocation')}
@@ -301,7 +309,7 @@ function mapStateToProps(state) {
   return {
     locations: getLocations(state),
     currentLocationId: getCurrentLocationId(state),
-    saveTagInLocation: state.settings.saveTagInLocation
+    saveTagsInLocation: state.settings.saveTagInLocation
   };
 }
 
