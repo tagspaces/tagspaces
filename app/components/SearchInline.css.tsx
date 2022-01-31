@@ -62,8 +62,8 @@ export const styles = (theme: any) => {
     },
     searchArea: {
       paddingTop: 0,
-      paddingLeft: 5,
-      paddingRight: 5,
+      paddingLeft: 10,
+      paddingRight: 10,
       marginTop: 0,
       height: 'calc(100% - 50px)',
       maxHeight: 'calc(100% - 50px)',

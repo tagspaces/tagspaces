@@ -297,36 +297,6 @@ export const actions = {
         console.warn('Resolution is faled!', e);
       });
   },
-  // loadDirectoryIndex: (
-  //   directoryPath: string,
-  //   isCurrentLocation: boolean = true
-  // ) => (dispatch: (actions: Object) => void) => {
-  //   dispatch(actions.startDirectoryIndexing());
-  //   dispatch(
-  //     AppActions.showNotification(i18n.t('core:loadingIndex'), 'default', true)
-  //   );
-  //   if (Pro && Pro.Indexer.loadIndex) {
-  //     Pro.Indexer.loadIndex(directoryPath, PlatformIO.getDirSeparator())
-  //       .then(directoryIndex => {
-  //         if (isCurrentLocation) {
-  //           // Load index only if current location
-  //           GlobalSearch.index = directoryIndex;
-  //         }
-  //         dispatch(actions.indexDirectorySuccess());
-  //         return true;
-  //       })
-  //       .catch(err => {
-  //         dispatch(actions.indexDirectoryFailure(err));
-  //         dispatch(
-  //           AppActions.showNotification(
-  //             i18n.t('core:loadingIndexFailed'),
-  //             'warning',
-  //             true
-  //           )
-  //         );
-  //       });
-  //   }
-  // },
   clearDirectoryIndex: () => ({
     type: types.INDEX_DIRECTORY_CLEAR
   }),
@@ -386,12 +356,6 @@ export const actions = {
       ) {
         const currentPath = getLocationPath(currentLocation);
         console.log('Start creating index for : ' + currentPath);
-        /* if (currentLocation.persistIndex && Pro && Pro.Indexer.loadIndex) {
-          GlobalSearch.index = await Pro.Indexer.loadIndex( // TODO move this
-            currentPath,
-            PlatformIO.getDirSeparator()
-          );
-        } else { */
         GlobalSearch.index = await createDirectoryIndex(
           {
             path: currentPath,

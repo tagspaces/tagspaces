@@ -511,16 +511,13 @@ const FolderContainer = (props: Props) => {
                 anchorEl={anchorSearch}
                 onClose={() => setAnchorSearch(null)}
                 anchorOrigin={{
-                  vertical: 'top',
+                  vertical: 'bottom',
                   horizontal: 'right'
-                }}
-                style={{
-                  marginLeft: -8
                 }}
                 PaperProps={{
                   style: {
                     overflow: 'hidden',
-                    height: 820
+                    height: 720
                   }
                 }}
                 transformOrigin={{
